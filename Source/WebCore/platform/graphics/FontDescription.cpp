@@ -65,14 +65,14 @@ FontDescription::FontDescription()
 {
 }
 
-void FontDescription::setLocale(const AtomicString& locale)
+void FontDescription::setLocale(const AtomString& locale)
 {
     m_locale = locale;
     m_script = localeToScriptCodeForFontSelection(m_locale);
 }
 
 #if !PLATFORM(COCOA)
-AtomicString FontDescription::platformResolveGenericFamily(UScriptCode, const AtomicString&, const AtomicString&)
+AtomString FontDescription::platformResolveGenericFamily(UScriptCode, const AtomString&, const AtomString&)
 {
     return nullAtom();
 }

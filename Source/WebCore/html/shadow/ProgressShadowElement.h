@@ -67,7 +67,7 @@ private:
 inline Ref<ProgressInnerElement> ProgressInnerElement::create(Document& document)
 {
     Ref<ProgressInnerElement> result = adoptRef(*new ProgressInnerElement(document));
-    result->setPseudo(AtomicString("-webkit-progress-inner-element", AtomicString::ConstructFromLiteral));
+    result->setPseudo(AtomString("-webkit-progress-inner-element", AtomString::ConstructFromLiteral));
     return result;
 }
 
@@ -82,7 +82,7 @@ private:
 inline Ref<ProgressBarElement> ProgressBarElement::create(Document& document)
 {
     Ref<ProgressBarElement> result = adoptRef(*new ProgressBarElement(document));
-    result->setPseudo(AtomicString("-webkit-progress-bar", AtomicString::ConstructFromLiteral));
+    result->setPseudo(AtomString("-webkit-progress-bar", AtomString::ConstructFromLiteral));
     return result;
 }
 
@@ -98,7 +98,7 @@ private:
 inline Ref<ProgressValueElement> ProgressValueElement::create(Document& document)
 {
     Ref<ProgressValueElement> result = adoptRef(*new ProgressValueElement(document));
-    result->setPseudo(AtomicString("-webkit-progress-value", AtomicString::ConstructFromLiteral));
+    result->setPseudo(AtomString("-webkit-progress-value", AtomString::ConstructFromLiteral));
     return result;
 }
 

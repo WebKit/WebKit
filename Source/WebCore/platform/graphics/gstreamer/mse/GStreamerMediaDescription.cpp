@@ -23,14 +23,14 @@
 #include "GStreamerCommon.h"
 
 #include <gst/pbutils/pbutils.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE)
 
 namespace WebCore {
 
-AtomicString GStreamerMediaDescription::codec() const
+AtomString GStreamerMediaDescription::codec() const
 {
     return m_codecName;
 }
@@ -51,7 +51,7 @@ bool GStreamerMediaDescription::isText() const
     return false;
 }
 
-AtomicString GStreamerMediaDescription::extractCodecName()
+AtomString GStreamerMediaDescription::extractCodecName()
 {
     GRefPtr<GstCaps> originalCaps = m_caps;
 
@@ -60,7 +60,7 @@ AtomicString GStreamerMediaDescription::extractCodecName()
         GstStructure* structure = gst_caps_get_structure(originalCaps.get(), 0);
 
         if (!gst_structure_has_field(structure, "original-media-type"))
-            return AtomicString();
+            return AtomString();
 
         gst_structure_set_name(structure, gst_structure_get_string(structure, "original-media-type"));
         // Remove the DRM related fields from the caps.

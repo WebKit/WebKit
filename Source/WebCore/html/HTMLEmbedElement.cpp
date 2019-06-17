@@ -90,7 +90,7 @@ RenderWidget* HTMLEmbedElement::renderWidgetLoadingPlugin() const
     return findWidgetRenderer(this);
 }
 
-void HTMLEmbedElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+void HTMLEmbedElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == hiddenAttr) {
         if (equalLettersIgnoringASCIICase(value, "yes") || equalLettersIgnoringASCIICase(value, "true")) {
@@ -106,7 +106,7 @@ static bool hasTypeOrSrc(const HTMLEmbedElement& embed)
     return embed.hasAttributeWithoutSynchronization(typeAttr) || embed.hasAttributeWithoutSynchronization(srcAttr);
 }
 
-void HTMLEmbedElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLEmbedElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == typeAttr) {
         m_serviceType = value.string().left(value.find(';')).convertToASCIILowercase();
@@ -222,7 +222,7 @@ bool HTMLEmbedElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == srcAttr || HTMLPlugInImageElement::isURLAttribute(attribute);
 }
 
-const AtomicString& HTMLEmbedElement::imageSourceURL() const
+const AtomString& HTMLEmbedElement::imageSourceURL() const
 {
     return attributeWithoutSynchronization(srcAttr);
 }

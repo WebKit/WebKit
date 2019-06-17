@@ -29,10 +29,10 @@ namespace WTF {
 
 class StringImpl;
 
-class AtomicStringTable {
+class AtomStringTable {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WTF_EXPORT_PRIVATE ~AtomicStringTable();
+    WTF_EXPORT_PRIVATE ~AtomStringTable();
 
     HashSet<StringImpl*>& table() { return m_table; }
 
@@ -41,4 +41,4 @@ private:
 };
 
 }
-using WTF::AtomicStringTable;
+using WTF::AtomStringTable;

@@ -27,7 +27,7 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -47,7 +47,7 @@ PopupMenu* WebSearchPopupMenu::popupMenu()
     return m_popup.get();
 }
 
-void WebSearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vector<RecentSearch>& searchItems)
+void WebSearchPopupMenu::saveRecentSearches(const AtomString& name, const Vector<RecentSearch>& searchItems)
 {
     if (name.isEmpty())
         return;
@@ -59,7 +59,7 @@ void WebSearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vect
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::SaveRecentSearches(name, searchItems), page->pageID());
 }
 
-void WebSearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<RecentSearch>& resultItems)
+void WebSearchPopupMenu::loadRecentSearches(const AtomString& name, Vector<RecentSearch>& resultItems)
 {
     if (name.isEmpty())
         return;

@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-const AtomicString& CheckboxInputType::formControlType() const
+const AtomString& CheckboxInputType::formControlType() const
 {
     return InputTypeNames::checkbox();
 }

@@ -34,7 +34,7 @@
 namespace WebCore {
 using namespace JSC;
 
-PromiseRejectionEvent::PromiseRejectionEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+PromiseRejectionEvent::PromiseRejectionEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
     , m_promise(*(initializer.promise))
     , m_reason(initializer.reason)

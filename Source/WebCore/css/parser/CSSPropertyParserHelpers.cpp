@@ -1444,7 +1444,7 @@ static RefPtr<CSSValue> consumeImageSet(CSSParserTokenRange& range, const CSSPar
     CSSParserTokenRange args = consumeFunction(rangeCopy);
     RefPtr<CSSImageSetValue> imageSet = CSSImageSetValue::create(context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
     do {
-        AtomicString urlValue = consumeUrlAsStringView(args).toAtomicString();
+        AtomString urlValue = consumeUrlAsStringView(args).toAtomString();
         if (urlValue.isNull())
             return nullptr;
 
@@ -1661,7 +1661,7 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, CSSParser
 
 RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, CSSParserContext context, ConsumeGeneratedImage generatedImage)
 {
-    AtomicString uri = consumeUrlAsStringView(range).toAtomicString();
+    AtomString uri = consumeUrlAsStringView(range).toAtomString();
     if (!uri.isNull())
         return CSSImageValue::create(completeURL(context, uri), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
 

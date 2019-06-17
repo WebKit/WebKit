@@ -259,9 +259,9 @@ void JSValue::dumpInContextAssumingStructure(
                 out.print(" (rope)");
             const StringImpl* impl = string->tryGetValueImpl();
             if (impl) {
-                if (impl->isAtomic())
+                if (impl->isAtom())
                     out.print(" (atomic)");
-                if (impl->isAtomic())
+                if (impl->isAtom())
                     out.print(" (identifier)");
                 if (impl->isSymbol())
                     out.print(" (symbol)");

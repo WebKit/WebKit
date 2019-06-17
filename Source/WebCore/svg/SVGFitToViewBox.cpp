@@ -63,7 +63,7 @@ void SVGFitToViewBox::reset()
     resetPreserveAspectRatio();
 }
 
-bool SVGFitToViewBox::parseAttribute(const QualifiedName& name, const AtomicString& value)
+bool SVGFitToViewBox::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::viewBoxAttr) {
         FloatRect viewBox;
@@ -84,7 +84,7 @@ bool SVGFitToViewBox::parseAttribute(const QualifiedName& name, const AtomicStri
     return false;
 }
 
-bool SVGFitToViewBox::parseViewBox(const AtomicString& value, FloatRect& viewBox)
+bool SVGFitToViewBox::parseViewBox(const AtomString& value, FloatRect& viewBox)
 {
     auto upconvertedCharacters = StringView(value).upconvertedCharacters();
     const UChar* characters = upconvertedCharacters;

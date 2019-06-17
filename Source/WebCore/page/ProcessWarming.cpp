@@ -47,7 +47,7 @@ namespace WebCore {
 
 void ProcessWarming::initializeNames()
 {
-    AtomicString::init();
+    AtomString::init();
     HTMLNames::init();
     QualifiedName::init();
     MediaFeatureNames::init();

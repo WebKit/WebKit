@@ -64,7 +64,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGElement);
 
-static NEVER_INLINE HashMap<AtomicStringImpl*, CSSPropertyID> createAttributeNameToCSSPropertyIDMap()
+static NEVER_INLINE HashMap<AtomStringImpl*, CSSPropertyID> createAttributeNameToCSSPropertyIDMap()
 {
     using namespace HTMLNames;
     using namespace SVGNames;
@@ -144,10 +144,10 @@ static NEVER_INLINE HashMap<AtomicStringImpl*, CSSPropertyID> createAttributeNam
         &yAttr.get(),
     };
 
-    HashMap<AtomicStringImpl*, CSSPropertyID> map;
+    HashMap<AtomStringImpl*, CSSPropertyID> map;
 
     for (auto& name : attributeNames) {
-        const AtomicString& localName = name->localName();
+        const AtomString& localName = name->localName();
         map.add(localName.impl(), cssPropertyID(localName));
     }
 
@@ -230,7 +230,7 @@ bool SVGElement::isOutermostSVGSVGElement() const
     return !parentNode()->isSVGElement();
 }
 
-void SVGElement::reportAttributeParsingError(SVGParsingError error, const QualifiedName& name, const AtomicString& value)
+void SVGElement::reportAttributeParsingError(SVGParsingError error, const QualifiedName& name, const AtomString& value)
 {
     if (error == NoError)
         return;
@@ -341,7 +341,7 @@ void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
         correspondingElement->ensureSVGRareData().instances().add(this);
 }
 
-void SVGElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == HTMLNames::classAttr) {
         m_className->setBaseValInternal(value);
@@ -374,7 +374,7 @@ bool SVGElement::haveLoadedRequiredResources()
     return true;
 }
 
-bool SVGElement::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+bool SVGElement::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {   
     // Add event listener to regular DOM element
     if (!Node::addEventListener(eventType, listener.copyRef(), options))
@@ -394,7 +394,7 @@ bool SVGElement::addEventListener(const AtomicString& eventType, Ref<EventListen
     return true;
 }
 
-bool SVGElement::removeEventListener(const AtomicString& eventType, EventListener& listener, const ListenerOptions& options)
+bool SVGElement::removeEventListener(const AtomString& eventType, EventListener& listener, const ListenerOptions& options)
 {
     if (containingShadowRoot())
         return Node::removeEventListener(eventType, listener, options);
@@ -533,7 +533,7 @@ bool SVGElement::childShouldCreateRenderer(const Node& child) const
     return svgChild.isValid();
 }
 
-void SVGElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason)
+void SVGElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason)
 {
     StyledElement::attributeChanged(name, oldValue, newValue);
 
@@ -675,7 +675,7 @@ const RenderStyle* SVGElement::computedStyle(PseudoId pseudoElementSpecifier)
     return m_svgRareData->overrideComputedStyle(*this, parentStyle);
 }
 
-QualifiedName SVGElement::animatableAttributeForName(const AtomicString& localName)
+QualifiedName SVGElement::animatableAttributeForName(const AtomString& localName)
 {
     static const auto animatableAttributes = makeNeverDestroyed([] {
         static const QualifiedName* const names[] = {
@@ -773,7 +773,7 @@ QualifiedName SVGElement::animatableAttributeForName(const AtomicString& localNa
             &SVGNames::zAttr.get(),
             &SVGNames::hrefAttr.get(),
         };
-        HashMap<AtomicString, QualifiedName> map;
+        HashMap<AtomString, QualifiedName> map;
         for (auto& name : names) {
             auto addResult = map.add(name->localName(), *name);
             ASSERT_UNUSED(addResult, addResult.isNewEntry);
@@ -839,7 +839,7 @@ bool SVGElement::isPresentationAttribute(const QualifiedName& name) const
     return StyledElement::isPresentationAttribute(name);
 }
 
-void SVGElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+void SVGElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(name);
     if (propertyID > 0)

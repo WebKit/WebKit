@@ -35,9 +35,9 @@ class MathMLSelectElement final : public MathMLRowElement {
     WTF_MAKE_ISO_ALLOCATED(MathMLSelectElement);
 public:
     static Ref<MathMLSelectElement> create(const QualifiedName& tagName, Document&);
-    static bool isMathMLEncoding(const AtomicString& value);
-    static bool isSVGEncoding(const AtomicString& value);
-    static bool isHTMLEncoding(const AtomicString& value);
+    static bool isMathMLEncoding(const AtomString& value);
+    static bool isSVGEncoding(const AtomString& value);
+    static bool isHTMLEncoding(const AtomString& value);
 
 private:
     MathMLSelectElement(const QualifiedName& tagName, Document&);
@@ -47,7 +47,7 @@ private:
 
     void finishParsingChildren() final;
     void childrenChanged(const ChildChange&) final;
-    void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason = ModifiedDirectly) final;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = ModifiedDirectly) final;
     void defaultEventHandler(Event&) final;
     bool willRespondToMouseClickEvents() final;
 

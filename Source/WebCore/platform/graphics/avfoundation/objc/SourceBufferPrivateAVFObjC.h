@@ -39,7 +39,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 OBJC_CLASS AVAsset;
@@ -158,11 +158,11 @@ private:
     void removedFromMediaSource() final;
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;
-    void flush(const AtomicString& trackID) final;
-    void enqueueSample(Ref<MediaSample>&&, const AtomicString& trackID) final;
-    bool isReadyForMoreSamples(const AtomicString& trackID) final;
+    void flush(const AtomString& trackID) final;
+    void enqueueSample(Ref<MediaSample>&&, const AtomString& trackID) final;
+    bool isReadyForMoreSamples(const AtomString& trackID) final;
     void setActive(bool) final;
-    void notifyClientWhenReadyForMoreSamples(const AtomicString& trackID) final;
+    void notifyClientWhenReadyForMoreSamples(const AtomString& trackID) final;
     bool canSwitchToType(const ContentType&) final;
 
     void didBecomeReadyForMoreSamples(int trackID);

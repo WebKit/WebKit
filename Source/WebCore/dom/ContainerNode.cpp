@@ -875,7 +875,7 @@ ExceptionOr<Ref<NodeList>> ContainerNode::querySelectorAll(const String& selecto
     return query.releaseReturnValue().queryAll(*this);
 }
 
-Ref<HTMLCollection> ContainerNode::getElementsByTagName(const AtomicString& qualifiedName)
+Ref<HTMLCollection> ContainerNode::getElementsByTagName(const AtomString& qualifiedName)
 {
     ASSERT(!qualifiedName.isNull());
 
@@ -887,7 +887,7 @@ Ref<HTMLCollection> ContainerNode::getElementsByTagName(const AtomicString& qual
     return ensureRareData().ensureNodeLists().addCachedCollection<TagCollection>(*this, ByTag, qualifiedName);
 }
 
-Ref<HTMLCollection> ContainerNode::getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName)
+Ref<HTMLCollection> ContainerNode::getElementsByTagNameNS(const AtomString& namespaceURI, const AtomString& localName)
 {
     ASSERT(!localName.isNull());
     return ensureRareData().ensureNodeLists().addCachedTagCollectionNS(*this, namespaceURI.isEmpty() ? nullAtom() : namespaceURI, localName);
@@ -898,12 +898,12 @@ Ref<NodeList> ContainerNode::getElementsByName(const String& elementName)
     return ensureRareData().ensureNodeLists().addCacheWithAtomicName<NameNodeList>(*this, elementName);
 }
 
-Ref<HTMLCollection> ContainerNode::getElementsByClassName(const AtomicString& classNames)
+Ref<HTMLCollection> ContainerNode::getElementsByClassName(const AtomString& classNames)
 {
     return ensureRareData().ensureNodeLists().addCachedCollection<ClassCollection>(*this, ByClass, classNames);
 }
 
-Ref<RadioNodeList> ContainerNode::radioNodeList(const AtomicString& name)
+Ref<RadioNodeList> ContainerNode::radioNodeList(const AtomString& name)
 {
     ASSERT(hasTagName(HTMLNames::formTag) || hasTagName(HTMLNames::fieldsetTag));
     return ensureRareData().ensureNodeLists().addCacheWithAtomicName<RadioNodeList>(*this, name);

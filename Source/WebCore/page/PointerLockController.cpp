@@ -182,7 +182,7 @@ void PointerLockController::didLosePointerLock()
     }
 }
 
-void PointerLockController::dispatchLockedMouseEvent(const PlatformMouseEvent& event, const AtomicString& eventType)
+void PointerLockController::dispatchLockedMouseEvent(const PlatformMouseEvent& event, const AtomString& eventType)
 {
     if (!m_element || !m_element->document().frame())
         return;
@@ -208,13 +208,13 @@ void PointerLockController::clearElement()
     m_element = nullptr;
 }
 
-void PointerLockController::enqueueEvent(const AtomicString& type, Element* element)
+void PointerLockController::enqueueEvent(const AtomString& type, Element* element)
 {
     if (element)
         enqueueEvent(type, &element->document());
 }
 
-void PointerLockController::enqueueEvent(const AtomicString& type, Document* document)
+void PointerLockController::enqueueEvent(const AtomString& type, Document* document)
 {
     if (document)
         document->enqueueDocumentEvent(Event::create(type, Event::CanBubble::Yes, Event::IsCancelable::No));

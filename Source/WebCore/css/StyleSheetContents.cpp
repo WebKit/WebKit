@@ -295,7 +295,7 @@ void StyleSheetContents::wrapperDeleteRule(unsigned index)
     m_childRules.remove(childVectorIndex);
 }
 
-void StyleSheetContents::parserAddNamespace(const AtomicString& prefix, const AtomicString& uri)
+void StyleSheetContents::parserAddNamespace(const AtomString& prefix, const AtomString& uri)
 {
     ASSERT(!uri.isNull());
     if (prefix.isNull()) {
@@ -308,7 +308,7 @@ void StyleSheetContents::parserAddNamespace(const AtomicString& prefix, const At
     result.iterator->value = uri;
 }
 
-const AtomicString& StyleSheetContents::namespaceURIFromPrefix(const AtomicString& prefix)
+const AtomString& StyleSheetContents::namespaceURIFromPrefix(const AtomString& prefix)
 {
     PrefixNamespaceURIMap::const_iterator it = m_namespaces.find(prefix);
     if (it == m_namespaces.end())

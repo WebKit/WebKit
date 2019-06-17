@@ -56,7 +56,7 @@ protected:
 
     bool isURLAllowed() const;
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomString&) override;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode() final;
     void didAttachRenderers() override;
@@ -72,7 +72,7 @@ private:
 
     void openURL(LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
 
-    AtomicString m_URL;
+    AtomString m_URL;
 
     ScrollbarMode m_scrolling;
 

@@ -82,7 +82,7 @@ HTMLFormControlElement::~HTMLFormControlElement()
 
 String HTMLFormControlElement::formEnctype() const
 {
-    const AtomicString& formEnctypeAttr = attributeWithoutSynchronization(formenctypeAttr);
+    const AtomString& formEnctypeAttr = attributeWithoutSynchronization(formenctypeAttr);
     if (formEnctypeAttr.isNull())
         return emptyString();
     return FormSubmission::Attributes::parseEncodingType(formEnctypeAttr);
@@ -113,13 +113,13 @@ bool HTMLFormControlElement::formNoValidate() const
 
 String HTMLFormControlElement::formAction() const
 {
-    const AtomicString& value = attributeWithoutSynchronization(formactionAttr);
+    const AtomString& value = attributeWithoutSynchronization(formactionAttr);
     if (value.isEmpty())
         return document().url();
     return getURLAttribute(formactionAttr);
 }
 
-void HTMLFormControlElement::setFormAction(const AtomicString& value)
+void HTMLFormControlElement::setFormAction(const AtomString& value)
 {
     setAttributeWithoutSynchronization(formactionAttr, value);
 }
@@ -147,7 +147,7 @@ void HTMLFormControlElement::setAncestorDisabled(bool isDisabled)
         disabledStateChanged();
 }
 
-void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == formAttr)
         formAttributeChanged();
@@ -620,7 +620,7 @@ void HTMLFormControlElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedEleme
 
 bool HTMLFormControlElement::shouldAutocorrect() const
 {
-    const AtomicString& autocorrectValue = attributeWithoutSynchronization(autocorrectAttr);
+    const AtomString& autocorrectValue = attributeWithoutSynchronization(autocorrectAttr);
     if (!autocorrectValue.isEmpty())
         return !equalLettersIgnoringASCIICase(autocorrectValue, "off");
     if (RefPtr<HTMLFormElement> form = this->form())

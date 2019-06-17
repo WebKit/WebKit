@@ -30,7 +30,7 @@
 #include "XMLHttpRequestProgressEvent.h"
 #include <wtf/Assertions.h>
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -41,7 +41,7 @@ XMLHttpRequestUpload::XMLHttpRequestUpload(XMLHttpRequest& request)
 {
 }
 
-void XMLHttpRequestUpload::dispatchProgressEvent(const AtomicString& type, unsigned long long loaded, unsigned long long total)
+void XMLHttpRequestUpload::dispatchProgressEvent(const AtomString& type, unsigned long long loaded, unsigned long long total)
 {
     ASSERT(type == eventNames().loadstartEvent || type == eventNames().progressEvent || type == eventNames().loadEvent || type == eventNames().loadendEvent || type == eventNames().abortEvent || type == eventNames().errorEvent || type == eventNames().timeoutEvent);
 

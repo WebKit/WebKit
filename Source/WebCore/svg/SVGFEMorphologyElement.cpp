@@ -56,7 +56,7 @@ void SVGFEMorphologyElement::setRadius(float x, float y)
     invalidate();
 }
 
-void SVGFEMorphologyElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGFEMorphologyElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::operatorAttr) {
         MorphologyOperatorType propertyValue = SVGPropertyTraits<MorphologyOperatorType>::fromString(value);

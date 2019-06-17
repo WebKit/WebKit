@@ -34,12 +34,12 @@
 
 namespace WebCore {
 
-ExtendableEvent::ExtendableEvent(const AtomicString& type, const ExtendableEventInit& initializer, IsTrusted isTrusted)
+ExtendableEvent::ExtendableEvent(const AtomString& type, const ExtendableEventInit& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
 {
 }
 
-ExtendableEvent::ExtendableEvent(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable)
+ExtendableEvent::ExtendableEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable)
     : Event(type, canBubble, cancelable)
 {
 }

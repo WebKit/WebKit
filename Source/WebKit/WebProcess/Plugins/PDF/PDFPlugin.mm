@@ -632,7 +632,7 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame)
     if (supportsForms()) {
         Document* document = webFrame()->coreFrame()->document();
         m_annotationContainer = document->createElement(divTag, false);
-        m_annotationContainer->setAttributeWithoutSynchronization(idAttr, AtomicString("annotationContainer", AtomicString::ConstructFromLiteral));
+        m_annotationContainer->setAttributeWithoutSynchronization(idAttr, AtomString("annotationContainer", AtomString::ConstructFromLiteral));
 
         auto annotationStyleElement = document->createElement(styleTag, false);
         annotationStyleElement->setTextContent(annotationStyle);

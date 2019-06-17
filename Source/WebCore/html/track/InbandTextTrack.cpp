@@ -137,22 +137,22 @@ size_t InbandTextTrack::inbandTrackIndex()
     return m_private->trackIndex();
 }
 
-AtomicString InbandTextTrack::inBandMetadataTrackDispatchType() const
+AtomString InbandTextTrack::inBandMetadataTrackDispatchType() const
 {
     return m_private->inBandMetadataTrackDispatchType();
 }
 
-void InbandTextTrack::idChanged(const AtomicString& id)
+void InbandTextTrack::idChanged(const AtomString& id)
 {
     setId(id);
 }
 
-void InbandTextTrack::labelChanged(const AtomicString& label)
+void InbandTextTrack::labelChanged(const AtomString& label)
 {
     setLabel(label);
 }
 
-void InbandTextTrack::languageChanged(const AtomicString& language)
+void InbandTextTrack::languageChanged(const AtomString& language)
 {
     setLanguage(language);
 }

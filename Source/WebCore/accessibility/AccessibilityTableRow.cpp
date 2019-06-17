@@ -169,7 +169,7 @@ void AccessibilityTableRow::addChildren()
 
 int AccessibilityTableRow::axColumnIndex() const
 {
-    const AtomicString& colIndexValue = getAttribute(aria_colindexAttr);
+    const AtomString& colIndexValue = getAttribute(aria_colindexAttr);
     if (colIndexValue.toInt() >= 1)
         return colIndexValue.toInt();
     
@@ -178,7 +178,7 @@ int AccessibilityTableRow::axColumnIndex() const
 
 int AccessibilityTableRow::axRowIndex() const
 {
-    const AtomicString& rowIndexValue = getAttribute(aria_rowindexAttr);
+    const AtomString& rowIndexValue = getAttribute(aria_rowindexAttr);
     if (rowIndexValue.toInt() >= 1)
         return rowIndexValue.toInt();
     

@@ -36,7 +36,7 @@ public:
     static Ref<HTMLMapElement> create(const QualifiedName&, Document&);
     virtual ~HTMLMapElement();
 
-    const AtomicString& getName() const { return m_name; }
+    const AtomString& getName() const { return m_name; }
 
     bool mapMouseEvent(LayoutPoint location, const LayoutSize&, HitTestResult&);
     
@@ -46,12 +46,12 @@ public:
 private:
     HTMLMapElement(const QualifiedName&, Document&);
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;
 
-    AtomicString m_name;
+    AtomString m_name;
 };
 
 } // namespaces

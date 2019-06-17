@@ -39,7 +39,7 @@ static bool mayBeAffectedByAttributeChange(const RuleFeatureSet& features, bool 
     return nameSet.contains(attributeName.localName());
 }
 
-void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
+void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attributeName, const AtomString& oldValue, const AtomString& newValue)
 {
     if (newValue == oldValue)
         return;

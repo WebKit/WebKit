@@ -60,9 +60,9 @@ public:
 
     int trackIndex() const override { return m_index; }
 
-    AtomicString id() const override { return m_id; }
-    AtomicString label() const override { return m_label; }
-    AtomicString language() const override { return m_language; }
+    AtomString id() const override { return m_id; }
+    AtomString label() const override { return m_label; }
+    AtomString language() const override { return m_language; }
 
 private:
     AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, gint index, GRefPtr<GstPad>);
@@ -70,7 +70,7 @@ private:
     AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, gint index, GRefPtr<GstStream>);
 #endif
 
-    AtomicString m_id;
+    AtomString m_id;
     WeakPtr<MediaPlayerPrivateGStreamer> m_player;
 };
 

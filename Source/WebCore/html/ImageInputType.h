@@ -42,7 +42,7 @@ public:
     explicit ImageInputType(HTMLInputElement&);
 
 private:
-    const AtomicString& formControlType() const final;
+    const AtomString& formControlType() const final;
     bool isFormDataAppendable() const final;
     bool appendFormData(DOMFormData&, bool) const final;
     bool supportsValidation() const final;

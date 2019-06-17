@@ -70,11 +70,11 @@ public:
 
     virtual bool isCanvas() const { return false; }
 
-    const AtomicString& kind() const;
+    const AtomString& kind() const;
     WEBCORE_EXPORT const String& id() const;
     const String& label() const;
 
-    const AtomicString& contentHint() const;
+    const AtomString& contentHint() const;
     void setContentHint(const String&);
         
     bool enabled() const;

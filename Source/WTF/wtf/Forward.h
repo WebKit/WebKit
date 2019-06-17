@@ -24,8 +24,8 @@
 
 namespace WTF {
 
-class AtomicString;
-class AtomicStringImpl;
+class AtomString;
+class AtomStringImpl;
 class BinarySemaphore;
 class CString;
 class CrashOnOverflow;
@@ -87,8 +87,8 @@ template<class, class> class expected;
 template<class> class unexpected;
 }}} // namespace std::experimental::fundamentals_v3
 
-using WTF::AtomicString;
-using WTF::AtomicStringImpl;
+using WTF::AtomString;
+using WTF::AtomStringImpl;
 using WTF::BinarySemaphore;
 using WTF::CString;
 using WTF::CompletionHandler;

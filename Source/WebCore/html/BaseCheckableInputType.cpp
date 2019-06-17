@@ -101,7 +101,7 @@ void BaseCheckableInputType::accessKeyAction(bool sendMouseEvents)
 
 String BaseCheckableInputType::fallbackValue() const
 {
-    static NeverDestroyed<const AtomicString> on("on", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> on("on", AtomString::ConstructFromLiteral);
     return on.get();
 }
 

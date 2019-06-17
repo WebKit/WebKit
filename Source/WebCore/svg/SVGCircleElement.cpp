@@ -49,7 +49,7 @@ Ref<SVGCircleElement> SVGCircleElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGCircleElement(tagName, document));
 }
 
-void SVGCircleElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGCircleElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     SVGParsingError parseError = NoError;
 

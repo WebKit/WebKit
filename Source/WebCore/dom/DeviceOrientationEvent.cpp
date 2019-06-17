@@ -37,7 +37,7 @@ DeviceOrientationEvent::DeviceOrientationEvent()
 {
 }
 
-DeviceOrientationEvent::DeviceOrientationEvent(const AtomicString& eventType, DeviceOrientationData* orientation)
+DeviceOrientationEvent::DeviceOrientationEvent(const AtomString& eventType, DeviceOrientationData* orientation)
     : Event(eventType, CanBubble::No, IsCancelable::No)
     , m_orientation(orientation)
 {
@@ -70,7 +70,7 @@ Optional<double> DeviceOrientationEvent::compassAccuracy() const
     return m_orientation->compassAccuracy();
 }
 
-void DeviceOrientationEvent::initDeviceOrientationEvent(const AtomicString& type, bool bubbles, bool cancelable, Optional<double> alpha, Optional<double> beta, Optional<double> gamma, Optional<double> compassHeading, Optional<double> compassAccuracy)
+void DeviceOrientationEvent::initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, Optional<double> alpha, Optional<double> beta, Optional<double> gamma, Optional<double> compassHeading, Optional<double> compassAccuracy)
 {
     if (isBeingDispatched())
         return;
@@ -86,7 +86,7 @@ Optional<bool> DeviceOrientationEvent::absolute() const
     return m_orientation->absolute();
 }
 
-void DeviceOrientationEvent::initDeviceOrientationEvent(const AtomicString& type, bool bubbles, bool cancelable, Optional<double> alpha, Optional<double> beta, Optional<double> gamma, Optional<bool> absolute)
+void DeviceOrientationEvent::initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, Optional<double> alpha, Optional<double> beta, Optional<double> gamma, Optional<bool> absolute)
 {
     if (isBeingDispatched())
         return;

@@ -256,7 +256,7 @@ double ScriptProcessorNode::latencyTime() const
     return std::numeric_limits<double>::infinity();
 }
 
-bool ScriptProcessorNode::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+bool ScriptProcessorNode::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     bool success = AudioNode::addEventListener(eventType, WTFMove(listener), options);
     if (success && eventType == eventNames().audioprocessEvent)
@@ -264,7 +264,7 @@ bool ScriptProcessorNode::addEventListener(const AtomicString& eventType, Ref<Ev
     return success;
 }
 
-bool ScriptProcessorNode::removeEventListener(const AtomicString& eventType, EventListener& listener, const ListenerOptions& options)
+bool ScriptProcessorNode::removeEventListener(const AtomString& eventType, EventListener& listener, const ListenerOptions& options)
 {
     bool success = AudioNode::removeEventListener(eventType, listener, options);
     if (success && eventType == eventNames().audioprocessEvent)

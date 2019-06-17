@@ -69,7 +69,7 @@ Optional<bool> MathMLMathElement::specifiedDisplayStyle()
     return toOptionalBool(m_displayStyle.value());
 }
 
-void MathMLMathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void MathMLMathElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     bool displayStyleAttribute = (name == displaystyleAttr || name == displayAttr);
     bool mathVariantAttribute = name == mathvariantAttr;

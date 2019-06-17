@@ -41,7 +41,7 @@ public:
     }
     virtual ~VideoTrackList();
 
-    VideoTrack* getTrackById(const AtomicString&) const;
+    VideoTrack* getTrackById(const AtomString&) const;
     int selectedIndex() const;
 
     VideoTrack* item(unsigned) const;

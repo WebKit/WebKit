@@ -53,7 +53,7 @@ Ref<SVGFEDiffuseLightingElement> SVGFEDiffuseLightingElement::create(const Quali
     return adoptRef(*new SVGFEDiffuseLightingElement(tagName, document));
 }
 
-void SVGFEDiffuseLightingElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGFEDiffuseLightingElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::inAttr) {
         m_in1->setBaseValInternal(value);

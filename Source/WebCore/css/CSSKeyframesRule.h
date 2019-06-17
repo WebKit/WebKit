@@ -29,7 +29,7 @@
 #include "StyleRule.h"
 #include <memory>
 #include <wtf/Forward.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -39,8 +39,8 @@ class CSSKeyframeRule;
 
 class StyleRuleKeyframes final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleKeyframes> create(const AtomicString& name) { return adoptRef(*new StyleRuleKeyframes(name)); }
-    static Ref<StyleRuleKeyframes> create(const AtomicString& name, std::unique_ptr<DeferredStyleGroupRuleList>&& deferredRules) { return adoptRef(*new StyleRuleKeyframes(name, WTFMove(deferredRules))); }
+    static Ref<StyleRuleKeyframes> create(const AtomString& name) { return adoptRef(*new StyleRuleKeyframes(name)); }
+    static Ref<StyleRuleKeyframes> create(const AtomString& name, std::unique_ptr<DeferredStyleGroupRuleList>&& deferredRules) { return adoptRef(*new StyleRuleKeyframes(name, WTFMove(deferredRules))); }
     
     ~StyleRuleKeyframes();
     
@@ -54,22 +54,22 @@ public:
     void wrapperAppendKeyframe(Ref<StyleRuleKeyframe>&&);
     void wrapperRemoveKeyframe(unsigned);
 
-    const AtomicString& name() const { return m_name; }
-    void setName(const AtomicString& name) { m_name = name; }
+    const AtomString& name() const { return m_name; }
+    void setName(const AtomString& name) { m_name = name; }
 
     size_t findKeyframeIndex(const String& key) const;
 
     Ref<StyleRuleKeyframes> copy() const { return adoptRef(*new StyleRuleKeyframes(*this)); }
 
 private:
-    StyleRuleKeyframes(const AtomicString&);
-    StyleRuleKeyframes(const AtomicString&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
+    StyleRuleKeyframes(const AtomString&);
+    StyleRuleKeyframes(const AtomString&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     StyleRuleKeyframes(const StyleRuleKeyframes&);
 
     void parseDeferredRulesIfNeeded() const;
     
     mutable Vector<Ref<StyleRuleKeyframe>> m_keyframes;
-    AtomicString m_name;
+    AtomString m_name;
     
     mutable std::unique_ptr<DeferredStyleGroupRuleList> m_deferredRules;
 };

@@ -1142,7 +1142,7 @@ Document* AccessibilityObject::topDocument() const
 
 String AccessibilityObject::language() const
 {
-    const AtomicString& lang = getAttribute(langAttr);
+    const AtomString& lang = getAttribute(langAttr);
     if (!lang.isEmpty())
         return lang;
 
@@ -1768,7 +1768,7 @@ bool AccessibilityObject::supportsAutoComplete() const
 
 String AccessibilityObject::autoCompleteValue() const
 {
-    const AtomicString& autoComplete = getAttribute(aria_autocompleteAttr);
+    const AtomString& autoComplete = getAttribute(aria_autocompleteAttr);
     if (equalLettersIgnoringASCIICase(autoComplete, "inline")
         || equalLettersIgnoringASCIICase(autoComplete, "list")
         || equalLettersIgnoringASCIICase(autoComplete, "both"))
@@ -1782,7 +1782,7 @@ bool AccessibilityObject::contentEditableAttributeIsEnabled(Element* element)
     if (!element)
         return false;
     
-    const AtomicString& contentEditableValue = element->attributeWithoutSynchronization(contenteditableAttr);
+    const AtomString& contentEditableValue = element->attributeWithoutSynchronization(contenteditableAttr);
     if (contentEditableValue.isNull())
         return false;
     
@@ -2241,7 +2241,7 @@ bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
     return downcast<Element>(*node).hasAttributeWithoutSynchronization(attribute);
 }
     
-const AtomicString& AccessibilityObject::getAttribute(const QualifiedName& attribute) const
+const AtomString& AccessibilityObject::getAttribute(const QualifiedName& attribute) const
 {
     if (auto* element = this->element())
         return element->attributeWithoutSynchronization(attribute);
@@ -2576,12 +2576,12 @@ bool AccessibilityObject::supportsDatetimeAttribute() const
     return hasTagName(insTag) || hasTagName(delTag) || hasTagName(timeTag);
 }
 
-const AtomicString& AccessibilityObject::datetimeAttributeValue() const
+const AtomString& AccessibilityObject::datetimeAttributeValue() const
 {
     return getAttribute(datetimeAttr);
 }
     
-const AtomicString& AccessibilityObject::linkRelValue() const
+const AtomString& AccessibilityObject::linkRelValue() const
 {
     return getAttribute(relAttr);
 }
@@ -2633,11 +2633,11 @@ bool AccessibilityObject::isValueAutofilled() const
 
 const String AccessibilityObject::placeholderValue() const
 {
-    const AtomicString& placeholder = getAttribute(placeholderAttr);
+    const AtomString& placeholder = getAttribute(placeholderAttr);
     if (!placeholder.isEmpty())
         return placeholder;
     
-    const AtomicString& ariaPlaceholder = getAttribute(aria_placeholderAttr);
+    const AtomString& ariaPlaceholder = getAttribute(aria_placeholderAttr);
     if (!ariaPlaceholder.isEmpty())
         return ariaPlaceholder;
     
@@ -2679,14 +2679,14 @@ bool AccessibilityObject::supportsARIAAttributes() const
         || hasAttribute(aria_relevantAttr);
 }
     
-bool AccessibilityObject::liveRegionStatusIsEnabled(const AtomicString& liveRegionStatus)
+bool AccessibilityObject::liveRegionStatusIsEnabled(const AtomString& liveRegionStatus)
 {
     return equalLettersIgnoringASCIICase(liveRegionStatus, "polite") || equalLettersIgnoringASCIICase(liveRegionStatus, "assertive");
 }
     
 bool AccessibilityObject::supportsLiveRegion(bool excludeIfOff) const
 {
-    const AtomicString& liveRegionStatusValue = liveRegionStatus();
+    const AtomString& liveRegionStatusValue = liveRegionStatus();
     return excludeIfOff ? liveRegionStatusIsEnabled(liveRegionStatusValue) : !liveRegionStatusValue.isEmpty();
 }
 
@@ -2729,7 +2729,7 @@ AccessibilitySortDirection AccessibilityObject::sortDirection() const
     if (role != AccessibilityRole::RowHeader && role != AccessibilityRole::ColumnHeader)
         return AccessibilitySortDirection::Invalid;
 
-    const AtomicString& sortAttribute = getAttribute(aria_sortAttr);
+    const AtomString& sortAttribute = getAttribute(aria_sortAttr);
     if (equalLettersIgnoringASCIICase(sortAttribute, "ascending"))
         return AccessibilitySortDirection::Ascending;
     if (equalLettersIgnoringASCIICase(sortAttribute, "descending"))
@@ -2757,7 +2757,7 @@ bool AccessibilityObject::supportsHasPopup() const
 
 String AccessibilityObject::hasPopupValue() const
 {
-    const AtomicString& hasPopup = getAttribute(aria_haspopupAttr);
+    const AtomString& hasPopup = getAttribute(aria_haspopupAttr);
     if (equalLettersIgnoringASCIICase(hasPopup, "true")
         || equalLettersIgnoringASCIICase(hasPopup, "dialog")
         || equalLettersIgnoringASCIICase(hasPopup, "grid")
@@ -2796,7 +2796,7 @@ int AccessibilityObject::posInSet() const
     return getAttribute(aria_posinsetAttr).toInt();
 }
     
-const AtomicString& AccessibilityObject::identifierAttribute() const
+const AtomString& AccessibilityObject::identifierAttribute() const
 {
     return getAttribute(idAttr);
 }
@@ -2816,14 +2816,14 @@ void AccessibilityObject::classList(Vector<String>& classList) const
 
 bool AccessibilityObject::supportsPressed() const
 {
-    const AtomicString& expanded = getAttribute(aria_pressedAttr);
+    const AtomString& expanded = getAttribute(aria_pressedAttr);
     return equalLettersIgnoringASCIICase(expanded, "true") || equalLettersIgnoringASCIICase(expanded, "false");
 }
     
 bool AccessibilityObject::supportsExpanded() const
 {
     // Undefined values should not result in this attribute being exposed to ATs according to ARIA.
-    const AtomicString& expanded = getAttribute(aria_expandedAttr);
+    const AtomString& expanded = getAttribute(aria_expandedAttr);
     if (equalLettersIgnoringASCIICase(expanded, "true") || equalLettersIgnoringASCIICase(expanded, "false"))
         return true;
     switch (roleValue()) {
@@ -2876,7 +2876,7 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
     // If it's a toggle button, the aria-pressed attribute is consulted.
 
     if (isToggleButton()) {
-        const AtomicString& ariaPressed = getAttribute(aria_pressedAttr);
+        const AtomString& ariaPressed = getAttribute(aria_pressedAttr);
         if (equalLettersIgnoringASCIICase(ariaPressed, "true"))
             return AccessibilityButtonState::On;
         if (equalLettersIgnoringASCIICase(ariaPressed, "mixed"))
@@ -2884,7 +2884,7 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
         return AccessibilityButtonState::Off;
     }
     
-    const AtomicString& result = getAttribute(aria_checkedAttr);
+    const AtomString& result = getAttribute(aria_checkedAttr);
     if (equalLettersIgnoringASCIICase(result, "true"))
         return AccessibilityButtonState::On;
     if (equalLettersIgnoringASCIICase(result, "mixed")) {
@@ -3396,7 +3396,7 @@ void AccessibilityObject::elementsFromAttribute(Vector<Element*>& elements, cons
 
     TreeScope& treeScope = node->treeScope();
 
-    const AtomicString& idList = getAttribute(attribute);
+    const AtomString& idList = getAttribute(attribute);
     if (idList.isEmpty())
         return;
 
@@ -3552,7 +3552,7 @@ void AccessibilityObject::ariaElementsReferencedByAttribute(AccessibilityChildre
         return;
 
     for (auto& element : descendantsOfType<Element>(node()->treeScope().rootNode())) {
-        const AtomicString& idList = element.attributeWithoutSynchronization(attribute);
+        const AtomString& idList = element.attributeWithoutSynchronization(attribute);
         if (!SpaceSplitString(idList, false).contains(id))
             continue;
 

@@ -56,7 +56,7 @@ public:
 
     bool knownToBeOpaque(const RenderElement&) const;
 
-    void setInitiator(const AtomicString& name) { m_initiatorName = name; }
+    void setInitiator(const AtomString& name) { m_initiatorName = name; }
 
 private:
     CSSImageValue(URL&&, LoadedFromOpaqueSource);
@@ -65,7 +65,7 @@ private:
     URL m_url;
     CachedResourceHandle<CachedImage> m_cachedImage;
     bool m_accessedImage;
-    AtomicString m_initiatorName;
+    AtomString m_initiatorName;
     LoadedFromOpaqueSource m_loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
 };
 

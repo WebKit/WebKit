@@ -34,7 +34,7 @@ public:
     static Ref<SVGImageElement> create(const QualifiedName&, Document&);
 
     bool hasSingleSecurityOrigin() const;
-    const AtomicString& imageSourceURL() const final;
+    const AtomString& imageSourceURL() const final;
 
     const SVGLengthValue& x() const { return m_x->currentValue(); }
     const SVGLengthValue& y() const { return m_y->currentValue(); }
@@ -54,7 +54,7 @@ private:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGImageElement, SVGGraphicsElement, SVGExternalResourcesRequired, SVGURIReference>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
 
     void didAttachRenderers() final;

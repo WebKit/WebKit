@@ -93,11 +93,11 @@ public:
 protected:
     MathMLElement(const QualifiedName& tagName, Document&);
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomString&) override;
     bool childShouldCreateRenderer(const Node&) const override;
 
     bool isPresentationAttribute(const QualifiedName&) const override;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
 
     bool willRespondToMouseClickEvents() override;
     void defaultEventHandler(Event&) override;

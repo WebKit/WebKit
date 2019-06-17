@@ -48,7 +48,7 @@ public:
 
     WEBCORE_EXPORT static Ref<FetchEvent> createForTesting(ScriptExecutionContext&);
 
-    static Ref<FetchEvent> create(const AtomicString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<FetchEvent> create(const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new FetchEvent(type, WTFMove(initializer), isTrusted));
     }
@@ -71,7 +71,7 @@ public:
     static ResourceError createResponseError(const URL&, const String&);
 
 private:
-    WEBCORE_EXPORT FetchEvent(const AtomicString&, Init&&, IsTrusted);
+    WEBCORE_EXPORT FetchEvent(const AtomString&, Init&&, IsTrusted);
 
     void promiseIsSettled();
     void processResponse(Expected<Ref<FetchResponse>, ResourceError>&&);

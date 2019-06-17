@@ -37,7 +37,7 @@ inline static unsigned determineDeltaMode(const PlatformWheelEvent& event)
 
 inline WheelEvent::WheelEvent() = default;
 
-inline WheelEvent::WheelEvent(const AtomicString& type, const Init& initializer)
+inline WheelEvent::WheelEvent(const AtomString& type, const Init& initializer)
     : MouseEvent(type, initializer)
     , m_wheelDelta(initializer.wheelDeltaX ? initializer.wheelDeltaX : -initializer.deltaX, initializer.wheelDeltaY ? initializer.wheelDeltaY : -initializer.deltaY)
     , m_deltaX(initializer.deltaX ? initializer.deltaX : -initializer.wheelDeltaX)
@@ -68,7 +68,7 @@ Ref<WheelEvent> WheelEvent::createForBindings()
     return adoptRef(*new WheelEvent);
 }
 
-Ref<WheelEvent> WheelEvent::create(const AtomicString& type, const Init& initializer)
+Ref<WheelEvent> WheelEvent::create(const AtomString& type, const Init& initializer)
 {
     return adoptRef(*new WheelEvent(type, initializer));
 }

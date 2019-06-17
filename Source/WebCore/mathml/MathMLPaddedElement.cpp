@@ -73,7 +73,7 @@ const MathMLElement::Length& MathMLPaddedElement::voffset()
     return cachedMathMLLength(MathMLNames::voffsetAttr, m_voffset);
 }
 
-void MathMLPaddedElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void MathMLPaddedElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == widthAttr)
         m_width = WTF::nullopt;

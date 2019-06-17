@@ -47,7 +47,7 @@ private:
         didChangeSlot(SlotAssignment::defaultSlotName(), shadowRoot);
     }
 
-    const AtomicString& slotNameForHostChild(const Node&) const override { return SlotAssignment::defaultSlotName(); }
+    const AtomString& slotNameForHostChild(const Node&) const override { return SlotAssignment::defaultSlotName(); }
 };
 
 Ref<HTMLSummaryElement> HTMLSummaryElement::create(const QualifiedName& tagName, Document& document)

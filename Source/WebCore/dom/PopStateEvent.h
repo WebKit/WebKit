@@ -43,7 +43,7 @@ public:
         JSC::JSValue state;
     };
 
-    static Ref<PopStateEvent> create(const AtomicString&, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<PopStateEvent> create(const AtomString&, const Init&, IsTrusted = IsTrusted::No);
     static Ref<PopStateEvent> createForBindings();
 
     const JSValueInWrappedObject& state() const { return m_state; }
@@ -55,7 +55,7 @@ public:
 
 private:
     PopStateEvent() = default;
-    PopStateEvent(const AtomicString&, const Init&, IsTrusted);
+    PopStateEvent(const AtomString&, const Init&, IsTrusted);
     PopStateEvent(RefPtr<SerializedScriptValue>&&, History*);
 
     EventInterface eventInterface() const final;

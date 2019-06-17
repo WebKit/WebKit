@@ -83,7 +83,7 @@ public:
 
 protected:
     bool shouldSendEventForListener(Document::ListenerType) const;    
-    bool sendTransitionEvent(const AtomicString&, double elapsedTime);
+    bool sendTransitionEvent(const AtomString&, double elapsedTime);
 
     void validateTransformFunctionList();
     void checkForMatchingFilterFunctionLists();

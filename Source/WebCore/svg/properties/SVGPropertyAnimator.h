@@ -72,7 +72,7 @@ protected:
 
     String adjustForInheritance(SVGElement* targetElement, const String& value) const
     {
-        static NeverDestroyed<const AtomicString> inherit("inherit", AtomicString::ConstructFromLiteral);
+        static NeverDestroyed<const AtomString> inherit("inherit", AtomString::ConstructFromLiteral);
         return value == inherit ? computeInheritedCSSPropertyValue(targetElement) : value;
     }
 

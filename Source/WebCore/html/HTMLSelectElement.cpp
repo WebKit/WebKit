@@ -98,10 +98,10 @@ void HTMLSelectElement::didRecalcStyle(Style::Change styleChange)
     HTMLFormControlElement::didRecalcStyle(styleChange);
 }
 
-const AtomicString& HTMLSelectElement::formControlType() const
+const AtomString& HTMLSelectElement::formControlType() const
 {
-    static NeverDestroyed<const AtomicString> selectMultiple("select-multiple", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> selectOne("select-one", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> selectMultiple("select-multiple", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> selectOne("select-one", AtomString::ConstructFromLiteral);
     return m_multiple ? selectMultiple : selectOne;
 }
 
@@ -288,7 +288,7 @@ bool HTMLSelectElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLFormControlElementWithState::isPresentationAttribute(name);
 }
 
-void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == sizeAttr) {
         unsigned oldSize = m_size;
@@ -408,7 +408,7 @@ void HTMLSelectElement::setSize(unsigned size)
     setUnsignedIntegralAttribute(sizeAttr, limitToOnlyHTMLNonNegative(size));
 }
 
-HTMLOptionElement* HTMLSelectElement::namedItem(const AtomicString& name)
+HTMLOptionElement* HTMLSelectElement::namedItem(const AtomString& name)
 {
     return options()->namedItem(name);
 }
@@ -1026,7 +1026,7 @@ void HTMLSelectElement::restoreFormControlState(const FormControlState& state)
     updateValidity();
 }
 
-void HTMLSelectElement::parseMultipleAttribute(const AtomicString& value)
+void HTMLSelectElement::parseMultipleAttribute(const AtomString& value)
 {
     bool oldUsesMenuList = usesMenuList();
     m_multiple = !value.isNull();
@@ -1037,7 +1037,7 @@ void HTMLSelectElement::parseMultipleAttribute(const AtomicString& value)
 
 bool HTMLSelectElement::appendFormData(DOMFormData& formData, bool)
 {
-    const AtomicString& name = this->name();
+    const AtomString& name = this->name();
     if (name.isEmpty())
         return false;
 

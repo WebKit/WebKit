@@ -43,7 +43,7 @@ SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document& document)
     });
 }
 
-void SVGPolyElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGPolyElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::pointsAttr) {
         if (!m_points->baseVal()->parse(value))

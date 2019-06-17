@@ -39,7 +39,7 @@ private:
     bool hasValidAttributeType() const override;
     bool hasValidAttributeName() const override;
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomString&) override;
 
     void resetAnimatedType() override;
     void clearAnimatedType(SVGElement* targetElement) override;

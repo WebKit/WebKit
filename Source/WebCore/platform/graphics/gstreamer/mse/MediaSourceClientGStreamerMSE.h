@@ -50,9 +50,9 @@ public:
     void resetParserState(RefPtr<SourceBufferPrivateGStreamer>);
     void append(RefPtr<SourceBufferPrivateGStreamer>, Vector<unsigned char>&&);
     void removedFromMediaSource(RefPtr<SourceBufferPrivateGStreamer>);
-    void flush(AtomicString);
+    void flush(AtomString);
     void enqueueSample(Ref<MediaSample>&&);
-    void allSamplesInTrackEnqueued(const AtomicString&);
+    void allSamplesInTrackEnqueued(const AtomString&);
 
     const MediaTime& duration();
     GRefPtr<WebKitMediaSrc> webKitMediaSrc();

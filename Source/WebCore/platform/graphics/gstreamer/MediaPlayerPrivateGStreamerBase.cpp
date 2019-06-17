@@ -38,7 +38,7 @@
 #include "VideoSinkGStreamer.h"
 #include "WebKitWebSourceGStreamer.h"
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StringPrintStream.h>

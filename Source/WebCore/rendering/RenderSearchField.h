@@ -52,7 +52,7 @@ private:
     LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
     void updateFromElement() override;
     Visibility visibilityForCancelButton() const;
-    const AtomicString& autosaveName() const;
+    const AtomString& autosaveName() const;
 
     // PopupMenuClient methods
     void valueChanged(unsigned listIndex, bool fireEvents = true) override;

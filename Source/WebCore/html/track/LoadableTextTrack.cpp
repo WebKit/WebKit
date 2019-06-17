@@ -140,7 +140,7 @@ void LoadableTextTrack::newStyleSheetsAvailable(TextTrackLoader& loader)
     m_styleSheets = m_loader->getNewStyleSheets();
 }
 
-AtomicString LoadableTextTrack::id() const
+AtomString LoadableTextTrack::id() const
 {
     if (!m_trackElement)
         return emptyAtom();

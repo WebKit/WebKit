@@ -40,7 +40,7 @@ public:
     const HTMLSelectElement& selectElement() const { return downcast<HTMLSelectElement>(ownerNode()); }
 
     HTMLOptionElement* item(unsigned offset) const final;
-    HTMLOptionElement* namedItem(const AtomicString& name) const final;
+    HTMLOptionElement* namedItem(const AtomString& name) const final;
     
     ExceptionOr<void> setItem(unsigned index, HTMLOptionElement*);
     
@@ -66,7 +66,7 @@ inline HTMLOptionElement* HTMLOptionsCollection::item(unsigned offset) const
     return downcast<HTMLOptionElement>(Base::item(offset));
 }
 
-inline HTMLOptionElement* HTMLOptionsCollection::namedItem(const AtomicString& name) const
+inline HTMLOptionElement* HTMLOptionsCollection::namedItem(const AtomString& name) const
 {
     return downcast<HTMLOptionElement>(Base::namedItem(name));
 }

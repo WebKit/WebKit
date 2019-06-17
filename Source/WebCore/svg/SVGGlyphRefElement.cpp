@@ -28,7 +28,7 @@
 #include "SVGParserUtilities.h"
 #include "XLinkNames.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -56,7 +56,7 @@ bool SVGGlyphRefElement::hasValidGlyphElement(String& glyphName) const
     return is<SVGGlyphElement>(target.element);
 }
 
-static float parseFloat(const AtomicString& value)
+static float parseFloat(const AtomString& value)
 {
     float result;
     if (!parseNumberFromString(value, result))
@@ -64,7 +64,7 @@ static float parseFloat(const AtomicString& value)
     return result;
 }
 
-void SVGGlyphRefElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGGlyphRefElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     // FIXME: Is the error handling in parseFloat correct for these attributes?
     if (name == SVGNames::xAttr)
@@ -83,22 +83,22 @@ void SVGGlyphRefElement::parseAttribute(const QualifiedName& name, const AtomicS
 
 void SVGGlyphRefElement::setX(float x)
 {
-    setAttribute(SVGNames::xAttr, AtomicString::number(x));
+    setAttribute(SVGNames::xAttr, AtomString::number(x));
 }
 
 void SVGGlyphRefElement::setY(float y)
 {
-    setAttribute(SVGNames::yAttr, AtomicString::number(y));
+    setAttribute(SVGNames::yAttr, AtomString::number(y));
 }
 
 void SVGGlyphRefElement::setDx(float dx)
 {
-    setAttribute(SVGNames::dxAttr, AtomicString::number(dx));
+    setAttribute(SVGNames::dxAttr, AtomString::number(dx));
 }
 
 void SVGGlyphRefElement::setDy(float dy)
 {
-    setAttribute(SVGNames::dyAttr, AtomicString::number(dy));
+    setAttribute(SVGNames::dyAttr, AtomString::number(dy));
 }
 
 }

@@ -129,7 +129,7 @@ Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::computeCascad
     return result;
 }
 
-SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::systemFontParameters(const FontCascadeDescription& description, const AtomicString& familyName, ClientUse clientUse, AllowUserInstalledFonts allowUserInstalledFonts)
+SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::systemFontParameters(const FontCascadeDescription& description, const AtomString& familyName, ClientUse clientUse, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     CascadeListParameters result;
     result.locale = description.locale();
@@ -160,7 +160,7 @@ SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::sy
         result.weight = kCTFontWeightBlack;
 
     if (clientUse == ClientUse::ForSystemUI) {
-        static NeverDestroyed<AtomicString> systemUI = AtomicString("system-ui", AtomicString::ConstructFromLiteral);
+        static NeverDestroyed<AtomString> systemUI = AtomString("system-ui", AtomString::ConstructFromLiteral);
         result.fontName = systemUI.get();
     } else {
         ASSERT(clientUse == ClientUse::ForTextStyle);
@@ -172,7 +172,7 @@ SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::sy
     return result;
 }
 
-Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(const FontCascadeDescription& description, const AtomicString& cssFamily, ClientUse clientUse, AllowUserInstalledFonts allowUserInstalledFonts)
+Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(const FontCascadeDescription& description, const AtomString& cssFamily, ClientUse clientUse, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     return cascadeList(systemFontParameters(description, cssFamily, clientUse, allowUserInstalledFonts), clientUse);
 }

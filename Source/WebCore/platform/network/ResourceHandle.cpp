@@ -36,14 +36,14 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
 
 static bool shouldForceContentSniffing;
 
-typedef HashMap<AtomicString, ResourceHandle::BuiltinConstructor> BuiltinResourceHandleConstructorMap;
+typedef HashMap<AtomString, ResourceHandle::BuiltinConstructor> BuiltinResourceHandleConstructorMap;
 static BuiltinResourceHandleConstructorMap& builtinResourceHandleConstructorMap()
 {
 #if PLATFORM(IOS_FAMILY)
@@ -55,12 +55,12 @@ static BuiltinResourceHandleConstructorMap& builtinResourceHandleConstructorMap(
     return map;
 }
 
-void ResourceHandle::registerBuiltinConstructor(const AtomicString& protocol, ResourceHandle::BuiltinConstructor constructor)
+void ResourceHandle::registerBuiltinConstructor(const AtomString& protocol, ResourceHandle::BuiltinConstructor constructor)
 {
     builtinResourceHandleConstructorMap().add(protocol, constructor);
 }
 
-typedef HashMap<AtomicString, ResourceHandle::BuiltinSynchronousLoader> BuiltinResourceHandleSynchronousLoaderMap;
+typedef HashMap<AtomString, ResourceHandle::BuiltinSynchronousLoader> BuiltinResourceHandleSynchronousLoaderMap;
 static BuiltinResourceHandleSynchronousLoaderMap& builtinResourceHandleSynchronousLoaderMap()
 {
     ASSERT(isMainThread());
@@ -68,7 +68,7 @@ static BuiltinResourceHandleSynchronousLoaderMap& builtinResourceHandleSynchrono
     return map;
 }
 
-void ResourceHandle::registerBuiltinSynchronousLoader(const AtomicString& protocol, ResourceHandle::BuiltinSynchronousLoader loader)
+void ResourceHandle::registerBuiltinSynchronousLoader(const AtomString& protocol, ResourceHandle::BuiltinSynchronousLoader loader)
 {
     builtinResourceHandleSynchronousLoaderMap().add(protocol, loader);
 }

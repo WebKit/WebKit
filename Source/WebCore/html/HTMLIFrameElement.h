@@ -41,7 +41,7 @@ public:
     RenderIFrame* renderer() const;
     const String& allow() const { return m_allow; }
 
-    void setReferrerPolicyForBindings(const AtomicString&);
+    void setReferrerPolicyForBindings(const AtomString&);
     String referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const final;
 
@@ -54,9 +54,9 @@ private:
     bool isKeyboardFocusable(KeyboardEvent*) const final { return false; }
 #endif
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
     bool isPresentationAttribute(const QualifiedName&) const final;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 
     bool rendererIsNeeded(const RenderStyle&) final;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;

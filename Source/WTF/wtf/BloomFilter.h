@@ -26,7 +26,7 @@
 #pragma once
 
 #include <array>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WTF {
 
@@ -55,9 +55,9 @@ public:
     
     void clear();
 
-    void add(const AtomicString& string) { add(string.impl()->existingHash()); }
+    void add(const AtomString& string) { add(string.impl()->existingHash()); }
     void add(const String& string) { add(string.impl()->hash()); }
-    bool mayContain(const AtomicString& string) const { return mayContain(string.impl()->existingHash()); }
+    bool mayContain(const AtomString& string) const { return mayContain(string.impl()->existingHash()); }
     bool mayContain(const String& string) const { return mayContain(string.impl()->hash()); }
 
 private:
@@ -174,12 +174,12 @@ public:
     // Otherwise overflowed keys will stick around.
     void clear();
 
-    void add(const AtomicString& string) { add(string.impl()->existingHash()); }
+    void add(const AtomString& string) { add(string.impl()->existingHash()); }
     void add(const String& string) { add(string.impl()->hash()); }
-    void remove(const AtomicString& string) { remove(string.impl()->existingHash()); }
+    void remove(const AtomString& string) { remove(string.impl()->existingHash()); }
     void remove(const String& string) { remove(string.impl()->hash()); }
 
-    bool mayContain(const AtomicString& string) const { return mayContain(string.impl()->existingHash()); }
+    bool mayContain(const AtomString& string) const { return mayContain(string.impl()->existingHash()); }
     bool mayContain(const String& string) const { return mayContain(string.impl()->hash()); }
 
 #if !ASSERT_DISABLED

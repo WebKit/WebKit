@@ -59,7 +59,7 @@ Ref<SVGLinearGradientElement> SVGLinearGradientElement::create(const QualifiedNa
     return adoptRef(*new SVGLinearGradientElement(tagName, document));
 }
 
-void SVGLinearGradientElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGLinearGradientElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     SVGParsingError parseError = NoError;
 

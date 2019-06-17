@@ -149,7 +149,7 @@ void BreakBlockquoteCommand::doApply()
             while (listChildNode && !listChildNode->hasTagName(liTag))
                 listChildNode = listChildNode->nextSibling();
             if (listChildNode && is<RenderListItem>(listChildNode->renderer()))
-                setNodeAttribute(clonedChild, startAttr, AtomicString::number(downcast<RenderListItem>(*listChildNode->renderer()).value()));
+                setNodeAttribute(clonedChild, startAttr, AtomString::number(downcast<RenderListItem>(*listChildNode->renderer()).value()));
         }
             
         appendNode(clonedChild.copyRef(), clonedAncestor.releaseNonNull());

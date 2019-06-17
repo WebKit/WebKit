@@ -990,8 +990,8 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
             continue;
 
         const UChar ellipsisAndSpace[2] = { horizontalEllipsis, ' ' };
-        static NeverDestroyed<AtomicString> ellipsisAndSpaceStr(ellipsisAndSpace, 2);
-        static NeverDestroyed<AtomicString> ellipsisStr(&horizontalEllipsis, 1);
+        static NeverDestroyed<AtomString> ellipsisAndSpaceStr(ellipsisAndSpace, 2);
+        static NeverDestroyed<AtomString> ellipsisStr(&horizontalEllipsis, 1);
         const RenderStyle& lineStyle = numVisibleLines == 1 ? firstLineStyle() : style();
         const FontCascade& font = lineStyle.fontCascade();
 

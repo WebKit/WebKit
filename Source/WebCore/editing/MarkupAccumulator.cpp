@@ -94,7 +94,7 @@ static bool elementCannotHaveEndTag(const Node& node)
     // If current node is an area, base, basefont, bgsound, br, col, embed, frame, hr, img,
     // input, keygen, link, meta, param, source, track or wbr element, then continue on to
     // the next child node at this point.
-    static const AtomicStringImpl* const localNames[] = {
+    static const AtomStringImpl* const localNames[] = {
         areaTag->localName().impl(),
         baseTag->localName().impl(),
         basefontTag->localName().impl(),
@@ -317,7 +317,7 @@ void MarkupAccumulator::appendQuotedURLAttributeValue(StringBuilder& result, con
 bool MarkupAccumulator::shouldAddNamespaceElement(const Element& element)
 {
     // Don't add namespace attribute if it is already defined for this elem.
-    const AtomicString& prefix = element.prefix();
+    const AtomString& prefix = element.prefix();
     if (prefix.isEmpty())
         return !element.hasAttribute(xmlnsAtom());
 
@@ -346,7 +346,7 @@ bool MarkupAccumulator::shouldAddNamespaceAttribute(const Attribute& attribute, 
     return true;
 }
 
-void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces& namespaces, bool allowEmptyDefaultNS)
+void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomString& prefix, const AtomString& namespaceURI, Namespaces& namespaces, bool allowEmptyDefaultNS)
 {
     namespaces.checkConsistency();
     if (namespaceURI.isEmpty()) {
@@ -360,8 +360,8 @@ void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomicStrin
     }
 
     // Use emptyAtom()s's impl() for both null and empty strings since the HashMap can't handle 0 as a key
-    AtomicStringImpl* pre = prefix.isEmpty() ? emptyAtom().impl() : prefix.impl();
-    AtomicStringImpl* foundNS = namespaces.get(pre);
+    AtomStringImpl* pre = prefix.isEmpty() ? emptyAtom().impl() : prefix.impl();
+    AtomStringImpl* foundNS = namespaces.get(pre);
     if (foundNS != namespaceURI.impl()) {
         namespaces.set(pre, namespaceURI.impl());
         // Add namespace to prefix pair so we can do constraint checking later.
@@ -531,7 +531,7 @@ void MarkupAccumulator::generateUniquePrefix(QualifiedName& prefixedName, const 
         builder.clear();
         builder.appendLiteral("NS");
         builder.appendNumber(++m_prefixLevel);
-        const AtomicString& name = builder.toAtomicString();
+        const AtomString& name = builder.toAtomString();
         if (!namespaces.get(name.impl())) {
             prefixedName.setPrefix(name);
             return;
@@ -554,11 +554,11 @@ void MarkupAccumulator::appendAttribute(StringBuilder& result, const Element& el
                 // Always use xml as prefix if the namespace is the XML namespace.
                 prefixedName.setPrefix(xmlAtom());
             } else {
-                AtomicStringImpl* foundNS = namespaces && attribute.prefix().impl() ? namespaces->get(attribute.prefix().impl()) : 0;
+                AtomStringImpl* foundNS = namespaces && attribute.prefix().impl() ? namespaces->get(attribute.prefix().impl()) : 0;
                 bool prefixIsAlreadyMappedToOtherNS = foundNS && foundNS != attribute.namespaceURI().impl();
                 if (attribute.prefix().isEmpty() || !foundNS || prefixIsAlreadyMappedToOtherNS) {
-                    if (AtomicStringImpl* prefix = namespaces ? namespaces->get(attribute.namespaceURI().impl()) : 0)
-                        prefixedName.setPrefix(AtomicString(prefix));
+                    if (AtomStringImpl* prefix = namespaces ? namespaces->get(attribute.namespaceURI().impl()) : 0)
+                        prefixedName.setPrefix(AtomString(prefix));
                     else {
                         bool shouldBeDeclaredUsingAppendNamespace = !attribute.prefix().isEmpty() && !foundNS;
                         if (!shouldBeDeclaredUsingAppendNamespace && attribute.localName() != xmlnsAtom() && namespaces)

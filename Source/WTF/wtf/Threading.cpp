@@ -36,7 +36,7 @@
 #include <wtf/ThreadGroup.h>
 #include <wtf/ThreadMessage.h>
 #include <wtf/ThreadingPrimitives.h>
-#include <wtf/text/AtomicStringTable.h>
+#include <wtf/text/AtomStringTable.h>
 #include <wtf/text/StringView.h>
 
 #if HAVE(QOS_CLASSES)
@@ -111,12 +111,12 @@ void Thread::initializeInThread()
         m_stack = StackBounds::currentThreadStackBounds();
     m_savedLastStackTop = stack().origin();
 
-    m_currentAtomicStringTable = &m_defaultAtomicStringTable;
+    m_currentAtomStringTable = &m_defaultAtomStringTable;
 #if USE(WEB_THREAD)
-    // On iOS, one AtomicStringTable is shared between the main UI thread and the WebThread.
+    // On iOS, one AtomStringTable is shared between the main UI thread and the WebThread.
     if (isWebThread() || isUIThread()) {
-        static NeverDestroyed<AtomicStringTable> sharedStringTable;
-        m_currentAtomicStringTable = &sharedStringTable.get();
+        static NeverDestroyed<AtomStringTable> sharedStringTable;
+        m_currentAtomStringTable = &sharedStringTable.get();
     }
 #endif
 }

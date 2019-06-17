@@ -92,7 +92,7 @@ bool GenericEventQueue::hasPendingEvents() const
     return !m_pendingEvents.isEmpty();
 }
 
-bool GenericEventQueue::hasPendingEventsOfType(const AtomicString& type) const
+bool GenericEventQueue::hasPendingEventsOfType(const AtomString& type) const
 {
     for (auto& event : m_pendingEvents) {
         if (event->type() == type)

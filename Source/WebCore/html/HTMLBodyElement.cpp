@@ -69,7 +69,7 @@ bool HTMLBodyElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLBodyElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+void HTMLBodyElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == backgroundAttr) {
         String url = stripLeadingAndTrailingHTMLSpaces(value);
@@ -135,13 +135,13 @@ HTMLElement::EventHandlerNameMap HTMLBodyElement::createWindowEventHandlerNameMa
     return map;
 }
 
-const AtomicString& HTMLBodyElement::eventNameForWindowEventHandlerAttribute(const QualifiedName& attributeName)
+const AtomString& HTMLBodyElement::eventNameForWindowEventHandlerAttribute(const QualifiedName& attributeName)
 {
     static NeverDestroyed<EventHandlerNameMap> map = createWindowEventHandlerNameMap();
     return eventNameForEventHandlerAttribute(attributeName, map.get());
 }
 
-void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == vlinkAttr || name == alinkAttr || name == linkAttr) {
         if (value.isNull()) {

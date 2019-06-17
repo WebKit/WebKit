@@ -39,7 +39,7 @@ public:
     const String& crossOriginMode() const { return m_crossOriginMode; }
 
 protected:
-    ScriptElementCachedScriptFetcher(const String& nonce, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree)
+    ScriptElementCachedScriptFetcher(const String& nonce, const String& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree)
         : CachedScriptFetcher(nonce, charset, initiatorName, isInUserAgentShadowTree)
         , m_crossOriginMode(crossOriginMode)
     {

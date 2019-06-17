@@ -32,14 +32,14 @@ public:
     static Ref<HTMLMetaElement> create(Document&);
     static Ref<HTMLMetaElement> create(const QualifiedName&, Document&);
 
-    const AtomicString& content() const;
-    const AtomicString& httpEquiv() const;
-    const AtomicString& name() const;
+    const AtomString& content() const;
+    const AtomString& httpEquiv() const;
+    const AtomString& name() const;
 
 private:
     HTMLMetaElement(const QualifiedName&, Document&);
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode();
 

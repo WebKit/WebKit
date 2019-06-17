@@ -52,7 +52,7 @@ inline JSC::VM& commonVM()
     return commonVMSlow();
 }
 
-void addImpureProperty(const AtomicString&);
+void addImpureProperty(const AtomString&);
 
 } // namespace WebCore
 

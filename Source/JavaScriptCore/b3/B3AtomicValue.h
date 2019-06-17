@@ -36,7 +36,7 @@ class JS_EXPORT_PRIVATE AtomicValue : public MemoryValue {
 public:
     static bool accepts(Kind kind)
     {
-        return isAtomic(kind.opcode());
+        return isAtom(kind.opcode());
     }
     
     ~AtomicValue();

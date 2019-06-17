@@ -34,14 +34,14 @@ public:
     static Ref<HTMLBodyElement> create(const QualifiedName&, Document&);
     virtual ~HTMLBodyElement();
 
-    static const AtomicString& eventNameForWindowEventHandlerAttribute(const QualifiedName& attributeName);
+    static const AtomString& eventNameForWindowEventHandlerAttribute(const QualifiedName& attributeName);
 
 private:
     HTMLBodyElement(const QualifiedName&, Document&);
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
     bool isPresentationAttribute(const QualifiedName&) const final;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode() final;

@@ -231,7 +231,7 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
 bool isValidCSSSelector(const String& selector)
 {
     ASSERT(isMainThread());
-    AtomicString::init();
+    AtomString::init();
     QualifiedName::init();
     CSSParserContext context(HTMLQuirksMode);
     CSSParser parser(context);

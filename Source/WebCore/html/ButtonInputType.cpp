@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-const AtomicString& ButtonInputType::formControlType() const
+const AtomString& ButtonInputType::formControlType() const
 {
     return InputTypeNames::button();
 }

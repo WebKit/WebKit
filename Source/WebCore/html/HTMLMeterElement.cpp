@@ -71,7 +71,7 @@ bool HTMLMeterElement::childShouldCreateRenderer(const Node& child) const
     return !is<RenderMeter>(renderer()) && HTMLElement::childShouldCreateRenderer(child);
 }
 
-void HTMLMeterElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLMeterElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == valueAttr || name == minAttr || name == maxAttr || name == lowAttr || name == highAttr || name == optimumAttr)
         didElementStateChange();
@@ -86,7 +86,7 @@ double HTMLMeterElement::min() const
 
 void HTMLMeterElement::setMin(double min)
 {
-    setAttributeWithoutSynchronization(minAttr, AtomicString::number(min));
+    setAttributeWithoutSynchronization(minAttr, AtomString::number(min));
 }
 
 double HTMLMeterElement::max() const
@@ -96,7 +96,7 @@ double HTMLMeterElement::max() const
 
 void HTMLMeterElement::setMax(double max)
 {
-    setAttributeWithoutSynchronization(maxAttr, AtomicString::number(max));
+    setAttributeWithoutSynchronization(maxAttr, AtomString::number(max));
 }
 
 double HTMLMeterElement::value() const
@@ -107,7 +107,7 @@ double HTMLMeterElement::value() const
 
 void HTMLMeterElement::setValue(double value)
 {
-    setAttributeWithoutSynchronization(valueAttr, AtomicString::number(value));
+    setAttributeWithoutSynchronization(valueAttr, AtomString::number(value));
 }
 
 double HTMLMeterElement::low() const
@@ -118,7 +118,7 @@ double HTMLMeterElement::low() const
 
 void HTMLMeterElement::setLow(double low)
 {
-    setAttributeWithoutSynchronization(lowAttr, AtomicString::number(low));
+    setAttributeWithoutSynchronization(lowAttr, AtomString::number(low));
 }
 
 double HTMLMeterElement::high() const
@@ -129,7 +129,7 @@ double HTMLMeterElement::high() const
 
 void HTMLMeterElement::setHigh(double high)
 {
-    setAttributeWithoutSynchronization(highAttr, AtomicString::number(high));
+    setAttributeWithoutSynchronization(highAttr, AtomString::number(high));
 }
 
 double HTMLMeterElement::optimum() const
@@ -140,7 +140,7 @@ double HTMLMeterElement::optimum() const
 
 void HTMLMeterElement::setOptimum(double optimum)
 {
-    setAttributeWithoutSynchronization(optimumAttr, AtomicString::number(optimum));
+    setAttributeWithoutSynchronization(optimumAttr, AtomString::number(optimum));
 }
 
 HTMLMeterElement::GaugeRegion HTMLMeterElement::gaugeRegion() const

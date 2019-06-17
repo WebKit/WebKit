@@ -56,7 +56,7 @@ private:
     MathMLOperatorElement(const QualifiedName& tagName, Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     void childrenChanged(const ChildChange&) final;
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
 
     Optional<OperatorChar> m_operatorChar;
 

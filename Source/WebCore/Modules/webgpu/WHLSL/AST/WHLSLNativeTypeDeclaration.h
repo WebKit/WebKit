@@ -59,7 +59,7 @@ public:
     bool isInt() const { return m_isInt; }
     bool isNumber() const { return m_isNumber; }
     bool isFloating() const { return m_isFloating; }
-    bool isAtomic() const { return m_isAtomic; }
+    bool isAtom() const { return m_isAtomic; }
     bool isVector() const { return m_isVector; }
     bool isMatrix() const { return m_isMatrix; }
     bool isTexture() const { return m_isTexture; }

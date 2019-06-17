@@ -349,7 +349,7 @@ URL HitTestResult::absoluteImageURL() const
     if (!(m_innerNonSharedNode->renderer() && m_innerNonSharedNode->renderer()->isImage()))
         return URL();
 
-    AtomicString urlString;
+    AtomString urlString;
     if (is<HTMLEmbedElement>(*m_innerNonSharedNode)
         || is<HTMLImageElement>(*m_innerNonSharedNode)
         || is<HTMLInputElement>(*m_innerNonSharedNode)

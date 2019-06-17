@@ -59,8 +59,8 @@ public:
     void willFireAnimationFrame(int callbackId);
     void didCancelAnimationFrame(int callbackId);
 
-    void didAddEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
-    void willRemoveEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
+    void didAddEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+    void willRemoveEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     void willHandleEvent(const RegisteredEventListener&);
 
     void didPostMessage(const TimerBase&, JSC::ExecState&);

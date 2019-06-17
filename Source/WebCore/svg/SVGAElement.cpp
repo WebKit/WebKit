@@ -67,7 +67,7 @@ Ref<SVGAElement> SVGAElement::create(const QualifiedName& tagName, Document& doc
 String SVGAElement::title() const
 {
     // If the xlink:title is set (non-empty string), use it.
-    const AtomicString& title = attributeWithoutSynchronization(XLinkNames::titleAttr);
+    const AtomString& title = attributeWithoutSynchronization(XLinkNames::titleAttr);
     if (!title.isEmpty())
         return title;
 
@@ -75,7 +75,7 @@ String SVGAElement::title() const
     return SVGElement::title();
 }
 
-void SVGAElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGAElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::targetAttr) {
         m_target->setBaseValInternal(value);

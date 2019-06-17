@@ -131,7 +131,7 @@ Ref<CSSPrimitiveValue> CSSValuePool::createFontFamilyValue(const String& familyN
     }).iterator->value;
 }
 
-RefPtr<CSSValueList> CSSValuePool::createFontFaceValue(const AtomicString& string)
+RefPtr<CSSValueList> CSSValuePool::createFontFaceValue(const AtomString& string)
 {
     // Remove one entry at random if the cache grows too large.
     // FIXME: Use TinyLRUCache instead?

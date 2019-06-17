@@ -51,7 +51,7 @@ public:
     static Vector<FileChooserFileInfo> filesFromFormControlState(const FormControlState&);
 
 private:
-    const AtomicString& formControlType() const final;
+    const AtomString& formControlType() const final;
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;
     bool appendFormData(DOMFormData&, bool) const final;

@@ -162,7 +162,7 @@ int HTMLOptionElement::index() const
     return 0;
 }
 
-void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
 #if ENABLE(DATALIST_ELEMENT)
     if (name == valueAttr) {
@@ -194,7 +194,7 @@ void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomicSt
 
 String HTMLOptionElement::value() const
 {
-    const AtomicString& value = attributeWithoutSynchronization(valueAttr);
+    const AtomString& value = attributeWithoutSynchronization(valueAttr);
     if (!value.isNull())
         return value;
     return stripLeadingAndTrailingHTMLSpaces(collectOptionInnerText()).simplifyWhiteSpace(isHTMLSpace);

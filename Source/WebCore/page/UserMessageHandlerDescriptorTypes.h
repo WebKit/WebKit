@@ -29,15 +29,15 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
 class DOMWrapperWorld;
 class UserMessageHandlerDescriptor;
 
-typedef HashMap<std::pair<AtomicString, RefPtr<DOMWrapperWorld>>, RefPtr<UserMessageHandlerDescriptor>> UserMessageHandlerDescriptorMap;
+typedef HashMap<std::pair<AtomString, RefPtr<DOMWrapperWorld>>, RefPtr<UserMessageHandlerDescriptor>> UserMessageHandlerDescriptorMap;
 
 } // namespace WebCore
 

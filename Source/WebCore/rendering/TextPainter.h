@@ -27,7 +27,7 @@
 #include "GlyphDisplayListCache.h"
 #include "TextFlags.h"
 #include "TextPaintStyle.h"
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -56,7 +56,7 @@ public:
     void setShadowColorFilter(const FilterOperations* colorFilter) { m_shadowColorFilter = colorFilter; }
     void setFont(const FontCascade& font) { m_font = &font; }
     void setIsHorizontal(bool isHorizontal) { m_textBoxIsHorizontal = isHorizontal; }
-    void setEmphasisMark(const AtomicString& mark, float offset, const RenderCombineText*);
+    void setEmphasisMark(const AtomString& mark, float offset, const RenderCombineText*);
 
     void paint(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin);
     void paintRange(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end);
@@ -77,17 +77,17 @@ public:
     static bool shouldUseGlyphDisplayList(const PaintInfo&);
 
 private:
-    void paintTextOrEmphasisMarks(const FontCascade&, const TextRun&, const AtomicString& emphasisMark, float emphasisMarkOffset,
+    void paintTextOrEmphasisMarks(const FontCascade&, const TextRun&, const AtomString& emphasisMark, float emphasisMarkOffset,
         const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset);
     void paintTextWithShadows(const ShadowData*, const FilterOperations*, const FontCascade&, const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin,
-        unsigned startOffset, unsigned endOffset, const AtomicString& emphasisMark, float emphasisMarkOffset, bool stroked);
+        unsigned startOffset, unsigned endOffset, const AtomString& emphasisMark, float emphasisMarkOffset, bool stroked);
     void paintTextAndEmphasisMarksIfNeeded(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset,
         const TextPaintStyle&, const ShadowData*, const FilterOperations*);
 
     GraphicsContext& m_context;
     const FontCascade* m_font { nullptr };
     TextPaintStyle m_style;
-    AtomicString m_emphasisMark;
+    AtomString m_emphasisMark;
     const ShadowData* m_shadow { nullptr };
     const FilterOperations* m_shadowColorFilter { nullptr };
     const RenderCombineText* m_combinedText { nullptr };
@@ -96,7 +96,7 @@ private:
     bool m_textBoxIsHorizontal { true };
 };
 
-inline void TextPainter::setEmphasisMark(const AtomicString& mark, float offset, const RenderCombineText* combinedText)
+inline void TextPainter::setEmphasisMark(const AtomString& mark, float offset, const RenderCombineText* combinedText)
 {
     m_emphasisMark = mark;
     m_emphasisMarkOffset = offset;

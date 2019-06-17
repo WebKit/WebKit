@@ -32,7 +32,7 @@
 namespace WebCore {
 namespace Style {
 
-void IdChangeInvalidation::invalidateStyle(const AtomicString& changedId)
+void IdChangeInvalidation::invalidateStyle(const AtomString& changedId)
 {
     if (changedId.isEmpty())
         return;

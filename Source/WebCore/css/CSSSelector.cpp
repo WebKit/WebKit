@@ -33,7 +33,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -63,8 +63,8 @@ CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRu
     , m_destructorHasBeenCalled(false)
 #endif
 {
-    const AtomicString& tagLocalName = tagQName.localName();
-    const AtomicString tagLocalNameASCIILowercase = tagLocalName.convertToASCIILowercase();
+    const AtomString& tagLocalName = tagQName.localName();
+    const AtomString tagLocalNameASCIILowercase = tagLocalName.convertToASCIILowercase();
 
     if (tagLocalName == tagLocalNameASCIILowercase) {
         m_data.m_tagQName = tagQName.impl();
@@ -82,7 +82,7 @@ void CSSSelector::createRareData()
     if (m_hasRareData)
         return;
     // Move the value to the rare data stucture.
-    AtomicString value { adoptRef(m_data.m_value) };
+    AtomString value { adoptRef(m_data.m_value) };
     m_data.m_rareData = &RareData::create(WTFMove(value)).leakRef();
     m_hasRareData = true;
 }
@@ -373,7 +373,7 @@ static void appendPseudoClassFunctionTail(StringBuilder& str, const CSSSelector*
 
 }
 
-static void appendLangArgumentList(StringBuilder& str, const Vector<AtomicString>& argumentList)
+static void appendLangArgumentList(StringBuilder& str, const Vector<AtomString>& argumentList)
 {
     unsigned argumentListSize = argumentList.size();
     for (unsigned i = 0; i < argumentListSize; ++i) {
@@ -671,7 +671,7 @@ String CSSSelector::selectorText(const String& rightSide) const
             }
         } else if (cs->isAttributeSelector()) {
             str.append('[');
-            const AtomicString& prefix = cs->attribute().prefix();
+            const AtomString& prefix = cs->attribute().prefix();
             if (!prefix.isEmpty()) {
                 str.append(prefix);
                 str.append('|');
@@ -759,13 +759,13 @@ void CSSSelector::setAttribute(const QualifiedName& value, bool convertToLowerca
     m_caseInsensitiveAttributeValueMatching = matchType == CaseInsensitive;
 }
     
-void CSSSelector::setArgument(const AtomicString& value)
+void CSSSelector::setArgument(const AtomString& value)
 {
     createRareData();
     m_data.m_rareData->m_argument = value;
 }
 
-void CSSSelector::setLangArgumentList(std::unique_ptr<Vector<AtomicString>> argumentList)
+void CSSSelector::setLangArgumentList(std::unique_ptr<Vector<AtomString>> argumentList)
 {
     createRareData();
     m_data.m_rareData->m_langArgumentList = WTFMove(argumentList);
@@ -802,7 +802,7 @@ int CSSSelector::nthB() const
     return m_data.m_rareData->m_b;
 }
 
-CSSSelector::RareData::RareData(AtomicString&& value)
+CSSSelector::RareData::RareData(AtomString&& value)
     : m_matchingValue(value)
     , m_serializingValue(value)
     , m_a(0)

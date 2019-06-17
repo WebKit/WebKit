@@ -75,7 +75,7 @@ SVGUseElement::~SVGUseElement()
         m_externalDocument->removeClient(*this);
 }
 
-void SVGUseElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGUseElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     SVGParsingError parseError = NoError;
 
@@ -144,14 +144,14 @@ void SVGUseElement::transferSizeAttributesToTargetClone(SVGElement& shadowElemen
         // If attributes width and/or height are provided on the 'use' element, then these attributes
         // will be transferred to the generated 'svg'. If attributes width and/or height are not specified,
         // the generated 'svg' element will use values of 100% for these attributes.
-        shadowElement.setAttribute(SVGNames::widthAttr, width().valueInSpecifiedUnits() ? AtomicString(width().valueAsString()) : "100%");
-        shadowElement.setAttribute(SVGNames::heightAttr, height().valueInSpecifiedUnits() ? AtomicString(height().valueAsString()) : "100%");
+        shadowElement.setAttribute(SVGNames::widthAttr, width().valueInSpecifiedUnits() ? AtomString(width().valueAsString()) : "100%");
+        shadowElement.setAttribute(SVGNames::heightAttr, height().valueInSpecifiedUnits() ? AtomString(height().valueAsString()) : "100%");
     } else if (is<SVGSVGElement>(shadowElement)) {
         // Spec (<use> on <svg>): If attributes width and/or height are provided on the 'use' element, then these
         // values will override the corresponding attributes on the 'svg' in the generated tree.
         auto correspondingElement = makeRefPtr(shadowElement.correspondingElement());
-        shadowElement.setAttribute(SVGNames::widthAttr, width().valueInSpecifiedUnits() ? AtomicString(width().valueAsString()) : (correspondingElement ? correspondingElement->getAttribute(SVGNames::widthAttr) : nullAtom()));
-        shadowElement.setAttribute(SVGNames::heightAttr, height().valueInSpecifiedUnits() ? AtomicString(height().valueAsString()) : (correspondingElement ? correspondingElement->getAttribute(SVGNames::heightAttr) : nullAtom()));
+        shadowElement.setAttribute(SVGNames::widthAttr, width().valueInSpecifiedUnits() ? AtomString(width().valueAsString()) : (correspondingElement ? correspondingElement->getAttribute(SVGNames::widthAttr) : nullAtom()));
+        shadowElement.setAttribute(SVGNames::heightAttr, height().valueInSpecifiedUnits() ? AtomString(height().valueAsString()) : (correspondingElement ? correspondingElement->getAttribute(SVGNames::heightAttr) : nullAtom()));
     }
 }
 
@@ -184,14 +184,14 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
-static HashSet<AtomicString> createAllowedElementSet()
+static HashSet<AtomString> createAllowedElementSet()
 {
     // Spec: "Any 'svg', 'symbol', 'g', graphics element or other 'use' is potentially a template object that can be re-used
     // (i.e., "instanced") in the SVG document via a 'use' element."
     // "Graphics Element" is defined as 'circle', 'ellipse', 'image', 'line', 'path', 'polygon', 'polyline', 'rect', 'text'
     // Excluded are anything that is used by reference or that only make sense to appear once in a document.
     using namespace SVGNames;
-    HashSet<AtomicString> set;
+    HashSet<AtomString> set;
     for (auto& tag : { aTag.get(), circleTag.get(), descTag.get(), ellipseTag.get(), gTag.get(), imageTag.get(), lineTag.get(), metadataTag.get(), pathTag.get(), polygonTag.get(), polylineTag.get(), rectTag.get(), svgTag.get(), switchTag.get(), symbolTag.get(), textTag.get(), textPathTag.get(), titleTag.get(), trefTag.get(), tspanTag.get(), useTag.get() })
         set.add(tag.localName());
     return set;
@@ -199,7 +199,7 @@ static HashSet<AtomicString> createAllowedElementSet()
 
 static inline bool isDisallowedElement(const SVGElement& element)
 {
-    static NeverDestroyed<HashSet<AtomicString>> set = createAllowedElementSet();
+    static NeverDestroyed<HashSet<AtomString>> set = createAllowedElementSet();
     return !set.get().contains(element.localName());
 }
 

@@ -572,7 +572,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
     }
 }
 
-static bool isProhibitedParagraphChild(const AtomicString& name)
+static bool isProhibitedParagraphChild(const AtomString& name)
 {
     // https://dvcs.w3.org/hg/editing/raw-file/57abe6d3cb60/editing.html#prohibited-paragraph-child
     static const auto localNames = makeNeverDestroyed([] {
@@ -626,7 +626,7 @@ static bool isProhibitedParagraphChild(const AtomicString& name)
             &ulTag.get(),
             &xmpTag.get(),
         };
-        HashSet<AtomicString> set;
+        HashSet<AtomString> set;
         for (auto& tag : tags)
             set.add(tag->localName());
         return set;
@@ -903,7 +903,7 @@ static bool isInlineNodeWithStyle(const Node* node)
     // We can skip over elements whose class attribute is
     // one of our internal classes.
     const HTMLElement* element = static_cast<const HTMLElement*>(node);
-    const AtomicString& classAttributeValue = element->attributeWithoutSynchronization(classAttr);
+    const AtomString& classAttributeValue = element->attributeWithoutSynchronization(classAttr);
     if (classAttributeValue == AppleTabSpanClass
         || classAttributeValue == AppleConvertedSpace
         || classAttributeValue == ApplePasteAsQuotation)

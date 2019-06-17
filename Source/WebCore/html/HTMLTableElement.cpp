@@ -278,7 +278,7 @@ static bool setTableCellsChanged(Element& element)
     return cellChanged;
 }
 
-static bool getBordersFromFrameAttributeValue(const AtomicString& value, bool& borderTop, bool& borderRight, bool& borderBottom, bool& borderLeft)
+static bool getBordersFromFrameAttributeValue(const AtomString& value, bool& borderTop, bool& borderRight, bool& borderBottom, bool& borderLeft)
 {
     borderTop = false;
     borderRight = false;
@@ -304,7 +304,7 @@ static bool getBordersFromFrameAttributeValue(const AtomicString& value, bool& b
     return true;
 }
 
-void HTMLTableElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+void HTMLTableElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr)
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);
@@ -368,7 +368,7 @@ bool HTMLTableElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLTableElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLTableElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     CellBorders bordersBefore = cellBorders();
     unsigned short oldPadding = m_padding;
@@ -566,12 +566,12 @@ Ref<HTMLCollection> HTMLTableElement::tBodies()
     return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<TableTBodies>::traversalType>>(*this, TableTBodies);
 }
 
-const AtomicString& HTMLTableElement::rules() const
+const AtomString& HTMLTableElement::rules() const
 {
     return attributeWithoutSynchronization(rulesAttr);
 }
 
-const AtomicString& HTMLTableElement::summary() const
+const AtomString& HTMLTableElement::summary() const
 {
     return attributeWithoutSynchronization(summaryAttr);
 }

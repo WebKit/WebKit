@@ -23,7 +23,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
@@ -46,9 +46,9 @@ public:
     void addTimeContainer(SVGSVGElement&);
     void removeTimeContainer(SVGSVGElement&);
 
-    void addResource(const AtomicString& id, RenderSVGResourceContainer&);
-    void removeResource(const AtomicString& id);
-    RenderSVGResourceContainer* resourceById(const AtomicString& id) const;
+    void addResource(const AtomString& id, RenderSVGResourceContainer&);
+    void removeResource(const AtomString& id);
+    RenderSVGResourceContainer* resourceById(const AtomString& id) const;
 
     void startAnimations();
     void pauseAnimations();
@@ -82,9 +82,9 @@ private:
 #if ENABLE(SVG_FONTS)
     HashSet<SVGFontFaceElement*> m_svgFontFaceElements;
 #endif
-    HashMap<AtomicString, RenderSVGResourceContainer*> m_resources;
-    HashMap<AtomicString, std::unique_ptr<PendingElements>> m_pendingResources; // Resources that are pending.
-    HashMap<AtomicString, std::unique_ptr<PendingElements>> m_pendingResourcesForRemoval; // Resources that are pending and scheduled for removal.
+    HashMap<AtomString, RenderSVGResourceContainer*> m_resources;
+    HashMap<AtomString, std::unique_ptr<PendingElements>> m_pendingResources; // Resources that are pending.
+    HashMap<AtomString, std::unique_ptr<PendingElements>> m_pendingResourcesForRemoval; // Resources that are pending and scheduled for removal.
     HashMap<SVGElement*, std::unique_ptr<HashSet<SVGElement*>>> m_elementDependencies;
     std::unique_ptr<SVGResourcesCache> m_resourcesCache;
 
@@ -95,20 +95,20 @@ public:
     // This HashMap contains a list of pending resources. Pending resources, are such
     // which are referenced by any object in the SVG document, but do NOT exist yet.
     // For instance, dynamically build gradients / patterns / clippers...
-    void addPendingResource(const AtomicString& id, Element&);
-    bool isIdOfPendingResource(const AtomicString& id) const;
-    bool isPendingResource(Element&, const AtomicString& id) const;
+    void addPendingResource(const AtomString& id, Element&);
+    bool isIdOfPendingResource(const AtomString& id) const;
+    bool isPendingResource(Element&, const AtomString& id) const;
     void clearHasPendingResourcesIfPossible(Element&);
     void removeElementFromPendingResources(Element&);
-    std::unique_ptr<PendingElements> removePendingResource(const AtomicString& id);
+    std::unique_ptr<PendingElements> removePendingResource(const AtomString& id);
 
     // The following two functions are used for scheduling a pending resource to be removed.
-    void markPendingResourcesForRemoval(const AtomicString&);
-    RefPtr<Element> removeElementFromPendingResourcesForRemovalMap(const AtomicString&);
+    void markPendingResourcesForRemoval(const AtomString&);
+    RefPtr<Element> removeElementFromPendingResourcesForRemovalMap(const AtomString&);
 
 private:
     bool isElementWithPendingResources(Element&) const;
-    std::unique_ptr<PendingElements> removePendingResourceForRemoval(const AtomicString&);
+    std::unique_ptr<PendingElements> removePendingResourceForRemoval(const AtomString&);
 };
 
 } // namespace WebCore

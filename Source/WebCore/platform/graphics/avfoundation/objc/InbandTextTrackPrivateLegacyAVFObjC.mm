@@ -78,7 +78,7 @@ bool InbandTextTrackPrivateLegacyAVFObjC::isEasyToRead() const
     return false;
 }
 
-AtomicString InbandTextTrackPrivateLegacyAVFObjC::label() const
+AtomString InbandTextTrackPrivateLegacyAVFObjC::label() const
 {
     if (!m_playerItemTrack)
         return emptyAtom();
@@ -96,10 +96,10 @@ AtomicString InbandTextTrackPrivateLegacyAVFObjC::label() const
             title = [[titles objectAtIndex:0] stringValue];
     }
 
-    return title ? AtomicString(title) : emptyAtom();
+    return title ? AtomString(title) : emptyAtom();
 }
 
-AtomicString InbandTextTrackPrivateLegacyAVFObjC::language() const
+AtomString InbandTextTrackPrivateLegacyAVFObjC::language() const
 {
     if (!m_playerItemTrack)
         return emptyAtom();

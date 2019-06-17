@@ -124,18 +124,18 @@ ExceptionOr<void> VTTRegion::setViewportAnchorY(double value)
     return { };
 }
 
-static const AtomicString& upKeyword()
+static const AtomString& upKeyword()
 {
-    static NeverDestroyed<const AtomicString> upKeyword("up", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> upKeyword("up", AtomString::ConstructFromLiteral);
     return upKeyword;
 }
 
-const AtomicString& VTTRegion::scroll() const
+const AtomString& VTTRegion::scroll() const
 {
     return m_scroll ? upKeyword() : emptyAtom();
 }
 
-ExceptionOr<void> VTTRegion::setScroll(const AtomicString& value)
+ExceptionOr<void> VTTRegion::setScroll(const AtomString& value)
 {
     if (value.isEmpty()) {
         m_scroll = false;
@@ -260,23 +260,23 @@ void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
     input.skipRun(valueRun);
 }
 
-const AtomicString& VTTRegion::textTrackCueContainerScrollingClass()
+const AtomString& VTTRegion::textTrackCueContainerScrollingClass()
 {
-    static NeverDestroyed<const AtomicString> trackRegionCueContainerScrollingClass("scrolling", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> trackRegionCueContainerScrollingClass("scrolling", AtomString::ConstructFromLiteral);
 
     return trackRegionCueContainerScrollingClass;
 }
 
-const AtomicString& VTTRegion::textTrackCueContainerShadowPseudoId()
+const AtomString& VTTRegion::textTrackCueContainerShadowPseudoId()
 {
-    static NeverDestroyed<const AtomicString> trackRegionCueContainerPseudoId("-webkit-media-text-track-region-container", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> trackRegionCueContainerPseudoId("-webkit-media-text-track-region-container", AtomString::ConstructFromLiteral);
 
     return trackRegionCueContainerPseudoId;
 }
 
-const AtomicString& VTTRegion::textTrackRegionShadowPseudoId()
+const AtomString& VTTRegion::textTrackRegionShadowPseudoId()
 {
-    static NeverDestroyed<const AtomicString> trackRegionShadowPseudoId("-webkit-media-text-track-region", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> trackRegionShadowPseudoId("-webkit-media-text-track-region", AtomString::ConstructFromLiteral);
 
     return trackRegionShadowPseudoId;
 }

@@ -40,7 +40,7 @@ public:
     explicit NumberInputType(HTMLInputElement& element) : TextFieldInputType(element) { }
 
 private:
-    const AtomicString& formControlType() const final;
+    const AtomString& formControlType() const final;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior) final;
     double valueAsDouble() const final;
     ExceptionOr<void> setValueAsDouble(double, TextFieldEventBehavior) const final;

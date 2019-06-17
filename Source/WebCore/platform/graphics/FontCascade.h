@@ -109,7 +109,7 @@ public:
     enum CustomFontNotReadyAction { DoNotPaintIfFontNotReady, UseFallbackIfFontNotReady };
     WEBCORE_EXPORT float drawText(GraphicsContext&, const TextRun&, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = WTF::nullopt, CustomFontNotReadyAction = DoNotPaintIfFontNotReady) const;
     static void drawGlyphs(GraphicsContext&, const Font&, const GlyphBuffer&, unsigned from, unsigned numGlyphs, const FloatPoint&, FontSmoothingMode);
-    void drawEmphasisMarks(GraphicsContext&, const TextRun&, const AtomicString& mark, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = WTF::nullopt) const;
+    void drawEmphasisMarks(GraphicsContext&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = WTF::nullopt) const;
 
     DashArray dashesForIntersectionsWithRect(const TextRun&, const FloatPoint& textOrigin, const FloatRect& lineExtents) const;
 
@@ -136,9 +136,9 @@ public:
     bool enableKerning() const { return m_enableKerning; }
     bool requiresShaping() const { return m_requiresShaping; }
 
-    const AtomicString& firstFamily() const { return m_fontDescription.firstFamily(); }
+    const AtomString& firstFamily() const { return m_fontDescription.firstFamily(); }
     unsigned familyCount() const { return m_fontDescription.familyCount(); }
-    const AtomicString& familyAt(unsigned i) const { return m_fontDescription.familyAt(i); }
+    const AtomString& familyAt(unsigned i) const { return m_fontDescription.familyAt(i); }
 
     // A WTF::nullopt return value indicates "font-style: normal".
     Optional<FontSelectionValue> italic() const { return m_fontDescription.italic(); }
@@ -154,9 +154,9 @@ public:
     bool hasValidAverageCharWidth() const;
     bool fastAverageCharWidthIfAvailable(float &width) const; // returns true on success
 
-    int emphasisMarkAscent(const AtomicString&) const;
-    int emphasisMarkDescent(const AtomicString&) const;
-    int emphasisMarkHeight(const AtomicString&) const;
+    int emphasisMarkAscent(const AtomString&) const;
+    int emphasisMarkDescent(const AtomString&) const;
+    int emphasisMarkHeight(const AtomString&) const;
 
     const Font& primaryFont() const;
     const FontRanges& fallbackRangesAt(unsigned) const;
@@ -206,21 +206,21 @@ private:
     float glyphBufferForTextRun(CodePath, const TextRun&, unsigned from, unsigned to, GlyphBuffer&) const;
     // Returns the initial in-stream advance.
     float getGlyphsAndAdvancesForSimpleText(const TextRun&, unsigned from, unsigned to, GlyphBuffer&, ForTextEmphasisOrNot = NotForTextEmphasis) const;
-    void drawEmphasisMarksForSimpleText(GraphicsContext&, const TextRun&, const AtomicString& mark, const FloatPoint&, unsigned from, unsigned to) const;
+    void drawEmphasisMarksForSimpleText(GraphicsContext&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from, unsigned to) const;
     void drawGlyphBuffer(GraphicsContext&, const GlyphBuffer&, FloatPoint&, CustomFontNotReadyAction) const;
-    void drawEmphasisMarks(GraphicsContext&, const GlyphBuffer&, const AtomicString&, const FloatPoint&) const;
+    void drawEmphasisMarks(GraphicsContext&, const GlyphBuffer&, const AtomString&, const FloatPoint&) const;
     float floatWidthForSimpleText(const TextRun&, HashSet<const Font*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     int offsetForPositionForSimpleText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForSimpleText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
 
-    Optional<GlyphData> getEmphasisMarkGlyphData(const AtomicString&) const;
+    Optional<GlyphData> getEmphasisMarkGlyphData(const AtomString&) const;
 
     static bool canReturnFallbackFontsForComplexText();
     static bool canExpandAroundIdeographsInComplexText();
 
     // Returns the initial in-stream advance.
     float getGlyphsAndAdvancesForComplexText(const TextRun&, unsigned from, unsigned to, GlyphBuffer&, ForTextEmphasisOrNot = NotForTextEmphasis) const;
-    void drawEmphasisMarksForComplexText(GraphicsContext&, const TextRun&, const AtomicString& mark, const FloatPoint&, unsigned from, unsigned to) const;
+    void drawEmphasisMarksForComplexText(GraphicsContext&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from, unsigned to) const;
     float floatWidthForComplexText(const TextRun&, HashSet<const Font*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     int offsetForPositionForComplexText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForComplexText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;

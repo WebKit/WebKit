@@ -37,7 +37,7 @@ DeviceMotionEvent::DeviceMotionEvent()
 {
 }
 
-DeviceMotionEvent::DeviceMotionEvent(const AtomicString& eventType, DeviceMotionData* deviceMotionData)
+DeviceMotionEvent::DeviceMotionEvent(const AtomString& eventType, DeviceMotionData* deviceMotionData)
     : Event(eventType, CanBubble::No, IsCancelable::No)
     , m_deviceMotionData(deviceMotionData)
 {
@@ -101,7 +101,7 @@ Optional<double> DeviceMotionEvent::interval() const
     return m_deviceMotionData->interval();
 }
 
-void DeviceMotionEvent::initDeviceMotionEvent(const AtomicString& type, bool bubbles, bool cancelable, Optional<DeviceMotionEvent::Acceleration>&& acceleration, Optional<DeviceMotionEvent::Acceleration>&& accelerationIncludingGravity, Optional<DeviceMotionEvent::RotationRate>&& rotationRate, Optional<double> interval)
+void DeviceMotionEvent::initDeviceMotionEvent(const AtomString& type, bool bubbles, bool cancelable, Optional<DeviceMotionEvent::Acceleration>&& acceleration, Optional<DeviceMotionEvent::Acceleration>&& accelerationIncludingGravity, Optional<DeviceMotionEvent::RotationRate>&& rotationRate, Optional<double> interval)
 {
     if (isBeingDispatched())
         return;

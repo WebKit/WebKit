@@ -182,7 +182,7 @@ Optional<ElementStyle> TextControlInnerTextElement::resolveCustomStyle(const Ren
 inline TextControlPlaceholderElement::TextControlPlaceholderElement(Document& document)
     : HTMLDivElement(divTag, document)
 {
-    setPseudo(AtomicString("placeholder", AtomicString::ConstructFromLiteral));
+    setPseudo(AtomString("placeholder", AtomString::ConstructFromLiteral));
     setHasCustomStyleResolveCallbacks();
 }
 
@@ -252,11 +252,11 @@ bool SearchFieldResultsButtonElement::willRespondToMouseClickEvents()
 inline SearchFieldCancelButtonElement::SearchFieldCancelButtonElement(Document& document)
     : HTMLDivElement(divTag, document)
 {
-    setPseudo(AtomicString("-webkit-search-cancel-button", AtomicString::ConstructFromLiteral));
+    setPseudo(AtomString("-webkit-search-cancel-button", AtomString::ConstructFromLiteral));
 #if !PLATFORM(IOS_FAMILY)
     setAttributeWithoutSynchronization(aria_labelAttr, AXSearchFieldCancelButtonText());
 #endif
-    setAttributeWithoutSynchronization(roleAttr, AtomicString("button", AtomicString::ConstructFromLiteral));
+    setAttributeWithoutSynchronization(roleAttr, AtomString("button", AtomString::ConstructFromLiteral));
 }
 
 Ref<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Document& document)

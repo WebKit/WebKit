@@ -64,7 +64,7 @@ Ref<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGMaskElement(tagName, document));
 }
 
-void SVGMaskElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGMaskElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::maskUnitsAttr) {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);

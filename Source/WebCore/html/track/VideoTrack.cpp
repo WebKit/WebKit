@@ -44,39 +44,39 @@
 
 namespace WebCore {
 
-const AtomicString& VideoTrack::alternativeKeyword()
+const AtomString& VideoTrack::alternativeKeyword()
 {
-    static NeverDestroyed<const AtomicString> alternative("alternative", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> alternative("alternative", AtomString::ConstructFromLiteral);
     return alternative;
 }
 
-const AtomicString& VideoTrack::captionsKeyword()
+const AtomString& VideoTrack::captionsKeyword()
 {
-    static NeverDestroyed<const AtomicString> captions("captions", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> captions("captions", AtomString::ConstructFromLiteral);
     return captions;
 }
 
-const AtomicString& VideoTrack::mainKeyword()
+const AtomString& VideoTrack::mainKeyword()
 {
-    static NeverDestroyed<const AtomicString> captions("main", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> captions("main", AtomString::ConstructFromLiteral);
     return captions;
 }
 
-const AtomicString& VideoTrack::signKeyword()
+const AtomString& VideoTrack::signKeyword()
 {
-    static NeverDestroyed<const AtomicString> sign("sign", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> sign("sign", AtomString::ConstructFromLiteral);
     return sign;
 }
 
-const AtomicString& VideoTrack::subtitlesKeyword()
+const AtomString& VideoTrack::subtitlesKeyword()
 {
-    static NeverDestroyed<const AtomicString> subtitles("subtitles", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> subtitles("subtitles", AtomString::ConstructFromLiteral);
     return subtitles;
 }
 
-const AtomicString& VideoTrack::commentaryKeyword()
+const AtomString& VideoTrack::commentaryKeyword()
 {
-    static NeverDestroyed<const AtomicString> commentary("commentary", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> commentary("commentary", AtomString::ConstructFromLiteral);
     return commentary;
 }
 
@@ -114,7 +114,7 @@ void VideoTrack::setPrivate(VideoTrackPrivate& trackPrivate)
     updateKindFromPrivate();
 }
 
-bool VideoTrack::isValidKind(const AtomicString& value) const
+bool VideoTrack::isValidKind(const AtomString& value) const
 {
     return value == alternativeKeyword()
         || value == commentaryKeyword()
@@ -146,17 +146,17 @@ void VideoTrack::selectedChanged(bool selected)
     setSelected(selected);
 }
 
-void VideoTrack::idChanged(const AtomicString& id)
+void VideoTrack::idChanged(const AtomString& id)
 {
     setId(id);
 }
 
-void VideoTrack::labelChanged(const AtomicString& label)
+void VideoTrack::labelChanged(const AtomString& label)
 {
     setLabel(label);
 }
 
-void VideoTrack::languageChanged(const AtomicString& language)
+void VideoTrack::languageChanged(const AtomString& language)
 {
     setLanguage(language);
 }
@@ -171,7 +171,7 @@ void VideoTrack::willRemove()
 
 #if ENABLE(MEDIA_SOURCE)
 
-void VideoTrack::setKind(const AtomicString& kind)
+void VideoTrack::setKind(const AtomString& kind)
 {
     // 10.1 kind, on setting:
     // 1. If the value being assigned to this attribute does not match one of the video track kinds,
@@ -192,7 +192,7 @@ void VideoTrack::setKind(const AtomicString& kind)
     mediaElement()->ensureVideoTracks().scheduleChangeEvent();
 }
 
-void VideoTrack::setLanguage(const AtomicString& language)
+void VideoTrack::setLanguage(const AtomString& language)
 {
     // 10.1 language, on setting:
     // 1. If the value being assigned to this attribute is not an empty string or a BCP 47 language

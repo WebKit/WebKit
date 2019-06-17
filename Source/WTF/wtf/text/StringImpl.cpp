@@ -27,7 +27,7 @@
 
 #include <wtf/ProcessID.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/ExternalStringImpl.h>
 #include <wtf/text/StringBuffer.h>
@@ -112,10 +112,10 @@ StringImpl::~StringImpl()
 
     STRING_STATS_REMOVE_STRING(*this);
 
-    if (isAtomic()) {
+    if (isAtom()) {
         ASSERT(!isSymbol());
         if (length())
-            AtomicStringImpl::remove(static_cast<AtomicStringImpl*>(this));
+            AtomStringImpl::remove(static_cast<AtomStringImpl*>(this));
     } else if (isSymbol()) {
         auto& symbol = static_cast<SymbolImpl&>(*this);
         auto* symbolRegistry = symbol.symbolRegistry();
@@ -518,7 +518,7 @@ upconvert:
     return newImpl;
 }
 
-static inline bool needsTurkishCasingRules(const AtomicString& localeIdentifier)
+static inline bool needsTurkishCasingRules(const AtomString& localeIdentifier)
 {
     // Either "tr" or "az" locale, with case sensitive comparison and allowing for an ignored subtag.
     UChar first = localeIdentifier[0];
@@ -528,7 +528,7 @@ static inline bool needsTurkishCasingRules(const AtomicString& localeIdentifier)
         && (localeIdentifier.length() == 2 || localeIdentifier[2] == '-');
 }
 
-Ref<StringImpl> StringImpl::convertToLowercaseWithLocale(const AtomicString& localeIdentifier)
+Ref<StringImpl> StringImpl::convertToLowercaseWithLocale(const AtomString& localeIdentifier)
 {
     // Use the more-optimized code path most of the time.
     // Assuming here that the only locale-specific lowercasing is the Turkish casing rules.
@@ -564,7 +564,7 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithLocale(const AtomicString& loc
     return newString;
 }
 
-Ref<StringImpl> StringImpl::convertToUppercaseWithLocale(const AtomicString& localeIdentifier)
+Ref<StringImpl> StringImpl::convertToUppercaseWithLocale(const AtomString& localeIdentifier)
 {
     // Use the more-optimized code path most of the time.
     // Assuming here that the only locale-specific lowercasing is the Turkish casing rules,

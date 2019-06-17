@@ -52,20 +52,20 @@ public:
 
     Ref<HTMLFormControlsCollection> elements();
     WEBCORE_EXPORT Ref<HTMLCollection> elementsForNativeBindings();
-    Vector<Ref<Element>> namedElements(const AtomicString&);
+    Vector<Ref<Element>> namedElements(const AtomString&);
 
     WEBCORE_EXPORT unsigned length() const;
     HTMLElement* item(unsigned index);
-    Optional<Variant<RefPtr<RadioNodeList>, RefPtr<Element>>> namedItem(const AtomicString&);
-    Vector<AtomicString> supportedPropertyNames() const;
+    Optional<Variant<RefPtr<RadioNodeList>, RefPtr<Element>>> namedItem(const AtomString&);
+    Vector<AtomString> supportedPropertyNames() const;
 
     String enctype() const { return m_attributes.encodingType(); }
     WEBCORE_EXPORT void setEnctype(const String&);
 
     bool shouldAutocomplete() const;
 
-    WEBCORE_EXPORT void setAutocomplete(const AtomicString&);
-    WEBCORE_EXPORT const AtomicString& autocomplete() const;
+    WEBCORE_EXPORT void setAutocomplete(const AtomString&);
+    WEBCORE_EXPORT const AtomString& autocomplete() const;
 
 #if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
     WEBCORE_EXPORT bool shouldAutocorrect() const final;
@@ -137,7 +137,7 @@ private:
 
     void handleLocalEvents(Event&, EventInvokePhase) final;
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
     bool isURLAttribute(const Attribute&) const final;
 
     void resumeFromDocumentSuspension() final;
@@ -158,8 +158,8 @@ private:
     // are any invalid controls in this form.
     bool checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<HTMLFormControlElement>>&);
 
-    RefPtr<HTMLElement> elementFromPastNamesMap(const AtomicString&) const;
-    void addToPastNamesMap(FormNamedItem*, const AtomicString& pastName);
+    RefPtr<HTMLElement> elementFromPastNamesMap(const AtomString&) const;
+    void addToPastNamesMap(FormNamedItem*, const AtomString& pastName);
     void assertItemCanBeInPastNamesMap(FormNamedItem*) const;
     void removeFromPastNamesMap(FormNamedItem*);
 
@@ -168,7 +168,7 @@ private:
 
     void resetAssociatedFormControlElements();
 
-    typedef HashMap<RefPtr<AtomicStringImpl>, FormNamedItem*> PastNamesMap;
+    typedef HashMap<RefPtr<AtomStringImpl>, FormNamedItem*> PastNamesMap;
 
     FormSubmission::Attributes m_attributes;
     std::unique_ptr<PastNamesMap> m_pastNamesMap;

@@ -46,7 +46,7 @@ protected:
 
 private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomString&) override;
 
     const ScriptType m_scriptType;
     Optional<Length> m_subscriptShift;

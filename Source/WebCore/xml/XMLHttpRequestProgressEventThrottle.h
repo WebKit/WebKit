@@ -49,7 +49,7 @@ public:
 
     void dispatchThrottledProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total);
     void dispatchReadyStateChangeEvent(Event&, ProgressEventAction = DoNotFlushProgressEvent);
-    void dispatchProgressEvent(const AtomicString&);
+    void dispatchProgressEvent(const AtomString&);
 
     void suspend();
     void resume();

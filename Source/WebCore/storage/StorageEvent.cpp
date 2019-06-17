@@ -39,17 +39,17 @@ StorageEvent::StorageEvent() = default;
 
 StorageEvent::~StorageEvent() = default;
 
-Ref<StorageEvent> StorageEvent::create(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea)
+Ref<StorageEvent> StorageEvent::create(const AtomString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea)
 {
     return adoptRef(*new StorageEvent(type, key, oldValue, newValue, url, storageArea));
 }
 
-Ref<StorageEvent> StorageEvent::create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+Ref<StorageEvent> StorageEvent::create(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
 {
     return adoptRef(*new StorageEvent(type, initializer, isTrusted));
 }
 
-StorageEvent::StorageEvent(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea)
+StorageEvent::StorageEvent(const AtomString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea)
     : Event(type, CanBubble::No, IsCancelable::No)
     , m_key(key)
     , m_oldValue(oldValue)
@@ -59,7 +59,7 @@ StorageEvent::StorageEvent(const AtomicString& type, const String& key, const St
 {
 }
 
-StorageEvent::StorageEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+StorageEvent::StorageEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
     , m_key(initializer.key)
     , m_oldValue(initializer.oldValue)
@@ -69,7 +69,7 @@ StorageEvent::StorageEvent(const AtomicString& type, const Init& initializer, Is
 {
 }
 
-void StorageEvent::initStorageEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea)
+void StorageEvent::initStorageEvent(const AtomString& type, bool canBubble, bool cancelable, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea)
 {
     if (isBeingDispatched())
         return;

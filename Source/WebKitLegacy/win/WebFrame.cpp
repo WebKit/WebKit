@@ -731,7 +731,7 @@ HRESULT WebFrame::findFrameNamed(_In_ BSTR name, _COM_Outptr_opt_ IWebFrame** fr
     if (!coreFrame)
         return E_UNEXPECTED;
 
-    Frame* foundFrame = coreFrame->tree().find(AtomicString(name, SysStringLen(name)), *coreFrame);
+    Frame* foundFrame = coreFrame->tree().find(AtomString(name, SysStringLen(name)), *coreFrame);
     if (!foundFrame)
         return S_OK;
 
@@ -1130,7 +1130,7 @@ HRESULT WebFrame::elementWithName(BSTR name, IDOMElement* form, IDOMElement** el
 
     HTMLFormElement* formElement = formElementFromDOMElement(form);
     if (formElement) {
-        AtomicString targetName((UChar*)name, SysStringLen(name));
+        AtomString targetName((UChar*)name, SysStringLen(name));
         for (auto& associatedElement : formElement->copyAssociatedElementsVector()) {
             if (!is<HTMLFormControlElement>(associatedElement.get()))
                 continue;

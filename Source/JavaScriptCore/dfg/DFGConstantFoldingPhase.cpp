@@ -323,7 +323,7 @@ private:
                             // However, a constant value propagated in DFG is not filtered.
                             // So here, we check the propagated value is actually an atomic string.
                             // And if it's not, we just ignore.
-                            if (impl->isAtomic())
+                            if (impl->isAtom())
                                 constantUid = static_cast<const UniquedStringImpl*>(impl);
                         }
                     }
@@ -675,7 +675,7 @@ private:
                     if (constant.isString()) {
                         JSString* string = asString(constant);
                         const StringImpl* impl = string->tryGetValueImpl();
-                        if (impl && impl->isAtomic()) {
+                        if (impl && impl->isAtom()) {
                             unsigned identifierNumber = m_graph.identifiers().ensure(const_cast<UniquedStringImpl*>(static_cast<const UniquedStringImpl*>(impl)));
                             node->convertToInById(identifierNumber);
                             changed = true;

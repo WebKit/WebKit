@@ -285,7 +285,7 @@ static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     auto& elements = formElement->unsafeAssociatedElements();
-    AtomicString targetName = name;
+    AtomString targetName = name;
     for (unsigned i = 0; i < elements.size(); i++) {
         FormAssociatedElement& element = *elements[i];
         if (element.name() == targetName)

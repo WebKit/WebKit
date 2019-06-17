@@ -58,7 +58,7 @@ public:
     // Returns the 'name' attribute value. If this element has no name
     // attribute, it returns an empty string instead of null string.
     // Note that the 'name' IDL attribute doesn't use this function.
-    virtual const AtomicString& name() const;
+    virtual const AtomString& name() const;
 
     // Override in derived classes to get the encoded name=value pair for submitting.
     // Return true for a successful control (see HTML4-17.13.2).

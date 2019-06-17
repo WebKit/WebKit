@@ -217,7 +217,7 @@ public:
     void loadFrom(const CachedResource&);
 
     SecurityOrigin* origin() const { return m_origin.get(); }
-    AtomicString initiatorName() const { return m_initiatorName; }
+    AtomString initiatorName() const { return m_initiatorName; }
 
     bool canDelete() const { return !hasClients() && !m_loader && !m_preloadCount && !m_handleCount && !m_resourceToRevalidate && !m_proxyResource; }
     bool hasOneHandle() const { return m_handleCount == 1; }
@@ -347,7 +347,7 @@ private:
 
     ResourceError m_error;
     RefPtr<SecurityOrigin> m_origin;
-    AtomicString m_initiatorName;
+    AtomString m_initiatorName;
 
     RedirectChainCacheStatus m_redirectChainCacheStatus;
 

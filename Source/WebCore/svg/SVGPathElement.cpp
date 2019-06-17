@@ -52,7 +52,7 @@ Ref<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGPathElement(tagName, document));
 }
 
-void SVGPathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGPathElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::dAttr) {
         if (!m_pathSegList->baseVal()->parse(value))

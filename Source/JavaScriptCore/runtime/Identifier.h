@@ -88,7 +88,7 @@ class Identifier {
 public:
     Identifier() { }
     enum EmptyIdentifierFlag { EmptyIdentifier };
-    Identifier(EmptyIdentifierFlag) : m_string(StringImpl::empty()) { ASSERT(m_string.impl()->isAtomic()); }
+    Identifier(EmptyIdentifierFlag) : m_string(StringImpl::empty()) { ASSERT(m_string.impl()->isAtom()); }
 
     const String& string() const { return m_string; }
     UniquedStringImpl* impl() const { return static_cast<UniquedStringImpl*>(m_string.impl()); }
@@ -117,8 +117,8 @@ public:
     static Identifier fromString(VM*, const LChar*, int length);
     static Identifier fromString(VM*, const UChar*, int length);
     static Identifier fromString(VM*, const String&);
-    static Identifier fromString(ExecState*, AtomicStringImpl*);
-    static Identifier fromString(ExecState*, const AtomicString&);
+    static Identifier fromString(ExecState*, AtomStringImpl*);
+    static Identifier fromString(ExecState*, const AtomString&);
     static Identifier fromString(ExecState*, const String&);
     static Identifier fromString(ExecState*, const char*);
     static Identifier fromString(VM* vm, const Vector<LChar>& characters) { return fromString(vm, characters.data(), characters.size()); }
@@ -167,14 +167,14 @@ private:
 
     // Only to be used with string literals.
     template<unsigned charactersCount>
-    Identifier(VM* vm, const char (&characters)[charactersCount]) : m_string(add(vm, characters)) { ASSERT(m_string.impl()->isAtomic()); }
+    Identifier(VM* vm, const char (&characters)[charactersCount]) : m_string(add(vm, characters)) { ASSERT(m_string.impl()->isAtom()); }
 
-    Identifier(VM* vm, const LChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtomic()); }
-    Identifier(VM* vm, const UChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtomic()); }
-    Identifier(ExecState*, AtomicStringImpl*);
-    Identifier(ExecState*, const AtomicString&);
-    Identifier(VM* vm, const String& string) : m_string(add(vm, string.impl())) { ASSERT(m_string.impl()->isAtomic()); }
-    Identifier(VM* vm, StringImpl* rep) : m_string(add(vm, rep)) { ASSERT(m_string.impl()->isAtomic()); }
+    Identifier(VM* vm, const LChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtom()); }
+    Identifier(VM* vm, const UChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtom()); }
+    Identifier(ExecState*, AtomStringImpl*);
+    Identifier(ExecState*, const AtomString&);
+    Identifier(VM* vm, const String& string) : m_string(add(vm, string.impl())) { ASSERT(m_string.impl()->isAtom()); }
+    Identifier(VM* vm, StringImpl* rep) : m_string(add(vm, rep)) { ASSERT(m_string.impl()->isAtom()); }
 
     Identifier(SymbolImpl& uid)
         : m_string(&uid)
@@ -195,11 +195,11 @@ private:
     static Ref<StringImpl> add(VM*, StringImpl*);
 
 #ifndef NDEBUG
-    JS_EXPORT_PRIVATE static void checkCurrentAtomicStringTable(ExecState*);
-    JS_EXPORT_PRIVATE static void checkCurrentAtomicStringTable(VM*);
+    JS_EXPORT_PRIVATE static void checkCurrentAtomStringTable(ExecState*);
+    JS_EXPORT_PRIVATE static void checkCurrentAtomStringTable(VM*);
 #else
-    JS_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH static void checkCurrentAtomicStringTable(ExecState*);
-    JS_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH static void checkCurrentAtomicStringTable(VM*);
+    JS_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH static void checkCurrentAtomStringTable(ExecState*);
+    JS_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH static void checkCurrentAtomStringTable(VM*);
 #endif
 };
 
@@ -225,7 +225,7 @@ Ref<StringImpl> Identifier::add(VM* vm, const T* s, int length)
     if (!length)
         return *StringImpl::empty();
 
-    return *AtomicStringImpl::add(s, length);
+    return *AtomStringImpl::add(s, length);
 }
 
 inline bool operator==(const Identifier& a, const Identifier& b)

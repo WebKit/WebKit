@@ -100,7 +100,7 @@ typedef (
     readonly attribute HTMLCollection links; // Should be [SameObject].
     readonly attribute HTMLCollection forms; // Should be [SameObject].
     readonly attribute HTMLCollection scripts; // Should be [SameObject].
-    NodeList getElementsByName([AtomicString] DOMString elementName);
+    NodeList getElementsByName([AtomString] DOMString elementName);
     readonly attribute HTMLScriptElement? currentScript; // FIXME: Should return a HTMLOrSVGScriptElement.
 
     // dynamic markup insertion

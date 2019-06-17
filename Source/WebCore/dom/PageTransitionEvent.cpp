@@ -28,13 +28,13 @@
 
 namespace WebCore {
 
-PageTransitionEvent::PageTransitionEvent(const AtomicString& type, bool persisted)
+PageTransitionEvent::PageTransitionEvent(const AtomString& type, bool persisted)
     : Event(type, CanBubble::Yes, IsCancelable::Yes)
     , m_persisted(persisted)
 {
 }
 
-PageTransitionEvent::PageTransitionEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+PageTransitionEvent::PageTransitionEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
     , m_persisted(initializer.persisted)
 {

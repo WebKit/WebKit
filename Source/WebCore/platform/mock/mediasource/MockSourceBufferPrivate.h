@@ -64,12 +64,12 @@ private:
     void setReadyState(MediaPlayer::ReadyState) final;
     bool canSwitchToType(const ContentType&) final;
 
-    void flush(const AtomicString&) final { m_enqueuedSamples.clear(); }
-    void enqueueSample(Ref<MediaSample>&&, const AtomicString&) final;
-    bool isReadyForMoreSamples(const AtomicString&) final { return true; }
+    void flush(const AtomString&) final { m_enqueuedSamples.clear(); }
+    void enqueueSample(Ref<MediaSample>&&, const AtomString&) final;
+    bool isReadyForMoreSamples(const AtomString&) final { return true; }
     void setActive(bool) final;
 
-    Vector<String> enqueuedSamplesForTrackID(const AtomicString&) final;
+    Vector<String> enqueuedSamplesForTrackID(const AtomString&) final;
 
     void didReceiveInitializationSegment(const MockInitializationBox&);
     void didReceiveSample(const MockSampleBox&);

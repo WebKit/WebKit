@@ -49,7 +49,7 @@ Ref<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGStopElement(tagName, document));
 }
 
-void SVGStopElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGStopElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::offsetAttr) {
         if (value.endsWith('%'))

@@ -34,7 +34,7 @@
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace JSC {
 class ExecState;

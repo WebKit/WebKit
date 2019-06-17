@@ -55,7 +55,7 @@
 #include "WebKitFontFamilyNames.h"
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -249,7 +249,7 @@ void CSSFontSelector::dispatchInvalidationCallbacks()
         client->fontsNeedUpdate(*this);
 }
 
-void CSSFontSelector::opportunisticallyStartFontDataURLLoading(const FontCascadeDescription& description, const AtomicString& familyName)
+void CSSFontSelector::opportunisticallyStartFontDataURLLoading(const FontCascadeDescription& description, const AtomString& familyName)
 {
     const auto& segmentedFontFace = m_cssFontFaceSet->fontFace(description.fontSelectionRequest(), familyName);
     if (!segmentedFontFace)
@@ -274,7 +274,7 @@ void CSSFontSelector::fontCacheInvalidated()
     dispatchInvalidationCallbacks();
 }
 
-static AtomicString resolveGenericFamily(Document* document, const FontDescription& fontDescription, const AtomicString& familyName)
+static AtomString resolveGenericFamily(Document* document, const FontDescription& fontDescription, const AtomString& familyName)
 {
     auto platformResult = FontDescription::platformResolveGenericFamily(fontDescription.script(), fontDescription.locale(), familyName);
     if (!platformResult.isNull())
@@ -304,7 +304,7 @@ static AtomicString resolveGenericFamily(Document* document, const FontDescripti
     return familyName;
 }
 
-FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescription, const AtomicString& familyName)
+FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescription, const AtomString& familyName)
 {
     // If this ASSERT() fires, it usually means you forgot a document.updateStyleIfNeeded() somewhere.
     ASSERT(!m_buildIsUnderway || m_computingRootStyleFontCount);
@@ -312,7 +312,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     // FIXME: The spec (and Firefox) says user specified generic families (sans-serif etc.) should be resolved before the @font-face lookup too.
     bool resolveGenericFamilyFirst = familyName == standardFamily;
 
-    AtomicString familyForLookup = resolveGenericFamilyFirst ? resolveGenericFamily(m_document.get(), fontDescription, familyName) : familyName;
+    AtomString familyForLookup = resolveGenericFamilyFirst ? resolveGenericFamily(m_document.get(), fontDescription, familyName) : familyName;
     auto* face = m_cssFontFaceSet->fontFace(fontDescription.fontSelectionRequest(), familyForLookup);
     if (face) {
         if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {

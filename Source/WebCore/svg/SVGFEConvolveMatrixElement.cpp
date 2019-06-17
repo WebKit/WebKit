@@ -59,7 +59,7 @@ Ref<SVGFEConvolveMatrixElement> SVGFEConvolveMatrixElement::create(const Qualifi
     return adoptRef(*new SVGFEConvolveMatrixElement(tagName, document));
 }
 
-void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::inAttr) {
         m_in1->setBaseValInternal(value);

@@ -496,7 +496,7 @@ public:
     bool hasHighlighting() const;
 
     bool supportsDatetimeAttribute() const;
-    const AtomicString& datetimeAttributeValue() const;
+    const AtomString& datetimeAttributeValue() const;
     
     virtual bool canSetFocusAttribute() const { return false; }
     virtual bool canSetTextRangeAttributes() const { return false; }
@@ -563,8 +563,8 @@ public:
     AccessibilitySortDirection sortDirection() const;
     virtual bool canvasHasFallbackContent() const { return false; }
     bool supportsRangeValue() const;
-    const AtomicString& identifierAttribute() const;
-    const AtomicString& linkRelValue() const;
+    const AtomString& identifierAttribute() const;
+    const AtomString& linkRelValue() const;
     void classList(Vector<String>&) const;
     virtual String roleDescription() const;
     AccessibilityCurrentState currentState() const;
@@ -640,7 +640,7 @@ public:
     String computedLabel();
     
     // A programmatic way to set a name on an AccessibleObject.
-    virtual void setAccessibleName(const AtomicString&) { }
+    virtual void setAccessibleName(const AtomString&) { }
     virtual bool hasAttributesRequiredForInclusion() const;
 
     // Accessibility Text - (To be deprecated).
@@ -695,7 +695,7 @@ public:
     virtual URL url() const { return URL(); }
     virtual VisibleSelection selection() const { return VisibleSelection(); }
     virtual String selectedText() const { return String(); }
-    virtual const AtomicString& accessKey() const { return nullAtom(); }
+    virtual const AtomString& accessKey() const { return nullAtom(); }
     const String& actionVerb() const;
     virtual Widget* widget() const { return nullptr; }
     virtual Widget* widgetForAttachmentView() const { return nullptr; }
@@ -766,7 +766,7 @@ public:
 
     WEBCORE_EXPORT static AccessibilityRole ariaRoleToWebCoreRole(const String&);
     bool hasAttribute(const QualifiedName&) const;
-    const AtomicString& getAttribute(const QualifiedName&) const;
+    const AtomString& getAttribute(const QualifiedName&) const;
     bool hasTagName(const QualifiedName&) const;
     
     virtual VisiblePositionRange visiblePositionRange() const { return VisiblePositionRange(); }
@@ -859,7 +859,7 @@ public:
     virtual bool liveRegionAtomic() const { return false; }
     virtual bool isBusy() const { return false; }
     static const String defaultLiveRegionStatusForRole(AccessibilityRole);
-    static bool liveRegionStatusIsEnabled(const AtomicString&);
+    static bool liveRegionStatusIsEnabled(const AtomString&);
     static bool contentEditableAttributeIsEnabled(Element*);
     bool hasContentEditableAttributeSet() const;
 

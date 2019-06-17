@@ -1810,7 +1810,7 @@ bool DOMWindow::isSameSecurityOriginAsMainFrame() const
     return false;
 }
 
-bool DOMWindow::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+bool DOMWindow::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     if (!EventTarget::addEventListener(eventType, WTFMove(listener), options))
         return false;
@@ -2031,7 +2031,7 @@ void DOMWindow::resetAllGeolocationPermission()
 #endif
 }
 
-bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener& listener, const ListenerOptions& options)
+bool DOMWindow::removeEventListener(const AtomString& eventType, EventListener& listener, const ListenerOptions& options)
 {
     if (!EventTarget::removeEventListener(eventType, listener, options.capture))
         return false;
@@ -2313,7 +2313,7 @@ bool DOMWindow::isInsecureScriptAccess(DOMWindow& activeWindow, const String& ur
     return true;
 }
 
-ExceptionOr<RefPtr<Frame>> DOMWindow::createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures& windowFeatures, DOMWindow& activeWindow, Frame& firstFrame, Frame& openerFrame, const WTF::Function<void(DOMWindow&)>& prepareDialogFunction)
+ExceptionOr<RefPtr<Frame>> DOMWindow::createWindow(const String& urlString, const AtomString& frameName, const WindowFeatures& windowFeatures, DOMWindow& activeWindow, Frame& firstFrame, Frame& openerFrame, const WTF::Function<void(DOMWindow&)>& prepareDialogFunction)
 {
     Frame* activeFrame = activeWindow.frame();
     if (!activeFrame)
@@ -2372,7 +2372,7 @@ ExceptionOr<RefPtr<Frame>> DOMWindow::createWindow(const String& urlString, cons
     return noopener ? RefPtr<Frame> { nullptr } : newFrame;
 }
 
-ExceptionOr<RefPtr<WindowProxy>> DOMWindow::open(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& urlString, const AtomicString& frameName, const String& windowFeaturesString)
+ExceptionOr<RefPtr<WindowProxy>> DOMWindow::open(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& urlString, const AtomString& frameName, const String& windowFeaturesString)
 {
     if (!isCurrentlyDisplayedInFrame())
         return RefPtr<WindowProxy> { nullptr };

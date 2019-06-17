@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-QualifiedName::QualifiedName(const AtomicString& p, const AtomicString& l, const AtomicString& n)
+QualifiedName::QualifiedName(const AtomString& p, const AtomString& l, const AtomString& n)
     : m_impl(threadGlobalData().qualifiedNameCache().getOrCreate(QualifiedNameComponents { p.impl(), l.impl(), n.isEmpty() ? nullptr : n.impl() }))
 {
 }
@@ -45,7 +45,7 @@ void QualifiedName::init()
     if (initialized)
         return;
 
-    ASSERT_WITH_MESSAGE(WTF::nullAtomData.isConstructed(), "AtomicString::init should have been called");
+    ASSERT_WITH_MESSAGE(WTF::nullAtomData.isConstructed(), "AtomString::init should have been called");
     anyName.construct(nullAtom(), starAtom(), starAtom());
     initialized = true;
 }
@@ -56,7 +56,7 @@ const QualifiedName& nullQName()
     return nullName;
 }
 
-const AtomicString& QualifiedName::localNameUpper() const
+const AtomString& QualifiedName::localNameUpper() const
 {
     if (!m_impl->m_localNameUpper)
         m_impl->m_localNameUpper = m_impl->m_localName.convertToASCIIUppercase();

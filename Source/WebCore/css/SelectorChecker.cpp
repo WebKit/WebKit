@@ -451,9 +451,9 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
     return MatchResult::fails(Match::SelectorFailsCompletely);
 }
 
-static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match match, const AtomicString& selectorValue, bool caseSensitive)
+static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match match, const AtomString& selectorValue, bool caseSensitive)
 {
-    const AtomicString& value = attribute.value();
+    const AtomString& value = attribute.value();
     ASSERT(!value.isNull());
 
     switch (match) {
@@ -559,7 +559,7 @@ static bool anyAttributeMatches(const Element& element, const CSSSelector& selec
     return false;
 }
 
-bool SelectorChecker::attributeSelectorMatches(const Element& element, const QualifiedName& attributeName, const AtomicString& attributeValue, const CSSSelector& selector)
+bool SelectorChecker::attributeSelectorMatches(const Element& element, const QualifiedName& attributeName, const AtomString& attributeValue, const CSSSelector& selector)
 {
     ASSERT(selector.isAttributeSelector());
     auto& selectorAttribute = selector.attribute();
@@ -636,11 +636,11 @@ static inline bool tagMatches(const Element& element, const CSSSelector& simpleS
     if (tagQName == anyQName())
         return true;
 
-    const AtomicString& localName = (element.isHTMLElement() && element.document().isHTMLDocument()) ? simpleSelector.tagLowercaseLocalName() : tagQName.localName();
+    const AtomString& localName = (element.isHTMLElement() && element.document().isHTMLDocument()) ? simpleSelector.tagLowercaseLocalName() : tagQName.localName();
 
     if (localName != starAtom() && localName != element.localName())
         return false;
-    const AtomicString& namespaceURI = tagQName.namespaceURI();
+    const AtomString& namespaceURI = tagQName.namespaceURI();
     return namespaceURI == starAtom() || namespaceURI == element.namespaceURI();
 }
 

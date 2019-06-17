@@ -34,7 +34,7 @@ public:
 private:
     HTMLAppletElement(const QualifiedName&, Document&);
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
     bool isURLAttribute(const Attribute&) const final;
     
     bool rendererIsNeeded(const RenderStyle&) final;

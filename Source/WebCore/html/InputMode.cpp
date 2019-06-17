@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-InputMode inputModeForAttributeValue(const AtomicString& value)
+InputMode inputModeForAttributeValue(const AtomString& value)
 {
     if (equalIgnoringASCIICase(value, InputModeNames::none()))
         return InputMode::None;
@@ -52,7 +52,7 @@ InputMode inputModeForAttributeValue(const AtomicString& value)
     return InputMode::Unspecified;
 }
 
-const AtomicString& stringForInputMode(InputMode mode)
+const AtomString& stringForInputMode(InputMode mode)
 {
     switch (mode) {
     case InputMode::Unspecified:
@@ -80,51 +80,51 @@ const AtomicString& stringForInputMode(InputMode mode)
 
 namespace InputModeNames {
 
-const AtomicString& none()
+const AtomString& none()
 {
-    static NeverDestroyed<AtomicString> mode("none", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> mode("none", AtomString::ConstructFromLiteral);
     return mode;
 }
 
-const AtomicString& text()
+const AtomString& text()
 {
-    static NeverDestroyed<AtomicString> mode("text", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> mode("text", AtomString::ConstructFromLiteral);
     return mode;
 }
 
-const AtomicString& tel()
+const AtomString& tel()
 {
-    static NeverDestroyed<AtomicString> mode("tel", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> mode("tel", AtomString::ConstructFromLiteral);
     return mode;
 }
 
-const AtomicString& url()
+const AtomString& url()
 {
-    static NeverDestroyed<AtomicString> mode("url", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> mode("url", AtomString::ConstructFromLiteral);
     return mode;
 }
 
-const AtomicString& email()
+const AtomString& email()
 {
-    static NeverDestroyed<AtomicString> mode("email", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> mode("email", AtomString::ConstructFromLiteral);
     return mode;
 }
 
-const AtomicString& numeric()
+const AtomString& numeric()
 {
-    static NeverDestroyed<AtomicString> mode("numeric", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> mode("numeric", AtomString::ConstructFromLiteral);
     return mode;
 }
 
-const AtomicString& decimal()
+const AtomString& decimal()
 {
-    static NeverDestroyed<AtomicString> mode("decimal", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> mode("decimal", AtomString::ConstructFromLiteral);
     return mode;
 }
 
-const AtomicString& search()
+const AtomString& search()
 {
-    static NeverDestroyed<AtomicString> mode("search", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> mode("search", AtomString::ConstructFromLiteral);
     return mode;
 }
 

@@ -32,7 +32,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(NameNodeList);
 
-NameNodeList::NameNodeList(ContainerNode& rootNode, const AtomicString& name)
+NameNodeList::NameNodeList(ContainerNode& rootNode, const AtomString& name)
     : CachedLiveNodeList(rootNode, InvalidateOnNameAttrChange)
     , m_name(name)
 {

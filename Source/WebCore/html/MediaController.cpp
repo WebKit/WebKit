@@ -35,7 +35,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -287,25 +287,25 @@ void MediaController::setMuted(bool flag)
         mediaElement->updateVolume();
 }
 
-static const AtomicString& playbackStateWaiting()
+static const AtomString& playbackStateWaiting()
 {
-    static NeverDestroyed<AtomicString> waiting("waiting", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> waiting("waiting", AtomString::ConstructFromLiteral);
     return waiting;
 }
 
-static const AtomicString& playbackStatePlaying()
+static const AtomString& playbackStatePlaying()
 {
-    static NeverDestroyed<AtomicString> playing("playing", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> playing("playing", AtomString::ConstructFromLiteral);
     return playing;
 }
 
-static const AtomicString& playbackStateEnded()
+static const AtomString& playbackStateEnded()
 {
-    static NeverDestroyed<AtomicString> ended("ended", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> ended("ended", AtomString::ConstructFromLiteral);
     return ended;
 }
 
-const AtomicString& MediaController::playbackState() const
+const AtomString& MediaController::playbackState() const
 {
     switch (m_playbackState) {
     case WAITING:
@@ -326,7 +326,7 @@ void MediaController::reportControllerState()
     updatePlaybackState();
 }
 
-static AtomicString eventNameForReadyState(MediaControllerInterface::ReadyState state)
+static AtomString eventNameForReadyState(MediaControllerInterface::ReadyState state)
 {
     switch (state) {
     case MediaControllerInterface::HAVE_NOTHING:
@@ -436,7 +436,7 @@ void MediaController::updatePlaybackState()
     // If the MediaController's most recently reported playback state is not equal to new playback state
     // then queue a task to fire a simple event at the MediaController object, whose name is playing 
     // if new playback state is playing, ended if new playback state is ended, and waiting otherwise.
-    AtomicString eventName;
+    AtomString eventName;
     switch (newPlaybackState) {
     case WAITING:
         eventName = eventNames().waitingEvent;
@@ -533,7 +533,7 @@ bool MediaController::hasEnded() const
     return allHaveEnded;
 }
 
-void MediaController::scheduleEvent(const AtomicString& eventName)
+void MediaController::scheduleEvent(const AtomString& eventName)
 {
     m_pendingEvents.append(Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::Yes));
     if (!m_asyncEventTimer.isActive())

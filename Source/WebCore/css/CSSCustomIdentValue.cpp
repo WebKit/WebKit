@@ -53,7 +53,7 @@ CSSCustomIdentValue::CSSCustomIdentValue(CSSPropertyID id)
 String CSSCustomIdentValue::customCSSText() const
 {
     if (isKnownPropertyID())
-        return getPropertyNameAtomicString(m_propertyId);
+        return getPropertyNameAtomString(m_propertyId);
     StringBuilder builder;
     serializeIdentifier(m_string, builder);
     return builder.toString();

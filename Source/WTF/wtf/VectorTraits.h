@@ -28,7 +28,7 @@
 
 namespace WTF {
 
-    class AtomicString;
+    class AtomString;
 
     template<bool isPod, typename T>
     struct VectorTraitsBase;
@@ -71,7 +71,7 @@ namespace WTF {
     template<typename P> struct VectorTraits<RefPtr<P>> : SimpleClassVectorTraits { };
     template<typename P> struct VectorTraits<std::unique_ptr<P>> : SimpleClassVectorTraits { };
     template<typename P> struct VectorTraits<Ref<P>> : SimpleClassVectorTraits { };
-    template<> struct VectorTraits<AtomicString> : SimpleClassVectorTraits { };
+    template<> struct VectorTraits<AtomString> : SimpleClassVectorTraits { };
 
     template<typename First, typename Second>
     struct VectorTraits<std::pair<First, Second>>

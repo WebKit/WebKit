@@ -41,11 +41,11 @@ class SVGViewSpec;
 class SVGSVGElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired, public SVGFitToViewBox, public SVGZoomAndPan {
     WTF_MAKE_ISO_ALLOCATED(SVGSVGElement);
 public: // DOM
-    const AtomicString& contentScriptType() const;
-    void setContentScriptType(const AtomicString&);
+    const AtomString& contentScriptType() const;
+    void setContentScriptType(const AtomString&);
 
-    const AtomicString& contentStyleType() const;
-    void setContentStyleType(const AtomicString&);
+    const AtomString& contentStyleType() const;
+    void setContentStyleType(const AtomString&);
 
     Ref<SVGRect> viewport() const;
 
@@ -91,7 +91,7 @@ public: // DOM
     static Ref<SVGTransform> createSVGTransform();
     static Ref<SVGTransform> createSVGTransformFromMatrix(SVGMatrix&);
 
-    Element* getElementById(const AtomicString&);
+    Element* getElementById(const AtomString&);
 
 public:
     static Ref<SVGSVGElement> create(const QualifiedName&, Document&);
@@ -134,7 +134,7 @@ private:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSVGElement, SVGGraphicsElement, SVGExternalResourcesRequired, SVGFitToViewBox>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
     
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
     bool selfHasRelativeLengths() const override;
     bool isValid() const override;

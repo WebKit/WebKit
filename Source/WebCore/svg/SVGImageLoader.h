@@ -32,7 +32,7 @@ public:
 
 private:
     void dispatchLoadEvent() override;
-    String sourceURI(const AtomicString&) const override;
+    String sourceURI(const AtomString&) const override;
 };
 
 } // namespace WebCore

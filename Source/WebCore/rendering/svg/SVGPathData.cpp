@@ -174,9 +174,9 @@ Path pathFromGraphicsElement(const SVGElement* element)
     ASSERT(element);
 
     typedef Path (*PathFromFunction)(const SVGElement&);
-    static HashMap<AtomicStringImpl*, PathFromFunction>* map = 0;
+    static HashMap<AtomStringImpl*, PathFromFunction>* map = 0;
     if (!map) {
-        map = new HashMap<AtomicStringImpl*, PathFromFunction>;
+        map = new HashMap<AtomStringImpl*, PathFromFunction>;
         map->set(SVGNames::circleTag->localName().impl(), pathFromCircleElement);
         map->set(SVGNames::ellipseTag->localName().impl(), pathFromEllipseElement);
         map->set(SVGNames::lineTag->localName().impl(), pathFromLineElement);

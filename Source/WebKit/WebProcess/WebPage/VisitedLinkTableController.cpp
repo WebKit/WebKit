@@ -70,7 +70,7 @@ VisitedLinkTableController::~VisitedLinkTableController()
     visitedLinkTableControllers().remove(m_identifier);
 }
 
-bool VisitedLinkTableController::isLinkVisited(Page&, SharedStringHash linkHash, const URL&, const AtomicString&)
+bool VisitedLinkTableController::isLinkVisited(Page&, SharedStringHash linkHash, const URL&, const AtomString&)
 {
     return m_visitedLinkTable.contains(linkHash);
 }

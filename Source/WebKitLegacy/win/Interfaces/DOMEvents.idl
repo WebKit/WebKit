@@ -196,7 +196,7 @@ interface IDOMKeyboardEvent : IDOMUIEvent
     HRESULT getModifierState([in] BSTR keyIdentifierArg, [out, retval] BOOL* result);
 
     // FIXME: this does not match the version in the DOM spec.
-    //void initKeyboardEvent(AtomicString type, 
+    //void initKeyboardEvent(AtomString type, 
     //                       boolean canBubble, 
     //                       boolean cancelable, 
     //                       DOMWindow view, 
@@ -216,7 +216,7 @@ interface IDOMKeyboardEvent : IDOMUIEvent
     //readonly attribute long             charCode;
     //HRESULT charCode([out, retval] long* result);
 
-    //void initKeyboardEvent(AtomicString type, 
+    //void initKeyboardEvent(AtomString type, 
     //                       boolean canBubble, 
     //                       boolean cancelable, 
     //                       DOMWindow view, 
@@ -266,7 +266,7 @@ interface IDOMMouseEvent : IDOMUIEvent
     //readonly attribute EventTarget      relatedTarget;
     HRESULT relatedTarget([out, retval] IDOMEventTarget** result);
 
-    //[OldStyleObjC] void initMouseEvent(AtomicString type, 
+    //[OldStyleObjC] void initMouseEvent(AtomString type, 
     //                                   boolean canBubble, 
     //                                   boolean cancelable, 
     //                                   DOMWindow view, 
@@ -331,7 +331,7 @@ interface IDOMMutationEvent : IDOMEvent
     //readonly attribute unsigned short attrChange;
     HRESULT attrChange([out, retval] unsigned short* result);
 
-    //[OldStyleObjC] void initMutationEvent(AtomicString type, 
+    //[OldStyleObjC] void initMutationEvent(AtomString type, 
     //                                      boolean canBubble, 
     //                                      boolean cancelable, 
     //                                      Node relatedNode, 
@@ -378,7 +378,7 @@ interface IDOMUIEvent : IDOMEvent
     //readonly attribute long                 detail;
     HRESULT detail([out, retval] long* result);
 
-    //[OldStyleObjC] void initUIEvent(AtomicString type, 
+    //[OldStyleObjC] void initUIEvent(AtomString type, 
     //                                boolean canBubble, 
     //                                boolean cancelable, 
     //                                DOMWindow view, 

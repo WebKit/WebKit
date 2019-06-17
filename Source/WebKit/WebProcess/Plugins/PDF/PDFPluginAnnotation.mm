@@ -67,8 +67,8 @@ void PDFPluginAnnotation::attach(Element* parent)
     m_parent = parent;
     m_element = createAnnotationElement();
 
-    m_element->setAttributeWithoutSynchronization(classAttr, AtomicString("annotation", AtomicString::ConstructFromLiteral));
-    m_element->setAttributeWithoutSynchronization(x_apple_pdf_annotationAttr, AtomicString("true", AtomicString::ConstructFromLiteral));
+    m_element->setAttributeWithoutSynchronization(classAttr, AtomString("annotation", AtomString::ConstructFromLiteral));
+    m_element->setAttributeWithoutSynchronization(x_apple_pdf_annotationAttr, AtomString("true", AtomString::ConstructFromLiteral));
     m_element->addEventListener(eventNames().changeEvent, *m_eventListener, false);
     m_element->addEventListener(eventNames().blurEvent, *m_eventListener, false);
 

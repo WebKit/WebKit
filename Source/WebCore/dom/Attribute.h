@@ -33,7 +33,7 @@ namespace WebCore {
 // The actual Attr with its value as a Text child is allocated only if needed.
 class Attribute {
 public:
-    Attribute(const QualifiedName& name, const AtomicString& value)
+    Attribute(const QualifiedName& name, const AtomString& value)
         : m_name(name)
         , m_value(value)
     {
@@ -42,21 +42,21 @@ public:
     // NOTE: The references returned by these functions are only valid for as long
     // as the Attribute stays in place. For example, calling a function that mutates
     // an Element's internal attribute storage may invalidate them.
-    const AtomicString& value() const { return m_value; }
+    const AtomString& value() const { return m_value; }
     static ptrdiff_t valueMemoryOffset() { return OBJECT_OFFSETOF(Attribute, m_value); }
-    const AtomicString& prefix() const { return m_name.prefix(); }
-    const AtomicString& localName() const { return m_name.localName(); }
-    const AtomicString& namespaceURI() const { return m_name.namespaceURI(); }
+    const AtomString& prefix() const { return m_name.prefix(); }
+    const AtomString& localName() const { return m_name.localName(); }
+    const AtomString& namespaceURI() const { return m_name.namespaceURI(); }
 
     const QualifiedName& name() const { return m_name; }
     static ptrdiff_t nameMemoryOffset() { return OBJECT_OFFSETOF(Attribute, m_name); }
 
     bool isEmpty() const { return m_value.isEmpty(); }
-    static bool nameMatchesFilter(const QualifiedName&, const AtomicString& filterPrefix, const AtomicString& filterLocalName, const AtomicString& filterNamespaceURI);
-    bool matches(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI) const;
+    static bool nameMatchesFilter(const QualifiedName&, const AtomString& filterPrefix, const AtomString& filterLocalName, const AtomString& filterNamespaceURI);
+    bool matches(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI) const;
 
-    void setValue(const AtomicString& value) { m_value = value; }
-    void setPrefix(const AtomicString& prefix) { m_name.setPrefix(prefix); }
+    void setValue(const AtomString& value) { m_value = value; }
+    void setPrefix(const AtomString& prefix) { m_name.setPrefix(prefix); }
 
     // Note: This API is only for HTMLTreeBuilder.  It is not safe to change the
     // name of an attribute once parseAttribute has been called as DOM
@@ -71,17 +71,17 @@ public:
 
 private:
     QualifiedName m_name;
-    AtomicString m_value;
+    AtomString m_value;
 };
 
-inline bool Attribute::nameMatchesFilter(const QualifiedName& name, const AtomicString& filterPrefix, const AtomicString& filterLocalName, const AtomicString& filterNamespaceURI)
+inline bool Attribute::nameMatchesFilter(const QualifiedName& name, const AtomString& filterPrefix, const AtomString& filterLocalName, const AtomString& filterNamespaceURI)
 {
     if (filterLocalName != name.localName())
         return false;
     return filterPrefix == starAtom() || filterNamespaceURI == name.namespaceURI();
 }
 
-inline bool Attribute::matches(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI) const
+inline bool Attribute::matches(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI) const
 {
     return nameMatchesFilter(m_name, prefix, localName, namespaceURI);
 }

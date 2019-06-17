@@ -41,7 +41,7 @@ public:
 private:
     SVGFontFaceUriElement(const QualifiedName&, Document&);
     
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
     void childrenChanged(const ChildChange&) final;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     bool rendererIsNeeded(const RenderStyle&) final { return false; }

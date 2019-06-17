@@ -80,11 +80,11 @@ Vector<double> parseHTMLListOfOfFloatingPointNumberValues(StringView);
 bool parseMetaHTTPEquivRefresh(const StringView&, double& delay, String& url);
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#cors-settings-attribute
-String parseCORSSettingsAttribute(const AtomicString&);
+String parseCORSSettingsAttribute(const AtomString&);
 
 bool threadSafeMatch(const QualifiedName&, const QualifiedName&);
 
-AtomicString parseHTMLHashNameReference(StringView);
+AtomString parseHTMLHashNameReference(StringView);
 
 // Inline implementations of some of the functions declared above.
 

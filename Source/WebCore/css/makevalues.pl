@@ -74,7 +74,7 @@ print GPERF << "EOF";
 #include \"CSSValueKeywords.h\"
 #include \"HashTools.h\"
 #include <wtf/ASCIICType.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
 #include <string.h>
 
@@ -131,13 +131,13 @@ const char* getValueName(unsigned short id)
     return valueList[id];
 }
 
-const AtomicString& getValueNameAtomicString(CSSValueID id)
+const AtomString& getValueNameAtomString(CSSValueID id)
 {
     if (id < firstCSSValueKeyword || id > lastCSSValueKeyword)
         return nullAtom();
 
-    static AtomicString* valueKeywordStrings = new AtomicString[numCSSValueKeywords]; // Leaked intentionally.
-    AtomicString& valueKeywordString = valueKeywordStrings[id];
+    static AtomString* valueKeywordStrings = new AtomString[numCSSValueKeywords]; // Leaked intentionally.
+    AtomString& valueKeywordString = valueKeywordStrings[id];
     if (valueKeywordString.isNull())
         valueKeywordString = getValueName(id);
     return valueKeywordString;
@@ -146,7 +146,7 @@ const AtomicString& getValueNameAtomicString(CSSValueID id)
 String getValueNameString(CSSValueID id)
 {
     // We share the StringImpl with the AtomicStrings.
-    return getValueNameAtomicString(id).string();
+    return getValueNameAtomString(id).string();
 }
 
 } // namespace WebCore
@@ -194,7 +194,7 @@ print HEADER "const size_t maxCSSValueKeywordLength = " . $maxLen . ";\n";
 print HEADER << "EOF";
 
 const char* getValueName(unsigned short id);
-const WTF::AtomicString& getValueNameAtomicString(CSSValueID id);
+const WTF::AtomString& getValueNameAtomString(CSSValueID id);
 WTF::String getValueNameString(CSSValueID id);
 
 inline CSSValueID convertToCSSValueID(int value)

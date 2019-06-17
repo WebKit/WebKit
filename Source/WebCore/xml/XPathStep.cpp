@@ -165,14 +165,14 @@ inline bool nodeMatchesBasicTest(Node& node, Step::Axis axis, const Step::NodeTe
         case Step::NodeTest::CommentNodeTest:
             return node.nodeType() == Node::COMMENT_NODE;
         case Step::NodeTest::ProcessingInstructionNodeTest: {
-            const AtomicString& name = nodeTest.m_data;
+            const AtomString& name = nodeTest.m_data;
             return node.nodeType() == Node::PROCESSING_INSTRUCTION_NODE && (name.isEmpty() || node.nodeName() == name);
         }
         case Step::NodeTest::AnyNodeTest:
             return true;
         case Step::NodeTest::NameTest: {
-            const AtomicString& name = nodeTest.m_data;
-            const AtomicString& namespaceURI = nodeTest.m_namespaceURI;
+            const AtomString& name = nodeTest.m_data;
+            const AtomString& namespaceURI = nodeTest.m_namespaceURI;
 
             if (axis == Step::AttributeAxis) {
                 ASSERT(node.isAttributeNode());

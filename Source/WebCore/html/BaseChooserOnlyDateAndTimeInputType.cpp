@@ -61,7 +61,7 @@ void BaseChooserOnlyDateAndTimeInputType::handleDOMActivateEvent(Event&)
 
 void BaseChooserOnlyDateAndTimeInputType::createShadowSubtree()
 {
-    static NeverDestroyed<AtomicString> valueContainerPseudo("-webkit-date-and-time-value", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> valueContainerPseudo("-webkit-date-and-time-value", AtomString::ConstructFromLiteral);
 
     ASSERT(element());
     auto valueContainer = HTMLDivElement::create(element()->document());

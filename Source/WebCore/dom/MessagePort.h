@@ -99,8 +99,8 @@ public:
 private:
     explicit MessagePort(ScriptExecutionContext&, const MessagePortIdentifier& local, const MessagePortIdentifier& remote);
 
-    bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
-    bool removeEventListener(const AtomicString& eventType, EventListener&, const ListenerOptions&) final;
+    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
+    bool removeEventListener(const AtomString& eventType, EventListener&, const ListenerOptions&) final;
 
     void disentangle();
 

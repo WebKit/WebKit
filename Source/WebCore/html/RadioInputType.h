@@ -40,7 +40,7 @@ public:
     explicit RadioInputType(HTMLInputElement& element) : BaseCheckableInputType(element) { }
 
 private:
-    const AtomicString& formControlType() const final;
+    const AtomString& formControlType() const final;
     bool valueMissing(const String&) const final;
     String valueMissingText() const final;
     void handleClickEvent(MouseEvent&) final;

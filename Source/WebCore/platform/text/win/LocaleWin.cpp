@@ -62,7 +62,7 @@ static LCID LCIDFromLocaleInternal(LCID userDefaultLCID, const String& userDefau
     return LocaleNameToLCID(locale.wideCharacters().data(), 0);
 }
 
-static LCID LCIDFromLocale(const AtomicString& locale)
+static LCID LCIDFromLocale(const AtomString& locale)
 {
     // According to MSDN, 9 is enough for LOCALE_SISO639LANGNAME.
     const size_t languageCodeBufferSize = 9;
@@ -76,7 +76,7 @@ static LCID LCIDFromLocale(const AtomicString& locale)
     return lcid;
 }
 
-std::unique_ptr<Locale> Locale::create(const AtomicString& locale)
+std::unique_ptr<Locale> Locale::create(const AtomString& locale)
 {
     return std::make_unique<LocaleWin>(LCIDFromLocale(locale));
 }

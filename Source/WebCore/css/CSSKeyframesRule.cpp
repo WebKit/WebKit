@@ -36,13 +36,13 @@
 
 namespace WebCore {
 
-StyleRuleKeyframes::StyleRuleKeyframes(const AtomicString& name)
+StyleRuleKeyframes::StyleRuleKeyframes(const AtomString& name)
     : StyleRuleBase(Keyframes)
     , m_name(name)
 {
 }
 
-StyleRuleKeyframes::StyleRuleKeyframes(const AtomicString& name, std::unique_ptr<DeferredStyleGroupRuleList>&& deferredRules)
+StyleRuleKeyframes::StyleRuleKeyframes(const AtomString& name, std::unique_ptr<DeferredStyleGroupRuleList>&& deferredRules)
     : StyleRuleBase(Keyframes)
     , m_name(name)
     , m_deferredRules(WTFMove(deferredRules))

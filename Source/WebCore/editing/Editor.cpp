@@ -122,7 +122,7 @@
 
 namespace WebCore {
 
-static bool dispatchBeforeInputEvent(Element& element, const AtomicString& inputType, const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { }, Event::IsCancelable cancelable = Event::IsCancelable::Yes)
+static bool dispatchBeforeInputEvent(Element& element, const AtomString& inputType, const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { }, Event::IsCancelable cancelable = Event::IsCancelable::Yes)
 {
     if (!element.document().settings().inputEventsEnabled())
         return true;
@@ -132,7 +132,7 @@ static bool dispatchBeforeInputEvent(Element& element, const AtomicString& input
     return !event->defaultPrevented();
 }
 
-static void dispatchInputEvent(Element& element, const AtomicString& inputType, const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { })
+static void dispatchInputEvent(Element& element, const AtomString& inputType, const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { })
 {
     if (element.document().settings().inputEventsEnabled()) {
         // FIXME: We should not be dispatching to the scoped queue here. Normally, input events are dispatched in CompositeEditCommand::apply after the end of the scope,
@@ -353,7 +353,7 @@ enum class ClipboardEventKind {
     BeforePaste,
 };
 
-static AtomicString eventNameForClipboardEvent(ClipboardEventKind kind)
+static AtomString eventNameForClipboardEvent(ClipboardEventKind kind)
 {
     switch (kind) {
     case ClipboardEventKind::Copy:
@@ -1056,7 +1056,7 @@ static void notifyTextFromControls(Element* startRoot, Element* endRoot)
         endingTextControl->didEditInnerTextValue();
 }
 
-static bool dispatchBeforeInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRoot, const AtomicString& inputTypeName, const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { }, Event::IsCancelable cancelable = Event::IsCancelable::Yes)
+static bool dispatchBeforeInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRoot, const AtomString& inputTypeName, const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { }, Event::IsCancelable cancelable = Event::IsCancelable::Yes)
 {
     bool continueWithDefaultBehavior = true;
     if (startRoot)
@@ -1066,7 +1066,7 @@ static bool dispatchBeforeInputEvents(RefPtr<Element> startRoot, RefPtr<Element>
     return continueWithDefaultBehavior;
 }
 
-static void dispatchInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRoot, const AtomicString& inputTypeName, const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { })
+static void dispatchInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRoot, const AtomString& inputTypeName, const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { })
 {
     if (startRoot)
         dispatchInputEvent(*startRoot, inputTypeName, data, WTFMove(dataTransfer), targetRanges);
@@ -1463,8 +1463,8 @@ void Editor::pasteAsQuotation()
 void Editor::quoteFragmentForPasting(DocumentFragment& fragment)
 {
     auto blockQuote = HTMLQuoteElement::create(blockquoteTag, document());
-    blockQuote->setAttributeWithoutSynchronization(typeAttr, AtomicString("cite"));
-    blockQuote->setAttributeWithoutSynchronization(classAttr, AtomicString(ApplePasteAsQuotation));
+    blockQuote->setAttributeWithoutSynchronization(typeAttr, AtomString("cite"));
+    blockQuote->setAttributeWithoutSynchronization(classAttr, AtomString(ApplePasteAsQuotation));
 
     auto childNode = fragment.firstChild();
 

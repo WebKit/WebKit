@@ -66,10 +66,10 @@ public:
     RefPtr<CDMInstance> createInstance();
     bool supportsServerCertificates() const;
     bool supportsSessions() const;
-    bool supportsInitDataType(const AtomicString&) const;
+    bool supportsInitDataType(const AtomString&) const;
 
-    RefPtr<SharedBuffer> sanitizeInitData(const AtomicString& initDataType, const SharedBuffer&);
-    bool supportsInitData(const AtomicString& initDataType, const SharedBuffer&);
+    RefPtr<SharedBuffer> sanitizeInitData(const AtomString& initDataType, const SharedBuffer&);
+    bool supportsInitData(const AtomString& initDataType, const SharedBuffer&);
 
     RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&);
 

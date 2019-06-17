@@ -59,7 +59,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/WTFSemaphore.h>
 #import <wtf/WeakPtr.h>
-#import <wtf/text/AtomicString.h>
+#import <wtf/text/AtomString.h>
 #import <wtf/text/CString.h>
 
 #pragma mark - Soft Linking
@@ -396,7 +396,7 @@ public:
     static Ref<MediaDescriptionAVFObjC> create(AVAssetTrack* track) { return adoptRef(*new MediaDescriptionAVFObjC(track)); }
     virtual ~MediaDescriptionAVFObjC() { }
 
-    AtomicString codec() const override { return m_codec; }
+    AtomString codec() const override { return m_codec; }
     bool isVideo() const override { return m_isVideo; }
     bool isAudio() const override { return m_isAudio; }
     bool isText() const override { return m_isText; }
@@ -411,11 +411,11 @@ protected:
         CMFormatDescriptionRef description = [formatDescriptions count] ? (__bridge CMFormatDescriptionRef)[formatDescriptions objectAtIndex:0] : 0;
         if (description) {
             FourCharCode codec = CMFormatDescriptionGetMediaSubType(description);
-            m_codec = AtomicString(reinterpret_cast<LChar*>(&codec), 4);
+            m_codec = AtomString(reinterpret_cast<LChar*>(&codec), 4);
         }
     }
 
-    AtomicString m_codec;
+    AtomString m_codec;
     bool m_isVideo;
     bool m_isAudio;
     bool m_isText;
@@ -1046,7 +1046,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return;
 }
 
-void SourceBufferPrivateAVFObjC::flush(const AtomicString& trackIDString)
+void SourceBufferPrivateAVFObjC::flush(const AtomString& trackIDString)
 {
     int trackID = trackIDString.toInt();
     DEBUG_LOG(LOGIDENTIFIER, trackID);
@@ -1088,7 +1088,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         m_mediaSource->player()->setHasAvailableAudioSample(renderer, false);
 }
 
-void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const AtomicString& trackIDString)
+void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const AtomString& trackIDString)
 {
     int trackID = trackIDString.toInt();
     if (trackID != m_enabledVideoTrackID && !m_audioRenderers.contains(trackID))
@@ -1168,7 +1168,7 @@ void SourceBufferPrivateAVFObjC::bufferWasConsumed()
         m_mediaSource->player()->setHasAvailableVideoFrame(true);
 }
 
-bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(const AtomicString& trackIDString)
+bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(const AtomString& trackIDString)
 {
     int trackID = trackIDString.toInt();
     if (trackID == m_enabledVideoTrackID) {
@@ -1223,10 +1223,10 @@ void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(int trackID)
         return;
 
     if (m_client)
-        m_client->sourceBufferPrivateDidBecomeReadyForMoreSamples(AtomicString::number(trackID));
+        m_client->sourceBufferPrivateDidBecomeReadyForMoreSamples(AtomString::number(trackID));
 }
 
-void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(const AtomicString& trackIDString)
+void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(const AtomString& trackIDString)
 {
     int trackID = trackIDString.toInt();
     if (trackID == m_enabledVideoTrackID) {
@@ -1284,7 +1284,7 @@ void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer
         }];
         [m_errorListener beginObservingLayer:m_displayLayer.get()];
         if (m_client)
-            m_client->sourceBufferPrivateReenqueSamples(AtomicString::number(m_enabledVideoTrackID));
+            m_client->sourceBufferPrivateReenqueSamples(AtomString::number(m_enabledVideoTrackID));
     }
 }
 
@@ -1314,7 +1314,7 @@ void SourceBufferPrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSes
             weakThis->m_mediaSource->player()->setHasAvailableVideoFrame(true);
     });
     if (m_client)
-        m_client->sourceBufferPrivateReenqueSamples(AtomicString::number(m_enabledVideoTrackID));
+        m_client->sourceBufferPrivateReenqueSamples(AtomString::number(m_enabledVideoTrackID));
 }
 
 #if !RELEASE_LOG_DISABLED

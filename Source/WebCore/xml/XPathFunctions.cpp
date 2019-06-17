@@ -304,13 +304,13 @@ Value FunPosition::evaluate() const
     return Expression::evaluationContext().position;
 }
 
-static AtomicString atomicSubstring(StringBuilder& builder, unsigned start, unsigned length)
+static AtomString atomicSubstring(StringBuilder& builder, unsigned start, unsigned length)
 {
     ASSERT(start <= builder.length());
     ASSERT(length <= builder.length() - start);
     if (builder.is8Bit())
-        return AtomicString(builder.characters8() + start, length);
-    return AtomicString(builder.characters16() + start, length);
+        return AtomString(builder.characters8() + start, length);
+    return AtomString(builder.characters16() + start, length);
 }
 
 Value FunId::evaluate() const
@@ -367,7 +367,7 @@ static inline String expandedNameLocalPart(Node* node)
 
 static inline String expandedName(Node* node)
 {
-    const AtomicString& prefix = node->prefix();
+    const AtomString& prefix = node->prefix();
     return prefix.isEmpty() ? expandedNameLocalPart(node) : prefix + ":" + expandedNameLocalPart(node);
 }
 

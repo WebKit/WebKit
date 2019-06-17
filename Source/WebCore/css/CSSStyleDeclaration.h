@@ -73,11 +73,11 @@ public:
     virtual CSSStyleSheet* parentStyleSheet() const { return nullptr; }
 
     // Bindings support.
-    Optional<Variant<String, double>> namedItem(const AtomicString&);
-    ExceptionOr<void> setNamedItem(const AtomicString& name, String value, bool& propertySupported);
-    Vector<AtomicString> supportedPropertyNames() const;
+    Optional<Variant<String, double>> namedItem(const AtomString&);
+    ExceptionOr<void> setNamedItem(const AtomString& name, String value, bool& propertySupported);
+    Vector<AtomString> supportedPropertyNames() const;
 
-    static CSSPropertyID getCSSPropertyIDFromJavaScriptPropertyName(const AtomicString&);
+    static CSSPropertyID getCSSPropertyIDFromJavaScriptPropertyName(const AtomString&);
 protected:
     CSSStyleDeclaration() = default;
 };

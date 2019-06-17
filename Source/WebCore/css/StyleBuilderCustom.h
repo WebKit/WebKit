@@ -145,8 +145,8 @@ public:
     static void applyValueStrokeWidth(StyleResolver&, CSSValue&);
     static void applyValueStrokeColor(StyleResolver&, CSSValue&);
 
-    static void applyInitialCustomProperty(StyleResolver&, const CSSRegisteredCustomProperty*, const AtomicString& name);
-    static void applyInheritCustomProperty(StyleResolver&, const CSSRegisteredCustomProperty*, const AtomicString& name);
+    static void applyInitialCustomProperty(StyleResolver&, const CSSRegisteredCustomProperty*, const AtomString& name);
+    static void applyInheritCustomProperty(StyleResolver&, const CSSRegisteredCustomProperty*, const AtomString& name);
     static void applyValueCustomProperty(StyleResolver&, const CSSRegisteredCustomProperty*, CSSCustomPropertyValue&);
 
 private:
@@ -901,12 +901,12 @@ inline void StyleBuilderCustom::applyValueFontFamily(StyleResolver& styleResolve
     // Before mapping in a new font-family property, we should reset the generic family.
     bool oldFamilyUsedFixedDefaultSize = fontDescription.useFixedDefaultSize();
 
-    Vector<AtomicString> families;
+    Vector<AtomString> families;
     families.reserveInitialCapacity(valueList.length());
 
     for (auto& item : valueList) {
         auto& contentValue = downcast<CSSPrimitiveValue>(item.get());
-        AtomicString family;
+        AtomString family;
         bool isGenericFamily = false;
         if (contentValue.isFontFamily()) {
             const CSSFontFamily& fontFamily = contentValue.fontFamily();
@@ -1135,7 +1135,7 @@ inline void StyleBuilderCustom::applyValueCounter(StyleResolver& styleResolver, 
 
     for (auto& item : downcast<CSSValueList>(value)) {
         Pair* pair = downcast<CSSPrimitiveValue>(item.get()).pairValue();
-        AtomicString identifier = pair->first()->stringValue();
+        AtomString identifier = pair->first()->stringValue();
         int value = pair->second()->intValue();
         auto& directives = map.add(identifier, CounterDirectives { }).iterator->value;
         if (counterBehavior == Reset)
@@ -1348,7 +1348,7 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
             else
                 const_cast<RenderStyle*>(styleResolver.parentStyle())->setHasAttrContent();
             QualifiedName attr(nullAtom(), contentValue.stringValue().impl(), nullAtom());
-            const AtomicString& value = styleResolver.element()->getAttribute(attr);
+            const AtomString& value = styleResolver.element()->getAttribute(attr);
             styleResolver.style()->setContent(value.isNull() ? emptyAtom() : value.impl(), didSet);
             didSet = true;
             // Register the fact that the attribute value affects the style.
@@ -1745,7 +1745,7 @@ void StyleBuilderCustom::applyValueAlt(StyleResolver& styleResolver, CSSValue& v
             const_cast<RenderStyle*>(styleResolver.parentStyle())->setUnique();
 
         QualifiedName attr(nullAtom(), primitiveValue.stringValue(), nullAtom());
-        const AtomicString& value = styleResolver.element()->getAttribute(attr);
+        const AtomString& value = styleResolver.element()->getAttribute(attr);
         styleResolver.style()->setContentAltText(value.isNull() ? emptyAtom() : value);
 
         // Register the fact that the attribute value affects the style.
@@ -1799,7 +1799,7 @@ inline void StyleBuilderCustom::applyValueStrokeColor(StyleResolver& styleResolv
     styleResolver.style()->setHasExplicitlySetStrokeColor(true);
 }
 
-inline void StyleBuilderCustom::applyInitialCustomProperty(StyleResolver& styleResolver, const CSSRegisteredCustomProperty* registered, const AtomicString& name)
+inline void StyleBuilderCustom::applyInitialCustomProperty(StyleResolver& styleResolver, const CSSRegisteredCustomProperty* registered, const AtomString& name)
 {
     if (registered && registered->initialValue()) {
         auto initialValue = registered->initialValueCopy();
@@ -1811,7 +1811,7 @@ inline void StyleBuilderCustom::applyInitialCustomProperty(StyleResolver& styleR
     applyValueCustomProperty(styleResolver, registered, invalid.get());
 }
 
-inline void StyleBuilderCustom::applyInheritCustomProperty(StyleResolver& styleResolver, const CSSRegisteredCustomProperty* registered, const AtomicString& name)
+inline void StyleBuilderCustom::applyInheritCustomProperty(StyleResolver& styleResolver, const CSSRegisteredCustomProperty* registered, const AtomString& name)
 {
     auto* parentValue = styleResolver.parentStyle() ? styleResolver.parentStyle()->inheritedCustomProperties().get(name) : nullptr;
     if (parentValue && !(registered && !registered->inherits))

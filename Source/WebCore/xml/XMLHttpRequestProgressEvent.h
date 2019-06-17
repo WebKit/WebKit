@@ -32,7 +32,7 @@ namespace WebCore {
 
 class XMLHttpRequestProgressEvent : public ProgressEvent {
 public:
-    static Ref<XMLHttpRequestProgressEvent> create(const AtomicString& type, bool lengthComputable = false, unsigned long long loaded = 0, unsigned long long total = 0)
+    static Ref<XMLHttpRequestProgressEvent> create(const AtomString& type, bool lengthComputable = false, unsigned long long loaded = 0, unsigned long long total = 0)
     {
         return adoptRef(*new XMLHttpRequestProgressEvent(type, lengthComputable, loaded, total));
     }
@@ -43,7 +43,7 @@ public:
     EventInterface eventInterface() const override { return XMLHttpRequestProgressEventInterfaceType; }
 
 private:
-    XMLHttpRequestProgressEvent(const AtomicString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total)
+    XMLHttpRequestProgressEvent(const AtomString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total)
         : ProgressEvent(type, lengthComputable, loaded, total)
     {
     }

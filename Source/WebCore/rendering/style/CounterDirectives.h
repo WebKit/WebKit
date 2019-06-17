@@ -21,7 +21,7 @@
 #pragma once
 
 #include <wtf/HashMap.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
@@ -40,6 +40,6 @@ constexpr bool operator!=(const CounterDirectives& a, const CounterDirectives& b
     return !(a == b);
 }
 
-using CounterDirectiveMap = HashMap<AtomicString, CounterDirectives>;
+using CounterDirectiveMap = HashMap<AtomString, CounterDirectives>;
 
 } // namespace WebCore

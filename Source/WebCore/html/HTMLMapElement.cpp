@@ -83,7 +83,7 @@ HTMLImageElement* HTMLMapElement::imageElement()
     return treeScope().imageElementByUsemap(*m_name.impl());
 }
 
-void HTMLMapElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLMapElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     // FIXME: This logic seems wrong for XML documents.
     // Either the id or name will be used depending on the order the attributes are parsed.

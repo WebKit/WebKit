@@ -1079,7 +1079,7 @@ void XMLHttpRequest::dispatchEvent(Event& event)
     EventTarget::dispatchEvent(event);
 }
 
-void XMLHttpRequest::dispatchErrorEvents(const AtomicString& type)
+void XMLHttpRequest::dispatchErrorEvents(const AtomString& type)
 {
     if (!m_uploadComplete) {
         m_uploadComplete = true;

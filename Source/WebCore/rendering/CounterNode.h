@@ -63,7 +63,7 @@ public:
     CounterNode* nextInPreOrder(const CounterNode* stayWithin = nullptr) const;
     CounterNode* nextInPreOrderAfterChildren(const CounterNode* stayWithin = nullptr) const;
 
-    void insertAfter(CounterNode& newChild, CounterNode* beforeChild, const AtomicString& identifier);
+    void insertAfter(CounterNode& newChild, CounterNode* beforeChild, const AtomString& identifier);
     // identifier must match the identifier of this counter.
     void removeChild(CounterNode&);
 

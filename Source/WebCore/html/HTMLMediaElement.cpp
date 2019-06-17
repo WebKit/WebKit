@@ -804,7 +804,7 @@ bool HTMLMediaElement::isMouseFocusable() const
     return false;
 }
 
-void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == srcAttr) {
         // https://html.spec.whatwg.org/multipage/embedded-content.html#location-of-the-media-resource
@@ -1010,7 +1010,7 @@ void HTMLMediaElement::mediaPlayerActiveSourceBuffersChanged(const MediaPlayer*)
     m_hasEverHadVideo |= hasVideo();
 }
 
-void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
+void HTMLMediaElement::scheduleEvent(const AtomString& eventName)
 {
     auto event = Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::Yes);
 
@@ -1121,7 +1121,7 @@ void HTMLMediaElement::setSrcObject(MediaProvider&& mediaProvider)
     prepareForLoad();
 }
 
-void HTMLMediaElement::setCrossOrigin(const AtomicString& value)
+void HTMLMediaElement::setCrossOrigin(const AtomString& value)
 {
     setAttributeWithoutSynchronization(crossoriginAttr, value);
 }
@@ -5922,7 +5922,7 @@ void HTMLMediaElement::dispatchEvent(Event& event)
     HTMLElement::dispatchEvent(event);
 }
 
-bool HTMLMediaElement::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+bool HTMLMediaElement::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     if (eventType != eventNames().webkitplaybacktargetavailabilitychangedEvent)
         return Node::addEventListener(eventType, WTFMove(listener), options);
@@ -5942,7 +5942,7 @@ bool HTMLMediaElement::addEventListener(const AtomicString& eventType, Ref<Event
     return true;
 }
 
-bool HTMLMediaElement::removeEventListener(const AtomicString& eventType, EventListener& listener, const ListenerOptions& options)
+bool HTMLMediaElement::removeEventListener(const AtomString& eventType, EventListener& listener, const ListenerOptions& options)
 {
     if (eventType != eventNames().webkitplaybacktargetavailabilitychangedEvent)
         return Node::removeEventListener(eventType, listener, options);
@@ -7875,7 +7875,7 @@ bool HTMLMediaElement::effectiveMuted() const
     return muted() || (document().page() && document().page()->isAudioMuted());
 }
 
-bool HTMLMediaElement::doesHaveAttribute(const AtomicString& attribute, AtomicString* value) const
+bool HTMLMediaElement::doesHaveAttribute(const AtomString& attribute, AtomString* value) const
 {
     QualifiedName attributeName(nullAtom(), attribute, nullAtom());
 

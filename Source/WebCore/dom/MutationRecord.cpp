@@ -61,7 +61,7 @@ public:
     }
 
 private:
-    const AtomicString& type() override;
+    const AtomString& type() override;
     Node* target() override { return m_target.ptr(); }
     NodeList* addedNodes() override { return m_addedNodes.get(); }
     NodeList* removedNodes() override { return m_removedNodes.get(); }
@@ -118,7 +118,7 @@ private:
 
 class AttributesRecord final : public RecordWithEmptyNodeLists {
 public:
-    AttributesRecord(Element& target, const QualifiedName& name, const AtomicString& oldValue)
+    AttributesRecord(Element& target, const QualifiedName& name, const AtomString& oldValue)
         : RecordWithEmptyNodeLists(target, oldValue)
         , m_attributeName(name.localName())
         , m_attributeNamespace(name.namespaceURI())
@@ -126,12 +126,12 @@ public:
     }
 
 private:
-    const AtomicString& type() override;
-    const AtomicString& attributeName() override { return m_attributeName; }
-    const AtomicString& attributeNamespace() override { return m_attributeNamespace; }
+    const AtomString& type() override;
+    const AtomString& attributeName() override { return m_attributeName; }
+    const AtomString& attributeNamespace() override { return m_attributeNamespace; }
 
-    AtomicString m_attributeName;
-    AtomicString m_attributeNamespace;
+    AtomString m_attributeName;
+    AtomString m_attributeNamespace;
 };
 
 class CharacterDataRecord : public RecordWithEmptyNodeLists {
@@ -142,7 +142,7 @@ public:
     }
 
 private:
-    const AtomicString& type() override;
+    const AtomString& type() override;
 };
 
 class MutationRecordWithNullOldValue final : public MutationRecord {
@@ -153,14 +153,14 @@ public:
     }
 
 private:
-    const AtomicString& type() override { return m_record->type(); }
+    const AtomString& type() override { return m_record->type(); }
     Node* target() override { return m_record->target(); }
     NodeList* addedNodes() override { return m_record->addedNodes(); }
     NodeList* removedNodes() override { return m_record->removedNodes(); }
     Node* previousSibling() override { return m_record->previousSibling(); }
     Node* nextSibling() override { return m_record->nextSibling(); }
-    const AtomicString& attributeName() override { return m_record->attributeName(); }
-    const AtomicString& attributeNamespace() override { return m_record->attributeNamespace(); }
+    const AtomString& attributeName() override { return m_record->attributeName(); }
+    const AtomString& attributeNamespace() override { return m_record->attributeNamespace(); }
 
     String oldValue() override { return String(); }
 
@@ -172,21 +172,21 @@ private:
     Ref<MutationRecord> m_record;
 };
 
-const AtomicString& ChildListRecord::type()
+const AtomString& ChildListRecord::type()
 {
-    static NeverDestroyed<AtomicString> childList("childList", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> childList("childList", AtomString::ConstructFromLiteral);
     return childList;
 }
 
-const AtomicString& AttributesRecord::type()
+const AtomString& AttributesRecord::type()
 {
-    static NeverDestroyed<AtomicString> attributes("attributes", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> attributes("attributes", AtomString::ConstructFromLiteral);
     return attributes;
 }
 
-const AtomicString& CharacterDataRecord::type()
+const AtomString& CharacterDataRecord::type()
 {
-    static NeverDestroyed<AtomicString> characterData("characterData", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> characterData("characterData", AtomString::ConstructFromLiteral);
     return characterData;
 }
 
@@ -197,7 +197,7 @@ Ref<MutationRecord> MutationRecord::createChildList(ContainerNode& target, Ref<N
     return adoptRef(static_cast<MutationRecord&>(*new ChildListRecord(target, WTFMove(added), WTFMove(removed), WTFMove(previousSibling), WTFMove(nextSibling))));
 }
 
-Ref<MutationRecord> MutationRecord::createAttributes(Element& target, const QualifiedName& name, const AtomicString& oldValue)
+Ref<MutationRecord> MutationRecord::createAttributes(Element& target, const QualifiedName& name, const AtomString& oldValue)
 {
     return adoptRef(static_cast<MutationRecord&>(*new AttributesRecord(target, name, oldValue)));
 }

@@ -61,7 +61,7 @@ public:
 
 private:
     typedef ListHashSet<RefPtr<HTMLFormControlElementWithState>> FormElementListHashSet;
-    typedef HashMap<RefPtr<AtomicStringImpl>, std::unique_ptr<SavedFormState>> SavedFormStateMap;
+    typedef HashMap<RefPtr<AtomStringImpl>, std::unique_ptr<SavedFormState>> SavedFormStateMap;
 
     static std::unique_ptr<SavedFormStateMap> createSavedFormStateMap(const FormElementListHashSet&);
     FormControlState takeStateForFormElement(const HTMLFormControlElementWithState&);

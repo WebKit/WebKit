@@ -52,7 +52,7 @@ static bool isValidEmailAddress(const String& address)
     return !matchOffset && matchLength == addressLength;
 }
 
-const AtomicString& EmailInputType::formControlType() const
+const AtomString& EmailInputType::formControlType() const
 {
     return InputTypeNames::email();
 }

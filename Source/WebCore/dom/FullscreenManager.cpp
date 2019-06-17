@@ -458,7 +458,7 @@ void FullscreenManager::dispatchFullscreenChangeEvents()
     dispatchFullscreenChangeOrErrorEvent(errorQueue, eventNames().webkitfullscreenerrorEvent, /* shouldNotifyMediaElement */ false);
 }
 
-void FullscreenManager::dispatchFullscreenChangeOrErrorEvent(Deque<RefPtr<Node>>& queue, const AtomicString& eventName, bool shouldNotifyMediaElement)
+void FullscreenManager::dispatchFullscreenChangeOrErrorEvent(Deque<RefPtr<Node>>& queue, const AtomString& eventName, bool shouldNotifyMediaElement)
 {
     while (!queue.isEmpty()) {
         RefPtr<Node> node = queue.takeFirst();

@@ -147,7 +147,7 @@ private:
     Vector<PlatformTimeRanges> activeRanges() const;
 
     ExceptionOr<Ref<SourceBufferPrivate>> createSourceBufferPrivate(const ContentType&);
-    void scheduleEvent(const AtomicString& eventName);
+    void scheduleEvent(const AtomString& eventName);
 
     bool hasBufferedTime(const MediaTime&);
     bool hasCurrentTime();

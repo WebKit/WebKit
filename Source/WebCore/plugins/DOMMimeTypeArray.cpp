@@ -25,7 +25,7 @@
 #include "Page.h"
 #include "PluginData.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -65,7 +65,7 @@ RefPtr<DOMMimeType> DOMMimeTypeArray::item(unsigned index)
     return DOMMimeType::create(data, frame(), index);
 }
 
-RefPtr<DOMMimeType> DOMMimeTypeArray::namedItem(const AtomicString& propertyName)
+RefPtr<DOMMimeType> DOMMimeTypeArray::namedItem(const AtomString& propertyName)
 {
     PluginData* data = getPluginData();
     if (!data)
@@ -81,7 +81,7 @@ RefPtr<DOMMimeType> DOMMimeTypeArray::namedItem(const AtomicString& propertyName
     return nullptr;
 }
 
-Vector<AtomicString> DOMMimeTypeArray::supportedPropertyNames()
+Vector<AtomString> DOMMimeTypeArray::supportedPropertyNames()
 {
     PluginData* data = getPluginData();
     if (!data)
@@ -91,7 +91,7 @@ Vector<AtomicString> DOMMimeTypeArray::supportedPropertyNames()
     Vector<size_t> mimePluginIndices;
     data->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
 
-    Vector<AtomicString> result;
+    Vector<AtomString> result;
     result.reserveInitialCapacity(mimes.size());
     for (auto& info : mimes)
         result.uncheckedAppend(WTFMove(info.type));

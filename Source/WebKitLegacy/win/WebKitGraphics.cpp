@@ -46,7 +46,7 @@ using namespace WebCore;
 
 static FontCascade makeFont(const WebFontDescription& description)
 {
-    AtomicString::init();
+    AtomString::init();
 
     String fontFamilyString(description.family, description.familyLength);
 

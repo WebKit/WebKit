@@ -102,7 +102,7 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
             auto& parameterNamedType = downcast<AST::NamedType>(parameterType);
             if (is<AST::NativeTypeDeclaration>(parameterNamedType)) {
                 auto& parameterNativeTypeDeclaration = downcast<AST::NativeTypeDeclaration>(parameterNamedType);
-                if (parameterNativeTypeDeclaration.isAtomic()) {
+                if (parameterNativeTypeDeclaration.isAtom()) {
                     stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"));
                     stringBuilder.append("    return atomic_load_explicit(&x, memory_order_relaxed);\n");
                     stringBuilder.append("}\n");

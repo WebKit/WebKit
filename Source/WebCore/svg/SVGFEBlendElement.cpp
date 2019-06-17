@@ -51,7 +51,7 @@ Ref<SVGFEBlendElement> SVGFEBlendElement::create(const QualifiedName& tagName, D
     return adoptRef(*new SVGFEBlendElement(tagName, document));
 }
     
-void SVGFEBlendElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGFEBlendElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::modeAttr) {
         BlendMode mode = BlendMode::Normal;

@@ -35,8 +35,8 @@ public:
     ~SearchPopupMenuMac();
 
     WebCore::PopupMenu* popupMenu() override;
-    void saveRecentSearches(const AtomicString& name, const Vector<WebCore::RecentSearch>&) override;
-    void loadRecentSearches(const AtomicString& name, Vector<WebCore::RecentSearch>&) override;
+    void saveRecentSearches(const AtomString& name, const Vector<WebCore::RecentSearch>&) override;
+    void loadRecentSearches(const AtomString& name, Vector<WebCore::RecentSearch>&) override;
     bool enabled() override;
 
 private:

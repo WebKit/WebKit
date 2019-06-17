@@ -52,10 +52,10 @@ namespace NetworkCache {
 
 using namespace FileSystem;
 
-static const AtomicString& resourceType()
+static const AtomString& resourceType()
 {
     ASSERT(WTF::RunLoop::isMain());
-    static NeverDestroyed<const AtomicString> resource("Resource", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> resource("Resource", AtomString::ConstructFromLiteral);
     return resource;
 }
 

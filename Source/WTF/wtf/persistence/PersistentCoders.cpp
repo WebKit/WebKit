@@ -32,18 +32,18 @@
 namespace WTF {
 namespace Persistence {
 
-void Coder<AtomicString>::encode(Encoder& encoder, const AtomicString& atomicString)
+void Coder<AtomString>::encode(Encoder& encoder, const AtomString& atomString)
 {
-    encoder << atomicString.string();
+    encoder << atomString.string();
 }
 
-bool Coder<AtomicString>::decode(Decoder& decoder, AtomicString& atomicString)
+bool Coder<AtomString>::decode(Decoder& decoder, AtomString& atomString)
 {
     String string;
     if (!decoder.decode(string))
         return false;
 
-    atomicString = string;
+    atomString = string;
     return true;
 }
 

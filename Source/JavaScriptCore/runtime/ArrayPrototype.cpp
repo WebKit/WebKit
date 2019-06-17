@@ -686,7 +686,7 @@ static JSValue slowJoin(ExecState& exec, JSObject* thisObject, JSString* separat
     // 9.e Increase k by 1..
     for (uint64_t k = 1; k < length; ++k) {
         // b. Let element be ? Get(O, ! ToString(k)).
-        JSValue element = thisObject->get(&exec, Identifier::fromString(&exec, AtomicString::number(k)));
+        JSValue element = thisObject->get(&exec, Identifier::fromString(&exec, AtomString::number(k)));
         RETURN_IF_EXCEPTION(scope, { });
 
         // c. If element is undefined or null, let next be the empty String; otherwise, let next be ? ToString(element).

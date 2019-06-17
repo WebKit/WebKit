@@ -172,7 +172,7 @@ void SVGTRefElement::detachTarget()
         document().accessSVGExtensions().addPendingResource(target.identifier, *this);
 }
 
-void SVGTRefElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGTRefElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     SVGTextPositioningElement::parseAttribute(name, value);
     SVGURIReference::parseAttribute(name, value);

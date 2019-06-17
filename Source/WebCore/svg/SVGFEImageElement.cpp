@@ -115,7 +115,7 @@ void SVGFEImageElement::buildPendingResource()
     invalidate();
 }
 
-void SVGFEImageElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGFEImageElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::preserveAspectRatioAttr) {
         SVGPreserveAspectRatioValue preserveAspectRatio;

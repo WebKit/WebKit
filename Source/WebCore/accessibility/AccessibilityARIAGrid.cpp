@@ -81,7 +81,7 @@ bool AccessibilityARIAGrid::addTableCellChild(AccessibilityObject* child, HashSe
 
 bool AccessibilityARIAGrid::isMultiSelectable() const
 {
-    const AtomicString& ariaMultiSelectable = getAttribute(HTMLNames::aria_multiselectableAttr);
+    const AtomString& ariaMultiSelectable = getAttribute(HTMLNames::aria_multiselectableAttr);
     return !equalLettersIgnoringASCIICase(ariaMultiSelectable, "false");
 }
 

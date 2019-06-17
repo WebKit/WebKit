@@ -262,9 +262,9 @@ static Ref<DocumentFragment> createFragmentForImageAttachment(Frame& frame, Docu
             image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, Blob::create(buffer.get(), contentType)));
             image->setAttachmentElement(WTFMove(attachment));
             if (preferredSize.width)
-                image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomicString::number(*preferredSize.width));
+                image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString::number(*preferredSize.width));
             if (preferredSize.height)
-                image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomicString::number(*preferredSize.height));
+                image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomString::number(*preferredSize.height));
             fragment->appendChild(WTFMove(image));
         } else {
             attachment->updateAttributes(buffer->size(), contentType, defaultImageAttachmentName);
@@ -296,7 +296,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
         return;
 
     // FIXME: Handle resources in subframe archives.
-    HashMap<AtomicString, Ref<ArchiveResource>> urlToResourceMap;
+    HashMap<AtomString, Ref<ArchiveResource>> urlToResourceMap;
     for (auto& subresource : subresources) {
         auto& url = subresource->url();
         if (shouldReplaceSubresourceURL(url))
@@ -332,7 +332,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
         if (name.isEmpty())
             name = URL({ }, resourceURLString).lastPathComponent();
         if (name.isEmpty())
-            name = AtomicString("media");
+            name = AtomString("media");
 
         attachmentInsertionInfo.append({ name, resource->value->mimeType(), resource->value->data(), image });
     }
@@ -350,7 +350,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
 
         auto name = URL({ }, resourceURLString).lastPathComponent();
         if (name.isEmpty())
-            name = AtomicString("file");
+            name = AtomString("file");
 
         attachmentInsertionInfo.append({ name, resource->value->mimeType(), resource->value->data(), object });
     }
@@ -413,7 +413,7 @@ RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttribute
         return WTFMove(fragmentAndResources.fragment);
     }
 
-    HashMap<AtomicString, AtomicString> blobURLMap;
+    HashMap<AtomString, AtomString> blobURLMap;
     for (const Ref<ArchiveResource>& subresource : fragmentAndResources.resources) {
         auto blob = Blob::create(subresource->data(), subresource->mimeType());
         String blobURL = DOMURL::createObjectURL(document, blob);
@@ -459,7 +459,7 @@ static String sanitizeMarkupWithArchive(Frame& frame, Document& destinationDocum
         return sanitizedMarkupForFragmentInDocument(WTFMove(fragment), *stagingDocument, msoListQuirks, markupAndArchive.markup);
     }
 
-    HashMap<AtomicString, AtomicString> blobURLMap;
+    HashMap<AtomString, AtomString> blobURLMap;
     for (const Ref<ArchiveResource>& subresource : markupAndArchive.archive->subresources()) {
         auto& subresourceURL = subresource->url();
         if (!shouldReplaceSubresourceURL(subresourceURL))
@@ -739,9 +739,9 @@ static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path, 
         image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, File::create(path)));
         image->setAttachmentElement(WTFMove(attachment));
         if (preferredSize.width)
-            image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomicString::number(*preferredSize.width));
+            image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString::number(*preferredSize.width));
         if (preferredSize.height)
-            image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomicString::number(*preferredSize.height));
+            image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomString::number(*preferredSize.height));
         return image;
     }
 
@@ -776,9 +776,9 @@ static Ref<HTMLElement> attachmentForData(Frame& frame, SharedBuffer& buffer, co
         image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, File::create(Blob::create(buffer, WTFMove(attachmentType)), WTFMove(fileName))));
         image->setAttachmentElement(WTFMove(attachment));
         if (preferredSize.width)
-            image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomicString::number(*preferredSize.width));
+            image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString::number(*preferredSize.width));
         if (preferredSize.height)
-            image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomicString::number(*preferredSize.height));
+            image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomString::number(*preferredSize.height));
         return image;
     }
 

@@ -45,17 +45,17 @@ void NamedNodeMap::deref()
     m_element.deref();
 }
 
-RefPtr<Attr> NamedNodeMap::getNamedItem(const AtomicString& name) const
+RefPtr<Attr> NamedNodeMap::getNamedItem(const AtomString& name) const
 {
     return m_element.getAttributeNode(name);
 }
 
-RefPtr<Attr> NamedNodeMap::getNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName) const
+RefPtr<Attr> NamedNodeMap::getNamedItemNS(const AtomString& namespaceURI, const AtomString& localName) const
 {
     return m_element.getAttributeNodeNS(namespaceURI, localName);
 }
 
-ExceptionOr<Ref<Attr>> NamedNodeMap::removeNamedItem(const AtomicString& name)
+ExceptionOr<Ref<Attr>> NamedNodeMap::removeNamedItem(const AtomString& name)
 {
     if (!m_element.hasAttributes())
         return Exception { NotFoundError };
@@ -80,7 +80,7 @@ Vector<String> NamedNodeMap::supportedPropertyNames() const
     return names;
 }
 
-ExceptionOr<Ref<Attr>> NamedNodeMap::removeNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName)
+ExceptionOr<Ref<Attr>> NamedNodeMap::removeNamedItemNS(const AtomString& namespaceURI, const AtomString& localName)
 {
     if (!m_element.hasAttributes())
         return Exception { NotFoundError };

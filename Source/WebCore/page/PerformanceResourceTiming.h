@@ -46,7 +46,7 @@ class PerformanceResourceTiming final : public PerformanceEntry {
 public:
     static Ref<PerformanceResourceTiming> create(MonotonicTime timeOrigin, ResourceTiming&&);
 
-    AtomicString initiatorType() const { return m_initiatorType; }
+    AtomString initiatorType() const { return m_initiatorType; }
     String nextHopProtocol() const;
 
     double workerStart() const;
@@ -69,7 +69,7 @@ private:
 
     double networkLoadTimeToDOMHighResTimeStamp(Seconds) const;
 
-    AtomicString m_initiatorType;
+    AtomString m_initiatorType;
     MonotonicTime m_timeOrigin;
     LoadTiming m_loadTiming;
     NetworkLoadMetrics m_networkLoadMetrics;

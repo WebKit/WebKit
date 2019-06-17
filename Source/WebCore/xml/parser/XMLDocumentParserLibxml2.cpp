@@ -673,14 +673,14 @@ static inline String toString(const xmlChar* string)
     return String::fromUTF8(reinterpret_cast<const char*>(string));
 }
 
-static inline AtomicString toAtomicString(const xmlChar* string, size_t size)
+static inline AtomString toAtomString(const xmlChar* string, size_t size)
 {
-    return AtomicString::fromUTF8(reinterpret_cast<const char*>(string), size);
+    return AtomString::fromUTF8(reinterpret_cast<const char*>(string), size);
 }
 
-static inline AtomicString toAtomicString(const xmlChar* string)
+static inline AtomString toAtomString(const xmlChar* string)
 {
-    return AtomicString::fromUTF8(reinterpret_cast<const char*>(string));
+    return AtomString::fromUTF8(reinterpret_cast<const char*>(string));
 }
 
 struct _xmlSAX2Namespace {
@@ -693,8 +693,8 @@ static inline bool handleNamespaceAttributes(Vector<Attribute>& prefixedAttribut
 {
     xmlSAX2Namespace* namespaces = reinterpret_cast<xmlSAX2Namespace*>(libxmlNamespaces);
     for (int i = 0; i < numNamespaces; i++) {
-        AtomicString namespaceQName = xmlnsAtom();
-        AtomicString namespaceURI = toAtomicString(namespaces[i].uri);
+        AtomString namespaceQName = xmlnsAtom();
+        AtomString namespaceURI = toAtomString(namespaces[i].uri);
         if (namespaces[i].prefix)
             namespaceQName = "xmlns:" + toString(namespaces[i].prefix);
 
@@ -721,10 +721,10 @@ static inline bool handleElementAttributes(Vector<Attribute>& prefixedAttributes
     xmlSAX2Attributes* attributes = reinterpret_cast<xmlSAX2Attributes*>(libxmlAttributes);
     for (int i = 0; i < numAttributes; i++) {
         int valueLength = static_cast<int>(attributes[i].end - attributes[i].value);
-        AtomicString attrValue = toAtomicString(attributes[i].value, valueLength);
+        AtomString attrValue = toAtomString(attributes[i].value, valueLength);
         String attrPrefix = toString(attributes[i].prefix);
-        AtomicString attrURI = attrPrefix.isEmpty() ? nullAtom() : toAtomicString(attributes[i].uri);
-        AtomicString attrQName = attrPrefix.isEmpty() ? toAtomicString(attributes[i].localname) : attrPrefix + ":" + toString(attributes[i].localname);
+        AtomString attrURI = attrPrefix.isEmpty() ? nullAtom() : toAtomString(attributes[i].uri);
+        AtomString attrQName = attrPrefix.isEmpty() ? toAtomString(attributes[i].localname) : attrPrefix + ":" + toString(attributes[i].localname);
 
         auto result = Element::parseAttributeName(attrURI, attrQName);
         if (result.hasException())
@@ -761,9 +761,9 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     if (!updateLeafTextNode())
         return;
 
-    AtomicString localName = toAtomicString(xmlLocalName);
-    AtomicString uri = toAtomicString(xmlURI);
-    AtomicString prefix = toAtomicString(xmlPrefix);
+    AtomString localName = toAtomString(xmlLocalName);
+    AtomString uri = toAtomString(xmlURI);
+    AtomString prefix = toAtomString(xmlPrefix);
 
     if (m_parsingFragment && uri.isNull()) {
         if (!prefix.isNull())

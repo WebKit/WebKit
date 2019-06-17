@@ -71,7 +71,7 @@ Ref<SVGPatternElement> SVGPatternElement::create(const QualifiedName& tagName, D
     return adoptRef(*new SVGPatternElement(tagName, document));
 }
 
-void SVGPatternElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGPatternElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::patternUnitsAttr) {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);

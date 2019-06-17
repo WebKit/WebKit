@@ -93,7 +93,7 @@ void SourceBufferList::swap(Vector<RefPtr<SourceBuffer>>& other)
         scheduleEvent(eventNames().removesourcebufferEvent);
 }
 
-void SourceBufferList::scheduleEvent(const AtomicString& eventName)
+void SourceBufferList::scheduleEvent(const AtomString& eventName)
 {
     auto event = Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::No);
     event->setTarget(this);

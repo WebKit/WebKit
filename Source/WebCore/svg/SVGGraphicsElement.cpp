@@ -123,7 +123,7 @@ AffineTransform* SVGGraphicsElement::supplementalTransform()
     return m_supplementalTransform.get();
 }
 
-void SVGGraphicsElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGGraphicsElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::transformAttr) {
         m_transform->baseVal()->parse(value);

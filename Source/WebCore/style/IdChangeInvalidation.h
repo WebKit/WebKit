@@ -33,19 +33,19 @@ namespace Style {
 
 class IdChangeInvalidation {
 public:
-    IdChangeInvalidation(Element&, const AtomicString& oldId, const AtomicString& newId);
+    IdChangeInvalidation(Element&, const AtomString& oldId, const AtomString& newId);
     ~IdChangeInvalidation();
 
 private:
-    void invalidateStyle(const AtomicString&);
+    void invalidateStyle(const AtomString&);
 
     const bool m_isEnabled;
     Element& m_element;
 
-    AtomicString m_newId;
+    AtomString m_newId;
 };
 
-inline IdChangeInvalidation::IdChangeInvalidation(Element& element, const AtomicString& oldId, const AtomicString& newId)
+inline IdChangeInvalidation::IdChangeInvalidation(Element& element, const AtomString& oldId, const AtomString& newId)
     : m_isEnabled(element.needsStyleInvalidation())
     , m_element(element)
 {

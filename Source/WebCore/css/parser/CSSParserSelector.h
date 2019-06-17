@@ -22,8 +22,8 @@
 
 #include "CSSSelector.h"
 #include "CSSValueKeywords.h"
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -43,7 +43,7 @@ class CSSParserSelector {
 public:
     static CSSParserSelector* parsePseudoClassSelectorFromStringView(StringView&);
     static CSSParserSelector* parsePseudoElementSelectorFromStringView(StringView&);
-    static CSSParserSelector* parsePagePseudoSelector(const AtomicString&);
+    static CSSParserSelector* parsePagePseudoSelector(const AtomString&);
     
     CSSParserSelector();
     explicit CSSParserSelector(const QualifiedName&);
@@ -51,11 +51,11 @@ public:
 
     std::unique_ptr<CSSSelector> releaseSelector() { return WTFMove(m_selector); }
 
-    void setValue(const AtomicString& value, bool matchLowerCase = false) { m_selector->setValue(value, matchLowerCase); }
+    void setValue(const AtomString& value, bool matchLowerCase = false) { m_selector->setValue(value, matchLowerCase); }
 
     void setAttribute(const QualifiedName& value, bool convertToLowercase, CSSSelector::AttributeMatchType type) { m_selector->setAttribute(value, convertToLowercase, type); }
     
-    void setArgument(const AtomicString& value) { m_selector->setArgument(value); }
+    void setArgument(const AtomString& value) { m_selector->setArgument(value); }
     void setNth(int a, int b) { m_selector->setNth(a, b); }
     void setMatch(CSSSelector::Match value) { m_selector->setMatch(value); }
     void setRelation(CSSSelector::RelationType value) { m_selector->setRelation(value); }
@@ -68,7 +68,7 @@ public:
     void setPseudoElementType(CSSSelector::PseudoElementType type) { m_selector->setPseudoElementType(type); }
 
     void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>&&);
-    void setLangArgumentList(std::unique_ptr<Vector<AtomicString>>);
+    void setLangArgumentList(std::unique_ptr<Vector<AtomString>>);
     void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
     CSSSelector::PseudoClassType pseudoClassType() const { return m_selector->pseudoClassType(); }

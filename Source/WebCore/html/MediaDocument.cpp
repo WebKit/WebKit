@@ -100,8 +100,8 @@ void MediaDocumentParser::createDocumentStructure()
     rootElement->appendChild(headElement);
 
     auto metaElement = HTMLMetaElement::create(document);
-    metaElement->setAttributeWithoutSynchronization(nameAttr, AtomicString("viewport", AtomicString::ConstructFromLiteral));
-    metaElement->setAttributeWithoutSynchronization(contentAttr, AtomicString("width=device-width,initial-scale=1", AtomicString::ConstructFromLiteral));
+    metaElement->setAttributeWithoutSynchronization(nameAttr, AtomString("viewport", AtomString::ConstructFromLiteral));
+    metaElement->setAttributeWithoutSynchronization(contentAttr, AtomString("width=device-width,initial-scale=1", AtomString::ConstructFromLiteral));
     headElement->appendChild(metaElement);
 #endif
 
@@ -245,15 +245,15 @@ void MediaDocument::replaceMediaElementTimerFired()
         return;
 
     // Set body margin width and height to 0 as that is what a PluginDocument uses.
-    htmlBody->setAttributeWithoutSynchronization(marginwidthAttr, AtomicString("0", AtomicString::ConstructFromLiteral));
-    htmlBody->setAttributeWithoutSynchronization(marginheightAttr, AtomicString("0", AtomicString::ConstructFromLiteral));
+    htmlBody->setAttributeWithoutSynchronization(marginwidthAttr, AtomString("0", AtomString::ConstructFromLiteral));
+    htmlBody->setAttributeWithoutSynchronization(marginheightAttr, AtomString("0", AtomString::ConstructFromLiteral));
 
     if (auto videoElement = makeRefPtr(descendantVideoElement(*htmlBody))) {
         auto embedElement = HTMLEmbedElement::create(*this);
 
-        embedElement->setAttributeWithoutSynchronization(widthAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
-        embedElement->setAttributeWithoutSynchronization(heightAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
-        embedElement->setAttributeWithoutSynchronization(nameAttr, AtomicString("plugin", AtomicString::ConstructFromLiteral));
+        embedElement->setAttributeWithoutSynchronization(widthAttr, AtomString("100%", AtomString::ConstructFromLiteral));
+        embedElement->setAttributeWithoutSynchronization(heightAttr, AtomString("100%", AtomString::ConstructFromLiteral));
+        embedElement->setAttributeWithoutSynchronization(nameAttr, AtomString("plugin", AtomString::ConstructFromLiteral));
         embedElement->setAttributeWithoutSynchronization(srcAttr, url().string());
 
         ASSERT(loader());

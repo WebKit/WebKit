@@ -61,9 +61,9 @@ public:
     VideoTrackPrivate::Kind videoKind() const;
 
     int index() const;
-    AtomicString id() const;
-    AtomicString label() const;
-    AtomicString language() const;
+    AtomString id() const;
+    AtomString label() const;
+    AtomString language() const;
 
     int trackID() const;
 

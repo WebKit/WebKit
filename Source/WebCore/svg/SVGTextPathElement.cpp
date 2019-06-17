@@ -62,7 +62,7 @@ void SVGTextPathElement::clearResourceReferences()
     document().accessSVGExtensions().removeAllTargetReferencesForElement(*this);
 }
 
-void SVGTextPathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGTextPathElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     SVGParsingError parseError = NoError;
 

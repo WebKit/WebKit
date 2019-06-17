@@ -41,7 +41,7 @@ public:
     explicit DateInputType(HTMLInputElement&);
 
 private:
-    const AtomicString& formControlType() const override;
+    const AtomString& formControlType() const override;
     DateComponents::Type dateType() const override;
     StepRange createStepRange(AnyStepHandling) const override;
     bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const override;

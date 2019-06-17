@@ -52,7 +52,7 @@ CachedSVGFont::CachedSVGFont(CachedResourceRequest&& request, const PAL::Session
 {
 }
 
-RefPtr<Font> CachedSVGFont::createFont(const FontDescription& fontDescription, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
+RefPtr<Font> CachedSVGFont::createFont(const FontDescription& fontDescription, const AtomString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
 {
     ASSERT(firstFontFace(remoteURI));
     return CachedFont::createFont(fontDescription, remoteURI, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities);
@@ -65,7 +65,7 @@ FontPlatformData CachedSVGFont::platformDataFromCustomData(const FontDescription
     return CachedFont::platformDataFromCustomData(fontDescription, bold, italic, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities);
 }
 
-bool CachedSVGFont::ensureCustomFontData(const AtomicString& remoteURI)
+bool CachedSVGFont::ensureCustomFontData(const AtomString& remoteURI)
 {
     if (!m_externalSVGDocument && !errorOccurred() && !isLoading() && m_data) {
         bool sawError = false;
@@ -114,7 +114,7 @@ SVGFontElement* CachedSVGFont::getSVGFontById(const String& fontName) const
     return nullptr;
 }
 
-SVGFontElement* CachedSVGFont::maybeInitializeExternalSVGFontElement(const AtomicString& remoteURI)
+SVGFontElement* CachedSVGFont::maybeInitializeExternalSVGFontElement(const AtomString& remoteURI)
 {
     if (m_externalSVGFontElement)
         return m_externalSVGFontElement;
@@ -126,7 +126,7 @@ SVGFontElement* CachedSVGFont::maybeInitializeExternalSVGFontElement(const Atomi
     return m_externalSVGFontElement;
 }
 
-SVGFontFaceElement* CachedSVGFont::firstFontFace(const AtomicString& remoteURI)
+SVGFontFaceElement* CachedSVGFont::firstFontFace(const AtomString& remoteURI)
 {
     if (!maybeInitializeExternalSVGFontElement(remoteURI))
         return nullptr;

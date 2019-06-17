@@ -282,9 +282,9 @@ template<> struct Coder<WallTime> {
     }
 };
 
-template<> struct Coder<AtomicString> {
-    WTF_EXPORT_PRIVATE static void encode(Encoder&, const AtomicString&);
-    WTF_EXPORT_PRIVATE static bool decode(Decoder&, AtomicString&);
+template<> struct Coder<AtomString> {
+    WTF_EXPORT_PRIVATE static void encode(Encoder&, const AtomString&);
+    WTF_EXPORT_PRIVATE static bool decode(Decoder&, AtomString&);
 };
 
 template<> struct Coder<CString> {

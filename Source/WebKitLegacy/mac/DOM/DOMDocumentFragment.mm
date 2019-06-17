@@ -72,7 +72,7 @@
 - (DOMElement *)getElementById:(NSString *)elementId
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->getElementById(AtomicString(elementId))));
+    return kit(WTF::getPtr(IMPL->getElementById(AtomString(elementId))));
 }
 
 - (DOMElement *)querySelector:(NSString *)selectors

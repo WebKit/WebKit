@@ -21,7 +21,7 @@
 #pragma once
 
 #include <wtf/MainThread.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -29,11 +29,11 @@ class SpaceSplitStringData {
     WTF_MAKE_NONCOPYABLE(SpaceSplitStringData);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<SpaceSplitStringData> create(const AtomicString&);
+    static RefPtr<SpaceSplitStringData> create(const AtomString&);
 
-    bool contains(const AtomicString& string)
+    bool contains(const AtomString& string)
     {
-        const AtomicString* data = tokenArrayStart();
+        const AtomString* data = tokenArrayStart();
         unsigned i = 0;
         do {
             if (data[i] == string)
@@ -48,7 +48,7 @@ public:
     unsigned size() const { return m_size; }
     static ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(SpaceSplitStringData, m_size); }
 
-    const AtomicString& operator[](unsigned i)
+    const AtomString& operator[](unsigned i)
     {
         RELEASE_ASSERT(i < m_size);
         return tokenArrayStart()[i];
@@ -76,8 +76,8 @@ public:
     static ptrdiff_t tokensMemoryOffset() { return sizeof(SpaceSplitStringData); }
 
 private:
-    static Ref<SpaceSplitStringData> create(const AtomicString&, unsigned tokenCount);
-    SpaceSplitStringData(const AtomicString& string, unsigned size)
+    static Ref<SpaceSplitStringData> create(const AtomString&, unsigned tokenCount);
+    SpaceSplitStringData(const AtomString& string, unsigned size)
         : m_keyString(string)
         , m_refCount(1)
         , m_size(size)
@@ -89,9 +89,9 @@ private:
     ~SpaceSplitStringData() = default;
     static void destroy(SpaceSplitStringData*);
 
-    AtomicString* tokenArrayStart() { return reinterpret_cast<AtomicString*>(this + 1); }
+    AtomString* tokenArrayStart() { return reinterpret_cast<AtomString*>(this + 1); }
 
-    AtomicString m_keyString;
+    AtomString m_keyString;
     unsigned m_refCount;
     unsigned m_size;
 };
@@ -99,19 +99,19 @@ private:
 class SpaceSplitString {
 public:
     SpaceSplitString() = default;
-    SpaceSplitString(const AtomicString& string, bool shouldFoldCase) { set(string, shouldFoldCase); }
+    SpaceSplitString(const AtomString& string, bool shouldFoldCase) { set(string, shouldFoldCase); }
 
     bool operator!=(const SpaceSplitString& other) const { return m_data != other.m_data; }
 
-    void set(const AtomicString&, bool shouldFoldCase);
+    void set(const AtomString&, bool shouldFoldCase);
     void clear() { m_data = nullptr; }
 
-    bool contains(const AtomicString& string) const { return m_data && m_data->contains(string); }
+    bool contains(const AtomString& string) const { return m_data && m_data->contains(string); }
     bool containsAll(const SpaceSplitString& names) const { return !names.m_data || (m_data && m_data->containsAll(*names.m_data)); }
 
     unsigned size() const { return m_data ? m_data->size() : 0; }
     bool isEmpty() const { return !m_data; }
-    const AtomicString& operator[](unsigned i) const
+    const AtomString& operator[](unsigned i) const
     {
         ASSERT_WITH_SECURITY_IMPLICATION(m_data);
         return (*m_data)[i];

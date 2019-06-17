@@ -78,7 +78,7 @@ private:
     void willDetachRenderers() final;
 
     Optional<ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) final;
-    const AtomicString& shadowPseudoId() const final;
+    const AtomString& shadowPseudoId() const final;
 
     void startDragging();
     void stopDragging();
@@ -97,7 +97,7 @@ private:
     void unregisterForTouchEvents();
 #endif
 
-    AtomicString m_shadowPseudoId;
+    AtomString m_shadowPseudoId;
     bool m_inDragMode { false };
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -137,10 +137,10 @@ private:
     SliderContainerElement(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     Optional<ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) final;
-    const AtomicString& shadowPseudoId() const final;
+    const AtomString& shadowPseudoId() const final;
     bool isSliderContainerElement() const final { return true; }
 
-    AtomicString m_shadowPseudoId;
+    AtomString m_shadowPseudoId;
 };
 
 } // namespace WebCore

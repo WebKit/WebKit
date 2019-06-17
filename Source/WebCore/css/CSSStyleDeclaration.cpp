@@ -149,7 +149,7 @@ struct CSSPropertyInfo {
     bool hadPixelOrPosPrefix;
 };
 
-static CSSPropertyInfo parseJavaScriptCSSPropertyName(const AtomicString& propertyName)
+static CSSPropertyInfo parseJavaScriptCSSPropertyName(const AtomString& propertyName)
 {
     using CSSPropertyInfoMap = HashMap<String, CSSPropertyInfo>;
     static NeverDestroyed<CSSPropertyInfoMap> propertyInfoCache;
@@ -258,12 +258,12 @@ static CSSPropertyInfo parseJavaScriptCSSPropertyName(const AtomicString& proper
 
 }
 
-CSSPropertyID CSSStyleDeclaration::getCSSPropertyIDFromJavaScriptPropertyName(const AtomicString& propertyName)
+CSSPropertyID CSSStyleDeclaration::getCSSPropertyIDFromJavaScriptPropertyName(const AtomString& propertyName)
 {
     return parseJavaScriptCSSPropertyName(propertyName).propertyID;
 }
 
-Optional<Variant<String, double>> CSSStyleDeclaration::namedItem(const AtomicString& propertyName)
+Optional<Variant<String, double>> CSSStyleDeclaration::namedItem(const AtomString& propertyName)
 {
     auto propertyInfo = parseJavaScriptCSSPropertyName(propertyName);
     if (!propertyInfo.propertyID)
@@ -285,7 +285,7 @@ Optional<Variant<String, double>> CSSStyleDeclaration::namedItem(const AtomicStr
     return Variant<String, double> { value->cssText() };
 }
 
-ExceptionOr<void> CSSStyleDeclaration::setNamedItem(const AtomicString& propertyName, String value, bool& propertySupported)
+ExceptionOr<void> CSSStyleDeclaration::setNamedItem(const AtomString& propertyName, String value, bool& propertySupported)
 {
     auto propertyInfo = parseJavaScriptCSSPropertyName(propertyName);
     if (!propertyInfo.propertyID) {
@@ -314,10 +314,10 @@ ExceptionOr<void> CSSStyleDeclaration::setNamedItem(const AtomicString& property
     return { };
 }
 
-Vector<AtomicString> CSSStyleDeclaration::supportedPropertyNames() const
+Vector<AtomString> CSSStyleDeclaration::supportedPropertyNames() const
 {
     static unsigned numNames = 0;
-    static const AtomicString* const cssPropertyNames = [] {
+    static const AtomString* const cssPropertyNames = [] {
         String names[numCSSProperties];
         for (int i = 0; i < numCSSProperties; ++i) {
             CSSPropertyID id = static_cast<CSSPropertyID>(firstCSSProperty + i);
@@ -325,13 +325,13 @@ Vector<AtomicString> CSSStyleDeclaration::supportedPropertyNames() const
                 names[numNames++] = getJSPropertyName(id);
         }
         std::sort(&names[0], &names[numNames], WTF::codePointCompareLessThan);
-        auto* identifiers = new AtomicString[numNames];
+        auto* identifiers = new AtomString[numNames];
         for (unsigned i = 0; i < numNames; ++i)
             identifiers[i] = names[i];
         return identifiers;
     }();
 
-    Vector<AtomicString> result;
+    Vector<AtomString> result;
     result.reserveInitialCapacity(numNames);
 
     for (unsigned i = 0; i < numNames; ++i)

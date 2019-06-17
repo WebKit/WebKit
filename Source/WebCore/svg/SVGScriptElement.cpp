@@ -45,7 +45,7 @@ Ref<SVGScriptElement> SVGScriptElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGScriptElement(tagName, document, insertedByParser, false));
 }
 
-void SVGScriptElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGScriptElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     SVGElement::parseAttribute(name, value);
     SVGURIReference::parseAttribute(name, value);

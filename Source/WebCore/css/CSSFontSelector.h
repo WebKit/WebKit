@@ -58,7 +58,7 @@ public:
     unsigned version() const final { return m_version; }
     unsigned uniqueId() const final { return m_uniqueId; }
 
-    FontRanges fontRangesForFamily(const FontDescription&, const AtomicString&) final;
+    FontRanges fontRangesForFamily(const FontDescription&, const AtomString&) final;
     size_t fallbackFontCount() final;
     RefPtr<Font> fallbackFontAt(const FontDescription&, size_t) final;
 
@@ -91,7 +91,7 @@ private:
 
     void dispatchInvalidationCallbacks();
 
-    void opportunisticallyStartFontDataURLLoading(const FontCascadeDescription&, const AtomicString& family) final;
+    void opportunisticallyStartFontDataURLLoading(const FontCascadeDescription&, const AtomString& family) final;
 
     void fontModified() final;
 

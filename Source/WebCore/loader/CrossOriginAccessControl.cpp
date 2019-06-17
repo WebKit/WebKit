@@ -38,7 +38,7 @@
 #include "SecurityPolicy.h"
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

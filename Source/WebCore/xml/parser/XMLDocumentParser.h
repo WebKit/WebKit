@@ -32,7 +32,7 @@
 #include <libxml/tree.h>
 #include <libxml/xmlstring.h>
 #include <wtf/HashMap.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -180,9 +180,9 @@ private:
     TextPosition m_scriptStartPosition;
 
     bool m_parsingFragment { false };
-    AtomicString m_defaultNamespaceURI;
+    AtomString m_defaultNamespaceURI;
 
-    HashMap<AtomicString, AtomicString> m_prefixToNamespaceMap;
+    HashMap<AtomString, AtomString> m_prefixToNamespaceMap;
     SegmentedString m_pendingSrc;
 };
 

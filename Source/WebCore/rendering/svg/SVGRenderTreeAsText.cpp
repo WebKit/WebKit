@@ -408,7 +408,7 @@ void writeSVGResourceContainer(TextStream& ts, const RenderSVGResourceContainer&
 {
     writeStandardPrefix(ts, resource, behavior);
 
-    const AtomicString& id = resource.element().getIdAttribute();
+    const AtomString& id = resource.element().getIdAttribute();
     writeNameAndQuotedValue(ts, "id", id);    
 
     if (resource.resourceType() == MaskerResourceType) {
@@ -578,7 +578,7 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
             const FilterOperation& filterOperation = *filterOperations.at(0);
             if (filterOperation.type() == FilterOperation::REFERENCE) {
                 const auto& referenceFilterOperation = downcast<ReferenceFilterOperation>(filterOperation);
-                AtomicString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation.url(), renderer.document());
+                AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation.url(), renderer.document());
                 if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(renderer.document(), id)) {
                     ts << indent << " ";
                     writeNameAndQuotedValue(ts, "filter", id);

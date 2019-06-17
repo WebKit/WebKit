@@ -157,7 +157,7 @@ private:
 
     bool isHTMLCanvasElement() const final { return true; }
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
     bool canContainRangeEndPoint() const final;

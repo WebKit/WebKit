@@ -177,7 +177,7 @@ bool CSSVariableParser::containsValidVariableReferences(CSSParserTokenRange rang
     return type == CSSValueInternalVariableValue && hasReferences && !hasAtApplyRule;
 }
 
-RefPtr<CSSCustomPropertyValue> CSSVariableParser::parseDeclarationValue(const AtomicString& variableName, CSSParserTokenRange range, const CSSParserContext& parserContext)
+RefPtr<CSSCustomPropertyValue> CSSVariableParser::parseDeclarationValue(const AtomString& variableName, CSSParserTokenRange range, const CSSParserContext& parserContext)
 {
     if (range.atEnd())
         return nullptr;

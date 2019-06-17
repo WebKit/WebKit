@@ -90,7 +90,7 @@ void VideoFullscreenModelVideoElement::handleEvent(WebCore::ScriptExecutionConte
     updateForEventName(event.type());
 }
 
-void VideoFullscreenModelVideoElement::updateForEventName(const WTF::AtomicString& eventName)
+void VideoFullscreenModelVideoElement::updateForEventName(const WTF::AtomString& eventName)
 {
     if (m_clients.isEmpty())
         return;
@@ -169,15 +169,15 @@ void VideoFullscreenModelVideoElement::setVideoLayerGravity(MediaPlayerEnums::Vi
     m_videoElement->setVideoFullscreenGravity(gravity);
 }
 
-const Vector<AtomicString>& VideoFullscreenModelVideoElement::observedEventNames()
+const Vector<AtomString>& VideoFullscreenModelVideoElement::observedEventNames()
 {
-    static const auto names = makeNeverDestroyed(Vector<AtomicString> { eventNames().resizeEvent });
+    static const auto names = makeNeverDestroyed(Vector<AtomString> { eventNames().resizeEvent });
     return names;
 }
 
-const AtomicString& VideoFullscreenModelVideoElement::eventNameAll()
+const AtomString& VideoFullscreenModelVideoElement::eventNameAll()
 {
-    static NeverDestroyed<AtomicString> sEventNameAll = "allEvents";
+    static NeverDestroyed<AtomString> sEventNameAll = "allEvents";
     return sEventNameAll;
 }
 

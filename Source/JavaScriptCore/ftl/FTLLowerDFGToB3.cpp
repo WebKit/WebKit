@@ -10440,17 +10440,17 @@ private:
         switch (m_node->child2().useKind()) {
         case StringUse: {
             LBasicBlock isNonEmptyString = m_out.newBlock();
-            LBasicBlock isAtomicString = m_out.newBlock();
+            LBasicBlock isAtomString = m_out.newBlock();
 
             keyAsValue = lowString(m_node->child2());
             m_out.branch(isNotRopeString(keyAsValue, m_node->child2()), usually(isNonEmptyString), rarely(slowCase));
 
-            lastNext = m_out.appendTo(isNonEmptyString, isAtomicString);
+            lastNext = m_out.appendTo(isNonEmptyString, isAtomString);
             uniquedStringImpl = m_out.loadPtr(keyAsValue, m_heaps.JSString_value);
             LValue isNotAtomic = m_out.testIsZero32(m_out.load32(uniquedStringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIsAtomic()));
-            m_out.branch(isNotAtomic, rarely(slowCase), usually(isAtomicString));
+            m_out.branch(isNotAtomic, rarely(slowCase), usually(isAtomString));
 
-            m_out.appendTo(isAtomicString, slowCase);
+            m_out.appendTo(isAtomString, slowCase);
             break;
         }
         case SymbolUse: {
@@ -10499,7 +10499,7 @@ private:
 
         ASSERT(keyAsValue);
 
-        // Note that we don't test if the hash is zero here. AtomicStringImpl's can't have a zero
+        // Note that we don't test if the hash is zero here. AtomStringImpl's can't have a zero
         // hash, however, a SymbolImpl may. But, because this is a cache, we don't care. We only
         // ever load the result from the cache if the cache entry matches what we are querying for.
         // So we either get super lucky and use zero for the hash and somehow collide with the entity

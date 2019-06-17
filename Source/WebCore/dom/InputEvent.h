@@ -39,10 +39,10 @@ public:
         String data;
     };
 
-    static Ref<InputEvent> create(const AtomicString& eventType, const String& inputType, IsCancelable, RefPtr<WindowProxy>&& view,
+    static Ref<InputEvent> create(const AtomString& eventType, const String& inputType, IsCancelable, RefPtr<WindowProxy>&& view,
         const String& data, RefPtr<DataTransfer>&&, const Vector<RefPtr<StaticRange>>& targetRanges, int detail);
 
-    static Ref<InputEvent> create(const AtomicString& type, const Init& initializer)
+    static Ref<InputEvent> create(const AtomString& type, const Init& initializer)
     {
         return adoptRef(*new InputEvent(type, initializer));
     }
@@ -55,8 +55,8 @@ public:
     const Vector<RefPtr<StaticRange>>& getTargetRanges() { return m_targetRanges; }
 
 private:
-    InputEvent(const AtomicString& eventType, const String& inputType, IsCancelable, RefPtr<WindowProxy>&&, const String& data, RefPtr<DataTransfer>&&, const Vector<RefPtr<StaticRange>>& targetRanges, int detail);
-    InputEvent(const AtomicString& eventType, const Init&);
+    InputEvent(const AtomString& eventType, const String& inputType, IsCancelable, RefPtr<WindowProxy>&&, const String& data, RefPtr<DataTransfer>&&, const Vector<RefPtr<StaticRange>>& targetRanges, int detail);
+    InputEvent(const AtomString& eventType, const Init&);
 
     String m_inputType;
     String m_data;

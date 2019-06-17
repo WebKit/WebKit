@@ -58,7 +58,7 @@ const MathMLElement::BooleanValue& MathMLUnderOverElement::accentUnder()
     return cachedBooleanAttribute(accentunderAttr, m_accentUnder);
 }
 
-void MathMLUnderOverElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void MathMLUnderOverElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == accentAttr)
         m_accent = WTF::nullopt;

@@ -32,13 +32,13 @@
 
 namespace WebCore {
 
-WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomicString& type, Uint8Array* initData)
+WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomString& type, Uint8Array* initData)
     : Event(type, CanBubble::No, IsCancelable::No)
     , m_initData(initData)
 {
 }
 
-WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
     , m_initData(initializer.initData)
 {

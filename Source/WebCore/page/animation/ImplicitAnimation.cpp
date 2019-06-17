@@ -201,7 +201,7 @@ void ImplicitAnimation::onAnimationEnd(double elapsedTime)
     endAnimation();
 }
 
-bool ImplicitAnimation::sendTransitionEvent(const AtomicString& eventType, double elapsedTime)
+bool ImplicitAnimation::sendTransitionEvent(const AtomString& eventType, double elapsedTime)
 {
     if (eventType == eventNames().transitionendEvent) {
         Document::ListenerType listenerType = Document::TRANSITIONEND_LISTENER;

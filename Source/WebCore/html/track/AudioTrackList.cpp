@@ -66,7 +66,7 @@ AudioTrack* AudioTrackList::item(unsigned index) const
     return nullptr;
 }
 
-AudioTrack* AudioTrackList::getTrackById(const AtomicString& id) const
+AudioTrack* AudioTrackList::getTrackById(const AtomString& id) const
 {
     for (auto& inbandTrack : m_inbandTracks) {
         auto& track = downcast<AudioTrack>(*inbandTrack);

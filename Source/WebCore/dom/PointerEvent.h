@@ -56,12 +56,12 @@ public:
 
     enum class IsPrimary : uint8_t { No, Yes };
 
-    static Ref<PointerEvent> create(const AtomicString& type, Init&& initializer)
+    static Ref<PointerEvent> create(const AtomString& type, Init&& initializer)
     {
         return adoptRef(*new PointerEvent(type, WTFMove(initializer)));
     }
 
-    static Ref<PointerEvent> createForPointerCapture(const AtomicString& type, const PointerEvent& pointerEvent)
+    static Ref<PointerEvent> createForPointerCapture(const AtomString& type, const PointerEvent& pointerEvent)
     {
         Init initializer;
         initializer.bubbles = true;
@@ -115,17 +115,17 @@ public:
     EventInterface eventInterface() const override;
 
 private:
-    static bool typeIsEnterOrLeave(const AtomicString& type) { return type == eventNames().pointerenterEvent || type == eventNames().pointerleaveEvent; }
-    static CanBubble typeCanBubble(const AtomicString& type) { return typeIsEnterOrLeave(type) ? CanBubble::No : CanBubble::Yes; }
-    static IsCancelable typeIsCancelable(const AtomicString& type) { return typeIsEnterOrLeave(type) ? IsCancelable::No : IsCancelable::Yes; }
-    static IsComposed typeIsComposed(const AtomicString& type) { return typeIsEnterOrLeave(type) ? IsComposed::No : IsComposed::Yes; }
+    static bool typeIsEnterOrLeave(const AtomString& type) { return type == eventNames().pointerenterEvent || type == eventNames().pointerleaveEvent; }
+    static CanBubble typeCanBubble(const AtomString& type) { return typeIsEnterOrLeave(type) ? CanBubble::No : CanBubble::Yes; }
+    static IsCancelable typeIsCancelable(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsCancelable::No : IsCancelable::Yes; }
+    static IsComposed typeIsComposed(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsComposed::No : IsComposed::Yes; }
 
     PointerEvent();
-    PointerEvent(const AtomicString&, Init&&);
-    PointerEvent(const AtomicString& type, short button, const MouseEvent&);
-    PointerEvent(const AtomicString& type, PointerID, const String& pointerType, IsPrimary);
+    PointerEvent(const AtomString&, Init&&);
+    PointerEvent(const AtomString& type, short button, const MouseEvent&);
+    PointerEvent(const AtomString& type, PointerID, const String& pointerType, IsPrimary);
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
-    PointerEvent(const AtomicString& type, const PlatformTouchEvent&, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
+    PointerEvent(const AtomString& type, const PlatformTouchEvent&, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
 #endif
 
     PointerID m_pointerId { mousePointerID };

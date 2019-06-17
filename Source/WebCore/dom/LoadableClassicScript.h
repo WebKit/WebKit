@@ -40,7 +40,7 @@ class LoadableClassicScript final : public LoadableScript, private CachedResourc
 public:
     virtual ~LoadableClassicScript();
 
-    static Ref<LoadableClassicScript> create(const String& nonce, const String& integrity, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree);
+    static Ref<LoadableClassicScript> create(const String& nonce, const String& integrity, const String& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree);
     bool isLoaded() const final;
     Optional<Error> error() const final;
     bool wasCanceled() const final;
@@ -55,7 +55,7 @@ public:
     bool load(Document&, const URL&);
 
 private:
-    LoadableClassicScript(const String& nonce, const String& integrity, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree)
+    LoadableClassicScript(const String& nonce, const String& integrity, const String& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree)
         : LoadableScript(nonce, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree)
         , m_integrity(integrity)
     {

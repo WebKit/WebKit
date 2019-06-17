@@ -31,7 +31,7 @@ namespace WebCore {
 
 class SecurityPolicyViolationEvent final : public Event {
 public:
-    static Ref<SecurityPolicyViolationEvent> create(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, const String& documentURI, const String& referrer, const String& blockedURI, const String& violatedDirective, const String& effectiveDirective, const String& originalPolicy, const String& sourceFile, unsigned short statusCode, int lineNumber, int columnNumber)
+    static Ref<SecurityPolicyViolationEvent> create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, const String& documentURI, const String& referrer, const String& blockedURI, const String& violatedDirective, const String& effectiveDirective, const String& originalPolicy, const String& sourceFile, unsigned short statusCode, int lineNumber, int columnNumber)
     {
         return adoptRef(*new SecurityPolicyViolationEvent(type, canBubble, cancelable, documentURI, referrer, blockedURI, violatedDirective, effectiveDirective, originalPolicy, sourceFile, statusCode, lineNumber, columnNumber));
     }
@@ -57,7 +57,7 @@ public:
         template<class Decoder> static bool decode(Decoder&, Init&);
     };
 
-    static Ref<SecurityPolicyViolationEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<SecurityPolicyViolationEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new SecurityPolicyViolationEvent(type, initializer, isTrusted));
     }
@@ -80,7 +80,7 @@ private:
     {
     }
 
-    SecurityPolicyViolationEvent(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, const String& documentURI, const String& referrer, const String& blockedURI, const String& violatedDirective, const String& effectiveDirective, const String& originalPolicy, const String& sourceFile, unsigned short statusCode, int lineNumber, int columnNumber)
+    SecurityPolicyViolationEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, const String& documentURI, const String& referrer, const String& blockedURI, const String& violatedDirective, const String& effectiveDirective, const String& originalPolicy, const String& sourceFile, unsigned short statusCode, int lineNumber, int columnNumber)
         : Event(type, canBubble, cancelable)
         , m_documentURI(documentURI)
         , m_referrer(referrer)
@@ -95,7 +95,7 @@ private:
     {
     }
 
-    SecurityPolicyViolationEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    SecurityPolicyViolationEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
         : Event(type, initializer, isTrusted)
         , m_documentURI(initializer.documentURI)
         , m_referrer(initializer.referrer)

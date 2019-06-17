@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 #include <mutex>
 #include <wtf/MainThread.h>
@@ -31,8 +31,8 @@
 
 namespace WTF {
 
-template<AtomicString::CaseConvertType type>
-ALWAYS_INLINE AtomicString AtomicString::convertASCIICase() const
+template<AtomString::CaseConvertType type>
+ALWAYS_INLINE AtomString AtomString::convertASCIICase() const
 {
     StringImpl* impl = this->impl();
     if (UNLIKELY(!impl))
@@ -59,61 +59,61 @@ SlowPath:
             localBuffer[i] = characters[i];
         for (unsigned i = failingIndex; i < length; ++i)
             localBuffer[i] = type == CaseConvertType::Lower ? toASCIILower(characters[i]) : toASCIIUpper(characters[i]);
-        return AtomicString(localBuffer, length);
+        return AtomString(localBuffer, length);
     }
 
     Ref<StringImpl> convertedString = type == CaseConvertType::Lower ? impl->convertToASCIILowercase() : impl->convertToASCIIUppercase();
     if (LIKELY(convertedString.ptr() == impl))
         return *this;
 
-    AtomicString result;
-    result.m_string = AtomicStringImpl::add(convertedString.ptr());
+    AtomString result;
+    result.m_string = AtomStringImpl::add(convertedString.ptr());
     return result;
 }
 
-AtomicString AtomicString::convertToASCIILowercase() const
+AtomString AtomString::convertToASCIILowercase() const
 {
     return convertASCIICase<CaseConvertType::Lower>();
 }
 
-AtomicString AtomicString::convertToASCIIUppercase() const
+AtomString AtomString::convertToASCIIUppercase() const
 {
     return convertASCIICase<CaseConvertType::Upper>();
 }
 
-AtomicString AtomicString::number(int number)
+AtomString AtomString::number(int number)
 {
-    return numberToStringSigned<AtomicString>(number);
+    return numberToStringSigned<AtomString>(number);
 }
 
-AtomicString AtomicString::number(unsigned number)
+AtomString AtomString::number(unsigned number)
 {
-    return numberToStringUnsigned<AtomicString>(number);
+    return numberToStringUnsigned<AtomString>(number);
 }
 
-AtomicString AtomicString::number(unsigned long number)
+AtomString AtomString::number(unsigned long number)
 {
-    return numberToStringUnsigned<AtomicString>(number);
+    return numberToStringUnsigned<AtomString>(number);
 }
 
-AtomicString AtomicString::number(unsigned long long number)
+AtomString AtomString::number(unsigned long long number)
 {
-    return numberToStringUnsigned<AtomicString>(number);
+    return numberToStringUnsigned<AtomString>(number);
 }
 
-AtomicString AtomicString::number(float number)
-{
-    NumberToStringBuffer buffer;
-    return numberToString(number, buffer);
-}
-
-AtomicString AtomicString::number(double number)
+AtomString AtomString::number(float number)
 {
     NumberToStringBuffer buffer;
     return numberToString(number, buffer);
 }
 
-AtomicString AtomicString::fromUTF8Internal(const char* start, const char* end)
+AtomString AtomString::number(double number)
+{
+    NumberToStringBuffer buffer;
+    return numberToString(number, buffer);
+}
+
+AtomString AtomString::fromUTF8Internal(const char* start, const char* end)
 {
     ASSERT(start);
 
@@ -121,25 +121,25 @@ AtomicString AtomicString::fromUTF8Internal(const char* start, const char* end)
     ASSERT(!end || end > start);
     ASSERT(end || start[0]);
 
-    return AtomicStringImpl::addUTF8(start, end ? end : start + std::strlen(start));
+    return AtomStringImpl::addUTF8(start, end ? end : start + std::strlen(start));
 }
 
 #ifndef NDEBUG
 
-void AtomicString::show() const
+void AtomString::show() const
 {
     m_string.show();
 }
 
 #endif
 
-WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomicString> nullAtomData;
-WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomicString> emptyAtomData;
-WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomicString> starAtomData;
-WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomicString> xmlAtomData;
-WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomicString> xmlnsAtomData;
+WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomString> nullAtomData;
+WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomString> emptyAtomData;
+WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomString> starAtomData;
+WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomString> xmlAtomData;
+WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomString> xmlnsAtomData;
 
-void AtomicString::init()
+void AtomString::init()
 {
     static std::once_flag initializeKey;
     std::call_once(initializeKey, [] {
@@ -148,9 +148,9 @@ void AtomicString::init()
 
         nullAtomData.construct();
         emptyAtomData.construct("");
-        starAtomData.construct("*", AtomicString::ConstructFromLiteral);
-        xmlAtomData.construct("xml", AtomicString::ConstructFromLiteral);
-        xmlnsAtomData.construct("xmlns", AtomicString::ConstructFromLiteral);
+        starAtomData.construct("*", AtomString::ConstructFromLiteral);
+        xmlAtomData.construct("xml", AtomString::ConstructFromLiteral);
+        xmlnsAtomData.construct("xmlns", AtomString::ConstructFromLiteral);
     });
 }
 

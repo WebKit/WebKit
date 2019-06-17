@@ -928,7 +928,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::createB
 {
     ASSERT(!name.isNull());
     
-    ASSERT(name.impl()->isAtomic() || name.impl()->isSymbol());
+    ASSERT(name.impl()->isAtom() || name.impl()->isSymbol());
 
     switch (kind) {
     case DestructuringKind::DestructureToVariables: {

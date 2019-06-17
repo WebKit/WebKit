@@ -220,14 +220,14 @@ void CompositeAnimation::updateKeyframeAnimations(Element& element, const Render
     // Toss the animation order map.
     m_keyframeAnimationOrderMap.clear();
 
-    static NeverDestroyed<const AtomicString> none("none", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> none("none", AtomString::ConstructFromLiteral);
     
     // Now mark any still active animations as active and add any new animations.
     if (targetStyle.animations()) {
         int numAnims = targetStyle.animations()->size();
         for (int i = 0; i < numAnims; ++i) {
             auto& animation = targetStyle.animations()->animation(i);
-            AtomicString animationName(animation.name());
+            AtomString animationName(animation.name());
 
             if (!animation.isValidAnimation())
                 continue;
@@ -526,7 +526,7 @@ bool CompositeAnimation::isAnimatingProperty(CSSPropertyID property, bool accele
     return false;
 }
 
-bool CompositeAnimation::pauseAnimationAtTime(const AtomicString& name, double t)
+bool CompositeAnimation::pauseAnimationAtTime(const AtomString& name, double t)
 {
     m_keyframeAnimations.checkConsistency();
 

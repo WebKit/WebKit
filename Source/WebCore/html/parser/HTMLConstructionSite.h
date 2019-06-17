@@ -104,7 +104,7 @@ public:
     void insertCommentOnHTMLHtmlElement(AtomicHTMLToken&&);
     void insertHTMLElement(AtomicHTMLToken&&);
     std::unique_ptr<CustomElementConstructionData> insertHTMLElementOrFindCustomElementInterface(AtomicHTMLToken&&);
-    void insertCustomElement(Ref<Element>&&, const AtomicString& localName, Vector<Attribute>&&);
+    void insertCustomElement(Ref<Element>&&, const AtomString& localName, Vector<Attribute>&&);
     void insertSelfClosingHTMLElement(AtomicHTMLToken&&);
     void insertFormattingElement(AtomicHTMLToken&&);
     void insertHTMLHeadElement(AtomicHTMLToken&&);
@@ -112,7 +112,7 @@ public:
     void insertHTMLFormElement(AtomicHTMLToken&&, bool isDemoted = false);
     void insertScriptElement(AtomicHTMLToken&&);
     void insertTextNode(const String&, WhitespaceMode = WhitespaceUnknown);
-    void insertForeignElement(AtomicHTMLToken&&, const AtomicString& namespaceURI);
+    void insertForeignElement(AtomicHTMLToken&&, const AtomString& namespaceURI);
 
     void insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken&&);
     void insertHTMLHtmlStartTagInBody(AtomicHTMLToken&&);
@@ -134,7 +134,7 @@ public:
     void reconstructTheActiveFormattingElements();
 
     void generateImpliedEndTags();
-    void generateImpliedEndTagsWithExclusion(const AtomicString& tagName);
+    void generateImpliedEndTagsWithExclusion(const AtomString& tagName);
 
     bool inQuirksMode() { return m_inQuirksMode; }
 
@@ -172,7 +172,7 @@ public:
         SetForScope<bool> m_redirectAttachToFosterParentChange;
     };
 
-    static bool isFormattingTag(const AtomicString&);
+    static bool isFormattingTag(const AtomString&);
 
 private:
     // In the common case, this queue will have only one task because most
@@ -188,7 +188,7 @@ private:
 
     RefPtr<Element> createHTMLElementOrFindCustomElementInterface(AtomicHTMLToken&, JSCustomElementInterface**);
     Ref<Element> createHTMLElement(AtomicHTMLToken&);
-    Ref<Element> createElement(AtomicHTMLToken&, const AtomicString& namespaceURI);
+    Ref<Element> createElement(AtomicHTMLToken&, const AtomString& namespaceURI);
 
     void mergeAttributesFromTokenIntoElement(AtomicHTMLToken&&, Element&);
     void dispatchDocumentElementAvailableIfNeeded();

@@ -151,7 +151,7 @@ HTMLCanvasElement::~HTMLCanvasElement()
     releaseImageBufferAndContext();
 }
 
-void HTMLCanvasElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLCanvasElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == widthAttr || name == heightAttr)
         reset();
@@ -180,7 +180,7 @@ ExceptionOr<void> HTMLCanvasElement::setHeight(unsigned value)
 {
     if (m_context && m_context->isPlaceholder())
         return Exception { InvalidStateError };
-    setAttributeWithoutSynchronization(heightAttr, AtomicString::number(limitToOnlyHTMLNonNegative(value, defaultHeight)));
+    setAttributeWithoutSynchronization(heightAttr, AtomString::number(limitToOnlyHTMLNonNegative(value, defaultHeight)));
     return { };
 }
 
@@ -188,7 +188,7 @@ ExceptionOr<void> HTMLCanvasElement::setWidth(unsigned value)
 {
     if (m_context && m_context->isPlaceholder())
         return Exception { InvalidStateError };
-    setAttributeWithoutSynchronization(widthAttr, AtomicString::number(limitToOnlyHTMLNonNegative(value, defaultWidth)));
+    setAttributeWithoutSynchronization(widthAttr, AtomString::number(limitToOnlyHTMLNonNegative(value, defaultWidth)));
     return { };
 }
 

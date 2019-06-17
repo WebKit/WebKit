@@ -26,8 +26,8 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -67,8 +67,8 @@ protected:
     struct GstCapsWebKitMapping {
         ElementType elementType;
         const char* capsString;
-        Vector<AtomicString> webkitMimeTypes;
-        Vector<AtomicString> webkitCodecPatterns;
+        Vector<AtomString> webkitMimeTypes;
+        Vector<AtomString> webkitCodecPatterns;
     };
     void fillMimeTypeSetFromCapsMapping(Vector<GstCapsWebKitMapping>&);
 
@@ -84,7 +84,7 @@ private:
     GList* m_videoParserFactories;
     GList* m_demuxerFactories;
     HashSet<String, ASCIICaseInsensitiveHash> m_mimeTypeSet;
-    HashMap<AtomicString, bool> m_codecMap;
+    HashMap<AtomString, bool> m_codecMap;
 };
 
 } // namespace WebCore

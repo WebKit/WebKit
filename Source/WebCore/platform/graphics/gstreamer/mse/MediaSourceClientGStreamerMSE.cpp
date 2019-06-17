@@ -158,7 +158,7 @@ void MediaSourceClientGStreamerMSE::removedFromMediaSource(RefPtr<SourceBufferPr
     m_playerPrivate.m_playbackPipeline->removeSourceBuffer(sourceBufferPrivate);
 }
 
-void MediaSourceClientGStreamerMSE::flush(AtomicString trackId)
+void MediaSourceClientGStreamerMSE::flush(AtomString trackId)
 {
     ASSERT(WTF::isMainThread());
 
@@ -174,7 +174,7 @@ void MediaSourceClientGStreamerMSE::enqueueSample(Ref<MediaSample>&& sample)
     m_playerPrivate.m_playbackPipeline->enqueueSample(WTFMove(sample));
 }
 
-void MediaSourceClientGStreamerMSE::allSamplesInTrackEnqueued(const AtomicString& trackId)
+void MediaSourceClientGStreamerMSE::allSamplesInTrackEnqueued(const AtomString& trackId)
 {
     ASSERT(WTF::isMainThread());
 

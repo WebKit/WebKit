@@ -42,7 +42,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     float firstFloat;
     Color colors[9];
     void* ownPtrs[1];
-    AtomicString atomicStrings[5];
+    AtomString atomStrings[5];
     void* refPtrs[3];
     Length lengths[2];
     float secondFloat;

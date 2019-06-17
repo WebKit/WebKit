@@ -31,8 +31,8 @@ public:
     SearchPopupMenuWin(PopupMenuClient*);
 
     virtual PopupMenu* popupMenu();
-    virtual void saveRecentSearches(const AtomicString& name, const Vector<RecentSearch>&);
-    virtual void loadRecentSearches(const AtomicString& name, Vector<RecentSearch>&);
+    virtual void saveRecentSearches(const AtomString& name, const Vector<RecentSearch>&);
+    virtual void loadRecentSearches(const AtomString& name, Vector<RecentSearch>&);
     virtual bool enabled();
 
 private:

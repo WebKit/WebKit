@@ -40,7 +40,7 @@ public:
 
 protected:
     MathMLPresentationElement(const QualifiedName& tagName, Document&);
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomString&) override;
 
     static bool isPhrasingContent(const Node&);
     static bool isFlowContent(const Node&);
@@ -66,7 +66,7 @@ private:
 
     static Length parseNumberAndUnit(const StringView&);
     static Length parseNamedSpace(const StringView&);
-    static MathVariant parseMathVariantAttribute(const AtomicString& attributeValue);
+    static MathVariant parseMathVariantAttribute(const AtomString& attributeValue);
 };
 
 }

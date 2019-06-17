@@ -37,7 +37,7 @@ Ref<ExtendableMessageEvent> ExtendableMessageEvent::create(Vector<RefPtr<Message
     return adoptRef(*new ExtendableMessageEvent(WTFMove(data), origin, lastEventId, WTFMove(source), WTFMove(ports)));
 }
 
-ExtendableMessageEvent::ExtendableMessageEvent(JSC::ExecState& state, const AtomicString& type, const Init& init, IsTrusted isTrusted)
+ExtendableMessageEvent::ExtendableMessageEvent(JSC::ExecState& state, const AtomString& type, const Init& init, IsTrusted isTrusted)
     : ExtendableEvent(type, init, isTrusted)
     , m_data(SerializedScriptValue::create(state, init.data, SerializationErrorMode::NonThrowing))
     , m_origin(init.origin)

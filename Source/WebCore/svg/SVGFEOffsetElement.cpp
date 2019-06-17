@@ -50,7 +50,7 @@ Ref<SVGFEOffsetElement> SVGFEOffsetElement::create(const QualifiedName& tagName,
     return adoptRef(*new SVGFEOffsetElement(tagName, document));
 }
 
-void SVGFEOffsetElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGFEOffsetElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::dxAttr) {
         m_dx->setBaseValInternal(value.toFloat());

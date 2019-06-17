@@ -59,8 +59,8 @@ public:
     RuleSet* sibling() const { return m_siblingRuleSet.get(); }
     RuleSet* uncommonAttribute() const { return m_uncommonAttributeRuleSet.get(); }
 
-    const Vector<InvalidationRuleSet>* classInvalidationRuleSets(const AtomicString& className) const;
-    const Vector<InvalidationRuleSet>* attributeInvalidationRuleSets(const AtomicString& attributeName) const;
+    const Vector<InvalidationRuleSet>* classInvalidationRuleSets(const AtomString& className) const;
+    const Vector<InvalidationRuleSet>* attributeInvalidationRuleSets(const AtomString& attributeName) const;
 
     bool hasComplexSelectorsForStyleAttribute() const;
 
@@ -89,8 +89,8 @@ private:
     mutable RuleFeatureSet m_features;
     mutable std::unique_ptr<RuleSet> m_siblingRuleSet;
     mutable std::unique_ptr<RuleSet> m_uncommonAttributeRuleSet;
-    mutable HashMap<AtomicString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_classInvalidationRuleSets;
-    mutable HashMap<AtomicString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;
+    mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_classInvalidationRuleSets;
+    mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;
 
     mutable Optional<bool> m_cachedHasComplexSelectorsForStyleAttribute;
 

@@ -115,7 +115,7 @@ Ref<DocumentParser> HTMLDocument::createParser()
 }
 
 // https://html.spec.whatwg.org/multipage/dom.html#dom-document-nameditem
-Optional<Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>>> HTMLDocument::namedItem(const AtomicString& name)
+Optional<Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>>> HTMLDocument::namedItem(const AtomString& name)
 {
     if (name.isNull() || !hasDocumentNamedItem(*name.impl()))
         return WTF::nullopt;
@@ -135,7 +135,7 @@ Optional<Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>>> 
     return Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { RefPtr<Element> { &element } };
 }
 
-Vector<AtomicString> HTMLDocument::supportedPropertyNames() const
+Vector<AtomString> HTMLDocument::supportedPropertyNames() const
 {
     // https://html.spec.whatwg.org/multipage/dom.html#dom-document-namedItem-which
     //
@@ -155,23 +155,23 @@ Vector<AtomicString> HTMLDocument::supportedPropertyNames() const
     return { };
 }
 
-void HTMLDocument::addDocumentNamedItem(const AtomicStringImpl& name, Element& item)
+void HTMLDocument::addDocumentNamedItem(const AtomStringImpl& name, Element& item)
 {
     m_documentNamedItem.add(name, item, *this);
-    addImpureProperty(AtomicString(const_cast<AtomicStringImpl*>(&name)));
+    addImpureProperty(AtomString(const_cast<AtomStringImpl*>(&name)));
 }
 
-void HTMLDocument::removeDocumentNamedItem(const AtomicStringImpl& name, Element& item)
+void HTMLDocument::removeDocumentNamedItem(const AtomStringImpl& name, Element& item)
 {
     m_documentNamedItem.remove(name, item);
 }
 
-void HTMLDocument::addWindowNamedItem(const AtomicStringImpl& name, Element& item)
+void HTMLDocument::addWindowNamedItem(const AtomStringImpl& name, Element& item)
 {
     m_windowNamedItem.add(name, item, *this);
 }
 
-void HTMLDocument::removeWindowNamedItem(const AtomicStringImpl& name, Element& item)
+void HTMLDocument::removeWindowNamedItem(const AtomStringImpl& name, Element& item)
 {
     m_windowNamedItem.remove(name, item);
 }
@@ -228,7 +228,7 @@ bool HTMLDocument::isCaseSensitiveAttribute(const QualifiedName& attributeName)
             &valuetypeAttr.get(),
             &vlinkAttr.get(),
         };
-        HashSet<AtomicString> set;
+        HashSet<AtomString> set;
         for (auto* name : names)
             set.add(name->localName());
         return set;

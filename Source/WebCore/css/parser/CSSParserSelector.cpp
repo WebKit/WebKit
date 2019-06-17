@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-CSSParserSelector* CSSParserSelector::parsePagePseudoSelector(const AtomicString& pseudoTypeString)
+CSSParserSelector* CSSParserSelector::parsePagePseudoSelector(const AtomString& pseudoTypeString)
 {
     CSSSelector::PagePseudoClassType pseudoType;
     if (equalLettersIgnoringASCIICase(pseudoTypeString, "first"))
@@ -52,7 +52,7 @@ CSSParserSelector* CSSParserSelector::parsePagePseudoSelector(const AtomicString
 
 CSSParserSelector* CSSParserSelector::parsePseudoElementSelectorFromStringView(StringView& pseudoTypeString)
 {
-    AtomicString name = pseudoTypeString.toAtomicString();
+    AtomString name = pseudoTypeString.toAtomString();
     
     CSSSelector::PseudoElementType pseudoType = CSSSelector::parsePseudoElementType(name);
     if (pseudoType == CSSSelector::PseudoElementUnknown) {
@@ -71,7 +71,7 @@ CSSParserSelector* CSSParserSelector::parsePseudoElementSelectorFromStringView(S
     if (pseudoType == CSSSelector::PseudoElementWebKitCustomLegacyPrefixed) {
         ASSERT_WITH_MESSAGE(name == "-webkit-input-placeholder", "-webkit-input-placeholder is the only LegacyPrefix pseudo type.");
         if (name == "-webkit-input-placeholder")
-            name = AtomicString("placeholder", AtomicString::ConstructFromLiteral);
+            name = AtomString("placeholder", AtomString::ConstructFromLiteral);
     }
     selector->m_selector->setValue(name);
     return selector.release();
@@ -90,7 +90,7 @@ CSSParserSelector* CSSParserSelector::parsePseudoClassSelectorFromStringView(Str
         auto selector = std::make_unique<CSSParserSelector>();
         selector->m_selector->setMatch(CSSSelector::PseudoElement);
         selector->m_selector->setPseudoElementType(pseudoType.compatibilityPseudoElement);
-        AtomicString name = pseudoTypeString.toAtomicString();
+        AtomString name = pseudoTypeString.toAtomString();
         selector->m_selector->setValue(name);
         return selector.release();
     }
@@ -127,7 +127,7 @@ void CSSParserSelector::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSele
     m_selector->setSelectorList(std::make_unique<CSSSelectorList>(WTFMove(selectorVector)));
 }
 
-void CSSParserSelector::setLangArgumentList(std::unique_ptr<Vector<AtomicString>> argumentList)
+void CSSParserSelector::setLangArgumentList(std::unique_ptr<Vector<AtomString>> argumentList)
 {
     ASSERT_WITH_MESSAGE(!argumentList->isEmpty(), "No CSS Selector takes an empty argument list.");
     m_selector->setLangArgumentList(WTFMove(argumentList));

@@ -74,7 +74,7 @@ public:
     bool isLoad() const { return B3::isLoad(opcode()); }
 
     bool hasFence() const { return !!fenceRange(); }
-    bool isExotic() const { return hasFence() || isAtomic(opcode()); }
+    bool isExotic() const { return hasFence() || isAtom(opcode()); }
 
     Type accessType() const;
     Bank accessBank() const;

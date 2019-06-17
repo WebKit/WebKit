@@ -50,9 +50,9 @@ public:
     virtual ~HTMLAnchorElement();
 
     WEBCORE_EXPORT URL href() const;
-    void setHref(const AtomicString&);
+    void setHref(const AtomString&);
 
-    const AtomicString& name() const;
+    const AtomString& name() const;
 
     WEBCORE_EXPORT String origin() const;
 
@@ -76,7 +76,7 @@ public:
 protected:
     HTMLAnchorElement(const QualifiedName&, Document&);
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomString&) override;
 
 private:
     bool supportsFocus() const override;

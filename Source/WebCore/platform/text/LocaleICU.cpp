@@ -42,7 +42,7 @@
 namespace WebCore {
 using namespace icu;
 
-std::unique_ptr<Locale> Locale::create(const AtomicString& locale)
+std::unique_ptr<Locale> Locale::create(const AtomString& locale)
 {
     return std::make_unique<LocaleICU>(locale.string().utf8().data());
 }

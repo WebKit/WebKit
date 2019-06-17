@@ -106,8 +106,8 @@ class LCharStringPrinter(StringPrinter):
         return lstring_to_string(self.val)
 
 
-class WTFAtomicStringPrinter(StringPrinter):
-    "Print a WTF::AtomicString"
+class WTFAtomStringPrinter(StringPrinter):
+    "Print a WTF::AtomString"
     def to_string(self):
         return self.val['m_string']
 
@@ -294,7 +294,7 @@ class WTFVectorPrinter:
 def add_pretty_printers():
     pretty_printers = (
         (re.compile("^WTF::Vector<.*>$"), WTFVectorPrinter),
-        (re.compile("^WTF::AtomicString$"), WTFAtomicStringPrinter),
+        (re.compile("^WTF::AtomString$"), WTFAtomStringPrinter),
         (re.compile("^WTF::CString$"), WTFCStringPrinter),
         (re.compile("^WTF::String$"), WTFStringPrinter),
         (re.compile("^WTF::StringImpl$"), WTFStringImplPrinter),

@@ -31,8 +31,8 @@ public:
     static Ref<WebSearchPopupMenu> create(WebPage*, WebCore::PopupMenuClient*);
 
     WebCore::PopupMenu* popupMenu() override;
-    void saveRecentSearches(const WTF::AtomicString& name, const Vector<WebCore::RecentSearch>&) override;
-    void loadRecentSearches(const WTF::AtomicString& name, Vector<WebCore::RecentSearch>&) override;
+    void saveRecentSearches(const WTF::AtomString& name, const Vector<WebCore::RecentSearch>&) override;
+    void loadRecentSearches(const WTF::AtomString& name, Vector<WebCore::RecentSearch>&) override;
     bool enabled() override;
 
 private:

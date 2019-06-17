@@ -109,7 +109,7 @@ bool ColorInputType::isPresentingAttachedView() const
     return !!m_chooser;
 }
 
-const AtomicString& ColorInputType::formControlType() const
+const AtomString& ColorInputType::formControlType() const
 {
     return InputTypeNames::color();
 }
@@ -145,9 +145,9 @@ void ColorInputType::createShadowSubtree()
 
     Document& document = element()->document();
     auto wrapperElement = HTMLDivElement::create(document);
-    wrapperElement->setPseudo(AtomicString("-webkit-color-swatch-wrapper", AtomicString::ConstructFromLiteral));
+    wrapperElement->setPseudo(AtomString("-webkit-color-swatch-wrapper", AtomString::ConstructFromLiteral));
     auto colorSwatch = HTMLDivElement::create(document);
-    colorSwatch->setPseudo(AtomicString("-webkit-color-swatch", AtomicString::ConstructFromLiteral));
+    colorSwatch->setPseudo(AtomString("-webkit-color-swatch", AtomString::ConstructFromLiteral));
     wrapperElement->appendChild(colorSwatch);
     element()->userAgentShadowRoot()->appendChild(wrapperElement);
 

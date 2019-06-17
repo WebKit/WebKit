@@ -343,7 +343,7 @@ private:
 
 class StyleRuleNamespace final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleNamespace> create(AtomicString prefix, AtomicString uri)
+    static Ref<StyleRuleNamespace> create(AtomString prefix, AtomString uri)
     {
         return adoptRef(*new StyleRuleNamespace(prefix, uri));
     }
@@ -352,15 +352,15 @@ public:
 
     Ref<StyleRuleNamespace> copy() const { return adoptRef(*new StyleRuleNamespace(*this)); }
     
-    AtomicString prefix() const { return m_prefix; }
-    AtomicString uri() const { return m_uri; }
+    AtomString prefix() const { return m_prefix; }
+    AtomString uri() const { return m_uri; }
 
 private:
-    StyleRuleNamespace(AtomicString prefix, AtomicString uri);
+    StyleRuleNamespace(AtomString prefix, AtomString uri);
     StyleRuleNamespace(const StyleRuleNamespace&);
     
-    AtomicString m_prefix;
-    AtomicString m_uri;
+    AtomString m_prefix;
+    AtomString m_uri;
 };
     
 } // namespace WebCore

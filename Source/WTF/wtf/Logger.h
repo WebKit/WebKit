@@ -41,7 +41,7 @@ struct LogArgument {
     template<typename U = T> static typename std::enable_if<std::is_enum<U>::value, String>::type toString(U argument) { return String::number(static_cast<typename std::underlying_type<U>::type>(argument)); }
     template<typename U = T> static typename std::enable_if<std::is_same<U, float>::value, String>::type toString(float argument) { return String::numberToStringFixedPrecision(argument); }
     template<typename U = T> static typename std::enable_if<std::is_same<U, double>::value, String>::type toString(double argument) { return String::numberToStringFixedPrecision(argument); }
-    template<typename U = T> static typename std::enable_if<std::is_same<typename std::remove_reference<U>::type, AtomicString>::value, String>::type toString(const AtomicString& argument) { return argument.string(); }
+    template<typename U = T> static typename std::enable_if<std::is_same<typename std::remove_reference<U>::type, AtomString>::value, String>::type toString(const AtomString& argument) { return argument.string(); }
     template<typename U = T> static typename std::enable_if<std::is_same<typename std::remove_reference<U>::type, String>::value, String>::type toString(String argument) { return argument; }
     template<typename U = T> static typename std::enable_if<std::is_same<typename std::remove_reference<U>::type, StringBuilder*>::value, String>::type toString(StringBuilder* argument) { return argument->toString(); }
     template<typename U = T> static typename std::enable_if<std::is_same<U, const char*>::value, String>::type toString(const char* argument) { return String(argument); }

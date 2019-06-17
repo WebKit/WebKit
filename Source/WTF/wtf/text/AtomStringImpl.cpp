@@ -22,14 +22,14 @@
  */
 
 #include "config.h"
-#include <wtf/text/AtomicStringImpl.h>
+#include <wtf/text/AtomStringImpl.h>
 
 #include <wtf/CommaPrinter.h>
 #include <wtf/DataLog.h>
 #include <wtf/HashSet.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/Threading.h>
-#include <wtf/text/AtomicStringTable.h>
+#include <wtf/text/AtomStringTable.h>
 #include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/unicode/UTF8Conversion.h>
@@ -44,25 +44,25 @@ using namespace Unicode;
 
 #if USE(WEB_THREAD)
 
-class AtomicStringTableLocker : public LockHolder {
-    WTF_MAKE_NONCOPYABLE(AtomicStringTableLocker);
+class AtomStringTableLocker : public LockHolder {
+    WTF_MAKE_NONCOPYABLE(AtomStringTableLocker);
 
     static Lock s_stringTableLock;
 public:
-    AtomicStringTableLocker()
+    AtomStringTableLocker()
         : LockHolder(&s_stringTableLock)
     {
     }
 };
 
-Lock AtomicStringTableLocker::s_stringTableLock;
+Lock AtomStringTableLocker::s_stringTableLock;
 
 #else
 
-class AtomicStringTableLocker {
-    WTF_MAKE_NONCOPYABLE(AtomicStringTableLocker);
+class AtomStringTableLocker {
+    WTF_MAKE_NONCOPYABLE(AtomStringTableLocker);
 public:
-    AtomicStringTableLocker() { }
+    AtomStringTableLocker() { }
 };
 
 #endif // USE(WEB_THREAD)
@@ -71,25 +71,25 @@ using StringTableImpl = HashSet<StringImpl*>;
 
 static ALWAYS_INLINE StringTableImpl& stringTable()
 {
-    return Thread::current().atomicStringTable()->table();
+    return Thread::current().atomStringTable()->table();
 }
 
 template<typename T, typename HashTranslator>
-static inline Ref<AtomicStringImpl> addToStringTable(AtomicStringTableLocker&, StringTableImpl& atomicStringTable, const T& value)
+static inline Ref<AtomStringImpl> addToStringTable(AtomStringTableLocker&, StringTableImpl& atomStringTable, const T& value)
 {
-    auto addResult = atomicStringTable.add<HashTranslator>(value);
+    auto addResult = atomStringTable.add<HashTranslator>(value);
 
     // If the string is newly-translated, then we need to adopt it.
     // The boolean in the pair tells us if that is so.
     if (addResult.isNewEntry)
-        return adoptRef(static_cast<AtomicStringImpl&>(**addResult.iterator));
-    return *static_cast<AtomicStringImpl*>(*addResult.iterator);
+        return adoptRef(static_cast<AtomStringImpl&>(**addResult.iterator));
+    return *static_cast<AtomStringImpl*>(*addResult.iterator);
 }
 
 template<typename T, typename HashTranslator>
-static inline Ref<AtomicStringImpl> addToStringTable(const T& value)
+static inline Ref<AtomStringImpl> addToStringTable(const T& value)
 {
-    AtomicStringTableLocker locker;
+    AtomStringTableLocker locker;
     return addToStringTable<T, HashTranslator>(locker, stringTable(), value);
 }
 
@@ -112,12 +112,12 @@ struct CStringTranslator {
     }
 };
 
-RefPtr<AtomicStringImpl> AtomicStringImpl::add(const LChar* characters)
+RefPtr<AtomStringImpl> AtomStringImpl::add(const LChar* characters)
 {
     if (!characters)
         return nullptr;
     if (!*characters)
-        return static_cast<AtomicStringImpl*>(StringImpl::empty());
+        return static_cast<AtomStringImpl*>(StringImpl::empty());
 
     return addToStringTable<const LChar*, CStringTranslator>(characters);
 }
@@ -231,19 +231,19 @@ struct HashAndUTF8CharactersTranslator {
     }
 };
 
-RefPtr<AtomicStringImpl> AtomicStringImpl::add(const UChar* characters, unsigned length)
+RefPtr<AtomStringImpl> AtomStringImpl::add(const UChar* characters, unsigned length)
 {
     if (!characters)
         return nullptr;
 
     if (!length)
-        return static_cast<AtomicStringImpl*>(StringImpl::empty());
+        return static_cast<AtomStringImpl*>(StringImpl::empty());
 
     UCharBuffer buffer { characters, length };
     return addToStringTable<UCharBuffer, UCharBufferTranslator>(buffer);
 }
 
-RefPtr<AtomicStringImpl> AtomicStringImpl::add(const UChar* characters)
+RefPtr<AtomStringImpl> AtomStringImpl::add(const UChar* characters)
 {
     if (!characters)
         return nullptr;
@@ -253,7 +253,7 @@ RefPtr<AtomicStringImpl> AtomicStringImpl::add(const UChar* characters)
         ++length;
 
     if (!length)
-        return static_cast<AtomicStringImpl*>(StringImpl::empty());
+        return static_cast<AtomStringImpl*>(StringImpl::empty());
 
     UCharBuffer buffer { characters, length };
     return addToStringTable<UCharBuffer, UCharBufferTranslator>(buffer);
@@ -298,13 +298,13 @@ struct SubstringTranslator16 : SubstringTranslator {
     }
 };
 
-RefPtr<AtomicStringImpl> AtomicStringImpl::add(StringImpl* baseString, unsigned start, unsigned length)
+RefPtr<AtomStringImpl> AtomStringImpl::add(StringImpl* baseString, unsigned start, unsigned length)
 {
     if (!baseString)
         return nullptr;
 
     if (!length || start >= baseString->length())
-        return static_cast<AtomicStringImpl*>(StringImpl::empty());
+        return static_cast<AtomStringImpl*>(StringImpl::empty());
 
     unsigned maxLength = baseString->length() - start;
     if (length >= maxLength) {
@@ -360,19 +360,19 @@ struct BufferFromStaticDataTranslator {
     }
 };
 
-RefPtr<AtomicStringImpl> AtomicStringImpl::add(const LChar* characters, unsigned length)
+RefPtr<AtomStringImpl> AtomStringImpl::add(const LChar* characters, unsigned length)
 {
     if (!characters)
         return nullptr;
 
     if (!length)
-        return static_cast<AtomicStringImpl*>(StringImpl::empty());
+        return static_cast<AtomStringImpl*>(StringImpl::empty());
 
     LCharBuffer buffer { characters, length };
     return addToStringTable<LCharBuffer, LCharBufferTranslator>(buffer);
 }
 
-Ref<AtomicStringImpl> AtomicStringImpl::addLiteral(const char* characters, unsigned length)
+Ref<AtomStringImpl> AtomStringImpl::addLiteral(const char* characters, unsigned length)
 {
     ASSERT(characters);
     ASSERT(length);
@@ -381,55 +381,55 @@ Ref<AtomicStringImpl> AtomicStringImpl::addLiteral(const char* characters, unsig
     return addToStringTable<LCharBuffer, BufferFromStaticDataTranslator<LChar>>(buffer);
 }
 
-static Ref<AtomicStringImpl> addSymbol(AtomicStringTableLocker& locker, StringTableImpl& atomicStringTable, StringImpl& base)
+static Ref<AtomStringImpl> addSymbol(AtomStringTableLocker& locker, StringTableImpl& atomStringTable, StringImpl& base)
 {
     ASSERT(base.length());
     ASSERT(base.isSymbol());
 
     SubstringLocation buffer = { &base, 0, base.length() };
     if (base.is8Bit())
-        return addToStringTable<SubstringLocation, SubstringTranslator8>(locker, atomicStringTable, buffer);
-    return addToStringTable<SubstringLocation, SubstringTranslator16>(locker, atomicStringTable, buffer);
+        return addToStringTable<SubstringLocation, SubstringTranslator8>(locker, atomStringTable, buffer);
+    return addToStringTable<SubstringLocation, SubstringTranslator16>(locker, atomStringTable, buffer);
 }
 
-static inline Ref<AtomicStringImpl> addSymbol(StringImpl& base)
+static inline Ref<AtomStringImpl> addSymbol(StringImpl& base)
 {
-    AtomicStringTableLocker locker;
+    AtomStringTableLocker locker;
     return addSymbol(locker, stringTable(), base);
 }
 
-static Ref<AtomicStringImpl> addStatic(AtomicStringTableLocker& locker, StringTableImpl& atomicStringTable, const StringImpl& base)
+static Ref<AtomStringImpl> addStatic(AtomStringTableLocker& locker, StringTableImpl& atomStringTable, const StringImpl& base)
 {
     ASSERT(base.length());
     ASSERT(base.isStatic());
 
     if (base.is8Bit()) {
         LCharBuffer buffer { base.characters8(), base.length(), base.hash() };
-        return addToStringTable<LCharBuffer, BufferFromStaticDataTranslator<LChar>>(locker, atomicStringTable, buffer);
+        return addToStringTable<LCharBuffer, BufferFromStaticDataTranslator<LChar>>(locker, atomStringTable, buffer);
     }
     UCharBuffer buffer { base.characters16(), base.length(), base.hash() };
-    return addToStringTable<UCharBuffer, BufferFromStaticDataTranslator<UChar>>(locker, atomicStringTable, buffer);
+    return addToStringTable<UCharBuffer, BufferFromStaticDataTranslator<UChar>>(locker, atomStringTable, buffer);
 }
 
-static inline Ref<AtomicStringImpl> addStatic(const StringImpl& base)
+static inline Ref<AtomStringImpl> addStatic(const StringImpl& base)
 {
-    AtomicStringTableLocker locker;
+    AtomStringTableLocker locker;
     return addStatic(locker, stringTable(), base);
 }
 
-RefPtr<AtomicStringImpl> AtomicStringImpl::add(const StaticStringImpl* string)
+RefPtr<AtomStringImpl> AtomStringImpl::add(const StaticStringImpl* string)
 {
     auto s = reinterpret_cast<const StringImpl*>(string);
     ASSERT(s->isStatic());
     return addStatic(*s);
 }
 
-Ref<AtomicStringImpl> AtomicStringImpl::addSlowCase(StringImpl& string)
+Ref<AtomStringImpl> AtomStringImpl::addSlowCase(StringImpl& string)
 {
     // This check is necessary for null symbols.
-    // Their length is zero, but they are not AtomicStringImpl.
+    // Their length is zero, but they are not AtomStringImpl.
     if (!string.length())
-        return *static_cast<AtomicStringImpl*>(StringImpl::empty());
+        return *static_cast<AtomStringImpl*>(StringImpl::empty());
 
     if (string.isStatic())
         return addStatic(string);
@@ -437,9 +437,9 @@ Ref<AtomicStringImpl> AtomicStringImpl::addSlowCase(StringImpl& string)
     if (string.isSymbol())
         return addSymbol(string);
 
-    ASSERT_WITH_MESSAGE(!string.isAtomic(), "AtomicStringImpl should not hit the slow case if the string is already atomic.");
+    ASSERT_WITH_MESSAGE(!string.isAtom(), "AtomStringImpl should not hit the slow case if the string is already atomic.");
 
-    AtomicStringTableLocker locker;
+    AtomStringTableLocker locker;
     auto addResult = stringTable().add(&string);
 
     if (addResult.isNewEntry) {
@@ -447,29 +447,29 @@ Ref<AtomicStringImpl> AtomicStringImpl::addSlowCase(StringImpl& string)
         string.setIsAtomic(true);
     }
 
-    return *static_cast<AtomicStringImpl*>(*addResult.iterator);
+    return *static_cast<AtomStringImpl*>(*addResult.iterator);
 }
 
-Ref<AtomicStringImpl> AtomicStringImpl::addSlowCase(AtomicStringTable& stringTable, StringImpl& string)
+Ref<AtomStringImpl> AtomStringImpl::addSlowCase(AtomStringTable& stringTable, StringImpl& string)
 {
     // This check is necessary for null symbols.
-    // Their length is zero, but they are not AtomicStringImpl.
+    // Their length is zero, but they are not AtomStringImpl.
     if (!string.length())
-        return *static_cast<AtomicStringImpl*>(StringImpl::empty());
+        return *static_cast<AtomStringImpl*>(StringImpl::empty());
 
     if (string.isStatic()) {
-        AtomicStringTableLocker locker;
+        AtomStringTableLocker locker;
         return addStatic(locker, stringTable.table(), string);
     }
 
     if (string.isSymbol()) {
-        AtomicStringTableLocker locker;
+        AtomStringTableLocker locker;
         return addSymbol(locker, stringTable.table(), string);
     }
 
-    ASSERT_WITH_MESSAGE(!string.isAtomic(), "AtomicStringImpl should not hit the slow case if the string is already atomic.");
+    ASSERT_WITH_MESSAGE(!string.isAtom(), "AtomStringImpl should not hit the slow case if the string is already atomic.");
 
-    AtomicStringTableLocker locker;
+    AtomStringTableLocker locker;
     auto addResult = stringTable.table().add(&string);
 
     if (addResult.isNewEntry) {
@@ -477,36 +477,36 @@ Ref<AtomicStringImpl> AtomicStringImpl::addSlowCase(AtomicStringTable& stringTab
         string.setIsAtomic(true);
     }
 
-    return *static_cast<AtomicStringImpl*>(*addResult.iterator);
+    return *static_cast<AtomStringImpl*>(*addResult.iterator);
 }
 
-void AtomicStringImpl::remove(AtomicStringImpl* string)
+void AtomStringImpl::remove(AtomStringImpl* string)
 {
-    ASSERT(string->isAtomic());
-    AtomicStringTableLocker locker;
-    auto& atomicStringTable = stringTable();
-    auto iterator = atomicStringTable.find(string);
-    ASSERT_WITH_MESSAGE(iterator != atomicStringTable.end(), "The string being removed is atomic in the string table of an other thread!");
+    ASSERT(string->isAtom());
+    AtomStringTableLocker locker;
+    auto& atomStringTable = stringTable();
+    auto iterator = atomStringTable.find(string);
+    ASSERT_WITH_MESSAGE(iterator != atomStringTable.end(), "The string being removed is atomic in the string table of an other thread!");
     ASSERT(string == *iterator);
-    atomicStringTable.remove(iterator);
+    atomStringTable.remove(iterator);
 }
 
-RefPtr<AtomicStringImpl> AtomicStringImpl::lookUpSlowCase(StringImpl& string)
+RefPtr<AtomStringImpl> AtomStringImpl::lookUpSlowCase(StringImpl& string)
 {
-    ASSERT_WITH_MESSAGE(!string.isAtomic(), "AtomicStringImpls should return from the fast case.");
+    ASSERT_WITH_MESSAGE(!string.isAtom(), "AtomicStringImpls should return from the fast case.");
 
     if (!string.length())
-        return static_cast<AtomicStringImpl*>(StringImpl::empty());
+        return static_cast<AtomStringImpl*>(StringImpl::empty());
 
-    AtomicStringTableLocker locker;
-    auto& atomicStringTable = stringTable();
-    auto iterator = atomicStringTable.find(&string);
-    if (iterator != atomicStringTable.end())
-        return static_cast<AtomicStringImpl*>(*iterator);
+    AtomStringTableLocker locker;
+    auto& atomStringTable = stringTable();
+    auto iterator = atomStringTable.find(&string);
+    if (iterator != atomStringTable.end())
+        return static_cast<AtomStringImpl*>(*iterator);
     return nullptr;
 }
 
-RefPtr<AtomicStringImpl> AtomicStringImpl::addUTF8(const char* charactersStart, const char* charactersEnd)
+RefPtr<AtomStringImpl> AtomStringImpl::addUTF8(const char* charactersStart, const char* charactersEnd)
 {
     HashAndUTF8Characters buffer;
     buffer.characters = charactersStart;
@@ -518,34 +518,34 @@ RefPtr<AtomicStringImpl> AtomicStringImpl::addUTF8(const char* charactersStart, 
     return addToStringTable<HashAndUTF8Characters, HashAndUTF8CharactersTranslator>(buffer);
 }
 
-RefPtr<AtomicStringImpl> AtomicStringImpl::lookUp(const LChar* characters, unsigned length)
+RefPtr<AtomStringImpl> AtomStringImpl::lookUp(const LChar* characters, unsigned length)
 {
-    AtomicStringTableLocker locker;
+    AtomStringTableLocker locker;
     auto& table = stringTable();
 
     LCharBuffer buffer = { characters, length };
     auto iterator = table.find<LCharBufferTranslator>(buffer);
     if (iterator != table.end())
-        return static_cast<AtomicStringImpl*>(*iterator);
+        return static_cast<AtomStringImpl*>(*iterator);
     return nullptr;
 }
 
-RefPtr<AtomicStringImpl> AtomicStringImpl::lookUp(const UChar* characters, unsigned length)
+RefPtr<AtomStringImpl> AtomStringImpl::lookUp(const UChar* characters, unsigned length)
 {
-    AtomicStringTableLocker locker;
+    AtomStringTableLocker locker;
     auto& table = stringTable();
 
     UCharBuffer buffer { characters, length };
     auto iterator = table.find<UCharBufferTranslator>(buffer);
     if (iterator != table.end())
-        return static_cast<AtomicStringImpl*>(*iterator);
+        return static_cast<AtomStringImpl*>(*iterator);
     return nullptr;
 }
 
 #if !ASSERT_DISABLED
-bool AtomicStringImpl::isInAtomicStringTable(StringImpl* string)
+bool AtomStringImpl::isInAtomStringTable(StringImpl* string)
 {
-    AtomicStringTableLocker locker;
+    AtomStringTableLocker locker;
     return stringTable().contains(string);
 }
 #endif

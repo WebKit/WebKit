@@ -33,7 +33,7 @@ namespace WebCore {
 
 class SpeechSynthesisEvent : public Event {
 public:
-    static Ref<SpeechSynthesisEvent> create(const AtomicString& type, unsigned charIndex, float elapsedTime, const String& name);
+    static Ref<SpeechSynthesisEvent> create(const AtomString& type, unsigned charIndex, float elapsedTime, const String& name);
 
     unsigned long charIndex() const { return m_charIndex; }
     float elapsedTime() const { return m_elapsedTime; }
@@ -42,7 +42,7 @@ public:
     virtual EventInterface eventInterface() const { return SpeechSynthesisEventInterfaceType; }
 
 private:
-    SpeechSynthesisEvent(const AtomicString& type, unsigned charIndex, float elapsedTime, const String& name);
+    SpeechSynthesisEvent(const AtomString& type, unsigned charIndex, float elapsedTime, const String& name);
 
     unsigned long m_charIndex;
     float m_elapsedTime;

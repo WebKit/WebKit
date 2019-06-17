@@ -894,7 +894,7 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString& errorString, int n
 
     struct EventListenerInfo {
         RefPtr<EventTarget> eventTarget;
-        const AtomicString eventType;
+        const AtomString eventType;
         const EventListenerVector eventListeners;
     };
 
@@ -1677,7 +1677,7 @@ RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> InspectorDOMAgent::buildAr
     return pseudoElements;
 }
 
-Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, int identifier, EventTarget& eventTarget, const AtomicString& eventType, bool disabled, bool hasBreakpoint)
+Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, int identifier, EventTarget& eventTarget, const AtomString& eventType, bool disabled, bool hasBreakpoint)
 {
     Ref<EventListener> eventListener = registeredEventListener.callback();
 
@@ -2176,7 +2176,7 @@ void InspectorDOMAgent::addEventListenersToNode(Node& node)
 #if ENABLE(VIDEO)
     auto callback = EventFiredCallback::create(*this);
 
-    auto createEventListener = [&] (const AtomicString& eventName) {
+    auto createEventListener = [&] (const AtomString& eventName) {
         node.addEventListener(eventName, callback.copyRef(), false);
     };
 
@@ -2262,12 +2262,12 @@ void InspectorDOMAgent::didRemoveDOMNode(Node& node)
     unbind(&node, &m_documentNodeToIdMap);
 }
 
-void InspectorDOMAgent::willModifyDOMAttr(Element&, const AtomicString& oldValue, const AtomicString& newValue)
+void InspectorDOMAgent::willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue)
 {
     m_suppressAttributeModifiedEvent = (oldValue == newValue);
 }
 
-void InspectorDOMAgent::didModifyDOMAttr(Element& element, const AtomicString& name, const AtomicString& value)
+void InspectorDOMAgent::didModifyDOMAttr(Element& element, const AtomString& name, const AtomString& value)
 {
     bool shouldSuppressEvent = m_suppressAttributeModifiedEvent;
     m_suppressAttributeModifiedEvent = false;
@@ -2284,7 +2284,7 @@ void InspectorDOMAgent::didModifyDOMAttr(Element& element, const AtomicString& n
     m_frontendDispatcher->attributeModified(id, name, value);
 }
 
-void InspectorDOMAgent::didRemoveDOMAttr(Element& element, const AtomicString& name)
+void InspectorDOMAgent::didRemoveDOMAttr(Element& element, const AtomString& name)
 {
     int id = boundNodeId(&element);
     if (!id)
@@ -2423,7 +2423,7 @@ void InspectorDOMAgent::didAddEventListener(EventTarget& target)
     m_frontendDispatcher->didAddEventListener(nodeId);
 }
 
-void InspectorDOMAgent::willRemoveEventListener(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
+void InspectorDOMAgent::willRemoveEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
     if (!is<Node>(target))
         return;
@@ -2459,7 +2459,7 @@ void InspectorDOMAgent::willRemoveEventListener(EventTarget& target, const Atomi
     m_frontendDispatcher->willRemoveEventListener(nodeId);
 }
 
-bool InspectorDOMAgent::isEventListenerDisabled(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
+bool InspectorDOMAgent::isEventListenerDisabled(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
     for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
         if (inspectorEventListener.matches(target, eventType, listener, capture))
@@ -2473,7 +2473,7 @@ void InspectorDOMAgent::eventDidResetAfterDispatch(const Event& event)
     m_dispatchedEvents.remove(&event);
 }
 
-bool InspectorDOMAgent::hasBreakpointForEventListener(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
+bool InspectorDOMAgent::hasBreakpointForEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
     for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
         if (inspectorEventListener.matches(target, eventType, listener, capture))
@@ -2482,7 +2482,7 @@ bool InspectorDOMAgent::hasBreakpointForEventListener(EventTarget& target, const
     return false;
 }
 
-int InspectorDOMAgent::idForEventListener(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
+int InspectorDOMAgent::idForEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
     for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
         if (inspectorEventListener.matches(target, eventType, listener, capture))

@@ -74,7 +74,7 @@ void HTMLFrameElement::didAttachRenderers()
         m_frameBorder = containingFrameSet->hasFrameBorder();
 }
 
-void HTMLFrameElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLFrameElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == frameborderAttr) {
         m_frameBorder = value.toInt();

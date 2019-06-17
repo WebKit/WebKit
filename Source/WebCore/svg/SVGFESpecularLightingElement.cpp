@@ -55,7 +55,7 @@ Ref<SVGFESpecularLightingElement> SVGFESpecularLightingElement::create(const Qua
     return adoptRef(*new SVGFESpecularLightingElement(tagName, document));
 }
 
-void SVGFESpecularLightingElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGFESpecularLightingElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::inAttr) {
         m_in1->setBaseValInternal(value);

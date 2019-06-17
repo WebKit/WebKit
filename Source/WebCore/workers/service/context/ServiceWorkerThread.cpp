@@ -77,7 +77,7 @@ ServiceWorkerThread::ServiceWorkerThread(const ServiceWorkerContextData& data, P
     , m_data(data.isolatedCopy())
     , m_workerObjectProxy(DummyServiceWorkerThreadProxy::shared())
 {
-    AtomicString::init();
+    AtomString::init();
 }
 
 ServiceWorkerThread::~ServiceWorkerThread() = default;

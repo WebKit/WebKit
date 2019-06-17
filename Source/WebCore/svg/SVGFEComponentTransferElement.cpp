@@ -52,7 +52,7 @@ Ref<SVGFEComponentTransferElement> SVGFEComponentTransferElement::create(const Q
     return adoptRef(*new SVGFEComponentTransferElement(tagName, document));
 }
 
-void SVGFEComponentTransferElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGFEComponentTransferElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::inAttr) {
         m_in1->setBaseValInternal(value);

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include <wtf/text/AtomicStringImpl.h>
+#include <wtf/text/AtomStringImpl.h>
 
 #if USE(CF)
 
@@ -33,7 +33,7 @@
 
 namespace WTF {
 
-RefPtr<AtomicStringImpl> AtomicStringImpl::add(CFStringRef string)
+RefPtr<AtomStringImpl> AtomStringImpl::add(CFStringRef string)
 {
     if (!string)
         return nullptr;

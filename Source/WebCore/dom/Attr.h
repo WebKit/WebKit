@@ -37,30 +37,30 @@ class Attr final : public Node {
     WTF_MAKE_ISO_ALLOCATED(Attr);
 public:
     static Ref<Attr> create(Element&, const QualifiedName&);
-    static Ref<Attr> create(Document&, const QualifiedName&, const AtomicString& value);
+    static Ref<Attr> create(Document&, const QualifiedName&, const AtomString& value);
     virtual ~Attr();
 
     String name() const { return qualifiedName().toString(); }
     bool specified() const { return true; }
     Element* ownerElement() const { return m_element; }
 
-    WEBCORE_EXPORT const AtomicString& value() const;
-    WEBCORE_EXPORT void setValue(const AtomicString&);
+    WEBCORE_EXPORT const AtomString& value() const;
+    WEBCORE_EXPORT void setValue(const AtomString&);
 
     const QualifiedName& qualifiedName() const { return m_name; }
 
     WEBCORE_EXPORT CSSStyleDeclaration* style();
 
     void attachToElement(Element&);
-    void detachFromElementWithValue(const AtomicString&);
+    void detachFromElementWithValue(const AtomString&);
 
-    const AtomicString& namespaceURI() const final { return m_name.namespaceURI(); }
-    const AtomicString& localName() const final { return m_name.localName(); }
-    const AtomicString& prefix() const final { return m_name.prefix(); }
+    const AtomString& namespaceURI() const final { return m_name.namespaceURI(); }
+    const AtomString& localName() const final { return m_name.localName(); }
+    const AtomString& prefix() const final { return m_name.prefix(); }
 
 private:
     Attr(Element&, const QualifiedName&);
-    Attr(Document&, const QualifiedName&, const AtomicString& value);
+    Attr(Document&, const QualifiedName&, const AtomString& value);
 
     String nodeName() const final { return name(); }
     NodeType nodeType() const final { return ATTRIBUTE_NODE; }
@@ -68,7 +68,7 @@ private:
     String nodeValue() const final { return value(); }
     ExceptionOr<void> setNodeValue(const String&) final;
 
-    ExceptionOr<void> setPrefix(const AtomicString&) final;
+    ExceptionOr<void> setPrefix(const AtomString&) final;
 
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) final;
 
@@ -80,7 +80,7 @@ private:
     // Note that m_name is always set, but m_element/m_standaloneValue may be null.
     Element* m_element { nullptr };
     QualifiedName m_name;
-    AtomicString m_standaloneValue;
+    AtomString m_standaloneValue;
 
     RefPtr<MutableStyleProperties> m_style;
 };

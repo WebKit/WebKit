@@ -53,7 +53,7 @@ public:
     
         Element& element() const { return m_item->element(); }
         ContainerNode& node() const { return m_item->node(); }
-        const AtomicString& namespaceURI() const { return m_item->namespaceURI(); }
+        const AtomString& namespaceURI() const { return m_item->namespaceURI(); }
         HTMLStackItem& stackItem() { return m_item.get(); }
         const HTMLStackItem& stackItem() const { return m_item.get(); }
 
@@ -96,7 +96,7 @@ public:
     ElementRecord& topRecord() const;
     ElementRecord* find(Element&) const;
     ElementRecord* furthestBlockForFormattingElement(Element&) const;
-    ElementRecord* topmost(const AtomicString& tagName) const;
+    ElementRecord* topmost(const AtomString& tagName) const;
 
     void insertAbove(Ref<HTMLStackItem>&&, ElementRecord&);
 
@@ -107,9 +107,9 @@ public:
     void pushHTMLBodyElement(Ref<HTMLStackItem>&&);
 
     void pop();
-    void popUntil(const AtomicString& tagName);
+    void popUntil(const AtomString& tagName);
     void popUntil(Element&);
-    void popUntilPopped(const AtomicString& tagName);
+    void popUntilPopped(const AtomString& tagName);
     void popUntilPopped(const QualifiedName& tagName) { popUntilPopped(tagName.localName()); }
 
     void popUntilPopped(Element&);
@@ -129,18 +129,18 @@ public:
     void removeHTMLHeadElement(Element&);
 
     bool contains(Element&) const;
-    bool contains(const AtomicString& tagName) const;
+    bool contains(const AtomString& tagName) const;
 
     bool inScope(Element&) const;
-    bool inScope(const AtomicString& tagName) const;
+    bool inScope(const AtomString& tagName) const;
     bool inScope(const QualifiedName&) const;
-    bool inListItemScope(const AtomicString& tagName) const;
+    bool inListItemScope(const AtomString& tagName) const;
     bool inListItemScope(const QualifiedName&) const;
-    bool inTableScope(const AtomicString& tagName) const;
+    bool inTableScope(const AtomString& tagName) const;
     bool inTableScope(const QualifiedName&) const;
-    bool inButtonScope(const AtomicString& tagName) const;
+    bool inButtonScope(const AtomString& tagName) const;
     bool inButtonScope(const QualifiedName&) const;
-    bool inSelectScope(const AtomicString& tagName) const;
+    bool inSelectScope(const AtomString& tagName) const;
     bool inSelectScope(const QualifiedName&) const;
 
     bool hasNumberedHeaderElementInScope() const;

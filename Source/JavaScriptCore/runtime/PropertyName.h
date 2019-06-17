@@ -69,9 +69,9 @@ public:
         return m_impl;
     }
 
-    AtomicStringImpl* publicName() const
+    AtomStringImpl* publicName() const
     {
-        return (!m_impl || m_impl->isSymbol()) ? nullptr : static_cast<AtomicStringImpl*>(m_impl);
+        return (!m_impl || m_impl->isSymbol()) ? nullptr : static_cast<AtomStringImpl*>(m_impl);
     }
 
     void dump(PrintStream& out) const

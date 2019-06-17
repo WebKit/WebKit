@@ -27,7 +27,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "Event.h"
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -37,12 +37,12 @@ class MediaStreamTrackEvent : public Event {
 public:
     virtual ~MediaStreamTrackEvent();
 
-    static Ref<MediaStreamTrackEvent> create(const AtomicString& type, CanBubble, IsCancelable, RefPtr<MediaStreamTrack>&&);
+    static Ref<MediaStreamTrackEvent> create(const AtomString& type, CanBubble, IsCancelable, RefPtr<MediaStreamTrack>&&);
 
     struct Init : EventInit {
         RefPtr<MediaStreamTrack> track;
     };
-    static Ref<MediaStreamTrackEvent> create(const AtomicString& type, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<MediaStreamTrackEvent> create(const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
 
     MediaStreamTrack* track() const;
 
@@ -50,8 +50,8 @@ public:
     EventInterface eventInterface() const override;
 
 private:
-    MediaStreamTrackEvent(const AtomicString& type, CanBubble, IsCancelable, RefPtr<MediaStreamTrack>&&);
-    MediaStreamTrackEvent(const AtomicString& type, const Init&, IsTrusted);
+    MediaStreamTrackEvent(const AtomString& type, CanBubble, IsCancelable, RefPtr<MediaStreamTrack>&&);
+    MediaStreamTrackEvent(const AtomString& type, const Init&, IsTrusted);
 
     RefPtr<MediaStreamTrack> m_track;
 };

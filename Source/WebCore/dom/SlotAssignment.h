@@ -31,8 +31,8 @@
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
@@ -46,19 +46,19 @@ public:
     SlotAssignment();
     virtual ~SlotAssignment();
 
-    static const AtomicString& defaultSlotName() { return emptyAtom(); }
+    static const AtomString& defaultSlotName() { return emptyAtom(); }
 
     HTMLSlotElement* findAssignedSlot(const Node&, ShadowRoot&);
 
-    void renameSlotElement(HTMLSlotElement&, const AtomicString& oldName, const AtomicString& newName, ShadowRoot&);
-    void addSlotElementByName(const AtomicString&, HTMLSlotElement&, ShadowRoot&);
-    void removeSlotElementByName(const AtomicString&, HTMLSlotElement&, ContainerNode* oldParentOfRemovedTreeForRemoval, ShadowRoot&);
+    void renameSlotElement(HTMLSlotElement&, const AtomString& oldName, const AtomString& newName, ShadowRoot&);
+    void addSlotElementByName(const AtomString&, HTMLSlotElement&, ShadowRoot&);
+    void removeSlotElementByName(const AtomString&, HTMLSlotElement&, ContainerNode* oldParentOfRemovedTreeForRemoval, ShadowRoot&);
     void slotFallbackDidChange(HTMLSlotElement&, ShadowRoot&);
     void resolveSlotsBeforeNodeInsertionOrRemoval(ShadowRoot&);
     void willRemoveAllChildren(ShadowRoot&);
 
-    void didChangeSlot(const AtomicString&, ShadowRoot&);
-    void enqueueSlotChangeEvent(const AtomicString&, ShadowRoot&);
+    void didChangeSlot(const AtomString&, ShadowRoot&);
+    void enqueueSlotChangeEvent(const AtomString&, ShadowRoot&);
 
     const Vector<Node*>* assignedNodesForSlot(const HTMLSlotElement&, ShadowRoot&);
 
@@ -85,15 +85,15 @@ private:
     enum class SlotMutationType { Insertion, Removal };
     void resolveSlotsAfterSlotMutation(ShadowRoot&, SlotMutationType, ContainerNode* oldParentOfRemovedTree = nullptr);
 
-    virtual const AtomicString& slotNameForHostChild(const Node&) const;
+    virtual const AtomString& slotNameForHostChild(const Node&) const;
 
     HTMLSlotElement* findFirstSlotElement(Slot&, ShadowRoot&);
     void resolveAllSlotElements(ShadowRoot&);
 
     void assignSlots(ShadowRoot&);
-    void assignToSlot(Node& child, const AtomicString& slotName);
+    void assignToSlot(Node& child, const AtomString& slotName);
 
-    HashMap<AtomicString, std::unique_ptr<Slot>> m_slots;
+    HashMap<AtomString, std::unique_ptr<Slot>> m_slots;
 
 #ifndef NDEBUG
     HashSet<HTMLSlotElement*> m_slotElementsForConsistencyCheck;
@@ -136,7 +136,7 @@ inline void ShadowRoot::hostChildElementDidChange(const Element& childElement)
         m_slotAssignment->hostChildElementDidChange(childElement, *this);
 }
 
-inline void ShadowRoot::hostChildElementDidChangeSlotAttribute(Element& element, const AtomicString& oldValue, const AtomicString& newValue)
+inline void ShadowRoot::hostChildElementDidChangeSlotAttribute(Element& element, const AtomString& oldValue, const AtomString& newValue)
 {
     if (!m_slotAssignment)
         return;

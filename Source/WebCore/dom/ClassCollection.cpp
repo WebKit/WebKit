@@ -38,7 +38,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ClassCollection);
 
-Ref<ClassCollection> ClassCollection::create(ContainerNode& rootNode, CollectionType type, const AtomicString& classNames)
+Ref<ClassCollection> ClassCollection::create(ContainerNode& rootNode, CollectionType type, const AtomString& classNames)
 {
     ASSERT(type == ByClass);
     return adoptRef(*new ClassCollection(rootNode, type, classNames));

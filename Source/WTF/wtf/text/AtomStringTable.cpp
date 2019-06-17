@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include <wtf/text/AtomicStringTable.h>
+#include <wtf/text/AtomStringTable.h>
 
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
@@ -29,7 +29,7 @@
 
 namespace WTF {
 
-AtomicStringTable::~AtomicStringTable()
+AtomStringTable::~AtomStringTable()
 {
     for (auto* string : m_table)
         string->setIsAtomic(false);

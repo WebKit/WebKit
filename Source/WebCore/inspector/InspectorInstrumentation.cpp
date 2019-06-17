@@ -169,7 +169,7 @@ void InspectorInstrumentation::didRemoveDOMNodeImpl(InstrumentingAgents& instrum
         domAgent->didRemoveDOMNode(node);
 }
 
-void InspectorInstrumentation::willModifyDOMAttrImpl(InstrumentingAgents& instrumentingAgents, Element& element, const AtomicString& oldValue, const AtomicString& newValue)
+void InspectorInstrumentation::willModifyDOMAttrImpl(InstrumentingAgents& instrumentingAgents, Element& element, const AtomString& oldValue, const AtomString& newValue)
 {
     if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents.inspectorDOMDebuggerAgent())
         domDebuggerAgent->willModifyDOMAttr(element);
@@ -177,13 +177,13 @@ void InspectorInstrumentation::willModifyDOMAttrImpl(InstrumentingAgents& instru
         domAgent->willModifyDOMAttr(element, oldValue, newValue);
 }
 
-void InspectorInstrumentation::didModifyDOMAttrImpl(InstrumentingAgents& instrumentingAgents, Element& element, const AtomicString& name, const AtomicString& value)
+void InspectorInstrumentation::didModifyDOMAttrImpl(InstrumentingAgents& instrumentingAgents, Element& element, const AtomString& name, const AtomString& value)
 {
     if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
         domAgent->didModifyDOMAttr(element, name, value);
 }
 
-void InspectorInstrumentation::didRemoveDOMAttrImpl(InstrumentingAgents& instrumentingAgents, Element& element, const AtomicString& name)
+void InspectorInstrumentation::didRemoveDOMAttrImpl(InstrumentingAgents& instrumentingAgents, Element& element, const AtomString& name)
 {
     if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
         domAgent->didRemoveDOMAttr(element, name);
@@ -328,7 +328,7 @@ void InspectorInstrumentation::didRemoveTimerImpl(InstrumentingAgents& instrumen
         timelineAgent->didRemoveTimer(timerId, frameForScriptExecutionContext(context));
 }
 
-void InspectorInstrumentation::didAddEventListenerImpl(InstrumentingAgents& instrumentingAgents, EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
+void InspectorInstrumentation::didAddEventListenerImpl(InstrumentingAgents& instrumentingAgents, EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
     if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
         pageDebuggerAgent->didAddEventListener(target, eventType, listener, capture);
@@ -336,7 +336,7 @@ void InspectorInstrumentation::didAddEventListenerImpl(InstrumentingAgents& inst
         domAgent->didAddEventListener(target);
 }
 
-void InspectorInstrumentation::willRemoveEventListenerImpl(InstrumentingAgents& instrumentingAgents, EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
+void InspectorInstrumentation::willRemoveEventListenerImpl(InstrumentingAgents& instrumentingAgents, EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
     if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
         pageDebuggerAgent->willRemoveEventListener(target, eventType, listener, capture);
@@ -344,7 +344,7 @@ void InspectorInstrumentation::willRemoveEventListenerImpl(InstrumentingAgents& 
         domAgent->willRemoveEventListener(target, eventType, listener, capture);
 }
 
-bool InspectorInstrumentation::isEventListenerDisabledImpl(InstrumentingAgents& instrumentingAgents, EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
+bool InspectorInstrumentation::isEventListenerDisabledImpl(InstrumentingAgents& instrumentingAgents, EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
     if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
         return domAgent->isEventListenerDisabled(target, eventType, listener, capture);

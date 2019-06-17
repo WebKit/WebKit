@@ -28,7 +28,7 @@ class SourceAlpha : public FilterEffect {
 public:        
     static Ref<SourceAlpha> create(FilterEffect&);
 
-    static const AtomicString& effectName();
+    static const AtomString& effectName();
 
 private:
     explicit SourceAlpha(FilterEffect&);

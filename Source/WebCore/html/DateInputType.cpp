@@ -50,7 +50,7 @@ DateInputType::DateInputType(HTMLInputElement& element)
 {
 }
 
-const AtomicString& DateInputType::formControlType() const
+const AtomString& DateInputType::formControlType() const
 {
     return InputTypeNames::date();
 }

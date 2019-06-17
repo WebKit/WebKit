@@ -289,10 +289,10 @@ set(WTF_PUBLIC_HEADERS
 
     text/ASCIIFastPath.h
     text/ASCIILiteral.h
-    text/AtomicString.h
-    text/AtomicStringHash.h
-    text/AtomicStringImpl.h
-    text/AtomicStringTable.h
+    text/AtomString.h
+    text/AtomStringHash.h
+    text/AtomStringImpl.h
+    text/AtomStringTable.h
     text/Base64.h
     text/CString.h
     text/ConversionMode.h
@@ -430,9 +430,9 @@ set(WTF_SOURCES
     persistence/PersistentEncoder.cpp
 
     text/ASCIILiteral.cpp
-    text/AtomicString.cpp
-    text/AtomicStringImpl.cpp
-    text/AtomicStringTable.cpp
+    text/AtomString.cpp
+    text/AtomStringImpl.cpp
+    text/AtomStringTable.cpp
     text/Base64.cpp
     text/CString.cpp
     text/ExternalStringImpl.cpp

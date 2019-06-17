@@ -153,7 +153,7 @@ bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::valuesAttr) {
         // Per the SMIL specification, leading and trailing white space,
@@ -277,12 +277,12 @@ void SVGAnimationElement::updateAnimationMode()
         setAnimationMode(AnimationMode::None);
 }
 
-void SVGAnimationElement::setCalcMode(const AtomicString& calcMode)
+void SVGAnimationElement::setCalcMode(const AtomString& calcMode)
 {
-    static NeverDestroyed<const AtomicString> discrete("discrete", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> linear("linear", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> paced("paced", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> spline("spline", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> discrete("discrete", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> linear("linear", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> paced("paced", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> spline("spline", AtomString::ConstructFromLiteral);
     if (calcMode == discrete)
         setCalcMode(CalcMode::Discrete);
     else if (calcMode == linear)
@@ -295,10 +295,10 @@ void SVGAnimationElement::setCalcMode(const AtomicString& calcMode)
         setCalcMode(hasTagName(SVGNames::animateMotionTag) ? CalcMode::Paced : CalcMode::Linear);
 }
 
-void SVGAnimationElement::setAttributeType(const AtomicString& attributeType)
+void SVGAnimationElement::setAttributeType(const AtomString& attributeType)
 {
-    static NeverDestroyed<const AtomicString> css("CSS", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> xml("XML", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> css("CSS", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> xml("XML", AtomString::ConstructFromLiteral);
     if (attributeType == css)
         m_attributeType = AttributeType::CSS;
     else if (attributeType == xml)
@@ -324,15 +324,15 @@ String SVGAnimationElement::fromValue() const
 
 bool SVGAnimationElement::isAdditive() const
 {
-    static NeverDestroyed<const AtomicString> sum("sum", AtomicString::ConstructFromLiteral);
-    const AtomicString& value = attributeWithoutSynchronization(SVGNames::additiveAttr);
+    static NeverDestroyed<const AtomString> sum("sum", AtomString::ConstructFromLiteral);
+    const AtomString& value = attributeWithoutSynchronization(SVGNames::additiveAttr);
     return value == sum || animationMode() == AnimationMode::By;
 }
 
 bool SVGAnimationElement::isAccumulated() const
 {
-    static NeverDestroyed<const AtomicString> sum("sum", AtomicString::ConstructFromLiteral);
-    const AtomicString& value = attributeWithoutSynchronization(SVGNames::accumulateAttr);
+    static NeverDestroyed<const AtomString> sum("sum", AtomString::ConstructFromLiteral);
+    const AtomString& value = attributeWithoutSynchronization(SVGNames::accumulateAttr);
     return value == sum && animationMode() != AnimationMode::To;
 }
 
@@ -609,7 +609,7 @@ void SVGAnimationElement::computeCSSPropertyValue(SVGElement* element, CSSProper
 
 static bool inheritsFromProperty(SVGElement* targetElement, const QualifiedName& attributeName, const String& value)
 {
-    static NeverDestroyed<const AtomicString> inherit("inherit", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> inherit("inherit", AtomString::ConstructFromLiteral);
     
     if (value.isEmpty() || value != inherit)
         return false;

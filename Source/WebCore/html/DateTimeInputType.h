@@ -42,7 +42,7 @@ public:
     explicit DateTimeInputType(HTMLInputElement& element) : BaseDateTimeInputType(element) { }
 
 private:
-    const AtomicString& formControlType() const override;
+    const AtomString& formControlType() const override;
     DateComponents::Type dateType() const override;
     StepRange createStepRange(AnyStepHandling) const override;
     Decimal defaultValueForStepUp() const override;

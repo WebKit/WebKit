@@ -39,12 +39,12 @@
 namespace WebCore {
 
 struct DateTimeChooserParameters {
-    AtomicString type;
+    AtomString type;
     IntRect anchorRectInRootView;
     // Locale name for which the chooser should be localized. This
     // might be an invalid name because it comes from HTML lang
     // attributes.
-    AtomicString locale;
+    AtomString locale;
     String currentValue;
     Vector<String> suggestionValues;
     Vector<String> localizedSuggestionValues;

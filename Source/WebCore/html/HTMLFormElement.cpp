@@ -166,7 +166,7 @@ HTMLElement* HTMLFormElement::item(unsigned index)
     return elements()->item(index);
 }
 
-Optional<Variant<RefPtr<RadioNodeList>, RefPtr<Element>>> HTMLFormElement::namedItem(const AtomicString& name)
+Optional<Variant<RefPtr<RadioNodeList>, RefPtr<Element>>> HTMLFormElement::namedItem(const AtomString& name)
 {
     auto namedItems = namedElements(name);
 
@@ -178,7 +178,7 @@ Optional<Variant<RefPtr<RadioNodeList>, RefPtr<Element>>> HTMLFormElement::named
     return Variant<RefPtr<RadioNodeList>, RefPtr<Element>> { RefPtr<RadioNodeList> { radioNodeList(name) } };
 }
 
-Vector<AtomicString> HTMLFormElement::supportedPropertyNames() const
+Vector<AtomString> HTMLFormElement::supportedPropertyNames() const
 {
     // FIXME: Should be implemented (only needed for enumeration with includeDontEnumProperties mode
     // since this class is annotated with LegacyUnenumerableNamedProperties).
@@ -408,7 +408,7 @@ void HTMLFormElement::resetAssociatedFormControlElements()
 
 bool HTMLFormElement::shouldAutocorrect() const
 {
-    const AtomicString& autocorrectValue = attributeWithoutSynchronization(autocorrectAttr);
+    const AtomString& autocorrectValue = attributeWithoutSynchronization(autocorrectAttr);
     if (!autocorrectValue.isEmpty())
         return !equalLettersIgnoringASCIICase(autocorrectValue, "off");
     if (RefPtr<HTMLFormElement> form = this->form())
@@ -418,7 +418,7 @@ bool HTMLFormElement::shouldAutocorrect() const
 
 #endif
 
-void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == actionAttr) {
         m_attributes.parseAction(value);
@@ -774,7 +774,7 @@ inline void HTMLFormElement::assertItemCanBeInPastNamesMap(FormNamedItem*) const
 }
 #endif
 
-RefPtr<HTMLElement> HTMLFormElement::elementFromPastNamesMap(const AtomicString& pastName) const
+RefPtr<HTMLElement> HTMLFormElement::elementFromPastNamesMap(const AtomString& pastName) const
 {
     if (pastName.isEmpty() || !m_pastNamesMap)
         return nullptr;
@@ -785,7 +785,7 @@ RefPtr<HTMLElement> HTMLFormElement::elementFromPastNamesMap(const AtomicString&
     return &item->asHTMLElement();
 }
 
-void HTMLFormElement::addToPastNamesMap(FormNamedItem* item, const AtomicString& pastName)
+void HTMLFormElement::addToPastNamesMap(FormNamedItem* item, const AtomString& pastName)
 {
     assertItemCanBeInPastNamesMap(item);
     if (pastName.isEmpty())
@@ -818,7 +818,7 @@ bool HTMLFormElement::matchesInvalidPseudoClass() const
 }
 
 // FIXME: Use Ref<HTMLElement> for the function result since there are no non-HTML elements returned here.
-Vector<Ref<Element>> HTMLFormElement::namedElements(const AtomicString& name)
+Vector<Ref<Element>> HTMLFormElement::namedElements(const AtomString& name)
 {
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#dom-form-nameditem
     Vector<Ref<Element>> namedItems = elements()->namedItems(name);
@@ -886,15 +886,15 @@ HTMLFormElement* HTMLFormElement::findClosestFormAncestor(const Element& startEl
     return const_cast<HTMLFormElement*>(ancestorsOfType<HTMLFormElement>(startElement).first());
 }
 
-void HTMLFormElement::setAutocomplete(const AtomicString& value)
+void HTMLFormElement::setAutocomplete(const AtomString& value)
 {
     setAttributeWithoutSynchronization(autocompleteAttr, value);
 }
 
-const AtomicString& HTMLFormElement::autocomplete() const
+const AtomString& HTMLFormElement::autocomplete() const
 {
-    static NeverDestroyed<AtomicString> on("on", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> off("off", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> on("on", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> off("off", AtomString::ConstructFromLiteral);
 
     return equalIgnoringASCIICase(attributeWithoutSynchronization(autocompleteAttr), "off") ? off : on;
 }

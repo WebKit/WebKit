@@ -41,7 +41,7 @@ public:
     explicit MonthInputType(HTMLInputElement& element) : BaseChooserOnlyDateAndTimeInputType(element) { }
 
 private:
-    const AtomicString& formControlType() const override;
+    const AtomString& formControlType() const override;
     DateComponents::Type dateType() const override;
     double valueAsDate() const override;
     String serializeWithMilliseconds(double) const override;

@@ -33,9 +33,9 @@ class QualifiedName;
 
 class JSLazyEventListener final : public JSEventListener {
 public:
-    static RefPtr<JSLazyEventListener> create(Element&, const QualifiedName& attributeName, const AtomicString& attributeValue);
-    static RefPtr<JSLazyEventListener> create(Document&, const QualifiedName& attributeName, const AtomicString& attributeValue);
-    static RefPtr<JSLazyEventListener> create(DOMWindow&, const QualifiedName& attributeName, const AtomicString& attributeValue);
+    static RefPtr<JSLazyEventListener> create(Element&, const QualifiedName& attributeName, const AtomString& attributeValue);
+    static RefPtr<JSLazyEventListener> create(Document&, const QualifiedName& attributeName, const AtomString& attributeValue);
+    static RefPtr<JSLazyEventListener> create(DOMWindow&, const QualifiedName& attributeName, const AtomString& attributeValue);
 
     virtual ~JSLazyEventListener();
 

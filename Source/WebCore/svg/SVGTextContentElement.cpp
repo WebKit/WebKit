@@ -148,7 +148,7 @@ bool SVGTextContentElement::isPresentationAttribute(const QualifiedName& name) c
     return SVGGraphicsElement::isPresentationAttribute(name);
 }
 
-void SVGTextContentElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+void SVGTextContentElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name.matches(XMLNames::spaceAttr)) {
         if (value == "preserve")
@@ -161,7 +161,7 @@ void SVGTextContentElement::collectStyleForPresentationAttribute(const Qualified
     SVGGraphicsElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
-void SVGTextContentElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGTextContentElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     SVGParsingError parseError = NoError;
 

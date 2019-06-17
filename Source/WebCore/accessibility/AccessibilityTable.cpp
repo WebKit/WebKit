@@ -700,7 +700,7 @@ String AccessibilityTable::title() const
 
 int AccessibilityTable::axColumnCount() const
 {
-    const AtomicString& colCountValue = getAttribute(aria_colcountAttr);
+    const AtomString& colCountValue = getAttribute(aria_colcountAttr);
     int colCountInt = colCountValue.toInt();
     // The ARIA spec states, "Authors must set the value of aria-colcount to an integer equal to the
     // number of columns in the full table. If the total number of columns is unknown, authors must
@@ -714,7 +714,7 @@ int AccessibilityTable::axColumnCount() const
 
 int AccessibilityTable::axRowCount() const
 {
-    const AtomicString& rowCountValue = getAttribute(aria_rowcountAttr);
+    const AtomString& rowCountValue = getAttribute(aria_rowcountAttr);
     int rowCountInt = rowCountValue.toInt();
     // The ARIA spec states, "Authors must set the value of aria-rowcount to an integer equal to the
     // number of rows in the full table. If the total number of rows is unknown, authors must set

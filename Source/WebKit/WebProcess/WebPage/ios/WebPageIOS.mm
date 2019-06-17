@@ -2906,7 +2906,7 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         else if (element.isURLField())
             information.elementType = InputType::URL;
         else if (element.isText()) {
-            const AtomicString& pattern = element.attributeWithoutSynchronization(HTMLNames::patternAttr);
+            const AtomString& pattern = element.attributeWithoutSynchronization(HTMLNames::patternAttr);
             if (pattern == "\\d*" || pattern == "[0-9]*")
                 information.elementType = InputType::NumberPad;
             else {

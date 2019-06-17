@@ -40,11 +40,11 @@ class HTMLTrackElement final : public HTMLElement, public TextTrackClient {
 public:
     static Ref<HTMLTrackElement> create(const QualifiedName&, Document&);
 
-    const AtomicString& kind();
-    void setKind(const AtomicString&);
+    const AtomString& kind();
+    void setKind(const AtomString&);
 
-    const AtomicString& srclang() const;
-    const AtomicString& label() const;
+    const AtomString& srclang() const;
+    const AtomString& label() const;
     bool isDefault() const;
 
     enum ReadyState { NONE = 0, LOADING = 1, LOADED = 2, TRACK_ERROR = 3 };
@@ -59,13 +59,13 @@ public:
     void didCompleteLoad(LoadStatus);
 
     RefPtr<HTMLMediaElement> mediaElement() const;
-    const AtomicString& mediaElementCrossOriginAttribute() const;
+    const AtomString& mediaElementCrossOriginAttribute() const;
 
 private:
     HTMLTrackElement(const QualifiedName&, Document&);
     virtual ~HTMLTrackElement();
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;

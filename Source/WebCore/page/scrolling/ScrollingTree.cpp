@@ -340,7 +340,7 @@ void ScrollingTree::setMainFrameScrollPosition(FloatPoint position)
     m_treeState.mainFrameScrollPosition = position;
 }
 
-TrackingType ScrollingTree::eventTrackingTypeForPoint(const AtomicString& eventName, IntPoint p)
+TrackingType ScrollingTree::eventTrackingTypeForPoint(const AtomString& eventName, IntPoint p)
 {
     LockHolder lock(m_treeStateMutex);
     return m_treeState.eventTrackingRegions.trackingTypeForPoint(eventName, p);

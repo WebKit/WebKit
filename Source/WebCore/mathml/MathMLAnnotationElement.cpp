@@ -95,7 +95,7 @@ bool MathMLAnnotationElement::childShouldCreateRenderer(const Node& child) const
     return false;
 }
 
-void MathMLAnnotationElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason reason)
+void MathMLAnnotationElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
 {
     if (name == MathMLNames::srcAttr || name == MathMLNames::encodingAttr) {
         auto* parent = parentElement();

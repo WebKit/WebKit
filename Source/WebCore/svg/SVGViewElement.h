@@ -46,7 +46,7 @@ private:
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     // FIXME(webkit.org/b/196554): svgAttributeChanged missing.
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 

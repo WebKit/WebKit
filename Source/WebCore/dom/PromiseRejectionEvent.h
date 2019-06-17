@@ -39,7 +39,7 @@ public:
         JSC::JSValue reason;
     };
 
-    static Ref<PromiseRejectionEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<PromiseRejectionEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new PromiseRejectionEvent(type, initializer, isTrusted));
     }
@@ -52,7 +52,7 @@ public:
     EventInterface eventInterface() const override { return PromiseRejectionEventInterfaceType; }
 
 private:
-    PromiseRejectionEvent(const AtomicString&, const Init&, IsTrusted);
+    PromiseRejectionEvent(const AtomString&, const Init&, IsTrusted);
 
     Ref<DOMPromise> m_promise;
     JSValueInWrappedObject m_reason;

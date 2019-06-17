@@ -156,7 +156,7 @@ VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node&, int index);
 
 WEBCORE_EXPORT Ref<HTMLElement> createDefaultParagraphElement(Document&);
 Ref<HTMLElement> createHTMLElement(Document&, const QualifiedName&);
-Ref<HTMLElement> createHTMLElement(Document&, const AtomicString&);
+Ref<HTMLElement> createHTMLElement(Document&, const AtomString&);
 
 WEBCORE_EXPORT HTMLElement* enclosingList(Node*);
 HTMLElement* outermostEnclosingList(Node*, Node* rootList = nullptr);

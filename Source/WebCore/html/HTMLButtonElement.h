@@ -34,9 +34,9 @@ class HTMLButtonElement final : public HTMLFormControlElement {
 public:
     static Ref<HTMLButtonElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
-    WEBCORE_EXPORT void setType(const AtomicString&);
+    WEBCORE_EXPORT void setType(const AtomString&);
     
-    const AtomicString& value() const;
+    const AtomString& value() const;
 
     bool willRespondToMouseClickEvents() final;
 
@@ -47,11 +47,11 @@ private:
 
     enum Type { SUBMIT, RESET, BUTTON };
 
-    const AtomicString& formControlType() const final;
+    const AtomString& formControlType() const final;
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
     bool isPresentationAttribute(const QualifiedName&) const final;
     void defaultEventHandler(Event&) final;
 

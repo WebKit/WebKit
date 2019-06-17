@@ -52,7 +52,7 @@ public:
 
     const KeyframeList& keyframes() const { return m_keyframes; }
 
-    const AtomicString& name() const { return m_keyframes.animationName(); }
+    const AtomString& name() const { return m_keyframes.animationName(); }
 
     bool hasAnimationForProperty(CSSPropertyID) const;
 
@@ -77,7 +77,7 @@ protected:
     void resumeOverriddenAnimations() override;
 
     bool shouldSendEventForListener(Document::ListenerType inListenerType) const;
-    bool sendAnimationEvent(const AtomicString&, double elapsedTime);
+    bool sendAnimationEvent(const AtomString&, double elapsedTime);
 
     bool affectsProperty(CSSPropertyID) const override;
 

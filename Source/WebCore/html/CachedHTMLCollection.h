@@ -42,7 +42,7 @@ public:
 
     unsigned length() const final { return m_indexCache.nodeCount(collection()); }
     Element* item(unsigned offset) const override { return m_indexCache.nodeAt(collection(), offset); }
-    Element* namedItem(const AtomicString& name) const override;
+    Element* namedItem(const AtomString& name) const override;
     size_t memoryCost() const final
     {
         // memoryCost() may be invoked concurrently from a GC thread, and we need to be careful about what data we access here and how.
@@ -129,7 +129,7 @@ static inline bool nameShouldBeVisibleInDocumentAll(Element& element)
 }
 
 template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-Element* CachedHTMLCollection<HTMLCollectionClass, traversalType>::namedItem(const AtomicString& name) const
+Element* CachedHTMLCollection<HTMLCollectionClass, traversalType>::namedItem(const AtomString& name) const
 {
     // http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/nameditem.asp
     // This method first searches for an object with a matching id

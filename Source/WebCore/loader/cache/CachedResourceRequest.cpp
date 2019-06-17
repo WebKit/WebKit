@@ -67,21 +67,21 @@ void CachedResourceRequest::setInitiator(Element& element)
     m_initiatorElement = &element;
 }
 
-void CachedResourceRequest::setInitiator(const AtomicString& name)
+void CachedResourceRequest::setInitiator(const AtomString& name)
 {
     ASSERT(!m_initiatorElement);
     ASSERT(m_initiatorName.isEmpty());
     m_initiatorName = name;
 }
 
-const AtomicString& CachedResourceRequest::initiatorName() const
+const AtomString& CachedResourceRequest::initiatorName() const
 {
     if (m_initiatorElement)
         return m_initiatorElement->localName();
     if (!m_initiatorName.isEmpty())
         return m_initiatorName;
 
-    static NeverDestroyed<AtomicString> defaultName("other", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> defaultName("other", AtomString::ConstructFromLiteral);
     return defaultName;
 }
 

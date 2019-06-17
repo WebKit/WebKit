@@ -206,11 +206,11 @@ private:
 
 protected:
     URL m_url;
-    AtomicString m_mimeType;
+    AtomString m_mimeType;
     long long m_expectedContentLength { 0 };
-    AtomicString m_textEncodingName;
-    AtomicString m_httpStatusText;
-    AtomicString m_httpVersion;
+    AtomString m_textEncodingName;
+    AtomString m_httpStatusText;
+    AtomString m_httpVersion;
     HTTPHeaderMap m_httpHeaderFields;
     mutable NetworkLoadMetrics m_networkLoadMetrics;
 

@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-MediaKeyMessageEvent::MediaKeyMessageEvent(const AtomicString& type, const MediaKeyMessageEvent::Init& initializer, IsTrusted isTrusted)
+MediaKeyMessageEvent::MediaKeyMessageEvent(const AtomString& type, const MediaKeyMessageEvent::Init& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
     , m_messageType(initializer.messageType)
     , m_message(initializer.message)

@@ -24,7 +24,7 @@ set(TestWTF_SOURCES
     Counters.cpp
     TestsController.cpp
 
-    Tests/WTF/AtomicString.cpp
+    Tests/WTF/AtomString.cpp
     Tests/WTF/BloomFilter.cpp
     Tests/WTF/CString.cpp
     Tests/WTF/CheckedArithmeticOperations.cpp

@@ -146,7 +146,7 @@ CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration
     return parser.parseValue(declaration, propertyID, string, important);
 }
 
-CSSParser::ParseResult CSSParser::parseCustomPropertyValue(MutableStyleProperties& declaration, const AtomicString& propertyName, const String& string, bool important, const CSSParserContext& context)
+CSSParser::ParseResult CSSParser::parseCustomPropertyValue(MutableStyleProperties& declaration, const AtomString& propertyName, const String& string, bool important, const CSSParserContext& context)
 {
     return CSSParserImpl::parseCustomPropertyValue(&declaration, propertyName, string, important, context);
 }

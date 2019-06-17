@@ -33,13 +33,13 @@
 
 namespace WebCore {
 
-PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(const AtomicString& type, const PaymentRequestUpdateEventInit& eventInit)
+PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(const AtomString& type, const PaymentRequestUpdateEventInit& eventInit)
     : Event { type, eventInit, IsTrusted::No }
 {
     ASSERT(!isTrusted());
 }
 
-PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(const AtomicString& type)
+PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(const AtomString& type)
     : Event { type, CanBubble::No, IsCancelable::No }
 {
     ASSERT(isTrusted());

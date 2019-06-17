@@ -26,7 +26,7 @@
 #pragma once
 
 #include <unknwn.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -43,7 +43,7 @@ namespace WebCore {
         bool attached() const { return m_object; }
         AccessibilityObject* accessibilityObject() const { return m_object; }
 
-        void accessibilityAttributeValue(const AtomicString&, VARIANT*);
+        void accessibilityAttributeValue(const AtomString&, VARIANT*);
 
     protected:
         AccessibilityObjectWrapper(AccessibilityObject* obj) : m_object(obj) { }

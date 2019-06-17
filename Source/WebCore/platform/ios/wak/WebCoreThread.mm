@@ -50,7 +50,7 @@
 #import <wtf/ThreadSpecific.h>
 #import <wtf/Threading.h>
 #import <wtf/spi/cocoa/objcSPI.h>
-#import <wtf/text/AtomicString.h>
+#import <wtf/text/AtomString.h>
 
 #define LOG_MESSAGES 0
 #define LOG_WEB_LOCK 0
@@ -632,11 +632,11 @@ static void StartWebThread()
 {
     webThreadStarted = TRUE;
 
-    // ThreadGlobalData touches AtomicString, which requires Threading initialization.
+    // ThreadGlobalData touches AtomString, which requires Threading initialization.
     WTF::initializeThreading();
 
-    // Initialize AtomicString on the main thread.
-    WTF::AtomicString::init();
+    // Initialize AtomString on the main thread.
+    WTF::AtomString::init();
 
     // Initialize ThreadGlobalData on the main UI thread so that the WebCore thread
     // can later set it's thread-specific data to point to the same objects.

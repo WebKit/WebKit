@@ -63,7 +63,7 @@
 #include "markup.h"
 #include <pal/system/Sound.h>
 #include <pal/text/KillRing.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 

@@ -25,24 +25,24 @@
 #include "FloatSize.h"
 #include "GStreamerCommon.h"
 #include "MediaSample.h"
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 class MediaSampleGStreamer final : public MediaSample {
 public:
-    static Ref<MediaSampleGStreamer> create(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const AtomicString& trackId)
+    static Ref<MediaSampleGStreamer> create(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const AtomString& trackId)
     {
         return adoptRef(*new MediaSampleGStreamer(WTFMove(sample), presentationSize, trackId));
     }
 
-    static Ref<MediaSampleGStreamer> createFakeSample(GstCaps*, MediaTime pts, MediaTime dts, MediaTime duration, const FloatSize& presentationSize, const AtomicString& trackId);
+    static Ref<MediaSampleGStreamer> createFakeSample(GstCaps*, MediaTime pts, MediaTime dts, MediaTime duration, const FloatSize& presentationSize, const AtomString& trackId);
 
     void applyPtsOffset(MediaTime);
     MediaTime presentationTime() const override { return m_pts; }
     MediaTime decodeTime() const override { return m_dts; }
     MediaTime duration() const override { return m_duration; }
-    AtomicString trackID() const override { return m_trackId; }
+    AtomString trackID() const override { return m_trackId; }
     void setTrackID(const String& trackId) override { m_trackId = trackId; }
     size_t sizeInBytes() const override { return m_size; }
     FloatSize presentationSize() const override { return m_presentationSize; }
@@ -56,14 +56,14 @@ public:
     void dump(PrintStream&) const override;
 
 private:
-    MediaSampleGStreamer(GRefPtr<GstSample>&&, const FloatSize& presentationSize, const AtomicString& trackId);
-    MediaSampleGStreamer(const FloatSize& presentationSize, const AtomicString& trackId);
+    MediaSampleGStreamer(GRefPtr<GstSample>&&, const FloatSize& presentationSize, const AtomString& trackId);
+    MediaSampleGStreamer(const FloatSize& presentationSize, const AtomString& trackId);
     virtual ~MediaSampleGStreamer() = default;
 
     MediaTime m_pts;
     MediaTime m_dts;
     MediaTime m_duration;
-    AtomicString m_trackId;
+    AtomString m_trackId;
     size_t m_size { 0 };
     GRefPtr<GstSample> m_sample;
     FloatSize m_presentationSize;

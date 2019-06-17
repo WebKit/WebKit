@@ -20,35 +20,35 @@
 
 #pragma once
 
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 namespace InputTypeNames {
 
-const AtomicString& button();
-const AtomicString& checkbox();
-const AtomicString& color();
-const AtomicString& date();
-const AtomicString& datetime();
-const AtomicString& datetimelocal();
-const AtomicString& email();
-const AtomicString& file();
-const AtomicString& hidden();
-const AtomicString& image();
-const AtomicString& month();
-const AtomicString& number();
-const AtomicString& password();
-const AtomicString& radio();
-const AtomicString& range();
-const AtomicString& reset();
-const AtomicString& search();
-const AtomicString& submit();
-const AtomicString& telephone();
-const AtomicString& text();
-const AtomicString& time();
-const AtomicString& url();
-const AtomicString& week();
+const AtomString& button();
+const AtomString& checkbox();
+const AtomString& color();
+const AtomString& date();
+const AtomString& datetime();
+const AtomString& datetimelocal();
+const AtomString& email();
+const AtomString& file();
+const AtomString& hidden();
+const AtomString& image();
+const AtomString& month();
+const AtomString& number();
+const AtomString& password();
+const AtomString& radio();
+const AtomString& range();
+const AtomString& reset();
+const AtomString& search();
+const AtomString& submit();
+const AtomString& telephone();
+const AtomString& text();
+const AtomString& time();
+const AtomString& url();
+const AtomString& week();
 
 }
 

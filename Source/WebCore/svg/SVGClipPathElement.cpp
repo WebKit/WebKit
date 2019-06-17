@@ -50,7 +50,7 @@ Ref<SVGClipPathElement> SVGClipPathElement::create(const QualifiedName& tagName,
     return adoptRef(*new SVGClipPathElement(tagName, document));
 }
 
-void SVGClipPathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGClipPathElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::clipPathUnitsAttr) {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);

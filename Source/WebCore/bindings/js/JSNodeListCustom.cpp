@@ -31,7 +31,7 @@
 #include "LiveNodeList.h"
 #include "Node.h"
 #include "NodeList.h"
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 
 namespace WebCore {

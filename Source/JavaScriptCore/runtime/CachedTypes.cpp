@@ -43,7 +43,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Optional.h>
 #include <wtf/UUID.h>
-#include <wtf/text/AtomicStringImpl.h>
+#include <wtf/text/AtomStringImpl.h>
 
 namespace JSC {
 
@@ -681,7 +681,7 @@ class CachedUniquedStringImplBase : public VariableLengthObject<T> {
 public:
     void encode(Encoder& encoder, const StringImpl& string)
     {
-        m_isAtomic = string.isAtomic();
+        m_isAtomic = string.isAtom();
         m_isSymbol = string.isSymbol();
         RefPtr<StringImpl> impl = const_cast<StringImpl*>(&string);
 
@@ -717,7 +717,7 @@ public:
     {
         auto create = [&](const auto* buffer) -> UniquedStringImpl* {
             if (!m_isSymbol)
-                return AtomicStringImpl::add(buffer, m_length).leakRef();
+                return AtomStringImpl::add(buffer, m_length).leakRef();
 
             Identifier ident = Identifier::fromString(&decoder.vm(), buffer, m_length);
             String str = decoder.vm().propertyNames->lookUpPrivateName(ident);
@@ -729,7 +729,7 @@ public:
         if (!m_length) {
             if (m_isSymbol)
                 return &SymbolImpl::createNullSymbol().leakRef();
-            return AtomicStringImpl::add("").leakRef();
+            return AtomStringImpl::add("").leakRef();
         }
 
         if (m_is8Bit)

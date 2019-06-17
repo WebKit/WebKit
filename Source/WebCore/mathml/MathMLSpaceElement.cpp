@@ -63,7 +63,7 @@ const MathMLElement::Length& MathMLSpaceElement::depth()
     return cachedMathMLLength(MathMLNames::depthAttr, m_depth);
 }
 
-void MathMLSpaceElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void MathMLSpaceElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == widthAttr)
         m_width = WTF::nullopt;

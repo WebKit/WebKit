@@ -142,7 +142,7 @@ bool JSTestNamedGetterCallWith::getOwnPropertySlot(JSObject* object, ExecState* 
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     using GetterIDLType = IDLDOMString;
     auto getterFunctor = [] (auto& thisObject, auto propertyName) -> Optional<typename GetterIDLType::ImplementationType> {
-        auto result = thisObject.wrapped().namedItem(worldForDOMObject(thisObject), propertyNameToAtomicString(propertyName));
+        auto result = thisObject.wrapped().namedItem(worldForDOMObject(thisObject), propertyNameToAtomString(propertyName));
         if (!GetterIDLType::isNullValue(result))
             return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
         return WTF::nullopt;
@@ -162,7 +162,7 @@ bool JSTestNamedGetterCallWith::getOwnPropertySlotByIndex(JSObject* object, Exec
     auto propertyName = Identifier::from(state, index);
     using GetterIDLType = IDLDOMString;
     auto getterFunctor = [] (auto& thisObject, auto propertyName) -> Optional<typename GetterIDLType::ImplementationType> {
-        auto result = thisObject.wrapped().namedItem(worldForDOMObject(thisObject), propertyNameToAtomicString(propertyName));
+        auto result = thisObject.wrapped().namedItem(worldForDOMObject(thisObject), propertyNameToAtomString(propertyName));
         if (!GetterIDLType::isNullValue(result))
             return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
         return WTF::nullopt;

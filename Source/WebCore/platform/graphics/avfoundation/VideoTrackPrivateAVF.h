@@ -36,21 +36,21 @@ class VideoTrackPrivateAVF : public VideoTrackPrivate {
 public:
     int trackIndex() const override { return m_index; }
     Kind kind() const override { return m_kind; }
-    AtomicString id() const override { return m_id; }
-    AtomicString label() const override { return m_label; }
-    AtomicString language() const override { return m_language; }
+    AtomString id() const override { return m_id; }
+    AtomString label() const override { return m_label; }
+    AtomString language() const override { return m_language; }
 
 protected:
     void setKind(Kind kind) { m_kind = kind; }
-    void setId(const AtomicString& newId) { m_id = newId; }
-    void setLabel(const AtomicString& label) { m_label = label; }
-    void setLanguage(const AtomicString& language) { m_language = language; }
+    void setId(const AtomString& newId) { m_id = newId; }
+    void setLabel(const AtomString& label) { m_label = label; }
+    void setLanguage(const AtomString& language) { m_language = language; }
     void setTrackIndex(int index) { m_index = index; }
 
     Kind m_kind { None };
-    AtomicString m_id;
-    AtomicString m_label;
-    AtomicString m_language;
+    AtomString m_id;
+    AtomString m_label;
+    AtomString m_language;
     int m_index { 0 };
 
     VideoTrackPrivateAVF() = default;

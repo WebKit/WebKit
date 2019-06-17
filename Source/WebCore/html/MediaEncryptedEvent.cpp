@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-MediaEncryptedEvent::MediaEncryptedEvent(const AtomicString& type, const MediaEncryptedEventInit& initializer, IsTrusted isTrusted)
+MediaEncryptedEvent::MediaEncryptedEvent(const AtomString& type, const MediaEncryptedEventInit& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
     , m_initDataType(initializer.initDataType)
     , m_initData(initializer.initData)

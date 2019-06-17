@@ -31,8 +31,8 @@
 #include "HTMLNames.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
@@ -48,7 +48,7 @@ struct AutofillInfo {
     AutofillCategory category;
 };
 
-static const HashMap<AtomicString, AutofillInfo>& fieldNameMap()
+static const HashMap<AtomString, AutofillInfo>& fieldNameMap()
 {
     static const auto map = makeNeverDestroyed([] {
         struct MapEntry {
@@ -113,7 +113,7 @@ static const HashMap<AtomicString, AutofillInfo>& fieldNameMap()
             { "email", { AutofillFieldName::Email, AutofillCategory::Contact } },
             { "impp", { AutofillFieldName::Impp, AutofillCategory::Contact } },
         };
-        HashMap<AtomicString, AutofillInfo> map;
+        HashMap<AtomString, AutofillInfo> map;
         for (auto& entry : entries)
             map.add(entry.name, entry.value);
         return map;
@@ -121,7 +121,7 @@ static const HashMap<AtomicString, AutofillInfo>& fieldNameMap()
     return map;
 }
 
-AutofillFieldName toAutofillFieldName(const AtomicString& value)
+AutofillFieldName toAutofillFieldName(const AtomString& value)
 {
     auto map = fieldNameMap();
     auto it = map.find(value);
@@ -130,13 +130,13 @@ AutofillFieldName toAutofillFieldName(const AtomicString& value)
     return it->value.fieldName;
 }
 
-static inline bool isContactToken(const AtomicString& token)
+static inline bool isContactToken(const AtomString& token)
 {
-    static NeverDestroyed<AtomicString> home("home", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> work("work", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> mobile("mobile", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> fax("fax", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> pager("pager", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> home("home", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> work("work", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> mobile("mobile", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> fax("fax", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> pager("pager", AtomString::ConstructFromLiteral);
 
     return token == home || token == work || token == mobile || token == fax || token == pager;
 }
@@ -161,8 +161,8 @@ static unsigned maxTokensForAutofillFieldCategory(AutofillCategory category)
 // https://html.spec.whatwg.org/multipage/forms.html#processing-model-3
 AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormControlElement& element)
 {
-    static NeverDestroyed<AtomicString> on("on", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> off("off", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> on("on", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> off("off", AtomString::ConstructFromLiteral);
 
     // Label: Default
     // 26. Let the element's IDL-exposed autofill value be the empty string, and its autofill hint set and autofill scope be empty.
@@ -180,7 +180,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     };
 
 
-    const AtomicString& attributeValue = element.attributeWithoutSynchronization(HTMLNames::autocompleteAttr);
+    const AtomString& attributeValue = element.attributeWithoutSynchronization(HTMLNames::autocompleteAttr);
 
     // 1. If the element has no autocomplete attribute, then jump to the step labeled default.
     if (attributeValue.isNull())

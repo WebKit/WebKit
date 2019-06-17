@@ -176,7 +176,7 @@ protected:
     Position replaceSelectedTextInNode(const String&);
     void replaceTextInNodePreservingMarkers(Text&, unsigned offset, unsigned count, const String& replacementText);
     Position positionOutsideTabSpan(const Position&);
-    void setNodeAttribute(Element&, const QualifiedName& attribute, const AtomicString& value);
+    void setNodeAttribute(Element&, const QualifiedName& attribute, const AtomString& value);
     void splitElement(Element&, Node& atChild);
     void splitTextNode(Text&, unsigned offset);
     void splitTextNodeContainingElement(Text&, unsigned offset);

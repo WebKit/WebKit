@@ -41,7 +41,7 @@ struct SameSizeAsFontCascadeDescription {
 #else
     char c;
 #endif
-    AtomicString string;
+    AtomString string;
     int16_t fontSelectionRequest[3];
     float size;
     unsigned bitfields1;
@@ -118,7 +118,7 @@ bool FontCascadeDescription::familiesEqualForTextAutoSizing(const FontCascadeDes
 
 #endif // ENABLE(TEXT_AUTOSIZING)
 
-bool FontCascadeDescription::familyNamesAreEqual(const AtomicString& family1, const AtomicString& family2)
+bool FontCascadeDescription::familyNamesAreEqual(const AtomString& family1, const AtomString& family2)
 {
 #if PLATFORM(COCOA)
     if (family1.startsWith('.'))
@@ -127,7 +127,7 @@ bool FontCascadeDescription::familyNamesAreEqual(const AtomicString& family1, co
     return ASCIICaseInsensitiveHash::equal(family1, family2);
 }
 
-unsigned FontCascadeDescription::familyNameHash(const AtomicString& family)
+unsigned FontCascadeDescription::familyNameHash(const AtomString& family)
 {
 #if PLATFORM(COCOA)
     if (family.startsWith('.'))

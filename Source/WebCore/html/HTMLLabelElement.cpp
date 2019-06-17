@@ -40,7 +40,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLLabelElement);
 
 using namespace HTMLNames;
 
-static LabelableElement* firstElementWithIdIfLabelable(TreeScope& treeScope, const AtomicString& id)
+static LabelableElement* firstElementWithIdIfLabelable(TreeScope& treeScope, const AtomString& id)
 {
     auto element = makeRefPtr(treeScope.getElementById(id));
     if (!is<LabelableElement>(element))

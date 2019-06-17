@@ -28,14 +28,14 @@
 
 #include "HTMLElement.h"
 #include "LiveNodeList.h"
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 class RadioNodeList final : public CachedLiveNodeList<RadioNodeList> {
     WTF_MAKE_ISO_ALLOCATED(RadioNodeList);
 public:
-    static Ref<RadioNodeList> create(ContainerNode& rootNode, const AtomicString& name)
+    static Ref<RadioNodeList> create(ContainerNode& rootNode, const AtomString& name)
     {
         return adoptRef(*new RadioNodeList(rootNode, name));
     }
@@ -51,10 +51,10 @@ public:
     bool isRootedAtDocument() const override { return m_isRootedAtDocument; }
 
 private:
-    RadioNodeList(ContainerNode&, const AtomicString& name);
+    RadioNodeList(ContainerNode&, const AtomString& name);
     bool checkElementMatchesRadioNodeListFilter(const Element&) const;
 
-    AtomicString m_name;
+    AtomString m_name;
     bool m_isRootedAtDocument;
 };
 

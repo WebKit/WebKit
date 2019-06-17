@@ -55,7 +55,7 @@ private:
 #endif
 };
 
-std::unique_ptr<Locale> Locale::create(const AtomicString&)
+std::unique_ptr<Locale> Locale::create(const AtomString&)
 {
     return std::make_unique<LocaleNone>();
 }

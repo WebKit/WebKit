@@ -201,7 +201,7 @@ const MathMLElement::Length& MathMLOperatorElement::maxSize()
     if (m_maxSize)
         return m_maxSize.value();
 
-    const AtomicString& value = attributeWithoutSynchronization(MathMLNames::maxsizeAttr);
+    const AtomString& value = attributeWithoutSynchronization(MathMLNames::maxsizeAttr);
     if (value == "infinity") {
         Length maxsize;
         maxsize.type = LengthType::Infinity;
@@ -239,7 +239,7 @@ static Optional<MathMLOperatorDictionary::Flag> attributeNameToPropertyFlag(cons
     return WTF::nullopt;
 }
 
-void MathMLOperatorElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void MathMLOperatorElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == formAttr) {
         m_dictionaryProperty = WTF::nullopt;

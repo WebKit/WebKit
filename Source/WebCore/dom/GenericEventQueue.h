@@ -47,7 +47,7 @@ public:
 
     void cancelAllEvents();
     bool hasPendingEvents() const;
-    bool hasPendingEventsOfType(const AtomicString&) const;
+    bool hasPendingEventsOfType(const AtomString&) const;
 
     void suspend();
     void resume();

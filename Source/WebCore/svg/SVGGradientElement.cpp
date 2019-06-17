@@ -51,7 +51,7 @@ SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document& d
     });
 }
 
-void SVGGradientElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGGradientElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::gradientUnitsAttr) {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);

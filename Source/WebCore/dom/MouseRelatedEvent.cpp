@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
+MouseRelatedEvent::MouseRelatedEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
     MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
     const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier> modifiers, IsSimulated isSimulated, IsTrusted isTrusted)
     : UIEventWithKeyState(eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, modifiers, isTrusted)
@@ -49,13 +49,13 @@ MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, CanBubble ca
     init(m_isSimulated, windowLocation);
 }
 
-MouseRelatedEvent::MouseRelatedEvent(const AtomicString& type, IsCancelable isCancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, const IntPoint& globalLocation, OptionSet<Modifier> modifiers)
+MouseRelatedEvent::MouseRelatedEvent(const AtomString& type, IsCancelable isCancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, const IntPoint& globalLocation, OptionSet<Modifier> modifiers)
     : MouseRelatedEvent(type, CanBubble::Yes, isCancelable, IsComposed::Yes, timestamp,
         WTFMove(view), 0, globalLocation, globalLocation /* Converted in init */, { }, modifiers, IsSimulated::No)
 {
 }
 
-MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, const MouseRelatedEventInit& initializer, IsTrusted isTrusted)
+MouseRelatedEvent::MouseRelatedEvent(const AtomString& eventType, const MouseRelatedEventInit& initializer, IsTrusted isTrusted)
     : UIEventWithKeyState(eventType, initializer)
     , m_screenLocation(IntPoint(initializer.screenX, initializer.screenY))
 #if ENABLE(POINTER_LOCK)

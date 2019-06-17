@@ -41,7 +41,7 @@ public:
 private:
     MathMLUnderOverElement(const QualifiedName& tagName, Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
 
     Optional<BooleanValue> m_accent;
     Optional<BooleanValue> m_accentUnder;

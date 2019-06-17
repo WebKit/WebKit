@@ -52,7 +52,7 @@ public:
 
 static std::unique_ptr<FontPlatformData> createPlatformFont(const char* familyName, float weight, float italic, float stretch, float size)
 {
-    AtomicString familyNameString(familyName);
+    AtomString familyNameString(familyName);
     FontCascadeDescription description;
     description.setOneFamily(familyNameString);
     description.setWeight(FontSelectionValue(weight));

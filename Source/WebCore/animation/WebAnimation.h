@@ -137,7 +137,7 @@ private:
 
     void timingDidChange(DidSeek, SynchronouslyNotify);
     void updateFinishedState(DidSeek, SynchronouslyNotify);
-    void enqueueAnimationPlaybackEvent(const AtomicString&, Optional<Seconds>, Optional<Seconds>);
+    void enqueueAnimationPlaybackEvent(const AtomString&, Optional<Seconds>, Optional<Seconds>);
     Seconds effectEndTime() const;
     WebAnimation& readyPromiseResolve();
     WebAnimation& finishedPromiseResolve();

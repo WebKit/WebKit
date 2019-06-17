@@ -67,7 +67,7 @@ SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElem
     return nullptr;
 }
 
-void SVGFELightElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGFELightElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::azimuthAttr) {
         m_azimuth->setBaseValInternal(value.toFloat());

@@ -68,17 +68,17 @@ RenderPtr<RenderElement> MathMLSelectElement::createElementRenderer(RenderStyle&
 // - Other MIME Content-Types for MathML, SVG and HTML.
 //
 // We exclude "application/mathml+xml" which is ambiguous about whether it is Presentation or Content MathML. Authors must use a more explicit encoding value.
-bool MathMLSelectElement::isMathMLEncoding(const AtomicString& value)
+bool MathMLSelectElement::isMathMLEncoding(const AtomString& value)
 {
     return value == "application/mathml-presentation+xml" || value == "MathML-Presentation";
 }
 
-bool MathMLSelectElement::isSVGEncoding(const AtomicString& value)
+bool MathMLSelectElement::isSVGEncoding(const AtomString& value)
 {
     return value == "image/svg+xml" || value == "SVG1.1";
 }
 
-bool MathMLSelectElement::isHTMLEncoding(const AtomicString& value)
+bool MathMLSelectElement::isHTMLEncoding(const AtomString& value)
 {
     return value == "application/xhtml+xml" || value == "text/html";
 }
@@ -100,7 +100,7 @@ void MathMLSelectElement::childrenChanged(const ChildChange& change)
     MathMLRowElement::childrenChanged(change);
 }
 
-void MathMLSelectElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason reason)
+void MathMLSelectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
 {
     if (hasTagName(mactionTag) && (name == MathMLNames::actiontypeAttr || name == MathMLNames::selectionAttr))
         updateSelectedChild();
@@ -240,7 +240,7 @@ void MathMLSelectElement::toggle()
 
     // We update the attribute value of the selection attribute.
     // This will also call MathMLSelectElement::attributeChanged to update the selected child.
-    setAttributeWithoutSynchronization(MathMLNames::selectionAttr, AtomicString::number(newSelectedChildIndex));
+    setAttributeWithoutSynchronization(MathMLNames::selectionAttr, AtomString::number(newSelectedChildIndex));
 }
 
 }

@@ -41,7 +41,7 @@ class CDMPrivate {
 public:
     virtual ~CDMPrivate() = default;
 
-    virtual bool supportsInitDataType(const AtomicString&) const = 0;
+    virtual bool supportsInitDataType(const AtomString&) const = 0;
     virtual bool supportsConfiguration(const CDMKeySystemConfiguration&) const = 0;
     virtual bool supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration&, const CDMRestrictions&) const = 0;
     virtual bool supportsSessionTypeWithConfiguration(CDMSessionType&, const CDMKeySystemConfiguration&) const = 0;
@@ -53,7 +53,7 @@ public:
     virtual void loadAndInitialize() = 0;
     virtual bool supportsServerCertificates() const = 0;
     virtual bool supportsSessions() const = 0;
-    virtual bool supportsInitData(const AtomicString&, const SharedBuffer&) const = 0;
+    virtual bool supportsInitData(const AtomString&, const SharedBuffer&) const = 0;
     virtual RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const = 0;
     virtual Optional<String> sanitizeSessionId(const String&) const = 0;
 };

@@ -51,7 +51,7 @@ void SmallStrings::initializeCommonStrings(VM& vm)
     for (unsigned i = 0; i < singleCharacterStringCount; ++i) {
         ASSERT(!m_singleCharacterStrings[i]);
         const LChar string[] = { static_cast<LChar>(i) };
-        m_singleCharacterStrings[i] = JSString::createHasOtherOwner(vm, AtomicStringImpl::add(string, 1).releaseNonNull());
+        m_singleCharacterStrings[i] = JSString::createHasOtherOwner(vm, AtomStringImpl::add(string, 1).releaseNonNull());
         ASSERT(m_needsToBeVisited);
     }
 
@@ -88,12 +88,12 @@ Ref<StringImpl> SmallStrings::singleCharacterStringRep(unsigned char character)
     if (LIKELY(m_isInitialized))
         return *const_cast<StringImpl*>(m_singleCharacterStrings[character]->tryGetValueImpl());
     const LChar string[] = { static_cast<LChar>(character) };
-    return AtomicStringImpl::add(string, 1).releaseNonNull();
+    return AtomStringImpl::add(string, 1).releaseNonNull();
 }
 
 void SmallStrings::initialize(VM* vm, JSString*& string, const char* value)
 {
-    string = JSString::create(*vm, AtomicStringImpl::add(value).releaseNonNull());
+    string = JSString::create(*vm, AtomStringImpl::add(value).releaseNonNull());
     ASSERT(m_needsToBeVisited);
 }
 

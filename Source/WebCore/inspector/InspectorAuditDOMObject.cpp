@@ -28,7 +28,7 @@
 #include "InspectorAuditDOMObject.h"
 
 #include "Node.h"
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -49,13 +49,13 @@ ExceptionOr<bool> InspectorAuditDOMObject::hasEventListeners(Node& node, const S
     ERROR_IF_NO_ACTIVE_AUDIT();
 
     if (EventTargetData* eventTargetData = node.eventTargetData()) {
-        Vector<AtomicString> eventTypes;
+        Vector<AtomString> eventTypes;
         if (type.isNull())
             eventTypes = eventTargetData->eventListenerMap.eventTypes();
         else
             eventTypes.append(type);
 
-        for (AtomicString& type : eventTypes) {
+        for (AtomString& type : eventTypes) {
             for (const RefPtr<RegisteredEventListener>& listener : node.eventListeners(type)) {
                 if (listener->callback().type() == EventListener::JSEventListenerType)
                     return true;

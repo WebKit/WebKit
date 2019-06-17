@@ -38,7 +38,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-const AtomicString& TextInputType::formControlType() const
+const AtomString& TextInputType::formControlType() const
 {
     return InputTypeNames::text();
 }

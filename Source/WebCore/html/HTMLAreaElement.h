@@ -52,7 +52,7 @@ public:
 private:
     HTMLAreaElement(const QualifiedName&, Document&);
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
     bool supportsFocus() const final;
     String target() const final;
     bool isKeyboardFocusable(KeyboardEvent*) const final;

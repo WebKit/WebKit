@@ -33,7 +33,7 @@ namespace WebCore {
 
 class InbandMetadataTextTrackPrivateGStreamer : public InbandTextTrackPrivate {
 public:
-    static Ref<InbandMetadataTextTrackPrivateGStreamer> create(Kind kind, CueFormat cueFormat, const AtomicString& id = emptyAtom())
+    static Ref<InbandMetadataTextTrackPrivateGStreamer> create(Kind kind, CueFormat cueFormat, const AtomString& id = emptyAtom())
     {
         return adoptRef(*new InbandMetadataTextTrackPrivateGStreamer(kind, cueFormat, id));
     }
@@ -41,9 +41,9 @@ public:
     ~InbandMetadataTextTrackPrivateGStreamer() = default;
 
     Kind kind() const override { return m_kind; }
-    AtomicString id() const override { return m_id; }
-    AtomicString inBandMetadataTrackDispatchType() const override { return m_inBandMetadataTrackDispatchType; }
-    void setInBandMetadataTrackDispatchType(const AtomicString& value) { m_inBandMetadataTrackDispatchType = value; }
+    AtomString id() const override { return m_id; }
+    AtomString inBandMetadataTrackDispatchType() const override { return m_inBandMetadataTrackDispatchType; }
+    void setInBandMetadataTrackDispatchType(const AtomString& value) { m_inBandMetadataTrackDispatchType = value; }
 
     void addDataCue(const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
     {
@@ -58,7 +58,7 @@ public:
     }
 
 private:
-    InbandMetadataTextTrackPrivateGStreamer(Kind kind, CueFormat cueFormat, const AtomicString& id)
+    InbandMetadataTextTrackPrivateGStreamer(Kind kind, CueFormat cueFormat, const AtomString& id)
         : InbandTextTrackPrivate(cueFormat)
         , m_kind(kind)
         , m_id(id)
@@ -67,8 +67,8 @@ private:
     }
 
     Kind m_kind;
-    AtomicString m_id;
-    AtomicString m_inBandMetadataTrackDispatchType;
+    AtomString m_id;
+    AtomString m_inBandMetadataTrackDispatchType;
 };
 
 } // namespace WebCore

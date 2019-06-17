@@ -31,7 +31,7 @@
 #include "SelectorCompiler.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 

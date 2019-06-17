@@ -62,12 +62,12 @@ public:
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;
 
-    void flush(const AtomicString&) final;
-    void enqueueSample(Ref<MediaSample>&&, const AtomicString&) final;
-    void allSamplesInTrackEnqueued(const AtomicString&) final;
-    bool isReadyForMoreSamples(const AtomicString&) final;
+    void flush(const AtomString&) final;
+    void enqueueSample(Ref<MediaSample>&&, const AtomString&) final;
+    void allSamplesInTrackEnqueued(const AtomString&) final;
+    bool isReadyForMoreSamples(const AtomString&) final;
     void setActive(bool) final;
-    void notifyClientWhenReadyForMoreSamples(const AtomicString&) final;
+    void notifyClientWhenReadyForMoreSamples(const AtomString&) final;
 
     void setReadyForMoreSamples(bool);
     void notifyReadyForMoreSamples();
@@ -89,7 +89,7 @@ private:
     SourceBufferPrivateClient* m_sourceBufferPrivateClient { nullptr };
     bool m_isReadyForMoreSamples = true;
     bool m_notifyWhenReadyForMoreSamples = false;
-    AtomicString m_trackId;
+    AtomString m_trackId;
 };
 
 }

@@ -1731,7 +1731,7 @@ bool ComputedStyleExtractor::useFixedFontDefaultSize()
     return style->fontDescription().useFixedDefaultSize();
 }
 
-static CSSValueID identifierForFamily(const AtomicString& family)
+static CSSValueID identifierForFamily(const AtomString& family)
 {
     if (family == cursiveFamily)
         return CSSValueCursive;
@@ -1750,7 +1750,7 @@ static CSSValueID identifierForFamily(const AtomicString& family)
     return CSSValueInvalid;
 }
 
-static Ref<CSSPrimitiveValue> valueForFamily(const AtomicString& family)
+static Ref<CSSPrimitiveValue> valueForFamily(const AtomString& family)
 {
     if (CSSValueID familyIdentifier = identifierForFamily(family))
         return CSSValuePool::singleton().createIdentifierValue(familyIdentifier);

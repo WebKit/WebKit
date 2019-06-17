@@ -28,7 +28,7 @@
 #if ENABLE(WEB_RTC_DTMF)
 
 #include "Event.h"
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -42,7 +42,7 @@ public:
         String tone;
     };
 
-    static Ref<RTCDTMFToneChangeEvent> create(const AtomicString& type, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<RTCDTMFToneChangeEvent> create(const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
 
     const String& tone() const;
 
@@ -50,7 +50,7 @@ public:
 
 private:
     explicit RTCDTMFToneChangeEvent(const String& tone);
-    RTCDTMFToneChangeEvent(const AtomicString& type, const Init&, IsTrusted);
+    RTCDTMFToneChangeEvent(const AtomString& type, const Init&, IsTrusted);
 
     String m_tone;
 };

@@ -35,10 +35,10 @@ class SVGAltGlyphElement final : public SVGTextPositioningElement, public SVGURI
 public:
     static Ref<SVGAltGlyphElement> create(const QualifiedName&, Document&);
 
-    const AtomicString& glyphRef() const;
-    ExceptionOr<void> setGlyphRef(const AtomicString&);
-    const AtomicString& format() const;
-    ExceptionOr<void> setFormat(const AtomicString&);
+    const AtomString& glyphRef() const;
+    ExceptionOr<void> setGlyphRef(const AtomString&);
+    const AtomString& format() const;
+    ExceptionOr<void> setFormat(const AtomString&);
 
     bool hasValidGlyphElements(Vector<String>& glyphNames) const;
 

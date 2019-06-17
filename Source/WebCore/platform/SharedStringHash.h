@@ -58,6 +58,6 @@ WEBCORE_EXPORT SharedStringHash computeSharedStringHash(const UChar* url, unsign
 // base URL, and returns the hash of the string that will be used for visited
 // link coloring. It will return the special value of 0 if attributeURL does not
 // look like a relative URL.
-SharedStringHash computeVisitedLinkHash(const URL& base, const AtomicString& attributeURL);
+SharedStringHash computeVisitedLinkHash(const URL& base, const AtomString& attributeURL);
 
 } // namespace WebCore

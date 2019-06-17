@@ -63,7 +63,7 @@ public:
         , m_newDocument(&newDocument)
     { }
 
-    CustomElementReactionQueueItem(const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
+    CustomElementReactionQueueItem(const QualifiedName& attributeName, const AtomString& oldValue, const AtomString& newValue)
         : m_type(Type::AttributeChanged)
         , m_attributeName(attributeName)
         , m_oldValue(oldValue)
@@ -99,8 +99,8 @@ private:
     RefPtr<Document> m_oldDocument;
     RefPtr<Document> m_newDocument;
     Optional<QualifiedName> m_attributeName;
-    AtomicString m_oldValue;
-    AtomicString m_newValue;
+    AtomString m_oldValue;
+    AtomString m_newValue;
 };
 
 CustomElementReactionQueue::CustomElementReactionQueue(JSCustomElementInterface& elementInterface)
@@ -190,7 +190,7 @@ void CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(Element& element
     enqueueElementOnAppropriateElementQueue(element);
 }
 
-void CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(Element& element, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
+void CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(Element& element, const QualifiedName& attributeName, const AtomString& oldValue, const AtomString& newValue)
 {
     ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.isDefinedCustomElement());

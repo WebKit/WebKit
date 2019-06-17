@@ -58,7 +58,7 @@ public:
         return WebVTTToken(Type::Character, characterData);
     }
 
-    static WebVTTToken StartTag(const String& tagName, const AtomicString& classes = emptyAtom(), const AtomicString& annotation = emptyAtom())
+    static WebVTTToken StartTag(const String& tagName, const AtomString& classes = emptyAtom(), const AtomString& annotation = emptyAtom())
     {
         WebVTTToken token(Type::StartTag, tagName);
         token.m_classes = classes;
@@ -79,8 +79,8 @@ public:
     Type::Type type() const { return m_type; }
     const String& name() const { return m_data; }
     const String& characters() const { return m_data; }
-    const AtomicString& classes() const { return m_classes; }
-    const AtomicString& annotation() const { return m_annotation; }
+    const AtomString& classes() const { return m_classes; }
+    const AtomString& annotation() const { return m_annotation; }
 
 private:
     WebVTTToken(Type::Type type, const String& data)
@@ -89,8 +89,8 @@ private:
 
     Type::Type m_type;
     String m_data;
-    AtomicString m_annotation;
-    AtomicString m_classes;
+    AtomString m_annotation;
+    AtomString m_classes;
 };
 
 } // namespace WebCore

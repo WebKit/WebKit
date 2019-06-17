@@ -35,7 +35,7 @@ class MediaDescription : public RefCounted<MediaDescription> {
 public:
     virtual ~MediaDescription() = default;
 
-    virtual AtomicString codec() const = 0;
+    virtual AtomString codec() const = 0;
     virtual bool isVideo() const = 0;
     virtual bool isAudio() const = 0;
     virtual bool isText() const = 0;

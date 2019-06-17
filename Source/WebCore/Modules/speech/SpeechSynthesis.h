@@ -81,7 +81,7 @@ private:
     
     void startSpeakingImmediately(SpeechSynthesisUtterance&);
     void handleSpeakingCompleted(SpeechSynthesisUtterance&, bool errorOccurred);
-    void fireEvent(const AtomicString& type, SpeechSynthesisUtterance&, unsigned long charIndex, const String& name);
+    void fireEvent(const AtomString& type, SpeechSynthesisUtterance&, unsigned long charIndex, const String& name);
 
 #if PLATFORM(IOS_FAMILY)
     // Restrictions to change default behaviors.

@@ -28,7 +28,7 @@
 
 #include <windows.h>
 #include <wtf/URL.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/win/WCharStringExtras.h>
 
@@ -77,7 +77,7 @@ BString::BString(const URL& url)
         m_bstr = SysAllocStringLen(wcharFrom(StringView(url.string()).upconvertedCharacters()), url.string().length());
 }
 
-BString::BString(const AtomicString& s)
+BString::BString(const AtomString& s)
 {
     if (s.isNull())
         m_bstr = 0;

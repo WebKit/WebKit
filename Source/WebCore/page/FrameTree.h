@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -45,9 +45,9 @@ public:
 
     ~FrameTree();
 
-    const AtomicString& name() const { return m_name; }
-    const AtomicString& uniqueName() const { return m_uniqueName; }
-    WEBCORE_EXPORT void setName(const AtomicString&);
+    const AtomString& name() const { return m_name; }
+    const AtomString& uniqueName() const { return m_uniqueName; }
+    WEBCORE_EXPORT void setName(const AtomString&);
     WEBCORE_EXPORT void clearName();
     WEBCORE_EXPORT Frame* parent() const;
     
@@ -74,13 +74,13 @@ public:
     void removeChild(Frame&);
 
     Frame* child(unsigned index) const;
-    Frame* child(const AtomicString& name) const;
-    WEBCORE_EXPORT Frame* find(const AtomicString& name, Frame& activeFrame) const;
+    Frame* child(const AtomString& name) const;
+    WEBCORE_EXPORT Frame* find(const AtomString& name, Frame& activeFrame) const;
     WEBCORE_EXPORT unsigned childCount() const;
     WEBCORE_EXPORT Frame& top() const;
 
     WEBCORE_EXPORT Frame* scopedChild(unsigned index) const;
-    WEBCORE_EXPORT Frame* scopedChild(const AtomicString& name) const;
+    WEBCORE_EXPORT Frame* scopedChild(const AtomString& name) const;
     unsigned scopedChildCount() const;
 
     void resetFrameIdentifiers() { m_frameIDGenerator = 0; }
@@ -91,17 +91,17 @@ private:
 
     bool scopedBy(TreeScope*) const;
     Frame* scopedChild(unsigned index, TreeScope*) const;
-    Frame* scopedChild(const AtomicString& name, TreeScope*) const;
+    Frame* scopedChild(const AtomString& name, TreeScope*) const;
     unsigned scopedChildCount(TreeScope*) const;
 
-    AtomicString uniqueChildName(const AtomicString& requestedName) const;
-    AtomicString generateUniqueName() const;
+    AtomString uniqueChildName(const AtomString& requestedName) const;
+    AtomString generateUniqueName() const;
 
     Frame& m_thisFrame;
 
     Frame* m_parent;
-    AtomicString m_name; // The actual frame name (may be empty).
-    AtomicString m_uniqueName;
+    AtomString m_name; // The actual frame name (may be empty).
+    AtomString m_uniqueName;
 
     RefPtr<Frame> m_nextSibling;
     Frame* m_previousSibling;

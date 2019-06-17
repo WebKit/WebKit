@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-AccessibleSetValueEvent::AccessibleSetValueEvent(const AtomicString& type, const AtomicString& value)
+AccessibleSetValueEvent::AccessibleSetValueEvent(const AtomString& type, const AtomString& value)
     : Event(type, CanBubble::Yes, IsCancelable::Yes)
     , m_value(value)
 {

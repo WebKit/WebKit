@@ -39,7 +39,7 @@ public:
     bool isModuleScript() const final { return false; }
 
 private:
-    InlineClassicScript(const String& nonce, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree)
+    InlineClassicScript(const String& nonce, const String& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree)
         : ScriptElementCachedScriptFetcher(nonce, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree)
     {
     }

@@ -58,8 +58,8 @@ public:
     bool isPastNode() const { return m_isPastNode; }
     void setIsPastNode(bool value) { m_isPastNode = value; }
 
-    AtomicString language() const { return m_language; }
-    void setLanguage(const AtomicString& value) { m_language = value; }
+    AtomString language() const { return m_language; }
+    void setLanguage(const AtomString& value) { m_language = value; }
 
     static const QualifiedName& voiceAttributeName()
     {
@@ -81,7 +81,7 @@ private:
     unsigned m_isPastNode : 1;
     unsigned m_webVTTNodeType : 4;
     
-    AtomicString m_language;
+    AtomString m_language;
 };
 
 } // namespace WebCore

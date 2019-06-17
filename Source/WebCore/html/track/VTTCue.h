@@ -57,7 +57,7 @@ public:
     VTTCue* getCue() const;
     virtual void applyCSSProperties(const IntSize& videoSize);
 
-    static const AtomicString& vttCueBoxShadowPseudoId();
+    static const AtomString& vttCueBoxShadowPseudoId();
     void setFontSizeFromCaptionUserPrefs(int fontSize) { m_fontSizeFromCaptionUserPrefs = fontSize; }
 
 protected:
@@ -89,7 +89,7 @@ public:
 
     static Ref<VTTCue> create(ScriptExecutionContext&, const WebVTTCueData&);
 
-    static const AtomicString& cueBackdropShadowPseudoId();
+    static const AtomString& cueBackdropShadowPseudoId();
 
     virtual ~VTTCue();
 

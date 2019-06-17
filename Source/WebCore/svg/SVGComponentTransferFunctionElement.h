@@ -94,7 +94,7 @@ protected:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGComponentTransferFunctionElement, SVGElement>;
     const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool rendererIsNeeded(const RenderStyle&) override { return false; }

@@ -31,7 +31,7 @@ namespace WebCore {
 
 class ProgressEvent : public Event {
 public:
-    static Ref<ProgressEvent> create(const AtomicString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total)
+    static Ref<ProgressEvent> create(const AtomString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total)
     {
         return adoptRef(*new ProgressEvent(type, lengthComputable, loaded, total));
     }
@@ -42,7 +42,7 @@ public:
         unsigned long long total { 0 };
     };
 
-    static Ref<ProgressEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<ProgressEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new ProgressEvent(type, initializer, isTrusted));
     }
@@ -54,8 +54,8 @@ public:
     EventInterface eventInterface() const override;
 
 protected:
-    ProgressEvent(const AtomicString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total);
-    ProgressEvent(const AtomicString&, const Init&, IsTrusted);
+    ProgressEvent(const AtomString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total);
+    ProgressEvent(const AtomString&, const Init&, IsTrusted);
 
 private:
     bool m_lengthComputable;

@@ -45,11 +45,11 @@ public:
 
     WEBCORE_EXPORT unsigned length() const;
     WEBCORE_EXPORT RefPtr<Attr> item(unsigned index) const;
-    WEBCORE_EXPORT RefPtr<Attr> getNamedItem(const AtomicString&) const;
-    WEBCORE_EXPORT RefPtr<Attr> getNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName) const;
+    WEBCORE_EXPORT RefPtr<Attr> getNamedItem(const AtomString&) const;
+    WEBCORE_EXPORT RefPtr<Attr> getNamedItemNS(const AtomString& namespaceURI, const AtomString& localName) const;
     WEBCORE_EXPORT ExceptionOr<RefPtr<Attr>> setNamedItem(Attr&);
-    WEBCORE_EXPORT ExceptionOr<Ref<Attr>> removeNamedItem(const AtomicString& name);
-    WEBCORE_EXPORT ExceptionOr<Ref<Attr>> removeNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName);
+    WEBCORE_EXPORT ExceptionOr<Ref<Attr>> removeNamedItem(const AtomString& name);
+    WEBCORE_EXPORT ExceptionOr<Ref<Attr>> removeNamedItemNS(const AtomString& namespaceURI, const AtomString& localName);
 
     Vector<String> supportedPropertyNames() const;
 

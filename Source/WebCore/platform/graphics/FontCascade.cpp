@@ -38,7 +38,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(WIN)
@@ -49,17 +49,17 @@ namespace WebCore {
 
 using namespace WTF::Unicode;
 
-static bool useBackslashAsYenSignForFamily(const AtomicString& family)
+static bool useBackslashAsYenSignForFamily(const AtomString& family)
 {
     if (family.isEmpty())
         return false;
     static const auto set = makeNeverDestroyed([] {
-        HashSet<AtomicString> set;
+        HashSet<AtomString> set;
         auto add = [&set] (const char* name, std::initializer_list<UChar> unicodeName) {
             unsigned nameLength = strlen(name);
-            set.add(AtomicString { name, nameLength, AtomicString::ConstructFromLiteral });
+            set.add(AtomString { name, nameLength, AtomString::ConstructFromLiteral });
             unsigned unicodeNameLength = unicodeName.size();
-            set.add(AtomicString { unicodeName.begin(), unicodeNameLength });
+            set.add(AtomString { unicodeName.begin(), unicodeNameLength });
         };
         add("MS PGothic", { 0xFF2D, 0xFF33, 0x0020, 0xFF30, 0x30B4, 0x30B7, 0x30C3, 0x30AF });
         add("MS PMincho", { 0xFF2D, 0xFF33, 0x0020, 0xFF30, 0x660E, 0x671D });
@@ -152,7 +152,7 @@ bool FontCascade::operator==(const FontCascade& other) const
 
 struct FontCascadeCacheKey {
     FontDescriptionKey fontDescriptionKey; // Shared with the lower level FontCache (caching Font objects)
-    Vector<AtomicString, 3> families;
+    Vector<AtomString, 3> families;
     unsigned fontSelectorId;
     unsigned fontSelectorVersion;
 };
@@ -298,7 +298,7 @@ float FontCascade::drawText(GraphicsContext& context, const TextRun& run, const 
     return startPoint.x() - startX;
 }
 
-void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, unsigned from, Optional<unsigned> to) const
+void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run, const AtomString& mark, const FloatPoint& point, unsigned from, Optional<unsigned> to) const
 {
     if (isLoadingCustomFonts())
         return;
@@ -486,7 +486,7 @@ GlyphData FontCascade::glyphDataForCharacter(UChar32 c, bool mirror, FontVariant
 // all platforms.
 bool FontCascade::hasValidAverageCharWidth() const
 {
-    const AtomicString& family = firstFamily();
+    const AtomString& family = firstFamily();
     if (family.isEmpty())
         return false;
 
@@ -496,7 +496,7 @@ bool FontCascade::hasValidAverageCharWidth() const
         return false;
 #endif
 
-    static const auto map = makeNeverDestroyed(HashSet<AtomicString> {
+    static const auto map = makeNeverDestroyed(HashSet<AtomString> {
         "American Typewriter",
         "Arial Hebrew",
         "Chalkboard",
@@ -1307,7 +1307,7 @@ static GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const Gly
 
 // FIXME: This function may not work if the emphasis mark uses a complex script, but none of the
 // standard emphasis marks do so.
-Optional<GlyphData> FontCascade::getEmphasisMarkGlyphData(const AtomicString& mark) const
+Optional<GlyphData> FontCascade::getEmphasisMarkGlyphData(const AtomString& mark) const
 {
     if (mark.isEmpty())
         return WTF::nullopt;
@@ -1325,7 +1325,7 @@ Optional<GlyphData> FontCascade::getEmphasisMarkGlyphData(const AtomicString& ma
     return glyphData.value().isValid() ? glyphData : WTF::nullopt;
 }
 
-int FontCascade::emphasisMarkAscent(const AtomicString& mark) const
+int FontCascade::emphasisMarkAscent(const AtomString& mark) const
 {
     Optional<GlyphData> markGlyphData = getEmphasisMarkGlyphData(mark);
     if (!markGlyphData)
@@ -1339,7 +1339,7 @@ int FontCascade::emphasisMarkAscent(const AtomicString& mark) const
     return markFontData->fontMetrics().ascent();
 }
 
-int FontCascade::emphasisMarkDescent(const AtomicString& mark) const
+int FontCascade::emphasisMarkDescent(const AtomString& mark) const
 {
     Optional<GlyphData> markGlyphData = getEmphasisMarkGlyphData(mark);
     if (!markGlyphData)
@@ -1353,7 +1353,7 @@ int FontCascade::emphasisMarkDescent(const AtomicString& mark) const
     return markFontData->fontMetrics().descent();
 }
 
-int FontCascade::emphasisMarkHeight(const AtomicString& mark) const
+int FontCascade::emphasisMarkHeight(const AtomString& mark) const
 {
     Optional<GlyphData> markGlyphData = getEmphasisMarkGlyphData(mark);
     if (!markGlyphData)
@@ -1429,7 +1429,7 @@ float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsign
 }
 #endif
 
-void FontCascade::drawEmphasisMarksForSimpleText(GraphicsContext& context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, unsigned from, unsigned to) const
+void FontCascade::drawEmphasisMarksForSimpleText(GraphicsContext& context, const TextRun& run, const AtomString& mark, const FloatPoint& point, unsigned from, unsigned to) const
 {
     GlyphBuffer glyphBuffer;
     float initialAdvance = getGlyphsAndAdvancesForSimpleText(run, from, to, glyphBuffer, ForTextEmphasis);
@@ -1500,7 +1500,7 @@ inline static float offsetToMiddleOfGlyphAtIndex(const GlyphBuffer& glyphBuffer,
     return offsetToMiddleOfGlyph(glyphBuffer.fontAt(i), glyphBuffer.glyphAt(i));
 }
 
-void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer& glyphBuffer, const AtomicString& mark, const FloatPoint& point) const
+void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer& glyphBuffer, const AtomString& mark, const FloatPoint& point) const
 {
     Optional<GlyphData> markGlyphData = getEmphasisMarkGlyphData(mark);
     if (!markGlyphData)
@@ -1661,7 +1661,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
 }
 #endif
 
-void FontCascade::drawEmphasisMarksForComplexText(GraphicsContext& context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, unsigned from, unsigned to) const
+void FontCascade::drawEmphasisMarksForComplexText(GraphicsContext& context, const TextRun& run, const AtomString& mark, const FloatPoint& point, unsigned from, unsigned to) const
 {
     GlyphBuffer glyphBuffer;
     float initialAdvance = getGlyphsAndAdvancesForComplexText(run, from, to, glyphBuffer, ForTextEmphasis);

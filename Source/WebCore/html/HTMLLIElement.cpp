@@ -63,7 +63,7 @@ bool HTMLLIElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLLIElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+void HTMLLIElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == typeAttr) {
         if (value == "a")
@@ -82,7 +82,7 @@ void HTMLLIElement::collectStyleForPresentationAttribute(const QualifiedName& na
         HTMLElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
-void HTMLLIElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLLIElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == valueAttr) {
         if (renderer() && renderer()->isListItem())
@@ -114,7 +114,7 @@ void HTMLLIElement::didAttachRenderers()
     parseValue(attributeWithoutSynchronization(valueAttr));
 }
 
-inline void HTMLLIElement::parseValue(const AtomicString& value)
+inline void HTMLLIElement::parseValue(const AtomString& value)
 {
     ASSERT(renderer());
 

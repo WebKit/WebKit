@@ -27,7 +27,7 @@
 #pragma once
 
 // FIXME (121927): This include should not be needed.
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 
 #include "EditingBehaviorTypes.h"
 #include "ExceptionOr.h"

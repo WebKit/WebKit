@@ -47,7 +47,7 @@ namespace WebCore {
 
         virtual ~TextEvent();
     
-        WEBCORE_EXPORT void initTextEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&, const String& data);
+        WEBCORE_EXPORT void initTextEvent(const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&, const String& data);
     
         String data() const { return m_data; }
 

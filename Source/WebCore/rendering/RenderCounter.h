@@ -35,7 +35,7 @@ public:
     virtual ~RenderCounter();
 
     static void destroyCounterNodes(RenderElement&);
-    static void destroyCounterNode(RenderElement&, const AtomicString& identifier);
+    static void destroyCounterNode(RenderElement&, const AtomString& identifier);
     static void rendererSubtreeAttached(RenderElement&);
     static void rendererRemovedFromTree(RenderElement&);
     static void rendererStyleChanged(RenderElement&, const RenderStyle* oldStyle, const RenderStyle* newStyle);

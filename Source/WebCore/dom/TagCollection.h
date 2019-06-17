@@ -24,7 +24,7 @@
 #pragma once
 
 #include "CachedHTMLCollection.h"
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -32,7 +32,7 @@ namespace WebCore {
 class TagCollection final : public CachedHTMLCollection<TagCollection, CollectionTypeTraits<ByTag>::traversalType> {
     WTF_MAKE_ISO_ALLOCATED(TagCollection);
 public:
-    static Ref<TagCollection> create(ContainerNode& rootNode, CollectionType type, const AtomicString& qualifiedName)
+    static Ref<TagCollection> create(ContainerNode& rootNode, CollectionType type, const AtomString& qualifiedName)
     {
         ASSERT_UNUSED(type, type == ByTag);
         return adoptRef(*new TagCollection(rootNode, qualifiedName));
@@ -42,15 +42,15 @@ public:
     bool elementMatches(Element&) const;
 
 private:
-    TagCollection(ContainerNode& rootNode, const AtomicString& qualifiedName);
+    TagCollection(ContainerNode& rootNode, const AtomString& qualifiedName);
 
-    AtomicString m_qualifiedName;
+    AtomString m_qualifiedName;
 };
 
 class TagCollectionNS final : public CachedHTMLCollection<TagCollectionNS, CollectionTypeTraits<ByTag>::traversalType> {
     WTF_MAKE_ISO_ALLOCATED(TagCollectionNS);
 public:
-    static Ref<TagCollectionNS> create(ContainerNode& rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
+    static Ref<TagCollectionNS> create(ContainerNode& rootNode, const AtomString& namespaceURI, const AtomString& localName)
     {
         return adoptRef(*new TagCollectionNS(rootNode, namespaceURI, localName));
     }
@@ -59,16 +59,16 @@ public:
     bool elementMatches(Element&) const;
 
 private:
-    TagCollectionNS(ContainerNode& rootNode, const AtomicString& namespaceURI, const AtomicString& localName);
+    TagCollectionNS(ContainerNode& rootNode, const AtomString& namespaceURI, const AtomString& localName);
 
-    AtomicString m_namespaceURI;
-    AtomicString m_localName;
+    AtomString m_namespaceURI;
+    AtomString m_localName;
 };
 
 class HTMLTagCollection final : public CachedHTMLCollection<HTMLTagCollection, CollectionTypeTraits<ByHTMLTag>::traversalType> {
     WTF_MAKE_ISO_ALLOCATED(HTMLTagCollection);
 public:
-    static Ref<HTMLTagCollection> create(ContainerNode& rootNode, CollectionType type, const AtomicString& qualifiedName)
+    static Ref<HTMLTagCollection> create(ContainerNode& rootNode, CollectionType type, const AtomString& qualifiedName)
     {
         ASSERT_UNUSED(type, type == ByHTMLTag);
         return adoptRef(*new HTMLTagCollection(rootNode, qualifiedName));
@@ -78,10 +78,10 @@ public:
     bool elementMatches(Element&) const;
 
 private:
-    HTMLTagCollection(ContainerNode& rootNode, const AtomicString& qualifiedName);
+    HTMLTagCollection(ContainerNode& rootNode, const AtomString& qualifiedName);
 
-    AtomicString m_qualifiedName;
-    AtomicString m_loweredQualifiedName;
+    AtomString m_qualifiedName;
+    AtomString m_loweredQualifiedName;
 };
 
 inline bool TagCollection::elementMatches(Element& element) const

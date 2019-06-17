@@ -31,7 +31,7 @@ namespace WebCore {
 
 class WebKitTransitionEvent final : public Event {
 public:
-    static Ref<WebKitTransitionEvent> create(const AtomicString& type, const String& propertyName, double elapsedTime, const String& pseudoElement)
+    static Ref<WebKitTransitionEvent> create(const AtomString& type, const String& propertyName, double elapsedTime, const String& pseudoElement)
     {
         return adoptRef(*new WebKitTransitionEvent(type, propertyName, elapsedTime, pseudoElement));
     }
@@ -42,7 +42,7 @@ public:
         String pseudoElement;
     };
 
-    static Ref<WebKitTransitionEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<WebKitTransitionEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new WebKitTransitionEvent(type, initializer, isTrusted));
     }
@@ -56,8 +56,8 @@ public:
     EventInterface eventInterface() const override;
 
 private:
-    WebKitTransitionEvent(const AtomicString& type, const String& propertyName, double elapsedTime, const String& pseudoElement);
-    WebKitTransitionEvent(const AtomicString& type, const Init& initializer, IsTrusted);
+    WebKitTransitionEvent(const AtomString& type, const String& propertyName, double elapsedTime, const String& pseudoElement);
+    WebKitTransitionEvent(const AtomString& type, const Init& initializer, IsTrusted);
 
     String m_propertyName;
     double m_elapsedTime;

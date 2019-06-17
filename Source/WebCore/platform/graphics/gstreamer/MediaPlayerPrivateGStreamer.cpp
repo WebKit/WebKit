@@ -1485,7 +1485,7 @@ void MediaPlayerPrivateGStreamer::processMpegTsSection(GstMpegtsSection* section
         for (guint i = 0; i < pmt->streams->len; ++i) {
             const GstMpegtsPMTStream* stream = static_cast<const GstMpegtsPMTStream*>(g_ptr_array_index(pmt->streams, i));
             if (stream->stream_type == 0x05 || stream->stream_type >= 0x80) {
-                AtomicString pid = String::number(stream->pid);
+                AtomString pid = String::number(stream->pid);
                 auto track = InbandMetadataTextTrackPrivateGStreamer::create(
                     InbandTextTrackPrivate::Metadata, InbandTextTrackPrivate::Data, pid);
 
@@ -1513,7 +1513,7 @@ void MediaPlayerPrivateGStreamer::processMpegTsSection(GstMpegtsSection* section
             }
         }
     } else {
-        AtomicString pid = String::number(section->pid);
+        AtomString pid = String::number(section->pid);
         RefPtr<InbandMetadataTextTrackPrivateGStreamer> track = m_metadataTracks.get(pid);
         if (!track)
             return;

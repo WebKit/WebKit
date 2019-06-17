@@ -82,12 +82,12 @@ void PluginDocumentParser::createDocumentStructure()
 #endif
 
     auto body = HTMLBodyElement::create(document);
-    body->setAttributeWithoutSynchronization(marginwidthAttr, AtomicString("0", AtomicString::ConstructFromLiteral));
-    body->setAttributeWithoutSynchronization(marginheightAttr, AtomicString("0", AtomicString::ConstructFromLiteral));
+    body->setAttributeWithoutSynchronization(marginwidthAttr, AtomString("0", AtomString::ConstructFromLiteral));
+    body->setAttributeWithoutSynchronization(marginheightAttr, AtomString("0", AtomString::ConstructFromLiteral));
 #if PLATFORM(IOS_FAMILY)
-    body->setAttribute(styleAttr, AtomicString("background-color: rgb(217,224,233)", AtomicString::ConstructFromLiteral));
+    body->setAttribute(styleAttr, AtomString("background-color: rgb(217,224,233)", AtomString::ConstructFromLiteral));
 #else
-    body->setAttribute(styleAttr, AtomicString("background-color: rgb(38,38,38)", AtomicString::ConstructFromLiteral));
+    body->setAttribute(styleAttr, AtomString("background-color: rgb(38,38,38)", AtomString::ConstructFromLiteral));
 #endif
 
     rootElement->appendChild(body);
@@ -95,10 +95,10 @@ void PluginDocumentParser::createDocumentStructure()
     auto embedElement = HTMLEmbedElement::create(document);
         
     m_embedElement = embedElement.ptr();
-    embedElement->setAttributeWithoutSynchronization(widthAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
-    embedElement->setAttributeWithoutSynchronization(heightAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
+    embedElement->setAttributeWithoutSynchronization(widthAttr, AtomString("100%", AtomString::ConstructFromLiteral));
+    embedElement->setAttributeWithoutSynchronization(heightAttr, AtomString("100%", AtomString::ConstructFromLiteral));
     
-    embedElement->setAttributeWithoutSynchronization(nameAttr, AtomicString("plugin", AtomicString::ConstructFromLiteral));
+    embedElement->setAttributeWithoutSynchronization(nameAttr, AtomString("plugin", AtomString::ConstructFromLiteral));
     embedElement->setAttributeWithoutSynchronization(srcAttr, document.url().string());
     
     ASSERT(document.loader());

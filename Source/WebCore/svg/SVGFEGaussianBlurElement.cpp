@@ -57,7 +57,7 @@ void SVGFEGaussianBlurElement::setStdDeviation(float x, float y)
     invalidate();
 }
 
-void SVGFEGaussianBlurElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGFEGaussianBlurElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::stdDeviationAttr) {
         float x, y;

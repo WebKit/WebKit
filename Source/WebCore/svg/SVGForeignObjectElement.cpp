@@ -54,7 +54,7 @@ Ref<SVGForeignObjectElement> SVGForeignObjectElement::create(const QualifiedName
     return adoptRef(*new SVGForeignObjectElement(tagName, document));
 }
 
-void SVGForeignObjectElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGForeignObjectElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     SVGParsingError parseError = NoError;
 

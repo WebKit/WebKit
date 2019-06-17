@@ -65,9 +65,9 @@ public:
     void markEndOfStream(MediaSourcePrivate::EndOfStreamStatus);
 
     // From SourceBufferPrivateGStreamer.
-    void flush(AtomicString);
+    void flush(AtomString);
     void enqueueSample(Ref<MediaSample>&&);
-    void allSamplesInTrackEnqueued(const AtomicString&);
+    void allSamplesInTrackEnqueued(const AtomString&);
 
     GstElement* pipeline();
 private:

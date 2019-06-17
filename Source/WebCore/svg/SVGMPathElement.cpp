@@ -101,7 +101,7 @@ void SVGMPathElement::removedFromAncestor(RemovalType removalType, ContainerNode
         clearResourceReferences();
 }
 
-void SVGMPathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGMPathElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     SVGElement::parseAttribute(name, value);
     SVGURIReference::parseAttribute(name, value);

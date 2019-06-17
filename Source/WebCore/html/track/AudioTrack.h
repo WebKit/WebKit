@@ -49,12 +49,12 @@ public:
     }
     virtual ~AudioTrack();
 
-    static const AtomicString& alternativeKeyword();
-    static const AtomicString& descriptionKeyword();
-    static const AtomicString& mainKeyword();
-    static const AtomicString& mainDescKeyword();
-    static const AtomicString& translationKeyword();
-    static const AtomicString& commentaryKeyword();
+    static const AtomString& alternativeKeyword();
+    static const AtomString& descriptionKeyword();
+    static const AtomString& mainKeyword();
+    static const AtomString& mainDescKeyword();
+    static const AtomString& translationKeyword();
+    static const AtomString& commentaryKeyword();
 
     bool enabled() const final { return m_enabled; }
     void setEnabled(const bool);
@@ -70,15 +70,15 @@ public:
 private:
     AudioTrack(AudioTrackClient&, AudioTrackPrivate&);
 
-    bool isValidKind(const AtomicString&) const final;
+    bool isValidKind(const AtomString&) const final;
 
     // AudioTrackPrivateClient
     void enabledChanged(bool) final;
 
     // TrackPrivateBaseClient
-    void idChanged(const AtomicString&) final;
-    void labelChanged(const AtomicString&) final;
-    void languageChanged(const AtomicString&) final;
+    void idChanged(const AtomString&) final;
+    void labelChanged(const AtomString&) final;
+    void languageChanged(const AtomString&) final;
     void willRemove() final;
 
     void updateKindFromPrivate();

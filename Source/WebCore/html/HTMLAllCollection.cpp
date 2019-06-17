@@ -48,7 +48,7 @@ inline HTMLAllCollection::HTMLAllCollection(Document& document, CollectionType t
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#dom-htmlallcollection-item
-Optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> HTMLAllCollection::namedOrIndexedItemOrItems(const AtomicString& nameOrIndex) const
+Optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> HTMLAllCollection::namedOrIndexedItemOrItems(const AtomString& nameOrIndex) const
 {
     if (nameOrIndex.isNull())
         return WTF::nullopt;
@@ -60,7 +60,7 @@ Optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> HTMLAllCollection::na
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#concept-get-all-named
-Optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> HTMLAllCollection::namedItemOrItems(const AtomicString& name) const
+Optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> HTMLAllCollection::namedItemOrItems(const AtomString& name) const
 {
     auto namedItems = this->namedItems(name);
 

@@ -657,7 +657,7 @@ void RenderObject::addPDFURLRect(PaintInfo& paintInfo, const LayoutPoint& paintO
     if (!is<Element>(node) || !node->isLink())
         return;
     Element& element = downcast<Element>(*node);
-    const AtomicString& href = element.getAttribute(hrefAttr);
+    const AtomString& href = element.getAttribute(hrefAttr);
     if (href.isNull())
         return;
 

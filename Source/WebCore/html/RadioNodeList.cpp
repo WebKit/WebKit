@@ -40,7 +40,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RadioNodeList);
 
-RadioNodeList::RadioNodeList(ContainerNode& rootNode, const AtomicString& name)
+RadioNodeList::RadioNodeList(ContainerNode& rootNode, const AtomString& name)
     : CachedLiveNodeList(rootNode, InvalidateForFormControls)
     , m_name(name)
     , m_isRootedAtDocument(is<HTMLFormElement>(ownerNode()))

@@ -95,7 +95,7 @@ void AccessibilitySlider::addChildren()
         m_children.append(&thumb);
 }
 
-const AtomicString& AccessibilitySlider::getAttribute(const QualifiedName& attribute) const
+const AtomString& AccessibilitySlider::getAttribute(const QualifiedName& attribute) const
 {
     return inputElement()->getAttribute(attribute);
 }

@@ -49,39 +49,39 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrack);
 
-const AtomicString& TextTrack::subtitlesKeyword()
+const AtomString& TextTrack::subtitlesKeyword()
 {
-    static NeverDestroyed<const AtomicString> subtitles("subtitles", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> subtitles("subtitles", AtomString::ConstructFromLiteral);
     return subtitles;
 }
 
-static const AtomicString& captionsKeyword()
+static const AtomString& captionsKeyword()
 {
-    static NeverDestroyed<const AtomicString> captions("captions", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> captions("captions", AtomString::ConstructFromLiteral);
     return captions;
 }
 
-static const AtomicString& descriptionsKeyword()
+static const AtomString& descriptionsKeyword()
 {
-    static NeverDestroyed<const AtomicString> descriptions("descriptions", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> descriptions("descriptions", AtomString::ConstructFromLiteral);
     return descriptions;
 }
 
-static const AtomicString& chaptersKeyword()
+static const AtomString& chaptersKeyword()
 {
-    static NeverDestroyed<const AtomicString> chapters("chapters", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> chapters("chapters", AtomString::ConstructFromLiteral);
     return chapters;
 }
 
-static const AtomicString& metadataKeyword()
+static const AtomString& metadataKeyword()
 {
-    static NeverDestroyed<const AtomicString> metadata("metadata", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> metadata("metadata", AtomString::ConstructFromLiteral);
     return metadata;
 }
     
-static const AtomicString& forcedKeyword()
+static const AtomString& forcedKeyword()
 {
-    static NeverDestroyed<const AtomicString> forced("forced", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> forced("forced", AtomString::ConstructFromLiteral);
     return forced;
 }
 
@@ -97,7 +97,7 @@ TextTrack* TextTrack::captionMenuAutomaticItem()
     return &automatic;
 }
 
-TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, const AtomicString& kind, const AtomicString& id, const AtomicString& label, const AtomicString& language, TextTrackType type)
+TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language, TextTrackType type)
     : TrackBase(TrackBase::TextTrack, id, label, language)
     , ContextDestructionObserver(context)
     , m_client(client)
@@ -134,7 +134,7 @@ bool TextTrack::enabled() const
     return m_mode != Mode::Disabled;
 }
 
-bool TextTrack::isValidKindKeyword(const AtomicString& value)
+bool TextTrack::isValidKindKeyword(const AtomString& value)
 {
     if (value == subtitlesKeyword())
         return true;
@@ -152,7 +152,7 @@ bool TextTrack::isValidKindKeyword(const AtomicString& value)
     return false;
 }
 
-const AtomicString& TextTrack::kindKeyword() const
+const AtomString& TextTrack::kindKeyword() const
 {
     switch (m_kind) {
     case Kind::Captions:
@@ -548,7 +548,7 @@ bool TextTrack::containsOnlyForcedSubtitles() const
 }
 
 #if ENABLE(MEDIA_SOURCE)
-void TextTrack::setLanguage(const AtomicString& language)
+void TextTrack::setLanguage(const AtomString& language)
 {
     // 11.1 language, on setting:
     // 1. If the value being assigned to this attribute is not an empty string or a BCP 47 language

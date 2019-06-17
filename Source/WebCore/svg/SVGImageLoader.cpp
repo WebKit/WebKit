@@ -46,7 +46,7 @@ void SVGImageLoader::dispatchLoadEvent()
     }
 }
 
-String SVGImageLoader::sourceURI(const AtomicString& attribute) const
+String SVGImageLoader::sourceURI(const AtomString& attribute) const
 {
     URL base = element().baseURI();
     if (base != WTF::blankURL())

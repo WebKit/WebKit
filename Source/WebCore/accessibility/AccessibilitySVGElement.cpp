@@ -157,7 +157,7 @@ String AccessibilitySVGElement::accessibilityDescription() const
     // listed as a supported attribute of the 'image' element in the SVG spec:
     // https://www.w3.org/TR/SVG/struct.html#ImageElement
     if (m_renderer->isSVGImage()) {
-        const AtomicString& alt = getAttribute(HTMLNames::altAttr);
+        const AtomString& alt = getAttribute(HTMLNames::altAttr);
         if (!alt.isNull())
             return alt;
     }

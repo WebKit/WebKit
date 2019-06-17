@@ -105,7 +105,7 @@ void WebVisitedLinkStore::removeVisitedLink(NSString *urlString)
     invalidateStylesForLink(linkHash);
 }
 
-bool WebVisitedLinkStore::isLinkVisited(Page& page, SharedStringHash linkHash, const URL& baseURL, const AtomicString& attributeURL)
+bool WebVisitedLinkStore::isLinkVisited(Page& page, SharedStringHash linkHash, const URL& baseURL, const AtomString& attributeURL)
 {
     populateVisitedLinksIfNeeded(page);
 

@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-IdTargetObserver::IdTargetObserver(IdTargetObserverRegistry& registry, const AtomicString& id)
+IdTargetObserver::IdTargetObserver(IdTargetObserverRegistry& registry, const AtomString& id)
     : m_registry(&registry)
     , m_id(id)
 {

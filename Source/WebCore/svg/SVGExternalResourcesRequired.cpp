@@ -39,7 +39,7 @@ SVGExternalResourcesRequired::SVGExternalResourcesRequired(SVGElement* contextEl
     });
 }
 
-void SVGExternalResourcesRequired::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGExternalResourcesRequired::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::externalResourcesRequiredAttr)
         m_externalResourcesRequired->setBaseValInternal(value == "true");

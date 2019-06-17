@@ -165,17 +165,17 @@ public:
     Ref<Node> cloneNode(bool deep) { return cloneNodeInternal(document(), deep ? CloningOperation::Everything : CloningOperation::OnlySelf); }
     WEBCORE_EXPORT ExceptionOr<Ref<Node>> cloneNodeForBindings(bool deep);
 
-    virtual const AtomicString& localName() const;
-    virtual const AtomicString& namespaceURI() const;
-    virtual const AtomicString& prefix() const;
-    virtual ExceptionOr<void> setPrefix(const AtomicString&);
+    virtual const AtomString& localName() const;
+    virtual const AtomString& namespaceURI() const;
+    virtual const AtomString& prefix() const;
+    virtual ExceptionOr<void> setPrefix(const AtomString&);
     WEBCORE_EXPORT void normalize();
 
     bool isSameNode(Node* other) const { return this == other; }
     WEBCORE_EXPORT bool isEqualNode(Node*) const;
-    WEBCORE_EXPORT bool isDefaultNamespace(const AtomicString& namespaceURI) const;
-    WEBCORE_EXPORT const AtomicString& lookupPrefix(const AtomicString& namespaceURI) const;
-    WEBCORE_EXPORT const AtomicString& lookupNamespaceURI(const AtomicString& prefix) const;
+    WEBCORE_EXPORT bool isDefaultNamespace(const AtomString& namespaceURI) const;
+    WEBCORE_EXPORT const AtomString& lookupPrefix(const AtomString& namespaceURI) const;
+    WEBCORE_EXPORT const AtomString& lookupNamespaceURI(const AtomString& prefix) const;
 
     WEBCORE_EXPORT String textContent(bool convertBRsToNewlines = false) const;
     WEBCORE_EXPORT ExceptionOr<void> setTextContent(const String&);
@@ -384,7 +384,7 @@ public:
     unsigned countChildNodes() const;
     Node* traverseToChildAt(unsigned) const;
 
-    ExceptionOr<void> checkSetPrefix(const AtomicString& prefix);
+    ExceptionOr<void> checkSetPrefix(const AtomString& prefix);
 
     WEBCORE_EXPORT bool isDescendantOf(const Node&) const;
     bool isDescendantOf(const Node* other) const { return other && isDescendantOf(*other); }
@@ -472,8 +472,8 @@ public:
     EventTargetInterface eventTargetInterface() const override;
     ScriptExecutionContext* scriptExecutionContext() const final; // Implemented in Document.h
 
-    bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
-    bool removeEventListener(const AtomicString& eventType, EventListener&, const ListenerOptions&) override;
+    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+    bool removeEventListener(const AtomString& eventType, EventListener&, const ListenerOptions&) override;
 
     using EventTarget::dispatchEvent;
     void dispatchEvent(Event&) override;
@@ -512,7 +512,7 @@ public:
     EventTargetData& ensureEventTargetData() final;
 
     HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> registeredMutationObservers(MutationObserver::MutationType, const QualifiedName* attributeName);
-    void registerMutationObserver(MutationObserver&, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
+    void registerMutationObserver(MutationObserver&, MutationObserverOptions, const HashSet<AtomString>& attributeFilter);
     void unregisterMutationObserver(MutationObserverRegistration&);
     void registerTransientMutationObserver(MutationObserverRegistration&);
     void unregisterTransientMutationObserver(MutationObserverRegistration&);

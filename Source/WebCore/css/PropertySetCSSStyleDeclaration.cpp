@@ -126,7 +126,7 @@ private:
     static bool s_shouldDeliver;
 
     std::unique_ptr<MutationObserverInterestGroup> m_mutationRecipients;
-    AtomicString m_oldValue;
+    AtomString m_oldValue;
     RefPtr<Element> m_customElement;
 };
 

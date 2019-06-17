@@ -29,8 +29,8 @@
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
@@ -55,7 +55,7 @@ class ConstantPropertyMap {
 public:
     explicit ConstantPropertyMap(Document&);
 
-    typedef HashMap<AtomicString, Ref<CSSCustomPropertyValue>> Values;
+    typedef HashMap<AtomString, Ref<CSSCustomPropertyValue>> Values;
     const Values& values() const;
 
     void didChangeSafeAreaInsets();
@@ -65,7 +65,7 @@ public:
 private:
     void buildValues();
 
-    const AtomicString& nameForProperty(ConstantProperty) const;
+    const AtomString& nameForProperty(ConstantProperty) const;
     void setValueForProperty(ConstantProperty, Ref<CSSVariableData>&&);
 
     void updateConstantsForSafeAreaInsets();

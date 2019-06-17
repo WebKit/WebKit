@@ -72,7 +72,7 @@ protected:
 
     bool supportsFocus() const override { return Element::supportsFocus() || hasFocusEventListeners(); }
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
 private:

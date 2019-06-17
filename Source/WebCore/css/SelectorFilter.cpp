@@ -38,14 +38,14 @@ namespace WebCore {
 // Salt to separate otherwise identical string hashes so a class-selector like .article won't match <article> elements.
 enum { TagNameSalt = 13, IdSalt = 17, ClassSalt = 19, AttributeSalt = 23 };
 
-static bool isExcludedAttribute(const AtomicString& name)
+static bool isExcludedAttribute(const AtomString& name)
 {
     return name == HTMLNames::classAttr->localName() || name == HTMLNames::idAttr->localName() || name == HTMLNames::styleAttr->localName();
 }
 
 static inline void collectElementIdentifierHashes(const Element& element, Vector<unsigned, 4>& identifierHashes)
 {
-    AtomicString tagLowercaseLocalName = element.localName().convertToASCIILowercase();
+    AtomString tagLowercaseLocalName = element.localName().convertToASCIILowercase();
     identifierHashes.append(tagLowercaseLocalName.impl()->existingHash() * TagNameSalt);
 
     auto& id = element.idForStyleResolution();

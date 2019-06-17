@@ -29,7 +29,7 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -39,17 +39,17 @@ class UserMessageHandler;
 
 class UserMessageHandlerDescriptor : public RefCounted<UserMessageHandlerDescriptor> {
 public:
-    WEBCORE_EXPORT explicit UserMessageHandlerDescriptor(const AtomicString&, DOMWrapperWorld&);
+    WEBCORE_EXPORT explicit UserMessageHandlerDescriptor(const AtomString&, DOMWrapperWorld&);
     WEBCORE_EXPORT virtual ~UserMessageHandlerDescriptor();
 
-    WEBCORE_EXPORT const AtomicString& name() const;
+    WEBCORE_EXPORT const AtomString& name() const;
     WEBCORE_EXPORT DOMWrapperWorld& world();
     WEBCORE_EXPORT const DOMWrapperWorld& world() const;
 
     virtual void didPostMessage(UserMessageHandler&, SerializedScriptValue*) = 0;
 
 private:
-    AtomicString m_name;
+    AtomString m_name;
     Ref<DOMWrapperWorld> m_world;
 };
 

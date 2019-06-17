@@ -509,12 +509,12 @@ void AppendPipeline::didReceiveInitializationSegment()
     m_sourceBufferPrivate->didReceiveInitializationSegment(initializationSegment);
 }
 
-AtomicString AppendPipeline::trackId()
+AtomString AppendPipeline::trackId()
 {
     ASSERT(isMainThread());
 
     if (!m_track)
-        return AtomicString();
+        return AtomString();
 
     return m_track->id();
 }

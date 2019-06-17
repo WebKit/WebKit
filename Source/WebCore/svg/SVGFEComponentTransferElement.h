@@ -41,7 +41,7 @@ private:
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     // FIXME: svgAttributeChanged missing.
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomString&) override;
 
     RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
 

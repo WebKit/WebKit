@@ -44,7 +44,7 @@ Ref<SVGSymbolElement> SVGSymbolElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGSymbolElement(tagName, document));
 }
 
-void SVGSymbolElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGSymbolElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     SVGElement::parseAttribute(name, value);
     SVGExternalResourcesRequired::parseAttribute(name, value);

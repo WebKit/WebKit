@@ -25,7 +25,7 @@
 
 #include "LiveNodeList.h"
 #include <wtf/Forward.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -33,7 +33,7 @@ namespace WebCore {
 class NameNodeList final : public CachedLiveNodeList<NameNodeList> {
     WTF_MAKE_ISO_ALLOCATED(NameNodeList);
 public:
-    static Ref<NameNodeList> create(ContainerNode& rootNode, const AtomicString& name)
+    static Ref<NameNodeList> create(ContainerNode& rootNode, const AtomString& name)
     {
         return adoptRef(*new NameNodeList(rootNode, name));
     }
@@ -44,9 +44,9 @@ public:
     bool isRootedAtDocument() const override { return false; }
 
 private:
-    NameNodeList(ContainerNode& rootNode, const AtomicString& name);
+    NameNodeList(ContainerNode& rootNode, const AtomString& name);
 
-    AtomicString m_name;
+    AtomString m_name;
 };
 
 inline bool NameNodeList::elementMatches(Element& element) const

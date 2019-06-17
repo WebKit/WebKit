@@ -43,8 +43,8 @@ public:
     WEBCORE_EXPORT unsigned length() const;
     WEBCORE_EXPORT StyleSheet* item(unsigned index);
 
-    CSSStyleSheet* namedItem(const AtomicString&) const;
-    Vector<AtomicString> supportedPropertyNames();
+    CSSStyleSheet* namedItem(const AtomString&) const;
+    Vector<AtomString> supportedPropertyNames();
 
     Node* ownerNode() const;
 

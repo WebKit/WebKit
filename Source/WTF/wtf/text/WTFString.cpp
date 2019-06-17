@@ -356,13 +356,13 @@ String String::convertToUppercaseWithoutLocale() const
     return m_impl ? m_impl->convertToUppercaseWithoutLocale() : String { };
 }
 
-String String::convertToLowercaseWithLocale(const AtomicString& localeIdentifier) const
+String String::convertToLowercaseWithLocale(const AtomString& localeIdentifier) const
 {
     // FIXME: Should this function, and the many others like it, be inlined?
     return m_impl ? m_impl->convertToLowercaseWithLocale(localeIdentifier) : String { };
 }
 
-String String::convertToUppercaseWithLocale(const AtomicString& localeIdentifier) const
+String String::convertToUppercaseWithLocale(const AtomString& localeIdentifier) const
 {
     // FIXME: Should this function, and the many others like it, be inlined?
     return m_impl ? m_impl->convertToUppercaseWithLocale(localeIdentifier) : String { };
@@ -649,8 +649,8 @@ String String::isolatedCopy() &&
 bool String::isSafeToSendToAnotherThread() const
 {
     // AtomicStrings are not safe to send between threads as ~StringImpl()
-    // will try to remove them from the wrong AtomicStringTable.
-    return isEmpty() || (m_impl->hasOneRef() && !m_impl->isAtomic());
+    // will try to remove them from the wrong AtomStringTable.
+    return isEmpty() || (m_impl->hasOneRef() && !m_impl->isAtom());
 }
 
 template<bool allowEmptyEntries>

@@ -600,7 +600,7 @@ sub GenerateNamedGetterLambda
     push(@$outputArray, "    auto getterFunctor = [] (auto& thisObject, auto propertyName) -> ${returnType} {\n");
 
     my @arguments = GenerateCallWithUsingReferences($namedGetterOperation->extendedAttributes->{CallWith}, $outputArray, "WTF::nullopt", "thisObject", "        ");
-    push(@arguments, "propertyNameToAtomicString(propertyName)");
+    push(@arguments, "propertyNameToAtomString(propertyName)");
 
     push(@$outputArray, "        auto result = thisObject.wrapped().${namedGetterFunctionName}(" . join(", ", @arguments) . ");\n");
     
@@ -2189,13 +2189,13 @@ sub GenerateDefaultValue
     my ($typeScope, $context, $type, $defaultValue) = @_;
 
     if ($codeGenerator->IsStringType($type)) {
-        my $useAtomicString = $type->extendedAttributes->{AtomicString};
+        my $useAtomString = $type->extendedAttributes->{AtomString};
         if ($defaultValue eq "null") {
-            return $useAtomicString ? "nullAtom()" : "String()";
+            return $useAtomString ? "nullAtom()" : "String()";
         } elsif ($defaultValue eq "\"\"") {
-            return $useAtomicString ? "emptyAtom()" : "emptyString()";
+            return $useAtomString ? "emptyAtom()" : "emptyString()";
         } else {
-            return $useAtomicString ? "AtomicString(${defaultValue}, AtomicString::ConstructFromLiteral)" : "${defaultValue}_s";
+            return $useAtomString ? "AtomString(${defaultValue}, AtomString::ConstructFromLiteral)" : "${defaultValue}_s";
         }
     }
 
@@ -6468,8 +6468,8 @@ sub IsAnnotatedType
     return 1 if $type->extendedAttributes->{Clamp};
     return 1 if $type->extendedAttributes->{EnforceRange};
     return 1 if $type->extendedAttributes->{TreatNullAs} && $type->extendedAttributes->{TreatNullAs} eq "EmptyString";
-    return 1 if $type->extendedAttributes->{AtomicString};
-    return 1 if $type->extendedAttributes->{RequiresExistingAtomicString};
+    return 1 if $type->extendedAttributes->{AtomString};
+    return 1 if $type->extendedAttributes->{RequiresExistingAtomString};
 }
 
 sub GetAnnotatedIDLType
@@ -6479,8 +6479,8 @@ sub GetAnnotatedIDLType
     return "IDLClampAdaptor" if $type->extendedAttributes->{Clamp};
     return "IDLEnforceRangeAdaptor" if $type->extendedAttributes->{EnforceRange};
     return "IDLTreatNullAsEmptyAdaptor" if $type->extendedAttributes->{TreatNullAs} && $type->extendedAttributes->{TreatNullAs} eq "EmptyString";
-    return "IDLAtomicStringAdaptor" if $type->extendedAttributes->{AtomicString};
-    return "IDLRequiresExistingAtomicStringAdaptor" if $type->extendedAttributes->{RequiresExistingAtomicString};
+    return "IDLAtomStringAdaptor" if $type->extendedAttributes->{AtomString};
+    return "IDLRequiresExistingAtomStringAdaptor" if $type->extendedAttributes->{RequiresExistingAtomString};
 }
 
 sub GetBaseIDLType

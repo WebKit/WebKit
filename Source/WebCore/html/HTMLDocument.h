@@ -36,20 +36,20 @@ public:
     WEBCORE_EXPORT int width();
     WEBCORE_EXPORT int height();
     
-    Optional<Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>>> namedItem(const AtomicString&);
-    Vector<AtomicString> supportedPropertyNames() const;
+    Optional<Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>>> namedItem(const AtomString&);
+    Vector<AtomString> supportedPropertyNames() const;
 
-    Element* documentNamedItem(const AtomicStringImpl& name) const { return m_documentNamedItem.getElementByDocumentNamedItem(name, *this); }
-    bool hasDocumentNamedItem(const AtomicStringImpl& name) const { return m_documentNamedItem.contains(name); }
-    bool documentNamedItemContainsMultipleElements(const AtomicStringImpl& name) const { return m_documentNamedItem.containsMultiple(name); }
-    void addDocumentNamedItem(const AtomicStringImpl&, Element&);
-    void removeDocumentNamedItem(const AtomicStringImpl&, Element&);
+    Element* documentNamedItem(const AtomStringImpl& name) const { return m_documentNamedItem.getElementByDocumentNamedItem(name, *this); }
+    bool hasDocumentNamedItem(const AtomStringImpl& name) const { return m_documentNamedItem.contains(name); }
+    bool documentNamedItemContainsMultipleElements(const AtomStringImpl& name) const { return m_documentNamedItem.containsMultiple(name); }
+    void addDocumentNamedItem(const AtomStringImpl&, Element&);
+    void removeDocumentNamedItem(const AtomStringImpl&, Element&);
 
-    Element* windowNamedItem(const AtomicStringImpl& name) const { return m_windowNamedItem.getElementByWindowNamedItem(name, *this); }
-    bool hasWindowNamedItem(const AtomicStringImpl& name) const { return m_windowNamedItem.contains(name); }
-    bool windowNamedItemContainsMultipleElements(const AtomicStringImpl& name) const { return m_windowNamedItem.containsMultiple(name); }
-    void addWindowNamedItem(const AtomicStringImpl&, Element&);
-    void removeWindowNamedItem(const AtomicStringImpl&, Element&);
+    Element* windowNamedItem(const AtomStringImpl& name) const { return m_windowNamedItem.getElementByWindowNamedItem(name, *this); }
+    bool hasWindowNamedItem(const AtomStringImpl& name) const { return m_windowNamedItem.contains(name); }
+    bool windowNamedItemContainsMultipleElements(const AtomStringImpl& name) const { return m_windowNamedItem.containsMultiple(name); }
+    void addWindowNamedItem(const AtomStringImpl&, Element&);
+    void removeWindowNamedItem(const AtomStringImpl&, Element&);
 
     static bool isCaseSensitiveAttribute(const QualifiedName&);
 

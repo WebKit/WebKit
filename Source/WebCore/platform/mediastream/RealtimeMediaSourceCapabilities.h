@@ -32,7 +32,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -184,12 +184,12 @@ public:
     void setEchoCancellation(EchoCancellation echoCancellation) { m_echoCancellation = echoCancellation; }
 
     bool supportsDeviceId() const { return m_supportedConstraints.supportsDeviceId(); }
-    const AtomicString& deviceId() const { return m_deviceId; }
-    void setDeviceId(const AtomicString& id)  { m_deviceId = id; }
+    const AtomString& deviceId() const { return m_deviceId; }
+    void setDeviceId(const AtomString& id)  { m_deviceId = id; }
 
     bool supportsGroupId() const { return m_supportedConstraints.supportsGroupId(); }
-    const AtomicString& groupId() const { return m_groupId; }
-    void setGroupId(const AtomicString& id)  { m_groupId = id; }
+    const AtomString& groupId() const { return m_groupId; }
+    void setGroupId(const AtomString& id)  { m_groupId = id; }
     
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const { return m_supportedConstraints; }
     void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& constraints) { m_supportedConstraints = constraints; }
@@ -207,8 +207,8 @@ private:
     CapabilityValueOrRange m_sampleRate;
     CapabilityValueOrRange m_sampleSize;
     EchoCancellation m_echoCancellation;
-    AtomicString m_deviceId;
-    AtomicString m_groupId;
+    AtomString m_deviceId;
+    AtomString m_groupId;
 
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 };

@@ -50,7 +50,7 @@ const String& PointerEvent::touchPointerType()
     return touchType;
 }
 
-static AtomicString pointerEventType(const AtomicString& mouseEventType)
+static AtomString pointerEventType(const AtomString& mouseEventType)
 {
     auto& names = eventNames();
     if (mouseEventType == names.mousedownEvent)
@@ -92,7 +92,7 @@ Ref<PointerEvent> PointerEvent::create(const String& type, PointerID pointerId, 
 
 PointerEvent::PointerEvent() = default;
 
-PointerEvent::PointerEvent(const AtomicString& type, Init&& initializer)
+PointerEvent::PointerEvent(const AtomString& type, Init&& initializer)
     : MouseEvent(type, initializer)
     , m_pointerId(initializer.pointerId)
     , m_width(initializer.width)
@@ -107,13 +107,13 @@ PointerEvent::PointerEvent(const AtomicString& type, Init&& initializer)
 {
 }
 
-PointerEvent::PointerEvent(const AtomicString& type, short button, const MouseEvent& mouseEvent)
+PointerEvent::PointerEvent(const AtomString& type, short button, const MouseEvent& mouseEvent)
     : MouseEvent(type, typeCanBubble(type), typeIsCancelable(type), typeIsComposed(type), mouseEvent.view(), mouseEvent.detail(), mouseEvent.screenLocation(), { mouseEvent.clientX(), mouseEvent.clientY() }, mouseEvent.modifierKeys(), button, mouseEvent.buttons(), mouseEvent.syntheticClickType(), mouseEvent.relatedTarget())
     , m_isPrimary(true)
 {
 }
 
-PointerEvent::PointerEvent(const AtomicString& type, PointerID pointerId, const String& pointerType, IsPrimary isPrimary)
+PointerEvent::PointerEvent(const AtomString& type, PointerID pointerId, const String& pointerType, IsPrimary isPrimary)
     : MouseEvent(type, typeCanBubble(type), typeIsCancelable(type), typeIsComposed(type), nullptr, 0, { }, { }, { }, 0, 0, 0, nullptr)
     , m_pointerId(pointerId)
     , m_pointerType(pointerType)

@@ -50,7 +50,7 @@ Ref<SVGLineElement> SVGLineElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGLineElement(tagName, document));
 }
 
-void SVGLineElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGLineElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     SVGParsingError parseError = NoError;
 

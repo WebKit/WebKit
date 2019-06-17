@@ -64,8 +64,8 @@ protected:
     static bool isKnownAttribute(const QualifiedName& attributeName) { return PropertyRegistry::isKnownAttribute(attributeName); }
 
     void reset();
-    bool parseAttribute(const QualifiedName&, const AtomicString&);
-    bool parseViewBox(const AtomicString& value, FloatRect& viewBox);
+    bool parseAttribute(const QualifiedName&, const AtomString&);
+    bool parseViewBox(const AtomString& value, FloatRect& viewBox);
     bool parseViewBox(const UChar*& start, const UChar* end, FloatRect& viewBox, bool validate = true);
 
 private:

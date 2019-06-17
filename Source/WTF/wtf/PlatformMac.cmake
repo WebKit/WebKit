@@ -69,7 +69,7 @@ list(APPEND WTF_SOURCES
     posix/OSAllocatorPOSIX.cpp
     posix/ThreadingPOSIX.cpp
 
-    text/cf/AtomicStringImplCF.cpp
+    text/cf/AtomStringImplCF.cpp
     text/cf/StringCF.cpp
     text/cf/StringImplCF.cpp
     text/cf/StringViewCF.cpp

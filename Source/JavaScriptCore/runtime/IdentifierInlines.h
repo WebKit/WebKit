@@ -31,25 +31,25 @@
 
 namespace JSC  {
 
-inline Identifier::Identifier(ExecState* exec, AtomicStringImpl* string)
+inline Identifier::Identifier(ExecState* exec, AtomStringImpl* string)
     : m_string(string)
 {
 #ifndef NDEBUG
-    checkCurrentAtomicStringTable(exec);
+    checkCurrentAtomStringTable(exec);
     if (string)
-        ASSERT_WITH_MESSAGE(!string->length() || string->isSymbol() || AtomicStringImpl::isInAtomicStringTable(string), "The atomic string comes from an other thread!");
+        ASSERT_WITH_MESSAGE(!string->length() || string->isSymbol() || AtomStringImpl::isInAtomStringTable(string), "The atomic string comes from an other thread!");
 #else
     UNUSED_PARAM(exec);
 #endif
 }
 
-inline Identifier::Identifier(ExecState* exec, const AtomicString& string)
+inline Identifier::Identifier(ExecState* exec, const AtomString& string)
     : m_string(string.string())
 {
 #ifndef NDEBUG
-    checkCurrentAtomicStringTable(exec);
+    checkCurrentAtomStringTable(exec);
     if (!string.isNull())
-        ASSERT_WITH_MESSAGE(!string.length() || string.impl()->isSymbol() || AtomicStringImpl::isInAtomicStringTable(string.impl()), "The atomic string comes from an other thread!");
+        ASSERT_WITH_MESSAGE(!string.length() || string.impl()->isSymbol() || AtomStringImpl::isInAtomStringTable(string.impl()), "The atomic string comes from an other thread!");
 #else
     UNUSED_PARAM(exec);
 #endif
@@ -58,17 +58,17 @@ inline Identifier::Identifier(ExecState* exec, const AtomicString& string)
 inline Ref<StringImpl> Identifier::add(ExecState* exec, StringImpl* r)
 {
 #ifndef NDEBUG
-    checkCurrentAtomicStringTable(exec);
+    checkCurrentAtomStringTable(exec);
 #endif
     VM& vm = exec->vm();
-    return *AtomicStringImpl::addWithStringTableProvider(vm, r);
+    return *AtomStringImpl::addWithStringTableProvider(vm, r);
 }
 inline Ref<StringImpl> Identifier::add(VM* vm, StringImpl* r)
 {
 #ifndef NDEBUG
-    checkCurrentAtomicStringTable(vm);
+    checkCurrentAtomStringTable(vm);
 #endif
-    return *AtomicStringImpl::addWithStringTableProvider(*vm, r);
+    return *AtomStringImpl::addWithStringTableProvider(*vm, r);
 }
 
 inline Identifier Identifier::fromUid(VM* vm, UniquedStringImpl* uid)
@@ -125,19 +125,19 @@ inline Identifier Identifier::fromString(ExecState* exec, const String& string)
     return Identifier(&exec->vm(), string.impl());
 }
 
-inline Identifier Identifier::fromString(ExecState* exec, AtomicStringImpl* atomicString)
+inline Identifier Identifier::fromString(ExecState* exec, AtomStringImpl* atomString)
 {
-    return Identifier(exec, atomicString);
+    return Identifier(exec, atomString);
 }
 
-inline Identifier Identifier::fromString(ExecState* exec, const AtomicString& atomicString)
+inline Identifier Identifier::fromString(ExecState* exec, const AtomString& atomString)
 {
-    return Identifier(exec, atomicString);
+    return Identifier(exec, atomString);
 }
 
 inline Identifier Identifier::fromString(ExecState* exec, const char* s)
 {
-    return Identifier(exec, AtomicString(s));
+    return Identifier(exec, AtomString(s));
 }
 
 inline JSValue identifierToJSValue(VM& vm, const Identifier& identifier)

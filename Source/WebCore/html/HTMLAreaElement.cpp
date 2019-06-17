@@ -52,7 +52,7 @@ Ref<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new HTMLAreaElement(tagName, document));
 }
 
-void HTMLAreaElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLAreaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == shapeAttr) {
         if (equalLettersIgnoringASCIICase(value, "default"))

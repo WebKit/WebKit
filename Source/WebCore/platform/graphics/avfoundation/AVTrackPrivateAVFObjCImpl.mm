@@ -153,17 +153,17 @@ int AVTrackPrivateAVFObjCImpl::index() const
     return 0;
 }
 
-AtomicString AVTrackPrivateAVFObjCImpl::id() const
+AtomString AVTrackPrivateAVFObjCImpl::id() const
 {
     if (m_assetTrack)
-        return AtomicString::number([m_assetTrack trackID]);
+        return AtomString::number([m_assetTrack trackID]);
     if (m_mediaSelectionOption)
         return [[m_mediaSelectionOption->avMediaSelectionOption() optionID] stringValue];
     ASSERT_NOT_REACHED();
     return emptyAtom();
 }
 
-AtomicString AVTrackPrivateAVFObjCImpl::label() const
+AtomString AVTrackPrivateAVFObjCImpl::label() const
 {
     NSArray *commonMetadata = nil;
     if (m_assetTrack)
@@ -184,7 +184,7 @@ AtomicString AVTrackPrivateAVFObjCImpl::label() const
     return [[titles objectAtIndex:0] stringValue];
 }
 
-AtomicString AVTrackPrivateAVFObjCImpl::language() const
+AtomString AVTrackPrivateAVFObjCImpl::language() const
 {
     if (m_assetTrack)
         return languageForAVAssetTrack(m_assetTrack.get());

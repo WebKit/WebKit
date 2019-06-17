@@ -509,7 +509,7 @@ std::unique_ptr<CustomElementConstructionData> HTMLConstructionSite::insertHTMLE
     return nullptr;
 }
 
-void HTMLConstructionSite::insertCustomElement(Ref<Element>&& element, const AtomicString& localName, Vector<Attribute>&& attributes)
+void HTMLConstructionSite::insertCustomElement(Ref<Element>&& element, const AtomString& localName, Vector<Attribute>&& attributes)
 {
     setAttributes(element, attributes, m_parserContentPolicy);
     attachLater(currentNode(), element.copyRef());
@@ -554,7 +554,7 @@ void HTMLConstructionSite::insertScriptElement(AtomicHTMLToken&& token)
     m_openElements.push(HTMLStackItem::create(WTFMove(element), WTFMove(token)));
 }
 
-void HTMLConstructionSite::insertForeignElement(AtomicHTMLToken&& token, const AtomicString& namespaceURI)
+void HTMLConstructionSite::insertForeignElement(AtomicHTMLToken&& token, const AtomString& namespaceURI)
 {
     ASSERT(token.type() == HTMLToken::StartTag);
     notImplemented(); // parseError when xmlns or xmlns:xlink are wrong.
@@ -575,8 +575,8 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
         findFosterSite(task);
 
     // Strings composed entirely of whitespace are likely to be repeated.
-    // Turn them into AtomicString so we share a single string for each.
-    bool shouldUseAtomicString = whitespaceMode == AllWhitespace || (whitespaceMode == WhitespaceUnknown && isAllWhitespace(characters));
+    // Turn them into AtomString so we share a single string for each.
+    bool shouldUseAtomString = whitespaceMode == AllWhitespace || (whitespaceMode == WhitespaceUnknown && isAllWhitespace(characters));
 
     unsigned currentPosition = 0;
     unsigned lengthLimit = shouldUseLengthLimit(*task.parent) ? Text::defaultLengthLimit : std::numeric_limits<unsigned>::max();
@@ -592,11 +592,11 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
     }
 
     while (currentPosition < characters.length()) {
-        auto textNode = Text::createWithLengthLimit(task.parent->document(), shouldUseAtomicString ? AtomicString(characters).string() : characters, currentPosition, lengthLimit);
+        auto textNode = Text::createWithLengthLimit(task.parent->document(), shouldUseAtomString ? AtomString(characters).string() : characters, currentPosition, lengthLimit);
         // If we have a whole string of unbreakable characters the above could lead to an infinite loop. Exceeding the length limit is the lesser evil.
         if (!textNode->length()) {
             String substring = characters.substring(currentPosition);
-            textNode = Text::create(task.parent->document(), shouldUseAtomicString ? AtomicString(substring).string() : substring);
+            textNode = Text::create(task.parent->document(), shouldUseAtomString ? AtomString(substring).string() : substring);
         }
 
         currentPosition += textNode->length();
@@ -635,7 +635,7 @@ void HTMLConstructionSite::takeAllChildrenAndReparent(HTMLStackItem& newParent, 
     m_taskQueue.append(WTFMove(task));
 }
 
-Ref<Element> HTMLConstructionSite::createElement(AtomicHTMLToken& token, const AtomicString& namespaceURI)
+Ref<Element> HTMLConstructionSite::createElement(AtomicHTMLToken& token, const AtomString& namespaceURI)
 {
     QualifiedName tagName(nullAtom(), token.name(), namespaceURI);
     auto element = ownerDocumentForCurrentNode().createElement(tagName, true);
@@ -650,7 +650,7 @@ inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
     return currentNode().document();
 }
 
-static inline JSCustomElementInterface* findCustomElementInterface(Document& ownerDocument, const AtomicString& localName)
+static inline JSCustomElementInterface* findCustomElementInterface(Document& ownerDocument, const AtomString& localName)
 {
     auto* window = ownerDocument.domWindow();
     if (!window)
@@ -754,7 +754,7 @@ void HTMLConstructionSite::reconstructTheActiveFormattingElements()
     }
 }
 
-void HTMLConstructionSite::generateImpliedEndTagsWithExclusion(const AtomicString& tagName)
+void HTMLConstructionSite::generateImpliedEndTagsWithExclusion(const AtomString& tagName)
 {
     while (hasImpliedEndTag(currentStackItem()) && !currentStackItem().matchesHTMLTag(tagName))
         m_openElements.pop();

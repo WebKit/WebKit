@@ -25,28 +25,28 @@
 #pragma once
 
 #include "RenderStyleConstants.h"
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 class CounterContent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CounterContent(const AtomicString& identifier, ListStyleType style, const AtomicString& separator)
+    CounterContent(const AtomString& identifier, ListStyleType style, const AtomString& separator)
         : m_identifier(identifier)
         , m_listStyle(style)
         , m_separator(separator)
     {
     }
 
-    const AtomicString& identifier() const { return m_identifier; }
+    const AtomString& identifier() const { return m_identifier; }
     ListStyleType listStyle() const { return m_listStyle; }
-    const AtomicString& separator() const { return m_separator; }
+    const AtomString& separator() const { return m_separator; }
 
 private:
-    AtomicString m_identifier;
+    AtomString m_identifier;
     ListStyleType m_listStyle;
-    AtomicString m_separator;
+    AtomString m_separator;
 };
 
 static inline bool operator==(const CounterContent& a, const CounterContent& b)

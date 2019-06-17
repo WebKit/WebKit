@@ -72,7 +72,7 @@ public:
     bool muted() const final { return m_muted; }
     void setMuted(bool) final;
 
-    const AtomicString& playbackState() const;
+    const AtomString& playbackState() const;
 
     using RefCounted::ref;
     using RefCounted::deref;
@@ -85,7 +85,7 @@ private:
     void updatePlaybackState();
     void updateMediaElements();
     void bringElementUpToSpeed(HTMLMediaElement&);
-    void scheduleEvent(const AtomicString& eventName);
+    void scheduleEvent(const AtomString& eventName);
     void asyncEventTimerFired();
     void clearPositionTimerFired();
     bool hasEnded() const;

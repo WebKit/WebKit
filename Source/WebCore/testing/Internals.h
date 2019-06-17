@@ -571,8 +571,8 @@ public:
 
 #if ENABLE(MEDIA_SOURCE)
     WEBCORE_TESTSUPPORT_EXPORT void initializeMockMediaSource();
-    Vector<String> bufferedSamplesForTrackID(SourceBuffer&, const AtomicString&);
-    Vector<String> enqueuedSamplesForTrackID(SourceBuffer&, const AtomicString&);
+    Vector<String> bufferedSamplesForTrackID(SourceBuffer&, const AtomString&);
+    Vector<String> enqueuedSamplesForTrackID(SourceBuffer&, const AtomString&);
     void setShouldGenerateTimestamps(SourceBuffer&, bool);
 #endif
 

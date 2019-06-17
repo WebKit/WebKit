@@ -39,13 +39,13 @@ namespace WebCore {
 class SimulatedMouseEvent final : public MouseEvent {
     WTF_MAKE_ISO_ALLOCATED_INLINE(SimulatedMouseEvent);
 public:
-    static Ref<SimulatedMouseEvent> create(const AtomicString& eventType, RefPtr<WindowProxy>&& view, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
+    static Ref<SimulatedMouseEvent> create(const AtomString& eventType, RefPtr<WindowProxy>&& view, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
     {
         return adoptRef(*new SimulatedMouseEvent(eventType, WTFMove(view), WTFMove(underlyingEvent), target, source));
     }
 
 private:
-    SimulatedMouseEvent(const AtomicString& eventType, RefPtr<WindowProxy>&& view, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
+    SimulatedMouseEvent(const AtomString& eventType, RefPtr<WindowProxy>&& view, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
         : MouseEvent(eventType, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes,
             underlyingEvent ? underlyingEvent->timeStamp() : MonotonicTime::now(), WTFMove(view), /* detail */ 0,
             { }, { }, { }, modifiersFromUnderlyingEvent(underlyingEvent), 0, 0, nullptr, 0, 0, nullptr, IsSimulated::Yes,
@@ -76,7 +76,7 @@ private:
     }
 };
 
-static void simulateMouseEvent(const AtomicString& eventType, Element& element, Event* underlyingEvent, SimulatedClickSource source)
+static void simulateMouseEvent(const AtomString& eventType, Element& element, Event* underlyingEvent, SimulatedClickSource source)
 {
     element.dispatchEvent(SimulatedMouseEvent::create(eventType, element.document().windowProxy(), underlyingEvent, element, source));
 }

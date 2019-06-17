@@ -55,7 +55,7 @@ public:
     WEBCORE_EXPORT void setFormMethod(const String&);
     bool formNoValidate() const;
     WEBCORE_EXPORT String formAction() const;
-    WEBCORE_EXPORT void setFormAction(const AtomicString&);
+    WEBCORE_EXPORT void setFormAction(const AtomString&);
 
     void setAncestorDisabled(bool isDisabled);
 
@@ -77,9 +77,9 @@ public:
 
     bool isRequired() const;
 
-    const AtomicString& type() const { return formControlType(); }
+    const AtomString& type() const { return formControlType(); }
 
-    virtual const AtomicString& formControlType() const = 0;
+    virtual const AtomString& formControlType() const = 0;
 
     virtual bool canTriggerImplicitSubmission() const { return false; }
 
@@ -130,7 +130,7 @@ protected:
 
     bool disabledByAncestorFieldset() const { return m_disabledByAncestorFieldset; }
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomString&) override;
     virtual void disabledAttributeChanged();
     virtual void disabledStateChanged();
     virtual void readOnlyStateChanged();

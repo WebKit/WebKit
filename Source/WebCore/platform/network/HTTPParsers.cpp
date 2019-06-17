@@ -485,7 +485,7 @@ ContentTypeOptionsDisposition parseContentTypeOptionsHeader(StringView header)
 
 // For example: "HTTP/1.1 200 OK" => "OK".
 // Note that HTTP/2 does not include a reason phrase, so we return the empty atom.
-AtomicString extractReasonPhraseFromHTTPStatusLine(const String& statusLine)
+AtomString extractReasonPhraseFromHTTPStatusLine(const String& statusLine)
 {
     StringView view = statusLine;
     size_t spacePos = view.find(' ');
@@ -495,7 +495,7 @@ AtomicString extractReasonPhraseFromHTTPStatusLine(const String& statusLine)
     if (spacePos == notFound)
         return emptyAtom();
 
-    return view.substring(spacePos + 1).toAtomicString();
+    return view.substring(spacePos + 1).toAtomString();
 }
 
 XFrameOptionsDisposition parseXFrameOptionsHeader(const String& header)

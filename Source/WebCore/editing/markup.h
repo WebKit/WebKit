@@ -49,7 +49,7 @@ class QualifiedName;
 class Range;
 class VisibleSelection;
 
-void replaceSubresourceURLs(Ref<DocumentFragment>&&, HashMap<AtomicString, AtomicString>&&);
+void replaceSubresourceURLs(Ref<DocumentFragment>&&, HashMap<AtomString, AtomString>&&);
 void removeSubresourceURLAttributes(Ref<DocumentFragment>&&, WTF::Function<bool(const URL&)> shouldRemoveURL);
 
 enum class MSOListQuirks { CheckIfNeeded, Disabled };

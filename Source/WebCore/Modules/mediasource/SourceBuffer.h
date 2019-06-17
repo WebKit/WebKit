@@ -154,8 +154,8 @@ private:
     void sourceBufferPrivateDidReceiveSample(MediaSample&) final;
     bool sourceBufferPrivateHasAudio() const final;
     bool sourceBufferPrivateHasVideo() const final;
-    void sourceBufferPrivateReenqueSamples(const AtomicString& trackID) final;
-    void sourceBufferPrivateDidBecomeReadyForMoreSamples(const AtomicString& trackID) final;
+    void sourceBufferPrivateReenqueSamples(const AtomString& trackID) final;
+    void sourceBufferPrivateDidBecomeReadyForMoreSamples(const AtomString& trackID) final;
     MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold) final;
     void sourceBufferPrivateAppendComplete(AppendResult) final;
     void sourceBufferPrivateDidReceiveRenderingError(int errorCode) final;
@@ -173,7 +173,7 @@ private:
     EventTargetInterface eventTargetInterface() const final { return SourceBufferEventTargetInterfaceType; }
 
     bool isRemoved() const;
-    void scheduleEvent(const AtomicString& eventName);
+    void scheduleEvent(const AtomString& eventName);
 
     ExceptionOr<void> appendBufferInternal(const unsigned char*, unsigned);
     void appendBufferTimerFired();
@@ -183,8 +183,8 @@ private:
 
     bool validateInitializationSegment(const InitializationSegment&);
 
-    void reenqueueMediaForTime(TrackBuffer&, const AtomicString& trackID, const MediaTime&);
-    void provideMediaData(TrackBuffer&, const AtomicString& trackID);
+    void reenqueueMediaForTime(TrackBuffer&, const AtomString& trackID, const MediaTime&);
+    void provideMediaData(TrackBuffer&, const AtomString& trackID);
     void didDropSample();
     void evictCodedFrames(size_t newDataSize);
     size_t maximumBufferSize() const;
@@ -205,11 +205,11 @@ private:
 
     void rangeRemoval(const MediaTime&, const MediaTime&);
 
-    void trySignalAllSamplesInTrackEnqueued(const AtomicString&);
+    void trySignalAllSamplesInTrackEnqueued(const AtomString&);
 
     friend class Internals;
-    WEBCORE_EXPORT Vector<String> bufferedSamplesForTrackID(const AtomicString&);
-    WEBCORE_EXPORT Vector<String> enqueuedSamplesForTrackID(const AtomicString&);
+    WEBCORE_EXPORT Vector<String> bufferedSamplesForTrackID(const AtomString&);
+    WEBCORE_EXPORT Vector<String> enqueuedSamplesForTrackID(const AtomString&);
 
     Ref<SourceBufferPrivate> m_private;
     MediaSource* m_source;
@@ -223,9 +223,9 @@ private:
     RefPtr<AudioTrackList> m_audioTracks;
     RefPtr<TextTrackList> m_textTracks;
 
-    Vector<AtomicString> m_videoCodecs;
-    Vector<AtomicString> m_audioCodecs;
-    Vector<AtomicString> m_textCodecs;
+    Vector<AtomString> m_videoCodecs;
+    Vector<AtomString> m_audioCodecs;
+    Vector<AtomString> m_textCodecs;
 
     MediaTime m_timestampOffset;
     MediaTime m_appendWindowStart;
@@ -234,7 +234,7 @@ private:
     MediaTime m_groupStartTimestamp;
     MediaTime m_groupEndTimestamp;
 
-    HashMap<AtomicString, TrackBuffer> m_trackBufferMap;
+    HashMap<AtomString, TrackBuffer> m_trackBufferMap;
     RefPtr<TimeRanges> m_buffered;
     bool m_bufferedDirty { true };
 

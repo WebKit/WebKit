@@ -31,7 +31,7 @@
 #include "TextNodeTraversal.h"
 #include "XMLNSNames.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -46,7 +46,7 @@ Attr::Attr(Element& element, const QualifiedName& name)
 {
 }
 
-Attr::Attr(Document& document, const QualifiedName& name, const AtomicString& standaloneValue)
+Attr::Attr(Document& document, const QualifiedName& name, const AtomString& standaloneValue)
     : Node(document, CreateOther)
     , m_name(name)
     , m_standaloneValue(standaloneValue)
@@ -58,7 +58,7 @@ Ref<Attr> Attr::create(Element& element, const QualifiedName& name)
     return adoptRef(*new Attr(element, name));
 }
 
-Ref<Attr> Attr::create(Document& document, const QualifiedName& name, const AtomicString& value)
+Ref<Attr> Attr::create(Document& document, const QualifiedName& name, const AtomString& value)
 {
     return adoptRef(*new Attr(document, name, value));
 }
@@ -69,7 +69,7 @@ Attr::~Attr()
     ASSERT_WITH_SECURITY_IMPLICATION(treeScope().rootNode().isDocumentNode());
 }
 
-ExceptionOr<void> Attr::setPrefix(const AtomicString& prefix)
+ExceptionOr<void> Attr::setPrefix(const AtomString& prefix)
 {
     auto result = checkSetPrefix(prefix);
     if (result.hasException())
@@ -78,7 +78,7 @@ ExceptionOr<void> Attr::setPrefix(const AtomicString& prefix)
     if ((prefix == xmlnsAtom() && namespaceURI() != XMLNSNames::xmlnsNamespaceURI) || qualifiedName() == xmlnsAtom())
         return Exception { NamespaceError };
 
-    const AtomicString& newPrefix = prefix.isEmpty() ? nullAtom() : prefix;
+    const AtomString& newPrefix = prefix.isEmpty() ? nullAtom() : prefix;
     if (m_element)
         elementAttribute().setPrefix(newPrefix);
     m_name.setPrefix(newPrefix);
@@ -86,7 +86,7 @@ ExceptionOr<void> Attr::setPrefix(const AtomicString& prefix)
     return { };
 }
 
-void Attr::setValue(const AtomicString& value)
+void Attr::setValue(const AtomString& value)
 {
     if (m_element)
         m_element->setAttribute(qualifiedName(), value);
@@ -116,7 +116,7 @@ CSSStyleDeclaration* Attr::style()
     return &m_style->ensureCSSStyleDeclaration();
 }
 
-const AtomicString& Attr::value() const
+const AtomString& Attr::value() const
 {
     if (m_element)
         return m_element->getAttribute(qualifiedName());
@@ -130,7 +130,7 @@ Attribute& Attr::elementAttribute()
     return *m_element->ensureUniqueElementData().findAttributeByName(qualifiedName());
 }
 
-void Attr::detachFromElementWithValue(const AtomicString& value)
+void Attr::detachFromElementWithValue(const AtomString& value)
 {
     ASSERT(m_element);
     ASSERT(m_standaloneValue.isNull());

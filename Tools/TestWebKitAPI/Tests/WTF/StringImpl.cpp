@@ -57,14 +57,14 @@ TEST(WTF, StringImplCreationFromLiteral)
     ASSERT_EQ(stringWithoutLengthLiteral, reinterpret_cast<const char*>(programmaticStringNoLength->characters8()));
     ASSERT_TRUE(programmaticStringNoLength->is8Bit());
 
-    // AtomicStringImpl from createFromLiteral should use the same underlying string.
-    auto atomicStringWithTemplate = AtomicStringImpl::add(stringWithTemplate.ptr());
-    ASSERT_TRUE(atomicStringWithTemplate->is8Bit());
-    ASSERT_EQ(atomicStringWithTemplate->characters8(), stringWithTemplate->characters8());
-    auto atomicProgrammaticString = AtomicStringImpl::add(programmaticString.ptr());
+    // AtomStringImpl from createFromLiteral should use the same underlying string.
+    auto atomStringWithTemplate = AtomStringImpl::add(stringWithTemplate.ptr());
+    ASSERT_TRUE(atomStringWithTemplate->is8Bit());
+    ASSERT_EQ(atomStringWithTemplate->characters8(), stringWithTemplate->characters8());
+    auto atomicProgrammaticString = AtomStringImpl::add(programmaticString.ptr());
     ASSERT_TRUE(atomicProgrammaticString->is8Bit());
     ASSERT_EQ(atomicProgrammaticString->characters8(), programmaticString->characters8());
-    auto atomicProgrammaticStringNoLength = AtomicStringImpl::add(programmaticStringNoLength.ptr());
+    auto atomicProgrammaticStringNoLength = AtomStringImpl::add(programmaticStringNoLength.ptr());
     ASSERT_TRUE(atomicProgrammaticStringNoLength->is8Bit());
     ASSERT_EQ(atomicProgrammaticStringNoLength->characters8(), programmaticStringNoLength->characters8());
 }
@@ -533,7 +533,7 @@ TEST(WTF, StringImplCreateNullSymbol)
     ASSERT_TRUE(reference->isSymbol());
     ASSERT_FALSE(reference->isPrivate());
     ASSERT_TRUE(reference->isNullSymbol());
-    ASSERT_FALSE(reference->isAtomic());
+    ASSERT_FALSE(reference->isAtom());
     ASSERT_EQ(0u, reference->length());
     ASSERT_TRUE(equal(reference.ptr(), ""));
 }
@@ -545,9 +545,9 @@ TEST(WTF, StringImplCreateSymbol)
     ASSERT_TRUE(reference->isSymbol());
     ASSERT_FALSE(reference->isPrivate());
     ASSERT_FALSE(reference->isNullSymbol());
-    ASSERT_FALSE(reference->isAtomic());
+    ASSERT_FALSE(reference->isAtom());
     ASSERT_FALSE(original->isSymbol());
-    ASSERT_FALSE(original->isAtomic());
+    ASSERT_FALSE(original->isAtom());
     ASSERT_EQ(original->length(), reference->length());
     ASSERT_TRUE(equal(reference.ptr(), "original"));
 
@@ -556,9 +556,9 @@ TEST(WTF, StringImplCreateSymbol)
     ASSERT_TRUE(emptyReference->isSymbol());
     ASSERT_FALSE(emptyReference->isPrivate());
     ASSERT_FALSE(emptyReference->isNullSymbol());
-    ASSERT_FALSE(emptyReference->isAtomic());
+    ASSERT_FALSE(emptyReference->isAtom());
     ASSERT_FALSE(empty->isSymbol());
-    ASSERT_TRUE(empty->isAtomic());
+    ASSERT_TRUE(empty->isAtom());
     ASSERT_EQ(empty->length(), emptyReference->length());
     ASSERT_TRUE(equal(emptyReference.ptr(), ""));
 }
@@ -570,9 +570,9 @@ TEST(WTF, StringImplCreatePrivateSymbol)
     ASSERT_TRUE(reference->isSymbol());
     ASSERT_TRUE(reference->isPrivate());
     ASSERT_FALSE(reference->isNullSymbol());
-    ASSERT_FALSE(reference->isAtomic());
+    ASSERT_FALSE(reference->isAtom());
     ASSERT_FALSE(original->isSymbol());
-    ASSERT_FALSE(original->isAtomic());
+    ASSERT_FALSE(original->isAtom());
     ASSERT_EQ(original->length(), reference->length());
     ASSERT_TRUE(equal(reference.ptr(), "original"));
 
@@ -581,80 +581,80 @@ TEST(WTF, StringImplCreatePrivateSymbol)
     ASSERT_TRUE(emptyReference->isSymbol());
     ASSERT_TRUE(emptyReference->isPrivate());
     ASSERT_FALSE(emptyReference->isNullSymbol());
-    ASSERT_FALSE(emptyReference->isAtomic());
+    ASSERT_FALSE(emptyReference->isAtom());
     ASSERT_FALSE(empty->isSymbol());
-    ASSERT_TRUE(empty->isAtomic());
+    ASSERT_TRUE(empty->isAtom());
     ASSERT_EQ(empty->length(), emptyReference->length());
     ASSERT_TRUE(equal(emptyReference.ptr(), ""));
 }
 
-TEST(WTF, StringImplSymbolToAtomicString)
+TEST(WTF, StringImplSymbolToAtomString)
 {
     auto original = stringFromUTF8("original");
     auto reference = SymbolImpl::create(original);
     ASSERT_TRUE(reference->isSymbol());
     ASSERT_FALSE(reference->isPrivate());
-    ASSERT_FALSE(reference->isAtomic());
+    ASSERT_FALSE(reference->isAtom());
 
-    auto result = AtomicStringImpl::lookUp(reference.ptr());
+    auto result = AtomStringImpl::lookUp(reference.ptr());
     ASSERT_FALSE(result);
 
-    auto atomic = AtomicStringImpl::add(reference.ptr());
-    ASSERT_TRUE(atomic->isAtomic());
+    auto atomic = AtomStringImpl::add(reference.ptr());
+    ASSERT_TRUE(atomic->isAtom());
     ASSERT_FALSE(atomic->isSymbol());
     ASSERT_TRUE(reference->isSymbol());
-    ASSERT_FALSE(reference->isAtomic());
+    ASSERT_FALSE(reference->isAtom());
 
-    auto result2 = AtomicStringImpl::lookUp(reference.ptr());
+    auto result2 = AtomStringImpl::lookUp(reference.ptr());
     ASSERT_TRUE(result2);
 }
 
-TEST(WTF, StringImplNullSymbolToAtomicString)
+TEST(WTF, StringImplNullSymbolToAtomString)
 {
     auto reference = SymbolImpl::createNullSymbol();
     ASSERT_TRUE(reference->isSymbol());
     ASSERT_FALSE(reference->isPrivate());
-    ASSERT_FALSE(reference->isAtomic());
+    ASSERT_FALSE(reference->isAtom());
 
     // Because the substring of the reference is the empty string which is already interned.
-    auto result = AtomicStringImpl::lookUp(reference.ptr());
+    auto result = AtomStringImpl::lookUp(reference.ptr());
     ASSERT_TRUE(result);
 
-    auto atomic = AtomicStringImpl::add(reference.ptr());
-    ASSERT_TRUE(atomic->isAtomic());
+    auto atomic = AtomStringImpl::add(reference.ptr());
+    ASSERT_TRUE(atomic->isAtom());
     ASSERT_FALSE(atomic->isSymbol());
     ASSERT_TRUE(reference->isSymbol());
-    ASSERT_FALSE(reference->isAtomic());
+    ASSERT_FALSE(reference->isAtom());
     ASSERT_EQ(atomic.get(), StringImpl::empty());
 
-    auto result2 = AtomicStringImpl::lookUp(reference.ptr());
+    auto result2 = AtomStringImpl::lookUp(reference.ptr());
     ASSERT_TRUE(result2);
 }
 
 static StringImpl::StaticStringImpl staticString {"Cocoa"};
 
-TEST(WTF, StringImplStaticToAtomicString)
+TEST(WTF, StringImplStaticToAtomString)
 {
     StringImpl& original = staticString;
     ASSERT_FALSE(original.isSymbol());
-    ASSERT_FALSE(original.isAtomic());
+    ASSERT_FALSE(original.isAtom());
     ASSERT_TRUE(original.isStatic());
 
-    auto result = AtomicStringImpl::lookUp(&original);
+    auto result = AtomStringImpl::lookUp(&original);
     ASSERT_FALSE(result);
 
-    auto atomic = AtomicStringImpl::add(&original);
-    ASSERT_TRUE(atomic->isAtomic());
+    auto atomic = AtomStringImpl::add(&original);
+    ASSERT_TRUE(atomic->isAtom());
     ASSERT_FALSE(atomic->isSymbol());
     ASSERT_FALSE(atomic->isStatic());
     ASSERT_FALSE(original.isSymbol());
-    ASSERT_FALSE(original.isAtomic());
+    ASSERT_FALSE(original.isAtom());
     ASSERT_TRUE(original.isStatic());
 
     ASSERT_TRUE(atomic->is8Bit());
     ASSERT_EQ(atomic->characters8(), original.characters8());
 
-    auto result2 = AtomicStringImpl::lookUp(&original);
+    auto result2 = AtomStringImpl::lookUp(&original);
     ASSERT_TRUE(result2);
     ASSERT_EQ(atomic, result2);
 }
@@ -752,7 +752,7 @@ TEST(WTF, ExternalStringImplCreate8bit)
         ASSERT_TRUE(external->isExternal());
         ASSERT_TRUE(external->is8Bit());
         ASSERT_FALSE(external->isSymbol());
-        ASSERT_FALSE(external->isAtomic());
+        ASSERT_FALSE(external->isAtom());
         ASSERT_EQ(external->length(), bufferStringLength);
         ASSERT_EQ(external->characters8(), buffer);
     }
@@ -774,7 +774,7 @@ TEST(WTF, ExternalStringImplCreate16bit)
         ASSERT_TRUE(external->isExternal());
         ASSERT_FALSE(external->is8Bit());
         ASSERT_FALSE(external->isSymbol());
-        ASSERT_FALSE(external->isAtomic());
+        ASSERT_FALSE(external->isAtom());
         ASSERT_EQ(external->length(), bufferStringLength);
         ASSERT_EQ(external->characters16(), buffer);
     }
@@ -801,24 +801,24 @@ TEST(WTF, ExternalStringAtomic)
         });    
 
         ASSERT_TRUE(external->isExternal());
-        ASSERT_FALSE(external->isAtomic());
+        ASSERT_FALSE(external->isAtom());
         ASSERT_FALSE(external->isSymbol());
         ASSERT_TRUE(external->is8Bit());
         ASSERT_EQ(external->length(), bufferStringLength);
         ASSERT_EQ(external->characters8(), buffer);
 
-        auto result = AtomicStringImpl::lookUp(external.ptr());
+        auto result = AtomStringImpl::lookUp(external.ptr());
         ASSERT_FALSE(result);
 
-        auto atomic = AtomicStringImpl::add(external.ptr());
+        auto atomic = AtomStringImpl::add(external.ptr());
         ASSERT_TRUE(atomic->isExternal());
-        ASSERT_TRUE(atomic->isAtomic());
+        ASSERT_TRUE(atomic->isAtom());
         ASSERT_FALSE(atomic->isSymbol());
         ASSERT_TRUE(atomic->is8Bit());
         ASSERT_EQ(atomic->length(), external->length());
         ASSERT_EQ(atomic->characters8(), external->characters8());
 
-        auto result2 = AtomicStringImpl::lookUp(external.ptr());
+        auto result2 = AtomStringImpl::lookUp(external.ptr());
         ASSERT_TRUE(result2);
         ASSERT_EQ(atomic, result2);
     }
@@ -839,12 +839,12 @@ TEST(WTF, ExternalStringToSymbol)
 
         ASSERT_TRUE(external->isExternal());
         ASSERT_FALSE(external->isSymbol());
-        ASSERT_FALSE(external->isAtomic());
+        ASSERT_FALSE(external->isAtom());
 
         auto symbol = SymbolImpl::create(external);
         ASSERT_FALSE(symbol->isExternal());
         ASSERT_TRUE(symbol->isSymbol());
-        ASSERT_FALSE(symbol->isAtomic());
+        ASSERT_FALSE(symbol->isAtom());
         ASSERT_FALSE(symbol->isPrivate());
         ASSERT_FALSE(symbol->isNullSymbol());
         ASSERT_EQ(external->length(), symbol->length());

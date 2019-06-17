@@ -184,7 +184,7 @@ void AudioScheduledSourceNode::finish()
     });
 }
 
-bool AudioScheduledSourceNode::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+bool AudioScheduledSourceNode::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     bool success = AudioNode::addEventListener(eventType, WTFMove(listener), options);
     if (success && eventType == eventNames().endedEvent)
@@ -192,7 +192,7 @@ bool AudioScheduledSourceNode::addEventListener(const AtomicString& eventType, R
     return success;
 }
 
-bool AudioScheduledSourceNode::removeEventListener(const AtomicString& eventType, EventListener& listener, const ListenerOptions& options)
+bool AudioScheduledSourceNode::removeEventListener(const AtomString& eventType, EventListener& listener, const ListenerOptions& options)
 {
     bool success = AudioNode::removeEventListener(eventType, listener, options);
     if (success && eventType == eventNames().endedEvent)

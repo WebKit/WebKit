@@ -39,7 +39,7 @@
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringHash.h>
 
 #if ENABLE(OPENTYPE_VERTICAL)
@@ -77,7 +77,7 @@ struct FontPlatformDataCacheKey {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FontPlatformDataCacheKey() { }
-    FontPlatformDataCacheKey(const AtomicString& family, const FontDescription& description, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
+    FontPlatformDataCacheKey(const AtomString& family, const FontDescription& description, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
         : m_fontDescriptionKey(description)
         , m_family(family)
         , m_fontFaceFeatures(fontFaceFeatures ? *fontFaceFeatures : FontFeatureSettings())
@@ -106,7 +106,7 @@ public:
     }
 
     FontDescriptionKey m_fontDescriptionKey;
-    AtomicString m_family;
+    AtomString m_family;
     FontFeatureSettings m_fontFaceFeatures;
     FontVariantSettings m_fontFaceVariantSettings;
     FontSelectionSpecifiedCapabilities m_fontFaceCapabilities;
@@ -155,16 +155,16 @@ static FontPlatformDataCache& fontPlatformDataCache()
     return cache;
 }
 
-const AtomicString& FontCache::alternateFamilyName(const AtomicString& familyName)
+const AtomString& FontCache::alternateFamilyName(const AtomString& familyName)
 {
-    static NeverDestroyed<AtomicString> arial("Arial", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> courier("Courier", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> courierNew("Courier New", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> helvetica("Helvetica", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> times("Times", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> timesNewRoman("Times New Roman", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> arial("Arial", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> courier("Courier", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> courierNew("Courier New", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> helvetica("Helvetica", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> times("Times", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> timesNewRoman("Times New Roman", AtomString::ConstructFromLiteral);
 
-    const AtomicString& platformSpecificAlternate = platformAlternateFamilyName(familyName);
+    const AtomString& platformSpecificAlternate = platformAlternateFamilyName(familyName);
     if (!platformSpecificAlternate.isNull())
         return platformSpecificAlternate;
 
@@ -203,7 +203,7 @@ const AtomicString& FontCache::alternateFamilyName(const AtomicString& familyNam
     return nullAtom();
 }
 
-FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription, const AtomicString& passedFamilyName,
+FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription, const AtomString& passedFamilyName,
     const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool checkingAlternateName)
 {
 #if PLATFORM(IOS_FAMILY)
@@ -214,10 +214,10 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
     // Leading "@" in the font name enables Windows vertical flow flag for the font.
     // Because we do vertical flow by ourselves, we don't want to use the Windows feature.
     // IE disregards "@" regardless of the orientatoin, so we follow the behavior.
-    const AtomicString& familyName = (passedFamilyName.isEmpty() || passedFamilyName[0] != '@') ?
-        passedFamilyName : AtomicString(passedFamilyName.impl()->substring(1));
+    const AtomString& familyName = (passedFamilyName.isEmpty() || passedFamilyName[0] != '@') ?
+        passedFamilyName : AtomString(passedFamilyName.impl()->substring(1));
 #else
-    const AtomicString& familyName = passedFamilyName;
+    const AtomString& familyName = passedFamilyName;
 #endif
 
     static bool initialized;
@@ -236,7 +236,7 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
         if (!it->value && !checkingAlternateName) {
             // We were unable to find a font.  We have a small set of fonts that we alias to other names,
             // e.g., Arial/Helvetica, Courier/Courier New, etc.  Try looking up the font under the aliased name.
-            const AtomicString& alternateName = alternateFamilyName(familyName);
+            const AtomString& alternateName = alternateFamilyName(familyName);
             if (!alternateName.isNull()) {
                 FontPlatformData* fontPlatformDataForAlternateName = getCachedFontPlatformData(fontDescription, alternateName, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities, true);
                 // Lookup the key in the hash table again as the previous iterator may have
@@ -320,7 +320,7 @@ const unsigned cTargetInactiveFontData = 200;
 const unsigned cMaxUnderMemoryPressureInactiveFontData = 50;
 const unsigned cTargetUnderMemoryPressureInactiveFontData = 30;
 
-RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const AtomicString& family, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool checkingAlternateName)
+RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const AtomString& family, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool checkingAlternateName)
 {
     if (!m_purgeTimer.isActive())
         m_purgeTimer.startOneShot(0_s);
@@ -492,7 +492,7 @@ void FontCache::prewarm(const PrewarmInformation&)
 {
 }
 
-RefPtr<Font> FontCache::similarFont(const FontDescription&, const AtomicString&)
+RefPtr<Font> FontCache::similarFont(const FontDescription&, const AtomString&)
 {
     return nullptr;
 }

@@ -49,7 +49,7 @@ Ref<SVGFETileElement> SVGFETileElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGFETileElement(tagName, document));
 }
 
-void SVGFETileElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGFETileElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::inAttr) {
         m_in1->setBaseValInternal(value);

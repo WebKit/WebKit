@@ -35,7 +35,7 @@
 namespace WebCore {
 namespace Style {
 
-using ClassChangeVector = Vector<AtomicStringImpl*, 4>;
+using ClassChangeVector = Vector<AtomStringImpl*, 4>;
 
 static ClassChangeVector collectClasses(const SpaceSplitString& classes)
 {

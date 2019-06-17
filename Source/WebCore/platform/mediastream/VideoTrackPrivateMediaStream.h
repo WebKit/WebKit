@@ -57,14 +57,14 @@ private:
     }
 
     Kind kind() const final { return Kind::Main; }
-    AtomicString id() const final { return m_id; }
-    AtomicString label() const final { return m_label; }
-    AtomicString language() const final { return emptyAtom(); }
+    AtomString id() const final { return m_id; }
+    AtomString label() const final { return m_label; }
+    AtomString language() const final { return emptyAtom(); }
     int trackIndex() const final { return m_index; }
 
     Ref<MediaStreamTrackPrivate> m_streamTrack;
-    AtomicString m_id;
-    AtomicString m_label;
+    AtomString m_id;
+    AtomString m_label;
     int m_index { 0 };
     MediaTime m_timelineOffset;
 };

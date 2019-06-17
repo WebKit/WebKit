@@ -39,7 +39,7 @@ class SVGExternalResourcesRequired {
 public:
     virtual ~SVGExternalResourcesRequired() = default;
 
-    void parseAttribute(const QualifiedName&, const AtomicString&);
+    void parseAttribute(const QualifiedName&, const AtomString&);
     void svgAttributeChanged(const QualifiedName&);
 
     static void addSupportedAttributes(HashSet<QualifiedName>&);

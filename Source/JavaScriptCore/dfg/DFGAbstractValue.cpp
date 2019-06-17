@@ -379,7 +379,7 @@ void AbstractValue::filterValueByType()
 
     // We assume that the constant value can produce a narrower type at
     // some point. For example, rope JSString produces SpecString, but
-    // it produces SpecStringIdent once it is resolved to AtomicStringImpl.
+    // it produces SpecStringIdent once it is resolved to AtomStringImpl.
     // We do not make this AbstractValue cleared, but clear the constant
     // value if validation fails currently.
     m_value = JSValue();

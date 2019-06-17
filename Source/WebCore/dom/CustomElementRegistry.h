@@ -28,8 +28,8 @@
 #include "ContextDestructionObserver.h"
 #include "QualifiedName.h"
 #include <wtf/HashMap.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace JSC {
 
@@ -59,22 +59,22 @@ public:
 
     JSCustomElementInterface* findInterface(const Element&) const;
     JSCustomElementInterface* findInterface(const QualifiedName&) const;
-    JSCustomElementInterface* findInterface(const AtomicString&) const;
+    JSCustomElementInterface* findInterface(const AtomString&) const;
     JSCustomElementInterface* findInterface(const JSC::JSObject*) const;
     bool containsConstructor(const JSC::JSObject*) const;
 
-    JSC::JSValue get(const AtomicString&);
+    JSC::JSValue get(const AtomString&);
     void upgrade(Node& root);
 
-    HashMap<AtomicString, Ref<DeferredPromise>>& promiseMap() { return m_promiseMap; }
+    HashMap<AtomString, Ref<DeferredPromise>>& promiseMap() { return m_promiseMap; }
 
 private:
     CustomElementRegistry(DOMWindow&, ScriptExecutionContext*);
 
     DOMWindow& m_window;
-    HashMap<AtomicString, Ref<JSCustomElementInterface>> m_nameMap;
+    HashMap<AtomString, Ref<JSCustomElementInterface>> m_nameMap;
     HashMap<const JSC::JSObject*, JSCustomElementInterface*> m_constructorMap;
-    HashMap<AtomicString, Ref<DeferredPromise>> m_promiseMap;
+    HashMap<AtomString, Ref<DeferredPromise>> m_promiseMap;
 
     bool m_elementDefinitionIsRunning { false };
 

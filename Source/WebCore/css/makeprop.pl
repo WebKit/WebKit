@@ -248,7 +248,7 @@ print GPERF << "EOF";
 #include \"HashTools.h\"
 #include "RuntimeEnabledFeatures.h"
 #include <wtf/ASCIICType.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
 #include <string.h>
 
@@ -350,7 +350,7 @@ const char* getPropertyName(CSSPropertyID id)
     return propertyNameStrings[index];
 }
 
-const AtomicString& getPropertyNameAtomicString(CSSPropertyID id)
+const AtomString& getPropertyNameAtomString(CSSPropertyID id)
 {
     if (id < firstCSSProperty)
         return nullAtom();
@@ -358,11 +358,11 @@ const AtomicString& getPropertyNameAtomicString(CSSPropertyID id)
     if (index >= numCSSProperties)
         return nullAtom();
 
-    static AtomicString* propertyStrings = new AtomicString[numCSSProperties]; // Intentionally never destroyed.
-    AtomicString& propertyString = propertyStrings[index];
+    static AtomString* propertyStrings = new AtomString[numCSSProperties]; // Intentionally never destroyed.
+    AtomString& propertyString = propertyStrings[index];
     if (propertyString.isNull()) {
         const char* propertyName = propertyNameStrings[index];
-        propertyString = AtomicString(propertyName, strlen(propertyName), AtomicString::ConstructFromLiteral);
+        propertyString = AtomString(propertyName, strlen(propertyName), AtomString::ConstructFromLiteral);
     }
     return propertyString;
 }
@@ -370,7 +370,7 @@ const AtomicString& getPropertyNameAtomicString(CSSPropertyID id)
 String getPropertyNameString(CSSPropertyID id)
 {
     // We share the StringImpl with the AtomicStrings.
-    return getPropertyNameAtomicString(id).string();
+    return getPropertyNameAtomString(id).string();
 }
 
 String getJSPropertyName(CSSPropertyID id)
@@ -487,7 +487,7 @@ print HEADER << "EOF";
 bool isInternalCSSProperty(const CSSPropertyID);
 bool isEnabledCSSProperty(const CSSPropertyID);
 const char* getPropertyName(CSSPropertyID);
-const WTF::AtomicString& getPropertyNameAtomicString(CSSPropertyID id);
+const WTF::AtomString& getPropertyNameAtomString(CSSPropertyID id);
 WTF::String getPropertyNameString(CSSPropertyID id);
 WTF::String getJSPropertyName(CSSPropertyID);
 

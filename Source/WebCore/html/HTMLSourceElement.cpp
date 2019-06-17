@@ -154,7 +154,7 @@ void HTMLSourceElement::stop()
     cancelPendingErrorEvent();
 }
 
-void HTMLSourceElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLSourceElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     HTMLElement::parseAttribute(name, value);
     if (name == srcsetAttr || name == sizesAttr || name == mediaAttr || name == typeAttr) {

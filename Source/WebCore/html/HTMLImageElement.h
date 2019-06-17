@@ -54,14 +54,14 @@ public:
 
     WEBCORE_EXPORT int naturalWidth() const;
     WEBCORE_EXPORT int naturalHeight() const;
-    const AtomicString& currentSrc() const { return m_currentSrc; }
+    const AtomString& currentSrc() const { return m_currentSrc; }
 
     bool supportsFocus() const override;
     bool isFocusable() const override;
 
     bool isServerMap() const;
 
-    const AtomicString& altText() const;
+    const AtomString& altText() const;
 
     CompositeOperator compositeOperator() const { return m_compositeOperator; }
 
@@ -69,17 +69,17 @@ public:
 
     void setLoadManually(bool loadManually) { m_imageLoader.setLoadManually(loadManually); }
 
-    bool matchesUsemap(const AtomicStringImpl&) const;
+    bool matchesUsemap(const AtomStringImpl&) const;
     HTMLMapElement* associatedMapElement() const;
 
-    WEBCORE_EXPORT const AtomicString& alt() const;
+    WEBCORE_EXPORT const AtomString& alt() const;
 
     WEBCORE_EXPORT void setHeight(unsigned);
 
     URL src() const;
     void setSrc(const String&);
 
-    WEBCORE_EXPORT void setCrossOrigin(const AtomicString&);
+    WEBCORE_EXPORT void setCrossOrigin(const AtomString&);
     WEBCORE_EXPORT String crossOrigin() const;
 
     WEBCORE_EXPORT void setWidth(unsigned);
@@ -107,7 +107,7 @@ public:
 
     bool canContainRangeEndPoint() const override { return false; }
 
-    const AtomicString& imageSourceURL() const override;
+    const AtomString& imageSourceURL() const override;
 
     bool hasShadowControls() const { return m_experimentalImageMenuEnabled; }
     
@@ -129,9 +129,9 @@ protected:
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
 private:
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomString&) override;
     bool isPresentationAttribute(const QualifiedName&) const override;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
 
     void didAttachRenderers() override;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
@@ -177,9 +177,9 @@ private:
     WeakPtr<HTMLFormElement> m_formSetByParser;
 
     CompositeOperator m_compositeOperator;
-    AtomicString m_bestFitImageURL;
-    AtomicString m_currentSrc;
-    AtomicString m_parsedUsemap;
+    AtomString m_bestFitImageURL;
+    AtomString m_currentSrc;
+    AtomString m_parsedUsemap;
     float m_imageDevicePixelRatio;
     bool m_experimentalImageMenuEnabled;
     bool m_hadNameBeforeAttributeChanged { false }; // FIXME: We only need this because parseAttribute() can't see the old value.

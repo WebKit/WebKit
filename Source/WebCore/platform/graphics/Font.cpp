@@ -39,7 +39,7 @@
 #include "OpenTypeMathData.h"
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 
 #if ENABLE(OPENTYPE_VERTICAL)
 #include "OpenTypeVerticalData.h"
@@ -517,7 +517,7 @@ public:
     {
     }
 
-    CharacterFallbackMapKey(const AtomicString& locale, UChar32 character, IsForPlatformFont isForPlatformFont)
+    CharacterFallbackMapKey(const AtomString& locale, UChar32 character, IsForPlatformFont isForPlatformFont)
         : locale(locale)
         , character(character)
         , isForPlatformFont(isForPlatformFont == IsForPlatformFont::Yes)
@@ -541,7 +541,7 @@ public:
 private:
     friend struct CharacterFallbackMapKeyHash;
 
-    AtomicString locale;
+    AtomString locale;
     UChar32 character { 0 };
     bool isForPlatformFont { false };
 };

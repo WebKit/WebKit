@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-const AtomicString& ResetInputType::formControlType() const
+const AtomString& ResetInputType::formControlType() const
 {
     return InputTypeNames::reset();
 }

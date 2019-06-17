@@ -174,7 +174,7 @@ void DocumentRuleSets::collectFeatures() const
     m_features.shrinkToFit();
 }
 
-static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const AtomicString& key, HashMap<AtomicString, std::unique_ptr<Vector<InvalidationRuleSet>>>& ruleSetMap, const HashMap<AtomicString, std::unique_ptr<Vector<RuleFeature>>>& ruleFeatures)
+static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const AtomString& key, HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>>& ruleSetMap, const HashMap<AtomString, std::unique_ptr<Vector<RuleFeature>>>& ruleFeatures)
 {
     return ruleSetMap.ensure(key, [&] () -> std::unique_ptr<Vector<InvalidationRuleSet>> {
         auto* features = ruleFeatures.get(key);
@@ -201,12 +201,12 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const AtomicStrin
     }).iterator->value.get();
 }
 
-const Vector<InvalidationRuleSet>* DocumentRuleSets::classInvalidationRuleSets(const AtomicString& className) const
+const Vector<InvalidationRuleSet>* DocumentRuleSets::classInvalidationRuleSets(const AtomString& className) const
 {
     return ensureInvalidationRuleSets(className, m_classInvalidationRuleSets, m_features.classRules);
 }
 
-const Vector<InvalidationRuleSet>* DocumentRuleSets::attributeInvalidationRuleSets(const AtomicString& attributeName) const
+const Vector<InvalidationRuleSet>* DocumentRuleSets::attributeInvalidationRuleSets(const AtomString& attributeName) const
 {
     return ensureInvalidationRuleSets(attributeName, m_attributeInvalidationRuleSets, m_features.attributeRules);
 }

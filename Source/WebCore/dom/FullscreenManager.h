@@ -99,7 +99,7 @@ public:
 protected:
     friend class Document;
 
-    void dispatchFullscreenChangeOrErrorEvent(Deque<RefPtr<Node>>&, const AtomicString& eventName, bool shouldNotifyMediaElement);
+    void dispatchFullscreenChangeOrErrorEvent(Deque<RefPtr<Node>>&, const AtomString& eventName, bool shouldNotifyMediaElement);
     void clearFullscreenElementStack();
     void popFullscreenElementStack();
     void pushFullscreenElementStack(Element&);

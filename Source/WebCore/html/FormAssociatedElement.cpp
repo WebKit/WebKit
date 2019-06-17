@@ -42,7 +42,7 @@ using namespace HTMLNames;
 class FormAttributeTargetObserver final : private IdTargetObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FormAttributeTargetObserver(const AtomicString& id, FormAssociatedElement&);
+    FormAttributeTargetObserver(const AtomString& id, FormAssociatedElement&);
 
 private:
     void idTargetChanged() override;
@@ -101,7 +101,7 @@ void FormAssociatedElement::removedFromAncestor(Node::RemovalType, ContainerNode
 
 HTMLFormElement* FormAssociatedElement::findAssociatedForm(const HTMLElement* element, HTMLFormElement* currentAssociatedForm)
 {
-    const AtomicString& formId(element->attributeWithoutSynchronization(formAttr));
+    const AtomString& formId(element->attributeWithoutSynchronization(formAttr));
     if (!formId.isNull() && element->isConnected()) {
         // The HTML5 spec says that the element should be associated with
         // the first element in the document to have an ID that equal to
@@ -287,9 +287,9 @@ void FormAssociatedElement::formAttributeTargetChanged()
     resetFormOwner();
 }
 
-const AtomicString& FormAssociatedElement::name() const
+const AtomString& FormAssociatedElement::name() const
 {
-    const AtomicString& name = asHTMLElement().getNameAttribute();
+    const AtomString& name = asHTMLElement().getNameAttribute();
     return name.isNull() ? emptyAtom() : name;
 }
 
@@ -298,7 +298,7 @@ bool FormAssociatedElement::isFormControlElementWithState() const
     return false;
 }
 
-FormAttributeTargetObserver::FormAttributeTargetObserver(const AtomicString& id, FormAssociatedElement& element)
+FormAttributeTargetObserver::FormAttributeTargetObserver(const AtomString& id, FormAssociatedElement& element)
     : IdTargetObserver(element.asHTMLElement().treeScope().idTargetObserverRegistry(), id)
     , m_element(element)
 {

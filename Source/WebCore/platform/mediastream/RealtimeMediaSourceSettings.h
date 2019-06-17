@@ -31,7 +31,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -102,12 +102,12 @@ public:
     void setEchoCancellation(bool echoCancellation) { m_echoCancellation = echoCancellation; }
 
     bool supportsDeviceId() const { return m_supportedConstraints.supportsDeviceId(); }
-    const AtomicString& deviceId() const { return m_deviceId; }
-    void setDeviceId(const AtomicString& deviceId) { m_deviceId = deviceId; }
+    const AtomString& deviceId() const { return m_deviceId; }
+    void setDeviceId(const AtomString& deviceId) { m_deviceId = deviceId; }
 
     bool supportsGroupId() const { return m_supportedConstraints.supportsGroupId(); }
-    const AtomicString& groupId() const { return m_groupId; }
-    void setGroupId(const AtomicString& groupId) { m_groupId = groupId; }
+    const AtomString& groupId() const { return m_groupId; }
+    void setGroupId(const AtomString& groupId) { m_groupId = groupId; }
 
     enum class DisplaySurfaceType {
         Monitor,
@@ -128,8 +128,8 @@ public:
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const { return m_supportedConstraints; }
     void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& supportedConstraints) { m_supportedConstraints = supportedConstraints; }
 
-    const AtomicString& label() const { return m_label; }
-    void setLabel(const AtomicString& label) { m_label = label; }
+    const AtomString& label() const { return m_label; }
+    void setLabel(const AtomString& label) { m_label = label; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, RealtimeMediaSourceSettings&);
@@ -147,9 +147,9 @@ private:
     uint32_t m_sampleSize { 0 };
     bool m_echoCancellation { 0 };
 
-    AtomicString m_deviceId;
-    AtomicString m_groupId;
-    AtomicString m_label;
+    AtomString m_deviceId;
+    AtomString m_groupId;
+    AtomString m_label;
 
     DisplaySurfaceType m_displaySurface { DisplaySurfaceType::Invalid };
     bool m_logicalSurface { 0 };

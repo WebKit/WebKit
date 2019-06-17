@@ -62,7 +62,7 @@ private:
     CSSCustomIdentValue(const String&);
     CSSCustomIdentValue(CSSPropertyID);
 
-    // FIXME: Change this to an AtomicString.
+    // FIXME: Change this to an AtomString.
     String m_string;
     CSSPropertyID m_propertyId;
 };

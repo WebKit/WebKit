@@ -111,7 +111,7 @@
 #include <wtf/Seconds.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
@@ -255,7 +255,7 @@ void StyleResolver::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&
 // This is a simplified style setting function for keyframe styles
 void StyleResolver::addKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
 {
-    AtomicString s(rule->name());
+    AtomString s(rule->name());
     m_keyframesRuleMap.set(s.impl(), WTFMove(rule));
 }
 
@@ -459,7 +459,7 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* 
 
 bool StyleResolver::isAnimationNameValid(const String& name)
 {
-    return m_keyframesRuleMap.find(AtomicString(name).impl()) != m_keyframesRuleMap.end();
+    return m_keyframesRuleMap.find(AtomString(name).impl()) != m_keyframesRuleMap.end();
 }
 
 void StyleResolver::keyframeStylesForAnimation(const Element& element, const RenderStyle* elementStyle, KeyframeList& list)
@@ -760,7 +760,7 @@ void StyleResolver::adjustStyleForInterCharacterRuby()
 static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
 {
     // https://drafts.csswg.org/css-display-3/#unbox-html
-    static NeverDestroyed<HashSet<AtomicString>> tagNames = [] {
+    static NeverDestroyed<HashSet<AtomString>> tagNames = [] {
         static const HTMLQualifiedName* const tagList[] = {
             &brTag.get(),
             &wbrTag.get(),
@@ -780,7 +780,7 @@ static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
             &textareaTag.get(),
             &selectTag.get(),
         };
-        HashSet<AtomicString> set;
+        HashSet<AtomString> set;
         for (auto& name : tagList)
             set.add(name->localName());
         return set;
@@ -1162,13 +1162,13 @@ void StyleResolver::adjustRenderStyleForSiteSpecificQuirks(RenderStyle& style, c
 {
     if (document().quirks().needsGMailOverflowScrollQuirk()) {
         // This turns sidebar scrollable without mouse move event.
-        static NeverDestroyed<AtomicString> roleValue("navigation", AtomicString::ConstructFromLiteral);
+        static NeverDestroyed<AtomString> roleValue("navigation", AtomString::ConstructFromLiteral);
         if (style.overflowY() == Overflow::Hidden && element.attributeWithoutSynchronization(roleAttr) == roleValue)
             style.setOverflowY(Overflow::Auto);
     }
     if (document().quirks().needsYouTubeOverflowScrollQuirk()) {
         // This turns sidebar scrollable without hover.
-        static NeverDestroyed<AtomicString> idValue("guide-inner-content", AtomicString::ConstructFromLiteral);
+        static NeverDestroyed<AtomString> idValue("guide-inner-content", AtomString::ConstructFromLiteral);
         if (style.overflowY() == Overflow::Hidden && element.idForStyleResolution() == idValue)
             style.setOverflowY(Overflow::Auto);
     }

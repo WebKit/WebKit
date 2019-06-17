@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-SetNodeAttributeCommand::SetNodeAttributeCommand(Ref<Element>&& element, const QualifiedName& attribute, const AtomicString& value)
+SetNodeAttributeCommand::SetNodeAttributeCommand(Ref<Element>&& element, const QualifiedName& attribute, const AtomString& value)
     : SimpleEditCommand(element->document())
     , m_element(WTFMove(element))
     , m_attribute(attribute)
@@ -48,7 +48,7 @@ void SetNodeAttributeCommand::doApply()
 void SetNodeAttributeCommand::doUnapply()
 {
     m_element->setAttribute(m_attribute, m_oldValue);
-    AtomicStringImpl* nullString = nullptr;
+    AtomStringImpl* nullString = nullptr;
     m_oldValue = nullString;
 }
 

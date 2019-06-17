@@ -61,7 +61,7 @@ void HTMLScriptElement::childrenChanged(const ChildChange& change)
     ScriptElement::childrenChanged(change);
 }
 
-void HTMLScriptElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLScriptElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == srcAttr)
         handleSourceAttribute(value);
@@ -99,7 +99,7 @@ bool HTMLScriptElement::async() const
     return hasAttributeWithoutSynchronization(asyncAttr) || forceAsync();
 }
 
-void HTMLScriptElement::setCrossOrigin(const AtomicString& value)
+void HTMLScriptElement::setCrossOrigin(const AtomString& value)
 {
     setAttributeWithoutSynchronization(crossoriginAttr, value);
 }

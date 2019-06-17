@@ -182,8 +182,8 @@ public:
     ~JSString();
 
     Identifier toIdentifier(ExecState*) const;
-    AtomicString toAtomicString(ExecState*) const;
-    RefPtr<AtomicStringImpl> toExistingAtomicString(ExecState*) const;
+    AtomString toAtomString(ExecState*) const;
+    RefPtr<AtomStringImpl> toExistingAtomString(ExecState*) const;
 
     StringViewWithUnderlyingString viewWithUnderlyingString(ExecState*) const;
 
@@ -576,8 +576,8 @@ private:
     // The rope value will remain a null string in that case.
     JS_EXPORT_PRIVATE const String& resolveRope(ExecState* nullOrExecForOOM) const;
     template<typename Function> const String& resolveRopeWithFunction(ExecState* nullOrExecForOOM, Function&&) const;
-    JS_EXPORT_PRIVATE AtomicString resolveRopeToAtomicString(ExecState*) const;
-    JS_EXPORT_PRIVATE RefPtr<AtomicStringImpl> resolveRopeToExistingAtomicString(ExecState*) const;
+    JS_EXPORT_PRIVATE AtomString resolveRopeToAtomString(ExecState*) const;
+    JS_EXPORT_PRIVATE RefPtr<AtomStringImpl> resolveRopeToExistingAtomString(ExecState*) const;
     void resolveRopeSlowCase8(LChar*) const;
     void resolveRopeSlowCase(UChar*) const;
     void outOfMemory(ExecState* nullOrExecForOOM) const;
@@ -735,27 +735,27 @@ inline JSString* jsNontrivialString(VM* vm, String&& s)
 
 ALWAYS_INLINE Identifier JSString::toIdentifier(ExecState* exec) const
 {
-    return Identifier::fromString(exec, toAtomicString(exec));
+    return Identifier::fromString(exec, toAtomString(exec));
 }
 
-ALWAYS_INLINE AtomicString JSString::toAtomicString(ExecState* exec) const
+ALWAYS_INLINE AtomString JSString::toAtomString(ExecState* exec) const
 {
     if (validateDFGDoesGC)
         RELEASE_ASSERT(vm()->heap.expectDoesGC());
     if (isRope())
-        return static_cast<const JSRopeString*>(this)->resolveRopeToAtomicString(exec);
-    return AtomicString(valueInternal());
+        return static_cast<const JSRopeString*>(this)->resolveRopeToAtomString(exec);
+    return AtomString(valueInternal());
 }
 
-ALWAYS_INLINE RefPtr<AtomicStringImpl> JSString::toExistingAtomicString(ExecState* exec) const
+ALWAYS_INLINE RefPtr<AtomStringImpl> JSString::toExistingAtomString(ExecState* exec) const
 {
     if (validateDFGDoesGC)
         RELEASE_ASSERT(vm()->heap.expectDoesGC());
     if (isRope())
-        return static_cast<const JSRopeString*>(this)->resolveRopeToExistingAtomicString(exec);
-    if (valueInternal().impl()->isAtomic())
-        return static_cast<AtomicStringImpl*>(valueInternal().impl());
-    return AtomicStringImpl::lookUp(valueInternal().impl());
+        return static_cast<const JSRopeString*>(this)->resolveRopeToExistingAtomString(exec);
+    if (valueInternal().impl()->isAtom())
+        return static_cast<AtomStringImpl*>(valueInternal().impl());
+    return AtomStringImpl::lookUp(valueInternal().impl());
 }
 
 inline const String& JSString::value(ExecState* exec) const

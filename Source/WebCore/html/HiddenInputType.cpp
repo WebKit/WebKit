@@ -43,7 +43,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-const AtomicString& HiddenInputType::formControlType() const
+const AtomString& HiddenInputType::formControlType() const
 {
     return InputTypeNames::hidden();
 }

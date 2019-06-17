@@ -53,7 +53,7 @@ public:
     FontRenderingMode renderingMode() const { return static_cast<FontRenderingMode>(m_renderingMode); }
     TextRenderingMode textRenderingMode() const { return static_cast<TextRenderingMode>(m_textRendering); }
     UScriptCode script() const { return static_cast<UScriptCode>(m_script); }
-    const AtomicString& locale() const { return m_locale; }
+    const AtomString& locale() const { return m_locale; }
 
     FontOrientation orientation() const { return static_cast<FontOrientation>(m_orientation); }
     NonCJKGlyphOrientation nonCJKGlyphOrientation() const { return static_cast<NonCJKGlyphOrientation>(m_nonCJKGlyphOrientation); }
@@ -108,7 +108,7 @@ public:
     void setOrientation(FontOrientation orientation) { m_orientation = static_cast<unsigned>(orientation); }
     void setNonCJKGlyphOrientation(NonCJKGlyphOrientation orientation) { m_nonCJKGlyphOrientation = static_cast<unsigned>(orientation); }
     void setWidthVariant(FontWidthVariant widthVariant) { m_widthVariant = static_cast<unsigned>(widthVariant); } // Make sure new callers of this sync with FontPlatformData::isForTextCombine()!
-    void setLocale(const AtomicString&);
+    void setLocale(const AtomString&);
     void setFeatureSettings(FontFeatureSettings&& settings) { m_featureSettings = WTFMove(settings); }
 #if ENABLE(VARIATION_FONTS)
     void setVariationSettings(FontVariationSettings&& settings) { m_variationSettings = WTFMove(settings); }
@@ -133,13 +133,13 @@ public:
     void setFontStyleAxis(FontStyleAxis axis) { m_fontStyleAxis = axis == FontStyleAxis::ital; }
     void setShouldAllowUserInstalledFonts(AllowUserInstalledFonts shouldAllowUserInstalledFonts) { m_shouldAllowUserInstalledFonts = static_cast<unsigned>(shouldAllowUserInstalledFonts); }
 
-    static AtomicString platformResolveGenericFamily(UScriptCode, const AtomicString& locale, const AtomicString& familyName);
+    static AtomString platformResolveGenericFamily(UScriptCode, const AtomString& locale, const AtomString& familyName);
 
 private:
     // FIXME: Investigate moving these into their own object on the heap (to save memory).
     FontFeatureSettings m_featureSettings;
     FontVariationSettings m_variationSettings;
-    AtomicString m_locale;
+    AtomString m_locale;
 
     FontSelectionRequest m_fontSelectionRequest;
     float m_computedSize { 0 }; // Computed size adjusted for the minimum font size and the zoom factor.

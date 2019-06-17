@@ -74,7 +74,7 @@ unsigned MathMLElement::rowSpan() const
     return std::max(1u, std::min(limitToOnlyHTMLNonNegative(rowSpanValue, 1u), maxRowspan));
 }
 
-void MathMLElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void MathMLElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == hrefAttr) {
         bool wasLink = isLink();
@@ -98,7 +98,7 @@ bool MathMLElement::isPresentationAttribute(const QualifiedName& name) const
     return StyledElement::isPresentationAttribute(name);
 }
 
-static String convertMathSizeIfNeeded(const AtomicString& value)
+static String convertMathSizeIfNeeded(const AtomString& value)
 {
     if (value == "small")
         return "0.75em";
@@ -117,7 +117,7 @@ static String convertMathSizeIfNeeded(const AtomicString& value)
     return makeString(FormattedNumber::fixedWidth(unitlessValue * 100, 3), '%');
 }
 
-void MathMLElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+void MathMLElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == mathbackgroundAttr)
         addPropertyToPresentationAttributeStyle(style, CSSPropertyBackgroundColor, value);

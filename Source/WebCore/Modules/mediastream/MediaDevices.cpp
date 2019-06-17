@@ -177,7 +177,7 @@ bool MediaDevices::canSuspendForDocumentSuspension() const
     return true;
 }
 
-bool MediaDevices::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+bool MediaDevices::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     if (!m_listeningForDeviceChanges && eventType == eventNames().devicechangeEvent) {
         auto* document = this->document();

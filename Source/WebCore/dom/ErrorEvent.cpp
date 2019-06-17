@@ -40,7 +40,7 @@
 namespace WebCore {
 using namespace JSC;
 
-ErrorEvent::ErrorEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+ErrorEvent::ErrorEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
     , m_message(initializer.message)
     , m_fileName(initializer.filename)

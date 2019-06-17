@@ -554,7 +554,7 @@ public:
     JSCell* currentlyDestructingCallbackObject;
     const ClassInfo* currentlyDestructingCallbackObjectClassInfo { nullptr };
 
-    AtomicStringTable* m_atomicStringTable;
+    AtomStringTable* m_atomStringTable;
     WTF::SymbolRegistry m_symbolRegistry;
     CommonIdentifiers* propertyNames;
     const ArgList* emptyList;
@@ -566,7 +566,7 @@ public:
     WeakGCMap<StringImpl*, JSString, PtrHash<StringImpl*>> stringCache;
     Strong<JSString> lastCachedString;
 
-    AtomicStringTable* atomicStringTable() const { return m_atomicStringTable; }
+    AtomStringTable* atomStringTable() const { return m_atomStringTable; }
     WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry; }
 
     Structure* setIteratorStructure()
@@ -866,7 +866,7 @@ public:
     WatchpointSet* ensureWatchpointSetForImpureProperty(const Identifier&);
     void registerWatchpointForImpureProperty(const Identifier&, Watchpoint*);
     
-    // FIXME: Use AtomicString once it got merged with Identifier.
+    // FIXME: Use AtomString once it got merged with Identifier.
     JS_EXPORT_PRIVATE void addImpureProperty(const String&);
     
     InlineWatchpointSet& primitiveGigacageEnabled() { return m_primitiveGigacageEnabled; }

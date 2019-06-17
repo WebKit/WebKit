@@ -67,6 +67,6 @@ interface TestDOMJIT : Node {
     [DOMJIT=ReadDOM] DOMString? getAttribute(DOMString name);
     [DOMJIT=ReadDOM] DOMString item(unsigned short x, unsigned short y);
     [DOMJIT=ReadDOM] boolean hasAttribute();
-    [DOMJIT=ReadDOM] Element getElementById([RequiresExistingAtomicString] DOMString elementId);
-    [DOMJIT=ReadDOM] NodeList getElementsByName([AtomicString] DOMString elementName);
+    [DOMJIT=ReadDOM] Element getElementById([RequiresExistingAtomString] DOMString elementId);
+    [DOMJIT=ReadDOM] NodeList getElementsByName([AtomString] DOMString elementName);
 };

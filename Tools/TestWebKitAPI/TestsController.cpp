@@ -29,7 +29,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/Threading.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace TestWebKitAPI {
 
@@ -72,7 +72,7 @@ TestsController::TestsController()
     WTF::initializeThreading();
     WTF::initializeMainThread();
     WTF::setProcessPrivileges(allPrivileges());
-    AtomicString::init();
+    AtomString::init();
 }
 
 bool TestsController::run(int argc, char** argv)

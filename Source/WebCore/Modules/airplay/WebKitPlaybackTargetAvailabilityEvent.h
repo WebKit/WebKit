@@ -34,7 +34,7 @@ namespace WebCore {
 class WebKitPlaybackTargetAvailabilityEvent : public Event {
 public:
 
-    static Ref<WebKitPlaybackTargetAvailabilityEvent> create(const AtomicString& eventType, bool available)
+    static Ref<WebKitPlaybackTargetAvailabilityEvent> create(const AtomString& eventType, bool available)
     {
         return adoptRef(*new WebKitPlaybackTargetAvailabilityEvent(eventType, available));
     }
@@ -43,7 +43,7 @@ public:
         String availability;
     };
 
-    static Ref<WebKitPlaybackTargetAvailabilityEvent> create(const AtomicString& eventType, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<WebKitPlaybackTargetAvailabilityEvent> create(const AtomString& eventType, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new WebKitPlaybackTargetAvailabilityEvent(eventType, initializer, isTrusted));
     }
@@ -53,8 +53,8 @@ public:
     EventInterface eventInterface() const override { return WebKitPlaybackTargetAvailabilityEventInterfaceType; }
 
 private:
-    explicit WebKitPlaybackTargetAvailabilityEvent(const AtomicString& eventType, bool available);
-    WebKitPlaybackTargetAvailabilityEvent(const AtomicString& eventType, const Init&, IsTrusted);
+    explicit WebKitPlaybackTargetAvailabilityEvent(const AtomString& eventType, bool available);
+    WebKitPlaybackTargetAvailabilityEvent(const AtomString& eventType, const Init&, IsTrusted);
 
     String m_availability;
 };

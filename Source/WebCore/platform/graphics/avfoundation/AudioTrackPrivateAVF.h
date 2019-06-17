@@ -35,22 +35,22 @@ class AudioTrackPrivateAVF : public AudioTrackPrivate {
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateAVF)
 public:
     virtual Kind kind() const { return m_kind; }
-    virtual AtomicString id() const { return m_id; }
-    virtual AtomicString label() const { return m_label; }
-    virtual AtomicString language() const { return m_language; }
+    virtual AtomString id() const { return m_id; }
+    virtual AtomString label() const { return m_label; }
+    virtual AtomString language() const { return m_language; }
     virtual int trackIndex() const { return m_index; }
 
 protected:
     void setKind(Kind kind) { m_kind = kind; }
-    void setId(const AtomicString& newId) { m_id = newId; }
-    void setLabel(const AtomicString& label) { m_label = label; }
-    void setLanguage(const AtomicString& language) { m_language = language; }
+    void setId(const AtomString& newId) { m_id = newId; }
+    void setLabel(const AtomString& label) { m_label = label; }
+    void setLanguage(const AtomString& language) { m_language = language; }
     void setTrackIndex(int index) { m_index = index; }
 
     Kind m_kind { None };
-    AtomicString m_id;
-    AtomicString m_label;
-    AtomicString m_language;
+    AtomString m_id;
+    AtomString m_label;
+    AtomString m_language;
     int m_index { 0 };
 
     AudioTrackPrivateAVF() = default;

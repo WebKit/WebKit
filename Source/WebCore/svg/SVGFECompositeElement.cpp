@@ -53,7 +53,7 @@ Ref<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedName& ta
     return adoptRef(*new SVGFECompositeElement(tagName, document));
 }
 
-void SVGFECompositeElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGFECompositeElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::operatorAttr) {
         CompositeOperationType propertyValue = SVGPropertyTraits<CompositeOperationType>::fromString(value);

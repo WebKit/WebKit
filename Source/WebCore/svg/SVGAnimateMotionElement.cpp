@@ -96,7 +96,7 @@ bool SVGAnimateMotionElement::hasValidAttributeName() const
     return true;
 }
 
-void SVGAnimateMotionElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGAnimateMotionElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::pathAttr) {
         m_path = buildPathFromString(value);
@@ -109,9 +109,9 @@ void SVGAnimateMotionElement::parseAttribute(const QualifiedName& name, const At
     
 SVGAnimateMotionElement::RotateMode SVGAnimateMotionElement::rotateMode() const
 {
-    static NeverDestroyed<const AtomicString> autoVal("auto", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> autoReverse("auto-reverse", AtomicString::ConstructFromLiteral);
-    const AtomicString& rotate = getAttribute(SVGNames::rotateAttr);
+    static NeverDestroyed<const AtomString> autoVal("auto", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> autoReverse("auto-reverse", AtomString::ConstructFromLiteral);
+    const AtomString& rotate = getAttribute(SVGNames::rotateAttr);
     if (rotate == autoVal)
         return RotateAuto;
     if (rotate == autoReverse)

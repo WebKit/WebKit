@@ -1786,7 +1786,7 @@ private:
 #endif
 
 #if PLATFORM(GTK)
-    void getEditorCommandsForKeyEvent(const AtomicString&, Vector<String>&);
+    void getEditorCommandsForKeyEvent(const AtomString&, Vector<String>&);
 #endif
 
 #if USE(ATK)

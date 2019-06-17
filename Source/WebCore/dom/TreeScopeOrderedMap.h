@@ -33,7 +33,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
-#include <wtf/text/AtomicStringImpl.h>
+#include <wtf/text/AtomStringImpl.h>
 
 namespace WebCore {
 
@@ -46,28 +46,28 @@ class TreeScope;
 class TreeScopeOrderedMap {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    void add(const AtomicStringImpl&, Element&, const TreeScope&);
-    void remove(const AtomicStringImpl&, Element&);
+    void add(const AtomStringImpl&, Element&, const TreeScope&);
+    void remove(const AtomStringImpl&, Element&);
     void clear();
 
-    bool contains(const AtomicStringImpl&) const;
-    bool containsSingle(const AtomicStringImpl&) const;
-    bool containsMultiple(const AtomicStringImpl&) const;
+    bool contains(const AtomStringImpl&) const;
+    bool containsSingle(const AtomStringImpl&) const;
+    bool containsMultiple(const AtomStringImpl&) const;
 
     // concrete instantiations of the get<>() method template
-    Element* getElementById(const AtomicStringImpl&, const TreeScope&) const;
-    Element* getElementByName(const AtomicStringImpl&, const TreeScope&) const;
-    HTMLMapElement* getElementByMapName(const AtomicStringImpl&, const TreeScope&) const;
-    HTMLImageElement* getElementByUsemap(const AtomicStringImpl&, const TreeScope&) const;
-    HTMLLabelElement* getElementByLabelForAttribute(const AtomicStringImpl&, const TreeScope&) const;
-    Element* getElementByWindowNamedItem(const AtomicStringImpl&, const TreeScope&) const;
-    Element* getElementByDocumentNamedItem(const AtomicStringImpl&, const TreeScope&) const;
+    Element* getElementById(const AtomStringImpl&, const TreeScope&) const;
+    Element* getElementByName(const AtomStringImpl&, const TreeScope&) const;
+    HTMLMapElement* getElementByMapName(const AtomStringImpl&, const TreeScope&) const;
+    HTMLImageElement* getElementByUsemap(const AtomStringImpl&, const TreeScope&) const;
+    HTMLLabelElement* getElementByLabelForAttribute(const AtomStringImpl&, const TreeScope&) const;
+    Element* getElementByWindowNamedItem(const AtomStringImpl&, const TreeScope&) const;
+    Element* getElementByDocumentNamedItem(const AtomStringImpl&, const TreeScope&) const;
 
-    const Vector<Element*>* getAllElementsById(const AtomicStringImpl&, const TreeScope&) const;
+    const Vector<Element*>* getAllElementsById(const AtomStringImpl&, const TreeScope&) const;
 
 private:
     template <typename KeyMatchingFunction>
-    Element* get(const AtomicStringImpl&, const TreeScope&, const KeyMatchingFunction&) const;
+    Element* get(const AtomStringImpl&, const TreeScope&, const KeyMatchingFunction&) const;
 
     struct MapEntry {
         MapEntry() { }
@@ -84,23 +84,23 @@ private:
 #endif
     };
 
-    typedef HashMap<const AtomicStringImpl*, MapEntry> Map;
+    typedef HashMap<const AtomStringImpl*, MapEntry> Map;
 
     mutable Map m_map;
 };
 
-inline bool TreeScopeOrderedMap::containsSingle(const AtomicStringImpl& id) const
+inline bool TreeScopeOrderedMap::containsSingle(const AtomStringImpl& id) const
 {
     auto it = m_map.find(&id);
     return it != m_map.end() && it->value.count == 1;
 }
 
-inline bool TreeScopeOrderedMap::contains(const AtomicStringImpl& id) const
+inline bool TreeScopeOrderedMap::contains(const AtomStringImpl& id) const
 {
     return m_map.contains(&id);
 }
 
-inline bool TreeScopeOrderedMap::containsMultiple(const AtomicStringImpl& id) const
+inline bool TreeScopeOrderedMap::containsMultiple(const AtomStringImpl& id) const
 {
     auto it = m_map.find(&id);
     return it != m_map.end() && it->value.count > 1;

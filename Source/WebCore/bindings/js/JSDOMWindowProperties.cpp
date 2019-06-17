@@ -48,7 +48,7 @@ static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowPr
     // properties that are in Moz but not IE. Since we have some of these, we have to do it
     // the Moz way.
     if (auto* frame = window.frame()) {
-        if (auto* scopedChild = frame->tree().scopedChild(propertyNameToAtomicString(propertyName))) {
+        if (auto* scopedChild = frame->tree().scopedChild(propertyNameToAtomString(propertyName))) {
             slot.setValue(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum, toJS(exec, scopedChild->document()->domWindow()));
             return true;
         }

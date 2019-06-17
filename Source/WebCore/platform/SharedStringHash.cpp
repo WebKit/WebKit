@@ -25,7 +25,7 @@
 #include "SharedStringHash.h"
 
 #include <wtf/URL.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringView.h>
 
@@ -280,7 +280,7 @@ static ALWAYS_INLINE void computeSharedStringHashInline(const URL& base, const C
     return;
 }
 
-SharedStringHash computeVisitedLinkHash(const URL& base, const AtomicString& attributeURL)
+SharedStringHash computeVisitedLinkHash(const URL& base, const AtomString& attributeURL)
 {
     if (attributeURL.isEmpty())
         return 0;

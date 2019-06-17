@@ -29,7 +29,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -41,27 +41,27 @@ class IdTargetObserverRegistry {
 public:
     IdTargetObserverRegistry() { }
 
-    void notifyObservers(const AtomicString& id);
-    void notifyObservers(const AtomicStringImpl& id);
+    void notifyObservers(const AtomString& id);
+    void notifyObservers(const AtomStringImpl& id);
 
 private:
-    void addObserver(const AtomicString& id, IdTargetObserver*);
-    void removeObserver(const AtomicString& id, IdTargetObserver*);
-    void notifyObserversInternal(const AtomicStringImpl& id);
+    void addObserver(const AtomString& id, IdTargetObserver*);
+    void removeObserver(const AtomString& id, IdTargetObserver*);
+    void notifyObserversInternal(const AtomStringImpl& id);
 
     typedef HashSet<IdTargetObserver*> ObserverSet;
-    typedef HashMap<const AtomicStringImpl*, std::unique_ptr<ObserverSet>> IdToObserverSetMap;
+    typedef HashMap<const AtomStringImpl*, std::unique_ptr<ObserverSet>> IdToObserverSetMap;
     IdToObserverSetMap m_registry;
     ObserverSet* m_notifyingObserversInSet { nullptr };
 };
 
-inline void IdTargetObserverRegistry::notifyObservers(const AtomicString& id)
+inline void IdTargetObserverRegistry::notifyObservers(const AtomString& id)
 {
     if (!id.isEmpty())
         return notifyObservers(*id.impl());
 }
 
-inline void IdTargetObserverRegistry::notifyObservers(const AtomicStringImpl& id)
+inline void IdTargetObserverRegistry::notifyObservers(const AtomStringImpl& id)
 {
     ASSERT(!m_notifyingObserversInSet);
     ASSERT(id.length());

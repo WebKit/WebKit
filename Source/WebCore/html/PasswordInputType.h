@@ -39,7 +39,7 @@ public:
     explicit PasswordInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
 
 private:
-    const AtomicString& formControlType() const override;
+    const AtomString& formControlType() const override;
     bool shouldSaveAndRestoreFormControlState() const override;
     FormControlState saveFormControlState() const override;
     void restoreFormControlState(const FormControlState&) override;

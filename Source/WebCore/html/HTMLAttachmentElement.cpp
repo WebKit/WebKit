@@ -156,7 +156,7 @@ bool HTMLAttachmentElement::hasEnclosingImage() const
     return is<HTMLImageElement>(shadowHost());
 }
 
-void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == progressAttr || name == subtitleAttr || name == titleAttr || name == typeAttr) {
         if (auto* renderer = this->renderer())

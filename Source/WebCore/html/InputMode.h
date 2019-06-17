@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -41,19 +41,19 @@ enum class InputMode : uint8_t {
     Search
 };
 
-InputMode inputModeForAttributeValue(const AtomicString&);
-const AtomicString& stringForInputMode(InputMode);
+InputMode inputModeForAttributeValue(const AtomString&);
+const AtomString& stringForInputMode(InputMode);
 
 namespace InputModeNames {
 
-const AtomicString& none();
-const AtomicString& text();
-const AtomicString& tel();
-const AtomicString& url();
-const AtomicString& email();
-const AtomicString& numeric();
-const AtomicString& decimal();
-const AtomicString& search();
+const AtomString& none();
+const AtomString& text();
+const AtomString& tel();
+const AtomString& url();
+const AtomString& email();
+const AtomString& numeric();
+const AtomString& decimal();
+const AtomString& search();
 
 } // namespace InputModeNames
 

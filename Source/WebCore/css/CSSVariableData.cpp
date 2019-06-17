@@ -34,7 +34,7 @@
 #include "CSSParserTokenRange.h"
 #include "CSSValuePool.h"
 #include "RenderStyle.h"
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
 

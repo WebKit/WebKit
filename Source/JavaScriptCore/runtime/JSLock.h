@@ -26,7 +26,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
-#include <wtf/text/AtomicStringTable.h>
+#include <wtf/text/AtomStringTable.h>
 
 namespace JSC {
 
@@ -140,7 +140,7 @@ private:
     unsigned m_lockDropDepth;
     bool m_shouldReleaseHeapAccess;
     VM* m_vm;
-    AtomicStringTable* m_entryAtomicStringTable; 
+    AtomStringTable* m_entryAtomStringTable; 
 };
 
 } // namespace

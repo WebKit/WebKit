@@ -50,7 +50,7 @@ SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagNam
     });
 }
 
-void SVGTextPositioningElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGTextPositioningElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::xAttr) {
         m_x->baseVal()->parse(value);
@@ -80,7 +80,7 @@ void SVGTextPositioningElement::parseAttribute(const QualifiedName& name, const 
     SVGTextContentElement::parseAttribute(name, value);
 }
 
-void SVGTextPositioningElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+void SVGTextPositioningElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == SVGNames::xAttr || name == SVGNames::yAttr)
         return;

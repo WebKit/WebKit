@@ -2935,13 +2935,13 @@ void MediaPlayerPrivateAVFoundationObjC::setBufferingPolicy(MediaPlayer::Bufferi
 
 #if ENABLE(DATACUE_VALUE)
 
-static const AtomicString& metadataType(NSString *avMetadataKeySpace)
+static const AtomString& metadataType(NSString *avMetadataKeySpace)
 {
-    static NeverDestroyed<const AtomicString> quickTimeUserData("com.apple.quicktime.udta", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> isoUserData("org.mp4ra", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> quickTimeMetadata("com.apple.quicktime.mdta", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> iTunesMetadata("com.apple.itunes", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> id3Metadata("org.id3", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> quickTimeUserData("com.apple.quicktime.udta", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> isoUserData("org.mp4ra", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> quickTimeMetadata("com.apple.quicktime.mdta", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> iTunesMetadata("com.apple.itunes", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> id3Metadata("org.id3", AtomString::ConstructFromLiteral);
 
     if ([avMetadataKeySpace isEqualToString:AVMetadataKeySpaceQuickTimeUserData])
         return quickTimeUserData;
@@ -2992,7 +2992,7 @@ void MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(const RetainPtr<NSArr
         if (CMTIME_IS_VALID(item.duration))
             end = start + PAL::toMediaTime(item.duration);
 
-        AtomicString type = nullAtom();
+        AtomString type = nullAtom();
         if (item.keySpace)
             type = metadataType(item.keySpace);
 

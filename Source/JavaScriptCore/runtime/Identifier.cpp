@@ -42,7 +42,7 @@ Ref<StringImpl> Identifier::add(VM* vm, const char* c)
     if (!c[1])
         return vm->smallStrings.singleCharacterStringRep(c[0]);
 
-    return *AtomicStringImpl::add(c);
+    return *AtomStringImpl::add(c);
 }
 
 Ref<StringImpl> Identifier::add(ExecState* exec, const char* c)
@@ -61,7 +61,7 @@ Ref<StringImpl> Identifier::add8(VM* vm, const UChar* s, int length)
     if (!length)
         return *StringImpl::empty();
 
-    return *AtomicStringImpl::add(s, length);
+    return *AtomStringImpl::add(s, length);
 }
 
 Identifier Identifier::from(ExecState* exec, unsigned value)
@@ -109,24 +109,24 @@ void Identifier::dump(PrintStream& out) const
 
 #ifndef NDEBUG
 
-void Identifier::checkCurrentAtomicStringTable(VM* vm)
+void Identifier::checkCurrentAtomStringTable(VM* vm)
 {
     // Check the identifier table accessible through the threadspecific matches the
     // vm's identifier table.
-    ASSERT_UNUSED(vm, vm->atomicStringTable() == Thread::current().atomicStringTable());
+    ASSERT_UNUSED(vm, vm->atomStringTable() == Thread::current().atomStringTable());
 }
 
-void Identifier::checkCurrentAtomicStringTable(ExecState* exec)
+void Identifier::checkCurrentAtomStringTable(ExecState* exec)
 {
-    checkCurrentAtomicStringTable(&exec->vm());
+    checkCurrentAtomStringTable(&exec->vm());
 }
 
 #else
 
 // These only exists so that our exports are the same for debug and release builds.
 // This would be an RELEASE_ASSERT_NOT_REACHED(), but we're in NDEBUG only code here!
-NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentAtomicStringTable(VM*) { CRASH(); }
-NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentAtomicStringTable(ExecState*) { CRASH(); }
+NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentAtomStringTable(VM*) { CRASH(); }
+NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentAtomStringTable(ExecState*) { CRASH(); }
 
 #endif
 

@@ -34,7 +34,7 @@ namespace WebCore {
 
 #if USE_PLATFORM_SYSTEM_FALLBACK_LIST
 
-static inline bool isSystemFontString(const AtomicString& string)
+static inline bool isSystemFontString(const AtomString& string)
 {
     return equalLettersIgnoringASCIICase(string, "-webkit-system-font")
         || equalLettersIgnoringASCIICase(string, "-apple-system")
@@ -54,7 +54,7 @@ template<typename T, typename U, std::size_t size> inline std::array<T, size> co
     return convertArray<T>(array, std::make_index_sequence<size> { });
 }
 
-static inline bool isUIFontTextStyle(const AtomicString& string)
+static inline bool isUIFontTextStyle(const AtomString& string)
 {
     static const CFStringRef styles[] = {
         kCTUIFontTextStyleHeadline,
@@ -78,12 +78,12 @@ static inline bool isUIFontTextStyle(const AtomicString& string)
 #endif
     };
     
-    static auto strings { makeNeverDestroyed(convertArray<AtomicString>(styles)) };
+    static auto strings { makeNeverDestroyed(convertArray<AtomString>(styles)) };
     return std::find(strings.get().begin(), strings.get().end(), string) != strings.get().end();
 }
 #endif
 
-static inline Vector<RetainPtr<CTFontDescriptorRef>> systemFontCascadeList(const FontCascadeDescription& description, const AtomicString& cssFamily, SystemFontDatabaseCoreText::ClientUse clientUse, AllowUserInstalledFonts allowUserInstalledFonts)
+static inline Vector<RetainPtr<CTFontDescriptorRef>> systemFontCascadeList(const FontCascadeDescription& description, const AtomString& cssFamily, SystemFontDatabaseCoreText::ClientUse clientUse, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     return SystemFontDatabaseCoreText::singleton().cascadeList(description, cssFamily, clientUse, allowUserInstalledFonts);
 }
@@ -163,7 +163,7 @@ static void languageChanged(void*)
     cachedSpecializedChineseLocale() = computeSpecializedChineseLocale();
 }
 
-AtomicString FontDescription::platformResolveGenericFamily(UScriptCode script, const AtomicString& locale, const AtomicString& familyName)
+AtomString FontDescription::platformResolveGenericFamily(UScriptCode script, const AtomString& locale, const AtomString& familyName)
 {
     ASSERT((locale.isNull() && script == USCRIPT_COMMON) || !locale.isNull());
     if (script == USCRIPT_COMMON)

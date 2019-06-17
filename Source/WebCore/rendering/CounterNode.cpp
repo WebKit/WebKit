@@ -211,7 +211,7 @@ void CounterNode::recount()
     }
 }
 
-void CounterNode::insertAfter(CounterNode& newChild, CounterNode* beforeChild, const AtomicString& identifier)
+void CounterNode::insertAfter(CounterNode& newChild, CounterNode* beforeChild, const AtomString& identifier)
 {
     ASSERT(!newChild.m_parent);
     ASSERT(!newChild.m_previousSibling);

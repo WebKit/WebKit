@@ -101,7 +101,7 @@ void HTMLVideoElement::didAttachRenderers()
     }
 }
 
-void HTMLVideoElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+void HTMLVideoElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr)
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);
@@ -118,7 +118,7 @@ bool HTMLVideoElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLMediaElement::isPresentationAttribute(name);
 }
 
-void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == posterAttr) {
         // Force a poster recalc by setting m_displayMode to Unknown directly before calling updateDisplayState.
@@ -232,9 +232,9 @@ bool HTMLVideoElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == posterAttr || HTMLMediaElement::isURLAttribute(attribute);
 }
 
-const AtomicString& HTMLVideoElement::imageSourceURL() const
+const AtomString& HTMLVideoElement::imageSourceURL() const
 {
-    const AtomicString& url = attributeWithoutSynchronization(posterAttr);
+    const AtomString& url = attributeWithoutSynchronization(posterAttr);
     if (!stripLeadingAndTrailingHTMLSpaces(url).isEmpty())
         return url;
     return m_defaultPosterURL;

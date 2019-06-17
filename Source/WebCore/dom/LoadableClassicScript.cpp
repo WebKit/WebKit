@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-Ref<LoadableClassicScript> LoadableClassicScript::create(const String& nonce, const String& integrityMetadata, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree)
+Ref<LoadableClassicScript> LoadableClassicScript::create(const String& nonce, const String& integrityMetadata, const String& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree)
 {
     return adoptRef(*new LoadableClassicScript(nonce, integrityMetadata, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree));
 }

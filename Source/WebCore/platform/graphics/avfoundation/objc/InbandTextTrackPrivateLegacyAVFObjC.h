@@ -51,8 +51,8 @@ public:
     bool containsOnlyForcedSubtitles() const override;
     bool isMainProgramContent() const override;
     bool isEasyToRead() const override;
-    AtomicString label() const override;
-    AtomicString language() const override;
+    AtomString label() const override;
+    AtomString language() const override;
 
     void disconnect() override;
 

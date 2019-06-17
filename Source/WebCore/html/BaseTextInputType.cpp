@@ -43,7 +43,7 @@ bool BaseTextInputType::patternMismatch(const String& value) const
     ASSERT(element());
     // FIXME: We should execute RegExp parser first to check validity instead of creating an actual RegularExpression.
     // https://bugs.webkit.org/show_bug.cgi?id=183361
-    const AtomicString& rawPattern = element()->attributeWithoutSynchronization(patternAttr);
+    const AtomString& rawPattern = element()->attributeWithoutSynchronization(patternAttr);
     if (rawPattern.isNull() || value.isEmpty() || !JSC::Yarr::RegularExpression(rawPattern, JSC::Yarr::TextCaseSensitive, JSC::Yarr::MultilineDisabled, JSC::Yarr::UnicodeAwareMode).isValid())
         return false;
     String pattern = "^(?:" + rawPattern + ")$";

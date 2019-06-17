@@ -100,7 +100,7 @@ public:
     virtual void scrollingTreeNodeDidEndScroll() { }
 #endif
 
-    WEBCORE_EXPORT TrackingType eventTrackingTypeForPoint(const AtomicString& eventName, IntPoint);
+    WEBCORE_EXPORT TrackingType eventTrackingTypeForPoint(const AtomString& eventName, IntPoint);
 #if ENABLE(POINTER_EVENTS)
     WEBCORE_EXPORT Optional<TouchActionData> touchActionDataAtPoint(IntPoint) const;
 #endif

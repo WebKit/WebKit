@@ -41,7 +41,7 @@ public:
     explicit TimeInputType(HTMLInputElement&);
 
 private:
-    const AtomicString& formControlType() const override;
+    const AtomString& formControlType() const override;
     DateComponents::Type dateType() const override;
     Decimal defaultValueForStepUp() const override;
     StepRange createStepRange(AnyStepHandling) const override;

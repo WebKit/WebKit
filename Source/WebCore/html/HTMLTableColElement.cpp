@@ -61,7 +61,7 @@ bool HTMLTableColElement::isPresentationAttribute(const QualifiedName& name) con
     return HTMLTablePartElement::isPresentationAttribute(name);
 }
 
-void HTMLTableColElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+void HTMLTableColElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr)
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);
@@ -69,7 +69,7 @@ void HTMLTableColElement::collectStyleForPresentationAttribute(const QualifiedNa
         HTMLTablePartElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
-void HTMLTableColElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLTableColElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == spanAttr) {
         m_span = clampHTMLNonNegativeIntegerToRange(value, minSpan, maxSpan, defaultSpan);

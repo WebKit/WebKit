@@ -25,7 +25,7 @@
 #include <memory>
 #include <wtf/Noncopyable.h>
 #include <wtf/TypeCasts.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 #include <wtf/text/TextPosition.h>
 
 namespace WebCore {

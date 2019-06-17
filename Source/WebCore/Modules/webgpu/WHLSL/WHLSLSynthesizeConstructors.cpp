@@ -124,7 +124,7 @@ bool synthesizeConstructors(Program& program)
     for (auto& namedType : namedTypes) {
         if (matches(namedType, program.intrinsics().voidType()))
             continue;
-        if (is<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType)) && downcast<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType)).isAtomic())
+        if (is<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType)) && downcast<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType)).isAtom())
             continue;
 
         auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(namedType.get().origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(AST::TypeReference::wrap(Lexer::Token(namedType.get().origin()), namedType.get())), String(), WTF::nullopt, WTF::nullopt);

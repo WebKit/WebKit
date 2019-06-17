@@ -33,8 +33,8 @@ class HTMLAllCollection final : public AllDescendantsCollection {
 public:
     static Ref<HTMLAllCollection> create(Document&, CollectionType);
 
-    Optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> namedOrIndexedItemOrItems(const AtomicString& nameOrIndex) const;
-    Optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> namedItemOrItems(const AtomicString&) const;
+    Optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> namedOrIndexedItemOrItems(const AtomString& nameOrIndex) const;
+    Optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> namedItemOrItems(const AtomString&) const;
 
 private:
     HTMLAllCollection(Document&, CollectionType);
@@ -44,7 +44,7 @@ static_assert(sizeof(HTMLAllCollection) == sizeof(AllDescendantsCollection), "")
 class HTMLAllNamedSubCollection final : public CachedHTMLCollection<HTMLAllNamedSubCollection, CollectionTraversalType::Descendants> {
     WTF_MAKE_ISO_ALLOCATED(HTMLAllNamedSubCollection);
 public:
-    static Ref<HTMLAllNamedSubCollection> create(Document& document, CollectionType type, const AtomicString& name)
+    static Ref<HTMLAllNamedSubCollection> create(Document& document, CollectionType type, const AtomString& name)
     {
         return adoptRef(*new HTMLAllNamedSubCollection(document, type, name));
     }
@@ -53,14 +53,14 @@ public:
     bool elementMatches(Element&) const;
 
 private:
-    HTMLAllNamedSubCollection(Document& document, CollectionType type, const AtomicString& name)
+    HTMLAllNamedSubCollection(Document& document, CollectionType type, const AtomString& name)
         : CachedHTMLCollection<HTMLAllNamedSubCollection, CollectionTraversalType::Descendants>(document, type)
         , m_name(name)
     {
         ASSERT(type == DocumentAllNamedItems);
     }
 
-    AtomicString m_name;
+    AtomString m_name;
 };
 
 } // namespace WebCore

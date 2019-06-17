@@ -22,7 +22,7 @@
 #pragma once
 
 #include <wtf/HashTraits.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/StringHasher.h>
 
 namespace WTF {
@@ -139,7 +139,7 @@ namespace WTF {
         {
             return hash(key.impl());
         }
-        static unsigned hash(const AtomicString& key)
+        static unsigned hash(const AtomString& key)
         {
             return hash(key.impl());
         }
@@ -147,7 +147,7 @@ namespace WTF {
         {
             return equal(a.impl(), b.impl());
         }
-        static bool equal(const AtomicString& a, const AtomicString& b)
+        static bool equal(const AtomString& a, const AtomString& b)
         {
             // FIXME: Is the "a == b" here a helpful optimization?
             // It makes all cases where the strings are not identical slightly slower.

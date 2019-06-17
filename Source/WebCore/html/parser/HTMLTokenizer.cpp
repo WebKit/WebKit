@@ -1405,7 +1405,7 @@ String HTMLTokenizer::bufferedCharacters() const
     return characters.toString();
 }
 
-void HTMLTokenizer::updateStateFor(const AtomicString& tagName)
+void HTMLTokenizer::updateStateFor(const AtomString& tagName)
 {
     if (tagName == textareaTag || tagName == titleTag)
         m_state = RCDATAState;

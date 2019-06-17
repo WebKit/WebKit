@@ -53,8 +53,8 @@ class UIEventWithKeyState;
 class NavigationAction {
 public:
     NavigationAction();
-    WEBCORE_EXPORT NavigationAction(Document&, const ResourceRequest&, InitiatedByMainFrame, NavigationType = NavigationType::Other, ShouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow, Event* = nullptr, const AtomicString& downloadAttribute = nullAtom());
-    NavigationAction(Document&, const ResourceRequest&, InitiatedByMainFrame, FrameLoadType, bool isFormSubmission, Event* = nullptr, ShouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow, const AtomicString& downloadAttribute = nullAtom());
+    WEBCORE_EXPORT NavigationAction(Document&, const ResourceRequest&, InitiatedByMainFrame, NavigationType = NavigationType::Other, ShouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow, Event* = nullptr, const AtomString& downloadAttribute = nullAtom());
+    NavigationAction(Document&, const ResourceRequest&, InitiatedByMainFrame, FrameLoadType, bool isFormSubmission, Event* = nullptr, ShouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow, const AtomString& downloadAttribute = nullAtom());
 
     WEBCORE_EXPORT ~NavigationAction();
 
@@ -117,7 +117,7 @@ public:
     void setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy policy) {  m_shouldOpenExternalURLsPolicy = policy; }
     InitiatedByMainFrame initiatedByMainFrame() const { return m_initiatedByMainFrame; }
 
-    const AtomicString& downloadAttribute() const { return m_downloadAttribute; }
+    const AtomString& downloadAttribute() const { return m_downloadAttribute; }
 
     bool treatAsSameOriginNavigation() const { return m_treatAsSameOriginNavigation; }
 
@@ -153,7 +153,7 @@ private:
     Optional<UIEventWithKeyStateData> m_keyStateEventData;
     Optional<MouseEventData> m_mouseEventData;
     RefPtr<UserGestureToken> m_userGestureToken { UserGestureIndicator::currentUserGesture() };
-    AtomicString m_downloadAttribute;
+    AtomString m_downloadAttribute;
     bool m_treatAsSameOriginNavigation;
     bool m_hasOpenedFrames { false };
     bool m_openedByDOMWithOpener { false };

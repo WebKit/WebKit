@@ -67,7 +67,7 @@ bool SVGImageElement::hasSingleSecurityOrigin() const
     return !image || image->hasSingleSecurityOrigin();
 }
 
-void SVGImageElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGImageElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::preserveAspectRatioAttr) {
         SVGPreserveAspectRatioValue preserveAspectRatio;
@@ -160,7 +160,7 @@ Node::InsertedIntoAncestorResult SVGImageElement::insertedIntoAncestor(Insertion
     return InsertedIntoAncestorResult::Done;
 }
 
-const AtomicString& SVGImageElement::imageSourceURL() const
+const AtomString& SVGImageElement::imageSourceURL() const
 {
     return getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr);
 }

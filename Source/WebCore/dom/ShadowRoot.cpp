@@ -218,13 +218,13 @@ HTMLSlotElement* ShadowRoot::findAssignedSlot(const Node& node)
     return m_slotAssignment->findAssignedSlot(node, *this);
 }
 
-void ShadowRoot::renameSlotElement(HTMLSlotElement& slot, const AtomicString& oldName, const AtomicString& newName)
+void ShadowRoot::renameSlotElement(HTMLSlotElement& slot, const AtomString& oldName, const AtomString& newName)
 {
     ASSERT(m_slotAssignment);
     return m_slotAssignment->renameSlotElement(slot, oldName, newName, *this);
 }
 
-void ShadowRoot::addSlotElementByName(const AtomicString& name, HTMLSlotElement& slot)
+void ShadowRoot::addSlotElementByName(const AtomString& name, HTMLSlotElement& slot)
 {
     ASSERT(&slot.rootNode() == this);
     if (!m_slotAssignment)
@@ -233,7 +233,7 @@ void ShadowRoot::addSlotElementByName(const AtomicString& name, HTMLSlotElement&
     return m_slotAssignment->addSlotElementByName(name, slot, *this);
 }
 
-void ShadowRoot::removeSlotElementByName(const AtomicString& name, HTMLSlotElement& slot, ContainerNode& oldParentOfRemovedTree)
+void ShadowRoot::removeSlotElementByName(const AtomString& name, HTMLSlotElement& slot, ContainerNode& oldParentOfRemovedTree)
 {
     ASSERT(m_slotAssignment);
     return m_slotAssignment->removeSlotElementByName(name, slot, &oldParentOfRemovedTree, *this);

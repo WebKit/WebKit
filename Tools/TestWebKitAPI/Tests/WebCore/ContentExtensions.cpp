@@ -217,7 +217,7 @@ static ResourceLoadInfo subResourceRequest(const char* url, const char* mainDocu
 
 ContentExtensions::ContentExtensionsBackend makeBackend(const char* json)
 {
-    AtomicString::init();
+    AtomString::init();
     auto extension = InMemoryCompiledContentExtension::create(json);
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("testFilter", WTFMove(extension));

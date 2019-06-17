@@ -59,9 +59,9 @@ public:
 private:
     HTMLObjectElement(const QualifiedName&, Document&, HTMLFormElement*);
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
     bool isPresentationAttribute(const QualifiedName&) const final;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode() final;
@@ -72,7 +72,7 @@ private:
     void childrenChanged(const ChildChange&) final;
 
     bool isURLAttribute(const Attribute&) const final;
-    const AtomicString& imageSourceURL() const final;
+    const AtomString& imageSourceURL() const final;
 
     RenderWidget* renderWidgetLoadingPlugin() const final;
 

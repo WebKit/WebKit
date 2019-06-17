@@ -160,7 +160,7 @@ bool JSTestNamedAndIndexedSetterWithIdentifier::getOwnPropertySlot(JSObject* obj
     }
     using GetterIDLType = IDLDOMString;
     auto getterFunctor = [] (auto& thisObject, auto propertyName) -> Optional<typename GetterIDLType::ImplementationType> {
-        auto result = thisObject.wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        auto result = thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
         if (!GetterIDLType::isNullValue(result))
             return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
         return WTF::nullopt;
@@ -188,7 +188,7 @@ bool JSTestNamedAndIndexedSetterWithIdentifier::getOwnPropertySlotByIndex(JSObje
     auto propertyName = Identifier::from(state, index);
     using GetterIDLType = IDLDOMString;
     auto getterFunctor = [] (auto& thisObject, auto propertyName) -> Optional<typename GetterIDLType::ImplementationType> {
-        auto result = thisObject.wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        auto result = thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
         if (!GetterIDLType::isNullValue(result))
             return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
         return WTF::nullopt;

@@ -160,7 +160,7 @@ bool HTMLMetaCharsetParser::checkForMetaCharset(const char* data, size_t length)
     while (auto token = m_tokenizer.nextToken(m_input)) {
         bool isEnd = token->type() == HTMLToken::EndTag;
         if (isEnd || token->type() == HTMLToken::StartTag) {
-            AtomicString tagName(token->name());
+            AtomString tagName(token->name());
             if (!isEnd) {
                 m_tokenizer.updateStateFor(tagName);
                 if (tagName == metaTag && processMeta(*token)) {

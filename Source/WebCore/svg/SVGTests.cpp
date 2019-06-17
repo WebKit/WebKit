@@ -147,7 +147,7 @@ bool SVGTests::isValid() const
     return true;
 }
 
-void SVGTests::parseAttribute(const QualifiedName& attributeName, const AtomicString& value)
+void SVGTests::parseAttribute(const QualifiedName& attributeName, const AtomString& value)
 {
     if (attributeName == requiredFeaturesAttr)
         m_requiredFeatures->reset(value);

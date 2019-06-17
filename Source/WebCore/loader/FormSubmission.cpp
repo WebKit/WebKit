@@ -147,7 +147,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, const Attribut
     auto copiedAttributes = attributes;
 
     if (auto* submitButton = form.findSubmitButton(event)) {
-        AtomicString attributeValue;
+        AtomString attributeValue;
         if (!(attributeValue = submitButton->attributeWithoutSynchronization(formactionAttr)).isNull())
             copiedAttributes.parseAction(attributeValue);
         if (!(attributeValue = submitButton->attributeWithoutSynchronization(formenctypeAttr)).isNull())

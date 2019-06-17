@@ -80,7 +80,7 @@ public:
     FontPlatformData(WTF::HashTableDeletedValueType);
     FontPlatformData();
 
-    FontPlatformData(const FontDescription&, const AtomicString& family);
+    FontPlatformData(const FontDescription&, const AtomString& family);
     FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::AutoTextRendering);
 
 #if PLATFORM(COCOA)

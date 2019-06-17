@@ -93,7 +93,7 @@ bool DocumentFragment::parseXML(const String& source, Element* contextElement, P
     return XMLDocumentParser::parseDocumentFragment(source, *this, contextElement, parserContentPolicy);
 }
 
-Element* DocumentFragment::getElementById(const AtomicString& id) const
+Element* DocumentFragment::getElementById(const AtomString& id) const
 {
     if (id.isNull())
         return nullptr;

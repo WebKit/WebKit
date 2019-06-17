@@ -191,7 +191,7 @@ const MathMLElement::BooleanValue& MathMLPresentationElement::cachedBooleanAttri
         return attribute.value();
 
     // In MathML, attribute values are case-sensitive.
-    const AtomicString& value = attributeWithoutSynchronization(name);
+    const AtomString& value = attributeWithoutSynchronization(name);
     if (value == "true")
         attribute = BooleanValue::True;
     else if (value == "false")
@@ -331,7 +331,7 @@ Optional<bool> MathMLPresentationElement::specifiedDisplayStyle()
     return toOptionalBool(specifiedDisplayStyle);
 }
 
-MathMLElement::MathVariant MathMLPresentationElement::parseMathVariantAttribute(const AtomicString& attributeValue)
+MathMLElement::MathVariant MathMLPresentationElement::parseMathVariantAttribute(const AtomString& attributeValue)
 {
     // The mathvariant attribute values is case-sensitive.
     if (attributeValue == "normal")
@@ -382,7 +382,7 @@ Optional<MathMLElement::MathVariant> MathMLPresentationElement::specifiedMathVar
     return m_mathVariant.value() == MathVariant::None ? WTF::nullopt : m_mathVariant;
 }
 
-void MathMLPresentationElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void MathMLPresentationElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     bool displayStyleAttribute = name == displaystyleAttr && acceptsDisplayStyleAttribute();
     bool mathVariantAttribute = name == mathvariantAttr && acceptsMathVariantAttribute();

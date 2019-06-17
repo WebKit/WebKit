@@ -370,8 +370,8 @@ public:
 
 private:
     PopupMenu* popupMenu() final { return m_popup.ptr(); }
-    void saveRecentSearches(const AtomicString&, const Vector<RecentSearch>&) final { }
-    void loadRecentSearches(const AtomicString&, Vector<RecentSearch>&) final { }
+    void saveRecentSearches(const AtomString&, const Vector<RecentSearch>&) final { }
+    void loadRecentSearches(const AtomString&, Vector<RecentSearch>&) final { }
     bool enabled() final { return false; }
 
     Ref<EmptyPopupMenu> m_popup;
@@ -414,7 +414,7 @@ class EmptyUserContentProvider final : public UserContentProvider {
 };
 
 class EmptyVisitedLinkStore final : public VisitedLinkStore {
-    bool isLinkVisited(Page&, SharedStringHash, const URL&, const AtomicString&) final { return false; }
+    bool isLinkVisited(Page&, SharedStringHash, const URL&, const AtomString&) final { return false; }
     void addVisitedLink(Page&, SharedStringHash) final { }
 };
 

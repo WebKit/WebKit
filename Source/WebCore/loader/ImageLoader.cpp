@@ -165,7 +165,7 @@ void ImageLoader::updateFromElement()
     if (!document.hasLivingRenderTree())
         return;
 
-    AtomicString attr = element().imageSourceURL();
+    AtomString attr = element().imageSourceURL();
 
     // Avoid loading a URL we already failed to load.
     if (!m_failedLoadURL.isEmpty() && attr == m_failedLoadURL)
@@ -392,7 +392,7 @@ void ImageLoader::decode(Ref<DeferredPromise>&& promise)
         return;
     }
     
-    AtomicString attr = element().imageSourceURL();
+    AtomString attr = element().imageSourceURL();
     if (stripLeadingAndTrailingHTMLSpaces(attr).isEmpty()) {
         decodeError("Missing source URL.");
         return;
@@ -445,7 +445,7 @@ void ImageLoader::timerFired()
 void ImageLoader::dispatchPendingEvent(ImageEventSender* eventSender)
 {
     ASSERT(eventSender == &beforeLoadEventSender() || eventSender == &loadEventSender() || eventSender == &errorEventSender());
-    const AtomicString& eventType = eventSender->eventType();
+    const AtomString& eventType = eventSender->eventType();
     if (eventType == eventNames().beforeloadEvent)
         dispatchPendingBeforeLoadEvent();
     if (eventType == eventNames().loadEvent)

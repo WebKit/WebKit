@@ -62,7 +62,7 @@ public:
     //
     // This approximation is also the algorithm called for when parsing an HTML fragment.
     // https://html.spec.whatwg.org/multipage/syntax.html#parsing-html-fragments
-    void updateStateFor(const AtomicString& tagName);
+    void updateStateFor(const AtomString& tagName);
 
     void setForceNullCharacterReplacement(bool);
 

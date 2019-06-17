@@ -22,7 +22,7 @@
         "AppleCopyright": {
             "contextsAllowed": ["interface", "attribute", "operation"]
         },
-        "AtomicString": {
+        "AtomString": {
             "contextsAllowed": ["type"]
         },
         "CEReactions": {
@@ -411,7 +411,7 @@
         "ReportExternalMemoryCost": {
             "contextsAllowed": ["interface"]
         },
-        "RequiresExistingAtomicString": {
+        "RequiresExistingAtomString": {
             "contextsAllowed": ["type"]
         },
         "RethrowException": {

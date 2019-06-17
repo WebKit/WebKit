@@ -49,7 +49,7 @@ String AccessibleImage::name() const
     if (!ariaLabel.isEmpty())
         return ariaLabel;
 
-    const AtomicString& altText = obj.getAttribute(HTMLNames::altAttr);
+    const AtomString& altText = obj.getAttribute(HTMLNames::altAttr);
     if (!altText.isEmpty())
         return altText;
 

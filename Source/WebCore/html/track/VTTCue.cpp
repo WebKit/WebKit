@@ -242,9 +242,9 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     cue->element().setInlineStyleProperty(CSSPropertyOverflow, CSSValueVisible);
 }
 
-const AtomicString& VTTCueBox::vttCueBoxShadowPseudoId()
+const AtomString& VTTCueBox::vttCueBoxShadowPseudoId()
 {
-    static NeverDestroyed<const AtomicString> trackDisplayBoxShadowPseudoId("-webkit-media-text-track-display", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> trackDisplayBoxShadowPseudoId("-webkit-media-text-track-display", AtomString::ConstructFromLiteral);
     return trackDisplayBoxShadowPseudoId;
 }
 
@@ -255,9 +255,9 @@ RenderPtr<RenderElement> VTTCueBox::createElementRenderer(RenderStyle&& style, c
 
 // ----------------------------
 
-const AtomicString& VTTCue::cueBackdropShadowPseudoId()
+const AtomString& VTTCue::cueBackdropShadowPseudoId()
 {
-    static NeverDestroyed<const AtomicString> cueBackdropShadowPseudoId("-webkit-media-text-track-display-backdrop", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> cueBackdropShadowPseudoId("-webkit-media-text-track-display-backdrop", AtomString::ConstructFromLiteral);
     return cueBackdropShadowPseudoId;
 }
 

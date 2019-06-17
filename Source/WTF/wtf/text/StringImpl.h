@@ -168,7 +168,7 @@ protected:
 class StringImpl : private StringImplShape {
     WTF_MAKE_NONCOPYABLE(StringImpl); WTF_MAKE_FAST_ALLOCATED;
 
-    friend class AtomicStringImpl;
+    friend class AtomStringImpl;
     friend class JSC::LLInt::Data;
     friend class JSC::LLIntOffsetsExtractor;
     friend class PrivateSymbolImpl;
@@ -292,7 +292,7 @@ public:
     WTF_EXPORT_PRIVATE size_t sizeInBytes() const;
 
     bool isSymbol() const { return m_hashAndFlags & s_hashFlagStringKindIsSymbol; }
-    bool isAtomic() const { return m_hashAndFlags & s_hashFlagStringKindIsAtomic; }
+    bool isAtom() const { return m_hashAndFlags & s_hashFlagStringKindIsAtomic; }
     void setIsAtomic(bool);
     
     bool isExternal() const { return bufferOwnership() == BufferExternal; }
@@ -412,8 +412,8 @@ public:
     WTF_EXPORT_PRIVATE Ref<StringImpl> convertToLowercaseWithoutLocale();
     WTF_EXPORT_PRIVATE Ref<StringImpl> convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned);
     WTF_EXPORT_PRIVATE Ref<StringImpl> convertToUppercaseWithoutLocale();
-    WTF_EXPORT_PRIVATE Ref<StringImpl> convertToLowercaseWithLocale(const AtomicString& localeIdentifier);
-    WTF_EXPORT_PRIVATE Ref<StringImpl> convertToUppercaseWithLocale(const AtomicString& localeIdentifier);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> convertToLowercaseWithLocale(const AtomString& localeIdentifier);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> convertToUppercaseWithLocale(const AtomString& localeIdentifier);
 
     Ref<StringImpl> foldCase();
 
@@ -1031,11 +1031,11 @@ inline size_t StringImpl::costDuringGC()
     return divideRoundedUp(result, refCount());
 }
 
-inline void StringImpl::setIsAtomic(bool isAtomic)
+inline void StringImpl::setIsAtomic(bool isAtom)
 {
     ASSERT(!isStatic());
     ASSERT(!isSymbol());
-    if (isAtomic)
+    if (isAtom)
         m_hashAndFlags |= s_hashFlagStringKindIsAtomic;
     else
         m_hashAndFlags &= ~s_hashFlagStringKindIsAtomic;

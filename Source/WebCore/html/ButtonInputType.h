@@ -39,7 +39,7 @@ public:
     explicit ButtonInputType(HTMLInputElement& element) : BaseButtonInputType(element) { }
 
 private:
-    const AtomicString& formControlType() const override;
+    const AtomString& formControlType() const override;
     bool supportsValidation() const override;
     bool isTextButton() const override;
 };

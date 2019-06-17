@@ -169,9 +169,9 @@ static Attr* findAttrNodeInList(Vector<RefPtr<Attr>>& attrNodeList, const Qualif
     return nullptr;
 }
 
-static Attr* findAttrNodeInList(Vector<RefPtr<Attr>>& attrNodeList, const AtomicString& localName, bool shouldIgnoreAttributeCase)
+static Attr* findAttrNodeInList(Vector<RefPtr<Attr>>& attrNodeList, const AtomString& localName, bool shouldIgnoreAttributeCase)
 {
-    const AtomicString& caseAdjustedName = shouldIgnoreAttributeCase ? localName.convertToASCIILowercase() : localName;
+    const AtomString& caseAdjustedName = shouldIgnoreAttributeCase ? localName.convertToASCIILowercase() : localName;
     for (auto& node : attrNodeList) {
         if (node->qualifiedName().localName() == caseAdjustedName)
             return node.get();
@@ -297,7 +297,7 @@ static bool isCompatibilityMouseEvent(const MouseEvent& mouseEvent)
 }
 #endif
 
-bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomicString& eventType, int detail, Element* relatedTarget)
+bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget)
 {
     if (isDisabledFormControl())
         return false;
@@ -518,14 +518,14 @@ ALWAYS_INLINE void Element::synchronizeAttribute(const QualifiedName& name) cons
         downcast<SVGElement>(const_cast<Element&>(*this)).synchronizeAttribute(name);
 }
 
-static ALWAYS_INLINE bool isStyleAttribute(const Element& element, const AtomicString& attributeLocalName)
+static ALWAYS_INLINE bool isStyleAttribute(const Element& element, const AtomString& attributeLocalName)
 {
     if (shouldIgnoreAttributeCase(element))
         return equalLettersIgnoringASCIICase(attributeLocalName, "style");
     return attributeLocalName == styleAttr->localName();
 }
 
-ALWAYS_INLINE void Element::synchronizeAttribute(const AtomicString& localName) const
+ALWAYS_INLINE void Element::synchronizeAttribute(const AtomString& localName) const
 {
     // This version of synchronizeAttribute() is streamlined for the case where you don't have a full QualifiedName,
     // e.g when called from DOM API.
@@ -541,7 +541,7 @@ ALWAYS_INLINE void Element::synchronizeAttribute(const AtomicString& localName) 
         downcast<SVGElement>(const_cast<Element&>(*this)).synchronizeAttribute(QualifiedName(nullAtom(), localName, nullAtom()));
 }
 
-const AtomicString& Element::getAttribute(const QualifiedName& name) const
+const AtomString& Element::getAttribute(const QualifiedName& name) const
 {
     if (!elementData())
         return nullAtom();
@@ -1490,7 +1490,7 @@ IntRect Element::screenRect() const
     return IntRect();
 }
 
-const AtomicString& Element::getAttribute(const AtomicString& qualifiedName) const
+const AtomString& Element::getAttribute(const AtomString& qualifiedName) const
 {
     if (!elementData())
         return nullAtom();
@@ -1500,13 +1500,13 @@ const AtomicString& Element::getAttribute(const AtomicString& qualifiedName) con
     return nullAtom();
 }
 
-const AtomicString& Element::getAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const
+const AtomString& Element::getAttributeNS(const AtomString& namespaceURI, const AtomString& localName) const
 {
     return getAttribute(QualifiedName(nullAtom(), localName, namespaceURI));
 }
 
 // https://dom.spec.whatwg.org/#dom-element-toggleattribute
-ExceptionOr<bool> Element::toggleAttribute(const AtomicString& qualifiedName, Optional<bool> force)
+ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, Optional<bool> force)
 {
     if (!Document::isValidName(qualifiedName))
         return Exception { InvalidCharacterError };
@@ -1530,7 +1530,7 @@ ExceptionOr<bool> Element::toggleAttribute(const AtomicString& qualifiedName, Op
     return true;
 }
 
-ExceptionOr<void> Element::setAttribute(const AtomicString& qualifiedName, const AtomicString& value)
+ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const AtomString& value)
 {
     if (!Document::isValidName(qualifiedName))
         return Exception { InvalidCharacterError };
@@ -1544,26 +1544,26 @@ ExceptionOr<void> Element::setAttribute(const AtomicString& qualifiedName, const
     return { };
 }
 
-void Element::setAttribute(const QualifiedName& name, const AtomicString& value)
+void Element::setAttribute(const QualifiedName& name, const AtomString& value)
 {
     synchronizeAttribute(name);
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(name) : ElementData::attributeNotFound;
     setAttributeInternal(index, name, value, NotInSynchronizationOfLazyAttribute);
 }
 
-void Element::setAttributeWithoutSynchronization(const QualifiedName& name, const AtomicString& value)
+void Element::setAttributeWithoutSynchronization(const QualifiedName& name, const AtomString& value)
 {
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(name) : ElementData::attributeNotFound;
     setAttributeInternal(index, name, value, NotInSynchronizationOfLazyAttribute);
 }
 
-void Element::setSynchronizedLazyAttribute(const QualifiedName& name, const AtomicString& value)
+void Element::setSynchronizedLazyAttribute(const QualifiedName& name, const AtomString& value)
 {
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(name) : ElementData::attributeNotFound;
     setAttributeInternal(index, name, value, InSynchronizationOfLazyAttribute);
 }
 
-inline void Element::setAttributeInternal(unsigned index, const QualifiedName& name, const AtomicString& newValue, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
+inline void Element::setAttributeInternal(unsigned index, const QualifiedName& name, const AtomString& newValue, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
     if (newValue.isNull()) {
         if (index != ElementData::attributeNotFound)
@@ -1583,7 +1583,7 @@ inline void Element::setAttributeInternal(unsigned index, const QualifiedName& n
 
     const Attribute& attribute = attributeAt(index);
     QualifiedName attributeName = attribute.name();
-    AtomicString oldValue = attribute.value();
+    AtomString oldValue = attribute.value();
 
     willModifyAttribute(attributeName, oldValue, newValue);
 
@@ -1595,14 +1595,14 @@ inline void Element::setAttributeInternal(unsigned index, const QualifiedName& n
     didModifyAttribute(attributeName, oldValue, newValue);
 }
 
-static inline AtomicString makeIdForStyleResolution(const AtomicString& value, bool inQuirksMode)
+static inline AtomString makeIdForStyleResolution(const AtomString& value, bool inQuirksMode)
 {
     if (inQuirksMode)
         return value.convertToASCIILowercase();
     return value;
 }
 
-void Element::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason)
+void Element::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason)
 {
     bool valueIsSameAsBefore = oldValue == newValue;
 
@@ -1612,8 +1612,8 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
         else if (name == HTMLNames::classAttr)
             classAttributeChanged(newValue);
         else if (name == HTMLNames::idAttr) {
-            AtomicString oldId = elementData()->idForStyleResolution();
-            AtomicString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
+            AtomString oldId = elementData()->idForStyleResolution();
+            AtomString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
             if (newId != oldId) {
                 Style::IdChangeInvalidation styleInvalidation(*this, oldId, newId);
                 elementData()->setIdForStyleResolution(newId);
@@ -1667,7 +1667,7 @@ static inline bool classStringHasClassName(const CharacterType* characters, unsi
     return i < length;
 }
 
-static inline bool classStringHasClassName(const AtomicString& newClassString)
+static inline bool classStringHasClassName(const AtomString& newClassString)
 {
     unsigned length = newClassString.length();
 
@@ -1679,7 +1679,7 @@ static inline bool classStringHasClassName(const AtomicString& newClassString)
     return classStringHasClassName(newClassString.characters16(), length);
 }
 
-void Element::classAttributeChanged(const AtomicString& newClassString)
+void Element::classAttributeChanged(const AtomString& newClassString)
 {
     // Note: We'll need ElementData, but it doesn't have to be UniqueElementData.
     if (!elementData())
@@ -1706,7 +1706,7 @@ URL Element::absoluteLinkURL() const
     if (!isLink())
         return URL();
 
-    AtomicString linkAttribute;
+    AtomString linkAttribute;
     if (hasTagName(SVGNames::aTag))
         linkAttribute = getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr);
     else
@@ -1924,7 +1924,7 @@ String Element::nodeNamePreservingCase() const
     return m_tagName.toString();
 }
 
-ExceptionOr<void> Element::setPrefix(const AtomicString& prefix)
+ExceptionOr<void> Element::setPrefix(const AtomString& prefix)
 {
     auto result = checkSetPrefix(prefix);
     if (result.hasException())
@@ -1934,7 +1934,7 @@ ExceptionOr<void> Element::setPrefix(const AtomicString& prefix)
     return { };
 }
 
-const AtomicString& Element::imageSourceURL() const
+const AtomString& Element::imageSourceURL() const
 {
     return attributeWithoutSynchronization(srcAttr);
 }
@@ -1972,7 +1972,7 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
     if (!insertionType.treeScopeChanged)
         newScope = nullptr;
 
-    const AtomicString& idValue = getIdAttribute();
+    const AtomString& idValue = getIdAttribute();
     if (!idValue.isNull()) {
         if (newScope)
             updateIdForTreeScope(*newScope, nullAtom(), idValue);
@@ -1980,7 +1980,7 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
             updateIdForDocument(*newDocument, nullAtom(), idValue, AlwaysUpdateHTMLDocumentNamedItemMaps);
     }
 
-    const AtomicString& nameValue = getNameAttribute();
+    const AtomString& nameValue = getNameAttribute();
     if (!nameValue.isNull()) {
         if (newScope)
             updateNameForTreeScope(*newScope, nullAtom(), nameValue);
@@ -2032,7 +2032,7 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
         if (!removalType.treeScopeChanged)
             oldScope = nullptr;
 
-        const AtomicString& idValue = getIdAttribute();
+        const AtomString& idValue = getIdAttribute();
         if (!idValue.isNull()) {
             if (oldScope)
                 updateIdForTreeScope(*oldScope, idValue, nullAtom());
@@ -2040,7 +2040,7 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
                 updateIdForDocument(*oldHTMLDocument, idValue, nullAtom(), AlwaysUpdateHTMLDocumentNamedItemMaps);
         }
 
-        const AtomicString& nameValue = getNameAttribute();
+        const AtomString& nameValue = getNameAttribute();
         if (!nameValue.isNull()) {
             if (oldScope)
                 updateNameForTreeScope(*oldScope, nameValue, nullAtom());
@@ -2149,7 +2149,7 @@ void Element::removeShadowRoot()
 
 static bool canAttachAuthorShadowRoot(const Element& element)
 {
-    static NeverDestroyed<HashSet<AtomicString>> tagNames = [] {
+    static NeverDestroyed<HashSet<AtomString>> tagNames = [] {
         static const HTMLQualifiedName* const tagList[] = {
             &articleTag.get(),
             &asideTag.get(),
@@ -2169,7 +2169,7 @@ static bool canAttachAuthorShadowRoot(const Element& element)
             &sectionTag.get(),
             &spanTag.get()
         };
-        HashSet<AtomicString> set;
+        HashSet<AtomString> set;
         for (auto& name : tagList)
             set.add(name->localName());
         return set;
@@ -2279,7 +2279,7 @@ CustomElementReactionQueue* Element::reactionQueue() const
     return elementRareData()->customElementReactionQueue();
 }
 
-const AtomicString& Element::shadowPseudoId() const
+const AtomString& Element::shadowPseudoId() const
 {
     return pseudo();
 }
@@ -2437,7 +2437,7 @@ void Element::childrenChanged(const ChildChange& change)
     }
 }
 
-void Element::setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& attributeValue)
+void Element::setAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& attributeValue)
 {
     setAttributeEventListener(eventType, JSLazyEventListener::create(*this, attributeName, attributeValue), mainThreadNormalWorld());
 }
@@ -2614,7 +2614,7 @@ ExceptionOr<Ref<Attr>> Element::removeAttributeNode(Attr& attr)
     return oldAttrNode;
 }
 
-ExceptionOr<QualifiedName> Element::parseAttributeName(const AtomicString& namespaceURI, const AtomicString& qualifiedName)
+ExceptionOr<QualifiedName> Element::parseAttributeName(const AtomString& namespaceURI, const AtomString& qualifiedName)
 {
     auto parseResult = Document::parseQualifiedName(namespaceURI, qualifiedName);
     if (parseResult.hasException())
@@ -2625,7 +2625,7 @@ ExceptionOr<QualifiedName> Element::parseAttributeName(const AtomicString& names
     return parsedAttributeName;
 }
 
-ExceptionOr<void> Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value)
+ExceptionOr<void> Element::setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const AtomString& value)
 {
     auto result = parseAttributeName(namespaceURI, qualifiedName);
     if (result.hasException())
@@ -2641,7 +2641,7 @@ void Element::removeAttributeInternal(unsigned index, SynchronizationOfLazyAttri
     UniqueElementData& elementData = ensureUniqueElementData();
 
     QualifiedName name = elementData.attributeAt(index).name();
-    AtomicString valueBeingRemoved = elementData.attributeAt(index).value();
+    AtomString valueBeingRemoved = elementData.attributeAt(index).value();
 
     if (RefPtr<Attr> attrNode = attrIfExists(name))
         detachAttrNodeFromElementWithValue(attrNode.get(), elementData.attributeAt(index).value());
@@ -2661,7 +2661,7 @@ void Element::removeAttributeInternal(unsigned index, SynchronizationOfLazyAttri
     didRemoveAttribute(name, valueBeingRemoved);
 }
 
-void Element::addAttributeInternal(const QualifiedName& name, const AtomicString& value, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
+void Element::addAttributeInternal(const QualifiedName& name, const AtomString& value, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
     if (inSynchronizationOfLazyAttribute) {
         ensureUniqueElementData().addAttribute(name, value);
@@ -2676,12 +2676,12 @@ void Element::addAttributeInternal(const QualifiedName& name, const AtomicString
     didAddAttribute(name, value);
 }
 
-bool Element::removeAttribute(const AtomicString& qualifiedName)
+bool Element::removeAttribute(const AtomString& qualifiedName)
 {
     if (!elementData())
         return false;
 
-    AtomicString caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? qualifiedName.convertToASCIILowercase() : qualifiedName;
+    AtomString caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? qualifiedName.convertToASCIILowercase() : qualifiedName;
     unsigned index = elementData()->findAttributeIndexByName(caseAdjustedQualifiedName, false);
     if (index == ElementData::attributeNotFound) {
         if (UNLIKELY(caseAdjustedQualifiedName == styleAttr) && elementData()->styleAttributeIsDirty() && is<StyledElement>(*this))
@@ -2693,12 +2693,12 @@ bool Element::removeAttribute(const AtomicString& qualifiedName)
     return true;
 }
 
-bool Element::removeAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName)
+bool Element::removeAttributeNS(const AtomString& namespaceURI, const AtomString& localName)
 {
     return removeAttribute(QualifiedName(nullAtom(), localName, namespaceURI));
 }
 
-RefPtr<Attr> Element::getAttributeNode(const AtomicString& qualifiedName)
+RefPtr<Attr> Element::getAttributeNode(const AtomString& qualifiedName)
 {
     if (!elementData())
         return nullptr;
@@ -2709,7 +2709,7 @@ RefPtr<Attr> Element::getAttributeNode(const AtomicString& qualifiedName)
     return ensureAttr(attribute->name());
 }
 
-RefPtr<Attr> Element::getAttributeNodeNS(const AtomicString& namespaceURI, const AtomicString& localName)
+RefPtr<Attr> Element::getAttributeNodeNS(const AtomString& namespaceURI, const AtomString& localName)
 {
     if (!elementData())
         return 0;
@@ -2721,7 +2721,7 @@ RefPtr<Attr> Element::getAttributeNodeNS(const AtomicString& namespaceURI, const
     return ensureAttr(attribute->name());
 }
 
-bool Element::hasAttribute(const AtomicString& qualifiedName) const
+bool Element::hasAttribute(const AtomString& qualifiedName) const
 {
     if (!elementData())
         return false;
@@ -2729,7 +2729,7 @@ bool Element::hasAttribute(const AtomicString& qualifiedName) const
     return elementData()->findAttributeByName(qualifiedName, shouldIgnoreAttributeCase(*this));
 }
 
-bool Element::hasAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const
+bool Element::hasAttributeNS(const AtomString& namespaceURI, const AtomString& localName) const
 {
     if (!elementData())
         return false;
@@ -2830,14 +2830,14 @@ void Element::blur()
     }
 }
 
-void Element::dispatchFocusInEvent(const AtomicString& eventType, RefPtr<Element>&& oldFocusedElement)
+void Element::dispatchFocusInEvent(const AtomString& eventType, RefPtr<Element>&& oldFocusedElement)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     ASSERT(eventType == eventNames().focusinEvent || eventType == eventNames().DOMFocusInEvent);
     dispatchScopedEvent(FocusEvent::create(eventType, Event::CanBubble::Yes, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(oldFocusedElement)));
 }
 
-void Element::dispatchFocusOutEvent(const AtomicString& eventType, RefPtr<Element>&& newFocusedElement)
+void Element::dispatchFocusOutEvent(const AtomString& eventType, RefPtr<Element>&& newFocusedElement)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     ASSERT(eventType == eventNames().focusoutEvent || eventType == eventNames().DOMFocusOutEvent);
@@ -2980,12 +2980,12 @@ String Element::title() const
     return String();
 }
 
-const AtomicString& Element::pseudo() const
+const AtomString& Element::pseudo() const
 {
     return attributeWithoutSynchronization(pseudoAttr);
 }
 
-void Element::setPseudo(const AtomicString& value)
+void Element::setPseudo(const AtomString& value)
 {
     setAttributeWithoutSynchronization(pseudoAttr, value);
 }
@@ -3253,7 +3253,7 @@ unsigned Element::rareDataChildIndex() const
     return elementRareData()->childIndex();
 }
 
-AtomicString Element::computeInheritedLanguage() const
+AtomString Element::computeInheritedLanguage() const
 {
     if (const ElementData* elementData = this->elementData()) {
         if (const Attribute* attribute = elementData->findLanguageAttribute())
@@ -3443,7 +3443,7 @@ int Element::getIntegralAttribute(const QualifiedName& attributeName) const
 
 void Element::setIntegralAttribute(const QualifiedName& attributeName, int value)
 {
-    setAttribute(attributeName, AtomicString::number(value));
+    setAttribute(attributeName, AtomString::number(value));
 }
 
 unsigned Element::getUnsignedIntegralAttribute(const QualifiedName& attributeName) const
@@ -3453,7 +3453,7 @@ unsigned Element::getUnsignedIntegralAttribute(const QualifiedName& attributeNam
 
 void Element::setUnsignedIntegralAttribute(const QualifiedName& attributeName, unsigned value)
 {
-    setAttribute(attributeName, AtomicString::number(limitToOnlyHTMLNonNegative(value)));
+    setAttribute(attributeName, AtomString::number(limitToOnlyHTMLNonNegative(value)));
 }
 
 bool Element::childShouldCreateRenderer(const Node& child) const
@@ -3589,7 +3589,7 @@ ResizeObserverData* Element::resizeObserverData()
 
 SpellcheckAttributeState Element::spellcheckAttributeState() const
 {
-    const AtomicString& value = attributeWithoutSynchronization(HTMLNames::spellcheckAttr);
+    const AtomString& value = attributeWithoutSynchronization(HTMLNames::spellcheckAttr);
     if (value.isNull())
         return SpellcheckAttributeDefault;
     if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "true"))
@@ -3635,7 +3635,7 @@ bool Element::hasNamedNodeMap() const
 }
 #endif
 
-inline void Element::updateName(const AtomicString& oldName, const AtomicString& newName)
+inline void Element::updateName(const AtomString& oldName, const AtomString& newName)
 {
     if (!isInTreeScope())
         return;
@@ -3652,7 +3652,7 @@ inline void Element::updateName(const AtomicString& oldName, const AtomicString&
     updateNameForDocument(downcast<HTMLDocument>(document()), oldName, newName);
 }
 
-void Element::updateNameForTreeScope(TreeScope& scope, const AtomicString& oldName, const AtomicString& newName)
+void Element::updateNameForTreeScope(TreeScope& scope, const AtomString& oldName, const AtomString& newName)
 {
     ASSERT(oldName != newName);
 
@@ -3662,7 +3662,7 @@ void Element::updateNameForTreeScope(TreeScope& scope, const AtomicString& oldNa
         scope.addElementByName(*newName.impl(), *this);
 }
 
-void Element::updateNameForDocument(HTMLDocument& document, const AtomicString& oldName, const AtomicString& newName)
+void Element::updateNameForDocument(HTMLDocument& document, const AtomString& oldName, const AtomString& newName)
 {
     ASSERT(oldName != newName);
 
@@ -3670,7 +3670,7 @@ void Element::updateNameForDocument(HTMLDocument& document, const AtomicString& 
         return;
 
     if (WindowNameCollection::elementMatchesIfNameAttributeMatch(*this)) {
-        const AtomicString& id = WindowNameCollection::elementMatchesIfIdAttributeMatch(*this) ? getIdAttribute() : nullAtom();
+        const AtomString& id = WindowNameCollection::elementMatchesIfIdAttributeMatch(*this) ? getIdAttribute() : nullAtom();
         if (!oldName.isEmpty() && oldName != id)
             document.removeWindowNamedItem(*oldName.impl(), *this);
         if (!newName.isEmpty() && newName != id)
@@ -3678,7 +3678,7 @@ void Element::updateNameForDocument(HTMLDocument& document, const AtomicString& 
     }
 
     if (DocumentNameCollection::elementMatchesIfNameAttributeMatch(*this)) {
-        const AtomicString& id = DocumentNameCollection::elementMatchesIfIdAttributeMatch(*this) ? getIdAttribute() : nullAtom();
+        const AtomString& id = DocumentNameCollection::elementMatchesIfIdAttributeMatch(*this) ? getIdAttribute() : nullAtom();
         if (!oldName.isEmpty() && oldName != id)
             document.removeDocumentNamedItem(*oldName.impl(), *this);
         if (!newName.isEmpty() && newName != id)
@@ -3686,7 +3686,7 @@ void Element::updateNameForDocument(HTMLDocument& document, const AtomicString& 
     }
 }
 
-inline void Element::updateId(const AtomicString& oldId, const AtomicString& newId, NotifyObservers notifyObservers)
+inline void Element::updateId(const AtomString& oldId, const AtomString& newId, NotifyObservers notifyObservers)
 {
     if (!isInTreeScope())
         return;
@@ -3703,7 +3703,7 @@ inline void Element::updateId(const AtomicString& oldId, const AtomicString& new
     updateIdForDocument(downcast<HTMLDocument>(document()), oldId, newId, UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute);
 }
 
-void Element::updateIdForTreeScope(TreeScope& scope, const AtomicString& oldId, const AtomicString& newId, NotifyObservers notifyObservers)
+void Element::updateIdForTreeScope(TreeScope& scope, const AtomString& oldId, const AtomString& newId, NotifyObservers notifyObservers)
 {
     ASSERT(isInTreeScope());
     ASSERT(oldId != newId);
@@ -3714,7 +3714,7 @@ void Element::updateIdForTreeScope(TreeScope& scope, const AtomicString& oldId, 
         scope.addElementById(*newId.impl(), *this, notifyObservers == NotifyObservers::Yes);
 }
 
-void Element::updateIdForDocument(HTMLDocument& document, const AtomicString& oldId, const AtomicString& newId, HTMLDocumentNamedItemMapsUpdatingCondition condition)
+void Element::updateIdForDocument(HTMLDocument& document, const AtomString& oldId, const AtomString& newId, HTMLDocumentNamedItemMapsUpdatingCondition condition)
 {
     ASSERT(isConnected());
     ASSERT(oldId != newId);
@@ -3723,7 +3723,7 @@ void Element::updateIdForDocument(HTMLDocument& document, const AtomicString& ol
         return;
 
     if (WindowNameCollection::elementMatchesIfIdAttributeMatch(*this)) {
-        const AtomicString& name = condition == UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute && WindowNameCollection::elementMatchesIfNameAttributeMatch(*this) ? getNameAttribute() : nullAtom();
+        const AtomString& name = condition == UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute && WindowNameCollection::elementMatchesIfNameAttributeMatch(*this) ? getNameAttribute() : nullAtom();
         if (!oldId.isEmpty() && oldId != name)
             document.removeWindowNamedItem(*oldId.impl(), *this);
         if (!newId.isEmpty() && newId != name)
@@ -3731,7 +3731,7 @@ void Element::updateIdForDocument(HTMLDocument& document, const AtomicString& ol
     }
 
     if (DocumentNameCollection::elementMatchesIfIdAttributeMatch(*this)) {
-        const AtomicString& name = condition == UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute && DocumentNameCollection::elementMatchesIfNameAttributeMatch(*this) ? getNameAttribute() : nullAtom();
+        const AtomString& name = condition == UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute && DocumentNameCollection::elementMatchesIfNameAttributeMatch(*this) ? getNameAttribute() : nullAtom();
         if (!oldId.isEmpty() && oldId != name)
             document.removeDocumentNamedItem(*oldId.impl(), *this);
         if (!newId.isEmpty() && newId != name)
@@ -3739,7 +3739,7 @@ void Element::updateIdForDocument(HTMLDocument& document, const AtomicString& ol
     }
 }
 
-void Element::updateLabel(TreeScope& scope, const AtomicString& oldForAttributeValue, const AtomicString& newForAttributeValue)
+void Element::updateLabel(TreeScope& scope, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue)
 {
     ASSERT(hasTagName(labelTag));
 
@@ -3755,7 +3755,7 @@ void Element::updateLabel(TreeScope& scope, const AtomicString& oldForAttributeV
         scope.addLabel(*newForAttributeValue.impl(), downcast<HTMLLabelElement>(*this));
 }
 
-void Element::willModifyAttribute(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue)
+void Element::willModifyAttribute(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue)
 {
     if (name == HTMLNames::idAttr)
         updateId(oldValue, newValue, NotifyObservers::No); // Will notify observers after the attribute is actually changed.
@@ -3772,21 +3772,21 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomicString&
     InspectorInstrumentation::willModifyDOMAttr(document(), *this, oldValue, newValue);
 }
 
-void Element::didAddAttribute(const QualifiedName& name, const AtomicString& value)
+void Element::didAddAttribute(const QualifiedName& name, const AtomString& value)
 {
     attributeChanged(name, nullAtom(), value);
     InspectorInstrumentation::didModifyDOMAttr(document(), *this, name.localName(), value);
     dispatchSubtreeModifiedEvent();
 }
 
-void Element::didModifyAttribute(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue)
+void Element::didModifyAttribute(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue)
 {
     attributeChanged(name, oldValue, newValue);
     InspectorInstrumentation::didModifyDOMAttr(document(), *this, name.localName(), newValue);
     // Do not dispatch a DOMSubtreeModified event here; see bug 81141.
 }
 
-void Element::didRemoveAttribute(const QualifiedName& name, const AtomicString& oldValue)
+void Element::didRemoveAttribute(const QualifiedName& name, const AtomString& oldValue)
 {
     attributeChanged(name, oldValue, nullAtom());
     InspectorInstrumentation::didRemoveDOMAttr(document(), *this, name.localName());
@@ -3805,7 +3805,7 @@ void Element::setSavedLayerScrollPosition(const IntPoint& position)
     ensureElementRareData().setSavedLayerScrollPosition(position);
 }
 
-RefPtr<Attr> Element::attrIfExists(const AtomicString& localName, bool shouldIgnoreAttributeCase)
+RefPtr<Attr> Element::attrIfExists(const AtomString& localName, bool shouldIgnoreAttributeCase)
 {
     if (auto* attrNodeList = attrNodeListForElement(*this))
         return findAttrNodeInList(*attrNodeList, localName, shouldIgnoreAttributeCase);
@@ -3831,7 +3831,7 @@ Ref<Attr> Element::ensureAttr(const QualifiedName& name)
     return attrNode.releaseNonNull();
 }
 
-void Element::detachAttrNodeFromElementWithValue(Attr* attrNode, const AtomicString& value)
+void Element::detachAttrNodeFromElementWithValue(Attr* attrNode, const AtomString& value)
 {
     ASSERT(hasSyntheticAttrChildNodes());
     attrNode->detachFromElementWithValue(value);
@@ -3949,14 +3949,14 @@ void Element::cloneAttributesFromElement(const Element& other)
     // Fortunately, those named item maps are only updated when this element is in the document, which should never be the case.
     ASSERT(!isConnected());
 
-    const AtomicString& oldID = getIdAttribute();
-    const AtomicString& newID = other.getIdAttribute();
+    const AtomString& oldID = getIdAttribute();
+    const AtomString& newID = other.getIdAttribute();
 
     if (!oldID.isNull() || !newID.isNull())
         updateId(oldID, newID, NotifyObservers::No); // Will notify observers after the attribute is actually changed.
 
-    const AtomicString& oldName = getNameAttribute();
-    const AtomicString& newName = other.getNameAttribute();
+    const AtomString& oldName = getNameAttribute();
+    const AtomString& newName = other.getNameAttribute();
 
     if (!oldName.isNull() || !newName.isNull())
         updateName(oldName, newName);
@@ -4158,7 +4158,7 @@ Element* Element::findAnchorElementForLink(String& outAnchorName)
     if (!isLink())
         return nullptr;
 
-    const AtomicString& href = attributeWithoutSynchronization(HTMLNames::hrefAttr);
+    const AtomString& href = attributeWithoutSynchronization(HTMLNames::hrefAttr);
     if (href.isNull())
         return nullptr;
 

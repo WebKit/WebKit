@@ -28,18 +28,18 @@
 
 #pragma once
 
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/HashTraits.h>
 
 namespace WTF {
 
-    struct AtomicStringHash {
-        static unsigned hash(const AtomicString& key)
+    struct AtomStringHash {
+        static unsigned hash(const AtomString& key)
         {
             return key.impl()->existingHash();
         }
 
-        static bool equal(const AtomicString& a, const AtomicString& b)
+        static bool equal(const AtomString& a, const AtomString& b)
         {
             return a == b;
         }
@@ -47,22 +47,22 @@ namespace WTF {
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
-    template<> struct HashTraits<WTF::AtomicString> : SimpleClassHashTraits<WTF::AtomicString> {
+    template<> struct HashTraits<WTF::AtomString> : SimpleClassHashTraits<WTF::AtomString> {
         static const bool hasIsEmptyValueFunction = true;
-        static bool isEmptyValue(const AtomicString& value)
+        static bool isEmptyValue(const AtomString& value)
         {
             return value.isNull();
         }
 
-        static void customDeleteBucket(AtomicString& value)
+        static void customDeleteBucket(AtomString& value)
         {
             // See unique_ptr's customDeleteBucket() for an explanation.
             ASSERT(!isDeletedValue(value));
-            AtomicString valueToBeDestroyed = WTFMove(value);
+            AtomString valueToBeDestroyed = WTFMove(value);
             constructDeletedValue(value);
         }
     };
 
 }
 
-using WTF::AtomicStringHash;
+using WTF::AtomStringHash;

@@ -28,7 +28,7 @@
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
@@ -62,8 +62,8 @@ public:
     
     const CSSParserContext& parserContext() const { return m_parserContext; }
     
-    const AtomicString& defaultNamespace() { return m_defaultNamespace; }
-    const AtomicString& namespaceURIFromPrefix(const AtomicString& prefix);
+    const AtomString& defaultNamespace() { return m_defaultNamespace; }
+    const AtomString& namespaceURIFromPrefix(const AtomString& prefix);
 
     void parseAuthorStyleSheet(const CachedCSSStyleSheet*, const SecurityOrigin*);
     WEBCORE_EXPORT bool parseString(const String&);
@@ -94,7 +94,7 @@ public:
     void setHasSyntacticallyValidCSSHeader(bool b) { m_hasSyntacticallyValidCSSHeader = b; }
     bool hasSyntacticallyValidCSSHeader() const { return m_hasSyntacticallyValidCSSHeader; }
 
-    void parserAddNamespace(const AtomicString& prefix, const AtomicString& uri);
+    void parserAddNamespace(const AtomString& prefix, const AtomString& uri);
     void parserAppendRule(Ref<StyleRuleBase>&&);
     void parserSetEncodingFromCharsetRule(const String& encoding); 
     void parserSetUsesStyleBasedEditability() { m_usesStyleBasedEditability = true; }
@@ -161,9 +161,9 @@ private:
     Vector<RefPtr<StyleRuleImport>> m_importRules;
     Vector<RefPtr<StyleRuleNamespace>> m_namespaceRules;
     Vector<RefPtr<StyleRuleBase>> m_childRules;
-    typedef HashMap<AtomicString, AtomicString> PrefixNamespaceURIMap;
+    typedef HashMap<AtomString, AtomString> PrefixNamespaceURIMap;
     PrefixNamespaceURIMap m_namespaces;
-    AtomicString m_defaultNamespace;
+    AtomString m_defaultNamespace;
 
     bool m_isUserStyleSheet;
     bool m_loadCompleted { false };

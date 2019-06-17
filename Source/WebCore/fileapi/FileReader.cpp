@@ -222,7 +222,7 @@ void FileReader::didFail(int errorCode)
     m_loadingActivity = nullptr;
 }
 
-void FileReader::fireEvent(const AtomicString& type)
+void FileReader::fireEvent(const AtomString& type)
 {
     dispatchEvent(ProgressEvent::create(type, true, m_loader ? m_loader->bytesLoaded() : 0, m_loader ? m_loader->totalBytes() : 0));
 }

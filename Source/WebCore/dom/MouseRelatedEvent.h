@@ -76,11 +76,11 @@ public:
 
 protected:
     MouseRelatedEvent() = default;
-    MouseRelatedEvent(const AtomicString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime, RefPtr<WindowProxy>&&, int detail,
+    MouseRelatedEvent(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier> modifiers,
         IsSimulated = IsSimulated::No, IsTrusted = IsTrusted::Yes);
-    MouseRelatedEvent(const AtomicString& type, IsCancelable, MonotonicTime, RefPtr<WindowProxy>&&, const IntPoint& globalLocation, OptionSet<Modifier>);
-    MouseRelatedEvent(const AtomicString& type, const MouseRelatedEventInit&, IsTrusted = IsTrusted::No);
+    MouseRelatedEvent(const AtomString& type, IsCancelable, MonotonicTime, RefPtr<WindowProxy>&&, const IntPoint& globalLocation, OptionSet<Modifier>);
+    MouseRelatedEvent(const AtomString& type, const MouseRelatedEventInit&, IsTrusted = IsTrusted::No);
 
     void initCoordinates();
     void initCoordinates(const LayoutPoint& clientLocation);

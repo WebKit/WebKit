@@ -38,20 +38,20 @@ namespace WebCore {
 class ClassCollection final : public CachedHTMLCollection<ClassCollection, CollectionTypeTraits<ByClass>::traversalType> {
     WTF_MAKE_ISO_ALLOCATED(ClassCollection);
 public:
-    static Ref<ClassCollection> create(ContainerNode&, CollectionType, const AtomicString& classNames);
+    static Ref<ClassCollection> create(ContainerNode&, CollectionType, const AtomString& classNames);
 
     virtual ~ClassCollection();
 
     bool elementMatches(Element&) const;
 
 private:
-    ClassCollection(ContainerNode& rootNode, CollectionType, const AtomicString& classNames);
+    ClassCollection(ContainerNode& rootNode, CollectionType, const AtomString& classNames);
 
     SpaceSplitString m_classNames;
-    AtomicString m_originalClassNames;
+    AtomString m_originalClassNames;
 };
 
-inline ClassCollection::ClassCollection(ContainerNode& rootNode, CollectionType type, const AtomicString& classNames)
+inline ClassCollection::ClassCollection(ContainerNode& rootNode, CollectionType type, const AtomString& classNames)
     : CachedHTMLCollection<ClassCollection, CollectionTypeTraits<ByClass>::traversalType>(rootNode, type)
     , m_classNames(classNames, rootNode.document().inQuirksMode())
     , m_originalClassNames(classNames)

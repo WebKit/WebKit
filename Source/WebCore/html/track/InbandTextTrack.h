@@ -46,7 +46,7 @@ public:
     void setMode(Mode) override;
     size_t inbandTrackIndex();
 
-    AtomicString inBandMetadataTrackDispatchType() const override;
+    AtomString inBandMetadataTrackDispatchType() const override;
 
     void setPrivate(InbandTextTrackPrivate&);
     void setMediaElement(HTMLMediaElement*) override;
@@ -61,9 +61,9 @@ protected:
 
 private:
     bool isInband() const final { return true; }
-    void idChanged(const AtomicString&) override;
-    void labelChanged(const AtomicString&) override;
-    void languageChanged(const AtomicString&) override;
+    void idChanged(const AtomString&) override;
+    void labelChanged(const AtomString&) override;
+    void languageChanged(const AtomString&) override;
     void willRemove() override;
 
     void addDataCue(const MediaTime&, const MediaTime&, const void*, unsigned) override { ASSERT_NOT_REACHED(); }

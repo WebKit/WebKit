@@ -74,9 +74,9 @@ static TextStream& operator<<(TextStream& ts, MediaFeaturePrefix op)
 #endif
 
 typedef bool (*MediaQueryFunction)(CSSValue*, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix);
-typedef HashMap<AtomicStringImpl*, MediaQueryFunction> MediaQueryFunctionMap;
+typedef HashMap<AtomStringImpl*, MediaQueryFunction> MediaQueryFunctionMap;
 
-static bool isAccessibilitySettingsDependent(const AtomicString& mediaFeature)
+static bool isAccessibilitySettingsDependent(const AtomString& mediaFeature)
 {
     return mediaFeature == MediaFeatureNames::invertedColors
         || mediaFeature == MediaFeatureNames::maxMonochrome
@@ -85,7 +85,7 @@ static bool isAccessibilitySettingsDependent(const AtomicString& mediaFeature)
         || mediaFeature == MediaFeatureNames::prefersReducedMotion;
 }
 
-static bool isViewportDependent(const AtomicString& mediaFeature)
+static bool isViewportDependent(const AtomString& mediaFeature)
 {
     return mediaFeature == MediaFeatureNames::width
         || mediaFeature == MediaFeatureNames::height
@@ -99,7 +99,7 @@ static bool isViewportDependent(const AtomicString& mediaFeature)
         || mediaFeature == MediaFeatureNames::maxAspectRatio;
 }
 
-static bool isAppearanceDependent(const AtomicString& mediaFeature)
+static bool isAppearanceDependent(const AtomString& mediaFeature)
 {
     return mediaFeature == MediaFeatureNames::prefersDarkInterface
 #if ENABLE(DARK_MODE_CSS)
@@ -842,7 +842,7 @@ static bool displayModeEvaluate(CSSValue* value, const CSSToLengthConversionData
 #endif // ENABLE(APPLICATION_MANIFEST)
 
 // Use this function instead of calling add directly to avoid inlining.
-static void add(MediaQueryFunctionMap& map, AtomicStringImpl* key, MediaQueryFunction value)
+static void add(MediaQueryFunctionMap& map, AtomStringImpl* key, MediaQueryFunction value)
 {
     map.add(key, value);
 }

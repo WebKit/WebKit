@@ -32,21 +32,21 @@ UIEvent::UIEvent()
 {
 }
 
-UIEvent::UIEvent(const AtomicString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, RefPtr<WindowProxy>&& viewArg, int detailArg)
+UIEvent::UIEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, RefPtr<WindowProxy>&& viewArg, int detailArg)
     : Event(eventType, canBubble, isCancelable, isComposed)
     , m_view(WTFMove(viewArg))
     , m_detail(detailArg)
 {
 }
 
-UIEvent::UIEvent(const AtomicString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&& viewArg, int detailArg, IsTrusted isTrusted)
+UIEvent::UIEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&& viewArg, int detailArg, IsTrusted isTrusted)
     : Event(eventType, canBubble, isCancelable, isComposed, timestamp, isTrusted)
     , m_view(WTFMove(viewArg))
     , m_detail(detailArg)
 {
 }
 
-UIEvent::UIEvent(const AtomicString& eventType, const UIEventInit& initializer)
+UIEvent::UIEvent(const AtomString& eventType, const UIEventInit& initializer)
     : Event(eventType, initializer, IsTrusted::No)
     , m_view(initializer.view.get())
     , m_detail(initializer.detail)
@@ -55,7 +55,7 @@ UIEvent::UIEvent(const AtomicString& eventType, const UIEventInit& initializer)
 
 UIEvent::~UIEvent() = default;
 
-void UIEvent::initUIEvent(const AtomicString& typeArg, bool canBubbleArg, bool cancelableArg, RefPtr<WindowProxy>&& viewArg, int detailArg)
+void UIEvent::initUIEvent(const AtomString& typeArg, bool canBubbleArg, bool cancelableArg, RefPtr<WindowProxy>&& viewArg, int detailArg)
 {
     if (isBeingDispatched())
         return;

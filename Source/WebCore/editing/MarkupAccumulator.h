@@ -38,7 +38,7 @@ class Element;
 class Node;
 class Range;
 
-typedef HashMap<AtomicString, AtomicStringImpl*> Namespaces;
+typedef HashMap<AtomString, AtomStringImpl*> Namespaces;
 
 enum EntityMask {
     EntityAmp = 0x0001,
@@ -94,7 +94,7 @@ protected:
     void appendEndMarkup(StringBuilder&, const Element&);
 
     void appendAttributeValue(StringBuilder&, const String&, bool isSerializingHTML);
-    void appendNamespace(StringBuilder&, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces&, bool allowEmptyDefaultNS = false);
+    void appendNamespace(StringBuilder&, const AtomString& prefix, const AtomString& namespaceURI, Namespaces&, bool allowEmptyDefaultNS = false);
     void appendXMLDeclaration(StringBuilder&, const Document&);
     void appendDocumentType(StringBuilder&, const DocumentType&);
     void appendProcessingInstruction(StringBuilder&, const String& target, const String& data);

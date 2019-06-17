@@ -90,7 +90,7 @@ ExceptionOr<void> MutationObserver::observe(Node& node, const Init& init)
     if (init.characterDataOldValue.valueOr(false))
         options |= CharacterDataOldValue;
 
-    HashSet<AtomicString> attributeFilter;
+    HashSet<AtomString> attributeFilter;
     if (init.attributeFilter) {
         for (auto& value : init.attributeFilter.value())
             attributeFilter.add(value);

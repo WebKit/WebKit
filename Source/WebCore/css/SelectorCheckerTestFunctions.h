@@ -172,9 +172,9 @@ ALWAYS_INLINE bool containslanguageSubtagMatchingRange(StringView language, Stri
     return false;
 }
 
-ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const Vector<AtomicString>& argumentList)
+ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const Vector<AtomString>& argumentList)
 {
-    AtomicString language;
+    AtomString language;
 #if ENABLE(VIDEO_TRACK)
     if (is<WebVTTElement>(element))
         language = downcast<WebVTTElement>(element).language();
@@ -189,7 +189,7 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const Vector<A
     // as specified in www.ietf.org/rfc/rfc4647.txt.
     StringView languageStringView = language.string();
     unsigned languageLength = language.length();
-    for (const AtomicString& range : argumentList) {
+    for (const AtomString& range : argumentList) {
         if (range.isEmpty())
             continue;
 

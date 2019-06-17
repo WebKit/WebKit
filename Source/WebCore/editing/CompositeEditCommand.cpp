@@ -860,7 +860,7 @@ void CompositeEditCommand::removeNodeAttribute(Element& element, const Qualified
     setNodeAttribute(element, attribute, nullAtom());
 }
 
-void CompositeEditCommand::setNodeAttribute(Element& element, const QualifiedName& attribute, const AtomicString& value)
+void CompositeEditCommand::setNodeAttribute(Element& element, const QualifiedName& attribute, const AtomString& value)
 {
     applyCommandToComposite(SetNodeAttributeCommand::create(element, attribute, value));
 }

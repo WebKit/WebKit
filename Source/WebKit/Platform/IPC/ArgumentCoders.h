@@ -615,9 +615,9 @@ template<> struct ArgumentCoder<WallTime> {
     static Optional<WallTime> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<AtomicString> {
-    static void encode(Encoder&, const AtomicString&);
-    static bool decode(Decoder&, AtomicString&);
+template<> struct ArgumentCoder<AtomString> {
+    static void encode(Encoder&, const AtomString&);
+    static bool decode(Decoder&, AtomString&);
 };
 
 template<> struct ArgumentCoder<CString> {

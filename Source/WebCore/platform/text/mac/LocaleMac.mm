@@ -65,7 +65,7 @@ static RetainPtr<NSLocale> determineLocale(const String& locale)
      return adoptNS([[NSLocale alloc] initWithLocaleIdentifier:locale]);
 }
 
-std::unique_ptr<Locale> Locale::create(const AtomicString& locale)
+std::unique_ptr<Locale> Locale::create(const AtomString& locale)
 {
     return std::make_unique<LocaleMac>(determineLocale(locale.string()).get());
 }

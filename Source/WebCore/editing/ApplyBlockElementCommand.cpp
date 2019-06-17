@@ -39,7 +39,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-ApplyBlockElementCommand::ApplyBlockElementCommand(Document& document, const QualifiedName& tagName, const AtomicString& inlineStyle)
+ApplyBlockElementCommand::ApplyBlockElementCommand(Document& document, const QualifiedName& tagName, const AtomString& inlineStyle)
     : CompositeEditCommand(document)
     , m_tagName(tagName)
     , m_inlineStyle(inlineStyle)

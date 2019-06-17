@@ -201,7 +201,7 @@ public:
         ExpansionBehavior = DefaultExpansion, TextRunFlags = DefaultTextRunFlags);
     static TextRun constructTextRun(const String&, const RenderStyle&,
         ExpansionBehavior = DefaultExpansion, TextRunFlags = DefaultTextRunFlags);
-    static TextRun constructTextRun(const AtomicString&, const RenderStyle&,
+    static TextRun constructTextRun(const AtomString&, const RenderStyle&,
         ExpansionBehavior = DefaultExpansion, TextRunFlags = DefaultTextRunFlags);
     static TextRun constructTextRun(const RenderText&, const RenderStyle&,
         ExpansionBehavior = DefaultExpansion);

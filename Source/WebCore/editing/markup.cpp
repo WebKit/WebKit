@@ -130,7 +130,7 @@ static void completeURLs(DocumentFragment* fragment, const String& baseURL)
         change.apply();
 }
 
-void replaceSubresourceURLs(Ref<DocumentFragment>&& fragment, HashMap<AtomicString, AtomicString>&& replacementMap)
+void replaceSubresourceURLs(Ref<DocumentFragment>&& fragment, HashMap<AtomString, AtomString>&& replacementMap)
 {
     Vector<AttributeChange> changes;
     for (auto& element : descendantsOfType<Element>(fragment)) {
@@ -1241,9 +1241,9 @@ Ref<DocumentFragment> createFragmentForImageAndURL(Document& document, const Str
     auto imageElement = HTMLImageElement::create(document);
     imageElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, url);
     if (preferredSize.width)
-        imageElement->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomicString::number(*preferredSize.width));
+        imageElement->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString::number(*preferredSize.width));
     if (preferredSize.height)
-        imageElement->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomicString::number(*preferredSize.height));
+        imageElement->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomString::number(*preferredSize.height));
     auto fragment = document.createDocumentFragment();
     fragment->appendChild(imageElement);
 

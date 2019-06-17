@@ -46,7 +46,7 @@ SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const Q
     });
 }
 
-void SVGComponentTransferFunctionElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGComponentTransferFunctionElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::typeAttr) {
         ComponentTransferType propertyValue = SVGPropertyTraits<ComponentTransferType>::fromString(value);

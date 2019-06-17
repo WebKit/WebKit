@@ -168,7 +168,7 @@ public:
     bool sizeShouldIncludeDecoration(int& preferredSize) const;
     float decorationWidth() const;
 
-    WEBCORE_EXPORT void setType(const AtomicString&);
+    WEBCORE_EXPORT void setType(const AtomString&);
 
     WEBCORE_EXPORT String value() const final;
     WEBCORE_EXPORT ExceptionOr<void> setValue(const String&, TextFieldEventBehavior = DispatchNoEvent);
@@ -311,7 +311,7 @@ public:
     void blur() final;
     void defaultBlur();
 
-    const AtomicString& name() const final;
+    const AtomString& name() const final;
 
     void endEditing();
 
@@ -375,7 +375,7 @@ private:
 
     bool canTriggerImplicitSubmission() const final { return isTextField(); }
 
-    const AtomicString& formControlType() const final;
+    const AtomString& formControlType() const final;
 
     bool shouldSaveAndRestoreFormControlState() const final;
     FormControlState saveFormControlState() const final;
@@ -387,9 +387,9 @@ private:
 
     void accessKeyAction(bool sendMouseEvents) final;
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
     bool isPresentationAttribute(const QualifiedName&) const final;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
     void finishParsingChildren() final;
     void parserDidSetAttributes() final;
 
@@ -445,8 +445,8 @@ private:
 #if ENABLE(DATALIST_ELEMENT)
     void resetListAttributeTargetObserver();
 #endif
-    void maxLengthAttributeChanged(const AtomicString& newValue);
-    void minLengthAttributeChanged(const AtomicString& newValue);
+    void maxLengthAttributeChanged(const AtomString& newValue);
+    void minLengthAttributeChanged(const AtomString& newValue);
     void updateValueIfNeeded();
 
     void addToRadioButtonGroup();
@@ -454,7 +454,7 @@ private:
 
     void setDefaultSelectionAfterFocus(SelectionRevealMode);
 
-    AtomicString m_name;
+    AtomString m_name;
     String m_valueIfDirty;
     unsigned m_size;
     short m_maxResults { -1 };

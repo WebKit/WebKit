@@ -64,7 +64,7 @@ void HTMLMenuElement::removedFromAncestor(RemovalType type, ContainerNode& ances
     }
 }
 
-void HTMLMenuElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLMenuElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name != typeAttr || !RuntimeEnabledFeatures::sharedFeatures().menuItemElementEnabled()) {
         HTMLElement::parseAttribute(name, value);

@@ -121,7 +121,7 @@ private:
 
     OpaqueJSClassContextData& contextData(JSC::ExecState*);
 
-    // Strings in these data members should not be put into any AtomicStringTable.
+    // Strings in these data members should not be put into any AtomStringTable.
     String m_className;
     std::unique_ptr<OpaqueJSClassStaticValuesTable> m_staticValues;
     std::unique_ptr<OpaqueJSClassStaticFunctionsTable> m_staticFunctions;

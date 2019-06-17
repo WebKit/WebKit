@@ -94,7 +94,7 @@ static Optional<NavigationAction::MouseEventData> mouseEventDataForFirstMouseEve
     return WTF::nullopt;
 }
 
-NavigationAction::NavigationAction(Document& requester, const ResourceRequest& resourceRequest, InitiatedByMainFrame initiatedByMainFrame, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Event* event, const AtomicString& downloadAttribute)
+NavigationAction::NavigationAction(Document& requester, const ResourceRequest& resourceRequest, InitiatedByMainFrame initiatedByMainFrame, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Event* event, const AtomString& downloadAttribute)
     : m_requester { requester }
     , m_resourceRequest { resourceRequest }
     , m_type { type }
@@ -120,7 +120,7 @@ static NavigationType navigationType(FrameLoadType frameLoadType, bool isFormSub
     return NavigationType::Other;
 }
 
-NavigationAction::NavigationAction(Document& requester, const ResourceRequest& resourceRequest, InitiatedByMainFrame initiatedByMainFrame, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomicString& downloadAttribute)
+NavigationAction::NavigationAction(Document& requester, const ResourceRequest& resourceRequest, InitiatedByMainFrame initiatedByMainFrame, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomString& downloadAttribute)
     : m_requester { requester }
     , m_resourceRequest { resourceRequest }
     , m_type { navigationType(frameLoadType, isFormSubmission, !!event) }

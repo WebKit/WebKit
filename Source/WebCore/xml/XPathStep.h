@@ -27,7 +27,7 @@
 #pragma once
 
 #include <wtf/Vector.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -55,8 +55,8 @@ public:
         enum Kind { TextNodeTest, CommentNodeTest, ProcessingInstructionNodeTest, AnyNodeTest, NameTest };
 
         explicit NodeTest(Kind kind) : m_kind(kind) { }
-        NodeTest(Kind kind, const AtomicString& data) : m_kind(kind), m_data(data) { }
-        NodeTest(Kind kind, const AtomicString& data, const AtomicString& namespaceURI) : m_kind(kind), m_data(data), m_namespaceURI(namespaceURI) { }
+        NodeTest(Kind kind, const AtomString& data) : m_kind(kind), m_data(data) { }
+        NodeTest(Kind kind, const AtomString& data, const AtomString& namespaceURI) : m_kind(kind), m_data(data), m_namespaceURI(namespaceURI) { }
 
     private:
         friend class Step;
@@ -65,8 +65,8 @@ public:
         friend bool nodeMatches(Node&, Axis, const NodeTest&);
 
         Kind m_kind;
-        AtomicString m_data;
-        AtomicString m_namespaceURI;
+        AtomString m_data;
+        AtomString m_namespaceURI;
         Vector<std::unique_ptr<Expression>> m_mergedPredicates;
     };
 

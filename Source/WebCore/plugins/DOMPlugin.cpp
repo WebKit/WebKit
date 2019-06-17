@@ -22,7 +22,7 @@
 #include "PluginData.h"
 #include "Frame.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -75,7 +75,7 @@ RefPtr<DOMMimeType> DOMPlugin::item(unsigned index)
     return nullptr;
 }
 
-RefPtr<DOMMimeType> DOMPlugin::namedItem(const AtomicString& propertyName)
+RefPtr<DOMMimeType> DOMPlugin::namedItem(const AtomString& propertyName)
 {
     if (!m_frame || !m_frame->page())
         return nullptr;
@@ -89,10 +89,10 @@ RefPtr<DOMMimeType> DOMPlugin::namedItem(const AtomicString& propertyName)
     return nullptr;
 }
 
-Vector<AtomicString> DOMPlugin::supportedPropertyNames()
+Vector<AtomString> DOMPlugin::supportedPropertyNames()
 {
     // FIXME: Should be implemented.
-    return Vector<AtomicString>();
+    return Vector<AtomString>();
 }
 
 } // namespace WebCore

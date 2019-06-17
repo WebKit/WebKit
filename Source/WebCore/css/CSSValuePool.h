@@ -37,7 +37,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
@@ -50,7 +50,7 @@ class CSSValuePool {
 public:
     static CSSValuePool& singleton();
 
-    RefPtr<CSSValueList> createFontFaceValue(const AtomicString&);
+    RefPtr<CSSValueList> createFontFaceValue(const AtomString&);
     Ref<CSSPrimitiveValue> createFontFamilyValue(const String&, FromSystemFontID = FromSystemFontID::No);
     Ref<CSSInheritedValue> createInheritedValue() { return m_inheritedValue.get(); }
     Ref<CSSInitialValue> createImplicitInitialValue() { return m_implicitInitialValue.get(); }
@@ -74,7 +74,7 @@ private:
     typedef HashMap<Color, RefPtr<CSSPrimitiveValue>> ColorValueCache;
     ColorValueCache m_colorValueCache;
 
-    typedef HashMap<AtomicString, RefPtr<CSSValueList>> FontFaceValueCache;
+    typedef HashMap<AtomString, RefPtr<CSSValueList>> FontFaceValueCache;
     FontFaceValueCache m_fontFaceValueCache;
 
     typedef HashMap<std::pair<String, bool>, RefPtr<CSSPrimitiveValue>> FontFamilyValueCache;

@@ -50,7 +50,7 @@ Ref<HTMLDivElement> HTMLDivElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new HTMLDivElement(tagName, document));
 }
 
-void HTMLDivElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+void HTMLDivElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == alignAttr) {
         if (equalLettersIgnoringASCIICase(value, "middle") || equalLettersIgnoringASCIICase(value, "center"))

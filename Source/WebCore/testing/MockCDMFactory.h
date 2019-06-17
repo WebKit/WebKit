@@ -46,7 +46,7 @@ public:
     static Ref<MockCDMFactory> create() { return adoptRef(*new MockCDMFactory); }
     ~MockCDMFactory();
 
-    const Vector<AtomicString>& supportedDataTypes() const { return m_supportedDataTypes; }
+    const Vector<AtomString>& supportedDataTypes() const { return m_supportedDataTypes; }
     void setSupportedDataTypes(Vector<String>&&);
 
     const Vector<MediaKeySessionType>& supportedSessionTypes() const { return m_supportedSessionTypes; }
@@ -88,7 +88,7 @@ private:
 
     MediaKeysRequirement m_distinctiveIdentifiersRequirement { MediaKeysRequirement::Optional };
     MediaKeysRequirement m_persistentStateRequirement { MediaKeysRequirement::Optional };
-    Vector<AtomicString> m_supportedDataTypes;
+    Vector<AtomString> m_supportedDataTypes;
     Vector<MediaKeySessionType> m_supportedSessionTypes;
     Vector<String> m_supportedRobustness;
     Vector<MediaKeyEncryptionScheme> m_supportedEncryptionSchemes;
@@ -108,7 +108,7 @@ public:
 private:
     friend class MockCDMInstance;
 
-    bool supportsInitDataType(const AtomicString&) const final;
+    bool supportsInitDataType(const AtomString&) const final;
     bool supportsConfiguration(const MediaKeySystemConfiguration&) const final;
     bool supportsConfigurationWithRestrictions(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) const final;
     bool supportsSessionTypeWithConfiguration(MediaKeySessionType&, const MediaKeySystemConfiguration&) const final;
@@ -120,7 +120,7 @@ private:
     void loadAndInitialize() final;
     bool supportsServerCertificates() const final;
     bool supportsSessions() const final;
-    bool supportsInitData(const AtomicString&, const SharedBuffer&) const final;
+    bool supportsInitData(const AtomString&, const SharedBuffer&) const final;
     RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const final;
     Optional<String> sanitizeSessionId(const String&) const final;
 
@@ -155,7 +155,7 @@ public:
     MockCDMInstanceSession(WeakPtr<MockCDMInstance>&&);
 
 private:
-    void requestLicense(LicenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
+    void requestLicense(LicenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
     void updateLicense(const String&, LicenseType, const SharedBuffer&, LicenseUpdateCallback&&) final;
     void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
     void closeSession(const String&, CloseSessionCallback&&) final;

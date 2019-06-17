@@ -27,7 +27,7 @@
 
 #include <cstring>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/StringView.h>
 
 // This macro is helpful for testing how many intermediate Strings are created while evaluating an
@@ -189,9 +189,9 @@ private:
     const String& m_string;
 };
 
-template<> class StringTypeAdapter<AtomicString, void> : public StringTypeAdapter<String, void> {
+template<> class StringTypeAdapter<AtomString, void> : public StringTypeAdapter<String, void> {
 public:
-    StringTypeAdapter(const AtomicString& string)
+    StringTypeAdapter(const AtomString& string)
         : StringTypeAdapter<String, void> { string.string() }
     {
     }

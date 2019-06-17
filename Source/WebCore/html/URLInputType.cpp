@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-const AtomicString& URLInputType::formControlType() const
+const AtomString& URLInputType::formControlType() const
 {
     return InputTypeNames::url();
 }

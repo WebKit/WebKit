@@ -690,7 +690,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     return result;
 }
 
-RefPtr<Font> FontCache::similarFont(const FontDescription& description, const AtomicString& family)
+RefPtr<Font> FontCache::similarFont(const FontDescription& description, const AtomString& family)
 {
     // Attempt to find an appropriate font using a match based on the presence of keywords in
     // the requested names. For example, we'll match any name that contains "Arabic" to Geeza Pro.
@@ -700,13 +700,13 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description, const At
 #if PLATFORM(IOS_FAMILY)
     // Substitute the default monospace font for well-known monospace fonts.
     if (equalLettersIgnoringASCIICase(family, "monaco") || equalLettersIgnoringASCIICase(family, "menlo")) {
-        static NeverDestroyed<AtomicString> courier("courier", AtomicString::ConstructFromLiteral);
+        static NeverDestroyed<AtomString> courier("courier", AtomString::ConstructFromLiteral);
         return fontForFamily(description, courier);
     }
 
     // Substitute Verdana for Lucida Grande.
     if (equalLettersIgnoringASCIICase(family, "lucida grande")) {
-        static NeverDestroyed<AtomicString> verdana("verdana", AtomicString::ConstructFromLiteral);
+        static NeverDestroyed<AtomString> verdana("verdana", AtomString::ConstructFromLiteral);
         return fontForFamily(description, verdana);
     }
 #endif
@@ -715,8 +715,8 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description, const At
     static NeverDestroyed<String> pashto(MAKE_STATIC_STRING_IMPL("Pashto"));
     static NeverDestroyed<String> urdu(MAKE_STATIC_STRING_IMPL("Urdu"));
     static String* matchWords[3] = { &arabic.get(), &pashto.get(), &urdu.get() };
-    static NeverDestroyed<AtomicString> geezaPlain("GeezaPro", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> geezaBold("GeezaPro-Bold", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> geezaPlain("GeezaPro", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> geezaBold("GeezaPro-Bold", AtomString::ConstructFromLiteral);
     for (String* matchWord : matchWords) {
         if (family.containsIgnoringASCIICase(*matchWord))
             return fontForFamily(description, isFontWeightBold(description.weight()) ? geezaBold : geezaPlain);
@@ -830,9 +830,9 @@ void FontCache::setFontWhitelist(const Vector<String>& inputWhitelist)
         whitelist.add(item);
 }
 
-static inline bool isSystemFont(const AtomicString& family)
+static inline bool isSystemFont(const AtomString& family)
 {
-    // AtomicString's operator[] handles out-of-bounds by returning 0.
+    // AtomString's operator[] handles out-of-bounds by returning 0.
     return family[0] == '.';
 }
 
@@ -945,7 +945,7 @@ public:
         return m_familyNameToFontDescriptors.add(folded.isolatedCopy(), WTFMove(installedFontFamily)).iterator->value;
     }
 
-    const InstalledFont& fontForPostScriptName(const AtomicString& postScriptName)
+    const InstalledFont& fontForPostScriptName(const AtomString& postScriptName)
     {
         const auto& folded = FontCascadeDescription::foldedFamilyName(postScriptName);
         return m_postScriptNameToFontDescriptors.ensure(folded, [&] {
@@ -1156,7 +1156,7 @@ static const FontDatabase::InstalledFont* findClosestFont(const FontDatabase::In
     return &familyFonts.installedFonts[fontSelectionAlgorithm.indexOfBestCapabilities()];
 }
 
-Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamily(const AtomicString& familyName, AllowUserInstalledFonts allowUserInstalledFonts)
+Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamily(const AtomString& familyName, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     auto& fontDatabase = allowUserInstalledFonts == AllowUserInstalledFonts::Yes ? FontDatabase::singletonAllowingUserInstalledFonts() : FontDatabase::singletonDisallowingUserInstalledFonts();
     const auto& fonts = fontDatabase.collectionForFamily(familyName.string());
@@ -1175,7 +1175,7 @@ struct FontLookup {
     bool createdFromPostScriptName { false };
 };
 
-static FontLookup platformFontLookupWithFamily(const AtomicString& family, FontSelectionRequest request, float size, AllowUserInstalledFonts allowUserInstalledFonts)
+static FontLookup platformFontLookupWithFamily(const AtomString& family, FontSelectionRequest request, float size, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     const auto& whitelist = fontWhitelist();
     if (!isSystemFont(family) && whitelist.size() && !whitelist.contains(family))
@@ -1238,7 +1238,7 @@ static void invalidateFontCache()
     FontCache::singleton().invalidate();
 }
 
-static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, const FontDescription& fontDescription, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities, float size)
+static RetainPtr<CTFontRef> fontWithFamily(const AtomString& family, const FontDescription& fontDescription, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities, float size)
 {
     if (family.isEmpty())
         return nullptr;
@@ -1252,7 +1252,7 @@ static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, const Fon
 }
 
 #if PLATFORM(MAC)
-static bool shouldAutoActivateFontIfNeeded(const AtomicString& family)
+static bool shouldAutoActivateFontIfNeeded(const AtomString& family)
 {
 #ifndef NDEBUG
     // This cache is not thread safe so the following assertion is there to
@@ -1261,7 +1261,7 @@ static bool shouldAutoActivateFontIfNeeded(const AtomicString& family)
     ASSERT(initThread == &Thread::current());
 #endif
 
-    static NeverDestroyed<HashSet<AtomicString>> knownFamilies;
+    static NeverDestroyed<HashSet<AtomString>> knownFamilies;
     static const unsigned maxCacheSize = 128;
     ASSERT(knownFamilies.get().size() <= maxCacheSize);
     if (knownFamilies.get().size() == maxCacheSize)
@@ -1283,7 +1283,7 @@ static void autoActivateFont(const String& name, CGFloat size)
 }
 #endif
 
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
 {
     float size = fontDescription.computedPixelSize();
 
@@ -1339,7 +1339,7 @@ static inline bool isArabicCharacter(UChar character)
 }
 #endif
 
-static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValue fontWeight, const AtomicString& locale, const UChar* characters, unsigned length)
+static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValue fontWeight, const AtomString& locale, const UChar* characters, unsigned length)
 {
     ASSERT(length > 0);
 
@@ -1417,7 +1417,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     return fontForPlatformData(alternateFont);
 }
 
-const AtomicString& FontCache::platformAlternateFamilyName(const AtomicString& familyName)
+const AtomString& FontCache::platformAlternateFamilyName(const AtomString& familyName)
 {
     static const UChar heitiString[] = { 0x9ed1, 0x4f53 };
     static const UChar songtiString[] = { 0x5b8b, 0x4f53 };
@@ -1425,10 +1425,10 @@ const AtomicString& FontCache::platformAlternateFamilyName(const AtomicString& f
     static const UChar weiruanYaHeiString[] = { 0x5fae, 0x8f6f, 0x96c5, 0x9ed1 };
     static const UChar weiruanZhengHeitiString[] = { 0x5fae, 0x8edf, 0x6b63, 0x9ed1, 0x9ad4 };
 
-    static NeverDestroyed<AtomicString> songtiSC("Songti SC", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> songtiTC("Songti TC", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> heitiSCReplacement("PingFang SC", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> heitiTCReplacement("PingFang TC", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> songtiSC("Songti SC", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> songtiTC("Songti TC", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> heitiSCReplacement("PingFang SC", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> heitiTCReplacement("PingFang TC", AtomString::ConstructFromLiteral);
 
     switch (familyName.length()) {
     case 2:
@@ -1534,7 +1534,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
 {
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
-    if (auto result = fontForFamily(fontDescription, AtomicString("Times", AtomicString::ConstructFromLiteral)))
+    if (auto result = fontForFamily(fontDescription, AtomString("Times", AtomString::ConstructFromLiteral)))
         return *result;
 
     // LastResort is guaranteed to be non-null.

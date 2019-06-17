@@ -43,7 +43,7 @@ public:
 
 private:
     bool isRangeControl() const final;
-    const AtomicString& formControlType() const final;
+    const AtomString& formControlType() const final;
     double valueAsDouble() const final;
     ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const final;
     bool typeMismatchFor(const String&) const final;

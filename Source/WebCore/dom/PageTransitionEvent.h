@@ -31,7 +31,7 @@ namespace WebCore {
 
 class PageTransitionEvent final : public Event {
 public:
-    static Ref<PageTransitionEvent> create(const AtomicString& type, bool persisted)
+    static Ref<PageTransitionEvent> create(const AtomString& type, bool persisted)
     {
         return adoptRef(*new PageTransitionEvent(type, persisted));
     }
@@ -40,7 +40,7 @@ public:
         bool persisted { false };
     };
 
-    static Ref<PageTransitionEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<PageTransitionEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new PageTransitionEvent(type, initializer, isTrusted));
     }
@@ -52,8 +52,8 @@ public:
     bool persisted() const { return m_persisted; }
 
 private:
-    PageTransitionEvent(const AtomicString& type, bool persisted);
-    PageTransitionEvent(const AtomicString&, const Init&, IsTrusted);
+    PageTransitionEvent(const AtomString& type, bool persisted);
+    PageTransitionEvent(const AtomString&, const Init&, IsTrusted);
 
     bool m_persisted;
 };

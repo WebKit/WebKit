@@ -59,7 +59,7 @@ ScriptExecutionContext* VisualViewport::scriptExecutionContext() const
     return static_cast<ContextDestructionObserver*>(window)->scriptExecutionContext();
 }
 
-bool VisualViewport::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+bool VisualViewport::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     if (!EventTarget::addEventListener(eventType, WTFMove(listener), options))
         return false;

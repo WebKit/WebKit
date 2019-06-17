@@ -60,7 +60,7 @@ public:
     WEBCORE_EXPORT void waitForPreparedForInlineThen(WTF::Function<void()>&& completionHandler = [] { });
     
     WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) override;
-    void updateForEventName(const WTF::AtomicString&);
+    void updateForEventName(const WTF::AtomString&);
     bool operator==(const EventListener& rhs) const override { return static_cast<const WebCore::EventListener*>(this) == &rhs; }
 
     WEBCORE_EXPORT void addClient(VideoFullscreenModelClient&) override;
@@ -87,8 +87,8 @@ private:
     void willExitPictureInPicture() override;
     void didExitPictureInPicture() override;
 
-    static const Vector<WTF::AtomicString>& observedEventNames();
-    const WTF::AtomicString& eventNameAll();
+    static const Vector<WTF::AtomString>& observedEventNames();
+    const WTF::AtomString& eventNameAll();
 
     RefPtr<HTMLVideoElement> m_videoElement;
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;

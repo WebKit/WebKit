@@ -45,7 +45,7 @@ class SVGPropertyAnimatorFactory;
 class SVGSVGElement;
 class SVGUseElement;
 
-void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, CSSPropertyID>* propertyNameToIdMap, const QualifiedName& attrName);
+void mapAttributeToCSSProperty(HashMap<AtomStringImpl*, CSSPropertyID>* propertyNameToIdMap, const QualifiedName& attrName);
 
 class SVGElement : public StyledElement, public SVGLangSpace, public SVGPropertyOwner {
     WTF_MAKE_ISO_ALLOCATED(SVGElement);
@@ -103,7 +103,7 @@ public:
 
     Optional<ElementStyle> resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle) override;
 
-    static QualifiedName animatableAttributeForName(const AtomicString&);
+    static QualifiedName animatableAttributeForName(const AtomString&);
 #ifndef NDEBUG
     bool isAnimatableAttribute(const QualifiedName&) const;
 #endif
@@ -114,8 +114,8 @@ public:
 
     virtual bool haveLoadedRequiredResources();
 
-    bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
-    bool removeEventListener(const AtomicString& eventType, EventListener&, const ListenerOptions&) override;
+    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+    bool removeEventListener(const AtomString& eventType, EventListener&, const ListenerOptions&) override;
     bool hasFocusEventListeners() const;
 
     bool hasTagName(const SVGQualifiedName& name) const { return hasLocalName(name.localName()); }
@@ -158,19 +158,19 @@ protected:
     bool supportsFocus() const override { return false; }
 
     bool rendererIsNeeded(const RenderStyle&) override;
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomString&) override;
 
     void finishParsingChildren() override;
-    void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason = ModifiedDirectly) override;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = ModifiedDirectly) override;
     bool childShouldCreateRenderer(const Node&) const override;
 
     SVGElementRareData& ensureSVGRareData();
 
-    void reportAttributeParsingError(SVGParsingError, const QualifiedName&, const AtomicString&);
+    void reportAttributeParsingError(SVGParsingError, const QualifiedName&, const AtomString&);
     static CSSPropertyID cssPropertyIdForSVGAttributeName(const QualifiedName&);
 
     bool isPresentationAttribute(const QualifiedName&) const override;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
     void childrenChanged(const ChildChange&) override;

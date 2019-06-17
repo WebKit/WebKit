@@ -39,39 +39,39 @@
 
 namespace WebCore {
 
-const AtomicString& AudioTrack::alternativeKeyword()
+const AtomString& AudioTrack::alternativeKeyword()
 {
-    static NeverDestroyed<AtomicString> alternative("alternative", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> alternative("alternative", AtomString::ConstructFromLiteral);
     return alternative;
 }
 
-const AtomicString& AudioTrack::descriptionKeyword()
+const AtomString& AudioTrack::descriptionKeyword()
 {
-    static NeverDestroyed<AtomicString> description("description", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> description("description", AtomString::ConstructFromLiteral);
     return description;
 }
 
-const AtomicString& AudioTrack::mainKeyword()
+const AtomString& AudioTrack::mainKeyword()
 {
-    static NeverDestroyed<AtomicString> main("main", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> main("main", AtomString::ConstructFromLiteral);
     return main;
 }
 
-const AtomicString& AudioTrack::mainDescKeyword()
+const AtomString& AudioTrack::mainDescKeyword()
 {
-    static NeverDestroyed<AtomicString> mainDesc("main-desc", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> mainDesc("main-desc", AtomString::ConstructFromLiteral);
     return mainDesc;
 }
 
-const AtomicString& AudioTrack::translationKeyword()
+const AtomString& AudioTrack::translationKeyword()
 {
-    static NeverDestroyed<AtomicString> translation("translation", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> translation("translation", AtomString::ConstructFromLiteral);
     return translation;
 }
 
-const AtomicString& AudioTrack::commentaryKeyword()
+const AtomString& AudioTrack::commentaryKeyword()
 {
-    static NeverDestroyed<AtomicString> commentary("commentary", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> commentary("commentary", AtomString::ConstructFromLiteral);
     return commentary;
 }
 
@@ -109,7 +109,7 @@ void AudioTrack::setPrivate(AudioTrackPrivate& trackPrivate)
     updateKindFromPrivate();
 }
 
-bool AudioTrack::isValidKind(const AtomicString& value) const
+bool AudioTrack::isValidKind(const AtomString& value) const
 {
     return value == alternativeKeyword()
         || value == commentaryKeyword()
@@ -143,17 +143,17 @@ void AudioTrack::enabledChanged(bool enabled)
         m_client->audioTrackEnabledChanged(*this);
 }
 
-void AudioTrack::idChanged(const AtomicString& id)
+void AudioTrack::idChanged(const AtomString& id)
 {
     setId(id);
 }
 
-void AudioTrack::labelChanged(const AtomicString& label)
+void AudioTrack::labelChanged(const AtomString& label)
 {
     setLabel(label);
 }
 
-void AudioTrack::languageChanged(const AtomicString& language)
+void AudioTrack::languageChanged(const AtomString& language)
 {
     setLanguage(language);
 }

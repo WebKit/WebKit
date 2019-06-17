@@ -33,7 +33,7 @@
 #include "ResourceLoaderOptions.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -64,7 +64,7 @@ namespace WebCore {
         ThreadableLoaderOptions isolatedCopy() const;
 
         ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement { ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective };
-        String initiator; // This cannot be an AtomicString, as isolatedCopy() wouldn't create an object that's safe for passing to another thread.
+        String initiator; // This cannot be an AtomString, as isolatedCopy() wouldn't create an object that's safe for passing to another thread.
         ResponseFilteringPolicy filteringPolicy { ResponseFilteringPolicy::Disable };
     };
 

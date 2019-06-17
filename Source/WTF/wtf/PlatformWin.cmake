@@ -44,7 +44,7 @@ if (USE_CF)
         cf/FileSystemCF.cpp
         cf/URLCF.cpp
 
-        text/cf/AtomicStringImplCF.cpp
+        text/cf/AtomStringImplCF.cpp
         text/cf/StringCF.cpp
         text/cf/StringImplCF.cpp
         text/cf/StringViewCF.cpp

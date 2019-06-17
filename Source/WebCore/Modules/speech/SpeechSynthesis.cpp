@@ -180,7 +180,7 @@ void SpeechSynthesis::resume()
     }
 }
 
-void SpeechSynthesis::fireEvent(const AtomicString& type, SpeechSynthesisUtterance& utterance, unsigned long charIndex, const String& name)
+void SpeechSynthesis::fireEvent(const AtomString& type, SpeechSynthesisUtterance& utterance, unsigned long charIndex, const String& name)
 {
     utterance.dispatchEvent(SpeechSynthesisEvent::create(type, charIndex, (MonotonicTime::now() - utterance.startTime()).seconds(), name));
 }

@@ -532,14 +532,14 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     if (auto liveContainer = coreObject->liveRegionAncestor(false)) {
         String liveStatus = liveContainer->liveRegionStatus();
         String relevant = liveContainer->liveRegionRelevant();
-        bool isAtomic = liveContainer->liveRegionAtomic();
+        bool isAtom = liveContainer->liveRegionAtomic();
         String liveRole = roleString.isEmpty() ? computedRoleString : roleString;
 
         // According to the Core AAM, we need to expose the above properties with "container-" prefixed
         // object attributes regardless of whether the container is this object, or an ancestor of it.
         attributeSet = addToAtkAttributeSet(attributeSet, "container-live", liveStatus.utf8().data());
         attributeSet = addToAtkAttributeSet(attributeSet, "container-relevant", relevant.utf8().data());
-        if (isAtomic)
+        if (isAtom)
             attributeSet = addToAtkAttributeSet(attributeSet, "container-atomic", "true");
         if (!liveRole.isEmpty())
             attributeSet = addToAtkAttributeSet(attributeSet, "container-live-role", liveRole.utf8().data());
@@ -549,9 +549,9 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
         if (liveContainer == coreObject) {
             attributeSet = addToAtkAttributeSet(attributeSet, "live", liveStatus.utf8().data());
             attributeSet = addToAtkAttributeSet(attributeSet, "relevant", relevant.utf8().data());
-            if (isAtomic)
+            if (isAtom)
                 attributeSet = addToAtkAttributeSet(attributeSet, "atomic", "true");
-        } else if (!isAtomic && coreObject->liveRegionAtomic())
+        } else if (!isAtom && coreObject->liveRegionAtomic())
             attributeSet = addToAtkAttributeSet(attributeSet, "atomic", "true");
     }
 
@@ -566,7 +566,7 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
         attributeSet = addToAtkAttributeSet(attributeSet, "grabbed", "false");
 
     // The Core AAM states the author-provided value should be exposed as-is.
-    const AtomicString& keyShortcuts = coreObject->keyShortcutsValue();
+    const AtomString& keyShortcuts = coreObject->keyShortcutsValue();
     if (!keyShortcuts.isEmpty())
         attributeSet = addToAtkAttributeSet(attributeSet, "keyshortcuts", keyShortcuts.string().utf8().data());
 

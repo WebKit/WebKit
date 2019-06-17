@@ -46,7 +46,7 @@ namespace WebCore {
         BString(const wchar_t*);
         BString(const wchar_t*, size_t length);
         BString(const String&);
-        BString(const AtomicString&);
+        BString(const AtomString&);
         BString(const URL&);
 #if USE(CF)
         BString(CFStringRef);

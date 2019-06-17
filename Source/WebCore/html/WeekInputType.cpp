@@ -45,7 +45,7 @@ static const int weekDefaultStep = 1;
 static const int weekStepScaleFactor = 604800000;
 static const StepRange::StepDescription weekStepDescription { weekDefaultStep, weekDefaultStepBase, weekStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger };
 
-const AtomicString& WeekInputType::formControlType() const
+const AtomString& WeekInputType::formControlType() const
 {
     return InputTypeNames::week();
 }

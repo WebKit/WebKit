@@ -55,7 +55,7 @@ Ref<HTMLButtonElement> HTMLButtonElement::create(const QualifiedName& tagName, D
     return adoptRef(*new HTMLButtonElement(tagName, document, form));
 }
 
-void HTMLButtonElement::setType(const AtomicString& type)
+void HTMLButtonElement::setType(const AtomString& type)
 {
     setAttributeWithoutSynchronization(typeAttr, type);
 }
@@ -65,19 +65,19 @@ RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(RenderStyle&& 
     return createRenderer<RenderButton>(*this, WTFMove(style));
 }
 
-const AtomicString& HTMLButtonElement::formControlType() const
+const AtomString& HTMLButtonElement::formControlType() const
 {
     switch (m_type) {
         case SUBMIT: {
-            static NeverDestroyed<const AtomicString> submit("submit", AtomicString::ConstructFromLiteral);
+            static NeverDestroyed<const AtomString> submit("submit", AtomString::ConstructFromLiteral);
             return submit;
         }
         case BUTTON: {
-            static NeverDestroyed<const AtomicString> button("button", AtomicString::ConstructFromLiteral);
+            static NeverDestroyed<const AtomString> button("button", AtomString::ConstructFromLiteral);
             return button;
         }
         case RESET: {
-            static NeverDestroyed<const AtomicString> reset("reset", AtomicString::ConstructFromLiteral);
+            static NeverDestroyed<const AtomString> reset("reset", AtomString::ConstructFromLiteral);
             return reset;
         }
     }
@@ -97,7 +97,7 @@ bool HTMLButtonElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLFormControlElement::isPresentationAttribute(name);
 }
 
-void HTMLButtonElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLButtonElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == typeAttr) {
         Type oldType = m_type;
@@ -218,7 +218,7 @@ bool HTMLButtonElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == formactionAttr || HTMLFormControlElement::isURLAttribute(attribute);
 }
 
-const AtomicString& HTMLButtonElement::value() const
+const AtomString& HTMLButtonElement::value() const
 {
     return attributeWithoutSynchronization(valueAttr);
 }

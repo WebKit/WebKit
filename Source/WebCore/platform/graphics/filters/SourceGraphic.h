@@ -30,7 +30,7 @@ class SourceGraphic : public FilterEffect {
 public:        
     static Ref<SourceGraphic> create(Filter&);
 
-    static const AtomicString& effectName();
+    static const AtomString& effectName();
 
 private:
     SourceGraphic(Filter& filter)

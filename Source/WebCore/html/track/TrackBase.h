@@ -28,7 +28,7 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include <wtf/LoggerHelper.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -52,15 +52,15 @@ public:
     HTMLMediaElement* mediaElement() { return m_mediaElement; }
     virtual Element* element();
 
-    virtual AtomicString id() const { return m_id; }
-    virtual void setId(const AtomicString& id) { m_id = id; }
+    virtual AtomString id() const { return m_id; }
+    virtual void setId(const AtomString& id) { m_id = id; }
 
-    AtomicString label() const { return m_label; }
-    void setLabel(const AtomicString& label) { m_label = label; }
+    AtomString label() const { return m_label; }
+    void setLabel(const AtomString& label) { m_label = label; }
 
-    AtomicString validBCP47Language() const;
-    AtomicString language() const { return m_language; }
-    virtual void setLanguage(const AtomicString&);
+    AtomString validBCP47Language() const;
+    AtomString language() const { return m_language; }
+    virtual void setLanguage(const AtomString&);
 
     virtual void clearClient() = 0;
 
@@ -80,7 +80,7 @@ public:
 #endif
 
 protected:
-    TrackBase(Type, const AtomicString& id, const AtomicString& label, const AtomicString& language);
+    TrackBase(Type, const AtomString& id, const AtomString& label, const AtomString& language);
 
     HTMLMediaElement* m_mediaElement { nullptr };
 
@@ -91,10 +91,10 @@ protected:
 private:
     Type m_type;
     int m_uniqueId;
-    AtomicString m_id;
-    AtomicString m_label;
-    AtomicString m_language;
-    AtomicString m_validBCP47Language;
+    AtomString m_id;
+    AtomString m_label;
+    AtomString m_language;
+    AtomString m_validBCP47Language;
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;
     const void* m_logIdentifier;
@@ -103,18 +103,18 @@ private:
 
 class MediaTrackBase : public TrackBase {
 public:
-    const AtomicString& kind() const { return m_kind; }
-    virtual void setKind(const AtomicString&);
+    const AtomString& kind() const { return m_kind; }
+    virtual void setKind(const AtomString&);
 
 protected:
-    MediaTrackBase(Type, const AtomicString& id, const AtomicString& label, const AtomicString& language);
+    MediaTrackBase(Type, const AtomString& id, const AtomString& label, const AtomString& language);
 
-    void setKindInternal(const AtomicString&);
+    void setKindInternal(const AtomString&);
 
 private:
-    virtual bool isValidKind(const AtomicString&) const = 0;
+    virtual bool isValidKind(const AtomString&) const = 0;
 
-    AtomicString m_kind;
+    AtomString m_kind;
 };
 
 } // namespace WebCore

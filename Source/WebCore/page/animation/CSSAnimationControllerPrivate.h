@@ -57,7 +57,7 @@ public:
 
     void updateStyleIfNeededDispatcherFired();
     void startUpdateStyleIfNeededDispatcher();
-    void addEventToDispatch(Element&, const AtomicString& eventType, const String& name, double elapsedTime);
+    void addEventToDispatch(Element&, const AtomString& eventType, const String& name, double elapsedTime);
     void addElementChangeToDispatch(Element&);
 
     bool hasAnimations() const { return !m_compositeAnimations.isEmpty(); }
@@ -79,7 +79,7 @@ public:
     bool isRunningAnimationOnRenderer(RenderElement&, CSSPropertyID) const;
     bool isRunningAcceleratedAnimationOnRenderer(RenderElement&, CSSPropertyID) const;
 
-    bool pauseAnimationAtTime(Element&, const AtomicString& name, double t);
+    bool pauseAnimationAtTime(Element&, const AtomString& name, double t);
     bool pauseTransitionAtTime(Element&, const String& property, double t);
     unsigned numberOfActiveAnimations(Document*) const;
 
@@ -122,7 +122,7 @@ private:
 
     struct EventToDispatch {
         Ref<Element> element;
-        AtomicString eventType;
+        AtomString eventType;
         String name;
         double elapsedTime;
     };

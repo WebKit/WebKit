@@ -34,7 +34,7 @@ class DeviceOrientationData;
 
 class DeviceOrientationEvent final : public Event, public DeviceOrientationOrMotionEvent {
 public:
-    static Ref<DeviceOrientationEvent> create(const AtomicString& eventType, DeviceOrientationData* orientation)
+    static Ref<DeviceOrientationEvent> create(const AtomString& eventType, DeviceOrientationData* orientation)
     {
         return adoptRef(*new DeviceOrientationEvent(eventType, orientation));
     }
@@ -54,16 +54,16 @@ public:
     Optional<double> compassHeading() const;
     Optional<double> compassAccuracy() const;
 
-    void initDeviceOrientationEvent(const AtomicString& type, bool bubbles, bool cancelable, Optional<double> alpha, Optional<double> beta, Optional<double> gamma, Optional<double> compassHeading, Optional<double> compassAccuracy);
+    void initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, Optional<double> alpha, Optional<double> beta, Optional<double> gamma, Optional<double> compassHeading, Optional<double> compassAccuracy);
 #else
     Optional<bool> absolute() const;
 
-    void initDeviceOrientationEvent(const AtomicString& type, bool bubbles, bool cancelable, Optional<double> alpha, Optional<double> beta, Optional<double> gamma, Optional<bool> absolute);
+    void initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, Optional<double> alpha, Optional<double> beta, Optional<double> gamma, Optional<bool> absolute);
 #endif
 
 private:
     DeviceOrientationEvent();
-    DeviceOrientationEvent(const AtomicString& eventType, DeviceOrientationData*);
+    DeviceOrientationEvent(const AtomString& eventType, DeviceOrientationData*);
 
     EventInterface eventInterface() const override;
 

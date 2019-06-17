@@ -49,22 +49,22 @@ Ref<SVGAltGlyphElement> SVGAltGlyphElement::create(const QualifiedName& tagName,
     return adoptRef(*new SVGAltGlyphElement(tagName, document));
 }
 
-ExceptionOr<void> SVGAltGlyphElement::setGlyphRef(const AtomicString&)
+ExceptionOr<void> SVGAltGlyphElement::setGlyphRef(const AtomString&)
 {
     return Exception { NoModificationAllowedError };
 }
 
-const AtomicString& SVGAltGlyphElement::glyphRef() const
+const AtomString& SVGAltGlyphElement::glyphRef() const
 {
     return attributeWithoutSynchronization(SVGNames::glyphRefAttr);
 }
 
-ExceptionOr<void> SVGAltGlyphElement::setFormat(const AtomicString&)
+ExceptionOr<void> SVGAltGlyphElement::setFormat(const AtomString&)
 {
     return Exception { NoModificationAllowedError };
 }
 
-const AtomicString& SVGAltGlyphElement::format() const
+const AtomString& SVGAltGlyphElement::format() const
 {
     return attributeWithoutSynchronization(SVGNames::formatAttr);
 }

@@ -73,7 +73,7 @@ class InputType : public RefCounted<InputType> {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    static Ref<InputType> create(HTMLInputElement&, const AtomicString&);
+    static Ref<InputType> create(HTMLInputElement&, const AtomString&);
     static Ref<InputType> createText(HTMLInputElement&);
     virtual ~InputType();
 
@@ -81,7 +81,7 @@ public:
 
     static bool themeSupportsDataListUI(InputType*);
 
-    virtual const AtomicString& formControlType() const = 0;
+    virtual const AtomString& formControlType() const = 0;
 
     // Type query functions.
 

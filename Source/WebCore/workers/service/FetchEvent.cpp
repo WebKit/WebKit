@@ -40,7 +40,7 @@ Ref<FetchEvent> FetchEvent::createForTesting(ScriptExecutionContext& context)
     return FetchEvent::create("fetch", WTFMove(init), Event::IsTrusted::Yes);
 }
 
-FetchEvent::FetchEvent(const AtomicString& type, Init&& initializer, IsTrusted isTrusted)
+FetchEvent::FetchEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
     : ExtendableEvent(type, initializer, isTrusted)
     , m_request(initializer.request.releaseNonNull())
     , m_clientId(WTFMove(initializer.clientId))

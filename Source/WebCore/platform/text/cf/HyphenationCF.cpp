@@ -35,16 +35,16 @@
 namespace WTF {
 
 template<>
-class TinyLRUCachePolicy<AtomicString, RetainPtr<CFLocaleRef>>
+class TinyLRUCachePolicy<AtomString, RetainPtr<CFLocaleRef>>
 {
 public:
-    static TinyLRUCache<AtomicString, RetainPtr<CFLocaleRef>>& cache()
+    static TinyLRUCache<AtomString, RetainPtr<CFLocaleRef>>& cache()
     {
-        static NeverDestroyed<TinyLRUCache<AtomicString, RetainPtr<CFLocaleRef>>> cache;
+        static NeverDestroyed<TinyLRUCache<AtomString, RetainPtr<CFLocaleRef>>> cache;
         return cache;
     }
 
-    static bool isKeyNull(const AtomicString& localeIdentifier)
+    static bool isKeyNull(const AtomString& localeIdentifier)
     {
         return localeIdentifier.isNull();
     }
@@ -57,7 +57,7 @@ public:
         return CFStringIsHyphenationAvailableForLocale(locale.get()) ? locale : nullptr;
     }
 
-    static RetainPtr<CFLocaleRef> createValueForKey(const AtomicString& localeIdentifier)
+    static RetainPtr<CFLocaleRef> createValueForKey(const AtomString& localeIdentifier)
     {
         RetainPtr<CFLocaleRef> locale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, localeIdentifier.string().createCFString().get()));
 
@@ -68,14 +68,14 @@ public:
 
 namespace WebCore {
 
-bool canHyphenate(const AtomicString& localeIdentifier)
+bool canHyphenate(const AtomString& localeIdentifier)
 {
-    return TinyLRUCachePolicy<AtomicString, RetainPtr<CFLocaleRef>>::cache().get(localeIdentifier);
+    return TinyLRUCachePolicy<AtomString, RetainPtr<CFLocaleRef>>::cache().get(localeIdentifier);
 }
 
-size_t lastHyphenLocation(StringView text, size_t beforeIndex, const AtomicString& localeIdentifier)
+size_t lastHyphenLocation(StringView text, size_t beforeIndex, const AtomString& localeIdentifier)
 {
-    RetainPtr<CFLocaleRef> locale = TinyLRUCachePolicy<AtomicString, RetainPtr<CFLocaleRef>>::cache().get(localeIdentifier);
+    RetainPtr<CFLocaleRef> locale = TinyLRUCachePolicy<AtomString, RetainPtr<CFLocaleRef>>::cache().get(localeIdentifier);
 
     CFOptionFlags searchAcrossWordBoundaries = 1;
     CFIndex result = CFStringGetHyphenationLocationBeforeIndex(text.createCFStringWithoutCopying().get(), beforeIndex, CFRangeMake(0, text.length()), searchAcrossWordBoundaries, locale.get(), nullptr);

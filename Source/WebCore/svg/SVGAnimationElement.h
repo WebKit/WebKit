@@ -92,7 +92,7 @@ protected:
     virtual void resetAnimation();
 
     static bool isSupportedAttribute(const QualifiedName&);
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     String toValue() const;
@@ -116,7 +116,7 @@ protected:
 
 private:
     void animationAttributeChanged() override;
-    void setAttributeType(const AtomicString&);
+    void setAttributeType(const AtomString&);
 
     virtual bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString) = 0;
     virtual bool calculateFromAndToValues(const String& fromString, const String& toString) = 0;
@@ -132,7 +132,7 @@ private:
     float calculatePercentForFromTo(float percent) const;
     unsigned calculateKeyTimesIndex(float percent) const;
 
-    void setCalcMode(const AtomicString&);
+    void setCalcMode(const AtomString&);
 
     bool m_animationValid { false };
 

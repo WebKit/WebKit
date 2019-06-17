@@ -50,9 +50,9 @@ void InsertEditableImageCommand::doApply()
 
     m_imageElement = HTMLImageElement::create(document());
     m_imageElement->setAttributeWithoutSynchronization(HTMLNames::x_apple_editable_imageAttr, emptyAtom());
-    m_imageElement->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
-    m_imageElement->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomicString("300px", AtomicString::ConstructFromLiteral));
-    m_imageElement->setAttributeWithoutSynchronization(HTMLNames::styleAttr, AtomicString("display: block", AtomicString::ConstructFromLiteral));
+    m_imageElement->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString("100%", AtomString::ConstructFromLiteral));
+    m_imageElement->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomString("300px", AtomString::ConstructFromLiteral));
+    m_imageElement->setAttributeWithoutSynchronization(HTMLNames::styleAttr, AtomString("display: block", AtomString::ConstructFromLiteral));
 
     insertNodeAt(*m_imageElement, endingSelection().start());
     setEndingSelection(visiblePositionAfterNode(*m_imageElement));

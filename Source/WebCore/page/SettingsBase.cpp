@@ -73,9 +73,9 @@ SettingsBase::SettingsBase(Page* page)
     , m_minimumDOMTimerInterval(DOMTimer::defaultMinimumInterval())
     , m_setImageLoadingSettingsTimer(*this, &SettingsBase::imageLoadingSettingsTimerFired)
 {
-    // A Frame may not have been created yet, so we initialize the AtomicString
+    // A Frame may not have been created yet, so we initialize the AtomString
     // hash before trying to use it.
-    AtomicString::init();
+    AtomString::init();
     initializeDefaultFontFamilies();
     m_page = page; // Page is not yet fully initialized when constructing Settings, so keeping m_page null over initializeDefaultFontFamilies() call.
 }
@@ -137,84 +137,84 @@ bool SettingsBase::platformDefaultMediaSourceEnabled()
 }
 #endif
 
-const AtomicString& SettingsBase::standardFontFamily(UScriptCode script) const
+const AtomString& SettingsBase::standardFontFamily(UScriptCode script) const
 {
     return m_fontGenericFamilies->standardFontFamily(script);
 }
 
-void SettingsBase::setStandardFontFamily(const AtomicString& family, UScriptCode script)
+void SettingsBase::setStandardFontFamily(const AtomString& family, UScriptCode script)
 {
     bool changes = m_fontGenericFamilies->setStandardFontFamily(family, script);
     if (changes)
         invalidateAfterGenericFamilyChange(m_page);
 }
 
-const AtomicString& SettingsBase::fixedFontFamily(UScriptCode script) const
+const AtomString& SettingsBase::fixedFontFamily(UScriptCode script) const
 {
     return m_fontGenericFamilies->fixedFontFamily(script);
 }
 
-void SettingsBase::setFixedFontFamily(const AtomicString& family, UScriptCode script)
+void SettingsBase::setFixedFontFamily(const AtomString& family, UScriptCode script)
 {
     bool changes = m_fontGenericFamilies->setFixedFontFamily(family, script);
     if (changes)
         invalidateAfterGenericFamilyChange(m_page);
 }
 
-const AtomicString& SettingsBase::serifFontFamily(UScriptCode script) const
+const AtomString& SettingsBase::serifFontFamily(UScriptCode script) const
 {
     return m_fontGenericFamilies->serifFontFamily(script);
 }
 
-void SettingsBase::setSerifFontFamily(const AtomicString& family, UScriptCode script)
+void SettingsBase::setSerifFontFamily(const AtomString& family, UScriptCode script)
 {
     bool changes = m_fontGenericFamilies->setSerifFontFamily(family, script);
     if (changes)
         invalidateAfterGenericFamilyChange(m_page);
 }
 
-const AtomicString& SettingsBase::sansSerifFontFamily(UScriptCode script) const
+const AtomString& SettingsBase::sansSerifFontFamily(UScriptCode script) const
 {
     return m_fontGenericFamilies->sansSerifFontFamily(script);
 }
 
-void SettingsBase::setSansSerifFontFamily(const AtomicString& family, UScriptCode script)
+void SettingsBase::setSansSerifFontFamily(const AtomString& family, UScriptCode script)
 {
     bool changes = m_fontGenericFamilies->setSansSerifFontFamily(family, script);
     if (changes)
         invalidateAfterGenericFamilyChange(m_page);
 }
 
-const AtomicString& SettingsBase::cursiveFontFamily(UScriptCode script) const
+const AtomString& SettingsBase::cursiveFontFamily(UScriptCode script) const
 {
     return m_fontGenericFamilies->cursiveFontFamily(script);
 }
 
-void SettingsBase::setCursiveFontFamily(const AtomicString& family, UScriptCode script)
+void SettingsBase::setCursiveFontFamily(const AtomString& family, UScriptCode script)
 {
     bool changes = m_fontGenericFamilies->setCursiveFontFamily(family, script);
     if (changes)
         invalidateAfterGenericFamilyChange(m_page);
 }
 
-const AtomicString& SettingsBase::fantasyFontFamily(UScriptCode script) const
+const AtomString& SettingsBase::fantasyFontFamily(UScriptCode script) const
 {
     return m_fontGenericFamilies->fantasyFontFamily(script);
 }
 
-void SettingsBase::setFantasyFontFamily(const AtomicString& family, UScriptCode script)
+void SettingsBase::setFantasyFontFamily(const AtomString& family, UScriptCode script)
 {
     bool changes = m_fontGenericFamilies->setFantasyFontFamily(family, script);
     if (changes)
         invalidateAfterGenericFamilyChange(m_page);
 }
 
-const AtomicString& SettingsBase::pictographFontFamily(UScriptCode script) const
+const AtomString& SettingsBase::pictographFontFamily(UScriptCode script) const
 {
     return m_fontGenericFamilies->pictographFontFamily(script);
 }
 
-void SettingsBase::setPictographFontFamily(const AtomicString& family, UScriptCode script)
+void SettingsBase::setPictographFontFamily(const AtomString& family, UScriptCode script)
 {
     bool changes = m_fontGenericFamilies->setPictographFontFamily(family, script);
     if (changes)

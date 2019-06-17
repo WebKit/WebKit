@@ -467,7 +467,7 @@ void ContentRuleListStore::getAvailableContentRuleListIdentifiers(CompletionHand
 
 void ContentRuleListStore::compileContentRuleList(const WTF::String& identifier, WTF::String&& json, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)
 {
-    AtomicString::init();
+    AtomString::init();
     WebCore::QualifiedName::init();
     
     auto parsedRules = WebCore::ContentExtensions::parseRuleList(json);

@@ -94,26 +94,26 @@ void SVGSVGElement::didMoveToNewDocument(Document& oldDocument, Document& newDoc
     SVGGraphicsElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
-const AtomicString& SVGSVGElement::contentScriptType() const
+const AtomString& SVGSVGElement::contentScriptType() const
 {
-    static NeverDestroyed<AtomicString> defaultScriptType { "text/ecmascript" };
-    const AtomicString& type = attributeWithoutSynchronization(SVGNames::contentScriptTypeAttr);
+    static NeverDestroyed<AtomString> defaultScriptType { "text/ecmascript" };
+    const AtomString& type = attributeWithoutSynchronization(SVGNames::contentScriptTypeAttr);
     return type.isNull() ? defaultScriptType.get() : type;
 }
 
-void SVGSVGElement::setContentScriptType(const AtomicString& type)
+void SVGSVGElement::setContentScriptType(const AtomString& type)
 {
     setAttributeWithoutSynchronization(SVGNames::contentScriptTypeAttr, type);
 }
 
-const AtomicString& SVGSVGElement::contentStyleType() const
+const AtomString& SVGSVGElement::contentStyleType() const
 {
-    static NeverDestroyed<AtomicString> defaultStyleType { "text/css" };
-    const AtomicString& type = attributeWithoutSynchronization(SVGNames::contentStyleTypeAttr);
+    static NeverDestroyed<AtomString> defaultStyleType { "text/css" };
+    const AtomString& type = attributeWithoutSynchronization(SVGNames::contentStyleTypeAttr);
     return type.isNull() ? defaultStyleType.get() : type;
 }
 
-void SVGSVGElement::setContentStyleType(const AtomicString& type)
+void SVGSVGElement::setContentStyleType(const AtomString& type)
 {
     setAttributeWithoutSynchronization(SVGNames::contentStyleTypeAttr, type);
 }
@@ -193,7 +193,7 @@ void SVGSVGElement::updateCurrentTranslate()
         document().renderView()->repaint();
 }
 
-void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (!nearestViewportElement()) {
         // For these events, the outermost <svg> element works like a <body> element does,
@@ -735,7 +735,7 @@ void SVGSVGElement::resumeFromDocumentSuspension()
 
 // getElementById on SVGSVGElement is restricted to only the child subtree defined by the <svg> element.
 // See http://www.w3.org/TR/SVG11/struct.html#InterfaceSVGSVGElement
-Element* SVGSVGElement::getElementById(const AtomicString& id)
+Element* SVGSVGElement::getElementById(const AtomString& id)
 {
     if (id.isNull())
         return nullptr;

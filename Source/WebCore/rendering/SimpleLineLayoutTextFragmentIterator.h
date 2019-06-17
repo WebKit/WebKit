@@ -123,7 +123,7 @@ public:
         float hyphenStringWidth;
         unsigned hyphenLimitBefore;
         unsigned hyphenLimitAfter;
-        AtomicString locale;
+        AtomString locale;
         Optional<unsigned> hyphenLimitLines;
     };
     const Style& style() const { return m_style; }

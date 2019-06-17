@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-ApplePayPaymentMethodSelectedEvent::ApplePayPaymentMethodSelectedEvent(const AtomicString& type, const PaymentMethod& paymentMethod)
+ApplePayPaymentMethodSelectedEvent::ApplePayPaymentMethodSelectedEvent(const AtomString& type, const PaymentMethod& paymentMethod)
     : Event(type, CanBubble::No, IsCancelable::No)
     , m_paymentMethod(paymentMethod.toApplePayPaymentMethod())
 {

@@ -143,7 +143,7 @@ void TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged()
     setActive(active);
 }
 
-bool TrackPrivateBaseGStreamer::getLanguageCode(GstTagList* tags, AtomicString& value)
+bool TrackPrivateBaseGStreamer::getLanguageCode(GstTagList* tags, AtomString& value)
 {
     String language;
     if (getTag(tags, GST_TAG_LANGUAGE_CODE, language)) {
@@ -185,7 +185,7 @@ void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
     if (getTag(tags.get(), GST_TAG_TITLE, m_label) && client)
         client->labelChanged(m_label);
 
-    AtomicString language;
+    AtomString language;
     if (!getLanguageCode(tags.get(), language))
         return;
 

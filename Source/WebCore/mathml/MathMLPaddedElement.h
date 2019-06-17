@@ -44,7 +44,7 @@ public:
 private:
     MathMLPaddedElement(const QualifiedName& tagName, Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
 
     Optional<Length> m_width;
     Optional<Length> m_height;

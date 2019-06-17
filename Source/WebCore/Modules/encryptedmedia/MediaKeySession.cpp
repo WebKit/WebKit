@@ -118,7 +118,7 @@ Ref<MediaKeyStatusMap> MediaKeySession::keyStatuses() const
     return m_keyStatuses.copyRef();
 }
 
-void MediaKeySession::generateRequest(const AtomicString& initDataType, const BufferSource& initData, Ref<DeferredPromise>&& promise)
+void MediaKeySession::generateRequest(const AtomString& initDataType, const BufferSource& initData, Ref<DeferredPromise>&& promise)
 {
     // https://w3c.github.io/encrypted-media/#dom-mediakeysession-generaterequest
     // W3C Editor's Draft 09 November 2016

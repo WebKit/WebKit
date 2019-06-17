@@ -31,7 +31,7 @@
 #include <wtf/EnumTraits.h>
 #include <wtf/MediaTime.h>
 #include <wtf/RefCounted.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 typedef struct _GstSample GstSample;
@@ -63,7 +63,7 @@ public:
     virtual MediaTime decodeTime() const = 0;
     virtual MediaTime duration() const = 0;
     virtual MediaTime outputDuration() const { return duration(); }
-    virtual AtomicString trackID() const = 0;
+    virtual AtomString trackID() const = 0;
     virtual void setTrackID(const String&) = 0;
     virtual size_t sizeInBytes() const = 0;
     virtual FloatSize presentationSize() const = 0;

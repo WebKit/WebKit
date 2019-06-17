@@ -76,8 +76,8 @@ public:
     double viewportAnchorY() const { return m_viewportAnchor.y(); }
     ExceptionOr<void> setViewportAnchorY(double);
 
-    const AtomicString& scroll() const;
-    ExceptionOr<void> setScroll(const AtomicString&);
+    const AtomString& scroll() const;
+    ExceptionOr<void> setScroll(const AtomString&);
 
     void updateParametersFromRegion(const VTTRegion&);
 
@@ -116,9 +116,9 @@ private:
 
     void parseSettingValue(RegionSetting, VTTScanner&);
 
-    static const AtomicString& textTrackCueContainerShadowPseudoId();
-    static const AtomicString& textTrackCueContainerScrollingClass();
-    static const AtomicString& textTrackRegionShadowPseudoId();
+    static const AtomString& textTrackCueContainerShadowPseudoId();
+    static const AtomString& textTrackCueContainerScrollingClass();
+    static const AtomString& textTrackRegionShadowPseudoId();
 
     String m_id;
     String m_settings;

@@ -57,7 +57,7 @@ protected:
     KeygenSelectElement(Document& document)
         : HTMLSelectElement(selectTag, document, 0)
     {
-        static NeverDestroyed<AtomicString> pseudoId("-webkit-keygen-select", AtomicString::ConstructFromLiteral);
+        static NeverDestroyed<AtomString> pseudoId("-webkit-keygen-select", AtomString::ConstructFromLiteral);
         setPseudo(pseudoId);
     }
 
@@ -92,7 +92,7 @@ Ref<HTMLKeygenElement> HTMLKeygenElement::create(const QualifiedName& tagName, D
     return adoptRef(*new HTMLKeygenElement(tagName, document, form));
 }
 
-void HTMLKeygenElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLKeygenElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     // Reflect disabled attribute on the shadow select element
     if (name == disabledAttr)
@@ -107,7 +107,7 @@ bool HTMLKeygenElement::isKeytypeRSA() const
     return keyType.isNull() || equalLettersIgnoringASCIICase(keyType, "rsa");
 }
 
-void HTMLKeygenElement::setKeytype(const AtomicString& value)
+void HTMLKeygenElement::setKeytype(const AtomString& value)
 {
     setAttributeWithoutSynchronization(keytypeAttr, value);
 }
@@ -129,9 +129,9 @@ bool HTMLKeygenElement::appendFormData(DOMFormData& formData, bool)
     return true;
 }
 
-const AtomicString& HTMLKeygenElement::formControlType() const
+const AtomString& HTMLKeygenElement::formControlType() const
 {
-    static NeverDestroyed<const AtomicString> keygen("keygen", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> keygen("keygen", AtomString::ConstructFromLiteral);
     return keygen;
 }
 

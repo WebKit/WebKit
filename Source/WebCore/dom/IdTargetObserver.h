@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -37,11 +37,11 @@ public:
     virtual void idTargetChanged() = 0;
 
 protected:
-    IdTargetObserver(IdTargetObserverRegistry&, const AtomicString& id);
+    IdTargetObserver(IdTargetObserverRegistry&, const AtomString& id);
 
 private:
     IdTargetObserverRegistry* m_registry;
-    AtomicString m_id;
+    AtomString m_id;
 };
 
 } // namespace WebCore

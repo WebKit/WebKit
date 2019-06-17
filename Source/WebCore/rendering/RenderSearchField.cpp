@@ -105,7 +105,7 @@ void RenderSearchField::addSearchResult()
     while (static_cast<int>(m_recentSearches.size()) > inputElement().maxResults())
         m_recentSearches.removeLast();
 
-    const AtomicString& name = autosaveName();
+    const AtomString& name = autosaveName();
     if (!m_searchPopup)
         m_searchPopup = page().chrome().createSearchPopupMenu(*this);
 
@@ -125,7 +125,7 @@ void RenderSearchField::showPopup()
 
     m_searchPopupIsVisible = true;
 
-    const AtomicString& name = autosaveName();
+    const AtomString& name = autosaveName();
     m_searchPopup->loadRecentSearches(name, m_recentSearches);
 
     // Trim the recent searches list if the maximum size has changed since we last saved.
@@ -199,7 +199,7 @@ Visibility RenderSearchField::visibilityForCancelButton() const
     return (style().visibility() == Visibility::Hidden || inputElement().value().isEmpty()) ? Visibility::Hidden : Visibility::Visible;
 }
 
-const AtomicString& RenderSearchField::autosaveName() const
+const AtomString& RenderSearchField::autosaveName() const
 {
     return inputElement().attributeWithoutSynchronization(autosaveAttr);
 }
@@ -211,7 +211,7 @@ void RenderSearchField::valueChanged(unsigned listIndex, bool fireEvents)
     if (static_cast<int>(listIndex) == (listSize() - 1)) {
         if (fireEvents) {
             m_recentSearches.clear();
-            const AtomicString& name = autosaveName();
+            const AtomString& name = autosaveName();
             if (!name.isEmpty()) {
                 if (!m_searchPopup)
                     m_searchPopup = page().chrome().createSearchPopupMenu(*this);

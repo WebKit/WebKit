@@ -35,13 +35,13 @@ public:
 private:
     HTMLLIElement(const QualifiedName&, Document&);
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
     bool isPresentationAttribute(const QualifiedName&) const final;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 
     void didAttachRenderers() final;
 
-    void parseValue(const AtomicString&);
+    void parseValue(const AtomString&);
 };
 
 } // namespace WebCore

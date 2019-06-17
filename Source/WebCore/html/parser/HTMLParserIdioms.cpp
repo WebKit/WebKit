@@ -346,7 +346,7 @@ bool threadSafeMatch(const QualifiedName& a, const QualifiedName& b)
     return threadSafeEqual(*a.localName().impl(), *b.localName().impl());
 }
 
-String parseCORSSettingsAttribute(const AtomicString& value)
+String parseCORSSettingsAttribute(const AtomString& value)
 {
     if (value.isNull())
         return String();
@@ -468,12 +468,12 @@ bool parseMetaHTTPEquivRefresh(const StringView& input, double& delay, String& u
 }
 
 // https://html.spec.whatwg.org/#rules-for-parsing-a-hash-name-reference
-AtomicString parseHTMLHashNameReference(StringView usemap)
+AtomString parseHTMLHashNameReference(StringView usemap)
 {
     size_t numberSignIndex = usemap.find('#');
     if (numberSignIndex == notFound)
         return nullAtom();
-    return usemap.substring(numberSignIndex + 1).toAtomicString();
+    return usemap.substring(numberSignIndex + 1).toAtomString();
 }
 
 }

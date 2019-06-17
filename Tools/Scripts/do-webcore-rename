@@ -76,6 +76,8 @@ find(\&wanted, "Source/WTF");
 find(\&wanted, "Source/WebCore");
 find(\&wanted, "Source/WebKitLegacy");
 find(\&wanted, "Source/WebKit");
+find(\&wanted, "Tools/gdb");
+find(\&wanted, "Tools/lldb");
 find(\&wanted, "Tools/DumpRenderTree");
 find(\&wanted, "Tools/TestWebKitAPI");
 
@@ -100,13 +102,59 @@ sub wanted
 my $isDOMTypeRename = 0;
 my %renames = (
     # Renames go here in the form of:
-    "ConstructorRaisesException" => "ConstructorMayThrowLegacyException",
-    "GetterRaisesException" => "GetterMayThrowLegacyException",
-    "GetterRaisesExceptionWithMessage" => "GetterMayThrowLegacyExceptionWithMessage",
-    "RaisesException" => "MayThrowLegacyException",
-    "RaisesExceptionWithMessage" => "MayThrowLegacyExceptionWithMessage",
-    "SetterRaisesException" => "SetterMayThrowLegacyException",
-    "SetterRaisesExceptionWithMessage" => "SetterMayThrowLegacyExceptionWithMessage",
+    "AtomicString" => "AtomString",
+    "AtomicStringCreationFromLiteral" => "AtomStringCreationFromLiteral",
+    "AtomicStringCreationFromLiteralUniqueness" => "AtomStringCreationFromLiteralUniqueness",
+    "AtomicStringExistingHash" => "AtomStringExistingHash",
+    "AtomicStringFromLiteralCannotOverflow" => "AtomStringFromLiteralCannotOverflow",
+    "AtomicStringFromLiteralNotEmpty" => "AtomStringFromLiteralNotEmpty",
+    "AtomicStringHash" => "AtomStringHash",
+    "AtomicStringImpl" => "AtomStringImpl",
+    "AtomicStringImplCF" => "AtomStringImplCF",
+    "AtomicStringNumberDouble" => "AtomStringNumberDouble",
+    "AtomicStringTable" => "AtomStringTable",
+    "AtomicStringTable" => "AtomStringTable",
+    "AtomicStringTableLocker" => "AtomStringTableLocker",
+    "AtomicString_h" => "AtomString_h",
+    "IDLAtomicStringAdaptor" => "IDLAtomStringAdaptor",
+    "IDLRequiresExistingAtomicStringAdaptor" => "IDLRequiresExistingAtomStringAdaptor",
+    "RequiresExistingAtomicString" => "RequiresExistingAtomString",
+    "StringImplNullSymbolToAtomicString" => "StringImplNullSymbolToAtomString",
+    "StringImplStaticToAtomicString" => "StringImplStaticToAtomString",
+    "StringImplSymbolToAtomicString" => "StringImplSymbolToAtomString",
+    "ToAtomicString" => "ToAtomString",
+    "ToAtomicStringOnEmpty" => "ToAtomStringOnEmpty",
+    "TokenAtomicStringInitializer" => "TokenAtomStringInitializer",
+    "WTFAtomicStringPrinter" => "WTFAtomStringPrinter",
+    "WTFAtomicString_SummaryProvider" => "WTFAtomString_SummaryProvider",
+    "atomicString" => "atomString",
+    "atomicString1" => "atomString1",
+    "atomicString2" => "atomString2",
+    "atomicStringTable" => "atomStringTable",
+    "atomicStringWithTemplate" => "atomStringWithTemplate",
+    "atomicStrings" => "atomStrings",
+    "checkCurrentAtomicStringTable" => "checkCurrentAtomStringTable",
+    "existingAtomicString" => "existingAtomString",
+    "existingEntryAtomicStringTable" => "existingEntryAtomStringTable",
+    "getPropertyNameAtomicString" => "getPropertyNameAtomString",
+    "getValueNameAtomicString" => "getValueNameAtomString",
+    "isAtomic" => "isAtom",
+    "isAtomicString" => "isAtomString",
+    "isInAtomicStringTable" => "isInAtomStringTable",
+    "m_atomicStringTable" => "m_atomStringTable",
+    "m_currentAtomicStringTable" => "m_currentAtomStringTable",
+    "m_defaultAtomicStringTable" => "m_defaultAtomStringTable",
+    "m_entryAtomicStringTable" => "m_entryAtomStringTable",
+    "oldAtomicStringTable" => "oldAtomStringTable",
+    "propertyNameToAtomicString" => "propertyNameToAtomString",
+    "resolveRopeToAtomicString" => "resolveRopeToAtomString",
+    "resolveRopeToExistingAtomicString" => "resolveRopeToExistingAtomString",
+    "setCurrentAtomicStringTable" => "setCurrentAtomStringTable",
+    "shouldUseAtomicString" => "shouldUseAtomString",
+    "testAtomicStringNumber" => "testAtomStringNumber",
+    "toAtomicString" => "toAtomString",
+    "toExistingAtomicString" => "toExistingAtomString",
+    "useAtomicString" => "useAtomString",
 );
 
 my %renamesContemplatedForTheFuture = (
@@ -219,16 +267,9 @@ for my $file (sort @paths) {
         }
     } else {
         for my $from (@sortedRenameKeys) {
-            $newContents =~ s/\b$from(?!["\w])/$renames{$from}/g; # this " unconfuses Xcode syntax highlighting
+            $newContents =~ s/\b$from\b/$renames{$from}/g; # this " unconfuses Xcode syntax highlighting
         }
     }
-
-    # Remove the "virtual" keyword from virtual/override lines.
-    # Should be a no-op but also OK to remove this any time, now that we have done it once.
-    $newContents =~ s/^(\s*(\w+EXPORT\w*\s+)?)virtual ([^{;]+ override\b)/$1$3/mg;
-    $newContents =~ s/^(\s*(\w+EXPORT\w*\s+)?)virtual ([^{;]+ final\b)/$1$3/mg;
-    $newContents =~ s/\boverride\s+final\b/final/g;
-    $newContents =~ s/\bfinal\s+override\b/final/g;
 
     if ($newContents ne $contents) {
         open FILE, ">", $file or die "Failed to open $file";

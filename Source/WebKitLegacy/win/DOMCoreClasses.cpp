@@ -66,7 +66,7 @@ DEFINE_GUID(IID_DOMElement, 0x3b0c0eff, 0x478b, 0x4b0b, 0x82, 0x90, 0xd2, 0x32, 
 // "DOMObject" exists both in the WebCore namespace and unnamespaced in this
 // file, which leads to ambiguities if we say "using namespace WebCore".
 using namespace WebCore::HTMLNames;
-using WTF::AtomicString;
+using WTF::AtomString;
 using WebCore::BString;
 using WebCore::Element;
 using WebCore::ExceptionCode;
@@ -1286,7 +1286,7 @@ HRESULT DOMElement::font(_Out_ WebFontDescription* webFontDescription)
         return E_FAIL;
 
     auto fontDescription = renderer->style().fontCascade().fontDescription();
-    AtomicString family = fontDescription.firstFamily();
+    AtomString family = fontDescription.firstFamily();
 
     // FIXME: This leaks. Delete this whole function to get rid of the leak.
     UChar* familyCharactersBuffer = new UChar[family.length()];

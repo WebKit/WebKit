@@ -56,18 +56,18 @@ Optional<WallTime> ArgumentCoder<WallTime>::decode(Decoder& decoder)
     return WallTime::fromRawSeconds(*time);
 }
 
-void ArgumentCoder<AtomicString>::encode(Encoder& encoder, const AtomicString& atomicString)
+void ArgumentCoder<AtomString>::encode(Encoder& encoder, const AtomString& atomString)
 {
-    encoder << atomicString.string();
+    encoder << atomString.string();
 }
 
-bool ArgumentCoder<AtomicString>::decode(Decoder& decoder, AtomicString& atomicString)
+bool ArgumentCoder<AtomString>::decode(Decoder& decoder, AtomString& atomString)
 {
     String string;
     if (!decoder.decode(string))
         return false;
 
-    atomicString = string;
+    atomString = string;
     return true;
 }
 

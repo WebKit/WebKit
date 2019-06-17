@@ -42,7 +42,7 @@ FrameTree::~FrameTree()
         child->setView(nullptr);
 }
 
-void FrameTree::setName(const AtomicString& name) 
+void FrameTree::setName(const AtomString& name) 
 {
     m_name = name;
     if (!parent()) {
@@ -94,7 +94,7 @@ void FrameTree::removeChild(Frame& child)
     m_scopedChildCount = invalidCount;
 }
 
-AtomicString FrameTree::uniqueChildName(const AtomicString& requestedName) const
+AtomString FrameTree::uniqueChildName(const AtomString& requestedName) const
 {
     // If the requested name (the frame's "name" attribute) is unique, just use that.
     if (!requestedName.isEmpty() && !child(requestedName) && !equalIgnoringASCIICase(requestedName, "_blank"))
@@ -105,7 +105,7 @@ AtomicString FrameTree::uniqueChildName(const AtomicString& requestedName) const
     return generateUniqueName();
 }
 
-AtomicString FrameTree::generateUniqueName() const
+AtomString FrameTree::generateUniqueName() const
 {
     auto& top = this->top();
     if (&top.tree() != this)
@@ -142,7 +142,7 @@ inline Frame* FrameTree::scopedChild(unsigned index, TreeScope* scope) const
     return nullptr;
 }
 
-inline Frame* FrameTree::scopedChild(const AtomicString& name, TreeScope* scope) const
+inline Frame* FrameTree::scopedChild(const AtomString& name, TreeScope* scope) const
 {
     if (!scope)
         return nullptr;
@@ -173,7 +173,7 @@ Frame* FrameTree::scopedChild(unsigned index) const
     return scopedChild(index, m_thisFrame.document());
 }
 
-Frame* FrameTree::scopedChild(const AtomicString& name) const
+Frame* FrameTree::scopedChild(const AtomString& name) const
 {
     return scopedChild(name, m_thisFrame.document());
 }
@@ -201,7 +201,7 @@ Frame* FrameTree::child(unsigned index) const
     return result;
 }
 
-Frame* FrameTree::child(const AtomicString& name) const
+Frame* FrameTree::child(const AtomString& name) const
 {
     for (Frame* child = firstChild(); child; child = child->tree().nextSibling())
         if (child->tree().uniqueName() == name)
@@ -221,7 +221,7 @@ static bool isFrameFamiliarWith(Frame& frameA, Frame& frameB)
     return (frameAOpener && frameAOpener->page() == frameB.page()) || (frameBOpener && frameBOpener->page() == frameA.page()) || (frameAOpener && frameBOpener && frameAOpener->page() == frameBOpener->page());
 }
 
-Frame* FrameTree::find(const AtomicString& name, Frame& activeFrame) const
+Frame* FrameTree::find(const AtomString& name, Frame& activeFrame) const
 {
     // FIXME: _current is not part of the HTML specification.
     if (equalIgnoringASCIICase(name, "_self") || name == "_current" || name.isEmpty())

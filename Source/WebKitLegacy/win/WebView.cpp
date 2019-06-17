@@ -255,9 +255,9 @@ WebView* kit(Page* page)
     return static_cast<WebChromeClient&>(page->chrome().client()).webView();
 }
 
-static inline AtomicString toAtomicString(BSTR bstr)
+static inline AtomString toAtomString(BSTR bstr)
 {
-    return AtomicString(bstr, SysStringLen(bstr));
+    return AtomString(bstr, SysStringLen(bstr));
 }
 
 static inline String toString(BSTR bstr)
@@ -5115,7 +5115,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = preferences->cursiveFontFamily(&str);
     if (FAILED(hr))
         return hr;
-    settings.setCursiveFontFamily(toAtomicString(str));
+    settings.setCursiveFontFamily(toAtomString(str));
     str.clear();
 
     hr = preferences->defaultFixedFontSize(&size);
@@ -5137,13 +5137,13 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = preferences->fantasyFontFamily(&str);
     if (FAILED(hr))
         return hr;
-    settings.setFantasyFontFamily(toAtomicString(str));
+    settings.setFantasyFontFamily(toAtomString(str));
     str.clear();
 
     hr = preferences->fixedFontFamily(&str);
     if (FAILED(hr))
         return hr;
-    settings.setFixedFontFamily(toAtomicString(str));
+    settings.setFixedFontFamily(toAtomString(str));
     str.clear();
 
 #if ENABLE(VIDEO_TRACK)
@@ -5175,7 +5175,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = preferences->pictographFontFamily(&str);
     if (FAILED(hr))
         return hr;
-    settings.setPictographFontFamily(toAtomicString(str));
+    settings.setPictographFontFamily(toAtomString(str));
     str.clear();
 
     hr = preferences->isJavaEnabled(&enabled);
@@ -5311,19 +5311,19 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = preferences->sansSerifFontFamily(&str);
     if (FAILED(hr))
         return hr;
-    settings.setSansSerifFontFamily(toAtomicString(str));
+    settings.setSansSerifFontFamily(toAtomString(str));
     str.clear();
 
     hr = preferences->serifFontFamily(&str);
     if (FAILED(hr))
         return hr;
-    settings.setSerifFontFamily(toAtomicString(str));
+    settings.setSerifFontFamily(toAtomString(str));
     str.clear();
 
     hr = preferences->standardFontFamily(&str);
     if (FAILED(hr))
         return hr;
-    settings.setStandardFontFamily(toAtomicString(str));
+    settings.setStandardFontFamily(toAtomString(str));
     str.clear();
 
     hr = preferences->loadsImagesAutomatically(&enabled);

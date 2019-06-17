@@ -75,8 +75,8 @@ public:
 
     WEBCORE_EXPORT virtual HTMLFormElement* form() const;
 
-    WEBCORE_EXPORT const AtomicString& dir() const;
-    WEBCORE_EXPORT void setDir(const AtomicString&);
+    WEBCORE_EXPORT const AtomString& dir() const;
+    WEBCORE_EXPORT void setDir(const AtomString&);
 
     bool hasDirectionAuto() const;
     TextDirection directionalityIfhasDirAutoAttribute(bool& isAuto) const;
@@ -94,7 +94,7 @@ public:
 
     bool hasTagName(const HTMLQualifiedName& name) const { return hasLocalName(name.localName()); }
 
-    static const AtomicString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName);
+    static const AtomString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName);
 
     // Only some element types can be disabled: https://html.spec.whatwg.org/multipage/scripting.html#concept-element-disabled
     bool canBeActuallyDisabled() const;
@@ -102,8 +102,8 @@ public:
 
 #if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
     WEBCORE_EXPORT virtual AutocapitalizeType autocapitalizeType() const;
-    WEBCORE_EXPORT const AtomicString& autocapitalize() const;
-    WEBCORE_EXPORT void setAutocapitalize(const AtomicString& value);
+    WEBCORE_EXPORT const AtomString& autocapitalize() const;
+    WEBCORE_EXPORT void setAutocapitalize(const AtomString& value);
 
     bool autocorrect() const { return shouldAutocorrect(); }
     WEBCORE_EXPORT virtual bool shouldAutocorrect() const;
@@ -111,8 +111,8 @@ public:
 #endif
 
     WEBCORE_EXPORT InputMode canonicalInputMode() const;
-    const AtomicString& inputMode() const;
-    void setInputMode(const AtomicString& value);
+    const AtomString& inputMode() const;
+    void setInputMode(const AtomString& value);
 
 protected:
     HTMLElement(const QualifiedName& tagName, Document&, ConstructionType);
@@ -120,28 +120,28 @@ protected:
     void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, const String& value);
     void addHTMLColorToStyle(MutableStyleProperties&, CSSPropertyID, const String& color);
 
-    void applyAlignmentAttributeToStyle(const AtomicString&, MutableStyleProperties&);
-    void applyBorderAttributeToStyle(const AtomicString&, MutableStyleProperties&);
+    void applyAlignmentAttributeToStyle(const AtomString&, MutableStyleProperties&);
+    void applyBorderAttributeToStyle(const AtomString&, MutableStyleProperties&);
 
     bool matchesReadWritePseudoClass() const override;
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomString&) override;
     bool isPresentationAttribute(const QualifiedName&) const override;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
-    unsigned parseBorderWidthAttribute(const AtomicString&) const;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+    unsigned parseBorderWidthAttribute(const AtomString&) const;
 
     void childrenChanged(const ChildChange&) override;
     void calculateAndAdjustDirectionality();
 
-    typedef HashMap<AtomicStringImpl*, AtomicString> EventHandlerNameMap;
+    typedef HashMap<AtomStringImpl*, AtomString> EventHandlerNameMap;
     template<size_t tableSize> static void populateEventHandlerNameMap(EventHandlerNameMap&, const QualifiedName* const (&table)[tableSize]);
-    static const AtomicString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap&);
+    static const AtomString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap&);
 
 private:
     String nodeName() const final;
 
-    void mapLanguageAttributeToLocale(const AtomicString&, MutableStyleProperties&);
+    void mapLanguageAttributeToLocale(const AtomString&, MutableStyleProperties&);
 
-    void dirAttributeChanged(const AtomicString&);
+    void dirAttributeChanged(const AtomString&);
     void adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child);
     void adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChangeType);
     TextDirection directionality(Node** strongDirectionalityTextNode= 0) const;

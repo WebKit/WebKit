@@ -50,7 +50,7 @@ Ref<SVGGElement> SVGGElement::create(Document& document)
     return create(SVGNames::gTag, document);
 }
 
-void SVGGElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGGElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     SVGGraphicsElement::parseAttribute(name, value);
     SVGExternalResourcesRequired::parseAttribute(name, value);

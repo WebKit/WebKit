@@ -276,77 +276,77 @@ TEST(StringBuilderTest, CanShrink)
     ASSERT_FALSE(builder.canShrink());
 }
 
-TEST(StringBuilderTest, ToAtomicString)
+TEST(StringBuilderTest, ToAtomString)
 {
     StringBuilder builder;
     builder.append("123");
-    AtomicString atomicString = builder.toAtomicString();
-    ASSERT_EQ(String("123"), atomicString);
+    AtomString atomString = builder.toAtomString();
+    ASSERT_EQ(String("123"), atomString);
 
     builder.reserveCapacity(256);
     ASSERT_TRUE(builder.canShrink());
     for (int i = builder.length(); i < 128; i++)
         builder.append('x');
-    AtomicString atomicString1 = builder.toAtomicString();
-    ASSERT_EQ(128u, atomicString1.length());
-    ASSERT_EQ('x', atomicString1[127]);
+    AtomString atomString1 = builder.toAtomString();
+    ASSERT_EQ(128u, atomString1.length());
+    ASSERT_EQ('x', atomString1[127]);
 
     // Later change of builder should not affect the atomic string.
     for (int i = builder.length(); i < 256; i++)
         builder.append('x');
-    ASSERT_EQ(128u, atomicString1.length());
+    ASSERT_EQ(128u, atomString1.length());
 
     ASSERT_FALSE(builder.canShrink());
     String string = builder.toString();
-    AtomicString atomicString2 = builder.toAtomicString();
+    AtomString atomString2 = builder.toAtomString();
     // They should share the same StringImpl.
-    ASSERT_EQ(atomicString2.impl(), string.impl());
+    ASSERT_EQ(atomString2.impl(), string.impl());
 }
 
-TEST(StringBuilderTest, ToAtomicStringOnEmpty)
+TEST(StringBuilderTest, ToAtomStringOnEmpty)
 {
     { // Default constructed.
         StringBuilder builder;
-        AtomicString atomicString = builder.toAtomicString();
-        ASSERT_EQ(emptyAtom(), atomicString);
+        AtomString atomString = builder.toAtomString();
+        ASSERT_EQ(emptyAtom(), atomString);
     }
     { // With capacity.
         StringBuilder builder;
         builder.reserveCapacity(64);
-        AtomicString atomicString = builder.toAtomicString();
-        ASSERT_EQ(emptyAtom(), atomicString);
+        AtomString atomString = builder.toAtomString();
+        ASSERT_EQ(emptyAtom(), atomString);
     }
-    { // AtomicString constructed from a null string.
+    { // AtomString constructed from a null string.
         StringBuilder builder;
         builder.append(String());
-        AtomicString atomicString = builder.toAtomicString();
-        ASSERT_EQ(emptyAtom(), atomicString);
+        AtomString atomString = builder.toAtomString();
+        ASSERT_EQ(emptyAtom(), atomString);
     }
-    { // AtomicString constructed from an empty string.
+    { // AtomString constructed from an empty string.
         StringBuilder builder;
         builder.append(emptyString());
-        AtomicString atomicString = builder.toAtomicString();
-        ASSERT_EQ(emptyAtom(), atomicString);
+        AtomString atomString = builder.toAtomString();
+        ASSERT_EQ(emptyAtom(), atomString);
     }
-    { // AtomicString constructed from an empty StringBuilder.
+    { // AtomString constructed from an empty StringBuilder.
         StringBuilder builder;
         StringBuilder emptyBuilder;
         builder.append(emptyBuilder);
-        AtomicString atomicString = builder.toAtomicString();
-        ASSERT_EQ(emptyAtom(), atomicString);
+        AtomString atomString = builder.toAtomString();
+        ASSERT_EQ(emptyAtom(), atomString);
     }
-    { // AtomicString constructed from an empty char* string.
+    { // AtomString constructed from an empty char* string.
         StringBuilder builder;
         builder.append("", 0);
-        AtomicString atomicString = builder.toAtomicString();
-        ASSERT_EQ(emptyAtom(), atomicString);
+        AtomString atomString = builder.toAtomString();
+        ASSERT_EQ(emptyAtom(), atomString);
     }
     { // Cleared StringBuilder.
         StringBuilder builder;
         builder.appendLiteral("WebKit");
         builder.clear();
-        AtomicString atomicString = builder.toAtomicString();
-        ASSERT_EQ(emptyAtom(), atomicString);
+        AtomString atomString = builder.toAtomString();
+        ASSERT_EQ(emptyAtom(), atomString);
     }
 }
 

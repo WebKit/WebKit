@@ -59,12 +59,12 @@ SVGFontFaceUriElement::~SVGFontFaceUriElement()
 Ref<CSSFontFaceSrcValue> SVGFontFaceUriElement::srcValue() const
 {
     auto src = CSSFontFaceSrcValue::create(getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr), LoadedFromOpaqueSource::No);
-    AtomicString value(attributeWithoutSynchronization(formatAttr));
+    AtomString value(attributeWithoutSynchronization(formatAttr));
     src.get().setFormat(value.isEmpty() ? "svg" : value); // Default format
     return src;
 }
 
-void SVGFontFaceUriElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGFontFaceUriElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::hrefAttr || name == XLinkNames::hrefAttr)
         loadFont();
@@ -101,7 +101,7 @@ void SVGFontFaceUriElement::loadFont()
     if (m_cachedFont)
         m_cachedFont->removeClient(*this);
 
-    const AtomicString& href = getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr);
+    const AtomString& href = getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr);
     if (!href.isNull()) {
         ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
         options.contentSecurityPolicyImposition = isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;

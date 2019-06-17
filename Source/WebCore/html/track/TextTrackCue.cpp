@@ -54,9 +54,9 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrackCue);
 
-const AtomicString& TextTrackCue::cueShadowPseudoId()
+const AtomString& TextTrackCue::cueShadowPseudoId()
 {
-    static NeverDestroyed<const AtomicString> cue("cue", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> cue("cue", AtomString::ConstructFromLiteral);
     return cue;
 }
 

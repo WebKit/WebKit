@@ -49,7 +49,7 @@ Ref<SVGFEColorMatrixElement> SVGFEColorMatrixElement::create(const QualifiedName
     return adoptRef(*new SVGFEColorMatrixElement(tagName, document));
 }
 
-void SVGFEColorMatrixElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGFEColorMatrixElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::typeAttr) {
         auto propertyValue = SVGPropertyTraits<ColorMatrixType>::fromString(value);

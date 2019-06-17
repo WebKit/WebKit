@@ -296,7 +296,7 @@ void HTMLAttributeEquivalent::addToStyle(Element* element, EditingStyle* style) 
 RefPtr<CSSValue> HTMLAttributeEquivalent::attributeValueAsCSSValue(Element* element) const
 {
     ASSERT(element);
-    const AtomicString& value = element->getAttribute(m_attrName);
+    const AtomString& value = element->getAttribute(m_attrName);
     if (value.isNull())
         return nullptr;
     
@@ -321,7 +321,7 @@ HTMLFontSizeEquivalent::HTMLFontSizeEquivalent()
 RefPtr<CSSValue> HTMLFontSizeEquivalent::attributeValueAsCSSValue(Element* element) const
 {
     ASSERT(element);
-    const AtomicString& value = element->getAttribute(m_attrName);
+    const AtomString& value = element->getAttribute(m_attrName);
     if (value.isNull())
         return nullptr;
     CSSValueID size;

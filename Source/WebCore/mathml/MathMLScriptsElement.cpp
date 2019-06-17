@@ -77,7 +77,7 @@ const MathMLElement::Length& MathMLScriptsElement::superscriptShift()
     return cachedMathMLLength(superscriptshiftAttr, m_superscriptShift);
 }
 
-void MathMLScriptsElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void MathMLScriptsElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == subscriptshiftAttr)
         m_subscriptShift = WTF::nullopt;

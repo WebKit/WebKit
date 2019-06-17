@@ -194,7 +194,7 @@ public:
     virtual bool mediaPlayerIsLooping() const { return false; }
     virtual CachedResourceLoader* mediaPlayerCachedResourceLoader() { return nullptr; }
     virtual RefPtr<PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() { return nullptr; }
-    virtual bool doesHaveAttribute(const AtomicString&, AtomicString* = nullptr) const { return false; }
+    virtual bool doesHaveAttribute(const AtomString&, AtomString* = nullptr) const { return false; }
     virtual bool mediaPlayerShouldUsePersistentCache() const { return true; }
     virtual const String& mediaPlayerMediaCacheDirectory() const { return emptyString(); }
 
@@ -267,7 +267,7 @@ public:
     bool supportsScanning() const;
     bool canSaveMediaData() const;
     bool requiresImmediateCompositing() const;
-    bool doesHaveAttribute(const AtomicString&, AtomicString* value = nullptr) const;
+    bool doesHaveAttribute(const AtomString&, AtomString* value = nullptr) const;
     PlatformLayer* platformLayer() const;
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

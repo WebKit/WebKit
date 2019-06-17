@@ -26,18 +26,18 @@
 #pragma once
 
 #include "ThreadGlobalData.h"
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 struct CachedResourceRequestInitiators {
     CachedResourceRequestInitiators();
 
-    const AtomicString css;
-    const AtomicString eventsource;
-    const AtomicString fetch;
-    const AtomicString icon;
-    const AtomicString xmlhttprequest;
+    const AtomString css;
+    const AtomString eventsource;
+    const AtomString fetch;
+    const AtomString icon;
+    const AtomString xmlhttprequest;
     WTF_MAKE_NONCOPYABLE(CachedResourceRequestInitiators); WTF_MAKE_FAST_ALLOCATED;
 private:
     friend class ThreadGlobalData;

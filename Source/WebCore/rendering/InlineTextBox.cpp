@@ -1039,7 +1039,7 @@ void InlineTextBox::paintMarkedTextForeground(PaintInfo& paintInfo, const FloatR
 
     float emphasisMarkOffset = 0;
     Optional<bool> markExistsAndIsAbove = emphasisMarkExistsAndIsAbove(lineStyle);
-    const AtomicString& emphasisMark = markExistsAndIsAbove ? lineStyle.textEmphasisMarkString() : nullAtom();
+    const AtomString& emphasisMark = markExistsAndIsAbove ? lineStyle.textEmphasisMarkString() : nullAtom();
     if (!emphasisMark.isEmpty())
         emphasisMarkOffset = *markExistsAndIsAbove ? -font.fontMetrics().ascent() - font.emphasisMarkDescent(emphasisMark) : font.fontMetrics().descent() + font.emphasisMarkAscent(emphasisMark);
 

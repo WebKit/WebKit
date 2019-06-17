@@ -64,8 +64,8 @@ public:
     size_t bufferedAmountLowThreshold() const { return m_bufferedAmountLowThreshold; }
     void setBufferedAmountLowThreshold(size_t value) { m_bufferedAmountLowThreshold = value; }
 
-    const AtomicString& binaryType() const;
-    ExceptionOr<void> setBinaryType(const AtomicString&);
+    const AtomString& binaryType() const;
+    ExceptionOr<void> setBinaryType(const AtomString&);
 
     ExceptionOr<void> send(const String&);
     ExceptionOr<void> send(JSC::ArrayBuffer&);

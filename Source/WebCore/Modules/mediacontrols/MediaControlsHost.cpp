@@ -44,27 +44,27 @@
 
 namespace WebCore {
 
-const AtomicString& MediaControlsHost::automaticKeyword()
+const AtomString& MediaControlsHost::automaticKeyword()
 {
-    static NeverDestroyed<const AtomicString> automatic("automatic", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> automatic("automatic", AtomString::ConstructFromLiteral);
     return automatic;
 }
 
-const AtomicString& MediaControlsHost::forcedOnlyKeyword()
+const AtomString& MediaControlsHost::forcedOnlyKeyword()
 {
-    static NeverDestroyed<const AtomicString> forcedOn("forced-only", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> forcedOn("forced-only", AtomString::ConstructFromLiteral);
     return forcedOn;
 }
 
-const AtomicString& MediaControlsHost::alwaysOnKeyword()
+const AtomString& MediaControlsHost::alwaysOnKeyword()
 {
-    static NeverDestroyed<const AtomicString> alwaysOn("always-on", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> alwaysOn("always-on", AtomString::ConstructFromLiteral);
     return alwaysOn;
 }
 
-const AtomicString& MediaControlsHost::manualKeyword()
+const AtomString& MediaControlsHost::manualKeyword()
 {
-    static NeverDestroyed<const AtomicString> alwaysOn("manual", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> alwaysOn("manual", AtomString::ConstructFromLiteral);
     return alwaysOn;
 }
 
@@ -124,7 +124,7 @@ TextTrack* MediaControlsHost::captionMenuAutomaticItem()
     return TextTrack::captionMenuAutomaticItem();
 }
 
-AtomicString MediaControlsHost::captionDisplayMode() const
+AtomString MediaControlsHost::captionDisplayMode() const
 {
     Page* page = m_mediaElement->document().page();
     if (!page)

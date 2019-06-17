@@ -3584,7 +3584,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (constant.isString()) {
                 JSString* string = asString(constant);
                 const StringImpl* impl = string->tryGetValueImpl();
-                if (impl && impl->isAtomic())
+                if (impl && impl->isAtom())
                     m_state.setFoundConstants(true);
             }
         }

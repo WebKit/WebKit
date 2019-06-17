@@ -36,7 +36,7 @@
 #include "JSDOMBinding.h"
 #include "JSDataTransfer.h"
 #include <JavaScriptCore/JSLock.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 
 namespace WebCore {

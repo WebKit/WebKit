@@ -41,7 +41,7 @@ bool SVGZoomAndPan::parseZoomAndPan(const UChar*& start, const UChar* end)
     return false;
 }
 
-void SVGZoomAndPan::parseAttribute(const QualifiedName& attributeName, const AtomicString& value)
+void SVGZoomAndPan::parseAttribute(const QualifiedName& attributeName, const AtomString& value)
 {
     if (attributeName != SVGNames::zoomAndPanAttr)
         return;

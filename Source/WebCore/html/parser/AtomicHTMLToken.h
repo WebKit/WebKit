@@ -33,7 +33,7 @@ namespace WebCore {
 class AtomicHTMLToken {
 public:
     explicit AtomicHTMLToken(HTMLToken&);
-    AtomicHTMLToken(HTMLToken::Type, const AtomicString& name, Vector<Attribute>&& = { }); // Only StartTag or EndTag.
+    AtomicHTMLToken(HTMLToken::Type, const AtomString& name, Vector<Attribute>&& = { }); // Only StartTag or EndTag.
 
     AtomicHTMLToken(const AtomicHTMLToken&) = delete;
     AtomicHTMLToken(AtomicHTMLToken&&) = default;
@@ -42,9 +42,9 @@ public:
 
     // StartTag, EndTag, DOCTYPE.
 
-    void setName(const AtomicString&);
+    void setName(const AtomString&);
 
-    const AtomicString& name() const;
+    const AtomString& name() const;
 
     // DOCTYPE.
 
@@ -74,7 +74,7 @@ private:
 
     void initializeAttributes(const HTMLToken::AttributeList& attributes);
 
-    AtomicString m_name; // StartTag, EndTag, DOCTYPE.
+    AtomString m_name; // StartTag, EndTag, DOCTYPE.
 
     String m_data; // Comment
 
@@ -92,20 +92,20 @@ private:
 };
 
 const Attribute* findAttribute(const Vector<Attribute>&, const QualifiedName&);
-bool hasAttribute(const Vector<Attribute>&, const AtomicString& localName);
+bool hasAttribute(const Vector<Attribute>&, const AtomString& localName);
 
 inline HTMLToken::Type AtomicHTMLToken::type() const
 {
     return m_type;
 }
 
-inline const AtomicString& AtomicHTMLToken::name() const
+inline const AtomString& AtomicHTMLToken::name() const
 {
     ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag || m_type == HTMLToken::DOCTYPE);
     return m_name;
 }
 
-inline void AtomicHTMLToken::setName(const AtomicString& name)
+inline void AtomicHTMLToken::setName(const AtomString& name)
 {
     ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag || m_type == HTMLToken::DOCTYPE);
     m_name = name;
@@ -182,7 +182,7 @@ inline const Attribute* findAttribute(const Vector<Attribute>& attributes, const
     return nullptr;
 }
 
-inline bool hasAttribute(const Vector<Attribute>& attributes, const AtomicString& localName)
+inline bool hasAttribute(const Vector<Attribute>& attributes, const AtomString& localName)
 {
     for (auto& attribute : attributes) {
         if (attribute.localName() == localName)
@@ -202,11 +202,11 @@ inline void AtomicHTMLToken::initializeAttributes(const HTMLToken::AttributeList
         if (attribute.name.isEmpty())
             continue;
 
-        AtomicString localName(attribute.name);
+        AtomString localName(attribute.name);
 
         // FIXME: This is N^2 for the number of attributes.
         if (!hasAttribute(m_attributes, localName))
-            m_attributes.uncheckedAppend(Attribute(QualifiedName(nullAtom(), localName, nullAtom()), AtomicString(attribute.value)));
+            m_attributes.uncheckedAppend(Attribute(QualifiedName(nullAtom(), localName, nullAtom()), AtomString(attribute.value)));
     }
 }
 
@@ -218,7 +218,7 @@ inline AtomicHTMLToken::AtomicHTMLToken(HTMLToken& token)
         ASSERT_NOT_REACHED();
         return;
     case HTMLToken::DOCTYPE:
-        m_name = AtomicString(token.name());
+        m_name = AtomString(token.name());
         m_doctypeData = token.releaseDoctypeData();
         return;
     case HTMLToken::EndOfFile:
@@ -226,7 +226,7 @@ inline AtomicHTMLToken::AtomicHTMLToken(HTMLToken& token)
     case HTMLToken::StartTag:
     case HTMLToken::EndTag:
         m_selfClosing = token.selfClosing();
-        m_name = AtomicString(token.name());
+        m_name = AtomString(token.name());
         initializeAttributes(token.attributes());
         return;
     case HTMLToken::Comment:
@@ -244,7 +244,7 @@ inline AtomicHTMLToken::AtomicHTMLToken(HTMLToken& token)
     ASSERT_NOT_REACHED();
 }
 
-inline AtomicHTMLToken::AtomicHTMLToken(HTMLToken::Type type, const AtomicString& name, Vector<Attribute>&& attributes)
+inline AtomicHTMLToken::AtomicHTMLToken(HTMLToken::Type type, const AtomString& name, Vector<Attribute>&& attributes)
     : m_type(type)
     , m_name(name)
     , m_selfClosing(false)

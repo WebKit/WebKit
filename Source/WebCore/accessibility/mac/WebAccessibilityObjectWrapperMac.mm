@@ -2433,7 +2433,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
-    const AtomicString& overrideRoleDescription = m_object->roleDescription();
+    const AtomString& overrideRoleDescription = m_object->roleDescription();
     if (!overrideRoleDescription.isNull() && !overrideRoleDescription.isEmpty())
         return overrideRoleDescription;
     
@@ -2912,7 +2912,7 @@ IGNORE_WARNINGS_END
     }
     
     if ([attributeName isEqualToString:NSAccessibilityAccessKeyAttribute]) {
-        AtomicString accessKey = m_object->accessKey();
+        AtomString accessKey = m_object->accessKey();
         if (accessKey.isNull())
             return nil;
         return accessKey;

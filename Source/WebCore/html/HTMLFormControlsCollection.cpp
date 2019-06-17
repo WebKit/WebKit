@@ -121,19 +121,19 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
 
     auto cache = std::make_unique<CollectionNamedElementCache>();
 
-    HashSet<AtomicStringImpl*> foundInputElements;
+    HashSet<AtomStringImpl*> foundInputElements;
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     for (auto& elementPtr : unsafeFormControlElements()) {
         FormAssociatedElement& associatedElement = *elementPtr;
         if (associatedElement.isEnumeratable()) {
             HTMLElement& element = associatedElement.asHTMLElement();
-            const AtomicString& id = element.getIdAttribute();
+            const AtomString& id = element.getIdAttribute();
             if (!id.isEmpty()) {
                 cache->appendToIdCache(id, element);
                 foundInputElements.add(id.impl());
             }
-            const AtomicString& name = element.getNameAttribute();
+            const AtomString& name = element.getNameAttribute();
             if (!name.isEmpty() && id != name) {
                 cache->appendToNameCache(name, element);
                 foundInputElements.add(name.impl());
@@ -145,10 +145,10 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
         if (!elementPtr)
             continue;
         HTMLImageElement& element = *elementPtr;
-        const AtomicString& id = element.getIdAttribute();
+        const AtomString& id = element.getIdAttribute();
         if (!id.isEmpty() && !foundInputElements.contains(id.impl()))
             cache->appendToIdCache(id, element);
-        const AtomicString& name = element.getNameAttribute();
+        const AtomString& name = element.getNameAttribute();
         if (!name.isEmpty() && id != name && !foundInputElements.contains(name.impl()))
             cache->appendToNameCache(name, element);
     }

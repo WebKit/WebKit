@@ -61,7 +61,7 @@ void HTMLImageLoader::dispatchLoadEvent()
     element().dispatchEvent(Event::create(errorOccurred ? eventNames().errorEvent : eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-String HTMLImageLoader::sourceURI(const AtomicString& attr) const
+String HTMLImageLoader::sourceURI(const AtomString& attr) const
 {
     return stripLeadingAndTrailingHTMLSpaces(attr);
 }

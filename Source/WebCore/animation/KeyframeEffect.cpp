@@ -607,7 +607,7 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(ExecState& state)
                 auto value = toJS<IDLDOMString>(state, idlValue);
                 // 4. Call the [[DefineOwnProperty]] internal method on output keyframe with property name property name,
                 //    Property Descriptor { [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true, [[Value]]: value } and Boolean flag false.
-                JSObject::defineOwnProperty(outputKeyframe, &state, AtomicString(propertyName).impl(), PropertyDescriptor(value, 0), false);
+                JSObject::defineOwnProperty(outputKeyframe, &state, AtomString(propertyName).impl(), PropertyDescriptor(value, 0), false);
             }
 
             // 5. Append output keyframe to result.
@@ -645,7 +645,7 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(ExecState& state)
                 auto value = toJS<IDLDOMString>(state, it->value);
                 // 4. Call the [[DefineOwnProperty]] internal method on output keyframe with property name property name,
                 //    Property Descriptor { [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true, [[Value]]: value } and Boolean flag false.
-                JSObject::defineOwnProperty(outputKeyframe, &state, AtomicString(propertyName).impl(), PropertyDescriptor(value, 0), false);
+                JSObject::defineOwnProperty(outputKeyframe, &state, AtomString(propertyName).impl(), PropertyDescriptor(value, 0), false);
             }
 
             // 4. Append output keyframe to result.

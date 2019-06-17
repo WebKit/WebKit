@@ -43,7 +43,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/Threading.h>
-#import <wtf/text/AtomicStringHash.h>
+#import <wtf/text/AtomStringHash.h>
 #endif
 
 #import <wtf/SoftLinking.h>
@@ -73,7 +73,7 @@ static CGFloat toNSFontWeight(FontSelectionValue fontWeight)
     return NSFontWeightBlack;
 }
 
-RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontSelectionRequest request, float size, AllowUserInstalledFonts allowUserInstalledFonts)
+RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomString& family, FontSelectionRequest request, float size, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     // FIXME: See comment in FontCascadeDescription::effectiveFamilyAt() in FontDescriptionCocoa.cpp
     if (equalLettersIgnoringASCIICase(family, "-webkit-system-font") || equalLettersIgnoringASCIICase(family, "-apple-system") || equalLettersIgnoringASCIICase(family, "-apple-system-font") || equalLettersIgnoringASCIICase(family, "system-ui")) {

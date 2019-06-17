@@ -1000,13 +1000,13 @@ void ApplicationCacheGroup::scheduleReachedMaxAppCacheSizeCallback()
     // The timer will delete itself once it fires.
 }
 
-void ApplicationCacheGroup::postListenerTask(const AtomicString& eventType, int progressTotal, int progressDone, const HashSet<DocumentLoader*>& loaderSet)
+void ApplicationCacheGroup::postListenerTask(const AtomString& eventType, int progressTotal, int progressDone, const HashSet<DocumentLoader*>& loaderSet)
 {
     for (auto& loader : loaderSet)
         postListenerTask(eventType, progressTotal, progressDone, *loader);
 }
 
-void ApplicationCacheGroup::postListenerTask(const AtomicString& eventType, int progressTotal, int progressDone, DocumentLoader& loader)
+void ApplicationCacheGroup::postListenerTask(const AtomString& eventType, int progressTotal, int progressDone, DocumentLoader& loader)
 {
     auto* frame = loader.frame();
     if (!frame)

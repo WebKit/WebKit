@@ -34,9 +34,9 @@ Ref<SourceGraphic> SourceGraphic::create(Filter& filter)
     return adoptRef(*new SourceGraphic(filter));
 }
 
-const AtomicString& SourceGraphic::effectName()
+const AtomString& SourceGraphic::effectName()
 {
-    static NeverDestroyed<const AtomicString> s_effectName("SourceGraphic", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> s_effectName("SourceGraphic", AtomString::ConstructFromLiteral);
     return s_effectName;
 }
 

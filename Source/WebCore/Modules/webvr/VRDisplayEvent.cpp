@@ -29,14 +29,14 @@
 
 namespace WebCore {
 
-VRDisplayEvent::VRDisplayEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+VRDisplayEvent::VRDisplayEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
     , m_display(initializer.display)
     , m_reason(initializer.reason)
 {
 }
 
-VRDisplayEvent::VRDisplayEvent(const AtomicString& name, const RefPtr<VRDisplay>& display, Optional<VRDisplayEventReason>&& reason)
+VRDisplayEvent::VRDisplayEvent(const AtomString& name, const RefPtr<VRDisplay>& display, Optional<VRDisplayEventReason>&& reason)
     : Event(name, CanBubble::No, IsCancelable::No)
     , m_display(display)
     , m_reason(WTFMove(reason))

@@ -53,7 +53,7 @@ Ref<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGRectElement(tagName, document));
 }
 
-void SVGRectElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGRectElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     SVGParsingError parseError = NoError;
 

@@ -52,10 +52,10 @@ FontPlatformData* FontCache::getCustomFallbackFont(const UInt32 c, const FontDes
 {
     ASSERT(requiresCustomFallbackFont(c));
 
-    static NeverDestroyed<AtomicString> helveticaFamily("Helvetica Neue", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> timesNewRomanPSMTFamily("TimesNewRomanPSMT", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> helveticaFamily("Helvetica Neue", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> timesNewRomanPSMTFamily("TimesNewRomanPSMT", AtomString::ConstructFromLiteral);
 
-    AtomicString* family = nullptr;
+    AtomString* family = nullptr;
     switch (c) {
     case AppleLogo:
         family = &helveticaFamily.get();
@@ -128,7 +128,7 @@ static RetainPtr<CTFontDescriptorRef> systemFontDescriptor(FontSelectionValue we
     return adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), static_cast<CFDictionaryRef>(attributes.get())));
 }
 
-RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontSelectionRequest request, float size, AllowUserInstalledFonts allowUserInstalledFonts)
+RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomString& family, FontSelectionRequest request, float size, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     // FIXME: See comment in FontCascadeDescription::effectiveFamilyAt() in FontDescriptionCocoa.cpp
     if (family.startsWith("UICTFontTextStyle")) {

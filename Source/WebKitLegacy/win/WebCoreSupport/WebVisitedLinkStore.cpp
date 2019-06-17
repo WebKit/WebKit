@@ -78,7 +78,7 @@ void WebVisitedLinkStore::addVisitedLink(const String& urlString)
     addVisitedLinkHash(computeSharedStringHash(urlString));
 }
 
-bool WebVisitedLinkStore::isLinkVisited(Page& page, SharedStringHash linkHash, const URL& baseURL, const AtomicString& attributeURL)
+bool WebVisitedLinkStore::isLinkVisited(Page& page, SharedStringHash linkHash, const URL& baseURL, const AtomString& attributeURL)
 {
     populateVisitedLinksIfNeeded(page);
 

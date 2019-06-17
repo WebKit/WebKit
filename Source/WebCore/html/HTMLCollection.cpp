@@ -159,7 +159,7 @@ void HTMLCollection::invalidateNamedElementCache(Document& document) const
     }
 }
 
-Element* HTMLCollection::namedItemSlow(const AtomicString& name) const
+Element* HTMLCollection::namedItemSlow(const AtomString& name) const
 {
     // The pathological case. We need to walk the entire subtree.
     updateNamedElementCache();
@@ -179,7 +179,7 @@ Element* HTMLCollection::namedItemSlow(const AtomicString& name) const
 }
 
 // Documented in https://dom.spec.whatwg.org/#interface-htmlcollection.
-const Vector<AtomicString>& HTMLCollection::supportedPropertyNames()
+const Vector<AtomString>& HTMLCollection::supportedPropertyNames()
 {
     updateNamedElementCache();
     ASSERT(m_namedElementCache);
@@ -210,12 +210,12 @@ void HTMLCollection::updateNamedElementCache() const
     unsigned size = length();
     for (unsigned i = 0; i < size; ++i) {
         Element& element = *item(i);
-        const AtomicString& id = element.getIdAttribute();
+        const AtomString& id = element.getIdAttribute();
         if (!id.isEmpty())
             cache->appendToIdCache(id, element);
         if (!is<HTMLElement>(element))
             continue;
-        const AtomicString& name = element.getNameAttribute();
+        const AtomString& name = element.getNameAttribute();
         if (!name.isEmpty() && id != name && (type() != DocAll || nameShouldBeVisibleInDocumentAll(downcast<HTMLElement>(element))))
             cache->appendToNameCache(name, element);
     }
@@ -223,7 +223,7 @@ void HTMLCollection::updateNamedElementCache() const
     setNamedItemCache(WTFMove(cache));
 }
 
-Vector<Ref<Element>> HTMLCollection::namedItems(const AtomicString& name) const
+Vector<Ref<Element>> HTMLCollection::namedItems(const AtomString& name) const
 {
     // FIXME: This non-virtual function can't possibly be doing the correct thing for
     // any derived class that overrides the virtual namedItem function.

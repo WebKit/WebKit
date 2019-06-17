@@ -41,7 +41,7 @@ public:
     static Ref<CachedScriptFetcher> create(const String& charset);
 
 protected:
-    CachedScriptFetcher(const String& nonce, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree)
+    CachedScriptFetcher(const String& nonce, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree)
         : m_nonce(nonce)
         , m_charset(charset)
         , m_initiatorName(initiatorName)
@@ -59,7 +59,7 @@ protected:
 private:
     String m_nonce;
     String m_charset;
-    AtomicString m_initiatorName;
+    AtomString m_initiatorName;
     bool m_isInUserAgentShadowTree { false };
 };
 

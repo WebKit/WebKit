@@ -39,7 +39,7 @@
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace Inspector {
 class InjectedScriptManager;
@@ -142,9 +142,9 @@ public:
     void addEventListenersToNode(Node&);
     void didInsertDOMNode(Node&);
     void didRemoveDOMNode(Node&);
-    void willModifyDOMAttr(Element&, const AtomicString& oldValue, const AtomicString& newValue);
-    void didModifyDOMAttr(Element&, const AtomicString& name, const AtomicString& value);
-    void didRemoveDOMAttr(Element&, const AtomicString& name);
+    void willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue);
+    void didModifyDOMAttr(Element&, const AtomString& name, const AtomString& value);
+    void didRemoveDOMAttr(Element&, const AtomString& name);
     void characterDataModified(CharacterData&);
     void didInvalidateStyleAttr(Element&);
     void didPushShadowRoot(Element& host, ShadowRoot&);
@@ -156,8 +156,8 @@ public:
     void pseudoElementCreated(PseudoElement&);
     void pseudoElementDestroyed(PseudoElement&);
     void didAddEventListener(EventTarget&);
-    void willRemoveEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
-    bool isEventListenerDisabled(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
+    void willRemoveEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+    bool isEventListenerDisabled(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     void eventDidResetAfterDispatch(const Event&);
 
     // Callbacks that don't directly correspond to an instrumentation entry point.
@@ -195,8 +195,8 @@ public:
     static Node* scriptValueAsNode(JSC::JSValue);
     static JSC::JSValue nodeAsScriptValue(JSC::ExecState&, Node*);
 
-    bool hasBreakpointForEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
-    int idForEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
+    bool hasBreakpointForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+    int idForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
 
 private:
 #if ENABLE(VIDEO)
@@ -222,7 +222,7 @@ private:
     Ref<JSON::ArrayOf<String>> buildArrayForElementAttributes(Element*);
     Ref<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
     RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForPseudoElements(const Element&, NodeToIdMap* nodesMap);
-    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, int identifier, EventTarget&, const AtomicString& eventType, bool disabled, bool hasBreakpoint);
+    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, int identifier, EventTarget&, const AtomString& eventType, bool disabled, bool hasBreakpoint);
     RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node*);
     void processAccessibilityChildren(AccessibilityObject&, JSON::ArrayOf<int>&);
     
@@ -282,14 +282,14 @@ private:
         int identifier { 1 };
         RefPtr<EventTarget> eventTarget;
         RefPtr<EventListener> eventListener;
-        AtomicString eventType;
+        AtomString eventType;
         bool useCapture { false };
         bool disabled { false };
         bool hasBreakpoint { false };
 
         InspectorEventListener() { }
 
-        InspectorEventListener(int identifier, EventTarget& target, const AtomicString& type, EventListener& listener, bool capture)
+        InspectorEventListener(int identifier, EventTarget& target, const AtomString& type, EventListener& listener, bool capture)
             : identifier(identifier)
             , eventTarget(&target)
             , eventListener(&listener)
@@ -298,7 +298,7 @@ private:
         {
         }
 
-        bool matches(EventTarget& target, const AtomicString& type, EventListener& listener, bool capture)
+        bool matches(EventTarget& target, const AtomString& type, EventListener& listener, bool capture)
         {
             if (eventTarget.get() != &target)
                 return false;

@@ -33,7 +33,7 @@
 #include "SecurityOrigin.h"
 #include "ServiceWorkerIdentifier.h"
 #include <wtf/RefPtr.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -63,8 +63,8 @@ public:
     void setPriority(Optional<ResourceLoadPriority>&& priority) { m_priority = WTFMove(priority); }
 
     void setInitiator(Element&);
-    void setInitiator(const AtomicString& name);
-    const AtomicString& initiatorName() const;
+    void setInitiator(const AtomString& name);
+    const AtomString& initiatorName() const;
 
     bool allowsCaching() const { return m_options.cachingPolicy == CachingPolicy::AllowCaching; }
     void setCachingPolicy(CachingPolicy policy) { m_options.cachingPolicy = policy;  }
@@ -116,7 +116,7 @@ private:
     ResourceLoaderOptions m_options;
     Optional<ResourceLoadPriority> m_priority;
     RefPtr<Element> m_initiatorElement;
-    AtomicString m_initiatorName;
+    AtomString m_initiatorName;
     RefPtr<SecurityOrigin> m_origin;
     String m_fragmentIdentifier;
     bool m_isLinkPreload { false };

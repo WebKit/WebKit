@@ -29,7 +29,7 @@
 #include "CachedResourceHandle.h"
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -65,7 +65,7 @@ public:
     };
     Status status() const { return m_status; }
 
-    const AtomicString& familyNameOrURI() const { return m_familyNameOrURI; }
+    const AtomString& familyNameOrURI() const { return m_familyNameOrURI; }
 
     void opportunisticallyStartFontDataURLLoading(CSSFontSelector&);
 
@@ -85,7 +85,7 @@ private:
 
     void setStatus(Status);
 
-    AtomicString m_familyNameOrURI; // URI for remote, built-in font name for local.
+    AtomString m_familyNameOrURI; // URI for remote, built-in font name for local.
     CachedResourceHandle<CachedFont> m_font; // For remote fonts, a pointer to our cached resource.
     CSSFontFace& m_face; // Our owning font face.
 

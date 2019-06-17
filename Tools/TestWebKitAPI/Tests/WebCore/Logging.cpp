@@ -319,10 +319,10 @@ TEST_F(LoggingTest, Logger)
     EXPECT_EQ(0u, output().length());
 
     logger->setEnabled(this, true);
-    AtomicString string1("AtomicString", AtomicString::ConstructFromLiteral);
-    const AtomicString string2("const AtomicString", AtomicString::ConstructFromLiteral);
+    AtomString string1("AtomString", AtomString::ConstructFromLiteral);
+    const AtomString string2("const AtomString", AtomString::ConstructFromLiteral);
     logger->logAlways(TestChannel1, string1, " and ", string2);
-    EXPECT_TRUE(output().contains("AtomicString and const AtomicString", false));
+    EXPECT_TRUE(output().contains("AtomString and const AtomString", false));
 
     String string3("String");
     const String string4("const String");

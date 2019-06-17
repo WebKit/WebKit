@@ -33,8 +33,8 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
@@ -51,8 +51,8 @@ public:
 
     virtual ~UserMessageHandlersNamespace();
 
-    Vector<AtomicString> supportedPropertyNames() const;
-    UserMessageHandler* namedItem(DOMWrapperWorld&, const AtomicString&);
+    Vector<AtomString> supportedPropertyNames() const;
+    UserMessageHandler* namedItem(DOMWrapperWorld&, const AtomString&);
 
 private:
     explicit UserMessageHandlersNamespace(Frame&, UserContentProvider&);
@@ -61,7 +61,7 @@ private:
     void didInvalidate(UserContentProvider&) override;
 
     Ref<UserContentProvider> m_userContentProvider;
-    HashMap<std::pair<AtomicString, RefPtr<DOMWrapperWorld>>, RefPtr<UserMessageHandler>> m_messageHandlers;
+    HashMap<std::pair<AtomString, RefPtr<DOMWrapperWorld>>, RefPtr<UserMessageHandler>> m_messageHandlers;
 };
 
 } // namespace WebCore

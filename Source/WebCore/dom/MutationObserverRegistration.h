@@ -33,8 +33,8 @@
 #include "GCReachableRef.h"
 #include "MutationObserver.h"
 #include <wtf/HashSet.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
@@ -43,10 +43,10 @@ class QualifiedName;
 class MutationObserverRegistration {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MutationObserverRegistration(MutationObserver&, Node&, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
+    MutationObserverRegistration(MutationObserver&, Node&, MutationObserverOptions, const HashSet<AtomString>& attributeFilter);
     ~MutationObserverRegistration();
 
-    void resetObservation(MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
+    void resetObservation(MutationObserverOptions, const HashSet<AtomString>& attributeFilter);
     void observedSubtreeNodeWillDetach(Node&);
     std::unique_ptr<HashSet<GCReachableRef<Node>>> takeTransientRegistrations();
     bool hasTransientRegistrations() const { return m_transientRegistrationNodes && !m_transientRegistrationNodes->isEmpty(); }
@@ -67,7 +67,7 @@ private:
     RefPtr<Node> m_nodeKeptAlive;
     std::unique_ptr<HashSet<GCReachableRef<Node>>> m_transientRegistrationNodes;
     MutationObserverOptions m_options;
-    HashSet<AtomicString> m_attributeFilter;
+    HashSet<AtomString> m_attributeFilter;
 };
 
 } // namespace WebCore

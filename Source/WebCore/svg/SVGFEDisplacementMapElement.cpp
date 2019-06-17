@@ -50,7 +50,7 @@ Ref<SVGFEDisplacementMapElement> SVGFEDisplacementMapElement::create(const Quali
     return adoptRef(*new SVGFEDisplacementMapElement(tagName, document));
 }
 
-void SVGFEDisplacementMapElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGFEDisplacementMapElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::xChannelSelectorAttr) {
         auto propertyValue = SVGPropertyTraits<ChannelSelectorType>::fromString(value);

@@ -186,9 +186,9 @@ public:
 
     const CustomPropertyValueMap& inheritedCustomProperties() const { return m_rareInheritedData->customProperties->values; }
     const CustomPropertyValueMap& nonInheritedCustomProperties() const { return m_rareNonInheritedData->customProperties->values; }
-    const CSSCustomPropertyValue* getCustomProperty(const AtomicString&) const;
-    void setInheritedCustomPropertyValue(const AtomicString& name, Ref<CSSCustomPropertyValue>&& value) { return m_rareInheritedData.access().customProperties.access().setCustomPropertyValue(name, WTFMove(value)); }
-    void setNonInheritedCustomPropertyValue(const AtomicString& name, Ref<CSSCustomPropertyValue>&& value) { return m_rareNonInheritedData.access().customProperties.access().setCustomPropertyValue(name, WTFMove(value)); }
+    const CSSCustomPropertyValue* getCustomProperty(const AtomString&) const;
+    void setInheritedCustomPropertyValue(const AtomString& name, Ref<CSSCustomPropertyValue>&& value) { return m_rareInheritedData.access().customProperties.access().setCustomPropertyValue(name, WTFMove(value)); }
+    void setNonInheritedCustomPropertyValue(const AtomString& name, Ref<CSSCustomPropertyValue>&& value) { return m_rareNonInheritedData.access().customProperties.access().setCustomPropertyValue(name, WTFMove(value)); }
 
     void setHasViewportUnits(bool v = true) { m_nonInheritedFlags.hasViewportUnits = v; }
     bool hasViewportUnits() const { return m_nonInheritedFlags.hasViewportUnits; }
@@ -598,8 +598,8 @@ public:
     short hyphenationLimitBefore() const { return m_rareInheritedData->hyphenationLimitBefore; }
     short hyphenationLimitAfter() const { return m_rareInheritedData->hyphenationLimitAfter; }
     short hyphenationLimitLines() const { return m_rareInheritedData->hyphenationLimitLines; }
-    const AtomicString& hyphenationString() const { return m_rareInheritedData->hyphenationString; }
-    const AtomicString& locale() const { return fontDescription().locale(); }
+    const AtomString& hyphenationString() const { return m_rareInheritedData->hyphenationString; }
+    const AtomString& locale() const { return fontDescription().locale(); }
     BorderFit borderFit() const { return static_cast<BorderFit>(m_rareNonInheritedData->borderFit); }
     Resize resize() const { return static_cast<Resize>(m_rareNonInheritedData->resize); }
     ColumnAxis columnAxis() const { return static_cast<ColumnAxis>(m_rareNonInheritedData->multiCol->axis); }
@@ -627,9 +627,9 @@ public:
 
     TextEmphasisFill textEmphasisFill() const { return static_cast<TextEmphasisFill>(m_rareInheritedData->textEmphasisFill); }
     TextEmphasisMark textEmphasisMark() const;
-    const AtomicString& textEmphasisCustomMark() const { return m_rareInheritedData->textEmphasisCustomMark; }
+    const AtomString& textEmphasisCustomMark() const { return m_rareInheritedData->textEmphasisCustomMark; }
     OptionSet<TextEmphasisPosition> textEmphasisPosition() const { return OptionSet<TextEmphasisPosition>::fromRaw(m_rareInheritedData->textEmphasisPosition); }
-    const AtomicString& textEmphasisMarkString() const;
+    const AtomString& textEmphasisMarkString() const;
 
     RubyPosition rubyPosition() const { return static_cast<RubyPosition>(m_rareInheritedData->rubyPosition); }
 
@@ -661,7 +661,7 @@ public:
 
     // End CSS3 Getters
 
-    const AtomicString& lineGrid() const { return m_rareInheritedData->lineGrid; }
+    const AtomString& lineGrid() const { return m_rareInheritedData->lineGrid; }
     LineSnap lineSnap() const { return static_cast<LineSnap>(m_rareInheritedData->lineSnap); }
     LineAlign lineAlign() const { return static_cast<LineAlign>(m_rareInheritedData->lineAlign); }
 
@@ -1129,7 +1129,7 @@ public:
     void setHyphenationLimitBefore(short limit) { SET_VAR(m_rareInheritedData, hyphenationLimitBefore, limit); }
     void setHyphenationLimitAfter(short limit) { SET_VAR(m_rareInheritedData, hyphenationLimitAfter, limit); }
     void setHyphenationLimitLines(short limit) { SET_VAR(m_rareInheritedData, hyphenationLimitLines, limit); }
-    void setHyphenationString(const AtomicString& h) { SET_VAR(m_rareInheritedData, hyphenationString, h); }
+    void setHyphenationString(const AtomString& h) { SET_VAR(m_rareInheritedData, hyphenationString, h); }
     void setBorderFit(BorderFit b) { SET_VAR(m_rareNonInheritedData, borderFit, static_cast<unsigned>(b)); }
     void setResize(Resize r) { SET_VAR(m_rareNonInheritedData, resize, static_cast<unsigned>(r)); }
     void setColumnAxis(ColumnAxis axis) { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, axis, static_cast<unsigned>(axis)); }
@@ -1160,7 +1160,7 @@ public:
     void setTextEmphasisColor(const Color& c) { SET_VAR(m_rareInheritedData, textEmphasisColor, c); }
     void setTextEmphasisFill(TextEmphasisFill fill) { SET_VAR(m_rareInheritedData, textEmphasisFill, static_cast<unsigned>(fill)); }
     void setTextEmphasisMark(TextEmphasisMark mark) { SET_VAR(m_rareInheritedData, textEmphasisMark, static_cast<unsigned>(mark)); }
-    void setTextEmphasisCustomMark(const AtomicString& mark) { SET_VAR(m_rareInheritedData, textEmphasisCustomMark, mark); }
+    void setTextEmphasisCustomMark(const AtomString& mark) { SET_VAR(m_rareInheritedData, textEmphasisCustomMark, mark); }
     void setTextEmphasisPosition(OptionSet<TextEmphasisPosition> position) { SET_VAR(m_rareInheritedData, textEmphasisPosition, static_cast<unsigned>(position.toRaw())); }
     bool setTextOrientation(TextOrientation);
 
@@ -1190,7 +1190,7 @@ public:
 
     // End CSS3 Setters
 
-    void setLineGrid(const AtomicString& lineGrid) { SET_VAR(m_rareInheritedData, lineGrid, lineGrid); }
+    void setLineGrid(const AtomString& lineGrid) { SET_VAR(m_rareInheritedData, lineGrid, lineGrid); }
     void setLineSnap(LineSnap lineSnap) { SET_VAR(m_rareInheritedData, lineSnap, static_cast<unsigned>(lineSnap)); }
     void setLineAlign(LineAlign lineAlign) { SET_VAR(m_rareInheritedData, lineAlign, static_cast<unsigned>(lineAlign)); }
 
@@ -1394,7 +1394,7 @@ public:
 
     bool willChangeCreatesStackingContext() const;
 
-    const AtomicString& hyphenString() const;
+    const AtomString& hyphenString() const;
 
     bool inheritedNotEqual(const RenderStyle*) const;
     bool inheritedDataShared(const RenderStyle*) const;
@@ -1548,7 +1548,7 @@ public:
     static short initialHyphenationLimitBefore() { return -1; }
     static short initialHyphenationLimitAfter() { return -1; }
     static short initialHyphenationLimitLines() { return -1; }
-    static const AtomicString& initialHyphenationString() { return nullAtom(); }
+    static const AtomString& initialHyphenationString() { return nullAtom(); }
     static BorderFit initialBorderFit() { return BorderFit::Border; }
     static Resize initialResize() { return Resize::None; }
     static ControlPart initialAppearance() { return NoControlPart; }
@@ -1577,7 +1577,7 @@ public:
     static Color initialTextEmphasisColor() { return Color(); }
     static TextEmphasisFill initialTextEmphasisFill() { return TextEmphasisFill::Filled; }
     static TextEmphasisMark initialTextEmphasisMark() { return TextEmphasisMark::None; }
-    static const AtomicString& initialTextEmphasisCustomMark() { return nullAtom(); }
+    static const AtomString& initialTextEmphasisCustomMark() { return nullAtom(); }
     static OptionSet<TextEmphasisPosition> initialTextEmphasisPosition() { return { TextEmphasisPosition::Over, TextEmphasisPosition::Right }; }
     static RubyPosition initialRubyPosition() { return RubyPosition::Before; }
     static LineBoxContain initialLineBoxContain() { return LineBoxContainBlock | LineBoxContainInline | LineBoxContainReplaced; }
@@ -1590,7 +1590,7 @@ public:
     static StyleImage* initialMaskBoxImageSource() { return nullptr; }
     static PrintColorAdjust initialPrintColorAdjust() { return PrintColorAdjust::Economy; }
     static QuotesData* initialQuotes() { return nullptr; }
-    static const AtomicString& initialContentAltText() { return emptyAtom(); }
+    static const AtomString& initialContentAltText() { return emptyAtom(); }
 
 #if ENABLE(DARK_MODE_CSS)
     static StyleColorScheme initialColorScheme() { return { }; }
@@ -1664,7 +1664,7 @@ public:
 
     static TabSize initialTabSize() { return 8; }
 
-    static const AtomicString& initialLineGrid() { return nullAtom(); }
+    static const AtomString& initialLineGrid() { return nullAtom(); }
     static LineSnap initialLineSnap() { return LineSnap::None; }
     static LineAlign initialLineAlign() { return LineAlign::None; }
 
@@ -2029,7 +2029,7 @@ inline BorderStyle collapsedBorderStyle(BorderStyle style)
     return style;
 }
 
-inline const CSSCustomPropertyValue* RenderStyle::getCustomProperty(const AtomicString& name) const
+inline const CSSCustomPropertyValue* RenderStyle::getCustomProperty(const AtomString& name) const
 {
     for (auto* map : { &nonInheritedCustomProperties(), &inheritedCustomProperties() }) {
         if (auto* val = map->get(name))

@@ -46,14 +46,14 @@ public:
     bool isSupportedPropertyName(const String& name) const;
     Vector<String> supportedPropertyNames() const;
 
-    String namedItem(const AtomicString& name) const;
+    String namedItem(const AtomString& name) const;
     ExceptionOr<void> setNamedItem(const String& name, const String& value);
     bool deleteNamedProperty(const String& name);
 
     Element& element() { return m_element; }
 
 private:
-    const AtomicString* item(const String& name) const;
+    const AtomString* item(const String& name) const;
 
     Element& m_element;
 };

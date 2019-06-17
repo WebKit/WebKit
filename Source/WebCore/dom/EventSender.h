@@ -33,9 +33,9 @@ namespace WebCore {
 template<typename T> class EventSender {
     WTF_MAKE_NONCOPYABLE(EventSender); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit EventSender(const AtomicString& eventType);
+    explicit EventSender(const AtomString& eventType);
 
-    const AtomicString& eventType() const { return m_eventType; }
+    const AtomString& eventType() const { return m_eventType; }
     void dispatchEventSoon(T&);
     void cancelEvent(T&);
     void dispatchPendingEvents();
@@ -50,13 +50,13 @@ public:
 private:
     void timerFired() { dispatchPendingEvents(); }
 
-    AtomicString m_eventType;
+    AtomString m_eventType;
     Timer m_timer;
     Vector<T*> m_dispatchSoonList;
     Vector<T*> m_dispatchingList;
 };
 
-template<typename T> EventSender<T>::EventSender(const AtomicString& eventType)
+template<typename T> EventSender<T>::EventSender(const AtomString& eventType)
     : m_eventType(eventType)
     , m_timer(*this, &EventSender::timerFired)
 {

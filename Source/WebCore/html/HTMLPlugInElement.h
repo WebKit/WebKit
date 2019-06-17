@@ -95,7 +95,7 @@ protected:
 
     void willDetachRenderers() override;
     bool isPresentationAttribute(const QualifiedName&) const override;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
 
     virtual bool useFallbackContent() const { return false; }
 

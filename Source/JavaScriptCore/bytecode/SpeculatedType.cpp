@@ -494,7 +494,7 @@ SpeculatedType speculationFromCell(JSCell* cell)
     if (cell->isString()) {
         JSString* string = jsCast<JSString*>(cell);
         if (const StringImpl* impl = string->tryGetValueImpl()) {
-            if (impl->isAtomic())
+            if (impl->isAtom())
                 return SpecStringIdent;
         }
         return SpecString;

@@ -21,7 +21,7 @@
 #import "SearchPopupMenuMac.h"
 
 #include "PopupMenuMac.h"
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 SearchPopupMenuMac::SearchPopupMenuMac(WebCore::PopupMenuClient* client)
     : m_popup(adoptRef(new PopupMenuMac(client)))
@@ -42,12 +42,12 @@ bool SearchPopupMenuMac::enabled()
     return true;
 }
 
-void SearchPopupMenuMac::saveRecentSearches(const AtomicString& name, const Vector<WebCore::RecentSearch>& searchItems)
+void SearchPopupMenuMac::saveRecentSearches(const AtomString& name, const Vector<WebCore::RecentSearch>& searchItems)
 {
     WebCore::saveRecentSearches(name, searchItems);
 }
 
-void SearchPopupMenuMac::loadRecentSearches(const AtomicString& name, Vector<WebCore::RecentSearch>& searchItems)
+void SearchPopupMenuMac::loadRecentSearches(const AtomString& name, Vector<WebCore::RecentSearch>& searchItems)
 {
     searchItems = WebCore::loadRecentSearches(name);
 }

@@ -39,7 +39,7 @@ public:
     explicit TextInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
 
 private:
-    const AtomicString& formControlType() const override;
+    const AtomString& formControlType() const override;
 };
 
 } // namespace WebCore

@@ -2248,7 +2248,7 @@ bool EventHandler::handlePasteGlobalSelection(const PlatformMouseEvent& platform
 
 #if ENABLE(DRAG_SUPPORT)
 
-bool EventHandler::dispatchDragEvent(const AtomicString& eventType, Element& dragTarget, const PlatformMouseEvent& event, DataTransfer& dataTransfer)
+bool EventHandler::dispatchDragEvent(const AtomString& eventType, Element& dragTarget, const PlatformMouseEvent& event, DataTransfer& dataTransfer)
 {
     Ref<Frame> protectedFrame(m_frame);
     FrameView* view = m_frame.view();
@@ -2343,7 +2343,7 @@ static bool findDropZone(Node& target, DataTransfer& dataTransfer)
     return false;
 }
 
-EventHandler::DragTargetResponse EventHandler::dispatchDragEnterOrDragOverEvent(const AtomicString& eventType, Element& target, const PlatformMouseEvent& event,
+EventHandler::DragTargetResponse EventHandler::dispatchDragEnterOrDragOverEvent(const AtomString& eventType, Element& target, const PlatformMouseEvent& event,
     std::unique_ptr<Pasteboard>&& pasteboard, DragOperation sourceOperation, bool draggingFiles)
 {
     auto dataTransfer = DataTransfer::createForUpdatingDropTarget(target.document(), WTFMove(pasteboard), sourceOperation, draggingFiles);
@@ -2489,7 +2489,7 @@ MouseEventWithHitTestResults EventHandler::prepareMouseEvent(const HitTestReques
     return m_frame.document()->prepareMouseEvent(request, documentPointForWindowPoint(m_frame, mouseEvent.position()), mouseEvent);
 }
 
-static bool hierarchyHasCapturingEventListeners(Element* element, const AtomicString& pointerEventName, const AtomicString& compatibilityMouseEventName)
+static bool hierarchyHasCapturingEventListeners(Element* element, const AtomString& pointerEventName, const AtomString& compatibilityMouseEventName)
 {
     for (ContainerNode* curr = element; curr; curr = curr->parentInComposedTree()) {
         if (curr->hasCapturingEventListeners(pointerEventName) || curr->hasCapturingEventListeners(compatibilityMouseEventName))
@@ -2603,7 +2603,7 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
     }
 }
 
-bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targetNode, bool /*cancelable*/, int clickCount, const PlatformMouseEvent& platformMouseEvent, bool setUnder)
+bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetNode, bool /*cancelable*/, int clickCount, const PlatformMouseEvent& platformMouseEvent, bool setUnder)
 {
     Ref<Frame> protectedFrame(m_frame);
 
@@ -3355,12 +3355,12 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     return keydownResult || keypress->defaultPrevented() || keypress->defaultHandled();
 }
 
-static FocusDirection focusDirectionForKey(const AtomicString& keyIdentifier)
+static FocusDirection focusDirectionForKey(const AtomString& keyIdentifier)
 {
-    static NeverDestroyed<AtomicString> Down("Down", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> Up("Up", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> Left("Left", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> Right("Right", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> Down("Down", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> Up("Up", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> Left("Left", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> Right("Right", AtomString::ConstructFromLiteral);
 
     FocusDirection retVal = FocusDirectionNone;
 
@@ -3637,7 +3637,7 @@ void EventHandler::updateDragStateAfterEditDragIfNeeded(Element& rootEditableEle
         dragState().source = &rootEditableElement;
 }
 
-void EventHandler::dispatchDragSrcEvent(const AtomicString& eventType, const PlatformMouseEvent& event)
+void EventHandler::dispatchDragSrcEvent(const AtomString& eventType, const PlatformMouseEvent& event)
 {
     ASSERT(dragState().dataTransfer);
     dispatchDragEvent(eventType, *dragState().source, event, *dragState().dataTransfer);
@@ -4026,7 +4026,7 @@ void EventHandler::updateLastScrollbarUnderMouse(Scrollbar* scrollbar, SetOrClea
 }
 
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
-static const AtomicString& eventNameForTouchPointState(PlatformTouchPoint::State state)
+static const AtomString& eventNameForTouchPointState(PlatformTouchPoint::State state)
 {
     switch (state) {
     case PlatformTouchPoint::TouchReleased:
@@ -4240,7 +4240,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         // When sending a touch cancel event, use empty touches and targetTouches lists.
         bool isTouchCancelEvent = (state == PlatformTouchPoint::TouchCancelled);
         RefPtr<TouchList>& effectiveTouches(isTouchCancelEvent ? emptyList : touches);
-        const AtomicString& stateName(eventNameForTouchPointState(static_cast<PlatformTouchPoint::State>(state)));
+        const AtomString& stateName(eventNameForTouchPointState(static_cast<PlatformTouchPoint::State>(state)));
 
         for (auto& target : changedTouches[state].m_targets) {
             ASSERT(is<Node>(target));

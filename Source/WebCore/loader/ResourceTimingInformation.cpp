@@ -89,7 +89,7 @@ void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Docu
     info.added = Added;
 }
 
-void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>& resource, const AtomicString& initiatorName, Frame* frame)
+void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>& resource, const AtomString& initiatorName, Frame* frame)
 {
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled());
     ASSERT(resource.get());

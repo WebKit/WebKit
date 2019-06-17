@@ -1,3 +1,15 @@
+2019-06-16  Darin Adler  <darin@apple.com>
+
+        Rename AtomicString to AtomString
+        https://bugs.webkit.org/show_bug.cgi?id=195276
+
+        Reviewed by Michael Catanzaro.
+
+        * many files: Let do-webcore-rename do the renaming.
+
+        * Scripts/do-webcore-rename: Updated with a list of all the identifiers
+        that mention "atomic string" and changed them to instead say "atom string".
+
 2019-06-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Unreviewed test gardening.

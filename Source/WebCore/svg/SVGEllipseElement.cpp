@@ -50,7 +50,7 @@ Ref<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, D
     return adoptRef(*new SVGEllipseElement(tagName, document));
 }
 
-void SVGEllipseElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGEllipseElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     SVGParsingError parseError = NoError;
 

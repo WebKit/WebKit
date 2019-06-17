@@ -111,7 +111,7 @@ void PlaybackSessionModelMediaElement::handleEvent(WebCore::ScriptExecutionConte
     updateForEventName(event.type());
 }
 
-void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomicString& eventName)
+void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomString& eventName)
 {
     if (m_clients.isEmpty())
         return;
@@ -385,10 +385,10 @@ double PlaybackSessionModelMediaElement::playbackStartedTime() const
     return m_mediaElement->playbackStartedTime();
 }
 
-const Vector<AtomicString>& PlaybackSessionModelMediaElement::observedEventNames()
+const Vector<AtomString>& PlaybackSessionModelMediaElement::observedEventNames()
 {
     // FIXME(157452): Remove the right-hand constructor notation once NeverDestroyed supports initializer_lists.
-    static NeverDestroyed<Vector<AtomicString>> names = Vector<AtomicString>({
+    static NeverDestroyed<Vector<AtomString>> names = Vector<AtomString>({
         eventNames().durationchangeEvent,
         eventNames().pauseEvent,
         eventNames().playEvent,
@@ -401,9 +401,9 @@ const Vector<AtomicString>& PlaybackSessionModelMediaElement::observedEventNames
     return names.get();
 }
 
-const AtomicString&  PlaybackSessionModelMediaElement::eventNameAll()
+const AtomString&  PlaybackSessionModelMediaElement::eventNameAll()
 {
-    static NeverDestroyed<AtomicString> eventNameAll("allEvents", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> eventNameAll("allEvents", AtomString::ConstructFromLiteral);
     return eventNameAll;
 }
 
@@ -505,7 +505,7 @@ uint64_t PlaybackSessionModelMediaElement::legibleMediaSelectedIndex() const
     if (!host)
         return selectedIndex;
 
-    AtomicString displayMode = host->captionDisplayMode();
+    AtomString displayMode = host->captionDisplayMode();
     TextTrack* offItem = host->captionMenuOffItem();
     TextTrack* automaticItem = host->captionMenuAutomaticItem();
 

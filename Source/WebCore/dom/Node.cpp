@@ -687,13 +687,13 @@ ExceptionOr<Ref<Node>> Node::cloneNodeForBindings(bool deep)
     return cloneNode(deep);
 }
 
-const AtomicString& Node::prefix() const
+const AtomString& Node::prefix() const
 {
     // For nodes other than elements and attributes, the prefix is always null
     return nullAtom();
 }
 
-ExceptionOr<void> Node::setPrefix(const AtomicString&)
+ExceptionOr<void> Node::setPrefix(const AtomString&)
 {
     // The spec says that for nodes other than elements and attributes, prefix is always null.
     // It does not say what to do when the user tries to set the prefix on another type of
@@ -701,12 +701,12 @@ ExceptionOr<void> Node::setPrefix(const AtomicString&)
     return Exception { NamespaceError };
 }
 
-const AtomicString& Node::localName() const
+const AtomString& Node::localName() const
 {
     return nullAtom();
 }
 
-const AtomicString& Node::namespaceURI() const
+const AtomString& Node::namespaceURI() const
 {
     return nullAtom();
 }
@@ -976,7 +976,7 @@ void Node::clearNodeLists()
     rareData()->clearNodeLists();
 }
 
-ExceptionOr<void> Node::checkSetPrefix(const AtomicString& prefix)
+ExceptionOr<void> Node::checkSetPrefix(const AtomString& prefix)
 {
     // Perform error checking as required by spec for setting Node.prefix. Used by
     // Element::setPrefix() and Attr::setPrefix()
@@ -1411,7 +1411,7 @@ bool Node::isEqualNode(Node* other) const
 }
 
 // https://dom.spec.whatwg.org/#locate-a-namespace
-static const AtomicString& locateDefaultNamespace(const Node& node, const AtomicString& prefix)
+static const AtomString& locateDefaultNamespace(const Node& node, const AtomString& prefix)
 {
     switch (node.nodeType()) {
     case Node::ELEMENT_NODE: {
@@ -1453,21 +1453,21 @@ static const AtomicString& locateDefaultNamespace(const Node& node, const Atomic
 }
 
 // https://dom.spec.whatwg.org/#dom-node-isdefaultnamespace
-bool Node::isDefaultNamespace(const AtomicString& potentiallyEmptyNamespace) const
+bool Node::isDefaultNamespace(const AtomString& potentiallyEmptyNamespace) const
 {
-    const AtomicString& namespaceURI = potentiallyEmptyNamespace.isEmpty() ? nullAtom() : potentiallyEmptyNamespace;
+    const AtomString& namespaceURI = potentiallyEmptyNamespace.isEmpty() ? nullAtom() : potentiallyEmptyNamespace;
     return locateDefaultNamespace(*this, nullAtom()) == namespaceURI;
 }
 
 // https://dom.spec.whatwg.org/#dom-node-lookupnamespaceuri
-const AtomicString& Node::lookupNamespaceURI(const AtomicString& potentiallyEmptyPrefix) const
+const AtomString& Node::lookupNamespaceURI(const AtomString& potentiallyEmptyPrefix) const
 {
-    const AtomicString& prefix = potentiallyEmptyPrefix.isEmpty() ? nullAtom() : potentiallyEmptyPrefix;
+    const AtomString& prefix = potentiallyEmptyPrefix.isEmpty() ? nullAtom() : potentiallyEmptyPrefix;
     return locateDefaultNamespace(*this, prefix);
 }
 
 // https://dom.spec.whatwg.org/#locate-a-namespace-prefix
-static const AtomicString& locateNamespacePrefix(const Element& element, const AtomicString& namespaceURI)
+static const AtomString& locateNamespacePrefix(const Element& element, const AtomString& namespaceURI)
 {
     if (element.namespaceURI() == namespaceURI)
         return element.prefix();
@@ -1483,7 +1483,7 @@ static const AtomicString& locateNamespacePrefix(const Element& element, const A
 }
 
 // https://dom.spec.whatwg.org/#dom-node-lookupprefix
-const AtomicString& Node::lookupPrefix(const AtomicString& namespaceURI) const
+const AtomString& Node::lookupPrefix(const AtomString& namespaceURI) const
 {
     if (namespaceURI.isEmpty())
         return nullAtom();
@@ -1741,7 +1741,7 @@ static void appendAttributeDesc(const Node* node, StringBuilder& stringBuilder, 
     if (!is<Element>(*node))
         return;
 
-    const AtomicString& attr = downcast<Element>(*node).getAttribute(name);
+    const AtomString& attr = downcast<Element>(*node).getAttribute(name);
     if (attr.isEmpty())
         return;
 
@@ -1794,7 +1794,7 @@ void Node::showNodePathForThis() const
             fprintf(stderr, "/%s", node->nodeName().utf8().data());
 
             const Element& element = downcast<Element>(*node);
-            const AtomicString& idattr = element.getIdAttribute();
+            const AtomString& idattr = element.getIdAttribute();
             bool hasIdAttr = !idattr.isNull() && !idattr.isEmpty();
             if (node->previousSibling() || node->nextSibling()) {
                 int count = 0;
@@ -2104,7 +2104,7 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
         downcast<Element>(*this).didMoveToNewDocument(oldDocument, newDocument);
 }
 
-static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eventType, Ref<EventListener>&& listener, const EventTarget::AddEventListenerOptions& options)
+static inline bool tryAddEventListener(Node* targetNode, const AtomString& eventType, Ref<EventListener>&& listener, const EventTarget::AddEventListenerOptions& options)
 {
     if (!targetNode->EventTarget::addEventListener(eventType, listener.copyRef(), options))
         return false;
@@ -2133,12 +2133,12 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
     return true;
 }
 
-bool Node::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+bool Node::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     return tryAddEventListener(this, eventType, WTFMove(listener), options);
 }
 
-static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& eventType, EventListener& listener, const EventTarget::ListenerOptions& options)
+static inline bool tryRemoveEventListener(Node* targetNode, const AtomString& eventType, EventListener& listener, const EventTarget::ListenerOptions& options)
 {
     if (!targetNode->EventTarget::removeEventListener(eventType, listener, options))
         return false;
@@ -2168,7 +2168,7 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& 
     return true;
 }
 
-bool Node::removeEventListener(const AtomicString& eventType, EventListener& listener, const ListenerOptions& options)
+bool Node::removeEventListener(const AtomString& eventType, EventListener& listener, const ListenerOptions& options)
 {
     return tryRemoveEventListener(this, eventType, listener, options);
 }
@@ -2271,7 +2271,7 @@ HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> Node::registeredMu
     return result;
 }
 
-void Node::registerMutationObserver(MutationObserver& observer, MutationObserverOptions options, const HashSet<AtomicString>& attributeFilter)
+void Node::registerMutationObserver(MutationObserver& observer, MutationObserverOptions options, const HashSet<AtomString>& attributeFilter)
 {
     MutationObserverRegistration* registration = nullptr;
     auto& registry = ensureRareData().ensureMutationObserverData().registry;
@@ -2367,7 +2367,7 @@ void Node::dispatchSubtreeModifiedEvent()
 
     if (!document().hasListenerType(Document::DOMSUBTREEMODIFIED_LISTENER))
         return;
-    const AtomicString& subtreeModifiedEventName = eventNames().DOMSubtreeModifiedEvent;
+    const AtomString& subtreeModifiedEventName = eventNames().DOMSubtreeModifiedEvent;
     if (!parentNode() && !hasEventListeners(subtreeModifiedEventName))
         return;
 
@@ -2405,7 +2405,7 @@ void Node::defaultEventHandler(Event& event)
 {
     if (event.target() != this)
         return;
-    const AtomicString& eventType = event.type();
+    const AtomString& eventType = event.type();
     if (eventType == eventNames().keydownEvent || eventType == eventNames().keypressEvent) {
         if (is<KeyboardEvent>(event)) {
             if (Frame* frame = document().frame())

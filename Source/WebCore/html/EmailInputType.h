@@ -39,7 +39,7 @@ public:
     explicit EmailInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
 
 private:
-    const AtomicString& formControlType() const override;
+    const AtomString& formControlType() const override;
     bool typeMismatchFor(const String&) const override;
     bool typeMismatch() const override;
     String typeMismatchText() const override;

@@ -48,7 +48,7 @@ static const int monthDefaultStepBase = 0;
 static const int monthStepScaleFactor = 1;
 static const StepRange::StepDescription monthStepDescription { monthDefaultStep, monthDefaultStepBase, monthStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger };
 
-const AtomicString& MonthInputType::formControlType() const
+const AtomString& MonthInputType::formControlType() const
 {
     return InputTypeNames::month();
 }

@@ -31,23 +31,23 @@ namespace WebCore {
 
 class AccessibleSetValueEvent : public Event {
 public:
-    static Ref<AccessibleSetValueEvent> create(const AtomicString& type, const AtomicString& value)
+    static Ref<AccessibleSetValueEvent> create(const AtomString& type, const AtomString& value)
     {
         return adoptRef(*new AccessibleSetValueEvent(type, value));
     }
 
     virtual ~AccessibleSetValueEvent();
 
-    const AtomicString& value() const { return m_value; }
+    const AtomString& value() const { return m_value; }
 
 protected:
-    AccessibleSetValueEvent(const AtomicString& type, const AtomicString& value);
+    AccessibleSetValueEvent(const AtomString& type, const AtomString& value);
 
     // Event.
     EventInterface eventInterface() const override { return AccessibleSetValueEventInterfaceType; }
 
 private:
-    const AtomicString m_value;
+    const AtomString m_value;
 };
 
 }

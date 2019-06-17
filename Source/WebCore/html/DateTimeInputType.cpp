@@ -45,7 +45,7 @@ static const int dateTimeDefaultStepBase = 0;
 static const int dateTimeStepScaleFactor = 1000;
 static const StepRange::StepDescription dateTimeStepDescription { dateTimeDefaultStep, dateTimeDefaultStepBase, dateTimeStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger };
 
-const AtomicString& DateTimeInputType::formControlType() const
+const AtomString& DateTimeInputType::formControlType() const
 {
     return InputTypeNames::datetime();
 }

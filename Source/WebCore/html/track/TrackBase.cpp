@@ -52,7 +52,7 @@ static RefPtr<Logger>& nullLogger()
 }
 #endif
 
-TrackBase::TrackBase(Type type, const AtomicString& id, const AtomicString& label, const AtomicString& language)
+TrackBase::TrackBase(Type type, const AtomString& id, const AtomString& label, const AtomString& language)
     : m_uniqueId(++s_uniqueId)
     , m_id(id)
     , m_label(label)
@@ -141,7 +141,7 @@ static bool isValidBCP47LanguageTag(const String& languageTag)
     return true;
 }
     
-void TrackBase::setLanguage(const AtomicString& language)
+void TrackBase::setLanguage(const AtomString& language)
 {
     if (!language.isEmpty() && !isValidBCP47LanguageTag(language)) {
         String message;
@@ -162,7 +162,7 @@ void TrackBase::setLanguage(const AtomicString& language)
     m_language = language;
 }
 
-AtomicString TrackBase::validBCP47Language() const
+AtomString TrackBase::validBCP47Language() const
 {
     return m_validBCP47Language;
 }
@@ -174,17 +174,17 @@ WTFLogChannel& TrackBase::logChannel() const
 }
 #endif
 
-MediaTrackBase::MediaTrackBase(Type type, const AtomicString& id, const AtomicString& label, const AtomicString& language)
+MediaTrackBase::MediaTrackBase(Type type, const AtomString& id, const AtomString& label, const AtomString& language)
     : TrackBase(type, id, label, language)
 {
 }
 
-void MediaTrackBase::setKind(const AtomicString& kind)
+void MediaTrackBase::setKind(const AtomString& kind)
 {
     setKindInternal(kind);
 }
 
-void MediaTrackBase::setKindInternal(const AtomicString& kind)
+void MediaTrackBase::setKindInternal(const AtomString& kind)
 {
     if (isValidKind(kind))
         m_kind = kind;

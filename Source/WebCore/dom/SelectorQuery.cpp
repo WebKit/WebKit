@@ -221,7 +221,7 @@ ALWAYS_INLINE void SelectorDataList::executeFastPathForIdSelector(const Containe
     ASSERT(m_selectors.size() == 1);
     ASSERT(idSelector);
 
-    const AtomicString& idToMatch = idSelector->value();
+    const AtomString& idToMatch = idSelector->value();
     if (UNLIKELY(rootNode.treeScope().containsMultipleElementsWithId(idToMatch))) {
         const Vector<Element*>* elements = rootNode.treeScope().getAllElementsById(idToMatch);
         ASSERT(elements);
@@ -263,7 +263,7 @@ static ContainerNode& filterRootById(ContainerNode& rootNode, const CSSSelector&
     bool inAdjacentChain = false;
     for (; selector; selector = selector->tagHistory()) {
         if (canBeUsedForIdFastPath(*selector)) {
-            const AtomicString& idToMatch = selector->value();
+            const AtomString& idToMatch = selector->value();
             if (ContainerNode* searchRoot = rootNode.treeScope().getElementById(idToMatch)) {
                 if (LIKELY(!rootNode.treeScope().containsMultipleElementsWithId(idToMatch))) {
                     if (inAdjacentChain)
@@ -283,7 +283,7 @@ static ContainerNode& filterRootById(ContainerNode& rootNode, const CSSSelector&
     return rootNode;
 }
 
-static ALWAYS_INLINE bool localNameMatches(const Element& element, const AtomicString& localName, const AtomicString& lowercaseLocalName)
+static ALWAYS_INLINE bool localNameMatches(const Element& element, const AtomString& localName, const AtomString& lowercaseLocalName)
 {
     if (element.isHTMLElement() && element.document().isHTMLDocument())
         return element.localName() == lowercaseLocalName;
@@ -292,7 +292,7 @@ static ALWAYS_INLINE bool localNameMatches(const Element& element, const AtomicS
 }
 
 template <typename SelectorQueryTrait>
-static inline void elementsForLocalName(const ContainerNode& rootNode, const AtomicString& localName, const AtomicString& lowercaseLocalName, typename SelectorQueryTrait::OutputType& output)
+static inline void elementsForLocalName(const ContainerNode& rootNode, const AtomString& localName, const AtomString& lowercaseLocalName, typename SelectorQueryTrait::OutputType& output)
 {
     if (localName == lowercaseLocalName) {
         for (auto& element : elementDescendants(const_cast<ContainerNode&>(rootNode))) {
@@ -331,9 +331,9 @@ ALWAYS_INLINE void SelectorDataList::executeSingleTagNameSelectorData(const Cont
     ASSERT(isSingleTagNameSelector(*selectorData.selector));
 
     const QualifiedName& tagQualifiedName = selectorData.selector->tagQName();
-    const AtomicString& selectorLocalName = tagQualifiedName.localName();
-    const AtomicString& selectorLowercaseLocalName = selectorData.selector->tagLowercaseLocalName();
-    const AtomicString& selectorNamespaceURI = tagQualifiedName.namespaceURI();
+    const AtomString& selectorLocalName = tagQualifiedName.localName();
+    const AtomString& selectorLowercaseLocalName = selectorData.selector->tagLowercaseLocalName();
+    const AtomString& selectorNamespaceURI = tagQualifiedName.namespaceURI();
 
     if (selectorNamespaceURI == starAtom()) {
         if (selectorLocalName != starAtom()) {
@@ -361,7 +361,7 @@ ALWAYS_INLINE void SelectorDataList::executeSingleClassNameSelectorData(const Co
     ASSERT(m_selectors.size() == 1);
     ASSERT(isSingleClassNameSelector(*selectorData.selector));
 
-    const AtomicString& className = selectorData.selector->value();
+    const AtomString& className = selectorData.selector->value();
     for (auto& element : elementDescendants(const_cast<ContainerNode&>(rootNode))) {
         if (element.hasClass() && element.classNames().contains(className)) {
             SelectorQueryTrait::appendOutputForElement(output, &element);

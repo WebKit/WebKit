@@ -217,7 +217,7 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
     usesFirstLetterRules = usesFirstLetterRules || other.usesFirstLetterRules;
 }
 
-void RuleFeatureSet::registerContentAttribute(const AtomicString& attributeName)
+void RuleFeatureSet::registerContentAttribute(const AtomString& attributeName)
 {
     contentAttributeNamesInRules.add(attributeName.convertToASCIILowercase());
     attributeCanonicalLocalNamesInRules.add(attributeName);

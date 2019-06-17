@@ -59,7 +59,7 @@ double PaintWorkletGlobalScope::devicePixelRatio() const
     return responsibleDocument()->domWindow()->devicePixelRatio();
 }
 
-PaintWorkletGlobalScope::PaintDefinition::PaintDefinition(const AtomicString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&& paintCallback, Vector<String>&& inputProperties, Vector<String>&& inputArguments)
+PaintWorkletGlobalScope::PaintDefinition::PaintDefinition(const AtomString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&& paintCallback, Vector<String>&& inputProperties, Vector<String>&& inputArguments)
     : name(name)
     , paintConstructor(paintConstructor)
     , paintCallback(WTFMove(paintCallback))

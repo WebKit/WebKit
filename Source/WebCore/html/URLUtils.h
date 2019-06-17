@@ -297,7 +297,7 @@ String URLUtils<T>::hash() const
     String fragmentIdentifier = href().fragmentIdentifier();
     if (fragmentIdentifier.isEmpty())
         return emptyString();
-    return AtomicString(String("#" + fragmentIdentifier));
+    return AtomString(String("#" + fragmentIdentifier));
 }
 
 template <typename T>

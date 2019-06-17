@@ -115,7 +115,7 @@ bool HTMLImageElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLImageElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+void HTMLImageElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr)
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);
@@ -137,15 +137,15 @@ void HTMLImageElement::collectStyleForPresentationAttribute(const QualifiedName&
         HTMLElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
-const AtomicString& HTMLImageElement::imageSourceURL() const
+const AtomString& HTMLImageElement::imageSourceURL() const
 {
     return m_bestFitImageURL.isEmpty() ? attributeWithoutSynchronization(srcAttr) : m_bestFitImageURL;
 }
 
 void HTMLImageElement::setBestFitURLAndDPRFromImageCandidate(const ImageCandidate& candidate)
 {
-    m_bestFitImageURL = candidate.string.toAtomicString();
-    m_currentSrc = AtomicString(document().completeURL(imageSourceURL()).string());
+    m_bestFitImageURL = candidate.string.toAtomString();
+    m_currentSrc = AtomString(document().completeURL(imageSourceURL()).string());
     if (candidate.density >= 0)
         m_imageDevicePixelRatio = 1 / candidate.density;
     if (is<RenderImage>(renderer()))
@@ -215,7 +215,7 @@ void HTMLImageElement::selectImageSource()
     m_imageLoader.updateFromElementIgnoringPreviousError();
 }
 
-void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == altAttr) {
         if (is<RenderImage>(renderer()))
@@ -247,7 +247,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
             bool willHaveName = !value.isNull();
             if (m_hadNameBeforeAttributeChanged != willHaveName && isConnected() && !isInShadowTree() && is<HTMLDocument>(document())) {
                 HTMLDocument& document = downcast<HTMLDocument>(this->document());
-                const AtomicString& id = getIdAttribute();
+                const AtomString& id = getIdAttribute();
                 if (!id.isEmpty() && id != getNameAttribute()) {
                     if (willHaveName)
                         document.addDocumentNamedItem(*id.impl(), *this);
@@ -261,12 +261,12 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
     }
 }
 
-const AtomicString& HTMLImageElement::altText() const
+const AtomString& HTMLImageElement::altText() const
 {
     // lets figure out the alt text.. magic stuff
     // http://www.w3.org/TR/1998/REC-html40-19980424/appendix/notes.html#altgen
     // also heavily discussed by Hixie on bugzilla
-    const AtomicString& alt = attributeWithoutSynchronization(altAttr);
+    const AtomString& alt = attributeWithoutSynchronization(altAttr);
     if (!alt.isNull())
         return alt;
     // fall back to title attribute
@@ -564,7 +564,7 @@ String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Att
     return HTMLElement::completeURLsInAttributeValue(base, attribute);
 }
 
-bool HTMLImageElement::matchesUsemap(const AtomicStringImpl& name) const
+bool HTMLImageElement::matchesUsemap(const AtomStringImpl& name) const
 {
     return m_parsedUsemap.impl() == &name;
 }
@@ -574,7 +574,7 @@ HTMLMapElement* HTMLImageElement::associatedMapElement() const
     return treeScope().getImageMap(m_parsedUsemap);
 }
 
-const AtomicString& HTMLImageElement::alt() const
+const AtomString& HTMLImageElement::alt() const
 {
     return attributeWithoutSynchronization(altAttr);
 }
@@ -634,7 +634,7 @@ bool HTMLImageElement::complete() const
 
 DecodingMode HTMLImageElement::decodingMode() const
 {
-    const AtomicString& decodingMode = attributeWithoutSynchronization(decodingAttr);
+    const AtomString& decodingMode = attributeWithoutSynchronization(decodingAttr);
     if (equalLettersIgnoringASCIICase(decodingMode, "sync"))
         return DecodingMode::Synchronous;
     if (equalLettersIgnoringASCIICase(decodingMode, "async"))
@@ -667,7 +667,7 @@ bool HTMLImageElement::isServerMap() const
     if (!hasAttributeWithoutSynchronization(ismapAttr))
         return false;
 
-    const AtomicString& usemap = attributeWithoutSynchronization(usemapAttr);
+    const AtomString& usemap = attributeWithoutSynchronization(usemapAttr);
 
     // If the usemap attribute starts with '#', it refers to a map element in the document.
     if (usemap.string()[0] == '#')
@@ -676,7 +676,7 @@ bool HTMLImageElement::isServerMap() const
     return document().completeURL(stripLeadingAndTrailingHTMLSpaces(usemap)).isEmpty();
 }
 
-void HTMLImageElement::setCrossOrigin(const AtomicString& value)
+void HTMLImageElement::setCrossOrigin(const AtomString& value)
 {
     setAttributeWithoutSynchronization(crossoriginAttr, value);
 }

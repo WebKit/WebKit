@@ -481,7 +481,7 @@ void SourceBuffer::seekToTime(const MediaTime& time)
 
     for (auto& trackBufferPair : m_trackBufferMap) {
         TrackBuffer& trackBuffer = trackBufferPair.value;
-        const AtomicString& trackID = trackBufferPair.key;
+        const AtomString& trackID = trackBufferPair.key;
 
         trackBuffer.needsReenqueueing = true;
         reenqueueMediaForTime(trackBuffer, trackID, time);
@@ -570,7 +570,7 @@ bool SourceBuffer::isRemoved() const
     return !m_source;
 }
 
-void SourceBuffer::scheduleEvent(const AtomicString& eventName)
+void SourceBuffer::scheduleEvent(const AtomString& eventName)
 {
     auto event = Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::No);
     event->setTarget(this);
@@ -703,7 +703,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(AppendResult result)
     MediaTime currentMediaTime = m_source->currentTime();
     for (auto& trackBufferPair : m_trackBufferMap) {
         TrackBuffer& trackBuffer = trackBufferPair.value;
-        const AtomicString& trackID = trackBufferPair.key;
+        const AtomString& trackID = trackBufferPair.key;
 
         if (trackBuffer.needsReenqueueing) {
             DEBUG_LOG(LOGIDENTIFIER, "reenqueuing at time ", currentMediaTime);
@@ -1508,7 +1508,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(MediaSample& sample)
 
         // NOTE: this is out-of-order, but we need TrackBuffer to be able to cache the results of timestamp offset rounding
         // 1.5 Let track buffer equal the track buffer that the coded frame will be added to.
-        AtomicString trackID = sample.trackID();
+        AtomString trackID = sample.trackID();
         auto it = m_trackBufferMap.find(trackID);
         if (it == m_trackBufferMap.end()) {
             // The client managed to append a sample with a trackID not present in the initialization
@@ -1976,7 +1976,7 @@ void SourceBuffer::textTrackKindChanged(TextTrack& track)
         m_source->mediaElement()->textTrackKindChanged(track);
 }
 
-void SourceBuffer::sourceBufferPrivateReenqueSamples(const AtomicString& trackID)
+void SourceBuffer::sourceBufferPrivateReenqueSamples(const AtomString& trackID)
 {
     if (isRemoved())
         return;
@@ -1991,7 +1991,7 @@ void SourceBuffer::sourceBufferPrivateReenqueSamples(const AtomicString& trackID
     reenqueueMediaForTime(trackBuffer, trackID, m_source->currentTime());
 }
 
-void SourceBuffer::sourceBufferPrivateDidBecomeReadyForMoreSamples(const AtomicString& trackID)
+void SourceBuffer::sourceBufferPrivateDidBecomeReadyForMoreSamples(const AtomString& trackID)
 {
     if (isRemoved())
         return;
@@ -2006,7 +2006,7 @@ void SourceBuffer::sourceBufferPrivateDidBecomeReadyForMoreSamples(const AtomicS
         provideMediaData(trackBuffer, trackID);
 }
 
-void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, const AtomicString& trackID)
+void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, const AtomString& trackID)
 {
     if (m_source->isSeeking())
         return;
@@ -2058,7 +2058,7 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, const AtomicString
     trySignalAllSamplesInTrackEnqueued(trackID);
 }
 
-void SourceBuffer::trySignalAllSamplesInTrackEnqueued(const AtomicString& trackID)
+void SourceBuffer::trySignalAllSamplesInTrackEnqueued(const AtomString& trackID)
 {
     if (m_source->isEnded() && m_trackBufferMap.get(trackID).decodeQueue.empty()) {
         DEBUG_LOG(LOGIDENTIFIER, "enqueued all samples from track ", trackID);
@@ -2068,11 +2068,11 @@ void SourceBuffer::trySignalAllSamplesInTrackEnqueued(const AtomicString& trackI
 
 void SourceBuffer::trySignalAllSamplesEnqueued()
 {
-    for (const AtomicString& trackID : m_trackBufferMap.keys())
+    for (const AtomString& trackID : m_trackBufferMap.keys())
         trySignalAllSamplesInTrackEnqueued(trackID);
 }
 
-void SourceBuffer::reenqueueMediaForTime(TrackBuffer& trackBuffer, const AtomicString& trackID, const MediaTime& time)
+void SourceBuffer::reenqueueMediaForTime(TrackBuffer& trackBuffer, const AtomString& trackID, const MediaTime& time)
 {
     m_private->flush(trackID);
     trackBuffer.decodeQueue.clear();
@@ -2242,7 +2242,7 @@ void SourceBuffer::reportExtraMemoryAllocated()
     scriptExecutionContext()->vm().heap.deprecatedReportExtraMemory(extraMemoryCostDelta);
 }
 
-Vector<String> SourceBuffer::bufferedSamplesForTrackID(const AtomicString& trackID)
+Vector<String> SourceBuffer::bufferedSamplesForTrackID(const AtomString& trackID)
 {
     auto it = m_trackBufferMap.find(trackID);
     if (it == m_trackBufferMap.end())
@@ -2256,7 +2256,7 @@ Vector<String> SourceBuffer::bufferedSamplesForTrackID(const AtomicString& track
     return sampleDescriptions;
 }
 
-Vector<String> SourceBuffer::enqueuedSamplesForTrackID(const AtomicString& trackID)
+Vector<String> SourceBuffer::enqueuedSamplesForTrackID(const AtomString& trackID)
 {
     return m_private->enqueuedSamplesForTrackID(trackID);
 }

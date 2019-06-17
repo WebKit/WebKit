@@ -434,7 +434,7 @@ StyleRuleCharset::StyleRuleCharset(const StyleRuleCharset& o)
 
 StyleRuleCharset::~StyleRuleCharset() = default;
 
-StyleRuleNamespace::StyleRuleNamespace(AtomicString prefix, AtomicString uri)
+StyleRuleNamespace::StyleRuleNamespace(AtomString prefix, AtomString uri)
     : StyleRuleBase(Namespace)
     , m_prefix(prefix)
     , m_uri(uri)

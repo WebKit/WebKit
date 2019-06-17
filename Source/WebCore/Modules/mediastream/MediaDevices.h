@@ -89,7 +89,7 @@ private:
     explicit MediaDevices(Document&);
 
     void scheduledEventTimerFired();
-    bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
 
     friend class JSMediaDevicesOwner;
 

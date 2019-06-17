@@ -88,9 +88,9 @@ public:
     const SpaceSplitString& classNames() const { return m_classNames; }
     static ptrdiff_t classNamesMemoryOffset() { return OBJECT_OFFSETOF(ElementData, m_classNames); }
 
-    const AtomicString& idForStyleResolution() const { return m_idForStyleResolution; }
+    const AtomString& idForStyleResolution() const { return m_idForStyleResolution; }
     static ptrdiff_t idForStyleResolutionMemoryOffset() { return OBJECT_OFFSETOF(ElementData, m_idForStyleResolution); }
-    void setIdForStyleResolution(const AtomicString& newId) const { m_idForStyleResolution = newId; }
+    void setIdForStyleResolution(const AtomString& newId) const { m_idForStyleResolution = newId; }
 
     const StyleProperties* inlineStyle() const { return m_inlineStyle.get(); }
     const StyleProperties* presentationAttributeStyle() const;
@@ -102,7 +102,7 @@ public:
     const Attribute& attributeAt(unsigned index) const;
     const Attribute* findAttributeByName(const QualifiedName&) const;
     unsigned findAttributeIndexByName(const QualifiedName&) const;
-    unsigned findAttributeIndexByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
+    unsigned findAttributeIndexByName(const AtomString& name, bool shouldIgnoreAttributeCase) const;
     const Attribute* findLanguageAttribute() const;
 
     bool hasID() const { return !m_idForStyleResolution.isNull(); }
@@ -161,7 +161,7 @@ protected:
 
     mutable RefPtr<StyleProperties> m_inlineStyle;
     mutable SpaceSplitString m_classNames;
-    mutable AtomicString m_idForStyleResolution;
+    mutable AtomString m_idForStyleResolution;
 
 private:
     friend class Element;
@@ -173,7 +173,7 @@ private:
     void destroy();
 
     const Attribute* attributeBase() const;
-    const Attribute* findAttributeByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
+    const Attribute* findAttributeByName(const AtomString& name, bool shouldIgnoreAttributeCase) const;
 
     Ref<UniqueElementData> makeUniqueCopy() const;
 };
@@ -206,7 +206,7 @@ public:
     Ref<ShareableElementData> makeShareableCopy() const;
 
     // These functions do no error/duplicate checking.
-    void addAttribute(const QualifiedName&, const AtomicString&);
+    void addAttribute(const QualifiedName&, const AtomString&);
     void removeAttribute(unsigned index);
 
     Attribute& attributeAt(unsigned index);
@@ -260,7 +260,7 @@ inline AttributeIteratorAccessor ElementData::attributesIterator() const
     return AttributeIteratorAccessor(downcast<ShareableElementData>(*this).m_attributeArray, arraySize());
 }
 
-ALWAYS_INLINE const Attribute* ElementData::findAttributeByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const
+ALWAYS_INLINE const Attribute* ElementData::findAttributeByName(const AtomString& name, bool shouldIgnoreAttributeCase) const
 {
     unsigned index = findAttributeIndexByName(name, shouldIgnoreAttributeCase);
     if (index != attributeNotFound)
@@ -280,14 +280,14 @@ ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const QualifiedName
 
 // We use a boolean parameter instead of calling shouldIgnoreAttributeCase so that the caller
 // can tune the behavior (hasAttribute is case sensitive whereas getAttribute is not).
-ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const
+ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const AtomString& name, bool shouldIgnoreAttributeCase) const
 {
     unsigned attributeCount = length();
     if (!attributeCount)
         return attributeNotFound;
 
     const Attribute* attributes = attributeBase();
-    const AtomicString& caseAdjustedName = shouldIgnoreAttributeCase ? name.convertToASCIILowercase() : name;
+    const AtomString& caseAdjustedName = shouldIgnoreAttributeCase ? name.convertToASCIILowercase() : name;
 
     unsigned attributeIndex = 0;
     do {
@@ -322,7 +322,7 @@ inline const Attribute& ElementData::attributeAt(unsigned index) const
     return attributeBase()[index];
 }
 
-inline void UniqueElementData::addAttribute(const QualifiedName& attributeName, const AtomicString& value)
+inline void UniqueElementData::addAttribute(const QualifiedName& attributeName, const AtomString& value)
 {
     m_attributeVector.append(Attribute(attributeName, value));
 }

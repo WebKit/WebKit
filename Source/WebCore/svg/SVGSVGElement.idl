@@ -74,7 +74,7 @@
     [NewObject] SVGTransform createSVGTransform();
     [NewObject] SVGTransform createSVGTransformFromMatrix(SVGMatrix matrix);
 
-    Element getElementById([RequiresExistingAtomicString] DOMString elementId);
+    Element getElementById([RequiresExistingAtomString] DOMString elementId);
 };
 
 SVGSVGElement implements SVGExternalResourcesRequired;

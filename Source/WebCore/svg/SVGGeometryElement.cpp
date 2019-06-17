@@ -92,7 +92,7 @@ bool SVGGeometryElement::isPointInStroke(DOMPointInit&& pointInit)
     return renderer->isPointInStroke(point);
 }
 
-void SVGGeometryElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGGeometryElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::pathLengthAttr) {
         m_pathLength->setBaseValInternal(value.toFloat());

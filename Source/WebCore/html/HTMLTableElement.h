@@ -62,8 +62,8 @@ public:
     WEBCORE_EXPORT Ref<HTMLCollection> rows();
     WEBCORE_EXPORT Ref<HTMLCollection> tBodies();
 
-    const AtomicString& rules() const;
-    const AtomicString& summary() const;
+    const AtomString& rules() const;
+    const AtomString& summary() const;
 
     const StyleProperties* additionalCellStyle();
     const StyleProperties* additionalGroupStyle(bool rows);
@@ -71,9 +71,9 @@ public:
 private:
     HTMLTableElement(const QualifiedName&, Document&);
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
     bool isPresentationAttribute(const QualifiedName&) const final;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
     bool isURLAttribute(const Attribute&) const final;
 
     // Used to obtain either a solid or outset border decl and to deal with the frame and rules attributes.

@@ -73,7 +73,7 @@ protected:
     Vector<RefPtr<TrackBase>> m_inbandTracks;
 
 private:
-    void scheduleTrackEvent(const AtomicString& eventName, Ref<TrackBase>&&);
+    void scheduleTrackEvent(const AtomString& eventName, Ref<TrackBase>&&);
 
     bool canSuspendForDocumentSuspension() const final;
     void suspend(ReasonForSuspension) final;

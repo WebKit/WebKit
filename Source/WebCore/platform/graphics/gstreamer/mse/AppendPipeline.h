@@ -73,7 +73,7 @@ private:
     void appsinkNewSample(GRefPtr<GstSample>&&);
     void handleEndOfAppend();
     void didReceiveInitializationSegment();
-    AtomicString trackId();
+    AtomString trackId();
 
     GstBus* bus() { return m_bus.get(); }
     GstElement* pipeline() { return m_pipeline.get(); }

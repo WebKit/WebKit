@@ -60,7 +60,7 @@ AffineTransform SVGMarkerElement::viewBoxToViewTransform(float viewWidth, float 
     return SVGFitToViewBox::viewBoxToViewTransform(viewBox(), preserveAspectRatio(), viewWidth, viewHeight);
 }
 
-void SVGMarkerElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGMarkerElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::markerUnitsAttr) {
         auto propertyValue = SVGPropertyTraits<SVGMarkerUnitsType>::fromString(value);

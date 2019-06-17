@@ -74,8 +74,8 @@ private:
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
-    void maxLengthAttributeChanged(const AtomicString& newValue);
-    void minLengthAttributeChanged(const AtomicString& newValue);
+    void maxLengthAttributeChanged(const AtomString& newValue);
+    void minLengthAttributeChanged(const AtomString& newValue);
 
     void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&) const;
     static String sanitizeUserInputValue(const String&, unsigned maxLength);
@@ -98,7 +98,7 @@ private:
     bool isEnumeratable() const final { return true; }
     bool supportLabels() const final { return true; }
 
-    const AtomicString& formControlType() const final;
+    const AtomString& formControlType() const final;
 
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;
@@ -106,9 +106,9 @@ private:
     bool isTextField() const final { return true; }
 
     void childrenChanged(const ChildChange&) final;
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
     bool isPresentationAttribute(const QualifiedName&) const final;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     bool appendFormData(DOMFormData&, bool) final;
     void reset() final;

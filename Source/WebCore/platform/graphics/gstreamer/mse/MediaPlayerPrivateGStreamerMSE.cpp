@@ -52,8 +52,8 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/URL.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
 
 static const char* dumpReadyState(WebCore::MediaPlayer::ReadyState readyState)
 {

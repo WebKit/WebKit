@@ -140,7 +140,7 @@ MutableStyleProperties& StyledElement::ensureMutableInlineStyle()
     return downcast<MutableStyleProperties>(*inlineStyle);
 }
 
-void StyledElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason reason)
+void StyledElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
 {
     if (oldValue != newValue) {
         if (name == styleAttr)
@@ -168,7 +168,7 @@ static bool usesStyleBasedEditability(const StyleProperties& properties)
     return properties.getPropertyCSSValue(CSSPropertyWebkitUserModify);
 }
 
-void StyledElement::setInlineStyleFromString(const AtomicString& newStyleString)
+void StyledElement::setInlineStyleFromString(const AtomString& newStyleString)
 {
     RefPtr<StyleProperties>& inlineStyle = elementData()->m_inlineStyle;
 
@@ -190,7 +190,7 @@ void StyledElement::setInlineStyleFromString(const AtomicString& newStyleString)
         document().setHasElementUsingStyleBasedEditability();
 }
 
-void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, AttributeModificationReason reason)
+void StyledElement::styleAttributeChanged(const AtomString& newStyleString, AttributeModificationReason reason)
 {
     WTF::OrdinalNumber startLineNumber = WTF::OrdinalNumber::beforeFirst();
     if (document().scriptableDocumentParser() && !document().isInDocumentWrite())

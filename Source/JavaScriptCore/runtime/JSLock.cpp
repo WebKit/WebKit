@@ -83,7 +83,7 @@ JSLock::JSLock(VM* vm)
     : m_lockCount(0)
     , m_lockDropDepth(0)
     , m_vm(vm)
-    , m_entryAtomicStringTable(nullptr)
+    , m_entryAtomStringTable(nullptr)
 {
 }
 
@@ -130,9 +130,9 @@ void JSLock::didAcquireLock()
         return;
     
     Thread& thread = Thread::current();
-    ASSERT(!m_entryAtomicStringTable);
-    m_entryAtomicStringTable = thread.setCurrentAtomicStringTable(m_vm->atomicStringTable());
-    ASSERT(m_entryAtomicStringTable);
+    ASSERT(!m_entryAtomStringTable);
+    m_entryAtomStringTable = thread.setCurrentAtomStringTable(m_vm->atomStringTable());
+    ASSERT(m_entryAtomStringTable);
 
     m_vm->setLastStackTop(thread.savedLastStackTop());
     ASSERT(thread.stack().contains(m_vm->lastStackTop()));
@@ -212,9 +212,9 @@ void JSLock::willReleaseLock()
             vm->heap.releaseAccess();
     }
 
-    if (m_entryAtomicStringTable) {
-        Thread::current().setCurrentAtomicStringTable(m_entryAtomicStringTable);
-        m_entryAtomicStringTable = nullptr;
+    if (m_entryAtomStringTable) {
+        Thread::current().setCurrentAtomStringTable(m_entryAtomStringTable);
+        m_entryAtomStringTable = nullptr;
     }
 }
 

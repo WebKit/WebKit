@@ -32,7 +32,7 @@
 
 #include "Event.h"
 #include "OverconstrainedError.h"
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -40,7 +40,7 @@ class OverconstrainedErrorEvent : public Event {
 public:
     virtual ~OverconstrainedErrorEvent() = default;
 
-    static Ref<OverconstrainedErrorEvent> create(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, OverconstrainedError* error)
+    static Ref<OverconstrainedErrorEvent> create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, OverconstrainedError* error)
     {
         return adoptRef(*new OverconstrainedErrorEvent(type, canBubble, cancelable, error));
     }
@@ -49,7 +49,7 @@ public:
         RefPtr<OverconstrainedError> error;
     };
 
-    static Ref<OverconstrainedErrorEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<OverconstrainedErrorEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new OverconstrainedErrorEvent(type, initializer, isTrusted));
     }
@@ -58,12 +58,12 @@ public:
     EventInterface eventInterface() const override { return OverconstrainedErrorEventInterfaceType; }
 
 private:
-    explicit OverconstrainedErrorEvent(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, OverconstrainedError* error)
+    explicit OverconstrainedErrorEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, OverconstrainedError* error)
         : Event(type, canBubble, cancelable)
         , m_error(error)
     {
     }
-    OverconstrainedErrorEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    OverconstrainedErrorEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
         : Event(type, initializer, isTrusted)
         , m_error(initializer.error)
     {

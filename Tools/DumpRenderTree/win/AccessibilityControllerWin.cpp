@@ -40,7 +40,7 @@
 #include <oleacc.h>
 #include <string>
 #include <wtf/Assertions.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 AccessibilityController::AccessibilityController() = default;
 

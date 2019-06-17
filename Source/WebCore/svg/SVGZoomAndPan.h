@@ -43,7 +43,7 @@ public:
     ExceptionOr<void> setZoomAndPan(unsigned) { return Exception { NoModificationAllowedError }; }
     void reset() { m_zoomAndPan = SVGPropertyTraits<SVGZoomAndPanType>::initialValue(); }
 
-    void parseAttribute(const QualifiedName&, const AtomicString&);
+    void parseAttribute(const QualifiedName&, const AtomString&);
 
 protected:
     SVGZoomAndPan() = default;

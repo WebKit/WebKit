@@ -41,7 +41,7 @@ public:
     }
     virtual ~AudioTrackList();
 
-    AudioTrack* getTrackById(const AtomicString&) const;
+    AudioTrack* getTrackById(const AtomString&) const;
 
     AudioTrack* item(unsigned index) const;
     AudioTrack* lastItem() const { return item(length() - 1); }

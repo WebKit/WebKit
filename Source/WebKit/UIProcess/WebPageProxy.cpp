@@ -2527,7 +2527,7 @@ void WebPageProxy::updateTouchEventTracking(const WebTouchEvent& touchStartEvent
     const EventNames& names = eventNames();
     for (auto& touchPoint : touchStartEvent.touchPoints()) {
         IntPoint location = touchPoint.location();
-        auto updateTrackingType = [this, location](TrackingType& trackingType, const AtomicString& eventName) {
+        auto updateTrackingType = [this, location](TrackingType& trackingType, const AtomString& eventName) {
             if (trackingType == TrackingType::Synchronous)
                 return;
 

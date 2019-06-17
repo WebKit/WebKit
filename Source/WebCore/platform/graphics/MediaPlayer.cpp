@@ -287,15 +287,15 @@ static void addMediaEngine(CreateMediaEnginePlayer&& constructor, MediaEngineSup
     mutableInstalledMediaEnginesVector().append(MediaPlayerFactory { WTFMove(constructor), getSupportedTypes, supportsType, originsInMediaCache, clearMediaCache, clearMediaCacheForOrigins, supportsKeySystem });
 }
 
-static const AtomicString& applicationOctetStream()
+static const AtomString& applicationOctetStream()
 {
-    static NeverDestroyed<const AtomicString> applicationOctetStream("application/octet-stream", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> applicationOctetStream("application/octet-stream", AtomString::ConstructFromLiteral);
     return applicationOctetStream;
 }
 
-static const AtomicString& textPlain()
+static const AtomString& textPlain()
 {
-    static NeverDestroyed<const AtomicString> textPlain("text/plain", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> textPlain("text/plain", AtomString::ConstructFromLiteral);
     return textPlain;
 }
 
@@ -390,7 +390,7 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, const Str
 #endif
 
     // If the MIME type is missing or is not meaningful, try to figure it out from the URL.
-    AtomicString containerType = m_contentType.containerType();
+    AtomString containerType = m_contentType.containerType();
     if (containerType.isEmpty() || containerType == applicationOctetStream() || containerType == textPlain()) {
         if (m_url.protocolIsData())
             m_contentType = ContentType(mimeTypeFromDataURL(m_url.string()));
@@ -920,7 +920,7 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportPara
 {
     // 4.8.10.3 MIME types - The canPlayType(type) method must return the empty string if type is a type that the 
     // user agent knows it cannot render or is the type "application/octet-stream"
-    AtomicString containerType = parameters.type.containerType();
+    AtomString containerType = parameters.type.containerType();
     if (containerType == applicationOctetStream())
         return IsNotSupported;
 
@@ -1498,7 +1498,7 @@ void MediaPlayerFactorySupport::callRegisterMediaEngine(MediaEngineRegister regi
     registerMediaEngine(addMediaEngine);
 }
 
-bool MediaPlayer::doesHaveAttribute(const AtomicString& attribute, AtomicString* value) const
+bool MediaPlayer::doesHaveAttribute(const AtomString& attribute, AtomString* value) const
 {
     return client().doesHaveAttribute(attribute, value);
 }

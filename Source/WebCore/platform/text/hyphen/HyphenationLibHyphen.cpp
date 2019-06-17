@@ -38,7 +38,7 @@
 #include <wtf/TinyLRUCache.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
 
@@ -59,7 +59,7 @@ static String extractLocaleFromDictionaryFilePath(const String& filePath)
     return fileName.substring(prefixLength, fileName.length() - prefixLength - suffixLength);
 }
 
-static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<AtomicString, Vector<String>>& availableLocales)
+static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<AtomString, Vector<String>>& availableLocales)
 {
     for (auto& filePath : FileSystem::listDirectory(directoryPath, "hyph_*.dic")) {
         String locale = extractLocaleFromDictionaryFilePath(filePath).convertToASCIILowercase();
@@ -109,7 +109,7 @@ static CString webkitBuildDirectory()
     return outputDir.get();
 }
 
-static void scanTestDictionariesDirectoryIfNecessary(HashMap<AtomicString, Vector<String>>& availableLocales)
+static void scanTestDictionariesDirectoryIfNecessary(HashMap<AtomString, Vector<String>>& availableLocales)
 {
     // It's unfortunate that we need to look for the dictionaries this way, but
     // libhyphen doesn't have the concept of installed dictionaries. Instead,
@@ -133,10 +133,10 @@ static void scanTestDictionariesDirectoryIfNecessary(HashMap<AtomicString, Vecto
 }
 #endif
 
-static HashMap<AtomicString, Vector<String>>& availableLocales()
+static HashMap<AtomString, Vector<String>>& availableLocales()
 {
     static bool scannedLocales = false;
-    static HashMap<AtomicString, Vector<String>> availableLocales;
+    static HashMap<AtomString, Vector<String>> availableLocales;
 
     if (!scannedLocales) {
         for (size_t i = 0; i < WTF_ARRAY_LENGTH(gDictionaryDirectories); i++)
@@ -152,13 +152,13 @@ static HashMap<AtomicString, Vector<String>>& availableLocales()
     return availableLocales;
 }
 
-bool canHyphenate(const AtomicString& localeIdentifier)
+bool canHyphenate(const AtomString& localeIdentifier)
 {
     if (localeIdentifier.isNull())
         return false;
     if (availableLocales().contains(localeIdentifier))
         return true;
-    return availableLocales().contains(AtomicString(localeIdentifier.string().convertToASCIILowercase()));
+    return availableLocales().contains(AtomString(localeIdentifier.string().convertToASCIILowercase()));
 }
 
 class HyphenationDictionary : public RefCounted<HyphenationDictionary> {
@@ -203,16 +203,16 @@ private:
 namespace WTF {
 
 template<>
-class TinyLRUCachePolicy<AtomicString, RefPtr<WebCore::HyphenationDictionary>>
+class TinyLRUCachePolicy<AtomString, RefPtr<WebCore::HyphenationDictionary>>
 {
 public:
-    static TinyLRUCache<AtomicString, RefPtr<WebCore::HyphenationDictionary>, 32>& cache()
+    static TinyLRUCache<AtomString, RefPtr<WebCore::HyphenationDictionary>, 32>& cache()
     {
-        static NeverDestroyed<TinyLRUCache<AtomicString, RefPtr<WebCore::HyphenationDictionary>, 32>> cache;
+        static NeverDestroyed<TinyLRUCache<AtomString, RefPtr<WebCore::HyphenationDictionary>, 32>> cache;
         return cache;
     }
 
-    static bool isKeyNull(const AtomicString& localeIdentifier)
+    static bool isKeyNull(const AtomString& localeIdentifier)
     {
         return localeIdentifier.isNull();
     }
@@ -222,7 +222,7 @@ public:
         return WebCore::HyphenationDictionary::createNull();
     }
 
-    static RefPtr<WebCore::HyphenationDictionary> createValueForKey(const AtomicString& dictionaryPath)
+    static RefPtr<WebCore::HyphenationDictionary> createValueForKey(const AtomString& dictionaryPath)
     {
         return WebCore::HyphenationDictionary::create(FileSystem::fileSystemRepresentation(dictionaryPath.string()));
     }
@@ -250,7 +250,7 @@ static void countLeadingSpaces(const CString& utf8String, int32_t& pointerOffset
     }
 }
 
-size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomicString& localeIdentifier)
+size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomString& localeIdentifier)
 {
     // libhyphen accepts strings in UTF-8 format, but WebCore can only provide StringView
     // which stores either UTF-16 or Latin1 data. This is unfortunate for performance
@@ -270,14 +270,14 @@ size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomicStr
     Vector<char> hyphenArray(utf8StringCopy.length() - leadingSpaceBytes + 5);
     char* hyphenArrayData = hyphenArray.data();
 
-    String lowercaseLocaleIdentifier = AtomicString(localeIdentifier.string().convertToASCIILowercase());
+    String lowercaseLocaleIdentifier = AtomString(localeIdentifier.string().convertToASCIILowercase());
 
     // Web content may specify strings for locales which do not exist or that we do not have.
     if (!availableLocales().contains(lowercaseLocaleIdentifier))
         return 0;
 
     for (const auto& dictionaryPath : availableLocales().get(lowercaseLocaleIdentifier)) {
-        RefPtr<HyphenationDictionary> dictionary = WTF::TinyLRUCachePolicy<AtomicString, RefPtr<HyphenationDictionary>>::cache().get(AtomicString(dictionaryPath));
+        RefPtr<HyphenationDictionary> dictionary = WTF::TinyLRUCachePolicy<AtomString, RefPtr<HyphenationDictionary>>::cache().get(AtomString(dictionaryPath));
 
         char** replacements = nullptr;
         int* positions = nullptr;

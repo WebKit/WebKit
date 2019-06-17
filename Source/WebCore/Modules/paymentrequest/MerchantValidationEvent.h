@@ -42,16 +42,16 @@ public:
         String validationURL;
     };
 
-    static Ref<MerchantValidationEvent> create(const AtomicString& type, const String& methodName, URL&& validationURL);
-    static ExceptionOr<Ref<MerchantValidationEvent>> create(Document&, const AtomicString& type, Init&&);
+    static Ref<MerchantValidationEvent> create(const AtomString& type, const String& methodName, URL&& validationURL);
+    static ExceptionOr<Ref<MerchantValidationEvent>> create(Document&, const AtomString& type, Init&&);
 
     const String& methodName() const { return m_methodName; }
     const String& validationURL() const { return m_validationURL.string(); }
     ExceptionOr<void> complete(Ref<DOMPromise>&&);
 
 private:
-    MerchantValidationEvent(const AtomicString& type, const String& methodName, URL&& validationURL);
-    MerchantValidationEvent(const AtomicString& type, String&& methodName, URL&& validationURL, Init&&);
+    MerchantValidationEvent(const AtomString& type, const String& methodName, URL&& validationURL);
+    MerchantValidationEvent(const AtomString& type, String&& methodName, URL&& validationURL, Init&&);
 
     // Event
     EventInterface eventInterface() const final;

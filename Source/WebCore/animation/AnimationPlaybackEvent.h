@@ -33,12 +33,12 @@ namespace WebCore {
 
 class AnimationPlaybackEvent final : public Event {
 public:
-    static Ref<AnimationPlaybackEvent> create(const AtomicString& type, Optional<Seconds> currentTime, Optional<Seconds> timelineTime)
+    static Ref<AnimationPlaybackEvent> create(const AtomString& type, Optional<Seconds> currentTime, Optional<Seconds> timelineTime)
     {
         return adoptRef(*new AnimationPlaybackEvent(type, currentTime, timelineTime));
     }
 
-    static Ref<AnimationPlaybackEvent> create(const AtomicString& type, const AnimationPlaybackEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<AnimationPlaybackEvent> create(const AtomString& type, const AnimationPlaybackEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new AnimationPlaybackEvent(type, initializer, isTrusted));
     }
@@ -53,8 +53,8 @@ public:
     EventInterface eventInterface() const override { return AnimationPlaybackEventInterfaceType; }
 
 private:
-    AnimationPlaybackEvent(const AtomicString&, Optional<Seconds>, Optional<Seconds>);
-    AnimationPlaybackEvent(const AtomicString&, const AnimationPlaybackEventInit&, IsTrusted);
+    AnimationPlaybackEvent(const AtomString&, Optional<Seconds>, Optional<Seconds>);
+    AnimationPlaybackEvent(const AtomString&, const AnimationPlaybackEventInit&, IsTrusted);
 
     Markable<Seconds, Seconds::MarkableTraits> m_currentTime;
     Markable<Seconds, Seconds::MarkableTraits> m_timelineTime;

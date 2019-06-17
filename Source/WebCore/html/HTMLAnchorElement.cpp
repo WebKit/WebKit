@@ -233,7 +233,7 @@ void HTMLAnchorElement::setActive(bool down, bool pause)
     HTMLElement::setActive(down, pause);
 }
 
-void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == hrefAttr) {
         bool wasLink = isLink();
@@ -251,9 +251,9 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomicSt
         // Do nothing.
     } else if (name == relAttr) {
         // Update HTMLAnchorElement::relList() if more rel attributes values are supported.
-        static NeverDestroyed<AtomicString> noReferrer("noreferrer", AtomicString::ConstructFromLiteral);
-        static NeverDestroyed<AtomicString> noOpener("noopener", AtomicString::ConstructFromLiteral);
-        static NeverDestroyed<AtomicString> opener("opener", AtomicString::ConstructFromLiteral);
+        static NeverDestroyed<AtomString> noReferrer("noreferrer", AtomString::ConstructFromLiteral);
+        static NeverDestroyed<AtomString> noOpener("noopener", AtomString::ConstructFromLiteral);
+        static NeverDestroyed<AtomString> opener("opener", AtomString::ConstructFromLiteral);
         const bool shouldFoldCase = true;
         SpaceSplitString relValue(value, shouldFoldCase);
         if (relValue.contains(noReferrer))
@@ -288,7 +288,7 @@ bool HTMLAnchorElement::canStartSelection() const
 
 bool HTMLAnchorElement::draggable() const
 {
-    const AtomicString& value = attributeWithoutSynchronization(draggableAttr);
+    const AtomString& value = attributeWithoutSynchronization(draggableAttr);
     if (equalLettersIgnoringASCIICase(value, "true"))
         return true;
     if (equalLettersIgnoringASCIICase(value, "false"))
@@ -301,7 +301,7 @@ URL HTMLAnchorElement::href() const
     return document().completeURL(stripLeadingAndTrailingHTMLSpaces(attributeWithoutSynchronization(hrefAttr)));
 }
 
-void HTMLAnchorElement::setHref(const AtomicString& value)
+void HTMLAnchorElement::setHref(const AtomString& value)
 {
     setAttributeWithoutSynchronization(hrefAttr, value);
 }
@@ -325,7 +325,7 @@ DOMTokenList& HTMLAnchorElement::relList() const
     return *m_relList;
 }
 
-const AtomicString& HTMLAnchorElement::name() const
+const AtomString& HTMLAnchorElement::name() const
 {
     return getNameAttribute();
 }
@@ -380,7 +380,7 @@ bool HTMLAnchorElement::isSystemPreviewLink() const
     if (!RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled())
         return false;
 
-    static NeverDestroyed<AtomicString> systemPreviewRelValue("ar", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> systemPreviewRelValue("ar", AtomString::ConstructFromLiteral);
 
     if (!relList().contains(systemPreviewRelValue))
         return false;

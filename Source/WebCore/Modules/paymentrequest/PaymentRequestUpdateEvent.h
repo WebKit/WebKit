@@ -45,8 +45,8 @@ public:
     ExceptionOr<void> updateWith(Ref<DOMPromise>&&);
 
 protected:
-    explicit PaymentRequestUpdateEvent(const AtomicString& type);
-    PaymentRequestUpdateEvent(const AtomicString& type, const PaymentRequestUpdateEventInit&);
+    explicit PaymentRequestUpdateEvent(const AtomString& type);
+    PaymentRequestUpdateEvent(const AtomString& type, const PaymentRequestUpdateEventInit&);
 
     // Event
     EventInterface eventInterface() const override;

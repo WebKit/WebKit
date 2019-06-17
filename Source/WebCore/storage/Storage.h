@@ -49,7 +49,7 @@ public:
 
     // Bindings support functions.
     bool isSupportedPropertyName(const String&) const;
-    Vector<AtomicString> supportedPropertyNames() const;
+    Vector<AtomString> supportedPropertyNames() const;
 
     StorageArea& area() const { return m_storageArea.get(); }
 

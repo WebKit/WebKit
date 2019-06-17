@@ -35,10 +35,10 @@ SVGLangSpace::SVGLangSpace(SVGElement* contextElement)
 {
 }
 
-const AtomicString& SVGLangSpace::xmlspace() const
+const AtomString& SVGLangSpace::xmlspace() const
 {
     if (!m_space) {
-        static NeverDestroyed<const AtomicString> defaultString("default", AtomicString::ConstructFromLiteral);
+        static NeverDestroyed<const AtomString> defaultString("default", AtomString::ConstructFromLiteral);
         return defaultString;
     }
     return m_space;
@@ -49,7 +49,7 @@ bool SVGLangSpace::isKnownAttribute(const QualifiedName& attributeName)
     return attributeName.matches(XMLNames::langAttr) || attributeName.matches(XMLNames::spaceAttr);
 }
 
-void SVGLangSpace::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGLangSpace::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name.matches(XMLNames::langAttr))
         setXmllang(value);

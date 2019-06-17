@@ -43,7 +43,7 @@ typedef FontFamilySpecificationCoreText FontFamilyPlatformSpecification;
 typedef FontFamilySpecificationNull FontFamilyPlatformSpecification;
 #endif
 
-typedef Variant<AtomicString, FontFamilyPlatformSpecification> FontFamilySpecification;
+typedef Variant<AtomString, FontFamilyPlatformSpecification> FontFamilySpecification;
 
 class FontCascadeDescription : public FontDescription {
 public:
@@ -53,12 +53,12 @@ public:
     bool operator!=(const FontCascadeDescription& other) const { return !(*this == other); }
 
     unsigned familyCount() const { return m_families.size(); }
-    const AtomicString& firstFamily() const { return familyAt(0); }
-    const AtomicString& familyAt(unsigned i) const { return m_families[i]; }
-    const RefCountedArray<AtomicString>& families() const { return m_families; }
+    const AtomString& firstFamily() const { return familyAt(0); }
+    const AtomString& familyAt(unsigned i) const { return m_families[i]; }
+    const RefCountedArray<AtomString>& families() const { return m_families; }
 
-    static bool familyNamesAreEqual(const AtomicString&, const AtomicString&);
-    static unsigned familyNameHash(const AtomicString&);
+    static bool familyNamesAreEqual(const AtomString&, const AtomString&);
+    static unsigned familyNameHash(const AtomString&);
     static String foldedFamilyName(const String&);
 
     unsigned effectiveFamilyCount() const;
@@ -85,9 +85,9 @@ public:
     FontSmoothingMode fontSmoothing() const { return static_cast<FontSmoothingMode>(m_fontSmoothing); }
     bool isSpecifiedFont() const { return m_isSpecifiedFont; }
 
-    void setOneFamily(const AtomicString& family) { ASSERT(m_families.size() == 1); m_families[0] = family; }
-    void setFamilies(const Vector<AtomicString>& families) { m_families = RefCountedArray<AtomicString>(families); }
-    void setFamilies(const RefCountedArray<AtomicString>& families) { m_families = families; }
+    void setOneFamily(const AtomString& family) { ASSERT(m_families.size() == 1); m_families[0] = family; }
+    void setFamilies(const Vector<AtomString>& families) { m_families = RefCountedArray<AtomString>(families); }
+    void setFamilies(const RefCountedArray<AtomString>& families) { m_families = families; }
     void setSpecifiedSize(float s) { m_specifiedSize = clampToFloat(s); }
     void setIsAbsoluteSize(bool s) { m_isAbsoluteSize = s; }
     void setKerning(Kerning kerning) { m_kerning = static_cast<unsigned>(kerning); }
@@ -132,10 +132,10 @@ public:
     static FontVariantCaps initialVariantCaps() { return FontVariantCaps::Normal; }
     static FontVariantAlternates initialVariantAlternates() { return FontVariantAlternates::Normal; }
     static FontOpticalSizing initialOpticalSizing() { return FontOpticalSizing::Enabled; }
-    static const AtomicString& initialLocale() { return nullAtom(); }
+    static const AtomString& initialLocale() { return nullAtom(); }
 
 private:
-    RefCountedArray<AtomicString> m_families { 1 };
+    RefCountedArray<AtomString> m_families { 1 };
 
     // Specified CSS value. Independent of rendering issues such as integer rounding, minimum font sizes, and zooming.
     float m_specifiedSize { 0 };

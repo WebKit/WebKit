@@ -103,7 +103,7 @@ MathMLFractionElement::FractionAlignment MathMLFractionElement::denominatorAlign
     return cachedFractionAlignment(denomalignAttr, m_denominatorAlignment);
 }
 
-void MathMLFractionElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void MathMLFractionElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == linethicknessAttr)
         m_lineThickness = WTF::nullopt;

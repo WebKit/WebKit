@@ -40,7 +40,7 @@ public:
     WEBCORE_EXPORT virtual ~VisitedLinkStore();
 
     // FIXME: These two members should only take the link hash.
-    virtual bool isLinkVisited(Page&, SharedStringHash, const URL& baseURL, const AtomicString& attributeURL) = 0;
+    virtual bool isLinkVisited(Page&, SharedStringHash, const URL& baseURL, const AtomString& attributeURL) = 0;
     virtual void addVisitedLink(Page&, SharedStringHash) = 0;
 
     void addPage(Page&);

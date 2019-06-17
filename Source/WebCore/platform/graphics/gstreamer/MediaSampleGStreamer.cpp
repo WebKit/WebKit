@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const AtomicString& trackId)
+MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const AtomString& trackId)
     : m_pts(MediaTime::zeroTime())
     , m_dts(MediaTime::zeroTime())
     , m_duration(MediaTime::zeroTime())
@@ -76,7 +76,7 @@ MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const Fl
         m_flags = static_cast<MediaSample::SampleFlags>(m_flags | MediaSample::IsNonDisplaying);
 }
 
-MediaSampleGStreamer::MediaSampleGStreamer(const FloatSize& presentationSize, const AtomicString& trackId)
+MediaSampleGStreamer::MediaSampleGStreamer(const FloatSize& presentationSize, const AtomString& trackId)
     : m_pts(MediaTime::zeroTime())
     , m_dts(MediaTime::zeroTime())
     , m_duration(MediaTime::zeroTime())
@@ -85,7 +85,7 @@ MediaSampleGStreamer::MediaSampleGStreamer(const FloatSize& presentationSize, co
 {
 }
 
-Ref<MediaSampleGStreamer> MediaSampleGStreamer::createFakeSample(GstCaps*, MediaTime pts, MediaTime dts, MediaTime duration, const FloatSize& presentationSize, const AtomicString& trackId)
+Ref<MediaSampleGStreamer> MediaSampleGStreamer::createFakeSample(GstCaps*, MediaTime pts, MediaTime dts, MediaTime duration, const FloatSize& presentationSize, const AtomString& trackId)
 {
     MediaSampleGStreamer* gstreamerMediaSample = new MediaSampleGStreamer(presentationSize, trackId);
     gstreamerMediaSample->m_pts = pts;

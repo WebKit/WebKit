@@ -38,8 +38,8 @@ namespace WebCore {
 class HTMLStackItem : public RefCounted<HTMLStackItem> {
 public:
     // Normal HTMLElementStack and HTMLFormattingElementList items.
-    static Ref<HTMLStackItem> create(Ref<Element>&&, AtomicHTMLToken&&, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI);
-    static Ref<HTMLStackItem> create(Ref<Element>&&, const AtomicString&, Vector<Attribute>&&);
+    static Ref<HTMLStackItem> create(Ref<Element>&&, AtomicHTMLToken&&, const AtomString& namespaceURI = HTMLNames::xhtmlNamespaceURI);
+    static Ref<HTMLStackItem> create(Ref<Element>&&, const AtomString&, Vector<Attribute>&&);
 
     // Document fragment or element for parsing context.
     static Ref<HTMLStackItem> create(Element&);
@@ -51,24 +51,24 @@ public:
     ContainerNode& node() const;
     Element& element() const;
 
-    const AtomicString& namespaceURI() const;
-    const AtomicString& localName() const;
+    const AtomString& namespaceURI() const;
+    const AtomString& localName() const;
 
     const Vector<Attribute>& attributes() const;
     const Attribute* findAttribute(const QualifiedName& attributeName) const;
 
     bool hasTagName(const QualifiedName&) const;
-    bool matchesHTMLTag(const AtomicString&) const;
+    bool matchesHTMLTag(const AtomString&) const;
 
 private:
-    HTMLStackItem(Ref<Element>&&, AtomicHTMLToken&&, const AtomicString& namespaceURI);
-    HTMLStackItem(Ref<Element>&&, const AtomicString& localName, const AtomicString& namespaceURI, Vector<Attribute>&&);
+    HTMLStackItem(Ref<Element>&&, AtomicHTMLToken&&, const AtomString& namespaceURI);
+    HTMLStackItem(Ref<Element>&&, const AtomString& localName, const AtomString& namespaceURI, Vector<Attribute>&&);
     explicit HTMLStackItem(Element&);
     explicit HTMLStackItem(DocumentFragment&);
 
     const Ref<ContainerNode> m_node;
-    const AtomicString m_namespaceURI;
-    const AtomicString m_localName;
+    const AtomString m_namespaceURI;
+    const AtomString m_localName;
     const Vector<Attribute> m_attributes;
 };
 
@@ -76,7 +76,7 @@ bool isInHTMLNamespace(const HTMLStackItem&);
 bool isNumberedHeaderElement(const HTMLStackItem&);
 bool isSpecialNode(const HTMLStackItem&);
 
-inline HTMLStackItem::HTMLStackItem(Ref<Element>&& element, AtomicHTMLToken&& token, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI)
+inline HTMLStackItem::HTMLStackItem(Ref<Element>&& element, AtomicHTMLToken&& token, const AtomString& namespaceURI = HTMLNames::xhtmlNamespaceURI)
     : m_node(WTFMove(element))
     , m_namespaceURI(namespaceURI)
     , m_localName(token.name())
@@ -84,12 +84,12 @@ inline HTMLStackItem::HTMLStackItem(Ref<Element>&& element, AtomicHTMLToken&& to
 {
 }
 
-inline Ref<HTMLStackItem> HTMLStackItem::create(Ref<Element>&& element, AtomicHTMLToken&& token, const AtomicString& namespaceURI)
+inline Ref<HTMLStackItem> HTMLStackItem::create(Ref<Element>&& element, AtomicHTMLToken&& token, const AtomString& namespaceURI)
 {
     return adoptRef(*new HTMLStackItem(WTFMove(element), WTFMove(token), namespaceURI));
 }
 
-inline HTMLStackItem::HTMLStackItem(Ref<Element>&& element, const AtomicString& localName, const AtomicString& namespaceURI, Vector<Attribute>&& attributes)
+inline HTMLStackItem::HTMLStackItem(Ref<Element>&& element, const AtomString& localName, const AtomString& namespaceURI, Vector<Attribute>&& attributes)
     : m_node(WTFMove(element))
     , m_namespaceURI(namespaceURI)
     , m_localName(localName)
@@ -97,7 +97,7 @@ inline HTMLStackItem::HTMLStackItem(Ref<Element>&& element, const AtomicString& 
 {
 }
 
-inline Ref<HTMLStackItem> HTMLStackItem::create(Ref<Element>&& element, const AtomicString& localName, Vector<Attribute>&& attributes)
+inline Ref<HTMLStackItem> HTMLStackItem::create(Ref<Element>&& element, const AtomString& localName, Vector<Attribute>&& attributes)
 {
     auto& namespaceURI = element.get().namespaceURI();
     return adoptRef(*new HTMLStackItem(WTFMove(element), localName, namespaceURI, WTFMove(attributes)));
@@ -145,12 +145,12 @@ inline bool HTMLStackItem::isElement() const
     return !isDocumentFragment();
 }
 
-inline const AtomicString& HTMLStackItem::namespaceURI() const
+inline const AtomString& HTMLStackItem::namespaceURI() const
 {
     return m_namespaceURI;
 }
 
-inline const AtomicString& HTMLStackItem::localName() const
+inline const AtomString& HTMLStackItem::localName() const
 {
     return m_localName;
 }
@@ -171,7 +171,7 @@ inline bool HTMLStackItem::hasTagName(const QualifiedName& name) const
     return m_localName == name.localName() && m_namespaceURI == name.namespaceURI();
 }
 
-inline bool HTMLStackItem::matchesHTMLTag(const AtomicString& name) const
+inline bool HTMLStackItem::matchesHTMLTag(const AtomString& name) const
 {
     return m_localName == name && m_namespaceURI == HTMLNames::xhtmlNamespaceURI;
 }
@@ -200,7 +200,7 @@ inline bool isSpecialNode(const HTMLStackItem& item)
 {
     if (item.isDocumentFragment())
         return true;
-    const AtomicString& tagName = item.localName();
+    const AtomString& tagName = item.localName();
     if (item.namespaceURI() == HTMLNames::xhtmlNamespaceURI) {
         return tagName == HTMLNames::addressTag
             || tagName == HTMLNames::appletTag

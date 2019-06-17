@@ -50,12 +50,12 @@ public:
     }
     virtual ~VideoTrack();
 
-    static const AtomicString& alternativeKeyword();
-    static const AtomicString& captionsKeyword();
-    static const AtomicString& mainKeyword();
-    static const AtomicString& signKeyword();
-    static const AtomicString& subtitlesKeyword();
-    static const AtomicString& commentaryKeyword();
+    static const AtomString& alternativeKeyword();
+    static const AtomString& captionsKeyword();
+    static const AtomString& mainKeyword();
+    static const AtomString& signKeyword();
+    static const AtomString& subtitlesKeyword();
+    static const AtomString& commentaryKeyword();
 
     bool selected() const { return m_selected; }
     virtual void setSelected(const bool);
@@ -66,8 +66,8 @@ public:
     size_t inbandTrackIndex();
 
 #if ENABLE(MEDIA_SOURCE)
-    void setKind(const AtomicString&) final;
-    void setLanguage(const AtomicString&) final;
+    void setKind(const AtomString&) final;
+    void setLanguage(const AtomString&) final;
 #endif
 
     const MediaDescription& description() const;
@@ -78,15 +78,15 @@ public:
 private:
     VideoTrack(VideoTrackClient&, VideoTrackPrivate&);
 
-    bool isValidKind(const AtomicString&) const final;
+    bool isValidKind(const AtomString&) const final;
 
     // VideoTrackPrivateClient
     void selectedChanged(bool) final;
 
     // TrackPrivateBaseClient
-    void idChanged(const AtomicString&) final;
-    void labelChanged(const AtomicString&) final;
-    void languageChanged(const AtomicString&) final;
+    void idChanged(const AtomString&) final;
+    void labelChanged(const AtomString&) final;
+    void languageChanged(const AtomString&) final;
     void willRemove() final;
 
     bool enabled() const final { return selected(); }

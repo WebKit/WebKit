@@ -488,7 +488,7 @@ bool AccessibilityNodeObject::isSearchField() const
     // but it will catch google.com for example.
 
     // Check the node name of the input type, sometimes it's "search".
-    const AtomicString& nameAttribute = getAttribute(nameAttr);
+    const AtomString& nameAttribute = getAttribute(nameAttr);
     if (nameAttribute.containsIgnoringASCIICase("search"))
         return true;
 
@@ -633,7 +633,7 @@ bool AccessibilityNodeObject::isEnabled() const
 {
     // ARIA says that the disabled status applies to the current element and all descendant elements.
     for (AccessibilityObject* object = const_cast<AccessibilityNodeObject*>(this); object; object = object->parentObject()) {
-        const AtomicString& disabledStatus = object->getAttribute(aria_disabledAttr);
+        const AtomString& disabledStatus = object->getAttribute(aria_disabledAttr);
         if (equalLettersIgnoringASCIICase(disabledStatus, "true"))
             return false;
         if (equalLettersIgnoringASCIICase(disabledStatus, "false"))
@@ -712,7 +712,7 @@ bool AccessibilityNodeObject::isHovered() const
 
 bool AccessibilityNodeObject::isMultiSelectable() const
 {
-    const AtomicString& ariaMultiSelectable = getAttribute(aria_multiselectableAttr);
+    const AtomString& ariaMultiSelectable = getAttribute(aria_multiselectableAttr);
     if (equalLettersIgnoringASCIICase(ariaMultiSelectable, "true"))
         return true;
     if (equalLettersIgnoringASCIICase(ariaMultiSelectable, "false"))
@@ -724,7 +724,7 @@ bool AccessibilityNodeObject::isMultiSelectable() const
 bool AccessibilityNodeObject::isRequired() const
 {
     // Explicit aria-required values should trump native required attributes.
-    const AtomicString& requiredValue = getAttribute(aria_requiredAttr);
+    const AtomString& requiredValue = getAttribute(aria_requiredAttr);
     if (equalLettersIgnoringASCIICase(requiredValue, "true"))
         return true;
     if (equalLettersIgnoringASCIICase(requiredValue, "false"))
@@ -1173,7 +1173,7 @@ HTMLLabelElement* AccessibilityNodeObject::labelForElement(Element* element) con
     if (!is<HTMLElement>(*element) || !downcast<HTMLElement>(*element).isLabelable())
         return nullptr;
 
-    const AtomicString& id = element->getIdAttribute();
+    const AtomString& id = element->getIdAttribute();
     if (!id.isEmpty()) {
         if (HTMLLabelElement* label = element->treeScope().labelElementForId(id))
             return label;
@@ -1188,7 +1188,7 @@ String AccessibilityNodeObject::ariaAccessibilityDescription() const
     if (!ariaLabeledBy.isEmpty())
         return ariaLabeledBy;
 
-    const AtomicString& ariaLabel = getAttribute(aria_labelAttr);
+    const AtomString& ariaLabel = getAttribute(aria_labelAttr);
     if (!ariaLabel.isEmpty())
         return ariaLabel;
 
@@ -1334,7 +1334,7 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
     
     ariaLabeledByText(textOrder);
     
-    const AtomicString& ariaLabel = getAttribute(aria_labelAttr);
+    const AtomString& ariaLabel = getAttribute(aria_labelAttr);
     if (!ariaLabel.isEmpty())
         textOrder.append(AccessibilityText(ariaLabel, AccessibilityTextSource::Alternative));
     
@@ -1350,7 +1350,7 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
         }
         // Images should use alt as long as the attribute is present, even if empty.
         // Otherwise, it should fallback to other methods, like the title attribute.
-        const AtomicString& alt = getAttribute(altAttr);
+        const AtomString& alt = getAttribute(altAttr);
         if (!alt.isEmpty())
             textOrder.append(AccessibilityText(alt, AccessibilityTextSource::Alternative));
     }
@@ -1455,7 +1455,7 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
 
 void AccessibilityNodeObject::helpText(Vector<AccessibilityText>& textOrder) const
 {
-    const AtomicString& ariaHelp = getAttribute(aria_helpAttr);
+    const AtomString& ariaHelp = getAttribute(aria_helpAttr);
     if (!ariaHelp.isEmpty())
         textOrder.append(AccessibilityText(ariaHelp, AccessibilityTextSource::Help));
     
@@ -1472,7 +1472,7 @@ void AccessibilityNodeObject::helpText(Vector<AccessibilityText>& textOrder) con
     }
 
     // Summary attribute used as help text on tables.
-    const AtomicString& summary = getAttribute(summaryAttr);
+    const AtomString& summary = getAttribute(summaryAttr);
     if (!summary.isEmpty())
         textOrder.append(AccessibilityText(summary, AccessibilityTextSource::Summary));
 
@@ -1481,7 +1481,7 @@ void AccessibilityNodeObject::helpText(Vector<AccessibilityText>& textOrder) con
     // descriptive text. This is problematic in the case of meters because the HTML spec suggests authors
     // can expose units through this attribute. Therefore, if the element is a meter, change its source
     // type to AccessibilityTextSource::Help.
-    const AtomicString& title = getAttribute(titleAttr);
+    const AtomString& title = getAttribute(titleAttr);
     if (!title.isEmpty()) {
         if (!isMeter() && !roleIgnoresTitle())
             textOrder.append(AccessibilityText(title, AccessibilityTextSource::TitleTag));
@@ -1539,14 +1539,14 @@ String AccessibilityNodeObject::alternativeTextForWebArea() const
     
     // Check if the HTML element has an aria-label for the webpage.
     if (Element* documentElement = document->documentElement()) {
-        const AtomicString& ariaLabel = documentElement->attributeWithoutSynchronization(aria_labelAttr);
+        const AtomString& ariaLabel = documentElement->attributeWithoutSynchronization(aria_labelAttr);
         if (!ariaLabel.isEmpty())
             return ariaLabel;
     }
     
     if (auto* owner = document->ownerElement()) {
         if (owner->hasTagName(frameTag) || owner->hasTagName(iframeTag)) {
-            const AtomicString& title = owner->attributeWithoutSynchronization(titleAttr);
+            const AtomString& title = owner->attributeWithoutSynchronization(titleAttr);
             if (!title.isEmpty())
                 return title;
         }
@@ -1576,7 +1576,7 @@ String AccessibilityNodeObject::accessibilityDescription() const
     if (usesAltTagForTextComputation()) {
         // Images should use alt as long as the attribute is present, even if empty.                    
         // Otherwise, it should fallback to other methods, like the title attribute.                    
-        const AtomicString& alt = getAttribute(altAttr);
+        const AtomString& alt = getAttribute(altAttr);
         if (!alt.isNull())
             return alt;
     }
@@ -1619,7 +1619,7 @@ String AccessibilityNodeObject::helpText() const
     if (!node)
         return String();
     
-    const AtomicString& ariaHelp = getAttribute(aria_helpAttr);
+    const AtomString& ariaHelp = getAttribute(aria_helpAttr);
     if (!ariaHelp.isEmpty())
         return ariaHelp;
     
@@ -1631,12 +1631,12 @@ String AccessibilityNodeObject::helpText() const
     for (Node* ancestor = node; ancestor; ancestor = ancestor->parentNode()) {
         if (is<HTMLElement>(*ancestor)) {
             HTMLElement& element = downcast<HTMLElement>(*ancestor);
-            const AtomicString& summary = element.getAttribute(summaryAttr);
+            const AtomString& summary = element.getAttribute(summaryAttr);
             if (!summary.isEmpty())
                 return summary;
             
             // The title attribute should be used as help text unless it is already being used as descriptive text.
-            const AtomicString& title = element.getAttribute(titleAttr);
+            const AtomString& title = element.getAttribute(titleAttr);
             if (!title.isEmpty() && description != title)
                 return title;
         }
@@ -1662,7 +1662,7 @@ unsigned AccessibilityNodeObject::hierarchicalLevel() const
     if (!is<Element>(node))
         return 0;
     Element& element = downcast<Element>(*node);
-    const AtomicString& ariaLevel = element.attributeWithoutSynchronization(aria_levelAttr);
+    const AtomString& ariaLevel = element.attributeWithoutSynchronization(aria_levelAttr);
     if (!ariaLevel.isEmpty())
         return ariaLevel.toInt();
     
@@ -1930,7 +1930,7 @@ String AccessibilityNodeObject::stringValue() const
         int selectedIndex = selectElement.selectedIndex();
         const Vector<HTMLElement*>& listItems = selectElement.listItems();
         if (selectedIndex >= 0 && static_cast<size_t>(selectedIndex) < listItems.size()) {
-            const AtomicString& overriddenDescription = listItems[selectedIndex]->attributeWithoutSynchronization(aria_labelAttr);
+            const AtomString& overriddenDescription = listItems[selectedIndex]->attributeWithoutSynchronization(aria_labelAttr);
             if (!overriddenDescription.isNull())
                 return overriddenDescription;
         }
@@ -1978,11 +1978,11 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
         return String();
     
     Element& element = downcast<Element>(*node);
-    const AtomicString& ariaLabel = element.attributeWithoutSynchronization(aria_labelAttr);
+    const AtomString& ariaLabel = element.attributeWithoutSynchronization(aria_labelAttr);
     if (!ariaLabel.isEmpty())
         return ariaLabel;
     
-    const AtomicString& alt = element.attributeWithoutSynchronization(altAttr);
+    const AtomString& alt = element.attributeWithoutSynchronization(altAttr);
     if (!alt.isEmpty())
         return alt;
 
@@ -2031,7 +2031,7 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
     if (!text.isEmpty())
         return text;
     
-    const AtomicString& title = element.attributeWithoutSynchronization(titleAttr);
+    const AtomString& title = element.attributeWithoutSynchronization(titleAttr);
     if (!title.isEmpty())
         return title;
     
@@ -2191,7 +2191,7 @@ bool AccessibilityNodeObject::canSetValueAttribute() const
 
 AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
 {
-    const AtomicString& ariaRole = getAttribute(roleAttr);
+    const AtomString& ariaRole = getAttribute(roleAttr);
     if (ariaRole.isNull() || ariaRole.isEmpty())
         return AccessibilityRole::Unknown;
     

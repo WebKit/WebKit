@@ -59,7 +59,7 @@ SVGCursorElement::~SVGCursorElement()
         client->cursorElementRemoved(*this);
 }
 
-void SVGCursorElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGCursorElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     SVGParsingError parseError = NoError;
 

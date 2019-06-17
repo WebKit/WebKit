@@ -37,15 +37,15 @@
 #include <wtf/RefCounted.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
 #define GST_CAT_DEFAULT webkit_mse_debug
 
-static Stream* getStreamByTrackId(WebKitMediaSrc*, AtomicString);
+static Stream* getStreamByTrackId(WebKitMediaSrc*, AtomString);
 static Stream* getStreamBySourceBufferPrivate(WebKitMediaSrc*, WebCore::SourceBufferPrivateGStreamer*);
 
-static Stream* getStreamByTrackId(WebKitMediaSrc* source, AtomicString trackIdString)
+static Stream* getStreamByTrackId(WebKitMediaSrc* source, AtomString trackIdString)
 {
     // WebKitMediaSrc should be locked at this point.
     for (Stream* stream : source->priv->streams) {
@@ -289,7 +289,7 @@ void PlaybackPipeline::markEndOfStream(MediaSourcePrivate::EndOfStreamStatus)
         gst_app_src_end_of_stream(appsrc);
 }
 
-void PlaybackPipeline::flush(AtomicString trackId)
+void PlaybackPipeline::flush(AtomString trackId)
 {
     ASSERT(WTF::isMainThread());
 
@@ -337,7 +337,7 @@ void PlaybackPipeline::enqueueSample(Ref<MediaSample>&& mediaSample)
 {
     ASSERT(WTF::isMainThread());
 
-    AtomicString trackId = mediaSample->trackID();
+    AtomString trackId = mediaSample->trackID();
 
     GST_TRACE("enqueing sample trackId=%s PTS=%f presentationSize=%.0fx%.0f at %" GST_TIME_FORMAT " duration: %" GST_TIME_FORMAT,
         trackId.string().utf8().data(), mediaSample->presentationTime().toFloat(),
@@ -381,7 +381,7 @@ void PlaybackPipeline::enqueueSample(Ref<MediaSample>&& mediaSample)
     }
 }
 
-void PlaybackPipeline::allSamplesInTrackEnqueued(const AtomicString& trackId)
+void PlaybackPipeline::allSamplesInTrackEnqueued(const AtomString& trackId)
 {
     Stream* stream = getStreamByTrackId(m_webKitMediaSrc.get(), trackId);
     gst_app_src_end_of_stream(GST_APP_SRC(stream->appsrc));

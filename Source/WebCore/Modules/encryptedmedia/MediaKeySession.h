@@ -67,7 +67,7 @@ public:
     double expiration() const;
     Ref<MediaKeyStatusMap> keyStatuses() const;
 
-    void generateRequest(const AtomicString&, const BufferSource&, Ref<DeferredPromise>&&);
+    void generateRequest(const AtomString&, const BufferSource&, Ref<DeferredPromise>&&);
     void load(const String&, Ref<DeferredPromise>&&);
     void update(const BufferSource&, Ref<DeferredPromise>&&);
     void close(Ref<DeferredPromise>&&);

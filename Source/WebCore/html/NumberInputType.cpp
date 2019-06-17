@@ -86,7 +86,7 @@ static RealNumberRenderSize calculateRenderSize(const Decimal& value)
     return { sizeOfSign + sizeOfZero , numberOfZeroAfterDecimalPoint + sizeOfDigits };
 }
 
-const AtomicString& NumberInputType::formControlType() const
+const AtomString& NumberInputType::formControlType() const
 {
     return InputTypeNames::number();
 }
@@ -151,7 +151,7 @@ StepRange NumberInputType::createStepRange(AnyStepHandling anyStepHandling) cons
 
     RangeLimitations rangeLimitations = RangeLimitations::Invalid;
     auto extractBound = [&] (const QualifiedName& attributeName, const Decimal& defaultValue) -> Decimal {
-        const AtomicString& attributeValue = element.attributeWithoutSynchronization(attributeName);
+        const AtomString& attributeValue = element.attributeWithoutSynchronization(attributeName);
         Decimal valueFromAttribute = parseToNumberOrNaN(attributeValue);
         if (valueFromAttribute.isFinite()) {
             rangeLimitations = RangeLimitations::Valid;

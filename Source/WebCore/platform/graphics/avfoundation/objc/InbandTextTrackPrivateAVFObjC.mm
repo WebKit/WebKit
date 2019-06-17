@@ -129,7 +129,7 @@ bool InbandTextTrackPrivateAVFObjC::isEasyToRead() const
     return [m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicEasyToRead];
 }
 
-AtomicString InbandTextTrackPrivateAVFObjC::label() const
+AtomString InbandTextTrackPrivateAVFObjC::label() const
 {
     if (!m_mediaSelectionOption)
         return emptyAtom();
@@ -147,10 +147,10 @@ AtomicString InbandTextTrackPrivateAVFObjC::label() const
             title = [[titles objectAtIndex:0] stringValue];
     }
 
-    return title ? AtomicString(title) : emptyAtom();
+    return title ? AtomString(title) : emptyAtom();
 }
 
-AtomicString InbandTextTrackPrivateAVFObjC::language() const
+AtomString InbandTextTrackPrivateAVFObjC::language() const
 {
     if (!m_mediaSelectionOption)
         return emptyAtom();

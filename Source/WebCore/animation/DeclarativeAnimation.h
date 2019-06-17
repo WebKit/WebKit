@@ -77,7 +77,7 @@ private:
     void disassociateFromOwningElement();
     void flushPendingStyleChanges() const;
     AnimationEffectPhase phaseWithoutEffect() const;
-    void enqueueDOMEvent(const AtomicString&, Seconds);
+    void enqueueDOMEvent(const AtomString&, Seconds);
     void remove() final;
 
     // ActiveDOMObject.

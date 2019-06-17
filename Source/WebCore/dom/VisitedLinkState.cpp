@@ -42,7 +42,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline static const AtomicString* linkAttribute(const Element& element)
+inline static const AtomString* linkAttribute(const Element& element)
 {
     if (!element.isLink())
         return nullptr;
@@ -91,7 +91,7 @@ InsideLink VisitedLinkState::determineLinkStateSlowCase(const Element& element)
 {
     ASSERT(element.isLink());
 
-    const AtomicString* attribute = linkAttribute(element);
+    const AtomString* attribute = linkAttribute(element);
     if (!attribute || attribute->isNull())
         return InsideLink::NotInside;
 

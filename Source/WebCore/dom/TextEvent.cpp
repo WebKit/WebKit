@@ -105,7 +105,7 @@ TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, const Vecto
 
 TextEvent::~TextEvent() = default;
 
-void TextEvent::initTextEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, const String& data)
+void TextEvent::initTextEvent(const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, const String& data)
 {
     if (isBeingDispatched())
         return;

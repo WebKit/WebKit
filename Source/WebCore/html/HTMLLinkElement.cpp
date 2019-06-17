@@ -158,7 +158,7 @@ void HTMLLinkElement::setDisabledState(bool disabled)
     }
 }
 
-void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == relAttr) {
         m_relAttribute = LinkRelAttribute(document(), value);
@@ -216,7 +216,7 @@ bool HTMLLinkElement::shouldLoadLink()
     return true;
 }
 
-void HTMLLinkElement::setCrossOrigin(const AtomicString& value)
+void HTMLLinkElement::setCrossOrigin(const AtomString& value)
 {
     setAttributeWithoutSynchronization(crossoriginAttr, value);
 }
@@ -226,7 +226,7 @@ String HTMLLinkElement::crossOrigin() const
     return parseCORSSettingsAttribute(attributeWithoutSynchronization(crossoriginAttr));
 }
 
-void HTMLLinkElement::setAs(const AtomicString& value)
+void HTMLLinkElement::setAs(const AtomString& value)
 {
     setAttributeWithoutSynchronization(asAttr, value);
 }
@@ -565,7 +565,7 @@ URL HTMLLinkElement::href() const
     return document().completeURL(attributeWithoutSynchronization(hrefAttr));
 }
 
-const AtomicString& HTMLLinkElement::rel() const
+const AtomString& HTMLLinkElement::rel() const
 {
     return attributeWithoutSynchronization(relAttr);
 }
@@ -575,7 +575,7 @@ String HTMLLinkElement::target() const
     return attributeWithoutSynchronization(targetAttr);
 }
 
-const AtomicString& HTMLLinkElement::type() const
+const AtomString& HTMLLinkElement::type() const
 {
     return attributeWithoutSynchronization(typeAttr);
 }

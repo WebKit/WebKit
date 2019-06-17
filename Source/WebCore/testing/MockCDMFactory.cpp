@@ -108,7 +108,7 @@ MockCDM::MockCDM(WeakPtr<MockCDMFactory> factory)
 {
 }
 
-bool MockCDM::supportsInitDataType(const AtomicString& initDataType) const
+bool MockCDM::supportsInitDataType(const AtomString& initDataType) const
 {
     if (m_factory)
         return m_factory->supportedDataTypes().contains(initDataType);
@@ -197,7 +197,7 @@ bool MockCDM::supportsSessions() const
     return m_factory && m_factory->supportsSessions();
 }
 
-bool MockCDM::supportsInitData(const AtomicString& initDataType, const SharedBuffer& initData) const
+bool MockCDM::supportsInitData(const AtomString& initDataType, const SharedBuffer& initData) const
 {
     if (!supportsInitDataType(initDataType))
         return false;
@@ -299,7 +299,7 @@ MockCDMInstanceSession::MockCDMInstanceSession(WeakPtr<MockCDMInstance>&& instan
 {
 }
 
-void MockCDMInstanceSession::requestLicense(LicenseType licenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
+void MockCDMInstanceSession::requestLicense(LicenseType licenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
 {
     MockCDMFactory* factory = m_instance ? m_instance->factory() : nullptr;
     if (!factory) {

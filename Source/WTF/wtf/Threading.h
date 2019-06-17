@@ -45,7 +45,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/WordLock.h>
-#include <wtf/text/AtomicStringTable.h>
+#include <wtf/text/AtomStringTable.h>
 
 #if USE(PTHREADS) && !OS(DARWIN)
 #include <signal.h>
@@ -156,16 +156,16 @@ public:
         return m_stack;
     }
 
-    AtomicStringTable* atomicStringTable()
+    AtomStringTable* atomStringTable()
     {
-        return m_currentAtomicStringTable;
+        return m_currentAtomStringTable;
     }
 
-    AtomicStringTable* setCurrentAtomicStringTable(AtomicStringTable* atomicStringTable)
+    AtomStringTable* setCurrentAtomStringTable(AtomStringTable* atomStringTable)
     {
-        AtomicStringTable* oldAtomicStringTable = m_currentAtomicStringTable;
-        m_currentAtomicStringTable = atomicStringTable;
-        return oldAtomicStringTable;
+        AtomStringTable* oldAtomStringTable = m_currentAtomStringTable;
+        m_currentAtomStringTable = atomStringTable;
+        return oldAtomStringTable;
     }
 
 #if ENABLE(STACK_STATS)
@@ -301,8 +301,8 @@ protected:
     unsigned m_suspendCount { 0 };
 #endif
 
-    AtomicStringTable* m_currentAtomicStringTable { nullptr };
-    AtomicStringTable m_defaultAtomicStringTable;
+    AtomStringTable* m_currentAtomStringTable { nullptr };
+    AtomStringTable m_defaultAtomStringTable;
 
 #if ENABLE(STACK_STATS)
     StackStats::PerThreadStats m_stackStats;

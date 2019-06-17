@@ -46,7 +46,7 @@ static const int dateTimeLocalDefaultStepBase = 0;
 static const int dateTimeLocalStepScaleFactor = 1000;
 static const StepRange::StepDescription dateTimeLocalStepDescription { dateTimeLocalDefaultStep, dateTimeLocalDefaultStepBase, dateTimeLocalStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger };
 
-const AtomicString& DateTimeLocalInputType::formControlType() const
+const AtomString& DateTimeLocalInputType::formControlType() const
 {
     return InputTypeNames::datetimelocal();
 }

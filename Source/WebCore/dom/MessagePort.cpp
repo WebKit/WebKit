@@ -401,7 +401,7 @@ Vector<RefPtr<MessagePort>> MessagePort::entanglePorts(ScriptExecutionContext& c
     return ports;
 }
 
-bool MessagePort::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+bool MessagePort::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     if (eventType == eventNames().messageEvent) {
         if (listener->isAttribute())
@@ -413,7 +413,7 @@ bool MessagePort::addEventListener(const AtomicString& eventType, Ref<EventListe
     return EventTargetWithInlineData::addEventListener(eventType, WTFMove(listener), options);
 }
 
-bool MessagePort::removeEventListener(const AtomicString& eventType, EventListener& listener, const ListenerOptions& options)
+bool MessagePort::removeEventListener(const AtomString& eventType, EventListener& listener, const ListenerOptions& options)
 {
     auto result = EventTargetWithInlineData::removeEventListener(eventType, listener, options);
 

@@ -888,7 +888,7 @@ Ref<HTMLElement> createHTMLElement(Document& document, const QualifiedName& name
     return HTMLElementFactory::createElement(name, document);
 }
 
-Ref<HTMLElement> createHTMLElement(Document& document, const AtomicString& tagName)
+Ref<HTMLElement> createHTMLElement(Document& document, const AtomString& tagName)
 {
     return createHTMLElement(document, QualifiedName(nullAtom(), tagName, xhtmlNamespaceURI));
 }

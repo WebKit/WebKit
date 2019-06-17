@@ -62,26 +62,26 @@ void SVGStyleElement::setDisabled(bool setDisabled)
         styleSheet->setDisabled(setDisabled);
 }
 
-const AtomicString& SVGStyleElement::type() const
+const AtomString& SVGStyleElement::type() const
 {
-    static NeverDestroyed<const AtomicString> defaultValue("text/css", AtomicString::ConstructFromLiteral);
-    const AtomicString& n = getAttribute(SVGNames::typeAttr);
+    static NeverDestroyed<const AtomString> defaultValue("text/css", AtomString::ConstructFromLiteral);
+    const AtomString& n = getAttribute(SVGNames::typeAttr);
     return n.isNull() ? defaultValue.get() : n;
 }
 
-void SVGStyleElement::setType(const AtomicString& type)
+void SVGStyleElement::setType(const AtomString& type)
 {
     setAttribute(SVGNames::typeAttr, type);
 }
 
-const AtomicString& SVGStyleElement::media() const
+const AtomString& SVGStyleElement::media() const
 {
-    static NeverDestroyed<const AtomicString> defaultValue("all", AtomicString::ConstructFromLiteral);
-    const AtomicString& n = attributeWithoutSynchronization(SVGNames::mediaAttr);
+    static NeverDestroyed<const AtomString> defaultValue("all", AtomString::ConstructFromLiteral);
+    const AtomString& n = attributeWithoutSynchronization(SVGNames::mediaAttr);
     return n.isNull() ? defaultValue.get() : n;
 }
 
-void SVGStyleElement::setMedia(const AtomicString& media)
+void SVGStyleElement::setMedia(const AtomString& media)
 {
     setAttributeWithoutSynchronization(SVGNames::mediaAttr, media);
 }
@@ -91,7 +91,7 @@ String SVGStyleElement::title() const
     return attributeWithoutSynchronization(SVGNames::titleAttr);
 }
 
-void SVGStyleElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGStyleElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::titleAttr) {
         if (sheet() && !isInShadowTree())

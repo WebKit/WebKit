@@ -93,7 +93,7 @@ bool HTMLObjectElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLPlugInImageElement::isPresentationAttribute(name);
 }
 
-void HTMLObjectElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+void HTMLObjectElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == borderAttr)
         applyBorderAttributeToStyle(value, style);
@@ -101,7 +101,7 @@ void HTMLObjectElement::collectStyleForPresentationAttribute(const QualifiedName
         HTMLPlugInImageElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
-void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     bool invalidateRenderer = false;
 
@@ -190,7 +190,7 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
     // Turn the attributes of the <object> element into arrays, but don't override <param> values.
     if (hasAttributes()) {
         for (const Attribute& attribute : attributesIterator()) {
-            const AtomicString& name = attribute.name().localName();
+            const AtomString& name = attribute.name().localName();
             if (!uniqueParamNames.contains(name.impl())) {
                 paramNames.append(name.string());
                 paramValues.append(attribute.value().string());
@@ -324,7 +324,7 @@ bool HTMLObjectElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == dataAttr || attribute.name() == codebaseAttr || (attribute.name() == usemapAttr && attribute.value().string()[0] != '#') || HTMLPlugInImageElement::isURLAttribute(attribute);
 }
 
-const AtomicString& HTMLObjectElement::imageSourceURL() const
+const AtomString& HTMLObjectElement::imageSourceURL() const
 {
     return attributeWithoutSynchronization(dataAttr);
 }
@@ -457,7 +457,7 @@ void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) cons
 
     // FIXME: Passing a string that starts with "#" to the completeURL function does
     // not seem like it would work. The image element has similar but not identical code.
-    const AtomicString& useMap = attributeWithoutSynchronization(usemapAttr);
+    const AtomString& useMap = attributeWithoutSynchronization(usemapAttr);
     if (useMap.startsWith('#'))
         addSubresourceURL(urls, document().completeURL(useMap));
 }

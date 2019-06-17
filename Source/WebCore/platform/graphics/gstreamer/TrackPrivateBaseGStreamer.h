@@ -80,15 +80,15 @@ protected:
 
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     gint m_index;
-    AtomicString m_label;
-    AtomicString m_language;
+    AtomString m_label;
+    AtomString m_language;
     GRefPtr<GstPad> m_pad;
 #if GST_CHECK_VERSION(1, 10, 0)
     GRefPtr<GstStream> m_stream;
 #endif
 
 private:
-    bool getLanguageCode(GstTagList* tags, AtomicString& value);
+    bool getLanguageCode(GstTagList* tags, AtomString& value);
 
     template<class StringType>
     bool getTag(GstTagList* tags, const gchar* tagName, StringType& value);

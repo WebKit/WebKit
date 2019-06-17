@@ -30,13 +30,13 @@ class SVGElement;
 
 class SVGLangSpace {
 public:
-    const AtomicString& xmllang() const { return m_lang; }
-    void setXmllang(const AtomicString& xmlLang) { m_lang = xmlLang; }
+    const AtomString& xmllang() const { return m_lang; }
+    void setXmllang(const AtomString& xmlLang) { m_lang = xmlLang; }
 
-    const AtomicString& xmlspace() const;
-    void setXmlspace(const AtomicString& xmlSpace) { m_space = xmlSpace; }
+    const AtomString& xmlspace() const;
+    void setXmlspace(const AtomString& xmlSpace) { m_space = xmlSpace; }
 
-    void parseAttribute(const QualifiedName&, const AtomicString&);
+    void parseAttribute(const QualifiedName&, const AtomString&);
 
     void svgAttributeChanged(const QualifiedName&);
 
@@ -47,8 +47,8 @@ protected:
 
 private:
     SVGElement& m_contextElement;
-    AtomicString m_lang;
-    AtomicString m_space;
+    AtomString m_lang;
+    AtomString m_space;
 };
 
 } // namespace WebCore

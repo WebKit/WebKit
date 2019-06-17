@@ -113,7 +113,7 @@ public:
 
     WebVTTParser(WebVTTParserClient*, ScriptExecutionContext*);
 
-    static inline bool isRecognizedTag(const AtomicString& tagName)
+    static inline bool isRecognizedTag(const AtomString& tagName)
     {
         return tagName == iTag
             || tagName == bTag

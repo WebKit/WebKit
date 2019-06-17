@@ -66,7 +66,7 @@ public:
     WEBCORE_EXPORT VisiblePosition visiblePositionForIndex(int index) const;
     WEBCORE_EXPORT int selectionStart() const;
     WEBCORE_EXPORT int selectionEnd() const;
-    WEBCORE_EXPORT const AtomicString& selectionDirection() const;
+    WEBCORE_EXPORT const AtomString& selectionDirection() const;
     WEBCORE_EXPORT void setSelectionStart(int);
     WEBCORE_EXPORT void setSelectionEnd(int);
     WEBCORE_EXPORT void setSelectionDirection(const String&);
@@ -105,7 +105,7 @@ protected:
     bool isPlaceholderEmpty() const;
     virtual void updatePlaceholderText() = 0;
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomString&) override;
 
     void disabledStateChanged() override;
     void readOnlyStateChanged() override;

@@ -73,10 +73,10 @@ static void logSpeculativeLoadingDiagnosticMessage(NetworkProcess& networkProces
     networkProcess.logDiagnosticMessage(frameID.first, WebCore::DiagnosticLoggingKeys::networkCacheKey(), message, WebCore::ShouldSample::Yes);
 }
 
-static const AtomicString& subresourcesType()
+static const AtomString& subresourcesType()
 {
     ASSERT(RunLoop::isMain());
-    static NeverDestroyed<const AtomicString> resource("SubResources", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> resource("SubResources", AtomString::ConstructFromLiteral);
     return resource;
 }
 

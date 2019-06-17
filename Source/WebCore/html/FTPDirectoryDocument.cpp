@@ -112,28 +112,28 @@ void FTPDirectoryDocumentParser::appendEntry(const String& filename, const Strin
     auto& document = *this->document();
 
     auto rowElement = m_tableElement->insertRow(-1).releaseReturnValue();
-    rowElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomicString("ftpDirectoryEntryRow", AtomicString::ConstructFromLiteral));
+    rowElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomString("ftpDirectoryEntryRow", AtomString::ConstructFromLiteral));
 
     auto typeElement = HTMLTableCellElement::create(tdTag, document);
     typeElement->appendChild(Text::create(document, String(&noBreakSpace, 1)));
     if (isDirectory)
-        typeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomicString("ftpDirectoryIcon ftpDirectoryTypeDirectory", AtomicString::ConstructFromLiteral));
+        typeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomString("ftpDirectoryIcon ftpDirectoryTypeDirectory", AtomString::ConstructFromLiteral));
     else
-        typeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomicString("ftpDirectoryIcon ftpDirectoryTypeFile", AtomicString::ConstructFromLiteral));
+        typeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomString("ftpDirectoryIcon ftpDirectoryTypeFile", AtomString::ConstructFromLiteral));
     rowElement->appendChild(typeElement);
 
     auto nameElement = createTDForFilename(filename);
-    nameElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomicString("ftpDirectoryFileName", AtomicString::ConstructFromLiteral));
+    nameElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomString("ftpDirectoryFileName", AtomString::ConstructFromLiteral));
     rowElement->appendChild(nameElement);
 
     auto dateElement = HTMLTableCellElement::create(tdTag, document);
     dateElement->appendChild(Text::create(document, date));
-    dateElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomicString("ftpDirectoryFileDate", AtomicString::ConstructFromLiteral));
+    dateElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomString("ftpDirectoryFileDate", AtomString::ConstructFromLiteral));
     rowElement->appendChild(dateElement);
 
     auto sizeElement = HTMLTableCellElement::create(tdTag, document);
     sizeElement->appendChild(Text::create(document, size));
-    sizeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomicString("ftpDirectoryFileSize", AtomicString::ConstructFromLiteral));
+    sizeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomString("ftpDirectoryFileSize", AtomString::ConstructFromLiteral));
     rowElement->appendChild(sizeElement);
 }
 
@@ -314,7 +314,7 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
     }
 
     m_tableElement = HTMLTableElement::create(document);
-    m_tableElement->setAttributeWithoutSynchronization(HTMLNames::idAttr, AtomicString("ftpDirectoryTable", AtomicString::ConstructFromLiteral));
+    m_tableElement->setAttributeWithoutSynchronization(HTMLNames::idAttr, AtomString("ftpDirectoryTable", AtomString::ConstructFromLiteral));
 
     // If we didn't find the table element, lets try to append our own to the body.
     // If that fails for some reason, cram it on the end of the document as a last ditch effort.
@@ -336,8 +336,8 @@ void FTPDirectoryDocumentParser::createBasicDocument()
     document.appendChild(bodyElement);
 
     m_tableElement = HTMLTableElement::create(document);
-    m_tableElement->setAttributeWithoutSynchronization(HTMLNames::idAttr, AtomicString("ftpDirectoryTable", AtomicString::ConstructFromLiteral));
-    m_tableElement->setAttribute(HTMLNames::styleAttr, AtomicString("width:100%", AtomicString::ConstructFromLiteral));
+    m_tableElement->setAttributeWithoutSynchronization(HTMLNames::idAttr, AtomString("ftpDirectoryTable", AtomString::ConstructFromLiteral));
+    m_tableElement->setAttribute(HTMLNames::styleAttr, AtomString("width:100%", AtomString::ConstructFromLiteral));
 
     bodyElement->appendChild(*m_tableElement);
 

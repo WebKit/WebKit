@@ -25,8 +25,8 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
@@ -57,20 +57,20 @@ struct RuleFeatureSet {
     void clear();
     void shrinkToFit();
     void collectFeatures(const RuleData&);
-    void registerContentAttribute(const AtomicString&);
+    void registerContentAttribute(const AtomString&);
 
-    HashSet<AtomicString> idsInRules;
-    HashSet<AtomicString> idsMatchingAncestorsInRules;
-    HashSet<AtomicString> attributeCanonicalLocalNamesInRules;
-    HashSet<AtomicString> attributeLocalNamesInRules;
-    HashSet<AtomicString> contentAttributeNamesInRules;
+    HashSet<AtomString> idsInRules;
+    HashSet<AtomString> idsMatchingAncestorsInRules;
+    HashSet<AtomString> attributeCanonicalLocalNamesInRules;
+    HashSet<AtomString> attributeLocalNamesInRules;
+    HashSet<AtomString> contentAttributeNamesInRules;
     Vector<RuleFeature> siblingRules;
     Vector<RuleFeature> uncommonAttributeRules;
     
-    HashMap<AtomicString, std::unique_ptr<Vector<RuleFeature>>> classRules;
-    HashMap<AtomicString, std::unique_ptr<Vector<RuleFeature>>> attributeRules;
-    HashSet<AtomicString> classesAffectingHost;
-    HashSet<AtomicString> attributesAffectingHost;
+    HashMap<AtomString, std::unique_ptr<Vector<RuleFeature>>> classRules;
+    HashMap<AtomString, std::unique_ptr<Vector<RuleFeature>>> attributeRules;
+    HashSet<AtomString> classesAffectingHost;
+    HashSet<AtomString> attributesAffectingHost;
 
     bool usesFirstLineRules { false };
     bool usesFirstLetterRules { false };
@@ -82,7 +82,7 @@ private:
     struct SelectorFeatures {
         bool hasSiblingSelector { false };
 
-        Vector<std::pair<AtomicString, MatchElement>, 32> classes;
+        Vector<std::pair<AtomString, MatchElement>, 32> classes;
         Vector<std::pair<const CSSSelector*, MatchElement>, 32> attributes;
     };
     void recursivelyCollectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, MatchElement = MatchElement::Subject);

@@ -150,7 +150,7 @@ bool isValidSharedInstanceThreadState(VM* vm)
 
 bool isValidThreadState(VM* vm)
 {
-    if (vm->atomicStringTable() != Thread::current().atomicStringTable())
+    if (vm->atomStringTable() != Thread::current().atomStringTable())
         return false;
 
     if (vm->isSharedInstance() && !isValidSharedInstanceThreadState(vm))
@@ -2105,7 +2105,7 @@ Heap::Ticket Heap::requestCollection(GCRequest request)
     stopIfNecessary();
     
     ASSERT(vm()->currentThreadIsHoldingAPILock());
-    RELEASE_ASSERT(vm()->atomicStringTable() == Thread::current().atomicStringTable());
+    RELEASE_ASSERT(vm()->atomStringTable() == Thread::current().atomStringTable());
     
     LockHolder locker(*m_threadLock);
     // We may be able to steal the conn. That only works if the collector is definitely not running

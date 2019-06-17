@@ -65,7 +65,7 @@ VideoTrack* VideoTrackList::item(unsigned index) const
     return nullptr;
 }
 
-VideoTrack* VideoTrackList::getTrackById(const AtomicString& id) const
+VideoTrack* VideoTrackList::getTrackById(const AtomString& id) const
 {
     for (auto& inbandTracks : m_inbandTracks) {
         auto& track = downcast<VideoTrack>(*inbandTracks);

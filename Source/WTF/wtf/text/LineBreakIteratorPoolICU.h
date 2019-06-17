@@ -29,7 +29,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSpecific.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WTF {
 
@@ -44,9 +44,9 @@ public:
         return *pool.get();
     }
 
-    static AtomicString makeLocaleWithBreakKeyword(const AtomicString& locale, LineBreakIteratorMode mode)
+    static AtomString makeLocaleWithBreakKeyword(const AtomString& locale, LineBreakIteratorMode mode)
     {
-        // The uloc functions model locales as char*, so we have to downconvert our AtomicString.
+        // The uloc functions model locales as char*, so we have to downconvert our AtomString.
         auto utf8Locale = locale.string().utf8();
         if (!utf8Locale.length())
             return locale;
@@ -72,7 +72,7 @@ public:
         UErrorCode status = U_ZERO_ERROR;
         int32_t lengthNeeded = uloc_setKeywordValue("lb", keywordValue, scratchBuffer.data(), scratchBuffer.size(), &status);
         if (U_SUCCESS(status))
-            return AtomicString::fromUTF8(scratchBuffer.data(), lengthNeeded);
+            return AtomString::fromUTF8(scratchBuffer.data(), lengthNeeded);
         if (status == U_BUFFER_OVERFLOW_ERROR) {
             scratchBuffer.grow(lengthNeeded + 1);
             memset(scratchBuffer.data() + utf8Locale.length(), 0, scratchBuffer.size() - utf8Locale.length());
@@ -80,12 +80,12 @@ public:
             int32_t lengthNeeded2 = uloc_setKeywordValue("lb", keywordValue, scratchBuffer.data(), scratchBuffer.size(), &status);
             if (!U_SUCCESS(status) || lengthNeeded != lengthNeeded2)
                 return locale;
-            return AtomicString::fromUTF8(scratchBuffer.data(), lengthNeeded);
+            return AtomString::fromUTF8(scratchBuffer.data(), lengthNeeded);
         }
         return locale;
     }
 
-    UBreakIterator* take(const AtomicString& locale, LineBreakIteratorMode mode)
+    UBreakIterator* take(const AtomString& locale, LineBreakIteratorMode mode)
     {
         auto localeWithOptionalBreakKeyword = makeLocaleWithBreakKeyword(locale, mode);
 
@@ -122,8 +122,8 @@ public:
 private:
     static constexpr size_t capacity = 4;
 
-    Vector<std::pair<AtomicString, UBreakIterator*>, capacity> m_pool;
-    HashMap<UBreakIterator*, AtomicString> m_vendedIterators;
+    Vector<std::pair<AtomString, UBreakIterator*>, capacity> m_pool;
+    HashMap<UBreakIterator*, AtomString> m_vendedIterators;
 
     friend WTF::ThreadSpecific<LineBreakIteratorPool>::operator LineBreakIteratorPool*();
 };

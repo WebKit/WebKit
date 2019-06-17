@@ -48,7 +48,7 @@ public:
         String reason;
     };
 
-    static Ref<CloseEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<CloseEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new CloseEvent(type, initializer, isTrusted));
     }
@@ -69,7 +69,7 @@ private:
     {
     }
 
-    CloseEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    CloseEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
         : Event(type, initializer, isTrusted)
         , m_wasClean(initializer.wasClean)
         , m_code(initializer.code)

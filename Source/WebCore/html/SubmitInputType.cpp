@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-const AtomicString& SubmitInputType::formControlType() const
+const AtomString& SubmitInputType::formControlType() const
 {
     return InputTypeNames::submit();
 }

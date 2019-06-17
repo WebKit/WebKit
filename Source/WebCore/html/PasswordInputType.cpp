@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-const AtomicString& PasswordInputType::formControlType() const
+const AtomString& PasswordInputType::formControlType() const
 {
     return InputTypeNames::password();
 }

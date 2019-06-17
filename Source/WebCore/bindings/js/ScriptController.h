@@ -133,8 +133,8 @@ public:
 
     void updateDocument();
 
-    void namedItemAdded(HTMLDocument*, const AtomicString&) { }
-    void namedItemRemoved(HTMLDocument*, const AtomicString&) { }
+    void namedItemAdded(HTMLDocument*, const AtomString&) { }
+    void namedItemRemoved(HTMLDocument*, const AtomString&) { }
 
     void clearScriptObjects();
     WEBCORE_EXPORT void cleanupScriptObjectsForPlugin(void*);

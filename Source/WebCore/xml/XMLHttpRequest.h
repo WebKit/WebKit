@@ -184,7 +184,7 @@ private:
     void networkError();
     void abortError();
 
-    void dispatchErrorEvents(const AtomicString&);
+    void dispatchErrorEvents(const AtomString&);
 
     using EventTarget::dispatchEvent;
     void dispatchEvent(Event&) override;

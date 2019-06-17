@@ -83,7 +83,7 @@ using namespace HTMLNames;
 class ListAttributeTargetObserver : IdTargetObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ListAttributeTargetObserver(const AtomicString& id, HTMLInputElement*);
+    ListAttributeTargetObserver(const AtomString& id, HTMLInputElement*);
 
     void idTargetChanged() override;
 
@@ -180,7 +180,7 @@ HTMLInputElement::~HTMLInputElement()
 #endif
 }
 
-const AtomicString& HTMLInputElement::name() const
+const AtomString& HTMLInputElement::name() const
 {
     return m_name.isNull() ? emptyAtom() : m_name;
 }
@@ -507,7 +507,7 @@ void HTMLInputElement::handleBlurEvent()
     m_inputType->handleBlurEvent();
 }
 
-void HTMLInputElement::setType(const AtomicString& type)
+void HTMLInputElement::setType(const AtomString& type)
 {
     setAttributeWithoutSynchronization(typeAttr, type);
 }
@@ -619,7 +619,7 @@ void HTMLInputElement::subtreeHasChanged()
     calculateAndAdjustDirectionality();
 }
 
-const AtomicString& HTMLInputElement::formControlType() const
+const AtomString& HTMLInputElement::formControlType() const
 {
     return m_inputType->formControlType();
 }
@@ -667,7 +667,7 @@ bool HTMLInputElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLTextFormControlElement::isPresentationAttribute(name);
 }
 
-void HTMLInputElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+void HTMLInputElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == vspaceAttr) {
         addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
@@ -695,7 +695,7 @@ inline void HTMLInputElement::initializeInputType()
     ASSERT(m_parsingInProgress);
     ASSERT(!m_inputType);
 
-    const AtomicString& type = attributeWithoutSynchronization(typeAttr);
+    const AtomString& type = attributeWithoutSynchronization(typeAttr);
     if (type.isNull()) {
         m_inputType = InputType::createText(*this);
         ensureUserAgentShadowRoot();
@@ -711,7 +711,7 @@ inline void HTMLInputElement::initializeInputType()
     runPostTypeUpdateTasks();
 }
 
-void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     ASSERT(m_inputType);
     Ref<InputType> protectedInputType(*m_inputType);
@@ -1798,7 +1798,7 @@ bool HTMLInputElement::isEmptyValue() const
     return m_inputType->isEmptyValue();
 }
 
-void HTMLInputElement::maxLengthAttributeChanged(const AtomicString& newValue)
+void HTMLInputElement::maxLengthAttributeChanged(const AtomString& newValue)
 {
     unsigned oldEffectiveMaxLength = effectiveMaxLength();
     internalSetMaxLength(parseHTMLNonNegativeInteger(newValue).value_or(-1));
@@ -1810,7 +1810,7 @@ void HTMLInputElement::maxLengthAttributeChanged(const AtomicString& newValue)
     updateValidity();
 }
 
-void HTMLInputElement::minLengthAttributeChanged(const AtomicString& newValue)
+void HTMLInputElement::minLengthAttributeChanged(const AtomString& newValue)
 {
     int oldMinLength = minLength();
     internalSetMinLength(parseHTMLNonNegativeInteger(newValue).value_or(-1));
@@ -1936,7 +1936,7 @@ void HTMLInputElement::setWidth(unsigned width)
 }
 
 #if ENABLE(DATALIST_ELEMENT)
-ListAttributeTargetObserver::ListAttributeTargetObserver(const AtomicString& id, HTMLInputElement* element)
+ListAttributeTargetObserver::ListAttributeTargetObserver(const AtomString& id, HTMLInputElement* element)
     : IdTargetObserver(element->treeScope().idTargetObserverRegistry(), id)
     , m_element(element)
 {
@@ -2094,8 +2094,8 @@ bool HTMLInputElement::setupDateTimeChooserParameters(DateTimeChooserParameters&
     if (!document().settings().langAttributeAwareFormControlUIEnabled())
         parameters.locale = defaultLanguage();
     else {
-        AtomicString computedLocale = computeInheritedLanguage();
-        parameters.locale = computedLocale.isEmpty() ? AtomicString(defaultLanguage()) : computedLocale;
+        AtomString computedLocale = computeInheritedLanguage();
+        parameters.locale = computedLocale.isEmpty() ? AtomString(defaultLanguage()) : computedLocale;
     }
 
     StepRange stepRange = createStepRange(RejectAny);

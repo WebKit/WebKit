@@ -38,7 +38,7 @@
 
 #if ENABLE(VIDEO_TRACK)
 #include "TrackPrivateBaseGStreamer.h"
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 #endif
 
 typedef struct _GstMpegtsSection GstMpegtsSection;
@@ -277,12 +277,12 @@ private:
     GRefPtr<GstElement> m_downloadBuffer;
     Vector<RefPtr<MediaPlayerRequestInstallMissingPluginsCallback>> m_missingPluginCallbacks;
 #if ENABLE(VIDEO_TRACK)
-    HashMap<AtomicString, RefPtr<AudioTrackPrivateGStreamer>> m_audioTracks;
-    HashMap<AtomicString, RefPtr<InbandTextTrackPrivateGStreamer>> m_textTracks;
-    HashMap<AtomicString, RefPtr<VideoTrackPrivateGStreamer>> m_videoTracks;
+    HashMap<AtomString, RefPtr<AudioTrackPrivateGStreamer>> m_audioTracks;
+    HashMap<AtomString, RefPtr<InbandTextTrackPrivateGStreamer>> m_textTracks;
+    HashMap<AtomString, RefPtr<VideoTrackPrivateGStreamer>> m_videoTracks;
     RefPtr<InbandMetadataTextTrackPrivateGStreamer> m_chaptersTrack;
 #if USE(GSTREAMER_MPEGTS)
-    HashMap<AtomicString, RefPtr<InbandMetadataTextTrackPrivateGStreamer>> m_metadataTracks;
+    HashMap<AtomString, RefPtr<InbandMetadataTextTrackPrivateGStreamer>> m_metadataTracks;
 #endif
 #endif
     virtual bool isMediaSource() const { return false; }

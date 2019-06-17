@@ -28,13 +28,13 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
 #define TEXMAP_DECLARE_VARIABLE(Accessor, Name, Type) \
     GLuint Accessor##Location() { \
-        static NeverDestroyed<const AtomicString> name(Name, AtomicString::ConstructFromLiteral); \
+        static NeverDestroyed<const AtomString> name(Name, AtomString::ConstructFromLiteral); \
         return getLocation(name.get(), Type); \
     }
 
@@ -98,10 +98,10 @@ private:
     GLuint m_fragmentShader;
 
     enum VariableType { UniformVariable, AttribVariable };
-    GLuint getLocation(const AtomicString&, VariableType);
+    GLuint getLocation(const AtomString&, VariableType);
 
     GLuint m_id;
-    HashMap<AtomicString, GLuint> m_variables;
+    HashMap<AtomString, GLuint> m_variables;
 };
 
 }

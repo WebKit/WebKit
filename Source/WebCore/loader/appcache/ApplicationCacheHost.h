@@ -113,7 +113,7 @@ public:
     void abort();
 
     void setDOMApplicationCache(DOMApplicationCache*);
-    void notifyDOMApplicationCache(const AtomicString& eventType, int progressTotal, int progressDone);
+    void notifyDOMApplicationCache(const AtomString& eventType, int progressTotal, int progressDone);
 
     void stopLoadingInFrame(Frame&);
 
@@ -129,7 +129,7 @@ private:
     friend class ApplicationCacheGroup;
 
     struct DeferredEvent {
-        AtomicString eventType;
+        AtomString eventType;
         int progressTotal;
         int progressDone;
     };
@@ -137,7 +137,7 @@ private:
     bool isApplicationCacheEnabled();
     bool isApplicationCacheBlockedForRequest(const ResourceRequest&);
 
-    void dispatchDOMEvent(const AtomicString& eventType, int progressTotal, int progressDone);
+    void dispatchDOMEvent(const AtomString& eventType, int progressTotal, int progressDone);
 
     bool scheduleLoadFallbackResourceFromApplicationCache(ResourceLoader*, ApplicationCache* = nullptr);
     void setCandidateApplicationCacheGroup(ApplicationCacheGroup*);

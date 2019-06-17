@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-AutocapitalizeType autocapitalizeTypeForAttributeValue(const AtomicString& attributeValue)
+AutocapitalizeType autocapitalizeTypeForAttributeValue(const AtomString& attributeValue)
 {
     // Omitted / missing values are the Default state.
     if (attributeValue.isEmpty())
@@ -49,25 +49,25 @@ AutocapitalizeType autocapitalizeTypeForAttributeValue(const AtomicString& attri
     return AutocapitalizeTypeSentences;
 }
 
-const AtomicString& stringForAutocapitalizeType(AutocapitalizeType type)
+const AtomString& stringForAutocapitalizeType(AutocapitalizeType type)
 {
     switch (type) {
     case AutocapitalizeTypeDefault:
         return nullAtom();
     case AutocapitalizeTypeNone: {
-        static NeverDestroyed<const AtomicString> valueNone("none", AtomicString::ConstructFromLiteral);
+        static NeverDestroyed<const AtomString> valueNone("none", AtomString::ConstructFromLiteral);
         return valueNone;
     }
     case AutocapitalizeTypeSentences: {
-        static NeverDestroyed<const AtomicString> valueSentences("sentences", AtomicString::ConstructFromLiteral);
+        static NeverDestroyed<const AtomString> valueSentences("sentences", AtomString::ConstructFromLiteral);
         return valueSentences;
     }
     case AutocapitalizeTypeWords: {
-        static NeverDestroyed<const AtomicString> valueWords("words", AtomicString::ConstructFromLiteral);
+        static NeverDestroyed<const AtomString> valueWords("words", AtomString::ConstructFromLiteral);
         return valueWords;
     }
     case AutocapitalizeTypeAllCharacters: {
-        static NeverDestroyed<const AtomicString> valueAllCharacters("characters", AtomicString::ConstructFromLiteral);
+        static NeverDestroyed<const AtomString> valueAllCharacters("characters", AtomString::ConstructFromLiteral);
         return valueAllCharacters;
     }
     }

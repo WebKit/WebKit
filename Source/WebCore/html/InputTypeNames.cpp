@@ -31,141 +31,141 @@ namespace InputTypeNames {
 // The type names must be lowercased because they will be the return values of
 // input.type and input.type must be lowercase according to DOM Level 2.
 
-const AtomicString& button()
+const AtomString& button()
 {
-    static NeverDestroyed<AtomicString> name("button", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("button", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& checkbox()
+const AtomString& checkbox()
 {
-    static NeverDestroyed<AtomicString> name("checkbox", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("checkbox", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& color()
+const AtomString& color()
 {
-    static NeverDestroyed<AtomicString> name("color", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("color", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& date()
+const AtomString& date()
 {
-    static NeverDestroyed<AtomicString> name("date", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("date", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& datetime()
+const AtomString& datetime()
 {
-    static NeverDestroyed<AtomicString> name("datetime", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("datetime", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& datetimelocal()
+const AtomString& datetimelocal()
 {
-    static NeverDestroyed<AtomicString> name("datetime-local", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("datetime-local", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& email()
+const AtomString& email()
 {
-    static NeverDestroyed<AtomicString> name("email", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("email", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& file()
+const AtomString& file()
 {
-    static NeverDestroyed<AtomicString> name("file", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("file", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& hidden()
+const AtomString& hidden()
 {
-    static NeverDestroyed<AtomicString> name("hidden", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("hidden", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& image()
+const AtomString& image()
 {
-    static NeverDestroyed<AtomicString> name("image", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("image", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& month()
+const AtomString& month()
 {
-    static NeverDestroyed<AtomicString> name("month", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("month", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& number()
+const AtomString& number()
 {
-    static NeverDestroyed<AtomicString> name("number", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("number", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& password()
+const AtomString& password()
 {
-    static NeverDestroyed<AtomicString> name("password", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("password", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& radio()
+const AtomString& radio()
 {
-    static NeverDestroyed<AtomicString> name("radio", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("radio", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& range()
+const AtomString& range()
 {
-    static NeverDestroyed<AtomicString> name("range", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("range", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& reset()
+const AtomString& reset()
 {
-    static NeverDestroyed<AtomicString> name("reset", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("reset", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& search()
+const AtomString& search()
 {
-    static NeverDestroyed<AtomicString> name("search", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("search", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& submit()
+const AtomString& submit()
 {
-    static NeverDestroyed<AtomicString> name("submit", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("submit", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& telephone()
+const AtomString& telephone()
 {
-    static NeverDestroyed<AtomicString> name("tel", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("tel", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& text()
+const AtomString& text()
 {
-    static NeverDestroyed<AtomicString> name("text", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("text", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& time()
+const AtomString& time()
 {
-    static NeverDestroyed<AtomicString> name("time", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("time", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& url()
+const AtomString& url()
 {
-    static NeverDestroyed<AtomicString> name("url", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("url", AtomString::ConstructFromLiteral);
     return name;
 }
 
-const AtomicString& week()
+const AtomString& week()
 {
-    static NeverDestroyed<AtomicString> name("week", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> name("week", AtomString::ConstructFromLiteral);
     return name;
 }
 

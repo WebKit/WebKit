@@ -330,7 +330,7 @@ void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
     m_previousIteration = iteration;
 }
 
-void DeclarativeAnimation::enqueueDOMEvent(const AtomicString& eventType, Seconds elapsedTime)
+void DeclarativeAnimation::enqueueDOMEvent(const AtomString& eventType, Seconds elapsedTime)
 {
     ASSERT(m_owningElement);
     auto time = secondsToWebAnimationsAPITime(elapsedTime) / 1000;

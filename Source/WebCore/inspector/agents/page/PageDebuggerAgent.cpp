@@ -156,7 +156,7 @@ void PageDebuggerAgent::mainFrameNavigated()
     setSuppressAllPauses(false);
 }
 
-void PageDebuggerAgent::didAddEventListener(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
+void PageDebuggerAgent::didAddEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
     if (!breakpointsActive())
         return;
@@ -182,7 +182,7 @@ void PageDebuggerAgent::didAddEventListener(EventTarget& target, const AtomicStr
     didScheduleAsyncCall(scriptState, InspectorDebuggerAgent::AsyncCallType::EventListener, identifier, registeredListener->isOnce());
 }
 
-void PageDebuggerAgent::willRemoveEventListener(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
+void PageDebuggerAgent::willRemoveEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
     auto& eventListeners = target.eventListeners(eventType);
     size_t listenerIndex = eventListeners.findMatching([&](auto& registeredListener) {

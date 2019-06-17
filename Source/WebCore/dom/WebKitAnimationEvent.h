@@ -31,7 +31,7 @@ namespace WebCore {
 
 class WebKitAnimationEvent final : public Event {
 public:
-    static Ref<WebKitAnimationEvent> create(const AtomicString& type, const String& animationName, double elapsedTime)
+    static Ref<WebKitAnimationEvent> create(const AtomString& type, const String& animationName, double elapsedTime)
     {
         return adoptRef(*new WebKitAnimationEvent(type, animationName, elapsedTime));
     }
@@ -41,7 +41,7 @@ public:
         double elapsedTime { 0.0 };
     };
 
-    static Ref<WebKitAnimationEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<WebKitAnimationEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new WebKitAnimationEvent(type, initializer, isTrusted));
     }
@@ -54,8 +54,8 @@ public:
     EventInterface eventInterface() const override;
 
 private:
-    WebKitAnimationEvent(const AtomicString& type, const String& animationName, double elapsedTime);
-    WebKitAnimationEvent(const AtomicString&, const Init&, IsTrusted);
+    WebKitAnimationEvent(const AtomString& type, const String& animationName, double elapsedTime);
+    WebKitAnimationEvent(const AtomString&, const Init&, IsTrusted);
 
     String m_animationName;
     double m_elapsedTime;

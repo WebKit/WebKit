@@ -111,9 +111,9 @@ public:
     static void didInsertDOMNode(Document&, Node&);
     static void willRemoveDOMNode(Document&, Node&);
     static void didRemoveDOMNode(Document&, Node&);
-    static void willModifyDOMAttr(Document&, Element&, const AtomicString& oldValue, const AtomicString& newValue);
-    static void didModifyDOMAttr(Document&, Element&, const AtomicString& name, const AtomicString& value);
-    static void didRemoveDOMAttr(Document&, Element&, const AtomicString& name);
+    static void willModifyDOMAttr(Document&, Element&, const AtomString& oldValue, const AtomString& newValue);
+    static void didModifyDOMAttr(Document&, Element&, const AtomString& name, const AtomString& value);
+    static void didRemoveDOMAttr(Document&, Element&, const AtomString& name);
     static void characterDataModified(Document&, CharacterData&);
     static void willInvalidateStyleAttr(Element&);
     static void didInvalidateStyleAttr(Element&);
@@ -149,9 +149,9 @@ public:
 
     static InspectorInstrumentationCookie willCallFunction(ScriptExecutionContext*, const String& scriptName, int scriptLine, int scriptColumn);
     static void didCallFunction(const InspectorInstrumentationCookie&, ScriptExecutionContext*);
-    static void didAddEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
-    static void willRemoveEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
-    static bool isEventListenerDisabled(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
+    static void didAddEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+    static void willRemoveEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+    static bool isEventListenerDisabled(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     static InspectorInstrumentationCookie willDispatchEvent(Document&, const Event&, bool hasEventListeners);
     static void didDispatchEvent(const InspectorInstrumentationCookie&, bool defaultPrevented);
     static void willHandleEvent(ScriptExecutionContext&, Event&, const RegisteredEventListener&);
@@ -305,9 +305,9 @@ private:
     static void didInsertDOMNodeImpl(InstrumentingAgents&, Node&);
     static void willRemoveDOMNodeImpl(InstrumentingAgents&, Node&);
     static void didRemoveDOMNodeImpl(InstrumentingAgents&, Node&);
-    static void willModifyDOMAttrImpl(InstrumentingAgents&, Element&, const AtomicString& oldValue, const AtomicString& newValue);
-    static void didModifyDOMAttrImpl(InstrumentingAgents&, Element&, const AtomicString& name, const AtomicString& value);
-    static void didRemoveDOMAttrImpl(InstrumentingAgents&, Element&, const AtomicString& name);
+    static void willModifyDOMAttrImpl(InstrumentingAgents&, Element&, const AtomString& oldValue, const AtomString& newValue);
+    static void didModifyDOMAttrImpl(InstrumentingAgents&, Element&, const AtomString& name, const AtomString& value);
+    static void didRemoveDOMAttrImpl(InstrumentingAgents&, Element&, const AtomString& name);
     static void characterDataModifiedImpl(InstrumentingAgents&, CharacterData&);
     static void willInvalidateStyleAttrImpl(InstrumentingAgents&, Element&);
     static void didInvalidateStyleAttrImpl(InstrumentingAgents&, Element&);
@@ -343,9 +343,9 @@ private:
 
     static InspectorInstrumentationCookie willCallFunctionImpl(InstrumentingAgents&, const String& scriptName, int scriptLine, int scriptColumn, ScriptExecutionContext*);
     static void didCallFunctionImpl(const InspectorInstrumentationCookie&, ScriptExecutionContext*);
-    static void didAddEventListenerImpl(InstrumentingAgents&, EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
-    static void willRemoveEventListenerImpl(InstrumentingAgents&, EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
-    static bool isEventListenerDisabledImpl(InstrumentingAgents&, EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
+    static void didAddEventListenerImpl(InstrumentingAgents&, EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+    static void willRemoveEventListenerImpl(InstrumentingAgents&, EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+    static bool isEventListenerDisabledImpl(InstrumentingAgents&, EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     static InspectorInstrumentationCookie willDispatchEventImpl(InstrumentingAgents&, Document&, const Event&, bool hasEventListeners);
     static void willHandleEventImpl(InstrumentingAgents&, Event&, const RegisteredEventListener&);
     static void didHandleEventImpl(InstrumentingAgents&);
@@ -533,21 +533,21 @@ inline void InspectorInstrumentation::didRemoveDOMNode(Document& document, Node&
         didRemoveDOMNodeImpl(*instrumentingAgents, node);
 }
 
-inline void InspectorInstrumentation::willModifyDOMAttr(Document& document, Element& element, const AtomicString& oldValue, const AtomicString& newValue)
+inline void InspectorInstrumentation::willModifyDOMAttr(Document& document, Element& element, const AtomString& oldValue, const AtomString& newValue)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
         willModifyDOMAttrImpl(*instrumentingAgents, element, oldValue, newValue);
 }
 
-inline void InspectorInstrumentation::didModifyDOMAttr(Document& document, Element& element, const AtomicString& name, const AtomicString& value)
+inline void InspectorInstrumentation::didModifyDOMAttr(Document& document, Element& element, const AtomString& name, const AtomString& value)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
         didModifyDOMAttrImpl(*instrumentingAgents, element, name, value);
 }
 
-inline void InspectorInstrumentation::didRemoveDOMAttr(Document& document, Element& element, const AtomicString& name)
+inline void InspectorInstrumentation::didRemoveDOMAttr(Document& document, Element& element, const AtomString& name)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
@@ -730,21 +730,21 @@ inline void InspectorInstrumentation::didRemoveTimer(ScriptExecutionContext& con
         didRemoveTimerImpl(*instrumentingAgents, timerId, context);
 }
 
-inline void InspectorInstrumentation::didAddEventListener(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
+inline void InspectorInstrumentation::didAddEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(target.scriptExecutionContext()))
         didAddEventListenerImpl(*instrumentingAgents, target, eventType, listener, capture);
 }
 
-inline void InspectorInstrumentation::willRemoveEventListener(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
+inline void InspectorInstrumentation::willRemoveEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(target.scriptExecutionContext()))
         willRemoveEventListenerImpl(*instrumentingAgents, target, eventType, listener, capture);
 }
 
-inline bool InspectorInstrumentation::isEventListenerDisabled(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
+inline bool InspectorInstrumentation::isEventListenerDisabled(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
     FAST_RETURN_IF_NO_FRONTENDS(false);
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(target.scriptExecutionContext()))

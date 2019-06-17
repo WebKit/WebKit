@@ -59,7 +59,7 @@ private:
     void newRegionsAvailable(TextTrackLoader&) final;
     void newStyleSheetsAvailable(TextTrackLoader&) final;
 
-    AtomicString id() const final;
+    AtomString id() const final;
     bool isDefault() const final { return m_isDefault; }
     Element* element() final;
 

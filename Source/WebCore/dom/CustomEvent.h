@@ -42,16 +42,16 @@ public:
         JSC::JSValue detail;
     };
 
-    static Ref<CustomEvent> create(const AtomicString& type, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<CustomEvent> create(const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
 
-    void initCustomEvent(const AtomicString& type, bool canBubble, bool cancelable, JSC::JSValue detail = JSC::JSValue::JSUndefined);
+    void initCustomEvent(const AtomString& type, bool canBubble, bool cancelable, JSC::JSValue detail = JSC::JSValue::JSUndefined);
 
     const JSValueInWrappedObject& detail() const { return m_detail; }
     JSValueInWrappedObject& cachedDetail() { return m_cachedDetail; }
 
 private:
     CustomEvent(IsTrusted);
-    CustomEvent(const AtomicString& type, const Init& initializer, IsTrusted);
+    CustomEvent(const AtomString& type, const Init& initializer, IsTrusted);
 
     EventInterface eventInterface() const final;
 

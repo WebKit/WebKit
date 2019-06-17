@@ -220,15 +220,15 @@ enum TestConfidence { "high", "kinda-low" };
     void    methodWithNonOptionalArgAndTwoOptionalArgs(long nonOpt, optional long opt1, optional long opt2);
     void    methodWithOptionalString(optional DOMString str);
     void    methodWithOptionalUSVString(optional USVString str);
-    void    methodWithOptionalAtomicString(optional [AtomicString] DOMString str);
+    void    methodWithOptionalAtomicString(optional [AtomString] DOMString str);
     void    methodWithOptionalStringAndDefaultValue(optional DOMString str = "foo");
-    void    methodWithOptionalAtomicStringAndDefaultValue(optional [AtomicString] DOMString str = "foo");
+    void    methodWithOptionalAtomicStringAndDefaultValue(optional [AtomString] DOMString str = "foo");
     void    methodWithOptionalStringIsNull(optional DOMString str = null);
     void    methodWithOptionalStringIsUndefined(optional DOMString str = "undefined");
-    void    methodWithOptionalAtomicStringIsNull(optional [AtomicString] DOMString str = null);
+    void    methodWithOptionalAtomicStringIsNull(optional [AtomString] DOMString str = null);
     void    methodWithOptionalStringIsEmptyString(optional DOMString str = "");
     void    methodWithOptionalUSVStringIsEmptyString(optional USVString str = "");
-    void    methodWithOptionalAtomicStringIsEmptyString(optional [AtomicString] DOMString str = "");
+    void    methodWithOptionalAtomicStringIsEmptyString(optional [AtomString] DOMString str = "");
     void    methodWithOptionalDoubleIsNaN(optional unrestricted double number = NaN);
     void    methodWithOptionalFloatIsNaN(optional unrestricted float number = NaN);
     void    methodWithOptionalLongLong(optional long long number);
@@ -344,7 +344,7 @@ enum TestConfidence { "high", "kinda-low" };
 
     void methodWithAndWithoutNullableSequence(sequence<unsigned long> arrayArg, sequence<unsigned long>? nullableArrayArg);
 
-    Element? getElementById([RequiresExistingAtomicString] DOMString elementId);
+    Element? getElementById([RequiresExistingAtomString] DOMString elementId);
 
     [CheckSecurityForNode] readonly attribute Document contentDocument;
     [CheckSecurityForNode, MayThrowException] SVGDocument getSVGDocument();

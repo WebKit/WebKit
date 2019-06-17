@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -92,7 +92,7 @@ enum class AutofillFieldName {
     Impp
 };
 
-WEBCORE_EXPORT AutofillFieldName toAutofillFieldName(const AtomicString&);
+WEBCORE_EXPORT AutofillFieldName toAutofillFieldName(const AtomString&);
 
 class HTMLFormControlElement;
 
@@ -100,7 +100,7 @@ class AutofillData {
 public:
     static AutofillData createFromHTMLFormControlElement(const HTMLFormControlElement&);
 
-    AutofillData(const AtomicString& fieldName, const String& idlExposedValue)
+    AutofillData(const AtomString& fieldName, const String& idlExposedValue)
         : fieldName(fieldName)
         , idlExposedValue(idlExposedValue)
     {
@@ -108,7 +108,7 @@ public:
 
     // We could add support for hint tokens and scope tokens if those ever became useful to anyone.
 
-    AtomicString fieldName;
+    AtomString fieldName;
     String idlExposedValue;
 };
 

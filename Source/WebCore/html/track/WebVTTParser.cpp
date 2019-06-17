@@ -501,7 +501,7 @@ private:
 
     WebVTTToken m_token;
     RefPtr<ContainerNode> m_currentNode;
-    Vector<AtomicString> m_languageStack;
+    Vector<AtomString> m_languageStack;
     Document& m_document;
 };
 

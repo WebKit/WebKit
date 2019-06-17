@@ -62,15 +62,15 @@ const Vector<FourCC>& CDMPrivateFairPlayStreaming::validFairPlayStreamingSchemes
     return validSchemes;
 }
 
-const AtomicString& CDMPrivateFairPlayStreaming::sinfName()
+const AtomString& CDMPrivateFairPlayStreaming::sinfName()
 {
-    static NeverDestroyed<AtomicString> sinf { MAKE_STATIC_STRING_IMPL("sinf") };
+    static NeverDestroyed<AtomString> sinf { MAKE_STATIC_STRING_IMPL("sinf") };
     return sinf;
 }
 
-const AtomicString& CDMPrivateFairPlayStreaming::skdName()
+const AtomString& CDMPrivateFairPlayStreaming::skdName()
 {
-    static NeverDestroyed<AtomicString> skd { MAKE_STATIC_STRING_IMPL("skd") };
+    static NeverDestroyed<AtomString> skd { MAKE_STATIC_STRING_IMPL("skd") };
     return skd;
 }
 
@@ -200,9 +200,9 @@ Optional<Vector<Ref<SharedBuffer>>> CDMPrivateFairPlayStreaming::extractKeyIDsSk
     return keyIDs;
 }
 
-static const HashSet<AtomicString>& validInitDataTypes()
+static const HashSet<AtomString>& validInitDataTypes()
 {
-    static NeverDestroyed<HashSet<AtomicString>> validTypes = HashSet<AtomicString>({
+    static NeverDestroyed<HashSet<AtomString>> validTypes = HashSet<AtomString>({
         CDMPrivateFairPlayStreaming::sinfName(),
         CDMPrivateFairPlayStreaming::skdName(),
     });
@@ -245,7 +245,7 @@ bool CDMFactoryFairPlayStreaming::supportsKeySystem(const String& keySystem)
 CDMPrivateFairPlayStreaming::CDMPrivateFairPlayStreaming() = default;
 CDMPrivateFairPlayStreaming::~CDMPrivateFairPlayStreaming() = default;
 
-bool CDMPrivateFairPlayStreaming::supportsInitDataType(const AtomicString& initDataType) const
+bool CDMPrivateFairPlayStreaming::supportsInitDataType(const AtomString& initDataType) const
 {
     return validInitDataTypes().contains(initDataType);
 }
@@ -362,7 +362,7 @@ bool CDMPrivateFairPlayStreaming::supportsSessions() const
     return true;
 }
 
-bool CDMPrivateFairPlayStreaming::supportsInitData(const AtomicString& initDataType, const SharedBuffer& initData) const
+bool CDMPrivateFairPlayStreaming::supportsInitData(const AtomString& initDataType, const SharedBuffer& initData) const
 {
     if (!supportsInitDataType(initDataType))
         return false;

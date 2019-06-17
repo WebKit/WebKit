@@ -49,14 +49,14 @@ public:
 private:
     MockMediaSample(const MockSampleBox& box)
         : m_box(box)
-        , m_id(AtomicString::number(box.trackID()))
+        , m_id(AtomString::number(box.trackID()))
     {
     }
 
     MediaTime presentationTime() const override { return m_box.presentationTimestamp(); }
     MediaTime decodeTime() const override { return m_box.decodeTimestamp(); }
     MediaTime duration() const override { return m_box.duration(); }
-    AtomicString trackID() const override { return m_id; }
+    AtomString trackID() const override { return m_id; }
     void setTrackID(const String& id) override { m_id = id; }
     size_t sizeInBytes() const override { return sizeof(m_box); }
     SampleFlags flags() const override;
@@ -72,7 +72,7 @@ private:
     unsigned generation() const { return m_box.generation(); }
 
     MockSampleBox m_box;
-    AtomicString m_id;
+    AtomString m_id;
 };
 
 MediaSample::SampleFlags MockMediaSample::flags() const
@@ -108,7 +108,7 @@ public:
     static Ref<MockMediaDescription> create(const MockTrackBox& box) { return adoptRef(*new MockMediaDescription(box)); }
     virtual ~MockMediaDescription() = default;
 
-    AtomicString codec() const override { return m_box.codec(); }
+    AtomString codec() const override { return m_box.codec(); }
     bool isVideo() const override { return m_box.kind() == MockTrackBox::Video; }
     bool isAudio() const override { return m_box.kind() == MockTrackBox::Audio; }
     bool isText() const override { return m_box.kind() == MockTrackBox::Text; }
@@ -235,7 +235,7 @@ void MockSourceBufferPrivate::setActive(bool isActive)
         m_mediaSource->sourceBufferPrivateDidChangeActiveState(this, isActive);
 }
 
-Vector<String> MockSourceBufferPrivate::enqueuedSamplesForTrackID(const AtomicString&)
+Vector<String> MockSourceBufferPrivate::enqueuedSamplesForTrackID(const AtomString&)
 {
     return m_enqueuedSamples;
 }
@@ -248,7 +248,7 @@ bool MockSourceBufferPrivate::canSwitchToType(const ContentType& contentType)
     return MockMediaPlayerMediaSource::supportsType(parameters) != MediaPlayer::IsNotSupported;
 }
 
-void MockSourceBufferPrivate::enqueueSample(Ref<MediaSample>&& sample, const AtomicString&)
+void MockSourceBufferPrivate::enqueueSample(Ref<MediaSample>&& sample, const AtomString&)
 {
     if (!m_mediaSource)
         return;

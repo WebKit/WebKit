@@ -51,7 +51,7 @@ using namespace HTMLNames;
 
 TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const HTMLToken::DataVector& data)
 {
-    AtomicString tagName(data);
+    AtomString tagName(data);
     if (tagName == imgTag)
         return TagId::Img;
     if (tagName == inputTag)
@@ -120,7 +120,7 @@ public:
             return;
         
         for (auto& attribute : attributes) {
-            AtomicString attributeName(attribute.name);
+            AtomString attributeName(attribute.name);
             String attributeValue = StringImpl::create8BitIfPossible(attribute.value);
             processAttribute(attributeName, attributeValue, document, pictureState);
         }
@@ -172,14 +172,14 @@ public:
         return request;
     }
 
-    static bool match(const AtomicString& name, const QualifiedName& qName)
+    static bool match(const AtomString& name, const QualifiedName& qName)
     {
         ASSERT(isMainThread());
         return qName.localName() == name;
     }
 
 private:
-    void processImageAndScriptAttribute(const AtomicString& attributeName, const String& attributeValue)
+    void processImageAndScriptAttribute(const AtomString& attributeName, const String& attributeValue)
     {
         if (match(attributeName, srcAttr))
             setUrlToLoad(attributeValue);
@@ -189,7 +189,7 @@ private:
             m_charset = attributeValue;
     }
 
-    void processAttribute(const AtomicString& attributeName, const String& attributeValue, Document& document, const Vector<bool>& pictureState)
+    void processAttribute(const AtomString& attributeName, const String& attributeValue, Document& document, const Vector<bool>& pictureState)
     {
         bool inPicture = !pictureState.isEmpty();
         bool alreadyMatchedSource = inPicture && pictureState.last();
@@ -472,7 +472,7 @@ void HTMLPreloadScanner::scan(HTMLResourcePreloader& preloader, Document& docume
 
     while (auto token = m_tokenizer.nextToken(m_source)) {
         if (token->type() == HTMLToken::StartTag)
-            m_tokenizer.updateStateFor(AtomicString(token->name()));
+            m_tokenizer.updateStateFor(AtomString(token->name()));
         m_scanner.scan(*token, requests, document);
     }
 

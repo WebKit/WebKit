@@ -24,7 +24,7 @@
 #include "SVGUnitTypes.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomStringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -44,9 +44,9 @@ public:
     SVGUnitTypes::SVGUnitType primitiveUnits() const { return m_primitiveUnits; }
     void setPrimitiveUnits(SVGUnitTypes::SVGUnitType units) { m_primitiveUnits = units; }
 
-    void add(const AtomicString& id, RefPtr<FilterEffect>);
+    void add(const AtomString& id, RefPtr<FilterEffect>);
 
-    RefPtr<FilterEffect> getEffectById(const AtomicString&) const;
+    RefPtr<FilterEffect> getEffectById(const AtomString&) const;
     FilterEffect* lastEffect() const { return m_lastEffect.get(); }
 
     void appendEffectToEffectReferences(RefPtr<FilterEffect>&&, RenderObject*);
@@ -71,8 +71,8 @@ private:
             m_effectReferences.add(effect, FilterEffectSet());
     }
 
-    HashMap<AtomicString, RefPtr<FilterEffect>> m_builtinEffects;
-    HashMap<AtomicString, RefPtr<FilterEffect>> m_namedEffects;
+    HashMap<AtomString, RefPtr<FilterEffect>> m_builtinEffects;
+    HashMap<AtomString, RefPtr<FilterEffect>> m_namedEffects;
     // The value is a list, which contains those filter effects,
     // which depends on the key filter effect.
     HashMap<RefPtr<FilterEffect>, FilterEffectSet> m_effectReferences;

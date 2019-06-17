@@ -598,7 +598,7 @@ void WebAnimation::cancel(Silently silently)
     invalidateEffect();
 }
 
-void WebAnimation::enqueueAnimationPlaybackEvent(const AtomicString& type, Optional<Seconds> currentTime, Optional<Seconds> timelineTime)
+void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, Optional<Seconds> currentTime, Optional<Seconds> timelineTime)
 {
     auto event = AnimationPlaybackEvent::create(type, currentTime, timelineTime);
     event->setTarget(this);

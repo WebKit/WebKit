@@ -44,15 +44,15 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RTCDataChannel);
 
-static const AtomicString& blobKeyword()
+static const AtomString& blobKeyword()
 {
-    static NeverDestroyed<AtomicString> blob("blob", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> blob("blob", AtomString::ConstructFromLiteral);
     return blob;
 }
 
-static const AtomicString& arraybufferKeyword()
+static const AtomString& arraybufferKeyword()
 {
-    static NeverDestroyed<AtomicString> arraybuffer("arraybuffer", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> arraybuffer("arraybuffer", AtomString::ConstructFromLiteral);
     return arraybuffer;
 }
 
@@ -83,7 +83,7 @@ size_t RTCDataChannel::bufferedAmount() const
     return m_handler->bufferedAmount();
 }
 
-const AtomicString& RTCDataChannel::binaryType() const
+const AtomString& RTCDataChannel::binaryType() const
 {
     switch (m_binaryType) {
     case BinaryType::Blob:
@@ -96,7 +96,7 @@ const AtomicString& RTCDataChannel::binaryType() const
     return emptyAtom();
 }
 
-ExceptionOr<void> RTCDataChannel::setBinaryType(const AtomicString& binaryType)
+ExceptionOr<void> RTCDataChannel::setBinaryType(const AtomString& binaryType)
 {
     if (binaryType == blobKeyword()) {
         m_binaryType = BinaryType::Blob;

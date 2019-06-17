@@ -211,7 +211,7 @@ void JSRopeString::resolveRopeInternal16NoSubstring(UChar* buffer) const
     ASSERT((buffer + length()) == position);
 }
 
-AtomicString JSRopeString::resolveRopeToAtomicString(ExecState* exec) const
+AtomString JSRopeString::resolveRopeToAtomString(ExecState* exec) const
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -219,18 +219,18 @@ AtomicString JSRopeString::resolveRopeToAtomicString(ExecState* exec) const
     if (length() > maxLengthForOnStackResolve) {
         scope.release();
         return resolveRopeWithFunction(exec, [&] (Ref<StringImpl>&& newImpl) {
-            return AtomicStringImpl::add(newImpl.ptr());
+            return AtomStringImpl::add(newImpl.ptr());
         });
     }
 
     if (is8Bit()) {
         LChar buffer[maxLengthForOnStackResolve];
         resolveRopeInternal8(buffer);
-        convertToNonRope(AtomicStringImpl::add(buffer, length()));
+        convertToNonRope(AtomStringImpl::add(buffer, length()));
     } else {
         UChar buffer[maxLengthForOnStackResolve];
         resolveRopeInternal16(buffer);
-        convertToNonRope(AtomicStringImpl::add(buffer, length()));
+        convertToNonRope(AtomStringImpl::add(buffer, length()));
     }
 
     // If we resolved a string that didn't previously exist, notify the heap that we've grown.
@@ -251,36 +251,36 @@ inline void JSRopeString::convertToNonRope(String&& string) const
     ASSERT(!JSString::isRope());
 }
 
-RefPtr<AtomicStringImpl> JSRopeString::resolveRopeToExistingAtomicString(ExecState* exec) const
+RefPtr<AtomStringImpl> JSRopeString::resolveRopeToExistingAtomString(ExecState* exec) const
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (length() > maxLengthForOnStackResolve) {
-        RefPtr<AtomicStringImpl> existingAtomicString;
+        RefPtr<AtomStringImpl> existingAtomString;
         resolveRopeWithFunction(exec, [&] (Ref<StringImpl>&& newImpl) -> Ref<StringImpl> {
-            existingAtomicString = AtomicStringImpl::lookUp(newImpl.ptr());
-            if (existingAtomicString)
-                return makeRef(*existingAtomicString);
+            existingAtomString = AtomStringImpl::lookUp(newImpl.ptr());
+            if (existingAtomString)
+                return makeRef(*existingAtomString);
             return WTFMove(newImpl);
         });
         RETURN_IF_EXCEPTION(scope, nullptr);
-        return existingAtomicString;
+        return existingAtomString;
     }
     
     if (is8Bit()) {
         LChar buffer[maxLengthForOnStackResolve];
         resolveRopeInternal8(buffer);
-        if (RefPtr<AtomicStringImpl> existingAtomicString = AtomicStringImpl::lookUp(buffer, length())) {
-            convertToNonRope(*existingAtomicString);
-            return existingAtomicString;
+        if (RefPtr<AtomStringImpl> existingAtomString = AtomStringImpl::lookUp(buffer, length())) {
+            convertToNonRope(*existingAtomString);
+            return existingAtomString;
         }
     } else {
         UChar buffer[maxLengthForOnStackResolve];
         resolveRopeInternal16(buffer);
-        if (RefPtr<AtomicStringImpl> existingAtomicString = AtomicStringImpl::lookUp(buffer, length())) {
-            convertToNonRope(*existingAtomicString);
-            return existingAtomicString;
+        if (RefPtr<AtomStringImpl> existingAtomString = AtomStringImpl::lookUp(buffer, length())) {
+            convertToNonRope(*existingAtomString);
+            return existingAtomString;
         }
     }
 

@@ -75,9 +75,9 @@ public:
 
     HTMLSlotElement* findAssignedSlot(const Node&);
 
-    void renameSlotElement(HTMLSlotElement&, const AtomicString& oldName, const AtomicString& newName);
-    void addSlotElementByName(const AtomicString&, HTMLSlotElement&);
-    void removeSlotElementByName(const AtomicString&, HTMLSlotElement&, ContainerNode& oldParentOfRemovedTree);
+    void renameSlotElement(HTMLSlotElement&, const AtomString& oldName, const AtomString& newName);
+    void addSlotElementByName(const AtomString&, HTMLSlotElement&);
+    void removeSlotElementByName(const AtomString&, HTMLSlotElement&, ContainerNode& oldParentOfRemovedTree);
     void slotFallbackDidChange(HTMLSlotElement&);
     void resolveSlotsBeforeNodeInsertionOrRemoval();
     void willRemoveAllChildren(ContainerNode&);
@@ -85,7 +85,7 @@ public:
     void didRemoveAllChildrenOfShadowHost();
     void didChangeDefaultSlot();
     void hostChildElementDidChange(const Element&);
-    void hostChildElementDidChangeSlotAttribute(Element&, const AtomicString& oldValue, const AtomicString& newValue);
+    void hostChildElementDidChangeSlotAttribute(Element&, const AtomString& oldValue, const AtomString& newValue);
 
     const Vector<Node*>* assignedNodesForSlot(const HTMLSlotElement&);
 

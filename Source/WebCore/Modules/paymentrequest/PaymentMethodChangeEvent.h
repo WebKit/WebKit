@@ -62,8 +62,8 @@ public:
     };
 
 private:
-    PaymentMethodChangeEvent(const AtomicString& type, Init&&);
-    PaymentMethodChangeEvent(const AtomicString& type, const String& methodName, MethodDetailsFunction&&);
+    PaymentMethodChangeEvent(const AtomString& type, Init&&);
+    PaymentMethodChangeEvent(const AtomString& type, const String& methodName, MethodDetailsFunction&&);
 
     String m_methodName;
     MethodDetailsType m_methodDetails;

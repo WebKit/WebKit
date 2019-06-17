@@ -1477,7 +1477,7 @@ CounterDirectiveMap& RenderStyle::accessCounterDirectives()
     return *map;
 }
 
-const AtomicString& RenderStyle::hyphenString() const
+const AtomString& RenderStyle::hyphenString() const
 {
     ASSERT(hyphens() != Hyphens::None);
 
@@ -1486,12 +1486,12 @@ const AtomicString& RenderStyle::hyphenString() const
         return hyphenationString;
 
     // FIXME: This should depend on locale.
-    static NeverDestroyed<AtomicString> hyphenMinusString(&hyphenMinus, 1);
-    static NeverDestroyed<AtomicString> hyphenString(&hyphen, 1);
+    static NeverDestroyed<AtomString> hyphenMinusString(&hyphenMinus, 1);
+    static NeverDestroyed<AtomString> hyphenString(&hyphen, 1);
     return fontCascade().primaryFont().glyphForCharacter(hyphen) ? hyphenString : hyphenMinusString;
 }
 
-const AtomicString& RenderStyle::textEmphasisMarkString() const
+const AtomString& RenderStyle::textEmphasisMarkString() const
 {
     switch (textEmphasisMark()) {
     case TextEmphasisMark::None:
@@ -1499,28 +1499,28 @@ const AtomicString& RenderStyle::textEmphasisMarkString() const
     case TextEmphasisMark::Custom:
         return textEmphasisCustomMark();
     case TextEmphasisMark::Dot: {
-        static NeverDestroyed<AtomicString> filledDotString(&bullet, 1);
-        static NeverDestroyed<AtomicString> openDotString(&whiteBullet, 1);
+        static NeverDestroyed<AtomString> filledDotString(&bullet, 1);
+        static NeverDestroyed<AtomString> openDotString(&whiteBullet, 1);
         return textEmphasisFill() == TextEmphasisFill::Filled ? filledDotString : openDotString;
     }
     case TextEmphasisMark::Circle: {
-        static NeverDestroyed<AtomicString> filledCircleString(&blackCircle, 1);
-        static NeverDestroyed<AtomicString> openCircleString(&whiteCircle, 1);
+        static NeverDestroyed<AtomString> filledCircleString(&blackCircle, 1);
+        static NeverDestroyed<AtomString> openCircleString(&whiteCircle, 1);
         return textEmphasisFill() == TextEmphasisFill::Filled ? filledCircleString : openCircleString;
     }
     case TextEmphasisMark::DoubleCircle: {
-        static NeverDestroyed<AtomicString> filledDoubleCircleString(&fisheye, 1);
-        static NeverDestroyed<AtomicString> openDoubleCircleString(&bullseye, 1);
+        static NeverDestroyed<AtomString> filledDoubleCircleString(&fisheye, 1);
+        static NeverDestroyed<AtomString> openDoubleCircleString(&bullseye, 1);
         return textEmphasisFill() == TextEmphasisFill::Filled ? filledDoubleCircleString : openDoubleCircleString;
     }
     case TextEmphasisMark::Triangle: {
-        static NeverDestroyed<AtomicString> filledTriangleString(&blackUpPointingTriangle, 1);
-        static NeverDestroyed<AtomicString> openTriangleString(&whiteUpPointingTriangle, 1);
+        static NeverDestroyed<AtomString> filledTriangleString(&blackUpPointingTriangle, 1);
+        static NeverDestroyed<AtomString> openTriangleString(&whiteUpPointingTriangle, 1);
         return textEmphasisFill() == TextEmphasisFill::Filled ? filledTriangleString : openTriangleString;
     }
     case TextEmphasisMark::Sesame: {
-        static NeverDestroyed<AtomicString> filledSesameString(&sesameDot, 1);
-        static NeverDestroyed<AtomicString> openSesameString(&whiteSesameDot, 1);
+        static NeverDestroyed<AtomString> filledSesameString(&sesameDot, 1);
+        static NeverDestroyed<AtomString> openSesameString(&whiteSesameDot, 1);
         return textEmphasisFill() == TextEmphasisFill::Filled ? filledSesameString : openSesameString;
     }
     case TextEmphasisMark::Auto:

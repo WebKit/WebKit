@@ -465,7 +465,7 @@ inline bool isLoadStore(Opcode opcode)
     }
 }
 
-inline bool isAtomic(Opcode opcode)
+inline bool isAtom(Opcode opcode)
 {
     switch (opcode) {
     case AtomicWeakCAS:
@@ -510,7 +510,7 @@ inline bool isAtomicXchg(Opcode opcode)
 
 inline bool isMemoryAccess(Opcode opcode)
 {
-    return isAtomic(opcode) || isLoadStore(opcode);
+    return isAtom(opcode) || isLoadStore(opcode);
 }
 
 inline Opcode signExtendOpcode(Width width)

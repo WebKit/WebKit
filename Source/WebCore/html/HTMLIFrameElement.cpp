@@ -67,7 +67,7 @@ bool HTMLIFrameElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLFrameElementBase::isPresentationAttribute(name);
 }
 
-void HTMLIFrameElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+void HTMLIFrameElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr)
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);
@@ -86,7 +86,7 @@ void HTMLIFrameElement::collectStyleForPresentationAttribute(const QualifiedName
         HTMLFrameElementBase::collectStyleForPresentationAttribute(name, value, style);
 }
 
-void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == sandboxAttr) {
         if (m_sandbox)
@@ -112,7 +112,7 @@ RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(RenderStyle&& 
     return createRenderer<RenderIFrame>(*this, WTFMove(style));
 }
 
-void HTMLIFrameElement::setReferrerPolicyForBindings(const AtomicString& value)
+void HTMLIFrameElement::setReferrerPolicyForBindings(const AtomString& value)
 {
     setAttributeWithoutSynchronization(referrerpolicyAttr, value);
 }

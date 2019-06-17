@@ -48,7 +48,7 @@ Ref<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGViewElement(tagName, document));
 }
 
-void SVGViewElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGViewElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::viewTargetAttr) {
         m_viewTarget->reset(value);

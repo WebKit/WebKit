@@ -41,7 +41,7 @@ public:
     explicit DateTimeLocalInputType(HTMLInputElement& element) : BaseChooserOnlyDateAndTimeInputType(element) { }
 
 private:
-    const AtomicString& formControlType() const final;
+    const AtomString& formControlType() const final;
     DateComponents::Type dateType() const final;
     double valueAsDate() const final;
     ExceptionOr<void> setValueAsDate(double) const final;

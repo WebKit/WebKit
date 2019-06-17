@@ -44,7 +44,7 @@ ImageInputType::ImageInputType(HTMLInputElement& element)
 {
 }
 
-const AtomicString& ImageInputType::formControlType() const
+const AtomString& ImageInputType::formControlType() const
 {
     return InputTypeNames::image();
 }

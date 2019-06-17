@@ -37,7 +37,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-const AtomicString& RadioInputType::formControlType() const
+const AtomString& RadioInputType::formControlType() const
 {
     return InputTypeNames::radio();
 }

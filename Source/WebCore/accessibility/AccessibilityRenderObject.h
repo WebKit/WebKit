@@ -80,7 +80,7 @@ public:
     bool canSetTextRangeAttributes() const override;
     bool canSetExpandedAttribute() const override;
 
-    void setAccessibleName(const AtomicString&) override;
+    void setAccessibleName(const AtomString&) override;
     
     // Provides common logic used by all elements when determining isIgnored.
     AccessibilityObjectInclusion defaultObjectInclusion() const override;
@@ -134,7 +134,7 @@ public:
     String text() const override;
     int textLength() const override;
     String selectedText() const override;
-    const AtomicString& accessKey() const override;
+    const AtomString& accessKey() const override;
     virtual const String& actionVerb() const;
     Widget* widget() const override;
     Widget* widgetForAttachmentView() const override;

@@ -35,9 +35,9 @@ Ref<SourceAlpha> SourceAlpha::create(FilterEffect& sourceEffect)
     return adoptRef(*new SourceAlpha(sourceEffect));
 }
 
-const AtomicString& SourceAlpha::effectName()
+const AtomString& SourceAlpha::effectName()
 {
-    static NeverDestroyed<const AtomicString> s_effectName("SourceAlpha", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> s_effectName("SourceAlpha", AtomString::ConstructFromLiteral);
     return s_effectName;
 }
 

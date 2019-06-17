@@ -59,7 +59,7 @@ public:
     StringView& operator=(const StringView&);
 #endif
 
-    StringView(const AtomicString&);
+    StringView(const AtomString&);
     StringView(const String&);
     StringView(const StringImpl&);
     StringView(const StringImpl*);
@@ -92,8 +92,8 @@ public:
 
     String toString() const;
     String toStringWithoutCopying() const;
-    AtomicString toAtomicString() const;
-    RefPtr<AtomicStringImpl> toExistingAtomicString() const;
+    AtomString toAtomString() const;
+    RefPtr<AtomStringImpl> toExistingAtomString() const;
 
 #if USE(CF)
     // This function converts null strings to empty strings.
@@ -223,7 +223,7 @@ WTF_EXPORT_PRIVATE String normalizedNFC(const String&);
 
 }
 
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -362,8 +362,8 @@ inline StringView::StringView(const String& string)
     initialize(string.characters16(), string.length());
 }
 
-inline StringView::StringView(const AtomicString& atomicString)
-    : StringView(atomicString.string())
+inline StringView::StringView(const AtomString& atomString)
+    : StringView(atomString.string())
 {
 }
 
@@ -504,18 +504,18 @@ inline String StringView::toString() const
     return String(characters16(), m_length);
 }
 
-inline AtomicString StringView::toAtomicString() const
+inline AtomString StringView::toAtomString() const
 {
     if (is8Bit())
-        return AtomicString(characters8(), m_length);
-    return AtomicString(characters16(), m_length);
+        return AtomString(characters8(), m_length);
+    return AtomString(characters16(), m_length);
 }
 
-inline RefPtr<AtomicStringImpl> StringView::toExistingAtomicString() const
+inline RefPtr<AtomStringImpl> StringView::toExistingAtomString() const
 {
     if (is8Bit())
-        return AtomicStringImpl::lookUp(characters8(), m_length);
-    return AtomicStringImpl::lookUp(characters16(), m_length);
+        return AtomStringImpl::lookUp(characters8(), m_length);
+    return AtomStringImpl::lookUp(characters16(), m_length);
 }
 
 inline float StringView::toFloat(bool& isValid) const

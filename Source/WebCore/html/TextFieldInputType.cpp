@@ -349,7 +349,7 @@ void TextFieldInputType::createShadowSubtree()
 
     if (shouldHaveCapsLockIndicator) {
         m_capsLockIndicator = HTMLDivElement::create(document);
-        m_capsLockIndicator->setPseudo(AtomicString("-webkit-caps-lock-indicator", AtomicString::ConstructFromLiteral));
+        m_capsLockIndicator->setPseudo(AtomString("-webkit-caps-lock-indicator", AtomString::ConstructFromLiteral));
 
         bool shouldDrawCapsLockIndicator = this->shouldDrawCapsLockIndicator();
         m_capsLockIndicator->setInlineStyleProperty(CSSPropertyDisplay, shouldDrawCapsLockIndicator ? CSSValueBlock : CSSValueNone, true);
@@ -457,7 +457,7 @@ void TextFieldInputType::createDataListDropdownIndicator()
     ScriptDisallowedScope::EventAllowedScope allowedScope(*m_container);
     m_dataListDropdownIndicator = DataListButtonElement::create(element()->document(), *this);
     m_container->appendChild(*m_dataListDropdownIndicator);
-    m_dataListDropdownIndicator->setPseudo(AtomicString("-webkit-list-button", AtomicString::ConstructFromLiteral));
+    m_dataListDropdownIndicator->setPseudo(AtomString("-webkit-list-button", AtomString::ConstructFromLiteral));
     m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);
 
 }
@@ -518,17 +518,17 @@ static String autoFillButtonTypeToAutoFillButtonText(AutoFillButtonType autoFill
     return { };
 }
 
-static AtomicString autoFillButtonTypeToAutoFillButtonPseudoClassName(AutoFillButtonType autoFillButtonType)
+static AtomString autoFillButtonTypeToAutoFillButtonPseudoClassName(AutoFillButtonType autoFillButtonType)
 {
     switch (autoFillButtonType) {
     case AutoFillButtonType::Contacts:
-        return { "-webkit-contacts-auto-fill-button", AtomicString::ConstructFromLiteral };
+        return { "-webkit-contacts-auto-fill-button", AtomString::ConstructFromLiteral };
     case AutoFillButtonType::Credentials:
-        return { "-webkit-credentials-auto-fill-button", AtomicString::ConstructFromLiteral };
+        return { "-webkit-credentials-auto-fill-button", AtomString::ConstructFromLiteral };
     case AutoFillButtonType::StrongPassword:
-        return { "-webkit-strong-password-auto-fill-button", AtomicString::ConstructFromLiteral };
+        return { "-webkit-strong-password-auto-fill-button", AtomString::ConstructFromLiteral };
     case AutoFillButtonType::CreditCard:
-        return { "-webkit-credit-card-auto-fill-button", AtomicString::ConstructFromLiteral };
+        return { "-webkit-credit-card-auto-fill-button", AtomString::ConstructFromLiteral };
     case AutoFillButtonType::None:
         ASSERT_NOT_REACHED();
         return emptyAtom();
@@ -537,7 +537,7 @@ static AtomicString autoFillButtonTypeToAutoFillButtonPseudoClassName(AutoFillBu
     return { };
 }
 
-static bool isAutoFillButtonTypeChanged(const AtomicString& attribute, AutoFillButtonType autoFillButtonType)
+static bool isAutoFillButtonTypeChanged(const AtomString& attribute, AutoFillButtonType autoFillButtonType)
 {
     if (attribute == "-webkit-contacts-auto-fill-button" && autoFillButtonType != AutoFillButtonType::Contacts)
         return true;
@@ -782,7 +782,7 @@ void TextFieldInputType::createContainer()
 
     m_container = TextControlInnerContainer::create(element()->document());
     element()->userAgentShadowRoot()->appendChild(*m_container);
-    m_container->setPseudo(AtomicString("-webkit-textfield-decoration-container", AtomicString::ConstructFromLiteral));
+    m_container->setPseudo(AtomString("-webkit-textfield-decoration-container", AtomString::ConstructFromLiteral));
 
     m_innerBlock = TextControlInnerElement::create(element()->document());
     m_container->appendChild(*m_innerBlock);
@@ -799,7 +799,7 @@ void TextFieldInputType::createAutoFillButton(AutoFillButtonType autoFillButtonT
     ASSERT(element());
     m_autoFillButton = AutoFillButtonElement::create(element()->document(), *this);
     m_autoFillButton->setPseudo(autoFillButtonTypeToAutoFillButtonPseudoClassName(autoFillButtonType));
-    m_autoFillButton->setAttributeWithoutSynchronization(roleAttr, AtomicString("button", AtomicString::ConstructFromLiteral));
+    m_autoFillButton->setAttributeWithoutSynchronization(roleAttr, AtomString("button", AtomString::ConstructFromLiteral));
     m_autoFillButton->setAttributeWithoutSynchronization(aria_labelAttr, autoFillButtonTypeToAccessibilityLabel(autoFillButtonType));
     m_autoFillButton->setTextContent(autoFillButtonTypeToAutoFillButtonText(autoFillButtonType));
     m_container->appendChild(*m_autoFillButton);
@@ -818,7 +818,7 @@ void TextFieldInputType::updateAutoFillButton()
         if (!m_autoFillButton)
             createAutoFillButton(autoFillButtonType);
 
-        const AtomicString& attribute = m_autoFillButton->attributeWithoutSynchronization(pseudoAttr);
+        const AtomString& attribute = m_autoFillButton->attributeWithoutSynchronization(pseudoAttr);
         bool shouldUpdateAutoFillButtonType = isAutoFillButtonTypeChanged(attribute, autoFillButtonType);
         if (shouldUpdateAutoFillButtonType) {
             m_autoFillButton->setPseudo(autoFillButtonTypeToAutoFillButtonPseudoClassName(autoFillButtonType));

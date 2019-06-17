@@ -35,7 +35,7 @@
 #include <JavaScriptCore/MachineStackMarker.h>
 #include <JavaScriptCore/VM.h>
 #include <wtf/MainThread.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "WebCoreThreadInternal.h"
@@ -83,7 +83,7 @@ Frame* lexicalFrameFromCommonVM()
     return nullptr;
 }
 
-void addImpureProperty(const AtomicString& propertyName)
+void addImpureProperty(const AtomString& propertyName)
 {
     commonVM().addImpureProperty(propertyName);
 }

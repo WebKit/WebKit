@@ -249,7 +249,7 @@ void RadioButtonGroups::requiredStateChanged(HTMLInputElement& element)
     group->requiredStateChanged(element);
 }
 
-HTMLInputElement* RadioButtonGroups::checkedButtonForGroup(const AtomicString& name) const
+HTMLInputElement* RadioButtonGroups::checkedButtonForGroup(const AtomString& name) const
 {
     if (!m_nameToGroupMap)
         return nullptr;
@@ -261,7 +261,7 @@ HTMLInputElement* RadioButtonGroups::checkedButtonForGroup(const AtomicString& n
 bool RadioButtonGroups::hasCheckedButton(const HTMLInputElement& element) const
 {
     ASSERT(element.isRadioButton());
-    const AtomicString& name = element.name();
+    const AtomString& name = element.name();
     if (name.isEmpty() || !m_nameToGroupMap)
         return element.checked();
     return m_nameToGroupMap->get(name.impl())->checkedButton();
@@ -294,7 +294,7 @@ void RadioButtonGroups::removeButton(HTMLInputElement& element)
     if (it->value->isEmpty()) {
         // FIXME: We may skip deallocating the empty RadioButtonGroup for
         // performance improvement. If we do so, we need to change the key type
-        // of m_nameToGroupMap from AtomicStringImpl* to RefPtr<AtomicStringImpl>.
+        // of m_nameToGroupMap from AtomStringImpl* to RefPtr<AtomStringImpl>.
         m_nameToGroupMap->remove(it);
         if (m_nameToGroupMap->isEmpty())
             m_nameToGroupMap = nullptr;

@@ -130,7 +130,7 @@ String HTMLTextFormControlElement::strippedPlaceholder() const
 {
     // According to the HTML5 specification, we need to remove CR and LF from
     // the attribute value.
-    const AtomicString& attributeValue = attributeWithoutSynchronization(placeholderAttr);
+    const AtomString& attributeValue = attributeWithoutSynchronization(placeholderAttr);
     if (!attributeValue.contains(newlineCharacter) && !attributeValue.contains(carriageReturn))
         return attributeValue;
 
@@ -150,7 +150,7 @@ static bool isNotLineBreak(UChar ch) { return ch != newlineCharacter && ch != ca
 
 bool HTMLTextFormControlElement::isPlaceholderEmpty() const
 {
-    const AtomicString& attributeValue = attributeWithoutSynchronization(placeholderAttr);
+    const AtomString& attributeValue = attributeWithoutSynchronization(placeholderAttr);
     return attributeValue.string().find(isNotLineBreak) == notFound;
 }
 
@@ -376,11 +376,11 @@ int HTMLTextFormControlElement::computeSelectionEnd() const
     return indexForPosition(frame->selection().selection().end());
 }
 
-static const AtomicString& directionString(TextFieldSelectionDirection direction)
+static const AtomString& directionString(TextFieldSelectionDirection direction)
 {
-    static NeverDestroyed<const AtomicString> none("none", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> forward("forward", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> backward("backward", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> none("none", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> forward("forward", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> backward("backward", AtomString::ConstructFromLiteral);
 
     switch (direction) {
     case SelectionHasNoDirection:
@@ -395,7 +395,7 @@ static const AtomicString& directionString(TextFieldSelectionDirection direction
     return none;
 }
 
-const AtomicString& HTMLTextFormControlElement::selectionDirection() const
+const AtomString& HTMLTextFormControlElement::selectionDirection() const
 {
     if (!isTextField())
         return directionString(SelectionHasNoDirection);
@@ -486,7 +486,7 @@ void HTMLTextFormControlElement::selectionChanged(bool shouldFireSelectEvent)
         dispatchEvent(Event::create(eventNames().selectEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 }
 
-void HTMLTextFormControlElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLTextFormControlElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == placeholderAttr) {
         updatePlaceholderText();
@@ -515,7 +515,7 @@ bool HTMLTextFormControlElement::isInnerTextElementEditable() const
 void HTMLTextFormControlElement::updateInnerTextElementEditability()
 {
     if (auto innerText = innerTextElement()) {
-        auto value = isInnerTextElementEditable() ? AtomicString { "plaintext-only", AtomicString::ConstructFromLiteral } : AtomicString { "false", AtomicString::ConstructFromLiteral };
+        auto value = isInnerTextElementEditable() ? AtomString { "plaintext-only", AtomString::ConstructFromLiteral } : AtomString { "false", AtomString::ConstructFromLiteral };
         innerText->setAttributeWithoutSynchronization(contenteditableAttr, value);
     }
 }
@@ -758,7 +758,7 @@ static const Element* parentHTMLElement(const Element* element)
 String HTMLTextFormControlElement::directionForFormData() const
 {
     for (const Element* element = this; element; element = parentHTMLElement(element)) {
-        const AtomicString& dirAttributeValue = element->attributeWithoutSynchronization(dirAttr);
+        const AtomString& dirAttributeValue = element->attributeWithoutSynchronization(dirAttr);
         if (dirAttributeValue.isNull())
             continue;
 

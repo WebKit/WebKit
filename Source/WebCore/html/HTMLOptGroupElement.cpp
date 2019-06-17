@@ -66,9 +66,9 @@ bool HTMLOptGroupElement::isFocusable() const
     return style && style->display() != DisplayType::None;
 }
 
-const AtomicString& HTMLOptGroupElement::formControlType() const
+const AtomString& HTMLOptGroupElement::formControlType() const
 {
-    static NeverDestroyed<const AtomicString> optgroup("optgroup", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> optgroup("optgroup", AtomString::ConstructFromLiteral);
     return optgroup;
 }
 
@@ -78,7 +78,7 @@ void HTMLOptGroupElement::childrenChanged(const ChildChange& change)
     HTMLElement::childrenChanged(change);
 }
 
-void HTMLOptGroupElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLOptGroupElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     HTMLElement::parseAttribute(name, value);
     recalcSelectOptions();

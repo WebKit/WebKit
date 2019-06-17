@@ -97,7 +97,7 @@ bool HTMLTableCellElement::isPresentationAttribute(const QualifiedName& name) co
     return HTMLTablePartElement::isPresentationAttribute(name);
 }
 
-void HTMLTableCellElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+void HTMLTableCellElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == nowrapAttr)
         addPropertyToPresentationAttributeStyle(style, CSSPropertyWhiteSpace, CSSValueWebkitNowrap);
@@ -117,7 +117,7 @@ void HTMLTableCellElement::collectStyleForPresentationAttribute(const QualifiedN
         HTMLTablePartElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
-void HTMLTableCellElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLTableCellElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == rowspanAttr) {
         if (is<RenderTableCell>(renderer()))
@@ -153,7 +153,7 @@ String HTMLTableCellElement::axis() const
 
 void HTMLTableCellElement::setColSpan(unsigned n)
 {
-    setAttributeWithoutSynchronization(colspanAttr, AtomicString::number(limitToOnlyHTMLNonNegative(n, 1)));
+    setAttributeWithoutSynchronization(colspanAttr, AtomString::number(limitToOnlyHTMLNonNegative(n, 1)));
 }
 
 String HTMLTableCellElement::headers() const
@@ -163,18 +163,18 @@ String HTMLTableCellElement::headers() const
 
 void HTMLTableCellElement::setRowSpanForBindings(unsigned n)
 {
-    setAttributeWithoutSynchronization(rowspanAttr, AtomicString::number(limitToOnlyHTMLNonNegative(n, 1)));
+    setAttributeWithoutSynchronization(rowspanAttr, AtomString::number(limitToOnlyHTMLNonNegative(n, 1)));
 }
 
-const AtomicString& HTMLTableCellElement::scope() const
+const AtomString& HTMLTableCellElement::scope() const
 {
     // https://html.spec.whatwg.org/multipage/tables.html#attr-th-scope
-    static NeverDestroyed<const AtomicString> row("row", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> col("col", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> rowgroup("rowgroup", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> colgroup("colgroup", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> row("row", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> col("col", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> rowgroup("rowgroup", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> colgroup("colgroup", AtomString::ConstructFromLiteral);
 
-    const AtomicString& value = attributeWithoutSynchronization(HTMLNames::scopeAttr);
+    const AtomString& value = attributeWithoutSynchronization(HTMLNames::scopeAttr);
 
     if (equalIgnoringASCIICase(value, row))
         return row;
@@ -187,7 +187,7 @@ const AtomicString& HTMLTableCellElement::scope() const
     return emptyAtom();
 }
 
-void HTMLTableCellElement::setScope(const AtomicString& scope)
+void HTMLTableCellElement::setScope(const AtomString& scope)
 {
     setAttributeWithoutSynchronization(scopeAttr, scope);
 }

@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-Ref<MerchantValidationEvent> MerchantValidationEvent::create(const AtomicString& type, const String& methodName, URL&& validationURL)
+Ref<MerchantValidationEvent> MerchantValidationEvent::create(const AtomString& type, const String& methodName, URL&& validationURL)
 {
     return adoptRef(*new MerchantValidationEvent(type, methodName, WTFMove(validationURL)));
 }
 
-ExceptionOr<Ref<MerchantValidationEvent>> MerchantValidationEvent::create(Document& document, const AtomicString& type, Init&& eventInit)
+ExceptionOr<Ref<MerchantValidationEvent>> MerchantValidationEvent::create(Document& document, const AtomString& type, Init&& eventInit)
 {
     URL validationURL { document.url(), eventInit.validationURL };
     if (!validationURL.isValid())
@@ -54,7 +54,7 @@ ExceptionOr<Ref<MerchantValidationEvent>> MerchantValidationEvent::create(Docume
     return adoptRef(*new MerchantValidationEvent(type, WTFMove(methodName), WTFMove(validationURL), WTFMove(eventInit)));
 }
 
-MerchantValidationEvent::MerchantValidationEvent(const AtomicString& type, const String& methodName, URL&& validationURL)
+MerchantValidationEvent::MerchantValidationEvent(const AtomString& type, const String& methodName, URL&& validationURL)
     : Event { type, Event::CanBubble::No, Event::IsCancelable::No }
     , m_methodName { methodName }
     , m_validationURL { WTFMove(validationURL) }
@@ -63,7 +63,7 @@ MerchantValidationEvent::MerchantValidationEvent(const AtomicString& type, const
     ASSERT(m_validationURL.isValid());
 }
 
-MerchantValidationEvent::MerchantValidationEvent(const AtomicString& type, String&& methodName, URL&& validationURL, Init&& eventInit)
+MerchantValidationEvent::MerchantValidationEvent(const AtomString& type, String&& methodName, URL&& validationURL, Init&& eventInit)
     : Event { type, WTFMove(eventInit), IsTrusted::No }
     , m_methodName { WTFMove(methodName) }
     , m_validationURL { WTFMove(validationURL) }

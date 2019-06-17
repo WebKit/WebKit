@@ -33,7 +33,7 @@ SVGFilterBuilder::SVGFilterBuilder(RefPtr<FilterEffect> sourceGraphic)
     addBuiltinEffects();
 }
 
-void SVGFilterBuilder::add(const AtomicString& id, RefPtr<FilterEffect> effect)
+void SVGFilterBuilder::add(const AtomString& id, RefPtr<FilterEffect> effect)
 {
     if (id.isEmpty()) {
         m_lastEffect = effect;
@@ -47,7 +47,7 @@ void SVGFilterBuilder::add(const AtomicString& id, RefPtr<FilterEffect> effect)
     m_namedEffects.set(id, m_lastEffect);
 }
 
-RefPtr<FilterEffect> SVGFilterBuilder::getEffectById(const AtomicString& id) const
+RefPtr<FilterEffect> SVGFilterBuilder::getEffectById(const AtomString& id) const
 {
     if (id.isEmpty()) {
         if (m_lastEffect)

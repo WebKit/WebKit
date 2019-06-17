@@ -41,14 +41,14 @@ struct IncompleteMetaDataCue {
 
 class InbandMetadataTextTrackPrivateAVF : public InbandTextTrackPrivate {
 public:
-    static Ref<InbandMetadataTextTrackPrivateAVF> create(Kind, CueFormat, const AtomicString& id = emptyAtom());
+    static Ref<InbandMetadataTextTrackPrivateAVF> create(Kind, CueFormat, const AtomString& id = emptyAtom());
 
     ~InbandMetadataTextTrackPrivateAVF();
 
     Kind kind() const override { return m_kind; }
-    AtomicString id() const override { return m_id; }
-    AtomicString inBandMetadataTrackDispatchType() const override { return m_inBandMetadataTrackDispatchType; }
-    void setInBandMetadataTrackDispatchType(const AtomicString& value) { m_inBandMetadataTrackDispatchType = value; }
+    AtomString id() const override { return m_id; }
+    AtomString inBandMetadataTrackDispatchType() const override { return m_inBandMetadataTrackDispatchType; }
+    void setInBandMetadataTrackDispatchType(const AtomString& value) { m_inBandMetadataTrackDispatchType = value; }
 
 #if ENABLE(DATACUE_VALUE)
     void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformRepresentation>&&, const String&);
@@ -58,15 +58,15 @@ public:
     void flushPartialCues();
 
 private:
-    InbandMetadataTextTrackPrivateAVF(Kind, CueFormat, const AtomicString&);
+    InbandMetadataTextTrackPrivateAVF(Kind, CueFormat, const AtomString&);
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "InbandMetadataTextTrackPrivateAVF"; }
 #endif
 
     Kind m_kind;
-    AtomicString m_id;
-    AtomicString m_inBandMetadataTrackDispatchType;
+    AtomString m_id;
+    AtomString m_inBandMetadataTrackDispatchType;
     MediaTime m_currentCueStartTime;
 #if ENABLE(DATACUE_VALUE)
     Vector<IncompleteMetaDataCue> m_incompleteCues;

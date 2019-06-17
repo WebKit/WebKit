@@ -59,7 +59,7 @@ MediaControls::MediaControls(Document& document)
     , m_isFullscreen(false)
     , m_isMouseOverControls(false)
 {
-    setPseudo(AtomicString("-webkit-media-controls", AtomicString::ConstructFromLiteral));
+    setPseudo(AtomString("-webkit-media-controls", AtomString::ConstructFromLiteral));
 }
 
 void MediaControls::setMediaController(MediaControllerInterface* controller)

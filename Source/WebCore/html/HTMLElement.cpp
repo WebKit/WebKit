@@ -84,7 +84,7 @@ Ref<HTMLElement> HTMLElement::create(const QualifiedName& tagName, Document& doc
 
 String HTMLElement::nodeName() const
 {
-    // FIXME: Would be nice to have an AtomicString lookup based off uppercase
+    // FIXME: Would be nice to have an AtomString lookup based off uppercase
     // ASCII characters that does not have to copy the string on a hit in the hash.
     if (document().isHTMLDocument()) {
         if (LIKELY(!tagQName().hasPrefix()))
@@ -103,7 +103,7 @@ static inline CSSValueID unicodeBidiAttributeForDirAuto(HTMLElement& element)
     return CSSValueIsolate;
 }
 
-unsigned HTMLElement::parseBorderWidthAttribute(const AtomicString& value) const
+unsigned HTMLElement::parseBorderWidthAttribute(const AtomString& value) const
 {
     if (auto optionalBorderWidth = parseHTMLNonNegativeInteger(value))
         return optionalBorderWidth.value();
@@ -111,13 +111,13 @@ unsigned HTMLElement::parseBorderWidthAttribute(const AtomicString& value) const
     return hasTagName(tableTag) ? 1 : 0;
 }
 
-void HTMLElement::applyBorderAttributeToStyle(const AtomicString& value, MutableStyleProperties& style)
+void HTMLElement::applyBorderAttributeToStyle(const AtomString& value, MutableStyleProperties& style)
 {
     addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(value), CSSPrimitiveValue::CSS_PX);
     addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
 }
 
-void HTMLElement::mapLanguageAttributeToLocale(const AtomicString& value, MutableStyleProperties& style)
+void HTMLElement::mapLanguageAttributeToLocale(const AtomString& value, MutableStyleProperties& style)
 {
     if (!value.isEmpty()) {
         // Have to quote so the locale id is treated as a string instead of as a CSS keyword.
@@ -135,7 +135,7 @@ bool HTMLElement::isPresentationAttribute(const QualifiedName& name) const
     return StyledElement::isPresentationAttribute(name);
 }
 
-static bool isLTROrRTLIgnoringCase(const AtomicString& dirAttributeValue)
+static bool isLTROrRTLIgnoringCase(const AtomString& dirAttributeValue)
 {
     return equalLettersIgnoringASCIICase(dirAttributeValue, "rtl") || equalLettersIgnoringASCIICase(dirAttributeValue, "ltr");
 }
@@ -147,7 +147,7 @@ enum class ContentEditableType {
     PlaintextOnly
 };
 
-static inline ContentEditableType contentEditableType(const AtomicString& value)
+static inline ContentEditableType contentEditableType(const AtomString& value)
 {
     if (value.isNull())
         return ContentEditableType::Inherit;
@@ -166,7 +166,7 @@ static ContentEditableType contentEditableType(const HTMLElement& element)
     return contentEditableType(element.attributeWithoutSynchronization(contenteditableAttr));
 }
 
-void HTMLElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+void HTMLElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == alignAttr) {
         if (equalLettersIgnoringASCIICase(value, "middle"))
@@ -347,7 +347,7 @@ HTMLElement::EventHandlerNameMap HTMLElement::createEventHandlerNameMap()
 
     struct UnusualMapping {
         const QualifiedName& attributeName;
-        const AtomicString& eventName;
+        const AtomString& eventName;
     };
 
     const UnusualMapping unusualPairsTable[] = {
@@ -374,13 +374,13 @@ void HTMLElement::populateEventHandlerNameMap(EventHandlerNameMap& map, const Qu
 
         // Remove the "on" prefix. Requires some memory allocation and computing a hash, but by not
         // using pointers from eventNames(), the passed-in table can be initialized at compile time.
-        AtomicString eventName = attributeName.string().substring(2);
+        AtomString eventName = attributeName.string().substring(2);
 
         map.add(attributeName.impl(), WTFMove(eventName));
     }
 }
 
-const AtomicString& HTMLElement::eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap& map)
+const AtomString& HTMLElement::eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap& map)
 {
     ASSERT(!attributeName.localName().isNull());
 
@@ -389,7 +389,7 @@ const AtomicString& HTMLElement::eventNameForEventHandlerAttribute(const Qualifi
         return nullAtom();
 
     // Fast early return for names that don't start with "on".
-    AtomicStringImpl& localName = *attributeName.localName().impl();
+    AtomStringImpl& localName = *attributeName.localName().impl();
     if (localName.length() < 3 || localName[0] != 'o' || localName[1] != 'n')
         return nullAtom();
 
@@ -397,7 +397,7 @@ const AtomicString& HTMLElement::eventNameForEventHandlerAttribute(const Qualifi
     return it == map.end() ? nullAtom() : it->value;
 }
 
-const AtomicString& HTMLElement::eventNameForEventHandlerAttribute(const QualifiedName& attributeName)
+const AtomString& HTMLElement::eventNameForEventHandlerAttribute(const QualifiedName& attributeName)
 {
     static NeverDestroyed<EventHandlerNameMap> map = createEventHandlerNameMap();
     return eventNameForEventHandlerAttribute(attributeName, map.get());
@@ -436,7 +436,7 @@ bool HTMLElement::matchesReadWritePseudoClass() const
     return editabilityFromContentEditableAttr(*this) != Editability::ReadOnly;
 }
 
-void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == dirAttr) {
         dirAttributeChanged(value);
@@ -503,11 +503,11 @@ static Ref<DocumentFragment> textToFragment(Document& document, const String& te
 // or the empty string if the attribute is in a state that has no associated keyword value or if the attribute is
 // not in a defined state (e.g. the attribute is missing and there is no missing value default).
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/common-dom-interfaces.html#limited-to-only-known-values
-static inline const AtomicString& toValidDirValue(const AtomicString& value)
+static inline const AtomString& toValidDirValue(const AtomString& value)
 {
-    static NeverDestroyed<AtomicString> ltrValue("ltr", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> rtlValue("rtl", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> autoValue("auto", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> ltrValue("ltr", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> rtlValue("rtl", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> autoValue("auto", AtomString::ConstructFromLiteral);
     if (equalLettersIgnoringASCIICase(value, "ltr"))
         return ltrValue;
     if (equalLettersIgnoringASCIICase(value, "rtl"))
@@ -517,12 +517,12 @@ static inline const AtomicString& toValidDirValue(const AtomicString& value)
     return nullAtom();
 }
 
-const AtomicString& HTMLElement::dir() const
+const AtomString& HTMLElement::dir() const
 {
     return toValidDirValue(attributeWithoutSynchronization(dirAttr));
 }
 
-void HTMLElement::setDir(const AtomicString& value)
+void HTMLElement::setDir(const AtomString& value)
 {
     setAttributeWithoutSynchronization(dirAttr, value);
 }
@@ -600,7 +600,7 @@ ExceptionOr<void> HTMLElement::setOuterText(const String& text)
     return { };
 }
 
-void HTMLElement::applyAlignmentAttributeToStyle(const AtomicString& alignment, MutableStyleProperties& style)
+void HTMLElement::applyAlignmentAttributeToStyle(const AtomString& alignment, MutableStyleProperties& style)
 {
     // Vertical alignment with respect to the current baseline of the text
     // right or left means floating images.
@@ -663,11 +663,11 @@ String HTMLElement::contentEditable() const
 ExceptionOr<void> HTMLElement::setContentEditable(const String& enabled)
 {
     if (equalLettersIgnoringASCIICase(enabled, "true"))
-        setAttributeWithoutSynchronization(contenteditableAttr, AtomicString("true", AtomicString::ConstructFromLiteral));
+        setAttributeWithoutSynchronization(contenteditableAttr, AtomString("true", AtomString::ConstructFromLiteral));
     else if (equalLettersIgnoringASCIICase(enabled, "false"))
-        setAttributeWithoutSynchronization(contenteditableAttr, AtomicString("false", AtomicString::ConstructFromLiteral));
+        setAttributeWithoutSynchronization(contenteditableAttr, AtomString("false", AtomString::ConstructFromLiteral));
     else if (equalLettersIgnoringASCIICase(enabled, "plaintext-only"))
-        setAttributeWithoutSynchronization(contenteditableAttr, AtomicString("plaintext-only", AtomicString::ConstructFromLiteral));
+        setAttributeWithoutSynchronization(contenteditableAttr, AtomString("plaintext-only", AtomString::ConstructFromLiteral));
     else if (equalLettersIgnoringASCIICase(enabled, "inherit"))
         removeAttribute(contenteditableAttr);
     else
@@ -683,8 +683,8 @@ bool HTMLElement::draggable() const
 void HTMLElement::setDraggable(bool value)
 {
     setAttributeWithoutSynchronization(draggableAttr, value
-        ? AtomicString("true", AtomicString::ConstructFromLiteral)
-        : AtomicString("false", AtomicString::ConstructFromLiteral));
+        ? AtomString("true", AtomString::ConstructFromLiteral)
+        : AtomString("false", AtomString::ConstructFromLiteral));
 }
 
 bool HTMLElement::spellcheck() const
@@ -695,8 +695,8 @@ bool HTMLElement::spellcheck() const
 void HTMLElement::setSpellcheck(bool enable)
 {
     setAttributeWithoutSynchronization(spellcheckAttr, enable
-        ? AtomicString("true", AtomicString::ConstructFromLiteral)
-        : AtomicString("false", AtomicString::ConstructFromLiteral));
+        ? AtomString("true", AtomString::ConstructFromLiteral)
+        : AtomString("false", AtomString::ConstructFromLiteral));
 }
 
 void HTMLElement::click()
@@ -724,7 +724,7 @@ int HTMLElement::tabIndex() const
 bool HTMLElement::translate() const
 {
     for (auto& element : lineageOfType<HTMLElement>(*this)) {
-        const AtomicString& value = element.attributeWithoutSynchronization(translateAttr);
+        const AtomString& value = element.attributeWithoutSynchronization(translateAttr);
         if (equalLettersIgnoringASCIICase(value, "yes") || (value.isEmpty() && !value.isNull()))
             return true;
         if (equalLettersIgnoringASCIICase(value, "no"))
@@ -812,7 +812,7 @@ void HTMLElement::childrenChanged(const ChildChange& change)
 
 bool HTMLElement::hasDirectionAuto() const
 {
-    const AtomicString& direction = attributeWithoutSynchronization(dirAttr);
+    const AtomString& direction = attributeWithoutSynchronization(dirAttr);
     return (hasTagName(bdiTag) && direction.isNull()) || equalLettersIgnoringASCIICase(direction, "auto");
 }
 
@@ -872,7 +872,7 @@ TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) c
     return TextDirection::LTR;
 }
 
-void HTMLElement::dirAttributeChanged(const AtomicString& value)
+void HTMLElement::dirAttributeChanged(const AtomString& value)
 {
     RefPtr<Element> parent = parentElement();
 
@@ -1077,7 +1077,7 @@ bool HTMLElement::isActuallyDisabled() const
 
 #if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
 
-const AtomicString& HTMLElement::autocapitalize() const
+const AtomString& HTMLElement::autocapitalize() const
 {
     return stringForAutocapitalizeType(autocapitalizeType());
 }
@@ -1087,7 +1087,7 @@ AutocapitalizeType HTMLElement::autocapitalizeType() const
     return autocapitalizeTypeForAttributeValue(attributeWithoutSynchronization(HTMLNames::autocapitalizeAttr));
 }
 
-void HTMLElement::setAutocapitalize(const AtomicString& value)
+void HTMLElement::setAutocapitalize(const AtomString& value)
 {
     setAttributeWithoutSynchronization(autocapitalizeAttr, value);
 }
@@ -1101,7 +1101,7 @@ bool HTMLElement::shouldAutocorrect() const
 
 void HTMLElement::setAutocorrect(bool autocorrect)
 {
-    setAttributeWithoutSynchronization(autocorrectAttr, autocorrect ? AtomicString("on", AtomicString::ConstructFromLiteral) : AtomicString("off", AtomicString::ConstructFromLiteral));
+    setAttributeWithoutSynchronization(autocorrectAttr, autocorrect ? AtomString("on", AtomString::ConstructFromLiteral) : AtomString("off", AtomString::ConstructFromLiteral));
 }
 
 #endif
@@ -1116,12 +1116,12 @@ InputMode HTMLElement::canonicalInputMode() const
     return mode;
 }
 
-const AtomicString& HTMLElement::inputMode() const
+const AtomString& HTMLElement::inputMode() const
 {
     return stringForInputMode(canonicalInputMode());
 }
 
-void HTMLElement::setInputMode(const AtomicString& value)
+void HTMLElement::setInputMode(const AtomString& value)
 {
     setAttributeWithoutSynchronization(inputmodeAttr, value);
 }

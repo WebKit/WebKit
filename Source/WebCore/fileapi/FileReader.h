@@ -93,7 +93,7 @@ private:
 
     ExceptionOr<void> readInternal(Blob&, FileReaderLoader::ReadType);
     void fireErrorEvent(int httpStatusCode);
-    void fireEvent(const AtomicString& type);
+    void fireEvent(const AtomString& type);
 
     ReadyState m_state { EMPTY };
     bool m_aborting { false };

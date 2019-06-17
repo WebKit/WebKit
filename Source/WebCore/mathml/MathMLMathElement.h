@@ -40,7 +40,7 @@ public:
 
 private:
     MathMLMathElement(const QualifiedName& tagName, Document&);
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
     void didAttachRenderers() final;
 
     bool acceptsDisplayStyleAttribute() final { return true; }

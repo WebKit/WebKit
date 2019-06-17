@@ -52,7 +52,7 @@ TimeInputType::TimeInputType(HTMLInputElement& element)
 {
 }
 
-const AtomicString& TimeInputType::formControlType() const
+const AtomString& TimeInputType::formControlType() const
 {
     return InputTypeNames::time();
 }

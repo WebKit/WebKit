@@ -182,7 +182,7 @@ void RemoteScrollingCoordinatorProxy::handleMouseEvent(const WebCore::PlatformMo
     m_scrollingTree->handleMouseEvent(event);
 }
 
-TrackingType RemoteScrollingCoordinatorProxy::eventTrackingTypeForPoint(const AtomicString& eventName, IntPoint p) const
+TrackingType RemoteScrollingCoordinatorProxy::eventTrackingTypeForPoint(const AtomString& eventName, IntPoint p) const
 {
     return m_scrollingTree->eventTrackingTypeForPoint(eventName, p);
 }

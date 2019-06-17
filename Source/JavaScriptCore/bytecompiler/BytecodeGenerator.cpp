@@ -888,7 +888,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     Vector<Identifier, 0, UnsafeVectorOverflow> hoistedFunctions;
     for (auto& entry : varDeclarations) {
         ASSERT(entry.value.isVar());
-        ASSERT(entry.key->isAtomic() || entry.key->isSymbol());
+        ASSERT(entry.key->isAtom() || entry.key->isSymbol());
         if (entry.value.isSloppyModeHoistingCandidate())
             hoistedFunctions.append(Identifier::fromUid(m_vm, entry.key.get()));
         else

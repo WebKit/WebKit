@@ -73,7 +73,7 @@ private:
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
     bool matchesDefaultPseudoClass() const final;
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void accessKeyAction(bool) final;

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-static AtomicString mouseEventType(PlatformTouchPoint::TouchPhaseType phase)
+static AtomString mouseEventType(PlatformTouchPoint::TouchPhaseType phase)
 {
     switch (phase) {
     case PlatformTouchPoint::TouchPhaseBegan:

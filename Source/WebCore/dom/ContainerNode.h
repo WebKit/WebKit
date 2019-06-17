@@ -114,11 +114,11 @@ public:
     WEBCORE_EXPORT ExceptionOr<Element*> querySelector(const String& selectors);
     WEBCORE_EXPORT ExceptionOr<Ref<NodeList>> querySelectorAll(const String& selectors);
 
-    WEBCORE_EXPORT Ref<HTMLCollection> getElementsByTagName(const AtomicString&);
-    WEBCORE_EXPORT Ref<HTMLCollection> getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName);
+    WEBCORE_EXPORT Ref<HTMLCollection> getElementsByTagName(const AtomString&);
+    WEBCORE_EXPORT Ref<HTMLCollection> getElementsByTagNameNS(const AtomString& namespaceURI, const AtomString& localName);
     WEBCORE_EXPORT Ref<NodeList> getElementsByName(const String& elementName);
-    WEBCORE_EXPORT Ref<HTMLCollection> getElementsByClassName(const AtomicString& classNames);
-    Ref<RadioNodeList> radioNodeList(const AtomicString&);
+    WEBCORE_EXPORT Ref<HTMLCollection> getElementsByClassName(const AtomString& classNames);
+    Ref<RadioNodeList> radioNodeList(const AtomString&);
 
     // From the ParentNode interface - https://dom.spec.whatwg.org/#interface-parentnode
     WEBCORE_EXPORT Ref<HTMLCollection> children();

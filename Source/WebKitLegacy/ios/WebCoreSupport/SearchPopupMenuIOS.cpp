@@ -19,7 +19,7 @@
 
 #include "SearchPopupMenuIOS.h"
 
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -35,11 +35,11 @@ PopupMenu* SearchPopupMenuIOS::popupMenu()
     return m_popup.ptr();
 }
 
-void SearchPopupMenuIOS::saveRecentSearches(const AtomicString&, const Vector<RecentSearch>& /*searchItems*/)
+void SearchPopupMenuIOS::saveRecentSearches(const AtomString&, const Vector<RecentSearch>& /*searchItems*/)
 {
 }
 
-void SearchPopupMenuIOS::loadRecentSearches(const AtomicString&, Vector<RecentSearch>& /*searchItems*/)
+void SearchPopupMenuIOS::loadRecentSearches(const AtomString&, Vector<RecentSearch>& /*searchItems*/)
 {
 }
 

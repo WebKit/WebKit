@@ -1073,7 +1073,7 @@ ExceptionOr<Ref<SourceBufferPrivate>> MediaSource::createSourceBufferPrivate(con
     return Exception { QuotaExceededError };
 }
 
-void MediaSource::scheduleEvent(const AtomicString& eventName)
+void MediaSource::scheduleEvent(const AtomString& eventName)
 {
     DEBUG_LOG(LOGIDENTIFIER, "scheduling '", eventName, "'");
 

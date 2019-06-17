@@ -54,7 +54,7 @@ public:
         JSC::JSValue error;
     };
 
-    static Ref<ErrorEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<ErrorEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new ErrorEvent(type, initializer, isTrusted));
     }
@@ -76,7 +76,7 @@ public:
 
 private:
     ErrorEvent(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error);
-    ErrorEvent(const AtomicString&, const Init&, IsTrusted);
+    ErrorEvent(const AtomString&, const Init&, IsTrusted);
 
     bool isErrorEvent() const override;
 

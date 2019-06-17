@@ -48,7 +48,7 @@ Ref<SVGFEMergeNodeElement> SVGFEMergeNodeElement::create(const QualifiedName& ta
     return adoptRef(*new SVGFEMergeNodeElement(tagName, document));
 }
 
-void SVGFEMergeNodeElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGFEMergeNodeElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::inAttr) {
         m_in1->setBaseValInternal(value);

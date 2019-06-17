@@ -37,8 +37,8 @@ public:
 
     virtual ~CSSNamespaceRule();
 
-    AtomicString namespaceURI() const;
-    AtomicString prefix() const;
+    AtomString namespaceURI() const;
+    AtomString prefix() const;
 
 private:
     CSSNamespaceRule(StyleRuleNamespace&, CSSStyleSheet*);

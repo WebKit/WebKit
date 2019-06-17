@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-WebGLContextEvent::WebGLContextEvent(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, const String& statusMessage)
+WebGLContextEvent::WebGLContextEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, const String& statusMessage)
     : Event(type, canBubble, cancelable)
     , m_statusMessage(statusMessage)
 {
 }
 
-WebGLContextEvent::WebGLContextEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+WebGLContextEvent::WebGLContextEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
     , m_statusMessage(initializer.statusMessage)
 {

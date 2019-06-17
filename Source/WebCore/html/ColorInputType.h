@@ -55,7 +55,7 @@ private:
     bool isKeyboardFocusable(KeyboardEvent*) const final;
     bool isColorControl() const final;
     bool isPresentingAttachedView() const final;
-    const AtomicString& formControlType() const final;
+    const AtomString& formControlType() const final;
     bool supportsRequired() const final;
     String fallbackValue() const final;
     String sanitizeValue(const String&) const final;

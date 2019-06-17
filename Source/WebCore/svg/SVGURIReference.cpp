@@ -45,7 +45,7 @@ bool SVGURIReference::isKnownAttribute(const QualifiedName& attributeName)
     return PropertyRegistry::isKnownAttribute(attributeName);
 }
 
-void SVGURIReference::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGURIReference::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (isKnownAttribute(name))
         m_href->setBaseValInternal(value);

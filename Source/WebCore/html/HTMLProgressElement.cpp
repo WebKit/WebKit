@@ -75,7 +75,7 @@ RenderProgress* HTMLProgressElement::renderProgress() const
     return downcast<RenderProgress>(descendantsOfType<Element>(*userAgentShadowRoot()).first()->renderer());
 }
 
-void HTMLProgressElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void HTMLProgressElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == valueAttr)
         didElementStateChange();
@@ -99,7 +99,7 @@ double HTMLProgressElement::value() const
 
 void HTMLProgressElement::setValue(double value)
 {
-    setAttributeWithoutSynchronization(valueAttr, AtomicString::number(value));
+    setAttributeWithoutSynchronization(valueAttr, AtomString::number(value));
 }
 
 double HTMLProgressElement::max() const
@@ -111,7 +111,7 @@ double HTMLProgressElement::max() const
 void HTMLProgressElement::setMax(double max)
 {
     if (max > 0)
-        setAttributeWithoutSynchronization(maxAttr, AtomicString::number(max));
+        setAttributeWithoutSynchronization(maxAttr, AtomString::number(max));
 }
 
 double HTMLProgressElement::position() const

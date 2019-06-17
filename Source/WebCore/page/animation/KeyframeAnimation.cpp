@@ -343,7 +343,7 @@ void KeyframeAnimation::onAnimationEnd(double elapsedTime)
     endAnimation(m_animation->fillsForwards());
 }
 
-bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double elapsedTime)
+bool KeyframeAnimation::sendAnimationEvent(const AtomString& eventType, double elapsedTime)
 {
     Document::ListenerType listenerType;
     if (eventType == eventNames().webkitAnimationIterationEvent || eventType == eventNames().animationiterationEvent)

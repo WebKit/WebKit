@@ -98,14 +98,14 @@ WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const StringView&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const CString&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const String&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const StringImpl*);
-inline void printInternal(PrintStream& out, const AtomicStringImpl* value) { printInternal(out, bitwise_cast<const StringImpl*>(value)); }
+inline void printInternal(PrintStream& out, const AtomStringImpl* value) { printInternal(out, bitwise_cast<const StringImpl*>(value)); }
 inline void printInternal(PrintStream& out, const UniquedStringImpl* value) { printInternal(out, bitwise_cast<const StringImpl*>(value)); }
 inline void printInternal(PrintStream& out, const UniquedStringImpl& value) { printInternal(out, &value); }
 inline void printInternal(PrintStream& out, char* value) { printInternal(out, static_cast<const char*>(value)); }
 inline void printInternal(PrintStream& out, CString& value) { printInternal(out, static_cast<const CString&>(value)); }
 inline void printInternal(PrintStream& out, String& value) { printInternal(out, static_cast<const String&>(value)); }
 inline void printInternal(PrintStream& out, StringImpl* value) { printInternal(out, static_cast<const StringImpl*>(value)); }
-inline void printInternal(PrintStream& out, AtomicStringImpl* value) { printInternal(out, static_cast<const AtomicStringImpl*>(value)); }
+inline void printInternal(PrintStream& out, AtomStringImpl* value) { printInternal(out, static_cast<const AtomStringImpl*>(value)); }
 inline void printInternal(PrintStream& out, UniquedStringImpl* value) { printInternal(out, static_cast<const UniquedStringImpl*>(value)); }
 inline void printInternal(PrintStream& out, UniquedStringImpl& value) { printInternal(out, &value); }
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, bool);

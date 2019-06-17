@@ -22,7 +22,7 @@
 #include "SearchPopupMenuWin.h"
 
 #include "SearchPopupMenuDB.h"
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -41,7 +41,7 @@ bool SearchPopupMenuWin::enabled()
     return true;
 }
 
-void SearchPopupMenuWin::saveRecentSearches(const AtomicString& name, const Vector<RecentSearch>& searchItems)
+void SearchPopupMenuWin::saveRecentSearches(const AtomString& name, const Vector<RecentSearch>& searchItems)
 {
     if (name.isEmpty())
         return;
@@ -49,7 +49,7 @@ void SearchPopupMenuWin::saveRecentSearches(const AtomicString& name, const Vect
     SearchPopupMenuDB::singleton().saveRecentSearches(name, searchItems);
 }
 
-void SearchPopupMenuWin::loadRecentSearches(const AtomicString& name, Vector<RecentSearch>& searchItems)
+void SearchPopupMenuWin::loadRecentSearches(const AtomString& name, Vector<RecentSearch>& searchItems)
 {
     if (name.isEmpty())
         return;

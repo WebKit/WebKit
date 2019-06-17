@@ -32,7 +32,7 @@ namespace WebCore {
 
 class VRDisplayEvent final : public Event {
 public:
-    static Ref<VRDisplayEvent> create(const AtomicString& type, const RefPtr<VRDisplay>& display, Optional<VRDisplayEventReason>&& reason)
+    static Ref<VRDisplayEvent> create(const AtomString& type, const RefPtr<VRDisplay>& display, Optional<VRDisplayEventReason>&& reason)
     {
         return adoptRef(*new VRDisplayEvent(type, display, WTFMove(reason)));
     }
@@ -42,7 +42,7 @@ public:
         Optional<VRDisplayEventReason> reason;
     };
 
-    static Ref<VRDisplayEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<VRDisplayEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new VRDisplayEvent(type, initializer, isTrusted));
     }
@@ -53,8 +53,8 @@ public:
     const Optional<VRDisplayEventReason>& reason() const { return m_reason; }
 
 private:
-    VRDisplayEvent(const AtomicString&, const Init&, IsTrusted);
-    VRDisplayEvent(const AtomicString&, const RefPtr<VRDisplay>&, Optional<VRDisplayEventReason>&&);
+    VRDisplayEvent(const AtomString&, const Init&, IsTrusted);
+    VRDisplayEvent(const AtomString&, const RefPtr<VRDisplay>&, Optional<VRDisplayEventReason>&&);
 
     // Event
     EventInterface eventInterface() const override;

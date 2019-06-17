@@ -22,7 +22,7 @@
 #pragma once
 
 #include <wtf/HashMap.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -47,7 +47,7 @@ struct SVGAnimatedPropertyDescription {
         return m_element == reinterpret_cast<SVGElement*>(-1);
     }
 
-    SVGAnimatedPropertyDescription(SVGElement* element, const AtomicString& attributeName)
+    SVGAnimatedPropertyDescription(SVGElement* element, const AtomString& attributeName)
         : m_element(element)
         , m_attributeName(attributeName.impl())
     {
@@ -61,7 +61,7 @@ struct SVGAnimatedPropertyDescription {
     }
 
     SVGElement* m_element;
-    AtomicStringImpl* m_attributeName;
+    AtomStringImpl* m_attributeName;
 };
 
 struct SVGAnimatedPropertyDescriptionHash {

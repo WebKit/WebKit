@@ -351,8 +351,8 @@ ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchin
         return Exception { SyntaxError };
     CSSValueList& familyList = downcast<CSSValueList>(*family);
 
-    HashSet<AtomicString> uniqueFamilies;
-    Vector<AtomicString> familyOrder;
+    HashSet<AtomString> uniqueFamilies;
+    Vector<AtomString> familyOrder;
     for (auto& family : familyList) {
         auto& primitive = downcast<CSSPrimitiveValue>(family.get());
         if (!primitive.isFontFamily())
@@ -402,7 +402,7 @@ ExceptionOr<bool> CSSFontFaceSet::check(const String& font, const String& text)
     return true;
 }
 
-CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, const AtomicString& family)
+CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, const AtomString& family)
 {
     auto iterator = m_facesLookupTable.find(family);
     if (iterator == m_facesLookupTable.end())

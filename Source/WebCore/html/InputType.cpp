@@ -84,9 +84,9 @@ namespace WebCore {
 using namespace HTMLNames;
 
 typedef bool (RuntimeEnabledFeatures::*InputTypeConditionalFunction)() const;
-typedef const AtomicString& (*InputTypeNameFunction)();
+typedef const AtomString& (*InputTypeNameFunction)();
 typedef Ref<InputType> (*InputTypeFactoryFunction)(HTMLInputElement&);
-typedef HashMap<AtomicString, InputTypeFactoryFunction, ASCIICaseInsensitiveHash> InputTypeFactoryMap;
+typedef HashMap<AtomString, InputTypeFactoryFunction, ASCIICaseInsensitiveHash> InputTypeFactoryMap;
 
 template<class T>
 static Ref<InputType> createInputType(HTMLInputElement& element)
@@ -149,7 +149,7 @@ static InputTypeFactoryMap createInputTypeFactoryMap()
     return map;
 }
 
-Ref<InputType> InputType::create(HTMLInputElement& element, const AtomicString& typeName)
+Ref<InputType> InputType::create(HTMLInputElement& element, const AtomString& typeName)
 {
     if (!typeName.isEmpty()) {
         static const auto factoryMap = makeNeverDestroyed(createInputTypeFactoryMap());

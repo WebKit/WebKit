@@ -38,7 +38,7 @@ public:
     void ref() { m_request.ref(); }
     void deref() { m_request.deref(); }
 
-    void dispatchProgressEvent(const AtomicString& type, unsigned long long loaded, unsigned long long total);
+    void dispatchProgressEvent(const AtomString& type, unsigned long long loaded, unsigned long long total);
 
 private:
     void refEventTarget() final { ref(); }

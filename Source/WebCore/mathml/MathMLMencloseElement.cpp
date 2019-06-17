@@ -132,7 +132,7 @@ bool MathMLMencloseElement::hasNotation(MencloseNotationFlag notationFlag)
     return m_notationFlags.value() & notationFlag;
 }
 
-void MathMLMencloseElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void MathMLMencloseElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == notationAttr)
         m_notationFlags = WTF::nullopt;

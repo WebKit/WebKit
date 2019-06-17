@@ -112,7 +112,7 @@ private:
     bool m_discardTrailingNewline { false };
     bool m_requestInFlight { false };
 
-    AtomicString m_eventName;
+    AtomString m_eventName;
     Vector<UChar> m_data;
     String m_currentlyParsedEventId;
     String m_lastEventId;

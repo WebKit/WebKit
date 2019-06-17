@@ -255,18 +255,18 @@ unsigned short CSSPrimitiveValue::primitiveType() const
     return CSSPrimitiveValue::CSS_UNKNOWN;
 }
 
-static const AtomicString& propertyName(CSSPropertyID propertyID)
+static const AtomString& propertyName(CSSPropertyID propertyID)
 {
     ASSERT_ARG(propertyID, (propertyID >= firstCSSProperty && propertyID < firstCSSProperty + numCSSProperties));
 
-    return getPropertyNameAtomicString(propertyID);
+    return getPropertyNameAtomString(propertyID);
 }
 
-static const AtomicString& valueName(CSSValueID valueID)
+static const AtomString& valueName(CSSValueID valueID)
 {
     ASSERT_ARG(valueID, (valueID >= firstCSSValueKeyword && valueID <= lastCSSValueKeyword));
 
-    return getValueNameAtomicString(valueID);
+    return getValueNameAtomString(valueID);
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(CSSValueID valueID)

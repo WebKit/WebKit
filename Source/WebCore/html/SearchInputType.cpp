@@ -65,11 +65,11 @@ void SearchInputType::addSearchResult()
 static void updateResultButtonPseudoType(SearchFieldResultsButtonElement& resultButton, int maxResults)
 {
     if (!maxResults)
-        resultButton.setPseudo(AtomicString("-webkit-search-results-decoration", AtomicString::ConstructFromLiteral));
+        resultButton.setPseudo(AtomString("-webkit-search-results-decoration", AtomString::ConstructFromLiteral));
     else if (maxResults < 0)
-        resultButton.setPseudo(AtomicString("-webkit-search-decoration", AtomicString::ConstructFromLiteral));
+        resultButton.setPseudo(AtomString("-webkit-search-decoration", AtomString::ConstructFromLiteral));
     else
-        resultButton.setPseudo(AtomicString("-webkit-search-results-button", AtomicString::ConstructFromLiteral));
+        resultButton.setPseudo(AtomString("-webkit-search-results-button", AtomString::ConstructFromLiteral));
 }
 
 void SearchInputType::attributeChanged(const QualifiedName& name)
@@ -89,7 +89,7 @@ RenderPtr<RenderElement> SearchInputType::createInputRenderer(RenderStyle&& styl
     return createRenderer<RenderSearchField>(*element(), WTFMove(style));
 }
 
-const AtomicString& SearchInputType::formControlType() const
+const AtomString& SearchInputType::formControlType() const
 {
     return InputTypeNames::search();
 }
