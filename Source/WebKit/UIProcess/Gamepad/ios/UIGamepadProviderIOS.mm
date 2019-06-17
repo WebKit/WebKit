@@ -35,7 +35,9 @@ namespace WebKit {
 
 WebPageProxy* UIGamepadProvider::platformWebPageProxyForGamepadInput()
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto firstResponder = [[[UIApplication sharedApplication] keyWindow] firstResponder];
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if ([firstResponder isKindOfClass:[WKContentView class]])
         return ((WKContentView *)firstResponder).page;

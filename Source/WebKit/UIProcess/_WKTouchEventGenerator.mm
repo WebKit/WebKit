@@ -214,7 +214,9 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     if (eventRef) {
         RetainPtr<IOHIDEventRef> strongEvent = eventRef;
         dispatch_async(dispatch_get_main_queue(), ^{
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             uint32_t contextID = [UIApplication sharedApplication].keyWindow._contextId;
+ALLOW_DEPRECATED_DECLARATIONS_END
             ASSERT(contextID);
             BKSHIDEventSetDigitizerInfo(strongEvent.get(), contextID, false, false, NULL, 0, 0);
             [[UIApplication sharedApplication] _enqueueHIDEvent:strongEvent.get()];
@@ -239,7 +241,9 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     
     if (markerEvent) {
         dispatch_async(dispatch_get_main_queue(), [markerEvent = WTFMove(markerEvent)] {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             auto contextID = [UIApplication sharedApplication].keyWindow._contextId;
+ALLOW_DEPRECATED_DECLARATIONS_END
             ASSERT(contextID);
             BKSHIDEventSetDigitizerInfo(markerEvent.get(), contextID, false, false, NULL, 0, 0);
             [[UIApplication sharedApplication] _enqueueHIDEvent:markerEvent.get()];

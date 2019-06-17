@@ -1,3 +1,13 @@
+2019-06-17  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * UIProcess/Gamepad/ios/UIGamepadProviderIOS.mm:
+        (WebKit::UIGamepadProvider::platformWebPageProxyForGamepadInput):
+        * UIProcess/_WKTouchEventGenerator.mm:
+        (-[_WKTouchEventGenerator _sendHIDEvent:]):
+        (-[_WKTouchEventGenerator _sendMarkerHIDEventWithCompletionBlock:]):
+
 2019-06-17  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r242686): Paths in XPC services’ LC_DYLD_ENVIRONMENT are incorrect in built products directory
