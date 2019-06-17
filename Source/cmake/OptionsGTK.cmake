@@ -207,7 +207,7 @@ if (USE_WPE_RENDERER)
         message(FATAL_ERROR "libwpe is required for USE_WPE_RENDERER")
     endif ()
 
-    find_package(WPEBackend-fdo 1.3.0)
+    find_package(WPEBackend-fdo 1.3.1)
     if (NOT WPEBACKEND_FDO_FOUND)
         message(FATAL_ERROR "WPEBackend-fdo is required for USE_WPE_RENDERER")
     endif ()
