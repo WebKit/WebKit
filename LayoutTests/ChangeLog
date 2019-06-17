@@ -1,3 +1,16 @@
+2019-06-16  Darin Adler  <darin@apple.com>
+
+        Convert some uses of fixed width and fixed precision floating point formatting to use shortest instead
+        https://bugs.webkit.org/show_bug.cgi?id=198896
+
+        Reviewed by Sam Weinig.
+
+        * fast/loader/stateobjects/pushstate-frequency-expected.txt:
+        * fast/loader/stateobjects/pushstate-frequency-iframe-expected.txt:
+        * fast/loader/stateobjects/replacestate-frequency-expected.txt:
+        * fast/loader/stateobjects/replacestate-frequency-iframe-expected.txt:
+        Updated to expect cleaner output without ".000000".
+
 2019-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         Make layerTreeAsText() output a bit less verbose

@@ -259,7 +259,7 @@ bool VertexPair::intersection(const VertexPair& other, FloatPoint& point) const
 
 String FloatPolygonEdge::debugString() const
 {
-    return makeString("0x", hex(reinterpret_cast<uintptr_t>(this)), " (", FormattedNumber::fixedPrecision(vertex1().x()), ',', FormattedNumber::fixedPrecision(vertex1().y()), ' ', FormattedNumber::fixedPrecision(vertex2().x()), ',', FormattedNumber::fixedPrecision(vertex2().y()), ')');
+    return makeString("0x", hex(reinterpret_cast<uintptr_t>(this)), " (", vertex1().x(), ',', vertex1().y(), ' ', vertex2().x(), ',', vertex2().y(), ')');
 }
 
 #endif

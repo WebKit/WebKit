@@ -364,9 +364,9 @@ String IDBKeyData::loggingString() const
         result = "<string> - " + WTF::get<String>(m_value);
         break;
     case IndexedDB::KeyType::Date:
-        return makeString("<date> - ", FormattedNumber::fixedWidth(WTF::get<double>(m_value), 6));
+        return makeString("<date> - ", WTF::get<double>(m_value));
     case IndexedDB::KeyType::Number:
-        return makeString("<number> - ", FormattedNumber::fixedWidth(WTF::get<double>(m_value), 6));
+        return makeString("<number> - ", WTF::get<double>(m_value));
     case IndexedDB::KeyType::Max:
         return "<maximum>"_s;
     case IndexedDB::KeyType::Min:
