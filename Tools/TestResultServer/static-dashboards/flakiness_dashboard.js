@@ -61,6 +61,12 @@ var PLATFORMS = {
                             'WK2': { fallbackPlatforms: ['APPLE_MAC_MOJAVE', 'APPLE_MAC', 'WK2'], expectationsDirectory: 'mac-wk2'}
                         }
                     },
+                    'CATALINA': {
+                        subPlatforms: {
+                            'WK1': { fallbackPlatforms: ['APPLE_MAC_CATALINA', 'APPLE_MAC'] },
+                            'WK2': { fallbackPlatforms: ['APPLE_MAC_CATALINA', 'APPLE_MAC', 'WK2'], expectationsDirectory: 'mac-wk2'}
+                        }
+                    },
                 }
             },
             'WIN': {
@@ -359,6 +365,8 @@ function determineBuilderPlatform(builderNameUpperCase)
     if (string.contains(builderNameUpperCase, 'WINCAIRO'))
         return 'WINCAIRO';
 
+    if (string.contains(builderNameUpperCase, 'CATALINA'))
+        return determineWKPlatform(builderNameUpperCase, 'APPLE_MAC_CATALINA');
     if (string.contains(builderNameUpperCase, 'MOJAVE'))
         return determineWKPlatform(builderNameUpperCase, 'APPLE_MAC_MOJAVE');
     if (string.contains(builderNameUpperCase, 'HIGHSIERRA'))
@@ -712,6 +720,7 @@ function getParsedExpectations(data)
             'Sierra': 'SIERRA',
             'HighSierra': 'HIGHSIERRA',
             'Mojave': 'MOJAVE',
+            'Catalina': 'CATALINA',
             'Win7': 'WIN7',
             'Win10': 'WIN10',
             'XP': 'XP',

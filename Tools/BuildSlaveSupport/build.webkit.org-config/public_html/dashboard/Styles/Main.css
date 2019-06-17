@@ -205,12 +205,26 @@ table.queue-grid tr.platform.ios-12 img.logo {
     content: -webkit-image-set(url(../Images/IOS12@2x.png) 2x, url(../Images/IOS12.png) 1x);
 }
 
+table.queue-grid tr.platform.ios-simulator-13 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: -webkit-image-set(url(../Images/IOS13Simulator@2x.png) 2x, url(../Images/IOS13Simulator.png) 1x);
+}
+
+table.queue-grid tr.platform.ios-13 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: -webkit-image-set(url(../Images/IOS13@2x.png) 2x, url(../Images/IOS13.png) 1x);
+}
+
 table.queue-grid tr.platform.macos-highsierra img.logo {
     content: -webkit-image-set(url(../Images/HighSierra@2x.png) 2x, url(../Images/HighSierra.png) 1x);
 }
 
 table.queue-grid tr.platform.macos-mojave img.logo {
     content: -webkit-image-set(url(../Images/Mojave@2x.png) 2x, url(../Images/Mojave.png) 1x);
+}
+
+table.queue-grid tr.platform.macos-catalina img.logo {
+    content: -webkit-image-set(url(../Images/Catalina@2x.png) 2x, url(../Images/Catalina.png) 1x);
 }
 
 table.queue-grid tr.platform.wincairo-windows-10 img.logo {

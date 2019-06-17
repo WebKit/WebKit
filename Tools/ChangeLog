@@ -1,3 +1,24 @@
+2019-06-17  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Add macOS Catalina, iOS 13
+        https://bugs.webkit.org/show_bug.cgi?id=198492
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Catalina.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Catalina@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS13.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS13@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS13Simulator.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS13Simulator@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        * BuildSlaveSupport/ews-build/steps.py:
+        * Scripts/webkitpy/common/version_name_map.py:
+        * Scripts/webkitpy/common/version_name_map_unittest.py:
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+
 2019-06-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. [GTK] Bump WPEBackend-fdo requirement to 1.3.1
