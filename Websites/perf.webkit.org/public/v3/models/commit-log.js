@@ -172,13 +172,16 @@ class CommitLog extends DataModelObject {
         return this._constructFromRawData(data);
     }
 
-    static async fetchForSingleRevision(repository, revision)
+    static async fetchForSingleRevision(repository, revision, prefixMatch=false)
     {
         const commit = repository.commitForRevision(revision);
         if (commit)
             return [commit];
 
-        const data = await this.cachedFetch(`/api/commits/${repository.id()}/${revision}`);
+        let params = {};
+        if (prefixMatch)
+            params['prefix-match'] = true;
+        const data = await this.cachedFetch(`/api/commits/${repository.id()}/${revision}`, params);
         return this._constructFromRawData(data);
     }
 

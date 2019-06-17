@@ -178,19 +178,35 @@ class CommitLogFetcher {
         return $this->format_single_commit($this->db->select_last_row('commits', 'commit', array('repository' => $repository_id, 'reported' => true), array('time', 'order')));
     }
 
-    function fetch_revision($repository_id, $revision) {
-        return $this->format_single_commit($this->commit_for_revision($repository_id, $revision));
+    function fetch_revision($repository_id, $revision, $prefix_match) {
+        $all_but_first = substr($revision, 1);
+        $is_svn_revision = false;
+        if ($revision[0] == 'r' && ctype_digit($all_but_first)) {
+            $revision = $all_but_first;
+            $is_svn_revision = true;
+        }
+        if ($prefix_match && !$is_svn_revision)
+            $commit = $this->commit_for_revision_prefix($repository_id, $revision);
+        else
+            $commit = $this->commit_for_revision($repository_id, $revision);
+        return $this->format_single_commit($commit);
     }
 
     private function commit_for_revision($repository_id, $revision) {
-        $all_but_first = substr($revision, 1);
-        if ($revision[0] == 'r' && ctype_digit($all_but_first))
-            $revision = $all_but_first;
         $commit_info = array('repository' => $repository_id, 'revision' => $revision);
         $row = $this->db->select_last_row('commits', 'commit', $commit_info);
         if (!$row)
             exit_with_error('UnknownCommit', $commit_info);
         return $row;
+    }
+
+    private function commit_for_revision_prefix($repository_id, $revision_prefix) {
+        $rows = $this->db->query_and_fetch_all('SELECT * FROM commits WHERE commit_repository = $1 AND commit_revision LIKE $2 LIMIT 2', array($repository_id, Database::escape_for_like($revision_prefix) . '%'));
+        if (count($rows) == 0)
+            exit_with_error('UnknownCommit', array('repository' => $repository_id, 'revision' => $revision_prefix));
+        if (count($rows) == 2)
+            exit_with_error('AmbiguousRevisionPrefix', array('repository' => $repository_id, 'revision' => $revision_prefix));
+        return $rows[0];
     }
 
     private function format_single_commit($commit_row) {

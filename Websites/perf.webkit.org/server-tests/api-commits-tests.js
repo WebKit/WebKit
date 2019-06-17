@@ -394,6 +394,50 @@ describe("/api/commits/", function () {
             });
         });
 
+        it("should return the full result for a reported commit with prefix-match to be false", async () => {
+            const remote = TestServer.remoteAPI();
+            await addSlaveForReport(subversionCommits);
+            await remote.postJSONWithStatus('/api/report-commits/', subversionCommits);
+            const result = await remote.getJSON('/api/commits/WebKit/210949?prefix-match=false');
+            assert.equal(result['status'], 'OK');
+            assert.deepEqual(result['commits'].length, 1);
+            assertCommitIsSameAsOneSubmitted(result['commits'][0], subversionCommits['commits'][1]);
+        });
+
+        it("should return the full result for a reported commit with prefix-match to be true", async () => {
+            const remote = TestServer.remoteAPI();
+            await addSlaveForReport(subversionCommits);
+            await remote.postJSONWithStatus('/api/report-commits/', subversionCommits);
+            const result = await remote.getJSON('/api/commits/WebKit/210949?prefix-match=true');
+            assert.equal(result['status'], 'OK');
+            assert.deepEqual(result['commits'].length, 1);
+            assertCommitIsSameAsOneSubmitted(result['commits'][0], subversionCommits['commits'][1]);
+        });
+
+        it("should return 'AmbiguousRevisionPrefix' when more than one commits are found for a revision prefix", async () => {
+            const remote = TestServer.remoteAPI();
+            await addSlaveForReport(subversionCommits);
+            await remote.postJSONWithStatus('/api/report-commits/', subversionCommits);
+            const result = await remote.getJSON('/api/commits/WebKit/21094?prefix-match=true');
+            assert.equal(result['status'], 'AmbiguousRevisionPrefix');
+        });
+
+        it("should return 'UnknownCommit' when no commit is found for a revision prefix", async () => {
+            const remote = TestServer.remoteAPI();
+            await addSlaveForReport(subversionCommits);
+            await remote.postJSONWithStatus('/api/report-commits/', subversionCommits);
+            const result = await remote.getJSON('/api/commits/WebKit/21090?prefix-match=true');
+            assert.equal(result['status'], 'UnknownCommit');
+        });
+
+        it("should not match prefix and return 'UnkownCommit' when svn commit starts with 'r' prefix and there is no exact match", async () => {
+            const remote = TestServer.remoteAPI();
+            await addSlaveForReport(subversionCommits);
+            await remote.postJSONWithStatus('/api/report-commits/', subversionCommits);
+            const result = await remote.getJSON('/api/commits/WebKit/r21095?prefix-match=true');
+            assert.equal(result['status'], 'UnknownCommit');
+        });
+
         it("should handle commit revision with space", () => {
             const db = TestServer.database();
             return Promise.all([

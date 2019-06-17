@@ -354,9 +354,10 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         const commitSet = new CustomCommitSet;
         for (let repository of repositoryGroup.repositories()) {
             let revision = this._specifiedRevisions[configurationName].get(repository);
-            if (!revision) {
-                const commit = this._fetchedCommits[configurationName].get(repository);
-                if (commit)
+            const commit = this._fetchedCommits[configurationName].get(repository);
+            if (commit) {
+                const commitLabel = commit.label();
+                if (!revision || commit.revision().startsWith(revision) || commitLabel.startsWith(revision) || revision.startsWith(commitLabel))
                     revision = commit.revision();
             }
             if (!revision)
@@ -405,25 +406,29 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
     async _resolveRevision(repository, revision, specifiedRevisions, invalidRevisionForRepository, fetchedCommits)
     {
         const fetchedCommit = fetchedCommits.get(repository);
-        if (fetchedCommit && fetchedCommit.revision() == revision)
+        const specifiedRevision = specifiedRevisions.get(repository);
+        if (fetchedCommit && fetchedCommit.revision() == revision && (!specifiedRevision || specifiedRevision == revision))
             return;
 
         fetchedCommits.delete(repository);
         let commits = [];
+        const revisionToFetch = specifiedRevision || revision;
         try {
-            commits = await CommitLog.fetchForSingleRevision(repository, revision);
+            commits = await CommitLog.fetchForSingleRevision(repository, revisionToFetch, true);
         } catch (error) {
-            console.assert(error == 'UnknownCommit');
-            if (revision != specifiedRevisions.get(repository))
+            console.assert(error == 'UnknownCommit' || error == 'AmbiguousRevisionPrefix');
+            if (revisionToFetch != specifiedRevisions.get(repository))
                 return;
-            invalidRevisionForRepository.set(repository, revision);
+            invalidRevisionForRepository.set(repository, `"${revisionToFetch}": ${error == 'UnknownCommit' ? 'Invalid revision' : 'Ambiguous revision prefix'}`);
             return;
         }
         console.assert(commits.length, 1);
-        if (revision != specifiedRevisions.get(repository))
+        if (revisionToFetch != specifiedRevisions.get(repository))
             return;
         invalidRevisionForRepository.delete(repository);
         fetchedCommits.set(repository, commits[0]);
+        if (revisionToFetch != commits[0].revision())
+            this._updateCommitSetMap();
     }
 
     _renderRepositoryPanes(triggerable, error, platform, repositoryGroupByConfiguration, showComparison)
@@ -536,7 +541,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
             if (commit && commit.testability() && !invalidRevisionForRepository.has(repository))
                 entries.push(element('li', `${commit.repository().name()} - "${commit.label()}": ${commit.testability()}`));
             if (invalidRevisionForRepository.has(repository))
-                entries.push(element('li', `${repository.name()} - "${invalidRevisionForRepository.get(repository)}": Invalid revision`));
+                entries.push(element('li', `${repository.name()} - ${invalidRevisionForRepository.get(repository)}`));
         }
 
         return entries;

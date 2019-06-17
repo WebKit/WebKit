@@ -48,8 +48,10 @@ function main($paths) {
             $commits = $fetcher->fetch_last_reported_between_orders($repository_id, $from, $to);
         else
             $commits = $fetcher->fetch_last_reported($repository_id);
-    } else
-        $commits = $fetcher->fetch_revision($repository_id, $filter);
+    } else {
+        $prefix_match = $keyword = array_get($_GET, 'prefix-match');
+        $commits = $fetcher->fetch_revision($repository_id, $filter, $prefix_match);
+    }
 
     if (!is_array($commits))
         exit_with_error('FailedToFetchCommits', array('repository' => $repository_id, 'filter' => $filter));

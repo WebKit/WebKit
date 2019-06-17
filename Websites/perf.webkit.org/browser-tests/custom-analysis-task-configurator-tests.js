@@ -56,7 +56,7 @@ describe('CustomAnalysisTaskConfigurator', () => {
         customAnalysisTaskConfigurator.content('baseline-revision-table').querySelector('input').dispatchEvent(new Event('input'));
         await sleep(context.symbols.CustomAnalysisTaskConfigurator.commitFetchInterval);
         expect(requests.length).to.be(2);
-        expect(requests[1].url).to.be('/api/commits/1/123');
+        expect(requests[1].url).to.be('/api/commits/1/123?prefix-match=true');
 
         customAnalysisTaskConfigurator._configureComparison();
         await waitForComponentsToRender(context);
@@ -65,7 +65,7 @@ describe('CustomAnalysisTaskConfigurator', () => {
         customAnalysisTaskConfigurator.content('comparison-revision-table').querySelector('input').dispatchEvent(new Event('input'));
         await sleep(context.symbols.CustomAnalysisTaskConfigurator.commitFetchInterval);
         expect(requests.length).to.be(3);
-        expect(requests[2].url).to.be('/api/commits/1/456');
+        expect(requests[2].url).to.be('/api/commits/1/456?prefix-match=true');
 
         const commitSets = customAnalysisTaskConfigurator.commitSets();
         expect(commitSets.length).to.be(2);
@@ -73,6 +73,93 @@ describe('CustomAnalysisTaskConfigurator', () => {
         expect(commitSets[0].revisionForRepository(repository)).to.be('123');
         expect(commitSets[1].repositories().length).to.be(1);
         expect(commitSets[1].revisionForRepository(repository)).to.be('456');
+
+        context.symbols.CustomAnalysisTaskConfigurator.commitFetchInterval = 100;
+    });
+
+    const webkitCommit = {
+        "id": "185338",
+        "revision": "abcdefg",
+        "repository": 1,
+        "previousCommit": null,
+        "ownsCommits": false,
+        "time": +new Date("2017-01-20T03:49:37.887Z"),
+        "authorName": "Commit Queue",
+        "authorEmail": "commit-queue@webkit.org",
+        "message": "another message",
+    };
+
+    const anotherWebkitCommit = {
+        "id": "185334",
+        "revision": "aabcdef",
+        "repository": 1,
+        "previousCommit": null,
+        "ownsCommits": false,
+        "time": +new Date("2017-01-20T03:23:50.645Z"),
+        "authorName": "Chris Dumez",
+        "authorEmail": "cdumez@apple.com",
+        "message": "some message",
+    };
+
+    it('Should use full commit revision even if UI does not have the full revision', async () => {
+        const context = new BrowsingContext();
+        const customAnalysisTaskConfigurator = await createCustomAnalysisTaskConfiguratorWithContext(context);
+        context.symbols.CustomAnalysisTaskConfigurator.commitFetchInterval = 1;
+
+        const test = new context.symbols.Test(1, {name: 'Speedometer'});
+        const platform = new context.symbols.Platform(1, {
+            name: 'Mojave',
+            metrics: [
+                new context.symbols.Metric(1, {
+                    name: 'Allocation',
+                    aggregator: 'Arithmetic',
+                    test
+                })
+            ],
+            lastModifiedByMetric: Date.now(),
+        });
+        const repository = context.symbols.Repository.ensureSingleton(1, {name: 'WebKit'});
+        const triggerableRepositoryGroup = new context.symbols.TriggerableRepositoryGroup(1, {repositories: [{repository}]});
+        new context.symbols.Triggerable(1, {
+            name: 'test-triggerable',
+            isDisabled: false,
+            repositoryGroups: [triggerableRepositoryGroup],
+            configurations: [{test, platform}],
+        });
+        customAnalysisTaskConfigurator.selectTests([test]);
+        customAnalysisTaskConfigurator.selectPlatform(platform);
+
+        await waitForComponentsToRender(context);
+
+        const requests = context.symbols.MockRemoteAPI.requests;
+        expect(requests.length).to.be(1);
+        expect(requests[0].url).to.be('/api/commits/1/latest?platform=1');
+        requests[0].reject();
+
+        customAnalysisTaskConfigurator.content('baseline-revision-table').querySelector('input').value = 'abc';
+        customAnalysisTaskConfigurator.content('baseline-revision-table').querySelector('input').dispatchEvent(new Event('input'));
+        await sleep(context.symbols.CustomAnalysisTaskConfigurator.commitFetchInterval);
+        expect(requests.length).to.be(2);
+        expect(requests[1].url).to.be('/api/commits/1/abc?prefix-match=true');
+        requests[1].resolve({commits: [webkitCommit]});
+
+        customAnalysisTaskConfigurator._configureComparison();
+        await waitForComponentsToRender(context);
+
+        customAnalysisTaskConfigurator.content('comparison-revision-table').querySelector('input').value = 'aabc';
+        customAnalysisTaskConfigurator.content('comparison-revision-table').querySelector('input').dispatchEvent(new Event('input'));
+        await sleep(context.symbols.CustomAnalysisTaskConfigurator.commitFetchInterval);
+        expect(requests.length).to.be(3);
+        expect(requests[2].url).to.be('/api/commits/1/aabc?prefix-match=true');
+        requests[2].resolve({commits: [anotherWebkitCommit]});
+
+        await waitForComponentsToRender(context);
+        const commitSets = customAnalysisTaskConfigurator.commitSets();
+        expect(commitSets.length).to.be(2);
+        expect(commitSets[0].repositories().length).to.be(1);
+        expect(commitSets[0].revisionForRepository(repository)).to.be('abcdefg');
+        expect(commitSets[1].repositories().length).to.be(1);
+        expect(commitSets[1].revisionForRepository(repository)).to.be('aabcdef');
 
         context.symbols.CustomAnalysisTaskConfigurator.commitFetchInterval = 100;
     });
@@ -145,7 +232,7 @@ describe('CustomAnalysisTaskConfigurator', () => {
         customAnalysisTaskConfigurator.content('baseline-revision-table').querySelector('input').dispatchEvent(new Event('input'));
         await sleep(context.symbols.CustomAnalysisTaskConfigurator.commitFetchInterval);
         expect(requests.length).to.be(2);
-        expect(requests[1].url).to.be('/api/commits/1/123');
+        expect(requests[1].url).to.be('/api/commits/1/123?prefix-match=true');
 
         customAnalysisTaskConfigurator._configureComparison();
         await waitForComponentsToRender(context);
@@ -154,7 +241,7 @@ describe('CustomAnalysisTaskConfigurator', () => {
         customAnalysisTaskConfigurator.content('comparison-revision-table').querySelector('input').dispatchEvent(new Event('input'));
         await sleep(context.symbols.CustomAnalysisTaskConfigurator.commitFetchInterval);
         expect(requests.length).to.be(3);
-        expect(requests[2].url).to.be('/api/commits/1/456');
+        expect(requests[2].url).to.be('/api/commits/1/456?prefix-match=true');
 
         let commitSets = customAnalysisTaskConfigurator.commitSets();
         expect(commitSets.length).to.be(2);
@@ -286,7 +373,7 @@ describe('CustomAnalysisTaskConfigurator', () => {
         customAnalysisTaskConfigurator.content('baseline-revision-table').querySelector('input').dispatchEvent(new Event('input'));
         await sleep(context.symbols.CustomAnalysisTaskConfigurator.commitFetchInterval);
         expect(requests.length).to.be(2);
-        expect(requests[1].url).to.be('/api/commits/1/123');
+        expect(requests[1].url).to.be('/api/commits/1/123?prefix-match=true');
 
         customAnalysisTaskConfigurator._configureComparison();
         await waitForComponentsToRender(context);

@@ -539,5 +539,19 @@ describe('CommitLog', function () {
 
             assert.notEqual(commits[0], newCommits[0]);
         });
+
+        it('should allow to fetch commit with prefix', async () => {
+            CommitLog.fetchForSingleRevision(MockModels.webkit, '236643', true);
+            const requests = MockRemoteAPI.requests;
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, `/api/commits/${MockModels.webkit.id()}/236643?prefix-match=true`);
+        });
+
+        it('should not set prefix-match when "prefixMatch" is false', async () => {
+            CommitLog.fetchForSingleRevision(MockModels.webkit, '236643', false);
+            const requests = MockRemoteAPI.requests;
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, `/api/commits/${MockModels.webkit.id()}/236643`);
+        })
     });
 });

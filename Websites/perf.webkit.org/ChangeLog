@@ -1,3 +1,25 @@
+2019-06-13  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Custom analysis task configurator should allow supplying commit prefix and revision starts 'r'.
+        https://bugs.webkit.org/show_bug.cgi?id=198847
+
+        Reviewed by Ryosuke Niwa.
+
+        Custom analysis task configurator should not require full SHA to start an A/B test.
+        Custom analysis task configurator should accept svn revision starts with 'r'.
+
+        * browser-tests/custom-analysis-task-configurator-tests.js: Added a unit test for this change.
+        * public/api/commits.php: Extend this API to allow prefix matching when fethcing a single commit.
+        * public/include/commit-log-fetcher.php: Added a function to fetch a commit with prefix.
+        * public/v3/components/custom-analysis-task-configurator.js: Add UI support for accepting partial revision.
+        (CustomAnalysisTaskConfigurator.prototype._computeCommitSet):
+        (CustomAnalysisTaskConfigurator.prototype.async._resolveRevision):
+        (CustomAnalysisTaskConfigurator.prototype._buildTestabilityList):
+        * public/v3/models/commit-log.js:
+        (CommitLog.async.fetchForSingleRevision): Added third argument to specify prefix matching which defaults to false.
+        * server-tests/api-commits-tests.js: Added unit tests.
+        * unit-tests/commit-log-tests.js: Added a unit test.
+
 2019-05-15  Dewei Zhu  <dewei_zhu@apple.com>
 
         Perf dashboard erroneously rejects a build request to build owned components when there are no patches.
