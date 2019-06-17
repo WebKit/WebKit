@@ -38,7 +38,9 @@ async function start() {
     const renderPipelineDescriptor = {vertexStage, fragmentStage, primitiveTopology, rasterizationState, colorStates, depthStencilState, vertexInput, sampleCount: 1, layout: pipelineLayout};
     const renderPipeline = device.createRenderPipeline(renderPipelineDescriptor);
 
-    const resourceBufferDescriptor = {size: 4 * 4 * Float32Array.BYTES_PER_ELEMENT, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.MAP_WRITE};
+    const size = 4 * 4 * Float32Array.BYTES_PER_ELEMENT;
+
+    const resourceBufferDescriptor = {size, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.MAP_WRITE};
     const resourceBuffer = device.createBuffer(resourceBufferDescriptor);
     const resourceBufferArrayBuffer = await resourceBuffer.mapWriteAsync();
     const resourceBufferFloat32Array = new Float32Array(resourceBufferArrayBuffer);
@@ -60,7 +62,7 @@ async function start() {
     resourceBufferFloat32Array[15] = 1;
     resourceBuffer.unmap();
 
-    const bufferBinding = {buffer: resourceBuffer, size: 4};
+    const bufferBinding = {buffer: resourceBuffer, size};
     const bindGroupBinding = {binding: 0, resource: bufferBinding};
     const bindGroupDescriptor = {layout: bindGroupLayout, bindings: [bindGroupBinding]};
     const bindGroup = device.createBindGroup(bindGroupDescriptor);

@@ -30,7 +30,9 @@ async function start() {
     const computePipelineDescriptor = {computeStage, layout: pipelineLayout};
     const computePipeline = device.createComputePipeline(computePipelineDescriptor);
 
-    const bufferDescriptor = {size: Float32Array.BYTES_PER_ELEMENT * 8, usage: GPUBufferUsage.MAP_WRITE | GPUBufferUsage.TRANSFER_SRC};
+    const size = Float32Array.BYTES_PER_ELEMENT * 8;
+
+    const bufferDescriptor = {size, usage: GPUBufferUsage.MAP_WRITE | GPUBufferUsage.TRANSFER_SRC};
     const buffer = device.createBuffer(bufferDescriptor);
     const bufferArrayBuffer = await buffer.mapWriteAsync();
     const bufferFloat32Array = new Float32Array(bufferArrayBuffer);
@@ -44,16 +46,16 @@ async function start() {
     bufferFloat32Array[7] = 8;
     buffer.unmap();
 
-    const resultsBufferDescriptor = {size: Float32Array.BYTES_PER_ELEMENT * 8, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.TRANSFER_DST | GPUBufferUsage.MAP_READ};
+    const resultsBufferDescriptor = {size, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.TRANSFER_DST | GPUBufferUsage.MAP_READ};
     const resultsBuffer = device.createBuffer(resultsBufferDescriptor);
 
-    const bufferBinding = {buffer: resultsBuffer, size: 4};
+    const bufferBinding = {buffer: resultsBuffer, size};
     const bindGroupBinding = {binding: 0, resource: bufferBinding};
     const bindGroupDescriptor = {layout: bindGroupLayout, bindings: [bindGroupBinding]};
     const bindGroup = device.createBindGroup(bindGroupDescriptor);
 
     const commandEncoder = device.createCommandEncoder(); // {}
-    commandEncoder.copyBufferToBuffer(buffer, 0, resultsBuffer, 0, Float32Array.BYTES_PER_ELEMENT * 8);
+    commandEncoder.copyBufferToBuffer(buffer, 0, resultsBuffer, 0, size);
     const computePassEncoder = commandEncoder.beginComputePass();
     computePassEncoder.setPipeline(computePipeline);
     computePassEncoder.setBindGroup(0, bindGroup);

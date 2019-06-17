@@ -315,9 +315,9 @@ String EntryPointScaffolding::unpackResourcesAndNamedBuiltIns()
                 auto& unnamedType = *m_entryPointItems.inputs[iterator->value].unnamedType;
                 auto mangledTypeName = m_typeNamer.mangledNameForType(downcast<AST::ReferenceType>(unnamedType).elementType());
 
-                stringBuilder.append(makeString("size_t ", lengthTemporaryName, " = ", variableName, '.', lengthElementName, ".x;\n"));
+                stringBuilder.append(makeString("size_t ", lengthTemporaryName, " = ", variableName, '.', lengthElementName, ".y;\n"));
                 stringBuilder.append(makeString(lengthTemporaryName, " = ", lengthTemporaryName, " << 32;\n"));
-                stringBuilder.append(makeString(lengthTemporaryName, " = ", lengthTemporaryName, " | ", variableName, '.', lengthElementName, ".y;\n"));
+                stringBuilder.append(makeString(lengthTemporaryName, " = ", lengthTemporaryName, " | ", variableName, '.', lengthElementName, ".x;\n"));
                 stringBuilder.append(makeString(lengthTemporaryName, " = ", lengthTemporaryName, " / sizeof(", mangledTypeName, ");\n"));
                 stringBuilder.append(makeString("if (", lengthTemporaryName, " > 0xFFFFFFFF) ", lengthTemporaryName, " = 0xFFFFFFFF;\n"));
                 stringBuilder.append(makeString(mangledInputPath(path), " = { ", variableName, '.', elementName, ", static_cast<uint32_t>(", lengthTemporaryName, ") };\n"));

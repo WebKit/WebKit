@@ -215,6 +215,19 @@ static Optional<AST::NativeFunctionDeclaration> resolveByInstantiation(const Str
     return WTF::nullopt;
 }
 
+static AST::FunctionDeclaration* resolveFunction(Program& program, Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& possibleOverloads, Vector<std::reference_wrapper<ResolvingType>>& types, const String& name, Lexer::Token origin, const Intrinsics& intrinsics, AST::NamedType* castReturnType = nullptr)
+{
+    if (AST::FunctionDeclaration* function = resolveFunctionOverload(possibleOverloads, types, castReturnType))
+        return function;
+
+    if (auto newFunction = resolveByInstantiation(name, origin, types, intrinsics)) {
+        program.append(WTFMove(*newFunction));
+        return &program.nativeFunctionDeclarations().last();
+    }
+
+    return nullptr;
+}
+
 static bool checkSemantics(Vector<EntryPointItem>& inputItems, Vector<EntryPointItem>& outputItems, const Optional<AST::EntryPointType>& entryPointType, const Intrinsics& intrinsics)
 {
     {
@@ -1004,7 +1017,7 @@ void Checker::finishVisiting(AST::PropertyAccessExpression& propertyAccessExpres
         Vector<std::reference_wrapper<ResolvingType>> getterArgumentTypes { baseInfo->resolvingType };
         if (additionalArgumentType)
             getterArgumentTypes.append(*additionalArgumentType);
-        if ((getterFunction = resolveFunctionOverload(propertyAccessExpression.possibleGetterOverloads(), getterArgumentTypes)))
+        if ((getterFunction = resolveFunction(m_program, propertyAccessExpression.possibleGetterOverloads(), getterArgumentTypes, propertyAccessExpression.getterFunctionName(), propertyAccessExpression.origin(), m_intrinsics)))
             getterReturnType = &getterFunction->type();
     }
 
@@ -1017,13 +1030,8 @@ void Checker::finishVisiting(AST::PropertyAccessExpression& propertyAccessExpres
             Vector<std::reference_wrapper<ResolvingType>> anderArgumentTypes { argumentType };
             if (additionalArgumentType)
                 anderArgumentTypes.append(*additionalArgumentType);
-            if ((anderFunction = resolveFunctionOverload(propertyAccessExpression.possibleAnderOverloads(), anderArgumentTypes)))
+            if ((anderFunction = resolveFunction(m_program, propertyAccessExpression.possibleAnderOverloads(), anderArgumentTypes, propertyAccessExpression.anderFunctionName(), propertyAccessExpression.origin(), m_intrinsics)))
                 anderReturnType = &downcast<AST::PointerType>(anderFunction->type()).elementType(); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198164 Enforce the return of anders will always be a pointer
-            else if (auto newFunction = resolveByInstantiation(propertyAccessExpression.anderFunctionName(), propertyAccessExpression.origin(), anderArgumentTypes, m_intrinsics)) {
-                m_program.append(WTFMove(*newFunction));
-                anderFunction = &m_program.nativeFunctionDeclarations().last();
-                anderReturnType = &downcast<AST::PointerType>(anderFunction->type()).elementType(); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198164 Enforce the return of anders will always be a pointer
-            }
         }
     }
 
@@ -1034,13 +1042,8 @@ void Checker::finishVisiting(AST::PropertyAccessExpression& propertyAccessExpres
         Vector<std::reference_wrapper<ResolvingType>> threadAnderArgumentTypes { argumentType };
         if (additionalArgumentType)
             threadAnderArgumentTypes.append(*additionalArgumentType);
-        if ((threadAnderFunction = resolveFunctionOverload(propertyAccessExpression.possibleAnderOverloads(), threadAnderArgumentTypes)))
+        if ((threadAnderFunction = resolveFunction(m_program, propertyAccessExpression.possibleAnderOverloads(), threadAnderArgumentTypes, propertyAccessExpression.anderFunctionName(), propertyAccessExpression.origin(), m_intrinsics)))
             threadAnderReturnType = &downcast<AST::PointerType>(threadAnderFunction->type()).elementType(); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198164 Enforce the return of anders will always be a pointer
-        else if (auto newFunction = resolveByInstantiation(propertyAccessExpression.anderFunctionName(), propertyAccessExpression.origin(), threadAnderArgumentTypes, m_intrinsics)) {
-            m_program.append(WTFMove(*newFunction));
-            threadAnderFunction = &m_program.nativeFunctionDeclarations().last();
-            threadAnderReturnType = &downcast<AST::PointerType>(anderFunction->type()).elementType(); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198164 Enforce the return of anders will always be a pointer
-        }
     }
 
     if (leftAddressSpace && !anderFunction && !getterFunction) {
@@ -1083,7 +1086,7 @@ void Checker::finishVisiting(AST::PropertyAccessExpression& propertyAccessExpres
         if (additionalArgumentType)
             setterArgumentTypes.append(*additionalArgumentType);
         setterArgumentTypes.append(fieldResolvingType);
-        setterFunction = resolveFunctionOverload(propertyAccessExpression.possibleSetterOverloads(), setterArgumentTypes);
+        setterFunction = resolveFunction(m_program, propertyAccessExpression.possibleSetterOverloads(), setterArgumentTypes, propertyAccessExpression.setterFunctionName(), propertyAccessExpression.origin(), m_intrinsics);
         if (setterFunction)
             setterReturnType = &setterFunction->type();
     }
@@ -1468,14 +1471,7 @@ void Checker::visit(AST::CallExpression& callExpression)
     // We don't want to recurse to the same node twice.
 
     ASSERT(callExpression.hasOverloads());
-    auto* function = resolveFunctionOverload(*callExpression.overloads(), types, callExpression.castReturnType());
-    if (!function) {
-        if (auto newFunction = resolveByInstantiation(callExpression.name(), callExpression.origin(), types, m_intrinsics)) {
-            m_program.append(WTFMove(*newFunction));
-            function = &m_program.nativeFunctionDeclarations().last();
-        }
-    }
-
+    auto* function = resolveFunction(m_program, *callExpression.overloads(), types, callExpression.name(), callExpression.origin(), m_intrinsics, callExpression.castReturnType());
     if (!function) {
         setError();
         return;

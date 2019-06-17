@@ -142,6 +142,8 @@ static Optional<AnderCallArgumentResult> wrapAnderCallArgument(UniqueRef<AST::Ex
 
 static Optional<AnderCallArgumentResult> anderCallArgument(UniqueRef<AST::Expression>& expression, bool anderFunction, bool threadAnderFunction)
 {
+    if (!anderFunction && !threadAnderFunction)
+        return WTF::nullopt;
     auto& unifyNode = expression->resolvedType().unifyNode();
     if (is<AST::UnnamedType>(unifyNode)) {
         auto& unnamedType = downcast<AST::UnnamedType>(unifyNode);

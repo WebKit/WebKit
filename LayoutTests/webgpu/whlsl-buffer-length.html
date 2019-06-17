@@ -6,12 +6,12 @@
 <body>
 <script>
 const shaderSource = `
-[numthreads(2, 1, 1)]
-compute void computeShader(device float[] buffer : register(u0), float3 threadID : SV_DispatchThreadID) {
-    buffer[uint(threadID.x)] = buffer[uint(threadID.x)] * 2.0;
+[numthreads(1, 1, 1)]
+compute void computeShader(device uint[] buffer : register(u0), float3 threadID : SV_DispatchThreadID) {
+    buffer[0] = buffer.length;
 }
 `;
-let resultsFloat32Array;
+let resultUint32Array;
 async function start() {
     const adapter = await navigator.gpu.requestAdapter();
     const device = await adapter.requestDevice();
@@ -27,20 +27,13 @@ async function start() {
     const computePipelineDescriptor = {computeStage, layout: pipelineLayout};
     const computePipeline = device.createComputePipeline(computePipelineDescriptor);
 
-    const size = Float32Array.BYTES_PER_ELEMENT * 8;
+    const size = Uint32Array.BYTES_PER_ELEMENT * 1337;
 
     const bufferDescriptor = {size, usage: GPUBufferUsage.MAP_WRITE | GPUBufferUsage.TRANSFER_SRC};
     const buffer = device.createBuffer(bufferDescriptor);
     const bufferArrayBuffer = await buffer.mapWriteAsync();
-    const bufferFloat32Array = new Float32Array(bufferArrayBuffer);
-    bufferFloat32Array[0] = 1;
-    bufferFloat32Array[1] = 2;
-    bufferFloat32Array[2] = 3;
-    bufferFloat32Array[3] = 4;
-    bufferFloat32Array[4] = 5;
-    bufferFloat32Array[5] = 6;
-    bufferFloat32Array[6] = 7;
-    bufferFloat32Array[7] = 8;
+    const bufferUint32Array = new Uint32Array(bufferArrayBuffer);
+    bufferUint32Array[0] = 0;
     buffer.unmap();
 
     const resultsBufferDescriptor = {size, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.TRANSFER_DST | GPUBufferUsage.MAP_READ};
@@ -52,25 +45,18 @@ async function start() {
     const bindGroup = device.createBindGroup(bindGroupDescriptor);
 
     const commandEncoder = device.createCommandEncoder(); // {}
-    commandEncoder.copyBufferToBuffer(buffer, 0, resultsBuffer, 0, size);
+    commandEncoder.copyBufferToBuffer(buffer, 0, resultsBuffer, 0, 1 * Uint32Array.BYTES_PER_ELEMENT);
     const computePassEncoder = commandEncoder.beginComputePass();
     computePassEncoder.setPipeline(computePipeline);
     computePassEncoder.setBindGroup(0, bindGroup);
-    computePassEncoder.dispatch(2, 1, 1);
+    computePassEncoder.dispatch(1, 1, 1);
     computePassEncoder.endPass();
     const commandBuffer = commandEncoder.finish();
     device.getQueue().submit([commandBuffer]);
 
     const resultsArrayBuffer = await resultsBuffer.mapReadAsync();
-    resultsFloat32Array = new Float32Array(resultsArrayBuffer);
-    shouldBe("resultsFloat32Array[0]", "2");
-    shouldBe("resultsFloat32Array[1]", "4");
-    shouldBe("resultsFloat32Array[2]", "6");
-    shouldBe("resultsFloat32Array[3]", "8");
-    shouldBe("resultsFloat32Array[4]", "5");
-    shouldBe("resultsFloat32Array[5]", "6");
-    shouldBe("resultsFloat32Array[6]", "7");
-    shouldBe("resultsFloat32Array[7]", "8");
+    resultUint32Array = new Uint32Array(resultsArrayBuffer);
+    shouldBe("resultUint32Array[0]", "1337");
     resultsBuffer.unmap();
 }
 if (window.testRunner)

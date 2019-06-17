@@ -1,3 +1,41 @@
+2019-06-17  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Make .length work
+        https://bugs.webkit.org/show_bug.cgi?id=198890
+
+        Reviewed by Myles Maxfield.
+
+        This patch makes accessing .length on buffers work. To make this work as
+        expected, I've fixed a handful of small bugs:
+        
+        - The checker was not calling resolveByInstantiation for getters. This patch
+          modifies the checker to do that, so we can now resolve a getter to
+          "operator.length". I also refactored the checker to have a helper method
+          that both does overload resolution and resolveByInstantiation to make it
+          difficult to forget to call resolveByInstantiation.
+        - The property resolver had a bug where it would return a non-null value
+          in anderCallArgument for array references even when there was no ander and
+          no thread ander function. This patch makes it now return null if there is
+          neither an ander nor a thread ander.
+        - The metal codegen incorrectly unpacked the length of buffers. It swapped the
+          bottom four bytes and the top four bytes of the size_t value. This patch
+          corrects that. This was also a cause of flakiness in various tests since
+          we ended up with a length much larger than expected, leading to bounds
+          checks always passing in our tests.
+        - This patch also fixes our tests to specify the output buffer length
+          properly for various programs.
+
+        Test: webgpu/whlsl-buffer-length.html
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp:
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::unpackResourcesAndNamedBuiltIns):
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::resolveFunction):
+        (WebCore::WHLSL::Checker::finishVisiting):
+        (WebCore::WHLSL::Checker::visit):
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp:
+        (WebCore::WHLSL::anderCallArgument):
+
 2019-06-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r246501.
