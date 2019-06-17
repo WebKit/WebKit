@@ -205,16 +205,21 @@ Vector<String> KeyBindingTranslator::commandsForKeyEvent(GdkEventKey* event)
 {
     ASSERT(m_pendingEditorCommands.isEmpty());
 
+    guint keyval;
+    GdkModifierType state;
+    gdk_event_get_keyval(reinterpret_cast<GdkEvent*>(event), &keyval);
+    gdk_event_get_state(reinterpret_cast<GdkEvent*>(event), &state);
+
     gtk_bindings_activate_event(G_OBJECT(m_nativeWidget.get()), event);
     if (!m_pendingEditorCommands.isEmpty())
         return WTFMove(m_pendingEditorCommands);
 
     // Special-case enter keys for we want them to work regardless of modifier.
-    if ((event->keyval == GDK_KEY_Return || event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter))
+    if ((keyval == GDK_KEY_Return || keyval == GDK_KEY_KP_Enter || keyval == GDK_KEY_ISO_Enter))
         return { "InsertNewLine" };
 
     // For keypress events, we want charCode(), but keyCode() does that.
-    unsigned mapKey = event->state << 16 | event->keyval;
+    unsigned mapKey = state << 16 | keyval;
     if (!mapKey)
         return { };
 

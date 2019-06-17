@@ -55,7 +55,7 @@ static const double swipeOverlayShadowGradientAlpha[] = { 1, 0.99, 0.98, 0.95, 0
 static bool isEventStop(GdkEventScroll* event)
 {
 #if GTK_CHECK_VERSION(3, 20, 0)
-    return event->is_stop;
+    return gdk_event_is_scroll_stop_event(reinterpret_cast<GdkEvent*>(event));
 #else
     return !event->delta_x && !event->delta_y;
 #endif
@@ -86,7 +86,7 @@ bool ViewGestureController::PendingSwipeTracker::scrollEventCanInfluenceSwipe(Gd
 
     // FIXME: Should it maybe be allowed on mice/trackpoints as well? The GDK_SCROLL_SMOOTH
     // requirement already filters out most mice, and it works pretty well on a trackpoint
-    return event->direction == GDK_SCROLL_SMOOTH && (source == GDK_SOURCE_TOUCHPAD || source == GDK_SOURCE_TOUCHSCREEN);
+    return gdk_event_get_scroll_deltas(reinterpret_cast<GdkEvent*>(event), nullptr, nullptr) && (source == GDK_SOURCE_TOUCHPAD || source == GDK_SOURCE_TOUCHSCREEN);
 }
 
 static bool isTouchEvent(GdkEventScroll* event)
@@ -100,9 +100,11 @@ static bool isTouchEvent(GdkEventScroll* event)
 FloatSize ViewGestureController::PendingSwipeTracker::scrollEventGetScrollingDeltas(GdkEventScroll* event)
 {
     double multiplier = isTouchEvent(event) ? Scrollbar::pixelsPerLineStep() : gtkScrollDeltaMultiplier;
+    double xDelta, yDelta;
+    gdk_event_get_scroll_deltas(reinterpret_cast<GdkEvent*>(event), &xDelta, &yDelta);
 
     // GdkEventScroll deltas are inverted compared to NSEvent, so invert them again
-    return -FloatSize(event->delta_x, event->delta_y) * multiplier;
+    return -FloatSize(xDelta, yDelta) * multiplier;
 }
 
 bool ViewGestureController::handleScrollWheelEvent(GdkEventScroll* event)
@@ -183,13 +185,17 @@ bool ViewGestureController::SwipeProgressTracker::handleEvent(GdkEventScroll* ev
         return false;
     }
 
-    double deltaX = -event->delta_x;
+    uint32_t eventTime = gdk_event_get_time(reinterpret_cast<GdkEvent*>(event));
+    double eventDeltaX;
+    gdk_event_get_scroll_deltas(reinterpret_cast<GdkEvent*>(event), &eventDeltaX, nullptr);
+
+    double deltaX = -eventDeltaX;
     if (isTouchEvent(event))
         deltaX *= (double) Scrollbar::pixelsPerLineStep() / m_webPageProxy.viewSize().width();
     else
         deltaX *= gtkScrollDeltaMultiplier / swipeTouchpadBaseWidth;
 
-    Seconds time = Seconds::fromMilliseconds(event->time);
+    Seconds time = Seconds::fromMilliseconds(eventTime);
     if (time != m_prevTime)
         m_velocity = deltaX / (time - m_prevTime).milliseconds();
 
