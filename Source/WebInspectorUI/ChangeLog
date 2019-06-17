@@ -1,5 +1,17 @@
 2019-06-17  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Sources: remove extra space above Breakpoints section when breakpoints are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=198933
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger .warning-banner):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.sources > .content > .warning-banner):
+
+2019-06-17  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Settings: split the General panel into sub panels so it's less crowded
         https://bugs.webkit.org/show_bug.cgi?id=198803
 
