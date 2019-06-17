@@ -187,10 +187,11 @@ public:
 
     // References
     PartialResult WARN_UNUSED_RETURN addRefIsNull(ExpressionType& value, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addRefFunc(uint32_t index, ExpressionType& result);
 
     // Tables
-    PartialResult WARN_UNUSED_RETURN addTableGet(ExpressionType& idx, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addTableSet(ExpressionType& idx, ExpressionType& value);
+    PartialResult WARN_UNUSED_RETURN addTableGet(ExpressionType& index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addTableSet(ExpressionType& index, ExpressionType& value);
 
     // Locals
     PartialResult WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
@@ -538,7 +539,7 @@ auto B3IRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
     for (uint32_t i = 0; i < count; ++i) {
         Variable* local = m_proc.addVariable(toB3Type(type));
         m_locals.uncheckedAppend(local);
-        auto val = type == Anyref ? JSValue::encode(jsNull()) : 0;
+        auto val = isSubtype(type, Anyref) ? JSValue::encode(jsNull()) : 0;
         m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, constant(toB3Type(type), val, Origin()));
     }
     return { };
@@ -565,32 +566,51 @@ auto B3IRGenerator::addRefIsNull(ExpressionType& value, ExpressionType& result) 
     return { };
 }
 
-auto B3IRGenerator::addTableGet(ExpressionType& idx, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addTableGet(ExpressionType& index, ExpressionType& result) -> PartialResult
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    uint64_t (*doGet)(Instance*, int32_t) = [] (Instance* instance, int32_t idx) -> uint64_t {
-        return JSValue::encode(instance->table()->get(idx));
-    };
-
     result = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Anyref), origin(),
-        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunctionPtr<void*>(doGet, B3CCallPtrTag)),
-        instanceValue(), idx);
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunctionPtr<void*>(&getWasmTableElement, B3CCallPtrTag)),
+        instanceValue(), index);
+
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), result, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), 0)));
+
+        check->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTableAccess);
+        });
+    }
 
     return { };
 }
 
-auto B3IRGenerator::addTableSet(ExpressionType& idx, ExpressionType& value) -> PartialResult
+auto B3IRGenerator::addTableSet(ExpressionType& index, ExpressionType& value) -> PartialResult
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    void (*doSet)(Instance*, int32_t, uint64_t value) = [] (Instance* instance, int32_t idx, uint64_t value) -> void {
-        // FIXME: We need to box wasm Funcrefs once they are supported here.
-        // <https://bugs.webkit.org/show_bug.cgi?id=198157>
-        instance->table()->set(idx, JSValue::decode(value));
-    };
+    auto shouldThrow = m_currentBlock->appendNew<CCallValue>(m_proc, B3::Int32, origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunctionPtr<void*>(&setWasmTableElement, B3CCallPtrTag)),
+        instanceValue(), index, value);
 
-    m_currentBlock->appendNew<CCallValue>(m_proc, B3::Void, origin(),
-        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunctionPtr<void*>(doSet, B3CCallPtrTag)),
-        instanceValue(), idx, value);
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), shouldThrow, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), 0)));
+
+        check->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTableAccess);
+        });
+    }
+
+    return { };
+}
+
+auto B3IRGenerator::addRefFunc(uint32_t index, ExpressionType& result) -> PartialResult
+{
+    // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
+
+    result = m_currentBlock->appendNew<CCallValue>(m_proc, B3::Int64, origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunctionPtr<void*>(&doWasmRefFunc, B3CCallPtrTag)),
+        instanceValue(), addConstant(Type::I32, index));
 
     return { };
 }
@@ -679,7 +699,7 @@ auto B3IRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialRe
     Value* globalsArray = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfGlobals()));
     m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), value, globalsArray, safeCast<int32_t>(index * sizeof(Register)));
 
-    if (m_info.globals[index].type == Anyref)
+    if (isSubtype(m_info.globals[index].type, Anyref))
         emitWriteBarrierForJSWrapper();
 
     return { };

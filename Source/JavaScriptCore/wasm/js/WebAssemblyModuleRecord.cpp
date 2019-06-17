@@ -235,10 +235,15 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
             // ii. If the global_type of i is i64 or Type(v) is not Number, throw a WebAssembly.LinkError.
             if (moduleInformation.globals[import.kindIndex].type == Wasm::I64)
                 return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "imported global", "cannot be an i64")));
-            if (moduleInformation.globals[import.kindIndex].type != Wasm::Anyref && !value.isNumber())
+            if (!isSubtype(moduleInformation.globals[import.kindIndex].type, Wasm::Anyref) && !value.isNumber())
                 return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "imported global", "must be a number")));
             // iii. Append ToWebAssemblyValue(v) to imports.
             switch (moduleInformation.globals[import.kindIndex].type) {
+            case Wasm::Anyfunc:
+                if (!isWebAssemblyHostFunction(vm, value) && !value.isNull())
+                    return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "imported global", "must be a wasm exported function or null")));
+                m_instance->instance().setGlobal(import.kindIndex, value);
+                break;
             case Wasm::Anyref:
                 m_instance->instance().setGlobal(import.kindIndex, value);
                 break;
@@ -319,6 +324,47 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
         }
     }
 
+    unsigned functionImportCount = codeBlock->functionImportCount();
+    auto makeFunctionWrapper = [&] (const String& field, uint32_t index) -> JSValue {
+        // If we already made a wrapper, do not make a new one.
+        JSValue wrapper = m_instance->instance().getFunctionWrapper(index);
+
+        if (!wrapper.isNull())
+            return wrapper;
+
+        // 1. If e is a closure c:
+        //   i. If there is an Exported Function Exotic Object func in funcs whose func.[[Closure]] equals c, then return func.
+        //   ii. (Note: At most one wrapper is created for any closure, so func is unique, even if there are multiple occurrances in the list. Moreover, if the item was an import that is already an Exported Function Exotic Object, then the original function object will be found. For imports that are regular JS functions, a new wrapper will be created.)
+        if (index < functionImportCount) {
+            JSObject* functionImport = m_instance->instance().importFunction<WriteBarrier<JSObject>>(index)->get();
+            if (isWebAssemblyHostFunction(vm, functionImport))
+                wrapper = functionImport;
+            else {
+                Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(index);
+                wrapper = WebAssemblyWrapperFunction::create(vm, globalObject, globalObject->webAssemblyWrapperFunctionStructure(), functionImport, index, m_instance.get(), signatureIndex);
+            }
+        } else {
+            //   iii. Otherwise:
+            //     a. Let func be an Exported Function Exotic Object created from c.
+            //     b. Append func to funcs.
+            //     c. Return func.
+            Wasm::Callee& embedderEntrypointCallee = codeBlock->embedderEntrypointCalleeFromFunctionIndexSpace(index);
+            Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = codeBlock->entrypointLoadLocationFromFunctionIndexSpace(index);
+            Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(index);
+            const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
+            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), field, m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
+            wrapper = function;
+        }
+
+        ASSERT(wrapper.isFunction(vm));
+        m_instance->instance().setFunctionWrapper(index, wrapper);
+
+        return wrapper;
+    };
+
+    for (auto index : moduleInformation.referencedFunctions())
+        makeFunctionWrapper("Referenced function", index);
+
     // Globals
     {
         for (size_t globalIndex = moduleInformation.firstInternalGlobal; globalIndex < moduleInformation.globals.size(); ++globalIndex) {
@@ -327,13 +373,16 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
             if (global.initializationType == Wasm::Global::FromGlobalImport) {
                 ASSERT(global.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
                 m_instance->instance().setGlobal(globalIndex, m_instance->instance().loadI64Global(global.initialBitsOrImportNumber));
+            } else if (global.initializationType == Wasm::Global::FromRefFunc) {
+                ASSERT(global.initialBitsOrImportNumber < moduleInformation.functionIndexSpaceSize());
+                ASSERT(makeFunctionWrapper("Global init expr", global.initialBitsOrImportNumber).isFunction(vm));
+                m_instance->instance().setGlobal(globalIndex, JSValue::encode(makeFunctionWrapper("Global init expr", global.initialBitsOrImportNumber)));
             } else
                 m_instance->instance().setGlobal(globalIndex, global.initialBitsOrImportNumber);
         }
     }
 
     SymbolTable* exportSymbolTable = module->exportSymbolTable();
-    unsigned functionImportCount = codeBlock->functionImportCount();
 
     // Let exports be a list of (string, JS value) pairs that is mapped from each external value e in instance.exports as follows:
     JSModuleEnvironment* moduleEnvironment = JSModuleEnvironment::create(vm, globalObject, nullptr, exportSymbolTable, JSValue(), this);
@@ -341,30 +390,9 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
         JSValue exportedValue;
         switch (exp.kind) {
         case Wasm::ExternalKind::Function: {
-            // 1. If e is a closure c:
-            //   i. If there is an Exported Function Exotic Object func in funcs whose func.[[Closure]] equals c, then return func.
-            //   ii. (Note: At most one wrapper is created for any closure, so func is unique, even if there are multiple occurrances in the list. Moreover, if the item was an import that is already an Exported Function Exotic Object, then the original function object will be found. For imports that are regular JS functions, a new wrapper will be created.)
-            if (exp.kindIndex < functionImportCount) {
-                unsigned functionIndex = exp.kindIndex;
-                JSObject* functionImport = m_instance->instance().importFunction<WriteBarrier<JSObject>>(functionIndex)->get();
-                if (isWebAssemblyHostFunction(vm, functionImport))
-                    exportedValue = functionImport;
-                else {
-                    Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(functionIndex);
-                    exportedValue = WebAssemblyWrapperFunction::create(vm, globalObject, globalObject->webAssemblyWrapperFunctionStructure(), functionImport, functionIndex, m_instance.get(), signatureIndex);
-                }
-            } else {
-                //   iii. Otherwise:
-                //     a. Let func be an Exported Function Exotic Object created from c.
-                //     b. Append func to funcs.
-                //     c. Return func.
-                Wasm::Callee& embedderEntrypointCallee = codeBlock->embedderEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
-                Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = codeBlock->entrypointLoadLocationFromFunctionIndexSpace(exp.kindIndex);
-                Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(exp.kindIndex);
-                const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
-                WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), String::fromUTF8(exp.field), m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
-                exportedValue = function;
-            }
+            exportedValue = makeFunctionWrapper(String::fromUTF8(exp.field), exp.kindIndex);
+            ASSERT(exportedValue.isFunction(vm));
+            ASSERT(makeFunctionWrapper(String::fromUTF8(exp.field), exp.kindIndex) == exportedValue);
             break;
         }
         case Wasm::ExternalKind::Table: {
@@ -388,8 +416,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
             // Return ToJSValue(v).
             switch (global.type) {
             case Wasm::Anyref:
-                // FIXME: We need to box wasm Funcrefs once they are supported here.
-                // <https://bugs.webkit.org/show_bug.cgi?id=198157>
+            case Wasm::Anyfunc:
                 exportedValue = JSValue::decode(m_instance->instance().loadI64Global(exp.kindIndex));
                 break;
 

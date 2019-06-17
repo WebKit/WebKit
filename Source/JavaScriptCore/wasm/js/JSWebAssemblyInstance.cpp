@@ -91,11 +91,12 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     for (unsigned i = 0; i < thisObject->instance().numImportFunctions(); ++i)
         visitor.append(*thisObject->instance().importFunction<WriteBarrier<JSObject>>(i)); // This also keeps the functions' JSWebAssemblyInstance alive.
 
-    for (size_t i : thisObject->instance().globalsToMark()) {
-        // FIXME: We need to box wasm Funcrefs once they are supported here.
-        // <https://bugs.webkit.org/show_bug.cgi?id=198157>
+    for (size_t i : thisObject->instance().globalsToMark())
         visitor.appendUnbarriered(JSValue::decode(thisObject->instance().loadI64Global(i)));
-    }
+
+    auto locker = holdLock(cell->cellLock());
+    for (auto& wrapper : thisObject->instance().functionWrappers())
+        visitor.appendUnbarriered(wrapper.get());
 }
 
 void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::CodeBlock>&& wasmCodeBlock, JSObject* importObject, Wasm::CreationMode creationMode)

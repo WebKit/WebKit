@@ -84,6 +84,11 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
         case Wasm::I32:
             arg = JSValue::decode(arg.toInt32(exec));
             break;
+        case Wasm::Anyfunc: {
+            if (!isWebAssemblyHostFunction(vm, arg) && !arg.isNull())
+                return JSValue::encode(throwException(exec, scope, createJSWebAssemblyRuntimeError(exec, vm, "Anyfunc must be an exported wasm function")));
+            break;
+        }
         case Wasm::Anyref:
             break;
         case Wasm::I64:
@@ -97,7 +102,6 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
             break;
         case Wasm::Void:
         case Wasm::Func:
-        case Wasm::Anyfunc:
             RELEASE_ASSERT_NOT_REACHED();
         }
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -228,6 +232,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
             argumentsIncludeI64 = true;
             break;
         case Wasm::Anyref:
+        case Wasm::Anyfunc:
         case Wasm::I32:
             if (numGPRs >= Wasm::wasmCallingConvention().m_gprArgs.size())
                 totalFrameSize += sizeof(CPURegister);
@@ -303,6 +308,27 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
                     ++numGPRs;
                 }
                 break;
+            case Wasm::Anyfunc: {
+                // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
+                bool (*shouldThrow)(Wasm::Instance*, JSValue) = [] (Wasm::Instance* wasmInstance, JSValue arg) -> bool {
+                    JSWebAssemblyInstance* instance = wasmInstance->owner<JSWebAssemblyInstance>();
+                    JSGlobalObject* globalObject = instance->globalObject();
+                    VM& vm = globalObject->vm();
+                    return !isWebAssemblyHostFunction(vm, arg) && !arg.isNull();
+                };
+                jit.move(CCallHelpers::TrustedImmPtr(&instance()->instance()), GPRInfo::argumentGPR0);
+                jit.load64(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), GPRInfo::argumentGPR1);
+                jit.setupArguments<decltype(shouldThrow)>(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1);
+                auto call = jit.call(OperationPtrTag);
+
+                jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                    linkBuffer.link(call, FunctionPtr<OperationPtrTag>(shouldThrow));
+                });
+
+                slowPath.append(jit.branchTest32(CCallHelpers::NonZero, GPRInfo::returnValueGPR));
+
+                FALLTHROUGH;
+            }
             case Wasm::Anyref: {
                 jit.load64(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), scratchGPR);
 
@@ -466,13 +492,11 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         isNaN.link(&jit);
         break;
     }
-    case Wasm::Anyref: {
-        // FIXME: We need to box wasm Funcrefs once they are supported here.
+    case Wasm::Anyfunc:
+    case Wasm::Anyref:
         break;
-    }
     case Wasm::I64:
     case Wasm::Func:
-    case Wasm::Anyfunc:
         return nullptr;
     default:
         break;

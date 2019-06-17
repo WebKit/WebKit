@@ -234,10 +234,11 @@ public:
 
     // References
     PartialResult WARN_UNUSED_RETURN addRefIsNull(ExpressionType& value, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addRefFunc(uint32_t index, ExpressionType& result);
 
     // Tables
-    PartialResult WARN_UNUSED_RETURN addTableGet(ExpressionType& idx, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addTableSet(ExpressionType& idx, ExpressionType& value);
+    PartialResult WARN_UNUSED_RETURN addTableGet(ExpressionType& index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addTableSet(ExpressionType& index, ExpressionType& value);
 
     // Locals
     PartialResult WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
@@ -370,6 +371,7 @@ private:
             return g32();
         case Type::I64:
         case Type::Anyref:
+        case Type::Anyfunc:
             return g64();
         case Type::F32:
             return f32();
@@ -554,6 +556,7 @@ private:
             return Move32;
         case Type::I64:
         case Type::Anyref:
+        case Type::Anyfunc:
             return Move;
         case Type::F32:
             return MoveFloat;
@@ -799,6 +802,7 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
             break;
         case Type::I64:
         case Type::Anyref:
+        case Type::Anyfunc:
             append(Move, arg, m_locals[i]);
             break;
         case Type::F32:
@@ -884,6 +888,7 @@ auto AirIRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
         m_locals.uncheckedAppend(local);
         switch (type) {
         case Type::Anyref:
+        case Type::Anyfunc:
             append(Move, Arg::imm(JSValue::encode(jsNull())), local);
             break;
         case Type::I32:
@@ -918,6 +923,7 @@ auto AirIRGenerator::addConstant(BasicBlock* block, Type type, uint64_t value) -
     case Type::I32:
     case Type::I64:
     case Type::Anyref:
+    case Type::Anyfunc:
         append(block, Move, Arg::bigImm(value), result);
         break;
     case Type::F32:
@@ -953,36 +959,47 @@ auto AirIRGenerator::addRefIsNull(ExpressionType& value, ExpressionType& result)
     return { };
 }
 
-auto AirIRGenerator::addTableGet(ExpressionType& idx, ExpressionType& result) -> PartialResult
+auto AirIRGenerator::addRefFunc(uint32_t index, ExpressionType& result) -> PartialResult
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    ASSERT(idx.tmp());
-    ASSERT(idx.type() == Type::I32);
-    result = tmpForType(Type::Anyref);
-
-    uint64_t (*doGet)(Instance*, int32_t) = [] (Instance* instance, int32_t idx) -> uint64_t {
-        return JSValue::encode(instance->table()->get(idx));
-    };
-
-    emitCCall(doGet, result, instanceValue(), idx);
+    result = tmpForType(Type::Anyfunc);
+    emitCCall(&doWasmRefFunc, result, instanceValue(), addConstant(Type::I32, index));
 
     return { };
 }
 
-auto AirIRGenerator::addTableSet(ExpressionType& idx, ExpressionType& value) -> PartialResult
+auto AirIRGenerator::addTableGet(ExpressionType& index, ExpressionType& result) -> PartialResult
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    ASSERT(idx.tmp());
-    ASSERT(idx.type() == Type::I32);
+    ASSERT(index.tmp());
+    ASSERT(index.type() == Type::I32);
+    result = tmpForType(Type::Anyref);
+
+    emitCCall(&getWasmTableElement, result, instanceValue(), index);
+    emitCheck([&] {
+        return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
+    });
+
+    return { };
+}
+
+auto AirIRGenerator::addTableSet(ExpressionType& index, ExpressionType& value) -> PartialResult
+{
+    // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
+    ASSERT(index.tmp());
+    ASSERT(index.type() == Type::I32);
     ASSERT(value.tmp());
 
-    void (*doSet)(Instance*, int32_t, uint64_t value) = [] (Instance* instance, int32_t idx, uint64_t value) -> void {
-        // FIXME: We need to box wasm Funcrefs once they are supported here.
-        // <https://bugs.webkit.org/show_bug.cgi?id=198157>
-        instance->table()->set(idx, JSValue::decode(value));
-    };
+    auto shouldThrow = g32();
+    emitCCall(&setWasmTableElement, shouldThrow, instanceValue(), index, value);
 
-    emitCCall(doSet, TypedTmp(), instanceValue(), idx, value);
+    emitCheck([&] {
+        return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), shouldThrow, shouldThrow);
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
+    });
 
     return { };
 }
@@ -1103,7 +1120,7 @@ auto AirIRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
         append(moveOpForValueType(type), value, Arg::addr(temp));
     }
 
-    if (type == Anyref)
+    if (isSubtype(type, Anyref))
         emitWriteBarrierForJSWrapper();
 
     return { };
@@ -1623,6 +1640,7 @@ auto AirIRGenerator::addReturn(const ControlData& data, const ExpressionList& re
             break;
         case Type::I64:
         case Type::Anyref:
+        case Type::Anyfunc:
             append(Move, returnValues[0], returnValueGPR);
             append(Ret64, returnValueGPR);
             break;

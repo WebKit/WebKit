@@ -536,6 +536,10 @@ export default class Builder {
                             s.data.push({ type, op: "get_global", mutability: _normalizeMutability(mutability), initValue });
                             return _errorHandlingProxyFor(globalBuilder);
                         },
+                        RefFunc: (type, initValue, mutability) => {
+                            s.data.push({ type, op: "ref.func", mutability: _normalizeMutability(mutability), initValue });
+                            return _errorHandlingProxyFor(globalBuilder);
+                        },
                         RefNull: (type, mutability) => {
                             s.data.push({ type, op: "ref.null", mutability: _normalizeMutability(mutability) });
                             return _errorHandlingProxyFor(globalBuilder);

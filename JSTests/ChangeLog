@@ -1,3 +1,33 @@
+2019-06-17  Justin Michaud  <justin_michaud@apple.com>
+
+        [WASM-References] Add support for Funcref in parameters and return types
+        https://bugs.webkit.org/show_bug.cgi?id=198157
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/Builder.js:
+        (export.default.Builder.prototype._registerSectionBuilders.const.section.in.WASM.description.section.switch.section.case.string_appeared_here.this.section):
+        * wasm/references/anyref_globals.js:
+        * wasm/references/func_ref.js: Added.
+        (fullGC.gc.makeExportedFunction):
+        (makeExportedIdent):
+        (makeAnyfuncIdent):
+        (fun):
+        (assert.eq.instance.exports.fix.fun):
+        (assert.eq.instance.exports.fix):
+        (string_appeared_here.End.End.Function.End.Code.End.WebAssembly.imp.ref):
+        (string_appeared_here.End.End.Function.End.Code.End.WebAssembly):
+        (GetLocal.0.I32Const.0.TableSet.End.End.WebAssembly.fun):
+        (GetLocal.0.I32Const.0.TableSet.End.End.WebAssembly.assert.throws):
+        (GetLocal.0.I32Const.0.TableSet.End.End.WebAssembly):
+        (assert.throws):
+        (assert.throws.doTest):
+        (let.importedFun.of):
+        (makeAnyfuncIdent.fun):
+        * wasm/references/validation.js:
+        (assert.throws):
+        * wasm/wasm.json:
+
 2019-06-17  Ross Kirsling  <ross.kirsling@sony.com>
 
         Update test262 tests (2019.06.13)

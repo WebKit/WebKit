@@ -1,3 +1,86 @@
+2019-06-17  Justin Michaud  <justin_michaud@apple.com>
+
+        [WASM-References] Add support for Funcref in parameters and return types
+        https://bugs.webkit.org/show_bug.cgi?id=198157
+
+        Reviewed by Yusuke Suzuki.
+
+        Add support for funcref in parameters, globals, and in table.get/set. When converting a JSValue to 
+        a funcref (nee anyfunc), we first make sure it is an exported wasm function or null. 
+
+        We also add support for Ref.func. Anywhere a Ref.func is used, (statically) we construct a JS wrapper
+        for it so that we never need to construct JSValues when handling references. This should make threads
+        easier to implement.
+
+        Finally, we add some missing bounds checks for table.get/set.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::tmpForType):
+        (JSC::Wasm::AirIRGenerator::moveOpForValueType):
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::addLocal):
+        (JSC::Wasm::AirIRGenerator::addConstant):
+        (JSC::Wasm::AirIRGenerator::addRefFunc):
+        (JSC::Wasm::AirIRGenerator::addTableSet):
+        (JSC::Wasm::AirIRGenerator::setGlobal):
+        (JSC::Wasm::AirIRGenerator::addReturn):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addLocal):
+        (JSC::Wasm::B3IRGenerator::addTableSet):
+        (JSC::Wasm::B3IRGenerator::addRefFunc):
+        (JSC::Wasm::B3IRGenerator::setGlobal):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::compileFunctions):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::CallingConventionAir::marshallArgument const):
+        (JSC::Wasm::CallingConventionAir::setupCall const):
+        * wasm/WasmExceptionType.h:
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::isValueType):
+        (JSC::Wasm::isSubtype):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::Instance):
+        (JSC::Wasm::Instance::getFunctionWrapper const):
+        (JSC::Wasm::Instance::setFunctionWrapper):
+        * wasm/WasmInstance.h:
+        * wasm/WasmModuleInformation.h:
+        (JSC::Wasm::ModuleInformation::referencedFunctions const):
+        (JSC::Wasm::ModuleInformation::addReferencedFunction const):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseGlobal):
+        (JSC::Wasm::SectionParser::parseInitExpr):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::addTableGet):
+        (JSC::Wasm::Validate::addTableSet):
+        (JSC::Wasm::Validate::addRefIsNull):
+        (JSC::Wasm::Validate::addRefFunc):
+        (JSC::Wasm::Validate::setLocal):
+        (JSC::Wasm::Validate::addCall):
+        (JSC::Wasm::Validate::addCallIndirect):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::isWebAssemblyHostFunction):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        * wasm/js/JSWebAssemblyRuntimeError.cpp:
+        (JSC::createJSWebAssemblyRuntimeError):
+        * wasm/js/JSWebAssemblyRuntimeError.h:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::handleBadI64Use):
+        (JSC::Wasm::wasmToJS):
+        (JSC::Wasm::emitWasmToJSException):
+        * wasm/js/WasmToJS.h:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        * wasm/wasm.json:
+
 2019-06-16  Darin Adler  <darin@apple.com>
 
         Rename AtomicString to AtomString

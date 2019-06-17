@@ -48,6 +48,12 @@ JSWebAssemblyRuntimeError::JSWebAssemblyRuntimeError(VM& vm, Structure* structur
 
 const ClassInfo JSWebAssemblyRuntimeError::s_info = { "WebAssembly.RuntimeError", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyRuntimeError) };
 
+JSObject* createJSWebAssemblyRuntimeError(ExecState* exec, VM& vm, const String& message)
+{
+    ASSERT(!message.isEmpty());
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    return JSWebAssemblyRuntimeError::create(exec, vm, globalObject->webAssemblyRuntimeErrorStructure(), message);
+}
     
 } // namespace JSC
 

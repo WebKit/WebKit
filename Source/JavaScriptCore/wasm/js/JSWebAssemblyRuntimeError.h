@@ -43,6 +43,8 @@ protected:
     JSWebAssemblyRuntimeError(VM&, Structure*);
 };
 
+JSObject* createJSWebAssemblyRuntimeError(ExecState*, VM&, const String&);
+
 } // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)

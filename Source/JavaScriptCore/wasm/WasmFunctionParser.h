@@ -283,25 +283,25 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
 
     case TableGet: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
-        ExpressionType result, idx;
-        WASM_TRY_POP_EXPRESSION_STACK_INTO(idx, "table.get");
-        WASM_TRY_ADD_TO_CONTEXT(addTableGet(idx, result));
+        ExpressionType result, index;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(index, "table.get");
+        WASM_TRY_ADD_TO_CONTEXT(addTableGet(index, result));
         m_expressionStack.append(result);
         return { };
     }
 
     case TableSet: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
-        ExpressionType val, idx;
+        ExpressionType val, index;
         WASM_TRY_POP_EXPRESSION_STACK_INTO(val, "table.set");
-        WASM_TRY_POP_EXPRESSION_STACK_INTO(idx, "table.set");
-        WASM_TRY_ADD_TO_CONTEXT(addTableSet(idx, val));
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(index, "table.set");
+        WASM_TRY_ADD_TO_CONTEXT(addTableSet(index, val));
         return { };
     }
 
     case RefNull: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
-        m_expressionStack.append(m_context.addConstant(Anyref, JSValue::encode(jsNull())));
+        m_expressionStack.append(m_context.addConstant(Anyfunc, JSValue::encode(jsNull())));
         return { };
     }
 
@@ -310,6 +310,17 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
         ExpressionType result, value;
         WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "ref.is_null");
         WASM_TRY_ADD_TO_CONTEXT(addRefIsNull(value, result));
+        m_expressionStack.append(result);
+        return { };
+    }
+
+    case RefFunc: {
+        uint32_t index;
+        ExpressionType result;
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get index for ref.func");
+
+        WASM_TRY_ADD_TO_CONTEXT(addRefFunc(index, result));
         m_expressionStack.append(result);
         return { };
     }
@@ -677,6 +688,13 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case TableSet:
     case RefIsNull:
     case RefNull: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+        return { };
+    }
+
+    case RefFunc: {
+        uint32_t unused;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get immediate for ", m_currentOpcode, " in unreachable context");
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
         return { };
     }

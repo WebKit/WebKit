@@ -291,9 +291,11 @@ auto SectionParser::parseGlobal() -> PartialResult
         WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, global.initialBitsOrImportNumber, typeForInitOpcode));
         if (initOpcode == GetGlobal)
             global.initializationType = Global::FromGlobalImport;
+        else if (initOpcode == RefFunc)
+            global.initializationType = Global::FromRefFunc;
         else
             global.initializationType = Global::FromExpression;
-        WASM_PARSER_FAIL_IF(typeForInitOpcode != global.type, "Global init_expr opcode of type ", typeForInitOpcode, " doesn't match global's type ", global.type);
+        WASM_PARSER_FAIL_IF(!isSubtype(typeForInitOpcode, global.type), "Global init_expr opcode of type ", typeForInitOpcode, " doesn't match global's type ", global.type);
 
         m_info->globals.uncheckedAppend(WTFMove(global));
     }
@@ -479,8 +481,18 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
     }
 
     case RefNull: {
-        resultType = Anyref;
+        resultType = Anyfunc;
         bitsOrImportNumber = JSValue::encode(jsNull());
+        break;
+    }
+
+    case RefFunc: {
+        uint32_t index;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get ref.func index");
+        WASM_PARSER_FAIL_IF(index >= m_info->functions.size(), "ref.func index", index, " exceeds the number of functions ", m_info->functions.size());
+
+        resultType = Anyfunc;
+        bitsOrImportNumber = index;
         break;
     }
 

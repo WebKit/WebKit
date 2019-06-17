@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCInlines.h"
+#include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
 #include "Register.h"
 #include "WasmModuleInformation.h"
@@ -57,7 +58,7 @@ Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** pointerT
         new (importFunctionInfo(i)) ImportFunctionInfo();
     memset(static_cast<void*>(m_globals.get()), 0, globalMemoryByteSize(m_module.get()));
     for (unsigned i = 0; i < m_module->moduleInformation().globals.size(); ++i) {
-        if (m_module.get().moduleInformation().globals[i].type == Anyref)
+        if (isSubtype(m_module.get().moduleInformation().globals[i].type, Anyref))
             m_globalsToMark.set(i);
     }
 }
@@ -78,6 +79,75 @@ void Instance::setGlobal(unsigned i, JSValue value)
 {
     ASSERT(m_owner);
     m_globals.get()[i].anyref.set(*owner<JSWebAssemblyInstance>()->vm(), owner<JSWebAssemblyInstance>(), value);
+}
+
+JSValue Instance::getFunctionWrapper(unsigned i) const
+{
+    JSValue value = m_functionWrappers.get(i).get();
+    if (value.isEmpty())
+        return jsNull();
+    return value;
+}
+
+void Instance::setFunctionWrapper(unsigned i, JSValue value)
+{
+    ASSERT(m_owner);
+    ASSERT(value.isFunction(*owner<JSWebAssemblyInstance>()->vm()));
+    ASSERT(!m_functionWrappers.contains(i));
+    auto locker = holdLock(owner<JSWebAssemblyInstance>()->cellLock());
+    m_functionWrappers.set(i, WriteBarrier<Unknown>(*owner<JSWebAssemblyInstance>()->vm(), owner<JSWebAssemblyInstance>(), value));
+    ASSERT(getFunctionWrapper(i) == value);
+}
+
+EncodedJSValue getWasmTableElement(Instance* instance, int32_t signedIndex)
+{
+    if (signedIndex < 0)
+        return 0;
+
+    uint32_t index = signedIndex;
+    if (index >= instance->table()->length())
+        return 0;
+
+    return JSValue::encode(instance->table()->get(index));
+}
+
+bool setWasmTableElement(Instance* instance, int32_t signedIndex, EncodedJSValue encValue)
+{
+    if (signedIndex < 0)
+        return false;
+
+    uint32_t index = signedIndex;
+    if (index >= instance->table()->length())
+        return false;
+
+    JSValue value = JSValue::decode(encValue);
+    if (instance->table()->type() == Wasm::TableElementType::Anyref)
+        instance->table()->set(index, value);
+    else if (instance->table()->type() == Wasm::TableElementType::Funcref) {
+        WebAssemblyFunction* wasmFunction;
+        WebAssemblyWrapperFunction* wasmWrapperFunction;
+
+        if (isWebAssemblyHostFunction(*instance->owner<JSObject>()->vm(), value, wasmFunction, wasmWrapperFunction)) {
+            ASSERT(!!wasmFunction || !!wasmWrapperFunction);
+            if (wasmFunction)
+                instance->table()->asFuncrefTable()->setFunction(index, jsCast<JSObject*>(value), wasmFunction->importableFunction(), &wasmFunction->instance()->instance());
+            else
+                instance->table()->asFuncrefTable()->setFunction(index, jsCast<JSObject*>(value), wasmWrapperFunction->importableFunction(), &wasmWrapperFunction->instance()->instance());
+        } else if (value.isNull())
+            instance->table()->clear(index);
+        else
+            ASSERT_NOT_REACHED();
+    } else
+        ASSERT_NOT_REACHED();
+
+    return true;
+}
+
+EncodedJSValue doWasmRefFunc(Instance* instance, uint32_t index)
+{
+    JSValue value = instance->getFunctionWrapper(index);
+    ASSERT(value.isFunction(*instance->owner<JSObject>()->vm()));
+    return JSValue::encode(value);
 }
 
 } } // namespace JSC::Wasm

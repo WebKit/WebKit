@@ -103,10 +103,11 @@ public:
 
     // References
     Result WARN_UNUSED_RETURN addRefIsNull(ExpressionType& value, ExpressionType& result);
+    Result WARN_UNUSED_RETURN addRefFunc(uint32_t index, ExpressionType& result);
 
     // Tables
-    Result WARN_UNUSED_RETURN addTableGet(ExpressionType& idx, ExpressionType& result);
-    Result WARN_UNUSED_RETURN addTableSet(ExpressionType& idx, ExpressionType& value);
+    Result WARN_UNUSED_RETURN addTableGet(ExpressionType& index, ExpressionType& result);
+    Result WARN_UNUSED_RETURN addTableSet(ExpressionType& index, ExpressionType& value);
 
     // Locals
     Result WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
@@ -177,20 +178,21 @@ auto Validate::addArguments(const Signature& signature) -> Result
     return { };
 }
 
-auto Validate::addTableGet(ExpressionType& idx, ExpressionType& result) -> Result
+auto Validate::addTableGet(ExpressionType& index, ExpressionType& result) -> Result
 {
-    result = Type::Anyref;
-    WASM_VALIDATOR_FAIL_IF(Type::I32 != idx, "table.get index to type ", idx, " expected ", Type::I32);
-    WASM_VALIDATOR_FAIL_IF(TableElementType::Anyref != m_module.tableInformation.type(), "table.get expects the table to have type ", Type::Anyref);
+    result = m_module.tableInformation.wasmType();
+    WASM_VALIDATOR_FAIL_IF(Type::I32 != index, "table.get index to type ", index, " expected ", Type::I32);
 
     return { };
 }
 
-auto Validate::addTableSet(ExpressionType& idx, ExpressionType& value) -> Result
+auto Validate::addTableSet(ExpressionType& index, ExpressionType& value) -> Result
 {
-    WASM_VALIDATOR_FAIL_IF(Type::I32 != idx, "table.set index to type ", idx, " expected ", Type::I32);
-    WASM_VALIDATOR_FAIL_IF(Type::Anyref != value, "table.set value to type ", value, " expected ", Type::Anyref);
-    WASM_VALIDATOR_FAIL_IF(TableElementType::Anyref != m_module.tableInformation.type(), "table.set expects the table to have type ", Type::Anyref);
+    auto type = m_module.tableInformation.wasmType();
+    WASM_VALIDATOR_FAIL_IF(Type::I32 != index, "table.set index to type ", index, " expected ", Type::I32);
+    WASM_VALIDATOR_FAIL_IF(!isSubtype(value, type), "table.set value to type ", value, " expected ", type);
+    WASM_VALIDATOR_FAIL_IF(m_module.tableInformation.type() != TableElementType::Anyref
+        && m_module.tableInformation.type() != TableElementType::Funcref, "table.set expects the table to have type anyref or anyfunc");
 
     return { };
 }
@@ -198,7 +200,16 @@ auto Validate::addTableSet(ExpressionType& idx, ExpressionType& value) -> Result
 auto Validate::addRefIsNull(ExpressionType& value, ExpressionType& result) -> Result
 {
     result = Type::I32;
-    WASM_VALIDATOR_FAIL_IF(Type::Anyref != value, "ref.is_null to type ", value, " expected ", Type::Anyref);
+    WASM_VALIDATOR_FAIL_IF(!isSubtype(value, Type::Anyref), "ref.is_null to type ", value, " expected ", Type::Anyref);
+
+    return { };
+}
+
+auto Validate::addRefFunc(uint32_t index, ExpressionType& result) -> Result
+{
+    result = Type::Anyfunc;
+    WASM_VALIDATOR_FAIL_IF(index >= m_module.functionIndexSpaceSize(), "ref.func index ", index, " is too large, max is ", m_module.functionIndexSpaceSize());
+    m_module.addReferencedFunction(index);
 
     return { };
 }
@@ -224,7 +235,7 @@ auto Validate::setLocal(uint32_t index, ExpressionType value) -> Result
 {
     ExpressionType localType;
     WASM_FAIL_IF_HELPER_FAILS(getLocal(index, localType));
-    WASM_VALIDATOR_FAIL_IF(localType != value, "set_local to type ", value, " expected ", localType);
+    WASM_VALIDATOR_FAIL_IF(!isSubtype(value, localType), "set_local to type ", value, " expected ", localType);
     return { };
 }
 
@@ -362,7 +373,7 @@ auto Validate::addCall(unsigned, const Signature& signature, const Vector<Expres
     WASM_VALIDATOR_FAIL_IF(signature.argumentCount() != args.size(), "arity mismatch in call, got ", args.size(), " arguments, expected ", signature.argumentCount());
 
     for (unsigned i = 0; i < args.size(); ++i)
-        WASM_VALIDATOR_FAIL_IF(args[i] != signature.argument(i), "argument type mismatch in call, got ", args[i], ", expected ", signature.argument(i));
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(args[i], signature.argument(i)), "argument type mismatch in call, got ", args[i], ", expected ", signature.argument(i));
 
     result = signature.returnType();
     return { };
@@ -375,7 +386,7 @@ auto Validate::addCallIndirect(const Signature& signature, const Vector<Expressi
     WASM_VALIDATOR_FAIL_IF(argumentCount != args.size() - 1, "arity mismatch in call_indirect, got ", args.size() - 1, " arguments, expected ", argumentCount);
 
     for (unsigned i = 0; i < argumentCount; ++i)
-        WASM_VALIDATOR_FAIL_IF(args[i] != signature.argument(i), "argument type mismatch in call_indirect, got ", args[i], ", expected ", signature.argument(i));
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(args[i], signature.argument(i)), "argument type mismatch in call_indirect, got ", args[i], ", expected ", signature.argument(i));
 
     WASM_VALIDATOR_FAIL_IF(args.last() != I32, "non-i32 call_indirect index ", args.last());
 

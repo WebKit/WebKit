@@ -236,6 +236,7 @@ private:
         case Type::I32:
         case Type::I64:
         case Type::Anyref:
+        case Wasm::Anyfunc:
             marshallArgumentImpl(m_gprArgs, gpArgumentCount, stackOffset, regFunc, stackFunc);
             break;
         case Type::F32:
@@ -301,6 +302,7 @@ public:
         case Type::I32:
         case Type::I64:
         case Type::Anyref:
+        case Wasm::Anyfunc:
             patchpoint->resultConstraint = B3::ValueRep::reg(GPRInfo::returnValueGPR);
             break;
         default:

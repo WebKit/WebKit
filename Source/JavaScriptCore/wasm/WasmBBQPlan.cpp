@@ -286,7 +286,7 @@ void BBQPlan::compileFunctions(CompilationEffort effort)
 
         m_wasmInternalFunctions[functionIndex] = WTFMove(*parseAndCompileResult);
 
-        if (m_exportedFunctionIndices.contains(functionIndex)) {
+        if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->referencedFunctions().contains(functionIndex)) {
             auto locker = holdLock(m_lock);
             auto result = m_embedderToWasmInternalFunctions.add(functionIndex, m_createEmbedderWrapper(m_compilationContexts[functionIndex], signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, functionIndex));
             ASSERT_UNUSED(result, result.isNewEntry);

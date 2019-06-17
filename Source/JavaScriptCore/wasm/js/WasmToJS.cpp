@@ -32,6 +32,7 @@
 #include "FrameTracers.h"
 #include "JITExceptions.h"
 #include "JSCInlines.h"
+#include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyRuntimeError.h"
 #include "LinkBuffer.h"
@@ -65,7 +66,6 @@ static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBa
         switch (argType) {
         case Void:
         case Func:
-        case Anyfunc:
             RELEASE_ASSERT_NOT_REACHED();
 
         case I64: {
@@ -162,10 +162,10 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
             switch (argType) {
             case Void:
             case Func:
-            case Anyfunc:
             case I64:
                 RELEASE_ASSERT_NOT_REACHED();
             case Anyref:
+            case Anyfunc:
             case I32: {
                 GPRReg gprReg;
                 if (marshalledGPRs < wasmCC.m_gprArgs.size())
@@ -237,14 +237,17 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
                     switch (argType) {
                     case Void:
                     case Func:
-                    case Anyfunc:
                     case I64:
                         RELEASE_ASSERT_NOT_REACHED();
                     case I32:
                         arg = jsNumber(static_cast<int32_t>(buffer[argNum]));
                         break;
+                    case Anyfunc: {
+                        arg = JSValue::decode(buffer[argNum]);
+                        ASSERT(isWebAssemblyHostFunction(*vm, arg) || arg.isNull());
+                        break;
+                    }
                     case Anyref:
-                        // FIXME: We need to box wasm Funcrefs once they are supported here.
                         arg = JSValue::decode(buffer[argNum]);
                         break;
                     case F32:
@@ -268,7 +271,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
                 uint64_t realResult;
                 switch (signature.returnType()) {
                 case Func:
-                case Anyfunc:
                 case I64:
                     RELEASE_ASSERT_NOT_REACHED();
                     break;
@@ -276,6 +278,11 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
                     break;
                 case I32: {
                     realResult = static_cast<uint64_t>(static_cast<uint32_t>(result.toInt32(exec)));
+                    break;
+                }
+                case Anyfunc: {
+                    realResult = JSValue::encode(result);
+                    ASSERT(result.isFunction(*vm) || result.isNull());
                     break;
                 }
                 case Anyref: {
@@ -371,10 +378,10 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
             switch (argType) {
             case Void:
             case Func:
-            case Anyfunc:
             case I64:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case Anyref:
+            case Anyfunc:
             case I32: {
                 GPRReg gprReg;
                 if (marshalledGPRs < wasmCC.m_gprArgs.size())
@@ -390,7 +397,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
                     jit.zeroExtend32ToPtr(gprReg, gprReg); // Clear non-int32 and non-tag bits.
                     jit.boxInt32(gprReg, JSValueRegs(gprReg), DoNotHaveTagRegisters);
                 }
-                // FIXME: We need to box wasm Funcrefs once they are supported here.
                 jit.store64(gprReg, calleeFrame.withOffset(calleeFrameOffset));
                 calleeFrameOffset += sizeof(Register);
                 break;
@@ -441,10 +447,10 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
             switch (argType) {
             case Void:
             case Func:
-            case Anyfunc:
             case I64:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case Anyref:
+            case Anyfunc:
             case I32:
                 // Skipped: handled above.
                 if (marshalledGPRs >= wasmCC.m_gprArgs.size())
@@ -519,7 +525,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
         // Discard.
         break;
     case Func:
-    case Anyfunc:
         // For the JavaScript embedding, imports with these types in their signature return are a WebAssembly.Module validation error.
         RELEASE_ASSERT_NOT_REACHED();
         break;
@@ -553,6 +558,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
         done.link(&jit);
         break;
     }
+    case Anyfunc:
     case Anyref:
         break;
     case F32: {
@@ -693,6 +699,25 @@ void* wasmToJSException(ExecState* exec, Wasm::ExceptionType type, Instance* was
     // https://bugs.webkit.org/show_bug.cgi?id=170440
     bitwise_cast<uint64_t*>(exec)[CallFrameSlot::callee] = bitwise_cast<uint64_t>(instance->webAssemblyToJSCallee());
     return vm.targetMachinePCForThrow;
+}
+
+void emitThrowWasmToJSException(CCallHelpers& jit, GPRReg wasmInstance, Wasm::ExceptionType type)
+{
+    ASSERT(wasmInstance != GPRInfo::argumentGPR0);
+    jit.loadPtr(CCallHelpers::Address(wasmInstance, Wasm::Instance::offsetOfPointerToTopEntryFrame()), GPRInfo::argumentGPR0);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0), GPRInfo::argumentGPR0);
+    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(GPRInfo::argumentGPR0);
+    jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    jit.move(CCallHelpers::TrustedImm32(static_cast<int32_t>(type)), GPRInfo::argumentGPR1);
+
+    CCallHelpers::Call call = jit.call(OperationPtrTag);
+
+    jit.jump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
+    jit.breakpoint(); // We should not reach this.
+
+    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+        linkBuffer.link(call, FunctionPtr<OperationPtrTag>(Wasm::wasmToJSException));
+    });
 }
 
 } } // namespace JSC::Wasm

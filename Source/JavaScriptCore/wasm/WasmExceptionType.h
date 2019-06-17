@@ -33,6 +33,7 @@ namespace Wasm {
 
 #define FOR_EACH_EXCEPTION(macro) \
     macro(OutOfBoundsMemoryAccess,  "Out of bounds memory access") \
+    macro(OutOfBoundsTableAccess,  "Out of bounds table access") \
     macro(OutOfBoundsCallIndirect, "Out of bounds call_indirect") \
     macro(NullTableEntry,  "call_indirect to a null table entry") \
     macro(BadSignature, "call_indirect to a signature that does not match") \
@@ -42,7 +43,8 @@ namespace Wasm {
     macro(IntegerOverflow, "Integer overflow") \
     macro(StackOverflow, "Stack overflow") \
     macro(I64ArgumentType, "WebAssembly function with an i64 argument can't be called from JavaScript") \
-    macro(I64ReturnType, "WebAssembly function that returns i64 can't be called from JavaScript")
+    macro(I64ReturnType, "WebAssembly function that returns i64 can't be called from JavaScript") \
+    macro(FuncrefNotWasm, "Anyfunc must be an exported wasm function")
 
 enum class ExceptionType : uint32_t {
 #define MAKE_ENUM(enumName, error) enumName,

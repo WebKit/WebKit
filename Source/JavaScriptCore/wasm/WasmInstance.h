@@ -39,10 +39,16 @@
 namespace JSC { namespace Wasm {
 
 struct Context;
+class Instance;
+
+EncodedJSValue getWasmTableElement(Instance*, int32_t);
+bool setWasmTableElement(Instance*, int32_t, EncodedJSValue encValue);
+EncodedJSValue doWasmRefFunc(Instance*, uint32_t);
 
 class Instance : public ThreadSafeRefCounted<Instance>, public CanMakeWeakPtr<Instance> {
 public:
     using StoreTopCallFrameCallback = WTF::Function<void(void*)>;
+    using FunctionWrapperMap = HashMap<uint32_t, WriteBarrier<Unknown>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
 
     static Ref<Instance> create(Context*, Ref<Module>&&, EntryFrame** pointerToTopEntryFrame, void** pointerToActualStackLimit, StoreTopCallFrameCallback&&);
 
@@ -91,6 +97,9 @@ public:
     void setGlobal(unsigned i, int64_t bits) { m_globals.get()[i].primitive = bits; }
     void setGlobal(unsigned, JSValue);
     const BitVector& globalsToMark() { return m_globalsToMark; }
+    JSValue getFunctionWrapper(unsigned) const;
+    typename FunctionWrapperMap::ValuesConstIteratorRange functionWrappers() const { return m_functionWrappers.values(); }
+    void setFunctionWrapper(unsigned, JSValue);
 
     static ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(Instance, m_memory); }
     static ptrdiff_t offsetOfGlobals() { return OBJECT_OFFSETOF(Instance, m_globals); }
@@ -159,6 +168,7 @@ private:
         uint64_t primitive;
     };
     MallocPtr<GlobalValue> m_globals;
+    FunctionWrapperMap m_functionWrappers;
     BitVector m_globalsToMark;
     EntryFrame** m_pointerToTopEntryFrame { nullptr };
     void** m_pointerToActualStackLimit { nullptr };

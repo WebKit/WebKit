@@ -29,6 +29,7 @@
 
 #include "WasmFormat.h"
 
+#include <wtf/BitVector.h>
 #include <wtf/Optional.h>
 
 namespace JSC { namespace Wasm {
@@ -66,6 +67,9 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     uint32_t memoryCount() const { return memory ? 1 : 0; }
     uint32_t tableCount() const { return tableInformation ? 1 : 0; }
 
+    const BitVector& referencedFunctions() const { return m_referencedFunctions; }
+    void addReferencedFunction(unsigned index) const { m_referencedFunctions.set(index); }
+
     Vector<Import> imports;
     Vector<SignatureIndex> importFunctionSignatureIndices;
     Vector<SignatureIndex> internalFunctionSignatureIndices;
@@ -84,6 +88,8 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     unsigned firstInternalGlobal { 0 };
     Vector<CustomSection> customSections;
     Ref<NameSection> nameSection;
+    
+    mutable BitVector m_referencedFunctions;
 };
 
     

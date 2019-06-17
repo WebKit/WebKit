@@ -122,7 +122,7 @@ ALWAYS_INLINE bool isWebAssemblyHostFunction(VM& vm, JSValue value, WebAssemblyF
 }
 
 
-ALWAYS_INLINE bool isWebAssemblyHostFunction(VM& vm, JSObject* object)
+ALWAYS_INLINE bool isWebAssemblyHostFunction(VM& vm, JSValue object)
 {
     WebAssemblyFunction* unused;
     WebAssemblyWrapperFunction* unused2;
