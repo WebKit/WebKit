@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D) && (USE(OPENGL) || USE(OPENGL_ES))
+#if ENABLE(GRAPHICS_CONTEXT_3D)
 #include "Extensions3DOpenGLCommon.h"
 
 #include "ANGLEWebKitBridge.h"
@@ -256,4 +256,4 @@ void Extensions3DOpenGLCommon::getnUniformivEXT(GC3Duint, int, GC3Dsizei, int *)
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D) && (USE(OPENGL) || USE(OPENGL_ES))
+#endif // ENABLE(GRAPHICS_CONTEXT_3D)

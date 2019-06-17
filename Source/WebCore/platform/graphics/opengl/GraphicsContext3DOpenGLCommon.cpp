@@ -28,7 +28,7 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D) && (USE(OPENGL) || USE(OPENGL_ES))
+#if ENABLE(GRAPHICS_CONTEXT_3D)
 
 #include "GraphicsContext3D.h"
 #if PLATFORM(IOS_FAMILY)
@@ -2079,4 +2079,4 @@ void GraphicsContext3D::primitiveRestartIndex(GC3Duint index)
 
 }
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D) && (USE(OPENGL) || USE(OPENGL_ES))
+#endif // ENABLE(GRAPHICS_CONTEXT_3D)

@@ -1101,20 +1101,15 @@
 #endif
 
 #if ENABLE(WEBGL)
-/* USE_ANGLE=1 uses ANGLE for the WebGL backend.
-   It replaces USE_OPENGL, USE_OPENGL_ES and USE_EGL. */
 #if PLATFORM(MAC)
 #define USE_OPENGL 1
 #define USE_OPENGL_ES 0
-#define USE_ANGLE 0
 #elif PLATFORM(IOSMAC) && __has_include(<OpenGL/OpenGL.h>)
 #define USE_OPENGL 1
 #define USE_OPENGL_ES 0
-#define USE_ANGLE 0
 #else
 #define USE_OPENGL 0
 #define USE_OPENGL_ES 1
-#define USE_ANGLE 0
 #endif
 #if PLATFORM(COCOA)
 #ifndef GL_SILENCE_DEPRECATION
@@ -1135,12 +1130,6 @@
 #define USE_OPENGL 1
 #define USE_OPENGL_ES 1
 #define USE_EGL 1
-#endif
-
-#if ENABLE(WEBGL)
-#if (USE_ANGLE && (USE_OPENGL || USE_OPENGL_ES || (defined(USE_EGL) && USE_EGL)))
-#error USE_ANGLE is incompatible with USE_OPENGL, USE_OPENGL_ES and USE_EGL
-#endif
 #endif
 
 #if USE(TEXTURE_MAPPER) && ENABLE(GRAPHICS_CONTEXT_3D) && !defined(USE_TEXTURE_MAPPER_GL)

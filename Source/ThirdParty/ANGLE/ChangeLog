@@ -1,3 +1,16 @@
+2019-06-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r246501.
+
+        Breaks Apple internal builds.
+
+        Reverted changeset:
+
+        "Support using ANGLE as the backend for the WebGL
+        implementation"
+        https://bugs.webkit.org/show_bug.cgi?id=197755
+        https://trac.webkit.org/changeset/246501
+
 2019-06-17  Kenneth Russell  <kbr@chromium.org>
 
         Support using ANGLE as the backend for the WebGL implementation

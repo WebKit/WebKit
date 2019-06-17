@@ -38,14 +38,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 #if USE(OPENGL)
 @interface WebGLLayer : CALayer
-#elif USE(OPENGL_ES)
-@interface WebGLLayer : CAEAGLLayer
-#elif USE(ANGLE) && PLATFORM(MAC)
-@interface WebGLLayer : CALayer
-#elif USE(ANGLE) && PLATFORM(IOS_FAMILY)
-@interface WebGLLayer : CAEAGLLayer
 #else
-#error Unsupported platform
+@interface WebGLLayer : CAEAGLLayer
 #endif
 {
     WebCore::GraphicsContext3D* _context;

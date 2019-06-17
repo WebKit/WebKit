@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D) && (USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES)))
+#if ENABLE(GRAPHICS_CONTEXT_3D)
 
 #include "GraphicsContext3D.h"
 
@@ -503,4 +503,4 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
 
 }
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D) && (USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES)))
+#endif // ENABLE(GRAPHICS_CONTEXT_3D)

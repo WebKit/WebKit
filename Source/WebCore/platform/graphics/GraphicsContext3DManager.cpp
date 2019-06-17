@@ -35,7 +35,7 @@
 #include <sys/sysctl.h>
 #endif
 
-#if PLATFORM(MAC) && USE(OPENGL)
+#if PLATFORM(MAC)
 #include "SwitchingGPUClient.h"
 #include <OpenGL/OpenGL.h>
 #endif
@@ -134,8 +134,7 @@ void GraphicsContext3DManager::displayWasReconfigured(CGDirectDisplayID, CGDispl
 
 void GraphicsContext3DManager::updateAllContexts()
 {
-    // FIXME: determine whether to do anything when using ANGLE.
-#if PLATFORM(MAC) && USE(OPENGL)
+#if PLATFORM(MAC)
     for (const auto& context : m_contexts) {
         context->updateCGLContext();
         context->dispatchContextChangedNotification();
@@ -218,7 +217,7 @@ void GraphicsContext3DManager::removeContextRequiringHighPerformance(GraphicsCon
 
 void GraphicsContext3DManager::updateHighPerformanceState()
 {
-#if PLATFORM(MAC) && USE(OPENGL)
+#if PLATFORM(MAC)
     if (!hasLowAndHighPowerGPUs())
         return;
     
@@ -258,7 +257,7 @@ void GraphicsContext3DManager::disableHighPerformanceGPUTimerFired()
         return;
 
     m_requestingHighPerformance = false;
-#if PLATFORM(MAC) && USE(OPENGL)
+#if PLATFORM(MAC)
     SwitchingGPUClient::singleton().releaseHighPerformanceGPU();
 #endif
 }
