@@ -674,8 +674,12 @@ WI.DOMManager = class DOMManager extends WI.Object
 
         if (breakpoint.disabled)
             target.DOMAgent.removeBreakpointForEventListener(eventListener.eventListenerId);
-        else
+        else {
+            if (!WI.debuggerManager.breakpointsDisabledTemporarily)
+                WI.debuggerManager.breakpointsEnabled = true;
+
             target.DOMAgent.setBreakpointForEventListener(eventListener.eventListenerId);
+        }
     }
 
     _handleEventBreakpointDisabledStateChanged(event)

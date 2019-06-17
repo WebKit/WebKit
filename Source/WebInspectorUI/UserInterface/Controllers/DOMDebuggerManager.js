@@ -492,8 +492,12 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
         if (breakpoint.disabled)
             target.DOMDebuggerAgent.removeDOMBreakpoint(breakpoint.domNodeIdentifier, breakpoint.type);
-        else
+        else {
+            if (!this._restoringBreakpoints && !WI.debuggerManager.breakpointsDisabledTemporarily)
+                WI.debuggerManager.breakpointsEnabled = true;
+
             target.DOMDebuggerAgent.setDOMBreakpoint(breakpoint.domNodeIdentifier, breakpoint.type);
+        }
     }
 
     _updateEventBreakpoint(breakpoint, target)
@@ -505,15 +509,23 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             console.assert(breakpoint.type === WI.EventBreakpoint.Type.Listener);
             if (breakpoint.disabled)
                 target.DOMDebuggerAgent.removeEventListenerBreakpoint(breakpoint.eventName);
-            else
+            else {
+                if (!this._restoringBreakpoints && !WI.debuggerManager.breakpointsDisabledTemporarily)
+                    WI.debuggerManager.breakpointsEnabled = true;
+
                 target.DOMDebuggerAgent.setEventListenerBreakpoint(breakpoint.eventName);
+            }
             return;
         }
 
         if (breakpoint.disabled)
             target.DOMDebuggerAgent.removeEventBreakpoint(breakpoint.type, breakpoint.eventName);
-        else
+        else {
+            if (!this._restoringBreakpoints && !WI.debuggerManager.breakpointsDisabledTemporarily)
+                WI.debuggerManager.breakpointsEnabled = true;
+
             target.DOMDebuggerAgent.setEventBreakpoint(breakpoint.type, breakpoint.eventName);
+        }
     }
 
     _updateURLBreakpoint(breakpoint, target)
@@ -525,6 +537,9 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             if (breakpoint.disabled)
                 target.DOMDebuggerAgent.removeXHRBreakpoint(breakpoint.url);
             else {
+                if (!this._restoringBreakpoints && !WI.debuggerManager.breakpointsDisabledTemporarily)
+                    WI.debuggerManager.breakpointsEnabled = true;
+
                 let isRegex = breakpoint.type === WI.URLBreakpoint.Type.RegularExpression;
                 target.DOMDebuggerAgent.setXHRBreakpoint(breakpoint.url, isRegex);
             }
@@ -534,6 +549,9 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         if (breakpoint.disabled)
             target.DOMDebuggerAgent.removeURLBreakpoint(breakpoint.url);
         else {
+            if (!this._restoringBreakpoints && !WI.debuggerManager.breakpointsDisabledTemporarily)
+                WI.debuggerManager.breakpointsEnabled = true;
+
             let isRegex = breakpoint.type === WI.URLBreakpoint.Type.RegularExpression;
             target.DOMDebuggerAgent.setURLBreakpoint(breakpoint.url, isRegex);
         }

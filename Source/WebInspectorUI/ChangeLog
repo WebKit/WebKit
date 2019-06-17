@@ -1,5 +1,28 @@
 2019-06-17  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Debugger: adding a DOM/Event/URL breakpoint should enable breakpoints
+        https://bugs.webkit.org/show_bug.cgi?id=198932
+
+        Reviewed by Matt Baker.
+
+        Match the behavior of JavaScript breakpoints, which enable breakpoints globally when a new
+        breakpoint is set or an existing breakpoint is enabled.
+
+        This avoids the situation where setting a DOM breakpoint or a specific event listener
+        breakpoint appears to not "work" because breakpoints are globally disabled. There is no
+        "breakpoints disabled" banner in the Elements tab, so the user could be completely unaware
+        of this, and therefore be confused as to why these breakpoints aren't being hit.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype._updateEventBreakpoint):
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager.prototype._updateDOMBreakpoint):
+        (WI.DOMDebuggerManager.prototype._updateEventBreakpoint):
+        (WI.DOMDebuggerManager.prototype._updateURLBreakpoint):
+
+2019-06-17  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Sources: remove extra space above Breakpoints section when breakpoints are disabled
         https://bugs.webkit.org/show_bug.cgi?id=198933
 
