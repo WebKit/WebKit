@@ -854,18 +854,11 @@ auto Parser::parseAttributeBlock() -> Expected<AST::AttributeBlock, Error>
     AST::AttributeBlock result;
 
     while (true) {
-        auto numThreadsFunctionAttribute = backtrackingScope<Expected<AST::NumThreadsFunctionAttribute, Error>>([&]() {
-            return parseNumThreadsFunctionAttribute();
-        });
-        if (numThreadsFunctionAttribute) {
-            result.append(WTFMove(*numThreadsFunctionAttribute));
-            continue;
-        }
-
-        break;
+        if (tryType(Lexer::Token::Type::RightSquareBracket))
+            break;
+        PARSE(numThreadsFunctionAttribute, NumThreadsFunctionAttribute);
+        result.append(WTFMove(*numThreadsFunctionAttribute));
     }
-
-    CONSUME_TYPE(rightSquareBracket, RightSquareBracket);
 
     return WTFMove(result);
 }
