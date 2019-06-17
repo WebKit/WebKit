@@ -632,27 +632,4 @@ public:
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<typename Type>
-struct LogArgument;
-
-template <>
-struct LogArgument<MediaTime> {
-    static String toString(const MediaTime& time)
-    {
-        return time.toJSONString();
-    }
-};
-
-template <>
-struct LogArgument<MediaTimeRange> {
-    static String toString(const MediaTimeRange& range)
-    {
-        return range.toJSONString();
-    }
-};
-
-}
-
 #endif // ENABLE(VIDEO)

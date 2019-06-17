@@ -1,3 +1,15 @@
+2019-06-16  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Avoid roundoff error when setting AVCapture min/max frame rate
+        https://bugs.webkit.org/show_bug.cgi?id=198875
+        <rdar://problem/51768374>
+
+        Reviewed by Youenn Fablet.
+
+        * wtf/MediaTime.h:
+        (WTF::LogArgument<MediaTime>::toString):
+        (WTF::LogArgument<MediaTimeRange>::toString):
+
 2019-06-12  Antoine Quint  <graouts@apple.com>
 
         Show the web page URL when sharing an AR model

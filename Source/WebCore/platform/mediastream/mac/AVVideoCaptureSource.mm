@@ -327,9 +327,16 @@ void AVVideoCaptureSource::setSessionSizeAndFrameRate()
             if (frameRateRange) {
                 m_currentFrameRate = clampTo(m_currentFrameRate, frameRateRange.minFrameRate, frameRateRange.maxFrameRate);
 
-                ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "setting frame rate to ", m_currentFrameRate);
-                [device() setActiveVideoMinFrameDuration: CMTimeMake(1, m_currentFrameRate)];
-                [device() setActiveVideoMaxFrameDuration: CMTimeMake(1, m_currentFrameRate)];
+                auto frameDuration = CMTimeMake(1, m_currentFrameRate);
+                if (CMTimeCompare(frameDuration, frameRateRange.minFrameDuration) < 0)
+                    frameDuration = frameRateRange.minFrameDuration;
+                else if (CMTimeCompare(frameDuration, frameRateRange.maxFrameDuration) > 0)
+                    frameDuration = frameRateRange.maxFrameDuration;
+
+                ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "setting frame rate to ", m_currentFrameRate, ", duration ", PAL::toMediaTime(frameDuration));
+
+                [device() setActiveVideoMinFrameDuration: frameDuration];
+                [device() setActiveVideoMaxFrameDuration: frameDuration];
             } else
                 ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "cannot find proper frame rate range for the selected preset\n");
 
