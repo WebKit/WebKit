@@ -28,7 +28,7 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D) && !PLATFORM(IOS_FAMILY)
+#if ENABLE(GRAPHICS_CONTEXT_3D) && USE(OPENGL_ES) && !PLATFORM(IOS_FAMILY)
 
 #include "GraphicsContext3D.h"
 
@@ -400,4 +400,4 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 
 }
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D) && !PLATFORM(IOS_FAMILY)
+#endif // ENABLE(GRAPHICS_CONTEXT_3D) && USE(OPENGL_ES) && !PLATFORM(IOS_FAMILY)

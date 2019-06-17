@@ -39,8 +39,12 @@ std::unique_ptr<TextureCacheCV> TextureCacheCV::create(GraphicsContext3D& contex
     TextureCacheType cache = nullptr;
 #if USE(OPENGL_ES)
     CVReturn error = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, nullptr, context.platformGraphicsContext3D(), nullptr, &cache);
-#else
+#elif USE(OPENGL)
     CVReturn error = CVOpenGLTextureCacheCreate(kCFAllocatorDefault, nullptr, context.platformGraphicsContext3D(), CGLGetPixelFormat(context.platformGraphicsContext3D()), nullptr, &cache);
+#elif USE(ANGLE)
+    // FIXME: figure out how to do this integrating via ANGLE.
+    UNUSED_PARAM(context);
+    CVReturn error = kCVReturnSuccess + 1;
 #endif
     if (error != kCVReturnSuccess)
         return nullptr;
@@ -63,7 +67,7 @@ RetainPtr<TextureCacheCV::TextureType> TextureCacheCV::textureFromImage(CVPixelB
     size_t height = CVPixelBufferGetHeight(image);
     if (kCVReturnSuccess != CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, m_cache.get(), image, nullptr, outputTarget, internalFormat, width, height, format, type, level, &bareVideoTexture))
         return nullptr;
-#else
+#elif USE(OPENGL)
     UNUSED_PARAM(outputTarget);
     UNUSED_PARAM(level);
     UNUSED_PARAM(internalFormat);
@@ -71,6 +75,15 @@ RetainPtr<TextureCacheCV::TextureType> TextureCacheCV::textureFromImage(CVPixelB
     UNUSED_PARAM(type);
     if (kCVReturnSuccess != CVOpenGLTextureCacheCreateTextureFromImage(kCFAllocatorDefault, m_cache.get(), image, nullptr, &bareVideoTexture))
         return nullptr;
+#elif USE(ANGLE)
+    // FIXME: figure out how to do this integrating via ANGLE.
+    UNUSED_PARAM(image);
+    UNUSED_PARAM(outputTarget);
+    UNUSED_PARAM(level);
+    UNUSED_PARAM(internalFormat);
+    UNUSED_PARAM(format);
+    UNUSED_PARAM(type);
+    return nullptr;
 #endif
     RetainPtr<TextureType> videoTexture = adoptCF(bareVideoTexture);
 

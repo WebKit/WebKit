@@ -38,8 +38,12 @@
 
 #if USE(OPENGL_ES)
 #import <OpenGLES/ES2/glext.h>
-#else
+#elif USE(OPENGL)
 #include <OpenGL/gl.h>
+#elif USE(ANGLE)
+#include <ANGLE/gl2.h>
+#else
+#error Unsupported configuration
 #endif
 
 #elif PLATFORM(WIN)

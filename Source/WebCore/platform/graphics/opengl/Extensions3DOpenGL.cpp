@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D)
+#if ENABLE(GRAPHICS_CONTEXT_3D) && (USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES)))
 
 #include "Extensions3DOpenGL.h"
 
@@ -308,4 +308,4 @@ bool Extensions3DOpenGL::isVertexArrayObjectSupported()
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D)
+#endif // ENABLE(GRAPHICS_CONTEXT_3D) && (USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES)))

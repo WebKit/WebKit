@@ -136,8 +136,10 @@ static void freeData(void *, const void *data, size_t /* size */)
         [self reloadValueForKeyPath:@"contents"];
         [self bindFramebufferToNextAvailableSurface];
     }
-#else
+#elif USE(OPENGL_ES)
     _context->presentRenderbuffer();
+#elif USE(ANGLE)
+    // FIXME: display rendering results via ANGLE.
 #endif
 
     _context->markLayerComposited();
