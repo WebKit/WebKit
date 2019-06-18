@@ -27,7 +27,7 @@
 
 #if HAVE(APP_SSO)
 
-#import <AppSSO/AppSSO.h>
+#import <pal/spi/cocoa/AppSSOSPI.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, AppSSO);
