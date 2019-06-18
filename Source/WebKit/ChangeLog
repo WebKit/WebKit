@@ -1,3 +1,24 @@
+2019-06-17  Tim Horton  <timothy_horton@apple.com>
+
+        Expose DataDetectors context generation on WKContentViewInteraction
+        https://bugs.webkit.org/show_bug.cgi?id=198950
+        <rdar://problem/51116021>
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant currentPositionInformation]):
+        (-[WKActionSheetAssistant showDataDetectorsSheet]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dataDetectionContextForPositionInformation:]):
+        (-[WKContentView dataDetectionContextForActionSheetAssistant:]):
+        For use by other clients, add -dataDetectionContextForPositionInformation:
+        and make -dataDetectionContextForActionSheetAssistant: use it.
+        Also, pull the code to augment the context with surrounding text out of
+        from WKActionSheetAssistant.
+
 2019-06-17  Sihui Liu  <sihui_liu@apple.com>
 
         -[WKWebsiteDataStore removeDataOfTypes:modifiedSince:completionHandler:] doesn't delete _WKWebsiteDataTypeCredentials
