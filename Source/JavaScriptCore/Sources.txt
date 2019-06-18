@@ -873,6 +873,7 @@ runtime/JSTypedArrayViewConstructor.cpp
 runtime/JSTypedArrayViewPrototype.cpp
 runtime/JSTypedArrays.cpp
 runtime/JSWeakMap.cpp
+runtime/JSWeakObjectRef.cpp
 runtime/JSWeakSet.cpp
 runtime/JSWithScope.cpp
 runtime/JSWrapperObject.cpp
@@ -969,6 +970,8 @@ runtime/Watchdog.cpp
 runtime/WeakMapConstructor.cpp
 runtime/WeakMapImpl.cpp
 runtime/WeakMapPrototype.cpp
+runtime/WeakObjectRefConstructor.cpp
+runtime/WeakObjectRefPrototype.cpp
 runtime/WeakSetConstructor.cpp
 runtime/WeakSetPrototype.cpp
 

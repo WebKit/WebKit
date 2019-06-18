@@ -329,6 +329,7 @@ static EncodedJSValue JSC_HOST_CALL functionMakeMasquerader(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionHasCustomProperties(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDumpTypesForAllVariables(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDrainMicrotasks(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionReleaseWeakRefs(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionIs32BitPlatform(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionPlatformSupportsSamplingProfiler(ExecState*);
@@ -557,6 +558,7 @@ protected:
         addFunction(vm, "dumpTypesForAllVariables", functionDumpTypesForAllVariables , 0);
 
         addFunction(vm, "drainMicrotasks", functionDrainMicrotasks, 0);
+        addFunction(vm, "releaseWeakRefs", functionReleaseWeakRefs, 0);
 
         addFunction(vm, "getRandomSeed", functionGetRandomSeed, 0);
         addFunction(vm, "setRandomSeed", functionSetRandomSeed, 1);
@@ -2206,6 +2208,13 @@ EncodedJSValue JSC_HOST_CALL functionDrainMicrotasks(ExecState* exec)
 {
     VM& vm = exec->vm();
     vm.drainMicrotasks();
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL functionReleaseWeakRefs(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    vm.finalizeSynchronousJSExecution();
     return JSValue::encode(jsUndefined());
 }
 

@@ -1,3 +1,45 @@
+2019-06-18  Keith Miller  <keith_miller@apple.com>
+
+        Add support for WeakRef
+        https://bugs.webkit.org/show_bug.cgi?id=198710
+
+        Reviewed by Yusuke Suzuki.
+
+        Add an asyncTestStart that mirrors the asyncTestStart behavior in
+        the JSC cli.
+
+        * http/tests/resources/js-test-pre.js:
+        (asyncTestStart):
+        * js/script-tests/weakref-async-is-collected.js: Added.
+        (makeWeakRef):
+        (turnEventLoop):
+        (async.foo):
+        (async.test):
+        * js/script-tests/weakref-eventually-collects-values.js: Added.
+        (makeWeakRef):
+        (turnEventLoop):
+        (let.weakRefs.async.test):
+        * js/script-tests/weakref-microtasks-dont-collect.js: Added.
+        (asyncTestStart.1.makeWeakRef):
+        (turnEventLoop):
+        (async.foo):
+        (async.test):
+        * js/script-tests/weakref-weakset-consistency.js: Added.
+        (makeWeakRef):
+        (turnEventLoop):
+        (async.foo):
+        (async.test):
+        * js/weakref-async-is-collected-expected.txt: Added.
+        * js/weakref-async-is-collected.html: Added.
+        * js/weakref-eventually-collects-values-expected.txt: Added.
+        * js/weakref-eventually-collects-values.html: Added.
+        * js/weakref-microtasks-dont-collect-expected.txt: Added.
+        * js/weakref-microtasks-dont-collect.html: Added.
+        * js/weakref-weakset-consistency-expected.txt: Added.
+        * js/weakref-weakset-consistency.html: Added.
+        * resources/js-test-pre.js:
+        (asyncTestStart):
+
 2019-06-18  Daniel Bates  <dabates@apple.com>
 
         [iOS] Pressing key while holding Command should not insert character

@@ -757,6 +757,16 @@ function isSuccessfullyParsed()
     debug('<br /><span class="pass">TEST COMPLETE</span>');
 }
 
+function asyncTestStart() {
+    if (self.testRunner)
+        testRunner.waitUntilDone();
+}
+
+function asyncTestPassed() {
+    if (self.testRunner)
+        testRunner.notifyDone();
+}
+
 // It's possible for an async test to call finishJSTest() before js-test-post.js
 // has been parsed.
 function finishJSTest()

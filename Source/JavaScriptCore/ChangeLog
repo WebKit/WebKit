@@ -1,3 +1,63 @@
+2019-06-18  Keith Miller  <keith_miller@apple.com>
+
+        Add support for WeakRef
+        https://bugs.webkit.org/show_bug.cgi?id=198710
+
+        Reviewed by Yusuke Suzuki.
+
+        Add support for WeakRefs which are now at stage 3
+        (https://tc39.es/proposal-weakrefs). This patch doesn't add
+        support for FinalizationGroups, which I'll add in another patch.
+
+        Some other things of interest. Per the spec, we cannot collect a
+        weak refs target unless it has not been dereffed (or created) in
+        the current microtask turn. i.e. WeakRefs are only allowed to be
+        collected at the end of a drain of the Microtask queue. My
+        understanding for this behavior is to reduce implementation
+        dependence on specific GC behavior in a given browser.
+
+        We track if a WeakRef is retaining its target by using a version
+        number on each WeakRef as well as on the VM. Whenever a WeakRef is
+        derefed we update its version number to match the VM's then
+        WriteBarrier ourselves. During marking if the VM and the WeakRef
+        have the same version number, the target is visited.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionReleaseWeakRefs):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSWeakObjectRef.cpp: Added.
+        (JSC::JSWeakObjectRef::finishCreation):
+        (JSC::JSWeakObjectRef::visitChildren):
+        (JSC::JSWeakObjectRef::finalizeUnconditionally):
+        (JSC::JSWeakObjectRef::toStringName):
+        * runtime/JSWeakObjectRef.h: Added.
+        * runtime/VM.cpp:
+        (JSC::VM::drainMicrotasks):
+        * runtime/VM.h:
+        (JSC::VM::setOnEachMicrotaskTick):
+        (JSC::VM::finalizeSynchronousJSExecution):
+        (JSC::VM::currentWeakRefVersion const):
+        * runtime/WeakObjectRefConstructor.cpp: Added.
+        (JSC::WeakObjectRefConstructor::finishCreation):
+        (JSC::WeakObjectRefConstructor::WeakObjectRefConstructor):
+        (JSC::callWeakRef):
+        (JSC::constructWeakRef):
+        * runtime/WeakObjectRefConstructor.h: Added.
+        (JSC::WeakObjectRefConstructor::create):
+        (JSC::WeakObjectRefConstructor::createStructure):
+        * runtime/WeakObjectRefPrototype.cpp: Added.
+        (JSC::WeakObjectRefPrototype::finishCreation):
+        (JSC::getWeakRef):
+        (JSC::protoFuncWeakRefDeref):
+        * runtime/WeakObjectRefPrototype.h: Added.
+
 2019-06-18  Tadeu Zagallo  <tzagallo@apple.com>
 
         Add missing mutator fence in compileNewFunction

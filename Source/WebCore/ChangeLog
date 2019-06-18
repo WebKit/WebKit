@@ -1,3 +1,32 @@
+2019-06-18  Keith Miller  <keith_miller@apple.com>
+
+        Add support for WeakRef
+        https://bugs.webkit.org/show_bug.cgi?id=198710
+
+        Reviewed by Yusuke Suzuki.
+
+        We need to make sure the Web MicrotaskQueue notifies the JSC VM
+        that it has finished performing a microtask checkpoint. This lets
+        the JSC VM know it is safe to collect referenced WeakRefs. Since
+        there was no way to get the VM from the MicrotaskQueue I have
+        added a RefPtr to the queue's VM. For the main thread the VM lives
+        forever so is fine. For workers the queue and the VM share an
+        owner so this shouldn't matter either.
+
+        Tests: js/weakref-async-is-collected.html
+               js/weakref-eventually-collects-values.html
+               js/weakref-microtasks-dont-collect.html
+               js/weakref-weakset-consistency.html
+
+        * dom/Microtasks.cpp:
+        (WebCore::MicrotaskQueue::MicrotaskQueue):
+        (WebCore::MicrotaskQueue::mainThreadQueue):
+        (WebCore::MicrotaskQueue::performMicrotaskCheckpoint):
+        * dom/Microtasks.h:
+        (WebCore::MicrotaskQueue::vm const):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+
 2019-06-18  Kenneth Russell  <kbr@chromium.org>
 
         Add preliminary ANGLE backend to WebCore

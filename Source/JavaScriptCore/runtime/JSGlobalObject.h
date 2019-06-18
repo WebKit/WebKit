@@ -149,6 +149,7 @@ template<typename Watchpoint> class ObjectPropertyChangeAdaptiveWatchpoint;
     macro(Error, error, error, ErrorInstance, Error, object) \
     macro(Number, number, numberObject, NumberObject, Number, object) \
     macro(Symbol, symbol, symbolObject, SymbolObject, Symbol, object) \
+    macro(WeakObjectRef, weakObjectRef, weakObjectRef, JSWeakObjectRef, WeakRef, object) \
     DEFINE_STANDARD_BUILTIN(macro, WeakMap, weakMap) \
     DEFINE_STANDARD_BUILTIN(macro, WeakSet, weakSet) \
 
