@@ -1,5 +1,14 @@
 2019-06-18  Russell Epstein  <russell_e@apple.com>
 
+        Layout Test imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=198977
+
+        Unreviewed Test Gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2019-06-18  Russell Epstein  <russell_e@apple.com>
+
         Layout test http/tests/websocket/tests/hybi/send-object-tostring-check.html is flaky.
         https://bugs.webkit.org/show_bug.cgi?id=176030
 
