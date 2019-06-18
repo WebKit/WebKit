@@ -64,10 +64,14 @@ typedef void* PlatformGraphicsContext3D;
 #endif // __OBJC__
 #endif // USE(OPENGL_ES)
 
-#if !USE(OPENGL_ES)
+#if USE(OPENGL)
 typedef struct _CGLContextObject *CGLContextObj;
 typedef CGLContextObj PlatformGraphicsContext3D;
-#endif
+#endif // USE(OPENGL)
+
+#if USE(ANGLE)
+typedef void* PlatformGraphicsContext3D;
+#endif // USE(ANGLE)
 
 OBJC_CLASS CALayer;
 OBJC_CLASS WebGLLayer;
@@ -94,8 +98,10 @@ namespace WebCore {
 class Extensions3D;
 #if !PLATFORM(COCOA) && USE(OPENGL_ES)
 class Extensions3DOpenGLES;
-#else
+#elif USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES))
 class Extensions3DOpenGL;
+#elif USE(ANGLE)
+class Extensions3DANGLE;
 #endif
 class HostWindow;
 class Image;
@@ -1431,12 +1437,16 @@ private:
 
 #if !PLATFORM(COCOA) && USE(OPENGL_ES)
     friend class Extensions3DOpenGLES;
-    std::unique_ptr<Extensions3DOpenGLES> m_extensions;
-#else
-    friend class Extensions3DOpenGL;
-    std::unique_ptr<Extensions3DOpenGL> m_extensions;
-#endif
     friend class Extensions3DOpenGLCommon;
+    std::unique_ptr<Extensions3DOpenGLES> m_extensions;
+#elif USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES))
+    friend class Extensions3DOpenGL;
+    friend class Extensions3DOpenGLCommon;
+    std::unique_ptr<Extensions3DOpenGL> m_extensions;
+#elif USE(ANGLE)
+    friend class Extensions3DANGLE;
+    std::unique_ptr<Extensions3DANGLE> m_extensions;
+#endif
 
     GraphicsContext3DAttributes m_attrs;
     GraphicsContext3DPowerPreference m_powerPreferenceUsedForCreation { GraphicsContext3DPowerPreference::Default };

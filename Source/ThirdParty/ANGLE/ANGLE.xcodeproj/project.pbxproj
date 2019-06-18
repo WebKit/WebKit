@@ -2557,6 +2557,7 @@
 				FB39D0CF1200F0E300088E69 /* Frameworks */,
 				312BDB0B15FECAB00097EBC7 /* CopyFiles */,
 				312BDB0D15FECACE0097EBC7 /* CopyFiles */,
+				6E28B8742294DD8000717E69 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -2594,6 +2595,26 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		6E28B8742294DD8000717E69 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh $SRCROOT/adjust-angle-include-paths.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		FB39D0CE1200F0E300088E69 /* Sources */ = {
