@@ -1,3 +1,26 @@
+2019-06-17  Sihui Liu  <sihui_liu@apple.com>
+
+        -[WKWebsiteDataStore removeDataOfTypes:modifiedSince:completionHandler:] doesn't delete _WKWebsiteDataTypeCredentials
+        https://bugs.webkit.org/show_bug.cgi?id=198854
+        <rdar://problem/51386058>
+
+        Reviewed by Geoffrey Garen.
+
+        Add option NSURLCredentialStorageRemoveSynchronizableCredentials when removing persistent credential so 
+        credentials from same account will be removed from all devices.
+
+        Test: WKWebsiteDataStore.RemoveAllPersistentCredentials
+
+        * platform/network/CredentialStorage.cpp:
+        (WebCore::CredentialStorage::originsWithPersistentCredentials):
+        (WebCore::CredentialStorage::removePersistentCredentialsWithOrigins):
+        (WebCore::CredentialStorage::clearPersistentCredentials):
+        * platform/network/CredentialStorage.h:
+        * platform/network/mac/CredentialStorageMac.mm:
+        (WebCore::CredentialStorage::originsWithPersistentCredentials):
+        (WebCore::CredentialStorage::removePersistentCredentialsWithOrigins):
+        (WebCore::CredentialStorage::clearPersistentCredentials):
+
 2019-06-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         m_disconnectedFrame can be null in DOMWindowExtension::willDestroyGlobalObjectInCachedFrame()

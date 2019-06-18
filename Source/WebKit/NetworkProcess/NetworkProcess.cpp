@@ -1282,6 +1282,11 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
             for (auto& securityOrigin : securityOrigins)
                 callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::Credentials, 0 });
         }
+        if (!sessionID.isEphemeral()) {
+            auto securityOrigins = WebCore::CredentialStorage::originsWithPersistentCredentials();
+            for (auto& securityOrigin : securityOrigins)
+                callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::Credentials, 0 });
+        }
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache)) {
@@ -1359,6 +1364,8 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
         if (auto* session = storageSession(sessionID))
             session->credentialStorage().clearCredentials();
+        if (!sessionID.isEphemeral())
+            WebCore::CredentialStorage::clearPersistentCredentials();
     }
 
     auto clearTasksHandler = WTF::CallbackAggregator::create([this, callbackID] {
@@ -1496,6 +1503,8 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
             for (auto& originData : originDatas)
                 session->credentialStorage().removeCredentialsWithOrigin(originData);
         }
+        if (!sessionID.isEphemeral())
+            WebCore::CredentialStorage::removePersistentCredentialsWithOrigins(originDatas);
     }
 
     // FIXME: Implement storage quota clearing for these origins.
@@ -2541,16 +2550,6 @@ StorageQuotaManager& NetworkProcess::storageQuotaManager(PAL::SessionID sessionI
 }
 
 #if !PLATFORM(COCOA)
-void NetworkProcess::originsWithPersistentCredentials(CompletionHandler<void(Vector<WebCore::SecurityOriginData>)>&& completionHandler)
-{
-    completionHandler(Vector<WebCore::SecurityOriginData>());
-}
-
-void NetworkProcess::removeCredentialsWithOrigins(const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&& completionHandler)
-{
-    completionHandler();
-}
-
 void NetworkProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)
 {
 }

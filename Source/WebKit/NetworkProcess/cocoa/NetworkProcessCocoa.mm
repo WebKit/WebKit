@@ -212,31 +212,6 @@ void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<vo
     }).get());
 }
 
-void NetworkProcess::originsWithPersistentCredentials(CompletionHandler<void(Vector<WebCore::SecurityOriginData>)>&& completionHandler)
-{
-    completionHandler(WebCore::CredentialStorage::originsWithPersistentCredentials());
-}
-
-void NetworkProcess::removeCredentialsWithOrigins(const Vector<WebCore::SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
-{
-    for (auto& origin : origins) {
-        auto allCredentials = [[NSURLCredentialStorage sharedCredentialStorage] allCredentials];
-        for (NSURLProtectionSpace* space in allCredentials) {
-            if (origin.protocol == String(space.protocol)
-                && origin.host == String(space.host)
-                && origin.port
-                && *origin.port == space.port) {
-                auto credentials = allCredentials[space];
-                for (NSString* user in credentials) {
-                    auto credential = credentials[user];
-                    [[NSURLCredentialStorage sharedCredentialStorage] removeCredential:credential forProtectionSpace:space];
-                }
-            }
-        }
-    }
-    completionHandler();
-}
-
 #if PLATFORM(MAC)
 void NetworkProcess::setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier)
 {
