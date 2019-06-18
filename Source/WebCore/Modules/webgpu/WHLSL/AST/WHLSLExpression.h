@@ -84,6 +84,14 @@ public:
         m_typeAnnotation = WTFMove(typeAnnotation);
     }
 
+    void copyTypeTo(Expression& other) const
+    {
+        if (auto* resolvedType = const_cast<Expression*>(this)->maybeResolvedType())
+            other.setType(resolvedType->clone());
+        if (auto* typeAnnotation = maybeTypeAnnotation())
+            other.setTypeAnnotation(TypeAnnotation(*typeAnnotation));
+    }
+
     virtual bool isAssignmentExpression() const { return false; }
     virtual bool isBooleanLiteral() const { return false; }
     virtual bool isCallExpression() const { return false; }

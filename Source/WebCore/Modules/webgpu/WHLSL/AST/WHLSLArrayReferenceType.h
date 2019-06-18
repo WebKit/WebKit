@@ -63,6 +63,15 @@ public:
         return this->Base::hash() ^ StringHasher::computeLiteralHash("array");
     }
 
+    bool operator==(const UnnamedType& other) const override
+    {
+        if (!is<ArrayReferenceType>(other))
+            return false;
+
+        return addressSpace() == downcast<ArrayReferenceType>(other).addressSpace()
+            && elementType() == downcast<ArrayReferenceType>(other).elementType();
+    }
+
 private:
 };
 

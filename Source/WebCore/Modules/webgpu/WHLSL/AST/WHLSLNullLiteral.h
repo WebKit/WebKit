@@ -61,6 +61,7 @@ public:
         auto result = NullLiteral(Lexer::Token(origin()));
         if (auto* resolvedType = m_type.maybeResolvedType())
             result.m_type.resolve(resolvedType->clone());
+        copyTypeTo(result);
         return result;
     }
 

@@ -45,47 +45,82 @@ namespace WebCore {
 
 namespace WHLSL {
 
+class UnnamedTypeKey {
+public:
+    UnnamedTypeKey() = default;
+    UnnamedTypeKey(WTF::HashTableDeletedValueType)
+    {
+        m_type = bitwise_cast<AST::UnnamedType*>(static_cast<uintptr_t>(1));
+    }
+
+    UnnamedTypeKey(AST::UnnamedType& type)
+        : m_type(&type)
+    { }
+
+    bool isEmptyValue() const { return !m_type; }
+    bool isHashTableDeletedValue() const { return m_type == bitwise_cast<AST::UnnamedType*>(static_cast<uintptr_t>(1)); }
+
+    unsigned hash() const { return m_type->hash(); }
+    bool operator==(const UnnamedTypeKey& other) const { return *m_type == *other.m_type; }
+    AST::UnnamedType& unnamedType() const { return *m_type; }
+
+    struct Hash {
+        static unsigned hash(const UnnamedTypeKey& key) { return key.hash(); }
+        static bool equal(const UnnamedTypeKey& a, const UnnamedTypeKey& b) { return a == b; }
+        static const bool safeToCompareToEmptyOrDeleted = false;
+        static const bool emptyValueIsZero = true;
+    };
+
+    struct Traits : public WTF::SimpleClassHashTraits<UnnamedTypeKey> {
+        static const bool hasIsEmptyValueFunction = true;
+        static bool isEmptyValue(const UnnamedTypeKey& key) { return key.isEmptyValue(); }
+    };
+
+private:
+    AST::UnnamedType* m_type { nullptr };
+};
+
 class FindAllTypes : public Visitor {
 public:
     ~FindAllTypes() = default;
 
     void visit(AST::PointerType& pointerType) override
     {
-        m_unnamedTypes.append(pointerType);
+        m_unnamedTypes.add(UnnamedTypeKey { pointerType });
         Visitor::visit(pointerType);
     }
 
     void visit(AST::ArrayReferenceType& arrayReferenceType) override
     {
-        m_unnamedTypes.append(arrayReferenceType);
+        m_unnamedTypes.add(UnnamedTypeKey { arrayReferenceType });
         Visitor::visit(arrayReferenceType);
     }
 
     void visit(AST::ArrayType& arrayType) override
     {
-        m_unnamedTypes.append(arrayType);
+        m_unnamedTypes.add(UnnamedTypeKey { arrayType });
         Visitor::visit(arrayType);
     }
 
     void visit(AST::EnumerationDefinition& enumerationDefinition) override
     {
-        m_namedTypes.append(enumerationDefinition);
+        appendNamedType(enumerationDefinition);
         Visitor::visit(enumerationDefinition);
     }
 
     void visit(AST::StructureDefinition& structureDefinition) override
     {
-        m_namedTypes.append(structureDefinition);
+        appendNamedType(structureDefinition);
         Visitor::visit(structureDefinition);
     }
 
     void visit(AST::NativeTypeDeclaration& nativeTypeDeclaration) override
     {
-        m_namedTypes.append(nativeTypeDeclaration);
+        appendNamedType(nativeTypeDeclaration);
         Visitor::visit(nativeTypeDeclaration);
     }
 
-    Vector<std::reference_wrapper<AST::UnnamedType>> takeUnnamedTypes()
+    HashSet<UnnamedTypeKey, UnnamedTypeKey::Hash, UnnamedTypeKey::Traits> takeUnnamedTypes()
     {
         return WTFMove(m_unnamedTypes);
     }
@@ -96,7 +131,17 @@ public:
     }
 
 private:
-    Vector<std::reference_wrapper<AST::UnnamedType>> m_unnamedTypes;
+    void appendNamedType(AST::NamedType& type)
+    {
+        // The way we walk the AST ensures we should never visit a named type twice.
+#if !ASSERT_DISABLED
+        for (auto& entry : m_namedTypes)
+            ASSERT(&entry.get().unifyNode() != &type.unifyNode());
+#endif
+        m_namedTypes.append(type);
+    }
+
+    HashSet<UnnamedTypeKey, UnnamedTypeKey::Hash, UnnamedTypeKey::Traits> m_unnamedTypes;
     Vector<std::reference_wrapper<AST::NamedType>> m_namedTypes;
 };
 
@@ -109,14 +154,16 @@ bool synthesizeConstructors(Program& program)
 
     bool isOperator = true;
 
-    for (auto& unnamedType : unnamedTypes) {
-        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(unnamedType.get().origin()), AST::Qualifiers(), unnamedType.get().clone(), String(), WTF::nullopt, WTF::nullopt);
+    for (auto& unnamedTypeKey : unnamedTypes) {
+        auto& unnamedType = unnamedTypeKey.unnamedType();
+
+        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(unnamedType.origin()), AST::Qualifiers(), unnamedType.clone(), String(), WTF::nullopt, WTF::nullopt);
         AST::VariableDeclarations parameters;
         parameters.append(WTFMove(variableDeclaration));
-        AST::NativeFunctionDeclaration copyConstructor(AST::FunctionDeclaration(Lexer::Token(unnamedType.get().origin()), AST::AttributeBlock(), WTF::nullopt, unnamedType.get().clone(), "operator cast"_str, WTFMove(parameters), WTF::nullopt, isOperator));
+        AST::NativeFunctionDeclaration copyConstructor(AST::FunctionDeclaration(Lexer::Token(unnamedType.origin()), AST::AttributeBlock(), WTF::nullopt, unnamedType.clone(), "operator cast"_str, WTFMove(parameters), WTF::nullopt, isOperator));
         program.append(WTFMove(copyConstructor));
 
-        AST::NativeFunctionDeclaration defaultConstructor(AST::FunctionDeclaration(Lexer::Token(unnamedType.get().origin()), AST::AttributeBlock(), WTF::nullopt, unnamedType.get().clone(), "operator cast"_str, AST::VariableDeclarations(), WTF::nullopt, isOperator));
+        AST::NativeFunctionDeclaration defaultConstructor(AST::FunctionDeclaration(Lexer::Token(unnamedType.origin()), AST::AttributeBlock(), WTF::nullopt, unnamedType.clone(), "operator cast"_str, AST::VariableDeclarations(), WTF::nullopt, isOperator));
         if (!program.append(WTFMove(defaultConstructor)))
             return false;
     }

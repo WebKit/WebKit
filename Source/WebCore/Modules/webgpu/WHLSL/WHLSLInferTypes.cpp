@@ -61,28 +61,7 @@ static bool matches(const AST::Type& unifyThis, const AST::Type& unifyOther)
         auto& unnamedThis = downcast<AST::UnnamedType>(unifyThis);
         auto& unnamedOther = downcast<AST::UnnamedType>(unifyOther);
         ASSERT(!is<AST::TypeReference>(unnamedThis) && !is<AST::TypeReference>(unnamedOther));
-        if (is<AST::PointerType>(unnamedThis) && is<AST::PointerType>(unnamedOther)) {
-            auto& pointerThis = downcast<AST::PointerType>(unnamedThis);
-            auto& pointerOther = downcast<AST::PointerType>(unnamedOther);
-            if (pointerThis.addressSpace() != pointerOther.addressSpace())
-                return false;
-            return matches(pointerThis.elementType(), pointerOther.elementType());
-        }
-        if (is<AST::ArrayReferenceType>(unnamedThis) && is<AST::ArrayReferenceType>(unnamedOther)) {
-            auto& arrayReferenceThis = downcast<AST::ArrayReferenceType>(unnamedThis);
-            auto& arrayReferenceOther = downcast<AST::ArrayReferenceType>(unnamedOther);
-            if (arrayReferenceThis.addressSpace() != arrayReferenceOther.addressSpace())
-                return false;
-            return matches(arrayReferenceThis.elementType(), arrayReferenceOther.elementType());
-        }
-        if (is<AST::ArrayType>(unnamedThis) && is<AST::ArrayType>(unnamedOther)) {
-            auto& arrayThis = downcast<AST::ArrayType>(unnamedThis);
-            auto& arrayOther = downcast<AST::ArrayType>(unnamedOther);
-            if (arrayThis.numElements() != arrayOther.numElements())
-                return false;
-            return matches(arrayThis.type(), arrayOther.type());
-        }
-        return false;
+        return unnamedThis == unnamedOther;
     }
     return false;
 }

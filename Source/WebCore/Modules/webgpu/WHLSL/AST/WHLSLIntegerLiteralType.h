@@ -60,6 +60,8 @@ public:
     bool canResolve(const Type&) const override;
     unsigned conversionCost(const UnnamedType&) const override;
 
+    IntegerLiteralType clone() const;
+
 private:
     int m_value;
     // This is a unique_ptr to resolve a circular dependency between

@@ -56,8 +56,18 @@ NameResolver::NameResolver(NameContext& nameContext)
 {
 }
 
+NameResolver::NameResolver(NameResolver& parentResolver, NameContext& nameContext)
+    : m_nameContext(nameContext)
+{
+    m_isResolvingCalls = parentResolver.m_isResolvingCalls;
+    setCurrentFunctionDefinition(parentResolver.m_currentFunction);
+}
+
 void NameResolver::visit(AST::TypeReference& typeReference)
 {
+    if (m_isResolvingCalls)
+        return;
+
     ScopedSetAdder<AST::TypeReference*> adder(m_typeReferences, &typeReference);
     if (!adder.isNewEntry()) {
         setError();
@@ -86,8 +96,7 @@ void NameResolver::visit(AST::TypeReference& typeReference)
 void NameResolver::visit(AST::FunctionDefinition& functionDefinition)
 {
     NameContext newNameContext(&m_nameContext);
-    NameResolver newNameResolver(newNameContext);
-    newNameResolver.setCurrentFunctionDefinition(m_currentFunction);
+    NameResolver newNameResolver(*this, newNameContext);
     checkErrorAndVisit(functionDefinition.type());
     for (auto& parameter : functionDefinition.parameters())
         newNameResolver.checkErrorAndVisit(parameter);
@@ -97,8 +106,7 @@ void NameResolver::visit(AST::FunctionDefinition& functionDefinition)
 void NameResolver::visit(AST::Block& block)
 {
     NameContext nameContext(&m_nameContext);
-    NameResolver newNameResolver(nameContext);
-    newNameResolver.setCurrentFunctionDefinition(m_currentFunction);
+    NameResolver newNameResolver(*this, nameContext);
     newNameResolver.Visitor::visit(block);
 }
 
@@ -106,13 +114,11 @@ void NameResolver::visit(AST::IfStatement& ifStatement)
 {
     checkErrorAndVisit(ifStatement.conditional());
     NameContext nameContext(&m_nameContext);
-    NameResolver newNameResolver(nameContext);
-    newNameResolver.setCurrentFunctionDefinition(m_currentFunction);
+    NameResolver newNameResolver(*this, nameContext);
     newNameResolver.checkErrorAndVisit(ifStatement.body());
     if (ifStatement.elseBody()) {
         NameContext nameContext(&m_nameContext);
-        NameResolver newNameResolver(nameContext);
-        newNameResolver.setCurrentFunctionDefinition(m_currentFunction);
+        NameResolver newNameResolver(*this, nameContext);
         newNameResolver.checkErrorAndVisit(*ifStatement.elseBody());
     }
 }
@@ -121,16 +127,14 @@ void NameResolver::visit(AST::WhileLoop& whileLoop)
 {
     checkErrorAndVisit(whileLoop.conditional());
     NameContext nameContext(&m_nameContext);
-    NameResolver newNameResolver(nameContext);
-    newNameResolver.setCurrentFunctionDefinition(m_currentFunction);
+    NameResolver newNameResolver(*this, nameContext);
     newNameResolver.checkErrorAndVisit(whileLoop.body());
 }
 
 void NameResolver::visit(AST::DoWhileLoop& whileLoop)
 {
     NameContext nameContext(&m_nameContext);
-    NameResolver newNameResolver(nameContext);
-    newNameResolver.setCurrentFunctionDefinition(m_currentFunction);
+    NameResolver newNameResolver(*this, nameContext);
     newNameResolver.checkErrorAndVisit(whileLoop.body());
     checkErrorAndVisit(whileLoop.conditional());
 }
@@ -138,8 +142,7 @@ void NameResolver::visit(AST::DoWhileLoop& whileLoop)
 void NameResolver::visit(AST::ForLoop& forLoop)
 {
     NameContext nameContext(&m_nameContext);
-    NameResolver newNameResolver(nameContext);
-    newNameResolver.setCurrentFunctionDefinition(m_currentFunction);
+    NameResolver newNameResolver(*this, nameContext);
     newNameResolver.Visitor::visit(forLoop);
 }
 
@@ -174,12 +177,14 @@ void NameResolver::visit(AST::Return& returnStatement)
 
 void NameResolver::visit(AST::PropertyAccessExpression& propertyAccessExpression)
 {
-    if (auto* getterFunctions = m_nameContext.getFunctions(propertyAccessExpression.getterFunctionName()))
-        propertyAccessExpression.setPossibleGetterOverloads(*getterFunctions);
-    if (auto* setterFunctions = m_nameContext.getFunctions(propertyAccessExpression.setterFunctionName()))
-        propertyAccessExpression.setPossibleSetterOverloads(*setterFunctions);
-    if (auto* anderFunctions = m_nameContext.getFunctions(propertyAccessExpression.anderFunctionName()))
-        propertyAccessExpression.setPossibleAnderOverloads(*anderFunctions);
+    if (m_isResolvingCalls) {
+        if (auto* getterFunctions = m_nameContext.getFunctions(propertyAccessExpression.getterFunctionName()))
+            propertyAccessExpression.setPossibleGetterOverloads(*getterFunctions);
+        if (auto* setterFunctions = m_nameContext.getFunctions(propertyAccessExpression.setterFunctionName()))
+            propertyAccessExpression.setPossibleSetterOverloads(*setterFunctions);
+        if (auto* anderFunctions = m_nameContext.getFunctions(propertyAccessExpression.anderFunctionName()))
+            propertyAccessExpression.setPossibleAnderOverloads(*anderFunctions);
+    }
     Visitor::visit(propertyAccessExpression);
 }
 
@@ -210,23 +215,25 @@ void NameResolver::visit(AST::DotExpression& dotExpression)
 
 void NameResolver::visit(AST::CallExpression& callExpression)
 {
-    if (!callExpression.hasOverloads()) {
-        if (auto* functions = m_nameContext.getFunctions(callExpression.name()))
-            callExpression.setOverloads(*functions);
-        else {
-            if (auto* types = m_nameContext.getTypes(callExpression.name())) {
-                if (types->size() == 1) {
-                    if (auto* functions = m_nameContext.getFunctions("operator cast"_str)) {
-                        callExpression.setCastData((*types)[0].get());
-                        callExpression.setOverloads(*functions);
+    if (m_isResolvingCalls) {
+        if (!callExpression.hasOverloads()) {
+            if (auto* functions = m_nameContext.getFunctions(callExpression.name()))
+                callExpression.setOverloads(*functions);
+            else {
+                if (auto* types = m_nameContext.getTypes(callExpression.name())) {
+                    if (types->size() == 1) {
+                        if (auto* functions = m_nameContext.getFunctions("operator cast"_str)) {
+                            callExpression.setCastData((*types)[0].get());
+                            callExpression.setOverloads(*functions);
+                        }
                     }
                 }
             }
         }
-    }
-    if (!callExpression.hasOverloads()) {
-        setError();
-        return;
+        if (!callExpression.hasOverloads()) {
+            setError();
+            return;
+        }
     }
     Visitor::visit(callExpression);
 }
@@ -278,7 +285,7 @@ bool resolveNamesInTypes(Program& program, NameResolver& nameResolver)
     return true;
 }
 
-bool resolveNamesInFunctions(Program& program, NameResolver& nameResolver)
+bool resolveTypeNamesInFunctions(Program& program, NameResolver& nameResolver)
 {
     for (auto& functionDefinition : program.functionDefinitions()) {
         nameResolver.setCurrentFunctionDefinition(&functionDefinition);
@@ -292,6 +299,20 @@ bool resolveNamesInFunctions(Program& program, NameResolver& nameResolver)
         if (nameResolver.error())
             return false;
     }
+    return true;
+}
+
+bool resolveCallsInFunctions(Program& program, NameResolver& nameResolver)
+{
+    nameResolver.setIsResolvingCalls(true);
+    for (auto& functionDefinition : program.functionDefinitions()) {
+        nameResolver.setCurrentFunctionDefinition(&functionDefinition);
+        nameResolver.checkErrorAndVisit(functionDefinition);
+        if (nameResolver.error())
+            return false;
+    }
+    nameResolver.setCurrentFunctionDefinition(nullptr);
+    nameResolver.setIsResolvingCalls(false);
     return true;
 }
 

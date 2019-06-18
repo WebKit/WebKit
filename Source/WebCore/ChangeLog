@@ -1,3 +1,95 @@
+2019-06-18  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Do not generate duplicate constructors/copy constructors in synthesizeConstructors
+        https://bugs.webkit.org/show_bug.cgi?id=198580
+
+        Reviewed by Robin Morisset.
+
+        Prior to this patch, we were generating duplicate constructors 
+        for unnamed types. This is bad for two reasons:
+        1. It's inefficient, since we'd generate a constructor for every place in
+        the AST where we'd visit this unnamed type.
+        2. It made it impossible to resolve function overloads to call
+        the default constructor. This made it so that the autoInitializeVariables
+        pass would crash if we ever generated more than one of these functions
+        for the same type.
+        
+        To make this work, this patch splits up what used to be the resolveNamesInFunctions
+        pass. Previously, this pass would both resolve calls and resolve type names.
+        Synthesize constructors would run before this, since resolving calls meant we
+        may resolve a call to one of these synthesized constructors. However, synthesize
+        constructors now needs to test for the equality unnamed types, so it now requires
+        running the type resolution part of resolveNamesInFunctions before it runs.
+        
+        This patch splits resolveNamesInFunctions into two parts:
+        resolveTypeNamesInFunctions and resolveCallsInFunctions.
+        
+        So we used to run:
+        synthesizeConstructors
+        resolveNamesInFunctions
+        
+        And now we run:
+        resolveTypeNamesInFunctions 
+        synthesizeConstructors
+        resolveCallsInFunctions
+
+        Test: webgpu/whlsl-duplicate-types-should-not-produce-duplicate-ctors.html
+
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayReferenceType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLBooleanLiteral.h:
+        (WebCore::WHLSL::AST::BooleanLiteral::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationMemberLiteral.h:
+        (WebCore::WHLSL::AST::EnumerationMemberLiteral::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.h:
+        (WebCore::WHLSL::AST::Expression::copyTypeTo const):
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteral.h:
+        (WebCore::WHLSL::AST::FloatLiteral::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.cpp:
+        (WebCore::WHLSL::AST::FloatLiteralType::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteral.h:
+        (WebCore::WHLSL::AST::IntegerLiteral::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.cpp:
+        (WebCore::WHLSL::AST::IntegerLiteralType::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLNullLiteral.h:
+        (WebCore::WHLSL::AST::NullLiteral::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLPointerType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeReference.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteral.h:
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteral::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.cpp:
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteralType::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.h:
+        * Modules/webgpu/WHLSL/WHLSLASTDumper.h:
+        * Modules/webgpu/WHLSL/WHLSLInferTypes.cpp:
+        (WebCore::WHLSL::matches):
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.cpp:
+        (WebCore::WHLSL::NameResolver::NameResolver):
+        (WebCore::WHLSL::NameResolver::visit):
+        (WebCore::WHLSL::resolveTypeNamesInFunctions):
+        (WebCore::WHLSL::resolveCallsInFunctions):
+        (WebCore::WHLSL::resolveNamesInFunctions): Deleted.
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.h:
+        (WebCore::WHLSL::NameResolver::setIsResolvingCalls):
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp:
+        (WebCore::WHLSL::prepareShared):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.cpp:
+        (WebCore::WHLSL::UnnamedTypeKey::UnnamedTypeKey):
+        (WebCore::WHLSL::UnnamedTypeKey::isEmptyValue const):
+        (WebCore::WHLSL::UnnamedTypeKey::isHashTableDeletedValue const):
+        (WebCore::WHLSL::UnnamedTypeKey::hash const):
+        (WebCore::WHLSL::UnnamedTypeKey::operator== const):
+        (WebCore::WHLSL::UnnamedTypeKey::unnamedType const):
+        (WebCore::WHLSL::UnnamedTypeKey::Hash::hash):
+        (WebCore::WHLSL::UnnamedTypeKey::Hash::equal):
+        (WebCore::WHLSL::UnnamedTypeKey::Traits::isEmptyValue):
+        (WebCore::WHLSL::FindAllTypes::takeUnnamedTypes):
+        (WebCore::WHLSL::FindAllTypes::appendNamedType):
+        (WebCore::WHLSL::synthesizeConstructors):
+
 2019-06-18  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r246524.

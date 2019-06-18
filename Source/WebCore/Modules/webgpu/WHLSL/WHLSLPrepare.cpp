@@ -125,8 +125,9 @@ static Optional<Program> prepareShared(String& whlslSource)
     RUN_PASS(synthesizeStructureAccessors, program);
     RUN_PASS(synthesizeEnumerationFunctions, program);
     RUN_PASS(synthesizeArrayOperatorLength, program);
+    RUN_PASS(resolveTypeNamesInFunctions, program, nameResolver);
     RUN_PASS(synthesizeConstructors, program);
-    RUN_PASS(resolveNamesInFunctions, program, nameResolver);
+    RUN_PASS(resolveCallsInFunctions, program, nameResolver);
     RUN_PASS(checkDuplicateFunctions, program);
 
     RUN_PASS(check, program);

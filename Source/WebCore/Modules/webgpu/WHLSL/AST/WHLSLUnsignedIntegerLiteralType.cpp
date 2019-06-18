@@ -76,6 +76,15 @@ unsigned UnsignedIntegerLiteralType::conversionCost(const UnnamedType& unnamedTy
     return 1;
 }
 
+UnsignedIntegerLiteralType UnsignedIntegerLiteralType::clone() const
+{
+    UnsignedIntegerLiteralType result(Lexer::Token(m_preferredType->origin()), m_value);
+    if (auto* type = maybeResolvedType())
+        result.resolve(type->clone());
+    result.m_preferredType = m_preferredType->cloneTypeReference();
+    return result;
+}
+
 } // namespace AST
 
 }

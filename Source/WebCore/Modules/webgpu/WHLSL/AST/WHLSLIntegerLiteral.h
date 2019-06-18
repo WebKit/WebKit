@@ -62,8 +62,10 @@ public:
     IntegerLiteral clone() const
     {
         IntegerLiteral result(Lexer::Token(origin()), m_value);
+        result.m_type = m_type.clone();
         if (auto* resolvedType = m_type.maybeResolvedType())
             result.m_type.resolve(resolvedType->clone());
+        copyTypeTo(result);
         return result;
     }
 

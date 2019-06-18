@@ -1,3 +1,13 @@
+2019-06-18  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Do not generate duplicate constructors/copy constructors in synthesizeConstructors
+        https://bugs.webkit.org/show_bug.cgi?id=198580
+
+        Reviewed by Robin Morisset.
+
+        * webgpu/whlsl-duplicate-types-should-not-produce-duplicate-ctors-expected.txt: Added.
+        * webgpu/whlsl-duplicate-types-should-not-produce-duplicate-ctors.html: Added.
+
 2019-06-18  Simon Fraser  <simon.fraser@apple.com>
 
         Convert macOS to scroll by changing layer boundsOrigin

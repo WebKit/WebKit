@@ -69,6 +69,15 @@ public:
         return WTF::IntHash<unsigned>::hash(m_numElements) ^ m_elementType->hash();
     }
 
+    bool operator==(const UnnamedType& other) const override
+    {
+        if (!is<ArrayType>(other))
+            return false;
+
+        return numElements() == downcast<ArrayType>(other).numElements()
+            && type() == downcast<ArrayType>(other).type();
+    }
+
 private:
     UniqueRef<UnnamedType> m_elementType;
     unsigned m_numElements;

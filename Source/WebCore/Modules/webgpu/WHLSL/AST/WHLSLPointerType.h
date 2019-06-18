@@ -63,6 +63,15 @@ public:
         return this->Base::hash() ^ StringHasher::computeLiteralHash("pointer");
     }
 
+    bool operator==(const UnnamedType& other) const override
+    {
+        if (!is<PointerType>(other))
+            return false;
+
+        return addressSpace() == downcast<PointerType>(other).addressSpace()
+            && elementType() == downcast<PointerType>(other).elementType();
+    }
+
 private:
 };
 

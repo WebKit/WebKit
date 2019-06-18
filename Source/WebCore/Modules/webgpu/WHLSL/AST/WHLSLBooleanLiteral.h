@@ -58,7 +58,9 @@ public:
 
     BooleanLiteral clone() const
     {
-        return BooleanLiteral(Lexer::Token(origin()), m_value);
+        BooleanLiteral result(Lexer::Token(origin()), m_value);
+        copyTypeTo(result);
+        return result;
     }
 
 private:

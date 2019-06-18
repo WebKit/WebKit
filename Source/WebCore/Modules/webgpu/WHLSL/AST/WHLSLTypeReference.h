@@ -107,6 +107,15 @@ public:
         return WTF::PtrHash<const Type*>::hash(&unifyNode());
     }
 
+    bool operator==(const UnnamedType& other) const override
+    {
+        ASSERT(m_resolvedType);
+        if (!is<TypeReference>(other))
+            return false;
+
+        return &unifyNode() == &downcast<TypeReference>(other).unifyNode();
+    }
+
 private:
     String m_name;
     TypeArguments m_typeArguments;

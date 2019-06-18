@@ -73,6 +73,7 @@ public:
     {
         auto result = EnumerationMemberLiteral(Lexer::Token(origin()), String(m_left), String(m_right));
         result.m_enumerationMember = m_enumerationMember;
+        copyTypeTo(result);
         return result;
     }
 

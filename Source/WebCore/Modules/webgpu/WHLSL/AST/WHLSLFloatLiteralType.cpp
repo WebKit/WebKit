@@ -72,6 +72,16 @@ unsigned FloatLiteralType::conversionCost(const UnnamedType& unnamedType) const
     return 1;
 }
 
+FloatLiteralType FloatLiteralType::clone() const
+{
+    FloatLiteralType result(Lexer::Token(m_preferredType->origin()), m_value);
+    if (auto* type = maybeResolvedType())
+        result.resolve(type->clone());
+    result.m_preferredType = m_preferredType->cloneTypeReference();
+    return result;
+}
+
+
 } // namespace AST
 
 }

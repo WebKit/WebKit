@@ -40,6 +40,7 @@ class Program;
 class NameResolver : public Visitor {
 public:
     NameResolver(NameContext&);
+    NameResolver(NameResolver&, NameContext&);
 
     virtual ~NameResolver() = default;
 
@@ -49,6 +50,8 @@ public:
     {
         m_currentFunction = functionDefinition;
     }
+
+    void setIsResolvingCalls(bool isResolvingCalls) { m_isResolvingCalls = isResolvingCalls; }
 
 private:
     void visit(AST::TypeReference&) override;
@@ -68,10 +71,12 @@ private:
     NameContext& m_nameContext;
     HashSet<AST::TypeReference*> m_typeReferences;
     AST::FunctionDefinition* m_currentFunction { nullptr };
+    bool m_isResolvingCalls { false };
 };
 
 bool resolveNamesInTypes(Program&, NameResolver&);
-bool resolveNamesInFunctions(Program&, NameResolver&);
+bool resolveTypeNamesInFunctions(Program&, NameResolver&);
+bool resolveCallsInFunctions(Program&, NameResolver&);
 
 } // namespace WHLSL
 
