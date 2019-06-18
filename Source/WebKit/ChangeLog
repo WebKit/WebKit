@@ -1,3 +1,11 @@
+2019-06-18  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Fix building the documentation
+
+        Unreviewed.
+
+        * UIProcess/API/wpe/docs/wpe-docs.sgml: Fix typo "2.62" -> "2.26"
+
 2019-06-18  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r246531.
