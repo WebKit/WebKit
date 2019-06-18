@@ -308,22 +308,20 @@ WI.TreeElement = class TreeElement extends WI.Object
             return;
 
         let toggleOnClick = treeElement.toggleOnClick && !treeElement.selectable;
-        let isInTriangle = treeElement.isEventWithinDisclosureTriangle(event);
-        if (!toggleOnClick && !isInTriangle)
-            return;
-
-        if (treeElement.expanded) {
-            if (event.altKey)
-                treeElement.collapseRecursively();
-            else
-                treeElement.collapse();
-        } else {
-            if (event.altKey)
-                treeElement.expandRecursively();
-            else
-                treeElement.expand();
+        if (toggleOnClick || treeElement.isEventWithinDisclosureTriangle(event)) {
+            if (treeElement.expanded) {
+                if (event.altKey)
+                    treeElement.collapseRecursively();
+                else
+                    treeElement.collapse();
+            } else {
+                if (event.altKey)
+                    treeElement.expandRecursively();
+                else
+                    treeElement.expand();
+            }
+            event.stopPropagation();
         }
-        event.stopPropagation();
 
         if (!treeElement.treeOutline.selectable)
             treeElement.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementClicked, {treeElement});
