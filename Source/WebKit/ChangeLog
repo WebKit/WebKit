@@ -1,3 +1,20 @@
+2019-06-18  Youenn Fablet  <youenn@apple.com>
+
+        StorageManager::removeAllowedSessionStorageNamespaceConnection should make sure its storageNamespaceID is valid
+        https://bugs.webkit.org/show_bug.cgi?id=198966
+        rdar://problem/51352080
+
+        Reviewed by Alex Christensen.
+
+        Make sure the namespace ID is a key of the map before using the value.
+        The namespace ID is coming straight from IPC so should not be trusted.
+        Also, namespace IDs are added/removed based on web pages being created/deleted.
+        Namespace IDs are supposed to be scoped by session IDs.
+        Using page IDs for namespace IDs works as long as the page does not change of session ID during its lifetime, which is not guaranteed.
+
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::removeAllowedSessionStorageNamespaceConnection):
+
 2019-06-18  David Quesada  <david_quesada@apple.com>
 
         Network process crash in SandboxExtension::consume() via Download::publishProgress

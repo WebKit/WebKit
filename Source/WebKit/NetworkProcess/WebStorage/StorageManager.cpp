@@ -551,8 +551,8 @@ void StorageManager::removeAllowedSessionStorageNamespaceConnection(uint64_t sto
     auto allowedConnectionID = allowedConnection.uniqueID();
     m_queue->dispatch([this, protectedThis = makeRef(*this), allowedConnectionID, storageNamespaceID]() mutable {
         ASSERT(m_sessionStorageNamespaces.contains(storageNamespaceID));
-
-        m_sessionStorageNamespaces.get(storageNamespaceID)->removeAllowedConnection(allowedConnectionID);
+        if (auto* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID))
+            sessionStorageNamespace->removeAllowedConnection(allowedConnectionID);
     });
 }
 
