@@ -85,13 +85,7 @@ public:
     };
     std::unique_ptr<Content> close();
 
-    void appendTextContent(const InlineTextItem&, LayoutUnit logicalWidth);
-    void appendNonReplacedInlineBox(const InlineItem&, LayoutUnit logicalWidth);
-    void appendReplacedInlineBox(const InlineItem&, LayoutUnit logicalWidth);
-    void appendInlineContainerStart(const InlineItem&, LayoutUnit logicalWidth);
-    void appendInlineContainerEnd(const InlineItem&, LayoutUnit logicalWidth);
-    void appendHardLineBreak(const InlineItem&);
-
+    void append(const InlineItem&, LayoutUnit logicalWidth);
     bool hasContent() const { return !isVisuallyEmpty(); }
 
     LayoutUnit trailingTrimmableWidth() const;
@@ -118,6 +112,13 @@ private:
     LayoutUnit baselineOffset() const { return m_baseline.ascent + m_baselineTop; }
 
     void appendNonBreakableSpace(const InlineItem&, const Display::Rect& logicalRect);
+    void appendTextContent(const InlineTextItem&, LayoutUnit logicalWidth);
+    void appendNonReplacedInlineBox(const InlineItem&, LayoutUnit logicalWidth);
+    void appendReplacedInlineBox(const InlineItem&, LayoutUnit logicalWidth);
+    void appendInlineContainerStart(const InlineItem&, LayoutUnit logicalWidth);
+    void appendInlineContainerEnd(const InlineItem&, LayoutUnit logicalWidth);
+    void appendHardLineBreak(const InlineItem&);
+
     void removeTrailingTrimmableContent();
 
     void adjustBaselineAndLineHeight(const InlineItem&, LayoutUnit runHeight);

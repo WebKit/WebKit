@@ -193,6 +193,21 @@ LayoutUnit Line::trailingTrimmableWidth() const
     return trimmableWidth;
 }
 
+void Line::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
+{
+    if (inlineItem.isHardLineBreak())
+        return appendHardLineBreak(inlineItem);
+    if (is<InlineTextItem>(inlineItem))
+        return appendTextContent(downcast<InlineTextItem>(inlineItem), logicalWidth);
+    if (inlineItem.isContainerStart())
+        return appendInlineContainerStart(inlineItem, logicalWidth);
+    if (inlineItem.isContainerEnd())
+        return appendInlineContainerEnd(inlineItem, logicalWidth);
+    if (inlineItem.layoutBox().isReplaced())
+        return appendReplacedInlineBox(inlineItem, logicalWidth);
+    appendNonReplacedInlineBox(inlineItem, logicalWidth);
+}
+
 void Line::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::Rect& logicalRect)
 {
     m_content->runs().append(std::make_unique<Content::Run>(inlineItem, logicalRect, Content::Run::TextContext { }, false, false));

@@ -143,21 +143,8 @@ InlineFormattingContext::LineLayout::LineContent InlineFormattingContext::LineLa
         if (uncommittedContent.isEmpty())
             return;
         committedInlineItemCount += uncommittedContent.size();
-        for (auto& uncommittedRun : uncommittedContent.runs()) {
-            auto& inlineItem = uncommittedRun.inlineItem;
-            if (inlineItem.isHardLineBreak())
-                line->appendHardLineBreak(inlineItem);
-            else if (is<InlineTextItem>(inlineItem))
-                line->appendTextContent(downcast<InlineTextItem>(inlineItem), uncommittedRun.logicalWidth);
-            else if (inlineItem.isContainerStart())
-                line->appendInlineContainerStart(inlineItem, uncommittedRun.logicalWidth);
-            else if (inlineItem.isContainerEnd())
-                line->appendInlineContainerEnd(inlineItem, uncommittedRun.logicalWidth);
-            else if (inlineItem.layoutBox().isReplaced())
-                line->appendReplacedInlineBox(inlineItem, uncommittedRun.logicalWidth);
-            else
-                line->appendNonReplacedInlineBox(inlineItem, uncommittedRun.logicalWidth);
-        }
+        for (auto& uncommittedRun : uncommittedContent.runs())
+            line->append(uncommittedRun.inlineItem, uncommittedRun.logicalWidth);
         uncommittedContent.reset();
     };
 

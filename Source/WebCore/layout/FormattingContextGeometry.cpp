@@ -233,7 +233,7 @@ static LayoutUnit staticHorizontalPositionForOutOfFlowPositioned(const LayoutSta
         ASSERT(!container->isPositioned() || layoutBox.isFixedPositioned());
     }
     // Move the static position relative to the padding box. This is very specific to abolutely positioned boxes.
-    auto paddingBoxLeft = layoutState.displayBoxForLayoutBox(containingBlock).paddingBoxTop();
+    auto paddingBoxLeft = layoutState.displayBoxForLayoutBox(containingBlock).paddingBoxLeft();
     return left - paddingBoxLeft;
 }
 
