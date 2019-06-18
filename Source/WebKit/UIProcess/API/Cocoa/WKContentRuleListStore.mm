@@ -28,7 +28,7 @@
 #import "WKContentRuleListStoreInternal.h"
 
 #import "APIContentRuleListStore.h"
-#import "NetworkCacheFilesystem.h"
+#import "NetworkCacheFileSystem.h"
 #import "WKErrorInternal.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
