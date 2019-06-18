@@ -625,4 +625,7 @@ operator float4(float x, float y, float z, float w) {
     return result;
 }
 
+native ushort Sample(Texture1D<ushort>, sampler, float location);
+native ushort Sample(Texture1D<ushort>, sampler, float location, int offset);
+
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=192890 Insert the rest of the standard library once the parser is fast enough

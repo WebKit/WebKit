@@ -43,14 +43,14 @@ public:
 
     virtual ~NameResolver() = default;
 
-    void visit(AST::FunctionDefinition&) override;
-
     void setCurrentFunctionDefinition(AST::FunctionDefinition* functionDefinition)
     {
         m_currentFunction = functionDefinition;
     }
 
 private:
+    void visit(AST::FunctionDefinition&) override;
+    void visit(AST::NativeFunctionDeclaration&) override;
     void visit(AST::TypeReference&) override;
     void visit(AST::Block&) override;
     void visit(AST::IfStatement&) override;
