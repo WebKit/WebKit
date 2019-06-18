@@ -6139,13 +6139,29 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _page->stopInteraction();
 }
 
-- (NSDictionary *)dataDetectionContextForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+- (NSDictionary *)dataDetectionContextForPositionInformation:(WebKit::InteractionInformationAtPosition)positionInformation
 {
-    NSDictionary *context = nil;
+    RetainPtr<NSMutableDictionary> context;
     id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
     if ([uiDelegate respondsToSelector:@selector(_dataDetectionContextForWebView:)])
-        context = [uiDelegate _dataDetectionContextForWebView:_webView];
-    return context;
+        context = adoptNS([[uiDelegate _dataDetectionContextForWebView:_webView] mutableCopy]);
+    
+    if (!context)
+        context = adoptNS([[NSMutableDictionary alloc] init]);
+
+#if ENABLE(DATA_DETECTION)
+    if (!positionInformation.textBefore.isEmpty())
+        context.get()[getkDataDetectorsLeadingText()] = positionInformation.textBefore;
+    if (!positionInformation.textAfter.isEmpty())
+        context.get()[getkDataDetectorsTrailingText()] = positionInformation.textAfter;
+#endif
+    
+    return context.autorelease();
+}
+
+- (NSDictionary *)dataDetectionContextForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+{
+    return [self dataDetectionContextForPositionInformation:assistant.currentPositionInformation.valueOr(_positionInformation)];
 }
 
 - (NSString *)selectedTextForActionSheetAssistant:(WKActionSheetAssistant *)assistant
