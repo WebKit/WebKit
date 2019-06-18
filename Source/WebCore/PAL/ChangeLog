@@ -1,3 +1,16 @@
+2019-06-18  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Link to the new AppSSO private framework
+        https://bugs.webkit.org/show_bug.cgi?id=198949
+        <rdar://problem/51281897>
+
+        Reviewed by Brent Fulgham.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/cocoa/AppSSOSoftLink.h:
+        * pal/cocoa/AppSSOSoftLink.mm:
+        * pal/spi/cocoa/AppSSOSPI.h: Added.
+
 2019-06-18  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r246534.
