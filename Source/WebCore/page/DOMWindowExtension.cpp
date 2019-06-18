@@ -81,13 +81,14 @@ void DOMWindowExtension::resumeFromPageCache()
 
 void DOMWindowExtension::willDestroyGlobalObjectInCachedFrame()
 {
-    ASSERT(m_disconnectedFrame);
+    ASSERT(m_disconnectedFrame); // Somehow m_disconnectedFrame can be null here. See <rdar://problem/49613448>.
 
     // Calling out to the client might result in this DOMWindowExtension being destroyed
     // while there is still work to do.
     Ref<DOMWindowExtension> protectedThis(*this);
 
-    m_disconnectedFrame->loader().client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
+    if (m_disconnectedFrame)
+        m_disconnectedFrame->loader().client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
     m_disconnectedFrame = nullptr;
 
     // DOMWindowExtension lifetime isn't tied directly to the DOMWindow itself so it is important that it unregister

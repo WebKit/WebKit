@@ -1,3 +1,20 @@
+2019-06-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        m_disconnectedFrame can be null in DOMWindowExtension::willDestroyGlobalObjectInCachedFrame()
+        https://bugs.webkit.org/show_bug.cgi?id=198943
+
+        Reviewed by Brady Eidson.
+
+        Apparently it's possible for m_disconnectedFrame to be null in this function even though this should never happen.
+
+        We've been trying to diagnose a class of issues in this area (e.g. r246187, r244971, r242797, r242677, r242676, r241848)
+        but at some point, we need to stop crashing for the sake of user.
+
+        Worked around the bug by adding a null pointer check here.
+
+        * page/DOMWindowExtension.cpp:
+        (WebCore::DOMWindowExtension::willDestroyGlobalObjectInCachedFrame):
+
 2019-06-17  Alex Christensen  <achristensen@webkit.org>
 
         Fix iOS crash when starting loads with no active DocumentLoader
