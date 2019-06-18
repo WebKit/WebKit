@@ -1251,6 +1251,7 @@ private:
 
     void sendPositionInformation(InteractionInformationAtPosition&&);
     InteractionInformationAtPosition positionInformation(const InteractionInformationRequest&);
+    RefPtr<ShareableBitmap> shareableBitmapSnapshotForNode(WebCore::Element&);
     WebAutocorrectionContext autocorrectionContext();
     bool applyAutocorrectionInternal(const String& correction, const String& originalText);
     bool shouldIgnoreMetaViewport() const;

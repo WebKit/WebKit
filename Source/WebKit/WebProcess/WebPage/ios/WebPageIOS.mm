@@ -2656,6 +2656,14 @@ static void textInteractionPositionInformation(WebPage& page, const HTMLInputEle
 }
 #endif
 
+RefPtr<ShareableBitmap> WebPage::shareableBitmapSnapshotForNode(Element& element)
+{
+    // Ensure that the image contains at most 600K pixels, so that it is not too big.
+    if (RefPtr<WebImage> snapshot = snapshotNode(element, SnapshotOptionsShareable, 600 * 1024))
+        return &snapshot->bitmap();
+    return nullptr;
+}
+
 InteractionInformationAtPosition WebPage::positionInformation(const InteractionInformationRequest& request)
 {
     InteractionInformationAtPosition info;
@@ -2678,15 +2686,18 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
         Element& element = downcast<Element>(*hitNode);
         elementPositionInformation(*this, element, request, info);
 
-        if (info.isLink && !info.isImage && request.includeSnapshot) {
-            // Ensure that the image contains at most 600K pixels, so that it is not too big.
-            if (RefPtr<WebImage> snapshot = snapshotNode(element, SnapshotOptionsShareable, 600 * 1024))
-                info.image = &snapshot->bitmap();
-        }
+        if (info.isLink && !info.isImage && request.includeSnapshot)
+            info.image = shareableBitmapSnapshotForNode(element);
     }
 
-    if (!(info.isLink || info.isImage))
+    if (!(info.isLink || info.isImage)) {
         selectionPositionInformation(*this, request, info);
+
+        if (info.isAttachment && request.includeSnapshot) {
+            Element& element = downcast<Element>(*hitNode);
+            info.image = shareableBitmapSnapshotForNode(element);
+        }
+    }
 
     // Prevent the callout bar from showing when tapping on the datalist button.
 #if ENABLE(DATALIST_ELEMENT)

@@ -1,3 +1,19 @@
+2019-06-18  Dean Jackson  <dino@apple.com>
+
+        Attachment elements are missing context menu previews
+        https://bugs.webkit.org/show_bug.cgi?id=198946
+
+        Reviewed by Tim Horton.
+
+        When requesting position information on an <attachment> element,
+        we were not providing a snapshot image.
+
+        * WebProcess/WebPage/WebPage.h: New common method to take a snapshot.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::shareableBitmapSnapshotForNode): New helper.
+        (WebKit::WebPage::positionInformation): If the element is an attachment,
+        then ask for a snapshot.
+
 2019-06-17  Tim Horton  <timothy_horton@apple.com>
 
         Expose DataDetectors context generation on WKContentViewInteraction
