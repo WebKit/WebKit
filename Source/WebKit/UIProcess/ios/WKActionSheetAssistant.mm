@@ -325,11 +325,6 @@ static const CGFloat presentationElementRectPadding = 15;
     return array;
 }
 
-- (Optional<WebKit::InteractionInformationAtPosition>)currentPositionInformation
-{
-    return _positionInformation;
-}
-
 - (void)_createSheetWithElementActions:(NSArray *)actions defaultTitle:(NSString *)defaultTitle showLinkTitle:(BOOL)showLinkTitle
 {
     auto delegate = _delegate.get();
@@ -651,11 +646,22 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     DDDetectionController *controller = [getDDDetectionControllerClass() sharedController];
     NSDictionary *context = nil;
     NSString *textAtSelection = nil;
+    RetainPtr<NSMutableDictionary> extendedContext;
 
     if ([_delegate respondsToSelector:@selector(dataDetectionContextForActionSheetAssistant:)])
         context = [_delegate dataDetectionContextForActionSheetAssistant:self];
     if ([_delegate respondsToSelector:@selector(selectedTextForActionSheetAssistant:)])
         textAtSelection = [_delegate selectedTextForActionSheetAssistant:self];
+    if (!_positionInformation->textBefore.isEmpty() || !_positionInformation->textAfter.isEmpty()) {
+        extendedContext = adoptNS([@{
+            getkDataDetectorsLeadingText() : _positionInformation->textBefore,
+            getkDataDetectorsTrailingText() : _positionInformation->textAfter,
+        } mutableCopy]);
+        
+        if (context)
+            [extendedContext addEntriesFromDictionary:context];
+        context = extendedContext.get();
+    }
 
     if ([controller respondsToSelector:@selector(shouldImmediatelyLaunchDefaultActionForURL:)] && [controller shouldImmediatelyLaunchDefaultActionForURL:targetURL]) {
         auto action = [controller defaultActionForURL:targetURL results:nil context:context];

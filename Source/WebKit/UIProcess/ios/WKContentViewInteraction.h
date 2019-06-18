@@ -470,7 +470,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_accessibilityClearSelection;
 - (WKFormInputSession *)_formInputSession;
 - (void)_didChangeWebViewEditability;
-- (NSDictionary *)dataDetectionContextForPositionInformation:(WebKit::InteractionInformationAtPosition)positionInformation;
 
 - (void)willFinishIgnoringCalloutBarFadeAfterPerformingAction;
 

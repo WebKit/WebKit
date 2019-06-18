@@ -6139,27 +6139,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _page->stopInteraction();
 }
 
-- (NSDictionary *)dataDetectionContextForPositionInformation:(WebKit::InteractionInformationAtPosition)positionInformation
-{
-    RetainPtr<NSMutableDictionary> context;
-    id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
-    if ([uiDelegate respondsToSelector:@selector(_dataDetectionContextForWebView:)])
-        context = adoptNS([[uiDelegate _dataDetectionContextForWebView:_webView] mutableCopy]);
-    
-    if (!context)
-        context = adoptNS([[NSMutableDictionary alloc] init]);
-    
-    if (!positionInformation.textBefore.isEmpty())
-        context.get()[getkDataDetectorsLeadingText()] = positionInformation.textBefore;
-    if (!positionInformation.textAfter.isEmpty())
-        context.get()[getkDataDetectorsTrailingText()] = positionInformation.textAfter;
-    
-    return context.autorelease();
-}
-
 - (NSDictionary *)dataDetectionContextForActionSheetAssistant:(WKActionSheetAssistant *)assistant
 {
-    return [self dataDetectionContextForPositionInformation:assistant.currentPositionInformation.valueOr(_positionInformation)];
+    NSDictionary *context = nil;
+    id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+    if ([uiDelegate respondsToSelector:@selector(_dataDetectionContextForWebView:)])
+        context = [uiDelegate _dataDetectionContextForWebView:_webView];
+    return context;
 }
 
 - (NSString *)selectedTextForActionSheetAssistant:(WKActionSheetAssistant *)assistant

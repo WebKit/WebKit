@@ -82,7 +82,6 @@ struct InteractionInformationAtPosition;
 - (BOOL)isShowingSheet;
 - (void)interactionDidStartWithPositionInformation:(const WebKit::InteractionInformationAtPosition&)information;
 - (NSArray *)currentAvailableActionTitles;
-- (Optional<WebKit::InteractionInformationAtPosition>)currentPositionInformation;
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
