@@ -201,9 +201,7 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
         return;
     }
 
-#if !RELEASE_LOG_DISABLED
-    RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "About to remove data records for %{public}s.", domainsToString(domainsToRemoveWebsiteDataFor).utf8().data());
-#endif
+    RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ITPDebug, "About to remove data records for %{public}s.", domainsToString(domainsToRemoveWebsiteDataFor).utf8().data());
 
     setDataRecordsBeingRemoved(true);
 
@@ -223,9 +221,7 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
                 weakThis->setDataRecordsBeingRemoved(false);
                 weakThis->m_store.tryDumpResourceLoadStatistics();
                 completionHandler();
-#if !RELEASE_LOG_DISABLED
-                RELEASE_LOG_INFO_IF(weakThis->m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Done removing data records.");
-#endif
+                RELEASE_LOG_INFO_IF(weakThis->m_debugLoggingEnabled, ITPDebug, "Done removing data records.");
             });
         });
     });
@@ -287,10 +283,8 @@ void ResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode(bool enable
 {
     ASSERT(!RunLoop::isMain());
 
-#if !RELEASE_LOG_DISABLED
     if (enable)
-        RELEASE_LOG_INFO(ResourceLoadStatisticsDebug, "Turned ITP Debug Mode on.");
-#endif
+        RELEASE_LOG_INFO(ITPDebug, "Turned ITP Debug Mode on.");
 
     m_debugModeEnabled = enable;
     m_debugLoggingEnabled = enable;
@@ -577,13 +571,12 @@ void ResourceLoadStatisticsStore::didCreateNetworkProcess()
 
 void ResourceLoadStatisticsStore::debugLogDomainsInBatches(const char* action, const Vector<RegistrableDomain>& domains)
 {
-#if !RELEASE_LOG_DISABLED
     static const auto maxNumberOfDomainsInOneLogStatement = 50;
     if (domains.isEmpty())
         return;
     
     if (domains.size() <= maxNumberOfDomainsInOneLogStatement) {
-        RELEASE_LOG_INFO(ResourceLoadStatisticsDebug, "About to %{public}s cookies in third-party contexts for: %{public}s.", action, domainsToString(domains).utf8().data());
+        RELEASE_LOG_INFO(ITPDebug, "About to %{public}s cookies in third-party contexts for: %{public}s.", action, domainsToString(domains).utf8().data());
         return;
     }
     
@@ -594,18 +587,14 @@ void ResourceLoadStatisticsStore::debugLogDomainsInBatches(const char* action, c
     
     for (auto& domain : domains) {
         if (batch.size() == maxNumberOfDomainsInOneLogStatement) {
-            RELEASE_LOG_INFO(ResourceLoadStatisticsDebug, "About to %{public}s cookies in third-party contexts for (%{public}d of %u): %{public}s.", action, batchNumber, numberOfBatches, domainsToString(batch).utf8().data());
+            RELEASE_LOG_INFO(ITPDebug, "About to %{public}s cookies in third-party contexts for (%{public}d of %u): %{public}s.", action, batchNumber, numberOfBatches, domainsToString(batch).utf8().data());
             batch.shrink(0);
             ++batchNumber;
         }
         batch.append(domain);
     }
     if (!batch.isEmpty())
-        RELEASE_LOG_INFO(ResourceLoadStatisticsDebug, "About to %{public}s cookies in third-party contexts for (%{public}d of %u): %{public}s.", action, batchNumber, numberOfBatches, domainsToString(batch).utf8().data());
-#else
-    UNUSED_PARAM(action);
-    UNUSED_PARAM(domains);
-#endif
+        RELEASE_LOG_INFO(ITPDebug, "About to %{public}s cookies in third-party contexts for (%{public}d of %u): %{public}s.", action, batchNumber, numberOfBatches, domainsToString(batch).utf8().data());
 }
 
 } // namespace WebKit
