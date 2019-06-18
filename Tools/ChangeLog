@@ -1,3 +1,16 @@
+2019-06-18  Keith Miller  <keith_miller@apple.com>
+
+        webkit-patch should allow for a bugzilla url not just bugzilla id
+        https://bugs.webkit.org/show_bug.cgi?id=198972
+
+        Reviewed by Dewei Zhu.
+
+        When prompting for a bugzilla id or a new title we should also
+        allow for a bugzilla url.
+
+        * Scripts/webkitpy/tool/steps/promptforbugortitle.py:
+        (PromptForBugOrTitle.run):
+
 2019-06-18  David Quesada  <david_quesada@apple.com>
 
         REGRESSION: _WKDownload.OriginatingWebView and _WKDownload.CrashAfterDownloadDidFinishWhenDownloadProxyHoldsTheLastRefOnWebProcessPool failing
