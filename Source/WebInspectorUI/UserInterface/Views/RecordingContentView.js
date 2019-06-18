@@ -111,7 +111,8 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
         this._updateSliderValue();
 
-        this._generateContentThrottler.fire();
+        if (this.didInitialLayout)
+            this._generateContentThrottler.fire();
 
         this._action = this.representedObject.actions[this._index];
 
@@ -179,6 +180,9 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         }
 
         this._updateSliderValue();
+
+        if (!isNaN(this._index))
+            this._generateContentThrottler.fire();
     }
 
     // Private
@@ -483,6 +487,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         }
 
         this._sliderElement.value = visualActionIndex;
+        this._sliderElement.max = visualActionIndexes.length;
         this._sliderValueElement.textContent = WI.UIString("%d of %d").format(visualActionIndex, visualActionIndexes.length);
     }
 
@@ -523,7 +528,6 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
     {
         this._updateExportButton();
 
-        this._sliderElement.max = this.representedObject.visualActionIndexes.length;
         this._updateSliderValue();
 
         if (this.representedObject.ready)
