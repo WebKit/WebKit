@@ -41,6 +41,25 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
     RetainPtr<NSURLSessionDownloadTask> m_task;
     WebKit::Download* m_download;
     RefPtr<WebKit::SandboxExtension> m_sandboxExtension;
+    std::once_flag m_progressCancelOnce;
+}
+
+- (void)performCancel
+{
+    if (m_download)
+        m_download->cancel();
+}
+
+- (void)progressCancelled
+{
+    std::call_once(m_progressCancelOnce, [self] {
+        if (!isMainThread()) {
+            [self performSelectorOnMainThread:@selector(performCancel) withObject:nil waitUntilDone:NO];
+            return;
+        }
+
+        [self performCancel];
+    });
 }
 
 - (instancetype)initWithDownloadTask:(NSURLSessionDownloadTask *)task download:(WebKit::Download*)download URL:(NSURL *)fileURL sandboxExtension:(RefPtr<WebKit::SandboxExtension>)sandboxExtension
@@ -66,12 +85,7 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
 
     self.cancellable = YES;
     self.cancellationHandler = makeBlockPtr([weakSelf = WeakObjCPtr<WKDownloadProgress> { self }] {
-        auto strongSelf = weakSelf.get();
-        if (!strongSelf)
-            return;
-
-        if (auto* download = strongSelf.get()->m_download)
-            download->cancel();
+        [weakSelf.get() progressCancelled];
     }).get();
 
     return self;

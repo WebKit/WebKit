@@ -86,7 +86,12 @@ Download::~Download()
 
 void Download::cancel()
 {
+    RELEASE_ASSERT(isMainThread());
+
+    if (m_wasCanceled)
+        return;
     m_wasCanceled = true;
+
     if (m_download) {
         m_download->cancel();
         didCancel({ });

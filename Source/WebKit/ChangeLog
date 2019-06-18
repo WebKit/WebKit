@@ -1,3 +1,28 @@
+2019-06-18  Brady Eidson  <beidson@apple.com>
+
+        Handle NSProgress calling our cancellation handler on background threads (and calling it more than once).
+        <rdar://problem/51392926> and https://bugs.webkit.org/show_bug.cgi?id=198945
+
+        Reviewed by Alex Christensen.
+
+        If you have a download in progress and quickly tap the button to cancel it multiple times, then:
+            - NSProgress calls our cancellation handler on a non-main thread, which we can't handle.
+            - They do it more than once, which is also bad.
+            - They might even do it multiple times concurrently (on different background dispatch queues)
+        
+        Let's work around these.
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::cancel): Double check we're on the main thread, and handle being called twice.
+
+        * NetworkProcess/Downloads/cocoa/WKDownloadProgress.mm:
+        (-[WKDownloadProgress performCancel]): Actually cancel the WebKit::Download if we still have one.
+        (-[WKDownloadProgress progressCancelled]): Called when NSProgress calls the cancellation handler, no matter
+          which thread it does it on. By leveraging std::call_once we handle multiple calls as well as being called
+          concurrently from different threads. call_once punts the *actual* cancel operation off to the main thread.
+        (-[WKDownloadProgress initWithDownloadTask:download:URL:sandboxExtension:]): The cancellation handler is
+          now simply calling 'progressCancelled' on self, assuming the weak pointer for self is still valid.
+
 2019-06-18  Daniel Bates  <dabates@apple.com>
 
         [iOS] Pressing key while holding Command should not insert character
