@@ -7184,6 +7184,7 @@ void SpeculativeJIT::compileNewFunctionCommon(GPRReg resultGPR, RegisteredStruct
     
     if (executable->isAnonymousBuiltinFunction()) {
         VM& vm = *m_jit.vm();
+        m_jit.mutatorFence(vm);
         GPRTemporary allocator(this);
         Allocator allocatorValue = allocatorForNonVirtualConcurrently<FunctionRareData>(vm, sizeof(FunctionRareData), AllocatorForMode::AllocatorIfExists);
         emitAllocateJSCell(scratch1GPR, JITAllocator::constant(allocatorValue), allocator.gpr(), TrustedImmPtr(m_jit.graph().registerStructure(vm.functionRareDataStructure.get())), scratch2GPR, slowPath);

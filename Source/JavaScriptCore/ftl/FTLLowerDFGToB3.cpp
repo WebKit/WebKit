@@ -5549,6 +5549,7 @@ private:
         
         VM& vm = this->vm();
         if (executable->isAnonymousBuiltinFunction()) {
+            mutatorFence();
             Allocator allocator = allocatorForNonVirtualConcurrently<FunctionRareData>(vm, sizeof(FunctionRareData), AllocatorForMode::AllocatorIfExists);
             LValue rareData = allocateCell(m_out.constIntPtr(allocator.localAllocator()), vm.functionRareDataStructure.get(), slowPath);
             m_out.storePtr(m_out.intPtrZero, rareData, m_heaps.FunctionRareData_allocator);

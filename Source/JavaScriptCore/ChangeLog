@@ -1,5 +1,22 @@
 2019-06-18  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Add missing mutator fence in compileNewFunction
+        https://bugs.webkit.org/show_bug.cgi?id=198849
+        <rdar://problem/51733890>
+
+        Reviewed by Saam Barati.
+
+        Follow-up after r246553. Saam pointed out that we still need a mutator
+        fence before allocating the FunctionRareData, since the allocation
+        might trigger a slow path call.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionCommon):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+
+2019-06-18  Tadeu Zagallo  <tzagallo@apple.com>
+
         DFG code should not reify the names of builtin functions with private names
         https://bugs.webkit.org/show_bug.cgi?id=198849
         <rdar://problem/51733890>
