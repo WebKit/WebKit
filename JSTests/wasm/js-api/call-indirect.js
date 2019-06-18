@@ -1,7 +1,7 @@
 import * as assert from '../assert.js';
 import Builder from '../Builder.js';
 
-const wasmModuleWhichImportJS = () => {
+const oneTable = () => {
     const builder = (new Builder())
         .Type().End()
         .Import()
@@ -31,6 +31,39 @@ const wasmModuleWhichImportJS = () => {
     return module;
 };
 
+const multiTable = () => {
+    const builder = (new Builder())
+        .Type().End()
+        .Import()
+            .Function("imp", "func", { params: ["i32"] })
+            .Table("imp", "table0", { initial: 0, maximum: 0, element: "anyfunc"})
+            .Table("imp", "table", { initial: 1, maximum: 1, element: "anyfunc"})
+        .End()
+        .Function().End()
+        .Export()
+            .Function("changeCounter")
+            .Function("callFunc")
+        .End()
+        .Code()
+            .Function("changeCounter", { params: ["i32", "i32"] })
+                .I32Const(42)
+                .GetLocal(0)
+                .I32Add()
+                .GetLocal(1)
+                .CallIndirect(0, 1) // Calls table[0](param[0] + 42).
+            .End()
+            .Function("callFunc", { params: ["i32"] })
+                .GetLocal(0)
+                .Call(0) // Calls func(param[0] + 42)
+            .End()
+        .End();
+    const bin = builder.WebAssembly().get();
+    const module = new WebAssembly.Module(bin);
+    return module;
+};
+
+for (const wasmModuleWhichImportJS of [oneTable, multiTable]) {
+
 const makeTable = () => {
     return new WebAssembly.Table({initial: 1, maximum: 1, element: "anyfunc"});
 };
@@ -40,7 +73,7 @@ const makeTable = () => {
     const counterSetter = v => counter = v;
     const table = makeTable();
     const module = wasmModuleWhichImportJS();
-    const instance = new WebAssembly.Instance(module, { imp: { func: counterSetter, table} });
+    const instance = new WebAssembly.Instance(module, { imp: { func: counterSetter, table, table0: new WebAssembly.Table({initial: 0, maximum: 0, element: "anyfunc"}) } });
     table.set(0, instance.exports.callFunc);
     for (let i = 0; i < 4096; ++i) {
         // Invoke this a bunch of times to make sure the IC in the wasm -> JS stub works correctly.
@@ -57,11 +90,11 @@ const makeTable = () => {
     const module = wasmModuleWhichImportJS();
 
     const tableA = makeTable();
-    const instanceA = new WebAssembly.Instance(module, { imp: { func: counterASetter, table: tableA} });
+    const instanceA = new WebAssembly.Instance(module, { imp: { func: counterASetter, table: tableA, table0: new WebAssembly.Table({initial: 0, maximum: 0, element: "anyfunc"}) } });
     tableA.set(0, instanceA.exports.callFunc);
 
     const tableB = makeTable();
-    const instanceB = new WebAssembly.Instance(module, { imp: { func: counterBSetter, table: tableB} });
+    const instanceB = new WebAssembly.Instance(module, { imp: { func: counterBSetter, table: tableB, table0: new WebAssembly.Table({initial: 0, maximum: 0, element: "anyfunc"}) } });
     tableB.set(0, instanceB.exports.callFunc);
     for (let i = 0; i < 2048; ++i) {
         instanceA.exports.changeCounter(i, 0);
@@ -93,7 +126,7 @@ const makeTable = () => {
     let instances = [];
     for (let i = 0; i < num; ++i) {
         let table = makeTable();
-        instances[i] = new WebAssembly.Instance(module, { imp: { func: counterSetters[i], table} });
+        instances[i] = new WebAssembly.Instance(module, { imp: { func: counterSetters[i], table, table0: new WebAssembly.Table({initial: 0, maximum: 0, element: "anyfunc"}) } });
         table.set(0, instances[i].exports.callFunc);
     }
     for (let i = 0; i < 2048; ++i) {
@@ -104,3 +137,5 @@ const makeTable = () => {
         }
     }
 })();
+
+}

@@ -1,3 +1,83 @@
+2019-06-18  Justin Michaud  <justin_michaud@apple.com>
+
+        [WASM-References] Add support for multiple tables
+        https://bugs.webkit.org/show_bug.cgi?id=198760
+
+        Reviewed by Saam Barati.
+
+        * wasm/Builder.js:
+        * wasm/js-api/call-indirect.js:
+        (const.oneTable):
+        (const.multiTable):
+        (multiTable):
+        (multiTable.Polyphic2Import):
+        (multiTable.VirtualImport):
+        (const.wasmModuleWhichImportJS): Deleted.
+        (const.makeTable): Deleted.
+        (): Deleted.
+        (Polyphic2Import): Deleted.
+        (VirtualImport): Deleted.
+        * wasm/js-api/table.js:
+        (new.WebAssembly.Module):
+        (assert.throws):
+        (assertBadTableImport):
+        (assert.truthy):
+        (assert.throws.new.WebAssembly.Module.builder.WebAssembly): Deleted.
+        * wasm/references/anyref_table.js:
+        * wasm/references/anyref_table_import.js:
+        (makeImport):
+        (string_appeared_here.fullGC.assert.eq.1.exports.get_tbl.makeImport):
+        (string_appeared_here.fullGC.assert.eq.1.exports.get_tbl):
+        * wasm/references/multitable.js: Added.
+        (assert.throws.1.exports.set_tbl0):
+        (assert.throws):
+        (assert.eq):
+        * wasm/references/validation.js:
+        (assert.throws.new.WebAssembly.Module.bin):
+        (assert.throws):
+        * wasm/spec-tests/imports.wast.js:
+        * wasm/wasm.json:
+
+        * wasm/Builder.js:
+        * wasm/js-api/call-indirect.js:
+        (const.oneTable):
+        (const.multiTable):
+        (multiTable):
+        (multiTable.Polyphic2Import):
+        (multiTable.VirtualImport):
+        (const.wasmModuleWhichImportJS): Deleted.
+        (const.makeTable): Deleted.
+        (): Deleted.
+        (Polyphic2Import): Deleted.
+        (VirtualImport): Deleted.
+        * wasm/js-api/table.js:
+        (new.WebAssembly.Module):
+        (assert.throws):
+        (assertBadTableImport):
+        (assert.truthy):
+        (assert.throws.new.WebAssembly.Module.builder.WebAssembly): Deleted.
+        * wasm/references/anyref_table.js:
+        * wasm/references/anyref_table_import.js:
+        (makeImport):
+        (string_appeared_here.fullGC.assert.eq.1.exports.get_tbl.makeImport):
+        (string_appeared_here.fullGC.assert.eq.1.exports.get_tbl):
+        * wasm/references/func_ref.js:
+        (GetLocal.0.I32Const.0.TableSet.End.End.WebAssembly.fun): Deleted.
+        (GetLocal.0.I32Const.0.TableSet.End.End.WebAssembly.assert.throws): Deleted.
+        (GetLocal.0.I32Const.0.TableSet.End.End.WebAssembly): Deleted.
+        * wasm/references/multitable.js: Added.
+        (assert.throws.1.exports.set_tbl0):
+        (assert.throws):
+        (assert.eq):
+        (string_appeared_here.tableInsanity):
+        (I32Const.0.GetLocal.0.TableSet.1.End.End.WebAssembly.):
+        (I32Const.0.GetLocal.0.TableSet.1.End.End.WebAssembly):
+        * wasm/references/validation.js:
+        (assert.throws.new.WebAssembly.Module.bin):
+        (assert.throws):
+        * wasm/spec-tests/imports.wast.js:
+        * wasm/wasm.json:
+
 2019-06-18  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [ESNExt] String.prototype.matchAll

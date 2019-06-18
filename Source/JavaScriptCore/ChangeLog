@@ -1,3 +1,66 @@
+2019-06-18  Justin Michaud  <justin_michaud@apple.com>
+
+        [WASM-References] Add support for multiple tables
+        https://bugs.webkit.org/show_bug.cgi?id=198760
+
+        Reviewed by Saam Barati.
+
+        Support multiple wasm tables. We turn tableInformation into a tables array, and update all of the
+        existing users to give a table index. The array of Tables in Wasm::Instance is hung off the tail
+        to make it easier to use from jit code. 
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::addTableGet):
+        (JSC::Wasm::AirIRGenerator::addTableSet):
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::addTableGet):
+        (JSC::Wasm::B3IRGenerator::addTableSet):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmExceptionType.h:
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::Element::Element):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::Instance):
+        (JSC::Wasm::Instance::create):
+        (JSC::Wasm::Instance::extraMemoryAllocated const):
+        (JSC::Wasm::Instance::table):
+        (JSC::Wasm::Instance::setTable):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::updateCachedMemory):
+        (JSC::Wasm::Instance::offsetOfGlobals):
+        (JSC::Wasm::Instance::offsetOfTablePtr):
+        (JSC::Wasm::Instance::allocationSize):
+        (JSC::Wasm::Instance::table): Deleted.
+        (JSC::Wasm::Instance::setTable): Deleted.
+        (JSC::Wasm::Instance::offsetOfTable): Deleted.
+        * wasm/WasmModuleInformation.h:
+        (JSC::Wasm::ModuleInformation::tableCount const):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseImport):
+        (JSC::Wasm::SectionParser::parseTableHelper):
+        (JSC::Wasm::SectionParser::parseTable):
+        (JSC::Wasm::SectionParser::parseElement):
+        * wasm/WasmTable.h:
+        (JSC::Wasm::Table::owner const):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::addTableGet):
+        (JSC::Wasm::Validate::addTableSet):
+        (JSC::Wasm::Validate::addCallIndirect):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::JSWebAssemblyInstance):
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/wasm.json:
+
 2019-06-18  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [ESNExt] String.prototype.matchAll

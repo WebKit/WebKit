@@ -106,8 +106,8 @@ public:
     Result WARN_UNUSED_RETURN addRefFunc(uint32_t index, ExpressionType& result);
 
     // Tables
-    Result WARN_UNUSED_RETURN addTableGet(ExpressionType& index, ExpressionType& result);
-    Result WARN_UNUSED_RETURN addTableSet(ExpressionType& index, ExpressionType& value);
+    Result WARN_UNUSED_RETURN addTableGet(unsigned, ExpressionType& index, ExpressionType& result);
+    Result WARN_UNUSED_RETURN addTableSet(unsigned, ExpressionType& index, ExpressionType& value);
 
     // Locals
     Result WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
@@ -148,7 +148,7 @@ public:
 
     // Calls
     Result WARN_UNUSED_RETURN addCall(unsigned calleeIndex, const Signature&, const Vector<ExpressionType>& args, ExpressionType& result);
-    Result WARN_UNUSED_RETURN addCallIndirect(const Signature&, const Vector<ExpressionType>& args, ExpressionType& result);
+    Result WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const Signature&, const Vector<ExpressionType>& args, ExpressionType& result);
 
     ALWAYS_INLINE void didKill(ExpressionType) { }
 
@@ -178,21 +178,22 @@ auto Validate::addArguments(const Signature& signature) -> Result
     return { };
 }
 
-auto Validate::addTableGet(ExpressionType& index, ExpressionType& result) -> Result
+auto Validate::addTableGet(unsigned tableIndex, ExpressionType& index, ExpressionType& result) -> Result
 {
-    result = m_module.tableInformation.wasmType();
+    WASM_VALIDATOR_FAIL_IF(tableIndex >= m_module.tableCount(), "table index ", tableIndex, " is invalid, limit is ", m_module.tableCount());
+    result = m_module.tables[tableIndex].wasmType();
     WASM_VALIDATOR_FAIL_IF(Type::I32 != index, "table.get index to type ", index, " expected ", Type::I32);
 
     return { };
 }
 
-auto Validate::addTableSet(ExpressionType& index, ExpressionType& value) -> Result
+auto Validate::addTableSet(unsigned tableIndex, ExpressionType& index, ExpressionType& value) -> Result
 {
-    auto type = m_module.tableInformation.wasmType();
+    WASM_VALIDATOR_FAIL_IF(tableIndex >= m_module.tableCount(), "table index ", tableIndex, " is invalid, limit is ", m_module.tableCount());
+    auto type = m_module.tables[tableIndex].wasmType();
     WASM_VALIDATOR_FAIL_IF(Type::I32 != index, "table.set index to type ", index, " expected ", Type::I32);
     WASM_VALIDATOR_FAIL_IF(!isSubtype(value, type), "table.set value to type ", value, " expected ", type);
-    WASM_VALIDATOR_FAIL_IF(m_module.tableInformation.type() != TableElementType::Anyref
-        && m_module.tableInformation.type() != TableElementType::Funcref, "table.set expects the table to have type anyref or anyfunc");
+    RELEASE_ASSERT(m_module.tables[tableIndex].type() == TableElementType::Anyref || m_module.tables[tableIndex].type() == TableElementType::Funcref);
 
     return { };
 }
@@ -379,9 +380,10 @@ auto Validate::addCall(unsigned, const Signature& signature, const Vector<Expres
     return { };
 }
 
-auto Validate::addCallIndirect(const Signature& signature, const Vector<ExpressionType>& args, ExpressionType& result) -> Result
+auto Validate::addCallIndirect(unsigned tableIndex, const Signature& signature, const Vector<ExpressionType>& args, ExpressionType& result) -> Result
 {
-    WASM_VALIDATOR_FAIL_IF(m_module.tableInformation.type() != TableElementType::Funcref, "Table must have type Anyfunc to call");
+    RELEASE_ASSERT(tableIndex < m_module.tableCount());
+    RELEASE_ASSERT(m_module.tables[tableIndex].type() == TableElementType::Funcref);
     const auto argumentCount = signature.argumentCount();
     WASM_VALIDATOR_FAIL_IF(argumentCount != args.size() - 1, "arity mismatch in call_indirect, got ", args.size() - 1, " arguments, expected ", argumentCount);
 

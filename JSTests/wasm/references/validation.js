@@ -24,6 +24,9 @@ import Builder from '../Builder.js';
 {
     const builder = (new Builder())
       .Type().End()
+      .Import()
+            .Table("imp", "tbl", {initial: 2, element: "anyfunc"})
+      .End()
       .Function().End()
       .Export()
           .Function("j")
@@ -32,14 +35,14 @@ import Builder from '../Builder.js';
         .Function("j", { params: [], ret: "void" })
             .I32Const(0)
             .I32Const(0)
-            .TableSet()
+            .TableSet(0)
         .End()
       .End();
 
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: table.set value to type I32 expected Anyref, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: table.set value to type I32 expected Anyfunc, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
 }
 
 {
@@ -56,7 +59,7 @@ import Builder from '../Builder.js';
         .Function("j", { params: ["anyref"], ret: "void" })
             .I32Const(0)
             .GetLocal(0)
-            .TableSet()
+            .TableSet(0)
         .End()
       .End();
 
@@ -79,7 +82,7 @@ import Builder from '../Builder.js';
       .Code()
         .Function("j", { params: [], ret: "anyref" })
             .I32Const(0)
-            .TableGet()
+            .TableGet(0)
         .End()
       .End();
 

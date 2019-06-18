@@ -213,10 +213,12 @@ struct Segment {
 };
 
 struct Element {
-    Element(I32InitExpr offset)
-        : offset(offset)
+    Element(uint32_t tableIndex, I32InitExpr offset)
+        : tableIndex(tableIndex)
+        , offset(offset)
     { }
 
+    uint32_t tableIndex;
     I32InitExpr offset;
     Vector<uint32_t> functionIndices;
 };

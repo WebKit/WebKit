@@ -53,6 +53,7 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, Ref<W
     : Base(vm, structure)
     , m_instance(WTFMove(instance))
     , m_vm(&vm)
+    , m_tables(m_instance->module().moduleInformation().tableCount())
 {
     for (unsigned i = 0; i < this->instance().numImportFunctions(); ++i)
         new (this->instance().importFunction<WriteBarrier<JSObject>>(i)) WriteBarrier<JSObject>();
@@ -85,7 +86,8 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_codeBlock);
     visitor.append(thisObject->m_moduleNamespaceObject);
     visitor.append(thisObject->m_memory);
-    visitor.append(thisObject->m_table);
+    for (unsigned i = 0; i < thisObject->instance().module().moduleInformation().tableCount(); ++i)
+        visitor.append(thisObject->m_tables[i]);
     visitor.append(thisObject->m_callee);
     visitor.reportExtraMemoryVisited(thisObject->m_instance->extraMemoryAllocated());
     for (unsigned i = 0; i < thisObject->instance().numImportFunctions(); ++i)

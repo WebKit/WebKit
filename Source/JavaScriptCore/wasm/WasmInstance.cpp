@@ -61,18 +61,19 @@ Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** pointerT
         if (isSubtype(m_module.get().moduleInformation().globals[i].type, Anyref))
             m_globalsToMark.set(i);
     }
+    memset(bitwise_cast<char*>(this) + offsetOfTablePtr(m_numImportFunctions, 0), 0, m_module->moduleInformation().tableCount() * sizeof(Table*));
 }
 
 Ref<Instance> Instance::create(Context* context, Ref<Module>&& module, EntryFrame** pointerToTopEntryFrame, void** pointerToActualStackLimit, StoreTopCallFrameCallback&& storeTopCallFrame)
 {
-    return adoptRef(*new (NotNull, fastMalloc(allocationSize(module->moduleInformation().importFunctionCount()))) Instance(context, WTFMove(module), pointerToTopEntryFrame, pointerToActualStackLimit, WTFMove(storeTopCallFrame)));
+    return adoptRef(*new (NotNull, fastMalloc(allocationSize(module->moduleInformation().importFunctionCount(), module->moduleInformation().tableCount()))) Instance(context, WTFMove(module), pointerToTopEntryFrame, pointerToActualStackLimit, WTFMove(storeTopCallFrame)));
 }
 
 Instance::~Instance() { }
 
 size_t Instance::extraMemoryAllocated() const
 {
-    return globalMemoryByteSize(m_module.get()) + allocationSize(m_numImportFunctions);
+    return globalMemoryByteSize(m_module.get()) + allocationSize(m_numImportFunctions, m_module->moduleInformation().tableCount());
 }
 
 void Instance::setGlobal(unsigned i, JSValue value)
@@ -99,42 +100,57 @@ void Instance::setFunctionWrapper(unsigned i, JSValue value)
     ASSERT(getFunctionWrapper(i) == value);
 }
 
-EncodedJSValue getWasmTableElement(Instance* instance, int32_t signedIndex)
+Table* Instance::table(unsigned i)
 {
+    RELEASE_ASSERT(i < m_module->moduleInformation().tableCount());
+    return *bitwise_cast<Table**>(bitwise_cast<char*>(this) + offsetOfTablePtr(m_numImportFunctions, i));
+}
+
+void Instance::setTable(unsigned i, Ref<Table>&& table)
+{
+    RELEASE_ASSERT(i < m_module->moduleInformation().tableCount());
+    ASSERT(!this->table(i));
+    *bitwise_cast<Table**>(bitwise_cast<char*>(this) + offsetOfTablePtr(m_numImportFunctions, i)) = &table.leakRef();
+}
+
+EncodedJSValue getWasmTableElement(Instance* instance, unsigned tableIndex, int32_t signedIndex)
+{
+    ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
     if (signedIndex < 0)
         return 0;
 
     uint32_t index = signedIndex;
-    if (index >= instance->table()->length())
+    if (index >= instance->table(tableIndex)->length())
         return 0;
 
-    return JSValue::encode(instance->table()->get(index));
+    return JSValue::encode(instance->table(tableIndex)->get(index));
 }
 
-bool setWasmTableElement(Instance* instance, int32_t signedIndex, EncodedJSValue encValue)
+bool setWasmTableElement(Instance* instance, unsigned tableIndex, int32_t signedIndex, EncodedJSValue encValue)
 {
+    ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
     if (signedIndex < 0)
         return false;
 
     uint32_t index = signedIndex;
-    if (index >= instance->table()->length())
+    if (index >= instance->table(tableIndex)->length())
         return false;
 
     JSValue value = JSValue::decode(encValue);
-    if (instance->table()->type() == Wasm::TableElementType::Anyref)
-        instance->table()->set(index, value);
-    else if (instance->table()->type() == Wasm::TableElementType::Funcref) {
+    if (instance->table(tableIndex)->type() == Wasm::TableElementType::Anyref)
+        instance->table(tableIndex)->set(index, value);
+    else if (instance->table(tableIndex)->type() == Wasm::TableElementType::Funcref) {
         WebAssemblyFunction* wasmFunction;
         WebAssemblyWrapperFunction* wasmWrapperFunction;
 
         if (isWebAssemblyHostFunction(*instance->owner<JSObject>()->vm(), value, wasmFunction, wasmWrapperFunction)) {
             ASSERT(!!wasmFunction || !!wasmWrapperFunction);
             if (wasmFunction)
-                instance->table()->asFuncrefTable()->setFunction(index, jsCast<JSObject*>(value), wasmFunction->importableFunction(), &wasmFunction->instance()->instance());
+                instance->table(tableIndex)->asFuncrefTable()->setFunction(index, jsCast<JSObject*>(value), wasmFunction->importableFunction(), &wasmFunction->instance()->instance());
             else
-                instance->table()->asFuncrefTable()->setFunction(index, jsCast<JSObject*>(value), wasmWrapperFunction->importableFunction(), &wasmWrapperFunction->instance()->instance());
+                instance->table(tableIndex)->asFuncrefTable()->setFunction(index, jsCast<JSObject*>(value), wasmWrapperFunction->importableFunction(), &wasmWrapperFunction->instance()->instance());
         } else if (value.isNull())
-            instance->table()->clear(index);
+            instance->table(tableIndex)->clear(index);
         else
             ASSERT_NOT_REACHED();
     } else

@@ -51,6 +51,7 @@ constexpr size_t maxFunctionLocals = 50000;
 constexpr size_t maxFunctionParams = 1000;
 
 constexpr size_t maxTableEntries = 10000000;
+constexpr unsigned maxTables = 1000000;
 
 } } // namespace JSC::Wasm
 

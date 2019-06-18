@@ -22,12 +22,12 @@ import Builder from '../Builder.js';
             .Function("set_tbl", { params: ["anyref"], ret: "void" })
               .I32Const(0)
               .GetLocal(0)
-              .TableSet()
+              .TableSet(0)
             .End()
 
             .Function("get_tbl", { params: [], ret: "anyref" })
               .I32Const(0)
-              .TableGet()
+              .TableGet(0)
             .End()
 
             .Function("tbl_is_null", { params: [], ret: "i32" })
@@ -88,12 +88,12 @@ import Builder from '../Builder.js';
             .Function("set_tbl", { params: ["anyref"], ret: "void" })
               .I32Const(0)
               .GetLocal(0)
-              .TableSet()
+              .TableSet(0)
             .End()
 
             .Function("get_tbl", { params: [], ret: "anyref" })
               .I32Const(0)
-              .TableGet()
+              .TableGet(0)
             .End()
 
             .Function("tbl_is_null", { params: [], ret: "i32" })
@@ -127,12 +127,12 @@ import Builder from '../Builder.js';
             .Function("set_tbl", { params: ["anyref"], ret: "void" })
               .I32Const(0)
               .GetLocal(0)
-              .TableSet()
+              .TableSet(0)
             .End()
 
             .Function("get_tbl", { params: [], ret: "anyref" })
               .I32Const(0)
-              .TableGet()
+              .TableGet(0)
             .End()
 
             .Function("tbl_is_null", { params: [], ret: "i32" })

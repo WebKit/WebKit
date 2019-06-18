@@ -13,7 +13,7 @@ import * as assert from '../assert.js';
         .End()
         .Code()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 34: Cannot have more than one Table for now");
+    new WebAssembly.Module(builder.WebAssembly().get())
 }
 
 {
@@ -38,7 +38,7 @@ import * as assert from '../assert.js';
         .End()
         .Code()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 17: Table count of 2 is invalid, at most 1 is allowed for now (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    new WebAssembly.Module(builder.WebAssembly().get())
 }
 
 {
@@ -73,7 +73,28 @@ import * as assert from '../assert.js';
                 .CallIndirect(0, 1)
             .End()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 6: call_indirect's 'reserved' varuint1 must be 0x0, in function at index 0 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 6: call_indirect's table index 1 invalid, limit is 1, in function at index 0 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+}
+
+{
+    const builder = new Builder()
+        .Type().End()
+        .Function().End()
+        .Table()
+            .Table({initial:20, element:"anyfunc"})
+            .Table({initial:20, element:"anyfunc"})
+        .End()
+        .Export()
+            .Function("foo")
+        .End()
+        .Code()
+            .Function("foo", {params: ["i32"]})
+                .GetLocal(0)
+                .GetLocal(0)
+                .CallIndirect(0, 1)
+            .End()
+        .End();
+    new WebAssembly.Module(builder.WebAssembly().get())
 }
 
 {
@@ -186,7 +207,7 @@ function assertBadTableImport(tableDescription, message) {
         .Function().End()
         .Code()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 39: Cannot have more than one Table for now");
+    new WebAssembly.Module(builder.WebAssembly().get())
 }
 
 
@@ -318,5 +339,28 @@ assert.throws(() => WebAssembly.Table.prototype.grow(undefined), TypeError, `exp
     const instance = new WebAssembly.Instance(module);
     assert.eq(instance.exports.table, instance.exports.table2);
     assert.eq(instance.exports.table.length, 20);
+    assert.truthy(instance.exports.table instanceof WebAssembly.Table);
+}
+
+{
+    const builder = new Builder()
+        .Type().End()
+        .Function().End()
+        .Table()
+            .Table({initial: 0, maximum: 1, element: "anyfunc"})
+            .Table({initial: 20, maximum: 30, element: "anyfunc"})
+        .End()
+        .Export()
+            .Table("table0", 0)
+            .Table("table", 1)
+            .Table("table2", 1)
+        .End()
+        .Code().End();
+
+    const module = new WebAssembly.Module(builder.WebAssembly().get());
+    const instance = new WebAssembly.Instance(module);
+    assert.eq(instance.exports.table, instance.exports.table2);
+    assert.eq(instance.exports.table.length, 20);
+    assert.eq(instance.exports.table0.length, 0);
     assert.truthy(instance.exports.table instanceof WebAssembly.Table);
 }
