@@ -1,3 +1,15 @@
+2019-06-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WebGL] Extensions3DOpenGLES::bindVertexArrayOES() should allow zero array object
+        https://bugs.webkit.org/show_bug.cgi?id=198929
+
+        Reviewed by Carlos Garcia Campos.
+
+        Enable the passing tests and update one baseline.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/webgl/2.0.0/conformance/extensions/oes-vertex-array-object-expected.txt:
+
 2019-06-17  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Make .length work

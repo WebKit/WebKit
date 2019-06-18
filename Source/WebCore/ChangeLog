@@ -1,3 +1,20 @@
+2019-06-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WebGL] Extensions3DOpenGLES::bindVertexArrayOES() should allow zero array object
+        https://bugs.webkit.org/show_bug.cgi?id=198929
+
+        Reviewed by Carlos Garcia Campos.
+
+        A 0 object parameter for the glBindVertexArrayOES() call is a valid
+        value since it binds the default vertex array object for any updates and
+        draws. As such the Extensions3DOpenGLES implementation shouldn't return
+        early if the object value is 0.
+
+        No new tests -- covered by existing tests.
+
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp:
+        (WebCore::Extensions3DOpenGLES::bindVertexArrayOES):
+
 2019-06-17  Sihui Liu  <sihui_liu@apple.com>
 
         -[WKWebsiteDataStore removeDataOfTypes:modifiedSince:completionHandler:] doesn't delete _WKWebsiteDataTypeCredentials

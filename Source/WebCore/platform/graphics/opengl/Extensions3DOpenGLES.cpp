@@ -167,9 +167,6 @@ GC3Dboolean Extensions3DOpenGLES::isVertexArrayOES(Platform3DObject array)
 
 void Extensions3DOpenGLES::bindVertexArrayOES(Platform3DObject array)
 {
-    if (!array)
-        return;
-
     m_context->makeContextCurrent();
     if (m_glBindVertexArrayOES)
         m_glBindVertexArrayOES(array);
