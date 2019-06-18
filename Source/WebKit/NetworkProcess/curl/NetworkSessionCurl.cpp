@@ -41,8 +41,8 @@ NetworkSessionCurl::NetworkSessionCurl(NetworkProcess& networkProcess, NetworkSe
     : NetworkSession(networkProcess, parameters.sessionID, parameters.localStorageDirectory, parameters.localStorageDirectoryExtensionHandle)
 {
     if (!parameters.cookiePersistentStorageFile.isEmpty())
-        networkStorageSession().setCookieDatabase(makeUniqueRef<CookieJarDB>(parameters.cookiePersistentStorageFile));
-    networkStorageSession().setProxySettings(WTFMove(parameters.proxySettings));
+        networkStorageSession()->setCookieDatabase(makeUniqueRef<CookieJarDB>(parameters.cookiePersistentStorageFile));
+    networkStorageSession()->setProxySettings(WTFMove(parameters.proxySettings));
 }
 
 NetworkSessionCurl::~NetworkSessionCurl()

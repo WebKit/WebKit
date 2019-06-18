@@ -1,3 +1,36 @@
+2019-06-18  Alex Christensen  <achristensen@webkit.org>
+
+        NetworkSession::networkStorageSession can return null
+        https://bugs.webkit.org/show_bug.cgi?id=198947
+        <rdar://problem/51394449>
+
+        Reviewed by Youenn Fablet.
+
+        We are seeing evidence of crashes from the map owning NetworkSessions and the map owning NetworkStorageSessions becoming out of sync
+        because NetworkSession is refcounted but NetworkStorageSession is not.  I started the complete fix in https://bugs.webkit.org/show_bug.cgi?id=194926
+        but for now let's add less risky null checks to prevent fallout.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::updateClientSideCookiesAgeCap):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::hasStorageAccessForFrame):
+        (WebKit::WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler):
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::removeAllStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::setCacheMaxAgeCap):
+        (WebKit::WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler):
+        (WebKit::WebResourceLoadStatisticsStore::removePrevalentDomains):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::networkStorageSession const):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::applyCookieBlockingPolicy):
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+        (WebKit::NetworkDataTaskCocoa::tryPasswordBasedAuthentication):
+
 2019-06-18  Brady Eidson  <beidson@apple.com>
 
         Handle NSProgress calling our cancellation handler on background threads (and calling it more than once).

@@ -39,7 +39,7 @@ using namespace WebCore;
 NetworkSessionSoup::NetworkSessionSoup(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
     : NetworkSession(networkProcess, parameters.sessionID, parameters.localStorageDirectory, parameters.localStorageDirectoryExtensionHandle)
 {
-    networkStorageSession().setCookieObserverHandler([this] {
+    networkStorageSession()->setCookieObserverHandler([this] {
         this->networkProcess().supplement<WebCookieManager>()->notifyCookiesDidChange(m_sessionID);
     });
 
@@ -55,7 +55,7 @@ NetworkSessionSoup::~NetworkSessionSoup()
 
 SoupSession* NetworkSessionSoup::soupSession() const
 {
-    return networkStorageSession().soupNetworkSession().soupSession();
+    return networkStorageSession()->soupNetworkSession().soupSession();
 }
 
 void NetworkSessionSoup::clearCredentials()

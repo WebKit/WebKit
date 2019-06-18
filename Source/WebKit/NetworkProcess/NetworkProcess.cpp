@@ -335,8 +335,9 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     initializeStorageQuota(parameters.defaultDataStoreParameters);
 
     auto* defaultSession = networkSession(PAL::SessionID::defaultSessionID());
+    auto* defaultStorageSession = defaultSession->networkStorageSession();
     for (const auto& cookie : parameters.defaultDataStoreParameters.pendingCookies)
-        defaultSession->networkStorageSession().setCookie(cookie);
+        defaultStorageSession->setCookie(cookie);
 
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);

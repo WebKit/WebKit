@@ -383,8 +383,10 @@ void ResourceLoadStatisticsStore::updateClientSideCookiesAgeCap()
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     RunLoop::main().dispatch([store = makeRef(m_store), seconds = m_parameters.clientSideCookiesAgeCapTime] () {
-        if (auto* networkSession = store->networkSession())
-            networkSession->networkStorageSession().setAgeCapForClientSideCookies(seconds);
+        if (auto* networkSession = store->networkSession()) {
+            if (auto* storageSession = networkSession->networkStorageSession())
+                storageSession->setAgeCapForClientSideCookies(seconds);
+        }
     });
 #endif
 }

@@ -68,11 +68,13 @@ Ref<NetworkSession> NetworkSession::create(NetworkProcess& networkProcess, Netwo
 #endif
 }
 
-NetworkStorageSession& NetworkSession::networkStorageSession() const
+NetworkStorageSession* NetworkSession::networkStorageSession() const
 {
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=194926 NetworkSession should own NetworkStorageSession
+    // instead of having separate maps with the same key and different management.
     auto* storageSession = m_networkProcess->storageSession(m_sessionID);
-    RELEASE_ASSERT(storageSession);
-    return *storageSession;
+    ASSERT(storageSession);
+    return storageSession;
 }
 
 NetworkSession::NetworkSession(NetworkProcess& networkProcess, PAL::SessionID sessionID, const String& localStorageDirectory, SandboxExtension::Handle& handle)

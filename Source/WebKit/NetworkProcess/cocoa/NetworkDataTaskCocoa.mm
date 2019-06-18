@@ -138,9 +138,15 @@ void NetworkDataTaskCocoa::applyCookieBlockingPolicy(bool shouldBlock)
     if (shouldBlock == m_hasBeenSetToUseStatelessCookieStorage)
         return;
 
-    NSHTTPCookieStorage *storage = shouldBlock ? statelessCookieStorage() : m_session->networkStorageSession().nsCookieStorage();
-    [m_task _setExplicitCookieStorage:storage._cookieStorage];
-    m_hasBeenSetToUseStatelessCookieStorage = shouldBlock;
+    NSHTTPCookieStorage *storage = nil;
+    if (shouldBlock)
+        storage = statelessCookieStorage();
+    else if (auto* storageSession = m_session->networkStorageSession())
+        storage = storageSession->nsCookieStorage();
+    if (storage) {
+        [m_task _setExplicitCookieStorage:storage._cookieStorage];
+        m_hasBeenSetToUseStatelessCookieStorage = shouldBlock;
+    }
 }
 #endif
 
@@ -180,10 +186,12 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         url = request.url();
     
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
-        if (m_user.isEmpty() && m_password.isEmpty())
-            m_initialCredential = m_session->networkStorageSession().credentialStorage().get(m_partition, url);
-        else
-            m_session->networkStorageSession().credentialStorage().set(m_partition, WebCore::Credential(m_user, m_password, WebCore::CredentialPersistenceNone), url);
+        if (auto* storageSession = m_session->networkStorageSession()) {
+            if (m_user.isEmpty() && m_password.isEmpty())
+                m_initialCredential = storageSession->credentialStorage().get(m_partition, url);
+            else
+                storageSession->credentialStorage().set(m_partition, WebCore::Credential(m_user, m_password, WebCore::CredentialPersistenceNone), url);
+        }
 #endif
     }
 
@@ -196,7 +204,8 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     bool shouldBlockCookies = false;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    shouldBlockCookies = storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless || session.networkStorageSession().shouldBlockCookies(request, frameID, pageID);
+    shouldBlockCookies = storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless
+        || (session.networkStorageSession() && session.networkStorageSession()->shouldBlockCookies(request, frameID, pageID));
 #endif
     restrictRequestReferrerToOriginIfNeeded(request, shouldBlockCookies);
 
@@ -351,7 +360,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         // Only consider applying authentication credentials if this is actually a redirect and the redirect
         // URL didn't include credentials of its own.
         if (m_user.isEmpty() && m_password.isEmpty() && !redirectResponse.isNull()) {
-            auto credential = m_session->networkStorageSession().credentialStorage().get(m_partition, request.url());
+            auto credential = m_session->networkStorageSession() ? m_session->networkStorageSession()->credentialStorage().get(m_partition, request.url()) : WebCore::Credential();
             if (!credential.isEmpty()) {
                 m_initialCredential = credential;
 
@@ -366,7 +375,8 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         request.setFirstPartyForCookies(request.url());
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    bool shouldBlockCookies = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless || m_session->networkStorageSession().shouldBlockCookies(request, m_frameID, m_pageID);
+    bool shouldBlockCookies = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless
+        || (m_session->networkStorageSession() && m_session->networkStorageSession()->shouldBlockCookies(request, m_frameID, m_pageID));
 #if !RELEASE_LOG_DISABLED
     if (m_session->shouldLogCookieInformation())
         RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::willPerformHTTPRedirection::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: %s cookies for redirect URL %s", this, m_pageID.toUInt64(), m_frameID, (unsigned long)[m_task taskIdentifier], (shouldBlockCookies ? "Blocking" : "Not blocking"), request.url().string().utf8().data());
@@ -397,7 +407,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
                 return completionHandler({ });
             if (!request.isNull()) {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-                bool shouldBlockCookies = m_session->networkStorageSession().shouldBlockCookies(request, m_frameID, m_pageID);
+                bool shouldBlockCookies = m_session->networkStorageSession() && m_session->networkStorageSession()->shouldBlockCookies(request, m_frameID, m_pageID);
 #else
                 bool shouldBlockCookies = false;
 #endif
@@ -445,16 +455,18 @@ bool NetworkDataTaskCocoa::tryPasswordBasedAuthentication(const WebCore::Authent
             // The stored credential wasn't accepted, stop using it.
             // There is a race condition here, since a different credential might have already been stored by another ResourceHandle,
             // but the observable effect should be very minor, if any.
-            m_session->networkStorageSession().credentialStorage().remove(m_partition, challenge.protectionSpace());
+            if (auto* storageSession = m_session->networkStorageSession())
+                storageSession->credentialStorage().remove(m_partition, challenge.protectionSpace());
         }
 
         if (!challenge.previousFailureCount()) {
-            auto credential = m_session->networkStorageSession().credentialStorage().get(m_partition, challenge.protectionSpace());
+            auto credential = m_session->networkStorageSession() ? m_session->networkStorageSession()->credentialStorage().get(m_partition, challenge.protectionSpace()) : WebCore::Credential();
             if (!credential.isEmpty() && credential != m_initialCredential) {
                 ASSERT(credential.persistence() == WebCore::CredentialPersistenceNone);
                 if (challenge.failureResponse().httpStatusCode() == 401) {
                     // Store the credential back, possibly adding it as a default for this directory.
-                    m_session->networkStorageSession().credentialStorage().set(m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
+                    if (auto* storageSession = m_session->networkStorageSession())
+                        storageSession->credentialStorage().set(m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
                 completionHandler(AuthenticationChallengeDisposition::UseCredential, credential);
                 return true;

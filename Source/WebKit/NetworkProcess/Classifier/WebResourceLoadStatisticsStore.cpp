@@ -300,7 +300,11 @@ void WebResourceLoadStatisticsStore::hasStorageAccess(const RegistrableDomain& s
 
 bool WebResourceLoadStatisticsStore::hasStorageAccessForFrame(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, uint64_t frameID, PageIdentifier pageID)
 {
-    return m_networkSession ? m_networkSession->networkStorageSession().hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID) : false;
+    if (m_networkSession) {
+        if (auto* storageSession = m_networkSession->networkStorageSession())
+            return storageSession->hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID);
+    }
+    return false;
 }
 
 void WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, uint64_t frameID, PageIdentifier pageID, CompletionHandler<void(bool hasAccess)>&& callback)
@@ -308,8 +312,10 @@ void WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler(const R
     ASSERT(RunLoop::isMain());
 
     if (m_networkSession) {
-        callback(m_networkSession->networkStorageSession().hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID));
-        return;
+        if (auto* storageSession = m_networkSession->networkStorageSession()) {
+            callback(storageSession->hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID));
+            return;
+        }
     }
 
     callback(false);
@@ -401,9 +407,11 @@ StorageAccessWasGranted WebResourceLoadStatisticsStore::grantStorageAccess(const
     bool isStorageGranted = false;
 
     if (m_networkSession) {
-        m_networkSession->networkStorageSession().grantStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID);
-        ASSERT(m_networkSession->networkStorageSession().hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID));
-        isStorageGranted = true;
+        if (auto* storageSession = m_networkSession->networkStorageSession()) {
+            storageSession->grantStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID);
+            ASSERT(storageSession->hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID));
+            isStorageGranted = true;
+        }
     }
 
     return isStorageGranted ? StorageAccessWasGranted::Yes : StorageAccessWasGranted::No;
@@ -431,8 +439,10 @@ void WebResourceLoadStatisticsStore::removeAllStorageAccess(CompletionHandler<vo
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_networkSession)
-        m_networkSession->networkStorageSession().removeAllStorageAccess();
+    if (m_networkSession) {
+        if (auto* storageSession = m_networkSession->networkStorageSession())
+            storageSession->removeAllStorageAccess();
+    }
 
     completionHandler();
 }
@@ -936,8 +946,10 @@ void WebResourceLoadStatisticsStore::setCacheMaxAgeCap(Seconds seconds, Completi
     ASSERT(RunLoop::isMain());
     ASSERT(seconds >= 0_s);
     
-    if (m_networkSession)
-        m_networkSession->networkStorageSession().setCacheMaxAgeCapForPrevalentResources(seconds);
+    if (m_networkSession) {
+        if (auto* storageSession = m_networkSession->networkStorageSession())
+            storageSession->setCacheMaxAgeCapForPrevalentResources(seconds);
+    }
 
     completionHandler();
 }
@@ -946,16 +958,20 @@ void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesFor
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_networkSession)
-        m_networkSession->networkStorageSession().setPrevalentDomainsToBlockCookiesFor(domainsToBlock);
+    if (m_networkSession) {
+        if (auto* storageSession = m_networkSession->networkStorageSession())
+            storageSession->setPrevalentDomainsToBlockCookiesFor(domainsToBlock);
+    }
 
     completionHandler();
 }
 
 void WebResourceLoadStatisticsStore::removePrevalentDomains(const Vector<RegistrableDomain>& domains)
 {
-    if (m_networkSession)
-        m_networkSession->networkStorageSession().removePrevalentDomains(domains);
+    if (m_networkSession) {
+        if (auto* storageSession = m_networkSession->networkStorageSession())
+            storageSession->removePrevalentDomains(domains);
+    }
 }
 
 void WebResourceLoadStatisticsStore::callRemoveDomainsHandler(const Vector<RegistrableDomain>& domains)
