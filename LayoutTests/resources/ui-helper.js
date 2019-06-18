@@ -351,6 +351,20 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static dismissFormAccessoryView()
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    uiController.dismissFormAccessoryView();
+                    uiController.uiScriptComplete();
+                })()`, resolve);
+        });
+    }
+
     static isShowingKeyboard()
     {
         return new Promise(resolve => {

@@ -1,3 +1,29 @@
+2019-06-18  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r240757): Cannot dismiss the keyboard on http://apple.com/apple-tv-plus
+        https://bugs.webkit.org/show_bug.cgi?id=198922
+        <rdar://problem/50300056>
+
+        Reviewed by Wenson Hsieh.
+
+        Actually dismiss the keyboard as intended in r240757. Do not wait for the round-trip
+        to the WebProcess to run through the -elementDidBlur steps in the UIProcess and hide
+        the keyboard when a person explicitly dismisses the keyboard via the Done button (iPhone)
+        or hide keyboard button (iPad).
+
+        Note that r240757 revealed another bug in this code, <https://bugs.webkit.org/show_bug.cgi?id=198928>.
+        I am unclear of the implications of that bug, but it is clear for this bug that it
+        never makes sense to round-trip to the WebProcess when the keyboard is dismissed by
+        a user gesture.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView endEditingAndUpdateFocusAppearanceWithReason:]): Invoke -_elementDidBlur
+        to blur the element in the UIProcess and hide the keyboard.
+        (-[WKContentView _elementDidBlur]): Prevent duplicate invocations of -didEndFormControlInteraction
+        and setIsShowingInputViewForFocusedElement messages by only doing these actions when
+        editablity changes. This covers the case where -_elementDidBlur may be invoked a second
+        time (the reply in the round-trip). In that case we don't need to do these actions.
+
 2019-06-18  Alex Christensen  <achristensen@webkit.org>
 
         NetworkSession::networkStorageSession can return null

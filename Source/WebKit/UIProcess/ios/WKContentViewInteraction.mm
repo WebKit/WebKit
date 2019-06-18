@@ -1226,8 +1226,12 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     if (!_webView._retainingActiveFocusedState) {
         // We need to complete the editing operation before we blur the element.
         [self _endEditing];
-        if ((reason == EndEditingReasonAccessoryDone && !currentUserInterfaceIdiomIsPad()) || _keyboardDidRequestDismissal)
+        if ((reason == EndEditingReasonAccessoryDone && !currentUserInterfaceIdiomIsPad()) || _keyboardDidRequestDismissal) {
             _page->blurFocusedElement();
+            // Don't wait for WebPageProxy::blurFocusedElement() to round-trip back to us to hide the keyboard
+            // because we know that the user explicitly requested us to do so.
+            [self _elementDidBlur];
+        }
     }
 
     [self _cancelInteraction];
@@ -5282,12 +5286,13 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         [self removeFocusedFormControlOverlay];
 #endif
 
-    // The custom fixed position rect behavior is affected by -isFocusingElement, so if that changes we need to recompute rects.
-    if (editableChanged)
+    if (editableChanged) {
+        // The custom fixed position rect behavior is affected by -isFocusingElement, so if that changes we need to recompute rects.
         [_webView _scheduleVisibleContentRectUpdate];
 
-    [_webView didEndFormControlInteraction];
-    _page->setIsShowingInputViewForFocusedElement(false);
+        [_webView didEndFormControlInteraction];
+        _page->setIsShowingInputViewForFocusedElement(false);
+    }
 
     if (!_isChangingFocus)
         _didAccessoryTabInitiateFocus = NO;
