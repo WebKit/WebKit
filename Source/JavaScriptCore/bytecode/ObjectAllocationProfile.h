@@ -92,6 +92,8 @@ class ObjectAllocationProfileWithPrototype : public ObjectAllocationProfileBase<
 public:
     using Base = ObjectAllocationProfileBase<ObjectAllocationProfileWithPrototype>;
 
+    static ptrdiff_t offsetOfPrototype() { return OBJECT_OFFSETOF(ObjectAllocationProfileWithPrototype, m_prototype); }
+
     ObjectAllocationProfileWithPrototype() = default;
 
     JSObject* prototype()

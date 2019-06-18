@@ -145,6 +145,7 @@ public:
     static void destroy(JSCell*);
 
     bool isBuiltinFunction() const { return m_isBuiltinFunction; }
+    bool isAnonymousBuiltinFunction() const { return isBuiltinFunction() && name().isPrivateName(); }
     ConstructAbility constructAbility() const { return static_cast<ConstructAbility>(m_constructAbility); }
     JSParserScriptMode scriptMode() const { return static_cast<JSParserScriptMode>(m_scriptMode); }
     bool isClassConstructorFunction() const { return constructorKind() != ConstructorKind::None; }

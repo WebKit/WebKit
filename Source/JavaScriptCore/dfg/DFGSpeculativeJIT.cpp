@@ -7182,7 +7182,27 @@ void SpeculativeJIT::compileNewFunctionCommon(GPRReg resultGPR, RegisteredStruct
     m_jit.storePtr(TrustedImmPtr::weakPointer(m_jit.graph(), executable), JITCompiler::Address(resultGPR, JSFunction::offsetOfExecutable()));
     m_jit.storePtr(TrustedImmPtr(nullptr), JITCompiler::Address(resultGPR, JSFunction::offsetOfRareData()));
     
-    m_jit.mutatorFence(*m_jit.vm());
+    if (executable->isAnonymousBuiltinFunction()) {
+        VM& vm = *m_jit.vm();
+        GPRTemporary allocator(this);
+        Allocator allocatorValue = allocatorForNonVirtualConcurrently<FunctionRareData>(vm, sizeof(FunctionRareData), AllocatorForMode::AllocatorIfExists);
+        emitAllocateJSCell(scratch1GPR, JITAllocator::constant(allocatorValue), allocator.gpr(), TrustedImmPtr(m_jit.graph().registerStructure(vm.functionRareDataStructure.get())), scratch2GPR, slowPath);
+
+        ptrdiff_t objectAllocationProfileOffset = FunctionRareData::offsetOfObjectAllocationProfile();
+        m_jit.storePtr(TrustedImmPtr(nullptr), JITCompiler::Address(scratch1GPR, objectAllocationProfileOffset + ObjectAllocationProfileWithPrototype::offsetOfAllocator()));
+        m_jit.storePtr(TrustedImmPtr(nullptr), JITCompiler::Address(scratch1GPR, objectAllocationProfileOffset + ObjectAllocationProfileWithPrototype::offsetOfStructure()));
+        m_jit.storePtr(TrustedImmPtr(nullptr), JITCompiler::Address(scratch1GPR, objectAllocationProfileOffset + ObjectAllocationProfileWithPrototype::offsetOfPrototype()));
+        m_jit.storePtr(TrustedImmPtr(0x1), JITCompiler::Address(scratch1GPR, FunctionRareData::offsetOfObjectAllocationProfileWatchpoint()));
+        m_jit.storePtr(TrustedImmPtr(nullptr), JITCompiler::Address(scratch1GPR, FunctionRareData::offsetOfInternalFunctionAllocationProfile() + InternalFunctionAllocationProfile::offsetOfStructure()));
+        m_jit.storePtr(TrustedImmPtr(nullptr), JITCompiler::Address(scratch1GPR, FunctionRareData::offsetOfBoundFunctionStructure()));
+        m_jit.storePtr(TrustedImmPtr(nullptr), JITCompiler::Address(scratch1GPR, FunctionRareData::offsetOfAllocationProfileClearingWatchpoint()));
+        m_jit.store8(TrustedImm32(0), JITCompiler::Address(scratch1GPR, FunctionRareData::offsetOfHasReifiedLength()));
+        m_jit.store8(TrustedImm32(1), JITCompiler::Address(scratch1GPR, FunctionRareData::offsetOfHasReifiedName()));
+        m_jit.mutatorFence(vm);
+        m_jit.storePtr(scratch1GPR, JITCompiler::Address(resultGPR, JSFunction::offsetOfRareData()));
+    } else
+        m_jit.mutatorFence(*m_jit.vm());
+
 }
 
 void SpeculativeJIT::compileNewFunction(Node* node)

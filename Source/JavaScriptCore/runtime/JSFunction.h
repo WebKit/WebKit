@@ -145,6 +145,7 @@ public:
 
     bool isHostOrBuiltinFunction() const;
     bool isBuiltinFunction() const;
+    bool isAnonymousBuiltinFunction() const;
     JS_EXPORT_PRIVATE bool isHostFunctionNonInline() const;
     bool isClassConstructorFunction() const;
 

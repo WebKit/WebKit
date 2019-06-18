@@ -59,6 +59,13 @@ namespace JSC { namespace FTL {
     macro(DirectArguments_modifiedArgumentsDescriptor, DirectArguments::offsetOfModifiedArgumentsDescriptor()) \
     macro(FunctionRareData_allocator, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfileWithPrototype::offsetOfAllocator()) \
     macro(FunctionRareData_structure, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfileWithPrototype::offsetOfStructure()) \
+    macro(FunctionRareData_prototype, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfileWithPrototype::offsetOfPrototype()) \
+    macro(FunctionRareData_objectAllocationProfileWatchpoint, FunctionRareData::offsetOfObjectAllocationProfileWatchpoint()) \
+    macro(FunctionRareData_internalFunctionAllocationProfile_structure, FunctionRareData::offsetOfInternalFunctionAllocationProfile() + InternalFunctionAllocationProfile::offsetOfStructure()) \
+    macro(FunctionRareData_boundFunctionStructure, FunctionRareData::offsetOfBoundFunctionStructure()) \
+    macro(FunctionRareData_allocationProfileClearingWatchpoint, FunctionRareData::offsetOfAllocationProfileClearingWatchpoint()) \
+    macro(FunctionRareData_hasReifiedLength, FunctionRareData::offsetOfHasReifiedLength()) \
+    macro(FunctionRareData_hasReifiedName, FunctionRareData::offsetOfHasReifiedName()) \
     macro(GetterSetter_getter, GetterSetter::offsetOfGetter()) \
     macro(GetterSetter_setter, GetterSetter::offsetOfSetter()) \
     macro(JSArrayBufferView_length, JSArrayBufferView::offsetOfLength()) \

@@ -68,6 +68,11 @@ inline bool JSFunction::isBuiltinFunction() const
     return !isHostFunction() && jsExecutable()->isBuiltinFunction();
 }
 
+inline bool JSFunction::isAnonymousBuiltinFunction() const
+{
+    return !isHostFunction() && jsExecutable()->isAnonymousBuiltinFunction();
+}
+
 inline bool JSFunction::isHostOrBuiltinFunction() const
 {
     return isHostFunction() || isBuiltinFunction();

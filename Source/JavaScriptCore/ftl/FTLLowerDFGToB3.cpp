@@ -5547,8 +5547,24 @@ private:
         m_out.storePtr(weakPointer(executable), fastObject, m_heaps.JSFunction_executable);
         m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.JSFunction_rareData);
         
-        mutatorFence();
-        
+        VM& vm = this->vm();
+        if (executable->isAnonymousBuiltinFunction()) {
+            Allocator allocator = allocatorForNonVirtualConcurrently<FunctionRareData>(vm, sizeof(FunctionRareData), AllocatorForMode::AllocatorIfExists);
+            LValue rareData = allocateCell(m_out.constIntPtr(allocator.localAllocator()), vm.functionRareDataStructure.get(), slowPath);
+            m_out.storePtr(m_out.intPtrZero, rareData, m_heaps.FunctionRareData_allocator);
+            m_out.storePtr(m_out.intPtrZero, rareData, m_heaps.FunctionRareData_structure);
+            m_out.storePtr(m_out.intPtrZero, rareData, m_heaps.FunctionRareData_prototype);
+            m_out.storePtr(m_out.intPtrOne, rareData, m_heaps.FunctionRareData_objectAllocationProfileWatchpoint);
+            m_out.storePtr(m_out.intPtrZero, rareData, m_heaps.FunctionRareData_internalFunctionAllocationProfile_structure);
+            m_out.storePtr(m_out.intPtrZero, rareData, m_heaps.FunctionRareData_boundFunctionStructure);
+            m_out.storePtr(m_out.intPtrZero, rareData, m_heaps.FunctionRareData_allocationProfileClearingWatchpoint);
+            m_out.store32As8(m_out.int32One, rareData, m_heaps.FunctionRareData_hasReifiedName);
+            m_out.store32As8(m_out.int32Zero, rareData, m_heaps.FunctionRareData_hasReifiedLength);
+            mutatorFence();
+            m_out.storePtr(rareData, fastObject, m_heaps.JSFunction_rareData);
+        } else
+            mutatorFence();
+
         ValueFromBlock fastResult = m_out.anchor(fastObject);
         m_out.jump(continuation);
         
@@ -5556,7 +5572,6 @@ private:
 
         Vector<LValue> slowPathArguments;
         slowPathArguments.append(scope);
-        VM& vm = this->vm();
         LValue callResult = lazySlowPath(
             [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
                 auto* operation = operationNewFunctionWithInvalidatedReallocationWatchpoint;

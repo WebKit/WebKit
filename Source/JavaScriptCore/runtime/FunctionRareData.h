@@ -61,10 +61,13 @@ public:
 
     DECLARE_INFO;
 
-    static inline ptrdiff_t offsetOfObjectAllocationProfile()
-    {
-        return OBJECT_OFFSETOF(FunctionRareData, m_objectAllocationProfile);
-    }
+    static inline ptrdiff_t offsetOfObjectAllocationProfile() { return OBJECT_OFFSETOF(FunctionRareData, m_objectAllocationProfile); }
+    static inline ptrdiff_t offsetOfObjectAllocationProfileWatchpoint() { return OBJECT_OFFSETOF(FunctionRareData, m_objectAllocationProfileWatchpoint); }
+    static inline ptrdiff_t offsetOfInternalFunctionAllocationProfile() { return OBJECT_OFFSETOF(FunctionRareData, m_internalFunctionAllocationProfile); }
+    static inline ptrdiff_t offsetOfBoundFunctionStructure() { return OBJECT_OFFSETOF(FunctionRareData, m_boundFunctionStructure); }
+    static inline ptrdiff_t offsetOfAllocationProfileClearingWatchpoint() { return OBJECT_OFFSETOF(FunctionRareData, m_allocationProfileClearingWatchpoint); }
+    static inline ptrdiff_t offsetOfHasReifiedLength() { return OBJECT_OFFSETOF(FunctionRareData, m_hasReifiedLength); }
+    static inline ptrdiff_t offsetOfHasReifiedName() { return OBJECT_OFFSETOF(FunctionRareData, m_hasReifiedName); }
 
     ObjectAllocationProfileWithPrototype* objectAllocationProfile()
     {

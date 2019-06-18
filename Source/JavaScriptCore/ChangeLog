@@ -1,3 +1,34 @@
+2019-06-18  Tadeu Zagallo  <tzagallo@apple.com>
+
+        DFG code should not reify the names of builtin functions with private names
+        https://bugs.webkit.org/show_bug.cgi?id=198849
+        <rdar://problem/51733890>
+
+        Reviewed by Filip Pizlo.
+
+        Builtin functions that have a private name call setHasReifiedName from finishCreation.
+        When compiled with DFG and FTL, that does not get called and the function ends up reifying
+        its name. In order to fix that, we initialize FunctionRareData and set m_hasReifiedName to
+        true from compileNewFunction in both DFG and FTL.
+
+        * bytecode/InternalFunctionAllocationProfile.h:
+        (JSC::InternalFunctionAllocationProfile::offsetOfStructure):
+        * bytecode/ObjectAllocationProfile.h:
+        (JSC::ObjectAllocationProfileWithPrototype::offsetOfPrototype):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionCommon):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        * runtime/FunctionExecutable.h:
+        * runtime/FunctionRareData.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::finishCreation):
+        * runtime/JSFunction.h:
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::isAnonymousBuiltinFunction const):
+
 2019-06-18  Keith Miller  <keith_miller@apple.com>
 
         MaybeParseAsGeneratorForScope sometimes loses track of its scope ref
