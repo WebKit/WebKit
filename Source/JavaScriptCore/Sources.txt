@@ -922,6 +922,7 @@ runtime/RegExpGlobalData.cpp
 runtime/RegExpMatchesArray.cpp
 runtime/RegExpObject.cpp
 runtime/RegExpPrototype.cpp
+runtime/RegExpStringIteratorPrototype.cpp
 runtime/RuntimeType.cpp
 runtime/SamplingCounter.cpp
 runtime/SamplingProfiler.cpp

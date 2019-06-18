@@ -111,6 +111,7 @@ JavaScriptCore_BUILTINS_SOURCES = \
     $(JavaScriptCore)/builtins/PromisePrototype.js \
     $(JavaScriptCore)/builtins/ReflectObject.js \
     $(JavaScriptCore)/builtins/RegExpPrototype.js \
+    ${JavaScriptCore}/builtins/RegExpStringIteratorPrototype.js \
     $(JavaScriptCore)/builtins/SetIteratorPrototype.js \
     $(JavaScriptCore)/builtins/SetPrototype.js \
     $(JavaScriptCore)/builtins/StringConstructor.js \

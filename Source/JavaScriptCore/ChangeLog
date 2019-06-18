@@ -1,3 +1,69 @@
+2019-06-18  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [ESNExt] String.prototype.matchAll
+        https://bugs.webkit.org/show_bug.cgi?id=186694
+
+        Reviewed by Yusuke Suzuki.
+
+        Implement String.prototype.matchAll.
+        (https://tc39.es/ecma262/#sec-string.prototype.matchall)
+
+        Also rename @globalPrivate @constructor functions and C++ variables holding them.
+
+        Shipping in Chrome since version 73.
+        Shipping in Firefox since version 67.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/wkbuiltins/builtins_generate_combined_header.py:
+        (get_var_name):
+        (generate_section_for_global_private_code_name_macro):
+        * Sources.txt:
+        * builtins/ArrayPrototype.js:
+        (globalPrivate.ArrayIterator):
+        (values):
+        (keys):
+        (entries):
+        (globalPrivate.createArrayIterator): Deleted.
+        * builtins/AsyncFromSyncIteratorPrototype.js:
+        (globalPrivate.createAsyncFromSyncIterator):
+        (globalPrivate.AsyncFromSyncIterator):
+        (globalPrivate.AsyncFromSyncIteratorConstructor): Deleted.
+        * builtins/BuiltinNames.h:
+        * builtins/MapPrototype.js:
+        (globalPrivate.MapIterator):
+        (values):
+        (keys):
+        (entries):
+        (globalPrivate.createMapIterator): Deleted.
+        * builtins/RegExpPrototype.js:
+        (globalPrivate.RegExpStringIterator):
+        (overriddenName.string_appeared_here.matchAll):
+        * builtins/RegExpStringIteratorPrototype.js: Added.
+        (next):
+        * builtins/SetPrototype.js:
+        (globalPrivate.SetIterator):
+        (values):
+        (entries):
+        (globalPrivate.createSetIterator): Deleted.
+        * builtins/StringPrototype.js:
+        (matchAll):
+        * builtins/TypedArrayPrototype.js:
+        (values):
+        (keys):
+        (entries):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::finishCreation):
+        * runtime/RegExpStringIteratorPrototype.cpp: Added.
+        (JSC::RegExpStringIteratorPrototype::finishCreation):
+        * runtime/RegExpStringIteratorPrototype.h: Added.
+        * runtime/StringPrototype.cpp:
+
 2019-06-18  Keith Miller  <keith_miller@apple.com>
 
         Add support for WeakRef

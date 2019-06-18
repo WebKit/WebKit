@@ -25,7 +25,7 @@
 
 @constructor
 @globalPrivate
-function createSetIterator(iteratedObject, kind)
+function SetIterator(iteratedObject, kind)
 {
     "use strict";
 
@@ -42,7 +42,7 @@ function values()
     if (!@isSet(this))
         @throwTypeError("Set.prototype.values requires that |this| be Set");
 
-    return new @createSetIterator(this, @iterationKindValue);
+    return new @SetIterator(this, @iterationKindValue);
 }
 
 function entries()
@@ -52,7 +52,7 @@ function entries()
     if (!@isSet(this))
         @throwTypeError("Set.prototype.entries requires that |this| be Set");
 
-    return new @createSetIterator(this, @iterationKindKeyValue);
+    return new @SetIterator(this, @iterationKindKeyValue);
 }
 
 function forEach(callback /*, thisArg */)

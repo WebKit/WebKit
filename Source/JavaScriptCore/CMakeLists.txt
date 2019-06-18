@@ -88,6 +88,7 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/ReflectObject.cpp
     runtime/RegExpConstructor.cpp
     runtime/RegExpPrototype.cpp
+    runtime/RegExpStringIteratorPrototype.cpp
     runtime/SetPrototype.cpp
     runtime/StringConstructor.cpp
     runtime/StringPrototype.cpp
@@ -931,6 +932,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/RegExpGlobalData.h
     runtime/RegExpKey.h
     runtime/RegExpObject.h
+    runtime/RegExpStringIteratorPrototype.h
     runtime/RuntimeFlags.h
     runtime/RuntimeType.h
     runtime/SamplingProfiler.h
@@ -1204,6 +1206,7 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/PromisePrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/ReflectObject.js
     ${JAVASCRIPTCORE_DIR}/builtins/RegExpPrototype.js
+    ${JAVASCRIPTCORE_DIR}/builtins/RegExpStringIteratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/SetIteratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/SetPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/StringConstructor.js

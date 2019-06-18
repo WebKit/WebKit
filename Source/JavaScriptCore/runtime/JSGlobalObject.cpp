@@ -156,6 +156,7 @@
 #include "RegExpMatchesArray.h"
 #include "RegExpObject.h"
 #include "RegExpPrototype.h"
+#include "RegExpStringIteratorPrototype.h"
 #include "ScopedArguments.h"
 #include "SetConstructor.h"
 #include "SetIteratorPrototype.h"
@@ -938,24 +939,27 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     JSObject* regExpSymbolReplace = asObject(m_regExpPrototype->getDirect(vm, vm.propertyNames->replaceSymbol).asCell());
     m_regExpProtoSymbolReplace.set(vm, this, regExpSymbolReplace);
 
-#define CREATE_PRIVATE_GLOBAL_FUNCTION(name, code) JSFunction* name ## PrivateFunction = JSFunction::create(vm, code ## CodeGenerator(vm), this);
+#define CREATE_PRIVATE_GLOBAL_FUNCTION(varName, funcName, code) JSFunction* varName ## PrivateFunction = JSFunction::create(vm, code ## CodeGenerator(vm), this);
     JSC_FOREACH_BUILTIN_FUNCTION_PRIVATE_GLOBAL_NAME(CREATE_PRIVATE_GLOBAL_FUNCTION)
 #undef CREATE_PRIVATE_GLOBAL_FUNCTION
 
     JSObject* arrayIteratorPrototype = ArrayIteratorPrototype::create(vm, this, ArrayIteratorPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
-    createArrayIteratorPrivateFunction->putDirect(vm, vm.propertyNames->prototype, arrayIteratorPrototype);
+    arrayIteratorConstructorPrivateFunction->putDirect(vm, vm.propertyNames->prototype, arrayIteratorPrototype);
 
     JSObject* asyncFromSyncIteratorPrototype = AsyncFromSyncIteratorPrototype::create(vm, this, AsyncFromSyncIteratorPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
-    AsyncFromSyncIteratorConstructorPrivateFunction->putDirect(vm, vm.propertyNames->prototype, asyncFromSyncIteratorPrototype);
+    asyncFromSyncIteratorConstructorPrivateFunction->putDirect(vm, vm.propertyNames->prototype, asyncFromSyncIteratorPrototype);
 
     JSObject* mapIteratorPrototype = MapIteratorPrototype::create(vm, this, MapIteratorPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
-    createMapIteratorPrivateFunction->putDirect(vm, vm.propertyNames->prototype, mapIteratorPrototype);
+    mapIteratorConstructorPrivateFunction->putDirect(vm, vm.propertyNames->prototype, mapIteratorPrototype);
+
+    JSObject* regExpStringIteratorPrototype = RegExpStringIteratorPrototype::create(vm, this, RegExpStringIteratorPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
+    regExpStringIteratorConstructorPrivateFunction->putDirect(vm, vm.propertyNames->prototype, regExpStringIteratorPrototype);
 
     JSObject* setIteratorPrototype = SetIteratorPrototype::create(vm, this, SetIteratorPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
-    createSetIteratorPrivateFunction->putDirect(vm, vm.propertyNames->prototype, setIteratorPrototype);
+    setIteratorConstructorPrivateFunction->putDirect(vm, vm.propertyNames->prototype, setIteratorPrototype);
 
     GlobalPropertyInfo staticGlobals[] = {
-#define INIT_PRIVATE_GLOBAL(name, code) GlobalPropertyInfo(vm.propertyNames->builtinNames().name ## PrivateName(), name ## PrivateFunction, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+#define INIT_PRIVATE_GLOBAL(varName, funcName, code) GlobalPropertyInfo(vm.propertyNames->builtinNames().funcName ## PrivateName(), varName ## PrivateFunction, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSC_FOREACH_BUILTIN_FUNCTION_PRIVATE_GLOBAL_NAME(INIT_PRIVATE_GLOBAL)
 #undef INIT_PRIVATE_GLOBAL
         GlobalPropertyInfo(vm.propertyNames->NaN, jsNaN(), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),

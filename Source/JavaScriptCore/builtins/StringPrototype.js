@@ -43,6 +43,24 @@ function match(regexp)
     return createdRegExp.@matchSymbol(thisString);
 }
 
+function matchAll(arg)
+{
+    "use strict";
+
+    if (@isUndefinedOrNull(this))
+        @throwTypeError("String.prototype.matchAll requires |this| not to be null nor undefined");
+
+    if (!@isUndefinedOrNull(arg)) {
+        let matcher = arg.@matchAllSymbol;
+        if (!@isUndefinedOrNull(matcher))
+            return matcher.@call(arg, this);
+    }
+
+    let string = @toString(this);
+    let regExp = @regExpCreate(arg, "g");
+    return regExp.@matchAllSymbol(string);
+}
+
 @globalPrivate
 function repeatSlowPath(string, count)
 {

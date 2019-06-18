@@ -164,6 +164,11 @@ namespace JSC {
     macro(regExpSearchFast) \
     macro(regExpSplitFast) \
     macro(regExpTestFast) \
+    macro(regExpStringIteratorRegExp) \
+    macro(regExpStringIteratorString) \
+    macro(regExpStringIteratorGlobal) \
+    macro(regExpStringIteratorUnicode) \
+    macro(regExpStringIteratorDone) \
     macro(stringIncludesInternal) \
     macro(stringSplitFast) \
     macro(stringSubstrInternal) \

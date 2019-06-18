@@ -1,3 +1,16 @@
+2019-06-18  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [ESNExt] String.prototype.matchAll
+        https://bugs.webkit.org/show_bug.cgi?id=186694
+
+        Reviewed by Yusuke Suzuki.
+
+        Implement String.prototype.matchAll.
+        (https://tc39.es/ecma262/#sec-string.prototype.matchall)
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2019-06-18  Keith Miller  <keith_miller@apple.com>
 
         Add support for WeakRef

@@ -98,6 +98,7 @@ const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, &st
 @begin stringPrototypeTable
     concat    JSBuiltin    DontEnum|Function 1
     match     JSBuiltin    DontEnum|Function 1
+    matchAll  JSBuiltin    DontEnum|Function 1
     padStart  JSBuiltin    DontEnum|Function 1
     padEnd    JSBuiltin    DontEnum|Function 1
     repeat    JSBuiltin    DontEnum|Function 1

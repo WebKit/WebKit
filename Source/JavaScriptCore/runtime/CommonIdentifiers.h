@@ -255,6 +255,7 @@
     macro(asyncIterator) \
     macro(iterator) \
     macro(match) \
+    macro(matchAll) \
     macro(replace) \
     macro(search) \
     macro(species) \

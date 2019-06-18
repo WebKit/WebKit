@@ -26,7 +26,7 @@
 
 @constructor
 @globalPrivate
-function createArrayIterator(iteratedObject, kind, iterationFunction)
+function ArrayIterator(iteratedObject, kind, iterationFunction)
 {
     "use strict";
 
@@ -41,21 +41,21 @@ function values()
 {
     "use strict";
 
-    return new @createArrayIterator(@toObject(this, "Array.prototype.values requires that |this| not be null or undefined"), "value", @arrayIteratorValueNext);
+    return new @ArrayIterator(@toObject(this, "Array.prototype.values requires that |this| not be null or undefined"), "value", @arrayIteratorValueNext);
 }
 
 function keys()
 {
     "use strict";
 
-    return new @createArrayIterator(@toObject(this, "Array.prototype.keys requires that |this| not be null or undefined"), "key", @arrayIteratorKeyNext);
+    return new @ArrayIterator(@toObject(this, "Array.prototype.keys requires that |this| not be null or undefined"), "key", @arrayIteratorKeyNext);
 }
 
 function entries()
 {
     "use strict";
 
-    return new @createArrayIterator(@toObject(this, "Array.prototype.entries requires that |this| not be null or undefined"), "key+value", @arrayIteratorKeyValueNext);
+    return new @ArrayIterator(@toObject(this, "Array.prototype.entries requires that |this| not be null or undefined"), "key+value", @arrayIteratorKeyValueNext);
 }
 
 function reduce(callback /*, initialValue */)

@@ -33,8 +33,14 @@ from string import Template
 from builtins_generator import BuiltinsGenerator
 from builtins_templates import BuiltinsGeneratorTemplates as Templates
 
-log = logging.getLogger('global')
 
+def get_var_name(function):
+    var_name = function.function_name
+    if function.is_constructor:
+        return var_name[:1].lower() + var_name[1:] + 'Constructor'
+    return var_name
+
+log = logging.getLogger('global')
 
 class BuiltinsCombinedHeaderGenerator(BuiltinsGenerator):
     def __init__(self, model):
@@ -164,10 +170,11 @@ extern const JSC::ConstructAbility s_%(codeName)sConstructAbility;""" % function
         functions.sort(key=lambda x: x.function_name)
         for function in functions:
             function_args = {
+                'varName': get_var_name(function),
                 'funcName': function.function_name,
                 'codeName': BuiltinsGenerator.mangledNameForFunction(function),
             }
 
-            lines.append("    macro(%(funcName)s, %(codeName)s) \\" % function_args)
+            lines.append("    macro(%(varName)s, %(funcName)s, %(codeName)s) \\" % function_args)
 
         return '\n'.join(lines)

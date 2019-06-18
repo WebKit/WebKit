@@ -72,21 +72,21 @@ function values()
 {
     "use strict";
     @typedArrayLength(this);
-    return new @createArrayIterator(this, "value", @arrayIteratorValueNext);
+    return new @ArrayIterator(this, "value", @arrayIteratorValueNext);
 }
 
 function keys()
 {
     "use strict";
     @typedArrayLength(this);
-    return new @createArrayIterator(this, "key", @arrayIteratorKeyNext);
+    return new @ArrayIterator(this, "key", @arrayIteratorKeyNext);
 }
 
 function entries()
 {
     "use strict";
     @typedArrayLength(this);
-    return new @createArrayIterator(this, "key+value", @arrayIteratorKeyValueNext);
+    return new @ArrayIterator(this, "key+value", @arrayIteratorKeyValueNext);
 }
 
 function every(callback /*, thisArg */)
