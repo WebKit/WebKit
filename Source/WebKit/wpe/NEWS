@@ -1,3 +1,20 @@
+=================
+WPE WebKit 2.25.1
+=================
+
+  - Enable process switch on cross site navigation.
+  - Fix rendering artifacts in youtube volume button.
+  - Fix trapezoid artifact in github comment box.
+  - Enable hyperlink auditing setting by default.
+  - Fix HLS streams being slow to start.
+  - Add support for subprocess sandboxing.
+  - Add API to get the web process unique identifier of a WebKitFrame.
+  - Add WebKitWebPage::did-associate-form-controls-for-frame signal and deprecate did-associate-form-controls.
+  - Implement AtkComponentIface scroll_to methods.
+  - Fix touch capabilities detection for websites checking touch events properties present in window or pointer media queries.
+  - Fix several crashes and rendering issues.
+
+
 ==================
 WPE WebKit 2.21.91
 ==================

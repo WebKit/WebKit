@@ -1,3 +1,9 @@
+2019-06-18  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.25.1 release
+
+        * Source/cmake/OptionsWPE.cmake: Bump version numbers.
+
 2019-06-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.25.2 release
