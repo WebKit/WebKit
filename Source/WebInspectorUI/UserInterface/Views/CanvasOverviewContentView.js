@@ -290,6 +290,8 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
             let header = this._savedRecordingsContentView.element.appendChild(document.createElement("header"));
             header.textContent = WI.UIString("Saved Recordings");
+
+            this.hideContentPlaceholder();
         }
 
         if (!this._savedRecordingsTreeOutline) {
