@@ -1,3 +1,18 @@
+2019-06-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert macOS to scroll by changing layer boundsOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=198917
+
+        Reviewed by Antti Koivisto.
+
+        * compositing/iframes/scrolling-iframe-expected.txt:
+        * compositing/overflow/textarea-scroll-touch-expected.txt:
+        * compositing/repaint/iframes/compositing-iframe-scroll-repaint-expected.txt:
+        * compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint-expected.txt:
+        * compositing/repaint/scroller-with-foreground-layer-repaints-expected.txt:
+        * compositing/rtl/rtl-scrolling-with-transformed-descendants-expected.txt:
+        * scrollingcoordinator/scrolling-tree/fixed-inside-frame-expected.txt:
+
 2019-06-18  Zan Dobersek  <zdobersek@igalia.com>
 
         [WebGL] Extensions3DOpenGLES::bindVertexArrayOES() should allow zero array object

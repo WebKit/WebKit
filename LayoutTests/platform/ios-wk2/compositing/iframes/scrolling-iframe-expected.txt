@@ -16,6 +16,7 @@
               (position 43.00 43.00)
               (children 1
                 (GraphicsLayer
+                  (bounds origin 80.00 80.00)
                   (anchor 0.00 0.00)
                   (bounds 300.00 150.00)
                   (children 1

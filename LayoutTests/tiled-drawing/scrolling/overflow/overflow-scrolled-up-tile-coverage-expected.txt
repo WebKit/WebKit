@@ -30,16 +30,16 @@
             (GraphicsLayer
               (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
+              (bounds origin 0.00 200.00)
               (bounds 385.00 512.00)
-              (visible rect 0.00, 0.00 385.00 x 512.00)
-              (coverage rect 0.00, 0.00 385.00 x 512.00)
+              (visible rect 0.00, 200.00 385.00 x 512.00)
+              (coverage rect 0.00, 200.00 385.00 x 512.00)
               (intersects coverage rect 1)
               (contentsScale 1.00)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=1 height=1)
                   (scrollOffset (0,200))
-                  (position 0.00 -200.00)
                   (anchor 0.00 0.00)
                   (bounds 385.00 3000.00)
                   (drawsContent 1)

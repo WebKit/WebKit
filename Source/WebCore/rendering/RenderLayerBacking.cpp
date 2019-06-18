@@ -1225,9 +1225,6 @@ void RenderLayerBacking::updateGeometry()
 
         ScrollOffset scrollOffset = m_owningLayer.scrollOffset();
         updateScrollOffset(scrollOffset);
-#if PLATFORM(IOS_FAMILY)
-        m_scrolledContentsLayer->setPosition({ }); // FIXME: necessary?
-#endif
 
         FloatSize oldScrollingLayerOffset = m_scrollContainerLayer->offsetFromRenderer();
         m_scrollContainerLayer->setOffsetFromRenderer(toFloatSize(paddingBox.location()));
@@ -1306,17 +1303,10 @@ void RenderLayerBacking::updateGeometry()
 
 void RenderLayerBacking::setLocationOfScrolledContents(ScrollOffset scrollOffset, ScrollingLayerPositionAction setOrSync)
 {
-#if PLATFORM(IOS_FAMILY)
     if (setOrSync == ScrollingLayerPositionAction::Sync)
         m_scrollContainerLayer->syncBoundsOrigin(scrollOffset);
     else
         m_scrollContainerLayer->setBoundsOrigin(scrollOffset);
-#else
-    if (setOrSync == ScrollingLayerPositionAction::Sync)
-        m_scrolledContentsLayer->syncPosition(-scrollOffset);
-    else
-        m_scrolledContentsLayer->setPosition(-scrollOffset);
-#endif
 }
 
 void RenderLayerBacking::updateScrollOffset(ScrollOffset scrollOffset)
@@ -1330,6 +1320,8 @@ void RenderLayerBacking::updateScrollOffset(ScrollOffset scrollOffset)
         setLocationOfScrolledContents(scrollOffset, ScrollingLayerPositionAction::Set);
         m_owningLayer.setRequiresScrollPositionReconciliation(false);
     }
+
+    ASSERT(m_scrolledContentsLayer->position().isZero());
 }
 
 void RenderLayerBacking::updateAfterDescendants()

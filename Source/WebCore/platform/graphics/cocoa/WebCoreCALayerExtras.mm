@@ -56,6 +56,13 @@
     };
 }
 
+- (void)_web_setLayerBoundsOrigin:(CGPoint)origin
+{
+    CGRect bounds = [self bounds];
+    bounds.origin = origin;
+    [self setBounds:bounds];
+}
+
 - (void)_web_setLayerTopLeftPosition:(CGPoint)position
 {
     CGSize layerSize = [self bounds].size;

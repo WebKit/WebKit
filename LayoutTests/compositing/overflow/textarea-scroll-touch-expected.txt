@@ -16,12 +16,12 @@
             (GraphicsLayer
               (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
+              (bounds origin 0.00 50.00)
               (bounds 189.00 124.00)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=1 height=1)
                   (scrollOffset (0,50))
-                  (position 0.00 -50.00)
                   (anchor 0.00 0.00)
                   (bounds 189.00 270.00)
                   (drawsContent 1)
@@ -39,12 +39,12 @@
             (GraphicsLayer
               (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
+              (bounds origin 0.00 50.00)
               (bounds 189.00 124.00)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=1 height=1)
                   (scrollOffset (0,50))
-                  (position 0.00 -50.00)
                   (anchor 0.00 0.00)
                   (bounds 189.00 270.00)
                   (drawsContent 1)

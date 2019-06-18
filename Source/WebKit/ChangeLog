@@ -1,3 +1,15 @@
+2019-06-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert macOS to scroll by changing layer boundsOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=198917
+
+        Reviewed by Antti Koivisto.
+
+        Remove unreached and confusing code.
+
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.mm:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::repositionScrollingLayers):
+
 2019-06-18  Dean Jackson  <dino@apple.com>
 
         Attachment elements are missing context menu previews

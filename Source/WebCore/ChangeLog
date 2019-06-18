@@ -1,3 +1,52 @@
+2019-06-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert macOS to scroll by changing layer boundsOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=198917
+
+        Reviewed by Antti Koivisto.
+
+        macOS did frame and overflow scrolling by changing the position of the scrolled
+        contents layer. iOS scrolls by changing the boundsOrigin of the scrollContainer layer
+        (which it has to, to match how UIScrollView works).
+
+        The iOS approach removes the need for an extra layer whose only role is for
+        scroll positioning, so migrate macOS to the same approach. A later patch can remove
+        m_scrolledContentsLayer.
+        
+        We can remove RenderLayerCompositor::m_clipLayer since m_scrollContainerLayer has exactly
+        the same role now.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::reconcileScrollPosition):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::insetClipLayerForFrameView):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers):
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::repositionScrollingLayers):
+        * platform/graphics/cocoa/WebCoreCALayerExtras.h:
+        * platform/graphics/cocoa/WebCoreCALayerExtras.mm:
+        (-[CALayer _web_setLayerBoundsOrigin:]):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::setLocationOfScrolledContents):
+        (WebCore::RenderLayerBacking::updateScrollOffset):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::~RenderLayerCompositor):
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        (WebCore::RenderLayerCompositor::frameViewDidChangeSize):
+        (WebCore::RenderLayerCompositor::updateLayersForScrollPosition):
+        (WebCore::RenderLayerCompositor::updateScrollContainerGeometry):
+        (WebCore::RenderLayerCompositor::frameViewDidScroll):
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        (WebCore::RenderLayerCompositor::destroyRootLayer):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeLayers):
+        (WebCore::RenderLayerCompositor::updateScrollLayerPosition): Deleted.
+        (WebCore::RenderLayerCompositor::updateScrollLayerClipping): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2019-06-18  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Identify elements with monotonically increasing counters

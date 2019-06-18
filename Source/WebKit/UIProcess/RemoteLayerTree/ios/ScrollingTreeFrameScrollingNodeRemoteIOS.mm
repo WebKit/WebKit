@@ -122,9 +122,7 @@ void ScrollingTreeFrameScrollingNodeRemoteIOS::repositionScrollingLayers()
         return;
     }
 
-    auto scrollPosition = currentScrollPosition();
-    // FIXME: This is always wrong on iOS. Maybe assert that we always have a delegate.
-    [scrolledContentsLayer() setPosition:-scrollPosition];
+    // Main frame scrolling is handled by the main UIScrollView.
 }
 
 void ScrollingTreeFrameScrollingNodeRemoteIOS::repositionRelatedLayers()

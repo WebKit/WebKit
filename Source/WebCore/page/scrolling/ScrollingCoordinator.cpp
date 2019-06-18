@@ -272,7 +272,7 @@ GraphicsLayer* ScrollingCoordinator::counterScrollingLayerForFrameView(FrameView
 GraphicsLayer* ScrollingCoordinator::insetClipLayerForFrameView(FrameView& frameView)
 {
     if (auto* renderView = frameView.frame().contentRenderer())
-        return renderView->compositor().clipLayer();
+        return renderView->compositor().scrollContainerLayer();
     return nullptr;
 }
 
