@@ -1,3 +1,21 @@
+2019-06-18  Keith Miller  <keith_miller@apple.com>
+
+        MaybeParseAsGeneratorForScope sometimes loses track of its scope ref
+        https://bugs.webkit.org/show_bug.cgi?id=198969
+        <rdar://problem/51620714>
+
+        Reviewed by Tadeu Zagallo.
+
+        Sometimes if the parser has enough nested scopes
+        MaybeParseAsGeneratorForScope can lose track of the ScopeRef it
+        should be tracking. This is because the parser sometimes relocates
+        its ScopeRefs. To fix this MaybeParseAsGeneratorForScope should
+        hold the scope ref it's watching.
+
+        * parser/Parser.cpp:
+        (JSC::Scope::MaybeParseAsGeneratorForScope::MaybeParseAsGeneratorForScope):
+        (JSC::Scope::MaybeParseAsGeneratorForScope::~MaybeParseAsGeneratorForScope):
+
 2019-06-17  Justin Michaud  <justin_michaud@apple.com>
 
         Validate that table element type is funcref if using an element section

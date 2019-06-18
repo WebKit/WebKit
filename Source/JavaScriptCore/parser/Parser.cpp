@@ -173,10 +173,23 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, JSParserBuiltinMode 
     next();
 }
 
-class Scope::MaybeParseAsGeneratorForScope : public SetForScope<bool> {
+class Scope::MaybeParseAsGeneratorForScope {
 public:
     MaybeParseAsGeneratorForScope(ScopeRef& scope, bool shouldParseAsGenerator)
-        : SetForScope<bool>(scope->m_isGenerator, shouldParseAsGenerator) { }
+        : m_scope(scope)
+        , m_oldValue(scope->m_isGenerator)
+    {
+        m_scope->m_isGenerator = shouldParseAsGenerator;
+    }
+
+    ~MaybeParseAsGeneratorForScope()
+    {
+        m_scope->m_isGenerator = m_oldValue;
+    }
+
+private:
+    ScopeRef m_scope;
+    bool m_oldValue;
 };
 
 struct DepthManager : private SetForScope<int> {
