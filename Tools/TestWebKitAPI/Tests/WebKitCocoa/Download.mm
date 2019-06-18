@@ -259,6 +259,7 @@ TEST(_WKDownload, CancelDownload)
 - (void)_downloadDidStart:(_WKDownload *)download
 {
     EXPECT_EQ([download originatingWebView], _webView);
+    [_webView _killWebContentProcessAndResetState];
     _webView = nullptr;
 
     WTF::callOnMainThread([download = retainPtr(download)] {
@@ -750,6 +751,7 @@ static bool didDownloadStart;
 - (void)_downloadDidStart:(_WKDownload *)download
 {
     didDownloadStart = true;
+    [download.originatingWebView _killWebContentProcessAndResetState];
 }
 
 - (void)_downloadDidCancel:(_WKDownload *)download
