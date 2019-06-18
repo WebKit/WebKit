@@ -31,6 +31,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 

@@ -9144,6 +9144,7 @@
 		6F0830DF20B46951008A945B /* BlockFormattingContextGeometry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlockFormattingContextGeometry.cpp; sourceTree = "<group>"; };
 		6F0CD692229ED31900C5994E /* InlineLine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineLine.cpp; sourceTree = "<group>"; };
 		6F0CD694229ED32700C5994E /* InlineLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineLine.h; sourceTree = "<group>"; };
+		6F10B08622B8568D0090E69C /* InlineFormattingContextQuirks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineFormattingContextQuirks.cpp; sourceTree = "<group>"; };
 		6F1CC1DC225F8B4100720AD2 /* InlineTextItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineTextItem.cpp; sourceTree = "<group>"; };
 		6F1CC1DD225F8B4200720AD2 /* InlineTextItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InlineTextItem.h; sourceTree = "<group>"; };
 		6F222B741AB52D640094651A /* WebGLVertexArrayObjectBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGLVertexArrayObjectBase.h; sourceTree = "<group>"; };
@@ -16402,6 +16403,7 @@
 				6F7CA3C8208C2B2E002F29AB /* InlineFormattingContext.h */,
 				6F35EFAF2187CBD50044E0F4 /* InlineFormattingContextGeometry.cpp */,
 				6F25B200220A85AB0000011B /* InlineFormattingContextLineLayout.cpp */,
+				6F10B08622B8568D0090E69C /* InlineFormattingContextQuirks.cpp */,
 				115CFA7D208B8E10001E6991 /* InlineFormattingState.cpp */,
 				115CFA7C208B8E10001E6991 /* InlineFormattingState.h */,
 				1123AFDD209ABBBA00736ACC /* InlineInvalidation.cpp */,

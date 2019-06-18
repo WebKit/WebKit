@@ -29,6 +29,8 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "Hyphenation.h"
+#include "InlineItem.h"
+#include "InlineTextItem.h"
 #include "LayoutState.h"
 
 namespace WebCore {

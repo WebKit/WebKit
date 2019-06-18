@@ -101,8 +101,12 @@ std::unique_ptr<Line::Content> Line::close()
             m_contentLogicalHeight = { };
         }
 
-        auto hasDescent = false;
-        auto hasNonBaselineAlignedContent = false;
+        // Remove descent when all content is baseline aligned but none of them have descent.
+        if (InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(m_layoutState, *m_content)) {
+            m_contentLogicalHeight -= m_baseline.descent;
+            m_baseline.descent = { };
+        }
+
         for (auto& run : m_content->runs()) {
             LayoutUnit logicalTop;
             auto& inlineItem = run->inlineItem;
@@ -112,20 +116,17 @@ std::unique_ptr<Line::Content> Line::close()
 
             switch (verticalAlign) {
             case VerticalAlign::Baseline:
-                if (inlineItem.isLineBreak() || inlineItem.isText()) {
+                if (inlineItem.isLineBreak() || inlineItem.isText())
                     logicalTop = baselineOffset() - ascent;
-                    hasDescent = hasDescent || !run->isCollapsed;
-                } else if (inlineItem.isContainerStart()) {
+                else if (inlineItem.isContainerStart()) {
                     auto& displayBox = m_layoutState.displayBoxForLayoutBox(layoutBox);
                     logicalTop = baselineOffset() - ascent - displayBox.borderTop() - displayBox.paddingTop().valueOr(0);
-                    hasDescent = hasDescent || (displayBox.horizontalBorder() || (displayBox.horizontalPadding() && displayBox.horizontalPadding().value()));
                 } else if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
                     auto& formattingState = downcast<InlineFormattingState>(m_layoutState.establishedFormattingState(layoutBox));
                     // Spec makes us generate at least one line -even if it is empty.
                     ASSERT(!formattingState.lineBoxes().isEmpty());
                     auto inlineBlockBaseline = formattingState.lineBoxes().last().baseline();
                     logicalTop = baselineOffset() - inlineBlockBaseline.ascent;
-                    hasDescent = hasDescent || inlineBlockBaseline.descent;
                 } else
                     logicalTop = baselineOffset() - run->logicalRect.height();
                 break;
@@ -139,13 +140,7 @@ std::unique_ptr<Line::Content> Line::close()
                 ASSERT_NOT_IMPLEMENTED_YET();
                 break;
             }
-            hasNonBaselineAlignedContent = hasNonBaselineAlignedContent || verticalAlign != VerticalAlign::Baseline;
             run->logicalRect.setTop(logicalTop);
-        }
-        // Remove descent when all content is baseline aligned but none of them have descent.
-        if (!m_layoutState.inNoQuirksMode() && !hasNonBaselineAlignedContent && !hasDescent) {
-            m_contentLogicalHeight -= m_baseline.descent;
-            m_baseline.descent = { };
         }
     }
     m_content->setLogicalRect({ logicalTop(), logicalLeft(), contentLogicalWidth(), logicalHeight() });

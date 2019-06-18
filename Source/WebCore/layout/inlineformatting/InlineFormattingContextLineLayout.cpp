@@ -310,8 +310,6 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
     Optional<unsigned> previousLineLastRunIndex = inlineDisplayRuns.isEmpty() ? Optional<unsigned>() : inlineDisplayRuns.size() - 1;
     // 9.4.2 Inline formatting contexts
     // A line box is always tall enough for all of the boxes it contains.
-
-    // Ignore the initial strut.
     auto lineBoxRect = Display::Rect { lineContent.logicalTop(), lineContent.logicalLeft(), 0, lineContent.logicalHeight()};
     // Create final display runs.
     auto& lineRuns = lineContent.runs();

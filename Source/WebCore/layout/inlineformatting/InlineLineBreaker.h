@@ -27,9 +27,12 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutUnit.h"
+
 namespace WebCore {
 namespace Layout {
 
+class InlineItem;
 class InlineTextItem;
 
 class LineBreaker {

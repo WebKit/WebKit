@@ -95,6 +95,11 @@ private:
         const Container& m_formattingRoot;
     };
 
+    class Quirks {
+    public:
+        static bool lineDescentNeedsCollapsing(const LayoutState&, const Line::Content&);
+    };
+
     class Geometry : public FormattingContext::Geometry {
     public:
         static HeightAndMargin inlineBlockHeightAndMargin(const LayoutState&, const Box&);
@@ -114,6 +119,8 @@ private:
     void collectInlineContent() const;
 
     InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
+    // FIXME: Come up with a structure that requires no friending.
+    friend class Line;
 };
 
 }
