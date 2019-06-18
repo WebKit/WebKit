@@ -26,17 +26,17 @@
 #import "config.h"
 #import "SOAuthorizationNSURLExtras.h"
 
-#if HAVE(APP_SSO)
-
 #import <pal/cocoa/AppSSOSoftLink.h>
 
 @implementation NSURL (SOAuthorizationExtras)
 
 + (BOOL)_web_canPerformAuthorizationWithURL:(NSURL *)url
 {
+#if HAVE(APP_SSO)
     return [PAL::getSOAuthorizationClass() canPerformAuthorizationWithURL:url responseCode:0];
+#else
+    return false;
+#endif
 }
 
 @end
-
-#endif

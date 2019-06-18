@@ -1,3 +1,13 @@
+2019-06-17  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, build fix after r246514
+
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationNSURLExtras.h:
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationNSURLExtras.mm:
+        (+[NSURL _web_canPerformAuthorizationWithURL:]):
+        Expose the above method as a SPI for Safari.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-06-17  Alex Christensen  <achristensen@webkit.org>
 
         Protect StorageManager::m_localStorageNamespaces with a Lock

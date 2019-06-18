@@ -25,13 +25,9 @@
 
 #pragma once
 
-#if HAVE(APP_SSO)
-
 // FIXME rdar://problem/50028246 Remove the following once the radar is fixed.
 @interface NSURL (SOAuthorizationExtras)
 
 + (BOOL)_web_canPerformAuthorizationWithURL:(NSURL *)url;
 
 @end
-
-#endif
