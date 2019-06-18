@@ -43,7 +43,6 @@
 #include <gst/pbutils/missing-plugins.h>
 #include <limits>
 #include <wtf/FileSystem.h>
-#include <wtf/HexNumber.h>
 #include <wtf/MediaTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
@@ -327,9 +326,10 @@ void MediaPlayerPrivateGStreamer::load(MediaStreamPrivate& stream)
 {
 #if GST_CHECK_VERSION(1, 10, 0)
     m_streamPrivate = &stream;
-    auto pipelineName = makeString("mediastream_",
-        (stream.hasCaptureVideoSource() || stream.hasCaptureAudioSource()) ? "Local" : "Remote",
-        "_0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase));
+    static Atomic<uint32_t> pipelineId;
+    auto pipelineName = makeString("mediastream-",
+        (stream.hasCaptureVideoSource() || stream.hasCaptureAudioSource()) ? "local" : "remote",
+        "-", pipelineId.exchangeAdd(1));
 
     loadFull(String("mediastream://") + stream.id(), pipelineName);
     syncOnClock(false);
@@ -2386,8 +2386,9 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
 
     // gst_element_factory_make() returns a floating reference so
     // we should not adopt.
+    static Atomic<uint32_t> pipelineId;
     setPipeline(gst_element_factory_make(playbinName,
-        (pipelineName.isEmpty() ? makeString("play_0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase)) : pipelineName).utf8().data()));
+        (pipelineName.isEmpty() ? makeString("media-player-", pipelineId.exchangeAdd(1)) : pipelineName).utf8().data()));
     setStreamVolumeElement(GST_STREAM_VOLUME(m_pipeline.get()));
 
     GST_INFO_OBJECT(pipeline(), "Using legacy playbin element: %s", boolForPrinting(m_isLegacyPlaybin));

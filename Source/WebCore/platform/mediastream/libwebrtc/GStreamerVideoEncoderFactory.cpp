@@ -41,10 +41,11 @@
 #undef GST_USE_UNSTABLE_API
 #include <gst/pbutils/encoding-profile.h>
 #include <gst/video/video.h>
+#include <wtf/Atomics.h>
 #include <wtf/HashMap.h>
-#include <wtf/HexNumber.h>
 #include <wtf/Lock.h>
 #include <wtf/StdMap.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 // Required for unified builds
 #ifdef GST_CAT_DEFAULT
@@ -95,7 +96,8 @@ public:
 
     GstElement* makeElement(const gchar* factoryName)
     {
-        auto name = makeString(Name(), "_enc_", factoryName, "_0x", hex(reinterpret_cast<uintptr_t>(this)));
+        static Atomic<uint32_t> elementId;
+        auto name = makeString(Name(), "-enc-", factoryName, "-", elementId.exchangeAdd(1));
         auto elem = gst_element_factory_make(factoryName, name.utf8().data());
 
         return elem;
@@ -136,8 +138,7 @@ public:
         m_sink = makeElement("appsink");
         g_object_set(m_sink, "sync", FALSE, nullptr);
 
-        auto name = makeString(Name(), "_enc_rawcapsfilter_0x", hex(reinterpret_cast<uintptr_t>(this)));
-        m_capsFilter = gst_element_factory_make("capsfilter", name.utf8().data());
+        m_capsFilter = makeElement("capsfilter");
         if (m_restrictionCaps)
             g_object_set(m_capsFilter, "caps", m_restrictionCaps.get(), nullptr);
 
