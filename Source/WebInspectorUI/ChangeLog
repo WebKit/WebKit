@@ -1,5 +1,22 @@
 2019-06-18  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION: Heap: subsequent snapshots taken manually don't appear in the list
+        https://bugs.webkit.org/show_bug.cgi?id=198941
+
+        Reviewed by Joseph Pecoraro.
+
+        Since heap snapshot records can be added at any time, including when not actively recording,
+        when the "Entire Recording" range is selected, make sure to set the `filterEndTime` to be an
+        effectively infinite number so that records added later aren't filtered out.
+
+        This isn't done for other timeline views as they may have graphs that don't expect to render
+        from time 0 till infinity, not to mention being unable to add records when not recording.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView.prototype._updateTimelineViewTimes):
+
+2019-06-18  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION: Canvas: cannot select saved recordings
         https://bugs.webkit.org/show_bug.cgi?id=198953
 

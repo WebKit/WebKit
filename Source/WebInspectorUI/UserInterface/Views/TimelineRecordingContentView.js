@@ -836,8 +836,13 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         let endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
 
         if (entireRangeSelected) {
-            if (timelineView instanceof WI.RenderingFrameTimelineView) {
+            if (timelineView instanceof WI.RenderingFrameTimelineView)
                 endTime = this._renderingFrameTimeline.records.length;
+            else if (timelineView instanceof WI.HeapAllocationsTimelineView) {
+                // Since heap snapshots can be added at any time, including when not actively recording,
+                // make sure to set the end time to an effectively infinite number so any new records
+                // that are added in the future aren't filtered out.
+                endTime = Number.MAX_VALUE;
             } else {
                 // Clamp selection to the end of the recording (with padding),
                 // so graph views will show an auto-sized graph without a lot of
