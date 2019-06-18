@@ -1585,10 +1585,14 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _mainResourceDidChange(event)
     {
-        this._runForMainCollection((collection) => {
+        this._runForMainCollection((collection, wasMain) => {
             let frame = event.target;
-            if (frame.isMainFrame() && WI.settings.clearNetworkOnNavigate.value)
+            if (frame.isMainFrame() && WI.settings.clearNetworkOnNavigate.value) {
                 this._resetCollection(collection);
+
+                if (wasMain && !this._needsInitialPopulate)
+                    this._hideDetailView();
+            }
 
             if (this._transitioningPageTarget) {
                 this._transitioningPageTarget = false;

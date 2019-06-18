@@ -1,5 +1,21 @@
 2019-06-18  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Network: detail view shouldn't stay open when the related entry is removed
+        https://bugs.webkit.org/show_bug.cgi?id=198951
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._mainResourceDidChange):
+        Hide the detail view if the main resource changes and we aren't preserving the log.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype.reloadVisibleColumnCells):
+        Only attempt to populate cells for rows that the `_dataSource` actually has. Without this,
+        the `_delegate` may be asked to populate a cell for a row it doesn't have, which would error.
+
+2019-06-18  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: parseQueryParameters fails to successfully parse query parameter values that contain "="
         https://bugs.webkit.org/show_bug.cgi?id=198971
         <rdar://problem/51852782>

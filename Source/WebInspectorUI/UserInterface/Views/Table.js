@@ -281,7 +281,8 @@ WI.Table = class Table extends WI.View
         if (columnIndex === -1)
             return;
 
-        for (let rowIndex = this._visibleRowIndexStart; rowIndex < this._visibleRowIndexEnd; ++rowIndex) {
+        let numberOfRows = Math.min(this._visibleRowIndexEnd, this.numberOfRows);
+        for (let rowIndex = this._visibleRowIndexStart; rowIndex < numberOfRows; ++rowIndex) {
             let row = this._cachedRows.get(rowIndex);
             if (!row)
                 continue;
