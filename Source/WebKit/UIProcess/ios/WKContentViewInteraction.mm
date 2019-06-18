@@ -4674,6 +4674,10 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         return YES;
 #endif
 
+    // Don't insert character for an unhandled Command-key key command. This matches iOS and Mac platform conventions.
+    if (event.modifierFlags & WebEventFlagMaskCommandKey)
+        return NO;
+
     NSString *characters = event.characters;
     if (!characters.length)
         return NO;
