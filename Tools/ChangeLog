@@ -1,3 +1,16 @@
+2019-06-18  Dan Bernstein  <mitz@apple.com>
+
+        Revert workaround for bug 198904 from run-webkit-archive
+        https://bugs.webkit.org/show_bug.cgi?id=198931
+
+        Reviewed by Alexey Proskuryakov.
+
+        Reverted r245965, now that the load commands in the XPC service binaries make them correctly
+        pick up the built frameworks.
+
+        * WebKitArchiveSupport/run-webkit-archive:
+        (set_dyld_framework_path):
+
 2019-06-17  Sihui Liu  <sihui_liu@apple.com>
 
         -[WKWebsiteDataStore removeDataOfTypes:modifiedSince:completionHandler:] doesn't delete _WKWebsiteDataTypeCredentials

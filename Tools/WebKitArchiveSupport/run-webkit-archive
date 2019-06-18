@@ -54,8 +54,6 @@ def set_dyld_framework_path(script_path):
     print('Setting DYLD FRAMEWORK and LIBRARY paths to {}'.format(dyld_path))
     os.environ['DYLD_FRAMEWORK_PATH'] = dyld_path
     os.environ['DYLD_LIBRARY_PATH'] = dyld_path
-    os.environ['__XPC_DYLD_FRAMEWORK_PATH'] = dyld_path
-    os.environ['__XPC_DYLD_LIBRARY_PATH'] = dyld_path
     
 def main():
     check_for_valid_platform()
