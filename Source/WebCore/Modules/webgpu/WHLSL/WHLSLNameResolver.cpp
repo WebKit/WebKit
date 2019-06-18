@@ -94,16 +94,6 @@ void NameResolver::visit(AST::FunctionDefinition& functionDefinition)
     newNameResolver.checkErrorAndVisit(functionDefinition.block());
 }
 
-void NameResolver::visit(AST::NativeFunctionDeclaration& nativeFunctionDeclaration)
-{
-    NameContext newNameContext(&m_nameContext);
-    NameResolver newNameResolver(newNameContext);
-    newNameResolver.setCurrentFunctionDefinition(m_currentFunction);
-    checkErrorAndVisit(nativeFunctionDeclaration.type());
-    for (auto& parameter : nativeFunctionDeclaration.parameters())
-        newNameResolver.checkErrorAndVisit(parameter);
-}
-
 void NameResolver::visit(AST::Block& block)
 {
     NameContext nameContext(&m_nameContext);
