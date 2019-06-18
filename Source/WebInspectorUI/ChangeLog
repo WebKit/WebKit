@@ -1,3 +1,15 @@
+2019-06-17  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Elements: remove ellipses from "Break on" context menu item title
+        https://bugs.webkit.org/show_bug.cgi?id=198944
+
+        Reviewed by Devin Rousso.
+
+        Update context menu title to comply with Apple HI guidelines.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/ContextMenuUtilities.js:
+
 2019-06-17  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: adding a DOM/Event/URL breakpoint should enable breakpoints

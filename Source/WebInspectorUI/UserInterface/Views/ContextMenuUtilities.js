@@ -291,7 +291,7 @@ WI.appendContextMenuItemsForDOMNodeBreakpoints = function(contextMenu, domNode, 
 
     contextMenu.__domBreakpointItemsAdded = true;
 
-    let subMenu = contextMenu.appendSubMenuItem(WI.UIString("Break on\u2026"));
+    let subMenu = contextMenu.appendSubMenuItem(WI.UIString("Break on"));
 
     let breakpoints = WI.domDebuggerManager.domBreakpointsForNode(domNode);
     let keyValuePairs = breakpoints.map((breakpoint) => [breakpoint.type, breakpoint]);
