@@ -1,3 +1,13 @@
+2019-06-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        WebSocketDeflater uses an unnecessarily constrained compression memory level
+        https://bugs.webkit.org/show_bug.cgi?id=198973
+
+        Reviewed by Alex Christensen.
+
+        * Modules/websockets/WebSocketDeflater.cpp:
+        Set the memLevel to the deflateInit2 default value, not a minimum value.
+
 2019-06-18  Keith Miller  <keith_miller@apple.com>
 
         Add support for WeakRef

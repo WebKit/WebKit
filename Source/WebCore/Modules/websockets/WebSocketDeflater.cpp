@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-static const int defaultMemLevel = 1;
+static const int defaultMemLevel = 8;
 static const size_t bufferIncrementUnit = 4096;
 
 WebSocketDeflater::WebSocketDeflater(int windowBits, ContextTakeOverMode contextTakeOverMode)
