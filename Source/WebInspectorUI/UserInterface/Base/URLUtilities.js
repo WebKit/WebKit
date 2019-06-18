@@ -202,13 +202,18 @@ function parseQueryString(queryString, arrayResult)
     }
 
     var parameters = arrayResult ? [] : {};
-    var parameterStrings = queryString.split("&");
-    for (var i = 0; i < parameterStrings.length; ++i) {
-        var pair = parameterStrings[i].split("=").map(decode);
+    for (let parameterString of queryString.split("&")) {
+        let index = parameterString.indexOf("=");
+        if (index === -1)
+            index = parameterString.length;
+
+        let name = decode(parameterString.substring(0, index));
+        let value = decode(parameterString.substring(index + 1));
+
         if (arrayResult)
-            parameters.push({name: pair[0], value: pair[1]});
+            parameters.push({name, value});
         else
-            parameters[pair[0]] = pair[1];
+            parameters[name] = value;
     }
 
     return parameters;

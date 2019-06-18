@@ -386,6 +386,39 @@ function test()
     });
 
     suite.addTestCase({
+        name: "parseQueryString",
+        test() {
+            function test(queryString, expected) {
+                InspectorTest.expectShallowEqual(parseQueryString(queryString), expected, `The query '${queryString}' was parsed successfully.`);
+            }
+
+            test("a", {a: ""});
+            test("a&b", {a: "", b: ""});
+
+            test("a=", {a: ""});
+            test("a=&b=", {a: "", b: ""});
+
+            test("a=1", {a: "1"});
+            test("a=1&b=2", {a: "1", b: "2"});
+
+            test("a==1", {a: "=1"});
+            test("a==1&b==2", {a: "=1", b: "=2"});
+
+            test("a=1=", {a: "1="});
+            test("a=1=&b=2=", {a: "1=", b: "2="});
+
+            test("a==1=", {a: "=1="});
+            test("a==1=&b==2=", {a: "=1=", b: "=2="});
+
+            test("a&b=1&c==2=&d&e=3&f==4=", {a: "", b: "1", c: "=2=", d: "", e: "3", f: "=4="});
+
+            test("a=foo%20bar&b=123%3A456", {a: "foo bar", b: "123:456"});
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
         name: "WI.h2Authority",
         test() {
             function test(url, expected) {

@@ -335,6 +335,22 @@ PASS: charset should be: 'US-ASCII'
 PASS: base64 should be: 'true'
 PASS: data should be: 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='
 
+-- Running test case: parseQueryString
+PASS: The query 'a' was parsed successfully.
+PASS: The query 'a&b' was parsed successfully.
+PASS: The query 'a=' was parsed successfully.
+PASS: The query 'a=&b=' was parsed successfully.
+PASS: The query 'a=1' was parsed successfully.
+PASS: The query 'a=1&b=2' was parsed successfully.
+PASS: The query 'a==1' was parsed successfully.
+PASS: The query 'a==1&b==2' was parsed successfully.
+PASS: The query 'a=1=' was parsed successfully.
+PASS: The query 'a=1=&b=2=' was parsed successfully.
+PASS: The query 'a==1=' was parsed successfully.
+PASS: The query 'a==1=&b==2=' was parsed successfully.
+PASS: The query 'a&b=1&c==2=&d&e=3&f==4=' was parsed successfully.
+PASS: The query 'a=foo%20bar&b=123%3A456' was parsed successfully.
+
 -- Running test case: WI.h2Authority
 PASS: HTTP/2 :authority of 'http://example.com' should be 'example.com'.
 PASS: HTTP/2 :authority of 'https://example.com' should be 'example.com'.
