@@ -119,6 +119,14 @@ void ResourceLoader::releaseResources()
 
 void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<void(bool)>&& completionHandler)
 {
+#if PLATFORM(IOS_FAMILY)
+    if (!m_documentLoader) {
+        // We should always have a DocumentLoader at this point, but crash reports indicate that it is sometimes null.
+        // See https://bugs.webkit.org/show_bug.cgi?id=187360
+        ASSERT_NOT_REACHED();
+        return completionHandler(false);
+    }
+#endif
     ASSERT(!m_handle);
     ASSERT(m_request.isNull());
     ASSERT(m_deferredRequest.isNull());

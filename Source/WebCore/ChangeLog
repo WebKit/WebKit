@@ -1,3 +1,21 @@
+2019-06-17  Alex Christensen  <achristensen@webkit.org>
+
+        Fix iOS crash when starting loads with no active DocumentLoader
+        https://bugs.webkit.org/show_bug.cgi?id=187360
+        <rdar://problem/29389084>
+
+        Reviewed by Geoff Garen.
+
+        When FrameLoader::activeDocumentLoader returns null in the ResourceLoader constructor,
+        on iOS we will dereference it to ask if it has a frame in an early return in init.
+        Let's not.  If we don't have a DocumentLoader, we don't have a frame and should fail.
+
+        Crash reports indicate this crash is related to Beacon and other uses of LoaderStrategy::startPingLoad,
+        but attempts to make a unit test to reproduce the crash were unsuccessful.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init):
+
 2019-06-17  Robin Morisset  <rmorisset@apple.com>
 
         [WHLSL] The name resolver does not deal with nativeFunctionDeclaration
