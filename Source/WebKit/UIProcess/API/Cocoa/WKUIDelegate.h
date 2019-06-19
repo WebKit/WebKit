@@ -135,7 +135,7 @@ NS_ASSUME_NONNULL_BEGIN
  This method will only be invoked for elements that have default preview in WebKit, which is
  limited to links. In the future, it could be invoked for additional elements.
  */
-- (BOOL)webView:(WKWebView *)webView shouldPreviewElement:(WKPreviewElementInfo *)elementInfo WK_API_DEPRECATED("This API will be replaced", ios(10.0, WK_IOS_TBA));
+- (BOOL)webView:(WKWebView *)webView shouldPreviewElement:(WKPreviewElementInfo *)elementInfo WK_API_DEPRECATED_WITH_REPLACEMENT("webView:contextMenuConfigurationForElement:completionHandler:", ios(10.0, WK_IOS_TBA));
 
 /*! @abstract Allows your app to provide a custom view controller to show when the given element is peeked.
  @param webView The web view invoking the delegate method.
@@ -150,13 +150,13 @@ NS_ASSUME_NONNULL_BEGIN
  Returning nil will result in WebKit's default preview behavior. webView:commitPreviewingViewController: will only be invoked
  if a non-nil view controller was returned.
  */
-- (nullable UIViewController *)webView:(WKWebView *)webView previewingViewControllerForElement:(WKPreviewElementInfo *)elementInfo defaultActions:(NSArray<id <WKPreviewActionItem>> *)previewActions WK_API_DEPRECATED("This API will be replaced", ios(10.0, WK_IOS_TBA));
+- (nullable UIViewController *)webView:(WKWebView *)webView previewingViewControllerForElement:(WKPreviewElementInfo *)elementInfo defaultActions:(NSArray<id <WKPreviewActionItem>> *)previewActions WK_API_DEPRECATED_WITH_REPLACEMENT("webView:contextMenuConfigurationForElement:completionHandler:", ios(10.0, WK_IOS_TBA));
 
 /*! @abstract Allows your app to pop to the view controller it created.
  @param webView The web view invoking the delegate method.
  @param previewingViewController The view controller that is being popped.
  */
-- (void)webView:(WKWebView *)webView commitPreviewingViewController:(UIViewController *)previewingViewController WK_API_DEPRECATED("webView:contextMenuForElement:willCommitWithAnimator:", ios(10.0, WK_IOS_TBA));
+- (void)webView:(WKWebView *)webView commitPreviewingViewController:(UIViewController *)previewingViewController WK_API_DEPRECATED_WITH_REPLACEMENT("webView:contextMenuForElement:willCommitWithAnimator:", ios(10.0, WK_IOS_TBA));
 
 #endif // TARGET_OS_IPHONE
 
