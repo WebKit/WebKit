@@ -84,7 +84,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
             FALLTHROUGH;
         case Wasm::I32:
         case Wasm::Anyref:
-        case Wasm::Anyfunc:
+        case Wasm::Funcref:
             if (numGPRs >= wasmCallingConvention().m_gprArgs.size())
                 totalFrameSize += sizeof(void*);
             ++numGPRs;
@@ -154,7 +154,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
             switch (signature.argument(i)) {
             case Wasm::I32:
             case Wasm::I64:
-            case Wasm::Anyfunc:
+            case Wasm::Funcref:
             case Wasm::Anyref:
                 if (numGPRs >= wasmCallingConvention().m_gprArgs.size()) {
                     if (signature.argument(i) == Wasm::I32) {
@@ -240,7 +240,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
         jit.moveTrustedValue(jsUndefined(), JSValueRegs { GPRInfo::returnValueGPR });
         break;
     case Wasm::Anyref:
-    case Wasm::Anyfunc:
+    case Wasm::Funcref:
         break;
     case Wasm::I32:
         jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);

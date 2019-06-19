@@ -237,7 +237,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
                 return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "imported global", "must be a number")));
             // iii. Append ToWebAssemblyValue(v) to imports.
             switch (moduleInformation.globals[import.kindIndex].type) {
-            case Wasm::Anyfunc:
+            case Wasm::Funcref:
                 if (!isWebAssemblyHostFunction(vm, value) && !value.isNull())
                     return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "imported global", "must be a wasm exported function or null")));
                 m_instance->instance().setGlobal(import.kindIndex, value);
@@ -410,7 +410,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
             // Return ToJSValue(v).
             switch (global.type) {
             case Wasm::Anyref:
-            case Wasm::Anyfunc:
+            case Wasm::Funcref:
                 exportedValue = JSValue::decode(m_instance->instance().loadI64Global(exp.kindIndex));
                 break;
 

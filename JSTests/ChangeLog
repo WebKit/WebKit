@@ -1,3 +1,99 @@
+2019-06-19  Justin Michaud  <justin_michaud@apple.com>
+
+        [WASM-References] Rename anyfunc to funcref
+        https://bugs.webkit.org/show_bug.cgi?id=198983
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/function-tests/basic-element.js:
+        * wasm/function-tests/context-switch.js:
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.makeInstance):
+        (makeInstance):
+        (assert.eq.makeInstance):
+        * wasm/function-tests/exceptions.js:
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.makeInstance):
+        * wasm/function-tests/grow-memory-2.js:
+        (assert.eq.instance.exports.foo):
+        * wasm/function-tests/nameSection.js:
+        (const.compile):
+        * wasm/function-tests/stack-overflow.js:
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.makeInstance):
+        (assertOverflows.makeInstance):
+        * wasm/function-tests/table-basic-2.js:
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.makeInstance):
+        * wasm/function-tests/table-basic.js:
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.makeInstance):
+        * wasm/function-tests/trap-from-start-async.js:
+        * wasm/function-tests/trap-from-start.js:
+        * wasm/js-api/Module.exports.js:
+        (assert.truthy):
+        * wasm/js-api/Module.imports.js:
+        (assert.truthy):
+        * wasm/js-api/call-indirect.js:
+        (const.oneTable):
+        (const.multiTable):
+        (multiTable.const.makeTable):
+        (multiTable):
+        (multiTable.Polyphic2Import):
+        (multiTable.VirtualImport):
+        * wasm/js-api/element-data.js:
+        * wasm/js-api/element.js:
+        (assert.throws.new.WebAssembly.Module.builder.WebAssembly):
+        (assert.throws):
+        (badInstantiation.makeModule):
+        (badInstantiation.test):
+        (badInstantiation):
+        * wasm/js-api/extension-MemoryMode.js:
+        * wasm/js-api/table.js:
+        (new.WebAssembly.Module):
+        (assert.throws):
+        (assertBadTableImport):
+        (assert.throws.WebAssembly.Table.prototype.grow):
+        (new.WebAssembly.Table):
+        (assertBadTable):
+        (assert.truthy):
+        * wasm/js-api/test_basic_api.js:
+        (const.c.in.constructorProperties.switch):
+        * wasm/js-api/unique-signature.js:
+        (CallIndirectWithDuplicateSignatures):
+        * wasm/js-api/wrapper-function.js:
+        * wasm/modules/table.wat:
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports/imports.wat:
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports/sum.wat:
+        * wasm/modules/wasm-imports-wasm-exports/imports.wat:
+        * wasm/modules/wasm-imports-wasm-exports/sum.wat:
+        * wasm/references/anyref_table.js:
+        * wasm/references/anyref_table_import.js:
+        (doSet):
+        (assert.throws):
+        * wasm/references/func_ref.js:
+        (makeFuncrefIdent):
+        (assert.eq.instance.exports.fix):
+        (GetLocal.0.I32Const.0.TableSet.0.End.End.WebAssembly.assert.throws):
+        (GetLocal.0.I32Const.0.TableSet.0.End.End.WebAssembly):
+        (let.importedFun.of):
+        (makeAnyfuncIdent): Deleted.
+        (makeAnyfuncIdent.fun): Deleted.
+        * wasm/references/multitable.js:
+        (assert.eq):
+        (assert.throws):
+        * wasm/references/table_misc.js:
+        (GetLocal.0.TableFill.0.End.End.WebAssembly):
+        * wasm/references/validation.js:
+        (assert.throws.new.WebAssembly.Module.bin):
+        (assert.throws):
+        * wasm/spec-harness/index.js:
+        * wasm/spec-harness/wasm-constants.js:
+        * wasm/spec-harness/wasm-module-builder.js:
+        (WasmModuleBuilder.prototype.toArray):
+        * wasm/spec-harness/wast.js:
+        (elem_type):
+        (string_of_elem_type):
+        (string_of_table_type):
+        * wasm/spec-tests/jsapi.js:
+        * wasm/stress/wasm-table-grow-initialize.js:
+        * wasm/wasm.json:
+
 2019-06-18  Justin Michaud  <justin_michaud@apple.com>
 
         [WASM-References] Add support for Table.size, grow and fill instructions

@@ -514,16 +514,16 @@ test(() => {
     assertThrows(() => new Table(1), TypeError);
     assertThrows(() => new Table({initial:1, element:1}), TypeError);
     assertThrows(() => new Table({initial:1, element:"any"}), TypeError);
-    assertThrows(() => new Table({initial:1, element:{valueOf() { return "anyfunc" }}}), TypeError);
-    assertThrows(() => new Table({initial:{valueOf() { throw new Error("here")}}, element:"anyfunc"}), Error);
-    assertThrows(() => new Table({initial:-1, element:"anyfunc"}), RangeError);
-    assertThrows(() => new Table({initial:Math.pow(2,32), element:"anyfunc"}), RangeError);
-    assertThrows(() => new Table({initial:2, maximum:1, element:"anyfunc"}), RangeError);
-    assertThrows(() => new Table({initial:2, maximum:Math.pow(2,32), element:"anyfunc"}), RangeError);
-    assert_equals(new Table({initial:1, element:"anyfunc"}) instanceof Table, true);
-    assert_equals(new Table({initial:1.5, element:"anyfunc"}) instanceof Table, true);
-    assert_equals(new Table({initial:1, maximum:1.5, element:"anyfunc"}) instanceof Table, true);
-    assert_equals(new Table({initial:1, maximum:Math.pow(2,32)-1, element:"anyfunc"}) instanceof Table, true);
+    assertThrows(() => new Table({initial:1, element:{valueOf() { return "funcref" }}}), TypeError);
+    assertThrows(() => new Table({initial:{valueOf() { throw new Error("here")}}, element:"funcref"}), Error);
+    assertThrows(() => new Table({initial:-1, element:"funcref"}), RangeError);
+    assertThrows(() => new Table({initial:Math.pow(2,32), element:"funcref"}), RangeError);
+    assertThrows(() => new Table({initial:2, maximum:1, element:"funcref"}), RangeError);
+    assertThrows(() => new Table({initial:2, maximum:Math.pow(2,32), element:"funcref"}), RangeError);
+    assert_equals(new Table({initial:1, element:"funcref"}) instanceof Table, true);
+    assert_equals(new Table({initial:1.5, element:"funcref"}) instanceof Table, true);
+    assert_equals(new Table({initial:1, maximum:1.5, element:"funcref"}) instanceof Table, true);
+    assert_equals(new Table({initial:1, maximum:Math.pow(2,32)-1, element:"funcref"}) instanceof Table, true);
 }, "'WebAssembly.Table' constructor function");
 
 test(() => {
@@ -543,7 +543,7 @@ test(() => {
 }, "'WebAssembly.Table.prototype' object");
 
 test(() => {
-    tbl1 = new Table({initial:2, element:"anyfunc"});
+    tbl1 = new Table({initial:2, element:"funcref"});
     assert_equals(typeof tbl1, "object");
     assert_equals(String(tbl1), "[object WebAssembly.Table]");
     assert_equals(Object.getPrototypeOf(tbl1), tableProto);
@@ -631,7 +631,7 @@ test(() => {
     assertThrows(() => tblGrow.call({}), TypeError);
     assertThrows(() => tblGrow.call(tbl1, -1), RangeError);
     assertThrows(() => tblGrow.call(tbl1, Math.pow(2,32)), RangeError);
-    var tbl = new Table({element:"anyfunc", initial:1, maximum:2});
+    var tbl = new Table({element:"funcref", initial:1, maximum:2});
     assert_equals(tbl.length, 1);
     assert_equals(tbl.grow(0), 1);
     assert_equals(tbl.length, 1);
@@ -732,7 +732,7 @@ test(() => {
         }, 'unexpected success in assertInstantiateError');
     }
     var scratch_memory = new WebAssembly.Memory({initial:1});
-    var scratch_table = new WebAssembly.Table({element:"anyfunc", initial:1, maximum:1});
+    var scratch_table = new WebAssembly.Table({element:"funcref", initial:1, maximum:1});
     assertInstantiateError([], TypeError);
     assertInstantiateError([undefined], TypeError);
     assertInstantiateError([1], TypeError);

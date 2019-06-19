@@ -2,7 +2,7 @@ import * as assert from '../assert.js';
 import Builder from '../Builder.js';
 
 const memoryInfo = { initial: 2 };
-const tableInfo = { element: "anyfunc", initial: 8 };
+const tableInfo = { element: "funcref", initial: 8 };
 
 (function StartTraps() {
     const builder = (new Builder())

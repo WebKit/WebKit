@@ -93,9 +93,9 @@ for (const c in constructorProperties) {
         new WebAssembly.Memory({initial: 20});
         break;
     case "Table":
-        new WebAssembly.Table({initial: 20, element: "anyfunc"});
-        new WebAssembly.Table({initial: 20, maximum: 20, element: "anyfunc"});
-        new WebAssembly.Table({initial: 20, maximum: 25, element: "anyfunc"});
+        new WebAssembly.Table({initial: 20, element: "funcref"});
+        new WebAssembly.Table({initial: 20, maximum: 20, element: "funcref"});
+        new WebAssembly.Table({initial: 20, maximum: 25, element: "funcref"});
         break;
     case "CompileError":
     case "LinkError":

@@ -198,7 +198,7 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
 
     int8_t type;
     WASM_PARSER_FAIL_IF(!parseInt7(type), "can't parse Table type");
-    WASM_PARSER_FAIL_IF(type != Wasm::Anyfunc && type != Wasm::Anyref, "Table type should be anyfunc or anyref, got ", type);
+    WASM_PARSER_FAIL_IF(type != Wasm::Funcref && type != Wasm::Anyref, "Table type should be funcref or anyref, got ", type);
 
     uint32_t initial;
     Optional<uint32_t> maximum;
@@ -209,7 +209,7 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
 
     ASSERT(!maximum || *maximum >= initial);
 
-    TableElementType tableType = type == Wasm::Anyfunc ? TableElementType::Funcref : TableElementType::Anyref;
+    TableElementType tableType = type == Wasm::Funcref ? TableElementType::Funcref : TableElementType::Anyref;
     m_info->tables.append(TableInformation(initial, maximum, isImport, tableType));
 
     return { };
@@ -378,7 +378,7 @@ auto SectionParser::parseElement() -> PartialResult
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't get ", elementNum, "th Element table index");
         WASM_PARSER_FAIL_IF(tableIndex >= m_info->tableCount(), "Element section for Table ", tableIndex, " exceeds available Table ", m_info->tableCount());
-        WASM_PARSER_FAIL_IF(m_info->tables[tableIndex].type() != TableElementType::Funcref, "Table ", tableIndex, " must have type 'anyfunc' to have an element section");
+        WASM_PARSER_FAIL_IF(m_info->tables[tableIndex].type() != TableElementType::Funcref, "Table ", tableIndex, " must have type 'funcref' to have an element section");
         Type initExprType;
         WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, initExprBits, initExprType));
         WASM_PARSER_FAIL_IF(initExprType != I32, "Element init_expr must produce an i32");
@@ -481,7 +481,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
     }
 
     case RefNull: {
-        resultType = Anyfunc;
+        resultType = Funcref;
         bitsOrImportNumber = JSValue::encode(jsNull());
         break;
     }
@@ -491,7 +491,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
         WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get ref.func index");
         WASM_PARSER_FAIL_IF(index >= m_info->functions.size(), "ref.func index", index, " exceeds the number of functions ", m_info->functions.size());
 
-        resultType = Anyfunc;
+        resultType = Funcref;
         bitsOrImportNumber = index;
         break;
     }

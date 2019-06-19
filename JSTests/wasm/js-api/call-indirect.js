@@ -6,7 +6,7 @@ const oneTable = () => {
         .Type().End()
         .Import()
             .Function("imp", "func", { params: ["i32"] })
-            .Table("imp", "table", { initial: 1, maximum: 1, element: "anyfunc"})
+            .Table("imp", "table", { initial: 1, maximum: 1, element: "funcref"})
         .End()
         .Function().End()
         .Export()
@@ -36,8 +36,8 @@ const multiTable = () => {
         .Type().End()
         .Import()
             .Function("imp", "func", { params: ["i32"] })
-            .Table("imp", "table0", { initial: 0, maximum: 0, element: "anyfunc"})
-            .Table("imp", "table", { initial: 1, maximum: 1, element: "anyfunc"})
+            .Table("imp", "table0", { initial: 0, maximum: 0, element: "funcref"})
+            .Table("imp", "table", { initial: 1, maximum: 1, element: "funcref"})
         .End()
         .Function().End()
         .Export()
@@ -65,7 +65,7 @@ const multiTable = () => {
 for (const wasmModuleWhichImportJS of [oneTable, multiTable]) {
 
 const makeTable = () => {
-    return new WebAssembly.Table({initial: 1, maximum: 1, element: "anyfunc"});
+    return new WebAssembly.Table({initial: 1, maximum: 1, element: "funcref"});
 };
 
 (function MonomorphicImport() {
@@ -73,7 +73,7 @@ const makeTable = () => {
     const counterSetter = v => counter = v;
     const table = makeTable();
     const module = wasmModuleWhichImportJS();
-    const instance = new WebAssembly.Instance(module, { imp: { func: counterSetter, table, table0: new WebAssembly.Table({initial: 0, maximum: 0, element: "anyfunc"}) } });
+    const instance = new WebAssembly.Instance(module, { imp: { func: counterSetter, table, table0: new WebAssembly.Table({initial: 0, maximum: 0, element: "funcref"}) } });
     table.set(0, instance.exports.callFunc);
     for (let i = 0; i < 4096; ++i) {
         // Invoke this a bunch of times to make sure the IC in the wasm -> JS stub works correctly.
@@ -90,11 +90,11 @@ const makeTable = () => {
     const module = wasmModuleWhichImportJS();
 
     const tableA = makeTable();
-    const instanceA = new WebAssembly.Instance(module, { imp: { func: counterASetter, table: tableA, table0: new WebAssembly.Table({initial: 0, maximum: 0, element: "anyfunc"}) } });
+    const instanceA = new WebAssembly.Instance(module, { imp: { func: counterASetter, table: tableA, table0: new WebAssembly.Table({initial: 0, maximum: 0, element: "funcref"}) } });
     tableA.set(0, instanceA.exports.callFunc);
 
     const tableB = makeTable();
-    const instanceB = new WebAssembly.Instance(module, { imp: { func: counterBSetter, table: tableB, table0: new WebAssembly.Table({initial: 0, maximum: 0, element: "anyfunc"}) } });
+    const instanceB = new WebAssembly.Instance(module, { imp: { func: counterBSetter, table: tableB, table0: new WebAssembly.Table({initial: 0, maximum: 0, element: "funcref"}) } });
     tableB.set(0, instanceB.exports.callFunc);
     for (let i = 0; i < 2048; ++i) {
         instanceA.exports.changeCounter(i, 0);
@@ -126,7 +126,7 @@ const makeTable = () => {
     let instances = [];
     for (let i = 0; i < num; ++i) {
         let table = makeTable();
-        instances[i] = new WebAssembly.Instance(module, { imp: { func: counterSetters[i], table, table0: new WebAssembly.Table({initial: 0, maximum: 0, element: "anyfunc"}) } });
+        instances[i] = new WebAssembly.Instance(module, { imp: { func: counterSetters[i], table, table0: new WebAssembly.Table({initial: 0, maximum: 0, element: "funcref"}) } });
         table.set(0, instances[i].exports.callFunc);
     }
     for (let i = 0; i < 2048; ++i) {

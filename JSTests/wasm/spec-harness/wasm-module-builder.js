@@ -321,7 +321,7 @@ class WasmModuleBuilder {
             section.emit_u32v(imp.initial); // initial
             if (has_max) section.emit_u32v(imp.maximum); // maximum
           } else if (imp.kind == kExternalTable) {
-            section.emit_u8(kWasmAnyFunctionTypeForm);
+            section.emit_u8(kWasmFuncReftionTypeForm);
             var has_max = (typeof imp.maximum) != "undefined";
             section.emit_u8(has_max ? 1 : 0); // flags
             section.emit_u32v(imp.initial); // initial
@@ -354,7 +354,7 @@ class WasmModuleBuilder {
       if (debug) print("emitting table @ " + binary.length);
       binary.emit_section(kTableSectionCode, section => {
         section.emit_u8(1);  // one table entry
-        section.emit_u8(kWasmAnyFunctionTypeForm);
+        section.emit_u8(kWasmFuncReftionTypeForm);
         section.emit_u8(1);
         section.emit_u32v(wasm.function_table_length);
         section.emit_u32v(wasm.function_table_length);

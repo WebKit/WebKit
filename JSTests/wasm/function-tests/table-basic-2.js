@@ -8,7 +8,7 @@ function makeInstance(func) {
             .Func(["i32"], "i32")
         .End()
         .Import()
-            .Table("imp", "table", {initial: 20, element: "anyfunc"})
+            .Table("imp", "table", {initial: 20, element: "funcref"})
             .Function("imp", "func", { params: ["i32"], ret: "i32" })
         .End()
         .Function().End()
@@ -33,7 +33,7 @@ function makeInstance(func) {
 
     const bin = builder.WebAssembly().get();
     const module = new WebAssembly.Module(bin);
-    const table = new WebAssembly.Table({initial: 20, element: "anyfunc"});
+    const table = new WebAssembly.Table({initial: 20, element: "funcref"});
     return {instance: new WebAssembly.Instance(module, {imp: {table, func}}), table};
 }
 

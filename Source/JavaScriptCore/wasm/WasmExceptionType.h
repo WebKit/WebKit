@@ -44,7 +44,7 @@ namespace Wasm {
     macro(StackOverflow, "Stack overflow") \
     macro(I64ArgumentType, "WebAssembly function with an i64 argument can't be called from JavaScript") \
     macro(I64ReturnType, "WebAssembly function that returns i64 can't be called from JavaScript") \
-    macro(FuncrefNotWasm, "Anyfunc must be an exported wasm function")
+    macro(FuncrefNotWasm, "Funcref must be an exported wasm function")
 
 enum class ExceptionType : uint32_t {
 #define MAKE_ENUM(enumName, error) enumName,

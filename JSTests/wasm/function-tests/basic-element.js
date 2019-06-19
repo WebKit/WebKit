@@ -2,7 +2,7 @@ import Builder from '../Builder.js';
 import * as assert from '../assert.js';
 
 
-const tableDescription = {initial: 1, element: "anyfunc"};
+const tableDescription = {initial: 1, element: "funcref"};
 const builder = new Builder()
     .Type().End()
     .Import()

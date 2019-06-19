@@ -238,7 +238,7 @@ auto Validate::addRefIsNull(ExpressionType& value, ExpressionType& result) -> Re
 
 auto Validate::addRefFunc(uint32_t index, ExpressionType& result) -> Result
 {
-    result = Type::Anyfunc;
+    result = Type::Funcref;
     WASM_VALIDATOR_FAIL_IF(index >= m_module.functionIndexSpaceSize(), "ref.func index ", index, " is too large, max is ", m_module.functionIndexSpaceSize());
     m_module.addReferencedFunction(index);
 

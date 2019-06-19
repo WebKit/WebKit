@@ -17,7 +17,7 @@ assert.eq(WebAssembly.Module.imports.length, 1);
             .Type().End()
             .Import()
                 .Function("fooFunction", "barFunction", { params: [] })
-                .Table("fooTable", "barTable", {initial: 20, element: "anyfunc"})
+                .Table("fooTable", "barTable", {initial: 20, element: "funcref"})
                 .Memory("fooMemory", "barMemory", {initial: 20})
                 .Global().I32("fooGlobal", "barGlobal", "immutable").End()
             .End()

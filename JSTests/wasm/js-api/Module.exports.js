@@ -17,7 +17,7 @@ assert.eq(WebAssembly.Module.exports.length, 1);
             .Type().End()
             .Function().End()
             .Table()
-                .Table({initial: 20, maximum: 30, element: "anyfunc"})
+                .Table({initial: 20, maximum: 30, element: "funcref"})
             .End()
             .Memory().InitialMaxPages(1, 1).End()
             .Global().I32(42, "immutable").End()

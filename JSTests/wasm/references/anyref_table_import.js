@@ -210,7 +210,24 @@ import Builder from '../Builder.js';
 }
 
 {
-    const tbl = new WebAssembly.Table({initial:2, element:"anyfunc"});
+    const tbl = new WebAssembly.Table({initial:2, element:"funcref"});
+
+    const mod = new WebAssembly.Module((new Builder())
+      .Type().End()
+      .Import()
+            .Table("imp", "tbl", {initial: 2, element: "anyref"})
+      .End()
+      .Function().End()
+      .Export()
+      .End()
+      .Code()
+      .End().WebAssembly().get())
+
+    assert.throws(() => new WebAssembly.Instance(mod, { imp: { tbl }}), Error, "Table import imp:tbl provided a 'type' that is wrong (evaluating 'new WebAssembly.Instance(mod, { imp: { tbl }})')");
+}
+
+{
+    const tbl = new WebAssembly.Table({initial:2, element:"funcref"});
 
     const mod = new WebAssembly.Module((new Builder())
       .Type().End()

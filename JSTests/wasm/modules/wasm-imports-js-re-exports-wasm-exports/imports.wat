@@ -1,7 +1,7 @@
 (module
     (import "./re-export.js" "sum" (func $sum (param i32 i32) (result i32)))
     (import "./re-export.js" "answer" (global i32))
-    (import "./re-export.js" "table" (table $table 4 anyfunc))
+    (import "./re-export.js" "table" (table $table 4 funcref))
     (export "table" (table $table))
     (type $t0 (func (param i32) (result i32)))
     (func $addOne (export "addOne") (type $t0) (param $p0 i32) (result i32)

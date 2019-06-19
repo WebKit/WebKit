@@ -3,7 +3,7 @@ import * as assert from '../assert.js'
 
 {
     function makeInstance() {
-        const tableDescription = {initial: 1, element: "anyfunc"};
+        const tableDescription = {initial: 1, element: "funcref"};
         const builder = new Builder()
             .Type()
                 .Func(["i32"], "void")
@@ -57,7 +57,7 @@ import * as assert from '../assert.js'
 
 {
     function makeInstance() {
-        const tableDescription = {initial: 1, element: "anyfunc"};
+        const tableDescription = {initial: 1, element: "funcref"};
         const builder = new Builder()
             .Type()
                 .Func([], "void")

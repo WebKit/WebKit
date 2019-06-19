@@ -4,7 +4,7 @@ function shouldBe(actual, expected) {
 }
 
 var table = new WebAssembly.Table({
-    element: "anyfunc",
+    element: "funcref",
     initial: 20
 });
 

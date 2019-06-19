@@ -2,7 +2,7 @@ import Builder from '../Builder.js'
 import * as assert from '../assert.js'
 
 function makeInstance() {
-    const tableDescription = {initial: 1, element: "anyfunc"};
+    const tableDescription = {initial: 1, element: "funcref"};
     const builder = new Builder()
         .Type()
             .Func(["i32", "i32"], "i32")

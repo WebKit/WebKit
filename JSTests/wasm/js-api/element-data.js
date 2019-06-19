@@ -10,7 +10,7 @@ const memoryDescription = { initial: memSizeInPages, maximum: memSizeInPages };
         .Type().End()
         .Import()
             .Memory("imp", "memory", memoryDescription)
-            .Table("imp", "table", {element: "anyfunc", initial: 19}) // unspecified maximum.
+            .Table("imp", "table", {element: "funcref", initial: 19}) // unspecified maximum.
         .End()
         .Function().End()
         .Element()
@@ -30,7 +30,7 @@ const memoryDescription = { initial: memSizeInPages, maximum: memSizeInPages };
     const bin = builder.WebAssembly().get();
     const module = new WebAssembly.Module(bin);
     const memory = new WebAssembly.Memory(memoryDescription);
-    const table = new WebAssembly.Table({element: "anyfunc", initial: 19});
+    const table = new WebAssembly.Table({element: "funcref", initial: 19});
     const imports = {
         imp: {
             memory: memory,

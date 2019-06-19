@@ -37,7 +37,7 @@ import * as assert from '../assert.js';
 
 {
     const memoryDescription = {initial: 0, maximum: 2};
-    const tableDescription = {initial: 1, maximum: 1, element: "anyfunc"};
+    const tableDescription = {initial: 1, maximum: 1, element: "funcref"};
     const builder = (new Builder())
         .Type()
             .Func([], "void")

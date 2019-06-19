@@ -18,7 +18,7 @@ assert.throws(() => WebAssemblyMemoryMode(1), TypeError, message);
 assert.throws(() => WebAssemblyMemoryMode(""), TypeError, message);
 assert.throws(() => WebAssemblyMemoryMode({}), TypeError, message);
 assert.throws(() => WebAssemblyMemoryMode(new WebAssembly.Module(emptyModuleArray)), TypeError, message);
-assert.throws(() => WebAssemblyMemoryMode(new WebAssembly.Table({initial: 1, element: "anyfunc"})), TypeError, message);
+assert.throws(() => WebAssemblyMemoryMode(new WebAssembly.Table({initial: 1, element: "funcref"})), TypeError, message);
 
 const validateMode = what => {
     const mode = WebAssemblyMemoryMode(what);

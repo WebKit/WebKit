@@ -16,7 +16,7 @@ import Builder from '../Builder.js';
         .End()
         .Function().End()
         .Table()
-            .Table({initial: 4, maximum: 4, element: "anyfunc"})
+            .Table({initial: 4, maximum: 4, element: "funcref"})
         .End()
         .Export()
             .Function("entry")

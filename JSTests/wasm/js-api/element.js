@@ -27,7 +27,7 @@ import * as assert from '../assert.js';
         .Type().End()
         .Function().End()
         .Table()
-            .Table({element: "anyfunc", initial: 20})
+            .Table({element: "funcref", initial: 20})
         .End()
         .Element()
             .Element({tableIndex: 1, offset: 0, functionIndices: [0]})
@@ -50,7 +50,7 @@ import * as assert from '../assert.js';
         .Type().End()
         .Function().End()
         .Table()
-            .Table({element: "anyfunc", initial: 20, maximum: 20})
+            .Table({element: "funcref", initial: 20, maximum: 20})
         .End()
         .Element()
             .Element({offset: 19, functionIndices: [0, 0]})
@@ -74,7 +74,7 @@ import * as assert from '../assert.js';
         .Type().End()
         .Function().End()
         .Table()
-            .Table({element: "anyfunc", initial: 20, maximum: 20})
+            .Table({element: "funcref", initial: 20, maximum: 20})
         .End()
         .Element()
             .Element({offset: 20, functionIndices: [0]})
@@ -98,7 +98,7 @@ import * as assert from '../assert.js';
         .Type().End()
         .Function().End()
         .Table()
-            .Table({element: "anyfunc", initial: 20, maximum: 20})
+            .Table({element: "funcref", initial: 20, maximum: 20})
         .End()
         .Element()
             .Element({offset: 0, functionIndices: [0, 0, 1]})
@@ -121,7 +121,7 @@ import * as assert from '../assert.js';
         const builder = new Builder()
             .Type().End()
             .Import()
-                .Table("imp", "table", {element: "anyfunc", initial: 19}) // unspecified maximum.
+                .Table("imp", "table", {element: "funcref", initial: 19}) // unspecified maximum.
             .End()
             .Function().End()
             .Element()
@@ -142,7 +142,7 @@ import * as assert from '../assert.js';
     }
 
     for (let i = 19; i < 19 + 5; i++) {
-        const table = new WebAssembly.Table({element: "anyfunc", initial: i});
+        const table = new WebAssembly.Table({element: "funcref", initial: i});
         badInstantiation(table, WebAssembly.LinkError, "Element is trying to set an out of bounds table index (evaluating 'new WebAssembly.Instance(module, {imp: {table: actualTable}})')");
     }
 }
@@ -152,7 +152,7 @@ import * as assert from '../assert.js';
         const builder = new Builder()
             .Type().End()
             .Import()
-                .Table("imp", "table", {element: "anyfunc", initial: 19}) // unspecified maximum.
+                .Table("imp", "table", {element: "funcref", initial: 19}) // unspecified maximum.
                 .Global().I32("imp", "global", "immutable").End()
             .End()
             .Function().End()
@@ -173,7 +173,7 @@ import * as assert from '../assert.js';
     }
 
     function test(i) {
-        const table = new WebAssembly.Table({element: "anyfunc", initial: 19});
+        const table = new WebAssembly.Table({element: "funcref", initial: 19});
         const global = i;
         const module = makeModule();
         const instance = new WebAssembly.Instance(module, {imp: {table, global}});
@@ -195,7 +195,7 @@ import * as assert from '../assert.js';
         const builder = new Builder()
             .Type().End()
             .Import()
-                .Table("imp", "table", {element: "anyfunc", initial: 19}) // unspecified maximum.
+                .Table("imp", "table", {element: "funcref", initial: 19}) // unspecified maximum.
                 .Global().F32("imp", "global", "immutable").End()
             .End()
             .Function().End()

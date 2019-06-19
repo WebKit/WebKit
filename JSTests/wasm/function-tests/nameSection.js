@@ -38,7 +38,7 @@ const compile = (location, importObject = {}) => {
         if (typeof importObject[imp.module][imp.name] === "undefined") {
             switch (imp.kind) {
             case "function": importObject[imp.module][imp.name] = () => {}; break;
-            case "table": importObject[imp.module][imp.name] = new WebAssembly.Table({ initial: 6, maximum: 6, element: "anyfunc" }); break;
+            case "table": importObject[imp.module][imp.name] = new WebAssembly.Table({ initial: 6, maximum: 6, element: "funcref" }); break;
             case "memory": importObject[imp.module][imp.name] = new WebAssembly.Memory({ initial: 16777216 / (64 * 1024), maximum: 16777216 / (64 * 1024) }); break;
             case "global": importObject[imp.module][imp.name] = 0; break;
             }

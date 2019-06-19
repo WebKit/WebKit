@@ -44,7 +44,7 @@ function makeExportedIdent() {
     return instance.exports.h
 }
 
-function makeAnyfuncIdent() {
+function makeFuncrefIdent() {
     const builder = (new Builder())
           .Type().End()
           .Function().End()
@@ -52,7 +52,7 @@ function makeAnyfuncIdent() {
               .Function("h")
           .End()
           .Code()
-            .Function("h", { params: ["anyfunc"], ret: "anyfunc" }, [])
+            .Function("h", { params: ["funcref"], ret: "funcref" }, [])
               .GetLocal(0)
             .End()
           .End();
@@ -82,38 +82,38 @@ function makeAnyfuncIdent() {
               .Function("local_read")
           .End()
           .Code()
-            .Function("h", { params: ["anyfunc"], ret: "anyref" }, ["anyref"])
+            .Function("h", { params: ["funcref"], ret: "anyref" }, ["anyref"])
               .GetLocal(0)
               .SetLocal(1)
               .GetLocal(1)
             .End()
 
-            .Function("i", { params: ["anyfunc"], ret: "anyfunc" }, ["anyfunc"])
+            .Function("i", { params: ["funcref"], ret: "funcref" }, ["funcref"])
               .GetLocal(0)
               .SetLocal(1)
               .GetLocal(1)
             .End()
 
-            .Function("get_h", { params: [], ret: "anyfunc" }, ["anyfunc"])
+            .Function("get_h", { params: [], ret: "funcref" }, ["funcref"])
               .I32Const(0)
               .RefFunc(0)
               .SetLocal(0)
-              .If("anyfunc")
-              .Block("anyfunc", (b) =>
+              .If("funcref")
+              .Block("funcref", (b) =>
                 b.GetLocal(0)
               )
               .Else()
-              .Block("anyfunc", (b) =>
+              .Block("funcref", (b) =>
                 b.GetLocal(0)
               )
               .End()
             .End()
 
-            .Function("fix", { params: [], ret: "anyfunc" }, [])
+            .Function("fix", { params: [], ret: "funcref" }, [])
               .RefFunc(3)
             .End()
 
-            .Function("get_not_exported", { params: [], ret: "anyfunc" }, [])
+            .Function("get_not_exported", { params: [], ret: "funcref" }, [])
               .RefFunc(5)
             .End()
 
@@ -121,7 +121,7 @@ function makeAnyfuncIdent() {
               .I32Const(42)
             .End()
 
-            .Function("local_read", { params: [], ret: "i32" }, ["anyfunc"])
+            .Function("local_read", { params: [], ret: "i32" }, ["funcref"])
               .GetLocal(0)
               .RefIsNull()
             .End()
@@ -135,20 +135,20 @@ function makeAnyfuncIdent() {
     assert.eq(instance.exports.local_read(), 1)
     assert.eq(instance.exports.h(null), null)
 
-    assert.throws(() => instance.exports.h(fun), Error, "Anyfunc must be an exported wasm function (evaluating 'func(...args)')")
+    assert.throws(() => instance.exports.h(fun), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
     assert.eq(instance.exports.h(myfun), myfun)
-    assert.throws(() => instance.exports.h(5), Error, "Anyfunc must be an exported wasm function (evaluating 'func(...args)')")
-    assert.throws(() => instance.exports.h(undefined), Error, "Anyfunc must be an exported wasm function (evaluating 'func(...args)')")
+    assert.throws(() => instance.exports.h(5), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
+    assert.throws(() => instance.exports.h(undefined), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
 
     assert.eq(instance.exports.i(null), null)
     assert.eq(instance.exports.i(myfun), myfun)
-    assert.throws(() => instance.exports.i(fun), Error, "Anyfunc must be an exported wasm function (evaluating 'func(...args)')")
-    assert.throws(() => instance.exports.i(5), Error, "Anyfunc must be an exported wasm function (evaluating 'func(...args)')")
+    assert.throws(() => instance.exports.i(fun), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
+    assert.throws(() => instance.exports.i(5), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
 
-    assert.throws(() => instance.exports.get_h()(fun), Error, "Anyfunc must be an exported wasm function (evaluating 'func(...args)')")
+    assert.throws(() => instance.exports.get_h()(fun), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
     assert.eq(instance.exports.get_h()(null), null)
     assert.eq(instance.exports.get_h()(myfun), myfun)
-    assert.throws(() => instance.exports.get_h()(5), Error, "Anyfunc must be an exported wasm function (evaluating 'func(...args)')")
+    assert.throws(() => instance.exports.get_h()(5), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
 
     assert.eq(instance.exports.get_not_exported()(), 42)
 
@@ -167,14 +167,14 @@ function makeAnyfuncIdent() {
     const $1 = (() => new WebAssembly.Instance(new WebAssembly.Module((new Builder())
       .Type().End()
       .Import()
-           .Global().Anyfunc("imp", "ref", "immutable").End()
+           .Global().Funcref("imp", "ref", "immutable").End()
       .End()
       .Function().End()
       .Global()
-          .RefNull("anyfunc", "mutable")
-          .RefNull("anyfunc", "immutable")
-          .GetGlobal("anyfunc", 0, "mutable")
-          .RefFunc("anyfunc", 2, "immutable")
+          .RefNull("funcref", "mutable")
+          .RefNull("funcref", "immutable")
+          .GetGlobal("funcref", 0, "mutable")
+          .RefFunc("funcref", 2, "immutable")
       .End()
       .Export()
           .Function("set_glob")
@@ -187,12 +187,12 @@ function makeAnyfuncIdent() {
           .Global("exp_glob_is_null", 4)
       .End()
       .Code()
-        .Function("set_glob", { params: ["anyfunc"], ret: "void" })
+        .Function("set_glob", { params: ["funcref"], ret: "void" })
           .GetLocal(0)
           .SetGlobal(1)
         .End()
 
-        .Function("get_glob", { params: [], ret: "anyfunc" })
+        .Function("get_glob", { params: [], ret: "funcref" })
             .GetGlobal(1)
         .End()
 
@@ -206,7 +206,7 @@ function makeAnyfuncIdent() {
             .Call(0)
         .End()
 
-        .Function("get_import", { params: [], ret: "anyfunc" })
+        .Function("get_import", { params: [], ret: "funcref" })
             .GetGlobal(0)
         .End()
       .End().WebAssembly().get()), { imp: { ref: makeExportedFunction(1337) } }))();
@@ -223,7 +223,7 @@ function makeAnyfuncIdent() {
     $1.exports.set_glob(null); assert.eq($1.exports.get_glob(), null)
     $1.exports.set_glob(myfun); assert.eq($1.exports.get_glob()(), 42);
 
-    assert.throws(() => $1.exports.set_glob(fun), Error, "Anyfunc must be an exported wasm function (evaluating 'func(...args)')")
+    assert.throws(() => $1.exports.set_glob(fun), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
 
     assert.eq($1.exports.glob_is_null(), 0)
     $1.exports.set_glob_null(); assert.eq($1.exports.get_glob(), null)
@@ -233,7 +233,7 @@ function makeAnyfuncIdent() {
 assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder())
   .Type().End()
   .Import()
-       .Global().Anyfunc("imp", "ref", "immutable").End()
+       .Global().Funcref("imp", "ref", "immutable").End()
   .End()
   .Function().End()
   .Code().End().WebAssembly().get()), { imp: { ref: function() { return "hi" } } }), Error, "imported global imp:ref must be a wasm exported function or null (evaluating 'new WebAssembly.Instance')");
@@ -242,7 +242,7 @@ assert.throws(() => new WebAssembly.Module((new Builder())
   .Type().End()
   .Function().End()
   .Code()
-    .Function("h", { params: ["anyfunc"], ret: "anyref" })
+    .Function("h", { params: ["funcref"], ret: "anyref" })
       .GetLocal(0)
     .End()
   .End().WebAssembly().get()), Error, "WebAssembly.Module doesn't validate: control flow returns with unexpected type, in function at index 0 (evaluating 'new WebAssembly.Module')");
@@ -251,7 +251,7 @@ assert.throws(() => new WebAssembly.Module((new Builder())
   .Type().End()
   .Function().End()
   .Table()
-    .Table({initial: 1, element: "anyfunc"})
+    .Table({initial: 1, element: "funcref"})
   .End()
   .Code()
     .Function("h", { params: ["i32"], ret: "void" })
@@ -259,7 +259,7 @@ assert.throws(() => new WebAssembly.Module((new Builder())
       .I32Const(0)
       .TableSet(0)
     .End()
-  .End().WebAssembly().get()), Error, "WebAssembly.Module doesn't validate: table.set value to type I32 expected Anyfunc, in function at index 0 (evaluating 'new WebAssembly.Module')");
+  .End().WebAssembly().get()), Error, "WebAssembly.Module doesn't validate: table.set value to type I32 expected Funcref, in function at index 0 (evaluating 'new WebAssembly.Module')");
 
 // Tables
 {
@@ -268,10 +268,10 @@ assert.throws(() => new WebAssembly.Module((new Builder())
       .Function().End()
       .Table()
             .Table({initial: 0, element: "anyref"})
-            .Table({initial: 1, element: "anyfunc"})
+            .Table({initial: 1, element: "funcref"})
       .End()
       .Global()
-          .RefNull("anyfunc", "mutable")
+          .RefNull("funcref", "mutable")
       .End()
       .Export()
           .Function("set_glob")
@@ -280,12 +280,12 @@ assert.throws(() => new WebAssembly.Module((new Builder())
           .Function("ret_20")
       .End()
       .Code()
-        .Function("set_glob", { params: ["anyfunc"], ret: "void" })
+        .Function("set_glob", { params: ["funcref"], ret: "void" })
           .GetLocal(0)
           .SetGlobal(0)
         .End()
 
-        .Function("get_glob", { params: [], ret: "anyfunc" })
+        .Function("get_glob", { params: [], ret: "funcref" })
             .GetGlobal(0)
         .End()
 
@@ -314,11 +314,11 @@ assert.throws(() => new WebAssembly.Module((new Builder())
     $1.exports.set_glob(null); assert.eq($1.exports.get_glob(), null); assert.throws(() => $1.exports.call_glob(42), Error, "call_indirect to a null table entry (evaluating 'func(...args)')")
     $1.exports.set_glob(ident); assert.eq($1.exports.get_glob(), ident); assert.eq($1.exports.call_glob(42), 42)
 
-    assert.throws(() => $1.exports.set_glob(fun), Error, "Anyfunc must be an exported wasm function (evaluating 'func(...args)')")
+    assert.throws(() => $1.exports.set_glob(fun), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
     $1.exports.set_glob(myfun); assert.eq($1.exports.get_glob(), myfun); assert.throws(() => $1.exports.call_glob(42), Error, "call_indirect to a signature that does not match (evaluating 'func(...args)')")
 
     for (let i=0; i<1000; ++i) {
-        assert.throws(() => $1.exports.set_glob(function() {}), Error, "Anyfunc must be an exported wasm function (evaluating 'func(...args)')");
+        assert.throws(() => $1.exports.set_glob(function() {}), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')");
     }
 }
 
@@ -330,20 +330,20 @@ assert.throws(() => new WebAssembly.Module((new Builder())
       .Function().End()
       .Table()
             .Table({initial: 0, element: "anyref"})
-            .Table({initial: 1, element: "anyfunc"})
+            .Table({initial: 1, element: "funcref"})
       .End()
       .Export()
           .Function("set")
           .Function("get")
       .End()
       .Code()
-        .Function("set", { params: ["anyfunc"], ret: "void" })
+        .Function("set", { params: ["funcref"], ret: "void" })
           .I32Const(0)
           .GetLocal(0)
           .TableSet(1)
         .End()
 
-        .Function("get", { params: [], ret: "anyfunc" })
+        .Function("get", { params: [], ret: "funcref" })
             .I32Const(0)
             .TableGet(1)
         .End()
@@ -376,15 +376,15 @@ assert.throws(() => new WebAssembly.Module((new Builder())
 
 // Wasm->JS Calls
 
-for (let importedFun of [function(i) { return i; }, makeAnyfuncIdent()]) {
+for (let importedFun of [function(i) { return i; }, makeFuncrefIdent()]) {
     const $1 = new WebAssembly.Instance(new WebAssembly.Module((new Builder())
       .Type().End()
       .Import()
-           .Function("imp", "h", { params: ["anyfunc"], ret: "anyfunc" })
+           .Function("imp", "h", { params: ["funcref"], ret: "funcref" })
       .End()
       .Function().End()
       .Table()
-            .Table({initial: 1, element: "anyfunc"})
+            .Table({initial: 1, element: "funcref"})
       .End()
       .Export()
           .Function("test1")
@@ -393,17 +393,17 @@ for (let importedFun of [function(i) { return i; }, makeAnyfuncIdent()]) {
           .Function("test4")
       .End()
       .Code()
-        .Function("test1", { params: ["anyfunc"], ret: "anyfunc" })
+        .Function("test1", { params: ["funcref"], ret: "funcref" })
           .GetLocal(0)
           .Call(0)
         .End()
 
-        .Function("test2", { params: [], ret: "anyfunc" })
+        .Function("test2", { params: [], ret: "funcref" })
           .RefFunc(1)
           .Call(0)
         .End()
 
-        .Function("test3", { params: ["anyfunc"], ret: "anyfunc" })
+        .Function("test3", { params: ["funcref"], ret: "funcref" })
           .GetLocal(0)
           .I32Const(0)
           .RefFunc(0)
@@ -412,7 +412,7 @@ for (let importedFun of [function(i) { return i; }, makeAnyfuncIdent()]) {
           .CallIndirect(0, 0)
         .End()
 
-        .Function("test4", { params: [], ret: "anyfunc" })
+        .Function("test4", { params: [], ret: "funcref" })
           .RefFunc(1)
           .I32Const(0)
           .RefFunc(0)
@@ -430,20 +430,20 @@ for (let importedFun of [function(i) { return i; }, makeAnyfuncIdent()]) {
     for (let test of [$1.exports.test1, $1.exports.test3]) {
         assert.eq(test(myfun), myfun)
         assert.eq(test(myfun)(), 1337)
-        assert.throws(() => test(fun), Error, "Anyfunc must be an exported wasm function (evaluating 'func(...args)')")
+        assert.throws(() => test(fun), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
 
         for (let i=0; i<1000; ++i) {
-            assert.throws(() => test(fun), Error, "Anyfunc must be an exported wasm function (evaluating 'func(...args)')")
+            assert.throws(() => test(fun), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
         }
     }
 
     for (let test of [$1.exports.test2, $1.exports.test4]) {
         assert.eq(test(), $1.exports.test1)
         assert.eq(test()(myfun), myfun)
-        assert.throws(() => test()(fun), Error, "Anyfunc must be an exported wasm function (evaluating 'func(...args)')")
+        assert.throws(() => test()(fun), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
 
         for (let i=0; i<1000; ++i) {
-            assert.throws(() => test()(fun), Error, "Anyfunc must be an exported wasm function (evaluating 'func(...args)')")
+            assert.throws(() => test()(fun), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
         }
     }
 }

@@ -65,12 +65,12 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyTable(ExecState* exec)
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         String elementString = elementValue.toWTFString(exec);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        if (elementString == "anyfunc")
+        if (elementString == "funcref" || elementString == "anyfunc")
             type = Wasm::TableElementType::Funcref;
         else if (elementString == "anyref")
             type = Wasm::TableElementType::Anyref;
         else
-            return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, "WebAssembly.Table expects its 'element' field to be the string 'anyfunc' or 'anyref'"_s)));
+            return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, "WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'anyref'"_s)));
     }
 
     Identifier initialIdent = Identifier::fromString(&vm, "initial");

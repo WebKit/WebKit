@@ -56,7 +56,7 @@ function exportImport(type) {
 }
 
 {
-    const tableDescription = {element: "anyfunc", initial: 2};
+    const tableDescription = {element: "funcref", initial: 2};
     function makeInstance(type, imp) {
         const builder = new Builder()
             .Type()

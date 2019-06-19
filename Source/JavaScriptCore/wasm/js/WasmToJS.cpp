@@ -165,7 +165,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
             case I64:
                 RELEASE_ASSERT_NOT_REACHED();
             case Anyref:
-            case Anyfunc:
+            case Funcref:
             case I32: {
                 GPRReg gprReg;
                 if (marshalledGPRs < wasmCC.m_gprArgs.size())
@@ -242,7 +242,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
                     case I32:
                         arg = jsNumber(static_cast<int32_t>(buffer[argNum]));
                         break;
-                    case Anyfunc: {
+                    case Funcref: {
                         arg = JSValue::decode(buffer[argNum]);
                         ASSERT(isWebAssemblyHostFunction(*vm, arg) || arg.isNull());
                         break;
@@ -280,7 +280,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
                     realResult = static_cast<uint64_t>(static_cast<uint32_t>(result.toInt32(exec)));
                     break;
                 }
-                case Anyfunc: {
+                case Funcref: {
                     realResult = JSValue::encode(result);
                     ASSERT(result.isFunction(*vm) || result.isNull());
                     break;
@@ -381,7 +381,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
             case I64:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case Anyref:
-            case Anyfunc:
+            case Funcref:
             case I32: {
                 GPRReg gprReg;
                 if (marshalledGPRs < wasmCC.m_gprArgs.size())
@@ -450,7 +450,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
             case I64:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case Anyref:
-            case Anyfunc:
+            case Funcref:
             case I32:
                 // Skipped: handled above.
                 if (marshalledGPRs >= wasmCC.m_gprArgs.size())
@@ -558,7 +558,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
         done.link(&jit);
         break;
     }
-    case Anyfunc:
+    case Funcref:
     case Anyref:
         break;
     case F32: {

@@ -342,7 +342,7 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
 
     case RefNull: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
-        m_expressionStack.append(m_context.addConstant(Anyfunc, JSValue::encode(jsNull())));
+        m_expressionStack.append(m_context.addConstant(Funcref, JSValue::encode(jsNull())));
         return { };
     }
 
@@ -443,7 +443,7 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
         WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't get call_indirect's table index");
         WASM_PARSER_FAIL_IF(tableIndex >= m_info.tableCount(), "call_indirect's table index ", tableIndex, " invalid, limit is ", m_info.tableCount());
         WASM_PARSER_FAIL_IF(m_info.usedSignatures.size() <= signatureIndex, "call_indirect's signature index ", signatureIndex, " exceeds known signatures ", m_info.usedSignatures.size());
-        WASM_PARSER_FAIL_IF(m_info.tables[tableIndex].type() != TableElementType::Funcref, "call_indirect is only valid when a table has type anyfunc");
+        WASM_PARSER_FAIL_IF(m_info.tables[tableIndex].type() != TableElementType::Funcref, "call_indirect is only valid when a table has type funcref");
 
         const Signature& calleeSignature = m_info.usedSignatures[signatureIndex].get();
         size_t argumentCount = calleeSignature.argumentCount() + 1; // Add the callee's index.

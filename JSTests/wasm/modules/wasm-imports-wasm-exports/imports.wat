@@ -5,7 +5,7 @@
     (import "./sum.wasm" "answer2" (global f64))
     (import "./sum.wasm" "answer3" (global f32))
     (import "./sum.wasm" "answer4" (global f64))
-    (import "./sum.wasm" "table" (table $table 4 anyfunc))
+    (import "./sum.wasm" "table" (table $table 4 funcref))
     (type $t0 (func (param i32) (result i32)))
     (func $addOne (export "addOne") (type $t0) (param $p0 i32) (result i32)
         i32.const 1

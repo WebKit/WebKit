@@ -84,9 +84,9 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
         case Wasm::I32:
             arg = JSValue::decode(arg.toInt32(exec));
             break;
-        case Wasm::Anyfunc: {
+        case Wasm::Funcref: {
             if (!isWebAssemblyHostFunction(vm, arg) && !arg.isNull())
-                return JSValue::encode(throwException(exec, scope, createJSWebAssemblyRuntimeError(exec, vm, "Anyfunc must be an exported wasm function")));
+                return JSValue::encode(throwException(exec, scope, createJSWebAssemblyRuntimeError(exec, vm, "Funcref must be an exported wasm function")));
             break;
         }
         case Wasm::Anyref:
@@ -232,7 +232,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
             argumentsIncludeI64 = true;
             break;
         case Wasm::Anyref:
-        case Wasm::Anyfunc:
+        case Wasm::Funcref:
         case Wasm::I32:
             if (numGPRs >= Wasm::wasmCallingConvention().m_gprArgs.size())
                 totalFrameSize += sizeof(CPURegister);
@@ -308,7 +308,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
                     ++numGPRs;
                 }
                 break;
-            case Wasm::Anyfunc: {
+            case Wasm::Funcref: {
                 // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
                 bool (*shouldThrow)(Wasm::Instance*, JSValue) = [] (Wasm::Instance* wasmInstance, JSValue arg) -> bool {
                     JSWebAssemblyInstance* instance = wasmInstance->owner<JSWebAssemblyInstance>();
@@ -492,7 +492,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         isNaN.link(&jit);
         break;
     }
-    case Wasm::Anyfunc:
+    case Wasm::Funcref:
     case Wasm::Anyref:
         break;
     case Wasm::I64:

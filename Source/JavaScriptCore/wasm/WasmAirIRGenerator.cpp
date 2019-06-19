@@ -365,7 +365,7 @@ private:
     TypedTmp g32() { return { newTmp(B3::GP), Type::I32 }; }
     TypedTmp g64() { return { newTmp(B3::GP), Type::I64 }; }
     TypedTmp gAnyref() { return { newTmp(B3::GP), Type::Anyref }; }
-    TypedTmp gAnyfunc() { return { newTmp(B3::GP), Type::Anyfunc }; }
+    TypedTmp gFuncref() { return { newTmp(B3::GP), Type::Funcref }; }
     TypedTmp f32() { return { newTmp(B3::FP), Type::F32 }; }
     TypedTmp f64() { return { newTmp(B3::FP), Type::F64 }; }
 
@@ -376,8 +376,8 @@ private:
             return g32();
         case Type::I64:
             return g64();
-        case Type::Anyfunc:
-            return gAnyfunc();
+        case Type::Funcref:
+            return gFuncref();
         case Type::Anyref:
             return gAnyref();
         case Type::F32:
@@ -516,7 +516,7 @@ private:
                 break;
             case Type::I64:
             case Type::Anyref:
-            case Type::Anyfunc:
+            case Type::Funcref:
                 resultType = B3::Int64;
                 break;
             case Type::F32:
@@ -565,7 +565,7 @@ private:
             return Move32;
         case Type::I64:
         case Type::Anyref:
-        case Type::Anyfunc:
+        case Type::Funcref:
             return Move;
         case Type::F32:
             return MoveFloat;
@@ -813,7 +813,7 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
             break;
         case Type::I64:
         case Type::Anyref:
-        case Type::Anyfunc:
+        case Type::Funcref:
             append(Move, arg, m_locals[i]);
             break;
         case Type::F32:
@@ -899,7 +899,7 @@ auto AirIRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
         m_locals.uncheckedAppend(local);
         switch (type) {
         case Type::Anyref:
-        case Type::Anyfunc:
+        case Type::Funcref:
             append(Move, Arg::imm(JSValue::encode(jsNull())), local);
             break;
         case Type::I32:
@@ -934,7 +934,7 @@ auto AirIRGenerator::addConstant(BasicBlock* block, Type type, uint64_t value) -
     case Type::I32:
     case Type::I64:
     case Type::Anyref:
-    case Type::Anyfunc:
+    case Type::Funcref:
         append(block, Move, Arg::bigImm(value), result);
         break;
     case Type::F32:
@@ -973,7 +973,7 @@ auto AirIRGenerator::addRefIsNull(ExpressionType& value, ExpressionType& result)
 auto AirIRGenerator::addRefFunc(uint32_t index, ExpressionType& result) -> PartialResult
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    result = tmpForType(Type::Anyfunc);
+    result = tmpForType(Type::Funcref);
     emitCCall(&doWasmRefFunc, result, instanceValue(), addConstant(Type::I32, index));
 
     return { };
@@ -1699,7 +1699,7 @@ auto AirIRGenerator::addReturn(const ControlData& data, const ExpressionList& re
             break;
         case Type::I64:
         case Type::Anyref:
-        case Type::Anyfunc:
+        case Type::Funcref:
             append(Move, returnValues[0], returnValueGPR);
             append(Ret64, returnValueGPR);
             break;
