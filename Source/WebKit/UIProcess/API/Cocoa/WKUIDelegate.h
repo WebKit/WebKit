@@ -39,12 +39,6 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKWebViewConfiguration;
 @class WKWindowFeatures;
 
-#if TARGET_OS_IPHONE
-@class WKContextMenuElementInfo;
-@class UIContextMenuConfiguration;
-@protocol UIContextMenuInteractionCommitAnimating;
-#endif
-
 /*! A class conforming to the WKUIDelegate protocol provides methods for
  presenting native UI on behalf of a webpage.
  */
@@ -135,7 +129,7 @@ NS_ASSUME_NONNULL_BEGIN
  This method will only be invoked for elements that have default preview in WebKit, which is
  limited to links. In the future, it could be invoked for additional elements.
  */
-- (BOOL)webView:(WKWebView *)webView shouldPreviewElement:(WKPreviewElementInfo *)elementInfo WK_API_DEPRECATED_WITH_REPLACEMENT("webView:contextMenuConfigurationForElement:completionHandler:", ios(10.0, WK_IOS_TBA));
+- (BOOL)webView:(WKWebView *)webView shouldPreviewElement:(WKPreviewElementInfo *)elementInfo WK_API_DEPRECATED("This API will be replaced", ios(10.0, WK_IOS_TBA));
 
 /*! @abstract Allows your app to provide a custom view controller to show when the given element is peeked.
  @param webView The web view invoking the delegate method.
@@ -150,53 +144,13 @@ NS_ASSUME_NONNULL_BEGIN
  Returning nil will result in WebKit's default preview behavior. webView:commitPreviewingViewController: will only be invoked
  if a non-nil view controller was returned.
  */
-- (nullable UIViewController *)webView:(WKWebView *)webView previewingViewControllerForElement:(WKPreviewElementInfo *)elementInfo defaultActions:(NSArray<id <WKPreviewActionItem>> *)previewActions WK_API_DEPRECATED_WITH_REPLACEMENT("webView:contextMenuConfigurationForElement:completionHandler:", ios(10.0, WK_IOS_TBA));
+- (nullable UIViewController *)webView:(WKWebView *)webView previewingViewControllerForElement:(WKPreviewElementInfo *)elementInfo defaultActions:(NSArray<id <WKPreviewActionItem>> *)previewActions WK_API_DEPRECATED("This API will be replaced", ios(10.0, WK_IOS_TBA));
 
 /*! @abstract Allows your app to pop to the view controller it created.
  @param webView The web view invoking the delegate method.
  @param previewingViewController The view controller that is being popped.
  */
-- (void)webView:(WKWebView *)webView commitPreviewingViewController:(UIViewController *)previewingViewController WK_API_DEPRECATED("webView:contextMenuForElement:willCommitWithAnimator:", ios(10.0, WK_IOS_TBA));
-
-/**
- * @abstract Called when a context menu interaction begins.
- *
- * @param webView The web view invoking the delegate method.
- * @param elementInfo The elementInfo for the element the user is touching.
- * @param completionHandler A completion handler to call once a it has been decided whether or not to show a context menu.
- * Pass a valid UIContextMenuConfiguration to show a context menu, or pass nil to not show a context menu.
- */
-
-- (void)webView:(WKWebView *)webView contextMenuConfigurationForElement:(WKContextMenuElementInfo *)elementInfo completionHandler:(void (^)(UIContextMenuConfiguration * _Nullable configuration))completionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA));
-
-/**
- * @abstract Called when the context menu configured by the UIContextMenuConfiguration from
- * webView:contextMenuConfigurationForElement:completionHandler: is committed.
- *
- * @param webView The web view invoking the delegate method.
- * @param elementInfo The elementInfo for the element the user is touching.
- * @param animator The animator to use for the commit animation.
- */
-
-- (void)webView:(WKWebView *)webView contextMenuForElement:(WKContextMenuElementInfo *)elementInfo willCommitWithAnimator:(id<UIContextMenuInteractionCommitAnimating>)animator WK_API_AVAILABLE(ios(WK_IOS_TBA));
-
-/**
- * @abstract Called when the context menu will be presented.
- *
- * @param webView The web view invoking the delegate method.
- * @param elementInfo The elementInfo for the element the user is touching.
- */
-
-- (void)webView:(WKWebView *)webView contextMenuWillPresentForElement:(WKContextMenuElementInfo *)elementInfo WK_API_AVAILABLE(ios(WK_IOS_TBA));
-
-/**
- * @abstract Called when the context menu ends.
- *
- * @param webView The web view invoking the delegate method.
- * @param elementInfo The elementInfo for the element the user is touching.
- */
-
-- (void)webView:(WKWebView *)webView contextMenuDidEndForElement:(WKContextMenuElementInfo *)elementInfo WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)webView:(WKWebView *)webView commitPreviewingViewController:(UIViewController *)previewingViewController WK_API_DEPRECATED("This API will be replaced", ios(10.0, WK_IOS_TBA));
 
 #endif // TARGET_OS_IPHONE
 
