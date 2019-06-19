@@ -1,3 +1,45 @@
+2019-06-18  Dean Jackson  <dino@apple.com>
+
+        UIContextMenuInteraction implementation for WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=198986
+        <rdar://problem/51875189>
+
+        Reviewed by Andy Estes.
+
+        Implement UIContextMenuInteraction and its delegate as a
+        replacement for UIPreviewItemController in iOS 13.
+
+        In order to preserve existing behaviour as much as possible,
+        we check for the implementation of new WebKit API to configure
+        the menu. If that is not present, we attempt to convert
+        the results of the existing WebKit WKPreviewAction delegates
+        into something that works with UIContextMenus.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView _contentsOfUserInterfaceItem:]):
+        (-[WKContentView _registerPreview]):
+        (-[WKContentView _unregisterPreview]):
+        (-[WKContentView _showLinkPreviewsPreferenceChanged:]):
+        (needsDeprecatedPreviewAPI):
+        (uiActionForPreviewAction):
+        (menuFromPreviewOrDefaults):
+        (titleForMenu):
+        (-[WKContentView assignLegacyDataForContextMenuInteraction]):
+        (-[WKContentView contextMenuInteraction:configurationForMenuAtLocation:]):
+        (-[WKContentView _contextMenuInteraction:configurationForMenuAtLocation:completion:]):
+        (-[WKContentView continueContextMenuInteraction:]):
+        (uiImageForImage):
+        (createTargetedPreview):
+        (-[WKContentView _targetedPreview]):
+        (-[WKContentView contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+        (-[WKContentView contextMenuInteractionWillPresent:]):
+        (-[WKContentView contextMenuInteraction:previewForDismissingMenuWithConfiguration:]):
+        (-[WKContentView contextMenuInteraction:willCommitWithAnimator:]):
+        (-[WKContentView contextMenuInteractionDidEnd:]):
+        (-[WKContentView shouldUsePreviewForLongPress]): Deleted.
+
 2019-06-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r246575.

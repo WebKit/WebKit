@@ -59,10 +59,6 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKInteractionPreviewAdditions.h>)
-#import <WebKitAdditions/WKInteractionPreviewAdditions.h>
-#endif
-
 namespace API {
 class OpenPanelParameters;
 }
@@ -101,6 +97,7 @@ struct WebAutocorrectionContext;
 @class UIHoverGestureRecognizer;
 @class WebEvent;
 @class WKActionSheetAssistant;
+@class WKContextMenuElementInfo;
 @class WKDrawingCoordinator;
 @class WKFocusedFormControlView;
 @class WKFormInputControl;
@@ -245,8 +242,13 @@ struct WKAutoCorrectionData {
     RetainPtr<UIGestureRecognizer> _previewSecondaryGestureRecognizer;
     Vector<bool> _focusStateStack;
 #if HAVE(LINK_PREVIEW)
-#if USE(LONG_PRESS_FOR_LINK_PREVIEW)
-    LONG_PRESS_LINK_PREVIEW_MEMBERS
+#if USE(UICONTEXTMENU)
+    RetainPtr<UIContextMenuInteraction> _contextMenuInteraction;
+    RetainPtr<WKContextMenuElementInfo> _contextMenuElementInfo;
+    BOOL _showLinkPreviews;
+    RetainPtr<UIViewController> _contextMenuLegacyPreviewController;
+    RetainPtr<UIMenu> _contextMenuLegacyMenu;
+    BOOL _contextMenuHasRequestedLegacyData;
 #else
     RetainPtr<UIPreviewItemController> _previewItemController;
 #endif
@@ -532,17 +534,13 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 @end
 
 #if HAVE(LINK_PREVIEW)
-#if USE(LONG_PRESS_FOR_LINK_PREVIEW)
-@interface WKContentView (WKInteractionPreview) <LONG_PRESS_LINK_PREVIEW_PROTOCOL>
+#if USE(UICONTEXTMENU)
+@interface WKContentView (WKInteractionPreview) <UIContextMenuInteractionDelegate>
 #else
 @interface WKContentView (WKInteractionPreview) <UIPreviewItemDelegate>
 #endif
-
-@property (nonatomic, readonly) BOOL shouldUsePreviewForLongPress;
-
 - (void)_registerPreview;
 - (void)_unregisterPreview;
-
 @end
 #endif
 

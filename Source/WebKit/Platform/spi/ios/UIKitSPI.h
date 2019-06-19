@@ -87,6 +87,7 @@
 #import <UIKit/_UINavigationParallaxTransition.h>
 
 #if HAVE(LINK_PREVIEW)
+#import <UIKit/UIPreviewAction_Private.h>
 #import <UIKit/UIPreviewItemController.h>
 #endif
 
@@ -1066,6 +1067,10 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @property (nonatomic, retain) id <NSCopying> inputElementIdentifier;
 @end
 
+@interface UIPreviewAction ()
+@property (nonatomic, strong) UIImage *image;
+@end
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 @interface UIGestureRecognizer (Staging_45970040)
@@ -1178,6 +1183,14 @@ static inline bool currentUserInterfaceIdiomIsPad()
 @interface UIWebFormAccessory (Staging_49666643)
 - (void)setNextPreviousItemsVisible:(BOOL)visible;
 @end
+
+#if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
+@interface UIContextMenuConfiguration (NeededUntil51288435Fixed)
+@property (nonatomic, copy) id <NSCopying> identifier;
+@property (nonatomic, copy) UIContextMenuContentPreviewProvider previewProvider;
+@property (nonatomic, copy) UIContextMenuActionProvider actionProvider;
+@end
+#endif
 
 WTF_EXTERN_C_BEGIN
 

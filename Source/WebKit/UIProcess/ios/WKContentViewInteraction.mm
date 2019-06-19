@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "APIUIClient.h"
+#import "CompletionHandlerCallChecker.h"
 #import "DocumentEditingContext.h"
 #import "EditableImageController.h"
 #import "InputViewUpdateDeferrer.h"
@@ -105,6 +106,8 @@
 #import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #import <pal/spi/ios/DataDetectorsUISPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
+#import <wtf/BlockObjCExceptions.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SetForScope.h>
@@ -151,8 +154,9 @@ SOFT_LINK_CLASS(ManagedConfiguration, MCProfileConnection);
 SOFT_LINK_CONSTANT(ManagedConfiguration, MCFeatureDefinitionLookupAllowed, NSString *)
 #endif
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKInteractionPreviewAdditions.h>)
-#import <WebKitAdditions/WKInteractionPreviewAdditions.h>
+#if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
+static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
+static NSString * const webkitShowLinkPreviewsPreferenceChangedNotification = @"WebKitShowLinkPreviewsPreferenceChanged";
 #endif
 
 #if PLATFORM(WATCHOS)
@@ -764,14 +768,10 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_highlightLongPressGestureRecognizer setDelay:highlightDelay];
     [_highlightLongPressGestureRecognizer setDelegate:self];
 
-#if HAVE(LINK_PREVIEW)
-    if (!self.shouldUsePreviewForLongPress)
+#if HAVE(LINK_PREVIEW) && !USE(UICONTEXTMENU)
+    [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
+    [self _createAndConfigureLongPressGestureRecognizer];
 #endif
-    {
-        [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
-
-        [self _createAndConfigureLongPressGestureRecognizer];
-    }
 
 #if ENABLE(DATA_INTERACTION)
     [self setupDragAndDropInteractions];
@@ -7367,7 +7367,7 @@ static WebEventFlags webEventFlagsForUIKeyModifierFlags(UIKeyModifierFlags flags
 
 #if HAVE(LINK_PREVIEW)
     if ([userInterfaceItem isEqualToString:@"linkPreviewPopoverContents"]) {
-#if USE(LONG_PRESS_FOR_LINK_PREVIEW)
+#if USE(UICONTEXTMENU)
         return @{ userInterfaceItem: @{ @"pageURL": WTF::userVisibleString(_positionInformation.url) } };
 #else
         NSString *url = [_previewItemController previewData][UIPreviewDataLink];
@@ -7411,16 +7411,587 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
     return nil;
 }
 
-#if USE(LONG_PRESS_FOR_LINK_PREVIEW)
-#include <WebKitAdditions/WKInteractionPreviewAdditions.mm>
-#else
+#if USE(UICONTEXTMENU)
 
 @implementation WKContentView (WKInteractionPreview)
 
-- (BOOL)shouldUsePreviewForLongPress
+- (void)_registerPreview
 {
-    return NO;
+    if (!_webView.allowsLinkPreview)
+        return;
+
+    _contextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
+    _contextMenuHasRequestedLegacyData = NO;
+    [self addInteraction:_contextMenuInteraction.get()];
+
+    [self _showLinkPreviewsPreferenceChanged:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_showLinkPreviewsPreferenceChanged:) name:webkitShowLinkPreviewsPreferenceChangedNotification object:nil];
 }
+
+- (void)_unregisterPreview
+{
+    if (!_contextMenuInteraction)
+        return;
+
+    [self removeInteraction:_contextMenuInteraction.get()];
+    _contextMenuInteraction = nil;
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:webkitShowLinkPreviewsPreferenceChangedNotification object:nil];
+}
+
+- (void)_showLinkPreviewsPreferenceChanged:(NSNotification *)notification
+{
+    Boolean keyExistsAndHasValidFormat = false;
+    Boolean prefValue = CFPreferencesGetAppBooleanValue((__bridge CFStringRef)webkitShowLinkPreviewsPreferenceKey, kCFPreferencesCurrentApplication, &keyExistsAndHasValidFormat);
+    if (keyExistsAndHasValidFormat)
+        _showLinkPreviews = prefValue;
+    else
+        _showLinkPreviews = YES;
+}
+
+static bool needsDeprecatedPreviewAPI(id<WKUIDelegate> delegate)
+{
+    // FIXME: Replace these with booleans in UIDelegate.h.
+    return delegate
+    && ![delegate respondsToSelector:@selector(_webView:contextMenuConfigurationForElement:completionHandler:)]
+    && ![delegate respondsToSelector:@selector(webView:contextMenuConfigurationForElement:completionHandler:)]
+    && ![delegate respondsToSelector:@selector(_webView:contextMenuForElement:willCommitWithAnimator:)]
+    && ![delegate respondsToSelector:@selector(webView:contextMenuForElement:willCommitWithAnimator:)]
+    && ![delegate respondsToSelector:@selector(_webView:contextMenuWillPresentForElement:)]
+    && ![delegate respondsToSelector:@selector(webView:contextMenuWillPresentForElement:)]
+    && ![delegate respondsToSelector:@selector(_webView:contextMenuDidEndForElement:)]
+    && ![delegate respondsToSelector:@selector(webView:contextMenuDidEndForElement:)]
+    && ([delegate respondsToSelector:@selector(webView:shouldPreviewElement:)]
+        || [delegate respondsToSelector:@selector(webView:previewingViewControllerForElement:defaultActions:)]
+        || [delegate respondsToSelector:@selector(webView:commitPreviewingViewController:)]
+        || [delegate respondsToSelector:@selector(_webView:previewViewControllerForURL:defaultActions:elementInfo:)]
+        || [delegate respondsToSelector:@selector(_webView:previewViewControllerForURL:)]
+        || [delegate respondsToSelector:@selector(_webView:previewViewControllerForImage:alternateURL:defaultActions:elementInfo:)]);
+}
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+static NSArray<WKPreviewAction *> *wkPreviewActionsFromElementActions(NSArray<_WKElementAction *> *elementActions, _WKActivatedElementInfo *elementInfo)
+{
+    NSMutableArray<WKPreviewAction *> *previewActions = [NSMutableArray arrayWithCapacity:[elementActions count]];
+    for (_WKElementAction *elementAction in elementActions) {
+        WKPreviewAction *previewAction = [WKPreviewAction actionWithIdentifier:previewIdentifierForElementAction(elementAction) title:elementAction.title style:UIPreviewActionStyleDefault handler:^(UIPreviewAction *, UIViewController *) {
+            [elementAction runActionWithElementInfo:elementInfo];
+        }];
+        previewAction.image = [_WKElementAction imageForElementActionType:elementAction.type];
+        [previewActions addObject:previewAction];
+    }
+    return previewActions;
+}
+
+static UIAction *uiActionForPreviewAction(UIPreviewAction *previewAction, UIViewController *previewViewController)
+{
+    // UIPreviewActionItem.image is SPI, so no external clients will be able
+    // to provide glyphs for actions <rdar://problem/50151855>.
+    // However, they should migrate to the new API.
+
+    return [UIAction actionWithTitle:previewAction.title image:previewAction.image identifier:nil handler:^(UIAction *action) {
+        previewAction.handler(previewAction, previewViewController);
+    }];
+}
+ALLOW_DEPRECATED_DECLARATIONS_END
+
+static NSArray<UIMenuElement *> *menuElementsFromPreviewOrDefaults(UIViewController *previewViewController, const RetainPtr<NSArray>& defaultElementActions, RetainPtr<_WKActivatedElementInfo> elementInfo)
+{
+    auto actions = [NSMutableArray arrayWithCapacity:defaultElementActions.get().count];
+
+    // One of the delegates may have provided a UIViewController with a previewActionItems array. If so,
+    // we need to convert each UIPreviewActionItem into a UIAction.
+    if (previewViewController) {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        NSArray<id<UIPreviewActionItem>> *previewActions = previewViewController.previewActionItems;
+        for (UIPreviewAction *previewAction in previewActions)
+            [actions addObject:uiActionForPreviewAction(previewAction, previewViewController)];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    }
+
+    if (![actions count]) {
+        // We either didn't get a custom preview UIViewController, or it didn't provide any actions
+        // so we should use the default set.
+        for (_WKElementAction *elementAction in defaultElementActions.get()) {
+            UIImage *image = [_WKElementAction imageForElementActionType:elementAction.type];
+
+            [actions addObject:[UIAction actionWithTitle:elementAction.title image:image identifier:nil handler:^(UIAction *) {
+                [elementAction runActionWithElementInfo:elementInfo.get()];
+            }]];
+        }
+    }
+
+    return actions;
+}
+
+static UIMenu *menuFromPreviewOrDefaults(UIViewController *previewViewController, const RetainPtr<NSArray>& defaultElementActions, RetainPtr<_WKActivatedElementInfo> elementInfo, NSString *title)
+{
+    auto actions = menuElementsFromPreviewOrDefaults(previewViewController, defaultElementActions, elementInfo);
+    return [UIMenu menuWithTitle:title children:actions];
+}
+
+static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url, const String& title)
+{
+    if (isLink && !showLinkPreviews) {
+        if (!url.isEmpty()) {
+            if (WTF::protocolIsJavaScript(url))
+                return WEB_UI_STRING_KEY("JavaScript", "JavaScript Action Sheet Title", "Title for action sheet for JavaScript link");
+            return WTF::userVisibleString(url);
+        }
+    } else if (!isLink && !title.isEmpty())
+        return title;
+
+    return nil;
+}
+
+- (void)assignLegacyDataForContextMenuInteraction
+{
+    ASSERT(!_contextMenuHasRequestedLegacyData);
+    if (_contextMenuHasRequestedLegacyData)
+        return;
+    _contextMenuHasRequestedLegacyData = YES;
+
+    if (!_webView)
+        return;
+    auto uiDelegate = static_cast<id<WKUIDelegatePrivate>>(_webView.UIDelegate);
+    if (!uiDelegate)
+        return;
+
+    const auto& url = _positionInformation.url;
+
+    _page->startInteractionWithElementAtPosition(_positionInformation.request.point);
+
+    UIViewController *previewViewController = nil;
+
+    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:_positionInformation]);
+
+    if (_positionInformation.isLink) {
+        _longPressCanClick = NO;
+
+        RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = [_actionSheetAssistant defaultActionsForLinkSheet:elementInfo.get()];
+
+        // FIXME: Animated images go here.
+
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        if ([uiDelegate respondsToSelector:@selector(webView:previewingViewControllerForElement:defaultActions:)]) {
+            auto defaultActions = wkPreviewActionsFromElementActions(defaultActionsFromAssistant.get(), elementInfo.get());
+            auto previewElementInfo = adoptNS([[WKPreviewElementInfo alloc] _initWithLinkURL:url]);
+            previewViewController = [uiDelegate webView:_webView previewingViewControllerForElement:previewElementInfo.get() defaultActions:defaultActions];
+        } else if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:defaultActions:elementInfo:)])
+            previewViewController = [uiDelegate _webView:_webView previewViewControllerForURL:url defaultActions:defaultActionsFromAssistant.get() elementInfo:elementInfo.get()];
+        else if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:)])
+            previewViewController = [uiDelegate _webView:_webView previewViewControllerForURL:url];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+
+#if USE(DATA_DETECTORS_FOR_DEFAULT_PREVIEW)
+        // Previously, UIPreviewItemController would detect the case where there was no previewViewController
+        // and create one. We need to replicate this code for the new API.
+        if (!previewViewController) {
+            auto ddContextMenuActionClass = getDDContextMenuActionClass();
+            if ([ddContextMenuActionClass respondsToSelector:@selector(contextMenuConfigurationForURL:identifier:selectedText:results:inView:context:menuIdentifier:)]) {
+                BEGIN_BLOCK_OBJC_EXCEPTIONS;
+                NSDictionary *context = [self dataDetectionContextForPositionInformation:_positionInformation];
+                RetainPtr<UIContextMenuConfiguration> dataDetectorsResult = [ddContextMenuActionClass contextMenuConfigurationForURL:url identifier:_positionInformation.dataDetectorIdentifier selectedText:self.selectedText results:_positionInformation.dataDetectorResults.get() inView:self context:context menuIdentifier:nil];
+                if (_showLinkPreviews && dataDetectorsResult && dataDetectorsResult.get().previewProvider)
+                    _contextMenuLegacyPreviewController = dataDetectorsResult.get().previewProvider();
+                if (dataDetectorsResult && dataDetectorsResult.get().actionProvider) {
+                    auto menuElements = menuElementsFromPreviewOrDefaults(nil, defaultActionsFromAssistant, elementInfo);
+                    _contextMenuLegacyMenu = dataDetectorsResult.get().actionProvider(menuElements);
+                }
+                END_BLOCK_OBJC_EXCEPTIONS;
+            }
+            return;
+        }
+#endif
+
+        auto menuTitle = titleForMenu(true, _showLinkPreviews, url, _positionInformation.title);
+        _contextMenuLegacyMenu = menuFromPreviewOrDefaults(previewViewController, defaultActionsFromAssistant, elementInfo, menuTitle);
+
+    } else if (_positionInformation.isImage) {
+        NSURL *nsURL = (NSURL *)url;
+        RetainPtr<NSDictionary> imageInfo;
+        ASSERT(_positionInformation.image);
+        auto cgImage = _positionInformation.image->makeCGImageCopy();
+        auto uiImage = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
+
+        if ([uiDelegate respondsToSelector:@selector(_webView:alternateURLFromImage:userInfo:)]) {
+            NSDictionary *userInfo;
+            nsURL = [uiDelegate _webView:_webView alternateURLFromImage:uiImage.get() userInfo:&userInfo];
+            imageInfo = userInfo;
+        }
+
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        if ([uiDelegate respondsToSelector:@selector(_webView:willPreviewImageWithURL:)])
+            [uiDelegate _webView:_webView willPreviewImageWithURL:_positionInformation.imageURL];
+
+        RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = [_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
+
+        if (imageInfo && [uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForImage:alternateURL:defaultActions:elementInfo:)])
+            previewViewController = [uiDelegate _webView:_webView previewViewControllerForImage:uiImage.get() alternateURL:nsURL defaultActions:defaultActionsFromAssistant.get() elementInfo:elementInfo.get()];
+        else
+            previewViewController = [[WKImagePreviewViewController alloc] initWithCGImage:cgImage defaultActions:defaultActionsFromAssistant.get() elementInfo:elementInfo.get()];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+
+        auto menuTitle = titleForMenu(false, _showLinkPreviews, url, _positionInformation.title);
+        _contextMenuLegacyMenu = menuFromPreviewOrDefaults(previewViewController, defaultActionsFromAssistant, elementInfo, menuTitle);
+    }
+
+    _contextMenuLegacyPreviewController = _showLinkPreviews ? previewViewController : nullptr;
+}
+
+- (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location
+{
+    // Required to conform to UIContextMenuInteractionDelegate, but SPI version should be called instead.
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+- (void)_contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location completion:(void(^)(UIContextMenuConfiguration *))completion
+{
+    if (!_webView)
+        return completion(nil);
+
+    if (!_webView.configuration._longPressActionsEnabled)
+        return completion(nil);
+
+    const auto position = [interaction locationInView:self];
+    WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint(position) };
+    request.includeSnapshot = true;
+    request.includeLinkIndicator = true;
+
+    [self doAfterPositionInformationUpdate:[weakSelf = WeakObjCPtr<WKContentView>(self), completion = makeBlockPtr(completion)] (WebKit::InteractionInformationAtPosition) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return completion(nil);
+        [strongSelf continueContextMenuInteraction:completion.get()];
+    } forRequest:request];
+}
+
+- (void)continueContextMenuInteraction:(void(^)(UIContextMenuConfiguration *))completion
+{
+    if (!_positionInformation.touchCalloutEnabled)
+        return completion(nil);
+
+    if (!_positionInformation.isLink && !_positionInformation.isImage && !_positionInformation.isAttachment)
+        return completion(nil);
+
+    URL linkURL = _positionInformation.url;
+
+    if (_positionInformation.isLink && linkURL.isEmpty())
+        return completion(nil);
+
+    auto uiDelegate = static_cast<id<WKUIDelegatePrivate>>(_webView.UIDelegate);
+    if (!uiDelegate)
+        return completion(nil);
+
+    if (needsDeprecatedPreviewAPI(uiDelegate)) {
+
+        if (_positionInformation.isLink) {
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            if ([uiDelegate respondsToSelector:@selector(webView:shouldPreviewElement:)]) {
+                auto previewElementInfo = adoptNS([[WKPreviewElementInfo alloc] _initWithLinkURL:linkURL]);
+                if (![uiDelegate webView:_webView shouldPreviewElement:previewElementInfo.get()])
+                    return completion(nil);
+            }
+            ALLOW_DEPRECATED_DECLARATIONS_END
+
+            // FIXME: Support JavaScript urls here. But make sure they don't show a preview.
+            // <rdar://problem/50572283>
+            if (!linkURL.protocolIsInHTTPFamily()) {
+#if ENABLE(DATA_DETECTION)
+                if (!WebCore::DataDetection::canBePresentedByDataDetectors(linkURL))
+                    return completion(nil);
+#endif
+            }
+        }
+
+        _contextMenuLegacyPreviewController = nullptr;
+        _contextMenuLegacyMenu = nullptr;
+        _contextMenuHasRequestedLegacyData = NO;
+
+        UIContextMenuActionProvider actionMenuProvider = [weakSelf = WeakObjCPtr<WKContentView>(self)] (NSArray<UIMenuElement *> *suggestedActions) -> UIMenu * {
+            auto strongSelf = weakSelf.get();
+            if (!strongSelf)
+                return nil;
+            if (!strongSelf->_contextMenuHasRequestedLegacyData)
+                [strongSelf assignLegacyDataForContextMenuInteraction];
+
+            return strongSelf->_contextMenuLegacyMenu.get();
+        };
+
+        UIContextMenuContentPreviewProvider contentPreviewProvider = [weakSelf = WeakObjCPtr<WKContentView>(self)] () -> UIViewController * {
+            auto strongSelf = weakSelf.get();
+            if (!strongSelf)
+                return nil;
+            if (!strongSelf->_contextMenuHasRequestedLegacyData)
+                [strongSelf assignLegacyDataForContextMenuInteraction];
+
+            return strongSelf->_contextMenuLegacyPreviewController.get();
+        };
+
+        // FIXME: Should we provide an identifier and ASSERT in delegates if we don't match?
+        return completion([UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:contentPreviewProvider actionProvider:actionMenuProvider]);
+    }
+
+    auto completionBlock = makeBlockPtr([completion = makeBlockPtr(completion), linkURL = WTFMove(linkURL), weakSelf = WeakObjCPtr<WKContentView>(self)] (UIContextMenuConfiguration *configurationFromWKUIDelegate) mutable {
+
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return completion(nil);
+
+        if (!configurationFromWKUIDelegate) {
+
+            strongSelf->_contextMenuElementInfo = nil;
+
+            // At this point we have an object we might want to show a context menu for, but the
+            // client was unable to handle it. Before giving up, we ask DataDetectors.
+
+#if ENABLE(DATA_DETECTION)
+            // FIXME: Support JavaScript urls here. But make sure they don't show a preview.
+            // <rdar://problem/50572283>
+            if (!linkURL.protocolIsInHTTPFamily() && !WebCore::DataDetection::canBePresentedByDataDetectors(linkURL))
+                return completion(nil);
+
+            BEGIN_BLOCK_OBJC_EXCEPTIONS;
+            auto ddContextMenuActionClass = getDDContextMenuActionClass();
+            if ([ddContextMenuActionClass respondsToSelector:@selector(contextMenuConfigurationWithURL:inView:context:menuIdentifier:)]) {
+                NSDictionary *context = [strongSelf dataDetectionContextForPositionInformation:strongSelf->_positionInformation];
+                UIContextMenuConfiguration *configurationFromDD = [ddContextMenuActionClass contextMenuConfigurationForURL:linkURL identifier:strongSelf->_positionInformation.dataDetectorIdentifier selectedText:[strongSelf selectedText] results:strongSelf->_positionInformation.dataDetectorResults.get() inView:strongSelf.get() context:context menuIdentifier:nil];
+                if (strongSelf->_showLinkPreviews)
+                    return completion(configurationFromDD);
+                return completion([UIContextMenuConfiguration configurationWithIdentifier:[configurationFromDD identifier] previewProvider:[configurationFromDD previewProvider] actionProvider:[configurationFromDD actionProvider]]);
+            }
+            END_BLOCK_OBJC_EXCEPTIONS;
+#endif
+            return completion(nil);
+        }
+
+        id<NSCopying> identifier = [configurationFromWKUIDelegate identifier];
+        UIContextMenuContentPreviewProvider contentPreviewProvider = [configurationFromWKUIDelegate previewProvider];
+        UIContextMenuActionProvider actionMenuProvider = [configurationFromWKUIDelegate actionProvider];
+
+        auto actionProviderWrapper = [actionProviderFromUIDelegate = makeBlockPtr(actionMenuProvider), weakSelf = WTFMove(weakSelf)] (NSArray<UIMenuElement *> *suggestedActions) -> UIMenu * {
+            auto strongSelf = weakSelf.get();
+            if (!strongSelf)
+                return nil;
+
+            auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:strongSelf->_positionInformation]);
+            RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = strongSelf->_positionInformation.isLink ? [strongSelf->_actionSheetAssistant defaultActionsForLinkSheet:elementInfo.get()] : [strongSelf->_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
+
+            auto menuElements = menuElementsFromPreviewOrDefaults(nil, defaultActionsFromAssistant, elementInfo);
+
+            if (actionProviderFromUIDelegate)
+                return actionProviderFromUIDelegate(menuElements);
+
+            auto title = titleForMenu(strongSelf->_positionInformation.isLink, strongSelf->_showLinkPreviews, strongSelf->_positionInformation.url, strongSelf->_positionInformation.title);
+            return [UIMenu menuWithTitle:title children:menuElements];
+        };
+
+        completion([UIContextMenuConfiguration configurationWithIdentifier:identifier previewProvider:contentPreviewProvider actionProvider:actionProviderWrapper]);
+    });
+
+    _contextMenuElementInfo = wrapper(API::ContextMenuElementInfo::create(_positionInformation));
+    if ([uiDelegate respondsToSelector:@selector(_webView:contextMenuConfigurationForElement:completionHandler:)]) {
+        auto checker = WebKit::CompletionHandlerCallChecker::create(uiDelegate, @selector(_webView:contextMenuConfigurationForElement:completionHandler:));
+        [uiDelegate _webView:_webView contextMenuConfigurationForElement:_contextMenuElementInfo.get() completionHandler:makeBlockPtr([completionBlock = WTFMove(completionBlock), checker = WTFMove(checker)] (UIContextMenuConfiguration *configuration) {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
+            completionBlock(configuration);
+        }).get()];
+    } else if (_positionInformation.isLink && [uiDelegate respondsToSelector:@selector(webView:contextMenuConfigurationForElement:completionHandler:)]) {
+        auto checker = WebKit::CompletionHandlerCallChecker::create(uiDelegate, @selector(webView:contextMenuConfigurationForElement:completionHandler:));
+        [uiDelegate webView:_webView contextMenuConfigurationForElement:_contextMenuElementInfo.get() completionHandler:makeBlockPtr([completionBlock = WTFMove(completionBlock), checker = WTFMove(checker)] (UIContextMenuConfiguration *configuration) {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
+            completionBlock(configuration);
+        }).get()];
+    } else
+        completionBlock(nil);
+}
+
+static RetainPtr<UIImage> uiImageForImage(WebCore::Image* image)
+{
+    if (!image)
+        return nil;
+
+    auto cgImage = image->nativeImage();
+    if (!cgImage)
+        return nil;
+
+    return adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
+}
+
+// FIXME: This should be merged with createTargetedDragPreview in DragDropInteractionState.
+static RetainPtr<UITargetedPreview> createTargetedPreview(UIImage *image, UIView *rootView, UIView *previewContainer, const WebCore::FloatRect& frameInRootViewCoordinates, const Vector<WebCore::FloatRect>& clippingRectsInFrameCoordinates, UIColor *backgroundColor)
+{
+    if (frameInRootViewCoordinates.isEmpty() || !image)
+        return nil;
+
+    WebCore::FloatRect frameInContainerCoordinates = [rootView convertRect:frameInRootViewCoordinates toView:previewContainer];
+    if (frameInContainerCoordinates.isEmpty())
+        return nil;
+
+    WebCore::FloatSize scalingRatio = frameInContainerCoordinates.size() / frameInRootViewCoordinates.size();
+    NSMutableArray *clippingRectValuesInFrameCoordinates = [NSMutableArray arrayWithCapacity:clippingRectsInFrameCoordinates.size()];
+
+    for (auto rect : clippingRectsInFrameCoordinates) {
+        rect.scale(scalingRatio);
+        [clippingRectValuesInFrameCoordinates addObject:[NSValue valueWithCGRect:rect]];
+    }
+
+    RetainPtr<UIPreviewParameters> parameters;
+    if (clippingRectValuesInFrameCoordinates.count)
+        parameters = adoptNS([[UIPreviewParameters alloc] initWithTextLineRects:clippingRectValuesInFrameCoordinates]);
+    else
+        parameters = adoptNS([[UIPreviewParameters alloc] init]);
+
+    if (backgroundColor)
+        [parameters setBackgroundColor:backgroundColor];
+
+    CGPoint centerInContainerCoordinates = { CGRectGetMidX(frameInContainerCoordinates), CGRectGetMidY(frameInContainerCoordinates) };
+    auto target = adoptNS([[UIPreviewTarget alloc] initWithContainer:previewContainer center:centerInContainerCoordinates]);
+
+    auto imageView = adoptNS([[UIImageView alloc] initWithImage:image]);
+    [imageView setFrame:frameInContainerCoordinates];
+    return adoptNS([[UITargetedPreview alloc] initWithView:imageView.get() parameters:parameters.get() target:target.get()]);
+}
+
+- (UITargetedPreview *)_targetedPreview
+{
+    if (_positionInformation.isLink && _positionInformation.linkIndicator.contentImage) {
+        [self _startSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
+
+        auto indicator = _positionInformation.linkIndicator;
+        auto textIndicatorImage = uiImageForImage(indicator.contentImage.get());
+
+        return createTargetedPreview(textIndicatorImage.get(), self, self.unscaledView, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, [UIColor colorWithCGColor:cachedCGColor(indicator.estimatedBackgroundColor)]).autorelease();
+    }
+
+    if ((_positionInformation.isAttachment || _positionInformation.isImage) && _positionInformation.image) {
+        [self _startSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
+
+        RetainPtr<CGImageRef> cgImage = _positionInformation.image->makeCGImageCopy();
+        auto image = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
+
+        return createTargetedPreview(image.get(), self, self.unscaledView, _positionInformation.bounds, { }, nil).autorelease();
+    }
+
+    return nil;
+}
+
+- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
+{
+    return [self _targetedPreview];
+}
+
+- (void)contextMenuInteractionWillPresent:(UIContextMenuInteraction *)interaction
+{
+    if (!_webView)
+        return;
+    auto uiDelegate = static_cast<id<WKUIDelegatePrivate>>(_webView.UIDelegate);
+    if (!uiDelegate)
+        return;
+    if ([uiDelegate respondsToSelector:@selector(webView:contextMenuWillPresentForElement:)])
+        [uiDelegate webView:_webView contextMenuWillPresentForElement:_contextMenuElementInfo.get()];
+    else if ([uiDelegate respondsToSelector:@selector(_webView:contextMenuWillPresentForElement:)]) {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        [uiDelegate _webView:_webView contextMenuWillPresentForElement:_contextMenuElementInfo.get()];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    }
+}
+
+- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForDismissingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
+{
+    return [self _targetedPreview];
+}
+
+- (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willCommitWithAnimator:(id<UIContextMenuInteractionCommitAnimating>)animator
+{
+    if (!_webView)
+        return;
+
+    [self _stopSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
+
+    auto uiDelegate = static_cast<id<WKUIDelegatePrivate>>(_webView.UIDelegate);
+    if (!uiDelegate)
+        return;
+
+    if (needsDeprecatedPreviewAPI(uiDelegate)) {
+
+        if (_positionInformation.isImage) {
+            if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewedImageWithURL:)]) {
+                const auto& imageURL = _positionInformation.imageURL;
+                if (imageURL.isEmpty() || !(imageURL.protocolIsInHTTPFamily() || imageURL.protocolIs("data")))
+                    return;
+                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+                [uiDelegate _webView:_webView commitPreviewedImageWithURL:(NSURL *)imageURL];
+                ALLOW_DEPRECATED_DECLARATIONS_END
+            }
+            return;
+        }
+
+        if ([uiDelegate respondsToSelector:@selector(webView:commitPreviewingViewController:)]) {
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            if (auto viewController = _contextMenuLegacyPreviewController.get())
+                [uiDelegate webView:_webView commitPreviewingViewController:viewController];
+            ALLOW_DEPRECATED_DECLARATIONS_END
+            return;
+        }
+
+        if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewedViewController:)]) {
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            if (auto viewController = _contextMenuLegacyPreviewController.get())
+                [uiDelegate _webView:_webView commitPreviewedViewController:viewController];
+            ALLOW_DEPRECATED_DECLARATIONS_END
+            return;
+        }
+
+        return;
+    }
+
+    if ([uiDelegate respondsToSelector:@selector(webView:contextMenuForElement:willCommitWithAnimator:)])
+        [uiDelegate webView:_webView contextMenuForElement:_contextMenuElementInfo.get() willCommitWithAnimator:animator];
+    else if ([uiDelegate respondsToSelector:@selector(_webView:contextMenuForElement:willCommitWithAnimator:)]) {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        [uiDelegate _webView:_webView contextMenuForElement:_contextMenuElementInfo.get() willCommitWithAnimator:animator];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    }
+}
+
+- (void)contextMenuInteractionDidEnd:(UIContextMenuInteraction *)interaction
+{
+    if (!_webView)
+        return;
+
+    [self _stopSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
+
+    // FIXME: This delegate is being called more than once by UIKit. <rdar://problem/51550291>
+    // This conditional avoids the WKUIDelegate being called twice too.
+    if (!_contextMenuElementInfo) {
+        auto uiDelegate = static_cast<id<WKUIDelegatePrivate>>(_webView.UIDelegate);
+        if ([uiDelegate respondsToSelector:@selector(webView:contextMenuDidEndForElement:)])
+            [uiDelegate webView:_webView contextMenuDidEndForElement:_contextMenuElementInfo.get()];
+        else if ([uiDelegate respondsToSelector:@selector(_webView:contextMenuDidEndForElement:)]) {
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            [uiDelegate _webView:_webView contextMenuDidEndForElement:_contextMenuElementInfo.get()];
+            ALLOW_DEPRECATED_DECLARATIONS_END
+        }
+    }
+
+    _contextMenuLegacyPreviewController = nullptr;
+    _contextMenuLegacyMenu = nullptr;
+    _contextMenuHasRequestedLegacyData = NO;
+    _contextMenuElementInfo = nullptr;
+}
+
+@end
+
+#else
+
+@implementation WKContentView (WKInteractionPreview)
 
 - (void)_registerPreview
 {
@@ -7766,7 +8337,7 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 
 @end
 
-#endif // USE(LONG_PRESS_FOR_LINK_PREVIEW)
+#endif // USE(UICONTEXTMENU)
 
 #endif // HAVE(LINK_PREVIEW)
 
