@@ -1138,6 +1138,10 @@
 #endif
 
 #if ENABLE(WEBGL)
+#if !defined(USE_ANGLE)
+#define USE_ANGLE 0
+#endif
+
 #if (USE_ANGLE && (USE_OPENGL || USE_OPENGL_ES || (defined(USE_EGL) && USE_EGL)))
 #error USE_ANGLE is incompatible with USE_OPENGL, USE_OPENGL_ES and USE_EGL
 #endif

@@ -1,3 +1,16 @@
+2019-06-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        USE_ANGLE macro can be evaluated without being defined
+        https://bugs.webkit.org/show_bug.cgi?id=198991
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/Platform.h: On platforms not yet defining USE_ANGLE, the
+        incompatibility check with some other flags leads to the macro being
+        evaluated even when it was not defined, producing compiler warnings.
+        To avoid this, the macro should be defined to 0 before the check in
+        case it was not defined already.
+
 2019-06-18  Dean Jackson  <dino@apple.com>
 
         UIContextMenuInteraction implementation for WKContentView
