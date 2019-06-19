@@ -59,18 +59,7 @@ namespace TestWebKitAPI {
 
 TEST(WebKit, HTTPSProxy)
 {
-    TCPServer server(TCPServer::Protocol::HTTPSProxy, [] (SSL* ssl) {
-        char requestBuffer[1000];
-        auto readResult = SSL_read(ssl, requestBuffer, sizeof(requestBuffer));
-        ASSERT_UNUSED(readResult, readResult > 0);
-
-        const char* reply = ""
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Length: 34\r\n\r\n"
-        "<script>alert('success!')</script>";
-        auto writeResult = SSL_write(ssl, reply, strlen(reply));
-        ASSERT_UNUSED(writeResult, writeResult == static_cast<int>(strlen(reply)));
-    });
+    TCPServer server(TCPServer::Protocol::HTTPSProxy, TCPServer::respondWithOK);
 
     auto storeConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];

@@ -30,11 +30,7 @@
 #include <wtf/Vector.h>
 
 #if HAVE(SSL)
-extern "C" {
 struct SSL;
-int SSL_read(SSL*, void*, int);
-int SSL_write(SSL*, const void*, int);
-}
 #endif // HAVE(SSL)
 
 namespace TestWebKitAPI {
@@ -47,14 +43,25 @@ public:
     
     TCPServer(Function<void(Socket)>&&, size_t connections = 1);
 #if HAVE(SSL)
-    enum class Protocol : bool {
-        HTTPS, HTTPSProxy
+    enum class Protocol : uint8_t {
+        HTTPS, HTTPSProxy, HTTPSWithClientCertificateRequest
     };
     TCPServer(Protocol, Function<void(SSL*)>&&);
 #endif // HAVE(SSL)
     ~TCPServer();
     
     Port port() const { return m_port; }
+    
+#if HAVE(SSL)
+    static void respondWithOK(SSL*);
+#endif
+    static void respondWithChallengeThenOK(Socket);
+
+    template<typename T> static Vector<uint8_t> read(T);
+    template<typename T> static void write(T, const void*, size_t);
+    
+    static Vector<uint8_t> testPrivateKey();
+    static Vector<uint8_t> testCertificate();
     
 private:
     Optional<Socket> socketBindListen(size_t connections);

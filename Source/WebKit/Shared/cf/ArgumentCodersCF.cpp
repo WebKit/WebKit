@@ -41,29 +41,6 @@
 #import <Foundation/Foundation.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <Security/SecIdentityPriv.h>
-#endif
-
-extern "C" SecIdentityRef SecIdentityCreate(CFAllocatorRef allocator, SecCertificateRef certificate, SecKeyRef privateKey);
-
-#if PLATFORM(IOS_FAMILY)
-#if USE(APPLE_INTERNAL_SDK)
-#include <Security/SecKeyPriv.h>
-#endif
-
-extern "C" OSStatus SecKeyFindWithPersistentRef(CFDataRef persistentRef, SecKeyRef* lookedUpData);
-#endif
-
-#if HAVE(SEC_ACCESS_CONTROL)
-#if USE(APPLE_INTERNAL_SDK)
-#include <Security/SecAccessControlPriv.h>
-#endif
-
-extern "C" SecAccessControlRef SecAccessControlCreateFromData(CFAllocatorRef allocator, CFDataRef data, CFErrorRef *error);
-extern "C" CFDataRef SecAccessControlCopyData(SecAccessControlRef access_control);
-#endif
-
 namespace IPC {
 using namespace WebCore;
 
