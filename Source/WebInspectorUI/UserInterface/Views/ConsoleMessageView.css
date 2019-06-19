@@ -320,4 +320,13 @@ body[dir=rtl] .console-message.expandable .console-top-level-message::before {
     .console-message .repeat-count {
         background-color: hsl(218, 70%, 48%);
     }
+
+    .console-message .go-to-link {
+        color: var(--text-color-secondary);
+    }
+
+    .console-message .go-to-link:hover,
+    .console-message .go-to-link:focus {
+        color: var(--selected-secondary-text-color-active);
+    }
 }

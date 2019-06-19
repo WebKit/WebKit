@@ -53,6 +53,12 @@ body[dir=rtl] .error-object > .formatted-error::before {
     color: hsla(0, 0%, 0%, 0.2);
 }
 
+@media (prefers-dark-interface) {
+    .error-object-link-container {
+        color: var(--text-color-secondary);
+    }
+}
+
 .error-object.expanded > .formatted-error > .error-object-link-container {
     display: none;
 }

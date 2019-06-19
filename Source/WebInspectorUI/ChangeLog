@@ -1,3 +1,14 @@
+2019-06-19  Zhifei Fang  <zhifei_fang@apple.com>
+
+        Correct the error object link color in dark mode.
+        https://bugs.webkit.org/show_bug.cgi?id=198033
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/ErrorObjectView.css:
+        (@media (prefers-dark-interface)):
+        (.error-object-link-container):
+
 2019-06-18  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Network: detail view shouldn't stay open when the related entry is removed
