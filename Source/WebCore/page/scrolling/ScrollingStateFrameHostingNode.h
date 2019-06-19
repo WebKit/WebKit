@@ -53,7 +53,7 @@ private:
     ScrollingStateFrameHostingNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateFrameHostingNode(const ScrollingStateFrameHostingNode&, ScrollingStateTree&);
 
-    void setAllPropertiesChanged() override;
+    void setPropertyChangedBitsAfterReattach() override;
 
     LayoutRect m_parentRelativeScrollableRect;
 };

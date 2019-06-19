@@ -85,7 +85,7 @@ Ref<ScrollingStateNode> ScrollingStateFrameScrollingNode::clone(ScrollingStateTr
     return adoptRef(*new ScrollingStateFrameScrollingNode(*this, adoptiveTree));
 }
 
-void ScrollingStateFrameScrollingNode::setAllPropertiesChanged()
+void ScrollingStateFrameScrollingNode::setPropertyChangedBitsAfterReattach()
 {
     setPropertyChangedBit(FrameScaleFactor);
     setPropertyChangedBit(EventTrackingRegion);
@@ -107,7 +107,7 @@ void ScrollingStateFrameScrollingNode::setAllPropertiesChanged()
     setPropertyChangedBit(MinLayoutViewportOrigin);
     setPropertyChangedBit(MaxLayoutViewportOrigin);
 
-    ScrollingStateScrollingNode::setAllPropertiesChanged();
+    ScrollingStateScrollingNode::setPropertyChangedBitsAfterReattach();
 }
 
 void ScrollingStateFrameScrollingNode::setFrameScaleFactor(float scaleFactor)

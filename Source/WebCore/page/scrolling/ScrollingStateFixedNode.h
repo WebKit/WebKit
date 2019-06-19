@@ -55,7 +55,7 @@ private:
     ScrollingStateFixedNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateFixedNode(const ScrollingStateFixedNode&, ScrollingStateTree&);
 
-    void setAllPropertiesChanged() override;
+    void setPropertyChangedBitsAfterReattach() override;
 
     void reconcileLayerPositionForViewportRect(const LayoutRect& viewportRect, ScrollingLayerPositionAction) override;
 

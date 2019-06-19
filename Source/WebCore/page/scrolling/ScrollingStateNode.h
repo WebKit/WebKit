@@ -212,7 +212,7 @@ public:
     bool hasChangedProperty(unsigned propertyBit) const { return m_changedProperties & (static_cast<ChangedProperties>(1) << propertyBit); }
     void resetChangedProperties() { m_changedProperties = 0; }
     void setPropertyChanged(unsigned propertyBit);
-    virtual void setAllPropertiesChanged();
+    virtual void setPropertyChangedBitsAfterReattach();
 
     ChangedProperties changedProperties() const { return m_changedProperties; }
     void setChangedProperties(ChangedProperties changedProperties) { m_changedProperties = changedProperties; }

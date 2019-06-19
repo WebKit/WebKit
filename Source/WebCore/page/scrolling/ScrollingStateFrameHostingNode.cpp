@@ -57,11 +57,11 @@ Ref<ScrollingStateNode> ScrollingStateFrameHostingNode::clone(ScrollingStateTree
     return adoptRef(*new ScrollingStateFrameHostingNode(*this, adoptiveTree));
 }
 
-void ScrollingStateFrameHostingNode::setAllPropertiesChanged()
+void ScrollingStateFrameHostingNode::setPropertyChangedBitsAfterReattach()
 {
     setPropertyChangedBit(ParentRelativeScrollableRect);
 
-    ScrollingStateNode::setAllPropertiesChanged();
+    ScrollingStateNode::setPropertyChangedBitsAfterReattach();
 }
 
 void ScrollingStateFrameHostingNode::setParentRelativeScrollableRect(const LayoutRect& parentRelativeScrollableRect)

@@ -1,3 +1,14 @@
+2019-06-19  Antti Koivisto  <antti@apple.com>
+
+        RequestedScrollPosition shouldn't be applied after node reattach
+        https://bugs.webkit.org/show_bug.cgi?id=198994
+        <rdar://problem/51439685>
+
+        Reviewed by Simon Fraser.
+
+        * scrollingcoordinator/ios/scroll-position-after-reattach-expected.html: Added.
+        * scrollingcoordinator/ios/scroll-position-after-reattach.html: Added.
+
 2019-06-19  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: ( r246394 ) webgpu/whlsl-buffer-fragment.html and webgpu/whlsl-buffer-vertex.html are failing

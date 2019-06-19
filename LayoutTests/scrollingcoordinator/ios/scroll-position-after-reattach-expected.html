@@ -1,0 +1,47 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true internal:AsyncFrameScrollingEnabled=true ] -->
+<style>
+#outer {
+    overflow: scroll;
+    width: 400px;
+    height: 400px;
+    border: 2px solid yellow;
+}
+#inner {
+    overflow: auto;
+    width: 300px;
+    height: 300px;
+    border: 2px solid blue;
+}
+#innercontent {
+    width: 1000px;
+    height: 1000px;
+    border: 10px solid green;
+}
+#outercontent {
+    width: 1000px;
+    height: 1000px;
+    border: 10px solid red;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+async function doTest() {
+    if (!window.testRunner)
+        return;
+    inner.scrollTo(0, 200);
+    testRunner.notifyDone();
+}
+
+window.addEventListener('load', doTest, false);
+</script>
+
+<div id=outer>
+    <div id=inner>
+        <div id=innercontent>This should be scrollable</div>
+    </div>
+    <div id=outercontent class=content></div>
+</div>
+

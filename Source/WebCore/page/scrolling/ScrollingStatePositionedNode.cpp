@@ -59,11 +59,11 @@ Ref<ScrollingStateNode> ScrollingStatePositionedNode::clone(ScrollingStateTree& 
     return adoptRef(*new ScrollingStatePositionedNode(*this, adoptiveTree));
 }
 
-void ScrollingStatePositionedNode::setAllPropertiesChanged()
+void ScrollingStatePositionedNode::setPropertyChangedBitsAfterReattach()
 {
     setPropertyChangedBit(RelatedOverflowScrollingNodes);
     setPropertyChangedBit(LayoutConstraintData);
-    ScrollingStateNode::setAllPropertiesChanged();
+    ScrollingStateNode::setPropertyChangedBitsAfterReattach();
 }
 
 void ScrollingStatePositionedNode::setRelatedOverflowScrollingNodes(Vector<ScrollingNodeID>&& nodes)

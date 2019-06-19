@@ -274,7 +274,7 @@ void ScrollingStateTree::clear()
 void ScrollingStateTree::nodeWasReattachedRecursive(ScrollingStateNode& node)
 {
     // When a node is re-attached, the ScrollingTree is recreating the ScrollingNode from scratch, so we need to set all the dirty bits.
-    node.setAllPropertiesChanged();
+    node.setPropertyChangedBitsAfterReattach();
 
     if (auto* children = node.children()) {
         for (auto& child : *children)

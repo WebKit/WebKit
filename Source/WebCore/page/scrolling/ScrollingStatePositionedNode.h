@@ -61,7 +61,7 @@ private:
     ScrollingStatePositionedNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStatePositionedNode(const ScrollingStatePositionedNode&, ScrollingStateTree&);
 
-    void setAllPropertiesChanged() override;
+    void setPropertyChangedBitsAfterReattach() override;
 
     void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 

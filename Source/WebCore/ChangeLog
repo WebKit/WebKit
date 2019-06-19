@@ -1,3 +1,54 @@
+2019-06-19  Antti Koivisto  <antti@apple.com>
+
+        RequestedScrollPosition shouldn't be applied after node reattach
+        https://bugs.webkit.org/show_bug.cgi?id=198994
+        <rdar://problem/51439685>
+
+        Reviewed by Simon Fraser.
+
+        Test: scrollingcoordinator/ios/scroll-position-after-reattach.html
+
+        If a scrolling node gets reattached, its scroll position resets to (0,0) or whatever the previous
+        requestedScrollPosition was, and the current position is lost.
+
+        * page/scrolling/ScrollingStateFixedNode.cpp:
+        (WebCore::ScrollingStateFixedNode::setPropertyChangedBitsAfterReattach):
+        (WebCore::ScrollingStateFixedNode::setAllPropertiesChanged): Deleted.
+
+        Rename to better reflect what this is for.
+
+        * page/scrolling/ScrollingStateFixedNode.h:
+        * page/scrolling/ScrollingStateFrameHostingNode.cpp:
+        (WebCore::ScrollingStateFrameHostingNode::setPropertyChangedBitsAfterReattach):
+        (WebCore::ScrollingStateFrameHostingNode::setAllPropertiesChanged): Deleted.
+        * page/scrolling/ScrollingStateFrameHostingNode.h:
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        (WebCore::ScrollingStateFrameScrollingNode::setPropertyChangedBitsAfterReattach):
+        (WebCore::ScrollingStateFrameScrollingNode::setAllPropertiesChanged): Deleted.
+        * page/scrolling/ScrollingStateFrameScrollingNode.h:
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::setPropertyChangedBitsAfterReattach):
+        (WebCore::ScrollingStateNode::setAllPropertiesChanged): Deleted.
+        * page/scrolling/ScrollingStateNode.h:
+        * page/scrolling/ScrollingStatePositionedNode.cpp:
+        (WebCore::ScrollingStatePositionedNode::setPropertyChangedBitsAfterReattach):
+        (WebCore::ScrollingStatePositionedNode::setAllPropertiesChanged): Deleted.
+        * page/scrolling/ScrollingStatePositionedNode.h:
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::setPropertyChangedBitsAfterReattach):
+
+        Don't set RequestedScrollPosition. It is a special property that is applied only once on request
+        and shouldn't get reapplied. Nodes should keep their existing scroll position on reattach.
+
+        (WebCore::ScrollingStateScrollingNode::setAllPropertiesChanged): Deleted.
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        (WebCore::ScrollingStateStickyNode::setPropertyChangedBitsAfterReattach):
+        (WebCore::ScrollingStateStickyNode::setAllPropertiesChanged): Deleted.
+        * page/scrolling/ScrollingStateStickyNode.h:
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::nodeWasReattachedRecursive):
+
 2019-06-18  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Support matrices

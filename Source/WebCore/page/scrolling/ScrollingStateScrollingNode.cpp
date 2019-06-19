@@ -73,7 +73,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
 
 ScrollingStateScrollingNode::~ScrollingStateScrollingNode() = default;
 
-void ScrollingStateScrollingNode::setAllPropertiesChanged()
+void ScrollingStateScrollingNode::setPropertyChangedBitsAfterReattach()
 {
     setPropertyChangedBit(ScrollableAreaSize);
     setPropertyChangedBit(TotalContentsSize);
@@ -82,7 +82,6 @@ void ScrollingStateScrollingNode::setAllPropertiesChanged()
     setPropertyChangedBit(ScrollPosition);
     setPropertyChangedBit(ScrollOrigin);
     setPropertyChangedBit(ScrollableAreaParams);
-    setPropertyChangedBit(RequestedScrollPosition);
 #if ENABLE(CSS_SCROLL_SNAP)
     setPropertyChangedBit(HorizontalSnapOffsets);
     setPropertyChangedBit(VerticalSnapOffsets);
@@ -98,7 +97,7 @@ void ScrollingStateScrollingNode::setAllPropertiesChanged()
     setPropertyChangedBit(VerticalScrollbarLayer);
     setPropertyChangedBit(PainterForScrollbar);
 
-    ScrollingStateNode::setAllPropertiesChanged();
+    ScrollingStateNode::setPropertyChangedBitsAfterReattach();
 }
 
 void ScrollingStateScrollingNode::setScrollableAreaSize(const FloatSize& size)
