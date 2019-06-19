@@ -145,12 +145,6 @@ class CustomizableTestGroupForm extends TestGroupForm {
 
         const commitSets = Array.from(commitSetMap.values());
         const hasCommitWithTestability = commitSets.some((commitSet) =>  !!commitSet.commitsWithTestability().length);
-        for (const c of commitSets) {
-            if (c.commitsWithTestability().length)
-                console.log(c);
-        }
-        console.log({hasCommitWithTestability});
-        console.log('aaaa');
         if (!hasCommitWithTestability)
             return [];
 

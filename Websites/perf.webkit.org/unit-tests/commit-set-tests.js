@@ -501,9 +501,9 @@ describe('IntermediateCommitSet', () => {
 
             const requests = MockRemoteAPI.requests;
             assert.equal(requests.length, 2);
-            assert.equal(requests[0].url, '/api/commits/111/owner-commit-0');
+            assert.equal(requests[0].url, '/api/commits/111/owner-commit-0?prefix-match=true');
             assert.equal(requests[0].method, 'GET');
-            assert.equal(requests[1].url, '/api/commits/112/owned-commit-0');
+            assert.equal(requests[1].url, '/api/commits/112/owned-commit-0?prefix-match=true');
             assert.equal(requests[1].method, 'GET');
 
             requests[0].resolve({commits: [{
@@ -556,9 +556,9 @@ describe('IntermediateCommitSet', () => {
             const requests = MockRemoteAPI.requests;
 
             assert(requests.length, 2);
-            assert.equal(requests[0].url, '/api/commits/11/webkit-commit-0');
+            assert.equal(requests[0].url, '/api/commits/11/webkit-commit-0?prefix-match=true');
             assert.equal(requests[0].method, 'GET');
-            assert.equal(requests[1].url, '/api/commits/11/webkit-commit-1');
+            assert.equal(requests[1].url, '/api/commits/11/webkit-commit-1?prefix-match=true');
             assert.equal(requests[1].method, 'GET');
 
             requests[1].resolve({commits: [{
@@ -653,7 +653,7 @@ describe('IntermediateCommitSet', () => {
             commitSet.removeCommitForRepository(MockModels.webkit);
 
             const requests = MockRemoteAPI.requests;
-            assert.equal(requests[0].url, '/api/commits/11/webkit-commit-1');
+            assert.equal(requests[0].url, '/api/commits/11/webkit-commit-1?prefix-match=true');
             assert.equal(requests[0].method, 'GET');
 
             requests[0].resolve({commits: [{

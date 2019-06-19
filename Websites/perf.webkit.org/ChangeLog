@@ -1,3 +1,18 @@
+2019-06-17  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Customizable test group form should allow user to supply a revision prefix of a commit and revision starts with 'r'.
+        https://bugs.webkit.org/show_bug.cgi?id=198940
+
+        Reviewed by Ryosuke Niwa.
+
+        Customizable test group form should adapt prefix matching when fetching for a commit.
+
+        * browser-tests/customizable-test-group-form-tests.js: Updated and added unit tests.
+        * public/v3/components/customizable-test-group-form.js: Removed loggings those a unintentionally committed.
+        * public/v3/models/commit-set.js: Adapted prefix matching API when fetching a commit.
+        (IntermediateCommitSet.prototype._fetchCommitLogAndOwnedCommits):
+        * unit-tests/commit-set-tests.js: Updated unit tests accordingly.
+
 2019-06-13  Dewei Zhu  <dewei_zhu@apple.com>
 
         Custom analysis task configurator should allow supplying commit prefix and revision starts 'r'.

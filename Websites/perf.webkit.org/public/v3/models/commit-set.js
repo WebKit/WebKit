@@ -394,7 +394,7 @@ class IntermediateCommitSet {
 
     _fetchCommitLogAndOwnedCommits(repository, revision)
     {
-        return CommitLog.fetchForSingleRevision(repository, revision).then((commits) => {
+        return CommitLog.fetchForSingleRevision(repository, revision, true).then((commits) => {
             console.assert(commits.length === 1);
             const commit = commits[0];
             if (!commit.ownsCommits())
