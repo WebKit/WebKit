@@ -962,3 +962,5 @@ webkit.org/b/176030 [ Debug ] http/tests/websocket/tests/hybi/send-object-tostri
 
 webkit.org/b/199012 webgpu/whlsl-buffer-fragment.html [ ImageOnlyFailure ]
 webkit.org/b/199012 webgpu/whlsl-buffer-vertex.html [ ImageOnlyFailure ]
+
+webkit.org/b/198921 [ Mojave+ ] webgpu/blend-color-triangle-strip.html [ Pass ImageOnlyFailure ]

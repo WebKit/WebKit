@@ -1,5 +1,14 @@
 2019-06-19  Russell Epstein  <russell_e@apple.com>
 
+        webgpu/blend-color-triangle-strip.html is a flakey failure since introduction.
+        https://bugs.webkit.org/show_bug.cgi?id=198921
+
+        Unreviewed Test Gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2019-06-19  Russell Epstein  <russell_e@apple.com>
+
         Layout Test imported/w3c/web-platform-tests/websockets/Create-Secure-verify-url-set-non-default-port.any.html is failing.
         https://bugs.webkit.org/show_bug.cgi?id=199013
 
