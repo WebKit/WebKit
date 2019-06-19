@@ -76,8 +76,7 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
 
 NetworkDataTaskCurl::~NetworkDataTaskCurl()
 {
-    if (m_curlRequest)
-        m_curlRequest->invalidateClient();
+    invalidateAndCancel();
 }
 
 void NetworkDataTaskCurl::resume()
