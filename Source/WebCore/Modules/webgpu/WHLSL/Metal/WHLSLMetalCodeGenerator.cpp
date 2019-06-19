@@ -30,6 +30,7 @@
 
 #include "WHLSLFunctionWriter.h"
 #include "WHLSLTypeNamer.h"
+#include <wtf/DataLog.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -37,6 +38,8 @@ namespace WebCore {
 namespace WHLSL {
 
 namespace Metal {
+
+static constexpr bool dumpMetalCode = false;
 
 static String generateMetalCodeShared(String&& metalTypes, String&& metalFunctions)
 {
@@ -53,6 +56,12 @@ static String generateMetalCodeShared(String&& metalTypes, String&& metalFunctio
 
     stringBuilder.append(WTFMove(metalTypes));
     stringBuilder.append(WTFMove(metalFunctions));
+
+    if (dumpMetalCode) {
+        dataLogLn("Generated Metal code: ");
+        dataLogLn(stringBuilder.toString());
+    }
+
     return stringBuilder.toString();
 }
 

@@ -507,7 +507,7 @@ private:
 
     void finishVisiting(AST::PropertyAccessExpression&, ResolvingType* additionalArgumentType = nullptr);
 
-    HashMap<AST::Expression*, ResolvingType> m_typeMap;
+    HashMap<AST::Expression*, std::unique_ptr<ResolvingType>> m_typeMap;
     HashMap<AST::Expression*, AST::TypeAnnotation> m_typeAnnotations;
     HashSet<String> m_vertexEntryPoints;
     HashSet<String> m_fragmentEntryPoints;
@@ -537,7 +537,7 @@ void Checker::visit(Program& program)
 bool Checker::assignTypes()
 {
     for (auto& keyValuePair : m_typeMap) {
-        auto success = keyValuePair.value.visit(WTF::makeVisitor([&](UniqueRef<AST::UnnamedType>& unnamedType) -> bool {
+        auto success = keyValuePair.value->visit(WTF::makeVisitor([&](UniqueRef<AST::UnnamedType>& unnamedType) -> bool {
             keyValuePair.key->setType(unnamedType->clone());
             return true;
         }, [&](RefPtr<ResolvableTypeReference>& resolvableTypeReference) -> bool {
@@ -780,7 +780,7 @@ auto Checker::getInfo(AST::Expression& expression, bool requiresLeftValue) -> Op
         setError();
         return WTF::nullopt;
     }
-    return {{ typeIterator->value, typeAnnotationIterator->value }};
+    return {{ *typeIterator->value, typeAnnotationIterator->value }};
 }
 
 void Checker::visit(AST::VariableDeclaration& variableDeclaration)
@@ -802,7 +802,7 @@ void Checker::visit(AST::VariableDeclaration& variableDeclaration)
 
 void Checker::assignType(AST::Expression& expression, UniqueRef<AST::UnnamedType>&& unnamedType, AST::TypeAnnotation typeAnnotation = AST::RightValue())
 {
-    auto addResult = m_typeMap.add(&expression, WTFMove(unnamedType));
+    auto addResult = m_typeMap.add(&expression, std::make_unique<ResolvingType>(WTFMove(unnamedType)));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
     auto typeAnnotationAddResult = m_typeAnnotations.add(&expression, WTFMove(typeAnnotation));
     ASSERT_UNUSED(typeAnnotationAddResult, typeAnnotationAddResult.isNewEntry);
@@ -810,7 +810,7 @@ void Checker::assignType(AST::Expression& expression, UniqueRef<AST::UnnamedType
 
 void Checker::assignType(AST::Expression& expression, RefPtr<ResolvableTypeReference>&& resolvableTypeReference, AST::TypeAnnotation typeAnnotation = AST::RightValue())
 {
-    auto addResult = m_typeMap.add(&expression, WTFMove(resolvableTypeReference));
+    auto addResult = m_typeMap.add(&expression, std::make_unique<ResolvingType>(WTFMove(resolvableTypeReference)));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
     auto typeAnnotationAddResult = m_typeAnnotations.add(&expression, WTFMove(typeAnnotation));
     ASSERT_UNUSED(typeAnnotationAddResult, typeAnnotationAddResult.isNewEntry);
@@ -819,10 +819,10 @@ void Checker::assignType(AST::Expression& expression, RefPtr<ResolvableTypeRefer
 void Checker::forwardType(AST::Expression& expression, ResolvingType& resolvingType, AST::TypeAnnotation typeAnnotation = AST::RightValue())
 {
     resolvingType.visit(WTF::makeVisitor([&](UniqueRef<AST::UnnamedType>& result) {
-        auto addResult = m_typeMap.add(&expression, result->clone());
+        auto addResult = m_typeMap.add(&expression, std::make_unique<ResolvingType>(result->clone()));
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }, [&](RefPtr<ResolvableTypeReference>& result) {
-        auto addResult = m_typeMap.add(&expression, result.copyRef());
+        auto addResult = m_typeMap.add(&expression, std::make_unique<ResolvingType>(result.copyRef()));
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }));
     auto typeAnnotationAddResult = m_typeAnnotations.add(&expression, WTFMove(typeAnnotation));

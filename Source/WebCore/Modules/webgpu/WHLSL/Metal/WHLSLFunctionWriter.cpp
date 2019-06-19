@@ -191,6 +191,13 @@ protected:
         return m_stack.takeLast().leftValue;
     }
 
+    enum class BreakContext {
+        Loop,
+        Switch
+    };
+
+    Optional<BreakContext> m_currentBreakContext;
+
     Intrinsics& m_intrinsics;
     TypeNamer& m_typeNamer;
     HashMap<AST::FunctionDeclaration*, String>& m_functionMapping;
@@ -271,9 +278,17 @@ void FunctionDefinitionWriter::visit(AST::Block& block)
 
 void FunctionDefinitionWriter::visit(AST::Break&)
 {
-    ASSERT(m_breakOutOfCurrentLoopEarlyVariable.length());
-    m_stringBuilder.append(makeString(m_breakOutOfCurrentLoopEarlyVariable, " = true;\n"));
-    m_stringBuilder.append("break;\n");
+    ASSERT(m_currentBreakContext);
+    switch (*m_currentBreakContext) {
+    case BreakContext::Switch:
+        m_stringBuilder.append("break;\n");
+        break;
+    case BreakContext::Loop:
+        ASSERT(m_breakOutOfCurrentLoopEarlyVariable.length());
+        m_stringBuilder.append(makeString(m_breakOutOfCurrentLoopEarlyVariable, " = true;\n"));
+        m_stringBuilder.append("break;\n");
+        break;
+    }
 }
 
 void FunctionDefinitionWriter::visit(AST::Continue&)
@@ -307,6 +322,7 @@ void FunctionDefinitionWriter::emitLoop(LoopConditionLocation loopConditionLocat
     }
 
     m_stringBuilder.append("do {\n");
+    SetForScope<Optional<BreakContext>> breakContext(m_currentBreakContext, BreakContext::Loop);
     checkErrorAndVisit(body);
     m_stringBuilder.append("} while(false); \n");
     m_stringBuilder.append(makeString("if (", m_breakOutOfCurrentLoopEarlyVariable, ") break;\n"));
@@ -393,9 +409,9 @@ void FunctionDefinitionWriter::visit(AST::SwitchCase& switchCase)
         m_stringBuilder.append(makeString("case ", constantExpressionString(*switchCase.value()), ":\n"));
     else
         m_stringBuilder.append("default:\n");
+    SetForScope<Optional<BreakContext>> breakContext(m_currentBreakContext, BreakContext::Switch);
     checkErrorAndVisit(switchCase.block());
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195812 Figure out whether we need to break or fallthrough.
-    notImplemented();
 }
 
 void FunctionDefinitionWriter::visit(AST::Trap&)

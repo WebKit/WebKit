@@ -225,6 +225,39 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         return stringBuilder.toString();
     }
 
+    auto numberOfMatrixRows = [&] {
+        auto& typeReference = downcast<AST::TypeReference>(*nativeFunctionDeclaration.parameters()[0]->type());
+        auto& matrixType = downcast<AST::NativeTypeDeclaration>(downcast<AST::TypeReference>(downcast<AST::TypeDefinition>(typeReference.resolvedType()).type()).resolvedType());
+        ASSERT(matrixType.name() == "matrix");
+        ASSERT(matrixType.typeArguments().size() == 3);
+        return String::number(WTF::get<AST::ConstantExpression>(matrixType.typeArguments()[1]).integerLiteral().value());
+    };
+
+    if (nativeFunctionDeclaration.name() == "operator[]") {
+        ASSERT(nativeFunctionDeclaration.parameters().size() == 2);
+        auto metalParameter1Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
+        auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1]->type());
+        auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
+        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " m, ", metalParameter2Name, " i) {\n"));
+        stringBuilder.append(makeString("    if (i < ", numberOfMatrixRows(), ") return m[i];\n"));
+        stringBuilder.append(makeString("    return ", metalReturnName, "(0);\n"));
+        stringBuilder.append("}\n");
+        return stringBuilder.toString();
+    }
+
+    if (nativeFunctionDeclaration.name() == "operator[]=") {
+        ASSERT(nativeFunctionDeclaration.parameters().size() == 3);
+        auto metalParameter1Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
+        auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1]->type());
+        auto metalParameter3Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[2]->type());
+        auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
+        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " m, ", metalParameter2Name, " i, ", metalParameter3Name, " v) {\n"));
+        stringBuilder.append(makeString("    if (i < ", numberOfMatrixRows(), ") m[i] = v;\n"));
+        stringBuilder.append("    return m;\n");
+        stringBuilder.append("}\n");
+        return stringBuilder.toString();
+    }
+
     if (nativeFunctionDeclaration.isOperator()) {
         if (nativeFunctionDeclaration.parameters().size() == 1) {
             auto operatorName = nativeFunctionDeclaration.name().substring("operator"_str.length());

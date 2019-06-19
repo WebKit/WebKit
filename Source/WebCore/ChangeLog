@@ -1,3 +1,48 @@
+2019-06-18  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Support matrices
+        https://bugs.webkit.org/show_bug.cgi?id=198876
+        <rdar://problem/51768882>
+
+        Reviewed by Dean Jackson and Myles Maxfield.
+
+        This patch adds in support for matrices to WHLSL. Most matrix related code
+        is defined by the standard library. This patch just needed to add support
+        for the native functions operator[] and operator[]= on matrix types. The only
+        native functions that are named operator[] and operator[]= are for matrix
+        operations, so we strongly assume when generating code for native operator[] and
+        operator[]= that we're dealing with matrix types.
+        
+        operator[]= ignores the write if the index is out of bounds. operator[]
+        returns a zeroed vector if the index is out of bounds.  
+        
+        This patch also incorporates two bug fixes:
+        1. This patch takes Robin's patch in https://bugs.webkit.org/show_bug.cgi?id=198313 to ensure
+        we don't have pointers to values in a hash map. This was needed in this patch
+        otherwise we'd crash parsing the standard library.
+        
+        2. This patch fixes how we handle "break" in metal codegen. When I first
+        implemented break, I strongly assumed we were in a loop. However, break
+        can be either from a loop or from switch. This patch teaches the metal code
+        generator to track which context we're in and to emit code accordingly.
+
+        Tests: webgpu/whlsl-matrix-2.html
+               webgpu/whlsl-matrix.html
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::emitLoop):
+        * Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.cpp:
+        (WebCore::WHLSL::Metal::generateMetalCodeShared):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeFunction):
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::Checker::assignTypes):
+        (WebCore::WHLSL::Checker::getInfo):
+        (WebCore::WHLSL::Checker::assignType):
+        (WebCore::WHLSL::Checker::forwardType):
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt:
+
 2019-06-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSLock should be WebThread aware
