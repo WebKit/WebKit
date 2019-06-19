@@ -1,3 +1,17 @@
+2019-06-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Invalidate SceneIntegration in LayerTreeHost::invalidate()
+        https://bugs.webkit.org/show_bug.cgi?id=198992
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::invalidate): Invalidate the
+        Nicosia::SceneIntegration object. This should properly disassociate
+        the now-invalited LayerTreeHost (a SceneIntegration client) from the
+        SceneIntegration object that can still be shared with platform layers
+        originating from this LayerTreeHost.
+
 2019-06-18  Dean Jackson  <dino@apple.com>
 
         UIContextMenuInteraction implementation for WKContentView

@@ -171,6 +171,7 @@ void LayerTreeHost::invalidate()
 
     cancelPendingLayerFlush();
 
+    m_sceneIntegration->invalidate();
     m_coordinator.invalidate();
     m_compositor->invalidate();
     m_surface = nullptr;
