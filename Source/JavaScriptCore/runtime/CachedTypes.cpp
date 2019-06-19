@@ -101,7 +101,7 @@ public:
 
     Allocation malloc(unsigned size)
     {
-        ASSERT(size);
+        RELEASE_ASSERT(size);
         ptrdiff_t offset;
         if (m_currentPage->malloc(size, offset))
             return Allocation { m_currentPage->buffer() + offset, m_baseOffset + offset };
@@ -244,7 +244,7 @@ private:
             ptrdiff_t size = roundUpToMultipleOf(alignof(std::max_align_t), m_offset);
             if (size == m_offset)
                 return;
-            ASSERT(static_cast<size_t>(size) <= m_capacity);
+            RELEASE_ASSERT(static_cast<size_t>(size) <= m_capacity);
             m_offset = size;
         }
 
@@ -323,23 +323,21 @@ WTF::Optional<void*> Decoder::cachedPtrForOffset(ptrdiff_t offset)
 
 const void* Decoder::ptrForOffsetFromBase(ptrdiff_t offset)
 {
-#ifndef NDEBUG
     ASSERT(offset > 0 && static_cast<size_t>(offset) < m_cachedBytecode->size());
-#endif
     return m_cachedBytecode->data() + offset;
 }
 
 CompactVariableMap::Handle Decoder::handleForEnvironment(CompactVariableEnvironment* environment) const
 {
     auto it = m_environmentToHandleMap.find(environment);
-    ASSERT(it != m_environmentToHandleMap.end());
+    RELEASE_ASSERT(it != m_environmentToHandleMap.end());
     return it->value;
 }
 
 void Decoder::setHandleForEnvironment(CompactVariableEnvironment* environment, const CompactVariableMap::Handle& handle)
 {
     auto addResult = m_environmentToHandleMap.add(environment, handle);
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    RELEASE_ASSERT(addResult.isNewEntry);
 }
 
 void Decoder::addLeafExecutable(const UnlinkedFunctionExecutable* executable, ptrdiff_t offset)
@@ -525,8 +523,7 @@ public:
 private:
     const T* get() const
     {
-        if (this->isEmpty())
-            return nullptr;
+        RELEASE_ASSERT(!this->isEmpty());
         return this->template buffer<T>();
     }
 };
@@ -823,14 +820,6 @@ public:
             encode(encoder, WTF::nullopt);
         else
             encode(encoder, { *source });
-    }
-
-    SourceType<T>* decodeAsPtr(Decoder& decoder) const
-    {
-        if (this->isEmpty())
-            return nullptr;
-
-        return this->template buffer<T>()->decode(decoder);
     }
 };
 
