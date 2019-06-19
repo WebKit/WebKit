@@ -1,3 +1,12 @@
+2019-06-19  Russell Epstein  <russell_e@apple.com>
+
+        Layout Tests in imported/w3c/web-platform-tests/websockets/ are flakey failures after r246406.
+        https://bugs.webkit.org/show_bug.cgi?id=199013
+
+        Unreviewed Test Gardening.
+
+        * TestExpectations:
+
 2019-06-19  Jer Noble  <jer.noble@apple.com>
 
         iOS 12.2 Drawing portrait video to canvas is sideways
