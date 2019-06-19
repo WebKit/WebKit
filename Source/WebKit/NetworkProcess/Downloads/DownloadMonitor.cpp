@@ -78,7 +78,7 @@ double DownloadMonitor::measuredThroughputRate() const
     Seconds timeDifference = m_timestamps.last().time.secondsSinceEpoch() - m_timestamps.first().time.secondsSinceEpoch();
     double seconds = timeDifference.seconds();
     if (!seconds)
-        return std::numeric_limits<double>::max();
+        return 0;
     return bytes / seconds;
 }
 
@@ -113,6 +113,8 @@ uint32_t DownloadMonitor::speedMultiplier() const
 
 void DownloadMonitor::timerFired()
 {
+    downloadReceivedBytes(0);
+
     RELEASE_ASSERT(m_interval < WTF_ARRAY_LENGTH(throughputIntervals));
     if (measuredThroughputRate() < throughputIntervals[m_interval].bytesPerSecond) {
         RELEASE_LOG_IF_ALLOWED("timerFired: cancelling download (id = %" PRIu64 ")", m_download.downloadID().downloadID());

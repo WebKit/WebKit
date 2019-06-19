@@ -1,3 +1,19 @@
+2019-06-19  Alex Christensen  <achristensen@webkit.org>
+
+        DownloadMonitor::measuredThroughputRate should approach zero with no throughput
+        https://bugs.webkit.org/show_bug.cgi?id=198981
+        <rdar://problem/51456914>
+
+        Reviewed by Geoffrey Garen.
+
+        When the timer fires to approximate the download rate, add a new timestamp with 0 bytes received since the last time we received bytes.
+        Then, if there's only one timestamp, assume the throughput rate is 0 instead of infinite.
+        This will prevent false positives estimating large download rates based on old data when the throughput drops to 0.
+
+        * NetworkProcess/Downloads/DownloadMonitor.cpp:
+        (WebKit::DownloadMonitor::measuredThroughputRate const):
+        (WebKit::DownloadMonitor::timerFired):
+
 2019-06-19  Sihui Liu  <sihui_liu@apple.com>
 
         Remove unused originsWithCredentials from WebsiteData
