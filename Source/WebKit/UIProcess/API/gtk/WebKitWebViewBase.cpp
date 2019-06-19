@@ -1700,14 +1700,32 @@ bool webkitWebViewBaseMakeGLContextCurrent(WebKitWebViewBase* webkitWebViewBase)
     return webkitWebViewBase->priv->acceleratedBackingStore->makeContextCurrent();
 }
 
+void webkitWebViewBaseWillSwapWebProcess(WebKitWebViewBase* webkitWebViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+
+    if (priv->viewGestureController)
+        priv->viewGestureController->disconnectFromProcess();
+}
+
+void webkitWebViewBaseDidExitWebProcess(WebKitWebViewBase* webkitWebViewBase)
+{
+    webkitWebViewBase->priv->viewGestureController = nullptr;
+}
+
 void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase)
 {
     // Queue a resize to ensure the new DrawingAreaProxy is resized.
     gtk_widget_queue_resize_no_redraw(GTK_WIDGET(webkitWebViewBase));
 
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
-    priv->viewGestureController = std::make_unique<WebKit::ViewGestureController>(*priv->pageProxy);
-    priv->viewGestureController->setSwipeGestureEnabled(priv->isBackForwardNavigationGestureEnabled);
+
+    if (priv->viewGestureController)
+        priv->viewGestureController->connectToProcess();
+    else {
+        priv->viewGestureController = std::make_unique<WebKit::ViewGestureController>(*priv->pageProxy);
+        priv->viewGestureController->setSwipeGestureEnabled(priv->isBackForwardNavigationGestureEnabled);
+    }
 }
 
 void webkitWebViewBasePageClosed(WebKitWebViewBase* webkitWebViewBase)

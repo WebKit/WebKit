@@ -69,6 +69,7 @@ private:
     bool isViewFocused() override;
     bool isViewVisible() override;
     bool isViewInWindow() override;
+    void processWillSwap() override;
     void processDidExit() override;
     void didRelaunchProcess() override;
     void pageClosed() override;

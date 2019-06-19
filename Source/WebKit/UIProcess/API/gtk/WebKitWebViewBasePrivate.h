@@ -71,6 +71,8 @@ void webkitWebViewBaseEnterAcceleratedCompositingMode(WebKitWebViewBase*, const 
 void webkitWebViewBaseUpdateAcceleratedCompositingMode(WebKitWebViewBase*, const WebKit::LayerTreeContext&);
 void webkitWebViewBaseExitAcceleratedCompositingMode(WebKitWebViewBase*);
 bool webkitWebViewBaseMakeGLContextCurrent(WebKitWebViewBase*);
+void webkitWebViewBaseWillSwapWebProcess(WebKitWebViewBase*);
+void webkitWebViewBaseDidExitWebProcess(WebKitWebViewBase*);
 void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase*);
 void webkitWebViewBasePageClosed(WebKitWebViewBase*);
 

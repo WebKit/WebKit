@@ -118,9 +118,14 @@ bool PageClientImpl::isViewInWindow()
     return webkitWebViewBaseIsInWindow(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
+void PageClientImpl::PageClientImpl::processWillSwap()
+{
+    webkitWebViewBaseWillSwapWebProcess(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+}
+
 void PageClientImpl::PageClientImpl::processDidExit()
 {
-    notImplemented();
+    webkitWebViewBaseDidExitWebProcess(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
 void PageClientImpl::didRelaunchProcess()
