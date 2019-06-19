@@ -83,7 +83,7 @@ class ConfigureBuild(buildstep.BuildStep):
     def getPatchURL(self, patch_id):
         if not patch_id:
             return None
-        return '{}attachment.cgi?id={}'.format(BUG_SERVER_URL, patch_id)
+        return '{}attachment.cgi?id={}&action=prettypatch'.format(BUG_SERVER_URL, patch_id)
 
 
 class CheckOutSource(git.Git):
