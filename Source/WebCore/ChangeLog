@@ -41,6 +41,38 @@
         (WebCore::RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer):
         (WebCore::computeRotatedWidthAndHeight): Deleted.
 
+2019-06-19  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (246538): Newyorker.com header scrolls on page
+        
+        Revert parts of r246538 so that frame scrolling is reverted to using layer positions.
+        Overflow scroll will still scroll by changing boundsOrigin.
+        
+        The bug was caused by confusion about insetClipLayer and scrollContainerLayer; macOS
+        positions the clip layer using FrameView::yPositionForInsetClipLayer(), so it's not just
+        a simple scroll container, and this change broke positioning for fixed position layers.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::reconcileScrollPosition):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::insetClipLayerForFrameView):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::~RenderLayerCompositor):
+        (WebCore::RenderLayerCompositor::frameViewDidChangeSize):
+        (WebCore::RenderLayerCompositor::updateScrollLayerPosition):
+        (WebCore::RenderLayerCompositor::updateScrollLayerClipping):
+        (WebCore::RenderLayerCompositor::frameViewDidScroll):
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        (WebCore::RenderLayerCompositor::destroyRootLayer):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeLayers):
+        (WebCore::RenderLayerCompositor::updateLayersForScrollPosition): Deleted.
+        (WebCore::RenderLayerCompositor::updateScrollContainerGeometry): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2019-06-19  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Fix build with unified sources disabled

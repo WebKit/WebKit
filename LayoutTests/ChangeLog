@@ -20,6 +20,27 @@
 
         * platform/gtk/TestExpectations:
 
+2019-06-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert parts of r246538 so that frame scrolling is reverted to using layer positions.
+        Overflow scroll will still scroll by changing boundsOrigin.
+        
+        The bug was caused by confusion about insetClipLayer and scrollContainerLayer; macOS
+        positions the clip layer using FrameView::yPositionForInsetClipLayer(), so it's not just
+        a simple scroll container, and this change broke positioning for fixed position layers.
+
+        * compositing/iframes/scrolling-iframe-expected.txt:
+        * compositing/repaint/iframes/compositing-iframe-scroll-repaint-expected.txt:
+        * compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint-expected.txt:
+        * platform/ios-wk2/compositing/iframes/scrolling-iframe-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/fixed-inside-frame-expected.txt:
+        * platform/mac-highsierra-wk1/compositing/repaint/iframes/compositing-iframe-scroll-repaint-expected.txt:
+        * platform/mac-highsierra-wk1/compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint-expected.txt:
+        * platform/mac-sierra-wk1/compositing/repaint/iframes/compositing-iframe-scroll-repaint-expected.txt:
+        * platform/mac-wk1/compositing/repaint/iframes/compositing-iframe-scroll-repaint-expected.txt:
+        * platform/mac-wk1/compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint-expected.txt:
+        * scrollingcoordinator/scrolling-tree/fixed-inside-frame-expected.txt:
+
 2019-06-19  Russell Epstein  <russell_e@apple.com>
 
         webgpu/blend-color-triangle-strip.html is a flakey failure since introduction.

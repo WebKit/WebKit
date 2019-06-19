@@ -246,7 +246,10 @@ public:
 
     GraphicsLayer* scrollContainerLayer() const { return m_scrollContainerLayer.get(); }
     GraphicsLayer* scrolledContentsLayer() const { return m_scrolledContentsLayer.get(); }
+    GraphicsLayer* clipLayer() const { return m_clipLayer.get(); }
     GraphicsLayer* rootContentsLayer() const { return m_rootContentsLayer.get(); }
+
+    GraphicsLayer* layerForClipping() const {  return m_clipLayer ? m_clipLayer.get() : m_scrollContainerLayer.get();  }
 
 #if ENABLE(RUBBER_BANDING)
     GraphicsLayer* headerLayer() const { return m_layerForHeader.get(); }
@@ -437,8 +440,8 @@ private:
 
     void updateOverflowControlsLayers();
 
-    void updateLayersForScrollPosition();
-    void updateScrollContainerGeometry();
+    void updateScrollLayerPosition();
+    void updateScrollLayerClipping();
 
     FloatPoint positionForClipLayer() const;
 
@@ -571,6 +574,7 @@ private:
     RefPtr<GraphicsLayer> m_rootContentsLayer;
 
     // Enclosing clipping layer for iframe content
+    RefPtr<GraphicsLayer> m_clipLayer;
     RefPtr<GraphicsLayer> m_scrollContainerLayer;
     RefPtr<GraphicsLayer> m_scrolledContentsLayer;
 

@@ -200,7 +200,7 @@ void ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged()
 void ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers()
 {
     // We use scroll position here because the root content layer is offset to account for scrollOrigin (see FrameView::positionForRootContentLayer).
-    [scrollContainerLayer() _web_setLayerBoundsOrigin:currentScrollPosition()];
+    scrolledContentsLayer().position = -currentScrollPosition();
 }
 
 void ScrollingTreeFrameScrollingNodeMac::repositionRelatedLayers()

@@ -301,6 +301,7 @@ RenderLayerCompositor::~RenderLayerCompositor()
     // Take care that the owned GraphicsLayers are deleted first as their destructors may call back here.
     GraphicsLayer::unparentAndClear(m_rootContentsLayer);
     
+    GraphicsLayer::unparentAndClear(m_clipLayer);
     GraphicsLayer::unparentAndClear(m_scrollContainerLayer);
     GraphicsLayer::unparentAndClear(m_scrolledContentsLayer);
 
@@ -1968,7 +1969,7 @@ void RenderLayerCompositor::frameViewDidChangeSize()
         layer->setNeedsCompositingGeometryUpdate();
 
     if (m_scrolledContentsLayer) {
-        updateScrollContainerGeometry();
+        updateScrollLayerClipping();
         frameViewDidScroll();
         updateOverflowControlsLayers();
 
@@ -1988,26 +1989,29 @@ bool RenderLayerCompositor::hasCoordinatedScrolling() const
     return scrollingCoordinator && scrollingCoordinator->coordinatesScrollingForFrameView(m_renderView.frameView());
 }
 
-void RenderLayerCompositor::updateLayersForScrollPosition()
+void RenderLayerCompositor::updateScrollLayerPosition()
 {
     ASSERT(!hasCoordinatedScrolling());
-    ASSERT(m_scrollContainerLayer);
+    ASSERT(m_scrolledContentsLayer);
 
     auto& frameView = m_renderView.frameView();
-    // This uses scrollPosition because the root content layer accounts for scrollOrigin (see FrameView::positionForRootContentLayer()).
-    m_scrollContainerLayer->setBoundsOrigin(frameView.scrollPosition());
+    IntPoint scrollPosition = frameView.scrollPosition();
+
+    // We use scroll position here because the root content layer is offset to account for scrollOrigin (see FrameView::positionForRootContentLayer).
+    m_scrolledContentsLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
 
     if (auto* fixedBackgroundLayer = fixedRootBackgroundLayer())
         fixedBackgroundLayer->setPosition(frameView.scrollPositionForFixedPosition());
 }
 
-void RenderLayerCompositor::updateScrollContainerGeometry()
+void RenderLayerCompositor::updateScrollLayerClipping()
 {
-    if (!m_scrollContainerLayer)
+    auto* layerForClipping = this->layerForClipping();
+    if (!layerForClipping)
         return;
 
-    m_scrollContainerLayer->setSize(m_renderView.frameView().sizeForVisibleContent());
-    m_scrollContainerLayer->setPosition(positionForClipLayer());
+    layerForClipping->setSize(m_renderView.frameView().sizeForVisibleContent());
+    layerForClipping->setPosition(positionForClipLayer());
 }
 
 FloatPoint RenderLayerCompositor::positionForClipLayer() const
@@ -2032,7 +2036,7 @@ void RenderLayerCompositor::frameViewDidScroll()
         return;
     }
 
-    updateLayersForScrollPosition();
+    updateScrollLayerPosition();
 }
 
 void RenderLayerCompositor::frameViewDidAddOrRemoveScrollbars()
@@ -2249,10 +2253,10 @@ void RenderLayerCompositor::updateRootLayerPosition()
     if (m_rootContentsLayer) {
         m_rootContentsLayer->setSize(m_renderView.frameView().contentsSize());
         m_rootContentsLayer->setPosition(m_renderView.frameView().positionForRootContentLayer());
-        m_rootContentsLayer->setAnchorPoint({ });
+        m_rootContentsLayer->setAnchorPoint(FloatPoint3D());
     }
 
-    updateScrollContainerGeometry();
+    updateScrollLayerClipping();
 
 #if ENABLE(RUBBER_BANDING)
     if (m_contentShadowLayer && m_rootContentsLayer) {
@@ -3679,7 +3683,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 
             // We want the overhang areas layer to be positioned below the frame contents,
             // so insert it below the clip layer.
-            m_overflowControlsHostLayer->addChildBelow(*m_layerForOverhangAreas, m_scrollContainerLayer.get());
+            m_overflowControlsHostLayer->addChildBelow(*m_layerForOverhangAreas, layerForClipping());
         }
     } else
         GraphicsLayer::unparentAndClear(m_layerForOverhangAreas);
@@ -3769,7 +3773,7 @@ void RenderLayerCompositor::ensureRootLayer()
         m_rootContentsLayer->setName("content root");
         IntRect overflowRect = snappedIntRect(m_renderView.layoutOverflowRect());
         m_rootContentsLayer->setSize(FloatSize(overflowRect.maxX(), overflowRect.maxY()));
-        m_rootContentsLayer->setPosition({ });
+        m_rootContentsLayer->setPosition(FloatPoint());
 
 #if PLATFORM(IOS_FAMILY)
         // Page scale is applied above this on iOS, so we'll just say that our root layer applies it.
@@ -3785,35 +3789,54 @@ void RenderLayerCompositor::ensureRootLayer()
     if (requiresScrollLayer(expectedAttachment)) {
         if (!m_overflowControlsHostLayer) {
             ASSERT(!m_scrolledContentsLayer);
+            ASSERT(!m_clipLayer);
 
             // Create a layer to host the clipping layer and the overflow controls layers.
             m_overflowControlsHostLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
             m_overflowControlsHostLayer->setName("overflow controls host");
 
-            m_scrollContainerLayer = GraphicsLayer::create(graphicsLayerFactory(), *this, GraphicsLayer::Type::ScrollContainer);
-            m_scrollContainerLayer->setName("scroll container");
-            m_scrollContainerLayer->setMasksToBounds(true);
-            m_scrollContainerLayer->setAnchorPoint({ });
-
             m_scrolledContentsLayer = GraphicsLayer::create(graphicsLayerFactory(), *this, GraphicsLayer::Type::ScrolledContents);
             m_scrolledContentsLayer->setName("scrolled contents");
             m_scrolledContentsLayer->setAnchorPoint({ });
 
-            m_overflowControlsHostLayer->addChild(*m_scrollContainerLayer);
-            m_scrollContainerLayer->addChild(*m_scrolledContentsLayer);
+#if PLATFORM(IOS_FAMILY)
+            if (m_renderView.settings().asyncFrameScrollingEnabled()) {
+                m_scrollContainerLayer = GraphicsLayer::create(graphicsLayerFactory(), *this, GraphicsLayer::Type::ScrollContainer);
+
+                m_scrollContainerLayer->setName("scroll container");
+                m_scrollContainerLayer->setMasksToBounds(true);
+                m_scrollContainerLayer->setAnchorPoint({ });
+
+                m_scrollContainerLayer->addChild(*m_scrolledContentsLayer);
+                m_overflowControlsHostLayer->addChild(*m_scrollContainerLayer);
+            }
+#endif
+            // FIXME: m_scrollContainerLayer and m_clipLayer have similar roles here, but m_clipLayer has some special positioning to
+            // account for clipping and top content inset (see FrameView::yPositionForInsetClipLayer()).
+            if (!m_scrollContainerLayer) {
+                m_clipLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
+                m_clipLayer->setName("frame clipping");
+                m_clipLayer->setMasksToBounds(true);
+                m_clipLayer->setAnchorPoint({ });
+
+                m_clipLayer->addChild(*m_scrolledContentsLayer);
+                m_overflowControlsHostLayer->addChild(*m_clipLayer);
+            }
+
             m_scrolledContentsLayer->addChild(*m_rootContentsLayer);
 
-            updateScrollContainerGeometry();
+            updateScrollLayerClipping();
             updateOverflowControlsLayers();
 
             if (hasCoordinatedScrolling())
                 scheduleLayerFlush(true);
             else
-                updateLayersForScrollPosition();
+                updateScrollLayerPosition();
         }
     } else {
         if (m_overflowControlsHostLayer) {
             GraphicsLayer::unparentAndClear(m_overflowControlsHostLayer);
+            GraphicsLayer::unparentAndClear(m_clipLayer);
             GraphicsLayer::unparentAndClear(m_scrollContainerLayer);
             GraphicsLayer::unparentAndClear(m_scrolledContentsLayer);
         }
@@ -3860,6 +3883,7 @@ void RenderLayerCompositor::destroyRootLayer()
 
     if (m_overflowControlsHostLayer) {
         GraphicsLayer::unparentAndClear(m_overflowControlsHostLayer);
+        GraphicsLayer::unparentAndClear(m_clipLayer);
         GraphicsLayer::unparentAndClear(m_scrollContainerLayer);
         GraphicsLayer::unparentAndClear(m_scrolledContentsLayer);
     }
@@ -4299,7 +4323,7 @@ void RenderLayerCompositor::updateScrollingNodeLayers(ScrollingNodeID nodeID, Re
         FrameView& frameView = m_renderView.frameView();
         scrollingCoordinator.setNodeLayers(nodeID, { nullptr,
             scrollContainerLayer(), scrolledContentsLayer(),
-            fixedRootBackgroundLayer(), nullptr, rootContentsLayer(),
+            fixedRootBackgroundLayer(), clipLayer(), rootContentsLayer(),
             frameView.layerForHorizontalScrollbar(), frameView.layerForVerticalScrollbar() });
     } else {
         auto& backing = *layer.backing();
