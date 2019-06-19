@@ -108,7 +108,9 @@ public:
     // Tables
     Result WARN_UNUSED_RETURN addTableGet(unsigned, ExpressionType& index, ExpressionType& result);
     Result WARN_UNUSED_RETURN addTableSet(unsigned, ExpressionType& index, ExpressionType& value);
-
+    Result WARN_UNUSED_RETURN addTableSize(unsigned, ExpressionType& result);
+    Result WARN_UNUSED_RETURN addTableGrow(unsigned, ExpressionType& fill, ExpressionType& delta, ExpressionType& result);
+    Result WARN_UNUSED_RETURN addTableFill(unsigned, ExpressionType& offset, ExpressionType& fill, ExpressionType& count);
     // Locals
     Result WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
     Result WARN_UNUSED_RETURN setLocal(uint32_t index, ExpressionType value);
@@ -194,6 +196,34 @@ auto Validate::addTableSet(unsigned tableIndex, ExpressionType& index, Expressio
     WASM_VALIDATOR_FAIL_IF(Type::I32 != index, "table.set index to type ", index, " expected ", Type::I32);
     WASM_VALIDATOR_FAIL_IF(!isSubtype(value, type), "table.set value to type ", value, " expected ", type);
     RELEASE_ASSERT(m_module.tables[tableIndex].type() == TableElementType::Anyref || m_module.tables[tableIndex].type() == TableElementType::Funcref);
+
+    return { };
+}
+
+auto Validate::addTableSize(unsigned tableIndex, ExpressionType& result) -> Result
+{
+    result = Type::I32;
+    WASM_VALIDATOR_FAIL_IF(tableIndex >= m_module.tableCount(), "table index ", tableIndex, " is invalid, limit is ", m_module.tableCount());
+
+    return { };
+}
+
+auto Validate::addTableGrow(unsigned tableIndex, ExpressionType& fill, ExpressionType& delta, ExpressionType& result) -> Result
+{
+    result = Type::I32;
+    WASM_VALIDATOR_FAIL_IF(tableIndex >= m_module.tableCount(), "table index ", tableIndex, " is invalid, limit is ", m_module.tableCount());
+    WASM_VALIDATOR_FAIL_IF(!isSubtype(fill, m_module.tables[tableIndex].wasmType()), "table.grow expects fill value of type ", m_module.tables[tableIndex].wasmType(), " got ", fill);
+    WASM_VALIDATOR_FAIL_IF(Type::I32 != delta, "table.grow expects an i32 delta value, got ", delta);
+
+    return { };
+}
+
+auto Validate::addTableFill(unsigned tableIndex, ExpressionType& offset, ExpressionType& fill, ExpressionType& count) -> Result
+{
+    WASM_VALIDATOR_FAIL_IF(tableIndex >= m_module.tableCount(), "table index ", tableIndex, " is invalid, limit is ", m_module.tableCount());
+    WASM_VALIDATOR_FAIL_IF(!isSubtype(fill, m_module.tables[tableIndex].wasmType()), "table.fill expects fill value of type ", m_module.tables[tableIndex].wasmType(), " got ", fill);
+    WASM_VALIDATOR_FAIL_IF(Type::I32 != offset, "table.fill expects an i32 offset value, got ", offset);
+    WASM_VALIDATOR_FAIL_IF(Type::I32 != count, "table.fill expects an i32 count value, got ", count);
 
     return { };
 }

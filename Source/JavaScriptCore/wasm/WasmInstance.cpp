@@ -159,6 +159,40 @@ bool setWasmTableElement(Instance* instance, unsigned tableIndex, int32_t signed
     return true;
 }
 
+int32_t doWasmTableGrow(Instance* instance, unsigned tableIndex, EncodedJSValue fill, int32_t delta)
+{
+    ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
+    auto oldSize = instance->table(tableIndex)->length();
+    if (delta < 0)
+        return oldSize;
+    auto newSize = instance->table(tableIndex)->grow(delta);
+    if (!newSize || *newSize == oldSize)
+        return -1;
+
+    for (unsigned i = oldSize; i < instance->table(tableIndex)->length(); ++i)
+        setWasmTableElement(instance, tableIndex, i, fill);
+
+    return oldSize;
+}
+
+bool doWasmTableFill(Instance* instance, unsigned tableIndex, int32_t unsafeOffset, EncodedJSValue fill, int32_t unsafeCount)
+{
+    ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
+    if (unsafeOffset < 0 || unsafeCount < 0)
+        return false;
+
+    unsigned offset = unsafeOffset;
+    unsigned count = unsafeCount;
+
+    if (offset >= instance->table(tableIndex)->length() || offset + count > instance->table(tableIndex)->length())
+        return false;
+
+    for (unsigned j = 0; j < count; ++j)
+        setWasmTableElement(instance, tableIndex, offset + j, fill);
+
+    return true;
+}
+
 EncodedJSValue doWasmRefFunc(Instance* instance, uint32_t index)
 {
     JSValue value = instance->getFunctionWrapper(index);

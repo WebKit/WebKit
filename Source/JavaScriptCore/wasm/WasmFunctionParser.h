@@ -303,6 +303,43 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
         return { };
     }
 
+    case ExtTable: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+        uint8_t extOp;
+        WASM_PARSER_FAIL_IF(!parseUInt8(extOp), "can't parse table extended opcode");
+        unsigned tableIndex;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't parse table index");
+
+        switch (static_cast<ExtTableOpType>(extOp)) {
+        case ExtTableOpType::TableSize: {
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addTableSize(tableIndex, result));
+            m_expressionStack.append(result);
+            break;
+        }
+        case ExtTableOpType::TableGrow: {
+            ExpressionType fill, delta, result;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(delta, "table.grow");
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(fill, "table.grow");
+            WASM_TRY_ADD_TO_CONTEXT(addTableGrow(tableIndex, fill, delta, result));
+            m_expressionStack.append(result);
+            break;
+        }
+        case ExtTableOpType::TableFill: {
+            ExpressionType offset, fill, count;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(count, "table.fill");
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(fill, "table.fill");
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(offset, "table.fill");
+            WASM_TRY_ADD_TO_CONTEXT(addTableFill(tableIndex, offset, fill, count));
+            break;
+        }
+        default:
+            WASM_PARSER_FAIL_IF(true, "invalid extended table op ", extOp);
+            break;
+        }
+        return { };
+    }
+
     case RefNull: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
         m_expressionStack.append(m_context.addConstant(Anyfunc, JSValue::encode(jsNull())));
@@ -688,6 +725,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         return { };
     }
 
+    case ExtTable:
     case TableGet:
     case TableSet: {
         unsigned tableIndex;

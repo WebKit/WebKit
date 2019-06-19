@@ -1,3 +1,44 @@
+2019-06-18  Justin Michaud  <justin_michaud@apple.com>
+
+        [WASM-References] Add support for Table.size, grow and fill instructions
+        https://bugs.webkit.org/show_bug.cgi?id=198761
+
+        Reviewed by Yusuke Suzuki.
+
+        Add support for Table.size, grow and fill instructions. This also required
+        adding support for two-byte opcodes to the ops generator.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::gAnyref):
+        (JSC::Wasm::AirIRGenerator::tmpForType):
+        (JSC::Wasm::AirIRGenerator::addTableSize):
+        (JSC::Wasm::AirIRGenerator::addTableGrow):
+        (JSC::Wasm::AirIRGenerator::addTableFill):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addTableSize):
+        (JSC::Wasm::B3IRGenerator::addTableGrow):
+        (JSC::Wasm::B3IRGenerator::addTableFill):
+        * wasm/WasmExceptionType.h:
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::TableInformation::wasmType const):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::doWasmTableGrow):
+        (JSC::Wasm::doWasmTableFill):
+        * wasm/WasmInstance.h:
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::grow):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::addTableSize):
+        (JSC::Wasm::Validate::addTableGrow):
+        (JSC::Wasm::Validate::addTableFill):
+        * wasm/generateWasmOpsHeader.py:
+        (opcodeMacroizer):
+        (ExtTableOpType):
+        * wasm/wasm.json:
+
 2019-06-18  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, fix signature of currentWeakRefVersion to return an uintptr_t.

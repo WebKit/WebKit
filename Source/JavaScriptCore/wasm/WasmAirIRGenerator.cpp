@@ -239,6 +239,9 @@ public:
     // Tables
     PartialResult WARN_UNUSED_RETURN addTableGet(unsigned, ExpressionType& index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addTableSet(unsigned, ExpressionType& index, ExpressionType& value);
+    PartialResult WARN_UNUSED_RETURN addTableSize(unsigned, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addTableGrow(unsigned, ExpressionType& fill, ExpressionType& delta, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addTableFill(unsigned, ExpressionType& offset, ExpressionType& fill, ExpressionType& count);
 
     // Locals
     PartialResult WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
@@ -361,6 +364,8 @@ private:
 
     TypedTmp g32() { return { newTmp(B3::GP), Type::I32 }; }
     TypedTmp g64() { return { newTmp(B3::GP), Type::I64 }; }
+    TypedTmp gAnyref() { return { newTmp(B3::GP), Type::Anyref }; }
+    TypedTmp gAnyfunc() { return { newTmp(B3::GP), Type::Anyfunc }; }
     TypedTmp f32() { return { newTmp(B3::FP), Type::F32 }; }
     TypedTmp f64() { return { newTmp(B3::FP), Type::F64 }; }
 
@@ -370,9 +375,11 @@ private:
         case Type::I32:
             return g32();
         case Type::I64:
-        case Type::Anyref:
-        case Type::Anyfunc:
             return g64();
+        case Type::Anyfunc:
+            return gAnyfunc();
+        case Type::Anyref:
+            return gAnyref();
         case Type::F32:
             return f32();
         case Type::F64:
@@ -508,6 +515,8 @@ private:
                 resultType = B3::Int32;
                 break;
             case Type::I64:
+            case Type::Anyref:
+            case Type::Anyfunc:
                 resultType = B3::Int64;
                 break;
             case Type::F32:
@@ -975,7 +984,7 @@ auto AirIRGenerator::addTableGet(unsigned tableIndex, ExpressionType& index, Exp
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
     ASSERT(index.tmp());
     ASSERT(index.type() == Type::I32);
-    result = tmpForType(Type::Anyref);
+    result = tmpForType(m_info.tables[tableIndex].wasmType());
 
     emitCCall(&getWasmTableElement, result, instanceValue(), addConstant(Type::I32, tableIndex), index);
     emitCheck([&] {
@@ -999,6 +1008,54 @@ auto AirIRGenerator::addTableSet(unsigned tableIndex, ExpressionType& index, Exp
 
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), shouldThrow, shouldThrow);
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
+    });
+
+    return { };
+}
+
+auto AirIRGenerator::addTableSize(unsigned tableIndex, ExpressionType& result) -> PartialResult
+{
+    // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
+    result = tmpForType(Type::I32);
+
+    int32_t (*doSize)(Instance*, unsigned) = [] (Instance* instance, unsigned tableIndex) -> int32_t {
+        return instance->table(tableIndex)->length();
+    };
+
+    emitCCall(doSize, result, instanceValue(), addConstant(Type::I32, tableIndex));
+
+    return { };
+}
+
+auto AirIRGenerator::addTableGrow(unsigned tableIndex, ExpressionType& fill, ExpressionType& delta, ExpressionType& result) -> PartialResult
+{
+    ASSERT(fill.tmp());
+    ASSERT(isSubtype(fill.type(), m_info.tables[tableIndex].wasmType()));
+    ASSERT(delta.tmp());
+    ASSERT(delta.type() == Type::I32);
+    result = tmpForType(Type::I32);
+
+    emitCCall(&doWasmTableGrow, result, instanceValue(), addConstant(Type::I32, tableIndex), fill, delta);
+
+    return { };
+}
+
+auto AirIRGenerator::addTableFill(unsigned tableIndex, ExpressionType& offset, ExpressionType& fill, ExpressionType& count) -> PartialResult
+{
+    ASSERT(fill.tmp());
+    ASSERT(isSubtype(fill.type(), m_info.tables[tableIndex].wasmType()));
+    ASSERT(offset.tmp());
+    ASSERT(offset.type() == Type::I32);
+    ASSERT(count.tmp());
+    ASSERT(count.type() == Type::I32);
+
+    auto result = tmpForType(Type::I32);
+    emitCCall(&doWasmTableFill, result, instanceValue(), addConstant(Type::I32, tableIndex), offset, fill, count);
+
+    emitCheck([&] {
+        return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);
     }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
     });

@@ -44,6 +44,8 @@ class Instance;
 EncodedJSValue getWasmTableElement(Instance*, unsigned, int32_t);
 bool setWasmTableElement(Instance*, unsigned, int32_t, EncodedJSValue encValue);
 EncodedJSValue doWasmRefFunc(Instance*, uint32_t);
+int32_t doWasmTableGrow(Instance*, unsigned, EncodedJSValue fill, int32_t delta);
+bool doWasmTableFill(Instance*, unsigned, int32_t offset, EncodedJSValue fill, int32_t count);
 
 class Instance : public ThreadSafeRefCounted<Instance>, public CanMakeWeakPtr<Instance> {
 public:

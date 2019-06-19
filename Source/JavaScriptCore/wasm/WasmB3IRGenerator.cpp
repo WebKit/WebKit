@@ -192,7 +192,9 @@ public:
     // Tables
     PartialResult WARN_UNUSED_RETURN addTableGet(unsigned, ExpressionType& index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addTableSet(unsigned, ExpressionType& index, ExpressionType& value);
-
+    PartialResult WARN_UNUSED_RETURN addTableSize(unsigned, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addTableGrow(unsigned, ExpressionType& fill, ExpressionType& delta, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addTableFill(unsigned, ExpressionType& offset, ExpressionType& fill, ExpressionType& count);
     // Locals
     PartialResult WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN setLocal(uint32_t index, ExpressionType value);
@@ -613,6 +615,47 @@ auto B3IRGenerator::addRefFunc(uint32_t index, ExpressionType& result) -> Partia
     result = m_currentBlock->appendNew<CCallValue>(m_proc, B3::Int64, origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunctionPtr<void*>(&doWasmRefFunc, B3CCallPtrTag)),
         instanceValue(), addConstant(Type::I32, index));
+
+    return { };
+}
+
+auto B3IRGenerator::addTableSize(unsigned tableIndex, ExpressionType& result) -> PartialResult
+{
+    // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
+    uint32_t (*doSize)(Instance*, unsigned) = [] (Instance* instance, unsigned tableIndex) -> uint32_t {
+        return instance->table(tableIndex)->length();
+    };
+
+    result = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(I32), origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunctionPtr<void*>(doSize, B3CCallPtrTag)),
+        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), tableIndex));
+
+    return { };
+}
+
+auto B3IRGenerator::addTableGrow(unsigned tableIndex, ExpressionType& fill, ExpressionType& delta, ExpressionType& result) -> PartialResult
+{
+    result = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(I32), origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunctionPtr<void*>(&doWasmTableGrow, B3CCallPtrTag)),
+        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), tableIndex), fill, delta);
+
+    return { };
+}
+
+auto B3IRGenerator::addTableFill(unsigned tableIndex, ExpressionType& offset, ExpressionType& fill, ExpressionType& count) -> PartialResult
+{
+    auto result = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(I32), origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunctionPtr<void*>(&doWasmTableFill, B3CCallPtrTag)),
+        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), tableIndex), offset, fill, count);
+
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), result, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), 0)));
+
+        check->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTableAccess);
+        });
+    }
 
     return { };
 }

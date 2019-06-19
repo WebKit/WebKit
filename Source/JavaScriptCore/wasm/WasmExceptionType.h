@@ -33,7 +33,7 @@ namespace Wasm {
 
 #define FOR_EACH_EXCEPTION(macro) \
     macro(OutOfBoundsMemoryAccess,  "Out of bounds memory access") \
-    macro(OutOfBoundsTableAccess,  "Out of bounds table access") \
+    macro(OutOfBoundsTableAccess, "Out of bounds table access") \
     macro(OutOfBoundsCallIndirect, "Out of bounds call_indirect") \
     macro(NullTableEntry,  "call_indirect to a null table entry") \
     macro(BadSignature, "call_indirect to a signature that does not match") \
