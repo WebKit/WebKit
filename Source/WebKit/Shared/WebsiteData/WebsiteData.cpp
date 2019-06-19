@@ -66,7 +66,6 @@ void WebsiteData::encode(IPC::Encoder& encoder) const
 #if ENABLE(NETSCAPE_PLUGIN_API)
     encoder << hostNamesWithPluginData;
 #endif
-    encoder << originsWithCredentials;
     encoder << hostNamesWithHSTSCache;
 }
 
@@ -80,8 +79,6 @@ bool WebsiteData::decode(IPC::Decoder& decoder, WebsiteData& result)
     if (!decoder.decode(result.hostNamesWithPluginData))
         return false;
 #endif
-    if (!decoder.decode(result.originsWithCredentials))
-        return false;
     if (!decoder.decode(result.hostNamesWithHSTSCache))
         return false;
     return true;

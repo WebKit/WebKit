@@ -58,9 +58,6 @@ struct WebsiteData {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     HashSet<String> hostNamesWithPluginData;
 #endif
-
-    HashSet<String> originsWithCredentials;
-
     HashSet<String> hostNamesWithHSTSCache;
 
     void encode(IPC::Encoder&) const;
