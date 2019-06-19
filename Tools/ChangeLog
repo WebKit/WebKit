@@ -1,5 +1,19 @@
 2019-06-19  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Add step to analyze Compile WebKit failures
+        https://bugs.webkit.org/show_bug.cgi?id=199025
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CompileWebKit.evaluateCommand): Add AnalyzeCompileWebKitResults step.
+        (CompileWebKitToT): set haltOnFailure to False since we need to run AnalyzeCompileWebKitResults step.
+        (AnalyzeCompileWebKitResults): Class to analyze compile webkit steps results.
+        (AnalyzeCompileWebKitResults.start): If ToT fails to build, retry the build, else marked the build as failed. Note that
+        this step is run only when compile-webkit failed.
+
+2019-06-19  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Send email notifications for failures
         https://bugs.webkit.org/show_bug.cgi?id=198919
 

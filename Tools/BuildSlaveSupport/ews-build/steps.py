@@ -617,7 +617,7 @@ class CompileWebKit(shell.Compile):
     def evaluateCommand(self, cmd):
         if cmd.didFail():
             self.setProperty('patchFailedToBuild', True)
-            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(), CompileWebKitToT()])
+            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(), CompileWebKitToT(), AnalyzeCompileWebKitResults()])
         else:
             self.build.addStepsAfterCurrentStep([ArchiveBuiltProduct(), UploadBuiltProduct(), TransferToS3()])
 
@@ -626,7 +626,7 @@ class CompileWebKit(shell.Compile):
 
 class CompileWebKitToT(CompileWebKit):
     name = 'compile-webkit-tot'
-    haltOnFailure = True
+    haltOnFailure = False
 
     def doStepIf(self, step):
         return self.getProperty('patchFailedToBuild') or self.getProperty('patchFailedAPITests')
@@ -636,6 +636,35 @@ class CompileWebKitToT(CompileWebKit):
 
     def evaluateCommand(self, cmd):
         return shell.Compile.evaluateCommand(self, cmd)
+
+
+class AnalyzeCompileWebKitResults(buildstep.BuildStep):
+    name = 'analyze-compile-webkit-results'
+    description = ['analyze-compile-webkit-results']
+    descriptionDone = ['analyze-compile-webkit-results']
+
+    def start(self):
+        compile_webkit_tot_result = self.getStepResult(CompileWebKitToT.name)
+
+        if compile_webkit_tot_result == FAILURE:
+            self.finished(FAILURE)
+            message = 'Unable to build WebKit without patch, retrying build'
+            self.descriptionDone = message
+            self.build.buildFinished([message], RETRY)
+            return defer.succeed(None)
+
+        self.finished(FAILURE)
+        self.build.results = FAILURE
+        message = 'Patch does not build'
+        self.descriptionDone = message
+        self.build.buildFinished([message], FAILURE)
+
+        return defer.succeed(None)
+
+    def getStepResult(self, step_name):
+        for step in self.build.executedSteps:
+            if step.name == step_name:
+                return step.results
 
 
 class CompileJSCOnly(CompileWebKit):
