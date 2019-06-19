@@ -90,6 +90,8 @@ target_sources(TestWebKitAPIInjectedBundle PRIVATE
 )
 target_include_directories(TestWebKitAPIInjectedBundle PRIVATE
     "${CMAKE_SOURCE_DIR}/Source"
+)
+target_include_directories(TestWebKitAPIInjectedBundle SYSTEM PRIVATE
     ${GLIB_INCLUDE_DIRS}
     ${GTK3_INCLUDE_DIRS}
 )

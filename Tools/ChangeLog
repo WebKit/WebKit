@@ -1,3 +1,11 @@
+2019-06-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix build warnings in TestWebKitAPIInjectedBundle
+
+        System headers are being included without SYSTEM again here.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+
 2019-06-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSLock should be WebThread aware
