@@ -1,3 +1,16 @@
+2019-06-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Text Selection gesture has changed behavior, change test to match new behavior
+        https://bugs.webkit.org/show_bug.cgi?id=198980
+        <rdar://problem/51713918>
+
+        Reviewed by Wenson Hsieh.
+
+        Long press and drag now starts a selection and entends the range, rather than changing
+        the start of the text selection. Update the test to match the new behavior. 
+
+        * fast/events/touch/ios/long-press-then-drag-to-select-text.html:
+
 2019-06-18  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Support matrices
