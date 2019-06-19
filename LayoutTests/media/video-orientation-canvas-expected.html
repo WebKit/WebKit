@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-orientation-canvas</title>
+    <script>requirePixelDump = true;</script>
+    <script src="video-test.js"></script>
+    <script>
+        window.addEventListener('load', async event => {
+            video1 = document.createElement('video');
+            video1.src = 'content/no-rotation.mp4';
+            await waitFor(video1, 'canplay', true);
+
+            var canvas1 = document.querySelector('#canvas1');
+            canvas1.height = video1.videoWidth;
+            canvas1.width = video1.videoHeight;
+            let context1 = canvas1.getContext('2d');
+            context1.translate(video1.videoHeight, 0);
+            context1.rotate(90 * Math.PI / 180);
+            context1.drawImage(video1, 0, 0);
+
+            var canvas2 = document.querySelector('#canvas2');
+            canvas2.height = video1.videoHeight;
+            canvas2.width = video1.videoWidth;
+            let context2 = canvas2.getContext('2d');
+            context2.translate(video1.videoWidth, video1.videoHeight);
+            context2.rotate(180 * Math.PI / 180);
+            context2.drawImage(video1, 0, 0);
+
+            var canvas3 = document.querySelector('#canvas3');
+            canvas3.height = video1.videoWidth;
+            canvas3.width = video1.videoHeight;
+            let context3 = canvas3.getContext('2d');
+            context3.translate(0, video1.videoWidth);
+            context3.rotate(270 * Math.PI / 180);
+            context3.drawImage(video1, 0, 0);
+
+            endTest();
+        });
+    </script>
+</head>
+<body>
+    <canvas id=canvas1></canvas>
+    <canvas id=canvas2></canvas>
+    <canvas id=canvas3></canvas>
+</body>
+</html>
