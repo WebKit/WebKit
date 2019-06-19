@@ -1516,6 +1516,15 @@ void WebProcessProxy::decrementSuspendedPageCount()
         send(Messages::WebProcess::SetHasSuspendedPageProxy(false), 0);
 }
 
+WebProcessPool* WebProcessProxy::processPoolIfExists() const
+{
+    if (m_isPrewarmed || m_isInProcessCache)
+        RELEASE_LOG_ERROR(Process, "%p - WebProcessProxy::processPoolIfExists: trying to get WebProcessPool from an inactive WebProcessProxy %i", this, processIdentifier());
+    else
+        ASSERT(m_processPool);
+    return m_processPool.get();
+}
+
 WebProcessPool& WebProcessProxy::processPool() const
 {
     ASSERT(m_processPool);

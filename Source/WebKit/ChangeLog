@@ -1,3 +1,24 @@
+2019-06-19  Sihui Liu  <sihui_liu@apple.com>
+
+        Crash at com.apple.WebKit: WebKit::WebsiteDataStore::processPools const
+        https://bugs.webkit.org/show_bug.cgi?id=198935
+        <rdar://problem/51549308>
+
+        Reviewed by Geoffrey Garen.
+
+        When WebProcessProxy is in WebProcessCache or is pre-warmed, it does not hold a strong reference of 
+        WebProcessPool. In this case, we should not store the raw pointer of WebProcessPool and perform websiteDataStore
+        operations with it.
+        This patch should fix the crash at dereferencing null pointer of WebProcessPool in 
+        WebsiteDataStore::processPools, but it is unclear why websiteDataStore comes to observe cached or prewarmed web 
+        process that should not have web page. The release log may help us find the cause.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::processPoolIfExists const):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::processPools const):
+
 2019-06-19  Alex Christensen  <achristensen@webkit.org>
 
         Add a unit test for client certificate authentication

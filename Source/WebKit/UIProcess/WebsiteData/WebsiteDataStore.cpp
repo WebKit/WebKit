@@ -1717,8 +1717,10 @@ bool WebsiteDataStore::isAssociatedProcessPool(WebProcessPool& processPool) cons
 HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools(size_t count, bool ensureAPoolExists) const
 {
     HashSet<RefPtr<WebProcessPool>> processPools;
-    for (auto& process : processes())
-        processPools.add(&process->processPool());
+    for (auto& process : processes()) {
+        if (auto* processPool = process->processPoolIfExists())
+            processPools.add(processPool);
+    }
 
     if (processPools.isEmpty()) {
         // Check if we're one of the legacy data stores.
