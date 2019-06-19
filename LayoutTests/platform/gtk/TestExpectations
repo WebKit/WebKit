@@ -1312,6 +1312,11 @@ webkit.org/b/196799 imported/blink/fast/css/first-letter-crash-document-disposal
 
 webkit.org/b/198126 http/tests/xmlhttprequest/access-control-response-with-body-sync.html [ Pass Crash ]
 
+webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure Crash ]
+webkit.org/b/199010 css2.1/t1204-order-01-d.html [ Pass Crash ]
+webkit.org/b/199014 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Pass Crash ]
+webkit.org/b/199018 fast/mediastream/RTCPeerConnection-add-removeTrack.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2995,7 +3000,6 @@ webkit.org/b/120596 css3/background/background-repeat-space-padding.html [ Image
 webkit.org/b/120596 css3/masking/mask-repeat-space-border.html [ ImageOnlyFailure ]
 webkit.org/b/120596 css3/masking/mask-repeat-space-content.html [ ImageOnlyFailure ]
 
-webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 webkit.org/b/120839 legacy-animation-engine/animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/121905 fast/images/exif-orientation.html [ Failure ]
@@ -3894,6 +3898,26 @@ webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-tim
 
 webkit.org/b/198119 compositing/shared-backing/shared-layer-has-reflection.html [ ImageOnlyFailure ]
 webkit.org/b/198121 fast/text/large-synthetic-bold-with-scale-transform.html [ ImageOnlyFailure ]
+
+webkit.org/b/199001 accessibility/set-selected-text-range-after-newline.html [ Failure ]
+webkit.org/b/199002 compositing/repaint/scroller-with-foreground-layer-repaints.html [ Failure ]
+webkit.org/b/199003 fast/events/event-attribute.html [ Failure ]
+webkit.org/b/199004 fast/events/fire-mousedown-while-pressing-mouse-button.html [ Failure ]
+webkit.org/b/199005 fast/events/touch/emulate-touch-events.html [ Failure ]
+webkit.org/b/199005 fast/events/touch/touch-handler-count.html [ Failure ]
+webkit.org/b/199006 fast/mediastream/MediaStreamTrack-getCapabilities.html [ Failure ]
+
+webkit.org/b/199008 compositing/backgrounds/fixed-background-on-descendant.html [ ImageOnlyFailure ]
+webkit.org/b/199008 compositing/backgrounds/fixed-backgrounds.html [ ImageOnlyFailure ]
+webkit.org/b/199008 compositing/geometry/rtl-overflow-scroll.html [ ImageOnlyFailure ]
+webkit.org/b/199008 fast/repaint/absolute-position-changed.html [ ImageOnlyFailure ]
+webkit.org/b/199008 fast/repaint/fixed-scale.html [ ImageOnlyFailure ]
+webkit.org/b/199008 fast/repaint/fixed-table-cell.html [ ImageOnlyFailure ]
+webkit.org/b/199008 fast/repaint/fixed-table-overflow-zindex.html [ ImageOnlyFailure ]
+webkit.org/b/199008 fast/repaint/fixed-table-overflow.html [ ImageOnlyFailure ]
+webkit.org/b/199008 fast/repaint/fixed.html [ ImageOnlyFailure ]
+
+webkit.org/b/199009 fast/text/variations/optical-sizing-units.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

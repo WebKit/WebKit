@@ -1,3 +1,10 @@
+2019-06-19  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=199021
+
+        * platform/gtk/TestExpectations:
+
 2019-06-19  Russell Epstein  <russell_e@apple.com>
 
         webgpu/blend-color-triangle-strip.html is a flakey failure since introduction.
