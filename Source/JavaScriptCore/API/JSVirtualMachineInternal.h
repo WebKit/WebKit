@@ -46,6 +46,8 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *);
 
 - (JSC::VM&)vm;
 
+- (BOOL)isWebThreadAware;
+
 @end
 
 #endif // defined(__OBJC__)

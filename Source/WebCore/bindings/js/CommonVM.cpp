@@ -59,6 +59,8 @@ JSC::VM& commonVMSlow()
     vm.heap.acquireAccess(); // At any time, we may do things that affect the GC.
 
 #if PLATFORM(IOS_FAMILY)
+    if (WebThreadIsEnabled())
+        vm.apiLock().makeWebThreadAware();
     vm.setRunLoop(WebThreadRunLoop());
     vm.heap.machineThreads().addCurrentThread();
 #endif

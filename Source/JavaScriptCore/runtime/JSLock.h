@@ -70,9 +70,8 @@ public:
     JS_EXPORT_PRIVATE JSLockHolder(ExecState*);
 
     JS_EXPORT_PRIVATE ~JSLockHolder();
-private:
-    void init();
 
+private:
     RefPtr<VM> m_vm;
 };
 
@@ -119,6 +118,13 @@ public:
         unsigned m_dropDepth;
     };
 
+    void makeWebThreadAware()
+    {
+        m_isWebThreadAware = true;
+    }
+
+    bool isWebThreadAware() const { return m_isWebThreadAware; }
+
 private:
     void lock(intptr_t lockCount);
     void unlock(intptr_t unlockCount);
@@ -130,6 +136,7 @@ private:
     void grabAllLocks(DropAllLocks*, unsigned lockCount);
 
     Lock m_lock;
+    bool m_isWebThreadAware { false };
     // We cannot make m_ownerThread an optional (instead of pairing it with an explicit
     // m_hasOwnerThread) because currentThreadIsHoldingLock() may be called from a
     // different thread, and an optional is vulnerable to races.

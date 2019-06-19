@@ -35,6 +35,10 @@
 #include <wtf/Threading.h>
 #include <wtf/threads/Signals.h>
 
+#if USE(WEB_THREAD)
+#include <wtf/ios/WebCoreThread.h>
+#endif
+
 namespace JSC {
 
 Lock GlobalJSLock::s_sharedInstanceMutex;
@@ -50,24 +54,17 @@ GlobalJSLock::~GlobalJSLock()
 }
 
 JSLockHolder::JSLockHolder(ExecState* exec)
-    : m_vm(&exec->vm())
+    : JSLockHolder(exec->vm())
 {
-    init();
 }
 
 JSLockHolder::JSLockHolder(VM* vm)
-    : m_vm(vm)
+    : JSLockHolder(*vm)
 {
-    init();
 }
 
 JSLockHolder::JSLockHolder(VM& vm)
     : m_vm(&vm)
-{
-    init();
-}
-
-void JSLockHolder::init()
 {
     m_vm->apiLock().lock();
 }
@@ -105,6 +102,13 @@ void JSLock::lock()
 void JSLock::lock(intptr_t lockCount)
 {
     ASSERT(lockCount > 0);
+#if USE(WEB_THREAD)
+    if (m_isWebThreadAware) {
+        ASSERT(WebCoreWebThreadIsEnabled && WebCoreWebThreadIsEnabled());
+        WebCoreWebThreadLock();
+    }
+#endif
+
     bool success = m_lock.tryLock();
     if (UNLIKELY(!success)) {
         if (currentThreadIsHoldingLock()) {

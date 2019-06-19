@@ -1,3 +1,38 @@
+2019-06-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSLock should be WebThread aware
+        https://bugs.webkit.org/show_bug.cgi?id=198911
+
+        Reviewed by Geoffrey Garen.
+
+        Since WebKitLegacy content rendering is done in WebThread instead of the main thread in iOS, user of WebKitLegacy (e.g. UIWebView) needs
+        to grab the WebThread lock (which is a recursive lock) in the main thread when touching the WebKitLegacy content.
+        But, WebKitLegacy can expose JSContext for the web view. And we can interact with the JS content through JavaScriptCore APIs. However,
+        since WebThread is a concept in WebCore, JavaScriptCore APIs do not grab the WebThread lock. As a result, WebKitLegacy web content can be
+        modified from the main thread without grabbing the WebThread lock through JavaScriptCore APIs.
+
+        This patch makes JSC aware of WebThread: JSLock grabs the WebThread lock before grabbing JS's lock. While this seems layering violation,
+        we already have many USE(WEB_THREAD) and WebThread aware code in WTF. Eventually, we should move WebThread code from WebCore to WTF since
+        JSC and WTF need to be aware of WebThread. But, for now, we just use the function pointer exposed by WebCore.
+
+        Since both JSLock and the WebThread lock are recursive locks, nested locking is totally OK. The possible problem is the order of locking.
+        We ensure that we always grab locks in (1) the WebThread lock and (2) JSLock order.
+
+        In JSLock, we take the WebThread lock, but we do not unlock it. This is how we use the WebThread lock: the WebThread lock is released
+        automatically when RunLoop finishes the current cycle, and in WebKitLegacy, we do not call unlocking function of the WebThread lock except
+        for some edge cases.
+
+        * API/JSVirtualMachine.mm:
+        (-[JSVirtualMachine isWebThreadAware]):
+        * API/JSVirtualMachineInternal.h:
+        * runtime/JSLock.cpp:
+        (JSC::JSLockHolder::JSLockHolder):
+        (JSC::JSLock::lock):
+        (JSC::JSLockHolder::init): Deleted.
+        * runtime/JSLock.h:
+        (JSC::JSLock::makeWebThreadAware):
+        (JSC::JSLock::isWebThreadAware const):
+
 2019-06-18  Justin Michaud  <justin_michaud@apple.com>
 
         [WASM-References] Add support for Table.size, grow and fill instructions
