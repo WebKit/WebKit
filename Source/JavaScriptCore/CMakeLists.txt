@@ -1297,6 +1297,11 @@ WEBKIT_COPY_FILES(JavaScriptCore_CopyPrivateHeaders
     FILES ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS}
     FLATTENED
 )
+# JavaScriptCore_CopyPrivateHeaders needs to have a direct or indirect
+# dependency of JavaScriptCore for CMake Visual Studio generator to
+# eliminate duplicated custom commands. Otherwise,
+# CombinedDomains.json will be generated in both projects.
+add_dependencies(JavaScriptCore_CopyPrivateHeaders JavaScriptCore)
 
 target_include_directories(LLIntSettingsExtractor PRIVATE
     ${JavaScriptCore_INCLUDE_DIRECTORIES}
