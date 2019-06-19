@@ -31,7 +31,6 @@
 #include "WebCertificateInfo.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageMessages.h"
-#include "WebPageProxy.h"
 #include "WebPasteboardProxy.h"
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
@@ -43,6 +42,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+class WebPageProxy;
 
 WebFrameProxy::WebFrameProxy(WebPageProxy& page, uint64_t frameID)
     : m_page(makeWeakPtr(page))

@@ -25,6 +25,10 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
+namespace JSC {
+class VM;
+} // namespace JSC
+
 namespace WebCore {
 
 class MicrotaskQueue;

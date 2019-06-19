@@ -33,7 +33,6 @@
 #include "IDBGetResult.h"
 #include "ServerOpenDBRequest.h"
 #include "Timer.h"
-#include "UniqueIDBDatabaseConnection.h"
 #include "UniqueIDBDatabaseTransaction.h"
 #include <wtf/CrossThreadQueue.h>
 #include <wtf/CrossThreadTask.h>
@@ -52,6 +51,7 @@ namespace WebCore {
 
 class IDBError;
 class IDBGetAllResult;
+struct IDBGetRecordData;
 class IDBRequestData;
 class IDBTransactionInfo;
 class StorageQuotaManager;
@@ -66,6 +66,7 @@ namespace IDBServer {
 
 class IDBConnectionToClient;
 class IDBServer;
+class UniqueIDBDatabaseConnection;
 
 typedef Function<void(const IDBError&)> ErrorCallback;
 typedef Function<void(const IDBError&, const IDBKeyData&)> KeyDataCallback;

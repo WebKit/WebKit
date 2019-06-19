@@ -67,6 +67,7 @@
 #include "NodeList.h"
 #include "Page.h"
 #include "PageConfiguration.h"
+#include "PasteboardItemInfo.h"
 #include "Range.h"
 #include "RenderBlock.h"
 #include "RuntimeEnabledFeatures.h"

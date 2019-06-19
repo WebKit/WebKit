@@ -25,7 +25,11 @@
 
 #pragma once
 
+#include "InternalFunction.h"
+
 namespace JSC {
+
+class WeakObjectRefPrototype;
 
 class WeakObjectRefConstructor final : public InternalFunction {
 public:

@@ -33,6 +33,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 

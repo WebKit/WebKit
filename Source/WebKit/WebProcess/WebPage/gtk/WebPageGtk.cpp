@@ -49,6 +49,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/UserAgent.h>
 #include <WebCore/WindowsKeyboardCodes.h>
+#include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {

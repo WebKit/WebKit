@@ -27,6 +27,7 @@
 
 #include "TiledBacking.h"
 #include <wtf/Forward.h>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 

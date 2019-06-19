@@ -28,6 +28,7 @@
 #include <WebCore/Pasteboard.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/markup.h>
+#include <WebPage.h>
 #include <wtf/Variant.h>
 #include <wtf/glib/GRefPtr.h>
 

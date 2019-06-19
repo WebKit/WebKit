@@ -29,6 +29,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/IntegerToStringConversion.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 

@@ -23,13 +23,13 @@
 
 #pragma once
 
+#include "Document.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class Document;
 class DocumentWriter;
 class SegmentedString;
 class ScriptableDocumentParser;

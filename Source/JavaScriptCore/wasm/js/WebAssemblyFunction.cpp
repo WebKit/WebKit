@@ -32,6 +32,7 @@
 #include "JSCInlines.h"
 #include "JSFunctionInlines.h"
 #include "JSObject.h"
+#include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyRuntimeError.h"

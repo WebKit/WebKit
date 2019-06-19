@@ -1,3 +1,33 @@
+2019-06-19  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Fix build with unified sources disabled
+        https://bugs.webkit.org/show_bug.cgi?id=198752
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests needed.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.h: Add missing forward declaration for IDBGetRecordData,
+        replace inclusion of UniqueIDBDatabaseConnection.h with a forward declaration.
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.h: Remove unneeded inclusion of
+        UniqueIDBDatabaseTransaction.h, add missing inclusion of UniqueIDBDatabase.h
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.h: Remove unneeded inclusion of
+        UniqueIDBDatabaseConnection.h inclusion.
+        * bridge/c/c_class.cpp: Add inclusion of JSCJSValueInlines.h to avoid linker errors due
+        to missing JSValue inline functions.
+        * dom/DocumentParser.h: Replace forward declaration of Document with inclusion of Document.h,
+        to avoid error due to usage of incomplete type in template expansion.
+        * dom/Microtasks.h: Add missing forward declaration of JSC::VM
+        * editing/markup.cpp: Add missing inclusion of PasteboardItemInfo.h
+        * page/Quirks.h: Add missing forward declaration of WebCore::EventTarget
+        * page/RuntimeEnabledFeatures.h: Add missing inclusion of wtf/Optional.h to avoid error due to
+        expansion of undefined template.
+        * page/SocketProvider.h: Add missing forward declaration for Document.
+        * platform/graphics/GraphicsLayerClient.h: Add missing inclusion of wtf/OptionSet.h to avoid
+        error due to expansion of undefined template.
+        * rendering/RenderMultiColumnSpannerPlaceholder.h: Replace forward declaration of RenderMultiColumnFlow
+        with inclusion of RenderMultiColumnFlow.h to avoid error due to usage of undefined class.
+
 2019-06-19  Antti Koivisto  <antti@apple.com>
 
         RequestedScrollPosition shouldn't be applied after node reattach

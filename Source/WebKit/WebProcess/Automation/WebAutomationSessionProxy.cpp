@@ -231,7 +231,7 @@ void WebAutomationSessionProxy::didClearWindowObjectForFrame(WebFrame& frame)
         WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, errorMessage, errorType), 0);
 }
 
-void WebAutomationSessionProxy::evaluateJavaScriptFunction(PageIdentifier pageID, uint64_t frameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, int callbackTimeout, uint64_t callbackID)
+void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifier pageID, uint64_t frameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, int callbackTimeout, uint64_t callbackID)
 {
     WebPage* page = WebProcess::singleton().webPage(pageID);
     if (!page) {
@@ -312,7 +312,7 @@ void WebAutomationSessionProxy::didEvaluateJavaScriptFunction(uint64_t frameID, 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, result, errorType), 0);
 }
 
-void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(PageIdentifier pageID, uint64_t frameID, uint32_t ordinal, CompletionHandler<void(Optional<String>, uint64_t)>&& completionHandler)
+void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(WebCore::PageIdentifier pageID, uint64_t frameID, uint32_t ordinal, CompletionHandler<void(Optional<String>, uint64_t)>&& completionHandler)
 {
     WebPage* page = WebProcess::singleton().webPage(pageID);
     if (!page) {
@@ -350,7 +350,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(PageIdentifier page
     completionHandler(WTF::nullopt, childFrame->frameID());
 }
 
-void WebAutomationSessionProxy::resolveChildFrameWithNodeHandle(PageIdentifier pageID, uint64_t frameID, const String& nodeHandle, CompletionHandler<void(Optional<String>, uint64_t)>&& completionHandler)
+void WebAutomationSessionProxy::resolveChildFrameWithNodeHandle(WebCore::PageIdentifier pageID, uint64_t frameID, const String& nodeHandle, CompletionHandler<void(Optional<String>, uint64_t)>&& completionHandler)
 {
     WebPage* page = WebProcess::singleton().webPage(pageID);
     if (!page) {
@@ -388,7 +388,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithNodeHandle(PageIdentifier p
     completionHandler(WTF::nullopt, frameFromElement->frameID());
 }
 
-void WebAutomationSessionProxy::resolveChildFrameWithName(PageIdentifier pageID, uint64_t frameID, const String& name, CompletionHandler<void(Optional<String>, uint64_t)>&& completionHandler)
+void WebAutomationSessionProxy::resolveChildFrameWithName(WebCore::PageIdentifier pageID, uint64_t frameID, const String& name, CompletionHandler<void(Optional<String>, uint64_t)>&& completionHandler)
 {
     WebPage* page = WebProcess::singleton().webPage(pageID);
     if (!page) {
@@ -426,7 +426,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithName(PageIdentifier pageID,
     completionHandler(WTF::nullopt, childFrame->frameID());
 }
 
-void WebAutomationSessionProxy::resolveParentFrame(PageIdentifier pageID, uint64_t frameID, CompletionHandler<void(Optional<String>, uint64_t)>&& completionHandler)
+void WebAutomationSessionProxy::resolveParentFrame(WebCore::PageIdentifier pageID, uint64_t frameID, CompletionHandler<void(Optional<String>, uint64_t)>&& completionHandler)
 {
     WebPage* page = WebProcess::singleton().webPage(pageID);
     if (!page) {
@@ -452,7 +452,7 @@ void WebAutomationSessionProxy::resolveParentFrame(PageIdentifier pageID, uint64
     completionHandler(WTF::nullopt, parentFrame->frameID());
 }
 
-void WebAutomationSessionProxy::focusFrame(PageIdentifier pageID, uint64_t frameID)
+void WebAutomationSessionProxy::focusFrame(WebCore::PageIdentifier pageID, uint64_t frameID)
 {
     WebPage* page = WebProcess::singleton().webPage(pageID);
     if (!page)
@@ -527,7 +527,7 @@ static WebCore::FloatPoint convertPointFromFrameClientToRootView(WebCore::FrameV
     return clientPoint;
 }
 
-void WebAutomationSessionProxy::computeElementLayout(PageIdentifier pageID, uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, CoordinateSystem coordinateSystem, CompletionHandler<void(Optional<String>, WebCore::IntRect, Optional<WebCore::IntPoint>, bool)>&& completionHandler)
+void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pageID, uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, CoordinateSystem coordinateSystem, CompletionHandler<void(Optional<String>, WebCore::IntRect, Optional<WebCore::IntPoint>, bool)>&& completionHandler)
 {
     WebPage* page = WebProcess::singleton().webPage(pageID);
     if (!page) {
@@ -635,7 +635,7 @@ void WebAutomationSessionProxy::computeElementLayout(PageIdentifier pageID, uint
     completionHandler(WTF::nullopt, resultElementBounds, resultInViewCenterPoint, isObscured);
 }
 
-void WebAutomationSessionProxy::selectOptionElement(PageIdentifier pageID, uint64_t frameID, String nodeHandle, CompletionHandler<void(Optional<String>)>&& completionHandler)
+void WebAutomationSessionProxy::selectOptionElement(WebCore::PageIdentifier pageID, uint64_t frameID, String nodeHandle, CompletionHandler<void(Optional<String>)>&& completionHandler)
 {
     WebPage* page = WebProcess::singleton().webPage(pageID);
     if (!page) {
@@ -703,7 +703,7 @@ static WebCore::IntRect snapshotRectForScreenshot(WebPage& page, WebCore::Elemen
     return { };
 }
 
-void WebAutomationSessionProxy::takeScreenshot(PageIdentifier pageID, uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, uint64_t callbackID)
+void WebAutomationSessionProxy::takeScreenshot(WebCore::PageIdentifier pageID, uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, uint64_t callbackID)
 {
     ShareableBitmap::Handle handle;
 
@@ -751,7 +751,7 @@ void WebAutomationSessionProxy::takeScreenshot(PageIdentifier pageID, uint64_t f
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, { }), 0);
 }
 
-void WebAutomationSessionProxy::getCookiesForFrame(PageIdentifier pageID, uint64_t frameID, CompletionHandler<void(Optional<String>, Vector<WebCore::Cookie>)>&& completionHandler)
+void WebAutomationSessionProxy::getCookiesForFrame(WebCore::PageIdentifier pageID, uint64_t frameID, CompletionHandler<void(Optional<String>, Vector<WebCore::Cookie>)>&& completionHandler)
 {
     WebPage* page = WebProcess::singleton().webPage(pageID);
     if (!page) {
@@ -776,7 +776,7 @@ void WebAutomationSessionProxy::getCookiesForFrame(PageIdentifier pageID, uint64
     completionHandler(WTF::nullopt, foundCookies);
 }
 
-void WebAutomationSessionProxy::deleteCookie(PageIdentifier pageID, uint64_t frameID, String cookieName, CompletionHandler<void(Optional<String>)>&& completionHandler)
+void WebAutomationSessionProxy::deleteCookie(WebCore::PageIdentifier pageID, uint64_t frameID, String cookieName, CompletionHandler<void(Optional<String>)>&& completionHandler)
 {
     WebPage* page = WebProcess::singleton().webPage(pageID);
     if (!page) {

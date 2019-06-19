@@ -30,6 +30,10 @@
 #include <WebCore/NotImplemented.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+class FloatRect;
+}
+
 namespace WebKit {
 
 WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
@@ -134,7 +138,7 @@ void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned)
     notImplemented();
 }
 
-void WebInspectorProxy::platformSetSheetRect(const FloatRect&)
+void WebInspectorProxy::platformSetSheetRect(const WebCore::FloatRect&)
 {
     notImplemented();
 }

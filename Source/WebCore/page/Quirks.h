@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class Document;
+class EventTarget;
 class HTMLElement;
 class LayoutUnit;
 

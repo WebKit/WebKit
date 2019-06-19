@@ -29,6 +29,7 @@
 #include "FrameLoadState.h"
 #include "GenericCallback.h"
 #include "WebFramePolicyListenerProxy.h"
+#include "WebPageProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -51,13 +52,10 @@ namespace WebKit {
 class SafeBrowsingWarning;
 class WebCertificateInfo;
 class WebFramePolicyListenerProxy;
-class WebPageProxy;
 class WebsiteDataStore;
 enum class ShouldExpectSafeBrowsingResult;
 enum class ProcessSwapRequestedByClient;
 struct WebsitePoliciesData;
-
-typedef GenericCallback<API::Data*> DataCallback;
 
 class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame> {
 public:

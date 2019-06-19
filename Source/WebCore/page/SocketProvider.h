@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class Document;
 class ThreadableWebSocketChannel;
 class ScriptExecutionContext;
 class StorageSessionProvider;
