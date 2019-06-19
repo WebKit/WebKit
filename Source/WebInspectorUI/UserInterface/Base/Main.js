@@ -2850,7 +2850,7 @@ WI.linkifyLocation = function(url, sourceCodePosition, options = {})
 {
     var sourceCode = WI.sourceCodeForURL(url);
     if (sourceCode)
-        return WI.linkifySourceCode(sourceCode);
+        return WI.linkifySourceCode(sourceCode, sourceCodePosition, options);
 
     var anchor = document.createElement("a");
     anchor.href = url;
