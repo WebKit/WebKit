@@ -101,7 +101,7 @@ static inline WebMouseEvent::Button buttonForEvent(const GdkEvent* event)
 #ifndef GTK_API_VERSION_2
         gdk_event_get_button(event, &eventButton);
 #else
-        eventButton = event->button;
+        eventButton = event->button.button;
 #endif
         if (eventButton == 1)
             button = WebMouseEvent::LeftButton;
@@ -155,7 +155,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int cu
 #ifndef GTK_API_VERSION_2
     gdk_event_get_button(event, &eventButton);
 #else
-    eventButton = event->button;
+    eventButton = event->button.button;
 #endif
 
     WebEvent::Type type = static_cast<WebEvent::Type>(0);
@@ -284,8 +284,8 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, 
     gdk_event_get_keyval(event, &keyval);
     gdk_event_get_keycode(event, &keycode);
 #else
-    keyval = event->keyval;
-    keycode = event->hardware_keycode;
+    keyval = event->key.keyval;
+    keycode = event->key.hardware_keycode;
 #endif
 #if GTK_CHECK_VERSION(3, 10, 0)
     GdkEventType type = gdk_event_get_event_type(event);
