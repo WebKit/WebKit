@@ -1,3 +1,16 @@
+2019-06-19  Cathie Chen  <cathiechen@igalia.com>
+
+        resize-observer/element-leak.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=198666
+
+        Reviewed by Frédéric Wang.
+
+        It takes a very long time to construct iframes which create and remove 1000 elements. This would cause timeout sometimes.
+        In order to make it more effective, reduce the number of elements to 200 and put them into a container first,
+        then attach the container to DOM tree.
+
+        * resize-observer/resources/element-leak-frame.html:
+
 2019-06-18  Megan Gardner  <megan_gardner@apple.com>
 
         Text Selection gesture has changed behavior, change test to match new behavior

@@ -3,7 +3,7 @@
 <script src="../../resources/gc.js"></script>
 <script type="text/javascript">
 
-const targetCount = 1000;
+const targetCount = 200;
 var resizeObserver = new ResizeObserver( entries => {
     for (let entry of entries)
         entry.target.myEntry = entry;
@@ -15,10 +15,12 @@ var resizeObserver = new ResizeObserver( entries => {
     parent.postMessage('Notified', '*');
 });
 
+var container = document.createElement('div');
 for (let i = 0; i < targetCount; ++i) {
     var target = document.createElement('div');
-    document.body.appendChild(target);
+    container.appendChild(target);
 }
+document.body.appendChild(container);
 
 document.querySelectorAll('div').forEach(target => resizeObserver.observe(target));
 
