@@ -538,6 +538,15 @@ void PageClientImpl::requestDOMPasteAccess(const IntRect&, const String&, Comple
     completionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
 }
 
+UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirection()
+{
+    GtkTextDirection direction = gtk_widget_get_direction(m_viewWidget);
+    if (direction == GTK_TEXT_DIR_RTL)
+        return UserInterfaceLayoutDirection::RTL;
+
+    return UserInterfaceLayoutDirection::LTR;
+}
+
 bool PageClientImpl::effectiveAppearanceIsDark() const
 {
     auto* settings = gtk_widget_get_settings(m_viewWidget);
