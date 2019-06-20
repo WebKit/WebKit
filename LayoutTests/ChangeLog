@@ -1,3 +1,14 @@
+2019-06-20  Greg Doolittle  <gr3g@apple.com>
+
+        Web Inspector: AXI: Audit: image label test is throwing spurious errors on elements with existing alt attr, but no value: <img alt>
+        https://bugs.webkit.org/show_bug.cgi?id=194754
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/img-alt-attribute-unassigned-value-expected.txt: Added.
+        * accessibility/img-alt-attribute-unassigned-value.html: Added.
+        * inspector/dom/getAccessibilityPropertiesForNode-expected.txt:
+
 2019-06-20  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Property resolver needs to recurse on newValueExpression for RMW operations
