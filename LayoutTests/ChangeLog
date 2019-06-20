@@ -1,3 +1,13 @@
+2019-06-20  Shawn Roberts  <sroberts@apple.com>
+
+        Moving expectations files
+        https://bugs.webkit.org/show_bug.cgi?id=196495
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
 2019-06-20  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
         [GTK] Enable navigation swipe layout tests
