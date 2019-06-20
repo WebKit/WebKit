@@ -46,6 +46,8 @@ enum class StorageAccessPromptWasShown : bool {
     Yes
 };
 
+const unsigned maxNumberOfTimesExplicitlyDeniedFrameSpecificStorageAccess = 2;
+
 class DocumentStorageAccess final : public Supplement<Document>, public CanMakeWeakPtr<DocumentStorageAccess> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -64,12 +66,16 @@ private:
     static const char* supplementName();
     bool hasFrameSpecificStorageAccess() const;
     void setHasFrameSpecificStorageAccess(bool);
+    void setWasExplicitlyDeniedFrameSpecificStorageAccess() { ++m_numberOfTimesExplicitlyDeniedFrameSpecificStorageAccess; };
+    bool isAllowedToRequestFrameSpecificStorageAccess() { return m_numberOfTimesExplicitlyDeniedFrameSpecificStorageAccess < maxNumberOfTimesExplicitlyDeniedFrameSpecificStorageAccess; };
     void enableTemporaryTimeUserGesture();
     void consumeTemporaryTimeUserGesture();
 
     std::unique_ptr<UserGestureIndicator> m_temporaryUserGesture;
     
     Document& m_document;
+
+    uint8_t m_numberOfTimesExplicitlyDeniedFrameSpecificStorageAccess = 0;
 };
 
 } // namespace WebCore

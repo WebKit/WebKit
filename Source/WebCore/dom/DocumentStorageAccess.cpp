@@ -128,7 +128,7 @@ void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
         return;
     }
     
-    if (!m_document.frame() || m_document.securityOrigin().isUnique()) {
+    if (!m_document.frame() || m_document.securityOrigin().isUnique() || !isAllowedToRequestFrameSpecificStorageAccess()) {
         promise->reject();
         return;
     }
@@ -192,8 +192,11 @@ void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
         if (wasGranted == StorageAccessWasGranted::Yes) {
             document->setHasFrameSpecificStorageAccess(true);
             promise->resolve();
-        } else
+        } else {
+            if (promptWasShown == StorageAccessPromptWasShown::Yes)
+                document->setWasExplicitlyDeniedFrameSpecificStorageAccess();
             promise->reject();
+        }
 
         if (shouldPreserveUserGesture) {
             MicrotaskQueue::mainThreadQueue().append(std::make_unique<VoidMicrotask>([documentReference = WTFMove(documentReference)] () {

@@ -1,3 +1,30 @@
+2019-06-20  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Cap the number of times an iframe document can request access
+        https://bugs.webkit.org/show_bug.cgi?id=199074
+        <rdar://problem/51857195>
+
+        Reviewed by Brent Fulgham.
+
+        Tested manually.
+
+        This change just adds a counter to the number of times the user explicitly
+        denies storage access and returns early if the counter has reached the limit
+        of 2.
+
+        We hoped that iframes that request storage access would count the number
+        of times the user has been asked and not repeat the request over and over.
+        However, we're seeing pretty aggressive use of the API and users are
+        complaining. Therefore, we need a cap on how many times an iframed
+        document can ask if it is explicitly denied access by the user.
+
+        This is a first measure. If we see continued aggressive use of the API,
+        we'll have to consider more drastic measures.
+
+        * dom/DocumentStorageAccess.cpp:
+        (WebCore::DocumentStorageAccess::requestStorageAccess):
+        * dom/DocumentStorageAccess.h:
+
 2019-06-20  Youenn Fablet  <youenn@apple.com>
 
         Changing settings of a MediaStreamTrack clone should not alter the settings of the original track
