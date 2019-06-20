@@ -1,3 +1,9 @@
+2019-06-19  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Expand tests coverage (1126 new tests -> 2324).
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
 2019-06-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Add WTF::crossThreadCopy(T&&) to utilize String::isolatedCopy() &&
