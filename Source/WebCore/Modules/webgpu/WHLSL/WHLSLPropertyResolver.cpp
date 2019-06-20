@@ -546,6 +546,10 @@ void PropertyResolver::visit(AST::AssignmentExpression& assignmentExpression)
 
 void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpression)
 {
+    checkErrorAndVisit(readModifyWriteExpression.newValueExpression());
+    if (error())
+        return;
+
     if (readModifyWriteExpression.leftValue().typeAnnotation().leftAddressSpace()) {
         // Consider a++;
         // This would get transformed into:
@@ -588,7 +592,7 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
 
             auto dereferenceExpression = makeUniqueRef<AST::DereferenceExpression>(Lexer::Token(readModifyWriteExpression.origin()), WTFMove(variableReference1));
             dereferenceExpression->setType(baseType->clone());
-            dereferenceExpression->setTypeAnnotation(AST::RightValue());
+            dereferenceExpression->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
             auto variableReference2 = readModifyWriteExpression.oldVariableReference();
             variableReference2->setType(baseType->clone());
@@ -621,7 +625,7 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
 
             auto dereferenceExpression = makeUniqueRef<AST::DereferenceExpression>(Lexer::Token(readModifyWriteExpression.origin()), WTFMove(variableReference1));
             dereferenceExpression->setType(baseType->clone());
-            dereferenceExpression->setTypeAnnotation(AST::RightValue());
+            dereferenceExpression->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
             auto variableReference2 = readModifyWriteExpression.newVariableReference();
             variableReference2->setType(baseType->clone());

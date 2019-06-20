@@ -90,7 +90,7 @@ static bool dumpASTAtEndIfNeeded(Program& program)
     return dumpASTIfNeeded(dumpASTAtEnd, program, "AST at end");
 }
 
-#define RUN_PASS(pass, ...) \
+#define CHECK_PASS(pass, ...) \
     do { \
         dumpASTBetweenEachPassIfNeeded(program, "AST before " # pass); \
         if (!pass(__VA_ARGS__)) { \
@@ -99,7 +99,12 @@ static bool dumpASTAtEndIfNeeded(Program& program)
             return WTF::nullopt; \
         } \
     } while (0)
-    
+
+#define RUN_PASS(pass, ...) \
+    do { \
+        dumpASTBetweenEachPassIfNeeded(program, "AST before " # pass); \
+        pass(__VA_ARGS__); \
+    } while (0)
 
 static Optional<Program> prepareShared(String& whlslSource)
 {
@@ -121,27 +126,27 @@ static Optional<Program> prepareShared(String& whlslSource)
         dumpASTAfterParsingIfNeeded(program);
 
     NameResolver nameResolver(program.nameContext());
-    RUN_PASS(resolveNamesInTypes, program, nameResolver);
-    RUN_PASS(checkRecursiveTypes, program);
-    RUN_PASS(synthesizeStructureAccessors, program);
-    RUN_PASS(synthesizeEnumerationFunctions, program);
-    RUN_PASS(synthesizeArrayOperatorLength, program);
-    RUN_PASS(resolveTypeNamesInFunctions, program, nameResolver);
-    RUN_PASS(synthesizeConstructors, program);
-    RUN_PASS(resolveCallsInFunctions, program, nameResolver);
-    RUN_PASS(checkDuplicateFunctions, program);
+    CHECK_PASS(resolveNamesInTypes, program, nameResolver);
+    CHECK_PASS(checkRecursiveTypes, program);
+    CHECK_PASS(synthesizeStructureAccessors, program);
+    CHECK_PASS(synthesizeEnumerationFunctions, program);
+    CHECK_PASS(synthesizeArrayOperatorLength, program);
+    CHECK_PASS(resolveTypeNamesInFunctions, program, nameResolver);
+    CHECK_PASS(synthesizeConstructors, program);
+    CHECK_PASS(resolveCallsInFunctions, program, nameResolver);
+    CHECK_PASS(checkDuplicateFunctions, program);
 
-    RUN_PASS(check, program);
+    CHECK_PASS(check, program);
 
-    checkLiteralTypes(program);
-    RUN_PASS(checkTextureReferences, program);
-    RUN_PASS(autoInitializeVariables, program);
-    resolveProperties(program);
-    findHighZombies(program);
-    RUN_PASS(checkStatementBehavior, program);
-    RUN_PASS(checkRecursion, program);
-    RUN_PASS(checkFunctionStages, program);
-    preserveVariableLifetimes(program);
+    RUN_PASS(checkLiteralTypes, program);
+    CHECK_PASS(checkTextureReferences, program);
+    CHECK_PASS(autoInitializeVariables, program);
+    RUN_PASS(resolveProperties, program);
+    RUN_PASS(findHighZombies, program);
+    CHECK_PASS(checkStatementBehavior, program);
+    CHECK_PASS(checkRecursion, program);
+    CHECK_PASS(checkFunctionStages, program);
+    RUN_PASS(preserveVariableLifetimes, program);
 
     dumpASTAtEndIfNeeded(program);
 

@@ -1,3 +1,29 @@
+2019-06-20  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Property resolver needs to recurse on newValueExpression for RMW operations
+        https://bugs.webkit.org/show_bug.cgi?id=199037
+
+        Reviewed by Myles C. Maxfield.
+
+        When we had an expression like `<e1> += <e2>`, we weren't running the property
+        resolver on <e2>. If <e2> was something like `mat[1][2]`, we wouldn't end up
+        simplifying that into the needed getter calls. This patch fixes this by having
+        the property resolver recurse on <e2>.
+        
+        This patch also fixes a bug in the property resolver where we weren't marking some
+        dereference expressions as LValues. This was causing bugs in the metal code generator.
+        
+        This patch also adds a way to dump the AST between passes that are
+        guaranteed to not fail.
+
+        Test: webgpu/whlsl-read-modify-write-high-zombies.html
+
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp:
+        (WebCore::WHLSL::prepareShared):
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp:
+        (WebCore::WHLSL::PropertyResolver::visit):
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt:
+
 2019-06-20  John Wilander  <wilander@apple.com>
 
         Storage Access API: Cap the number of times an iframe document can request access
