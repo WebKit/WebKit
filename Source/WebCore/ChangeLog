@@ -1,3 +1,23 @@
+2019-06-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Resolve frequent crashes in topPrivatelyControlledDomain
+        https://bugs.webkit.org/show_bug.cgi?id=199072
+        <rdar://problem/51428162>
+
+        Reviewed by Youenn Fablet.
+
+        Crash data indicates that we are frequently crashing when multiple threads call
+        WebCore::topPrivatelyControlledDomain. 
+
+        Code review showed the potential for a thread contention issue, since WebKit builds
+        with '--fno-threadsafe-statics'.
+
+        This patch corrects the thread safety issue in WebCore::topPrivatelyControlledDomain.
+
+        * platform/mac/PublicSuffixMac.mm:
+        (WebCore::topPrivatelyControlledDomain): Only instantiate the static cache after the
+        current thread has achieved its lock.
+
 2019-06-20  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Property resolver needs to recurse on newValueExpression for RMW operations

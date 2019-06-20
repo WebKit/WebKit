@@ -50,13 +50,13 @@ String topPrivatelyControlledDomain(const String& domain)
     if (!domain.isAllASCII())
         return domain;
 
-    static NeverDestroyed<HashMap<String, String, ASCIICaseInsensitiveHash>> cache;
     static Lock cacheLock;
-
-    auto isolatedDomain = domain.isolatedCopy();
-
     auto locker = holdLock(cacheLock);
 
+    static NeverDestroyed<HashMap<String, String, ASCIICaseInsensitiveHash>> cache;
+
+    auto isolatedDomain = domain.isolatedCopy();
+    
     constexpr auto maximumSizeToPreventUnlimitedGrowth = 128;
     if (cache.get().size() == maximumSizeToPreventUnlimitedGrowth)
         cache.get().remove(cache.get().random());
