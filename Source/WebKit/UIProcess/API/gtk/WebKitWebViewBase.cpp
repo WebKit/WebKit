@@ -1263,6 +1263,22 @@ ViewGestureController* webkitWebViewBaseViewGestureController(WebKitWebViewBase*
     return webViewBase->priv->viewGestureController.get();
 }
 
+bool webkitWebViewBaseBeginBackSwipeForTesting(WebKitWebViewBase* webViewBase)
+{
+    if (auto* gestureController = webkitWebViewBaseViewGestureController(webViewBase))
+        return gestureController->beginSimulatedSwipeInDirectionForTesting(ViewGestureController::SwipeDirection::Back);
+
+    return FALSE;
+}
+
+bool webkitWebViewBaseCompleteBackSwipeForTesting(WebKitWebViewBase* webViewBase)
+{
+    if (auto* gestureController = webkitWebViewBaseViewGestureController(webViewBase))
+        return gestureController->completeSimulatedSwipeInDirectionForTesting(ViewGestureController::SwipeDirection::Back);
+
+    return FALSE;
+}
+
 static gboolean webkitWebViewBaseQueryTooltip(GtkWidget* widget, gint /* x */, gint /* y */, gboolean keyboardMode, GtkTooltip* tooltip)
 {
     WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;

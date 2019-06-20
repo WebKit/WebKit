@@ -1,5 +1,23 @@
 2019-06-20  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
+        [GTK] Enable navigation swipe layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=198995
+
+        Reviewed by Michael Catanzaro.
+
+        Enable the existing tests for the swipe gesture.
+
+        swipe/pushState-programmatic-back-while-swiping-crash.html is not applicable because
+        it deals with NSEvents directly, skip it.
+
+        swipe/main-frame-pinning-requirement.html is flaky, same as on Mac.
+
+        swipe/pushstate-with-manual-scrollrestoration.html passes, don't mark it as failure.
+
+        * platform/gtk/TestExpectations:
+
+2019-06-20  Alexander Mikhaylenko  <exalm7659@gmail.com>
+
         [GTK] HTTP layout tests don't run in flatpak
         https://bugs.webkit.org/show_bug.cgi?id=199067
 

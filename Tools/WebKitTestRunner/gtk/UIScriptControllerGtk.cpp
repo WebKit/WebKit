@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2019 Alexander Mikhaylenko <exalm7659@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,40 +24,26 @@
  */
 
 #include "config.h"
-#include "WKView.h"
+#include "UIScriptController.h"
 
-#include "WKAPICast.h"
-#include "WKViewPrivate.h"
-#include "WebKitWebViewBasePrivate.h"
+#include "PlatformWebView.h"
+#include "TestController.h"
+#include <WebKit/WKViewPrivate.h>
 
-using namespace WebKit;
+namespace WTR {
 
-WKViewRef WKViewCreate(WKPageConfigurationRef configuration)
+void UIScriptController::beginBackSwipe(JSValueRef callback)
 {
-    return toAPI(webkitWebViewBaseCreate(*toImpl(configuration)));
+    auto* webView = TestController::singleton().mainWebView()->platformView();
+
+    WKViewBeginBackSwipeForTesting(webView);
 }
 
-WKPageRef WKViewGetPage(WKViewRef viewRef)
+void UIScriptController::completeBackSwipe(JSValueRef callback)
 {
-    return toAPI(webkitWebViewBaseGetPage(toImpl(viewRef)));
+    auto* webView = TestController::singleton().mainWebView()->platformView();
+
+    WKViewCompleteBackSwipeForTesting(webView);
 }
 
-void WKViewSetFocus(WKViewRef viewRef, bool focused)
-{
-    webkitWebViewBaseSetFocus(toImpl(viewRef), focused);
-}
-
-void WKViewSetEnableBackForwardNavigationGesture(WKViewRef viewRef, bool enabled)
-{
-    webkitWebViewBaseSetEnableBackForwardNavigationGesture(toImpl(viewRef), enabled);
-}
-
-bool WKViewBeginBackSwipeForTesting(WKViewRef viewRef)
-{
-    return webkitWebViewBaseBeginBackSwipeForTesting(toImpl(viewRef));
-}
-
-bool WKViewCompleteBackSwipeForTesting(WKViewRef viewRef)
-{
-    return webkitWebViewBaseCompleteBackSwipeForTesting(toImpl(viewRef));
-}
+} // namespace WTR

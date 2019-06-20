@@ -84,9 +84,9 @@ bool ViewGestureController::PendingSwipeTracker::scrollEventCanInfluenceSwipe(Gd
     GdkDevice* device = gdk_event_get_source_device(reinterpret_cast<GdkEvent*>(event));
     GdkInputSource source = gdk_device_get_source(device);
 
-    // FIXME: Should it maybe be allowed on mice/trackpoints as well? The GDK_SCROLL_SMOOTH
-    // requirement already filters out most mice, and it works pretty well on a trackpoint
-    return gdk_event_get_scroll_deltas(reinterpret_cast<GdkEvent*>(event), nullptr, nullptr) && (source == GDK_SOURCE_TOUCHPAD || source == GDK_SOURCE_TOUCHSCREEN);
+    bool isDeviceAllowed = source == GDK_SOURCE_TOUCHPAD || source == GDK_SOURCE_TOUCHSCREEN || m_viewGestureController.m_isSimulatedSwipe;
+
+    return gdk_event_get_scroll_deltas(reinterpret_cast<GdkEvent*>(event), nullptr, nullptr) && isDeviceAllowed;
 }
 
 static bool isTouchEvent(GdkEventScroll* event)
@@ -412,14 +412,63 @@ void ViewGestureController::removeSwipeSnapshot()
     m_swipeProgressTracker.reset();
 }
 
-bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirection)
+static GUniquePtr<GdkEvent> createScrollEvent(GtkWidget* widget, double xDelta, double yDelta)
 {
-    return false;
+    GdkWindow* window = gtk_widget_get_window(widget);
+
+    int x, y;
+    gdk_window_get_root_origin(window, &x, &y);
+
+    int width = gdk_window_get_width(window);
+    int height = gdk_window_get_height(window);
+
+    GUniquePtr<GdkEvent> event(gdk_event_new(GDK_SCROLL));
+    event->scroll.time = GDK_CURRENT_TIME;
+    event->scroll.x = width / 2;
+    event->scroll.y = height / 2;
+    event->scroll.x_root = x + width / 2;
+    event->scroll.y_root = y + height / 2;
+    event->scroll.direction = GDK_SCROLL_SMOOTH;
+    event->scroll.delta_x = xDelta;
+    event->scroll.delta_y = yDelta;
+    event->scroll.state = 0;
+#if GTK_CHECK_VERSION(3, 20, 0)
+    event->scroll.is_stop = !xDelta && !yDelta;
+#endif
+    event->scroll.window = GDK_WINDOW(g_object_ref(window));
+    gdk_event_set_screen(event.get(), gdk_window_get_screen(window));
+    gdk_event_set_device(event.get(), gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(window))));
+    gdk_event_set_source_device(event.get(), gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(window))));
+
+    return event;
+}
+
+bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirection direction)
+{
+    if (!canSwipeInDirection(direction))
+        return false;
+
+    m_isSimulatedSwipe = true;
+
+    double delta = swipeTouchpadBaseWidth / gtkScrollDeltaMultiplier * 0.75;
+
+    if (isPhysicallySwipingLeft(direction))
+        delta = -delta;
+
+    GUniquePtr<GdkEvent> event = createScrollEvent(m_webPageProxy.viewWidget(), delta, 0);
+    gtk_widget_event(m_webPageProxy.viewWidget(), event.get());
+
+    return true;
 }
 
 bool ViewGestureController::completeSimulatedSwipeInDirectionForTesting(SwipeDirection)
 {
-    return false;
+    GUniquePtr<GdkEvent> event = createScrollEvent(m_webPageProxy.viewWidget(), 0, 0);
+    gtk_widget_event(m_webPageProxy.viewWidget(), event.get());
+
+    m_isSimulatedSwipe = false;
+
+    return true;
 }
 
 } // namespace WebKit

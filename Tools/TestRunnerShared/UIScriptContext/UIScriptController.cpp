@@ -671,6 +671,7 @@ void UIScriptController::addViewToWindow(JSValueRef)
 {
 }
 
+#if !PLATFORM(GTK)
 void UIScriptController::beginBackSwipe(JSValueRef callback)
 {
 }
@@ -678,6 +679,7 @@ void UIScriptController::beginBackSwipe(JSValueRef callback)
 void UIScriptController::completeBackSwipe(JSValueRef callback)
 {
 }
+#endif
 
 void UIScriptController::setShareSheetCompletesImmediatelyWithResolution(bool)
 {

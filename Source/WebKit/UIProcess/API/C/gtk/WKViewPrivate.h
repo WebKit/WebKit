@@ -34,6 +34,12 @@ extern "C" {
 
 WK_EXPORT void WKViewSetFocus(WKViewRef viewRef, bool focused);
 
+WK_EXPORT void WKViewSetEnableBackForwardNavigationGesture(WKViewRef viewRef, bool enabled);
+
+WK_EXPORT bool WKViewBeginBackSwipeForTesting(WKViewRef viewRef);
+
+WK_EXPORT bool WKViewCompleteBackSwipeForTesting(WKViewRef viewRef);
+
 #ifdef __cplusplus
 }
 #endif

@@ -185,8 +185,9 @@ void PlatformWebView::dismissAllPopupMenus()
     }, nullptr);
 }
 
-void PlatformWebView::setNavigationGesturesEnabled(bool)
+void PlatformWebView::setNavigationGesturesEnabled(bool enabled)
 {
+    WKViewSetEnableBackForwardNavigationGesture(platformView(), enabled);
 }
 
 bool PlatformWebView::drawsBackground() const

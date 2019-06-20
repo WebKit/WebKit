@@ -21,6 +21,7 @@
 
 accessibility/gtk [ Pass ]
 editing/pasteboard/gtk [ Pass ]
+swipe [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
@@ -1220,6 +1221,9 @@ fast/mediastream/screencapture-user-gesture.html [ Skip ]
 # No different rendering for text-rendering: optimizeLegibility
 fast/text/variations/optical-sizing-trak-2.html [ Skip ]
 
+# The test directly sends Cocoa events
+swipe/pushState-programmatic-back-while-swiping-crash.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -2253,6 +2257,8 @@ webkit.org/b/198830 media/video-size-intrinsic-scale.html [ Crash Failure ]
 webkit.org/b/198830 media/video-src.html [ Crash Pass ]
 webkit.org/b/198830 media/video-timeupdate-reverse-play.html [ Crash Pass ]
 webkit.org/b/198830 media/video-trackmenu-selection.html [ Crash Timeout ]
+
+webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests

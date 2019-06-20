@@ -10,6 +10,7 @@ list(APPEND WebKitTestRunner_SOURCES
     ${WEBKIT_TESTRUNNER_DIR}/gtk/EventSenderProxyGtk.cpp
     ${WEBKIT_TESTRUNNER_DIR}/gtk/PlatformWebViewGtk.cpp
     ${WEBKIT_TESTRUNNER_DIR}/gtk/TestControllerGtk.cpp
+    ${WEBKIT_TESTRUNNER_DIR}/gtk/UIScriptControllerGtk.cpp
     ${WEBKIT_TESTRUNNER_DIR}/gtk/main.cpp
 )
 

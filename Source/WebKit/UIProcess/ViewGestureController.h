@@ -409,6 +409,8 @@ private:
     SwipeProgressTracker m_swipeProgressTracker;
 
     RefPtr<cairo_pattern_t> m_currentSwipeSnapshotPattern;
+
+    bool m_isSimulatedSwipe { false };
 #endif
 
     bool m_isConnectedToProcess { false };
