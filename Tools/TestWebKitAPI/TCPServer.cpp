@@ -298,6 +298,7 @@ template<> void TCPServer::write(Socket socket, const void* response, size_t len
     EXPECT_EQ(static_cast<size_t>(bytesWritten), length);
 }
 
+#if HAVE(SSL)
 template<> Vector<uint8_t> TCPServer::read(SSL* ssl)
 {
     uint8_t buffer[1000];
@@ -315,6 +316,7 @@ template<> void TCPServer::write(SSL* ssl, const void* response, size_t length)
     auto bytesWritten = SSL_write(ssl, response, length);
     EXPECT_EQ(static_cast<size_t>(bytesWritten), length);
 }
+#endif
 
 void TCPServer::respondWithChallengeThenOK(Socket socket)
 {
