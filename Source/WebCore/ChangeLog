@@ -1,3 +1,17 @@
+2019-06-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r245912): Crash in TextIterator::range via visiblePositionForIndexUsingCharacterIterator
+        https://bugs.webkit.org/show_bug.cgi?id=199061
+
+        Reviewed by Wenson Hsieh.
+
+        Avoid calling CharacterIterator::range when it's at the end. Otherwise, we'd crash with null pointer dereferencing.
+
+        Unfortunately no new tests since we don't have any reproducible test case.
+
+        * editing/Editing.cpp:
+        (WebCore::visiblePositionForIndexUsingCharacterIterator):
+
 2019-06-20  Brent Fulgham  <bfulgham@apple.com>
 
         Resolve frequent crashes in topPrivatelyControlledDomain
