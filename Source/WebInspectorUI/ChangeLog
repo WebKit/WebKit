@@ -1,5 +1,28 @@
 2019-06-20  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Debugger: setting a breakpoint on a non-JavaScript line should immediately show as unresolved
+        https://bugs.webkit.org/show_bug.cgi?id=199033
+
+        Reviewed by Matt Baker.
+
+        Remove the `shouldSpeculativelyResolve` parameter, as it was resolving breakpoints even in
+        the case that there were no resolved locations for the given breakpoint.
+
+        In the case that there are resolved locations, the breakpoint would've already been resolved
+        by the time that `shouldSpeculativelyResolve` would've taken effect, so it's unnecessary.
+
+        This parameter was only used when setting a breakpoint from a `SourceCodeTextEditor` gutter.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype.addBreakpoint):
+        (WI.DebuggerManager.prototype._setBreakpoint):
+        (WI.DebuggerManager.prototype._setBreakpoint.didSetBreakpoint):
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.textEditorBreakpointAdded):
+
+2019-06-20  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Edit -> Tag doesn't do anything for html, head, and body elements
         https://bugs.webkit.org/show_bug.cgi?id=199052
         <rdar://problem/51923906>

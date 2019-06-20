@@ -471,7 +471,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         return script.target.DebuggerAgent.continueToLocation({scriptId: script.id, lineNumber, columnNumber});
     }
 
-    addBreakpoint(breakpoint, shouldSpeculativelyResolve)
+    addBreakpoint(breakpoint)
     {
         console.assert(breakpoint instanceof WI.Breakpoint);
         if (!breakpoint)
@@ -492,10 +492,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         if (!breakpoint.disabled) {
             const specificTarget = undefined;
-            this._setBreakpoint(breakpoint, specificTarget, () => {
-                if (shouldSpeculativelyResolve)
-                    breakpoint.resolved = true;
-            });
+            this._setBreakpoint(breakpoint, specificTarget);
         }
 
         if (!this._restoringBreakpoints)
@@ -933,7 +930,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         };
     }
 
-    _setBreakpoint(breakpoint, specificTarget, callback)
+    _setBreakpoint(breakpoint, specificTarget)
     {
         console.assert(!breakpoint.disabled);
 
@@ -962,9 +959,6 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
             for (let location of locations)
                 this.breakpointResolved(target, breakpointIdentifier, location);
-
-            if (typeof callback === "function")
-                callback();
         }
 
         // The breakpoint will be resolved again by calling DebuggerAgent, so mark it as unresolved.
