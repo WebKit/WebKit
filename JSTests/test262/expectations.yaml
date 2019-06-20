@@ -1095,27 +1095,9 @@ test/built-ins/Object/prototype/toString/proxy-function.js:
 test/built-ins/Object/subclass-object-arg.js:
   default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«1Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«1Â») to be true'
-test/built-ins/Promise/all/invoke-resolve-get-error-close.js:
-  default: 'Test262Error: Expected SameValue(Â«1Â», Â«0Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«1Â», Â«0Â») to be true'
-test/built-ins/Promise/all/invoke-resolve-get-once-multiple-calls.js:
-  default: 'Test262Error: Got `resolve` only once for each iterated value Expected SameValue(Â«4Â», Â«1Â») to be true'
-  strict mode: 'Test262Error: Got `resolve` only once for each iterated value Expected SameValue(Â«4Â», Â«1Â») to be true'
-test/built-ins/Promise/all/invoke-resolve-get-once-no-calls.js:
-  default: 'Test262Error: Got `resolve` only once for each iterated value Expected SameValue(Â«0Â», Â«1Â») to be true'
-  strict mode: 'Test262Error: Got `resolve` only once for each iterated value Expected SameValue(Â«0Â», Â«1Â») to be true'
 test/built-ins/Promise/all/resolve-element-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Promise/allSettled/invoke-resolve-get-error-close.js:
-  default: 'Test262Error: Expected SameValue(Â«1Â», Â«0Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«1Â», Â«0Â») to be true'
-test/built-ins/Promise/allSettled/invoke-resolve-get-once-multiple-calls.js:
-  default: 'Test262Error: Got `resolve` only once for each iterated value Expected SameValue(Â«4Â», Â«1Â») to be true'
-  strict mode: 'Test262Error: Got `resolve` only once for each iterated value Expected SameValue(Â«4Â», Â«1Â») to be true'
-test/built-ins/Promise/allSettled/invoke-resolve-get-once-no-calls.js:
-  default: 'Test262Error: Got `resolve` only once for each iterated value Expected SameValue(Â«0Â», Â«1Â») to be true'
-  strict mode: 'Test262Error: Got `resolve` only once for each iterated value Expected SameValue(Â«0Â», Â«1Â») to be true'
 test/built-ins/Promise/allSettled/reject-element-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -1128,15 +1110,6 @@ test/built-ins/Promise/get-prototype-abrupt-executor-not-callable.js:
 test/built-ins/Promise/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object Promise]Â», Â«[object Promise]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Promise]Â», Â«[object Promise]Â») to be true'
-test/built-ins/Promise/race/invoke-resolve-get-error-close.js:
-  default: 'Test262Error: Expected SameValue(Â«1Â», Â«0Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«1Â», Â«0Â») to be true'
-test/built-ins/Promise/race/invoke-resolve-get-once-multiple-calls.js:
-  default: 'Test262Error: Got `resolve` only once for each iterated value Expected SameValue(Â«4Â», Â«1Â») to be true'
-  strict mode: 'Test262Error: Got `resolve` only once for each iterated value Expected SameValue(Â«4Â», Â«1Â») to be true'
-test/built-ins/Promise/race/invoke-resolve-get-once-no-calls.js:
-  default: 'Test262Error: Got `resolve` only once for each iterated value Expected SameValue(Â«0Â», Â«1Â») to be true'
-  strict mode: 'Test262Error: Got `resolve` only once for each iterated value Expected SameValue(Â«0Â», Â«1Â») to be true'
 test/built-ins/Promise/reject-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'

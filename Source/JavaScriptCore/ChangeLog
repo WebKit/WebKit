@@ -1,3 +1,17 @@
+2019-06-19  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Optimize `resolve` method lookup in Promise static methods
+        https://bugs.webkit.org/show_bug.cgi?id=198864
+
+        Reviewed by Yusuke Suzuki.
+
+        Lookup `resolve` method only once in Promise.{all,allSettled,race}.
+        (https://github.com/tc39/ecma262/pull/1506)
+
+        Already implemented in V8.
+
+        * builtins/PromiseConstructor.js:
+
 2019-06-19  Tadeu Zagallo  <tzagallo@apple.com>
 
         Some of the ASSERTs in CachedTypes.cpp should be RELEASE_ASSERTs

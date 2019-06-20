@@ -56,9 +56,13 @@ function all(iterable)
     }
 
     try {
+        var promiseResolve = this.resolve;
+        if (typeof promiseResolve !== "function")
+            @throwTypeError("Promise resolve is not a function");
+
         for (var value of iterable) {
             @putByValDirect(values, index, @undefined);
-            var nextPromise = this.resolve(value);
+            var nextPromise = promiseResolve.@call(this, value);
             var resolveElement = newResolveElement(index);
             ++remainingElementsCount;
             nextPromise.then(resolveElement, promiseCapability.@reject);
@@ -136,9 +140,13 @@ function allSettled(iterable)
     }
 
     try {
+        var promiseResolve = this.resolve;
+        if (typeof promiseResolve !== "function")
+            @throwTypeError("Promise resolve is not a function");
+
         for (var value of iterable) {
             @putByValDirect(values, index, @undefined);
-            var nextPromise = this.resolve(value);
+            var nextPromise = promiseResolve.@call(this, value);
             var [resolveElement, rejectElement] = newResolveRejectElements(index);
             ++remainingElementsCount;
             nextPromise.then(resolveElement, rejectElement);
@@ -165,8 +173,12 @@ function race(iterable)
     var promiseCapability = @newPromiseCapability(this);
 
     try {
+        var promiseResolve = this.resolve;
+        if (typeof promiseResolve !== "function")
+            @throwTypeError("Promise resolve is not a function");
+
         for (var value of iterable) {
-            var nextPromise = this.resolve(value);
+            var nextPromise = promiseResolve.@call(this, value);
             nextPromise.then(promiseCapability.@resolve, promiseCapability.@reject);
         }
     } catch (error) {
