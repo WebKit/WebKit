@@ -960,7 +960,7 @@ webkit.org/b/198774 imported/w3c/web-platform-tests/websockets/bufferedAmount-un
 
 webkit.org/b/176030 [ Debug ] http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Pass Failure ]
 
-webkit.org/b/199012 webgpu/whlsl-buffer-fragment.html [ ImageOnlyFailure ]
-webkit.org/b/199012 webgpu/whlsl-buffer-vertex.html [ ImageOnlyFailure ]
+webkit.org/b/199012 [ HighSierra ] webgpu/whlsl-buffer-fragment.html [ ImageOnlyFailure ]
+webkit.org/b/199012 [ HighSierra ] webgpu/whlsl-buffer-vertex.html [ ImageOnlyFailure ]
 
 webkit.org/b/198921 [ Mojave+ ] webgpu/blend-color-triangle-strip.html [ Pass ImageOnlyFailure ]
