@@ -82,7 +82,7 @@ private:
 
 class FindAllTypes : public Visitor {
 public:
-    ~FindAllTypes() = default;
+    virtual ~FindAllTypes() = default;
 
     void visit(AST::PointerType& pointerType) override
     {
@@ -171,7 +171,7 @@ bool synthesizeConstructors(Program& program)
     for (auto& namedType : namedTypes) {
         if (matches(namedType, program.intrinsics().voidType()))
             continue;
-        if (is<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType)) && downcast<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType)).isAtom())
+        if (is<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType)) && downcast<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType)).isAtomic())
             continue;
 
         auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(namedType.get().origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(AST::TypeReference::wrap(Lexer::Token(namedType.get().origin()), namedType.get())), String(), WTF::nullopt, WTF::nullopt);
@@ -180,6 +180,11 @@ bool synthesizeConstructors(Program& program)
         AST::NativeFunctionDeclaration copyConstructor(AST::FunctionDeclaration(Lexer::Token(namedType.get().origin()), AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(Lexer::Token(namedType.get().origin()), namedType.get()), "operator cast"_str, WTFMove(parameters), WTF::nullopt, isOperator));
         program.append(WTFMove(copyConstructor));
 
+        if (is<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType))) {
+            auto& nativeTypeDeclaration = downcast<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType));
+            if (nativeTypeDeclaration.isOpaqueType())
+                continue;
+        }
         AST::NativeFunctionDeclaration defaultConstructor(AST::FunctionDeclaration(Lexer::Token(namedType.get().origin()), AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(Lexer::Token(namedType.get().origin()), namedType.get()), "operator cast"_str, AST::VariableDeclarations(), WTF::nullopt, isOperator));
         if (!program.append(WTFMove(defaultConstructor)))
             return false;

@@ -1,3 +1,28 @@
+2019-06-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Hook up common texture functions
+        https://bugs.webkit.org/show_bug.cgi?id=198704
+        <rdar://problem/51668841>
+
+        Reviewed by Saam Barati.
+
+        Make the text tests play better with js-test-pre.js.
+
+        * webgpu/whlsl-buffer-length.html:
+        * webgpu/whlsl-compute-expected.txt:
+        * webgpu/whlsl-compute.html:
+        * webgpu/whlsl-duplicate-types-should-not-produce-duplicate-ctors.html:
+        * webgpu/whlsl-null-dereference-expected.txt:
+        * webgpu/whlsl-null-dereference.html:
+        * webgpu/whlsl-oob-access-expected.txt:
+        * webgpu/whlsl-oob-access.html:
+        * webgpu/whlsl-textures-getdimensions-expected.txt: Added.
+        * webgpu/whlsl-textures-getdimensions.html: Copied from LayoutTests/webgpu/whlsl-buffer-length.html.
+        * webgpu/whlsl-textures-load-expected.html: Added.
+        * webgpu/whlsl-textures-load.html: Added.
+        * webgpu/whlsl-textures-sample-expected.html: Added.
+        * webgpu/whlsl-textures-sample.html: Added.
+
 2019-06-19  Rob Buis  <rbuis@igalia.com>
 
         Make preload/link-header-preload-imagesrcset.html work on DPR != 1

@@ -263,7 +263,7 @@ private:
     AST::NativeTypeDeclaration* m_matrixHalf[3][3] {{ 0 }};
     AST::NativeTypeDeclaration* m_matrixFloat[3][3] {{ 0 }};
 
-    static constexpr const char* m_textureTypeNames[] = { "Texture1D", "RWTexture1D", "Texture1DArray", "RWTexture1DArray", "Texture2D", "RWTexture2D", "Texture2DArray", "RWTexture2DArray", "Texture3D", "RWTexture3D", "TextureCube" };
+    static constexpr const char* m_textureTypeNames[] = { "Texture1D", "RWTexture1D", "Texture2D", "RWTexture2D", "Texture3D", "RWTexture3D", "TextureCube", "Texture1DArray", "RWTexture1DArray", "Texture2DArray", "RWTexture2DArray" };
 
     static constexpr const char* m_textureInnerTypeNames[] = { "uchar", "ushort",  "uint", "char", "short", "int", "half", "float" };
 
@@ -272,9 +272,7 @@ private:
     static constexpr const char* m_depthTextureInnerTypes[] =  { "half", "float" };
 
     AST::NativeTypeDeclaration* m_textureDepth2D[WTF_ARRAY_LENGTH(m_depthTextureInnerTypes)] { 0 };
-    AST::NativeTypeDeclaration* m_rwTextureDepth2D[WTF_ARRAY_LENGTH(m_depthTextureInnerTypes)] { 0 };
     AST::NativeTypeDeclaration* m_textureDepth2DArray[WTF_ARRAY_LENGTH(m_depthTextureInnerTypes)] { 0 };
-    AST::NativeTypeDeclaration* m_rwTextureDepth2DArray[WTF_ARRAY_LENGTH(m_depthTextureInnerTypes)] { 0 };
     AST::NativeTypeDeclaration* m_textureDepthCube[WTF_ARRAY_LENGTH(m_depthTextureInnerTypes)] { 0 };
 
     AST::NativeFunctionDeclaration* m_ddx { nullptr };

@@ -63,11 +63,27 @@ void GPUProgrammablePassEncoder::setBindGroup(unsigned index, GPUBindGroup& bind
         setComputeBuffer(bindGroup.computeArgsBuffer(), 0, index);
 
     for (auto& bufferRef : bindGroup.boundBuffers()) {
-        useResource(bufferRef->platformBuffer(), bufferRef->isReadOnly() ? MTLResourceUsageRead : MTLResourceUsageRead | MTLResourceUsageWrite);
+        MTLResourceUsage usage = 0;
+        if (bufferRef->isUniform()) {
+            ASSERT(!bufferRef->isStorage());
+            usage = MTLResourceUsageRead;
+        } else if (bufferRef->isStorage()) {
+            ASSERT(!bufferRef->isUniform());
+            usage = MTLResourceUsageRead | MTLResourceUsageWrite;
+        }
+        useResource(bufferRef->platformBuffer(), usage);
         m_commandBuffer->useBuffer(bufferRef.copyRef());
     }
     for (auto& textureRef : bindGroup.boundTextures()) {
-        useResource(textureRef->platformTexture(), textureRef->isReadOnly() ? MTLResourceUsageRead : MTLResourceUsageRead | MTLResourceUsageWrite);
+        MTLResourceUsage usage = 0;
+        if (textureRef->isSampled()) {
+            ASSERT(!textureRef->isStorage());
+            usage = MTLResourceUsageRead | MTLResourceUsageSample;
+        } else if (textureRef->isStorage()) {
+            ASSERT(!textureRef->isSampled());
+            usage = MTLResourceUsageRead | MTLResourceUsageWrite;
+        }
+        useResource(textureRef->platformTexture(), usage);
         m_commandBuffer->useTexture(textureRef.copyRef());
     }
 }

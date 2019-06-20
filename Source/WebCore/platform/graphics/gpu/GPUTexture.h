@@ -54,6 +54,8 @@ public:
     bool isTransferDestination() const { return m_usage.contains(GPUTextureUsage::Flags::TransferDestination); }
     bool isOutputAttachment() const { return m_usage.contains(GPUTextureUsage::Flags::OutputAttachment); }
     bool isReadOnly() const { return m_usage.containsAny({ GPUTextureUsage::Flags::TransferSource, GPUTextureUsage::Flags::Sampled }); }
+    bool isSampled() const { return m_usage.contains(GPUTextureUsage::Flags::Sampled); }
+    bool isStorage() const { return m_usage.contains(GPUTextureUsage::Flags::Storage); }
 
     RefPtr<GPUTexture> tryCreateDefaultTextureView();
     void destroy() { m_platformTexture = nullptr; }

@@ -216,22 +216,22 @@ RefPtr<GPUBindGroup> GPUBindGroup::tryCreate(const GPUBindGroupDescriptor& descr
             if (!samplerState)
                 return false;
             if (isForVertex)
-                setSamplerOnEncoder(vertexEncoder, samplerState, index);
+                setSamplerOnEncoder(vertexEncoder, samplerState, layoutBinding.internalName);
             if (isForFragment)
-                setSamplerOnEncoder(fragmentEncoder, samplerState, index);
+                setSamplerOnEncoder(fragmentEncoder, samplerState, layoutBinding.internalName);
             if (isForCompute)
-                setSamplerOnEncoder(computeEncoder, samplerState, index);
+                setSamplerOnEncoder(computeEncoder, samplerState, layoutBinding.internalName);
             return true;
         }, [&](GPUBindGroupLayout::SampledTexture&) -> bool {
             auto textureResource = tryGetResourceAsTexture(resourceBinding.resource, functionName);
             if (!textureResource)
                 return false;
             if (isForVertex)
-                setTextureOnEncoder(vertexEncoder, textureResource->platformTexture(), index);
+                setTextureOnEncoder(vertexEncoder, textureResource->platformTexture(), layoutBinding.internalName);
             if (isForFragment)
-                setTextureOnEncoder(fragmentEncoder, textureResource->platformTexture(), index);
+                setTextureOnEncoder(fragmentEncoder, textureResource->platformTexture(), layoutBinding.internalName);
             if (isForCompute)
-                setTextureOnEncoder(computeEncoder, textureResource->platformTexture(), index);
+                setTextureOnEncoder(computeEncoder, textureResource->platformTexture(), layoutBinding.internalName);
             boundTextures.append(textureResource.releaseNonNull());
             return true;
         }, [&](GPUBindGroupLayout::StorageBuffer& storageBuffer) -> bool {

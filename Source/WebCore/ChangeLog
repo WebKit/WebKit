@@ -1,3 +1,102 @@
+2019-06-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Hook up common texture functions
+        https://bugs.webkit.org/show_bug.cgi?id=198704
+        <rdar://problem/51668841>
+
+        Reviewed by Saam Barati.
+
+        This patch adds the Metal implementation of the Sample(), Load(), and GetDimensions()
+        texture functions. The implementation simply performs string concatenation to produce the 
+        correct results, and adds many new native functions to the standard library.
+
+        We can't zero-fill texture types or sampler types, so this patch forbids default
+        constructors for those types. It also forbids those types to exist within arrays, array
+        references, or pointers, becuase an out-of-bounds access may cause us to try to zero-fill
+        them.
+
+        Tests: webgpu/whlsl-textures-getdimensions.html
+               webgpu/whlsl-textures-load.html
+               webgpu/whlsl-textures-sample.html
+
+        * Modules/webgpu/WHLSL/AST/WHLSLNativeTypeDeclaration.h: Add some more introspection functions
+        so we can generate the necessary Metal functions for the appropriate texture types.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isAtomic const):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isTextureArray const):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isDepthTexture const):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isWritableTexture const):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::textureDimension const):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsTextureArray):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsDepthTexture):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsWritableTexture):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setTextureDimension):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isAtom const): Deleted.
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp: Native types can be passed into 
+        entry points, too.
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::resourceHelperTypes):
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp: Entry points that return void don't need a
+        semantic.
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp: Implement the functions.
+        (WebCore::WHLSL::Metal::vectorLength):
+        (WebCore::WHLSL::Metal::vectorInnerType):
+        (WebCore::WHLSL::Metal::vectorSuffix):
+        (WebCore::WHLSL::Metal::writeNativeFunction):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeTypeWriter.cpp: Textures come in two flavors: sample-able
+        and read/write-able. Make sure we produce the correct Metal types for them.
+        (WebCore::WHLSL::Metal::writeNativeType):
+        * Modules/webgpu/WHLSL/WHLSLAutoInitializeVariables.cpp: We can't auto-initialize textures and 
+        samplers. Therefore, this function needs to be able to fail.
+        (WebCore::WHLSL::AutoInitialize::visit):
+        (WebCore::WHLSL::autoInitializeVariables):
+        * Modules/webgpu/WHLSL/WHLSLAutoInitializeVariables.h:
+        * Modules/webgpu/WHLSL/WHLSLCheckDuplicateFunctions.cpp: We can't auto-initialize textures, so users
+        shouldn't be able to either.
+        (WebCore::WHLSL::checkDuplicateFunctions):
+        * Modules/webgpu/WHLSL/WHLSLCheckTextureReferences.cpp: Added. Make sure textures and samplers can't
+        exist inside arrays, array references, or pointers. This is because out-of-bounds accesses may cause
+        us to attempt to zero-fill the inner type, but we can't zero-fill textures and samplers.
+        (WebCore::WHLSL::TextureReferencesChecker::TextureReferencesChecker):
+        (WebCore::WHLSL::Searcher::Searcher):
+        (WebCore::WHLSL::Searcher::found const):
+        (WebCore::WHLSL::Searcher::visit):
+        (WebCore::WHLSL::TextureReferencesChecker::containsTextureOrSampler):
+        (WebCore::WHLSL::TextureReferencesChecker::visit):
+        (WebCore::WHLSL::checkTextureReferences):
+        * Modules/webgpu/WHLSL/WHLSLCheckTextureReferences.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/WHLSLAutoInitializeVariables.h.
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.cpp: Record more detailed information about texture types,
+        so we can emit correct Metal code.
+        (WebCore::WHLSL::Intrinsics::addFullTexture):
+        (WebCore::WHLSL::Intrinsics::addDepthTexture):
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.h:
+        (WebCore::WHLSL::Intrinsics::WTF_ARRAY_LENGTH):
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.cpp: Nested NameResolvers need to propagate their error. Also,
+        native functions with named arguments shouldn't be adding their arguments to the global scope.
+        (WebCore::WHLSL::NameResolver::visit):
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.h:
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp:
+        (WebCore::WHLSL::prepareShared):
+        * Modules/webgpu/WHLSL/WHLSLProgram.h:
+        (WebCore::WHLSL::Program::intrinsics const):
+        * Modules/webgpu/WHLSL/WHLSLRecursiveTypeChecker.cpp:
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt: Metal doesn't have writable depth textures.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeArrayOperatorLength.cpp:
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.cpp: Don't generate default constructors for textures
+        or samplers.
+        (WebCore::WHLSL::synthesizeConstructors):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/GPUTexture.h: Make texture usages more clear.
+        (WebCore::GPUTexture::isSampled const):
+        (WebCore::GPUTexture::isStorage const):
+        * platform/graphics/gpu/cocoa/GPUBindGroupMetal.mm: Ditto.
+        (WebCore::GPUBindGroup::tryCreate):
+        * platform/graphics/gpu/cocoa/GPUProgrammablePassEncoderMetal.mm: Ditto.
+        (WebCore::GPUProgrammablePassEncoder::setBindGroup):
+        * platform/graphics/gpu/cocoa/GPUTextureMetal.mm: Ditto.
+        (WebCore::mtlTextureUsageForGPUTextureUsageFlags):
+
 2019-06-19  Justin Fan  <justin_fan@apple.com>
 
         [WHLSL] Create a shading language test harness

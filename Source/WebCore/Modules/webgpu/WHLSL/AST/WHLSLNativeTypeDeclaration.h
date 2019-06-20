@@ -59,10 +59,15 @@ public:
     bool isInt() const { return m_isInt; }
     bool isNumber() const { return m_isNumber; }
     bool isFloating() const { return m_isFloating; }
-    bool isAtom() const { return m_isAtomic; }
+    bool isAtomic() const { return m_isAtomic; }
     bool isVector() const { return m_isVector; }
     bool isMatrix() const { return m_isMatrix; }
+    bool isOpaqueType() const { return m_isOpaqueType; }
     bool isTexture() const { return m_isTexture; }
+    bool isTextureArray() const { return m_isTextureArray; }
+    bool isDepthTexture() const { return m_isDepthTexture; }
+    bool isWritableTexture() const { return m_isWritableTexture; }
+    uint textureDimension() const { return m_textureDimension; }
     bool isSigned() const { return m_isSigned; }
     const std::function<bool(int)>& canRepresentInteger() const { return m_canRepresentInteger; }
     const std::function<bool(unsigned)>& canRepresentUnsignedInteger() const { return m_canRepresentUnsignedInteger; }
@@ -78,7 +83,12 @@ public:
     void setIsAtomic() { m_isAtomic = true; }
     void setIsVector() { m_isVector = true; }
     void setIsMatrix() { m_isMatrix = true; }
+    void setIsOpaqueType() { m_isOpaqueType = true; }
     void setIsTexture() { m_isTexture = true; }
+    void setIsTextureArray() { m_isTextureArray = true; }
+    void setIsDepthTexture() { m_isDepthTexture = true; }
+    void setIsWritableTexture() { m_isWritableTexture = true; }
+    void setTextureDimension(uint textureDimension) { m_textureDimension = textureDimension; }
     void setIsSigned() { m_isSigned = true; }
     void setCanRepresentInteger(std::function<bool(int)>&& canRepresent) { m_canRepresentInteger = WTFMove(canRepresent); }
     void setCanRepresentUnsignedInteger(std::function<bool(unsigned)>&& canRepresent) { m_canRepresentUnsignedInteger = WTFMove(canRepresent); }
@@ -97,13 +107,18 @@ private:
     std::function<int64_t(int)> m_formatValueFromInteger;
     std::function<int64_t(unsigned)> m_formatValueFromUnsignedInteger;
     std::function<void(const std::function<bool(int64_t)>&)> m_iterateAllValues;
+    uint m_textureDimension { 0 };
     bool m_isInt { false };
     bool m_isNumber { false };
     bool m_isFloating { false };
     bool m_isAtomic { false };
     bool m_isVector { false };
     bool m_isMatrix { false };
+    bool m_isOpaqueType { false };
     bool m_isTexture { false };
+    bool m_isTextureArray { false };
+    bool m_isDepthTexture { false };
+    bool m_isWritableTexture { false };
     bool m_isSigned { false };
 };
 

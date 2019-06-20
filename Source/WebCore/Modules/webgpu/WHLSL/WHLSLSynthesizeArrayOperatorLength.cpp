@@ -39,7 +39,7 @@ namespace WHLSL {
 
 class FindArrayTypes : public Visitor {
 public:
-    ~FindArrayTypes() = default;
+    virtual ~FindArrayTypes() = default;
 
     void visit(AST::ArrayType& arrayType) override
     {

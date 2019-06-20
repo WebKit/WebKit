@@ -1,5 +1,5 @@
+PASS resultUint32Array[0] is 1337
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS resultUint32Array[0] is 1337
 

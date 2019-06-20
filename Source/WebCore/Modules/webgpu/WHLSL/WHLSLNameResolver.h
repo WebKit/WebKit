@@ -42,7 +42,7 @@ public:
     NameResolver(NameContext&);
     NameResolver(NameResolver&, NameContext&);
 
-    virtual ~NameResolver() = default;
+    virtual ~NameResolver();
 
     void visit(AST::FunctionDefinition&) override;
 
@@ -54,6 +54,7 @@ public:
     void setIsResolvingCalls(bool isResolvingCalls) { m_isResolvingCalls = isResolvingCalls; }
 
 private:
+    void visit(AST::NativeFunctionDeclaration&) override;
     void visit(AST::TypeReference&) override;
     void visit(AST::Block&) override;
     void visit(AST::IfStatement&) override;
@@ -71,6 +72,7 @@ private:
     NameContext& m_nameContext;
     HashSet<AST::TypeReference*> m_typeReferences;
     AST::FunctionDefinition* m_currentFunction { nullptr };
+    NameResolver* m_parentNameResolver { nullptr };
     bool m_isResolvingCalls { false };
 };
 

@@ -180,11 +180,7 @@ String writeNativeType(AST::NativeTypeDeclaration& nativeTypeDeclaration)
             return "texturecube"_str;
         if (nativeTypeDeclaration.name() == "TextureDepth2D")
             return "depth2d"_str;
-        if (nativeTypeDeclaration.name() == "RWTextureDepth2D")
-            return "depth2d"_str;
         if (nativeTypeDeclaration.name() == "TextureDepth2DArray")
-            return "depth2d_array"_str;
-        if (nativeTypeDeclaration.name() == "RWTextureDepth2DArray")
             return "depth2d_array"_str;
         ASSERT(nativeTypeDeclaration.name() == "TextureDepthCube");
         return "depthcube"_str;
@@ -239,8 +235,12 @@ String writeNativeType(AST::NativeTypeDeclaration& nativeTypeDeclaration)
         ASSERT(typeReference->name() == "float4");
         return "float"_str;
     })();
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Specify the second template argument to Metal texture types.
-    return makeString(prefix, '<', innerType, '>');
+    auto isReadWrite = nativeTypeDeclaration.name() == "RWTexture1D"
+        || nativeTypeDeclaration.name() == "RWTexture1DArray"
+        || nativeTypeDeclaration.name() == "RWTexture2D"
+        || nativeTypeDeclaration.name() == "RWTexture2DArray"
+        || nativeTypeDeclaration.name() == "RWTexture3D";
+    return makeString(prefix, '<', innerType, ", ", isReadWrite ? "access::read_write" : "access::sample", '>');
 }
 
 } // namespace Metal

@@ -452,7 +452,7 @@ public:
     {
     }
 
-    ~Checker() = default;
+    virtual ~Checker() = default;
 
     void visit(Program&) override;
 

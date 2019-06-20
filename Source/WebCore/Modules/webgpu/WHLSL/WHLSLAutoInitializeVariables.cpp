@@ -75,7 +75,10 @@ private:
         callExpression->setOverloads(m_castFunctions);
         Vector<std::reference_wrapper<ResolvingType>> argumentTypes;
         auto* function = resolveFunctionOverload(*callExpression->overloads(), argumentTypes, type);
-        RELEASE_ASSERT(function);
+        if (!function) {
+            setError();
+            return;
+        }
         callExpression->setFunction(*function);
 
         variableDeclaration.setInitializer(WTFMove(callExpression));
@@ -85,10 +88,11 @@ private:
     Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& m_castFunctions;
 };
 
-void autoInitializeVariables(Program& program)
+bool autoInitializeVariables(Program& program)
 {
     AutoInitialize autoInitialize(program.nameContext());
     autoInitialize.Visitor::visit(program);
+    return !autoInitialize.error();
 }
 
 } // namespace WHLSL

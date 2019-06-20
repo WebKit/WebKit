@@ -73,15 +73,12 @@ async function start() {
     shouldBe("resultsFloat32Array[7]", "8");
     resultsBuffer.unmap();
 }
-if (window.testRunner)
-    testRunner.waitUntilDone();
+window.jsTestIsAsync = true;
 window.addEventListener("load", function() {
     start().then(function() {
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }, function() {
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     });
 });
 </script>

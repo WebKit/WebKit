@@ -33,7 +33,7 @@ namespace WHLSL {
 
 class Program;
 
-bool autoInitializeVariables(Program&);
+bool checkTextureReferences(Program&);
 
 }
 

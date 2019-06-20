@@ -86,6 +86,7 @@ public:
 
     NameContext& nameContext() { return m_nameContext; }
     Intrinsics& intrinsics() { return m_intrinsics; }
+    const Intrinsics& intrinsics() const { return m_intrinsics; }
     Vector<UniqueRef<AST::TypeDefinition>>& typeDefinitions() { return m_typeDefinitions; }
     Vector<UniqueRef<AST::StructureDefinition>>& structureDefinitions() { return m_structureDefinitions; }
     Vector<UniqueRef<AST::EnumerationDefinition>>& enumerationDefinitions() { return m_enumerationDefinitions; }

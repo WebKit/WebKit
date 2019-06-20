@@ -558,7 +558,9 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& callExpression)
     auto iterator = m_functionMapping.find(callExpression.function());
     ASSERT(iterator != m_functionMapping.end());
     auto variableName = generateNextVariableName();
-    m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(callExpression.resolvedType()), ' ', variableName, " = ", iterator->value, '('));
+    if (!matches(callExpression.resolvedType(), m_intrinsics.voidType()))
+        m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(callExpression.resolvedType()), ' ', variableName, " = "));
+    m_stringBuilder.append(makeString(iterator->value, '('));
     for (size_t i = 0; i < argumentNames.size(); ++i) {
         if (i)
             m_stringBuilder.append(", ");

@@ -141,6 +141,14 @@ bool checkDuplicateFunctions(const Program& program)
             && is<AST::ReferenceType>(static_cast<const AST::UnnamedType&>(*function.parameters()[1]->type()))
             && matches(*function.parameters()[0]->type(), *function.parameters()[1]->type()))
             return false;
+        else if (function.isCast() && function.parameters().isEmpty()) {
+            auto& unifyNode = function.type().unifyNode();
+            if (is<AST::NamedType>(unifyNode) && is<AST::NativeTypeDeclaration>(downcast<AST::NamedType>(unifyNode))) {
+                auto& nativeTypeDeclaration = downcast<AST::NativeTypeDeclaration>(downcast<AST::NamedType>(unifyNode));
+                if (nativeTypeDeclaration.isOpaqueType())
+                    return false;
+            }
+        }
 
         return true;
     };

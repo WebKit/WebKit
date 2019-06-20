@@ -6383,6 +6383,8 @@
 		1C24EEA61C72A7B40080F8FC /* JSFontFaceSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSFontFaceSet.cpp; path = DerivedSources/WebCore/JSFontFaceSet.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C24EEA71C72A7B40080F8FC /* JSFontFaceSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSFontFaceSet.h; path = DerivedSources/WebCore/JSFontFaceSet.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C2649790D7E248A00BD10F2 /* DocumentLoaderMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentLoaderMac.cpp; sourceTree = "<group>"; };
+		1C281C6D22B87B9800691C00 /* WHLSLCheckTextureReferences.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLCheckTextureReferences.cpp; sourceTree = "<group>"; };
+		1C281C6E22B87B9800691C00 /* WHLSLCheckTextureReferences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLCheckTextureReferences.h; sourceTree = "<group>"; };
 		1C3249101C6D6A3B007EDB32 /* FontVariantBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontVariantBuilder.cpp; sourceTree = "<group>"; };
 		1C33277121CF0BE1000DC9F2 /* WHLSLNamedType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLNamedType.h; sourceTree = "<group>"; };
 		1C33277221CF0D2E000DC9F2 /* WHLSLUnnamedType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLUnnamedType.h; sourceTree = "<group>"; };
@@ -25481,6 +25483,8 @@
 				C234A9AE21E92C1A003C984D /* WHLSLCheckDuplicateFunctions.h */,
 				1C840B9B21EC400900D0500D /* WHLSLChecker.cpp */,
 				1C840B9721EC400700D0500D /* WHLSLChecker.h */,
+				1C281C6D22B87B9800691C00 /* WHLSLCheckTextureReferences.cpp */,
+				1C281C6E22B87B9800691C00 /* WHLSLCheckTextureReferences.h */,
 				1C86CA4B22AA19FF001BF961 /* WHLSLComputeDimensions.cpp */,
 				1C86CA4C22AA19FF001BF961 /* WHLSLComputeDimensions.h */,
 				1CA0C2E421EED12A00A11860 /* WHLSLFunctionStageChecker.cpp */,

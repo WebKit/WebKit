@@ -31,6 +31,7 @@
 #include "WHLSLASTDumper.h"
 #include "WHLSLAutoInitializeVariables.h"
 #include "WHLSLCheckDuplicateFunctions.h"
+#include "WHLSLCheckTextureReferences.h"
 #include "WHLSLChecker.h"
 #include "WHLSLComputeDimensions.h"
 #include "WHLSLFunctionStageChecker.h"
@@ -133,7 +134,8 @@ static Optional<Program> prepareShared(String& whlslSource)
     RUN_PASS(check, program);
 
     checkLiteralTypes(program);
-    autoInitializeVariables(program);
+    RUN_PASS(checkTextureReferences, program);
+    RUN_PASS(autoInitializeVariables, program);
     resolveProperties(program);
     findHighZombies(program);
     RUN_PASS(checkStatementBehavior, program);

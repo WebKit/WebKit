@@ -59,27 +59,26 @@ static Optional<MTLTextureUsage> mtlTextureUsageForGPUTextureUsageFlags(OptionSe
 #if LOG_DISABLED
     UNUSED_PARAM(functionName);
 #endif
+
     if (flags.containsAny({ GPUTextureUsage::Flags::TransferSource, GPUTextureUsage::Flags::Sampled }) && (flags & GPUTextureUsage::Flags::Storage)) {
         LOG(WebGPU, "%s: Texture cannot have both STORAGE and a read-only usage!", functionName);
         return WTF::nullopt;
     }
 
-    if (flags & GPUTextureUsage::Flags::OutputAttachment) {
-        if (flags.containsAny({ GPUTextureUsage::Flags::Storage, GPUTextureUsage::Flags::Sampled })) {
-            LOG(WebGPU, "%s: Texture cannot have OUTPUT_ATTACHMENT usage with STORAGE or SAMPLED usages!", functionName);
-            return WTF::nullopt;
-        }
-
-        return MTLTextureUsageRenderTarget | MTLTextureUsagePixelFormatView;
+    if (flags & GPUTextureUsage::Flags::OutputAttachment && flags.containsAny({ GPUTextureUsage::Flags::Storage, GPUTextureUsage::Flags::Sampled })) {
+        LOG(WebGPU, "%s: Texture cannot have OUTPUT_ATTACHMENT usage with STORAGE or SAMPLED usages!", functionName);
+        return WTF::nullopt;
     }
 
-    if (flags & GPUTextureUsage::Flags::Storage)
-        return MTLTextureUsageShaderWrite | MTLTextureUsageShaderRead | MTLTextureUsagePixelFormatView;
+    MTLTextureUsage result = MTLTextureUsagePixelFormatView;
+    if (flags.contains(GPUTextureUsage::Flags::OutputAttachment))
+        result |= MTLTextureUsageRenderTarget;
+    if (flags.containsAny({ GPUTextureUsage::Flags::Storage, GPUTextureUsage::Flags::Sampled }))
+        result |= MTLTextureUsageShaderRead;
+    if (flags.contains(GPUTextureUsage::Flags::Storage))
+        result |= MTLTextureUsageShaderWrite;
 
-    if (flags & GPUTextureUsage::Flags::Sampled)
-        return MTLTextureUsageShaderRead | MTLTextureUsagePixelFormatView;
-
-    return MTLTextureUsageUnknown;
+    return result;
 }
 
 #if !PLATFORM(MAC)

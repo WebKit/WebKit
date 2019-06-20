@@ -41,7 +41,7 @@ namespace WHLSL {
 
 class RecursiveTypeChecker : public Visitor {
 public:
-    ~RecursiveTypeChecker() = default;
+    virtual ~RecursiveTypeChecker() = default;
 
     void visit(AST::TypeDefinition&) override;
     void visit(AST::StructureDefinition&) override;
