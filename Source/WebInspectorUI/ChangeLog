@@ -1,3 +1,13 @@
+2019-06-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION: Debugger: current call frame indicator isn't vertically centered
+        https://bugs.webkit.org/show_bug.cgi?id=199015
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CallFrameTreeElement.css:
+        (.tree-outline .item.call-frame .status):
+
 2019-06-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION(r240946): Web Inspector: Styles: Pasting multiple properties has issues

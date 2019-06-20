@@ -30,6 +30,7 @@
 .tree-outline .item.call-frame .status {
     position: absolute;
     float: none;
+    margin-top: 0;
     -webkit-margin-start: 1px;
 
     --call-frame-status-start: 1px;
