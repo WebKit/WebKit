@@ -1,3 +1,19 @@
+2019-06-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION(r240946): Web Inspector: Styles: Pasting multiple properties has issues
+        https://bugs.webkit.org/show_bug.cgi?id=198505
+        <rdar://problem/51374780>
+
+        Reviewed by Matt Baker.
+
+        * inspector/css/modify-css-property.html:
+        Listen for PropertiesChanged on the specific inline style declaration.
+        In Debug, PropertiesChanged may fire on a computed style declaration first,
+        causing the test to fail.
+
+        * inspector/css/pseudo-element-matches-for-pseudo-element-node.html:
+        Drive-by: fix trailing white space.
+
 2019-06-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION: ( r246394 ) webgpu/whlsl-buffer-fragment.html and webgpu/whlsl-buffer-vertex.html are failing

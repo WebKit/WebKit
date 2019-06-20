@@ -42,6 +42,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
         this._initialState = null;
         this._updatesInProgressCount = 0;
+        this._pendingPropertiesChanged = false;
         this._locked = false;
         this._pendingProperties = [];
         this._propertyNameMap = {};
@@ -183,8 +184,10 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
         // Don't fire the event if text hasn't changed. However, it should still fire for Computed style declarations
         // because it never has text.
-        if (oldText === this._text && this._type !== WI.CSSStyleDeclaration.Type.Computed)
+        if (oldText === this._text && !this._pendingPropertiesChanged && this._type !== WI.CSSStyleDeclaration.Type.Computed)
             return;
+
+        this._pendingPropertiesChanged = false;
 
         function delayed()
         {
@@ -237,6 +240,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
             clearTimeout(timeoutId);
             timeoutId = null;
             this._updatesInProgressCount = Math.max(0, this._updatesInProgressCount - 1);
+            this._pendingPropertiesChanged = true;
         };
 
         this._nodeStyles.changeStyleText(this, text, styleTextDidChange);

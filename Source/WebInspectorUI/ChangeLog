@@ -1,3 +1,19 @@
+2019-06-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION(r240946): Web Inspector: Styles: Pasting multiple properties has issues
+        https://bugs.webkit.org/show_bug.cgi?id=198505
+        <rdar://problem/51374780>
+
+        Reviewed by Matt Baker.
+
+        Since r240946, setting WI.CSSStyleDeclaration.prototype.text updates the text immediately.
+        When WI.CSSStyleDeclaration.prototype.update gets called after setting text, it exits early
+        without firing WI.CSSStyleDeclaration.Event.PropertiesChanged.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration):
+        (WI.CSSStyleDeclaration.prototype.set text):
+
 2019-06-19  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Remove unused _pendingFilter from NetworkTableContentView
