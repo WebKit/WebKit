@@ -737,7 +737,6 @@ class WebkitFlatpak:
                 "--bind-mount=/run/shm=/dev/shm",
                 # Workaround for https://webkit.org/b/187384 to have our own perl modules usable inside the sandbox
                 # as setting the PERL5LIB envvar won't work inside apache (and for scripts using `perl -T``).
-                "--bind-mount=/etc/perl=%s" % os.path.join(self.flatpak_build_path, "files/lib/perl"),
                 "--bind-mount=/run/host/%s=%s" % (tempfile.gettempdir(), tempfile.gettempdir()),
                 "--bind-mount=%s=%s" % (self.sandbox_source_root, self.source_root),
                 "--talk-name=org.a11y.Bus",
@@ -957,7 +956,7 @@ class WebkitFlatpak:
 
 
 def is_sandboxed():
-    return os.path.exists("/usr/manifest.json")
+    return os.path.exists("/.flatpak-info")
 
 
 def run_in_sandbox_if_available(args):

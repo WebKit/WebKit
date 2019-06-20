@@ -1,3 +1,23 @@
+2019-06-20  Alexander Mikhaylenko  <exalm7659@gmail.com>
+
+        [GTK] HTTP layout tests don't run in flatpak
+        https://bugs.webkit.org/show_bug.cgi?id=199067
+
+        Reviewed by Michael Catanzaro.
+
+        Stop bind mounting /app/lib/perl to /etc/perl because Perl doesn't actually
+        check that path. Instead, add /app/lib/perl to Apache config directly.
+
+        /usr/manifest.json file is not guaranteed to exist in sandbox, check for
+        /.flatpak-info instead.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._is_flatpak):
+        (Port._in_flatpak_sandbox):
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+        (is_sandboxed):
+
 2019-06-18  Darin Adler  <darin@apple.com>
 
         Tidy up the remaining bits of the AtomicString to AtomString rename

@@ -1,3 +1,14 @@
+2019-06-20  Alexander Mikhaylenko  <exalm7659@gmail.com>
+
+        [GTK] HTTP layout tests don't run in flatpak
+        https://bugs.webkit.org/show_bug.cgi?id=199067
+
+        Reviewed by Michael Catanzaro.
+
+        Set PERL5LIB environment variable in Apache config.
+
+        * http/conf/flatpak-httpd.conf:
+
 2019-06-18  Darin Adler  <darin@apple.com>
 
         Tidy up the remaining bits of the AtomicString to AtomString rename

@@ -1271,7 +1271,7 @@ class Port(object):
         return self._filesystem.exists('/etc/arch-release')
 
     def _is_flatpak(self):
-        return self._filesystem.exists('/usr/manifest.json')
+        return self._filesystem.exists('/.flatpak-info')
 
     def _apache_version(self):
         config = self._executive.run_command([self._path_to_apache(), '-v'])
@@ -1465,7 +1465,7 @@ class Port(object):
         return self._filesystem.exists(self.path_from_webkit_base('WebKitBuild', suffix, "FlatpakTree"))
 
     def _in_flatpak_sandbox(self):
-        return os.path.exists("/usr/manifest.json")
+        return os.path.exists("/.flatpak-info")
 
     def _should_use_jhbuild(self):
         if self._in_flatpak_sandbox():
