@@ -72,6 +72,7 @@ enum class SDKVersion : uint32_t {
     FirstThatDecidesPolicyBeforeLoadingQuickLookPreview = DYLD_IOS_VERSION_FIRST_THAT_DECIDES_POLICY_BEFORE_LOADING_QUICK_LOOK_PREVIEW,
     FirstWithExceptionsForRelatedWebViewsUsingDifferentDataStores = DYLD_IOS_VERSION_FIRST_WITH_EXCEPTIONS_FOR_RELATED_WEBVIEWS_USING_DIFFERENT_DATA_STORES,
     FirstWithModernCompabilityModeByDefault = DYLD_IOS_VERSION_FIRST_WITH_MODERN_COMPATIBILITY_MODE_BY_DEFAULT,
+    FirstThatHasUIContextMenuInteraction = DYLD_IOS_VERSION_13_0,
 #elif PLATFORM(MAC)
     FirstWithNetworkCache = DYLD_MACOSX_VERSION_10_11,
     FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_MACOSX_VERSION_10_13,

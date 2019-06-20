@@ -42,6 +42,7 @@
 #import "SmartMagnificationController.h"
 #import "TextInputSPI.h"
 #import "UIKitSPI.h"
+#import "VersionChecks.h"
 #import "WKActionSheetAssistant.h"
 #import "WKContextMenuElementInfoInternal.h"
 #import "WKDatePickerViewController.h"
@@ -768,9 +769,11 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_highlightLongPressGestureRecognizer setDelay:highlightDelay];
     [_highlightLongPressGestureRecognizer setDelegate:self];
 
-#if HAVE(LINK_PREVIEW) && !USE(UICONTEXTMENU)
-    [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
-    [self _createAndConfigureLongPressGestureRecognizer];
+#if HAVE(LINK_PREVIEW)
+    if (![self _shouldUseContextMenus]) {
+        [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
+        [self _createAndConfigureLongPressGestureRecognizer];
+    }
 #endif
 
 #if ENABLE(DATA_INTERACTION)
@@ -7367,12 +7370,11 @@ static WebEventFlags webEventFlagsForUIKeyModifierFlags(UIKeyModifierFlags flags
 
 #if HAVE(LINK_PREVIEW)
     if ([userInterfaceItem isEqualToString:@"linkPreviewPopoverContents"]) {
-#if USE(UICONTEXTMENU)
-        return @{ userInterfaceItem: @{ @"pageURL": WTF::userVisibleString(_positionInformation.url) } };
-#else
+        if ([self _shouldUseContextMenus])
+            return @{ userInterfaceItem: @{ @"pageURL": WTF::userVisibleString(_positionInformation.url) } };
+
         NSString *url = [_previewItemController previewData][UIPreviewDataLink];
         return @{ userInterfaceItem: @{ @"pageURL": url } };
-#endif
     }
 #endif
 
@@ -7411,34 +7413,67 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
     return nil;
 }
 
-#if USE(UICONTEXTMENU)
-
 @implementation WKContentView (WKInteractionPreview)
+
+- (bool)_shouldUseContextMenus
+{
+#if USE(UICONTEXTMENU)
+    return linkedOnOrAfter(WebKit::SDKVersion::FirstThatHasUIContextMenuInteraction);
+#endif
+    return false;
+}
 
 - (void)_registerPreview
 {
     if (!_webView.allowsLinkPreview)
         return;
 
-    _contextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
-    _contextMenuHasRequestedLegacyData = NO;
-    [self addInteraction:_contextMenuInteraction.get()];
+#if USE(UICONTEXTMENU)
+    if ([self _shouldUseContextMenus]) {
+        _contextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
+        _contextMenuHasRequestedLegacyData = NO;
+        [self addInteraction:_contextMenuInteraction.get()];
 
-    [self _showLinkPreviewsPreferenceChanged:nil];
+        [self _showLinkPreviewsPreferenceChanged:nil];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_showLinkPreviewsPreferenceChanged:) name:webkitShowLinkPreviewsPreferenceChangedNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_showLinkPreviewsPreferenceChanged:) name:webkitShowLinkPreviewsPreferenceChangedNotification object:nil];
+
+        return;
+    }
+#endif
+
+    if (!_webView.allowsLinkPreview)
+        return;
+
+    _previewItemController = adoptNS([[UIPreviewItemController alloc] initWithView:self]);
+    [_previewItemController setDelegate:self];
+    _previewGestureRecognizer = _previewItemController.get().presentationGestureRecognizer;
+    if ([_previewItemController respondsToSelector:@selector(presentationSecondaryGestureRecognizer)])
+        _previewSecondaryGestureRecognizer = _previewItemController.get().presentationSecondaryGestureRecognizer;
 }
 
 - (void)_unregisterPreview
 {
-    if (!_contextMenuInteraction)
+#if USE(UICONTEXTMENU)
+    if ([self _shouldUseContextMenus]) {
+        if (!_contextMenuInteraction)
+            return;
+
+        [self removeInteraction:_contextMenuInteraction.get()];
+        _contextMenuInteraction = nil;
+
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:webkitShowLinkPreviewsPreferenceChangedNotification object:nil];
         return;
+    }
+#endif
 
-    [self removeInteraction:_contextMenuInteraction.get()];
-    _contextMenuInteraction = nil;
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:webkitShowLinkPreviewsPreferenceChangedNotification object:nil];
+    [_previewItemController setDelegate:nil];
+    _previewGestureRecognizer = nil;
+    _previewSecondaryGestureRecognizer = nil;
+    _previewItemController = nil;
 }
+
+#if USE(UICONTEXTMENU)
 
 - (void)_showLinkPreviewsPreferenceChanged:(NSNotification *)notification
 {
@@ -8004,31 +8039,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     _contextMenuInteractionTargetedPreview = nil;
 }
 
-@end
-
-#else
-
-@implementation WKContentView (WKInteractionPreview)
-
-- (void)_registerPreview
-{
-    if (!_webView.allowsLinkPreview)
-        return;
-
-    _previewItemController = adoptNS([[UIPreviewItemController alloc] initWithView:self]);
-    [_previewItemController setDelegate:self];
-    _previewGestureRecognizer = _previewItemController.get().presentationGestureRecognizer;
-    if ([_previewItemController respondsToSelector:@selector(presentationSecondaryGestureRecognizer)])
-        _previewSecondaryGestureRecognizer = _previewItemController.get().presentationSecondaryGestureRecognizer;
-}
-
-- (void)_unregisterPreview
-{
-    [_previewItemController setDelegate:nil];
-    _previewGestureRecognizer = nil;
-    _previewSecondaryGestureRecognizer = nil;
-    _previewItemController = nil;
-}
+#endif // USE(UICONTEXTMENU)
 
 - (BOOL)_interactionShouldBeginFromPreviewItemController:(UIPreviewItemController *)controller forPosition:(CGPoint)position
 {
@@ -8353,8 +8364,6 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 }
 
 @end
-
-#endif // USE(UICONTEXTMENU)
 
 #endif // HAVE(LINK_PREVIEW)
 
