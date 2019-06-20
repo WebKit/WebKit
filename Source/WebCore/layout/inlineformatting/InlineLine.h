@@ -38,8 +38,14 @@ namespace Layout {
 class Line {
     WTF_MAKE_ISO_ALLOCATED(Line);
 public:
-    Line(const LayoutState&, const LayoutPoint& topLeft, LayoutUnit availableWidth, LayoutUnit minimumLineHeight, LayoutUnit baselineOffset);
-    Line(const LayoutState&, LayoutUnit logicalLeft, LayoutUnit availableWidth);
+    struct InitialConstraints {
+        LayoutPoint topLeft;
+        LayoutUnit availableWidth;
+        LayoutUnit height;
+        LayoutUnit baselineOffset;
+    };
+    enum class SkipVerticalAligment { No, Yes };
+    Line(const LayoutState&, const InitialConstraints&, SkipVerticalAligment);
 
     class Content {
     public:

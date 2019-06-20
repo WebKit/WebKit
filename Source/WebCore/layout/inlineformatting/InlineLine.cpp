@@ -44,22 +44,14 @@ Line::Content::Run::Run(const InlineItem& inlineItem, const Display::Rect& logic
 {
 }
 
-Line::Line(const LayoutState& layoutState, LayoutUnit logicalLeft, LayoutUnit availableWidth)
+Line::Line(const LayoutState& layoutState, const InitialConstraints& initialConstraints, SkipVerticalAligment skipVerticalAligment)
     : m_layoutState(layoutState)
     , m_content(std::make_unique<Line::Content>())
-    , m_logicalTopLeft(logicalLeft, 0)
-    , m_lineLogicalWidth(availableWidth)
-    , m_skipVerticalAligment(true)
-{
-}
-
-Line::Line(const LayoutState& layoutState, const LayoutPoint& topLeft, LayoutUnit availableWidth, LayoutUnit minimumHeight, LayoutUnit baselineOffset)
-    : m_layoutState(layoutState)
-    , m_content(std::make_unique<Line::Content>())
-    , m_logicalTopLeft(topLeft)
-    , m_baseline({ baselineOffset, minimumHeight - baselineOffset })
-    , m_contentLogicalHeight(minimumHeight)
-    , m_lineLogicalWidth(availableWidth)
+    , m_logicalTopLeft(initialConstraints.topLeft)
+    , m_baseline({ initialConstraints.baselineOffset, initialConstraints.height - initialConstraints.baselineOffset })
+    , m_contentLogicalHeight(initialConstraints.height)
+    , m_lineLogicalWidth(initialConstraints.availableWidth)
+    , m_skipVerticalAligment(skipVerticalAligment == SkipVerticalAligment::Yes)
 {
 }
 
