@@ -1,3 +1,17 @@
+2019-06-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Edit -> Tag doesn't do anything for html, head, and body elements
+        https://bugs.webkit.org/show_bug.cgi?id=199052
+        <rdar://problem/51923906>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.populateDOMNodeContextMenu):
+         - Don't show an "Edit > Tag" for <html>, <head>, and <body> nodes
+         - Disable any "Edit" submenu item if it's target is already being edited
+         - Prevent "Add" submenu items from being shown for text nodes
+
 2019-06-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION: Debugger: current call frame indicator isn't vertically centered
