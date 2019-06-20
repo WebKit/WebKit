@@ -64,7 +64,15 @@ public:
 
     String& name() { return m_name; }
 
-    const Optional<UniqueRef<UnnamedType>>& type() const { return m_type; } // Anonymous variables inside ReadModifyWriteExpressions have their type set by the type checker.
+    // We use this for ReadModifyWrite expressions, since we don't know the type of their
+    // internal variables until the checker runs. All other variables should start life out
+    // with a type.
+    void setType(UniqueRef<UnnamedType> type)
+    {
+        ASSERT(!m_type);
+        m_type = WTFMove(type);
+    }
+    const Optional<UniqueRef<UnnamedType>>& type() const { return m_type; }
     UnnamedType* type() { return m_type ? &*m_type : nullptr; }
     Optional<Semantic>& semantic() { return m_semantic; }
     Expression* initializer() { return m_initializer ? &*m_initializer : nullptr; }

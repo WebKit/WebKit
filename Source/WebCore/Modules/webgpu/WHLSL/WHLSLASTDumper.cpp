@@ -639,7 +639,7 @@ void ASTDumper::visit(AST::ReadModifyWriteExpression& readModifyWriteExpression)
     auto oldVariable = readModifyWriteExpression.oldVariableReference();
     auto newVariable = readModifyWriteExpression.newVariableReference();
 
-    m_out.print("(");
+    m_out.print("RMW(");
     visit(oldVariable.get());
     m_out.print(" = ");
     visit(readModifyWriteExpression.leftValue());

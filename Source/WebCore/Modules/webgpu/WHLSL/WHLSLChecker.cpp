@@ -463,7 +463,7 @@ private:
     bool isBoolType(ResolvingType&);
     struct RecurseInfo {
         ResolvingType& resolvingType;
-        AST::TypeAnnotation& typeAnnotation;
+        const AST::TypeAnnotation typeAnnotation;
     };
     Optional<RecurseInfo> recurseAndGetInfo(AST::Expression&, bool requiresLeftValue = false);
     Optional<RecurseInfo> getInfo(AST::Expression&, bool requiresLeftValue = false);
@@ -859,13 +859,15 @@ void Checker::visit(AST::ReadModifyWriteExpression& readModifyWriteExpression)
     if (!leftValueInfo)
         return;
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198166 Figure out what to do with the ReadModifyWriteExpression's AnonymousVariables.
+    readModifyWriteExpression.oldValue().setType(leftValueInfo->resolvingType.getUnnamedType()->clone());
 
     auto newValueInfo = recurseAndGetInfo(readModifyWriteExpression.newValueExpression());
     if (!newValueInfo)
         return;
 
-    if (!matchAndCommit(leftValueInfo->resolvingType, newValueInfo->resolvingType)) {
+    if (Optional<UniqueRef<AST::UnnamedType>> matchedType = matchAndCommit(leftValueInfo->resolvingType, newValueInfo->resolvingType))
+        readModifyWriteExpression.newValue().setType(WTFMove(matchedType.value()));
+    else {
         setError();
         return;
     }
@@ -1131,8 +1133,7 @@ void Checker::visit(AST::VariableReference& variableReference)
     ASSERT(variableReference.variable()->type());
     
     AST::TypeAnnotation typeAnnotation = AST::RightValue();
-    if (!variableReference.variable()->isAnonymous()) // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198166 This doesn't seem right.
-        typeAnnotation = AST::LeftValue { AST::AddressSpace::Thread };
+    typeAnnotation = AST::LeftValue { AST::AddressSpace::Thread };
     assignType(variableReference, variableReference.variable()->type()->clone(), WTFMove(typeAnnotation));
 }
 

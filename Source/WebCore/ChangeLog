@@ -1,3 +1,31 @@
+2019-06-19  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] The checker needs to resolve types for the anonymous variables in ReadModifyWrite expressions
+        https://bugs.webkit.org/show_bug.cgi?id=198988
+
+        Reviewed by Dean Jackson and Myles C. Maxfield.
+
+        This patch makes it so that the Checker assigns types to the internal variables
+        in a read modify write expression. These were the only variables that didn't have
+        types ascribed to them.
+
+        This patch also does a fly by fix where we kept pointers to value types
+        in a HashMap in the checker. This is wrong precisely when the HashMap gets
+        resized. Instead, we now just store the value itself since we're just
+        dealing with a simple Variant that wraps either an empty struct or an
+        enum.
+
+        Test: webgpu/whlsl-checker-should-set-type-of-read-modify-write-variables.html
+
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclaration.h:
+        (WebCore::WHLSL::AST::VariableDeclaration::setType):
+        (WebCore::WHLSL::AST::VariableDeclaration::type const):
+        * Modules/webgpu/WHLSL/WHLSLASTDumper.cpp: Make it obvious that read
+        modify write expressions are such by prefixing them with "RMW".
+        (WebCore::WHLSL::ASTDumper::visit):
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::Checker::visit):
+
 2019-06-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Network: replace CFNetwork SPI with new API where able
