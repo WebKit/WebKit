@@ -1,3 +1,12 @@
+2019-06-20  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add unit tests for AnalyzeCompileWebKitResults
+        https://bugs.webkit.org/show_bug.cgi?id=199073
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests for AnalyzeCompileWebKitResults.
+
 2019-06-20  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
         [GTK] Enable navigation swipe layout tests

@@ -34,7 +34,7 @@ from twisted.internet import error, reactor
 from twisted.python import failure, log
 from twisted.trial import unittest
 
-from steps import (AnalyzeAPITestsResults, ApplyPatch, ArchiveBuiltProduct, ArchiveTestResults,
+from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, ApplyPatch, ArchiveBuiltProduct, ArchiveTestResults,
                    CheckOutSource, CheckPatchRelevance, CheckStyle, CleanBuild, CleanWorkingDirectory,
                    CompileJSCOnly, CompileJSCOnlyToT, CompileWebKit, CompileWebKitToT, ConfigureBuild,
                    DownloadBuiltProduct, ExtractBuiltProduct, ExtractTestResults, KillOldProcesses,
@@ -46,6 +46,13 @@ from steps import (AnalyzeAPITestsResults, ApplyPatch, ArchiveBuiltProduct, Arch
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
 from buildbot.test.fake.fakebuild import FakeBuild
 FakeBuild.addStepsAfterCurrentStep = lambda FakeBuild, step_factories: None
+
+
+def mock_step(step, logs='', results=SUCCESS, stopped=False, properties=None):
+    step.logs = logs
+    step.results = results
+    step.stopped = stopped
+    return step
 
 
 class ExpectMasterShellCommand(object):
@@ -542,6 +549,33 @@ class TestCompileWebKitToT(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectHidden(True)
         self.expectOutcome(result=SKIPPED, state_string='Compiled WebKit (skipped)')
+        return self.runStep()
+
+
+class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_patch_with_build_failure(self):
+        previous_steps = [
+            mock_step(CompileWebKit(), results=FAILURE),
+            mock_step(CompileWebKitToT(), results=SUCCESS),
+        ]
+        self.setupStep(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
+        self.expectOutcome(result=FAILURE, state_string='Patch does not build (failure)')
+        return self.runStep()
+
+    def test_patch_with_ToT_failure(self):
+        previous_steps = [
+            mock_step(CompileWebKit(), results=FAILURE),
+            mock_step(CompileWebKitToT(), results=FAILURE),
+        ]
+        self.setupStep(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
+        self.expectOutcome(result=FAILURE, state_string='Unable to build WebKit without patch, retrying build (failure)')
         return self.runStep()
 
 
