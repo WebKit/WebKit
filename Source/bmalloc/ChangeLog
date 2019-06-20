@@ -1,3 +1,59 @@
+2019-06-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] IsoHeap's initialization is racy with IsoHeap::isInitialized
+        https://bugs.webkit.org/show_bug.cgi?id=199053
+
+        Reviewed by Saam Barati.
+
+        IsoHeap's initialization code is racy. Let's see the `isInitialized` and the initialization code.
+
+        isInitialized:
+
+            template<typename Type>
+            bool IsoHeap<Type>::isInitialized()
+            {
+                std::atomic<unsigned>* atomic =
+                    reinterpret_cast<std::atomic<unsigned>*>(&m_allocatorOffsetPlusOne);
+                return !!atomic->load(std::memory_order_acquire);
+            }
+
+        initialization:
+
+            if (!handle.isInitialized()) {
+                std::lock_guard<Mutex> locker(handle.m_initializationLock);
+                if (!handle.isInitialized()) {
+                    auto* heap = new IsoHeapImpl<typename api::IsoHeap<Type>::Config>();
+                    std::atomic_thread_fence(std::memory_order_seq_cst);
+                    handle.setAllocatorOffset(heap->allocatorOffset());                  // <================= (1)
+                    handle.setDeallocatorOffset(heap->deallocatorOffset());              // (2)
+                    handle.m_impl = heap;
+                }
+            }
+
+        IsoHeap::isInitialized is loading m_allocatorOffsetPlusOne with acquire fence. On the other hand, the initialization
+        code configures m_allocatorOffsetPlusOne (1) before configuring m_deallocatorOffsetPlusOne (2). Let's consider the following
+        case.
+
+            1. Thread A is at (1)
+            2. Thread B calls handle.isInitialized(). Then B think that handle is already initialized while it lacks m_deallocatorOffsetPlusOne and m_impl pointer.
+            3. Thread B uses this handle, and does `std::max(handle.allocatorOffset(), handle.deallocatorOffset())`. But m_deallocatorOffsetPlusOne is not configured
+               yet. As a result, deallocatorOffset() returns 0xffffffff (b/c it calculates m_deallocatorOffsetPlusOne - 1, and m_deallocatorOffsetPlusOne is first
+               zero-initialized before IsoHeap initialization happens).
+            4. std::max returns 0xffffffff as an offset. Of course, this is wrong, and leading to the release assertion.
+
+        This patch fixes the above issue by,
+
+            1. Add IsoHeap::initialize() function instead of initializing it in IsoTLS
+            2. Change `isInitialized()` function to load m_impl pointer instead of m_allocatorOffsetPlusOne with acquire fence.
+            3. In initialize() function, we store m_heap with release fence at last.
+
+        * bmalloc/IsoHeap.h:
+        * bmalloc/IsoHeapInlines.h:
+        (bmalloc::api::IsoHeap<Type>::isInitialized):
+        (bmalloc::api::IsoHeap<Type>::initialize):
+        * bmalloc/IsoTLSInlines.h:
+        (bmalloc::IsoTLS::ensureHeap):
+
 2019-06-14  Keith Miller  <keith_miller@apple.com>
 
         Restore PAC based cage.

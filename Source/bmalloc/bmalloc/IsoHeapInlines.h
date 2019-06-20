@@ -72,9 +72,23 @@ void IsoHeap<Type>::scavenge()
 template<typename Type>
 bool IsoHeap<Type>::isInitialized()
 {
-    std::atomic<unsigned>* atomic =
-        reinterpret_cast<std::atomic<unsigned>*>(&m_allocatorOffsetPlusOne);
-    return !!atomic->load(std::memory_order_acquire);
+    auto* atomic = reinterpret_cast<std::atomic<IsoHeapImpl<Config>*>*>(&m_impl);
+    return atomic->load(std::memory_order_acquire);
+}
+
+template<typename Type>
+void IsoHeap<Type>::initialize()
+{
+    // We are using m_impl field as a guard variable of the initialization of IsoHeap.
+    // IsoHeap::isInitialized gets m_impl with "acquire", and IsoHeap::initialize stores
+    // the value to m_impl with "release". To make IsoHeap changes visible to any threads
+    // when IsoHeap::isInitialized returns true, we need to store the value to m_impl *after*
+    // all the initialization finishes.
+    auto* heap = new IsoHeapImpl<Config>();
+    setAllocatorOffset(heap->allocatorOffset());
+    setDeallocatorOffset(heap->deallocatorOffset());
+    auto* atomic = reinterpret_cast<std::atomic<IsoHeapImpl<Config>*>*>(&m_impl);
+    atomic->store(heap, std::memory_order_release);
 }
 
 template<typename Type>

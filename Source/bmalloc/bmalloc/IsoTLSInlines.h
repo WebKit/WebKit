@@ -173,13 +173,8 @@ void IsoTLS::ensureHeap(api::IsoHeap<Type>& handle)
 {
     if (!handle.isInitialized()) {
         std::lock_guard<Mutex> locker(handle.m_initializationLock);
-        if (!handle.isInitialized()) {
-            auto* heap = new IsoHeapImpl<typename api::IsoHeap<Type>::Config>();
-            std::atomic_thread_fence(std::memory_order_seq_cst);
-            handle.setAllocatorOffset(heap->allocatorOffset());
-            handle.setDeallocatorOffset(heap->deallocatorOffset());
-            handle.m_impl = heap;
-        }
+        if (!handle.isInitialized())
+            handle.initialize();
     }
 }
 

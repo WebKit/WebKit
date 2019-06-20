@@ -1,3 +1,17 @@
+2019-06-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] IsoHeap's initialization is racy with IsoHeap::isInitialized
+        https://bugs.webkit.org/show_bug.cgi?id=199053
+
+        Reviewed by Saam Barati.
+
+        Add constexpr static functions to generate pseudo random numbers from __LINE__.
+
+        * wtf/WeakRandom.h:
+        (WTF::WeakRandom::nextState):
+        (WTF::WeakRandom::generate):
+        (WTF::WeakRandom::advance):
+
 2019-06-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Add WTF::crossThreadCopy(T&&) to utilize String::isolatedCopy() &&

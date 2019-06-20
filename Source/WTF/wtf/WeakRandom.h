@@ -87,17 +87,32 @@ public:
     static unsigned lowOffset() { return OBJECT_OFFSETOF(WeakRandom, m_low); }
     static unsigned highOffset() { return OBJECT_OFFSETOF(WeakRandom, m_high); }
 
+    static constexpr uint64_t nextState(uint64_t x, uint64_t y)
+    {
+        x ^= x << 23;
+        x ^= x >> 17;
+        x ^= y ^ (y >> 26);
+        return x;
+    }
+
+    static constexpr uint64_t generate(unsigned seed)
+    {
+        if (!seed)
+            seed = 1;
+        uint64_t low = seed;
+        uint64_t high = seed;
+        high = nextState(low, high);
+        return low + high;
+    }
+
 private:
     uint64_t advance()
     {
         uint64_t x = m_low;
         uint64_t y = m_high;
         m_low = y;
-        x ^= x << 23;
-        x ^= x >> 17;
-        x ^= y ^ (y >> 26);
-        m_high = x;
-        return x + y;
+        m_high = nextState(x, y);
+        return m_high + m_low;
     }
 
     unsigned m_seed;

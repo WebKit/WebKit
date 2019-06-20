@@ -43,6 +43,8 @@ namespace api {
 template<typename Type>
 struct IsoHeap {
     typedef IsoConfig<sizeof(Type)> Config;
+
+    constexpr IsoHeap() = default;
     
     void* allocate();
     void* tryAllocate();
@@ -50,6 +52,7 @@ struct IsoHeap {
     
     void scavenge();
     
+    void initialize();
     bool isInitialized();
     
     unsigned allocatorOffset() { return m_allocatorOffsetPlusOne - 1; }
@@ -61,9 +64,9 @@ struct IsoHeap {
     IsoHeapImpl<Config>& impl();
     
     Mutex m_initializationLock;
-    unsigned m_allocatorOffsetPlusOne;
-    unsigned m_deallocatorOffsetPlusOne;
-    IsoHeapImpl<Config>* m_impl;
+    unsigned m_allocatorOffsetPlusOne { 0 };
+    unsigned m_deallocatorOffsetPlusOne { 0 };
+    IsoHeapImpl<Config>* m_impl { nullptr };
 };
 
 // Use this together with MAKE_BISO_MALLOCED_IMPL.
