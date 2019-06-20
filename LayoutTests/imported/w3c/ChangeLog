@@ -1,3 +1,15 @@
+2019-06-19  Rob Buis  <rbuis@igalia.com>
+
+        Make preload/link-header-preload-imagesrcset.html work on DPR != 1
+        https://bugs.webkit.org/show_bug.cgi?id=198533
+
+        Reviewed by Youenn Fablet.
+
+        Make the test take DPR into account.
+
+        * web-platform-tests/preload/dynamic-adding-preload-imagesrcset.html:
+        * web-platform-tests/preload/link-header-preload-imagesrcset.html:
+
 2019-06-14  Ali Juma  <ajuma@chromium.org>
 
         IntersectionObserver rootMargin detection fails when `root` is an element

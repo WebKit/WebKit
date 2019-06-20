@@ -1,3 +1,0 @@
-
-FAIL Makes sure that a dynamically added preload with imagesrcset works assert_equals: resources/square.png?400 expected 1 but got 0
-
