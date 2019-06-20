@@ -49,7 +49,7 @@ namespace WebKit {
 class WebURLSchemeHandler;
 class WebPageProxy;
 
-using SyncLoadCompletionHandler = CompletionHandler<void(const WebCore::ResourceResponse&, const WebCore::ResourceError&, const IPC::DataReference&)>;
+using SyncLoadCompletionHandler = CompletionHandler<void(const WebCore::ResourceResponse&, const WebCore::ResourceError&, const Vector<char>&)>;
 
 class WebURLSchemeTask : public RefCounted<WebURLSchemeTask>, public InstanceCounted<WebURLSchemeTask> {
     WTF_MAKE_NONCOPYABLE(WebURLSchemeTask);

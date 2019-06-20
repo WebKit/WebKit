@@ -136,10 +136,13 @@ auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
     m_completed = true;
     
     if (isSync()) {
-        IPC::DataReference data;
-        if (m_syncData)
-            data = { reinterpret_cast<const uint8_t*>(m_syncData->data()), m_syncData->size() };
-        m_syncCompletionHandler(m_syncResponse, error, data);
+        Vector<char> data;
+        if (m_syncData) {
+            data.resize(m_syncData->size());
+            memcpy(data.data(), reinterpret_cast<const char*>(m_syncData->data()), m_syncData->size());
+        }
+
+        m_syncCompletionHandler(m_syncResponse, error, WTFMove(data));
         m_syncData = nullptr;
     }
 

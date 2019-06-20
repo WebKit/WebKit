@@ -64,14 +64,11 @@ void WebURLSchemeHandlerProxy::startNewTask(ResourceLoader& loader)
 
 void WebURLSchemeHandlerProxy::loadSynchronously(ResourceLoadIdentifier loadIdentifier, const ResourceRequest& request, ResourceResponse& response, ResourceError& error, Vector<char>& data)
 {
-    IPC::DataReference dataReference;
-    if (!m_webPage.sendSync(Messages::WebPageProxy::LoadSynchronousURLSchemeTask(URLSchemeTaskParameters { m_identifier, loadIdentifier, request }), Messages::WebPageProxy::LoadSynchronousURLSchemeTask::Reply(response, error, dataReference))) {
+    data.shrink(0);
+    if (!m_webPage.sendSync(Messages::WebPageProxy::LoadSynchronousURLSchemeTask(URLSchemeTaskParameters { m_identifier, loadIdentifier, request }), Messages::WebPageProxy::LoadSynchronousURLSchemeTask::Reply(response, error, data))) {
         error = failedCustomProtocolSyncLoad(request);
         return;
     }
-    
-    data.resize(dataReference.size());
-    memcpy(data.data(), dataReference.data(), dataReference.size());
 }
 
 void WebURLSchemeHandlerProxy::stopAllTasks()
