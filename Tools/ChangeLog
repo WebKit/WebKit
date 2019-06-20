@@ -1,5 +1,17 @@
 2019-06-20  Dean Johnson  <dean_johnson@apple.com>
 
+        test-webkitpy is broken on macOS Catalina
+        https://bugs.webkit.org/show_bug.cgi?id=199078
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/test/main.py: Check if lldb tests are supported before adding them
+        to the runner.
+        (main): 
+        (_supports_building_and_running_lldb_tests): Check if you are running macOS Catalina.
+
+2019-06-20  Dean Johnson  <dean_johnson@apple.com>
+
         Change status to "committer" in contributors.json
 
         Unreviewed.

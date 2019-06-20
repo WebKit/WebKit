@@ -69,14 +69,17 @@ def main():
         tester.add_tree(os.path.join(_webkit_root, 'Source', 'WebKit', 'Scripts'), 'webkit')
 
     lldb_python_directory = _host.path_to_lldb_python_directory()
-    if os.path.isdir(lldb_python_directory):
+    if not _supports_building_and_running_lldb_tests():
+        _log.info("Skipping lldb_webkit tests; not yet supported on macOS Catalina.")
+        will_run_lldb_webkit_tests = False
+    elif not os.path.isdir(lldb_python_directory):
+        _log.info("Skipping lldb_webkit tests; could not find path to lldb.py '{}'.".format(lldb_python_directory))
+        will_run_lldb_webkit_tests = False
+    else:
         if lldb_python_directory not in sys.path:
             sys.path.append(lldb_python_directory)
         tester.add_tree(os.path.join(_webkit_root, 'Tools', 'lldb'))
         will_run_lldb_webkit_tests = True
-    else:
-        _log.info("Skipping lldb_webkit tests; could not find path to lldb.py '{}'.".format(lldb_python_directory))
-        will_run_lldb_webkit_tests = False
 
     tester.skip(('webkitpy.common.checkout.scm.scm_unittest',), 'are really, really, slow', 31818)
     if sys.platform.startswith('win'):
@@ -96,6 +99,12 @@ def main():
         _log.info('Skipping QueueStatusServer tests; the Google AppEngine Python SDK is not installed.')
 
     return not tester.run(will_run_lldb_webkit_tests=will_run_lldb_webkit_tests)
+
+
+def _supports_building_and_running_lldb_tests():
+    # FIXME: Remove when test-lldb is in its own script
+    # https://bugs.webkit.org/show_bug.cgi?id=187916
+    return not _host.platform.build_version().startswith('19A')
 
 
 def _print_results_as_json(stream, all_test_names, failures, errors):
