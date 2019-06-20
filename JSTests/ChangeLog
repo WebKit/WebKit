@@ -1,3 +1,78 @@
+2019-06-20  Justin Michaud  <justin_michaud@apple.com>
+
+        [WASM-References] Add extra tests for Wasm references + fix element parsing and subtyping bugs
+        https://bugs.webkit.org/show_bug.cgi?id=199044
+
+        Reviewed by Saam Barati.
+
+        Add wasm references spec tests as well as a worker test.
+
+        * wasm.yaml:
+        * wasm/Builder_WebAssemblyBinary.js:
+        (const.emitters.Element):
+        * wasm/js-api/element.js:
+        (assert.throws.new.WebAssembly.Module.builder.WebAssembly):
+        * wasm/references-spec-tests/ref_is_null.js: Added.
+        (hostref):
+        (is_hostref):
+        (is_funcref):
+        (eq_ref):
+        (let.handler.get target):
+        (register):
+        (module):
+        (instance):
+        (call):
+        (get instance):
+        (exports):
+        (run):
+        (assert_malformed):
+        (assert_invalid):
+        (assert_unlinkable):
+        (assert_uninstantiable):
+        (assert_trap):
+        (try.f):
+        (catch):
+        (assert_exhaustion):
+        (assert_return):
+        (assert_return_canonical_nan):
+        (assert_return_arithmetic_nan):
+        (assert_return_ref):
+        (assert_return_func):
+        * wasm/references-spec-tests/ref_null.js: Added.
+        (hostref):
+        (is_hostref):
+        (is_funcref):
+        (eq_ref):
+        (let.handler.get target):
+        (register):
+        (module):
+        (instance):
+        (call):
+        (get instance):
+        (exports):
+        (run):
+        (assert_malformed):
+        (assert_invalid):
+        (assert_unlinkable):
+        (assert_uninstantiable):
+        (assert_trap):
+        (try.f):
+        (catch):
+        (assert_exhaustion):
+        (assert_return):
+        (assert_return_canonical_nan):
+        (assert_return_arithmetic_nan):
+        (assert_return_ref):
+        (assert_return_func):
+        * wasm/references/element_parsing.js: Added.
+        (module):
+        * wasm/references/func_ref.js:
+        * wasm/references/multitable.js:
+        * wasm/references/table_misc.js:
+        (TableSize.0.End.End.WebAssembly):
+        * wasm/references/validation.js:
+        (assert.throws):
+
 2019-06-19  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Optimize `resolve` method lookup in Promise static methods

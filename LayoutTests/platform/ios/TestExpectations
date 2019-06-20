@@ -2705,6 +2705,7 @@ webkit.org/b/158420 http/tests/navigation/redirect-to-fragment2.html [ Failure ]
 
 # These tests are not supported on ios-simulator
 workers/wasm-hashset-many-2.html [ Skip ]
+workers/wasm-references.html [ Skip ]
 workers/wasm-hashset-many.html [ Skip ]
 workers/wasm-hashset.html [ Skip ]
 workers/wasm-long-compile-many.html [ Skip ]

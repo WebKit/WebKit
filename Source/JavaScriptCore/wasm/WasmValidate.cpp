@@ -434,7 +434,7 @@ auto Validate::unify(const ExpressionList& values, const ControlType& block) -> 
     }
 
     WASM_VALIDATOR_FAIL_IF(values.size() != 1, "block with type: ", block.signature(), " ends with a stack containing more than one value");
-    WASM_VALIDATOR_FAIL_IF(values[0] != block.signature(), "control flow returns with unexpected type");
+    WASM_VALIDATOR_FAIL_IF(!isSubtype(values[0], block.signature()), "control flow returns with unexpected type");
     return { };
 }
 

@@ -41,7 +41,7 @@ import * as assert from '../assert.js';
             .End()
         .End();
 
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 30: Element section for Table 1 exceeds available Table 1");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 31: Element section for Table 1 exceeds available Table 1");
 }
 
 {

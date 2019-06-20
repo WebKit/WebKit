@@ -1,3 +1,20 @@
+2019-06-20  Justin Michaud  <justin_michaud@apple.com>
+
+        [WASM-References] Add extra tests for Wasm references + fix element parsing and subtyping bugs
+        https://bugs.webkit.org/show_bug.cgi?id=199044
+
+        Reviewed by Saam Barati.
+
+        Fix parsing table indices from the element section. The byte that we previously read as the table index actually tells us how to parse the table index.
+        Fix some areas where we got the isSubtype check wrong, causing funcrefs to not be considred anyrefs.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::unify):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseElement):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::unify):
+
 2019-06-18  Darin Adler  <darin@apple.com>
 
         Tidy up the remaining bits of the AtomicString to AtomString rename

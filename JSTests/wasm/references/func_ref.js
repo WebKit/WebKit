@@ -242,7 +242,7 @@ assert.throws(() => new WebAssembly.Module((new Builder())
   .Type().End()
   .Function().End()
   .Code()
-    .Function("h", { params: ["funcref"], ret: "anyref" })
+    .Function("h", { params: ["anyref"], ret: "funcref" })
       .GetLocal(0)
     .End()
   .End().WebAssembly().get()), Error, "WebAssembly.Module doesn't validate: control flow returns with unexpected type, in function at index 0 (evaluating 'new WebAssembly.Module')");

@@ -194,6 +194,8 @@ const emitters = {
         const data = section.data;
         put(bin, "varuint32", data.length);
         for (const {tableIndex, offset, functionIndices} of data) {
+            if (tableIndex != 0)
+                put(bin, "uint8", 2);
             put(bin, "varuint32", tableIndex);
 
             let initExpr;

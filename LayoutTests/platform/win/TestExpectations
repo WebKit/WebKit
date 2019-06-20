@@ -3719,6 +3719,7 @@ fast/canvas/webgl/webglcontextchangedevent.html [ Skip ]
 http/tests/websocket/tests/hybi/network-process-crash-error.html [ Skip ]
 
 # We don't support Wasm on Windows.
+workers/wasm-references.html [ Skip ]
 workers/wasm-hashset-many-2.html [ Skip ]
 workers/wasm-hashset-many.html [ Skip ]
 workers/wasm-hashset.html [ Skip ]

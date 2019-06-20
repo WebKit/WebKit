@@ -391,6 +391,7 @@ webkit.org/b/98696 plugins/snapshotting [ Skip ]
 webkit.org/b/35013 svg/zoom/text/ [ Skip ]
 
 # We don't support Wasm.
+workers/wasm-references.html [ Skip ]
 workers/wasm-hashset-many-2.html [ Skip ]
 workers/wasm-hashset-many.html [ Skip ]
 workers/wasm-hashset.html [ Skip ]

@@ -2115,7 +2115,7 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signa
 
 void AirIRGenerator::unify(const ExpressionType& dst, const ExpressionType& source)
 {
-    ASSERT(dst.type() == source.type());
+    ASSERT(isSubtype(source.type(), dst.type()));
     append(moveOpForValueType(dst.type()), source, dst);
 }
 

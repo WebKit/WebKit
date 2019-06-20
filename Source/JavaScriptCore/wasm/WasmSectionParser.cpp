@@ -376,7 +376,14 @@ auto SectionParser::parseElement() -> PartialResult
         uint8_t initOpcode;
         uint32_t indexCount;
 
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't get ", elementNum, "th Element table index");
+        uint8_t magic;
+        WASM_PARSER_FAIL_IF(!parseUInt8(magic) || (magic && magic != 2), "can't get ", elementNum, "th Element reserved byte, which should be either 0x00 or 0x02 followed by a table index");
+
+        if (magic == 2)
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't get ", elementNum, "th Element table index");
+        else
+            tableIndex = 0;
+        
         WASM_PARSER_FAIL_IF(tableIndex >= m_info->tableCount(), "Element section for Table ", tableIndex, " exceeds available Table ", m_info->tableCount());
         WASM_PARSER_FAIL_IF(m_info->tables[tableIndex].type() != TableElementType::Funcref, "Table ", tableIndex, " must have type 'funcref' to have an element section");
         Type initExprType;

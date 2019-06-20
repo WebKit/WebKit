@@ -1,3 +1,35 @@
+2019-06-20  Justin Michaud  <justin_michaud@apple.com>
+
+        [WASM-References] Add extra tests for Wasm references + fix element parsing and subtyping bugs
+        https://bugs.webkit.org/show_bug.cgi?id=199044
+
+        Reviewed by Saam Barati.
+
+        Add wasm references spec tests as well as a worker test. 
+
+        * workers/wasm-references.html: Added.
+        * workers/wasm-references/test.js: Added.
+        (const._fail):
+        (const.isNotA.assert.isNotA):
+        (const):
+        (switch.typeof):
+        (Builder):
+        (Builder.prototype.setChecked):
+        (Builder.prototype.setPreamble):
+        (Builder.prototype._functionIndexSpaceKeyHash):
+        (Builder.prototype._registerFunctionToIndexSpace):
+        (Builder.prototype._getFunctionFromIndexSpace):
+        (Builder.prototype._registerSectionBuilders.const.section.in.WASM.description.section.switch.section.case.string_appeared_here.this.section):
+        (Builder.prototype._registerSectionBuilders.const.section.in.WASM.description.section.switch.section.const.codeBuilder.End.switch.case.string_appeared_here.e):
+        (Builder.prototype._registerSectionBuilders.this.Unknown):
+        (done):
+        (runTest.worker.onmessage):
+        (runTest):
+        (doGC):
+        * workers/wasm-references/worker.js: Added.
+        (const._fail):
+        (const.isNotA.assert.isNotA):
+
 2019-06-20  Youenn Fablet  <youenn@apple.com>
 
         Changing settings of a MediaStreamTrack clone should not alter the settings of the original track
