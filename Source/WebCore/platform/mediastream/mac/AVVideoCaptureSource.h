@@ -29,7 +29,7 @@
 
 #include "IntSizeHash.h"
 #include "OrientationNotifier.h"
-#include "RealtimeVideoSource.h"
+#include "RealtimeVideoCaptureSource.h"
 #include <wtf/Lock.h>
 #include <wtf/text/StringHash.h>
 
@@ -51,7 +51,7 @@ namespace WebCore {
 class AVVideoPreset;
 class ImageTransferSessionVT;
 
-class AVVideoCaptureSource : public RealtimeVideoSource, private OrientationNotifier::Observer {
+class AVVideoCaptureSource : public RealtimeVideoCaptureSource, private OrientationNotifier::Observer {
 public:
     static CaptureSourceOrError create(String&& id, String&& hashSalt, const MediaConstraints*);
 
@@ -91,6 +91,7 @@ private:
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Camera; }
     bool interrupted() const final;
 
+    MediaSample::VideoRotation sampleRotation() const final { return m_sampleRotation; }
     void setFrameRateWithPreset(double, RefPtr<VideoPreset>) final;
     bool prefersPreset(VideoPreset&) final;
     void generatePresets() final;

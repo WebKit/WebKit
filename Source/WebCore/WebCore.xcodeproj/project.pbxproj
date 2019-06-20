@@ -112,7 +112,7 @@
 		07277E4F17D018CC0015534D /* JSMediaStreamAudioDestinationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 07277E4317D018CC0015534D /* JSMediaStreamAudioDestinationNode.h */; };
 		07277E5317D018CC0015534D /* JSMediaStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07277E4717D018CC0015534D /* JSMediaStreamTrack.h */; };
 		07277E5517D018CC0015534D /* JSMediaStreamTrackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07277E4917D018CC0015534D /* JSMediaStreamTrackEvent.h */; };
-		072880D12010F1F60071B255 /* RealtimeVideoSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 072880D02010EED70071B255 /* RealtimeVideoSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		072880D12010F1F60071B255 /* RealtimeVideoCaptureSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 072880D02010EED70071B255 /* RealtimeVideoCaptureSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		072A70401D6E8F6200DF0AFC /* OverconstrainedErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 072A703E1D6E8F6200DF0AFC /* OverconstrainedErrorEvent.h */; };
 		072AE1E5183C0741000A5988 /* PluginReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 072AE1DF183C0741000A5988 /* PluginReplacement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		072AE1E8183C0741000A5988 /* QuickTimePluginReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 072AE1E2183C0741000A5988 /* QuickTimePluginReplacement.h */; };
@@ -1117,6 +1117,7 @@
 		41B28B151F8501D300FB52AC /* MediaEndpointConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B28B121F8501A300FB52AC /* MediaEndpointConfiguration.h */; };
 		41B28B3D1F860EF300FB52AC /* LibWebRTCProviderCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B28B361F860BD000FB52AC /* LibWebRTCProviderCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41B2A6261EF1BF6D002B9D7A /* WebAudioSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B2A6251EF1BF60002B9D7A /* WebAudioSourceProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		41BF204922BA7BE80004F812 /* RealtimeVideoSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF204022B947160004F812 /* RealtimeVideoSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41C760B10EDE03D300C1655F /* ScriptState.h in Headers */ = {isa = PBXBuildFile; fileRef = 41C760B00EDE03D300C1655F /* ScriptState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D015CA0F4B5C71004A662F /* ContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D015C80F4B5C71004A662F /* ContentType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D129CE1F3D0EF600D15E47 /* WorkerGlobalScopeCaches.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FB278D1F34C28200795487 /* WorkerGlobalScopeCaches.h */; };
@@ -5381,8 +5382,8 @@
 		07277E4817D018CC0015534D /* JSMediaStreamTrackEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamTrackEvent.cpp; sourceTree = "<group>"; };
 		07277E4917D018CC0015534D /* JSMediaStreamTrackEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaStreamTrackEvent.h; sourceTree = "<group>"; };
 		072847E216EBC5B00043CFA4 /* PlatformTextTrack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformTextTrack.h; sourceTree = "<group>"; };
-		072880CE2010EED60071B255 /* RealtimeVideoSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeVideoSource.cpp; sourceTree = "<group>"; };
-		072880D02010EED70071B255 /* RealtimeVideoSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeVideoSource.h; sourceTree = "<group>"; };
+		072880CE2010EED60071B255 /* RealtimeVideoCaptureSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeVideoCaptureSource.cpp; sourceTree = "<group>"; };
+		072880D02010EED70071B255 /* RealtimeVideoCaptureSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeVideoCaptureSource.h; sourceTree = "<group>"; };
 		072A703E1D6E8F6200DF0AFC /* OverconstrainedErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OverconstrainedErrorEvent.h; sourceTree = "<group>"; };
 		072A703F1D6E8F6200DF0AFC /* OverconstrainedErrorEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OverconstrainedErrorEvent.idl; sourceTree = "<group>"; };
 		072AE1DF183C0741000A5988 /* PluginReplacement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginReplacement.h; sourceTree = "<group>"; };
@@ -7388,6 +7389,8 @@
 		41B2A6251EF1BF60002B9D7A /* WebAudioSourceProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAudioSourceProvider.h; sourceTree = "<group>"; };
 		41B459DA1F4CADB90000F6FD /* ReadableStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadableStream.h; sourceTree = "<group>"; };
 		41B459ED1F55EBC70000F6FD /* ReadableStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReadableStream.cpp; sourceTree = "<group>"; };
+		41BF204022B947160004F812 /* RealtimeVideoSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RealtimeVideoSource.h; sourceTree = "<group>"; };
+		41BF204222B947170004F812 /* RealtimeVideoSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeVideoSource.cpp; sourceTree = "<group>"; };
 		41C760B00EDE03D300C1655F /* ScriptState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptState.h; sourceTree = "<group>"; };
 		41C7E1051E6A54360027B4DE /* CanvasCaptureMediaStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasCaptureMediaStreamTrack.cpp; sourceTree = "<group>"; };
 		41C7E1061E6A54360027B4DE /* CanvasCaptureMediaStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasCaptureMediaStreamTrack.h; sourceTree = "<group>"; };
@@ -15849,8 +15852,10 @@
 				41103AA81E39790A00769F03 /* RealtimeOutgoingAudioSource.h */,
 				5CDD833B1E4324BB00621E92 /* RealtimeOutgoingVideoSource.cpp */,
 				5CDD833C1E4324BB00621E92 /* RealtimeOutgoingVideoSource.h */,
-				072880CE2010EED60071B255 /* RealtimeVideoSource.cpp */,
-				072880D02010EED70071B255 /* RealtimeVideoSource.h */,
+				072880CE2010EED60071B255 /* RealtimeVideoCaptureSource.cpp */,
+				072880D02010EED70071B255 /* RealtimeVideoCaptureSource.h */,
+				41BF204222B947170004F812 /* RealtimeVideoSource.cpp */,
+				41BF204022B947160004F812 /* RealtimeVideoSource.h */,
 				3135910C1E7DDCB600F30630 /* RTCBundlePolicy.h */,
 				07221BA217CF0AD400848E51 /* RTCDataChannelHandler.h */,
 				07221BA317CF0AD400848E51 /* RTCDataChannelHandlerClient.h */,
@@ -31071,7 +31076,8 @@
 				07C1C0E51BFB60ED00BD2256 /* RealtimeMediaSourceSupportedConstraints.h in Headers */,
 				41103AAC1E39791000769F03 /* RealtimeOutgoingAudioSource.h in Headers */,
 				41103AAC1E39791000769F14 /* RealtimeOutgoingAudioSourceCocoa.h in Headers */,
-				072880D12010F1F60071B255 /* RealtimeVideoSource.h in Headers */,
+				072880D12010F1F60071B255 /* RealtimeVideoCaptureSource.h in Headers */,
+				41BF204922BA7BE80004F812 /* RealtimeVideoSource.h in Headers */,
 				91B952241F58A58F00931DC2 /* RecordingSwizzleTypes.h in Headers */,
 				BC4368E80C226E32005EFB5F /* Rect.h in Headers */,
 				FD45A958175D414C00C21EC8 /* RectangleShape.h in Headers */,

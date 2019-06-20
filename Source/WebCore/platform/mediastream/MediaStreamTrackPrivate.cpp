@@ -155,12 +155,15 @@ void MediaStreamTrackPrivate::endTrack()
 
 Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::clone()
 {
-    auto clonedMediaStreamTrackPrivate = create(m_logger.copyRef(), m_source.copyRef());
+    auto clonedMediaStreamTrackPrivate = create(m_logger.copyRef(), m_source->clone());
 
     clonedMediaStreamTrackPrivate->m_isEnabled = this->m_isEnabled;
     clonedMediaStreamTrackPrivate->m_isEnded = this->m_isEnded;
     clonedMediaStreamTrackPrivate->m_contentHint = this->m_contentHint;
     clonedMediaStreamTrackPrivate->updateReadyState();
+
+    if (isProducingData())
+        clonedMediaStreamTrackPrivate->startProducingData();
 
     return clonedMediaStreamTrackPrivate;
 }

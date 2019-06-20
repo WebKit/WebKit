@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,93 +27,46 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "ImageBuffer.h"
-#include "MediaSample.h"
-#include "RealtimeMediaSource.h"
-#include "VideoPreset.h"
-#include <wtf/Lock.h>
-#include <wtf/RunLoop.h>
+#include "RealtimeVideoCaptureSource.h"
 
 namespace WebCore {
 
-class ImageTransferSessionVT;
-
-class RealtimeVideoSource : public RealtimeMediaSource {
+// FIXME: Make RealtimeVideoSource derive from RealtimeMediaSource directly.
+class RealtimeVideoSource final : public RealtimeVideoCaptureSource, public RealtimeMediaSource::Observer {
 public:
-    virtual ~RealtimeVideoSource();
-
-protected:
-    RealtimeVideoSource(String&& name, String&& id, String&& hashSalt);
-
-    void prepareToProduceData();
-    bool supportsSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>) override;
-    void setSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>) override;
-
-    virtual void generatePresets() = 0;
-    virtual bool prefersPreset(VideoPreset&) { return true; }
-    virtual void setFrameRateWithPreset(double, RefPtr<VideoPreset>) { };
-    virtual bool canResizeVideoFrames() const { return false; }
-    bool shouldUsePreset(VideoPreset& current, VideoPreset& candidate);
-
-    void setSupportedPresets(const Vector<Ref<VideoPreset>>&);
-    void setSupportedPresets(Vector<VideoPresetData>&&);
-    const Vector<Ref<VideoPreset>>& presets();
-
-    bool frameRateRangeIncludesRate(const FrameRateRange&, double);
-
-    void updateCapabilities(RealtimeMediaSourceCapabilities&);
-
-    void setDefaultSize(const IntSize& size) { m_defaultSize = size; }
-
-    double observedFrameRate() const { return m_observedFrameRate; }
-
-    void dispatchMediaSampleToObservers(MediaSample&);
-    const Vector<IntSize>& standardVideoSizes();
+    static Ref<RealtimeVideoSource> create(Ref<RealtimeVideoCaptureSource>&& source) { return adoptRef(*new RealtimeVideoSource(WTFMove(source))); }
 
 private:
-    struct CaptureSizeAndFrameRate {
-        RefPtr<VideoPreset> encodingPreset;
-        IntSize requestedSize;
-        double requestedFrameRate { 0 };
-    };
-    bool supportsCaptureSize(Optional<int>, Optional<int>, const Function<bool(const IntSize&)>&&);
-    Optional<CaptureSizeAndFrameRate> bestSupportedSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>);
-    bool presetSupportsFrameRate(RefPtr<VideoPreset>, double);
+    explicit RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&&);
+    ~RealtimeVideoSource();
 
-#if !RELEASE_LOG_DISABLED
-    const char* logClassName() const override { return "RealtimeVideoSource"; }
-#endif
+    // RealtimeVideoCaptureSource
+    void startProducingData() final;
+    void stopProducingData() final;
+    bool supportsSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> frameRate) final;
+    void setSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> frameRate) final;
+    Ref<RealtimeMediaSource> clone() final;
 
-    Vector<Ref<VideoPreset>> m_presets;
-    Deque<double> m_observedFrameTimeStamps;
-    double m_observedFrameRate { 0 };
-    IntSize m_defaultSize;
-#if PLATFORM(COCOA)
-    std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
-#endif
-};
+    const RealtimeMediaSourceCapabilities& capabilities() final { return m_source->capabilities(); }
+    const RealtimeMediaSourceSettings& settings() final { return m_currentSettings; }
+    void generatePresets() final { m_source->generatePresets(); }
+    bool isCaptureSource() const final { return m_source->isCaptureSource(); }
+    CaptureDevice::DeviceType deviceType() const final { return m_source->deviceType(); }
+    void monitorOrientation(OrientationNotifier& notifier) final { m_source->monitorOrientation(notifier); }
+    bool interrupted() const final { return m_source->interrupted(); }
 
-struct SizeAndFrameRate {
-    Optional<int> width;
-    Optional<int> height;
-    Optional<double> frameRate;
+    // Observer
+    void sourceMutedChanged() final;
+    void sourceSettingsChanged() final;
+    void sourceStopped() final;
+    bool preventSourceFromStopping() final;
+    void videoSampleAvailable(MediaSample&) final;
 
-    String toJSONString() const;
-    Ref<JSON::Object> toJSONObject() const;
+    Ref<RealtimeVideoCaptureSource> m_source;
+    RealtimeMediaSourceSettings m_currentSettings;
 };
 
 } // namespace WebCore
-
-namespace WTF {
-template<typename Type> struct LogArgument;
-template <>
-struct LogArgument<WebCore::SizeAndFrameRate> {
-    static String toString(const WebCore::SizeAndFrameRate& size)
-    {
-        return size.toJSONString();
-    }
-};
-}; // namespace WTF
 
 #endif // ENABLE(MEDIA_STREAM)
 

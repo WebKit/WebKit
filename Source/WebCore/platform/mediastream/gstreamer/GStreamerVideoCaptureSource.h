@@ -24,11 +24,11 @@
 #if ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
 #include "CaptureDevice.h"
 #include "GStreamerVideoCapturer.h"
-#include "RealtimeVideoSource.h"
+#include "RealtimeVideoCaptureSource.h"
 
 namespace WebCore {
 
-class GStreamerVideoCaptureSource : public RealtimeVideoSource {
+class GStreamerVideoCaptureSource : public RealtimeVideoCaptureSource {
 public:
     static CaptureSourceOrError create(String&& deviceID, String&& hashSalt, const MediaConstraints*);
     WEBCORE_EXPORT static VideoCaptureFactory& factory();

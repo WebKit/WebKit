@@ -1,3 +1,13 @@
+2019-06-20  Youenn Fablet  <youenn@apple.com>
+
+        Changing settings of a MediaStreamTrack clone should not alter the settings of the original track
+        https://bugs.webkit.org/show_bug.cgi?id=198840
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/mediastreamtrack-video-clone-expected.txt: Added.
+        * fast/mediastream/mediastreamtrack-video-clone.html: Added.
+
 2019-06-20  Russell Epstein  <russell_e@apple.com>
 
         Layout Test imported/blink/fast/css/user-select-none.html is flaky.

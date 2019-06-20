@@ -126,14 +126,14 @@ DisplayCaptureFactory& GStreamerVideoCaptureSource::displayFactory()
 }
 
 GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(String&& deviceID, String&& name, String&& hashSalt, const gchar *source_factory)
-    : RealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
+    : RealtimeVideoCaptureSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
     , m_capturer(std::make_unique<GStreamerVideoCapturer>(source_factory))
 {
     initializeGStreamerDebug();
 }
 
 GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(GStreamerCaptureDevice device, String&& hashSalt)
-    : RealtimeVideoSource(String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt))
+    : RealtimeVideoCaptureSource(String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt))
     , m_capturer(std::make_unique<GStreamerVideoCapturer>(device))
 {
     initializeGStreamerDebug();

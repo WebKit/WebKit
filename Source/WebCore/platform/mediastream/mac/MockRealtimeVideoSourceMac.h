@@ -59,6 +59,7 @@ private:
 
     void orientationChanged(int orientation) final;
     void monitorOrientation(OrientationNotifier&) final;
+    MediaSample::VideoRotation sampleRotation() const final { return m_deviceOrientation; }
 
     MediaSample::VideoRotation m_deviceOrientation { MediaSample::VideoRotation::None };
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;

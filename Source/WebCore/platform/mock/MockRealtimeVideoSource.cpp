@@ -42,6 +42,7 @@
 #include "NotImplemented.h"
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceSettings.h"
+#include "RealtimeVideoSource.h"
 #include <math.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -62,12 +63,12 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, String&&
     if (constraints && source->applyConstraints(*constraints))
         return { };
 
-    return CaptureSourceOrError(WTFMove(source));
+    return CaptureSourceOrError(RealtimeVideoSource::create(WTFMove(source)));
 }
 #endif
 
 MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, String&& name, String&& hashSalt)
-    : RealtimeVideoSource(WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt))
+    : RealtimeVideoCaptureSource(WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt))
     , m_emitFrameTimer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
 {
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(persistentID());
@@ -97,7 +98,7 @@ bool MockRealtimeVideoSource::supportsSizeAndFrameRate(Optional<int> width, Opti
     // FIXME: consider splitting mock display into another class so we don't don't have to do this silly dance
     // because of the RealtimeVideoSource inheritance.
     if (mockCamera())
-        return RealtimeVideoSource::supportsSizeAndFrameRate(width, height, rate);
+        return RealtimeVideoCaptureSource::supportsSizeAndFrameRate(width, height, rate);
 
     return RealtimeMediaSource::supportsSizeAndFrameRate(width, height, rate);
 }
@@ -107,7 +108,7 @@ void MockRealtimeVideoSource::setSizeAndFrameRate(Optional<int> width, Optional<
     // FIXME: consider splitting mock display into another class so we don't don't have to do this silly dance
     // because of the RealtimeVideoSource inheritance.
     if (mockCamera()) {
-        RealtimeVideoSource::setSizeAndFrameRate(width, height, rate);
+        RealtimeVideoCaptureSource::setSizeAndFrameRate(width, height, rate);
         return;
     }
 

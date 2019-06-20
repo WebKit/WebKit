@@ -96,6 +96,8 @@ public:
 
     virtual ~RealtimeMediaSource() = default;
 
+    virtual Ref<RealtimeMediaSource> clone() { return *this; }
+
     const String& hashedId() const;
     String deviceIDHashSalt() const;
 
@@ -224,14 +226,14 @@ protected:
     void videoSampleAvailable(MediaSample&);
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
 
+    void forEachObserver(const WTF::Function<void(Observer&)>&) const;
+
 private:
     virtual void startProducingData() { }
     virtual void stopProducingData() { }
     virtual void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) { }
 
     virtual void hasEnded() { }
-
-    void forEachObserver(const WTF::Function<void(Observer&)>&) const;
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;

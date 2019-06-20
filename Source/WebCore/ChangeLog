@@ -1,3 +1,83 @@
+2019-06-20  Youenn Fablet  <youenn@apple.com>
+
+        Changing settings of a MediaStreamTrack clone should not alter the settings of the original track
+        https://bugs.webkit.org/show_bug.cgi?id=198840
+
+        Reviewed by Eric Carlson.
+
+        Rename RealtimeVideoSource in RealtimeVideoCaptureSource.
+        Introduce RealtimeVideoSource as a class wrapping RealtimeVideoCaptureSource.
+        Its goal is to be able to have independent settings from its underlying RealtimeVideoCaptureSource.
+        It can also adapt size based on its settings if different than its RealtimeVideoCaptureSource.
+        Apply this wrapping for AV video sources as well as mock video sources.
+        Test: fast/mediastream/mediastreamtrack-video-clone.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::clone):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeVideoCaptureSource.cpp: Added.
+        (WebCore::RealtimeVideoCaptureSource::RealtimeVideoCaptureSource):
+        (WebCore::RealtimeVideoCaptureSource::~RealtimeVideoCaptureSource):
+        (WebCore::RealtimeVideoCaptureSource::prepareToProduceData):
+        (WebCore::RealtimeVideoCaptureSource::presets):
+        (WebCore::RealtimeVideoCaptureSource::setSupportedPresets):
+        (WebCore::RealtimeVideoCaptureSource::standardVideoSizes):
+        (WebCore::updateMinMax):
+        (WebCore::RealtimeVideoCaptureSource::updateCapabilities):
+        (WebCore::RealtimeVideoCaptureSource::supportsSizeAndFrameRate):
+        (WebCore::RealtimeVideoCaptureSource::frameRateRangeIncludesRate):
+        (WebCore::RealtimeVideoCaptureSource::presetSupportsFrameRate):
+        (WebCore::RealtimeVideoCaptureSource::supportsCaptureSize):
+        (WebCore::RealtimeVideoCaptureSource::shouldUsePreset):
+        (WebCore::RealtimeVideoCaptureSource::bestSupportedSizeAndFrameRate):
+        (WebCore::RealtimeVideoCaptureSource::setSizeAndFrameRate):
+        (WebCore::RealtimeVideoCaptureSource::adaptVideoSample):
+        (WebCore::RealtimeVideoCaptureSource::dispatchMediaSampleToObservers):
+        (WebCore::RealtimeVideoCaptureSource::clientUpdatedSizeAndFrameRate):
+        (WebCore::SizeAndFrameRate::toJSONObject const):
+        (WebCore::SizeAndFrameRate::toJSONString const):
+        * platform/mediastream/RealtimeVideoCaptureSource.h: Added.
+        (WebCore::RealtimeVideoCaptureSource::sampleRotation const):
+        (WebCore::RealtimeVideoCaptureSource::prefersPreset):
+        (WebCore::RealtimeVideoCaptureSource::setFrameRateWithPreset):
+        (WebCore::RealtimeVideoCaptureSource::canResizeVideoFrames const):
+        (WebCore::RealtimeVideoCaptureSource::setDefaultSize):
+        (WebCore::RealtimeVideoCaptureSource::observedFrameRate const):
+        (WTF::LogArgument<WebCore::SizeAndFrameRate>::toString):
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        (WebCore::RealtimeVideoSource::RealtimeVideoSource):
+        (WebCore::m_source):
+        (WebCore::RealtimeVideoSource::~RealtimeVideoSource):
+        (WebCore::RealtimeVideoSource::startProducingData):
+        (WebCore::RealtimeVideoSource::stopProducingData):
+        (WebCore::RealtimeVideoSource::supportsSizeAndFrameRate):
+        (WebCore::RealtimeVideoSource::setSizeAndFrameRate):
+        (WebCore::RealtimeVideoSource::sourceMutedChanged):
+        (WebCore::RealtimeVideoSource::sourceSettingsChanged):
+        (WebCore::RealtimeVideoSource::preventSourceFromStopping):
+        (WebCore::RealtimeVideoSource::sourceStopped):
+        (WebCore::RealtimeVideoSource::videoSampleAvailable):
+        (WebCore::RealtimeVideoSource::clone):
+        * platform/mediastream/RealtimeVideoSource.h:
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        (WebCore::GStreamerVideoCaptureSource::GStreamerVideoCaptureSource):
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::create):
+        (WebCore::AVVideoCaptureSource::AVVideoCaptureSource):
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSource::create):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::create):
+        (WebCore::MockRealtimeVideoSource::MockRealtimeVideoSource):
+        (WebCore::MockRealtimeVideoSource::supportsSizeAndFrameRate):
+        (WebCore::MockRealtimeVideoSource::setSizeAndFrameRate):
+        * platform/mock/MockRealtimeVideoSource.h:
+
 2019-06-20  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. More speculative build fixing for watchOS after r246631.

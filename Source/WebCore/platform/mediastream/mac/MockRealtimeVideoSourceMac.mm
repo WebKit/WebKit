@@ -41,6 +41,7 @@
 #import "NotImplemented.h"
 #import "PlatformLayer.h"
 #import "RealtimeMediaSourceSettings.h"
+#import "RealtimeVideoSource.h"
 #import "RealtimeVideoUtilities.h"
 #import <QuartzCore/CALayer.h>
 #import <QuartzCore/CATransaction.h>
@@ -66,7 +67,7 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, String&&
     if (constraints && source->applyConstraints(*constraints))
         return { };
 
-    return CaptureSourceOrError(WTFMove(source));
+    return CaptureSourceOrError(RealtimeVideoSource::create(WTFMove(source)));
 }
 
 MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac(String&& deviceID, String&& name, String&& hashSalt)

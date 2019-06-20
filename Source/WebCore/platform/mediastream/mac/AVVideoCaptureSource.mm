@@ -37,6 +37,7 @@
 #import "PlatformLayer.h"
 #import "RealtimeMediaSourceCenter.h"
 #import "RealtimeMediaSourceSettings.h"
+#import "RealtimeVideoSource.h"
 #import "RealtimeVideoUtilities.h"
 #import <AVFoundation/AVCaptureDevice.h>
 #import <AVFoundation/AVCaptureInput.h>
@@ -121,11 +122,11 @@ CaptureSourceOrError AVVideoCaptureSource::create(String&& id, String&& hashSalt
             return WTFMove(result.value().badConstraint);
     }
 
-    return CaptureSourceOrError(WTFMove(source));
+    return CaptureSourceOrError(RealtimeVideoSource::create(WTFMove(source)));
 }
 
 AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDevice* device, String&& id, String&& hashSalt)
-    : RealtimeVideoSource(device.localizedName, WTFMove(id), WTFMove(hashSalt))
+    : RealtimeVideoCaptureSource(device.localizedName, WTFMove(id), WTFMove(hashSalt))
     , m_objcObserver(adoptNS([[WebCoreAVVideoCaptureSourceObserver alloc] initWithCallback:this]))
     , m_device(device)
 {
@@ -636,7 +637,6 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
     if (this->device() == [notification object])
         captureFailed();
 }
-
 
 } // namespace WebCore
 

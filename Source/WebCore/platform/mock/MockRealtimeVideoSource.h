@@ -37,7 +37,7 @@
 #include "ImageBuffer.h"
 #include "MockMediaDevice.h"
 #include "RealtimeMediaSourceFactory.h"
-#include "RealtimeVideoSource.h"
+#include "RealtimeVideoCaptureSource.h"
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
@@ -45,7 +45,7 @@ namespace WebCore {
 class FloatRect;
 class GraphicsContext;
 
-class MockRealtimeVideoSource : public RealtimeVideoSource {
+class MockRealtimeVideoSource : public RealtimeVideoCaptureSource {
 public:
 
     static CaptureSourceOrError create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints*);

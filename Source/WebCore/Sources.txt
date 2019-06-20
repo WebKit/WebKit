@@ -1872,6 +1872,7 @@ platform/mediastream/RealtimeMediaSourceFactory.cpp
 platform/mediastream/RealtimeMediaSourceSettings.cpp
 platform/mediastream/RealtimeOutgoingAudioSource.cpp
 platform/mediastream/RealtimeOutgoingVideoSource.cpp
+platform/mediastream/RealtimeVideoCaptureSource.cpp
 platform/mediastream/RealtimeVideoSource.cpp
 
 platform/mediastream/libwebrtc/LibWebRTCProvider.cpp
