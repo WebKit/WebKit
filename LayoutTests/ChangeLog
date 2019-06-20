@@ -1,3 +1,12 @@
+2019-06-20  Russell Epstein  <russell_e@apple.com>
+
+        Layout Test imported/blink/fast/css/user-select-none.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=199071
+
+        Unreviewed Test Gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2019-06-20  Shawn Roberts  <sroberts@apple.com>
 
         Moving expectations files
