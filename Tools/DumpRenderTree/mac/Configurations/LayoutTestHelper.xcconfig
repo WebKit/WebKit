@@ -27,3 +27,9 @@
 
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -framework Carbon -framework Cocoa -framework OpenGL -framework IOKit;
 STRIP_STYLE = debugging;
+
+INSTALL_PATH = $(INSTALL_PATH_$(CONFIGURATION))
+INSTALL_PATH_Release = $(INSTALL_PATH);
+INSTALL_PATH_Debug = $(INSTALL_PATH);
+INSTALL_PATH_Production = $(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH);
+INSTALL_PATH_engineering = $(INSTALL_PATH);

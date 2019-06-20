@@ -1,3 +1,38 @@
+2019-06-19  Keith Rollin  <krollin@apple.com>
+
+        Relocate some test tools in non-mac builds
+        https://bugs.webkit.org/show_bug.cgi?id=198984
+        <rdar://problem/51873261>
+
+        Reviewed by Andy Estes.
+
+        The tools DumpRenderTree, WebKitTestRunner, LayoutTestHelper, and
+        TestNetscapePlugin get created in
+        WebKit.framework/Versions/A/Resources on non-mac builds. This is
+        incorrect, as those bundles are shallow bundles that don't use the
+        Versions hierarchy. Instead, store these files directly in
+        WebKit.framework.
+
+        Note that getting rid of just the "Versions/A" path components and
+        putting the files in WebKit.framework/Resources doesn't work as
+        `codesign` treats the result as an invalid layout.
+
+        The work in this patch involves changing the definition of the custom
+        build variable WEBKIT_FRAMEWORK_RESOURCES_PATH. The standard build
+        variable INSTALL_PATH is defined in terms of this variable. In order
+        to increase visiblity into this relationship, move both of these
+        variables into .xcconfig files if they weren't already. This
+        refactoring was done in a way to be the least disruptive and most
+        compatible with the previous definitions, even at the cost of being
+        repetitive.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig:
+        * DumpRenderTree/mac/Configurations/LayoutTestHelper.xcconfig:
+        * DumpRenderTree/mac/Configurations/TestNetscapePlugIn.xcconfig:
+        * WebKitTestRunner/Configurations/BaseTarget.xcconfig:
+
 2019-06-19  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Patch link should open the pretty patch

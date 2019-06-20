@@ -1349,7 +1349,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A1103B5B1892498F00738C87 /* LayoutTestHelper.xcconfig */;
 			buildSettings = {
-				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
 				PRODUCT_NAME = LayoutTestHelper;
 				SKIP_INSTALL = NO;
 			};
@@ -1386,14 +1385,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB281EE0CFA713D007E533E /* Base.xcconfig */;
 			buildSettings = {
-				WEBKIT_FRAMEWORK_RESOURCES_PATH = WebKit.framework/Versions/A/Resources;
 			};
 			name = Production;
 		};
 		90CBC3510F748B1300A712B7 /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
 				PRODUCT_NAME = All;
 				USE_EXPORT_MACROS = 0;
 			};
@@ -1403,7 +1400,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
 			buildSettings = {
-				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
 			};
 			name = Production;
 		};
@@ -1412,7 +1408,6 @@
 			baseConfigurationReference = BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = TestNetscapePlugIn/mac/Info.plist;
-				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
 				SKIP_INSTALL = NO;
 			};
 			name = Production;

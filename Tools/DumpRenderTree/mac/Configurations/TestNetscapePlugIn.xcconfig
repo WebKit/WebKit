@@ -27,7 +27,12 @@ PRODUCT_NAME = TestNetscapePlugIn
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.testnetscapeplugin
 WRAPPER_EXTENSION = plugin
 INFOPLIST_FILE = TestNetscapePlugIn.subproj/Info.plist
-INSTALL_PATH = "$(USER_LIBRARY_DIR)/Plugins"
 WARNING_CFLAGS = -Wmost -Wno-four-char-constants -Wno-unknown-pragmas
 LIBRARY_STYLE = BUNDLE
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *;
+
+INSTALL_PATH = $(INSTALL_PATH_$(CONFIGURATION))
+INSTALL_PATH_Release = $(USER_LIBRARY_DIR)/Plugins;
+INSTALL_PATH_Debug = $(USER_LIBRARY_DIR)/Plugins;
+INSTALL_PATH_Production = $(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH);
+INSTALL_PATH_engineering = $(USER_LIBRARY_DIR)/Plugins;
