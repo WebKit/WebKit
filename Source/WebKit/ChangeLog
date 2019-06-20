@@ -1,3 +1,32 @@
+2019-06-19  Andy Estes  <aestes@apple.com>
+
+        [iOS] Fall back to taking a UIView snapshohot for UITargetedPreviews if InteractionInformationAtPosition does not have an image
+        https://bugs.webkit.org/show_bug.cgi?id=199038
+        <rdar://problem/50555810>
+
+        Reviewed by Tim Horton.
+
+        In -contextMenuInteraction:previewForHighlightingMenuWithConfiguration: and friend, we
+        should always return a non-nil UITargetedPreview. When we do return nil, UIKit uses the web
+        view itself as the snapshot view, creating an unsightly animation.
+
+        For cases where we fail to create a UITargetedPreview from the information in
+        InteractionInformationAtPosition, this patch falls back to creating a UITargetedPreview with
+        a snapshot view obtained from
+        -[UIView resizableSnapshotViewFromRect:afterScreenUpdates:withCapInsets:].
+
+        Also renamed -targetedPreview to -_ensureTargetedPreview and cached the UITargetedPreview
+        for reuse in -contextMenuInteraction:previewForDismissingMenuWithConfiguration:.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (createFallbackTargetedPreview):
+        (-[WKContentView _ensureTargetedPreview]):
+        (-[WKContentView contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+        (-[WKContentView contextMenuInteraction:previewForDismissingMenuWithConfiguration:]):
+        (-[WKContentView contextMenuInteractionDidEnd:]):
+        (-[WKContentView _targetedPreview]): Renamed to _ensureTargetedPreview.
+
 2019-06-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Network: replace CFNetwork SPI with new API where able

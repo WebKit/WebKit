@@ -7859,32 +7859,48 @@ static RetainPtr<UITargetedPreview> createTargetedPreview(UIImage *image, UIView
     return adoptNS([[UITargetedPreview alloc] initWithView:imageView.get() parameters:parameters.get() target:target.get()]);
 }
 
-- (UITargetedPreview *)_targetedPreview
+static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootView, UIView *containerView, const WebCore::FloatRect& frameInRootViewCoordinates)
 {
-    if (_positionInformation.isLink && _positionInformation.linkIndicator.contentImage) {
-        [self _startSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
+    auto parameters = adoptNS([[UIPreviewParameters alloc] init]);
+    UIView *snapshotView = [rootView resizableSnapshotViewFromRect:frameInRootViewCoordinates afterScreenUpdates:NO withCapInsets:UIEdgeInsetsZero];
 
+    CGRect frameInContainerViewCoordinates = [rootView convertRect:frameInRootViewCoordinates toView:containerView];
+    snapshotView.frame = frameInContainerViewCoordinates;
+
+    CGPoint centerInContainerViewCoordinates = CGPointMake(CGRectGetMidX(frameInContainerViewCoordinates), CGRectGetMidY(frameInContainerViewCoordinates));
+    auto target = adoptNS([[UIPreviewTarget alloc] initWithContainer:containerView center:centerInContainerViewCoordinates]);
+
+    return adoptNS([[UITargetedPreview alloc] initWithView:snapshotView parameters:parameters.get() target:target.get()]);
+}
+
+- (UITargetedPreview *)_ensureTargetedPreview
+{
+    if (_contextMenuInteractionTargetedPreview)
+        return _contextMenuInteractionTargetedPreview.get();
+
+    RetainPtr<UITargetedPreview> targetedPreview;
+
+    if (_positionInformation.isLink && _positionInformation.linkIndicator.contentImage) {
         auto indicator = _positionInformation.linkIndicator;
         auto textIndicatorImage = uiImageForImage(indicator.contentImage.get());
-
-        return createTargetedPreview(textIndicatorImage.get(), self, self.unscaledView, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, [UIColor colorWithCGColor:cachedCGColor(indicator.estimatedBackgroundColor)]).autorelease();
-    }
-
-    if ((_positionInformation.isAttachment || _positionInformation.isImage) && _positionInformation.image) {
-        [self _startSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
-
-        RetainPtr<CGImageRef> cgImage = _positionInformation.image->makeCGImageCopy();
+        targetedPreview = createTargetedPreview(textIndicatorImage.get(), self, self.unscaledView, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, [UIColor colorWithCGColor:cachedCGColor(indicator.estimatedBackgroundColor)]);
+    } else if ((_positionInformation.isAttachment || _positionInformation.isImage) && _positionInformation.image) {
+        auto cgImage = _positionInformation.image->makeCGImageCopy();
         auto image = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
-
-        return createTargetedPreview(image.get(), self, self.unscaledView, _positionInformation.bounds, { }, nil).autorelease();
+        targetedPreview = createTargetedPreview(image.get(), self, self.unscaledView, _positionInformation.bounds, { }, nil);
     }
 
-    return nil;
+    if (!targetedPreview)
+        targetedPreview = createFallbackTargetedPreview(self, self.unscaledView, _positionInformation.bounds);
+
+    _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
+    return _contextMenuInteractionTargetedPreview.get();
 }
 
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
 {
-    return [self _targetedPreview];
+    [self _startSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
+    return [self _ensureTargetedPreview];
 }
 
 - (void)contextMenuInteractionWillPresent:(UIContextMenuInteraction *)interaction
@@ -7905,7 +7921,7 @@ static RetainPtr<UITargetedPreview> createTargetedPreview(UIImage *image, UIView
 
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForDismissingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
 {
-    return [self _targetedPreview];
+    return [self _ensureTargetedPreview];
 }
 
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willCommitWithAnimator:(id<UIContextMenuInteractionCommitAnimating>)animator
@@ -7985,6 +8001,7 @@ static RetainPtr<UITargetedPreview> createTargetedPreview(UIImage *image, UIView
     _contextMenuLegacyMenu = nullptr;
     _contextMenuHasRequestedLegacyData = NO;
     _contextMenuElementInfo = nullptr;
+    _contextMenuInteractionTargetedPreview = nil;
 }
 
 @end

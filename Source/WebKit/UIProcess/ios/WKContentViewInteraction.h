@@ -95,6 +95,7 @@ struct WebAutocorrectionContext;
 @class _UIHighlightView;
 @class _UIWebHighlightLongPressGestureRecognizer;
 @class UIHoverGestureRecognizer;
+@class UITargetedPreview;
 @class WebEvent;
 @class WKActionSheetAssistant;
 @class WKContextMenuElementInfo;
@@ -249,6 +250,7 @@ struct WKAutoCorrectionData {
     RetainPtr<UIViewController> _contextMenuLegacyPreviewController;
     RetainPtr<UIMenu> _contextMenuLegacyMenu;
     BOOL _contextMenuHasRequestedLegacyData;
+    RetainPtr<UITargetedPreview> _contextMenuInteractionTargetedPreview;
 #else
     RetainPtr<UIPreviewItemController> _previewItemController;
 #endif
