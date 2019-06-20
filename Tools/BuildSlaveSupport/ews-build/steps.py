@@ -107,6 +107,23 @@ class CheckOutSource(git.Git):
             return {u'step': u'Cleaned and updated working directory'}
 
 
+class CheckOutSpecificRevision(shell.ShellCommand):
+    name = 'checkout-specific-revision'
+    descriptionDone = ['Checked out required revision']
+    flunkOnFailure = False
+    haltOnFailure = False
+
+    def doStepIf(self, step):
+        return self.getProperty('ews_revision', False)
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+    def start(self):
+        self.setCommand(['git', 'checkout', self.getProperty('ews_revision')])
+        return shell.ShellCommand.start(self)
+
+
 class CleanWorkingDirectory(shell.ShellCommand):
     name = 'clean-working-directory'
     description = ['clean-working-directory running']
@@ -404,6 +421,7 @@ class Trigger(trigger.Trigger):
             'fullPlatform': properties.Property('fullPlatform'),
             'architecture': properties.Property('architecture'),
             'owner': properties.Property('owner'),
+            'ews_revision': properties.Property('got_revision'),
         }
 
 

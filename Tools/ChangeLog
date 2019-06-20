@@ -1,5 +1,23 @@
 2019-06-20  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Triggered builds should use same revision as parent build
+        https://bugs.webkit.org/show_bug.cgi?id=198289
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CheckOutSpecificRevision): Build step to checkout specific revision.
+        (CheckOutSpecificRevision.doStepIf): Run this step only if ews_revision property is set.
+        (CheckOutSpecificRevision.hideStepIf): Hide this step when it is skipped.
+        (CheckOutSpecificRevision.start): Run appropriate git command.
+        (Trigger.propertiesToPassToTriggers): Pass ews_revision property to triggered builds, so that triggered
+        builds use same revision as parent build.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+        * BuildSlaveSupport/ews-build/factories.py:
+        (Factory.__init__): Added CheckOutSpecificRevision step.
+
+2019-06-20  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Add unit tests for AnalyzeCompileWebKitResults
         https://bugs.webkit.org/show_bug.cgi?id=199073
 

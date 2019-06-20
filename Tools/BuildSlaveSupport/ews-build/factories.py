@@ -24,8 +24,8 @@
 from buildbot.process import factory
 from buildbot.steps import trigger
 
-from steps import (ApplyPatch, CheckOutSource, CheckPatchRelevance, CheckStyle,
-                   CompileJSCOnly, CompileJSCOnlyToT, CompileWebKit, ConfigureBuild,
+from steps import (ApplyPatch, CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance,
+                   CheckStyle, CompileJSCOnly, CompileJSCOnlyToT, CompileWebKit, ConfigureBuild,
                    DownloadBuiltProduct, ExtractBuiltProduct, KillOldProcesses,
                    PrintConfiguration, ReRunJavaScriptCoreTests, RunAPITests, RunBindingsTests,
                    RunJavaScriptCoreTests, RunJavaScriptCoreTestsToT, RunWebKit1Tests, RunWebKitPerlTests,
@@ -41,6 +41,10 @@ class Factory(factory.BuildFactory):
         self.addStep(ValidatePatch())
         self.addStep(PrintConfiguration())
         self.addStep(CheckOutSource())
+        # CheckOutSource step pulls the latest revision, since we use alwaysUseLatest=True. Without alwaysUseLatest Buildbot will
+        # automatically apply the patch to the repo, and that doesn't handle ChangeLogs well. See https://webkit.org/b/193138
+        # Therefore we add CheckOutSpecificRevision step to checkout required revision.
+        self.addStep(CheckOutSpecificRevision())
         self.addStep(ApplyPatch())
 
 
