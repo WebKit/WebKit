@@ -1,3 +1,23 @@
+2019-06-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Add WTF::crossThreadCopy(T&&) to utilize String::isolatedCopy() &&
+        https://bugs.webkit.org/show_bug.cgi?id=198957
+
+        Reviewed by Alex Christensen.
+
+        &&-qualified String::isolatedCopy() has a optimization path which
+        does just WTFMove if it isSafeToSendToAnotherThread which means
+        the object hasOneRef.
+
+        However, WTF::crossThreadCopy was using only &-qualified
+        isolatedCopy. To use the optimization, added
+        WTF::crossThreadCopy(T&&) overloading.
+
+        * wtf/CrossThreadCopier.h:
+        (WTF::crossThreadCopy): Added a overload of (T&&).
+        * wtf/CrossThreadTask.h:
+        (WTF::createCrossThreadTask): Removed explicit template arguments of crossThreadCopy.
+
 2019-06-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Network: replace CFNetwork SPI with new API where able

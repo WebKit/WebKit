@@ -1,3 +1,14 @@
+2019-06-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Add WTF::crossThreadCopy(T&&) to utilize String::isolatedCopy() &&
+        https://bugs.webkit.org/show_bug.cgi?id=198957
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/CrossThreadCopier.cpp: Added.
+
 2019-06-19  Keith Rollin  <krollin@apple.com>
 
         Relocate some test tools in non-mac builds

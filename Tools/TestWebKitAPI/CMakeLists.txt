@@ -30,6 +30,7 @@ set(TestWTF_SOURCES
     Tests/WTF/CheckedArithmeticOperations.cpp
     Tests/WTF/ConcurrentPtrHashSet.cpp
     Tests/WTF/Condition.cpp
+    Tests/WTF/CrossThreadCopier.cpp
     Tests/WTF/CrossThreadTask.cpp
     Tests/WTF/DateMath.cpp
     Tests/WTF/Deque.cpp
