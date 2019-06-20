@@ -37,6 +37,8 @@
 #include "WHLSLNativeFunctionDeclaration.h"
 #include "WHLSLNativeTypeDeclaration.h"
 #include "WHLSLPointerType.h"
+#include "WHLSLStructureDefinition.h"
+#include "WHLSLTypeDefinition.h"
 #include "WHLSLTypeNamer.h"
 #include "WHLSLUnnamedType.h"
 #include "WHLSLVariableDeclaration.h"

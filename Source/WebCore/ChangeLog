@@ -1,5 +1,11 @@
 2019-06-20  Saam Barati  <sbarati@apple.com>
 
+        Unreviewed. More speculative build fixing for watchOS after r246631.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+
+2019-06-20  Saam Barati  <sbarati@apple.com>
+
         Unreviewed. Speculative build fix for watchOS after r246631.
 
         * Modules/webgpu/WHLSL/WHLSLVisitor.cpp:
