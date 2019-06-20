@@ -1,3 +1,35 @@
+2019-06-18  Darin Adler  <darin@apple.com>
+
+        Tidy up the remaining bits of the AtomicString to AtomString rename
+        https://bugs.webkit.org/show_bug.cgi?id=198990
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/text/AtomString.cpp: Fix a comment.
+        * wtf/text/AtomString.h: Tweak formatting a bit. Use nullptr instead of 0.
+        Removed "using AtomicString = AtomString".
+        * wtf/text/AtomStringImpl.cpp:
+        (WTF::CStringTranslator::translate): Use setIsAtom instead of setIsAtomic.
+        (WTF::UCharBufferTranslator::translate): Ditto.
+        (WTF::HashAndUTF8CharactersTranslator::translate): Ditto.
+        (WTF::SubstringTranslator::translate): Ditto.
+        (WTF::LCharBufferTranslator::translate): Ditto.
+        (WTF::BufferFromStaticDataTranslator::translate): Ditto.
+        (WTF::AtomStringImpl::addSlowCase): Ditto.
+        (WTF::AtomStringImpl::lookUpSlowCase): Updated assertion message.
+
+        * wtf/text/AtomStringImpl.h: Tweaked the implementation of add.
+        Updated comments to say AtomString.
+
+        * wtf/text/AtomStringTable.cpp:
+        (WTF::AtomStringTable::~AtomStringTable): Use setIsAtom.
+
+        * wtf/text/StringImpl.h: Updated name of StringAtomic and
+        s_hashFlagStringKindIsAtom. Renamed to flagIsAtom and setIsAtom.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::isSafeToSendToAnotherThread const): Updated comment.
+
 2019-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove support for GTK2 plugins

@@ -32,7 +32,7 @@ namespace WTF {
 AtomStringTable::~AtomStringTable()
 {
     for (auto* string : m_table)
-        string->setIsAtomic(false);
+        string->setIsAtom(false);
 }
 
 }

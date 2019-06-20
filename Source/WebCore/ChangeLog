@@ -1,3 +1,18 @@
+2019-06-18  Darin Adler  <darin@apple.com>
+
+        Tidy up the remaining bits of the AtomicString to AtomString rename
+        https://bugs.webkit.org/show_bug.cgi?id=198990
+
+        Reviewed by Michael Catanzaro.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp: Updated names.
+        * bindings/scripts/test/TestObj.idl: Ditto.
+
+        * css/makeprop.pl: Updated comment.
+        * css/makevalues.pl: Ditto.
+        * html/FormController.cpp:
+        (WebCore::FormKeyGenerator::formKey): Ditto.
+
 2019-06-20  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Make the initial strut explicit

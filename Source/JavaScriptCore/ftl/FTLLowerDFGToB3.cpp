@@ -10463,7 +10463,7 @@ private:
 
             lastNext = m_out.appendTo(isNonEmptyString, isAtomString);
             uniquedStringImpl = m_out.loadPtr(keyAsValue, m_heaps.JSString_value);
-            LValue isNotAtomic = m_out.testIsZero32(m_out.load32(uniquedStringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIsAtomic()));
+            LValue isNotAtomic = m_out.testIsZero32(m_out.load32(uniquedStringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIsAtom()));
             m_out.branch(isNotAtomic, rarely(slowCase), usually(isAtomString));
 
             m_out.appendTo(isAtomString, slowCase);
@@ -10495,7 +10495,7 @@ private:
             m_out.appendTo(isNonEmptyString, notStringCase);
             LValue implFromString = m_out.loadPtr(keyAsValue, m_heaps.JSString_value);
             ValueFromBlock stringResult = m_out.anchor(implFromString);
-            LValue isNotAtomic = m_out.testIsZero32(m_out.load32(implFromString, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIsAtomic()));
+            LValue isNotAtomic = m_out.testIsZero32(m_out.load32(implFromString, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIsAtom()));
             m_out.branch(isNotAtomic, rarely(slowCase), usually(hasUniquedStringImpl));
 
             m_out.appendTo(notStringCase, isSymbolCase);
@@ -16421,7 +16421,7 @@ private:
             BadType, jsValueValue(string), edge.node(),
             m_out.testIsZero32(
                 m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags),
-                m_out.constInt32(StringImpl::flagIsAtomic())));
+                m_out.constInt32(StringImpl::flagIsAtom())));
         m_interpreter.filter(edge, SpecStringIdent | ~SpecString);
     }
     

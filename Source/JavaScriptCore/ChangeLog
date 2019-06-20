@@ -1,3 +1,20 @@
+2019-06-18  Darin Adler  <darin@apple.com>
+
+        Tidy up the remaining bits of the AtomicString to AtomString rename
+        https://bugs.webkit.org/show_bug.cgi?id=198990
+
+        Reviewed by Michael Catanzaro.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateStringIdentAndLoadStorage): Use flagIsAtom.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Ditto.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Ditto.
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasOwnProperty): Ditto.
+        (JSC::FTL::DFG::LowerDFGToB3::speculateStringIdent): Ditto.
+
 2019-06-19  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Optimize `resolve` method lookup in Promise static methods

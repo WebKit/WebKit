@@ -789,7 +789,7 @@ TEST(WTF, StringImplNotExternal)
 }
 
 
-TEST(WTF, ExternalStringAtomic)
+TEST(WTF, ExternalStringAtom)
 {
     constexpr LChar buffer[] = "hello";
     constexpr size_t bufferStringLength = sizeof(buffer) - 1;

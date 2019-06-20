@@ -39,7 +39,7 @@ ALWAYS_INLINE AtomString AtomString::convertASCIICase() const
         return nullAtom();
 
     // Convert short strings without allocating a new StringImpl, since
-    // there's a good chance these strings are already in the atomic
+    // there's a good chance these strings are already in the atom
     // string table and so no memory allocation will be required.
     unsigned length;
     const unsigned localBufferSize = 100;

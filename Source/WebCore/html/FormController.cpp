@@ -326,7 +326,7 @@ AtomString FormKeyGenerator::formKey(const HTMLFormControlElementWithState& cont
     return m_formToKeyMap.ensure(form.get(), [this, &form] {
         auto signature = formSignature(*form);
         auto nextIndex = m_formSignatureToNextIndexMap.add(signature, 0).iterator->value++;
-        // FIXME: Would be nice to have makeAtomicString to use here.
+        // FIXME: Would be nice to have makeAtomString to use to optimize the case where the string already exists.
         return makeString(signature, " #", nextIndex);
     }).iterator->value;
 }

@@ -108,7 +108,7 @@ struct CStringTranslator {
     {
         location = &StringImpl::create(characters).leakRef();
         location->setHash(hash);
-        location->setIsAtomic(true);
+        location->setIsAtom(true);
     }
 };
 
@@ -159,7 +159,7 @@ struct UCharBufferTranslator {
     {
         location = &StringImpl::create8BitIfPossible(buf.characters, buf.length).leakRef();
         location->setHash(hash);
-        location->setIsAtomic(true);
+        location->setIsAtom(true);
     }
 };
 
@@ -227,7 +227,7 @@ struct HashAndUTF8CharactersTranslator {
 
         location = &newString.leakRef();
         location->setHash(hash);
-        location->setIsAtomic(true);
+        location->setIsAtom(true);
     }
 };
 
@@ -270,7 +270,7 @@ struct SubstringTranslator {
     {
         location = &StringImpl::createSubstringSharingImpl(*buffer.baseString, buffer.start, buffer.length).leakRef();
         location->setHash(hash);
-        location->setIsAtomic(true);
+        location->setIsAtom(true);
     }
 };
 
@@ -335,7 +335,7 @@ struct LCharBufferTranslator {
     {
         location = &StringImpl::create(buf.characters, buf.length).leakRef();
         location->setHash(hash);
-        location->setIsAtomic(true);
+        location->setIsAtom(true);
     }
 };
 
@@ -356,7 +356,7 @@ struct BufferFromStaticDataTranslator {
     {
         location = &StringImpl::createWithoutCopying(buf.characters, buf.length).leakRef();
         location->setHash(hash);
-        location->setIsAtomic(true);
+        location->setIsAtom(true);
     }
 };
 
@@ -437,14 +437,14 @@ Ref<AtomStringImpl> AtomStringImpl::addSlowCase(StringImpl& string)
     if (string.isSymbol())
         return addSymbol(string);
 
-    ASSERT_WITH_MESSAGE(!string.isAtom(), "AtomStringImpl should not hit the slow case if the string is already atomic.");
+    ASSERT_WITH_MESSAGE(!string.isAtom(), "AtomStringImpl should not hit the slow case if the string is already an atom.");
 
     AtomStringTableLocker locker;
     auto addResult = stringTable().add(&string);
 
     if (addResult.isNewEntry) {
         ASSERT(*addResult.iterator == &string);
-        string.setIsAtomic(true);
+        string.setIsAtom(true);
     }
 
     return *static_cast<AtomStringImpl*>(*addResult.iterator);
@@ -467,14 +467,14 @@ Ref<AtomStringImpl> AtomStringImpl::addSlowCase(AtomStringTable& stringTable, St
         return addSymbol(locker, stringTable.table(), string);
     }
 
-    ASSERT_WITH_MESSAGE(!string.isAtom(), "AtomStringImpl should not hit the slow case if the string is already atomic.");
+    ASSERT_WITH_MESSAGE(!string.isAtom(), "AtomStringImpl should not hit the slow case if the string is already an atom.");
 
     AtomStringTableLocker locker;
     auto addResult = stringTable.table().add(&string);
 
     if (addResult.isNewEntry) {
         ASSERT(*addResult.iterator == &string);
-        string.setIsAtomic(true);
+        string.setIsAtom(true);
     }
 
     return *static_cast<AtomStringImpl*>(*addResult.iterator);
@@ -486,14 +486,14 @@ void AtomStringImpl::remove(AtomStringImpl* string)
     AtomStringTableLocker locker;
     auto& atomStringTable = stringTable();
     auto iterator = atomStringTable.find(string);
-    ASSERT_WITH_MESSAGE(iterator != atomStringTable.end(), "The string being removed is atomic in the string table of an other thread!");
+    ASSERT_WITH_MESSAGE(iterator != atomStringTable.end(), "The string being removed is an atom in the string table of an other thread!");
     ASSERT(string == *iterator);
     atomStringTable.remove(iterator);
 }
 
 RefPtr<AtomStringImpl> AtomStringImpl::lookUpSlowCase(StringImpl& string)
 {
-    ASSERT_WITH_MESSAGE(!string.isAtom(), "AtomicStringImpls should return from the fast case.");
+    ASSERT_WITH_MESSAGE(!string.isAtom(), "AtomStringImpl objects should return from the fast case.");
 
     if (!string.length())
         return static_cast<AtomStringImpl*>(StringImpl::empty());

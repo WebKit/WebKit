@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -49,7 +49,7 @@ public:
     ALWAYS_INLINE static RefPtr<AtomStringImpl> add(StringImpl* string)
     {
         if (!string)
-            return static_cast<AtomStringImpl*>(string);
+            return nullptr;
         return add(*string);
     }
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(const StaticStringImpl*);
@@ -80,7 +80,7 @@ private:
     ALWAYS_INLINE static Ref<AtomStringImpl> add(StringImpl& string)
     {
         if (string.isAtom()) {
-            ASSERT_WITH_MESSAGE(!string.length() || isInAtomStringTable(&string), "The atomic string comes from an other thread!");
+            ASSERT_WITH_MESSAGE(!string.length() || isInAtomStringTable(&string), "The atom string comes from an other thread!");
             return static_cast<AtomStringImpl&>(string);
         }
         return addSlowCase(string);
@@ -89,7 +89,7 @@ private:
     ALWAYS_INLINE static Ref<AtomStringImpl> add(AtomStringTable& stringTable, StringImpl& string)
     {
         if (string.isAtom()) {
-            ASSERT_WITH_MESSAGE(!string.length() || isInAtomStringTable(&string), "The atomic string comes from an other thread!");
+            ASSERT_WITH_MESSAGE(!string.length() || isInAtomStringTable(&string), "The atom string comes from an other thread!");
             return static_cast<AtomStringImpl&>(string);
         }
         return addSlowCase(stringTable, string);
@@ -102,20 +102,19 @@ private:
 };
 
 #if !ASSERT_DISABLED
-// AtomicStringImpls created from StaticStringImpl will ASSERT
-// in the generic ValueCheck<T>::checkConsistency
-// as they are not allocated by fastMalloc.
-// We don't currently have any way to detect that case
-// so we ignore the consistency check for all AtomicStringImpls*.
-template<> struct
-ValueCheck<AtomStringImpl*> {
+
+// AtomStringImpls created from StaticStringImpl will ASSERT in the generic ValueCheck<T>::checkConsistency,
+// as they are not allocated by fastMalloc. We don't currently have any way to detect that case, so we don't
+// do any consistency check for AtomStringImpl*.
+
+template<> struct ValueCheck<AtomStringImpl*> {
     static void checkConsistency(const AtomStringImpl*) { }
 };
 
-template<> struct
-ValueCheck<const AtomStringImpl*> {
+template<> struct ValueCheck<const AtomStringImpl*> {
     static void checkConsistency(const AtomStringImpl*) { }
 };
+
 #endif
 
 }

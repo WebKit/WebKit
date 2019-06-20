@@ -102,67 +102,10 @@ sub wanted
 my $isDOMTypeRename = 0;
 my %renames = (
     # Renames go here in the form of:
-    "AtomicString" => "AtomString",
-    "AtomicStringCreationFromLiteral" => "AtomStringCreationFromLiteral",
-    "AtomicStringCreationFromLiteralUniqueness" => "AtomStringCreationFromLiteralUniqueness",
-    "AtomicStringExistingHash" => "AtomStringExistingHash",
-    "AtomicStringFromLiteralCannotOverflow" => "AtomStringFromLiteralCannotOverflow",
-    "AtomicStringFromLiteralNotEmpty" => "AtomStringFromLiteralNotEmpty",
-    "AtomicStringHash" => "AtomStringHash",
-    "AtomicStringImpl" => "AtomStringImpl",
-    "AtomicStringImplCF" => "AtomStringImplCF",
-    "AtomicStringNumberDouble" => "AtomStringNumberDouble",
-    "AtomicStringTable" => "AtomStringTable",
-    "AtomicStringTable" => "AtomStringTable",
-    "AtomicStringTableLocker" => "AtomStringTableLocker",
-    "AtomicString_h" => "AtomString_h",
-    "IDLAtomicStringAdaptor" => "IDLAtomStringAdaptor",
-    "IDLRequiresExistingAtomicStringAdaptor" => "IDLRequiresExistingAtomStringAdaptor",
-    "RequiresExistingAtomicString" => "RequiresExistingAtomString",
-    "StringImplNullSymbolToAtomicString" => "StringImplNullSymbolToAtomString",
-    "StringImplStaticToAtomicString" => "StringImplStaticToAtomString",
-    "StringImplSymbolToAtomicString" => "StringImplSymbolToAtomString",
-    "ToAtomicString" => "ToAtomString",
-    "ToAtomicStringOnEmpty" => "ToAtomStringOnEmpty",
-    "TokenAtomicStringInitializer" => "TokenAtomStringInitializer",
-    "WTFAtomicStringPrinter" => "WTFAtomStringPrinter",
-    "WTFAtomicString_SummaryProvider" => "WTFAtomString_SummaryProvider",
-    "atomicString" => "atomString",
-    "atomicString1" => "atomString1",
-    "atomicString2" => "atomString2",
-    "atomicStringTable" => "atomStringTable",
-    "atomicStringWithTemplate" => "atomStringWithTemplate",
-    "atomicStrings" => "atomStrings",
-    "checkCurrentAtomicStringTable" => "checkCurrentAtomStringTable",
-    "existingAtomicString" => "existingAtomString",
-    "existingEntryAtomicStringTable" => "existingEntryAtomStringTable",
-    "getPropertyNameAtomicString" => "getPropertyNameAtomString",
-    "getValueNameAtomicString" => "getValueNameAtomString",
-    "isAtomic" => "isAtom",
-    "isAtomicString" => "isAtomString",
-    "isInAtomicStringTable" => "isInAtomStringTable",
-    "m_atomicStringTable" => "m_atomStringTable",
-    "m_currentAtomicStringTable" => "m_currentAtomStringTable",
-    "m_defaultAtomicStringTable" => "m_defaultAtomStringTable",
-    "m_entryAtomicStringTable" => "m_entryAtomStringTable",
-    "oldAtomicStringTable" => "oldAtomStringTable",
-    "propertyNameToAtomicString" => "propertyNameToAtomString",
-    "resolveRopeToAtomicString" => "resolveRopeToAtomString",
-    "resolveRopeToExistingAtomicString" => "resolveRopeToExistingAtomString",
-    "setCurrentAtomicStringTable" => "setCurrentAtomStringTable",
-    "shouldUseAtomicString" => "shouldUseAtomString",
-    "testAtomicStringNumber" => "testAtomStringNumber",
-    "toAtomicString" => "toAtomString",
-    "toExistingAtomicString" => "toExistingAtomString",
-    "useAtomicString" => "useAtomString",
+    "flagIsAtomic" => "flagIsAtom",
 );
 
 my %renamesContemplatedForTheFuture = (
-    "setDOMException" => "propagateException",
-    "setDOMExceptionSlow" => "propagateExceptionSlowPath",
-
-    "PassRefPtr" => "DeprecatedPassRefPtr",
-
     "HTMLPlugInImageElement" => "HTMLEmbeddedObjectElement",
     "isPlugInImageElement" => "isEmbeddedObjectElement",
     "isHTMLPlugInImageElement" => "isHTMLEmbeddedObjectElement",
@@ -172,8 +115,6 @@ my %renamesContemplatedForTheFuture = (
 
     "DateInstance" => "JSDate",
     "ErrorInstance" => "JSError",
-
-    "TreeShared" => "TreeRefCounted",
 
     "StringImpl" => "SharedString",
 
@@ -186,10 +127,6 @@ my %renamesContemplatedForTheFuture = (
     "runtime_method" => "BridgedFunction",
     "runtime_object" => "BridgedObject",
     "objc_runtime" => "ObjCBridge",
-
-    "WTF_UNICODE_H" => "Unicode_h",
-    "WTF_UNICODE_ICU_H" => "UnicodeICU_h",
-    "UnicodeIcu" => "UnicodeICU",
 
     "LegacyWebArchive" => "WebArchive",
     "LegacyWebArchive_h" => "WebArchive_h",

@@ -1,3 +1,13 @@
+2019-06-18  Darin Adler  <darin@apple.com>
+
+        Tidy up the remaining bits of the AtomicString to AtomString rename
+        https://bugs.webkit.org/show_bug.cgi?id=198990
+
+        Reviewed by Michael Catanzaro.
+
+        * js/dopey-rope-with-16-bit-propertyname-expected.txt: Rename to AtomString.
+        * js/dopey-rope-with-16-bit-propertyname.html: Ditto.
+
 2019-06-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Hook up common texture functions

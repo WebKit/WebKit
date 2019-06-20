@@ -1,6 +1,6 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -648,7 +648,7 @@ String String::isolatedCopy() &&
 
 bool String::isSafeToSendToAnotherThread() const
 {
-    // AtomicStrings are not safe to send between threads as ~StringImpl()
+    // AtomStrings are not safe to send between threads, as ~StringImpl()
     // will try to remove them from the wrong AtomStringTable.
     return isEmpty() || (m_impl->hasOneRef() && !m_impl->isAtom());
 }

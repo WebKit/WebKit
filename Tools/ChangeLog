@@ -1,3 +1,13 @@
+2019-06-18  Darin Adler  <darin@apple.com>
+
+        Tidy up the remaining bits of the AtomicString to AtomString rename
+        https://bugs.webkit.org/show_bug.cgi?id=198990
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/do-webcore-rename: Removed already-done renames.
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp: Rename one use of "atomic".
+
 2019-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove support for GTK2 plugins

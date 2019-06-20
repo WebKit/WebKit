@@ -7,14 +7,14 @@
 <body>
 <script>
 
-description("Test that a 16-bit AtomicString containing only 8-bit characters doesn't confuse the JIT into thinking it's an 8-bit AtomicString.");
+description("Test that a 16-bit AtomString containing only 8-bit characters doesn't confuse the JIT into thinking it's an 8-bit AtomString.");
 
 o = {};
 
 stringWithEmoji = "zest😐";
 var test16bit = stringWithEmoji.substring(0, 4);
 
-o[test16bit] = "this makes it an AtomicString";
+o[test16bit] = "this makes it an AtomString";
 
 globalRope = "";
 

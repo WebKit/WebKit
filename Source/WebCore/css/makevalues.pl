@@ -145,7 +145,7 @@ const AtomString& getValueNameAtomString(CSSValueID id)
 
 String getValueNameString(CSSValueID id)
 {
-    // We share the StringImpl with the AtomicStrings.
+    // We share the StringImpl with the AtomStrings.
     return getValueNameAtomString(id).string();
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -90,7 +90,8 @@ public:
     operator const String&() const { return m_string; }
     const String& string() const { return m_string; };
 
-    AtomStringImpl* impl() const { return static_cast<AtomStringImpl *>(m_string.impl()); }
+    // FIXME: What guarantees this isn't a SymbolImpl rather than an AtomStringImpl?
+    AtomStringImpl* impl() const { return static_cast<AtomStringImpl*>(m_string.impl()); }
 
     bool is8Bit() const { return m_string.is8Bit(); }
     const LChar* characters8() const { return m_string.characters8(); }
@@ -132,9 +133,9 @@ public:
     WTF_EXPORT_PRIVATE AtomString convertToASCIILowercase() const;
     WTF_EXPORT_PRIVATE AtomString convertToASCIIUppercase() const;
 
-    int toInt(bool* ok = 0) const { return m_string.toInt(ok); }
-    double toDouble(bool* ok = 0) const { return m_string.toDouble(ok); }
-    float toFloat(bool* ok = 0) const { return m_string.toFloat(ok); }
+    int toInt(bool* ok = nullptr) const { return m_string.toInt(ok); }
+    double toDouble(bool* ok = nullptr) const { return m_string.toDouble(ok); }
+    float toFloat(bool* ok = nullptr) const { return m_string.toFloat(ok); }
     bool percentage(int& p) const { return m_string.percentage(p); }
 
     bool isNull() const { return m_string.isNull(); }
@@ -145,8 +146,8 @@ public:
 #endif
 
 #ifdef __OBJC__
-    AtomString(NSString*);
-    operator NSString*() const { return m_string; }
+    AtomString(NSString *);
+    operator NSString *() const { return m_string; }
 #endif
 
 #if OS(WINDOWS) && U_ICU_VERSION_MAJOR_NUM >= 59
@@ -177,9 +178,7 @@ private:
     String m_string;
 };
 
-using AtomicString = AtomString;
-
-static_assert(sizeof(AtomString) == sizeof(String), "AtomString and String must be same size!");
+static_assert(sizeof(AtomString) == sizeof(String), "AtomString and String must be the same size!");
 
 inline bool operator==(const AtomString& a, const AtomString& b) { return a.impl() == b.impl(); }
 bool operator==(const AtomString&, const LChar*);
@@ -281,14 +280,14 @@ inline AtomString::AtomString(CFStringRef string)
 
 #ifdef __OBJC__
 
-inline AtomString::AtomString(NSString* string)
+inline AtomString::AtomString(NSString *string)
     : m_string(AtomStringImpl::add((__bridge CFStringRef)string))
 {
 }
 
 #endif
 
-// Define external global variables for the commonly used atomic strings.
+// Define external global variables for the commonly used atom strings.
 // These are only usable from the main thread.
 extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomString> nullAtomData;
 extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomString> emptyAtomData;
@@ -360,7 +359,6 @@ template<> struct IntegerToStringConversionTrait<AtomString> {
 } // namespace WTF
 
 using WTF::AtomString;
-using WTF::AtomicString;
 using WTF::nullAtom;
 using WTF::emptyAtom;
 using WTF::starAtom;
