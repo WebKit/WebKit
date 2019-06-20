@@ -39,7 +39,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         this._entriesSortComparator = null;
 
-        this._pendingFilter = false;
         this._showingRepresentedObjectCookie = null;
 
         this._table = null;
@@ -1333,10 +1332,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     {
         let collection = this._activeCollection;
         let needsSort = collection.pendingUpdates.length > 0;
-        let needsFilter = this._pendingFilter;
 
-        // No global sort or filter is needed, so just insert new records into their sorted position.
-        if (!needsSort && !needsFilter) {
+        // No global sort is needed, so just insert new records into their sorted position.
+        if (!needsSort) {
             let originalLength = collection.pendingInsertions.length;
             for (let resource of collection.pendingInsertions)
                 this._insertResourceAndReloadTable(resource);
@@ -1357,8 +1355,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 this._updateEntryForResource(updateObject);
         }
         collection.pendingUpdates = [];
-
-        this._pendingFilter = false;
 
         this._updateSort();
         this._updateFilteredEntries();
