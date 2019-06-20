@@ -1,3 +1,15 @@
+2019-06-20  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Fix a bug that 'test_metrics' and 'tests' tables are not joined correctly in CommitLogFetcher.fetch_latest_for_platform
+        https://bugs.webkit.org/show_bug.cgi?id=199062
+
+        Reviewed by Ryosuke Niwa.
+
+        'test_metrics' and 'tests' should be joined based on 'metric_test' and 'test_id'.
+
+        * public/include/commit-log-fetcher.php: Fix the typo in the query.
+        * server-tests/api-commits-tests.js: Added a unit test for this change.
+
 2019-06-17  Dewei Zhu  <dewei_zhu@apple.com>
 
         Customizable test group form should allow user to supply a revision prefix of a commit and revision starts with 'r'.

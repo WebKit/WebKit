@@ -155,10 +155,10 @@ class CommitLogFetcher {
     function fetch_latest_for_platform($repository_id, $platform_id)
     {
         $query_result = $this->db->query_and_fetch_all("SELECT commits.* FROM test_runs, builds, build_commits, commits
-            WHERE run_build = build_id AND NOT EXISTS (SELECT * FROM build_requests WHERE request_build = build_id)
+            WHERE run_build = build_id AND NOT EXISTS (SELECT * FROM build_requests WHERE request_build = build_id LIMIT 1)
                 AND run_config IN (SELECT config_id FROM test_configurations
                     WHERE config_type = 'current' AND config_platform = $2 AND config_metric
-                        IN (SELECT metric_id FROM test_metrics, tests WHERE metric_id = test_id and test_parent IS NULL))
+                        IN (SELECT metric_id FROM test_metrics, tests WHERE metric_test = test_id and test_parent IS NULL))
                 AND run_build = build_id AND commit_build = build_id AND build_commit = commit_id AND commit_repository = $1
             ORDER BY build_time DESC LIMIT 1;", array($repository_id, $platform_id));
         /* This query is approximation. It finds the commit of the last build instead of the last commit.
