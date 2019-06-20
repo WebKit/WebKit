@@ -21,10 +21,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-// FIXME: Many of these files are built with @no-unify to avoid errors
-// linking PluginProcessGTK2. I don't know why this is necessary. These
-// annotations should be revisited after removing PluginProcessGTK2.
-
 NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
 NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp
 
@@ -49,20 +45,20 @@ NetworkProcess/webrtc/NetworkRTCMonitor.cpp
 NetworkProcess/webrtc/NetworkRTCProvider.cpp
 NetworkProcess/webrtc/NetworkRTCSocket.cpp
 
-Platform/IPC/glib/GSocketMonitor.cpp @no-unify
-Platform/IPC/unix/AttachmentUnix.cpp @no-unify
-Platform/IPC/unix/ConnectionUnix.cpp @no-unify
+Platform/IPC/glib/GSocketMonitor.cpp
+Platform/IPC/unix/AttachmentUnix.cpp
+Platform/IPC/unix/ConnectionUnix.cpp
 
 Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 
-Platform/glib/ModuleGlib.cpp @no-unify
+Platform/glib/ModuleGlib.cpp
 
-Platform/unix/LoggingUnix.cpp @no-unify
-Platform/unix/SharedMemoryUnix.cpp @no-unify
+Platform/unix/LoggingUnix.cpp
+Platform/unix/SharedMemoryUnix.cpp
 
-PluginProcess/unix/PluginControllerProxyUnix.cpp @no-unify
-PluginProcess/unix/PluginProcessMainUnix.cpp @no-unify
-PluginProcess/unix/PluginProcessUnix.cpp @no-unify
+PluginProcess/unix/PluginControllerProxyUnix.cpp
+PluginProcess/unix/PluginProcessMainUnix.cpp
+PluginProcess/unix/PluginProcessUnix.cpp
 
 Shared/API/c/cairo/WKImageCairo.cpp
 
@@ -80,14 +76,14 @@ Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp
 Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp
 Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp
 
-Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp @no-unify
-Shared/Plugins/Netscape/unix/NetscapePluginModuleUnix.cpp @no-unify
+Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
+Shared/Plugins/Netscape/unix/NetscapePluginModuleUnix.cpp
 
 Shared/Plugins/unix/PluginSearchPath.cpp
 
-Shared/cairo/ShareableBitmapCairo.cpp @no-unify
+Shared/cairo/ShareableBitmapCairo.cpp
 
-Shared/glib/ProcessExecutablePathGLib.cpp @no-unify
+Shared/glib/ProcessExecutablePathGLib.cpp
 Shared/glib/WebContextMenuItemGlib.cpp
 
 Shared/gtk/ArgumentCodersGtk.cpp
@@ -102,18 +98,18 @@ Shared/gtk/WebSelectionData.cpp
 
 Shared/linux/WebMemorySamplerLinux.cpp
 
-Shared/soup/WebCoreArgumentCodersSoup.cpp @no-unify
+Shared/soup/WebCoreArgumentCodersSoup.cpp
 Shared/soup/WebErrorsSoup.cpp
 
-Shared/unix/AuxiliaryProcessMain.cpp @no-unify
+Shared/unix/AuxiliaryProcessMain.cpp
 
 UIProcess/BackingStore.cpp
 UIProcess/DefaultUndoController.cpp
 UIProcess/LegacySessionStateCodingNone.cpp
 UIProcess/ViewGestureController.cpp
-UIProcess/ViewSnapshotStore.cpp @no-unify
+UIProcess/ViewSnapshotStore.cpp
 UIProcess/WebGrammarDetail.cpp
-UIProcess/WebMemoryPressureHandler.cpp @no-unify
+UIProcess/WebMemoryPressureHandler.cpp
 UIProcess/WebTextChecker.cpp
 UIProcess/WebTextCheckerClient.cpp
 UIProcess/WebViewportAttributes.cpp
@@ -220,10 +216,10 @@ UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp
 
 UIProcess/linux/MemoryPressureMonitor.cpp
 
-UIProcess/Plugins/gtk/PluginInfoCache.cpp @no-unify
+UIProcess/Plugins/gtk/PluginInfoCache.cpp
 
-UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp @no-unify
-UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp @no-unify
+UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
+UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
 
 UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
@@ -237,20 +233,20 @@ UIProcess/glib/WebProcessProxyGLib.cpp
 UIProcess/gstreamer/InstallMissingMediaPluginsPermissionRequest.cpp
 UIProcess/gstreamer/WebPageProxyGStreamer.cpp
 
-UIProcess/gtk/AcceleratedBackingStore.cpp  @no-unify
+UIProcess/gtk/AcceleratedBackingStore.cpp
 UIProcess/gtk/AcceleratedBackingStoreWayland.cpp @no-unify
 UIProcess/gtk/AcceleratedBackingStoreX11.cpp @no-unify
 UIProcess/gtk/DragAndDropHandler.cpp
 UIProcess/gtk/GestureController.cpp
 UIProcess/gtk/HardwareAccelerationManager.cpp
-UIProcess/gtk/InputMethodFilter.cpp @no-unify
+UIProcess/gtk/InputMethodFilter.cpp
 UIProcess/gtk/KeyBindingTranslator.cpp
-UIProcess/gtk/RemoteWebInspectorProxyGtk.cpp @no-unify
+UIProcess/gtk/RemoteWebInspectorProxyGtk.cpp
 UIProcess/gtk/TextCheckerGtk.cpp @no-unify
 UIProcess/gtk/ViewGestureControllerGtk.cpp @no-unify
-UIProcess/gtk/ViewSnapshotStoreGtk.cpp @no-unify
+UIProcess/gtk/ViewSnapshotStoreGtk.cpp
 UIProcess/gtk/WaylandCompositor.cpp @no-unify
-UIProcess/gtk/WebColorPickerGtk.cpp @no-unify
+UIProcess/gtk/WebColorPickerGtk.cpp
 UIProcess/gtk/WebContextMenuProxyGtk.cpp
 UIProcess/gtk/WebInspectorProxyGtk.cpp
 UIProcess/gtk/WebKitInspectorWindow.cpp
@@ -390,8 +386,8 @@ WebProcess/InjectedBundle/glib/InjectedBundleGlib.cpp
 
 WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
 
-WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.cpp @no-unify
-WebProcess/Plugins/Netscape/unix/PluginProxyUnix.cpp @no-unify
+WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.cpp
+WebProcess/Plugins/Netscape/unix/PluginProxyUnix.cpp
 
 WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp @no-unify
 

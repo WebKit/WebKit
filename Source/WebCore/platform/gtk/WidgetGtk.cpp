@@ -31,7 +31,6 @@
 #include "Cursor.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "GtkVersioning.h"
 #include "HostWindow.h"
 #include "IntRect.h"
 

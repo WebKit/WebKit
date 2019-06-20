@@ -112,7 +112,6 @@ function installDependenciesWithApt {
         libgirepository1.0-dev \
         libgl1-mesa-dev \
         libgl1-mesa-glx \
-        libgtk2.0-dev \
         libgtk-3-dev \
         libgstreamer1.0-dev \
         libgstreamer-plugins-bad1.0-dev \
@@ -282,7 +281,6 @@ function installDependenciesWithPacman {
         gobject-introspection \
         mesa \
         mesa-libgl \
-        gtk2 \
         gtk3 \
         libsystemd \
         libjpeg-turbo \
@@ -434,7 +432,6 @@ function installDependenciesWithDnf {
         gstreamer1-plugins-bad-free-devel \
         gstreamer1-plugins-base-devel \
         gtk-doc \
-        gtk2-devel \
         gtk3-devel \
         hyphen-devel \
         intltool \

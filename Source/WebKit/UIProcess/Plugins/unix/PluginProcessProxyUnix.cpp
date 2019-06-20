@@ -53,12 +53,7 @@ using namespace WebCore;
 void PluginProcessProxy::platformGetLaunchOptionsWithAttributes(ProcessLauncher::LaunchOptions& launchOptions, const PluginProcessAttributes& pluginProcessAttributes)
 {
     launchOptions.processType = ProcessLauncher::ProcessType::Plugin64;
-
     launchOptions.extraInitializationData.add("plugin-path", pluginProcessAttributes.moduleInfo.path);
-#if PLATFORM(GTK)
-    if (pluginProcessAttributes.moduleInfo.requiresGtk2)
-        launchOptions.extraInitializationData.add("requires-gtk2", emptyString());
-#endif
 }
 
 void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters&)
@@ -81,20 +76,8 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
     String pluginProcessPath = executablePathOfPluginProcess();
 
 #if PLATFORM(GTK)
-    bool requiresGtk2 = pluginRequiresGtk2(pluginPath);
-    if (requiresGtk2) {
-#if PLATFORM(WAYLAND)
-        if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
-            return false;
-#endif
-#if ENABLE(PLUGIN_PROCESS_GTK2)
-        pluginProcessPath.append('2');
-        if (!FileSystem::fileExists(pluginProcessPath))
-            return false;
-#else
+    if (pluginRequiresGtk2(pluginPath))
         return false;
-#endif
-    }
 #endif
 
     CString binaryPath = FileSystem::fileSystemRepresentation(pluginProcessPath);
@@ -147,9 +130,6 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
     result.name.swap(lines[0]);
     result.description.swap(lines[1]);
     result.mimeDescription.swap(lines[2]);
-#if PLATFORM(GTK)
-    result.requiresGtk2 = requiresGtk2;
-#endif
     return !result.mimeDescription.isEmpty();
 }
 #endif // PLUGIN_ARCHITECTURE(UNIX)

@@ -25,12 +25,6 @@
 
 namespace WebCore {
 
-Color::Color(const GdkColor& c)
-{
-    setRGB(makeRGB(c.red >> 8, c.green >> 8, c.blue >> 8));
-}
-
-#ifndef GTK_API_VERSION_2
 Color::Color(const GdkRGBA& c)
 {
     setRGB(makeRGBA(static_cast<int>(c.red * 255),
@@ -48,7 +42,6 @@ Color::operator GdkRGBA() const
     getRGBA(red, green, blue, alpha);
     return { red, green, blue, alpha };
 }
-#endif
 
 }
 

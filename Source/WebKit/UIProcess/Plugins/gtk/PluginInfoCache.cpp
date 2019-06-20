@@ -133,8 +133,6 @@ bool PluginInfoCache::getPluginInfo(const String& pluginPath, PluginModuleInfo& 
     NetscapePluginModule::parseMIMEDescription(String::fromUTF8(stringValue.get()), plugin.info.mimes);
 #endif
 
-    plugin.requiresGtk2 = g_key_file_get_boolean(m_cacheFile.get(), pluginGroup.data(), "requires-gtk2", nullptr);
-
     return true;
 }
 
@@ -153,8 +151,6 @@ void PluginInfoCache::updatePluginInfo(const String& pluginPath, const PluginMod
     String mimeDescription = NetscapePluginModule::buildMIMEDescription(plugin.info.mimes);
     g_key_file_set_string(m_cacheFile.get(), pluginGroup.data(), "mime-description", mimeDescription.utf8().data());
 #endif
-
-    g_key_file_set_boolean(m_cacheFile.get(), pluginGroup.data(), "requires-gtk2", plugin.requiresGtk2);
 
     if (m_cachePath && !m_readOnlyMode) {
         // Save the cache file in an idle to make sure it happens in the main thread and

@@ -48,8 +48,6 @@ private:
     void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override;
 
 public:
-#ifndef GTK_API_VERSION_2
-
     // A method asking if the theme's controls actually care about redrawing when hovered.
     bool supportsHover(const RenderStyle&) const override { return true; }
 
@@ -189,7 +187,6 @@ private:
 #endif
 
     static IntRect calculateProgressRect(const RenderObject&, const IntRect&);
-#endif // GTK_API_VERSION_2
 };
 
 } // namespace WebCore

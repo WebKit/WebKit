@@ -5,6 +5,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
+    platform/graphics/freetype/FontCacheFreeType.cpp
     platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
     platform/graphics/freetype/FontPlatformDataFreeType.cpp
     platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
@@ -20,16 +21,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/harfbuzz/HbUniquePtr.h
 )
-
-if (PORT STREQUAL "GTK")
-    list(APPEND WebCorePlatformGTK_SOURCES
-        platform/graphics/freetype/FontCacheFreeType.cpp
-)
-else ()
-    list(APPEND WebCore_SOURCES
-        platform/graphics/freetype/FontCacheFreeType.cpp
-)
-endif ()
 
 if (USE_CAIRO)
     list(APPEND WebCore_SOURCES

@@ -33,7 +33,6 @@
 #include "GUniquePtrGtk.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
-#include "GtkVersioning.h"
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "LocalizedStrings.h"
@@ -124,8 +123,6 @@ int RenderThemeGtk::sliderTickOffsetFromTrackCenter() const
     return 0;
 }
 #endif
-
-#ifndef GTK_API_VERSION_2
 
 static void themeChangedCallback()
 {
@@ -2061,6 +2058,4 @@ String RenderThemeGtk::mediaControlsScript()
     return scriptBuilder.toString();
 }
 #endif // ENABLE(VIDEO)
-
-#endif // GTK_API_VERSION_2
 }

@@ -54,7 +54,7 @@
 #include <gdk/gdkx.h>
 #endif
 
-#if PLATFORM(GTK) && PLATFORM(WAYLAND) && !defined(GTK_API_VERSION_2)
+#if PLATFORM(GTK) && PLATFORM(WAYLAND)
 #include <gdk/gdkwayland.h>
 #endif
 
@@ -74,9 +74,6 @@ namespace WebCore {
 std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
 {
 #if PLATFORM(GTK)
-#if defined(GTK_API_VERSION_2)
-    return PlatformDisplayX11::create(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()));
-#else
     if (gtk_init_check(nullptr, nullptr)) {
         GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
 #if PLATFORM(X11)
@@ -88,7 +85,6 @@ std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
             return PlatformDisplayWayland::create(gdk_wayland_display_get_wl_display(display));
 #endif
     }
-#endif
 #endif // PLATFORM(GTK)
 
 #if USE(WPE_RENDERER)

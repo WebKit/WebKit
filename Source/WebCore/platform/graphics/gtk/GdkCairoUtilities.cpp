@@ -27,7 +27,6 @@
 #include "CairoUtilities.h"
 
 #include "GdkCairoUtilities.h"
-#include "GtkVersioning.h"
 #include "IntSize.h"
 #include <cairo.h>
 #include <gtk/gtk.h>

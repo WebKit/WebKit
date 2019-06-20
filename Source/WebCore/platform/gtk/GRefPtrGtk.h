@@ -18,8 +18,7 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef GRefPtrGtk_h
-#define GRefPtrGtk_h
+#pragma once
 
 #include <wtf/glib/GRefPtr.h>
 
@@ -36,14 +35,8 @@ template <> SecretValue* refGPtr(SecretValue* ptr);
 template <> void derefGPtr(SecretValue* ptr);
 #endif
 
-#ifdef GTK_API_VERSION_2
-template <> GdkCursor* refGPtr(GdkCursor* ptr);
-template <> void derefGPtr(GdkCursor* ptr);
-#else
 template <> GtkWidgetPath* refGPtr(GtkWidgetPath* ptr);
 template <> void derefGPtr(GtkWidgetPath* ptr);
-#endif
 
 }
 
-#endif

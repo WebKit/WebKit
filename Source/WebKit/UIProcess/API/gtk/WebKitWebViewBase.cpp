@@ -54,7 +54,6 @@
 #include <WebCore/CairoUtilities.h>
 #include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GtkUtilities.h>
-#include <WebCore/GtkVersioning.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PasteboardHelper.h>
 #include <WebCore/PlatformDisplay.h>

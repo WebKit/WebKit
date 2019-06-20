@@ -1,3 +1,38 @@
+2019-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove support for GTK2 plugins
+        https://bugs.webkit.org/show_bug.cgi?id=199065
+
+        Reviewed by Sergio Villar Senin.
+
+        * PlatformGTK.cmake:
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::moduleMixesGtkSymbols):
+        * Shared/Plugins/Netscape/unix/NetscapePluginModuleUnix.cpp:
+        (WebKit::NetscapePluginModule::getPluginInfo):
+        * Shared/Plugins/PluginModuleInfo.h:
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::isGdkKeyCodeFromKeyPad):
+        (WebKit::buttonForEvent):
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * SourcesGTK.txt:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Plugins/gtk/PluginInfoCache.cpp:
+        (WebKit::PluginInfoCache::getPluginInfo):
+        (WebKit::PluginInfoCache::updatePluginInfo):
+        * UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp:
+        (WebKit::PluginInfoStore::getPluginInfo):
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptionsWithAttributes):
+        (WebKit::PluginProcessProxy::scanPlugin):
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+
 2019-06-19  Dean Jackson  <dino@apple.com>
 
         No menu pop-up when long pressing on a link in Firefox app

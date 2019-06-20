@@ -1,3 +1,16 @@
+2019-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove support for GTK2 plugins
+        https://bugs.webkit.org/show_bug.cgi?id=199065
+
+        Reviewed by Sergio Villar Senin.
+
+        * EWSTools/ubuntu-ews-packages:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * WebKitTestRunner/PlatformGTK.cmake:
+        * flatpak/org.webkit.GTK.yaml:
+        * gtk/install-dependencies:
+
 2019-06-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] IsoHeap's initialization is racy with IsoHeap::isInitialized

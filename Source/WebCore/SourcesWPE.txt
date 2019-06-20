@@ -58,9 +58,6 @@ page/scrolling/generic/ScrollingThreadGeneric.cpp
 
 platform/UserAgentQuirks.cpp
 
-// This can't go into SourcesGLib.txt because it has to go into WebCorePlatformGTK.
-platform/glib/EventHandlerGLib.cpp
-
 platform/graphics/GLContext.cpp
 platform/graphics/GraphicsContext3DPrivate.cpp
 platform/graphics/PlatformDisplay.cpp

@@ -41,7 +41,11 @@ accessibility/atk/WebKitAccessibleUtil.cpp
 
 editing/atk/FrameSelectionAtk.cpp
 
+editing/gtk/EditorGtk.cpp
+
 loader/soup/ResourceLoaderSoup.cpp
+
+page/gtk/DragControllerGtk.cpp
 
 page/linux/ResourceUsageOverlayLinux.cpp
 page/linux/ResourceUsageThreadLinux.cpp
@@ -63,6 +67,7 @@ platform/generic/ScrollAnimatorGeneric.cpp
 
 platform/graphics/GLContext.cpp @no-unify
 platform/graphics/GraphicsContext3DPrivate.cpp
+platform/graphics/PlatformDisplay.cpp
 
 platform/graphics/cairo/BackingStoreBackendCairoX11.cpp @no-unify
 
@@ -72,6 +77,13 @@ platform/graphics/egl/GLContextEGLWayland.cpp @no-unify
 platform/graphics/egl/GLContextEGLX11.cpp @no-unify
 
 platform/graphics/glx/GLContextGLX.cpp
+
+platform/graphics/gtk/ColorGtk.cpp
+platform/graphics/gtk/DisplayRefreshMonitorGtk.cpp
+platform/graphics/gtk/GdkCairoUtilities.cpp
+platform/graphics/gtk/IconGtk.cpp
+platform/graphics/gtk/ImageBufferGtk.cpp
+platform/graphics/gtk/ImageGtk.cpp
 
 platform/graphics/gstreamer/ImageGStreamerCairo.cpp
 
@@ -89,10 +101,24 @@ platform/graphics/x11/PlatformDisplayX11.cpp @no-unify
 platform/graphics/x11/XErrorTrapper.cpp @no-unify
 platform/graphics/x11/XUniqueResource.cpp @no-unify
 
+platform/gtk/CursorGtk.cpp
 platform/gtk/DragDataGtk.cpp
+platform/gtk/DragImageGtk.cpp
+platform/gtk/GRefPtrGtk.cpp
+platform/gtk/GtkUtilities.cpp
 platform/gtk/LocalizedStringsGtk.cpp
 platform/gtk/PasteboardGtk.cpp
+platform/gtk/PasteboardHelper.cpp
+platform/gtk/PlatformKeyboardEventGtk.cpp
+platform/gtk/PlatformMouseEventGtk.cpp
+platform/gtk/PlatformPasteboardGtk.cpp
+platform/gtk/PlatformScreenGtk.cpp
+platform/gtk/PlatformWheelEventGtk.cpp
+platform/gtk/RenderThemeGadget.cpp
+platform/gtk/RenderThemeWidget.cpp
+platform/gtk/ScrollbarThemeGtk.cpp
 platform/gtk/SelectionData.cpp
+platform/gtk/WidgetGtk.cpp
 
 platform/text/Hyphenation.cpp
 platform/text/LocaleICU.cpp
@@ -104,3 +130,5 @@ platform/text/hyphen/HyphenationLibHyphen.cpp
 platform/unix/LoggingUnix.cpp
 
 platform/xdg/MIMETypeRegistryXdg.cpp
+
+rendering/RenderThemeGtk.cpp

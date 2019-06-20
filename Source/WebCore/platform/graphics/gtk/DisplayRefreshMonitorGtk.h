@@ -37,12 +37,7 @@ class DisplayRefreshMonitorGtk : public DisplayRefreshMonitor {
 public:
     static RefPtr<DisplayRefreshMonitorGtk> create(PlatformDisplayID displayID)
     {
-#ifndef GTK_API_VERSION_2
         return adoptRef(*new DisplayRefreshMonitorGtk(displayID));
-#else
-        UNUSED_PARAM(displayID);
-        return nullptr;
-#endif
     }
 
     virtual ~DisplayRefreshMonitorGtk();

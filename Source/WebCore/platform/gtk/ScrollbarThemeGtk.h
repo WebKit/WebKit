@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollbarThemeGtk_h
-#define ScrollbarThemeGtk_h
+#pragma once
 
 #include "ScrollbarThemeComposite.h"
 
@@ -42,7 +41,6 @@ public:
     IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool) override;
     IntRect trackRect(Scrollbar&, bool) override;
 
-#ifndef GTK_API_VERSION_2
     ScrollbarThemeGtk();
 
     bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
@@ -66,9 +64,7 @@ private:
     bool m_hasBackButtonStartPart : 1;
     bool m_hasBackButtonEndPart : 1;
     bool m_usesOverlayScrollbars { false };
-#endif // GTK_API_VERSION_2
 };
 
 }
 
-#endif

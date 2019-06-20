@@ -62,7 +62,6 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_deltaX = 0;
     m_deltaY = 0;
     GdkScrollDirection direction;
-#ifndef GTK_API_VERSION_2
     if (!gdk_event_get_scroll_direction(reinterpret_cast<GdkEvent*>(event), &direction)) {
         gdouble deltaX, deltaY;
         if (gdk_event_get_scroll_deltas(reinterpret_cast<GdkEvent*>(event), &deltaX, &deltaY)) {
@@ -70,9 +69,6 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
             m_deltaY = -deltaY;
         }
     }
-#else
-    direction = event->direction;
-#endif
 
     // Docs say an upwards scroll (away from the user) has a positive delta
     if (!m_deltaX && !m_deltaY) {
@@ -97,7 +93,6 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_wheelTicksY = m_deltaY;
 
 #if ENABLE(ASYNC_SCROLLING)
-#ifndef GTK_API_VERSION_2
 #if GTK_CHECK_VERSION(3, 20, 0)
     m_phase = gdk_event_is_scroll_stop_event(reinterpret_cast<GdkEvent*>(event)) ?
         PlatformWheelEventPhaseEnded :
@@ -107,9 +102,6 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
         PlatformWheelEventPhaseEnded :
         PlatformWheelEventPhaseChanged;
 #endif
-#else
-    m_phase = PlatformWheelEventPhaseChanged;
-#endif // GTK_API_VERSION_2
 #endif // ENABLE(ASYNC_SCROLLING)
 
     gdouble x, y, rootX, rootY;

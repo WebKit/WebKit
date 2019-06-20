@@ -33,7 +33,6 @@
 
 #include "FloatRect.h"
 #include "FrameView.h"
-#include "GtkVersioning.h"
 #include "HostWindow.h"
 #include "NotImplemented.h"
 #include "Widget.h"
@@ -220,17 +219,6 @@ bool screenSupportsExtendedColor(Widget*)
 }
 
 #if ENABLE(TOUCH_EVENTS)
-#ifdef GTK_API_VERSION_2
-bool screenHasTouchDevice()
-{
-    return false;
-}
-
-bool screenIsTouchPrimaryInputDevice()
-{
-    return false;
-}
-#else // GTK_API_VERSION_2
 #if !GTK_CHECK_VERSION(3, 20, 0)
 static void deviceAddedCallback(GdkDeviceManager*, GdkDevice*);
 static void deviceRemovedCallback(GdkDeviceManager*, GdkDevice*);
@@ -324,7 +312,6 @@ bool screenIsTouchPrimaryInputDevice()
 
     return device ? gdk_device_get_source(device) == GDK_SOURCE_TOUCHSCREEN : true;
 }
-#endif // !GTK_API_VERSION_2
 #endif // ENABLE(TOUCH_EVENTS)
 
 } // namespace WebCore

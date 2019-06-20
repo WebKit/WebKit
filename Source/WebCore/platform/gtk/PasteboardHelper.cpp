@@ -24,7 +24,6 @@
 #include "PasteboardHelper.h"
 
 #include "BitmapImage.h"
-#include "GtkVersioning.h"
 #include "SelectionData.h"
 #include <gtk/gtk.h>
 #include <wtf/SetForScope.h>
@@ -119,7 +118,6 @@ void PasteboardHelper::getClipboardContents(GtkClipboard* clipboard, SelectionDa
         }
     }
 
-#ifndef GTK_API_VERSION_2
     if (gtk_clipboard_wait_is_image_available(clipboard)) {
         if (GRefPtr<GdkPixbuf> pixbuf = adoptGRef(gtk_clipboard_wait_for_image(clipboard))) {
             RefPtr<cairo_surface_t> surface = adoptRef(gdk_cairo_surface_create_from_pixbuf(pixbuf.get(), 1, nullptr));
@@ -127,7 +125,6 @@ void PasteboardHelper::getClipboardContents(GtkClipboard* clipboard, SelectionDa
             selection.setImage(image.ptr());
         }
     }
-#endif
 
     selection.setCanSmartReplace(gtk_clipboard_wait_is_target_available(clipboard, smartPasteAtom));
 }

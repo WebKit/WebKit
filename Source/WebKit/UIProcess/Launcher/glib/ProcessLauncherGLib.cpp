@@ -87,10 +87,6 @@ void ProcessLauncher::launchProcess()
     case ProcessLauncher::ProcessType::Plugin64:
     case ProcessLauncher::ProcessType::Plugin32:
         executablePath = executablePathOfPluginProcess();
-#if ENABLE(PLUGIN_PROCESS_GTK2)
-        if (m_launchOptions.extraInitializationData.contains("requires-gtk2"))
-            executablePath.append('2');
-#endif
         pluginPath = m_launchOptions.extraInitializationData.get("plugin-path");
         realPluginPath = FileSystem::fileSystemRepresentation(pluginPath);
         break;

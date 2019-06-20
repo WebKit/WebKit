@@ -46,7 +46,6 @@ ScrollbarTheme& ScrollbarTheme::nativeTheme()
 
 ScrollbarThemeGtk::~ScrollbarThemeGtk() = default;
 
-#ifndef GTK_API_VERSION_2
 static void themeChangedCallback()
 {
     ScrollbarTheme::theme().themeChanged();
@@ -836,32 +835,4 @@ int ScrollbarThemeGtk::minimumThumbLength(Scrollbar& scrollbar)
     return minThumbLength;
 }
 #endif
-
-#else // GTK_API_VERSION_2
-bool ScrollbarThemeGtk::hasThumb(Scrollbar&)
-{
-    return false;
-}
-
-IntRect ScrollbarThemeGtk::backButtonRect(Scrollbar&, ScrollbarPart, bool)
-{
-    return IntRect();
-}
-
-IntRect ScrollbarThemeGtk::forwardButtonRect(Scrollbar&, ScrollbarPart, bool)
-{
-    return IntRect();
-}
-
-IntRect ScrollbarThemeGtk::trackRect(Scrollbar&, bool)
-{
-    return IntRect();
-}
-
-bool ScrollbarThemeGtk::hasButtons(Scrollbar&)
-{
-    return false;
-}
-#endif // GTK_API_VERSION_2
-
 }

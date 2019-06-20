@@ -44,19 +44,16 @@ DisplayRefreshMonitorGtk::~DisplayRefreshMonitorGtk()
         gtk_widget_destroy(m_window);
 }
 
-#ifndef GTK_API_VERSION_2
 static void onFrameClockUpdate(GdkFrameClock*, DisplayRefreshMonitorGtk* monitor)
 {
     monitor->displayLinkFired();
 }
-#endif
 
 bool DisplayRefreshMonitorGtk::requestRefreshCallback()
 {
     if (!isActive())
         return false;
 
-#ifndef GTK_API_VERSION_2
     if (!m_window) {
         // GdkFrameClockIdle is private in GDK, so we need to create a toplevel to get its frame clock.
         m_window = gtk_offscreen_window_new();
@@ -75,9 +72,6 @@ bool DisplayRefreshMonitorGtk::requestRefreshCallback()
     LockHolder lock(mutex());
     setIsScheduled(true);
     return true;
-#else
-    return false;
-#endif
 }
 
 void DisplayRefreshMonitorGtk::displayLinkFired()

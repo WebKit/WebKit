@@ -422,8 +422,11 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
 list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
     ${CAIRO_INCLUDE_DIRS}
     ${ENCHANT_INCLUDE_DIRS}
+    ${GLIB_INCLUDE_DIRS}
     ${GSTREAMER_INCLUDE_DIRS}
     ${GSTREAMER_PBUTILS_INCLUDE_DIRS}
+    ${GTK_INCLUDE_DIRS}
+    ${GTK_UNIX_PRINT_INCLUDE_DIRS}
     ${HARFBUZZ_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
 )
@@ -447,12 +450,6 @@ endif ()
 set(WebKitCommonIncludeDirectories ${WebKit_INCLUDE_DIRECTORIES})
 set(WebKitCommonSystemIncludeDirectories ${WebKit_SYSTEM_INCLUDE_DIRECTORIES})
 
-list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-    ${GLIB_INCLUDE_DIRS}
-    ${GTK_INCLUDE_DIRS}
-    ${GTK_UNIX_PRINT_INCLUDE_DIRS}
-)
-
 list(APPEND WebProcess_SOURCES
     WebProcess/EntryPoint/unix/WebProcessMain.cpp
 )
@@ -466,13 +463,8 @@ set(SharedWebKitLibraries
 )
 
 list(APPEND WebKit_LIBRARIES
-    PRIVATE
-        WebCorePlatformGTK
-        ${GTK_UNIX_PRINT_LIBRARIES}
+    ${GTK_UNIX_PRINT_LIBRARIES}
 )
-
-# WebCore should be specifed before and after WebCorePlatformGTK
-list(APPEND WebKit_LIBRARIES PRIVATE WebCore)
 
 if (USE_WPE_RENDERER)
     list(APPEND WebKit_LIBRARIES
@@ -569,144 +561,6 @@ if (ENABLE_WAYLAND_TARGET)
         COMMAND wayland-scanner code < ${WEBKIT_DIR}/Shared/gtk/WebKitWaylandProtocol.xml > ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitWaylandClientProtocol.c
     )
 endif ()
-
-if (ENABLE_PLUGIN_PROCESS_GTK2)
-    set(PluginProcessGTK2_EXECUTABLE_NAME WebKitPluginProcess2)
-
-    # FIXME: We should remove WebKitPluginProcess2 in 2020, once Flash is no longer supported.
-    list(APPEND PluginProcessGTK2_SOURCES
-        Platform/Logging.cpp
-        Platform/Module.cpp
-
-        Platform/IPC/ArgumentCoders.cpp
-        Platform/IPC/Attachment.cpp
-        Platform/IPC/Connection.cpp
-        Platform/IPC/DataReference.cpp
-        Platform/IPC/Decoder.cpp
-        Platform/IPC/Encoder.cpp
-        Platform/IPC/MessageReceiverMap.cpp
-        Platform/IPC/MessageSender.cpp
-        Platform/IPC/StringReference.cpp
-
-        Platform/IPC/glib/GSocketMonitor.cpp
-        Platform/IPC/unix/AttachmentUnix.cpp
-        Platform/IPC/unix/ConnectionUnix.cpp
-
-        Platform/glib/ModuleGlib.cpp
-
-        Platform/unix/LoggingUnix.cpp
-        Platform/unix/SharedMemoryUnix.cpp
-
-        PluginProcess/PluginControllerProxy.cpp
-        PluginProcess/PluginCreationParameters.cpp
-        PluginProcess/PluginProcess.cpp
-        PluginProcess/WebProcessConnection.cpp
-
-        PluginProcess/EntryPoint/unix/PluginProcessMain.cpp
-
-        PluginProcess/unix/PluginControllerProxyUnix.cpp
-        PluginProcess/unix/PluginProcessMainUnix.cpp
-        PluginProcess/unix/PluginProcessUnix.cpp
-
-        Shared/ActivityAssertion.cpp
-        Shared/AuxiliaryProcess.cpp
-        Shared/BlobDataFileReferenceWithSandboxExtension.cpp
-        Shared/ShareableBitmap.cpp
-        Shared/WebCoreArgumentCoders.cpp
-        Shared/WebEvent.cpp
-        Shared/WebKeyboardEvent.cpp
-        Shared/WebKit2Initialize.cpp
-        Shared/WebMouseEvent.cpp
-        Shared/WebPlatformTouchPoint.cpp
-        Shared/WebTouchEvent.cpp
-        Shared/WebWheelEvent.cpp
-
-        Shared/Plugins/NPIdentifierData.cpp
-        Shared/Plugins/NPObjectMessageReceiver.cpp
-        Shared/Plugins/NPObjectProxy.cpp
-        Shared/Plugins/NPRemoteObjectMap.cpp
-        Shared/Plugins/NPVariantData.cpp
-        Shared/Plugins/PluginProcessCreationParameters.cpp
-
-        Shared/Plugins/Netscape/NetscapePluginModule.cpp
-        Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
-
-        Shared/Plugins/Netscape/unix/NetscapePluginModuleUnix.cpp
-
-        Shared/cairo/ShareableBitmapCairo.cpp
-
-        Shared/glib/ProcessExecutablePathGLib.cpp
-
-        Shared/gtk/NativeWebKeyboardEventGtk.cpp
-        Shared/gtk/NativeWebMouseEventGtk.cpp
-        Shared/gtk/NativeWebTouchEventGtk.cpp
-        Shared/gtk/NativeWebWheelEventGtk.cpp
-        Shared/gtk/WebEventFactory.cpp
-
-        Shared/soup/WebCoreArgumentCodersSoup.cpp
-
-        Shared/unix/AuxiliaryProcessMain.cpp
-
-        UIProcess/Launcher/ProcessLauncher.cpp
-
-        UIProcess/Launcher/glib/BubblewrapLauncher.cpp
-        UIProcess/Launcher/glib/FlatpakLauncher.cpp
-        UIProcess/Launcher/glib/ProcessLauncherGLib.cpp
-
-        UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
-
-        WebProcess/Plugins/Plugin.cpp
-
-        WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp
-        WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp
-        WebProcess/Plugins/Netscape/NetscapePlugin.cpp
-        WebProcess/Plugins/Netscape/NetscapePluginNone.cpp
-        WebProcess/Plugins/Netscape/NetscapePluginStream.cpp
-
-        WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.cpp
-        WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp
-
-        ${WebKit_DERIVED_SOURCES_DIR}/AuxiliaryProcessMessageReceiver.cpp
-        ${WebKit_DERIVED_SOURCES_DIR}/PluginControllerProxyMessageReceiver.cpp
-        ${WebKit_DERIVED_SOURCES_DIR}/PluginProcessMessageReceiver.cpp
-        ${WebKit_DERIVED_SOURCES_DIR}/NPObjectMessageReceiverMessageReceiver.cpp
-        ${WebKit_DERIVED_SOURCES_DIR}/WebProcessConnectionMessageReceiver.cpp
-    )
-
-    add_executable(WebKitPluginProcess2 ${PluginProcessGTK2_SOURCES})
-    ADD_WEBKIT_PREFIX_HEADER(WebKitPluginProcess2)
-
-    # We need ENABLE_PLUGIN_PROCESS for all targets in this directory, but
-    # we only want GTK_API_VERSION_2 for the plugin process target.
-    set_property(
-        TARGET WebKitPluginProcess2
-        APPEND
-        PROPERTY COMPILE_DEFINITIONS GTK_API_VERSION_2=1
-    )
-    target_include_directories(WebKitPluginProcess2 PRIVATE
-        ${WebKitCommonIncludeDirectories}
-    )
-    target_include_directories(WebKitPluginProcess2 SYSTEM PRIVATE
-         ${WebKitCommonSystemIncludeDirectories}
-         ${GTK2_INCLUDE_DIRS}
-         ${GDK2_INCLUDE_DIRS}
-    )
-
-    set(WebKitPluginProcess2_LIBRARIES
-        ${SharedWebKitLibraries}
-        PRIVATE WebCorePlatformGTK2
-    )
-    ADD_WHOLE_ARCHIVE_TO_LIBRARIES(WebKitPluginProcess2_LIBRARIES)
-    target_link_libraries(WebKitPluginProcess2 ${WebKitPluginProcess2_LIBRARIES})
-
-    add_dependencies(WebKitPluginProcess2 WebKit)
-
-    install(TARGETS WebKitPluginProcess2 DESTINATION "${LIBEXEC_INSTALL_DIR}")
-
-    if (COMPILER_IS_GCC_OR_CLANG)
-        WEBKIT_ADD_TARGET_CXX_FLAGS(WebKitPluginProcess2 -Wno-unused-parameter)
-    endif ()
-endif () # ENABLE_PLUGIN_PROCESS_GTK2
 
 # GTK3 PluginProcess
 list(APPEND PluginProcess_SOURCES

@@ -163,9 +163,6 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
     plugin.info.name = metaData.name;
     plugin.info.desc = metaData.description;
     parseMIMEDescription(metaData.mimeDescription, plugin.info.mimes);
-#if PLATFORM(GTK)
-    plugin.requiresGtk2 = metaData.requiresGtk2;
-#endif
 
     return true;
 }

@@ -42,41 +42,6 @@ if (USE_WPE_RENDERER)
     )
 endif ()
 
-list(APPEND WebCorePlatformGTK_SOURCES
-    editing/gtk/EditorGtk.cpp
-
-    page/gtk/DragControllerGtk.cpp
-
-    platform/glib/EventHandlerGLib.cpp
-
-    platform/graphics/PlatformDisplay.cpp
-
-    platform/graphics/gtk/ColorGtk.cpp
-    platform/graphics/gtk/DisplayRefreshMonitorGtk.cpp
-    platform/graphics/gtk/GdkCairoUtilities.cpp
-    platform/graphics/gtk/IconGtk.cpp
-    platform/graphics/gtk/ImageBufferGtk.cpp
-    platform/graphics/gtk/ImageGtk.cpp
-
-    platform/gtk/CursorGtk.cpp
-    platform/gtk/DragImageGtk.cpp
-    platform/gtk/GRefPtrGtk.cpp
-    platform/gtk/GtkUtilities.cpp
-    platform/gtk/GtkVersioning.c
-    platform/gtk/PasteboardHelper.cpp
-    platform/gtk/PlatformKeyboardEventGtk.cpp
-    platform/gtk/PlatformMouseEventGtk.cpp
-    platform/gtk/PlatformPasteboardGtk.cpp
-    platform/gtk/PlatformScreenGtk.cpp
-    platform/gtk/PlatformWheelEventGtk.cpp
-    platform/gtk/RenderThemeGadget.cpp
-    platform/gtk/RenderThemeWidget.cpp
-    platform/gtk/ScrollbarThemeGtk.cpp
-    platform/gtk/WidgetGtk.cpp
-
-    rendering/RenderThemeGtk.cpp
-)
-
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/x11/PlatformDisplayX11.h
     platform/graphics/x11/XErrorTrapper.h
@@ -87,7 +52,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/gtk/GRefPtrGtk.h
     platform/gtk/GUniquePtrGtk.h
     platform/gtk/GtkUtilities.h
-    platform/gtk/GtkVersioning.h
     platform/gtk/PasteboardHelper.h
     platform/gtk/SelectionData.h
 
@@ -109,10 +73,12 @@ set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/platform/gtk/RenderTh
 list(APPEND WebCore_LIBRARIES
     ${ATK_LIBRARIES}
     ${ENCHANT_LIBRARIES}
+    ${GDK_LIBRARIES}
     ${GLIB_GIO_LIBRARIES}
     ${GLIB_GMODULE_LIBRARIES}
     ${GLIB_GOBJECT_LIBRARIES}
     ${GLIB_LIBRARIES}
+    ${GTK_LIBRARIES}
     ${LIBSECCOMP_LIBRARIES}
     ${LIBSECRET_LIBRARIES}
     ${LIBTASN1_LIBRARIES}
@@ -135,8 +101,10 @@ endif ()
 list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${ATK_INCLUDE_DIRS}
     ${ENCHANT_INCLUDE_DIRS}
+    ${GDK_INCLUDE_DIRS}
     ${GIO_UNIX_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
+    ${GTK_INCLUDE_DIRS}
     ${LIBSECCOMP_INCLUDE_DIRS}
     ${LIBSECRET_INCLUDE_DIRS}
     ${LIBTASN1_INCLUDE_DIRS}
@@ -166,31 +134,6 @@ if (USE_OPENGL)
     )
 endif ()
 
-if (ENABLE_PLUGIN_PROCESS_GTK2)
-    # WebKitPluginProcess2 needs a version of WebCore compiled against GTK+2, so we've isolated all the GTK+
-    # dependent files into a separate library which can be used to construct a GTK+2 WebCore
-    # for the plugin process.
-    add_library(WebCorePlatformGTK2 ${WebCore_LIBRARY_TYPE} ${WebCorePlatformGTK_SOURCES})
-    add_dependencies(WebCorePlatformGTK2 WebCore)
-    set_property(TARGET WebCorePlatformGTK2
-        APPEND
-        PROPERTY COMPILE_DEFINITIONS GTK_API_VERSION_2=1
-    )
-    target_include_directories(WebCorePlatformGTK2 PRIVATE
-        ${WebCore_INCLUDE_DIRECTORIES}
-    )
-    target_include_directories(WebCorePlatformGTK2 SYSTEM PRIVATE
-        ${WebCore_SYSTEM_INCLUDE_DIRECTORIES}
-        ${GTK2_INCLUDE_DIRS}
-        ${GDK2_INCLUDE_DIRS}
-    )
-    target_link_libraries(WebCorePlatformGTK2
-         ${WebCore_LIBRARIES}
-         ${GTK2_LIBRARIES}
-         ${GDK2_LIBRARIES}
-    )
-endif ()
-
 if (ENABLE_WAYLAND_TARGET)
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
         platform/graphics/wayland/PlatformDisplayWayland.h
@@ -203,29 +146,6 @@ if (ENABLE_WAYLAND_TARGET)
         ${WAYLAND_LIBRARIES}
     )
 endif ()
-
-add_library(WebCorePlatformGTK ${WebCore_LIBRARY_TYPE} ${WebCorePlatformGTK_SOURCES})
-add_dependencies(WebCorePlatformGTK WebCore)
-target_include_directories(WebCorePlatformGTK PRIVATE
-    ${WebCore_INCLUDE_DIRECTORIES}
-    ${WebCore_PRIVATE_INCLUDE_DIRECTORIES}
-)
-target_include_directories(WebCorePlatformGTK SYSTEM PRIVATE
-    ${WebCore_SYSTEM_INCLUDE_DIRECTORIES}
-    ${GTK_INCLUDE_DIRS}
-    ${GDK_INCLUDE_DIRS}
-)
-target_link_libraries(WebCorePlatformGTK
-    ${WebCore_LIBRARIES}
-    ${GTK_LIBRARIES}
-    ${GDK_LIBRARIES}
-)
-
-include_directories(
-    ${WebCore_INCLUDE_DIRECTORIES}
-    ${WebCore_PRIVATE_INCLUDE_DIRECTORIES}
-    "${WEBCORE_DIR}/bindings/gobject/"
-)
 
 include_directories(SYSTEM
     ${WebCore_SYSTEM_INCLUDE_DIRECTORIES}

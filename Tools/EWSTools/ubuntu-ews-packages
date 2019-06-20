@@ -28,7 +28,6 @@ libnspr4-dev
 libnss3-dev
 libpam0g-dev
 libtool
-libgtk2.0-dev
 libpango1.0-dev
 libicu-dev
 libxslt-dev
