@@ -41,8 +41,12 @@ public:
     struct InitialConstraints {
         LayoutPoint topLeft;
         LayoutUnit availableWidth;
-        LayoutUnit height;
-        LayoutUnit baselineOffset;
+        struct HeightAndBaseline {
+            LayoutUnit height;
+            LayoutUnit baselineOffset;
+            Optional<LineBox::Baseline> strut;
+        };
+        HeightAndBaseline heightAndBaseline;
     };
     enum class SkipVerticalAligment { No, Yes };
     Line(const LayoutState&, const InitialConstraints&, SkipVerticalAligment);
@@ -141,6 +145,7 @@ private:
     LineBox::Baseline m_baseline;
     LayoutUnit m_baselineTop;
 
+    Optional<LineBox::Baseline> m_initialStrut;
     LayoutUnit m_contentLogicalHeight;
     LayoutUnit m_lineLogicalWidth;
     bool m_skipVerticalAligment { false };

@@ -127,13 +127,10 @@ static LayoutUnit inlineItemWidth(const LayoutState& layoutState, const InlineIt
 
 InlineFormattingContext::LineLayout::LineContent InlineFormattingContext::LineLayout::placeInlineItems(const LineInput& lineInput) const
 {
-    auto mimimumLineHeight = m_formattingRoot.style().computedLineHeight();
-    auto initialBaselineOffset = Line::halfLeadingMetrics(m_formattingRoot.style().fontMetrics(), mimimumLineHeight).ascent;
     auto initialLineConstraints = Line::InitialConstraints {
         lineInput.horizontalConstraint.logicalTopLeft,
         lineInput.horizontalConstraint.availableLogicalWidth,
-        mimimumLineHeight,
-        initialBaselineOffset
+        Quirks::lineHeightConstraints(layoutState(), m_formattingRoot)
     };
     auto line = Line { layoutState(), initialLineConstraints, lineInput.skipVerticalAligment };
 

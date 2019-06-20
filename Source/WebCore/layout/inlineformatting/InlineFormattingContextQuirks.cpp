@@ -82,6 +82,26 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const LayoutSta
     return true;
 }
 
+Line::InitialConstraints::HeightAndBaseline InlineFormattingContext::Quirks::lineHeightConstraints(const LayoutState& layoutState, const Box& formattingRoot)
+{
+    // computedLineHeight takes font-size into account when line-height is not set.
+    // Strut is the imaginary box that we put on every line. It sets the initial vertical constraints for each new line.
+    auto strutHeight = formattingRoot.style().computedLineHeight();
+    auto strutBaselineOffset = Line::halfLeadingMetrics(formattingRoot.style().fontMetrics(), strutHeight).ascent;
+    if (layoutState.inNoQuirksMode())
+        return { strutHeight, strutBaselineOffset, { } };
+
+    auto lineHeight = formattingRoot.style().lineHeight();
+    if (lineHeight.isPercentOrCalculated()) {
+        auto initialBaselineOffset = Line::halfLeadingMetrics(formattingRoot.style().fontMetrics(), { }).ascent;
+        return { initialBaselineOffset, initialBaselineOffset, LineBox::Baseline { strutBaselineOffset, strutHeight - strutBaselineOffset } };
+    }
+    // FIXME: The only reason why we use intValue() here is to match current inline tree (integral)behavior.
+    auto initialLineHeight = LayoutUnit { lineHeight.intValue() };
+    auto initialBaselineOffset = Line::halfLeadingMetrics(formattingRoot.style().fontMetrics(), initialLineHeight).ascent;
+    return { initialLineHeight, initialBaselineOffset, LineBox::Baseline { strutBaselineOffset, strutHeight - strutBaselineOffset } };
+}
+
 }
 }
 

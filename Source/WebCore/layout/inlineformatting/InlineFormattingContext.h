@@ -97,6 +97,7 @@ private:
     class Quirks {
     public:
         static bool lineDescentNeedsCollapsing(const LayoutState&, const Line::Content&);
+        static Line::InitialConstraints::HeightAndBaseline lineHeightConstraints(const LayoutState&, const Box& formattingRoot);
     };
 
     class Geometry : public FormattingContext::Geometry {

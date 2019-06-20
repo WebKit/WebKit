@@ -48,8 +48,9 @@ Line::Line(const LayoutState& layoutState, const InitialConstraints& initialCons
     : m_layoutState(layoutState)
     , m_content(std::make_unique<Line::Content>())
     , m_logicalTopLeft(initialConstraints.topLeft)
-    , m_baseline({ initialConstraints.baselineOffset, initialConstraints.height - initialConstraints.baselineOffset })
-    , m_contentLogicalHeight(initialConstraints.height)
+    , m_baseline({ initialConstraints.heightAndBaseline.baselineOffset, initialConstraints.heightAndBaseline.height - initialConstraints.heightAndBaseline.baselineOffset })
+    , m_initialStrut(initialConstraints.heightAndBaseline.strut)
+    , m_contentLogicalHeight(initialConstraints.heightAndBaseline.height)
     , m_lineLogicalWidth(initialConstraints.availableWidth)
     , m_skipVerticalAligment(skipVerticalAligment == SkipVerticalAligment::Yes)
 {
@@ -254,8 +255,11 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
     auto logicalRect = Display::Rect { };
     logicalRect.setLeft(contentLogicalRight());
     logicalRect.setWidth(logicalWidth);
-    if (!m_skipVerticalAligment)
-        logicalRect.setHeight(inlineItemContentHeight(inlineItem));
+    if (!m_skipVerticalAligment) {
+        auto runHeight = inlineItemContentHeight(inlineItem);
+        logicalRect.setHeight(runHeight);
+        adjustBaselineAndLineHeight(inlineItem, runHeight);
+    }
 
     auto textContext = Content::Run::TextContext { inlineItem.start(), inlineItem.isCollapsed() ? 1 : inlineItem.length() };
     auto lineItem = std::make_unique<Content::Run>(inlineItem, logicalRect, textContext, isCompletelyCollapsed, canBeExtended);
@@ -295,14 +299,16 @@ void Line::appendHardLineBreak(const InlineItem& inlineItem)
     auto logicalRect = Display::Rect { };
     logicalRect.setLeft(contentLogicalRight());
     logicalRect.setWidth({ });
-    if (!m_skipVerticalAligment)
+    if (!m_skipVerticalAligment) {
+        adjustBaselineAndLineHeight(inlineItem, { });
         logicalRect.setHeight(logicalHeight());
+    }
     m_content->runs().append(std::make_unique<Content::Run>(inlineItem, logicalRect, Content::Run::TextContext { }, false, false));
 }
 
 void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit runHeight)
 {
-    ASSERT(!inlineItem.isContainerEnd() && !inlineItem.isText());
+    ASSERT(!inlineItem.isContainerEnd());
     auto& layoutBox = inlineItem.layoutBox();
     auto& style = layoutBox.style();
 
@@ -314,6 +320,16 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
         if (halfLeading.ascent > 0)
             m_baseline.ascent = std::max(m_baseline.ascent, halfLeading.ascent);
         m_contentLogicalHeight = std::max(m_contentLogicalHeight, baselineAlignedContentHeight());
+        return;
+    }
+    // Apply initial strut if needed.
+    if (inlineItem.isText() || inlineItem.isHardLineBreak()) {
+        if (!m_initialStrut)
+            return;
+        m_baseline.ascent = std::max(m_initialStrut->ascent, m_baseline.ascent);
+        m_baseline.descent = std::max(m_initialStrut->descent, m_baseline.descent);
+        m_contentLogicalHeight = std::max(m_contentLogicalHeight, baselineAlignedContentHeight());
+        m_initialStrut = { };
         return;
     }
     // Replaced and non-replaced inline level box.
