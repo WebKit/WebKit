@@ -1,3 +1,21 @@
+2019-06-19  Justin Fan  <justin_fan@apple.com>
+
+        [WHLSL] Create a shading language test harness
+        https://bugs.webkit.org/show_bug.cgi?id=198978
+
+        Reviewed by Myles C. Maxfield.
+
+        When creating MTLArgumentEncoders for argument buffers, the user's arguments
+        must match the order that they are declared in the shader. Move back-end information
+        such as buffer lengths to the end of the argument arrays.
+
+        Test: webgpu/whlsl-harness-test.html
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp:
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::resourceHelperTypes):
+        * platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm:
+        (WebCore::GPUBindGroupLayout::tryCreate):
+
 2019-06-19  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] The checker needs to resolve types for the anonymous variables in ReadModifyWrite expressions

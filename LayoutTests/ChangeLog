@@ -1,3 +1,47 @@
+2019-06-19  Justin Fan  <justin_fan@apple.com>
+
+        [WHLSL] Create a shading language test harness
+        https://bugs.webkit.org/show_bug.cgi?id=198978
+
+        Reviewed by Myles C. Maxfield.
+
+        Introduce a test harness that can be used to test WebGPU shader compilation and functionality.
+        Currently using MSL. 
+        Will be replaced with WHLSL as it gains the minimum features needed to support.
+
+        * webgpu/js/whlsl-test-harness.js: Added.
+        (isVectorType):
+        (convertTypeToArrayType):
+        (convertTypeToWHLSLType):
+        (Data):
+        (Data.prototype.async.getArrayBuffer):
+        (Data.prototype.get type):
+        (Data.prototype.get isPointer):
+        (Data.prototype.get buffer):
+        (Data.prototype.get byteLength):
+        (Harness.prototype._initialize):
+        (Harness.prototype.async.callTypedFunction):
+        (Harness.prototype.async.callVoidFunction):
+        (Harness.prototype._setUpArguments):
+        (Harness.prototype._callFunction):
+        (Harness):
+        (harness._initialize.async):
+        (makeBool):
+        (makeInt):
+        (makeUchar):
+        (makeUint):
+        (makeFloat):
+        (makeFloat4):
+        (async.callBoolFunction):
+        (async.callIntFunction):
+        (async.callUcharFunction):
+        (async.callUintFunction):
+        (async.callFloatFunction):
+        (async.callFloat4Function):
+        (callVoidFunction):
+        * webgpu/whlsl-harness-test-expected.txt: Added.
+        * webgpu/whlsl-harness-test.html: Added.
+
 2019-06-19  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] The checker needs to resolve types for the anonymous variables in ReadModifyWrite expressions

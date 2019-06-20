@@ -96,7 +96,7 @@ RefPtr<GPUBindGroupLayout> GPUBindGroupLayout::tryCreate(const GPUDevice& device
         return nullptr;
     }
 
-    ArgumentArray vertexArgsArray, fragmentArgsArray, computeArgsArray;
+    ArgumentArray vertexArgs, fragmentArgs, computeArgs, vertexLengths, fragmentLengths, computeLengths;
     BindingsMapType bindingsMap;
 
     unsigned internalName = 0;
@@ -137,33 +137,39 @@ RefPtr<GPUBindGroupLayout> GPUBindGroupLayout::tryCreate(const GPUDevice& device
             return nullptr;
         }
 
-        auto addIndices = [&](ArgumentArray& array) -> bool {
-            appendArgumentToArray(array, mtlArgument);
+        auto addIndices = [&](ArgumentArray& args, ArgumentArray& lengths) -> bool {
+            appendArgumentToArray(args, mtlArgument);
             if (extraIndex) {
                 RetainPtr<MTLArgumentDescriptor> mtlArgument = argumentDescriptor(MTLDataTypeUInt2, *extraIndex);
                 if (!mtlArgument) {
                     LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Unable to create MTLArgumentDescriptor for binding %u!", binding.binding);
                     return false;
                 }
-                appendArgumentToArray(array, mtlArgument);
+                appendArgumentToArray(lengths, mtlArgument);
             }
             return true;
         };
-        if ((binding.visibility & GPUShaderStageBit::Flags::Vertex) && !addIndices(vertexArgsArray))
+        if ((binding.visibility & GPUShaderStageBit::Flags::Vertex) && !addIndices(vertexArgs, vertexLengths))
             return nullptr;
-        if ((binding.visibility & GPUShaderStageBit::Flags::Fragment) && !addIndices(fragmentArgsArray))
+        if ((binding.visibility & GPUShaderStageBit::Flags::Fragment) && !addIndices(fragmentArgs, fragmentLengths))
             return nullptr;
-        if ((binding.visibility & GPUShaderStageBit::Flags::Compute) && !addIndices(computeArgsArray))
+        if ((binding.visibility & GPUShaderStageBit::Flags::Compute) && !addIndices(computeArgs, computeLengths))
             return nullptr;
     }
 
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [vertexArgs addObjectsFromArray:vertexLengths.get()];
+    [fragmentArgs addObjectsFromArray:fragmentLengths.get()];
+    [computeArgs addObjectsFromArray:computeLengths.get()];
+    END_BLOCK_OBJC_EXCEPTIONS;
+
     RetainPtr<MTLArgumentEncoder> vertex, fragment, compute;
 
-    if (vertexArgsArray && !(vertex = tryCreateMtlArgumentEncoder(device, vertexArgsArray)))
+    if (vertexArgs && !(vertex = tryCreateMtlArgumentEncoder(device, vertexArgs)))
         return nullptr;
-    if (fragmentArgsArray && !(fragment = tryCreateMtlArgumentEncoder(device, fragmentArgsArray)))
+    if (fragmentArgs && !(fragment = tryCreateMtlArgumentEncoder(device, fragmentArgs)))
         return nullptr;
-    if (computeArgsArray && !(compute = tryCreateMtlArgumentEncoder(device, computeArgsArray)))
+    if (computeArgs && !(compute = tryCreateMtlArgumentEncoder(device, computeArgs)))
         return nullptr;
 
     return adoptRef(new GPUBindGroupLayout(WTFMove(bindingsMap), WTFMove(vertex), WTFMove(fragment), WTFMove(compute)));
