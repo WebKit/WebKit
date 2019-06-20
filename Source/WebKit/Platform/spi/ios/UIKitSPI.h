@@ -1190,6 +1190,30 @@ static inline bool currentUserInterfaceIdiomIsPad()
 @property (nonatomic, copy) UIContextMenuContentPreviewProvider previewProvider;
 @property (nonatomic, copy) UIContextMenuActionProvider actionProvider;
 @end
+
+@protocol _UIClickInteractionDriverDelegate;
+@protocol _UIClickInteractionDriving <NSObject>
+@property (nonatomic, weak) id <_UIClickInteractionDriverDelegate> delegate;
+@end
+
+@class _UIClickPresentationInteraction;
+@interface UIContextMenuInteraction (Radar51288435)
+@property (nonatomic, strong) _UIClickPresentationInteraction *presentationInteraction;
+@end
+
+@interface _UIClickInteraction : NSObject <UIInteraction>
+@end
+
+@interface _UIClickPresentationInteraction : NSObject <UIInteraction>
+@end
+@interface _UIClickPresentationInteraction (NeededUntil51288435Fixed)
+@property (nonatomic, strong) _UIClickInteraction *previewClickInteraction;
+@end
+
+@interface _UIClickInteraction (Radar51288435)
+@property (nonatomic, strong) id<_UIClickInteractionDriving> driver;
+@end
+
 #endif
 
 WTF_EXTERN_C_BEGIN

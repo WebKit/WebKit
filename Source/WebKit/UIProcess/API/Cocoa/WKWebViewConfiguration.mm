@@ -791,6 +791,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _pageConfiguration->canShowWhileLocked();
 }
 
+- (void)_setClickInteractionDriverForTesting:(id<_UIClickInteractionDriving>)driver
+{
+    _pageConfiguration->setClickInteractionDriverForTesting((NSObject<_UIClickInteractionDriving> *)driver);
+}
+
+- (id <_UIClickInteractionDriving>)_clickInteractionDriverForTesting
+{
+    return _pageConfiguration->clickInteractionDriverForTesting().get();
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 - (BOOL)_invisibleAutoplayNotPermitted

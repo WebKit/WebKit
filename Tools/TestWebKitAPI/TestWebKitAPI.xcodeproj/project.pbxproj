@@ -319,6 +319,7 @@
 		5C23DF0B2246015800F454B6 /* Challenge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C23DF0A2245C9D700F454B6 /* Challenge.mm */; };
 		5C2936931D5BF70D00DEAB1E /* CookieAcceptPolicy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */; };
 		5C2936961D5C00ED00DEAB1E /* CookieMessage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C2936941D5BFD1900DEAB1E /* CookieMessage.html */; };
+		5C3B1D2622A74F6700BCF4D0 /* ContextMenus.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C3B1D2522A74EA400BCF4D0 /* ContextMenus.mm */; };
 		5C4259462266A68A0039AA7A /* BasicProposedCredentialPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C42594422669E9B0039AA7A /* BasicProposedCredentialPlugIn.mm */; };
 		5C4A84951F7EEFFC00ACFC54 /* Configuration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C4A84941F7EEFD400ACFC54 /* Configuration.mm */; };
 		5C69BDD51F82A7EF000F4F4B /* JavaScriptDuringNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C69BDD41F82A7EB000F4F4B /* JavaScriptDuringNavigation.mm */; };
@@ -349,6 +350,7 @@
 		5CCB10E3213457D800AC5AF0 /* RestoreSessionStateWithoutNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CCB10DE2134579D00AC5AF0 /* RestoreSessionStateWithoutNavigation.mm */; };
 		5CCB10E4213457E000AC5AF0 /* ShouldGoToBackForwardListItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CCB10DF2134579D00AC5AF0 /* ShouldGoToBackForwardListItem.mm */; };
 		5CE354D91E70DA5C00BEFE3B /* WKContentExtensionStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CE354D81E70D9C300BEFE3B /* WKContentExtensionStore.mm */; };
+		5CE7594922A883D200C12409 /* TestContextMenuDriver.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CE7594722A883A500C12409 /* TestContextMenuDriver.mm */; };
 		5CEAB5E11FA939F400A77FAA /* _WKInputDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CEAB5DF1FA937CB00A77FAA /* _WKInputDelegate.mm */; };
 		5CF540E92257E67C00E6BC0E /* DownloadThread.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CF540E82257E64B00E6BC0E /* DownloadThread.mm */; };
 		5CFACF63226F73C60056C7D0 /* libboringssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CFACF62226F73C60056C7D0 /* libboringssl.a */; };
@@ -1767,6 +1769,7 @@
 		5C23DF0A2245C9D700F454B6 /* Challenge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Challenge.mm; sourceTree = "<group>"; };
 		5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieAcceptPolicy.mm; sourceTree = "<group>"; };
 		5C2936941D5BFD1900DEAB1E /* CookieMessage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CookieMessage.html; sourceTree = "<group>"; };
+		5C3B1D2522A74EA400BCF4D0 /* ContextMenus.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenus.mm; sourceTree = "<group>"; };
 		5C42594422669E9B0039AA7A /* BasicProposedCredentialPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BasicProposedCredentialPlugIn.mm; sourceTree = "<group>"; };
 		5C4A84941F7EEFD400ACFC54 /* Configuration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Configuration.mm; sourceTree = "<group>"; };
 		5C5E633D1D0B67940085A025 /* UniqueRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueRef.cpp; sourceTree = "<group>"; };
@@ -1798,6 +1801,8 @@
 		5CCB10DF2134579D00AC5AF0 /* ShouldGoToBackForwardListItem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ShouldGoToBackForwardListItem.mm; sourceTree = "<group>"; };
 		5CCB10E02134579D00AC5AF0 /* ResponsivenessTimer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResponsivenessTimer.mm; sourceTree = "<group>"; };
 		5CE354D81E70D9C300BEFE3B /* WKContentExtensionStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentExtensionStore.mm; sourceTree = "<group>"; };
+		5CE7594722A883A500C12409 /* TestContextMenuDriver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestContextMenuDriver.mm; path = cocoa/TestContextMenuDriver.mm; sourceTree = "<group>"; };
+		5CE7594822A883A500C12409 /* TestContextMenuDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestContextMenuDriver.h; path = cocoa/TestContextMenuDriver.h; sourceTree = "<group>"; };
 		5CEAB5DF1FA937CB00A77FAA /* _WKInputDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKInputDelegate.mm; sourceTree = "<group>"; };
 		5CF540E82257E64B00E6BC0E /* DownloadThread.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DownloadThread.mm; sourceTree = "<group>"; };
 		5CFACF62226F73C60056C7D0 /* libboringssl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libboringssl.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2539,6 +2544,8 @@
 				F44A530D21B8976900DBB99C /* InstanceMethodSwizzler.h */,
 				F44A531021B8976900DBB99C /* InstanceMethodSwizzler.mm */,
 				0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */,
+				5CE7594822A883A500C12409 /* TestContextMenuDriver.h */,
+				5CE7594722A883A500C12409 /* TestContextMenuDriver.mm */,
 				2D1C04A51D76298B000A6816 /* TestNavigationDelegate.h */,
 				2D1C04A61D76298B000A6816 /* TestNavigationDelegate.mm */,
 				A14FC58D1B8AE36500D107EB /* TestProtocol.h */,
@@ -2615,6 +2622,7 @@
 				A14FC5861B8991B600D107EB /* ContentFiltering.mm */,
 				A14FC5891B89927100D107EB /* ContentFilteringPlugIn.mm */,
 				5CA1DED81F74A87100E71BD3 /* ContentRuleListNotification.mm */,
+				5C3B1D2522A74EA400BCF4D0 /* ContextMenus.mm */,
 				5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */,
 				5C19A5231FD0F32600EEA323 /* CookiePrivateBrowsing.mm */,
 				9B1056411F9045C700D5583F /* CopyHTML.mm */,
@@ -4170,6 +4178,7 @@
 				37FB72971DB2E82F00E41BE4 /* ContextMenuDefaultItemsHaveTags.mm in Sources */,
 				8349D3C21DB96DDE004A9F65 /* ContextMenuDownload.mm in Sources */,
 				CD0BD0A61F79924D001AB2CF /* ContextMenuImgWithVideo.mm in Sources */,
+				5C3B1D2622A74F6700BCF4D0 /* ContextMenus.mm in Sources */,
 				5C2936931D5BF70D00DEAB1E /* CookieAcceptPolicy.mm in Sources */,
 				51D1249B1E785425002B2820 /* CookieManager.cpp in Sources */,
 				5C19A5241FD0F60100EEA323 /* CookiePrivateBrowsing.mm in Sources */,
@@ -4473,6 +4482,7 @@
 				5C9B548E223C4CBE00B150C4 /* TCPServer.cpp in Sources */,
 				7CCE7F161A411AE600447C4C /* TerminateTwice.cpp in Sources */,
 				7CCE7EA91A411A1D00447C4C /* TestBrowsingContextLoadDelegate.mm in Sources */,
+				5CE7594922A883D200C12409 /* TestContextMenuDriver.mm in Sources */,
 				F46128CB211D475100D9FADB /* TestDraggingInfo.mm in Sources */,
 				F4E0A2B82122847400AF7C7F /* TestFilePromiseReceiver.mm in Sources */,
 				F4F5BB5221667BAA002D06B9 /* TestFontOptions.mm in Sources */,

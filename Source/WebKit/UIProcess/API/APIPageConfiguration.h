@@ -31,6 +31,11 @@
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 
+#if PLATFORM(IOS_FAMILY)
+OBJC_PROTOCOL(_UIClickInteractionDriving);
+#include <wtf/RetainPtr.h>
+#endif
+
 namespace WebKit {
 class VisitedLinkStore;
 class WebPageGroup;
@@ -98,6 +103,9 @@ public:
     
     bool canShowWhileLocked() const { return m_canShowWhileLocked; }
     void setCanShowWhileLocked(bool canShowWhileLocked) { m_canShowWhileLocked = canShowWhileLocked; }
+
+    const RetainPtr<_UIClickInteractionDriving>& clickInteractionDriverForTesting() const { return m_clickInteractionDriverForTesting; }
+    void setClickInteractionDriverForTesting(RetainPtr<_UIClickInteractionDriving>&& driver) { m_clickInteractionDriverForTesting = WTFMove(driver); }
 #endif
     bool initialCapitalizationEnabled() { return m_initialCapitalizationEnabled; }
     void setInitialCapitalizationEnabled(bool initialCapitalizationEnabled) { m_initialCapitalizationEnabled = initialCapitalizationEnabled; }
@@ -151,6 +159,7 @@ private:
 #if PLATFORM(IOS_FAMILY)
     bool m_alwaysRunsAtForegroundPriority { false };
     bool m_canShowWhileLocked { false };
+    RetainPtr<_UIClickInteractionDriving> m_clickInteractionDriverForTesting;
 #endif
     bool m_initialCapitalizationEnabled { true };
     bool m_waitsForPaintAfterViewDidMoveToWindow { true };

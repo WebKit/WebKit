@@ -73,6 +73,7 @@ Ref<PageConfiguration> PageConfiguration::copy() const
 #if PLATFORM(IOS_FAMILY)
     copy->m_alwaysRunsAtForegroundPriority = this->m_alwaysRunsAtForegroundPriority;
     copy->m_canShowWhileLocked = this->m_canShowWhileLocked;
+    copy->m_clickInteractionDriverForTesting = this->m_clickInteractionDriverForTesting;
 #endif
     copy->m_initialCapitalizationEnabled = this->m_initialCapitalizationEnabled;
     copy->m_waitsForPaintAfterViewDidMoveToWindow = this->m_waitsForPaintAfterViewDidMoveToWindow;

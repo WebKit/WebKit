@@ -7434,6 +7434,12 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
         _contextMenuHasRequestedLegacyData = NO;
         [self addInteraction:_contextMenuInteraction.get()];
 
+        if (id<_UIClickInteractionDriving> driver = _webView.configuration._clickInteractionDriverForTesting) {
+            _UIClickInteraction *previewClickInteraction = [[_contextMenuInteraction presentationInteraction] previewClickInteraction];
+            [previewClickInteraction setDriver:driver];
+            [driver setDelegate:(id<_UIClickInteractionDriverDelegate>)previewClickInteraction];
+        }
+
         [self _showLinkPreviewsPreferenceChanged:nil];
 
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_showLinkPreviewsPreferenceChanged:) name:webkitShowLinkPreviewsPreferenceChangedNotification object:nil];

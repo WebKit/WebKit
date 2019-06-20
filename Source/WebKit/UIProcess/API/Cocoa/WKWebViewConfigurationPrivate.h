@@ -33,6 +33,8 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
     _WKDragLiftDelayMedium,
     _WKDragLiftDelayLong
 } WK_API_AVAILABLE(ios(11.0));
+
+@protocol _UIClickInteractionDriving;
 #endif
 
 @class WKWebView;
@@ -84,6 +86,7 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 @property (nonatomic, setter=_setSystemPreviewEnabled:) BOOL _systemPreviewEnabled WK_API_AVAILABLE(ios(12.0));
 @property (nonatomic, setter=_setShouldDecidePolicyBeforeLoadingQuickLookPreview:) BOOL _shouldDecidePolicyBeforeLoadingQuickLookPreview WK_API_AVAILABLE(ios(WK_IOS_TBA));
 @property (nonatomic, setter=_setCanShowWhileLocked:) BOOL _canShowWhileLocked WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setClickInteractionDriverForTesting:) id <_UIClickInteractionDriving> _clickInteractionDriverForTesting WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #else
 @property (nonatomic, setter=_setShowsURLsInToolTips:) BOOL _showsURLsInToolTips WK_API_AVAILABLE(macos(10.12));
 @property (nonatomic, setter=_setServiceControlsEnabled:) BOOL _serviceControlsEnabled WK_API_AVAILABLE(macos(10.12));
