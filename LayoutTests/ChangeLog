@@ -1,3 +1,14 @@
+2019-06-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK gardening. Skip touch event tests.
+
+        Since r245788 touch events support is enabled at runtime depending on whether there's an actual touch device
+        attached or not. We need to skip the tests in the bots since they don't have a touch screen.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/events/event-attribute-expected.txt: Removed.
+        * platform/gtk/fast/events/touch/document-create-touch-list-expected.txt: Removed.
+
 2019-06-20  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover

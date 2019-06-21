@@ -768,18 +768,9 @@ webkit.org/b/109570 media/track/w3c [ Skip ]
 fast/events/touch/gesture [ Skip ]
 fast/shadow-dom/touch-event-on-text-assigned-to-slot.html [ Skip ]
 
-# These tests rely on touch event grouping, which X11/GTK+ doesn't do by design
-webkit.org/b/128172 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
-webkit.org/b/128172 fast/events/touch/basic-multi-touch-events.html [ Failure ]
-webkit.org/b/128172 fast/events/touch/touch-input-element-change-documents.html [ Failure Timeout ]
-webkit.org/b/128172 fast/events/touch/multi-touch-grouped-targets.html [ Timeout Failure ]
-webkit.org/b/128172 fast/events/touch/multi-touch-inside-nested-iframes.html [ Crash Timeout ]
-webkit.org/b/128172 fast/events/touch/multi-touch-inside-iframes.html [ Timeout ]
-webkit.org/b/128172 fast/events/touch/basic-single-touch-events.html [ Crash Failure Timeout ]
-webkit.org/b/128172 fast/events/touch/page-scaled-touch-gesture-click.html [ Timeout ]
-webkit.org/b/128172 fast/events/touch/touch-target.html [ Crash Timeout ]
-webkit.org/b/128172 fast/events/touch/touch-target-limited.html [ Crash Timeout ]
-webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Timeout ]
+# These tests require touch support
+fast/events/touch [ Skip ]
+imported/w3c/web-platform-tests/touch-events [ Skip ]
 
 # HighDPI support is not enabled
 webkit.org/b/131347 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
@@ -1176,22 +1167,6 @@ webkit.org/b/190738 imported/w3c/web-platform-tests/encrypted-media/resources/cl
 # MediaRecorder is not currently implemented
 http/wpt/mediarecorder [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
-
-# This tests were moved on r187990 from platform/ios-simulator/ios/fast/events/touch
-webkit.org/b/148940 fast/events/touch/document-create-touch-list-ios.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/gesture-event-basic.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/input-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/inserted-fragment-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/moved-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/multi-touch-some-without-handlers.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/ontouchstart-active-selector.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/removed-fragment-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/removed-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/text-node-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/textarea-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/touch-event-frames.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/touch-event-pageXY.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/zoomed-touch-event-pageXY.html [ Skip ]
 
 # This tests were moved on r188159 from platform/mac/fast/forms/
 webkit.org/b/152247 fast/forms/attributed-strings.html [ Skip ]
@@ -1726,7 +1701,6 @@ webkit.org/b/144733 fast/forms/number/number-change-type-on-focus.html [ Failure
 webkit.org/b/144864 fast/events/clear-edit-drag-state.html [ Failure Pass ]
 webkit.org/b/144864 fast/events/clear-drag-state.html [ Failure Pass ]
 
-webkit.org/b/145050 fast/events/touch/touch-coords-in-zoom-and-scroll.html [ Failure Pass ]
 webkit.org/b/145051 media/video-rtl.html [ ImageOnlyFailure Pass ]
 webkit.org/b/145052 fast/history/page-cache-webdatabase-pending-transaction.html [ Failure Pass ]
 
@@ -1771,8 +1745,6 @@ webkit.org/b/145639 media/volume-bar-empty-when-muted.html [ Failure Pass ]
 webkit.org/b/157729 fast/images/image-map-outline-with-paint-root-offset.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/157730 fast/forms/select/optgroup-clicking.html [ Failure Pass ]
-
-webkit.org/b/157731 fast/events/touch/touch-inside-iframe-scrolled.html [ Timeout Pass Failure ]
 
 webkit.org/b/158472 fast/text/international/system-language/han-quotes.html [ ImageOnlyFailure Pass ]
 
@@ -1899,7 +1871,6 @@ webkit.org/b/182761 accessibility/gtk/aria-pressed-changed-notification.html [ P
 webkit.org/b/182761 accessibility/gtk/aria-readonly-changed-notification.html [ Pass Failure ]
 webkit.org/b/182761 accessibility/gtk/aria-required-changed-notification.html [ Pass Failure ]
 
-webkit.org/b/182789 fast/events/touch/touch-scaled-scrolled.html [ Pass Failure ]
 webkit.org/b/182790 imported/w3c/web-platform-tests/IndexedDB/idbdatabase-deleteObjectStore-exception-order.htm [ Pass Failure ]
 
 webkit.org/b/182989 http/wpt/beacon/beacon-quota.html [ Pass Failure ]
@@ -1937,7 +1908,6 @@ webkit.org/b/186638 animations/play-state-paused.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/streams/piping/error-propagation-forward.html [ Failure Pass ]
 webkit.org/b/186638 imported/mozilla/css-transitions/test_animation-finished.html [ Timeout Pass ]
 webkit.org/b/186638 compositing/repaint/repaint-on-layer-grouping-change.html [ Failure  Pass ]
-webkit.org/b/186638 fast/events/touch/touch-stale-node-crash.html [ Timeout Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/presentation-markup/spaces/space-2.html [ Timeout Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/relations/html5-tree/class-1.html [ Timeout Pass ]
 webkit.org/b/186638 media/video-remote-control-playpause.html [ Timeout Pass ]
@@ -2550,8 +2520,6 @@ webkit.org/b/177934 http/tests/preconnect/link-rel-preconnect-https.html [ Timeo
 
 webkit.org/b/177941 http/tests/inspector/network/ping-type.html [ Timeout ]
 
-webkit.org/b/178792 fast/events/touch/touch-inside-iframe.html [ Timeout Pass ]
-
 webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Timeout ]
 webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
 
@@ -2701,9 +2669,6 @@ webkit.org/b/157179 editing/pasteboard/drag-list-item.html [ Failure ]
 webkit.org/b/157179 fast/events/ondragenter.html [ Failure ]
 webkit.org/b/157179 fast/events/drag-customData.html  [ Timeout ]
 webkit.org/b/157179 fast/events/drag-and-drop-autoscroll-inner-frame.html [ Timeout ]
-
-# Need support for internals.settings.setDeviceSupportsMouse
-fast/events/touch/scroll-without-mouse-lacks-mousemove-events.html
 
 # WebKit2 testRunner.setEditingBehaviour appears broken sometimes.
 webkit.org/b/144764 [ Release ] editing/selection/move-by-word-visually-mac.html [ Failure ]
@@ -3197,10 +3162,6 @@ webkit.org/b/144575 http/tests/loading/promote-img-preload-priority.html [ Failu
 
 webkit.org/b/144673 fast/forms/button-line-height.html [ ImageOnlyFailure ]
 
-# Touch events not working
-webkit.org/b/144765 fast/events/touch/touch-slider.html [ Failure ]
-webkit.org/b/144765 fast/events/touch/touch-slider-no-js-touch-listener.html [ Failure ]
-
 webkit.org/b/144763 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
 
 webkit.org/b/145049 fast/text/simple-line-layout-text-stroke-width.html [ Failure ]
@@ -3333,8 +3294,6 @@ webkit.org/b/163830 svg/css/mix-blend-mode-with-inline-svg.html [ ImageOnlyFailu
 webkit.org/b/163829 svg/W3C-SVG-1.1/fonts-desc-02-t.svg [ Failure ]
 webkit.org/b/163831 svg/custom/acid3-test-77.html [ Failure ]
 
-webkit.org/b/163858 fast/events/touch/touch-constructor.html [ Skip ]
-
 webkit.org/b/163971 fast/borders/border-image-space.html [ ImageOnlyFailure ]
 
 webkit.org/b/163974 fast/canvas/drawImage-with-negative-source-destination.html [ Failure ]
@@ -3436,8 +3395,6 @@ webkit.org/b/172811 fast/forms/number/number-appearance-spinbutton-layer.html [ 
 webkit.org/b/172812 fast/canvas/webgl/lose-context-on-status-failure.html [ Failure ]
 
 webkit.org/b/173410 fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
-
-webkit.org/b/173411 fast/events/touch/frame-hover-update.html [ Failure ]
 
 webkit.org/b/173413 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-after-content-change.html [ Failure ]
 
@@ -3907,10 +3864,7 @@ webkit.org/b/198121 fast/text/large-synthetic-bold-with-scale-transform.html [ I
 
 webkit.org/b/199001 accessibility/set-selected-text-range-after-newline.html [ Failure ]
 webkit.org/b/199002 compositing/repaint/scroller-with-foreground-layer-repaints.html [ Failure ]
-webkit.org/b/199003 fast/events/event-attribute.html [ Failure ]
 webkit.org/b/199004 fast/events/fire-mousedown-while-pressing-mouse-button.html [ Failure ]
-webkit.org/b/199005 fast/events/touch/emulate-touch-events.html [ Failure ]
-webkit.org/b/199005 fast/events/touch/touch-handler-count.html [ Failure ]
 webkit.org/b/199006 fast/mediastream/MediaStreamTrack-getCapabilities.html [ Failure ]
 
 webkit.org/b/199008 compositing/backgrounds/fixed-background-on-descendant.html [ ImageOnlyFailure ]
