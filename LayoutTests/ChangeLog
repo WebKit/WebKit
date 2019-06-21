@@ -1,3 +1,16 @@
+2019-06-21  Antoine Quint  <graouts@apple.com>
+
+        [iOS] Compatibility mouse events aren't prevented by calling preventDefault() on pointerdown
+        https://bugs.webkit.org/show_bug.cgi?id=198124
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that checks that calling preventDefault() within a "pointerdown" event handler correctly prevents
+        the dispatch of compatibility mouse events even with a slow tap. 
+
+        * pointerevents/ios/pointer-events-no-mousedown-when-prevent-default-called-on-pointerdown-expected.txt: Added.
+        * pointerevents/ios/pointer-events-no-mousedown-when-prevent-default-called-on-pointerdown.html: Added.
+
 2019-06-21  Russell Epstein  <russell_e@apple.com>
 
         Layout Test animations/change-one-anim.html is flaky.

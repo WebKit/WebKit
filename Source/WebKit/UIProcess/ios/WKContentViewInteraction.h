@@ -59,6 +59,10 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
 
+#if ENABLE(POINTER_EVENTS)
+#import <WebCore/PointerID.h>
+#endif
+
 namespace API {
 class OpenPanelParameters;
 }
@@ -319,6 +323,10 @@ struct WKAutoCorrectionData {
     BOOL _didAccessoryTabInitiateFocus;
     BOOL _isExpectingFastSingleTapCommit;
     BOOL _showDebugTapHighlightsForFastClicking;
+
+#if ENABLE(POINTER_EVENTS)
+    WebCore::PointerID m_commitPotentialTapPointerId;
+#endif
 
     BOOL _keyboardDidRequestDismissal;
 

@@ -2341,8 +2341,11 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
     cancelPotentialTapIfNecessary(self);
 #if ENABLE(POINTER_EVENTS)
-    if (auto* singleTapTouchIdentifier = [_singleTapGestureRecognizer lastActiveTouchIdentifier])
-        _page->touchWithIdentifierWasRemoved([singleTapTouchIdentifier unsignedIntValue]);
+    if (auto* singleTapTouchIdentifier = [_singleTapGestureRecognizer lastActiveTouchIdentifier]) {
+        WebCore::PointerID pointerId = [singleTapTouchIdentifier unsignedIntValue];
+        if (m_commitPotentialTapPointerId != pointerId)
+            _page->touchWithIdentifierWasRemoved(pointerId);
+    }
 #endif
 }
 
@@ -2354,6 +2357,11 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)_commitPotentialTapFailed
 {
+#if ENABLE(POINTER_EVENTS)
+    _page->touchWithIdentifierWasRemoved(m_commitPotentialTapPointerId);
+    m_commitPotentialTapPointerId = 0;
+#endif
+
     [self _cancelInteraction];
     
     [self _resetInputViewDeferral];
@@ -2381,6 +2389,11 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)_didCompleteSyntheticClick
 {
+#if ENABLE(POINTER_EVENTS)
+    _page->touchWithIdentifierWasRemoved(m_commitPotentialTapPointerId);
+    m_commitPotentialTapPointerId = 0;
+#endif
+
     RELEASE_LOG(ViewGestures, "Synthetic click completed. (%p)", self);
     [self _resetInputViewDeferral];
 }
@@ -2409,8 +2422,10 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
     WebCore::PointerID pointerId = WebCore::mousePointerID;
 #if ENABLE(POINTER_EVENTS)
-    if (auto* singleTapTouchIdentifier = [_singleTapGestureRecognizer lastActiveTouchIdentifier])
+    if (auto* singleTapTouchIdentifier = [_singleTapGestureRecognizer lastActiveTouchIdentifier]) {
         pointerId = [singleTapTouchIdentifier unsignedIntValue];
+        m_commitPotentialTapPointerId = pointerId;
+    }
 #endif
     _page->commitPotentialTap(WebKit::webEventModifierFlags(gestureRecognizerModifierFlags(gestureRecognizer)), _layerTreeTransactionIdAtLastTouchStart, pointerId);
 

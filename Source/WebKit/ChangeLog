@@ -1,3 +1,20 @@
+2019-06-21  Antoine Quint  <graouts@apple.com>
+
+        [iOS] Compatibility mouse events aren't prevented by calling preventDefault() on pointerdown
+        https://bugs.webkit.org/show_bug.cgi?id=198124
+        <rdar://problem/50410863>
+
+        Reviewed by Dean Jackson.
+
+        Ensure we wait until completion of a tap before removing the pointer ID and the preventDefault() state along with it.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _singleTapDidReset:]):
+        (-[WKContentView _commitPotentialTapFailed]):
+        (-[WKContentView _didCompleteSyntheticClick]):
+        (-[WKContentView _singleTapRecognized:]):
+
 2019-06-21  Keith Rollin  <krollin@apple.com>
 
         Address reference to UIColor.groupTableViewBackgroundColor in WKPasswordView.mm
