@@ -127,9 +127,6 @@ function matchSlow(regexp, str)
         if (resultList.length > maximumReasonableMatchSize)
             @throwOutOfMemoryError();
 
-        if (!@isObject(result))
-            @throwTypeError("RegExp.prototype.@@match call to RegExp.exec didn't return null or an object");
-
         let resultString = @toString(result[0]);
 
         if (!resultString.length)
