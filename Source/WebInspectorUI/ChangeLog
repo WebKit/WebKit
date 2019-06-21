@@ -1,5 +1,26 @@
 2019-06-20  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Dark Mode: inactive tab bar item should get darker on hover
+        https://bugs.webkit.org/show_bug.cgi?id=199022
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Views/TabBar.css:
+        (.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover):
+        (@media not (prefers-color-scheme: dark) .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover > .icon):
+        (@media (prefers-color-scheme: dark) .tab-bar):
+        (@media (prefers-color-scheme: dark) .tab-bar > .item):
+        (@media (prefers-color-scheme: dark) .tab-bar > .item:not(.disabled).selected):
+        (@media (prefers-color-scheme: dark) .tab-bar:not(.animating) > .item:not(.selected):hover):
+        (@media (prefers-color-scheme: dark) body.window-inactive .tab-bar):
+        (@media (prefers-color-scheme: dark) body.window-inactive .tab-bar > .item):
+        (@media (prefers-color-scheme: dark) body.window-inactive .tab-bar > .item.selected):
+
+        * UserInterface/Views/Toolbar.css:
+        (@media (prefers-color-scheme: dark) body .toolbar):
+
+2019-06-20  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Debugger: setting a breakpoint on a non-JavaScript line should immediately show as unresolved
         https://bugs.webkit.org/show_bug.cgi?id=199033
 

@@ -138,7 +138,7 @@ body[dir=rtl] .tab-bar.dragging-tab > .item.selected {
 }
 
 .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover {
-    background-position: 0 100%;
+    background-image: linear-gradient(to bottom, hsl(0, 0%, 67%), hsl(0, 0%, 64%));
     border-top-color: var(--tab-item-dark-border-color);
 }
 
@@ -251,8 +251,10 @@ body:not(.window-inactive) .tab-bar.single-tab > .item.default-tab:hover > .clos
     opacity: 0.35;
 }
 
-.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover > .icon {
-    opacity: 0.6;
+@media not (prefers-color-scheme: dark) {
+    .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover > .icon {
+        opacity: 0.6;
+    }
 }
 
 .tab-bar > .item > .title {
@@ -360,8 +362,7 @@ body.window-inactive .tab-bar.animating.closing-tab > .item.selected {
 
 @media (prefers-color-scheme: dark) {
     .tab-bar {
-        background-image: none;
-        background-color: hsl(0, 0%, 23%);
+        background-image: linear-gradient(to bottom, hsl(0, 0%, 12%), hsl(0, 0%, 10%));
 
         --tab-item-border-color: hsl(0, 0%, 36%);
 
@@ -373,8 +374,7 @@ body.window-inactive .tab-bar.animating.closing-tab > .item.selected {
     }
 
     .tab-bar > .item {
-        background-image: none;
-        background-color: hsl(0, 0%, 10%);
+        background-image: linear-gradient(to bottom, hsl(0, 0%, 12%), hsl(0, 0%, 10%));
     }
 
     .tab-bar > .item > .title {
@@ -382,13 +382,12 @@ body.window-inactive .tab-bar.animating.closing-tab > .item.selected {
     }
 
     .tab-bar > .item:not(.disabled).selected {
-        background-image: none;
-        background-color: hsl(0, 0%, 21%);
+        background-image: linear-gradient(to bottom, hsl(0, 0%, 23%), hsl(0, 0%, 21%));
         border-top-color: hsl(0, 0%, 37%);
     }
 
     .tab-bar:not(.animating) > .item:not(.selected):hover {
-        background-color: hsl(0, 0%, 15%);
+        background-image: linear-gradient(to bottom, hsl(0, 0%, 11%), hsl(0, 0%, 9%));
     }
 
     .tab-bar > .item > .close,
@@ -401,16 +400,16 @@ body.window-inactive .tab-bar.animating.closing-tab > .item.selected {
         border-bottom-color: var(--tab-item-border-color);
 
         background-image: none !important;
-        background-color: hsl(0, 0%, 17%) !important;
+        background-color: hsl(0, 0%, 13%) !important;
     }
 
     body.window-inactive .tab-bar > .item {
         background-image: none !important;
-        background-color: hsl(0, 0%, 17%) !important;
+        background-color: hsl(0, 0%, 13%) !important;
     }
 
     body.window-inactive .tab-bar > .item.selected {
-        background-color: var(--background-color) !important;
+        background-color: hsl(0, 0%, 19%) !important;
     }
 
     body.window-inactive .tab-bar > .item > .title {
