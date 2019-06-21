@@ -1,0 +1,39 @@
+From ce3b5d0dd003a502922ef1bb34a0935dd9fa26a9 Mon Sep 17 00:00:00 2001
+From: Youenn Fablet <youenn@apple.com>
+Date: Thu, 20 Jun 2019 19:09:59 -0700
+Subject: [PATCH] fix-fd-clr
+
+---
+ .../Source/webrtc/rtc_base/physicalsocketserver.cc         | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc
+index 91cb7da8366..3cf2d3221c5 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc
+@@ -1424,8 +1424,10 @@ bool PhysicalSocketServer::WaitSelect(int cmsWait, bool process_io) {
+         // "select"ing a file descriptor that is equal to or larger than
+         // FD_SETSIZE will result in undefined behavior.
+         RTC_DCHECK_LT(fd, FD_SETSIZE);
++#if defined(WEBRTC_WEBKIT_BUILD)
+         if (fd < 0 || fd >= FD_SETSIZE)
+             continue;
++#endif
+         if (fd > fdmax)
+           fdmax = fd;
+ 
+@@ -1462,7 +1464,10 @@ bool PhysicalSocketServer::WaitSelect(int cmsWait, bool process_io) {
+       processing_dispatchers_ = true;
+       for (Dispatcher* pdispatcher : dispatchers_) {
+         int fd = pdispatcher->GetDescriptor();
+-
++#if defined(WEBRTC_WEBKIT_BUILD)
++        if (fd < 0 || fd >= FD_SETSIZE)
++          continue;
++#endif
+         bool readable = FD_ISSET(fd, &fdsRead);
+         if (readable) {
+           FD_CLR(fd, &fdsRead);
+-- 
+2.21.0 (Apple Git-118)
+

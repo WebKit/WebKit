@@ -1,3 +1,14 @@
+2019-06-21  Youenn Fablet  <youenn@apple.com>
+
+        Make sure to check for file descriptor value before using FD_CLR
+        https://bugs.webkit.org/show_bug.cgi?id=199097
+        <rdar://problem/51479074>
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/rtc_base/physicalsocketserver.cc:
+        * WebKit/0001-fix-fd-clr.patch: Added.
+
 2019-06-12  Youenn Fablet  <youenn@apple.com>
 
         Make sure libwebrtc ObjC codec interfaces do not conflict
