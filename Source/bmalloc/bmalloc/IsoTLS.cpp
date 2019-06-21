@@ -82,21 +82,19 @@ IsoTLS* IsoTLS::ensureEntries(unsigned offset)
     IsoTLSEntry* oldLastEntry = tls ? tls->m_lastEntry : nullptr;
     RELEASE_BASSERT(!oldLastEntry || oldLastEntry->offset() < offset);
     
-    IsoTLSEntry* startEntry = oldLastEntry ? oldLastEntry : layout.head();
+    IsoTLSEntry* startEntry = oldLastEntry ? oldLastEntry->m_next : layout.head();
+    RELEASE_BASSERT(startEntry);
     
     IsoTLSEntry* targetEntry = startEntry;
-    size_t requiredCapacity = 0;
-    if (startEntry) {
-        for (;;) {
-            RELEASE_BASSERT(targetEntry);
-            RELEASE_BASSERT(targetEntry->offset() <= offset);
-            if (targetEntry->offset() == offset)
-                break;
-            targetEntry = targetEntry->m_next;
-        }
+    for (;;) {
         RELEASE_BASSERT(targetEntry);
-        requiredCapacity = targetEntry->extent();
+        RELEASE_BASSERT(targetEntry->offset() <= offset);
+        if (targetEntry->offset() == offset)
+            break;
+        targetEntry = targetEntry->m_next;
     }
+    RELEASE_BASSERT(targetEntry);
+    size_t requiredCapacity = targetEntry->extent();
     
     if (!tls || requiredCapacity > tls->m_capacity) {
         size_t requiredSize = sizeForCapacity(requiredCapacity);
@@ -122,16 +120,14 @@ IsoTLS* IsoTLS::ensureEntries(unsigned offset)
         set(tls);
     }
     
-    if (startEntry) {
-        startEntry->walkUpToInclusive(
-            targetEntry,
-            [&] (IsoTLSEntry* entry) {
-                entry->construct(tls->m_data + entry->offset());
-            });
-        
-        tls->m_lastEntry = targetEntry;
-        tls->m_extent = targetEntry->extent();
-    }
+    startEntry->walkUpToInclusive(
+        targetEntry,
+        [&] (IsoTLSEntry* entry) {
+            entry->construct(tls->m_data + entry->offset());
+        });
+    
+    tls->m_lastEntry = targetEntry;
+    tls->m_extent = targetEntry->extent();
     
     return tls;
 }

@@ -1,3 +1,26 @@
+2019-06-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] IsoTLS Layout extension initializes one IsoTLSEntry twice
+        https://bugs.webkit.org/show_bug.cgi?id=199077
+
+        Reviewed by Saam Barati.
+
+        Found that IsoTLS::ensureEntries can construct the same IsoTLSEntry many times, it can leak memory because the construction clears previous fields including freelist.
+
+        1. We have oldLastEntry.
+        2. In that case, startEntry is oldLastEntry.
+        3. We find some targetEntry.
+        4. Finally, if startEntry exists, we newly construct [startEntry, targetEntry]
+        5. In the above sequence, oldLastEntry (== startEntry) is constructed again, while oldLastEntry is already constructed previously.
+
+        We fix this issue by changing the startEntry. We already have `RELEASE_BASSERT(!oldLastEntry || oldLastEntry->offset() < offset);`
+        assertion. This means that `oldLastEntry->m_next` must exist, otherwise the following loop would not find a `targetEntry`. And `layout.head()`
+        must return non nullptr at `IsoTLS::ensureEntries` because `IsoTLS::ensureEntries` requires that `IsoHeap<>` is initialized, and `IsoHeap<>`
+        must add at least one TLS entry to the IsoTLSLayout.
+
+        * bmalloc/IsoTLS.cpp:
+        (bmalloc::IsoTLS::ensureEntries):
+
 2019-06-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] IsoHeap's initialization is racy with IsoHeap::isInitialized
