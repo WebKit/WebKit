@@ -906,6 +906,9 @@ void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behav
     if (m_supportsSubpixelAntialiasedText)
         ts << indent << "(supports subpixel antialiased text " << m_supportsSubpixelAntialiasedText << ")\n";
 
+    if (m_masksToBounds && behavior & LayerTreeAsTextIncludeClipping)
+        ts << indent << "(clips " << m_masksToBounds << ")\n";
+
     if (m_preserves3D)
         ts << indent << "(preserves3D " << m_preserves3D << ")\n";
 

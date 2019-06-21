@@ -2084,6 +2084,8 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
         layerTreeBehavior |= LayerTreeAsTextIncludeContentLayers;
     if (flags & LayerTreeFlagsIncludeAcceleratesDrawing)
         layerTreeBehavior |= LayerTreeAsTextIncludeAcceleratesDrawing;
+    if (flags & LayerTreeFlagsIncludeClipping)
+        layerTreeBehavior |= LayerTreeAsTextIncludeClipping;
     if (flags & LayerTreeFlagsIncludeBackingStoreAttached)
         layerTreeBehavior |= LayerTreeAsTextIncludeBackingStoreAttached;
     if (flags & LayerTreeFlagsIncludeRootLayerProperties)

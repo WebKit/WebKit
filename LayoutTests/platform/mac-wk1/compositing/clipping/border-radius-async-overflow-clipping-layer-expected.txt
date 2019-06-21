@@ -3,6 +3,7 @@ This is the scrolled contents
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
+  (clips 1)
   (children 1
     (GraphicsLayer
       (bounds 800.00 600.00)
@@ -17,6 +18,7 @@ This is the scrolled contents
               (offsetFromRenderer width=30 height=30)
               (position 44.00 44.00)
               (bounds 320.00 200.00)
+              (clips 1)
               (children 1
                 (GraphicsLayer
                   (position 10.00 10.00)
@@ -43,6 +45,7 @@ This is the scrolled contents
               (offsetFromRenderer width=30 height=30)
               (position 44.00 44.00)
               (bounds 320.00 200.00)
+              (clips 1)
               (children 1
                 (GraphicsLayer
                   (position 10.00 10.00)

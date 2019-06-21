@@ -1,3 +1,24 @@
+2019-06-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to include clipping in GraphicsLayer tree dumps
+        https://bugs.webkit.org/show_bug.cgi?id=199096
+
+        Reviewed by Zalan Bujtas.
+
+        Add LAYER_TREE_INCLUDES_CLIPPING and plumb it down to GraphicsLayers, turning
+        it on for a couple of tests.
+
+        * page/Frame.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties const):
+        * platform/graphics/GraphicsLayerClient.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+        * testing/Internals.cpp:
+        (WebCore::toLayerTreeFlags):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-06-20  Daniel Bates  <dabates@apple.com>
 
         [iOS] Evernote crashes when creating a note

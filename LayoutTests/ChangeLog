@@ -1,3 +1,16 @@
+2019-06-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to include clipping in GraphicsLayer tree dumps
+        https://bugs.webkit.org/show_bug.cgi?id=199096
+
+        Reviewed by Zalan Bujtas.
+
+        * compositing/clipping/border-radius-async-overflow-clipping-layer-expected.txt:
+        * compositing/clipping/border-radius-async-overflow-clipping-layer.html:
+        * compositing/clipping/border-radius-overflow-hidden-stacking-context-expected.txt:
+        * compositing/clipping/border-radius-overflow-hidden-stacking-context.html:
+        * platform/mac-wk1/compositing/clipping/border-radius-async-overflow-clipping-layer-expected.txt:
+
 2019-06-20  Greg Doolittle  <gr3g@apple.com>
 
         Web Inspector: AXI: Audit: image label test is throwing spurious errors on elements with existing alt attr, but no value: <img alt>
