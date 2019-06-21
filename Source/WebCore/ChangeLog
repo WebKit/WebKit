@@ -1,3 +1,17 @@
+2019-06-21  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r246655.
+
+        Introduced a failing test
+
+        Reverted changeset:
+
+        "Web Inspector: AXI: Audit: image label test is throwing
+        spurious errors on elements with existing alt attr, but no
+        value: <img alt>"
+        https://bugs.webkit.org/show_bug.cgi?id=194754
+        https://trac.webkit.org/changeset/246655
+
 2019-06-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] read modify write expressions do no work as expected

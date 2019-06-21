@@ -326,7 +326,7 @@ Total elements to be tested: 122.
 <img src="data:image/gif..." alt="x" aria-hidden="true">
     exists: true
     label: x
-    role: presentation
+    role: img
     ignored: true
     ignoredByDefault: true
     hidden: true
@@ -339,7 +339,7 @@ Total elements to be tested: 122.
 <img src="data:image/gif..." alt="">
     exists: true
     label: 
-    role: presentation
+    role: img
     ignored: true
 
 <img src="data:image/gif...">
@@ -350,7 +350,7 @@ Total elements to be tested: 122.
 <img src="./404.gif">
     exists: true
     label: 
-    role: presentation
+    role: img
     ignored: true
 
 <input style="display:none;">
@@ -361,7 +361,7 @@ Total elements to be tested: 122.
 <input aria-hidden="true">
     exists: true
     label: 
-    role: presentation
+    role: 
     focused: false
     ignored: true
     ignoredByDefault: true
@@ -906,7 +906,7 @@ Total elements to be tested: 122.
 <span aria-hidden="true"></span>
     exists: true
     label: 
-    role: presentation
+    role: 
     ignored: true
     ignoredByDefault: true
     hidden: true
@@ -915,7 +915,7 @@ Total elements to be tested: 122.
 <span></span>
     exists: true
     label: 
-    role: presentation
+    role: 
     ignored: true
     ignoredByDefault: true
     parentNodeId: exists
@@ -923,7 +923,7 @@ Total elements to be tested: 122.
 <div aria-hidden="true"></div>
     exists: true
     label: 
-    role: presentation
+    role: 
     ignored: true
     ignoredByDefault: true
     hidden: true
@@ -932,7 +932,7 @@ Total elements to be tested: 122.
 <div></div>
     exists: true
     label: 
-    role: presentation
+    role: 
     ignored: true
     parentNodeId: exists
 
@@ -961,14 +961,14 @@ Total elements to be tested: 122.
 <div><div></div></div>
     exists: true
     label: 
-    role: presentation
+    role: 
     ignored: true
     parentNodeId: exists
 
 <script style="display:block;"></script>
     exists: true
     label: 
-    role: presentation
+    role: 
     ignored: true
     parentNodeId: exists
 
