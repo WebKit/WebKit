@@ -3850,8 +3850,6 @@ webkit.org/b/197251 imported/w3c/web-platform-tests/css/css-shapes/shape-outside
 
 webkit.org/b/197252 http/tests/adClickAttribution/send-attribution-conversion-request.html [ Failure ]
 
-webkit.org/b/197706 css-dark-mode/default-colors.html [ Failure ]
-
 webkit.org/b/197708 http/wpt/beacon/beacon-async-error-logging.html [ Failure ]
 webkit.org/b/197708 http/wpt/beacon/cors/cors-preflight-cookie.html [ Failure ]
 
