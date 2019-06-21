@@ -1,3 +1,33 @@
+2019-06-21  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit context menu highlights include extra padding
+        https://bugs.webkit.org/show_bug.cgi?id=199080
+        <rdar://problem/51140126>
+
+        Reviewed by Dean Jackson.
+
+        * Shared/ios/InteractionInformationRequest.cpp:
+        (WebKit::InteractionInformationRequest::encode const):
+        (WebKit::InteractionInformationRequest::decode):
+        (WebKit::InteractionInformationRequest::isValidForRequest):
+        (WebKit::InteractionInformationRequest::isApproximatelyValidForRequest):
+        * Shared/ios/InteractionInformationRequest.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView positionInformationForActionSheetAssistant:]):
+        (-[WKContentView updatePositionInformationForActionSheetAssistant:]):
+        (-[WKContentView _contextMenuInteraction:configurationForMenuAtLocation:completion:]):
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::linkIndicatorPositionInformation):
+        Disable the margin going forward, but leave it if we're using the legacy
+        API, because there is no way to add margin at the platform level with
+        the legacy API.
+
+        In the future we should always have no margin in our indicator, and just
+        apply it in whatever consumes the indicator, so that there is no
+        disagreement between clients about the size of the margin.
+
 2019-06-21  Youenn Fablet  <youenn@apple.com>
 
         WebPageProxy should use the right path for sandbox extension

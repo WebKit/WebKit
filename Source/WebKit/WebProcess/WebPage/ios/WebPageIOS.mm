@@ -2492,7 +2492,7 @@ static void linkIndicatorPositionInformation(WebPage& page, Element& element, El
 
     auto linkRange = rangeOfContents(linkElement);
     float deviceScaleFactor = page.corePage()->deviceScaleFactor();
-    const float marginInPoints = 4;
+    const float marginInPoints = request.linkIndicatorShouldHaveLegacyMargins ? 4 : 0;
 
     auto textIndicator = TextIndicator::createWithRange(linkRange.get(),
         TextIndicatorOptionTightlyFitContent | TextIndicatorOptionRespectTextColor | TextIndicatorOptionPaintBackgrounds |

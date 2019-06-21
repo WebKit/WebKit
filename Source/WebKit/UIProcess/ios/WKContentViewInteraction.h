@@ -524,6 +524,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 - (void)_didStartProvisionalLoadForMainFrame;
 
+@property (nonatomic, readonly, getter=_shouldUseContextMenus) BOOL _shouldUseContextMenus;
+
 @end
 
 @interface WKContentView (WKTesting)
@@ -548,7 +550,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #else
 @interface WKContentView (WKInteractionPreview) <UIPreviewItemDelegate>
 #endif
-- (bool)_shouldUseContextMenus;
 - (void)_registerPreview;
 - (void)_unregisterPreview;
 @end

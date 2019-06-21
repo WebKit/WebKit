@@ -770,7 +770,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_highlightLongPressGestureRecognizer setDelegate:self];
 
 #if HAVE(LINK_PREVIEW)
-    if (![self _shouldUseContextMenus]) {
+    if (!self._shouldUseContextMenus) {
         [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
         [self _createAndConfigureLongPressGestureRecognizer];
     }
@@ -2066,6 +2066,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         if (self.traitCollection.forceTouchCapability == UIForceTouchCapabilityAvailable) {
             request.includeSnapshot = true;
             request.includeLinkIndicator = true;
+            request.linkIndicatorShouldHaveLegacyMargins = !self._shouldUseContextMenus;
         }
 
         [self requestAsynchronousPositionInformationUpdate:request];
@@ -6074,6 +6075,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     WebKit::InteractionInformationRequest request(_positionInformation.request.point);
     request.includeSnapshot = true;
     request.includeLinkIndicator = assistant.needsLinkIndicator;
+    request.linkIndicatorShouldHaveLegacyMargins = !self._shouldUseContextMenus;
     if (![self ensurePositionInformationIsUpToDate:request])
         return WTF::nullopt;
 
@@ -6086,6 +6088,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     WebKit::InteractionInformationRequest request(_positionInformation.request.point);
     request.includeSnapshot = true;
     request.includeLinkIndicator = assistant.needsLinkIndicator;
+    request.linkIndicatorShouldHaveLegacyMargins = !self._shouldUseContextMenus;
 
     [self requestAsynchronousPositionInformationUpdate:request];
 }
@@ -6202,6 +6205,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }];
     } else
         completion(nil, nil);
+}
+
+- (BOOL)_shouldUseContextMenus
+{
+#if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
+    return linkedOnOrAfter(WebKit::SDKVersion::FirstThatHasUIContextMenuInteraction);
+#endif
+    return NO;
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -7382,7 +7393,7 @@ static WebEventFlags webEventFlagsForUIKeyModifierFlags(UIKeyModifierFlags flags
 
 #if HAVE(LINK_PREVIEW)
     if ([userInterfaceItem isEqualToString:@"linkPreviewPopoverContents"]) {
-        if ([self _shouldUseContextMenus])
+        if (self._shouldUseContextMenus)
             return @{ userInterfaceItem: @{ @"pageURL": WTF::userVisibleString(_positionInformation.url) } };
 
         NSString *url = [_previewItemController previewData][UIPreviewDataLink];
@@ -7427,21 +7438,13 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 
 @implementation WKContentView (WKInteractionPreview)
 
-- (bool)_shouldUseContextMenus
-{
-#if USE(UICONTEXTMENU)
-    return linkedOnOrAfter(WebKit::SDKVersion::FirstThatHasUIContextMenuInteraction);
-#endif
-    return false;
-}
-
 - (void)_registerPreview
 {
     if (!_webView.allowsLinkPreview)
         return;
 
 #if USE(UICONTEXTMENU)
-    if ([self _shouldUseContextMenus]) {
+    if (self._shouldUseContextMenus) {
         _contextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
         _contextMenuHasRequestedLegacyData = NO;
         [self addInteraction:_contextMenuInteraction.get()];
@@ -7460,9 +7463,6 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
     }
 #endif
 
-    if (!_webView.allowsLinkPreview)
-        return;
-
     _previewItemController = adoptNS([[UIPreviewItemController alloc] initWithView:self]);
     [_previewItemController setDelegate:self];
     _previewGestureRecognizer = _previewItemController.get().presentationGestureRecognizer;
@@ -7473,7 +7473,7 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 - (void)_unregisterPreview
 {
 #if USE(UICONTEXTMENU)
-    if ([self _shouldUseContextMenus]) {
+    if (self._shouldUseContextMenus) {
         if (!_contextMenuInteraction)
             return;
 
@@ -7712,6 +7712,7 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
     WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint(position) };
     request.includeSnapshot = true;
     request.includeLinkIndicator = true;
+    request.linkIndicatorShouldHaveLegacyMargins = !self._shouldUseContextMenus;
 
     [self doAfterPositionInformationUpdate:[weakSelf = WeakObjCPtr<WKContentView>(self), completion = makeBlockPtr(completion)] (WebKit::InteractionInformationAtPosition) {
         auto strongSelf = weakSelf.get();
@@ -8067,6 +8068,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     WebKit::InteractionInformationRequest request(WebCore::roundedIntPoint(position));
     request.includeSnapshot = true;
     request.includeLinkIndicator = true;
+    request.linkIndicatorShouldHaveLegacyMargins = !self._shouldUseContextMenus;
     if (![self ensurePositionInformationIsUpToDate:request])
         return NO;
     if (!_positionInformation.isLink && !_positionInformation.isImage && !_positionInformation.isAttachment)
