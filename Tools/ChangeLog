@@ -1,3 +1,15 @@
+2019-06-21  Youenn Fablet  <youenn@apple.com>
+
+        WebPageProxy should use the right path for sandbox extension
+        https://bugs.webkit.org/show_bug.cgi?id=198902
+        <rdar://problem/50772810>
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/LoadFileURL.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-06-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Bump minimum versions of GLib, GTK, libsoup, ATK, GStreamer, and Cairo

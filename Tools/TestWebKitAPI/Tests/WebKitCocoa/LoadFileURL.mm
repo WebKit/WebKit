@@ -29,6 +29,7 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import <WebKit/WebKit.h>
+#import <WebKit/WebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 
@@ -42,6 +43,7 @@ TEST(WKWebView, LoadTwoFiles)
     NSURL *file = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     [webView loadFileURL:file allowingReadAccessToURL:file.URLByDeletingLastPathComponent];
     [delegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ(webView.get()._resourceDirectoryURL.path, file.URLByDeletingLastPathComponent.path);
 
     // Load a second file: resource that is in a completely different directory from the above
     file = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -49,8 +51,18 @@ TEST(WKWebView, LoadTwoFiles)
     [[NSFileManager defaultManager] createDirectoryAtURL:targetURL.URLByDeletingLastPathComponent withIntermediateDirectories:YES attributes:nil error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:targetURL error:nil];
     [[NSFileManager defaultManager] copyItemAtURL:file toURL:targetURL error:nil];
-    
+
     // If this second load succeeds (e.g. doesn't timeout due to a sandbox violation) the test passes
     [webView loadFileURL:targetURL allowingReadAccessToURL:targetURL.URLByDeletingLastPathComponent];
     [delegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ(webView.get()._resourceDirectoryURL.path, targetURL.URLByDeletingLastPathComponent.path);
+
+    [webView _killWebContentProcessAndResetState];
+    [webView reload];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ(webView.get()._resourceDirectoryURL.path, targetURL.URLByDeletingLastPathComponent.path);
+
+    [webView goBack];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ(webView.get()._resourceDirectoryURL.path, file.URLByDeletingLastPathComponent.path);
 }

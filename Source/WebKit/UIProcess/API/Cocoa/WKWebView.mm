@@ -982,6 +982,11 @@ static void validate(WKWebViewConfiguration *configuration)
     return [NSURL _web_URLWithWTFString:_page->pageLoadState().activeURL()];
 }
 
+- (NSURL *)_resourceDirectoryURL
+{
+    return _page->currentResourceDirectoryURL();
+}
+
 - (BOOL)isLoading
 {
     return _page->pageLoadState().isLoading();

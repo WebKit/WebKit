@@ -67,6 +67,9 @@ public:
     const String& url() const { return m_itemState.pageState.mainFrameState.urlString; }
     const String& title() const { return m_itemState.pageState.title; }
 
+    const URL& resourceDirectoryURL() const { return m_resourceDirectoryURL; }
+    void setResourceDirectoryURL(URL&& url) { m_resourceDirectoryURL = WTFMove(url); }
+
     bool itemIsInSameDocument(const WebBackForwardListItem&) const;
     bool itemIsClone(const WebBackForwardListItem&);
 
@@ -87,6 +90,7 @@ private:
     void removeSuspendedPageFromProcessPool();
 
     BackForwardListItemState m_itemState;
+    URL m_resourceDirectoryURL;
     WebCore::PageIdentifier m_pageID;
     WebCore::ProcessIdentifier m_lastProcessIdentifier;
     WeakPtr<SuspendedPageProxy> m_suspendedPage;

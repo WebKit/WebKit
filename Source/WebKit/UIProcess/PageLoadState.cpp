@@ -239,10 +239,16 @@ const String& PageLoadState::pendingAPIRequestURL() const
     return m_committedState.pendingAPIRequestURL;
 }
 
-void PageLoadState::setPendingAPIRequestURL(const Transaction::Token& token, const String& pendingAPIRequestURL)
+const URL& PageLoadState::resourceDirectoryURL() const
+{
+    return m_committedState.resourceDirectoryURL;
+}
+
+void PageLoadState::setPendingAPIRequestURL(const Transaction::Token& token, const String& pendingAPIRequestURL, const URL& resourceDirectoryURL)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
     m_uncommittedState.pendingAPIRequestURL = pendingAPIRequestURL;
+    m_uncommittedState.resourceDirectoryURL = resourceDirectoryURL;
 }
 
 void PageLoadState::clearPendingAPIRequestURL(const Transaction::Token& token)

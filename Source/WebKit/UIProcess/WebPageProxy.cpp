@@ -1048,19 +1048,29 @@ bool WebPageProxy::tryClose()
     return false;
 }
 
-bool WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& process, const URL& url, SandboxExtension::Handle& sandboxExtensionHandle)
+void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& process, const URL& url, const URL& resourceDirectoryURL, SandboxExtension::Handle& sandboxExtensionHandle)
 {
     if (!url.isLocalFile())
-        return false;
+        return;
+
+    if (!resourceDirectoryURL.isEmpty()) {
+        if (process.hasAssumedReadAccessToURL(resourceDirectoryURL))
+            return;
+
+        if (SandboxExtension::createHandle(resourceDirectoryURL.fileSystemPath(), SandboxExtension::Type::ReadOnly, sandboxExtensionHandle)) {
+            m_process->assumeReadAccessToBaseURL(*this, resourceDirectoryURL);
+            return;
+        }
+    }
 
     if (process.hasAssumedReadAccessToURL(url))
-        return false;
+        return;
 
     // Inspector resources are in a directory with assumed access.
     ASSERT_WITH_SECURITY_IMPLICATION(!WebKit::isInspectorPage(*this));
 
-    SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly, sandboxExtensionHandle);
-    return true;
+    if (SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly, sandboxExtensionHandle))
+        willAcquireUniversalFileReadSandboxExtension(process);
 }
 
 #if !PLATFORM(COCOA)
@@ -1114,9 +1124,8 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     loadParameters.lockHistory = navigation.lockHistory();
     loadParameters.lockBackForwardList = navigation.lockBackForwardList();
     loadParameters.clientRedirectSourceForHistory = navigation.clientRedirectSourceForHistory();
-    bool createdExtension = maybeInitializeSandboxExtensionHandle(process, url, loadParameters.sandboxExtensionHandle);
-    if (createdExtension)
-        willAcquireUniversalFileReadSandboxExtension(process);
+    maybeInitializeSandboxExtensionHandle(process, url, m_pageLoadState.resourceDirectoryURL(), loadParameters.sandboxExtensionHandle);
+
     addPlatformLoadParameters(loadParameters);
 
     process->send(Messages::WebPage::LoadRequest(loadParameters), m_pageID);
@@ -1156,7 +1165,7 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
 
     auto transaction = m_pageLoadState.transaction();
 
-    m_pageLoadState.setPendingAPIRequestURL(transaction, fileURLString);
+    m_pageLoadState.setPendingAPIRequestURL(transaction, fileURLString, resourceDirectoryURL);
 
     String resourceDirectoryPath = resourceDirectoryURL.fileSystemPath();
 
@@ -1336,9 +1345,7 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
         m_pageLoadState.setPendingAPIRequestURL(transaction, url);
 
         // We may not have an extension yet if back/forward list was reinstated after a WebProcess crash or a browser relaunch
-        bool createdExtension = maybeInitializeSandboxExtensionHandle(m_process, URL(URL(), url), sandboxExtensionHandle);
-        if (createdExtension)
-            willAcquireUniversalFileReadSandboxExtension(m_process);
+        maybeInitializeSandboxExtensionHandle(m_process, URL(URL(), url), currentResourceDirectoryURL(), sandboxExtensionHandle);
     }
 
     if (!hasRunningProcess())
@@ -5714,6 +5721,7 @@ void WebPageProxy::requestDOMPasteAccess(const WebCore::IntRect& elementRect, co
 void WebPageProxy::backForwardAddItem(BackForwardListItemState&& itemState)
 {
     auto item = WebBackForwardListItem::create(WTFMove(itemState), pageID());
+    item->setResourceDirectoryURL(currentResourceDirectoryURL());
     m_backForwardList->addItem(WTFMove(item));
 }
 
@@ -5736,9 +5744,7 @@ void WebPageProxy::backForwardGoToItemShared(Ref<WebProcessProxy>&& process, con
         return completionHandler({ });
 
     SandboxExtension::Handle sandboxExtensionHandle;
-    bool createdExtension = maybeInitializeSandboxExtensionHandle(process, URL(URL(), item->url()), sandboxExtensionHandle);
-    if (createdExtension)
-        willAcquireUniversalFileReadSandboxExtension(process);
+    maybeInitializeSandboxExtensionHandle(process, URL(URL(), item->url()), item->resourceDirectoryURL(),  sandboxExtensionHandle);
     m_backForwardList->goToItem(*item);
     completionHandler(WTFMove(sandboxExtensionHandle));
 }
@@ -6787,6 +6793,16 @@ String WebPageProxy::currentURL() const
     if (url.isEmpty() && m_backForwardList->currentItem())
         url = m_backForwardList->currentItem()->url();
     return url;
+}
+
+URL WebPageProxy::currentResourceDirectoryURL() const
+{
+    auto resourceDirectoryURL = m_pageLoadState.resourceDirectoryURL();
+    if (!resourceDirectoryURL.isEmpty())
+        return resourceDirectoryURL;
+    if (auto* item = m_backForwardList->currentItem())
+        return item->resourceDirectoryURL();
+    return { };
 }
 
 void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)

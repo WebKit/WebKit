@@ -6295,3 +6295,33 @@ TEST(ProcessSwap, SuspendAllMediaPlayback)
     [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
     TestWebKitAPI::Util::run(&notPlaying);
 }
+
+TEST(ProcessSwap, PassSandboxExtension)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+#if TARGET_OS_IPHONE
+    configuration.get().allowsInlineMediaPlayback = YES;
+#endif
+    [configuration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    NSURL *file = [[NSBundle mainBundle] URLForResource:@"autoplay-with-controls" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    [webView loadFileURL:file allowingReadAccessToURL:file.URLByDeletingLastPathComponent];
+    [webView waitForMessage:@"loaded"];
+
+    EXPECT_WK_STREQ(webView.get()._resourceDirectoryURL.path, file.URLByDeletingLastPathComponent.path);
+}

@@ -176,6 +176,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 @property (nonatomic, readonly, getter=_isShowingNavigationGestureSnapshot) BOOL _showingNavigationGestureSnapshot;
 
+@property (nonatomic, readonly) NSURL *_resourceDirectoryURL WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 - (void)_close;
 
 - (void)_updateWebsitePolicies:(_WKWebsitePolicies *)websitePolicies WK_API_AVAILABLE(macos(10.13), ios(11.0));

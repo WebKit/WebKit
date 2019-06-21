@@ -27,6 +27,7 @@
 #define PageLoadState_h
 
 #include "WebCertificateInfo.h"
+#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -140,8 +141,10 @@ public:
 
     WebCertificateInfo* certificateInfo() const { return m_committedState.certificateInfo.get(); }
 
+    const URL& resourceDirectoryURL() const;
+
     const String& pendingAPIRequestURL() const;
-    void setPendingAPIRequestURL(const Transaction::Token&, const String&);
+    void setPendingAPIRequestURL(const Transaction::Token&, const String& pendingAPIRequestURL, const URL& resourceDirectoryPath = { });
     void clearPendingAPIRequestURL(const Transaction::Token&);
 
     void didStartProvisionalLoad(const Transaction::Token&, const String& url, const String& unreachableURL);
@@ -212,6 +215,8 @@ private:
         String unreachableURL;
 
         String title;
+
+        URL resourceDirectoryURL;
 
         bool canGoBack;
         bool canGoForward;

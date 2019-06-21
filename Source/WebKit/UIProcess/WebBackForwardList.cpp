@@ -434,6 +434,7 @@ void WebBackForwardList::restoreFromState(BackForwardListState backForwardListSt
     Vector<Ref<WebBackForwardListItem>> items;
     items.reserveInitialCapacity(backForwardListState.items.size());
 
+    // FIXME: Enable restoring resourceDirectoryURL.
     for (auto& backForwardListItemState : backForwardListState.items) {
         backForwardListItemState.identifier = { Process::identifier(), ObjectIdentifier<BackForwardItemIdentifier::ItemIdentifierType>::generate() };
         items.uncheckedAppend(WebBackForwardListItem::create(WTFMove(backForwardListItemState), m_page->pageID()));

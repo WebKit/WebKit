@@ -1556,6 +1556,8 @@ public:
 
     void requestStorageSpace(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, WTF::CompletionHandler<void(uint64_t)>&&);
 
+    URL currentResourceDirectoryURL() const;
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, WebCore::PageIdentifier, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -1892,7 +1894,7 @@ private:
     void setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, uint64_t complexTextInputState);
 #endif
 
-    bool maybeInitializeSandboxExtensionHandle(WebProcessProxy&, const URL&, SandboxExtension::Handle&);
+    void maybeInitializeSandboxExtensionHandle(WebProcessProxy&, const URL& url, const URL& resourceDirectoryURL, SandboxExtension::Handle&);
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
     void toggleSmartInsertDelete();
