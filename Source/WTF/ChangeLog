@@ -1,3 +1,15 @@
+2019-06-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Try to use C++14 std::enable_if_t in CheckedArithmetic.h again
+        https://bugs.webkit.org/show_bug.cgi?id=199099
+
+        Reviewed by Ross Kirsling.
+
+        r242235 changed CheckedArithmetic to not use C++14. Let's try
+        C++14 again.
+
+        * wtf/CheckedArithmetic.h: Use C++14 std::make_unsigned_t and std::enable_if_t.
+
 2019-06-18  Darin Adler  <darin@apple.com>
 
         Tidy up the remaining bits of the AtomicString to AtomString rename

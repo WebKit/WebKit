@@ -181,7 +181,7 @@ template <typename Target, typename Source> struct BoundsChecker<Target, Source,
     {
         // When converting value to unsigned Source, value will become a big value if value is negative.
         // Casted value will become bigger than Target::max as Source is bigger than Target.
-        return static_cast<typename std::make_unsigned<Source>::type>(value) <= std::numeric_limits<Target>::max();
+        return static_cast<std::make_unsigned_t<Source>>(value) <= std::numeric_limits<Target>::max();
     }
 };
 
@@ -541,7 +541,7 @@ template <typename ResultType> struct ArithmeticOperations<unsigned, int, Result
     }
 };
 
-template <class OverflowHandler, typename = typename std::enable_if<!std::is_scalar<OverflowHandler>::value>::type>
+template <class OverflowHandler, typename = std::enable_if_t<!std::is_scalar<OverflowHandler>::value>>
 inline constexpr bool observesOverflow() { return true; }
 
 template <>
@@ -553,7 +553,7 @@ template <typename U, typename V, typename R> static inline bool safeAdd(U lhs, 
     return true;
 }
 
-template <class OverflowHandler, typename U, typename V, typename R, typename = typename std::enable_if<!std::is_scalar<OverflowHandler>::value>::type>
+template <class OverflowHandler, typename U, typename V, typename R, typename = std::enable_if_t<!std::is_scalar<OverflowHandler>::value>>
 static inline bool safeAdd(U lhs, V rhs, R& result)
 {
     if (observesOverflow<OverflowHandler>())
@@ -567,7 +567,7 @@ template <typename U, typename V, typename R> static inline bool safeSub(U lhs, 
     return ArithmeticOperations<U, V, R>::sub(lhs, rhs, result);
 }
 
-template <class OverflowHandler, typename U, typename V, typename R, typename = typename std::enable_if<!std::is_scalar<OverflowHandler>::value>::type>
+template <class OverflowHandler, typename U, typename V, typename R, typename = std::enable_if_t<!std::is_scalar<OverflowHandler>::value>>
 static inline bool safeSub(U lhs, V rhs, R& result)
 {
     if (observesOverflow<OverflowHandler>())
@@ -581,7 +581,7 @@ template <typename U, typename V, typename R> static inline bool safeMultiply(U 
     return ArithmeticOperations<U, V, R>::multiply(lhs, rhs, result);
 }
 
-template <class OverflowHandler, typename U, typename V, typename R, typename = typename std::enable_if<!std::is_scalar<OverflowHandler>::value>::type>
+template <class OverflowHandler, typename U, typename V, typename R, typename = std::enable_if_t<!std::is_scalar<OverflowHandler>::value>>
 static inline bool safeMultiply(U lhs, V rhs, R& result)
 {
     if (observesOverflow<OverflowHandler>())
