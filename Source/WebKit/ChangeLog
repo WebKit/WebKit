@@ -1,3 +1,19 @@
+2019-06-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Adjust sandboxes based on seed feedback
+        https://bugs.webkit.org/show_bug.cgi?id=199119
+        <rdar://problem/50164879>
+
+        Reviewed by Geoffrey Garen.
+
+        Update our sandboxes to address test failures and bugs encountered during initial iOS 13 and
+        macOS Catalina testing.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-06-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         WebPageProxy::loadData should accept ShouldOpenExternalURLsPolicy

@@ -288,6 +288,7 @@
     (iokit-property-regex #"(canvas-height|canvas-width)")
     (iokit-property "class-code")
     (iokit-property "color-accuracy-index")
+    (iokit-property "compatible") ;; <rdar://problem/47523516>
     (iokit-property "compatible-device-fallback") ;; <rdar://problem/49497720>
     (iokit-property "device-colors") ;; <rdar://problem/51322072>
     (iokit-property "device-id")

@@ -167,6 +167,7 @@
         "kern.hostname"
         "kern.maxfilesperproc"
         "kern.memorystatus_level"
+        "kern.osproductversion" ;; <rdar://problem/51756739>
         "kern.safeboot"
         "kern.version"
         "machdep.cpu.brand_string"
@@ -635,10 +636,11 @@
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(IOSMAC)
 (deny mach-lookup (with no-log)
+    (global-name "com.apple.CoreServices.coreservicesd")
+    (global-name "com.apple.DiskArbitration.diskarbitrationd")
     (global-name "com.apple.ViewBridgeAuxiliary")
     (global-name "com.apple.windowserver.active"))
 #endif
-
 
 ;; Needed to support encrypted media playback <rdar://problem/40038478>
 (allow mach-lookup
