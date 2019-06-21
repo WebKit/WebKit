@@ -1437,6 +1437,12 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         };
 
         script.requestScriptSyntaxTree((syntaxTree) => {
+            // After requesting the tree, we still might get a null tree from a parse error.
+            if (!syntaxTree) {
+                callback(null);
+                return;
+            }
+
             // Convert to the position within the inline script before querying the AST.
             position = toInlineScriptPosition(position);
             let nodes = syntaxTree.containersOfPosition(position);

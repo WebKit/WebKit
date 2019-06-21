@@ -1,5 +1,17 @@
 2019-06-20  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Error "null is not an object (evaluating 'syntaxTree.containersOfPosition')" when setting a breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=199082
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.textEditorExecutionHighlightRange):
+        The script syntax tree may be fetched even if the resource hasn't finished parsing (or had
+        a syntax error), so it's possible for it to be `null`.
+
+2019-06-20  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Dark Mode: inactive tab bar item should get darker on hover
         https://bugs.webkit.org/show_bug.cgi?id=199022
 
