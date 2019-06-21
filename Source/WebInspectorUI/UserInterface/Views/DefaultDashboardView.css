@@ -200,10 +200,6 @@ body:not(.web) .toolbar .dashboard.default > :matches(.resourcesCount, .resource
         filter: var(--filter-invert);
     }
 
-    body.latest-mac .toolbar .dashboard .item.button {
-        background: unset;
-    }
-
     .dashboard-container .advance-arrow {
         filter: var(--filter-invert);
     }

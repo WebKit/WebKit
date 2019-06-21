@@ -1,3 +1,48 @@
+2019-06-21  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: remove .legacy-mac/.latest-mac CSS classes, standardize on .latest-mac UI
+        https://bugs.webkit.org/show_bug.cgi?id=199109
+        <rdar://problem/51991129>
+
+        Reviewed by Timothy Hatcher.
+
+        Drop legacy macOS version support from Web Inspector UI.
+
+        * UserInterface/Base/Main.js:
+
+        * UserInterface/Views/DefaultDashboardView.css:
+        (@media (prefers-color-scheme: dark)):
+        (body.latest-mac .toolbar .dashboard .item.button): Deleted.
+
+        * UserInterface/Views/Toolbar.css:
+        (.toolbar):
+        (.toolbar .item.button,):
+        (.toolbar .search-bar > input[type="search"]):
+        (.toolbar .search-bar > input[type="search"]:focus):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+        (.toolbar .item.button:active):
+        (body.window-inactive .toolbar .item.button,):
+        (@media (prefers-color-scheme: dark)):
+        (.toolbar .search-bar > input[type="search"]::placeholder):
+        (body.window-inactive .toolbar .search-bar > input[type="search"]::placeholder):
+        (body.window-inactive .toolbar .search-bar > input[type="search"]::-webkit-search-results-button):
+        (.toolbar .dashboard-container):
+        (body .toolbar): Deleted.
+        (body.legacy-mac .toolbar .item.button,): Deleted.
+        (body.legacy-mac .toolbar .search-bar > input[type="search"]): Deleted.
+        (body.legacy-mac .toolbar .search-bar > input[type="search"]:focus): Deleted.
+        (body.legacy-mac .toolbar .item.button:active): Deleted.
+        (body.window-inactive.legacy-mac .toolbar .item.button,): Deleted.
+        (body.latest-mac .toolbar .item.button,): Deleted.
+        (body.latest-mac .toolbar .search-bar > input[type="search"]): Deleted.
+        (body.latest-mac .toolbar .search-bar > input[type="search"]:focus): Deleted.
+        (body.latest-mac .toolbar .item.button:active): Deleted.
+        (body.latest-mac.window-inactive .toolbar .item.button,): Deleted.
+        (body.latest-mac .toolbar .search-bar > input[type="search"]::placeholder): Deleted.
+        (body.latest-mac.window-inactive .toolbar .search-bar > input[type="search"]::placeholder): Deleted.
+        (body.latest-mac.window-inactive .toolbar .search-bar > input[type="search"]::-webkit-search-results-button): Deleted.
+        (body.latest-mac .toolbar .dashboard-container): Deleted.
+
 2019-06-20  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: rename shadowRootPushed parameter to match protocol

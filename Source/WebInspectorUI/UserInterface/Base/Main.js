@@ -290,14 +290,8 @@ WI.contentLoaded = function()
     if (WI.Platform.isNightlyBuild)
         document.body.classList.add("nightly-build");
 
-    if (WI.Platform.name === "mac") {
+    if (WI.Platform.name === "mac")
         document.body.classList.add(WI.Platform.version.name);
-
-        if (WI.Platform.version.release >= 11)
-            document.body.classList.add("latest-mac");
-        else
-            document.body.classList.add("legacy-mac");
-    }
 
     document.body.classList.add(WI.sharedApp.debuggableType);
     document.body.setAttribute("dir", WI.resolvedLayoutDirection());
