@@ -115,7 +115,7 @@ private:
     LayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
 
     LayoutUnit logicalWidth() const { return m_lineLogicalWidth; }
-    LayoutUnit logicalHeight() const { return m_contentLogicalHeight; }
+    LayoutUnit logicalHeight() const { return m_lineLogicalHeight; }
 
     LayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
     LayoutUnit baselineOffset() const { return m_baseline.ascent + m_baselineTop; }
@@ -145,7 +145,7 @@ private:
     LayoutUnit m_baselineTop;
 
     Optional<LineBox::Baseline> m_initialStrut;
-    LayoutUnit m_contentLogicalHeight;
+    LayoutUnit m_lineLogicalHeight;
     LayoutUnit m_lineLogicalWidth;
     bool m_skipVerticalAligment { false };
 };

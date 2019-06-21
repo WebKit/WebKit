@@ -50,7 +50,7 @@ Line::Line(const LayoutState& layoutState, const InitialConstraints& initialCons
     , m_logicalTopLeft(initialConstraints.topLeft)
     , m_baseline({ initialConstraints.heightAndBaseline.baselineOffset, initialConstraints.heightAndBaseline.height - initialConstraints.heightAndBaseline.baselineOffset })
     , m_initialStrut(initialConstraints.heightAndBaseline.strut)
-    , m_contentLogicalHeight(initialConstraints.heightAndBaseline.height)
+    , m_lineLogicalHeight(initialConstraints.heightAndBaseline.height)
     , m_lineLogicalWidth(initialConstraints.availableWidth)
     , m_skipVerticalAligment(skipVerticalAligment == SkipVerticalAligment::Yes)
 {
@@ -91,12 +91,12 @@ std::unique_ptr<Line::Content> Line::close()
         if (isVisuallyEmpty()) {
             m_baseline = { };
             m_baselineTop = { };
-            m_contentLogicalHeight = { };
+            m_lineLogicalHeight = { };
         }
 
         // Remove descent when all content is baseline aligned but none of them have descent.
         if (InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(m_layoutState, *m_content)) {
-            m_contentLogicalHeight -= m_baseline.descent;
+            m_lineLogicalHeight -= m_baseline.descent;
             m_baseline.descent = { };
         }
 
@@ -319,7 +319,7 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
             m_baseline.descent = std::max(m_baseline.descent, halfLeading.descent);
         if (halfLeading.ascent > 0)
             m_baseline.ascent = std::max(m_baseline.ascent, halfLeading.ascent);
-        m_contentLogicalHeight = std::max(m_contentLogicalHeight, m_baseline.height());
+        m_lineLogicalHeight = std::max(m_lineLogicalHeight, m_baseline.height());
         return;
     }
     // Apply initial strut if needed.
@@ -328,7 +328,7 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
             return;
         m_baseline.ascent = std::max(m_initialStrut->ascent, m_baseline.ascent);
         m_baseline.descent = std::max(m_initialStrut->descent, m_baseline.descent);
-        m_contentLogicalHeight = std::max(m_contentLogicalHeight, m_baseline.height());
+        m_lineLogicalHeight = std::max(m_lineLogicalHeight, m_baseline.height());
         m_initialStrut = { };
         return;
     }
@@ -343,21 +343,21 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
             auto inlineBlockBaseline = formattingState.lineBoxes().last().baseline();
             m_baseline.descent = std::max(inlineBlockBaseline.descent, m_baseline.descent);
             m_baseline.ascent = std::max(inlineBlockBaseline.ascent, m_baseline.ascent);
-            m_contentLogicalHeight = std::max(std::max(m_contentLogicalHeight, runHeight), m_baseline.height());
+            m_lineLogicalHeight = std::max(std::max(m_lineLogicalHeight, runHeight), m_baseline.height());
             break;
         }
         m_baseline.descent = std::max<LayoutUnit>(0, m_baseline.descent);
         m_baseline.ascent = std::max(runHeight, m_baseline.ascent);
-        m_contentLogicalHeight = std::max(m_contentLogicalHeight, m_baseline.height());
+        m_lineLogicalHeight = std::max(m_lineLogicalHeight, m_baseline.height());
         break;
     case VerticalAlign::Top:
         // Top align content never changes the baseline offset, it only pushes the bottom of the line further down.
-        m_contentLogicalHeight = std::max(runHeight, m_contentLogicalHeight);
+        m_lineLogicalHeight = std::max(runHeight, m_lineLogicalHeight);
         break;
     case VerticalAlign::Bottom:
-        if (m_contentLogicalHeight < runHeight) {
-            m_baselineTop += runHeight - m_contentLogicalHeight;
-            m_contentLogicalHeight = runHeight;
+        if (m_lineLogicalHeight < runHeight) {
+            m_baselineTop += runHeight - m_lineLogicalHeight;
+            m_lineLogicalHeight = runHeight;
         }
         break;
     default:

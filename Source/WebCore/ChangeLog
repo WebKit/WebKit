@@ -1,5 +1,21 @@
 2019-06-21  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Rename Line::m_contentLogicalHeight to m_lineLogicalHeight
+        https://bugs.webkit.org/show_bug.cgi?id=199100
+        <rdar://problem/51973614>
+
+        Reviewed by Antti Koivisto.
+
+        m_logicalLineHeight name seems more appropriate at this point (though the line heigh is driven by the content height).
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::close):
+        (WebCore::Layout::Line::adjustBaselineAndLineHeight):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::logicalHeight const):
+
+2019-06-21  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] LineBox::Baseline should have a height getter.
         https://bugs.webkit.org/show_bug.cgi?id=199092
         <rdar://problem/51966958>
