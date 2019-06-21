@@ -132,7 +132,7 @@ void PopUpSOAuthorizationSession::abortInternal()
     [m_secretWebView evaluateJavaScript: @"window.close()" completionHandler:nil];
 }
 
-void PopUpSOAuthorizationSession::completeInternal(WebCore::ResourceResponse&& response, NSData *data)
+void PopUpSOAuthorizationSession::completeInternal(const WebCore::ResourceResponse& response, NSData *data)
 {
     if (response.httpStatusCode() != 200 || !page()) {
         fallBackToWebPathInternal();

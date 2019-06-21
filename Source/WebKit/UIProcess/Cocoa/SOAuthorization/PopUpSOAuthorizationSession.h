@@ -55,7 +55,7 @@ private:
     void shouldStartInternal() final;
     void fallBackToWebPathInternal() final;
     void abortInternal() final;
-    void completeInternal(WebCore::ResourceResponse&&, NSData *) final;
+    void completeInternal(const WebCore::ResourceResponse&, NSData *) final;
 
     void initSecretWebView();
 

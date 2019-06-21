@@ -49,12 +49,12 @@ NavigationSOAuthorizationSession::~NavigationSOAuthorizationSession()
 
 void NavigationSOAuthorizationSession::shouldStartInternal()
 {
-    auto* pagePtr = page();
-    ASSERT(pagePtr);
+    auto* page = this->page();
+    ASSERT(page);
     beforeStart();
-    if (!pagePtr->isInWindow()) {
+    if (!page->isInWindow()) {
         setState(State::Waiting);
-        pagePtr->addObserver(*this);
+        page->addObserver(*this);
         return;
     }
     start();
@@ -62,11 +62,11 @@ void NavigationSOAuthorizationSession::shouldStartInternal()
 
 void NavigationSOAuthorizationSession::webViewDidMoveToWindow()
 {
-    auto* pagePtr = page();
-    if (state() != State::Waiting || !pagePtr || !pagePtr->isInWindow())
+    auto* page = this->page();
+    if (state() != State::Waiting || !page || !page->isInWindow())
         return;
     start();
-    pagePtr->removeObserver(*this);
+    page->removeObserver(*this);
 }
 
 } // namespace WebKit

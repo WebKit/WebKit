@@ -32,6 +32,7 @@
 #import <WebCore/ResourceResponse.h>
 
 namespace WebKit {
+using namespace WebCore;
 
 Ref<SOAuthorizationSession> RedirectSOAuthorizationSession::create(SOAuthorization *soAuthorization, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler)
 {
@@ -53,37 +54,37 @@ void RedirectSOAuthorizationSession::abortInternal()
     invokeCallback(true);
 }
 
-void RedirectSOAuthorizationSession::completeInternal(WebCore::ResourceResponse&& response, NSData *data)
+void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& response, NSData *data)
 {
-    auto* pagePtr = page();
-    if ((response.httpStatusCode() != 302 && response.httpStatusCode() != 200) || !pagePtr) {
+    auto* navigationAction = this->navigationAction();
+    ASSERT(navigationAction);
+    auto* page = this->page();
+    if ((response.httpStatusCode() != 302 && response.httpStatusCode() != 200) || !page) {
         fallBackToWebPathInternal();
         return;
     }
     invokeCallback(true);
     if (response.httpStatusCode() == 302) {
 #if PLATFORM(IOS)
-        auto* navigationActionPtr = navigationAction();
-        ASSERT(navigationActionPtr);
         // MobileSafari has a WBSURLSpoofingMitigator, which will not display the provisional URL for navigations without user gestures.
         // For slow loads that are initiated from the MobileSafari Favorites screen, the aforementioned behavior will create a period
         // after authentication completion where the new request to the application site loads with a blank URL and blank page. To
         // workaround this issue, we load an html page that does a client side redirection to the application site on behalf of the
         // request URL, instead of directly loading a new request. The html page should be super fast to load and therefore will not
         // show an empty URL or a blank page. These changes ensure a relevant URL bar and useful page content during the load.
-        if (!navigationActionPtr->isProcessingUserGesture()) {
-            pagePtr->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
-            auto html = makeString("<script>location = '", response.httpHeaderFields().get(WebCore::HTTPHeaderName::Location), "'</script>").utf8();
+        if (!navigationAction->isProcessingUserGesture()) {
+            page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
+            auto html = makeString("<script>location = '", response.httpHeaderFields().get(HTTPHeaderName::Location), "'</script>").utf8();
             auto data = IPC::DataReference(reinterpret_cast<const uint8_t*>(html.data()), html.length());
-            pagePtr->loadData(data, "text/html"_s, "UTF-8"_s, navigationActionPtr->request().url());
+            page->loadData(data, "text/html"_s, "UTF-8"_s, navigationAction->request().url(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
             return;
         }
 #endif
-        pagePtr->loadRequest(WebCore::ResourceRequest(response.httpHeaderFields().get(WebCore::HTTPHeaderName::Location)));
+        page->loadRequest(ResourceRequest(response.httpHeaderFields().get(HTTPHeaderName::Location)));
     }
     if (response.httpStatusCode() == 200) {
-        pagePtr->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
-        pagePtr->loadData(IPC::DataReference(static_cast<const uint8_t*>(data.bytes), data.length), "text/html"_s, "UTF-8"_s, response.url().string());
+        page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
+        page->loadData(IPC::DataReference(static_cast<const uint8_t*>(data.bytes), data.length), "text/html"_s, "UTF-8"_s, response.url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
     }
 }
 

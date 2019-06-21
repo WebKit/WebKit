@@ -98,7 +98,7 @@ private:
     virtual void shouldStartInternal() = 0;
     virtual void fallBackToWebPathInternal() = 0;
     virtual void abortInternal() = 0;
-    virtual void completeInternal(WebCore::ResourceResponse&&, NSData *) = 0;
+    virtual void completeInternal(const WebCore::ResourceResponse&, NSData *) = 0;
 
     void becomeCompleted();
     void dismissViewController();

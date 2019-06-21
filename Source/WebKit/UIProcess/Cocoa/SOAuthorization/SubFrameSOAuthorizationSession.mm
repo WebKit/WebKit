@@ -59,14 +59,14 @@ void SubFrameSOAuthorizationSession::fallBackToWebPathInternal()
     postDidCancelMessageToParent([weakThis = makeWeakPtr(*this)] {
         if (!weakThis)
             return;
-        auto* pagePtr = weakThis->page();
+        auto* page = weakThis->page();
         auto* navigationActionPtr = weakThis->navigationAction();
-        if (!pagePtr || !navigationActionPtr)
+        if (!page || !navigationActionPtr)
             return;
 
         if (auto* targetFrame = navigationActionPtr->targetFrame()) {
-            if (auto* frame = pagePtr->process().webFrame(targetFrame->handle().frameID())) {
-                pagePtr->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
+            if (auto* frame = page->process().webFrame(targetFrame->handle().frameID())) {
+                page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
                 // Issue a new load to the original URL as the original load is aborted before start.
                 frame->loadURL(navigationActionPtr->request().url());
             }
@@ -79,7 +79,7 @@ void SubFrameSOAuthorizationSession::abortInternal()
     ASSERT_NOT_REACHED();
 }
 
-void SubFrameSOAuthorizationSession::completeInternal(WebCore::ResourceResponse&& response, NSData *data)
+void SubFrameSOAuthorizationSession::completeInternal(const WebCore::ResourceResponse& response, NSData *data)
 {
     if (response.httpStatusCode() != 200) {
         fallBackToWebPathInternal();
@@ -103,14 +103,14 @@ void SubFrameSOAuthorizationSession::beforeStart()
 
 void SubFrameSOAuthorizationSession::loadDataToFrame(const IPC::DataReference& data, const URL& baseURL)
 {
-    auto* pagePtr = page();
+    auto* page = this->page();
     auto* navigationActionPtr = navigationAction();
-    if (!pagePtr || !navigationActionPtr)
+    if (!page || !navigationActionPtr)
         return;
 
     if (auto* targetFrame = navigationActionPtr->targetFrame()) {
-        if (auto* frame = pagePtr->process().webFrame(targetFrame->handle().frameID())) {
-            pagePtr->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
+        if (auto* frame = page->process().webFrame(targetFrame->handle().frameID())) {
+            page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
             frame->loadData(data, "text/html", "UTF-8", baseURL);
         }
     }
@@ -118,13 +118,13 @@ void SubFrameSOAuthorizationSession::loadDataToFrame(const IPC::DataReference& d
 
 void SubFrameSOAuthorizationSession::postDidCancelMessageToParent(Function<void()>&& callback)
 {
-    auto* pagePtr = page();
+    auto* page = this->page();
     auto* navigationActionPtr = navigationAction();
-    if (!pagePtr || !navigationActionPtr)
+    if (!page || !navigationActionPtr)
         return;
 
     if (auto* targetFrame = navigationActionPtr->targetFrame()) {
-        pagePtr->runJavaScriptInFrame(targetFrame->handle().frameID(), soAuthorizationPostDidCancelMessageToParent, false, [callback = WTFMove(callback)] (API::SerializedScriptValue*, bool, const ExceptionDetails&, ScriptValueCallback::Error) {
+        page->runJavaScriptInFrame(targetFrame->handle().frameID(), soAuthorizationPostDidCancelMessageToParent, false, [callback = WTFMove(callback)] (API::SerializedScriptValue*, bool, const ExceptionDetails&, ScriptValueCallback::Error) {
             callback();
         });
     }

@@ -1,3 +1,16 @@
+2019-06-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebPageProxy::loadData should accept ShouldOpenExternalURLsPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=199114
+        <rdar://problem/51671674>
+
+        Reviewed by Youenn Fablet.
+
+        Covered by new test content within existing tests.
+
+        * loader/FrameLoaderTypes.h:
+        Adds an EnumTraits for ShouldOpenExternalURLsPolicy.
+
 2019-06-21  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Code that accesses an undefined variable crashes

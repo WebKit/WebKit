@@ -154,7 +154,7 @@ void SOAuthorizationSession::complete(NSHTTPURLResponse *httpResponse, NSData *d
     // Set cookies.
     auto cookies = toCookieVector([NSHTTPCookie cookiesWithResponseHeaderFields:httpResponse.allHeaderFields forURL:response.url()]);
     if (cookies.isEmpty()) {
-        completeInternal(WTFMove(response), data);
+        completeInternal(response, data);
         return;
     }
 
@@ -163,7 +163,7 @@ void SOAuthorizationSession::complete(NSHTTPURLResponse *httpResponse, NSData *d
     m_page->websiteDataStore().cookieStore().setCookies(cookies, [weakThis = makeWeakPtr(*this), response = WTFMove(response), data = adoptNS([[NSData alloc] initWithData:data])] () mutable {
         if (!weakThis)
             return;
-        weakThis->completeInternal(WTFMove(response), data.get());
+        weakThis->completeInternal(response, data.get());
     });
 }
 

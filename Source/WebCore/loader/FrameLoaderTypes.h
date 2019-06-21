@@ -219,4 +219,13 @@ template<> struct EnumTraits<WebCore::FrameLoadType> {
     >;
 };
 
+template<> struct EnumTraits<WebCore::ShouldOpenExternalURLsPolicy> {
+    using values = EnumValues<
+        WebCore::ShouldOpenExternalURLsPolicy,
+        WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow,
+        WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes,
+        WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow
+    >;
+};
+
 } // namespace WTF
