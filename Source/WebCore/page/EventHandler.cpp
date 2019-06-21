@@ -127,6 +127,12 @@
 #include "PointerLockController.h"
 #endif
 
+#if ENABLE(POINTER_EVENTS)
+#include "PointerCaptureController.h"
+#include "Quirks.h"
+#include "RuntimeEnabledFeatures.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -1789,7 +1795,11 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
 
     m_frame.selection().setCaretBlinkingSuspended(true);
 
+#if ENABLE(POINTER_EVENTS)
+    bool swallowEvent = !dispatchMouseEvent(eventNames().mousedownEvent, mouseEvent.targetNode(), true, m_clickCount, platformMouseEvent, true, request, mouseEvent);
+#else
     bool swallowEvent = !dispatchMouseEvent(eventNames().mousedownEvent, mouseEvent.targetNode(), true, m_clickCount, platformMouseEvent, true);
+#endif
     m_capturesDragging = !swallowEvent || mouseEvent.scrollbar();
 
     // If the hit testing originally determined the event was in a scrollbar, refetch the MouseEventWithHitTestResults
@@ -2035,7 +2045,12 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
     if (swallowEvent)
         return true;
     
+#if ENABLE(POINTER_EVENTS)
+    swallowEvent = !dispatchMouseEvent(eventNames().mousemoveEvent, mouseEvent.targetNode(), false, 0, platformMouseEvent, true, request, mouseEvent);
+#else
     swallowEvent = !dispatchMouseEvent(eventNames().mousemoveEvent, mouseEvent.targetNode(), false, 0, platformMouseEvent, true);
+#endif
+
 #if ENABLE(DRAG_SUPPORT)
     if (!swallowEvent)
         swallowEvent = handleMouseDraggedEvent(mouseEvent);
@@ -2139,6 +2154,20 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMou
         return !dispatchMouseEvent(eventNames().mouseupEvent, m_lastElementUnderMouse.get(), cancelable, m_clickCount, platformMouseEvent, setUnder);
     }
 
+    bool shouldFireBoundaryEventsWithClick = true;
+#if ENABLE(POINTER_EVENTS)
+    if (m_frame.page()->pointerCaptureController().hasPointerCapture(m_capturingMouseEventsElement.get(), mousePointerID)) {
+        // If we have pointer capture enabled, it will be disabled by virtue of receiving a "pointerup" event. For :active and :hover
+        // styles to be set correctly when prepareMouseEvent() is called below, we should already reset pointer capture.
+        // We must also reset m_capturingMouseEventsElement to ensure boundary mouse events are dispatched on the hit-testing target.
+        // Finally, the click event target may differ from the hit-testing target, so let's not dispatch boundary mouse events as part of
+        // dispatching the click event below.
+        m_frame.page()->pointerCaptureController().releasePointerCapture(m_capturingMouseEventsElement.get(), mousePointerID);
+        m_capturingMouseEventsElement = nullptr;
+        shouldFireBoundaryEventsWithClick = false;
+    }
+#endif
+
     HitTestRequest request(HitTestRequest::Release | HitTestRequest::DisallowUserAgentShadowContent);
     MouseEventWithHitTestResults mouseEvent = prepareMouseEvent(request, platformMouseEvent);
     Frame* subframe = m_capturingMouseEventsElement.get() ? subframeForTargetNode(m_capturingMouseEventsElement.get()) : subframeForHitTestResult(mouseEvent);
@@ -2152,7 +2181,12 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMou
     bool contextMenuEvent = platformMouseEvent.button() == RightButton;
 
     Node* nodeToClick = targetNodeForClickEvent(m_clickNode.get(), mouseEvent.targetNode());
-    bool swallowClickEvent = m_clickCount > 0 && !contextMenuEvent && nodeToClick && !dispatchMouseEvent(eventNames().clickEvent, nodeToClick, true, m_clickCount, platformMouseEvent, true);
+    bool swallowClickEvent = m_clickCount > 0 && !contextMenuEvent && nodeToClick && !dispatchMouseEvent(eventNames().clickEvent, nodeToClick, true, m_clickCount, platformMouseEvent, shouldFireBoundaryEventsWithClick);
+
+    // Since we did not dispatch boundary mouse events while dispatching the click event, since the click node would have been used,
+    // we need to dispatch them now accounting for the hit-testing node.
+    if (!shouldFireBoundaryEventsWithClick)
+        updateMouseEventTargetNode(mouseEvent.targetNode(), platformMouseEvent, FireMouseOverOut::Yes);
 
     if (m_resizeLayer) {
         m_resizeLayer->setInResizeMode(false);
@@ -2478,8 +2512,17 @@ void EventHandler::clearDragState()
 
 void EventHandler::setCapturingMouseEventsElement(Element* element)
 {
+    if (m_capturingMouseEventsElement == element)
+        return;
+
     m_capturingMouseEventsElement = element;
     m_eventHandlerWillResetCapturingMouseEventsElement = false;
+
+#if ENABLE(POINTER_EVENTS)
+    // If we have a new capture element, we need to dispatch boundary mouse events.
+    if (element && !element->document().quirks().shouldDisablePointerEventsQuirk() && RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled())
+        updateMouseEventTargetNode(element, m_mouseDown, FireMouseOverOut::Yes);
+#endif
 }
 
 MouseEventWithHitTestResults EventHandler::prepareMouseEvent(const HitTestRequest& request, const PlatformMouseEvent& mouseEvent)
@@ -2602,6 +2645,22 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
         m_lastElementUnderMouse = m_elementUnderMouse;
     }
 }
+
+#if ENABLE(POINTER_EVENTS)
+bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetNode, bool cancelable, int clickCount, const PlatformMouseEvent& platformMouseEvent, bool setUnder, const HitTestRequest& request, MouseEventWithHitTestResults& mouseEvent)
+{
+    if (!RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled() || (targetNode && targetNode->ownerDocument() && targetNode->document().quirks().shouldDisablePointerEventsQuirk()))
+        return dispatchMouseEvent(eventType, targetNode, cancelable, clickCount, platformMouseEvent, setUnder);
+
+    auto& pointerCaptureController = m_frame.page()->pointerCaptureController();
+    auto* oldCaptureElement = pointerCaptureController.pointerCaptureElement(mousePointerID);
+    bool defaultPrevented = dispatchMouseEvent(eventType, targetNode, cancelable, clickCount, platformMouseEvent, setUnder);
+    auto* newCaptureElement = pointerCaptureController.pointerCaptureElement(mousePointerID);
+    if (oldCaptureElement != newCaptureElement)
+        mouseEvent = prepareMouseEvent(HitTestRequest(request.type() | HitTestRequest::PointerCaptureElementChanged), platformMouseEvent);
+    return defaultPrevented;
+}
+#endif
 
 bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetNode, bool /*cancelable*/, int clickCount, const PlatformMouseEvent& platformMouseEvent, bool setUnder)
 {

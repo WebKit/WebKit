@@ -1,3 +1,53 @@
+2019-06-20  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover
+        https://bugs.webkit.org/show_bug.cgi?id=198999
+
+        Reviewed by Dean Jackson.
+
+        Up until now, we would not account for pointer capture (see https://w3c.github.io/pointerevents/#pointer-capture) when dispatching
+        mouse boundary events (mouseover, mouseout, mouseenter, mouseleave) and their counterpart pointer events. We would also not account
+        for it when updating :hover styles.
+
+        Now, when pointer capture changes for an element, we call setCapturingMouseEventsElement() on the EventHandler such that the element
+        that would naturally hit-test is overridden by the pointer capture element when identifying which target to use for the dispatch of
+        boundary mouse events. Additionally, when calling EventHandler::prepareMouseEvent(), we also use the pointer capture element to
+        eventually pass down to Document::updateHoverActiveState() such that :hover styles are applied to the correct element.
+
+        This also means that we need to re-run EventHandler::prepareMouseEvent() during mouse state changes to ensure that the :hover styles
+        are applied correctly should the pointer capture element change during dispatch of boundary mouse events.
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareMouseEvent): If there is one, use the pointer capture element instead of the hit-test target.
+        (WebCore::Document::updateHoverActiveState): Relax the mustBeInActiveChain condition in case the pointer capture element changed when
+        updating the :hover/:active chains.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent): Re-process the mouse event if the pointer capture element changed during event dispatch.
+        (WebCore::EventHandler::handleMouseMoveEvent): Re-process the mouse event if the pointer capture element changed during event dispatch.
+        (WebCore::EventHandler::handleMouseReleaseEvent): As we know the pointer capture element will be reset as part of the mouse being
+        released, we reset the pointer capture element and EventHandler's capture element prior to invalidating hover styles and boundary events.
+        (WebCore::EventHandler::setCapturingMouseEventsElement): Dispatch boundary events when a new element is set.
+        (WebCore::EventHandler::dispatchMouseEvent): New dispatchMouseEvent() variant that re-processes the provided MouseEventWithHitTestResults
+        in case the pointer capture element changes during event dispatch, as called by handleMousePressEvent() and handleMouseMoveEvent().
+        * page/EventHandler.h:
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::pointerCaptureElement): We now need to query whay the pointer capture element might be from EventHandler,
+        so expose a new method to access it.
+        (WebCore::PointerCaptureController::releasePointerCapture): Since we may not call processPendingPointerCapture() until the dispatch of the
+        next event, we must reset EventHandler's capturing mouse element right now so that the next event processed does not use it as an overriding target.
+        (WebCore::PointerCaptureController::hasPointerCapture): We would mistakenly return true if the provided element was null, which could be the
+        case of EventHandler's capturing element. Rather than changing call sites to check that the provided value exists, we change the method to
+        return false when the provided element is null. Note that this does not affect the API since it's exposed on Element itself.
+        (WebCore::PointerCaptureController::dispatchEventForTouchAtIndex): Call dispatchEvent() instead of calling pointerEventWillBeDispatched() and
+        pointerEventWasDispatched().
+        (WebCore::PointerCaptureController::dispatchEvent): Remove all code specific to pointer capture since now the events will be dispatched on the
+        pointer capture element by EventHandler.
+        (WebCore::PointerCaptureController::processPendingPointerCapture): Make sure this method is not re-entrant since it dispatches events.
+        * page/PointerCaptureController.h:
+        * rendering/HitTestRequest.h:
+        (WebCore::HitTestRequest::pointerCaptureElementChanged const): Add a new HitTestRequestType bit such that we can indicate to Document::updateHoverActiveState()
+        that it must be update the :hover/:active chains when the pointer capture element has just changed.
+
 2019-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Stop pretending WebCore::Widget can have a platform widget

@@ -44,7 +44,9 @@ public:
         // Collect a list of nodes instead of just one. Used for elementsFromPoint and rect-based tests.
         CollectMultipleElements = 1 << 13,
         // When using list-based testing, continue hit testing even after a hit has been found.
-        IncludeAllElementsUnderPoint = 1 << 14
+        IncludeAllElementsUnderPoint = 1 << 14,
+        // When the pointer capture target has changed, we should disregard the move and active bits when invalidating the :active and :hover chains.
+        PointerCaptureElementChanged = 1 << 15
     };
 
     typedef unsigned HitTestRequestType;
@@ -69,6 +71,7 @@ public:
     bool isChildFrameHitTest() const { return m_requestType & ChildFrameHitTest; }
     bool resultIsElementList() const { return m_requestType & CollectMultipleElements; }
     bool includesAllElementsUnderPoint() const { return m_requestType & IncludeAllElementsUnderPoint; }
+    bool pointerCaptureElementChanged() const { return m_requestType & PointerCaptureElementChanged; }
 
     // Convenience functions
     bool touchMove() const { return move() && touchEvent(); }

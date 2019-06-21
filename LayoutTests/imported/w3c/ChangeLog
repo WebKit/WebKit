@@ -1,3 +1,17 @@
+2019-06-20  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover
+        https://bugs.webkit.org/show_bug.cgi?id=198999
+
+        Reviewed by Dean Jackson.
+
+        Record progressions in two WPT tests and mark updated failures in two other WPT tests.
+
+        * web-platform-tests/pointerevents/pointerevent_boundary_events_at_implicit_release_hoverable_pointers-expected.txt:
+        * web-platform-tests/pointerevents/pointerevent_click_during_capture-expected.txt:
+        * web-platform-tests/pointerevents/pointerevent_mouse_capture_change_hover-expected.txt:
+        * web-platform-tests/pointerevents/pointerevent_setpointercapture_relatedtarget-expected.txt:
+
 2019-06-19  Rob Buis  <rbuis@igalia.com>
 
         Make preload/link-header-preload-imagesrcset.html work on DPR != 1

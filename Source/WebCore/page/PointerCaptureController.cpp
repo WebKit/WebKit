@@ -48,6 +48,14 @@ PointerCaptureController::PointerCaptureController(Page& page)
     reset();
 }
 
+Element* PointerCaptureController::pointerCaptureElement(PointerID pointerId)
+{
+    auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
+    if (iterator != m_activePointerIdsToCapturingData.end())
+        return iterator->value.pendingTargetOverride.get();
+    return nullptr;
+}
+
 ExceptionOr<void> PointerCaptureController::setPointerCapture(Element* capturingTarget, PointerID pointerId)
 {
     // https://w3c.github.io/pointerevents/#setting-pointer-capture
@@ -98,6 +106,11 @@ ExceptionOr<void> PointerCaptureController::releasePointerCapture(Element* captu
     // 3. For the specified pointerId, clear the pending pointer capture target override, if set.
     iterator->value.pendingTargetOverride = nullptr;
 
+    // Since we may not call processPendingPointerCapture() until the dispatch of the next event,
+    // we must reset EventHandler's capturing mouse element right now so that the next event processed
+    // does not use it as an overriding target.
+    m_page.mainFrame().eventHandler().setCapturingMouseEventsElement(nullptr);
+
     return { };
 }
 
@@ -108,6 +121,9 @@ bool PointerCaptureController::hasPointerCapture(Element* capturingTarget, Point
     // Indicates whether the element on which this method is invoked has pointer capture for the pointer identified by the argument pointerId.
     // In particular, returns true if the pending pointer capture target override for pointerId is set to the element on which this method is
     // invoked, and false otherwise.
+
+    if (!capturingTarget)
+        return false;
 
     auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
     return iterator != m_activePointerIdsToCapturingData.end() && iterator->value.pendingTargetOverride == capturingTarget;
@@ -174,7 +190,7 @@ bool PointerCaptureController::preventsCompatibilityMouseEventsForIdentifier(Poi
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
 void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target, const PlatformTouchEvent& platformTouchEvent, unsigned index, bool isPrimary, WindowProxy& view)
 {
-    auto dispatchEvent = [&](const String& type) {
+    auto dispatchOverOrOutEvent = [&](const String& type) {
         target.dispatchEvent(PointerEvent::create(type, platformTouchEvent, index, isPrimary, view));
     };
 
@@ -213,19 +229,17 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
         // https://w3c.github.io/pointerevents/#the-pointerdown-event
         // For input devices that do not support hover, a user agent MUST also fire a pointer event named pointerover followed by a pointer event named
         // pointerenter prior to dispatching the pointerdown event.
-        dispatchEvent(eventNames().pointeroverEvent);
+        dispatchOverOrOutEvent(eventNames().pointeroverEvent);
         dispatchEnterOrLeaveEvent(eventNames().pointerenterEvent);
     }
 
-    pointerEventWillBeDispatched(pointerEvent, &target);
-    target.dispatchEvent(pointerEvent);
-    pointerEventWasDispatched(pointerEvent);
+    dispatchEvent(pointerEvent, &target);
 
     if (pointerEvent->type() == eventNames().pointerupEvent) {
         // https://w3c.github.io/pointerevents/#the-pointerup-event
         // For input devices that do not support hover, a user agent MUST also fire a pointer event named pointerout followed by a
         // pointer event named pointerleave after dispatching the pointerup event.
-        dispatchEvent(eventNames().pointeroutEvent);
+        dispatchOverOrOutEvent(eventNames().pointeroutEvent);
         dispatchEnterOrLeaveEvent(eventNames().pointerleaveEvent);
     }
 }
@@ -268,16 +282,6 @@ RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const M
 
 void PointerCaptureController::dispatchEvent(PointerEvent& event, EventTarget* target)
 {
-    auto iterator = m_activePointerIdsToCapturingData.find(event.pointerId());
-    if (iterator != m_activePointerIdsToCapturingData.end()) {
-        auto& capturingData = iterator->value;
-        if (capturingData.pendingTargetOverride && capturingData.targetOverride)
-            target = capturingData.targetOverride.get();
-    }
-
-    if (!target || event.target())
-        return;
-
     pointerEventWillBeDispatched(event, target);
     target->dispatchEvent(event);
     pointerEventWasDispatched(event);
@@ -401,6 +405,11 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
 
 void PointerCaptureController::processPendingPointerCapture(const PointerEvent& event)
 {
+    if (m_processingPendingPointerCapture)
+        return;
+    
+    m_processingPendingPointerCapture = true;
+    
     // https://w3c.github.io/pointerevents/#process-pending-pointer-capture
 
     auto iterator = m_activePointerIdsToCapturingData.find(event.pointerId());
@@ -411,17 +420,23 @@ void PointerCaptureController::processPendingPointerCapture(const PointerEvent& 
 
     // 1. If the pointer capture target override for this pointer is set and is not equal to the pending pointer capture target override,
     // then fire a pointer event named lostpointercapture at the pointer capture target override node.
-    if (capturingData.targetOverride && capturingData.targetOverride != capturingData.pendingTargetOverride)
+    if (capturingData.targetOverride && capturingData.targetOverride != capturingData.pendingTargetOverride) {
+        m_page.mainFrame().eventHandler().setCapturingMouseEventsElement(nullptr);
         capturingData.targetOverride->dispatchEvent(PointerEvent::createForPointerCapture(eventNames().lostpointercaptureEvent, event));
+    }
 
     // 2. If the pending pointer capture target override for this pointer is set and is not equal to the pointer capture target override,
     // then fire a pointer event named gotpointercapture at the pending pointer capture target override.
-    if (capturingData.pendingTargetOverride && capturingData.targetOverride != capturingData.pendingTargetOverride)
+    if (capturingData.pendingTargetOverride && capturingData.targetOverride != capturingData.pendingTargetOverride) {
+        m_page.mainFrame().eventHandler().setCapturingMouseEventsElement(capturingData.pendingTargetOverride.get());
         capturingData.pendingTargetOverride->dispatchEvent(PointerEvent::createForPointerCapture(eventNames().gotpointercaptureEvent, event));
+    }
 
     // 3. Set the pointer capture target override to the pending pointer capture target override, if set. Otherwise, clear the pointer
     // capture target override.
     capturingData.targetOverride = capturingData.pendingTargetOverride;
+
+    m_processingPendingPointerCapture = false;
 }
 
 } // namespace WebCore
