@@ -5775,9 +5775,6 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
             [(id <UITextInputDelegatePrivate>)self.inputDelegate layoutHasChanged];
     }
 #endif
-
-    [self.inputDelegate selectionWillChange:self];
-    [self.inputDelegate selectionDidChange:self];
     
     [_webView _didChangeEditorState];
 }

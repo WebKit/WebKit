@@ -1,3 +1,17 @@
+2019-06-20  Megan Gardner  <megan_gardner@apple.com>
+
+        Remove change that was causing hangs
+        https://bugs.webkit.org/show_bug.cgi?id=199055
+        <rdar://problem/51820516>
+
+        Reviewed by Darin Adler.
+
+        This fix can sometimes cause deadlocks in the UIProcess.
+        We have a different fix that will go into UIKit <rdar://problem/51927701>.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _selectionChanged]):
+
 2019-06-20  Daniel Bates  <dabates@apple.com>
 
         [iOS] Evernote crashes when creating a note
