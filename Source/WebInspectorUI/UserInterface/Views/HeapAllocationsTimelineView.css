@@ -39,7 +39,7 @@
     color: gray;
 }
 
-.timeline-view.heap-allocations > .data-grid:not(:focus, .force-focus) tr.selected.invalid {
+.timeline-view.heap-allocations > .data-grid:not(:focus) tr.selected.invalid {
     color: gray !important;
 }
 

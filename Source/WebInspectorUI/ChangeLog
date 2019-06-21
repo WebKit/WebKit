@@ -1,5 +1,22 @@
 2019-06-21  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: remove unused DataGrid style .force-focus
+        https://bugs.webkit.org/show_bug.cgi?id=199112
+        <rdar://problem/51993412>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.css:
+        (.timeline-view.heap-allocations > .data-grid:not(:focus) tr.selected.invalid):
+        (.timeline-view.heap-allocations > .data-grid:not(:focus, .force-focus) tr.selected.invalid): Deleted.
+
+        * UserInterface/Views/ResourceTreeElement.css:
+        (.item.resource.resource-type-websocket:not(.selected) .status .ready-state.open,):
+        (.item.resource.resource-type-websocket:not(.selected) .status .ready-state.connecting,):
+        Missed in https://bugs.webkit.org/show_bug.cgi?id=190480.
+
+2019-06-21  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: remove .legacy-mac/.latest-mac CSS classes, standardize on .latest-mac UI
         https://bugs.webkit.org/show_bug.cgi?id=199109
         <rdar://problem/51991129>
