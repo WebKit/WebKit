@@ -1,3 +1,15 @@
+2019-06-21  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Code that accesses an undefined variable crashes
+        https://bugs.webkit.org/show_bug.cgi?id=198775
+
+        Reviewed by Myles C. Maxfield.
+
+        * webgpu/whlsl-use-undefined-variable-2-expected.txt: Added.
+        * webgpu/whlsl-use-undefined-variable-2.html: Added.
+        * webgpu/whlsl-use-undefined-variable-expected.txt: Added.
+        * webgpu/whlsl-use-undefined-variable.html: Added.
+
 2019-06-21  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r246611.

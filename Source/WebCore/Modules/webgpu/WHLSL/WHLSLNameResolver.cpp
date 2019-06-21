@@ -120,12 +120,18 @@ void NameResolver::visit(AST::Block& block)
 void NameResolver::visit(AST::IfStatement& ifStatement)
 {
     checkErrorAndVisit(ifStatement.conditional());
-    NameContext nameContext(&m_nameContext);
-    NameResolver newNameResolver(*this, nameContext);
-    newNameResolver.checkErrorAndVisit(ifStatement.body());
-    if (newNameResolver.error())
-        setError();
-    else if (ifStatement.elseBody()) {
+    if (error())
+        return;
+
+    {
+        NameContext nameContext(&m_nameContext);
+        NameResolver newNameResolver(*this, nameContext);
+        newNameResolver.checkErrorAndVisit(ifStatement.body());
+    }
+    if (error())
+        return;
+
+    if (ifStatement.elseBody()) {
         NameContext nameContext(&m_nameContext);
         NameResolver newNameResolver(*this, nameContext);
         newNameResolver.checkErrorAndVisit(*ifStatement.elseBody());
@@ -135,6 +141,9 @@ void NameResolver::visit(AST::IfStatement& ifStatement)
 void NameResolver::visit(AST::WhileLoop& whileLoop)
 {
     checkErrorAndVisit(whileLoop.conditional());
+    if (error())
+        return;
+
     NameContext nameContext(&m_nameContext);
     NameResolver newNameResolver(*this, nameContext);
     newNameResolver.checkErrorAndVisit(whileLoop.body());
@@ -142,9 +151,12 @@ void NameResolver::visit(AST::WhileLoop& whileLoop)
 
 void NameResolver::visit(AST::DoWhileLoop& whileLoop)
 {
-    NameContext nameContext(&m_nameContext);
-    NameResolver newNameResolver(*this, nameContext);
-    newNameResolver.checkErrorAndVisit(whileLoop.body());
+    {
+        NameContext nameContext(&m_nameContext);
+        NameResolver newNameResolver(*this, nameContext);
+        newNameResolver.checkErrorAndVisit(whileLoop.body());
+    }
+
     checkErrorAndVisit(whileLoop.conditional());
 }
 

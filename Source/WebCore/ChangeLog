@@ -1,3 +1,21 @@
+2019-06-21  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Code that accesses an undefined variable crashes
+        https://bugs.webkit.org/show_bug.cgi?id=198775
+
+        Reviewed by Myles C. Maxfield.
+
+        Myles mostly fixed this in r246631 when he made NameResolver propagate
+        its error to its parent NameResolver. However, there was still one bug
+        where we ended up calling setError twice for an if statement. This patch
+        fixes that and adds tests.
+
+        Tests: webgpu/whlsl-use-undefined-variable-2.html
+               webgpu/whlsl-use-undefined-variable.html
+
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.cpp:
+        (WebCore::WHLSL::NameResolver::visit):
+
 2019-06-21  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r246611.
