@@ -37,9 +37,9 @@ WI.DOMObserver = class DOMObserver
         WI.domManager.inspectElement(nodeId);
     }
 
-    setChildNodes(parentId, payloads)
+    setChildNodes(parentId, nodes)
     {
-        WI.domManager._setChildNodes(parentId, payloads);
+        WI.domManager._setChildNodes(parentId, nodes);
     }
 
     attributeModified(nodeId, name, value)
@@ -67,9 +67,9 @@ WI.DOMObserver = class DOMObserver
         WI.domManager._childNodeCountUpdated(nodeId, childNodeCount);
     }
 
-    childNodeInserted(parentNodeId, previousNodeId, payload)
+    childNodeInserted(parentNodeId, previousNodeId, node)
     {
-        WI.domManager._childNodeInserted(parentNodeId, previousNodeId, payload);
+        WI.domManager._childNodeInserted(parentNodeId, previousNodeId, node);
     }
 
     childNodeRemoved(parentNodeId, nodeId)
@@ -77,14 +77,14 @@ WI.DOMObserver = class DOMObserver
         WI.domManager._childNodeRemoved(parentNodeId, nodeId);
     }
 
-    shadowRootPushed(parentNodeId, nodeId)
+    shadowRootPushed(hostId, root)
     {
-        WI.domManager._childNodeInserted(parentNodeId, 0, nodeId);
+        WI.domManager._childNodeInserted(hostId, 0, root);
     }
 
-    shadowRootPopped(parentNodeId, nodeId)
+    shadowRootPopped(hostId, rootId)
     {
-        WI.domManager._childNodeRemoved(parentNodeId, nodeId);
+        WI.domManager._childNodeRemoved(hostId, rootId);
     }
 
     customElementStateChanged(nodeId, customElementState)
