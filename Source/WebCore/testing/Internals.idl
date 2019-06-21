@@ -161,6 +161,20 @@ enum CompositingPolicy {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary TextIndicatorInfo {
+    DOMRectReadOnly textBoundingRectInRootViewCoordinates;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary TextIndicatorOptions {
+    boolean useBoundingRectAndPaintAllContentForComplexRanges = false;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     NoInterfaceObject,
 ] interface Internals {
     DOMString address(Node node);
@@ -758,4 +772,6 @@ enum CompositingPolicy {
     void setXHRMaximumIntervalForUserGestureForwarding(XMLHttpRequest xhr, double interval);
 
     void setIsPlayingToAutomotiveHeadUnit(boolean value);
+
+    TextIndicatorInfo textIndicatorForRange(Range range, TextIndicatorOptions options);
 };

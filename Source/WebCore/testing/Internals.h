@@ -35,6 +35,7 @@
 #include "OrientationNotifier.h"
 #include "PageConsoleClient.h"
 #include "RealtimeMediaSource.h"
+#include "TextIndicator.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <wtf/Optional.h>
 
@@ -53,6 +54,7 @@ class AudioContext;
 class CacheStorageConnection;
 class DOMRect;
 class DOMRectList;
+class DOMRectReadOnly;
 class DOMURL;
 class DOMWindow;
 class Document;
@@ -828,6 +830,28 @@ public:
     void setXHRMaximumIntervalForUserGestureForwarding(XMLHttpRequest&, double);
 
     void setIsPlayingToAutomotiveHeadUnit(bool);
+    
+    struct TextIndicatorInfo {
+        RefPtr<DOMRectReadOnly> textBoundingRectInRootViewCoordinates;
+        
+        TextIndicatorInfo();
+        TextIndicatorInfo(const WebCore::TextIndicatorData&);
+        ~TextIndicatorInfo();
+    };
+        
+    struct TextIndicatorOptions {
+        bool useBoundingRectAndPaintAllContentForComplexRanges { false };
+        
+        WebCore::TextIndicatorOptions core()
+        {
+            WebCore::TextIndicatorOptions options = 0;
+            if (useBoundingRectAndPaintAllContentForComplexRanges)
+                options = options | TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges;
+            return options;
+        }
+    };
+
+    TextIndicatorInfo textIndicatorForRange(const Range&, TextIndicatorOptions);
 
 private:
     explicit Internals(Document&);

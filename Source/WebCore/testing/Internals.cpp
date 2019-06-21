@@ -5097,5 +5097,22 @@ void Internals::setIsPlayingToAutomotiveHeadUnit(bool isPlaying)
 {
     PlatformMediaSessionManager::sharedManager().setIsPlayingToAutomotiveHeadUnit(isPlaying);
 }
+    
+Internals::TextIndicatorInfo::TextIndicatorInfo()
+{
+}
+
+Internals::TextIndicatorInfo::TextIndicatorInfo(const WebCore::TextIndicatorData& data)
+    : textBoundingRectInRootViewCoordinates(DOMRect::create(data.textBoundingRectInRootViewCoordinates))
+{
+}
+    
+Internals::TextIndicatorInfo::~TextIndicatorInfo() = default;
+
+Internals::TextIndicatorInfo Internals::textIndicatorForRange(const Range& range, TextIndicatorOptions options)
+{
+    auto indicator = TextIndicator::createWithRange(range, options.core(), TextIndicatorPresentationTransition::None);
+    return indicator->data();
+}
 
 } // namespace WebCore

@@ -1,3 +1,14 @@
+2019-06-21  Tim Horton  <timothy_horton@apple.com>
+
+        Preview of <picture> element doesn't match element bounds
+        https://bugs.webkit.org/show_bug.cgi?id=199049
+        <rdar://problem/51474402>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text-indicator/text-indicator-uses-img-size-inside-picture-expected.txt: Added.
+        * fast/text-indicator/text-indicator-uses-img-size-inside-picture.html: Added.
+
 2019-06-21  Antoine Quint  <graouts@apple.com>
 
         [iOS] Compatibility mouse events aren't prevented by calling preventDefault() on pointerdown

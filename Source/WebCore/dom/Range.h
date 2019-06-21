@@ -28,6 +28,7 @@
 #include "IntRect.h"
 #include "RangeBoundaryPoint.h"
 #include <wtf/Forward.h>
+#include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -114,15 +115,19 @@ public:
         PartiallyFixedPosition,
         EntirelyFixedPosition
     };
+    
+    enum class BoundingRectBehavior : uint8_t {
+        RespectClipping = 1 << 0,
+        UseVisibleBounds = 1 << 1,
+    };
 
     // Not transform-friendly
-    enum class RespectClippingForTextRects { No, Yes };
-    WEBCORE_EXPORT void absoluteTextRects(Vector<IntRect>&, bool useSelectionHeight = false, RangeInFixedPosition* = nullptr, RespectClippingForTextRects = RespectClippingForTextRects::No) const;
+    WEBCORE_EXPORT void absoluteTextRects(Vector<IntRect>&, bool useSelectionHeight = false, RangeInFixedPosition* = nullptr, OptionSet<BoundingRectBehavior> = { }) const;
     WEBCORE_EXPORT IntRect absoluteBoundingBox() const;
 
     // Transform-friendly
     WEBCORE_EXPORT void absoluteTextQuads(Vector<FloatQuad>&, bool useSelectionHeight = false, RangeInFixedPosition* = nullptr) const;
-    WEBCORE_EXPORT FloatRect absoluteBoundingRect(RespectClippingForTextRects = RespectClippingForTextRects::No) const;
+    WEBCORE_EXPORT FloatRect absoluteBoundingRect(OptionSet<BoundingRectBehavior> = { }) const;
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void collectSelectionRects(Vector<SelectionRect>&) const;
     WEBCORE_EXPORT int collectSelectionRectsWithoutUnionInteriorLines(Vector<SelectionRect>&) const;
@@ -163,10 +168,10 @@ private:
     ExceptionOr<RefPtr<DocumentFragment>> processContents(ActionType);
 
     enum class CoordinateSpace { Absolute, Client };
-    Vector<FloatRect> borderAndTextRects(CoordinateSpace, RespectClippingForTextRects = RespectClippingForTextRects::No) const;
-    FloatRect boundingRect(CoordinateSpace, RespectClippingForTextRects = RespectClippingForTextRects::No) const;
+    Vector<FloatRect> borderAndTextRects(CoordinateSpace, OptionSet<BoundingRectBehavior> = { }) const;
+    FloatRect boundingRect(CoordinateSpace, OptionSet<BoundingRectBehavior> = { }) const;
 
-    Vector<FloatRect> absoluteRectsForRangeInText(Node*, RenderText&, bool useSelectionHeight, bool& isFixed, RespectClippingForTextRects) const;
+    Vector<FloatRect> absoluteRectsForRangeInText(Node*, RenderText&, bool useSelectionHeight, bool& isFixed, OptionSet<BoundingRectBehavior>) const;
 
     Ref<Document> m_ownerDocument;
     RangeBoundaryPoint m_start;

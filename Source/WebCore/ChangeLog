@@ -1,3 +1,37 @@
+2019-06-21  Tim Horton  <timothy_horton@apple.com>
+
+        Preview of <picture> element doesn't match element bounds
+        https://bugs.webkit.org/show_bug.cgi?id=199049
+        <rdar://problem/51474402>
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/text-indicator/text-indicator-uses-img-size-inside-picture.html
+
+        * dom/DOMRectReadOnly.idl:
+        * dom/Range.cpp:
+        (WebCore::Range::absoluteRectsForRangeInText const):
+        (WebCore::Range::absoluteTextRects const):
+        (WebCore::Range::borderAndTextRects const):
+        (WebCore::Range::boundingRect const):
+        (WebCore::Range::absoluteBoundingRect const):
+        * dom/Range.h:
+        (WebCore::Range::absoluteTextRects):
+        (WebCore::Range::absoluteBoundingRect):
+        (WebCore::Range::borderAndTextRects):
+        (WebCore::Range::boundingRect):
+        * page/TextIndicator.cpp:
+        (WebCore::absoluteBoundingRectForRange):
+        (WebCore::estimatedBackgroundColorForRange):
+        (WebCore::initializeIndicator):
+        * rendering/RenderBlock.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::TextIndicatorData::TextIndicatorData):
+        (WebCore::Internals::TextIndicatorData::~TextIndicatorData):
+        (WebCore::Internals::textIndicatorForRange):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-06-21  Youenn Fablet  <youenn@apple.com>
 
         Safari crashes after ~2028 OfflineAudioContext objects are created (they never get garbage collected, consuming a thread each)

@@ -221,6 +221,14 @@ static HashSet<Color> estimatedTextColorsForRange(const Range& range)
     }
     return colors;
 }
+    
+static FloatRect absoluteBoundingRectForRange(const Range& range)
+{
+    return range.absoluteBoundingRect({
+        Range::BoundingRectBehavior::RespectClipping,
+        Range::BoundingRectBehavior::UseVisibleBounds
+    });
+}
 
 static Color estimatedBackgroundColorForRange(const Range& range, const Frame& frame)
 {
@@ -236,7 +244,7 @@ static Color estimatedBackgroundColorForRange(const Range& range, const Frame& f
         commonAncestor = commonAncestor->parentOrShadowHostElement();
     }
 
-    auto boundingRectForRange = enclosingIntRect(range.absoluteBoundingRect(Range::RespectClippingForTextRects::Yes));
+    auto boundingRectForRange = enclosingIntRect(absoluteBoundingRectForRange(range));
     Vector<Color> parentRendererBackgroundColors;
     for (; !!renderer; renderer = renderer->parent()) {
         auto absoluteBoundingBox = renderer->absoluteBoundingBoxRect();
@@ -311,7 +319,7 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Ran
 #endif
     else {
         Vector<IntRect> absoluteTextRects;
-        range.absoluteTextRects(absoluteTextRects, textRectHeight == FrameSelection::TextRectangleHeight::SelectionHeight, nullptr, Range::RespectClippingForTextRects::Yes);
+        range.absoluteTextRects(absoluteTextRects, textRectHeight == FrameSelection::TextRectangleHeight::SelectionHeight, nullptr, Range::BoundingRectBehavior::RespectClipping);
 
         textRects.reserveInitialCapacity(absoluteTextRects.size());
         for (auto& rect : absoluteTextRects)
@@ -319,7 +327,7 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Ran
     }
 
     if (textRects.isEmpty())
-        textRects.append(range.absoluteBoundingRect(Range::RespectClippingForTextRects::Yes));
+        textRects.append(absoluteBoundingRectForRange(range));
 
     auto frameView = frame.view();
 
