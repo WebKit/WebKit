@@ -1,3 +1,25 @@
+2019-06-21  Keith Rollin  <krollin@apple.com>
+
+        Address reference to UIColor.groupTableViewBackgroundColor in WKPasswordView.mm
+        https://bugs.webkit.org/show_bug.cgi?id=199111
+        <rdar://problem/51992107>
+
+        Reviewed by Timothy Hatcher.
+
+        WKPasswordView.mm is used on iOS-family devices. However, it doesn't
+        build on tvOS or watchOS when "treat deprecation warnings as errors"
+        is enabled. This build failure is due to a reference to
+        UIColor.groupTableViewBackgroundColor in a branch of non-dark-mode
+        code. Address this by surrounding the reference with
+        ALLOW_DEPRECATED_DECLARATIONS_* macros.
+
+        Attempting to address the build failure by unconditionally enabling
+        the dark-mode code works for tvOS, but fails for watchOS due to lack
+        of dark-mode support on that platform.
+
+        * UIProcess/ios/WKPasswordView.mm:
+        (-[WKPasswordView showInScrollView:]):
+
 2019-06-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Bump minimum versions of GLib, GTK, libsoup, ATK, GStreamer, and Cairo

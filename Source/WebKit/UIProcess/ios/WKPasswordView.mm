@@ -104,7 +104,9 @@ const CGFloat passwordEntryFieldPadding = 10;
 #if HAVE(OS_DARK_MODE_SUPPORT)
     [_scrollView setBackgroundColor:UIColor.systemGroupedBackgroundColor];
 #else
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_scrollView setBackgroundColor:UIColor.groupTableViewBackgroundColor];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     [scrollView addSubview:self];
