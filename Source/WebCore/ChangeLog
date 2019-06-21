@@ -1,5 +1,19 @@
 2019-06-21  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Adjust baseline top when the baseline moves.
+        https://bugs.webkit.org/show_bug.cgi?id=199091
+        <rdar://problem/51966257>
+
+        Reviewed by Antti Koivisto.
+
+        Currently only "text-align: bottom" adjusts the baseline top. This patch fixes the "text-align: baseline" case when
+        the growing ascent pushes the baseline top closer to the line top.
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::adjustBaselineAndLineHeight):
+
+2019-06-21  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Rename Line::m_contentLogicalHeight to m_lineLogicalHeight
         https://bugs.webkit.org/show_bug.cgi?id=199100
         <rdar://problem/51973614>

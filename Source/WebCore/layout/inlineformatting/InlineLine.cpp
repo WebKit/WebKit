@@ -313,6 +313,7 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
     auto& style = layoutBox.style();
 
     if (inlineItem.isContainerStart()) {
+        // FIXME: This implies baseline vertical aligment for the inline container.
         auto& fontMetrics = style.fontMetrics();
         auto halfLeading = halfLeadingMetrics(fontMetrics, style.computedLineHeight());
         if (halfLeading.descent > 0)
@@ -334,29 +335,30 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
     }
     // Replaced and non-replaced inline level box.
     switch (inlineItem.style().verticalAlign()) {
-    case VerticalAlign::Baseline:
+     case VerticalAlign::Baseline: {
+        auto newBaselineCandidate = LineBox::Baseline { runHeight, 0 };
         if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
             // Inline-blocks with inline content always have baselines.
             auto& formattingState = downcast<InlineFormattingState>(m_layoutState.establishedFormattingState(layoutBox));
             // Spec makes us generate at least one line -even if it is empty.
             ASSERT(!formattingState.lineBoxes().isEmpty());
-            auto inlineBlockBaseline = formattingState.lineBoxes().last().baseline();
-            m_baseline.descent = std::max(inlineBlockBaseline.descent, m_baseline.descent);
-            m_baseline.ascent = std::max(inlineBlockBaseline.ascent, m_baseline.ascent);
-            m_lineLogicalHeight = std::max(std::max(m_lineLogicalHeight, runHeight), m_baseline.height());
-            break;
+            newBaselineCandidate = formattingState.lineBoxes().last().baseline();
         }
-        m_baseline.descent = std::max<LayoutUnit>(0, m_baseline.descent);
-        m_baseline.ascent = std::max(runHeight, m_baseline.ascent);
-        m_lineLogicalHeight = std::max(m_lineLogicalHeight, m_baseline.height());
+        m_baseline.ascent = std::max(newBaselineCandidate.ascent, m_baseline.ascent);
+        m_baseline.descent = std::max(newBaselineCandidate.descent, m_baseline.descent);
+        m_lineLogicalHeight = std::max(std::max(m_lineLogicalHeight, runHeight), m_baseline.height());
+        // Baseline ascent/descent never shrink -> max.
+        m_baselineTop = std::max(m_baselineTop, m_lineLogicalHeight - m_baseline.height());
         break;
+    }
     case VerticalAlign::Top:
         // Top align content never changes the baseline offset, it only pushes the bottom of the line further down.
         m_lineLogicalHeight = std::max(runHeight, m_lineLogicalHeight);
         break;
     case VerticalAlign::Bottom:
-        if (m_lineLogicalHeight < runHeight) {
-            m_baselineTop += runHeight - m_lineLogicalHeight;
+        // Bottom aligned, tall content pushes the baseline further down from the line top.
+        if (runHeight > m_lineLogicalHeight) {
+            m_baselineTop += (runHeight - m_lineLogicalHeight);
             m_lineLogicalHeight = runHeight;
         }
         break;
