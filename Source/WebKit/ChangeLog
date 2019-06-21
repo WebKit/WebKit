@@ -1,3 +1,16 @@
+2019-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Stop pretending WebCore::Widget can have a platform widget
+        https://bugs.webkit.org/show_bug.cgi?id=199066
+
+        Reviewed by Michael Catanzaro.
+
+        Rename PlatformWidget as PlatformViewWidget to avoid conflict with PlatformWidget defined in WebCore.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::WebPageProxy::viewWidget):
+
 2019-06-20  Megan Gardner  <megan_gardner@apple.com>
 
         Remove change that was causing hangs

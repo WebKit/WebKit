@@ -1,3 +1,38 @@
+2019-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Stop pretending WebCore::Widget can have a platform widget
+        https://bugs.webkit.org/show_bug.cgi?id=199066
+
+        Reviewed by Michael Catanzaro.
+
+        That was only possible in legacy WebKit that we no longer support. The code can be simplified a bit.
+
+        * platform/Widget.cpp:
+        (WebCore::Widget::init):
+        * platform/Widget.h:
+        (WebCore::Widget::setPlatformWidget):
+        (WebCore::Widget::releasePlatformWidget): Deleted.
+        (WebCore::Widget::retainPlatformWidget): Deleted.
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::systemVisual):
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        (WebCore::getToplevel): Deleted.
+        (WebCore::getVisual): Deleted.
+        (WebCore::getScreen): Deleted.
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::~Widget):
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        (WebCore::Widget::setIsSelected):
+        (WebCore::Widget::setFrameRect):
+        (WebCore::Widget::releasePlatformWidget): Deleted.
+        (WebCore::Widget::retainPlatformWidget): Deleted.
+        * platform/ios/WidgetIOS.mm:
+        (WebCore::Widget::~Widget):
+
 2019-06-20  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to include clipping in GraphicsLayer tree dumps

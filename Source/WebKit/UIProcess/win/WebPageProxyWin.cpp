@@ -65,7 +65,7 @@ void WebPageProxy::updateEditorState(const EditorState& editorState)
     m_editorState = editorState;
 }
 
-PlatformWidget WebPageProxy::viewWidget()
+PlatformViewWidget WebPageProxy::viewWidget()
 {
     return static_cast<PageClientImpl&>(pageClient()).viewWidget();
 }

@@ -50,10 +50,6 @@ typedef NSView *PlatformWidget;
 #elif PLATFORM(WIN)
 typedef struct HWND__* HWND;
 typedef HWND PlatformWidget;
-#elif PLATFORM(GTK)
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkContainer GtkContainer;
-typedef GtkWidget* PlatformWidget;
 #else
 typedef void* PlatformWidget;
 #endif
@@ -200,9 +196,6 @@ public:
 private:
     void init(PlatformWidget); // Must be called by all Widget constructors to initialize cross-platform data.
 
-    void releasePlatformWidget();
-    void retainPlatformWidget();
-
     // These methods are used to convert from the root widget to the containing window,
     // which has behavior that may differ between platforms (e.g. Mac uses flipped window coordinates).
     static IntRect convertFromRootToContainingWindow(const Widget* rootWidget, const IntRect&);
@@ -234,23 +227,7 @@ inline PlatformWidget Widget::platformWidget() const
 
 inline void Widget::setPlatformWidget(PlatformWidget widget)
 {
-    if (widget != m_widget) {
-        releasePlatformWidget();
-        m_widget = widget;
-        retainPlatformWidget();
-    }
-}
-
-#endif
-
-#if !PLATFORM(GTK)
-
-inline void Widget::releasePlatformWidget()
-{
-}
-
-inline void Widget::retainPlatformWidget()
-{
+    m_widget = widget;
 }
 
 #endif

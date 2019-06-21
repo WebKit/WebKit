@@ -30,20 +30,14 @@
 
 #include "Cursor.h"
 #include "FrameView.h"
-#include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "IntRect.h"
-
-#include <gdk/gdk.h>
-#include <gtk/gtk.h>
 
 namespace WebCore {
 
 Widget::~Widget()
 {
     ASSERT(!parent());
-
-    releasePlatformWidget();
 }
 
 void Widget::setFocus(bool)
@@ -61,56 +55,24 @@ void Widget::setCursor(const Cursor& cursor)
 void Widget::show()
 {
     setSelfVisible(true);
-
-    if (isParentVisible() && platformWidget())
-        gtk_widget_show(platformWidget());
 }
 
 void Widget::hide()
 {
     setSelfVisible(false);
-
-    if (isParentVisible() && platformWidget())
-        gtk_widget_hide(platformWidget());
 }
 
 void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy)
 {
 }
 
-void Widget::setIsSelected(bool isSelected)
+void Widget::setIsSelected(bool)
 {
-    if (!platformWidget())
-        return;
-
-    // See if the platformWidget has a webkit-widget-is-selected property
-    // and set it afterwards.
-    GParamSpec* spec = g_object_class_find_property(G_OBJECT_GET_CLASS(platformWidget()),
-                                                    "webkit-widget-is-selected");
-    if (!spec)
-        return;
-
-    g_object_set(platformWidget(), "webkit-widget-is-selected", isSelected, NULL);
 }
 
 void Widget::setFrameRect(const IntRect& rect)
 {
     m_frame = rect;
-    frameRectsChanged();
-}
-
-void Widget::releasePlatformWidget()
-{
-    if (!platformWidget())
-         return;
-    g_object_unref(platformWidget());
-}
-
-void Widget::retainPlatformWidget()
-{
-    if (!platformWidget())
-         return;
-    g_object_ref_sink(platformWidget());
 }
 
 }

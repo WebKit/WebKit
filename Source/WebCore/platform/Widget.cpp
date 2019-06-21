@@ -38,8 +38,6 @@ void Widget::init(PlatformWidget widget)
     m_selfVisible = false;
     m_parentVisible = false;
     m_widget = widget;
-    if (m_widget)
-        retainPlatformWidget();
 }
 
 ScrollView* Widget::parent() const

@@ -217,7 +217,7 @@ using FloatBoxExtent = RectEdges<float>;
 }
 
 #if PLATFORM(GTK)
-typedef GtkWidget* PlatformWidget;
+typedef GtkWidget* PlatformViewWidget;
 #endif
 
 #if PLATFORM(WPE)
@@ -229,7 +229,7 @@ typedef struct OpaqueJSContext* JSGlobalContextRef;
 #endif
 
 #if PLATFORM(WIN)
-typedef HWND PlatformWidget;
+typedef HWND PlatformViewWidget;
 #endif
 
 namespace WebKit {
@@ -804,7 +804,7 @@ public:
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(GTK)
-    PlatformWidget viewWidget();
+    PlatformViewWidget viewWidget();
     bool makeGLContextCurrent();
 #endif
 
@@ -812,7 +812,7 @@ public:
     void setBackgroundColor(const Optional<WebCore::Color>&);
 
 #if PLATFORM(WIN)
-    PlatformWidget viewWidget();
+    PlatformViewWidget viewWidget();
 #endif
 #if PLATFORM(WPE)
     struct wpe_view_backend* viewBackend();
