@@ -1,3 +1,17 @@
+2019-06-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] read modify write expressions do no work as expected
+        https://bugs.webkit.org/show_bug.cgi?id=195864
+
+        Reviewed by Saam Barati.
+
+        Turns out https://bugs.webkit.org/show_bug.cgi?id=199037 already fixed everything.
+        This patch just adds a test.
+
+        Test: webgpu/whlsl-read-modify-write.html
+
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt:
+
 2019-06-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Adjust baseline top when the baseline moves.
