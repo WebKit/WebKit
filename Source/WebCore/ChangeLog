@@ -1,3 +1,40 @@
+2019-06-21  Youenn Fablet  <youenn@apple.com>
+
+        Safari crashes after ~2028 OfflineAudioContext objects are created (they never get garbage collected, consuming a thread each)
+        https://bugs.webkit.org/show_bug.cgi?id=198964
+        <rdar://problem/51891520>
+
+        Reviewed by Jer Noble.
+
+        Move from setPendingActivity/unsetPendingActivity to an
+        m_pendingActivity member which is easier to manage.
+
+        Keep setting a pending activity for AudioContext at construction time
+        but do not do that for Offline contexts.
+        Instead, set the pending activity when startRendering is called.
+        Unset the pending activity when the rendering activity is finished.
+
+        Make m_audioDecoder a unique pointer so that it can lazily be initialized.
+        This removes the burden of creating an audio decoder thread for each context.
+
+        Test: webaudio/offlineaudiocontext-gc.html
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::AudioContext):
+        (WebCore::AudioContext::constructCommon):
+        (WebCore::AudioContext::clear):
+        (WebCore::AudioContext::decodeAudioData):
+        (WebCore::AudioContext::startRendering):
+        (WebCore::AudioContext::finishedRendering):
+        (WebCore::AudioContext::dispatchEvent):
+        (WebCore::AudioContext::clearPendingActivity):
+        (WebCore::AudioContext::makePendingActivity):
+        To keep it consistent with setPendingActivity/unsetPendingActivity, we
+        explicitly ref/unref the AudioContext. We should try to remove this ref/unref.
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::startRendering):
+
 2019-06-21  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r246655.

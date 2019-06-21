@@ -94,8 +94,7 @@ void OfflineAudioDestinationNode::startRendering()
     m_renderThread = Thread::create("offline renderer", [this] {
         bool didRender = offlineRender();
         callOnMainThread([this, didRender] {
-            if (didRender)
-                context().fireCompletionEvent();
+            context().finishedRendering(didRender);
             deref();
         });
     });

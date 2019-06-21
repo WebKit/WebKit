@@ -1,3 +1,14 @@
+2019-06-21  Youenn Fablet  <youenn@apple.com>
+
+        Safari crashes after ~2028 OfflineAudioContext objects are created (they never get garbage collected, consuming a thread each)
+        https://bugs.webkit.org/show_bug.cgi?id=198964
+        <rdar://problem/51891520>
+
+        Reviewed by Jer Noble.
+
+        * webaudio/offlineaudiocontext-gc-expected.txt: Added.
+        * webaudio/offlineaudiocontext-gc.html: Added.
+
 2019-06-21  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r246655.

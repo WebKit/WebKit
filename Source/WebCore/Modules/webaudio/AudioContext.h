@@ -259,8 +259,8 @@ public:
     using ThreadSafeRefCounted::deref;
 
     void startRendering();
-    void fireCompletionEvent();
-    
+    void finishedRendering(bool didRendering);
+
     static unsigned s_hardwareContextCount;
 
     // Restrictions to change default behaviors.
@@ -297,7 +297,9 @@ protected:
     AudioContext(Document&, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
     
     static bool isSampleRateRangeGood(float sampleRate);
-    
+    void clearPendingActivity();
+    void makePendingActivity();
+
 private:
     void constructCommon();
 
@@ -320,6 +322,7 @@ private:
 
     // EventTarget
     ScriptExecutionContext* scriptExecutionContext() const final;
+    void dispatchEvent(Event&) final;
 
     // MediaProducer
     MediaProducer::MediaStateFlags mediaState() const override;
@@ -429,7 +432,7 @@ private:
     Thread* volatile m_audioThread { nullptr };
     Thread* volatile m_graphOwnerThread { nullptr }; // if the lock is held then this is the thread which owns it, otherwise == nullptr.
 
-    AsyncAudioDecoder m_audioDecoder;
+    std::unique_ptr<AsyncAudioDecoder> m_audioDecoder;
 
     // This is considering 32 is large enough for multiple channels audio. 
     // It is somewhat arbitrary and could be increased if necessary.
@@ -441,6 +444,7 @@ private:
     BehaviorRestrictions m_restrictions { NoRestrictions };
 
     State m_state { State::Suspended };
+    RefPtr<PendingActivity<AudioContext>> m_pendingActivity;
 };
 
 // FIXME: Find out why these ==/!= functions are needed and remove them if possible.

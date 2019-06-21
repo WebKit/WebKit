@@ -99,6 +99,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Scope.h>
 #include <wtf/text/WTFString.h>
 
 const unsigned MaxPeriodicWaveLength = 4096;
@@ -141,6 +142,10 @@ AudioContext::AudioContext(Document& document)
     , m_mediaSession(PlatformMediaSession::create(*this))
     , m_eventQueue(std::make_unique<GenericEventQueue>(*this))
 {
+    // According to spec AudioContext must die only after page navigate.
+    // Lets mark it as ActiveDOMObject with pending activity and unmark it in clear method.
+    makePendingActivity();
+
     constructCommon();
 
     m_destinationNode = DefaultAudioDestinationNode::create(*this);
@@ -172,10 +177,6 @@ AudioContext::AudioContext(Document& document, unsigned numberOfChannels, size_t
 
 void AudioContext::constructCommon()
 {
-    // According to spec AudioContext must die only after page navigate.
-    // Lets mark it as ActiveDOMObject with pending activity and unmark it in clear method.
-    setPendingActivity(*this);
-
     FFTFrame::initialize();
     
     m_listener = AudioListener::create();
@@ -242,6 +243,8 @@ void AudioContext::lazyInitialize()
 
 void AudioContext::clear()
 {
+    Ref<AudioContext> protectedThis(*this);
+
     // We have to release our reference to the destination node before the context will ever be deleted since the destination node holds a reference to the context.
     if (m_destinationNode)
         m_destinationNode = nullptr;
@@ -253,8 +256,7 @@ void AudioContext::clear()
         m_nodesMarkedForDeletion.clear();
     } while (m_nodesToDelete.size());
 
-    // It was set in constructCommon.
-    unsetPendingActivity(*this);
+    clearPendingActivity();
 }
 
 void AudioContext::uninitialize()
@@ -429,7 +431,9 @@ ExceptionOr<Ref<AudioBuffer>> AudioContext::createBuffer(ArrayBuffer& arrayBuffe
 
 void AudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback)
 {
-    m_audioDecoder.decodeAsync(WTFMove(audioData), sampleRate(), WTFMove(successCallback), WTFMove(errorCallback));
+    if (!m_audioDecoder)
+        m_audioDecoder = std::make_unique<AsyncAudioDecoder>();
+    m_audioDecoder->decodeAsync(WTFMove(audioData), sampleRate(), WTFMove(successCallback), WTFMove(errorCallback));
 }
 
 ExceptionOr<Ref<AudioBufferSourceNode>> AudioContext::createBufferSource()
@@ -1141,6 +1145,8 @@ void AudioContext::startRendering()
     if (m_isStopScheduled || !willBeginPlayback())
         return;
 
+    makePendingActivity();
+
     destination()->startRendering();
     setState(State::Running);
 }
@@ -1176,14 +1182,23 @@ void AudioContext::isPlayingAudioDidChange()
     });
 }
 
-void AudioContext::fireCompletionEvent()
+void AudioContext::finishedRendering(bool didRendering)
 {
+    ASSERT(isOfflineContext());
     ASSERT(isMainThread());
     if (!isMainThread())
         return;
 
+    auto clearPendingActivityIfExitEarly = WTF::makeScopeExit([this] {
+        clearPendingActivity();
+    });
+
+
     ALWAYS_LOG(LOGIDENTIFIER);
-    
+
+    if (!didRendering)
+        return;
+
     AudioBuffer* renderedBuffer = m_renderTarget.get();
     setState(State::Closed);
 
@@ -1192,10 +1207,18 @@ void AudioContext::fireCompletionEvent()
         return;
 
     // Avoid firing the event if the document has already gone away.
-    if (!m_isStopScheduled) {
-        // Call the offline rendering completion event listener.
-        m_eventQueue->enqueueEvent(OfflineAudioCompletionEvent::create(renderedBuffer));
-    }
+    if (m_isStopScheduled)
+        return;
+
+    clearPendingActivityIfExitEarly.release();
+    m_eventQueue->enqueueEvent(OfflineAudioCompletionEvent::create(renderedBuffer));
+}
+
+void AudioContext::dispatchEvent(Event& event)
+{
+    EventTarget::dispatchEvent(event);
+    if (event.eventInterface() == OfflineAudioCompletionEventInterfaceType)
+        clearPendingActivity();
 }
 
 void AudioContext::incrementActiveSourceCount()
@@ -1345,6 +1368,23 @@ void AudioContext::addConsoleMessage(MessageSource source, MessageLevel level, c
 {
     if (m_scriptExecutionContext)
         m_scriptExecutionContext->addConsoleMessage(source, level, message);
+}
+
+void AudioContext::clearPendingActivity()
+{
+    if (!m_pendingActivity)
+        return;
+    m_pendingActivity = nullptr;
+    // FIXME: Remove this specific deref() and ref() call in makePendingActivity().
+    deref();
+}
+
+void AudioContext::makePendingActivity()
+{
+    if (m_pendingActivity)
+        return;
+    m_pendingActivity = ActiveDOMObject::makePendingActivity(*this);
+    ref();
 }
 
 #if !RELEASE_LOG_DISABLED
