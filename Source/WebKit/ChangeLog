@@ -1,3 +1,49 @@
+2019-06-20  Patrick Griffis  <pgriffis@igalia.com> and Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Implement a basic DNS cache
+        https://bugs.webkit.org/show_bug.cgi?id=196094
+
+        Reviewed by Michael Catanzaro.
+
+        This adds a simple cache to all DNS operations in the network process.
+
+        * NetworkProcess/glib/DNSCache.cpp: Added.
+        (WebKit::DNSCache::DNSCache):
+        (WebKit::DNSCache::mapForType):
+        (WebKit::DNSCache::lookup):
+        (WebKit::DNSCache::update):
+        (WebKit::DNSCache::removeExpiredResponsesInMap):
+        (WebKit::DNSCache::pruneResponsesInMap):
+        (WebKit::DNSCache::removeExpiredResponsesFired):
+        (WebKit::DNSCache::clear):
+        * NetworkProcess/glib/DNSCache.h: Added.
+        * NetworkProcess/glib/WebKitCachedResolver.cpp: Added.
+        (addressListVectorToGList):
+        (addressListGListToVector):
+        (webkitCachedResolverLookupByName):
+        (webkitCachedResolverLookupByNameAsync):
+        (webkitCachedResolverLookupByNameFinish):
+        (dnsCacheType):
+        (webkitCachedResolverLookupByNameWithFlags):
+        (webkitCachedResolverLookupByNameWithFlagsAsync):
+        (webkitCachedResolverLookupByNameWithFlagsFinish):
+        (webkitCachedResolverLookupByAddress):
+        (webkitCachedResolverLookupByAddressAsync):
+        (webkitCachedResolverLookupByAddressFinish):
+        (webkitCachedResolverLookupRecords):
+        (webkitCachedResolverLookupRecordsAsync):
+        (webkitCachedResolverLookupRecordsFinish):
+        (webkitCachedResolverReload):
+        (webkit_cached_resolver_class_init):
+        (webkitCachedResolverNew):
+        * NetworkProcess/glib/WebKitCachedResolver.h: Added.
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+
 2019-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Stop pretending WebCore::Widget can have a platform widget

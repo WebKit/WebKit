@@ -31,6 +31,7 @@
 #include "NetworkProcessCreationParameters.h"
 #include "ResourceCachesToClear.h"
 #include "WebCookieManager.h"
+#include "WebKitCachedResolver.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotImplemented.h>
@@ -108,6 +109,9 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 
     ASSERT(!parameters.diskCacheDirectory.isEmpty());
     m_diskCacheDirectory = parameters.diskCacheDirectory;
+
+    GRefPtr<GResolver> cachedResolver = adoptGRef(webkitCachedResolverNew(adoptGRef(g_resolver_get_default())));
+    g_resolver_set_default(cachedResolver.get());
 
     SoupNetworkSession::clearOldSoupCache(FileSystem::directoryName(m_diskCacheDirectory));
 

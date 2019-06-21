@@ -233,6 +233,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_DIR}"
     "${DERIVED_SOURCES_WPE_API_DIR}"
     "${WEBKIT_DIR}/NetworkProcess/CustomProtocols/soup"
+    "${WEBKIT_DIR}/NetworkProcess/glib"
     "${WEBKIT_DIR}/NetworkProcess/soup"
     "${WEBKIT_DIR}/NetworkProcess/unix"
     "${WEBKIT_DIR}/Platform/IPC/glib"
