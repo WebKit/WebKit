@@ -1,3 +1,16 @@
+2019-06-20  Antoine Quint  <graouts@apple.com>
+
+        fast/events/ios/click-event-and-display-contents.html times out on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=199068
+        <rdar://problem/51899547>
+
+        Reviewed by Dean Jackson.
+
+        Querying the bounds of a "display: contents" element will always return 0 width and height. So let's position the element at 0,0
+        so that we can send a tap at that location and reliably tap on that element.
+
+        * fast/events/ios/click-event-and-display-contents.html:
+
 2019-06-20  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to include clipping in GraphicsLayer tree dumps
