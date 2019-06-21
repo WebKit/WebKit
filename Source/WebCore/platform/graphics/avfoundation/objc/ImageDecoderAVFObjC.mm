@@ -34,7 +34,6 @@
 #import "FloatQuad.h"
 #import "FloatRect.h"
 #import "FloatSize.h"
-#import "ImageRotationSessionVT.h"
 #import "Logging.h"
 #import "MIMETypeRegistry.h"
 #import "MediaSampleAVFObjC.h"
@@ -234,6 +233,29 @@ static NSDictionary *imageDecoderAssetOptions()
     return options;
 }
 
+static ImageDecoderAVFObjC::RotationProperties transformToRotationProperties(AffineTransform inTransform)
+{
+    ImageDecoderAVFObjC::RotationProperties rotation;
+    if (inTransform.isIdentity())
+        return rotation;
+
+    AffineTransform::DecomposedType decomposed { };
+    if (!inTransform.decompose(decomposed))
+        return rotation;
+
+    rotation.flipY = WTF::areEssentiallyEqual(decomposed.scaleX, -1.);
+    rotation.flipX = WTF::areEssentiallyEqual(decomposed.scaleY, -1.);
+    auto degrees = rad2deg(decomposed.angle);
+    while (degrees < 0)
+        degrees += 360;
+
+    // Only support rotation in multiples of 90º:
+    if (WTF::areEssentiallyEqual(fmod(degrees, 90.), 0.))
+        rotation.angle = clampToUnsigned(degrees);
+
+    return rotation;
+}
+
 class ImageDecoderAVFObjCSample : public MediaSampleAVFObjC {
 public:
     static Ref<ImageDecoderAVFObjCSample> create(RetainPtr<CMSampleBufferRef>&& sampleBuffer)
@@ -400,21 +422,17 @@ void ImageDecoderAVFObjC::readSamples()
 
 void ImageDecoderAVFObjC::readTrackMetadata()
 {
-    AffineTransform finalTransform = CGAffineTransformConcat(m_asset.get().preferredTransform, m_track.get().preferredTransform);
-    auto size = expandedIntSize(FloatSize(m_track.get().naturalSize));
-    if (finalTransform.isIdentity()) {
-        m_size = size;
-        m_imageRotationSession = nullptr;
-        return;
+    if (!m_rotation)
+        m_rotation = transformToRotationProperties(CGAffineTransformConcat(m_asset.get().preferredTransform, m_track.get().preferredTransform));
+
+    if (!m_size) {
+        auto size = FloatSize(m_track.get().naturalSize);
+        auto angle = m_rotation.value().angle;
+        if (angle == 90 || angle == 270)
+            size = size.transposedSize();
+
+        m_size = expandedIntSize(size);
     }
-
-    if (!m_imageRotationSession
-        || !m_imageRotationSession->transform()
-        || m_imageRotationSession->transform().value() != finalTransform
-        || m_imageRotationSession->size() != size)
-        m_imageRotationSession = std::make_unique<ImageRotationSessionVT>(WTFMove(finalTransform), size, kCVPixelFormatType_32BGRA, ImageRotationSessionVT::IsCGImageCompatible::Yes);
-
-    m_size = expandedIntSize(m_imageRotationSession->rotatedSize());
 }
 
 bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
@@ -428,8 +446,38 @@ bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
     auto presentationTime = PAL::toMediaTime(PAL::CMSampleBufferGetPresentationTimeStamp(sampleBuffer));
     auto iter = m_sampleData.presentationOrder().findSampleWithPresentationTime(presentationTime);
 
-    if (m_imageRotationSession)
-        pixelBuffer = m_imageRotationSession->rotate(pixelBuffer.get());
+    if (m_rotation && !m_rotation.value().isIdentity()) {
+        auto& rotation = m_rotation.value();
+        if (!m_rotationSession) {
+            VTImageRotationSessionRef rawRotationSession = nullptr;
+            VTImageRotationSessionCreate(kCFAllocatorDefault, rotation.angle, &rawRotationSession);
+            m_rotationSession = rawRotationSession;
+            VTImageRotationSessionSetProperty(m_rotationSession.get(), kVTImageRotationPropertyKey_EnableHighSpeedTransfer, kCFBooleanTrue);
+
+            if (rotation.flipY)
+                VTImageRotationSessionSetProperty(m_rotationSession.get(), kVTImageRotationPropertyKey_FlipVerticalOrientation, kCFBooleanTrue);
+            if (rotation.flipX)
+                VTImageRotationSessionSetProperty(m_rotationSession.get(), kVTImageRotationPropertyKey_FlipHorizontalOrientation, kCFBooleanTrue);
+        }
+
+        if (!m_rotationPool) {
+            auto pixelAttributes = @{
+                (__bridge NSString *)kCVPixelBufferWidthKey: @(m_size.value().width()),
+                (__bridge NSString *)kCVPixelBufferHeightKey: @(m_size.value().height()),
+                (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA),
+                (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey: @YES,
+            };
+            CVPixelBufferPoolRef rawPool = nullptr;
+            CVPixelBufferPoolCreate(kCFAllocatorDefault, nullptr, (__bridge CFDictionaryRef)pixelAttributes, &rawPool);
+            m_rotationPool = adoptCF(rawPool);
+        }
+
+        CVPixelBufferRef rawRotatedBuffer = nullptr;
+        CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, m_rotationPool.get(), &rawRotatedBuffer);
+        auto status = VTImageRotationSessionTransferImage(m_rotationSession.get(), pixelBuffer.get(), rawRotatedBuffer);
+        if (status == noErr)
+            pixelBuffer = adoptCF(rawRotatedBuffer);
+    }
 
     CGImageRef rawImage = nullptr;
     if (noErr != VTCreateCGImageFromCVPixelBuffer(pixelBuffer.get(), nullptr, &rawImage)) {
@@ -458,8 +506,9 @@ void ImageDecoderAVFObjC::setTrack(AVAssetTrack *track)
     LockHolder holder { m_sampleGeneratorLock };
     m_sampleData.clear();
     m_size.reset();
+    m_rotation.reset();
     m_cursor = m_sampleData.decodeOrder().end();
-    m_imageRotationSession = nullptr;
+    m_rotationSession = nullptr;
 
     [track loadValuesAsynchronouslyForKeys:@[@"naturalSize", @"preferredTransform"] completionHandler:[protectedThis = makeRefPtr(this)] () mutable {
         callOnMainThread([protectedThis = WTFMove(protectedThis)] {

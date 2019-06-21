@@ -58,7 +58,6 @@ class AudioSourceProviderAVFObjC;
 class AudioTrackPrivateAVFObjC;
 class CDMInstanceFairPlayStreamingAVFObjC;
 class CDMSessionAVFoundationObjC;
-class ImageRotationSessionVT;
 class InbandMetadataTextTrackPrivateAVF;
 class MediaSelectionGroupAVFObjC;
 class PixelBufferConformerCV;
@@ -326,7 +325,6 @@ private:
     Vector<String> preferredAudioCharacteristics() const;
 
     void setShouldDisableSleep(bool) override;
-    void updateRotationSession();
 
     Optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
 
@@ -362,7 +360,6 @@ private:
     RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
     RetainPtr<CGImageRef> m_lastImage;
     BinarySemaphore m_videoOutputSemaphore;
-    std::unique_ptr<ImageRotationSessionVT> m_imageRotationSession;
     std::unique_ptr<VideoTextureCopierCV> m_videoTextureCopier;
 #endif
 

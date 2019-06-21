@@ -38,6 +38,8 @@ OBJC_CLASS AVAssetReader;
 OBJC_CLASS AVURLAsset;
 OBJC_CLASS WebCoreSharedBufferResourceLoaderDelegate;
 typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
+typedef struct OpaqueVTImageRotationSession* VTImageRotationSessionRef;
+typedef struct __CVPixelBufferPool* CVPixelBufferPoolRef;
 
 namespace WTF {
 class MediaTime;
@@ -47,7 +49,6 @@ namespace WebCore {
 
 class ContentType;
 class ImageDecoderAVFObjCSample;
-class ImageRotationSessionVT;
 class PixelBufferConformerCV;
 class WebCoreDecompressionSession;
 
@@ -89,6 +90,14 @@ public:
     bool isAllDataReceived() const final { return m_isAllDataReceived; }
     void clearFrameBufferCache(size_t) final;
 
+    struct RotationProperties {
+        bool flipX { false };
+        bool flipY { false };
+        unsigned angle { 0 };
+
+        bool isIdentity() const { return !flipX && !flipY && !angle; }
+    };
+
 private:
     ImageDecoderAVFObjC(SharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
 
@@ -107,7 +116,8 @@ private:
     RetainPtr<AVURLAsset> m_asset;
     RetainPtr<AVAssetTrack> m_track;
     RetainPtr<WebCoreSharedBufferResourceLoaderDelegate> m_loader;
-    std::unique_ptr<ImageRotationSessionVT> m_imageRotationSession;
+    RetainPtr<VTImageRotationSessionRef> m_rotationSession;
+    RetainPtr<CVPixelBufferPoolRef> m_rotationPool;
     Ref<WebCoreDecompressionSession> m_decompressionSession;
     WTF::Function<void(EncodedDataStatus)> m_encodedDataStatusChangedCallback;
 
@@ -116,6 +126,7 @@ private:
     Lock m_sampleGeneratorLock;
     bool m_isAllDataReceived { false };
     Optional<IntSize> m_size;
+    Optional<RotationProperties> m_rotation;
 };
 
 }

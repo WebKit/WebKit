@@ -186,11 +186,10 @@ function run(testFuncString)
     }
 }
 
-function waitFor(element, type, silent) {
+function waitFor(element, type) {
     return new Promise(resolve => {
         element.addEventListener(type, event => {
-            if (!silent)
-                consoleWrite(`EVENT(${event.type})`);
+            consoleWrite(`EVENT(${event.type})`);
             resolve(event);
         }, { once: true });
     });

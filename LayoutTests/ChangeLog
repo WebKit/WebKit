@@ -1,3 +1,15 @@
+2019-06-21  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r246611.
+
+        Introduced a flakey test.
+
+        Reverted changeset:
+
+        "iOS 12.2 Drawing portrait video to canvas is sideways"
+        https://bugs.webkit.org/show_bug.cgi?id=196772
+        https://trac.webkit.org/changeset/246611
+
 2019-06-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] read modify write expressions do no work as expected

@@ -28,8 +28,6 @@
 
 #if USE(LIBWEBRTC)
 
-#import "AffineTransform.h"
-#import "ImageRotationSessionVT.h"
 #import "Logging.h"
 #import "MediaSample.h"
 #import "PixelBufferConformerCV.h"
@@ -51,17 +49,19 @@ RetainPtr<CVPixelBufferRef> RealtimeOutgoingVideoSourceCocoa::convertToYUV(CVPix
     return m_pixelBufferConformer->convert(pixelBuffer);
 }
 
-static inline unsigned rotationToAngle(webrtc::VideoRotation rotation)
+static inline void computeRotatedWidthAndHeight(CVPixelBufferRef pixelBuffer, webrtc::VideoRotation rotation, size_t& width, size_t& height)
 {
     switch (rotation) {
     case webrtc::kVideoRotation_0:
-        return 0;
-    case webrtc::kVideoRotation_90:
-        return 90;
     case webrtc::kVideoRotation_180:
-        return 180;
+        width = CVPixelBufferGetWidth(pixelBuffer);
+        height = CVPixelBufferGetHeight(pixelBuffer);
+        return;
+    case webrtc::kVideoRotation_90:
     case webrtc::kVideoRotation_270:
-        return 270;
+        width = CVPixelBufferGetHeight(pixelBuffer);
+        height = CVPixelBufferGetWidth(pixelBuffer);
+        return;
     }
 }
 
@@ -72,13 +72,60 @@ RetainPtr<CVPixelBufferRef> RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer(
         return pixelBuffer;
 
     if (!m_rotationSession || rotation != m_currentRotationSessionAngle) {
-        IntSize size = { (int)CVPixelBufferGetWidth(pixelBuffer) , (int)CVPixelBufferGetHeight(pixelBuffer) };
-        AffineTransform transform;
-        transform.rotate(rotationToAngle(rotation));
-        m_rotationSession = std::make_unique<ImageRotationSessionVT>(WTFMove(transform), size, CVPixelBufferGetPixelFormatType(pixelBuffer), ImageRotationSessionVT::IsCGImageCompatible::No);
+        VTImageRotationSessionRef rawRotationSession = nullptr;
+        auto status = VTImageRotationSessionCreate(kCFAllocatorDefault, rotation, &rawRotationSession);
+        if (status != noErr) {
+            ERROR_LOG(LOGIDENTIFIER, "Failed creating a rotation session with error ", status);
+            return nullptr;
+        }
+
+        m_rotationSession = adoptCF(rawRotationSession);
+        m_currentRotationSessionAngle = rotation;
+
+        VTImageRotationSessionSetProperty(rawRotationSession, kVTImageRotationPropertyKey_EnableHighSpeedTransfer, kCFBooleanTrue);
     }
 
-    return m_rotationSession->rotate(pixelBuffer);
+    size_t rotatedWidth, rotatedHeight;
+    computeRotatedWidthAndHeight(pixelBuffer, rotation, rotatedWidth, rotatedHeight);
+    auto format = CVPixelBufferGetPixelFormatType(pixelBuffer);
+    if (!m_rotationPool || rotatedWidth != m_rotatedWidth || rotatedHeight != m_rotatedHeight || format != m_rotatedFormat) {
+        auto pixelAttributes = @{
+            (__bridge NSString *)kCVPixelBufferWidthKey: @(rotatedWidth),
+            (__bridge NSString *)kCVPixelBufferHeightKey: @(rotatedHeight),
+            (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(format),
+            (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey: @NO,
+        };
+
+        CVPixelBufferPoolRef pool = nullptr;
+        auto status = CVPixelBufferPoolCreate(kCFAllocatorDefault, nullptr, (__bridge CFDictionaryRef)pixelAttributes, &pool);
+
+        if (status != kCVReturnSuccess) {
+            ERROR_LOG(LOGIDENTIFIER, "Failed creating a pixel buffer pool with error ", status);
+            return nullptr;
+        }
+        m_rotationPool = adoptCF(pool);
+
+        m_rotatedWidth = rotatedWidth;
+        m_rotatedHeight = rotatedHeight;
+        m_rotatedFormat = format;
+    }
+
+    CVPixelBufferRef rawRotatedBuffer = nullptr;
+    auto status = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, m_rotationPool.get(), &rawRotatedBuffer);
+
+    if (status != kCVReturnSuccess) {
+        ERROR_LOG(LOGIDENTIFIER, "Failed creating a pixel buffer with error ", status);
+        return nullptr;
+    }
+    RetainPtr<CVPixelBufferRef> rotatedBuffer = adoptCF(rawRotatedBuffer);
+
+    status = VTImageRotationSessionTransferImage(m_rotationSession.get(), pixelBuffer, rotatedBuffer.get());
+
+    if (status != noErr) {
+        ERROR_LOG(LOGIDENTIFIER, "Failed rotating with error ", status, " for rotation ", m_currentRotation);
+        return nullptr;
+    }
+    return rotatedBuffer;
 }
 
 } // namespace WebCore
