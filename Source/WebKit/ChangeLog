@@ -1,3 +1,22 @@
+2019-06-20  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Evernote crashes when creating a note
+        https://bugs.webkit.org/show_bug.cgi?id=199083
+        <rdar://problem/51759247>
+
+        Reviewed by Brent Fulgham.
+
+        Add a hack just for Evernote linked before iOS 13 that dynamically adds a placeholder -[WKContentView keyCommands]
+        method (it just calls super). Evernote swizzles the IPI -[WKContentView keyCommands], but this
+        method may not always be present in the WebKit binary following r240514. So, Evernote may end
+        up swizzling -[UIResponder keyCommands], but their implementation doesn't account for this
+        scenario and they end up crashing because they call an unrecognized selector.
+
+        * UIProcess/Cocoa/VersionChecks.h: Add version check.
+        * UIProcess/ios/WKContentView.mm:
+        (keyCommandsPlaceholderHackForEvernote): Added.
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]): Install the hack.
+
 2019-06-20  Brady Eidson  <beidson@apple.com>
 
         WebURLSchemeHandlerProxy::loadSynchronously crash with sync request.

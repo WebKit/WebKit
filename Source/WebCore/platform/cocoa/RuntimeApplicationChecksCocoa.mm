@@ -294,6 +294,12 @@ bool IOSApplication::isAppleApplication()
     return isAppleApplication;
 }
 
+bool IOSApplication::isEvernote()
+{
+    static bool isEvernote = applicationBundleIsEqualTo("com.evernote.iPhone.Evernote"_s);
+    return isEvernote;
+}
+
 #endif
 
 } // namespace WebCore

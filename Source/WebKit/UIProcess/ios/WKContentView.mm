@@ -60,7 +60,9 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/Quirks.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/VelocityData.h>
+#import <objc/message.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/TextStream.h>
@@ -141,6 +143,22 @@
     RetainPtr<CGPDFDocumentRef> _printedDocument;
 }
 
+#if USE(UIKIT_KEYBOARD_ADDITIONS)
+
+// Evernote expects to swizzle -keyCommands on WKContentView or they crash. Remove this hack
+// as soon as reasonably possible. See <rdar://problem/51759247>.
+static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
+{
+    struct objc_super super { 0 };
+    super.receiver = self;
+    super.super_class = class_getSuperclass(object_getClass(self));
+
+    using SuperKeyCommandsFunction = NSArray *(*)(struct objc_super*, SEL);
+    return reinterpret_cast<SuperKeyCommandsFunction>(&objc_msgSendSuper)(&super, @selector(keyCommands));
+}
+
+#endif
+
 - (instancetype)_commonInitializationWithProcessPool:(WebKit::WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration
 {
     ASSERT(_pageClient);
@@ -186,6 +204,11 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:[UIApplication sharedApplication]];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:[UIApplication sharedApplication]];
+
+#if USE(UIKIT_KEYBOARD_ADDITIONS)
+    if (WebCore::IOSApplication::isEvernote() && !linkedOnOrAfter(WebKit::SDKVersion::FirstWhereWKContentViewDoesNotOverrideKeyCommands))
+        class_addMethod(self.class, @selector(keyCommands), reinterpret_cast<IMP>(&keyCommandsPlaceholderHackForEvernote), method_getTypeEncoding(class_getInstanceMethod(self.class, @selector(keyCommands))));
+#endif
 
     return self;
 }

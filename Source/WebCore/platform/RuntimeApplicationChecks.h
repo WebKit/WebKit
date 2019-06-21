@@ -92,6 +92,7 @@ WEBCORE_EXPORT bool isNike();
 bool isMoviStarPlus();
 WEBCORE_EXPORT bool isFirefox();
 WEBCORE_EXPORT bool isAppleApplication();
+WEBCORE_EXPORT bool isEvernote();
 
 } // IOSApplication
 
