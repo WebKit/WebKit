@@ -27,8 +27,6 @@
 
 #include <gtk/gtk.h>
 
-#if GTK_CHECK_VERSION(3, 20, 0)
-
 #include "RenderThemeGadget.h"
 
 namespace WebCore {
@@ -247,5 +245,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // GTK_CHECK_VERSION(3, 20, 0)

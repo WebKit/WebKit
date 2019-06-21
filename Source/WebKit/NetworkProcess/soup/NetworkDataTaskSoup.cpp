@@ -157,10 +157,7 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request)
         soup_message_headers_set_content_length(soupMessage->request_headers, 0);
 
     soup_message_set_flags(soupMessage.get(), static_cast<SoupMessageFlags>(soup_message_get_flags(soupMessage.get()) | messageFlags));
-
-#if SOUP_CHECK_VERSION(2, 43, 1)
     soup_message_set_priority(soupMessage.get(), toSoupMessagePriority(m_currentRequest.priority()));
-#endif
 
     m_soupRequest = WTFMove(soupRequest);
     m_soupMessage = WTFMove(soupMessage);
@@ -170,11 +167,7 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request)
     g_signal_connect(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), "authenticate",  G_CALLBACK(authenticateCallback), this);
     g_signal_connect(m_soupMessage.get(), "network-event", G_CALLBACK(networkEventCallback), this);
     g_signal_connect(m_soupMessage.get(), "restarted", G_CALLBACK(restartedCallback), this);
-#if SOUP_CHECK_VERSION(2, 49, 91)
     g_signal_connect(m_soupMessage.get(), "starting", G_CALLBACK(startingCallback), this);
-#else
-    g_signal_connect(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), "request-started", G_CALLBACK(requestStartedCallback), this);
-#endif
 }
 
 void NetworkDataTaskSoup::clearRequest()
@@ -921,13 +914,7 @@ void NetworkDataTaskSoup::writeDownloadCallback(GOutputStream* outputStream, GAs
 
     GUniqueOutPtr<GError> error;
     gsize bytesWritten;
-#if GLIB_CHECK_VERSION(2, 44, 0)
     g_output_stream_write_all_finish(outputStream, result, &bytesWritten, &error.outPtr());
-#else
-    gssize writeTaskResult = g_task_propagate_int(G_TASK(result), &error.outPtr());
-    if (writeTaskResult != -1)
-        bytesWritten = writeTaskResult;
-#endif
     if (error)
         task->didFailDownload(downloadDestinationError(task->m_response, error->message));
     else
@@ -937,31 +924,8 @@ void NetworkDataTaskSoup::writeDownloadCallback(GOutputStream* outputStream, GAs
 void NetworkDataTaskSoup::writeDownload()
 {
     RefPtr<NetworkDataTaskSoup> protectedThis(this);
-#if GLIB_CHECK_VERSION(2, 44, 0)
     g_output_stream_write_all_async(m_downloadOutputStream.get(), m_readBuffer.data(), m_readBuffer.size(), RunLoopSourcePriority::AsyncIONetwork, m_cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(writeDownloadCallback), protectedThis.leakRef());
-#else
-    GRefPtr<GTask> writeTask = adoptGRef(g_task_new(m_downloadOutputStream.get(), m_cancellable.get(),
-        reinterpret_cast<GAsyncReadyCallback>(writeDownloadCallback), protectedThis.leakRef()));
-    g_task_set_task_data(writeTask.get(), this, nullptr);
-    g_task_run_in_thread(writeTask.get(), [](GTask* writeTask, gpointer source, gpointer userData, GCancellable* cancellable) {
-        auto* task = static_cast<NetworkDataTaskSoup*>(userData);
-        GOutputStream* outputStream = G_OUTPUT_STREAM(source);
-        RELEASE_ASSERT(task->m_downloadOutputStream.get() == outputStream);
-        RELEASE_ASSERT(task->m_cancellable.get() == cancellable);
-        GError* error = nullptr;
-        if (g_cancellable_set_error_if_cancelled(cancellable, &error)) {
-            g_task_return_error(writeTask, error);
-            return;
-        }
-
-        gsize bytesWritten;
-        if (g_output_stream_write_all(outputStream, task->m_readBuffer.data(), task->m_readBuffer.size(), &bytesWritten, cancellable, &error))
-            g_task_return_int(writeTask, bytesWritten);
-        else
-            g_task_return_error(writeTask, error);
-    });
-#endif
 }
 
 void NetworkDataTaskSoup::didWriteDownload(gsize bytesWritten)
@@ -1084,7 +1048,6 @@ void NetworkDataTaskSoup::networkEvent(GSocketClientEvent event, GIOStream* stre
     }
 }
 
-#if SOUP_CHECK_VERSION(2, 49, 91)
 void NetworkDataTaskSoup::startingCallback(SoupMessage* soupMessage, NetworkDataTaskSoup* task)
 {
     if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client)
@@ -1093,19 +1056,6 @@ void NetworkDataTaskSoup::startingCallback(SoupMessage* soupMessage, NetworkData
     ASSERT(task->m_soupMessage.get() == soupMessage);
     task->didStartRequest();
 }
-#else
-void NetworkDataTaskSoup::requestStartedCallback(SoupSession* session, SoupMessage* soupMessage, SoupSocket*, NetworkDataTaskSoup* task)
-{
-    ASSERT(session == static_cast<NetworkSessionSoup&>(task->m_session.get()).soupSession());
-    if (soupMessage != task->m_soupMessage.get())
-        return;
-
-    if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client)
-        return;
-
-    task->didStartRequest();
-}
-#endif
 
 void NetworkDataTaskSoup::didStartRequest()
 {

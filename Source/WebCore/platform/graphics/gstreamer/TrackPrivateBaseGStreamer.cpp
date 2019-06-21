@@ -58,7 +58,6 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gi
     tagsChanged();
 }
 
-#if GST_CHECK_VERSION(1, 10, 0)
 TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstStream> stream)
     : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
     , m_index(index)
@@ -70,7 +69,6 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gi
     // We can't call notifyTrackOfTagsChanged() directly, because we need tagsChanged() to setup m_tags.
     tagsChanged();
 }
-#endif
 
 TrackPrivateBaseGStreamer::~TrackPrivateBaseGStreamer()
 {
@@ -82,10 +80,8 @@ void TrackPrivateBaseGStreamer::disconnect()
 {
     m_tags.clear();
 
-#if GST_CHECK_VERSION(1, 10, 0)
     if (m_stream)
         m_stream.clear();
-#endif
 
     m_notifier->cancelPendingNotifications();
 
@@ -115,10 +111,8 @@ void TrackPrivateBaseGStreamer::tagsChanged()
         else
             tags = adoptGRef(gst_tag_list_new_empty());
     }
-#if GST_CHECK_VERSION(1, 10, 0)
     else if (m_stream)
         tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
-#endif
     else
         tags = adoptGRef(gst_tag_list_new_empty());
 

@@ -399,7 +399,7 @@ GstContext* MediaPlayerPrivateGStreamerBase::requestGLContext(const char* contex
     if (!g_strcmp0(contextType, "gst.gl.app_context")) {
         GstContext* appContext = gst_context_new("gst.gl.app_context", TRUE);
         GstStructure* structure = gst_context_writable_structure(appContext);
-#if GST_CHECK_VERSION(1, 11, 0)
+#if GST_CHECK_VERSION(1, 12, 0)
         gst_structure_set(structure, "context", GST_TYPE_GL_CONTEXT, gstGLContext(), nullptr);
 #else
         gst_structure_set(structure, "context", GST_GL_TYPE_CONTEXT, gstGLContext(), nullptr);
@@ -1032,9 +1032,6 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateGStreamerBase::movieLoadType() cons
 #if USE(GSTREAMER_GL)
 GstElement* MediaPlayerPrivateGStreamerBase::createGLAppSink()
 {
-    if (!webkitGstCheckVersion(1, 8, 0))
-        return nullptr;
-
     GstElement* appsink = gst_element_factory_make("appsink", "webkit-gl-video-sink");
     if (!appsink)
         return nullptr;
@@ -1071,9 +1068,6 @@ GstElement* MediaPlayerPrivateGStreamerBase::createGLAppSink()
 
 GstElement* MediaPlayerPrivateGStreamerBase::createVideoSinkGL()
 {
-    if (!webkitGstCheckVersion(1, 8, 0))
-        return nullptr;
-
     gboolean result = TRUE;
     GstElement* videoSink = gst_bin_new(nullptr);
     GstElement* upload = gst_element_factory_make("glupload", nullptr);

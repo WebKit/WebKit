@@ -43,7 +43,6 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
     notifyTrackOfActiveChanged();
 }
 
-#if GST_CHECK_VERSION(1, 10, 0)
 VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, gint index, GRefPtr<GstStream> stream)
     : TrackPrivateBaseGStreamer(this, index, stream)
     , m_player(player)
@@ -69,7 +68,6 @@ VideoTrackPrivate::Kind VideoTrackPrivateGStreamer::kind() const
 
     return VideoTrackPrivate::kind();
 }
-#endif
 
 void VideoTrackPrivateGStreamer::disconnect()
 {

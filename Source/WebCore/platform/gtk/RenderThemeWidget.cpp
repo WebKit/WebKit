@@ -26,8 +26,6 @@
 #include "config.h"
 #include "RenderThemeWidget.h"
 
-#if GTK_CHECK_VERSION(3, 20, 0)
-
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -301,5 +299,3 @@ RenderThemeWindow::RenderThemeWindow()
 }
 
 } // namepsace WebCore
-
-#endif // GTK_CHECK_VERSION(3, 20, 0)

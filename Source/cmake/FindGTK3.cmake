@@ -4,7 +4,6 @@
 #  GTK3_FOUND - system has GTK+ 3.
 #  GTK3_INCLUDE_DIRS - the GTK+ 3. include directories
 #  GTK3_LIBRARIES - link these to use GTK+ 3.
-#  GTK3_SUPPORTS_GESTURES - GTK+ supports gestures (GTK+ >= 3.14)
 #  GTK3_SUPPORTS_QUARTZ - GTK+ supports Quartz backend
 #  GTK3_SUPPORTS_X11 - GTK+ supports X11 backend
 #  GTK3_SUPPORTS_WAYLAND - GTK+ supports Wayland backend
@@ -69,12 +68,6 @@ if (GTK3_VERSION AND VERSION_OK)
         set(GTK3_SUPPORTS_WAYLAND TRUE)
     else ()
         set(GTK3_SUPPORTS_WAYLAND FALSE)
-    endif ()
-
-    if (NOT("${GTK3_VERSION}" VERSION_LESS "3.14.0"))
-        set(GTK3_SUPPORTS_GESTURES ON)
-    else ()
-        set(GTK3_SUPPORTS_GESTURES OFF)
     endif ()
 endif ()
 

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "RenderThemeGadget.h"
 
-#if GTK_CHECK_VERSION(3, 20, 0)
-
 #include "FloatRect.h"
 #include "GRefPtrGtk.h"
 
@@ -400,5 +398,3 @@ IntSize RenderThemeButtonGadget::minimumSize() const
 }
 
 } // namespace WebCore
-
-#endif // GTK_CHECK_VERSION(3, 20, 0)

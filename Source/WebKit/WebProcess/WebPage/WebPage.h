@@ -768,9 +768,7 @@ public:
 
     void collapseSelectionInFrame(uint64_t frameID);
     void showEmojiPicker(WebCore::Frame&);
-#endif
 
-#if PLATFORM (GTK) && HAVE(GTK_GESTURES)
     void getCenterForZoomGesture(const WebCore::IntPoint& centerInViewCoordinates, CompletionHandler<void(WebCore::IntPoint&&)>&&);
 #endif
 

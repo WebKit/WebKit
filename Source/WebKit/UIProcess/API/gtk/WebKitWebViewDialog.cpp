@@ -24,9 +24,6 @@
 #include <wtf/glib/WTFGType.h>
 
 struct _WebKitWebViewDialogPrivate {
-#if !GTK_CHECK_VERSION(3, 20, 0)
-    GRefPtr<GtkStyleContext> styleContext;
-#endif
 };
 
 WEBKIT_DEFINE_ABSTRACT_TYPE(WebKitWebViewDialog, webkit_web_view_dialog, GTK_TYPE_EVENT_BOX)
@@ -41,11 +38,7 @@ static gboolean webkitWebViewDialogDraw(GtkWidget* widget, cairo_t* cr)
         GtkAllocation allocation;
         gtk_widget_get_allocation(child, &allocation);
 
-#if GTK_CHECK_VERSION(3, 20, 0)
         GtkStyleContext* styleContext = gtk_widget_get_style_context(widget);
-#else
-        GtkStyleContext* styleContext = WEBKIT_WEB_VIEW_DIALOG(widget)->priv->styleContext.get();
-#endif
         gtk_render_background(styleContext, cr, allocation.x, allocation.y, allocation.width, allocation.height);
     }
 
@@ -81,20 +74,8 @@ static void webkitWebViewDialogConstructed(GObject* object)
 
     gtk_widget_set_app_paintable(GTK_WIDGET(object), TRUE);
 
-#if GTK_CHECK_VERSION(3, 20, 0)
     gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(object)), GTK_STYLE_CLASS_CSD);
     gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(object)), GTK_STYLE_CLASS_BACKGROUND);
-#else
-    WebKitWebViewDialogPrivate* priv = WEBKIT_WEB_VIEW_DIALOG(object)->priv;
-    priv->styleContext = adoptGRef(gtk_style_context_new());
-    GtkWidgetPath* path = gtk_widget_path_new();
-    gtk_widget_path_append_type(path, GTK_TYPE_WINDOW);
-    gtk_style_context_add_class(priv->styleContext.get(), GTK_STYLE_CLASS_BACKGROUND);
-    gtk_style_context_add_class(priv->styleContext.get(), GTK_STYLE_CLASS_TITLEBAR);
-    gtk_style_context_add_class(priv->styleContext.get(), GTK_STYLE_CLASS_CSD);
-    gtk_style_context_set_path(priv->styleContext.get(), path);
-    gtk_widget_path_free(path);
-#endif
 }
 
 static void webkit_web_view_dialog_class_init(WebKitWebViewDialogClass* klass)
@@ -106,7 +87,5 @@ static void webkit_web_view_dialog_class_init(WebKitWebViewDialogClass* klass)
     widgetClass->draw = webkitWebViewDialogDraw;
     widgetClass->size_allocate = webkitWebViewDialogSizeAllocate;
 
-#if GTK_CHECK_VERSION(3, 20, 0)
     gtk_widget_class_set_css_name(widgetClass, "messagedialog");
-#endif
 }

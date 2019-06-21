@@ -409,9 +409,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     CancelComposition()
 
     CollapseSelectionInFrame(uint64_t frameID)
-#endif
 
-#if PLATFORM (GTK) && HAVE(GTK_GESTURES)
     GetCenterForZoomGesture(WebCore::IntPoint centerInViewCoordinates) -> (WebCore::IntPoint center) Synchronous
 #endif
 

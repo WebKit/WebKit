@@ -140,7 +140,6 @@ void setScreenDPIObserverHandler(Function<void()>&& handler, void* context)
 FloatRect screenRect(Widget*)
 {
     GdkRectangle geometry;
-#if GTK_CHECK_VERSION(3, 22, 0)
     GdkDisplay* display = gdk_display_get_default();
     if (!display)
         return { };
@@ -150,13 +149,6 @@ FloatRect screenRect(Widget*)
         return { };
 
     gdk_monitor_get_geometry(monitor, &geometry);
-#else
-    GdkScreen* screen = gdk_screen_get_default();
-    if (!screen)
-        return { };
-
-    gdk_screen_get_monitor_geometry(screen, 0, &geometry);
-#endif // !GTK_CHECK_VERSION(3, 22, 0)
 
     return FloatRect(geometry.x, geometry.y, geometry.width, geometry.height);
 }
@@ -164,7 +156,6 @@ FloatRect screenRect(Widget*)
 FloatRect screenAvailableRect(Widget*)
 {
     GdkRectangle workArea;
-#if GTK_CHECK_VERSION(3, 22, 0)
     GdkDisplay* display = gdk_display_get_default();
     if (!display)
         return { };
@@ -174,13 +165,6 @@ FloatRect screenAvailableRect(Widget*)
         return { };
 
     gdk_monitor_get_workarea(monitor, &workArea);
-#else
-    GdkScreen* screen = gdk_screen_get_default();
-    if (!screen)
-        return FloatRect();
-
-    gdk_screen_get_monitor_workarea(screen, 0, &workArea);
-#endif // !GTK_CHECK_VERSION(3, 22, 0)
 
     return FloatRect(workArea.x, workArea.y, workArea.width, workArea.height);
 }
@@ -191,75 +175,14 @@ bool screenSupportsExtendedColor(Widget*)
 }
 
 #if ENABLE(TOUCH_EVENTS)
-#if !GTK_CHECK_VERSION(3, 20, 0)
-static void deviceAddedCallback(GdkDeviceManager*, GdkDevice*);
-static void deviceRemovedCallback(GdkDeviceManager*, GdkDevice*);
-
-static HashSet<GdkDevice*>& touchDevices()
-{
-    static LazyNeverDestroyed<HashSet<GdkDevice*>> touchDeviceSet;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [] {
-        touchDeviceSet.construct();
-
-        auto* display = gdk_display_get_default();
-        if (!display)
-            return;
-
-        auto* deviceManager = gdk_display_get_device_manager(display);
-        if (!deviceManager)
-            return;
-
-        GUniquePtr<GList> devices(gdk_device_manager_list_devices(deviceManager, GDK_DEVICE_TYPE_SLAVE));
-        for (GList* it = devices.get(); it; it = g_list_next(it)) {
-            auto* device = GDK_DEVICE(it->data);
-            if (gdk_device_get_source(device) == GDK_SOURCE_TOUCHSCREEN)
-                touchDeviceSet->add(device);
-        }
-
-        g_signal_connect(deviceManager, "device-added", G_CALLBACK(deviceAddedCallback), nullptr);
-        g_signal_connect(deviceManager, "device-removed", G_CALLBACK(deviceRemovedCallback), nullptr);
-    });
-
-    return touchDeviceSet;
-}
-
-static inline bool isTouchDevice(GdkDevice* device)
-{
-    return gdk_device_get_device_type(device) == GDK_DEVICE_TYPE_SLAVE && gdk_device_get_source(device) == GDK_SOURCE_TOUCHSCREEN;
-}
-
-static void deviceAddedCallback(GdkDeviceManager*, GdkDevice* device)
-{
-    if (!isTouchDevice(device))
-        return;
-
-    ASSERT(!touchDevices().contains(device));
-    touchDevices().add(device);
-}
-
-static void deviceRemovedCallback(GdkDeviceManager*, GdkDevice* device)
-{
-    if (!isTouchDevice(device))
-        return;
-
-    ASSERT(touchDevices().contains(device));
-    touchDevices().remove(device);
-}
-#endif // !GTK_CHECK_VERSION(3, 20, 0)
-
 bool screenHasTouchDevice()
 {
-#if GTK_CHECK_VERSION(3, 20, 0)
     auto* display = gdk_display_get_default();
     if (!display)
         return true;
 
     auto* seat = gdk_display_get_default_seat(display);
     return seat ? gdk_seat_get_capabilities(seat) & GDK_SEAT_CAPABILITY_TOUCH : true;
-#else
-    return !touchDevices().isEmpty();
-#endif
 }
 
 bool screenIsTouchPrimaryInputDevice()
@@ -268,20 +191,11 @@ bool screenIsTouchPrimaryInputDevice()
     if (!display)
         return true;
 
-#if GTK_CHECK_VERSION(3, 20, 0)
     auto* seat = gdk_display_get_default_seat(display);
     if (!seat)
         return true;
 
     auto* device = gdk_seat_get_pointer(seat);
-#else
-    auto* deviceManager = gdk_display_get_device_manager(display);
-    if (!deviceManager)
-        return true;
-
-    auto* device = gdk_device_manager_get_client_pointer(deviceManager);
-#endif
-
     return device ? gdk_device_get_source(device) == GDK_SOURCE_TOUCHSCREEN : true;
 }
 #endif // ENABLE(TOUCH_EVENTS)

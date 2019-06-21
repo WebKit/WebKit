@@ -200,11 +200,8 @@ void InputMethodFilter::filterKeyEvent(GdkEventKey* event, FilterKeyEventComplet
     m_justSentFakeKeyUp = false;
     guint keyval;
     gdk_event_get_keyval(reinterpret_cast<GdkEvent*>(event), &keyval);
-#if GTK_CHECK_VERSION(3, 10, 0)
     GdkEventType type = gdk_event_get_event_type(reinterpret_cast<GdkEvent*>(event));
-#else
-    GdkEventType type = event->type;
-#endif
+
     if (justSentFakeKeyUp && type == GDK_KEY_RELEASE)
         return;
 
@@ -452,11 +449,7 @@ void InputMethodFilter::logHandleKeyboardEventForTesting(GdkEventKey* event, con
 {
     guint keyval;
     gdk_event_get_keyval(reinterpret_cast<GdkEvent*>(event), &keyval);
-#if GTK_CHECK_VERSION(3, 10, 0)
     const char* eventType = gdk_event_get_event_type(reinterpret_cast<GdkEvent*>(event)) == GDK_KEY_RELEASE ? "release" : "press";
-#else
-    const char* eventType = event->type == GDK_KEY_RELEASE ? "release" : "press";
-#endif
     const char* fakedString = faked == EventFaked ? " (faked)" : "";
     if (!eventString.isNull())
         m_events.append(makeString("sendSimpleKeyEvent type=", eventType, " keycode=", hex(keyval), " text='", eventString, '\'', fakedString));
@@ -468,11 +461,7 @@ void InputMethodFilter::logHandleKeyboardEventWithCompositionResultsForTesting(G
 {
     guint keyval;
     gdk_event_get_keyval(reinterpret_cast<GdkEvent*>(event), &keyval);
-#if GTK_CHECK_VERSION(3, 10, 0)
     const char* eventType = gdk_event_get_event_type(reinterpret_cast<GdkEvent*>(event)) == GDK_KEY_RELEASE ? "release" : "press";
-#else
-    const char* eventType = event->type == GDK_KEY_RELEASE ? "release" : "press";
-#endif
     const char* fakedString = faked == EventFaked ? " (faked)" : "";
     m_events.append(makeString("sendKeyEventWithCompositionResults type=", eventType, " keycode=", hex(keyval), fakedString));
 

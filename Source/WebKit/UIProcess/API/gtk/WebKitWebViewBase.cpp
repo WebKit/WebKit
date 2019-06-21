@@ -79,10 +79,6 @@
 #include <gdk/gdkx.h>
 #endif
 
-// gtk_widget_get_scale_factor() appeared in GTK 3.10, but we also need
-// to make sure we have cairo new enough to support cairo_surface_set_device_scale
-#define HAVE_GTK_SCALE_FACTOR HAVE_CAIRO_SURFACE_SET_DEVICE_SCALE && GTK_CHECK_VERSION(3, 10, 0)
-
 using namespace WebKit;
 using namespace WebCore;
 
@@ -122,11 +118,8 @@ public:
         double x, y;
         gdk_event_get_coords(event, &x, &y);
         gdk_event_get_button(event, &button);
-#if GTK_CHECK_VERSION(3, 10, 0)
         type = gdk_event_get_event_type(event);
-#else
-        type = event->type;
-#endif
+
         if ((type == GDK_2BUTTON_PRESS || type == GDK_3BUTTON_PRESS)
             || ((std::abs(x - previousClickPoint.x()) < doubleClickDistance)
                 && (std::abs(y - previousClickPoint.y()) < doubleClickDistance)
@@ -227,9 +220,7 @@ struct _WebKitWebViewBasePrivate {
     std::unique_ptr<DragAndDropHandler> dragAndDropHandler;
 #endif
 
-#if HAVE(GTK_GESTURES)
     std::unique_ptr<GestureController> gestureController;
-#endif
     std::unique_ptr<ViewGestureController> viewGestureController;
     bool isBackForwardNavigationGestureEnabled { false };
 
@@ -422,9 +413,7 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
         | GDK_BUTTON2_MOTION_MASK
         | GDK_BUTTON3_MOTION_MASK
         | GDK_TOUCH_MASK;
-#if HAVE(GTK_GESTURES)
     attributes.event_mask |= GDK_TOUCHPAD_GESTURE_MASK;
-#endif
 
     gint attributesMask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL;
 
@@ -821,11 +810,7 @@ static void webkitWebViewBaseHandleMouseEvent(WebKitWebViewBase* webViewBase, Gd
     ASSERT(!priv->dialog);
 
     int clickCount = 0;
-#if GTK_CHECK_VERSION(3, 10, 0)
     GdkEventType eventType = gdk_event_get_event_type(event);
-#else
-    GdkEventType eventType = event->type;
-#endif
     switch (eventType) {
     case GDK_BUTTON_PRESS:
     case GDK_2BUTTON_PRESS:
@@ -1056,11 +1041,7 @@ static inline WebPlatformTouchPoint::TouchPointState touchPointStateForEvents(co
 static void webkitWebViewBaseGetTouchPointsForEvent(WebKitWebViewBase* webViewBase, GdkEvent* event, Vector<WebPlatformTouchPoint>& touchPoints)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-#if GTK_CHECK_VERSION(3, 10, 0)
     GdkEventType type = gdk_event_get_event_type(event);
-#else
-    GdkEventType type = event->type;
-#endif
     bool touchEnd = (type == GDK_TOUCH_END) || (type == GDK_TOUCH_CANCEL);
     touchPoints.reserveInitialCapacity(touchEnd ? priv->touchEvents.size() + 1 : priv->touchEvents.size());
 
@@ -1083,11 +1064,7 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
     GdkEvent* touchEvent = reinterpret_cast<GdkEvent*>(event);
     uint32_t sequence = GPOINTER_TO_UINT(gdk_event_get_event_sequence(touchEvent));
 
-#if GTK_CHECK_VERSION(3, 10, 0)
     GdkEventType type = gdk_event_get_event_type(touchEvent);
-#else
-    GdkEventType type = touchEvent->type
-#endif
     switch (type) {
     case GDK_TOUCH_BEGIN: {
         ASSERT(!priv->touchEvents.contains(sequence));
@@ -1119,7 +1096,6 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
 }
 #endif // ENABLE(TOUCH_EVENTS)
 
-#if HAVE(GTK_GESTURES)
 class TouchGestureController final : public GestureControllerClient {
     WTF_MAKE_FAST_ALLOCATED;
 
@@ -1142,11 +1118,7 @@ private:
         scrollEvent->scroll.delta_x = delta.x();
         scrollEvent->scroll.delta_y = delta.y();
         scrollEvent->scroll.state = event->state;
-#if GTK_CHECK_VERSION(3, 20, 0)
         scrollEvent->scroll.is_stop = isStop;
-#else
-        UNUSED_PARAM(isStop);
-#endif
         scrollEvent->scroll.window = event->window ? GDK_WINDOW(g_object_ref(event->window)) : nullptr;
         auto* touchEvent = reinterpret_cast<GdkEvent*>(event);
         gdk_event_set_screen(scrollEvent.get(), gdk_event_get_screen(touchEvent));
@@ -1244,7 +1216,6 @@ GestureController& webkitWebViewBaseGestureController(WebKitWebViewBase* webView
         priv->gestureController = std::make_unique<GestureController>(GTK_WIDGET(webViewBase), std::make_unique<TouchGestureController>(webViewBase));
     return *priv->gestureController;
 }
-#endif
 
 void webkitWebViewBaseSetEnableBackForwardNavigationGesture(WebKitWebViewBase* webViewBase, bool enabled)
 {
@@ -1325,15 +1296,8 @@ static void webkitWebViewBaseDragDataReceived(GtkWidget* widget, GdkDragContext*
 
 static gboolean webkitWebViewBaseEvent(GtkWidget* widget, GdkEvent* event)
 {
-#if HAVE(GTK_GESTURES)
-#if GTK_CHECK_VERSION(3, 10, 0)
     if (gdk_event_get_event_type(event) == GDK_TOUCHPAD_PINCH)
-#else
-    if (event->type == GDK_TOUCHPAD_PINCH)
-#endif // GTK_CHECK_VERSION(3, 10, 0)
         webkitWebViewBaseGestureController(WEBKIT_WEB_VIEW_BASE(widget)).handleEvent(event);
-#endif // HAVE(GTK_GESTURES)
-
     return GDK_EVENT_PROPAGATE;
 }
 
@@ -1486,12 +1450,10 @@ WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase* webkitWebViewBase)
     return webkitWebViewBase->priv->pageProxy.get();
 }
 
-#if HAVE(GTK_SCALE_FACTOR)
 static void deviceScaleFactorChanged(WebKitWebViewBase* webkitWebViewBase)
 {
     webkitWebViewBase->priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
 }
-#endif // HAVE(GTK_SCALE_FACTOR)
 
 void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<API::PageConfiguration>&& configuration)
 {
@@ -1503,11 +1465,9 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
 
     priv->inputMethodFilter.setPage(priv->pageProxy.get());
 
-#if HAVE(GTK_SCALE_FACTOR)
     // We attach this here, because changes in scale factor are passed directly to the page proxy.
     priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
     g_signal_connect(webkitWebViewBase, "notify::scale-factor", G_CALLBACK(deviceScaleFactorChanged), nullptr);
-#endif
 }
 
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char* tooltip)
@@ -1754,16 +1714,11 @@ RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase
 
     IntSize size = page->viewSize();
 
-#if HAVE_GTK_SCALE_FACTOR
     float deviceScale = page->deviceScaleFactor();
     size.scale(deviceScale);
-#endif
 
     RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_RGB24, size.width(), size.height()));
-
-#if HAVE_GTK_SCALE_FACTOR
     cairoSurfaceSetDeviceScale(surface.get(), deviceScale, deviceScale);
-#endif
 
     RefPtr<cairo_t> cr = adoptRef(cairo_create(surface.get()));
     webkitWebViewBaseDraw(GTK_WIDGET(webkitWebViewBase), cr.get());

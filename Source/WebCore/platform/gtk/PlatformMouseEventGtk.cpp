@@ -66,12 +66,7 @@ PlatformMouseEvent::PlatformMouseEvent(GdkEventButton* event)
     if (PlatformKeyboardEvent::modifiersContainCapsLock(state))
         m_modifiers.add(PlatformEvent::Modifier::CapsLockKey);
 
-#if GTK_CHECK_VERSION(3, 10, 0)
     GdkEventType type = gdk_event_get_event_type(reinterpret_cast<GdkEvent*>(event));
-#else
-    GdkEventType type = event->type;
-#endif
-
     switch (type) {
     case GDK_BUTTON_PRESS:
     case GDK_2BUTTON_PRESS:
@@ -126,12 +121,7 @@ PlatformMouseEvent::PlatformMouseEvent(GdkEventMotion* motion)
     if (PlatformKeyboardEvent::modifiersContainCapsLock(state))
         m_modifiers.add(PlatformEvent::Modifier::CapsLockKey);
 
-#if GTK_CHECK_VERSION(3, 10, 0)
     GdkEventType type = gdk_event_get_event_type(reinterpret_cast<GdkEvent*>(motion));
-#else
-    GdkEventType type = motion->type;
-#endif
-
     switch (type) {
     case GDK_MOTION_NOTIFY:
         m_type = PlatformEvent::MouseMoved;

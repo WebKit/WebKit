@@ -253,16 +253,9 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
         return;
 
     auto* display = gtk_widget_get_display(m_webView);
-#if GTK_CHECK_VERSION(3, 22, 0)
     auto* monitor = gdk_display_get_monitor_at_window(display, gtk_widget_get_window(m_webView));
     GdkRectangle area;
     gdk_monitor_get_workarea(monitor, &area);
-#else
-    auto* screen = gtk_widget_get_screen(m_webView);
-    gint monitor = gdk_screen_get_monitor_at_window(screen, gtk_widget_get_window(m_webView));
-    GdkRectangle area;
-    gdk_screen_get_monitor_workarea(screen, monitor, &area);
-#endif
     int width = std::min(rect.width(), area.width);
     size_t itemCount = std::min<size_t>(items.size(), (area.height / 3) / itemHeight);
 
@@ -305,28 +298,16 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
         m_device = gtk_get_current_event_device();
     if (m_device && gdk_device_get_display(m_device) != display)
         m_device = nullptr;
-#if GTK_CHECK_VERSION(3, 20, 0)
     if (!m_device)
         m_device = gdk_seat_get_pointer(gdk_display_get_default_seat(display));
-#else
-    if (!m_device)
-        m_device = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(display));
-#endif
     ASSERT(m_device);
     if (gdk_device_get_source(m_device) == GDK_SOURCE_KEYBOARD)
         m_device = gdk_device_get_associated_device(m_device);
 
-#if GTK_CHECK_VERSION(3, 20, 0)
     gtk_grab_add(m_popup);
     auto grabResult = gdk_seat_grab(gdk_device_get_seat(m_device), gtk_widget_get_window(m_popup), GDK_SEAT_CAPABILITY_ALL, TRUE, nullptr, nullptr, [](GdkSeat*, GdkWindow*, gpointer userData) {
         static_cast<WebPopupMenuProxyGtk*>(userData)->show();
     }, this);
-#else
-    gtk_device_grab_add(m_popup, m_device, TRUE);
-    auto grabResult = gdk_device_grab(m_device, gtk_widget_get_window(m_popup), GDK_OWNERSHIP_WINDOW, TRUE,
-        static_cast<GdkEventMask>(GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK), nullptr, GDK_CURRENT_TIME);
-    show();
-#endif
 
     // PopupMenu can fail to open when there is no mouse grab.
     // Ensure WebCore does not go into some pesky state.
@@ -342,13 +323,8 @@ void WebPopupMenuProxyGtk::hidePopupMenu()
         return;
 
     if (m_device) {
-#if GTK_CHECK_VERSION(3, 20, 0)
         gdk_seat_ungrab(gdk_device_get_seat(m_device));
         gtk_grab_remove(m_popup);
-#else
-        gdk_device_ungrab(m_device, GDK_CURRENT_TIME);
-        gtk_device_grab_remove(m_popup, m_device);
-#endif
         gtk_window_set_transient_for(GTK_WINDOW(m_popup), nullptr);
         gtk_window_set_attached_to(GTK_WINDOW(m_popup), nullptr);
         m_device = nullptr;

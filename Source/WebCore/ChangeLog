@@ -1,3 +1,124 @@
+2019-06-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Bump minimum versions of GLib, GTK, libsoup, ATK, GStreamer, and Cairo
+        https://bugs.webkit.org/show_bug.cgi?id=199094
+
+        Reviewed by Carlos Garcia Campos.
+
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/atk/WebKitAccessible.cpp:
+        (atkRole):
+        (setAtkStateSetFromCoreObject):
+        (interfaceMaskFromObject):
+        * accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceTableCell.h:
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (webkitAccessibleTextGetStringAtOffset):
+        (webkitAccessibleTextInterfaceInit):
+        * accessibility/atk/WebKitAccessibleInterfaceValue.cpp:
+        (webkitAccessibleValueInterfaceInit):
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp:
+        (WebCore::AudioTrackPrivateGStreamer::kind const):
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::derefGPtr<GstStreamCollection>):
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h:
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::initializeGStreamerAndRegisterWebKitElements):
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        (WebCore::InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer):
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h:
+        (WebCore::InbandTextTrackPrivateGStreamer::create):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        (WebCore::MediaPlayerPrivateGStreamer::updateTracks):
+        (WebCore::MediaPlayerPrivateGStreamer::enableTrack):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::sourceSetup):
+        (WebCore::MediaPlayerPrivateGStreamer::handleSyncMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::supportsType):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::requestGLContext):
+        (WebCore::MediaPlayerPrivateGStreamerBase::createGLAppSink):
+        (WebCore::MediaPlayerPrivateGStreamerBase::createVideoSinkGL):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer):
+        (WebCore::TrackPrivateBaseGStreamer::disconnect):
+        (WebCore::TrackPrivateBaseGStreamer::tagsChanged):
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h:
+        (WebCore::TrackPrivateBaseGStreamer::stream):
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp:
+        (WebCore::VideoTrackPrivateGStreamer::kind const):
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.h:
+        * platform/gtk/PlatformKeyboardEventGtk.cpp:
+        (WebCore::eventTypeForGdkKeyEvent):
+        * platform/gtk/PlatformMouseEventGtk.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        (WebCore::screenHasTouchDevice):
+        (WebCore::screenIsTouchPrimaryInputDevice):
+        (): Deleted.
+        (WebCore::isTouchDevice): Deleted.
+        (WebCore::deviceAddedCallback): Deleted.
+        (WebCore::deviceRemovedCallback): Deleted.
+        * platform/gtk/PlatformWheelEventGtk.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/gtk/RenderThemeGadget.cpp:
+        * platform/gtk/RenderThemeGadget.h:
+        * platform/gtk/RenderThemeWidget.cpp:
+        * platform/gtk/RenderThemeWidget.h:
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::ScrollbarThemeGtk):
+        (WebCore::ScrollbarThemeGtk::themeChanged):
+        (WebCore::ScrollbarThemeGtk::updateThemeProperties):
+        (WebCore::ScrollbarThemeGtk::trackRect):
+        (WebCore::ScrollbarThemeGtk::forwardButtonRect):
+        (WebCore::ScrollbarThemeGtk::paint):
+        (WebCore::ScrollbarThemeGtk::scrollbarThickness):
+        (WebCore::createStyleContext): Deleted.
+        (WebCore::createChildStyleContext): Deleted.
+        (WebCore::paintStepper): Deleted.
+        (WebCore::adjustRectAccordingToMargin): Deleted.
+        * platform/mediastream/gstreamer/GStreamerCapturer.cpp:
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        * platform/network/soup/ResourceRequest.h:
+        (WebCore::toSoupMessagePriority):
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::SoupNetworkSession):
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::themePartStateFlags):
+        (WebCore::paintToggle):
+        (WebCore::RenderThemeGtk::paintButton):
+        (WebCore::menuListColor):
+        (WebCore::RenderThemeGtk::paintMenuList):
+        (WebCore::RenderThemeGtk::paintTextField):
+        (WebCore::adjustSearchFieldIconStyle):
+        (WebCore::RenderThemeGtk::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeGtk::paintSliderThumb):
+        (WebCore::RenderThemeGtk::paintProgressBar):
+        (WebCore::RenderThemeGtk::paintInnerSpinButton):
+        (WebCore::styleColor):
+        (WebCore::RenderThemeGtk::systemColor const):
+        (WebCore::RenderThemeGtk::paintMediaButton):
+        (WebCore::createStyleContext): Deleted.
+        (WebCore::loadThemedIcon): Deleted.
+        (WebCore::gtkTextDirection): Deleted.
+        (WebCore::gtkIconStateFlags): Deleted.
+        (WebCore::adjustRectForFocus): Deleted.
+        (WebCore::renderButton): Deleted.
+        (WebCore::getIconSizeForPixelSize): Deleted.
+        (WebCore::paintIcon): Deleted.
+        (WebCore::paintEntryIcon): Deleted.
+        (WebCore::centerRectVerticallyInParentInputElement): Deleted.
+        (WebCore::spinButtonArrowSize): Deleted.
+        (WebCore::paintSpinArrowButton): Deleted.
+
 2019-06-20  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover

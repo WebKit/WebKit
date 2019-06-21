@@ -72,9 +72,7 @@ private:
 
     RefPtr<cairo_surface_t> m_surface;
     bool m_glContextInitialized { false };
-#if GTK_CHECK_VERSION(3, 16, 0)
     GRefPtr<GdkGLContext> m_gdkGLContext;
-#endif
     std::unique_ptr<WebCore::GLContext> m_glContext;
 
 #if USE(WPE_RENDERER)

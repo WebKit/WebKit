@@ -111,7 +111,6 @@ GRefPtr<WebKitWebSrc> ensureGRef(WebKitWebSrc* ptr);
 template<> WebKitWebSrc* refGPtr<WebKitWebSrc>(WebKitWebSrc* ptr);
 template<> void derefGPtr<WebKitWebSrc>(WebKitWebSrc* ptr);
 
-#if GST_CHECK_VERSION(1, 10, 0)
 template<> GRefPtr<GstStream> adoptGRef(GstStream*);
 template<> GstStream* refGPtr<GstStream>(GstStream*);
 template<> void derefGPtr<GstStream>(GstStream*);
@@ -119,7 +118,6 @@ template<> void derefGPtr<GstStream>(GstStream*);
 template<> GRefPtr<GstStreamCollection> adoptGRef(GstStreamCollection*);
 template<> GstStreamCollection* refGPtr<GstStreamCollection>(GstStreamCollection*);
 template<> void derefGPtr<GstStreamCollection>(GstStreamCollection*);
-#endif
 
 #if USE(GSTREAMER_GL)
 template<> GRefPtr<GstGLDisplay> adoptGRef(GstGLDisplay* ptr);

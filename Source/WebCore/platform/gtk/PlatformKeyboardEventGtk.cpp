@@ -1323,11 +1323,7 @@ String PlatformKeyboardEvent::singleCharacterString(unsigned val)
 
 static PlatformEvent::Type eventTypeForGdkKeyEvent(GdkEventKey* event)
 {
-#if GTK_CHECK_VERSION(3, 10, 0)
     return gdk_event_get_event_type(reinterpret_cast<GdkEvent*>(event)) == GDK_KEY_RELEASE ? PlatformEvent::KeyUp : PlatformEvent::KeyDown;
-#else
-    return event->type == GDK_KEY_RELEASE ? PlatformEvent::KeyUp : PlatformEvent::KeyDown;
-#endif
 }
 
 static OptionSet<PlatformEvent::Modifier> modifiersForGdkKeyEvent(GdkEventKey* event)

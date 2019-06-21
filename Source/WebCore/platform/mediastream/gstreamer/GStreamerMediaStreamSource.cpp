@@ -34,8 +34,6 @@
 #include <gst/app/gstappsrc.h>
 #include <gst/base/gstflowcombiner.h>
 
-#if GST_CHECK_VERSION(1, 10, 0)
-
 namespace WebCore {
 
 static void webkitMediaStreamSrcPushVideoSample(WebKitMediaStreamSrc* self, GstSample* gstsample);
@@ -614,5 +612,5 @@ GstElement* webkitMediaStreamSrcNew(void)
 }
 
 } // WebCore
-#endif // GST_CHECK_VERSION(1, 10, 0)
+
 #endif // ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC)

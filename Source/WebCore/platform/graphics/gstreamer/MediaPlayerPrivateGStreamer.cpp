@@ -53,7 +53,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
-#if ENABLE(MEDIA_STREAM) && GST_CHECK_VERSION(1, 10, 0)
+#if ENABLE(MEDIA_STREAM)
 #include "GStreamerMediaStreamSource.h"
 #endif
 
@@ -324,7 +324,6 @@ void MediaPlayerPrivateGStreamer::load(const String&, MediaSourcePrivateClient*)
 #if ENABLE(MEDIA_STREAM)
 void MediaPlayerPrivateGStreamer::load(MediaStreamPrivate& stream)
 {
-#if GST_CHECK_VERSION(1, 10, 0)
     m_streamPrivate = &stream;
     static Atomic<uint32_t> pipelineId;
     auto pipelineName = makeString("mediastream-",
@@ -338,12 +337,6 @@ void MediaPlayerPrivateGStreamer::load(MediaStreamPrivate& stream)
     ensureGLVideoSinkContext();
 #endif
     m_player->play();
-#else
-    // Properly fail so the global MediaPlayer tries to fallback to the next MediaPlayerPrivate.
-    m_networkState = MediaPlayer::FormatError;
-    m_player->networkStateChanged();
-    notImplemented();
-#endif
 }
 #endif
 
@@ -672,7 +665,6 @@ bool MediaPlayerPrivateGStreamer::seeking() const
     return m_seeking;
 }
 
-#if GST_CHECK_VERSION(1, 10, 0)
 #define CLEAR_TRACKS(tracks, method) \
     for (auto& track : tracks.values())\
         method(*track);\
@@ -762,7 +754,6 @@ void MediaPlayerPrivateGStreamer::updateTracks()
 
     m_player->client().mediaPlayerEngineUpdated(m_player);
 }
-#endif // GST_CHECK_VERSION(1, 10, 0)
 
 void MediaPlayerPrivateGStreamer::enableTrack(TrackPrivateBaseGStreamer::TrackType trackType, unsigned index)
 {
@@ -777,7 +768,6 @@ void MediaPlayerPrivateGStreamer::enableTrack(TrackPrivateBaseGStreamer::TrackTy
     Vector<String> selectedStreams;
     String selectedStreamId;
 
-#if GST_CHECK_VERSION(1, 10, 0)
     GstStream* stream = nullptr;
 
     if (!m_isLegacyPlaybin) {
@@ -789,7 +779,6 @@ void MediaPlayerPrivateGStreamer::enableTrack(TrackPrivateBaseGStreamer::TrackTy
         selectedStreamId = String::fromUTF8(gst_stream_get_stream_id(stream));
         selectedStreams.append(selectedStreamId);
     }
-#endif // GST_CHECK_VERSION(1,0,0)
 
     switch (trackType) {
     case TrackPrivateBaseGStreamer::TrackType::Audio:
@@ -839,7 +828,6 @@ void MediaPlayerPrivateGStreamer::enableTrack(TrackPrivateBaseGStreamer::TrackTy
     GST_INFO_OBJECT(pipeline(), "Enabling %s track with index: %u", trackTypeAsString, index);
     if (m_isLegacyPlaybin)
         g_object_set(m_pipeline.get(), propertyName, index, nullptr);
-#if GST_CHECK_VERSION(1, 10, 0)
     else {
         GList* selectedStreamsList = nullptr;
 
@@ -850,7 +838,6 @@ void MediaPlayerPrivateGStreamer::enableTrack(TrackPrivateBaseGStreamer::TrackTy
         gst_element_send_event(m_pipeline.get(), gst_event_new_select_streams(selectedStreamsList));
         g_list_free_full(selectedStreamsList, reinterpret_cast<GDestroyNotify>(g_free));
     }
-#endif
 }
 
 void MediaPlayerPrivateGStreamer::videoChangedCallback(MediaPlayerPrivateGStreamer* player)
@@ -1413,7 +1400,6 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         gst_tag_list_unref(tags);
         break;
     }
-#if GST_CHECK_VERSION(1, 10, 0)
     case GST_MESSAGE_STREAMS_SELECTED: {
         GRefPtr<GstStreamCollection> collection;
         gst_message_parse_streams_selected(message, &collection.outPtr());
@@ -1456,7 +1442,6 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         }
         break;
     }
-#endif
     default:
         GST_DEBUG_OBJECT(pipeline(), "Unhandled GStreamer message type: %s", GST_MESSAGE_TYPE_NAME(message));
         break;
@@ -1827,7 +1812,7 @@ void MediaPlayerPrivateGStreamer::sourceSetup(GstElement* sourceElement)
     if (WEBKIT_IS_WEB_SRC(m_source.get())) {
         webKitWebSrcSetMediaPlayer(WEBKIT_WEB_SRC(m_source.get()), m_player);
         g_signal_connect(GST_ELEMENT_PARENT(m_source.get()), "element-added", G_CALLBACK(uriDecodeBinElementAddedCallback), this);
-#if ENABLE(MEDIA_STREAM) && GST_CHECK_VERSION(1, 10, 0)
+#if ENABLE(MEDIA_STREAM)
     } else if (WEBKIT_IS_MEDIA_STREAM_SRC(sourceElement)) {
         auto stream = m_streamPrivate.get();
         ASSERT(stream);
@@ -2066,7 +2051,6 @@ void MediaPlayerPrivateGStreamer::updateStates()
 
 bool MediaPlayerPrivateGStreamer::handleSyncMessage(GstMessage* message)
 {
-#if GST_CHECK_VERSION(1, 10, 0)
     if (GST_MESSAGE_TYPE(message) == GST_MESSAGE_STREAM_COLLECTION && !m_isLegacyPlaybin) {
         GRefPtr<GstStreamCollection> collection;
         gst_message_parse_stream_collection(message, &collection.outPtr());
@@ -2078,7 +2062,6 @@ bool MediaPlayerPrivateGStreamer::handleSyncMessage(GstMessage* message)
             });
         }
     }
-#endif
 
     return MediaPlayerPrivateGStreamerBase::handleSyncMessage(message);
 }
@@ -2251,7 +2234,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const MediaE
         return result;
 #endif
 
-#if !ENABLE(MEDIA_STREAM) || !GST_CHECK_VERSION(1, 10, 0)
+#if !ENABLE(MEDIA_STREAM)
     if (parameters.isMediaStream)
         return result;
 #endif
@@ -2364,10 +2347,8 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
     // MSE doesn't support playbin3. Mediastream requires playbin3. Regular
     // playback can use playbin3 on-demand with the WEBKIT_GST_USE_PLAYBIN3
     // environment variable.
-#if GST_CHECK_VERSION(1, 10, 0)
     if ((!isMediaSource() && g_getenv("WEBKIT_GST_USE_PLAYBIN3")) || url.protocolIs("mediastream"))
         playbinName = "playbin3";
-#endif
 
     if (m_pipeline) {
         if (!g_strcmp0(GST_OBJECT_NAME(gst_element_get_factory(m_pipeline.get())), playbinName)) {

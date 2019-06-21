@@ -26,8 +26,6 @@
 #include "config.h"
 #include "GestureController.h"
 
-#if HAVE(GTK_GESTURES)
-
 #include <WebCore/Scrollbar.h>
 #include <gtk/gtk.h>
 
@@ -53,11 +51,7 @@ bool GestureController::handleEvent(GdkEvent* event)
     m_swipeGesture.handleEvent(event);
     m_zoomGesture.handleEvent(event);
     m_longpressGesture.handleEvent(event);
-#if GTK_CHECK_VERSION(3, 10, 0)
     touchEnd = (gdk_event_get_event_type(event) == GDK_TOUCH_END) || (gdk_event_get_event_type(event) == GDK_TOUCH_CANCEL);
-#else
-    touchEnd = (event->type == GDK_TOUCH_END) || (event->type == GDK_TOUCH_CANCEL);
-#endif
     return touchEnd ? wasProcessingGestures : isProcessingGestures();
 }
 
@@ -263,5 +257,3 @@ GestureController::LongPressGesture::LongPressGesture(GtkWidget* widget, Gesture
 }
 
 } // namespace WebKit
-
-#endif // HAVE(GTK_GESTURES)

@@ -1,3 +1,37 @@
+2019-06-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Bump minimum versions of GLib, GTK, libsoup, ATK, GStreamer, and Cairo
+        https://bugs.webkit.org/show_bug.cgi?id=199094
+
+        Reviewed by Carlos Garcia Campos.
+
+        * MiniBrowser/gtk/BrowserTab.c:
+        (runColorChooserCallback):
+        (browserTabConstructed):
+        * TestWebKitAPI/Tests/WebKitGLib/TestResources.cpp:
+        (testWebViewSyncRequestOnMaxConns):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp:
+        (testWebSocketTLSErrors):
+        (beforeAll):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp:
+        (WebKitTestServer::~WebKitTestServer):
+        (WebKitTestServer::getWebSocketURIForPath const):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::rowHeaders const):
+        (WTR::AccessibilityUIElement::columnHeaders const):
+        (WTR::AccessibilityUIElement::isAttributeSettable):
+        (WTR::AccessibilityUIElement::x):
+        (WTR::AccessibilityUIElement::y):
+        (WTR::AccessibilityUIElement::width):
+        (WTR::AccessibilityUIElement::height):
+        (WTR::AccessibilityUIElement::clickPointX):
+        (WTR::AccessibilityUIElement::clickPointY):
+        (WTR::AccessibilityUIElement::intValue const):
+        (WTR::AccessibilityUIElement::minValue):
+        (WTR::AccessibilityUIElement::maxValue):
+        (WTR::stringAtOffset):
+
 2019-06-20  Dean Johnson  <dean_johnson@apple.com>
 
         test-webkitpy is broken on macOS Catalina

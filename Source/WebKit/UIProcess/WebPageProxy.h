@@ -749,13 +749,9 @@ public:
     void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);
     void confirmComposition(const String& compositionString, int64_t selectionStart, int64_t selectionLength);
     void cancelComposition();
-#endif
 
-#if PLATFORM(GTK)
     void setInputMethodState(bool enabled);
-#endif
 
-#if PLATFORM (GTK) && HAVE(GTK_GESTURES)
     void getCenterForZoomGesture(const WebCore::IntPoint& centerInViewCoordinates, WebCore::IntPoint& center);
 #endif
 

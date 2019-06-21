@@ -58,7 +58,6 @@ InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(gint index, GRe
     notifyTrackOfStreamChanged();
 }
 
-#if GST_CHECK_VERSION(1, 10, 0)
 InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(gint index, GRefPtr<GstStream> stream)
     : InbandTextTrackPrivate(WebVTT)
     , TrackPrivateBaseGStreamer(this, index, stream)
@@ -66,7 +65,6 @@ InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(gint index, GRe
     m_streamId = gst_stream_get_stream_id(stream.get());
     GST_INFO("Track %d got stream start for stream %s.", m_index, m_streamId.utf8().data());
 }
-#endif
 
 void InbandTextTrackPrivateGStreamer::disconnect()
 {

@@ -62,11 +62,7 @@ static void fileChooserDialogResponseCallback(GtkFileChooser* dialog, gint respo
     } else
         webkit_file_chooser_request_cancel(adoptedRequest.get());
 
-#if GTK_CHECK_VERSION(3, 20, 0)
     g_object_unref(dialog);
-#else
-    gtk_widget_destroy(GTK_WIDGET(dialog));
-#endif
 }
 
 gboolean webkitWebViewRunFileChooser(WebKitWebView* webView, WebKitFileChooserRequest* request)
@@ -77,21 +73,10 @@ gboolean webkitWebViewRunFileChooser(WebKitWebView* webView, WebKitFileChooserRe
 
     gboolean allowsMultipleSelection = webkit_file_chooser_request_get_select_multiple(request);
 
-#if GTK_CHECK_VERSION(3, 20, 0)
     GtkFileChooserNative* dialog = gtk_file_chooser_native_new(allowsMultipleSelection ? _("Select Files") : _("Select File"),
         toplevel ? GTK_WINDOW(toplevel) : nullptr, GTK_FILE_CHOOSER_ACTION_OPEN, nullptr, nullptr);
     if (toplevel)
         gtk_native_dialog_set_modal(GTK_NATIVE_DIALOG(dialog), TRUE);
-#else
-    GtkWidget* dialog = gtk_file_chooser_dialog_new(allowsMultipleSelection ? _("Select Files") : _("Select File"),
-        toplevel ? GTK_WINDOW(toplevel) : nullptr,
-        GTK_FILE_CHOOSER_ACTION_OPEN,
-        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-        GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-        nullptr);
-    if (toplevel)
-        gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
-#endif
 
     if (GtkFileFilter* filter = webkit_file_chooser_request_get_mime_types_filter(request))
         gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter);
@@ -102,11 +87,7 @@ gboolean webkitWebViewRunFileChooser(WebKitWebView* webView, WebKitFileChooserRe
 
     g_signal_connect(dialog, "response", G_CALLBACK(fileChooserDialogResponseCallback), g_object_ref(request));
 
-#if GTK_CHECK_VERSION(3, 20, 0)
     gtk_native_dialog_show(GTK_NATIVE_DIALOG(dialog));
-#else
-    gtk_widget_show(dialog);
-#endif
 
     return TRUE;
 }

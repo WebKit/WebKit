@@ -17,22 +17,23 @@ set(WEBKITGTK_HEADER_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/webkitgtk-${WEBKIT
 set(INTROSPECTION_INSTALL_GIRDIR "${CMAKE_INSTALL_FULL_DATADIR}/gir-1.0")
 set(INTROSPECTION_INSTALL_TYPELIBDIR "${LIB_INSTALL_DIR}/girepository-1.0")
 
-find_package(Cairo 1.10.2 REQUIRED)
+find_package(Cairo 1.14.0 REQUIRED)
 find_package(Fontconfig 2.8.0 REQUIRED)
 find_package(Freetype 2.4.2 REQUIRED)
 find_package(LibGcrypt 1.6.0 REQUIRED)
-find_package(GTK3 3.6.0 REQUIRED)
-find_package(GDK3 3.6.0 REQUIRED)
+find_package(GLIB 2.44.0 REQUIRED COMPONENTS gio gio-unix gobject gthread gmodule)
+find_package(GTK3 3.22.0 REQUIRED)
+find_package(GDK3 3.22.0 REQUIRED)
 find_package(HarfBuzz 0.9.2 REQUIRED)
 find_package(ICU REQUIRED COMPONENTS data i18n uc)
 find_package(JPEG REQUIRED)
-find_package(LibSoup 2.42.0 REQUIRED)
+find_package(LibSoup 2.54.0 REQUIRED)
 find_package(LibXml2 2.8.0 REQUIRED)
 find_package(PNG REQUIRED)
 find_package(Sqlite REQUIRED)
 find_package(Threads REQUIRED)
 find_package(ZLIB REQUIRED)
-find_package(ATK REQUIRED)
+find_package(ATK 2.16.0 REQUIRED)
 find_package(WebP REQUIRED)
 find_package(ATSPI 2.5.3)
 find_package(EGL)
@@ -70,7 +71,7 @@ if (NOT OPENGL_FOUND AND OPENGLES2_FOUND)
     set(ENABLE_GLES2_DEFAULT ON)
 endif ()
 
-# Public options specific to the GTK+ port. Do not add any options here unless
+# Public options specific to the GTK port. Do not add any options here unless
 # there is a strong reason we should support changing the value of the option,
 # and the option is not relevant to any other WebKit ports.
 WEBKIT_OPTION_DEFINE(ENABLE_GLES2 "Whether to enable OpenGL ES 2.0." PUBLIC ${ENABLE_GLES2_DEFAULT})
@@ -87,7 +88,7 @@ WEBKIT_OPTION_DEFINE(USE_OPENJPEG "Whether to enable support for JPEG2000 images
 WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_WPE_RENDERER "Whether to enable WPE rendering" PUBLIC ON)
 
-# Private options specific to the GTK+ port. Changing these options is
+# Private options specific to the GTK port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
 WEBKIT_OPTION_DEFINE(USE_OPENVR "Whether to use OpenVR as WebVR backend." PRIVATE OFF)
 
@@ -134,7 +135,7 @@ if (("${PC_CAIRO_VERSION}" VERSION_GREATER "1.16.0" OR "${PC_CAIRO_VERSION}" STR
 endif ()
 
 # Public options shared with other WebKit ports. Do not add any options here
-# without approval from a GTK+ reviewer. There must be strong reason to support
+# without approval from a GTK reviewer. There must be strong reason to support
 # changing the value of the option.
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ACCELERATED_2D_CANVAS PUBLIC OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ASYNC_SCROLLING PRIVATE OFF)
@@ -192,12 +193,8 @@ set(GTK_INCLUDE_DIRS ${GTK3_INCLUDE_DIRS})
 set(GDK_LIBRARIES ${GDK3_LIBRARIES})
 set(GDK_INCLUDE_DIRS ${GDK3_INCLUDE_DIRS})
 
-SET_AND_EXPOSE_TO_BUILD(HAVE_GTK_GESTURES ${GTK3_SUPPORTS_GESTURES})
 SET_AND_EXPOSE_TO_BUILD(HAVE_GTK_UNIX_PRINTING ${GTKUnixPrint_FOUND})
 SET_AND_EXPOSE_TO_BUILD(HAVE_OS_DARK_MODE_SUPPORT 1)
-
-set(glib_components gio gio-unix gobject gthread gmodule)
-find_package(GLIB 2.36 REQUIRED COMPONENTS ${glib_components})
 
 if (USE_WPE_RENDERER)
     find_package(WPE 1.3.0)
@@ -254,14 +251,6 @@ if (ENABLE_WEB_CRYPTO)
 endif ()
 
 if (ENABLE_WEBDRIVER)
-    # WebDriver requires newer versions of GLib and Soup.
-    if (PC_GLIB_VERSION VERSION_LESS "2.40")
-        message(FATAL_ERROR "GLib 2.40 is required to enable WebDriver support.")
-    endif ()
-    if (PC_LIBSOUP_VERSION VERSION_LESS "2.48")
-        message(FATAL_ERROR "libsoup 2.48 is required to enable WebDriver support.")
-    endif ()
-
     SET_AND_EXPOSE_TO_BUILD(ENABLE_WEBDRIVER_KEYBOARD_INTERACTIONS ON)
     SET_AND_EXPOSE_TO_BUILD(ENABLE_WEBDRIVER_MOUSE_INTERACTIONS ON)
     SET_AND_EXPOSE_TO_BUILD(ENABLE_WEBDRIVER_TOUCH_INTERACTIONS OFF)
@@ -313,13 +302,13 @@ endif ()
 
 if (ENABLE_QUARTZ_TARGET)
     if (NOT GTK3_SUPPORTS_QUARTZ)
-        message(FATAL_ERROR "Recompile GTK+ with Quartz backend to use ENABLE_QUARTZ_TARGET")
+        message(FATAL_ERROR "Recompile GTK with Quartz backend to use ENABLE_QUARTZ_TARGET")
     endif ()
 endif ()
 
 if (ENABLE_X11_TARGET)
     if (NOT GTK3_SUPPORTS_X11)
-        message(FATAL_ERROR "Recompile GTK+ with X11 backend to use ENABLE_X11_TARGET")
+        message(FATAL_ERROR "Recompile GTK with X11 backend to use ENABLE_X11_TARGET")
     endif ()
 
     find_package(X11 REQUIRED)
@@ -336,11 +325,7 @@ endif ()
 
 if (ENABLE_WAYLAND_TARGET)
     if (NOT GTK3_SUPPORTS_WAYLAND)
-        message(FATAL_ERROR "Recompile GTK+ with Wayland backend to use ENABLE_WAYLAND_TARGET")
-    endif ()
-
-    if (GTK3_VERSION VERSION_LESS 3.12)
-        message(FATAL_ERROR "GTK+ 3.12 is required to use ENABLE_WAYLAND_TARGET")
+        message(FATAL_ERROR "Recompile GTK with Wayland backend to use ENABLE_WAYLAND_TARGET")
     endif ()
 
     if (NOT EGL_FOUND)

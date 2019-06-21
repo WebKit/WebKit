@@ -35,9 +35,7 @@ using namespace WebKit;
 struct _WebKitInspectorWindow {
     GtkWindow parent;
 
-#if GTK_CHECK_VERSION(3, 10, 0)
     GtkWidget* headerBar;
-#endif
 };
 
 struct _WebKitInspectorWindowClass {
@@ -52,15 +50,11 @@ static void webkit_inspector_window_class_init(WebKitInspectorWindowClass*)
 
 static void webkit_inspector_window_init(WebKitInspectorWindow* window)
 {
-#if GTK_CHECK_VERSION(3, 10, 0)
     window->headerBar = gtk_header_bar_new();
     gtk_header_bar_set_title(GTK_HEADER_BAR(window->headerBar), _("Web Inspector"));
     gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(window->headerBar), TRUE);
     gtk_window_set_titlebar(GTK_WINDOW(window), window->headerBar);
     gtk_widget_show(window->headerBar);
-#else
-    gtk_window_set_title(GTK_WINDOW(window), _("Web Inspector"));
-#endif
 }
 
 GtkWidget* webkitInspectorWindowNew(GtkWindow* parent)
@@ -73,14 +67,5 @@ void webkitInspectorWindowSetSubtitle(WebKitInspectorWindow* window, const char*
 {
     g_return_if_fail(WEBKIT_IS_INSPECTOR_WINDOW(window));
 
-#if GTK_CHECK_VERSION(3, 10, 0)
     gtk_header_bar_set_subtitle(GTK_HEADER_BAR(window->headerBar), subtitle);
-#else
-    if (subtitle) {
-        GUniquePtr<gchar> title(g_strdup_printf("%s - %s", _("Web Inspector"), subtitle));
-        gtk_window_set_title(GTK_WINDOW(window), title.get());
-    } else
-        gtk_window_set_title(GTK_WINDOW(window), _("Web Inspector"));
-#endif
 }
-

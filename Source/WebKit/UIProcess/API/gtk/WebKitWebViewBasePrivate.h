@@ -80,9 +80,7 @@ void webkitWebViewBasePageClosed(WebKitWebViewBase*);
 WebKit::DragAndDropHandler& webkitWebViewBaseDragAndDropHandler(WebKitWebViewBase*);
 #endif
 
-#if HAVE(GTK_GESTURES)
 WebKit::GestureController& webkitWebViewBaseGestureController(WebKitWebViewBase*);
-#endif
 
 RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase*);
 

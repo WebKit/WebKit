@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if HAVE(GTK_GESTURES)
-
 #include <WebCore/FloatPoint.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
@@ -157,5 +155,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // HAVE(GTK_GESTURES)

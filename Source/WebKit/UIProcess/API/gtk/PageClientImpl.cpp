@@ -376,14 +376,12 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& event, bool w
 {
     const GdkEvent* touchEvent = event.nativeEvent();
 
-#if HAVE(GTK_GESTURES)
     GestureController& gestureController = webkitWebViewBaseGestureController(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
     if (wasEventHandled) {
         gestureController.reset();
         return;
     }
     wasEventHandled = gestureController.handleEvent(const_cast<GdkEvent*>(event.nativeEvent()));
-#endif
 
     if (wasEventHandled)
         return;

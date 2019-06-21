@@ -136,15 +136,11 @@ SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID, SoupCookieJar* 
     if (!initialAcceptLanguages().isNull())
         setAcceptLanguages(initialAcceptLanguages());
 
-#if SOUP_CHECK_VERSION(2, 53, 92)
     if (soup_auth_negotiate_supported() && !sessionID.isEphemeral()) {
         g_object_set(m_soupSession.get(),
             SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_AUTH_NEGOTIATE,
             nullptr);
     }
-#else
-    UNUSED_PARAM(sessionID);
-#endif
 
     if (proxySettings().mode != SoupNetworkProxySettings::Mode::Default)
         setupProxy();

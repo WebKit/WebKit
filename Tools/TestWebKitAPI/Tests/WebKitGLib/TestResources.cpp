@@ -751,7 +751,6 @@ public:
     unsigned m_resourcesToStartPending;
 };
 
-#if SOUP_CHECK_VERSION(2, 49, 91)
 static void testWebViewSyncRequestOnMaxConns(SyncRequestOnMaxConnsTest* test, gconstpointer)
 {
     WTF::GMutexLocker<GMutex> lock(s_serverMutex);
@@ -786,7 +785,6 @@ static void testWebViewSyncRequestOnMaxConns(SyncRequestOnMaxConnsTest* test, gc
     if (context.unlockServerSourceID)
         g_source_remove(context.unlockServerSourceID);
 }
-#endif
 
 static void addCacheHTTPHeadersToResponse(SoupMessage* message)
 {
@@ -923,9 +921,7 @@ void beforeAll()
     Test::add("WebKitWebResource", "get-data-empty", testWebResourceGetDataEmpty);
     SingleResourceLoadTest::add("WebKitWebView", "history-cache", testWebViewResourcesHistoryCache);
     SendRequestTest::add("WebKitWebPage", "send-request", testWebResourceSendRequest);
-#if SOUP_CHECK_VERSION(2, 49, 91)
     SyncRequestOnMaxConnsTest::add("WebKitWebView", "sync-request-on-max-conns", testWebViewSyncRequestOnMaxConns);
-#endif
 }
 
 void afterAll()

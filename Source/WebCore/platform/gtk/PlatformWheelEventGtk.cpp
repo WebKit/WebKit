@@ -93,15 +93,9 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_wheelTicksY = m_deltaY;
 
 #if ENABLE(ASYNC_SCROLLING)
-#if GTK_CHECK_VERSION(3, 20, 0)
     m_phase = gdk_event_is_scroll_stop_event(reinterpret_cast<GdkEvent*>(event)) ?
         PlatformWheelEventPhaseEnded :
         PlatformWheelEventPhaseChanged;
-#else
-    m_phase = direction == GDK_SCROLL_SMOOTH && !m_deltaX && !m_deltaY ?
-        PlatformWheelEventPhaseEnded :
-        PlatformWheelEventPhaseChanged;
-#endif
 #endif // ENABLE(ASYNC_SCROLLING)
 
     gdouble x, y, rootX, rootY;

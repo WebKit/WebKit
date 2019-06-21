@@ -279,7 +279,6 @@ static gboolean decidePermissionRequest(WebKitWebView *webView, WebKitPermission
     return TRUE;
 }
 
-#if GTK_CHECK_VERSION(3, 12, 0)
 static void colorChooserRGBAChanged(GtkColorChooser *colorChooser, GParamSpec *paramSpec, WebKitColorChooserRequest *request)
 {
     GdkRGBA rgba;
@@ -322,7 +321,6 @@ static gboolean runColorChooserCallback(WebKitWebView *webView, WebKitColorChoos
 
     return TRUE;
 }
-#endif /* GTK_CHECK_VERSION(3, 12, 0) */
 
 static gboolean inspectorOpenedInWindow(WebKitWebInspector *inspector, BrowserTab *tab)
 {
@@ -431,9 +429,7 @@ static void browserTabConstructed(GObject *gObject)
     g_signal_connect(tab->webView, "load-changed", G_CALLBACK(loadChanged), tab);
     g_signal_connect(tab->webView, "load-failed-with-tls-errors", G_CALLBACK(loadFailedWithTLSerrors), tab);
     g_signal_connect(tab->webView, "permission-request", G_CALLBACK(decidePermissionRequest), tab);
-#if GTK_CHECK_VERSION(3, 12, 0)
     g_signal_connect(tab->webView, "run-color-chooser", G_CALLBACK(runColorChooserCallback), tab);
-#endif
 
     WebKitWebInspector *inspector = webkit_web_view_get_inspector(tab->webView);
     g_signal_connect(inspector, "open-window", G_CALLBACK(inspectorOpenedInWindow), tab);

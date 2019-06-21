@@ -25,12 +25,9 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
-
-#if GTK_CHECK_VERSION(3, 20, 0)
-
 #include "Color.h"
 #include "IntSize.h"
+#include <gtk/gtk.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
@@ -178,5 +175,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // GTK_CHECK_VERSION(3, 20, 0)

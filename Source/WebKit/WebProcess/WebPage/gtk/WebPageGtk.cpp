@@ -166,7 +166,6 @@ String WebPage::platformUserAgent(const URL& url) const
     return WebCore::standardUserAgentForURL(url);
 }
 
-#if HAVE(GTK_GESTURES)
 void WebPage::getCenterForZoomGesture(const IntPoint& centerInViewCoordinates, CompletionHandler<void(WebCore::IntPoint&&)>&& completionHandler)
 {
     IntPoint result = mainFrameView()->rootViewToContents(centerInViewCoordinates);
@@ -174,7 +173,6 @@ void WebPage::getCenterForZoomGesture(const IntPoint& centerInViewCoordinates, C
     result.scale(1 / scale, 1 / scale);
     completionHandler(WTFMove(result));
 }
-#endif
 
 void WebPage::setInputMethodState(bool enabled)
 {

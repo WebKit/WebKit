@@ -56,18 +56,15 @@ public:
 
     void setIndex(int index) { m_index =  index; }
 
-#if GST_CHECK_VERSION(1, 10, 0)
     GstStream* stream()
     {
         return m_stream.get();
     }
-#endif
 
 protected:
     TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstPad>);
-#if GST_CHECK_VERSION(1, 10, 0)
     TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstStream>);
-#endif
+
     void notifyTrackOfActiveChanged();
     void notifyTrackOfTagsChanged();
 
@@ -83,9 +80,7 @@ protected:
     AtomString m_label;
     AtomString m_language;
     GRefPtr<GstPad> m_pad;
-#if GST_CHECK_VERSION(1, 10, 0)
     GRefPtr<GstStream> m_stream;
-#endif
 
 private:
     bool getLanguageCode(GstTagList* tags, AtomString& value);

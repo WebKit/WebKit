@@ -35,9 +35,7 @@
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <WebCore/NotImplemented.h>
-#if ATK_CHECK_VERSION(2,11,90)
 #include <WebKit/WKBundleFrame.h>
-#endif
 #include <atk/atk.h>
 #include <wtf/Assertions.h>
 #include <wtf/glib/GRefPtr.h>
@@ -50,12 +48,10 @@ namespace WTR {
 
 namespace {
 
-#if ATK_CHECK_VERSION(2,11,92)
 enum RangeLimit {
     RangeLimitMinimum,
     RangeLimitMaximum
 };
-#endif
 
 enum AtkAttributeType {
     ObjectAttributeType,
@@ -124,7 +120,6 @@ static const Attributes& attributesMap()
     return attributes.get();
 }
 
-#if ATK_CHECK_VERSION(2, 11, 3)
 const char* landmarkStringBanner = "AXLandmarkBanner";
 const char* landmarkStringComplementary = "AXLandmarkComplementary";
 const char* landmarkStringContentinfo = "AXLandmarkContentInfo";
@@ -133,7 +128,6 @@ const char* landmarkStringMain = "AXLandmarkMain";
 const char* landmarkStringNavigation = "AXLandmarkNavigation";
 const char* landmarkStringRegion = "AXLandmarkRegion";
 const char* landmarkStringSearch = "AXLandmarkSearch";
-#endif
 
 String jsStringToWTFString(JSStringRef attribute)
 {
@@ -256,35 +250,14 @@ bool checkElementState(PlatformUIElement element, AtkStateType stateType)
 JSStringRef indexRangeInTable(PlatformUIElement element, bool isRowRange)
 {
     GUniquePtr<gchar> rangeString(g_strdup("{0, 0}"));
-#if ATK_CHECK_VERSION(2,11,90)
     if (!ATK_IS_TABLE_CELL(element.get()))
         return JSStringCreateWithUTF8CString(rangeString.get());
-#else
-    if (!ATK_IS_OBJECT(element.get()))
-        return JSStringCreateWithUTF8CString(rangeString.get());
-
-    AtkObject* axTable = atk_object_get_parent(ATK_OBJECT(element.get()));
-    if (!axTable || !ATK_IS_TABLE(axTable))
-        return JSStringCreateWithUTF8CString(rangeString.get());
-
-    // Look for the cell in the table.
-    gint indexInParent = atk_object_get_index_in_parent(ATK_OBJECT(element.get()));
-    if (indexInParent == -1)
-        return JSStringCreateWithUTF8CString(rangeString.get());
-#endif
 
     gint row = -1;
     gint column = -1;
     gint rowSpan = -1;
     gint columnSpan = -1;
-#if ATK_CHECK_VERSION(2,11,90)
     atk_table_cell_get_row_column_span(ATK_TABLE_CELL(element.get()), &row, &column, &rowSpan, &columnSpan);
-#else
-    row = atk_table_get_row_at_index(ATK_TABLE(axTable), indexInParent);
-    column = atk_table_get_column_at_index(ATK_TABLE(axTable), indexInParent);
-    rowSpan = atk_table_get_row_extent_at(ATK_TABLE(axTable), row, column);
-    columnSpan = atk_table_get_column_extent_at(ATK_TABLE(axTable), row, column);
-#endif
 
     // Get the actual values, if row and columns are valid values.
     if (row != -1 && column != -1) {
@@ -308,29 +281,11 @@ void alterCurrentValue(PlatformUIElement element, int factor)
     if (!ATK_IS_VALUE(element.get()))
         return;
 
-#if ATK_CHECK_VERSION(2,11,92)
     double currentValue;
     atk_value_get_value_and_text(ATK_VALUE(element.get()), &currentValue, nullptr);
 
     double increment = atk_value_get_increment(ATK_VALUE(element.get()));
     atk_value_set_value(ATK_VALUE(element.get()), currentValue + factor * increment);
-#else
-    GValue currentValue = G_VALUE_INIT;
-    atk_value_get_current_value(ATK_VALUE(element.get()), &currentValue);
-
-    GValue increment = G_VALUE_INIT;
-    atk_value_get_minimum_increment(ATK_VALUE(element.get()), &increment);
-
-    GValue newValue = G_VALUE_INIT;
-    g_value_init(&newValue, G_TYPE_FLOAT);
-
-    g_value_set_float(&newValue, g_value_get_float(&currentValue) + factor * g_value_get_float(&increment));
-    atk_value_set_current_value(ATK_VALUE(element.get()), &newValue);
-
-    g_value_unset(&newValue);
-    g_value_unset(&increment);
-    g_value_unset(&currentValue);
-#endif
 }
 
 gchar* replaceCharactersForResults(gchar* str)
@@ -353,7 +308,6 @@ const gchar* roleToString(AtkObject* object)
 {
     AtkRole role = atk_object_get_role(object);
 
-#if ATK_CHECK_VERSION(2, 11, 3)
     if (role == ATK_ROLE_LANDMARK) {
         String xmlRolesValue = getAttributeSetValueForId(object, ObjectAttributeType, "xml-roles");
         if (equalLettersIgnoringASCIICase(xmlRolesValue, "banner"))
@@ -413,7 +367,6 @@ const gchar* roleToString(AtkObject* object)
         if (equalLettersIgnoringASCIICase(xmlRolesValue, "search"))
             return landmarkStringSearch;
     }
-#endif
 
     switch (role) {
     case ATK_ROLE_ALERT:
@@ -538,7 +491,6 @@ const gchar* roleToString(AtkObject* object)
         return "AXWindow";
     case ATK_ROLE_UNKNOWN:
         return "AXUnknown";
-#if ATK_CHECK_VERSION(2, 11, 3)
     case ATK_ROLE_ARTICLE:
         return "AXArticle";
     case ATK_ROLE_AUDIO:
@@ -557,20 +509,14 @@ const gchar* roleToString(AtkObject* object)
         return "AXTimer";
     case ATK_ROLE_VIDEO:
         return "AXVideo";
-#endif
-#if ATK_CHECK_VERSION(2, 11, 4)
     case ATK_ROLE_DESCRIPTION_LIST:
         return "AXDescriptionList";
     case ATK_ROLE_DESCRIPTION_TERM:
         return "AXDescriptionTerm";
     case ATK_ROLE_DESCRIPTION_VALUE:
         return "AXDescriptionValue";
-#endif
-#if ATK_CHECK_VERSION(2, 15, 2)
     case ATK_ROLE_STATIC:
         return "AXStatic";
-#endif
-#if ATK_CHECK_VERSION(2, 15, 4)
     case ATK_ROLE_MATH_FRACTION:
         return "AXMathFraction";
     case ATK_ROLE_MATH_ROOT:
@@ -579,7 +525,6 @@ const gchar* roleToString(AtkObject* object)
         return "AXSubscript";
     case ATK_ROLE_SUPERSCRIPT:
         return "AXSuperscript";
-#endif
 #if ATK_CHECK_VERSION(2, 25, 2)
     case ATK_ROLE_FOOTNOTE:
         return "AXFootnote";
@@ -763,7 +708,6 @@ static Vector<RefPtr<AccessibilityUIElement> > getVisibleCells(AccessibilityUIEl
     return visibleCells;
 }
 
-#if ATK_CHECK_VERSION(2,11,90)
 static Vector<RefPtr<AccessibilityUIElement>> convertGPtrArrayToVector(const GPtrArray* array)
 {
     Vector<RefPtr<AccessibilityUIElement>> cells;
@@ -786,9 +730,7 @@ static JSValueRef convertToJSObjectArray(const Vector<RefPtr<AccessibilityUIElem
 
     return JSObjectMakeArray(context, elementCount, valueElements.get(), nullptr);
 }
-#endif
 
-#if ATK_CHECK_VERSION(2,11,92)
 static double rangeMinMaxValue(AtkValue* atkValue, RangeLimit rangeLimit)
 {
     AtkRange* range = atk_value_get_range(atkValue);
@@ -808,7 +750,6 @@ static double rangeMinMaxValue(AtkValue* atkValue, RangeLimit rangeLimit)
     atk_range_free(range);
     return rangeValue;
 }
-#endif
 
 } // namespace
 
@@ -1210,10 +1151,8 @@ JSValueRef AccessibilityUIElement::rowHeaders() const
     if (!ATK_IS_TABLE_CELL(m_element.get()))
         return convertToJSObjectArray(headers);
 
-#if ATK_CHECK_VERSION(2,11,90)
     if (GRefPtr<GPtrArray> array = adoptGRef(atk_table_cell_get_row_header_cells(ATK_TABLE_CELL(m_element.get()))))
         headers = convertGPtrArrayToVector(array.get());
-#endif
     return convertToJSObjectArray(headers);
 }
 
@@ -1226,10 +1165,8 @@ JSValueRef AccessibilityUIElement::columnHeaders() const
     if (!ATK_IS_TABLE_CELL(m_element.get()))
         return convertToJSObjectArray(headers);
 
-#if ATK_CHECK_VERSION(2,11,90)
     if (GRefPtr<GPtrArray> array = adoptGRef(atk_table_cell_get_column_header_cells(ATK_TABLE_CELL(m_element.get()))))
         headers = convertGPtrArrayToVector(array.get());
-#endif
     return convertToJSObjectArray(headers);
 }
 
@@ -1313,17 +1250,13 @@ bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
     if (checkElementState(m_element.get(), ATK_STATE_EDITABLE))
         return true;
 
-#if ATK_CHECK_VERSION(2,11,2)
     // This state is applicable to checkboxes, radiobuttons, switches, etc.
     if (checkElementState(m_element.get(), ATK_STATE_CHECKABLE))
         return true;
-#endif
 
-#if ATK_CHECK_VERSION(2,15,3)
     // This state is expected to be present only for controls and only if explicitly set.
     if (checkElementState(m_element.get(), ATK_STATE_READ_ONLY))
         return false;
-#endif
 
     // We expose an object attribute to ATs when there is an author-provided ARIA property
     // and also when there is a supported ARIA role but no author-provided value.
@@ -1519,11 +1452,7 @@ double AccessibilityUIElement::x()
         return 0;
 
     int x;
-#if ATK_CHECK_VERSION(2,11,90)
     atk_component_get_extents(ATK_COMPONENT(m_element.get()), &x, nullptr, nullptr, nullptr, ATK_XY_SCREEN);
-#else
-    atk_component_get_position(ATK_COMPONENT(m_element.get()), &x, nullptr, ATK_XY_SCREEN);
-#endif
     return x;
 }
 
@@ -1533,11 +1462,7 @@ double AccessibilityUIElement::y()
         return 0;
 
     int y;
-#if ATK_CHECK_VERSION(2,11,90)
     atk_component_get_extents(ATK_COMPONENT(m_element.get()), nullptr, &y, nullptr, nullptr, ATK_XY_SCREEN);
-#else
-    atk_component_get_position(ATK_COMPONENT(m_element.get()), nullptr, &y, ATK_XY_SCREEN);
-#endif
     return y;
 }
 
@@ -1547,11 +1472,7 @@ double AccessibilityUIElement::width()
         return 0;
 
     int width;
-#if ATK_CHECK_VERSION(2,11,90)
     atk_component_get_extents(ATK_COMPONENT(m_element.get()), nullptr, nullptr, &width, nullptr, ATK_XY_WINDOW);
-#else
-    atk_component_get_size(ATK_COMPONENT(m_element.get()), &width, nullptr);
-#endif
     return width;
 }
 
@@ -1561,11 +1482,7 @@ double AccessibilityUIElement::height()
         return 0;
 
     int height;
-#if ATK_CHECK_VERSION(2,11,90)
     atk_component_get_extents(ATK_COMPONENT(m_element.get()), nullptr, nullptr, nullptr, &height, ATK_XY_WINDOW);
-#else
-    atk_component_get_size(ATK_COMPONENT(m_element.get()), nullptr, &height);
-#endif
     return height;
 }
 
@@ -1575,13 +1492,7 @@ double AccessibilityUIElement::clickPointX()
         return 0;
 
     int x, width;
-#if ATK_CHECK_VERSION(2,11,90)
     atk_component_get_extents(ATK_COMPONENT(m_element.get()), &x, nullptr, &width, nullptr, ATK_XY_WINDOW);
-#else
-    atk_component_get_position(ATK_COMPONENT(m_element.get()), &x, nullptr, ATK_XY_WINDOW);
-    atk_component_get_size(ATK_COMPONENT(m_element.get()), &width, nullptr);
-#endif
-
     return x + width / 2.0;
 }
 
@@ -1591,13 +1502,7 @@ double AccessibilityUIElement::clickPointY()
         return 0;
 
     int y, height;
-#if ATK_CHECK_VERSION(2,11,90)
     atk_component_get_extents(ATK_COMPONENT(m_element.get()), nullptr, &y, nullptr, &height, ATK_XY_WINDOW);
-#else
-    atk_component_get_position(ATK_COMPONENT(m_element.get()), nullptr, &y, ATK_XY_WINDOW);
-    atk_component_get_size(ATK_COMPONENT(m_element.get()), nullptr, &height);
-#endif
-
     return y + height / 2.0;
 }
 
@@ -1607,17 +1512,9 @@ double AccessibilityUIElement::intValue() const
         return 0;
 
     if (ATK_IS_VALUE(m_element.get())) {
-#if ATK_CHECK_VERSION(2,11,92)
         double value;
         atk_value_get_value_and_text(ATK_VALUE(m_element.get()), &value, nullptr);
         return value;
-#else
-        GValue value = G_VALUE_INIT;
-        atk_value_get_current_value(ATK_VALUE(m_element.get()), &value);
-        if (!G_VALUE_HOLDS_FLOAT(&value))
-            return 0;
-        return g_value_get_float(&value);
-#endif
     }
 
     // Consider headings as an special case when returning the "int value" of
@@ -1638,16 +1535,8 @@ double AccessibilityUIElement::minValue()
 {
     if (!ATK_IS_VALUE(m_element.get()))
         return 0;
-#if ATK_CHECK_VERSION(2,11,92)
-    return rangeMinMaxValue(ATK_VALUE(m_element.get()), RangeLimitMinimum);
-#else
-    GValue value = G_VALUE_INIT;
-    atk_value_get_minimum_value(ATK_VALUE(m_element.get()), &value);
-    if (!G_VALUE_HOLDS_FLOAT(&value))
-        return 0;
 
-    return g_value_get_float(&value);
-#endif
+    return rangeMinMaxValue(ATK_VALUE(m_element.get()), RangeLimitMinimum);
 }
 
 double AccessibilityUIElement::maxValue()
@@ -1655,16 +1544,7 @@ double AccessibilityUIElement::maxValue()
     if (!ATK_IS_VALUE(m_element.get()))
         return 0;
 
-#if ATK_CHECK_VERSION(2,11,92)
     return rangeMinMaxValue(ATK_VALUE(m_element.get()), RangeLimitMaximum);
-#else
-    GValue value = G_VALUE_INIT;
-    atk_value_get_maximum_value(ATK_VALUE(m_element.get()), &value);
-    if (!G_VALUE_HOLDS_FLOAT(&value))
-        return 0;
-
-    return g_value_get_float(&value);
-#endif
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::valueDescription()
@@ -2393,7 +2273,6 @@ JSRetainPtr<JSStringRef> stringAtOffset(PlatformUIElement element, AtkTextBounda
     gint startOffset, endOffset;
     StringBuilder builder;
 
-#if ATK_CHECK_VERSION(2, 10, 0)
     AtkTextGranularity granularity;
     switch (boundary) {
     case ATK_TEXT_BOUNDARY_CHAR:
@@ -2413,9 +2292,7 @@ JSRetainPtr<JSStringRef> stringAtOffset(PlatformUIElement element, AtkTextBounda
     }
 
     builder.append(atk_text_get_string_at_offset(ATK_TEXT(element.get()), offset, granularity, &startOffset, &endOffset));
-#else
-    builder.append(atk_text_get_text_at_offset(ATK_TEXT(element.get()), offset, boundary, &startOffset, &endOffset));
-#endif
+
     builder.appendLiteral(", ");
     builder.appendNumber(startOffset);
     builder.appendLiteral(", ");

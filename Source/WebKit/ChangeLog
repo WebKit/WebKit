@@ -1,3 +1,86 @@
+2019-06-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Bump minimum versions of GLib, GTK, libsoup, ATK, GStreamer, and Cairo
+        https://bugs.webkit.org/show_bug.cgi?id=199094
+
+        Reviewed by Carlos Garcia Campos.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::createRequest):
+        (WebKit::NetworkDataTaskSoup::writeDownloadCallback):
+        (WebKit::NetworkDataTaskSoup::writeDownload):
+        (WebKit::NetworkDataTaskSoup::startingCallback):
+        (WebKit::NetworkDataTaskSoup::requestStartedCallback): Deleted.
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::buttonForEvent):
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::doneWithTouchEvent):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (ClickCounter::currentClickCountForGdkButtonEvent):
+        (webkitWebViewBaseRealize):
+        (webkitWebViewBaseHandleMouseEvent):
+        (webkitWebViewBaseGetTouchPointsForEvent):
+        (webkitWebViewBaseTouchEvent):
+        (webkitWebViewBaseGestureController):
+        (webkitWebViewBaseEvent):
+        (deviceScaleFactorChanged):
+        (webkitWebViewBaseCreateWebPage):
+        (webkitWebViewBaseTakeViewSnapshot):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/gtk/WebKitWebViewDialog.cpp:
+        (webkitWebViewDialogDraw):
+        (webkitWebViewDialogConstructed):
+        (webkit_web_view_dialog_class_init):
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
+        (fileChooserDialogResponseCallback):
+        (webkitWebViewRunFileChooser):
+        * UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp:
+        (WebKit::doMouseEvent):
+        (WebKit::doMotionEvent):
+        (WebKit::doKeyStrokeEvent):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::~AcceleratedBackingStoreWayland):
+        (WebKit::AcceleratedBackingStoreWayland::tryEnsureGLContext):
+        (WebKit::AcceleratedBackingStoreWayland::makeContextCurrent):
+        (WebKit::AcceleratedBackingStoreWayland::paint):
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.h:
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        (WebKit::DragAndDropHandler::startDrag):
+        (WebKit::DragAndDropHandler::fillDragData):
+        (WebKit::DragAndDropHandler::finishDrag):
+        * UIProcess/gtk/DragAndDropHandler.h:
+        * UIProcess/gtk/GestureController.cpp:
+        (WebKit::GestureController::handleEvent):
+        * UIProcess/gtk/GestureController.h:
+        * UIProcess/gtk/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::filterKeyEvent):
+        (WebKit::InputMethodFilter::logHandleKeyboardEventForTesting):
+        (WebKit::InputMethodFilter::logHandleKeyboardEventWithCompositionResultsForTesting):
+        * UIProcess/gtk/ViewGestureControllerGtk.cpp:
+        (WebKit::isEventStop):
+        (WebKit::createScrollEvent):
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::append):
+        (WebKit::WebContextMenuProxyGtk::WebContextMenuProxyGtk):
+        (WebKit::WebContextMenuProxyGtk::~WebContextMenuProxyGtk):
+        * UIProcess/gtk/WebKitInspectorWindow.cpp:
+        (webkit_inspector_window_init):
+        (webkitInspectorWindowSetSubtitle):
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::getCenterForZoomGesture):
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::showPopupMenu):
+        (WebKit::WebPopupMenuProxyGtk::hidePopupMenu):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::getCenterForZoomGesture):
+
 2019-06-20  Patrick Griffis  <pgriffis@igalia.com> and Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Implement a basic DNS cache

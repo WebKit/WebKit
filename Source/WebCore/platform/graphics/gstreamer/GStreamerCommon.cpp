@@ -43,7 +43,7 @@
 #include "WebKitMediaSourceGStreamer.h"
 #endif
 
-#if ENABLE(MEDIA_STREAM) && GST_CHECK_VERSION(1, 10, 0)
+#if ENABLE(MEDIA_STREAM)
 #include "GStreamerMediaStreamSource.h"
 #endif
 
@@ -269,9 +269,8 @@ bool initializeGStreamerAndRegisterWebKitElements()
         gst_element_register(nullptr, "webkitclearkey", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_MEDIA_CK_DECRYPT);
 #endif
 
-#if ENABLE(MEDIA_STREAM) && GST_CHECK_VERSION(1, 10, 0)
-        if (webkitGstCheckVersion(1, 10, 0))
-            gst_element_register(nullptr, "mediastreamsrc", GST_RANK_PRIMARY, WEBKIT_TYPE_MEDIA_STREAM_SRC);
+#if ENABLE(MEDIA_STREAM)
+        gst_element_register(nullptr, "mediastreamsrc", GST_RANK_PRIMARY, WEBKIT_TYPE_MEDIA_STREAM_SRC);
 #endif
 
 #if ENABLE(MEDIA_SOURCE)

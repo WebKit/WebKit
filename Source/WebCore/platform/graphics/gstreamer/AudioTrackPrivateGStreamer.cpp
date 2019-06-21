@@ -43,7 +43,6 @@ AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
     notifyTrackOfActiveChanged();
 }
 
-#if GST_CHECK_VERSION(1, 10, 0)
 AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, gint index, GRefPtr<GstStream> stream)
     : TrackPrivateBaseGStreamer(this, index, stream)
     , m_player(player)
@@ -70,7 +69,6 @@ AudioTrackPrivate::Kind AudioTrackPrivateGStreamer::kind() const
 
     return AudioTrackPrivate::kind();
 }
-#endif
 
 void AudioTrackPrivateGStreamer::disconnect()
 {

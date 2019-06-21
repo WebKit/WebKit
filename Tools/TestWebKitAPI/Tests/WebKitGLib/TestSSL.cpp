@@ -339,7 +339,6 @@ static void testSubresourceLoadFailedWithTLSErrors(TLSSubresourceTest* test, gco
     assertIfSSLRequestProcessed = false;
 }
 
-#if SOUP_CHECK_VERSION(2, 50, 0)
 class WebSocketTest : public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(WebSocketTest);
@@ -439,7 +438,6 @@ static void testWebSocketTLSErrors(WebSocketTest* test, gconstpointer)
 
     webkit_web_context_set_tls_errors_policy(context, originalPolicy);
 }
-#endif
 
 static void httpsServerCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
@@ -527,9 +525,7 @@ void beforeAll()
     SSLTest::add("WebKitWebView", "tls-http-auth", testTLSErrorsHTTPAuth);
     TLSSubresourceTest::add("WebKitWebView", "tls-subresource", testSubresourceLoadFailedWithTLSErrors);
     TLSErrorsTest::add("WebKitWebView", "load-failed-with-tls-errors", testLoadFailedWithTLSErrors);
-#if SOUP_CHECK_VERSION(2, 50, 0)
     WebSocketTest::add("WebKitWebView", "web-socket-tls-errors", testWebSocketTLSErrors);
-#endif
 }
 
 void afterAll()

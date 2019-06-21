@@ -54,11 +54,7 @@ static const double swipeOverlayShadowGradientAlpha[] = { 1, 0.99, 0.98, 0.95, 0
 
 static bool isEventStop(GdkEventScroll* event)
 {
-#if GTK_CHECK_VERSION(3, 20, 0)
     return gdk_event_is_scroll_stop_event(reinterpret_cast<GdkEvent*>(event));
-#else
-    return !event->delta_x && !event->delta_y;
-#endif
 }
 
 void ViewGestureController::platformTeardown()
@@ -432,9 +428,7 @@ static GUniquePtr<GdkEvent> createScrollEvent(GtkWidget* widget, double xDelta, 
     event->scroll.delta_x = xDelta;
     event->scroll.delta_y = yDelta;
     event->scroll.state = 0;
-#if GTK_CHECK_VERSION(3, 20, 0)
     event->scroll.is_stop = !xDelta && !yDelta;
-#endif
     event->scroll.window = GDK_WINDOW(g_object_ref(window));
     gdk_event_set_screen(event.get(), gdk_window_get_screen(window));
     gdk_event_set_device(event.get(), gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(window))));

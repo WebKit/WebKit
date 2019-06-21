@@ -72,11 +72,7 @@ static inline OptionSet<WebEvent::Modifier> modifiersForEvent(const GdkEvent* ev
 static inline WebMouseEvent::Button buttonForEvent(const GdkEvent* event)
 {
     unsigned button = 0;
-#if GTK_CHECK_VERSION(3, 10, 0)
     GdkEventType type = gdk_event_get_event_type(event);
-#else
-    GdkEventType type = event->type;
-#endif
     switch (type) {
     case GDK_ENTER_NOTIFY:
     case GDK_LEAVE_NOTIFY:
@@ -153,11 +149,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int cu
 
     WebEvent::Type type = static_cast<WebEvent::Type>(0);
 
-#if GTK_CHECK_VERSION(3, 10, 0)
     GdkEventType eventType = gdk_event_get_event_type(event);
-#else
-    GdkEventType eventType = event->type;
-#endif
     switch (eventType) {
     case GDK_MOTION_NOTIFY:
     case GDK_ENTER_NOTIFY:
@@ -197,18 +189,9 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int cu
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event)
 {
-#if GTK_CHECK_VERSION(3, 20, 0)
     WebWheelEvent::Phase phase = gdk_event_is_scroll_stop_event(event) ?
         WebWheelEvent::Phase::PhaseEnded :
         WebWheelEvent::Phase::PhaseChanged;
-#else
-    double deltaX, deltaY;
-    gdk_event_get_scroll_deltas(event, &deltaX, &deltaY);
-    WebWheelEvent::Phase phase = event->scroll.direction == GDK_SCROLL_SMOOTH && !deltaX && !deltaY ?
-        WebWheelEvent::Phase::PhaseEnded :
-        WebWheelEvent::Phase::PhaseChanged;
-#endif
-
     return createWebWheelEvent(event, phase, WebWheelEvent::Phase::PhaseNone);
 }
 
@@ -269,12 +252,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, 
     gdk_event_get_keyval(event, &keyval);
     guint16 keycode;
     gdk_event_get_keycode(event, &keycode);
-
-#if GTK_CHECK_VERSION(3, 10, 0)
     GdkEventType type = gdk_event_get_event_type(event);
-#else
-    GdkEventType type = event->type;
-#endif
 
     return WebKeyboardEvent(
         type == GDK_KEY_RELEASE ? WebEvent::KeyUp : WebEvent::KeyDown,
@@ -295,11 +273,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, 
 WebTouchEvent WebEventFactory::createWebTouchEvent(const GdkEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
 {
     WebEvent::Type type = WebEvent::NoType;
-#if GTK_CHECK_VERSION(3, 10, 0)
     GdkEventType eventType = gdk_event_get_event_type(event);
-#else
-    GdkEventType eventType = event->type;
-#endif
     switch (eventType) {
     case GDK_TOUCH_BEGIN:
         type = WebEvent::TouchStart;

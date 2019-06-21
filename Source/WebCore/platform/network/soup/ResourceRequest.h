@@ -166,8 +166,6 @@ bool ResourceRequest::decodeWithPlatformData(Decoder& decoder)
     return true;
 }
 
-
-#if SOUP_CHECK_VERSION(2, 43, 1)
 inline SoupMessagePriority toSoupMessagePriority(ResourceLoadPriority priority)
 {
     switch (priority) {
@@ -186,7 +184,6 @@ inline SoupMessagePriority toSoupMessagePriority(ResourceLoadPriority priority)
     ASSERT_NOT_REACHED();
     return SOUP_MESSAGE_PRIORITY_VERY_LOW;
 }
-#endif
 
 } // namespace WebCore
 

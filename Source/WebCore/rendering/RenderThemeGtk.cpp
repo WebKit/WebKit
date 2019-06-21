@@ -164,136 +164,8 @@ enum RenderThemePart {
 #if ENABLE(VIDEO)
     MediaButton,
 #endif
-#if GTK_CHECK_VERSION(3, 20, 0)
     Window,
-#endif
 };
-
-#if !GTK_CHECK_VERSION(3, 20, 0)
-// This is the default value defined by GTK+, where it was defined as MIN_ARROW_SIZE in gtkarrow.c.
-static const int minArrowSize = 15;
-// This is the default value defined by GTK+, where it was defined as MIN_ARROW_WIDTH in gtkspinbutton.c.
-static const int minSpinButtonArrowSize = 6;
-
-static GRefPtr<GtkStyleContext> createStyleContext(RenderThemePart themePart, GtkStyleContext* parent = nullptr)
-{
-    GRefPtr<GtkWidgetPath> path = adoptGRef(parent ? gtk_widget_path_copy(gtk_style_context_get_path(parent)) : gtk_widget_path_new());
-
-    switch (themePart) {
-    case Entry:
-    case EntrySelection:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_ENTRY);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_ENTRY);
-        break;
-    case EntryIconLeft:
-    case EntryIconRight:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_ENTRY);
-        break;
-    case Button:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_BUTTON);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_BUTTON);
-        gtk_widget_path_iter_add_class(path.get(), -1, "text-button");
-        break;
-    case CheckButton:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_CHECK_BUTTON);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_CHECK);
-        break;
-    case RadioButton:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_RADIO_BUTTON);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_RADIO);
-        break;
-    case ComboBox:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_COMBO_BOX);
-        break;
-    case ComboBoxButton:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_BUTTON);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_BUTTON);
-        gtk_widget_path_iter_add_class(path.get(), -1, "text-button");
-        gtk_widget_path_iter_add_class(path.get(), -1, "combo");
-        break;
-    case ComboBoxArrow:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_ARROW);
-        gtk_widget_path_iter_add_class(path.get(), -1, "arrow");
-        break;
-    case Scale:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_SCALE);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_SCALE);
-        break;
-    case ScaleTrough:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_SCALE);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_SCALE);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_TROUGH);
-        break;
-    case ScaleSlider:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_SCALE);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_SCALE);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_SLIDER);
-        break;
-    case ProgressBar:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_PROGRESS_BAR);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_PROGRESSBAR);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_HORIZONTAL);
-        break;
-    case ProgressBarTrough:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_PROGRESS_BAR);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_TROUGH);
-        break;
-    case ProgressBarProgress:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_PROGRESS_BAR);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_PROGRESSBAR);
-        break;
-    case ListBox:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_TREE_VIEW);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_VIEW);
-        break;
-    case SpinButton:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_SPIN_BUTTON);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_SPINBUTTON);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_HORIZONTAL);
-        break;
-    case SpinButtonUpButton:
-    case SpinButtonDownButton:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_SPIN_BUTTON);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_SPINBUTTON);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_BUTTON);
-        break;
-#if ENABLE(VIDEO)
-    case MediaButton:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_IMAGE);
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_IMAGE);
-        break;
-#endif // ENABLE(VIDEO)
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    GRefPtr<GtkStyleContext> context = adoptGRef(gtk_style_context_new());
-    gtk_style_context_set_path(context.get(), path.get());
-    gtk_style_context_set_parent(context.get(), parent);
-    return context;
-}
-
-static GRefPtr<GdkPixbuf> loadThemedIcon(GtkStyleContext* context, const char* iconName, GtkIconSize iconSize)
-{
-    GRefPtr<GIcon> icon = adoptGRef(g_themed_icon_new(iconName));
-    unsigned lookupFlags = GTK_ICON_LOOKUP_USE_BUILTIN | GTK_ICON_LOOKUP_FORCE_SIZE | GTK_ICON_LOOKUP_FORCE_SVG;
-#if GTK_CHECK_VERSION(3, 14, 0)
-    GtkTextDirection direction = gtk_style_context_get_direction(context);
-    if (direction & GTK_TEXT_DIR_LTR)
-        lookupFlags |= GTK_ICON_LOOKUP_DIR_LTR;
-    else if (direction & GTK_TEXT_DIR_RTL)
-        lookupFlags |= GTK_ICON_LOOKUP_DIR_RTL;
-#endif
-    int width, height;
-    gtk_icon_size_lookup(iconSize, &width, &height);
-    GRefPtr<GtkIconInfo> iconInfo = adoptGRef(gtk_icon_theme_lookup_by_gicon(gtk_icon_theme_get_default(), icon.get(), std::min(width, height), static_cast<GtkIconLookupFlags>(lookupFlags)));
-    if (!iconInfo)
-        return nullptr;
-
-    return adoptGRef(gtk_icon_info_load_symbolic_for_context(iconInfo.get(), context, nullptr, nullptr));
-}
-#endif // !GTK_CHECK_VERSION(3, 20, 0)
 
 #if ENABLE(VIDEO)
 static bool nodeHasPseudo(Node& node, const char* pseudo)
@@ -354,7 +226,6 @@ int RenderThemeGtk::baselinePosition(const RenderBox& box) const
     return RenderTheme::baselinePosition(box);
 }
 
-#if GTK_CHECK_VERSION(3, 20, 0)
 void RenderThemeGtk::adjustRepaintRect(const RenderObject&, FloatRect&)
 {
 }
@@ -418,82 +289,6 @@ static GtkStateFlags themePartStateFlags(const RenderThemeGtk& theme, RenderThem
 
     return static_cast<GtkStateFlags>(stateFlags);
 }
-#else
-static GtkTextDirection gtkTextDirection(TextDirection direction)
-{
-    switch (direction) {
-    case TextDirection::RTL:
-        return GTK_TEXT_DIR_RTL;
-    case TextDirection::LTR:
-        return GTK_TEXT_DIR_LTR;
-    default:
-        return GTK_TEXT_DIR_NONE;
-    }
-}
-
-static GtkStateFlags gtkIconStateFlags(RenderTheme* theme, const RenderObject& renderObject)
-{
-    if (!theme->isEnabled(renderObject))
-        return GTK_STATE_FLAG_INSENSITIVE;
-    if (theme->isPressed(renderObject))
-        return GTK_STATE_FLAG_ACTIVE;
-    if (theme->isHovered(renderObject))
-        return GTK_STATE_FLAG_PRELIGHT;
-
-    return GTK_STATE_FLAG_NORMAL;
-}
-
-static void adjustRectForFocus(GtkStyleContext* context, FloatRect& rect)
-{
-    gint focusWidth, focusPad;
-    gtk_style_context_get_style(context, "focus-line-width", &focusWidth, "focus-padding", &focusPad, nullptr);
-    rect.inflate(focusWidth + focusPad);
-}
-
-void RenderThemeGtk::adjustRepaintRect(const RenderObject& renderObject, FloatRect& rect)
-{
-    GRefPtr<GtkStyleContext> context;
-    bool checkInteriorFocus = false;
-    ControlPart part = renderObject.style().appearance();
-    switch (part) {
-    case CheckboxPart:
-    case RadioPart:
-        context = createStyleContext(part == CheckboxPart ? CheckButton : RadioButton);
-
-        gint indicatorSpacing;
-        gtk_style_context_get_style(context.get(), "indicator-spacing", &indicatorSpacing, nullptr);
-        rect.inflate(indicatorSpacing);
-
-        return;
-    case SliderVerticalPart:
-    case SliderHorizontalPart:
-        context = createStyleContext(ScaleSlider);
-        break;
-    case ButtonPart:
-    case MenulistButtonPart:
-    case MenulistPart:
-        context = createStyleContext(Button);
-        checkInteriorFocus = true;
-        break;
-    case TextFieldPart:
-    case TextAreaPart:
-        context = createStyleContext(Entry);
-        checkInteriorFocus = true;
-        break;
-    default:
-        return;
-    }
-
-    ASSERT(context);
-    if (checkInteriorFocus) {
-        gboolean interiorFocus;
-        gtk_style_context_get_style(context.get(), "interior-focus", &interiorFocus, nullptr);
-        if (interiorFocus)
-            return;
-    }
-    adjustRectForFocus(context.get(), rect);
-}
-#endif // GTK_CHECK_VERSION(3, 20, 0)
 
 void RenderThemeGtk::adjustButtonStyle(StyleResolver&, RenderStyle& style, const Element*) const
 {
@@ -515,7 +310,6 @@ static void shrinkToMinimumSizeAndCenterRectangle(FloatRect& rect, const IntSize
     }
 }
 
-#if GTK_CHECK_VERSION(3, 20, 0)
 static void setToggleSize(RenderThemePart themePart, RenderStyle& style)
 {
     ASSERT(themePart == CheckButton || themePart == RadioButton);
@@ -560,75 +354,6 @@ static void paintToggle(const RenderThemeGtk* theme, RenderThemePart themePart, 
     if (theme->isFocused(renderObject))
         toggleWidget.button().renderFocus(paintInfo.context().platformContext()->cr(), rect);
 }
-#else
-static void setToggleSize(RenderThemePart themePart, RenderStyle& style)
-{
-    // The width and height are both specified, so we shouldn't change them.
-    if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
-        return;
-
-    GRefPtr<GtkStyleContext> context = createStyleContext(themePart);
-    // Other ports hard-code this to 13. GTK+ users tend to demand the native look.
-    gint indicatorSize;
-    gtk_style_context_get_style(context.get(), "indicator-size", &indicatorSize, nullptr);
-
-    if (style.width().isIntrinsicOrAuto())
-        style.setWidth(Length(indicatorSize, Fixed));
-
-    if (style.height().isAuto())
-        style.setHeight(Length(indicatorSize, Fixed));
-}
-
-static void paintToggle(const RenderThemeGtk* theme, RenderThemePart themePart, const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& fullRect)
-{
-    GRefPtr<GtkStyleContext> context = createStyleContext(themePart);
-    gtk_style_context_set_direction(context.get(), static_cast<GtkTextDirection>(gtkTextDirection(renderObject.style().direction())));
-
-    unsigned flags = 0;
-    if (!theme->isEnabled(renderObject))
-        flags |= GTK_STATE_FLAG_INSENSITIVE;
-    else if (theme->isHovered(renderObject))
-        flags |= GTK_STATE_FLAG_PRELIGHT;
-    if (theme->isIndeterminate(renderObject))
-        flags |= GTK_STATE_FLAG_INCONSISTENT;
-    else if (theme->isChecked(renderObject))
-#if GTK_CHECK_VERSION(3, 13, 7)
-        flags |= GTK_STATE_FLAG_CHECKED;
-#else
-        flags |= GTK_STATE_FLAG_ACTIVE;
-#endif
-    if (theme->isPressed(renderObject))
-        flags |= GTK_STATE_FLAG_SELECTED;
-    gtk_style_context_set_state(context.get(), static_cast<GtkStateFlags>(flags));
-
-    // Some themes do not render large toggle buttons properly, so we simply
-    // shrink the rectangle back down to the default size and then center it
-    // in the full toggle button region. The reason for not simply forcing toggle
-    // buttons to be a smaller size is that we don't want to break site layouts.
-    FloatRect rect(fullRect);
-    gint indicatorSize;
-    gtk_style_context_get_style(context.get(), "indicator-size", &indicatorSize, nullptr);
-    IntSize minSize(indicatorSize, indicatorSize);
-    shrinkToMinimumSizeAndCenterRectangle(rect, minSize);
-
-    gtk_render_background(context.get(), paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
-    gtk_render_frame(context.get(), paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
-
-    if (themePart == CheckButton)
-        gtk_render_check(context.get(), paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
-    else
-        gtk_render_option(context.get(), paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
-
-    if (theme->isFocused(renderObject)) {
-        IntRect indicatorRect(rect);
-        gint indicatorSpacing;
-        gtk_style_context_get_style(context.get(), "indicator-spacing", &indicatorSpacing, nullptr);
-        indicatorRect.inflate(indicatorSpacing);
-        gtk_render_focus(context.get(), paintInfo.context().platformContext()->cr(), indicatorRect.x(), indicatorRect.y(),
-            indicatorRect.width(), indicatorRect.height());
-    }
-}
-#endif // GTK_CHECK_VERSION(3, 20, 0)
 
 void RenderThemeGtk::setCheckboxSize(RenderStyle& style) const
 {
@@ -652,7 +377,6 @@ bool RenderThemeGtk::paintRadio(const RenderObject& renderObject, const PaintInf
     return false;
 }
 
-#if GTK_CHECK_VERSION(3, 20, 0)
 bool RenderThemeGtk::paintButton(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     auto& buttonWidget = static_cast<RenderThemeButton&>(RenderThemeWidget::getOrCreate(isDefault(renderObject) ? RenderThemeWidget::Type::ButtonDefault : RenderThemeWidget::Type::Button));
@@ -662,99 +386,14 @@ bool RenderThemeGtk::paintButton(const RenderObject& renderObject, const PaintIn
         buttonWidget.button().renderFocus(paintInfo.context().platformContext()->cr(), rect);
     return false;
 }
-#else
-static void renderButton(RenderTheme* theme, GtkStyleContext* context, const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    IntRect buttonRect(rect);
-
-    guint flags = 0;
-    if (!theme->isEnabled(renderObject))
-        flags |= GTK_STATE_FLAG_INSENSITIVE;
-    else if (theme->isHovered(renderObject))
-        flags |= GTK_STATE_FLAG_PRELIGHT;
-    if (theme->isPressed(renderObject))
-        flags |= GTK_STATE_FLAG_ACTIVE;
-    gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
-
-    if (theme->isDefault(renderObject)) {
-        GtkBorder* borderPtr = 0;
-        GtkBorder border = { 1, 1, 1, 1 };
-
-        gtk_style_context_get_style(context, "default-border", &borderPtr, nullptr);
-        if (borderPtr) {
-            border = *borderPtr;
-            gtk_border_free(borderPtr);
-        }
-
-        buttonRect.move(border.left, border.top);
-        buttonRect.setWidth(buttonRect.width() - (border.left + border.right));
-        buttonRect.setHeight(buttonRect.height() - (border.top + border.bottom));
-
-        gtk_style_context_add_class(context, GTK_STYLE_CLASS_DEFAULT);
-    }
-
-    gtk_render_background(context, paintInfo.context().platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
-    gtk_render_frame(context, paintInfo.context().platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
-
-    if (theme->isFocused(renderObject)) {
-        gint focusWidth, focusPad;
-        gboolean displaceFocus, interiorFocus;
-        gtk_style_context_get_style(
-            context,
-            "focus-line-width", &focusWidth,
-            "focus-padding", &focusPad,
-            "interior-focus", &interiorFocus,
-            "displace-focus", &displaceFocus,
-            nullptr);
-
-        if (interiorFocus) {
-            GtkBorder borderWidth;
-            gtk_style_context_get_border(context, gtk_style_context_get_state(context), &borderWidth);
-
-            buttonRect = IntRect(
-                buttonRect.x() + borderWidth.left + focusPad,
-                buttonRect.y() + borderWidth.top + focusPad,
-                buttonRect.width() - (2 * focusPad + borderWidth.left + borderWidth.right),
-                buttonRect.height() - (2 * focusPad + borderWidth.top + borderWidth.bottom));
-        } else
-            buttonRect.inflate(focusWidth + focusPad);
-
-        if (displaceFocus && theme->isPressed(renderObject)) {
-            gint childDisplacementX;
-            gint childDisplacementY;
-            gtk_style_context_get_style(context, "child-displacement-x", &childDisplacementX, "child-displacement-y", &childDisplacementY, nullptr);
-            buttonRect.move(childDisplacementX, childDisplacementY);
-        }
-
-        gtk_render_focus(context, paintInfo.context().platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
-    }
-}
-bool RenderThemeGtk::paintButton(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    GRefPtr<GtkStyleContext> context = createStyleContext(Button);
-    gtk_style_context_set_direction(context.get(), static_cast<GtkTextDirection>(gtkTextDirection(renderObject.style().direction())));
-    renderButton(this, context.get(), renderObject, paintInfo, rect);
-    return false;
-}
-#endif // GTK_CHECK_VERSION(3, 20, 0)
 
 static Color menuListColor(const Element* element)
 {
-#if GTK_CHECK_VERSION(3, 20, 0)
     auto& comboWidget = static_cast<RenderThemeComboBox&>(RenderThemeWidget::getOrCreate(RenderThemeWidget::Type::ComboBox));
     GtkStateFlags state = element->isDisabledFormControl() ? GTK_STATE_FLAG_INSENSITIVE : GTK_STATE_FLAG_NORMAL;
     comboWidget.comboBox().setState(state);
     comboWidget.button().setState(state);
     return comboWidget.button().color();
-#else
-    GRefPtr<GtkStyleContext> parentStyleContext = createStyleContext(ComboBox);
-    GRefPtr<GtkStyleContext> buttonStyleContext = createStyleContext(ComboBoxButton, parentStyleContext.get());
-    gtk_style_context_set_state(buttonStyleContext.get(), element->isDisabledFormControl() ? GTK_STATE_FLAG_INSENSITIVE : GTK_STATE_FLAG_NORMAL);
-
-    GdkRGBA gdkRGBAColor;
-    gtk_style_context_get_color(buttonStyleContext.get(), gtk_style_context_get_state(buttonStyleContext.get()), &gdkRGBAColor);
-    return gdkRGBAColor;
-#endif // GTK_CHECK_VERSION(3, 20, 0)
 }
 
 void RenderThemeGtk::adjustMenuListStyle(StyleResolver&, RenderStyle& style, const Element* element) const
@@ -774,7 +413,6 @@ void RenderThemeGtk::adjustMenuListButtonStyle(StyleResolver& styleResolver, Ren
     adjustMenuListStyle(styleResolver, style, e);
 }
 
-#if GTK_CHECK_VERSION(3, 20, 0)
 /*
  * GtkComboBox gadgets tree
  *
@@ -830,103 +468,11 @@ bool RenderThemeGtk::paintMenuList(const RenderObject& renderObject, const Paint
 
     return false;
 }
-#else
-LengthBox RenderThemeGtk::popupInternalPaddingBox(const RenderStyle& style) const
-{
-    if (style.appearance() == NoControlPart)
-        return { 0, 0, 0, 0 };
-
-    GRefPtr<GtkStyleContext> parentContext = createStyleContext(ComboBox);
-    GRefPtr<GtkStyleContext> context = createStyleContext(ComboBoxButton, parentContext.get());
-    gtk_style_context_set_direction(context.get(), static_cast<GtkTextDirection>(gtkTextDirection(style.direction())));
-    gtk_style_context_set_state(context.get(), static_cast<GtkStateFlags>(0));
-    GtkBorder borderWidth = { 0, 0, 0, 0 };
-    gtk_style_context_get_border(context.get(), gtk_style_context_get_state(context.get()), &borderWidth);
-
-    gboolean interiorFocus;
-    gint focusWidth, focusPad;
-    gtk_style_context_get_style(context.get(), "interior-focus", &interiorFocus, "focus-line-width", &focusWidth, "focus-padding", &focusPad, nullptr);
-    focusWidth = interiorFocus ? focusWidth + focusPad : 0;
-
-    return { borderWidth.top + focusWidth, borderWidth.right + focusWidth + (style.direction() == TextDirection::LTR ? minArrowSize : 0),
-        borderWidth.bottom + focusWidth, borderWidth.left + focusWidth + (style.direction() == TextDirection::RTL ? minArrowSize : 0) };
-}
-
-bool RenderThemeGtk::paintMenuList(const RenderObject& renderObject, const PaintInfo& paintInfo, const FloatRect& r)
-{
-    // FIXME: adopt subpixel themes.
-    IntRect rect = IntRect(r);
-
-    cairo_t* cairoContext = paintInfo.context().platformContext()->cr();
-    GtkTextDirection direction = static_cast<GtkTextDirection>(gtkTextDirection(renderObject.style().direction()));
-
-    GRefPtr<GtkStyleContext> parentStyleContext = createStyleContext(ComboBox);
-
-    // Paint the button.
-    GRefPtr<GtkStyleContext> buttonStyleContext = createStyleContext(ComboBoxButton, parentStyleContext.get());
-    gtk_style_context_set_direction(buttonStyleContext.get(), direction);
-    renderButton(this, buttonStyleContext.get(), renderObject, paintInfo, rect);
-
-    // Get the inner rectangle.
-    gint focusWidth, focusPad;
-    GtkBorder* innerBorderPtr = 0;
-    GtkBorder innerBorder = { 1, 1, 1, 1 };
-    gtk_style_context_get_style(buttonStyleContext.get(), "inner-border", &innerBorderPtr, "focus-line-width", &focusWidth, "focus-padding", &focusPad, nullptr);
-    if (innerBorderPtr) {
-        innerBorder = *innerBorderPtr;
-        gtk_border_free(innerBorderPtr);
-    }
-
-    GtkBorder borderWidth;
-    GtkStateFlags state = gtk_style_context_get_state(buttonStyleContext.get());
-    gtk_style_context_get_border(buttonStyleContext.get(), state, &borderWidth);
-
-    focusWidth += focusPad;
-    IntRect innerRect(
-        rect.x() + innerBorder.left + borderWidth.left + focusWidth,
-        rect.y() + innerBorder.top + borderWidth.top + focusWidth,
-        rect.width() - borderWidth.left - borderWidth.right - innerBorder.left - innerBorder.right - (2 * focusWidth),
-        rect.height() - borderWidth.top - borderWidth.bottom - innerBorder.top - innerBorder.bottom - (2 * focusWidth));
-
-    if (isPressed(renderObject)) {
-        gint childDisplacementX;
-        gint childDisplacementY;
-        gtk_style_context_get_style(buttonStyleContext.get(), "child-displacement-x", &childDisplacementX, "child-displacement-y", &childDisplacementY, nullptr);
-        innerRect.move(childDisplacementX, childDisplacementY);
-    }
-    innerRect.setWidth(std::max(1, innerRect.width()));
-    innerRect.setHeight(std::max(1, innerRect.height()));
-
-    // Paint the arrow.
-    GRefPtr<GtkStyleContext> arrowStyleContext = createStyleContext(ComboBoxArrow, buttonStyleContext.get());
-    gtk_style_context_set_direction(arrowStyleContext.get(), direction);
-
-    gfloat arrowScaling;
-    gtk_style_context_get_style(parentStyleContext.get(), "arrow-scaling", &arrowScaling, nullptr);
-
-    IntSize arrowSize(minArrowSize, innerRect.height());
-    FloatPoint arrowPosition(innerRect.location());
-    if (direction == GTK_TEXT_DIR_LTR)
-        arrowPosition.move(innerRect.width() - arrowSize.width(), 0);
-
-    // GTK+ actually fetches the xalign and valign values from the widget, but since we
-    // don't have a widget here, we are just using the default xalign and valign values of 0.5.
-    gint extent = std::min(arrowSize.width(), arrowSize.height()) * arrowScaling;
-    arrowPosition.move((arrowSize.width() - extent) / 2, (arrowSize.height() - extent) / 2);
-
-    gtk_style_context_set_state(arrowStyleContext.get(), state);
-    gtk_render_arrow(arrowStyleContext.get(), cairoContext, G_PI, arrowPosition.x(), arrowPosition.y(), extent);
-
-    return false;
-}
-#endif // GTK_CHECK_VERSION(3, 20, 0)
 
 bool RenderThemeGtk::paintMenuListButtonDecorations(const RenderBox& object, const PaintInfo& info, const FloatRect& rect)
 {
     return paintMenuList(object, info, rect);
 }
-
-#if GTK_CHECK_VERSION(3, 20, 0)
 
 static IntSize spinButtonSize()
 {
@@ -977,42 +523,7 @@ bool RenderThemeGtk::paintTextField(const RenderObject& renderObject, const Pain
     }
     return false;
 }
-#else
-void RenderThemeGtk::adjustTextFieldStyle(StyleResolver&, RenderStyle&, const Element*) const
-{
-}
 
-bool RenderThemeGtk::paintTextField(const RenderObject& renderObject, const PaintInfo& paintInfo, const FloatRect& rect)
-{
-    GRefPtr<GtkStyleContext> context = createStyleContext(Entry);
-    gtk_style_context_set_direction(context.get(), static_cast<GtkTextDirection>(gtkTextDirection(renderObject.style().direction())));
-
-    guint flags = 0;
-    if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
-        flags |= GTK_STATE_FLAG_INSENSITIVE;
-    else if (isFocused(renderObject))
-        flags |= GTK_STATE_FLAG_FOCUSED;
-    gtk_style_context_set_state(context.get(), static_cast<GtkStateFlags>(flags));
-
-    gtk_render_background(context.get(), paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
-    gtk_render_frame(context.get(), paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
-
-    if (isFocused(renderObject) && isEnabled(renderObject)) {
-        gboolean interiorFocus;
-        gint focusWidth, focusPad;
-        gtk_style_context_get_style(context.get(), "interior-focus", &interiorFocus, "focus-line-width", &focusWidth, "focus-padding", &focusPad, nullptr);
-        if (!interiorFocus) {
-            IntRect focusRect(rect);
-            focusRect.inflate(focusWidth + focusPad);
-            gtk_render_focus(context.get(), paintInfo.context().platformContext()->cr(), focusRect.x(), focusRect.y(), focusRect.width(), focusRect.height());
-        }
-    }
-
-    return false;
-}
-#endif
-
-#if GTK_CHECK_VERSION(3, 20, 0)
 static void adjustSearchFieldIconStyle(RenderThemePart themePart, RenderStyle& style)
 {
     ASSERT(themePart == EntryIconLeft || themePart == EntryIconRight);
@@ -1033,55 +544,6 @@ static void adjustSearchFieldIconStyle(RenderThemePart themePart, RenderStyle& s
     style.setWidth(Length(preferredSize.width(), Fixed));
     style.setHeight(Length(preferredSize.height(), Fixed));
 }
-#else
-// Defined in GTK+ (gtk/gtkiconfactory.c)
-static const gint gtkIconSizeMenu = 16;
-static const gint gtkIconSizeSmallToolbar = 18;
-static const gint gtkIconSizeButton = 20;
-static const gint gtkIconSizeLargeToolbar = 24;
-static const gint gtkIconSizeDnd = 32;
-static const gint gtkIconSizeDialog = 48;
-
-static GtkIconSize getIconSizeForPixelSize(gint pixelSize)
-{
-    if (pixelSize < gtkIconSizeSmallToolbar)
-        return GTK_ICON_SIZE_MENU;
-    if (pixelSize >= gtkIconSizeSmallToolbar && pixelSize < gtkIconSizeButton)
-        return GTK_ICON_SIZE_SMALL_TOOLBAR;
-    if (pixelSize >= gtkIconSizeButton && pixelSize < gtkIconSizeLargeToolbar)
-        return GTK_ICON_SIZE_BUTTON;
-    if (pixelSize >= gtkIconSizeLargeToolbar && pixelSize < gtkIconSizeDnd)
-        return GTK_ICON_SIZE_LARGE_TOOLBAR;
-    if (pixelSize >= gtkIconSizeDnd && pixelSize < gtkIconSizeDialog)
-        return GTK_ICON_SIZE_DND;
-
-    return GTK_ICON_SIZE_DIALOG;
-}
-
-static void adjustSearchFieldIconStyle(RenderThemePart themePart, RenderStyle& style)
-{
-    style.resetBorder();
-    style.resetPadding();
-
-    GRefPtr<GtkStyleContext> parentContext = createStyleContext(Entry);
-    GRefPtr<GtkStyleContext> context = createStyleContext(themePart, parentContext.get());
-
-    GtkBorder padding;
-    gtk_style_context_get_padding(context.get(), gtk_style_context_get_state(context.get()), &padding);
-
-    // Get the icon size based on the font size.
-    int fontSize = style.computedFontPixelSize();
-    if (fontSize < gtkIconSizeMenu) {
-        style.setWidth(Length(fontSize + (padding.left + padding.right), Fixed));
-        style.setHeight(Length(fontSize + (padding.top + padding.bottom), Fixed));
-        return;
-    }
-    gint width = 0, height = 0;
-    gtk_icon_size_lookup(getIconSizeForPixelSize(fontSize), &width, &height);
-    style.setWidth(Length(width + (padding.left + padding.right), Fixed));
-    style.setHeight(Length(height + (padding.top + padding.bottom), Fixed));
-}
-#endif
 
 bool RenderThemeGtk::paintTextArea(const RenderObject& o, const PaintInfo& i, const FloatRect& r)
 {
@@ -1108,7 +570,6 @@ void RenderThemeGtk::adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderSt
     adjustSearchFieldIconStyle(EntryIconRight, style);
 }
 
-#if GTK_CHECK_VERSION(3, 20, 0)
 static bool paintSearchFieldIcon(RenderThemeGtk* theme, RenderThemePart themePart, const RenderBox& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     ASSERT(themePart == EntryIconLeft || themePart == EntryIconRight);
@@ -1135,72 +596,6 @@ bool RenderThemeGtk::paintSearchFieldCancelButton(const RenderBox& renderObject,
 {
     return paintSearchFieldIcon(this, EntryIconRight, renderObject, paintInfo, rect);
 }
-#else
-static bool paintIcon(GtkStyleContext* context, GraphicsContext& graphicsContext, const IntRect& rect, const char* iconName)
-{
-    GRefPtr<GdkPixbuf> icon = loadThemedIcon(context, iconName, getIconSizeForPixelSize(rect.height()));
-    if (!icon)
-        return false;
-
-    if (gdk_pixbuf_get_width(icon.get()) > rect.width() || gdk_pixbuf_get_height(icon.get()) > rect.height())
-        icon = adoptGRef(gdk_pixbuf_scale_simple(icon.get(), rect.width(), rect.height(), GDK_INTERP_BILINEAR));
-
-    gtk_render_icon(context, graphicsContext.platformContext()->cr(), icon.get(), rect.x(), rect.y());
-    return true;
-}
-
-static bool paintEntryIcon(RenderThemePart themePart, const char* iconName, GraphicsContext& graphicsContext, const IntRect& rect, GtkTextDirection direction, GtkStateFlags state)
-{
-    GRefPtr<GtkStyleContext> parentContext = createStyleContext(Entry);
-    GRefPtr<GtkStyleContext> context = createStyleContext(themePart, parentContext.get());
-    gtk_style_context_set_direction(context.get(), direction);
-    gtk_style_context_set_state(context.get(), state);
-    return paintIcon(context.get(), graphicsContext, rect, iconName);
-}
-
-static IntRect centerRectVerticallyInParentInputElement(const RenderObject& renderObject, const IntRect& rect)
-{
-    if (!renderObject.node())
-        return IntRect();
-
-    // Get the renderer of <input> element.
-    Node* input = renderObject.node()->shadowHost();
-    if (!input)
-        input = renderObject.node();
-    if (!is<RenderBox>(*input->renderer()))
-        return IntRect();
-
-    // If possible center the y-coordinate of the rect vertically in the parent input element.
-    // We also add one pixel here to ensure that the y coordinate is rounded up for box heights
-    // that are even, which looks in relation to the box text.
-    IntRect inputContentBox = downcast<RenderBox>(*input->renderer()).absoluteContentBox();
-
-    // Make sure the scaled decoration stays square and will fit in its parent's box.
-    int iconSize = std::min(inputContentBox.width(), std::min(inputContentBox.height(), rect.height()));
-    IntRect scaledRect(rect.x(), inputContentBox.y() + (inputContentBox.height() - iconSize + 1) / 2, iconSize, iconSize);
-    return scaledRect;
-}
-
-bool RenderThemeGtk::paintSearchFieldResultsDecorationPart(const RenderBox& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    IntRect iconRect = centerRectVerticallyInParentInputElement(renderObject, rect);
-    if (iconRect.isEmpty())
-        return true;
-
-    return !paintEntryIcon(EntryIconLeft, "edit-find-symbolic", paintInfo.context(), iconRect, gtkTextDirection(renderObject.style().direction()),
-        gtkIconStateFlags(this, renderObject));
-}
-
-bool RenderThemeGtk::paintSearchFieldCancelButton(const RenderBox& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    IntRect iconRect = centerRectVerticallyInParentInputElement(renderObject, rect);
-    if (iconRect.isEmpty())
-        return true;
-
-    return !paintEntryIcon(EntryIconRight, "edit-clear-symbolic", paintInfo.context(), iconRect, gtkTextDirection(renderObject.style().direction()),
-        gtkIconStateFlags(this, renderObject));
-}
-#endif // GTK_CHECK_VERSION(3, 20, 0)
 
 void RenderThemeGtk::adjustSearchFieldStyle(StyleResolver&, RenderStyle& style, const Element*) const
 {
@@ -1230,7 +625,6 @@ void RenderThemeGtk::adjustSliderThumbStyle(StyleResolver& styleResolver, Render
     style.setBoxShadow(nullptr);
 }
 
-#if GTK_CHECK_VERSION(3, 20, 0)
 /*
  * GtkScale
  *
@@ -1358,98 +752,7 @@ bool RenderThemeGtk::paintSliderThumb(const RenderObject& renderObject, const Pa
     slider.render(paintInfo.context().platformContext()->cr(), sliderRect);
     return false;
 }
-#else
-bool RenderThemeGtk::paintSliderTrack(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    ControlPart part = renderObject.style().appearance();
-    ASSERT(part == SliderHorizontalPart || part == SliderVerticalPart);
 
-    GRefPtr<GtkStyleContext> parentContext = createStyleContext(Scale);
-    gtk_style_context_add_class(parentContext.get(), part == SliderHorizontalPart ? GTK_STYLE_CLASS_HORIZONTAL : GTK_STYLE_CLASS_VERTICAL);
-    GRefPtr<GtkStyleContext> context = createStyleContext(ScaleTrough, parentContext.get());
-    gtk_style_context_set_direction(context.get(), gtkTextDirection(renderObject.style().direction()));
-
-    if (!isEnabled(renderObject))
-        gtk_style_context_set_state(context.get(), GTK_STATE_FLAG_INSENSITIVE);
-
-    IntRect sliderRect = rect;
-    // GTK+ uses the slider thumb size and margins to calculate the trough size, but in WebKit we render the thumb and
-    // the slider track separately and the track rectangle we receive here can't be used to apply the GTK+ CSS sizes
-    // and margins. So we use a maximum fixed size for the trough to match at least Adwaita, but that should look
-    // good in other themes as well.
-    static const int sliderSize = 4;
-
-    if (part == SliderHorizontalPart) {
-        sliderRect.setHeight(std::min(rect.height(), sliderSize));
-        sliderRect.move(0, (rect.height() - sliderRect.height()) / 2);
-    } else {
-        sliderRect.setWidth(std::min(rect.width(), sliderSize));
-        sliderRect.move((rect.width() - sliderRect.width()) / 2, 0);
-    }
-
-    gtk_render_background(context.get(), paintInfo.context().platformContext()->cr(), sliderRect.x(), sliderRect.y(), sliderRect.width(), sliderRect.height());
-    gtk_render_frame(context.get(), paintInfo.context().platformContext()->cr(), sliderRect.x(), sliderRect.y(), sliderRect.width(), sliderRect.height());
-
-    if (isFocused(renderObject)) {
-        gint focusWidth, focusPad;
-        gtk_style_context_get_style(context.get(), "focus-line-width", &focusWidth, "focus-padding", &focusPad, nullptr);
-        IntRect focusRect(sliderRect);
-        focusRect.inflate(focusWidth + focusPad);
-        gtk_render_focus(context.get(), paintInfo.context().platformContext()->cr(), focusRect.x(), focusRect.y(), focusRect.width(), focusRect.height());
-    }
-
-    return false;
-}
-
-void RenderThemeGtk::adjustSliderThumbSize(RenderStyle& style, const Element*) const
-{
-    ControlPart part = style.appearance();
-    if (part != SliderThumbHorizontalPart && part != SliderThumbVerticalPart)
-        return;
-
-    GRefPtr<GtkStyleContext> context = createStyleContext(Scale);
-    gint sliderWidth, sliderLength;
-    gtk_style_context_get_style(context.get(), "slider-width", &sliderWidth, "slider-length", &sliderLength, nullptr);
-
-    if (part == SliderThumbHorizontalPart) {
-        style.setWidth(Length(sliderLength, Fixed));
-        style.setHeight(Length(sliderWidth, Fixed));
-        return;
-    }
-    ASSERT(part == SliderThumbVerticalPart);
-    style.setWidth(Length(sliderWidth, Fixed));
-    style.setHeight(Length(sliderLength, Fixed));
-}
-
-bool RenderThemeGtk::paintSliderThumb(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    ControlPart part = renderObject.style().appearance();
-    ASSERT(part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart);
-
-    // FIXME: The entire slider is too wide, stretching the thumb into an oval rather than a circle.
-    GRefPtr<GtkStyleContext> parentContext = createStyleContext(Scale);
-    gtk_style_context_add_class(parentContext.get(), part == SliderThumbHorizontalPart ? GTK_STYLE_CLASS_HORIZONTAL : GTK_STYLE_CLASS_VERTICAL);
-    GRefPtr<GtkStyleContext> troughContext = createStyleContext(ScaleTrough, parentContext.get());
-    GRefPtr<GtkStyleContext> context = createStyleContext(ScaleSlider, troughContext.get());
-    gtk_style_context_set_direction(context.get(), gtkTextDirection(renderObject.style().direction()));
-
-    guint flags = 0;
-    if (!isEnabled(renderObject))
-        flags |= GTK_STATE_FLAG_INSENSITIVE;
-    else if (isHovered(renderObject))
-        flags |= GTK_STATE_FLAG_PRELIGHT;
-    if (isPressed(renderObject))
-        flags |= GTK_STATE_FLAG_ACTIVE;
-    gtk_style_context_set_state(context.get(), static_cast<GtkStateFlags>(flags));
-
-    gtk_render_slider(context.get(), paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height(),
-        part == SliderThumbHorizontalPart ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL);
-
-    return false;
-}
-#endif
-
-#if GTK_CHECK_VERSION(3, 20, 0)
 IntRect RenderThemeGtk::progressBarRectForBounds(const RenderObject& renderObject, const IntRect& bounds) const
 {
     const auto& renderProgress = downcast<RenderProgress>(renderObject);
@@ -1472,49 +775,7 @@ bool RenderThemeGtk::paintProgressBar(const RenderObject& renderObject, const Pa
     progressBarWidget.progress().render(paintInfo.context().platformContext()->cr(), calculateProgressRect(renderObject, rect));
     return false;
 }
-#else
-IntRect RenderThemeGtk::progressBarRectForBounds(const RenderObject&, const IntRect& bounds) const
-{
-    return bounds;
-}
 
-bool RenderThemeGtk::paintProgressBar(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    if (!renderObject.isProgress())
-        return true;
-
-    GRefPtr<GtkStyleContext> parentContext = createStyleContext(ProgressBar);
-    GRefPtr<GtkStyleContext> troughContext = createStyleContext(ProgressBarTrough, parentContext.get());
-    GRefPtr<GtkStyleContext> context = createStyleContext(ProgressBarProgress, troughContext.get());
-
-    gtk_render_background(troughContext.get(), paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
-    gtk_render_frame(troughContext.get(), paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
-
-    gtk_style_context_set_state(context.get(), static_cast<GtkStateFlags>(0));
-
-    GtkBorder padding;
-    gtk_style_context_get_padding(context.get(), gtk_style_context_get_state(context.get()), &padding);
-    IntRect progressRect(
-        rect.x() + padding.left,
-        rect.y() + padding.top,
-        rect.width() - (padding.left + padding.right),
-        rect.height() - (padding.top + padding.bottom));
-    progressRect = RenderThemeGtk::calculateProgressRect(renderObject, progressRect);
-
-    if (!progressRect.isEmpty()) {
-#if GTK_CHECK_VERSION(3, 13, 7)
-        gtk_render_background(context.get(), paintInfo.context().platformContext()->cr(), progressRect.x(), progressRect.y(), progressRect.width(), progressRect.height());
-        gtk_render_frame(context.get(), paintInfo.context().platformContext()->cr(), progressRect.x(), progressRect.y(), progressRect.width(), progressRect.height());
-#else
-        gtk_render_activity(context.get(), paintInfo.context().platformContext()->cr(), progressRect.x(), progressRect.y(), progressRect.width(), progressRect.height());
-#endif
-    }
-
-    return false;
-}
-#endif // GTK_CHECK_VERSION(3, 20, 0)
-
-#if GTK_CHECK_VERSION(3, 20, 0)
 RenderTheme::InnerSpinButtonLayout RenderThemeGtk::innerSpinButtonLayout(const RenderObject& renderObject) const
 {
     return renderObject.style().direction() == TextDirection::RTL ? InnerSpinButtonLayout::HorizontalUpLeft : InnerSpinButtonLayout::HorizontalUpRight;
@@ -1551,114 +812,6 @@ bool RenderThemeGtk::paintInnerSpinButton(const RenderObject& renderObject, cons
 
     return false;
 }
-#else
-RenderTheme::InnerSpinButtonLayout RenderThemeGtk::innerSpinButtonLayout(const RenderObject&) const
-{
-    return InnerSpinButtonLayout::Vertical;
-}
-static gint spinButtonArrowSize(GtkStyleContext* context)
-{
-    PangoFontDescription* fontDescription;
-    gtk_style_context_get(context, gtk_style_context_get_state(context), "font", &fontDescription, nullptr);
-    gint fontSize = pango_font_description_get_size(fontDescription);
-    gint arrowSize = std::max(PANGO_PIXELS(fontSize), minSpinButtonArrowSize);
-    pango_font_description_free(fontDescription);
-
-    return arrowSize - arrowSize % 2; // Force even.
-}
-
-void RenderThemeGtk::adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle& style, const Element*) const
-{
-    GRefPtr<GtkStyleContext> context = createStyleContext(SpinButton);
-
-    GtkBorder padding;
-    gtk_style_context_get_padding(context.get(), gtk_style_context_get_state(context.get()), &padding);
-
-    int width = spinButtonArrowSize(context.get()) + padding.left + padding.right;
-    style.setWidth(Length(width, Fixed));
-    style.setMinWidth(Length(width, Fixed));
-}
-
-static void paintSpinArrowButton(RenderTheme* theme, GtkStyleContext* parentContext, const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect, GtkArrowType arrowType)
-{
-    ASSERT(arrowType == GTK_ARROW_UP || arrowType == GTK_ARROW_DOWN);
-
-    GRefPtr<GtkStyleContext> context = createStyleContext(arrowType == GTK_ARROW_UP ? SpinButtonUpButton : SpinButtonDownButton, parentContext);
-    GtkTextDirection direction = gtk_style_context_get_direction(context.get());
-    guint state = static_cast<guint>(gtk_style_context_get_state(context.get()));
-    if (!(state & GTK_STATE_FLAG_INSENSITIVE)) {
-        if (theme->isPressed(renderObject)) {
-            if ((arrowType == GTK_ARROW_UP && theme->isSpinUpButtonPartPressed(renderObject))
-                || (arrowType == GTK_ARROW_DOWN && !theme->isSpinUpButtonPartPressed(renderObject)))
-                state |= GTK_STATE_FLAG_ACTIVE;
-        } else if (theme->isHovered(renderObject)) {
-            if ((arrowType == GTK_ARROW_UP && theme->isSpinUpButtonPartHovered(renderObject))
-                || (arrowType == GTK_ARROW_DOWN && !theme->isSpinUpButtonPartHovered(renderObject)))
-                state |= GTK_STATE_FLAG_PRELIGHT;
-        }
-    }
-    gtk_style_context_set_state(context.get(), static_cast<GtkStateFlags>(state));
-
-    // Paint button.
-    IntRect buttonRect(rect);
-    guint junction = gtk_style_context_get_junction_sides(context.get());
-    if (arrowType == GTK_ARROW_UP)
-        junction |= GTK_JUNCTION_BOTTOM;
-    else {
-        junction |= GTK_JUNCTION_TOP;
-        buttonRect.move(0, rect.height() / 2);
-    }
-    buttonRect.setHeight(rect.height() / 2);
-    gtk_style_context_set_junction_sides(context.get(), static_cast<GtkJunctionSides>(junction));
-
-    gtk_render_background(context.get(), paintInfo.context().platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
-    gtk_render_frame(context.get(), paintInfo.context().platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
-
-    // Paint arrow centered inside button.
-    // This code is based on gtkspinbutton.c code.
-    IntRect arrowRect;
-    gdouble angle;
-    if (arrowType == GTK_ARROW_UP) {
-        angle = 0;
-        arrowRect.setY(rect.y());
-        arrowRect.setHeight(rect.height() / 2 - 2);
-    } else {
-        angle = G_PI;
-        arrowRect.setY(rect.y() + buttonRect.y());
-        arrowRect.setHeight(rect.height() - arrowRect.y() - 2);
-    }
-    arrowRect.setWidth(rect.width() - 3);
-    if (direction == GTK_TEXT_DIR_LTR)
-        arrowRect.setX(rect.x() + 1);
-    else
-        arrowRect.setX(rect.x() + 2);
-
-    gint width = arrowRect.width() / 2;
-    width -= width % 2 - 1; // Force odd.
-    gint height = (width + 1) / 2;
-
-    arrowRect.move((arrowRect.width() - width) / 2, (arrowRect.height() - height) / 2);
-    gtk_render_arrow(context.get(), paintInfo.context().platformContext()->cr(), angle, arrowRect.x(), arrowRect.y(), width);
-}
-
-bool RenderThemeGtk::paintInnerSpinButton(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    GRefPtr<GtkStyleContext> context = createStyleContext(SpinButton);
-    gtk_style_context_set_direction(context.get(), gtkTextDirection(renderObject.style().direction()));
-
-    guint flags = 0;
-    if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
-        flags |= GTK_STATE_FLAG_INSENSITIVE;
-    else if (isFocused(renderObject))
-        flags |= GTK_STATE_FLAG_FOCUSED;
-    gtk_style_context_set_state(context.get(), static_cast<GtkStateFlags>(flags));
-
-    paintSpinArrowButton(this, context.get(), renderObject, paintInfo, rect, GTK_ARROW_UP);
-    paintSpinArrowButton(this, context.get(), renderObject, paintInfo, rect, GTK_ARROW_DOWN);
-
-    return false;
-}
-#endif // GTK_CHECK_VERSION(3, 20, 0)
 
 Seconds RenderThemeGtk::caretBlinkInterval() const
 {
@@ -1677,7 +830,6 @@ Seconds RenderThemeGtk::caretBlinkInterval() const
 
 enum StyleColorType { StyleColorBackground, StyleColorForeground };
 
-#if GTK_CHECK_VERSION(3, 20, 0)
 static Color styleColor(RenderThemePart themePart, GtkStateFlags state, StyleColorType colorType)
 {
     RenderThemeGadget* gadget = nullptr;
@@ -1706,20 +858,6 @@ static Color styleColor(RenderThemePart themePart, GtkStateFlags state, StyleCol
     gadget->setState(state);
     return colorType == StyleColorBackground ? gadget->backgroundColor() : gadget->color();
 }
-#else
-static Color styleColor(RenderThemePart themePart, GtkStateFlags state, StyleColorType colorType)
-{
-    GRefPtr<GtkStyleContext> context = createStyleContext(themePart);
-    gtk_style_context_set_state(context.get(), state);
-
-    GdkRGBA gdkRGBAColor;
-    if (colorType == StyleColorBackground)
-        gtk_style_context_get_background_color(context.get(), state, &gdkRGBAColor);
-    else
-        gtk_style_context_get_color(context.get(), state, &gdkRGBAColor);
-    return gdkRGBAColor;
-}
-#endif // GTK_CHECK_VERSION(3, 20, 0)
 
 Color RenderThemeGtk::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
 {
@@ -1779,7 +917,6 @@ Color RenderThemeGtk::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::O
         return styleColor(Entry, GTK_STATE_FLAG_INSENSITIVE, StyleColorForeground);
     case CSSValueWebkitControlBackground:
         return styleColor(Entry, GTK_STATE_FLAG_ACTIVE, StyleColorBackground);
-#if GTK_CHECK_VERSION(3, 20, 0)
     case CSSValueWindow: {
         // Only get window color from the theme in dark mode.
         gboolean preferDarkTheme = FALSE;
@@ -1789,7 +926,6 @@ Color RenderThemeGtk::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::O
             return styleColor(Window, GTK_STATE_FLAG_ACTIVE, StyleColorBackground);
         break;
     }
-#endif
     default:
         break;
     }
@@ -1815,7 +951,6 @@ String RenderThemeGtk::extraFullScreenStyleSheet()
 }
 #endif
 
-#if GTK_CHECK_VERSION(3, 20, 0)
 bool RenderThemeGtk::paintMediaButton(const RenderObject& renderObject, GraphicsContext& graphicsContext, const IntRect& rect, const char* iconName)
 {
     auto& iconWidget = static_cast<RenderThemeIcon&>(RenderThemeWidget::getOrCreate(RenderThemeWidget::Type::Icon));
@@ -1825,17 +960,6 @@ bool RenderThemeGtk::paintMediaButton(const RenderObject& renderObject, Graphics
     icon.setIconName(iconName);
     return !icon.render(graphicsContext.platformContext()->cr(), rect);
 }
-#else
-bool RenderThemeGtk::paintMediaButton(const RenderObject& renderObject, GraphicsContext& graphicsContext, const IntRect& rect, const char* iconName)
-{
-    GRefPtr<GtkStyleContext> context = createStyleContext(MediaButton);
-    gtk_style_context_set_direction(context.get(), gtkTextDirection(renderObject.style().direction()));
-    gtk_style_context_set_state(context.get(), gtkIconStateFlags(this, renderObject));
-    static const unsigned mediaIconSize = 16;
-    IntRect iconRect(rect.x() + (rect.width() - mediaIconSize) / 2, rect.y() + (rect.height() - mediaIconSize) / 2, mediaIconSize, mediaIconSize);
-    return !paintIcon(context.get(), graphicsContext, iconRect, iconName);
-}
-#endif // GTK_CHECK_VERSION(3, 20, 0)
 
 bool RenderThemeGtk::hasOwnDisabledStateHandlingFor(ControlPart part) const
 {

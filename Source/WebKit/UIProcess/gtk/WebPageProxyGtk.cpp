@@ -151,12 +151,10 @@ void WebPageProxy::setInputMethodState(bool enabled)
     webkitWebViewBaseSetInputMethodState(WEBKIT_WEB_VIEW_BASE(viewWidget()), enabled);
 }
 
-#if HAVE(GTK_GESTURES)
 void WebPageProxy::getCenterForZoomGesture(const WebCore::IntPoint& centerInViewCoordinates, WebCore::IntPoint& center)
 {
     process().sendSync(Messages::WebPage::GetCenterForZoomGesture(centerInViewCoordinates), Messages::WebPage::GetCenterForZoomGesture::Reply(center), m_pageID);
 }
-#endif
 
 bool WebPageProxy::makeGLContextCurrent()
 {

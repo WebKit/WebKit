@@ -138,10 +138,8 @@ AcceleratedBackingStoreWayland::~AcceleratedBackingStoreWayland()
     WaylandCompositor::singleton().unregisterWebPage(m_webPage);
 #endif
 
-#if GTK_CHECK_VERSION(3, 16, 0)
     if (m_gdkGLContext && m_gdkGLContext.get() == gdk_gl_context_get_current())
         gdk_gl_context_clear_current();
-#endif
 }
 
 void AcceleratedBackingStoreWayland::tryEnsureGLContext()
@@ -151,7 +149,6 @@ void AcceleratedBackingStoreWayland::tryEnsureGLContext()
 
     m_glContextInitialized = true;
 
-#if GTK_CHECK_VERSION(3, 16, 0)
     GUniqueOutPtr<GError> error;
     m_gdkGLContext = adoptGRef(gdk_window_create_gl_context(gtk_widget_get_window(m_webPage.viewWidget()), &error.outPtr()));
     if (m_gdkGLContext) {
@@ -162,7 +159,6 @@ void AcceleratedBackingStoreWayland::tryEnsureGLContext()
     }
 
     g_warning("GDK is not able to create a GL context, falling back to glReadPixels (slow!): %s", error->message);
-#endif
 
     m_glContext = GLContext::createOffscreenContext();
 }
@@ -171,13 +167,10 @@ bool AcceleratedBackingStoreWayland::makeContextCurrent()
 {
     tryEnsureGLContext();
 
-#if GTK_CHECK_VERSION(3, 16, 0)
     if (m_gdkGLContext) {
         gdk_gl_context_make_current(m_gdkGLContext.get());
         return true;
     }
-#endif
-
     return m_glContext ? m_glContext->makeContextCurrent() : false;
 }
 
@@ -262,13 +255,11 @@ bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
 
     cairo_save(cr);
 
-#if GTK_CHECK_VERSION(3, 16, 0)
     if (m_gdkGLContext) {
         gdk_cairo_draw_from_gl(cr, gtk_widget_get_window(m_webPage.viewWidget()), texture, GL_TEXTURE, m_webPage.deviceScaleFactor(), 0, 0, textureSize.width(), textureSize.height());
         cairo_restore(cr);
         return true;
     }
-#endif
 
     ASSERT(m_glContext);
 

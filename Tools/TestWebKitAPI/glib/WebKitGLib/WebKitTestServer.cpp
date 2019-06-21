@@ -53,10 +53,8 @@ WebKitTestServer::WebKitTestServer(ServerOptions options)
 WebKitTestServer::~WebKitTestServer()
 {
     soup_uri_free(m_baseURI);
-#if SOUP_CHECK_VERSION(2, 50, 0)
     if (m_baseWebSocketURI)
         soup_uri_free(m_baseWebSocketURI);
-#endif
 }
 
 void WebKitTestServer::run(SoupServerCallback serverCallback)
@@ -72,7 +70,6 @@ void WebKitTestServer::run(SoupServerCallback serverCallback)
     }
 }
 
-#if SOUP_CHECK_VERSION(2, 50, 0)
 void WebKitTestServer::addWebSocketHandler(SoupServerWebsocketCallback callback, gpointer userData)
 {
     m_baseWebSocketURI = soup_uri_new_with_base(m_baseURI, "/websocket/");
@@ -108,7 +105,6 @@ CString WebKitTestServer::getWebSocketURIForPath(const char* path) const
     soup_uri_free(uri);
     return uriString.get();
 }
-#endif // SOUP_CHECK_VERSION(2, 50, 0)
 
 CString WebKitTestServer::getURIForPath(const char* path) const
 {
