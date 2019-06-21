@@ -319,7 +319,7 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
             m_baseline.descent = std::max(m_baseline.descent, halfLeading.descent);
         if (halfLeading.ascent > 0)
             m_baseline.ascent = std::max(m_baseline.ascent, halfLeading.ascent);
-        m_contentLogicalHeight = std::max(m_contentLogicalHeight, baselineAlignedContentHeight());
+        m_contentLogicalHeight = std::max(m_contentLogicalHeight, m_baseline.height());
         return;
     }
     // Apply initial strut if needed.
@@ -328,7 +328,7 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
             return;
         m_baseline.ascent = std::max(m_initialStrut->ascent, m_baseline.ascent);
         m_baseline.descent = std::max(m_initialStrut->descent, m_baseline.descent);
-        m_contentLogicalHeight = std::max(m_contentLogicalHeight, baselineAlignedContentHeight());
+        m_contentLogicalHeight = std::max(m_contentLogicalHeight, m_baseline.height());
         m_initialStrut = { };
         return;
     }
@@ -343,12 +343,12 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
             auto inlineBlockBaseline = formattingState.lineBoxes().last().baseline();
             m_baseline.descent = std::max(inlineBlockBaseline.descent, m_baseline.descent);
             m_baseline.ascent = std::max(inlineBlockBaseline.ascent, m_baseline.ascent);
-            m_contentLogicalHeight = std::max(std::max(m_contentLogicalHeight, runHeight), baselineAlignedContentHeight());
+            m_contentLogicalHeight = std::max(std::max(m_contentLogicalHeight, runHeight), m_baseline.height());
             break;
         }
         m_baseline.descent = std::max<LayoutUnit>(0, m_baseline.descent);
         m_baseline.ascent = std::max(runHeight, m_baseline.ascent);
-        m_contentLogicalHeight = std::max(m_contentLogicalHeight, baselineAlignedContentHeight());
+        m_contentLogicalHeight = std::max(m_contentLogicalHeight, m_baseline.height());
         break;
     case VerticalAlign::Top:
         // Top align content never changes the baseline offset, it only pushes the bottom of the line further down.

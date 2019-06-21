@@ -1,3 +1,21 @@
+2019-06-21  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] LineBox::Baseline should have a height getter.
+        https://bugs.webkit.org/show_bug.cgi?id=199092
+        <rdar://problem/51966958>
+
+        Reviewed by Antti Koivisto.
+
+        The baseline height does not need to be a getter on the Line (no one calls it).
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::adjustBaselineAndLineHeight):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::contentLogicalWidth const):
+        (WebCore::Layout::Line::baselineAlignedContentHeight const): Deleted.
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::Baseline::height const):
+
 2019-06-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Bump minimum versions of GLib, GTK, libsoup, ATK, GStreamer, and Cairo

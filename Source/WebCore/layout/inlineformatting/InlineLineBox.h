@@ -35,6 +35,8 @@ namespace Layout {
 class LineBox {
 public:
     struct Baseline {
+        LayoutUnit height() const { return ascent + descent; }
+
         LayoutUnit ascent;
         LayoutUnit descent;
     };

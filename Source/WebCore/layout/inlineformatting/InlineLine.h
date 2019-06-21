@@ -118,7 +118,6 @@ private:
     LayoutUnit logicalHeight() const { return m_contentLogicalHeight; }
 
     LayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
-    LayoutUnit baselineAlignedContentHeight() const { return m_baseline.ascent + m_baseline.descent; }
     LayoutUnit baselineOffset() const { return m_baseline.ascent + m_baselineTop; }
 
     void appendNonBreakableSpace(const InlineItem&, const Display::Rect& logicalRect);
