@@ -226,4 +226,52 @@ private:
     WriteBarrier<FunctionRareData> m_rareData;
 };
 
+class JSStrictFunction final : public JSFunction {
+public:
+    using Base = JSFunction;
+
+    DECLARE_EXPORT_INFO;
+
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        ASSERT(globalObject);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
+    }
+};
+static_assert(sizeof(JSStrictFunction) == sizeof(JSFunction), "Allocated in JSFunction IsoSubspace");
+
+class JSSloppyFunction final : public JSFunction {
+public:
+    using Base = JSFunction;
+
+    DECLARE_EXPORT_INFO;
+
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        ASSERT(globalObject);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
+    }
+};
+static_assert(sizeof(JSSloppyFunction) == sizeof(JSFunction), "Allocated in JSFunction IsoSubspace");
+
+class JSArrowFunction final : public JSFunction {
+public:
+    using Base = JSFunction;
+
+    DECLARE_EXPORT_INFO;
+
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        ASSERT(globalObject);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
+    }
+};
+static_assert(sizeof(JSArrowFunction) == sizeof(JSFunction), "Allocated in JSFunction IsoSubspace");
+
 } // namespace JSC

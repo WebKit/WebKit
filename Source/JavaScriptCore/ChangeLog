@@ -1,5 +1,52 @@
 2019-06-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Strict, Sloppy and Arrow functions should have different classInfo
+        https://bugs.webkit.org/show_bug.cgi?id=197631
+
+        Reviewed by Saam Barati.
+
+        If a constructor inherits a builtin class, it creates a Structure which is subclassing the builtin class.
+        This is done by using InternalFunction::createSubclassStructure. But to accelerate the common cases, we
+        cache the created structure in InternalFunctionAllocationProfile. Whether the cache is valid is checked
+        by comparing classInfo of the cached structure and the given base structure. This implicitly assume that
+        each builtin class's InternalFunction creates an instance based on one structure.
+
+        However, Function constructor is an exception: Function constructor creates an instance which has different
+        structures based on a parameter. If a strict code is given (e.g. "'use strict'"), it creates a function
+        instance with strict function structure.
+
+        As a result, InternalFunctionAllocationProfile incorrectly caches the structure. Consider the following code.
+
+            class A extends Function { };
+            let a = new A("'use strict'");
+            let b = new A("");
+
+        While `a` and `b` should have different structures, `A` caches the structure for `a`, and reuse it even the given
+        code is not a strict code. This is problematic: We are separating structures of strict, sloppy, and arrow functions
+        because they have different properties. However, in the above case, a and b have the same structure while they have
+        different properties. So it causes incorrect structure-based caching in JSC. One of the example is HasOwnPropertyCache.
+
+        In this patch, we introduce JSStrictFunction, JSSloppyFunction, and JSArrowFunction classes and classInfos. This design
+        works well and already partially accepted for JSGeneratorFunction, JSAsyncGeneratorFunction, and JSAsyncFunction. Each
+        structure now has a different classInfo so that InternalFunctionAllocationProfile correctly caches and invalidates the
+        cached one based on the classInfo. Since we already have different structures for these instances, and DFG and FTL
+        optimizations are based on JSFunctionType (not classInfo), introducing these three classInfo do not break the optimization.
+
+        Note that structures on ArrayConstructor does not cause the same problem. It only uses Undecided indexing typed array
+        structure in InternalFunctionAllocationProfile, and once haveABadTime happens, it clears InternalFunctionAllocationProfile.
+
+        * runtime/JSAsyncFunction.h: This subspaceFor is not necessary since it is defined in JSFunction. And we already ensure that
+        sizeof(JSAsyncFunction) == sizeof(JSFunction).
+        * runtime/JSAsyncGeneratorFunction.cpp:
+        * runtime/JSAsyncGeneratorFunction.h: Ditto.
+        * runtime/JSFunction.cpp:
+        * runtime/JSFunction.h:
+        * runtime/JSGeneratorFunction.h: Ditto.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+
+2019-06-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] ClassExpr should not store result in the middle of evaluation
         https://bugs.webkit.org/show_bug.cgi?id=199106
 

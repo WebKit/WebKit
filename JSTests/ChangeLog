@@ -1,5 +1,16 @@
 2019-06-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Strict, Sloppy and Arrow functions should have different classInfo
+        https://bugs.webkit.org/show_bug.cgi?id=197631
+
+        Reviewed by Saam Barati.
+
+        * stress/has-own-property-arguments.js: Added.
+        (shouldBe):
+        (A):
+
+2019-06-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] ClassExpr should not store result in the middle of evaluation
         https://bugs.webkit.org/show_bug.cgi?id=199106
 

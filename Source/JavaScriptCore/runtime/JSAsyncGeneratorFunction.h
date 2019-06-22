@@ -38,12 +38,6 @@ public:
 
     const static unsigned StructureFlags = Base::StructureFlags;
 
-    template<typename CellType, SubspaceAccess>
-    static IsoSubspace* subspaceFor(VM& vm)
-    {
-        return &vm.functionSpace;
-    }
-
     DECLARE_EXPORT_INFO;
 
     static JSAsyncGeneratorFunction* create(VM&, FunctionExecutable*, JSScope*);
