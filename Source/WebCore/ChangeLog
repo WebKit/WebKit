@@ -1,3 +1,18 @@
+2019-06-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Nullptr crash in DeleteSelectionCommand::handleGeneralDelete
+        https://bugs.webkit.org/show_bug.cgi?id=199126
+
+        Reviewed by Wenson Hsieh.
+
+        Added null checks to handleGeneralDelete as well as mergeParagraphs which runs after handleGeneralDelete to be defensive.
+
+        Unfortunately no new tests since there is no reproducible test case.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+
 2019-06-21  Youenn Fablet  <youenn@apple.com>
 
         ResourceLoadNotifier should check whether its frame document loader is null
