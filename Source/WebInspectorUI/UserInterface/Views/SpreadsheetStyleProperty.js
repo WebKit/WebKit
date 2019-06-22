@@ -402,7 +402,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         }
 
         if (textField === this._valueTextField)
-            this._renderValue(this._valueElement.textContent);
+            this._renderValue(this._property.rawValue);
 
         if (typeof this._delegate.spreadsheetStylePropertyFocusMoved === "function")
             this._delegate.spreadsheetStylePropertyFocusMoved(this, {direction: null});

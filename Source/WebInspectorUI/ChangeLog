@@ -1,3 +1,16 @@
+2019-06-22  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: unbalanced quotes and parenthesis aren't displayed as property closed after editing values
+        https://bugs.webkit.org/show_bug.cgi?id=199090
+        <rdar://problem/51965431>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidBlur):
+        Unbalanced quotes and parenthesis are fixed inside of CSSProperty's rawValue setter.
+        Render the value from the model, not the view.
+
 2019-06-21  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: remove unused DataGrid style .force-focus
