@@ -1,3 +1,13 @@
+2019-06-21  Youenn Fablet  <youenn@apple.com>
+
+        ResourceLoadNotifier should check whether its frame document loader is null
+        https://bugs.webkit.org/show_bug.cgi?id=199118
+
+        Reviewed by Geoffrey Garen.
+
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+
 2019-06-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         WebPageProxy::loadData should accept ShouldOpenExternalURLsPolicy

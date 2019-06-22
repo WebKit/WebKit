@@ -122,14 +122,17 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
 #endif
 
     String oldRequestURL = request.url().string();
-    m_frame.loader().documentLoader()->didTellClientAboutLoad(request.url());
+
+    ASSERT(m_frame.loader().documentLoader());
+    if (m_frame.loader().documentLoader())
+        m_frame.loader().documentLoader()->didTellClientAboutLoad(request.url());
 
     // Notifying the FrameLoaderClient may cause the frame to be destroyed.
     Ref<Frame> protect(m_frame);
     m_frame.loader().client().dispatchWillSendRequest(loader, identifier, request, redirectResponse);
 
     // If the URL changed, then we want to put that new URL in the "did tell client" set too.
-    if (!request.isNull() && oldRequestURL != request.url().string())
+    if (!request.isNull() && oldRequestURL != request.url().string() && m_frame.loader().documentLoader())
         m_frame.loader().documentLoader()->didTellClientAboutLoad(request.url());
 
     InspectorInstrumentation::willSendRequest(&m_frame, identifier, loader, request, redirectResponse);
