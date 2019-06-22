@@ -421,14 +421,16 @@ void PointerCaptureController::processPendingPointerCapture(const PointerEvent& 
     // 1. If the pointer capture target override for this pointer is set and is not equal to the pending pointer capture target override,
     // then fire a pointer event named lostpointercapture at the pointer capture target override node.
     if (capturingData.targetOverride && capturingData.targetOverride != capturingData.pendingTargetOverride) {
-        m_page.mainFrame().eventHandler().setCapturingMouseEventsElement(nullptr);
+        if (event.pointerType() == PointerEvent::mousePointerType())
+            m_page.mainFrame().eventHandler().setCapturingMouseEventsElement(nullptr);
         capturingData.targetOverride->dispatchEvent(PointerEvent::createForPointerCapture(eventNames().lostpointercaptureEvent, event));
     }
 
     // 2. If the pending pointer capture target override for this pointer is set and is not equal to the pointer capture target override,
     // then fire a pointer event named gotpointercapture at the pending pointer capture target override.
     if (capturingData.pendingTargetOverride && capturingData.targetOverride != capturingData.pendingTargetOverride) {
-        m_page.mainFrame().eventHandler().setCapturingMouseEventsElement(capturingData.pendingTargetOverride.get());
+        if (event.pointerType() == PointerEvent::mousePointerType())
+            m_page.mainFrame().eventHandler().setCapturingMouseEventsElement(capturingData.pendingTargetOverride.get());
         capturingData.pendingTargetOverride->dispatchEvent(PointerEvent::createForPointerCapture(eventNames().gotpointercaptureEvent, event));
     }
 

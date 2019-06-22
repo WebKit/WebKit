@@ -1,3 +1,16 @@
+2019-06-22  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover
+        https://bugs.webkit.org/show_bug.cgi?id=198999
+        <rdar://problem/52005663>
+
+        Reviewed by Dean Jackson.
+
+        We should only set the mouse events capturing element in EventHandler if we're dealing with mouse-originated Pointer Events.
+
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::processPendingPointerCapture):
+
 2019-06-22  Andres Gonzalez  <andresg_22@apple.com>
 
         Accessibility objects contained in links should honor the aria-haspopup attribute in the ancestor link.
