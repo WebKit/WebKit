@@ -1,3 +1,28 @@
+2019-06-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] ClassExpr should not store result in the middle of evaluation
+        https://bugs.webkit.org/show_bug.cgi?id=199106
+
+        Reviewed by Tadeu Zagallo.
+
+        Let's consider the case,
+
+            let a = class A {
+                static get[a=0x12345678]() {
+                }
+            };
+
+        When evaluating `class A` expression, we should not use the local register for `let a`
+        until we finally store it to that register. Otherwise, `a=0x12345678` will override it.
+        Out BytecodeGenerator does that this by using tempDestination and finalDestination, but
+        we did not do that in ClassExprNode.
+
+        This patch leverages tempDestination and finalDestination to store `class A` result finally,
+        while we attempt to reduce mov.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ClassExprNode::emitBytecode):
+
 2019-06-21  Sihui Liu  <sihui_liu@apple.com>
 
         openDatabase should return an empty object when WebSQL is disabled
