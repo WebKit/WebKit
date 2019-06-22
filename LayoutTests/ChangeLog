@@ -1,3 +1,18 @@
+2019-06-22  Andres Gonzalez  <andresg_22@apple.com>
+
+        Accessibility objects contained in links should honor the aria-haspopup attribute in the ancestor link.
+        https://bugs.webkit.org/show_bug.cgi?id=199107
+        <rdar://problem/43663611>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/element-haspopup-expected.txt:
+        * accessibility/element-haspopup.html: Added cases for a <p> element contained within <a>.
+        * accessibility/ios-simulator/button-with-aria-haspopup-role-expected.txt: Added.
+        * accessibility/ios-simulator/button-with-aria-haspopup-role.html: Added. Existed for MacOS and now also for iOS.
+        * accessibility/ios-simulator/element-haspopup-expected.txt: Copied from LayoutTests/accessibility/element-haspopup-expected.txt.
+        * accessibility/ios-simulator/element-haspopup.html: Added.
+
 2019-06-21  Sihui Liu  <sihui_liu@apple.com>
 
         openDatabase should return an empty object when WebSQL is disabled

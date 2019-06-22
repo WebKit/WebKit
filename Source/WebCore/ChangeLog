@@ -1,3 +1,20 @@
+2019-06-22  Andres Gonzalez  <andresg_22@apple.com>
+
+        Accessibility objects contained in links should honor the aria-haspopup attribute in the ancestor link.
+        https://bugs.webkit.org/show_bug.cgi?id=199107
+        <rdar://problem/43663611>
+
+        Reviewed by Chris Fleizach.
+
+        Tests: accessibility/ios-simulator/button-with-aria-haspopup-role.html
+               accessibility/ios-simulator/element-haspopup.html
+
+        If an accessibility object is contained within an <a>, we should check
+        the aria-haspopup attribute on the ancestor <a> element. This was done
+        before in the iOS WebKit accessibility bunddle override.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::hasPopup const):
+
 2019-06-22  Robin Morisset  <rmorisset@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
 
         All prototypes should call didBecomePrototype()

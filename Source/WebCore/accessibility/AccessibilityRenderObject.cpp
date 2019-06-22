@@ -1029,10 +1029,14 @@ bool AccessibilityRenderObject::hasTextAlternative() const
     // override the "label" element association.
     return ariaAccessibilityDescription().length();
 }
-    
+
 bool AccessibilityRenderObject::hasPopup() const
 {
-    return !equalLettersIgnoringASCIICase(hasPopupValue(), "false");
+    // Return true if this has the aria-haspopup attribute, or if it has an ancestor of type link with the aria-haspopup attribute.
+    return AccessibilityObject::matchedParent(*this, true, [this] (const AccessibilityObject& object) {
+        return (this == &object) ? !equalLettersIgnoringASCIICase(object.hasPopupValue(), "false")
+            : object.isLink() && !equalLettersIgnoringASCIICase(object.hasPopupValue(), "false");
+    });
 }
 
 bool AccessibilityRenderObject::supportsARIADropping() const 
