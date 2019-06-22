@@ -1,3 +1,17 @@
+2019-06-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] The anonymous InlineBox wrapper for the text node should take the parent style.
+        https://bugs.webkit.org/show_bug.cgi?id=199127
+        <rdar://problem/52017744>
+
+        Reviewed by Antti Koivisto.
+
+        <span style="vertical-align: bottom">bottom aligned text</span>
+        The InlineBox wrapper for the "bottom aligned text" content should take the parent span's style.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createSubTree):
+
 2019-06-22  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover
