@@ -30,7 +30,6 @@ var functionNames = [
     'name',
     'navigator',
     'open',
-    'openDatabase',
     'opener',
     'outerHeight',
     'outerWidth',

@@ -22,6 +22,7 @@
 #include "JSDOMWindowCustom.h"
 
 #include "DOMWindowIndexedDatabase.h"
+#include "DOMWindowWebDatabase.h"
 #include "Frame.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
@@ -31,6 +32,8 @@
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertStrings.h"
+#include "JSDatabase.h"
+#include "JSDatabaseCallback.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
 #include "JSHTMLAudioElement.h"
@@ -48,8 +51,10 @@
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/HeapSnapshotBuilder.h>
 #include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/JSMicrotask.h>
 #include <JavaScriptCore/Lookup.h>
+#include <JavaScriptCore/Structure.h>
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 #include "JSWebKitNamespace.h"
@@ -60,6 +65,7 @@ namespace WebCore {
 using namespace JSC;
 
 EncodedJSValue JSC_HOST_CALL jsDOMWindowInstanceFunctionShowModalDialog(ExecState*);
+EncodedJSValue JSC_HOST_CALL jsDOMWindowInstanceFunctionOpenDatabase(ExecState*);
 
 void JSDOMWindow::visitAdditionalChildren(SlotVisitor& visitor)
 {
@@ -562,6 +568,55 @@ JSValue JSDOMWindow::window(JSC::ExecState&) const
 JSValue JSDOMWindow::frames(JSC::ExecState&) const
 {
     return globalThis();
+}
+
+static inline JSC::EncodedJSValue jsDOMWindowInstanceFunctionOpenDatabaseBody(JSC::ExecState* state, typename IDLOperation<JSDOMWindow>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+{
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped(), ThrowSecurityError))
+        return JSValue::encode(jsUndefined());
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 4))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto name = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto version = convert<IDLDOMString>(*state, state->uncheckedArgument(1));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto displayName = convert<IDLDOMString>(*state, state->uncheckedArgument(2));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto estimatedSize = convert<IDLUnsignedLong>(*state, state->uncheckedArgument(3));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+
+    if (!RuntimeEnabledFeatures::sharedFeatures().webSQLEnabled()) {
+        if (name != "null" || version != "null" || displayName != "null" || estimatedSize)
+            propagateException(*state, throwScope, Exception(UnknownError, "Web SQL is deprecated"_s));
+        return JSValue::encode(constructEmptyObject(state, castedThis->globalObject()->objectPrototype()));
+    }
+
+    auto creationCallback = convert<IDLNullable<IDLCallbackFunction<JSDatabaseCallback>>>(*state, state->argument(4), *castedThis->globalObject(), [](JSC::ExecState& state, JSC::ThrowScope& scope) {
+        throwArgumentMustBeFunctionError(state, scope, 4, "creationCallback", "Window", "openDatabase");
+    });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    return JSValue::encode(toJS<IDLNullable<IDLInterface<Database>>>(*state, *castedThis->globalObject(), throwScope, WebCore::DOMWindowWebDatabase::openDatabase(impl, WTFMove(name), WTFMove(version), WTFMove(displayName), WTFMove(estimatedSize), WTFMove(creationCallback))));
+}
+
+template<> inline JSDOMWindow* IDLOperation<JSDOMWindow>::cast(ExecState& state)
+{
+    return toJSDOMWindow(state.vm(), state.thisValue().toThis(&state, NotStrictMode));
+}
+
+EncodedJSValue JSC_HOST_CALL jsDOMWindowInstanceFunctionOpenDatabase(ExecState* state)
+{
+    return IDLOperation<JSDOMWindow>::call<jsDOMWindowInstanceFunctionOpenDatabaseBody>(*state, "openDatabase");
+}
+
+JSValue JSDOMWindow::openDatabase(JSC::ExecState& state) const
+{
+    VM& vm = state.vm();
+    StringImpl* name = PropertyName(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().openDatabasePublicName()).publicName();
+    if (RuntimeEnabledFeatures::sharedFeatures().webSQLEnabled())
+        return JSFunction::create(vm, state.lexicalGlobalObject(), 4, name, jsDOMWindowInstanceFunctionOpenDatabase, NoIntrinsic);
+
+    return JSFunction::createFunctionThatMasqueradesAsUndefined(vm, state.lexicalGlobalObject(), 4, name, jsDOMWindowInstanceFunctionOpenDatabase, NoIntrinsic);
 }
 
 } // namespace WebCore

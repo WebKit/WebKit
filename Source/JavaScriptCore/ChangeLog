@@ -1,3 +1,14 @@
+2019-06-21  Sihui Liu  <sihui_liu@apple.com>
+
+        openDatabase should return an empty object when WebSQL is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=198805
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::createFunctionThatMasqueradesAsUndefined):
+        * runtime/JSFunction.h:
+
 2019-06-21  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove extra check in RegExp @matchSlow

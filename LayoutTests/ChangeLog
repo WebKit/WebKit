@@ -1,3 +1,15 @@
+2019-06-21  Sihui Liu  <sihui_liu@apple.com>
+
+        openDatabase should return an empty object when WebSQL is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=198805
+
+        Reviewed by Geoffrey Garen.
+
+        Modify test expectation as openDatabase is not a function but an attribute of window now.
+
+        * js/dom/global-function-resolve-expected.txt:
+        * js/dom/script-tests/global-function-resolve.js:
+
 2019-06-21  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Code that accesses an undefined variable crashes

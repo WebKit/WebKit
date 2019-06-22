@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<script>
+
+var allPassed = false;
+if (!window.openDatabase) {
+    if (window.openDatabase(null, null, null, null)) {
+        var hasError = false;
+        try {
+            openDatabase('WebSQLDatabase', '1.0', 'Test DB', 524288);
+        } catch(e) {
+            hasError = true;
+            window.webkit.messageHandlers.testHandler.postMessage(e.message);
+        } finally {
+            if (!hasError)
+                window.webkit.messageHandlers.testHandler.postMessage("openDatabase can be called with non-null parameters");
+        }
+    } else {
+        window.webkit.messageHandlers.testHandler.postMessage("openDatabase cannot be called");
+    }
+} else {
+    window.webkit.messageHandlers.testHandler.postMessage("window has openDatabase");
+}
+
+</script>

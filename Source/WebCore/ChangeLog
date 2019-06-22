@@ -1,3 +1,23 @@
+2019-06-21  Sihui Liu  <sihui_liu@apple.com>
+
+        openDatabase should return an empty object when WebSQL is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=198805
+
+        Reviewed by Geoffrey Garen.
+
+        Some websites rely on calling openDatabase with null parameters to check for private browsing. To not break 
+        those sites, we now expose openDatabase interface even if Web SQL is disabled. When Web SQL is disabled, 
+        window.openDatabase returns false, but it is callable and returns empty object.
+
+        Test: WebSQL.OpenDatabaseAlwaysExists
+
+        * Modules/webdatabase/DOMWindowWebDatabase.idl:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowInstanceFunctionOpenDatabaseBody):
+        (WebCore::IDLOperation<JSDOMWindow>::cast):
+        (WebCore::jsDOMWindowInstanceFunctionOpenDatabase):
+        (WebCore::JSDOMWindow::openDatabase const):
+
 2019-06-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Nullptr crash in DeleteSelectionCommand::handleGeneralDelete
