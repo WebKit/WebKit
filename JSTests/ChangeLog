@@ -1,3 +1,12 @@
+2019-06-22  Robin Morisset  <rmorisset@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
+
+        All prototypes should call didBecomePrototype()
+        https://bugs.webkit.org/show_bug.cgi?id=196315
+
+        Reviewed by Saam Barati.
+
+        * stress/function-prototype-indexed-accessor.js: Added.
+
 2019-06-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Strict, Sloppy and Arrow functions should have different classInfo

@@ -73,6 +73,7 @@ private:
     JSTestSerializationInheritFinalPrototype(JSC::VM& vm, JSC::JSGlobalObject*, JSC::Structure* structure)
         : JSC::JSNonFinalObject(vm, structure)
     {
+        didBecomePrototype();
     }
 
     void finishCreation(JSC::VM&);
@@ -82,7 +83,9 @@ using JSTestSerializationInheritFinalConstructor = JSDOMConstructorNotConstructa
 
 template<> JSValue JSTestSerializationInheritFinalConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
-    return JSTestSerializationInherit::getConstructor(vm, &globalObject);
+    auto result = JSTestSerializationInherit::getConstructor(vm, &globalObject);
+    result.getObject()->didBecomePrototype();
+    return result;
 }
 
 template<> void JSTestSerializationInheritFinalConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)

@@ -1,3 +1,84 @@
+2019-06-22  Robin Morisset  <rmorisset@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
+
+        All prototypes should call didBecomePrototype()
+        https://bugs.webkit.org/show_bug.cgi?id=196315
+
+        Reviewed by Saam Barati.
+
+        Otherwise we won't remember to run haveABadTime() when someone adds to them an indexed accessor.
+
+        I added a check used in both Structure::finishCreation() and Structure::changePrototypeTransition to make sure we don't
+        create structures with invalid prototypes.
+        It found a lot of objects that are used as prototypes in JSGlobalObject and yet were missing didBecomePrototype() in their finishCreation().
+        Somewhat surprisingly, some of them have names like FunctionConstructor and not only FooPrototype.
+
+        * runtime/BigIntPrototype.cpp:
+        (JSC::BigIntPrototype::finishCreation):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::finishCreation):
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::finishCreation):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::finishCreation):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::finishCreation):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::finishCreation):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::finishCreation):
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::IntlCollatorPrototype::finishCreation):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototype::finishCreation):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototype::finishCreation):
+        * runtime/IntlPluralRulesPrototype.cpp:
+        (JSC::IntlPluralRulesPrototype::finishCreation):
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::JSArrayBufferPrototype::finishCreation):
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::JSDataViewPrototype::finishCreation):
+        * runtime/JSGenericTypedArrayViewPrototypeInlines.h:
+        (JSC::JSGenericTypedArrayViewPrototype<ViewClass>::finishCreation):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::createConsoleProperty):
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototype::finishCreation):
+        * runtime/JSTypedArrayViewConstructor.cpp:
+        (JSC::JSTypedArrayViewConstructor::finishCreation):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::finishCreation):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::finishCreation):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        * runtime/Structure.cpp:
+        (JSC::Structure::isValidPrototype):
+        (JSC::Structure::changePrototypeTransition):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::setPrototypeWithoutTransition):
+        * runtime/SymbolPrototype.cpp:
+        (JSC::SymbolPrototype::finishCreation):
+        * wasm/js/WebAssemblyCompileErrorPrototype.cpp:
+        (JSC::WebAssemblyCompileErrorPrototype::finishCreation):
+        * wasm/js/WebAssemblyInstancePrototype.cpp:
+        (JSC::WebAssemblyInstancePrototype::finishCreation):
+        * wasm/js/WebAssemblyLinkErrorPrototype.cpp:
+        (JSC::WebAssemblyLinkErrorPrototype::finishCreation):
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        (JSC::WebAssemblyMemoryPrototype::finishCreation):
+        * wasm/js/WebAssemblyModulePrototype.cpp:
+        (JSC::WebAssemblyModulePrototype::finishCreation):
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::WebAssemblyPrototype::finishCreation):
+        * wasm/js/WebAssemblyRuntimeErrorPrototype.cpp:
+        (JSC::WebAssemblyRuntimeErrorPrototype::finishCreation):
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::WebAssemblyTablePrototype::finishCreation):
+
 2019-06-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Strict, Sloppy and Arrow functions should have different classInfo

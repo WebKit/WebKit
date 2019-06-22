@@ -144,6 +144,7 @@ private:
     JSTestEventConstructorPrototype(JSC::VM& vm, JSC::JSGlobalObject*, JSC::Structure* structure)
         : JSC::JSNonFinalObject(vm, structure)
     {
+        didBecomePrototype();
     }
 
     void finishCreation(JSC::VM&);
@@ -170,7 +171,9 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::const
 
 template<> JSValue JSTestEventConstructorConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
-    return JSEvent::getConstructor(vm, &globalObject);
+    auto result = JSEvent::getConstructor(vm, &globalObject);
+    result.getObject()->didBecomePrototype();
+    return result;
 }
 
 template<> void JSTestEventConstructorConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)

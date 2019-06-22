@@ -88,6 +88,7 @@ private:
     JSTestNodePrototype(JSC::VM& vm, JSC::JSGlobalObject*, JSC::Structure* structure)
         : JSC::JSNonFinalObject(vm, structure)
     {
+        didBecomePrototype();
     }
 
     void finishCreation(JSC::VM&);
@@ -108,7 +109,9 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::construct(ExecSta
 
 template<> JSValue JSTestNodeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
-    return JSNode::getConstructor(vm, &globalObject);
+    auto result = JSNode::getConstructor(vm, &globalObject);
+    result.getObject()->didBecomePrototype();
+    return result;
 }
 
 template<> void JSTestNodeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)

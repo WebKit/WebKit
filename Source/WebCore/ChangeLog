@@ -1,3 +1,156 @@
+2019-06-22  Robin Morisset  <rmorisset@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
+
+        All prototypes should call didBecomePrototype()
+        https://bugs.webkit.org/show_bug.cgi?id=196315
+
+        Reviewed by Saam Barati.
+
+        * bindings/js/JSDOMIterator.h:
+        (WebCore::IteratorTraits>::finishCreation):
+        * bindings/js/JSDOMWindowProperties.h:
+        (WebCore::JSDOMWindowProperties::create): Deleted.
+        (WebCore::JSDOMWindowProperties::createStructure): Deleted.
+        (WebCore::JSDOMWindowProperties::JSDOMWindowProperties): Deleted.
+        * bindings/js/JSWindowProxy.cpp:
+        (WebCore::JSWindowProxy::setWindow):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GeneratePrototypeDeclaration):
+        (GenerateConstructorHelperMethods):
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        (WebCore::JSInterfaceNamePrototype::JSInterfaceNamePrototype):
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        (WebCore::JSMapLikePrototype::JSMapLikePrototype):
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        (WebCore::JSReadOnlyMapLikePrototype::JSReadOnlyMapLikePrototype):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::JSTestActiveDOMObjectPrototype::JSTestActiveDOMObjectPrototype):
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        (WebCore::JSTestCEReactionsPrototype::JSTestCEReactionsPrototype):
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        (WebCore::JSTestCEReactionsStringifierPrototype::JSTestCEReactionsStringifierPrototype):
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        (WebCore::JSTestCallTracerPrototype::JSTestCallTracerPrototype):
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::JSTestClassWithJSBuiltinConstructorPrototype::JSTestClassWithJSBuiltinConstructorPrototype):
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        (WebCore::JSTestDOMJITPrototype::JSTestDOMJITPrototype):
+        (WebCore::JSTestDOMJITConstructor::prototypeForStructure):
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        (WebCore::JSTestEnabledBySettingPrototype::JSTestEnabledBySettingPrototype):
+        * bindings/scripts/test/JS/JSTestEnabledForContext.cpp:
+        (WebCore::JSTestEnabledForContextPrototype::JSTestEnabledForContextPrototype):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorPrototype::JSTestEventConstructorPrototype):
+        (WebCore::JSTestEventConstructorConstructor::prototypeForStructure):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTargetPrototype::JSTestEventTargetPrototype):
+        (WebCore::JSTestEventTargetConstructor::prototypeForStructure):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::JSTestExceptionPrototype::JSTestExceptionPrototype):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::JSTestGenerateIsReachablePrototype::JSTestGenerateIsReachablePrototype):
+        * bindings/scripts/test/JS/JSTestGlobalObject.h:
+        (WebCore::JSTestGlobalObjectPrototype::JSTestGlobalObjectPrototype):
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.cpp:
+        (WebCore::JSTestIndexedSetterNoIdentifierPrototype::JSTestIndexedSetterNoIdentifierPrototype):
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.cpp:
+        (WebCore::JSTestIndexedSetterThrowingExceptionPrototype::JSTestIndexedSetterThrowingExceptionPrototype):
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        (WebCore::JSTestIndexedSetterWithIdentifierPrototype::JSTestIndexedSetterWithIdentifierPrototype):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfacePrototype::JSTestInterfacePrototype):
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        (WebCore::JSTestInterfaceLeadingUnderscorePrototype::JSTestInterfaceLeadingUnderscorePrototype):
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        (WebCore::JSTestIterablePrototype::JSTestIterablePrototype):
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        (WebCore::JSTestJSBuiltinConstructorPrototype::JSTestJSBuiltinConstructorPrototype):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListenerPrototype::JSTestMediaQueryListListenerPrototype):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterNoIdentifierPrototype::JSTestNamedAndIndexedSetterNoIdentifierPrototype):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterThrowingExceptionPrototype::JSTestNamedAndIndexedSetterThrowingExceptionPrototype):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterWithIdentifierPrototype::JSTestNamedAndIndexedSetterWithIdentifierPrototype):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorPrototype::JSTestNamedConstructorPrototype):
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.cpp:
+        (WebCore::JSTestNamedDeleterNoIdentifierPrototype::JSTestNamedDeleterNoIdentifierPrototype):
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.cpp:
+        (WebCore::JSTestNamedDeleterThrowingExceptionPrototype::JSTestNamedDeleterThrowingExceptionPrototype):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        (WebCore::JSTestNamedDeleterWithIdentifierPrototype::JSTestNamedDeleterWithIdentifierPrototype):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp:
+        (WebCore::JSTestNamedDeleterWithIndexedGetterPrototype::JSTestNamedDeleterWithIndexedGetterPrototype):
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.cpp:
+        (WebCore::JSTestNamedGetterCallWithPrototype::JSTestNamedGetterCallWithPrototype):
+        * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedGetterNoIdentifierPrototype::JSTestNamedGetterNoIdentifierPrototype):
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedGetterWithIdentifierPrototype::JSTestNamedGetterWithIdentifierPrototype):
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedSetterNoIdentifierPrototype::JSTestNamedSetterNoIdentifierPrototype):
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+        (WebCore::JSTestNamedSetterThrowingExceptionPrototype::JSTestNamedSetterThrowingExceptionPrototype):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedSetterWithIdentifierPrototype::JSTestNamedSetterWithIdentifierPrototype):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        (WebCore::JSTestNamedSetterWithIndexedGetterPrototype::JSTestNamedSetterWithIndexedGetterPrototype):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        (WebCore::JSTestNamedSetterWithIndexedGetterAndSetterPrototype::JSTestNamedSetterWithIndexedGetterAndSetterPrototype):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.cpp:
+        (WebCore::JSTestNamedSetterWithOverrideBuiltinsPrototype::JSTestNamedSetterWithOverrideBuiltinsPrototype):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp:
+        (WebCore::JSTestNamedSetterWithUnforgablePropertiesPrototype::JSTestNamedSetterWithUnforgablePropertiesPrototype):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.cpp:
+        (WebCore::JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsPrototype::JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsPrototype):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodePrototype::JSTestNodePrototype):
+        (WebCore::JSTestNodeConstructor::prototypeForStructure):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjPrototype::JSTestObjPrototype):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructorsPrototype::JSTestOverloadedConstructorsPrototype):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        (WebCore::JSTestOverloadedConstructorsWithSequencePrototype::JSTestOverloadedConstructorsWithSequencePrototype):
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        (WebCore::JSTestOverrideBuiltinsPrototype::JSTestOverrideBuiltinsPrototype):
+        * bindings/scripts/test/JS/JSTestPluginInterface.cpp:
+        (WebCore::JSTestPluginInterfacePrototype::JSTestPluginInterfacePrototype):
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        (WebCore::JSTestPromiseRejectionEventPrototype::JSTestPromiseRejectionEventPrototype):
+        (WebCore::JSTestPromiseRejectionEventConstructor::prototypeForStructure):
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        (WebCore::JSTestSerializationPrototype::JSTestSerializationPrototype):
+        * bindings/scripts/test/JS/JSTestSerializationIndirectInheritance.cpp:
+        (WebCore::JSTestSerializationIndirectInheritancePrototype::JSTestSerializationIndirectInheritancePrototype):
+        (WebCore::JSTestSerializationIndirectInheritanceConstructor::prototypeForStructure):
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        (WebCore::JSTestSerializationInheritPrototype::JSTestSerializationInheritPrototype):
+        (WebCore::JSTestSerializationInheritConstructor::prototypeForStructure):
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        (WebCore::JSTestSerializationInheritFinalPrototype::JSTestSerializationInheritFinalPrototype):
+        (WebCore::JSTestSerializationInheritFinalConstructor::prototypeForStructure):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterfacePrototype::JSTestSerializedScriptValueInterfacePrototype):
+        * bindings/scripts/test/JS/JSTestStringifier.cpp:
+        (WebCore::JSTestStringifierPrototype::JSTestStringifierPrototype):
+        * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.cpp:
+        (WebCore::JSTestStringifierAnonymousOperationPrototype::JSTestStringifierAnonymousOperationPrototype):
+        * bindings/scripts/test/JS/JSTestStringifierNamedOperation.cpp:
+        (WebCore::JSTestStringifierNamedOperationPrototype::JSTestStringifierNamedOperationPrototype):
+        * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.cpp:
+        (WebCore::JSTestStringifierOperationImplementedAsPrototype::JSTestStringifierOperationImplementedAsPrototype):
+        * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.cpp:
+        (WebCore::JSTestStringifierOperationNamedToStringPrototype::JSTestStringifierOperationNamedToStringPrototype):
+        * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.cpp:
+        (WebCore::JSTestStringifierReadOnlyAttributePrototype::JSTestStringifierReadOnlyAttributePrototype):
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+        (WebCore::JSTestStringifierReadWriteAttributePrototype::JSTestStringifierReadWriteAttributePrototype):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsPrototype::JSTestTypedefsPrototype):
+
 2019-06-22  Mike Gorse  <mgorse@suse.com>
 
         webkitgtk 2.24.2 fails to build w/gstreamer 1.12.5

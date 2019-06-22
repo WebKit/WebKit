@@ -142,7 +142,7 @@ protected:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
-        ASSERT(m_prototype.get().isEmpty() || m_prototype.isObject() || m_prototype.isNull());
+        ASSERT(m_prototype.get().isEmpty() || isValidPrototype(m_prototype.get()));
     }
 
     void finishCreation(VM& vm, const Structure* previous)
@@ -679,6 +679,8 @@ private:
     PropertyOffset remove(PropertyName);
 
     void checkConsistency();
+
+    JS_EXPORT_PRIVATE static bool isValidPrototype(JSValue);
 
     // This may grab the lock, or not. Do not call when holding the Structure's lock.
     PropertyTable* ensurePropertyTableIfNotEmpty(VM& vm)

@@ -493,6 +493,7 @@ inline PropertyOffset Structure::removePropertyWithoutTransition(VM&, PropertyNa
 
 ALWAYS_INLINE void Structure::setPrototypeWithoutTransition(VM& vm, JSValue prototype)
 {
+    ASSERT(isValidPrototype(prototype));
     m_prototype.set(vm, this, prototype);
 }
 

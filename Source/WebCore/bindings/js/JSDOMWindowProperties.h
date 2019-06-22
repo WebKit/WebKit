@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class JSDOMWindowProperties : public JSDOMObject {
+class JSDOMWindowProperties final : public JSDOMObject {
 public:
     static JSDOMWindowProperties* create(JSC::Structure* structure, JSC::JSGlobalObject& globalObject)
     {
@@ -55,6 +55,7 @@ protected:
     JSDOMWindowProperties(JSC::Structure* structure, JSC::JSGlobalObject& globalObject)
         : JSDOMObject(structure, globalObject)
     {
+        didBecomePrototype();
     }
 };
 
