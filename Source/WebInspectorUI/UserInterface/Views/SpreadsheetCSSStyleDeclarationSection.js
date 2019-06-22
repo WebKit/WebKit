@@ -145,7 +145,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         this._shouldFocusSelectorElement = false;
 
         if (this._style.selectorEditable)
-            this._selectorElement.focus();
+            this._selectorTextField.startEditing();
         else
             this._propertiesEditor.startEditingFirstProperty();
     }

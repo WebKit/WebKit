@@ -1,5 +1,19 @@
 2019-06-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        REGRESSION(r241980): Web Inspector: Styles: Pressing Tab/Enter on last property no longer focuses on selector on next rule
+        https://bugs.webkit.org/show_bug.cgi?id=199125
+        <rdar://problem/52011182>
+
+        Reviewed by Matt Baker.
+
+        Since SpreadsheetSelectorField's focus handler was removed in r241980, focusing on the selector element
+        doesn't start editing it.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.startEditingRuleSelector):
+
+2019-06-22  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Styles: unbalanced quotes and parenthesis aren't displayed as property closed after editing values
         https://bugs.webkit.org/show_bug.cgi?id=199090
         <rdar://problem/51965431>
