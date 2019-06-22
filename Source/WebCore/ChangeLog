@@ -1,3 +1,17 @@
+2019-06-22  Mike Gorse  <mgorse@suse.com>
+
+        webkitgtk 2.24.2 fails to build w/gstreamer 1.12.5
+        https://bugs.webkit.org/show_bug.cgi?id=198080
+
+        Reviewed by Philippe Normand.
+
+        No new tests (build fix only).
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        Move includes of gst/gl/gl.h and epoxy/gl.h into
+        MediaPlayerPrivateGStreamerBase.h.
+
 2019-06-21  Sihui Liu  <sihui_liu@apple.com>
 
         openDatabase should return an empty object when WebSQL is disabled
