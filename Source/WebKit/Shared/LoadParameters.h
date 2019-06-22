@@ -63,7 +63,7 @@ struct LoadParameters {
 
     Optional<WebsitePoliciesData> websitePolicies;
 
-    WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy;
+    WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy { WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     bool shouldTreatAsContinuingLoad { false };
     UserData userData;
     WebCore::LockHistory lockHistory { WebCore::LockHistory::No };

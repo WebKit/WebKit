@@ -1,3 +1,10 @@
+2019-06-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a build fix after r246701
+
+        * Shared/LoadParameters.h:
+        Add a default value for shouldOpenExternalURLsPolicy.
+
 2019-06-21  Brent Fulgham  <bfulgham@apple.com>
 
         Adjust sandboxes based on seed feedback
