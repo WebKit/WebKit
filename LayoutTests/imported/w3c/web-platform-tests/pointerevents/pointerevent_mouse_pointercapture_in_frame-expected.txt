@@ -1,7 +1,7 @@
 
 
-PASS Test pointer capture event route across the same-origin frame: Mouse down at inner frame and set pointer capture. 
-PASS Test pointer capture event route across the same-origin frame: Mouse down at outer frame body and set pointer capture. 
-PASS Test pointer capture event route across the same-origin frame: Mouse down with set capture at inner frame, then release on next mouse move. 
+FAIL Test pointer capture event route across the same-origin frame: Mouse down at inner frame and set pointer capture. assert_array_equals: Received events: innerFrame received pointermove,innerFrame received pointerdown,innerFrame received gotpointercapture,innerFrame received pointermove,innerFrameDocument received pointermove,innerFrameDocument received pointerup,innerFrame received lostpointercapture property 4, expected "innerFrame received pointermove" but got "innerFrameDocument received pointermove"
+FAIL Test pointer capture event route across the same-origin frame: Mouse down at outer frame body and set pointer capture. assert_array_equals: Received events: outerFrame received pointermove,outerFrame received pointerdown,outerFrame received gotpointercapture,outerFrame received pointermove,innerFrame received pointerup,outerFrame received lostpointercapture property 4, expected "outerFrame received pointerup" but got "innerFrame received pointerup"
+FAIL Test pointer capture event route across the same-origin frame: Mouse down with set capture at inner frame, then release on next mouse move. assert_array_equals: Received events: innerFrame received pointermove,innerFrame received pointerdown,innerFrame received gotpointercapture,innerFrame received pointermove,innerFrame received lostpointercapture,innerFrameDocument received pointermove,outerFrame received pointermove,outerFrame received pointerup lengths differ, expected 7 got 8
 PASS Test pointercapture event route across the same-origin frame: Mouse down with set capture at outer frame, then release on next mouse move. 
 

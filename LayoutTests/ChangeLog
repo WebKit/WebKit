@@ -1,5 +1,14 @@
 2019-06-23  Antoine Quint  <graouts@apple.com>
 
+        [Pointer Events WPT] Unflake imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_pointercapture_in_frame.html
+        https://bugs.webkit.org/show_bug.cgi?id=197058
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2019-06-23  Antoine Quint  <graouts@apple.com>
+
         [Pointer Events WPT] Unflake imported/w3c/web-platform-tests/pointerevents/pointerevent_setpointercapture_invalid_pointerid.html
         https://bugs.webkit.org/show_bug.cgi?id=197009
 
