@@ -56,14 +56,20 @@ Line::Line(const LayoutState& layoutState, const InitialConstraints& initialCons
 {
 }
 
+static bool isInlineContainerConsideredEmpty(const LayoutState& layoutState, const Box& layoutBox)
+{
+    // Note that this does not check whether the inline container has content. It simply checks if the container itself is considered empty.
+    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+    return !(displayBox.horizontalBorder() || (displayBox.horizontalPadding() && displayBox.horizontalPadding().value()));
+}
+
 bool Line::isVisuallyEmpty() const
 {
     // FIXME: This should be cached instead -as the inline items are being added.
     // Return true for empty inline containers like <span></span>.
     for (auto& run : m_content->runs()) {
         if (run->inlineItem.isContainerStart()) {
-            auto& displayBox = m_layoutState.displayBoxForLayoutBox(run->inlineItem.layoutBox());
-            if (displayBox.horizontalBorder() || (displayBox.horizontalPadding() && displayBox.horizontalPadding().value()))
+            if (!isInlineContainerConsideredEmpty(m_layoutState, run->inlineItem.layoutBox()))
                 return false;
             continue;
         }
@@ -313,59 +319,74 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
     auto& style = layoutBox.style();
 
     if (inlineItem.isContainerStart()) {
-        // FIXME: This implies baseline vertical aligment for the inline container.
+        // Inline containers stretch the line by their font size.
+        // Vertical margins, paddings and borders don't contribute to the line height.
         auto& fontMetrics = style.fontMetrics();
-        auto halfLeading = halfLeadingMetrics(fontMetrics, style.computedLineHeight());
-        if (halfLeading.descent > 0)
-            m_baseline.descent = std::max(m_baseline.descent, halfLeading.descent);
-        if (halfLeading.ascent > 0)
-            m_baseline.ascent = std::max(m_baseline.ascent, halfLeading.ascent);
-        m_lineLogicalHeight = std::max(m_lineLogicalHeight, m_baseline.height());
+        LayoutUnit contentHeight;
+        if (style.verticalAlign() == VerticalAlign::Baseline) {
+            auto halfLeading = halfLeadingMetrics(fontMetrics, style.computedLineHeight());
+            // Both halfleading ascent and descent could be negative (tall font vs. small line-height value)
+            if (halfLeading.descent > 0)
+                m_baseline.descent = std::max(m_baseline.descent, halfLeading.descent);
+            if (halfLeading.ascent > 0)
+                m_baseline.ascent = std::max(m_baseline.ascent, halfLeading.ascent);
+            contentHeight = m_baseline.height();
+        } else
+            contentHeight = fontMetrics.height();
+        m_lineLogicalHeight = std::max(m_lineLogicalHeight, contentHeight);
+        m_baselineTop = std::max(m_baselineTop, m_lineLogicalHeight - m_baseline.height());
         return;
     }
-    // Apply initial strut if needed.
+
     if (inlineItem.isText() || inlineItem.isHardLineBreak()) {
+        // For text content we set the baseline either through the initial strut (set by the formatting context root) or
+        // through the inline container (start) -see above. Normally the text content itself does not stretch the line.
         if (!m_initialStrut)
             return;
         m_baseline.ascent = std::max(m_initialStrut->ascent, m_baseline.ascent);
         m_baseline.descent = std::max(m_initialStrut->descent, m_baseline.descent);
         m_lineLogicalHeight = std::max(m_lineLogicalHeight, m_baseline.height());
+        m_baselineTop = std::max(m_baselineTop, m_lineLogicalHeight - m_baseline.height());
         m_initialStrut = { };
         return;
     }
-    // Replaced and non-replaced inline level box.
-    switch (inlineItem.style().verticalAlign()) {
-     case VerticalAlign::Baseline: {
-        auto newBaselineCandidate = LineBox::Baseline { runHeight, 0 };
-        if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
-            // Inline-blocks with inline content always have baselines.
-            auto& formattingState = downcast<InlineFormattingState>(m_layoutState.establishedFormattingState(layoutBox));
-            // Spec makes us generate at least one line -even if it is empty.
-            ASSERT(!formattingState.lineBoxes().isEmpty());
-            newBaselineCandidate = formattingState.lineBoxes().last().baseline();
+
+    if (inlineItem.isBox()) {
+        switch (style.verticalAlign()) {
+        case VerticalAlign::Baseline: {
+            auto newBaselineCandidate = LineBox::Baseline { runHeight, 0 };
+            if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
+                // Inline-blocks with inline content always have baselines.
+                auto& formattingState = downcast<InlineFormattingState>(m_layoutState.establishedFormattingState(layoutBox));
+                // Spec makes us generate at least one line -even if it is empty.
+                ASSERT(!formattingState.lineBoxes().isEmpty());
+                newBaselineCandidate = formattingState.lineBoxes().last().baseline();
+            }
+            m_baseline.ascent = std::max(newBaselineCandidate.ascent, m_baseline.ascent);
+            m_baseline.descent = std::max(newBaselineCandidate.descent, m_baseline.descent);
+            m_lineLogicalHeight = std::max(std::max(m_lineLogicalHeight, runHeight), m_baseline.height());
+            // Baseline ascent/descent never shrink -> max.
+            m_baselineTop = std::max(m_baselineTop, m_lineLogicalHeight - m_baseline.height());
+            break;
         }
-        m_baseline.ascent = std::max(newBaselineCandidate.ascent, m_baseline.ascent);
-        m_baseline.descent = std::max(newBaselineCandidate.descent, m_baseline.descent);
-        m_lineLogicalHeight = std::max(std::max(m_lineLogicalHeight, runHeight), m_baseline.height());
-        // Baseline ascent/descent never shrink -> max.
-        m_baselineTop = std::max(m_baselineTop, m_lineLogicalHeight - m_baseline.height());
-        break;
-    }
-    case VerticalAlign::Top:
-        // Top align content never changes the baseline offset, it only pushes the bottom of the line further down.
-        m_lineLogicalHeight = std::max(runHeight, m_lineLogicalHeight);
-        break;
-    case VerticalAlign::Bottom:
-        // Bottom aligned, tall content pushes the baseline further down from the line top.
-        if (runHeight > m_lineLogicalHeight) {
-            m_baselineTop += (runHeight - m_lineLogicalHeight);
-            m_lineLogicalHeight = runHeight;
+        case VerticalAlign::Top:
+            // Top align content never changes the baseline offset, it only pushes the bottom of the line further down.
+            m_lineLogicalHeight = std::max(runHeight, m_lineLogicalHeight);
+            break;
+        case VerticalAlign::Bottom:
+            // Bottom aligned, tall content pushes the baseline further down from the line top.
+            if (runHeight > m_lineLogicalHeight) {
+                m_baselineTop += (runHeight - m_lineLogicalHeight);
+                m_lineLogicalHeight = runHeight;
+            }
+            break;
+        default:
+            ASSERT_NOT_IMPLEMENTED_YET();
+            break;
         }
-        break;
-    default:
-        ASSERT_NOT_IMPLEMENTED_YET();
-        break;
+        return;
     }
+    ASSERT_NOT_REACHED();
 }
 
 LayoutUnit Line::inlineItemContentHeight(const InlineItem& inlineItem) const

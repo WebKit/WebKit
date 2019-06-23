@@ -1,3 +1,19 @@
+2019-06-23  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Non-baseline aligned inline container should not mutate the baseline
+        https://bugs.webkit.org/show_bug.cgi?id=199129
+        <rdar://problem/52022533>
+
+        Reviewed by Antti Koivisto.
+
+        Only baseline aligned inline container (<span style="vertical-aligned: baseline">) should adjust line's baseline.
+        This patch also fixes m_baselineTop's value when we apply the initial strut.
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::isInlineContainerConsideredEmpty):
+        (WebCore::Layout::Line::isVisuallyEmpty const):
+        (WebCore::Layout::Line::adjustBaselineAndLineHeight):
+
 2019-06-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] The anonymous InlineBox wrapper for the text node should take the parent style.
