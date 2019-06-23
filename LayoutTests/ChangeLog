@@ -1,3 +1,14 @@
+2019-06-23  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events WPT] Unflake imported/w3c/web-platform-tests/pointerevents/pointerevent_setpointercapture_invalid_pointerid.html
+        https://bugs.webkit.org/show_bug.cgi?id=197009
+
+        Unreviewed test gardening.
+
+        This test some being flaky as of r245809, the fix for wkb.ug/198191.
+
+        * platform/mac/TestExpectations:
+
 2019-06-22  Andres Gonzalez  <andresg_22@apple.com>
 
         Accessibility objects contained in links should honor the aria-haspopup attribute in the ancestor link.

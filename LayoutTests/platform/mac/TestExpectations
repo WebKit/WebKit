@@ -1887,7 +1887,6 @@ imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointermo
 
 webkit.org/b/197005 imported/w3c/web-platform-tests/pointerevents/pointerevent_lostpointercapture_is_first.html [ Skip ]
 webkit.org/b/197007 imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_coordinates_when_locked.html [ Skip ]
-webkit.org/b/197009 imported/w3c/web-platform-tests/pointerevents/pointerevent_setpointercapture_invalid_pointerid.html [ Failure Pass ]
 webkit.org/b/197058 imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_pointercapture_in_frame.html [ Failure Pass ]
 
 webkit.org/b/192501 [ Debug ] animations/play-state-in-shorthand.html [ Pass Failure ]
