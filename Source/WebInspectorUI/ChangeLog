@@ -1,3 +1,13 @@
+2019-06-23  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: show green highlight for newly added properties only when name and value are present
+        https://bugs.webkit.org/show_bug.cgi?id=199131
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.updateStatus):
+
 2019-06-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION(r241980): Web Inspector: Styles: Pressing Tab/Enter on last property no longer focuses on selector on next rule
