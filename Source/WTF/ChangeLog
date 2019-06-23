@@ -1,3 +1,16 @@
+2019-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Add OverflowScrollProxyNodes to the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=199132
+
+        Reviewed by Antti Koivisto.
+        
+        Setting indent is useful if you want to make a new stream with the indent of an
+        existing stream.
+
+        * wtf/text/TextStream.h:
+        (WTF::TextStream::setIndent):
+
 2019-06-20  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Try to use C++14 std::enable_if_t in CheckedArithmetic.h again

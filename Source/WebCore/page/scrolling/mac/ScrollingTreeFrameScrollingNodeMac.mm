@@ -37,8 +37,7 @@
 #import "ScrollingStateTree.h"
 #import "ScrollingTree.h"
 #import "TileController.h"
-#import "WebLayer.h"
-#import <QuartzCore/QuartzCore.h>
+#import "WebCoreCALayerExtras.h"
 #import <wtf/Deque.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/TextStream.h>

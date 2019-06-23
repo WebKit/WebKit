@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScrollingStateOverflowScrollingNode.h"
+#pragma once
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "ScrollingStateTree.h"
-#include <wtf/text/TextStream.h>
+#include "ScrollingStateNode.h"
 
 namespace WebCore {
 
-Ref<ScrollingStateOverflowScrollingNode> ScrollingStateOverflowScrollingNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
-{
-    return adoptRef(*new ScrollingStateOverflowScrollingNode(stateTree, nodeID));
-}
+class ScrollingStateOverflowScrollProxyNode : public ScrollingStateNode {
+public:
+    static Ref<ScrollingStateOverflowScrollProxyNode> create(ScrollingStateTree&, ScrollingNodeID);
 
-ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
-    : ScrollingStateScrollingNode(stateTree, ScrollingNodeType::Overflow, nodeID)
-{
-}
+    Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
 
-ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(const ScrollingStateOverflowScrollingNode& stateNode, ScrollingStateTree& adoptiveTree)
-    : ScrollingStateScrollingNode(stateNode, adoptiveTree)
-{
-}
+    virtual ~ScrollingStateOverflowScrollProxyNode();
 
-ScrollingStateOverflowScrollingNode::~ScrollingStateOverflowScrollingNode() = default;
+    enum {
+        OverflowScrollingNode = NumStateNodeBits
+    };
 
-Ref<ScrollingStateNode> ScrollingStateOverflowScrollingNode::clone(ScrollingStateTree& adoptiveTree)
-{
-    return adoptRef(*new ScrollingStateOverflowScrollingNode(*this, adoptiveTree));
-}
+    // This is the node we get our scroll position from.
+    ScrollingNodeID overflowScrollingNode() const { return m_overflowScrollingNodeID; }
+    WEBCORE_EXPORT void setOverflowScrollingNode(ScrollingNodeID);
 
-void ScrollingStateOverflowScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
-{
-    ts << "Overflow scrolling node";
+    void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
+
+private:
+    ScrollingStateOverflowScrollProxyNode(ScrollingStateTree&, ScrollingNodeID);
+    ScrollingStateOverflowScrollProxyNode(const ScrollingStateOverflowScrollProxyNode&, ScrollingStateTree&);
     
-    ScrollingStateScrollingNode::dumpProperties(ts, behavior);
-}
+    ScrollingNodeID m_overflowScrollingNodeID { 0 };
+};
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_SCROLLING_STATE_NODE(ScrollingStateOverflowScrollProxyNode, isOverflowScrollProxyNode())
 
 #endif // ENABLE(ASYNC_SCROLLING)

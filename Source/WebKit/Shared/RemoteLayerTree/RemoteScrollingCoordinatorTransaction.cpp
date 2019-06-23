@@ -32,6 +32,7 @@
 #include <WebCore/ScrollingStateFixedNode.h>
 #include <WebCore/ScrollingStateFrameHostingNode.h>
 #include <WebCore/ScrollingStateFrameScrollingNode.h>
+#include <WebCore/ScrollingStateOverflowScrollProxyNode.h>
 #include <WebCore/ScrollingStateOverflowScrollingNode.h>
 #include <WebCore/ScrollingStatePositionedNode.h>
 #include <WebCore/ScrollingStateStickyNode.h>
@@ -68,6 +69,11 @@ template<> struct ArgumentCoder<ScrollingStateFrameScrollingNode> {
 template<> struct ArgumentCoder<ScrollingStateOverflowScrollingNode> {
     static void encode(Encoder&, const ScrollingStateOverflowScrollingNode&);
     static bool decode(Decoder&, ScrollingStateOverflowScrollingNode&);
+};
+
+template<> struct ArgumentCoder<ScrollingStateOverflowScrollProxyNode> {
+    static void encode(Encoder&, const ScrollingStateOverflowScrollProxyNode&);
+    static bool decode(Decoder&, ScrollingStateOverflowScrollProxyNode&);
 };
 
 template<> struct ArgumentCoder<ScrollingStateFixedNode> {
@@ -199,6 +205,12 @@ void ArgumentCoder<ScrollingStateFrameHostingNode>::encode(Encoder& encoder, con
 void ArgumentCoder<ScrollingStateOverflowScrollingNode>::encode(Encoder& encoder, const ScrollingStateOverflowScrollingNode& node)
 {
     encoder << static_cast<const ScrollingStateScrollingNode&>(node);
+}
+
+void ArgumentCoder<ScrollingStateOverflowScrollProxyNode>::encode(Encoder& encoder, const ScrollingStateOverflowScrollProxyNode& node)
+{
+    encoder << static_cast<const ScrollingStateNode&>(node);
+    SCROLLING_NODE_ENCODE(ScrollingStateOverflowScrollProxyNode::OverflowScrollingNode, overflowScrollingNode)
 }
 
 #define SCROLLING_NODE_DECODE(property, type, setter) \
@@ -345,6 +357,15 @@ bool ArgumentCoder<ScrollingStateOverflowScrollingNode>::decode(Decoder& decoder
     return true;
 }
 
+bool ArgumentCoder<ScrollingStateOverflowScrollProxyNode>::decode(Decoder& decoder, ScrollingStateOverflowScrollProxyNode& node)
+{
+    if (!decoder.decode(static_cast<ScrollingStateNode&>(node)))
+        return false;
+
+    SCROLLING_NODE_DECODE(ScrollingStateOverflowScrollProxyNode::OverflowScrollingNode, ScrollingNodeID, setOverflowScrollingNode);
+    return true;
+}
+
 void ArgumentCoder<ScrollingStateFixedNode>::encode(Encoder& encoder, const ScrollingStateFixedNode& node)
 {
     encoder << static_cast<const ScrollingStateNode&>(node);
@@ -441,6 +462,9 @@ static void encodeNodeAndDescendants(IPC::Encoder& encoder, const ScrollingState
     case ScrollingNodeType::Overflow:
         encoder << downcast<ScrollingStateOverflowScrollingNode>(stateNode);
         break;
+    case ScrollingNodeType::OverflowProxy:
+        encoder << downcast<ScrollingStateOverflowScrollProxyNode>(stateNode);
+        break;
     case ScrollingNodeType::Fixed:
         encoder << downcast<ScrollingStateFixedNode>(stateNode);
         break;
@@ -532,6 +556,10 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder)
             break;
         case ScrollingNodeType::Overflow:
             if (!decoder.decode(downcast<ScrollingStateOverflowScrollingNode>(*newNode)))
+                return false;
+            break;
+        case ScrollingNodeType::OverflowProxy:
+            if (!decoder.decode(downcast<ScrollingStateOverflowScrollProxyNode>(*newNode)))
                 return false;
             break;
         case ScrollingNodeType::Fixed:
@@ -652,6 +680,12 @@ static void dump(TextStream& ts, const ScrollingStateOverflowScrollingNode& node
     dump(ts, static_cast<const ScrollingStateScrollingNode&>(node), changedPropertiesOnly);
 }
 
+static void dump(TextStream& ts, const ScrollingStateOverflowScrollProxyNode& node, bool changedPropertiesOnly)
+{
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateOverflowScrollProxyNode::OverflowScrollingNode))
+        ts.dumpProperty("overflow-scrolling-node", node.overflowScrollingNode());
+}
+
 static void dump(TextStream& ts, const ScrollingStateFixedNode& node, bool changedPropertiesOnly)
 {
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFixedNode::ViewportConstraints))
@@ -690,6 +724,9 @@ static void dump(TextStream& ts, const ScrollingStateNode& node, bool changedPro
         break;
     case ScrollingNodeType::Overflow:
         dump(ts, downcast<ScrollingStateOverflowScrollingNode>(node), changedPropertiesOnly);
+        break;
+    case ScrollingNodeType::OverflowProxy:
+        dump(ts, downcast<ScrollingStateOverflowScrollProxyNode>(node), changedPropertiesOnly);
         break;
     case ScrollingNodeType::Fixed:
         dump(ts, downcast<ScrollingStateFixedNode>(node), changedPropertiesOnly);

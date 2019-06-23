@@ -95,6 +95,7 @@ public:
     WTF_EXPORT_PRIVATE void nextLine(); // Output newline and indent.
 
     int indent() const { return m_indent; }
+    void setIndent(int indent) { m_indent = indent; }
     void increaseIndent(int amount = 1) { m_indent += amount; }
     void decreaseIndent(int amount = 1) { m_indent -= amount; ASSERT(m_indent >= 0); }
 

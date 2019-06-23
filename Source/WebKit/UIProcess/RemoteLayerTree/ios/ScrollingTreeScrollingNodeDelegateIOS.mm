@@ -295,8 +295,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
 void ScrollingTreeScrollingNodeDelegateIOS::repositionScrollingLayers()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    auto scrollOffset = ScrollableArea::scrollOffsetFromPosition(scrollingNode().currentScrollPosition(), toFloatSize(scrollOrigin()));
-    [scrollView() setContentOffset:scrollOffset];
+    [scrollView() setContentOffset:scrollingNode().currentScrollOffset()];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

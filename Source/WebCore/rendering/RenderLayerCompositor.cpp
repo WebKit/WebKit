@@ -4116,6 +4116,8 @@ static inline ScrollCoordinationRole scrollCoordinationRoleForNodeType(Scrolling
         return ScrollCoordinationRole::ViewportConstrained;
     case ScrollingNodeType::Positioned:
         return ScrollCoordinationRole::Positioning;
+    case ScrollingNodeType::OverflowProxy:
+        break;
     }
     ASSERT_NOT_REACHED();
     return ScrollCoordinationRole::Scrolling;

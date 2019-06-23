@@ -1,3 +1,71 @@
+2019-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Add OverflowScrollProxyNodes to the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=199132
+
+        Reviewed by Antti Koivisto.
+
+        Add ScrollingStateOverflowScrollProxyNode and ScrollingTreeOverflowScrollProxyNode. These
+        nodes represent clip and scroll position for an overflow:scroll in the containing block chain,
+        but not the paint ancestor chain of a layer. They will be used to correctly manipulate clip
+        rects for composited layers in non-stacking-context scrollers, and in a future patch will
+        replace the functionality of "Moves" positioned nodes.
+
+        An OverflowScrollProxyNode has the ScrollingNodeID of the scrolling node that it relates to,
+        and we use the existing "related overflow nodes" to create the back references in the scrolling tree.
+
+        These nodes are not instantiated yet; a future patch will hook them up.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::setRelatedOverflowScrollingNodes):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::operator<<):
+        * page/scrolling/ScrollingCoordinatorTypes.h:
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::isOverflowScrollProxyNode const):
+        * page/scrolling/ScrollingStateOverflowScrollProxyNode.cpp: Added.
+        (WebCore::ScrollingStateOverflowScrollProxyNode::create):
+        (WebCore::ScrollingStateOverflowScrollProxyNode::ScrollingStateOverflowScrollProxyNode):
+        (WebCore::ScrollingStateOverflowScrollProxyNode::clone):
+        (WebCore::ScrollingStateOverflowScrollProxyNode::setOverflowScrollingNode):
+        (WebCore::ScrollingStateOverflowScrollProxyNode::dumpProperties const):
+        * page/scrolling/ScrollingStateOverflowScrollProxyNode.h: Copied from Source/WebCore/page/scrolling/ScrollingStateOverflowScrollingNode.cpp.
+        (WebCore::ScrollingStateOverflowScrollProxyNode::overflowScrollingNode const):
+        * page/scrolling/ScrollingStateOverflowScrollingNode.cpp:
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::createNode):
+        * page/scrolling/ScrollingTreeNode.h:
+        (WebCore::ScrollingTreeNode::isOverflowScrollProxyNode const):
+        * page/scrolling/ScrollingTreeOverflowScrollProxyNode.cpp: Added.
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::create):
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::ScrollingTreeOverflowScrollProxyNode):
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::applyLayerPositions):
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::dumpProperties const):
+        * page/scrolling/ScrollingTreeOverflowScrollProxyNode.h: Copied from Source/WebCore/page/scrolling/ScrollingStateOverflowScrollingNode.cpp.
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/cocoa/ScrollingTreeOverflowScrollProxyNode.h: Copied from Source/WebCore/page/scrolling/ScrollingStateOverflowScrollingNode.cpp.
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::overflowScrollingNodeID const):
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::layer const):
+        * page/scrolling/cocoa/ScrollingTreeOverflowScrollProxyNode.mm: Added.
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::create):
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::ScrollingTreeOverflowScrollProxyNode):
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::scrollDeltaSinceLastCommit const):
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::applyLayerPositions):
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::dumpProperties const):
+        * page/scrolling/cocoa/ScrollingTreePositionedNode.mm:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        * page/scrolling/mac/ScrollingTreeMac.cpp:
+        (ScrollingTreeMac::createScrollingTreeNode):
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::repositionScrollingLayers):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::scrollCoordinationRoleForNodeType):
+
 2019-06-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Non-baseline aligned inline container should not mutate the baseline

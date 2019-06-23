@@ -464,6 +464,9 @@ TextStream& operator<<(TextStream& ts, ScrollingNodeType nodeType)
     case ScrollingNodeType::Overflow:
         ts << "overflow-scrolling";
         break;
+    case ScrollingNodeType::OverflowProxy:
+        ts << "overflow-scroll-proxy";
+        break;
     case ScrollingNodeType::Fixed:
         ts << "fixed";
         break;

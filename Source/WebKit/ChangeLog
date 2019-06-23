@@ -1,3 +1,36 @@
+2019-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Add OverflowScrollProxyNodes to the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=199132
+
+        Reviewed by Antti Koivisto.
+
+        Add ScrollingStateOverflowScrollProxyNode and ScrollingTreeOverflowScrollProxyNode. These
+        nodes represent clip and scroll position for an overflow:scroll in the containing block chain,
+        but not the paint ancestor chain of a layer. They will be used to correctly manipulate clip
+        rects for composited layers in non-stacking-context scrollers, and in a future patch will
+        replace the functionality of "Moves" positioned nodes.
+
+        An OverflowScrollProxyNode has the ScrollingNodeID of the scrolling node that it relates to,
+        and we use the existing "related overflow nodes" to create the back references in the scrolling tree.
+
+        These nodes are not instantiated yet; a future patch will hook them up.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateOverflowScrollProxyNode>::encode):
+        (ArgumentCoder<ScrollingStateOverflowScrollProxyNode>::decode):
+        (WebKit::encodeNodeAndDescendants):
+        (WebKit::RemoteScrollingCoordinatorTransaction::decode):
+        (WebKit::dump):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::createScrollingTreeNode):
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::repositionScrollingLayers):
+
 2019-06-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a build fix after r246701

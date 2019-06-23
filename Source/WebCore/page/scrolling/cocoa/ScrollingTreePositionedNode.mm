@@ -33,7 +33,7 @@
 #import "ScrollingTree.h"
 #import "ScrollingTreeOverflowScrollingNode.h"
 #import "ScrollingTreeScrollingNode.h"
-#import <QuartzCore/CALayer.h>
+#import "WebCoreCALayerExtras.h"
 #import <wtf/text/TextStream.h>
 
 namespace WebCore {

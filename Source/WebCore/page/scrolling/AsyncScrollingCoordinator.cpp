@@ -42,6 +42,7 @@
 #include "ScrollingStateFixedNode.h"
 #include "ScrollingStateFrameHostingNode.h"
 #include "ScrollingStateFrameScrollingNode.h"
+#include "ScrollingStateOverflowScrollProxyNode.h"
 #include "ScrollingStateOverflowScrollingNode.h"
 #include "ScrollingStatePositionedNode.h"
 #include "ScrollingStateStickyNode.h"
@@ -710,9 +711,14 @@ void AsyncScrollingCoordinator::setRelatedOverflowScrollingNodes(ScrollingNodeID
     if (!node)
         return;
 
-    ASSERT(is<ScrollingStatePositionedNode>(*node));
-    if (auto* positionedNode = downcast<ScrollingStatePositionedNode>(node))
-        positionedNode->setRelatedOverflowScrollingNodes(WTFMove(relatedNodes));
+    if (is<ScrollingStatePositionedNode>(node))
+        downcast<ScrollingStatePositionedNode>(node)->setRelatedOverflowScrollingNodes(WTFMove(relatedNodes));
+    else if (is<ScrollingStateOverflowScrollProxyNode>(node)) {
+        auto* overflowScrollProxyNode = downcast<ScrollingStateOverflowScrollProxyNode>(node);
+        ASSERT(relatedNodes.size() == 1);
+        overflowScrollProxyNode->setOverflowScrollingNode(relatedNodes[0]);
+    } else
+        ASSERT_NOT_REACHED();
 }
 
 void AsyncScrollingCoordinator::setSynchronousScrollingReasons(FrameView& frameView, SynchronousScrollingReasons reasons)

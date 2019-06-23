@@ -91,8 +91,7 @@ FloatPoint ScrollingTreeOverflowScrollingNodeMac::adjustedScrollPosition(const F
 
 void ScrollingTreeOverflowScrollingNodeMac::repositionScrollingLayers()
 {
-    auto scrollOffset = ScrollableArea::scrollOffsetFromPosition(currentScrollPosition(), toFloatSize(scrollOrigin()));
-    [scrollContainerLayer() _web_setLayerBoundsOrigin:scrollOffset];
+    [scrollContainerLayer() _web_setLayerBoundsOrigin:currentScrollOffset()];
 }
 
 void ScrollingTreeOverflowScrollingNodeMac::repositionRelatedLayers()

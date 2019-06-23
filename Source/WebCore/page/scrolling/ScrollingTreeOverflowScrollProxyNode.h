@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScrollingStateOverflowScrollingNode.h"
+#pragma once
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "ScrollingStateTree.h"
-#include <wtf/text/TextStream.h>
+#include "ScrollingTreeNode.h"
 
 namespace WebCore {
 
-Ref<ScrollingStateOverflowScrollingNode> ScrollingStateOverflowScrollingNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
-{
-    return adoptRef(*new ScrollingStateOverflowScrollingNode(stateTree, nodeID));
-}
+class ScrollingTreeOverflowScrollProxyNode : public ScrollingTreeNode {
+public:
+    WEBCORE_EXPORT static Ref<ScrollingTreeOverflowScrollProxyNode> create(ScrollingTree&, ScrollingNodeID);
+    WEBCORE_EXPORT virtual ~ScrollingTreeOverflowScrollProxyNode();
 
-ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
-    : ScrollingStateScrollingNode(stateTree, ScrollingNodeType::Overflow, nodeID)
-{
-}
-
-ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(const ScrollingStateOverflowScrollingNode& stateNode, ScrollingStateTree& adoptiveTree)
-    : ScrollingStateScrollingNode(stateNode, adoptiveTree)
-{
-}
-
-ScrollingStateOverflowScrollingNode::~ScrollingStateOverflowScrollingNode() = default;
-
-Ref<ScrollingStateNode> ScrollingStateOverflowScrollingNode::clone(ScrollingStateTree& adoptiveTree)
-{
-    return adoptRef(*new ScrollingStateOverflowScrollingNode(*this, adoptiveTree));
-}
-
-void ScrollingStateOverflowScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
-{
-    ts << "Overflow scrolling node";
+protected:
+    WEBCORE_EXPORT ScrollingTreeOverflowScrollProxyNode(ScrollingTree&, ScrollingNodeID);
     
-    ScrollingStateScrollingNode::dumpProperties(ts, behavior);
-}
+    void commitStateBeforeChildren(const ScrollingStateNode&) override;
+    void applyLayerPositions() override;
+
+    WEBCORE_EXPORT void dumpProperties(TextStream&, ScrollingStateTreeAsTextBehavior) const override;
+
+    ScrollingNodeID m_overflowScrollingNode;
+};
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_SCROLLING_NODE(ScrollingTreeOverflowScrollProxyNode, isOverflowScrollingNode())
 
 #endif // ENABLE(ASYNC_SCROLLING)
