@@ -1,3 +1,9 @@
+2019-06-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Expand tests coverage (328 new tests -> 2652).
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
 2019-06-22  Andres Gonzalez  <andresg_22@apple.com>
 
         Accessibility objects contained in links should honor the aria-haspopup attribute in the ancestor link.
