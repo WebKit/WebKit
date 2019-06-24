@@ -1,3 +1,34 @@
+2019-06-24  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] Volume level sometimes changes inappropriately
+        https://bugs.webkit.org/show_bug.cgi?id=197358
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Be consistent with our application of volume scaling. We were
+        setting volumes using cubic interpolation in setVolume() and using
+        the inverse in volume(); however setting initial volumes was done
+        linearly in setStreamVolumeElement, which was causing strange
+        jumps in the volume level at non-deterministic times. The fix
+        looks to be that we should use linear interpolation consistently,
+        since PulseAudio already applies cubic scaling to software
+        volumes.
+
+        Covered by existing tests.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::paused const): Bump the
+        logging here to LOG level, it's very spammy at DEBUG.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::setVolume): Switch to
+        linear interpolation.
+        (WebCore::MediaPlayerPrivateGStreamerBase::volume const): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamerBase::notifyPlayerOfVolumeChange):
+        Ditto.
+        (WebCore::MediaPlayerPrivateGStreamerBase::setStreamVolumeElement):
+        Ditto, and be consistent here with the API, do not set the raw
+        volume managed by MediaElement.
+
 2019-06-24  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover

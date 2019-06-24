@@ -656,7 +656,7 @@ bool MediaPlayerPrivateGStreamer::paused() const
     GstState state;
     gst_element_get_state(m_pipeline.get(), &state, nullptr, 0);
     bool paused = state <= GST_STATE_PAUSED;
-    GST_DEBUG_OBJECT(pipeline(), "Paused: %s", toString(paused).utf8().data());
+    GST_LOG_OBJECT(pipeline(), "Paused: %s", toString(paused).utf8().data());
     return paused;
 }
 
