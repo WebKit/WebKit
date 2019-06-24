@@ -104,12 +104,14 @@ ExceptionOr<void> PointerCaptureController::releasePointerCapture(Element* captu
         return { };
 
     // 3. For the specified pointerId, clear the pending pointer capture target override, if set.
-    iterator->value.pendingTargetOverride = nullptr;
+    auto& capturingData = iterator->value;
+    capturingData.pendingTargetOverride = nullptr;
 
     // Since we may not call processPendingPointerCapture() until the dispatch of the next event,
     // we must reset EventHandler's capturing mouse element right now so that the next event processed
     // does not use it as an overriding target.
-    m_page.mainFrame().eventHandler().setCapturingMouseEventsElement(nullptr);
+    if (capturingData.pointerType == PointerEvent::mousePointerType())
+        m_page.mainFrame().eventHandler().setCapturingMouseEventsElement(nullptr);
 
     return { };
 }

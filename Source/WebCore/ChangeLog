@@ -1,3 +1,16 @@
+2019-06-23  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover
+        https://bugs.webkit.org/show_bug.cgi?id=198999
+        <rdar://problem/52005663>
+
+        Reviewed by Dean Jackson.
+
+        We should only set the mouse events capturing element in EventHandler if we're dealing with mouse-originated Pointer Events (part 2).
+
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::releasePointerCapture):
+
 2019-06-23  Simon Fraser  <simon.fraser@apple.com>
 
         [Async overflow scroll] Clipped composited layers inside overflow scroll jitter and get incorrectly clipped
