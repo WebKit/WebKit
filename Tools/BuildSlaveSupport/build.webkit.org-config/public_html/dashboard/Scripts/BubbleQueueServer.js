@@ -29,7 +29,6 @@ BubbleQueueServer = function()
         "commit-queue": {platform: Dashboard.Platform.macOSHighSierra, shortName: "commit", title: "Commit Queue"},
         "style-queue": {shortName: "style", title: "Style Checker Queue"},
         "gtk-wk2-ews": {platform: Dashboard.Platform.LinuxGTK, shortName: "gtk-wk2", title: "WebKit2\xa0Release\xa0Build\xa0EWS"},
-        "ios-ews": {platform: Dashboard.Platform.iOS12Device, shortName: "ios", title: "Release\xa0Build\xa0EWS"},
         "ios-sim-ews": {platform: Dashboard.Platform.iOS12Simulator, shortName: "ios-sim", title: "WebKit2\xa0Release\xa0Tests\xa0EWS"},
         "jsc-armv7-ews": {platform: Dashboard.Platform.LinuxJSCOnly, shortName: "jsc-armv7", title: "ARMv7\xa0Release\xa0Build\xa0EWS"},
         "jsc-ews": {platform: Dashboard.Platform.macOSMojave, shortName: "jsc", title: "Release\xa0JSC\xa0Tests\xa0EWS"},

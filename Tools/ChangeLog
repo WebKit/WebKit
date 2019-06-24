@@ -1,3 +1,13 @@
+2019-06-24  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Remove iOS queue from old EWS and dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=199150
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueServer.js:
+        * QueueStatusServer/config/queues.py:
+
 2019-06-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         API Test [Mojave+ WK2 Debug ] TestWebKitAPI.WKAttachmentTestsMac.InsertDroppedFilePromisesAsAttachments is a flaky crash

@@ -34,7 +34,6 @@ all_queue_names = [
     "commit-queue",
     "style-queue",
     "gtk-wk2-ews",
-    "ios-ews",
     "ios-sim-ews",
     "jsc-ews",
     "jsc-mips-ews",
