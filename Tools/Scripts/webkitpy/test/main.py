@@ -270,7 +270,7 @@ class Tester(object):
                     platform=_host.platform.os_name,
                     version=str(_host.platform.os_version),
                     version_name=_host.platform.os_version_name(),
-                    style='asan' if config.asan else configuration_to_use,
+                    style='asan' if config.asan else configuration_to_use.lower(),
                     sdk=_host.platform.build_version(),
                     flavor=self._options.result_report_flavor,
                 ),

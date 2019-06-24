@@ -1,3 +1,13 @@
+2019-06-24  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Build style should be lower-case
+        https://bugs.webkit.org/show_bug.cgi?id=199158
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests): Make all styles lower-case.
+
 2019-06-24  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Remove iOS queue from old EWS and dashboard
