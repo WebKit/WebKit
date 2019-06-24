@@ -157,7 +157,7 @@ public:
     bool isLinked() { return m_stub || m_calleeOrCodeBlock; }
     void unlink(VM&);
 
-    void setUpCall(CallType callType, CodeOrigin codeOrigin, unsigned calleeGPR)
+    void setUpCall(CallType callType, CodeOrigin codeOrigin, GPRReg calleeGPR)
     {
         m_callType = callType;
         m_codeOrigin = codeOrigin;
@@ -312,12 +312,7 @@ public:
         return OBJECT_OFFSETOF(CallLinkInfo, m_slowPathCount);
     }
 
-    void setCalleeGPR(unsigned calleeGPR)
-    {
-        m_calleeGPR = calleeGPR;
-    }
-
-    unsigned calleeGPR()
+    GPRReg calleeGPR()
     {
         return m_calleeGPR;
     }
@@ -362,10 +357,10 @@ private:
     bool m_allowStubs : 1;
     bool m_clearedByJettison : 1;
     unsigned m_callType : 4; // CallType
-    unsigned m_calleeGPR : 8;
     uint32_t m_maxNumArguments; // For varargs: the profiled maximum number of arguments. For direct: the number of stack slots allocated for arguments.
     uint32_t m_slowPathCount;
     CodeOrigin m_codeOrigin;
+    GPRReg m_calleeGPR { InvalidGPRReg };
 };
 
 inline CodeOrigin getCallLinkInfoCodeOrigin(CallLinkInfo& callLinkInfo)
