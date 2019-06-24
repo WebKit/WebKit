@@ -1,3 +1,14 @@
+2019-06-24  Greg Doolittle  <gr3g@apple.com>
+
+        Web Inspector: AXI: Audit: image label test is throwing spurious errors on elements with existing alt attr, but no value: <img alt>
+        https://bugs.webkit.org/show_bug.cgi?id=194754
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/img-alt-attribute-unassigned-value-expected.txt: Added.
+        * accessibility/img-alt-attribute-unassigned-value.html: Added.
+        * inspector/dom/getAccessibilityPropertiesForNode-expected.txt:
+
 2019-06-24  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover

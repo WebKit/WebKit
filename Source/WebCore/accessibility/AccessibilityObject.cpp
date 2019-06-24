@@ -2493,6 +2493,9 @@ String AccessibilityObject::computedRoleString() const
     // FIXME: Need a few special cases that aren't in the RoleMap: option, etc. http://webkit.org/b/128296
     AccessibilityRole role = roleValue();
 
+    if (role == AccessibilityRole::Image && accessibilityIsIgnored())
+        return reverseAriaRoleMap().get(static_cast<int>(AccessibilityRole::Presentational));
+
     // We do not compute a role string for generic block elements with user-agent assigned roles.
     if (role == AccessibilityRole::Group || role == AccessibilityRole::TextGroup)
         return "";
