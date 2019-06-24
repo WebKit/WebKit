@@ -1,3 +1,13 @@
+2019-06-21  Mark Lam  <mark.lam@apple.com>
+
+        ArraySlice needs to keep the source array alive.
+        https://bugs.webkit.org/show_bug.cgi?id=197374
+        <rdar://problem/50304429>
+
+        Reviewed by Michael Saboff and Filip Pizlo.
+
+        * stress/array-slice-must-keep-source-array-alive.js: Added.
+
 2019-06-22  Robin Morisset  <rmorisset@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
 
         All prototypes should call didBecomePrototype()

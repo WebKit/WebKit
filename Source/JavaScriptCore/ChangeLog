@@ -1,3 +1,46 @@
+2019-06-24  Mark Lam  <mark.lam@apple.com>
+
+        ArraySlice needs to keep the source array alive.
+        https://bugs.webkit.org/show_bug.cgi?id=197374
+        <rdar://problem/50304429>
+
+        Reviewed by Michael Saboff and Filip Pizlo.
+
+        The implementation of the FTL ArraySlice intrinsics may GC while allocating the
+        result array and its butterfly.  Previously, ArraySlice already keeps the source
+        butterfly alive in order to copy from it to the new butterfly after the allocation.
+        Unfortunately, this is not enough.  We also need to keep the source array alive
+        so that GC will scan the values in the butterfly as well.  Note: the butterfly
+        does not have a visitChildren() method to do this scan.  It's the parent object's
+        responsibility to do the scanning.
+
+        This patch fixes this by introducing a keepAlive() utility method, and we use it
+        to keep the source array alive while allocating the result array and butterfly.
+
+        keepAlive() works by using a patchpoint to communicate to B3 that a value (the
+        source array in this case) is still in use.  It also uses a fence to keep B3 from
+        relocating the patchpoint, which may defeat the fix.
+
+        For the DFG's SpeculativeJIT::compileArraySlice(), we may have lucked out and the
+        source array cell is kept alive.  This patch makes it explicit that we should
+        keep its cell alive till after the result array has been allocated.
+
+        For the Baseline JIT and LLInt, we use the arrayProtoFuncSlice() runtime function
+        and there is no issue because the source array (in "thisObj") is in the element
+        copying loop that follows the allocation of the result array.  However, for
+        documentation purposes, this patch adds a call to HeapCell::use() to indicate that
+        the source array need to kept alive at least until after the allocation of the
+        result array.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArraySlice):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::keepAlive):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSlice):
+
 2019-06-22  Robin Morisset  <rmorisset@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
 
         All prototypes should call didBecomePrototype()

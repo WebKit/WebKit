@@ -5116,6 +5116,7 @@ private:
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
 
+        LValue sourceArray = lowCell(m_graph.varArgChild(m_node, 0));
         LValue sourceStorage = lowStorage(m_graph.varArgChild(m_node, m_node->numChildren() - 1));
         LValue inputLength = m_out.load32(sourceStorage, m_heaps.Butterfly_publicLength);
 
@@ -5141,7 +5142,7 @@ private:
 
         ArrayValues arrayResult;
         {
-            LValue indexingType = m_out.load8ZeroExt32(lowCell(m_graph.varArgChild(m_node, 0)), m_heaps.JSCell_indexingTypeAndMisc);
+            LValue indexingType = m_out.load8ZeroExt32(sourceArray, m_heaps.JSCell_indexingTypeAndMisc);
             // We can ignore the writability of the cell since we won't write to the source.
             indexingType = m_out.bitAnd(indexingType, m_out.constInt32(AllWritableArrayTypesAndHistory));
             // When we emit an ArraySlice, we dominate the use of the array by a CheckStructure
@@ -5155,6 +5156,9 @@ private:
                     weakStructure(m_graph.registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithDouble)))));
             arrayResult = allocateJSArray(resultLength, resultLength, structure, indexingType, false, false);
         }
+
+        // Keep the sourceArray alive at least until after anything that can GC.
+        keepAlive(sourceArray);
 
         LBasicBlock loop = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
@@ -13711,7 +13715,7 @@ private:
         }
         
         ValueFromBlock noButterfly = m_out.anchor(m_out.intPtrZero);
-        
+
         LValue predicate;
         if (shouldLargeArraySizeCreateArrayStorage)
             predicate = m_out.aboveOrEqual(publicLength, m_out.constInt32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH));
@@ -13721,16 +13725,16 @@ private:
         m_out.branch(predicate, rarely(largeCase), usually(fastCase));
         
         m_out.appendTo(fastCase, largeCase);
-            
+
         LValue payloadSize =
             m_out.shl(m_out.zeroExt(vectorLength, pointerType()), m_out.constIntPtr(3));
-            
+
         LValue butterflySize = m_out.add(
             payloadSize, m_out.constIntPtr(sizeof(IndexingHeader)));
-            
+
         LValue allocator = allocatorForSize(vm().jsValueGigacageAuxiliarySpace, butterflySize, failCase);
         LValue startOfStorage = allocateHeapCell(allocator, failCase);
-            
+
         LValue butterfly = m_out.add(startOfStorage, m_out.constIntPtr(sizeof(IndexingHeader)));
         
         m_out.store32(publicLength, butterfly, m_heaps.Butterfly_publicLength);
@@ -17274,7 +17278,16 @@ private:
             return false;
         return true;
     }
-    
+
+    void keepAlive(LValue value)
+    {
+        PatchpointValue* patchpoint = m_out.patchpoint(Void);
+        patchpoint->effects = Effects::none();
+        patchpoint->effects.writesLocalState = true;
+        patchpoint->append(value, ValueRep::ColdAny);
+        patchpoint->setGenerator([=] (CCallHelpers&, const StackmapGenerationParams&) { });
+    }
+
     void addWeakReference(JSCell* target)
     {
         m_graph.m_plan.weakReferences().addLazily(target);
