@@ -237,7 +237,7 @@ public:
 
     HandlerInfo* handlerForBytecodeOffset(unsigned bytecodeOffset, RequiredHandler = RequiredHandler::AnyHandler);
     HandlerInfo* handlerForIndex(unsigned, RequiredHandler = RequiredHandler::AnyHandler);
-    void removeExceptionHandlerForCallSite(CallSiteIndex);
+    void removeExceptionHandlerForCallSite(DisposableCallSiteIndex);
     unsigned lineNumberForBytecodeOffset(unsigned bytecodeOffset);
     unsigned columnNumberForBytecodeOffset(unsigned bytecodeOffset);
     void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot,
@@ -843,7 +843,7 @@ public:
         m_rareData->m_exceptionHandlers.append(handler);
     }
 
-    CallSiteIndex newExceptionHandlingCallSiteIndex(CallSiteIndex originalCallSite);
+    DisposableCallSiteIndex newExceptionHandlingCallSiteIndex(CallSiteIndex originalCallSite);
 
     void ensureCatchLivenessIsComputedForBytecodeOffset(InstructionStream::Offset bytecodeOffset);
 
