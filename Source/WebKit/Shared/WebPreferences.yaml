@@ -55,6 +55,13 @@ ThirdPartyIframeRedirectBlockingEnabled:
    humanReadableDescription: "Block top-level redirects by third-party iframes"
    category: experimental
 
+GoogleAntiFlickerOptimizationQuirkEnabled:
+   type: bool
+   defaultValue: true
+   humanReadableName: "Quirk to prevent delayed initial painting on sites using Google's Anti-Flicker optimization"
+   humanReadableDescription: "Quirk to prevent delayed initial painting on sites using Google's Anti-Flicker optimization"
+   category: experimental
+
 JavaEnabled:
   type: bool
   defaultValue: false

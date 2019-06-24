@@ -1,3 +1,27 @@
+2019-06-24  Chris Dumez  <cdumez@apple.com>
+
+        Pages using Google's anti-flicker optimization may take ~5 seconds to do initial paint
+        https://bugs.webkit.org/show_bug.cgi?id=199173
+        <rdar://problem/45968770>
+
+        Reviewed by Geoffrey Garen.
+
+        Pages using Google's anti-flicker optimization [1] take ~5 seconds to do initial paint when
+        analytics.js load is blocked by a content blocker.
+
+        To address the issue, this patch introduces a quirk behind an experimental feature flag that
+        calls window.dataLayer.hide.end() on the page when the load of https://www.google-analytics.com/analytics.js
+        is blocked by a content blocker. Note that this is more robust than dropping the 'async-hide'
+        class from document.documentElement since the class name is customizable by the caller.
+        A message is logged in the console when the quirk causes window.dataLayer.hide.end() to get called
+        early.
+
+        [1] https://developers.google.com/optimize/
+
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentRuleListsForLoad):
+        * page/Settings.yaml:
+
 2019-06-24  John Wilander  <wilander@apple.com>
 
         Remove IsITPFirstPartyWebsiteDataRemovalEnabled as runtime check

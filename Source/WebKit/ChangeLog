@@ -1,3 +1,15 @@
+2019-06-24  Chris Dumez  <cdumez@apple.com>
+
+        Pages using Google's anti-flicker optimization may take ~5 seconds to do initial paint
+        https://bugs.webkit.org/show_bug.cgi?id=199173
+        <rdar://problem/45968770>
+
+        Reviewed by Geoffrey Garen.
+
+        Add experimental feature for the quirk.
+
+        * Shared/WebPreferences.yaml:
+
 2019-06-24  John Wilander  <wilander@apple.com>
 
         Remove IsITPFirstPartyWebsiteDataRemovalEnabled as runtime check
