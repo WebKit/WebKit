@@ -312,10 +312,10 @@ public:
 
 private:
     // This function fixes up the default font size if it detects that the current generic font family has changed. -dwh
-    void checkForGenericFamilyChange(RenderStyle*, const RenderStyle* parentStyle);
-    void checkForZoomChange(RenderStyle*, const RenderStyle* parentStyle);
+    void checkForGenericFamilyChange(RenderStyle&, const RenderStyle* parentStyle);
+    void checkForZoomChange(RenderStyle&, const RenderStyle* parentStyle);
 #if ENABLE(TEXT_AUTOSIZING)
-    void checkForTextSizeAdjust(RenderStyle*);
+    void checkForTextSizeAdjust(RenderStyle&);
 #endif
 
     void adjustRenderStyle(RenderStyle&, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element*);

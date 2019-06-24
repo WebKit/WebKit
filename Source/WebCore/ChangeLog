@@ -1,3 +1,21 @@
+2019-06-24  Zalan Bujtas  <zalan@apple.com>
+
+        [StyleResolver] Pass RenderStyle& instead of RenderStyle* to updateFont() related functions.
+        https://bugs.webkit.org/show_bug.cgi?id=199167
+        <rdar://problem/52062669>
+
+        Reviewed by Antti Koivisto.
+
+        It is expected to have a valid RenderStyle object here (and existing code relies on it).
+
+        * css/StyleResolver.cpp:
+        (WebCore::checkForOrientationChange):
+        (WebCore::StyleResolver::updateFont):
+        (WebCore::StyleResolver::checkForTextSizeAdjust):
+        (WebCore::StyleResolver::checkForZoomChange):
+        (WebCore::StyleResolver::checkForGenericFamilyChange):
+        * css/StyleResolver.h:
+
 2019-06-24  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events WPT] Unskip imported/w3c/web-platform-tests/pointerevents/pointerevent_lostpointercapture_is_first.html

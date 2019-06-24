@@ -1174,20 +1174,20 @@ void StyleResolver::adjustRenderStyleForSiteSpecificQuirks(RenderStyle& style, c
     }
 }
 
-static void checkForOrientationChange(RenderStyle* style)
+static void checkForOrientationChange(RenderStyle& style)
 {
     FontOrientation fontOrientation;
     NonCJKGlyphOrientation glyphOrientation;
-    std::tie(fontOrientation, glyphOrientation) = style->fontAndGlyphOrientation();
+    std::tie(fontOrientation, glyphOrientation) = style.fontAndGlyphOrientation();
 
-    const auto& fontDescription = style->fontDescription();
+    const auto& fontDescription = style.fontDescription();
     if (fontDescription.orientation() == fontOrientation && fontDescription.nonCJKGlyphOrientation() == glyphOrientation)
         return;
 
     auto newFontDescription = fontDescription;
     newFontDescription.setNonCJKGlyphOrientation(glyphOrientation);
     newFontDescription.setOrientation(fontOrientation);
-    style->setFontDescription(WTFMove(newFontDescription));
+    style.setFontDescription(WTFMove(newFontDescription));
 }
 
 void StyleResolver::updateFont()
@@ -1195,16 +1195,16 @@ void StyleResolver::updateFont()
     if (!m_state.fontDirty())
         return;
 
-    RenderStyle* style = m_state.style();
+    auto& style = *m_state.style();
 #if ENABLE(TEXT_AUTOSIZING)
     checkForTextSizeAdjust(style);
 #endif
     checkForGenericFamilyChange(style, m_state.parentStyle());
     checkForZoomChange(style, m_state.parentStyle());
     checkForOrientationChange(style);
-    style->fontCascade().update(&document().fontSelector());
+    style.fontCascade().update(&document().fontSelector());
     if (m_state.fontSizeHasViewportUnits())
-        style->setHasViewportUnits(true);
+        style.setHasViewportUnits(true);
     m_state.setFontDirty(false);
 }
 
@@ -1848,38 +1848,37 @@ RefPtr<StyleImage> StyleResolver::styleImage(CSSValue& value)
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
-void StyleResolver::checkForTextSizeAdjust(RenderStyle* style)
+void StyleResolver::checkForTextSizeAdjust(RenderStyle& style)
 {
-    ASSERT(style);
-    if (style->textSizeAdjust().isAuto() || (settings().textAutosizingUsesIdempotentMode() && !style->textSizeAdjust().isNone()))
+    if (style.textSizeAdjust().isAuto() || (settings().textAutosizingUsesIdempotentMode() && !style.textSizeAdjust().isNone()))
         return;
 
-    auto newFontDescription = style->fontDescription();
-    if (!style->textSizeAdjust().isNone())
-        newFontDescription.setComputedSize(newFontDescription.specifiedSize() * style->textSizeAdjust().multiplier());
+    auto newFontDescription = style.fontDescription();
+    if (!style.textSizeAdjust().isNone())
+        newFontDescription.setComputedSize(newFontDescription.specifiedSize() * style.textSizeAdjust().multiplier());
     else
         newFontDescription.setComputedSize(newFontDescription.specifiedSize());
-    style->setFontDescription(WTFMove(newFontDescription));
+    style.setFontDescription(WTFMove(newFontDescription));
 }
 #endif
 
-void StyleResolver::checkForZoomChange(RenderStyle* style, const RenderStyle* parentStyle)
+void StyleResolver::checkForZoomChange(RenderStyle& style, const RenderStyle* parentStyle)
 {
     if (!parentStyle)
         return;
 
-    if (style->effectiveZoom() == parentStyle->effectiveZoom() && style->textZoom() == parentStyle->textZoom())
+    if (style.effectiveZoom() == parentStyle->effectiveZoom() && style.textZoom() == parentStyle->textZoom())
         return;
 
-    const auto& childFont = style->fontDescription();
+    const auto& childFont = style.fontDescription();
     auto newFontDescription = childFont;
     setFontSize(newFontDescription, childFont.specifiedSize());
-    style->setFontDescription(WTFMove(newFontDescription));
+    style.setFontDescription(WTFMove(newFontDescription));
 }
 
-void StyleResolver::checkForGenericFamilyChange(RenderStyle* style, const RenderStyle* parentStyle)
+void StyleResolver::checkForGenericFamilyChange(RenderStyle& style, const RenderStyle* parentStyle)
 {
-    const auto& childFont = style->fontDescription();
+    const auto& childFont = style.fontDescription();
 
     if (childFont.isAbsoluteSize() || !parentStyle)
         return;
@@ -1905,7 +1904,7 @@ void StyleResolver::checkForGenericFamilyChange(RenderStyle* style, const Render
 
     auto newFontDescription = childFont;
     setFontSize(newFontDescription, size);
-    style->setFontDescription(WTFMove(newFontDescription));
+    style.setFontDescription(WTFMove(newFontDescription));
 }
 
 void StyleResolver::initializeFontStyle()
