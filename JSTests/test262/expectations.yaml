@@ -624,9 +624,6 @@ test/built-ins/Array/of/return-abrupt-from-data-property.js:
 test/built-ins/Array/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«Â», Â«Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«Â», Â«Â») to be true'
-test/built-ins/Array/prototype/Symbol.unscopables/value.js:
-  default: 'Test262Error: `flat` property value Expected SameValue(Â«undefinedÂ», Â«trueÂ») to be true'
-  strict mode: 'Test262Error: `flat` property value Expected SameValue(Â«undefinedÂ», Â«trueÂ») to be true'
 test/built-ins/Array/prototype/filter/target-array-with-non-writable-property.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'

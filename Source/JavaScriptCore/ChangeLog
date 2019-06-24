@@ -1,3 +1,13 @@
+2019-06-24  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Add Array.prototype.{flat,flatMap} to unscopables
+        https://bugs.webkit.org/show_bug.cgi?id=194322
+
+        Reviewed by Keith Miller.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+
 2019-06-24  Mark Lam  <mark.lam@apple.com>
 
         ArraySlice needs to keep the source array alive.

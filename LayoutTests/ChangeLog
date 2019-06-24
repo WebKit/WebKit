@@ -1,3 +1,13 @@
+2019-06-24  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Add Array.prototype.{flat,flatMap} to unscopables
+        https://bugs.webkit.org/show_bug.cgi?id=194322
+
+        Reviewed by Keith Miller.
+
+        * js/array-unscopables-properties-expected.txt:
+        * js/script-tests/array-unscopables-properties.js:
+
 2019-06-24  Jer Noble  <jer.noble@apple.com>
 
         iOS 12.2 Drawing portrait video to canvas is sideways
