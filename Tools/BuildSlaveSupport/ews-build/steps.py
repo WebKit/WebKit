@@ -1090,7 +1090,7 @@ class ExtractTestResults(master.MasterShellCommand):
 
     descriptionDone = ['Extracted test results']
     command = ['unzip', zipFile, '-d', resultDirectory]
-    renderables = ['resultDirectory']
+    renderables = ['resultDirectory', 'zipFile']
 
     def __init__(self):
         super(ExtractTestResults, self).__init__(self.command)
@@ -1098,8 +1098,12 @@ class ExtractTestResults(master.MasterShellCommand):
     def resultDirectoryURL(self):
         return self.resultDirectory.replace('public_html/', '/') + '/'
 
+    def resultsDownloadURL(self):
+        return self.zipFile.replace('public_html/', '/')
+
     def addCustomURLs(self):
         self.addURL('view layout test results', self.resultDirectoryURL() + 'results.html')
+        self.addURL('download layout test results', self.resultsDownloadURL())
 
     def finished(self, result):
         self.addCustomURLs()
