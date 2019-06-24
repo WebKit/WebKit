@@ -1976,6 +1976,16 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
     if (vm.heap.isCurrentThreadBusy() && !Heap::isMarked(ownerScriptExecutable()))
         return;
 
+#if ENABLE(JIT)
+    {
+        ConcurrentJSLocker locker(m_lock);
+        if (JITData* jitData = m_jitData.get()) {
+            for (CallLinkInfo* callLinkInfo : jitData->m_callLinkInfos)
+                callLinkInfo->setClearedByJettison();
+        }
+    }
+#endif
+
     // This accomplishes (2).
     ownerScriptExecutable()->installCode(vm, alternative(), codeType(), specializationKind());
 

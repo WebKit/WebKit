@@ -895,18 +895,20 @@ void linkSlowFor(
 
 static void revertCall(VM* vm, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef<JITStubRoutinePtrTag> codeRef)
 {
-    if (callLinkInfo.isDirect()) {
-        callLinkInfo.clearCodeBlock();
-        if (callLinkInfo.callType() == CallLinkInfo::DirectTailCall)
-            MacroAssembler::repatchJump(callLinkInfo.patchableJump(), callLinkInfo.slowPathStart());
-        else
-            MacroAssembler::repatchNearCall(callLinkInfo.hotPathOther(), callLinkInfo.slowPathStart());
-    } else {
-        MacroAssembler::revertJumpReplacementToBranchPtrWithPatch(
-            MacroAssembler::startOfBranchPtrWithPatchOnRegister(callLinkInfo.hotPathBegin()),
-            static_cast<MacroAssembler::RegisterID>(callLinkInfo.calleeGPR()), 0);
-        linkSlowFor(vm, callLinkInfo, codeRef);
-        callLinkInfo.clearCallee();
+    if (!callLinkInfo.clearedByJettison()) {
+        if (callLinkInfo.isDirect()) {
+            callLinkInfo.clearCodeBlock();
+            if (callLinkInfo.callType() == CallLinkInfo::DirectTailCall)
+                MacroAssembler::repatchJump(callLinkInfo.patchableJump(), callLinkInfo.slowPathStart());
+            else
+                MacroAssembler::repatchNearCall(callLinkInfo.hotPathOther(), callLinkInfo.slowPathStart());
+        } else {
+            MacroAssembler::revertJumpReplacementToBranchPtrWithPatch(
+                MacroAssembler::startOfBranchPtrWithPatchOnRegister(callLinkInfo.hotPathBegin()),
+                static_cast<MacroAssembler::RegisterID>(callLinkInfo.calleeGPR()), 0);
+            linkSlowFor(vm, callLinkInfo, codeRef);
+            callLinkInfo.clearCallee();
+        }
     }
     callLinkInfo.clearSeen();
     callLinkInfo.clearStub();

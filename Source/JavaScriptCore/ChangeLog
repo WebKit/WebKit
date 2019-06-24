@@ -1,5 +1,83 @@
 2019-06-24  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r243626. rdar://problem/51927634
+
+    CodeBlock::jettison() should disallow repatching its own calls
+    https://bugs.webkit.org/show_bug.cgi?id=196359
+    <rdar://problem/48973663>
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/call-link-info-osrexit-repatch.js: Added.
+    (foo):
+    
+    Source/JavaScriptCore:
+    
+    CodeBlock::jettison() calls CommonData::invalidate, which replaces the `hlt`
+    instruction with the jump to OSR exit. However, if the `hlt` was immediately
+    followed by a call to the CodeBlock being jettisoned, we would write over the
+    OSR exit address while unlinking all the incoming CallLinkInfos later in
+    CodeBlock::jettison().
+    
+    Change it so that we set a flag, `clearedByJettison`, in all the CallLinkInfos
+    owned by the CodeBlock being jettisoned. If the flag is set, we will avoid
+    repatching the call during unlinking. This is safe because this call will never
+    be reachable again after the CodeBlock is jettisoned.
+    
+    * bytecode/CallLinkInfo.cpp:
+    (JSC::CallLinkInfo::CallLinkInfo):
+    (JSC::CallLinkInfo::setCallee):
+    (JSC::CallLinkInfo::clearCallee):
+    (JSC::CallLinkInfo::setCodeBlock):
+    (JSC::CallLinkInfo::clearCodeBlock):
+    * bytecode/CallLinkInfo.h:
+    (JSC::CallLinkInfo::clearedByJettison):
+    (JSC::CallLinkInfo::setClearedByJettison):
+    * bytecode/CodeBlock.cpp:
+    (JSC::CodeBlock::jettison):
+    * jit/Repatch.cpp:
+    (JSC::revertCall):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243626 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-28  Tadeu Zagallo  <tzagallo@apple.com>
+
+            CodeBlock::jettison() should disallow repatching its own calls
+            https://bugs.webkit.org/show_bug.cgi?id=196359
+            <rdar://problem/48973663>
+
+            Reviewed by Saam Barati.
+
+            CodeBlock::jettison() calls CommonData::invalidate, which replaces the `hlt`
+            instruction with the jump to OSR exit. However, if the `hlt` was immediately
+            followed by a call to the CodeBlock being jettisoned, we would write over the
+            OSR exit address while unlinking all the incoming CallLinkInfos later in
+            CodeBlock::jettison().
+
+            Change it so that we set a flag, `clearedByJettison`, in all the CallLinkInfos
+            owned by the CodeBlock being jettisoned. If the flag is set, we will avoid
+            repatching the call during unlinking. This is safe because this call will never
+            be reachable again after the CodeBlock is jettisoned.
+
+            * bytecode/CallLinkInfo.cpp:
+            (JSC::CallLinkInfo::CallLinkInfo):
+            (JSC::CallLinkInfo::setCallee):
+            (JSC::CallLinkInfo::clearCallee):
+            (JSC::CallLinkInfo::setCodeBlock):
+            (JSC::CallLinkInfo::clearCodeBlock):
+            * bytecode/CallLinkInfo.h:
+            (JSC::CallLinkInfo::clearedByJettison):
+            (JSC::CallLinkInfo::setClearedByJettison):
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::jettison):
+            * jit/Repatch.cpp:
+            (JSC::revertCall):
+
+2019-06-24  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r246507. rdar://problem/51927645
 
     Concurrent GC should check the conn before starting a new collection cycle
