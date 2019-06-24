@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DNSCache.h"
 
+#include <wtf/glib/RunLoopSourcePriority.h>
+
 namespace WebKit {
 
 static const Seconds expireInterval = 60_s;

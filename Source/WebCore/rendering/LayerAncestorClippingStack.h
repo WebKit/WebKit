@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LayoutRect.h"
+#include "RenderLayer.h"
 #include "ScrollTypes.h"
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>

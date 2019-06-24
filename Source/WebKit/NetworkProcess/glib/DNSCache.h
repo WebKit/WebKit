@@ -34,6 +34,8 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
+typedef struct _GInetAddress GInetAddress;
+
 namespace WebKit {
 
 class DNSCache {

@@ -1,3 +1,13 @@
+2019-06-24  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Fixes for compilation with unified builds disabled
+        https://bugs.webkit.org/show_bug.cgi?id=199155
+
+        Reviewed by Michael Catanzaro.
+
+        * NetworkProcess/glib/DNSCache.cpp: Add missing inclusion of wtf/glib/RunLoopSourcePriority.h
+        * NetworkProcess/glib/DNSCache.h: Add missing forward declaration for GInetAddress
+
 2019-06-24  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
         [GTK] Navigation gesture should use dark fallback bg color on dark themes
