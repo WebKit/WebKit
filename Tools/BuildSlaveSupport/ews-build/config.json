@@ -292,7 +292,7 @@
       "platform": "ios-12",
       "configuration": "release",
       "architectures": ["arm64"],
-      "workernames": ["ews108", "ews109"]
+      "workernames": ["ews152", "ews154", "ews108", "ews109"]
     },
     {
       "name": "iOS-12-Simulator-Build-EWS",
@@ -434,14 +434,14 @@
       "type": "Try_Userpass",
       "name": "try",
       "port": 5555,
-      "builderNames": ["Bindings-Tests-EWS", "macOS-High-Sierra-Release-Build-EWS",
-                       "iOS-12-Simulator-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS"]
+      "builderNames": ["Bindings-Tests-EWS", "iOS-12-Build-EWS", "iOS-12-Simulator-Build-EWS",
+                       "macOS-High-Sierra-Release-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS"]
     },
     {
       "type": "Try_Userpass",
       "name": "disabled",
       "port": 5556,
-      "builderNames": ["GTK-Webkit2-EWS", "iOS-12-Build-EWS", "JSC-Tests-EWS",
+      "builderNames": ["GTK-Webkit2-EWS", "JSC-Tests-EWS",
                        "iOS-12-Simulator-WK2-Tests-EWS", "macOS-High-Sierra-Release-WK2-Tests-EWS",  "macOS-High-Sierra-Release-WK1-Tests-EWS",
                        "macOS-High-Sierra-Debug-Build-EWS", "Style-EWS", "WinCairo-EWS", "Windows-EWS", "WPE-EWS"]
     },

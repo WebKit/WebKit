@@ -1,5 +1,18 @@
 2019-06-24  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Enable iOS-12-Build queue on new EWS
+        https://bugs.webkit.org/show_bug.cgi?id=199149
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/config.json: Enable iOS-12-Build-EWS trigger. Also temporarily share ews152 and ews154 with
+        this queue.
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble): Enable ios status-bubble. Also display the ios bubble first (left). Going forward
+        will keep the builders to the left and testers to the right.
+
+2019-06-24  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Upload test results after running layout-tests
         https://bugs.webkit.org/show_bug.cgi?id=199120
 
