@@ -883,10 +883,7 @@ http/tests/globalhistory/history-delegate-basic-visited-links.html [ Pass Failur
 http/tests/history [ Skip ]
 http/tests/images [ Skip ]
 http/tests/incremental [ Skip ]
-
 http/tests/inspector [ Skip ]
-http/tests/inspector/network/resource-request-headers.html [ Pass ]
-
 http/tests/loading [ Skip ]
 http/tests/local/blob [ Skip ]
 http/tests/local/fileapi [ Skip ]
@@ -963,6 +960,7 @@ http/tests/websocket/tests/hybi/contentextensions [ Failure ]
 http/tests/websocket/tests/hybi/contentextensions/block-cookies.php [ Pass Failure ]
 http/tests/websocket/tests/hybi/contentextensions/block-cookies-worker.php [ Pass Failure ]
 http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
+http/tests/websocket/tests/hybi/frame-lengths.html [ Pass Timeout ]
 http/tests/websocket/tests/hybi/httponly-cookie.pl [ Pass Failure ]
 http/tests/websocket/tests/hybi/inspector [ Skip ]
 http/tests/websocket/tests/hybi/secure-cookie-insecure-connection.pl [ Pass Failure ]
@@ -1445,10 +1443,16 @@ editing/undo/undo-deleteWord.html [ Pass Failure ]
 
 # TODO These tests failures need to be investigated
 
+resize-observer/element-leak.html [ Pass Timeout ]
+resize-observer/resize-observer-entry-keeps-js-wrapper-of-target-alive.html [ Pass Timeout ]
+
 # Text diff failures
 storage/domstorage/localstorage/blocked-file-access.html [ Failure ]
 storage/indexeddb/exceptions.html [ Failure Pass ]
+storage/indexeddb/index-cursor.html [ Pass Timeout ]
 storage/indexeddb/intversion-revert-on-abort.html [ Failure Pass ]
+storage/indexeddb/key-type-array-private.html [ Pass Timeout ]
+storage/indexeddb/key-type-array.html [ Pass Timeout ]
 storage/indexeddb/metadata.html [ Failure Pass ]
 storage/indexeddb/modern/date-basic-private.html [ Failure ]
 storage/indexeddb/modern/date-basic.html [ Failure ]
@@ -1458,12 +1462,14 @@ storage/indexeddb/modern/idbindex-getall-1.html [ Failure Pass ]
 storage/indexeddb/modern/idbindex-getallkeys-1.html [ Failure Pass ]
 storage/indexeddb/modern/idbobjectstore-delete-1-private.html [ Failure ]
 storage/indexeddb/modern/idbobjectstore-delete-1.html [ Failure ]
-storage/indexeddb/modern/idbtransaction-objectstore-failures.html [ Failure Pass ]
 storage/indexeddb/modern/idbtransaction-objectstore-failures-private.html [ Failure Pass ]
-storage/indexeddb/objectstore-basics.html [ Failure Pass ]
+storage/indexeddb/modern/idbtransaction-objectstore-failures.html [ Failure Pass ]
 storage/indexeddb/objectstore-basics-workers.html [ Failure ]
-storage/indexeddb/wasm-exceptions.html [ Failure ]
+storage/indexeddb/objectstore-basics.html [ Failure Pass ]
+storage/indexeddb/objectstore-cursor.html [ Pass Timeout ]
+storage/indexeddb/structured-clone.html [ Pass Timeout ]
 storage/indexeddb/version-change-abort.html [ Failure Pass ]
+storage/indexeddb/wasm-exceptions.html [ Failure ]
 
 # TODO Exclude WebSQL tests:
 webkit.org/b/116559 storage/websql/ [ Skip ]

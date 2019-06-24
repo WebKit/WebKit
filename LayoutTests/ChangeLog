@@ -1,3 +1,9 @@
+2019-06-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+
 2019-06-23  Simon Fraser  <simon.fraser@apple.com>
 
         [Async overflow scroll] Clipped composited layers inside overflow scroll jitter and get incorrectly clipped
