@@ -1,5 +1,20 @@
 2019-06-24  Charlie Turner  <cturner@igalia.com>
 
+        [GStreamer][MSE] Pausing video sometimes causes skip to finish
+        https://bugs.webkit.org/show_bug.cgi?id=197355
+
+        Reviewed by Philippe Normand.
+
+        Covered by existing tests.
+
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::currentMediaTime const):
+        Assuming that when m_eosPending is on and we're paused() that the
+        network resource is fully loaded and the end is reached is clearly
+        wrong. Whether this is now correct is unclear...
+
+2019-06-24  Charlie Turner  <cturner@igalia.com>
+
         [GStreamer] Volume level sometimes changes inappropriately
         https://bugs.webkit.org/show_bug.cgi?id=197358
 
