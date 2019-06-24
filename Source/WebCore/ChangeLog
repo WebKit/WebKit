@@ -1,3 +1,35 @@
+2019-06-24  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover
+        https://bugs.webkit.org/show_bug.cgi?id=198999
+        <rdar://problem/51979477>
+
+        Unreviewed.
+
+        Rolling back all changes made for this bug (r246728 + r246716 + r246674) as it regressed one test
+        (imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_pointercapture_in_frame.html).
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareMouseEvent):
+        (WebCore::Document::updateHoverActiveState):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::setCapturingMouseEventsElement):
+        * page/EventHandler.h:
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::releasePointerCapture):
+        (WebCore::PointerCaptureController::hasPointerCapture):
+        (WebCore::PointerCaptureController::dispatchEventForTouchAtIndex):
+        (WebCore::PointerCaptureController::dispatchEvent):
+        (WebCore::PointerCaptureController::processPendingPointerCapture):
+        (WebCore::PointerCaptureController::pointerCaptureElement): Deleted.
+        * page/PointerCaptureController.h:
+        * rendering/HitTestRequest.h:
+        (WebCore::HitTestRequest::includesAllElementsUnderPoint const):
+        (WebCore::HitTestRequest::pointerCaptureElementChanged const): Deleted.
+
 2019-06-23  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover

@@ -413,9 +413,6 @@ private:
     MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const PlatformMouseEvent&);
 
     bool dispatchMouseEvent(const AtomString& eventType, Node* target, bool cancelable, int clickCount, const PlatformMouseEvent&, bool setUnder);
-#if ENABLE(POINTER_EVENTS)
-    bool dispatchMouseEvent(const AtomString& eventType, Node* target, bool cancelable, int clickCount, const PlatformMouseEvent&, bool setUnder, const HitTestRequest&, MouseEventWithHitTestResults&);
-#endif
 
 #if ENABLE(DRAG_SUPPORT)
     bool dispatchDragEvent(const AtomString& eventType, Element& target, const PlatformMouseEvent&, DataTransfer&);

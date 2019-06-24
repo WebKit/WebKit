@@ -320,10 +320,6 @@
 #include "GPUCanvasContext.h"
 #endif
 
-#if ENABLE(POINTER_EVENTS)
-#include "PointerCaptureController.h"
-#endif
-
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Document);
@@ -3736,16 +3732,8 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& r
     HitTestResult result(documentPoint);
     hitTest(request, result);
 
-    if (!request.readOnly()) {
-        auto targetElement = makeRefPtr(result.targetElement());
-#if ENABLE(POINTER_EVENTS)
-        if (auto* page = this->page()) {
-            if (auto* captureElement = page->pointerCaptureController().pointerCaptureElement(mousePointerID))
-                targetElement = captureElement;
-        }
-#endif
-        updateHoverActiveState(request, targetElement.get());
-    }
+    if (!request.readOnly())
+        updateHoverActiveState(request, result.targetElement());
 
     return MouseEventWithHitTestResults(event, result);
 }
@@ -6788,9 +6776,8 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
 
     // If the mouse is down and if this is a mouse move event, we want to restrict changes in
     // :hover/:active to only apply to elements that are in the :active chain that we froze
-    // at the time the mouse went down. Unless the pointer capture element was changed, in which
-    // case we want to invalidate the chains anyway.
-    bool mustBeInActiveChain = request.active() && request.move() && !request.pointerCaptureElementChanged();
+    // at the time the mouse went down.
+    bool mustBeInActiveChain = request.active() && request.move();
 
     RefPtr<Element> oldHoveredElement = WTFMove(m_hoveredElement);
 

@@ -60,7 +60,6 @@ public:
     bool preventsCompatibilityMouseEventsForIdentifier(PointerID);
     void dispatchEvent(PointerEvent&, EventTarget*);
     WEBCORE_EXPORT void cancelPointer(PointerID, const IntPoint&);
-    Element* pointerCaptureElement(PointerID);
 
 private:
     struct CapturingData {
@@ -83,7 +82,6 @@ private:
     // empty and removed values, allowing any int32_t to be provided through the API for lookup in this hashmap.
     using PointerIdToCapturingDataMap = HashMap<int64_t, CapturingData, WTF::IntHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>>;
     PointerIdToCapturingDataMap m_activePointerIdsToCapturingData;
-    bool m_processingPendingPointerCapture { false };
 };
 
 } // namespace WebCore

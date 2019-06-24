@@ -1,3 +1,21 @@
+2019-06-24  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover
+        https://bugs.webkit.org/show_bug.cgi?id=198999
+        <rdar://problem/51979477>
+
+        Unreviewed.
+
+        Rolling back all changes made for this bug (r246728 + r246716 + r246674) as it regressed one test
+        (imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_pointercapture_in_frame.html).
+
+        * platform/mac-highsierra-wk1/imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_capture_change_hover-expected.txt: Added.
+        * platform/mac-highsierra/imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_capture_change_hover-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_at_implicit_release_hoverable_pointers-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/pointerevents/pointerevent_click_during_capture-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_pointercapture_in_frame-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/pointerevents/pointerevent_setpointercapture_relatedtarget-expected.txt:
+
 2019-06-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
