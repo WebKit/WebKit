@@ -1,3 +1,13 @@
+2019-06-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Add user agent quirk for Google Drive
+        https://bugs.webkit.org/show_bug.cgi?id=199153
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+
 2019-06-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Expand tests coverage (328 new tests -> 2652).

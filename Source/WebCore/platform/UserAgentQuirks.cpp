@@ -104,9 +104,10 @@ static bool urlRequiresMacintoshPlatform(const URL& url)
         || domain == "exchange.tu-berlin.de")
         return true;
 
-    // Google Docs shows a scary unsupported browser warning with WebKitGTK+'s
-    // standard user agent.
-    if (domain == "docs.google.com")
+    // Google Docs and Google Drive both show a scary unsupported browser
+    // warning with WebKitGTK+'s standard user agent.
+    if (domain == "docs.google.com"
+        || domain == "drive.google.com")
         return true;
 
     return false;
@@ -114,8 +115,10 @@ static bool urlRequiresMacintoshPlatform(const URL& url)
 
 static bool urlRequiresLinuxDesktopPlatform(const URL& url)
 {
-    // docs.google.com requires the macOS platform quirk.
-    return isGoogle(url) && url.host() != "docs.google.com";
+    // docs.google.com and drive.google.com require the macOS platform quirk.
+    return isGoogle(url)
+        && url.host() != "docs.google.com"
+        && url.host() != "drive.google.com";
 }
 
 UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
