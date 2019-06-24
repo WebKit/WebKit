@@ -1,3 +1,23 @@
+2019-06-24  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r246725 ): Crashes on twitch.tv
+        https://bugs.webkit.org/show_bug.cgi?id=199176
+        rdar://problem/52071249
+
+        Reviewed by Zalan Bujtas.
+        
+        With a composited negative z-index child inside a scroller, we can register the overflow scroll
+        proxy node before we've traversed the overflow layer, so it that layer hasn't got its OverflowScrollingNode
+        yet. Thus, AsyncScrollingCoordinator::setRelatedOverflowScrollingNodes() can be called with an empty vector.
+        Avoid crashing when this happens.
+
+        Test: scrollingcoordinator/scrolling-tree/scroller-with-negative-z-child.html
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::setRelatedOverflowScrollingNodes):
+        * page/scrolling/cocoa/ScrollingTreeOverflowScrollProxyNode.mm:
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren):
+
 2019-06-24  Chris Dumez  <cdumez@apple.com>
 
         Pages using Google's anti-flicker optimization may take ~5 seconds to do initial paint

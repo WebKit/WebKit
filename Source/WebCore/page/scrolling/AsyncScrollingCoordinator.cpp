@@ -715,8 +715,10 @@ void AsyncScrollingCoordinator::setRelatedOverflowScrollingNodes(ScrollingNodeID
         downcast<ScrollingStatePositionedNode>(node)->setRelatedOverflowScrollingNodes(WTFMove(relatedNodes));
     else if (is<ScrollingStateOverflowScrollProxyNode>(node)) {
         auto* overflowScrollProxyNode = downcast<ScrollingStateOverflowScrollProxyNode>(node);
-        ASSERT(relatedNodes.size() == 1);
-        overflowScrollProxyNode->setOverflowScrollingNode(relatedNodes[0]);
+        if (!relatedNodes.isEmpty())
+            overflowScrollProxyNode->setOverflowScrollingNode(relatedNodes[0]);
+        else
+            overflowScrollProxyNode->setOverflowScrollingNode(0);
     } else
         ASSERT_NOT_REACHED();
 }

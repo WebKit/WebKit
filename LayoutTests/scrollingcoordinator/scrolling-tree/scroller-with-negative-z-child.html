@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+		.scroller {
+			position: relative;
+			overflow-y: scroll;
+			width: 300px;
+			height: 300px;
+			border: 1px solid black;
+		}
+		
+		.box {
+			position: relative;
+			margin: 20px;
+		    width: 100px;
+		    height: 100px;
+		    background-color: green;
+		}
+
+		.inside {
+			left: 20px;
+		}
+		
+		.negative {
+			z-index: -1;
+		    transform: translateZ(0);
+		}
+
+		.spacer {
+		    width: 40px;
+		    height: 500px;
+		    background-color: silver;
+		}
+    </style>
+	<script>
+		if (window.testRunner)
+			testRunner.dumpAsText();
+	</script>
+</head>
+<body>
+    <p>This test should not assert or crash</p>
+	<div class="scroller">
+        <div class="inside negative box"></div>
+        <div class="spacer"></div>
+	</div>
+</body>
+</html>

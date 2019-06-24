@@ -1,3 +1,13 @@
+2019-06-24  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r246725 ): Crashes on twitch.tv
+        https://bugs.webkit.org/show_bug.cgi?id=199176
+
+        Reviewed by Zalan Bujtas.
+
+        * scrollingcoordinator/scrolling-tree/scroller-with-negative-z-child-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/scroller-with-negative-z-child.html: Added.
+
 2019-06-24  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Add Array.prototype.{flat,flatMap} to unscopables
