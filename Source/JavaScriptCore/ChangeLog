@@ -1,5 +1,56 @@
 2019-06-24  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r246507. rdar://problem/51927645
+
+    Concurrent GC should check the conn before starting a new collection cycle
+    https://bugs.webkit.org/show_bug.cgi?id=198913
+    <rdar://problem/49515149>
+    
+    Reviewed by Filip Pizlo.
+    
+    Heap::requestCollection tries to steal the conn as an optimization to avoid waking up the collector
+    thread if it's idle. We determine if the collector is idle by ensuring that there are no pending collections
+    and that the current GC phase is NotRunning. However, that's not safe immediately after the concurrent
+    GC has finished processing the last pending request. The collector thread will runEndPhase and immediately
+    start runNotRunningPhase, without checking if it still has the conn. If the mutator has stolen the conn in
+    the mean time, this will lead to both threads collecting concurrently, and eventually we'll crash in checkConn,
+    since the collector is running but doesn't have the conn anymore.
+    
+    To solve this, we check if we still have the conn after holding the lock in runNotRunningPhase, in case the mutator
+    has stolen the conn. Ideally, we wouldn't let the mutator steal the conn in the first place, but that doesn't seem
+    trivial to determine.
+    
+    * heap/Heap.cpp:
+    (JSC::Heap::runNotRunningPhase):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@246507 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-06-17  Tadeu Zagallo  <tzagallo@apple.com>
+
+            Concurrent GC should check the conn before starting a new collection cycle
+            https://bugs.webkit.org/show_bug.cgi?id=198913
+            <rdar://problem/49515149>
+
+            Reviewed by Filip Pizlo.
+
+            Heap::requestCollection tries to steal the conn as an optimization to avoid waking up the collector
+            thread if it's idle. We determine if the collector is idle by ensuring that there are no pending collections
+            and that the current GC phase is NotRunning. However, that's not safe immediately after the concurrent
+            GC has finished processing the last pending request. The collector thread will runEndPhase and immediately
+            start runNotRunningPhase, without checking if it still has the conn. If the mutator has stolen the conn in
+            the mean time, this will lead to both threads collecting concurrently, and eventually we'll crash in checkConn,
+            since the collector is running but doesn't have the conn anymore.
+
+            To solve this, we check if we still have the conn after holding the lock in runNotRunningPhase, in case the mutator
+            has stolen the conn. Ideally, we wouldn't let the mutator steal the conn in the first place, but that doesn't seem
+            trivial to determine.
+
+            * heap/Heap.cpp:
+            (JSC::Heap::runNotRunningPhase):
+
+2019-06-24  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r246505. rdar://problem/51927642
 
     [JSC] Introduce DisposableCallSiteIndex to enforce type-safety

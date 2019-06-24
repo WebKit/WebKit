@@ -1196,6 +1196,9 @@ NEVER_INLINE bool Heap::runNotRunningPhase(GCConductor conn)
         auto locker = holdLock(*m_threadLock);
         if (m_requests.isEmpty())
             return false;
+        // Check if the mutator has stolen the conn while the collector transitioned from End to NotRunning
+        if (conn == GCConductor::Collector && !!(m_worldState.load() & mutatorHasConnBit))
+            return false;
     }
     
     return changePhase(conn, CollectorPhase::Begin);
