@@ -1,5 +1,23 @@
 2019-06-24  Sihui Liu  <sihui_liu@apple.com>
 
+        REGRESSION (r244436): IndexedDB Uint8Array returned as ArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=198738
+        <rdar://problem/51614053>
+
+        Reviewed by Brady Eidson.
+
+        In InexedDB, two binary keys are the same as long as their data is the same.
+
+        Modified tests: storage/indexeddb/key-type-binary.html
+                        storage/indexeddb/key-type-binary-private.html
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::injectIDBKeyIntoScriptValue):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readArrayBufferView):
+
+2019-06-24  Sihui Liu  <sihui_liu@apple.com>
+
         Remove WebSQL quirk for nytimes.com
         https://bugs.webkit.org/show_bug.cgi?id=199175
 

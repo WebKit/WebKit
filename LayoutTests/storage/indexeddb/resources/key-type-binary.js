@@ -11,6 +11,7 @@ function prepareDatabase()
     db = event.target.result;
     event.target.transaction.onabort = unexpectedAbortCallback;
     objectStore = evalAndLog("db.createObjectStore('store');");
+    objectStoreWithKeyPath = evalAndLog("db.createObjectStore('storeWithKeyPath', {keyPath: 'binary'});");
     debug("");
 }
 
@@ -46,29 +47,54 @@ function testBinaryKeys1()
     trans.oncomplete = testBinaryKeys2;
 }
 
+const cases = [
+    "new Uint8ClampedArray([1,2,3])",
+    "new Uint16Array([1,2,3])",
+    "new Uint32Array([1,2,3])",
+    "new Int8Array([1,2,3])",
+    "new Int16Array([1,2,3])",
+    "new Int32Array([1,2,3])",
+    "new Float32Array([1,2,3])",
+    "new Float64Array([1,2,3])",
+    "new Uint8Array([1,2,3]).buffer",
+    "new DataView(new Uint8Array([1,2,3]).buffer)"
+];
+
 function testBinaryKeys2()
 {
     preamble();
     evalAndLog("trans = db.transaction('store', 'readwrite')");
     evalAndLog("store = trans.objectStore('store')");
 
-    var cases = [
-        "new Uint8ClampedArray([1,2,3])",
-        "new Uint16Array([1,2,3])",
-        "new Uint32Array([1,2,3])",
-        "new Int8Array([1,2,3])",
-        "new Int16Array([1,2,3])",
-        "new Int32Array([1,2,3])",
-        "new Float32Array([1,2,3])",
-        "new Float64Array([1,2,3])",
-        "new Uint8Array([1,2,3]).buffer",
-        "new DataView(new Uint8Array([1,2,3]).buffer)"
-    ];
-
     cases.forEach(function(testCase) {
         debug("");
         evalAndLog("store.put('value', " + testCase + ")");
     });
 
-    finishJSTest();
+    trans.oncomplete = testBinaryKeys3;
+}
+
+function runTest(testNumber) {
+    debug("");
+    evalAndLog("binary = " + cases[testNumber]);
+    evalAndLog("store.put({ binary })");
+    evalAndLog("request = store.get(binary)");
+    request.onsuccess = ()=>{
+        shouldBeTrue("binary.constructor === request.result.binary.constructor");
+
+        if (++testNumber == cases.length)
+            finishJSTest();
+        else
+            runTest(testNumber);
+    }
+    request.onerror = unexpectedErrorCallback;
+}
+
+function testBinaryKeys3()
+{
+    preamble();
+    evalAndLog("trans = db.transaction('storeWithKeyPath', 'readwrite')");
+    evalAndLog("store = trans.objectStore('storeWithKeyPath')");
+
+    runTest(0);
 }

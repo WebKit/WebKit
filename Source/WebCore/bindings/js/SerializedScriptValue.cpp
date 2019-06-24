@@ -2136,7 +2136,7 @@ private:
         RefPtr<ArrayBuffer> arrayBuffer = toPossiblySharedArrayBuffer(vm, arrayBufferObj);
         switch (arrayBufferViewSubtag) {
         case DataViewTag:
-            arrayBufferView = getJSValue(DataView::create(WTFMove(arrayBuffer), byteOffset, length).get());
+            arrayBufferView = toJS(m_exec, m_globalObject, DataView::create(WTFMove(arrayBuffer), byteOffset, length).get());
             return true;
         case Int8ArrayTag:
             arrayBufferView = toJS(m_exec, m_globalObject, Int8Array::tryCreate(WTFMove(arrayBuffer), byteOffset, length).get());

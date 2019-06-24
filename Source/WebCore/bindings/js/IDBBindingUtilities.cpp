@@ -327,11 +327,9 @@ bool injectIDBKeyIntoScriptValue(ExecState& exec, const IDBKeyData& keyData, JSV
         return false;
 
     // Do not set if object already has the correct property value.
-    auto jsKey = toJS(exec, *exec.lexicalGlobalObject(), key.get());
     JSValue existingKey;
-    if (get(exec, parent, keyPathElements.last(), existingKey) && existingKey == jsKey)
+    if (get(exec, parent, keyPathElements.last(), existingKey) && !key->compare(createIDBKeyFromValue(exec, existingKey)))
         return true;
-
     if (!set(exec, parent, keyPathElements.last(), toJS(exec, *exec.lexicalGlobalObject(), key.get())))
         return false;
 
