@@ -1979,10 +1979,8 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
 #if ENABLE(JIT)
     {
         ConcurrentJSLocker locker(m_lock);
-        if (JITData* jitData = m_jitData.get()) {
-            for (CallLinkInfo* callLinkInfo : jitData->m_callLinkInfos)
-                callLinkInfo->setClearedByJettison();
-        }
+        for (CallLinkInfo* callLinkInfo : m_callLinkInfos)
+            callLinkInfo->setClearedByJettison();
     }
 #endif
 
