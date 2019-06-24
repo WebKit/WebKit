@@ -312,6 +312,13 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
         }
     }
 
+    if (!m_currentSwipeSnapshotPattern) {
+        GdkRGBA color;
+        auto* context = gtk_widget_get_style_context(m_webPageProxy.viewWidget());
+        if (gtk_style_context_lookup_color(context, "theme_base_color", &color))
+            m_currentSwipeSnapshotPattern = adoptRef(cairo_pattern_create_rgba(color.red, color.green, color.blue, color.alpha));
+    }
+
     if (!m_currentSwipeSnapshotPattern)
         m_currentSwipeSnapshotPattern = adoptRef(cairo_pattern_create_rgb(1, 1, 1));
 }
