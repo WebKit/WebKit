@@ -3438,3 +3438,5 @@ imported/w3c/web-platform-tests/websockets/Secure-Send-unpaired-surrogates.any.w
 
 # iOS only
 fast/dom/linkify-phone-numbers.html [ ImageOnlyFailure ]
+
+webkit.org/b/199039 editing/deleting/smart-delete-paragraph-003.html [ Skip ]

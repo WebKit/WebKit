@@ -2620,9 +2620,6 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
         return;
 
     RenderObject* renderer = hitNode->renderer();
-    if (!request.readonly)
-        page.corePage()->focusController().setFocusedFrame(result.innerNodeFrame());
-
     info.bounds = renderer->absoluteBoundingBoxRect(true);
     // We don't want to select blocks that are larger than 97% of the visible area of the document.
     if (is<HTMLAttachmentElement>(*hitNode)) {

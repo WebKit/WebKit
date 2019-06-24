@@ -1316,7 +1316,6 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         _layerTreeTransactionIdAtLastTouchStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
 
         WebKit::InteractionInformationRequest positionInformationRequest { WebCore::IntPoint(_lastInteractionLocation) };
-        positionInformationRequest.readonly = true;
         [self doAfterPositionInformationUpdate:[assistant = WeakObjCPtr<WKActionSheetAssistant>(_actionSheetAssistant.get())] (WebKit::InteractionInformationAtPosition information) {
             [assistant interactionDidStartWithPositionInformation:information];
         } forRequest:positionInformationRequest];

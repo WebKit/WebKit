@@ -1,3 +1,18 @@
+2019-06-24  Daniel Bates  <dabates@apple.com>
+
+        m_focusedElement != &element in WebPage::elementDidBlur() sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=198928
+        <rdar://problem/51814327>
+
+        Reviewed by Brent Fulgham.
+
+        Update test result now that we do not mutate the focused frame on tap.
+
+        * TestExpectations: Skip problematic test editing/deleting/smart-delete-paragraph-003.html;
+        See <https://bugs.webkit.org/show_bug.cgi?id=198928#c16>, <https://bugs.webkit.org/show_bug.cgi?id=198928#c17>,
+        and <https://bugs.webkit.org/show_bug.cgi?id=199039> for more details.
+        * fast/events/ios/should-be-able-to-dismiss-form-accessory-after-tapping-outside-iframe-with-focused-field-expected.txt:
+
 2019-06-24  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events WPT] Unskip imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_coordinates_when_locked.html
