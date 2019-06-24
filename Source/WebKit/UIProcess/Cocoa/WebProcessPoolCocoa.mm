@@ -299,12 +299,6 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.shouldEnableITPDatabase = [defaults boolForKey:[NSString stringWithFormat:@"InternalDebug%@", WebPreferencesKey::isITPDatabaseEnabledKey().createCFString().get()]];
     parameters.downloadMonitorSpeedMultiplier = m_configuration->downloadMonitorSpeedMultiplier();
 
-    // Check if the feature has been turned off explicitly. This avoids interpreting
-    // a non-existing default as a false value.
-    auto isITPFirstPartyWebsiteDataRemovalEnabledStr = [defaults stringForKey:[NSString stringWithFormat:@"Experimental%@", WebPreferencesKey::isITPFirstPartyWebsiteDataRemovalEnabledKey().createCFString().get()]];
-    if ([isITPFirstPartyWebsiteDataRemovalEnabledStr isEqual:@"0"])
-        parameters.isITPFirstPartyWebsiteDataRemovalEnabled = false;
-
     parameters.enableAdClickAttributionDebugMode = [defaults boolForKey:[NSString stringWithFormat:@"Experimental%@", WebPreferencesKey::adClickAttributionDebugModeEnabledKey().createCFString().get()]];
 }
 

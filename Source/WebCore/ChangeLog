@@ -1,3 +1,21 @@
+2019-06-24  John Wilander  <wilander@apple.com>
+
+        Remove IsITPFirstPartyWebsiteDataRemovalEnabled as runtime check
+        https://bugs.webkit.org/show_bug.cgi?id=199164
+        <rdar://problem/52061147>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests. Just a removal of a runtime feature check. The functionality
+        already has a layout test.
+
+        We've had this toggle as a safety thing since mid-March. No need for it any longer.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::isITPDatabaseEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setIsITPFirstPartyWebsiteDataRemovalEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::isITPFirstPartyWebsiteDataRemovalEnabled const): Deleted.
+
 2019-06-24  Jer Noble  <jer.noble@apple.com>
 
         iOS 12.2 Drawing portrait video to canvas is sideways

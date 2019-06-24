@@ -1,3 +1,25 @@
+2019-06-24  John Wilander  <wilander@apple.com>
+
+        Remove IsITPFirstPartyWebsiteDataRemovalEnabled as runtime check
+        https://bugs.webkit.org/show_bug.cgi?id=199164
+        <rdar://problem/52061147>
+
+        Reviewed by Brent Fulgham.
+
+        We've had this toggle as a safety thing since mid-March. No need for it any longer.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::shouldRemoveAllButCookiesFor const):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * Shared/WebPreferences.yaml:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
 2019-06-24  Daniel Bates  <dabates@apple.com>
 
         m_focusedElement != &element in WebPage::elementDidBlur() sometimes

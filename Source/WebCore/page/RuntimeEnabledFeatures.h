@@ -151,9 +151,6 @@ public:
 
     void setIsITPDatabaseEnabled(bool isEnabled) { m_isITPDatabaseEnabled = isEnabled; }
     bool isITPDatabaseEnabled() const { return m_isITPDatabaseEnabled; }
-    
-    void setIsITPFirstPartyWebsiteDataRemovalEnabled(bool isEnabled) { m_isITPFirstPartyWebsiteDataRemovalEnabled = isEnabled; }
-    bool isITPFirstPartyWebsiteDataRemovalEnabled() const { return m_isITPFirstPartyWebsiteDataRemovalEnabled; }
 
     void setRestrictedHTTPResponseAccess(bool isEnabled) { m_isRestrictedHTTPResponseAccess = isEnabled; }
     bool restrictedHTTPResponseAccess() const { return m_isRestrictedHTTPResponseAccess; }
@@ -553,7 +550,6 @@ private:
 #endif
 
     bool m_isITPDatabaseEnabled { false };
-    bool m_isITPFirstPartyWebsiteDataRemovalEnabled { false };
 
     bool m_referrerPolicyAttributeEnabled { false };
     bool m_interruptAudioOnPageVisibilityChangeEnabled { false };

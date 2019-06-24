@@ -1393,14 +1393,6 @@ MediaCapabilitiesExtensionsEnabled:
   humanReadableDescription: "Media Capabilities Extensions"
   category: experimental
 
-IsITPFirstPartyWebsiteDataRemovalEnabled:
-    type: bool
-    defaultValue: true
-    humanReadableName: "ITP First Party Website Data Removal"
-    humanReadableDescription: "Enable Intelligent Tracking Prevention First Party Website Data Removal"
-    webcoreBinding: RuntimeEnabledFeatures
-    category: experimental
-
 ResizeObserverEnabled:
   type: bool
   defaultValue: false

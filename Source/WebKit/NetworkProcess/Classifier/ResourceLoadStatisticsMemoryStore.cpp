@@ -41,7 +41,6 @@
 #include <WebCore/KeyedCoding.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceLoadStatistics.h>
-#include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/DateMath.h>
@@ -797,7 +796,7 @@ bool ResourceLoadStatisticsMemoryStore::shouldRemoveAllWebsiteDataFor(ResourceLo
 
 bool ResourceLoadStatisticsMemoryStore::shouldRemoveAllButCookiesFor(ResourceLoadStatistics& resourceStatistic, bool shouldCheckForGrandfathering) const
 {
-    return RuntimeEnabledFeatures::sharedFeatures().isITPFirstPartyWebsiteDataRemovalEnabled() && resourceStatistic.gotLinkDecorationFromPrevalentResource && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Short) && (!shouldCheckForGrandfathering || !resourceStatistic.grandfathered);
+    return resourceStatistic.gotLinkDecorationFromPrevalentResource && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Short) && (!shouldCheckForGrandfathering || !resourceStatistic.grandfathered);
 }
 
 HashMap<RegistrableDomain, WebsiteDataToRemove> ResourceLoadStatisticsMemoryStore::registrableDomainsToRemoveWebsiteDataFor()

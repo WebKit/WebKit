@@ -309,7 +309,6 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
         switchToNewTestingSession();
 
     WebCore::RuntimeEnabledFeatures::sharedFeatures().setIsITPDatabaseEnabled(parameters.shouldEnableITPDatabase);
-    WebCore::RuntimeEnabledFeatures::sharedFeatures().setIsITPFirstPartyWebsiteDataRemovalEnabled(parameters.isITPFirstPartyWebsiteDataRemovalEnabled);
 
     WebCore::RuntimeEnabledFeatures::sharedFeatures().setAdClickAttributionDebugModeEnabled(parameters.enableAdClickAttributionDebugMode);
 
