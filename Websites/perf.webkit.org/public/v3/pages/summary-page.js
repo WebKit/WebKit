@@ -346,21 +346,21 @@ class SummaryPageConfigurationGroup {
             var baselineTimeSeries = set.fetchedTimeSeries('baseline', false, false);
             var currentTimeSeries = set.fetchedTimeSeries('current', false, false);
 
-            var baselineMedian = SummaryPageConfigurationGroup._medianForTimeRange(baselineTimeSeries, timeRange);
-            var currentMedian = SummaryPageConfigurationGroup._medianForTimeRange(currentTimeSeries, timeRange);
+            const baselineMean = SummaryPageConfigurationGroup._meanForTimeRange(baselineTimeSeries, timeRange);
+            const currentMean = SummaryPageConfigurationGroup._meanForTimeRange(currentTimeSeries, timeRange);
             var platform = Platform.findById(set.platformId());
-            if (!currentMedian)
+            if (!currentMean)
                 self._missingPlatforms.add(platform);
-            else if (!baselineMedian)
+            else if (!baselineMean)
                 self._platformsWithoutBaseline.add(platform);
 
-            setToRatio.set(set, currentMedian / baselineMedian);
+            setToRatio.set(set, currentMean / baselineMean);
         }).catch(function () {
             setToRatio.set(set, NaN);
         });
     }
 
-    static _medianForTimeRange(timeSeries, timeRange)
+    static _startAndEndPointForTimeRange(timeSeries, timeRange)
     {
         if (!timeSeries.firstPoint())
             return NaN;
@@ -371,6 +371,12 @@ class SummaryPageConfigurationGroup {
         if (!endPoint || startPoint == afterEndPoint)
             endPoint = afterEndPoint;
 
-        return Statistics.median(timeSeries.viewBetweenPoints(startPoint, endPoint).values());
+        return [startPoint, endPoint];
+    }
+
+    static _meanForTimeRange(timeSeries, timeRange)
+    {
+        const [startPoint, endPoint] = SummaryPageConfigurationGroup._startAndEndPointForTimeRange(timeSeries, timeRange);
+        return Statistics.mean(timeSeries.viewBetweenPoints(startPoint, endPoint).values());
     }
 }
