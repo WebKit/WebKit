@@ -1,5 +1,17 @@
 2019-06-24  Antoine Quint  <graouts@apple.com>
 
+        [Pointer Events WPT] Unskip imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_coordinates_when_locked.html
+        https://bugs.webkit.org/show_bug.cgi?id=197007
+
+        Reviewed by Dean Jackson.
+
+        Update the test from the Web Platform Tests repository following the fix for https://github.com/web-platform-tests/wpt/issues/16406.
+
+        * web-platform-tests/pointerevents/pointerlock/pointerevent_coordinates_when_locked-expected.txt: Added.
+        * web-platform-tests/pointerevents/pointerlock/pointerevent_coordinates_when_locked.html:
+
+2019-06-24  Antoine Quint  <graouts@apple.com>
+
         [Pointer Events WPT] Unskip imported/w3c/web-platform-tests/pointerevents/pointerevent_lostpointercapture_is_first.html
         https://bugs.webkit.org/show_bug.cgi?id=197005
 

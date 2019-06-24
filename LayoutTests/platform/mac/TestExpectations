@@ -1885,8 +1885,6 @@ imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointerlo
 imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointermove_in_pointerlock-manual.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointermove_on_chorded_mouse_button_when_locked-manual.html [ Skip ]
 
-webkit.org/b/197007 imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_coordinates_when_locked.html [ Skip ]
-
 webkit.org/b/192501 [ Debug ] animations/play-state-in-shorthand.html [ Pass Failure ]
 
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Pass Failure ]
