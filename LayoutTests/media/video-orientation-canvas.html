@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-orientation-canvas</title>
+    <script src="video-test.js"></script>
+    <script>
+        let redColor = new Uint8ClampedArray([210, 0, 0, 255]);
+        var context;
+
+        function arraysAreApproximatelyEqual(arrayString, expected, tolerance) {
+            try {
+                var observed = eval(arrayString);
+            } catch (ex) {
+                consoleWrite(ex);
+                return;
+            }
+
+            if (observed.length != expected.length) {
+                logResult(Failed, `EXPECTED (<em>${ arrayString }.length</em> == <em>${ expected.length }</em>, OBSERVED '<em>${ observed.length }</em>'`);
+                return;
+            }
+
+            for (var index in observed) {
+                if (Math.abs(observed[index] - expected[index]) <= tolerance)
+                    continue;
+                logResult(Failed, `EXPECTED (<em>${ arrayString }</em> == <em>[${ expected }]</em>
+                    with tolerance <em>${ tolerance }</em>, OBSERVED '<em>[${ observed }]</em>'`);
+                return;
+            }
+
+            logResult(true, `EXPECTED (<em>${ arrayString }</em> == <em>[${ expected }]</em> with tolerance <em>${ tolerance }</em>`)
+        }
+
+        window.addEventListener('load', async event => {
+            video1 = document.createElement('video');
+            video1.src = 'content/rotation-90.mp4';
+            await waitFor(video1, 'canplay', true);
+
+            let canvas1 = document.querySelector('#canvas1');
+            canvas1.width = video1.videoWidth;
+            canvas1.height = video1.videoHeight;
+            context = canvas1.getContext('2d');
+            context.drawImage(video1, 0, 0);
+            arraysAreApproximatelyEqual('context.getImageData(88, 115, 1, 1).data', redColor, 5);
+
+            video2 = document.createElement('video');
+            video2.src = 'content/rotation-180.mp4';
+            await waitFor(video2, 'canplay', true);
+
+            let canvas2 = document.querySelector('#canvas2');
+            canvas2.width = video2.videoWidth;
+            canvas2.height = video2.videoHeight;
+            context = canvas2.getContext('2d');
+            context.drawImage(video2, 0, 0);
+            arraysAreApproximatelyEqual('context.getImageData(237, 88, 1, 1).data', redColor, 5);
+
+            video3 = document.createElement('video');
+            video3.src = 'content/rotation-270.mp4';
+            await waitFor(video3, 'canplay', true);
+
+            let canvas3 = document.querySelector('#canvas3');
+            canvas3.width = video3.videoWidth;
+            canvas3.height = video3.videoHeight;
+            context = canvas3.getContext('2d');
+            context.drawImage(video3, 0, 0);
+            arraysAreApproximatelyEqual('context.getImageData(200, 237, 1, 1).data', redColor, 5);
+
+
+            endTest();
+        });
+    </script>
+</head>
+<body>
+    <canvas id=canvas1></canvas>
+    <canvas id=canvas2></canvas>
+    <canvas id=canvas3></canvas>
+</body>
+</html>

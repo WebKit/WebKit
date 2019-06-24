@@ -1,3 +1,46 @@
+2019-06-24  Jer Noble  <jer.noble@apple.com>
+
+        iOS 12.2 Drawing portrait video to canvas is sideways
+        https://bugs.webkit.org/show_bug.cgi?id=196772
+        <rdar://problem/49781802>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-orientation-canvas.html
+
+        Move rotation code into its own ImageRotationSessionVT class for re-use across
+        all existing classes with rotation operations. Should slightly increase performance
+        for painting rotated media files, as the rotation only occurs once per frame, rather
+        than once per drawing operation.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.h:
+        (WebCore::ImageDecoderAVFObjC::RotationProperties::isIdentity const): Deleted.
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (WebCore::ImageDecoderAVFObjC::readTrackMetadata):
+        (WebCore::ImageDecoderAVFObjC::storeSampleBuffer):
+        (WebCore::ImageDecoderAVFObjC::setTrack):
+        (WebCore::transformToRotationProperties): Deleted.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateLastPixelBuffer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+        * platform/graphics/cv/ImageRotationSessionVT.h: Added.
+        (WebCore::ImageRotationSessionVT::RotationProperties::isIdentity const):
+        (WebCore::ImageRotationSessionVT::rotationProperties const):
+        (WebCore::ImageRotationSessionVT::rotatedSize):
+        * platform/graphics/cv/ImageRotationSessionVT.mm: Added.
+        (WebCore::transformToRotationProperties):
+        (WebCore::ImageRotationSessionVT::ImageRotationSessionVT):
+        (WebCore::ImageRotationSessionVT::rotate):
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.h:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.mm:
+        (WebCore::rotationToAngle):
+        (WebCore::RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer):
+        (WebCore::computeRotatedWidthAndHeight): Deleted.
+
 2019-06-24  Zalan Bujtas  <zalan@apple.com>
 
         [StyleResolver] Pass RenderStyle& instead of RenderStyle* to updateFont() related functions.
