@@ -95,7 +95,6 @@
 
 (allow file-read*
     ;; Basic system paths
-    (subpath "/Library/Fonts") ;; Needed to serialize font data types <rdar://problem/50164879>
     (subpath "/Library/Frameworks")
     (subpath "/Library/Managed Preferences")
 

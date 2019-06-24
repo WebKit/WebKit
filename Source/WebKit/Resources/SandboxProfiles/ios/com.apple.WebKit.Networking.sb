@@ -72,12 +72,6 @@
     (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
 )
 
-;; Read-only preferences and data
-(allow file-read*
-    ;; Basic system paths
-    (subpath "/Library/Fonts") ;; Needed to serialize font data types <rdar://problem/50164879>
-)
-
 ;; Security framework
 (allow mach-lookup
     (global-name "com.apple.ocspd")
