@@ -1,3 +1,13 @@
+2019-06-24  Brady Eidson  <beidson@apple.com>
+
+        Null deref in WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad.
+        <rdar://problem/51535942> and https://bugs.webkit.org/show_bug.cgi?id=199123
+
+        Reviewed by Andy Estes.
+
+        * loader/FrameLoaderStateMachine.h:
+        (WebCore::FrameLoaderStateMachine::stateForDebugging const):
+
 2019-06-24  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r246725 ): Crashes on twitch.tv

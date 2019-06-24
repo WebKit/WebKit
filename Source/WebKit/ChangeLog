@@ -1,3 +1,14 @@
+2019-06-24  Brady Eidson  <beidson@apple.com>
+
+        Null deref in WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad.
+        <rdar://problem/51535942> and https://bugs.webkit.org/show_bug.cgi?id=199123
+
+        Reviewed by Andy Estes.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad): Properly detect this null DocumentLoader
+          and try to learn more about the state of things.
+
 2019-06-24  Chris Dumez  <cdumez@apple.com>
 
         Pages using Google's anti-flicker optimization may take ~5 seconds to do initial paint

@@ -57,6 +57,8 @@ public:
     WEBCORE_EXPORT bool firstLayoutDone() const;
     void advanceTo(State);
 
+    State stateForDebugging() const { return m_state; }
+
 private:
     State m_state;
 };
