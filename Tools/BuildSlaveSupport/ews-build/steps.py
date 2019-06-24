@@ -789,6 +789,16 @@ class RunWebKitTests(shell.Test):
             self.setCommand(self.command + additionalArguments)
         return shell.Test.start(self)
 
+    def evaluateCommand(self, cmd):
+        rc = super(RunWebKitTests, self).evaluateCommand(cmd)
+        if rc == SUCCESS:
+            message = 'Passed layout tests'
+            self.descriptionDone = message
+            self.build.results = SUCCESS
+            self.build.buildFinished([message], SUCCESS)
+        else:
+            self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(), ExtractTestResults()])
+        return rc
 
 class RunWebKit1Tests(RunWebKitTests):
     def start(self):

@@ -1,5 +1,16 @@
 2019-06-24  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Upload test results after running layout-tests
+        https://bugs.webkit.org/show_bug.cgi?id=199120
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitTests.evaluateCommand):
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+
+2019-06-24  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] EWS should provide option to download layout test results zip file
         https://bugs.webkit.org/show_bug.cgi?id=199121
 
