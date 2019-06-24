@@ -1,3 +1,13 @@
+2019-06-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        API Test [Mojave+ WK2 Debug ] TestWebKitAPI.WKAttachmentTestsMac.InsertDroppedFilePromisesAsAttachments is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=198795
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST): Disable flaky test.
+
 2019-06-24  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Enable iOS-12-Build queue on new EWS
