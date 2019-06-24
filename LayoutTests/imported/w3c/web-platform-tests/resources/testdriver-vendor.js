@@ -14,6 +14,8 @@ function dispatchMouseActions(actions)
 
     return new Promise(resolve => {
         setTimeout(() => {
+            eventSender.dragMode = false;
+
             for (let action of actions) {
                 switch (action.type) {
                 case "pointerMove":

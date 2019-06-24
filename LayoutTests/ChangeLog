@@ -1,3 +1,18 @@
+2019-06-24  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events WPT] Unskip imported/w3c/web-platform-tests/pointerevents/pointerevent_lostpointercapture_is_first.html
+        https://bugs.webkit.org/show_bug.cgi?id=197005
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac-wk1/imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_capture_change_hover-expected.txt: Removed.
+        * platform/mac-highsierra-wk1/imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_capture_change_hover-expected.txt: Removed.
+        * platform/mac-highsierra/imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_capture_change_hover-expected.txt: Removed.
+        Since we've fixed the issue with event dispatch in WK1, we can remove these platform-specific expectations.
+        * platform/mac/TestExpectations: We no longer skip this test which works reliably.
+        * pointerevents/mouse/pointer-capture.html: We modify this test to correctly expect the "gotpointercapture" event only once the next
+        pointer event has been dispatched.
+
 2019-06-24  Greg Doolittle  <gr3g@apple.com>
 
         Web Inspector: AXI: Audit: image label test is throwing spurious errors on elements with existing alt attr, but no value: <img alt>

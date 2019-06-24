@@ -1,3 +1,33 @@
+2019-06-24  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events WPT] Unskip imported/w3c/web-platform-tests/pointerevents/pointerevent_lostpointercapture_is_first.html
+        https://bugs.webkit.org/show_bug.cgi?id=197005
+
+        Reviewed by Dean Jackson.
+
+        We were calling processPendingPointerCapture() at the wrong time, calling in after dispatching a PointerEvent rather than before.
+        We now do this correctly in the consolidated PointerCaptureController::dispatchEvent() method, which we call for dispatching all
+        PointerEvents, save for gotpointercapture and lostpointercapture since these should not yield the processing of the pending pointer
+        capture per the spec.
+
+        This uncovered a couple of new issues. First, since we would now call processPendingPointerCapture() and dispatch a lostpointercapture
+        event earlier, the alternative lostpointercapture dispatch when an element is removed (which is dispatched asynchronously on the
+        document) would be dispatched *after* dispatching the event in processPendingPointerCapture(). We now check in processPendingPointerCapture()
+        whether the event target is connected to fix this. This makes sure pointerevent_lostpointercapture_for_disconnected_node.html doesn't regress.
+
+        Finally, we must also call processPendingPointerCapture() when implicitly releasing pointer capture during handling of a "pointerup" event.
+        This ensures that pointerevent_releasepointercapture_invalid_pointerid.html doesn't regress.
+
+        As a result of all these changes, we now pass imported/w3c/web-platform-tests/pointerevents/pointerevent_lostpointercapture_is_first.html reliably.
+
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::dispatchEventForTouchAtIndex):
+        (WebCore::PointerCaptureController::dispatchEvent): We now more closely adhere to the spec when determining what the pointer capture target is by
+        only checking for the target override. We can now do this safely since we call processPendingPointerCapture() before and not after event dispatch.
+        (WebCore::PointerCaptureController::pointerEventWasDispatched):
+        (WebCore::PointerCaptureController::processPendingPointerCapture): Cache the pending target override to make sure that dispatching a "gotpointercapture"
+        or "lostpointercapture" event during this function does not alter it until the next call is made when the next event is dispatched.
+
 2019-06-24  Greg Doolittle  <gr3g@apple.com>
 
         Web Inspector: AXI: Audit: image label test is throwing spurious errors on elements with existing alt attr, but no value: <img alt>

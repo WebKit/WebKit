@@ -1,5 +1,17 @@
 2019-06-24  Antoine Quint  <graouts@apple.com>
 
+        [Pointer Events WPT] Unskip imported/w3c/web-platform-tests/pointerevents/pointerevent_lostpointercapture_is_first.html
+        https://bugs.webkit.org/show_bug.cgi?id=197005
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/pointerevents/pointerevent_lostpointercapture_is_first-expected.txt: Added.
+        * web-platform-tests/resources/testdriver-vendor.js:
+        (dispatchMouseActions): We need to disable dragMode for the eventSender or else the "pointermove" events in the test will
+        not be dispatched as there is no mouseUp() call in the test's event sequence.
+
+2019-06-24  Antoine Quint  <graouts@apple.com>
+
         [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover
         https://bugs.webkit.org/show_bug.cgi?id=198999
         <rdar://problem/51979477>
