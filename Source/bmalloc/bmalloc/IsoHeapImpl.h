@@ -39,7 +39,7 @@ class BEXPORT IsoHeapImplBase {
     MAKE_BMALLOCED;
 public:
     static constexpr unsigned maxAllocationFromShared = 8;
-    static constexpr unsigned maxAllocationFromSharedMask = maxAllocationFromShared - 1;
+    static constexpr unsigned maxAllocationFromSharedMask = (1U << maxAllocationFromShared) - 1U;
     static_assert(maxAllocationFromShared <= bmalloc::alignment, "");
     static_assert(isPowerOfTwo(maxAllocationFromShared), "");
 
