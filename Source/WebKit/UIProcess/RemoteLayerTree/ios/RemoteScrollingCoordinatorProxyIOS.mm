@@ -132,31 +132,49 @@ void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const
 
     // Usually a scroll view scrolls its descendant layers. In some positioning cases it also controls non-descendants, or doesn't control a descendant.
     // To do overlap hit testing correctly we tell layers about such relations.
-    for (auto positionedNodeID : m_scrollingTree->positionedNodesWithRelatedOverflow()) {
-        auto* positionedNode = downcast<ScrollingTreePositionedNode>(m_scrollingTree->nodeForID(positionedNodeID));
-        if (!positionedNode) {
+    
+    for (auto nodeID : m_scrollingTree->nodesWithRelatedOverflow()) {
+        auto* node = m_scrollingTree->nodeForID(nodeID);
+        if (!node) {
             ASSERT_NOT_REACHED();
             continue;
         }
-        Vector<GraphicsLayer::PlatformLayerID> scrollContainerLayerIDs;
 
-        for (auto overflowNodeID : positionedNode->relatedOverflowScrollingNodes()) {
-            auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(m_scrollingTree->nodeForID(overflowNodeID));
+        Vector<GraphicsLayer::PlatformLayerID> scrollContainerLayerIDs;
+        RemoteLayerTreeNode* layerNode = nullptr;
+        ScrollPositioningBehavior behavior = ScrollPositioningBehavior::None;
+
+        if (is<ScrollingTreePositionedNode>(*node)) {
+            auto& positionedNode = downcast<ScrollingTreePositionedNode>(*node);
+            for (auto overflowNodeID : positionedNode.relatedOverflowScrollingNodes()) {
+                auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(m_scrollingTree->nodeForID(overflowNodeID));
+                if (!overflowNode) {
+                    ASSERT_NOT_REACHED();
+                    continue;
+                }
+                scrollContainerLayerIDs.append(RemoteLayerTreeNode::layerID(overflowNode->scrollContainerLayer()));
+            }
+            layerNode = RemoteLayerTreeNode::forCALayer(positionedNode.layer());
+            behavior = ScrollPositioningBehavior::Stationary;
+        } else if (is<ScrollingTreeOverflowScrollProxyNode>(*node)) {
+            auto& scrollProxyNode = downcast<ScrollingTreeOverflowScrollProxyNode>(*node);
+            auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(m_scrollingTree->nodeForID(scrollProxyNode.overflowScrollingNodeID()));
             if (!overflowNode) {
                 ASSERT_NOT_REACHED();
                 continue;
             }
             scrollContainerLayerIDs.append(RemoteLayerTreeNode::layerID(overflowNode->scrollContainerLayer()));
+            layerNode = RemoteLayerTreeNode::forCALayer(scrollProxyNode.layer());
+            behavior = ScrollPositioningBehavior::Moves;
         }
 
-        auto* positionedLayerNode = RemoteLayerTreeNode::forCALayer(positionedNode->layer());
-        if (!positionedLayerNode) {
+        if (!layerNode) {
             ASSERT_NOT_REACHED();
             continue;
         }
-        positionedLayerNode->setRelatedScrollContainerBehaviorAndIDs(positionedNode->scrollPositioningBehavior(), WTFMove(scrollContainerLayerIDs));
+        layerNode->setRelatedScrollContainerBehaviorAndIDs(behavior, WTFMove(scrollContainerLayerIDs));
 
-        m_layersWithScrollingRelations.add(positionedLayerNode->layerID());
+        m_layersWithScrollingRelations.add(layerNode->layerID());
     }
 }
 

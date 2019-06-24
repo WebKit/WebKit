@@ -1,3 +1,92 @@
+2019-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow scroll] Clipped composited layers inside overflow scroll jitter and get incorrectly clipped
+        https://bugs.webkit.org/show_bug.cgi?id=199133
+        rdar://problem/43614439
+
+        Reviewed by Antti Koivisto.
+        
+        New baselines for:
+        - clipping layers no longer have offsetFromRenderer(), which they didn't need.
+        - positioned nodes don't print scrollBehavior (they are always "Stationary")
+        - "Moves" positioned nodes are replaced with overflow scroll proxy nodes
+
+        * compositing/backing/backing-store-attachment-empty-keyframe-expected.txt:
+        * compositing/geometry/clip-expected.txt:
+        * compositing/geometry/clip-inside-expected.txt:
+        * compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt:
+        * compositing/layer-creation/clipping-scope/nested-scroller-overlap-expected.txt:
+        * compositing/layer-creation/clipping-scope/nested-scroller-overlap.html:
+        * compositing/layer-creation/clipping-scope/overlap-constrained-inside-scroller-expected.txt:
+        * compositing/layer-creation/clipping-scope/scroller-with-negative-z-children-expected.txt:
+        * compositing/overflow/clip-descendents-expected.txt:
+        * compositing/overflow/scrolling-content-clip-to-viewport-expected.txt:
+        * compositing/rtl/rtl-scrolling-with-transformed-descendants-expected.txt:
+        * compositing/rtl/rtl-scrolling-with-transformed-descendants.html:
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-clipped-by-scroll-expected.txt: Added.
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-clipped-by-scroll.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-expected.txt: Added.
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-nested-expected.txt: Added.
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-nested.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-hidden-expected.txt: Added.
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-hidden.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-visible-expected.txt: Added.
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-visible.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-expected.txt: Added.
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-gain-clipping-layer-expected.txt: Added.
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-gain-clipping-layer.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-in-clipped-expected.txt: Added.
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-in-clipped.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-lose-clipping-layer-expected.txt: Added.
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-lose-clipping-layer.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow.html: Added.
+        * compositing/shared-backing/overflow-scroll/composited-absolute-in-absolute-in-relative-in-scroller-expected.txt:
+        * compositing/shared-backing/overflow-scroll/previous-sibling-prevents-inclusiveness-expected.txt:
+        * compositing/shared-backing/overflow-scroll/previous-sibling-prevents-inclusiveness.html:
+        * platform/ios-wk2/compositing/layer-creation/clipping-scope/nested-scroller-overlap-expected.txt:
+        * platform/ios-wk2/compositing/layer-creation/clipping-scope/overlap-constrained-inside-scroller-expected.txt:
+        * platform/ios-wk2/compositing/layer-creation/clipping-scope/scroller-with-negative-z-children-expected.txt:
+        * platform/ios-wk2/compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-clipped-by-scroll-expected.txt: Added.
+        * platform/ios-wk2/compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-expected.txt: Added.
+        * platform/ios-wk2/compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-nested-expected.txt: Added.
+        * platform/ios-wk2/compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-hidden-expected.txt: Added.
+        * platform/ios-wk2/compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-visible-expected.txt: Added.
+        * platform/ios-wk2/compositing/scrolling/async-overflow-scrolling/layer-in-overflow-expected.txt: Added.
+        * platform/ios-wk2/compositing/scrolling/async-overflow-scrolling/layer-in-overflow-gain-clipping-layer-expected.txt: Added.
+        * platform/ios-wk2/compositing/scrolling/async-overflow-scrolling/layer-in-overflow-in-clipped-expected.txt: Added.
+        * platform/ios-wk2/compositing/scrolling/async-overflow-scrolling/layer-in-overflow-lose-clipping-layer-expected.txt: Added.
+        * platform/ios-wk2/compositing/shared-backing/overflow-scroll/composited-absolute-in-absolute-in-relative-in-scroller-expected.txt:
+        * platform/ios-wk2/compositing/shared-backing/overflow-scroll/previous-sibling-prevents-inclusiveness-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/absolute-in-nested-sc-scrollers-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/absolute-inside-stacking-in-scroller-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/clipped-layer-in-overflow-expected.txt: Copied from LayoutTests/platform/ios-wk2/scrollingcoordinator/scrolling-tree/absolute-inside-stacking-in-scroller-expected.txt.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/clipped-layer-in-overflow-nested-expected.txt: Copied from LayoutTests/platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-overflow-scroll-expected.txt.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/composited-in-absolute-in-stacking-context-overflow-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-absolute-overflow-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-relative-in-overflow-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-overflow-scroll-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/positioned-nodes-complex-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/positioned-nodes-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/sticky-in-overflow-expected.txt:
+        * platform/ios/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt:
+        * platform/ios/compositing/rtl/rtl-scrolling-with-transformed-descendants-expected.txt:
+        * scrollingcoordinator/scrolling-tree/absolute-in-nested-sc-scrollers-expected.txt:
+        * scrollingcoordinator/scrolling-tree/absolute-inside-stacking-in-scroller-expected.txt:
+        * scrollingcoordinator/scrolling-tree/clipped-layer-in-overflow-expected.txt: Copied from LayoutTests/scrollingcoordinator/scrolling-tree/absolute-inside-stacking-in-scroller-expected.txt.
+        * scrollingcoordinator/scrolling-tree/clipped-layer-in-overflow-nested-expected.txt: Copied from LayoutTests/scrollingcoordinator/scrolling-tree/nested-overflow-scroll-expected.txt.
+        * scrollingcoordinator/scrolling-tree/clipped-layer-in-overflow-nested.html: Added.
+        * scrollingcoordinator/scrolling-tree/clipped-layer-in-overflow.html: Added.
+        * scrollingcoordinator/scrolling-tree/composited-in-absolute-in-stacking-context-overflow-expected.txt:
+        * scrollingcoordinator/scrolling-tree/nested-absolute-in-absolute-overflow-expected.txt:
+        * scrollingcoordinator/scrolling-tree/nested-absolute-in-relative-in-overflow-expected.txt:
+        * scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow-expected.txt:
+        * scrollingcoordinator/scrolling-tree/nested-overflow-scroll-expected.txt:
+        * scrollingcoordinator/scrolling-tree/positioned-nodes-complex-expected.txt:
+        * scrollingcoordinator/scrolling-tree/positioned-nodes-expected.txt:
+        * scrollingcoordinator/scrolling-tree/sticky-in-overflow-expected.txt:
+
 2019-06-23  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events WPT] Unflake imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_pointercapture_in_frame.html

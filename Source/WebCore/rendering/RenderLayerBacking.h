@@ -44,7 +44,7 @@ class TransformationMatrix;
 enum CompositingLayerType {
     NormalCompositingLayer, // non-tiled layer with backing store
     TiledCompositingLayer, // tiled layer (always has backing store)
-    MediaCompositingLayer, // layer that contains an image, video, webGL or plugin
+    MediaCompositingLayer, // layer that contains an image, video, WebGL or plugin
     ContainerCompositingLayer // layer with no backing store
 };
 
@@ -100,9 +100,9 @@ public:
     bool hasClippingLayer() const { return (m_childContainmentLayer && !m_isFrameLayerWithTiledBacking); }
     GraphicsLayer* clippingLayer() const { return !m_isFrameLayerWithTiledBacking ? m_childContainmentLayer.get() : nullptr; }
 
-    // Layer to get clipped by ancestor
-    bool hasAncestorClippingLayer() const { return m_ancestorClippingLayer != nullptr; }
-    GraphicsLayer* ancestorClippingLayer() const { return m_ancestorClippingLayer.get(); }
+    bool hasAncestorClippingLayers() const { return !!m_ancestorClippingStack; }
+    LayerAncestorClippingStack* ancestorClippingStack() const { return m_ancestorClippingStack.get(); }
+    bool updateAncestorClippingStack(Vector<CompositedClipData>&&);
 
     GraphicsLayer* contentsContainmentLayer() const { return m_contentsContainmentLayer.get(); }
 
@@ -117,8 +117,6 @@ public:
     GraphicsLayer* scrollContainerLayer() const { return m_scrollContainerLayer.get(); }
     GraphicsLayer* scrolledContentsLayer() const { return m_scrolledContentsLayer.get(); }
 
-    OptionSet<ScrollCoordinationRole> coordinatedScrollingRoles() const;
-
     void detachFromScrollingCoordinator(OptionSet<ScrollCoordinationRole>);
 
     ScrollingNodeID scrollingNodeIDForRole(ScrollCoordinationRole role) const
@@ -126,6 +124,10 @@ public:
         switch (role) {
         case ScrollCoordinationRole::Scrolling:
             return m_scrollingNodeID;
+        case ScrollCoordinationRole::ScrollingProxy:
+            // These nodeIDs are stored in m_ancestorClippingStack.
+            ASSERT_NOT_REACHED();
+            return 0;
         case ScrollCoordinationRole::FrameHosting:
             return m_frameHostingNodeID;
         case ScrollCoordinationRole::ViewportConstrained:
@@ -142,6 +144,10 @@ public:
         case ScrollCoordinationRole::Scrolling:
             m_scrollingNodeID = nodeID;
             break;
+        case ScrollCoordinationRole::ScrollingProxy:
+            // These nodeIDs are stored in m_ancestorClippingStack.
+            ASSERT_NOT_REACHED();
+            break;
         case ScrollCoordinationRole::FrameHosting:
             m_frameHostingNodeID = nodeID;
             break;
@@ -155,20 +161,7 @@ public:
         }
     }
 
-    ScrollingNodeID scrollingNodeIDForChildren() const
-    {
-        if (m_frameHostingNodeID)
-            return m_frameHostingNodeID;
-
-        if (m_scrollingNodeID)
-            return m_scrollingNodeID;
-
-        if (m_viewportConstrainedNodeID)
-            return m_viewportConstrainedNodeID;
-
-        return m_positioningNodeID;
-    }
-
+    ScrollingNodeID scrollingNodeIDForChildren() const;
     void setIsScrollCoordinatedWithViewportConstrainedRole(bool);
 
     bool hasMaskLayer() const { return m_maskLayer; }
@@ -313,7 +306,7 @@ private:
     RenderLayerCompositor& compositor() const { return m_owningLayer.compositor(); }
 
     void updateInternalHierarchy();
-    bool updateAncestorClippingLayer(bool needsAncestorClip);
+    bool updateAncestorClipping(bool needsAncestorClip, const RenderLayer* compositingAncestor);
     bool updateDescendantClippingLayer(bool needsDescendantClip);
     bool updateOverflowControlsLayers(bool needsHorizontalScrollbarLayer, bool needsVerticalScrollbarLayer, bool needsScrollCornerLayer);
     bool updateForegroundLayer(bool needsForegroundLayer);
@@ -391,15 +384,16 @@ private:
     static AnimatedPropertyID cssToGraphicsLayerProperty(CSSPropertyID);
 
     bool canIssueSetNeedsDisplay() const { return !paintsIntoWindow() && !paintsIntoCompositedAncestor(); }
-    LayoutRect computeParentGraphicsLayerRect(RenderLayer* compositedAncestor, LayoutSize& ancestorClippingLayerOffset) const;
+    LayoutRect computeParentGraphicsLayerRect(const RenderLayer* compositedAncestor) const;
     LayoutRect computePrimaryGraphicsLayerRect(const LayoutRect& parentGraphicsLayerRect) const;
 
     RenderLayer& m_owningLayer;
-
+    
     // A list other layers that paint into this backing store, later than m_owningLayer in paint order.
     Vector<WeakPtr<RenderLayer>> m_backingSharingLayers;
 
-    RefPtr<GraphicsLayer> m_ancestorClippingLayer; // Only used if we are clipped by an ancestor which is not a stacking context.
+    std::unique_ptr<LayerAncestorClippingStack> m_ancestorClippingStack; // Only used if we are clipped by an ancestor which is not a stacking context.
+
     RefPtr<GraphicsLayer> m_contentsContainmentLayer; // Only used if we have a background layer; takes the transform.
     RefPtr<GraphicsLayer> m_graphicsLayer;
     RefPtr<GraphicsLayer> m_foregroundLayer; // Only used in cases where we need to draw the foreground separately.

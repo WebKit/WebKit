@@ -354,6 +354,8 @@ public:
 
     WEBCORE_EXPORT void save();
     WEBCORE_EXPORT void restore();
+    
+    unsigned stackSize() const { return m_stack.size(); }
 
     // These draw methods will do both stroking and filling.
     // FIXME: ...except drawRect(), which fills properly but always strokes
@@ -696,6 +698,27 @@ private:
     GraphicsContext& m_context;
     bool m_saveAndRestore;
 };
+
+
+class GraphicsContextStateStackChecker {
+public:
+    GraphicsContextStateStackChecker(GraphicsContext& context)
+        : m_context(context)
+        , m_stackSize(context.stackSize())
+    { }
+    
+    ~GraphicsContextStateStackChecker()
+    {
+        if (m_context.stackSize() != m_stackSize)
+            WTFLogAlways("GraphicsContext %p stack changed by %d", this, (int)m_context.stackSize() - (int)m_stackSize);
+    }
+
+private:
+    GraphicsContext& m_context;
+    unsigned m_stackSize;
+};
+
+
 
 class InterpolationQualityMaintainer {
 public:

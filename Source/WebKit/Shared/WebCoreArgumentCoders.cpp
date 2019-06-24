@@ -2201,14 +2201,13 @@ bool ArgumentCoder<FixedPositionViewportConstraints>::decode(Decoder& decoder, F
     return true;
 }
 
-void ArgumentCoder<LayoutConstraints>::encode(Encoder& encoder, const LayoutConstraints& layoutConstraints)
+void ArgumentCoder<AbsolutePositionConstraints>::encode(Encoder& encoder, const AbsolutePositionConstraints& layoutConstraints)
 {
     encoder << layoutConstraints.alignmentOffset();
     encoder << layoutConstraints.layerPositionAtLastLayout();
-    encoder.encodeEnum(layoutConstraints.scrollPositioningBehavior());
 }
 
-bool ArgumentCoder<LayoutConstraints>::decode(Decoder& decoder, LayoutConstraints& layoutConstraints)
+bool ArgumentCoder<AbsolutePositionConstraints>::decode(Decoder& decoder, AbsolutePositionConstraints& layoutConstraints)
 {
     FloatSize alignmentOffset;
     if (!decoder.decode(alignmentOffset))
@@ -2218,14 +2217,9 @@ bool ArgumentCoder<LayoutConstraints>::decode(Decoder& decoder, LayoutConstraint
     if (!decoder.decode(layerPosition))
         return false;
 
-    ScrollPositioningBehavior positioningBehavior;
-    if (!decoder.decodeEnum(positioningBehavior))
-        return false;
-
     layoutConstraints = { };
     layoutConstraints.setAlignmentOffset(alignmentOffset);
     layoutConstraints.setLayerPositionAtLastLayout(layerPosition);
-    layoutConstraints.setScrollPositioningBehavior(positioningBehavior);
     return true;
 }
 

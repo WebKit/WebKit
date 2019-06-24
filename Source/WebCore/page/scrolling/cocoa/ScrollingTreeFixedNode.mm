@@ -32,6 +32,7 @@
 #import "ScrollingStateFixedNode.h"
 #import "ScrollingTree.h"
 #import "ScrollingTreeFrameScrollingNode.h"
+#import "ScrollingTreeOverflowScrollProxyNode.h"
 #import "ScrollingTreeOverflowScrollingNode.h"
 #import "ScrollingTreePositionedNode.h"
 #import "ScrollingTreeStickyNode.h"
@@ -83,6 +84,13 @@ void ScrollingTreeFixedNode::applyLayerPositions()
             if (is<ScrollingTreeOverflowScrollingNode>(*ancestor)) {
                 // To keep the layer still during async scrolling we adjust by how much the position has changed since layout.
                 auto& overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(*ancestor);
+                overflowScrollDelta -= overflowNode.scrollDeltaSinceLastCommit();
+                continue;
+            }
+
+            if (is<ScrollingTreeOverflowScrollProxyNode>(*ancestor)) {
+                // To keep the layer still during async scrolling we adjust by how much the position has changed since layout.
+                auto& overflowNode = downcast<ScrollingTreeOverflowScrollProxyNode>(*ancestor);
                 overflowScrollDelta -= overflowNode.scrollDeltaSinceLastCommit();
                 continue;
             }

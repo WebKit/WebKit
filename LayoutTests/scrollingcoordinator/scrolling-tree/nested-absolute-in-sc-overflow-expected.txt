@@ -28,20 +28,17 @@ abs
       (children 3
         (Positioned node
           (layout constraints 
-            (layer-position-at-last-layout (20,28))
-            (positioning-behavior stationary))
+            (layer-position-at-last-layout (20,28)))
           (related overflow nodes 1)
         )
         (Positioned node
           (layout constraints 
-            (layer-position-at-last-layout (32,58))
-            (positioning-behavior stationary))
+            (layer-position-at-last-layout (32,58)))
           (related overflow nodes 1)
         )
         (Positioned node
           (layout constraints 
-            (layer-position-at-last-layout (47,55))
-            (positioning-behavior stationary))
+            (layer-position-at-last-layout (47,55)))
           (related overflow nodes 1)
         )
       )

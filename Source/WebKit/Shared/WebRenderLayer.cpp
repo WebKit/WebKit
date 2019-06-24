@@ -73,7 +73,7 @@ WebRenderLayer::WebRenderLayer(WebCore::RenderLayer* layer)
     if (layer->isComposited()) {
         WebCore::RenderLayerBacking* backing = layer->backing();
         m_isClipping = backing->hasClippingLayer();
-        m_isClipped = backing->hasAncestorClippingLayer();
+        m_isClipped = backing->hasAncestorClippingLayers();
         switch (backing->compositingLayerType()) {
         case WebCore::NormalCompositingLayer:
             m_compositingLayerType = Normal;

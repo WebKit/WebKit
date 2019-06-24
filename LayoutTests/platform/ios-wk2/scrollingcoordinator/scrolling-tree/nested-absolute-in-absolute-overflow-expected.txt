@@ -27,29 +27,17 @@ abs
         (has enabled horizontal scrollbar 1)
         (has enabled vertical scrollbar 1))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (10,10))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (50,50))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (62,82))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (77,77))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
   )
 )

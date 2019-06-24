@@ -37,8 +37,7 @@
           (children 1
             (Positioned node
               (layout constraints 
-                (layer-position-at-last-layout (-2,6))
-                (positioning-behavior stationary))
+                (layer-position-at-last-layout (-2,6)))
               (related overflow nodes 2)
             )
           )

@@ -4389,6 +4389,8 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     if (localPaintFlags & PaintLayerPaintingRootBackgroundOnly && !renderer().isRenderView() && !renderer().isDocumentElementRenderer())
         return;
 
+    GraphicsContextStateStackChecker checker(context);
+
     updateLayerListsIfNeeded();
 
     LayoutSize offsetFromRoot = offsetFromAncestor(paintingInfo.rootLayer);

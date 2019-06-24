@@ -30,21 +30,18 @@
 
 namespace WebCore {
 
-// LayoutConstraints classes encapsulate data and logic required to reposition elements whose layout
-// depends on the scroll position of ancestor elements.
-class LayoutConstraints {
+class AbsolutePositionConstraints {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    LayoutConstraints() = default;
+    AbsolutePositionConstraints() = default;
 
-    bool operator==(const LayoutConstraints& other) const
+    bool operator==(const AbsolutePositionConstraints& other) const
     {
         return alignmentOffset() == other.alignmentOffset()
-            && layerPositionAtLastLayout() == other.layerPositionAtLastLayout()
-            && scrollPositioningBehavior() == other.scrollPositioningBehavior();
+            && layerPositionAtLastLayout() == other.layerPositionAtLastLayout();
     }
 
-    bool operator!=(const LayoutConstraints& other) const { return !(*this == other); }
+    bool operator!=(const AbsolutePositionConstraints& other) const { return !(*this == other); }
     
     FloatSize alignmentOffset() const { return m_alignmentOffset; }
     void setAlignmentOffset(FloatSize offset) { m_alignmentOffset = offset; }
@@ -52,13 +49,9 @@ public:
     FloatPoint layerPositionAtLastLayout() const { return m_layerPositionAtLastLayout; }
     void setLayerPositionAtLastLayout(FloatPoint position) { m_layerPositionAtLastLayout = position; }
     
-    ScrollPositioningBehavior scrollPositioningBehavior() const { return m_scrollPositioningBehavior; }
-    void setScrollPositioningBehavior(ScrollPositioningBehavior behavior) { m_scrollPositioningBehavior = behavior; }
-
 private:
     FloatSize m_alignmentOffset;
     FloatPoint m_layerPositionAtLastLayout;
-    ScrollPositioningBehavior m_scrollPositioningBehavior { ScrollPositioningBehavior::None };
 };
 
 // ViewportConstraints classes encapsulate data and logic required to reposition elements whose layout
@@ -205,7 +198,7 @@ private:
 
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollPositioningBehavior);
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const LayoutConstraints&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const AbsolutePositionConstraints&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FixedPositionViewportConstraints&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const StickyPositionViewportConstraints&);
 

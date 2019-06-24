@@ -2,6 +2,7 @@
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
+  (clips 1)
   (children 1
     (GraphicsLayer
       (bounds 800.00 600.00)
@@ -17,6 +18,7 @@
               (position 2.00 2.00)
               (bounds origin 366.00 0.00)
               (bounds 400.00 204.00)
+              (clips 1)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=2 height=2)
@@ -30,12 +32,13 @@
           )
         )
         (GraphicsLayer
-          (offsetFromRenderer width=-96 height=0)
           (position 10.00 10.00)
+          (bounds origin 366.00 0.00)
           (bounds 400.00 204.00)
+          (clips 1)
           (children 1
             (GraphicsLayer
-              (position 96.00 0.00)
+              (position 462.00 0.00)
               (anchor 0.00 0.00)
               (bounds 150.00 200.00)
               (contentsOpaque 1)
@@ -43,12 +46,13 @@
           )
         )
         (GraphicsLayer
-          (offsetFromRenderer width=58 height=0)
           (position 10.00 10.00)
+          (bounds origin 366.00 0.00)
           (bounds 400.00 204.00)
+          (clips 1)
           (children 1
             (GraphicsLayer
-              (position -58.00 0.00)
+              (position 308.00 0.00)
               (bounds 150.00 200.00)
               (contentsOpaque 1)
             )

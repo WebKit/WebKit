@@ -1986,6 +1986,7 @@ rendering/InlineElementBox.cpp
 rendering/InlineFlowBox.cpp
 rendering/InlineIterator.cpp
 rendering/InlineTextBox.cpp
+rendering/LayerAncestorClippingStack.cpp
 rendering/LayerOverlapMap.cpp
 rendering/LayoutDisallowedScope.cpp
 rendering/LayoutRepainter.cpp

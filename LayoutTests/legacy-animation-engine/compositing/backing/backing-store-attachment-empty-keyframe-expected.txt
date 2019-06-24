@@ -9,7 +9,6 @@
       (backingStoreAttached 1)
       (children 1
         (GraphicsLayer
-          (offsetFromRenderer width=-501 height=0)
           (position 9.00 101.00)
           (bounds 501.00 150.00)
           (backingStoreAttached 1)

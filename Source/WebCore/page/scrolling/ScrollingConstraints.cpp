@@ -110,10 +110,9 @@ TextStream& operator<<(TextStream& ts, ScrollPositioningBehavior behavior)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, const LayoutConstraints& constraints)
+TextStream& operator<<(TextStream& ts, const AbsolutePositionConstraints& constraints)
 {
     ts.dumpProperty("layer-position-at-last-layout", constraints.layerPositionAtLastLayout());
-    ts.dumpProperty("positioning-behavior", constraints.scrollPositioningBehavior());
 
     return ts;
 }

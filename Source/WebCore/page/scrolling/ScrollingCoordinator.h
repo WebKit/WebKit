@@ -52,11 +52,11 @@ class TextStream;
 
 namespace WebCore {
 
+class AbsolutePositionConstraints;
 class Document;
 class Frame;
 class FrameView;
 class GraphicsLayer;
-class LayoutConstraints;
 class Page;
 class Region;
 class RenderLayer;
@@ -149,7 +149,7 @@ public:
     virtual void setScrollingNodeScrollableAreaGeometry(ScrollingNodeID, ScrollableArea&) { }
     virtual void setFrameScrollingNodeState(ScrollingNodeID, const FrameView&) { }
     virtual void setViewportConstraintedNodeConstraints(ScrollingNodeID, const ViewportConstraints&) { }
-    virtual void setPositionedNodeGeometry(ScrollingNodeID, const LayoutConstraints&) { }
+    virtual void setPositionedNodeConstraints(ScrollingNodeID, const AbsolutePositionConstraints&) { }
     virtual void setRelatedOverflowScrollingNodes(ScrollingNodeID, Vector<ScrollingNodeID>&&) { }
 
     virtual void reconcileViewportConstrainedLayerPositions(ScrollingNodeID, const LayoutRect&, ScrollingLayerPositionAction) { }

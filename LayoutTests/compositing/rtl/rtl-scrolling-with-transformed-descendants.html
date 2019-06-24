@@ -30,7 +30,7 @@
 
         function dumpLayers()
         {
-            document.getElementById('layertree').textContent = window.internals.layerTreeAsText(document);
+            document.getElementById('layertree').textContent = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CLIPPING);
         }
         window.addEventListener('load', dumpLayers, false);
     </script>

@@ -1,5 +1,29 @@
 2019-06-23  Simon Fraser  <simon.fraser@apple.com>
 
+        [Async overflow scroll] Clipped composited layers inside overflow scroll jitter and get incorrectly clipped
+        https://bugs.webkit.org/show_bug.cgi?id=199133
+        rdar://problem/43614439
+
+        Reviewed by Antti Koivisto.
+        
+        LayoutConstraints -> AbsolutePositionConstraints rename.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStatePositionedNode>::decode):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<AbsolutePositionConstraints>::encode):
+        (IPC::ArgumentCoder<AbsolutePositionConstraints>::decode):
+        (IPC::ArgumentCoder<LayoutConstraints>::encode): Deleted.
+        (IPC::ArgumentCoder<LayoutConstraints>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebRenderLayer.cpp:
+        (WebKit::WebRenderLayer::WebRenderLayer):
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations): ScrollingTreeOverflowScrollProxyNode
+        have overflow scroll relations now too.
+
+2019-06-23  Simon Fraser  <simon.fraser@apple.com>
+
         Add OverflowScrollProxyNodes to the scrolling tree
         https://bugs.webkit.org/show_bug.cgi?id=199132
 

@@ -1,5 +1,180 @@
 2019-06-23  Simon Fraser  <simon.fraser@apple.com>
 
+        [Async overflow scroll] Clipped composited layers inside overflow scroll jitter and get incorrectly clipped
+        https://bugs.webkit.org/show_bug.cgi?id=199133
+        rdar://problem/43614439
+
+        Reviewed by Antti Koivisto.
+
+        Currently a composited layer with an overflow:scroll ancestor (which is not a paint-order
+        ancestor) gets a single "ancestor clip layer" that represents the intersection of all the
+        clips provided by its containing-block ancestors with non-visible overflow (both scrolling
+        and non-scrolling ones).
+
+        To correctly update clips with async overflow scroll, this single clip layer needs to be
+        broken up into multiple clipping ancestors. We need a separate layer, and scrolling tree
+        node for each ancestor that is an overflow scroll, and layers that represent non-moving
+        clips (i.e. overflow:hidden and 'clip') between them. This patch adds
+        LayerAncestorClippingStack to represent this stack of clipping layers. For example with the
+        following content:
+        
+        <div style="overflow:hidden"> <--- A
+            <div style="overflow:scroll"> <--- B
+                <div style="overflow:hidden"> <--- C
+                    <div style="overflow:hidden"> <--- D
+                        <div style="overflow:scroll">  <--- E
+                            <div style="overflow:hidden"> <--- F
+                                <div style="overflow:hidden"> <--- G
+                                    <div></div> <--- H
+                                <div>
+                            <div>
+                        <div>
+                    <div>
+                <div>
+            <div>
+        <div>
+        
+        the composited RenderLayer for H owns a LayerAncestorClippingStack with the following contents:
+            [clip - A]
+            [scroller - B]
+            [clip - intersection of C and D]
+            [scroller - E]
+            [clip - intersection of F and G]
+
+        Each stack entry has a 'masksToBounds' GraphicsLayer for clipping. Entries representing
+        overflow:scroll clips have a ScrollingNodeID for their OverflowScrollProxy scrolling tree
+        node (which references the actual OverflowScrollingNode). The non-scroller clips in this
+        stack are computed unconstrained by the enclosing overflow:scroll.
+
+        When the OverflowScrollingNode is scrolled, the boundsOrigin of related OverflowScrollProxy nodes
+        is adjusted to move the descendant layers (other clipping layers, or composited layers).
+
+        OverflowScrollProxy nodes thus take over the role that "Moves" ScrollingTreePositionedNode had.
+        With this patch, ScrollingTreePositionedNode are purely for absolute position inside non-containing-block
+        stacking context overflow scroll. LayoutConstraints is renamed to AbsolutePositionConstraints accordingly.
+
+        Tests: compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-clipped-by-scroll.html
+               compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-nested.html
+               compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow.html
+               compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-hidden.html
+               compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-visible.html
+               compositing/scrolling/async-overflow-scrolling/layer-in-overflow-gain-clipping-layer.html
+               compositing/scrolling/async-overflow-scrolling/layer-in-overflow-in-clipped.html
+               compositing/scrolling/async-overflow-scrolling/layer-in-overflow-lose-clipping-layer.html
+               compositing/scrolling/async-overflow-scrolling/layer-in-overflow.html
+               scrollingcoordinator/scrolling-tree/clipped-layer-in-overflow-nested.html
+               scrollingcoordinator/scrolling-tree/clipped-layer-in-overflow.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::setPositionedNodeConstraints):
+        (WebCore::AsyncScrollingCoordinator::setPositionedNodeGeometry): Deleted.
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingConstraints.cpp:
+        (WebCore::operator<<):
+        * page/scrolling/ScrollingConstraints.h:
+        (WebCore::AbsolutePositionConstraints::operator== const):
+        (WebCore::AbsolutePositionConstraints::operator!= const):
+        (WebCore::LayoutConstraints::operator== const): Deleted.
+        (WebCore::LayoutConstraints::operator!= const): Deleted.
+        (WebCore::LayoutConstraints::alignmentOffset const): Deleted.
+        (WebCore::LayoutConstraints::setAlignmentOffset): Deleted.
+        (WebCore::LayoutConstraints::layerPositionAtLastLayout const): Deleted.
+        (WebCore::LayoutConstraints::setLayerPositionAtLastLayout): Deleted.
+        (WebCore::LayoutConstraints::scrollPositioningBehavior const): Deleted.
+        (WebCore::LayoutConstraints::setScrollPositioningBehavior): Deleted.
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::setPositionedNodeConstraints):
+        (WebCore::ScrollingCoordinator::setPositionedNodeGeometry): Deleted.
+        * page/scrolling/ScrollingStatePositionedNode.cpp:
+        (WebCore::ScrollingStatePositionedNode::updateConstraints):
+        * page/scrolling/ScrollingStatePositionedNode.h:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitTreeState):
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::nodesWithRelatedOverflow):
+        (WebCore::ScrollingTree::positionedNodesWithRelatedOverflow): Deleted.
+        * page/scrolling/cocoa/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::applyLayerPositions):
+        * page/scrolling/cocoa/ScrollingTreeOverflowScrollProxyNode.mm:
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren):
+        * page/scrolling/cocoa/ScrollingTreePositionedNode.h:
+        (WebCore::ScrollingTreePositionedNode::scrollPositioningBehavior const): Deleted.
+        * page/scrolling/cocoa/ScrollingTreePositionedNode.mm:
+        (WebCore::ScrollingTreePositionedNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreePositionedNode::scrollDeltaSinceLastCommit const):
+        * page/scrolling/cocoa/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::computeLayerPosition const):
+        * rendering/LayerAncestorClippingStack.cpp: Added.
+        (WebCore::LayerAncestorClippingStack::LayerAncestorClippingStack):
+        (WebCore::LayerAncestorClippingStack::equalToClipData const):
+        (WebCore::LayerAncestorClippingStack::hasAnyScrollingLayers const):
+        (WebCore::LayerAncestorClippingStack::clear):
+        (WebCore::LayerAncestorClippingStack::detachFromScrollingCoordinator):
+        (WebCore::LayerAncestorClippingStack::firstClippingLayer const):
+        (WebCore::LayerAncestorClippingStack::lastClippingLayer const):
+        (WebCore::LayerAncestorClippingStack::lastOverflowScrollProxyNodeID const):
+        (WebCore::LayerAncestorClippingStack::updateScrollingNodeLayers):
+        (WebCore::LayerAncestorClippingStack::updateWithClipData):
+        (WebCore::operator<<):
+        * rendering/LayerAncestorClippingStack.h: Added.
+        (WebCore::CompositedClipData::CompositedClipData):
+        (WebCore::CompositedClipData::operator== const):
+        (WebCore::CompositedClipData::operator!= const):
+        (WebCore::LayerAncestorClippingStack::stack):
+        (WebCore::LayerAncestorClippingStack::stack const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::~RenderLayerBacking):
+        (WebCore::RenderLayerBacking::updateDebugIndicators):
+        (WebCore::RenderLayerBacking::destroyGraphicsLayers):
+        (WebCore::RenderLayerBacking::updateTransform):
+        (WebCore::RenderLayerBacking::updateBlendMode):
+        (WebCore::RenderLayerBacking::updateAfterLayout):
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::computeOffsetFromAncestorGraphicsLayer):
+        (WebCore::RenderLayerBacking::computePrimaryGraphicsLayerRect const):
+        (WebCore::RenderLayerBacking::computeParentGraphicsLayerRect const):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::updateInternalHierarchy):
+        (WebCore::RenderLayerBacking::updateAncestorClippingStack):
+        (WebCore::RenderLayerBacking::updateAncestorClipping):
+        (WebCore::RenderLayerBacking::detachFromScrollingCoordinator):
+        (WebCore::RenderLayerBacking::scrollingNodeIDForChildren const):
+        (WebCore::RenderLayerBacking::childForSuperlayers const):
+        (WebCore::RenderLayerBacking::backingStoreMemoryEstimate const):
+        (WebCore::operator<<):
+        (WebCore::RenderLayerBacking::updateAncestorClippingLayer): Deleted.
+        (WebCore::RenderLayerBacking::coordinatedScrollingRoles const): Deleted.
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::didChangePlatformLayerForLayer):
+        (WebCore::RenderLayerCompositor::updateBackingAndHierarchy):
+        (WebCore::RenderLayerCompositor::layerStyleChanged): We need to run the checks for changed
+        clipping whether or not this layer has backing, because a non-composited layer with clipping can be
+        represented in the clipping stack of some other layer.
+        (WebCore::RenderLayerCompositor::clippedByAncestor const):
+        (WebCore::RenderLayerCompositor::updateAncestorClippingStack const):
+        (WebCore::RenderLayerCompositor::computeAncestorClippingStack const): The output of this function
+        is a Vector<CompositedClipData> which represents the ancestor clipping stack, but without the proxy node
+        and GraphicsLayer information. It's input to LayerAncestorClippingStack::updateWithClipData() which does
+        the merging of old and new states.
+        (WebCore::collectRelatedCoordinatedScrollingNodes):
+        (WebCore::RenderLayerCompositor::removeFromScrollCoordinatedLayers):
+        (WebCore::scrollCoordinationRoleForNodeType):
+        (WebCore::RenderLayerCompositor::attachScrollingNode):
+        (WebCore::RenderLayerCompositor::registerScrollingNodeID):
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayerWithRole):
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayer):
+        (WebCore::RenderLayerCompositor::coordinatedScrollingRolesForLayer const): Code moved from RenderLayerBacking.
+        (WebCore::RenderLayerCompositor::updateScrollCoordinationForLayer):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForScrollingProxyRole):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForPositioningRole):
+        * rendering/RenderLayerCompositor.h:
+        (WebCore::allScrollCoordinationRoles):
+
+2019-06-23  Simon Fraser  <simon.fraser@apple.com>
+
         Add OverflowScrollProxyNodes to the scrolling tree
         https://bugs.webkit.org/show_bug.cgi?id=199132
 

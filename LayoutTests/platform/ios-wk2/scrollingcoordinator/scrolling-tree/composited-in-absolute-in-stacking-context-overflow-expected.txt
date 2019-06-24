@@ -26,14 +26,12 @@
       (children 2
         (Positioned node
           (layout constraints 
-            (layer-position-at-last-layout (20,28))
-            (positioning-behavior stationary))
+            (layer-position-at-last-layout (20,28)))
           (related overflow nodes 1)
         )
         (Positioned node
           (layout constraints 
-            (layer-position-at-last-layout (40,48))
-            (positioning-behavior stationary))
+            (layer-position-at-last-layout (40,48)))
           (related overflow nodes 1)
         )
       )

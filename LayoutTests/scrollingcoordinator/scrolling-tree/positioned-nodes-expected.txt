@@ -55,11 +55,8 @@ Scrolling content
         )
       )
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (10,28))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
     (Overflow scrolling node
       (scrollable area size 205 155)
@@ -85,8 +82,7 @@ Scrolling content
       (children 1
         (Positioned node
           (layout constraints 
-            (layer-position-at-last-layout (81,28))
-            (positioning-behavior stationary))
+            (layer-position-at-last-layout (81,28)))
           (related overflow nodes 1)
         )
       )

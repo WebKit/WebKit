@@ -57,6 +57,7 @@ class MachSendRight;
 #endif
 
 namespace WebCore {
+class AbsolutePositionConstraints;
 class AffineTransform;
 class AuthenticationChallenge;
 class BlobPart;
@@ -82,7 +83,6 @@ class IntSize;
 class KeyframeValueList;
 class LayoutSize;
 class LayoutPoint;
-class LayoutConstraints;
 class LinearTimingFunction;
 class Notification;
 class Path;
@@ -544,9 +544,9 @@ template<> struct ArgumentCoder<WebCore::StickyPositionViewportConstraints> {
     static bool decode(Decoder&, WebCore::StickyPositionViewportConstraints&);
 };
 
-template<> struct ArgumentCoder<WebCore::LayoutConstraints> {
-    static void encode(Encoder&, const WebCore::LayoutConstraints&);
-    static bool decode(Decoder&, WebCore::LayoutConstraints&);
+template<> struct ArgumentCoder<WebCore::AbsolutePositionConstraints> {
+    static void encode(Encoder&, const WebCore::AbsolutePositionConstraints&);
+    static bool decode(Decoder&, WebCore::AbsolutePositionConstraints&);
 };
 
 #if !USE(COORDINATED_GRAPHICS)

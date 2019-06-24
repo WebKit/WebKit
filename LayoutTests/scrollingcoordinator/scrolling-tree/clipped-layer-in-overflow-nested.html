@@ -1,0 +1,85 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>Tests clipped layer in overflow in clipped in overflow</title>
+    <style>
+        #scroller {
+            height: 300px;
+            width: 300px;
+            margin: 20px;
+            border: 13px solid black;
+            box-shadow: 0 0 7px black;
+            padding: 8px;
+        }
+        
+        .scroller {
+            overflow-y: scroll;
+        }
+        
+        .inner.scroller {
+            height: 200px;
+            width: 200px;
+            margin: 20px;
+            border: 3px solid purple;
+        }
+        
+        .clipping {
+            overflow: hidden;
+            border: 2px solid gray;
+        }
+        
+        .outer.clipping {
+            margin: 10px;
+            width: 200px;
+            height: 200px;
+        }
+
+        .box {
+            margin-top: 50px;
+            margin-left: 30px;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+        
+        .composited {
+            transform: translateZ(0);
+            box-shadow: 0 0 4px black;
+        }
+
+        .spacer {
+            height: 200px;
+            width: 20px;
+            background-color: silver;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            scroller.scrollTo(0, 50);
+            scroller2.scrollTo(0, 150);
+            if (window.internals)
+                document.getElementById('scrollingTree').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="scroller" class="scroller">
+        <div class="spacer"></div>
+        <div class="outer clipping">
+            <div id="scroller2" class="inner scroller">
+                <div class="spacer"></div>
+                <div class="clipping">
+                    <div class="composited box"></div>
+                </div>
+                <div class="spacer"></div>
+            </div>
+        </div>
+        <div class="spacer"></div>
+    </div>
+<pre id="scrollingTree"></pre>
+</body>
+</html>
+

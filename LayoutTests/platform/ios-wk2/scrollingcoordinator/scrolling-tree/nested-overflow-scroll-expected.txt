@@ -24,16 +24,13 @@
         (vertical scrollbar mode 0)
         (has enabled vertical scrollbar 1))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (20,130))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
       (children 1
         (Overflow scrolling node
           (scrollable area size 200 200)
           (contents size 200 520)
-          (parent relative scrollable rect at (2,2) size 200x200)
+          (parent relative scrollable rect at (0,0) size 200x200)
           (scrollable area parameters 
             (horizontal scroll elasticity 1)
             (vertical scroll elasticity 1)

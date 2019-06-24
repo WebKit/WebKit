@@ -33,6 +33,7 @@
 #import "ScrollingTree.h"
 #import "ScrollingTreeFixedNode.h"
 #import "ScrollingTreeFrameScrollingNode.h"
+#import "ScrollingTreeOverflowScrollProxyNode.h"
 #import "ScrollingTreeOverflowScrollingNode.h"
 #import "WebCoreCALayerExtras.h"
 #import <wtf/text/TextStream.h>
@@ -81,27 +82,15 @@ FloatPoint ScrollingTreeStickyNode::computeLayerPosition() const
     };
 
     for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
-        if (is<ScrollingTreePositionedNode>(*ancestor)) {
-            auto& positioningAncestor = downcast<ScrollingTreePositionedNode>(*ancestor);
+        if (is<ScrollingTreeOverflowScrollProxyNode>(*ancestor)) {
+            auto& overflowProxyNode = downcast<ScrollingTreeOverflowScrollProxyNode>(*ancestor);
+            auto overflowNode = scrollingTree().nodeForID(overflowProxyNode.overflowScrollingNodeID());
+            if (!overflowNode)
+                break;
 
-            // FIXME: Do we need to do anything for ScrollPositioningBehavior::Stationary?
-            if (positioningAncestor.scrollPositioningBehavior() == ScrollPositioningBehavior::Moves) {
-                if (positioningAncestor.relatedOverflowScrollingNodes().isEmpty())
-                    break;
-                auto overflowNode = scrollingTree().nodeForID(positioningAncestor.relatedOverflowScrollingNodes()[0]);
-                if (!overflowNode)
-                    break;
-
-                auto position = computeLayerPositionForScrollingNode(*overflowNode);
-
-                if (positioningAncestor.layer() == m_layer) {
-                    // We'll also do the adjustment the positioning node would do.
-                    position -= positioningAncestor.scrollDeltaSinceLastCommit();
-                }
-
-                return position;
-            }
+            return computeLayerPositionForScrollingNode(*overflowNode);
         }
+
         if (is<ScrollingTreeScrollingNode>(*ancestor))
             return computeLayerPositionForScrollingNode(*ancestor);
 

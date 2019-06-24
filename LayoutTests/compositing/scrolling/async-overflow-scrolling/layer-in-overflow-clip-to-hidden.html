@@ -1,0 +1,79 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>Tests the bounds of the clipping layer for nested clips in non-stacking context overflow</title>
+    <style>
+        #scroller {
+            overflow-y: scroll;
+            height: 300px;
+            width: 300px;
+            margin: 20px;
+            border: 13px solid black;
+            box-shadow: 0 0 7px black;
+            padding: 8px;
+        }
+        
+        .clipping {
+            position: relative; /* keep it in a layer */
+            overflow: visible;
+            border: 2px solid gray;
+            margin: 10px;
+            width: 200px;
+            height: 100px;
+        }
+        
+        .clipping.changed {
+            overflow: hidden;
+        }
+        
+        .box {
+            margin-top: 50px;
+            margin-left: 30px;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+        
+        .composited {
+            transform: translateZ(0);
+            box-shadow: 0 0 4px black;
+        }
+
+        .spacer {
+            height: 200px;
+            width: 20px;
+            background-color: silver;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        window.addEventListener('load', () => {
+            scroller.scrollTo(0, 50);
+            
+            setTimeout(() => {
+                document.getElementById('target').classList.add('changed');
+                if (window.internals)
+                    document.getElementById('layers').innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CLIPPING);
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div class="spacer"></div>
+        <div id="target" class="clipping">
+            <div class="composited box"></div>
+        </div>
+        <div class="spacer"></div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>
+

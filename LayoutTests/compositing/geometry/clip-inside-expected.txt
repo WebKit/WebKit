@@ -17,7 +17,6 @@ Test CSS clip with composited layers. Left and right sides should look the same.
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
         )
         (GraphicsLayer
-          (offsetFromRenderer width=15 height=25)
           (position 225.00 35.00)
           (bounds 90.00 80.00)
           (children 1

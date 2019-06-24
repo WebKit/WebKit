@@ -26,7 +26,6 @@
           )
         )
         (GraphicsLayer
-          (offsetFromRenderer width=-10 height=-10)
           (position 9.00 9.00)
           (bounds 285.00 300.00)
           (children 1
@@ -38,7 +37,6 @@
           )
         )
         (GraphicsLayer
-          (offsetFromRenderer width=-40 height=-20)
           (position 9.00 9.00)
           (bounds 285.00 300.00)
           (children 1
@@ -50,7 +48,6 @@
           )
         )
         (GraphicsLayer
-          (offsetFromRenderer width=-40 height=-260)
           (position 9.00 9.00)
           (bounds 285.00 300.00)
           (children 1

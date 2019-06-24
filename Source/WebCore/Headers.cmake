@@ -1243,6 +1243,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/HitTestResult.h
     rendering/InlineBox.h
     rendering/InlineFlowBox.h
+    rendering/LayerAncestorClippingStack.h
     rendering/LayerFragment.h
     rendering/MarkedText.h
     rendering/OrderIterator.h

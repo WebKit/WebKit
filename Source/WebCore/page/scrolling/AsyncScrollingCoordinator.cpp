@@ -694,7 +694,7 @@ void AsyncScrollingCoordinator::setViewportConstraintedNodeConstraints(Scrolling
     }
 }
 
-void AsyncScrollingCoordinator::setPositionedNodeGeometry(ScrollingNodeID nodeID, const LayoutConstraints& constraints)
+void AsyncScrollingCoordinator::setPositionedNodeConstraints(ScrollingNodeID nodeID, const AbsolutePositionConstraints& constraints)
 {
     auto* node = m_scrollingStateTree->stateNodeForID(nodeID);
     if (!node)

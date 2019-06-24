@@ -40,23 +40,14 @@ Stacking
         (has enabled horizontal scrollbar 1)
         (has enabled vertical scrollbar 1))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (20,38))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (10,58))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (10,76))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
     (Overflow scrolling node
       (scrollable area size 205 155)
@@ -70,17 +61,11 @@ Stacking
         (has enabled horizontal scrollbar 1)
         (has enabled vertical scrollbar 1))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (20,38))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (10,58))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
     (Overflow scrolling node
       (scrollable area size 205 155)
@@ -93,11 +78,8 @@ Stacking
         (vertical scrollbar mode 0)
         (has enabled vertical scrollbar 1))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (20,38))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
     (Overflow scrolling node
       (scrollable area size 205 155)
@@ -110,11 +92,8 @@ Stacking
         (vertical scrollbar mode 0)
         (has enabled vertical scrollbar 1))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (20,38))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
     (Overflow scrolling node
       (scrollable area size 205 155)
@@ -128,29 +107,17 @@ Stacking
         (has enabled horizontal scrollbar 1)
         (has enabled vertical scrollbar 1))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (20,38))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (10,58))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (20,86))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (110,106))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
     (Overflow scrolling node
       (scrollable area size 205 155)
@@ -163,22 +130,15 @@ Stacking
         (vertical scrollbar mode 0)
         (has enabled vertical scrollbar 1))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (20,38))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (10,58))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
       (children 1
         (Positioned node
           (layout constraints 
-            (layer-position-at-last-layout (79,48))
-            (positioning-behavior stationary))
+            (layer-position-at-last-layout (79,48)))
           (related overflow nodes 1)
         )
       )

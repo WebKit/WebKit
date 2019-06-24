@@ -35,7 +35,7 @@
 namespace WebCore {
 
 // ScrollingStatePositionedNode is used to manage the layers for z-order composited descendants of overflow:scroll
-// which are not containing block descendants. These layers must have their position inside their ancestor clipping
+// which are not containing block descendants (i.e. position:absolute). These layers must have their position inside their ancestor clipping
 // layer adjusted on the scrolling thread.
 class ScrollingStatePositionedNode final : public ScrollingStateNode {
 public:
@@ -54,8 +54,8 @@ public:
     const Vector<ScrollingNodeID>& relatedOverflowScrollingNodes() const { return m_relatedOverflowScrollingNodes; }
     WEBCORE_EXPORT void setRelatedOverflowScrollingNodes(Vector<ScrollingNodeID>&&);
 
-    WEBCORE_EXPORT void updateConstraints(const LayoutConstraints&);
-    const LayoutConstraints& layoutConstraints() const { return m_constraints; }
+    WEBCORE_EXPORT void updateConstraints(const AbsolutePositionConstraints&);
+    const AbsolutePositionConstraints& layoutConstraints() const { return m_constraints; }
 
 private:
     ScrollingStatePositionedNode(ScrollingStateTree&, ScrollingNodeID);
@@ -66,7 +66,7 @@ private:
     void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
     Vector<ScrollingNodeID> m_relatedOverflowScrollingNodes;
-    LayoutConstraints m_constraints;
+    AbsolutePositionConstraints m_constraints;
 };
 
 } // namespace WebCore

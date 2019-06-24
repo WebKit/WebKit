@@ -63,17 +63,8 @@ void ScrollingTreePositionedNode::commitStateBeforeChildren(const ScrollingState
     if (positionedStateNode.hasChangedProperty(ScrollingStatePositionedNode::LayoutConstraintData))
         m_constraints = positionedStateNode.layoutConstraints();
 
-    // Tell the ScrollingTree about non-ancestor overflow nodes which affect this node.
-    if (m_constraints.scrollPositioningBehavior() == ScrollPositioningBehavior::Moves) {
-        auto& relatedNodes = scrollingTree().overflowRelatedNodes();
-        for (auto overflowNodeID : m_relatedOverflowScrollingNodes) {
-            relatedNodes.ensure(overflowNodeID, [] {
-                return Vector<ScrollingNodeID>();
-            }).iterator->value.append(scrollingNodeID());
-        }
-    }
-    if (!m_relatedOverflowScrollingNodes.isEmpty() && m_constraints.scrollPositioningBehavior() != ScrollPositioningBehavior::None)
-        scrollingTree().positionedNodesWithRelatedOverflow().add(scrollingNodeID());
+    if (!m_relatedOverflowScrollingNodes.isEmpty())
+        scrollingTree().nodesWithRelatedOverflow().add(scrollingNodeID());
 }
 
 FloatSize ScrollingTreePositionedNode::scrollDeltaSinceLastCommit() const
@@ -87,12 +78,9 @@ FloatSize ScrollingTreePositionedNode::scrollDeltaSinceLastCommit() const
             }
         }
     }
-    if (m_constraints.scrollPositioningBehavior() == ScrollPositioningBehavior::Stationary) {
-        // Stationary nodes move in the opposite direction.
-        return -delta;
-    }
-
-    return delta;
+    
+    // Positioned nodes compensate for scrolling, so negate the scroll delta.
+    return -delta;
 }
 
 void ScrollingTreePositionedNode::applyLayerPositions()

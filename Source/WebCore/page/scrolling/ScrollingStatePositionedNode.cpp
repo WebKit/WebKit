@@ -75,7 +75,7 @@ void ScrollingStatePositionedNode::setRelatedOverflowScrollingNodes(Vector<Scrol
     setPropertyChanged(RelatedOverflowScrollingNodes);
 }
 
-void ScrollingStatePositionedNode::updateConstraints(const LayoutConstraints& constraints)
+void ScrollingStatePositionedNode::updateConstraints(const AbsolutePositionConstraints& constraints)
 {
     if (m_constraints == constraints)
         return;

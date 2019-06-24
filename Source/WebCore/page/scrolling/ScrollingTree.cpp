@@ -169,7 +169,7 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
         unvisitedNodes.add(nodeID);
 
     m_overflowRelatedNodesMap.clear();
-    m_positionedNodesWithRelatedOverflow.clear();
+    m_nodesWithRelatedOverflow.clear();
 
     // orphanNodes keeps child nodes alive while we rebuild child lists.
     OrphanScrollingNodeMap orphanNodes;

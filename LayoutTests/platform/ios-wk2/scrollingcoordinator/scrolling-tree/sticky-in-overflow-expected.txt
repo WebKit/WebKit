@@ -25,11 +25,8 @@ Sticky content
         (vertical scrollbar mode 0)
         (has enabled vertical scrollbar 1))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (50,50))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
       (children 1
         (Sticky node
           (anchor edges: AnchorEdgeTop )

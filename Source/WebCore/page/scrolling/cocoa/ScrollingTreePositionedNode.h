@@ -43,7 +43,6 @@ public:
 
     CALayer *layer() const { return m_layer.get(); }
 
-    ScrollPositioningBehavior scrollPositioningBehavior() const { return m_constraints.scrollPositioningBehavior(); }
     const Vector<ScrollingNodeID>& relatedOverflowScrollingNodes() const { return m_relatedOverflowScrollingNodes; }
 
     FloatSize scrollDeltaSinceLastCommit() const;
@@ -58,7 +57,7 @@ private:
     WEBCORE_EXPORT void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
     Vector<ScrollingNodeID> m_relatedOverflowScrollingNodes;
-    LayoutConstraints m_constraints;
+    AbsolutePositionConstraints m_constraints;
     RetainPtr<CALayer> m_layer;
 };
 

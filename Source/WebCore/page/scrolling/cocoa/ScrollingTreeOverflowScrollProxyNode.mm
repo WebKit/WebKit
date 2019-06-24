@@ -62,7 +62,7 @@ void ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren(const Scrol
         return Vector<ScrollingNodeID>();
     }).iterator->value.append(scrollingNodeID());
 
-    scrollingTree().positionedNodesWithRelatedOverflow().add(scrollingNodeID());
+    scrollingTree().nodesWithRelatedOverflow().add(scrollingNodeID());
 }
 
 FloatSize ScrollingTreeOverflowScrollProxyNode::scrollDeltaSinceLastCommit() const

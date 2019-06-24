@@ -436,7 +436,7 @@ bool ArgumentCoder<ScrollingStatePositionedNode>::decode(Decoder& decoder, Scrol
     }
 
     if (node.hasChangedProperty(ScrollingStatePositionedNode::LayoutConstraintData)) {
-        LayoutConstraints decodedValue;
+        AbsolutePositionConstraints decodedValue;
         if (!decoder.decode(decodedValue))
             return false;
         node.updateConstraints(decodedValue);

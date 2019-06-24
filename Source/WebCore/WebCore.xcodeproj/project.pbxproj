@@ -367,6 +367,7 @@
 		0FEA3E80191B3169000F1B55 /* ScrollingTreeOverflowScrollingNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA3E7E191B3169000F1B55 /* ScrollingTreeOverflowScrollingNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA3E84191B31BF000F1B55 /* ScrollingStateOverflowScrollingNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA3E82191B31BF000F1B55 /* ScrollingStateOverflowScrollingNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA3E88191B3BD7000F1B55 /* ScrollingTreeFrameScrollingNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA3E86191B3BD7000F1B55 /* ScrollingTreeFrameScrollingNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FEC120C22BF2CD2004E9D35 /* LayerAncestorClippingStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC120922BF2CC7004E9D35 /* LayerAncestorClippingStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FF3B9291EE3B6DE00B84144 /* JSDOMQuad.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF3B9251EE3B6DE00B84144 /* JSDOMQuad.h */; };
 		0FF3B92B1EE3B6DE00B84144 /* JSDOMQuadInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF3B9271EE3B6DE00B84144 /* JSDOMQuadInit.h */; };
 		0FF5026A102BA9430066F39A /* JSStyleMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF50268102BA9430066F39A /* JSStyleMedia.h */; };
@@ -5815,6 +5816,8 @@
 		0FEA3E82191B31BF000F1B55 /* ScrollingStateOverflowScrollingNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingStateOverflowScrollingNode.h; sourceTree = "<group>"; };
 		0FEA3E85191B3BD7000F1B55 /* ScrollingTreeFrameScrollingNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeFrameScrollingNode.cpp; sourceTree = "<group>"; };
 		0FEA3E86191B3BD7000F1B55 /* ScrollingTreeFrameScrollingNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeFrameScrollingNode.h; sourceTree = "<group>"; };
+		0FEC120922BF2CC7004E9D35 /* LayerAncestorClippingStack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayerAncestorClippingStack.h; sourceTree = "<group>"; };
+		0FEC120B22BF2CC7004E9D35 /* LayerAncestorClippingStack.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayerAncestorClippingStack.cpp; sourceTree = "<group>"; };
 		0FEF20CD1BD4A24100128E5D /* LengthSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LengthSize.cpp; sourceTree = "<group>"; };
 		0FEF20CF1BD4A64F00128E5D /* RenderStyleConstants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderStyleConstants.cpp; sourceTree = "<group>"; };
 		0FF2E80C1EE0D430009EABD4 /* PerformanceLoggingClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceLoggingClient.cpp; sourceTree = "<group>"; };
@@ -26997,6 +27000,8 @@
 				BCE789151120D6080060ECE5 /* InlineIterator.h */,
 				BCEA481A097D93020094C9E4 /* InlineTextBox.cpp */,
 				BCEA481B097D93020094C9E4 /* InlineTextBox.h */,
+				0FEC120B22BF2CC7004E9D35 /* LayerAncestorClippingStack.cpp */,
+				0FEC120922BF2CC7004E9D35 /* LayerAncestorClippingStack.h */,
 				580371631A66F1D300BAF519 /* LayerFragment.h */,
 				0F69F2B7228B98FF008D3565 /* LayerOverlapMap.cpp */,
 				0F69F2B6228B98FF008D3565 /* LayerOverlapMap.h */,
@@ -30510,6 +30515,7 @@
 				E15FF7D518C9553800FE4C87 /* KeypressCommand.h in Headers */,
 				450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */,
 				A456FA2711AD4A830020B420 /* LabelsNodeList.h in Headers */,
+				0FEC120C22BF2CD2004E9D35 /* LayerAncestorClippingStack.h in Headers */,
 				E4916FF7195DF6A0005AB349 /* LayerFlushThrottleState.h in Headers */,
 				580371641A66F1D300BAF519 /* LayerFragment.h in Headers */,
 				7AA3A6A0194B59B6001CBD24 /* LayerPool.h in Headers */,
