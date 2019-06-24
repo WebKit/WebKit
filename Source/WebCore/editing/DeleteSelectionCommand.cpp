@@ -610,7 +610,9 @@ void DeleteSelectionCommand::handleGeneralDelete()
             }
         }
         
-        if (m_downstreamEnd.deprecatedNode() != startNode && !m_upstreamStart.deprecatedNode()->isDescendantOf(m_downstreamEnd.deprecatedNode()) && m_downstreamEnd.anchorNode()->isConnected() && m_downstreamEnd.deprecatedEditingOffset() >= caretMinOffset(*m_downstreamEnd.deprecatedNode())) {
+        if (!m_downstreamEnd.isNull() && !m_downstreamEnd.isOrphan() && m_downstreamEnd.deprecatedNode() != startNode
+            && !m_upstreamStart.deprecatedNode()->isDescendantOf(m_downstreamEnd.deprecatedNode())
+            && m_downstreamEnd.deprecatedEditingOffset() >= caretMinOffset(*m_downstreamEnd.deprecatedNode())) {
             if (m_downstreamEnd.atLastEditingPositionForNode() && !canHaveChildrenForEditing(*m_downstreamEnd.deprecatedNode())) {
                 // The node itself is fully selected, not just its contents.  Delete it.
                 removeNode(*m_downstreamEnd.deprecatedNode());
@@ -679,7 +681,7 @@ void DeleteSelectionCommand::mergeParagraphs()
     ASSERT(!m_pruneStartBlockIfNecessary);
 
     // FIXME: Deletion should adjust selection endpoints as it removes nodes so that we never get into this state (4099839).
-    if (!m_downstreamEnd.anchorNode()->isConnected() || !m_upstreamStart.anchorNode()->isConnected())
+    if (m_downstreamEnd.isNull() || m_upstreamStart.isNull() || !m_downstreamEnd.anchorNode()->isConnected() || !m_upstreamStart.anchorNode()->isConnected())
          return;
 
     // FIXME: The deletion algorithm shouldn't let this happen.
