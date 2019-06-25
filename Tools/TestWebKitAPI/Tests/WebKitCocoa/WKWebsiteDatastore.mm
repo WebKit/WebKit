@@ -225,51 +225,6 @@ TEST(WKWebsiteDataStore, RemovePersistentCredentials)
     TestWebKitAPI::Util::run(&done);
 }
 
-TEST(WKWebsiteDataStore, RemoveAllPersistentCredentials)
-{
-    usePersistentCredentialStorage = true;
-
-    TCPServer server(TCPServer::respondWithChallengeThenOK);
-    auto websiteDataStore = [WKWebsiteDataStore defaultDataStore];
-    auto navigationDelegate = adoptNS([[NavigationTestDelegate alloc] init]);
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView setNavigationDelegate:navigationDelegate.get()];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
-    [navigationDelegate waitForDidFinishNavigation];
-
-    readyToContinue = false;
-    [websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
-        bool foundRecord = false;
-        for (WKWebsiteDataRecord *record in dataRecords) {
-            auto name = [record displayName];
-            if ([name isEqualToString:@"127.0.0.1"])
-                foundRecord = true;
-        }
-        EXPECT_TRUE(foundRecord);
-        readyToContinue = true;
-    }];
-    TestWebKitAPI::Util::run(&readyToContinue);
-
-    readyToContinue = false;
-    [websiteDataStore removeDataOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] modifiedSince:[NSDate distantPast] completionHandler:^() {
-        readyToContinue = true;
-    }];
-    TestWebKitAPI::Util::run(&readyToContinue);
-    
-    readyToContinue = false;
-    [websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
-        bool foundRecord = false;
-        for (WKWebsiteDataRecord *record in dataRecords) {
-            auto name = [record displayName];
-            if ([name isEqualToString:@"127.0.0.1"])
-                foundRecord = true;
-        }
-        EXPECT_FALSE(foundRecord);
-        readyToContinue = true;
-    }];
-    TestWebKitAPI::Util::run(&readyToContinue);
-}
-
 TEST(WKWebsiteDataStore, RemoveNonPersistentCredentials)
 {
     TCPServer server(TCPServer::respondWithChallengeThenOK);
