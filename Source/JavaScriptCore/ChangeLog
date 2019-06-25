@@ -1,3 +1,17 @@
+2019-06-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r245586): static assertion failed: Match result and EncodedMatchResult should be the same size
+        https://bugs.webkit.org/show_bug.cgi?id=198518
+
+        Reviewed by Keith Miller.
+
+        r245586 made some bad assumptions about the size of size_t, which we can solve using the
+        CPU(ADDRESS32) guard that I didn't know about.
+
+        This solution was developed by Mark Lam and Keith Miller. I'm just preparing the patch.
+
+        * runtime/MatchResult.h:
+
 2019-06-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r246714.
