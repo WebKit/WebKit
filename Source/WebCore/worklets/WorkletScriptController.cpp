@@ -126,7 +126,9 @@ void WorkletScriptController::initScriptWithSubclass()
     ASSERT(structure->globalObject() == m_workletGlobalScopeWrapper);
     ASSERT(m_workletGlobalScopeWrapper->structure(*m_vm)->globalObject() == m_workletGlobalScopeWrapper);
     contextPrototype->structure(*m_vm)->setGlobalObject(*m_vm, m_workletGlobalScopeWrapper.get());
-    contextPrototype->structure(*m_vm)->setPrototypeWithoutTransition(*m_vm, JSGlobalScope::prototype(*m_vm, *m_workletGlobalScopeWrapper.get()));
+    auto* globalScopePrototype = JSGlobalScope::prototype(*m_vm, *m_workletGlobalScopeWrapper.get());
+    globalScopePrototype->didBecomePrototype();
+    contextPrototype->structure(*m_vm)->setPrototypeWithoutTransition(*m_vm, globalScopePrototype);
 
     proxy->setTarget(*m_vm, m_workletGlobalScopeWrapper.get());
     proxy->structure(*m_vm)->setGlobalObject(*m_vm, m_workletGlobalScopeWrapper.get());

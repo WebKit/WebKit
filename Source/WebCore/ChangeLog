@@ -1,3 +1,28 @@
+2019-06-25  Keith Miller  <keith_miller@apple.com>
+
+        Add didBecomePrototype() calls to global context prototypes
+        https://bugs.webkit.org/show_bug.cgi?id=199202
+
+        Reviewed by Mark Lam.
+
+        This fixes some crashes related to asserting that all prototypes
+        have been marked as such in JSC from
+        https://trac.webkit.org/changeset/246801. It's ok to call
+        didBecomePrototype here as we setting up the world state right now
+        so we won't be having a bad time.
+
+        We don't automatically call didBecomePrototype() for
+        setPrototypeWithoutTransition because existing objects may already
+        have this structure so it seems more reasonable to be explicit
+        there.
+
+        * bindings/js/JSWindowProxy.cpp:
+        (WebCore::JSWindowProxy::setWindow):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::initScript):
+        * worklets/WorkletScriptController.cpp:
+        (WebCore::WorkletScriptController::initScriptWithSubclass):
+
 2019-06-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Implement console.timeLog
