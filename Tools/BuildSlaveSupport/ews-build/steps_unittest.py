@@ -1469,6 +1469,28 @@ class TestUploadTestResults(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Uploaded test results')
         return self.runStep()
 
+    def test_success_with_identifier(self):
+        self.setupStep(UploadTestResults(identifier='clean-tree'))
+        self.setProperty('configuration', 'release')
+        self.setProperty('architecture', 'x86_64')
+        self.setProperty('patch_id', '271211')
+        self.setProperty('buildername', 'iOS-12-Simulator-WK2-Tests-EWS')
+        self.setProperty('buildnumber', '120')
+        self.expectHidden(False)
+        self.expectRemoteCommands(
+            Expect('uploadFile', dict(
+                                        workersrc='layout-test-results.zip', workdir='wkdir',
+                                        blocksize=1024 * 256, maxsize=None, keepstamp=False,
+                                        writer=ExpectRemoteRef(remotetransfer.FileWriter),
+                                     ))
+            + Expect.behavior(uploadFileWithContentsOfString('Dummy zip file content.'))
+            + 0,
+        )
+        self.expectUploadedFile('public_html/results/iOS-12-Simulator-WK2-Tests-EWS/r271211-120-clean-tree.zip')
+
+        self.expectOutcome(result=SUCCESS, state_string='Uploaded test results')
+        return self.runStep()
+
 
 class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -1489,6 +1511,24 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
                                               'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12.zip',
                                               '-d',
                                               'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12',
+                                             ])
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Extracted test results')
+        self.expectAddedURLs([call('view layout test results', '/results/test/r2468_ab1a28b4feee0d42973c7c05335b35bca927e974 (1)/results.html')])
+        return self.runStep()
+
+    def test_success_with_identifier(self):
+        self.setupStep(ExtractTestResults(identifier='rerun'))
+        self.setProperty('configuration', 'release')
+        self.setProperty('patch_id', '1234')
+        self.setProperty('buildername', 'iOS-12-Simulator-WK2-Tests-EWS')
+        self.setProperty('buildnumber', '12')
+        self.expectLocalCommands(
+            ExpectMasterShellCommand(command=['unzip',
+                                              'public_html/results/iOS-12-Simulator-WK2-Tests-EWS/r1234-12-rerun.zip',
+                                              '-d',
+                                              'public_html/results/iOS-12-Simulator-WK2-Tests-EWS/r1234-12-rerun',
                                              ])
             + 0,
         )

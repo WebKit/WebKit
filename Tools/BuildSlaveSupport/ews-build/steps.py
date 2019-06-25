@@ -1082,12 +1082,13 @@ class UploadTestResults(transfer.FileUpload):
     name = 'upload-test-results'
     descriptionDone = ['Uploaded test results']
     workersrc = 'layout-test-results.zip'
-    masterdest = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s.zip')
     haltOnFailure = True
 
-    def __init__(self, **kwargs):
+    def __init__(self, identifier='', **kwargs):
+        if identifier and not identifier.startswith('-'):
+            identifier = '-{}'.format(identifier)
         kwargs['workersrc'] = self.workersrc
-        kwargs['masterdest'] = self.masterdest
+        kwargs['masterdest'] = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s{}.zip'.format(identifier))
         kwargs['mode'] = 0644
         kwargs['blocksize'] = 1024 * 256
         transfer.FileUpload.__init__(self, **kwargs)
@@ -1095,14 +1096,19 @@ class UploadTestResults(transfer.FileUpload):
 
 class ExtractTestResults(master.MasterShellCommand):
     name = 'extract-test-results'
-    zipFile = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s.zip')
-    resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s')
-
     descriptionDone = ['Extracted test results']
-    command = ['unzip', zipFile, '-d', resultDirectory]
     renderables = ['resultDirectory', 'zipFile']
+    haltOnFailure = False
+    flunkOnFailure = False
 
-    def __init__(self):
+    def __init__(self, identifier=''):
+        if identifier and not identifier.startswith('-'):
+            identifier = '-{}'.format(identifier)
+
+        self.zipFile = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s{}.zip'.format(identifier))
+        self.resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s{}'.format(identifier))
+        self.command = ['unzip', self.zipFile, '-d', self.resultDirectory]
+
         super(ExtractTestResults, self).__init__(self.command)
 
     def resultDirectoryURL(self):

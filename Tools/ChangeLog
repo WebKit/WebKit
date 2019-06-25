@@ -1,3 +1,15 @@
+2019-06-25  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] UploadTestResults and ExtractTestResults clobber results in case of multiple layout test runs in a build
+        https://bugs.webkit.org/show_bug.cgi?id=199178
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (UploadTestResults.__init__): Add an optional identifier and append the identifier to the file name.
+        (ExtractTestResults.__init__): Ditto.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit tests.
+
 2019-06-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Add user agent quirk for bankofamerica.com
