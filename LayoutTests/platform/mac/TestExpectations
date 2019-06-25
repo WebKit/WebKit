@@ -1935,3 +1935,5 @@ webkit.org/b/175678 media/W3C/video/events/event_progress.html [ Pass Failure ]
 webkit.org/b/199013 [ Debug Mojave+ ] imported/w3c/web-platform-tests/websockets/Create-Secure-verify-url-set-non-default-port.any.html [ Pass Failure ]
 
 webkit.org/b/190882 [ Mojave+ ] animations/change-one-anim.html [ Pass Failure ]
+
+webkit.org/b/195635 scrollingcoordinator/mac/multiple-fixed.html [ Pass Timeout ]
