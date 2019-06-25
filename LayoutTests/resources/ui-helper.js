@@ -899,6 +899,15 @@ window.UIHelper = class UIHelper {
             await this.activateAt(menuRect.left + menuRect.width / 2, menuRect.top + menuRect.height / 2);
     }
 
+    static callFunctionAndWaitForEvent(functionToCall, target, eventName)
+    {
+        return new Promise((resolve) => {
+            target.addEventListener(eventName, resolve, { once: true });
+            functionToCall();
+        });
+
+    }
+
     static callFunctionAndWaitForScrollToFinish(functionToCall, ...theArguments)
     {
         return new Promise((resolved) => {
