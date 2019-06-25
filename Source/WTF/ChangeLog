@@ -1,3 +1,21 @@
+2019-06-25  Adam Barth  <abarth@webkit.org>
+
+        [fuchsia] Update to newer zx_clock_get syscall
+        https://bugs.webkit.org/show_bug.cgi?id=199191
+
+        Reviewed by Sam Weinig.
+
+        Fuchsia has changed the zx_clock_get syscall to return the clock value
+        via an out parameter rather than via its return value. This change
+        makes zx_clock_get consistent with all the other syscalls.
+
+        This patch updates our use of zx_clock_get to use the new syscall. The
+        old syscall is no longer supported by Fuchsia.
+
+        * wtf/fuchsia/CPUTimeFuchsia.cpp:
+        (WTF::CPUTime::get): Switch to using the out parameter.
+        (WTF::CPUTime::forCurrentThread): Switch to using the out parameter.
+
 2019-06-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fully rename WebKitGTK+ -> WebKitGTK everywhere

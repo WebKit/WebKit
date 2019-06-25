@@ -41,14 +41,17 @@ Optional<CPUTime> CPUTime::get()
     // Fuchsia issue ZX-2318 tracks being able to get the monotonic and thread
     // times atomically and being able to separate ZX_CLOCK_THREAD into user and
     // kernel time.
-    zx_time_t thread = zx_clock_get(ZX_CLOCK_THREAD);
+    zx_time_t thread = 0;
+    zx_clock_get(ZX_CLOCK_THREAD, &thread);
 
     return CPUTime { MonotonicTime::now(), timeToSeconds(thread), Seconds() };
 }
 
 Seconds CPUTime::forCurrentThread()
 {
-    return timeToSeconds(zx_clock_get(ZX_CLOCK_THREAD));
+    zx_time_t thread = 0;
+    zx_clock_get(ZX_CLOCK_THREAD, &thread)
+    return timeToSeconds(thread);
 }
 
 }
