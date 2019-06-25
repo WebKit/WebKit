@@ -35,6 +35,7 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "LinkLoaderClient.h"
+#include "LinkRelAttribute.h"
 
 #include <wtf/WeakPtr.h>
 
@@ -43,14 +44,23 @@ namespace WebCore {
 class Document;
 class LinkPreloadResourceClient;
 
-struct LinkRelAttribute;
+struct LinkLoadParameters {
+    LinkRelAttribute relAttribute;
+    URL href;
+    String as;
+    String media;
+    String mimeType;
+    String crossOrigin;
+    String imageSrcSet;
+    String imageSizes;
+};
 
 class LinkLoader : private CachedResourceClient, public CanMakeWeakPtr<LinkLoader> {
 public:
     explicit LinkLoader(LinkLoaderClient&);
     virtual ~LinkLoader();
 
-    bool loadLink(const LinkRelAttribute&, const URL&, const String& as, const String& media, const String& type, const String& crossOrigin, const String& imageSrcSet, const String& imageSizes, Document&);
+    bool loadLink(const LinkLoadParameters&, Document&);
     static Optional<CachedResource::Type> resourceTypeFromAsAttribute(const String& as);
 
     enum class MediaAttributeCheck { MediaAttributeEmpty, MediaAttributeNotEmpty, SkipMediaAttributeCheck };
@@ -62,9 +72,9 @@ public:
 
 private:
     void notifyFinished(CachedResource&) override;
-    static void preconnectIfNeeded(const LinkRelAttribute&, const URL& href, Document&, const String& crossOrigin);
-    static std::unique_ptr<LinkPreloadResourceClient> preloadIfNeeded(const LinkRelAttribute&, const URL& href, Document&, const String& as, const String& media, const String& type, const String& crossOriginMode, const String& imageSrcSet, const String& imageSizes, LinkLoader*);
-    void prefetchIfNeeded(const LinkRelAttribute&, const URL& href, Document&);
+    static void preconnectIfNeeded(const LinkLoadParameters&, Document&);
+    static std::unique_ptr<LinkPreloadResourceClient> preloadIfNeeded(const LinkLoadParameters&, Document&, LinkLoader*);
+    void prefetchIfNeeded(const LinkLoadParameters&, Document&);
 
     LinkLoaderClient& m_client;
     CachedResourceHandle<CachedResource> m_cachedLinkResource;

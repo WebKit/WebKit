@@ -262,7 +262,18 @@ void HTMLLinkElement::process()
 
     URL url = getNonEmptyURLAttribute(hrefAttr);
 
-    if (!m_linkLoader.loadLink(m_relAttribute, url, attributeWithoutSynchronization(asAttr), attributeWithoutSynchronization(mediaAttr), attributeWithoutSynchronization(typeAttr), attributeWithoutSynchronization(crossoriginAttr), attributeWithoutSynchronization(imagesrcsetAttr),  attributeWithoutSynchronization(imagesizesAttr), document()))
+    LinkLoadParameters params {
+        m_relAttribute,
+        url,
+        attributeWithoutSynchronization(asAttr),
+        attributeWithoutSynchronization(mediaAttr),
+        attributeWithoutSynchronization(typeAttr),
+        attributeWithoutSynchronization(crossoriginAttr),
+        attributeWithoutSynchronization(imagesrcsetAttr),
+        attributeWithoutSynchronization(imagesizesAttr)
+    };
+
+    if (!m_linkLoader.loadLink(params, document()))
         return;
 
     bool treatAsStyleSheet = m_relAttribute.isStyleSheet
