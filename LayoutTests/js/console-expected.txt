@@ -121,6 +121,13 @@ PASS descriptor.configurable is true
 PASS descriptor.writable is true
 PASS descriptor.enumerable is true
 
+console.timeLog
+PASS typeof console.timeLog is "function"
+PASS console.timeLog.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
 console.timeEnd
 PASS typeof console.timeEnd is "function"
 PASS console.timeEnd.length is 0

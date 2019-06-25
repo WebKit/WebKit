@@ -1,3 +1,21 @@
+2019-06-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Implement console.timeLog
+        https://bugs.webkit.org/show_bug.cgi?id=199184
+
+        Reviewed by Devin Rousso.
+
+        * inspector/console/console-time-expected.txt:
+        * inspector/console/console-time.html:
+        Add new timeLog tests.
+
+        * js/console-expected.txt:
+        New timeLog method.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        Unskip test.
+
 2019-06-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed test gardening

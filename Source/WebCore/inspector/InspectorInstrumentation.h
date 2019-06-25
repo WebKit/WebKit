@@ -226,6 +226,8 @@ public:
     static void takeHeapSnapshot(Frame&, const String& title);
     static void startConsoleTiming(Frame&, const String& title);
     static void startConsoleTiming(WorkerGlobalScope&, const String& title);
+    static void logConsoleTiming(Frame&, const String& title, Ref<Inspector::ScriptArguments>&&);
+    static void logConsoleTiming(WorkerGlobalScope&, const String& title, Ref<Inspector::ScriptArguments>&&);
     static void stopConsoleTiming(Frame&, const String& title, Ref<Inspector::ScriptCallStack>&&);
     static void stopConsoleTiming(WorkerGlobalScope&, const String& title, Ref<Inspector::ScriptCallStack>&&);
     static void consoleTimeStamp(Frame&, Ref<Inspector::ScriptArguments>&&);
@@ -404,6 +406,7 @@ private:
     static void takeHeapSnapshotImpl(InstrumentingAgents&, const String& title);
     static void startConsoleTimingImpl(InstrumentingAgents&, Frame&, const String& title);
     static void startConsoleTimingImpl(InstrumentingAgents&, const String& title);
+    static void logConsoleTimingImpl(InstrumentingAgents&, const String& title, Ref<Inspector::ScriptArguments>&&);
     static void stopConsoleTimingImpl(InstrumentingAgents&, Frame&, const String& title, Ref<Inspector::ScriptCallStack>&&);
     static void stopConsoleTimingImpl(InstrumentingAgents&, const String& title, Ref<Inspector::ScriptCallStack>&&);
     static void consoleTimeStampImpl(InstrumentingAgents&, Frame&, Ref<Inspector::ScriptArguments>&&);
@@ -1406,6 +1409,17 @@ inline void InspectorInstrumentation::startConsoleTiming(Frame& frame, const Str
 inline void InspectorInstrumentation::startConsoleTiming(WorkerGlobalScope& workerGlobalScope, const String& title)
 {
     startConsoleTimingImpl(instrumentingAgentsForWorkerGlobalScope(workerGlobalScope), title);
+}
+
+inline void InspectorInstrumentation::logConsoleTiming(Frame& frame, const String& title, Ref<Inspector::ScriptArguments>&& arguments)
+{
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        logConsoleTimingImpl(*instrumentingAgents, title, WTFMove(arguments));
+}
+
+inline void InspectorInstrumentation::logConsoleTiming(WorkerGlobalScope& workerGlobalScope, const String& title, Ref<Inspector::ScriptArguments>&& arguments)
+{
+    logConsoleTimingImpl(instrumentingAgentsForWorkerGlobalScope(workerGlobalScope), title, WTFMove(arguments));
 }
 
 inline void InspectorInstrumentation::stopConsoleTiming(Frame& frame, const String& title, Ref<Inspector::ScriptCallStack>&& stack)

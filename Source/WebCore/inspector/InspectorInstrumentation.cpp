@@ -886,6 +886,15 @@ void InspectorInstrumentation::startConsoleTimingImpl(InstrumentingAgents& instr
         consoleAgent->startTiming(title);
 }
 
+void InspectorInstrumentation::logConsoleTimingImpl(InstrumentingAgents& instrumentingAgents, const String& title, Ref<Inspector::ScriptArguments>&& arguments)
+{
+    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+        return;
+
+    if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
+        consoleAgent->logTiming(title, WTFMove(arguments));
+}
+
 void InspectorInstrumentation::stopConsoleTimingImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, const String& title, Ref<ScriptCallStack>&& stack)
 {
     if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())

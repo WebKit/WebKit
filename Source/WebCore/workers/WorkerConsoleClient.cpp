@@ -60,6 +60,11 @@ void WorkerConsoleClient::time(JSC::ExecState*, const String& title)
     InspectorInstrumentation::startConsoleTiming(m_workerGlobalScope, title);
 }
 
+void WorkerConsoleClient::timeLog(JSC::ExecState*, const String& title, Ref<ScriptArguments>&& arguments)
+{
+    InspectorInstrumentation::logConsoleTiming(m_workerGlobalScope, title, WTFMove(arguments));
+}
+
 void WorkerConsoleClient::timeEnd(JSC::ExecState* exec, const String& title)
 {
     InspectorInstrumentation::stopConsoleTiming(m_workerGlobalScope, title, createScriptCallStackForConsole(exec, 1));

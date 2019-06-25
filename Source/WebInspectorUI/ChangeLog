@@ -1,3 +1,16 @@
+2019-06-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Implement console.timeLog
+        https://bugs.webkit.org/show_bug.cgi?id=199184
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WI.ConsoleMessageView.prototype._appendMessageTextAndArguments):
+        Time messages (like timeLog) do not include their messageText
+        in their parameters list. So to behave more like normal logs
+        build a parameter list that includes it at the front.
+
 2019-06-23  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r246684): Dark Mode: dashboard buttons should have no background

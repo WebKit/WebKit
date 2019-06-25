@@ -1,3 +1,26 @@
+2019-06-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Implement console.timeLog
+        https://bugs.webkit.org/show_bug.cgi?id=199184
+
+        Reviewed by Devin Rousso.
+
+        Updated existing tests.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::logConsoleTimingImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::logConsoleTiming):
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::timeLog):
+        * page/PageConsoleClient.h:
+        * workers/WorkerConsoleClient.cpp:
+        (WebCore::WorkerConsoleClient::timeLog):
+        * workers/WorkerConsoleClient.h:
+        * worklets/WorkletConsoleClient.cpp:
+        (WebCore::WorkletConsoleClient::timeLog):
+        * worklets/WorkletConsoleClient.h:
+
 2019-06-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Add user agent quirk for bankofamerica.com

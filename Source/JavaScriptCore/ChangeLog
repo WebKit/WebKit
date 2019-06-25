@@ -1,3 +1,22 @@
+2019-06-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Implement console.timeLog
+        https://bugs.webkit.org/show_bug.cgi?id=199184
+
+        Reviewed by Devin Rousso.
+
+        * inspector/JSGlobalObjectConsoleClient.cpp:
+        (Inspector::JSGlobalObjectConsoleClient::timeLog):
+        * inspector/JSGlobalObjectConsoleClient.h:
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::logTiming):
+        (Inspector::InspectorConsoleAgent::stopTiming):
+        * inspector/agents/InspectorConsoleAgent.h:
+        * runtime/ConsoleClient.h:
+        * runtime/ConsoleObject.cpp:
+        (JSC::ConsoleObject::finishCreation):
+        (JSC::consoleProtoFuncTimeLog):
+
 2019-06-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r245586): static assertion failed: Match result and EncodedMatchResult should be the same size

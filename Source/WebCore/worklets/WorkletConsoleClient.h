@@ -50,6 +50,7 @@ private:
     void profileEnd(JSC::ExecState*, const String& title) final;
     void takeHeapSnapshot(JSC::ExecState*, const String& title) final;
     void time(JSC::ExecState*, const String& title) final;
+    void timeLog(JSC::ExecState*, const String& title, Ref<Inspector::ScriptArguments>&&) final;
     void timeEnd(JSC::ExecState*, const String& title) final;
     void timeStamp(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
     void record(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;

@@ -60,6 +60,7 @@ public:
     virtual void profileEnd(ExecState*, const String& title) = 0;
     virtual void takeHeapSnapshot(ExecState*, const String& title) = 0;
     virtual void time(ExecState*, const String& title) = 0;
+    virtual void timeLog(ExecState*, const String& title, Ref<Inspector::ScriptArguments>&&) = 0;
     virtual void timeEnd(ExecState*, const String& title) = 0;
     virtual void timeStamp(ExecState*, Ref<Inspector::ScriptArguments>&&) = 0;
     virtual void record(ExecState*, Ref<Inspector::ScriptArguments>&&) = 0;

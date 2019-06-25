@@ -288,6 +288,14 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
                 this._extraParameters = null;
                 break;
 
+            case WI.ConsoleMessage.MessageType.Timing: {
+                let args = [this._message.messageText];
+                if (this._extraParameters)
+                    args = args.concat(this._extraParameters);
+                this._appendFormattedArguments(element, args);
+                break;
+            }
+
             case WI.ConsoleMessage.MessageType.Image: {
                 let img = element.appendChild(document.createElement("img"));
                 img.classList.add("console-image", "show-grid");

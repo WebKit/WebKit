@@ -144,6 +144,29 @@ void InspectorConsoleAgent::startTiming(const String& title)
     }
 }
 
+void InspectorConsoleAgent::logTiming(const String& title, Ref<ScriptArguments>&& arguments)
+{
+    if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
+        return;
+
+    ASSERT(!title.isNull());
+    if (title.isNull())
+        return;
+
+    auto it = m_times.find(title);
+    if (it == m_times.end()) {
+        // FIXME: Send an enum to the frontend for localization?
+        String warning = makeString("Timer \"", title, "\" does not exist");
+        addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Warning, warning));
+        return;
+    }
+
+    MonotonicTime startTime = it->value;
+    Seconds elapsed = MonotonicTime::now() - startTime;
+    String message = makeString(title, ": ", FormattedNumber::fixedWidth(elapsed.milliseconds(), 3), "ms");
+    addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Debug, message, WTFMove(arguments)));
+}
+
 void InspectorConsoleAgent::stopTiming(const String& title, Ref<ScriptCallStack>&& callStack)
 {
     if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
@@ -162,11 +185,11 @@ void InspectorConsoleAgent::stopTiming(const String& title, Ref<ScriptCallStack>
     }
 
     MonotonicTime startTime = it->value;
-    m_times.remove(it);
-
     Seconds elapsed = MonotonicTime::now() - startTime;
     String message = makeString(title, ": ", FormattedNumber::fixedWidth(elapsed.milliseconds(), 3), "ms");
     addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Debug, message, WTFMove(callStack)));
+
+    m_times.remove(it);
 }
 
 void InspectorConsoleAgent::takeHeapSnapshot(const String& title)

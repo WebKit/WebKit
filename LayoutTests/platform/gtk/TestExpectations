@@ -2135,8 +2135,6 @@ webkit.org/b/197498 imported/w3c/web-platform-tests/web-animations/interfaces/An
 webkit.org/b/197498 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/ready.html [ Failure Pass ]
 webkit.org/b/197498 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/update-and-send-events.html [ Failure Pass ]
 
-webkit.org/b/197499 inspector/console/console-time.html [ Failure Pass ]
-
 webkit.org/b/197500 legacy-animation-engine/compositing/repaint/become-overlay-composited-layer.html [ Failure Pass ]
 
 webkit.org/b/197501 fast/images/animated-webp.html [ ImageOnlyFailure Pass ]

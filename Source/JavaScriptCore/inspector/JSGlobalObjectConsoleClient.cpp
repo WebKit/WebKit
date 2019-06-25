@@ -153,6 +153,11 @@ void JSGlobalObjectConsoleClient::time(ExecState*, const String& title)
     m_consoleAgent->startTiming(title);
 }
 
+void JSGlobalObjectConsoleClient::timeLog(ExecState*, const String& title, Ref<ScriptArguments>&& arguments)
+{
+    m_consoleAgent->logTiming(title, WTFMove(arguments));
+}
+
 void JSGlobalObjectConsoleClient::timeEnd(ExecState* exec, const String& title)
 {
     m_consoleAgent->stopTiming(title, createScriptCallStackForConsole(exec, 1));

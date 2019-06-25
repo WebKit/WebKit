@@ -197,6 +197,11 @@ void PageConsoleClient::time(JSC::ExecState*, const String& title)
     InspectorInstrumentation::startConsoleTiming(m_page.mainFrame(), title);
 }
 
+void PageConsoleClient::timeLog(JSC::ExecState*, const String& title, Ref<ScriptArguments>&& arguments)
+{
+    InspectorInstrumentation::logConsoleTiming(m_page.mainFrame(), title, WTFMove(arguments));
+}
+
 void PageConsoleClient::timeEnd(JSC::ExecState* exec, const String& title)
 {
     InspectorInstrumentation::stopConsoleTiming(m_page.mainFrame(), title, createScriptCallStackForConsole(exec, 1));

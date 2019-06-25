@@ -55,6 +55,7 @@ void WorkletConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLeve
 void WorkletConsoleClient::count(JSC::ExecState*, Ref<ScriptArguments>&&) { }
 
 void WorkletConsoleClient::time(JSC::ExecState*, const String&) { }
+void WorkletConsoleClient::timeLog(JSC::ExecState*, const String&, Ref<ScriptArguments>&&) { }
 void WorkletConsoleClient::timeEnd(JSC::ExecState*, const String&) { }
 
 void WorkletConsoleClient::profile(JSC::ExecState*, const String&) { }

@@ -52,6 +52,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncProfile(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncProfileEnd(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTakeHeapSnapshot(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTime(ExecState*);
+static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTimeLog(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTimeEnd(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTimeStamp(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncGroup(ExecState*);
@@ -92,6 +93,7 @@ void ConsoleObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("profile", consoleProtoFuncProfile, static_cast<unsigned>(PropertyAttribute::None), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("profileEnd", consoleProtoFuncProfileEnd, static_cast<unsigned>(PropertyAttribute::None), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("time", consoleProtoFuncTime, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("timeLog", consoleProtoFuncTimeLog, static_cast<unsigned>(PropertyAttribute::None), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("timeEnd", consoleProtoFuncTimeEnd, static_cast<unsigned>(PropertyAttribute::None), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("timeStamp", consoleProtoFuncTimeStamp, static_cast<unsigned>(PropertyAttribute::None), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("takeHeapSnapshot", consoleProtoFuncTakeHeapSnapshot, static_cast<unsigned>(PropertyAttribute::None), 0);
@@ -310,6 +312,26 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTime(ExecState* exec)
     }
 
     client->time(exec, title);
+    return JSValue::encode(jsUndefined());
+}
+
+static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTimeLog(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
+    if (!client)
+        return JSValue::encode(jsUndefined());
+
+    String title;
+    if (exec->argumentCount() < 1)
+        title =  "default"_s;
+    else {
+        title = valueOrDefaultLabelString(exec, exec->argument(0));
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    }
+
+    client->timeLog(exec, title, Inspector::createScriptArguments(exec, 1));
     return JSValue::encode(jsUndefined());
 }
 
