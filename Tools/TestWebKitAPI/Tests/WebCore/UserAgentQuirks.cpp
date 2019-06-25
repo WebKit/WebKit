@@ -98,6 +98,7 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasMacPlatformQuirk("http://outlook.live.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://mail.ntu.edu.tw/");
     assertUserAgentForURLHasMacPlatformQuirk("http://exchange.tu-berlin.de/");
+    assertUserAgentForURLHasMacPlatformQuirk("http://bankofamerica.com/");
 }
 
 } // namespace TestWebKitAPI

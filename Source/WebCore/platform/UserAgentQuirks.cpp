@@ -110,6 +110,11 @@ static bool urlRequiresMacintoshPlatform(const URL& url)
         || domain == "drive.google.com")
         return true;
 
+    // Bank of America shows an unsupported browser warning with WebKitGTK's
+    // standard user agent.
+    if (baseDomain == "bankofamerica.com")
+        return true;
+
     return false;
 }
 
