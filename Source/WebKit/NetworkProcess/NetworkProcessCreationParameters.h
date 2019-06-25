@@ -86,7 +86,7 @@ struct NetworkProcessCreationParameters {
     WebsiteDataStoreParameters defaultDataStoreParameters;
     
 #if USE(SOUP)
-    HTTPCookieAcceptPolicy cookieAcceptPolicy { HTTPCookieAcceptPolicyAlways };
+    HTTPCookieAcceptPolicy cookieAcceptPolicy { HTTPCookieAcceptPolicy::AlwaysAccept };
     bool ignoreTLSErrors { false };
     Vector<String> languages;
     WebCore::SoupNetworkProxySettings proxySettings;

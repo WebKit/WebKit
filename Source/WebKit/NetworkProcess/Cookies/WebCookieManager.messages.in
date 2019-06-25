@@ -35,7 +35,7 @@
     void DeleteCookie(PAL::SessionID sessionID, struct WebCore::Cookie cookie, WebKit::CallbackID callbackID)
     void DeleteAllCookiesModifiedSince(PAL::SessionID sessionID, WallTime time, WebKit::CallbackID callbackID)
 
-    void SetHTTPCookieAcceptPolicy(uint32_t policy, WebKit::OptionalCallbackID callbackID)
+    void SetHTTPCookieAcceptPolicy(enum:uint8_t WebKit::HTTPCookieAcceptPolicy policy, WebKit::OptionalCallbackID callbackID)
     void GetHTTPCookieAcceptPolicy(WebKit::CallbackID callbackID)
     
     void StartObservingCookieChanges(PAL::SessionID sessionID)

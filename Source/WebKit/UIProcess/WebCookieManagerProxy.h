@@ -109,7 +109,7 @@ private:
     WebCookieManagerProxy(WebProcessPool*);
 
     void didGetHostnamesWithCookies(const Vector<String>&, WebKit::CallbackID);
-    void didGetHTTPCookieAcceptPolicy(uint32_t policy, WebKit::CallbackID);
+    void didGetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy, WebKit::CallbackID);
 
     void didSetHTTPCookieAcceptPolicy(WebKit::CallbackID);
     void didSetCookies(WebKit::CallbackID);

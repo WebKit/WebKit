@@ -55,6 +55,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LayoutMilestone.h>
+#include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserScriptTypes.h>
@@ -312,6 +313,28 @@ inline WKEventMouseButton toAPI(WebMouseEvent::Button mouseButton)
         wkMouseButton = kWKEventMouseButtonMiddleButton;
         break;
     case WebMouseEvent::RightButton:
+        wkMouseButton = kWKEventMouseButtonRightButton;
+        break;
+    }
+
+    return wkMouseButton;
+}
+
+inline WKEventMouseButton toAPI(WebCore::MouseButton mouseButton)
+{
+    WKEventMouseButton wkMouseButton = kWKEventMouseButtonNoButton;
+
+    switch (mouseButton) {
+    case WebCore::MouseButton::NoButton:
+        wkMouseButton = kWKEventMouseButtonNoButton;
+        break;
+    case WebCore::MouseButton::LeftButton:
+        wkMouseButton = kWKEventMouseButtonLeftButton;
+        break;
+    case WebCore::MouseButton::MiddleButton:
+        wkMouseButton = kWKEventMouseButtonMiddleButton;
+        break;
+    case WebCore::MouseButton::RightButton:
         wkMouseButton = kWKEventMouseButtonRightButton;
         break;
     }

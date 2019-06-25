@@ -37,16 +37,16 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy 
 {
     CookieAcceptPolicy curlPolicy = CookieAcceptPolicy::OnlyFromMainDocumentDomain;
     switch (policy) {
-    case HTTPCookieAcceptPolicyAlways:
+    case HTTPCookieAcceptPolicy::AlwaysAccept:
         curlPolicy = CookieAcceptPolicy::Always;
         break;
-    case HTTPCookieAcceptPolicyNever:
+    case HTTPCookieAcceptPolicy::Never:
         curlPolicy = CookieAcceptPolicy::Never;
         break;
-    case HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
+    case HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
         curlPolicy = CookieAcceptPolicy::OnlyFromMainDocumentDomain;
         break;
-    case HTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain:
+    case HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
         curlPolicy = CookieAcceptPolicy::ExclusivelyFromMainDocumentDomain;
         break;
     }
@@ -61,17 +61,17 @@ HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
     const auto& networkStorageSession = m_process.defaultStorageSession();
     switch (networkStorageSession.cookieStorage().cookieAcceptPolicy(networkStorageSession)) {
     case CookieAcceptPolicy::Always:
-        return HTTPCookieAcceptPolicyAlways;
+        return HTTPCookieAcceptPolicy::AlwaysAccept;
     case CookieAcceptPolicy::Never:
-        return HTTPCookieAcceptPolicyNever;
+        return HTTPCookieAcceptPolicy::Never;
     case CookieAcceptPolicy::OnlyFromMainDocumentDomain:
-        return HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+        return HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
     case CookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
-        return HTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain;
+        return HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain;
     }
 
     ASSERT_NOT_REACHED();
-    return HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+    return HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
 }
 
 } // namespace WebKit

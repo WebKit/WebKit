@@ -101,6 +101,14 @@ typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
 typedef CFIndex CFURLRequestPriority;
 typedef int CFHTTPCookieStorageAcceptPolicy;
 
+CF_ENUM(CFHTTPCookieStorageAcceptPolicy)
+{
+    CFHTTPCookieStorageAcceptPolicyAlways = 0,
+    CFHTTPCookieStorageAcceptPolicyNever = 1,
+    CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain = 2,
+    CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
+};
+
 #ifdef __BLOCKS__
 typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 #endif

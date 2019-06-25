@@ -22,7 +22,7 @@
 
 messages -> WebCookieManagerProxy {
     DidGetHostnamesWithCookies(Vector<String> hostnames, WebKit::CallbackID callbackID);
-    DidGetHTTPCookieAcceptPolicy(uint32_t policy, WebKit::CallbackID callbackID);
+    DidGetHTTPCookieAcceptPolicy(enum:uint8_t WebKit::HTTPCookieAcceptPolicy policy, WebKit::CallbackID callbackID);
 
     DidSetHTTPCookieAcceptPolicy(WebKit::CallbackID callbackID);
     DidDeleteCookies(WebKit::CallbackID callbackID);

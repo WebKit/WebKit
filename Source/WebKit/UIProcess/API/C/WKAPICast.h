@@ -367,29 +367,29 @@ inline HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(WKHTTPCookieAcceptPolicy 
 {
     switch (policy) {
     case kWKHTTPCookieAcceptPolicyAlways:
-        return HTTPCookieAcceptPolicyAlways;
+        return HTTPCookieAcceptPolicy::AlwaysAccept;
     case kWKHTTPCookieAcceptPolicyNever:
-        return HTTPCookieAcceptPolicyNever;
+        return HTTPCookieAcceptPolicy::Never;
     case kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
-        return HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+        return HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
     case kWKHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain:
-        return HTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain;
+        return HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain;
     }
 
     ASSERT_NOT_REACHED();
-    return HTTPCookieAcceptPolicyAlways;
+    return HTTPCookieAcceptPolicy::AlwaysAccept;
 }
 
 inline WKHTTPCookieAcceptPolicy toAPI(HTTPCookieAcceptPolicy policy)
 {
     switch (policy) {
-    case HTTPCookieAcceptPolicyAlways:
+    case HTTPCookieAcceptPolicy::AlwaysAccept:
         return kWKHTTPCookieAcceptPolicyAlways;
-    case HTTPCookieAcceptPolicyNever:
+    case HTTPCookieAcceptPolicy::Never:
         return kWKHTTPCookieAcceptPolicyNever;
-    case HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
+    case HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
         return kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
-    case HTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain:
+    case HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
         return kWKHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain;
     }
 

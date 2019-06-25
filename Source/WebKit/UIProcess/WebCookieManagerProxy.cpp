@@ -258,7 +258,7 @@ void WebCookieManagerProxy::getHTTPCookieAcceptPolicy(PAL::SessionID, Function<v
     processPool()->sendToNetworkingProcess(Messages::WebCookieManager::GetHTTPCookieAcceptPolicy(callbackID));
 }
 
-void WebCookieManagerProxy::didGetHTTPCookieAcceptPolicy(uint32_t policy, WebKit::CallbackID callbackID)
+void WebCookieManagerProxy::didGetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy, WebKit::CallbackID callbackID)
 {
     m_callbacks.take<HTTPCookieAcceptPolicyCallback>(callbackID)->performCallbackWithReturnValue(policy);
 }

@@ -90,11 +90,11 @@ static inline SoupCookiePersistentStorageType toSoupCookiePersistentStorageType(
 static inline WebKitCookieAcceptPolicy toWebKitCookieAcceptPolicy(HTTPCookieAcceptPolicy httpPolicy)
 {
     switch (httpPolicy) {
-    case HTTPCookieAcceptPolicyAlways:
+    case HTTPCookieAcceptPolicy::AlwaysAccept:
         return WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS;
-    case HTTPCookieAcceptPolicyNever:
+    case HTTPCookieAcceptPolicy::Never:
         return WEBKIT_COOKIE_POLICY_ACCEPT_NEVER;
-    case HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
+    case HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
         return WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY;
     default:
         ASSERT_NOT_REACHED();
@@ -106,14 +106,14 @@ static inline HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(WebKitCookieAccept
 {
     switch (kitPolicy) {
     case WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS:
-        return HTTPCookieAcceptPolicyAlways;
+        return HTTPCookieAcceptPolicy::AlwaysAccept;
     case WEBKIT_COOKIE_POLICY_ACCEPT_NEVER:
-        return HTTPCookieAcceptPolicyNever;
+        return HTTPCookieAcceptPolicy::Never;
     case WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY:
-        return HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+        return HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
     default:
         ASSERT_NOT_REACHED();
-        return HTTPCookieAcceptPolicyAlways;
+        return HTTPCookieAcceptPolicy::AlwaysAccept;
     }
 }
 

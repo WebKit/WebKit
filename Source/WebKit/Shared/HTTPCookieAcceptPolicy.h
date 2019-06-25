@@ -23,19 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTTPCookieAcceptPolicy_h
-#define HTTPCookieAcceptPolicy_h
+#pragma once
 
 namespace WebKit {
 
-enum {
-    HTTPCookieAcceptPolicyAlways = 0,
-    HTTPCookieAcceptPolicyNever = 1,
-    HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain = 2,
-    HTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
+enum class HTTPCookieAcceptPolicy : uint8_t {
+    AlwaysAccept = 0,
+    Never = 1,
+    OnlyFromMainDocumentDomain = 2,
+    ExclusivelyFromMainDocumentDomain = 3,
 };
-typedef unsigned HTTPCookieAcceptPolicy;
 
 } // namespace WebKit
 
-#endif // HTTPCookieAcceptPolicy_h
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::HTTPCookieAcceptPolicy> {
+    using values = EnumValues<
+        WebKit::HTTPCookieAcceptPolicy,
+        WebKit::HTTPCookieAcceptPolicy::AlwaysAccept,
+        WebKit::HTTPCookieAcceptPolicy::Never,
+        WebKit::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain,
+        WebKit::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain
+    >;
+};
+
+}

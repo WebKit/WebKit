@@ -41,13 +41,13 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy 
 {
     SoupCookieJarAcceptPolicy soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
     switch (policy) {
-    case HTTPCookieAcceptPolicyAlways:
+    case HTTPCookieAcceptPolicy::AlwaysAccept:
         soupPolicy = SOUP_COOKIE_JAR_ACCEPT_ALWAYS;
         break;
-    case HTTPCookieAcceptPolicyNever:
+    case HTTPCookieAcceptPolicy::Never:
         soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NEVER;
         break;
-    case HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
+    case HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
         soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
         break;
     }
@@ -61,15 +61,15 @@ HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
 {
     switch (soup_cookie_jar_get_accept_policy(m_process.defaultStorageSession().cookieStorage())) {
     case SOUP_COOKIE_JAR_ACCEPT_ALWAYS:
-        return HTTPCookieAcceptPolicyAlways;
+        return HTTPCookieAcceptPolicy::AlwaysAccept;
     case SOUP_COOKIE_JAR_ACCEPT_NEVER:
-        return HTTPCookieAcceptPolicyNever;
+        return HTTPCookieAcceptPolicy::Never;
     case SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY:
-        return HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+        return HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
     }
 
     ASSERT_NOT_REACHED();
-    return HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+    return HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
 }
 
 void WebCookieManager::setCookiePersistentStorage(PAL::SessionID sessionID, const String& storagePath, SoupCookiePersistentStorageType storageType)

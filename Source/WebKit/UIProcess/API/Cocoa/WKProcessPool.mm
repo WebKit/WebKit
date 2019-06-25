@@ -207,17 +207,17 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
 {
     switch (static_cast<NSUInteger>(policy)) {
     case NSHTTPCookieAcceptPolicyAlways:
-        return WebKit::HTTPCookieAcceptPolicyAlways;
+        return WebKit::HTTPCookieAcceptPolicy::AlwaysAccept;
     case NSHTTPCookieAcceptPolicyNever:
-        return WebKit::HTTPCookieAcceptPolicyNever;
+        return WebKit::HTTPCookieAcceptPolicy::Never;
     case NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
-        return WebKit::HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+        return WebKit::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
     case NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain:
-        return WebKit::HTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain;
+        return WebKit::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain;
     }
 
     ASSERT_NOT_REACHED();
-    return WebKit::HTTPCookieAcceptPolicyAlways;
+    return WebKit::HTTPCookieAcceptPolicy::AlwaysAccept;
 }
 
 - (void)_setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy

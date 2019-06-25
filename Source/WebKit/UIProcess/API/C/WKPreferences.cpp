@@ -1307,7 +1307,7 @@ void WKPreferencesSetIncrementalRenderingSuppressionTimeout(WKPreferencesRef pre
 
 double WKPreferencesGetIncrementalRenderingSuppressionTimeout(WKPreferencesRef preferencesRef)
 {
-    return toAPI(toImpl(preferencesRef)->incrementalRenderingSuppressionTimeout());
+    return toImpl(preferencesRef)->incrementalRenderingSuppressionTimeout();
 }
 
 void WKPreferencesSetThreadedScrollingEnabled(WKPreferencesRef preferencesRef, bool enabled)
