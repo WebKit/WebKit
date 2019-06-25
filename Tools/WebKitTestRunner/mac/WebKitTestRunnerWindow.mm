@@ -27,6 +27,7 @@
 #import "WebKitTestRunnerWindow.h"
 
 #import "PlatformWebView.h"
+#import <wtf/MainThread.h>
 #import <wtf/Vector.h>
 
 @implementation WebKitTestRunnerWindow
@@ -37,6 +38,7 @@ static Vector<WebKitTestRunnerWindow *> allWindows;
 
 + (WebKitTestRunnerWindow *)_WTR_keyWindow
 {
+    ASSERT(isMainThread());
     for (auto window : allWindows) {
         if ([window isKeyWindow])
             return window;
@@ -46,14 +48,24 @@ static Vector<WebKitTestRunnerWindow *> allWindows;
 
 - (instancetype)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
 {
+    ASSERT(isMainThread());
     allWindows.append(self);
     return [super initWithContentRect:contentRect styleMask:windowStyle backing:bufferingType defer:deferCreation];
 }
 
-- (void)dealloc
+- (void)close
 {
+    ASSERT(isMainThread());
+    ASSERT(allWindows.contains(self));
     allWindows.removeFirst(self);
     ASSERT(!allWindows.contains(self));
+    [super close];
+}
+
+- (void)dealloc
+{
+    ASSERT(isMainThread());
+    ASSERT(!allWindows.contains(self)); // The window needs to stop being key before deallocation, otherwise AppKit spins waiting for this to happen (see <rdar://problem/50948871>).
     [super dealloc];
 }
 
