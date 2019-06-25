@@ -1,3 +1,22 @@
+2019-06-25  Timothy Hatcher  <timothy@apple.com>
+
+        Clicking the up/down spin buttons for a number input increments/decrements by 2.
+        https://bugs.webkit.org/show_bug.cgi?id=198809
+
+        Reviewed by Tim Horton.
+
+        AppKit no longer registers NSScrollerButtonDelay and NSScrollerButtonPeriod in the base
+        NSUserDefaults for an app. This caused our use to always get 0s when setting the click
+        and hold timer, causing the value to increment quickly for a single press.
+
+        * platform/mac/ScrollbarThemeMac.h:
+        (WebCore::ScrollbarThemeMac::initialAutoscrollTimerDelay): Added. Hardcode 500ms.
+        (WebCore::ScrollbarThemeMac::autoscrollTimerDelay): Added. Hardcode 50ms.
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::preferencesChanged): Removed use of old user defaults.
+        (WebCore::ScrollbarThemeMac::initialAutoscrollTimerDelay): Deleted.
+        (WebCore::ScrollbarThemeMac::autoscrollTimerDelay): Deleted.
+
 2019-06-25  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, windows build fix.

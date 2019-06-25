@@ -136,8 +136,6 @@ static const int cButtonLength[] = { 14, 10 };
 static const int cOuterButtonLength[] = { 16, 14 }; // The outer button in a double button pair is a bit bigger.
 static const int cOuterButtonOverlap = 2;
 
-static Seconds gInitialButtonDelay { 500_ms };
-static Seconds gAutoscrollButtonDelay { 50_ms };
 static bool gJumpOnTrackClick = false;
 static bool gUsesOverlayScrollbars = false;
 
@@ -240,8 +238,6 @@ void ScrollbarThemeMac::preferencesChanged()
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults synchronize];
-    gInitialButtonDelay = Seconds { [defaults floatForKey:@"NSScrollerButtonDelay"] };
-    gAutoscrollButtonDelay = Seconds { [defaults floatForKey:@"NSScrollerButtonPeriod"] };
     gJumpOnTrackClick = [defaults boolForKey:@"AppleScrollerPagingBehavior"];
     usesOverlayScrollbarsChanged();
 }
@@ -283,16 +279,6 @@ void ScrollbarThemeMac::updateScrollbarOverlayStyle(Scrollbar& scrollbar)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-Seconds ScrollbarThemeMac::initialAutoscrollTimerDelay()
-{
-    return gInitialButtonDelay;
-}
-
-Seconds ScrollbarThemeMac::autoscrollTimerDelay()
-{
-    return gAutoscrollButtonDelay;
-}
-    
 ScrollbarButtonsPlacement ScrollbarThemeMac::buttonsPlacement() const
 {
     return gButtonPlacement;
