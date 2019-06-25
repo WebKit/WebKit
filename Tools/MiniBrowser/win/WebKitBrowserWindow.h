@@ -40,7 +40,6 @@ private:
     HRESULT init() override;
     HWND hwnd() override;
 
-    HRESULT loadHTMLString(const BSTR&) override;
     HRESULT loadURL(const BSTR& url) override;
     void navigateForwardOrBackward(UINT menuID) override;
     void navigateToHistory(UINT menuID) override;

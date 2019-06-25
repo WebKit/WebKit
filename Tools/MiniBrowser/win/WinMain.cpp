@@ -82,7 +82,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     if (options.requestedURL.length())
         mainWindow.loadURL(options.requestedURL.GetBSTR());
     else
-        mainWindow.browserWindow()->loadHTMLString(_bstr_t(defaultHTML).GetBSTR());
+        mainWindow.browserWindow()->loadURL(_bstr_t(defaultURL).GetBSTR());
 
 #pragma warning(disable:4509)
 

@@ -35,7 +35,6 @@ public:
     virtual HRESULT init() = 0;
     virtual HWND hwnd() = 0;
 
-    virtual HRESULT loadHTMLString(const BSTR&) = 0;
     virtual HRESULT loadURL(const BSTR& passedURL) = 0;
     virtual void navigateForwardOrBackward(UINT menuID) = 0;
     virtual void navigateToHistory(UINT menuID) = 0;

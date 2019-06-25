@@ -33,7 +33,6 @@
 #include "Common.h"
 #include "DOMDefaultImpl.h"
 #include "MiniBrowserLibResource.h"
-#include "MiniBrowserReplace.h"
 #include "MiniBrowserWebHost.h"
 #include "PrintWebUIDelegate.h"
 #include "ResourceLoadDelegate.h"
@@ -195,17 +194,6 @@ HRESULT WebKitLegacyBrowserWindow::prepareViews(HWND mainWnd, const RECT& client
 
     hr = m_webViewPrivate->viewWindow(&m_viewWnd);
 
-    return hr;
-}
-
-HRESULT WebKitLegacyBrowserWindow::loadHTMLString(const BSTR& str)
-{
-    IWebFramePtr frame;
-    HRESULT hr = m_webView->mainFrame(&frame.GetInterfacePtr());
-    if (FAILED(hr))
-        return hr;
-
-    frame->loadHTMLString(str, 0);
     return hr;
 }
 

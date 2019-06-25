@@ -189,14 +189,6 @@ HRESULT WebKitBrowserWindow::loadURL(const BSTR& url)
     return true;
 }
 
-HRESULT WebKitBrowserWindow::loadHTMLString(const BSTR& str)
-{
-    auto page = WKViewGetPage(m_view.get());
-    auto url = createWKURL(_bstr_t(L"about:"));
-    WKPageLoadHTMLString(page, createWKString(_bstr_t(str)).get(), url.get());
-    return true;
-}
-
 void WebKitBrowserWindow::navigateForwardOrBackward(UINT menuID)
 {
     auto page = WKViewGetPage(m_view.get());

@@ -1,3 +1,21 @@
+2019-06-25  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] MiniBrowser should default to webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=199201
+
+        Reviewed by Don Olmstead.
+
+        * MiniBrowser/win/BrowserWindow.h:
+        * MiniBrowser/win/MiniBrowserReplace.h:
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::loadHTMLString): Deleted.
+        * MiniBrowser/win/WebKitBrowserWindow.h:
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.cpp:
+        (WebKitLegacyBrowserWindow::loadHTMLString): Deleted.
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.h:
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain):
+
 2019-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Occasional crash under -[UIPreviewTarget initWithContainer:center:transform:] when generating a drag preview
