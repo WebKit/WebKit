@@ -563,9 +563,9 @@ webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight
 webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-sync-not-supported.htm [ Failure ]
 webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/send-conditional-cors.htm [ Failure ]
 webkit.org/b/179611 imported/w3c/web-platform-tests/xhr/send-entity-body-document.htm [ Pass Failure ]
-imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.html [ Skip ]
-imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.html [ Skip ]
-imported/w3c/web-platform-tests/IndexedDB/nested-cloning-small.html [ Skip ]
+webkit.org/b/184066 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.html [ Skip ]
+webkit.org/b/184066 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.html [ Skip ]
+webkit.org/b/184066 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-small.html [ Skip ]
 imported/w3c/web-platform-tests/css/cssom/interfaces.html [ Pass Timeout ]
 [ Debug ] imported/w3c/web-platform-tests/css/cssom-view/interfaces.html [ Skip ]
 webkit.org/b/182292 imported/w3c/web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-001.html [ ImageOnlyFailure ]
@@ -1770,7 +1770,7 @@ storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-big.htm [ Failure ]
 
 # Test is crashing
-imported/w3c/web-platform-tests/IndexedDB/keypath-exceptions.htm [ Skip ]
+webkit.org/b/184065 imported/w3c/web-platform-tests/IndexedDB/keypath-exceptions.htm [ Skip ]
 
 # SQLite backend tests that timeout
 storage/indexeddb/modern/transaction-scheduler-1.html [ Skip ]

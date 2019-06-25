@@ -1,5 +1,12 @@
 2019-06-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        Unreviewed test gardening
+
+        * TestExpectations: Added webkit.org/b/184066 to imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.html and others.
+        Added webkit.org/b/184065 to imported/w3c/web-platform-tests/IndexedDB/keypath-exceptions.htm.
+
+2019-06-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [WinCairo] Unreviewed test gardening
 
         * platform/wincairo/TestExpectations: Added webkit.org/b/199186 to fonts/use-typo-metrics-1.html.
