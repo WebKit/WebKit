@@ -42,30 +42,35 @@ bool AutosizeStatus::contains(Fields fields) const
     return m_fields.contains(fields);
 }
 
-AutosizeStatus AutosizeStatus::updateStatus(RenderStyle& style)
+void AutosizeStatus::updateStatus(RenderStyle& style)
 {
-    OptionSet<Fields> result = style.autosizeStatus().fields();
-    if (style.hasOutOfFlowPosition())
-        result.add(Fields::FoundOutOfFlowPosition);
-    switch (style.display()) {
-    case DisplayType::InlineBlock:
-        result.add(Fields::FoundInlineBlock);
-        break;
-    case DisplayType::None:
-        result.add(Fields::FoundDisplayNone);
-        break;
-    default: // FIXME: Add more cases.
-        break;
-    }
-    if (style.height().isFixed())
-        result.add(Fields::FoundFixedHeight);
-    style.setAutosizeStatus(result);
-    return result;
-}
+    auto result = style.autosizeStatus().fields();
 
-bool AutosizeStatus::shouldSkipSubtree() const
-{
-    return m_fields.containsAny({ Fields::FoundOutOfFlowPosition, Fields::FoundInlineBlock, Fields::FoundFixedHeight, Fields::FoundDisplayNone });
+    if (style.display() == DisplayType::None)
+        result.add(Fields::DisplayNone);
+
+    if (style.hasOutOfFlowPosition())
+        result.add(Fields::OutOfFlowPosition);
+
+    if (style.height().isFixed())
+        result.add(Fields::FixedHeight);
+
+    if (style.width().isFixed())
+        result.add(Fields::FixedWidth);
+
+    if (style.maxWidth().isFixed())
+        result.add(Fields::FixedMaxWidth);
+
+    if (style.overflowX() == Overflow::Hidden)
+        result.add(Fields::OverflowXHidden);
+
+    if (style.overflowY() == Overflow::Hidden)
+        result.add(Fields::OverflowYHidden);
+
+    if (style.isFloating())
+        result.add(Fields::Floating);
+
+    style.setAutosizeStatus(result);
 }
 
 float AutosizeStatus::idempotentTextSize(float specifiedSize, float pageScale)

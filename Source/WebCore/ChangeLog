@@ -1,3 +1,68 @@
+2019-06-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Text autosizing] [iPadOS] Revise our heuristics to determine idempotent text autosizing candidates
+        https://bugs.webkit.org/show_bug.cgi?id=198763
+        <rdar://problem/51826266>
+
+        Reviewed by Simon Fraser.
+
+        This patch adjusts existing text autosizing heuristics, based on a survey of text on websites in the Alexa top
+        500 that shrink down to fit the viewport when requesting the desktop version of the site. The new heuristic is
+        derived from training decision trees against the dataset obtained from this survey, and balances false positives
+        (cases where layout is broken due to autosizing) against overall accuracy (measured using cross-validation).
+
+        See below for more details. Additionally, please refer to the link in the radar for more details, as well as
+        resources used to generate, validate, and analyze these decision trees.
+
+        Test: fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-candidates.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyleForTextAutosizing):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::isIdempotentTextAutosizingCandidate const):
+
+        Rename AutosizeStatus::shouldSkipSubtree to RenderStyle::isIdempotentTextAutosizingCandidate. We relocate this
+        logic to RenderStyle, such that we're able to ask the element's RenderStyle questions when determining whether
+        the element should be autosized.
+
+        Of course, this patch additionally revamps the heuristic used to determine whether it is safe to autosize an
+        element. Our current heuristic in trunk simply checks for the presence of inline block display, out of flow
+        positioning and a fixed height ancestor; if any of these conditions are satisfied, we opt the element out of
+        text autosizing. This is an excellent strategy for boosting some runs of text while avoiding autosizing in the
+        vast majority of cases where increasing font size may lead to layout breakage (e.g. overlapping or clipped text,
+        content unexpectedly flowing to the next line, etc.). However, it also avoids boosting font sizes in many
+        scenarios where boosting font sizes is desired; for concrete examples, see the (currently 24) radars about small
+        font sizes that are duped to <rdar://problem/51826266>.
+
+        To help analyze and identify trends in autosizable and non-autosizable text, we assembled a dataset of elements
+        with text from the Alexa top 500 that either: (1) were too small and could be boosted safely, or (2) would break
+        layout if boosted. With this labeled dataset, we then trained binary decision trees to classify the data. Each
+        decision tree was trained with a number of hyperparameters: namely, maximum depth, minimum leaf size, and the
+        amount of bias towards negative samples (i.e. the ratio of the weight of a non-autosizable sample relative to
+        the weight of an autosizable sample).
+
+        For each 3-tuple of these hyperparameters (800 in total: max depth between 3 and 10, min leaf size between 1 and
+        10 and bias between 1 and 10), for 5000 iterations each, we split the full dataset into a training dataset and
+        a cross-validation dataset, trained a decision tree using the training set, and tested against the cross-
+        validation set to compute average precision, recall, and overall accuracy for each tuple of hyperparameters.
+
+        The decision tree introduced in this patch was generated using a hand-picked set of hyperparameters (max depth
+        10, min leaf size 4, and negative bias 2) to provide a balance between precision scores (limiting layout
+        breakage) and recall score (ensuring that small text is mostly autosized), while optimizing for overall
+        accuracy. Cross-validation scores predict that the overall accuracy of this classifier is approximately 70%, up
+        from the current accuracy in trunk (~53%).
+
+        * rendering/style/RenderStyle.h:
+
+        Grow the width of `autosizeStatus` from 4 to 8 (notably, this does not increase the size of RenderStyle).
+
+        * rendering/style/TextSizeAdjustment.cpp:
+        (WebCore::AutosizeStatus::updateStatus):
+        (WebCore::AutosizeStatus::shouldSkipSubtree const): Deleted.
+        * rendering/style/TextSizeAdjustment.h:
+
+        Introduce new text autosizing state flags, and remove some existing ones.
+
 2019-06-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r246714.

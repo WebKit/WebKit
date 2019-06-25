@@ -1,3 +1,22 @@
+2019-06-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Text autosizing] [iPadOS] Revise our heuristics to determine idempotent text autosizing candidates
+        https://bugs.webkit.org/show_bug.cgi?id=198763
+        <rdar://problem/51826266>
+
+        Reviewed by Simon Fraser.
+
+        Rebaseline an existing text autosizing test, and introduce some new test cases that correspond to several common
+        patterns of autosizable (or non-autosizable) text on websites that were surveyed.
+
+        * fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-after-changing-initial-scale.html:
+        * fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-candidates-expected.txt: Added.
+        * fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-candidates.html: Renamed from LayoutTests/fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-skip.html.
+
+        Rename this existing layout test too, to avoid using the term "skip" in the name of a layout test.
+
+        * fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-skip-expected.txt: Removed.
+
 2019-06-24  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r246725 ): Crashes on twitch.tv

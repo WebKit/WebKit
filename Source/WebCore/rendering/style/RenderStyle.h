@@ -741,6 +741,7 @@ public:
 #if ENABLE(TEXT_AUTOSIZING)
     TextSizeAdjustment textSizeAdjust() const { return m_rareInheritedData->textSizeAdjust; }
     AutosizeStatus autosizeStatus() const;
+    bool isIdempotentTextAutosizingCandidate() const;
 #endif
 
     TextSecurity textSecurity() const { return static_cast<TextSecurity>(m_rareInheritedData->textSecurity); }
@@ -1834,9 +1835,9 @@ private:
         // 48 bits
 
 #if ENABLE(TEXT_AUTOSIZING)
-        unsigned autosizeStatus : 4;
+        unsigned autosizeStatus : 8;
 #endif
-        // 52 bits
+        // 56 bits
     };
 
     // This constructor is used to implement the replace operation.

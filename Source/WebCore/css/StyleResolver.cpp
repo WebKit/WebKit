@@ -879,17 +879,17 @@ static bool hasTextChildren(const Element& element)
 
 void StyleResolver::adjustRenderStyleForTextAutosizing(RenderStyle& style, const Element& element)
 {
-    auto newAutosizeStatus = AutosizeStatus::updateStatus(style);
     if (!settings().textAutosizingEnabled() || !settings().textAutosizingUsesIdempotentMode())
         return;
 
+    AutosizeStatus::updateStatus(style);
     if (!hasTextChildren(element))
         return;
 
     if (style.textSizeAdjust().isNone())
         return;
 
-    if (newAutosizeStatus.shouldSkipSubtree())
+    if (!style.isIdempotentTextAutosizingCandidate())
         return;
 
     float initialScale = document().page() ? document().page()->initialScale() : 1;
