@@ -38,46 +38,13 @@ Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace& pr
     return credential ? Credential(credential) : Credential();
 }
 
-Vector<SecurityOriginData> CredentialStorage::originsWithPersistentCredentials()
+Vector<WebCore::SecurityOriginData> CredentialStorage::originsWithPersistentCredentials()
 {
-    Vector<SecurityOriginData> origins;
+    Vector<WebCore::SecurityOriginData> origins;
     auto allCredentials = [[NSURLCredentialStorage sharedCredentialStorage] allCredentials];
     for (NSURLProtectionSpace* key in allCredentials.keyEnumerator)
-        origins.append(SecurityOriginData { String(key.protocol), String(key.host), key.port });
+        origins.append(WebCore::SecurityOriginData { String(key.protocol), String(key.host), key.port });
     return origins;
-}
-
-void CredentialStorage::removePersistentCredentialsWithOrigins(const Vector<SecurityOriginData>& origins)
-{
-    auto sharedStorage = [NSURLCredentialStorage sharedCredentialStorage];
-    auto allCredentials = [sharedStorage allCredentials];
-    for (auto& origin : origins) {
-        for (NSURLProtectionSpace* space in allCredentials) {
-            if (origin.protocol == String(space.protocol)
-                && origin.host == String(space.host)
-                && origin.port
-                && *origin.port == space.port) {
-                auto credentials = allCredentials[space];
-                for (NSString* user in credentials) {
-                    auto credential = credentials[user];
-                    [sharedStorage removeCredential:credential forProtectionSpace:space options:@{ NSURLCredentialStorageRemoveSynchronizableCredentials : @YES }];
-                }
-            }
-        }
-    }
-}
-
-void CredentialStorage::clearPersistentCredentials()
-{
-    auto sharedStorage = [NSURLCredentialStorage sharedCredentialStorage];
-    auto allCredentials = [sharedStorage allCredentials];
-    for (NSURLProtectionSpace* space in allCredentials.keyEnumerator) {
-        auto credentials = allCredentials[space];
-        for (NSString* user in credentials) {
-            auto credential = credentials[user];
-            [sharedStorage removeCredential:credential forProtectionSpace:space options:@{ NSURLCredentialStorageRemoveSynchronizableCredentials : @YES }];
-        }
-    }
 }
 
 } // namespace WebCore

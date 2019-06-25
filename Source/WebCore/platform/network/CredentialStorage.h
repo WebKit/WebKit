@@ -48,8 +48,6 @@ public:
     // OS persistent storage.
     WEBCORE_EXPORT static Credential getFromPersistentStorage(const ProtectionSpace&);
     WEBCORE_EXPORT static Vector<SecurityOriginData> originsWithPersistentCredentials();
-    WEBCORE_EXPORT static void removePersistentCredentialsWithOrigins(const Vector<SecurityOriginData>& origins);
-    WEBCORE_EXPORT static void clearPersistentCredentials();
 
     WEBCORE_EXPORT void clearCredentials();
 

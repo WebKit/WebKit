@@ -1,3 +1,7 @@
+2019-06-24  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r246530. rdar://problem/52020968
+
 2019-06-20  Megan Gardner  <megan_gardner@apple.com>
 
         Remove change that was causing hangs
