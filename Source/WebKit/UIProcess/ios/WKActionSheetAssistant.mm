@@ -658,7 +658,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         textAtSelection = [_delegate selectedTextForActionSheetAssistant:self];
 
     if ([controller respondsToSelector:@selector(shouldImmediatelyLaunchDefaultActionForURL:)] && [controller shouldImmediatelyLaunchDefaultActionForURL:targetURL]) {
-        auto action = [controller defaultActionForURL:targetURL results:nil context:context];
+        auto action = [controller defaultActionForURL:targetURL results:_positionInformation->dataDetectorResults.get() context:context];
         auto *elementAction = [self _elementActionForDDAction:action];
         [elementAction _runActionWithElementInfo:_elementInfo.get() forActionSheetAssistant:self];
         return;
@@ -675,7 +675,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [elementActions addObject:elementAction];
     }
 
-    NSString *title = [controller titleForURL:targetURL results:nil context:context];
+    NSString *title = [controller titleForURL:targetURL results:_positionInformation->dataDetectorResults.get() context:context];
     [self _createSheetWithElementActions:elementActions defaultTitle:title showLinkTitle:NO];
     if (!_interactionSheet)
         return;

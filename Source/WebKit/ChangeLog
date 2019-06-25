@@ -1,3 +1,16 @@
+2019-06-25  Tim Horton  <timothy_horton@apple.com>
+
+        Wrong title for Data Detectors tap action menu
+        https://bugs.webkit.org/show_bug.cgi?id=199198
+        <rdar://problem/51957842>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showDataDetectorsSheet]):
+        Always pass the results array through to DataDetectors; they need it
+        to figure out the title too!
+
 2019-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Occasional crash under -[UIPreviewTarget initWithContainer:center:transform:] when generating a drag preview
