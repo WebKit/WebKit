@@ -310,7 +310,8 @@ IGNORE_WARNINGS_END
 
     RetainPtr<NSMutableDictionary<NSNumber *, NSValue *>>_remainingAdditionalItemRequestLocationsByProgress;
     RetainPtr<NSMutableArray<NSValue *>>_queuedAdditionalItemRequestLocations;
-    RetainPtr<NSMutableArray<UITargetedDragPreview *>> _liftPreviews;
+    RetainPtr<NSMutableArray> _liftPreviews;
+    RetainPtr<NSMutableArray<UITargetedDragPreview *>> _cancellationPreviews;
     RetainPtr<NSMutableArray> _dropPreviews;
     RetainPtr<NSMutableArray> _delayedDropPreviews;
 
@@ -330,6 +331,7 @@ IGNORE_WARNINGS_END
     BlockPtr<NSArray *(id <UIDropSession>)> _overridePerformDropBlock;
     BlockPtr<UIDropOperation(UIDropOperation, id)> _overrideDragUpdateBlock;
     BlockPtr<void(BOOL, NSArray *)> _dropCompletionBlock;
+    BlockPtr<void()> _sessionWillBeginBlock;
 }
 
 - (instancetype)initWithWebViewFrame:(CGRect)frame
@@ -388,6 +390,7 @@ IGNORE_WARNINGS_END
     _queuedAdditionalItemRequestLocations = adoptNS([[NSMutableArray alloc] init]);
     _liftPreviews = adoptNS([[NSMutableArray alloc] init]);
     _dropPreviews = adoptNS([[NSMutableArray alloc] init]);
+    _cancellationPreviews = adoptNS([[NSMutableArray alloc] init]);
     _delayedDropPreviews = adoptNS([[NSMutableArray alloc] init]);
     _hasStartedInputSession = false;
 }
@@ -497,6 +500,15 @@ IGNORE_WARNINGS_END
     } else {
         _isDoneWithCurrentRun = true;
         _phase = DragAndDropPhaseCancelled;
+        [[_dropSession items] enumerateObjectsUsingBlock:^(UIDragItem *item, NSUInteger index, BOOL *) {
+            UITargetedDragPreview *defaultPreview = nil;
+            if ([_liftPreviews count] && [[_liftPreviews objectAtIndex:index] isEqual:NSNull.null])
+                defaultPreview = [_liftPreviews objectAtIndex:index];
+
+            UITargetedDragPreview *preview = [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] previewForCancellingItem:item withDefault:defaultPreview];
+            if (preview)
+                [_cancellationPreviews addObject:preview];
+        }];
         [[_webView dropInteractionDelegate] dropInteraction:[_webView dropInteraction] concludeDrop:_dropSession.get()];
     }
 
@@ -576,9 +588,8 @@ IGNORE_WARNINGS_END
         for (UIDragItem *item in items) {
             [itemProviders addObject:item.itemProvider];
             UITargetedDragPreview *liftPreview = [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] previewForLiftingItem:item session:_dragSession.get()];
-            EXPECT_TRUE(!!liftPreview);
-            if (liftPreview)
-                [_liftPreviews addObject:liftPreview];
+            EXPECT_TRUE(liftPreview || ![_webView window]);
+            [_liftPreviews addObject:liftPreview ?: NSNull.null];
         }
 
         _dropSession = adoptNS([[MockDropSession alloc] initWithProviders:itemProviders location:self._currentLocation window:[_webView window] allowMove:self.shouldAllowMoveOperation]);
@@ -662,9 +673,14 @@ IGNORE_WARNINGS_END
     return _phase;
 }
 
-- (NSArray<UITargetedDragPreview *> *)liftPreviews
+- (NSArray *)liftPreviews
 {
     return _liftPreviews.get();
+}
+
+- (NSArray<UITargetedDragPreview *> *)cancellationPreviews
+{
+    return _cancellationPreviews.get();
 }
 
 - (NSArray<UITargetedDragPreview *> *)dropPreviews
@@ -757,7 +773,23 @@ IGNORE_WARNINGS_END
     return _dropCompletionBlock.get();
 }
 
+- (void)setSessionWillBeginBlock:(dispatch_block_t)block
+{
+    _sessionWillBeginBlock = block;
+}
+
+- (dispatch_block_t)sessionWillBeginBlock
+{
+    return _sessionWillBeginBlock.get();
+}
+
 #pragma mark - WKUIDelegatePrivate
+
+- (void)_webView:(WKWebView *)webView dataInteraction:(UIDragInteraction *)interaction sessionWillBegin:(id <UIDragSession>)session
+{
+    if (_sessionWillBeginBlock)
+        _sessionWillBeginBlock();
+}
 
 - (void)_webView:(WKWebView *)webView dataInteractionOperationWasHandled:(BOOL)handled forSession:(id)session itemProviders:(NSArray<NSItemProvider *> *)itemProviders
 {

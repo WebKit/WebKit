@@ -46,7 +46,7 @@ static UIDragItem *dragItemMatchingIdentifier(id <UIDragSession> session, NSInte
 
 static RetainPtr<UITargetedDragPreview> createTargetedDragPreview(UIImage *image, UIView *rootView, UIView *previewContainer, const FloatRect& frameInRootViewCoordinates, const Vector<FloatRect>& clippingRectsInFrameCoordinates, UIColor *backgroundColor, UIBezierPath *visiblePath)
 {
-    if (frameInRootViewCoordinates.isEmpty() || !image)
+    if (frameInRootViewCoordinates.isEmpty() || !image || !previewContainer.window)
         return nullptr;
 
     NSMutableArray *clippingRectValuesInFrameCoordinates = [NSMutableArray arrayWithCapacity:clippingRectsInFrameCoordinates.size()];

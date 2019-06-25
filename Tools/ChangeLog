@@ -1,3 +1,27 @@
+2019-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Occasional crash under -[UIPreviewTarget initWithContainer:center:transform:] when generating a drag preview
+        https://bugs.webkit.org/show_bug.cgi?id=199192
+        <rdar://problem/51554509>
+
+        Reviewed by Tim Horton.
+
+        Tweak the drag and drop simulator to ask for drag cancellation previews, and use this to write a couple tests to
+        verify that we gracefully handle web process termination and web view unparenting mid-drag.
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[DragAndDropSimulator _resetSimulatedState]):
+        (-[DragAndDropSimulator _concludeDropAndPerformOperationIfNecessary]):
+        (-[DragAndDropSimulator _advanceProgress]):
+        (-[DragAndDropSimulator liftPreviews]):
+        (-[DragAndDropSimulator cancellationPreviews]):
+        (-[DragAndDropSimulator setSessionWillBeginBlock:]):
+        (-[DragAndDropSimulator sessionWillBeginBlock]):
+        (-[DragAndDropSimulator _webView:dataInteraction:sessionWillBegin:]):
+
 2019-06-25  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] UploadTestResults and ExtractTestResults clobber results in case of multiple layout test runs in a build

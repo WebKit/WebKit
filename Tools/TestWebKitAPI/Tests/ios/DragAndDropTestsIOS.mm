@@ -1445,6 +1445,30 @@ TEST(DragAndDropTests, CancelledLiftDoesNotCauseSubsequentDragsToFail)
     checkStringArraysAreEqual(@[@"dragstart", @"dragend"], [outputText componentsSeparatedByString:@" "]);
 }
 
+TEST(DragAndDropTests, WebProcessTerminationDuringDrag)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"link-and-target-div"];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setSessionWillBeginBlock:^{
+        [webView _killWebContentProcessAndResetState];
+    }];
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(300, 50)];
+}
+
+TEST(DragAndDropTests, WebViewRemovedFromViewHierarchyDuringDrag)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"link-and-target-div"];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setConvertItemProvidersBlock:[webView] (NSItemProvider *item, NSArray *, NSDictionary *) -> NSArray * {
+        [webView removeFromSuperview];
+        return @[ item ];
+    }];
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(300, 50)];
+    EXPECT_EQ([simulator cancellationPreviews].firstObject, nil);
+}
+
 static void testDragAndDropOntoTargetElements(TestWKWebView *webView)
 {
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView]);
