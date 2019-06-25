@@ -205,9 +205,7 @@
 #elif !defined(FALLTHROUGH) && !defined(__cplusplus)
 
 #if COMPILER(GCC)
-#if GCC_VERSION_AT_LEAST(7, 0, 0)
 #define FALLTHROUGH __attribute__ ((fallthrough))
-#endif
 #endif
 
 #endif // !defined(FALLTHROUGH) && defined(__cplusplus) && defined(__has_cpp_attribute)

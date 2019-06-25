@@ -61,8 +61,8 @@ if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQU
 endif ()
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-    if (${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS "6.0.0")
-        message(FATAL_ERROR "GCC 6.0.0 is required to build WebKitGTK+, use a newer GCC version or clang")
+    if (${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS "7.3.0")
+        message(FATAL_ERROR "GCC 7.3 or newer is required to build WebKit. Use a newer GCC version or Clang.")
     endif ()
 endif ()
 
