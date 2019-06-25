@@ -1,3 +1,17 @@
+2019-06-25  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Should not process key events in non-editable elements using IME
+        https://bugs.webkit.org/show_bug.cgi?id=199122
+        <rdar://problem/52006654>
+
+        Reviewed by Brent Fulgham.
+
+        Add a test to ensure that we do not process key events as being handled by the Input Manager
+        when using a Chinese keyboard layout and targeting a non-editable element.
+
+        * fast/events/ios/keydown-keyup-keypress-keys-in-non-editable-using-chinese-keyboard-expected.txt: Added.
+        * fast/events/ios/keydown-keyup-keypress-keys-in-non-editable-using-chinese-keyboard.html: Added.
+
 2019-06-25  Truitt Savell  <tsavell@apple.com>
 
         [macOS WK2] REGRESSION (r242313): Layout Test scrollingcoordinator/mac/multiple-fixed.html is a flaky time out and image diff

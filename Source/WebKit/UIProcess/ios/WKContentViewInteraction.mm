@@ -4627,7 +4627,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     using HandledByInputMethod = WebKit::NativeWebKeyboardEvent::HandledByInputMethod;
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
     auto* keyboard = [UIKeyboardImpl sharedInstance];
-    if ([keyboard respondsToSelector:@selector(handleKeyInputMethodCommandForCurrentEvent)] && [keyboard handleKeyInputMethodCommandForCurrentEvent]) {
+    if (_page->editorState().isContentEditable && [keyboard respondsToSelector:@selector(handleKeyInputMethodCommandForCurrentEvent)] && [keyboard handleKeyInputMethodCommandForCurrentEvent]) {
         completionHandler(theEvent, YES);
         _page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(theEvent, HandledByInputMethod::Yes));
         return;

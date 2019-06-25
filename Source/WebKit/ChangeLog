@@ -1,3 +1,18 @@
+2019-06-25  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Should not process key events in non-editable elements using IME
+        https://bugs.webkit.org/show_bug.cgi?id=199122
+        <rdar://problem/52006654>
+
+        Reviewed by Brent Fulgham.
+
+        Use the non-Input Method code path (the one we use for US keyboard input) for all key events
+        targeting a non-editable element. Such key events will never require Input Method support
+        (i.e. show candidate suggestions). Moreover, this behavior matches the behavior on Mac.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView handleKeyWebEvent:withCompletionHandler:]):
+
 2019-06-25  Alex Christensen  <achristensen@webkit.org>
 
         Make HTTPCookieAcceptPolicy an enum class
