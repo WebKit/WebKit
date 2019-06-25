@@ -138,6 +138,9 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     remove(replacement = null)
     {
+        if (this._delegate && typeof this._delegate.spreadsheetStylePropertyWillRemove === "function")
+            this._delegate.spreadsheetStylePropertyWillRemove(this);
+
         this.element.remove();
 
         if (replacement)
@@ -146,9 +149,6 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._property.remove();
 
         this.detached();
-
-        if (this._delegate && typeof this._delegate.spreadsheetStylePropertyRemoved === "function")
-            this._delegate.spreadsheetStylePropertyRemoved(this);
     }
 
     update()

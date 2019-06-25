@@ -1,3 +1,26 @@
+2019-06-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION(r246621): Web Inspector: Styles: property may get removed when editing after deleting value
+        https://bugs.webkit.org/show_bug.cgi?id=199143
+        <rdar://problem/52042815>
+
+        Reviewed by Matt Baker.
+
+        r246621 affected when WI.CSSStyleDeclaration.Event.PropertiesChanged event is fired, which caused
+        SpreadsheetCSSStyleDeclarationEditor to possibly enter a state when `focused` property is
+        incorrectly set to false.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyRemoved): Removed.
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyWillRemove): Added.
+        Renamed from "removed" to "willRemove" since we need to call it before the property DOM element
+        is detached from the document.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.remove):
+        Don't set focused to false when the removed property wasn't focused.
+        This code need to exist because removing focused element from the DOM doesn't trigger blur event.
+
 2019-06-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Implement console.timeLog

@@ -487,14 +487,16 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         event.stop();
     }
 
-    spreadsheetStylePropertyRemoved(propertyView)
+    spreadsheetStylePropertyWillRemove(propertyView)
     {
         this._propertyViews.remove(propertyView);
 
         for (let index = 0; index < this._propertyViews.length; index++)
             this._propertyViews[index].index = index;
 
-        this.focused = false;
+        let wasFocused = document.activeElement && propertyView.element.contains(document.activeElement);
+        if (wasFocused)
+            this.focused = false;
     }
 
     spreadsheetStylePropertyShowProperty(propertyView, property)
