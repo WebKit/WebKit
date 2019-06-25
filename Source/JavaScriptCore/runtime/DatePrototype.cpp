@@ -515,7 +515,6 @@ void DatePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
     JSFunction* toPrimitiveFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.toPrimitive]"_s, dateProtoFuncToPrimitiveSymbol, NoIntrinsic);
     putDirectWithoutTransition(vm, vm.propertyNames->toPrimitiveSymbol, toPrimitiveFunction, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    didBecomePrototype();
 
     // The constructor will be added later, after DateConstructor has been built.
 }

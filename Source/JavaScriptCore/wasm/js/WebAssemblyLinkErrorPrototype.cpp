@@ -57,7 +57,6 @@ Structure* WebAssemblyLinkErrorPrototype::createStructure(VM& vm, JSGlobalObject
 void WebAssemblyLinkErrorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    didBecomePrototype();
 }
 
 WebAssemblyLinkErrorPrototype::WebAssemblyLinkErrorPrototype(VM& vm, Structure* structure)
