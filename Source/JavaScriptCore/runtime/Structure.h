@@ -138,11 +138,13 @@ public:
         return &vm.structureSpace;
     }
 
+    JS_EXPORT_PRIVATE static bool isValidPrototype(JSValue);
+
 protected:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
-        ASSERT(m_prototype.get().isEmpty() || m_prototype.isObject() || m_prototype.isNull());
+        ASSERT(m_prototype.get().isEmpty() || isValidPrototype(m_prototype.get()));
     }
 
     void finishCreation(VM& vm, const Structure* previous)
@@ -785,17 +787,5 @@ private:
 
     uint32_t m_propertyHash;
 };
-
-// We deliberately put Structure::create here in Structure.h instead of StructureInlines.h, because
-// it is used everywhere. This is so we don't have to hunt down all the places where we would need
-// to #include StructureInlines.h otherwise.
-inline Structure* Structure::create(VM& vm, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity)
-{
-    ASSERT(vm.structureStructure);
-    ASSERT(classInfo);
-    Structure* structure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm, globalObject, prototype, typeInfo, classInfo, indexingType, inlineCapacity);
-    structure->finishCreation(vm);
-    return structure;
-}
 
 } // namespace JSC
