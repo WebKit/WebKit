@@ -1482,8 +1482,6 @@ storage/indexeddb/modern/multiple-objectstore-index-cursor-collision.html [ Cras
 storage/indexeddb/modern/objectstore-cursor-advance-failures-private.html [ Crash Pass ]
 storage/indexeddb/modern/workers-disabled.html [ Crash Pass ]
 storage/indexeddb/modern/workers-enable.html [ Crash Pass ]
-[ Debug ] storage/indexeddb/key-type-array-private.html [ Crash ]
-[ Debug ] storage/indexeddb/key-type-array.html [ Crash ]
 
 # Flaky timeouts
 storage/indexeddb/clone-exception.html [ Timeout Pass ]
@@ -1557,7 +1555,7 @@ fast/writing-mode [ Skip ]
 fast/xmlhttprequest [ Skip ]
 fast/xpath [ Skip ]
 fast/xsl [ Skip ]
-fonts/use-typo-metrics-1.html [ Skip ]
+webkit.org/b/199186 fonts/use-typo-metrics-1.html [ Skip ]
 fullscreen [ Skip ]
 html5lib [ Skip ]
 http/wpt [ Skip ]

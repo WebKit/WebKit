@@ -1,3 +1,10 @@
+2019-06-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations: Added webkit.org/b/199186 to fonts/use-typo-metrics-1.html.
+        Removed duplicated storage/indexeddb/key-type-array-private.html and storage/indexeddb/key-type-array.html.
+
 2019-06-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Text autosizing] [iPadOS] Revise our heuristics to determine idempotent text autosizing candidates
