@@ -1340,3 +1340,5 @@ webkit.org/b/196495 fast/viewport/ios/viewport-shrink-to-fit-on-new-navigation.h
 webkit.org/b/199071 [ Release ] imported/blink/fast/css/user-select-none.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/190882 [ Debug ] animations/change-one-anim.html [ Pass Failure ]
+
+webkit.org/b/199196 [ Release ] imported/mozilla/svg/text/textpath-selection.svg [ Pass ImageOnlyFailure ]
