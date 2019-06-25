@@ -69,9 +69,6 @@ WI.loaded = function()
     // Register for events.
     document.addEventListener("DOMContentLoaded", WI.contentLoaded);
 
-    // Non-default global setting values for tests.
-    WI.settings.showShadowDOM.value = true;
-
     // Targets.
     WI.backendTarget = null;
     WI.pageTarget = null;

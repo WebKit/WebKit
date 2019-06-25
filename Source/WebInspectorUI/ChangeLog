@@ -1,3 +1,16 @@
+2019-06-25  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Elements: show shadow DOM by default
+        https://bugs.webkit.org/show_bug.cgi?id=199128
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Base/Setting.js:
+
+        * UserInterface/Test/Test.js:
+        (WI.loaded):
+        Overriding the default value isn't necessary since the default is now true.
+
 2019-06-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION(r246621): Web Inspector: Styles: property may get removed when editing after deleting value
