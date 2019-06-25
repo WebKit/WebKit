@@ -243,7 +243,8 @@ static WebCore::PhysicalBoxSide boxSide(WebKit::ScrollingDirection direction)
         };
     }();
 
-    if (event.modifierFlags & ~allowedModifiers)
+    auto relevantModifierFlags = WebEventFlagMaskOptionKey | WebEventFlagMaskCommandKey | WebEventFlagMaskShiftKey;
+    if (event.modifierFlags & relevantModifierFlags & ~allowedModifiers)
         return WTF::nullopt;
 
     auto increment = ^{
