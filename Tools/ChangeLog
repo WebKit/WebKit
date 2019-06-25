@@ -1,3 +1,54 @@
+2019-06-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fully rename WebKitGTK+ -> WebKitGTK everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=199159
+
+        Reviewed by Carlos Garcia Campos.
+
+        * BuildSlaveSupport/gtk/README:
+        * MiniBrowser/gtk/BrowserWindow.c:
+        * MiniBrowser/gtk/main.c:
+        (aboutURISchemeRequestCallback):
+        * Scripts/webkitpy/common/config/contributionareas.py:
+        * Scripts/webkitpy/common/config/contributors.json:
+        * Scripts/webkitpy/tool/commands/analyzechangelog_unittest.py:
+        * TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp:
+        * TestWebKitAPI/Tests/WebKitGLib/TestResources.cpp:
+        (testWebViewResources):
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp:
+        (testWebViewMouseTarget):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (testWebExtensionGetTitle):
+        (testDocumentLoadedSignal):
+        (testWebExtensionFormControlsAssociated):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettingsUserAgent):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewRunJavaScript):
+        * TestWebKitAPI/Tests/WebKitGtk/InspectorTestServer.cpp:
+        (main):
+        * TestWebKitAPI/Tests/WebKitGtk/TestContextMenu.cpp:
+        (prepareContextMenuTestView):
+        (testContextMenuPopulateMenu):
+        (testContextMenuCustomMenu):
+        (testContextMenuDisableMenu):
+        (testContextMenuSubMenu):
+        (testContextMenuDismissed):
+        (testContextMenuWebExtensionMenu):
+        (testContextMenuWebExtensionNode):
+        * TestWebKitAPI/Tests/WebKitGtk/TestInspector.cpp:
+        (testInspectorDefault):
+        (testInspectorManualAttachDetach):
+        (testInspectorCustomContainerDestroyed):
+        * TestWebKitAPI/Tests/WebKitGtk/TestPrinting.cpp:
+        (testWebViewPrint):
+        (testPrintOperationPrint):
+        (testPrintOperationErrors):
+        * gtk/install-dependencies:
+        * gtk/jhbuild.modules:
+        * gtkdoc/generate-gtkdoc:
+        * wpe/install-dependencies:
+
 2019-06-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         contributors.json not canonicalized since r243297

@@ -2,7 +2,7 @@
  Running a GTK+ build slave under daemontools
 ==============================================
 
-This directory contains several scripts which can be used to run a WebKitGTK+
+This directory contains several scripts which can be used to run a WebKitGTK
 build slave under daemontools [1]. This is convenient because daemontools
 will automatically restart services when they die, and that means less human
 intervention is needed.

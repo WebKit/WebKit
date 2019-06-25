@@ -75,28 +75,28 @@ static bool urlRequiresMacintoshPlatform(const URL& url)
     String domain = url.host().toString();
     String baseDomain = topPrivatelyControlledDomain(domain);
 
-    // At least finance.yahoo.com displays a mobile version with WebKitGTK+'s standard user agent.
+    // At least finance.yahoo.com displays a mobile version with WebKitGTK's standard user agent.
     if (baseDomain == "yahoo.com")
         return true;
 
-    // taobao.com displays a mobile version with WebKitGTK+'s standard user agent.
+    // taobao.com displays a mobile version with WebKitGTK's standard user agent.
     if (baseDomain == "taobao.com")
         return true;
 
-    // web.whatsapp.com completely blocks users with WebKitGTK+'s standard user agent.
+    // web.whatsapp.com completely blocks users with WebKitGTK's standard user agent.
     if (baseDomain == "whatsapp.com")
         return true;
 
-    // paypal.com completely blocks users with WebKitGTK+'s standard user agent.
+    // paypal.com completely blocks users with WebKitGTK's standard user agent.
     if (baseDomain == "paypal.com")
         return true;
 
     // chase.com displays a huge "please update your browser" warning with
-    // WebKitGTK+'s standard user agent.
+    // WebKitGTK's standard user agent.
     if (baseDomain == "chase.com")
         return true;
 
-    // Microsoft Outlook Web App forces users with WebKitGTK+'s standard user
+    // Microsoft Outlook Web App forces users with WebKitGTK's standard user
     // agent to use the light version. Earlier versions even block users from
     // accessing the calendar.
     if (domain == "outlook.live.com"
@@ -105,7 +105,7 @@ static bool urlRequiresMacintoshPlatform(const URL& url)
         return true;
 
     // Google Docs and Google Drive both show a scary unsupported browser
-    // warning with WebKitGTK+'s standard user agent.
+    // warning with WebKitGTK's standard user agent.
     if (domain == "docs.google.com"
         || domain == "drive.google.com")
         return true;

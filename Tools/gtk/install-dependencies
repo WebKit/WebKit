@@ -85,7 +85,7 @@ function aptIfElse {
 }
 
 function installDependenciesWithApt {
-    # These are dependencies necessary for building WebKitGTK+.
+    # These are dependencies necessary for building WebKitGTK.
     packages=" \
         autoconf \
         automake \
@@ -238,7 +238,7 @@ function installDependenciesWithApt {
 }
 
 function installDependenciesWithPacman {
-    # These are dependencies necessary for building WebKitGTK+.
+    # These are dependencies necessary for building WebKitGTK.
     packages=" \
         alsa-lib \
         autoconf \
@@ -405,7 +405,7 @@ call python2 in the WebKit folder:
 
     https://wiki.archlinux.org/index.php/Python#Dealing_with_version_problem_in_build_scripts
 
-Alternatively, you may use a Python 2.x virtualenv while hacking on WebKitGTK+:
+Alternatively, you may use a Python 2.x virtualenv while hacking on WebKitGTK:
 
     https://wiki.archlinux.org/index.php/Python/Virtual_environment
 
@@ -413,7 +413,7 @@ EOF
 }
 
 function installDependenciesWithDnf {
-    # These are dependencies necessary for building WebKitGTK+.
+    # These are dependencies necessary for building WebKitGTK.
     packages=" \
         atk-devel \
         alsa-lib-devel \

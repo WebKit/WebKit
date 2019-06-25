@@ -168,16 +168,16 @@ class ChangeLogAnalyzerTest(CommandsTest):
             'foo/platform/audio/gstreamer/AudioDestinationGStreamer.h': 1, 'foo/platform/audio/gstreamer/AudioFileReaderGStreamer.cpp': 1,
             'foo/platform/audio/gtk/AudioBusGtk.cpp': 1}
         author_expectation_for_audio_patch = {'reviews': {'files': {}, 'total': 0, 'areas': {}},
-            'patches': {'files': files_for_audio_patch, 'areas': {'The WebKitGTK+ Port': 1}, 'unreviewed': 0, 'reviewed': 1}}
+            'patches': {'files': files_for_audio_patch, 'areas': {'The WebKitGTK Port': 1}, 'unreviewed': 0, 'reviewed': 1}}
         self.assertEqual(analyzer.contributors_statistics()[u'Martin Robinson'],
-            {'reviews': {'files': files_for_audio_patch, 'total': 1, 'areas': {'The WebKitGTK+ Port': 1}},
+            {'reviews': {'files': files_for_audio_patch, 'total': 1, 'areas': {'The WebKitGTK Port': 1}},
                 'patches': {'files': {}, 'areas': {}, 'unreviewed': 0, 'reviewed': 0}})
         self.assertEqual(analyzer.contributors_statistics()[u'Philippe Normand'], author_expectation_for_audio_patch)
         self.assertEqual(analyzer.contributors_statistics()[u'Zan Dobersek'], author_expectation_for_audio_patch)
 
         areas_statistics = analyzer.areas_statistics()
         areas_with_patches = [area for area in areas_statistics if areas_statistics[area]['reviewed'] or areas_statistics[area]['unreviewed']]
-        self.assertEqual(set(areas_with_patches), set(['Bindings', 'Network', 'The WebKitGTK+ Port']))
+        self.assertEqual(set(areas_with_patches), set(['Bindings', 'Network', 'The WebKitGTK Port']))
         self.assertEqual(areas_statistics['Bindings'], {'unreviewed': 1, 'reviewed': 0, 'contributors':
             {u'Kevin Ollivier': {'reviews': 0, 'unreviewed': 1, 'reviewed': 0}}})
         self.assertEqual(areas_statistics['Network'], {'unreviewed': 0, 'reviewed': 1, 'contributors':

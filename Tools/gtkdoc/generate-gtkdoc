@@ -239,7 +239,7 @@ if __name__ == "__main__":
                              'make install as DESTDIR.')
 
     parser.add_argument('--gtk', action='store_true',
-                        help='Build documentation for WebKitGTK+')
+                        help='Build documentation for WebKitGTK')
     parser.add_argument('--wpe', action='store_true',
                         help='Build documentation for WPE')
 

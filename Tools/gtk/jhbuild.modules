@@ -120,7 +120,7 @@
   <!-- FIXME: Pixman 0.32.6 ARM iwMMXt fast path isn't buildable with GCC 4.9 and
               ARM traditional instruction set. It causes a build failure on Raspbian.
               This workaround can be removed once we raise the minimum GCC version
-              for WebKitGTK+ above 4.9 -->
+              for WebKitGTK above 4.9 -->
   <autotools id="pixman" autogen-sh="configure"
              autogenargs="--enable-gtk=no --disable-arm-iwmmxt">
     <branch module="releases/pixman-0.34.0.tar.gz" version="0.34.0"

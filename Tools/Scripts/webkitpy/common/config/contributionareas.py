@@ -135,7 +135,7 @@ contribution_areas = [
 # FIXME: 'Text Encoding'
 # FIXME: 'Text Layout'
     _Area('The Chromium Port', ['chromium']),
-    _Area('The WebKitGTK+ Port', ['gtk']),
+    _Area('The WebKitGTK Port', ['gtk']),
     _Area('The Haiku Port', ['haiku']),
     _Area('The QtWebKit Port', ['qt']),
     _Area('The WinCE Port', ['wince']),

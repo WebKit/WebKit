@@ -65,7 +65,7 @@ static gboolean webViewPrintCallback(WebKitWebView* webView, WebKitPrintOperatio
 static void testWebViewPrint(WebViewTest* test, gconstpointer)
 {
     g_signal_connect(test->m_webView, "print", G_CALLBACK(webViewPrintCallback), test);
-    test->loadHtml("<html><body onLoad=\"print();\">WebKitGTK+ printing test</body></html>", 0);
+    test->loadHtml("<html><body onLoad=\"print();\">WebKitGTK printing test</body></html>", 0);
     g_main_loop_run(test->m_mainLoop);
 }
 
@@ -123,7 +123,7 @@ public:
 
 static void testPrintOperationPrint(PrintTest* test, gconstpointer)
 {
-    test->loadHtml("<html><body>WebKitGTK+ printing test</body></html>", 0);
+    test->loadHtml("<html><body>WebKitGTK printing test</body></html>", 0);
     test->waitUntilLoadFinished();
 
     GRefPtr<GtkPrinter> printer = adoptGRef(findPrintToFilePrinter());
@@ -156,7 +156,7 @@ static void testPrintOperationPrint(PrintTest* test, gconstpointer)
 
 static void testPrintOperationErrors(PrintTest* test, gconstpointer)
 {
-    test->loadHtml("<html><body>WebKitGTK+ printing errors test</body></html>", 0);
+    test->loadHtml("<html><body>WebKitGTK printing errors test</body></html>", 0);
     test->waitUntilLoadFinished();
 
     GRefPtr<GtkPrinter> printer = adoptGRef(findPrintToFilePrinter());

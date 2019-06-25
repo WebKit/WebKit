@@ -34,7 +34,7 @@ static GUniquePtr<char> scriptDialogResult;
 
 static void testWebExtensionGetTitle(WebViewTest* test, gconstpointer)
 {
-    test->loadHtml("<html><head><title>WebKitGTK+ Web Extensions Test</title></head><body></body></html>", 0);
+    test->loadHtml("<html><head><title>WebKitGTK Web Extensions Test</title></head><body></body></html>", 0);
     test->waitUntilLoadFinished();
 
     GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
@@ -50,7 +50,7 @@ static void testWebExtensionGetTitle(WebViewTest* test, gconstpointer)
 
     const char* title;
     g_variant_get(result.get(), "(&s)", &title);
-    g_assert_cmpstr(title, ==, "WebKitGTK+ Web Extensions Test");
+    g_assert_cmpstr(title, ==, "WebKitGTK Web Extensions Test");
 }
 
 #if PLATFORM(GTK)
@@ -130,7 +130,7 @@ static void testDocumentLoadedSignal(WebViewTest* test, gconstpointer)
         0);
     g_assert_cmpuint(id, !=, 0);
 
-    test->loadHtml("<html><head><title>WebKitGTK+ Web Extensions Test</title></head><body></body></html>", 0);
+    test->loadHtml("<html><head><title>WebKitGTK Web Extensions Test</title></head><body></body></html>", 0);
     g_main_loop_run(test->m_mainLoop);
     g_dbus_connection_signal_unsubscribe(connection, id);
 }
@@ -308,7 +308,7 @@ static void testWebExtensionFormControlsAssociated(WebViewTest* test, gconstpoin
         nullptr);
     g_assert_cmpuint(id, !=, 0);
 
-    test->loadHtml("<!DOCTYPE html><head><title>WebKitGTK+ Web Extensions Test</title></head><div id=\"placeholder\"/>", 0);
+    test->loadHtml("<!DOCTYPE html><head><title>WebKitGTK Web Extensions Test</title></head><div id=\"placeholder\"/>", 0);
     test->waitUntilLoadFinished();
 
     static const char* addFormScript =

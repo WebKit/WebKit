@@ -500,7 +500,7 @@ void RenderThemeGtk::adjustTextFieldStyle(StyleResolver&, RenderStyle& style, co
 
     // The default theme for the GTK+ port uses very wide spin buttons (66px) compared to what other
     // browsers use (~13 px). And unfortunately, most of the web developers won't test how their site
-    // renders on WebKitGTK+. To ensure that spin buttons don't end up covering the values of the input
+    // renders on WebKitGTK. To ensure that spin buttons don't end up covering the values of the input
     // field, we override the width of the input element and always increment it with the width needed
     // for the spinbutton (when drawing the spinbutton).
     int minimumWidth = style.width().intValue() + spinButtonSize().width();

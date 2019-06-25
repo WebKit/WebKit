@@ -31,7 +31,7 @@ static const char* kIndexHtml =
     "<html><head>"
     " <link rel='stylesheet' href='/style.css' type='text/css'>"
     " <script language='javascript' src='/javascript.js'></script>"
-    "</head><body>WebKitGTK+ resources test</body></html>";
+    "</head><body>WebKitGTK resources test</body></html>";
 
 static const char* kStyleCSS =
     "body {"
@@ -216,7 +216,7 @@ static void testWebViewResources(ResourcesTest* test, gconstpointer)
     g_assert_null(test->subresources());
 
     // Load simple page without subresources.
-    test->loadHtml("<html><body>Testing WebKitGTK+</body></html>", 0);
+    test->loadHtml("<html><body>Testing WebKitGTK</body></html>", 0);
     test->waitUntilLoadFinished();
     WebKitWebResource* resource = webkit_web_view_get_main_resource(test->m_webView);
     g_assert_nonnull(resource);

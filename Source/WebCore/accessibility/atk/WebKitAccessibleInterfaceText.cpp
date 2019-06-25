@@ -1214,9 +1214,12 @@ static gchar* webkitAccessibleTextGetStringAtOffset(AtkText* text, gint offset, 
     // ATK_TEXT_BOUNDARY_*_START boundaries, so for now we just need to translate the
     // granularity to the right old boundary and reuse the code for the old API.
     // However, this should be simplified later on (and a lot of code removed) once
-    // WebKitGTK+ depends on ATK >= 2.9.4 *and* can safely assume that a version of
+    // WebKitGTK depends on ATK >= 2.9.4 *and* can safely assume that a version of
     // AT-SPI2 new enough not to include the old APIs is being used. But until then,
     // we will have to live with both the old and new APIs implemented here.
+    // FIXME: WebKit nowadays depends on much newer ATK and we can safely assume AT-SPI2
+    // isn't ancient. But whoever wrote this code didn't use ATK_CHECK_VERSION() guards,
+    // so it's unclear what is supposed to be changed here.
     AtkTextBoundary boundaryType = ATK_TEXT_BOUNDARY_CHAR;
     switch (granularity) {
     case ATK_TEXT_GRANULARITY_CHAR:

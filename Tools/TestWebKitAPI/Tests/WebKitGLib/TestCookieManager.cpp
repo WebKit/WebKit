@@ -39,7 +39,7 @@ static const char* kCookieValueNew = "new-value";
 
 static const char* kIndexHtmlFormat =
     "<html><body>"
-    " <p>WebKitGTK+ Cookie Manager test</p>"
+    " <p>WebKitGTK Cookie Manager test</p>"
     " <img src='http://localhost:%u/image.png' width=5 height=5></img>"
     "</body></html>";
 

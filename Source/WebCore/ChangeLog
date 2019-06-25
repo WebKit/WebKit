@@ -1,3 +1,19 @@
+2019-06-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fully rename WebKitGTK+ -> WebKitGTK everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=199159
+
+        Reviewed by Carlos Garcia Campos.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (webkitAccessibleTextGetStringAtOffset):
+        * platform/UserAgentQuirks.cpp:
+        (WebCore::urlRequiresMacintoshPlatform):
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::saveCredentialToPersistentStorage):
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::adjustTextFieldStyle const):
+
 2019-06-25  Rob Buis  <rbuis@igalia.com>
 
         Introduce LinkLoadParameters

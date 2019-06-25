@@ -297,7 +297,7 @@ static void testWebViewZoomLevel(WebViewTest* test, gconstpointer)
 
 static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
 {
-    static const char* html = "<html><body><a id='WebKitLink' href='http://www.webkitgtk.org/' title='WebKitGTK+ Title'>WebKitGTK+ Website</a></body></html>";
+    static const char* html = "<html><body><a id='WebKitLink' href='http://www.webkitgtk.org/' title='WebKitGTK Title'>WebKitGTK Website</a></body></html>";
     test->loadHtml(html, 0);
     test->waitUntilLoadFinished();
 
@@ -307,7 +307,7 @@ static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_javascript_result_get_js_value(javascriptResult)));
     g_assert_no_error(error.get());
     GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
-    g_assert_cmpstr(valueString.get(), ==, "WebKitGTK+ Title");
+    g_assert_cmpstr(valueString.get(), ==, "WebKitGTK Title");
 
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.document.getElementById('WebKitLink').href;", &error.outPtr());
     g_assert_nonnull(javascriptResult);
@@ -321,7 +321,7 @@ static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_javascript_result_get_js_value(javascriptResult)));
     g_assert_no_error(error.get());
     valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
-    g_assert_cmpstr(valueString.get(), ==, "WebKitGTK+ Website");
+    g_assert_cmpstr(valueString.get(), ==, "WebKitGTK Website");
 
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("a = 25;", &error.outPtr());
     g_assert_nonnull(javascriptResult);
@@ -364,7 +364,7 @@ static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_javascript_result_get_js_value(javascriptResult)));
     g_assert_no_error(error.get());
     valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
-    g_assert_cmpstr(valueString.get(), ==, "WebKitGTK+ Title");
+    g_assert_cmpstr(valueString.get(), ==, "WebKitGTK Title");
 
     javascriptResult = test->runJavaScriptFromGResourceAndWaitUntilFinished("/wrong/path/to/resource.js", &error.outPtr());
     g_assert_null(javascriptResult);

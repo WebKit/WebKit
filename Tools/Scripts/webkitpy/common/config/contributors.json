@@ -245,7 +245,7 @@
          "alex@igalia.com",
          "alex@webkit.org"
       ],
-      "expertise" : "WebKitGTK+, Cairo graphics backend, ShadowBlur rendering, Epiphany/WebKit Contributor",
+      "expertise" : "WebKitGTK, Cairo graphics backend, ShadowBlur rendering, Epiphany/WebKit Contributor",
       "nicks" : [
          "alexg__"
       ],
@@ -421,7 +421,7 @@
          "alp@atoker.com",
          "alp@webkit.org"
       ],
-      "expertise" : "GTK+ WebKit Port, Cairo graphics backend (including canvas, SVG), CURL HTTP backend",
+      "expertise" : "WebKitGTK Port, Cairo graphics backend (including canvas, SVG), CURL HTTP backend",
       "nicks" : [
          "alp"
       ]
@@ -508,7 +508,7 @@
          "tanty0@gmail.com",
          "agomez@gnome.org"
       ],
-      "expertise" : "WebKitGTK+",
+      "expertise" : "WebKitGTK",
       "nicks" : [
          "tanty",
          "agomez"
@@ -596,7 +596,7 @@
       "emails" : [
          "wingo@igalia.com"
       ],
-      "expertise" : "JavaScriptCore, the WebKitGTK+ port",
+      "expertise" : "JavaScriptCore, the WebKitGTK port",
       "nicks" : [
          "wingo"
       ]
@@ -672,7 +672,7 @@
       "emails" : [
          "a.obzhirov@samsung.com"
       ],
-      "expertise" : "The WebKitGTK+ Port",
+      "expertise" : "The WebKitGTK Port",
       "nicks" : [
          "aobzhirov"
       ]
@@ -858,7 +858,7 @@
          "otte@gnome.org",
          "otte@webkit.org"
       ],
-      "expertise" : "WebKitGTK+ port, GTK+ lead developer",
+      "expertise" : "WebKitGTK port, GTK lead developer",
       "nicks" : [
          "otte"
       ]
@@ -916,7 +916,7 @@
          "self@brendanlong.com",
          "b.long@cablelabs.com"
       ],
-      "expertise" : "WebKitGTK+, GStreamer",
+      "expertise" : "WebKitGTK, GStreamer",
       "nicks" : [
          "brendanlong"
       ]
@@ -957,7 +957,7 @@
       "emails" : [
          "brian.holt@samsung.com"
       ],
-      "expertise" : "WebKitGTK+, memory leak detection",
+      "expertise" : "WebKitGTK, memory leak detection",
       "nicks" : [
          "bdholt1"
       ]
@@ -1056,7 +1056,7 @@
       "emails" : [
          "clopez@igalia.com"
       ],
-      "expertise" : "The WebKitGTK+ port, Tools, Build/test infrastructure",
+      "expertise" : "The WebKitGTK port, Tools, Build/test infrastructure",
       "nicks" : [
          "clopez"
       ]
@@ -1077,7 +1077,7 @@
          "carlosgc@gnome.org",
          "carlosgc@webkit.org"
       ],
-      "expertise" : "The WebKitGTK+ Port, WebKit2, Glib unicode backend, GTK+ contributor, Epiphany contributor",
+      "expertise" : "The WebKitGTK Port, WebKit2, Glib unicode backend, GTK contributor, Epiphany contributor",
       "nicks" : [
          "KaL"
       ],
@@ -1116,7 +1116,7 @@
       "emails" : [
          "changseok@webkit.org"
       ],
-      "expertise" : "The WebKitGTK+ port, H/W acceleration, Layout and Rendering",
+      "expertise" : "The WebKitGTK port, H/W acceleration, Layout and Rendering",
       "nicks" : [
          "changseok"
       ]
@@ -1270,7 +1270,7 @@
       "emails" : [
          "csaavedra@igalia.com"
       ],
-      "expertise" : "WebKitGTK+ port, Epiphany developer, HTML Editing",
+      "expertise" : "WebKitGTK port, Epiphany developer, HTML Editing",
       "nicks" : [
          "claudio___"
       ],
@@ -1571,7 +1571,7 @@
       "emails" : [
          "d.nomiyama@samsung.com"
       ],
-      "expertise" : "The WebKitGTK+ Port",
+      "expertise" : "The WebKitGTK Port",
       "nicks" : [
          "dnomi"
       ]
@@ -2236,7 +2236,7 @@
          "gustavo.noronha@collabora.co.uk",
          "gustavo.noronha@collabora.com"
       ],
-      "expertise" : "WebKitGTK+ API, Soup HTTP backend, Debian Packaging, A little bit of Epiphany",
+      "expertise" : "WebKitGTK API, Soup HTTP backend, Debian Packaging, A little bit of Epiphany",
       "nicks" : [
          "kov"
       ],
@@ -2248,7 +2248,7 @@
          "yoon@webkit.org",
          "ryumiel@company100.net"
       ],
-      "expertise" : "Accelerated Compositing, WebKitGTK+",
+      "expertise" : "Accelerated Compositing, WebKitGTK",
       "nicks" : [
          "ryumiel"
       ]
@@ -2349,7 +2349,7 @@
          "zecke@selfish.org",
          "zecke@webkit.org"
       ],
-      "expertise" : "The QtWebKit Port, The GTK+ WebKit Port",
+      "expertise" : "The QtWebKit Port, The WebKitGTK Port",
       "nicks" : [
          "zecke"
       ]
@@ -2784,7 +2784,7 @@
       "emails" : [
          "jdiggs@igalia.com"
       ],
-      "expertise" : "Accessibility, WebKitGTK+",
+      "expertise" : "Accessibility, WebKitGTK",
       "nicks" : [
          "joanie"
       ],
@@ -2983,7 +2983,7 @@
          "joone.hur@intel.com",
          "joone.hur@collabora.co.uk"
       ],
-      "expertise" : "The WebKitGtk+ port",
+      "expertise" : "The WebKitGTK port",
       "nicks" : [
          "joone"
       ]
@@ -3646,7 +3646,7 @@
       "emails" : [
          "rego@igalia.com"
       ],
-      "expertise" : "Layout, CSS, Selection, WebKitGTK+ port",
+      "expertise" : "Layout, CSS, Selection, WebKitGTK port",
       "nicks" : [
          "rego",
          "mrego"
@@ -3674,7 +3674,7 @@
          "mario.prada@samsung.com",
          "msanchez@igalia.com"
       ],
-      "expertise" : "WebKitGTK+, Accessibility, WebKit2, Epiphany/WebKit Contributor",
+      "expertise" : "WebKitGTK, Accessibility, WebKit2, Epiphany/WebKit Contributor",
       "nicks" : [
          "msanchez"
       ],
@@ -3740,7 +3740,7 @@
          "mrobinson@igalia.com",
          "martin.james.robinson@gmail.com"
       ],
-      "expertise" : "The WebKitGTK+ Port, Cairo graphics backend, soup HTTP backend",
+      "expertise" : "The WebKitGTK Port, Cairo graphics backend, soup HTTP backend",
       "nicks" : [
          "mrobinson"
       ]
@@ -3888,7 +3888,7 @@
          "mcatanzaro@igalia.com",
          "mcatanzaro@gnome.org"
       ],
-      "expertise" : "The WebKitGTK+ Port, Epiphany, Soup HTTP Backend",
+      "expertise" : "The WebKitGTK Port, Epiphany, Soup HTTP Backend",
       "nicks" : [
          "mcatanzaro"
       ],
@@ -3942,7 +3942,7 @@
       "emails" : [
          "magomez@igalia.com"
       ],
-      "expertise" : "The WebKitGTK+ port, Accelerated Compositing, HW acceleration",
+      "expertise" : "The WebKitGTK port, Accelerated Compositing, HW acceleration",
       "nicks" : [
          "magomez"
       ],
@@ -4406,7 +4406,7 @@
          "philn@webkit.org",
          "philn@igalia.com"
       ],
-      "expertise" : "WebKitGTK+, Media support (focused on the GStreamer implementation)",
+      "expertise" : "WebKitGTK, Media support (focused on the GStreamer implementation)",
       "nicks" : [
          "philn"
       ],
@@ -4799,7 +4799,7 @@
          "sebastian.droege@collabora.co.uk",
          "sebastian.droege@collabora.com"
       ],
-      "expertise" : "WebKitGTK+, Media support (focused on the GStreamer implementation)",
+      "expertise" : "WebKitGTK, Media support (focused on the GStreamer implementation)",
       "nicks" : [
          "slomo"
       ]
@@ -4828,7 +4828,7 @@
          "svillar@igalia.com",
          "sergio@webkit.org"
       ],
-      "expertise" : "WebKitGTK+ port, WebKit2, CSS Grid Layout, libsoup",
+      "expertise" : "WebKitGTK port, WebKit2, CSS Grid Layout, libsoup",
       "nicks" : [
          "svillar"
       ],
@@ -5457,7 +5457,7 @@
          "sheriff-bot"
       ]
    },
-   "WebKitGTK+ Bugs" : {
+   "WebKitGTK Bugs" : {
       "class" : "bot",
       "emails" : [
          "bugs-noreply@webkitgtk.org"
@@ -5496,7 +5496,7 @@
          "calvaris@igalia.com",
          "xrcalvar@igalia.com"
       ],
-      "expertise" : "WebKitGTK+, GStreamer, Streams API",
+      "expertise" : "WebKitGTK, GStreamer, Streams API",
       "nicks" : [
          "calvaris"
       ],
@@ -5509,7 +5509,7 @@
          "xan@webkit.org",
          "xlopez@igalia.com"
       ],
-      "expertise" : "WebKitGTK+, Soup HTTP Backend, libsoup Contributor, WebKit a11y (focused on the ATK implementation), Epiphany/WebKit maintainer",
+      "expertise" : "WebKitGTK, Soup HTTP Backend, libsoup Contributor, WebKit a11y (focused on the ATK implementation), Epiphany/WebKit maintainer",
       "nicks" : [
          "xan"
       ],

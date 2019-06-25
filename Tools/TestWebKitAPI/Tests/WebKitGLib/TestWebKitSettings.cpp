@@ -417,12 +417,12 @@ static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
     g_assert_cmpstr(funkyUserAgent, ==, webkit_settings_get_user_agent(settings.get()));
     assertThatUserAgentIsSentInHeaders(test, funkyUserAgent);
 
-    webkit_settings_set_user_agent_with_application_details(settings.get(), "WebKitGTK+", 0);
+    webkit_settings_set_user_agent_with_application_details(settings.get(), "WebKitGTK", 0);
     const char* userAgentWithNullVersion = webkit_settings_get_user_agent(settings.get());
     g_assert_cmpstr(g_strstr_len(userAgentWithNullVersion, -1, defaultUserAgent.data()), ==, userAgentWithNullVersion);
-    g_assert_nonnull(g_strstr_len(userAgentWithNullVersion, -1, "WebKitGTK+"));
+    g_assert_nonnull(g_strstr_len(userAgentWithNullVersion, -1, "WebKitGTK"));
 
-    webkit_settings_set_user_agent_with_application_details(settings.get(), "WebKitGTK+", "");
+    webkit_settings_set_user_agent_with_application_details(settings.get(), "WebKitGTK", "");
     g_assert_cmpstr(webkit_settings_get_user_agent(settings.get()), ==, userAgentWithNullVersion);
 
     webkit_settings_set_user_agent_with_application_details(settings.get(), "WebCatGTK+", "3.4.5");

@@ -24,11 +24,11 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/StringHash.h>
 
-static const char* kAlertDialogMessage = "WebKitGTK+ alert dialog message";
-static const char* kConfirmDialogMessage = "WebKitGTK+ confirm dialog message";
-static const char* kPromptDialogMessage = "WebKitGTK+ prompt dialog message";
-static const char* kPromptDialogReturnedText = "WebKitGTK+ prompt dialog returned text";
-static const char* kBeforeUnloadConfirmDialogMessage = "WebKitGTK+ beforeunload dialog message";
+static const char* kAlertDialogMessage = "WebKitGTK alert dialog message";
+static const char* kConfirmDialogMessage = "WebKitGTK confirm dialog message";
+static const char* kPromptDialogMessage = "WebKitGTK prompt dialog message";
+static const char* kPromptDialogReturnedText = "WebKitGTK prompt dialog returned text";
+static const char* kBeforeUnloadConfirmDialogMessage = "WebKitGTK beforeunload dialog message";
 
 class UIClientTest: public WebViewTest {
 public:
@@ -686,9 +686,9 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
         "    }"
         " </script>"
         "</head><body>"
-        " <a style='position:absolute; left:1; top:1' href='http://www.webkitgtk.org' title='WebKitGTK+ Title'>WebKitGTK+ Website</a>"
+        " <a style='position:absolute; left:1; top:1' href='http://www.webkitgtk.org' title='WebKitGTK Title'>WebKitGTK Website</a>"
         " <img style='position:absolute; left:1; top:10' src='0xdeadbeef' width=5 height=5></img>"
-        " <a style='position:absolute; left:1; top:20' href='http://www.webkitgtk.org/logo' title='WebKitGTK+ Logo'><img src='0xdeadbeef' width=5 height=5></img></a>"
+        " <a style='position:absolute; left:1; top:20' href='http://www.webkitgtk.org/logo' title='WebKitGTK Logo'><img src='0xdeadbeef' width=5 height=5></img></a>"
         " <input style='position:absolute; left:1; top:30' size='10'></input>"
         " <video style='position:absolute; left:1; top:100' width='300' height='300' controls='controls' preload='none'><source src='movie.ogg' type='video/ogg' /></video>"
         " <p style='position:absolute; left:1; top:120' id='text_to_select'>Lorem ipsum.</p>"
@@ -705,8 +705,8 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert_false(webkit_hit_test_result_context_is_editable(hitTestResult));
     g_assert_false(webkit_hit_test_result_context_is_selection(hitTestResult));
     g_assert_cmpstr(webkit_hit_test_result_get_link_uri(hitTestResult), ==, "http://www.webkitgtk.org/");
-    g_assert_cmpstr(webkit_hit_test_result_get_link_title(hitTestResult), ==, "WebKitGTK+ Title");
-    g_assert_cmpstr(webkit_hit_test_result_get_link_label(hitTestResult), ==, "WebKitGTK+ Website");
+    g_assert_cmpstr(webkit_hit_test_result_get_link_title(hitTestResult), ==, "WebKitGTK Title");
+    g_assert_cmpstr(webkit_hit_test_result_get_link_label(hitTestResult), ==, "WebKitGTK Website");
     g_assert_cmpuint(test->m_mouseTargetModifiers, ==, 0);
 
     // Move out of the link.
@@ -739,7 +739,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert_false(webkit_hit_test_result_context_is_selection(hitTestResult));
     g_assert_cmpstr(webkit_hit_test_result_get_link_uri(hitTestResult), ==, "http://www.webkitgtk.org/logo");
     g_assert_cmpstr(webkit_hit_test_result_get_image_uri(hitTestResult), ==, "file:///0xdeadbeef");
-    g_assert_cmpstr(webkit_hit_test_result_get_link_title(hitTestResult), ==, "WebKitGTK+ Logo");
+    g_assert_cmpstr(webkit_hit_test_result_get_link_title(hitTestResult), ==, "WebKitGTK Logo");
     g_assert_false(webkit_hit_test_result_get_link_label(hitTestResult));
     g_assert_cmpuint(test->m_mouseTargetModifiers, ==, 0);
 

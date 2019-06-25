@@ -100,7 +100,7 @@ foreach (_component ${GLIB_FIND_COMPONENTS})
     elseif (${_component} STREQUAL "gio-unix")
         # gio-unix is compiled as part of the gio library, but the include paths
         # are separate from the shared glib ones. Since this is currently only used
-        # by WebKitGTK+ we don't go to extraordinary measures beyond pkg-config.
+        # by WebKitGTK we don't go to extraordinary measures beyond pkg-config.
         pkg_check_modules(GIO_UNIX QUIET gio-unix-2.0)
     endif ()
 endforeach ()

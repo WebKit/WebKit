@@ -441,7 +441,7 @@ static void aboutURISchemeRequestCallback(WebKitURISchemeRequest *request, WebKi
 
     path = webkit_uri_scheme_request_get_path(request);
     if (!g_strcmp0(path, "minibrowser")) {
-        contents = g_strdup_printf("<html><body><h1>WebKitGTK+ MiniBrowser</h1><p>The WebKit2 test browser of the GTK+ port.</p><p>WebKit version: %d.%d.%d</p></body></html>",
+        contents = g_strdup_printf("<html><body><h1>WebKitGTK MiniBrowser</h1><p>The test browser of WebKitGTK</p><p>WebKit version: %d.%d.%d</p></body></html>",
             webkit_get_major_version(),
             webkit_get_minor_version(),
             webkit_get_micro_version());

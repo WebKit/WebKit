@@ -253,7 +253,7 @@ call python2 in the WebKit folder:
 
     https://wiki.archlinux.org/index.php/Python#Dealing_with_version_problem_in_build_scripts
 
-Alternatively, you may use a Python 2.x virtualenv while hacking on WebKitGTK+:
+Alternatively, you may use a Python 2.x virtualenv while hacking on WPE:
 
     https://wiki.archlinux.org/index.php/Python/Virtual_environment
 

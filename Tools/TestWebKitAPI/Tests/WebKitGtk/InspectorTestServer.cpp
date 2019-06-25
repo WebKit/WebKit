@@ -37,7 +37,7 @@ int main(int argc, char** argv)
     WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
     webkit_settings_set_enable_developer_extras(webkit_web_view_get_settings(webView), TRUE);
     webkit_web_view_load_html(webView,
-        "<html><body><p>WebKitGTK+ Inspector Test Server</p></body></html>",
+        "<html><body><p>WebKitGTK Inspector Test Server</p></body></html>",
         "http://127.0.0.1:2999/");
 
     GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);

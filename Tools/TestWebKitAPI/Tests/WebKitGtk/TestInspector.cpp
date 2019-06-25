@@ -169,7 +169,7 @@ static void testInspectorDefault(InspectorTest* test, gconstpointer)
 {
     test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
     test->resizeView(200, 200);
-    test->loadHtml("<html><body><p>WebKitGTK+ Inspector test</p></body></html>", 0);
+    test->loadHtml("<html><body><p>WebKitGTK Inspector test</p></body></html>", 0);
     test->waitUntilLoadFinished();
 
     test->show();
@@ -300,7 +300,7 @@ static void testInspectorManualAttachDetach(CustomInspectorTest* test, gconstpoi
 {
     test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
     test->resizeView(200, 200);
-    test->loadHtml("<html><body><p>WebKitGTK+ Inspector test</p></body></html>", 0);
+    test->loadHtml("<html><body><p>WebKitGTK Inspector test</p></body></html>", 0);
     test->waitUntilLoadFinished();
 
     test->show();
@@ -342,7 +342,7 @@ static void testInspectorCustomContainerDestroyed(CustomInspectorTest* test, gco
 {
     test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
     test->resizeView(200, 200);
-    test->loadHtml("<html><body><p>WebKitGTK+ Inspector test</p></body></html>", 0);
+    test->loadHtml("<html><body><p>WebKitGTK Inspector test</p></body></html>", 0);
     test->waitUntilLoadFinished();
 
     test->show();
