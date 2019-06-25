@@ -1,3 +1,15 @@
+2019-06-25  Youenn Fablet  <youenn@apple.com>
+
+        Close sockets with too high file descriptor
+        https://bugs.webkit.org/show_bug.cgi?id=199116
+
+        Reviewed by Eric Carlson.
+
+        Log the case of failing to open a socket.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createSocket):
+
 2019-06-25  Tim Horton  <timothy_horton@apple.com>
 
         When Caps Lock is enabled on the Smart Keyboard, can't scroll with space or arrow keys

@@ -1,0 +1,27 @@
+From 9dfcb7989c54b62a8499721e942b5221430839a0 Mon Sep 17 00:00:00 2001
+From: Youenn Fablet <youenn@apple.com>
+Date: Fri, 21 Jun 2019 13:26:51 -0700
+Subject: [PATCH] Close sockets with file descriptors above FD_SETSIZE
+
+---
+ .../libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc  | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc
+index 91cb7da8366..ea67624192b 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc
+@@ -589,6 +589,10 @@ SocketDispatcher::~SocketDispatcher() {
+ 
+ bool SocketDispatcher::Initialize() {
+   RTC_DCHECK(s_ != INVALID_SOCKET);
++#if defined(WEBRTC_WEBKIT_BUILD)
++  if (s_ < 0 || s_ >= FD_SETSIZE)
++    return false;
++#endif
+ // Must be a non-blocking
+ #if defined(WEBRTC_WIN)
+   u_long argp = 1;
+-- 
+2.21.0 (Apple Git-118)
+

@@ -1,3 +1,13 @@
+2019-06-25  Youenn Fablet  <youenn@apple.com>
+
+        Close sockets with too high file descriptor
+        https://bugs.webkit.org/show_bug.cgi?id=199116
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/rtc_base/physicalsocketserver.cc:
+        * WebKit/0001-Close-sockets-with-file-descriptors-above-FD_SETSIZE.patch: Added.
+
 2019-06-21  Youenn Fablet  <youenn@apple.com>
 
         Make sure to check for file descriptor value before using FD_CLR

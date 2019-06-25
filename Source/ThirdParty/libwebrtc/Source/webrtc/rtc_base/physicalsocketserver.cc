@@ -589,6 +589,10 @@ SocketDispatcher::~SocketDispatcher() {
 
 bool SocketDispatcher::Initialize() {
   RTC_DCHECK(s_ != INVALID_SOCKET);
+#if defined(WEBRTC_WEBKIT_BUILD)
+  if (s_ < 0 || s_ >= FD_SETSIZE)
+    return false;
+#endif
 // Must be a non-blocking
 #if defined(WEBRTC_WIN)
   u_long argp = 1;
