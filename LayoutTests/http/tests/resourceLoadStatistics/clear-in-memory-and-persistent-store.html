@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <title>Test Cleared Store</title>
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
 </head>
 <body>
 <script>
+    description("Tests clearing of website data store.");
+    jsTestIsAsync = true;
+
     const hostUnderTest = "127.0.0.1:8000";
     const statisticsUrl = "http://" + hostUnderTest + "/temp";
     const topFrameOrigin1 = "http://127.0.0.2:8000/temp";
@@ -28,10 +32,7 @@
         else
             testPassed("Host is no longer a prevalent resource after the store was cleared.");
 
-        internals.setResourceLoadStatisticsEnabled(false);
-        testRunner.statisticsResetToConsistentState(function() {
-            testRunner.notifyDone();
-        });
+        setEnableFeature(false, finishJSTest);
     }
 
     function runTestRunnerTest() {
@@ -56,9 +57,9 @@
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
-        testRunner.waitUntilDone();
-        internals.setResourceLoadStatisticsEnabled(true);
-        runTestRunnerTest();
+        setEnableFeature(true, function () {
+            runTestRunnerTest();
+        });
     }
 </script>
 </body>
