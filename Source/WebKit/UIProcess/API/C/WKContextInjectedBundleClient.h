@@ -29,9 +29,10 @@
 #include <WebKit/WKBase.h>
 
 // Injected Bundle Client
-typedef void (*WKContextDidReceiveMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo);
-typedef void (*WKContextDidReceiveSynchronousMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData, const void *clientInfo);
+typedef void (*WKContextDidReceiveMessageFromInjectedBundleCallback)(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo);
+typedef void (*WKContextDidReceiveSynchronousMessageFromInjectedBundleCallback)(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData, const void *clientInfo);
 typedef WKTypeRef (*WKContextGetInjectedBundleInitializationUserDataCallback)(WKContextRef context, const void *clientInfo);
+typedef void (*WKContextDidReceiveSynchronousMessageFromInjectedBundleWithListenerCallback)(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef listener, const void *clientInfo);
 
 typedef struct WKContextInjectedBundleClientBase {
     int                                                                 version;
@@ -56,5 +57,19 @@ typedef struct WKContextInjectedBundleClientV1 {
     // Version 1.
     WKContextGetInjectedBundleInitializationUserDataCallback            getInjectedBundleInitializationUserData;
 } WKContextInjectedBundleClientV1;
+
+typedef struct WKContextInjectedBundleClientV2 {
+    WKContextInjectedBundleClientBase                                   base;
+
+    // Version 0.
+    WKContextDidReceiveMessageFromInjectedBundleCallback                didReceiveMessageFromInjectedBundle;
+    WKContextDidReceiveSynchronousMessageFromInjectedBundleCallback     didReceiveSynchronousMessageFromInjectedBundle;
+
+    // Version 1.
+    WKContextGetInjectedBundleInitializationUserDataCallback            getInjectedBundleInitializationUserData;
+
+    // Version 2.
+    WKContextDidReceiveSynchronousMessageFromInjectedBundleWithListenerCallback didReceiveSynchronousMessageFromInjectedBundleWithListener;
+} WKContextInjectedBundleClientV2;
 
 #endif // WKContextInjectedBundleClient_h

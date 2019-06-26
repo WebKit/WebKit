@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageInjectedBundleClient_h
-#define WebPageInjectedBundleClient_h
+#pragma once
 
 #include "APIClient.h"
 #include "WKPage.h"
@@ -34,7 +33,7 @@ namespace API {
 class Object;
 
 template<> struct ClientTraits<WKPageInjectedBundleClientBase> {
-    typedef std::tuple<WKPageInjectedBundleClientV0> Versions;
+    typedef std::tuple<WKPageInjectedBundleClientV0, WKPageInjectedBundleClientV1> Versions;
 };
 }
 
@@ -45,9 +44,7 @@ class WebPageProxy;
 class WebPageInjectedBundleClient : public API::Client<WKPageInjectedBundleClientBase> {
 public:
     void didReceiveMessageFromInjectedBundle(WebPageProxy*, const String&, API::Object*);
-    void didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy*, const String&, API::Object*, RefPtr<API::Object>& returnData);
+    void didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy*, const String&, API::Object*, CompletionHandler<void(RefPtr<API::Object>)>&&);
 };
 
 } // namespace WebKit
-
-#endif // WebPageInjectedBundleClient_h

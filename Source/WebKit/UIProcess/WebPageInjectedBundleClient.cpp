@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPageInjectedBundleClient.h"
 
+#include "APIMessageListener.h"
 #include "WKAPICast.h"
 #include "WebProcessPool.h"
 #include <wtf/text/WTFString.h>
@@ -41,14 +42,19 @@ void WebPageInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebPagePro
     m_client.didReceiveMessageFromInjectedBundle(toAPI(page), toAPI(messageName.impl()), toAPI(messageBody), m_client.base.clientInfo);
 }
 
-void WebPageInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy* page, const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
+void WebPageInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy* page, const String& messageName, API::Object* messageBody, CompletionHandler<void(RefPtr<API::Object>)>&& completionHandler)
 {
-    if (!m_client.didReceiveSynchronousMessageFromInjectedBundle)
-        return;
+    if (!m_client.didReceiveSynchronousMessageFromInjectedBundle
+        && !m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener)
+        return completionHandler(nullptr);
 
-    WKTypeRef returnDataRef = 0;
-    m_client.didReceiveSynchronousMessageFromInjectedBundle(toAPI(page), toAPI(messageName.impl()), toAPI(messageBody), &returnDataRef, m_client.base.clientInfo);
-    returnData = adoptRef(toImpl(returnDataRef));
+    if (m_client.didReceiveSynchronousMessageFromInjectedBundle) {
+        WKTypeRef returnDataRef = nullptr;
+        m_client.didReceiveSynchronousMessageFromInjectedBundle(toAPI(page), toAPI(messageName.impl()), toAPI(messageBody), &returnDataRef, m_client.base.clientInfo);
+        return completionHandler(adoptRef(toImpl(returnDataRef)));
+    }
+
+    m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener(toAPI(page), toAPI(messageName.impl()), toAPI(messageBody), toAPI(API::MessageListener::create(WTFMove(completionHandler)).ptr()), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

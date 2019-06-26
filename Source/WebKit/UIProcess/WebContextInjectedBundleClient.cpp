@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebContextInjectedBundleClient.h"
 
+#include "APIMessageListener.h"
 #include "WKAPICast.h"
 #include "WebProcessPool.h"
 #include <wtf/text/WTFString.h>
@@ -45,14 +46,18 @@ void WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebProc
     m_client.didReceiveMessageFromInjectedBundle(toAPI(&processPool), toAPI(messageName.impl()), toAPI(messageBody), m_client.base.clientInfo);
 }
 
-void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebProcessPool& processPool, const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
+void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebProcessPool& processPool, const String& messageName, API::Object* messageBody, CompletionHandler<void(RefPtr<API::Object>)>&& completionHandler)
 {
-    if (!m_client.didReceiveSynchronousMessageFromInjectedBundle)
-        return;
+    if (!m_client.didReceiveSynchronousMessageFromInjectedBundle && !m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener)
+        return completionHandler(nullptr);
 
-    WKTypeRef returnDataRef = nullptr;
-    m_client.didReceiveSynchronousMessageFromInjectedBundle(toAPI(&processPool), toAPI(messageName.impl()), toAPI(messageBody), &returnDataRef, m_client.base.clientInfo);
-    returnData = adoptRef(toImpl(returnDataRef));
+    if (m_client.didReceiveSynchronousMessageFromInjectedBundle) {
+        WKTypeRef returnDataRef = nullptr;
+        m_client.didReceiveSynchronousMessageFromInjectedBundle(toAPI(&processPool), toAPI(messageName.impl()), toAPI(messageBody), &returnDataRef, m_client.base.clientInfo);
+        return completionHandler(adoptRef(toImpl(returnDataRef)));
+    }
+
+    m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener(toAPI(&processPool), toAPI(messageName.impl()), toAPI(messageBody), toAPI(API::MessageListener::create(WTFMove(completionHandler)).ptr()), m_client.base.clientInfo);
 }
 
 RefPtr<API::Object> WebContextInjectedBundleClient::getInjectedBundleInitializationUserData(WebProcessPool& processPool)

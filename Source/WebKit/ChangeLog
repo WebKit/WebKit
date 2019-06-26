@@ -1,3 +1,49 @@
+2019-06-26  Alex Christensen  <achristensen@webkit.org>
+
+        testRunner.setAlwaysAcceptCookies should wait for cookie accept policy to be set
+        https://bugs.webkit.org/show_bug.cgi?id=199230
+        <rdar://51757107>
+
+        Reviewed by Andy Estes.
+
+        This patch adds an optional callback to WKCookieManagerSetHTTPCookieAcceptPolicy which is luckily only used for testing.
+        It also adds listener-based asynchronous versions of didReceiveSynchronousMessageFromInjectedBundle.
+        WebKitTestRunner uses these new abilities to wait for the cookie accept policy to be set in the network process while the web process is hung.
+        This removes the race condition that was causing some flakiness in tests that use testRunner.setAlwaysAcceptCookies
+
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKBase.h:
+        * Sources.txt:
+        * UIProcess/API/APIInjectedBundleClient.h:
+        (API::InjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle):
+        * UIProcess/API/APIMessageListener.h: Copied from Source/WebKit/UIProcess/API/APIInjectedBundleClient.h.
+        (API::MessageListener::create):
+        (API::MessageListener::sendReply):
+        (API::MessageListener::MessageListener):
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKContextInjectedBundleClient.h:
+        * UIProcess/API/C/WKCookieManager.cpp:
+        (WKCookieManagerSetHTTPCookieAcceptPolicy):
+        * UIProcess/API/C/WKCookieManager.h:
+        * UIProcess/API/C/WKMessageListener.cpp: Copied from Source/WebKit/UIProcess/API/APIInjectedBundleClient.h.
+        (WKMessageListenerGetTypeID):
+        (WKMessageListenerSendReply):
+        * UIProcess/API/C/WKMessageListener.h: Copied from Source/WebKit/UIProcess/API/APIInjectedBundleClient.h.
+        * UIProcess/API/C/WKPageInjectedBundleClient.h:
+        * UIProcess/WebContextInjectedBundleClient.cpp:
+        (WebKit::WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle):
+        * UIProcess/WebContextInjectedBundleClient.h:
+        * UIProcess/WebPageInjectedBundleClient.cpp:
+        (WebKit::WebPageInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle):
+        * UIProcess/WebPageInjectedBundleClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleSynchronousMessage):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::injectedBundleClient): Deleted.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::handleSynchronousMessage):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] eddm.usps.com scrolls horizontally due to explicit width set in viewport meta tag

@@ -133,6 +133,7 @@ public:
         Inspector,
         KeyValueStorageManager,
         MediaCacheManager,
+        MessageListener,
         Navigation,
         NavigationAction,
         NavigationData,

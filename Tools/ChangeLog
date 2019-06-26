@@ -1,3 +1,26 @@
+2019-06-26  Alex Christensen  <achristensen@webkit.org>
+
+        testRunner.setAlwaysAcceptCookies should wait for cookie accept policy to be set
+        https://bugs.webkit.org/show_bug.cgi?id=199230
+        <rdar://51757107>
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebKit/CookieManager.cpp:
+        (TestWebKitAPI::didGetTestHTTPCookieAcceptPolicy):
+        (TestWebKitAPI::didGetUserHTTPCookieAcceptPolicy):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::generatePageConfiguration):
+        (WTR::TestController::createWebViewWithOptions):
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundleWithListener):
+        (WTR::TestController::didReceiveSynchronousPageMessageFromInjectedBundleWithListener):
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestController::didReceiveSynchronousPageMessageFromInjectedBundle): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2019-06-26  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Win][MiniBrowser] Remove obsolete code after r246814.

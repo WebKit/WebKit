@@ -46,7 +46,7 @@ static void didGetTestHTTPCookieAcceptPolicy(WKHTTPCookieAcceptPolicy policy, WK
     EXPECT_EQ(testPolicy, policy);
 
     WKCookieManagerRef cookieManager = WKContextGetCookieManager(wkContext.get());
-    WKCookieManagerSetHTTPCookieAcceptPolicy(cookieManager, userPolicy);
+    WKCookieManagerSetHTTPCookieAcceptPolicy(cookieManager, userPolicy, nullptr, nullptr);
 
     testDone = true;
 }
@@ -60,7 +60,7 @@ static void didGetUserHTTPCookieAcceptPolicy(WKHTTPCookieAcceptPolicy policy, WK
     // Make sure to choose a policy different from the policy the user currently has set.
     testPolicy = (userPolicy + 1) % 3;
     WKCookieManagerRef cookieManager = WKContextGetCookieManager(wkContext.get());
-    WKCookieManagerSetHTTPCookieAcceptPolicy(cookieManager, testPolicy);
+    WKCookieManagerSetHTTPCookieAcceptPolicy(cookieManager, testPolicy, nullptr, nullptr);
     WKCookieManagerGetHTTPCookieAcceptPolicy(cookieManager, reinterpret_cast<void*>(0x1234578), didGetTestHTTPCookieAcceptPolicy);
 }
 

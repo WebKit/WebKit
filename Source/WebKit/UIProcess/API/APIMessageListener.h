@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +25,29 @@
 
 #pragma once
 
-#include "APIClient.h"
-#include "APIInjectedBundleClient.h"
-#include "WKContextInjectedBundleClient.h"
-#include <wtf/Forward.h>
+#include "APIObject.h"
+#include <wtf/CompletionHandler.h>
 
 namespace API {
-class Object;
 
-template<> struct ClientTraits<WKContextInjectedBundleClientBase> {
-    typedef std::tuple<WKContextInjectedBundleClientV0, WKContextInjectedBundleClientV1, WKContextInjectedBundleClientV2> Versions;
-};
-}
-
-namespace WebKit {
-
-class WebProcessPool;
-
-class WebContextInjectedBundleClient : public API::InjectedBundleClient, public API::Client<WKContextInjectedBundleClientBase> {
-    WTF_MAKE_FAST_ALLOCATED;
+class MessageListener : public ObjectImpl<Object::Type::MessageListener> {
+    WTF_MAKE_NONCOPYABLE(MessageListener);
 public:
-    explicit WebContextInjectedBundleClient(const WKContextInjectedBundleClientBase*);
+    static Ref<MessageListener> create(CompletionHandler<void(RefPtr<API::Object>)>&& reply)
+    {
+        return adoptRef(*new MessageListener(WTFMove(reply)));
+    }
 
-    void didReceiveMessageFromInjectedBundle(WebProcessPool&, const WTF::String&, API::Object*) override;
-    void didReceiveSynchronousMessageFromInjectedBundle(WebProcessPool&, const WTF::String&, API::Object*, CompletionHandler<void(RefPtr<API::Object>)>&&) override;
-    RefPtr<API::Object> getInjectedBundleInitializationUserData(WebProcessPool&) override;
+    void sendReply(RefPtr<API::Object>&& reply)
+    {
+        m_reply(WTFMove(reply));
+    }
+
+private:
+    MessageListener(CompletionHandler<void(RefPtr<API::Object>)>&& reply)
+        : m_reply(WTFMove(reply)) { }
+
+    CompletionHandler<void(RefPtr<API::Object>)> m_reply;
 };
 
-} // namespace WebKit
+} // namespace API
