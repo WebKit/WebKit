@@ -1,3 +1,17 @@
+2019-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] eddm.usps.com scrolls horizontally due to explicit width set in viewport meta tag
+        https://bugs.webkit.org/show_bug.cgi?id=199219
+        <rdar://problem/50425765>
+
+        Reviewed by Tim Horton.
+
+        Add a new test to verify that if the meta viewport tag specifies a wide fixed width value, we will still try to
+        shrink the page down to fit within the viewport.
+
+        * fast/viewport/ios/shrink-to-fit-content-large-constant-width-expected.txt: Added.
+        * fast/viewport/ios/shrink-to-fit-content-large-constant-width.html: Added.
+
 2019-06-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Implement console.countReset

@@ -3317,10 +3317,16 @@ bool WebPage::immediatelyShrinkToFitContent()
 
     static const int toleratedHorizontalScrollingDistance = 20;
     static const int maximumExpandedLayoutWidth = 1280;
+
+    auto scaledViewWidth = [&] () -> int {
+        return std::round(m_viewportConfiguration.viewLayoutSize().width() / m_viewportConfiguration.initialScale());
+    };
+
     int originalContentWidth = view->contentsWidth();
+    int originalViewWidth = scaledViewWidth();
     int originalLayoutWidth = m_viewportConfiguration.layoutWidth();
-    int originalHorizontalOverflowAmount = originalContentWidth - originalLayoutWidth;
-    if (originalHorizontalOverflowAmount <= toleratedHorizontalScrollingDistance || originalLayoutWidth >= maximumExpandedLayoutWidth || originalContentWidth <= m_viewportConfiguration.viewLayoutSize().width())
+    int originalHorizontalOverflowAmount = originalContentWidth - originalViewWidth;
+    if (originalHorizontalOverflowAmount <= toleratedHorizontalScrollingDistance || originalLayoutWidth >= maximumExpandedLayoutWidth || originalContentWidth <= originalViewWidth)
         return false;
 
     auto changeMinimumEffectiveDeviceWidth = [this, mainDocument] (int targetLayoutWidth) -> bool {
@@ -3334,7 +3340,7 @@ bool WebPage::immediatelyShrinkToFitContent()
 
     m_viewportConfiguration.setIsKnownToLayOutWiderThanViewport(true);
     double originalMinimumDeviceWidth = m_viewportConfiguration.minimumEffectiveDeviceWidth();
-    if (changeMinimumEffectiveDeviceWidth(std::min(maximumExpandedLayoutWidth, originalContentWidth)) && view->contentsWidth() - m_viewportConfiguration.layoutWidth() > originalHorizontalOverflowAmount) {
+    if (changeMinimumEffectiveDeviceWidth(std::min(maximumExpandedLayoutWidth, originalContentWidth)) && view->contentsWidth() - scaledViewWidth() > originalHorizontalOverflowAmount) {
         changeMinimumEffectiveDeviceWidth(originalMinimumDeviceWidth);
         m_viewportConfiguration.setIsKnownToLayOutWiderThanViewport(false);
     }

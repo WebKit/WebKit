@@ -1,3 +1,23 @@
+2019-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] eddm.usps.com scrolls horizontally due to explicit width set in viewport meta tag
+        https://bugs.webkit.org/show_bug.cgi?id=199219
+        <rdar://problem/50425765>
+
+        Reviewed by Tim Horton.
+
+        Currently, the heuristic to determine whether the page should be shrunk to fit the content width after loading
+        works by checking whether the page's content is wider than the layout width we've provided for the page.
+        However, in the case where an explicit width larger than the true view width is specified by the page's meta
+        viewport, we'll end up believing that the page's content is not wider than the layout width, which is dictated
+        by the fixed meta viewport width. Instead, we can shrink the page down in this scenario by comparing the content
+        width against the scaled size of the view when computing the amount of horizontal overflow.
+
+        Test: fast/viewport/ios/shrink-to-fit-content-large-constant-width.html
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::immediatelyShrinkToFitContent):
+
 2019-06-26  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Dispatch synthetic mouse event asynchronously in completePendingSyntheticClickForContentChangeObserver
