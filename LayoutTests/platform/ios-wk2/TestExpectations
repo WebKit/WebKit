@@ -1342,3 +1342,5 @@ webkit.org/b/199071 [ Release ] imported/blink/fast/css/user-select-none.html [ 
 webkit.org/b/190882 [ Debug ] animations/change-one-anim.html [ Pass Failure ]
 
 webkit.org/b/199196 [ Release ] imported/mozilla/svg/text/textpath-selection.svg [ Pass ImageOnlyFailure ]
+
+webkit.org/b/199213 [ Release ] imported/blink/editing/selection/deleteFromDocument-crash.html [ Pass ImageOnlyFailure ]

@@ -1,3 +1,12 @@
+2019-06-25  Russell Epstein  <russell_e@apple.com>
+
+        Layout Test imported/blink/editing/selection/deleteFromDocument-crash.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=199213
+
+        Unreviewed Test Gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2019-06-25  Justin Fan  <justin_fan@apple.com>
 
         [WHLSL] Make whlsl-test-harness actually generate WHLSL shaders by default
