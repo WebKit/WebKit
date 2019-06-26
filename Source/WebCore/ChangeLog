@@ -1,3 +1,34 @@
+2019-06-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Incorrect clippping with overflow:scroll inside oveflow:hidden with border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=199135
+        rdar://problem/51882383
+
+        Reviewed by Zalan Bujtas.
+        
+        In some cases the geometry of the shape mask layer added to m_childContainmentLayer, for
+        border-radius, was incorrect. GraphicsLayerCA::updateClippingStrategy() treated
+        the rounded rect as if it were in renderer coordinates, but to match the other geometry
+        on GraphicsLayer, it should in GraphicsLayer coordinates, so we need to offset by
+        clipLayer->offsetFromRenderer().
+        
+        In addition, RenderLayerBacking::updateChildClippingStrategy() is called from
+        the updateConfiguration(), which is before we've set offsetFromRenderer() on the clipLayer.
+        This first call is really to find out whether the platform supports this rounded rect
+        as a shape mask.
+        
+        So we need to call setMasksToBoundsRect() a second time in RenderLayerBacking::updateGeometry()
+        after clipLayers's offsetFromRenderer() has been computed.
+
+        Test: compositing/scrolling/async-overflow-scrolling/border-radius-on-scroll-container.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateClippingStrategy):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+        (WebCore::RenderLayerBacking::updateDescendantClippingLayer):
+        (WebCore::RenderLayerBacking::updateChildClippingStrategy):
+
 2019-06-26  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover

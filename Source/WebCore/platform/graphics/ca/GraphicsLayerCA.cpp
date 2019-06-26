@@ -2602,7 +2602,7 @@ void GraphicsLayerCA::updateClippingStrategy(PlatformCALayer& clippingLayer, Ref
         shapeMaskLayer->setName("shape mask");
     }
     
-    shapeMaskLayer->setPosition(roundedRect.rect().location() - offsetFromRenderer());
+    shapeMaskLayer->setPosition(roundedRect.rect().location());
     FloatRect shapeBounds({ }, roundedRect.rect().size());
     shapeMaskLayer->setBounds(shapeBounds);
     FloatRoundedRect offsetRoundedRect(shapeBounds, roundedRect.radii());
