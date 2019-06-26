@@ -1,3 +1,41 @@
+2019-06-26  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r246835. rdar://problem/51787961
+
+    [ContentChangeObserver] Dispatch synthetic mouse event asynchronously in completePendingSyntheticClickForContentChangeObserver
+    https://bugs.webkit.org/show_bug.cgi?id=199220
+    <rdar://problem/51787961>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebKit:
+    
+    WebPage::completePendingSyntheticClickForContentChangeObserver should not dispatch mouse events synchronously.
+    Mouse events, through style updates could destroy the element that initiated this change.
+    WebPage::handleSyntheticClick() already implements this pattern.
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::completePendingSyntheticClickForContentChangeObserver):
+    
+    LayoutTests:
+    
+    * fast/events/touch/ios/content-observation/animation-end-with-visiblity-change-crash-expected.txt: Added.
+    * fast/events/touch/ios/content-observation/animation-end-with-visiblity-change-crash.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@246835 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-06-26  Zalan Bujtas  <zalan@apple.com>
+
+            [ContentChangeObserver] Dispatch synthetic mouse event asynchronously in completePendingSyntheticClickForContentChangeObserver
+            https://bugs.webkit.org/show_bug.cgi?id=199220
+            <rdar://problem/51787961>
+
+            Reviewed by Simon Fraser.
+
+            * fast/events/touch/ios/content-observation/animation-end-with-visiblity-change-crash-expected.txt: Added.
+            * fast/events/touch/ios/content-observation/animation-end-with-visiblity-change-crash.html: Added.
+
 2019-06-20  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to include clipping in GraphicsLayer tree dumps
