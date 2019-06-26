@@ -1,3 +1,17 @@
+2019-06-26  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover
+        https://bugs.webkit.org/show_bug.cgi?id=198999
+        <rdar://problem/51979477>
+
+        Reviewed by Dean Jackson.
+
+        Make sure we don't return early prior to setting the flag that prevents re-entrancy, or else we would never
+        enter this function again. No new tests, this was caught because Pointer Events WPT tests on iOS tests regressed.
+
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::processPendingPointerCapture):
+
 2019-06-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION: ( r246394 ) webgpu/whlsl-buffer-fragment.html and webgpu/whlsl-buffer-vertex.html are failing
