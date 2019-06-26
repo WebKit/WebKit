@@ -1,3 +1,20 @@
+2019-06-25  Keith Miller  <keith_miller@apple.com>
+
+        CagedPtr doesn't merge PAC bits back into the resulting caged pointer.
+        https://bugs.webkit.org/show_bug.cgi?id=199214
+
+        Reviewed by Yusuke Suzuki.
+
+        The current code means that caging will just strip the any failed
+        authentication bits. Adding this code doesn't appear to be a
+        regression on iPhone Xs.
+
+        * wtf/CagedPtr.h:
+        (WTF::CagedPtr::get const):
+        (WTF::CagedPtr::getMayBeNull const):
+        (WTF::CagedPtr::getUnsafe const):
+        (WTF::CagedPtr::mergePointers):
+
 2019-06-25  Sam Weinig  <weinig@apple.com>
 
         Experiment with simple structured bindings use

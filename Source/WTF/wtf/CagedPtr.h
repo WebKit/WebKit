@@ -29,6 +29,8 @@
 #include <wtf/Gigacage.h>
 #include <wtf/PtrTag.h>
 
+#include <climits>
+
 namespace WTF {
 
 constexpr bool tagCagedPtr = true;
@@ -52,24 +54,21 @@ public:
     {
         ASSERT(m_ptr);
         T* ptr = PtrTraits::unwrap(m_ptr);
-        if (shouldTag)
-            ptr = untagArrayPtr(ptr, size);
-        return Gigacage::caged(kind, ptr);
+        T* untaggedPtr = shouldTag ? untagArrayPtr(ptr, size) : ptr;
+        return mergePointers(untaggedPtr, Gigacage::caged(kind, ptr));
     }
 
     T* getMayBeNull(unsigned size) const
     {
         T* ptr = PtrTraits::unwrap(m_ptr);
-        if (shouldTag)
-            ptr = untagArrayPtr(ptr, size);
-        return Gigacage::cagedMayBeNull(kind, ptr);
+        T* untaggedPtr = shouldTag ? untagArrayPtr(ptr, size) : ptr;
+        return mergePointers(untaggedPtr, Gigacage::cagedMayBeNull(kind, ptr));
     }
 
     T* getUnsafe() const
     {
         T* ptr = PtrTraits::unwrap(m_ptr);
-        if (shouldTag)
-            ptr = removeArrayPtrTag(ptr);
+        ptr = shouldTag ? removeArrayPtrTag(ptr) : ptr;
         return Gigacage::cagedMayBeNull(kind, ptr);
     }
 
@@ -125,6 +124,13 @@ public:
     }
     
 protected:
+    static inline T* mergePointers(const T* untaggedPtr, const T* uncagedPtr)
+    {
+        constexpr unsigned numberOfPACBits = 25;
+        constexpr uintptr_t mask = (1ull << ((sizeof(T*) * CHAR_BIT) - numberOfPACBits)) - 1;
+        return reinterpret_cast<T*>((reinterpret_cast<uintptr_t>(untaggedPtr) & ~mask) | (reinterpret_cast<uintptr_t>(uncagedPtr) & mask));
+    }
+
     typename PtrTraits::StorageType m_ptr;
 };
 
