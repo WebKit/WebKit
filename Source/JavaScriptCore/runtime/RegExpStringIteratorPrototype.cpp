@@ -45,7 +45,6 @@ void RegExpStringIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globa
     ASSERT(inherits(vm, info()));
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "RegExp String Iterator"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->next, regExpStringIteratorPrototypeNextCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    didBecomePrototype();
 }
 
 } // namespace JSC
