@@ -1,3 +1,18 @@
+2019-06-26  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Dispatch synthetic mouse event asynchronously in completePendingSyntheticClickForContentChangeObserver
+        https://bugs.webkit.org/show_bug.cgi?id=199220
+        <rdar://problem/51787961>
+
+        Reviewed by Simon Fraser.
+
+        WebPage::completePendingSyntheticClickForContentChangeObserver should not dispatch mouse events synchronously.
+        Mouse events, through style updates could destroy the element that initiated this change.
+        WebPage::handleSyntheticClick() already implements this pattern.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::completePendingSyntheticClickForContentChangeObserver):
+
 2019-06-25  Jiewen Tan  <jiewen_tan@apple.com>
 
         Implement a new SPI to inform clients about AppSSO
