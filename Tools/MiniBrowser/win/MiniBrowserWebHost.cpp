@@ -29,31 +29,9 @@
 #include "stdafx.h"
 #include "MiniBrowserWebHost.h"
 
-#include "DOMDefaultImpl.h"
 #include "PageLoadTestClient.h"
 #include "WebKitLegacyBrowserWindow.h"
 #include <WebKitLegacy/WebKit.h>
-
-class SimpleEventListener : public DOMEventListener {
-public:
-    SimpleEventListener(LPWSTR type)
-    {
-        wcsncpy_s(m_eventType, 100, type, 100);
-        m_eventType[99] = 0;
-    }
-
-    virtual HRESULT STDMETHODCALLTYPE handleEvent(IDOMEvent* evt)
-    {
-        wchar_t message[255];
-        wcscpy_s(message, 255, m_eventType);
-        wcscat_s(message, 255, L" event fired!");
-        ::MessageBox(0, message, L"Event Handler", MB_OK);
-        return S_OK;
-    }
-
-private:
-    wchar_t m_eventType[100];
-};
 
 typedef _com_ptr_t<_com_IIID<IWebDataSource, &__uuidof(IWebDataSource)>> IWebDataSourcePtr;
 typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
@@ -138,9 +116,6 @@ ULONG MiniBrowserWebHost::Release()
     return m_client->Release();
 }
 
-typedef _com_ptr_t<_com_IIID<IDOMDocument, &__uuidof(IDOMDocument)>> IDOMDocumentPtr;
-typedef _com_ptr_t<_com_IIID<IDOMElement, &__uuidof(IDOMElement)>> IDOMElementPtr;
-typedef _com_ptr_t<_com_IIID<IDOMEventTarget, &__uuidof(IDOMEventTarget)>> IDOMEventTargetPtr;
 typedef _com_ptr_t<_com_IIID<IWebFrame2, &__uuidof(IWebFrame2)>> IWebFrame2Ptr;
 
 HRESULT MiniBrowserWebHost::didFinishLoadForFrame(_In_opt_ IWebView* webView, _In_opt_ IWebFrame* frame)
@@ -157,32 +132,10 @@ HRESULT MiniBrowserWebHost::didFinishLoadForFrame(_In_opt_ IWebView* webView, _I
         }
     }
 
-    IDOMDocumentPtr doc;
-    frame->DOMDocument(&doc.GetInterfacePtr());
-
-    IDOMElementPtr element;
-    IDOMEventTargetPtr target;
-
     if (m_client)
         m_client->showLastVisitedSites(*webView);
 
-    // The following is for the test page:
-    static _bstr_t id = L"webkit logo";
-    HRESULT hr = doc->getElementById(id, &element.GetInterfacePtr());
-    if (!SUCCEEDED(hr))
-        return hr;
-
-    hr = element->QueryInterface(IID_IDOMEventTarget, reinterpret_cast<void**>(&target.GetInterfacePtr()));
-    if (!SUCCEEDED(hr))
-        return hr;
-
-    static _bstr_t eventName = L"click";
-    static _bstr_t eventType = L"webkit logo click";
-    hr = target->addEventListener(eventName, new SimpleEventListener(eventType), FALSE);
-    if (!SUCCEEDED(hr))
-        return hr;
-
-    return hr;
+    return S_OK;
 }
 
 HRESULT MiniBrowserWebHost::didStartProvisionalLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame* frame)

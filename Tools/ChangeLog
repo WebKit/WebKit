@@ -1,3 +1,15 @@
+2019-06-26  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win][MiniBrowser] Remove obsolete code after r246814.
+        https://bugs.webkit.org/show_bug.cgi?id=199233
+
+        Reviewed by Fujii Hironori.
+
+        * MiniBrowser/win/MiniBrowserWebHost.cpp:
+        (MiniBrowserWebHost::didFinishLoadForFrame):
+        (SimpleEventListener::SimpleEventListener): Deleted.
+        (SimpleEventListener::handleEvent): Deleted.
+
 2019-06-25  Jiewen Tan  <jiewen_tan@apple.com>
 
         Implement a new SPI to inform clients about AppSSO
