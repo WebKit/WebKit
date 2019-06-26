@@ -39,16 +39,18 @@ fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
 }
 `
 
-promise_test(async () => {
-    const device = await getBasicDevice();
-    const shaderModule = device.createShaderModule({ code: shaderCode });
+promise_test(() => {
+    return getBasicDevice().then(function(device) {
+        const shaderModule = device.createShaderModule({ code: shaderCode });
 
-    const layoutBinding = { binding: 0, visibility: GPUShaderStageBit.VERTEX, type: "storage-buffer" };
-    const bindGroupLayout = device.createBindGroupLayout({ bindings: [layoutBinding] });
-    const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+        const layoutBinding = { binding: 0, visibility: GPUShaderStageBit.VERTEX, type: "storage-buffer" };
+        const bindGroupLayout = device.createBindGroupLayout({ bindings: [layoutBinding] });
+        const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
 
-    const pipeline = createBasicPipeline(shaderModule, device, null, pipelineLayout);
-    assert_true(pipeline instanceof GPURenderPipeline, "Successfully created GPURenderPipeline");
+        const pipeline = createBasicPipeline(shaderModule, device, null, pipelineLayout);
+        assert_true(pipeline instanceof GPURenderPipeline, "Successfully created GPURenderPipeline");
+    }, function() {
+    });
 }, "Create basic GPURenderPipeline");
 </script>
 </html>

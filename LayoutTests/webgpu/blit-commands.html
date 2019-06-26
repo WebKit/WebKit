@@ -11,24 +11,29 @@
 if (window.testRunner)
     testRunner.waitUntilDone();
 
+const canvas2d = document.querySelector("canvas");
+
 async function loadImage() {
     const image = new Image();
     image.src = "resources/green-400.png";
     image.onload = function() {
-        test(image).then(function() {
-            if (window.testRunner)
-                testRunner.notifyDone();
+        getBasicDevice().then(function(device) {
+            test(device, image).then(function() {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, function(e) {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
         }, function() {
+            drawGreenSquareInSoftware(canvas2d);
             if (window.testRunner)
                 testRunner.notifyDone();
         });
     }
 }
 
-async function test(image) {
-    const device = await getBasicDevice();
-
-    const canvas2d = document.createElement('canvas');
+async function test(device, image) {
     canvas2d.width = image.width;
     canvas2d.height = image.height;
     const context2d = canvas2d.getContext('2d');

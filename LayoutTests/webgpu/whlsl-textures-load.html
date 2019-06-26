@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="js/webgpu-functions.js"></script>
 </head>
 <body>
 <canvas id="canvas" width="400" height="400"></canvas>
@@ -14,10 +15,10 @@ fragment float4 fragmentShader(Texture2D<float4> theTexture : register(t0)) : SV
     return Load(theTexture, int2(0, 0));
 }
 `;
-async function start() {
-    const adapter = await navigator.gpu.requestAdapter();
-    const device = await adapter.requestDevice();
 
+const canvas = document.getElementById("canvas");
+
+async function start(device) {
     const shaderModule = device.createShaderModule({code: shaderSource, isWHLSL: true});
     const vertexStage = {module: shaderModule, entryPoint: "vertexShader"};
     const fragmentStage = {module: shaderModule, entryPoint: "fragmentShader"};
@@ -93,7 +94,6 @@ async function start() {
     const bindGroupDescriptor = {layout: bindGroupLayout, bindings: bindGroupBindings};
     const bindGroup = device.createBindGroup(bindGroupDescriptor);
 
-    const canvas = document.getElementById("canvas");
     const context = canvas.getContext("gpu");
     const swapChainDescriptor = {device, format: "bgra8unorm"};
     const swapChain = context.configureSwapChain(swapChainDescriptor);
@@ -125,7 +125,19 @@ async function start() {
 }
 if (window.testRunner)
     testRunner.waitUntilDone();
-window.addEventListener("load", start);
+getBasicDevice().then(function(device) {
+    start(device).then(function() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, function() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+}, function() {
+    drawWhiteSquareOnBlueBackgroundInSoftware(canvas);
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
 </script>
 </body>
 </html>

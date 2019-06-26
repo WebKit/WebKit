@@ -4,6 +4,52 @@ async function getBasicDevice() {
     return device;
 }
 
+function drawWhiteSquareOnBlueBackgroundInSoftware(canvas) {
+    const context = canvas.getContext("2d");
+    context.fillStyle = "blue";
+    context.fillRect(0, 0, 400, 400);
+    context.fillStyle = "white";
+    context.fillRect(100, 100, 200, 200);
+}
+
+function drawBlackSquareOnBlueBackgroundInSoftware(canvas) {
+    const context = canvas.getContext("2d");
+    context.fillStyle = "blue";
+    context.fillRect(0, 0, 400, 400);
+    context.fillStyle = "black";
+    context.fillRect(100, 100, 200, 200);
+}
+
+function drawGreenSquareInSoftware(canvas) {
+    const context = canvas.getContext('2d');
+    context.fillStyle = 'rgb(0, 255, 0)';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function drawGreenAndBlueCheckerboardInSoftware(canvas) {
+    const context = canvas.getContext('2d');
+
+    context.fillStyle = 'rgb(0, 255, 0)';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    const numColumns = 4;
+    const numRows = 4;
+    context.beginPath();
+    context.fillStyle = 'rgb(0, 0, 255)';
+    for (let x = 0; x < numColumns; ++x) {
+        for (let y = 0; y < numRows; ++y) {
+            if (x % 2 == 0 && y % 2 == 0 || x % 2 == 1 && y % 2 == 1)
+                context.rect(
+                    x * canvas.width / numColumns,
+                    y * canvas.height / numRows,
+                    canvas.width / numColumns,
+                    canvas.height / numRows
+                    );
+        }
+    }
+    context.fill();
+}
+
 function createBasicSwapChain(canvas, device) {
     const context = canvas.getContext("gpu");
     return context.configureSwapChain({ device: device, format: "bgra8unorm" });

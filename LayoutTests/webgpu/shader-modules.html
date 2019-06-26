@@ -27,11 +27,12 @@ fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
 }
 `
 
-promise_test(async () => {
-    const device = await getBasicDevice();
-
-    let shaderModule = device.createShaderModule({ code: shaders });
-    assert_true(shaderModule instanceof GPUShaderModule, "Shader module created successfully.");
+promise_test(() => {
+    return getBasicDevice().then(function(device) {
+        let shaderModule = device.createShaderModule({ code: shaders });
+        assert_true(shaderModule instanceof GPUShaderModule, "Shader module created successfully.");
+    }, function() {
+    });
 }, "Test shader code validation when creating modules.");
 </script>
 </html>

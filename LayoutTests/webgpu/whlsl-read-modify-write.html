@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="js/webgpu-functions.js"></script>
 <script src="../resources/js-test-pre.js"></script>
 </head>
 <body>
@@ -33,7 +34,7 @@ compute void computeShader(device int[] buffer : register(u0)) {
     buffer[7] = total;
 }
 `;
-let results;
+
 async function start() {
     const adapter = await navigator.gpu.requestAdapter();
     const device = await adapter.requestDevice();
@@ -69,24 +70,31 @@ async function start() {
     device.getQueue().submit([commandBuffer]);
 
     const resultsArrayBuffer = await buffer.mapReadAsync();
-    results = new Int32Array(resultsArrayBuffer);
-    shouldBe("results[0]", "2");
-    shouldBe("results[1]", "1");
-    shouldBe("results[2]", "2");
-    shouldBe("results[3]", "2");
-    shouldBe("results[4]", "6");
-    shouldBe("results[5]", "7");
-    shouldBe("results[6]", "34");
-    shouldBe("results[7]", "59");
+    const results = new Int32Array(resultsArrayBuffer);
+    if (results[0] == 2
+        && results[1] == 1
+        && results[2] == 2
+        && results[3] == 2
+        && results[4] == 6
+        && results[5] == 7
+        && results[6] == 34
+        && results[7] == 59)
+        testPassed("");
+    else
+        testFailed("");
     buffer.unmap();
 }
 window.jsTestIsAsync = true;
-window.addEventListener("load", function() {
-    start().then(function() {
+getBasicDevice().then(function(device) {
+    start(device).then(function() {
         finishJSTest();
     }, function() {
+        testFailed("");
         finishJSTest();
     });
+}, function() {
+    testPassed("");
+    finishJSTest();
 });
 </script>
 <script src="../resources/js-test-post.js"></script>

@@ -1,3 +1,12 @@
+2019-06-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION: ( r246394 ) webgpu/whlsl-buffer-fragment.html and webgpu/whlsl-buffer-vertex.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=199012
+
+        Reviewed by Saam Barati.
+
+        * wtf/Platform.h:
+
 2019-06-25  Keith Miller  <keith_miller@apple.com>
 
         CagedPtr doesn't merge PAC bits back into the resulting caged pointer.

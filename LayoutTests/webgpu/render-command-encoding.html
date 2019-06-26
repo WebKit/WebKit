@@ -26,22 +26,24 @@ fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
     return vertexIn.position;
 }
 `
-promise_test(async () => {
-    const device = await getBasicDevice();
 
-    const canvas = document.createElement("canvas");
-    const swapChain = createBasicSwapChain(canvas, device);
-    const shaderModule = device.createShaderModule({ code: shaders });
-    const pipeline = createBasicPipeline(shaderModule, device);
+promise_test(() => {
+    return getBasicDevice().then(function(device) {
+        const canvas = document.createElement("canvas");
+        const swapChain = createBasicSwapChain(canvas, device);
+        const shaderModule = device.createShaderModule({ code: shaders });
+        const pipeline = createBasicPipeline(shaderModule, device);
 
-    const commandEncoder = device.createCommandEncoder();
-    assert_true(commandEncoder instanceof GPUCommandEncoder, "createCommandEncoder returned a GPUCommandEncoder");
+        const commandEncoder = device.createCommandEncoder();
+        assert_true(commandEncoder instanceof GPUCommandEncoder, "createCommandEncoder returned a GPUCommandEncoder");
 
-    const encoder = beginBasicRenderPass(swapChain, commandEncoder);
-    assert_true(encoder instanceof GPURenderPassEncoder, "beginRenderPass() returned a GPURenderPassEncoder");
+        const encoder = beginBasicRenderPass(swapChain, commandEncoder);
+        assert_true(encoder instanceof GPURenderPassEncoder, "beginRenderPass() returned a GPURenderPassEncoder");
 
-    encoder.setPipeline(pipeline);
-    encoder.endPass();
+        encoder.setPipeline(pipeline);
+        encoder.endPass();
+    }, function() {
+    });
 }, "GPURenderPassEncoder created and successfully ended");
 
 </script>

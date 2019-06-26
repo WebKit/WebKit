@@ -1,3 +1,0 @@
-
-PASS Web GPU is enabled. 
-

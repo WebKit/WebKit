@@ -21,13 +21,15 @@ test(() => {
     assert_equals(bindGroupLayoutDescriptor.bindings[0].type, "storage-buffer");
 }, "Create a basic GPUBindGroupLayoutDescriptor."); 
 
-promise_test(async () => {
-    const device = await getBasicDevice();
-    const bindGroupLayout = device.createBindGroupLayout({ bindings: [createBindGroupLayoutBinding()] });
-    assert_true(bindGroupLayout instanceof GPUBindGroupLayout, "createBindGroupLayout returned a GPUBindGroupLayout");
+promise_test(() => {
+    return getBasicDevice().then(function(device) {
+        const bindGroupLayout = device.createBindGroupLayout({ bindings: [createBindGroupLayoutBinding()] });
+        assert_true(bindGroupLayout instanceof GPUBindGroupLayout, "createBindGroupLayout returned a GPUBindGroupLayout");
 
-    const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
-    assert_true(pipelineLayout instanceof GPUPipelineLayout, "createPipelineLayout returned a GPUPipelineLayout");
+        const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+        assert_true(pipelineLayout instanceof GPUPipelineLayout, "createPipelineLayout returned a GPUPipelineLayout");
+    }, function() {
+    });
 }, "Create a basic GPUPipelineLayout wtih a GPUDevice.");
 </script>
 </body>

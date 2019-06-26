@@ -1,5 +1,5 @@
+PASS 
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS resultsFloat32Array[0] is 66
 

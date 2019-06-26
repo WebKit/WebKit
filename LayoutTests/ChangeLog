@@ -1,3 +1,163 @@
+2019-06-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION: ( r246394 ) webgpu/whlsl-buffer-fragment.html and webgpu/whlsl-buffer-vertex.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=199012
+
+        Reviewed by Saam Barati.
+
+        Make the tests still pass if the machine doesn't support WebGPU.
+
+        * webgpu/adapter-options-expected.txt: Removed.
+        * webgpu/adapter-options.html: Removed.
+        * webgpu/bind-groups.html:
+        * webgpu/blend-color-triangle-strip-expected.html:
+        * webgpu/blend-color-triangle-strip.html:
+        * webgpu/blend-triangle-strip-expected.html:
+        * webgpu/blend-triangle-strip.html:
+        * webgpu/blit-commands-expected.html:
+        * webgpu/blit-commands.html:
+        * webgpu/buffer-command-buffer-races-expected.html:
+        * webgpu/buffer-command-buffer-races.html:
+        * webgpu/color-write-mask-triangle-strip-expected.html:
+        * webgpu/color-write-mask-triangle-strip.html:
+        * webgpu/command-buffers.html:
+        * webgpu/depth-enabled-triangle-strip-expected.html:
+        * webgpu/depth-enabled-triangle-strip.html:
+        * webgpu/draw-indexed-triangles-expected.html:
+        * webgpu/draw-indexed-triangles.html:
+        * webgpu/js/create-worker-device.js: Removed.
+        * webgpu/js/webgpu-functions.js:
+        (drawWhiteSquareOnBlueBackgroundInSoftware):
+        (drawGreenSquareInSoftware):
+        (drawGreenAndBlueCheckerboardInSoftware):
+        (async.mapWriteDataToBuffer):
+        * webgpu/map-read-buffers.html:
+        * webgpu/map-write-buffers.html:
+        * webgpu/pipeline-layouts.html:
+        * webgpu/propertyresolver/ander-abstract-lvalue-expected.html:
+        * webgpu/propertyresolver/ander-abstract-lvalue.html:
+        * webgpu/propertyresolver/ander-expected.html:
+        * webgpu/propertyresolver/ander-lvalue-3-levels-expected.html:
+        * webgpu/propertyresolver/ander-lvalue-3-levels.html:
+        * webgpu/propertyresolver/ander-lvalue-expected.html:
+        * webgpu/propertyresolver/ander-lvalue.html:
+        * webgpu/propertyresolver/ander.html:
+        * webgpu/propertyresolver/getter-expected.html:
+        * webgpu/propertyresolver/getter.html:
+        * webgpu/propertyresolver/indexer-ander-abstract-lvalue-expected.html:
+        * webgpu/propertyresolver/indexer-ander-abstract-lvalue.html:
+        * webgpu/propertyresolver/indexer-ander-expected.html:
+        * webgpu/propertyresolver/indexer-ander-lvalue-3-levels-expected.html:
+        * webgpu/propertyresolver/indexer-ander-lvalue-3-levels.html:
+        * webgpu/propertyresolver/indexer-ander-lvalue-expected.html:
+        * webgpu/propertyresolver/indexer-ander-lvalue.html:
+        * webgpu/propertyresolver/indexer-ander.html:
+        * webgpu/propertyresolver/indexer-getter-expected.html:
+        * webgpu/propertyresolver/indexer-getter.html:
+        * webgpu/propertyresolver/indexer-setter-abstract-lvalue-3-levels-expected.html:
+        * webgpu/propertyresolver/indexer-setter-abstract-lvalue-3-levels.html:
+        * webgpu/propertyresolver/indexer-setter-abstract-lvalue-expected.html:
+        * webgpu/propertyresolver/indexer-setter-abstract-lvalue.html:
+        * webgpu/propertyresolver/indexer-setter-expected.html:
+        * webgpu/propertyresolver/indexer-setter-lvalue-expected.html:
+        * webgpu/propertyresolver/indexer-setter-lvalue.html:
+        * webgpu/propertyresolver/indexer-setter.html:
+        * webgpu/propertyresolver/setter-abstract-lvalue-3-levels-expected.html:
+        * webgpu/propertyresolver/setter-abstract-lvalue-3-levels.html:
+        * webgpu/propertyresolver/setter-abstract-lvalue-expected.html:
+        * webgpu/propertyresolver/setter-abstract-lvalue.html:
+        * webgpu/propertyresolver/setter-lvalue-expected.html:
+        * webgpu/propertyresolver/setter-lvalue.html:
+        * webgpu/queue-creation.html:
+        * webgpu/render-command-encoding.html:
+        * webgpu/render-pipelines.html:
+        * webgpu/shader-modules.html:
+        * webgpu/simple-triangle-strip-expected.html:
+        * webgpu/simple-triangle-strip.html:
+        * webgpu/texture-triangle-strip-expected.html:
+        * webgpu/texture-triangle-strip.html:
+        * webgpu/textures-textureviews.html:
+        * webgpu/vertex-buffer-triangle-strip-expected.html:
+        * webgpu/vertex-buffer-triangle-strip.html:
+        * webgpu/viewport-scissor-rect-triangle-strip-expected.html:
+        * webgpu/viewport-scissor-rect-triangle-strip.html:
+        * webgpu/webgpu-enabled-expected.txt: Removed.
+        * webgpu/webgpu-enabled-in-worker-expected.txt: Removed.
+        * webgpu/webgpu-enabled-in-worker.html: Removed.
+        * webgpu/webgpu-enabled.html: Removed.
+        * webgpu/whlsl-arbitrary-vertex-attribute-locations-expected.html:
+        * webgpu/whlsl-arbitrary-vertex-attribute-locations.html:
+        * webgpu/whlsl-buffer-fragment-expected.html:
+        * webgpu/whlsl-buffer-fragment.html:
+        * webgpu/whlsl-buffer-length-expected.txt:
+        * webgpu/whlsl-buffer-length.html:
+        * webgpu/whlsl-buffer-vertex-expected.html:
+        * webgpu/whlsl-buffer-vertex.html:
+        * webgpu/whlsl-checker-should-set-type-of-read-modify-write-variables-expected.txt:
+        * webgpu/whlsl-checker-should-set-type-of-read-modify-write-variables.html:
+        * webgpu/whlsl-compute-expected.txt:
+        * webgpu/whlsl-compute.html:
+        * webgpu/whlsl-dereference-pointer-should-type-check-expected.html:
+        * webgpu/whlsl-dereference-pointer-should-type-check.html:
+        * webgpu/whlsl-do-while-loop-break-expected.html:
+        * webgpu/whlsl-do-while-loop-break.html:
+        * webgpu/whlsl-do-while-loop-continue-expected.html:
+        * webgpu/whlsl-do-while-loop-continue.html:
+        * webgpu/whlsl-do-while-loop-expected.html:
+        * webgpu/whlsl-do-while-loop.html:
+        * webgpu/whlsl-dont-crash-parsing-enum-expected.html:
+        * webgpu/whlsl-dont-crash-parsing-enum.html:
+        * webgpu/whlsl-dot-expressions-expected.html:
+        * webgpu/whlsl-dot-expressions.html:
+        * webgpu/whlsl-duplicate-types-should-not-produce-duplicate-ctors-expected.txt:
+        * webgpu/whlsl-duplicate-types-should-not-produce-duplicate-ctors.html:
+        * webgpu/whlsl-ensure-proper-variable-lifetime-2-expected.html:
+        * webgpu/whlsl-ensure-proper-variable-lifetime-2.html:
+        * webgpu/whlsl-ensure-proper-variable-lifetime-3-expected.html:
+        * webgpu/whlsl-ensure-proper-variable-lifetime-3.html:
+        * webgpu/whlsl-ensure-proper-variable-lifetime-expected.html:
+        * webgpu/whlsl-ensure-proper-variable-lifetime.html:
+        * webgpu/whlsl-expected.html:
+        * webgpu/whlsl-loops-break-expected.html:
+        * webgpu/whlsl-loops-break.html:
+        * webgpu/whlsl-loops-continue-expected.html:
+        * webgpu/whlsl-loops-continue.html:
+        * webgpu/whlsl-loops-expected.html:
+        * webgpu/whlsl-loops.html:
+        * webgpu/whlsl-matrix-2-expected.txt:
+        * webgpu/whlsl-matrix-2.html:
+        * webgpu/whlsl-matrix-expected.txt:
+        * webgpu/whlsl-matrix.html:
+        * webgpu/whlsl-nested-dot-expression-rvalue-expected.html:
+        * webgpu/whlsl-nested-dot-expression-rvalue.html:
+        * webgpu/whlsl-nested-loop-expected.html:
+        * webgpu/whlsl-nested-loop.html:
+        * webgpu/whlsl-null-dereference-expected.txt:
+        * webgpu/whlsl-null-dereference.html:
+        * webgpu/whlsl-oob-access-expected.txt:
+        * webgpu/whlsl-oob-access.html:
+        * webgpu/whlsl-read-modify-write-high-zombies-expected.txt:
+        * webgpu/whlsl-read-modify-write-high-zombies.html:
+        * webgpu/whlsl-return-local-variable-expected.html:
+        * webgpu/whlsl-return-local-variable.html:
+        * webgpu/whlsl-store-to-property-updates-properly-expected.html:
+        * webgpu/whlsl-store-to-property-updates-properly.html:
+        * webgpu/whlsl-textures-getdimensions-expected.txt:
+        * webgpu/whlsl-textures-getdimensions.html:
+        * webgpu/whlsl-textures-load-expected.html:
+        * webgpu/whlsl-textures-load.html:
+        * webgpu/whlsl-textures-sample-expected.html:
+        * webgpu/whlsl-textures-sample.html:
+        * webgpu/whlsl-while-loop-break-expected.html:
+        * webgpu/whlsl-while-loop-break.html:
+        * webgpu/whlsl-while-loop-continue-expected.html:
+        * webgpu/whlsl-while-loop-continue.html:
+        * webgpu/whlsl-zero-initialize-values-2-expected.html:
+        * webgpu/whlsl-zero-initialize-values-2.html:
+        * webgpu/whlsl-zero-initialize-values-expected.html:
+        * webgpu/whlsl-zero-initialize-values.html:
+        * webgpu/whlsl.html:
+
 2019-06-26  Simon Fraser  <simon.fraser@apple.com>
 
         Incorrect clippping with overflow:scroll inside oveflow:hidden with border-radius

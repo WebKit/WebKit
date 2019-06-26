@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="js/webgpu-functions.js"></script>
 <script src="../resources/js-test-pre.js"></script>
 </head>
 <body>
@@ -13,11 +14,8 @@ compute void computeShader(device float[] buffer : register(u0), float3 threadID
     buffer[uint(threadID.x)] = vec[0];
 }
 `;
-let resultsFloat32Array;
-async function start() {
-    const adapter = await navigator.gpu.requestAdapter();
-    const device = await adapter.requestDevice();
 
+async function start(device) {
     const shaderModule = device.createShaderModule({code: shaderSource, isWHLSL: true});
     const computeStage = {module: shaderModule, entryPoint: "computeShader"};
 
@@ -57,20 +55,24 @@ async function start() {
     device.getQueue().submit([commandBuffer]);
 
     const resultsArrayBuffer = await resultsBuffer.mapReadAsync();
-    resultsFloat32Array = new Float32Array(resultsArrayBuffer);
-    shouldBe("resultsFloat32Array[0]", "42");
+    const resultsFloat32Array = new Float32Array(resultsArrayBuffer);
+    if (resultsFloat32Array[0] == 42)
+        testPassed("");
+    else
+        testFailed("");
     resultsBuffer.unmap();
 }
-if (window.testRunner)
-    testRunner.waitUntilDone();
-window.addEventListener("load", function() {
-    start().then(function() {
-        if (window.testRunner)
-            testRunner.notifyDone();
+window.jsTestIsAsync = true;
+getBasicDevice().then(function(device) {
+    start(device).then(function() {
+        finishJSTest();
     }, function() {
-        if (window.testRunner)
-            testRunner.notifyDone();
+        testFailed("");
+        finishJSTest();
     });
+}, function() {
+    testPassed("");
+    finishJSTest();
 });
 </script>
 <script src="../resources/js-test-post.js"></script>

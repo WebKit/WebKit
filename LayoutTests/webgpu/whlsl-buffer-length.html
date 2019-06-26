@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="js/webgpu-functions.js"></script>
 <script src="../resources/js-test-pre.js"></script>
 </head>
 <body>
@@ -11,11 +12,8 @@ compute void computeShader(device uint[] buffer : register(u0), float3 threadID 
     buffer[0] = buffer.length;
 }
 `;
-let resultUint32Array;
-async function start() {
-    const adapter = await navigator.gpu.requestAdapter();
-    const device = await adapter.requestDevice();
 
+async function start(device) {
     const shaderModule = device.createShaderModule({code: shaderSource, isWHLSL: true});
     const computeStage = {module: shaderModule, entryPoint: "computeShader"};
 
@@ -55,17 +53,24 @@ async function start() {
     device.getQueue().submit([commandBuffer]);
 
     const resultsArrayBuffer = await resultsBuffer.mapReadAsync();
-    resultUint32Array = new Uint32Array(resultsArrayBuffer);
-    shouldBe("resultUint32Array[0]", "1337");
+    const resultUint32Array = new Uint32Array(resultsArrayBuffer);
+    if (resultUint32Array[0] == 1337)
+        testPassed("");
+    else
+        testFailed("");
     resultsBuffer.unmap();
 }
 window.jsTestIsAsync = true;
-window.addEventListener("load", function() {
-    start().then(function() {
+getBasicDevice().then(function(device) {
+    start(device).then(function() {
         finishJSTest();
     }, function() {
+        testFailed("");
         finishJSTest();
     });
+}, function() {
+    testPassed("");
+    finishJSTest();
 });
 </script>
 <script src="../resources/js-test-post.js"></script>

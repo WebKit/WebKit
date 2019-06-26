@@ -1,6 +1,4 @@
-PASS resultsUint32Array[0] is 2
-PASS resultsUint32Array[1] is 2
-PASS resultsUint32Array[2] is 1
+PASS 
 PASS successfullyParsed is true
 
 TEST COMPLETE

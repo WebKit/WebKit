@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="js/webgpu-functions.js"></script>
 <script src="../resources/js-test-pre.js"></script>
 </head>
 <body>
@@ -11,7 +12,7 @@ compute void computeShader(device float[] buffer : register(u0), float3 threadID
     float4 vec = float4(x,x,x,x);
 }
 `;
-let resultsFloat32Array;
+
 async function start() {
     const adapter = await navigator.gpu.requestAdapter();
     const device = await adapter.requestDevice();
@@ -26,16 +27,20 @@ async function start() {
 
     const computePipelineDescriptor = {computeStage, layout: pipelineLayout};
     const computePipeline = device.createComputePipeline(computePipelineDescriptor);
-
-    testPassed("Should not crash.");
 }
+
 window.jsTestIsAsync = true;
-window.addEventListener("load", function() {
-    start().then(function() {
+getBasicDevice().then(function(device) {
+    start(device).then(function() {
+        testPassed("");
         finishJSTest();
     }, function() {
+        testFailed("");
         finishJSTest();
     });
+}, function() {
+    testPassed("");
+    finishJSTest();
 });
 </script>
 <script src="../resources/js-test-post.js"></script>

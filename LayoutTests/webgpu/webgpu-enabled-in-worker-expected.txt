@@ -1,3 +1,0 @@
-
-PASS Test if WebGPU is enabled for workers. 
-
