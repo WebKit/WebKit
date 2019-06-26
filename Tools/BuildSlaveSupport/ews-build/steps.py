@@ -797,8 +797,34 @@ class RunWebKitTests(shell.Test):
             self.build.results = SUCCESS
             self.build.buildFinished([message], SUCCESS)
         else:
-            self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(), ExtractTestResults()])
+            self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(), ExtractTestResults(), ReRunWebKitTests()])
         return rc
+
+
+class ReRunWebKitTests(RunWebKitTests):
+    name = 're-run-layout-tests'
+
+    def evaluateCommand(self, cmd):
+        rc = shell.Test.evaluateCommand(self, cmd)
+        if rc == SUCCESS:
+            message = 'Passed layout tests'
+            self.descriptionDone = message
+            self.build.results = SUCCESS
+            self.build.buildFinished([message], SUCCESS)
+        else:
+            self.setProperty('patchFailedTests', True)
+            self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(identifier='rerun'), ExtractTestResults(identifier='rerun'), UnApplyPatchIfRequired(), CompileWebKitToT(), RunWebKitTestsWithoutPatch()])
+        return rc
+
+
+class RunWebKitTestsWithoutPatch(RunWebKitTests):
+    name = 'run-layout-tests-without-patch'
+
+    def evaluateCommand(self, cmd):
+        rc = shell.Test.evaluateCommand(self, cmd)
+        self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(identifier='clean-tree'), ExtractTestResults(identifier='clean-tree')])
+        return rc
+
 
 class RunWebKit1Tests(RunWebKitTests):
     def start(self):
