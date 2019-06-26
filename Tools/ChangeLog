@@ -1,3 +1,14 @@
+2019-06-25  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Combine various patchFailed*Tests properties
+        https://bugs.webkit.org/show_bug.cgi?id=199193
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py: Renamed patchFailedJSCTests and patchFailedAPITests to patchFailedTests. This property 
+        can also be used for layout-tests later on.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests.
+
 2019-06-25  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Win] MiniBrowser should default to webkit.org

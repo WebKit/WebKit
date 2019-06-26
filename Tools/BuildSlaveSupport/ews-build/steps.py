@@ -401,7 +401,7 @@ class UnApplyPatchIfRequired(CleanWorkingDirectory):
     descriptionDone = ['Unapplied patch']
 
     def doStepIf(self, step):
-        return self.getProperty('patchFailedToBuild') or self.getProperty('patchFailedJSCTests') or self.getProperty('patchFailedAPITests')
+        return self.getProperty('patchFailedToBuild') or self.getProperty('patchFailedTests')
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -647,7 +647,7 @@ class CompileWebKitToT(CompileWebKit):
     haltOnFailure = False
 
     def doStepIf(self, step):
-        return self.getProperty('patchFailedToBuild') or self.getProperty('patchFailedAPITests')
+        return self.getProperty('patchFailedToBuild') or self.getProperty('patchFailedTests')
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -716,7 +716,7 @@ class RunJavaScriptCoreTests(shell.Test):
 
     def evaluateCommand(self, cmd):
         if cmd.didFail():
-            self.setProperty('patchFailedJSCTests', True)
+            self.setProperty('patchFailedTests', True)
 
         return super(RunJavaScriptCoreTests, self).evaluateCommand(cmd)
 
@@ -725,13 +725,13 @@ class ReRunJavaScriptCoreTests(RunJavaScriptCoreTests):
     name = 'jscore-test-rerun'
 
     def doStepIf(self, step):
-        return self.getProperty('patchFailedJSCTests')
+        return self.getProperty('patchFailedTests')
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
 
     def evaluateCommand(self, cmd):
-        self.setProperty('patchFailedJSCTests', cmd.didFail())
+        self.setProperty('patchFailedTests', cmd.didFail())
         return super(RunJavaScriptCoreTests, self).evaluateCommand(cmd)
 
 
@@ -741,7 +741,7 @@ class RunJavaScriptCoreTestsToT(RunJavaScriptCoreTests):
     command = ['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--json-output={0}'.format(jsonFileName), WithProperties('--%(configuration)s')]
 
     def doStepIf(self, step):
-        return self.getProperty('patchFailedJSCTests')
+        return self.getProperty('patchFailedTests')
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -950,7 +950,7 @@ class ReRunAPITests(RunAPITests):
             self.build.results = SUCCESS
             self.build.buildFinished([message], SUCCESS)
         else:
-            self.setProperty('patchFailedAPITests', True)
+            self.setProperty('patchFailedTests', True)
             self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(), CompileWebKitToT(), RunAPITestsWithoutPatch(), AnalyzeAPITestsResults()])
         return rc
 

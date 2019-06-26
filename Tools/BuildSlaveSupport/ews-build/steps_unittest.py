@@ -532,7 +532,7 @@ class TestCompileWebKitToT(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(CompileWebKitToT())
         self.setProperty('fullPlatform', 'mac-sierra')
         self.setProperty('configuration', 'debug')
-        self.setProperty('patchFailedToBuild', True)
+        self.setProperty('patchFailedTests', True)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
@@ -713,7 +713,7 @@ class TestReRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(ReRunJavaScriptCoreTests())
         self.setProperty('fullPlatform', 'jsc-only')
         self.setProperty('configuration', 'release')
-        self.setProperty('patchFailedJSCTests', 'True')
+        self.setProperty('patchFailedTests', 'True')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'],
@@ -728,7 +728,7 @@ class TestReRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(ReRunJavaScriptCoreTests())
         self.setProperty('fullPlatform', 'jsc-only')
         self.setProperty('configuration', 'debug')
-        self.setProperty('patchFailedJSCTests', 'True')
+        self.setProperty('patchFailedTests', 'True')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'],
@@ -762,7 +762,7 @@ class TestRunJavaScriptCoreTestsToT(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(RunJavaScriptCoreTestsToT())
         self.setProperty('fullPlatform', 'jsc-only')
         self.setProperty('configuration', 'release')
-        self.setProperty('patchFailedJSCTests', 'True')
+        self.setProperty('patchFailedTests', 'True')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'],
@@ -777,7 +777,7 @@ class TestRunJavaScriptCoreTestsToT(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(RunJavaScriptCoreTestsToT())
         self.setProperty('fullPlatform', 'jsc-only')
         self.setProperty('configuration', 'debug')
-        self.setProperty('patchFailedJSCTests', 'True')
+        self.setProperty('patchFailedTests', 'True')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'],
@@ -969,7 +969,7 @@ class TestUnApplyPatchIfRequired(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(UnApplyPatchIfRequired())
-        self.setProperty('patchFailedToBuild', True)
+        self.setProperty('patchFailedTests', True)
         self.expectHidden(False)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
