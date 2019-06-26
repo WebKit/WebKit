@@ -743,3 +743,6 @@ webkit.org/b/198459 [ HighSierra Debug ] inspector/canvas/recording-webgl-full.h
 webkit.org/b/196508 compositing/repaint/scroller-with-foreground-layer-repaints.html [ Pass Failure ]
 
 webkit.org/b/198676 imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html [ Pass Failure ]
+
+webkit.org/b/199242 [ Debug ] http/tests/performance/performance-resource-timing-resourcetimingbufferfull-shrinking-buffer-crash.html [ Pass Failure ]
+
