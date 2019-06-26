@@ -1,3 +1,15 @@
+2019-06-25  Kenneth Russell  <kbr@chromium.org>
+
+        Script which adjusts include paths in ANGLE's copied headers breaks incremental builds
+        https://bugs.webkit.org/show_bug.cgi?id=199212
+
+        Reviewed by Darin Adler.
+
+        Maintain and test a timestamp in adjust-angle-include-paths.sh
+        in order to avoid touching the headers during each build.
+
+	* adjust-angle-include-paths.sh:
+
 2019-06-18  Kenneth Russell  <kbr@chromium.org>
 
         Add preliminary ANGLE backend to WebCore
