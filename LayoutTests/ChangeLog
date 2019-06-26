@@ -1,3 +1,40 @@
+2019-06-25  Justin Fan  <justin_fan@apple.com>
+
+        [WHLSL] Make whlsl-test-harness actually generate WHLSL shaders by default
+        https://bugs.webkit.org/show_bug.cgi?id=199028
+
+        Reviewed by Saam Barati.
+
+        whlsl-test-harness.js now generates WHLSL shaders and invokes WebKit's WHLSL compiler.
+        MSL mode remains to facilitate further harness tesing.
+        In addition, if WebGPU is not supported, synchronous Harness methods do nothing.
+        Asynchronous methods will throw a WebGPUUnsupportedError that "rejects" the returned Promise.
+
+        * TestExpectations:
+        * platform/mac/TestExpectations:
+        * webgpu/js/whlsl-test-harness.js:
+        (WebGPUUnsupportedError): Layout tests should catch these to fail gracefully if WebGPU is not supported.
+        (Data):
+        (Data.prototype.async.getArrayBuffer):
+        (Data.prototype.get isBuffer): Renamed from isPointer.
+        (Harness):
+        (Harness.prototype.async.requestDevice): Can be used to re-acquire a GPUDevice.
+        (Harness.prototype.set isWHLSL): Determines whether harness will generate WHLSL or MSL shaders.
+        (Harness.prototype.async.callTypedFunction):
+        (Harness.prototype.callVoidFunction):
+        (Harness.prototype.get device):
+        (Harness.prototype._clearResults):
+        (Harness.prototype._setUpArguments):
+        (Harness.prototype._callFunction):
+        (Data.prototype.get isPointer): Deleted.
+        (Harness.prototype._initialize): Deleted.
+        (Harness.prototype.async.callVoidFunction): Deleted.
+        (harness._initialize.async): Deleted.
+        * webgpu/msl-harness-test-expected.txt: Renamed from LayoutTests/webgpu/whlsl-harness-test-expected.txt.
+        * webgpu/msl-harness-test.html: Copied from LayoutTests/webgpu/whlsl-harness-test.html.
+        * webgpu/whlsl-test-harness-test-expected.html: Added.
+        * webgpu/whlsl-test-harness-test.html: Renamed from LayoutTests/webgpu/whlsl-harness-test.html.
+
 2019-06-25  Daniel Bates  <dabates@apple.com>
 
         Non-editable text selections should be modifiable with hardware keyboard

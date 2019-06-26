@@ -1786,7 +1786,8 @@ webkit.org/b/192956 [ Sierra ] webgpu [ Skip ]
 webkit.org/b/192956 [ Sierra ] inspector/canvas/create-context-webgpu.html [ Skip ]
 webkit.org/b/192956 [ Sierra ] inspector/canvas/resolveCanvasContext-webgpu.html [ Skip ]
 
-webkit.org/b/199076 [ HighSierra ] webgpu/whlsl-harness-test.html [ Skip ]
+webkit.org/b/199076 [ HighSierra ] webgpu/whlsl-test-harness-test.html [ Skip ]
+webkit.org/b/199028 [ HighSierra ] webgpu/msl-harness-test.html [ Skip ]
 
 webkit.org/b/189680 platform/mac/media/audio-session-category-video-paused.html [ Pass Timeout ]
 

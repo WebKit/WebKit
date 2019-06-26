@@ -63,28 +63,37 @@ function convertTypeToWHLSLType(type)
 
 /* Harness Classes */
 
+class WebGPUUnsupportedError extends Error {
+    constructor()
+    {
+        super("No GPUDevice detected!");
+    }
+};
+
 class Data {
     /**
      * Upload typed data to and return a wrapper of a GPUBuffer.
      * @param {Types} type - The WHLSL type to be stored in this Data.
      * @param {Number or Array[Number]} values - The raw data to be uploaded.
      */
-    constructor(harness, type, values, isPointer = false)
+    constructor(harness, type, values, isBuffer = false)
     {
-        // One or more scalars in an array can be accessed through a pointer to buffer.
+        if (harness.device === undefined)
+            return;
+        // One or more scalars in an array can be accessed through an array reference.
         // However, vector types are also created via an array of scalars.
         // This ensures that buffers of just one vector are usable in a test function.
         if (Array.isArray(values))
-            this._isPointer = isVectorType(type) ? isPointer : true;
+            this._isBuffer = isVectorType(type) ? isBuffer : true;
         else {
-            this._isPointer = false;
+            this._isBuffer = false;
             values = [values];
         }
 
         this._type = type;
         this._byteLength = (convertTypeToArrayType(type)).BYTES_PER_ELEMENT * values.length;
 
-        const [buffer, arrayBuffer] = harness._device.createBufferMapped({
+        const [buffer, arrayBuffer] = harness.device.createBufferMapped({
             size: this._byteLength,
             usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ
         });
@@ -101,6 +110,9 @@ class Data {
      */
     async getArrayBuffer()
     {
+        if (harness.device === undefined)
+            throw new WebGPUUnsupportedError();
+
         let result;
         try {
             result = await this._buffer.mapReadAsync();
@@ -112,22 +124,37 @@ class Data {
     }
 
     get type() { return this._type; }
-    get isPointer() { return this._isPointer; }
+    get isBuffer() { return this._isBuffer; }
     get buffer() { return this._buffer; }
     get byteLength() { return this._byteLength; }
 }
 
 class Harness {
-    constructor()
+    constructor ()
     {
-        this._shaderHeader = `#include <metal_stdlib>
-        using namespace metal;
-        `;
+        this.isWHLSL = true;
     }
 
-    _initialize(callback)
+    async requestDevice()
     {
-        callback.bind(this)();
+        try {
+            const adapter = await navigator.gpu.requestAdapter();
+            this._device = await adapter.requestDevice();
+        } catch {
+            // WebGPU is not supported.
+            // FIXME: Add support for GPUAdapterRequestOptions and GPUDeviceDescriptor,
+            // and differentiate between descriptor validation errors and no WebGPU support.
+        }
+    }
+
+    // Sets whether Harness generates WHLSL or MSL shaders.
+    set isWHLSL(value)
+    {
+        this._isWHLSL = value;
+        this._shaderHeader = value ? "" : `
+#include <metal_stdlib>
+using namespace metal;
+        `;
     }
 
     /**
@@ -140,12 +167,17 @@ class Harness {
      */
     async callTypedFunction(type, functions, name, args)
     {   
-        const [argsLayouts, argsResourceBindings, argsStructCode, functionCallArgs] = this._setUpArguments(args);
+        if (this._device === undefined)
+            throw new WebGPUUnsupportedError();
 
-        if (!this._resultBuffer) {
-            this._resultBuffer = this._device.createBuffer({ 
+        const [argsLayouts, argsResourceBindings, argsDeclarations, functionCallArgs] = this._setUpArguments(args);
+
+        if (this._resultBuffer) {
+            this._clearResults()
+        } else {
+            this._resultBuffer = this.device.createBuffer({ 
                 size: Types.MAX_SIZE, 
-                usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ 
+                usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ | GPUBufferUsage.TRANSFER_DST
             });
         }
 
@@ -162,17 +194,30 @@ class Harness {
             }
         });
 
-        const code = this._shaderHeader + functions + `
-        struct _compute_args {
-            device ${convertTypeToWHLSLType(type)}* result [[id(0)]];
-            ${argsStructCode}};
-    
-        kernel void _compute_main(device _compute_args& args [[buffer(0)]]) 
-        {
-            *args.result = ${name}(${functionCallArgs.join(", ")});
+        let entryPointCode;
+        if (this._isWHLSL) {
+            argsDeclarations.unshift(`device ${convertTypeToWHLSLType(type)}[] result : register(u0)`);
+            entryPointCode = `
+[numthreads(1, 1, 1)]
+compute void _compute_main(${argsDeclarations.join(", ")})
+{
+    result[0] = ${name}(${functionCallArgs.join(", ")});
+}
+`;
+        } else {
+            argsDeclarations.unshift(`device ${convertTypeToWHLSLType(type)}* result [[id(0)]];`);
+            entryPointCode = `
+struct _compute_args {
+    ${argsDeclarations.join("\n")}
+};
+
+kernel void _compute_main(device _compute_args& args [[buffer(0)]]) 
+{
+    *args.result = ${name}(${functionCallArgs.join(", ")});
+}
+`;
         }
-        `;
-    
+        const code = this._shaderHeader + functions + entryPointCode;
         this._callFunction(code, argsLayouts, argsResourceBindings);
     
         try {
@@ -192,21 +237,50 @@ class Harness {
      * @param {String} name - The name of the WHLSL function which must be present in 'functions'.
      * @param {Data or Array[Data]} args - Data arguments to be passed to the call of 'name'.
      */
-    async callVoidFunction(functions, name, args)
+    callVoidFunction(functions, name, args)
     {
-        const [argsLayouts, argsResourceBindings, argsStructCode, functionCallArgs] = this._setUpArguments(args);
+        if (this._device === undefined)
+            return;
 
-        const code = this._shaderHeader + functions + `
-        struct _compute_args {
-            ${argsStructCode}};
+        const [argsLayouts, argsResourceBindings, argsDeclarations, functionCallArgs] = this._setUpArguments(args);
 
-        kernel void _compute_main(device _compute_args& args [[buffer(0)]])
-        {
-            ${name}(${functionCallArgs.join(", ")});
+        let entryPointCode;
+        if (this._isWHLSL) {
+            entryPointCode = `
+[numthreads(1, 1, 1)]
+compute void _compute_main(${argsDeclarations.join(", ")})
+{
+    ${name}(${functionCallArgs.join(", ")});
+}`;
+        } else {
+            entryPointCode = `
+struct _compute_args {
+    ${argsDeclarations.join("\n")}
+};
+
+kernel void _compute_main(device _compute_args& args [[buffer(0)]])
+{
+    ${name}(${functionCallArgs.join(", ")});
+}
+`;
         }
-        `;
-
+        const code = this._shaderHeader + functions + entryPointCode;
         this._callFunction(code, argsLayouts, argsResourceBindings);
+    }
+
+    get device() { return this._device; }
+
+    _clearResults()
+    {
+        if (!this._clearBuffer) {
+            this._clearBuffer = this._device.createBuffer({ 
+                size: Types.MAX_SIZE, 
+                usage: GPUBufferUsage.TRANSFER_SRC
+            });
+        }
+        const commandEncoder = this._device.createCommandEncoder();
+        commandEncoder.copyBufferToBuffer(this._clearBuffer, 0, this._resultBuffer, 0, Types.MAX_SIZE);
+        this._device.getQueue().submit([commandEncoder.finish()]);
     }
 
     _setUpArguments(args)
@@ -218,19 +292,21 @@ class Harness {
                 args = [];
         }
 
-        // FIXME: Replace with WHLSL.
         // Expand bind group structure to represent any arguments.
-        let argsStructCode = "";
+        let argsDeclarations = [];
         let functionCallArgs = [];
         let argsLayouts = [];
         let argsResourceBindings = [];
 
         for (let i = 1; i <= args.length; ++i) {
             const arg = args[i - 1];
-            argsStructCode += `device ${convertTypeToWHLSLType(arg.type)}* arg${i} [[id(${i})]];
-            `;
-            const optionalDeref = (!arg.isPointer) ? "*" : "";
-            functionCallArgs.push(optionalDeref + `args.arg${i}`);
+            if (this._isWHLSL) {
+                argsDeclarations.push(`device ${convertTypeToWHLSLType(arg.type)}[] arg${i} : register(u${i})`);
+                functionCallArgs.push(`arg${i}` + (arg.isBuffer ? "" : "[0]"));
+            } else {
+                argsDeclarations.push(`device ${convertTypeToWHLSLType(arg.type)}* arg${i} [[id(${i})]];`);
+                functionCallArgs.push((arg.isBuffer ? "" : "*") + `args.arg${i}`);
+            }
             argsLayouts.push({
                 binding: i,
                 visibility: GPUShaderStageBit.COMPUTE,
@@ -245,29 +321,33 @@ class Harness {
             });
         }
 
-        return [argsLayouts, argsResourceBindings, argsStructCode, functionCallArgs];
+        return [argsLayouts, argsResourceBindings, argsDeclarations, functionCallArgs];
     }
 
     _callFunction(code, argsLayouts, argsResourceBindings)
     {
-        const shaders = this._device.createShaderModule({ code: code });
+        const shaders = this._device.createShaderModule({ code: code, isWHLSL: this._isWHLSL });
+
+        const bindGroupLayout = this._device.createBindGroupLayout({
+            bindings: argsLayouts
+        });
+
+        const pipelineLayout = this._device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+
+        const bindGroup = this._device.createBindGroup({
+            layout: bindGroupLayout,
+            bindings: argsResourceBindings
+        });
+
         // FIXME: Compile errors should be caught and reported here.
         const pipeline = this._device.createComputePipeline({
+            layout: pipelineLayout,
             computeStage: {
                 module: shaders,
                 entryPoint: "_compute_main"
             }
         });
 
-        const layout = this._device.createBindGroupLayout({
-            bindings: argsLayouts
-        });
-    
-        const bindGroup = this._device.createBindGroup({
-            layout: layout,
-            bindings: argsResourceBindings
-        });
-        
         const commandEncoder = this._device.createCommandEncoder();
         const passEncoder = commandEncoder.beginComputePass();
         passEncoder.setBindGroup(0, bindGroup);
@@ -282,14 +362,7 @@ class Harness {
 /* Harness Setup */
 
 const harness = new Harness();
-harness._initialize(async () => {
-    try {
-        const adapter = await navigator.gpu.requestAdapter();
-        harness._device = await adapter.requestDevice();
-    } catch (e) {
-        throw new Error("Harness error: Unable to acquire GPUDevice!");
-    }
-});
+harness.requestDevice();
 
 /* Global Helper Functions */
 
