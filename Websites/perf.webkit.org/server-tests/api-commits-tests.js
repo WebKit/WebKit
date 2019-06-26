@@ -39,6 +39,27 @@ describe("/api/commits/", function () {
         ]
     }
 
+    const commitsOnePrefixOfTheOther = {
+        "slaveName": "someSlave",
+        "slavePassword": "somePassword",
+        "commits": [
+            {
+                "repository": "WebKit",
+                "revision": "21094",
+                "time": "2017-01-20T02:52:34.577Z",
+                "author": {"name": "Zalan Bujtas", "account": "zalan@apple.com"},
+                "message": "a message",
+            },
+            {
+                "repository": "WebKit",
+                "revision": "210949",
+                "time": "2017-01-20T03:23:50.645Z",
+                "author": {"name": "Chris Dumez", "account": "cdumez@apple.com"},
+                "message": "some message",
+            }
+        ]
+    }
+
     const systemVersionCommits = {
         "slaveName": "someSlave",
         "slavePassword": "somePassword",
@@ -458,6 +479,16 @@ describe("/api/commits/", function () {
             await remote.postJSONWithStatus('/api/report-commits/', subversionCommits);
             const result = await remote.getJSON('/api/commits/WebKit/21094?prefix-match=true');
             assert.equal(result['status'], 'AmbiguousRevisionPrefix');
+        });
+
+        it("should not return 'AmbiguousRevisionPrefix' when there is a commit revision extract matches specified revision prefix", async () => {
+            const remote = TestServer.remoteAPI();
+            await addSlaveForReport(commitsOnePrefixOfTheOther);
+            await remote.postJSONWithStatus('/api/report-commits/', commitsOnePrefixOfTheOther);
+            const result = await remote.getJSON('/api/commits/WebKit/21094?prefix-match=true');
+            assert.equal(result['status'], 'OK');
+            assert.deepEqual(result['commits'].length, 1);
+            assertCommitIsSameAsOneSubmitted(result['commits'][0], commitsOnePrefixOfTheOther['commits'][0]);
         });
 
         it("should return 'UnknownCommit' when no commit is found for a revision prefix", async () => {

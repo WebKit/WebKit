@@ -1,3 +1,16 @@
+2019-06-26  Dewei Zhu  <dewei_zhu@apple.com>
+
+        commit api should not return 'AmbiguousRevisionPrefix' if there is an exact revision match
+        https://bugs.webkit.org/show_bug.cgi?id=199227
+
+        Reviewed by Ryosuke Niwa.
+
+        When prefix match is specified, api should check whether there is an exact match when multiple commits
+        match the prefix.
+
+        * public/include/commit-log-fetcher.php: Added the logic to check if there is an exact match when multiple matches are found.
+        * server-tests/api-commits-tests.js: Added an unit test.
+
 2019-06-24  Dean Johnson  <dean_johnson@apple.com>
 
         [perf.webkit.org] Update summary page calculations to use mean instead of median

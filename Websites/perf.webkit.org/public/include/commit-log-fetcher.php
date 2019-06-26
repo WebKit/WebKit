@@ -201,11 +201,14 @@ class CommitLogFetcher {
     }
 
     private function commit_for_revision_prefix($repository_id, $revision_prefix) {
-        $rows = $this->db->query_and_fetch_all('SELECT * FROM commits WHERE commit_repository = $1 AND commit_revision LIKE $2 LIMIT 2', array($repository_id, Database::escape_for_like($revision_prefix) . '%'));
+        $rows = $this->db->query_and_fetch_all('SELECT * FROM commits WHERE commit_repository = $1 AND commit_revision LIKE $2 ORDER BY commit_revision LIMIT 2', array($repository_id, Database::escape_for_like($revision_prefix) . '%'));
         if (count($rows) == 0)
             exit_with_error('UnknownCommit', array('repository' => $repository_id, 'revision' => $revision_prefix));
-        if (count($rows) == 2)
+        if (count($rows) == 2) {
+            if ($rows[0]['commit_revision'] == $revision_prefix)
+                return $rows[0];
             exit_with_error('AmbiguousRevisionPrefix', array('repository' => $repository_id, 'revision' => $revision_prefix));
+        }
         return $rows[0];
     }
 
