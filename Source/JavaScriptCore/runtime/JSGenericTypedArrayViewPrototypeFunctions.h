@@ -70,6 +70,11 @@ inline JSArrayBufferView* speciesConstruct(ExecState* exec, JSObject* exemplar, 
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(vm, result)) {
+        if (view->type() == DataViewType) {
+            throwTypeError(exec, scope, "species constructor did not return a TypedArray View"_s);
+            return nullptr;
+        }
+
         if (!view->isNeutered())
             return view;
 

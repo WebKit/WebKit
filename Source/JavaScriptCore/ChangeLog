@@ -1,3 +1,17 @@
+2019-06-26  Keith Miller  <keith_miller@apple.com>
+
+        speciesConstruct needs to throw if the result is a DataView
+        https://bugs.webkit.org/show_bug.cgi?id=199231
+
+        Reviewed by Mark Lam.
+
+        Previously, we only checked that the result was a
+        JSArrayBufferView, which can include DataViews. This is incorrect
+        as the result should be only be a TypedArray.
+
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::speciesConstruct):
+
 2019-06-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Implement console.countReset

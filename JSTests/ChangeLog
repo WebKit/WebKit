@@ -1,3 +1,19 @@
+2019-06-26  Keith Miller  <keith_miller@apple.com>
+
+        speciesConstruct needs to throw if the result is a DataView
+        https://bugs.webkit.org/show_bug.cgi?id=199231
+
+        Reviewed by Mark Lam.
+
+        * stress/typedarray-filter.js:
+        (subclasses.forEach):
+        * stress/typedarray-map.js:
+        (subclasses.forEach):
+        * stress/typedarray-slice.js:
+        (typedArrays.forEach):
+        * stress/typedarray-subarray.js:
+        (subclasses.forEach):
+
 2019-06-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r246714.

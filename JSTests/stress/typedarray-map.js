@@ -90,6 +90,17 @@ shouldBeTrue("forEachTypedArray(subclasses, testSpeciesIsDefault)");
 subclasses.forEach(function(constructor) { constructor[Symbol.species] = undefined; });
 shouldBeTrue("forEachTypedArray(subclasses, testSpeciesIsDefault)");
 
+subclasses.forEach(function(constructor) { constructor[Symbol.species] = () => new DataView(new ArrayBuffer()); });
+function testSpeciesReturnsDataView(array, constructor) {
+    try {
+        array.map(id);
+    } catch (e) {
+        return e instanceof TypeError;
+    }
+    return false;
+}
+shouldBeTrue("forEachTypedArray(subclasses, testSpeciesReturnsDataView)");
+
 subclasses = typedArrays.map(function(constructor) { return class extends constructor { } } );
 function testSpeciesRemoveConstructor(array, constructor) {
     array.constructor = undefined;

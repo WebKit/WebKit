@@ -169,4 +169,15 @@ function testSpeciesWithTransferring(unused, constructor) {
 
 shouldBeTrue("forEachTypedArray(typedArrays, testSpeciesWithTransferring)");
 
+typedArrays.forEach(function(constructor) { constructor[Symbol.species] = () => new DataView(new ArrayBuffer()); });
+function testSpeciesReturnsDataView(array, constructor) {
+    try {
+        array.slice(0, 1);
+    } catch (e) {
+        return e instanceof TypeError;
+    }
+    return false;
+}
+shouldBeTrue("forEachTypedArray(typedArrays, testSpeciesReturnsDataView)");
+
 finishJSTest();
