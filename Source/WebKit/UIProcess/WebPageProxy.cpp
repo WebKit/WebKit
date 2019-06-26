@@ -9247,6 +9247,13 @@ void WebPageProxy::configureLoggingChannel(const String& channelName, WTFLogChan
 #endif
 }
 
+#if HAVE(APP_SSO)
+void WebPageProxy::decidePolicyForSOAuthorizationLoad(const String& extension, CompletionHandler<void(SOAuthorizationLoadPolicy)>&& completionHandler)
+{
+    m_navigationClient->decidePolicyForSOAuthorizationLoad(*this, SOAuthorizationLoadPolicy::Allow, extension, WTFMove(completionHandler));
+}
+#endif
+
 } // namespace WebKit
 
 #undef MERGE_WHEEL_EVENTS

@@ -141,6 +141,10 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 #include <WebCore/WebMediaSessionManagerClient.h>
 #endif
 
+#if HAVE(APP_SSO)
+#include "SOAuthorizationLoadPolicy.h"
+#endif
+
 #if ENABLE(MEDIA_SESSION)
 namespace WebCore {
 class MediaSessionMetadata;
@@ -1545,6 +1549,7 @@ public:
 #if HAVE(APP_SSO)
     void setShouldSuppressSOAuthorizationInAllNavigationPolicyDecision() { m_shouldSuppressSOAuthorizationInAllNavigationPolicyDecision = true; }
     void setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision() { m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision = true; }
+    void decidePolicyForSOAuthorizationLoad(const String&, CompletionHandler<void(SOAuthorizationLoadPolicy)>&&);
 #endif
 
     Logger& logger();

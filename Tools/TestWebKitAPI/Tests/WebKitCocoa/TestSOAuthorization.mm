@@ -120,9 +120,25 @@ static const char* samlResponse =
 "</script>"
 "</html>";
 
+@interface TestSOAuthorizationBasicDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation TestSOAuthorizationBasicDelegate
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    EXPECT_FALSE(navigationCompleted);
+    navigationCompleted = true;
+    finalURL = navigation._request.URL.absoluteString;
+}
+
+@end
+
 @interface TestSOAuthorizationNavigationDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
 @property bool isDefaultPolicy;
 @property bool shouldOpenExternalSchemes;
+@property bool allowSOAuthorizationLoad;
+@property bool isAsyncExecution;
 - (instancetype)init;
 @end
 
@@ -133,6 +149,8 @@ static const char* samlResponse =
     if (self = [super init]) {
         self.isDefaultPolicy = true;
         self.shouldOpenExternalSchemes = false;
+        self.allowSOAuthorizationLoad = true;
+        self.isAsyncExecution = false;
     }
     return self;
 }
@@ -161,6 +179,27 @@ static const char* samlResponse =
     gNewWindow = [[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration];
     [gNewWindow setNavigationDelegate:self];
     return gNewWindow.get();
+}
+
+- (void)_webView:(WKWebView *)webView decidePolicyForSOAuthorizationLoadWithCurrentPolicy:(_WKSOAuthorizationLoadPolicy)policy forExtension:(NSString *)extension completionHandler:(void (^)(_WKSOAuthorizationLoadPolicy policy))completionHandler
+{
+    EXPECT_EQ(policy, _WKSOAuthorizationLoadPolicyAllow);
+    EXPECT_TRUE([extension isEqual:@""]);
+    if (!self.isAsyncExecution) {
+        if (self.allowSOAuthorizationLoad)
+            completionHandler(policy);
+        else
+            completionHandler(_WKSOAuthorizationLoadPolicyIgnore);
+        return;
+    }
+
+    auto allowSOAuthorizationLoad = self.allowSOAuthorizationLoad;
+    dispatch_async(dispatch_get_main_queue(), ^() {
+        if (allowSOAuthorizationLoad)
+            completionHandler(_WKSOAuthorizationLoadPolicyAllow);
+        else
+            completionHandler(_WKSOAuthorizationLoadPolicyIgnore);
+    });
 }
 
 @end
@@ -416,8 +455,8 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed1)
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    auto delegate = adoptNS([[TestSOAuthorizationNavigationDelegate alloc] init]);
-    configureSOAuthorizationWebView(webView.get(), delegate.get(), OpenExternalSchemesPolicy::Allow);
+    auto delegate = adoptNS([[TestSOAuthorizationBasicDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&authorizationPerformed);
@@ -443,8 +482,8 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed2)
     InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    auto delegate = adoptNS([[TestSOAuthorizationNavigationDelegate alloc] init]);
-    configureSOAuthorizationWebView(webView.get(), delegate.get(), OpenExternalSchemesPolicy::Allow);
+    auto delegate = adoptNS([[TestSOAuthorizationBasicDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
 
     // Force App Links with a request.URL that has a different host than the current one (empty host) and ShouldOpenExternalURLsPolicy::ShouldAllow.
     auto testURL = URL(URL(), "https://www.example.com");
@@ -956,6 +995,72 @@ TEST(SOAuthorizationRedirect, InterceptionCompleteTwice)
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] init]).get()];
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] init]).get()];
 }
+
+TEST(SOAuthorizationRedirect, SOAuthorizationLoadPolicyIgnore)
+{
+    resetState();
+    ClassMethodSwizzler swizzler(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
+
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto delegate = adoptNS([[TestSOAuthorizationNavigationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get(), OpenExternalSchemesPolicy::Allow);
+    [delegate setAllowSOAuthorizationLoad:false];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    Util::run(&navigationCompleted);
+
+    EXPECT_WK_STREQ(testURL.get().absoluteString, finalURL);
+}
+
+TEST(SOAuthorizationRedirect, SOAuthorizationLoadPolicyAllowAsync)
+{
+    resetState();
+    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
+    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
+    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
+
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto delegate = adoptNS([[TestSOAuthorizationNavigationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get(), OpenExternalSchemesPolicy::Allow);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    Util::run(&authorizationPerformed);
+    checkAuthorizationOptions(false, "", 0);
+
+    RetainPtr<NSURL> redirectURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.get() statusCode:302 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Location" : [redirectURL absoluteString] }]);
+    [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] init]).get()];
+    Util::run(&navigationCompleted);
+#if PLATFORM(IOS)
+    navigationCompleted = false;
+    Util::run(&navigationCompleted);
+#endif
+    EXPECT_WK_STREQ(redirectURL.get().absoluteString, finalURL);
+}
+
+TEST(SOAuthorizationRedirect, SOAuthorizationLoadPolicyIgnoreAsync)
+{
+    resetState();
+    ClassMethodSwizzler swizzler(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
+
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto delegate = adoptNS([[TestSOAuthorizationNavigationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get(), OpenExternalSchemesPolicy::Allow);
+    [delegate setAllowSOAuthorizationLoad:false];
+    [delegate setIsAsyncExecution:true];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    Util::run(&navigationCompleted);
+
+    EXPECT_WK_STREQ(testURL.get().absoluteString, finalURL);
+}
+
 
 // FIXME(175204): Enable the iOS tests once the bug is fixed.
 #if PLATFORM(MAC)
@@ -1654,6 +1759,95 @@ TEST(SOAuthorizationPopUp, AuthorizationOptions)
     checkAuthorizationOptions(true, "http://www.webkit.org", 1);
 }
 
+TEST(SOAuthorizationPopUp, SOAuthorizationLoadPolicyIgnore)
+{
+    resetState();
+    ClassMethodSwizzler swizzler(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
+
+    auto testURL = URL(URL(), "http://www.example.com");
+    auto testHtml = generateHtml(openerTemplate, testURL.string());
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto delegate = adoptNS([[TestSOAuthorizationNavigationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get());
+    [delegate setAllowSOAuthorizationLoad:false];
+
+    [webView loadHTMLString:testHtml baseURL:(NSURL *)URL(URL(), "http://www.webkit.org")];
+    Util::run(&navigationCompleted);
+
+#if PLATFORM(MAC)
+    [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
+#elif PLATFORM(IOS)
+    [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
+#endif
+    Util::run(&newWindowCreated);
+    EXPECT_FALSE(authorizationPerformed);
+}
+
+TEST(SOAuthorizationPopUp, SOAuthorizationLoadPolicyAllowAsync)
+{
+    resetState();
+    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
+    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
+    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
+
+    RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    auto testURL = URL(URL(), "http://www.example.com");
+    auto testHtml = generateHtml(openerTemplate, testURL.string());
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    auto delegate = adoptNS([[TestSOAuthorizationNavigationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get());
+    [delegate setIsAsyncExecution:true];
+
+    [webView loadHTMLString:testHtml baseURL:baseURL.get()];
+    Util::run(&navigationCompleted);
+
+#if PLATFORM(MAC)
+    [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
+#elif PLATFORM(IOS)
+    [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
+#endif
+    Util::run(&authorizationPerformed);
+    checkAuthorizationOptions(true, "file://", 1);
+
+    auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:nil]);
+    auto resonseHtmlCString = generateHtml(newWindowResponseTemplate, "window.close();").utf8(); // The pop up closes itself.
+    // The secret WKWebView needs to be destroyed right the way.
+    @autoreleasepool {
+        [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:resonseHtmlCString.data() length:resonseHtmlCString.length()]).get()];
+    }
+    [webView waitForMessage:@"Hello."];
+    [webView waitForMessage:@"WindowClosed."];
+}
+
+
+TEST(SOAuthorizationPopUp, SOAuthorizationLoadPolicyIgnoreAsync)
+{
+    resetState();
+    ClassMethodSwizzler swizzler(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
+
+    auto testURL = URL(URL(), "http://www.example.com");
+    auto testHtml = generateHtml(openerTemplate, testURL.string());
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto delegate = adoptNS([[TestSOAuthorizationNavigationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get());
+    [delegate setAllowSOAuthorizationLoad:false];
+    [delegate setIsAsyncExecution:true];
+
+    [webView loadHTMLString:testHtml baseURL:(NSURL *)URL(URL(), "http://www.webkit.org")];
+    Util::run(&navigationCompleted);
+
+#if PLATFORM(MAC)
+    [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
+#elif PLATFORM(IOS)
+    [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
+#endif
+    Util::run(&newWindowCreated);
+    EXPECT_FALSE(authorizationPerformed);
+}
+
 TEST(SOAuthorizationSubFrame, NoInterceptions)
 {
     resetState();
@@ -1859,6 +2053,75 @@ TEST(SOAuthorizationSubFrame, AuthorizationOptions)
     [webView waitForMessage:@"http://www.example.com"];
     [webView waitForMessage:@"SOAuthorizationDidStart"];
     checkAuthorizationOptions(false, "http://www.apple.com", 2);
+}
+
+TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyIgnore)
+{
+    resetState();
+    ClassMethodSwizzler swizzler(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
+
+    auto testURL = URL(URL(), "http://www.example.com");
+    auto testHtml = generateHtml(parentTemplate, testURL.string());
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto delegate = adoptNS([[TestSOAuthorizationNavigationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get());
+    [delegate setAllowSOAuthorizationLoad:false];
+
+    [webView loadHTMLString:testHtml baseURL:(NSURL *)URL(URL(), "http://www.apple.com")];
+    // Try to wait until the iframe load is finished.
+    Util::sleep(0.5);
+    // Make sure we don't intercept the iframe.
+    EXPECT_FALSE(authorizationPerformed);
+}
+
+TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyAllowAsync)
+{
+    resetState();
+    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
+    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
+    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
+    ClassMethodSwizzler swizzler4([AKAuthorizationController class], @selector(isURLFromAppleOwnedDomain:), reinterpret_cast<IMP>(overrideIsURLFromAppleOwnedDomain));
+
+    auto testURL = URL(URL(), "http://www.example.com");
+    auto testHtml = generateHtml(parentTemplate, testURL.string());
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto delegate = adoptNS([[TestSOAuthorizationNavigationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get());
+    [delegate setIsAsyncExecution:true];
+
+    [webView loadHTMLString:testHtml baseURL:nil];
+    [webView waitForMessage:@"http://www.example.com"];
+    [webView waitForMessage:@"SOAuthorizationDidStart"];
+    checkAuthorizationOptions(false, "null", 2);
+
+    auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:nil]);
+    auto iframeHtmlCString = generateHtml(iframeTemplate, "").utf8();
+    [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:iframeHtmlCString.data() length:iframeHtmlCString.length()]).get()];
+    [webView waitForMessage:@"http://www.example.com"];
+    [webView waitForMessage:@"Hello."];
+}
+
+TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyIgnoreAsync)
+{
+    resetState();
+    ClassMethodSwizzler swizzler(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
+
+    auto testURL = URL(URL(), "http://www.example.com");
+    auto testHtml = generateHtml(parentTemplate, testURL.string());
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto delegate = adoptNS([[TestSOAuthorizationNavigationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get());
+    [delegate setAllowSOAuthorizationLoad:false];
+    [delegate setIsAsyncExecution:true];
+
+    [webView loadHTMLString:testHtml baseURL:(NSURL *)URL(URL(), "http://www.apple.com")];
+    // Try to wait until the iframe load is finished.
+    Util::sleep(0.5);
+    // Make sure we don't intercept the iframe.
+    EXPECT_FALSE(authorizationPerformed);
 }
 
 } // namespace TestWebKitAPI

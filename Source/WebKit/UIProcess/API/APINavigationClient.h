@@ -40,6 +40,10 @@
 #include <WebCore/LayoutMilestone.h>
 #include <wtf/Forward.h>
 
+#if HAVE(APP_SSO)
+#include "SOAuthorizationLoadPolicy.h"
+#endif
+
 namespace WebCore {
 struct ContentRuleListResults;
 class ResourceError;
@@ -140,6 +144,13 @@ public:
     virtual void didEndNavigationGesture(WebKit::WebPageProxy&, bool willNavigate, WebKit::WebBackForwardListItem&) { }
     virtual void didRemoveNavigationGestureSnapshot(WebKit::WebPageProxy&) { }
     virtual bool didChangeBackForwardList(WebKit::WebPageProxy&, WebKit::WebBackForwardListItem*, const Vector<Ref<WebKit::WebBackForwardListItem>>&) { return false; }
+
+#if HAVE(APP_SSO)
+    virtual void decidePolicyForSOAuthorizationLoad(WebKit::WebPageProxy&, WebKit::SOAuthorizationLoadPolicy currentSOAuthorizationLoadPolicy, const WTF::String&, CompletionHandler<void(WebKit::SOAuthorizationLoadPolicy)>&& completionHandler)
+    {
+        completionHandler(currentSOAuthorizationLoadPolicy);
+    }
+#endif
 };
 
 } // namespace API

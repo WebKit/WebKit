@@ -196,6 +196,9 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewBackForwardListItemAddedRemoved = [delegate respondsToSelector:@selector(_webView:backForwardListItemAdded:removed:)];
     m_navigationDelegateMethods.webViewDecidePolicyForPluginLoadWithCurrentPolicyPluginInfoCompletionHandler = [delegate respondsToSelector:@selector(_webView:decidePolicyForPluginLoadWithCurrentPolicy:pluginInfo:completionHandler:)];
 #endif
+#if HAVE(APP_SSO)
+    m_navigationDelegateMethods.webViewDecidePolicyForSOAuthorizationLoadWithCurrentPolicyForExtensionCompletionHandler = [delegate respondsToSelector:@selector(_webView:decidePolicyForSOAuthorizationLoadWithCurrentPolicy:forExtension:completionHandler:)];
+#endif
 }
 
 RetainPtr<id <WKHistoryDelegatePrivate> > NavigationState::historyDelegate()
@@ -1098,6 +1101,54 @@ void NavigationState::NavigationClient::didFinishLoadForQuickLookDocumentInMainF
         return;
 
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView didFinishLoadForQuickLookDocumentInMainFrame:(NSData *)data.decodedData()];
+}
+#endif
+
+#if HAVE(APP_SSO)
+static SOAuthorizationLoadPolicy soAuthorizationLoadPolicy(_WKSOAuthorizationLoadPolicy policy)
+{
+    switch (policy) {
+    case _WKSOAuthorizationLoadPolicyAllow:
+        return SOAuthorizationLoadPolicy::Allow;
+    case _WKSOAuthorizationLoadPolicyIgnore:
+        return SOAuthorizationLoadPolicy::Ignore;
+    }
+    ASSERT_NOT_REACHED();
+    return SOAuthorizationLoadPolicy::Allow;
+}
+
+static _WKSOAuthorizationLoadPolicy wkSOAuthorizationLoadPolicy(SOAuthorizationLoadPolicy policy)
+{
+    switch (policy) {
+    case SOAuthorizationLoadPolicy::Allow:
+        return _WKSOAuthorizationLoadPolicyAllow;
+    case SOAuthorizationLoadPolicy::Ignore:
+        return _WKSOAuthorizationLoadPolicyIgnore;
+    }
+    ASSERT_NOT_REACHED();
+    return _WKSOAuthorizationLoadPolicyAllow;
+}
+
+void NavigationState::NavigationClient::decidePolicyForSOAuthorizationLoad(WebPageProxy&, SOAuthorizationLoadPolicy currentSOAuthorizationLoadPolicy, const String& extension, CompletionHandler<void(SOAuthorizationLoadPolicy)>&& completionHandler)
+{
+    if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForSOAuthorizationLoadWithCurrentPolicyForExtensionCompletionHandler) {
+        completionHandler(currentSOAuthorizationLoadPolicy);
+        return;
+    }
+
+    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+    if (!navigationDelegate) {
+        completionHandler(currentSOAuthorizationLoadPolicy);
+        return;
+    }
+
+    auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(_webView:decidePolicyForSOAuthorizationLoadWithCurrentPolicy:forExtension:completionHandler:));
+    [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView decidePolicyForSOAuthorizationLoadWithCurrentPolicy:wkSOAuthorizationLoadPolicy(currentSOAuthorizationLoadPolicy) forExtension:extension completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](_WKSOAuthorizationLoadPolicy policy) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        completionHandler(soAuthorizationLoadPolicy(policy));
+    }).get()];
 }
 #endif
 

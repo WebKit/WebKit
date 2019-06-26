@@ -32,6 +32,7 @@
 #import "APINavigation.h"
 #import "APINavigationAction.h"
 #import "APIUIClient.h"
+#import "SOAuthorizationLoadPolicy.h"
 #import "WKUIDelegate.h"
 #import "WebPageProxy.h"
 #import "WebSiteDataStore.h"
@@ -102,24 +103,35 @@ void SOAuthorizationSession::start()
 {
     ASSERT((m_state == State::Idle || m_state == State::Waiting) && m_page && m_navigationAction);
     m_state = State::Active;
-    if (!m_soAuthorization)
-        return;
 
-    // FIXME<rdar://problem/48909336>: Replace the below with AppSSO constants.
-    auto initiatorOrigin = emptyString();
-    if (m_navigationAction->sourceFrame())
-        initiatorOrigin = m_navigationAction->sourceFrame()->securityOrigin().securityOrigin().toString();
-    if (m_action == InitiatingAction::SubFrame && m_page->mainFrame())
-        initiatorOrigin = WebCore::SecurityOrigin::create(m_page->mainFrame()->url())->toString();
-    NSDictionary *authorizationOptions = @{
-        SOAuthorizationOptionUserActionInitiated: @(m_navigationAction->isProcessingUserGesture()),
-        @"initiatorOrigin": (NSString *)initiatorOrigin,
-        @"initiatingAction": @(static_cast<NSInteger>(m_action))
-    };
-    [m_soAuthorization setAuthorizationOptions:authorizationOptions];
+    m_page->decidePolicyForSOAuthorizationLoad(emptyString(), [this, weakThis = makeWeakPtr(*this)] (SOAuthorizationLoadPolicy policy) {
+        if (!weakThis)
+            return;
 
-    auto *nsRequest = m_navigationAction->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
-    [m_soAuthorization beginAuthorizationWithURL:nsRequest.URL httpHeaders:nsRequest.allHTTPHeaderFields httpBody:nsRequest.HTTPBody];
+        if (policy == SOAuthorizationLoadPolicy::Ignore) {
+            fallBackToWebPath();
+            return;
+        }
+
+        if (!m_soAuthorization || !m_page || !m_navigationAction)
+            return;
+
+        // FIXME: <rdar://problem/48909336> Replace the below with AppSSO constants.
+        auto initiatorOrigin = emptyString();
+        if (m_navigationAction->sourceFrame())
+            initiatorOrigin = m_navigationAction->sourceFrame()->securityOrigin().securityOrigin().toString();
+        if (m_action == InitiatingAction::SubFrame && m_page->mainFrame())
+            initiatorOrigin = WebCore::SecurityOrigin::create(m_page->mainFrame()->url())->toString();
+        NSDictionary *authorizationOptions = @{
+            SOAuthorizationOptionUserActionInitiated: @(m_navigationAction->isProcessingUserGesture()),
+            @"initiatorOrigin": (NSString *)initiatorOrigin,
+            @"initiatingAction": @(static_cast<NSInteger>(m_action))
+        };
+        [m_soAuthorization setAuthorizationOptions:authorizationOptions];
+
+        auto *nsRequest = m_navigationAction->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
+        [m_soAuthorization beginAuthorizationWithURL:nsRequest.URL httpHeaders:nsRequest.allHTTPHeaderFields httpBody:nsRequest.HTTPBody];
+    });
 }
 
 void SOAuthorizationSession::fallBackToWebPath()
