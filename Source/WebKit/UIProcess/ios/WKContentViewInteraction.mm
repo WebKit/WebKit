@@ -6189,11 +6189,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         completion(nil, nil);
 }
 
-- (UIView *)containerViewForTargetedPreviews
-{
-    return self.unscaledView ?: self;
-}
-
 #if ENABLE(DRAG_SUPPORT)
 
 static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy)
@@ -6426,7 +6421,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     [_unselectedContentSnapshot setFrame:data->contentImageWithoutSelectionRectInRootViewCoordinates];
 
     [self insertSubview:_unselectedContentSnapshot.get() belowSubview:_visibleContentViewSnapshot.get()];
-    _dragDropInteractionState.deliverDelayedDropPreview(self, self.containerViewForTargetedPreviews, data.value());
+    _dragDropInteractionState.deliverDelayedDropPreview(self, self.unscaledView, data.value());
 }
 
 - (void)_didPerformDragOperation:(BOOL)handled
@@ -6772,7 +6767,7 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
         if (overriddenPreview)
             return overriddenPreview;
     }
-    return _dragDropInteractionState.previewForDragItem(item, self, self.containerViewForTargetedPreviews);
+    return _dragDropInteractionState.previewForDragItem(item, self, self.unscaledView);
 }
 
 - (void)dragInteraction:(UIDragInteraction *)interaction willAnimateLiftWithAnimator:(id <UIDragAnimating>)animator session:(id <UIDragSession>)session
@@ -7870,7 +7865,7 @@ static RetainPtr<UIImage> uiImageForImage(WebCore::Image* image)
 // FIXME: This should be merged with createTargetedDragPreview in DragDropInteractionState.
 static RetainPtr<UITargetedPreview> createTargetedPreview(UIImage *image, UIView *rootView, UIView *previewContainer, const WebCore::FloatRect& frameInRootViewCoordinates, const Vector<WebCore::FloatRect>& clippingRectsInFrameCoordinates, UIColor *backgroundColor)
 {
-    if (frameInRootViewCoordinates.isEmpty() || !image || !previewContainer.window)
+    if (frameInRootViewCoordinates.isEmpty() || !image)
         return nil;
 
     WebCore::FloatRect frameInContainerCoordinates = [rootView convertRect:frameInRootViewCoordinates toView:previewContainer];
@@ -7926,15 +7921,15 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     if (_positionInformation.isLink && _positionInformation.linkIndicator.contentImage) {
         auto indicator = _positionInformation.linkIndicator;
         auto textIndicatorImage = uiImageForImage(indicator.contentImage.get());
-        targetedPreview = createTargetedPreview(textIndicatorImage.get(), self, self.containerViewForTargetedPreviews, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, [UIColor colorWithCGColor:cachedCGColor(indicator.estimatedBackgroundColor)]);
+        targetedPreview = createTargetedPreview(textIndicatorImage.get(), self, self.unscaledView, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, [UIColor colorWithCGColor:cachedCGColor(indicator.estimatedBackgroundColor)]);
     } else if ((_positionInformation.isAttachment || _positionInformation.isImage) && _positionInformation.image) {
         auto cgImage = _positionInformation.image->makeCGImageCopy();
         auto image = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
-        targetedPreview = createTargetedPreview(image.get(), self, self.containerViewForTargetedPreviews, _positionInformation.bounds, { }, nil);
+        targetedPreview = createTargetedPreview(image.get(), self, self.unscaledView, _positionInformation.bounds, { }, nil);
     }
 
     if (!targetedPreview)
-        targetedPreview = createFallbackTargetedPreview(self, self.containerViewForTargetedPreviews, _positionInformation.bounds);
+        targetedPreview = createFallbackTargetedPreview(self, self.unscaledView, _positionInformation.bounds);
 
     _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
     return _contextMenuInteractionTargetedPreview.get();
