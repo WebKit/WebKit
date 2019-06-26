@@ -223,6 +223,9 @@ public:
 
     static void consoleCount(Page&, JSC::ExecState*, Ref<Inspector::ScriptArguments>&&);
     static void consoleCount(WorkerGlobalScope&, JSC::ExecState*, Ref<Inspector::ScriptArguments>&&);
+    static void consoleCountReset(Page&, JSC::ExecState*, Ref<Inspector::ScriptArguments>&&);
+    static void consoleCountReset(WorkerGlobalScope&, JSC::ExecState*, Ref<Inspector::ScriptArguments>&&);
+
     static void takeHeapSnapshot(Frame&, const String& title);
     static void startConsoleTiming(Frame&, const String& title);
     static void startConsoleTiming(WorkerGlobalScope&, const String& title);
@@ -403,6 +406,7 @@ private:
     static void addMessageToConsoleImpl(InstrumentingAgents&, std::unique_ptr<Inspector::ConsoleMessage>);
 
     static void consoleCountImpl(InstrumentingAgents&, JSC::ExecState*, Ref<Inspector::ScriptArguments>&&);
+    static void consoleCountResetImpl(InstrumentingAgents&, JSC::ExecState*, Ref<Inspector::ScriptArguments>&&);
     static void takeHeapSnapshotImpl(InstrumentingAgents&, const String& title);
     static void startConsoleTimingImpl(InstrumentingAgents&, Frame&, const String& title);
     static void startConsoleTimingImpl(InstrumentingAgents&, const String& title);
@@ -1391,6 +1395,16 @@ inline void InspectorInstrumentation::consoleCount(Page& page, JSC::ExecState* s
 inline void InspectorInstrumentation::consoleCount(WorkerGlobalScope& workerGlobalScope, JSC::ExecState* state, Ref<Inspector::ScriptArguments>&& arguments)
 {
     consoleCountImpl(instrumentingAgentsForWorkerGlobalScope(workerGlobalScope), state, WTFMove(arguments));
+}
+
+inline void InspectorInstrumentation::consoleCountReset(Page& page, JSC::ExecState* state, Ref<Inspector::ScriptArguments>&& arguments)
+{
+    consoleCountResetImpl(instrumentingAgentsForPage(page), state, WTFMove(arguments));
+}
+
+inline void InspectorInstrumentation::consoleCountReset(WorkerGlobalScope& workerGlobalScope, JSC::ExecState* state, Ref<Inspector::ScriptArguments>&& arguments)
+{
+    consoleCountResetImpl(instrumentingAgentsForWorkerGlobalScope(workerGlobalScope), state, WTFMove(arguments));
 }
 
 inline void InspectorInstrumentation::takeHeapSnapshot(Frame& frame, const String& title)

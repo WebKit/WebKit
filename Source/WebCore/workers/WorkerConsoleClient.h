@@ -44,6 +44,7 @@ public:
 protected:
     void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
     void count(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
+    void countReset(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
     void profile(JSC::ExecState*, const String& title) override;
     void profileEnd(JSC::ExecState*, const String& title) override;
     void takeHeapSnapshot(JSC::ExecState*, const String& title) override;

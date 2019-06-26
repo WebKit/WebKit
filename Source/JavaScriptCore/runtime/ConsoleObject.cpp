@@ -48,6 +48,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTable(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTrace(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncAssert(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncCount(ExecState*);
+static EncodedJSValue JSC_HOST_CALL consoleProtoFuncCountReset(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncProfile(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncProfileEnd(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTakeHeapSnapshot(ExecState*);
@@ -90,6 +91,7 @@ void ConsoleObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("trace", consoleProtoFuncTrace, static_cast<unsigned>(PropertyAttribute::None), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("assert", consoleProtoFuncAssert, static_cast<unsigned>(PropertyAttribute::None), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->count, consoleProtoFuncCount, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("countReset", consoleProtoFuncCountReset, static_cast<unsigned>(PropertyAttribute::None), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("profile", consoleProtoFuncProfile, static_cast<unsigned>(PropertyAttribute::None), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("profileEnd", consoleProtoFuncProfileEnd, static_cast<unsigned>(PropertyAttribute::None), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("time", consoleProtoFuncTime, static_cast<unsigned>(PropertyAttribute::None), 0);
@@ -222,6 +224,16 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncCount(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     client->count(exec, Inspector::createScriptArguments(exec, 0));
+    return JSValue::encode(jsUndefined());
+}
+
+static EncodedJSValue JSC_HOST_CALL consoleProtoFuncCountReset(ExecState* exec)
+{
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
+    if (!client)
+        return JSValue::encode(jsUndefined());
+
+    client->countReset(exec, Inspector::createScriptArguments(exec, 0));
     return JSValue::encode(jsUndefined());
 }
 

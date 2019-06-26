@@ -1,8 +1,8 @@
-Tests for the console.count API.
+Tests for the console.count and console.countReset APIs.
 
 
 == Running test suite: console.count
--- Running test case: NoArguments
+-- Running test case: console.count.NoArguments
 Global: 1
 Global: 2
 Global: 3
@@ -20,7 +20,7 @@ Global: 14
 Global: 15
 Global: 16
 
--- Running test case: WithLabel
+-- Running test case: console.count.WithLabel
 alpha: 1
 alpha: 2
 beta: 1
@@ -41,4 +41,22 @@ alpha: 13
 alpha: 14
 beta: 5
 alpha: 15
+
+-- Running test case: console.countReset.NoCounter
+PASS: Should produce a warning console message.
+Counter "missing-label-1" does not exist
+PASS: Should produce a warning console message.
+Counter "missing-label-2" does not exist
+
+-- Running test case: console.countReset.Basic
+reset-label: 1
+reset-label: 2
+reset-label: 3
+reset-label: 4
+reset-label: 5
+reset-label: 6
+reset-label: 1
+reset-label: 2
+reset-label: 1
+reset-label: 2
 

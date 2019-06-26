@@ -853,11 +853,14 @@ void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents& inst
 
 void InspectorInstrumentation::consoleCountImpl(InstrumentingAgents& instrumentingAgents, JSC::ExecState* state, Ref<ScriptArguments>&& arguments)
 {
-    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
-        return;
-
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
         consoleAgent->count(state, WTFMove(arguments));
+}
+
+void InspectorInstrumentation::consoleCountResetImpl(InstrumentingAgents& instrumentingAgents, JSC::ExecState* state, Ref<ScriptArguments>&& arguments)
+{
+    if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
+        consoleAgent->countReset(state, WTFMove(arguments));
 }
 
 void InspectorInstrumentation::takeHeapSnapshotImpl(InstrumentingAgents& instrumentingAgents, const String& title)

@@ -1,3 +1,23 @@
+2019-06-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Implement console.countReset
+        https://bugs.webkit.org/show_bug.cgi?id=199200
+
+        Reviewed by Devin Rousso.
+
+        * inspector/JSGlobalObjectConsoleClient.cpp:
+        (Inspector::JSGlobalObjectConsoleClient::countReset):
+        * inspector/JSGlobalObjectConsoleClient.h:
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::getCounterLabel):
+        (Inspector::InspectorConsoleAgent::count):
+        (Inspector::InspectorConsoleAgent::countReset):
+        * inspector/agents/InspectorConsoleAgent.h:
+        * runtime/ConsoleClient.h:
+        * runtime/ConsoleObject.cpp:
+        (JSC::ConsoleObject::finishCreation):
+        (JSC::consoleProtoFuncCountReset):
+
 2019-06-26  Keith Miller  <keith_miller@apple.com>
 
         remove unneeded didBecomePrototype() calls

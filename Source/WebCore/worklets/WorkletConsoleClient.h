@@ -46,6 +46,7 @@ public:
 private:
     void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
     void count(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
+    void countReset(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
     void profile(JSC::ExecState*, const String& title) final;
     void profileEnd(JSC::ExecState*, const String& title) final;
     void takeHeapSnapshot(JSC::ExecState*, const String& title) final;

@@ -208,15 +208,8 @@ void InspectorConsoleAgent::takeHeapSnapshot(const String& title)
     m_frontendDispatcher->heapSnapshot(timestamp, snapshotData, title.isEmpty() ? nullptr : &title);
 }
 
-void InspectorConsoleAgent::count(JSC::ExecState* state, Ref<ScriptArguments>&& arguments)
+void InspectorConsoleAgent::getCounterLabel(Ref<ScriptArguments>&& arguments, String& title, String& identifier)
 {
-    if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
-        return;
-
-    Ref<ScriptCallStack> callStack = createScriptCallStackForConsole(state);
-
-    String title;
-    String identifier;
     if (!arguments->argumentCount()) {
         // '@' prefix for engine generated labels.
         title = "Global"_s;
@@ -226,6 +219,16 @@ void InspectorConsoleAgent::count(JSC::ExecState* state, Ref<ScriptArguments>&& 
         arguments->getFirstArgumentAsString(title);
         identifier = makeString('#', title);
     }
+}
+
+void InspectorConsoleAgent::count(JSC::ExecState* state, Ref<ScriptArguments>&& arguments)
+{
+    if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
+        return;
+
+    String title;
+    String identifier;
+    getCounterLabel(WTFMove(arguments), title, identifier);
 
     auto result = m_counts.add(identifier, 1);
     if (!result.isNewEntry)
@@ -234,7 +237,30 @@ void InspectorConsoleAgent::count(JSC::ExecState* state, Ref<ScriptArguments>&& 
     // FIXME: Web Inspector should have a better UI for counters, but for now we just log an updated counter value.
 
     String message = makeString(title, ": ", result.iterator->value);
+    Ref<ScriptCallStack> callStack = createScriptCallStackForConsole(state);
     addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Debug, message, WTFMove(callStack)));
+}
+
+void InspectorConsoleAgent::countReset(JSC::ExecState*, Ref<ScriptArguments>&& arguments)
+{
+    if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
+        return;
+
+    String title;
+    String identifier;
+    getCounterLabel(WTFMove(arguments), title, identifier);
+
+    auto it = m_counts.find(identifier);
+    if (it == m_counts.end()) {
+        // FIXME: Send an enum to the frontend for localization?
+        String warning = makeString("Counter \"", title, "\" does not exist");
+        addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Warning, warning));
+        return;
+    }
+
+    it->value = 0;
+
+    // FIXME: Web Inspector should have a better UI for counters, but for now we just log an updated counter value.
 }
 
 static bool isGroupMessage(MessageType type)

@@ -175,6 +175,11 @@ void PageConsoleClient::count(JSC::ExecState* exec, Ref<ScriptArguments>&& argum
     InspectorInstrumentation::consoleCount(m_page, exec, WTFMove(arguments));
 }
 
+void PageConsoleClient::countReset(JSC::ExecState* exec, Ref<ScriptArguments>&& arguments)
+{
+    InspectorInstrumentation::consoleCountReset(m_page, exec, WTFMove(arguments));
+}
+
 void PageConsoleClient::profile(JSC::ExecState* exec, const String& title)
 {
     // FIXME: <https://webkit.org/b/153499> Web Inspector: console.profile should use the new Sampling Profiler

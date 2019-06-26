@@ -75,6 +75,11 @@ void JSGlobalObjectConsoleClient::count(ExecState* exec, Ref<ScriptArguments>&& 
     m_consoleAgent->count(exec, WTFMove(arguments));
 }
 
+void JSGlobalObjectConsoleClient::countReset(ExecState* exec, Ref<ScriptArguments>&& arguments)
+{
+    m_consoleAgent->countReset(exec, WTFMove(arguments));
+}
+
 void JSGlobalObjectConsoleClient::profile(JSC::ExecState*, const String& title)
 {
     if (!m_consoleAgent->enabled())

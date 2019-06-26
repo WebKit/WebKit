@@ -56,6 +56,7 @@ public:
 
     virtual void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) = 0;
     virtual void count(ExecState*, Ref<Inspector::ScriptArguments>&&) = 0;
+    virtual void countReset(ExecState*, Ref<Inspector::ScriptArguments>&&) = 0;
     virtual void profile(ExecState*, const String& title) = 0;
     virtual void profileEnd(ExecState*, const String& title) = 0;
     virtual void takeHeapSnapshot(ExecState*, const String& title) = 0;
