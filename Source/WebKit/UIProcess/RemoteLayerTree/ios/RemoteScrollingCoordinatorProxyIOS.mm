@@ -159,10 +159,9 @@ void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const
         } else if (is<ScrollingTreeOverflowScrollProxyNode>(*node)) {
             auto& scrollProxyNode = downcast<ScrollingTreeOverflowScrollProxyNode>(*node);
             auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(m_scrollingTree->nodeForID(scrollProxyNode.overflowScrollingNodeID()));
-            if (!overflowNode) {
-                ASSERT_NOT_REACHED();
+            if (!overflowNode)
                 continue;
-            }
+
             scrollContainerLayerIDs.append(RemoteLayerTreeNode::layerID(overflowNode->scrollContainerLayer()));
             layerNode = RemoteLayerTreeNode::forCALayer(scrollProxyNode.layer());
             behavior = ScrollPositioningBehavior::Moves;

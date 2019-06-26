@@ -1,3 +1,17 @@
+2019-06-25  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2 Debug] scrollingcoordinator/scrolling-tree/scroller-with-negative-z-child.html asserts
+        https://bugs.webkit.org/show_bug.cgi?id=199218
+
+        Reviewed by Zalan Bujtas.
+
+        Followup to r246766; don't assert in the UI process if a ScrollingTreeOverflowScrollProxyNode
+        doesn't have a related overflow node; this is currently expected behavior with negative z-order
+        children of a scroller.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations):
+
 2019-06-25  Daniel Bates  <dabates@apple.com>
 
         Non-editable text selections should be modifiable with hardware keyboard
