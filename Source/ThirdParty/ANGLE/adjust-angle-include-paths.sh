@@ -28,7 +28,8 @@ else
 fi
 
 for i in $output_dir/*.h ; do
-    sed -e '
+    if [ ! -f $output_dir/angle.timestamp ] || [ $i -nt $output_dir/angle.timestamp ] ; then
+        sed -e '
 s/^#include <EGL\/\(.*\)>/#include <ANGLE\/\1>/
 s/^#include <GLES2\/\(.*\)>/#include <ANGLE\/\1>/
 s/^#include <GLES3\/\(.*\)>/#include <ANGLE\/\1>/
@@ -36,4 +37,8 @@ s/^#include <KHR\/\(.*\)>/#include <ANGLE\/\1>/
 s/^#include <export.h>/#include <ANGLE\/export.h>/
 s/^#include "\(eglext_angle\|gl2ext_angle\|ShaderVars\).h"/#include <ANGLE\/\1.h>/
 ' -i "" $i
+        echo Postprocessed ANGLE header $i
+    fi
 done
+
+date > $output_dir/angle.timestamp
