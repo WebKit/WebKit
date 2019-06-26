@@ -6,5 +6,5 @@ When a captured pointer is implicitly released after a click, the boundary event
 
 Click on the black box with mouse and do not move the mouse after or during the click.
 
-FAIL mouse Event sequence at implicit release on click assert_equals: expected "pointerout@target, pointerleave@target, pointerover@capture-target, pointerenter@capture-target, gotpointercapture@capture-target, pointerup@capture-target, lostpointercapture@capture-target, pointerout@capture-target, pointerleave@capture-target, pointerover@target, pointerenter@target" but got "gotpointercapture@capture-target, pointerup@capture-target, lostpointercapture@capture-target, pointermove@target"
+FAIL mouse Event sequence at implicit release on click assert_equals: expected "pointerout@target, pointerleave@target, pointerover@capture-target, pointerenter@capture-target, gotpointercapture@capture-target, pointerup@capture-target, lostpointercapture@capture-target, pointerout@capture-target, pointerleave@capture-target, pointerover@target, pointerenter@target" but got "pointerout@target, pointerleave@target, pointerover@capture-target, pointerenter@capture-target, gotpointercapture@capture-target, pointerup@capture-target, lostpointercapture@capture-target, pointerout@capture-target, pointerleave@capture-target, pointerover@target, pointerenter@target, pointermove@target"
 

@@ -1,3 +1,55 @@
+2019-06-26  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover
+        https://bugs.webkit.org/show_bug.cgi?id=198999
+        <rdar://problem/51979477>
+
+        Reviewed by Dean Jackson.
+
+        Up until now, we would not account for pointer capture (see ​https://w3c.github.io/pointerevents/#pointer-capture) when dispatching
+        mouse boundary events (mouseover, mouseout, mouseenter, mouseleave) and their counterpart pointer events. We would also not account
+        for it when updating :hover styles.
+
+        Now, when pointer capture changes for an element, we call setCapturingMouseEventsElement() on the EventHandler such that the element
+        that would naturally hit-test is overridden by the pointer capture element when identifying which target to use for the dispatch of
+        boundary mouse events. Additionally, when calling Document::prepareMouseEvent(), we also use the pointer capture element to
+        pass down to Document::updateHoverActiveState() such that :hover styles are applied to the correct element.
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareMouseEvent): When a new event is going to be dispatched, we must run the Process Pending Capture Element
+        steps as mandated by the Pointer Events spec. Calling this will dispatch the appropriate pointer capture change events and also
+        required boundary events since EventHandler::setCapturingMouseEventsElement() calls into EventHandler::updateMouseEventTargetNode().
+        Since this may update the capturing mouse events element, we ensure that we call updateHoverActiveState() with a flag that indicates that.
+        Finally, we use the capturing mouse events element instead of the hit-testing element to pass to updateHoverActiveState() to ensure
+        that is has :hover styles applied.
+        (WebCore::Document::updateHoverActiveState): Account for the new CaptureChange flag to force the invalidation of the :hover and :active
+        elements chain at all times when the capturing mouse events element changed.
+        * dom/Document.h:
+        * dom/PointerEvent.h: Update PointerEvent::createForPointerCapture() to take specific parameters rather than a single PointerEvent to
+        set the pointerId, isPrimary and pointerType properties of the generated event. This is required to call processPendingPointerCapture()
+        outside of PointerEvent dispatch logic since we now call it from Document::prepareMouseEvent() where we haven't yet generated such an
+        event.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::pointerCaptureElementDidChange): When a new pointer capture element is set, call updateMouseEventTargetNode()
+        to ensure that boundary events are fired to indicate the pointer capture state change.
+        (WebCore::EventHandler::prepareMouseEvent): Keep track of the last PlatformMouseEvent used to prepare a mouse event so that we can use
+        it when setCapturingMouseEventsElement() is called.
+        * page/EventHandler.h:
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::pointerCaptureElement): Since Document::prepareMouseEvent() needs to know the current pointer capture
+        element, add a new public method that indicates the pointer capture element if that element is contained in the provided document. We need
+        to provide the document since PointerCaptureController is owned by the Page and may manage several documents.
+        (WebCore::PointerCaptureController::dispatchEvent): Only run the Process Pending Capture Element steps when dealing with a touch or pen
+        event since those steps are already ran for mouse events in Document::prepareMouseEvent(). Additionally, since the element target is already
+        set to be the pointer capture element with the changes made to processPendingPointerCapture(), and because on iOS pointer capture is always
+        active, we can remove the code that would retarget the event to the pointer capture element.
+        (WebCore::PointerCaptureController::pointerEventWasDispatched):
+        (WebCore::PointerCaptureController::cancelPointer):
+        (WebCore::PointerCaptureController::processPendingPointerCapture): We now call into EventHandler::setCapturingMouseEventsElement() when the
+        capture target element changes. We must be careful to call this method prior to dispatching the "gotpointercapture" event and after dispatching
+        the "lostpointercapture" event so that boundary events are fired at the right time.
+        * page/PointerCaptureController.h:
+
 2019-06-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] incorrect font height for 'Google Sans Display' font
