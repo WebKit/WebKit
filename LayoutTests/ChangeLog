@@ -1,3 +1,12 @@
+2019-06-26  Russell Epstein  <russell_e@apple.com>
+
+        Layout Test imported/mozilla/svg/text/selectSubString-2.svg is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=199196
+
+        Unreviewed Test Gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2019-06-26  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Dispatch synthetic mouse event asynchronously in completePendingSyntheticClickForContentChangeObserver
