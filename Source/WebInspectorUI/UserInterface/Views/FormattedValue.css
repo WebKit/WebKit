@@ -65,7 +65,8 @@
 .formatted-node > .tree-outline.dom {
     display: block !important;
     padding: 0;
-    margin-left: -2px;
+
+    --item-pseudo-class-indicator-start: -2px;
 }
 
 .formatted-node > .tree-outline.dom li {

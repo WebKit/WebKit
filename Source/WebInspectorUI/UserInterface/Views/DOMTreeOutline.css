@@ -38,7 +38,7 @@
     background-color: transparent !important;
     color: var(--text-color);
 
-    --item-pseudo-class-enabled-selection-before-start: 2px;
+    --item-pseudo-class-indicator-start: 2px;
 
     --sublist-margin-start: 4px;
     --sublist-padding-start: 1px;
@@ -131,23 +131,27 @@ body[dir=rtl] .tree-outline.dom li:matches(.hovered, .selected) + ol.children.ex
     -webkit-margin-end: var(--item-padding-end);
 }
 
-.tree-outline.dom li.pseudo-class-enabled > .selection-area::before {
+.tree-outline.dom li .pseudo-class-indicator {
     display: inline-block;
     position: absolute;
-    top: 4px;
     width: 5px;
     height: 5px;
+    margin-top: 4px;
     content: "";
     background-color: var(--glyph-color-active);
     border-radius: 50%;
 }
 
-body[dir=ltr] .tree-outline.dom li.pseudo-class-enabled > .selection-area::before {
-    left: var(--item-pseudo-class-enabled-selection-before-start);
+body[dir=ltr] .tree-outline.dom li .pseudo-class-indicator {
+    left: var(--item-pseudo-class-indicator-start);
 }
 
-body[dir=rtl] .tree-outline.dom li.pseudo-class-enabled > .selection-area::before {
-    right: var(--item-pseudo-class-enabled-selection-before-start);
+body[dir=rtl] .tree-outline.dom li .pseudo-class-indicator {
+    right: var(--item-pseudo-class-indicator-start);
+}
+
+.tree-outline.dom:focus li.selected .pseudo-class-indicator {
+    background-color: var(--selected-foreground-color);
 }
 
 .tree-outline.dom.single-node li {
@@ -156,10 +160,6 @@ body[dir=rtl] .tree-outline.dom li.pseudo-class-enabled > .selection-area::befor
 
 .tree-outline.dom:focus li.selected {
     color: white;
-}
-
-.tree-outline.dom:focus li.selected.pseudo-class-enabled > .selection-area::before {
-    background-color: hsl(0, 100%, 100%);
 }
 
 .tree-outline.dom:focus li.selected * {

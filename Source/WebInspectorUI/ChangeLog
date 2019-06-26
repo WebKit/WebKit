@@ -1,3 +1,36 @@
+2019-06-26  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION: Elements: the forced pseudo-class indicator isn't visible when hovering
+        https://bugs.webkit.org/show_bug.cgi?id=199166
+
+        Reviewed by Matt Baker.
+
+        Make the pseudo-class indicator into its own element instead of being a `::before`.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement):
+        (WI.DOMTreeElement.prototype.updateSelectionArea):
+        (WI.DOMTreeElement.prototype.updateTitle):
+        (WI.DOMTreeElement.prototype._updatePseudoClassIndicator): Added.
+        (WI.DOMTreeElement.prototype.get pseudoClassesEnabled): Deleted.
+        (WI.DOMTreeElement.prototype._nodePseudoClassesDidChange): Deleted.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom):
+        (.tree-outline.dom li .pseudo-class-indicator): Added.
+        (body[dir=ltr] .tree-outline.dom li .pseudo-class-indicator): Added.
+        (body[dir=rtl] .tree-outline.dom li .pseudo-class-indicator): Added.
+        (.tree-outline.dom:focus li.selected .pseudo-class-indicator): Added.
+        (.tree-outline.dom li.pseudo-class-enabled > .selection-area::before): Deleted.
+        (body[dir=ltr] .tree-outline.dom li.pseudo-class-enabled > .selection-area::before): Deleted.
+        (body[dir=rtl] .tree-outline.dom li.pseudo-class-enabled > .selection-area::before): Deleted.
+        (.tree-outline.dom:focus li.selected.pseudo-class-enabled > .selection-area::before): Deleted.
+
+        * UserInterface/Views/FormattedValue.css:
+        (.formatted-node > .tree-outline.dom):
+        Adjust the indent of any `DOMTreeOutline` so there's more room for the pseudo-class
+        indicator, such as in the Console.
+
 2019-06-25  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Elements: show shadow DOM by default

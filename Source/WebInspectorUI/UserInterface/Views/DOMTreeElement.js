@@ -52,7 +52,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         this._recentlyModifiedAttributes = new Map;
         this._closeTagTreeElement = null;
 
-        node.addEventListener(WI.DOMNode.Event.EnabledPseudoClassesChanged, this._nodePseudoClassesDidChange, this);
+        node.addEventListener(WI.DOMNode.Event.EnabledPseudoClassesChanged, this._updatePseudoClassIndicator, this);
 
         this._ignoreSingleTextChild = false;
         this._forceUpdateTitle = false;
@@ -393,7 +393,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         // If there's no reason to have a selection area, remove the DOM element.
         let indicatesTreeOutlineState = this.treeOutline && (this.treeOutline.dragOverTreeElement === this || this.selected || this._animatingHighlight);
-        if (!this.hovered && !this.pseudoClassesEnabled && !indicatesTreeOutlineState) {
+        if (!this.hovered && !indicatesTreeOutlineState) {
             if (this._selectionElement) {
                 this._selectionElement.remove();
                 this._selectionElement = null;
@@ -1292,6 +1292,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         this._selectionElement = null;
         this.updateSelectionArea();
         this._highlightSearchResults();
+        this._updatePseudoClassIndicator();
         this._updateBreakpointStatus();
     }
 
@@ -1840,24 +1841,29 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         element.classList.add("node-state-changed");
     }
 
-    get pseudoClassesEnabled()
-    {
-        return !!this.representedObject.enabledPseudoClasses.length;
-    }
-
     get isNodeHidden()
     {
         let classes = this.representedObject.getAttribute("class");
         return classes && classes.includes(WI.DOMTreeElement.HideElementStyleSheetIdOrClassName);
     }
 
-    _nodePseudoClassesDidChange(event)
+    _updatePseudoClassIndicator()
     {
-        if (this._elementCloseTag)
+        if (!this.listItemElement || this._elementCloseTag)
             return;
 
-        this.updateSelectionArea();
-        this.listItemElement.classList.toggle("pseudo-class-enabled", !!this.representedObject.enabledPseudoClasses.length);
+        if (this.representedObject.enabledPseudoClasses.length) {
+            if (!this._pseudoClassIndicatorElement) {
+                this._pseudoClassIndicatorElement = document.createElement("div");
+                this._pseudoClassIndicatorElement.classList.add("pseudo-class-indicator");
+            }
+            this.listItemElement.insertBefore(this._pseudoClassIndicatorElement, this.listItemElement.firstChild);
+        } else {
+            if (this._pseudoClassIndicatorElement) {
+                this._pseudoClassIndicatorElement.remove();
+                this._pseudoClassIndicatorElement = null;
+            }
+        }
     }
 
     handleEvent(event)
