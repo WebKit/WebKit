@@ -104,6 +104,7 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 @property (nonatomic, copy) NSArray *(^convertItemProvidersBlock)(NSItemProvider *, NSArray *, NSDictionary *);
 @property (nonatomic, copy) NSArray *(^overridePerformDropBlock)(id <UIDropSession>);
 @property (nonatomic, copy) void(^dropCompletionBlock)(BOOL, NSArray *);
+@property (nonatomic, copy) dispatch_block_t sessionWillBeginBlock;
 @property (nonatomic, copy) UIDropOperation(^overrideDragUpdateBlock)(UIDropOperation, id <UIDropSession>);
 
 @property (nonatomic, readonly) NSArray *sourceItemProviders;
@@ -111,6 +112,7 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 @property (nonatomic, readonly) CGRect finalSelectionStartRect;
 @property (nonatomic, readonly) CGRect lastKnownDragCaretRect;
 @property (nonatomic, readonly) NSArray<UITargetedDragPreview *> *liftPreviews;
+@property (nonatomic, readonly) NSArray<UITargetedDragPreview *> *cancellationPreviews;
 @property (nonatomic, readonly) NSArray *dropPreviews;
 @property (nonatomic, readonly) NSArray *delayedDropPreviews;
 
