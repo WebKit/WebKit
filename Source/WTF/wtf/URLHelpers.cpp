@@ -729,9 +729,7 @@ String mapHostNames(const String& string, const Optional<URLDecodeFunction>& dec
     // Do the mapping.
     String result = string;
     while (!hostNameRanges->isEmpty()) {
-        unsigned location, length;
-        String mappedHostName;
-        std::tie(location, length, mappedHostName) = hostNameRanges->takeLast();
+        auto [location, length, mappedHostName] = hostNameRanges->takeLast();
         result = result.replace(location, length, mappedHostName);
     }
     return result;

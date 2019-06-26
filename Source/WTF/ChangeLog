@@ -1,3 +1,15 @@
+2019-06-25  Sam Weinig  <weinig@apple.com>
+
+        Experiment with simple structured bindings use
+        https://bugs.webkit.org/show_bug.cgi?id=198905
+
+        Reviewed by Darin Adler.
+
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::mapHostNames):
+        Simplify code using c++ structured bindings (https://en.cppreference.com/w/cpp/language/structured_binding)
+        to see if all the platforms will work with it.
+
 2019-06-25  Adam Barth  <abarth@webkit.org>
 
         [fuchsia] Update to newer zx_clock_get syscall
