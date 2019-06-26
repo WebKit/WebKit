@@ -1,3 +1,21 @@
+2019-06-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] incorrect font height for 'Google Sans Display' font
+        https://bugs.webkit.org/show_bug.cgi?id=198909
+
+        Reviewed by Frédéric Wang.
+
+        r191893 changed to use OS/2 typo metrics, but its calculation
+        wasn't correct. And, there is no reliable way to get OS/2 table by
+        using Windows API. Revert the part of r191893 change at the
+        moment.
+
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp:
+        (WebCore::Font::platformInit):
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::Font::initGDIFont):
+        Reverted the part of r191893 change, and added FIXME comments.
+
 2019-06-25  Timothy Hatcher  <timothy@apple.com>
 
         Clicking the up/down spin buttons for a number input increments/decrements by 2.

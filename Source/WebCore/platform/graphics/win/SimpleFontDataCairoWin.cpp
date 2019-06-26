@@ -67,23 +67,13 @@ void Font::platformInit()
 
     cairo_win32_scaled_font_select_font(scaledFont, dc);
 
-    OUTLINETEXTMETRIC metrics;
-    GetOutlineTextMetrics(dc, sizeof(metrics), &metrics);
-    TEXTMETRIC& textMetrics = metrics.otmTextMetrics;
-    float ascent, descent, lineGap;
-    // The Open Font Format describes the OS/2 USE_TYPO_METRICS flag as follows:
-    // "If set, it is strongly recommended to use OS/2.sTypoAscender - OS/2.sTypoDescender+ OS/2.sTypoLineGap as a value for default line spacing for this font."
-    const UINT useTypoMetricsMask = 1 << 7;
-    if (metrics.otmfsSelection & useTypoMetricsMask) {
-        ascent = metrics.otmAscent * metricsMultiplier;
-        descent = metrics.otmDescent * metricsMultiplier;
-        lineGap = metrics.otmLineGap * metricsMultiplier;
-    } else {
-        ascent = textMetrics.tmAscent * metricsMultiplier;
-        descent = textMetrics.tmDescent * metricsMultiplier;
-        lineGap = textMetrics.tmExternalLeading * metricsMultiplier;
-    }
-    float xHeight = ascent * 0.56f; // Best guess for xHeight for non-Truetype fonts.
+    // FIXME: Needs to take OS/2 USE_TYPO_METRICS flag into account
+    // https://bugs.webkit.org/show_bug.cgi?id=199186
+    TEXTMETRIC textMetrics;
+    GetTextMetrics(dc, &textMetrics);
+    float ascent = textMetrics.tmAscent * metricsMultiplier;
+    float descent = textMetrics.tmDescent * metricsMultiplier;
+    float lineGap = textMetrics.tmExternalLeading * metricsMultiplier;
 
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
@@ -94,7 +84,7 @@ void Font::platformInit()
 
     cairo_text_extents_t extents;
     cairo_scaled_font_text_extents(scaledFont, "x", &extents);
-    xHeight = -extents.y_bearing;
+    float xHeight = -extents.y_bearing;
 
     m_fontMetrics.setXHeight(xHeight);
     cairo_win32_scaled_font_done_font(scaledFont);

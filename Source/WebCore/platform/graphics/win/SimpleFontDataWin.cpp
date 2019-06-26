@@ -87,19 +87,11 @@ void Font::initGDIFont()
     OUTLINETEXTMETRIC metrics;
     GetOutlineTextMetrics(hdc, sizeof(metrics), &metrics);
     TEXTMETRIC& textMetrics = metrics.otmTextMetrics;
-    float ascent, descent, lineGap;
-    // The Open Font Format describes the OS/2 USE_TYPO_METRICS flag as follows:
-    // "If set, it is strongly recommended to use OS/2.sTypoAscender - OS/2.sTypoDescender+ OS/2.sTypoLineGap as a value for default line spacing for this font."
-    const UINT useTypoMetricsMask = 1 << 7;
-    if (metrics.otmfsSelection & useTypoMetricsMask) {
-        ascent = metrics.otmAscent;
-        descent = metrics.otmDescent;
-        lineGap = metrics.otmLineGap;
-    } else {
-        ascent = textMetrics.tmAscent;
-        descent = textMetrics.tmDescent;
-        lineGap = textMetrics.tmExternalLeading;
-    }
+    // FIXME: Needs to take OS/2 USE_TYPO_METRICS flag into account
+    // https://bugs.webkit.org/show_bug.cgi?id=199186
+    float ascent = textMetrics.tmAscent;
+    float descent = textMetrics.tmDescent;
+    float lineGap = textMetrics.tmExternalLeading;
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setLineGap(lineGap);
