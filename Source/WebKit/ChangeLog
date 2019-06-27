@@ -1,3 +1,11 @@
+2019-06-27  Saam Barati  <sbarati@apple.com>
+
+        Make WEBGPU enabled only on Mojave and later.
+
+        Rubber-stamped by Myles C. Maxfield.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-06-27  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Fix build non-unified builds after r246856

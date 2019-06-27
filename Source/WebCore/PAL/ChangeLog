@@ -1,3 +1,11 @@
+2019-06-27  Saam Barati  <sbarati@apple.com>
+
+        Make WEBGPU enabled only on Mojave and later.
+
+        Rubber-stamped by Myles C. Maxfield.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-06-25  Alex Christensen  <achristensen@webkit.org>
 
         Make HTTPCookieAcceptPolicy an enum class

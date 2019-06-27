@@ -1,3 +1,14 @@
+2019-06-27  Saam Barati  <sbarati@apple.com>
+
+        Make WEBGPU enabled only on Mojave and later.
+
+        Rubber-stamped by Myles C. Maxfield.
+
+        We're going to look into re-enabling it on High Sierra in:
+        https://bugs.webkit.org/show_bug.cgi?id=199275
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-06-27  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (touch-action): Can't scroll vertically when touching a horizontally-scrollable element on instagram.com
