@@ -1,3 +1,17 @@
+2019-06-27  Don Olmstead  <don.olmstead@sony.com>
+
+        [FTW] Build JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=199254
+
+        Reviewed by Brent Fulgham.
+
+        Add the FTW [For the Win(dows)] port. FTW is OS(WINDOWS) + USE(DIRECT2D) +
+        USE(CURL). Its eventual goal is to be the one true Windows port but to avoid
+        breaking AppleWin and WinCairo its being split into its own port for the interim.
+
+        * CMakeLists.txt:
+        * Source/cmake/OptionsFTW.cmake: Added.
+
 2019-06-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake] Bump cmake_minimum_required version to 3.10

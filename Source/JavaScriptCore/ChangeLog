@@ -1,3 +1,12 @@
+2019-06-27  Don Olmstead  <don.olmstead@sony.com>
+
+        [FTW] Build JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=199254
+
+        Reviewed by Brent Fulgham.
+
+        * PlatformFTW.cmake: Added.
+
 2019-06-27  Konstantin Tokarev  <annulen@yandex.ru>
 
         Use JSC_GLIB_API_ENABLED instead of USE(GLIB) as a compile-time check for GLib JSC API
