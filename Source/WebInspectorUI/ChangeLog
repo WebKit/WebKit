@@ -1,3 +1,17 @@
+2019-06-27  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: throw an error if console.count/console.countReset is called with an object that throws an error from toString
+        https://bugs.webkit.org/show_bug.cgi?id=199252
+
+        Reviewed by Joseph Pecoraro.
+
+        Add entries for `console.countReset` and `console.timeLog`.
+
+        Rename `title` to `label` for `console.time`, `console.timeLog`, and `console.timeEnd` to
+        better match the spec.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+
 2019-06-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Update legacy backend commands after enum name change

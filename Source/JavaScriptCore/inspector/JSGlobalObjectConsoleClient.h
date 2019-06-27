@@ -49,14 +49,14 @@ public:
 
 protected:
     void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, Ref<ScriptArguments>&&) override;
-    void count(JSC::ExecState*, Ref<ScriptArguments>&&) override;
-    void countReset(JSC::ExecState*, Ref<ScriptArguments>&&) override;
+    void count(JSC::ExecState*, const String& label) override;
+    void countReset(JSC::ExecState*, const String& label) override;
     void profile(JSC::ExecState*, const String& title) override;
     void profileEnd(JSC::ExecState*, const String& title) override;
     void takeHeapSnapshot(JSC::ExecState*, const String& title) override;
-    void time(JSC::ExecState*, const String& title) override;
-    void timeLog(JSC::ExecState*, const String& title, Ref<ScriptArguments>&& arguments) override;
-    void timeEnd(JSC::ExecState*, const String& title) override;
+    void time(JSC::ExecState*, const String& label) override;
+    void timeLog(JSC::ExecState*, const String& label, Ref<ScriptArguments>&&) override;
+    void timeEnd(JSC::ExecState*, const String& label) override;
     void timeStamp(JSC::ExecState*, Ref<ScriptArguments>&&) override;
     void record(JSC::ExecState*, Ref<ScriptArguments>&&) override;
     void recordEnd(JSC::ExecState*, Ref<ScriptArguments>&&) override;

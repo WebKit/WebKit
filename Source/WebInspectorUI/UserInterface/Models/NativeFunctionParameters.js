@@ -161,7 +161,8 @@ WI.NativeConstructorFunctionParameters = {
 
     Console: {
         assert: "condition, [message], [...values]",
-        count: "[label]",
+        count: "label = \"default\"",
+        countReset: "label = \"default\"",
         debug: "message, [...values]",
         dir: "object",
         dirxml: "object",
@@ -178,8 +179,9 @@ WI.NativeConstructorFunctionParameters = {
         screenshot: "[node]",
         table: "data, [columns]",
         takeHeapSnapshot: "[label]",
-        time: "name = \"default\"",
-        timeEnd: "name = \"default\"",
+        time: "label = \"default\"",
+        timeLog: "label = \"default\"",
+        timeEnd: "label = \"default\"",
         timeStamp: "[label]",
         trace: "message, [...values]",
         warn: "message, [...values]",

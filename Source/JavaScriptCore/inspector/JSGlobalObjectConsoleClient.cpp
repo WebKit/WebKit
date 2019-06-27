@@ -70,14 +70,14 @@ void JSGlobalObjectConsoleClient::messageWithTypeAndLevel(MessageType type, Mess
     m_consoleAgent->addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, type, level, message, WTFMove(arguments), exec));
 }
 
-void JSGlobalObjectConsoleClient::count(ExecState* exec, Ref<ScriptArguments>&& arguments)
+void JSGlobalObjectConsoleClient::count(ExecState* exec, const String& label)
 {
-    m_consoleAgent->count(exec, WTFMove(arguments));
+    m_consoleAgent->count(exec, label);
 }
 
-void JSGlobalObjectConsoleClient::countReset(ExecState* exec, Ref<ScriptArguments>&& arguments)
+void JSGlobalObjectConsoleClient::countReset(ExecState* exec, const String& label)
 {
-    m_consoleAgent->countReset(exec, WTFMove(arguments));
+    m_consoleAgent->countReset(exec, label);
 }
 
 void JSGlobalObjectConsoleClient::profile(JSC::ExecState*, const String& title)
@@ -153,19 +153,19 @@ void JSGlobalObjectConsoleClient::takeHeapSnapshot(JSC::ExecState*, const String
     m_consoleAgent->takeHeapSnapshot(title);
 }
 
-void JSGlobalObjectConsoleClient::time(ExecState*, const String& title)
+void JSGlobalObjectConsoleClient::time(ExecState* exec, const String& label)
 {
-    m_consoleAgent->startTiming(title);
+    m_consoleAgent->startTiming(exec, label);
 }
 
-void JSGlobalObjectConsoleClient::timeLog(ExecState*, const String& title, Ref<ScriptArguments>&& arguments)
+void JSGlobalObjectConsoleClient::timeLog(ExecState* exec, const String& label, Ref<ScriptArguments>&& arguments)
 {
-    m_consoleAgent->logTiming(title, WTFMove(arguments));
+    m_consoleAgent->logTiming(exec, label, WTFMove(arguments));
 }
 
-void JSGlobalObjectConsoleClient::timeEnd(ExecState* exec, const String& title)
+void JSGlobalObjectConsoleClient::timeEnd(ExecState* exec, const String& label)
 {
-    m_consoleAgent->stopTiming(title, createScriptCallStackForConsole(exec, 1));
+    m_consoleAgent->stopTiming(exec, label);
 }
 
 void JSGlobalObjectConsoleClient::timeStamp(ExecState*, Ref<ScriptArguments>&&)

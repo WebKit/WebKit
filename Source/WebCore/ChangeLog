@@ -1,3 +1,62 @@
+2019-06-27  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: throw an error if console.count/console.countReset is called with an object that throws an error from toString
+        https://bugs.webkit.org/show_bug.cgi?id=199252
+
+        Reviewed by Joseph Pecoraro.
+
+        Parse the arguments passed to `console.count` and `console.countReset` before sending it to
+        the `ConsoleClient` so that an error can be thrown if the first argument doesn't `toString`
+        nicely (e.g. without throwing an error).
+
+        Generate call stacks for `console.countReset` to match other `console` methods. Also do this
+        for `console.time`, `console.timeLog`, and `console.timeEnd`. Limit the call stack to only
+        have the top frame, so no unnecessary/extra data is sent to the frontend (right now, only
+        the call location is displayed).
+
+        Rename `title` to `label` for `console.time`, `console.timeLog`, and `console.timeEnd` to
+        better match the spec.
+
+        Updated existing LayoutTests:
+         - inspector/console/console-count.html
+         - inspector/console/console-api.html
+
+        Also covered by existing WPT tests.
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::consoleCount):
+        (WebCore::InspectorInstrumentation::consoleCountReset):
+        (WebCore::InspectorInstrumentation::startConsoleTiming):
+        (WebCore::InspectorInstrumentation::logConsoleTiming):
+        (WebCore::InspectorInstrumentation::stopConsoleTiming):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::consoleCountImpl):
+        (WebCore::InspectorInstrumentation::consoleCountResetImpl):
+        (WebCore::InspectorInstrumentation::startConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::logConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::stopConsoleTimingImpl):
+
+        * page/PageConsoleClient.h:
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::count):
+        (WebCore::PageConsoleClient::countReset):
+        (WebCore::PageConsoleClient::time):
+        (WebCore::PageConsoleClient::timeLog):
+        (WebCore::PageConsoleClient::timeEnd):
+
+        * workers/WorkerConsoleClient.h:
+        * workers/WorkerConsoleClient.cpp:
+        (WebCore::WorkerConsoleClient::count):
+        (WebCore::WorkerConsoleClient::countReset):
+        (WebCore::WorkerConsoleClient::time):
+        (WebCore::WorkerConsoleClient::timeLog):
+        (WebCore::WorkerConsoleClient::timeEnd):
+
+        * worklets/WorkletConsoleClient.h:
+        * worklets/WorkletConsoleClient.cpp:
+        (WebCore::WorkletConsoleClient::count):
+        (WebCore::WorkletConsoleClient::countReset):
+
 2019-06-27  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Implement arrays and MakeArrayReference

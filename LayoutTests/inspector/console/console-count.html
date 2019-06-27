@@ -40,7 +40,7 @@ function test()
 
     suite.addTestCase({
         name: "console.count.NoArguments",
-        description: "No arguments increments a shared global counter.",
+        description: "No arguments uses the default label.",
         test(resolve, reject) {
             let seen = 0;
             const expected = 16;
@@ -55,7 +55,7 @@ function test()
             }
 
             InspectorTest.evaluateInPage(`triggerCountNoArguments()`); // 15
-            InspectorTest.evaluateInPage(`console.count()`); // 1
+            InspectorTest.evaluateInPage(`console.count("default")`); // 16
         }
     });
 

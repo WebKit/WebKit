@@ -585,7 +585,7 @@ STEP: console.count()
 {
   "_source": "console-api",
   "_level": "debug",
-  "_messageText": "Global: 1",
+  "_messageText": "default: 1",
   "_type": "log",
   "_url": null,
   "_line": 3,
@@ -599,7 +599,21 @@ STEP: console.count()
 {
   "_source": "console-api",
   "_level": "debug",
-  "_messageText": "Global: 2",
+  "_messageText": "default: 2",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count("default")
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "default: 3",
   "_type": "log",
   "_url": null,
   "_line": 3,

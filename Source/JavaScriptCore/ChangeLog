@@ -1,3 +1,53 @@
+2019-06-27  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: throw an error if console.count/console.countReset is called with an object that throws an error from toString
+        https://bugs.webkit.org/show_bug.cgi?id=199252
+
+        Reviewed by Joseph Pecoraro.
+
+        Parse the arguments passed to `console.count` and `console.countReset` before sending it to
+        the `ConsoleClient` so that an error can be thrown if the first argument doesn't `toString`
+        nicely (e.g. without throwing an error).
+
+        Generate call stacks for `console.countReset` to match other `console` methods. Also do this
+        for `console.time`, `console.timeLog`, and `console.timeEnd`. Limit the call stack to only
+        have the top frame, so no unnecessary/extra data is sent to the frontend (right now, only
+        the call location is displayed).
+
+        Rename `title` to `label` for `console.time`, `console.timeLog`, and `console.timeEnd` to
+        better match the spec.
+
+        * runtime/ConsoleClient.h:
+        * runtime/ConsoleObject.cpp:
+        (JSC::valueOrDefaultLabelString):
+        (JSC::consoleProtoFuncCount):
+        (JSC::consoleProtoFuncCountReset):
+        (JSC::consoleProtoFuncTime):
+        (JSC::consoleProtoFuncTimeLog):
+        (JSC::consoleProtoFuncTimeEnd):
+
+        * inspector/JSGlobalObjectConsoleClient.h:
+        * inspector/JSGlobalObjectConsoleClient.cpp:
+        (Inspector::JSGlobalObjectConsoleClient::count):
+        (Inspector::JSGlobalObjectConsoleClient::countReset):
+        (Inspector::JSGlobalObjectConsoleClient::time):
+        (Inspector::JSGlobalObjectConsoleClient::timeLog):
+        (Inspector::JSGlobalObjectConsoleClient::timeEnd):
+
+        * inspector/agents/InspectorConsoleAgent.h:
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::startTiming):
+        (Inspector::InspectorConsoleAgent::logTiming):
+        (Inspector::InspectorConsoleAgent::stopTiming):
+        (Inspector::InspectorConsoleAgent::count):
+        (Inspector::InspectorConsoleAgent::countReset):
+        (Inspector::InspectorConsoleAgent::getCounterLabel): Deleted.
+
+        * inspector/ConsoleMessage.h:
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::ConsoleMessage):
+        Allow `ConsoleMessage`s to be created with both `ScriptArguments` and a `ScriptCallStack`.
+
 2019-06-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake] Bump cmake_minimum_required version to 3.10

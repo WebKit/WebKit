@@ -52,8 +52,8 @@ void WorkletConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLeve
     m_workletGlobalScope.addConsoleMessage(WTFMove(message));
 }
 
-void WorkletConsoleClient::count(JSC::ExecState*, Ref<ScriptArguments>&&) { }
-void WorkletConsoleClient::countReset(JSC::ExecState*, Ref<ScriptArguments>&&) { }
+void WorkletConsoleClient::count(JSC::ExecState*, const String&) { }
+void WorkletConsoleClient::countReset(JSC::ExecState*, const String&) { }
 
 void WorkletConsoleClient::time(JSC::ExecState*, const String&) { }
 void WorkletConsoleClient::timeLog(JSC::ExecState*, const String&, Ref<ScriptArguments>&&) { }

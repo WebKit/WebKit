@@ -82,6 +82,24 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     }
 }
 
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, Ref<ScriptArguments>&& arguments, Ref<ScriptCallStack>&& callStack, unsigned long requestIdentifier)
+    : m_source(source)
+    , m_type(type)
+    , m_level(level)
+    , m_message(message)
+    , m_arguments(WTFMove(arguments))
+    , m_callStack(WTFMove(callStack))
+    , m_url()
+    , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
+{
+    const ScriptCallFrame* frame = m_callStack ? m_callStack->firstNonNativeCallFrame() : nullptr;
+    if (frame) {
+        m_url = frame->sourceURL();
+        m_line = frame->lineNumber();
+        m_column = frame->columnNumber();
+    }
+}
+
 ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, Ref<ScriptArguments>&& arguments, JSC::ExecState* state, unsigned long requestIdentifier)
     : m_source(source)
     , m_type(type)

@@ -45,14 +45,14 @@ public:
 
 private:
     void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
-    void count(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
-    void countReset(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
+    void count(JSC::ExecState*, const String& label) final;
+    void countReset(JSC::ExecState*, const String& label) final;
     void profile(JSC::ExecState*, const String& title) final;
     void profileEnd(JSC::ExecState*, const String& title) final;
     void takeHeapSnapshot(JSC::ExecState*, const String& title) final;
-    void time(JSC::ExecState*, const String& title) final;
-    void timeLog(JSC::ExecState*, const String& title, Ref<Inspector::ScriptArguments>&&) final;
-    void timeEnd(JSC::ExecState*, const String& title) final;
+    void time(JSC::ExecState*, const String& label) final;
+    void timeLog(JSC::ExecState*, const String& label, Ref<Inspector::ScriptArguments>&&) final;
+    void timeEnd(JSC::ExecState*, const String& label) final;
     void timeStamp(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
     void record(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
     void recordEnd(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
