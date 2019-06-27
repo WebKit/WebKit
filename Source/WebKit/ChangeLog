@@ -1,3 +1,22 @@
+2019-06-21  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Switch to built-in handling of C++ standard instead of hardcoding -std=c++17
+        https://bugs.webkit.org/show_bug.cgi?id=199108
+
+        Reviewed by Don Olmstead.
+
+        Rationale:
+
+        1. It provides an abstraction over exact flags of particular compilers -
+           we just specify required version of C++ standard
+        2. External libraries (like Qt used in WPEQt) may require particular C++
+           standard or even particular C++ features to be availabe (e.g. Qt
+           requires INTERFACE_COMPILE_FEATURES cxx_decltype, which causes cmake
+           to add -std=gnu++11 unless proper CXX_STANDARD is defined)
+
+        * PlatformWPE.cmake: Use project-level default for CXX_STANDARD
+        property.
+
 2019-06-26  Jiewen Tan  <jiewen_tan@apple.com>
 
         SubFrameSOAuthorizationSession should preserve the referrer header when fall back to web path

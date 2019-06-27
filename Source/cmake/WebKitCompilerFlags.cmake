@@ -104,13 +104,6 @@ if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-fno-exceptions)
         WEBKIT_APPEND_GLOBAL_CXX_FLAGS(-fno-rtti)
 
-        check_cxx_compiler_flag("-std=c++17" CXX_COMPILER_SUPPORTS_CXX17)
-        if (CXX_COMPILER_SUPPORTS_CXX17)
-            WEBKIT_APPEND_GLOBAL_CXX_FLAGS(-std=c++17)
-        else ()
-            message(FATAL_ERROR "Compiler with C++17 support is required")
-        endif ()
-
         if (WIN32)
             WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-mno-ms-bitfields)
             WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-unknown-pragmas)
