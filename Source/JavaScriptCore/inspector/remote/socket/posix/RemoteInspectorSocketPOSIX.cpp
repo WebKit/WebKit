@@ -92,7 +92,7 @@ Optional<PlatformSocketType> listen(const char* addressStr, uint16_t port)
 
     // FIXME: Support AF_INET6 connections.
     address.sin_family = AF_INET;
-    if (addressStr)
+    if (addressStr && *addressStr)
         inet_aton(addressStr, &address.sin_addr);
     else
         address.sin_addr.s_addr = htonl(INADDR_ANY);

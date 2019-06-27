@@ -132,11 +132,11 @@ RemoteInspectorServer& RemoteInspectorServer::singleton()
     return server;
 }
 
-bool RemoteInspectorServer::start(uint16_t port)
+bool RemoteInspectorServer::start(const char* address, uint16_t port)
 {
     m_server = RemoteInspectorSocketEndpoint::create(this, "RemoteInspectorServer");
 
-    if (!m_server->listenInet(nullptr, port)) {
+    if (!m_server->listenInet(address, port)) {
         m_server = nullptr;
         return false;
     }

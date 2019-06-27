@@ -1,3 +1,20 @@
+2019-06-26  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [RemoteInspector] Add address argument to listen for RemoteInspectorServer Socket implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=199035
+
+        Reviewed by Ross Kirsling.
+
+        Added new argument `address` to start listening. 
+
+        * inspector/remote/socket/RemoteInspectorServer.cpp:
+        (Inspector::RemoteInspectorServer::start):
+        * inspector/remote/socket/RemoteInspectorServer.h:
+        * inspector/remote/socket/posix/RemoteInspectorSocketPOSIX.cpp:
+        (Inspector::Socket::listen):
+        * inspector/remote/socket/win/RemoteInspectorSocketWin.cpp:
+        (Inspector::Socket::listen):
+
 2019-06-26  Keith Miller  <keith_miller@apple.com>
 
         speciesConstruct needs to throw if the result is a DataView
