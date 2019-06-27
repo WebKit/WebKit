@@ -327,7 +327,8 @@ static bool allCharactersInIDNScriptWhiteList(const UChar* buffer, int32_t lengt
     return true;
 }
 
-static bool isSecondLevelDomainNameAllowedByTLDRules(const UChar* buffer, int32_t length, const WTF::Function<bool(UChar)>& characterIsAllowed)
+template<typename Func>
+static inline bool isSecondLevelDomainNameAllowedByTLDRules(const UChar* buffer, int32_t length, Func characterIsAllowed)
 {
     ASSERT(length > 0);
 

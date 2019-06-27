@@ -1,3 +1,16 @@
+2019-06-27  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Avoid using WTF::Function for passing local function pointers and closures in URLHelpers.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=199271
+
+        Reviewed by Yusuke Suzuki.
+
+        WTF::Function allocates memory on heap, which is totally redundant in this
+        case.
+
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::isSecondLevelDomainNameAllowedByTLDRules):
+
 2019-06-27  Timothy Hatcher  <timothy@apple.com>
 
         Move WebKitLegacy off of a couple AppKit ivars.
