@@ -1351,6 +1351,15 @@
         "description": "An API to discover and communicate with devices over the Bluetooth."
     },
     {
+        "name": "Web Bluetooth Scanning",
+        "status": {
+            "status": "Not Considering"
+        },
+        "url": "https://webbluetoothcg.github.io/web-bluetooth/",
+        "keywords": ["bluetooth"],
+        "description": "An API to listen for Bluetooth Low Energy advertising packets."
+    },
+    {
         "name": "Web MIDI",
         "status": {
             "status": "Not Considering"

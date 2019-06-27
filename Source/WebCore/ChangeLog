@@ -1,3 +1,12 @@
+2019-06-27  Jon Davis  <jond@apple.com>
+
+        Add status for Web Bluetooth Scanning standards specification.
+        https://bugs.webkit.org/show_bug.cgi?id=199235
+
+        Reviewed by Joseph Pecoraro.
+
+        * features.json:
+
 2019-06-27  Saam Barati  <sbarati@apple.com>
 
         Make WEBGPU enabled only on Mojave and later.
