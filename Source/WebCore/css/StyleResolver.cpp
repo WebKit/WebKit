@@ -856,8 +856,11 @@ static OptionSet<TouchAction> computeEffectiveTouchActions(const RenderStyle& st
     if (effectiveTouchActions.contains(TouchAction::None))
         return { TouchAction::None };
 
-    if (effectiveTouchActions.contains(TouchAction::Auto) || effectiveTouchActions.contains(TouchAction::Manipulation))
+    if (effectiveTouchActions.containsAny({ TouchAction::Auto, TouchAction::Manipulation }))
         return touchActions;
+
+    if (touchActions.containsAny({ TouchAction::Auto, TouchAction::Manipulation }))
+        return effectiveTouchActions;
 
     auto sharedTouchActions = effectiveTouchActions & touchActions;
     if (sharedTouchActions.isEmpty())

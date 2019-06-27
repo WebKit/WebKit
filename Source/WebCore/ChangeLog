@@ -1,3 +1,22 @@
+2019-06-27  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (touch-action): Can't scroll vertically when touching a horizontally-scrollable element on instagram.com
+        https://bugs.webkit.org/show_bug.cgi?id=199268
+        <rdar://problem/52246473>
+
+        Reviewed by Antoine Quint.
+
+        Test: pointerevents/ios/touch-action-region-manipulation.html
+
+        Having a restrictive touch-action value like 'pan-y' on on element and then having a descendant with
+        'touch-action: manipulation' computes to 'none'.
+
+        * css/StyleResolver.cpp:
+        (WebCore::computeEffectiveTouchActions):
+
+        For value 'manipulation' return the current effective value, similar to the reverse case above.
+        Set intersection should only be computed out of restrictive values (pan-x/pan-y/pinch-zoom/none).
+
 2019-06-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Use libsoup WebSockets API
