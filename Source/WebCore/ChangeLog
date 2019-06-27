@@ -1,3 +1,17 @@
+2019-06-27  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct document lifecycle while processing commands
+        https://bugs.webkit.org/show_bug.cgi?id=199146
+        <rdar://problem/52047462>
+
+        Reviewed by Darin Adler.
+
+        Protect the document while commands are being processed since script may run
+        during the style resolution. We should protect against this.
+
+        * dom/Document.cpp:
+        (WebCore::command):
+
 2019-06-27  Jon Davis  <jond@apple.com>
 
         Add status for Web Bluetooth Scanning standards specification.

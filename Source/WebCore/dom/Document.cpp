@@ -5364,11 +5364,14 @@ bool Document::shouldCreateRenderers()
 
 static Editor::Command command(Document* document, const String& commandName, bool userInterface = false)
 {
-    RefPtr<Frame> frame = document->frame();
-    if (!frame || frame->document() != document)
-        return Editor::Command();
+    auto protectedDocument = makeRef(*document);
 
     document->updateStyleIfNeeded();
+
+    auto frame = makeRefPtr(document->frame());
+
+    if (!frame || frame->document() != document)
+        return Editor::Command();
 
     return frame->editor().command(commandName,
         userInterface ? CommandFromDOMWithUserInterface : CommandFromDOM);
