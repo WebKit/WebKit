@@ -1488,13 +1488,13 @@ void WebPage::suspendForProcessSwap()
     send(Messages::WebPageProxy::DidSuspendAfterProcessSwap());
 }
 
-void WebPage::loadURLInFrame(URL&& url, uint64_t frameID)
+void WebPage::loadURLInFrame(URL&& url, const String& referrer, uint64_t frameID)
 {
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
 
-    frame->coreFrame()->loader().load(FrameLoadRequest(*frame->coreFrame(), ResourceRequest(url), ShouldOpenExternalURLsPolicy::ShouldNotAllow));
+    frame->coreFrame()->loader().load(FrameLoadRequest(*frame->coreFrame(), ResourceRequest(url, referrer), ShouldOpenExternalURLsPolicy::ShouldNotAllow));
 }
 
 void WebPage::loadDataInFrame(IPC::DataReference&& data, String&& MIMEType, String&& encodingName, URL&& baseURL, uint64_t frameID)

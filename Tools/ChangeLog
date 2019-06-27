@@ -1,3 +1,15 @@
+2019-06-26  Jiewen Tan  <jiewen_tan@apple.com>
+
+        SubFrameSOAuthorizationSession should preserve the referrer header when fall back to web path
+        https://bugs.webkit.org/show_bug.cgi?id=199232
+        <rdar://problem/51718328>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TestSOAuthorization.mm:
+        (TestWebKitAPI::TEST):
+        Add a test that utilizes TCPServer as local files always omit referrer.
+
 2019-06-26  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add configuration and architecture for WPE and GTK builders

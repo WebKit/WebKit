@@ -1,3 +1,31 @@
+2019-06-26  Jiewen Tan  <jiewen_tan@apple.com>
+
+        SubFrameSOAuthorizationSession should preserve the referrer header when fall back to web path
+        https://bugs.webkit.org/show_bug.cgi?id=199232
+        <rdar://problem/51718328>
+
+        Reviewed by Youenn Fablet.
+
+        The fall back to web path mechanism in SubFrameSOAuthorizationSession doesn't actually resume
+        the previous navigation. Instead it starts a new one. The current implementation doesn't carry
+        any information from the previous navigation. It is problematic when it comes to http referrer
+        as the server might use that to determine what kind of responses to send back. Therefore, we
+        add that information now.
+
+        To accomplish the above, the patch teaches WebFrameProxy::loadURL to carry referrer information
+        when it is available. Then SubFrameSOAuthorizationSession can reuses the referrer from the
+        original request.
+
+        * UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.mm:
+        (WebKit::SubFrameSOAuthorizationSession::fallBackToWebPathInternal):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::loadURL):
+        * UIProcess/WebFrameProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadURLInFrame):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-06-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         testRunner.setAlwaysAcceptCookies should wait for cookie accept policy to be set

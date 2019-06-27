@@ -79,12 +79,12 @@ bool WebFrameProxy::isMainFrame() const
     return this == m_page->mainFrame() || (m_page->provisionalPageProxy() && this == m_page->provisionalPageProxy()->mainFrame());
 }
 
-void WebFrameProxy::loadURL(const URL& url)
+void WebFrameProxy::loadURL(const URL& url, const String& referrer)
 {
     if (!m_page)
         return;
 
-    m_page->process().send(Messages::WebPage::LoadURLInFrame(url, m_frameID), m_page->pageID());
+    m_page->process().send(Messages::WebPage::LoadURLInFrame(url, referrer, m_frameID), m_page->pageID());
 }
 
 void WebFrameProxy::loadData(const IPC::DataReference& data, const String& MIMEType, const String& encodingName, const URL& baseURL)

@@ -1337,7 +1337,7 @@ private:
     static bool scroll(WebCore::Page*, WebCore::ScrollDirection, WebCore::ScrollGranularity);
     static bool logicalScroll(WebCore::Page*, WebCore::ScrollLogicalDirection, WebCore::ScrollGranularity);
 
-    void loadURLInFrame(URL&&, uint64_t frameID);
+    void loadURLInFrame(URL&&, const String& referrer, uint64_t frameID);
     void loadDataInFrame(IPC::DataReference&&, String&& MIMEType, String&& encodingName, URL&& baseURL, uint64_t frameID);
 
     enum class WasRestoredByAPIRequest { No, Yes };

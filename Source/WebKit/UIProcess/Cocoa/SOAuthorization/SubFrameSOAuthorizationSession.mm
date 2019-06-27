@@ -68,7 +68,7 @@ void SubFrameSOAuthorizationSession::fallBackToWebPathInternal()
             if (auto* frame = page->process().webFrame(targetFrame->handle().frameID())) {
                 page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
                 // Issue a new load to the original URL as the original load is aborted before start.
-                frame->loadURL(navigationActionPtr->request().url());
+                frame->loadURL(navigationActionPtr->request().url(), navigationActionPtr->request().httpReferrer());
             }
         }
     });

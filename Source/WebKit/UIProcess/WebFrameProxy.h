@@ -78,7 +78,7 @@ public:
 
     FrameLoadState& frameLoadState() { return m_frameLoadState; }
 
-    void loadURL(const URL&);
+    void loadURL(const URL&, const String& referrer = String());
     // Sub frames only. For main frames, use WebPageProxy::loadData.
     void loadData(const IPC::DataReference&, const String& MIMEType, const String& encodingName, const URL& baseURL);
     void stopLoading() const;

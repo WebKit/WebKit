@@ -31,16 +31,19 @@
 #import "ClassMethodSwizzler.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
+#import "TCPServer.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <pal/cocoa/AppSSOSoftLink.h>
 #import <pal/spi/cocoa/AuthKitSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StringPrintStream.h>
 #import <wtf/URL.h>
+#import <wtf/text/StringConcatenateNumbers.h>
 #import <wtf/text/WTFString.h>
 
 static bool navigationCompleted = false;
@@ -95,6 +98,7 @@ static const char* newWindowResponseTemplate =
 
 static const char* parentTemplate =
 "<html>"
+"<meta name='referrer' content='origin' />"
 "<iframe src='%s'></iframe>"
 "<script>"
 "function receiveMessage(event)"
@@ -110,6 +114,7 @@ static const char* iframeTemplate =
 "<html>"
 "<script>"
 "parent.postMessage('Hello.', '*');"
+"%s"
 "</script>"
 "</html>";
 
@@ -2122,6 +2127,51 @@ TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyIgnoreAsync)
     Util::sleep(0.5);
     // Make sure we don't intercept the iframe.
     EXPECT_FALSE(authorizationPerformed);
+}
+
+TEST(SOAuthorizationSubFrame, InterceptionErrorWithReferrer)
+{
+    resetState();
+    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
+    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
+    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
+    ClassMethodSwizzler swizzler4([AKAuthorizationController class], @selector(isURLFromAppleOwnedDomain:), reinterpret_cast<IMP>(overrideIsURLFromAppleOwnedDomain));
+
+    TCPServer server([parentHtml = generateHtml(parentTemplate, "simple.html"), frameHtml = generateHtml(iframeTemplate, "parent.postMessage('Referrer: ' + document.referrer, '*');")] (int socket) {
+        NSString *firstResponse = [NSString stringWithFormat:
+            @"HTTP/1.1 200 OK\r\n"
+            "Content-Length: %d\r\n\r\n"
+            "%@",
+            parentHtml.length(),
+            (id)parentHtml
+        ];
+        NSString *secondResponse = [NSString stringWithFormat:
+            @"HTTP/1.1 200 OK\r\n"
+            "Content-Length: %d\r\n\r\n"
+            "%@",
+            frameHtml.length(),
+            (id)frameHtml
+        ];
+
+        TCPServer::read(socket);
+        TCPServer::write(socket, firstResponse.UTF8String, firstResponse.length);
+        TCPServer::read(socket);
+        TCPServer::write(socket, secondResponse.UTF8String, secondResponse.length);
+    });
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto delegate = adoptNS([[TestSOAuthorizationNavigationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get());
+
+    auto origin = makeString("http://127.0.0.1:", static_cast<unsigned>(server.port()));
+    [webView _loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:(id)origin]] shouldOpenExternalURLs:NO];
+    [webView waitForMessage:(id)origin];
+    [webView waitForMessage:@"SOAuthorizationDidStart"];
+
+    [gDelegate authorization:gAuthorization didCompleteWithError:adoptNS([[NSError alloc] initWithDomain:NSCocoaErrorDomain code:0 userInfo:nil]).get()];
+    [webView waitForMessage:(id)origin];
+    [webView waitForMessage:@"SOAuthorizationDidCancel"];
+    [webView waitForMessage:(id)makeString("Referrer: ", origin, "/")]; // Referrer policy requires '/' after origin.
 }
 
 } // namespace TestWebKitAPI

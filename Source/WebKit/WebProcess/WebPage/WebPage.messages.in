@@ -158,7 +158,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GoToBackForwardItem(uint64_t navigationID, struct WebCore::BackForwardItemIdentifier backForwardItemID, enum:uint8_t WebCore::FrameLoadType backForwardType, enum:bool WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, Optional<WebKit::WebsitePoliciesData> websitePolicies)
     TryRestoreScrollPosition()
 
-    LoadURLInFrame(URL url, uint64_t frameID)
+    LoadURLInFrame(URL url, String referrer, uint64_t frameID)
     LoadDataInFrame(IPC::DataReference data, String MIMEType, String encodingName, URL baseURL, uint64_t frameID)
     LoadRequest(struct WebKit::LoadParameters loadParameters)
     LoadData(struct WebKit::LoadParameters loadParameters)
