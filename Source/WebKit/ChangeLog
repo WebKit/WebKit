@@ -1,3 +1,36 @@
+2019-06-27  Sihui Liu  <sihui_liu@apple.com>
+
+        Regression(r246526): StorageManager thread hangs
+        https://bugs.webkit.org/show_bug.cgi?id=199278
+        <rdar://problem/52202948>
+
+        Reviewed by Geoffrey Garen.
+
+        r246526 adds a lock m_localStorageNamespacesMutex to protect m_localStorageNamespaces, because 
+        m_localStorageNamespaces is destroyed at main thread while accesses to m_localStorageNamespaces happen in the 
+        background thread.
+        After r246526, getOrCreateLocalStorageNamespace acquires lock m_localStorageNamespacesMutex when 
+        m_localStorageNamespacesMutex is already acquired in cloneSessionStorageNamespace, so the StorageManager thread
+        hangs.
+        To solve this issue, we can remove the lock in getOrCreateLocalStorageNamespace, or we can remove the 
+        m_localStorageNamespacesMutex. waitUntilWritesFinished() before ~StorageManager() already guarantees nothing 
+        will be running in the background thread, so it is unlikely we the access to m_localStorageNamespaces in the 
+        background thread would collide with the destruction of m_localStorageNamespaces. Also, we don't need 
+        didDestroyStorageArea as LocalStorageNamespace can hold the last reference of StorageArea after r245881.
+
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageArea::StorageArea):
+        (WebKit::StorageManager::StorageArea::~StorageArea):
+        (WebKit::StorageManager::LocalStorageNamespace::LocalStorageNamespace):
+        (WebKit::StorageManager::cloneSessionStorageNamespace):
+        (WebKit::StorageManager::getLocalStorageOrigins):
+        (WebKit::StorageManager::deleteLocalStorageEntriesForOrigin):
+        (WebKit::StorageManager::deleteLocalStorageOriginsModifiedSince):
+        (WebKit::StorageManager::deleteLocalStorageEntriesForOrigins):
+        (WebKit::StorageManager::getOrCreateLocalStorageNamespace):
+        (WebKit::StorageManager::LocalStorageNamespace::didDestroyStorageArea): Deleted.
+        * NetworkProcess/WebStorage/StorageManager.h:
+
 2019-06-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebSockets: avoid data copies when queuing tasks in WebSocketChannel
