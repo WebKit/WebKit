@@ -73,7 +73,7 @@ private:
     void dispatchEvents(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const;
 
     // Will be null if the storage area belongs to a session storage namespace or the storage area is in an ephemeral session.
-    LocalStorageNamespace* m_localStorageNamespace;
+    WeakPtr<LocalStorageNamespace> m_localStorageNamespace;
     mutable RefPtr<LocalStorageDatabase> m_localStorageDatabase;
     mutable bool m_didImportItemsFromDatabase { false };
 
@@ -84,7 +84,7 @@ private:
     HashSet<std::pair<IPC::Connection::UniqueID, uint64_t>> m_eventListeners;
 };
 
-class StorageManager::LocalStorageNamespace : public ThreadSafeRefCounted<LocalStorageNamespace> {
+class StorageManager::LocalStorageNamespace : public ThreadSafeRefCounted<LocalStorageNamespace>, public CanMakeWeakPtr<LocalStorageNamespace> {
 public:
     static Ref<LocalStorageNamespace> create(StorageManager&, uint64_t storageManagerID);
     ~LocalStorageNamespace();
@@ -93,7 +93,6 @@ public:
 
     enum class IsEphemeral : bool { No, Yes };
     Ref<StorageArea> getOrCreateStorageArea(SecurityOriginData&&, IsEphemeral);
-    void didDestroyStorageArea(StorageArea*);
 
     void clearStorageAreasMatchingOrigin(const SecurityOriginData&);
     void clearAllStorageAreas();
@@ -105,7 +104,6 @@ private:
     LocalStorageNamespace(StorageManager&, uint64_t storageManagerID);
 
     StorageManager& m_storageManager;
-    uint64_t m_storageNamespaceID;
     unsigned m_quotaInBytes;
 
     HashMap<SecurityOriginData, RefPtr<StorageArea>> m_storageAreaMap;
@@ -173,7 +171,7 @@ auto StorageManager::StorageArea::create(LocalStorageNamespace* localStorageName
 }
 
 StorageManager::StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, const SecurityOriginData& securityOrigin, unsigned quotaInBytes)
-    : m_localStorageNamespace(localStorageNamespace)
+    : m_localStorageNamespace(localStorageNamespace ? makeWeakPtr(*localStorageNamespace) : nullptr)
     , m_securityOrigin(securityOrigin)
     , m_quotaInBytes(quotaInBytes)
     , m_storageMap(StorageMap::create(m_quotaInBytes))
@@ -183,12 +181,10 @@ StorageManager::StorageArea::StorageArea(LocalStorageNamespace* localStorageName
 StorageManager::StorageArea::~StorageArea()
 {
     ASSERT(m_eventListeners.isEmpty());
+    ASSERT(!m_localStorageNamespace);
 
     if (m_localStorageDatabase)
         m_localStorageDatabase->close();
-
-    if (m_localStorageNamespace)
-        m_localStorageNamespace->didDestroyStorageArea(this);
 }
 
 void StorageManager::StorageArea::addListener(IPC::Connection::UniqueID connectionID, uint64_t storageMapID)
@@ -350,7 +346,6 @@ Ref<StorageManager::LocalStorageNamespace> StorageManager::LocalStorageNamespace
 // We should investigate a way to share it with WebCore.
 StorageManager::LocalStorageNamespace::LocalStorageNamespace(StorageManager& storageManager, uint64_t storageNamespaceID)
     : m_storageManager(storageManager)
-    , m_storageNamespaceID(storageNamespaceID)
     , m_quotaInBytes(localStorageDatabaseQuotaInBytes)
 {
 }
@@ -366,19 +361,6 @@ auto StorageManager::LocalStorageNamespace::getOrCreateStorageArea(SecurityOrigi
         protectedStorageArea = StorageArea::create(isEphemeral == IsEphemeral::Yes ? nullptr : this, WTFMove(securityOrigin), m_quotaInBytes);
         return protectedStorageArea.get();
     }).iterator->value;
-}
-
-void StorageManager::LocalStorageNamespace::didDestroyStorageArea(StorageArea* storageArea)
-{
-    ASSERT(m_storageAreaMap.contains(storageArea->securityOrigin()));
-
-    m_storageAreaMap.remove(storageArea->securityOrigin());
-    if (!m_storageAreaMap.isEmpty())
-        return;
-
-    std::lock_guard<Lock> lock(m_storageManager.m_localStorageNamespacesMutex);
-    ASSERT(m_storageManager.m_localStorageNamespaces.contains(m_storageNamespaceID));
-    m_storageManager.m_localStorageNamespaces.remove(m_storageNamespaceID);
 }
 
 void StorageManager::LocalStorageNamespace::clearStorageAreasMatchingOrigin(const SecurityOriginData& securityOrigin)
@@ -573,7 +555,6 @@ void StorageManager::cloneSessionStorageNamespace(uint64_t storageNamespaceID, u
         sessionStorageNamespace->cloneTo(*newSessionStorageNamespace);
 
         if (!m_localStorageDatabaseTracker) {
-            std::lock_guard<Lock> lock(m_localStorageNamespacesMutex);
             if (auto* localStorageNamespace = m_localStorageNamespaces.get(storageNamespaceID)) {
                 LocalStorageNamespace* newlocalStorageNamespace = getOrCreateLocalStorageNamespace(newStorageNamespaceID);
                 localStorageNamespace->cloneTo(*newlocalStorageNamespace);
@@ -664,7 +645,6 @@ void StorageManager::getLocalStorageOrigins(Function<void(HashSet<WebCore::Secur
             for (auto& origin : m_localStorageDatabaseTracker->origins())
                 origins.add(origin);
         } else {
-            std::lock_guard<Lock> lock(m_localStorageNamespacesMutex);
             for (const auto& localStorageNameSpace : m_localStorageNamespaces.values()) {
                 for (auto& origin : localStorageNameSpace->ephemeralOrigins())
                     origins.add(origin);
@@ -698,11 +678,8 @@ void StorageManager::getLocalStorageOriginDetails(Function<void(Vector<LocalStor
 void StorageManager::deleteLocalStorageEntriesForOrigin(const SecurityOriginData& securityOrigin)
 {
     m_queue->dispatch([this, protectedThis = makeRef(*this), copiedOrigin = securityOrigin.isolatedCopy()]() mutable {
-        {
-            std::lock_guard<Lock> lock(m_localStorageNamespacesMutex);
-            for (auto& localStorageNamespace : m_localStorageNamespaces.values())
-                localStorageNamespace->clearStorageAreasMatchingOrigin(copiedOrigin);
-        }
+        for (auto& localStorageNamespace : m_localStorageNamespaces.values())
+            localStorageNamespace->clearStorageAreasMatchingOrigin(copiedOrigin);
 
         for (auto& transientLocalStorageNamespace : m_transientLocalStorageNamespaces.values())
             transientLocalStorageNamespace->clearStorageAreasMatchingOrigin(copiedOrigin);
@@ -722,16 +699,12 @@ void StorageManager::deleteLocalStorageOriginsModifiedSince(WallTime time, Funct
                 transientLocalStorageNamespace->clearAllStorageAreas();
 
             for (const auto& origin : originsToDelete) {
-                {
-                    std::lock_guard<Lock> lock(m_localStorageNamespacesMutex);
-                    for (auto& localStorageNamespace : m_localStorageNamespaces.values())
-                        localStorageNamespace->clearStorageAreasMatchingOrigin(origin);
-                }
+                for (auto& localStorageNamespace : m_localStorageNamespaces.values())
+                    localStorageNamespace->clearStorageAreasMatchingOrigin(origin);
                 
                 m_localStorageDatabaseTracker->deleteDatabaseWithOrigin(origin);
             }
         } else {
-            std::lock_guard<Lock> lock(m_localStorageNamespacesMutex);
             for (auto& localStorageNamespace : m_localStorageNamespaces.values())
                 localStorageNamespace->clearAllStorageAreas();
         }
@@ -750,11 +723,8 @@ void StorageManager::deleteLocalStorageEntriesForOrigins(const Vector<WebCore::S
 
     m_queue->dispatch([this, protectedThis = makeRef(*this), copiedOrigins = WTFMove(copiedOrigins), completionHandler = WTFMove(completionHandler)]() mutable {
         for (auto& origin : copiedOrigins) {
-            {
-                std::lock_guard<Lock> lock(m_localStorageNamespacesMutex);
-                for (auto& localStorageNamespace : m_localStorageNamespaces.values())
-                    localStorageNamespace->clearStorageAreasMatchingOrigin(origin);
-            }
+            for (auto& localStorageNamespace : m_localStorageNamespaces.values())
+                localStorageNamespace->clearStorageAreasMatchingOrigin(origin);
 
             for (auto& transientLocalStorageNamespace : m_transientLocalStorageNamespaces.values())
                 transientLocalStorageNamespace->clearStorageAreasMatchingOrigin(origin);
@@ -1012,7 +982,6 @@ StorageManager::StorageArea* StorageManager::findStorageArea(IPC::Connection& co
 
 StorageManager::LocalStorageNamespace* StorageManager::getOrCreateLocalStorageNamespace(uint64_t storageNamespaceID)
 {
-    std::lock_guard<Lock> lock(m_localStorageNamespacesMutex);
     if (!m_localStorageNamespaces.isValidKey(storageNamespaceID))
         return nullptr;
 
