@@ -1,3 +1,39 @@
+2019-06-26  Dean Jackson  <dino@apple.com>
+
+        Expose UIAction identifiers for _WKElementActions
+        https://bugs.webkit.org/show_bug.cgi?id=199246
+        <rdar://problem/52218950>
+
+        Reviewed by Tim Horton.
+
+        In order for clients to create a contextual menu, they are given
+        a set of suggested UIActions, created from _WKElementActions.
+        By associating identifiers (strings) with the UIActions, clients
+        can inspect the suggestions and make a decision on whether or
+        not to include them in the final menu.
+
+        * UIProcess/API/Cocoa/_WKElementAction.h: Typedef UIActionIdentifier,
+        add a method to create a UIAction from an _WKElementAction, and a
+        helper to map between identifiers and types.
+
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (elementActionTypeToUIActionIdentifier): Helper to convert between the two types.
+        (uiActionIdentifierToElementActionType): The inverse of above.
+        (+[_WKElementAction elementActionTypeForUIActionIdentifier:]): A client given
+        a UIAction object can use this helper method to see what _WKElementActionType it
+        corresponds to.
+        (-[_WKElementAction uiActionForElementInfo:]): Used by WKContentViewInteraction to
+        create a UIAction from this _WKElementAction.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (uiActionForLegacyPreviewAction): Renamed to make it clear this is a legacy approach.
+        (menuFromLegacyPreviewOrDefaultActions): Split these functions to separate the legacy
+        and non-legacy approach.
+        (-[WKContentView assignLegacyDataForContextMenuInteraction]):
+        (-[WKContentView continueContextMenuInteraction:]):
+        (uiActionForPreviewAction): Deleted.
+        (menuFromPreviewOrDefaults): Deleted.
+
 2019-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] Fix another crash in -[UIPreviewTarget initWithContainer:center:transform:] when generating a fallback targeted preview

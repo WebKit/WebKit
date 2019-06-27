@@ -50,6 +50,20 @@ SOFT_LINK_CLASS(SafariServices, SSReadingList);
 
 typedef void (^WKElementActionHandlerInternal)(WKActionSheetAssistant *, _WKActivatedElementInfo *);
 
+static UIActionIdentifier const WKElementActionTypeCustomIdentifier = @"WKElementActionTypeCustom";
+static UIActionIdentifier const WKElementActionTypeOpenIdentifier = @"WKElementActionTypeOpen";
+static UIActionIdentifier const WKElementActionTypeCopyIdentifier = @"WKElementActionTypeCopy";
+static UIActionIdentifier const WKElementActionTypeSaveImageIdentifier = @"WKElementActionTypeSaveImage";
+#if !defined(TARGET_OS_IOS) || TARGET_OS_IOS
+static UIActionIdentifier const WKElementActionTypeAddToReadingListIdentifier = @"WKElementActionTypeAddToReadingList";
+static UIActionIdentifier const WKElementActionTypeOpenInDefaultBrowserIdentifier = @"WKElementActionTypeOpenInDefaultBrowser";
+static UIActionIdentifier const WKElementActionTypeOpenInExternalApplicationIdentifier = @"WKElementActionTypeOpenInExternalApplication";
+#endif
+static UIActionIdentifier const WKElementActionTypeShareIdentifier = @"WKElementActionTypeShare";
+static UIActionIdentifier const WKElementActionTypeOpenInNewTabIdentifier = @"WKElementActionTypeOpenInNewTab";
+static UIActionIdentifier const WKElementActionTypeOpenInNewWindowIdentifier = @"WKElementActionTypeOpenInNewWindow";
+static UIActionIdentifier const WKElementActionTypeDownloadIdentifier = @"WKElementActionTypeDownload";
+
 @implementation _WKElementAction  {
     RetainPtr<NSString> _title;
     WKElementActionHandlerInternal _actionHandler;
@@ -183,6 +197,99 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
 #include <WebKitAdditions/WKElementActionAdditions.mm>
 #else
 + (UIImage *)imageForElementActionType:(_WKElementActionType)actionType
+{
+    return nil;
+}
+#endif
+
+#if USE(UICONTEXTMENU)
+static UIActionIdentifier elementActionTypeToUIActionIdentifier(_WKElementActionType actionType)
+{
+    switch (actionType) {
+    case _WKElementActionTypeCustom:
+        return WKElementActionTypeCustomIdentifier;
+    case _WKElementActionTypeOpen:
+        return WKElementActionTypeOpenIdentifier;
+    case _WKElementActionTypeCopy:
+        return WKElementActionTypeCopyIdentifier;
+    case _WKElementActionTypeSaveImage:
+        return WKElementActionTypeSaveImageIdentifier;
+#if !defined(TARGET_OS_IOS) || TARGET_OS_IOS
+    case _WKElementActionTypeAddToReadingList:
+        return WKElementActionTypeAddToReadingListIdentifier;
+    case _WKElementActionTypeOpenInDefaultBrowser:
+        return WKElementActionTypeOpenInDefaultBrowserIdentifier;
+    case _WKElementActionTypeOpenInExternalApplication:
+        return WKElementActionTypeOpenInExternalApplicationIdentifier;
+#endif
+    case _WKElementActionTypeShare:
+        return WKElementActionTypeShareIdentifier;
+    case _WKElementActionTypeOpenInNewTab:
+        return WKElementActionTypeOpenInNewTabIdentifier;
+    case _WKElementActionTypeOpenInNewWindow:
+        return WKElementActionTypeOpenInNewWindowIdentifier;
+    case _WKElementActionTypeDownload:
+        return WKElementActionTypeDownloadIdentifier;
+    }
+}
+
+static _WKElementActionType uiActionIdentifierToElementActionType(UIActionIdentifier identifier)
+{
+    if ([identifier isEqualToString:WKElementActionTypeCustomIdentifier])
+        return _WKElementActionTypeCustom;
+    if ([identifier isEqualToString:WKElementActionTypeOpenIdentifier])
+        return _WKElementActionTypeOpen;
+    if ([identifier isEqualToString:WKElementActionTypeCopyIdentifier])
+        return _WKElementActionTypeCopy;
+    if ([identifier isEqualToString:WKElementActionTypeSaveImageIdentifier])
+        return _WKElementActionTypeSaveImage;
+#if !defined(TARGET_OS_IOS) || TARGET_OS_IOS
+    if ([identifier isEqualToString:WKElementActionTypeAddToReadingListIdentifier])
+        return _WKElementActionTypeAddToReadingList;
+    if ([identifier isEqualToString:WKElementActionTypeOpenInDefaultBrowserIdentifier])
+        return _WKElementActionTypeOpenInDefaultBrowser;
+    if ([identifier isEqualToString:WKElementActionTypeOpenInExternalApplicationIdentifier])
+        return _WKElementActionTypeOpenInExternalApplication;
+#endif
+    if ([identifier isEqualToString:WKElementActionTypeShareIdentifier])
+        return _WKElementActionTypeShare;
+    if ([identifier isEqualToString:WKElementActionTypeOpenInNewTabIdentifier])
+        return _WKElementActionTypeOpenInNewTab;
+    if ([identifier isEqualToString:WKElementActionTypeOpenInNewWindowIdentifier])
+        return _WKElementActionTypeOpenInNewWindow;
+    if ([identifier isEqualToString:WKElementActionTypeDownloadIdentifier])
+        return _WKElementActionTypeDownload;
+
+    return _WKElementActionTypeCustom;
+}
+
++ (_WKElementActionType)elementActionTypeForUIActionIdentifier:(UIActionIdentifier)identifier
+{
+    return uiActionIdentifierToElementActionType(identifier);
+}
+
+- (UIAction *)uiActionForElementInfo:(_WKActivatedElementInfo *)elementInfo
+{
+    UIImage *image = [_WKElementAction imageForElementActionType:self.type];
+    UIActionIdentifier identifier = elementActionTypeToUIActionIdentifier(self.type);
+
+    return [UIAction actionWithTitle:self.title image:image identifier:identifier handler:[weakSelf = WeakObjCPtr<_WKElementAction>(self), weakElementInfo = WeakObjCPtr<_WKActivatedElementInfo>(elementInfo)] (UIAction *) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+        auto strongElementInfo = weakElementInfo.get();
+        if (!strongElementInfo)
+            return;
+        [strongSelf runActionWithElementInfo:strongElementInfo.get()];
+    }];
+}
+#else
++ (_WKElementActionType)elementActionTypeForUIActionIdentifier:(UIActionIdentifier)identifier
+{
+    return _WKElementActionTypeCustom;
+}
+
+- (UIAction *)uiActionForElementInfo:(_WKActivatedElementInfo *)elementInfo
 {
     return nil;
 }

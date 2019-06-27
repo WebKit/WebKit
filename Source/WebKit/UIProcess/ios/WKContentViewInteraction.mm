@@ -7530,7 +7530,7 @@ static bool needsDeprecatedPreviewAPI(id<WKUIDelegate> delegate)
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-static NSArray<WKPreviewAction *> *wkPreviewActionsFromElementActions(NSArray<_WKElementAction *> *elementActions, _WKActivatedElementInfo *elementInfo)
+static NSArray<WKPreviewAction *> *wkLegacyPreviewActionsFromElementActions(NSArray<_WKElementAction *> *elementActions, _WKActivatedElementInfo *elementInfo)
 {
     NSMutableArray<WKPreviewAction *> *previewActions = [NSMutableArray arrayWithCapacity:[elementActions count]];
     for (_WKElementAction *elementAction in elementActions) {
@@ -7543,7 +7543,7 @@ static NSArray<WKPreviewAction *> *wkPreviewActionsFromElementActions(NSArray<_W
     return previewActions;
 }
 
-static UIAction *uiActionForPreviewAction(UIPreviewAction *previewAction, UIViewController *previewViewController)
+static UIAction *uiActionForLegacyPreviewAction(UIPreviewAction *previewAction, UIViewController *previewViewController)
 {
     // UIPreviewActionItem.image is SPI, so no external clients will be able
     // to provide glyphs for actions <rdar://problem/50151855>.
@@ -7555,38 +7555,44 @@ static UIAction *uiActionForPreviewAction(UIPreviewAction *previewAction, UIView
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-static NSArray<UIMenuElement *> *menuElementsFromPreviewOrDefaults(UIViewController *previewViewController, const RetainPtr<NSArray>& defaultElementActions, RetainPtr<_WKActivatedElementInfo> elementInfo)
+static NSArray<UIMenuElement *> *menuElementsFromLegacyPreview(UIViewController *previewViewController)
 {
-    auto actions = [NSMutableArray arrayWithCapacity:defaultElementActions.get().count];
+    if (previewViewController)
+        return nil;
 
-    // One of the delegates may have provided a UIViewController with a previewActionItems array. If so,
-    // we need to convert each UIPreviewActionItem into a UIAction.
-    if (previewViewController) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        NSArray<id<UIPreviewActionItem>> *previewActions = previewViewController.previewActionItems;
-        for (UIPreviewAction *previewAction in previewActions)
-            [actions addObject:uiActionForPreviewAction(previewAction, previewViewController)];
-        ALLOW_DEPRECATED_DECLARATIONS_END
-    }
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    NSArray<id<UIPreviewActionItem>> *previewActions = previewViewController.previewActionItems;
+    if (!previewActions || ![previewActions count])
+        return nil;
 
-    if (![actions count]) {
-        // We either didn't get a custom preview UIViewController, or it didn't provide any actions
-        // so we should use the default set.
-        for (_WKElementAction *elementAction in defaultElementActions.get()) {
-            UIImage *image = [_WKElementAction imageForElementActionType:elementAction.type];
+    auto actions = [NSMutableArray arrayWithCapacity:previewActions.count];
 
-            [actions addObject:[UIAction actionWithTitle:elementAction.title image:image identifier:nil handler:^(UIAction *) {
-                [elementAction runActionWithElementInfo:elementInfo.get()];
-            }]];
-        }
-    }
+    for (UIPreviewAction *previewAction in previewActions)
+        [actions addObject:uiActionForLegacyPreviewAction(previewAction, previewViewController)];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     return actions;
 }
 
-static UIMenu *menuFromPreviewOrDefaults(UIViewController *previewViewController, const RetainPtr<NSArray>& defaultElementActions, RetainPtr<_WKActivatedElementInfo> elementInfo, NSString *title)
+static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(const RetainPtr<NSArray>& defaultElementActions, RetainPtr<_WKActivatedElementInfo> elementInfo)
 {
-    auto actions = menuElementsFromPreviewOrDefaults(previewViewController, defaultElementActions, elementInfo);
+    if (!defaultElementActions || !defaultElementActions.get().count)
+        return nil;
+
+    auto actions = [NSMutableArray arrayWithCapacity:defaultElementActions.get().count];
+
+    for (_WKElementAction *elementAction in defaultElementActions.get())
+        [actions addObject:[elementAction uiActionForElementInfo:elementInfo.get()]];
+
+    return actions;
+}
+
+static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewViewController, const RetainPtr<NSArray>& defaultElementActions, RetainPtr<_WKActivatedElementInfo> elementInfo, NSString *title)
+{
+    auto actions = menuElementsFromLegacyPreview(previewViewController);
+    if (!actions)
+        actions = menuElementsFromDefaultActions(defaultElementActions, elementInfo);
+
     return [UIMenu menuWithTitle:title children:actions];
 }
 
@@ -7634,7 +7640,7 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
 
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([uiDelegate respondsToSelector:@selector(webView:previewingViewControllerForElement:defaultActions:)]) {
-            auto defaultActions = wkPreviewActionsFromElementActions(defaultActionsFromAssistant.get(), elementInfo.get());
+            auto defaultActions = wkLegacyPreviewActionsFromElementActions(defaultActionsFromAssistant.get(), elementInfo.get());
             auto previewElementInfo = adoptNS([[WKPreviewElementInfo alloc] _initWithLinkURL:url]);
             previewViewController = [uiDelegate webView:_webView previewingViewControllerForElement:previewElementInfo.get() defaultActions:defaultActions];
         } else if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:defaultActions:elementInfo:)])
@@ -7655,7 +7661,7 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
                 if (_showLinkPreviews && dataDetectorsResult && dataDetectorsResult.get().previewProvider)
                     _contextMenuLegacyPreviewController = dataDetectorsResult.get().previewProvider();
                 if (dataDetectorsResult && dataDetectorsResult.get().actionProvider) {
-                    auto menuElements = menuElementsFromPreviewOrDefaults(nil, defaultActionsFromAssistant, elementInfo);
+                    auto menuElements = menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
                     _contextMenuLegacyMenu = dataDetectorsResult.get().actionProvider(menuElements);
                 }
                 END_BLOCK_OBJC_EXCEPTIONS;
@@ -7665,7 +7671,7 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
 #endif
 
         auto menuTitle = titleForMenu(true, _showLinkPreviews, url, _positionInformation.title);
-        _contextMenuLegacyMenu = menuFromPreviewOrDefaults(previewViewController, defaultActionsFromAssistant, elementInfo, menuTitle);
+        _contextMenuLegacyMenu = menuFromLegacyPreviewOrDefaultActions(previewViewController, defaultActionsFromAssistant, elementInfo, menuTitle);
 
     } else if (_positionInformation.isImage) {
         NSURL *nsURL = (NSURL *)url;
@@ -7693,7 +7699,7 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
         ALLOW_DEPRECATED_DECLARATIONS_END
 
         auto menuTitle = titleForMenu(false, _showLinkPreviews, url, _positionInformation.title);
-        _contextMenuLegacyMenu = menuFromPreviewOrDefaults(previewViewController, defaultActionsFromAssistant, elementInfo, menuTitle);
+        _contextMenuLegacyMenu = menuFromLegacyPreviewOrDefaultActions(previewViewController, defaultActionsFromAssistant, elementInfo, menuTitle);
     }
 
     _contextMenuLegacyPreviewController = _showLinkPreviews ? previewViewController : nullptr;
@@ -7839,7 +7845,7 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
             auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:strongSelf->_positionInformation]);
             RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = strongSelf->_positionInformation.isLink ? [strongSelf->_actionSheetAssistant defaultActionsForLinkSheet:elementInfo.get()] : [strongSelf->_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
 
-            auto menuElements = menuElementsFromPreviewOrDefaults(nil, defaultActionsFromAssistant, elementInfo);
+            auto menuElements = menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
 
             if (actionProviderFromUIDelegate)
                 return actionProviderFromUIDelegate(menuElements);

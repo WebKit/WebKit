@@ -30,7 +30,10 @@
 #import <WebKit/WKBase.h>
 #import <WebKit/_WKActivatedElementInfo.h>
 
+@class UIAction;
 @class UIImage;
+
+typedef NSString *UIActionIdentifier;
 
 typedef void (^WKElementActionHandler)(_WKActivatedElementInfo *);
 typedef BOOL (^WKElementActionDismissalHandler)(void);
@@ -42,8 +45,8 @@ typedef NS_ENUM(NSInteger, _WKElementActionType) {
     _WKElementActionTypeSaveImage,
 #if !defined(TARGET_OS_IOS) || TARGET_OS_IOS
     _WKElementActionTypeAddToReadingList,
-    _WKElementActionTypeOpenInDefaultBrowser WK_API_AVAILABLE(ios(9_0)),
-    _WKElementActionTypeOpenInExternalApplication WK_API_AVAILABLE(ios(9_0)),
+    _WKElementActionTypeOpenInDefaultBrowser WK_API_AVAILABLE(ios(9.0)),
+    _WKElementActionTypeOpenInExternalApplication WK_API_AVAILABLE(ios(9.0)),
 #endif
     _WKElementActionTypeShare WK_API_AVAILABLE(macos(10.12), ios(10.0)),
     _WKElementActionTypeOpenInNewTab WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
@@ -59,9 +62,12 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 + (instancetype)elementActionWithType:(_WKElementActionType)type customTitle:(NSString *)title;
 + (instancetype)elementActionWithTitle:(NSString *)title actionHandler:(WKElementActionHandler)handler;
 
-+ (UIImage *)imageForElementActionType:(_WKElementActionType)actionType WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (UIImage *)imageForElementActionType:(_WKElementActionType)actionType WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(13.0));
++ (_WKElementActionType)elementActionTypeForUIActionIdentifier:(UIActionIdentifier)identifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(13.0));
 
-- (void)runActionWithElementInfo:(_WKActivatedElementInfo *)info WK_API_AVAILABLE(ios(9_0));
+- (void)runActionWithElementInfo:(_WKActivatedElementInfo *)info WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(9.0));
+
+- (UIAction *)uiActionForElementInfo:(_WKActivatedElementInfo *)elementInfo WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(13.0));
 
 @property (nonatomic, readonly) _WKElementActionType type;
 @property (nonatomic, readonly) NSString* title;
