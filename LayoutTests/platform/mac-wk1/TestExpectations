@@ -746,3 +746,5 @@ webkit.org/b/198676 imported/w3c/web-platform-tests/content-security-policy/repo
 
 webkit.org/b/199242 [ Debug ] http/tests/performance/performance-resource-timing-resourcetimingbufferfull-shrinking-buffer-crash.html [ Pass Failure ]
 
+webkit.org/b/199280 [ Debug Mojave ] fast/parser/parser-yield-timing.html [ Pass Failure ]
+
