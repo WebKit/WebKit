@@ -150,10 +150,14 @@ def isTriggerUsedByAnyBuilder(config, trigger):
 
 def checkWorkersAndBuildersForConsistency(config, workers, builders):
     def _find_worker_with_name(workers, worker_name):
+        result = None
         for worker in workers:
             if worker['name'] == worker_name:
-                return worker
-        return None
+                if not result:
+                    result = worker
+                else:
+                    raise Exception('Duplicate worker entry found for {}.'.format(worker['name']))
+        return result
 
     for worker in workers:
         checkValidWorker(worker)
