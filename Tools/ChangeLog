@@ -1,3 +1,14 @@
+2019-06-26  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] MiniBrowser should make better font choices
+        https://bugs.webkit.org/show_bug.cgi?id=199244
+
+        Reviewed by Brent Fulgham.
+
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::updateDeviceScaleFactor):
+        * MiniBrowser/win/MiniBrowserLib.rc:
+
 2019-06-26  Alex Christensen  <achristensen@webkit.org>
 
         testRunner.setAlwaysAcceptCookies should wait for cookie accept policy to be set
