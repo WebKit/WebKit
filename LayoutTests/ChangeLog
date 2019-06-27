@@ -1,3 +1,17 @@
+2019-06-26  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Set state to Closed when show() is called during an active session
+        https://bugs.webkit.org/show_bug.cgi?id=199239
+
+        Reviewed by Alex Christensen.
+
+        Copied from web-platform-tests/payment-request/payment-is-showing.https.html and modified to
+        use UIHelper instead of test_driver.bless.
+
+        * http/tests/paymentrequest/payment-is-showing.https-expected.txt: Added.
+        * http/tests/paymentrequest/payment-is-showing.https.html: Added.
+        * http/tests/paymentrequest/resources/blank.html: Added.
+
 2019-06-26  Russell Epstein  <russell_e@apple.com>
 
         Layout Test http/tests/performance/performance-resource-timing-resourcetimingbufferfull-shrinking-buffer-crash.html is failing.

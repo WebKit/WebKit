@@ -404,6 +404,7 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
 
     if (PaymentHandler::hasActiveSession(document)) {
         promise.reject(Exception { AbortError });
+        m_state = State::Closed;
         return;
     }
 

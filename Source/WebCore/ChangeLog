@@ -1,3 +1,20 @@
+2019-06-26  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Set state to Closed when show() is called during an active session
+        https://bugs.webkit.org/show_bug.cgi?id=199239
+
+        Reviewed by Alex Christensen.
+
+        According to step 7 of https://w3c.github.io/payment-request/#show-method (as of 26 June
+        2019), when another payment request is showing, calling show() should set the [[state]]
+        internal slot to Closed in addition to rejecting the show promise with an AbortError. WebKit
+        was only doing the latter. Let's do both.
+
+        Test: http/tests/paymentrequest/payment-is-showing.https.html
+
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::show):
+
 2019-06-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Implement console.countReset
