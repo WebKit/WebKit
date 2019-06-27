@@ -1,3 +1,20 @@
+2019-06-27  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Do not print worker environment variables in each build step
+        https://bugs.webkit.org/show_bug.cgi?id=197319
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CheckOutSource.__init__): Disabled logging of environment variables.
+        (ApplyPatch.__init__): Ditto.
+        (KillOldProcesses.__init__): Ditto.
+        (ArchiveBuiltProduct.__init__): Ditto.
+        (DownloadBuiltProduct.__init__): Ditto.
+        (ExtractBuiltProduct.__init__): Ditto.
+        (RunAPITests.__init__): Ditto.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests accordingly.
+
 2019-06-26  Jiewen Tan  <jiewen_tan@apple.com>
 
         SubFrameSOAuthorizationSession should preserve the referrer header when fall back to web path

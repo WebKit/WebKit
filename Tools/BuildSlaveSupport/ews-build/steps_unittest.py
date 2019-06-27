@@ -413,6 +413,7 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['python', 'Tools/BuildSlaveSupport/kill-old-processes', 'buildbot'],
+                        logEnviron=False,
                         timeout=60,
                         )
             + 0,
@@ -425,6 +426,7 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['python', 'Tools/BuildSlaveSupport/kill-old-processes', 'buildbot'],
+                        logEnviron=False,
                         timeout=60,
                         )
             + ExpectShell.log('stdio', stdout='Unexpected error.')
@@ -1002,6 +1004,7 @@ class TestArchiveBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['python', 'Tools/BuildSlaveSupport/built-product-archive', '--platform=ios-simulator',  '--release', 'archive'],
                         )
             + 0,
@@ -1015,6 +1018,7 @@ class TestArchiveBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['python', 'Tools/BuildSlaveSupport/built-product-archive', '--platform=mac-sierra',  '--debug', 'archive'],
                         )
             + ExpectShell.log('stdio', stdout='Unexpected failure.')
@@ -1091,6 +1095,7 @@ class TestDownloadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('patch_id', '1234')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['python', 'Tools/BuildSlaveSupport/download-built-product', '--release', 'https://s3-us-west-2.amazonaws.com/ews-archives.webkit.org/ios-simulator-12-x86_64-release/1234.zip'],
                         )
             + 0,
@@ -1106,6 +1111,7 @@ class TestDownloadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('patch_id', '123456')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['python', 'Tools/BuildSlaveSupport/download-built-product', '--debug', 'https://s3-us-west-2.amazonaws.com/ews-archives.webkit.org/mac-sierra-x86_64-debug/123456.zip'],
                         )
             + ExpectShell.log('stdio', stdout='Unexpected failure.')
@@ -1129,6 +1135,7 @@ class TestExtractBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['python', 'Tools/BuildSlaveSupport/built-product-archive', '--platform=ios-simulator',  '--release', 'extract'],
                         )
             + 0,
@@ -1142,6 +1149,7 @@ class TestExtractBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['python', 'Tools/BuildSlaveSupport/built-product-archive', '--platform=mac-sierra',  '--debug', 'extract'],
                         )
             + ExpectShell.log('stdio', stdout='Unexpected failure.')
@@ -1213,6 +1221,7 @@ class TestRunAPITests(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--release', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
                         logfiles={'json': self.jsonFileName},
                         )
@@ -1240,6 +1249,7 @@ All tests successfully passed!
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', '--json-output={0}'.format(self.jsonFileName), '--ios-simulator'],
                         logfiles={'json': self.jsonFileName},
                         )
@@ -1267,6 +1277,7 @@ All tests successfully passed!
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
                         logfiles={'json': self.jsonFileName},
                         )
@@ -1308,6 +1319,7 @@ Testing completed, Exit status: 3
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
                         logfiles={'json': self.jsonFileName},
                         )
@@ -1363,6 +1375,7 @@ Testing completed, Exit status: 3
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
                         logfiles={'json': self.jsonFileName},
                         )
@@ -1380,6 +1393,7 @@ Testing completed, Exit status: 3
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
                         logfiles={'json': self.jsonFileName},
                         )
