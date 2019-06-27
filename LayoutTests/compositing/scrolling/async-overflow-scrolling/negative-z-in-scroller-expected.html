@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+		#scroller {
+			position: relative;
+			overflow-y: scroll;
+			width: 300px;
+			height: 300px;
+			border: 1px solid black;
+		}
+
+		.negative {
+			position: relative;
+			z-index: 1;
+			margin: 20px;
+		    width: 200px;
+		    height: 200px;
+		    background-color: green;
+		}
+
+        .spacer {
+            height: 1000px;
+            width: 10px;
+            background-color: silver;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                scroller.scrollTo(0, 300);
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0)
+        }, false);
+    </script>
+</head>
+<body>
+	<div id="scroller">
+        <div class="negative box"></div>
+        <div class="spacer"></div>
+	</div>
+</body>
+</html>
+

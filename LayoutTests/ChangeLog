@@ -1,3 +1,27 @@
+2019-06-26  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow scrolling] Fix missing or misplaced content inside overflow:scroll
+        https://bugs.webkit.org/show_bug.cgi?id=199253
+
+        Reviewed by Zalan Bujtas.
+
+        * compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt:
+        * compositing/layer-creation/clipping-scope/overlap-constrained-inside-scroller-expected.txt:
+        * compositing/layer-creation/clipping-scope/scroller-with-negative-z-children-expected.txt:
+        * compositing/rtl/rtl-scrolling-with-transformed-descendants-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/hidden-relative-layer-content-in-scroller-expected.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/hidden-relative-layer-content-in-scroller.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/layer-for-negative-z-in-scroller-expected.txt: Added.
+        * compositing/scrolling/async-overflow-scrolling/layer-for-negative-z-in-scroller.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/negative-z-in-scroller-expected.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/negative-z-in-scroller.html: Added.
+        * compositing/shared-backing/overflow-scroll/nested-absolute-with-clipping-in-stacking-overflow-expected.txt:
+        * platform/ios-wk2/compositing/layer-creation/clipping-scope/overlap-constrained-inside-scroller-expected.txt:
+        * platform/ios-wk2/compositing/layer-creation/clipping-scope/scroller-with-negative-z-children-expected.txt:
+        * platform/ios-wk2/compositing/scrolling/async-overflow-scrolling/layer-for-negative-z-in-scroller-expected.txt: Added.
+        * platform/ios-wk2/compositing/shared-backing/overflow-scroll/nested-absolute-with-clipping-in-stacking-overflow-expected.txt:
+        * platform/ios/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt:
+
 2019-06-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         ReplacementFragment should not have script observable side effects

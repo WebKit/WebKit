@@ -497,7 +497,7 @@ private:
     bool requiresCompositingForEditableImage(RenderLayerModelObject&) const;
     bool requiresCompositingForIndirectReason(const RenderLayer&, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking, IndirectCompositingReason&) const;
 
-    static bool layerContainingBlockCrossesCoordinatedScrollingBoundary(const RenderLayer&, const RenderLayer& compositedAncestor);
+    static ScrollPositioningBehavior layerScrollBehahaviorRelativeToCompositedAncestor(const RenderLayer&, const RenderLayer& compositedAncestor);
 
     static bool styleChangeMayAffectIndirectCompositingReasons(const RenderStyle& oldStyle, const RenderStyle& newStyle);
 

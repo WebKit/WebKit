@@ -1,0 +1,46 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+		#scroller {
+			position: relative;
+			overflow-y: scroll;
+			width: 300px;
+			height: 300px;
+			border: 1px solid black;
+		}
+
+		.negative {
+			position: relative;
+			z-index: -1;
+			margin: 20px;
+		    width: 200px;
+		    height: 200px;
+		    background-color: green;
+		}
+
+        .spacer {
+            height: 1000px;
+            width: 10px;
+            background-color: silver;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            if (window.internals)
+                document.getElementById('layers').innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CLIPPING);
+        }, false);
+    </script>
+</head>
+<body>
+	<div id="scroller">
+        <div class="negative box"></div>
+        <div class="spacer"></div>
+	</div>
+<pre id="layers"></pre>
+</body>
+</html>
+

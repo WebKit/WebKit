@@ -28,11 +28,6 @@
                       (bounds 140.00 140.00)
                       (contentsOpaque 1)
                       (drawsContent 1)
-                      (children 1
-                        (GraphicsLayer
-                          (bounds 140.00 140.00)
-                        )
-                      )
                     )
                   )
                 )
