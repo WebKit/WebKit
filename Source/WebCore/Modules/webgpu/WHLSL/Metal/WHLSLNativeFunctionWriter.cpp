@@ -174,8 +174,8 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         auto& unnamedParameterType = downcast<AST::UnnamedType>(parameterType);
         if (is<AST::ArrayType>(unnamedParameterType)) {
             auto& arrayParameterType = downcast<AST::ArrayType>(unnamedParameterType);
-            stringBuilder.append(makeString("uint ", outputFunctionName, '(', metalParameterName, " v) {\n"));
-            stringBuilder.append(makeString("    return ", arrayParameterType.numElements(), "u;\n"));
+            stringBuilder.append(makeString("uint ", outputFunctionName, '(', metalParameterName, ") {\n"));
+            stringBuilder.append(makeString("    return ", arrayParameterType.numElements(), ";\n"));
             stringBuilder.append("}\n");
             return stringBuilder.toString();
         }
@@ -257,6 +257,7 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1]->type());
         auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
         stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " v, ", metalParameter2Name, " n) {\n"));
+        ASSERT(is<AST::ArrayReferenceType>(*nativeFunctionDeclaration.parameters()[0]->type()));
         stringBuilder.append("    if (n < v.length) return &(v.pointer[n]);\n");
         stringBuilder.append("    return nullptr;\n");
         stringBuilder.append("}\n");

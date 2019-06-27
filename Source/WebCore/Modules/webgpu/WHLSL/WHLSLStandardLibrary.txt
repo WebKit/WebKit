@@ -792,6 +792,12 @@ int operator++(int value) {
 int operator--(int value) {
     return value - 1;
 }
+uint operator++(uint value) {
+    return value + 1;
+}
+uint operator--(uint value) {
+    return value - 1;
+}
 
 native ushort Sample(Texture1D<ushort>, sampler, float location);
 native ushort Sample(Texture1DArray<ushort>, sampler, float2 location);

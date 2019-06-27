@@ -1,3 +1,53 @@
+2019-06-27  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Implement arrays and MakeArrayReference
+        https://bugs.webkit.org/show_bug.cgi?id=198414
+
+        Reviewed by Myles C. Maxfield.
+
+        This patch implements WHLSL arrays. The main implementation detail is that
+        arrays get compiled to use Metal's array type. To make everything work, this
+        patch also fixes a few bugs:
+        - The checker now allows "operator.length" to be called on arrays. Prior to
+        this patch, it was just allowed on array references.
+        
+        - The preserve variable lifetimes pass now looks at MakeArrayReference nodes.
+        Prior to this patch, it just looked at MakePointerExpression.
+        
+        - We were producing the wrong type for ander arguments for indexed accesses
+        on array types. We were saying the argument that was produced was a reference
+        to an array instead of an array reference to the element type.
+        
+        - The trie we compose for the reverse type hierarchy was inserting elements
+        into the wrong "children" vector. We were always inserting things into the
+        top level vector. This is wrong when we have a nesting of types > 1.
+        
+        I also found a bug with having arrays of pointers when writing this patch.
+        Work on this will take place in a follow up: https://bugs.webkit.org/show_bug.cgi?id=199197
+
+        Tests: webgpu/whlsl-huge-array.html
+               webgpu/whlsl-make-array-reference.html
+               webgpu/whlsl-simple-arrays.html
+               webgpu/whlsl-two-dimensional-array.html
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeFunction):
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp:
+        (WebCore::WHLSL::Metal::TypeNamer::insert):
+        (WebCore::WHLSL::Metal::TypeNamer::emitUnnamedTypeDefinition):
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.h:
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::resolveByInstantiation):
+        (WebCore::WHLSL::Checker::visit):
+        * Modules/webgpu/WHLSL/WHLSLPreserveVariableLifetimes.cpp:
+        (WebCore::WHLSL::EscapedVariableCollector::escapeVariableUse):
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp:
+        (WebCore::WHLSL::wrapAnderCallArgument):
+        (WebCore::WHLSL::anderCallArgument):
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt:
+
 2019-06-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake] Bump cmake_minimum_required version to 3.10

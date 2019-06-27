@@ -95,13 +95,12 @@ struct AnderCallArgumentResult {
 };
 
 template <typename ExpressionConstructor, typename TypeConstructor>
-static Optional<AnderCallArgumentResult> wrapAnderCallArgument(UniqueRef<AST::Expression>& expression, bool anderFunction, bool threadAnderFunction)
+static Optional<AnderCallArgumentResult> wrapAnderCallArgument(UniqueRef<AST::Expression>& expression, UniqueRef<AST::UnnamedType> baseType, bool anderFunction, bool threadAnderFunction)
 {
     if (auto addressSpace = expression->typeAnnotation().leftAddressSpace()) {
         if (!anderFunction)
             return WTF::nullopt;
         auto origin = expression->origin();
-        auto baseType = expression->resolvedType().clone();
         auto makeArrayReference = makeUniqueRef<ExpressionConstructor>(Lexer::Token(origin), WTFMove(expression));
         makeArrayReference->setType(makeUniqueRef<TypeConstructor>(WTFMove(origin), *addressSpace, WTFMove(baseType)));
         makeArrayReference->setTypeAnnotation(AST::RightValue());
@@ -109,7 +108,6 @@ static Optional<AnderCallArgumentResult> wrapAnderCallArgument(UniqueRef<AST::Ex
     }
     if (threadAnderFunction) {
         auto origin = expression->origin();
-        auto baseType = expression->resolvedType().clone();
         auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(origin), AST::Qualifiers(), baseType->clone(), String(), WTF::nullopt, WTF::nullopt);
 
         auto variableReference1 = makeUniqueRef<AST::VariableReference>(AST::VariableReference::wrap(variableDeclaration));
@@ -151,9 +149,9 @@ static Optional<AnderCallArgumentResult> anderCallArgument(UniqueRef<AST::Expres
         if (is<AST::ArrayReferenceType>(unnamedType))
             return {{ WTFMove(expression), WTF::nullopt, WhichAnder::Ander }};
         if (is<AST::ArrayType>(unnamedType))
-            return wrapAnderCallArgument<AST::MakeArrayReferenceExpression, AST::ArrayReferenceType>(expression, anderFunction, threadAnderFunction);
+            return wrapAnderCallArgument<AST::MakeArrayReferenceExpression, AST::ArrayReferenceType>(expression, downcast<AST::ArrayType>(unnamedType).type().clone(), anderFunction, threadAnderFunction);
     }
-    return wrapAnderCallArgument<AST::MakePointerExpression, AST::PointerType>(expression, anderFunction, threadAnderFunction);
+    return wrapAnderCallArgument<AST::MakePointerExpression, AST::PointerType>(expression, expression->resolvedType().clone(), anderFunction, threadAnderFunction);
 }
 
 static Optional<UniqueRef<AST::Expression>> setterCall(AST::PropertyAccessExpression& propertyAccessExpression, AST::FunctionDeclaration* relevantAnder, UniqueRef<AST::Expression>&& newValue, const std::function<UniqueRef<AST::Expression>()>& leftValueFactory, AST::VariableDeclaration* indexVariable)

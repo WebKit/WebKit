@@ -55,22 +55,32 @@ namespace WHLSL {
 class EscapedVariableCollector : public Visitor {
     using Base = Visitor;
 public:
-    void visit(AST::MakePointerExpression& makePointerExpression) override
+
+    void escapeVariableUse(AST::Expression& expression)
     {
-        if (!is<AST::VariableReference>(makePointerExpression.leftValue())) {
+        if (!is<AST::VariableReference>(expression)) {
             // FIXME: Are we missing any interesting productions here?
             // https://bugs.webkit.org/show_bug.cgi?id=198311
-            Base::visit(makePointerExpression.leftValue());
+            Base::visit(expression);
             return;
         }
 
-        auto& variableReference = downcast<AST::VariableReference>(makePointerExpression.leftValue());
-        auto* variable = variableReference.variable();
+        auto* variable = downcast<AST::VariableReference>(expression).variable();
         ASSERT(variable);
         // FIXME: We could skip this if we mark all internal variables with a bit, since we
         // never make any internal variable escape the current scope it is defined in:
         // https://bugs.webkit.org/show_bug.cgi?id=198383
         m_escapedVariables.add(variable, makeString("_", variable->name(), "_", m_count++));
+    }
+
+    void visit(AST::MakePointerExpression& makePointerExpression) override
+    {
+        escapeVariableUse(makePointerExpression.leftValue());
+    }
+
+    void visit(AST::MakeArrayReferenceExpression& makeArrayReferenceExpression) override
+    {
+        escapeVariableUse(makeArrayReferenceExpression.leftValue());
     }
 
     HashMap<AST::VariableDeclaration*, String> takeEscapedVariables() { return WTFMove(m_escapedVariables); }

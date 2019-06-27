@@ -628,16 +628,22 @@ void FunctionDefinitionWriter::visit(AST::MakeArrayReferenceExpression& makeArra
     checkErrorAndVisit(makeArrayReferenceExpression.leftValue());
     // FIXME: This needs to be made to work. It probably should be using the last leftValue too.
     // https://bugs.webkit.org/show_bug.cgi?id=198838
-    auto lValue = takeLastValue();
     auto variableName = generateNextVariableName();
+
     auto mangledTypeName = m_typeNamer.mangledNameForType(makeArrayReferenceExpression.resolvedType());
-    if (is<AST::PointerType>(makeArrayReferenceExpression.resolvedType()))
+    if (is<AST::PointerType>(makeArrayReferenceExpression.leftValue().resolvedType())) {
+        auto ptrValue = takeLastValue();
+        m_stringBuilder.append(makeString(mangledTypeName, ' ', variableName, ";\n"));
+        m_stringBuilder.append(makeString("if (", ptrValue, ") ", variableName, " = { ", ptrValue, ", 1};\n"));
+        m_stringBuilder.append(makeString("else ", variableName, " = { nullptr, 0 };\n"));
+    } else if (is<AST::ArrayType>(makeArrayReferenceExpression.leftValue().resolvedType())) {
+        auto lValue = takeLastLeftValue();
+        auto& arrayType = downcast<AST::ArrayType>(makeArrayReferenceExpression.leftValue().resolvedType());
+        m_stringBuilder.append(makeString(mangledTypeName, ' ', variableName, " = { ", lValue, "->data(), ", arrayType.numElements(), " };\n"));
+    } else {
+        auto lValue = takeLastLeftValue();
         m_stringBuilder.append(makeString(mangledTypeName, ' ', variableName, " = { ", lValue, ", 1 };\n"));
-    else if (is<AST::ArrayType>(makeArrayReferenceExpression.resolvedType())) {
-        auto& arrayType = downcast<AST::ArrayType>(makeArrayReferenceExpression.resolvedType());
-        m_stringBuilder.append(makeString(mangledTypeName, ' ', variableName, " = { &(", lValue, "[0]), ", arrayType.numElements(), " };\n"));
-    } else
-        m_stringBuilder.append(makeString(mangledTypeName, ' ', variableName, " = { &", lValue, ", 1 };\n"));
+    }
     appendRightValue(makeArrayReferenceExpression, variableName);
 }
 

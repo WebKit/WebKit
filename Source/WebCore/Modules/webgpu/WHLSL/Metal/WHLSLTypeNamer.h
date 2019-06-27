@@ -100,7 +100,7 @@ private:
     String metalTypeDefinitions();
 
     UniqueRef<BaseTypeNameNode> createNameNode(AST::UnnamedType&, BaseTypeNameNode* parent);
-    size_t insert(AST::UnnamedType&, Vector<UniqueRef<BaseTypeNameNode>>&);
+    BaseTypeNameNode* insert(AST::UnnamedType&, Vector<UniqueRef<BaseTypeNameNode>>&);
 
     Program& m_program;
     Vector<UniqueRef<BaseTypeNameNode>> m_trie;

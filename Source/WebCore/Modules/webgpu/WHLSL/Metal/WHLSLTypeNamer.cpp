@@ -309,7 +309,7 @@ UniqueRef<BaseTypeNameNode> TypeNamer::createNameNode(AST::UnnamedType& unnamedT
     return makeUniqueRef<ArrayTypeNameNode>(parent, generateNextTypeName(), arrayType.numElements());
 }
 
-size_t TypeNamer::insert(AST::UnnamedType& unnamedType, Vector<UniqueRef<BaseTypeNameNode>>& types)
+BaseTypeNameNode* TypeNamer::insert(AST::UnnamedType& unnamedType, Vector<UniqueRef<BaseTypeNameNode>>& types)
 {
     Vector<UniqueRef<BaseTypeNameNode>>* vectorToInsertInto { nullptr };
     BaseTypeNameNode* parent { nullptr };
@@ -317,17 +317,14 @@ size_t TypeNamer::insert(AST::UnnamedType& unnamedType, Vector<UniqueRef<BaseTyp
         vectorToInsertInto = &types;
         parent = nullptr;
     } else if (is<AST::PointerType>(unnamedType)) {
-        auto& item = types[insert(downcast<AST::PointerType>(unnamedType).elementType(), types)];
-        vectorToInsertInto = &item->children();
-        parent = &item;
+        parent = insert(downcast<AST::PointerType>(unnamedType).elementType(), types);
+        vectorToInsertInto = &parent->children();
     } else if (is<AST::ArrayReferenceType>(unnamedType)) {
-        auto& item = types[insert(downcast<AST::ArrayReferenceType>(unnamedType).elementType(), types)];
-        vectorToInsertInto = &item->children();
-        parent = &item;
+        parent = insert(downcast<AST::ArrayReferenceType>(unnamedType).elementType(), types);
+        vectorToInsertInto = &parent->children();
     } else {
-        auto& item = types[insert(downcast<AST::ArrayType>(unnamedType).type(), types)];
-        vectorToInsertInto = &item->children();
-        parent = &item;
+        parent = insert(downcast<AST::ArrayType>(unnamedType).type(), types);
+        vectorToInsertInto = &parent->children();
     }
     ASSERT(vectorToInsertInto);
 
@@ -339,11 +336,11 @@ size_t TypeNamer::insert(AST::UnnamedType& unnamedType, Vector<UniqueRef<BaseTyp
             ASSERT_UNUSED(addResult, addResult.isNewEntry);
         }
         vectorToInsertInto->append(WTFMove(result));
-        return vectorToInsertInto->size() - 1;
+        return &vectorToInsertInto->last().get();
     }
     auto addResult = m_unnamedTypeMapping.add(&unnamedType, &*iterator);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    return iterator - vectorToInsertInto->begin();
+    return &*iterator;
 }
 
 class MetalTypeDeclarationWriter : public Visitor {
@@ -398,7 +395,7 @@ void TypeNamer::emitUnnamedTypeDefinition(BaseTypeNameNode& baseTypeNameNode, Ha
     } else {
         auto& arrayType = downcast<ArrayTypeNameNode>(baseTypeNameNode);
         ASSERT(baseTypeNameNode.parent());
-        stringBuilder.append(makeString("typedef Array<", arrayType.parent()->mangledName(), ", ", arrayType.numElements(), "> ", arrayType.mangledName(), ";\n"));
+        stringBuilder.append(makeString("typedef array<", arrayType.parent()->mangledName(), ", ", arrayType.numElements(), "> ", arrayType.mangledName(), ";\n"));
     }
     emittedUnnamedTypes.add(&baseTypeNameNode);
 }

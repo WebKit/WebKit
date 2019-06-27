@@ -183,7 +183,7 @@ static Optional<AST::NativeFunctionDeclaration> resolveByInstantiation(const Str
             return resolveWithOperatorAnderIndexer(origin, *firstArgumentArrayRef, intrinsics);
     } else if (name == "operator.length" && types.size() == 1) {
         auto* firstArgumentReference = types[0].get().visit(WTF::makeVisitor([](UniqueRef<AST::UnnamedType>& unnamedType) -> AST::UnnamedType* {
-            if (is<AST::ArrayReferenceType>(static_cast<AST::UnnamedType&>(unnamedType)))
+            if (is<AST::ArrayReferenceType>(static_cast<AST::UnnamedType&>(unnamedType)) || is<AST::ArrayType>(static_cast<AST::UnnamedType&>(unnamedType)))
                 return &unnamedType;
             return nullptr;
         }, [](RefPtr<ResolvableTypeReference>&) -> AST::UnnamedType* {
@@ -1132,9 +1132,7 @@ void Checker::visit(AST::VariableReference& variableReference)
     ASSERT(variableReference.variable());
     ASSERT(variableReference.variable()->type());
     
-    AST::TypeAnnotation typeAnnotation = AST::RightValue();
-    typeAnnotation = AST::LeftValue { AST::AddressSpace::Thread };
-    assignType(variableReference, variableReference.variable()->type()->clone(), WTFMove(typeAnnotation));
+    assignType(variableReference, variableReference.variable()->type()->clone(), AST::LeftValue { AST::AddressSpace::Thread });
 }
 
 void Checker::visit(AST::Return& returnStatement)
