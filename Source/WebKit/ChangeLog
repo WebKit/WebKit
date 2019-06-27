@@ -1,3 +1,18 @@
+2019-06-27  Youenn Fablet  <youenn@apple.com>
+
+        Fix build after revision 246877
+        https://bugs.webkit.org/show_bug.cgi?id=199276
+
+        Unreviewed.
+
+        Pass protocol parameter to NetworkSocketChannel.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:webSocketTask:didOpenWithProtocol:]):
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.h:
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+        (WebKit::WebSocketTask::didConnect):
+
 2019-06-27  Beth Dakin  <bdakin@apple.com>
 
         Upstream use of MACCATALYST

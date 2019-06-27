@@ -49,7 +49,7 @@ public:
     void sendData(const IPC::DataReference&, CompletionHandler<void()>&&);
     void close(int32_t code, const String& reason);
 
-    void didConnect();
+    void didConnect(const String&);
     void didClose(unsigned short code, const String& reason);
 
     void cancel();

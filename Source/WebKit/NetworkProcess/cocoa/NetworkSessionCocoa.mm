@@ -842,7 +842,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
 - (void)URLSession:(NSURLSession *)session webSocketTask:(NSURLSessionWebSocketTask *)task didOpenWithProtocol:(NSString *) protocol
 {
     if (auto* webSocketTask = [self existingWebSocketTask:task])
-        webSocketTask->didConnect();
+        webSocketTask->didConnect(protocol);
 }
 
 - (void)URLSession:(NSURLSession *)session webSocketTask:(NSURLSessionWebSocketTask *)task didCloseWithCode:(NSURLSessionWebSocketCloseCode)closeCode reason:(NSData *)reason

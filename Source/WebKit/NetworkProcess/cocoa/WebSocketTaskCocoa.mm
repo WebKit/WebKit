@@ -82,9 +82,9 @@ void WebSocketTask::resume()
     [m_task resume];
 }
 
-void WebSocketTask::didConnect()
+void WebSocketTask::didConnect(const String& protocol)
 {
-    m_channel.didConnect();
+    m_channel.didConnect(protocol);
 }
 
 void WebSocketTask::didClose(unsigned short code, const String& reason)
