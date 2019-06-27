@@ -3051,9 +3051,10 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     }
 
     if (action == @selector(selectAll:)) {
-        if (!editorState.selectionIsNone && !editorState.selectionIsRange)
-            return YES;
-        return NO;
+        // By platform convention we don't show Select All in the callout menu for a range selection.
+        if ([sender isKindOfClass:UIMenuController.class])
+            return !editorState.selectionIsNone && !editorState.selectionIsRange;
+        return !editorState.selectionIsNone && self.hasContent;
     }
 
     if (action == @selector(replace:))

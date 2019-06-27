@@ -1,3 +1,26 @@
+2019-06-27  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Select all with existing range selection replaces range instead of selecting all text
+        https://bugs.webkit.org/show_bug.cgi?id=197950
+        <rdar://problem/50245131>
+
+        Reviewed by Wenson Hsieh.
+
+        Following <rdar://problem/47333786>, UIKit now asks WebKit whether it can handle Command + A as
+        "select all" instead of just demanding that we handle it. So, WebKit needs to be able to correctly
+        tell UIKit in advance whether it can handle it. Currenlty WebKit tells UIKit it cannot handle a
+        "select all" whenever there is an existing range selection. So, UIKit does not tell WebKit to
+        perform the "select all". Moreover, since UIKit has no other means to handle this key command
+        itself it tells WebKit the key command was not handled. So, WebKit tells the keyboard to insert
+        the "a". Instead, WebKit should tell UIKit it can handle a "select all" even when this is an
+        existing range selection. However we need to keep the current logic just for when UIKit is
+        asking us with respect to populating the callout menu to not regress platform behavior.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformActionForWebView:withSender:]): Do what we do now if we are called
+        when populating the callout menu and action is Select All. Otherwise, return YES for the Select All
+        action if we have a non-empty selection.
+
 2019-06-27  Andy Estes  <aestes@apple.com>
 
         [iOS] Stop using cached UITargetedPreviews from previous interactions when starting a new context menu interaction
