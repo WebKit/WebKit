@@ -67,7 +67,7 @@ InspectorBackend.activateDomain("CSS", ["web"]);
 
 // Canvas.
 InspectorBackend.registerCanvasDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Canvas");
-InspectorBackend.registerEnum("Canvas.ContextType", {Canvas2D: "canvas-2d", BitmapRenderer: "bitmaprenderer", WebGL: "webgl", WebGL2: "webgl2", WebMetal: "webmetal"});
+InspectorBackend.registerEnum("Canvas.ContextType", {Canvas2D: "canvas-2d", BitmapRenderer: "bitmaprenderer", WebGL: "webgl", WebGL2: "webgl2", Webmetal: "webmetal"});
 InspectorBackend.registerEnum("Canvas.ShaderType", {Fragment: "fragment", Vertex: "vertex"});
 InspectorBackend.registerEvent("Canvas.canvasAdded", ["canvas"]);
 InspectorBackend.registerEvent("Canvas.canvasRemoved", ["canvasId"]);
