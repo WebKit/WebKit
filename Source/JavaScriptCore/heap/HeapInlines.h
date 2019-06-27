@@ -164,7 +164,7 @@ inline void Heap::releaseSoon(RetainPtr<T>&& object)
 }
 #endif
 
-#if USE(GLIB)
+#ifdef JSC_GLIB_API_ENABLED
 inline void Heap::releaseSoon(std::unique_ptr<JSCGLibWrapperObject>&& object)
 {
     m_delayedReleaseObjects.append(WTFMove(object));

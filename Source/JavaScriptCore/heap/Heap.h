@@ -86,7 +86,7 @@ class VM;
 class WeakGCMapBase;
 struct CurrentThreadState;
 
-#if USE(GLIB)
+#ifdef JSC_GLIB_API_ENABLED
 class JSCGLibWrapperObject;
 #endif
 
@@ -279,7 +279,7 @@ public:
 #if USE(FOUNDATION)
     template<typename T> void releaseSoon(RetainPtr<T>&&);
 #endif
-#if USE(GLIB)
+#ifdef JSC_GLIB_API_ENABLED
     void releaseSoon(std::unique_ptr<JSCGLibWrapperObject>&&);
 #endif
 
@@ -664,7 +664,7 @@ private:
     Vector<RetainPtr<CFTypeRef>> m_delayedReleaseObjects;
     unsigned m_delayedReleaseRecursionCount { 0 };
 #endif
-#if USE(GLIB)
+#ifdef JSC_GLIB_API_ENABLED
     Vector<std::unique_ptr<JSCGLibWrapperObject>> m_delayedReleaseObjects;
     unsigned m_delayedReleaseRecursionCount { 0 };
 #endif

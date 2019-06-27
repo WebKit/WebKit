@@ -96,7 +96,7 @@
 #include <wtf/spi/cocoa/objcSPI.h>
 #endif
 
-#if USE(GLIB)
+#ifdef JSC_GLIB_API_ENABLED
 #include "JSCGLibWrapperObject.h"
 #endif
 
@@ -477,7 +477,7 @@ void Heap::lastChanceToFinalize()
 
 void Heap::releaseDelayedReleasedObjects()
 {
-#if USE(FOUNDATION) || USE(GLIB)
+#if USE(FOUNDATION) || defined(JSC_GLIB_API_ENABLED)
     // We need to guard against the case that releasing an object can create more objects due to the
     // release calling into JS. When those JS call(s) exit and all locks are being dropped we end up
     // back here and could try to recursively release objects. We guard that with a recursive entry
