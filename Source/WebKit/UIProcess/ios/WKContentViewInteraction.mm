@@ -7944,9 +7944,6 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 
 - (UITargetedPreview *)_createTargetedPreviewIfPossible
 {
-    if (_contextMenuInteractionTargetedPreview)
-        return _contextMenuInteractionTargetedPreview.get();
-
     RetainPtr<UITargetedPreview> targetedPreview;
 
     if (_positionInformation.isLink && _positionInformation.linkIndicator.contentImage) {
@@ -7990,7 +7987,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForDismissingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
 {
-    return [self _createTargetedPreviewIfPossible];
+    return std::exchange(_contextMenuInteractionTargetedPreview, nil).autorelease();
 }
 
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willCommitWithAnimator:(id<UIContextMenuInteractionCommitAnimating>)animator
@@ -8070,7 +8067,6 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     _contextMenuLegacyMenu = nullptr;
     _contextMenuHasRequestedLegacyData = NO;
     _contextMenuElementInfo = nullptr;
-    _contextMenuInteractionTargetedPreview = nil;
 }
 
 #endif // USE(UICONTEXTMENU)

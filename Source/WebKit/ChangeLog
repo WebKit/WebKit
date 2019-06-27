@@ -1,3 +1,33 @@
+2019-06-27  Andy Estes  <aestes@apple.com>
+
+        [iOS] Stop using cached UITargetedPreviews from previous interactions when starting a new context menu interaction
+        https://bugs.webkit.org/show_bug.cgi?id=199285
+        <rdar://problem/52074916>
+
+        Reviewed by Tim Horton.
+
+        WKContentView was caching the UITargetedPreview created in
+        -contextMenuInteraction:previewForHighlightingMenuWithConfiguration: for later reuse by
+        -contextMenuInteraction:previewForDismissingMenuWithConfiguration:. The cached value was
+        then cleared in -contextMenuInteractionDidEnd:.
+
+        This was wrong, because -contextMenuInteractionDidEnd: can be called before
+        -contextMenuInteraction:previewForDismissingMenuWithConfiguration:, so we would clear the
+        cache then create and cache a new UITargetedPreview during dismissal. Then when a new
+        context menu interaction started, we'd reuse the targeted preview created for the previous
+        dismissal (which has the wrong geometry).
+
+        Stop assuming an ordering between
+        -contextMenuInteraction:previewForDismissingMenuWithConfiguration: and
+        -contextMenuInteractionDidEnd:. Instead, always create and cache a new UITargetedPreview in
+        -contextMenuInteraction:previewForHighlightingMenuWithConfiguration:, then reuse it and
+        clear the cache in -contextMenuInteraction:previewForDismissingMenuWithConfiguration:.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _createTargetedPreviewIfPossible]):
+        (-[WKContentView contextMenuInteraction:previewForDismissingMenuWithConfiguration:]):
+        (-[WKContentView contextMenuInteractionDidEnd:]):
+
 2019-06-27  Sihui Liu  <sihui_liu@apple.com>
 
         Regression(r246526): StorageManager thread hangs
