@@ -1,3 +1,14 @@
+2019-06-27  Russell Epstein  <russell_e@apple.com>
+
+        Layout Test fast/parser/parser-yield-timing.html was flaky due to strict tolerance, increased tolerance.
+        https://bugs.webkit.org/show_bug.cgi?id=199280
+
+        Reviewed by Tim Horton.
+
+        * fast/parser/parser-yield-timing-expected.txt:
+        * fast/parser/parser-yield-timing.html:
+        * platform/mac-wk1/TestExpectations:
+
 2019-06-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION (r246888): fast/dom/navigator-detached-no-crash.html failing on Apple High Sierra Release WK2 (Tests)
