@@ -161,7 +161,7 @@ void WebSocketChannel::disconnect()
     MessageSender::send(Messages::NetworkSocketChannel::Close { 0, { } });
 }
 
-void WebSocketChannel::didConnect(const String& subprotocol)
+void WebSocketChannel::didConnect(String&& subprotocol)
 {
     if (m_isClosing)
         return;
@@ -170,17 +170,17 @@ void WebSocketChannel::didConnect(const String& subprotocol)
         return;
 
     if (m_isSuspended) {
-        enqueueTask([this, subprotocol] {
-            didConnect(subprotocol);
+        enqueueTask([this, subprotocol = WTFMove(subprotocol)] () mutable {
+            didConnect(WTFMove(subprotocol));
         });
         return;
     }
 
-    m_subprotocol = subprotocol;
+    m_subprotocol = WTFMove(subprotocol);
     m_client->didConnect();
 }
 
-void WebSocketChannel::didReceiveText(const String& message)
+void WebSocketChannel::didReceiveText(String&& message)
 {
     if (m_isClosing)
         return;
@@ -189,8 +189,8 @@ void WebSocketChannel::didReceiveText(const String& message)
         return;
 
     if (m_isSuspended) {
-        enqueueTask([this, message] {
-            didReceiveText(message);
+        enqueueTask([this, message = WTFMove(message)] () mutable {
+            didReceiveText(WTFMove(message));
         });
         return;
     }
@@ -198,7 +198,7 @@ void WebSocketChannel::didReceiveText(const String& message)
     m_client->didReceiveMessage(message);
 }
 
-void WebSocketChannel::didReceiveBinaryData(const IPC::DataReference& data)
+void WebSocketChannel::didReceiveBinaryData(IPC::DataReference&& data)
 {
     if (m_isClosing)
         return;
@@ -207,7 +207,7 @@ void WebSocketChannel::didReceiveBinaryData(const IPC::DataReference& data)
         return;
 
     if (m_isSuspended) {
-        enqueueTask([this, data = data.vector()]() mutable {
+        enqueueTask([this, data = data.vector()] () mutable {
             if (!m_isClosing && m_client)
                 m_client->didReceiveBinaryData(WTFMove(data));
         });
@@ -216,14 +216,14 @@ void WebSocketChannel::didReceiveBinaryData(const IPC::DataReference& data)
     m_client->didReceiveBinaryData(data.vector());
 }
 
-void WebSocketChannel::didClose(unsigned short code, const String& reason)
+void WebSocketChannel::didClose(unsigned short code, String&& reason)
 {
     if (!m_client)
         return;
 
     if (m_isSuspended) {
-        enqueueTask([this, code, reason] {
-            didClose(code, reason);
+        enqueueTask([this, code, reason = WTFMove(reason)] () mutable {
+            didClose(code, WTFMove(reason));
         });
         return;
     }
@@ -234,14 +234,14 @@ void WebSocketChannel::didClose(unsigned short code, const String& reason)
     m_client->didClose(m_bufferedAmount, (m_isClosing || code == WebCore::WebSocketChannel::CloseEventCodeNormalClosure) ? WebCore::WebSocketChannelClient::ClosingHandshakeComplete : WebCore::WebSocketChannelClient::ClosingHandshakeIncomplete, code, reason);
 }
 
-void WebSocketChannel::didReceiveMessageError(const String& errorMessage)
+void WebSocketChannel::didReceiveMessageError(String&& errorMessage)
 {
     if (!m_client)
         return;
 
     if (m_isSuspended) {
-        enqueueTask([this, errorMessage] {
-            didReceiveMessageError(errorMessage);
+        enqueueTask([this, errorMessage = WTFMove(errorMessage)] () mutable {
+            didReceiveMessageError(WTFMove(errorMessage));
         });
         return;
     }

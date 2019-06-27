@@ -73,11 +73,11 @@ private:
     void derefThreadableWebSocketChannel() final { deref(); }
 
     // Message receivers
-    void didConnect(const String&);
-    void didReceiveText(const String&);
-    void didReceiveBinaryData(const IPC::DataReference&);
-    void didClose(unsigned short code, const String&);
-    void didReceiveMessageError(const String&);
+    void didConnect(String&&);
+    void didReceiveText(String&&);
+    void didReceiveBinaryData(IPC::DataReference&&);
+    void didClose(unsigned short code, String&&);
+    void didReceiveMessageError(String&&);
 
     // MessageSender
     IPC::Connection* messageSenderConnection() const final;
