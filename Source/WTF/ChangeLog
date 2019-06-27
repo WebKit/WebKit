@@ -1,3 +1,13 @@
+2019-06-27  Timothy Hatcher  <timothy@apple.com>
+
+        Move WebKitLegacy off of a couple AppKit ivars.
+        https://bugs.webkit.org/show_bug.cgi?id=199279
+        rdar://problem/34983438
+
+        Reviewed by Tim Horton.
+
+        * wtf/Platform.h: Added HAVE_SUBVIEWS_IVAR_SPI.
+
 2019-06-27  Beth Dakin  <bdakin@apple.com>
 
         Upstream use of MACCATALYST

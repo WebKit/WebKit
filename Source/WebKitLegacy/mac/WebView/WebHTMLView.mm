@@ -213,12 +213,32 @@ using namespace WTF;
 @end
 
 @interface NSWindow ()
+@property (readonly) __kindof NSView *_borderView;
+
 - (id)_newFirstResponderAfterResigning;
 @end
 
-@interface NSWindow (WebBorderViewAccess)
-- (NSView *)_web_borderView;
+@interface NSView (SubviewsIvar)
+@property (nullable, assign, setter=_setSubviewsIvar:) NSMutableArray<__kindof NSView *> *_subviewsIvar;
 @end
+
+#if !HAVE(SUBVIEWS_IVAR_SPI)
+@implementation NSView (SubviewsIvar)
+
+- (void)_setSubviewsIvar:(NSMutableArray<__kindof NSView *> *)subviews {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    _subviews = subviews;
+    ALLOW_DEPRECATED_DECLARATIONS_END
+}
+
+- (NSMutableArray<__kindof NSView *> *)_subviewsIvar {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    return (NSMutableArray *)_subviews;
+    ALLOW_DEPRECATED_DECLARATIONS_END
+}
+
+@end
+#endif
 
 using WebEvent = NSEvent;
 const auto WebEventMouseDown = NSEventTypeLeftMouseDown;
@@ -626,17 +646,6 @@ static Optional<NSInteger> toTag(ContextMenuAction action)
 
 @end
 
-@implementation NSWindow (WebBorderViewAccess)
-
-- (NSView *)_web_borderView
-{
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return _borderView;
-    ALLOW_DEPRECATED_DECLARATIONS_END
-}
-
-@end
-
 @interface WebResponderChainSink : NSResponder {
     NSResponder* _lastResponderInChain;
     BOOL _receivedUnhandledCommand;
@@ -685,7 +694,7 @@ static WebHTMLView *lastHitView;
 static bool needsCursorRectsSupportAtPoint(NSWindow* window, NSPoint point)
 {
     forceNSViewHitTest = YES;
-    NSView* view = [[window _web_borderView] hitTest:point];
+    NSView* view = [window._borderView hitTest:point];
     forceNSViewHitTest = NO;
 
     // WebHTMLView doesn't use cursor rects.
@@ -1544,17 +1553,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(MAC)
     ASSERT(!_private->subviewsSetAside);
     ASSERT(_private->savedSubviews == nil);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    _private->savedSubviews = _subviews;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    _private->savedSubviews = self._subviewsIvar;
     // We need to keep the layer-hosting view in the subviews, otherwise the layers flash.
     if (_private->layerHostingView) {
-        NSArray* newSubviews = [[NSArray alloc] initWithObjects:_private->layerHostingView, nil];
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        _subviews = newSubviews;
+        NSMutableArray* newSubviews = [[NSMutableArray alloc] initWithObjects:_private->layerHostingView, nil];
+        self._subviewsIvar = newSubviews;
     } else
-        _subviews = nil;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+        self._subviewsIvar = nil;
     _private->subviewsSetAside = YES;
 #endif
  }
@@ -1564,13 +1569,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(MAC)
     ASSERT(_private->subviewsSetAside);
     if (_private->layerHostingView) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        [_subviews release];
-        _subviews = _private->savedSubviews;
+        [self._subviewsIvar release];
+        self._subviewsIvar = _private->savedSubviews;
     } else {
-        ASSERT(_subviews == nil);
-        _subviews = _private->savedSubviews;
-        ALLOW_DEPRECATED_DECLARATIONS_END
+        ASSERT(self._subviewsIvar == nil);
+        self._subviewsIvar = _private->savedSubviews;
     }
     _private->savedSubviews = nil;
     _private->subviewsSetAside = NO;
