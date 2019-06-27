@@ -1,3 +1,13 @@
+2019-06-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        testRunner.setAlwaysAcceptCookies should wait for cookie accept policy to be set
+        https://bugs.webkit.org/show_bug.cgi?id=199230
+        <rdar://problem/52217933>
+
+        Unreviewed build fix for WinCairo WK2 since r246856.
+
+        * PlatformWin.cmake: Added WKMessageListener.h to WebKit_PUBLIC_FRAMEWORK_HEADERS.
+
 2019-06-26  Dean Jackson  <dino@apple.com>
 
         Add type to UIImage symbol mapping for _WKElementAction
