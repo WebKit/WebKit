@@ -27,6 +27,9 @@
 #include "WKMessageListener.h"
 
 #include "APIMessageListener.h"
+#include "WKAPICast.h"
+
+using namespace WebKit;
 
 WKTypeID WKMessageListenerGetTypeID()
 {
