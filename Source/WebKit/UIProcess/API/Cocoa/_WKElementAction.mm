@@ -38,10 +38,6 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKElementActionAdditions.h>)
-#include <WebKitAdditions/WKElementActionAdditions.h>
-#endif
-
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)
 #import <SafariServices/SSReadingList.h>
 SOFT_LINK_FRAMEWORK(SafariServices);
@@ -193,16 +189,35 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
     [self _runActionWithElementInfo:info forActionSheetAssistant:_defaultActionSheetAssistant.get().get()];
 }
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKElementActionAdditions.mm>)
-#include <WebKitAdditions/WKElementActionAdditions.mm>
-#else
+#if USE(UICONTEXTMENU)
 + (UIImage *)imageForElementActionType:(_WKElementActionType)actionType
 {
-    return nil;
+    switch (actionType) {
+    case _WKElementActionTypeCustom:
+        return nil;
+    case _WKElementActionTypeOpen:
+        return [UIImage systemImageNamed:@"safari"];
+    case _WKElementActionTypeCopy:
+        return [UIImage systemImageNamed:@"doc.on.doc"];
+    case _WKElementActionTypeSaveImage:
+        return [UIImage systemImageNamed:@"square.and.arrow.down"];
+    case _WKElementActionTypeAddToReadingList:
+        return [UIImage systemImageNamed:@"eyeglasses"];
+    case _WKElementActionTypeOpenInDefaultBrowser:
+        return [UIImage systemImageNamed:@"safari"];
+    case _WKElementActionTypeOpenInExternalApplication:
+        return [UIImage systemImageNamed:@"arrow.up.right.square"];
+    case _WKElementActionTypeShare:
+        return [UIImage systemImageNamed:@"square.and.arrow.up"];
+    case _WKElementActionTypeOpenInNewTab:
+        return [UIImage systemImageNamed:@"plus.square.on.square"];
+    case _WKElementActionTypeOpenInNewWindow:
+        return [UIImage systemImageNamed:@"square.grid.2x2"];
+    case _WKElementActionTypeDownload:
+        return [UIImage systemImageNamed:@"arrow.down.circle"];
+    }
 }
-#endif
 
-#if USE(UICONTEXTMENU)
 static UIActionIdentifier elementActionTypeToUIActionIdentifier(_WKElementActionType actionType)
 {
     switch (actionType) {
@@ -214,14 +229,12 @@ static UIActionIdentifier elementActionTypeToUIActionIdentifier(_WKElementAction
         return WKElementActionTypeCopyIdentifier;
     case _WKElementActionTypeSaveImage:
         return WKElementActionTypeSaveImageIdentifier;
-#if !defined(TARGET_OS_IOS) || TARGET_OS_IOS
     case _WKElementActionTypeAddToReadingList:
         return WKElementActionTypeAddToReadingListIdentifier;
     case _WKElementActionTypeOpenInDefaultBrowser:
         return WKElementActionTypeOpenInDefaultBrowserIdentifier;
     case _WKElementActionTypeOpenInExternalApplication:
         return WKElementActionTypeOpenInExternalApplicationIdentifier;
-#endif
     case _WKElementActionTypeShare:
         return WKElementActionTypeShareIdentifier;
     case _WKElementActionTypeOpenInNewTab:
@@ -243,14 +256,12 @@ static _WKElementActionType uiActionIdentifierToElementActionType(UIActionIdenti
         return _WKElementActionTypeCopy;
     if ([identifier isEqualToString:WKElementActionTypeSaveImageIdentifier])
         return _WKElementActionTypeSaveImage;
-#if !defined(TARGET_OS_IOS) || TARGET_OS_IOS
     if ([identifier isEqualToString:WKElementActionTypeAddToReadingListIdentifier])
         return _WKElementActionTypeAddToReadingList;
     if ([identifier isEqualToString:WKElementActionTypeOpenInDefaultBrowserIdentifier])
         return _WKElementActionTypeOpenInDefaultBrowser;
     if ([identifier isEqualToString:WKElementActionTypeOpenInExternalApplicationIdentifier])
         return _WKElementActionTypeOpenInExternalApplication;
-#endif
     if ([identifier isEqualToString:WKElementActionTypeShareIdentifier])
         return _WKElementActionTypeShare;
     if ([identifier isEqualToString:WKElementActionTypeOpenInNewTabIdentifier])
@@ -284,6 +295,11 @@ static _WKElementActionType uiActionIdentifierToElementActionType(UIActionIdenti
     }];
 }
 #else
++ (UIImage *)imageForElementActionType:(_WKElementActionType)actionType
+{
+    return nil;
+}
+
 + (_WKElementActionType)elementActionTypeForUIActionIdentifier:(UIActionIdentifier)identifier
 {
     return _WKElementActionTypeCustom;
@@ -293,7 +309,7 @@ static _WKElementActionType uiActionIdentifierToElementActionType(UIActionIdenti
 {
     return nil;
 }
-#endif
+#endif // USE(UICONTEXTMENU)
 
 @end
 
