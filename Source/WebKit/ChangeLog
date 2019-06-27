@@ -1,3 +1,50 @@
+2019-06-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Use libsoup WebSockets API
+        https://bugs.webkit.org/show_bug.cgi?id=199151
+
+        Reviewed by Michael Catanzaro.
+
+        Use the new WebSockets code path that depends on platform specific WebSockets implementation using the libsoup
+        API. This is an initial implementation manually tested using the layout tests, which most of them fail due to
+        missing console messages, missing features in the new code path or differences in the platform
+        implementation. It will be disabled by default until it's feature complete compared to the internal WebKit
+        implementation.
+
+        * NetworkProcess/NetworkSocketChannel.cpp:
+        (WebKit::NetworkSocketChannel::NetworkSocketChannel): Null check m_socket before using it, because
+        createWebSocketTask() can return nullptr;
+        (WebKit::NetworkSocketChannel::didConnect): Receive the protocol accepted by the server.
+        (WebKit::NetworkSocketChannel::didReceiveMessageError): Something failed in the server side.
+        * NetworkProcess/NetworkSocketChannel.h:
+        * NetworkProcess/WebSocketTask.h:
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::createWebSocketTask): Create a WebSocketTask.
+        * NetworkProcess/soup/NetworkSessionSoup.h:
+        * NetworkProcess/soup/WebSocketTaskSoup.cpp: Added.
+        (WebKit::WebSocketTask::WebSocketTask):
+        (WebKit::WebSocketTask::~WebSocketTask):
+        (WebKit::WebSocketTask::didConnect):
+        (WebKit::WebSocketTask::didReceiveMessageCallback):
+        (WebKit::WebSocketTask::didReceiveErrorCallback):
+        (WebKit::WebSocketTask::didFail):
+        (WebKit::WebSocketTask::didCloseCallback):
+        (WebKit::WebSocketTask::didClose):
+        (WebKit::WebSocketTask::sendString):
+        (WebKit::WebSocketTask::sendData):
+        (WebKit::WebSocketTask::close):
+        (WebKit::WebSocketTask::cancel):
+        (WebKit::WebSocketTask::resume):
+        * NetworkProcess/soup/WebSocketTaskSoup.h: Copied from Source/WebKit/NetworkProcess/WebSocketTask.h.
+        * SourcesGTK.txt:
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::subprotocol): Return the protocol accepted by the server.
+        (WebKit::WebSocketChannel::didConnect): Set the protocol accepted by the server.
+        (WebKit::WebSocketChannel::didReceiveMessageError): It's now an IPC message handler and receives the reason as parameter.
+        (WebKit::WebSocketChannel::networkProcessCrashed): Pass empty reason.
+        * WebProcess/Network/WebSocketChannel.h:
+        * WebProcess/Network/WebSocketChannel.messages.in:
+
 2019-06-21  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Switch to built-in handling of C++ standard instead of hardcoding -std=c++17

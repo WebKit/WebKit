@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,42 @@
 
 #pragma once
 
-#if PLATFORM(COCOA) && HAVE(NSURLSESSION_WEBSOCKET)
-#include "WebSocketTaskCocoa.h"
-#elif USE(SOUP)
-#include "WebSocketTaskSoup.h"
-#else
+#include <libsoup/soup.h>
+#include <wtf/glib/GRefPtr.h>
+
+namespace IPC {
+class DataReference;
+}
 
 namespace WebKit {
+class NetworkSocketChannel;
 
 class WebSocketTask {
 public:
-    typedef uint64_t TaskIdentifier;
+    WebSocketTask(NetworkSocketChannel&, SoupSession*, SoupMessage*, const String& protocol);
+    ~WebSocketTask();
 
-    void sendString(const String&, CompletionHandler<void()>&&) { }
-    void sendData(const IPC::DataReference&, CompletionHandler<void()>&&) { }
-    void close(int32_t code, const String& reason) { }
+    void sendString(const String&, CompletionHandler<void()>&&);
+    void sendData(const IPC::DataReference&, CompletionHandler<void()>&&);
+    void close(int32_t code, const String& reason);
 
-    void cancel() { }
-    void resume() { }
+    void cancel();
+    void resume();
+
+private:
+    void didConnect(GRefPtr<SoupWebsocketConnection>&&);
+    void didFail(const String&);
+    void didClose(unsigned short code, const String& reason);
+
+    static void didReceiveMessageCallback(WebSocketTask*, SoupWebsocketDataType, GBytes*);
+    static void didReceiveErrorCallback(WebSocketTask*, GError*);
+    static void didCloseCallback(WebSocketTask*);
+
+    NetworkSocketChannel& m_channel;
+    GRefPtr<SoupWebsocketConnection> m_connection;
+    GRefPtr<GCancellable> m_cancellable;
+    bool m_receivedDidFail { false };
+    bool m_receivedDidClose { false };
 };
 
 } // namespace WebKit
-
-#endif

@@ -59,10 +59,11 @@ public:
     friend class WebSocketTask;
 
 private:
-    void didConnect();
+    void didConnect(const String& subprotocol);
     void didReceiveText(const String&);
     void didReceiveBinaryData(const uint8_t* data, size_t length);
     void didClose(unsigned short code, const String& reason);
+    void didReceiveMessageError(const String&);
 
     void sendString(const String&, CompletionHandler<void()>&&);
     void sendData(const IPC::DataReference&, CompletionHandler<void()>&&);

@@ -58,12 +58,19 @@ Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecuti
 
     auto& document = downcast<Document>(context);
 
+    bool shouldProviderCreateSocketChannel = false;
 #if HAVE(NSURLSESSION_WEBSOCKET)
-    if (RuntimeEnabledFeatures::sharedFeatures().isNSURLSessionWebSocketEnabled()) {
+    shouldProviderCreateSocketChannel = RuntimeEnabledFeatures::sharedFeatures().isNSURLSessionWebSocketEnabled();
+#endif
+#if USE(SOUP)
+    shouldProviderCreateSocketChannel = getenv("WEBKIT_USE_SOUP_WEBSOCKETS");
+#endif
+
+    if (shouldProviderCreateSocketChannel) {
         if (auto channel = provider.createWebSocketChannel(document, client))
             return channel.releaseNonNull();
     }
-#endif
+
     return WebSocketChannel::create(document, client, provider);
 }
 

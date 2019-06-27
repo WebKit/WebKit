@@ -67,8 +67,7 @@ uint64_t WebSocketChannel::messageSenderDestinationID() const
 
 String WebSocketChannel::subprotocol()
 {
-    // FIXME: support subprotocol.
-    return emptyString();
+    return m_subprotocol.isNull() ? emptyString() : m_subprotocol;
 }
 
 String WebSocketChannel::extensions()
@@ -162,7 +161,7 @@ void WebSocketChannel::disconnect()
     MessageSender::send(Messages::NetworkSocketChannel::Close { 0, { } });
 }
 
-void WebSocketChannel::didConnect()
+void WebSocketChannel::didConnect(const String& subprotocol)
 {
     if (m_isClosing)
         return;
@@ -171,12 +170,13 @@ void WebSocketChannel::didConnect()
         return;
 
     if (m_isSuspended) {
-        enqueueTask([this] {
-            didConnect();
+        enqueueTask([this, subprotocol] {
+            didConnect(subprotocol);
         });
         return;
     }
 
+    m_subprotocol = subprotocol;
     m_client->didConnect();
 }
 
@@ -234,24 +234,25 @@ void WebSocketChannel::didClose(unsigned short code, const String& reason)
     m_client->didClose(m_bufferedAmount, (m_isClosing || code == WebCore::WebSocketChannel::CloseEventCodeNormalClosure) ? WebCore::WebSocketChannelClient::ClosingHandshakeComplete : WebCore::WebSocketChannelClient::ClosingHandshakeIncomplete, code, reason);
 }
 
-void WebSocketChannel::didFail()
+void WebSocketChannel::didReceiveMessageError(const String& errorMessage)
 {
     if (!m_client)
         return;
 
     if (m_isSuspended) {
-        enqueueTask([this] {
-            didFail();
+        enqueueTask([this, errorMessage] {
+            didReceiveMessageError(errorMessage);
         });
         return;
     }
 
+    // FIXME: do something with errorMessage.
     m_client->didReceiveMessageError();
 }
 
 void WebSocketChannel::networkProcessCrashed()
 {
-    didFail();
+    didReceiveMessageError({ });
 }
 
 void WebSocketChannel::suspend()

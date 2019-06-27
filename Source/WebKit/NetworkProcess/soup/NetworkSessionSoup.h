@@ -31,6 +31,8 @@ typedef struct _SoupSession SoupSession;
 
 namespace WebKit {
 
+class NetworkSocketChannel;
+class WebSocketTask;
 struct NetworkSessionCreationParameters;
 
 class NetworkSessionSoup final : public NetworkSession {
@@ -45,6 +47,8 @@ public:
 
 private:
     NetworkSessionSoup(NetworkProcess&, NetworkSessionCreationParameters&&);
+
+    std::unique_ptr<WebSocketTask> createWebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol) override;
 
     void clearCredentials() override;
 };

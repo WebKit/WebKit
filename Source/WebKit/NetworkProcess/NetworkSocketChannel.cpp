@@ -55,9 +55,10 @@ NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connec
         return;
 
     m_socket = m_session->createWebSocketTask(*this, request, protocol);
-
-    m_session->addWebSocketTask(*m_socket);
-    m_socket->resume();
+    if (m_socket) {
+        m_session->addWebSocketTask(*m_socket);
+        m_socket->resume();
+    }
 }
 
 NetworkSocketChannel::~NetworkSocketChannel()
@@ -96,9 +97,9 @@ void NetworkSocketChannel::close(int32_t code, const String& reason)
     finishClosingIfPossible();
 }
 
-void NetworkSocketChannel::didConnect()
+void NetworkSocketChannel::didConnect(const String& subprotocol)
 {
-    send(Messages::WebSocketChannel::DidConnect { });
+    send(Messages::WebSocketChannel::DidConnect { subprotocol });
 }
 
 void NetworkSocketChannel::didReceiveText(const String& text)
@@ -115,6 +116,11 @@ void NetworkSocketChannel::didClose(unsigned short code, const String& reason)
 {
     send(Messages::WebSocketChannel::DidClose { code, reason });
     finishClosingIfPossible();
+}
+
+void NetworkSocketChannel::didReceiveMessageError(const String& errorMessage)
+{
+    send(Messages::WebSocketChannel::DidReceiveMessageError { errorMessage });
 }
 
 IPC::Connection* NetworkSocketChannel::messageSenderConnection() const

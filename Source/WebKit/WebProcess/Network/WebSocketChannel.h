@@ -49,7 +49,6 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     void networkProcessCrashed();
-    void didFail();
 
     using RefCounted<WebSocketChannel>::ref;
     using RefCounted<WebSocketChannel>::deref;
@@ -74,10 +73,11 @@ private:
     void derefThreadableWebSocketChannel() final { deref(); }
 
     // Message receivers
-    void didConnect();
+    void didConnect(const String&);
     void didReceiveText(const String&);
     void didReceiveBinaryData(const IPC::DataReference&);
     void didClose(unsigned short code, const String&);
+    void didReceiveMessageError(const String&);
 
     // MessageSender
     IPC::Connection* messageSenderConnection() const final;
@@ -87,6 +87,7 @@ private:
 
     WeakPtr<WebCore::Document> m_document;
     WeakPtr<WebCore::WebSocketChannelClient> m_client;
+    String m_subprotocol;
     size_t m_bufferedAmount { 0 };
     bool m_isClosing { false };
     bool m_isSuspended { false };

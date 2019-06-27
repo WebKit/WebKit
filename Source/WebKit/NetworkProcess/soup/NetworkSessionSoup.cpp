@@ -29,7 +29,9 @@
 #include "NetworkProcess.h"
 #include "NetworkSessionCreationParameters.h"
 #include "WebCookieManager.h"
+#include "WebSocketTaskSoup.h"
 #include <WebCore/NetworkStorageSession.h>
+#include <WebCore/ResourceRequest.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
 
@@ -63,6 +65,17 @@ void NetworkSessionSoup::clearCredentials()
 #if SOUP_CHECK_VERSION(2, 57, 1)
     soup_auth_manager_clear_cached_credentials(SOUP_AUTH_MANAGER(soup_session_get_feature(soupSession(), SOUP_TYPE_AUTH_MANAGER)));
 #endif
+}
+
+std::unique_ptr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(NetworkSocketChannel& channel, const ResourceRequest& request, const String& protocol)
+{
+    GUniquePtr<SoupURI> soupURI = request.createSoupURI();
+    if (!soupURI)
+        return nullptr;
+
+    GRefPtr<SoupMessage> soupMessage = adoptGRef(soup_message_new_from_uri(SOUP_METHOD_GET, soupURI.get()));
+    request.updateSoupMessage(soupMessage.get());
+    return std::make_unique<WebSocketTask>(channel, soupSession(), soupMessage.get(), protocol);
 }
 
 } // namespace WebKit
