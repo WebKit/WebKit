@@ -48,7 +48,7 @@ function insertObjectElement() {
             if (window.open('about:blank', 'named-frame').frameElement.parentNode)
                 didExecute = true;
         } catch (e) { }
-        if (!didExecute)
+        if (!didExecute && i++ < 10)
             insertObjectElement();
     }
     document.body.appendChild(object);
