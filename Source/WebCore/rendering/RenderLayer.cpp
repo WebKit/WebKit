@@ -1788,8 +1788,10 @@ void RenderLayer::setBackingProviderLayer(RenderLayer* backingProvider)
     if (backingProvider == m_backingProviderLayer)
         return;
 
-    if (!renderer().renderTreeBeingDestroyed())
+    if (!renderer().renderTreeBeingDestroyed()) {
+        clearRepaintRects();
         clearClipRectsIncludingDescendants();
+    }
 
     m_backingProviderLayer = makeWeakPtr(backingProvider);
 }

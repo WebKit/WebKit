@@ -1,3 +1,16 @@
+2019-06-27  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r246869): ASSERTION FAILED: !renderer().hasRepaintLayoutRects() || renderer().repaintLayoutRects().m_repaintRect == renderer().clippedOverflowRectForRepaint(renderer().containerForRepaint())
+        https://bugs.webkit.org/show_bug.cgi?id=199274
+
+        Reviewed by Zalan Bujtas.
+
+        When layer backing sharing changes, we need to clear cached repaint rects, since they
+        painting root changes.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setBackingProviderLayer):
+
 2019-06-27  Beth Dakin  <bdakin@apple.com>
 
         Upstream use of MACCATALYST
