@@ -30,6 +30,7 @@
 #include "NetworkSessionCreationParameters.h"
 #include "WebCookieManager.h"
 #include "WebSocketTaskSoup.h"
+#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SoupNetworkSession.h>
@@ -67,6 +68,22 @@ void NetworkSessionSoup::clearCredentials()
 #endif
 }
 
+static gboolean webSocketAcceptCertificateCallback(GTlsConnection*, GTlsCertificate* certificate, GTlsCertificateFlags errors, SoupMessage* soupMessage)
+{
+    if (DeprecatedGlobalSettings::allowsAnySSLCertificate())
+        return TRUE;
+
+    return !SoupNetworkSession::checkTLSErrors(soupURIToURL(soup_message_get_uri(soupMessage)), certificate, errors);
+}
+
+static void webSocketMessageNetworkEventCallback(SoupMessage* soupMessage, GSocketClientEvent event, GIOStream* connection)
+{
+    if (event != G_SOCKET_CLIENT_TLS_HANDSHAKING)
+        return;
+
+    g_signal_connect(connection, "accept-certificate", G_CALLBACK(webSocketAcceptCertificateCallback), soupMessage);
+}
+
 std::unique_ptr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(NetworkSocketChannel& channel, const ResourceRequest& request, const String& protocol)
 {
     GUniquePtr<SoupURI> soupURI = request.createSoupURI();
@@ -75,6 +92,8 @@ std::unique_ptr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(NetworkSo
 
     GRefPtr<SoupMessage> soupMessage = adoptGRef(soup_message_new_from_uri(SOUP_METHOD_GET, soupURI.get()));
     request.updateSoupMessage(soupMessage.get());
+    if (request.url().protocolIs("wss"))
+        g_signal_connect(soupMessage.get(), "network-event", G_CALLBACK(webSocketMessageNetworkEventCallback), nullptr);
     return std::make_unique<WebSocketTask>(channel, soupSession(), soupMessage.get(), protocol);
 }
 

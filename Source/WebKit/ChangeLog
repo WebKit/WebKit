@@ -1,5 +1,19 @@
 2019-06-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] WebSockets: handle TLS certificate and errors
+        https://bugs.webkit.org/show_bug.cgi?id=199223
+
+        Reviewed by Michael Catanzaro.
+
+        Connect to accept-certificate signal on the WebSocket message connection to decide what to do in case of TLS errors.
+
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::webSocketAcceptCertificateCallback):
+        (WebKit::webSocketMessageNetworkEventCallback):
+        (WebKit::NetworkSessionSoup::createWebSocketTask):
+
+2019-06-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] Use libsoup WebSockets API
         https://bugs.webkit.org/show_bug.cgi?id=199151
 
