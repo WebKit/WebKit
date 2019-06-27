@@ -1,3 +1,31 @@
+2019-06-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ReplacementFragment should not have script observable side effects
+        https://bugs.webkit.org/show_bug.cgi?id=199147
+
+        Reviewed by Wenson Hsieh.
+
+        Fixed the bug that ReplacementFragment has script observable side effects.
+
+        Use a brand new document for sanitization where the script is disabled for test rendering,
+        and remove style and script elements as well as event handlers before the test rendering
+        and the actual pasting.
+
+        Test: editing/pasteboard/paste-contents-with-side-effects.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::document): Deleted.
+        (WebCore::ReplacementFragment::ReplacementFragment): Use createPageForSanitizingWebContent
+        to create our own document for test rendering. We need to copy over the computed style
+        from the root editable element (editing host) to respect whitespace treatment, etc...
+        (WebCore::ReplacementFragment::removeContentsWithSideEffects): Moved from removeHeadContents.
+        Now removes event handlers and JavaScript URLs.
+        (WebCore::ReplacementFragment::insertFragmentForTestRendering): Renamed variable names.
+        (WebCore::ReplaceSelectionCommand::willApplyCommand): Create the plain text and HTML markup
+        for beforeinput and input events before ReplacementFragment removes contents with side effects.
+        (WebCore::ReplaceSelectionCommand::ensureReplacementFragment): The removal of head elements
+        is now done in ReplacementFragment's constructor.
+
 2019-06-26  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Set state to Closed when show() is called during an active session

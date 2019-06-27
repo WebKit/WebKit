@@ -1,3 +1,15 @@
+2019-06-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ReplacementFragment should not have script observable side effects
+        https://bugs.webkit.org/show_bug.cgi?id=199147
+
+        Reviewed by Wenson Hsieh.
+
+        Added regression tests.
+
+        * editing/pasteboard/paste-contents-with-side-effects-expected.txt: Added.
+        * editing/pasteboard/paste-contents-with-side-effects.html: Added.
+
 2019-06-26  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Set state to Closed when show() is called during an active session
