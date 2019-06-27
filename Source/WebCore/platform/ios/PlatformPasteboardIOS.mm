@@ -48,8 +48,8 @@
 #import <wtf/text/StringHash.h>
 
 #define PASTEBOARD_SUPPORTS_ITEM_PROVIDERS (PLATFORM(IOS_FAMILY) && !(PLATFORM(WATCHOS) || PLATFORM(APPLETV)))
-#define PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA (PASTEBOARD_SUPPORTS_ITEM_PROVIDERS && !PLATFORM(IOSMAC))
-#define NSURL_SUPPORTS_TITLE (!PLATFORM(IOSMAC))
+#define PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA (PASTEBOARD_SUPPORTS_ITEM_PROVIDERS && !PLATFORM(MACCATALYST))
+#define NSURL_SUPPORTS_TITLE (!PLATFORM(MACCATALYST))
 
 namespace WebCore {
 
@@ -305,8 +305,8 @@ static NSString *webIOSPastePboardType = @"iOS rich content paste pasteboard typ
 
 static void registerItemToPasteboard(WebItemProviderRegistrationInfoList *representationsToRegister, id <AbstractPasteboard> pasteboard)
 {
-#if PLATFORM(IOSMAC)
-    // In iOSMac, -[UIPasteboard setItemProviders:] is not yet supported, so we fall back to setting an item dictionary when
+#if PLATFORM(MACCATALYST)
+    // In macCatalyst, -[UIPasteboard setItemProviders:] is not yet supported, so we fall back to setting an item dictionary when
     // populating the pasteboard upon copy.
     if ([pasteboard isKindOfClass:PAL::getUIPasteboardClass()]) {
         auto itemDictionary = adoptNS([[NSMutableDictionary alloc] init]);
@@ -317,7 +317,7 @@ static void registerItemToPasteboard(WebItemProviderRegistrationInfoList *repres
         [pasteboard setItems:@[ itemDictionary.get() ]];
         return;
     }
-#endif // PLATFORM(IOSMAC)
+#endif // PLATFORM(MACCATALYST)
 
     if (NSItemProvider *itemProvider = representationsToRegister.itemProvider)
         [pasteboard setItemProviders:@[ itemProvider ]];
@@ -364,7 +364,7 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
 {
     auto representationsToRegister = adoptNS([[WebItemProviderRegistrationInfoList alloc] init]);
 
-#if !PLATFORM(IOSMAC)
+#if !PLATFORM(MACCATALYST)
     [representationsToRegister addData:[webIOSPastePboardType dataUsingEncoding:NSUTF8StringEncoding] forType:webIOSPastePboardType];
 #endif
 
@@ -374,7 +374,7 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
 
     if (content.dataInWebArchiveFormat) {
         auto webArchiveData = content.dataInWebArchiveFormat->createNSData();
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
         NSString *webArchiveType = (__bridge NSString *)kUTTypeWebArchive;
 #else
         // FIXME: We should additionally register "com.apple.webarchive" once <rdar://problem/46830277> is fixed.

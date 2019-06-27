@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(MAC) || PLATFORM(IOSMAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #import "AuxiliaryProcess.h"
 
 #import "CodeSigning.h"
@@ -66,7 +66,7 @@
 #define USE_CACHE_COMPILED_SANDBOX 0
 #endif
 
-#if PLATFORM(IOSMAC) && USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(MACCATALYST) && USE(APPLE_INTERNAL_SDK)
 enum LSSessionID {
     kLSDefaultSessionID = -2,
 };
@@ -163,7 +163,7 @@ void AuxiliaryProcess::platformInitialize()
 
 static OSStatus enableSandboxStyleFileQuarantine()
 {
-#if !PLATFORM(IOSMAC)
+#if !PLATFORM(MACCATALYST)
     qtn_proc_t quarantineProperties = qtn_proc_alloc();
     auto quarantinePropertiesDeleter = makeScopeExit([quarantineProperties]() {
         qtn_proc_free(quarantineProperties);
@@ -685,7 +685,7 @@ void AuxiliaryProcess::stopNSAppRunLoop()
 }
 #endif
 
-#if !PLATFORM(IOSMAC) && ENABLE(WEBPROCESS_NSRUNLOOP)
+#if !PLATFORM(MACCATALYST) && ENABLE(WEBPROCESS_NSRUNLOOP)
 void AuxiliaryProcess::stopNSRunLoop()
 {
     ASSERT([NSRunLoop mainRunLoop]);

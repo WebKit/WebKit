@@ -404,7 +404,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     BOOL containsImageMediaType = !mediaTypes.count || arrayContainsUTIThatConformsTo(mediaTypes, kUTTypeImage);
     BOOL containsVideoMediaType = !mediaTypes.count || arrayContainsUTIThatConformsTo(mediaTypes, kUTTypeMovie);
 
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
     // FIXME 49961589: Support picking media with UIImagePickerController
     BOOL shouldPresentDocumentMenuViewController = NO;
 #else

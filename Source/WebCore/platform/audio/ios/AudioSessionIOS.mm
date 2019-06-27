@@ -125,7 +125,7 @@ void AudioSession::setCategory(CategoryType newCategory, RouteSharingPolicy poli
 
     NSError *error = nil;
     [[PAL::getAVAudioSessionClass() sharedInstance] setCategory:categoryString mode:categoryMode routeSharingPolicy:static_cast<AVAudioSessionRouteSharingPolicy>(policy) options:options error:&error];
-#if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(IOSMAC)
+#if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
     ASSERT(!error);
 #endif
 }
@@ -168,7 +168,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 String AudioSession::routingContextUID() const
 {
-#if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(IOSMAC) && !PLATFORM(WATCHOS)
+#if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
     return [[PAL::getAVAudioSessionClass() sharedInstance] routingContextUID];
 #else
     return emptyString();

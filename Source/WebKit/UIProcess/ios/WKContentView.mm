@@ -194,7 +194,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
     self.layer.hitTestsAsOpaque = YES;
 
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
     [self _setFocusRingType:UIFocusRingTypeNone];
 #endif
 
@@ -699,7 +699,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 #pragma mark Printing
 
-#if !PLATFORM(IOSMAC)
+#if !PLATFORM(MACCATALYST)
 
 @interface WKContentView (_WKWebViewPrintFormatter) <_WKWebViewPrintProvider>
 @end
@@ -767,6 +767,6 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 @end
 
-#endif // !PLATFORM(IOSMAC)
+#endif // !PLATFORM(MACCATALYST)
 
 #endif // PLATFORM(IOS_FAMILY)

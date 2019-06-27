@@ -34,7 +34,7 @@
 #import <CoreMedia/CMSampleBuffer.h>
 #import <pal/cf/CoreMediaSoftLink.h>
 
-#if HAVE(IOSURFACE) && !PLATFORM(IOSMAC)
+#if HAVE(IOSURFACE) && !PLATFORM(MACCATALYST)
 #include <pal/spi/cocoa/IOSurfaceSPI.h>
 #endif
 
@@ -45,7 +45,7 @@ using namespace PAL;
 
 static inline CFStringRef cvPixelFormatOpenGLKey()
 {
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     return kCVPixelFormatOpenGLESCompatibility;
 #else
     return kCVPixelBufferOpenGLCompatibilityKey;
@@ -71,7 +71,7 @@ ImageTransferSessionVT::ImageTransferSessionVT(uint32_t pixelFormat)
     if (status != kCVReturnSuccess)
         RELEASE_LOG(Media, "ImageTransferSessionVT::ImageTransferSessionVT: VTSessionSetProperty(kVTPixelTransferPropertyKey_RealTime) failed with error %d", static_cast<int>(status));
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     status = VTSessionSetProperty(transferSession, kVTPixelTransferPropertyKey_EnableHardwareAcceleratedTransfer, @(YES));
     if (status != kCVReturnSuccess)
         RELEASE_LOG(Media, "ImageTransferSessionVT::ImageTransferSessionVT: VTSessionSetProperty(kVTPixelTransferPropertyKey_EnableHardwareAcceleratedTransfer) failed with error %d", static_cast<int>(status));
@@ -265,7 +265,7 @@ RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::createCMSampleBuffer(CGImag
     return createCMSampleBuffer(pixelBuffer.get(), sampleTime, size);
 }
 
-#if HAVE(IOSURFACE) && !PLATFORM(IOSMAC)
+#if HAVE(IOSURFACE) && !PLATFORM(MACCATALYST)
 
 #if PLATFORM(MAC)
 static int32_t roundUpToMacroblockMultiple(int32_t size)
@@ -350,7 +350,7 @@ RefPtr<MediaSample> ImageTransferSessionVT::convertMediaSample(MediaSample& samp
     return MediaSampleAVFObjC::create(resizedBuffer.get(), sample.videoRotation(), sample.videoMirrored());
 }
 
-#if HAVE(IOSURFACE) && !PLATFORM(IOSMAC)
+#if HAVE(IOSURFACE) && !PLATFORM(MACCATALYST)
 RefPtr<MediaSample> ImageTransferSessionVT::createMediaSample(IOSurfaceRef surface, const MediaTime& sampleTime, const IntSize& size, MediaSample::VideoRotation rotation, bool mirrored)
 {
     auto sampleBuffer = createCMSampleBuffer(surface, sampleTime, size);

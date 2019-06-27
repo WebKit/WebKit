@@ -1,3 +1,85 @@
+2019-06-27  Beth Dakin  <bdakin@apple.com>
+
+        Upstream use of MACCATALYST
+        https://bugs.webkit.org/show_bug.cgi?id=199245
+        rdar://problem/51687723
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/Network-iOSMac.entitlements: Removed.
+        * Configurations/Network-macCatalyst.entitlements: Copied from Source/WebKit/Configurations/Network-iOSMac.entitlements.
+        * Configurations/NetworkService.xcconfig:
+        * Configurations/SDKVariant.xcconfig:
+        * Configurations/WebContent-iOSMac.entitlements: Removed.
+        * Configurations/WebContent-macCatalyst.entitlements: Copied from Source/WebKit/Configurations/WebContent-iOSMac.entitlements.
+        * Configurations/WebContentService.xcconfig:
+        * Configurations/WebKit.xcconfig:
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::initializeProcess):
+        (WebKit::NetworkProcess::initializeProcessName):
+        * Platform/mac/LayerHostingContext.mm:
+        (WebKit::LayerHostingContext::createForExternalHostingProcess):
+        * Platform/spi/ios/ManagedConfigurationSPI.h:
+        * Platform/spi/ios/UIKitSPI.h:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultCustomPasteboardDataEnabled):
+        * Shared/ios/AuxiliaryProcessIOS.mm:
+        (WebKit::AuxiliaryProcess::initializeSandbox):
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::enableSandboxStyleFileQuarantine):
+        * Shared/mac/CodeSigning.mm:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _webViewPrintFormatter]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (-[WKRemoteView initWithFrame:contextID:]):
+        * UIProcess/_WKWebViewPrintFormatter.mm:
+        * UIProcess/_WKWebViewPrintFormatterInternal.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant _elementActionForDDAction:]):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView _showTapHighlight]):
+        (-[WKContentView gestureRecognizer:canBePreventedByGestureRecognizer:]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+        (-[WKContentView _defineForWebView:]):
+        (-[WKContentView setSelectedTextRange:]):
+        (-[WKContentView closestPositionToPoint:]):
+        (-[WKContentView _showShareSheet:inRect:completionHandler:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::desktopClassBrowsingSupported):
+        (WebKit::desktopClassBrowsingRecommended):
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _showDocumentPickerMenu]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::dictionaryPopupInfoForRange):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const):
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::selectionPositionInformation):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeSandbox):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-06-27  Saam Barati  <sbarati@apple.com>
 
         Make WEBGPU enabled only on Mojave and later.

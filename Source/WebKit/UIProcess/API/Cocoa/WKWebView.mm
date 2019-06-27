@@ -6355,13 +6355,13 @@ static WTF::Optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
 
 - (_WKWebViewPrintFormatter *)_webViewPrintFormatter
 {
-#if !PLATFORM(IOSMAC)
+#if !PLATFORM(MACCATALYST)
     UIViewPrintFormatter *viewPrintFormatter = self.viewPrintFormatter;
     ASSERT([viewPrintFormatter isKindOfClass:[_WKWebViewPrintFormatter class]]);
     return (_WKWebViewPrintFormatter *)viewPrintFormatter;
 #else
     return nil;
-#endif // PLATFORM(IOSMAC)
+#endif // PLATFORM(MACCATALYST)
 }
 
 static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISemanticContentAttribute contentAttribute)
@@ -7461,7 +7461,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 @implementation WKWebView (_WKWebViewPrintFormatter)
 
 - (Class)_printFormatterClass

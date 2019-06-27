@@ -89,7 +89,7 @@ SOFT_LINK(WebKitLegacy, _WebCreateFragment, void, (WebCore::Document& document, 
 
 namespace WebCore {
 
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
 
 static FragmentAndResources createFragment(Frame&, NSAttributedString *)
 {

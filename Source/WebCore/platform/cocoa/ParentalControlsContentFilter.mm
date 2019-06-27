@@ -55,7 +55,7 @@ std::unique_ptr<ParentalControlsContentFilter> ParentalControlsContentFilter::cr
 
 static inline bool canHandleResponse(const ResourceResponse& response)
 {
-#if PLATFORM(MAC) || PLATFORM(IOSMAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     return response.url().protocolIs("https");
 #else
     return response.url().protocolIsInHTTPFamily();

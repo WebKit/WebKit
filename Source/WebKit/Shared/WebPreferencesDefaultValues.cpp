@@ -48,7 +48,7 @@ bool defaultPassiveTouchListenersAsDefaultOnDocument()
 
 bool defaultCustomPasteboardDataEnabled()
 {
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
     return true;
 #elif PLATFORM(IOS_FAMILY)
     return WebCore::IOSApplication::isMobileSafari() || dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_11_3;

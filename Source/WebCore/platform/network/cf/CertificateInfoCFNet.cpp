@@ -101,7 +101,7 @@ Optional<CertificateInfo::SummaryInfo> CertificateInfo::summaryInfo() const
 
     SummaryInfo summaryInfo;
 
-#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(IOSMAC)
+#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
     auto leafCertificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain, 0));
 
     auto subjectCF = adoptCF(SecCertificateCopySubjectSummary(leafCertificate));

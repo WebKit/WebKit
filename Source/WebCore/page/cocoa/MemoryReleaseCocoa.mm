@@ -49,7 +49,7 @@ void platformReleaseMemory(Critical)
 #endif
     clearFontFamilySpecificationCoreTextCache();
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
     // FIXME: Remove this call to GSFontInitialize() once <rdar://problem/32886715> is fixed.
     GSFontInitialize();
     GSFontPurgeFontCache();

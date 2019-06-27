@@ -1,3 +1,29 @@
+2019-06-27  Beth Dakin  <bdakin@apple.com>
+
+        Upstream use of MACCATALYST
+        https://bugs.webkit.org/show_bug.cgi?id=199245
+        rdar://problem/51687723
+
+        Reviewed by Tim Horton.
+
+        * ContentExtensionTester/Configurations/SDKVariant.xcconfig:
+        * DumpRenderTree/mac/Configurations/SDKVariant.xcconfig:
+        * ImageDiff/cg/Configurations/SDKVariant.xcconfig:
+        * MiniBrowser/Configurations/SDKVariant.xcconfig:
+        * MobileMiniBrowser/Configurations/SDKVariant.xcconfig:
+        * Scripts/webkitpy/generate_xcfilelists_lib/generators.py:
+        (JavaScriptCoreGenerator):
+        (WebCoreGenerator):
+        (WebKitGenerator):
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+        * TestWebKitAPI/Configurations/SDKVariant.xcconfig:
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        * WebEditingTester/Configurations/SDKVariant.xcconfig:
+        * WebKitLauncher/Configurations/SDKVariant.xcconfig:
+        * WebKitTestRunner/Configurations/SDKVariant.xcconfig:
+        * lldb/lldbWebKitTester/Configurations/SDKVariant.xcconfig:
+
 2019-06-27  Saam Barati  <sbarati@apple.com>
 
         Make WEBGPU enabled only on Mojave and later.

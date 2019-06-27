@@ -89,7 +89,7 @@ using namespace WebCore;
 
 - (void)requestGeolocationAuthorization
 {
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
     [_positionListener geolocationAuthorizationDenied];
     return;
 #else

@@ -123,7 +123,7 @@
 #import <WebCore/WebItemProviderPasteboard.h>
 #endif
 
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
 #import "NativeWebMouseEvent.h"
 #import <UIKit/UIHoverGestureRecognizer.h>
 #import <UIKit/_UILookupGestureRecognizer.h>
@@ -146,7 +146,7 @@
 #import <WebCore/TouchAction.h>
 #endif
 
-#if !PLATFORM(IOSMAC)
+#if !PLATFORM(MACCATALYST)
 #import "ManagedConfigurationSPI.h"
 #import <wtf/SoftLinking.h>
 
@@ -734,7 +734,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_touchEventGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
 
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
     _hoverGestureRecognizer = adoptNS([[UIHoverGestureRecognizer alloc] initWithTarget:self action:@selector(_hoverGestureRecognizerChanged:)]);
     [_hoverGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_hoverGestureRecognizer.get()];
@@ -869,7 +869,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_touchEventGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
 
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
     [_hoverGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
     
@@ -972,7 +972,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
     [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
     [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
 #endif
@@ -988,7 +988,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
     [self addGestureRecognizer:_hoverGestureRecognizer.get()];
     [self addGestureRecognizer:_lookupGestureRecognizer.get()];
 #endif
@@ -1513,7 +1513,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 - (void)_showTapHighlight
 {
     auto shouldPaintTapHighlight = [&](const WebCore::FloatRect& rect) {
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
         UNUSED_PARAM(rect);
         return NO;
 #else
@@ -1789,7 +1789,7 @@ static BOOL isBuiltInScrollViewGestureRecognizer(UIGestureRecognizer *recognizer
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
     isForcePressGesture = (preventingGestureRecognizer == _textSelectionAssistant.get().forcePressGesture);
 #endif
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
     if ((preventingGestureRecognizer == _textSelectionAssistant.get().loupeGesture) && (preventedGestureRecognizer == _highlightLongPressGestureRecognizer || preventedGestureRecognizer == _longPressGestureRecognizer || preventedGestureRecognizer == _textSelectionAssistant.get().forcePressGesture))
         return YES;
 #endif
@@ -1811,7 +1811,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return YES;
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _textSelectionAssistant.get().loupeGesture, _textSelectionAssistant.get().forcePressGesture))
         return YES;
 
@@ -2989,7 +2989,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         if (!textLength || textLength > 200)
             return NO;
 
-#if !PLATFORM(IOSMAC)
+#if !PLATFORM(MACCATALYST)
         if ([[getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:getMCFeatureDefinitionLookupAllowed()] == MCRestrictedBoolExplicitNo)
             return NO;
 #endif
@@ -3001,7 +3001,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         if (editorState.isInPasswordField)
             return NO;
 
-#if !PLATFORM(IOSMAC)
+#if !PLATFORM(MACCATALYST)
         if ([[getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:getMCFeatureDefinitionLookupAllowed()] == MCRestrictedBoolExplicitNo)
             return NO;
 #endif
@@ -3199,7 +3199,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (void)_defineForWebView:(id)sender
 {
-#if !PLATFORM(IOSMAC)
+#if !PLATFORM(MACCATALYST)
     if ([[getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:getMCFeatureDefinitionLookupAllowed()] == MCRestrictedBoolExplicitNo)
         return;
 #endif
@@ -4114,7 +4114,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     if (range)
         return;
-#if !PLATFORM(IOSMAC)
+#if !PLATFORM(MACCATALYST)
     if (!hasFocusedElement(_focusedElementInformation))
         return;
 #endif
@@ -4247,7 +4247,7 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 /* Hit testing. */
 - (UITextPosition *)closestPositionToPoint:(CGPoint)point
 {
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
     WebKit::InteractionInformationRequest request(WebCore::roundedIntPoint(point));
     [self requestAsynchronousPositionInformationUpdate:request];
     if ([self _currentPositionInformationIsApproximatelyValidForRequest:request] && _positionInformation.isSelectable)
@@ -5996,7 +5996,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:_webView]);
     [_shareSheet setDelegate:self];
 
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
     if (!rect) {
         auto hoverLocationInWebView = [self convertPoint:_lastHoverLocation toView:_webView];
         rect = WebCore::FloatRect(hoverLocationInWebView.x, hoverLocationInWebView.y, 1, 1);
@@ -7246,7 +7246,7 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
 
 #endif // PLATFORM(WATCHOS)
 
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
 - (void)_lookupGestureRecognized:(UIGestureRecognizer *)gestureRecognizer
 {
     NSPoint locationInViewCoordinates = [gestureRecognizer locationInView:self];

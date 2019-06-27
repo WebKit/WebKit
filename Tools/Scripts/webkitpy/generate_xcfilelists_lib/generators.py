@@ -648,7 +648,7 @@ class BaseGenerator(object):
 
 
 class JavaScriptCoreGenerator(BaseGenerator):
-    VALID_PLATFORMS = ("macosx", "iosmac", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator")
+    VALID_PLATFORMS = ("macosx", "maccatalyst", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator")
     VALID_CONFIGURATIONS = ("Debug", "Release", "Production", "Profiling")
 
     @util.LogEntryExit
@@ -665,7 +665,7 @@ class JavaScriptCoreGenerator(BaseGenerator):
 
 
 class WebCoreGenerator(BaseGenerator):
-    VALID_PLATFORMS = ("macosx", "iosmac", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator")
+    VALID_PLATFORMS = ("macosx", "maccatalyst", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator")
     VALID_CONFIGURATIONS = ("Debug", "Release", "Production")
 
     @util.LogEntryExit
@@ -682,7 +682,7 @@ class WebCoreGenerator(BaseGenerator):
 
 
 class WebKitGenerator(BaseGenerator):
-    VALID_PLATFORMS = ("macosx", "iosmac", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator")
+    VALID_PLATFORMS = ("macosx", "maccatalyst", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator")
     VALID_CONFIGURATIONS = ("Debug", "Release", "Production")
 
     @util.LogEntryExit

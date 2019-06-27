@@ -25,7 +25,7 @@
 #include "Version.xcconfig"
 
 DEFINES_MODULE = $(DEFINES_MODULE_$(WK_PLATFORM_NAME))
-DEFINES_MODULE_iosmac = YES;
+DEFINES_MODULE_maccatalyst = YES;
 DEFINES_MODULE_ = NO;
 MODULEMAP_FILE = $(SRCROOT)/JavaScriptCore.modulemap;
 

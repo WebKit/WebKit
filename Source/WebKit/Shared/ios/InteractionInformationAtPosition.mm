@@ -62,7 +62,7 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
     encoder << title;
     encoder << idAttribute;
     encoder << bounds;
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
     encoder << caretRect;
 #endif
     encoder << textBefore;
@@ -143,7 +143,7 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
     if (!decoder.decode(result.bounds))
         return false;
     
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
     if (!decoder.decode(result.caretRect))
         return false;
 #endif

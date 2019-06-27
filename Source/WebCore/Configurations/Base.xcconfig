@@ -131,8 +131,8 @@ LLVM_TARGET_TRIPLE_SUFFIX = $(inherited);
 
 WK_COCOA_TOUCH = $(WK_COCOA_TOUCH_$(WK_PLATFORM_NAME));
 WK_COCOA_TOUCH_iphoneos = cocoatouch;
-WK_COCOA_TOUCH_iosmac = cocoatouch;
 WK_COCOA_TOUCH_iphonesimulator = cocoatouch;
+WK_COCOA_TOUCH_maccatalyst = cocoatouch;
 WK_COCOA_TOUCH_watchos = cocoatouch;
 WK_COCOA_TOUCH_watchsimulator = cocoatouch;
 WK_COCOA_TOUCH_appletvos = cocoatouch;

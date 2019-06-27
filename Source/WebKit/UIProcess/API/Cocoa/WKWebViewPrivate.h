@@ -429,7 +429,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 @end
 
-#if TARGET_OS_IOS || (defined(TARGET_OS_IOSMAC) && TARGET_OS_IOSMAC) || TARGET_OS_TV
+#if TARGET_OS_IPHONE && !TARGET_OS_WATCH
 @interface WKWebView (FullScreenAPI_Private)
 -(BOOL)hasFullScreenWindowController;
 -(void)closeFullScreenWindowController;

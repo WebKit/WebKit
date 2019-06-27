@@ -104,7 +104,7 @@
     ;; CVMS
     (allow mach-lookup
         (global-name "com.apple.cvmsServ"))
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(IOSMAC)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
     (allow file-read*
         (prefix "/private/var/db/CVMS/cvmsCodeSignObj"))
 #endif
@@ -622,19 +622,19 @@
        (global-name "com.apple.tccd")
        (global-name "com.apple.tccd.system")
        (global-name "com.apple.trustd.agent")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(IOSMAC)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
        (global-name "com.apple.CARenderServer") ; Needed for [CAContext remoteContextWithOptions]
 #else
        (global-name "com.apple.windowserver.active")
 #endif
 )
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(IOSMAC)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
 ;; <rdar://problem/47268166>
 (allow mach-lookup (xpc-service-name "com.apple.MTLCompilerService"))
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(IOSMAC)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
 (deny mach-lookup (with no-log)
     (global-name "com.apple.CoreServices.coreservicesd")
     (global-name "com.apple.DiskArbitration.diskarbitrationd")

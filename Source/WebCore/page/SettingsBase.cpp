@@ -109,7 +109,7 @@ bool SettingsBase::defaultDownloadableBinaryFontsEnabled()
 
 bool SettingsBase::defaultContentChangeObserverEnabled()
 {
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     return true;
 #else
     return false;

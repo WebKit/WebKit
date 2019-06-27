@@ -26,7 +26,7 @@
 #import "config.h"
 #import "NetworkProcess.h"
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 
 #import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"

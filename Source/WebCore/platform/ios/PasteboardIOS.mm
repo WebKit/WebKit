@@ -205,7 +205,7 @@ Pasteboard::ReaderResult Pasteboard::readPasteboardWebContentDataForType(Pastebo
         return ReaderResult::DidNotReadType;
     }
 
-#if !PLATFORM(IOSMAC)
+#if !PLATFORM(MACCATALYST)
     if ([type isEqualToString:(__bridge NSString *)kUTTypeFlatRTFD]) {
         RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(itemIndex, kUTTypeFlatRTFD, m_pasteboardName);
         if (m_changeCount != changeCount())
@@ -219,7 +219,7 @@ Pasteboard::ReaderResult Pasteboard::readPasteboardWebContentDataForType(Pastebo
             return ReaderResult::PasteboardWasChangedExternally;
         return buffer && reader.readRTF(*buffer) ? ReaderResult::ReadType : ReaderResult::DidNotReadType;
     }
-#endif // !PLATFORM(IOSMAC)
+#endif // !PLATFORM(MACCATALYST)
 
     if ([supportedImageTypes() containsObject:type]) {
         RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(itemIndex, type, m_pasteboardName);
@@ -375,11 +375,11 @@ void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader,
 NSArray *Pasteboard::supportedWebContentPasteboardTypes()
 {
     return @[
-#if !PLATFORM(IOSMAC)
+#if !PLATFORM(MACCATALYST)
         WebArchivePboardType,
 #endif
         (__bridge NSString *)kUTTypeWebArchive,
-#if !PLATFORM(IOSMAC)
+#if !PLATFORM(MACCATALYST)
         (__bridge NSString *)kUTTypeFlatRTFD,
         (__bridge NSString *)kUTTypeRTF,
 #endif

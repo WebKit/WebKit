@@ -46,7 +46,7 @@ GeolocationPosition::GeolocationPosition(CLLocation* location)
         speed = location.speed;
     if (location.course >= 0.0)
         heading = location.course;
-#if !PLATFORM(IOSMAC)
+#if !PLATFORM(MACCATALYST)
     if (location.floor)
         floorLevel = location.floor.level;
 #endif

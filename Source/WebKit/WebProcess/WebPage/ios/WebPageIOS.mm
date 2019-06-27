@@ -214,7 +214,7 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
     // immediately so that the UIProcess can update UI, including the position of the caret.
     bool needsLayout = !frame.view() || frame.view()->needsLayout();
     bool requiresPostLayoutData = frame.editor().hasComposition();
-#if !PLATFORM(IOSMAC)
+#if !PLATFORM(MACCATALYST)
     requiresPostLayoutData |= m_keyboardIsAttached;
 #endif
     if ((shouldIncludePostLayoutData == IncludePostLayoutDataHint::No || needsLayout) && !requiresPostLayoutData) {
@@ -1367,7 +1367,7 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
         if (position.rootEditableElement())
             range = Range::create(*frame.document(), position, position);
         else
-#if !PLATFORM(IOSMAC)
+#if !PLATFORM(MACCATALYST)
             range = wordRangeFromPosition(position);
 #else
             switch (wkGestureState) {
@@ -2640,7 +2640,7 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
             info.isSelectable = !isAssistableElement(*downcast<Element>(hitNode)) && !rectIsTooBigForSelection(info.bounds, *result.innerNodeFrame());
     }
 
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
     bool isInsideFixedPosition;
     VisiblePosition caretPosition(renderer->positionForPoint(request.point, nullptr));
     info.caretRect = caretPosition.absoluteCaretBounds(&isInsideFixedPosition);

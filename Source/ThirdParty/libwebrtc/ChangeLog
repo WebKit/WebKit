@@ -1,3 +1,13 @@
+2019-06-27  Beth Dakin  <bdakin@apple.com>
+
+        Upstream use of MACCATALYST
+        https://bugs.webkit.org/show_bug.cgi?id=199245
+        rdar://problem/51687723
+
+        Reviewed by Tim Horton.
+
+        * Configurations/SDKVariant.xcconfig:
+
 2019-06-25  Youenn Fablet  <youenn@apple.com>
 
         Close sockets with too high file descriptor

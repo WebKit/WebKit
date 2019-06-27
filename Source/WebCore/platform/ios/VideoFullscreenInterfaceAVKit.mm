@@ -321,7 +321,7 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
 
 - (void)setVideoGravity:(NSString *)videoGravity
 {
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
     // FIXME<rdar://46011230>: remove this #if once this radar lands.
     if (!videoGravity)
         videoGravity = AVLayerVideoGravityResizeAspect;

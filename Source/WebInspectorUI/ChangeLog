@@ -1,3 +1,14 @@
+2019-06-27  Beth Dakin  <bdakin@apple.com>
+
+        Upstream use of MACCATALYST
+        https://bugs.webkit.org/show_bug.cgi?id=199245
+        rdar://problem/51687723
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/SDKVariant.xcconfig:
+
 2019-06-27  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: throw an error if console.count/console.countReset is called with an object that throws an error from toString

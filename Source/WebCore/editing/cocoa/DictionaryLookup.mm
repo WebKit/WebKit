@@ -59,11 +59,11 @@
 #import <PDFKit/PDFKit.h>
 #endif
 
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
 #import <UIKitMacHelper/UINSRevealController.h>
 SOFT_LINK_PRIVATE_FRAMEWORK(UIKitMacHelper)
 SOFT_LINK(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, (void), ())
-#endif // PLATFORM(IOSMAC)
+#endif // PLATFORM(MACCATALYST)
 
 #if ENABLE(REVEAL)
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(Reveal)
@@ -159,7 +159,7 @@ SOFT_LINK_CLASS_OPTIONAL(RevealCore, RVSelection)
 
 @end
 
-#elif PLATFORM(IOSMAC) // PLATFORM(MAC)
+#elif PLATFORM(MACCATALYST) // PLATFORM(MAC)
 
 @interface WebRevealHighlight <UIRVPresenterHighlightDelegate> : NSObject {
 @private
@@ -246,8 +246,8 @@ SOFT_LINK_CLASS_OPTIONAL(RevealCore, RVSelection)
     WebCore::CGContextStateSaver saveState(context);
     CGAffineTransform contextTransform = CGContextGetCTM(context);
     CGFloat backingScale = contextTransform.a;
-    CGFloat iOSMacScaleFactor = [PAL::getUIApplicationClass() sharedApplication]._iOSMacScale;
-    CGAffineTransform transform = CGAffineTransformMakeScale(iOSMacScaleFactor * backingScale, iOSMacScaleFactor * backingScale);
+    CGFloat macCatalystScaleFactor = [PAL::getUIApplicationClass() sharedApplication]._iOSMacScale;
+    CGAffineTransform transform = CGAffineTransformMakeScale(macCatalystScaleFactor * backingScale, macCatalystScaleFactor * backingScale);
     CGContextSetCTM(context, transform);
     
     for (NSValue *v in rects) {
@@ -260,7 +260,7 @@ SOFT_LINK_CLASS_OPTIONAL(RevealCore, RVSelection)
 
 @end
 
-#endif // PLATFORM(IOSMAC)
+#endif // PLATFORM(MACCATALYST)
 
 #endif // ENABLE(REVEAL)
 
@@ -494,7 +494,7 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     [presenter revealItem:item.get() documentContext:nil presentingContext:context.get() options:nil];
     return nil;
     
-#elif PLATFORM(IOSMAC)
+#elif PLATFORM(MACCATALYST)
     
     UNUSED_PARAM(textIndicatorInstallationCallback);
     UNUSED_PARAM(rootViewToViewConversionCallback);

@@ -1255,7 +1255,7 @@ static bool desktopClassBrowsingSupported()
     static bool supportsDesktopClassBrowsing = false;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
         supportsDesktopClassBrowsing = true;
 #else
         supportsDesktopClassBrowsing = currentUserInterfaceIdiomIsPad();
@@ -1264,14 +1264,14 @@ static bool desktopClassBrowsingSupported()
     return supportsDesktopClassBrowsing;
 }
 
-#if !PLATFORM(IOSMAC)
+#if !PLATFORM(MACCATALYST)
 
 static bool webViewSizeIsNarrow(WebCore::IntSize viewSize)
 {
     return !viewSize.isEmpty() && viewSize.width() <= 375;
 }
 
-#endif // !PLATFORM(IOSMAC)
+#endif // !PLATFORM(MACCATALYST)
 
 static bool desktopClassBrowsingRecommendedForRequest(const WebCore::ResourceRequest& request)
 {
@@ -1312,7 +1312,7 @@ static bool desktopClassBrowsingRecommended(const WebCore::ResourceRequest& requ
     if (!desktopClassBrowsingRecommendedForRequest(request))
         return false;
 
-#if !PLATFORM(IOSMAC)
+#if !PLATFORM(MACCATALYST)
     if (webViewSizeIsNarrow(viewSize))
         return false;
 #endif
@@ -1320,7 +1320,7 @@ static bool desktopClassBrowsingRecommended(const WebCore::ResourceRequest& requ
     static bool shouldRecommendDesktopClassBrowsing = false;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
         UNUSED_PARAM(ignoreSafeguards);
         shouldRecommendDesktopClassBrowsing = true;
 #else

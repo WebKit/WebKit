@@ -516,7 +516,7 @@ typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
     _UIBackdropMaskViewAll = _UIBackdropMaskViewGrayscaleTint | _UIBackdropMaskViewColorTint | _UIBackdropMaskViewFilters,
 };
 
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
 typedef NS_ENUM(NSUInteger, UIFocusRingType) {
     UIFocusRingTypeNone = 1,
 };
@@ -537,7 +537,7 @@ typedef NS_ENUM(NSUInteger, UIFocusRingType) {
 - (void)_removeAllAnimations:(BOOL)includeSubviews;
 - (UIColor *)_inheritedInteractionTintColor;
 - (NSString *)recursiveDescription;
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
 @property (nonatomic, getter=_focusRingType, setter=_setFocusRingType:) UIFocusRingType focusRingType;
 #endif
 @end

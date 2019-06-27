@@ -220,7 +220,7 @@ struct WKAutoCorrectionData {
     RetainPtr<UITapGestureRecognizer> _stylusSingleTapGestureRecognizer;
     RetainPtr<WKInspectorNodeSearchGestureRecognizer> _inspectorNodeSearchGestureRecognizer;
 
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
     RetainPtr<UIHoverGestureRecognizer> _hoverGestureRecognizer;
     RetainPtr<_UILookupGestureRecognizer> _lookupGestureRecognizer;
     CGPoint _lastHoverLocation;

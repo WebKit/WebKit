@@ -44,7 +44,7 @@
 #import <WebCore/VisibleUnits.h>
 
 // FIXME: Remove this after rdar://problem/48914153 is resolved.
-#if PLATFORM(IOSMAC)
+#if PLATFORM(MACCATALYST)
 typedef NS_ENUM(NSInteger, NSSpellingState) {
     NSSpellingStateSpellingFlag = (1 << 0),
     NSSpellingStateGrammarFlag = (1 << 1)

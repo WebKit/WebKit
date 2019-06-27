@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CodeSigning.h"
 
-#if PLATFORM(MAC) || PLATFORM(IOSMAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 
 #include <wtf/RetainPtr.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>

@@ -499,7 +499,7 @@ void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
 #if ENABLE(MANUAL_SANDBOXING)
     // Need to override the default, because service has a different bundle ID.
     NSBundle *webKit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     sandboxParameters.setOverrideSandboxProfilePath([webKit2Bundle pathForResource:@"com.apple.WebKit.WebContent" ofType:@"sb"]);
 #else
     sandboxParameters.setOverrideSandboxProfilePath([webKit2Bundle pathForResource:@"com.apple.WebProcess" ofType:@"sb"]);

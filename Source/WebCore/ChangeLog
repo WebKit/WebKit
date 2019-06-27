@@ -1,3 +1,57 @@
+2019-06-27  Beth Dakin  <bdakin@apple.com>
+
+        Upstream use of MACCATALYST
+        https://bugs.webkit.org/show_bug.cgi?id=199245
+        rdar://problem/51687723
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/SDKVariant.xcconfig:
+        * Configurations/WebCore.xcconfig:
+        * Modules/geolocation/ios/GeolocationPositionIOS.mm:
+        (WebCore::GeolocationPosition::GeolocationPosition):
+        * editing/cocoa/DictionaryLookup.mm:
+        (-[WebRevealHighlight drawHighlightContentForItem:context:]):
+        (WebCore::showPopupOrCreateAnimationController):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        * page/Navigator.h:
+        * page/SettingsBase.cpp:
+        (WebCore::SettingsBase::defaultContentChangeObserverEnabled):
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        (WebCore::platformReleaseMemory):
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSession::setCategory):
+        (WebCore::AudioSession::routingContextUID const):
+        * platform/cocoa/ParentalControlsContentFilter.mm:
+        (WebCore::canHandleResponse):
+        * platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.mm:
+        (WebCore::AVAssetMIMETypeCache::isAvailable const):
+        * platform/graphics/avfoundation/objc/AVStreamDataParserMIMETypeCache.mm:
+        (WebCore::AVStreamDataParserMIMETypeCache::isAvailable const):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldDisableSleep):
+        * platform/graphics/cv/ImageTransferSessionVT.h:
+        * platform/graphics/cv/ImageTransferSessionVT.mm:
+        (WebCore::cvPixelFormatOpenGLKey):
+        (WebCore::ImageTransferSessionVT::ImageTransferSessionVT):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::readPasteboardWebContentDataForType):
+        (WebCore::Pasteboard::supportedWebContentPasteboardTypes):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::registerItemToPasteboard):
+        (WebCore::PlatformPasteboard::write):
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerLayer setVideoGravity:]):
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderRegistrationInfoList itemProvider]):
+        (-[WebItemProviderLoadResult canBeRepresentedAsFileUpload]):
+        (-[WebItemProviderPasteboard numberOfFiles]):
+        * platform/network/cf/CertificateInfoCFNet.cpp:
+        (WebCore::CertificateInfo::summaryInfo const):
+
 2019-06-27  Brent Fulgham  <bfulgham@apple.com>
 
         Correct document lifecycle while processing commands

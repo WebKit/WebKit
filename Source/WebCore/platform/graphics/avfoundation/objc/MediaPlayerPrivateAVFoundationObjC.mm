@@ -889,7 +889,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     }
 #endif
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
     setShouldDisableSleep(player()->shouldDisableSleep());
 #endif
 
@@ -3139,7 +3139,7 @@ void MediaPlayerPrivateAVFoundationObjC::canPlayFastReverseDidChange(bool newVal
 
 void MediaPlayerPrivateAVFoundationObjC::setShouldDisableSleep(bool flag)
 {
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [m_avPlayer _setPreventsSleepDuringVideoPlayback:flag];
     ALLOW_DEPRECATED_DECLARATIONS_END
