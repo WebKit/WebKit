@@ -283,6 +283,8 @@
       "shortname": "gtk",
       "factory": "GTKFactory",
       "platform": "gtk",
+      "configuration": "release",
+      "architectures": ["x86_64"],
       "workernames": ["tanty-gtk-wk2-ews", "ltilve-gtk-wk2-ews"]
     },
     {
@@ -383,6 +385,8 @@
       "shortname": "wpe",
       "factory": "WPEFactory",
       "platform": "wpe",
+      "configuration": "release",
+      "architectures": ["x86_64"],
       "workernames": ["igalia-wpe-ews", "aperez-wpe-gcc5-ews", "aperez-wpe-gcc6-ews"]
     },
     {

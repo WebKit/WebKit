@@ -1,5 +1,14 @@
 2019-06-26  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Add configuration and architecture for WPE and GTK builders
+        https://bugs.webkit.org/show_bug.cgi?id=199249
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
+2019-06-26  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Add check for duplicate workers in config.json
         https://bugs.webkit.org/show_bug.cgi?id=199240
 
