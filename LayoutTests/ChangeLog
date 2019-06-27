@@ -1,3 +1,9 @@
+2019-06-27  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed, fix test failures after r246876.
+
+        * inspector/worker/console-basic-expected.txt:
+
 2019-06-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, rebaseline test after r246876.
