@@ -34,10 +34,6 @@
 #include <wtf/Optional.h>
 #include <wtf/RunLoop.h>
 
-#if USE(GLIB)
-#include <wtf/glib/GRefPtr.h>
-#endif
-
 #if OS(WINDOWS)
 #include <wtf/win/Win32Handle.h>
 #endif
