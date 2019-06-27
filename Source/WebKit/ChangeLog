@@ -1,3 +1,23 @@
+2019-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Fix another crash in -[UIPreviewTarget initWithContainer:center:transform:] when generating a fallback targeted preview
+        https://bugs.webkit.org/show_bug.cgi?id=199243
+        <rdar://problem/51554509>
+
+        Reviewed by Tim Horton.
+
+        Additionally make createFallbackTargetedPreview robust in the case where the content view is unparented, and
+        rename _ensureTargetedPreview to _createTargetedPreviewIfPossible, to reflect the fact that it may now return
+        nil.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (createTargetedPreview):
+        (createFallbackTargetedPreview):
+        (-[WKContentView _createTargetedPreviewIfPossible]):
+        (-[WKContentView contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+        (-[WKContentView contextMenuInteraction:previewForDismissingMenuWithConfiguration:]):
+        (-[WKContentView _ensureTargetedPreview]): Deleted.
+
 2019-06-26  Alex Christensen  <achristensen@webkit.org>
 
         testRunner.setAlwaysAcceptCookies should wait for cookie accept policy to be set

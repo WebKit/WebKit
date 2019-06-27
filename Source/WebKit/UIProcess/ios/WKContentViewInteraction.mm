@@ -7921,6 +7921,9 @@ static RetainPtr<UITargetedPreview> createTargetedPreview(UIImage *image, UIView
 
 static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootView, UIView *containerView, const WebCore::FloatRect& frameInRootViewCoordinates)
 {
+    if (!containerView.window)
+        return nil;
+
     auto parameters = adoptNS([[UIPreviewParameters alloc] init]);
     UIView *snapshotView = [rootView resizableSnapshotViewFromRect:frameInRootViewCoordinates afterScreenUpdates:NO withCapInsets:UIEdgeInsetsZero];
 
@@ -7933,7 +7936,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     return adoptNS([[UITargetedPreview alloc] initWithView:snapshotView parameters:parameters.get() target:target.get()]);
 }
 
-- (UITargetedPreview *)_ensureTargetedPreview
+- (UITargetedPreview *)_createTargetedPreviewIfPossible
 {
     if (_contextMenuInteractionTargetedPreview)
         return _contextMenuInteractionTargetedPreview.get();
@@ -7960,7 +7963,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
 {
     [self _startSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
-    return [self _ensureTargetedPreview];
+    return [self _createTargetedPreviewIfPossible];
 }
 
 - (void)contextMenuInteractionWillPresent:(UIContextMenuInteraction *)interaction
@@ -7981,7 +7984,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForDismissingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
 {
-    return [self _ensureTargetedPreview];
+    return [self _createTargetedPreviewIfPossible];
 }
 
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willCommitWithAnimator:(id<UIContextMenuInteractionCommitAnimating>)animator
