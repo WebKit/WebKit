@@ -1,3 +1,11 @@
+2019-06-28  Robin Morisset  <rmorisset@apple.com>
+
+        Adding myself as a reviewer to contributors.json.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-06-28  Jer Noble  <jer.noble@apple.com>
 
         Add new -[WKWebView _closeAllMediaPresentations] SPI
