@@ -1444,8 +1444,8 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
     auto& cache = colorCache(options);
     return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, options] () -> Color {
         const bool useDarkAppearance = options.contains(StyleColor::Options::UseDarkAppearance);
-        const bool useInactiveAppearance = options.contains(StyleColor::Options::UseInactiveAppearance);
-        LocalCurrentTraitCollection localTraitCollection(useDarkAppearance, useInactiveAppearance);
+        const bool useElevatedUserInterfaceLevel = options.contains(StyleColor::Options::UseElevatedUserInterfaceLevel);
+        LocalCurrentTraitCollection localTraitCollection(useDarkAppearance, useElevatedUserInterfaceLevel);
 
         auto cssColorToSelector = [cssValueID] () -> SEL {
             switch (cssValueID) {

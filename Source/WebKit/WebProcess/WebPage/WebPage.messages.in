@@ -489,7 +489,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetFooterBannerHeightForTesting(int height);
 #endif
 
-    EffectiveAppearanceDidChange(bool useDarkAppearance, bool useInactiveAppearance);
+    EffectiveAppearanceDidChange(bool useDarkAppearance, bool useElevatedUserInterfaceLevel);
 
 #if PLATFORM(COCOA)
     RequestActiveNowPlayingSessionInfo(WebKit::CallbackID callbackID)

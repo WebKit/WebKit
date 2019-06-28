@@ -944,9 +944,9 @@ bool PageClientImpl::effectiveAppearanceIsDark() const
     return m_impl->effectiveAppearanceIsDark();
 }
 
-bool PageClientImpl::effectiveAppearanceIsInactive() const
+bool PageClientImpl::effectiveUserInterfaceLevelIsElevated() const
 {
-    return m_impl->effectiveAppearanceIsInactive();
+    return m_impl->effectiveUserInterfaceLevelIsElevated();
 }
 
 void PageClientImpl::takeFocus(WebCore::FocusDirection direction)

@@ -5314,9 +5314,8 @@ bool WebViewImpl::effectiveAppearanceIsDark()
 #endif
 }
 
-bool WebViewImpl::effectiveAppearanceIsInactive()
+bool WebViewImpl::effectiveUserInterfaceLevelIsElevated()
 {
-    // FIXME: Use the window isKeyWindow state or view first responder status?
     return false;
 }
 

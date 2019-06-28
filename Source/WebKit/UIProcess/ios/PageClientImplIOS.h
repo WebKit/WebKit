@@ -142,7 +142,7 @@ private:
     void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&) override;
 
     bool effectiveAppearanceIsDark() const override;
-    bool effectiveAppearanceIsInactive() const override;
+    bool effectiveUserInterfaceLevelIsElevated() const override;
 
     void couldNotRestorePageState() override;
     void restorePageState(Optional<WebCore::FloatPoint>, const WebCore::FloatPoint&, const WebCore::FloatBoxExtent&, double) override;

@@ -380,8 +380,8 @@ public:
     WEBCORE_EXPORT void setUseSystemAppearance(bool);
     
     WEBCORE_EXPORT bool useDarkAppearance() const;
-    bool useInactiveAppearance() const { return m_useInactiveAppearance; }
-    WEBCORE_EXPORT void effectiveAppearanceDidChange(bool useDarkAppearance, bool useInactiveAppearance);
+    bool useElevatedUserInterfaceLevel() const { return m_useElevatedUserInterfaceLevel; }
+    WEBCORE_EXPORT void effectiveAppearanceDidChange(bool useDarkAppearance, bool useElevatedUserInterfaceLevel);
     bool defaultUseDarkAppearance() const { return m_useDarkAppearance; }
     void setUseDarkAppearanceOverride(Optional<bool>);
 
@@ -837,7 +837,7 @@ private:
 #endif
     
     bool m_useSystemAppearance { false };
-    bool m_useInactiveAppearance { false };
+    bool m_useElevatedUserInterfaceLevel { false };
     bool m_useDarkAppearance { false };
     Optional<bool> m_useDarkAppearanceOverride;
 

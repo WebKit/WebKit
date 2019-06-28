@@ -40,7 +40,7 @@ class LocalCurrentTraitCollection {
     WTF_MAKE_NONCOPYABLE(LocalCurrentTraitCollection);
 
 public:
-    WEBCORE_EXPORT LocalCurrentTraitCollection(bool useDarkAppearance, bool useBaseLevelAppearance);
+    WEBCORE_EXPORT LocalCurrentTraitCollection(bool useDarkAppearance, bool useElevatedUserInterfaceLevel);
     WEBCORE_EXPORT LocalCurrentTraitCollection(UITraitCollection *);
     WEBCORE_EXPORT ~LocalCurrentTraitCollection();
 
@@ -53,12 +53,12 @@ public:
 #endif
     }
 
-    bool usingBaseLevelAppearance() const
+    bool usingElevatedUserInterfaceLevel() const
     {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-        return m_usingBaseLevelAppearance;
+        return m_usingElevatedUserInterfaceLevel;
 #else
-        return true;
+        return false;
 #endif
     }
 
@@ -66,7 +66,7 @@ private:
 #if HAVE(OS_DARK_MODE_SUPPORT)
     RetainPtr<UITraitCollection> m_savedTraitCollection;
     bool m_usingDarkAppearance { false };
-    bool m_usingBaseLevelAppearance { true };
+    bool m_usingElevatedUserInterfaceLevel { false };
 #endif
 };
 

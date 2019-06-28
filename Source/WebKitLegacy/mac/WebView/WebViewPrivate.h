@@ -324,9 +324,10 @@ typedef enum {
 + (BOOL)_isIconLoadingEnabled;
 
 @property (nonatomic, assign, setter=_setUseDarkAppearance:) BOOL _useDarkAppearance;
-@property (nonatomic, assign, setter=_setUseInactiveAppearance:) BOOL _useInactiveAppearance;
+@property (nonatomic, assign, setter=_setUseElevatedUserInterfaceLevel:) BOOL _useElevatedUserInterfaceLevel;
 
 - (void)_setUseDarkAppearance:(BOOL)useDarkAppearance useInactiveAppearance:(BOOL)useInactiveAppearance;
+- (void)_setUseDarkAppearance:(BOOL)useDarkAppearance useElevatedUserInterfaceLevel:(BOOL)useElevatedUserInterfaceLevel;
 
 - (WebInspector *)inspector;
 

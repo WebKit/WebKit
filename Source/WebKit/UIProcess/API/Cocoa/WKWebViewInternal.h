@@ -171,7 +171,7 @@ struct PrintInfo;
 @property (nonatomic, readonly, getter=_isRetainingActiveFocusedState) BOOL _retainingActiveFocusedState;
 
 - (BOOL)_effectiveAppearanceIsDark;
-- (BOOL)_effectiveAppearanceIsInactive;
+- (BOOL)_effectiveUserInterfaceLevelIsElevated;
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(ATTACHMENT_ELEMENT)

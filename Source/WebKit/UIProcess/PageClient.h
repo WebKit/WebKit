@@ -327,7 +327,7 @@ public:
 #endif
 
     virtual bool effectiveAppearanceIsDark() const { return false; }
-    virtual bool effectiveAppearanceIsInactive() const { return false; }
+    virtual bool effectiveUserInterfaceLevelIsElevated() const { return false; }
 
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) = 0;
     virtual void exitAcceleratedCompositingMode() = 0;

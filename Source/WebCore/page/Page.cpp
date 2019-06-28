@@ -2727,14 +2727,14 @@ void Page::setUseSystemAppearance(bool value)
     }
 }
 
-void Page::effectiveAppearanceDidChange(bool useDarkAppearance, bool useInactiveAppearance)
+void Page::effectiveAppearanceDidChange(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    if (m_useDarkAppearance == useDarkAppearance && m_useInactiveAppearance == useInactiveAppearance)
+    if (m_useDarkAppearance == useDarkAppearance && m_useElevatedUserInterfaceLevel == useElevatedUserInterfaceLevel)
         return;
 
     m_useDarkAppearance = useDarkAppearance;
-    m_useInactiveAppearance = useInactiveAppearance;
+    m_useElevatedUserInterfaceLevel = useElevatedUserInterfaceLevel;
 
     InspectorInstrumentation::defaultAppearanceDidChange(*this, useDarkAppearance);
 
@@ -2742,10 +2742,10 @@ void Page::effectiveAppearanceDidChange(bool useDarkAppearance, bool useInactive
 #else
     UNUSED_PARAM(useDarkAppearance);
 
-    if (m_useInactiveAppearance == useInactiveAppearance)
+    if (m_useElevatedUserInterfaceLevel == useElevatedUserInterfaceLevel)
         return;
 
-    m_useInactiveAppearance = useInactiveAppearance;
+    m_useElevatedUserInterfaceLevel = useElevatedUserInterfaceLevel;
 
     appearanceDidChange();
 #endif

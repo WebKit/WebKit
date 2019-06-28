@@ -1585,7 +1585,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 
 #if HAVE(OS_DARK_MODE_SUPPORT) && PLATFORM(MAC)
-    _private->page->effectiveAppearanceDidChange(self._effectiveAppearanceIsDark, self._effectiveAppearanceIsInactive);
+    _private->page->effectiveAppearanceDidChange(self._effectiveAppearanceIsDark, self._effectiveUserInterfaceLevelIsElevated);
 #endif
 
     _private->page->settings().setContentDispositionAttachmentSandboxEnabled(true);
@@ -2496,28 +2496,34 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if (!_private || !_private->page)
         return;
-    [self _setUseDarkAppearance:useDarkAppearance useInactiveAppearance:_private->page->useInactiveAppearance()];
+    [self _setUseDarkAppearance:useDarkAppearance useElevatedUserInterfaceLevel:_private->page->useElevatedUserInterfaceLevel()];
 }
 
-- (BOOL)_useInactiveAppearance
+- (BOOL)_useElevatedUserInterfaceLevel
 {
     if (!_private || !_private->page)
         return NO;
-    return _private->page->useInactiveAppearance();
+    return _private->page->useElevatedUserInterfaceLevel();
 }
 
-- (void)_setUseInactiveAppearance:(BOOL)useInactiveAppearance
+- (void)_setUseElevatedUserInterfaceLevel:(BOOL)useElevatedUserInterfaceLevel
 {
     if (!_private || !_private->page)
         return;
-    [self _setUseDarkAppearance:_private->page->useDarkAppearance() useInactiveAppearance:useInactiveAppearance];
+    [self _setUseDarkAppearance:_private->page->useDarkAppearance() useElevatedUserInterfaceLevel:useElevatedUserInterfaceLevel];
 }
 
 - (void)_setUseDarkAppearance:(BOOL)useDarkAppearance useInactiveAppearance:(BOOL)useInactiveAppearance
 {
+    // FIXME: Remove once UIWebView has moved off this old method.
+    [self _setUseDarkAppearance:useDarkAppearance useElevatedUserInterfaceLevel:!useInactiveAppearance];
+}
+
+- (void)_setUseDarkAppearance:(BOOL)useDarkAppearance useElevatedUserInterfaceLevel:(BOOL)useElevatedUserInterfaceLevel
+{
     if (!_private || !_private->page)
         return;
-    _private->page->effectiveAppearanceDidChange(useDarkAppearance, useInactiveAppearance);
+    _private->page->effectiveAppearanceDidChange(useDarkAppearance, useElevatedUserInterfaceLevel);
 }
 
 + (void)_setIconLoadingEnabled:(BOOL)enabled
@@ -5186,9 +5192,8 @@ static Vector<String> toStringVector(NSArray* patterns)
     return [appearance isEqualToString:NSAppearanceNameDarkAqua];
 }
 
-- (bool)_effectiveAppearanceIsInactive
+- (bool)_effectiveUserInterfaceLevelIsElevated
 {
-    // FIXME: Use the window isKeyWindow state or view first responder status?
     return false;
 }
 #endif
@@ -5215,7 +5220,7 @@ static Vector<String> toStringVector(NSArray* patterns)
     if (!_private || !_private->page)
         return;
 
-    _private->page->effectiveAppearanceDidChange(self._effectiveAppearanceIsDark, self._effectiveAppearanceIsInactive);
+    _private->page->effectiveAppearanceDidChange(self._effectiveAppearanceIsDark, self._effectiveUserInterfaceLevelIsElevated);
 }
 #endif
 

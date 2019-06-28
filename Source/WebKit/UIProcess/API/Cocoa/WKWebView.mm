@@ -480,10 +480,10 @@ static bool shouldAllowSettingAnyXHRHeaderFromFileURLs()
     return self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
 }
 
-- (BOOL)_effectiveAppearanceIsInactive
+- (BOOL)_effectiveUserInterfaceLevelIsElevated
 {
 #if HAVE(OS_DARK_MODE_SUPPORT) && !PLATFORM(WATCHOS)
-    return self.traitCollection.userInterfaceLevel != UIUserInterfaceLevelElevated;
+    return self.traitCollection.userInterfaceLevel == UIUserInterfaceLevelElevated;
 #else
     return NO;
 #endif

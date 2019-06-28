@@ -31,21 +31,21 @@
 
 namespace WebCore {
 
-LocalCurrentTraitCollection::LocalCurrentTraitCollection(bool useDarkAppearance, bool useBaseLevelAppearance)
+LocalCurrentTraitCollection::LocalCurrentTraitCollection(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
     m_savedTraitCollection = [PAL::getUITraitCollectionClass() _currentTraitCollection];
     m_usingDarkAppearance = useDarkAppearance;
-    m_usingBaseLevelAppearance = useBaseLevelAppearance;
+    m_usingElevatedUserInterfaceLevel = useElevatedUserInterfaceLevel;
 
     auto userInterfaceStyleTrait = [PAL::getUITraitCollectionClass() traitCollectionWithUserInterfaceStyle:m_usingDarkAppearance ? UIUserInterfaceStyleDark : UIUserInterfaceStyleLight];
-    auto backgroundLevelTrait = [PAL::getUITraitCollectionClass() traitCollectionWithUserInterfaceLevel:m_usingBaseLevelAppearance ? UIUserInterfaceLevelBase : UIUserInterfaceLevelElevated];
+    auto backgroundLevelTrait = [PAL::getUITraitCollectionClass() traitCollectionWithUserInterfaceLevel:m_usingElevatedUserInterfaceLevel ? UIUserInterfaceLevelElevated : UIUserInterfaceLevelBase];
     auto newTraitCollection = [PAL::getUITraitCollectionClass() traitCollectionWithTraitsFromCollections:@[ m_savedTraitCollection.get(), userInterfaceStyleTrait, backgroundLevelTrait ]];
 
     [PAL::getUITraitCollectionClass() _setCurrentTraitCollection:newTraitCollection];
 #else
     UNUSED_PARAM(useDarkAppearance);
-    UNUSED_PARAM(useBaseLevelAppearance);
+    UNUSED_PARAM(useElevatedUserInterfaceLevel);
 #endif
 }
 
@@ -54,7 +54,7 @@ LocalCurrentTraitCollection::LocalCurrentTraitCollection(UITraitCollection *trai
 #if HAVE(OS_DARK_MODE_SUPPORT)
     m_savedTraitCollection = [PAL::getUITraitCollectionClass() _currentTraitCollection];
     m_usingDarkAppearance = traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
-    m_usingBaseLevelAppearance = traitCollection.userInterfaceLevel == UIUserInterfaceLevelBase;
+    m_usingElevatedUserInterfaceLevel = traitCollection.userInterfaceLevel == UIUserInterfaceLevelElevated;
 
     [PAL::getUITraitCollectionClass() _setCurrentTraitCollection:traitCollection];
 #else

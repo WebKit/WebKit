@@ -599,7 +599,7 @@ public:
 
     void effectiveAppearanceDidChange();
     bool effectiveAppearanceIsDark();
-    bool effectiveAppearanceIsInactive();
+    bool effectiveUserInterfaceLevelIsElevated();
 
     void takeFocus(WebCore::FocusDirection);
 

@@ -6958,10 +6958,10 @@ bool Document::useDarkAppearance(const RenderStyle* style) const
     return false;
 }
 
-bool Document::useInactiveAppearance() const
+bool Document::useElevatedUserInterfaceLevel() const
 {
     if (auto* documentPage = page())
-        return documentPage->useInactiveAppearance();
+        return documentPage->useElevatedUserInterfaceLevel();
     return false;
 }
 
@@ -6972,8 +6972,8 @@ OptionSet<StyleColor::Options> Document::styleColorOptions(const RenderStyle* st
         options.add(StyleColor::Options::UseSystemAppearance);
     if (useDarkAppearance(style))
         options.add(StyleColor::Options::UseDarkAppearance);
-    if (useInactiveAppearance())
-        options.add(StyleColor::Options::UseInactiveAppearance);
+    if (useElevatedUserInterfaceLevel())
+        options.add(StyleColor::Options::UseElevatedUserInterfaceLevel);
     return options;
 }
 

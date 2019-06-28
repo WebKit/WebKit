@@ -481,9 +481,9 @@ bool PageClientImpl::effectiveAppearanceIsDark() const
     return [m_webView _effectiveAppearanceIsDark];
 }
 
-bool PageClientImpl::effectiveAppearanceIsInactive() const
+bool PageClientImpl::effectiveUserInterfaceLevelIsElevated() const
 {
-    return [m_webView _effectiveAppearanceIsInactive];
+    return [m_webView _effectiveUserInterfaceLevelIsElevated];
 }
 
 void PageClientImpl::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)

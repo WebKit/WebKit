@@ -548,7 +548,7 @@ void InternalSettings::setUseDarkAppearanceInternal(bool useDarkAppearance)
     }
 #endif
     ASSERT(m_page);
-    m_page->effectiveAppearanceDidChange(useDarkAppearance, m_page->useInactiveAppearance());
+    m_page->effectiveAppearanceDidChange(useDarkAppearance, m_page->useElevatedUserInterfaceLevel());
 }
 
 ExceptionOr<void> InternalSettings::setUseDarkAppearance(bool useDarkAppearance)
