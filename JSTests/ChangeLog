@@ -1,3 +1,17 @@
+2019-06-28  Justin Michaud  <justin_michaud@apple.com>
+
+        Add b3 macro lowering for CheckMul on arm64
+        https://bugs.webkit.org/show_bug.cgi?id=199251
+
+        Reviewed by Robin Morisset.
+
+        * microbenchmarks/check-mul-constant.js: Added.
+        (doTest):
+        * microbenchmarks/check-mul-no-constant.js: Added.
+        (doTest):
+        * microbenchmarks/check-mul-power-of-two.js: Added.
+        (doTest):
+
 2019-06-26  Keith Miller  <keith_miller@apple.com>
 
         speciesConstruct needs to throw if the result is a DataView
