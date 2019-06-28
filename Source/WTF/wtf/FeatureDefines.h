@@ -89,10 +89,6 @@
 #define ENABLE_GEOLOCATION 1
 #endif
 
-#if !defined(ENABLE_ICONDATABASE)
-#define ENABLE_ICONDATABASE 0
-#endif
-
 #if !defined(ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS)
 #define ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS 1
 #endif
@@ -510,10 +506,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 
 #if !defined(ENABLE_GEOLOCATION)
 #define ENABLE_GEOLOCATION 0
-#endif
-
-#if !defined(ENABLE_ICONDATABASE)
-#define ENABLE_ICONDATABASE 1
 #endif
 
 #if !defined(ENABLE_INDEXED_DATABASE)

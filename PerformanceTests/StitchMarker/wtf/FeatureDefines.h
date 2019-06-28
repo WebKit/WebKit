@@ -78,10 +78,6 @@
 #define ENABLE_GEOLOCATION 1
 #endif
 
-#if !defined(ENABLE_ICONDATABASE)
-#define ENABLE_ICONDATABASE 0
-#endif
-
 #if !defined(ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS)
 #define ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS 1
 #endif
@@ -454,10 +450,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #if !defined(ENABLE_GEOLOCATION)
 #define ENABLE_GEOLOCATION 0
-#endif
-
-#if !defined(ENABLE_ICONDATABASE)
-#define ENABLE_ICONDATABASE 1
 #endif
 
 #if !defined(ENABLE_IMAGE_DECODER_DOWN_SAMPLING)

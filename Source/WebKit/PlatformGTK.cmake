@@ -524,12 +524,6 @@ set(WebKitResources
     "        <file alias=\"images/textAreaResizeCorner@2x\">textAreaResizeCorner@2x.png</file>\n"
 )
 
-if (ENABLE_ICONDATABASE)
-    list(APPEND WebKitResources
-        "        <file alias=\"images/urlIcon\">urlIcon.png</file>\n"
-    )
-endif ()
-
 if (ENABLE_WEB_AUDIO)
     list(APPEND WebKitResources
         "        <file alias=\"audio/Composite\">Composite.wav</file>\n"

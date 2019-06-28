@@ -326,9 +326,6 @@ my @features = (
     { option => "geolocation", desc => "Toggle Geolocation support",
       define => "ENABLE_GEOLOCATION", value => \$geolocationSupport },
 
-    { option => "icon-database", desc => "Toggle Icondatabase support",
-      define => "ENABLE_ICONDATABASE", value => \$icondatabaseSupport },
-
     { option => "indexed-database", desc => "Toggle Indexed Database support",
       define => "ENABLE_INDEXED_DATABASE", value => \$indexedDatabaseSupport },
 

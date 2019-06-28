@@ -1,3 +1,17 @@
+2019-06-28  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Remove traces of ENABLE_ICONDATABASE remaining after its removal in 219733
+        https://bugs.webkit.org/show_bug.cgi?id=199317
+
+        Reviewed by Michael Catanzaro.
+
+        While IconDatabase and all code using it was removed,
+        ENABLE_ICONDATABASE still exists as build option and C++ macro.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Resources/urlIcon.png: Removed file which was only used in
+        IconDatabase.cpp.
+
 2019-06-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] unresolved external symbol "JSC::JSObject::didBecomePrototype(void)" referenced in function "JSC::Structure::create(...)"

@@ -1,3 +1,15 @@
+2019-06-28  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Remove traces of ENABLE_ICONDATABASE remaining after its removal in 219733
+        https://bugs.webkit.org/show_bug.cgi?id=199317
+
+        Reviewed by Michael Catanzaro.
+
+        While IconDatabase and all code using it was removed,
+        ENABLE_ICONDATABASE still exists as build option and C++ macro.
+
+        * wtf/FeatureDefines.h:
+
 2019-06-27  Konstantin Tokarev  <annulen@yandex.ru>
 
         Avoid using WTF::Function for passing local function pointers and closures in URLHelpers.cpp

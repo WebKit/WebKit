@@ -1,3 +1,19 @@
+2019-06-28  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Remove traces of ENABLE_ICONDATABASE remaining after its removal in 219733
+        https://bugs.webkit.org/show_bug.cgi?id=199317
+
+        Reviewed by Michael Catanzaro.
+
+        While IconDatabase and all code using it was removed,
+        ENABLE_ICONDATABASE still exists as build option and C++ macro.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebView/WebView.mm:
+        (-[WebView _cacheFrameLoadDelegateImplementations]): Use PLATFORM(MAC)
+        guard instead of ENABLE_ICONDATABASE, because ENABLE_ICONDATABASE was
+        enabled for macOS only.
+
 2019-06-27  Timothy Hatcher  <timothy@apple.com>
 
         Move WebKitLegacy off of a couple AppKit ivars.
