@@ -487,8 +487,12 @@ void NetworkStorageSession::getHostnamesWithCookies(HashSet<String>& hostnames)
 
     NSArray *cookies = httpCookies(cookieStorage().get());
     
-    for (NSHTTPCookie* cookie in cookies)
-        hostnames.add([cookie domain]);
+    for (NSHTTPCookie* cookie in cookies) {
+        if (NSString *domain = [cookie domain])
+            hostnames.add(domain);
+        else
+            ASSERT_NOT_REACHED();
+    }
     
     END_BLOCK_OBJC_EXCEPTIONS;
 }
