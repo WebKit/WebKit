@@ -4749,8 +4749,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
         });
     }
 
+#if ENABLE(FULLSCREEN_API)
     if (auto fullScreenManager = _page->fullScreenManager(); fullScreenManager && fullScreenManager->isFullScreen())
         fullScreenManager->close();
+#endif
 }
 
 - (void)_stopAllMediaPlayback

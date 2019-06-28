@@ -1,3 +1,10 @@
+2019-06-28  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed maccatalyst build fix; add ENABLE(FULLSCREEN) checks around calls to fullScreenManager().
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _closeAllMediaPresentations]):
+
 2019-06-28  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: Selected range sometimes wrong after autocorrection
