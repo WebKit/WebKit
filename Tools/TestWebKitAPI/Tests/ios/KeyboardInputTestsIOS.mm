@@ -505,6 +505,28 @@ TEST(KeyboardInputTests, DisableSmartQuotesAndDashes)
     checkSmartQuotesAndDashesType(UITextSmartDashesTypeDefault, UITextSmartQuotesTypeDefault);
 }
 
+TEST(KeyboardInputTests, SelectionClipRectsWhenPresentingInputView)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    CGRect selectionClipRect = CGRectNull;
+    [inputDelegate setDidStartInputSessionHandler:[&] (WKWebView *, id <_WKFormInputSession>) {
+        selectionClipRect = [[webView textInputContentView] _selectionClipRect];
+    }];
+    [webView _setInputDelegate:inputDelegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><input>"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.querySelector('input').focus()"];
+
+    EXPECT_EQ(10, selectionClipRect.origin.x);
+    EXPECT_EQ(10, selectionClipRect.origin.y);
+    EXPECT_EQ(136, selectionClipRect.size.width);
+    EXPECT_EQ(22, selectionClipRect.size.height);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)

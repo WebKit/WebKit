@@ -36,6 +36,7 @@
 @interface TestInputDelegate : NSObject <_WKInputDelegate>
 @property (nonatomic, copy) _WKFocusStartsInputSessionPolicy (^focusStartsInputSessionPolicyHandler)(WKWebView *, id <_WKFocusedElementInfo>);
 @property (nonatomic, copy) void (^willStartInputSessionHandler)(WKWebView *, id <_WKFormInputSession>);
+@property (nonatomic, copy) void (^didStartInputSessionHandler)(WKWebView *, id <_WKFormInputSession>);
 @end
 
 #endif

@@ -218,4 +218,8 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 
 #endif // PLATFORM(IOS)
 
+@protocol UITextInputInternal
+- (CGRect)_selectionClipRect;
+@end
+
 #endif // PLATFORM(IOS_FAMILY)

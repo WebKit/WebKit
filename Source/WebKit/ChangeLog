@@ -1,3 +1,28 @@
+2019-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        -[WKContentView _selectionClipRects] returns a bogus value in -reloadInputViews when focusing an element
+        https://bugs.webkit.org/show_bug.cgi?id=199310
+        <rdar://problem/52292137>
+
+        Reviewed by Megan Gardner.
+
+        When reloading input views under -_elementDidFocus:, -_selectionClipRect returns the value of the previously
+        focused element; this is because _selectionClipRect depends on EditorState's post layout data, which is only
+        guaranteed to arrive during the next remote layer tree commit after the element is focused.
+
+        However, some clients need to inspect this value under the call to -reloadInputViews when an element is focused;
+        to make this work, simply check whether we are currently waiting for post-layout EditorState data to arrive
+        following element focus; if so, return the FocusedElementInformation's elementRect, which represents the initial
+        state of the focused element. Otherwise, use the EditorState's post layout data, which is guaranteed to be more
+        up-to-date than the FocusedElementInformation's element rect.
+
+        Test: KeyboardInputTests.SelectionClipRectsWhenPresentingInputView
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::waitingForPostLayoutEditorStateUpdateAfterFocusingElement const):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _selectionClipRect]):
+
 2019-06-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] WebSockets: runtime critical warning when closing the connection in some cases

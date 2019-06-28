@@ -1,3 +1,35 @@
+2019-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        -[WKContentView _selectionClipRects] returns a bogus value in -reloadInputViews when focusing an element
+        https://bugs.webkit.org/show_bug.cgi?id=199310
+        <rdar://problem/52292137>
+
+        Reviewed by Megan Gardner.
+
+        Add a new API test to verify that _selectionClipRects returns the correct value when invoked under the scope of
+        _elementDidFocus.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/TestInputDelegate.h:
+        * TestWebKitAPI/Tests/ios/TestInputDelegate.mm:
+        (-[TestInputDelegate setDidStartInputSessionHandler:]):
+        (-[TestInputDelegate didStartInputSessionHandler]):
+
+        Add plumbing for a handler block in TestInputDelegate.
+
+        (-[TestInputDelegate setWillStartInputSessionHandler:]):
+
+        Drive-by style fixes to add a space between id and < for Objective-C protocols.
+
+        (-[TestInputDelegate willStartInputSessionHandler]):
+        (-[TestInputDelegate _webView:willStartInputSession:]):
+        (-[TestInputDelegate _webView:didStartInputSession:]):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
+        Add a declaration for _selectionClipRects.
+
 2019-06-27  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r244633): e-mail with "height: 100%" causes unstable layout.
