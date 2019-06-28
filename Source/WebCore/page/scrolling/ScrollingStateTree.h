@@ -69,7 +69,7 @@ public:
 
     unsigned nodeCount() const { return m_stateNodeMap.size(); }
 
-    typedef HashMap<ScrollingNodeID, ScrollingStateNode*> StateNodeMap;
+    typedef HashMap<ScrollingNodeID, RefPtr<ScrollingStateNode>> StateNodeMap;
     const StateNodeMap& nodeMap() const { return m_stateNodeMap; }
 
     LayerRepresentation::Type preferredLayerRepresentation() const { return m_preferredLayerRepresentation; }

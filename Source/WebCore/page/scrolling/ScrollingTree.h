@@ -175,7 +175,7 @@ private:
 
     RefPtr<ScrollingTreeFrameScrollingNode> m_rootNode;
 
-    using ScrollingTreeNodeMap = HashMap<ScrollingNodeID, ScrollingTreeNode*>;
+    using ScrollingTreeNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>>;
     ScrollingTreeNodeMap m_nodeMap;
 
     RelatedNodesMap m_overflowRelatedNodesMap;
