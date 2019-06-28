@@ -1,3 +1,26 @@
+2019-06-27  Mark Lam  <mark.lam@apple.com>
+
+        FTL keepAlive()'s patchpoint should also declare that it reads HeapRange::top().
+        https://bugs.webkit.org/show_bug.cgi?id=199291
+
+        Reviewed by Yusuke Suzuki and Filip Pizlo.
+
+        The sole purpose of keepAlive() is to communicate to B3 that an LValue
+        needs to be kept alive past the last opportunity for a GC.  The only way
+        we can get a GC is via a function call.  Hence, what keepAlive() really
+        needs to communicate is that the LValue needs to be kept alive past the
+        last function call.  Function calls read and write HeapRange::top().
+        Currently, B3 does not shuffle writes.  Hence, simply inserting the
+        keepAlive() after the calls that can GC is sufficient.
+
+        But to be strictly correct, keepAlive() should also declare that it reads
+        HeapRange::top().  This will guarantee that the keepAlive patchpoint won't
+        ever be moved before the function call should B3 gain the ability to shuffle
+        writes in the future.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::keepAlive):
+
 2019-06-27  Beth Dakin  <bdakin@apple.com>
 
         Upstream use of MACCATALYST

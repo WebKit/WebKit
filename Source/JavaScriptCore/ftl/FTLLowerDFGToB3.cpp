@@ -17284,6 +17284,7 @@ private:
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->effects = Effects::none();
         patchpoint->effects.writesLocalState = true;
+        patchpoint->effects.reads = HeapRange::top();
         patchpoint->append(value, ValueRep::ColdAny);
         patchpoint->setGenerator([=] (CCallHelpers&, const StackmapGenerationParams&) { });
     }
