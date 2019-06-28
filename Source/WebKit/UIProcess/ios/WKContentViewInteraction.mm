@@ -7776,8 +7776,9 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
         _contextMenuLegacyPreviewController = nullptr;
         _contextMenuLegacyMenu = nullptr;
         _contextMenuHasRequestedLegacyData = NO;
+        _contextMenuActionProviderDelegateNeedsOverride = NO;
 
-        UIContextMenuActionProvider actionMenuProvider = [weakSelf = WeakObjCPtr<WKContentView>(self)] (NSArray<UIMenuElement *> *suggestedActions) -> UIMenu * {
+        UIContextMenuActionProvider actionMenuProvider = [weakSelf = WeakObjCPtr<WKContentView>(self)] (NSArray<UIMenuElement *> *) -> UIMenu * {
             auto strongSelf = weakSelf.get();
             if (!strongSelf)
                 return nil;
@@ -7807,57 +7808,39 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
         if (!strongSelf)
             return completion(nil);
 
-        if (!configurationFromWKUIDelegate) {
-
-            strongSelf->_contextMenuElementInfo = nil;
-
-            // At this point we have an object we might want to show a context menu for, but the
-            // client was unable to handle it. Before giving up, we ask DataDetectors.
-
-#if ENABLE(DATA_DETECTION)
-            // FIXME: Support JavaScript urls here. But make sure they don't show a preview.
-            // <rdar://problem/50572283>
-            if (!linkURL.protocolIsInHTTPFamily() && !WebCore::DataDetection::canBePresentedByDataDetectors(linkURL))
-                return completion(nil);
-
-            BEGIN_BLOCK_OBJC_EXCEPTIONS;
-            auto ddContextMenuActionClass = getDDContextMenuActionClass();
-            if ([ddContextMenuActionClass respondsToSelector:@selector(contextMenuConfigurationWithURL:inView:context:menuIdentifier:)]) {
-                NSDictionary *context = [strongSelf dataDetectionContextForPositionInformation:strongSelf->_positionInformation];
-                UIContextMenuConfiguration *configurationFromDD = [ddContextMenuActionClass contextMenuConfigurationForURL:linkURL identifier:strongSelf->_positionInformation.dataDetectorIdentifier selectedText:[strongSelf selectedText] results:strongSelf->_positionInformation.dataDetectorResults.get() inView:strongSelf.get() context:context menuIdentifier:nil];
-                if (strongSelf->_showLinkPreviews)
-                    return completion(configurationFromDD);
-                return completion([UIContextMenuConfiguration configurationWithIdentifier:[configurationFromDD identifier] previewProvider:[configurationFromDD previewProvider] actionProvider:[configurationFromDD actionProvider]]);
-            }
-            END_BLOCK_OBJC_EXCEPTIONS;
-#endif
-            return completion(nil);
+        if (configurationFromWKUIDelegate) {
+            strongSelf->_contextMenuActionProviderDelegateNeedsOverride = YES;
+            completion(configurationFromWKUIDelegate);
+            return;
         }
 
-        id<NSCopying> identifier = [configurationFromWKUIDelegate identifier];
-        UIContextMenuContentPreviewProvider contentPreviewProvider = [configurationFromWKUIDelegate previewProvider];
-        UIContextMenuActionProvider actionMenuProvider = [configurationFromWKUIDelegate actionProvider];
+        // At this point we have an object we might want to show a context menu for, but the
+        // client was unable to handle it. Before giving up, we ask DataDetectors.
 
-        auto actionProviderWrapper = [actionProviderFromUIDelegate = makeBlockPtr(actionMenuProvider), weakSelf = WTFMove(weakSelf)] (NSArray<UIMenuElement *> *suggestedActions) -> UIMenu * {
-            auto strongSelf = weakSelf.get();
-            if (!strongSelf)
-                return nil;
+        strongSelf->_contextMenuElementInfo = nil;
 
-            auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:strongSelf->_positionInformation]);
-            RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = strongSelf->_positionInformation.isLink ? [strongSelf->_actionSheetAssistant defaultActionsForLinkSheet:elementInfo.get()] : [strongSelf->_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
+#if ENABLE(DATA_DETECTION)
+        // FIXME: Support JavaScript urls here. But make sure they don't show a preview.
+        // <rdar://problem/50572283>
+        if (!linkURL.protocolIsInHTTPFamily() && !WebCore::DataDetection::canBePresentedByDataDetectors(linkURL))
+            return completion(nil);
 
-            auto menuElements = menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
-
-            if (actionProviderFromUIDelegate)
-                return actionProviderFromUIDelegate(menuElements);
-
-            auto title = titleForMenu(strongSelf->_positionInformation.isLink, strongSelf->_showLinkPreviews, strongSelf->_positionInformation.url, strongSelf->_positionInformation.title);
-            return [UIMenu menuWithTitle:title children:menuElements];
-        };
-
-        completion([UIContextMenuConfiguration configurationWithIdentifier:identifier previewProvider:contentPreviewProvider actionProvider:actionProviderWrapper]);
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        auto ddContextMenuActionClass = getDDContextMenuActionClass();
+        if ([ddContextMenuActionClass respondsToSelector:@selector(contextMenuConfigurationWithURL:inView:context:menuIdentifier:)]) {
+            NSDictionary *context = [strongSelf dataDetectionContextForPositionInformation:strongSelf->_positionInformation];
+            UIContextMenuConfiguration *configurationFromDD = [ddContextMenuActionClass contextMenuConfigurationForURL:linkURL identifier:strongSelf->_positionInformation.dataDetectorIdentifier selectedText:[strongSelf selectedText] results:strongSelf->_positionInformation.dataDetectorResults.get() inView:strongSelf.get() context:context menuIdentifier:nil];
+            strongSelf->_contextMenuActionProviderDelegateNeedsOverride = YES;
+            if (strongSelf->_showLinkPreviews)
+                return completion(configurationFromDD);
+            return completion([UIContextMenuConfiguration configurationWithIdentifier:[configurationFromDD identifier] previewProvider:nil actionProvider:[configurationFromDD actionProvider]]);
+        }
+        END_BLOCK_OBJC_EXCEPTIONS;
+#endif
+        return completion(nil);
     });
 
+    _contextMenuActionProviderDelegateNeedsOverride = NO;
     _contextMenuElementInfo = wrapper(API::ContextMenuElementInfo::create(_positionInformation));
     if ([uiDelegate respondsToSelector:@selector(_webView:contextMenuConfigurationForElement:completionHandler:)]) {
         auto checker = WebKit::CompletionHandlerCallChecker::create(uiDelegate, @selector(_webView:contextMenuConfigurationForElement:completionHandler:));
@@ -7877,6 +7860,17 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
         }).get()];
     } else
         completionBlock(nil);
+}
+
+- (NSArray<UIMenuElement *> *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction overrideSuggestedActionsForConfiguration:(UIContextMenuConfiguration *)configuration
+{
+    if (_contextMenuActionProviderDelegateNeedsOverride) {
+        auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:_positionInformation]);
+        RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = _positionInformation.isLink ? [_actionSheetAssistant defaultActionsForLinkSheet:elementInfo.get()] : [_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
+        return menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
+    }
+    // If we're here we're in the legacy path, which ignores the suggested actions anyway.
+    return nil;
 }
 
 static RetainPtr<UIImage> uiImageForImage(WebCore::Image* image)

@@ -254,6 +254,7 @@ struct WKAutoCorrectionData {
     RetainPtr<UIViewController> _contextMenuLegacyPreviewController;
     RetainPtr<UIMenu> _contextMenuLegacyMenu;
     BOOL _contextMenuHasRequestedLegacyData;
+    BOOL _contextMenuActionProviderDelegateNeedsOverride;
     RetainPtr<UITargetedPreview> _contextMenuInteractionTargetedPreview;
 #endif
     RetainPtr<UIPreviewItemController> _previewItemController;

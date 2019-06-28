@@ -89,6 +89,9 @@
 #if HAVE(LINK_PREVIEW)
 #import <UIKit/UIPreviewAction_Private.h>
 #import <UIKit/UIPreviewItemController.h>
+#if USE(UICONTEXTMENU)
+#import <UIKit/UIContextMenuInteraction_ForWebKitOnly.h>
+#endif
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
@@ -1185,7 +1188,7 @@ static inline bool currentUserInterfaceIdiomIsPad()
 @end
 
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
-@interface UIContextMenuConfiguration (NeededUntil51288435Fixed)
+@interface UIContextMenuConfiguration (Radar52295535)
 @property (nonatomic, copy) id <NSCopying> identifier;
 @property (nonatomic, copy) UIContextMenuContentPreviewProvider previewProvider;
 @property (nonatomic, copy) UIContextMenuActionProvider actionProvider;
@@ -1197,7 +1200,7 @@ static inline bool currentUserInterfaceIdiomIsPad()
 @end
 
 @class _UIClickPresentationInteraction;
-@interface UIContextMenuInteraction (Radar51288435)
+@interface UIContextMenuInteraction (Radar52298310)
 @property (nonatomic, strong) _UIClickPresentationInteraction *presentationInteraction;
 @end
 
@@ -1206,11 +1209,11 @@ static inline bool currentUserInterfaceIdiomIsPad()
 
 @interface _UIClickPresentationInteraction : NSObject <UIInteraction>
 @end
-@interface _UIClickPresentationInteraction (NeededUntil51288435Fixed)
+@interface _UIClickPresentationInteraction (Radar52298310)
 @property (nonatomic, strong) _UIClickInteraction *previewClickInteraction;
 @end
 
-@interface _UIClickInteraction (Radar51288435)
+@interface _UIClickInteraction (Radar52298310)
 @property (nonatomic, strong) id<_UIClickInteractionDriving> driver;
 @end
 
