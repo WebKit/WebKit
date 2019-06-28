@@ -1,3 +1,17 @@
+2019-06-28  Dean Jackson  <dino@apple.com>
+
+        unable to build WebRTC for iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=199337
+        <rdar://problem/52020841>
+
+        Reviewed by Tim Horton.
+
+        Run the compiled yasm with DYLD_ROOT_PATH=/
+        in order to convince dyld that it can load
+        the simulator binary on macOS.
+
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2019-06-27  Beth Dakin  <bdakin@apple.com>
 
         Upstream use of MACCATALYST

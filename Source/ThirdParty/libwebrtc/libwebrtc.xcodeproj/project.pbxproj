@@ -3375,11 +3375,13 @@
 			compilerSpec = com.apple.compilers.proxy.script;
 			filePatterns = asm;
 			fileType = sourcecode.asm.asm;
+			inputFiles = (
+			);
 			isEditable = 1;
 			outputFiles = (
 				"${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o",
 			);
-			script = "${BUILT_PRODUCTS_DIR}/yasm -fmacho64 -I ${SRCROOT}/Source/third_party/libvpx/source/config -I ${SRCROOT}/Source/third_party/libvpx/source/config/mac/x64 -I ${SRCROOT}/Source/third_party/libvpx/source/libvpx -o ${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o ${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.asm\n";
+			script = "# This DYLD_ROOT_PATH hack is there to allow the yasm binary to run on macOS if it was built for another platform (e.g. iphonesimulator) - rdar://52020841 and rdar://50479465\nDYLD_ROOT_PATH=/ ${BUILT_PRODUCTS_DIR}/yasm -fmacho64 -I ${SRCROOT}/Source/third_party/libvpx/source/config -I ${SRCROOT}/Source/third_party/libvpx/source/config/mac/x64 -I ${SRCROOT}/Source/third_party/libvpx/source/libvpx -o ${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o ${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.asm\n";
 		};
 /* End PBXBuildRule section */
 
