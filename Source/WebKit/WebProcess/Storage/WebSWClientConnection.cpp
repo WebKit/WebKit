@@ -56,7 +56,6 @@ WebSWClientConnection::WebSWClientConnection(SessionID sessionID)
     : m_sessionID(sessionID)
     , m_swOriginTable(makeUniqueRef<WebSWOriginTable>())
 {
-    ASSERT(sessionID.isValid());
     initializeConnectionIfNeeded();
 }
 
@@ -68,6 +67,10 @@ WebSWClientConnection::~WebSWClientConnection()
 
 void WebSWClientConnection::initializeConnectionIfNeeded()
 {
+    ASSERT(m_sessionID.isValid());
+    if (!m_sessionID.isValid())
+        return;
+
     if (m_connection)
         return;
 
@@ -83,7 +86,8 @@ template<typename U>
 void WebSWClientConnection::ensureConnectionAndSend(const U& message)
 {
     initializeConnectionIfNeeded();
-    send(message);
+    if (m_connection)
+        send(message);
 }
 
 void WebSWClientConnection::scheduleJobInServer(const ServiceWorkerJobData& jobData)

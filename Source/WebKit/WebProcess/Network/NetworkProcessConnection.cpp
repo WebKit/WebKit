@@ -279,6 +279,7 @@ void NetworkProcessConnection::removeSWClientConnection(WebSWClientConnection& c
 
 SWServerConnectionIdentifier NetworkProcessConnection::initializeSWClientConnection(WebSWClientConnection& connection)
 {
+    ASSERT(connection.sessionID().isValid());
     SWServerConnectionIdentifier identifier;
     bool result = m_connection->sendSync(Messages::NetworkConnectionToWebProcess::EstablishSWServerConnection(connection.sessionID()), Messages::NetworkConnectionToWebProcess::EstablishSWServerConnection::Reply(identifier), 0);
     ASSERT_UNUSED(result, result);

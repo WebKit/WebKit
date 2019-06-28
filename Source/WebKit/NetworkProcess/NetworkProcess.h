@@ -463,7 +463,6 @@ private:
     
     void disableServiceWorkerProcessTerminationDelay();
     
-    WebSWOriginStore& swOriginStoreForSession(PAL::SessionID);
     WebSWOriginStore* existingSWOriginStoreForSession(PAL::SessionID) const;
     bool needsServerToContextConnectionForRegistrableDomain(const WebCore::RegistrableDomain&) const;
 

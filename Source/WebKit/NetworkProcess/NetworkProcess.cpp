@@ -577,6 +577,10 @@ void NetworkProcess::setSession(const PAL::SessionID& sessionID, Ref<NetworkSess
 
 void NetworkProcess::destroySession(const PAL::SessionID& sessionID)
 {
+    ASSERT(sessionID.isValid());
+    if (!sessionID.isValid())
+        return;
+
     ASSERT(sessionID != PAL::SessionID::defaultSessionID());
 
     if (auto session = m_networkSessions.take(sessionID))
@@ -1250,6 +1254,10 @@ static void fetchDiskCacheEntries(NetworkCache::Cache* cache, PAL::SessionID ses
 
 void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, uint64_t callbackID)
 {
+    ASSERT(sessionID.isValid());
+    if (!sessionID.isValid())
+        return;
+
     struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(Function<void (WebsiteData)>&& completionHandler)
             : m_completionHandler(WTFMove(completionHandler))
@@ -1344,6 +1352,10 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
 
 void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, WallTime modifiedSince, uint64_t callbackID)
 {
+    ASSERT(sessionID.isValid());
+    if (!sessionID.isValid())
+        return;
+
 #if PLATFORM(COCOA)
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
         if (auto* networkStorageSession = storageSession(sessionID))
@@ -1551,6 +1563,10 @@ static Vector<WebCore::SecurityOriginData> filterForRegistrableDomains(const Has
 
 void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, HashMap<RegistrableDomain, WebsiteDataToRemove>&& domains, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)
 {
+    ASSERT(sessionID.isValid());
+    if (!sessionID.isValid())
+        return;
+
     OptionSet<WebsiteDataFetchOption> fetchOptions = WebsiteDataFetchOption::DoNotCreateProcesses;
 
     struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
@@ -1749,6 +1765,10 @@ void NetworkProcess::deleteCookiesForTesting(PAL::SessionID sessionID, Registrab
 
 void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
 {
+    ASSERT(sessionID.isValid());
+    if (!sessionID.isValid())
+        return;
+
     OptionSet<WebsiteDataFetchOption> fetchOptions = WebsiteDataFetchOption::DoNotCreateProcesses;
     
     struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
@@ -2035,8 +2055,10 @@ void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend 
         connection->cleanupForSuspension([delayedTaskCounter] { });
 
 #if ENABLE(SERVICE_WORKER)
-    for (auto& server : m_swServers.values())
+    for (auto& server : m_swServers.values()) {
+        ASSERT(m_swServers.get(server->sessionID()) == server.get());
         server->startSuspension([delayedTaskCounter] { });
+    }
 #endif
 
     for (auto& session : m_networkSessions)
@@ -2367,7 +2389,7 @@ bool NetworkProcess::needsServerToContextConnectionForRegistrableDomain(const Re
 SWServer& NetworkProcess::swServerForSession(PAL::SessionID sessionID)
 {
     ASSERT(sessionID.isValid());
-    
+
     auto result = m_swServers.ensure(sessionID, [&] {
         auto path = m_swDatabasePaths.get(sessionID);
         // There should already be a registered path for this PAL::SessionID.
@@ -2383,13 +2405,12 @@ SWServer& NetworkProcess::swServerForSession(PAL::SessionID sessionID)
     return *result.iterator->value;
 }
 
-WebSWOriginStore& NetworkProcess::swOriginStoreForSession(PAL::SessionID sessionID)
-{
-    return static_cast<WebSWOriginStore&>(swServerForSession(sessionID).originStore());
-}
-
 WebSWOriginStore* NetworkProcess::existingSWOriginStoreForSession(PAL::SessionID sessionID) const
 {
+    ASSERT(sessionID.isValid());
+    if (!sessionID.isValid())
+        return nullptr;
+
     auto* swServer = m_swServers.get(sessionID);
     if (!swServer)
         return nullptr;
@@ -2430,7 +2451,10 @@ void NetworkProcess::registerSWServerConnection(WebSWServerConnection& connectio
     ASSERT(parentProcessHasServiceWorkerEntitlement());
     ASSERT(!m_swServerConnections.contains(connection.identifier()));
     m_swServerConnections.add(connection.identifier(), &connection);
-    swOriginStoreForSession(connection.sessionID()).registerSWServerConnection(connection);
+    auto* store = existingSWOriginStoreForSession(connection.sessionID());
+    ASSERT(store);
+    if (store)
+        store->registerSWServerConnection(connection);
 }
 
 void NetworkProcess::unregisterSWServerConnection(WebSWServerConnection& connection)
