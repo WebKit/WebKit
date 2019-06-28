@@ -42,6 +42,7 @@ NetworkProcess/soup/NetworkProcessSoup.cpp
 NetworkProcess/soup/NetworkSessionSoup.cpp
 NetworkProcess/soup/RemoteNetworkingContextSoup.cpp
 NetworkProcess/soup/WebKitSoupRequestInputStream.cpp
+NetworkProcess/soup/WebSocketTaskSoup.cpp
 
 NetworkProcess/webrtc/LibWebRTCSocketClient.cpp
 NetworkProcess/webrtc/NetworkRTCMonitor.cpp
