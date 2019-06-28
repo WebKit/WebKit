@@ -1,3 +1,15 @@
+2019-06-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] WebSockets: runtime critical warning when closing the connection in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=199265
+
+        Reviewed by Michael Catanzaro.
+
+        Ensure the connection is still open before calling soup_websocket_connection_close().
+
+        * NetworkProcess/soup/WebSocketTaskSoup.cpp:
+        (WebKit::WebSocketTask::close):
+
 2019-06-27  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE build fix.

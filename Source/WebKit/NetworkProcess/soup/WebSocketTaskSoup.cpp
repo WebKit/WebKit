@@ -156,12 +156,14 @@ void WebSocketTask::close(int32_t code, const String& reason)
     if (m_receivedDidClose)
         return;
 
-    if (m_connection)
-        soup_websocket_connection_close(m_connection.get(), code, reason.utf8().data());
-    else {
+    if (!m_connection) {
         g_cancellable_cancel(m_cancellable.get());
         didClose(code ? code : SOUP_WEBSOCKET_CLOSE_ABNORMAL, reason);
+        return;
     }
+
+    if (soup_websocket_connection_get_state(m_connection.get()) == SOUP_WEBSOCKET_STATE_OPEN)
+        soup_websocket_connection_close(m_connection.get(), code, reason.utf8().data());
 }
 
 void WebSocketTask::cancel()
