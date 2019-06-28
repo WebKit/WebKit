@@ -31,6 +31,7 @@
 #import <WebCore/GraphicsLayer.h>
 
 namespace WebKit {
+class RemoteLayerTreeHost;
 class WebPageProxy;
 }
 
@@ -77,6 +78,7 @@ namespace WebKit {
 #if ENABLE(POINTER_EVENTS)
 OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const WebCore::IntPoint&);
 #endif
+UIScrollView *findActingScrollParent(UIScrollView *, const RemoteLayerTreeHost&);
 
 }
 

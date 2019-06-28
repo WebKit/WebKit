@@ -124,6 +124,35 @@ OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const Web
 }
 #endif
 
+UIScrollView *findActingScrollParent(UIScrollView *scrollView, const RemoteLayerTreeHost& host)
+{
+    HashSet<WebCore::GraphicsLayer::PlatformLayerID> scrollersToSkip;
+
+    for (UIView *view = [scrollView superview]; view; view = [view superview]) {
+        if ([view isKindOfClass:[WKChildScrollView class]] && !scrollersToSkip.contains(RemoteLayerTreeNode::layerID(view.layer))) {
+            // FIXME: Ideally we would return the scroller we want in all cases but the current UIKit SPI only allows returning a non-ancestor.
+            return nil;
+        }
+
+        if (auto* node = RemoteLayerTreeNode::forCALayer(view.layer)) {
+            switch (node->relatedScrollContainerPositioningBehavior()) {
+            case WebCore::ScrollPositioningBehavior::Moves:
+                if (!node->relatedScrollContainerIDs().isEmpty()) {
+                    if (auto* nonAncestorScrollingNode = host.nodeForID(node->relatedScrollContainerIDs()[0]))
+                        return (WKChildScrollView *)nonAncestorScrollingNode->uiView();
+                }
+                break;
+            case WebCore::ScrollPositioningBehavior::Stationary:
+                scrollersToSkip.add(node->relatedScrollContainerIDs().begin(), node->relatedScrollContainerIDs().end());
+                break;
+            case WebCore::ScrollPositioningBehavior::None:
+                break;
+            }
+        }
+    }
+    return nil;
+}
+
 }
 
 @interface UIView (WKHitTesting)

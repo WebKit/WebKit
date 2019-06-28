@@ -73,6 +73,8 @@ public:
     void cancelPointersForGestureRecognizer(UIGestureRecognizer*);
 #endif
 
+    UIScrollView *findActingScrollParent(UIScrollView *);
+
 private:
     UIScrollView *scrollView() const;
 

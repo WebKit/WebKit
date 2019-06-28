@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
 
+#import "RemoteLayerTreeViews.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "RemoteScrollingTree.h"
 #import "UIKitSPI.h"
@@ -59,6 +60,12 @@
         _scrollingTreeNodeDelegate = delegate;
 
     return self;
+}
+
+- (UIScrollView *)_actingParentScrollViewForScrollView:(UIScrollView *)scrollView
+{
+    // An "acting parent" is a non-ancestor scrolling parent. We tell this to UIKit so it can propagate scrolls correctly.
+    return _scrollingTreeNodeDelegate->findActingScrollParent(scrollView);
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
@@ -336,6 +343,14 @@ UIScrollView *ScrollingTreeScrollingNodeDelegateIOS::scrollView() const
     UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate];
     ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
     return scrollView;
+}
+
+UIScrollView *ScrollingTreeScrollingNodeDelegateIOS::findActingScrollParent(UIScrollView *scrollView)
+{
+    ASSERT(scrollView == this->scrollView());
+
+    auto& scrollingCoordinatorProxy = downcast<RemoteScrollingTree>(scrollingTree()).scrollingCoordinatorProxy();
+    return WebKit::findActingScrollParent(scrollView, *scrollingCoordinatorProxy.layerTreeHost());
 }
 
 #if ENABLE(POINTER_EVENTS)
