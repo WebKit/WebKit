@@ -1980,7 +1980,7 @@ static RenderObject* rendererForView(WAKView* view)
     AccessibilitySearchCriteria criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(parameters);
     AccessibilityObject::AccessibilityChildrenVector results;
     m_object->findMatchingObjects(&criteria, results);
-    return (NSArray *)convertToNSArray(results);
+    return convertToNSArray(results);
 }
 
 - (void)accessibilityModifySelection:(TextGranularity)granularity increase:(BOOL)increase

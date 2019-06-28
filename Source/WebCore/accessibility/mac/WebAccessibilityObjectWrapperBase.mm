@@ -276,21 +276,21 @@ static void addChildToArray(AccessibilityObjectInterface& child, RetainPtr<NSMut
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-RetainPtr<NSArray> convertToNSArray(const Vector<RefPtr<WebCore::AXIsolatedTreeNode>>& children)
+NSArray *convertToNSArray(const Vector<RefPtr<WebCore::AXIsolatedTreeNode>>& children)
 {
-    RetainPtr<NSMutableArray> result = [[NSMutableArray alloc] initWithCapacity:children.size()];
+    NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:children.size()];
     for (auto& child : children)
         addChildToArray(*child, result)
-    return result;
+    return [result autorelease];
 }
 #endif
 
-RetainPtr<NSArray> convertToNSArray(const WebCore::AccessibilityObject::AccessibilityChildrenVector& children)
+NSArray *convertToNSArray(const WebCore::AccessibilityObject::AccessibilityChildrenVector& children)
 {
-    RetainPtr<NSMutableArray> result = [[NSMutableArray alloc] initWithCapacity:children.size()];
+    NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:children.size()];
     for (auto& child : children)
         addChildToArray(*child, result);
-    return result;
+    return [result autorelease];
 }
 
 @implementation WebAccessibilityObjectWrapperBase

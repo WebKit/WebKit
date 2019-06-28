@@ -100,9 +100,9 @@ class VisiblePosition;
 extern WebCore::AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(const NSDictionary *);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-extern RetainPtr<NSArray> convertToNSArray(const Vector<RefPtr<WebCore::AXIsolatedTreeNode>>&);
+extern NSArray *convertToNSArray(const Vector<RefPtr<WebCore::AXIsolatedTreeNode>>&);
 #endif
-extern RetainPtr<NSArray> convertToNSArray(const WebCore::AccessibilityObject::AccessibilityChildrenVector&);
+extern NSArray *convertToNSArray(const WebCore::AccessibilityObject::AccessibilityChildrenVector&);
 
 #if PLATFORM(IOS_FAMILY)
 - (id)_accessibilityWebDocumentView;

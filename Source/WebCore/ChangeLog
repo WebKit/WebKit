@@ -1,3 +1,23 @@
+2019-06-28  chris fleizach  <cfleizach@apple.com>
+
+        AX: Both convertToNSArray() functions in WebAccessibilityObjectWrapperBase.mm leak every NSMutableArray returned
+        https://bugs.webkit.org/show_bug.cgi?id=199306
+
+        Reviewed by David Kilzer.
+
+        Stop leaking every instance of convertToNSArray and return an autoreleased version.
+        Remove unneeded casts.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityFindMatchingObjects:]):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (convertToNSArray):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper childrenVectorArray]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2019-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Followup to r246931
