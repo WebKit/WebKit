@@ -1,3 +1,17 @@
+2019-06-27  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r244633): e-mail with "height: 100%" causes unstable layout.
+        https://bugs.webkit.org/show_bug.cgi?id=199303
+        <rdar://problem/51340927>
+
+        Reviewed by Tim Horton.
+
+        This patch restores the previous behavior (pre r244633) where we intentionally reported stale content size value to
+        avoid unstable layout for content like height: 100px.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::autoSizeIfEnabled):
+
 2019-06-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][MediaFoundation] Stop using soft linking for Media Foundation

@@ -3468,13 +3468,15 @@ void FrameView::autoSizeIfEnabled()
     Ref<FrameView> protectedThis(*this);
     document->updateStyleIfNeeded();
     document->updateLayoutIgnorePendingStylesheets();
+    // While the final content size could slightly be different after the next resize/layout (see below), we intentionally save and report 
+    // the current value to avoid unstable layout (e.g. content "height: 100%").
+    // See also webkit.org/b/173561
+    m_autoSizeContentSize = contentsSize();
 
-    auto currentContentsSize = this->contentsSize();
-    auto finalWidth = std::max(m_autoSizeConstraint.width(), currentContentsSize.width());
-    auto finalHeight = m_autoSizeFixedMinimumHeight ? std::max(m_autoSizeFixedMinimumHeight, currentContentsSize.height()) : currentContentsSize.height();
+    auto finalWidth = std::max(m_autoSizeConstraint.width(), m_autoSizeContentSize.width());
+    auto finalHeight = m_autoSizeFixedMinimumHeight ? std::max(m_autoSizeFixedMinimumHeight, m_autoSizeContentSize.height()) : m_autoSizeContentSize.height();
     resize(finalWidth, finalHeight);
     document->updateLayoutIgnorePendingStylesheets();
-    m_autoSizeContentSize = contentsSize(); 
     if (auto* page = frame().page())
         page->chrome().client().intrinsicContentsSizeChanged(m_autoSizeContentSize);
     m_didRunAutosize = true;
