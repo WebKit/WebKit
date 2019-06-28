@@ -388,7 +388,9 @@ public:
     ExceptionOr<void> insertAuthorCSS(const String&) const;
     ExceptionOr<void> insertUserCSS(const String&) const;
 
+#if ENABLE(INDEXED_DATABASE)
     unsigned numberOfIDBTransactions() const;
+#endif
 
     unsigned numberOfLiveNodes() const;
     unsigned numberOfLiveDocuments() const;

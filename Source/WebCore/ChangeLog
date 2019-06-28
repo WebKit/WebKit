@@ -1,3 +1,14 @@
+2019-06-27  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+         Fix build error on WebCore when disabling ENABLE_INDEXED_DATABASE.
+        https://bugs.webkit.org/show_bug.cgi?id=199286
+
+         Unreviewed build fix.
+
+         * testing/Internals.cpp: Make method conditional.
+         * testing/Internals.h: Ditto.
+         * testing/Internals.idl: Ditto.
+
 2019-06-27  Simon Fraser  <simon.fraser@apple.com>
 
         Fix crash in ScrollingStateNode::insertChild()

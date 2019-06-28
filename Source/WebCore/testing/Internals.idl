@@ -423,7 +423,7 @@ enum CompositingPolicy {
     void beginSimulatedMemoryPressure();
     void endSimulatedMemoryPressure();
 
-    unsigned long numberOfIDBTransactions();
+    [Conditional=INDEXED_DATABASE] unsigned long numberOfIDBTransactions();
 
     unsigned long numberOfLiveNodes();
     unsigned long numberOfLiveDocuments();
