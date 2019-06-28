@@ -39,12 +39,12 @@ TextCheckingController::TextCheckingController(WebPageProxy& webPageProxy)
 {
 }
 
-void TextCheckingController::replaceRelativeToSelection(NSAttributedString *annotatedString, int64_t selectionOffset, uint64_t length, bool textChanged)
+void TextCheckingController::replaceRelativeToSelection(NSAttributedString *annotatedString, int64_t selectionOffset, uint64_t length, uint64_t relativeReplacementLocation, uint64_t relativeReplacementLength)
 {
     if (!m_page.hasRunningProcess())
         return;
 
-    m_page.process().send(Messages::TextCheckingControllerProxy::ReplaceRelativeToSelection(annotatedString, selectionOffset, length, textChanged), m_page.pageID());
+    m_page.process().send(Messages::TextCheckingControllerProxy::ReplaceRelativeToSelection(annotatedString, selectionOffset, length, relativeReplacementLocation, relativeReplacementLength), m_page.pageID());
 }
 
 void TextCheckingController::removeAnnotationRelativeToSelection(NSString *annotationName, int64_t selectionOffset, uint64_t length)

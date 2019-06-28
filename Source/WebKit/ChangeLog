@@ -1,3 +1,25 @@
+2019-06-28  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Selected range sometimes wrong after autocorrection
+        https://bugs.webkit.org/show_bug.cgi?id=199299
+        <rdar://problem/49717224>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/Cocoa/TextCheckingController.h:
+        * UIProcess/Cocoa/TextCheckingController.mm:
+        (WebKit::TextCheckingController::replaceRelativeToSelection):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView replaceSelectionOffset:length:withAnnotatedString:relativeReplacementRange:]):
+        Plumb the whole relative replacement range through to the Web Content process.
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.h:
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in:
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+        (WebKit::TextCheckingControllerProxy::replaceRelativeToSelection):
+        Only replace the text of the substring that changed (the replacement range),
+        and fix up the selection offset math (it was really just wrong before).
+
 2019-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Need a way for SPI clients to know when to avoid resizing to accommodate for the input view bounds

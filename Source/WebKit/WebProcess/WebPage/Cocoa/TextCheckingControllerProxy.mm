@@ -90,7 +90,7 @@ Optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControllerProx
     return {{ TextIterator::rangeFromLocationAndLength(root, selectionLocation, length), selectionLocation }};
 }
 
-void TextCheckingControllerProxy::replaceRelativeToSelection(AttributedString annotatedString, int64_t selectionOffset, uint64_t length, bool textChanged)
+void TextCheckingControllerProxy::replaceRelativeToSelection(AttributedString annotatedString, int64_t selectionOffset, uint64_t length, uint64_t relativeReplacementLocation, uint64_t relativeReplacementLength)
 {
     Frame& frame = m_page.corePage()->focusController().focusedOrMainFrame();
     FrameSelection& frameSelection = frame.selection();
@@ -107,16 +107,20 @@ void TextCheckingControllerProxy::replaceRelativeToSelection(AttributedString an
     auto& markers = frame.document()->markers();
     markers.removeMarkers(*range, relevantMarkerTypes());
 
-    if (textChanged) {
-        bool restoreSelection = frameSelection.selection().isRange();
+    if (relativeReplacementLocation != NSNotFound) {
+        auto rangeAndOffsetOfReplacement = rangeAndOffsetRelativeToSelection(selectionOffset + relativeReplacementLocation, relativeReplacementLength);
+        if (rangeAndOffsetOfReplacement) {
+            auto replacementRange = rangeAndOffsetOfReplacement->range;
+            if (replacementRange) {
+                bool restoreSelection = frameSelection.selection().isRange();
+                frame.editor().replaceRangeForSpellChecking(*replacementRange, [[annotatedString.string string] substringWithRange:NSMakeRange(relativeReplacementLocation, relativeReplacementLength)]);
 
-        frame.editor().replaceRangeForSpellChecking(*range, [annotatedString.string string]);
-
-        size_t selectionLocationToRestore = locationInRoot - selectionOffset;
-        if (restoreSelection && selectionLocationToRestore > locationInRoot + length) {
-            selectionLocationToRestore -= locationInRoot - length;
-            auto selectionToRestore = TextIterator::rangeFromLocationAndLength(root, selectionLocationToRestore, 0);
-            frameSelection.moveTo(selectionToRestore.get());
+                size_t selectionLocationToRestore = locationInRoot - selectionOffset;
+                if (restoreSelection && selectionLocationToRestore > locationInRoot + relativeReplacementLocation + relativeReplacementLength) {
+                    auto selectionToRestore = TextIterator::rangeFromLocationAndLength(root, selectionLocationToRestore, 0);
+                    frameSelection.moveTo(selectionToRestore.get());
+                }
+            }
         }
     }
 

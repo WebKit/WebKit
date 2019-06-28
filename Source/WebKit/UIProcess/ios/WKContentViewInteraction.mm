@@ -5810,7 +5810,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
 - (void)replaceSelectionOffset:(NSInteger)selectionOffset length:(NSUInteger)length withAnnotatedString:(NSAttributedString *)annotatedString relativeReplacementRange:(NSRange)relativeReplacementRange
 {
-    _textCheckingController->replaceRelativeToSelection(annotatedString, selectionOffset, length, relativeReplacementRange.location != NSNotFound);
+    _textCheckingController->replaceRelativeToSelection(annotatedString, selectionOffset, length, relativeReplacementRange.location, relativeReplacementRange.length);
 }
 
 - (void)removeAnnotation:(NSAttributedStringKey)annotationName forSelectionOffset:(NSInteger)selectionOffset length:(NSUInteger)length
