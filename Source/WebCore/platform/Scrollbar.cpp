@@ -54,11 +54,12 @@ int Scrollbar::maxOverlapBetweenPages()
     return maxOverlapBetweenPages;
 }
 
-Scrollbar::Scrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize, ScrollbarTheme* customTheme)
+Scrollbar::Scrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize, ScrollbarTheme* customTheme, bool isCustomScrollbar)
     : m_scrollableArea(scrollableArea)
     , m_orientation(orientation)
     , m_controlSize(controlSize)
     , m_theme(customTheme ? *customTheme : ScrollbarTheme::theme())
+    , m_isCustomScrollbar(isCustomScrollbar)
     , m_scrollTimer(*this, &Scrollbar::autoscrollTimerFired)
 {
     theme().registerScrollbar(*this);

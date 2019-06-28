@@ -61,7 +61,6 @@ public:
 private:
     RenderScrollbar(ScrollableArea&, ScrollbarOrientation, Element*, Frame*);
 
-    bool isCustomScrollbar() const override { return true; }
     bool isOverlayScrollbar() const override { return false; }
 
     void setParent(ScrollView*) override;

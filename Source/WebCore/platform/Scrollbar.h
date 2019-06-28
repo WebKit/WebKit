@@ -56,7 +56,7 @@ public:
 
     ScrollableArea& scrollableArea() const { return m_scrollableArea; }
 
-    virtual bool isCustomScrollbar() const { return false; }
+    bool isCustomScrollbar() const { return m_isCustomScrollbar; }
     ScrollbarOrientation orientation() const { return m_orientation; }
 
     int value() const { return lroundf(m_currentPos); }
@@ -132,7 +132,7 @@ public:
     bool supportsUpdateOnSecondaryThread() const;
 
 protected:
-    Scrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = nullptr);
+    Scrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = nullptr, bool isCustomScrollbar = false);
 
     void updateThumb();
     virtual void updateThumbPosition();
@@ -165,6 +165,7 @@ protected:
     int m_documentDragPos { 0 };
 
     bool m_enabled { true };
+    bool m_isCustomScrollbar { false };
 
     Timer m_scrollTimer;
 
