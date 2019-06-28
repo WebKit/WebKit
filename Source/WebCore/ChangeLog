@@ -1,3 +1,16 @@
+2019-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Followup to r246931
+        https://bugs.webkit.org/show_bug.cgi?id=199331
+
+        Reviewed by Tim Horton.
+
+        Extend the site-specific quirk added in r246931 to *.sharepoint.com, so that it fixes Word for enterprise
+        customers as well.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldAvoidResizingWhenInputViewBoundsChange const):
+
 2019-06-28  Timothy Hatcher  <timothy@apple.com>
 
         Rename effectiveAppearanceIsInactive and useInactiveAppearance to better match UIUserInterfaceLevel.

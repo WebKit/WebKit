@@ -304,7 +304,13 @@ bool Quirks::shouldAvoidResizingWhenInputViewBoundsChange() const
         return false;
 
     auto host = m_document->topDocument().url().host();
-    return equalLettersIgnoringASCIICase(host, "live.com") || host.endsWithIgnoringASCIICase(".live.com");
+    if (equalLettersIgnoringASCIICase(host, "live.com") || host.endsWithIgnoringASCIICase(".live.com"))
+        return true;
+
+    if (host.endsWithIgnoringASCIICase(".sharepoint.com"))
+        return true;
+
+    return false;
 }
 
 bool Quirks::shouldDisablePointerEventsQuirk() const
