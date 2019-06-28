@@ -420,6 +420,18 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
     [self _manager]->willExitFullScreen();
 }
 
+- (void)exitFullScreenImmediately
+{
+    if (![self isFullScreen])
+        return;
+
+    [self _manager]->requestExitFullScreen();
+    [_webViewPlaceholder setExitWarningVisible:NO];
+    [self _manager]->willExitFullScreen();
+    _fullScreenState = ExitingFullScreen;
+    [self finishedExitFullScreenAnimation:YES];
+}
+
 - (void)requestExitFullScreen
 {
     [self _manager]->requestExitFullScreen();
@@ -581,7 +593,7 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     // normal exit full screen sequence, but don't wait to be called back
     // in response.
     if ([self isFullScreen])
-        [self exitFullScreen];
+        [self exitFullScreenImmediately];
     
     if (_fullScreenState == ExitingFullScreen)
         [self finishedExitFullScreenAnimation:YES];

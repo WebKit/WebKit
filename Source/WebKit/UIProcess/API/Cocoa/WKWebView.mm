@@ -54,6 +54,7 @@
 #import "UIDelegate.h"
 #import "UserMediaProcessManager.h"
 #import "VersionChecks.h"
+#import "VideoFullscreenManagerProxy.h"
 #import "ViewGestureController.h"
 #import "ViewSnapshotStore.h"
 #import "WKBackForwardListInternal.h"
@@ -4733,6 +4734,18 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     _impl->togglePictureInPicture();
 #endif
+}
+
+- (void)_closeAllMediaPresentations
+{
+    if (auto videoFullscreenManager = _page->videoFullscreenManager()) {
+        videoFullscreenManager->forEachSession([] (auto& model, auto& interface) {
+            model.requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone);
+        });
+    }
+
+    if (auto fullScreenManager = _page->fullScreenManager(); fullScreenManager && fullScreenManager->isFullScreen())
+        fullScreenManager->close();
 }
 
 - (void)_stopAllMediaPlayback

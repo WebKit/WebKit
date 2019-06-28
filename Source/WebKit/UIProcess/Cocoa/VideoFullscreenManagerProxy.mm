@@ -466,6 +466,30 @@ void VideoFullscreenManagerProxy::removeClientForContext(uint64_t contextId)
     m_clientCounts.set(contextId, clientCount);
 }
 
+void VideoFullscreenManagerProxy::forEachSession(Function<void(VideoFullscreenModel&, PlatformVideoFullscreenInterface&)>&& callback)
+{
+    if (m_contextMap.isEmpty())
+        return;
+
+    Vector<ModelInterfaceTuple> values;
+    values.reserveInitialCapacity(m_contextMap.size());
+    for (auto& value : m_contextMap.values())
+        values.uncheckedAppend(value);
+
+    for (auto& value : values) {
+        RefPtr<VideoFullscreenModelContext> model;
+        RefPtr<PlatformVideoFullscreenInterface> interface;
+        std::tie(model, interface) = value;
+
+        ASSERT(model);
+        ASSERT(interface);
+        if (!model || !interface)
+            continue;
+
+        callback(*model, *interface);
+    }
+}
+
 #pragma mark Messages from VideoFullscreenManager
 
 void VideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby)

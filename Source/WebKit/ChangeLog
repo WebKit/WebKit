@@ -1,3 +1,35 @@
+2019-06-28  Jer Noble  <jer.noble@apple.com>
+
+        Add new -[WKWebView _closeAllMediaPresentations] SPI
+        https://bugs.webkit.org/show_bug.cgi?id=199294
+        <rdar://problem/51965958>
+
+        Reviewed by Alex Christensen.
+
+        Add a new SPI that will close all out-of-window media presentations, including
+        picture-in-picture, video fullscreen, and element fullscreen.
+
+        Drive-by fixes:
+
+        + -[WKApplicationStateTrackingView didMoveToWindow] incorrectly assumes that a WKWebView will
+          never be moved frome one window to another, and asserts.
+
+        + -[WKFullScreenWindowController close] doesn't fire the correct 'webkitfullscreenchange' event
+          when called in the middle of animating into fullscreen.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _closeAllMediaPresentations]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::forEachSession):
+        * UIProcess/ios/WKApplicationStateTrackingView.mm:
+        (-[WKApplicationStateTrackingView didMoveToWindow]):
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController exitFullScreenImmediately]):
+        (-[WKFullScreenWindowController close]):
+
 2019-06-28  Antti Koivisto  <antti@apple.com>
 
         [iOS Scrolling] Propagate scrolls to non-nested UIScrollViews

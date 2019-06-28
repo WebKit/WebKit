@@ -851,6 +851,7 @@
 		CDC9442E1EF1FC080059C3C4 /* MediaStreamTrackDetached.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDC9442C1EF1FC080059C3C4 /* MediaStreamTrackDetached.mm */; };
 		CDC9442F1EF205D60059C3C4 /* mediastreamtrack-detached.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CDC9442B1EF1FBD20059C3C4 /* mediastreamtrack-detached.html */; };
 		CDCFA7AA1E45183200C2433D /* SampleMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCFA7A91E45122F00C2433D /* SampleMap.cpp */; };
+		CDD68F0D22C18317000CF0AE /* WKWebViewCloseAllMediaPresentations.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDD68F0C22C18317000CF0AE /* WKWebViewCloseAllMediaPresentations.mm */; };
 		CDE195B51CFE0B880053D256 /* FullscreenTopContentInset.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CDE195B21CFE0ADE0053D256 /* FullscreenTopContentInset.html */; };
 		CDF0B78A216D48DC00421ECC /* CloseWebViewDuringEnterFullscreen.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDF0B789216D484300421ECC /* CloseWebViewDuringEnterFullscreen.mm */; };
 		CDF92237216D186400647AA7 /* CloseWebViewAfterEnterFullscreen.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDF92236216D186400647AA7 /* CloseWebViewAfterEnterFullscreen.mm */; };
@@ -2250,6 +2251,7 @@
 		CDC9442B1EF1FBD20059C3C4 /* mediastreamtrack-detached.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "mediastreamtrack-detached.html"; sourceTree = "<group>"; };
 		CDC9442C1EF1FC080059C3C4 /* MediaStreamTrackDetached.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaStreamTrackDetached.mm; sourceTree = "<group>"; };
 		CDCFA7A91E45122F00C2433D /* SampleMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SampleMap.cpp; sourceTree = "<group>"; };
+		CDD68F0C22C18317000CF0AE /* WKWebViewCloseAllMediaPresentations.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewCloseAllMediaPresentations.mm; sourceTree = "<group>"; };
 		CDE195B21CFE0ADE0053D256 /* FullscreenTopContentInset.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = FullscreenTopContentInset.html; sourceTree = "<group>"; };
 		CDE195B31CFE0ADE0053D256 /* FullscreenTopContentInset.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FullscreenTopContentInset.mm; sourceTree = "<group>"; };
 		CDF0B789216D484300421ECC /* CloseWebViewDuringEnterFullscreen.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CloseWebViewDuringEnterFullscreen.mm; sourceTree = "<group>"; };
@@ -2813,6 +2815,7 @@
 				93F56DA81E5F9181003EDE84 /* WKWebViewSnapshot.mm */,
 				CD7F89DB22A86CDA00D683AE /* WKWebViewSuspendAllMediaPlayback.mm */,
 				9984FACA1CFFAEEE008D198C /* WKWebViewTextInput.mm */,
+				CDD68F0C22C18317000CF0AE /* WKWebViewCloseAllMediaPresentations.mm */,
 			);
 			name = "WebKit Cocoa";
 			path = WebKitCocoa;
@@ -4350,6 +4353,7 @@
 				CA38459620AE17A900990D3B /* LocalStorageDatabaseTracker.mm in Sources */,
 				46C519DA1D355AB200DAA51A /* LocalStorageNullEntries.mm in Sources */,
 				8C10AF99206467A90018FD90 /* LocalStoragePersistence.mm in Sources */,
+				CDD68F0D22C18317000CF0AE /* WKWebViewCloseAllMediaPresentations.mm in Sources */,
 				7A6A2C701DCCFA8C00C0D085 /* LocalStorageQuirkTest.mm in Sources */,
 				076E507F1F4513D6006E9F5A /* Logging.cpp in Sources */,
 				CE1866491F72E8F100A0CAB6 /* MarkedText.cpp in Sources */,

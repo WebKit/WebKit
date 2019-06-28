@@ -1,3 +1,15 @@
+2019-06-28  Jer Noble  <jer.noble@apple.com>
+
+        Add new -[WKWebView _closeAllMediaPresentations] SPI
+        https://bugs.webkit.org/show_bug.cgi?id=199294
+        <rdar://problem/51965958>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewCloseAllMediaPresentations.mm: Added.
+        (TEST):
+
 2019-06-28  Sihui Liu  <sihui_liu@apple.com>
 
         Add a regression test for change r246901

@@ -138,6 +138,8 @@ public:
 
     PlatformVideoFullscreenInterface* controlsManagerInterface();
 
+    void forEachSession(Function<void(WebCore::VideoFullscreenModel&, PlatformVideoFullscreenInterface&)>&&);
+
 private:
     friend class VideoFullscreenModelContext;
 

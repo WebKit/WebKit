@@ -77,6 +77,7 @@ typedef enum FullScreenState : NSInteger FullScreenState;
 
 - (void)enterFullScreen:(NSScreen *)screen;
 - (void)exitFullScreen;
+- (void)exitFullScreenImmediately;
 - (void)requestExitFullScreen;
 - (void)close;
 - (void)beganEnterFullScreenWithInitialFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame;

@@ -423,6 +423,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_stopAllMediaPlayback;
 - (void)_suspendAllMediaPlayback;
 - (void)_resumeAllMediaPlayback;
+- (void)_closeAllMediaPresentations;
 
 - (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void(^)(NSArray<_WKTextInputContext *> *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_focusTextInputContext:(_WKTextInputContext *)textInputElement completionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));

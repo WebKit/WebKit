@@ -62,10 +62,9 @@
 
 - (void)didMoveToWindow
 {
-    if (!self._contentView.window)
+    if (!self._contentView.window || _applicationStateTracker)
         return;
 
-    ASSERT(!_applicationStateTracker);
     _applicationStateTracker = std::make_unique<WebKit::ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationDidFinishSnapshottingAfterEnteringBackground), @selector(_applicationWillEnterForeground));
     
     if (_lastObservedStateWasBackground && ![self isBackground])
