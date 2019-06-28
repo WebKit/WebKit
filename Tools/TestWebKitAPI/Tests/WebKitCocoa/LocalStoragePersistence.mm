@@ -39,6 +39,7 @@
 static bool readyToContinue;
 static bool receivedScriptMessage;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
+static RetainPtr<WKWebView> createdWebView;
 
 @interface LocalStorageMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -49,6 +50,19 @@ static RetainPtr<WKScriptMessage> lastScriptMessage;
 {
     receivedScriptMessage = true;
     lastScriptMessage = message;
+}
+
+@end
+
+@interface LocalStorageNavigationDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
+@end
+
+@implementation LocalStorageNavigationDelegate
+
+- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
+{
+    createdWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    return createdWebView.get();
 }
 
 @end
@@ -197,4 +211,25 @@ TEST(WKWebView, LocalStorageEmptyString)
     receivedScriptMessage = false;
     RetainPtr<NSString> string2 = (NSString *)[lastScriptMessage body];
     EXPECT_WK_STREQ(@"", string2.get());
+}
+
+TEST(WKWebView, LocalStorageOpenWindowPrivate)
+{
+    auto handler = adoptNS([[LocalStorageMessageHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    [configuration _setAllowUniversalAccessFromFileURLs:YES];
+    [configuration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
+    auto delegate = adoptNS([[LocalStorageNavigationDelegate alloc] init]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView setUIDelegate:delegate.get()];
+    [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"localstorage-open-window-private" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    
+    receivedScriptMessage = false;
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"local:storage", [lastScriptMessage body]);
 }
