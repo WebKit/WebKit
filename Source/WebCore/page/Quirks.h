@@ -60,6 +60,7 @@ public:
     WEBCORE_EXPORT bool shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() const;
     WEBCORE_EXPORT bool isTouchBarUpdateSupressedForHiddenContentEditable() const;
     WEBCORE_EXPORT bool isNeverRichlyEditableForTouchBar() const;
+    WEBCORE_EXPORT bool shouldAvoidResizingWhenInputViewBoundsChange() const;
 
     bool needsGMailOverflowScrollQuirk() const;
     bool needsYouTubeOverflowScrollQuirk() const;

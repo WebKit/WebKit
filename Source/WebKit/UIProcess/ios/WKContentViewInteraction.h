@@ -525,7 +525,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 - (void)_didStartProvisionalLoadForMainFrame;
 
-@property (nonatomic, readonly, getter=_shouldUseContextMenus) BOOL _shouldUseContextMenus;
+@property (nonatomic, readonly) BOOL _shouldUseContextMenus;
+@property (nonatomic, readonly) BOOL _shouldAvoidResizingWhenInputViewBoundsChange;
 
 @end
 

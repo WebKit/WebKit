@@ -1425,6 +1425,11 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     return self._currentContentView.isFirstResponder;
 }
 
+- (BOOL)_shouldAvoidResizingWhenInputViewBoundsChange
+{
+    return [_contentView _shouldAvoidResizingWhenInputViewBoundsChange];
+}
+
 - (_WKDragInteractionPolicy)_dragInteractionPolicy
 {
     return _dragInteractionPolicy;

@@ -298,6 +298,15 @@ bool Quirks::shouldDispatchSimulatedMouseEventsOnTarget(EventTarget* target) con
 }
 #endif
 
+bool Quirks::shouldAvoidResizingWhenInputViewBoundsChange() const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->topDocument().url().host();
+    return equalLettersIgnoringASCIICase(host, "live.com") || host.endsWithIgnoringASCIICase(".live.com");
+}
+
 bool Quirks::shouldDisablePointerEventsQuirk() const
 {
 #if PLATFORM(IOS_FAMILY)

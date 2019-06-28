@@ -5300,6 +5300,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
     _focusedElementInformation.elementType = WebKit::InputType::None;
     _focusedElementInformation.shouldSynthesizeKeyEventsForEditing = false;
+    _focusedElementInformation.shouldAvoidResizingWhenInputViewBoundsChange = false;
     _inputPeripheral = nil;
     _focusRequiresStrongPasswordAssistance = NO;
 
@@ -6219,6 +6220,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return linkedOnOrAfter(WebKit::SDKVersion::FirstThatHasUIContextMenuInteraction);
 #endif
     return NO;
+}
+
+- (BOOL)_shouldAvoidResizingWhenInputViewBoundsChange
+{
+    return _focusedElementInformation.shouldAvoidResizingWhenInputViewBoundsChange;
 }
 
 - (UIView *)containerViewForTargetedPreviews

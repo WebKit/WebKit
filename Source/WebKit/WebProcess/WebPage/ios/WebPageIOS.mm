@@ -2969,6 +2969,8 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         information.autocapitalizeType = AutocapitalizeTypeNone;
         information.isAutocorrect = false;
     }
+
+    information.shouldAvoidResizingWhenInputViewBoundsChange = m_focusedElement->document().quirks().shouldAvoidResizingWhenInputViewBoundsChange();
 }
 
 void WebPage::autofillLoginCredentials(const String& username, const String& password)

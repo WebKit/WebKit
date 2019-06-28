@@ -1,3 +1,36 @@
+2019-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Need a way for SPI clients to know when to avoid resizing to accommodate for the input view bounds
+        https://bugs.webkit.org/show_bug.cgi?id=199331
+        <rdar://problem/52116170>
+
+        Reviewed by Tim Horton.
+
+        Expose new SPI, such that clients may check whether to avoid resizing the web view when changing input view
+        bounds. In particular, resizing the web view in this case causes toolbar menus in Microsoft Word online to
+        dismiss immediately after opening them, due to resize events fired as a result of the input view dismissing.
+
+        * Shared/FocusedElementInformation.cpp:
+        (WebKit::FocusedElementInformation::encode const):
+        (WebKit::FocusedElementInformation::decode):
+        * Shared/FocusedElementInformation.h:
+
+        Add a new flag to FocusedElementInformation to indicate whether we should avoid resizing the web view when an
+        input view is presented.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _shouldAvoidResizingWhenInputViewBoundsChange]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _elementDidBlur]):
+
+        Reset the value of the flag.
+
+        (-[WKContentView _shouldAvoidResizingWhenInputViewBoundsChange]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getFocusedElementInformation):
+
 2019-06-28  Jer Noble  <jer.noble@apple.com>
 
         Add new -[WKWebView _closeAllMediaPresentations] SPI
