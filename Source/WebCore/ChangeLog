@@ -1,3 +1,34 @@
+2019-06-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][MediaFoundation] Stop using soft linking for Media Foundation
+        https://bugs.webkit.org/show_bug.cgi?id=198783
+
+        Reviewed by Alex Christensen.
+
+        WinCairo is supporting Windows 7 or newer. It doesn't need soft
+        linking anymore.
+
+        No new tests because there is no behavior change.
+
+        * PlatformWinCairo.cmake: Added libraries to WebCore_LIBRARIES.
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::mimeTypeCache):
+        (WebCore::MediaPlayerPrivateMediaFoundation::setRate):
+        (WebCore::MediaPlayerPrivateMediaFoundation::setAllChannelVolumes):
+        (WebCore::MediaPlayerPrivateMediaFoundation::createSession):
+        (WebCore::MediaPlayerPrivateMediaFoundation::endSession):
+        (WebCore::MediaPlayerPrivateMediaFoundation::startCreateMediaSource):
+        (WebCore::MediaPlayerPrivateMediaFoundation::createTopologyFromSource):
+        (WebCore::MediaPlayerPrivateMediaFoundation::createOutputNode):
+        (WebCore::MediaPlayerPrivateMediaFoundation::createSourceStreamNode):
+        (WebCore::MediaPlayerPrivateMediaFoundation::updateReadyState):
+        (WebCore::MediaPlayerPrivateMediaFoundation::videoDisplay):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::createOptimalVideoType):
+        (WebCore::MediaPlayerPrivateMediaFoundation::VideoScheduler::setFrameRate):
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::presentSample):
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::initializeD3D):
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::createD3DSample):
+
 2019-06-27  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
          Fix build error on WebCore when disabling ENABLE_INDEXED_DATABASE.
