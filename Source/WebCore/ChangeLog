@@ -1,3 +1,17 @@
+2019-06-28  Zalan Bujtas  <zalan@apple.com>
+
+        [Text autosizing][iPadOS] bing.com is hard to read even with boosted text because of the line height
+        https://bugs.webkit.org/show_bug.cgi?id=199318
+        <rdar://problem/51826096>
+
+        Reviewed by Wenson Hsieh.
+
+        Initial implementation of line height boosting on iPadOs. It enlarges line height in certain cases to improve readability when the text content feels too dense.
+        It kicks in only for relatively small text (12px) where it slightly (1.25x) changes the line height to widen the gap between lines.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyleForTextAutosizing):
+
 2019-06-28  Alex Christensen  <achristensen@webkit.org>
 
         Make getHostnamesWithCookies more robust
