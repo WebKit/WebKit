@@ -1,3 +1,19 @@
+2019-06-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] unresolved external symbol "JSC::JSObject::didBecomePrototype(void)" referenced in function "JSC::Structure::create(...)"
+        https://bugs.webkit.org/show_bug.cgi?id=199312
+
+        Reviewed by Keith Miller.
+
+        WinCairo port, clang-cl Release builds reported a following linkage error:
+
+        > WebCore.lib(UnifiedSource-4babe430-10.cpp.obj) : error LNK2019: unresolved external symbol "public: void __cdecl JSC::JSObject::didBecomePrototype(void)" (?didBecomePrototype@JSObject@JSC@@QEAAXXZ) referenced in function "public: static class JSC::Structure * __cdecl JSC::Structure::create(class JSC::VM &,class JSC::JSGlobalObject *,class JSC::JSValue,class JSC::TypeInfo const &,struct JSC::ClassInfo const *,unsigned char,unsigned int)" (?create@Structure@JSC@@SAPEAV12@AEAVVM@2@PEAVJSGlobalObject@2@VJSValue@2@AEBVTypeInfo@2@PEBUClassInfo@2@EI@Z)
+
+        No new tests because there is no behavior change.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp: Include <JavaScriptCore/JSCInlines.h>,
+        and do not include headers which is included by it.
+
 2019-06-27  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r244633): e-mail with "height: 100%" causes unstable layout.
