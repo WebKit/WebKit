@@ -2,6 +2,20 @@
 
         [WinCairo][MediaFoundation] Stop using soft linking for Media Foundation
         https://bugs.webkit.org/show_bug.cgi?id=198783
+        <rdar://problem/52301843>
+
+        Unreviewed compilation warning fix. clang-cl reports:
+
+        ..\..\Source\WebCore\platform\graphics\win\MediaPlayerPrivateMediaFoundation.cpp(526,10): warning: address of function 'MFCreateTopology' will always evaluate to 'true' [-Wpointer-bool-conversion]
+            if (!MFCreateTopology)
+                ~^~~~~~~~~~~~~~~~
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::createTopologyFromSource): Removed the pointer check of MFCreateTopology.
+
+2019-06-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][MediaFoundation] Stop using soft linking for Media Foundation
+        https://bugs.webkit.org/show_bug.cgi?id=198783
 
         Reviewed by Alex Christensen.
 

@@ -523,9 +523,6 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
 
 bool MediaPlayerPrivateMediaFoundation::createTopologyFromSource()
 {
-    if (!MFCreateTopology)
-        return false;
-
     // Create a new topology.
     if (FAILED(MFCreateTopology(&m_topology)))
         return false;
