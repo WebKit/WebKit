@@ -1,3 +1,10 @@
+2019-06-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed build fix attempt after r246928.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _closeAllMediaPresentations]):
+
 2019-06-28  Youenn Fablet  <youenn@apple.com>
 
         Protect NetworkProcess::m_swServers from bad session IDs

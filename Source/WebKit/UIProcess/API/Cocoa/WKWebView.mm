@@ -4743,13 +4743,13 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (void)_closeAllMediaPresentations
 {
+#if ENABLE(FULLSCREEN_API)
     if (auto videoFullscreenManager = _page->videoFullscreenManager()) {
         videoFullscreenManager->forEachSession([] (auto& model, auto& interface) {
             model.requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone);
         });
     }
 
-#if ENABLE(FULLSCREEN_API)
     if (auto fullScreenManager = _page->fullScreenManager(); fullScreenManager && fullScreenManager->isFullScreen())
         fullScreenManager->close();
 #endif
