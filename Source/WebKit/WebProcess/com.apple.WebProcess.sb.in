@@ -974,6 +974,7 @@
         (syscall-number SYS_workq_open)
         (syscall-number SYS_getgroups)
         (syscall-number SYS_fgetattrlist) ;; <rdar://problem/50931110>
+        (syscall-number SYS_kqueue) ;; <rdar://problem/49609201>
         (syscall-number SYS_kqueue_workloop_ctl) ;; <rdar://problem/50999499>
         (syscall-number SYS_open_dprotected_np)
         (syscall-number SYS_flistxattr)

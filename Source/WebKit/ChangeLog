@@ -1,3 +1,16 @@
+2019-06-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Revise WebContent sandbox based on seed feedback
+        https://bugs.webkit.org/show_bug.cgi?id=199339
+        <rdar://problem/49609201>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Unblock syscall needed by CoreText.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-06-28  Tim Horton  <timothy_horton@apple.com>
 
         iOS WebKit2 find-in-page indicator doesn't move with 'overflow: scroll'
