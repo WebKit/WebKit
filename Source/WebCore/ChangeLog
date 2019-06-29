@@ -1,3 +1,22 @@
+2019-06-28  Tim Horton  <timothy_horton@apple.com>
+
+        iOS WebKit2 find-in-page indicator doesn't move with 'overflow: scroll'
+        https://bugs.webkit.org/show_bug.cgi?id=175032
+        <rdar://problem/29346482>
+
+        Reviewed by Wenson Hsieh.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::selectionBounds const):
+        (WebCore::FrameSelection::revealSelection):
+        * editing/FrameSelection.h:
+        Make selectionBounds' clipToVisibleContent param an enum class.
+
+        * page/TextIndicator.cpp:
+        (WebCore::initializeIndicator):
+        Save the un-clipped selection rect; otherwise we'll frequently save 0, 0
+        here when finding a match that is off-screen.
+
 2019-06-28  Zalan Bujtas  <zalan@apple.com>
 
         [Text autosizing][iPadOS] bing.com is hard to read even with boosted text because of the line height

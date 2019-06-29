@@ -92,6 +92,7 @@ private:
     
     unsigned findIndicatorRadius() const;
     bool shouldHideFindIndicatorOnScroll() const;
+    void didScrollAffectingFindIndicatorPosition();
 
     WebPage* m_webPage;
     WebCore::PageOverlay* m_findPageOverlay { nullptr };

@@ -99,6 +99,7 @@ bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOve
         return false;
 
     m_findIndicatorOverlayClient = std::make_unique<FindIndicatorOverlayClientIOS>(selectedFrame, textIndicator.get());
+    m_findIndicatorRect = enclosingIntRect(textIndicator->selectionRectInRootViewCoordinates());
     m_findIndicatorOverlay = PageOverlay::create(*m_findIndicatorOverlayClient, PageOverlay::OverlayType::Document);
     m_webPage->corePage()->pageOverlayController().installPageOverlay(*m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
 

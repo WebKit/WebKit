@@ -1,3 +1,25 @@
+2019-06-28  Tim Horton  <timothy_horton@apple.com>
+
+        iOS WebKit2 find-in-page indicator doesn't move with 'overflow: scroll'
+        https://bugs.webkit.org/show_bug.cgi?id=175032
+        <rdar://problem/29346482>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::drawRect):
+        (WebKit::FindController::didScrollAffectingFindIndicatorPosition):
+        Adopt the macOS code that notices that the find highlight doesn't match
+        its original position, but instead of hiding the highlight like we do on macOS,
+        update it. We do this asynchronously to avoid mutating the layer tree
+        in the middle of painting, which is not /truly/ unsafe, but definitely
+        non-ideal and causes fun flashes.
+
+        * WebProcess/WebPage/FindController.h:
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindController::updateFindIndicator):
+        Store m_findIndicatorRect when updating the indicator, just like we do on macOS.
+
 2019-06-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed build fix attempt after r246928.

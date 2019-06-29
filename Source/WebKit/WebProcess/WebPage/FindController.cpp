@@ -499,15 +499,29 @@ void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, co
     for (auto& path : whiteFramePaths)
         graphicsContext.fillPath(path);
 
-    if (!m_isShowingFindIndicator || !shouldHideFindIndicatorOnScroll())
+    if (!m_isShowingFindIndicator)
         return;
 
     if (Frame* selectedFrame = frameWithSelection(m_webPage->corePage())) {
-        IntRect findIndicatorRect = selectedFrame->view()->contentsToRootView(enclosingIntRect(selectedFrame->selection().selectionBounds()));
+        IntRect findIndicatorRect = selectedFrame->view()->contentsToRootView(enclosingIntRect(selectedFrame->selection().selectionBounds(FrameSelection::ClipToVisibleContent::No)));
 
-        if (findIndicatorRect != m_findIndicatorRect)
-            hideFindIndicator();
+        if (findIndicatorRect != m_findIndicatorRect) {
+            // We are underneath painting, so it's not safe to mutate the layer tree synchronously.
+            callOnMainThread([weakWebPage = makeWeakPtr(m_webPage)] {
+                if (!weakWebPage)
+                    return;
+                weakWebPage->findController().didScrollAffectingFindIndicatorPosition();
+            });
+        }
     }
+}
+
+void FindController::didScrollAffectingFindIndicatorPosition()
+{
+    if (shouldHideFindIndicatorOnScroll())
+        hideFindIndicator();
+    else if (Frame *selectedFrame = frameWithSelection(m_webPage->corePage()))
+        updateFindIndicator(*selectedFrame, true, false);
 }
 
 bool FindController::mouseEvent(PageOverlay&, const PlatformMouseEvent& mouseEvent)

@@ -2288,7 +2288,7 @@ bool FrameSelection::shouldDeleteSelection(const VisibleSelection& selection) co
     return m_frame->editor().client()->shouldDeleteRange(selection.toNormalizedRange().get());
 }
 
-FloatRect FrameSelection::selectionBounds(bool clipToVisibleContent) const
+FloatRect FrameSelection::selectionBounds(ClipToVisibleContent clipToVisibleContent) const
 {
     if (!m_frame->document())
         return LayoutRect();
@@ -2299,8 +2299,13 @@ FloatRect FrameSelection::selectionBounds(bool clipToVisibleContent) const
         return LayoutRect();
 
     auto& selection = renderView->selection();
-    auto selectionRect = clipToVisibleContent ? selection.boundsClippedToVisibleContent() : selection.bounds();
-    return clipToVisibleContent ? intersection(selectionRect, renderView->frameView().visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect)) : selectionRect;
+
+    if (clipToVisibleContent == ClipToVisibleContent::Yes) {
+        auto selectionRect = selection.boundsClippedToVisibleContent();
+        return intersection(selectionRect, renderView->frameView().visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect));
+    }
+
+    return selection.bounds();
 }
 
 void FrameSelection::getClippedVisibleTextRectangles(Vector<FloatRect>& rectangles, TextRectangleHeight textRectHeight) const
@@ -2391,7 +2396,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
         rect = absoluteCaretBounds(&insideFixed);
         break;
     case VisibleSelection::RangeSelection:
-        rect = revealExtentOption == RevealExtent ? VisiblePosition(m_selection.extent()).absoluteCaretBounds() : enclosingIntRect(selectionBounds(false));
+        rect = revealExtentOption == RevealExtent ? VisiblePosition(m_selection.extent()).absoluteCaretBounds() : enclosingIntRect(selectionBounds(ClipToVisibleContent::No));
         break;
     }
 
