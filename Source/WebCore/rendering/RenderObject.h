@@ -802,7 +802,10 @@ protected:
 
     static bool shouldApplyCompositedContainerScrollsForRepaint();
 
-    static VisibleRectContext visibleRectContextForRepaint();
+    static VisibleRectContext visibleRectContextForRepaint()
+    {
+        return VisibleRectContext(false, false, { VisibleRectContextOption::ApplyContainerClip, VisibleRectContextOption::ApplyCompositedContainerScrolls });
+    }
 
 private:
 #ifndef NDEBUG

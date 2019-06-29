@@ -975,23 +975,6 @@ LayoutRect RenderObject::clippedOverflowRectForRepaint(const RenderLayerModelObj
     return LayoutRect();
 }
 
-bool RenderObject::shouldApplyCompositedContainerScrollsForRepaint()
-{
-#if PLATFORM(IOS_FAMILY)
-    return false;
-#else
-    return true;
-#endif
-}
-
-RenderObject::VisibleRectContext RenderObject::visibleRectContextForRepaint()
-{
-    VisibleRectContext context(false, false, { VisibleRectContextOption::ApplyContainerClip });
-    if (shouldApplyCompositedContainerScrollsForRepaint())
-        context.m_options.add(VisibleRectContextOption::ApplyCompositedContainerScrolls);
-    return context;
-}
-
 LayoutRect RenderObject::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer) const
 {
     return *computeVisibleRectInContainer(rect, repaintContainer, visibleRectContextForRepaint());

@@ -1,3 +1,29 @@
+2019-06-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove a PLATFORM(IOS_FAMILY) related to repaint offsets in composited scrolling layers
+        https://bugs.webkit.org/show_bug.cgi?id=199342
+
+        Reviewed by Zalan Bujtas.
+
+        Code in RenderObject::shouldApplyCompositedContainerScrollsForRepaint() adds VisibleRectContextOption::ApplyCompositedContainerScrolls
+        only for iOS, and RenderLayerBacking::setContentsNeedDisplayInRect() subtracts out scroll position for only iOS,
+        so remove this iOS-specific code.
+
+        Blame for this code mentions touch event regions, so I tested these but they use absoluteBoundingBoxRect()
+        which doesn't hit this code. Still, I added a layout test for touch regions inside scrolled overflow.
+
+        Existing tests exist for repaint inside scrolled overflow.
+
+        Test: fast/events/touch/ios/touch-event-regions/scrolled-overflow.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::shouldApplyCompositedContainerScrollsForRepaint): Deleted.
+        (WebCore::RenderObject::visibleRectContextForRepaint): Deleted.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::visibleRectContextForRepaint):
+
 2019-06-28  Tim Horton  <timothy_horton@apple.com>
 
         iOS WebKit2 find-in-page indicator doesn't move with 'overflow: scroll'
