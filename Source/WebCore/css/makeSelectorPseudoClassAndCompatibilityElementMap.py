@@ -184,7 +184,7 @@ static inline const SelectorPseudoClassOrCompatibilityPseudoElementEntry* parseP
 """ % longest_keyword)
 
 output_file.write("""
-PseudoClassOrCompatibilityPseudoElement parsePseudoClassAndCompatibilityElementString(const StringView& pseudoTypeString)
+PseudoClassOrCompatibilityPseudoElement parsePseudoClassAndCompatibilityElementString(StringView pseudoTypeString)
 {
     const SelectorPseudoClassOrCompatibilityPseudoElementEntry* entry;
     if (pseudoTypeString.is8Bit())

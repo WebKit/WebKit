@@ -140,7 +140,7 @@ static HashMap<const RenderText*, WeakPtr<RenderInline>>& inlineWrapperForDispla
     return map;
 }
 
-static inline UChar convertNoBreakSpace(UChar character)
+static constexpr UChar convertNoBreakSpaceToSpace(UChar character)
 {
     return character == noBreakSpace ? ' ' : character;
 }
@@ -150,28 +150,30 @@ String capitalize(const String& string, UChar previousCharacter)
     // FIXME: Change this to use u_strToTitle instead of u_totitle and to consider locale.
 
     unsigned length = string.length();
+    auto& stringImpl = *string.impl();
 
-    // Prepend the previous character, and convert NO BREAK SPACE to SPACE so ICU will see a word separator.
-    Vector<UChar> wordBreakCharacters;
-    wordBreakCharacters.grow(length + 1);
-    wordBreakCharacters[0] = convertNoBreakSpace(previousCharacter);
+    static_assert(String::MaxLength < std::numeric_limits<unsigned>::max(), "Must be able to add one without overflowing unsigned");
+
+    // Replace NO BREAK SPACE with a normal spaces since ICU does not treat it as a word separator.
+    Vector<UChar> stringWithPrevious(length + 1);
+    stringWithPrevious[0] = convertNoBreakSpaceToSpace(previousCharacter);
     for (unsigned i = 1; i < length + 1; i++)
-        wordBreakCharacters[i] = convertNoBreakSpace(string[i - 1]);
+        stringWithPrevious[i] = convertNoBreakSpaceToSpace(stringImpl[i - 1]);
 
-    auto* boundary = wordBreakIterator(StringView { wordBreakCharacters.data(), length + 1 });
-    if (!boundary)
+    auto* breakIterator = wordBreakIterator(StringView { stringWithPrevious.data(), length + 1 });
+    if (!breakIterator)
         return string;
 
     StringBuilder result;
     result.reserveCapacity(length);
 
+    int32_t startOfWord = ubrk_first(breakIterator);
     int32_t endOfWord;
-    int32_t startOfWord = ubrk_first(boundary);
-    for (endOfWord = ubrk_next(boundary); endOfWord != UBRK_DONE; startOfWord = endOfWord, endOfWord = ubrk_next(boundary)) {
-        if (startOfWord) // Ignore first char of previous string
-            result.append(string[startOfWord - 1] == noBreakSpace ? noBreakSpace : u_totitle(wordBreakCharacters[startOfWord]));
+    for (endOfWord = ubrk_next(breakIterator); endOfWord != UBRK_DONE; startOfWord = endOfWord, endOfWord = ubrk_next(breakIterator)) {
+        if (startOfWord) // Do not append the first character, since it's the previous character, not from this string.
+            result.append(u_totitle(stringImpl[startOfWord - 1]));
         for (int i = startOfWord + 1; i < endOfWord; i++)
-            result.append(string[i - 1]);
+            result.append(stringImpl[i - 1]);
     }
 
     return result == string ? string : result.toString();

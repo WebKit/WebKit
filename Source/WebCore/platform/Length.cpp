@@ -89,16 +89,15 @@ static unsigned countCharacter(StringImpl& string, UChar character)
 UniqueArray<Length> newCoordsArray(const String& string, int& len)
 {
     unsigned length = string.length();
-    UChar* spacified;
-    auto str = StringImpl::createUninitialized(length, spacified);
+    LChar* spacifiedCharacters;
+    auto str = StringImpl::createUninitialized(length, spacifiedCharacters);
     for (unsigned i = 0; i < length; i++) {
         UChar cc = string[i];
         if (cc > '9' || (cc < '0' && cc != '-' && cc != '*' && cc != '.'))
-            spacified[i] = ' ';
+            spacifiedCharacters[i] = ' ';
         else
-            spacified[i] = cc;
+            spacifiedCharacters[i] = cc;
     }
-
     str = str->simplifyWhiteSpace();
 
     len = countCharacter(str, ' ') + 1;

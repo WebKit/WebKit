@@ -1,3 +1,70 @@
+2019-06-22  Darin Adler  <darin@apple.com>
+
+        Streamline some string code, focusing on functions that were using substringSharingImpl
+        https://bugs.webkit.org/show_bug.cgi?id=198898
+
+        Reviewed by Daniel Bates.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::CSSComputedStyleDeclaration): Take a StringView
+        instead of a String argument for the pseudo-element name. This prevents us from having
+        to use substringSharingImpl to strip off leading colons.
+        (WebCore::CSSComputedStyleDeclaration::create): Moved this function in here since it's
+        no longer being inlined.
+
+        * css/CSSComputedStyleDeclaration.h: Moved the create function to no longer be inlined,
+        since it's better to have the constructor be inlined in the create function instead.
+        Changed the pseudo-element name argument to be a StringView rather than a String.
+        Also initialize m_refCount in the class definition.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::parsePseudoElementType): Take a StringView instead of a String.
+        * css/CSSSelector.h: Updated for the above change.
+
+        * css/SelectorPseudoTypeMap.h: Change both parse functions to take StringView. Before
+        one took a StringImpl and the other used const StringView&, which is not as good as
+        StringView.
+
+        * css/makeSelectorPseudoClassAndCompatibilityElementMap.py: Use StringView, not
+        const StringView&.
+
+        * css/makeSelectorPseudoElementsMap.py: Use StringView rather than StringImpl.
+
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::parsePageSelector): Use a StringView for the pseudo-element
+        name. It was already computed as a StringView, but the old code converted it to
+        an AtomicString.
+
+        * css/parser/CSSParserSelector.cpp:
+        (WebCore::CSSParserSelector::parsePagePseudoSelector): Take a StringView, and
+        return a std::unique_ptr.
+        (WebCore::CSSParserSelector::parsePseudoElementSelector): Renamed to not mention
+        StringView in function name. Take a StringView, not a StringView&. Do the lowercasing
+        inside this function rather than having it be a caller responsibility. Don't convert
+        from a StringView to an AtomicString before starting to parse; only do it in the
+        "unknown/custom" case. Return a std::unique_ptr.
+        (WebCore::CSSParserSelector::parsePseudoClassSelector): Ditto.
+        * css/parser/CSSParserSelector.h: Make the three parse functions all take a StringView
+        and all return a std::unique_ptr. They were already creating objects, but before
+        callers just had to know to adopt.
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumePseudo): Updated to use improved parse
+        functions above.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getMatchedCSSRules const): Updated to use the new
+        parsePseudoElementType above and use StringView::substring instead of
+        String::substringSharingImpl.
+
+        * platform/Length.cpp:
+        (WebCore::newCoordsArray): Local string that is "spacified" can't have any non-Latin-1
+        characters, so use LChar instead of UChar.
+
+        * rendering/RenderText.cpp:
+        (WebCore::convertNoBreakSpaceToSpace): Renamed for clarity. Also use constexpr
+        instead of inline since this is a pure function.
+        (WebCore::capitalize): Tighten up logic a bit.
+
 2019-06-29  Simon Fraser  <simon.fraser@apple.com>
 
         Remove a PLATFORM(IOS_FAMILY) related to repaint offsets in composited scrolling layers

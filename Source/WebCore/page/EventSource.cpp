@@ -349,7 +349,8 @@ void EventSource::parseEventStreamLine(unsigned position, Optional<unsigned> fie
         m_eventName = { &m_receiveBuffer[position], valueLength };
     else if (field == "id") {
         StringView parsedEventId = { &m_receiveBuffer[position], valueLength };
-        if (!parsedEventId.contains('\0'))
+        constexpr UChar nullCharacter = '\0';
+        if (!parsedEventId.contains(nullCharacter))
             m_currentlyParsedEventId = parsedEventId.toString();
     } else if (field == "retry") {
         if (!valueLength)

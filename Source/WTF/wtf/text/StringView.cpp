@@ -58,6 +58,11 @@ size_t StringView::findIgnoringASCIICase(const StringView& matchString, unsigned
     return ::WTF::findIgnoringASCIICase(*this, matchString, startOffset);
 }
 
+bool StringView::startsWith(UChar character) const
+{
+    return m_length && (*this)[0] == character;
+}
+
 bool StringView::startsWith(const StringView& prefix) const
 {
     return ::WTF::startsWith(*this, prefix);

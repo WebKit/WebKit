@@ -96,7 +96,7 @@ public:
     RefPtr<AtomStringImpl> toExistingAtomString() const;
 
 #if USE(CF)
-    // This function converts null strings to empty strings.
+    // These functions convert null strings to empty strings.
     WTF_EXPORT_PRIVATE RetainPtr<CFStringRef> createCFString() const;
     WTF_EXPORT_PRIVATE RetainPtr<CFStringRef> createCFStringWithoutCopying() const;
 #endif
@@ -117,8 +117,8 @@ public:
     void getCharactersWithUpconvert(UChar*) const;
 
     StringView substring(unsigned start, unsigned length = std::numeric_limits<unsigned>::max()) const;
-    StringView left(unsigned len) const { return substring(0, len); }
-    StringView right(unsigned len) const { return substring(length() - len, len); }
+    StringView left(unsigned length) const { return substring(0, length); }
+    StringView right(unsigned length) const { return substring(this->length() - length, length); }
 
     template<typename MatchedCharacterPredicate>
     StringView stripLeadingAndTrailingMatchedCharacters(const MatchedCharacterPredicate&);
@@ -132,7 +132,7 @@ public:
 
     WTF_EXPORT_PRIVATE size_t find(StringView, unsigned start) const;
 
-    size_t reverseFind(UChar, unsigned index = UINT_MAX) const;
+    size_t reverseFind(UChar, unsigned index = std::numeric_limits<unsigned>::max()) const;
 
     WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringView&) const;
     WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringView&, unsigned startOffset) const;
@@ -141,9 +141,11 @@ public:
     WTF_EXPORT_PRIVATE String convertToASCIIUppercase() const;
 
     bool contains(UChar) const;
+    bool contains(CodeUnitMatchFunction) const;
     WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(const StringView&) const;
     WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(const StringView&, unsigned startOffset) const;
 
+    WTF_EXPORT_PRIVATE bool startsWith(UChar) const;
     WTF_EXPORT_PRIVATE bool startsWith(const StringView&) const;
     WTF_EXPORT_PRIVATE bool startsWithIgnoringASCIICase(const StringView&) const;
 
@@ -173,6 +175,7 @@ private:
     WTF_EXPORT_PRIVATE bool underlyingStringIsValid() const;
     WTF_EXPORT_PRIVATE void setUnderlyingString(const StringImpl*);
     WTF_EXPORT_PRIVATE void setUnderlyingString(const StringView&);
+    void adoptUnderlyingString(UnderlyingString*);
 #else
     bool underlyingStringIsValid() const { return true; }
     void setUnderlyingString(const StringImpl*) { }
@@ -185,7 +188,6 @@ private:
     bool m_is8Bit { true };
 
 #if CHECK_STRINGVIEW_LIFETIME
-    void adoptUnderlyingString(UnderlyingString*);
     UnderlyingString* m_underlyingString { nullptr };
 #endif
 };
@@ -466,6 +468,11 @@ inline UChar StringView::operator[](unsigned index) const
 inline bool StringView::contains(UChar character) const
 {
     return find(character) != notFound;
+}
+
+inline bool StringView::contains(CodeUnitMatchFunction function) const
+{
+    return find(function) != notFound;
 }
 
 inline void StringView::getCharactersWithUpconvert(LChar* destination) const

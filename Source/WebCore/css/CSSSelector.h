@@ -223,7 +223,7 @@ namespace WebCore {
             CaseInsensitive,
         };
 
-        static PseudoElementType parsePseudoElementType(const String&);
+        static PseudoElementType parsePseudoElementType(StringView);
         static PseudoId pseudoId(PseudoElementType);
 
         // Selectors are kept in an array by CSSSelectorList. The next component of the selector is

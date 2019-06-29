@@ -268,12 +268,12 @@ CSSSelectorList CSSParserImpl::parsePageSelector(CSSParserTokenRange range, Styl
     if (range.peek().type() == IdentToken)
         typeSelector = range.consume().value().toAtomString();
 
-    AtomString pseudo;
+    StringView pseudo;
     if (range.peek().type() == ColonToken) {
         range.consume();
         if (range.peek().type() != IdentToken)
             return CSSSelectorList();
-        pseudo = range.consume().value().toAtomString();
+        pseudo = range.consume().value();
     }
 
     range.consumeWhitespace();

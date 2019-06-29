@@ -664,7 +664,7 @@ static void applyHostNameFunctionToURLString(const String& string, const Optiona
         applyHostNameFunctionToMailToURLString(string, decodeFunction, array);
         return;
     }
-    
+
     // Find the host name in a hierarchical URL.
     // It comes after a "://" sequence, with scheme characters preceding.
     // If ends with the end of the string or a ":", "/", or a "?".
@@ -675,39 +675,23 @@ static void applyHostNameFunctionToURLString(const String& string, const Optiona
         return;
 
     unsigned authorityStart = separatorIndex + strlen(separator);
-    
-    // Check that all characters before the :// are valid scheme characters.
-    auto invalidSchemeCharacter = string.substringSharingImpl(0, separatorIndex).find([](UChar ch) {
-        static const char* allowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-.";
-        static size_t length = strlen(allowedCharacters);
-        for (size_t i = 0; i < length; ++i) {
-            if (allowedCharacters[i] == ch)
-                return false;
-        }
-        return true;
-    });
 
-    if (invalidSchemeCharacter != notFound)
+    // Check that all characters before the :// are valid scheme characters.
+    if (StringView { string }.left(separatorIndex).contains([](UChar character) {
+        return !(isASCIIAlphanumeric(character) || character == '+' || character == '-' || character == '.');
+    }))
         return;
-    
-    unsigned stringLength = string.length();
-    
+
     // Find terminating character.
-    auto hostNameTerminator = string.find([](UChar ch) {
-        static const char* terminatingCharacters = ":/?#";
-        static size_t length = strlen(terminatingCharacters);
-        for (size_t i = 0; i < length; ++i) {
-            if (terminatingCharacters[i] == ch)
-                return true;
-        }
-        return false;
+    auto hostNameTerminator = string.find([](UChar character) {
+        return character == ':' || character == '/' || character == '?' || character == '#';
     }, authorityStart);
-    unsigned hostNameEnd = hostNameTerminator == notFound ? stringLength : hostNameTerminator;
-    
+    unsigned hostNameEnd = hostNameTerminator == notFound ? string.length() : hostNameTerminator;
+
     // Find "@" for the start of the host name.
-    auto userInfoTerminator = string.substringSharingImpl(0, hostNameEnd).find('@', authorityStart);
+    auto userInfoTerminator = StringView { string }.left(hostNameEnd).find('@', authorityStart);
     unsigned hostNameStart = userInfoTerminator == notFound ? authorityStart : userInfoTerminator + 1;
-    
+
     collectRangesThatNeedMapping(string, hostNameStart, hostNameEnd - hostNameStart, array, decodeFunction);
 }
 

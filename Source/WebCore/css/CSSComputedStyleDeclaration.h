@@ -107,10 +107,7 @@ private:
 class CSSComputedStyleDeclaration final : public CSSStyleDeclaration {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(CSSComputedStyleDeclaration, WEBCORE_EXPORT);
 public:
-    static Ref<CSSComputedStyleDeclaration> create(Element& element, bool allowVisitedStyle = false, const String& pseudoElementName = String())
-    {
-        return adoptRef(*new CSSComputedStyleDeclaration(element, allowVisitedStyle, pseudoElementName));
-    }
+    WEBCORE_EXPORT static Ref<CSSComputedStyleDeclaration> create(Element&, bool allowVisitedStyle = false, StringView pseudoElementName = StringView { });
     virtual ~CSSComputedStyleDeclaration();
 
     WEBCORE_EXPORT void ref() final;
@@ -119,7 +116,7 @@ public:
     String getPropertyValue(CSSPropertyID) const;
 
 private:
-    WEBCORE_EXPORT CSSComputedStyleDeclaration(Element&, bool allowVisitedStyle, const String&);
+    CSSComputedStyleDeclaration(Element&, bool allowVisitedStyle, StringView);
 
     // CSSOM functions. Don't make these public.
     CSSRule* parentRule() const final;
@@ -144,7 +141,7 @@ private:
     mutable Ref<Element> m_element;
     PseudoId m_pseudoElementSpecifier;
     bool m_allowVisitedStyle;
-    unsigned m_refCount;
+    unsigned m_refCount { 1 };
 };
 
 } // namespace WebCore

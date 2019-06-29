@@ -185,7 +185,7 @@ static inline CSSSelector::PseudoElementType parsePseudoElementString(const UCha
 """ % longest_keyword)
 
 output_file.write("""
-CSSSelector::PseudoElementType parsePseudoElementString(const StringImpl& pseudoTypeString)
+CSSSelector::PseudoElementType parsePseudoElementString(StringView pseudoTypeString)
 {
     if (pseudoTypeString.is8Bit())
         return parsePseudoElementString(pseudoTypeString.characters8(), pseudoTypeString.length());

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-CSSParserSelector* CSSParserSelector::parsePagePseudoSelector(const AtomString& pseudoTypeString)
+std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePagePseudoSelector(StringView pseudoTypeString)
 {
     CSSSelector::PagePseudoClassType pseudoType;
     if (equalLettersIgnoringASCIICase(pseudoTypeString, "first"))
@@ -43,18 +43,16 @@ CSSParserSelector* CSSParserSelector::parsePagePseudoSelector(const AtomString& 
         pseudoType = CSSSelector::PagePseudoClassRight;
     else
         return nullptr;
-    
+
     auto selector = std::make_unique<CSSParserSelector>();
     selector->m_selector->setMatch(CSSSelector::PagePseudoClass);
     selector->m_selector->setPagePseudoType(pseudoType);
-    return selector.release();
+    return selector;
 }
 
-CSSParserSelector* CSSParserSelector::parsePseudoElementSelectorFromStringView(StringView& pseudoTypeString)
+std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoElementSelector(StringView pseudoTypeString)
 {
-    AtomString name = pseudoTypeString.toAtomString();
-    
-    CSSSelector::PseudoElementType pseudoType = CSSSelector::parsePseudoElementType(name);
+    auto pseudoType = CSSSelector::parsePseudoElementType(pseudoTypeString);
     if (pseudoType == CSSSelector::PseudoElementUnknown) {
         // FIXME-NEWPARSER: We can't add "slotted" to the map without breaking the old
         // parser, so this hack ensures the new parser still recognizes it. When the new
@@ -68,31 +66,35 @@ CSSParserSelector* CSSParserSelector::parsePseudoElementSelectorFromStringView(S
     auto selector = std::make_unique<CSSParserSelector>();
     selector->m_selector->setMatch(CSSSelector::PseudoElement);
     selector->m_selector->setPseudoElementType(pseudoType);
-    if (pseudoType == CSSSelector::PseudoElementWebKitCustomLegacyPrefixed) {
-        ASSERT_WITH_MESSAGE(name == "-webkit-input-placeholder", "-webkit-input-placeholder is the only LegacyPrefix pseudo type.");
-        if (name == "-webkit-input-placeholder")
+    AtomString name;
+    if (pseudoType != CSSSelector::PseudoElementWebKitCustomLegacyPrefixed)
+        name = pseudoTypeString.convertToASCIILowercase();
+    else {
+        ASSERT_WITH_MESSAGE(equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-input-placeholder"), "-webkit-input-placeholder is the only LegacyPrefix pseudo type.");
+        if (equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-input-placeholder"))
             name = AtomString("placeholder", AtomString::ConstructFromLiteral);
+        else
+            name = pseudoTypeString.convertToASCIILowercase();
     }
     selector->m_selector->setValue(name);
-    return selector.release();
+    return selector;
 }
 
-CSSParserSelector* CSSParserSelector::parsePseudoClassSelectorFromStringView(StringView& pseudoTypeString)
+std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoClassSelector(StringView pseudoTypeString)
 {
-    PseudoClassOrCompatibilityPseudoElement pseudoType = parsePseudoClassAndCompatibilityElementString(pseudoTypeString);
+    auto pseudoType = parsePseudoClassAndCompatibilityElementString(pseudoTypeString);
     if (pseudoType.pseudoClass != CSSSelector::PseudoClassUnknown) {
         auto selector = std::make_unique<CSSParserSelector>();
         selector->m_selector->setMatch(CSSSelector::PseudoClass);
         selector->m_selector->setPseudoClassType(pseudoType.pseudoClass);
-        return selector.release();
+        return selector;
     }
     if (pseudoType.compatibilityPseudoElement != CSSSelector::PseudoElementUnknown) {
         auto selector = std::make_unique<CSSParserSelector>();
         selector->m_selector->setMatch(CSSSelector::PseudoElement);
         selector->m_selector->setPseudoElementType(pseudoType.compatibilityPseudoElement);
-        AtomString name = pseudoTypeString.toAtomString();
-        selector->m_selector->setValue(name);
-        return selector.release();
+        selector->m_selector->setValue(pseudoTypeString.convertToASCIILowercase());
+        return selector;
     }
     return nullptr;
 }

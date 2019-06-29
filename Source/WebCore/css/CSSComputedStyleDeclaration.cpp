@@ -1658,17 +1658,24 @@ ComputedStyleExtractor::ComputedStyleExtractor(Element* element, bool allowVisit
 {
 }
 
-CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(Element& element, bool allowVisitedStyle, const String& pseudoElementName)
+CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(Element& element, bool allowVisitedStyle, StringView pseudoElementName)
     : m_element(element)
     , m_allowVisitedStyle(allowVisitedStyle)
-    , m_refCount(1)
 {
-    unsigned nameWithoutColonsStart = pseudoElementName[0] == ':' ? (pseudoElementName[1] == ':' ? 2 : 1) : 0;
-    m_pseudoElementSpecifier = CSSSelector::pseudoId(CSSSelector::parsePseudoElementType(
-    (pseudoElementName.substringSharingImpl(nameWithoutColonsStart))));
+    StringView name = pseudoElementName;
+    if (name.startsWith(':'))
+        name = name.substring(1);
+    if (name.startsWith(':'))
+        name = name.substring(1);
+    m_pseudoElementSpecifier = CSSSelector::pseudoId(CSSSelector::parsePseudoElementType(name));
 }
 
 CSSComputedStyleDeclaration::~CSSComputedStyleDeclaration() = default;
+
+Ref<CSSComputedStyleDeclaration> CSSComputedStyleDeclaration::create(Element& element, bool allowVisitedStyle, StringView pseudoElementName)
+{
+    return adoptRef(*new CSSComputedStyleDeclaration(element, allowVisitedStyle, pseudoElementName));
+}
 
 void CSSComputedStyleDeclaration::ref()
 {

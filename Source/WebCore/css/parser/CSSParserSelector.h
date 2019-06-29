@@ -21,15 +21,9 @@
 #pragma once
 
 #include "CSSSelector.h"
-#include "CSSValueKeywords.h"
-#include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-class CSSValue;
-class QualifiedName;
 
 enum class CSSParserSelectorCombinator {
     Child,
@@ -41,10 +35,10 @@ enum class CSSParserSelectorCombinator {
 class CSSParserSelector {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static CSSParserSelector* parsePseudoClassSelectorFromStringView(StringView&);
-    static CSSParserSelector* parsePseudoElementSelectorFromStringView(StringView&);
-    static CSSParserSelector* parsePagePseudoSelector(const AtomString&);
-    
+    static std::unique_ptr<CSSParserSelector> parsePseudoClassSelector(StringView);
+    static std::unique_ptr<CSSParserSelector> parsePseudoElementSelector(StringView);
+    static std::unique_ptr<CSSParserSelector> parsePagePseudoSelector(StringView);
+
     CSSParserSelector();
     explicit CSSParserSelector(const QualifiedName&);
     ~CSSParserSelector();
@@ -74,14 +68,7 @@ public:
     CSSSelector::PseudoClassType pseudoClassType() const { return m_selector->pseudoClassType(); }
     bool isCustomPseudoElement() const { return m_selector->isCustomPseudoElement(); }
 
-    bool isPseudoElementCueFunction() const
-    {
-#if ENABLE(VIDEO_TRACK)
-        return m_selector->match() == CSSSelector::PseudoElement && m_selector->pseudoElementType() == CSSSelector::PseudoElementCue;
-#else
-        return false;
-#endif
-    }
+    bool isPseudoElementCueFunction() const;
 
     bool hasShadowDescendant() const;
     bool matchesPseudoElement() const;
@@ -121,6 +108,15 @@ inline bool CSSParserSelector::needsImplicitShadowCombinatorForMatching() const
             || pseudoElementType() == CSSSelector::PseudoElementCue
 #endif
             || pseudoElementType() == CSSSelector::PseudoElementWebKitCustomLegacyPrefixed);
+}
+
+inline bool CSSParserSelector::isPseudoElementCueFunction() const
+{
+#if ENABLE(VIDEO_TRACK)
+    return m_selector->match() == CSSSelector::PseudoElement && m_selector->pseudoElementType() == CSSSelector::PseudoElementCue;
+#else
+    return false;
+#endif
 }
 
 }

@@ -308,19 +308,17 @@ PseudoId CSSSelector::pseudoId(PseudoElementType type)
     return PseudoId::None;
 }
 
-CSSSelector::PseudoElementType CSSSelector::parsePseudoElementType(const String& name)
+CSSSelector::PseudoElementType CSSSelector::parsePseudoElementType(StringView name)
 {
     if (name.isNull())
         return PseudoElementUnknown;
-
-    PseudoElementType type = parsePseudoElementString(*name.impl());
+    auto type = parsePseudoElementString(name);
     if (type == PseudoElementUnknown) {
         if (name.startsWith("-webkit-"))
             type = PseudoElementWebKitCustom;
     }
     return type;
 }
-
 
 bool CSSSelector::operator==(const CSSSelector& other) const
 {
