@@ -1,3 +1,16 @@
+2019-06-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement Layout::printLayoutTreeForLiveDocuments
+        https://bugs.webkit.org/show_bug.cgi?id=199343
+        <rdar://problem/52393047>
+
+        Reviewed by Antti Koivisto.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::printLayoutTreeForLiveDocuments):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
 2019-06-22  Darin Adler  <darin@apple.com>
 
         Streamline some string code, focusing on functions that were using substringSharingImpl
