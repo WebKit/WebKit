@@ -308,7 +308,6 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
             afterPseudoId = 5;
         }
 
-
         for (let [pseudoId, pseudoElementInfo] of this.nodeStyles.pseudoElements) {
             let pseudoElement = null;
             if (pseudoId === beforePseudoId)
@@ -349,8 +348,6 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         if (header)
             header.classList.remove(WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
     }
-
-    // Private
 
     _addNewRule(stylesheetId)
     {

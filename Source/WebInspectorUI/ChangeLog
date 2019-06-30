@@ -1,3 +1,12 @@
+2019-06-29  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Remove duplicate "Private" section and fix white space
+
+        Unreviewed code style fix.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.layout):
+
 2019-06-27  Beth Dakin  <bdakin@apple.com>
 
         Upstream use of MACCATALYST
