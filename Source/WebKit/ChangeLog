@@ -1,3 +1,23 @@
+2019-06-30  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        Pass WebProcess information to platformInitializeWebProcess().
+        https://bugs.webkit.org/show_bug.cgi?id=199345
+
+        Reviewed by Darin Adler.
+
+        Add const reference to WebProcessProxy for first argument of
+        WebProcessPool::platformInitializeWebProcess().
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/win/WebProcessPoolWin.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
 2019-06-28  Brent Fulgham  <bfulgham@apple.com>
 
         Revise WebContent sandbox based on seed feedback

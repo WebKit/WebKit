@@ -989,16 +989,8 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
     parameters.presentingApplicationPID = m_configuration->presentingApplicationPID();
 
-#if PLATFORM(COCOA)
-    parameters.mediaMIMETypes = process.mediaMIMETypes();
-#endif
-
-#if PLATFORM(WPE)
-    parameters.isServiceWorkerProcess = process.isServiceWorkerProcess();
-#endif
-
     // Add any platform specific parameters
-    platformInitializeWebProcess(parameters);
+    platformInitializeWebProcess(process, parameters);
 
     RefPtr<API::Object> injectedBundleInitializationUserData = m_injectedBundleClient->getInjectedBundleInitializationUserData(*this);
     if (!injectedBundleInitializationUserData)

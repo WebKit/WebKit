@@ -43,7 +43,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     notImplemented();
 }
 
-void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
+void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy&, WebProcessCreationParameters&)
 {
     notImplemented();
 }

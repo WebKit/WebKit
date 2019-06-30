@@ -252,7 +252,7 @@ public:
     void markIsNoLongerInPrewarmedPool();
 
 #if PLATFORM(COCOA)
-    Vector<String> mediaMIMETypes();
+    Vector<String> mediaMIMETypes() const;
     void cacheMediaMIMETypes(const Vector<String>&);
 #endif
 

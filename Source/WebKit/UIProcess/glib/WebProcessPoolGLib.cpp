@@ -100,9 +100,11 @@ void WebProcessPool::platformInitialize()
         installMemoryPressureHandler();
 }
 
-void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
+void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
 {
 #if PLATFORM(WPE)
+    parameters.isServiceWorkerProcess = process.isServiceWorkerProcess();
+
     if (!parameters.isServiceWorkerProcess) {
         parameters.hostClientFileDescriptor = wpe_renderer_host_create_client();
         parameters.implementationLibraryName = FileSystem::fileSystemRepresentation(wpe_loader_get_loaded_implementation_library_name());

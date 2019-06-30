@@ -170,7 +170,7 @@ void WebProcessProxy::cacheMediaMIMETypesInternal(const Vector<String>& types)
     send(Messages::WebProcess::SetMediaMIMETypes(types), 0);
 }
 
-Vector<String> WebProcessProxy::mediaMIMETypes()
+Vector<String> WebProcessProxy::mediaMIMETypes() const
 {
     return mediaTypeCache();
 }

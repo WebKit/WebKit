@@ -162,8 +162,10 @@ void WebProcessPool::platformResolvePathsForSandboxExtensions()
 #endif
 }
 
-void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
+void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
 {
+    parameters.mediaMIMETypes = process.mediaMIMETypes();
+
 #if PLATFORM(MAC)
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
