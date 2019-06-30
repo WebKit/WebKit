@@ -41,7 +41,7 @@
 body[dir=ltr] .resource-details > section > .details {
     border-left: 2px solid var(--border-color);
 }
-    
+
 body[dir=rtl] .resource-details > section > .details {
     border-right: 2px solid var(--border-color);
 }

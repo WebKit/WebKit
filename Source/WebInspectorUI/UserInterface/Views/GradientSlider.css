@@ -47,7 +47,7 @@
 
 .gradient-slider > .add-area {
     position: absolute;
-    
+
     top: 14px;
     left: 0;
     height: 20px;
@@ -87,7 +87,7 @@
 
 .gradient-slider-knob > :matches(img, div) {
     position: absolute;
-    
+
     left: 5px;
     top: 12px;
     width: 10px;

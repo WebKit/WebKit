@@ -354,7 +354,7 @@ body[dir=rtl] .data-grid td .go-to-arrow {
 
 .data-grid .resizer {
     z-index: var(--z-index-resizer);
-    
+
     --data-grid-resizer-translateX: -2.5px;
 }
 

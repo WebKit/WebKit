@@ -772,7 +772,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         let callFrames = initiatorPayload.stackTrace;
         if (!callFrames)
             return null;
-        
+
         return callFrames.map((payload) => WI.CallFrame.fromPayload(WI.assumingMainTarget(), payload));
     }
 

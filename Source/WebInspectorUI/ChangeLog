@@ -1,5 +1,36 @@
 2019-06-29  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Remove trailing white-space
+        https://bugs.webkit.org/show_bug.cgi?id=199346
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype._initiatorCallFramesFromPayload):
+        * UserInterface/Images/Import.svg:
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.navigation-bar > .item.canvas-recording-auto-capture > label > input):
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid .resizer):
+        * UserInterface/Views/DatabaseContentView.css:
+        (.storage-view):
+        * UserInterface/Views/GoToLineDialog.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/GradientSlider.css:
+        (.gradient-slider > .add-area):
+        (.gradient-slider-knob > :matches(img, div)):
+        * UserInterface/Views/ResourceDetailsSection.css:
+        * UserInterface/Views/ScrubberNavigationItem.css:
+        (.navigation-bar .item.scrubber > input[disabled]):
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.popover .expandable):
+        * UserInterface/Views/TimelineRecordBar.css:
+        (.timeline-record-bar.timeline-record-type-script.garbage-collected > .segment,):
+        * UserInterface/Workers/HeapSnapshot/HeapSnapshotWorker.js:
+        (HeapSnapshotWorker.prototype.createSnapshot):
+
+2019-06-29  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Remove duplicate "Private" section and fix white space
 
         Unreviewed code style fix.

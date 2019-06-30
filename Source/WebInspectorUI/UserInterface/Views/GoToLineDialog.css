@@ -107,7 +107,7 @@
     .go-to-line-dialog > div > input::placeholder {
         color: var(--text-color-secondary);
     }
-    
+
     .go-to-line-dialog > div::before {
         filter: invert();
     }

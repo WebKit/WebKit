@@ -63,7 +63,7 @@ HeapSnapshotWorker = class HeapSnapshotWorker
                         return;
                     this.sendEvent("HeapSnapshot.CollectionEvent", collectionData);
                 }, 0);
-            }            
+            }
         }
 
         return {objectId, snapshot: snapshot.serialize()};

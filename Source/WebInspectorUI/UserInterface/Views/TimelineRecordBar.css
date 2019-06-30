@@ -125,7 +125,7 @@ body[dir=rtl] :focus .selected .timeline-record-bar.has-inactive-segment > .segm
 .timeline-record-bar.timeline-record-type-script.garbage-collected > .segment,
 .timeline-record-bar.timeline-record-type-heap-allocations > .segment {
     background-color: hsl(23, 69%, 73%);
-    border-color: hsl(11, 54%, 62%);    
+    border-color: hsl(11, 54%, 62%);
 }
 
 .timeline-record-bar.timeline-record-type-media > .segment {
