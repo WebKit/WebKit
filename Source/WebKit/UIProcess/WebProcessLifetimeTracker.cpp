@@ -47,8 +47,6 @@ void WebProcessLifetimeTracker::addObserver(WebProcessLifetimeObserver& observer
 
     m_observers.add(&observer);
 
-    observer.webPageWasAdded(m_webPageProxy);
-
     if (processIsRunning(m_webPageProxy.process()))
         observer.addWebPage(m_webPageProxy, m_webPageProxy.process());
 }
@@ -74,11 +72,8 @@ void WebProcessLifetimeTracker::pageWasInvalidated()
     if (!processIsRunning(m_webPageProxy.process()))
         return;
 
-    for (auto& observer : m_observers) {
+    for (auto& observer : m_observers)
         observer->removeWebPage(m_webPageProxy, m_webPageProxy.process());
-
-        observer->webPageWasInvalidated(m_webPageProxy);
-    }
 }
 
 bool WebProcessLifetimeTracker::processIsRunning(WebProcessProxy& process)

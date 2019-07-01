@@ -53,12 +53,10 @@ public:
 private:
     friend class WebProcessLifetimeTracker;
 
-    virtual void webPageWasAdded(WebPageProxy&) { }
     virtual void webProcessWillOpenConnection(WebProcessProxy&, IPC::Connection&) { }
     virtual void webPageWillOpenConnection(WebPageProxy&, IPC::Connection&) { }
     virtual void webPageDidCloseConnection(WebPageProxy&, IPC::Connection&) { }
     virtual void webProcessDidCloseConnection(WebProcessProxy&, IPC::Connection&) { }
-    virtual void webPageWasInvalidated(WebPageProxy&) { }
 
     HashCountedSet<WebProcessProxy*> m_processes;
 };
