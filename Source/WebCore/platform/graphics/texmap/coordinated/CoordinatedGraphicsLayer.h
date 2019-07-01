@@ -29,6 +29,7 @@
 #include "GraphicsLayerTransform.h"
 #include "Image.h"
 #include "IntSize.h"
+#include "NicosiaAnimatedBackingStoreClient.h"
 #include "NicosiaBuffer.h"
 #include "NicosiaPlatformLayer.h"
 #include "TextureMapperAnimation.h"
@@ -124,6 +125,30 @@ public:
 
     const RefPtr<Nicosia::CompositionLayer>& compositionLayer() const;
 
+    class AnimatedBackingStoreHost : public ThreadSafeRefCounted<AnimatedBackingStoreHost> {
+    public:
+        static Ref<AnimatedBackingStoreHost> create(CoordinatedGraphicsLayer& layer)
+        {
+            return adoptRef(*new AnimatedBackingStoreHost(layer));
+        }
+
+        void requestBackingStoreUpdate()
+        {
+            if (m_layer)
+                m_layer->requestBackingStoreUpdate();
+        }
+
+        void layerWillBeDestroyed() { m_layer = nullptr; }
+    private:
+        explicit AnimatedBackingStoreHost(CoordinatedGraphicsLayer& layer)
+            : m_layer(&layer)
+        { }
+
+        CoordinatedGraphicsLayer* m_layer;
+    };
+
+    void requestBackingStoreUpdate();
+
 private:
     bool isCoordinatedGraphicsLayer() const;
 
@@ -199,7 +224,10 @@ private:
         RefPtr<Nicosia::BackingStore> backingStore;
         RefPtr<Nicosia::ContentLayer> contentLayer;
         RefPtr<Nicosia::ImageBacking> imageBacking;
+        RefPtr<Nicosia::AnimatedBackingStoreClient> animatedBackingStoreClient;
     } m_nicosia;
+
+    RefPtr<AnimatedBackingStoreHost> m_animatedBackingStoreHost;
 };
 
 } // namespace WebCore
