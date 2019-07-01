@@ -2308,6 +2308,7 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
 
     clear(document, true, true, cachedFrame.isMainFrame());
 
+    document->attachToCachedFrame(cachedFrame);
     document->setPageCacheState(Document::NotInPageCache);
 
     m_needsClear = true;
@@ -2674,6 +2675,13 @@ void FrameLoader::detachChildren()
     // this event is being fired in its subframes:
     // https://html.spec.whatwg.org/multipage/browsers.html#unload-a-document
     IgnoreOpensDuringUnloadCountIncrementer ignoreOpensDuringUnloadCountIncrementer(m_frame.document());
+
+    // detachChildren() will fire the unload event in each subframe and the
+    // HTML specification states that navigations should be prevented during the prompt to unload algorithm:
+    // https://html.spec.whatwg.org/multipage/browsing-the-web.html#navigate
+    std::unique_ptr<NavigationDisabler> navigationDisabler;
+    if (m_frame.isMainFrame())
+        navigationDisabler = std::make_unique<NavigationDisabler>(&m_frame);
 
     // Any subframe inserted by unload event handlers executed in the loop below will not get unloaded
     // because we create a copy of the subframes list before looping. Therefore, it would be unsafe to

@@ -1,0 +1,12 @@
+<script>
+
+if (parent.opener) {
+  onunload = () => {
+    a = parent.opener.cached_doc.body.appendChild(document.createElement('form'));
+    a.action = 'javascript:opener.postMessage(document.firstChild.outerHTML, "*")';
+    a.submit();
+  }
+
+  parent.opener.child_loaded = true;
+}
+</script>

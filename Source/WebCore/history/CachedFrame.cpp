@@ -217,8 +217,6 @@ void CachedFrame::open()
     if (!m_isMainFrame)
         m_view->frame().page()->incrementSubframeCount();
 
-    m_document->attachToCachedFrame(*this);
-
     m_view->frame().loader().open(*this);
 }
 

@@ -1,3 +1,39 @@
+2019-07-01  Chris Dumez  <cdumez@apple.com>
+
+        It should not be possible to trigger a load while in the middle of restoring a page in PageCache
+        https://bugs.webkit.org/show_bug.cgi?id=199190
+        <rdar://problem/52114552>
+
+        Reviewed by Brady Eidson.
+
+        Test: http/tests/security/navigate-when-restoring-cached-page.html
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::open):
+        Stop attaching the cached document before calling FrameLoader::open() given that the previous document
+        is still attached to the frame at this point. This avoids having 2 documents attached to the same frame
+        during a short period of time.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::open):
+        We now attach the cached document to the frame *after* calling FrameLoader::clear(), which means that
+        the previous document now has been detached from this frame.
+
+        (WebCore::FrameLoader::detachChildren):
+        As per the HTML specification [1], an attempt to navigate should fail if the prompt to unload algorithm
+        is being run for the active document of browsingContext. Note that the "prompt to unload" algorithm [2]
+        includes firing the 'unload' event in the current document and in all the documents in the subframes.
+        As a result, FrameLoader::detachChildren() is the right prevent such navigations. We were actually trying
+        to do this via the SubframeLoadingDisabler stack variable inside detachChildren(). The issue is that this
+        only prevents navigation in the subframes (i.e. <iframe> elements), not the main frame. As a result,
+        script would be able to navigate the top-frame even though detachChildren() is being called on the top
+        frame. To address the issue, I now create a NavigationDisabler variable in the scope of detachChildren()
+        when detachChildren() is called on the top frame. NavigationDisabler prevents all navigations within the
+        page, including navigations on the main/top frame.
+
+        [1] https://html.spec.whatwg.org/multipage/browsing-the-web.html#navigate
+        [2] https://html.spec.whatwg.org/multipage/browsing-the-web.html#prompt-to-unload-a-document
+
 2019-07-01  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r246844.
