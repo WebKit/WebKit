@@ -2758,22 +2758,16 @@ bool AccessibilityObject::supportsHasPopup() const
     return hasAttribute(aria_haspopupAttr) || isComboBox();
 }
 
-String AccessibilityObject::popupValue() const
+String AccessibilityObject::hasPopupValue() const
 {
-    static const NeverDestroyed<HashSet<String>> allowedPopupValues(std::initializer_list<String> {
-        "menu", "listbox", "tree", "grid", "dialog"
-    });
-
-    auto hasPopup = getAttribute(aria_haspopupAttr).convertToASCIILowercase();
-    if (hasPopup.isNull())
-        return "false";
-
-    if (allowedPopupValues->contains(hasPopup))
+    const AtomString& hasPopup = getAttribute(aria_haspopupAttr);
+    if (equalLettersIgnoringASCIICase(hasPopup, "true")
+        || equalLettersIgnoringASCIICase(hasPopup, "dialog")
+        || equalLettersIgnoringASCIICase(hasPopup, "grid")
+        || equalLettersIgnoringASCIICase(hasPopup, "listbox")
+        || equalLettersIgnoringASCIICase(hasPopup, "menu")
+        || equalLettersIgnoringASCIICase(hasPopup, "tree"))
         return hasPopup;
-
-    // aria-haspopup specification states that true must be treated as menu.
-    if (hasPopup == "true")
-        return "menu";
 
     // In ARIA 1.1, the implicit value for combobox became "listbox."
     if (isComboBox() && hasPopup.isEmpty())

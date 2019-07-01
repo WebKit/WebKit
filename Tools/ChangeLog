@@ -1,3 +1,15 @@
+2019-07-01  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r246958.
+
+        Broke inspector/dom/getAccessibilityPropertiesForNode.html
+
+        Reverted changeset:
+
+        "Enhance support of aria-haspopup per ARIA 1.1 specification."
+        https://bugs.webkit.org/show_bug.cgi?id=199216
+        https://trac.webkit.org/changeset/246958
+
 2019-07-01  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK a11y tests fix after r246958

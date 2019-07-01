@@ -503,14 +503,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return m_object->hasPopup();
 }
 
-- (NSString *)accessibilityPopupValue
-{
-    if (![self _prepareAccessibilityCall])
-        return nil;
-
-    return m_object->popupValue();
-}
-
 - (NSString *)accessibilityLanguage
 {
     if (![self _prepareAccessibilityCall])

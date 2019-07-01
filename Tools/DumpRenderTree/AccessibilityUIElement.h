@@ -164,7 +164,6 @@ public:
     bool isMultiLine() const;
     bool isIndeterminate() const;
     bool hasPopup() const;
-    JSRetainPtr<JSStringRef> popupValue() const;
     int hierarchicalLevel() const;
     double clickPointX();
     double clickPointY();

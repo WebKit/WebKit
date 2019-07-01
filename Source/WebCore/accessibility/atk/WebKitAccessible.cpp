@@ -467,7 +467,7 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
         attributeSet = addToAtkAttributeSet(attributeSet, "autocomplete", coreObject->autoCompleteValue().utf8().data());
 
     if (coreObject->supportsHasPopup())
-        attributeSet = addToAtkAttributeSet(attributeSet, "haspopup", coreObject->popupValue().utf8().data());
+        attributeSet = addToAtkAttributeSet(attributeSet, "haspopup", coreObject->hasPopupValue().utf8().data());
 
     if (coreObject->supportsCurrent())
         attributeSet = addToAtkAttributeSet(attributeSet, "current", coreObject->currentValue().utf8().data());

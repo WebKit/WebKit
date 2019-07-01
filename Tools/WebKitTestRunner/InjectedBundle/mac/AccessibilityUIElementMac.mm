@@ -1708,17 +1708,6 @@ bool AccessibilityUIElement::hasPopup() const
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
-{
-    BEGIN_AX_OBJC_EXCEPTIONS
-    id value = [m_element accessibilityAttributeValue:@"AXPopupValue"];
-    if ([value isKindOfClass:[NSString class]])
-        return [value createJSStringRef];
-    END_AX_OBJC_EXCEPTIONS
-
-    return [@"false" createJSStringRef];
-}
-
 void AccessibilityUIElement::takeFocus()
 {
     BEGIN_AX_OBJC_EXCEPTIONS

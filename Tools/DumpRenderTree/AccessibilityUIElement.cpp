@@ -1403,11 +1403,6 @@ static JSValueRef getHasPopupCallback(JSContextRef context, JSObjectRef thisObje
     return JSValueMakeBoolean(context, toAXElement(thisObject)->hasPopup());
 }
 
-static JSValueRef getPopupValueCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef*)
-{
-    return JSValueMakeString(context, toAXElement(thisObject)->popupValue().get());
-}
-
 static JSValueRef hierarchicalLevelCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
     return JSValueMakeNumber(context, toAXElement(thisObject)->hierarchicalLevel());
@@ -1868,7 +1863,6 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "isOffScreen", getIsOffScreenCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isCollapsed", getIsCollapsedCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "hasPopup", getHasPopupCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "popupValue", getPopupValueCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "valueDescription", getValueDescriptionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "hierarchicalLevel", hierarchicalLevelCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "documentEncoding", getDocumentEncodingCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

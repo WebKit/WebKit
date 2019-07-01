@@ -103,8 +103,6 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (NSArray *)accessibilitySpeechHint;
 - (BOOL)_accessibilityIsStrongPasswordField;
 - (NSString *)accessibilityTextualContext;
-- (BOOL)accessibilityHasPopup;
-- (NSString *)accessibilityPopupValue;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -1138,12 +1136,8 @@ bool AccessibilityUIElement::isMultiLine() const
 
 bool AccessibilityUIElement::hasPopup() const
 {
-    return [m_element accessibilityHasPopup];
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
-{
-    return [[m_element accessibilityPopupValue] createJSStringRef];
+    // FIXME: implement
+    return false;
 }
 
 void AccessibilityUIElement::takeFocus()

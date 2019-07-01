@@ -758,12 +758,6 @@ bool AccessibilityUIElement::hasPopup() const
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
-{
-    notImplemented();
-    return nullptr;
-}
-
 void AccessibilityUIElement::takeFocus()
 {
     notImplemented();

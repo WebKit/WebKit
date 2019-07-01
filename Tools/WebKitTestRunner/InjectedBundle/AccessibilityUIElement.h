@@ -170,7 +170,6 @@ public:
     bool isSingleLine() const;
     bool isMultiLine() const;
     bool hasPopup() const;
-    JSRetainPtr<JSStringRef> popupValue() const;
     int hierarchicalLevel() const;
     double clickPointX();
     double clickPointY();
