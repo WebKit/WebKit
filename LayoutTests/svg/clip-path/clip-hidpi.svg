@@ -15,10 +15,8 @@
     </html>
 </foreignObject>
 <script>
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.setBackingScaleFactor(2, () => { testRunner.notifyDone() });
-}
+  testRunner.setBackingScaleFactor(2, () -> { testRunner.notifyDone() });
+  testRunner.waitUntilDone();
 </script>
 </svg>
 

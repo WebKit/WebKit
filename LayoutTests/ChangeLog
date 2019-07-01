@@ -1,5 +1,18 @@
 2019-06-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        Unreviewed, rolling out r246959.
+
+        svg/clip-path/clip-hidpi.svg is flaky on mac-wk2-ews
+
+        Reverted changeset:
+
+        "LayoutTests svg/clip-path/clip-hidpi.svg isn't working as
+        expected due to a syntax error"
+        https://bugs.webkit.org/show_bug.cgi?id=199313
+        https://trac.webkit.org/changeset/246959
+
+2019-06-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         LayoutTests svg/clip-path/clip-hidpi.svg isn't working as expected due to a syntax error
         https://bugs.webkit.org/show_bug.cgi?id=199313
 
