@@ -1,5 +1,19 @@
 2019-07-01  Truitt Savell  <tsavell@apple.com>
 
+        Unreviewed, rolling out r246844.
+
+        Broke 12 tests in imported/w3c/web-platform-
+        tests/pointerevents/
+
+        Reverted changeset:
+
+        "[Pointer Events] Respect pointer capture when dispatching
+        mouse boundary events and updating :hover"
+        https://bugs.webkit.org/show_bug.cgi?id=198999
+        https://trac.webkit.org/changeset/246844
+
+2019-07-01  Truitt Savell  <tsavell@apple.com>
+
         Unreviewed, rolling out r246958.
 
         Broke inspector/dom/getAccessibilityPropertiesForNode.html

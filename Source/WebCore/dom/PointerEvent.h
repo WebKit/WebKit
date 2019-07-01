@@ -61,13 +61,13 @@ public:
         return adoptRef(*new PointerEvent(type, WTFMove(initializer)));
     }
 
-    static Ref<PointerEvent> createForPointerCapture(const AtomString& type, PointerID pointerId, bool isPrimary, String pointerType)
+    static Ref<PointerEvent> createForPointerCapture(const AtomString& type, const PointerEvent& pointerEvent)
     {
         Init initializer;
         initializer.bubbles = true;
-        initializer.pointerId = pointerId;
-        initializer.isPrimary = isPrimary;
-        initializer.pointerType = pointerType;
+        initializer.pointerId = pointerEvent.pointerId();
+        initializer.isPrimary = pointerEvent.isPrimary();
+        initializer.pointerType = pointerEvent.pointerType();
         return adoptRef(*new PointerEvent(type, WTFMove(initializer)));
     }
 

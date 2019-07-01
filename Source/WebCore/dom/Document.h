@@ -760,8 +760,7 @@ public:
     void hoveredElementDidDetach(Element&);
     void elementInActiveChainDidDetach(Element&);
 
-    enum class CaptureChange : uint8_t { Yes, No };
-    void updateHoverActiveState(const HitTestRequest&, Element*, CaptureChange = CaptureChange::No);
+    void updateHoverActiveState(const HitTestRequest&, Element*);
 
     // Updates for :target (CSS3 selector).
     void setCSSTarget(Element*);
