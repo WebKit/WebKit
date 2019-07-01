@@ -1308,6 +1308,9 @@ static IntRect selectionBoxForRange(WebCore::Range* range)
 
 void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithFocusedElement, CallbackID callbackID)
 {
+    if (static_cast<GestureRecognizerState>(gestureState) == GestureRecognizerState::Began)
+        setFocusedFrameBeforeSelectingTextAtLocation(point);
+
     auto& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
 
@@ -2027,8 +2030,18 @@ static inline bool rectIsTooBigForSelection(const IntRect& blockRect, const Fram
     return blockRect.height() > frame.view()->unobscuredContentRect().height() * factor;
 }
 
+void WebPage::setFocusedFrameBeforeSelectingTextAtLocation(const IntPoint& point)
+{
+    auto result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
+    auto* hitNode = result.innerNode();
+    if (hitNode && hitNode->renderer())
+        m_page->focusController().setFocusedFrame(result.innerNodeFrame());
+}
+
 void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, uint32_t granularity, bool isInteractingWithFocusedElement, CallbackID callbackID)
 {
+    setFocusedFrameBeforeSelectingTextAtLocation(point);
+
     auto& frame = m_page->focusController().focusedOrMainFrame();
     RefPtr<Range> range = rangeForGranularityAtPoint(frame, point, granularity, isInteractingWithFocusedElement);
     if (!isInteractingWithFocusedElement) {
