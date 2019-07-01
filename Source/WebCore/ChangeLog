@@ -1,3 +1,41 @@
+2019-05-30  Andres Gonzalez  <andresg_22@apple.com>
+
+        Inserting a newline in contenteditable causes two characters to be added instead of one
+        https://bugs.webkit.org/show_bug.cgi?id=197894
+        <rdar://problem/49700998>
+
+        Reviewed by Wenson Hsieh and Chris Fleizach.
+
+        There were two issues with inserting a newline character at the end of 
+        a line that caused problems for accessibility:
+        - the first '\n' inserted after text would result in two line breaks 
+        inserted instead of one. createFragmentFromText in markup.cpp was 
+        splitting the string "\n" into two empty strings and creating a <div> 
+        and a <br> respectively. Then the emission code would emit a '\n' for 
+        the empty div and another for the <br>.
+        - the second problem is a consequence of <rdar://problem/5192593> and 
+        the workaround is the change in editing.cpp in the function
+        visiblePositionForIndexUsingCharacterIterator, similar to what is done
+        in VisibleUnits.cpp for nextBoundary.
+        The rest of the changes in this patch are accessibility changes to 
+        execute the layout tests.
+
+        Tests: accessibility/ios-simulator/set-selected-text-range-after-newline.html
+               accessibility/set-selected-text-range-after-newline.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::setSelectedTextRange):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper stringForRange:]):
+        (-[WebAccessibilityObjectWrapper _accessibilitySelectedTextRange]):
+        (-[WebAccessibilityObjectWrapper accessibilityReplaceRange:withText:]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * editing/Editing.cpp:
+        (WebCore::visiblePositionForIndexUsingCharacterIterator):
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromText):
+
 2019-06-24  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer][MSE] Pausing video sometimes causes skip to finish

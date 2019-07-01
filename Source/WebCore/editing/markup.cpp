@@ -1114,12 +1114,16 @@ Ref<DocumentFragment> createFragmentFromText(Range& context, const String& text)
     string.replace("\r\n", "\n");
     string.replace('\r', '\n');
 
+    auto createHTMLBRElement = [&document]() {
+        auto element = HTMLBRElement::create(document);
+        element->setAttributeWithoutSynchronization(classAttr, AppleInterchangeNewline);
+        return element;
+    };
+
     if (contextPreservesNewline(context)) {
         fragment->appendChild(document.createTextNode(string));
         if (string.endsWith('\n')) {
-            auto element = HTMLBRElement::create(document);
-            element->setAttributeWithoutSynchronization(classAttr, AppleInterchangeNewline);
-            fragment->appendChild(element);
+            fragment->appendChild(createHTMLBRElement());
         }
         return fragment;
     }
@@ -1127,6 +1131,12 @@ Ref<DocumentFragment> createFragmentFromText(Range& context, const String& text)
     // A string with no newlines gets added inline, rather than being put into a paragraph.
     if (string.find('\n') == notFound) {
         fillContainerFromString(fragment, string);
+        return fragment;
+    }
+
+    if (string.length() == 1 && string[0] == '\n') {
+        // This is a single newline char, thus just create one HTMLBRElement.
+        fragment->appendChild(createHTMLBRElement());
         return fragment;
     }
 
@@ -1148,8 +1158,7 @@ Ref<DocumentFragment> createFragmentFromText(Range& context, const String& text)
         RefPtr<Element> element;
         if (s.isEmpty() && i + 1 == numLines) {
             // For last line, use the "magic BR" rather than a P.
-            element = HTMLBRElement::create(document);
-            element->setAttributeWithoutSynchronization(classAttr, AppleInterchangeNewline);
+            element = createHTMLBRElement();
         } else if (useLineBreak) {
             element = HTMLBRElement::create(document);
             fillContainerFromString(fragment, s);
