@@ -1738,10 +1738,6 @@ void GraphicsContext::setURLForRect(const URL& link, const FloatRect& destRect)
         return; // FIXME for display lists.
     }
 
-    RetainPtr<CFURLRef> urlRef = link.createCFURL();
-    if (!urlRef)
-        return;
-
     notImplemented();
 }
 

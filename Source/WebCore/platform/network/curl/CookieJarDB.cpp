@@ -27,6 +27,7 @@
 
 #include "CookieUtil.h"
 #include "Logging.h"
+#include "PublicSuffix.h"
 #include "RegistrableDomain.h"
 #include "SQLiteFileSystem.h"
 #include <wtf/FileSystem.h>
@@ -337,8 +338,10 @@ bool CookieJarDB::hasCookies(const URL& url)
     if (host.isEmpty())
         return false;
 
+#if ENABLE(PUBLIC_SUFFIX_LIST)
     if (isPublicSuffix(host))
         return false;
+#endif
 
     RegistrableDomain registrableDomain { url };
     auto& statement = preparedStatement(CHECK_EXISTS_COOKIE_SQL);
@@ -455,8 +458,10 @@ bool CookieJarDB::hasHttpOnlyCookie(const String& name, const String& domain, co
 
 bool CookieJarDB::canAcceptCookie(const Cookie& cookie, const URL& firstParty, const URL& url, CookieJarDB::Source source)
 {
+#if ENABLE(PUBLIC_SUFFIX_LIST)
     if (isPublicSuffix(cookie.domain))
         return false;
+#endif
 
     bool fromJavaScript = source == CookieJarDB::Source::Script;
     if (fromJavaScript && (cookie.httpOnly || hasHttpOnlyCookie(cookie.name, cookie.domain, cookie.path)))

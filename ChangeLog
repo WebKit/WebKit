@@ -1,3 +1,17 @@
+2019-06-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Build WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=199199
+
+        Reviewed by Don Olmstead.
+
+        Establish a set of build options for the FTW port, based on the current WinCairo
+        feature set. I also note which features should be turned on, but aren't yet, as
+        well as which features are disabled due to lack of WebGL and Media support in
+        the current build.
+
+        * Source/cmake/OptionsFTW.cmake:
+
 2019-06-28  Konstantin Tokarev  <annulen@yandex.ru>
 
         Remove traces of ENABLE_ICONDATABASE remaining after its removal in 219733

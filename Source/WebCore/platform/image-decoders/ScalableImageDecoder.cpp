@@ -27,6 +27,7 @@
 #include "GIFImageDecoder.h"
 #include "ICOImageDecoder.h"
 #include "JPEGImageDecoder.h"
+#include "NotImplemented.h"
 #include "PNGImageDecoder.h"
 #include "SharedBuffer.h"
 #if USE(OPENJPEG)
@@ -305,5 +306,12 @@ int ScalableImageDecoder::scaledY(int origY, int searchStart)
 {
     return getScaledValue<Exact>(m_scaledRows, origY, searchStart);
 }
+
+#if USE(DIRECT2D)
+void ScalableImageDecoder::setTargetContext(ID2D1RenderTarget*)
+{
+    notImplemented();
+}
+#endif
 
 }

@@ -30,7 +30,6 @@
 
 #include "AffineTransform.h"
 #include "GraphicsContext.h"
-#include <CoreGraphics/CoreGraphics.h>
 #include <d2d1.h>
 #include <wtf/MainThread.h>
 

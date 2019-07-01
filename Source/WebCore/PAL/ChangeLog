@@ -1,3 +1,12 @@
+2019-06-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Build WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=199199
+
+        Reviewed by Don Olmstead.
+
+        * pal/PlatformFTW.cmake: Added.
+
 2019-06-28  Konstantin Tokarev  <annulen@yandex.ru>
 
         Remove traces of ENABLE_ICONDATABASE remaining after its removal in 219733

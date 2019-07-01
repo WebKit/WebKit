@@ -217,6 +217,10 @@ protected:
 private:
     virtual void tryDecodeSize(bool) = 0;
 
+#if USE(DIRECT2D)
+    void setTargetContext(ID2D1RenderTarget*) override;
+#endif
+
     IntSize m_size;
     EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::TypeAvailable };
     bool m_decodingSizeFromSetData { false };

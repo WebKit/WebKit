@@ -38,7 +38,6 @@
 #include <comutil.h>
 #include <dwrite.h>
 #include <mlang.h>
-#include <pal/spi/win/CoreTextSPIWin.h>
 #include <unicode/uchar.h>
 #include <unicode/unorm.h>
 #include <winsock2.h>
