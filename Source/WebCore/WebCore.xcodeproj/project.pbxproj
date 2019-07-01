@@ -857,12 +857,12 @@
 		2E4346510F546A8200B0F1BA /* WorkerObjectProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E43463F0F546A8200B0F1BA /* WorkerObjectProxy.h */; };
 		2E4346530F546A8200B0F1BA /* WorkerRunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346410F546A8200B0F1BA /* WorkerRunLoop.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E4346550F546A8200B0F1BA /* WorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346430F546A8200B0F1BA /* WorkerThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2E75841E12779ADA0062628B /* FileReaderLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E75841B12779ADA0062628B /* FileReaderLoader.h */; };
+		2E75841E12779ADA0062628B /* FileReaderLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E75841B12779ADA0062628B /* FileReaderLoader.h */; settings = {ATTRIBUTES = (Private, ); };};
 		2E75841F12779ADA0062628B /* FileReaderLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E75841C12779ADA0062628B /* FileReaderLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E94F43C119207DA00B7F75D /* JSFileReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E94F43A119207DA00B7F75D /* JSFileReader.h */; };
 		2E9B5D8F1B66A94E008C6A24 /* WheelEventDeltaFilterMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E9B5D8E1B66A94E008C6A24 /* WheelEventDeltaFilterMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2EA768040FE7126400AB9C8A /* WorkerScriptLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EA768030FE7126400AB9C8A /* WorkerScriptLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2EB4BCD3121F03E300EC4885 /* BlobResourceHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EB4BCD1121F03E300EC4885 /* BlobResourceHandle.h */; };
+		2EB4BCD3121F03E300EC4885 /* BlobResourceHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EB4BCD1121F03E300EC4885 /* BlobResourceHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2EB767571DA19BDF003E23B5 /* InputEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EB767541DA19B67003E23B5 /* InputEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2EBBC3D81B65988300F5253D /* WheelEventDeltaFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EBBC3D71B65988300F5253D /* WheelEventDeltaFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2ECDBAD121D8903400F00ECD /* UndoManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2ECDBACE21D8903400F00ECD /* UndoManager.h */; };
@@ -2804,7 +2804,7 @@
 		976D6C7C122B8A3D001FD1F7 /* BlobBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C5D122B8A3D001FD1F7 /* BlobBuilder.h */; };
 		976D6C7F122B8A3D001FD1F7 /* BlobURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C60122B8A3D001FD1F7 /* BlobURL.h */; };
 		976D6C81122B8A3D001FD1F7 /* File.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C62122B8A3D001FD1F7 /* File.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		976D6C83122B8A3D001FD1F7 /* FileError.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C64122B8A3D001FD1F7 /* FileError.h */; };
+		976D6C83122B8A3D001FD1F7 /* FileError.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C64122B8A3D001FD1F7 /* FileError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		976D6C86122B8A3D001FD1F7 /* FileList.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C67122B8A3D001FD1F7 /* FileList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		976D6C89122B8A3D001FD1F7 /* FileReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C6A122B8A3D001FD1F7 /* FileReader.h */; };
 		976D6C95122B8A3D001FD1F7 /* ThreadableBlobRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C76122B8A3D001FD1F7 /* ThreadableBlobRegistry.h */; };

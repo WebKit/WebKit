@@ -41,6 +41,8 @@ class DataReference;
 
 namespace WebKit {
 
+class PendingMessage;
+
 class WebSocketChannel : public IPC::MessageSender, public IPC::MessageReceiver, public WebCore::ThreadableWebSocketChannel, public RefCounted<WebSocketChannel>, public Identified<WebSocketChannel> {
 public:
     static Ref<WebSocketChannel> create(WebCore::Document&, WebCore::WebSocketChannelClient&);
@@ -83,6 +85,9 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
+    bool increaseBufferedAmount(size_t);
+    void decreaseBufferedAmount(size_t);
+    template<typename T> void sendMessage(T&&, size_t byteLength);
     void enqueueTask(Function<void()>&&);
 
     WeakPtr<WebCore::Document> m_document;
@@ -92,6 +97,7 @@ private:
     bool m_isClosing { false };
     bool m_isSuspended { false };
     Deque<Function<void()>> m_pendingTasks;
+    Deque<std::unique_ptr<PendingMessage>> m_pendingMessages;
 };
 
 } // namespace WebKit

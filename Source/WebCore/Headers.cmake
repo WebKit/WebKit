@@ -515,7 +515,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     fileapi/BlobLineEndings.h
     fileapi/BlobPropertyBag.h
     fileapi/File.h
+    fileapi/FileError.h
     fileapi/FileList.h
+    fileapi/FileReaderLoader.h
     fileapi/FileReaderLoaderClient.h
 
     history/BackForwardClient.h
@@ -1168,6 +1170,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/BlobPart.h
     platform/network/BlobRegistry.h
     platform/network/BlobRegistryImpl.h
+    platform/network/BlobResourceHandle.h
     platform/network/CacheValidation.h
     platform/network/CertificateInfoBase.h
     platform/network/CookieRequestHeaderFieldProxy.h

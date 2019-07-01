@@ -1,3 +1,12 @@
+2019-07-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebSockets: add support for sending blob messages when using web sockets platform APIs
+        https://bugs.webkit.org/show_bug.cgi?id=199189
+
+        Reviewed by Youenn Fablet.
+
+        * Headers.cmake: Add missing headers.
+
 2019-07-01  Miguel Gomez  <magomez@igalia.com>
 
         [WPE][GTK] Content disappearing when using CSS transforms
