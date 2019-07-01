@@ -44,6 +44,8 @@ class ScrollingStateTree;
 class ScrollingStateNode;
 class ScrollingTreeFrameScrollingNode;
 class ScrollingTreeNode;
+class ScrollingTreeOverflowScrollProxyNode;
+class ScrollingTreePositionedNode;
 class ScrollingTreeScrollingNode;
 
 class ScrollingTree : public ThreadSafeRefCounted<ScrollingTree> {
@@ -154,7 +156,8 @@ public:
     using RelatedNodesMap = HashMap<ScrollingNodeID, Vector<ScrollingNodeID>>;
     RelatedNodesMap& overflowRelatedNodes() { return m_overflowRelatedNodesMap; }
 
-    HashSet<ScrollingNodeID>& nodesWithRelatedOverflow() { return m_nodesWithRelatedOverflow; }
+    HashSet<Ref<ScrollingTreeOverflowScrollProxyNode>>& activeOverflowScrollProxyNodes() { return m_activeOverflowScrollProxyNodes; }
+    HashSet<Ref<ScrollingTreePositionedNode>>& activePositionedNodes() { return m_activePositionedNodes; }
 
     WEBCORE_EXPORT String scrollingTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal);
 
@@ -179,7 +182,9 @@ private:
     ScrollingTreeNodeMap m_nodeMap;
 
     RelatedNodesMap m_overflowRelatedNodesMap;
-    HashSet<ScrollingNodeID> m_nodesWithRelatedOverflow;
+
+    HashSet<Ref<ScrollingTreeOverflowScrollProxyNode>> m_activeOverflowScrollProxyNodes;
+    HashSet<Ref<ScrollingTreePositionedNode>> m_activePositionedNodes;
 
     struct TreeState {
         ScrollingNodeID latchedNodeID { 0 };

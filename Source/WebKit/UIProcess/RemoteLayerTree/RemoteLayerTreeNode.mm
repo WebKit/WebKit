@@ -92,12 +92,6 @@ void RemoteLayerTreeNode::setEventRegion(const WebCore::EventRegion& eventRegion
     m_eventRegion = eventRegion;
 }
 
-void RemoteLayerTreeNode::setRelatedScrollContainerBehaviorAndIDs(WebCore::ScrollPositioningBehavior behavior, Vector<WebCore::GraphicsLayer::PlatformLayerID>&& scrollContainerIDs)
-{
-    m_relatedScrollContainerPositioningBehavior = behavior;
-    m_relatedScrollContainerIDs = WTFMove(scrollContainerIDs);
-}
-
 void RemoteLayerTreeNode::initializeLayer()
 {
     [layer() setValue:[NSValue valueWithPointer:this] forKey:WKRemoteLayerTreeNodePropertyKey];

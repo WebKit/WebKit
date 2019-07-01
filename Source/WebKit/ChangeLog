@@ -1,3 +1,30 @@
+2019-06-30  Antti Koivisto  <antti@apple.com>
+
+        Use separate variables for moving and stationary scrolling relationships in RemoteLayerTreeNode
+        https://bugs.webkit.org/show_bug.cgi?id=199348
+
+        Reviewed by Darin Adler.
+
+        A layer can have only one acting scroll parent. Not using a vector for that case makes the code clearer.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeNode.h:
+        (WebKit::RemoteLayerTreeNode::actingScrollContainerID const):
+        (WebKit::RemoteLayerTreeNode::stationaryScrollContainerIDs const):
+
+        Separate fields for the acting container and stationary containers.
+
+        (WebKit::RemoteLayerTreeNode::setActingScrollContainerID):
+        (WebKit::RemoteLayerTreeNode::setStationaryScrollContainerIDs):
+        (WebKit::RemoteLayerTreeNode::relatedScrollContainerIDs const): Deleted.
+        (WebKit::RemoteLayerTreeNode::relatedScrollContainerPositioningBehavior const): Deleted.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeNode.mm:
+        (WebKit::RemoteLayerTreeNode::setRelatedScrollContainerBehaviorAndIDs): Deleted.
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (WebKit::isScrolledBy):
+        (WebKit::findActingScrollParent):
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations):
+
 2019-06-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Multiline mode of tooltip control does word-wrapping very slowly

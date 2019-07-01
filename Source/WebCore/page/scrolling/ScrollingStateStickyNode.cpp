@@ -31,6 +31,7 @@
 #include "GraphicsLayer.h"
 #include "Logging.h"
 #include "ScrollingStateTree.h"
+#include "ScrollingTree.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

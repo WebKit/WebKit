@@ -59,10 +59,13 @@ public:
     const WebCore::EventRegion& eventRegion() const { return m_eventRegion; }
     void setEventRegion(const WebCore::EventRegion&);
 
-    // If empty the layer is scrolled normally by an ancestor scroller.
-    const auto& relatedScrollContainerIDs() const { return m_relatedScrollContainerIDs; }
-    WebCore::ScrollPositioningBehavior relatedScrollContainerPositioningBehavior() const { return m_relatedScrollContainerPositioningBehavior; }
-    void setRelatedScrollContainerBehaviorAndIDs(WebCore::ScrollPositioningBehavior, Vector<WebCore::GraphicsLayer::PlatformLayerID>&&);
+    // Non-ancestor scroller that controls positioning of the layer.
+    WebCore::GraphicsLayer::PlatformLayerID actingScrollContainerID() const { return m_actingScrollContainerID; }
+    // Ancestor scrollers that don't affect positioning of the layer.
+    const Vector<WebCore::GraphicsLayer::PlatformLayerID>& stationaryScrollContainerIDs() const { return m_stationaryScrollContainerIDs; }
+
+    void setActingScrollContainerID(WebCore::GraphicsLayer::PlatformLayerID value) { m_actingScrollContainerID = value; }
+    void setStationaryScrollContainerIDs(Vector<WebCore::GraphicsLayer::PlatformLayerID>&& value) { m_stationaryScrollContainerIDs = WTFMove(value); }
 
     void detachFromParent();
 
@@ -83,8 +86,8 @@ private:
 
     WebCore::EventRegion m_eventRegion;
 
-    Vector<WebCore::GraphicsLayer::PlatformLayerID> m_relatedScrollContainerIDs;
-    WebCore::ScrollPositioningBehavior m_relatedScrollContainerPositioningBehavior { WebCore::ScrollPositioningBehavior::None };
+    WebCore::GraphicsLayer::PlatformLayerID m_actingScrollContainerID { 0 };
+    Vector<WebCore::GraphicsLayer::PlatformLayerID> m_stationaryScrollContainerIDs;
 };
 
 }

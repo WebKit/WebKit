@@ -1,3 +1,27 @@
+2019-06-30  Antti Koivisto  <antti@apple.com>
+
+        Use separate variables for moving and stationary scrolling relationships in RemoteLayerTreeNode
+        https://bugs.webkit.org/show_bug.cgi?id=199348
+
+        Reviewed by Darin Adler.
+
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitTreeState):
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::activeOverflowScrollProxyNodes):
+        (WebCore::ScrollingTree::activePositionedNodes):
+        (WebCore::ScrollingTree::nodesWithRelatedOverflow): Deleted.
+
+        Use separate sets for overflow proxies and positioned nodes.
+        Use Refs to nodes instead of ids to simplify client code. This doesn't affect lifetimes, these sets are cleared
+        at the beginning of each commit.
+
+        * page/scrolling/cocoa/ScrollingTreeOverflowScrollProxyNode.mm:
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren):
+        * page/scrolling/cocoa/ScrollingTreePositionedNode.mm:
+        (WebCore::ScrollingTreePositionedNode::commitStateBeforeChildren):
+
 2019-06-30  Andres Gonzalez  <andresg_22@apple.com>
 
         Enhance support of aria-haspopup per ARIA 1.1 specification.

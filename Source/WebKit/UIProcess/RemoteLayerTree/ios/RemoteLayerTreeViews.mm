@@ -79,15 +79,11 @@ static bool isScrolledBy(WKChildScrollView* scrollView, UIView *hitView)
             return true;
 
         auto* node = RemoteLayerTreeNode::forCALayer(view.layer);
-        if (node && scrollLayerID && node->relatedScrollContainerIDs().contains(scrollLayerID)) {
-            switch (node->relatedScrollContainerPositioningBehavior()) {
-            case WebCore::ScrollPositioningBehavior::Moves:
+        if (node && scrollLayerID) {
+            if (node->actingScrollContainerID() == scrollLayerID)
                 return true;
-            case WebCore::ScrollPositioningBehavior::Stationary:
+            if (node->stationaryScrollContainerIDs().contains(scrollLayerID))
                 return false;
-            case WebCore::ScrollPositioningBehavior::None:
-                ASSERT_NOT_REACHED();
-            }
         }
     }
 
@@ -133,21 +129,13 @@ UIScrollView *findActingScrollParent(UIScrollView *scrollView, const RemoteLayer
             // FIXME: Ideally we would return the scroller we want in all cases but the current UIKit SPI only allows returning a non-ancestor.
             return nil;
         }
-
         if (auto* node = RemoteLayerTreeNode::forCALayer(view.layer)) {
-            switch (node->relatedScrollContainerPositioningBehavior()) {
-            case WebCore::ScrollPositioningBehavior::Moves:
-                if (!node->relatedScrollContainerIDs().isEmpty()) {
-                    if (auto* nonAncestorScrollingNode = host.nodeForID(node->relatedScrollContainerIDs()[0]))
-                        return (WKChildScrollView *)nonAncestorScrollingNode->uiView();
-                }
-                break;
-            case WebCore::ScrollPositioningBehavior::Stationary:
-                scrollersToSkip.add(node->relatedScrollContainerIDs().begin(), node->relatedScrollContainerIDs().end());
-                break;
-            case WebCore::ScrollPositioningBehavior::None:
-                break;
+            if (auto* actingParent = host.nodeForID(node->actingScrollContainerID())) {
+                if ([actingParent->uiView() isKindOfClass:[UIScrollView class]])
+                    return (UIScrollView *)actingParent->uiView();
             }
+
+            scrollersToSkip.add(node->stationaryScrollContainerIDs().begin(), node->stationaryScrollContainerIDs().end());
         }
     }
     return nil;

@@ -64,7 +64,7 @@ void ScrollingTreePositionedNode::commitStateBeforeChildren(const ScrollingState
         m_constraints = positionedStateNode.layoutConstraints();
 
     if (!m_relatedOverflowScrollingNodes.isEmpty())
-        scrollingTree().nodesWithRelatedOverflow().add(scrollingNodeID());
+        scrollingTree().activePositionedNodes().add(*this);
 }
 
 FloatSize ScrollingTreePositionedNode::scrollDeltaSinceLastCommit() const
