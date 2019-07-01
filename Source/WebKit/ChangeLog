@@ -1,3 +1,15 @@
+2019-07-01  Chris Dumez  <cdumez@apple.com>
+
+        StorageManager::SessionStorageNamespace::allowedConnections() should not copy the HashSet
+        https://bugs.webkit.org/show_bug.cgi?id=199379
+
+        Reviewed by Alex Christensen.
+
+        This was pretty inefficient.
+
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::SessionStorageNamespace::allowedConnections const):
+
 2019-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] REGRESSION (r246757): Unable to select non-editable text in subframes

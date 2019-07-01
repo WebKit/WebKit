@@ -399,7 +399,7 @@ public:
 
     bool isEmpty() const { return m_storageAreaMap.isEmpty(); }
 
-    HashSet<IPC::Connection::UniqueID> allowedConnections() const { return m_allowedConnections; }
+    const HashSet<IPC::Connection::UniqueID>& allowedConnections() const { return m_allowedConnections; }
     void addAllowedConnection(IPC::Connection::UniqueID);
     void removeAllowedConnection(IPC::Connection::UniqueID);
 
