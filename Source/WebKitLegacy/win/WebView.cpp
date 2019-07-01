@@ -3216,6 +3216,20 @@ void WebView::initializeToolTipWindow()
     ::SetWindowPos(m_toolTipHwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
 
+static Vector<wchar_t> truncatedString(const String& string)
+{
+    // Truncate tooltip texts because multiline mode of tooltip control does word-wrapping very slowly
+    auto maxLength = 1024;
+    auto buffer = string.wideCharacters();
+    if (buffer.size() > maxLength) {
+        buffer[maxLength - 4] = L'.';
+        buffer[maxLength - 3] = L'.';
+        buffer[maxLength - 2] = L'.';
+        buffer[maxLength - 1] = L'\0';
+    }
+    return buffer;
+}
+
 void WebView::setToolTip(const String& toolTip)
 {
     if (!m_toolTipHwnd)
@@ -3231,8 +3245,8 @@ void WebView::setToolTip(const String& toolTip)
         info.cbSize = sizeof(info);
         info.uFlags = TTF_IDISHWND;
         info.uId = reinterpret_cast<UINT_PTR>(m_viewWindow);
-        Vector<wchar_t> toolTipCharacters = m_toolTip.wideCharacters(); // Retain buffer long enough to make the SendMessage call
-        info.lpszText = const_cast<wchar_t*>(toolTipCharacters.data());
+        auto toolTipCharacters = truncatedString(m_toolTip); // Retain buffer long enough to make the SendMessage call
+        info.lpszText = toolTipCharacters.data();
         ::SendMessage(m_toolTipHwnd, TTM_UPDATETIPTEXT, 0, reinterpret_cast<LPARAM>(&info));
     }
 
