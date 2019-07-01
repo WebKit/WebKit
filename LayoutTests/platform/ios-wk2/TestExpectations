@@ -1347,3 +1347,6 @@ webkit.org/b/199196 [ Release ] imported/mozilla/svg/text/selectSubString-2.svg 
 webkit.org/b/199213 [ Release ] imported/blink/editing/selection/deleteFromDocument-crash.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/199370 [ Release ] imported/mozilla/svg/text/selectSubString.svg [ Pass ImageOnlyFailure ]
+
+webkit.org/b/199387 imported/blink/fast/multicol/span/overflow-on-viewport.html [ Pass ImageOnlyFailure ]
+

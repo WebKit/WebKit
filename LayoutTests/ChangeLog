@@ -1,3 +1,12 @@
+2019-07-01  Russell Epstein  <russell_e@apple.com>
+
+        Layout Test imported/blink/fast/multicol/span/overflow-on-viewport.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=199387
+
+        Unreviewed Test Gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2019-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS 13] editing/selection/ios/dispatch-mouse-events-when-modifying-selection-quirk.html fails on trunk
