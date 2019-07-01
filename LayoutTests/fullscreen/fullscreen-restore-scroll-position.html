@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>fullscreen-restore-scroll-position</title>
+        <script src="../media/video-test.js"></script>
+        <script src="../media/media-file.js"></script>
+        <style>
+            html, body, #spacer {
+                height: 100%;
+            }
+            video {
+                width: 600px;
+                height: 400px;
+            }
+        </style>
+        <script>
+
+        let originalScroll = 0;
+
+        waitFor(window, 'load').then(async event => { 
+
+            if (Element.prototype.webkitRequestFullScreen == undefined) {
+                logResult(false, "Element.prototype.webkitRequestFullScreen == undefined");
+                endTest();
+                returh;
+            }
+
+            video = document.getElementsByTagName('video')[0];
+            video.src = findMediaFile('video', '../media/content/test');
+            waitFor(video, 'canplaythrough', true);
+
+            originalScroll = document.body.clientHeight;
+            document.scrollingElement.scrollTop = originalScroll;
+            originalScroll = document.scrollingElement.scrollTop;
+
+            document.onwebkitfullscreenchange = async (event) => {
+
+                if (document.webkitIsFullScreen) {
+                    await sleepFor(100);
+                    document.webkitCancelFullScreen();
+                    return;
+                }
+
+                await testExpectedEventually("(document.scrollingElement.scrollTop === originalScroll)", true);
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            };
+
+            runWithKeyDown(() => document.getElementById('parent').webkitRequestFullScreen());
+        });
+
+        </script>
+    </head>
+    <body>
+    <p>This tests that page scroll is restored after fullscreen. Press any key to start the test.</p>
+    <div id="spacer"></div>
+    <div id="parent">
+        <video id="video" controls><video>
+    </div>
+    </body>
+</html>

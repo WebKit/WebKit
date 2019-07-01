@@ -1,3 +1,14 @@
+2019-07-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Exiting from fullscreen scrolls to top of page
+        https://bugs.webkit.org/show_bug.cgi?id=199338
+        <rdar://problem/51273017>
+
+        Reviewed by Jer Noble.
+
+        * fullscreen/fullscreen-restore-scroll-position-expected.txt: Added.
+        * fullscreen/fullscreen-restore-scroll-position.html: Added.
+
 2019-07-01  Russell Epstein  <russell_e@apple.com>
 
         Layout Test imported/mozilla/svg/text/selectSubString.svg is flaky.

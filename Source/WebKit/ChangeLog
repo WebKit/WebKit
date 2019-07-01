@@ -1,3 +1,17 @@
+2019-07-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Exiting from fullscreen scrolls to top of page
+        https://bugs.webkit.org/show_bug.cgi?id=199338
+        <rdar://problem/51273017>
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController _completedExitFullScreen]): Restore scroll position.
+        Hide window after restoring scroll position.
+        (-[WKFullScreenWindowController _exitFullscreenImmediately]): Drive-by fix: remove code
+        already also done in _completedExitFullScreen.
+
 2019-07-01  Zalan Bujtas  <zalan@apple.com>
 
         Tapping on the bottom part of youtube video behaves as if controls were visible

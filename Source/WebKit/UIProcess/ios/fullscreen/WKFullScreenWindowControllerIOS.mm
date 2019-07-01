@@ -735,13 +735,14 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
 
     [CATransaction commit];
 
-    [_window setHidden:YES];
-    _window = nil;
-
     if (auto* manager = self._manager) {
+        manager->restoreScrollPosition();
         manager->setAnimatingFullScreen(false);
         manager->didExitFullScreen();
     }
+
+    [_window setHidden:YES];
+    _window = nil;
 
     if (_repaintCallback) {
         _repaintCallback->invalidate(WebKit::CallbackBase::Error::OwnerWasInvalidated);
@@ -873,10 +874,6 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
     WebKit::replaceViewWithView(_webViewPlaceholder.get(), webView.get());
     if (auto* page = [webView _page])
         page->setSuppressVisibilityUpdates(false);
-    if (manager) {
-        manager->didExitFullScreen();
-        manager->setAnimatingFullScreen(false);
-    }
     _webViewPlaceholder = nil;
 }
 
