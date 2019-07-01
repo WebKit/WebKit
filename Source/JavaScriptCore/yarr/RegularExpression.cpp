@@ -74,7 +74,7 @@ private:
 
         m_numSubpatterns = pattern.m_numSubpatterns;
 
-        return JSC::Yarr::byteCompile(pattern, &m_regexAllocator);
+        return JSC::Yarr::byteCompile(pattern, &m_regexAllocator, m_constructionErrorCode);
     }
 
     BumpPointerAllocator m_regexAllocator;

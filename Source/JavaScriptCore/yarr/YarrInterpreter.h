@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ConcurrentJSLock.h"
+#include "YarrErrorCode.h"
 #include "YarrPattern.h"
 
 namespace WTF {
@@ -388,7 +389,7 @@ private:
     Vector<std::unique_ptr<CharacterClass>> m_userCharacterClasses;
 };
 
-JS_EXPORT_PRIVATE std::unique_ptr<BytecodePattern> byteCompile(YarrPattern&, BumpPointerAllocator*, ConcurrentJSLock* = nullptr);
+JS_EXPORT_PRIVATE std::unique_ptr<BytecodePattern> byteCompile(YarrPattern&, BumpPointerAllocator*, ErrorCode&, ConcurrentJSLock* = nullptr);
 JS_EXPORT_PRIVATE unsigned interpret(BytecodePattern*, const String& input, unsigned start, unsigned* output);
 unsigned interpret(BytecodePattern*, const LChar* input, unsigned length, unsigned start, unsigned* output);
 unsigned interpret(BytecodePattern*, const UChar* input, unsigned length, unsigned start, unsigned* output);

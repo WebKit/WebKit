@@ -262,9 +262,9 @@ RegExp* RegExp::create(VM& vm, const String& patternString, RegExpFlags flags)
 }
 
 
-static std::unique_ptr<Yarr::BytecodePattern> byteCodeCompilePattern(VM* vm, Yarr::YarrPattern& pattern)
+static std::unique_ptr<Yarr::BytecodePattern> byteCodeCompilePattern(VM* vm, Yarr::YarrPattern& pattern, Yarr::ErrorCode& errorCode)
 {
-    return Yarr::byteCompile(pattern, &vm->m_regExpAllocator, &vm->m_regExpAllocatorLock);
+    return Yarr::byteCompile(pattern, &vm->m_regExpAllocator, errorCode, &vm->m_regExpAllocatorLock);
 }
 
 void RegExp::byteCodeCompileIfNecessary(VM* vm)
@@ -282,7 +282,11 @@ void RegExp::byteCodeCompileIfNecessary(VM* vm)
     }
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
 
-    m_regExpBytecode = byteCodeCompilePattern(vm, pattern);
+    m_regExpBytecode = byteCodeCompilePattern(vm, pattern, m_constructionErrorCode);
+    if (!m_regExpBytecode) {
+        m_state = ParseError;
+        return;
+    }
 }
 
 void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
@@ -322,7 +326,11 @@ void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
         dataLog("Can't JIT this regular expression: \"", m_patternString, "\"\n");
 
     m_state = ByteCode;
-    m_regExpBytecode = byteCodeCompilePattern(vm, pattern);
+    m_regExpBytecode = byteCodeCompilePattern(vm, pattern, m_constructionErrorCode);
+    if (!m_regExpBytecode) {
+        m_state = ParseError;
+        return;
+    }
 }
 
 int RegExp::match(VM& vm, const String& s, unsigned startOffset, Vector<int>& ovector)
@@ -379,7 +387,11 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
         dataLog("Can't JIT this regular expression: \"", m_patternString, "\"\n");
 
     m_state = ByteCode;
-    m_regExpBytecode = byteCodeCompilePattern(vm, pattern);
+    m_regExpBytecode = byteCodeCompilePattern(vm, pattern, m_constructionErrorCode);
+    if (!m_regExpBytecode) {
+        m_state = ParseError;
+        return;
+    }
 }
 
 MatchResult RegExp::match(VM& vm, const String& s, unsigned startOffset)

@@ -170,8 +170,9 @@ static String findMagicComment(const String& content, const String& patternStrin
     YarrPattern pattern(patternString, JSC::RegExpFlags::FlagMultiline, error);
     ASSERT(!hasError(error));
     BumpPointerAllocator regexAllocator;
-    auto bytecodePattern = byteCompile(pattern, &regexAllocator);
-    ASSERT(bytecodePattern);
+    JSC::Yarr::ErrorCode ignoredErrorCode = JSC::Yarr::ErrorCode::NoError;
+    auto bytecodePattern = byteCompile(pattern, &regexAllocator, ignoredErrorCode);
+    RELEASE_ASSERT(bytecodePattern);
 
     ASSERT(pattern.m_numSubpatterns == 1);
     std::array<unsigned, 4> matches;
