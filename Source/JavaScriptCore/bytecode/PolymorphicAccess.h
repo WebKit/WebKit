@@ -241,13 +241,7 @@ struct AccessGenerationState {
     const RegisterSet& liveRegistersForCall();
 
     CallSiteIndex callSiteIndexForExceptionHandlingOrOriginal();
-    CallSiteIndex callSiteIndexForExceptionHandling()
-    {
-        RELEASE_ASSERT(m_calculatedRegistersForCallAndExceptionHandling);
-        RELEASE_ASSERT(m_needsToRestoreRegistersIfException);
-        RELEASE_ASSERT(m_calculatedCallSiteIndex);
-        return m_callSiteIndex;
-    }
+    DisposableCallSiteIndex callSiteIndexForExceptionHandling();
 
     const HandlerInfo& originalExceptionHandler();
 
@@ -271,7 +265,7 @@ private:
     
     RegisterSet m_liveRegistersToPreserveAtExceptionHandlingCallSite;
     RegisterSet m_liveRegistersForCall;
-    CallSiteIndex m_callSiteIndex { CallSiteIndex(std::numeric_limits<unsigned>::max()) };
+    CallSiteIndex m_callSiteIndex;
     SpillState m_spillStateForJSGetterSetter;
     bool m_calculatedRegistersForCallAndExceptionHandling : 1;
     bool m_needsToRestoreRegistersIfException : 1;
