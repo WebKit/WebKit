@@ -97,6 +97,7 @@ if (USE_COORDINATED_GRAPHICS)
         page/scrolling/nicosia/ScrollingTreeFixedNode.h
         page/scrolling/nicosia/ScrollingTreeStickyNode.h
 
+        platform/graphics/nicosia/NicosiaAnimatedBackingStoreClient.h
         platform/graphics/nicosia/NicosiaBuffer.h
         platform/graphics/nicosia/NicosiaPaintingEngine.h
         platform/graphics/nicosia/NicosiaPlatformLayer.h

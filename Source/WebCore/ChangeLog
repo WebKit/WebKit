@@ -1,3 +1,38 @@
+2019-07-01  Miguel Gomez  <magomez@igalia.com>
+
+        [WPE][GTK] Content disappearing when using CSS transforms
+        https://bugs.webkit.org/show_bug.cgi?id=181757
+
+        Reviewed by Žan Doberšek.
+
+        During each layer flush, create an AnimatedBackingStoreClient instance for each layer that
+        has a backingStore and is to be animated, and send that client to the appropriate
+        TextureMapperLayer on the compositor thread. During each frame rendering, the client will
+        use the future layer position (currently 50ms in the future) to check whether new tiles are
+        required to keep the animation ongoing, and notify the appropriate CoordinatedGraphicsLayer so
+        it can perform a layer flush and provide new tiles.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/nicosia/NicosiaAnimatedBackingStoreClient.h: Added.
+        * platform/graphics/nicosia/NicosiaPlatformLayer.h:
+        (Nicosia::CompositionLayer::flushState):
+        * platform/graphics/texmap/TextureMapperAnimation.cpp:
+        (WebCore::TextureMapperAnimation::applyKeepingInternalState):
+        (WebCore::TextureMapperAnimations::applyKeepingInternalState):
+        * platform/graphics/texmap/TextureMapperAnimation.h:
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::computeTransformsRecursive):
+        (WebCore::TextureMapperLayer::setAnimatedBackingStoreClient):
+        (WebCore::TextureMapperLayer::syncAnimations):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer):
+        (WebCore::clampToContentsRectIfRectIsInfinite):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        (WebCore::CoordinatedGraphicsLayer::requestBackingStoreUpdate):
+        (WebCore::CoordinatedGraphicsLayer::updateContentBuffers):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+
 2019-06-30  Antti Koivisto  <antti@apple.com>
 
         Use separate variables for moving and stationary scrolling relationships in RemoteLayerTreeNode

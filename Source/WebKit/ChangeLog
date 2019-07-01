@@ -1,3 +1,15 @@
+2019-07-01  Miguel Gomez  <magomez@igalia.com>
+
+        [WPE][GTK] Content disappearing when using CSS transforms
+        https://bugs.webkit.org/show_bug.cgi?id=181757
+
+        Reviewed by Žan Doberšek.
+
+        Set the appropriate AnimatedBackingStoreClient to the TextureMapperLayers when required.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::updateSceneState):
+
 2019-06-30  Antti Koivisto  <antti@apple.com>
 
         Use separate variables for moving and stationary scrolling relationships in RemoteLayerTreeNode
