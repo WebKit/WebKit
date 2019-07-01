@@ -1,5 +1,22 @@
 2019-07-01  Alex Christensen  <achristensen@webkit.org>
 
+        Add new decidePolicyForNavigationAction SPI with preferences and userInfo
+        https://bugs.webkit.org/show_bug.cgi?id=199371
+        <rdar://problem/52352905>
+
+        Reviewed by Tim Horton.
+
+        Also deprecate some older SPI so we may someday clean up this mess.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        (WebKit::NavigationState::NavigationClient::shouldBypassContentModeSafeguards const):
+
+2019-07-01  Alex Christensen  <achristensen@webkit.org>
+
         Deprecate but still call _webView:showCustomSheetForElement: after transition to UIContextMenuInteraction
         https://bugs.webkit.org/show_bug.cgi?id=199296
         <rdar://problem/51041960>

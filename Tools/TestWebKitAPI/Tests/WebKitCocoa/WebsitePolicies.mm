@@ -250,7 +250,9 @@ TEST(WebKit, WebsitePoliciesContentBlockersEnabled)
 
 @implementation WebsitePoliciesNavigationDelegate
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+IGNORE_WARNINGS_END
 {
     if (_decidePolicyForNavigationActionWithWebsitePolicies)
         _decidePolicyForNavigationActionWithWebsitePolicies(navigationAction, userInfo, decisionHandler);
@@ -1127,7 +1129,9 @@ static unsigned loadCount;
 
 @implementation CustomUserAgentDelegate
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+IGNORE_WARNINGS_END
 {
     _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
     if (navigationAction.targetFrame.mainFrame)

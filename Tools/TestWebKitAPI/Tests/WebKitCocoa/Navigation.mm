@@ -354,6 +354,42 @@ TEST(WKNavigation, WebViewDidCancelClientRedirect)
     ASSERT_TRUE(didCancelRedirect);
 }
 
+@interface NavigationActionSPIDelegate : NSObject <WKNavigationDelegate> {
+@public
+    BOOL _spiCalled;
+}
+- (BOOL)spiCalled;
+@end
+
+@implementation NavigationActionSPIDelegate
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    isDone = true;
+}
+
+-(void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler {
+    _spiCalled = TRUE;
+    decisionHandler(WKNavigationActionPolicyAllow, preferences);
+}
+
+- (BOOL)spiCalled
+{
+    return _spiCalled;
+}
+
+@end
+
+TEST(WKNavigation, NavigationActionSPI)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    auto delegate = adoptNS([[NavigationActionSPIDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,1"]]];
+    TestWebKitAPI::Util::run(&isDone);
+    EXPECT_TRUE([delegate spiCalled]);
+}
+
 #if PLATFORM(MAC)
 
 static bool navigationComplete;
