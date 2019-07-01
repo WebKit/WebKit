@@ -3,7 +3,7 @@
  *                     1999 Lars Knoll <knoll@kde.org>
  *                     1999 Antti Koivisto <koivisto@kde.org>
  *                     2000 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2009 Google Inc. All rights reserved.
@@ -3512,6 +3512,7 @@ void FrameView::autoSizeIfEnabled()
         setHorizontalScrollbarLock(false);
         setScrollbarModes(horizonalScrollbarMode, verticalScrollbarMode, true, true);
     }
+    Ref<FrameView> protectedThis(*this);
     // All the resizing above may have invalidated style (for example if viewport units are being used).
     document->updateStyleIfNeeded();
     // FIXME: Use the final layout's result as the content size (webkit.org/b/173561).
@@ -4889,8 +4890,11 @@ void FrameView::resetTrackedRepaints()
 
 String FrameView::trackedRepaintRectsAsText() const
 {
-    if (frame().document())
-        frame().document()->updateLayout();
+    Frame& frame = this->frame();
+    Ref<Frame> protector(frame);
+
+    if (auto* document = frame.document())
+        document->updateLayout();
 
     TextStream ts;
     if (!m_trackedRepaintRects.isEmpty()) {

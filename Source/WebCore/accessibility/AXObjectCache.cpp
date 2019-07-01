@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -593,6 +593,8 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     
     if (!inCanvasSubtree && !isHidden && !insideMeterElement)
         return nullptr;
+
+    auto protectedNode = makeRef(*node);
 
     // Fallback content is only focusable as long as the canvas is displayed and visible.
     // Update the style before Element::isFocusable() gets called.

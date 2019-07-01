@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  *
@@ -223,6 +223,7 @@ bool HTMLTextAreaElement::appendFormData(DOMFormData& formData, bool)
     if (name().isEmpty())
         return false;
 
+    Ref<HTMLTextAreaElement> protectedThis(*this);
     document().updateLayout();
 
     formData.append(name(), m_wrap == HardWrap ? valueWithHardLineBreaks() : value());

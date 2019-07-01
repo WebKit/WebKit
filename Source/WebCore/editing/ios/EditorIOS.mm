@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -279,8 +279,13 @@ void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& d
 
     element.appendChild(createFragmentFromText(*context, dictationPhrasesBuilder.toString()));
 
+    auto weakElement = makeWeakPtr(element);
+
     // We need a layout in order to add markers below.
     document().updateLayout();
+
+    if (!weakElement)
+        return;
 
     if (!element.firstChild()->isTextNode()) {
         // Shouldn't happen.

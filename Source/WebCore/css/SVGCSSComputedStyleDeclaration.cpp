@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2007 Eric Seidel <eric@webkit.org>
     Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
+    Copyright (C) 2019 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -81,14 +82,10 @@ Ref<CSSValue> ComputedStyleExtractor::adjustSVGPaintForCurrentColor(SVGPaintType
     return CSSPrimitiveValue::create(color);
 }
 
-RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID propertyID, EUpdateLayout updateLayout)
+RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID propertyID)
 {
     if (!m_element)
         return nullptr;
-
-    // Make sure our layout is up to date before we allow a query on these attributes.
-    if (updateLayout)
-        m_element->document().updateLayout();
 
     auto* style = m_element->computedStyle();
     if (!style)

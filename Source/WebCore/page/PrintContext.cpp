@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
- * Copyright (C) 2007, 2016 Apple Inc.
+ * Copyright (C) 2007-2019 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -316,6 +316,8 @@ String PrintContext::pageProperty(Frame* frame, const char* propertyName, int pa
     ASSERT(frame);
     ASSERT(frame->document());
 
+    Ref<Frame> protectedFrame(*frame);
+
     auto& document = *frame->document();
     PrintContext printContext(frame);
     printContext.begin(800); // Any width is OK here.
@@ -371,6 +373,8 @@ bool PrintContext::beginAndComputePageRectsWithPageSize(Frame& frame, const Floa
 
 int PrintContext::numberOfPages(Frame& frame, const FloatSize& pageSizeInPixels)
 {
+    Ref<Frame> protectedFrame(frame);
+
     PrintContext printContext(&frame);
     if (!printContext.beginAndComputePageRectsWithPageSize(frame, pageSizeInPixels))
         return -1;
@@ -380,6 +384,8 @@ int PrintContext::numberOfPages(Frame& frame, const FloatSize& pageSizeInPixels)
 
 void PrintContext::spoolAllPagesWithBoundaries(Frame& frame, GraphicsContext& graphicsContext, const FloatSize& pageSizeInPixels)
 {
+    Ref<Frame> protectedFrame(frame);
+
     PrintContext printContext(&frame);
     if (!printContext.beginAndComputePageRectsWithPageSize(frame, pageSizeInPixels))
         return;

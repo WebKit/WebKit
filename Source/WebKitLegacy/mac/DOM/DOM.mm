@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2006 James G. Speth (speth@end.com)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  *
@@ -617,6 +617,8 @@ id <DOMEventTarget> kit(EventTarget* target)
     auto* frame = range.ownerDocument().frame();
     if (!frame)
         return nil;
+
+    Ref<Frame> protectedFrame(*frame);
 
     // iOS uses CGImageRef for drag images, which doesn't support separate logical/physical sizes.
 #if PLATFORM(MAC)
