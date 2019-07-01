@@ -8186,17 +8186,18 @@ void SpeculativeJIT::compileArraySlice(Node* node)
         }
     }
 
-
     GPRTemporary temp3(this);
     GPRReg tempValue = temp3.gpr();
+
     {
+        // We need to keep the source array alive at least until after we're done
+        // with anything that can GC (e.g. allocating the result array below).
         SpeculateCellOperand cell(this, m_jit.graph().varArgChild(node, 0));
+
         m_jit.load8(MacroAssembler::Address(cell.gpr(), JSCell::indexingTypeAndMiscOffset()), tempValue);
         // We can ignore the writability of the cell since we won't write to the source.
         m_jit.and32(TrustedImm32(AllWritableArrayTypesAndHistory), tempValue);
-    }
 
-    {
         JSValueRegsTemporary emptyValue(this);
         JSValueRegs emptyValueRegs = emptyValue.regs();
 

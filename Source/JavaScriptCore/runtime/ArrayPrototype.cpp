@@ -1004,6 +1004,10 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
         RETURN_IF_EXCEPTION(scope, { });
     }
 
+    // Document that we need to keep the source array alive until after anything
+    // that can GC (e.g. allocating the result array).
+    thisObj->use();
+
     unsigned n = 0;
     for (unsigned k = begin; k < end; k++, n++) {
         JSValue v = getProperty(exec, thisObj, k);
