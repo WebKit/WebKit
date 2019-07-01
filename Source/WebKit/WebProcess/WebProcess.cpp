@@ -1471,6 +1471,16 @@ void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shou
     SetForScope<bool> suspensionScope(m_isSuspending, true);
     m_processIsSuspended = true;
 
+#if PLATFORM(COCOA)
+    if (m_processType == ProcessType::PrewarmedWebContent) {
+        if (shouldAcknowledgeWhenReadyToSuspend == ShouldAcknowledgeWhenReadyToSuspend::Yes) {
+            RELEASE_LOG(ProcessSuspension, "%p - WebProcess::actualPrepareToSuspend() Sending ProcessReadyToSuspend IPC message", this);
+            parentProcessConnection()->send(Messages::WebProcessProxy::ProcessReadyToSuspend(), 0);
+        }
+        return;
+    }
+#endif
+
 #if ENABLE(VIDEO)
     suspendAllMediaBuffering();
     if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
@@ -1526,6 +1536,11 @@ void WebProcess::cancelPrepareToSuspend()
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::cancelPrepareToSuspend()", this);
 
     m_processIsSuspended = false;
+
+#if PLATFORM(COCOA)
+    if (m_processType == ProcessType::PrewarmedWebContent)
+        return;
+#endif
 
     unfreezeAllLayerTrees();
 
@@ -1602,6 +1617,11 @@ void WebProcess::processDidResume()
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processDidResume()", this);
 
     m_processIsSuspended = false;
+
+#if PLATFORM(COCOA)
+    if (m_processType == ProcessType::PrewarmedWebContent)
+        return;
+#endif
 
     cancelMarkAllLayersVolatile();
     unfreezeAllLayerTrees();
