@@ -1,3 +1,14 @@
+2019-06-13  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] HLS stream slow start
+        https://bugs.webkit.org/show_bug.cgi?id=198377
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcCreate): Cut down the adapter condition to 200 ms to
+        improve start-up times for HLS playback.
+
 2019-05-28  Yacine Bandou  <yacine.bandou@softathome.com>
 
         [MSE][GStreamer] update the readyState correctly in MediaPlayerPrivateGStreamerMSE
