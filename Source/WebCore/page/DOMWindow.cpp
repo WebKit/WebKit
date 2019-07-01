@@ -1237,14 +1237,17 @@ int DOMWindow::outerWidth() const
 
 int DOMWindow::innerHeight() const
 {
-    auto* frame = this->frame();
-    if (!frame)
+    if (!frame())
         return 0;
-
+    
     // Force enough layout in the parent document to ensure that the FrameView has been resized.
     if (auto* frameElement = this->frameElement())
         frameElement->document().updateLayoutIfDimensionsOutOfDate(*frameElement, HeightDimensionsCheck);
 
+    auto* frame = this->frame();
+    if (!frame)
+        return 0;
+    
     FrameView* view = frame->view();
     if (!view)
         return 0;
@@ -1254,13 +1257,16 @@ int DOMWindow::innerHeight() const
 
 int DOMWindow::innerWidth() const
 {
-    auto* frame = this->frame();
-    if (!frame)
+    if (!frame())
         return 0;
 
     // Force enough layout in the parent document to ensure that the FrameView has been resized.
     if (auto* frameElement = this->frameElement())
         frameElement->document().updateLayoutIfDimensionsOutOfDate(*frameElement, WidthDimensionsCheck);
+
+    auto* frame = this->frame();
+    if (!frame)
+        return 0;
 
     FrameView* view = frame->view();
     if (!view)
@@ -1311,7 +1317,16 @@ int DOMWindow::scrollX() const
 
     frame->document()->updateLayoutIgnorePendingStylesheets();
 
-    return view->mapFromLayoutToCSSUnits(view->contentsScrollPosition().x());
+    // Layout may have affected the current frame:
+    auto* frameAfterLayout = this->frame();
+    if (!frameAfterLayout)
+        return 0;
+    
+    FrameView* viewAfterLayout = frameAfterLayout->view();
+    if (!viewAfterLayout)
+        return 0;
+
+    return viewAfterLayout->mapFromLayoutToCSSUnits(viewAfterLayout->contentsScrollPosition().x());
 }
 
 int DOMWindow::scrollY() const
@@ -1330,7 +1345,16 @@ int DOMWindow::scrollY() const
 
     frame->document()->updateLayoutIgnorePendingStylesheets();
 
-    return view->mapFromLayoutToCSSUnits(view->contentsScrollPosition().y());
+    // Layout may have affected the current frame:
+    auto* frameAfterLayout = this->frame();
+    if (!frameAfterLayout)
+        return 0;
+    
+    FrameView* viewAfterLayout = frameAfterLayout->view();
+    if (!viewAfterLayout)
+        return 0;
+    
+    return viewAfterLayout->mapFromLayoutToCSSUnits(viewAfterLayout->contentsScrollPosition().y());
 }
 
 bool DOMWindow::closed() const
