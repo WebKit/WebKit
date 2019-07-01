@@ -758,7 +758,7 @@ MediaTime MediaPlayerPrivateGStreamerMSE::currentMediaTime() const
 {
     MediaTime position = MediaPlayerPrivateGStreamer::currentMediaTime();
 
-    if (m_eosPending && (paused() || (position >= durationMediaTime()))) {
+    if (m_eosPending && position >= durationMediaTime()) {
         if (m_networkState != MediaPlayer::Loaded) {
             m_networkState = MediaPlayer::Loaded;
             m_player->networkStateChanged();
