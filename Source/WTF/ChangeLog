@@ -1,3 +1,13 @@
+2019-07-01  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Cannot play Bert's Bytes radio stream from http://radio.dos.nl/
+        https://bugs.webkit.org/show_bug.cgi?id=198376
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * wtf/glib/GLibUtilities.h:
+        (enumToString): Utility function to get a string representation of of a GLib enum.
+
 2019-06-22  Darin Adler  <darin@apple.com>
 
         Streamline some string code, focusing on functions that were using substringSharingImpl

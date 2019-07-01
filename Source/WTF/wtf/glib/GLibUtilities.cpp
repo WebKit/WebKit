@@ -77,3 +77,18 @@ CString getCurrentExecutableName()
 
     return g_get_prgname();
 }
+
+CString enumToString(GType type, guint value)
+{
+#if GLIB_CHECK_VERSION(2, 54, 0)
+    GUniquePtr<char> result(g_enum_to_string(type, value));
+    return result.get();
+#else
+    GEnumClass* enumClass = reinterpret_cast<GEnumClass*>(g_type_class_ref(type));
+    GEnumValue* enumValue = g_enum_get_value(enumClass, value);
+    char* representation = enumValue ? g_strdup(enumValue->value_nick) : nullptr;
+    g_type_class_unref(enumClass);
+    GUniquePtr<char> result(representation);
+    return result.get();
+#endif
+}

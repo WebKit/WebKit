@@ -48,7 +48,7 @@
 #include <wtf/StringPrintStream.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
-#include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -349,7 +349,7 @@ void MediaPlayerPrivateGStreamer::commitLoad()
     // start providing anything useful.
     changePipelineState(GST_STATE_PAUSED);
 
-    setDownloadBuffering();
+    updateDownloadBufferingFlag();
     updateStates();
 }
 
@@ -458,7 +458,7 @@ void MediaPlayerPrivateGStreamer::play()
         m_isEndReached = false;
         m_delayingLoad = false;
         m_preload = MediaPlayer::Auto;
-        setDownloadBuffering();
+        updateDownloadBufferingFlag();
         GST_INFO_OBJECT(pipeline(), "Play");
     } else
         loadingFailed(MediaPlayer::Empty);
@@ -1349,6 +1349,14 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                     break;
                 }
             }
+
+            bool isRangeRequest = false;
+            GUniqueOutPtr<GstStructure> requestHeaders;
+            if (gst_structure_get(structure, "request-headers", GST_TYPE_STRUCTURE, &requestHeaders.outPtr(), nullptr))
+                isRangeRequest = gst_structure_has_field(requestHeaders.get(), "Range");
+
+            GST_DEBUG_OBJECT(pipeline(), "Is range request: %s", boolForPrinting(isRangeRequest));
+
             GUniqueOutPtr<GstStructure> responseHeaders;
             if (gst_structure_get(structure, "response-headers", GST_TYPE_STRUCTURE, &responseHeaders.outPtr(), nullptr)) {
                 const char* contentLengthHeaderName = httpHeaderNameString(HTTPHeaderName::ContentLength).utf8().data();
@@ -1363,10 +1371,10 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                             contentLength = 0;
                     }
                 }
-                GST_INFO_OBJECT(pipeline(), "%s stream detected", !contentLength ? "Live" : "Non-live");
-                if (!contentLength) {
-                    m_isStreaming = true;
-                    setDownloadBuffering();
+                if (!isRangeRequest) {
+                    m_isStreaming = !contentLength;
+                    GST_INFO_OBJECT(pipeline(), "%s stream detected", m_isStreaming ? "Live" : "Non-live");
+                    updateDownloadBufferingFlag();
                 }
             }
         } else if (gst_structure_has_name(structure, "webkit-network-statistics")) {
@@ -1450,13 +1458,57 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
 
 void MediaPlayerPrivateGStreamer::processBufferingStats(GstMessage* message)
 {
-    m_buffering = true;
-    gst_message_parse_buffering(message, &m_bufferingPercentage);
+    GstBufferingMode mode;
+    gst_message_parse_buffering_stats(message, &mode, nullptr, nullptr, nullptr);
 
-    GST_DEBUG_OBJECT(pipeline(), "[Buffering] Buffering: %d%%.", m_bufferingPercentage);
+    int percentage;
+    gst_message_parse_buffering(message, &percentage);
 
-    if (m_bufferingPercentage == 100)
+    updateBufferingStatus(mode, percentage);
+}
+
+void MediaPlayerPrivateGStreamer::updateMaxTimeLoaded(double percentage)
+{
+    MediaTime mediaDuration = durationMediaTime();
+    if (!mediaDuration)
+        return;
+
+    m_maxTimeLoaded = MediaTime(percentage * static_cast<double>(toGstUnsigned64Time(mediaDuration)) / 100, GST_SECOND);
+    GST_DEBUG_OBJECT(pipeline(), "[Buffering] Updated maxTimeLoaded: %s", toString(m_maxTimeLoaded).utf8().data());
+}
+
+void MediaPlayerPrivateGStreamer::updateBufferingStatus(GstBufferingMode mode, double percentage)
+{
+    GST_DEBUG_OBJECT(pipeline(), "[Buffering] mode: %s, status: %f%%", enumToString(GST_TYPE_BUFFERING_MODE, mode).data(), percentage);
+
+    m_downloadFinished = percentage == 100;
+    m_buffering = !m_downloadFinished;
+
+    switch (mode) {
+    case GST_BUFFERING_STREAM: {
+        updateMaxTimeLoaded(percentage);
+
+        m_bufferingPercentage = percentage;
+        if (m_downloadFinished)
+            updateStates();
+
+        break;
+    }
+    case GST_BUFFERING_DOWNLOAD: {
+        updateMaxTimeLoaded(percentage);
+
+        // Media is now fully loaded. It will play even if network connection is
+        // cut. Buffering is done, remove the fill source from the main loop.
+        if (m_downloadFinished)
+            m_fillTimer.stop();
+
         updateStates();
+        break;
+    }
+    default:
+        GST_DEBUG_OBJECT(pipeline(), "Unhandled buffering mode: %s", enumToString(GST_TYPE_BUFFERING_MODE, mode).data());
+        break;
+    }
 }
 
 #if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
@@ -1585,48 +1637,23 @@ void MediaPlayerPrivateGStreamer::fillTimerFired()
 {
     GRefPtr<GstQuery> query = adoptGRef(gst_query_new_buffering(GST_FORMAT_PERCENT));
     double fillStatus = 100.0;
+    GstBufferingMode mode = GST_BUFFERING_DOWNLOAD;
 
-    if (gst_element_query(m_pipeline.get(), query.get())) {
-        int64_t stop;
-        GstFormat format;
-        gst_query_parse_buffering_range(query.get(), &format, nullptr, &stop, nullptr);
-        ASSERT(format == GST_FORMAT_PERCENT);
+    if (gst_element_query(m_source.get(), query.get())) {
+        gst_query_parse_buffering_stats(query.get(), &mode, nullptr, nullptr, nullptr);
 
-        if (stop != -1)
-            fillStatus = 100.0 * stop / GST_FORMAT_PERCENT_MAX;
+        int percentage;
+        gst_query_parse_buffering_percent(query.get(), nullptr, &percentage);
+        fillStatus = percentage;
     } else if (m_httpResponseTotalSize) {
         GST_DEBUG_OBJECT(pipeline(), "[Buffering] Query failed, falling back to network read position estimation");
-        fillStatus = 100.0 * (m_networkReadPosition / m_httpResponseTotalSize);
+        fillStatus = 100.0 * (static_cast<double>(m_networkReadPosition) / static_cast<double>(m_httpResponseTotalSize));
     } else {
         GST_DEBUG_OBJECT(pipeline(), "[Buffering] Unable to determine on-disk buffering status");
         return;
     }
 
-    GST_DEBUG_OBJECT(pipeline(), "[Buffering] Download buffer filled up to %f%%", fillStatus);
-
-    MediaTime mediaDuration = durationMediaTime();
-
-    // Update maxTimeLoaded only if the media duration is
-    // available. Otherwise we can't compute it.
-    if (mediaDuration) {
-        if (fillStatus == 100.0)
-            m_maxTimeLoaded = mediaDuration;
-        else
-            m_maxTimeLoaded = MediaTime(fillStatus * static_cast<double>(toGstUnsigned64Time(mediaDuration)) / 100, GST_SECOND);
-        GST_DEBUG_OBJECT(pipeline(), "[Buffering] Updated maxTimeLoaded: %s", toString(m_maxTimeLoaded).utf8().data());
-    }
-
-    m_downloadFinished = fillStatus == 100.0;
-    if (!m_downloadFinished) {
-        updateStates();
-        return;
-    }
-
-    // Media is now fully loaded. It will play even if network
-    // connection is cut. Buffering is done, remove the fill source
-    // from the main loop.
-    m_fillTimer.stop();
-    updateStates();
+    updateBufferingStatus(mode, fillStatus);
 }
 
 MediaTime MediaPlayerPrivateGStreamer::maxMediaTimeSeekable() const
@@ -1655,7 +1682,7 @@ MediaTime MediaPlayerPrivateGStreamer::maxTimeLoaded() const
     MediaTime loaded = m_maxTimeLoaded;
     if (m_isEndReached)
         loaded = durationMediaTime();
-    GST_LOG("maxTimeLoaded: %s", toString(loaded).utf8().data());
+    GST_LOG_OBJECT(pipeline(), "maxTimeLoaded: %s", toString(loaded).utf8().data());
     return loaded;
 }
 
@@ -1666,8 +1693,9 @@ bool MediaPlayerPrivateGStreamer::didLoadingProgress() const
 
     if (WEBKIT_IS_WEB_SRC(m_source.get())) {
         GST_LOG_OBJECT(pipeline(), "Last network read position: %" G_GUINT64_FORMAT ", current: %" G_GUINT64_FORMAT, m_readPositionAtLastDidLoadingProgress, m_networkReadPosition);
-        bool didLoadingProgress = m_readPositionAtLastDidLoadingProgress != m_networkReadPosition;
+        bool didLoadingProgress = m_readPositionAtLastDidLoadingProgress < m_networkReadPosition;
         m_readPositionAtLastDidLoadingProgress = m_networkReadPosition;
+        GST_LOG_OBJECT(pipeline(), "didLoadingProgress: %s", boolForPrinting(didLoadingProgress));
         return didLoadingProgress;
     }
 
@@ -2001,7 +2029,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
 
         // Live pipelines go in PAUSED without prerolling.
         m_isStreaming = true;
-        setDownloadBuffering();
+        updateDownloadBufferingFlag();
 
         if (m_currentState == GST_STATE_READY)
             m_readyState = MediaPlayer::HaveNothing;
@@ -2256,7 +2284,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const MediaE
     return finalResult;
 }
 
-void MediaPlayerPrivateGStreamer::setDownloadBuffering()
+void MediaPlayerPrivateGStreamer::updateDownloadBufferingFlag()
 {
     if (!m_pipeline)
         return;
@@ -2291,7 +2319,7 @@ void MediaPlayerPrivateGStreamer::setPreload(MediaPlayer::Preload preload)
         return;
 
     m_preload = preload;
-    setDownloadBuffering();
+    updateDownloadBufferingFlag();
 
     if (m_delayingLoad && m_preload != MediaPlayer::None) {
         m_delayingLoad = false;

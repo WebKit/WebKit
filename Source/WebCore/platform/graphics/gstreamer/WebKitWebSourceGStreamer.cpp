@@ -237,6 +237,7 @@ static void webkitWebSrcReset(WebKitWebSrc* src)
 {
     WebKitWebSrcPrivate* priv = WEBKIT_WEB_SRC_GET_PRIVATE(src);
 
+    GST_DEBUG_OBJECT(src, "Resetting internal state");
     priv->haveSize = false;
     priv->wereHeadersReceived = false;
     priv->isSeekable = false;
