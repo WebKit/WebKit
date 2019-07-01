@@ -674,12 +674,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
     /**
      * WebKitSettings:enable-html5-database:
      *
-     * Whether to enable HTML5 client-side SQL database support. Client-side
-     * SQL database allows web pages to store structured data and be able to
-     * use SQL to manipulate that data asynchronously.
-     *
-     * HTML5 database specification is available at
-     * http://www.w3.org/TR/webdatabase/.
+     * Whether to enable HTML5 client-side SQL database support (IndexedDB).
      */
     g_object_class_install_property(gObjectClass,
                                     PROP_ENABLE_HTML5_DATABASE,
@@ -1715,7 +1710,7 @@ void webkit_settings_set_enable_html5_local_storage(WebKitSettings* settings, gb
  *
  * Get the #WebKitSettings:enable-html5-database property.
  *
- * Returns: %TRUE If HTML5 database support is enabled or %FALSE otherwise.
+ * Returns: %TRUE if IndexedDB support is enabled or %FALSE otherwise.
  */
 gboolean webkit_settings_get_enable_html5_database(WebKitSettings* settings)
 {
