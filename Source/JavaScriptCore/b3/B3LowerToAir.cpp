@@ -2602,27 +2602,6 @@ private:
         }
 
         case Mul: {
-            if (m_value->type() == Int64
-                && isValidForm(MultiplySignExtend32, Arg::Tmp, Arg::Tmp, Arg::Tmp)
-                && m_value->child(0)->opcode() == SExt32
-                && !m_locked.contains(m_value->child(0))) {
-                Value* opLeft = m_value->child(0);
-                Value* left = opLeft->child(0);
-                Value* opRight = m_value->child(1);
-                Value* right = nullptr;
-
-                if (opRight->opcode() == SExt32 && !m_locked.contains(opRight->child(0))) {
-                    right = opRight->child(0);
-                } else if (m_value->child(1)->isRepresentableAs<int32_t>() && !m_locked.contains(m_value->child(1))) {
-                    // We just use the 64-bit const int as a 32 bit const int directly
-                    right = opRight;
-                }
-
-                if (right) {
-                    append(MultiplySignExtend32, tmp(left), tmp(right), tmp(m_value));
-                    return;
-                }
-            }
             appendBinOp<Mul32, Mul64, MulDouble, MulFloat, Commutative>(
                 m_value->child(0), m_value->child(1));
             return;

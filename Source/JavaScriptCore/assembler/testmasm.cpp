@@ -351,25 +351,6 @@ void testMul32WithImmediates()
     }
 }
 
-#if CPU(ARM64)
-void testMul32SignExtend()
-{
-    for (auto value : int32Operands()) {
-        auto mul = compile([=] (CCallHelpers& jit) {
-            jit.emitFunctionPrologue();
-
-            jit.multiplySignExtend32(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
-
-            jit.emitFunctionEpilogue();
-            jit.ret();
-        });
-
-        for (auto value2 : int32Operands())
-            CHECK_EQ(invoke<long int>(mul, value, value2), ((long int) value) * ((long int) value2));
-    }
-}
-#endif
-
 #if CPU(X86) || CPU(X86_64) || CPU(ARM64)
 void testCompareFloat(MacroAssembler::DoubleCondition condition)
 {
@@ -1128,10 +1109,6 @@ void run(const char* filter)
     RUN(testCompareDouble(MacroAssembler::DoubleLessThanOrUnordered));
     RUN(testCompareDouble(MacroAssembler::DoubleLessThanOrEqualOrUnordered));
     RUN(testMul32WithImmediates());
-
-#if CPU(ARM64)
-    RUN(testMul32SignExtend());
-#endif
 
 #if CPU(X86) || CPU(X86_64) || CPU(ARM64)
     RUN(testCompareFloat(MacroAssembler::DoubleEqual));
