@@ -664,18 +664,23 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
     }
 
     auto& respondingDocument = nodeRespondingToClick.document();
+    auto& contentChangeObserver = respondingDocument.contentChangeObserver();
+    auto targetNodeisConsideredHidden = contentChangeObserver.hiddenTouchTarget() == &nodeRespondingToClick || ContentChangeObserver::isConsideredHidden(nodeRespondingToClick);
     {
         LOG_WITH_STREAM(ContentObservation, stream << "handleSyntheticClick: node(" << &nodeRespondingToClick << ") " << location);
         ContentChangeObserver::MouseMovedScope observingScope(respondingDocument);
         auto& mainFrame = m_page->mainFrame();
         dispatchSyntheticMouseMove(mainFrame, location, modifiers, pointerId);
         mainFrame.document()->updateStyleIfNeeded();
+        if (m_isClosed)
+            return;
     }
 
-    if (m_isClosed)
+    if (targetNodeisConsideredHidden) {
+        LOG(ContentObservation, "handleSyntheticClick: target node is considered hidden -> hover.");
         return;
+    }
 
-    auto& contentChangeObserver = respondingDocument.contentChangeObserver();
     auto observedContentChange = contentChangeObserver.observedContentChange();
     auto targetNodeTriggersClick = nodeAlwaysTriggersClick(nodeRespondingToClick);
 

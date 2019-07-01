@@ -35,6 +35,7 @@
 #include "WKContentObservation.h"
 #include <wtf/HashSet.h>
 #include <wtf/Seconds.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -48,6 +49,7 @@ public:
 
     WEBCORE_EXPORT void startContentObservationForDuration(Seconds duration);
     WKContentChange observedContentChange() const { return m_observedContentState; }
+    WEBCORE_EXPORT static bool isConsideredHidden(const Node&);
 
     void didInstallDOMTimer(const DOMTimer&, Seconds timeout, bool singleShot);
     void didRemoveDOMTimer(const DOMTimer&);
@@ -64,6 +66,10 @@ public:
     void willDetachPage();
 
     void willDestroyRenderer(const Element&);
+
+    void setHiddenTouchTarget(Element& targetElement) { m_hiddenTouchTargetElement = makeWeakPtr(targetElement); }
+    void resetHiddenTouchTarget() { m_hiddenTouchTargetElement = { }; }
+    Element* hiddenTouchTarget() const { return m_hiddenTouchTargetElement.get(); }
 
     class StyleChangeScope {
     public:
@@ -204,6 +210,7 @@ private:
     HashSet<const Element*> m_elementsWithTransition;
     HashSet<const Element*> m_elementsWithDestroyedVisibleRenderer;
     WKContentChange m_observedContentState { WKContentNoChange };
+    WeakPtr<Element> m_hiddenTouchTargetElement;
     bool m_touchEventIsBeingDispatched { false };
     bool m_isWaitingForStyleRecalc { false };
     bool m_isInObservedStyleRecalc { false };

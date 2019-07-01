@@ -43,12 +43,12 @@ namespace WebCore {
 static const Seconds maximumDelayForTimers { 400_ms };
 static const Seconds maximumDelayForTransitions { 300_ms };
 
-static bool isConsideredHidden(const Element& element)
+bool ContentChangeObserver::isConsideredHidden(const Node& node)
 {
-    if (!element.renderStyle())
+    if (!node.renderStyle())
         return true;
 
-    auto& style = *element.renderStyle();
+    auto& style = *node.renderStyle();
     if (style.display() == DisplayType::None)
         return true;
 
@@ -80,6 +80,14 @@ static bool isConsideredHidden(const Element& element)
     if (maxHeight.isFixed() && !maxHeight.value())
         return true;
 
+    // Special case opacity, because a descendant with non-zero opacity should still be considered hidden when one of its ancetors has opacity: 0;
+    // YouTube.com has this setup with the bottom control bar.
+    constexpr static unsigned numberOfAncestorsToCheckForOpacity = 4;
+    unsigned i = 0;
+    for (auto* parent = node.parentNode(); parent && i < numberOfAncestorsToCheckForOpacity; parent = parent->parentNode(), ++i) {
+        if (!parent->renderStyle() || !parent->renderStyle()->opacity())
+            return true;
+    }
     return false;
 }
 
@@ -324,6 +332,7 @@ void ContentChangeObserver::reset()
 
     m_contentObservationTimer.stop();
     m_elementsWithDestroyedVisibleRenderer.clear();
+    resetHiddenTouchTarget();
 }
 
 void ContentChangeObserver::didSuspendActiveDOMObjects()
@@ -579,6 +588,7 @@ ContentChangeObserver::MouseMovedScope::MouseMovedScope(Document& document)
 ContentChangeObserver::MouseMovedScope::~MouseMovedScope()
 {
     m_contentChangeObserver.mouseMovedDidFinish();
+    m_contentChangeObserver.resetHiddenTouchTarget();
 }
 
 ContentChangeObserver::StyleRecalcScope::StyleRecalcScope(Document& document)

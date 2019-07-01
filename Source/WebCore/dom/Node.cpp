@@ -32,6 +32,9 @@
 #include "CommonVM.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ContainerNodeAlgorithms.h"
+#if PLATFORM(IOS_FAMILY)
+#include "ContentChangeObserver.h"
+#endif
 #include "ContextMenuController.h"
 #include "DOMWindow.h"
 #include "DataTransfer.h"
@@ -2452,6 +2455,15 @@ void Node::defaultEventHandler(Event& event)
                 frame->eventHandler().defaultWheelEventHandler(startNode, downcast<WheelEvent>(event));
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     } else if (is<TouchEvent>(event) && eventNames().isTouchRelatedEventType(document(), eventType)) {
+        // Capture the target node's visibility state before dispatching touchStart.
+        if (is<Element>(*this) && eventType == eventNames().touchstartEvent) {
+            auto& contentChangeObserver = document().contentChangeObserver(); 
+            if (ContentChangeObserver::isConsideredHidden(*this))
+                contentChangeObserver.setHiddenTouchTarget(downcast<Element>(*this));
+            else
+                contentChangeObserver.resetHiddenTouchTarget();
+        }
+
         RenderObject* renderer = this->renderer();
         while (renderer && (!is<RenderBox>(*renderer) || !downcast<RenderBox>(*renderer).canBeScrolledAndHasScrollableArea()))
             renderer = renderer->parent();

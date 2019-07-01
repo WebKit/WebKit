@@ -1,3 +1,27 @@
+2019-07-01  Zalan Bujtas  <zalan@apple.com>
+
+        [iPadOS] Tapping on the bottom part of youtube video behaves as if controls were visible
+        https://bugs.webkit.org/show_bug.cgi?id=199349
+        <rdar://problem/51955744>
+
+        Reviewed by Simon Fraser.
+
+        Synthetic click event should not be dispatched to a node that is initially hidden (by opacity: 0) and becomes visible by the touchStart event.
+        While this behaves different from macOS where opacity: 0; content is "clickable", it impoves usability on certain sites like YouTube.com. 
+
+        Test: fast/events/touch/ios/content-observation/opacity-change-happens-on-touchstart-with-transition2.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::defaultEventHandler):
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::isConsideredHidden):
+        (WebCore::ContentChangeObserver::reset):
+        (WebCore::isConsideredHidden): Deleted.
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::setHiddenTouchTarget):
+        (WebCore::ContentChangeObserver::resetHiddenTouchTarget):
+        (WebCore::ContentChangeObserver::hiddenTouchTarget const):
+
 2019-06-28  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Build WebCore
