@@ -1,3 +1,14 @@
+2019-06-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] ClassExpr should not store result in the middle of evaluation
+        https://bugs.webkit.org/show_bug.cgi?id=199106
+
+        Reviewed by Tadeu Zagallo.
+
+        * stress/class-expression-should-store-result-at-last.js: Added.
+        (shouldThrow):
+        (shouldThrow.let.a):
+
 2019-06-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce DisposableCallSiteIndex to enforce type-safety
