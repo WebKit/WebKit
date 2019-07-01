@@ -118,7 +118,6 @@ public:
     void unregisterAllViewportConstrainedLayers();
     
     void registerAllScrollingLayers();
-    void registerScrollingLayersNeedingUpdate();
     void unregisterAllScrollingLayers();
     
     void addScrollingLayer(RenderLayer&);
@@ -126,8 +125,6 @@ public:
 
     void addViewportConstrainedLayer(RenderLayer&);
     void removeViewportConstrainedLayer(RenderLayer&);
-
-    void didChangePlatformLayerForLayer(RenderLayer&);
 
     void removeLayer(RenderLayer&);
 
@@ -139,7 +136,6 @@ private:
     HashSet<RenderLayer*> m_scrollingLayers;
     HashSet<RenderLayer*> m_viewportConstrainedLayers;
 
-    HashSet<RenderLayer*> m_scrollingLayersNeedingUpdate;
     const bool m_coordinateViewportConstrainedLayers;
 };
 #endif

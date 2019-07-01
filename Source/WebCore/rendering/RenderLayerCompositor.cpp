@@ -557,18 +557,13 @@ void RenderLayerCompositor::updateScrollCoordinatedLayersAfterFlush()
 {
     if (m_legacyScrollingLayerCoordinator) {
         m_legacyScrollingLayerCoordinator->registerAllViewportConstrainedLayers(*this);
-        m_legacyScrollingLayerCoordinator->registerScrollingLayersNeedingUpdate();
+        m_legacyScrollingLayerCoordinator->registerAllScrollingLayers();
     }
 }
 #endif
 
 void RenderLayerCompositor::didChangePlatformLayerForLayer(RenderLayer& layer, const GraphicsLayer*)
 {
-#if PLATFORM(IOS_FAMILY)
-    if (m_legacyScrollingLayerCoordinator)
-        m_legacyScrollingLayerCoordinator->didChangePlatformLayerForLayer(layer);
-#endif
-
     auto* scrollingCoordinator = this->scrollingCoordinator();
     if (!scrollingCoordinator)
         return;
@@ -4777,6 +4772,7 @@ void LegacyWebKitScrollingLayerCoordinator::updateScrollingLayer(RenderLayer& la
 
     bool allowHorizontalScrollbar = !layer.horizontalScrollbarHiddenByStyle();
     bool allowVerticalScrollbar = !layer.verticalScrollbarHiddenByStyle();
+
     m_chromeClient.addOrUpdateScrollingLayer(layer.renderer().element(), backing->scrollContainerLayer()->platformLayer(), backing->scrolledContentsLayer()->platformLayer(),
         layer.reachableTotalContentsSize(), allowHorizontalScrollbar, allowVerticalScrollbar);
 }
@@ -4785,14 +4781,6 @@ void LegacyWebKitScrollingLayerCoordinator::registerAllScrollingLayers()
 {
     for (auto* layer : m_scrollingLayers)
         updateScrollingLayer(*layer);
-}
-
-void LegacyWebKitScrollingLayerCoordinator::registerScrollingLayersNeedingUpdate()
-{
-    for (auto* layer : m_scrollingLayersNeedingUpdate)
-        updateScrollingLayer(*layer);
-    
-    m_scrollingLayersNeedingUpdate.clear();
 }
 
 void LegacyWebKitScrollingLayerCoordinator::unregisterAllScrollingLayers()
@@ -4807,12 +4795,10 @@ void LegacyWebKitScrollingLayerCoordinator::unregisterAllScrollingLayers()
 void LegacyWebKitScrollingLayerCoordinator::addScrollingLayer(RenderLayer& layer)
 {
     m_scrollingLayers.add(&layer);
-    m_scrollingLayersNeedingUpdate.add(&layer);
 }
 
 void LegacyWebKitScrollingLayerCoordinator::removeScrollingLayer(RenderLayer& layer, RenderLayerBacking& backing)
 {
-    m_scrollingLayersNeedingUpdate.remove(&layer);
     if (m_scrollingLayers.remove(&layer)) {
         auto* scrollContainerLayer = backing.scrollContainerLayer()->platformLayer();
         auto* scrolledContentsLayer = backing.scrolledContentsLayer()->platformLayer();
@@ -4836,12 +4822,6 @@ void LegacyWebKitScrollingLayerCoordinator::addViewportConstrainedLayer(RenderLa
 void LegacyWebKitScrollingLayerCoordinator::removeViewportConstrainedLayer(RenderLayer& layer)
 {
     m_viewportConstrainedLayers.remove(&layer);
-}
-
-void LegacyWebKitScrollingLayerCoordinator::didChangePlatformLayerForLayer(RenderLayer& layer)
-{
-    if (m_scrollingLayers.contains(&layer))
-        m_scrollingLayersNeedingUpdate.add(&layer);
 }
 
 #endif
