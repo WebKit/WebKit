@@ -1,3 +1,14 @@
+2019-06-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        LayoutTests svg/clip-path/clip-hidpi.svg isn't working as expected due to a syntax error
+        https://bugs.webkit.org/show_bug.cgi?id=199313
+
+        Reviewed by Carlos Garcia Campos.
+
+        * svg/clip-path/clip-hidpi.svg: Fix the syntax error by replacing '->' with '=>'.
+        Call testRunner.waitUntilDone() before testRunner.notifyDone().
+        * svg/clip-path/clip-hidpi-expected.svg: Call testRunner.setBackingScaleFactor().
+
 2019-06-30  Andres Gonzalez  <andresg_22@apple.com>
 
         Enhance support of aria-haspopup per ARIA 1.1 specification.
