@@ -1,3 +1,15 @@
+2019-07-01  Alex Christensen  <achristensen@webkit.org>
+
+        Null check provisionalItem in FrameLoader::continueLoadAfterNavigationPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=199327
+        <rdar://problem/48262384>
+
+        Reviewed by Darin Adler.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        Sometimes provisionalItem is null.  Let's not crash.
+
 2019-07-01  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r246958.
