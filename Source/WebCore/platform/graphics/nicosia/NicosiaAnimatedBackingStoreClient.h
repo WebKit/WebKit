@@ -40,10 +40,28 @@ namespace Nicosia {
 
 class AnimatedBackingStoreClient : public ThreadSafeRefCounted<AnimatedBackingStoreClient> {
 public:
+    enum class Type {
+        Coordinated
+    };
+
+    explicit AnimatedBackingStoreClient(Type type)
+        : m_type(type)
+    {
+    }
+
+    Type type() const { return m_type; }
     virtual ~AnimatedBackingStoreClient() = default;
     virtual void requestBackingStoreUpdateIfNeeded(const WebCore::TransformationMatrix&) = 0;
+
+private:
+    Type m_type;
 };
 
 } // namespace Nicosia
+
+#define SPECIALIZE_TYPE_TRAITS_ANIMATEDBACKINGSTORECLIENT(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
+    static bool isType(const Nicosia::AnimatedBackingStoreClient& client) { return client.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // USE(COORDINATED_GRAPHICS)

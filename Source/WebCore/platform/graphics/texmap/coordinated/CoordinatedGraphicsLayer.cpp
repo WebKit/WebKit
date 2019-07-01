@@ -699,7 +699,8 @@ public:
 
 private:
     CoordinatedAnimatedBackingStoreClient(RefPtr<CoordinatedGraphicsLayer::AnimatedBackingStoreHost>&& host, const FloatRect& visibleRect, const FloatRect& coverRect, const FloatSize& size, float contentsScale)
-        : m_host(WTFMove(host))
+        : Nicosia::AnimatedBackingStoreClient(Type::Coordinated)
+        , m_host(WTFMove(host))
         , m_visibleRect(visibleRect)
         , m_coverRect(coverRect)
         , m_size(size)
@@ -1004,9 +1005,9 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
         layerState.mainBackingStore->createTilesIfNeeded(transformedVisibleRect(), IntRect(0, 0, m_size.width(), m_size.height()));
     }
 
-    if (m_nicosia.animatedBackingStoreClient) {
+    if (is<CoordinatedAnimatedBackingStoreClient>(m_nicosia.animatedBackingStoreClient)) {
         // Determine the coverRect and set it to the client.
-        downcast<CoordinatedAnimatedBackingStoreClient>(m_nicosia.animatedBackingStoreClient.get())->setCoverRect(layerState.mainBackingStore->coverRect());
+        downcast<CoordinatedAnimatedBackingStoreClient>(*m_nicosia.animatedBackingStoreClient).setCoverRect(layerState.mainBackingStore->coverRect());
     }
 
     ASSERT(m_coordinator && m_coordinator->isFlushingLayerChanges());
@@ -1302,5 +1303,7 @@ bool CoordinatedGraphicsLayer::usesContentsLayer() const
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_ANIMATEDBACKINGSTORECLIENT(WebCore::CoordinatedAnimatedBackingStoreClient, type() == Nicosia::AnimatedBackingStoreClient::Type::Coordinated)
 
 #endif // USE(COORDINATED_GRAPHICS)
