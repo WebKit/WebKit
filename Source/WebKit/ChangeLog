@@ -1,3 +1,26 @@
+2019-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        iOS: REGRESSION(async scroll): Caret doesn't scroll when scrolling textarea
+        https://bugs.webkit.org/show_bug.cgi?id=198217
+        <rdar://problem/51097296>
+
+        Reviewed by Simon Fraser.
+
+        In iOS 12, when scrolling a text selection in an fast-scrolling container, editor state updates are scheduled
+        under AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll after the end of the scrolling gesture,
+        when the scrolling layer action is ScrollingLayerPositionAction::Set. This is no longer the case in iOS 13,
+        because we now bail in ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling after scroll deceleration
+        finishes since the scroll position didn't end up changing. Additionally, we no longer use
+        ScrollingLayerPositionAction::Set in the case where scrolling finished decelerating, since
+        ScrollingTreeScrollingNodeDelegateIOS::scrollViewDidScroll no longer uses to value of inUserInteraction to
+        determine whether to Set or Sync scrolling layer positions.
+
+        To restore iOS 12 behavior, ensure that we send a scrolling tree update using ScrollingLayerPositionAction::Set
+        after scrolling ends.
+
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::scrollViewDidScroll):
+
 2019-07-01  Per Arne Vollan  <pvollan@apple.com>
 
         Perform less work when a pre-warmed WebProcess is suspended or resumed.

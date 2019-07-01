@@ -194,10 +194,10 @@ void ScrollingTreeScrollingNode::applyLayerPositions()
     repositionRelatedLayers();
 }
 
-void ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling(const FloatPoint& position, Optional<FloatRect> overrideLayoutViewport)
+void ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling(const FloatPoint& position, Optional<FloatRect> overrideLayoutViewport, ScrollingLayerPositionAction scrollingLayerPositionAction)
 {
     bool scrollPositionChanged = !scrollPositionAndLayoutViewportMatch(position, overrideLayoutViewport);
-    if (!scrollPositionChanged)
+    if (!scrollPositionChanged && scrollingLayerPositionAction != ScrollingLayerPositionAction::Set)
         return;
 
     m_currentScrollPosition = adjustedScrollPosition(position, ScrollPositionClamp::None);
@@ -206,7 +206,7 @@ void ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling(const FloatPoin
     repositionRelatedLayers();
 
     scrollingTree().notifyRelatedNodesAfterScrollPositionChange(*this);
-    scrollingTree().scrollingTreeNodeDidScroll(*this);
+    scrollingTree().scrollingTreeNodeDidScroll(*this, scrollingLayerPositionAction);
     scrollingTree().didScrollByDelegatedScrolling();
 }
 

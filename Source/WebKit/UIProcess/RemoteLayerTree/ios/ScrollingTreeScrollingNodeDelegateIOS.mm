@@ -327,7 +327,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::scrollViewDidScroll(const FloatPoint
         return;
 
     auto scrollPosition = ScrollableArea::scrollPositionFromOffset(scrollOffset, toFloatSize(scrollOrigin()));
-    scrollingNode().wasScrolledByDelegatedScrolling(scrollPosition);
+    scrollingNode().wasScrolledByDelegatedScrolling(scrollPosition, { }, inUserInteraction ? ScrollingLayerPositionAction::Sync : ScrollingLayerPositionAction::Set);
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::currentSnapPointIndicesDidChange(unsigned horizontal, unsigned vertical) const

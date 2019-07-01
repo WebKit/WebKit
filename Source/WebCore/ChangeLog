@@ -1,3 +1,21 @@
+2019-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        iOS: REGRESSION(async scroll): Caret doesn't scroll when scrolling textarea
+        https://bugs.webkit.org/show_bug.cgi?id=198217
+        <rdar://problem/51097296>
+
+        Reviewed by Simon Fraser.
+
+        Add a ScrollingLayerPositionAction argument to ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling, and
+        avoid bailing early in the case where ScrollingLayerPositionAction::Set is used. See the WebKit ChangeLog for
+        more detail.
+
+        Test: editing/selection/ios/update-selection-after-overflow-scroll.html
+
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+
 2019-07-01  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r240047): Overflow scrollers on WK1 fail to update their content size when it changes
