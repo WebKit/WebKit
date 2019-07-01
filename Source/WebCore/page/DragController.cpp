@@ -366,7 +366,7 @@ static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& 
     LayoutPoint point(p.x() * zoomFactor, p.y() * zoomFactor);
 
     HitTestResult result(point);
-    documentUnderMouse->renderView()->hitTest(HitTestRequest(), result);
+    documentUnderMouse->hitTest(HitTestRequest(), result);
 
     auto* node = result.innerNode();
     if (!node)

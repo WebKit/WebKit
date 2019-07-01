@@ -1,3 +1,60 @@
+2019-05-23  Zalan Bujtas  <zalan@apple.com>
+
+        [Hittest] Move hittesting from RenderView to Document
+        https://bugs.webkit.org/show_bug.cgi?id=198192
+        <rdar://problem/51077762>
+
+        Reviewed by Antti Koivisto.
+
+        RenderView is not refcounted and may be destroyed in updateLayout(), so enter hit-testing from Document.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::press):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint const):
+        * dom/Document.cpp:
+        (WebCore::FrameFlatteningLayoutDisallower::FrameFlatteningLayoutDisallower):
+        (WebCore::FrameFlatteningLayoutDisallower::~FrameFlatteningLayoutDisallower):
+        (WebCore::Document::scheduleStyleRecalc):
+        (WebCore::Document::prepareMouseEvent):
+        (WebCore::Document::hitTest):
+        * dom/Document.h:
+        (WebCore::Document::inHitTesting const):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::nodeFromPoint):
+        (WebCore::TreeScope::elementsFromPoint):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::contains const):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::isReplacementObscured):
+        * html/MediaElementSession.cpp:
+        (WebCore::isElementMainContentForPurposesOfAutoplay):
+        * page/DragController.cpp:
+        (WebCore::elementUnderMouse):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseDraggedEvent):
+        (WebCore::EventHandler::eventMayStartDrag const):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+        (WebCore::EventHandler::hitTestResultAtPoint const):
+        (WebCore::EventHandler::updateCursor):
+        (WebCore::EventHandler::isInsideScrollbar const):
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::hoverTimerFired):
+        (WebCore::EventHandler::handleDrag):
+        (WebCore::hitTestResultInFrame):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::setNeedsLayoutAfterViewConfigurationChange):
+        * rendering/RenderView.cpp:
+        (WebCore::FrameFlatteningLayoutDisallower::FrameFlatteningLayoutDisallower): Deleted.
+        (WebCore::FrameFlatteningLayoutDisallower::~FrameFlatteningLayoutDisallower): Deleted.
+        (): Deleted.
+        (WebCore::RenderView::hitTest): Deleted.
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::nodeAtPoint):
+        * testing/Internals.cpp:
+        (WebCore::Internals::nodesFromRect const):
+
 2019-05-22  Antti Koivisto  <antti@apple.com>
 
         Subselectors not searched when determining property whitelist for selector

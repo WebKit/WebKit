@@ -854,8 +854,6 @@ static bool isElementMainContentForPurposesOfAutoplay(const HTMLMediaElement& el
     if (!shouldHitTestMainFrame)
         return true;
 
-    RenderView& mainRenderView = *mainFrame.view()->renderView();
-
     // Hit test the area of the main frame where the element appears, to determine if the element is being obscured.
     IntRect rectRelativeToView = element.clientRect();
     ScrollPosition scrollPosition = mainFrame.view()->documentScrollPositionRelativeToViewOrigin();
@@ -864,7 +862,9 @@ static bool isElementMainContentForPurposesOfAutoplay(const HTMLMediaElement& el
     HitTestResult result(rectRelativeToTopDocument.center());
 
     // Elements which are obscured by other elements cannot be main content.
-    mainRenderView.hitTest(request, result);
+    if (!mainFrame.document())
+        return false;
+    mainFrame.document()->hitTest(request, result);
     result.setToNonUserAgentShadowAncestor();
     RefPtr<Element> hitElement = result.targetElement();
     if (hitElement != &element)

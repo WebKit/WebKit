@@ -356,11 +356,9 @@ Node* TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* loca
         return nullptr;
 
     HitTestResult result(absolutePoint.value());
-    documentScope().renderView()->hitTest(HitTestRequest(), result);
-
+    documentScope().hitTest(HitTestRequest(), result);
     if (localPoint)
         *localPoint = result.localPoint();
-
     return result.innerNode();
 }
 
@@ -403,7 +401,7 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
         | HitTestRequest::CollectMultipleElements
         | HitTestRequest::IncludeAllElementsUnderPoint);
     HitTestResult result(absolutePoint.value());
-    documentScope().renderView()->hitTest(request, result);
+    documentScope().hitTest(request, result);
 
     Node* lastNode = nullptr;
     for (const auto& listBasedNode : result.listBasedTestResult()) {

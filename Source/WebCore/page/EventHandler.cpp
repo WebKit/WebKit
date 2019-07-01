@@ -884,7 +884,7 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
 
     if (m_selectionInitiationState != ExtendedSelection) {
         HitTestResult result(m_mouseDownPos);
-        m_frame.document()->renderView()->hitTest(HitTestRequest(), result);
+        m_frame.document()->hitTest(HitTestRequest(), result);
 
         updateSelectionForMouseDrag(result);
     }
@@ -897,8 +897,8 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     // This is a pre-flight check of whether the event might lead to a drag being started.  Be careful
     // that its logic needs to stay in sync with handleMouseMoveEvent() and the way we setMouseDownMayStartDrag
     // in handleMousePressEvent
-    RenderView* renderView = m_frame.contentRenderer();
-    if (!renderView)
+    auto* document = m_frame.document();
+    if (!document)
         return false;
 
     if (event.button() != LeftButton || event.clickCount() != 1)
@@ -917,7 +917,7 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     updateDragSourceActionsAllowed();
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::DisallowUserAgentShadowContent);
     HitTestResult result(view->windowToContents(event.position()));
-    renderView->hitTest(request, result);
+    document->hitTest(request, result);
     DragState state;
     Element* targetElement = result.targetElement();
     return targetElement && page->dragController().draggableElement(&m_frame, targetElement, result.roundedPointInInnerNodeFrame(), state);
@@ -928,13 +928,13 @@ void EventHandler::updateSelectionForMouseDrag()
     FrameView* view = m_frame.view();
     if (!view)
         return;
-    RenderView* renderView = m_frame.contentRenderer();
-    if (!renderView)
+    auto* document = m_frame.document();
+    if (!document)
         return;
 
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::Move | HitTestRequest::DisallowUserAgentShadowContent);
     HitTestResult result(view->windowToContents(m_lastKnownMousePosition));
-    renderView->hitTest(request, result);
+    document->hitTest(request, result);
     updateSelectionForMouseDrag(result);
 }
 
@@ -1176,13 +1176,13 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, HitTe
         frameView->updateLayoutAndStyleIfNeededRecursive();
 
     HitTestResult result(point, nonNegativePaddingHeight, nonNegativePaddingWidth, nonNegativePaddingHeight, nonNegativePaddingWidth);
-    RenderView* renderView = m_frame.contentRenderer();
-    if (!renderView)
+    auto* document = m_frame.document();
+    if (!document)
         return result;
 
     // hitTestResultAtPoint is specifically used to hitTest into all frames, thus it always allows child frame content.
     HitTestRequest request(hitType | HitTestRequest::AllowChildFrameContent);
-    renderView->hitTest(request, result);
+    document->hitTest(request, result);
     if (!request.readOnly())
         m_frame.document()->updateHoverActiveState(request, result.targetElement());
 
@@ -1378,8 +1378,8 @@ void EventHandler::updateCursor()
     if (!view)
         return;
 
-    RenderView* renderView = view->renderView();
-    if (!renderView)
+    auto* document = m_frame.document();
+    if (!document)
         return;
 
     if (!view->shouldSetCursor())
@@ -1393,7 +1393,7 @@ void EventHandler::updateCursor()
 
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::AllowFrameScrollbars);
     HitTestResult result(view->windowToContents(m_lastKnownMousePosition));
-    renderView->hitTest(request, result);
+    document->hitTest(request, result);
 
     updateCursor(*view, result, shiftKey);
 }
@@ -2642,10 +2642,10 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
 
 bool EventHandler::isInsideScrollbar(const IntPoint& windowPoint) const
 {
-    if (RenderView* renderView = m_frame.contentRenderer()) {
+    if (auto* document = m_frame.document()) {
         HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::DisallowUserAgentShadowContent);
         HitTestResult result(windowPoint);
-        renderView->hitTest(request, result);
+        document->hitTest(request, result);
         return result.scrollbar();
     }
 
@@ -2761,8 +2761,8 @@ bool EventHandler::completeWidgetWheelEvent(const PlatformWheelEvent& event, con
 
 bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
 {
-    RenderView* renderView = m_frame.contentRenderer();
-    if (!renderView)
+    auto* document = m_frame.document();
+    if (!document)
         return false;
 
     Ref<Frame> protectedFrame(m_frame);
@@ -2784,7 +2784,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
 
     HitTestRequest request;
     HitTestResult result(view->windowToContents(event.position()));
-    renderView->hitTest(request, result);
+    document->hitTest(request, result);
 
     RefPtr<Element> element = result.targetElement();
     RefPtr<ContainerNode> scrollableContainer;
@@ -3096,12 +3096,12 @@ void EventHandler::hoverTimerFired()
 
     Ref<Frame> protectedFrame(m_frame);
 
-    if (RenderView* renderView = m_frame.contentRenderer()) {
+    if (auto* document = m_frame.document()) {
         if (FrameView* view = m_frame.view()) {
             HitTestRequest request(HitTestRequest::Move | HitTestRequest::DisallowUserAgentShadowContent);
             HitTestResult result(view->windowToContents(m_lastKnownMousePosition));
-            renderView->hitTest(request, result);
-            m_frame.document()->updateHoverActiveState(request, result.targetElement());
+            document->hitTest(request, result);
+            document->updateHoverActiveState(request, result.targetElement());
         }
     }
 }
@@ -3660,7 +3660,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
         // try to find an element that wants to be dragged
         HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::DisallowUserAgentShadowContent);
         HitTestResult result(m_mouseDownPos);
-        m_frame.contentRenderer()->hitTest(request, result);
+        m_frame.document()->hitTest(request, result);
         if (m_frame.page())
             dragState().source = m_frame.page()->dragController().draggableElement(&m_frame, result.targetElement(), m_mouseDownPos, dragState());
         
@@ -4035,7 +4035,7 @@ static HitTestResult hitTestResultInFrame(Frame* frame, const LayoutPoint& point
         if (!rect.contains(roundedIntPoint(point)))
             return result;
     }
-    frame->contentRenderer()->hitTest(HitTestRequest(hitType), result);
+    frame->document()->hitTest(HitTestRequest(hitType), result);
     return result;
 }
 

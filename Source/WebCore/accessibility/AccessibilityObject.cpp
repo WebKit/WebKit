@@ -974,7 +974,7 @@ bool AccessibilityObject::press()
     if (document) {
         HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AccessibilityHitTest);
         HitTestResult hitTestResult(clickPoint());
-        document->renderView()->hitTest(request, hitTestResult);
+        document->hitTest(request, hitTestResult);
         if (auto* innerNode = hitTestResult.innerNode()) {
             if (auto* shadowHost = innerNode->shadowHost())
                 hitTestElement = shadowHost;

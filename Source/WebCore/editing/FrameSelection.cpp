@@ -1879,12 +1879,12 @@ bool FrameSelection::contains(const LayoutPoint& point) const
     if (!isRange())
         return false;
     
-    RenderView* renderView = m_frame->contentRenderer();
-    if (!renderView)
+    auto* document = m_frame->document();
+    if (!document)
         return false;
     
     HitTestResult result(point);
-    renderView->hitTest(HitTestRequest(), result);
+    document->hitTest(HitTestRequest(), result);
     Node* innerNode = result.innerNode();
     if (!innerNode || !innerNode->renderer())
         return false;

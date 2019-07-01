@@ -321,7 +321,7 @@ void FrameViewLayoutContext::setNeedsLayoutAfterViewConfigurationChange()
     }
 
     if (auto* renderView = this->renderView()) {
-        ASSERT(!renderView->inHitTesting());
+        ASSERT(!frame().document()->inHitTesting());
         renderView->setNeedsLayout();
         scheduleLayout();
     }
