@@ -1,3 +1,12 @@
+2019-07-01  Russell Epstein  <russell_e@apple.com>
+
+        Layout Test imported/mozilla/svg/text/selectSubString.svg is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=199370
+
+        Unreviewed Test Gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2019-07-01  Zalan Bujtas  <zalan@apple.com>
 
         Tapping on the bottom part of youtube video behaves as if controls were visible
