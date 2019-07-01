@@ -1,3 +1,25 @@
+2019-07-01  Alex Christensen  <achristensen@webkit.org>
+
+        Add main thread assertions in sendWithAsyncReply code
+        https://bugs.webkit.org/show_bug.cgi?id=199324
+
+        Reviewed by Sam Weinig.
+
+        sendWithAsyncReply can only be used on the main thread because
+        the CompletionHandler will be called on the main thread, and if it's
+        called from a background thread, then HashMap corruption will likely happen.
+        Add assertions to alert developers that they should only call sendWithAsyncReply
+        from the main thread.
+
+        This is responding to good feedback from r237294
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::asyncReplyHandlerMap):
+        (IPC::nextAsyncReplyHandlerID):
+        (IPC::addAsyncReplyHandler):
+        (IPC::clearAsyncReplyHandlers):
+        (IPC::CompletionHandler<void):
+
 2019-07-01  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Exiting from fullscreen scrolls to top of page

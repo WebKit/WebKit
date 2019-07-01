@@ -239,6 +239,7 @@ static HashMap<IPC::Connection::UniqueID, Connection*>& allConnections()
 
 static HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>& asyncReplyHandlerMap()
 {
+    ASSERT(RunLoop::isMain());
     static NeverDestroyed<HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>> map;
     return map.get();
 }
@@ -1127,12 +1128,14 @@ void Connection::dispatchIncomingMessages()
 
 uint64_t nextAsyncReplyHandlerID()
 {
+    ASSERT(RunLoop::isMain());
     static uint64_t identifier { 0 };
     return ++identifier;
 }
 
 void addAsyncReplyHandler(Connection& connection, uint64_t identifier, CompletionHandler<void(Decoder*)>&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
     auto result = asyncReplyHandlerMap().ensure(reinterpret_cast<uintptr_t>(&connection), [] {
         return HashMap<uint64_t, CompletionHandler<void(Decoder*)>>();
     }).iterator->value.add(identifier, WTFMove(completionHandler));
@@ -1141,6 +1144,7 @@ void addAsyncReplyHandler(Connection& connection, uint64_t identifier, Completio
 
 void clearAsyncReplyHandlers(const Connection& connection)
 {
+    ASSERT(RunLoop::isMain());
     auto map = asyncReplyHandlerMap().take(reinterpret_cast<uintptr_t>(&connection));
     for (auto& handler : map.values()) {
         if (handler)
@@ -1150,6 +1154,7 @@ void clearAsyncReplyHandlers(const Connection& connection)
 
 CompletionHandler<void(Decoder*)> takeAsyncReplyHandler(Connection& connection, uint64_t identifier)
 {
+    ASSERT(RunLoop::isMain());
     auto iterator = asyncReplyHandlerMap().find(reinterpret_cast<uintptr_t>(&connection));
     if (iterator != asyncReplyHandlerMap().end()) {
         if (!iterator->value.isValidKey(identifier)) {
