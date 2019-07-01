@@ -1,3 +1,16 @@
+2019-06-30  Andres Gonzalez  <andresg_22@apple.com>
+
+        Enhance support of aria-haspopup per ARIA 1.1 specification.
+        https://bugs.webkit.org/show_bug.cgi?id=199216
+        <rdar://problem/46221342>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/button-with-aria-haspopup-role-expected.txt:
+        * accessibility/button-with-aria-haspopup-role.html:
+        * accessibility/ios-simulator/button-with-aria-haspopup-role-expected.txt:
+        * accessibility/ios-simulator/button-with-aria-haspopup-role.html:
+
 2019-06-29  Simon Fraser  <simon.fraser@apple.com>
 
         Remove a PLATFORM(IOS_FAMILY) related to repaint offsets in composited scrolling layers

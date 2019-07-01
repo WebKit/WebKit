@@ -1034,8 +1034,8 @@ bool AccessibilityRenderObject::hasPopup() const
 {
     // Return true if this has the aria-haspopup attribute, or if it has an ancestor of type link with the aria-haspopup attribute.
     return AccessibilityObject::matchedParent(*this, true, [this] (const AccessibilityObject& object) {
-        return (this == &object) ? !equalLettersIgnoringASCIICase(object.hasPopupValue(), "false")
-            : object.isLink() && !equalLettersIgnoringASCIICase(object.hasPopupValue(), "false");
+        return (this == &object) ? !equalLettersIgnoringASCIICase(object.popupValue(), "false")
+            : object.isLink() && !equalLettersIgnoringASCIICase(object.popupValue(), "false");
     });
 }
 

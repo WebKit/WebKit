@@ -552,7 +552,7 @@ public:
     void ariaOwnsReferencingElements(AccessibilityChildrenVector&) const;
 
     virtual bool hasPopup() const { return false; }
-    String hasPopupValue() const;
+    String popupValue() const;
     bool supportsHasPopup() const;
     bool pressedIsPresent() const;
     bool ariaIsMultiline() const;

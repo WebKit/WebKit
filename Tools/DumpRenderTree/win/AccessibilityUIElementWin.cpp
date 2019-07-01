@@ -907,6 +907,11 @@ bool AccessibilityUIElement::hasPopup() const
     return (state & STATE_SYSTEM_HASPOPUP) == STATE_SYSTEM_HASPOPUP;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
+{
+    return createEmptyJSString();
+}
+
 void AccessibilityUIElement::takeFocus()
 {
     if (!m_element)

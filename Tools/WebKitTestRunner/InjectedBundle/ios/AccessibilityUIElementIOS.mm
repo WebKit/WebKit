@@ -87,6 +87,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSString *)accessibilityTextualContext;
 - (NSString *)accessibilityRoleDescription;
 - (BOOL)accessibilityHasPopup;
+- (NSString *)accessibilityPopupValue;
 - (NSString *)accessibilityColorStringValue;
 
 // TextMarker related
@@ -1056,6 +1057,11 @@ bool AccessibilityUIElement::isMultiLine() const
 bool AccessibilityUIElement::hasPopup() const
 {
     return [m_element accessibilityHasPopup];
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
+{
+    return [[m_element accessibilityPopupValue] createJSStringRef];
 }
 
 void AccessibilityUIElement::takeFocus()
