@@ -304,6 +304,8 @@ void ViewGestureController::handleSwipeGesture(WebBackForwardListItem*, double, 
 void ViewGestureController::draw(cairo_t* cr, cairo_pattern_t* pageGroup)
 {
     bool swipingLeft = isPhysicallySwipingLeft(m_swipeProgressTracker.direction());
+    bool swipingBack = m_swipeProgressTracker.direction() == SwipeDirection::Back;
+    bool isRTL = m_webPageProxy.userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL;
     float progress = m_swipeProgressTracker.progress();
 
     double width = m_webPageProxy.drawingArea()->size().width();
@@ -312,6 +314,8 @@ void ViewGestureController::draw(cairo_t* cr, cairo_pattern_t* pageGroup)
     double swipingLayerOffset = (swipingLeft ? 0 : width) + floor(width * progress);
 
     double dimmingProgress = swipingLeft ? 1 - progress : -progress;
+    if (isRTL)
+        dimmingProgress = 1 - dimmingProgress;
 
     double remainingSwipeDistance = dimmingProgress * width;
     double shadowFadeDistance = swipeOverlayShadowWidth;
@@ -320,7 +324,7 @@ void ViewGestureController::draw(cairo_t* cr, cairo_pattern_t* pageGroup)
     if (remainingSwipeDistance < shadowFadeDistance)
         shadowOpacity = (remainingSwipeDistance / shadowFadeDistance) * swipeOverlayShadowOpacity;
 
-    RefPtr<cairo_pattern_t> shadowPattern = adoptRef(cairo_pattern_create_linear(0, 0, -swipeOverlayShadowWidth, 0));
+    RefPtr<cairo_pattern_t> shadowPattern = adoptRef(cairo_pattern_create_linear(0, 0, swipeOverlayShadowWidth, 0));
     for (int i = 0; i < 16; i++) {
         double offset = swipeOverlayShadowGradientOffsets[i];
         double alpha = swipeOverlayShadowGradientAlpha[i] * shadowOpacity;
@@ -329,8 +333,11 @@ void ViewGestureController::draw(cairo_t* cr, cairo_pattern_t* pageGroup)
 
     cairo_save(cr);
 
-    cairo_rectangle(cr, 0, 0, swipingLayerOffset, height);
-    cairo_set_source(cr, swipingLeft ? m_currentSwipeSnapshotPattern.get() : pageGroup);
+    if (isRTL)
+        cairo_rectangle(cr, swipingLayerOffset, 0, width - swipingLayerOffset, height);
+    else
+        cairo_rectangle(cr, 0, 0, swipingLayerOffset, height);
+    cairo_set_source(cr, swipingBack ? m_currentSwipeSnapshotPattern.get() : pageGroup);
     cairo_fill_preserve(cr);
 
     cairo_set_source_rgba(cr, 0, 0, 0, dimmingProgress * swipeOverlayDimmingOpacity);
@@ -339,13 +346,21 @@ void ViewGestureController::draw(cairo_t* cr, cairo_pattern_t* pageGroup)
     cairo_translate(cr, swipingLayerOffset, 0);
 
     if (progress) {
-        cairo_rectangle(cr, -swipeOverlayShadowWidth, 0, swipeOverlayShadowWidth, height);
+        cairo_save(cr);
+        if (!isRTL)
+            cairo_scale(cr, -1, 1);
+        cairo_rectangle(cr, 0, 0, swipeOverlayShadowWidth, height);
         cairo_set_source(cr, shadowPattern.get());
         cairo_fill(cr);
+        cairo_restore(cr);
     }
 
-    cairo_rectangle(cr, 0, 0, width - swipingLayerOffset, height);
-    cairo_set_source(cr, swipingLeft ? pageGroup : m_currentSwipeSnapshotPattern.get());
+    if (isRTL) {
+        cairo_translate(cr, -width, 0);
+        cairo_rectangle(cr, width - swipingLayerOffset, 0, swipingLayerOffset, height);
+    } else
+        cairo_rectangle(cr, 0, 0, width - swipingLayerOffset, height);
+    cairo_set_source(cr, swipingBack ? pageGroup : m_currentSwipeSnapshotPattern.get());
     cairo_fill(cr);
 
     cairo_restore(cr);

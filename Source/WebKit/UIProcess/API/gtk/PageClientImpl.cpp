@@ -517,4 +517,13 @@ bool PageClientImpl::decidePolicyForInstallMissingMediaPluginsPermissionRequest(
 }
 #endif
 
+UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirection()
+{
+    GtkTextDirection direction = gtk_widget_get_direction(m_viewWidget);
+    if (direction == GTK_TEXT_DIR_RTL)
+        return UserInterfaceLayoutDirection::RTL;
+
+    return UserInterfaceLayoutDirection::LTR;
+}
+
 } // namespace WebKit
