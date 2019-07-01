@@ -1,3 +1,14 @@
+2019-07-01  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate _webView:showCustomSheetForElement: after transition to UIContextMenuInteraction
+        https://bugs.webkit.org/show_bug.cgi?id=199296
+        <rdar://problem/51041960>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[DragAndDropSimulator _webView:showCustomSheetForElement:]):
+
 2019-07-01  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r246958.

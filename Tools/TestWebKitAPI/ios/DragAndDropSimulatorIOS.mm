@@ -815,7 +815,9 @@ IGNORE_WARNINGS_END
     return self.convertItemProvidersBlock ? self.convertItemProvidersBlock(itemProvider, representingObjects, additionalData) : @[ itemProvider ];
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (BOOL)_webView:(WKWebView *)webView showCustomSheetForElement:(_WKActivatedElementInfo *)element
+IGNORE_WARNINGS_END
 {
     if (!self.showCustomActionSheetBlock)
         return NO;

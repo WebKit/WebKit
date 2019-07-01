@@ -1,5 +1,19 @@
 2019-07-01  Alex Christensen  <achristensen@webkit.org>
 
+        Deprecate but still call _webView:showCustomSheetForElement: after transition to UIContextMenuInteraction
+        https://bugs.webkit.org/show_bug.cgi?id=199296
+        <rdar://problem/51041960>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showAttachmentSheet]):
+        (-[WKContentView actionSheetAssistant:showCustomSheetForElement:]):
+        (-[WKContentView continueContextMenuInteraction:]):
+
+2019-07-01  Alex Christensen  <achristensen@webkit.org>
+
         Add main thread assertions in sendWithAsyncReply code
         https://bugs.webkit.org/show_bug.cgi?id=199324
 

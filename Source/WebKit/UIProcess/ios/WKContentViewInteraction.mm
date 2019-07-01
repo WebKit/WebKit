@@ -1870,7 +1870,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return;
 
     auto element = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:(NSURL *)_positionInformation.url imageURL:(NSURL *)_positionInformation.imageURL location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:nil]);
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [uiDelegate _webView:_webView showCustomSheetForElement:element.get()];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (void)_showLinkSheet
@@ -6129,6 +6131,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
     
     if ([uiDelegate respondsToSelector:@selector(_webView:showCustomSheetForElement:)]) {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([uiDelegate _webView:_webView showCustomSheetForElement:element]) {
 #if ENABLE(DATA_INTERACTION)
             BOOL shouldCancelAllTouches = !_dragDropInteractionState.dragSession();
@@ -6136,14 +6139,13 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
             BOOL shouldCancelAllTouches = YES;
 #endif
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             // Prevent tap-and-hold and panning.
             if (shouldCancelAllTouches)
                 [UIApp _cancelAllTouches];
-ALLOW_DEPRECATED_DECLARATIONS_END
 
             return YES;
         }
+        ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     return NO;
