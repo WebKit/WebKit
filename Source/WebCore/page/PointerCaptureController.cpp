@@ -409,14 +409,14 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
 
 void PointerCaptureController::processPendingPointerCapture(PointerID pointerId)
 {
-    auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
-    if (iterator == m_activePointerIdsToCapturingData.end())
-        return;
-
     if (m_processingPendingPointerCapture)
         return;
 
     m_processingPendingPointerCapture = true;
+
+    auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
+    if (iterator == m_activePointerIdsToCapturingData.end())
+        return;
 
     auto& capturingData = iterator->value;
 
