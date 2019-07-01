@@ -756,11 +756,11 @@ private:
                         InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame;
                         index += numberOfArgumentsToSkip;
                         
-                        bool safeToGetStack;
+                        bool safeToGetStack = index >= numberOfArgumentsToSkip;
                         if (inlineCallFrame)
-                            safeToGetStack = index < inlineCallFrame->argumentCountIncludingThis - 1;
+                            safeToGetStack &= index < inlineCallFrame->argumentCountIncludingThis - 1;
                         else {
-                            safeToGetStack =
+                            safeToGetStack &=
                                 index < static_cast<unsigned>(codeBlock()->numParameters()) - 1;
                         }
                         if (safeToGetStack) {
