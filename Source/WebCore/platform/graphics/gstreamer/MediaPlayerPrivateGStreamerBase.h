@@ -37,6 +37,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 
+#if USE(GSTREAMER_GL)
 #if USE(LIBEPOXY)
 // Include the <epoxy/gl.h> header before <gst/gl/gl.h>.
 #include <epoxy/gl.h>
@@ -55,6 +56,7 @@
 #define GST_USE_UNSTABLE_API
 #include <gst/gl/gl.h>
 #undef GST_USE_UNSTABLE_API
+#endif
 
 #if USE(TEXTURE_MAPPER_GL)
 #include "TextureMapperGL.h"
