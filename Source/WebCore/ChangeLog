@@ -1,3 +1,20 @@
+2019-05-22  Antti Koivisto  <antti@apple.com>
+
+        Subselectors not searched when determining property whitelist for selector
+        https://bugs.webkit.org/show_bug.cgi?id=198147
+        <rdar://problem/50405208>
+
+        Reviewed by Zalan Bujtas.
+
+        This can cause marker elements get style they shouldn't.
+
+        Test: fast/lists/marker-style-subselector-whitelist.html
+
+        * css/RuleSet.cpp:
+        (WebCore::determinePropertyWhitelistType):
+
+        Check subselectors too.
+
 2019-05-19  Brent Fulgham  <bfulgham@apple.com>
 
         Wait to get frame until after layout has been run
