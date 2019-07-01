@@ -1127,7 +1127,8 @@ VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node& node, int in
         auto range = it.range();
         if (range->startPosition() == range->endPosition()) {
             it.advance(1);
-            return VisiblePosition(it.range()->startPosition());
+            if (!it.atEnd())
+                return VisiblePosition(it.range()->startPosition());
         }
     }
 
