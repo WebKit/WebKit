@@ -1,3 +1,16 @@
+2019-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 13] editing/selection/ios/dispatch-mouse-events-when-modifying-selection-quirk.html fails on trunk
+        https://bugs.webkit.org/show_bug.cgi?id=199384
+
+        Reviewed by Tim Horton.
+
+        Adjust this test to show the callout menu by tapping on the caret rect, rather than the center of the editable
+        area. Currently, tapping the center of the editable area twice results in a double tap, which fails to trigger
+        the callout bar.
+
+        * editing/selection/ios/dispatch-mouse-events-when-modifying-selection-quirk.html:
+
 2019-07-01  Chris Dumez  <cdumez@apple.com>
 
         It should not be possible to trigger a load while in the middle of restoring a page in PageCache
