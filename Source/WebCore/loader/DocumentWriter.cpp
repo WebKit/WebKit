@@ -142,14 +142,12 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     else
         document->createDOMWindow();
 
-    // Per <http://www.w3.org/TR/upgrade-insecure-requests/>, we need to retain an ongoing set of upgraded
-    // requests in new navigation contexts. Although this information is present when we construct the
-    // Document object, it is discard in the subsequent 'clear' statements below. So, we must capture it
-    // so we can restore it.
-    HashSet<SecurityOriginData> insecureNavigationRequestsToUpgrade;
-    if (auto* existingDocument = m_frame->document())
-        insecureNavigationRequestsToUpgrade = existingDocument->contentSecurityPolicy()->takeNavigationRequestsToUpgrade();
-    
+    // Temporarily extend the lifetime of the existing document so that FrameLoader::clear() doesn't destroy it as
+    // we need to retain its ongoing set of upgraded requests in new navigation contexts per <http://www.w3.org/TR/upgrade-insecure-requests/>
+    // and we may also need to inherit its Content Security Policy in FrameLoader::didBeginDocument().
+    RefPtr<Document> existingDocument = m_frame->document();
+    auto* previousContentSecurityPolicy = existingDocument ? existingDocument->contentSecurityPolicy() : nullptr;
+
     m_frame->loader().clear(document.ptr(), !shouldReuseDefaultView, !shouldReuseDefaultView);
     clear();
 
@@ -164,7 +162,8 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     m_frame->loader().setOutgoingReferrer(url);
     m_frame->setDocument(document.copyRef());
 
-    document->contentSecurityPolicy()->setInsecureNavigationRequestsToUpgrade(WTFMove(insecureNavigationRequestsToUpgrade));
+    if (previousContentSecurityPolicy)
+        document->contentSecurityPolicy()->setInsecureNavigationRequestsToUpgrade(previousContentSecurityPolicy->takeNavigationRequestsToUpgrade());
 
     if (m_decoder)
         document->setDecoder(m_decoder.get());
@@ -174,7 +173,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
         document->setStrictMixedContentMode(ownerDocument->isStrictMixedContentMode());
     }
 
-    m_frame->loader().didBeginDocument(dispatch);
+    m_frame->loader().didBeginDocument(dispatch, previousContentSecurityPolicy);
 
     document->implicitOpen();
 
