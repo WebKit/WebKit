@@ -1,3 +1,19 @@
+2019-05-28  Yacine Bandou  <yacine.bandou@softathome.com>
+
+        [MSE][GStreamer] update the readyState correctly in MediaPlayerPrivateGStreamerMSE
+        https://bugs.webkit.org/show_bug.cgi?id=197834
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The buffering state and the m_downloadFinished boolean aren't supported in the MSE case.
+        When the readyState is already "HaveEnoughData", we don't want to revert it to "HaveFutureData",
+        or else the MediaPlayer would send a "canplay" event instead of a "canplaythrough".
+
+        Test: media/media-source/media-source-canplaythrough-event.html
+
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::updateStates):
+
 2019-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [cairo] Entering text into forms on github.com creates a trapezoid artifact
