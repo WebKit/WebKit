@@ -1,3 +1,15 @@
+2019-07-02  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Make PrintConfiguration platform aware
+        https://bugs.webkit.org/show_bug.cgi?id=196657
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (PrintConfiguration): Specified platform-specific command lists.
+        (PrintConfiguration.run): Override run method and specify platform specific commands.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+
 2019-07-01  Justin Michaud  <justin_michaud@apple.com>
 
         [Wasm-References] Disable references by default

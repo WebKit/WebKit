@@ -1175,20 +1175,33 @@ class PrintConfiguration(steps.ShellSequence):
     flunkOnFailure = False
     warnOnFailure = False
     logEnviron = False
-    command_list = [['hostname'],
+    command_list_generic = [['hostname'],
                     ['df', '-hl'],
-                    ['date'],
-                    ['sw_vers'],
-                    ['xcodebuild', '-sdk', '-version']]
+                    ['date']]
+    command_list_apple = [['sw_vers'], ['xcodebuild', '-sdk', '-version']]
+    command_list_linux = [['uname', '-a']]
+    command_list_win = [[]]  # TODO: add windows specific commands here
 
     def __init__(self, **kwargs):
         super(PrintConfiguration, self).__init__(timeout=60, **kwargs)
         self.commands = []
         self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
         self.addLogObserver('stdio', self.log_observer)
-        # FIXME: Check platform before running platform specific commands.
-        for command in self.command_list:
+
+    def run(self):
+        command_list = list(self.command_list_generic)
+        platform = self.getProperty('platform')
+        platform = platform.split('-')[0]
+        if platform in ('mac', 'ios', '*'):
+            command_list.extend(self.command_list_apple)
+        elif platform in ('gtk', 'wpe'):
+            command_list.extend(self.command_list_linux)
+        elif platform in ('win', 'wincairo'):
+            command_list.extend(self.command_list_win)
+
+        for command in command_list:
             self.commands.append(util.ShellArg(command=command, logfile='stdio'))
+        return super(PrintConfiguration, self).run()
 
     def convert_build_to_os_name(self, build):
         if not build:
@@ -1217,7 +1230,7 @@ class PrintConfiguration(steps.ShellSequence):
         if self.results != SUCCESS:
             return {u'step': u'Failed to print configuration'}
         logText = self.log_observer.getStdout() + self.log_observer.getStderr()
-        configuration = u''
+        configuration = u'Printed configuration'
         match = re.search('ProductVersion:[ \t]*(.+?)\n', logText)
         if match:
             os_version = match.group(1).strip()

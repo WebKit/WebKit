@@ -1577,10 +1577,10 @@ class TestPrintConfiguration(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
-    def test_success(self):
+    def test_success_mac(self):
         self.setupStep(PrintConfiguration())
-        self.setProperty('buildername', 'macOS-Sierra-Release-WK2-Tests-EWS')
-        self.setProperty('platform', 'mac')
+        self.setProperty('buildername', 'macOS-High-Sierra-Release-WK2-Tests-EWS')
+        self.setProperty('platform', 'mac-highsierra')
 
         self.expectRemoteCommands(
             ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0
@@ -1615,9 +1615,108 @@ Build version 9F2000''')
         self.expectOutcome(result=SUCCESS, state_string='OS: High Sierra (10.13.4), Xcode: 9.4.1')
         return self.runStep()
 
+    def test_success_ios_simulator(self):
+        self.setupStep(PrintConfiguration())
+        self.setProperty('buildername', 'macOS-Sierra-Release-WK2-Tests-EWS')
+        self.setProperty('platform', 'ios-simulator-12')
+
+        self.expectRemoteCommands(
+            ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='ews152.apple.com'),
+            ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='''Filesystem     Size   Used  Avail Capacity iused  ifree %iused  Mounted on
+/dev/disk1s1  119Gi   95Gi   23Gi    81%  937959 9223372036853837848    0%   /
+/dev/disk1s4  119Gi   20Ki   23Gi     1%       0 9223372036854775807    0%   /private/var/vm
+/dev/disk0s3  119Gi   22Gi   97Gi    19%  337595          4294629684    0%   /Volumes/Data'''),
+            ExpectShell(command=['date'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Tue Apr  9 15:30:52 PDT 2019'),
+            ExpectShell(command=['sw_vers'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='''ProductName:	Mac OS X
+ProductVersion:	10.14.5
+BuildVersion:	18F132'''),
+            ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
+            + ExpectShell.log('stdio', stdout='''iPhoneSimulator12.2.sdk - Simulator - iOS 12.2 (iphonesimulator12.2)
+SDKVersion: 12.2
+Path: /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator12.2.sdk
+PlatformVersion: 12.2
+PlatformPath: /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform
+BuildID: 15C4BAF8-4632-11E9-86EB-BA47F1FFAC3C
+ProductBuildVersion: 16E226
+ProductCopyright: 1983-2019 Apple Inc.
+ProductName: iPhone OS
+ProductVersion: 12.2
+
+Xcode 10.2
+Build version 10E125''')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='OS: Mojave (10.14.5), Xcode: 10.2')
+        return self.runStep()
+
+    def test_success_webkitpy(self):
+        self.setupStep(PrintConfiguration())
+        self.setProperty('platform', '*')
+
+        self.expectRemoteCommands(
+            ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['date'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['sw_vers'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='''ProductName:	Mac OS X
+ProductVersion:	10.13.6
+BuildVersion:	17G7024'''),
+            ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='''Xcode 10.2\nBuild version 10E125'''),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='OS: High Sierra (10.13.6), Xcode: 10.2')
+        return self.runStep()
+
+    def test_success_linux_wpe(self):
+        self.setupStep(PrintConfiguration())
+        self.setProperty('platform', 'wpe')
+
+        self.expectRemoteCommands(
+            ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='ews190'),
+            ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='''Filesystem     Size   Used  Avail Capacity iused  ifree %iused  Mounted on
+/dev/disk0s3  119Gi   22Gi   97Gi    19%  337595          4294629684    0%   /'''),
+            ExpectShell(command=['date'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Tue Apr  9 15:30:52 PDT 2019'),
+            ExpectShell(command=['uname', '-a'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='''Linux kodama-ews 5.0.4-arch1-1-ARCH #1 SMP PREEMPT Sat Mar 23 21:00:33 UTC 2019 x86_64 GNU/Linux'''),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Printed configuration')
+        return self.runStep()
+
+    def test_success_linux_gtk(self):
+        self.setupStep(PrintConfiguration())
+        self.setProperty('platform', 'gtk')
+
+        self.expectRemoteCommands(
+            ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['date'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['uname', '-a'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Printed configuration')
+        return self.runStep()
+
+    def test_success_win(self):
+        self.setupStep(PrintConfiguration())
+        self.setProperty('platform', 'win')
+
+        self.expectRemoteCommands(
+            ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['date'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Printed configuration')
+        return self.runStep()
+
     def test_failure(self):
         self.setupStep(PrintConfiguration())
-        self.setProperty('platform', 'mac')
+        self.setProperty('platform', 'ios-12')
         self.expectRemoteCommands(
             ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
             ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
