@@ -1,3 +1,7 @@
+2019-07-02  Alan Coon  <alancoon@apple.com>
+
+        Revert r246801. rdar://problem/52505032
+
 2019-07-01  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r246801. rdar://problem/52505032
