@@ -286,8 +286,12 @@ bool JSArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSVa
     thisObject->ensureWritable(vm);
 
     if (propertyName == vm.propertyNames->length) {
-        if (!thisObject->isLengthWritable())
+        if (!thisObject->isLengthWritable()) {
+            if (slot.isStrictMode())
+                throwTypeError(exec, scope, "Array length is not writable"_s);
             return false;
+        }
+
         unsigned newLength = value.toUInt32(exec);
         RETURN_IF_EXCEPTION(scope, false);
         double valueAsNumber = value.toNumber(exec);

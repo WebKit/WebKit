@@ -1,3 +1,13 @@
+2019-07-02  Keith Miller  <keith_miller@apple.com>
+
+        Frozen Arrays length assignment should throw in strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=199365
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/frozen-array-length-should-throw-strict.js: Added.
+        (test):
+
 2019-07-01  Justin Michaud  <justin_michaud@apple.com>
 
         [Wasm-References] Disable references by default
