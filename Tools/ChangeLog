@@ -1,5 +1,14 @@
 2019-07-02  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Update bot configuration for WPE and GTK
+        https://bugs.webkit.org/show_bug.cgi?id=199238
+
+        Reviewed by Michael Catanzaro.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
+2019-07-02  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Make PrintConfiguration platform aware
         https://bugs.webkit.org/show_bug.cgi?id=196657
 

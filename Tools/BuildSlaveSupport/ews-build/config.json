@@ -5,6 +5,26 @@
       "platform": "*"
     },
     {
+      "name": "igalia1-gtk-wk2-ews",
+      "platform": "gtk"
+    },
+    {
+      "name": "igalia2-gtk-wk2-ews",
+      "platform": "gtk"
+    },
+    {
+      "name": "igalia3-gtk-wk2-ews",
+      "platform": "gtk"
+    },
+    {
+      "name": "igalia4-gtk-wk2-ews",
+      "platform": "gtk"
+    },
+    {
+      "name": "aperez-gtk-ews",
+      "platform": "gtk"
+    },
+    {
       "name": "tanty-gtk-wk2-ews",
       "platform": "gtk"
     },
@@ -17,11 +37,7 @@
       "platform": "wpe"
     },
     {
-      "name": "aperez-wpe-gcc5-ews",
-      "platform": "wpe"
-    },
-    {
-      "name": "aperez-wpe-gcc6-ews",
+      "name": "aperez-wpe-ews",
       "platform": "wpe"
     },
     {
@@ -285,7 +301,7 @@
       "platform": "gtk",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "workernames": ["tanty-gtk-wk2-ews", "ltilve-gtk-wk2-ews"]
+      "workernames": ["igalia1-gtk-wk2-ews", "igalia2-gtk-wk2-ews", "igalia3-gtk-wk2-ews", "igalia4-gtk-wk2-ews", "aperez-gtk-ews", "tanty-gtk-wk2-ews", "ltilve-gtk-wk2-ews"]
     },
     {
       "name": "iOS-12-Build-EWS",
@@ -387,7 +403,7 @@
       "platform": "wpe",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "workernames": ["igalia-wpe-ews", "aperez-wpe-gcc5-ews", "aperez-wpe-gcc6-ews"]
+      "workernames": ["igalia-wpe-ews", "aperez-wpe-ews"]
     },
     {
       "name": "JSC-Tests-EWS",
