@@ -114,6 +114,9 @@ class CheckOutSpecificRevision(shell.ShellCommand):
     flunkOnFailure = False
     haltOnFailure = False
 
+    def __init__(self, **kwargs):
+        super(CheckOutSpecificRevision, self).__init__(logEnviron=False, **kwargs)
+
     def doStepIf(self, step):
         return self.getProperty('ews_revision', False)
 
@@ -132,6 +135,9 @@ class CleanWorkingDirectory(shell.ShellCommand):
     flunkOnFailure = True
     haltOnFailure = True
     command = ['Tools/Scripts/clean-webkit']
+
+    def __init__(self, **kwargs):
+        super(CleanWorkingDirectory, self).__init__(logEnviron=False, **kwargs)
 
 
 class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
@@ -494,7 +500,7 @@ class RunBindingsTests(shell.ShellCommand):
     command = ['Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(jsonFileName)]
 
     def __init__(self, **kwargs):
-        super(RunBindingsTests, self).__init__(timeout=5 * 60, **kwargs)
+        super(RunBindingsTests, self).__init__(timeout=5 * 60, logEnviron=False, **kwargs)
 
     def start(self):
         self.log_observer = logobserver.BufferLogObserver()
@@ -541,7 +547,7 @@ class RunWebKitPerlTests(shell.ShellCommand):
     command = ['Tools/Scripts/test-webkitperl']
 
     def __init__(self, **kwargs):
-        super(RunWebKitPerlTests, self).__init__(timeout=2 * 60, **kwargs)
+        super(RunWebKitPerlTests, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
 
 
 class RunWebKitPyTests(shell.ShellCommand):
@@ -554,7 +560,7 @@ class RunWebKitPyTests(shell.ShellCommand):
     command = ['Tools/Scripts/test-webkitpy', '--json-output={0}'.format(jsonFileName)]
 
     def __init__(self, **kwargs):
-        super(RunWebKitPyTests, self).__init__(timeout=2 * 60, **kwargs)
+        super(RunWebKitPyTests, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
 
     def start(self):
         self.log_observer = logobserver.BufferLogObserver()
@@ -612,6 +618,9 @@ class CompileWebKit(shell.Compile):
     warningPattern = '.*arning: .*'
     haltOnFailure = False
     command = ['perl', 'Tools/Scripts/build-webkit', WithProperties('--%(configuration)s')]
+
+    def __init__(self, **kwargs):
+        super(CompileWebKit, self).__init__(logEnviron=False, **kwargs)
 
     def start(self):
         platform = self.getProperty('platform')
@@ -1118,6 +1127,9 @@ class ArchiveTestResults(shell.ShellCommand):
     description = ['archiving test results']
     descriptionDone = ['Archived test results']
     haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        super(ArchiveTestResults, self).__init__(logEnviron=False, **kwargs)
 
 
 class UploadTestResults(transfer.FileUpload):
