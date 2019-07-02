@@ -1,5 +1,53 @@
 2019-07-02  Chris Dumez  <cdumez@apple.com>
 
+        Protect NetworkProcess::m_networkSessions against corruption
+        https://bugs.webkit.org/show_bug.cgi?id=199418
+        <rdar://problem/50614019>
+
+        Reviewed by Youenn Fablet.
+
+        I believe the most likely reason for the crash at <rdar://problem/50614019> is that NetworkProcess::m_networkSessions
+        is getting corrupted and is returning us a bad pointer.
+
+        To harden our code, I added debug assertions to make sure that this HashMap is only used on the main thread and
+        to make sure that the sessionID used as key is always valid. I have also added if checks to avoid crashing in
+        release whenever possible.
+
+        Note that we came to a similar conclusion for NetworkProcess::m_swServers when investigating rdar://problem/51859081,
+        so the two radars are potentially related. Both HashMaps are owned by the NetworkProcess and use a SessionID
+        as key.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM):
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM):
+        (WebKit::NetworkConnectionToWebProcess::logUserInteraction):
+        (WebKit::NetworkConnectionToWebProcess::logWebSocketLoading):
+        (WebKit::NetworkConnectionToWebProcess::logSubresourceLoading):
+        (WebKit::NetworkConnectionToWebProcess::logSubresourceRedirect):
+        (WebKit::NetworkConnectionToWebProcess::hasStorageAccess):
+        (WebKit::NetworkConnectionToWebProcess::requestStorageAccess):
+        (WebKit::NetworkConnectionToWebProcess::requestStorageAccessUnderOpener):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::networkSession const):
+        (WebKit::NetworkProcess::setSession):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::addKeptAliveLoad):
+        (WebKit::NetworkProcess::removeKeptAliveLoad):
+        (WebKit::NetworkProcess::webProcessWasDisconnected):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::didFinishWithRedirectResponse):
+        (WebKit::NetworkResourceLoader::tryStoreAsCacheEntry):
+        (WebKit::NetworkResourceLoader::shouldLogCookieInformation):
+        * NetworkProcess/ios/NetworkConnectionToWebProcessIOS.mm:
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorBoundInterfaceIdentifier):
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorCTDataConnectionServiceType):
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorSourceApplicationBundleIdentifier):
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorSourceApplicationSecondaryIdentifier):
+
+2019-07-02  Chris Dumez  <cdumez@apple.com>
+
         VisitedLinkStore does not need to subclass WebProcessLifetimeObserver
         https://bugs.webkit.org/show_bug.cgi?id=199407
 

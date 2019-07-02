@@ -531,7 +531,7 @@ void NetworkConnectionToWebProcess::cookiesForDOM(PAL::SessionID sessionID, cons
     auto& networkStorageSession = storageSession(networkProcess(), sessionID);
     auto result = networkStorageSession.cookiesForDOM(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-    if (auto session = networkProcess().networkSession(sessionID)) {
+    if (auto* session = networkProcess().networkSession(sessionID)) {
         if (session->shouldLogCookieInformation())
             NetworkResourceLoader::logCookieInformation(*this, "NetworkConnectionToWebProcess::cookiesForDOM", reinterpret_cast<const void*>(this), networkStorageSession, firstParty, sameSiteInfo, url, emptyString(), frameID, pageID, WTF::nullopt);
     }
@@ -544,7 +544,7 @@ void NetworkConnectionToWebProcess::setCookiesFromDOM(PAL::SessionID sessionID, 
     auto& networkStorageSession = storageSession(networkProcess(), sessionID);
     networkStorageSession.setCookiesFromDOM(firstParty, sameSiteInfo, url, frameID, pageID, cookieString);
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-    if (auto session = networkProcess().networkSession(sessionID)) {
+    if (auto* session = networkProcess().networkSession(sessionID)) {
         if (session->shouldLogCookieInformation())
             NetworkResourceLoader::logCookieInformation(*this, "NetworkConnectionToWebProcess::setCookiesFromDOM", reinterpret_cast<const void*>(this), networkStorageSession, firstParty, sameSiteInfo, url, emptyString(), frameID, pageID, WTF::nullopt);
     }
@@ -670,7 +670,7 @@ void NetworkConnectionToWebProcess::logUserInteraction(PAL::SessionID sessionID,
     if (!sessionID.isValid())
         return;
 
-    if (auto networkSession = networkProcess().networkSession(sessionID)) {
+    if (auto* networkSession = networkProcess().networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->logUserInteraction(domain, [] { });
     }
@@ -678,7 +678,7 @@ void NetworkConnectionToWebProcess::logUserInteraction(PAL::SessionID sessionID,
 
 void NetworkConnectionToWebProcess::logWebSocketLoading(PAL::SessionID sessionID, const RegistrableDomain& targetDomain, const RegistrableDomain& topFrameDomain, WallTime lastSeen)
 {
-    if (auto networkSession = networkProcess().networkSession(sessionID)) {
+    if (auto* networkSession = networkProcess().networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->logWebSocketLoading(targetDomain, topFrameDomain, lastSeen, [] { });
     }
@@ -686,7 +686,7 @@ void NetworkConnectionToWebProcess::logWebSocketLoading(PAL::SessionID sessionID
 
 void NetworkConnectionToWebProcess::logSubresourceLoading(PAL::SessionID sessionID, const RegistrableDomain& targetDomain, const RegistrableDomain& topFrameDomain, WallTime lastSeen)
 {
-    if (auto networkSession = networkProcess().networkSession(sessionID)) {
+    if (auto* networkSession = networkProcess().networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->logSubresourceLoading(targetDomain, topFrameDomain, lastSeen, [] { });
     }
@@ -694,7 +694,7 @@ void NetworkConnectionToWebProcess::logSubresourceLoading(PAL::SessionID session
 
 void NetworkConnectionToWebProcess::logSubresourceRedirect(PAL::SessionID sessionID, const RegistrableDomain& sourceDomain, const RegistrableDomain& targetDomain)
 {
-    if (auto networkSession = networkProcess().networkSession(sessionID)) {
+    if (auto* networkSession = networkProcess().networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->logSubresourceRedirect(sourceDomain, targetDomain, [] { });
     }
@@ -713,7 +713,7 @@ void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(Vector<WebCore
 
 void NetworkConnectionToWebProcess::hasStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (auto networkSession = networkProcess().networkSession(sessionID)) {
+    if (auto* networkSession = networkProcess().networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
             resourceLoadStatistics->hasStorageAccess(subFrameDomain, topFrameDomain, frameID, pageID, WTFMove(completionHandler));
             return;
@@ -725,7 +725,7 @@ void NetworkConnectionToWebProcess::hasStorageAccess(PAL::SessionID sessionID, c
 
 void NetworkConnectionToWebProcess::requestStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, PageIdentifier pageID, CompletionHandler<void(WebCore::StorageAccessWasGranted wasGranted, WebCore::StorageAccessPromptWasShown promptWasShown)>&& completionHandler)
 {
-    if (auto networkSession = networkProcess().networkSession(sessionID)) {
+    if (auto* networkSession = networkProcess().networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
             resourceLoadStatistics->requestStorageAccess(subFrameDomain, topFrameDomain, frameID, pageID, WTFMove(completionHandler));
             return;
@@ -737,7 +737,7 @@ void NetworkConnectionToWebProcess::requestStorageAccess(PAL::SessionID sessionI
 
 void NetworkConnectionToWebProcess::requestStorageAccessUnderOpener(PAL::SessionID sessionID, WebCore::RegistrableDomain&& domainInNeedOfStorageAccess, PageIdentifier openerPageID, WebCore::RegistrableDomain&& openerDomain)
 {
-    if (auto networkSession = networkProcess().networkSession(sessionID)) {
+    if (auto* networkSession = networkProcess().networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->requestStorageAccessUnderOpener(WTFMove(domainInNeedOfStorageAccess), openerPageID, WTFMove(openerDomain));
     }

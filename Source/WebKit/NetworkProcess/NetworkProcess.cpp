@@ -559,7 +559,9 @@ void NetworkProcess::forEachNetworkStorageSession(const Function<void(WebCore::N
 
 NetworkSession* NetworkProcess::networkSession(const PAL::SessionID& sessionID) const
 {
-    return m_networkSessions.get(sessionID);
+    ASSERT(RunLoop::isMain());
+    ASSERT(sessionID.isValid());
+    return sessionID.isValid() ? m_networkSessions.get(sessionID) : nullptr;
 }
 
 NetworkSession* NetworkProcess::networkSessionByConnection(IPC::Connection& connection) const
@@ -572,11 +574,17 @@ NetworkSession* NetworkProcess::networkSessionByConnection(IPC::Connection& conn
 
 void NetworkProcess::setSession(const PAL::SessionID& sessionID, Ref<NetworkSession>&& session)
 {
+    ASSERT(RunLoop::isMain());
+    ASSERT(sessionID.isValid());
+    if (!sessionID.isValid())
+        return;
+
     m_networkSessions.set(sessionID, WTFMove(session));
 }
 
 void NetworkProcess::destroySession(const PAL::SessionID& sessionID)
 {
+    ASSERT(RunLoop::isMain());
     ASSERT(sessionID.isValid());
     if (!sessionID.isValid())
         return;
@@ -2646,13 +2654,13 @@ void NetworkProcess::markAdClickAttributionsAsExpiredForTesting(PAL::SessionID s
 
 void NetworkProcess::addKeptAliveLoad(Ref<NetworkResourceLoader>&& loader)
 {
-    if (auto session = m_networkSessions.get(loader->sessionID()))
+    if (auto* session = networkSession(loader->sessionID()))
         session->addKeptAliveLoad(WTFMove(loader));
 }
 
 void NetworkProcess::removeKeptAliveLoad(NetworkResourceLoader& loader)
 {
-    if (auto session = m_networkSessions.get(loader.sessionID()))
+    if (auto* session = networkSession(loader.sessionID()))
         session->removeKeptAliveLoad(loader);
 }
 
@@ -2705,10 +2713,8 @@ void NetworkProcess::webProcessWasDisconnected(IPC::Connection& connection)
         return;
 
     auto sessionID = m_sessionByConnection.take(connectionID);
-    if (!m_networkSessions.contains(sessionID))
-        return;
-
-    networkSession(sessionID)->storageManager().processDidCloseConnection(connection);
+    if (auto* session = networkSession(sessionID))
+        session->storageManager().processDidCloseConnection(connection);
 }
 
 void NetworkProcess::webProcessSessionChanged(IPC::Connection& connection, PAL::SessionID newSessionID, const Vector<PageIdentifier>& pageIDs)

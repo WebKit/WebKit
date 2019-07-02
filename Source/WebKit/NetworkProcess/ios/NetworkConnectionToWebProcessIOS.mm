@@ -54,28 +54,28 @@ UIViewController *NetworkConnectionToWebProcess::paymentCoordinatorPresentingVie
 
 const String& NetworkConnectionToWebProcess::paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&, PAL::SessionID sessionID)
 {
-    if (auto session = static_cast<NetworkSessionCocoa*>(m_networkProcess->networkSession(sessionID)))
+    if (auto* session = static_cast<NetworkSessionCocoa*>(m_networkProcess->networkSession(sessionID)))
         return session->boundInterfaceIdentifier();
     return emptyString();
 }
 
 const String& NetworkConnectionToWebProcess::paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&, PAL::SessionID sessionID)
 {
-    if (auto session = static_cast<NetworkSessionCocoa*>(m_networkProcess->networkSession(sessionID)))
+    if (auto* session = static_cast<NetworkSessionCocoa*>(m_networkProcess->networkSession(sessionID)))
         return session->ctDataConnectionServiceType();
     return emptyString();
 }
 
 const String& NetworkConnectionToWebProcess::paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&, PAL::SessionID sessionID)
 {
-    if (auto session = static_cast<NetworkSessionCocoa*>(m_networkProcess->networkSession(sessionID)))
+    if (auto* session = static_cast<NetworkSessionCocoa*>(m_networkProcess->networkSession(sessionID)))
         return session->sourceApplicationBundleIdentifier();
     return emptyString();
 }
 
 const String& NetworkConnectionToWebProcess::paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&, PAL::SessionID sessionID)
 {
-    if (auto session = static_cast<NetworkSessionCocoa*>(m_networkProcess->networkSession(sessionID)))
+    if (auto* session = static_cast<NetworkSessionCocoa*>(m_networkProcess->networkSession(sessionID)))
         return session->sourceApplicationSecondaryIdentifier();
     return emptyString();
 }

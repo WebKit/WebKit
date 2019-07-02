@@ -164,7 +164,7 @@ public:
     NetworkCache::Cache* cache() { return m_cache.get(); }
 
     void setSession(const PAL::SessionID&, Ref<NetworkSession>&&);
-    NetworkSession* networkSession(const PAL::SessionID&) const override;
+    NetworkSession* networkSession(const PAL::SessionID&) const final;
     NetworkSession* networkSessionByConnection(IPC::Connection&) const;
     void destroySession(const PAL::SessionID&);
 
