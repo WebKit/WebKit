@@ -90,7 +90,7 @@ template<typename AsyncReplyResult> struct AsyncReplyError {
 class MachMessage;
 class UnixMessage;
 
-class Connection : public ThreadSafeRefCounted<Connection, WTF::DestructionThread::Main> {
+class Connection : public ThreadSafeRefCounted<Connection, WTF::DestructionThread::MainRunLoop> {
 public:
     class Client : public MessageReceiver {
     public:

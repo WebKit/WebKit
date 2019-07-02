@@ -1,3 +1,21 @@
+2019-07-02  Chris Dumez  <cdumez@apple.com>
+
+        ThreadSafeRefCounted<DestructionThread::Main> is not safe to use in the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=199420
+        <rdar://problem/52289717>
+
+        Reviewed by Ryosuke Niwa.
+
+        Update IPC::Connection and DeviceIdHashSaltStorage to use DestructionThread::MainRunLoop
+        instead of DestructionThread::Main, since both classes are used in the UIProcess.
+
+        Using DestructionThread::Main is not safe in the UIProcess because its implementation relies
+        on isMainThread() / callOnMainThread(). Those get confused about which thread is the main
+        thread when an application uses both WK1 and WK2.
+
+        * Platform/IPC/Connection.h:
+        * UIProcess/DeviceIdHashSaltStorage.h:
+
 2019-07-02  Patrick Griffis  <pgriffis@igalia.com>
 
         [GTK][WPE] Explicitly blacklist problematic directories for sandbox

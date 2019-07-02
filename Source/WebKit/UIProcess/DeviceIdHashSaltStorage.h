@@ -36,7 +36,7 @@
 
 namespace WebKit {
 
-class DeviceIdHashSaltStorage : public ThreadSafeRefCounted<DeviceIdHashSaltStorage, WTF::DestructionThread::Main> {
+class DeviceIdHashSaltStorage : public ThreadSafeRefCounted<DeviceIdHashSaltStorage, WTF::DestructionThread::MainRunLoop> {
 public:
     static Ref<DeviceIdHashSaltStorage> create(const String& deviceIdHashSaltStorageDirectory);
     ~DeviceIdHashSaltStorage();

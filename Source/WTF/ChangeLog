@@ -1,3 +1,25 @@
+2019-07-02  Chris Dumez  <cdumez@apple.com>
+
+        ThreadSafeRefCounted<DestructionThread::Main> is not safe to use in the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=199420
+        <rdar://problem/52289717>
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/MainThread.cpp:
+        (WTF::isMainRunLoop):
+        (WTF::callOnMainRunLoop):
+        * wtf/MainThread.h:
+        Add some function to MainThread.h to be used by ThreadSafeRefCounted to interact with the
+        main RunLoop. This is used to avoid a circular dependency between RunLoop (which is
+        ThreadSafeRefCounted) and ThreadSafeReCounted.
+
+        * wtf/ThreadSafeRefCounted.h:
+        (WTF::ThreadSafeRefCounted::deref const):
+        Add a new DestructionThread::MainRunLoop enum value to be used by classes that need to
+        be destroyed on the main RunLoop rather than the main thread (which may be different
+        when WK1 is invoved)
+
 2019-07-02  Robin Morisset  <rmorisset@apple.com>
 
         [WHLSL] the initializer in VariableDeclaration should be a std::unique_ptr, not Optional<UniqueRef<..>>

@@ -64,7 +64,7 @@ private:
     mutable std::atomic<unsigned> m_refCount { 1 };
 };
 
-enum class DestructionThread { Any, Main };
+enum class DestructionThread { Any, Main, MainRunLoop };
 
 template<class T, DestructionThread destructionThread = DestructionThread::Any> class ThreadSafeRefCounted : public ThreadSafeRefCountedBase {
 public:
@@ -72,13 +72,27 @@ public:
     {
         if (!derefBase())
             return;
-        if (destructionThread == DestructionThread::Any || isMainThread()) {
+
+        auto deleteThis = [this] {
             delete static_cast<const T*>(this);
-            return;
+        };
+        switch (destructionThread) {
+        case DestructionThread::Any:
+            break;
+        case DestructionThread::Main:
+            if (!isMainThread()) {
+                callOnMainThread(WTFMove(deleteThis));
+                return;
+            }
+            break;
+        case DestructionThread::MainRunLoop:
+            if (!isMainRunLoop()) {
+                callOnMainRunLoop(WTFMove(deleteThis));
+                return;
+            }
+            break;
         }
-        callOnMainThread([this] {
-            delete static_cast<const T*>(this);
-        });
+        deleteThis();
     }
 
 protected:

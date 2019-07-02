@@ -35,6 +35,7 @@
 #include <wtf/Lock.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
@@ -124,6 +125,16 @@ void dispatchFunctionsFromMainThread()
             break;
         }
     }
+}
+
+bool isMainRunLoop()
+{
+    return RunLoop::isMain();
+}
+
+void callOnMainRunLoop(Function<void()>&& function)
+{
+    RunLoop::main().dispatch(WTFMove(function));
 }
 
 void callOnMainThread(Function<void()>&& function)
