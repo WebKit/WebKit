@@ -1434,35 +1434,34 @@ void YarrPattern::dumpPattern(PrintStream& out, const String& patternString)
     dumpPatternString(out, patternString);
 
     if (m_flags) {
-        bool printSeperator = false;
+        bool printSeparator = false;
         out.print(" (");
         if (global()) {
             out.print("global");
-            printSeperator = true;
+            printSeparator = true;
         }
         if (ignoreCase()) {
-            if (printSeperator)
+            if (printSeparator)
                 out.print("|");
             out.print("ignore case");
-            printSeperator = true;
+            printSeparator = true;
         }
         if (multiline()) {
-            if (printSeperator)
+            if (printSeparator)
                 out.print("|");
             out.print("multiline");
-            printSeperator = true;
+            printSeparator = true;
         }
         if (unicode()) {
-            if (printSeperator)
+            if (printSeparator)
                 out.print("|");
             out.print("unicode");
-            printSeperator = true;
+            printSeparator = true;
         }
         if (sticky()) {
-            if (printSeperator)
+            if (printSeparator)
                 out.print("|");
             out.print("sticky");
-            printSeperator = true;
         }
         out.print(")");
     }

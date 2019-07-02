@@ -1,3 +1,13 @@
+2019-07-02  Paulo Matos  <pmatos@linki.tools>
+
+        Fix typo in if/else block and remove dead assignment
+        https://bugs.webkit.org/show_bug.cgi?id=199352
+
+        Reviewed by Alexey Proskuryakov.
+
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPattern::dumpPattern): Fix typo in if/else block and remove dead assignment
+
 2019-07-02  Keith Miller  <keith_miller@apple.com>
 
         PACCage should first cage leaving PAC bits intact then authenticate
