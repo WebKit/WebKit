@@ -20,11 +20,13 @@
 #ifndef GLibUtilities_h
 #define GLibUtilities_h
 
+#include <glib-object.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
 
 CString getCurrentExecutablePath();
 CString getCurrentExecutableName();
+CString enumToString(GType, guint value);
 
 // These might be added to glib in the future, but in the meantime they're defined here.
 #ifndef GULONG_TO_POINTER

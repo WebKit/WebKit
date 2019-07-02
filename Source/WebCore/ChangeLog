@@ -1,3 +1,37 @@
+2019-07-01  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Cannot play Bert's Bytes radio stream from http://radio.dos.nl/
+        https://bugs.webkit.org/show_bug.cgi?id=198376
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The delayed startup was due to a mix of buffering feedback
+        messages not handled correctly by the player. We were handling
+        download and streaming buffering metrics without distinction.
+        Range requests (used for seeking) were also triggering on-disk
+        buffering in some cases. The buffering percentage estimation based
+        on network read position was not working either because uint64_t
+        division doesn't return a floating point value.
+
+        No new tests, existing media tests cover this patch.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::commitLoad):
+        (WebCore::MediaPlayerPrivateGStreamer::play):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::processBufferingStats):
+        (WebCore::MediaPlayerPrivateGStreamer::updateBufferingStatus):
+        (WebCore::MediaPlayerPrivateGStreamer::fillTimerFired):
+        (WebCore::MediaPlayerPrivateGStreamer::maxTimeLoaded const):
+        (WebCore::MediaPlayerPrivateGStreamer::didLoadingProgress const):
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates):
+        (WebCore::MediaPlayerPrivateGStreamer::updateDownloadBufferingFlag):
+        (WebCore::MediaPlayerPrivateGStreamer::setPreload):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkitWebSrcReset):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+
 2019-07-01  Miguel Gomez  <magomez@igalia.com>
 
         REGRESSION(r246963) GTK's debug build is broken
