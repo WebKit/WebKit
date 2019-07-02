@@ -251,6 +251,19 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         selectedDOMNode.copyNode();
     }
 
+    handlePasteEvent(event)
+    {
+        let selectedDOMNode = this._domTreeOutline.selectedDOMNode();
+        if (!selectedDOMNode)
+            return;
+
+        let text = event.clipboardData.getData("text/plain");
+        if (!text)
+            return;
+
+        selectedDOMNode.insertAdjacentHTML("afterend", text);
+    }
+
     get supportsSave()
     {
         return WI.canArchiveMainFrame();

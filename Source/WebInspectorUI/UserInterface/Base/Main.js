@@ -269,6 +269,7 @@ WI.contentLoaded = function()
     // Register for global events.
     document.addEventListener("beforecopy", WI._beforecopy);
     document.addEventListener("copy", WI._copy);
+    document.addEventListener("paste", WI._paste);
 
     document.addEventListener("click", WI._mouseWasClicked);
     document.addEventListener("dragover", WI._handleDragOver);
@@ -2618,6 +2619,34 @@ WI._copy = function(event)
     var selectionString = selection.toString().removeWordBreakCharacters();
     event.clipboardData.setData("text/plain", selectionString);
     event.preventDefault();
+};
+
+WI._paste = function(event)
+{
+    let selection = window.getSelection();
+
+    // If there is no selection, pass the paste event on to the focused element or focused ContentView.
+    if (!selection.isCollapsed || WI.isEventTargetAnEditableField(event))
+        return;
+
+    let focusedPasteHandler = WI.currentFocusElement && WI.currentFocusElement.pasteHandler;
+    if (focusedPasteHandler && focusedPasteHandler.handlePasteEvent) {
+        focusedPasteHandler.handlePasteEvent(event);
+        if (event.defaultPrevented)
+            return;
+    }
+
+    let focusedContentView = WI._focusedContentView();
+    if (focusedContentView && focusedContentView.handlePasteEvent) {
+        focusedContentView.handlePasteEvent(event);
+        return;
+    }
+
+    let tabContentView = WI.tabBrowser.selectedTabContentView;
+    if (tabContentView && tabContentView.handlePasteEvent) {
+        tabContentView.handlePasteEvent(event);
+        return;
+    }
 };
 
 WI._increaseZoom = function(event)
