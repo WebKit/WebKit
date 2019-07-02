@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+class ISOProtectionSystemSpecificHeaderBox;
 class SharedBuffer;
 
 class InitDataRegistry {
@@ -56,6 +57,14 @@ public:
         ExtractKeyIDsCallback extractKeyIDs;
     };
     void registerInitDataType(const AtomString& initDataType, InitDataTypeCallbacks&&);
+
+    static const AtomString& cencName();
+    static const AtomString& keyidsName();
+    static const AtomString& webmName();
+
+    static Optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> extractPsshBoxesFromCenc(const SharedBuffer&);
+    static Optional<Vector<Ref<SharedBuffer>>> extractKeyIDsCenc(const SharedBuffer&);
+    static RefPtr<SharedBuffer> sanitizeCenc(const SharedBuffer&);
 
 private:
     InitDataRegistry();

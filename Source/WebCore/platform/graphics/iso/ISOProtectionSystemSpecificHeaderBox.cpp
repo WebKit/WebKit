@@ -34,6 +34,17 @@ using JSC::DataView;
 
 namespace WebCore {
 
+Optional<Vector<uint8_t>> ISOProtectionSystemSpecificHeaderBox::peekSystemID(JSC::DataView& view, unsigned offset)
+{
+    auto peekResult = ISOBox::peekBox(view, offset);
+    if (!peekResult || peekResult.value().first != boxTypeName())
+        return WTF::nullopt;
+
+    ISOProtectionSystemSpecificHeaderBox psshBox;
+    psshBox.parse(view, offset);
+    return psshBox.systemID();
+}
+
 bool ISOProtectionSystemSpecificHeaderBox::parse(DataView& view, unsigned& offset)
 {
     if (!ISOFullBox::parse(view, offset))

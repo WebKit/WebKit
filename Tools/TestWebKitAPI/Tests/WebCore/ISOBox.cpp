@@ -74,13 +74,13 @@ TEST(ISOBox, ISOProtectionSchemeInfoBox)
     ASSERT_EQ(defaultIV, trackEncryptionBox->defaultConstantIV());
 }
 
-static const char* base64EncodedPsshWithAssetId = "AAAAqHBzc2gAAAAAlM6G+wf/T0OtuJPS+paMogAAAIgAAACIZnBzZAAAABBmcHNpAAAAAGNlbmMAAAA4ZnBzawAAABhma3JpAAAAAAAAAAAAAAAAAAAAAQAAABhma2FpAAAAAAAAAAAAAAAAAAAA8QAAADhmcHNrAAAAGGZrcmkAAAAAAAAAAAAAAAAAAAACAAAAGGZrYWkAAAAAAAAAAAAAAAAAAADy";
+static const char* base64EncodedPsshWithAssetId = "AAAAsHBzc2gAAAAAlM6G+wf/T0OtuJPS+paMogAAAJAAAACQZnBzZAAAABBmcHNpAAAAAGNlbmMAAAA8ZnBzawAAABxma3JpAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAYZmthaQAAAAAAAAAAAAAAAAAAAPEAAAA8ZnBzawAAABxma3JpAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAYZmthaQAAAAAAAAAAAAAAAAAAAPI=";
 
 TEST(ISOBox, ISOFairPlayStreamingPsshBox)
 {
     Vector<uint8_t> psshArray;
     ASSERT_TRUE(base64Decode(StringView(base64EncodedPsshWithAssetId), psshArray));
-    ASSERT_EQ(168UL, psshArray.size());
+    ASSERT_EQ(176UL, psshArray.size());
 
     auto view = JSC::DataView::create(ArrayBuffer::create(psshArray.data(), psshArray.size()), 0, psshArray.size());
 
@@ -94,14 +94,14 @@ TEST(ISOBox, ISOFairPlayStreamingPsshBox)
     auto requests = psshBox.initDataBox().requests();
     ASSERT_EQ(2UL, requests.size());
 
-    Vector<uint8_t, 16> expectedFirstKeyID = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+    Vector<uint8_t, 16> expectedFirstKeyID = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     ASSERT_EQ(requests[0].requestInfo().keyID(), expectedFirstKeyID);
 
     Vector<uint8_t> expectedFirstAssetID = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xF1 };
     ASSERT_TRUE(requests[0].assetID());
     ASSERT_EQ(requests[0].assetID().value().data(), expectedFirstAssetID);
 
-    Vector<uint8_t, 16> expectedSecondKeyID = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 };
+    Vector<uint8_t, 16> expectedSecondKeyID = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     ASSERT_EQ(requests[1].requestInfo().keyID(), expectedSecondKeyID);
 
     Vector<uint8_t> expectedSecondAssetID = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xF2 };

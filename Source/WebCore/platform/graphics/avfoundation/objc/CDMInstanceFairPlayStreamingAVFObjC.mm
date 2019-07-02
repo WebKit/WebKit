@@ -31,6 +31,7 @@
 #import "CDMFairPlayStreaming.h"
 #import "CDMKeySystemConfiguration.h"
 #import "CDMMediaCapability.h"
+#import "InitDataRegistry.h"
 #import "NotImplemented.h"
 #import "SharedBuffer.h"
 #import "TextDecoder.h"
@@ -39,6 +40,7 @@
 #import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/Algorithms.h>
 #import <wtf/FileSystem.h>
+#import <wtf/text/Base64.h>
 #import <wtf/text/StringHash.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -318,6 +320,12 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType lice
         initializationData = initData->createNSData();
     else if (initDataType == CDMPrivateFairPlayStreaming::skdName())
         identifier = adoptNS([[NSString alloc] initWithData:initData->createNSData().get() encoding:NSUTF8StringEncoding]);
+#if HAVE(FAIRPLAYSTREAMING_CENC_INITDATA)
+    else if (initDataType == InitDataRegistry::cencName()) {
+        String psshString = base64Encode(initData->data(), initData->size());
+        initializationData = [NSJSONSerialization dataWithJSONObject:@{ @"pssh": (NSString*)psshString } options:NSJSONWritingPrettyPrinted error:nil];
+    }
+#endif
     else {
         callback(SharedBuffer::create(), emptyString(), false, Failed);
         return;

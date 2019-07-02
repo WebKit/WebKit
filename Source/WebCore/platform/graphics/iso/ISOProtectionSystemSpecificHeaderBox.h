@@ -36,6 +36,8 @@ public:
     using KeyID = Vector<uint8_t>;
     static FourCC boxTypeName() { return "pssh"; }
 
+    static Optional<Vector<uint8_t>> peekSystemID(JSC::DataView&, unsigned offset);
+
     Vector<uint8_t> systemID() const { return m_systemID; }
     Vector<KeyID> keyIDs() const { return m_keyIDs; }
     Vector<uint8_t> data() const { return m_data; }

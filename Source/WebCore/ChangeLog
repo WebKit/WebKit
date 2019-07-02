@@ -1,3 +1,48 @@
+2019-07-02  Jer Noble  <jer.noble@apple.com>
+
+        Pipe suport for 'cenc' init data type into CDMFairPlayStreaming
+        https://bugs.webkit.org/show_bug.cgi?id=199381
+
+        Reviewed by Eric Carlson.
+
+        Expose the parsing of 'cenc' init data from InitDataRegistry, so it can be used in the
+        evaluation steps inside CDMFairPlayStreaming.
+
+        + Add a new method, extractPsshBoxesFromCenc() which returns an optional array of
+          unique_ptrs to different types of ISOPSSHBoxes.
+        + Add a peekScheme() method to ISOPSSHBox so that we can create the correct subclass
+          of ISOPSSHBox from the above method.
+        + Remove an extra definition of fairPlaySystemID() from CDMFairPlayStreaming.
+        + Add 'cenc' to the list of supported types in CDMPrivateFairPlayStreaming::vaildInitDataTypes().
+        + Add support for 'cenc' in CDMPrivateFairPlayStreaming::supportsInitData().
+        + Format the 'cenc' init data as an encodec-JSON structure for AVContentKeySession.
+        + Update the ISOFairPlayStreamingKeyRequestInfoBox to be a ISOFullBox.
+        + Update the box name of ISOFairPlayStreamingInitDataBox.
+
+        * Modules/encryptedmedia/InitDataRegistry.cpp:
+        (WebCore::InitDataRegistry::extractPsshBoxesFromCenc):
+        (WebCore::InitDataRegistry::extractKeyIDsCenc):
+        (WebCore::InitDataRegistry::sanitizeCenc):
+        (WebCore::InitDataRegistry::cencName):
+        (WebCore::InitDataRegistry::keyidsName):
+        (WebCore::InitDataRegistry::webmName):
+        (WebCore::extractKeyIDsCenc): Deleted.
+        (WebCore::sanitizeCenc): Deleted.
+        * Modules/encryptedmedia/InitDataRegistry.h:
+        (WebCore::SourceBuffer::changeType):
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.cpp:
+        (WebCore::validInitDataTypes):
+        (WebCore::CDMPrivateFairPlayStreaming::supportsInitData const):
+        (WebCore::CDMPrivateFairPlayStreaming::fairPlaySystemID): Deleted.
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.h:
+        * platform/graphics/avfoundation/ISOFairPlayStreamingPsshBox.h:
+        (isType):
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense):
+        * platform/graphics/iso/ISOProtectionSystemSpecificHeaderBox.cpp:
+        (WebCore::ISOProtectionSystemSpecificHeaderBox::peekSystemID):
+        * platform/graphics/iso/ISOProtectionSystemSpecificHeaderBox.h:
+
 2019-07-02  Daniel Bates  <dabates@apple.com>
 
         [iOS] Cannot tab cycle through credit card fields on antonsvpatisserie.com checkout page

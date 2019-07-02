@@ -78,7 +78,6 @@ public:
     static RefPtr<SharedBuffer> sanitizeSkd(const SharedBuffer&);
 
     static const Vector<FourCC>& validFairPlayStreamingSchemes();
-    static const Vector<uint8_t>& fairPlaySystemID();
 };
 
 }

@@ -42,7 +42,7 @@ private:
     FourCC m_scheme;
 };
 
-class WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestInfoBox : public ISOBox {
+class WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestInfoBox : public ISOFullBox {
 public:
     static FourCC boxTypeName() { return "fkri"; }
 
@@ -108,7 +108,7 @@ private:
 
 class WEBCORE_EXPORT ISOFairPlayStreamingInitDataBox : public ISOBox {
 public:
-    static FourCC boxTypeName() { return "fps "; }
+    static FourCC boxTypeName() { return "fpsd"; }
 
     const ISOFairPlayStreamingInfoBox& info() const { return m_info; }
     const Vector<ISOFairPlayStreamingKeyRequestBox>& requests() const { return m_requests; }
@@ -133,3 +133,7 @@ private:
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ISOFairPlayStreamingPsshBox) \
+static bool isType(const WebCore::ISOProtectionSystemSpecificHeaderBox& psshBox) { return psshBox.systemID() == WebCore::ISOFairPlayStreamingPsshBox::fairPlaySystemID(); }
+SPECIALIZE_TYPE_TRAITS_END()

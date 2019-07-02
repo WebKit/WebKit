@@ -32,6 +32,7 @@
 #include "CDMKeySystemConfiguration.h"
 #include "CDMRestrictions.h"
 #include "CDMSessionType.h"
+#include "ISOProtectionSystemSpecificHeaderBox.h"
 #include "ISOSchemeInformationBox.h"
 #include "ISOSchemeTypeBox.h"
 #include "ISOTrackEncryptionBox.h"
@@ -46,6 +47,10 @@
 
 #if HAVE(AVCONTENTKEYSESSION)
 #include "CDMInstanceFairPlayStreamingAVFObjC.h"
+#endif
+
+#if HAVE(FAIRPLAYSTREAMING_CENC_INITDATA)
+#include "ISOFairPlayStreamingPsshBox.h"
 #endif
 
 namespace WebCore {
@@ -72,12 +77,6 @@ const AtomString& CDMPrivateFairPlayStreaming::skdName()
 {
     static NeverDestroyed<AtomString> skd { MAKE_STATIC_STRING_IMPL("skd") };
     return skd;
-}
-
-const Vector<uint8_t>& CDMPrivateFairPlayStreaming::fairPlaySystemID()
-{
-    static NeverDestroyed<Vector<uint8_t>> systemID = Vector<uint8_t>({ 0x94, 0xCE, 0x86, 0xFB, 0x07, 0xFF, 0x4F, 0x43, 0xAD, 0xB8, 0x93, 0xD2, 0xFA, 0x96, 0x8C, 0xA2 });
-    return systemID;
 }
 
 static Vector<Ref<SharedBuffer>> extractSinfData(const SharedBuffer& buffer)
@@ -205,6 +204,9 @@ static const HashSet<AtomString>& validInitDataTypes()
     static NeverDestroyed<HashSet<AtomString>> validTypes = HashSet<AtomString>({
         CDMPrivateFairPlayStreaming::sinfName(),
         CDMPrivateFairPlayStreaming::skdName(),
+#if HAVE(FAIRPLAYSTREAMING_CENC_INITDATA)
+        InitDataRegistry::cencName(),
+#endif
     });
     return validTypes;
 }
@@ -372,6 +374,18 @@ bool CDMPrivateFairPlayStreaming::supportsInitData(const AtomString& initDataTyp
             return validFairPlayStreamingSchemes().contains(result.first);
         });
     }
+
+#if HAVE(FAIRPLAYSTREAMING_CENC_INITDATA)
+    if (initDataType == InitDataRegistry::cencName()) {
+        auto psshBoxes = InitDataRegistry::extractPsshBoxesFromCenc(initData);
+        if (!psshBoxes)
+            return false;
+
+        return WTF::anyOf(psshBoxes.value(), [](auto& psshBox) {
+            return is<ISOFairPlayStreamingPsshBox>(*psshBox);
+        });
+    }
+#endif
 
     if (initDataType == skdName())
         return true;

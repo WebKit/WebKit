@@ -112,7 +112,7 @@ static RefPtr<SharedBuffer> sanitizeKeyids(const SharedBuffer& buffer)
     return SharedBuffer::create(jsonData.data(), jsonData.length());
 }
 
-static Optional<Vector<Ref<SharedBuffer>>> extractKeyIDsCenc(const SharedBuffer& buffer)
+Optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> InitDataRegistry::extractPsshBoxesFromCenc(const SharedBuffer& buffer)
 {
     // 4. Common SystemID and PSSH Box Format
     // https://w3c.github.io/encrypted-media/format-registry/initdata/cenc.html#common-system
@@ -120,7 +120,7 @@ static Optional<Vector<Ref<SharedBuffer>>> extractKeyIDsCenc(const SharedBuffer&
         return WTF::nullopt;
 
     unsigned offset = 0;
-    Vector<Ref<SharedBuffer>> keyIDs;
+    Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>> psshBoxes;
 
     auto view = JSC::DataView::create(buffer.tryCreateArrayBuffer(), offset, buffer.size());
     while (auto optionalBoxType = ISOBox::peekBox(view, offset)) {
@@ -130,16 +130,44 @@ static Optional<Vector<Ref<SharedBuffer>>> extractKeyIDsCenc(const SharedBuffer&
         if (boxTypeName != ISOProtectionSystemSpecificHeaderBox::boxTypeName() || boxSize > buffer.size())
             return WTF::nullopt;
 
-        ISOProtectionSystemSpecificHeaderBox psshBox;
-        if (!psshBox.read(view, offset))
+        auto systemID = ISOProtectionSystemSpecificHeaderBox::peekSystemID(view, offset);
+#if HAVE(FAIRPLAYSTREAMING_CENC_INITDATA)
+        if (systemID == ISOFairPlayStreamingPsshBox::fairPlaySystemID()) {
+            auto fpsPssh = std::make_unique<ISOFairPlayStreamingPsshBox>();
+            if (!fpsPssh->read(view, offset))
+                return WTF::nullopt;
+            psshBoxes.append(WTFMove(fpsPssh));
+            continue;
+        }
+#else
+        UNUSED_PARAM(systemID);
+#endif
+        auto psshBox = std::make_unique<ISOProtectionSystemSpecificHeaderBox>();
+        if (!psshBox->read(view, offset))
+            return WTF::nullopt;
+
+        psshBoxes.append(WTFMove(psshBox));
+    }
+
+    return psshBoxes;
+}
+
+Optional<Vector<Ref<SharedBuffer>>> InitDataRegistry::extractKeyIDsCenc(const SharedBuffer& buffer)
+{
+    Vector<Ref<SharedBuffer>> keyIDs;
+
+    auto psshBoxes = extractPsshBoxesFromCenc(buffer);
+    if (!psshBoxes)
+        return WTF::nullopt;
+
+    for (auto& psshBox : psshBoxes.value()) {
+        ASSERT(psshBox);
+        if (!psshBox)
             return WTF::nullopt;
 
 #if HAVE(FAIRPLAYSTREAMING_CENC_INITDATA)
-        if (psshBox.systemID() == CDMPrivateFairPlayStreaming::fairPlaySystemID()) {
-            ISOFairPlayStreamingPsshBox fpsPssh;
-            offset -= psshBox.size();
-            if (!fpsPssh.read(view, offset))
-                return WTF::nullopt;
+        if (is<ISOFairPlayStreamingPsshBox>(*psshBox)) {
+            ISOFairPlayStreamingPsshBox& fpsPssh = downcast<ISOFairPlayStreamingPsshBox>(*psshBox);
 
             FourCC scheme = fpsPssh.initDataBox().info().scheme();
             if (CDMPrivateFairPlayStreaming::validFairPlayStreamingSchemes().contains(scheme)) {
@@ -151,14 +179,14 @@ static Optional<Vector<Ref<SharedBuffer>>> extractKeyIDsCenc(const SharedBuffer&
         }
 #endif
 
-        for (auto& value : psshBox.keyIDs())
+        for (auto& value : psshBox->keyIDs())
             keyIDs.append(SharedBuffer::create(WTFMove(value)));
     }
 
     return keyIDs;
 }
 
-static RefPtr<SharedBuffer> sanitizeCenc(const SharedBuffer& buffer)
+RefPtr<SharedBuffer> InitDataRegistry::sanitizeCenc(const SharedBuffer& buffer)
 {
     // 4. Common SystemID and PSSH Box Format
     // https://w3c.github.io/encrypted-media/format-registry/initdata/cenc.html#common-system
@@ -226,6 +254,24 @@ void InitDataRegistry::registerInitDataType(const AtomString& initDataType, Init
 {
     ASSERT(!m_types.contains(initDataType));
     m_types.set(initDataType, WTFMove(callbacks));
+}
+
+const AtomString& InitDataRegistry::cencName()
+{
+    static NeverDestroyed<AtomString> sinf { MAKE_STATIC_STRING_IMPL("cenc") };
+    return sinf;
+}
+
+const AtomString& InitDataRegistry::keyidsName()
+{
+    static NeverDestroyed<AtomString> sinf { MAKE_STATIC_STRING_IMPL("keyids") };
+    return sinf;
+}
+
+const AtomString& InitDataRegistry::webmName()
+{
+    static NeverDestroyed<AtomString> sinf { MAKE_STATIC_STRING_IMPL("webm") };
+    return sinf;
 }
 
 }
