@@ -365,18 +365,28 @@ WI.Table = class Table extends WI.View
         if (rowIndex < 0 || rowIndex >= this.numberOfRows)
             return;
 
-        // Force our own scroll update because we may have scrolled.
-        this._cachedScrollTop = NaN;
-
         if (this._isRowVisible(rowIndex)) {
             let row = this._cachedRows.get(rowIndex);
             console.assert(row, "Visible rows should always be in the cache.");
-            if (row)
+            if (row) {
                 row.scrollIntoViewIfNeeded(false);
-            this.needsLayout();
+                this._cachedScrollTop = NaN;
+                this.needsLayout();
+            }
         } else {
-            this._scrollContainerElement.scrollTop = rowIndex * this._rowHeight;
-            this.updateLayout();
+            let rowPosition = rowIndex * this._rowHeight;
+            let scrollableOffsetHeight = this._calculateOffsetHeight();
+            let scrollTop = this._calculateScrollTop();
+            let newScrollTop = NaN;
+            if (rowPosition + this._rowHeight < scrollTop)
+                newScrollTop = rowPosition;
+            else if (rowPosition > scrollTop + scrollableOffsetHeight)
+                newScrollTop = scrollTop + scrollableOffsetHeight - this._rowHeight;
+
+            if (!isNaN(newScrollTop)) {
+                this._scrollContainerElement.scrollTop = newScrollTop;
+                this.updateLayout();
+            }
         }
     }
 
@@ -855,7 +865,7 @@ WI.Table = class Table extends WI.View
     _resizeColumnsAndFiller()
     {
         if (isNaN(this._cachedWidth) || !this._cachedWidth)
-            this._cachedWidth = Math.floor(this._scrollContainerElement.getBoundingClientRect().width);
+            this._cachedWidth = this._scrollContainerElement.realOffsetWidth;
 
         // Not visible yet.
         if (!this._cachedWidth)
@@ -1064,14 +1074,8 @@ WI.Table = class Table extends WI.View
         let updateOffsetThreshold = rowHeight * 10;
         let overflowPadding = updateOffsetThreshold * 3;
 
-        if (isNaN(this._cachedScrollTop))
-            this._cachedScrollTop = this._scrollContainerElement.scrollTop;
-
-        if (isNaN(this._cachedHeight) || !this._cachedHeight)
-            this._cachedHeight = Math.floor(this._scrollContainerElement.getBoundingClientRect().height);
-
-        let scrollTop = this._cachedScrollTop;
-        let scrollableOffsetHeight = this._cachedHeight;
+        let scrollTop = this._calculateScrollTop();
+        let scrollableOffsetHeight = this._calculateOffsetHeight();
 
         let visibleRowCount = Math.ceil((scrollableOffsetHeight + (overflowPadding * 2)) / rowHeight);
         let currentTopMargin = this._topSpacerHeight;
@@ -1450,6 +1454,20 @@ WI.Table = class Table extends WI.View
     _representedObjectForIndex(index)
     {
         return this.dataSource.tableRepresentedObjectForIndex(this, index);
+    }
+
+    _calculateOffsetHeight()
+    {
+        if (isNaN(this._cachedHeight))
+            this._cachedHeight = this._scrollContainerElement.realOffsetHeight;
+        return this._cachedHeight;
+    }
+
+    _calculateScrollTop()
+    {
+        if (isNaN(this._cachedScrollTop))
+            this._cachedScrollTop = this._scrollContainerElement.scrollTop;
+        return this._cachedScrollTop;
     }
 };
 

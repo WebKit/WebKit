@@ -1,3 +1,27 @@
+2019-07-02  Matt Baker  <mattbaker@apple.com>
+
+        REGRESSION (r238563): Web Inspector: Selection is erratic when holding Up/Down on Network Table
+        https://bugs.webkit.org/show_bug.cgi?id=193841
+        <rdar://problem/47559124>
+
+        Reviewed by Devin Rousso.
+
+        Selecting and revealing a row after reloading Table data, but before the
+        layout that populates visible rows, could cause the Table to always be
+        scrolled so that the revealed row is first.
+
+        This patch fixes `revealRow` by calculating the position of the row being
+        revealed in the absence of its DOM element, so that the Table is only
+        scrolled when necessary.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype.revealRow):
+        (WI.Table.prototype._resizeColumnsAndFiller):
+        Drive-by fix: use realOffsetWidth for consistency.
+        (WI.Table.prototype._updateVisibleRows):
+        (WI.Table.prototype._calculateOffsetHeight):
+        (WI.Table.prototype._calculateScrollTop):
+
 2019-07-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debug: "Reset Web Inspector" should also clear the saved window size and attachment side
