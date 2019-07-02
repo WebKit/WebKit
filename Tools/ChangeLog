@@ -1,45 +1,53 @@
-2019-06-24  Ryan Haddad  <ryanhaddad@apple.com>
+2019-07-01  Alan Coon  <alancoon@apple.com>
 
-        Cherry-pick r245975. rdar://problem/52090309
+        Cherry-pick r244621. rdar://problem/52492610
 
-    WebKitTestRunner sometimes freezes under -[NSWindow release]
-    https://bugs.webkit.org/show_bug.cgi?id=198422
+    PeatyG: Re-land fixes for 3 PeatyF Security Critical that accidentally got reverted in G.
     
-    Reviewed by Tim Horton.
-    
-    The window remains key until it's out of the allWindows vector, and AppKit is not
-    happy about deallocating key windows. Fixed by updating allWindows in -close
-    instead of -release.
-    
-    Added isMainFrame assertions in code that manipulates allWindows for a good measure.
-    
-    * WebKitTestRunner/mac/WebKitTestRunnerWindow.mm:
-    (+[WebKitTestRunnerWindow _WTR_keyWindow]):
-    (-[WebKitTestRunnerWindow initWithContentRect:styleMask:backing:defer:]):
-    (-[WebKitTestRunnerWindow close]):
-    (-[WebKitTestRunnerWindow dealloc]):
-    
-    
-    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@245975 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.webkit.org/repository/webkit/branches/safari-607-branch@244621 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2019-05-31  Alexey Proskuryakov  <ap@apple.com>
+    2019-06-24  Ryan Haddad  <ryanhaddad@apple.com>
 
-            WebKitTestRunner sometimes freezes under -[NSWindow release]
-            https://bugs.webkit.org/show_bug.cgi?id=198422
+            Cherry-pick r245975. rdar://problem/52090309
 
-            Reviewed by Tim Horton.
+        WebKitTestRunner sometimes freezes under -[NSWindow release]
+        https://bugs.webkit.org/show_bug.cgi?id=198422
 
-            The window remains key until it's out of the allWindows vector, and AppKit is not
-            happy about deallocating key windows. Fixed by updating allWindows in -close
-            instead of -release.
+        Reviewed by Tim Horton.
 
-            Added isMainFrame assertions in code that manipulates allWindows for a good measure.
+        The window remains key until it's out of the allWindows vector, and AppKit is not
+        happy about deallocating key windows. Fixed by updating allWindows in -close
+        instead of -release.
 
-            * WebKitTestRunner/mac/WebKitTestRunnerWindow.mm:
-            (+[WebKitTestRunnerWindow _WTR_keyWindow]):
-            (-[WebKitTestRunnerWindow initWithContentRect:styleMask:backing:defer:]):
-            (-[WebKitTestRunnerWindow close]):
-            (-[WebKitTestRunnerWindow dealloc]):
+        Added isMainFrame assertions in code that manipulates allWindows for a good measure.
+
+        * WebKitTestRunner/mac/WebKitTestRunnerWindow.mm:
+        (+[WebKitTestRunnerWindow _WTR_keyWindow]):
+        (-[WebKitTestRunnerWindow initWithContentRect:styleMask:backing:defer:]):
+        (-[WebKitTestRunnerWindow close]):
+        (-[WebKitTestRunnerWindow dealloc]):
+
+
+        git-svn-id: http://svn.webkit.org/repository/webkit/trunk@245975 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-05-31  Alexey Proskuryakov  <ap@apple.com>
+
+                WebKitTestRunner sometimes freezes under -[NSWindow release]
+                https://bugs.webkit.org/show_bug.cgi?id=198422
+
+                Reviewed by Tim Horton.
+
+                The window remains key until it's out of the allWindows vector, and AppKit is not
+                happy about deallocating key windows. Fixed by updating allWindows in -close
+                instead of -release.
+
+                Added isMainFrame assertions in code that manipulates allWindows for a good measure.
+
+                * WebKitTestRunner/mac/WebKitTestRunnerWindow.mm:
+                (+[WebKitTestRunnerWindow _WTR_keyWindow]):
+                (-[WebKitTestRunnerWindow initWithContentRect:styleMask:backing:defer:]):
+                (-[WebKitTestRunnerWindow close]):
+                (-[WebKitTestRunnerWindow dealloc]):
 
 2019-06-13  Kocsen Chung  <kocsen_chung@apple.com>
 
@@ -202,14 +210,6 @@
         Unreviewed, attempt to fix the TestWebKitAPI build.
 
         * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
-
-2019-04-24  Alan Coon  <alancoon@apple.com>
-
-        Revert r244173. rdar://problem/28160396
-
-2019-04-24  Alan Coon  <alancoon@apple.com>
-
-        Revert r244174. rdar://problem/28160396
 
 2019-04-17  Ryan Haddad  <ryanhaddad@apple.com>
 

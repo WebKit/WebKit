@@ -1,0 +1,6 @@
+PASS '-apple-trailing-word' in element.style is true
+PASS window.getComputedStyle(element).getPropertyValue('color') is "rgb(0, 128, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

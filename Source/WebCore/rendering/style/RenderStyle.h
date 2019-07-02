@@ -799,7 +799,7 @@ public:
     bool shouldPlaceBlockDirectionScrollbarOnLeft() const;
 
 #if ENABLE(CSS_TRAILING_WORD)
-    TrailingWord trailingWord() const { return static_cast<TrailingWord>(m_rareInheritedData->trailingWord); }
+    TrailingWord trailingWord() const { return TrailingWord::Auto; }
 #endif
 
 #if ENABLE(APPLE_PAY)
@@ -1259,7 +1259,7 @@ public:
     void setTextSecurity(TextSecurity security) { SET_VAR(m_rareInheritedData, textSecurity, static_cast<unsigned>(security)); }
 
 #if ENABLE(CSS_TRAILING_WORD)
-    void setTrailingWord(TrailingWord v) { SET_VAR(m_rareInheritedData, trailingWord, static_cast<unsigned>(v)); }
+    void setTrailingWord(TrailingWord) { }
 #endif
 
 #if ENABLE(APPLE_PAY)

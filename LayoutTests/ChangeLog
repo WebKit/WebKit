@@ -1,50 +1,58 @@
-2019-06-12  Null  <null@apple.com>
+2019-07-01  Alan Coon  <alancoon@apple.com>
 
-        Cherry-pick r246040. rdar://problem/51656856
+        Cherry-pick r244621. rdar://problem/52492610
 
-    [JSC] JSObject::attemptToInterceptPutByIndexOnHole should use getPrototype instead of getPrototypeDirect
-    https://bugs.webkit.org/show_bug.cgi?id=198477
-    <rdar://problem/51299504>
+    PeatyG: Re-land fixes for 3 PeatyF Security Critical that accidentally got reverted in G.
     
-    Reviewed by Saam Barati.
-    
-    Source/JavaScriptCore:
-    
-    JSObject::attemptToInterceptPutByIndexOnHole uses getPrototypeDirect, but it should use getPrototype to
-    handle getPrototype methods in derived JSObject classes correctly.
-    
-    * runtime/JSArrayInlines.h:
-    (JSC::JSArray::pushInline):
-    * runtime/JSObject.cpp:
-    (JSC::JSObject::putByIndex):
-    (JSC::JSObject::attemptToInterceptPutByIndexOnHoleForPrototype):
-    (JSC::JSObject::attemptToInterceptPutByIndexOnHole):
-    (JSC::JSObject::putByIndexBeyondVectorLength):
-    
-    LayoutTests:
-    
-    Ensure that JSWindow::getPrototype is used.
-    
-    * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put-expected.txt: Added.
-    * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put.html: Added.
-    * http/tests/security/resources/cross-frame-iframe-for-object-getPrototypeOf-in-put-test.html: Added.
-    
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@246040 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.webkit.org/repository/webkit/branches/safari-607-branch@244621 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2019-06-03  Yusuke Suzuki  <ysuzuki@apple.com>
+    2019-06-12  Null  <null@apple.com>
 
-            [JSC] JSObject::attemptToInterceptPutByIndexOnHole should use getPrototype instead of getPrototypeDirect
-            https://bugs.webkit.org/show_bug.cgi?id=198477
-            <rdar://problem/51299504>
+            Cherry-pick r246040. rdar://problem/51656856
 
-            Reviewed by Saam Barati.
+        [JSC] JSObject::attemptToInterceptPutByIndexOnHole should use getPrototype instead of getPrototypeDirect
+        https://bugs.webkit.org/show_bug.cgi?id=198477
+        <rdar://problem/51299504>
 
-            Ensure that JSWindow::getPrototype is used.
+        Reviewed by Saam Barati.
 
-            * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put-expected.txt: Added.
-            * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put.html: Added.
-            * http/tests/security/resources/cross-frame-iframe-for-object-getPrototypeOf-in-put-test.html: Added.
+        Source/JavaScriptCore:
+
+        JSObject::attemptToInterceptPutByIndexOnHole uses getPrototypeDirect, but it should use getPrototype to
+        handle getPrototype methods in derived JSObject classes correctly.
+
+        * runtime/JSArrayInlines.h:
+        (JSC::JSArray::pushInline):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::attemptToInterceptPutByIndexOnHoleForPrototype):
+        (JSC::JSObject::attemptToInterceptPutByIndexOnHole):
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+
+        LayoutTests:
+
+        Ensure that JSWindow::getPrototype is used.
+
+        * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put-expected.txt: Added.
+        * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put.html: Added.
+        * http/tests/security/resources/cross-frame-iframe-for-object-getPrototypeOf-in-put-test.html: Added.
+
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@246040 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-06-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+                [JSC] JSObject::attemptToInterceptPutByIndexOnHole should use getPrototype instead of getPrototypeDirect
+                https://bugs.webkit.org/show_bug.cgi?id=198477
+                <rdar://problem/51299504>
+
+                Reviewed by Saam Barati.
+
+                Ensure that JSWindow::getPrototype is used.
+
+                * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put-expected.txt: Added.
+                * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put.html: Added.
+                * http/tests/security/resources/cross-frame-iframe-for-object-getPrototypeOf-in-put-test.html: Added.
 
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
@@ -658,14 +666,6 @@
             * http/tests/security/resources/navigate-top-level-frame-to-success-page-with-user-gesture.html: Added.
             * http/tests/security/resources/should-have-loaded.html: Added.
             * http/tests/security/resources/should-not-have-loaded.html: Added.
-
-2019-04-24  Alan Coon  <alancoon@apple.com>
-
-        Revert r244173. rdar://problem/28160396
-
-2019-04-24  Alan Coon  <alancoon@apple.com>
-
-        Revert r244174. rdar://problem/28160396
 
 2019-04-10  Alan Coon  <alancoon@apple.com>
 

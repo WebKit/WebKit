@@ -488,6 +488,9 @@ void DOMWindow::willDetachDocumentFromFrame()
 
     if (m_performance)
         m_performance->clearResourceTimings();
+
+    JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(this);
+    InspectorInstrumentation::frameWindowDiscarded(*frame(), this);
 }
 
 #if ENABLE(GAMEPAD)

@@ -1,32 +1,40 @@
-2019-04-30  Alan Coon  <alancoon@apple.com>
+2019-07-01  Alan Coon  <alancoon@apple.com>
 
-        Cherry-pick r244358. rdar://problem/50352725
+        Cherry-pick r244621. rdar://problem/52492610
 
-    REGRESSION(r238168) Web Inspector: <iframe src=...> request does not show up in Network Tab
-    https://bugs.webkit.org/show_bug.cgi?id=193505
-    <rdar://problem/47325957>
+    PeatyG: Re-land fixes for 3 PeatyF Security Critical that accidentally got reverted in G.
     
-    Reviewed by Devin Rousso.
-    
-    * UserInterface/Views/NetworkTableContentView.js:
-    (WI.NetworkTableContentView):
-    (WI.NetworkTableContentView.prototype._handleFrameWasAdded):
-    Handle new frames by adding the frame's main resource.
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@244358 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.webkit.org/repository/webkit/branches/safari-607-branch@244621 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2019-04-16  Joseph Pecoraro  <pecoraro@apple.com>
+    2019-04-30  Alan Coon  <alancoon@apple.com>
 
-            REGRESSION(r238168) Web Inspector: <iframe src=...> request does not show up in Network Tab
-            https://bugs.webkit.org/show_bug.cgi?id=193505
-            <rdar://problem/47325957>
+            Cherry-pick r244358. rdar://problem/50352725
 
-            Reviewed by Devin Rousso.
+        REGRESSION(r238168) Web Inspector: <iframe src=...> request does not show up in Network Tab
+        https://bugs.webkit.org/show_bug.cgi?id=193505
+        <rdar://problem/47325957>
 
-            * UserInterface/Views/NetworkTableContentView.js:
-            (WI.NetworkTableContentView):
-            (WI.NetworkTableContentView.prototype._handleFrameWasAdded):
-            Handle new frames by adding the frame's main resource.
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype._handleFrameWasAdded):
+        Handle new frames by adding the frame's main resource.
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@244358 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-04-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+                REGRESSION(r238168) Web Inspector: <iframe src=...> request does not show up in Network Tab
+                https://bugs.webkit.org/show_bug.cgi?id=193505
+                <rdar://problem/47325957>
+
+                Reviewed by Devin Rousso.
+
+                * UserInterface/Views/NetworkTableContentView.js:
+                (WI.NetworkTableContentView):
+                (WI.NetworkTableContentView.prototype._handleFrameWasAdded):
+                Handle new frames by adding the frame's main resource.
 
 2019-04-30  Alan Coon  <alancoon@apple.com>
 
@@ -56,10 +64,6 @@
             (WI.ResourceCookiesContentView.prototype.tableIndexForRepresentedObject):
             (WI.ResourceCookiesContentView.prototype.tableRepresentedObjectForIndex):
             Include needed delegate methods.
-
-2019-04-24  Alan Coon  <alancoon@apple.com>
-
-        Revert r244173. rdar://problem/28160396
 
 2019-04-10  Alan Coon  <alancoon@apple.com>
 

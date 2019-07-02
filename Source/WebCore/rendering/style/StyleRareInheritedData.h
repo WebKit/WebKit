@@ -145,10 +145,6 @@ public:
     unsigned touchCalloutEnabled : 1;
 #endif
 
-#if ENABLE(CSS_TRAILING_WORD)
-    unsigned trailingWord : 1;
-#endif
-
     unsigned hangingPunctuation : 4;
 
     unsigned paintOrder : 3; // PaintOrder

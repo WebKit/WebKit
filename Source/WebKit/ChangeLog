@@ -1,64 +1,72 @@
-2019-06-19  Kocsen Chung  <kocsen_chung@apple.com>
+2019-07-01  Alan Coon  <alancoon@apple.com>
 
-        Cherry-pick r245911. rdar://problem/51656609
+        Cherry-pick r244621. rdar://problem/52492610
 
-    Network process crash when decoding SecItemResponseData
-    https://bugs.webkit.org/show_bug.cgi?id=198388
-    <rdar://problem/50408046>
+    PeatyG: Re-land fixes for 3 PeatyF Security Critical that accidentally got reverted in G.
     
-    Reviewed by Alex Christensen.
-    
-    * Shared/cf/ArgumentCodersCF.cpp:
-    (IPC::decode):
-    When decoding the elements inside a CFArrayRef, if decoding was successful but
-    the CFTypeRef element is still null then skip it instead of trying to append it
-    to the array. A CFArray container is not allowed to contain null.
-    Some of our decoders for CFTypeRef types may not initialize the element even if
-    the decode() function returns true. For example, the decoders for CFArrayRef and
-    CFDictionaryRef return true if the encoded container was null but do not create
-    a container.
-    
-    * Shared/mac/SecItemResponseData.cpp:
-    (WebKit::SecItemResponseData::SecItemResponseData):
-    nit: The wrong parameter was being moved. This is more efficient.
-    
-    (WebKit::SecItemResponseData::encode const):
-    nit: Drop unnecessary .get().
-    
-    * UIProcess/mac/SecItemShimProxy.cpp:
-    (WebKit::SecItemShimProxy::secItemRequest):
-    nit: Use nullptr instead of 0.
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245911 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.webkit.org/repository/webkit/branches/safari-607-branch@244621 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2019-05-30  Chris Dumez  <cdumez@apple.com>
+    2019-06-19  Kocsen Chung  <kocsen_chung@apple.com>
 
-            Network process crash when decoding SecItemResponseData
-            https://bugs.webkit.org/show_bug.cgi?id=198388
-            <rdar://problem/50408046>
+            Cherry-pick r245911. rdar://problem/51656609
 
-            Reviewed by Alex Christensen.
+        Network process crash when decoding SecItemResponseData
+        https://bugs.webkit.org/show_bug.cgi?id=198388
+        <rdar://problem/50408046>
 
-            * Shared/cf/ArgumentCodersCF.cpp:
-            (IPC::decode):
-            When decoding the elements inside a CFArrayRef, if decoding was successful but
-            the CFTypeRef element is still null then skip it instead of trying to append it
-            to the array. A CFArray container is not allowed to contain null.
-            Some of our decoders for CFTypeRef types may not initialize the element even if
-            the decode() function returns true. For example, the decoders for CFArrayRef and
-            CFDictionaryRef return true if the encoded container was null but do not create
-            a container.
+        Reviewed by Alex Christensen.
 
-            * Shared/mac/SecItemResponseData.cpp:
-            (WebKit::SecItemResponseData::SecItemResponseData):
-            nit: The wrong parameter was being moved. This is more efficient.
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::decode):
+        When decoding the elements inside a CFArrayRef, if decoding was successful but
+        the CFTypeRef element is still null then skip it instead of trying to append it
+        to the array. A CFArray container is not allowed to contain null.
+        Some of our decoders for CFTypeRef types may not initialize the element even if
+        the decode() function returns true. For example, the decoders for CFArrayRef and
+        CFDictionaryRef return true if the encoded container was null but do not create
+        a container.
 
-            (WebKit::SecItemResponseData::encode const):
-            nit: Drop unnecessary .get().
+        * Shared/mac/SecItemResponseData.cpp:
+        (WebKit::SecItemResponseData::SecItemResponseData):
+        nit: The wrong parameter was being moved. This is more efficient.
 
-            * UIProcess/mac/SecItemShimProxy.cpp:
-            (WebKit::SecItemShimProxy::secItemRequest):
-            nit: Use nullptr instead of 0.
+        (WebKit::SecItemResponseData::encode const):
+        nit: Drop unnecessary .get().
+
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::secItemRequest):
+        nit: Use nullptr instead of 0.
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245911 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-05-30  Chris Dumez  <cdumez@apple.com>
+
+                Network process crash when decoding SecItemResponseData
+                https://bugs.webkit.org/show_bug.cgi?id=198388
+                <rdar://problem/50408046>
+
+                Reviewed by Alex Christensen.
+
+                * Shared/cf/ArgumentCodersCF.cpp:
+                (IPC::decode):
+                When decoding the elements inside a CFArrayRef, if decoding was successful but
+                the CFTypeRef element is still null then skip it instead of trying to append it
+                to the array. A CFArray container is not allowed to contain null.
+                Some of our decoders for CFTypeRef types may not initialize the element even if
+                the decode() function returns true. For example, the decoders for CFArrayRef and
+                CFDictionaryRef return true if the encoded container was null but do not create
+                a container.
+
+                * Shared/mac/SecItemResponseData.cpp:
+                (WebKit::SecItemResponseData::SecItemResponseData):
+                nit: The wrong parameter was being moved. This is more efficient.
+
+                (WebKit::SecItemResponseData::encode const):
+                nit: Drop unnecessary .get().
+
+                * UIProcess/mac/SecItemShimProxy.cpp:
+                (WebKit::SecItemShimProxy::secItemRequest):
+                nit: Use nullptr instead of 0.
 
 2019-06-12  Null  <null@apple.com>
 
@@ -460,14 +468,6 @@
 
             * UIProcess/mac/WebInspectorProxyMac.mm:
             (WebKit::WebInspectorProxy::inspectedViewFrameDidChange):
-
-2019-04-24  Alan Coon  <alancoon@apple.com>
-
-        Revert r244173. rdar://problem/28160396
-
-2019-04-24  Alan Coon  <alancoon@apple.com>
-
-        Revert r244174. rdar://problem/28160396
 
 2019-04-19  Kocsen Chung  <kocsen_chung@apple.com>
 
