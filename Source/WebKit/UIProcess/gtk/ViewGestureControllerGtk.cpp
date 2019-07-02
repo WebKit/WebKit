@@ -59,10 +59,7 @@ static bool isEventStop(GdkEventScroll* event)
 
 void ViewGestureController::platformTeardown()
 {
-    m_swipeProgressTracker.reset();
-
-    if (m_activeGestureType == ViewGestureType::Swipe)
-        removeSwipeSnapshot();
+    cancelSwipe();
 }
 
 bool ViewGestureController::PendingSwipeTracker::scrollEventCanStartSwipe(GdkEventScroll*)
@@ -326,6 +323,16 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 void ViewGestureController::handleSwipeGesture(WebBackForwardListItem*, double, SwipeDirection)
 {
     gtk_widget_queue_draw(m_webPageProxy.viewWidget());
+}
+
+void ViewGestureController::cancelSwipe()
+{
+    m_pendingSwipeTracker.reset("cancelling swipe");
+
+    if (m_activeGestureType == ViewGestureType::Swipe) {
+        m_swipeProgressTracker.reset();
+        removeSwipeSnapshot();
+    }
 }
 
 void ViewGestureController::draw(cairo_t* cr, cairo_pattern_t* pageGroup)

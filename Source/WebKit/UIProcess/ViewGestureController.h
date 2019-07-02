@@ -165,6 +165,7 @@ public:
     bool isSwipeGestureEnabled() { return m_swipeGestureEnabled; }
 
 #if PLATFORM(GTK)
+    void cancelSwipe();
     void draw(cairo_t*, cairo_pattern_t*);
 #endif
 

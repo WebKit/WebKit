@@ -1,3 +1,28 @@
+2019-07-02  Alexander Mikhaylenko  <exalm7659@gmail.com>
+
+        [GTK] Support cancelling touchscreen back/forward gesture
+        https://bugs.webkit.org/show_bug.cgi?id=199401
+
+        Reviewed by Michael Catanzaro.
+
+        It should be possible to cancel the gesture when performing it on
+        touchscreen, for example, by moving pen too far from the screen.
+        Handle this case properly.
+
+        Only DragGesture in GestureController needs to handle this,
+        SwipeGesture simply won't emit the relevant event in this case.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        * UIProcess/ViewGestureController.h:
+        * UIProcess/gtk/GestureController.cpp:
+        (WebKit::GestureController::DragGesture::cancelDrag):
+        (WebKit::GestureController::DragGesture::cancel):
+        (WebKit::GestureController::DragGesture::DragGesture):
+        * UIProcess/gtk/GestureController.h:
+        * UIProcess/gtk/ViewGestureControllerGtk.cpp:
+        (WebKit::ViewGestureController::platformTeardown):
+        (WebKit::ViewGestureController::cancelSwipe):
+
 2019-07-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debug: "Reset Web Inspector" should also clear the saved window size and attachment side

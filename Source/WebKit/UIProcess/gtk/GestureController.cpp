@@ -95,6 +95,12 @@ void GestureController::DragGesture::handleDrag(GdkEvent* event, double x, doubl
         FloatPoint::narrowPrecision((m_offset.x() - x) / Scrollbar::pixelsPerLineStep(), (m_offset.y() - y) / Scrollbar::pixelsPerLineStep()));
 }
 
+void GestureController::DragGesture::cancelDrag()
+{
+    ASSERT(m_inDrag);
+    m_client.cancelDrag();
+}
+
 void GestureController::DragGesture::handleTap(GdkEvent* event)
 {
     ASSERT(!m_inDrag);
@@ -145,6 +151,12 @@ void GestureController::DragGesture::end(DragGesture* dragGesture, GdkEventSeque
     }
 }
 
+void GestureController::DragGesture::cancel(DragGesture* dragGesture, GdkEventSequence* sequence, GtkGesture* gesture)
+{
+    dragGesture->m_longPressTimeout.stop();
+    dragGesture->cancelDrag();
+}
+
 void GestureController::DragGesture::longPressFired()
 {
     m_inDrag = true;
@@ -158,6 +170,7 @@ GestureController::DragGesture::DragGesture(GtkWidget* widget, GestureController
     g_signal_connect_swapped(m_gesture.get(), "drag-begin", G_CALLBACK(begin), this);
     g_signal_connect_swapped(m_gesture.get(), "drag-update", G_CALLBACK(update), this);
     g_signal_connect_swapped(m_gesture.get(), "end", G_CALLBACK(end), this);
+    g_signal_connect_swapped(m_gesture.get(), "cancel", G_CALLBACK(cancel), this);
 }
 
 void GestureController::SwipeGesture::startMomentumScroll(GdkEvent* event, double velocityX, double velocityY)

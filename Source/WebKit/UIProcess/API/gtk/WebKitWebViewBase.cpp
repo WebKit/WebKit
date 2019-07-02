@@ -1177,6 +1177,12 @@ private:
         webkitWebViewBaseHandleWheelEvent(m_webView, scrollEvent.get(), WebWheelEvent::Phase::PhaseChanged);
     }
 
+    void cancelDrag() final
+    {
+        if (auto* controller = webkitWebViewBaseViewGestureController(m_webView))
+            controller->cancelSwipe();
+    }
+
     void swipe(GdkEventTouch* event, const FloatPoint& velocity) final
     {
         double x, y;
