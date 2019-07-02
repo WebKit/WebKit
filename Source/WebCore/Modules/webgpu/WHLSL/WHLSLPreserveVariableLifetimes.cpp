@@ -134,7 +134,7 @@ public:
         bool isEntryPoint = !!functionDefinition.entryPointType();
         if (isEntryPoint) {
             auto structVariableDeclaration = makeUniqueRef<AST::VariableDeclaration>(functionDefinition.origin(), AST::Qualifiers(),
-                m_structType->clone(), String(), WTF::nullopt, WTF::nullopt);
+                m_structType->clone(), String(), WTF::nullopt, nullptr);
 
             auto structVariableReference = makeUniqueRef<AST::VariableReference>(AST::VariableReference::wrap(structVariableDeclaration));
             structVariableReference->setType(m_structType->clone());
@@ -144,12 +144,12 @@ public:
             structVariableDeclarations.append(WTFMove(structVariableDeclaration));
             auto structDeclarationStatement = makeUniqueRef<AST::VariableDeclarationsStatement>(functionDefinition.origin(), WTFMove(structVariableDeclarations));
 
-            auto makePointerExpression = makeUniqueRef<AST::MakePointerExpression>(functionDefinition.origin(), WTFMove(structVariableReference));
+            auto makePointerExpression = std::make_unique<AST::MakePointerExpression>(functionDefinition.origin(), WTFMove(structVariableReference));
             makePointerExpression->setType(m_pointerToStructType->clone());
             makePointerExpression->setTypeAnnotation(AST::RightValue());
 
             auto pointerDeclaration = makeUniqueRef<AST::VariableDeclaration>(functionDefinition.origin(), AST::Qualifiers(),
-                m_pointerToStructType->clone(), "wrapper"_s, WTF::nullopt, Optional<UniqueRef<AST::Expression>>(WTFMove(makePointerExpression)));
+                m_pointerToStructType->clone(), "wrapper"_s, WTF::nullopt, WTFMove(makePointerExpression));
             m_structVariable = &pointerDeclaration;
 
             AST::VariableDeclarations pointerVariableDeclarations;
@@ -160,7 +160,7 @@ public:
             functionDefinition.block().statements().insert(1, WTFMove(pointerDeclarationStatement));
         } else {
             auto pointerDeclaration = makeUniqueRef<AST::VariableDeclaration>(functionDefinition.origin(), AST::Qualifiers(),
-                m_pointerToStructType->clone(), "wrapper"_s, WTF::nullopt, WTF::nullopt);
+                m_pointerToStructType->clone(), "wrapper"_s, WTF::nullopt, nullptr);
             m_structVariable = &pointerDeclaration;
             functionDefinition.parameters().append(WTFMove(pointerDeclaration));
         }

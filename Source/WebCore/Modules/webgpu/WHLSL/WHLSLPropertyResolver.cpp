@@ -108,7 +108,7 @@ static Optional<AnderCallArgumentResult> wrapAnderCallArgument(UniqueRef<AST::Ex
     }
     if (threadAnderFunction) {
         auto origin = expression->origin();
-        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(origin), AST::Qualifiers(), baseType->clone(), String(), WTF::nullopt, WTF::nullopt);
+        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(origin), AST::Qualifiers(), baseType->clone(), String(), WTF::nullopt, nullptr);
 
         auto variableReference1 = makeUniqueRef<AST::VariableReference>(AST::VariableReference::wrap(variableDeclaration));
         variableReference1->setType(baseType->clone());
@@ -312,14 +312,14 @@ static Optional<ModifyResult> modify(AST::PropertyAccessExpression& propertyAcce
     AST::Expression& innerLeftExpression = leftExpression;
 
     // Create "p" variable.
-    auto pointerVariable = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(leftExpression->origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(makeUniqueRef<AST::PointerType>(Lexer::Token(leftExpression->origin()), *leftExpression->typeAnnotation().leftAddressSpace(), leftExpression->resolvedType().clone())), String(), WTF::nullopt, WTF::nullopt);
+    auto pointerVariable = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(leftExpression->origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(makeUniqueRef<AST::PointerType>(Lexer::Token(leftExpression->origin()), *leftExpression->typeAnnotation().leftAddressSpace(), leftExpression->resolvedType().clone())), String(), WTF::nullopt, nullptr);
 
     // Create "q" and "r" variables.
     Vector<UniqueRef<AST::VariableDeclaration>> intermediateVariables;
     intermediateVariables.reserveInitialCapacity(chain.size() - 1);
     for (size_t i = 1; i < chain.size(); ++i) {
         auto& propertyAccessExpression = static_cast<AST::PropertyAccessExpression&>(chain[i]);
-        intermediateVariables.uncheckedAppend(makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(propertyAccessExpression.origin()), AST::Qualifiers(), propertyAccessExpression.resolvedType().clone(), String(), WTF::nullopt, WTF::nullopt));
+        intermediateVariables.uncheckedAppend(makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(propertyAccessExpression.origin()), AST::Qualifiers(), propertyAccessExpression.resolvedType().clone(), String(), WTF::nullopt, nullptr));
     }
 
     // Consider a[foo()][b] = c;
@@ -350,7 +350,7 @@ static Optional<ModifyResult> modify(AST::PropertyAccessExpression& propertyAcce
             continue;
         }
         auto& indexExpression = downcast<AST::IndexExpression>(propertyAccessExpression);
-        indexVariables.uncheckedAppend(makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(propertyAccessExpression.origin()), AST::Qualifiers(), indexExpression.indexExpression().resolvedType().clone(), String(), WTF::nullopt, WTF::nullopt));
+        indexVariables.uncheckedAppend(makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(propertyAccessExpression.origin()), AST::Qualifiers(), indexExpression.indexExpression().resolvedType().clone(), String(), WTF::nullopt, nullptr));
     }
 
     Vector<UniqueRef<AST::Expression>> expressions;
@@ -562,7 +562,7 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
         auto baseType = readModifyWriteExpression.leftValue().resolvedType().clone();
         auto pointerType = makeUniqueRef<AST::PointerType>(Lexer::Token(readModifyWriteExpression.leftValue().origin()), *readModifyWriteExpression.leftValue().typeAnnotation().leftAddressSpace(), baseType->clone());
 
-        auto pointerVariable = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(readModifyWriteExpression.leftValue().origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(pointerType->clone()), String(), WTF::nullopt, WTF::nullopt);
+        auto pointerVariable = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(readModifyWriteExpression.leftValue().origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(pointerType->clone()), String(), WTF::nullopt, nullptr);
 
         Vector<UniqueRef<AST::Expression>> expressions;
 

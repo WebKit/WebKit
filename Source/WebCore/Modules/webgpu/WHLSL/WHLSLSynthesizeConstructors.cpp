@@ -157,7 +157,7 @@ bool synthesizeConstructors(Program& program)
     for (auto& unnamedTypeKey : unnamedTypes) {
         auto& unnamedType = unnamedTypeKey.unnamedType();
 
-        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(unnamedType.origin()), AST::Qualifiers(), unnamedType.clone(), String(), WTF::nullopt, WTF::nullopt);
+        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(unnamedType.origin()), AST::Qualifiers(), unnamedType.clone(), String(), WTF::nullopt, nullptr);
         AST::VariableDeclarations parameters;
         parameters.append(WTFMove(variableDeclaration));
         AST::NativeFunctionDeclaration copyConstructor(AST::FunctionDeclaration(Lexer::Token(unnamedType.origin()), AST::AttributeBlock(), WTF::nullopt, unnamedType.clone(), "operator cast"_str, WTFMove(parameters), WTF::nullopt, isOperator));
@@ -174,7 +174,7 @@ bool synthesizeConstructors(Program& program)
         if (is<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType)) && downcast<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType)).isAtomic())
             continue;
 
-        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(namedType.get().origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(AST::TypeReference::wrap(Lexer::Token(namedType.get().origin()), namedType.get())), String(), WTF::nullopt, WTF::nullopt);
+        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(namedType.get().origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(AST::TypeReference::wrap(Lexer::Token(namedType.get().origin()), namedType.get())), String(), WTF::nullopt, nullptr);
         AST::VariableDeclarations parameters;
         parameters.append(WTFMove(variableDeclaration));
         AST::NativeFunctionDeclaration copyConstructor(AST::FunctionDeclaration(Lexer::Token(namedType.get().origin()), AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(Lexer::Token(namedType.get().origin()), namedType.get()), "operator cast"_str, WTFMove(parameters), WTF::nullopt, isOperator));

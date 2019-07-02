@@ -877,7 +877,7 @@ auto Parser::parseParameter() -> Expected<AST::VariableDeclaration, Error>
 
     PARSE(semantic, Semantic);
 
-    return AST::VariableDeclaration(WTFMove(*origin), WTFMove(qualifiers), { WTFMove(*type) }, WTFMove(name), WTFMove(*semantic), WTF::nullopt);
+    return AST::VariableDeclaration(WTFMove(*origin), WTFMove(qualifiers), { WTFMove(*type) }, WTFMove(name), WTFMove(*semantic), nullptr);
 }
 
 auto Parser::parseParameters() -> Expected<AST::VariableDeclarations, Error>
@@ -1155,12 +1155,13 @@ auto Parser::parseVariableDeclaration(UniqueRef<AST::UnnamedType>&& type) -> Exp
     CONSUME_TYPE(name, Identifier);
     PARSE(semantic, Semantic);
 
+    std::unique_ptr<AST::Expression> initializer = nullptr;
     if (tryType(Lexer::Token::Type::EqualsSign)) {
-        PARSE(initializer, PossibleTernaryConditional);
-        return AST::VariableDeclaration(WTFMove(*origin), WTFMove(qualifiers), { WTFMove(type) }, name->stringView.toString(), WTFMove(*semantic), WTFMove(*initializer));
+        PARSE(initializingExpression, PossibleTernaryConditional);
+        initializer = initializingExpression.value().moveToUniquePtr();
     }
 
-    return AST::VariableDeclaration(WTFMove(*origin), WTFMove(qualifiers), { WTFMove(type) }, name->stringView.toString(), WTFMove(*semantic), WTF::nullopt);
+    return AST::VariableDeclaration(WTFMove(*origin), WTFMove(qualifiers), { WTFMove(type) }, name->stringView.toString(), WTFMove(*semantic), WTFMove(initializer));
 }
 
 auto Parser::parseVariableDeclarations() -> Expected<AST::VariableDeclarationsStatement, Error>

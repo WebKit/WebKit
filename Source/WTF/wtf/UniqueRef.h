@@ -60,6 +60,8 @@ public:
     operator T&() { ASSERT(m_ref); return *m_ref; }
     operator const T&() const { ASSERT(m_ref); return *m_ref; }
 
+    std::unique_ptr<T> moveToUniquePtr() { return WTFMove(m_ref); }
+
 private:
     template<class U, class... Args> friend UniqueRef<U> makeUniqueRef(Args&&...);
     template<class U> friend class UniqueRef;

@@ -1,3 +1,13 @@
+2019-07-02  Robin Morisset  <rmorisset@apple.com>
+
+        [WHLSL] the initializer in VariableDeclaration should be a std::unique_ptr, not Optional<UniqueRef<..>>
+        https://bugs.webkit.org/show_bug.cgi?id=199389
+
+        Reviewed by Sam Weinig.
+
+        * wtf/UniqueRef.h:
+        (WTF::UniqueRef::moveToUniquePtr): Added.
+
 2019-07-02  Keith Miller  <keith_miller@apple.com>
 
         PACCage should first cage leaving PAC bits intact then authenticate

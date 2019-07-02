@@ -1,3 +1,45 @@
+2019-07-02  Robin Morisset  <rmorisset@apple.com>
+
+        [WHLSL] the initializer in VariableDeclaration should be a std::unique_ptr, not Optional<UniqueRef<..>>
+        https://bugs.webkit.org/show_bug.cgi?id=199389
+
+        Reviewed by Sam Weinig.
+
+        Optional<UniqueRef<..>> is not only semantically weird (UniqueRef is basically a unique_ptr that promises not to be null), but also inefficient, wasting 8 bytes for the boolean in Optional.
+        It is a pattern that appears throughout the AST. In this patch I start by removing it in a fairly simple spot: the initializer for VariableDeclaration.
+
+        No test because there is no intended functional change.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLReadModifyWriteExpression.h:
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::ReadModifyWriteExpression):
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclaration.h:
+        (WebCore::WHLSL::AST::VariableDeclaration::VariableDeclaration):
+        (WebCore::WHLSL::AST::VariableDeclaration::initializer):
+        (WebCore::WHLSL::AST::VariableDeclaration::takeInitializer):
+        (WebCore::WHLSL::AST::VariableDeclaration::setInitializer):
+        * Modules/webgpu/WHLSL/WHLSLAutoInitializeVariables.cpp:
+        (WebCore::WHLSL::AutoInitialize::visit):
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::resolveWithOperatorAnderIndexer):
+        (WebCore::WHLSL::resolveWithOperatorLength):
+        (WebCore::WHLSL::resolveWithReferenceComparator):
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::parseParameter):
+        (WebCore::WHLSL::Parser::parseVariableDeclaration):
+        * Modules/webgpu/WHLSL/WHLSLPreserveVariableLifetimes.cpp:
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp:
+        (WebCore::WHLSL::wrapAnderCallArgument):
+        (WebCore::WHLSL::modify):
+        (WebCore::WHLSL::PropertyResolver::visit):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeArrayOperatorLength.cpp:
+        (WebCore::WHLSL::synthesizeArrayOperatorLength):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.cpp:
+        (WebCore::WHLSL::synthesizeConstructors):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeEnumerationFunctions.cpp:
+        (WebCore::WHLSL::synthesizeEnumerationFunctions):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeStructureAccessors.cpp:
+        (WebCore::WHLSL::synthesizeStructureAccessors):
+
 2019-07-02  Jer Noble  <jer.noble@apple.com>
 
         Pipe suport for 'cenc' init data type into CDMFairPlayStreaming

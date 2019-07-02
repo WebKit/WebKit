@@ -65,7 +65,7 @@ bool synthesizeArrayOperatorLength(Program& program)
     bool isOperator = true;
 
     for (auto& arrayType : arrayTypes) {
-        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(arrayType.get().origin()), AST::Qualifiers(), arrayType.get().clone(), String(), WTF::nullopt, WTF::nullopt);
+        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(arrayType.get().origin()), AST::Qualifiers(), arrayType.get().clone(), String(), WTF::nullopt, nullptr);
         AST::VariableDeclarations parameters;
         parameters.append(WTFMove(variableDeclaration));
         AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(arrayType.get().origin()), AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(Lexer::Token(arrayType.get().origin()), program.intrinsics().uintType()), "operator.length"_str, WTFMove(parameters), WTF::nullopt, isOperator));

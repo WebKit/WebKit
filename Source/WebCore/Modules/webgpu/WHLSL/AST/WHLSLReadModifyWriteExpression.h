@@ -118,8 +118,8 @@ private:
     ReadModifyWriteExpression(Lexer::Token&& origin, UniqueRef<Expression> leftValue)
         : Expression(Lexer::Token(origin))
         , m_leftValue(WTFMove(leftValue))
-        , m_oldValue(makeUniqueRef<VariableDeclaration>(Lexer::Token(origin), Qualifiers(), WTF::nullopt, String(), WTF::nullopt, WTF::nullopt))
-        , m_newValue(makeUniqueRef<VariableDeclaration>(WTFMove(origin), Qualifiers(), WTF::nullopt, String(), WTF::nullopt, WTF::nullopt))
+        , m_oldValue(makeUniqueRef<VariableDeclaration>(Lexer::Token(origin), Qualifiers(), WTF::nullopt, String(), WTF::nullopt, nullptr))
+        , m_newValue(makeUniqueRef<VariableDeclaration>(WTFMove(origin), Qualifiers(), WTF::nullopt, String(), WTF::nullopt, nullptr))
     {
     }
 
