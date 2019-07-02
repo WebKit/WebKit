@@ -1,3 +1,16 @@
+2019-07-01  Zalan Bujtas  <zalan@apple.com>
+
+        [Text autosizing] [iPadOS] AutosizeStatus::idempotentTextSize returns the computed font size in certain cases.
+        https://bugs.webkit.org/show_bug.cgi?id=199382
+        <rdar://problem/52483097>
+
+        Reviewed by Wenson Hsieh.
+
+        Adjust the font size on the style only when the autosized value is different from the computed value. 
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyleForTextAutosizing):
+
 2019-07-01  Chris Dumez  <cdumez@apple.com>
 
         It should not be possible to trigger a load while in the middle of restoring a page in PageCache

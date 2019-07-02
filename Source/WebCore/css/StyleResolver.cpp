@@ -913,11 +913,13 @@ void StyleResolver::adjustRenderStyleForTextAutosizing(RenderStyle& style, const
     auto fontDescription = style.fontDescription();
     auto initialComputedFontSize = fontDescription.computedSize(); 
     auto adjustedFontSize = AutosizeStatus::idempotentTextSize(fontDescription.specifiedSize(), initialScale);
+    if (initialComputedFontSize == adjustedFontSize)
+        return;
+
     fontDescription.setComputedSize(adjustedFontSize);
     style.setFontDescription(WTFMove(fontDescription));
     style.fontCascade().update(&document().fontSelector());
-    if (initialComputedFontSize != adjustedFontSize)
-        adjustLineHeightIfNeeded(adjustedFontSize);
+    adjustLineHeightIfNeeded(adjustedFontSize);
 }
 #endif
 
