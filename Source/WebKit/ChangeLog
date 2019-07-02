@@ -1,5 +1,26 @@
 2019-07-02  Chris Dumez  <cdumez@apple.com>
 
+        VisitedLinkStore does not need to subclass WebProcessLifetimeObserver
+        https://bugs.webkit.org/show_bug.cgi?id=199407
+
+        Reviewed by Sam Weinig.
+
+        VisitedLinkStore does not need to subclass WebProcessLifetimeObserver, it overrides
+        only 2 of WebProcessLifetimeObserver's functions and the implementation of those
+        overrides is empty. It also does not use WebProcessLifetimeObserver::processes()
+        since the VisitedLinkStore maintains its own list of processes.
+
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        * UIProcess/VisitedLinkStore.cpp:
+        * UIProcess/VisitedLinkStore.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_resetRecentCrashCountTimer):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+
+2019-07-02  Chris Dumez  <cdumez@apple.com>
+
         Null dereference under StorageManager::destroySessionStorageNamespace()
         https://bugs.webkit.org/show_bug.cgi?id=199388
         <rdar://problem/52030641>

@@ -40,6 +40,7 @@
 #include "WebFullScreenManagerProxy.h"
 #include "WebInspectorProxy.h"
 #include "WebOpenPanelResultListenerProxy.h"
+#include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>

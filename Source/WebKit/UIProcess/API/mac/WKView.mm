@@ -38,6 +38,7 @@
 #import "WebBackForwardListItem.h"
 #import "WebKit2Initialize.h"
 #import "WebPageGroup.h"
+#import "WebPageProxy.h"
 #import "WebPreferencesKeys.h"
 #import "WebProcessPool.h"
 #import "WebViewImpl.h"

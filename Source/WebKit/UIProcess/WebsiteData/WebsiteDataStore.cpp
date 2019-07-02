@@ -35,6 +35,7 @@
 #include "NetworkProcessMessages.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
+#include "WebPageProxy.h"
 #include "WebProcessCache.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"

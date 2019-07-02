@@ -36,6 +36,7 @@
 #import "WKProcessPoolInternal.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebView.h"
+#import "WebFrameProxy.h"
 #import "WebGeolocationManagerProxy.h"
 #import "WebProcessPool.h"
 #import "_WKGeolocationCoreLocationProvider.h"

@@ -28,6 +28,7 @@
 
 #include "VisitedLinkStoreMessages.h"
 #include "VisitedLinkTableControllerMessages.h"
+#include "WebPageProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
@@ -97,16 +98,6 @@ void VisitedLinkStore::removeAll()
         ASSERT(process->processPool().processes().contains(process));
         process->send(Messages::VisitedLinkTableController::RemoveAllVisitedLinks(), identifier());
     }
-}
-
-void VisitedLinkStore::webProcessWillOpenConnection(WebProcessProxy&, IPC::Connection&)
-{
-    // FIXME: Implement.
-}
-
-void VisitedLinkStore::webProcessDidCloseConnection(WebProcessProxy&, IPC::Connection&)
-{
-    // FIXME: Implement.
 }
 
 void VisitedLinkStore::addVisitedLinkHashFromPage(PageIdentifier pageID, SharedStringHash linkHash)

@@ -445,7 +445,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Pag
     if (!m_configuration->drawsBackground())
         m_backgroundColor = Color(Color::transparent);
 
-    m_webProcessLifetimeTracker.addObserver(m_visitedLinkStore);
     m_webProcessLifetimeTracker.addObserver(m_websiteDataStore);
 
     updateActivityState();
