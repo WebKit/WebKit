@@ -1,3 +1,12 @@
+2019-07-02  Youenn Fablet  <youenn@apple.com>
+
+        StorageManager does not need to be a WorkQueueMessageReceiver anymore
+        https://bugs.webkit.org/show_bug.cgi?id=199421
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/WebStorage/StorageManager.h:
+
 2019-07-02  Chris Dumez  <cdumez@apple.com>
 
         ThreadSafeRefCounted<DestructionThread::Main> is not safe to use in the UIProcess

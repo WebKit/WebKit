@@ -45,7 +45,7 @@ class WebProcessProxy;
 
 using GetValuesCallback = CompletionHandler<void(const HashMap<String, String>&)>;
 
-class StorageManager : public IPC::Connection::WorkQueueMessageReceiver {
+class StorageManager : public ThreadSafeRefCounted<StorageManager> {
 public:
     static Ref<StorageManager> create(const String& localStorageDirectory);
     ~StorageManager();
@@ -73,9 +73,8 @@ public:
 
     void getLocalStorageOriginDetails(Function<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&& completionHandler);
 
-    // IPC::Connection::WorkQueueMessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>& replyEncoder) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>& replyEncoder);
 
 private:
     explicit StorageManager(const String& localStorageDirectory);
