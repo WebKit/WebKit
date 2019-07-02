@@ -86,6 +86,7 @@
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLElementTypeHelpers.h>
 #import <WebCore/HTMLFormElement.h>
+#import <WebCore/HTMLIFrameElement.h>
 #import <WebCore/HTMLImageElement.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLLabelElement.h>
@@ -2453,16 +2454,16 @@ static HTMLAnchorElement* containingLinkElement(Element* element)
     return nullptr;
 }
 
-static inline bool isAssistableElement(Element& node)
+static inline bool isAssistableElement(Element& element)
 {
-    if (is<HTMLSelectElement>(node))
+    if (is<HTMLSelectElement>(element))
         return true;
-    if (is<HTMLTextAreaElement>(node))
+    if (is<HTMLTextAreaElement>(element))
         return true;
-    if (is<HTMLImageElement>(node) && downcast<HTMLImageElement>(node).hasEditableImageAttribute())
+    if (is<HTMLImageElement>(element) && downcast<HTMLImageElement>(element).hasEditableImageAttribute())
         return true;
-    if (is<HTMLInputElement>(node)) {
-        HTMLInputElement& inputElement = downcast<HTMLInputElement>(node);
+    if (is<HTMLInputElement>(element)) {
+        HTMLInputElement& inputElement = downcast<HTMLInputElement>(element);
         // FIXME: This laundry list of types is not a good way to factor this. Need a suitable function on HTMLInputElement itself.
 #if ENABLE(INPUT_TYPE_COLOR)
         if (inputElement.isColorControl())
@@ -2470,7 +2471,9 @@ static inline bool isAssistableElement(Element& node)
 #endif
         return inputElement.isTextField() || inputElement.isDateField() || inputElement.isDateTimeLocalField() || inputElement.isMonthField() || inputElement.isTimeField();
     }
-    return node.isContentEditable();
+    if (is<HTMLIFrameElement>(element))
+        return false;
+    return element.isContentEditable();
 }
 
 void WebPage::getPositionInformation(const InteractionInformationRequest& request, CompletionHandler<void(InteractionInformationAtPosition&&)>&& reply)

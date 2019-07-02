@@ -1,3 +1,25 @@
+2019-07-02  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Cannot tab cycle through credit card fields on antonsvpatisserie.com checkout page
+        https://bugs.webkit.org/show_bug.cgi?id=196053
+        <rdar://problem/49093034>
+
+        Reviewed by Wenson Hsieh.
+
+        Allow iframes to be keyboard focusable when pressing the Tab key on the keyboard. This
+        also allow the that the focus controller to search their content document for other
+        editable elements. This makes iOS match the behavior on Mac.
+
+        Although iframes can be focused by pressing the Tab key we maintain the current UI
+        restriction on iOS of not allowing iframes themselves to be focusable via the next and
+        previous accessory bar buttons. We do this because it's unclear what value supporting
+        such focusing brings, but it's clear that doing so makes tab cycling more confusing
+        since the default focus appearance for an iframe is indistinguishable from its non-
+        focused appearance.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::isAssistableElement): Do not consider an iframe as assistable.
+
 2019-07-02  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
         [GTK] Support cancelling touchscreen back/forward gesture

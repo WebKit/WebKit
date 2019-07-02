@@ -50,10 +50,6 @@ public:
 private:
     HTMLIFrameElement(const QualifiedName&, Document&);
 
-#if PLATFORM(IOS_FAMILY)
-    bool isKeyboardFocusable(KeyboardEvent*) const final { return false; }
-#endif
-
     void parseAttribute(const QualifiedName&, const AtomString&) final;
     bool isPresentationAttribute(const QualifiedName&) const final;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
