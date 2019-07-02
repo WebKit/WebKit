@@ -1,3 +1,19 @@
+2019-07-02  Chris Dumez  <cdumez@apple.com>
+
+        Null dereference under StorageManager::destroySessionStorageNamespace()
+        https://bugs.webkit.org/show_bug.cgi?id=199388
+        <rdar://problem/52030641>
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::createSessionStorageNamespace):
+        Call HashMap::ensure() instead of contains() + set() to avoid double hash lookup.
+
+        (WebKit::StorageManager::destroySessionStorageNamespace):
+        Add null check to address top crasher, similarly to what was done in r246552.
+        I am keeping the debug assertion since this is not supposed to happen.
+
 2019-07-02  Daniel Bates  <dabates@apple.com>
 
         [iOS] Cannot tab cycle through credit card fields on antonsvpatisserie.com checkout page

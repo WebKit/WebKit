@@ -502,10 +502,9 @@ StorageManager::~StorageManager()
 void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, unsigned quotaInBytes)
 {
     m_queue->dispatch([this, protectedThis = makeRef(*this), storageNamespaceID, quotaInBytes]() mutable {
-        if (m_sessionStorageNamespaces.contains(storageNamespaceID))
-            return;
-
-        m_sessionStorageNamespaces.set(storageNamespaceID, SessionStorageNamespace::create(quotaInBytes));
+        m_sessionStorageNamespaces.ensure(storageNamespaceID, [quotaInBytes] {
+            return SessionStorageNamespace::create(quotaInBytes);
+        });
     });
 }
 
@@ -513,8 +512,10 @@ void StorageManager::destroySessionStorageNamespace(uint64_t storageNamespaceID)
 {
     m_queue->dispatch([this, protectedThis = makeRef(*this), storageNamespaceID] {
         ASSERT(m_sessionStorageNamespaces.contains(storageNamespaceID));
-        if (m_sessionStorageNamespaces.get(storageNamespaceID)->allowedConnections().isEmpty())
-            m_sessionStorageNamespaces.remove(storageNamespaceID);
+        if (auto* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID)) {
+            if (sessionStorageNamespace->allowedConnections().isEmpty())
+                m_sessionStorageNamespaces.remove(storageNamespaceID);
+        }
     });
 }
 
