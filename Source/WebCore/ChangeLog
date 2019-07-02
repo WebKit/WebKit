@@ -1,3 +1,20 @@
+2019-07-02  Antti Koivisto  <antti@apple.com>
+
+        Crash when adding inline stylesheet to shadow tree in document with null base URL
+        https://bugs.webkit.org/show_bug.cgi?id=199400
+
+        Reviewed by Zalan Bujtas.
+
+        We compute CSSParserContextHash for the inline stylesheet cache but that hits a nullptr crash
+        if the document happens to have null base URL (which is uncommon but possible).
+
+        Test: fast/shadow-dom/stylesheet-in-shadow-without-base-url-crash.html
+
+        * css/parser/CSSParserContext.h:
+        (WebCore::CSSParserContextHash::hash):
+
+        Null check the base URL (like other strings), it is a valid case.
+
 2019-07-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debug: "Reset Web Inspector" should also clear the saved window size and attachment side

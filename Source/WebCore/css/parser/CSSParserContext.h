@@ -89,7 +89,9 @@ WEBCORE_EXPORT const CSSParserContext& strictCSSParserContext();
 struct CSSParserContextHash {
     static unsigned hash(const CSSParserContext& key)
     {
-        auto hash = WTF::URLHash::hash(key.baseURL);
+        unsigned hash = 0;
+        if (!key.baseURL.isNull())
+            hash ^= WTF::URLHash::hash(key.baseURL);
         if (!key.charset.isEmpty())
             hash ^= StringHash::hash(key.charset);
         unsigned bits = key.isHTMLDocument                  << 0

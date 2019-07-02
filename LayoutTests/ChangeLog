@@ -1,3 +1,13 @@
+2019-07-02  Antti Koivisto  <antti@apple.com>
+
+        Crash when adding inline stylesheet to shadow tree in document with null base URL
+        https://bugs.webkit.org/show_bug.cgi?id=199400
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/shadow-dom/stylesheet-in-shadow-without-base-url-crash-expected.txt: Added.
+        * fast/shadow-dom/stylesheet-in-shadow-without-base-url-crash.html: Added.
+
 2019-07-01  Justin Michaud  <justin_michaud@apple.com>
 
         [Wasm-References] Disable references by default
