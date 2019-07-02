@@ -392,10 +392,8 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         let resetInspectorButton = document.createElement("button");
         resetInspectorButton.textContent = WI.unlocalizedString("Reset Web Inspector");
-        resetInspectorButton.addEventListener("click", async (event) => {
-            await WI.ObjectStore.reset();
-            WI.Setting.reset();
-            InspectorFrontendHost.reopen();
+        resetInspectorButton.addEventListener("click", (event) => {
+            WI.reset();
         });
         this._debugSettingsView.addCenteredContainer(resetInspectorButton);
 

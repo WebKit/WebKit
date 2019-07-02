@@ -197,6 +197,13 @@ void InspectorFrontendHost::reopen()
         m_client->reopen();
 }
 
+void InspectorFrontendHost::reset()
+{
+    if (m_client)
+        m_client->resetState();
+    reopen();
+}
+
 void InspectorFrontendHost::bringToFront()
 {
     if (m_client)

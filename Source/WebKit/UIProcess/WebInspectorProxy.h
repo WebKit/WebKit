@@ -101,6 +101,7 @@ public:
     void close();
     void closeForCrash();
     void reopen();
+    void resetState();
 
     void reset();
     void updateForNewPageProcess(WebPageProxy*);
@@ -189,6 +190,7 @@ private:
 
     void platformDidCloseForCrash();
     void platformInvalidate();
+    void platformResetState();
     void platformBringToFront();
     void platformBringInspectedPageToFront();
     void platformHide();

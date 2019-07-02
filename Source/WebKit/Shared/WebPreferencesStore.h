@@ -58,6 +58,8 @@ struct WebPreferencesStore {
     void setOverrideDefaultsUInt32ValueForKey(const String& key, uint32_t value);
     void setOverrideDefaultsDoubleValueForKey(const String& key, double value);
 
+    void deleteKey(const String& key);
+
     // For WebKitTestRunner usage.
     static void overrideBoolValueForKey(const String& key, bool value);
     static void removeTestRunnerOverrides();

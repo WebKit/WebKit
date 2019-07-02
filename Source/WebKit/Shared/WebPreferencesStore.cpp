@@ -173,4 +173,10 @@ void WebPreferencesStore::setOverrideDefaultsDoubleValueForKey(const String& key
     m_overriddenDefaults.set(key, Value(value));
 }
 
+void WebPreferencesStore::deleteKey(const String& key)
+{
+    m_values.remove(key);
+    m_overriddenDefaults.remove(key);
+}
+
 } // namespace WebKit

@@ -68,9 +68,11 @@ public:
 
     bool inspectorStartsAttached();
     void setInspectorStartsAttached(bool);
+    void deleteInspectorStartsAttached();
 
     bool inspectorAttachDisabled();
     void setInspectorAttachDisabled(bool);
+    void deleteInspectorAttachDisabled();
 
     void releaseFrontend();
 
@@ -104,6 +106,7 @@ public:
     void bringToFront() override;
     void closeWindow() override;
     void reopen() override;
+    void resetState() override;
 
     void setAttachedWindowHeight(unsigned) override;
     void setAttachedWindowWidth(unsigned) override;

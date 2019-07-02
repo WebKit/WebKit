@@ -89,6 +89,11 @@ static void storeSetting(const String& key, const String& setting)
     CFPreferencesSetAppValue(createKeyForPreferences(key).get(), setting.createCFString().get(), kCFPreferencesCurrentApplication);
 }
 
+static void deleteSetting(const String& key)
+{
+    CFPreferencesSetAppValue(createKeyForPreferences(key).get(), nullptr, kCFPreferencesCurrentApplication);
+}
+
 void WebInspectorClient::sendMessageToFrontend(const String& message)
 {
     doDispatchMessageOnFrontendPage(m_frontendPage, message);
@@ -108,6 +113,11 @@ void WebInspectorClient::setInspectorAttachDisabled(bool disabled)
     storeSetting(inspectorAttachDisabledSetting, disabled ? "true" : "false");
 }
 
+void WebInspectorClient::deleteInspectorStartsAttached()
+{
+    deleteSetting(inspectorAttachDisabledSetting);
+}
+
 bool WebInspectorClient::inspectorStartsAttached()
 {
     String value;
@@ -120,6 +130,11 @@ bool WebInspectorClient::inspectorStartsAttached()
 void WebInspectorClient::setInspectorStartsAttached(bool attached)
 {
     storeSetting(inspectorStartsAttachedSetting, attached ? "true" : "false");
+}
+
+void WebInspectorClient::deleteInspectorAttachDisabled()
+{
+    deleteSetting(inspectorStartsAttachedSetting);
 }
 
 std::unique_ptr<WebCore::InspectorFrontendClientLocal::Settings> WebInspectorClient::createFrontendSettings()
@@ -137,6 +152,11 @@ std::unique_ptr<WebCore::InspectorFrontendClientLocal::Settings> WebInspectorCli
         virtual void setProperty(const String& name, const String& value)
         {
             storeSetting(name, value);
+        }
+
+        virtual void deleteProperty(const String& name)
+        {
+            deleteSetting(name);
         }
     };
     return std::make_unique<InspectorFrontendSettingsCF>();

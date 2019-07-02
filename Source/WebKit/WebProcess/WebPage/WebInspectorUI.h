@@ -96,6 +96,7 @@ public:
     void bringToFront() override;
     void closeWindow() override;
     void reopen() override;
+    void resetState() override;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() const override;
 

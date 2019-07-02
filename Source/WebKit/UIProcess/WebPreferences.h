@@ -35,6 +35,7 @@
 
 #define DECLARE_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
     void set##KeyUpper(const Type& value); \
+    void delete##KeyUpper(); \
     Type KeyLower() const;
 
 namespace WebKit {
@@ -97,6 +98,9 @@ private:
     void platformUpdateUInt32ValueForKey(const String& key, uint32_t value);
     void platformUpdateDoubleValueForKey(const String& key, double value);
     void platformUpdateFloatValueForKey(const String& key, float value);
+
+    void deleteKey(const String& key);
+    void platformDeleteKey(const String& key);
 
     void updatePrivateBrowsingValue(bool value);
 

@@ -1,3 +1,22 @@
+2019-07-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debug: "Reset Web Inspector" should also clear the saved window size and attachment side
+        https://bugs.webkit.org/show_bug.cgi?id=198956
+
+        Reviewed by Matt Baker.
+
+        * inspector/InspectorFrontendClient.h:
+
+        * inspector/InspectorFrontendClientLocal.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::Settings::deleteProperty): Added.
+        (WebCore::InspectorFrontendClientLocal::resetWindowState): Added.
+
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::reset): Added.
+
 2019-07-01  Zalan Bujtas  <zalan@apple.com>
 
         [Text autosizing] [iPadOS] AutosizeStatus::idempotentTextSize returns the computed font size in certain cases.

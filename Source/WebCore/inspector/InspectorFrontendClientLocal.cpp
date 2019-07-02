@@ -127,6 +127,10 @@ void InspectorFrontendClientLocal::Settings::setProperty(const String&, const St
 {
 }
 
+void InspectorFrontendClientLocal::Settings::deleteProperty(const String&)
+{
+}
+
 InspectorFrontendClientLocal::InspectorFrontendClientLocal(InspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings> settings)
     : m_inspectedPageController(inspectedPageController)
     , m_frontendPage(frontendPage)
@@ -144,6 +148,11 @@ InspectorFrontendClientLocal::~InspectorFrontendClientLocal()
     m_frontendPage = nullptr;
     m_inspectedPageController = nullptr;
     m_dispatchTask->reset();
+}
+
+void InspectorFrontendClientLocal::resetState()
+{
+    m_settings->deleteProperty(inspectorAttachedHeightSetting);
 }
 
 void InspectorFrontendClientLocal::windowObjectCleared()

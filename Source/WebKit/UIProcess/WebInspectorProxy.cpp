@@ -182,6 +182,17 @@ void WebInspectorProxy::reopen()
     show();
 }
 
+void WebInspectorProxy::resetState()
+{
+    inspectorPagePreferences().deleteInspectorAttachedHeight();
+    inspectorPagePreferences().deleteInspectorAttachedWidth();
+    inspectorPagePreferences().deleteInspectorAttachmentSide();
+    inspectorPagePreferences().deleteInspectorStartsAttached();
+    inspectorPagePreferences().deleteInspectorWindowFrame();
+
+    platformResetState();
+}
+
 void WebInspectorProxy::reset()
 {
     if (m_inspectedPage) {
@@ -622,6 +633,11 @@ void WebInspectorProxy::platformDidCloseForCrash()
 }
 
 void WebInspectorProxy::platformInvalidate()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformResetState()
 {
     notImplemented();
 }

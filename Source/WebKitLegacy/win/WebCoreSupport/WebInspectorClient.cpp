@@ -278,6 +278,14 @@ void WebInspectorFrontendClient::reopen()
         inspectedPage->inspectorController().show();
 }
 
+void WebInspectorFrontendClient::resetState()
+{
+    InspectorFrontendClientLocal::resetState();
+
+    m_inspectorClient->deleteInspectorStartsAttached();
+    m_inspectorClient->deleteInspectorAttachDisabled();
+}
+
 void WebInspectorFrontendClient::attachWindow(DockSide)
 {
     if (m_attached)

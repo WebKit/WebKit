@@ -256,6 +256,17 @@ void WebInspectorFrontendClient::reopen()
     [inspector show:nil];
 }
 
+void WebInspectorFrontendClient::resetState()
+{
+    InspectorFrontendClientLocal::resetState();
+
+    auto* inspectorClient = [m_frontendWindowController inspectorClient];
+    inspectorClient->deleteInspectorStartsAttached();
+    inspectorClient->deleteInspectorAttachDisabled();
+
+    [NSWindow removeFrameUsingName:[[m_frontendWindowController window] frameAutosaveName]];
+}
+
 void WebInspectorFrontendClient::attachWindow(DockSide)
 {
     if ([m_frontendWindowController.get() attached])

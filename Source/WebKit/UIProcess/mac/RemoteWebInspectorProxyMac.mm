@@ -123,6 +123,11 @@ void RemoteWebInspectorProxy::platformCloseFrontendPageAndWindow()
         m_objCAdapter = nil;
 }
 
+void RemoteWebInspectorProxy::platformResetState()
+{
+    [NSWindow removeFrameUsingName:[m_window frameAutosaveName]];
+}
+
 void RemoteWebInspectorProxy::platformBringToFront()
 {
     [m_window makeKeyAndOrderFront:nil];

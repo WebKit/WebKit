@@ -1,3 +1,14 @@
+2019-07-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debug: "Reset Web Inspector" should also clear the saved window size and attachment side
+        https://bugs.webkit.org/show_bug.cgi?id=198956
+
+        Reviewed by Matt Baker.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorFrontendClient::resetWindowState): Added.
+
 2019-06-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Multiline mode of tooltip control does word-wrapping very slowly

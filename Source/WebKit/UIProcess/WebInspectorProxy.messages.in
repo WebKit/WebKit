@@ -30,6 +30,7 @@ messages -> WebInspectorProxy {
     DidClose()
     BringToFront()
     Reopen()
+    ResetState()
 
     InspectedURLChanged(String urlString)
     ShowCertificate(WebCore::CertificateInfo certificateInfo)

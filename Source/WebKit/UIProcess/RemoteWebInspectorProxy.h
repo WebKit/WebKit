@@ -107,6 +107,7 @@ private:
     // RemoteWebInspectorProxy messages.
     void frontendDidClose();
     void reopen();
+    void resetState();
     void bringToFront();
     void save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
     void append(const String& filename, const String& content);
@@ -122,6 +123,7 @@ private:
     // Platform implementations.
     WebPageProxy* platformCreateFrontendPageAndWindow();
     void platformCloseFrontendPageAndWindow();
+    void platformResetState();
     void platformBringToFront();
     void platformSave(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
     void platformAppend(const String& filename, const String& content);

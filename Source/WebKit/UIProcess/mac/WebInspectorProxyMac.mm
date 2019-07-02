@@ -361,6 +361,11 @@ void WebInspectorProxy::platformHide()
     }
 }
 
+void WebInspectorProxy::platformResetState()
+{
+    inspectedPage()->pageGroup().preferences().deleteInspectorWindowFrame();
+}
+
 void WebInspectorProxy::platformBringToFront()
 {
     // If the Web Inspector is no longer in the same window as the inspected view,

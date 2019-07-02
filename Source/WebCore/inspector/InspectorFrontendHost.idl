@@ -37,6 +37,8 @@
     void loaded();
     void closeWindow();
     void reopen();
+    void reset();
+
     void bringToFront();
     void inspectedURLChanged(DOMString newURL);
 

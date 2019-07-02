@@ -198,4 +198,12 @@ void WebPreferences::platformUpdateFloatValueForKey(const String& key, float val
     [[NSUserDefaults standardUserDefaults] setFloat:value forKey:makeKey(m_identifier, m_keyPrefix, key)];
 }
 
+void WebPreferences::platformDeleteKey(const String& key)
+{
+    if (!m_identifier)
+        return;
+
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:makeKey(m_identifier, m_keyPrefix, key)];
+}
+
 } // namespace WebKit

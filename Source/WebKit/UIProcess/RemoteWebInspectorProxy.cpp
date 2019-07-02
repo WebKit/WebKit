@@ -102,6 +102,11 @@ void RemoteWebInspectorProxy::reopen()
     load(m_debuggableType, m_backendCommandsURL);
 }
 
+void RemoteWebInspectorProxy::resetState()
+{
+    platformResetState();
+}
+
 void RemoteWebInspectorProxy::bringToFront()
 {
     platformBringToFront();
@@ -177,6 +182,7 @@ WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
     return nullptr;
 }
 
+void RemoteWebInspectorProxy::platformResetState() { }
 void RemoteWebInspectorProxy::platformBringToFront() { }
 void RemoteWebInspectorProxy::platformSave(const String&, const String&, bool, bool) { }
 void RemoteWebInspectorProxy::platformAppend(const String&, const String&) { }

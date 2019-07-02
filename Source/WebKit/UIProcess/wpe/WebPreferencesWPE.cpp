@@ -60,6 +60,11 @@ void WebPreferences::platformUpdateFloatValueForKey(const String&, float)
     notImplemented();
 }
 
+void WebPreferences::platformDeleteKey(const String&)
+{
+    notImplemented();
+}
+
 bool WebPreferences::platformGetStringUserValueForKey(const String&, String&)
 {
     notImplemented();

@@ -129,6 +129,7 @@ WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
     return m_webView->page();
 }
 
+void RemoteWebInspectorProxy::platformResetState() { }
 void RemoteWebInspectorProxy::platformBringToFront() { }
 void RemoteWebInspectorProxy::platformSave(const String&, const String&, bool, bool) { }
 void RemoteWebInspectorProxy::platformAppend(const String&, const String&) { }

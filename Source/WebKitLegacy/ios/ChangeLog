@@ -1,3 +1,13 @@
+2019-07-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debug: "Reset Web Inspector" should also clear the saved window size and attachment side
+        https://bugs.webkit.org/show_bug.cgi?id=198956
+
+        Reviewed by Matt Baker.
+
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorFrontendClient::resetWindowState): Added.
+
 2019-06-27  Beth Dakin  <bdakin@apple.com>
 
         Upstream use of MACCATALYST

@@ -89,6 +89,10 @@ void RemoteWebInspectorProxy::platformCloseFrontendPageAndWindow()
         gtk_widget_destroy(m_window);
 }
 
+void RemoteWebInspectorProxy::platformResetState()
+{
+}
+
 void RemoteWebInspectorProxy::platformBringToFront()
 {
     if (m_window)

@@ -374,6 +374,11 @@ void WebInspectorProxy::platformHide()
     notImplemented();
 }
 
+void WebInspectorProxy::platformResetState()
+{
+    notImplemented();
+}
+
 void WebInspectorProxy::platformBringToFront()
 {
     notImplemented();

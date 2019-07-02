@@ -302,6 +302,10 @@ void WebInspectorProxy::platformHide()
     notImplemented();
 }
 
+void WebInspectorProxy::platformResetState()
+{
+}
+
 void WebInspectorProxy::platformBringToFront()
 {
     if (m_isOpening)

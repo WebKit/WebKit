@@ -1,3 +1,16 @@
+2019-07-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debug: "Reset Web Inspector" should also clear the saved window size and attachment side
+        https://bugs.webkit.org/show_bug.cgi?id=198956
+
+        Reviewed by Matt Baker.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (deleteSetting): Added.
+        (WebInspectorClient::deleteInspectorStartsAttached): Added.
+        (WebInspectorClient::deleteInspectorAttachDisabled): Added.
+        (WebInspectorClient::createFrontendSettings):
+
 2018-01-30  Don Olmstead  <don.olmstead@sony.com>
 
         JSExports.h should be included as <JavaScriptCore/JSExportMacros.h>

@@ -55,10 +55,13 @@ public:
         virtual ~Settings() = default;
         virtual String getProperty(const String& name);
         virtual void setProperty(const String& name, const String& value);
+        virtual void deleteProperty(const String& name);
     };
 
     WEBCORE_EXPORT InspectorFrontendClientLocal(InspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings>);
     WEBCORE_EXPORT virtual ~InspectorFrontendClientLocal();
+
+    WEBCORE_EXPORT void resetState() override;
 
     WEBCORE_EXPORT void windowObjectCleared() final;
     WEBCORE_EXPORT void frontendLoaded() override;

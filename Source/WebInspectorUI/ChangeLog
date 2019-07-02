@@ -1,5 +1,18 @@
 2019-07-02  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Debug: "Reset Web Inspector" should also clear the saved window size and attachment side
+        https://bugs.webkit.org/show_bug.cgi?id=198956
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Base/Main.js:
+        (WI.reset): Added.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createDebugSettingsView):
+
+2019-07-02  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Audit: missing demo audits for WebInspectorAudit functions
         https://bugs.webkit.org/show_bug.cgi?id=198719
 

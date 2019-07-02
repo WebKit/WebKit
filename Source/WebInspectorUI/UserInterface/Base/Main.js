@@ -3220,6 +3220,13 @@ WI.assumingMainTarget = function()
     return WI.mainTarget;
 };
 
+WI.reset = async function()
+{
+    await WI.ObjectStore.reset();
+    WI.Setting.reset();
+    InspectorFrontendHost.reset();
+};
+
 WI.isEngineeringBuild = false;
 
 // OpenResourceDialog delegate

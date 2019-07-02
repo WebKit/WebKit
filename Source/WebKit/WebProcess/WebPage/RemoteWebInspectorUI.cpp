@@ -139,6 +139,11 @@ void RemoteWebInspectorUI::reopen()
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::Reopen(), m_page.pageID());
 }
 
+void RemoteWebInspectorUI::resetState()
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::ResetState(), m_page.pageID());
+}
+
 void RemoteWebInspectorUI::openInNewTab(const String& url)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::OpenInNewTab(url), m_page.pageID());
