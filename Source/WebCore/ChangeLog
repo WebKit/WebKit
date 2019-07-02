@@ -1,3 +1,47 @@
+2019-07-02  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r247017. rdar://problem/52054321
+
+    More judiciously handle clearing/creation of DOMWindows for new Documents.
+    <rdar://problem/51665406> and https://bugs.webkit.org/show_bug.cgi?id=198786
+    
+    Reviewed by Chris Dumez.
+    
+    * bindings/js/ScriptController.cpp:
+    (WebCore::ScriptController::executeIfJavaScriptURL):
+    
+    * loader/DocumentWriter.cpp:
+    (WebCore::DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL): Rename for clarity.
+    (WebCore::DocumentWriter::begin): Handle DOMWindow taking/creation inside FrameLoader::clear via a lambda.
+    (WebCore::DocumentWriter::replaceDocument): Deleted.
+    * loader/DocumentWriter.h:
+    
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::clear): Take a "handleDOMWindowCreation" lambda to run after clearing the previous document.
+    * loader/FrameLoader.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247017 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-01  Brady Eidson  <beidson@apple.com>
+
+            More judiciously handle clearing/creation of DOMWindows for new Documents.
+            <rdar://problem/51665406> and https://bugs.webkit.org/show_bug.cgi?id=198786
+
+            Reviewed by Chris Dumez.
+
+            * bindings/js/ScriptController.cpp:
+            (WebCore::ScriptController::executeIfJavaScriptURL):
+
+            * loader/DocumentWriter.cpp:
+            (WebCore::DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL): Rename for clarity.
+            (WebCore::DocumentWriter::begin): Handle DOMWindow taking/creation inside FrameLoader::clear via a lambda.
+            (WebCore::DocumentWriter::replaceDocument): Deleted.
+            * loader/DocumentWriter.h:
+
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::clear): Take a "handleDOMWindowCreation" lambda to run after clearing the previous document.
+            * loader/FrameLoader.h:
+
 2019-07-01  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r244621. rdar://problem/52492610

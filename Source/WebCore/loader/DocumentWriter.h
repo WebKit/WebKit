@@ -44,9 +44,7 @@ class DocumentWriter {
 public:
     explicit DocumentWriter(Frame*);
 
-    // This is only called by ScriptController::executeIfJavaScriptURL
-    // and always contains the result of evaluating a javascript: url.
-    void replaceDocument(const String&, Document* ownerDocument);
+    void replaceDocumentWithResultOfExecutingJavascriptURL(const String&, Document* ownerDocument);
 
     bool begin();
     bool begin(const URL&, bool dispatchWindowObjectAvailable = true, Document* ownerDocument = nullptr);

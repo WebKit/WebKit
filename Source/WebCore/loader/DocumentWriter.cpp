@@ -69,7 +69,7 @@ DocumentWriter::DocumentWriter(Frame* frame)
 // This is only called by ScriptController::executeIfJavaScriptURL
 // and always contains the result of evaluating a javascript: url.
 // This is the <iframe src="javascript:'html'"> case.
-void DocumentWriter::replaceDocument(const String& source, Document* ownerDocument)
+void DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL(const String& source, Document* ownerDocument)
 {
     m_frame->loader().stopAllLoaders();
 
@@ -145,10 +145,6 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     // FIXME: Do we need to consult the content security policy here about blocked plug-ins?
 
     bool shouldReuseDefaultView = m_frame->loader().stateMachine().isDisplayingInitialEmptyDocument() && m_frame->document()->isSecureTransitionTo(url);
-    if (shouldReuseDefaultView)
-        document->takeDOMWindowFrom(m_frame->document());
-    else
-        document->createDOMWindow();
 
     // Per <http://www.w3.org/TR/upgrade-insecure-requests/>, we need to retain an ongoing set of upgraded
     // requests in new navigation contexts. Although this information is present when we construct the
@@ -157,8 +153,16 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     HashSet<SecurityOriginData> insecureNavigationRequestsToUpgrade;
     if (auto* existingDocument = m_frame->document())
         insecureNavigationRequestsToUpgrade = existingDocument->contentSecurityPolicy()->takeNavigationRequestsToUpgrade();
+
+    WTF::Function<void()> handleDOMWindowCreation = [this, document = document.copyRef(), url] {
+        if (m_frame->loader().stateMachine().isDisplayingInitialEmptyDocument() && m_frame->document()->isSecureTransitionTo(url))
+            document->takeDOMWindowFrom(*m_frame->document());
+        else
+           document->createDOMWindow();
+    };
     
-    m_frame->loader().clear(document.ptr(), !shouldReuseDefaultView, !shouldReuseDefaultView);
+    m_frame->loader().clear(document.ptr(), !shouldReuseDefaultView, !shouldReuseDefaultView, true, WTFMove(handleDOMWindowCreation));
+
     clear();
 
     // m_frame->loader().clear() might fire unload event which could remove the view of the document.
