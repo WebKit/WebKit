@@ -14177,7 +14177,18 @@ private:
 
     LValue caged(Gigacage::Kind kind, LValue ptr, LValue base)
     {
+#if CPU(ARM64E)
+        if (kind == Gigacage::Primitive) {
+            LValue size = m_out.load32(base, m_heaps.JSArrayBufferView_length);
+            ptr = untagArrayPtr(ptr, size);
+        }
+#else
+        UNUSED_PARAM(kind);
+        UNUSED_PARAM(base);
+#endif
+
 #if GIGACAGE_ENABLED
+        UNUSED_PARAM(base);
         if (!Gigacage::isEnabled(kind))
             return ptr;
         
@@ -14195,7 +14206,7 @@ private:
         LValue result = m_out.add(masked, basePtr);
 
 #if CPU(ARM64E)
-        if (kind == Gigacage::Primitive) {
+        {
             PatchpointValue* merge = m_out.patchpoint(pointerType());
             merge->append(result, B3::ValueRep(B3::ValueRep::SomeLateRegister));
             merge->appendSomeRegister(ptr);
@@ -14203,12 +14214,9 @@ private:
                 jit.move(params[2].gpr(), params[0].gpr());
                 jit.bitFieldInsert64(params[1].gpr(), 0, 64 - MacroAssembler::numberOfPACBits, params[0].gpr());
             });
-
-            LValue size = m_out.load32(base, m_heaps.JSArrayBufferView_length);
-            result = untagArrayPtr(merge, size);
+            result = merge;
         }
-#endif // CPU(ARM64E)
-
+#endif
         // Make sure that B3 doesn't try to do smart reassociation of these pointer bits.
         // FIXME: In an ideal world, B3 would not do harmful reassociations, and if it did, it would be able
         // to undo them during constant hoisting and regalloc. As it stands, if you remove this then Octane
@@ -14222,9 +14230,6 @@ private:
         // https://bugs.webkit.org/show_bug.cgi?id=175493
         return m_out.opaque(result);
 #endif
-
-        UNUSED_PARAM(kind);
-        UNUSED_PARAM(base);
         return ptr;
     }
     

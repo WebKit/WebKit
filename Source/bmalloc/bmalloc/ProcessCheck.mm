@@ -66,9 +66,7 @@ bool shouldProcessUnconditionallyUseBmalloc()
             result = contains(@"com.apple.WebKit") || contains(@"safari");
         } else {
             NSString *processName = [[NSProcessInfo processInfo] processName];
-            result = [processName isEqualToString:@"jsc"]
-                || [processName isEqualToString:@"wasm"]
-                || [processName hasPrefix:@"test"];
+            result = [processName isEqualToString:@"jsc"] || [processName isEqualToString:@"wasm"];
         }
     });
 

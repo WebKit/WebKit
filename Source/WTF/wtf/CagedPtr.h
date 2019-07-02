@@ -49,21 +49,20 @@ public:
         : m_ptr(shouldTag ? tagArrayPtr(ptr, size) : ptr)
     { }
 
+
     T* get(unsigned size) const
     {
         ASSERT(m_ptr);
         T* ptr = PtrTraits::unwrap(m_ptr);
-        T* cagedPtr = Gigacage::caged(kind, ptr);
-        T* untaggedPtr = shouldTag ? untagArrayPtr(mergePointers(ptr, cagedPtr), size) : cagedPtr;
-        return untaggedPtr;
+        T* untaggedPtr = shouldTag ? untagArrayPtr(ptr, size) : ptr;
+        return mergePointers(untaggedPtr, Gigacage::caged(kind, ptr));
     }
 
     T* getMayBeNull(unsigned size) const
     {
         T* ptr = PtrTraits::unwrap(m_ptr);
-        T* cagedPtr = Gigacage::cagedMayBeNull(kind, ptr);
-        T* untaggedPtr = shouldTag ? untagArrayPtr(mergePointers(ptr, cagedPtr), size) : cagedPtr;
-        return untaggedPtr;
+        T* untaggedPtr = shouldTag ? untagArrayPtr(ptr, size) : ptr;
+        return mergePointers(untaggedPtr, Gigacage::cagedMayBeNull(kind, ptr));
     }
 
     T* getUnsafe() const
@@ -125,16 +124,11 @@ public:
     }
     
 protected:
-    static inline T* mergePointers(T* sourcePtr, T* cagedPtr)
+    static inline T* mergePointers(const T* untaggedPtr, const T* uncagedPtr)
     {
-#if CPU(ARM64E)
         constexpr unsigned numberOfPACBits = 25;
         constexpr uintptr_t mask = (1ull << ((sizeof(T*) * CHAR_BIT) - numberOfPACBits)) - 1;
-        return reinterpret_cast<T*>((reinterpret_cast<uintptr_t>(sourcePtr) & ~mask) | (reinterpret_cast<uintptr_t>(cagedPtr) & mask));
-#else
-        UNUSED_PARAM(sourcePtr);
-        return cagedPtr;
-#endif
+        return reinterpret_cast<T*>((reinterpret_cast<uintptr_t>(untaggedPtr) & ~mask) | (reinterpret_cast<uintptr_t>(uncagedPtr) & mask));
     }
 
     typename PtrTraits::StorageType m_ptr;

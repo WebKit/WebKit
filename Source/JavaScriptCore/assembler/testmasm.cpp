@@ -1015,8 +1015,6 @@ void testMoveDoubleConditionally64()
 
 static void testCagePreservesPACFailureBit()
 {
-#if GIGACAGE_ENABLED
-    ASSERT(!Gigacage::isDisablingPrimitiveGigacageDisabled());
     auto cage = compile([] (CCallHelpers& jit) {
         jit.emitFunctionPrologue();
         jit.cageConditionally(Gigacage::Primitive, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2);
@@ -1027,15 +1025,10 @@ static void testCagePreservesPACFailureBit()
 
     void* ptr = Gigacage::tryMalloc(Gigacage::Primitive, 1);
     void* taggedPtr = tagArrayPtr(ptr, 1);
-    ASSERT(hasOneBitSet(Gigacage::size(Gigacage::Primitive) << 2));
-    void* notCagedPtr = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(ptr) + (Gigacage::size(Gigacage::Primitive) << 2));
-    CHECK_NOT_EQ(Gigacage::caged(Gigacage::Primitive, notCagedPtr), notCagedPtr);
-    void* taggedNotCagedPtr = tagArrayPtr(notCagedPtr, 1);
-
+    dataLogLn("starting test");
     if (isARM64E()) {
         // FIXME: This won't work if authentication failures trap but I don't know how to test for that right now.
         CHECK_NOT_EQ(invoke<void*>(cage, taggedPtr, 2), ptr);
-        CHECK_EQ(invoke<void*>(cage, taggedNotCagedPtr, 1), untagArrayPtr(taggedPtr, 2));
     } else
         CHECK_EQ(invoke<void*>(cage, taggedPtr, 2), ptr);
 
@@ -1049,17 +1042,16 @@ static void testCagePreservesPACFailureBit()
         jit.ret();
     });
 
-    CHECK_EQ(invoke<void*>(cageWithoutAuthentication, taggedPtr), taggedPtr);
     if (isARM64E()) {
         // FIXME: This won't work if authentication failures trap but I don't know how to test for that right now.
-        CHECK_NOT_EQ(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), taggedNotCagedPtr);
-        CHECK_NOT_EQ(untagArrayPtr(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), 1), notCagedPtr);
-        CHECK_NOT_EQ(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), taggedPtr);
-        CHECK_NOT_EQ(untagArrayPtr(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), 1), ptr);
-    }
+        CHECK_NOT_EQ(invoke<void*>(cageWithoutAuthentication, untagArrayPtr(taggedPtr, 2)), ptr);
+    } else
+        CHECK_EQ(invoke<void*>(cageWithoutAuthentication, untagArrayPtr(taggedPtr, 2)), ptr);
+
+    CHECK_EQ(untagArrayPtr(taggedPtr, 1), ptr);
+    CHECK_EQ(invoke<void*>(cageWithoutAuthentication, untagArrayPtr(taggedPtr, 1)), ptr);
 
     Gigacage::free(Gigacage::Primitive, ptr);
-#endif
 }
 
 #define RUN(test) do {                          \
