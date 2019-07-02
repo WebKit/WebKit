@@ -1,3 +1,17 @@
+2019-07-02  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK][WPE] Explicitly blacklist problematic directories for sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=199367
+
+        Reviewed by Michael Catanzaro.
+
+        There are some directories that simply do not make sense to bind into the sandbox
+        and will only cause issues such as `/proc` so lets just block them.
+
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (path_is_not_blacklisted):
+        (webkit_web_context_add_path_to_sandbox):
+
 2019-07-02  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r243240): Unable to swipe back in Safari

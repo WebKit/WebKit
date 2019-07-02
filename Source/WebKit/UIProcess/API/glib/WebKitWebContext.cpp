@@ -1185,6 +1185,21 @@ void webkit_web_context_set_sandbox_enabled(WebKitWebContext* context, gboolean 
     context->priv->processPool->setSandboxEnabled(enabled);
 }
 
+static bool pathIsBlacklisted(const char* path)
+{
+    static const Vector<CString, 4> blacklistedPrefixes = {
+        // These are recreated by bwrap and it doesn't make sense to try and rebind them.
+        "sys", "proc", "dev",
+        "", // All of `/` isn't acceptable.
+    };
+
+    if (!g_path_is_absolute(path))
+        return true;
+
+    GUniquePtr<char*> splitPath(g_strsplit(path, G_DIR_SEPARATOR_S, 3));
+    return blacklistedPrefixes.contains(splitPath.get()[1]);
+}
+
 /**
  * webkit_web_context_add_path_to_sandbox:
  * @context: a #WebKitWebContext
@@ -1195,6 +1210,9 @@ void webkit_web_context_set_sandbox_enabled(WebKitWebContext* context, gboolean 
  * has been created otherwise it will be silently ignored. It is a fatal error to
  * add paths after a web process has been spawned.
  *
+ * Paths in directories such as `/sys`, `/proc`, and `/dev` or all of `/`
+ * are not valid.
+ *
  * See also webkit_web_context_set_sandbox_enabled()
  *
  * Since: 2.26
@@ -1202,7 +1220,11 @@ void webkit_web_context_set_sandbox_enabled(WebKitWebContext* context, gboolean 
 void webkit_web_context_add_path_to_sandbox(WebKitWebContext* context, const char* path, gboolean readOnly)
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
-    g_return_if_fail(g_path_is_absolute(path));
+
+    if (pathIsBlacklisted(path)) {
+        g_critical("Attempted to add disallowed path to sandbox: %s", path);
+        return;
+    }
 
     if (context->priv->processPool->processes().size())
         g_error("Sandbox paths cannot be changed after subprocesses were spawned.");
