@@ -1,4 +1,24 @@
 =================
+WebKitGTK  2.24.3
+=================
+
+What's new in WebKitGTK 2.24.3?
+
+  - Deprecate WebSQL APIs.
+  - Make Previous/Next gesture work in RTL mode.
+  - Fix content disappearing when using CSS transforms.
+  - Fix rendering artifacts in youtube volume button.
+  - Fix trapezoid artifact in github comment box.
+  - Fix video pause that sometimes caused to skip to finish.
+  - Fix volume level changes when playing a video.
+  - Fix HLS streams being slow to start.
+  - Fix some radio streams that could not be played.
+  - Fix the build with older versions of GStreamer.
+  - Fix the build with video and audio disabled.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Brazilian Portuguese.
+
+=================
 WebKitGTK  2.24.2
 =================
 
