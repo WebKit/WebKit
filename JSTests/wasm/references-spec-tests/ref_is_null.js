@@ -1,4 +1,4 @@
-
+//@ runWebAssemblySuite("--useWebAssemblyReferences=true")
 'use strict';
 let console = { log: print }
 let hostrefs = {};
