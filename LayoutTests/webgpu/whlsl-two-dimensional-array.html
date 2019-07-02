@@ -8,20 +8,20 @@
 <script>
 const shaderSource = `
 void fill(thread float[10][] array, float[10] value) {
-    for (uint i = 0; i < array.length; i++) {
+    for (uint i = 0; i < array.length; i = i + 1) {
         array[i] = value;
     }
 }
 
 void fill(thread float[] array, float value) {
-    for (uint i = 0; i < array.length; i++) {
+    for (uint i = 0; i < array.length; i = i + 1) {
         array[i] = value;
     }
 }
 
 bool contains(thread float[10][] array, float value) {
-    for (uint i = 0; i < array.length; i++) {
-        for (uint j = 0; j < array[j].length; j++) {
+    for (uint i = 0; i < array.length; i = i + 1) {
+        for (uint j = 0; j < array[j].length; j = j + 1) {
             if (array[i][j] != value)
                 return false;
         }
@@ -30,7 +30,7 @@ bool contains(thread float[10][] array, float value) {
 }
 
 bool contains(thread float[] array, float value) {
-    for (uint i = 0; i < array.length; i++) {
+    for (uint i = 0; i < array.length; i = i + 1) {
         if (array[i] != value)
             return false;
     }
@@ -45,13 +45,13 @@ compute void computeShader(device int[] buffer : register(u0), float3 threadID :
     if (!contains(@array, 0))
         return;
 
-    for (uint i = 0; i < array.length; ++i) {
+    for (uint i = 0; i < array.length; i = i + 1) {
         float[10] value;
         fill(@value, float(i));
         array[i] = value;
     }
 
-    for (uint i = 0; i < array.length; ++i) {
+    for (uint i = 0; i < array.length; i = i + 1) {
         float[10] value = array[i];
         if (!contains(@value, float(i)))
             return;

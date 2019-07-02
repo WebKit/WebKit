@@ -1,3 +1,12 @@
+2019-07-02  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Change whlsl-two-dimensional-array.html to not be flaky on AMD Radeon Pro GPUs
+        https://bugs.webkit.org/show_bug.cgi?id=199424
+
+        Reviewed by Myles C. Maxfield.
+
+        * webgpu/whlsl-two-dimensional-array.html:
+
 2019-07-02  Andres Gonzalez  <andresg_22@apple.com>
 
         Enhance support of aria-haspopup per ARIA 1.1 specification.
