@@ -1,3 +1,63 @@
+2019-07-02  Keith Miller  <keith_miller@apple.com>
+
+        PACCage should first cage leaving PAC bits intact then authenticate
+        https://bugs.webkit.org/show_bug.cgi?id=199372
+
+        Reviewed by Saam Barati.
+
+        This ordering prevents someone from taking a signed pointer from
+        outside the gigacage and using it in a struct that expects a caged
+        pointer. Previously, the PACCaging just double checked that the PAC
+        bits were valid for the original pointer.
+
+
+               +---------------------------+
+               |       |        |          |
+               | "PAC" | "base" | "offset" +----+
+               |       |        |          |    |
+               +---------------------------+    | Caging
+                |                               |
+                |                               |
+                |                               v
+                |                +---------------------------+
+                |                |       |        |          |
+                | Bit Merge      | 00000 |  base  | "offset" |
+                |                |       |        |          |
+                |                +---------------------------+
+                |                               |
+                |                               |
+                v                               |  Bit Merge
+          +---------------------------+         |
+          |       |        |          |         |
+          | "PAC" |  base  | "offset" +<--------+
+          |       |        |          |
+          +---------------------------+
+                      |
+                      |
+                      | Authenticate
+                      |
+                      v
+          +---------------------------+
+          |       |        |          |
+          | Auth  |  base  | "offset" |
+          |       |        |          |
+          +---------------------------+
+
+        The above ascii art graph shows how the PACCage system works. The
+        key take away is that even if someone passes in a valid, signed
+        pointer outside the cage it will still fail to authenticate as the
+        "base" bits will change before authentication.
+
+
+        * assembler/MacroAssemblerARM64E.h:
+        * assembler/testmasm.cpp:
+        (JSC::testCagePreservesPACFailureBit):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::caged):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::cageConditionally):
+        * llint/LowLevelInterpreter64.asm:
+
 2019-07-01  Justin Michaud  <justin_michaud@apple.com>
 
         [Wasm-References] Disable references by default

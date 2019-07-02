@@ -1,3 +1,15 @@
+2019-07-02  Keith Miller  <keith_miller@apple.com>
+
+        PACCage should first cage leaving PAC bits intact then authenticate
+        https://bugs.webkit.org/show_bug.cgi?id=199372
+
+        Reviewed by Saam Barati.
+
+        * wtf/CagedPtr.h:
+        (WTF::CagedPtr::get const):
+        (WTF::CagedPtr::getMayBeNull const):
+        (WTF::CagedPtr::mergePointers):
+
 2019-07-01  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Cannot play Bert's Bytes radio stream from http://radio.dos.nl/
