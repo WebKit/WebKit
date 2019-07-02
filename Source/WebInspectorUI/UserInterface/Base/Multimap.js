@@ -35,6 +35,11 @@ class Multimap
 
     // Public
 
+    get size()
+    {
+        return this._map.size;
+    }
+
     has(key, value)
     {
         let valueSet = this._map.get(key);

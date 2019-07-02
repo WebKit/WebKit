@@ -114,8 +114,6 @@ WI.URLBreakpointTreeElement = class URLBreakpointTreeElement extends WI.GeneralT
         let label = breakpoint.disabled ? WI.UIString("Enable Breakpoint") : WI.UIString("Disable Breakpoint");
         contextMenu.appendItem(label, this._toggleBreakpoint.bind(this));
 
-        contextMenu.appendSeparator();
-
         contextMenu.appendItem(WI.UIString("Delete Breakpoint"), () => {
             WI.domDebuggerManager.removeURLBreakpoint(breakpoint);
         });

@@ -146,10 +146,8 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         while (frames.length) {
             let frame = frames.shift();
             let domBreakpointNodeIdentifierMap = this._domBreakpointFrameIdentifierMap.get(frame.id);
-            if (domBreakpointNodeIdentifierMap) {
-                for (let breakpoints of domBreakpointNodeIdentifierMap.values())
-                    resolvedBreakpoints = resolvedBreakpoints.concat(breakpoints);
-            }
+            if (domBreakpointNodeIdentifierMap)
+                resolvedBreakpoints = resolvedBreakpoints.concat(Array.from(domBreakpointNodeIdentifierMap.values()));
 
             frames.push(...frame.childFrameCollection);
         }
@@ -178,7 +176,26 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             return [];
 
         let breakpoints = domBreakpointNodeIdentifierMap.get(node.id);
-        return breakpoints ? breakpoints.slice() : [];
+        return breakpoints ? Array.from(breakpoints) : [];
+    }
+
+    domBreakpointsInSubtree(node)
+    {
+        console.assert(node instanceof WI.DOMNode);
+
+        let breakpoints = [];
+
+        if (node.children) {
+            let children = Array.from(node.children);
+            while (children.length) {
+                let child = children.pop();
+                if (child.children)
+                    children = children.concat(child.children);
+                breakpoints = breakpoints.concat(this.domBreakpointsForNode(child));
+            }
+        }
+
+        return breakpoints;
     }
 
     addDOMBreakpoint(breakpoint)
@@ -215,11 +232,6 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             return;
         }
 
-        let nodeIdentifier = breakpoint.domNodeIdentifier;
-        console.assert(nodeIdentifier, "Cannot remove unresolved DOM breakpoint.");
-        if (!nodeIdentifier)
-            return;
-
         this._detachDOMBreakpoint(breakpoint);
 
         this._domBreakpointURLMap.delete(breakpoint.url);
@@ -227,7 +239,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         if (!breakpoint.disabled) {
             // We should get the target associated with the nodeIdentifier of this breakpoint.
             let target = WI.assumingMainTarget();
-            target.DOMDebuggerAgent.removeDOMBreakpoint(nodeIdentifier, breakpoint.type);
+            target.DOMDebuggerAgent.removeDOMBreakpoint(breakpoint.domNodeIdentifier, breakpoint.type);
         }
 
         this.dispatchEventToListeners(WI.DOMDebuggerManager.Event.DOMBreakpointRemoved, {breakpoint});
@@ -406,17 +418,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         if (!domBreakpointNodeIdentifierMap)
             return;
 
-        let breakpoints = domBreakpointNodeIdentifierMap.get(nodeIdentifier);
-        console.assert(breakpoints, "Missing DOM breakpoints for node.", node);
-        if (!breakpoints)
-            return;
-
-        breakpoints.remove(breakpoint, true);
-
-        if (breakpoints.length)
-            return;
-
-        domBreakpointNodeIdentifierMap.delete(nodeIdentifier);
+        domBreakpointNodeIdentifierMap.delete(nodeIdentifier, breakpoint);
 
         if (!domBreakpointNodeIdentifierMap.size)
             this._domBreakpointFrameIdentifierMap.delete(frameIdentifier);
@@ -430,10 +432,8 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
         this._domBreakpointFrameIdentifierMap.delete(frame.id);
 
-        for (let breakpoints of domBreakpointNodeIdentifierMap.values()) {
-            for (let breakpoint of breakpoints)
-                breakpoint.domNodeIdentifier = null;
-        }
+        for (let breakpoint of domBreakpointNodeIdentifierMap.values())
+            breakpoint.domNodeIdentifier = null;
     }
 
     _speculativelyResolveDOMBreakpointsForURL(url)
@@ -447,6 +447,14 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
                 continue;
 
             WI.domManager.pushNodeByPathToFrontend(breakpoint.path, (nodeIdentifier) => {
+                if (breakpoint.domNodeIdentifier) {
+                    // This breakpoint may have been resolved by a node being inserted before this
+                    // callback is invoked.  If so, the `nodeIdentifier` should match, so don't try
+                    // to resolve it again as it would've already been resolved.
+                    console.assert(breakpoint.domNodeIdentifier === nodeIdentifier);
+                    return;
+                }
+
                 if (nodeIdentifier)
                     this._resolveDOMBreakpoint(breakpoint, nodeIdentifier);
             });
@@ -463,15 +471,11 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         let frameIdentifier = node.frame.id;
         let domBreakpointNodeIdentifierMap = this._domBreakpointFrameIdentifierMap.get(frameIdentifier);
         if (!domBreakpointNodeIdentifierMap) {
-            domBreakpointNodeIdentifierMap = new Map;
+            domBreakpointNodeIdentifierMap = new Multimap;
             this._domBreakpointFrameIdentifierMap.set(frameIdentifier, domBreakpointNodeIdentifierMap);
         }
 
-        let breakpoints = domBreakpointNodeIdentifierMap.get(nodeIdentifier);
-        if (breakpoints)
-            breakpoints.push(breakpoint);
-        else
-            domBreakpointNodeIdentifierMap.set(nodeIdentifier, [breakpoint]);
+        domBreakpointNodeIdentifierMap.add(nodeIdentifier, breakpoint);
 
         breakpoint.domNodeIdentifier = nodeIdentifier;
 

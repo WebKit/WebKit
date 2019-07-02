@@ -289,6 +289,10 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
             excludeRevealElement: this._excludeRevealElementContextMenu,
             copySubMenu: subMenus.copy,
         };
+
+        if (treeElement.bindRevealDescendantBreakpointsMenuItemHandler)
+            options.revealDescendantBreakpointsMenuItemHandler = treeElement.bindRevealDescendantBreakpointsMenuItemHandler();
+
         WI.appendContextMenuItemsForDOMNode(contextMenu, treeElement.representedObject, options);
 
         super.populateContextMenu(contextMenu, event, treeElement);

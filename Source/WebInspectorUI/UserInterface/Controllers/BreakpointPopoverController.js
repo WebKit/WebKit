@@ -88,10 +88,8 @@ WI.BreakpointPopoverController = class BreakpointPopoverController extends WI.Ob
         if (!breakpoint.autoContinue && !breakpoint.disabled && breakpoint.actions.length)
             contextMenu.appendItem(WI.UIString("Set to Automatically Continue"), toggleAutoContinue);
 
-        if (WI.debuggerManager.isBreakpointRemovable(breakpoint)) {
-            contextMenu.appendSeparator();
+        if (WI.debuggerManager.isBreakpointRemovable(breakpoint))
             contextMenu.appendItem(WI.UIString("Delete Breakpoint"), removeBreakpoint);
-        }
 
         if (breakpoint._sourceCodeLocation.hasMappedLocation()) {
             contextMenu.appendSeparator();

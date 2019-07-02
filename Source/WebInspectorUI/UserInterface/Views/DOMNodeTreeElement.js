@@ -55,9 +55,7 @@ WI.DOMNodeTreeElement = class DOMNodeTreeElement extends WI.GeneralTreeElement
     {
         contextMenu.appendSeparator();
 
-        WI.appendContextMenuItemsForDOMNodeBreakpoints(contextMenu, this.representedObject, {
-            allowEditing: true,
-        });
+        WI.appendContextMenuItemsForDOMNodeBreakpoints(contextMenu, this.representedObject);
 
         contextMenu.appendSeparator();
 

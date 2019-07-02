@@ -224,7 +224,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
     if (WI.domDebuggerManager.supported && isElement && !domNode.isPseudoElement() && attached) {
         contextMenu.appendSeparator();
 
-        WI.appendContextMenuItemsForDOMNodeBreakpoints(contextMenu, domNode);
+        WI.appendContextMenuItemsForDOMNodeBreakpoints(contextMenu, domNode, options);
     }
 
     contextMenu.appendSeparator();
@@ -284,43 +284,64 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
     contextMenu.appendSeparator();
 };
 
-WI.appendContextMenuItemsForDOMNodeBreakpoints = function(contextMenu, domNode, {allowEditing} = {})
+WI.appendContextMenuItemsForDOMNodeBreakpoints = function(contextMenu, domNode, options = {})
 {
     if (contextMenu.__domBreakpointItemsAdded)
         return;
 
     contextMenu.__domBreakpointItemsAdded = true;
 
-    let subMenu = contextMenu.appendSubMenuItem(WI.UIString("Break on"));
-
     let breakpoints = WI.domDebuggerManager.domBreakpointsForNode(domNode);
-    let keyValuePairs = breakpoints.map((breakpoint) => [breakpoint.type, breakpoint]);
-    let breakpointsByType = new Map(keyValuePairs);
+
+    contextMenu.appendSeparator();
+
+    let subMenu = contextMenu.appendSubMenuItem(WI.UIString("Break on"));
 
     for (let type of Object.values(WI.DOMBreakpoint.Type)) {
         let label = WI.DOMBreakpointTreeElement.displayNameForType(type);
-        let breakpoint = breakpointsByType.get(type);
+        let breakpoint = breakpoints.find((breakpoint) => breakpoint.type === type);
 
         subMenu.appendCheckboxItem(label, function() {
             if (breakpoint)
                 WI.domDebuggerManager.removeDOMBreakpoint(breakpoint);
             else
                 WI.domDebuggerManager.addDOMBreakpoint(new WI.DOMBreakpoint(domNode, type));
-        }, !!breakpoint, false);
+        }, !!breakpoint);
     }
 
-    if (allowEditing) {
-        contextMenu.appendSeparator();
+    contextMenu.appendSeparator();
 
+    if (breakpoints.length) {
         let shouldEnable = breakpoints.some((breakpoint) => breakpoint.disabled);
-        let label = shouldEnable ? WI.UIString("Enable Breakpoints") : WI.UIString("Disable Breakpoints");
-        contextMenu.appendItem(label, () => {
-            breakpoints.forEach((breakpoint) => breakpoint.disabled = !shouldEnable);
+        contextMenu.appendItem(shouldEnable ? WI.UIString("Enable Breakpoint") : WI.UIString("Disable Breakpoint"), () => {
+            for (let breakpoint of breakpoints)
+                breakpoint.disabled = !shouldEnable;
         });
 
-        contextMenu.appendItem(WI.UIString("Delete Breakpoints"), function() {
-            WI.domDebuggerManager.removeDOMBreakpointsForNode(domNode);
-            WI.domManager.removeEventListenerBreakpointsForNode(domNode);
+        contextMenu.appendItem(WI.UIString("Delete Breakpoint"), () => {
+            for (let breakpoint of breakpoints)
+                WI.domDebuggerManager.removeDOMBreakpoint(breakpoint);
         });
+
+        contextMenu.appendSeparator();
+    }
+
+    let subtreeBreakpoints = WI.domDebuggerManager.domBreakpointsInSubtree(domNode);
+    if (subtreeBreakpoints.length) {
+        if (options.revealDescendantBreakpointsMenuItemHandler)
+            contextMenu.appendItem(WI.UIString("Reveal Descendant Breakpoints"), options.revealDescendantBreakpointsMenuItemHandler);
+
+        let subtreeShouldEnable = subtreeBreakpoints.some((breakpoint) => breakpoint.disabled);
+        contextMenu.appendItem(subtreeShouldEnable ? WI.UIString("Enable Descendant Breakpoints") : WI.UIString("Disable Descendant Breakpoints"), () => {
+            for (let subtreeBreakpoint of subtreeBreakpoints)
+                subtreeBreakpoint.disabled = !subtreeShouldEnable;
+        });
+
+        contextMenu.appendItem(WI.UIString("Delete Descendant Breakpoints"), () => {
+            for (let subtreeBreakpoint of subtreeBreakpoints)
+                WI.domDebuggerManager.removeDOMBreakpoint(subtreeBreakpoint);
+        });
+
+        contextMenu.appendSeparator();
     }
 };

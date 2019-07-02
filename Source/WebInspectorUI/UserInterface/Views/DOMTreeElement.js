@@ -45,7 +45,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         this._animatingHighlight = false;
         this._shouldHighlightAfterReveal = false;
         this._boundHighlightAnimationEnd = this._highlightAnimationEnd.bind(this);
-        this._subtreeBreakpointCount = 0;
+        this._subtreeBreakpointTreeElements = null;
 
         this._showGoToArrow = false;
         this._highlightedAttributes = new Set;
@@ -76,7 +76,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     get hasBreakpoint()
     {
-        return this._breakpointStatus !== WI.DOMTreeElement.BreakpointStatus.None || this._subtreeBreakpointCount > 0;
+        return this._breakpointStatus !== WI.DOMTreeElement.BreakpointStatus.None || (this._subtreeBreakpointTreeElements && this._subtreeBreakpointTreeElements.size);
     }
 
     get breakpointStatus()
@@ -103,9 +103,21 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         let parentElement = this.parent;
         while (parentElement && !parentElement.root) {
-            parentElement.subtreeBreakpointCountDidChange(increment);
+            parentElement._subtreeBreakpointChanged(this);
             parentElement = parentElement.parent;
         }
+    }
+
+    bindRevealDescendantBreakpointsMenuItemHandler()
+    {
+        if (!this._subtreeBreakpointTreeElements || !this._subtreeBreakpointTreeElements.size)
+            return null;
+
+        let subtreeBreakpointTreeElements = Array.from(this._subtreeBreakpointTreeElements);
+        return () => {
+            for (let subtreeBreakpointTreeElement of subtreeBreakpointTreeElements)
+                subtreeBreakpointTreeElement.reveal();
+        };
     }
 
     get closeTagTreeElement() { return this._closeTagTreeElement; }
@@ -117,12 +129,6 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         this._shouldHighlightAfterReveal = true;
         this.reveal();
-    }
-
-    subtreeBreakpointCountDidChange(increment)
-    {
-        this._subtreeBreakpointCount += increment;
-        this._updateBreakpointStatus();
     }
 
     isCloseTag()
@@ -1872,6 +1878,21 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             event.preventDefault();
     }
 
+    _subtreeBreakpointChanged(treeElement)
+    {
+        if (treeElement.hasBreakpoint) {
+            if (!this._subtreeBreakpointTreeElements)
+                this._subtreeBreakpointTreeElements = new Set;
+            this._subtreeBreakpointTreeElements.add(treeElement);
+        } else {
+            this._subtreeBreakpointTreeElements.delete(treeElement);
+            if (!this._subtreeBreakpointTreeElements.size)
+                this._subtreeBreakpointTreeElements = null;
+        }
+
+        this._updateBreakpointStatus();
+    }
+
     _updateBreakpointStatus()
     {
         let listItemElement = this.listItemElement;
@@ -1879,7 +1900,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             return;
 
         let hasBreakpoint = this._breakpointStatus !== WI.DOMTreeElement.BreakpointStatus.None;
-        let hasSubtreeBreakpoints = !!this._subtreeBreakpointCount;
+        let hasSubtreeBreakpoints = this._subtreeBreakpointTreeElements && this._subtreeBreakpointTreeElements.size;
 
         if (!hasBreakpoint && !hasSubtreeBreakpoints) {
             if (this._statusImageElement)
@@ -1921,26 +1942,13 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     _statusImageContextmenu(event)
     {
-        let hasBreakpoint = this._breakpointStatus !== WI.DOMTreeElement.BreakpointStatus.None;
-        let hasSubtreeBreakpoints = !!this._subtreeBreakpointCount;
-        if (!hasBreakpoint && !hasSubtreeBreakpoints)
+        if (!this.hasBreakpoint)
             return;
 
         let contextMenu = WI.ContextMenu.createFromEvent(event);
-        if (hasBreakpoint) {
-            WI.appendContextMenuItemsForDOMNodeBreakpoints(contextMenu, this.representedObject, {
-                allowEditing: true,
-            });
-            return;
-        }
 
-        contextMenu.appendItem(WI.UIString("Reveal Breakpoint"), () => {
-            let breakpointTreeElement = this.selfOrDescendant((treeElement) => treeElement.breakpointStatus && treeElement.breakpointStatus !== WI.DOMTreeElement.BreakpointStatus.None);
-            console.assert(breakpointTreeElement, "Missing breakpoint descendant.", this);
-            if (!breakpointTreeElement)
-                return;
-
-            breakpointTreeElement.revealAndHighlight();
+        WI.appendContextMenuItemsForDOMNodeBreakpoints(contextMenu, this.representedObject, {
+            revealDescendantBreakpointsMenuItemHandler: this.bindRevealDescendantBreakpointsMenuItemHandler(),
         });
     }
 

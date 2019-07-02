@@ -1,3 +1,60 @@
+2019-07-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: DOM Debugger: descendant breakpoints should be able to be enabled/disabled/deleted from a collapsed parent
+        https://bugs.webkit.org/show_bug.cgi?id=199332
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager.prototype.get domBreakpoints):
+        (WI.DOMDebuggerManager.prototype.domBreakpointsForNode):
+        (WI.DOMDebuggerManager.prototype.domBreakpointsInSubtree): Added.
+        (WI.DOMDebuggerManager.prototype.removeDOMBreakpoint):
+        (WI.DOMDebuggerManager.prototype._detachDOMBreakpoint):
+        (WI.DOMDebuggerManager.prototype._detachBreakpointsForFrame):
+        (WI.DOMDebuggerManager.prototype._speculativelyResolveDOMBreakpointsForURL):
+        (WI.DOMDebuggerManager.prototype._resolveDOMBreakpoint):
+        Provide a way of getting a "summary" array of `DOMBreakpoint`s for all descendant nodes.
+        Rework the data structure for holding `DOMBreakpoint`s to use a `Multimap` so no duplicates
+        can be added (it uses a `Set` instead of an `Array`).
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement):
+        (WI.DOMTreeElement.prototype.get hasBreakpoint):
+        (WI.DOMTreeElement.prototype.set breakpointStatus):
+        (WI.DOMTreeElement.prototype.bindRevealDescendantBreakpointsMenuItemHandler): Added.
+        (WI.DOMTreeElement.prototype._subtreeBreakpointChanged): Added.
+        (WI.DOMTreeElement.prototype._updateBreakpointStatus):
+        (WI.DOMTreeElement.prototype._statusImageContextmenu):
+        (WI.DOMTreeElement.prototype.subtreeBreakpointCountDidChange): Deleted.
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype.populateContextMenu):
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForDOMNode):
+        (WI.appendContextMenuItemsForDOMNodeBreakpoints):
+        Keep track of the actual descendant `DOMNodeTreeElement` that have breakpoints, rather than
+        just a count, so that the "Reveal Descendant Breakpoints" action is able to access them.
+        Change "Reveal Descendant Breakpoints" to reveal and select all descendant breakpoints
+        instead of just the first one.
+        Drive-by: don't remove specific (event) listener breakpoints when invoking the
+                  "Delete Descendant Breakpoints" action, as that's not obvious from the UI.
+
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        (WI.BreakpointPopoverController.prototype.appendContextMenuItems):
+        * UserInterface/Views/DOMBreakpointTreeElement.js:
+        (WI.DOMBreakpointTreeElement.prototype.populateContextMenu):
+        * UserInterface/Views/DOMNodeTreeElement.js:
+        (WI.DOMNodeTreeElement.prototype.populateContextMenu):
+        * UserInterface/Views/EventBreakpointTreeElement.js:
+        (WI.EventBreakpointTreeElement.prototype.populateContextMenu):
+        * UserInterface/Views/URLBreakpointTreeElement.js:
+        (WI.URLBreakpointTreeElement.prototype.populateContextMenu):
+        Remove the separator before "Delete Breakpoint" so all breakpoint actions are in the same section.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Multimap.js:
+        (Multimap.prototype.get size): Added.
+
 2019-07-02  Matt Baker  <mattbaker@apple.com>
 
         REGRESSION (r238563): Web Inspector: Selection is erratic when holding Up/Down on Network Table
