@@ -884,6 +884,8 @@ http/tests/history [ Skip ]
 http/tests/images [ Skip ]
 http/tests/incremental [ Skip ]
 http/tests/inspector [ Skip ]
+http/tests/inspector/page/get-cookies.html [ Pass ]
+
 http/tests/loading [ Skip ]
 http/tests/local/blob [ Skip ]
 http/tests/local/fileapi [ Skip ]

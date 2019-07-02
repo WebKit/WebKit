@@ -298,6 +298,7 @@ webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Fai
 # Cookie policy only supported in WK2.
 http/tests/cookies/only-accept-first-party-cookies.html [ Skip ]
 http/tests/cookies/third-party-cookie-relaxing.html [ Skip ]
+http/tests/inspector/page/get-cookies.html [ Skip ]
 http/tests/security/cookies/third-party-cookie-blocking.html [ Skip ]
 http/tests/security/cookies/third-party-cookie-blocking-redirect.html [ Skip ]
 http/tests/security/cookies/third-party-cookie-blocking-user-action.html [ Skip ]

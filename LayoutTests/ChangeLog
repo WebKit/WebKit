@@ -1,3 +1,16 @@
+2019-07-02  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Fix CookieJarCurl::getRawCookie.
+        https://bugs.webkit.org/show_bug.cgi?id=199300
+
+        Reviewed by Fujii Hironori.
+
+        * http/tests/inspector/page/get-cookies-expected.txt: Added.
+        * http/tests/inspector/page/get-cookies.html: Added.
+        * http/tests/inspector/page/resources/set-cookie.php: Added.
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2019-07-02  Daniel Bates  <dabates@apple.com>
 
         [iOS] Cannot tab cycle through credit card fields on antonsvpatisserie.com checkout page

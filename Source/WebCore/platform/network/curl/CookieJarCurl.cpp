@@ -112,13 +112,13 @@ bool CookieJarCurl::cookiesEnabled(const NetworkStorageSession& session) const
     return session.cookieDatabase().isEnabled();
 }
 
-bool CookieJarCurl::getRawCookies(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID, Vector<Cookie>& rawCookies) const
+bool CookieJarCurl::getRawCookies(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID, Vector<Cookie>& rawCookies) const
 {
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
 
     CookieJarDB& cookieJarDB = session.cookieDatabase();
-    if (auto cookies = cookieJarDB.searchCookies(firstParty, firstParty, WTF::nullopt, WTF::nullopt, WTF::nullopt)) {
+    if (auto cookies = cookieJarDB.searchCookies(firstParty, url, WTF::nullopt, WTF::nullopt, WTF::nullopt)) {
         rawCookies = WTFMove(*cookies);
         return true;
     }

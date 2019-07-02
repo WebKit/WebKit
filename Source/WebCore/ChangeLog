@@ -1,3 +1,19 @@
+2019-07-02  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Fix CookieJarCurl::getRawCookie.
+        https://bugs.webkit.org/show_bug.cgi?id=199300
+
+        Reviewed by Fujii Hironori.
+
+        On wincairo some cookie information was not displayed in WebInspector's storage tab as
+        CookieJarCurl::getRawCookies was calling CookieJarDB::searchCookies with wrong arguments.
+        This patch fixes it.
+
+        Test: http/tests/inspector/page/get-cookies.html
+
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::CookieJarCurl::getRawCookies const):
+
 2019-07-02  Robin Morisset  <rmorisset@apple.com>
 
         [WHLSL] the initializer in VariableDeclaration should be a std::unique_ptr, not Optional<UniqueRef<..>>

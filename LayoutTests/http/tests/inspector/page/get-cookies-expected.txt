@@ -1,0 +1,21 @@
+Test for the Page.getCookies
+
+
+== Running test suite: Page.getCookies
+-- Running test case: CheckNoCookies
+PASS: Should be no cookies.
+
+-- Running test setup.
+-- Running test case: Page.getCookies.OnlyMainResource
+PASS: length should be one.
+PASS: [Main] Name is 'Main'
+PASS: [Main] Value is 'foo'
+PASS: [Main] Domain is '127.0.0.1'
+
+-- Running test setup.
+-- Running test case: Page.getCookies.SubResource
+PASS: length should be two.
+PASS: [Sub] Name is 'Sub'
+PASS: [Sub] Value is 'bar'
+PASS: [Sub] Domain is 'localhost'
+
