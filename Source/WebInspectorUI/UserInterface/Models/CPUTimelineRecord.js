@@ -104,10 +104,9 @@ WI.CPUTimelineRecord = class CPUTimelineRecord extends WI.TimelineRecord
     get unknownThreadUsage() { return this._unknownThreadUsage; }
     get workersData() { return this._workersData; }
 
-    adjustStartTimeToLastRecord(lastRecord)
+    adjustStartTime(startTime)
     {
-        console.assert(lastRecord instanceof CPUTimelineRecord);
-        console.assert(this._startTime >= lastRecord.endTime);
-        this._startTime = lastRecord.endTime;
+        console.assert(startTime < this._endTime);
+        this._startTime = startTime;
     }
 };

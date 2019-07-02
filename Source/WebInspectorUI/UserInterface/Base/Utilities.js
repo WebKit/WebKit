@@ -146,6 +146,17 @@ Object.defineProperty(Map.prototype, "getOrInitialize",
     }
 });
 
+Object.defineProperty(Set.prototype, "take",
+{
+    value(key)
+    {
+        let exists = this.has(key);
+        if (exists)
+            this.delete(key);
+        return exists;
+    }
+});
+
 Object.defineProperty(Set.prototype, "equals",
 {
     value(other)

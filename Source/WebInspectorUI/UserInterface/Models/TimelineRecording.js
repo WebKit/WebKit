@@ -39,7 +39,10 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
 
         this._startTime = NaN;
         this._endTime = NaN;
+
+        this._discontinuityStartTime = NaN;
         this._discontinuities = null;
+        this._firstRecordOfTypeAfterDiscontinuity = new Set;
 
         this._exportDataRecords = null;
         this._exportDataMarkers = null;
@@ -168,6 +171,11 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
 
         for (let instrument of this._instruments)
             instrument.startInstrumentation(initiatedByBackend);
+
+        if (!isNaN(this._discontinuityStartTime)) {
+            for (let instrument of this._instruments)
+                this._firstRecordOfTypeAfterDiscontinuity.add(instrument.timelineRecordType);
+        }
     }
 
     stop(initiatedByBackend)
@@ -179,6 +187,25 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
 
         for (let instrument of this._instruments)
             instrument.stopInstrumentation(initiatedByBackend);
+    }
+
+    capturingStarted(startTime)
+    {
+        // A discontinuity occurs when the recording is stopped and resumed at
+        // a future time. Capturing started signals the end of the current
+        // discontinuity, if one exists.
+        if (!isNaN(this._discontinuityStartTime)) {
+            this._discontinuities.push({
+                startTime: this._discontinuityStartTime,
+                endTime: startTime,
+            });
+            this._discontinuityStartTime = NaN;
+        }
+    }
+
+    capturingStopped(endTime)
+    {
+        this._discontinuityStartTime = endTime;
     }
 
     saveIdentityToCookie()
@@ -214,7 +241,10 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
 
         this._startTime = NaN;
         this._endTime = NaN;
+
+        this._discontinuityStartTime = NaN;
         this._discontinuities = [];
+        this._firstRecordOfTypeAfterDiscontinuity.clear();
 
         this._exportDataRecords = [];
         this._exportDataMarkers = []
@@ -300,8 +330,12 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         if (!timeline)
             return;
 
+        let discontinuity = null;
+        if (this._firstRecordOfTypeAfterDiscontinuity.take(record.type))
+            discontinuity = this._discontinuities.lastValue;
+
         // Add the record to the global timeline by type.
-        timeline.addRecord(record);
+        timeline.addRecord(record, {discontinuity});
 
         // Some records don't have source code timelines.
         if (record.type === WI.TimelineRecord.Type.Network
@@ -358,14 +392,9 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         memoryTimeline.addMemoryPressureEvent(memoryPressureEvent);
     }
 
-    addDiscontinuity(startTime, endTime)
-    {
-        this._discontinuities.push({startTime, endTime});
-    }
-
     discontinuitiesInTimeRange(startTime, endTime)
     {
-        return this._discontinuities.filter((item) => item.startTime < endTime && item.endTime > startTime);
+        return this._discontinuities.filter((item) => item.startTime <= endTime && item.endTime >= startTime);
     }
 
     addScriptInstrumentForProgrammaticCapture()

@@ -109,10 +109,9 @@ WI.MemoryTimelineRecord = class MemoryTimelineRecord extends WI.TimelineRecord
     get categories() { return this._categories; }
     get totalSize() { return this._totalSize; }
 
-    adjustStartTimeToLastRecord(lastRecord)
+    adjustStartTime(startTime)
     {
-        console.assert(lastRecord instanceof MemoryTimelineRecord);
-        console.assert(this._startTime >= lastRecord.endTime);
-        this._startTime = lastRecord.endTime;
+        console.assert(startTime < this._endTime);
+        this._startTime = startTime;
     }
 };

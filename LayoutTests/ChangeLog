@@ -1,3 +1,13 @@
+2019-07-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r245498): Timelines: CPU: discontinuities are filled in by the next record
+        https://bugs.webkit.org/show_bug.cgi?id=198927
+
+        Reviewed by Matt Baker.
+
+        * inspector/unit-tests/set-utilities.html:
+        * inspector/unit-tests/set-utilities-expected.txt:
+
 2019-07-01  Russell Epstein  <russell_e@apple.com>
 
         Layout Test imported/blink/fast/multicol/span/overflow-on-viewport.html is flaky.

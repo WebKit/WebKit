@@ -1,3 +1,58 @@
+2019-07-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r245498): Timelines: CPU: discontinuities are filled in by the next record
+        https://bugs.webkit.org/show_bug.cgi?id=198927
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.prototype.capturingStarted):
+        (WI.TimelineManager.prototype.capturingStopped):
+        * UserInterface/Models/TimelineRecording.js:
+        (WI.TimelineRecording):
+        (WI.TimelineRecording.prototype.start):
+        (WI.TimelineRecording.prototype.capturingStarted): Added.
+        (WI.TimelineRecording.prototype.capturingStopped): Added.
+        (WI.TimelineRecording.prototype.reset):
+        (WI.TimelineRecording.prototype.addRecord):
+        (WI.TimelineRecording.prototype.discontinuitiesInTimeRange):
+        (WI.TimelineRecording.prototype.addDiscontinuity): Deleted.
+        Notify the `TimelineRecording` when capturing has started/stopped.
+        Adjust the first record after a discontinuity to have it's `startTime` match the `endTime`
+        of the most recent discontinuity.
+
+        * UserInterface/Models/Timeline.js:
+        (WI.Timeline.prototype.addRecord):
+        * UserInterface/Models/CPUTimeline.js:
+        (WI.CPUTimeline.prototype.addRecord):
+        * UserInterface/Models/CPUTimelineRecord.js:
+        (WI.CPUTimelineRecord.prototype.adjustStartTime): Added.
+        (WI.CPUTimelineRecord.prototype.adjustStartTimeToLastRecord): Deleted.
+        * UserInterface/Models/MemoryTimeline.js:
+        (WI.MemoryTimeline.prototype.addRecord):
+        * UserInterface/Models/MemoryTimelineRecord.js:
+        (WI.MemoryTimelineRecord.prototype.adjustStartTime): Added.
+        (WI.MemoryTimelineRecord.prototype.adjustStartTimeToLastRecord): Deleted.
+        * UserInterface/Models/NetworkTimeline.js:
+        (WI.NetworkTimeline.prototype.addRecord):
+
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView.prototype.layout):
+        * UserInterface/Views/MemoryTimelineOverviewGraph.js:
+        (WI.MemoryTimelineOverviewGraph.prototype.layout):
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WI.MemoryTimelineView.prototype.layout):
+        Include discontinuities that exactly match the start/end time of the record immediately
+        before/after the discontinuity.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView):
+        (WI.TimelineRecordingContentView.prototype._handleTimelineCapturingStateChanged):
+        (WI.TimelineRecordingContentView.prototype._recordingReset):
+        Move the logic for handling discontinuity start/end times to the `TimelineRecording`.
+
+        * UserInterface/Base/Utilities.js:
+
 2019-06-29  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Remove trailing white-space

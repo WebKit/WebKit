@@ -41,7 +41,7 @@ WI.NetworkTimeline = class NetworkTimeline extends WI.Timeline
         super.reset(suppressEvents);
     }
 
-    addRecord(record)
+    addRecord(record, options = {})
     {
         console.assert(record instanceof WI.ResourceTimelineRecord);
 
@@ -51,6 +51,6 @@ WI.NetworkTimeline = class NetworkTimeline extends WI.Timeline
 
         this._resourceRecordMap.set(record.resource, record);
 
-        super.addRecord(record);
+        super.addRecord(record, options);
     }
 };

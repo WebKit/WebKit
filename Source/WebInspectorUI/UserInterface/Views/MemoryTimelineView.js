@@ -228,10 +228,10 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
             let time = record.startTime;
             let startDiscontinuity = null;
             let endDiscontinuity = null;
-            if (discontinuities.length && discontinuities[0].endTime < time) {
+            if (discontinuities.length && discontinuities[0].endTime <= time) {
                 startDiscontinuity = discontinuities.shift();
                 endDiscontinuity = startDiscontinuity;
-                while (discontinuities.length && discontinuities[0].endTime < time)
+                while (discontinuities.length && discontinuities[0].endTime <= time)
                     endDiscontinuity = discontinuities.shift();
             }
 

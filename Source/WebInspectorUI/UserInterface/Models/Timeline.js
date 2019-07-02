@@ -69,7 +69,7 @@ WI.Timeline = class Timeline extends WI.Object
         }
     }
 
-    addRecord(record)
+    addRecord(record, options = {})
     {
         if (record.updatesDynamically)
             record.addEventListener(WI.TimelineRecord.Event.Updated, this._recordUpdated, this);

@@ -355,6 +355,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         this._webTimelineScriptRecordsExpectingScriptProfilerEvents = [];
 
+        this._activeRecording.capturingStarted(this._capturingStartTime);
+
         WI.settings.timelinesAutoStop.addEventListener(WI.Setting.Event.Changed, this._handleTimelinesAutoStopSettingChanged, this);
 
         WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
@@ -399,6 +401,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         WI.Target.removeEventListener(WI.Target.Event.ResourceAdded, this._resourceWasAdded, this);
         WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
         WI.settings.timelinesAutoStop.removeEventListener(null, null, this);
+
+        this._activeRecording.capturingStopped(this._capturingEndTime);
 
         this.relaxAutoStop();
 

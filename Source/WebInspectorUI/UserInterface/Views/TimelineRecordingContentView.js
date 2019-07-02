@@ -92,7 +92,6 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
         this._updating = false;
         this._currentTime = NaN;
-        this._discontinuityStartTime = NaN;
         this._lastUpdateTimestamp = NaN;
         this._startTimeNeedsReset = true;
         this._renderingFrameTimeline = null;
@@ -523,14 +522,6 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
             this._clearTimelineNavigationItem.enabled = !this._recording.readonly;
             this._exportButtonNavigationItem.enabled = false;
-
-            // A discontinuity occurs when the recording is stopped and resumed at
-            // a future time. Capturing started signals the end of the current
-            // discontinuity, if one exists.
-            if (!isNaN(this._discontinuityStartTime)) {
-                this._recording.addDiscontinuity(this._discontinuityStartTime, startTime);
-                this._discontinuityStartTime = NaN;
-            }
             break;
 
         case WI.TimelineManager.CapturingState.Inactive:
@@ -539,8 +530,6 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
             if (this.currentTimelineView)
                 this._updateTimelineViewTimes(this.currentTimelineView);
-
-            this._discontinuityStartTime = endTime || this._currentTime;
 
             this._exportButtonNavigationItem.enabled = this._recording.canExport();
             break;
@@ -710,7 +699,6 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
             timelineView.reset();
 
         this._currentTime = NaN;
-        this._discontinuityStartTime = NaN;
 
         if (!this._updating) {
             // Force the time ruler and views to reset to 0.

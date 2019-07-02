@@ -188,10 +188,10 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
         // Points for visible records.
         let previousRecord = null;
         for (let record of visibleRecords) {
-            if (discontinuities.length && discontinuities[0].endTime < record.startTime) {
+            if (discontinuities.length && discontinuities[0].endTime <= record.startTime) {
                 let startDiscontinuity = discontinuities.shift();
                 let endDiscontinuity = startDiscontinuity;
-                while (discontinuities.length && discontinuities[0].endTime < record.startTime)
+                while (discontinuities.length && discontinuities[0].endTime <= record.startTime)
                     endDiscontinuity = discontinuities.shift();
                 insertDiscontinuity.call(this, previousRecord, startDiscontinuity, endDiscontinuity, record);
             }

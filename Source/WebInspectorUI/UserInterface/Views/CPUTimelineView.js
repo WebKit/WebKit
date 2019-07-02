@@ -486,10 +486,10 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             let time = record.startTime;
             let {usage, mainThreadUsage, workerThreadUsage, webkitThreadUsage, unknownThreadUsage} = record;
 
-            if (discontinuities.length && discontinuities[0].endTime < time) {
+            if (discontinuities.length && discontinuities[0].endTime <= time) {
                 let startDiscontinuity = discontinuities.shift();
                 let endDiscontinuity = startDiscontinuity;
-                while (discontinuities.length && discontinuities[0].endTime < time)
+                while (discontinuities.length && discontinuities[0].endTime <= time)
                     endDiscontinuity = discontinuities.shift();
 
                 if (dataPoints.length) {
