@@ -237,6 +237,10 @@ using namespace HTMLNames;
 #define NSAccessibilityHasPopupAttribute @"AXHasPopup"
 #endif
 
+#ifndef NSAccessibilityPopupValueAttribute
+#define NSAccessibilityPopupValueAttribute @"AXPopupValue"
+#endif
+
 #ifndef NSAccessibilityPlaceholderValueAttribute
 #define NSAccessibilityPlaceholderValueAttribute @"AXPlaceholderValue"
 #endif
@@ -3379,10 +3383,10 @@ IGNORE_WARNINGS_END
     
     if ([attributeName isEqualToString:@"AXAutocompleteValue"])
         return m_object->autoCompleteValue();
-    
-    if ([attributeName isEqualToString:@"AXHasPopUpValue"])
-        return m_object->hasPopupValue();
-    
+
+    if ([attributeName isEqualToString:NSAccessibilityPopupValueAttribute])
+        return m_object->popupValue();
+
     if ([attributeName isEqualToString:@"AXKeyShortcutsValue"])
         return m_object->keyShortcutsValue();
     

@@ -21,11 +21,13 @@
 <script>
     description("This tests the platform attributes exposed for buttons with aria-haspopup");
     if (window.accessibilityController) {
-        // Get the document and accessibility elements for test0 to be used as reference.
+        // Get the document and accessibility elements for test0 to be used as reference to check traits against.
         var element = document.getElementById("test0");
         shouldBe("element.hasAttribute('aria-haspopup')", "true");
         var axElement = accessibilityController.accessibleElementById("test0");
         var haspopupTraits = axElement.traits;
+        // Check that accessibilityHasPopupValue returns the right value in each case.
+        debug("AX popupValue = " + "'" + axElement.popupValue + "'");
 
         for (var i = 1; i <= 9; i++) {
             var element = document.getElementById("test" + i);
@@ -33,6 +35,8 @@
             var axElement = accessibilityController.accessibleElementById("test" + i);
             var sameTraits = axElement.traits == haspopupTraits;
             debug("test" + i + " has trait haspopup = " + sameTraits + " with aria-haspopup attribute = " + popup);
+            // Check that accessibilityHasPopupValue returns the right value in each case.
+            debug("AX popupValue = " + "'" + axElement.popupValue + "'");
         }
 
         document.getElementById("content").style.visibility = "hidden";
