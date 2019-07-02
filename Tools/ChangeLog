@@ -1,3 +1,15 @@
+2019-07-02  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r243240): Unable to swipe back in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=199394
+        <rdar://problem/51137447>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        Make sure that we actually end up with swipe gesture recognizers installed
+        after process swap and crash.
+
 2019-07-02  Andres Gonzalez  <andresg_22@apple.com>
 
         Enhance support of aria-haspopup per ARIA 1.1 specification.

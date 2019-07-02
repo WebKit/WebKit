@@ -5350,6 +5350,19 @@ TEST(ProcessSwap, TerminateProcessAfterProcessSwap)
     done = false;
 }
 
+#if PLATFORM(IOS_FAMILY)
+static bool viewHasSwipeGestures(UIView *view)
+{
+    unsigned swipeGestureCount = 0;
+    for (UIGestureRecognizer *recognizer in view.gestureRecognizers) {
+        if ([recognizer isKindOfClass:NSClassFromString(@"UIScreenEdgePanGestureRecognizer")])
+            swipeGestureCount++;
+    }
+
+    return swipeGestureCount == 2;
+}
+#endif
+
 TEST(ProcessSwap, SwapWithGestureController)
 {
     @autoreleasepool {
@@ -5383,6 +5396,10 @@ TEST(ProcessSwap, SwapWithGestureController)
 
         TestWebKitAPI::Util::run(&done);
         done = false;
+
+#if PLATFORM(IOS_FAMILY)
+        EXPECT_TRUE(viewHasSwipeGestures(webView.get()));
+#endif
     }
 }
 
@@ -5431,6 +5448,10 @@ TEST(ProcessSwap, CrashWithGestureController)
         [webView reload];
         TestWebKitAPI::Util::run(&done);
         done = false;
+
+#if PLATFORM(IOS_FAMILY)
+        EXPECT_TRUE(viewHasSwipeGestures(webView.get()));
+#endif
     }
 }
 

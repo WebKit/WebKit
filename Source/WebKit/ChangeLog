@@ -1,3 +1,18 @@
+2019-07-02  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r243240): Unable to swipe back in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=199394
+        <rdar://problem/51137447>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _processDidExit]):
+        r243240 started nilling out the ViewGestureController, but we don't actually
+        expect that; the only time WKWebView's ViewGestureController goes away
+        is if the client turns off the gestures... and so nothing ever puts it back.
+        Instead, just always disconnect, don't nil it out.
+
 2019-07-02  Chris Dumez  <cdumez@apple.com>
 
         Protect NetworkProcess::m_networkSessions against corruption

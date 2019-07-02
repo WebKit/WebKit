@@ -1848,6 +1848,9 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     [self _hidePasswordView];
     [self _cancelAnimatedResize];
 
+    if (_gestureController)
+        _gestureController->disconnectFromProcess();
+
     _viewportMetaTagWidth = WebCore::ViewportArguments::ValueAuto;
     _initialScaleFactor = 1;
     _hasCommittedLoadForMainFrame = NO;
@@ -1883,8 +1886,6 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 {
     RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _processWillSwap]", self);
     [self _processWillSwapOrDidExit];
-    if (_gestureController)
-        _gestureController->disconnectFromProcess();
 }
 
 - (void)_processDidExit
@@ -1897,7 +1898,6 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     [_scrollView setBackgroundColor:[_contentView backgroundColor]];
     [_scrollView setContentOffset:[self _initialContentOffsetForScrollView]];
     [_scrollView setZoomScale:1];
-    _gestureController = nullptr;
 }
 
 - (void)_didRelaunchProcess
