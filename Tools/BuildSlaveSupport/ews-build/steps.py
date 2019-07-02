@@ -619,7 +619,8 @@ class CompileWebKit(shell.Compile):
     haltOnFailure = False
     command = ['perl', 'Tools/Scripts/build-webkit', WithProperties('--%(configuration)s')]
 
-    def __init__(self, **kwargs):
+    def __init__(self, skipUpload=False, **kwargs):
+        self.skipUpload = skipUpload
         super(CompileWebKit, self).__init__(logEnviron=False, **kwargs)
 
     def start(self):
@@ -650,7 +651,9 @@ class CompileWebKit(shell.Compile):
             self.setProperty('patchFailedToBuild', True)
             self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(), CompileWebKitToT(), AnalyzeCompileWebKitResults()])
         else:
-            self.build.addStepsAfterCurrentStep([ArchiveBuiltProduct(), UploadBuiltProduct(), TransferToS3()])
+            triggers = self.getProperty('triggers', None)
+            if triggers or not self.skipUpload:
+                self.build.addStepsAfterCurrentStep([ArchiveBuiltProduct(), UploadBuiltProduct(), TransferToS3()])
 
         return super(CompileWebKit, self).evaluateCommand(cmd)
 

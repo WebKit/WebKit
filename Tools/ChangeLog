@@ -1,3 +1,14 @@
+2019-07-02  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Allow skipping uploading built product for few builders
+        https://bugs.webkit.org/show_bug.cgi?id=199422
+
+        Reviewed by Michael Catanzaro.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CompileWebKit.__init__): Added optional skipUpload parameter.
+        (CompileWebKit.evaluateCommand): Allow to skip upload if there are no triggers and skipUpload is True.
+
 2019-07-02  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r243240): Unable to swipe back in Safari
