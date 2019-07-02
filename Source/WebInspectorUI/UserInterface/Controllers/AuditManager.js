@@ -343,6 +343,121 @@ WI.AuditManager = class AuditManager extends WI.Object
 
     _addDefaultTests()
     {
+        const levelPass = function() {
+            return {level: "pass"};
+        };
+
+        const levelWarn = function() {
+            return {level: "warn"};
+        };
+
+        const levelFail = function() {
+            return {level: "fail"};
+        };
+
+        const levelError = function() {
+            return {level: "error"};
+        };
+
+        const levelUnsupported = function() {
+            return {level: "unsupported"};
+        };
+
+        const dataDOMNodes = function() {
+            return {level: "pass", domNodes: [document.body]};
+        };
+
+        const dataDOMAttributes = function() {
+            return {level: "pass", domNodes: Array.from(document.querySelectorAll("[id]")), domAttributes: ["id"]};
+        };
+
+        const dataErrors = function() {
+            throw Error("this error was thrown from inside the audit test code.");
+        };
+
+        const dataCustom = function() {
+            return {level: "pass", a: 1, b: [2], c: {key: 3}};
+        };
+
+        const getElementsByComputedRole = function() {
+            return {level: "pass", domNodes: WebInspectorAudit.Accessibility.getElementsByComputedRole("link"), domAttributes: ["role"]};
+        };
+
+        const getActiveDescendant = function() {
+            let result = {level: "pass"};
+            let activeDescendant = WebInspectorAudit.Accessibility.getActiveDescendant(document.body);
+            if (activeDescendant)
+                result.domNodes = [activeDescendant];
+            return result;
+        };
+
+        const getChildNodes = function() {
+            let childNodes = WebInspectorAudit.Accessibility.getChildNodes(document.body);
+            return {level: "pass", domNodes: childNodes || []};
+        };
+
+        const getComputedProperties = function() {
+            let domAttributes = ["alt", "aria-atomic", "aria-busy", "aria-checked", "aria-current", "aria-disabled", "aria-expanded", "aria-haspopup", "aria-hidden", "aria-invalid", "aria-label", "aria-labelledby", "aria-level", "aria-live", "aria-pressed", "aria-readonly", "aria-relevant", "aria-required", "aria-selected", "role", "title"].filter((attribute) => document.body.hasAttribute(attribute));
+            let computedProperties = WebInspectorAudit.Accessibility.getComputedProperties(document.body);
+            return {level: "pass", domNodes: [document.body], domAttributes, ...(computedProperties || {})};
+        };
+
+        const getControlledNodes = function() {
+            let controlledNodes = WebInspectorAudit.Accessibility.getControlledNodes(document.body);
+            return {level: "pass", domNodes: controlledNodes || []};
+        };
+
+        const getFlowedNodes = function() {
+            let flowedNodes = WebInspectorAudit.Accessibility.getFlowedNodes(document.body);
+            return {level: "pass", domNodes: flowedNodes || []};
+        };
+
+        const getMouseEventNode = function() {
+            let result = {level: "pass"};
+            let mouseEventNode = WebInspectorAudit.Accessibility.getMouseEventNode(document.body);
+            if (mouseEventNode)
+                result.domNodes = [mouseEventNode];
+            return result;
+        };
+
+        const getOwnedNodes = function() {
+            let ownedNodes = WebInspectorAudit.Accessibility.getOwnedNodes(document.body);
+            return {level: "pass", domNodes: ownedNodes || []};
+        };
+
+        const getParentNode = function() {
+            let result = {level: "pass"};
+            let parentNode = WebInspectorAudit.Accessibility.getParentNode(document.body);
+            if (parentNode)
+                result.domNodes = [parentNode];
+            return result;
+        };
+
+        const getSelectedChildNodes = function() {
+            let selectedChildNodes = WebInspectorAudit.Accessibility.getSelectedChildNodes(document.body);
+            return {level: "pass", domNodes: selectedChildNodes || []};
+        };
+
+        const hasEventListeners = function() {
+            let domAttributes = Array.from(document.body.attributes).filter((attribute) => attribute.name.startsWith("on"));
+            return {level: "pass", domNodes: [document.body], domAttributes, hasEventListeners: WebInspectorAudit.DOM.hasEventListeners(document.body)};
+        };
+
+        const hasEventListenersClick = function() {
+            let domAttributes = ["onclick"].filter((attribute) => document.body.hasAttribute(attribute));
+            return {level: "pass", domNodes: [document.body], domAttributes, hasClickEventListener: WebInspectorAudit.DOM.hasEventListeners(document.body, "click")};
+        };
+
+        const getResources = function() {
+            return {level: "pass", resources: WebInspectorAudit.Resources.getResources()};
+        };
+
+        const getResourceContent = function() {
+            let resources = WebInspectorAudit.Resources.getResources();
+            let mainResource = resources.find((resource) => resource.url === window.location.href);
+            return {level: "pass", mainResource, resourceContent: WebInspectorAudit.Resources.getResourceContent(mainResource.id)};
+        };
+
         const testMenuRoleForRequiredChidren = function() {
             const relationships = {
                 menu: ["menuitem", "menuitemcheckbox", "menuitemradio"],
@@ -880,45 +995,71 @@ WI.AuditManager = class AuditManager extends WI.Object
             return {level: domNodes.length ? "fail" : "pass", domNodes, domAttributes: ["aria-hidden"]};
         };
 
+        function removeWhitespace(func) {
+            return func.toString().replace(/\s+/g, " ");
+        }
+
         const defaultTests = [
             new WI.AuditTestGroup(WI.UIString("Demo Audit"), [
                 new WI.AuditTestGroup(WI.UIString("Result Levels"), [
-                    new WI.AuditTestCase(`level-pass`, `function() { return {level: "pass"}; }`, {description: WI.UIString("This is what the result of a passing test with no data looks like.")}),
-                    new WI.AuditTestCase(`level-warn`, `function() { return {level: "warn"}; }`, {description: WI.UIString("This is what the result of a warning test with no data looks like.")}),
-                    new WI.AuditTestCase(`level-fail`, `function() { return {level: "fail"}; }`, {description: WI.UIString("This is what the result of a failing test with no data looks like.")}),
-                    new WI.AuditTestCase(`level-error`, `function() { return {level: "error"}; }`, {description: WI.UIString("This is what the result of a test that threw an error with no data looks like.")}),
-                    new WI.AuditTestCase(`level-unsupported`, `function() { return {level: "unsupported"}; }`, {description: WI.UIString("This is what the result of an unsupported test with no data looks like.")}),
+                    new WI.AuditTestCase("level-pass", removeWhitespace(levelPass), {description: WI.UIString("This is what the result of a passing test with no data looks like.")}),
+                    new WI.AuditTestCase("level-warn", removeWhitespace(levelWarn), {description: WI.UIString("This is what the result of a warning test with no data looks like.")}),
+                    new WI.AuditTestCase("level-fail", removeWhitespace(levelFail), {description: WI.UIString("This is what the result of a failing test with no data looks like.")}),
+                    new WI.AuditTestCase("level-error", removeWhitespace(levelError), {description: WI.UIString("This is what the result of a test that threw an error with no data looks like.")}),
+                    new WI.AuditTestCase("level-unsupported", removeWhitespace(levelUnsupported), {description: WI.UIString("This is what the result of an unsupported test with no data looks like.")}),
                 ], {description: WI.UIString("These are all of the different test result levels.")}),
                 new WI.AuditTestGroup(WI.UIString("Result Data"), [
-                    new WI.AuditTestCase(`data-domNodes`, `function() { return {domNodes: [document.body], level: "pass"}; }`, {description: WI.UIString("This is an example of how result DOM nodes are shown. It will pass with the <body> element.")}),
-                    new WI.AuditTestCase(`data-domAttributes`, `function() { return {domNodes: Array.from(document.querySelectorAll("[id]")), domAttributes: ["id"], level: "pass"}; }`, {description: WI.UIString("This is an example of how result DOM attributes are highlighted on any returned DOM nodes. It will pass with all elements with an id attribute.")}),
-                    new WI.AuditTestCase(`data-errors`, `function() { throw Error("this error was thrown from inside the audit test code."); }`, {description: WI.UIString("This is an example of how errors are shown. The error was thrown manually, but execution errors will appear in the same way.")}),
-                    new WI.AuditTestCase(`data-custom`, `function() { return {level: "pass", a: 1, b: [2], c: {key: 3}}; }`, {description: WI.UIString("This is an example of how custom result data is shown.")}),
+                    new WI.AuditTestCase("data-domNodes", removeWhitespace(dataDOMNodes), {description: WI.UIString("This is an example of how result DOM nodes are shown. It will pass with the <body> element.")}),
+                    new WI.AuditTestCase("data-domAttributes", removeWhitespace(dataDOMAttributes), {description: WI.UIString("This is an example of how result DOM attributes are highlighted on any returned DOM nodes. It will pass with all elements with an id attribute.")}),
+                    new WI.AuditTestCase("data-errors", removeWhitespace(dataErrors), {description: WI.UIString("This is an example of how errors are shown. The error was thrown manually, but execution errors will appear in the same way.")}),
+                    new WI.AuditTestCase("data-custom", removeWhitespace(dataCustom), {description: WI.UIString("This is an example of how custom result data is shown."), supports: 3}),
                 ], {description: WI.UIString("These are all of the different types of data that can be returned with the test result.")}),
+                new WI.AuditTestGroup(WI.UIString("Specially Exposed Data"), [
+                    new WI.AuditTestGroup(WI.UIString("Accessibility"), [
+                        new WI.AuditTestCase("getElementsByComputedRole", removeWhitespace(getElementsByComputedRole), {description: WI.UIString("This test will pass with all DOM nodes that have a computed role of \u0022link\u0022."), supports: 1}),
+                        new WI.AuditTestCase("getActiveDescendant", removeWhitespace(getActiveDescendant), {description: WI.UIString("This test will pass with the active descendant (\u0022%s\u0022) of the <body> element, if it exists.").format(WI.unlocalizedString("aria-activedescendant")), supports: 1}),
+                        new WI.AuditTestCase("getChildNodes", removeWhitespace(getChildNodes), {description: WI.UIString("This test will pass with all of the child nodes of the <body> element in the accessibility tree."), supports: 1}),
+                        new WI.AuditTestCase("getComputedProperties", removeWhitespace(getComputedProperties), {description: WI.UIString("This test will pass with a variety of accessibility information about the <body> element."), supports: 3}),
+                        new WI.AuditTestCase("getControlledNodes", removeWhitespace(getControlledNodes), {description: WI.UIString("This test will pass with all nodes controlled (\u0022%s\u0022) by the <body> element, if any exist.").format(WI.unlocalizedString("aria-controls")), supports: 1}),
+                        new WI.AuditTestCase("getFlowedNodes", removeWhitespace(getFlowedNodes), {description: WI.UIString("This test will pass with all nodes flowed to (\u0022%s\u0022) from the <body> element, if any exist.").format(WI.unlocalizedString("aria-flowto")), supports: 1}),
+                        new WI.AuditTestCase("getMouseEventNode", removeWhitespace(getMouseEventNode), {description: WI.UIString("This test will pass with the node that would handle mouse events for the <body> element, if applicable."), supports: 1}),
+                        new WI.AuditTestCase("getOwnedNodes", removeWhitespace(getOwnedNodes), {description: WI.UIString("This test will pass with all nodes owned (\u0022%s\u0022) by the <body> element, if any exist.").format(WI.unlocalizedString("aria-owns")), supports: 1}),
+                        new WI.AuditTestCase("getParentNode", removeWhitespace(getParentNode), {description: WI.UIString("This test will pass with the parent node of the <body> element in the accessibility tree."), supports: 1}),
+                        new WI.AuditTestCase("getSelectedChildNodes", removeWhitespace(getSelectedChildNodes), {description: WI.UIString("This test will pass with all child nodes that are selected (\u0022%s\u0022) of the <body> element in the accessibility tree.").format(WI.unlocalizedString("aria-selected")), supports: 1}),
+                    ], {description: WI.UIString("These tests demonstrate how to use %s to get information about the accessibility tree.").format(WI.unlocalizedString("WebInspectorAudit.Accessibility")), supports: 1}),
+                    new WI.AuditTestGroup(WI.UIString("DOM"), [
+                        new WI.AuditTestCase("hasEventListeners", removeWhitespace(hasEventListeners), {description: WI.UIString("This test will pass with data indicating whether the <body> element has any event listeners."), supports: 3}),
+                        new WI.AuditTestCase("hasEventListeners-click", removeWhitespace(hasEventListenersClick), {description: WI.UIString("This test will pass with data indicating whether the <body> element has any click event listeners."), supports: 3}),
+                    ], {description: WI.UIString("These tests demonstrate how to use %s to get information about DOM nodes.").format(WI.unlocalizedString("WebInspectorAudit.DOM")), supports: 1}),
+                    new WI.AuditTestGroup(WI.UIString("Resources"), [
+                        new WI.AuditTestCase("getResources", removeWhitespace(getResources), {description: WI.UIString("This test will pass with somee basic information about each resource."), supports: 3}),
+                        new WI.AuditTestCase("getResourceContent", removeWhitespace(getResourceContent), {description: WI.UIString("This test will pass with the contents of the main resource."), supports: 3}),
+                    ], {description: WI.UIString("These tests demonstrate how to use %s to get information about loaded resources.").format(WI.unlocalizedString("WebInspectorAudit.Resources")), supports: 2}),
+                ], {description: WI.UIString("These tests demonstrate how to use %s to access information not normally available to JavaScript.").format(WI.unlocalizedString("WebInspectorAudit")), supports: 1}),
             ], {description: WI.UIString("These tests serve as a demonstration of the functionality and structure of audits.")}),
             new WI.AuditTestGroup(WI.UIString("Accessibility"), [
-                new WI.AuditTestCase(`testMenuRoleForRequiredChidren`, testMenuRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that element of role \u0022%s\u0022 and \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("menu"), WI.unlocalizedString("menubar")), supports: 1}),
-                new WI.AuditTestCase(`testGridRoleForRequiredChidren`, testGridRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("grid")), supports: 1}),
-                new WI.AuditTestCase(`testForAriaLabelledBySpelling`, testForAriaLabelledBySpelling.toString(), {description: WI.UIString("Ensure that \u0022%s\u0022 is spelled correctly.").format(WI.unlocalizedString("aria-labelledby")), supports: 1}),
-                new WI.AuditTestCase(`testForMultipleBanners`, testForMultipleBanners.toString(), {description: WI.UIString("Ensure that only one banner is used on the page."), supports: 1}),
-                new WI.AuditTestCase(`testForLinkLabels`, testForLinkLabels.toString(), {description: WI.UIString("Ensure that links have accessible labels for assistive technology."), supports: 1}),
-                new WI.AuditTestCase(`testRowGroupRoleForRequiredChidren`, testRowGroupRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that element of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("rowgroup")), supports: 1}),
-                new WI.AuditTestCase(`testTableRoleForRequiredChidren`, testTableRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("table")), supports: 1}),
-                new WI.AuditTestCase(`testForMultipleLiveRegions`, testForMultipleLiveRegions.toString(), {description: WI.UIString("Ensure that only one live region is used on the page."), supports: 1}),
-                new WI.AuditTestCase(`testListBoxRoleForRequiredChidren`, testListBoxRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("listbox")), supports: 1}),
-                new WI.AuditTestCase(`testImageLabels`, testImageLabels.toString(), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have accessible labels for assistive technology.").format(WI.unlocalizedString("img")), supports: 1}),
-                new WI.AuditTestCase(`testForAriaHiddenFalse`, testForAriaHiddenFalse.toString(), {description: WI.UIString("Ensure aria-hidden=\u0022%s\u0022 is not used.").format(WI.unlocalizedString("false")), supports: 1}),
-                new WI.AuditTestCase(`testTreeRoleForRequiredChidren`, testTreeRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that element of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("tree")), supports: 1}),
-                new WI.AuditTestCase(`testRadioGroupRoleForRequiredChidren`, testRadioGroupRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that element of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("radiogroup")), supports: 1}),
-                new WI.AuditTestCase(`testFeedRoleForRequiredChidren`, testFeedRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("feed")), supports: 1}),
-                new WI.AuditTestCase(`testTabListRoleForRequiredChidren`, testTabListRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that element of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("tablist")), supports: 1}),
-                new WI.AuditTestCase(`testButtonLabels`, testButtonLabels.toString(), {description: WI.UIString("Ensure that buttons have accessible labels for assistive technology."), supports: 1}),
-                new WI.AuditTestCase(`testRowRoleForRequiredChidren`, testRowRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("row")), supports: 1}),
-                new WI.AuditTestCase(`testListRoleForRequiredChidren`, testListRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("list")), supports: 1}),
-                new WI.AuditTestCase(`testComboBoxRoleForRequiredChidren`, testComboBoxRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("combobox")), supports: 1}),
-                new WI.AuditTestCase(`testForMultipleMainContentSections`, testForMultipleMainContentSections.toString(), {description: WI.UIString("Ensure that only one main content section is used on the page."), supports: 1}),
-                new WI.AuditTestCase(`testDialogsForLabels`, testDialogsForLabels.toString(), {description: WI.UIString("Ensure that dialogs have accessible labels for assistive technology."), supports: 1}),
-                new WI.AuditTestCase(`testForInvalidAriaHiddenValue`, testForInvalidAriaHiddenValue.toString(), {description: WI.UIString("Ensure that values for \u0022%s\u0022 are valid.").format(WI.unlocalizedString("aria-hidden")), supports: 1})
+                new WI.AuditTestCase("testMenuRoleForRequiredChidren", removeWhitespace(testMenuRoleForRequiredChidren), {description: WI.UIString("Ensure that element of role \u0022%s\u0022 and \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("menu"), WI.unlocalizedString("menubar")), supports: 1}),
+                new WI.AuditTestCase("testGridRoleForRequiredChidren", removeWhitespace(testGridRoleForRequiredChidren), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("grid")), supports: 1}),
+                new WI.AuditTestCase("testForAriaLabelledBySpelling", removeWhitespace(testForAriaLabelledBySpelling), {description: WI.UIString("Ensure that \u0022%s\u0022 is spelled correctly.").format(WI.unlocalizedString("aria-labelledby")), supports: 1}),
+                new WI.AuditTestCase("testForMultipleBanners", removeWhitespace(testForMultipleBanners), {description: WI.UIString("Ensure that only one banner is used on the page."), supports: 1}),
+                new WI.AuditTestCase("testForLinkLabels", removeWhitespace(testForLinkLabels), {description: WI.UIString("Ensure that links have accessible labels for assistive technology."), supports: 1}),
+                new WI.AuditTestCase("testRowGroupRoleForRequiredChidren", removeWhitespace(testRowGroupRoleForRequiredChidren), {description: WI.UIString("Ensure that element of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("rowgroup")), supports: 1}),
+                new WI.AuditTestCase("testTableRoleForRequiredChidren", removeWhitespace(testTableRoleForRequiredChidren), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("table")), supports: 1}),
+                new WI.AuditTestCase("testForMultipleLiveRegions", removeWhitespace(testForMultipleLiveRegions), {description: WI.UIString("Ensure that only one live region is used on the page."), supports: 1}),
+                new WI.AuditTestCase("testListBoxRoleForRequiredChidren", removeWhitespace(testListBoxRoleForRequiredChidren), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("listbox")), supports: 1}),
+                new WI.AuditTestCase("testImageLabels", removeWhitespace(testImageLabels), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have accessible labels for assistive technology.").format(WI.unlocalizedString("img")), supports: 1}),
+                new WI.AuditTestCase("testForAriaHiddenFalse", removeWhitespace(testForAriaHiddenFalse), {description: WI.UIString("Ensure aria-hidden=\u0022%s\u0022 is not used.").format(WI.unlocalizedString("false")), supports: 1}),
+                new WI.AuditTestCase("testTreeRoleForRequiredChidren", removeWhitespace(testTreeRoleForRequiredChidren), {description: WI.UIString("Ensure that element of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("tree")), supports: 1}),
+                new WI.AuditTestCase("testRadioGroupRoleForRequiredChidren", removeWhitespace(testRadioGroupRoleForRequiredChidren), {description: WI.UIString("Ensure that element of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("radiogroup")), supports: 1}),
+                new WI.AuditTestCase("testFeedRoleForRequiredChidren", removeWhitespace(testFeedRoleForRequiredChidren), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("feed")), supports: 1}),
+                new WI.AuditTestCase("testTabListRoleForRequiredChidren", removeWhitespace(testTabListRoleForRequiredChidren), {description: WI.UIString("Ensure that element of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("tablist")), supports: 1}),
+                new WI.AuditTestCase("testButtonLabels", removeWhitespace(testButtonLabels), {description: WI.UIString("Ensure that buttons have accessible labels for assistive technology."), supports: 1}),
+                new WI.AuditTestCase("testRowRoleForRequiredChidren", removeWhitespace(testRowRoleForRequiredChidren), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("row")), supports: 1}),
+                new WI.AuditTestCase("testListRoleForRequiredChidren", removeWhitespace(testListRoleForRequiredChidren), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("list")), supports: 1}),
+                new WI.AuditTestCase("testComboBoxRoleForRequiredChidren", removeWhitespace(testComboBoxRoleForRequiredChidren), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("combobox")), supports: 1}),
+                new WI.AuditTestCase("testForMultipleMainContentSections", removeWhitespace(testForMultipleMainContentSections), {description: WI.UIString("Ensure that only one main content section is used on the page."), supports: 1}),
+                new WI.AuditTestCase("testDialogsForLabels", removeWhitespace(testDialogsForLabels), {description: WI.UIString("Ensure that dialogs have accessible labels for assistive technology."), supports: 1}),
+                new WI.AuditTestCase("testForInvalidAriaHiddenValue", removeWhitespace(testForInvalidAriaHiddenValue), {description: WI.UIString("Ensure that values for \u0022%s\u0022 are valid.").format(WI.unlocalizedString("aria-hidden")), supports: 1})
             ], {description: WI.UIString("Diagnoses common accessibility problems affecting screen readers and other assistive technology.")}),
         ];
 

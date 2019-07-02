@@ -1,3 +1,22 @@
+2019-07-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: missing demo audits for WebInspectorAudit functions
+        https://bugs.webkit.org/show_bug.cgi?id=198719
+
+        Reviewed by Matt Baker.
+
+        Other than the LayoutTests, there's no way to see an example of the functionality of many of
+        the exposed `WebInspectorAudit` functions. There should be a demo audit for every exposed
+        function so they're more discoverable.
+
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager.prototype._addDefaultTests):
+        (WI.AuditManager.prototype._addDefaultTests.removeWhitespace): Added.
+        Move all demo audit test functions to be actual JavaScript functions, which are then
+        stringified and stripped of unnecessary white-space.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-07-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r245498): Timelines: CPU: discontinuities are filled in by the next record
