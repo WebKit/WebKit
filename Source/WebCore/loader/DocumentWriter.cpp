@@ -156,9 +156,9 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
 
     WTF::Function<void()> handleDOMWindowCreation = [this, document = document.copyRef(), url] {
         if (m_frame->loader().stateMachine().isDisplayingInitialEmptyDocument() && m_frame->document()->isSecureTransitionTo(url))
-            document->takeDOMWindowFrom(*m_frame->document());
+            document->takeDOMWindowFrom(m_frame->document());
         else
-           document->createDOMWindow();
+            document->createDOMWindow();
     };
     
     m_frame->loader().clear(document.ptr(), !shouldReuseDefaultView, !shouldReuseDefaultView, true, WTFMove(handleDOMWindowCreation));
