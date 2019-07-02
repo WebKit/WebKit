@@ -37,7 +37,7 @@ from twisted.trial import unittest
 from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, ApplyPatch, ArchiveBuiltProduct, ArchiveTestResults,
                    CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckStyle, CleanBuild, CleanWorkingDirectory,
                    CompileJSCOnly, CompileJSCOnlyToT, CompileWebKit, CompileWebKitToT, ConfigureBuild,
-                   DownloadBuiltProduct, ExtractBuiltProduct, ExtractTestResults, KillOldProcesses,
+                   DownloadBuiltProduct, ExtractBuiltProduct, ExtractTestResults, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
                    PrintConfiguration, ReRunAPITests, ReRunJavaScriptCoreTests, RunAPITests, RunAPITestsWithoutPatch,
                    RunBindingsTests, RunJavaScriptCoreTests, RunJavaScriptCoreTestsToT, RunWebKit1Tests, RunWebKitPerlTests,
                    RunWebKitPyTests, RunWebKitTests, TestWithFailureCount, Trigger, TransferToS3, UnApplyPatchIfRequired,
@@ -475,6 +475,78 @@ class TestCleanBuild(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Deleted WebKitBuild directory (failure)')
+        return self.runStep()
+
+
+class TestInstallGtkDependencies(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(InstallGtkDependencies())
+        self.assertEqual(InstallGtkDependencies.haltOnFailure, False)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['perl', 'Tools/Scripts/update-webkitgtk-libs'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Updated gtk dependencies')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(InstallGtkDependencies())
+        self.assertEqual(InstallGtkDependencies.haltOnFailure, False)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['perl', 'Tools/Scripts/update-webkitgtk-libs'],
+                        )
+            + ExpectShell.log('stdio', stdout='Unexpected error.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Updated gtk dependencies (failure)')
+        return self.runStep()
+
+
+class TestInstallWpeDependencies(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(InstallWpeDependencies())
+        self.assertEqual(InstallWpeDependencies.haltOnFailure, False)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['perl', 'Tools/Scripts/update-webkitwpe-libs'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Updated wpe dependencies')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(InstallWpeDependencies())
+        self.assertEqual(InstallWpeDependencies.haltOnFailure, False)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['perl', 'Tools/Scripts/update-webkitwpe-libs'],
+                        )
+            + ExpectShell.log('stdio', stdout='Unexpected error.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Updated wpe dependencies (failure)')
         return self.runStep()
 
 

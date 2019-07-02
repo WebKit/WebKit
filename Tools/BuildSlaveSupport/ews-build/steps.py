@@ -599,6 +599,28 @@ class RunWebKitPyTests(shell.ShellCommand):
         log.addStdout(message)
 
 
+class InstallGtkDependencies(shell.ShellCommand):
+    name = 'jhbuild'
+    description = ['updating gtk dependencies']
+    descriptionDone = ['Updated gtk dependencies']
+    command = ['perl', 'Tools/Scripts/update-webkitgtk-libs']
+    haltOnFailure = False
+
+    def __init__(self, **kwargs):
+        super(InstallGtkDependencies, self).__init__(logEnviron=False, **kwargs)
+
+
+class InstallWpeDependencies(shell.ShellCommand):
+    name = 'jhbuild'
+    description = ['updating wpe dependencies']
+    descriptionDone = ['Updated wpe dependencies']
+    command = ['perl', 'Tools/Scripts/update-webkitwpe-libs']
+    haltOnFailure = False
+
+    def __init__(self, **kwargs):
+        super(InstallWpeDependencies, self).__init__(logEnviron=False, **kwargs)
+
+
 def appendCustomBuildFlags(step, platform, fullPlatform):
     # FIXME: Make a common 'supported platforms' list.
     if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe'):

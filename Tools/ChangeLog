@@ -1,5 +1,18 @@
 2019-07-02  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Add build steps to Install Wpe and Gtk dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=199408
+
+        Reviewed by Michael Catanzaro.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (InstallGtkDependencies): Build step to install dependencies for GTK. Set haltOnFailure=False so that in case of failure, build isn't
+        marked as failed (which would indicated patch failed EWS), instead subsequent steps would be run and the build would be marked as RETRY.
+        (InstallWpeDependencies): Ditto for WPE.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+
+2019-07-02  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Allow skipping uploading built product for few builders
         https://bugs.webkit.org/show_bug.cgi?id=199422
 
