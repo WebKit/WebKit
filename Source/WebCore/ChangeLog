@@ -1,3 +1,19 @@
+2019-07-02  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Import bitwise bool tests
+        https://bugs.webkit.org/show_bug.cgi?id=199093
+
+        Reviewed by Myles C. Maxfield.
+
+        Add standard library functions for:
+        - bool bit ops
+        - converting from bool to number
+        - converting from number to bool
+
+        Test: webgpu/whlsl-bitwise-bool-ops.html
+
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt:
+
 2019-07-02  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Fix CookieJarCurl::getRawCookie.

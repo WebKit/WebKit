@@ -1,3 +1,37 @@
+2019-07-02  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Import bitwise bool tests
+        https://bugs.webkit.org/show_bug.cgi?id=199093
+
+        Reviewed by Myles C. Maxfield.
+
+        This patch makes it so that we can mark bools as input and output types in the
+        WHLSL harness. Since bool is not something WHLSL itself allows as an entrypoint
+        input/output type (because we don't specify its bit pattern), we convert between
+        bool and int in the input and output of the function. For now,  we don't support
+        a buffer of bools for the input type as a simplification, so we don't have to worry
+        about dynamically converting an int buffer to a bool buffer. We could add this
+        in the future if we found it helpful, but we don't have a strong reason for supporting
+        it right now.
+        
+        This patch also starts the process of importing the WHLSL test suite by importing bool
+        bit op tests.
+
+        * webgpu/js/whlsl-test-harness.js:
+        (convertTypeToArrayType):
+        (whlslArgumentType):
+        (convertToWHLSLOutputType):
+        (convertToWHLSLInputType):
+        (Data):
+        (Harness.prototype.get isWHLSL):
+        (Harness.prototype.async.callTypedFunction):
+        (Harness.prototype._setUpArguments):
+        (callVoidFunction):
+        * webgpu/whlsl-bitwise-bool-ops-expected.txt: Added.
+        * webgpu/whlsl-bitwise-bool-ops.html: Added.
+        * webgpu/whlsl-test-harness-test-expected.txt:
+        * webgpu/whlsl-test-harness-test.html:
+
 2019-07-02  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Fix CookieJarCurl::getRawCookie.

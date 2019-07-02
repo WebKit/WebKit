@@ -1,0 +1,175 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebGPUEnabled=true ] -->
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Test the WHLSL test harness.</title>
+<script src="js/whlsl-test-harness.js"></script>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+const epsilon = 0.0001;
+
+const whlslTests = {};
+
+whlslTests.boolBitAnd = () => {
+    const source = `
+        bool foo(bool a, bool b)
+        {
+            return a & b;
+        }
+    `;
+
+    webGPUPromiseTest(async () => {
+        try {
+            {
+                let result = await callBoolFunction(source, "foo", [makeBool(true), makeBool(true)]);
+                assert_equals(result, true, "Test returned expected value.");
+            }
+
+            {
+                let result = await callBoolFunction(source, "foo", [makeBool(false), makeBool(false)]);
+                assert_equals(result, false, "Test returned expected value.");
+            }
+
+            {
+                let result = await callBoolFunction(source, "foo", [makeBool(true), makeBool(false)]);
+                assert_equals(result, false, "Test returned expected value.");
+            }
+
+            {
+                let result = await callBoolFunction(source, "foo", [makeBool(false), makeBool(true)]);
+                assert_equals(result, false, "Test returned expected value.");
+            }
+        } catch(e) {
+            if (!(e instanceof WebGPUUnsupportedError))
+                throw e;
+        }
+    }, "Bool bit and");
+};
+
+whlslTests.boolBitOr = () => {
+    const source = `
+        bool foo(bool a, bool b)
+        {
+            return a | b;
+        }
+    `;
+
+    webGPUPromiseTest(async () => {
+        try {
+            {
+                let result = await callBoolFunction(source, "foo", [makeBool(true), makeBool(true)]);
+                assert_equals(result, true, "Test returned expected value.");
+            }
+
+            {
+                let result = await callBoolFunction(source, "foo", [makeBool(false), makeBool(false)]);
+                assert_equals(result, false, "Test returned expected value.");
+            }
+
+            {
+                let result = await callBoolFunction(source, "foo", [makeBool(true), makeBool(false)]);
+                assert_equals(result, true, "Test returned expected value.");
+            }
+
+            {
+                let result = await callBoolFunction(source, "foo", [makeBool(false), makeBool(true)]);
+                assert_equals(result, true, "Test returned expected value.");
+            }
+        } catch(e) {
+            if (!(e instanceof WebGPUUnsupportedError))
+                throw e;
+        }
+    }, "Bool bit or");
+};
+
+whlslTests.boolBitXor = () => {
+    const source = `
+        bool foo(bool a, bool b)
+        {
+            return a ^ b;
+        }
+    `;
+
+    webGPUPromiseTest(async () => {
+        try {
+            {
+                let result = await callBoolFunction(source, "foo", [makeBool(true), makeBool(true)]);
+                assert_equals(result, false, "Test returned expected value.");
+            }
+
+            {
+                let result = await callBoolFunction(source, "foo", [makeBool(false), makeBool(false)]);
+                assert_equals(result, false, "Test returned expected value.");
+            }
+
+            {
+                let result = await callBoolFunction(source, "foo", [makeBool(true), makeBool(false)]);
+                assert_equals(result, true, "Test returned expected value.");
+            }
+
+            {
+                let result = await callBoolFunction(source, "foo", [makeBool(false), makeBool(true)]);
+                assert_equals(result, true, "Test returned expected value.");
+            }
+        } catch(e) {
+            if (!(e instanceof WebGPUUnsupportedError))
+                throw e;
+        }
+    }, "Bool bit or");
+};
+
+whlslTests.boolBitNot = () => {
+    const source = `
+        bool foo(bool a)
+        {
+            return ~a;
+        }
+    `;
+
+    webGPUPromiseTest(async () => {
+        try {
+            {
+                let result = await callBoolFunction(source, "foo", [makeBool(true)]);
+                assert_equals(result, false, "Test returned expected value.");
+            }
+
+            {
+                let result = await callBoolFunction(source, "foo", [makeBool(false)]);
+                assert_equals(result, true, "Test returned expected value.");
+            }
+        } catch(e) {
+            if (!(e instanceof WebGPUUnsupportedError))
+                throw e;
+        }
+    }, "Bool bit not");
+};
+
+function runTests(obj) {
+    window.addEventListener("load", () => {
+        try {
+            for (const name in obj) {
+                if (!name.startsWith("_"))
+                    obj[name]();
+            }
+        } catch (e) {
+            if (window.testRunner)
+                testRunner.notifyDone();
+            
+            throw e;
+        }
+    });
+}
+
+runTests(whlslTests);
+
+const webGPUPromiseTest = (testFunc, msg) => {
+    promise_test(async () => { 
+        return testFunc().catch(e => {
+        if (!(e instanceof WebGPUUnsupportedError))
+            throw e;
+        });
+    }, msg);
+}
+</script>
+</html>

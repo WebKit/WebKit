@@ -22,10 +22,12 @@ function isVectorType(type)
     }
 }
 
-function convertTypeToArrayType(type)
+function convertTypeToArrayType(isWHLSL, type)
 {
     switch(type) {
         case Types.BOOL:
+            if (isWHLSL)
+                return Int32Array;
             return Uint8Array;
         case Types.INT:
             return Int32Array;
@@ -61,6 +63,27 @@ function convertTypeToWHLSLType(type)
     }
 }
 
+function whlslArgumentType(type)
+{
+    if (type === Types.BOOL)
+        return "int";
+    return convertTypeToWHLSLType(type);
+}
+
+function convertToWHLSLOutputType(code, type)
+{
+    if (type !== Types.BOOL)
+        return code;
+    return `int(${code})`;
+}
+
+function convertToWHLSLInputType(code, type)
+{
+    if (type !== Types.BOOL)
+        return code;
+    return `bool(${code})`;
+}
+
 /* Harness Classes */
 
 class WebGPUUnsupportedError extends Error {
@@ -91,14 +114,14 @@ class Data {
         }
 
         this._type = type;
-        this._byteLength = (convertTypeToArrayType(type)).BYTES_PER_ELEMENT * values.length;
+        this._byteLength = (convertTypeToArrayType(harness.isWHLSL, type)).BYTES_PER_ELEMENT * values.length;
 
         const [buffer, arrayBuffer] = harness.device.createBufferMapped({
             size: this._byteLength,
             usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ
         });
 
-        const typedArray = new (convertTypeToArrayType(type))(arrayBuffer);
+        const typedArray = new (convertTypeToArrayType(harness.isWHLSL, type))(arrayBuffer);
         typedArray.set(values);
         buffer.unmap();
 
@@ -157,6 +180,11 @@ using namespace metal;
         `;
     }
 
+    get isWHLSL()
+    {
+        return this._isWHLSL;
+    }
+
     /**
      * Return the return value of a WHLSL function.
      * @param {Types} type - The return type of the WHLSL function.
@@ -196,12 +224,14 @@ using namespace metal;
 
         let entryPointCode;
         if (this._isWHLSL) {
-            argsDeclarations.unshift(`device ${convertTypeToWHLSLType(type)}[] result : register(u0)`);
+            argsDeclarations.unshift(`device ${whlslArgumentType(type)}[] result : register(u0)`);
+            let callCode = `${name}(${functionCallArgs.join(", ")})`;
+            callCode = convertToWHLSLOutputType(callCode, type);
             entryPointCode = `
 [numthreads(1, 1, 1)]
 compute void _compute_main(${argsDeclarations.join(", ")})
 {
-    result[0] = ${name}(${functionCallArgs.join(", ")});
+    result[0] = ${callCode};
 }
 `;
         } else {
@@ -225,7 +255,7 @@ kernel void _compute_main(device _compute_args& args [[buffer(0)]])
         } catch {
             throw new Error("Harness error: Unable to read results!");
         }
-        const array = new (convertTypeToArrayType(type))(result);
+        const array = new (convertTypeToArrayType(this._isWHLSL, type))(result);
         this._resultBuffer.unmap();
 
         return array;
@@ -301,8 +331,8 @@ kernel void _compute_main(device _compute_args& args [[buffer(0)]])
         for (let i = 1; i <= args.length; ++i) {
             const arg = args[i - 1];
             if (this._isWHLSL) {
-                argsDeclarations.push(`device ${convertTypeToWHLSLType(arg.type)}[] arg${i} : register(u${i})`);
-                functionCallArgs.push(`arg${i}` + (arg.isBuffer ? "" : "[0]"));
+                argsDeclarations.push(`device ${whlslArgumentType(arg.type)}[] arg${i} : register(u${i})`);
+                functionCallArgs.push(convertToWHLSLInputType(`arg${i}` + (arg.isBuffer ? "" : "[0]"), arg.type));
             } else {
                 argsDeclarations.push(`device ${convertTypeToWHLSLType(arg.type)}* arg${i} [[id(${i})]];`);
                 functionCallArgs.push((arg.isBuffer ? "" : "*") + `args.arg${i}`);

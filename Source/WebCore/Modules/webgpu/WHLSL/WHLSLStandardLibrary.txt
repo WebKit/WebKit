@@ -744,6 +744,12 @@ operator uint2(uint x, uint y) {
     return result;
 }
 
+native bool operator==(uchar, uchar);
+native bool operator==(ushort, ushort);
+native bool operator==(char, char);
+native bool operator==(short, short);
+native bool operator==(half, half);
+
 native int operator+(int, int);
 native int operator-(int, int);
 native int operator*(int, int);
@@ -1171,5 +1177,53 @@ native void GetDimensions(Texture2D<float4>, uint MipLevel, threadgroup uint* Wi
 native void GetDimensions(Texture2D<float4>, uint MipLevel, threadgroup uint* Width, threadgroup uint* Height, thread uint* NumberOfLevels);
 native void GetDimensions(Texture2D<float4>, uint MipLevel, threadgroup uint* Width, threadgroup uint* Height, device uint* NumberOfLevels);
 native void GetDimensions(Texture2D<float4>, uint MipLevel, threadgroup uint* Width, threadgroup uint* Height, threadgroup uint* NumberOfLevels);
+
+
+native bool operator==(bool, bool);
+native bool operator&&(bool, bool);
+native bool operator||(bool, bool);
+bool operator&(bool a, bool b) {
+    return a && b;
+}
+bool operator|(bool a, bool b) {
+    return a || b;
+}
+bool operator^(bool a, bool b) {
+    if (a)
+        return !b;
+    return b;
+}
+bool operator~(bool value) {
+    return !value;
+}
+
+operator bool(uchar x) {
+    return x != 0;
+}
+operator bool(ushort x) {
+    return x != 0;
+}
+operator bool(uint x) {
+    return x != 0;
+}
+operator bool(char x) {
+    return x != 0;
+}
+operator bool(short x) {
+    return x != 0;
+}
+operator bool(int x) {
+    return x != 0;
+}
+operator bool(half x) {
+    return x != 0;
+}
+operator bool(float x) {
+    return x != 0;
+}
+
+operator int(bool x) {
+    return x ? 1 : 0;
+}
 
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=192890 Insert the rest of the standard library once the parser is fast enough

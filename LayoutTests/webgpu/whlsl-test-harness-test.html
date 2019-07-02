@@ -58,16 +58,11 @@ whlslTests.manyArguments = () => {
 
 whlslTests.buffersWithOneValue = () => {
     const body = `return in0[0];`
-    checkBools("Access and return a single bool through a bool[].", body, [[true]]);
     checkFloat4s(body, [[[0, 1, 2, 3]]]);
     checkNumericScalars(body, [[42]], 42);
 };
 
 whlslTests.multipleBufferArguments = () => {
-    checkBools("Access multiple bools through various buffers and return a bool.", 
-        "return in0[0] & in0[1] & in0[2] & in1 & in2[0];", 
-        [[true, true, true], true, [true]]);
-
     let body = `
     float x = in0[0].x + in0[1].x + in0[2].x + in1.x + in2[0].x;
     float y = in0[0].y + in0[1].y + in0[2].y + in1.y + in2[0].y;
@@ -168,9 +163,6 @@ const checkNumericScalars = (body, argValues, expected) => {
 };
 
 const checkBools = (msg = "Return an expected bool value.", body, argValues = [], expected = true) => {
-    // FIXME (https://webkit.org/b/199093): Bool[] functions don't compile, so no-op for now.
-    return;
-
     const [src, name, values] = appendScalarFunctionToSource("", "bool", body, argValues); 
 
     webGPUPromiseTest(async () => {

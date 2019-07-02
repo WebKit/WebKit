@@ -1,0 +1,6 @@
+
+PASS Bool bit and 
+PASS Bool bit or 
+PASS Bool bit or 
+PASS Bool bit not 
+
