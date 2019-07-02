@@ -1,3 +1,11 @@
+2019-07-01  Joonghun Park  <pjh0718@gmail.com>
+
+        Unreviewed. Revert r246965 to fix build break
+        since r247019 reverted its related changes.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::popupValue const): Deleted.
+
 2019-07-01  Alex Christensen  <achristensen@webkit.org>
 
         Add new decidePolicyForNavigationAction SPI with preferences and userInfo

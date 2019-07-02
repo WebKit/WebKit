@@ -2326,12 +2326,6 @@ bool AccessibilityUIElement::replaceTextInRange(JSStringRef, int, int)
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
-{
-    notImplemented();
-    return nullptr;
-}
-
 } // namespace WTR
 
 #endif // HAVE(ACCESSIBILITY)
