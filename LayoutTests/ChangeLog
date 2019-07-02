@@ -1,3 +1,18 @@
+2019-07-02  Daniel Bates  <dabates@apple.com>
+
+        Left and right option key has Unidentified key identifier
+        https://bugs.webkit.org/show_bug.cgi?id=199392
+        <rdar://problem/52497604>
+
+        Reviewed by Wenson Hsieh.
+
+        Update test results.
+
+        * fast/events/ios/key-events-comprehensive/key-events-control-option-expected.txt:
+        * fast/events/ios/key-events-comprehensive/key-events-meta-option-expected.txt:
+        * fast/events/ios/key-events-comprehensive/key-events-option-expected.txt:
+        * fast/events/ios/key-events-comprehensive/key-events-option-shift-expected.txt:
+
 2019-07-02  Antti Koivisto  <antti@apple.com>
 
         Crash when adding inline stylesheet to shadow tree in document with null base URL

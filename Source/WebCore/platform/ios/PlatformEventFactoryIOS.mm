@@ -267,8 +267,8 @@ String codeForKeyEvent(WebEvent *event)
     case VK_OEM_2: return "Slash"_s;
 
     // Functional keys in alphanumeric section.
-    case VK_MENU: return "AltLeft"_s;
-    // AltRight.
+    case VK_LMENU: return "AltLeft"_s;
+    case VK_RMENU: return "AltRight"_s;
     case VK_CAPITAL: return "CapsLock"_s;
     // ContextMenu.
     case VK_LCONTROL: return "ControlLeft"_s;
