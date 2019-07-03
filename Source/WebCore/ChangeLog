@@ -1,3 +1,52 @@
+2019-07-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Assertion fires when animating the 'class' attribute of an SVG element
+        https://bugs.webkit.org/show_bug.cgi?id=197372
+
+        Reviewed by Ryosuke Niwa.
+
+        All instances of SVG animated properties have to share a single animVal
+        such that once its value is progressed, all the instances will see the
+        change. This was not happening for SVGAnimatedPrimitiveProperty. To do
+        that we need to:
+
+        -- Introduce the new template class SVGSharedPrimitiveProperty which is
+           derived from SVGProperty. This class manages a single primitive value.
+        -- Change the type of SVGAnimatedPrimitiveProperty::m_animVal to
+           RefPtr<SVGSharedPrimitiveProperty<PropertyType>>. The master property
+           creates it and all the instances hold references to the same pointer.
+        -- Change the type of SVGAnimatedPrimitiveProperty::m_baseVal to
+           Ref<SVGSharedPrimitiveProperty<PropertyType>> for simplicity and get
+           rid of SVGAnimatedPrimitiveProperty::m_state.
+        -- Override the virtual methods instanceStartAnimation() and
+           instanceStopAnimation() of SVGAnimatedPrimitiveProperty.
+        -- SVGAnimatedStringAnimator should invalidate the style of the target
+           element if attribute name is 'class' and when its animVal changes.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/properties/SVGAnimatedPrimitiveProperty.h:
+        (WebCore::SVGAnimatedPrimitiveProperty::setBaseVal):
+        (WebCore::SVGAnimatedPrimitiveProperty::setBaseValInternal):
+        (WebCore::SVGAnimatedPrimitiveProperty::baseVal const):
+        (WebCore::SVGAnimatedPrimitiveProperty::setAnimVal):
+        (WebCore::SVGAnimatedPrimitiveProperty::animVal const):
+        (WebCore::SVGAnimatedPrimitiveProperty::animVal):
+        (WebCore::SVGAnimatedPrimitiveProperty::currentValue const):
+        (WebCore::SVGAnimatedPrimitiveProperty::SVGAnimatedPrimitiveProperty):
+        (WebCore::SVGAnimatedPrimitiveProperty::ensureAnimVal):
+        * svg/properties/SVGAnimatedPropertyAnimatorImpl.h:
+        * svg/properties/SVGAttributeAnimator.cpp:
+        (WebCore::SVGAttributeAnimator::invalidateStyle):
+        (WebCore::SVGAttributeAnimator::applyAnimatedStylePropertyChange):
+        (WebCore::SVGAttributeAnimator::removeAnimatedStyleProperty):
+        * svg/properties/SVGAttributeAnimator.h:
+        * svg/properties/SVGSharedPrimitiveProperty.h: Added.
+        (WebCore::SVGSharedPrimitiveProperty::create):
+        (WebCore::SVGSharedPrimitiveProperty::value const):
+        (WebCore::SVGSharedPrimitiveProperty::value):
+        (WebCore::SVGSharedPrimitiveProperty::setValue):
+        (WebCore::SVGSharedPrimitiveProperty::SVGSharedPrimitiveProperty):
+
 2019-07-02  Andres Gonzalez  <andresg_22@apple.com>
 
         Enhance support of aria-haspopup per ARIA 1.1 specification.

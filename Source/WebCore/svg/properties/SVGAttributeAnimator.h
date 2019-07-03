@@ -76,6 +76,7 @@ public:
 protected:
     bool isAnimatedStylePropertyAniamtor(const SVGElement*) const;
 
+    static void invalidateStyle(SVGElement*);
     static void applyAnimatedStylePropertyChange(SVGElement*, CSSPropertyID, const String& value);
     static void removeAnimatedStyleProperty(SVGElement*, CSSPropertyID);
     static void applyAnimatedPropertyChange(SVGElement*, const QualifiedName&);

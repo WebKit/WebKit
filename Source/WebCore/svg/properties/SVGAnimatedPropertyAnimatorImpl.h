@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "HTMLNames.h"
 #include "SVGAnimatedPropertyAnimator.h"
 #include "SVGAnimatedPropertyImpl.h"
 #include "SVGAnimationAdditiveListFunctionImpl.h"
@@ -301,10 +302,32 @@ public:
     }
 
 private:
+    bool isAnimatedStyleClassAniamtor() const
+    {
+        return m_attributeName.matches(HTMLNames::classAttr);
+    }
+
     void animate(SVGElement* targetElement, float progress, unsigned repeatCount) final
     {
         String& animated = m_animated->animVal();
         m_function.animate(targetElement, progress, repeatCount, animated);
+    }
+    
+    void apply(SVGElement* targetElement) final
+    {
+        Base::apply(targetElement);
+        if (isAnimatedStyleClassAniamtor())
+            invalidateStyle(targetElement);
+    }
+    
+    void stop(SVGElement* targetElement) final
+    {
+        if (!m_animated->isAnimating())
+            return;
+
+        Base::stop(targetElement);
+        if (isAnimatedStyleClassAniamtor())
+            invalidateStyle(targetElement);
     }
 };
 

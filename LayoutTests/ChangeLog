@@ -1,3 +1,17 @@
+2019-07-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Assertion fires when animating the 'class' attribute of an SVG element
+        https://bugs.webkit.org/show_bug.cgi?id=197372
+
+        Reviewed by Ryosuke Niwa.
+
+        * svg/animations/animated-bool-externalResourcesRequired-instances-expected.svg: Added.
+        * svg/animations/animated-bool-externalResourcesRequired-instances.svg: Added.
+        * svg/animations/animated-string-class-instances-expected.svg: Added.
+        * svg/animations/animated-string-class-instances.svg: Added.
+        * svg/animations/animated-string-href-expected.svg: Added.
+        * svg/animations/animated-string-href.svg: Added.
+
 2019-07-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         [macOS WK2] REGRESSION (r242313): Layout Test scrollingcoordinator/mac/multiple-fixed.html is a flaky time out and image diff

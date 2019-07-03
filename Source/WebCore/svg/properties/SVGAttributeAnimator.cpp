@@ -37,10 +37,17 @@ bool SVGAttributeAnimator::isAnimatedStylePropertyAniamtor(const SVGElement* tar
     return targetElement->isAnimatedStyleAttribute(m_attributeName);
 }
 
+void SVGAttributeAnimator::invalidateStyle(SVGElement* targetElement)
+{
+    SVGElement::InstanceInvalidationGuard guard(*targetElement);
+    targetElement->invalidateSVGPresentationAttributeStyle();
+}
+
 void SVGAttributeAnimator::applyAnimatedStylePropertyChange(SVGElement* element, CSSPropertyID id, const String& value)
 {
     ASSERT(element);
     ASSERT(!element->m_deletionHasBegun);
+    ASSERT(id != CSSPropertyInvalid);
     
     if (!element->ensureAnimatedSMILStyleProperties().setProperty(id, value, false))
         return;
@@ -70,6 +77,7 @@ void SVGAttributeAnimator::removeAnimatedStyleProperty(SVGElement* element, CSSP
 {
     ASSERT(element);
     ASSERT(!element->m_deletionHasBegun);
+    ASSERT(id != CSSPropertyInvalid);
 
     element->ensureAnimatedSMILStyleProperties().removeProperty(id);
     element->invalidateStyle();
