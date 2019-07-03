@@ -422,37 +422,36 @@ macro checkSwitchToJITForLoop()
         end)
 end
 
-macro uncage(basePtr, mask, ptr, scratchOrLength)
+macro cage(basePtr, mask, ptr, scratch)
     if GIGACAGE_ENABLED and not (C_LOOP or C_LOOP_WIN)
-        loadp basePtr, scratchOrLength
-        btpz scratchOrLength, .done
+        loadp basePtr, scratch
+        btpz scratch, .done
         andp mask, ptr
-        addp scratchOrLength, ptr
+        addp scratch, ptr
     .done:
     end
 end
 
-macro loadCagedPrimitive(source, dest, scratchOrLength)
-    loadp source, dest
+macro cagedPrimitive(ptr, length, scratch, scratch2)
     if ARM64E
-        const result = t7
-        untagArrayPtr scratchOrLength, dest
-        move dest, result
+        const source = scratch2
+        move ptr, scratch2
     else
-        const result = dest
+        const source = ptr
     end
     if GIGACAGE_ENABLED
-        uncage(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr Gigacage::primitiveGigacageMask, result, scratchOrLength)
+        cage(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr Gigacage::primitiveGigacageMask, source, scratch)
         if ARM64E
             const numberOfPACBits = constexpr MacroAssembler::numberOfPACBits
-            bfiq result, 0, 64 - numberOfPACBits, dest
+            bfiq scratch2, 0, 64 - numberOfPACBits, ptr
+            untagArrayPtr length, ptr
         end
     end
 end
 
 macro loadCagedJSValue(source, dest, scratchOrLength)
     loadp source, dest
-    uncage(_g_gigacageBasePtrs + Gigacage::BasePtrs::jsValue, constexpr Gigacage::jsValueGigacageMask, dest, scratchOrLength)
+    cage(_g_gigacageBasePtrs + Gigacage::BasePtrs::jsValue, constexpr Gigacage::jsValueGigacageMask, dest, scratchOrLength)
 end
 
 macro loadVariable(get, fieldName, valueReg)
@@ -1522,15 +1521,17 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     # Sweet, now we know that we have a typed array. Do some basic things now.
 
     if ARM64E
-        const scratchOrLength = t6
-        loadi JSArrayBufferView::m_length[t0], scratchOrLength
-        biaeq t1, scratchOrLength, .opGetByValSlow
+        const length = t6
+        const scratch = t7
+        loadi JSArrayBufferView::m_length[t0], length
+        biaeq t1, length, .opGetByValSlow
     else
-        const scratchOrLength = t0
+        # length and scratch are intentionally undefined on this branch because they are not used on other platforms.
         biaeq t1, JSArrayBufferView::m_length[t0], .opGetByValSlow
     end
 
-    loadCagedPrimitive(JSArrayBufferView::m_vector[t0], t3, scratchOrLength)
+    loadp JSArrayBufferView::m_vector[t0], t3
+    cagedPrimitive(t3, length, t0, scratch)
 
     # Now bisect through the various types:
     #    Int8ArrayType,
