@@ -1,3 +1,17 @@
+2019-07-03  Jer Noble  <jer.noble@apple.com>
+
+        Exception thrown from -[AVSampleBufferRenderSynchronizer addRenderer:], not a valid renderer.
+        https://bugs.webkit.org/show_bug.cgi?id=199419
+        <rdar://problem/52141139>
+
+        Reviewed by Eric Carlson.
+
+        Sometimes, -[AVSampleBufferDisplayLayer init] will return nil. When that happens, passing a nil
+        pointer to -addRenderer: will throw an exception.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer):
+
 2019-07-03  Robin Morisset  <rmorisset@apple.com>
 
         [WHLSL] "Semantic" should be held by a unique_ptr, not an Optional

@@ -722,6 +722,13 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
     [m_sampleBufferDisplayLayer setName:@"MediaPlayerPrivateMediaSource AVSampleBufferDisplayLayer"];
 #endif
 
+    ASSERT(m_sampleBufferDisplayLayer);
+    if (!m_sampleBufferDisplayLayer) {
+        ERROR_LOG(LOGIDENTIFIER, "Failed to create AVSampleBufferDisplayLayer");
+        setNetworkState(MediaPlayer::DecodeError);
+        return;
+    }
+
     [m_synchronizer addRenderer:m_sampleBufferDisplayLayer.get()];
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->setVideoLayer(m_sampleBufferDisplayLayer.get());
