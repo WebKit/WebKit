@@ -692,7 +692,8 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
 
 #if PLATFORM(IOS_FAMILY)
     // The text selection assistant will handle selection in the case where we are already editing the node
-    if (newSelection.rootEditableElement() == targetNode->rootEditableElement())
+    auto* editableRoot = newSelection.rootEditableElement();
+    if (editableRoot && editableRoot == targetNode->rootEditableElement())
         return true;
 #endif
 

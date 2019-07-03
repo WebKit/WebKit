@@ -1,3 +1,35 @@
+2019-07-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (iOS 13): Tapping an element with a click event handler no longer clears the selection
+        https://bugs.webkit.org/show_bug.cgi?id=199430
+
+        Reviewed by Tim Horton.
+
+        After <trac.webkit.org/r245067>, we no longer immediately clear the text selection when recognizing a single tap
+        in WKContentView, and instead only clear it out in the case where the single tap didn't result in a click event
+        in the web process. This fixed an issue wherein the text selection would be prematurely cleared when tapping,
+        but also made it such that tapping on an element with a click event handler would not cause the selection to
+        change, even if preventDefault() is not called on mousedown. On web pages that add a click event listener to
+        `document.body`, it's nearly impossible to dismiss text selections by tapping elsewhere in the body.
+
+        On macOS, this works because EventHandler::handleMousePressEventSingleClick contains logic to modify the
+        selection when handling a mousedown, as a part of default behavior. However, there is platform-specific logic
+        added in <trac.webkit.org/r233311> that avoids changing the selection when handling a synthetic mousedown on
+        iOS; this is because we defer to the single tap text interaction gesture on iOS, which (among other things)
+        provides additional support for moving the selection to word boundaries, instead of the editing position
+        directly under the click.
+
+        However, no such platform-specific text interaction single tap gesture exists for non-editable text, so there's
+        no reason we need to bail in the case where the root editable element is null. We can fix this bug without
+        breaking the fix in r233311 by matching macOS behavior and not bailing via early return in the case where the
+        single tap would move selection into non-editable text.
+
+        Tests: editing/selection/ios/clear-selection-after-tapping-on-element-with-click-handler.html
+               editing/selection/ios/persist-selection-after-tapping-on-element-with-mousedown-handler.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+
 2019-07-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r246616.

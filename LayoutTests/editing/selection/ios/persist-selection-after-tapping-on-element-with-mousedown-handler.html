@@ -39,12 +39,12 @@
 
         var clickTarget = document.getElementById("clickTarget");
 
-        clickTarget.addEventListener("click", event => {
+        clickTarget.addEventListener("mousedown", event => {
             event.preventDefault();
             setTimeout(() => testRunner.notifyDone(), 0);
         });
 
-        var target = document.getElementById("target");        
+        var target = document.getElementById("target");
         window.getSelection().setBaseAndExtent(target, 0, target, 6);
 
         await UIHelper.activateElement(clickTarget);
@@ -55,6 +55,6 @@
     <div id="target">WebKit</div>
     <div id="clickTarget"></div>
     <pre>The selected text is: "<span id="result"></span>"</pre>
-    <p>This test verifies that the DOM selection is not dismissed when tapping on an element that preventDefault()s the click event.</p>
+    <p>This test verifies that the DOM selection is not dismissed when tapping on an element that preventDefault()s the mousedown event.</p>
 </body>
 </html>
