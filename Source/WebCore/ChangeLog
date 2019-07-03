@@ -1,3 +1,18 @@
+2019-07-03  Andres Gonzalez  <andresg_22@apple.com>
+
+        Safari hanging while loading pages - WebCore::AccessibilityRenderObject::visiblePositionRangeForLine.
+        https://bugs.webkit.org/show_bug.cgi?id=199434
+        <rdar://problem/52475140>
+
+        Reviewed by Chris Fleizach.
+
+        Tests were disabled until underlying bug is fixed.
+
+        Rolling out a workaround for CharacterIterator::advance bug because it
+        seems to be causing a hang in Safari.
+        * editing/Editing.cpp:
+        (WebCore::visiblePositionForIndexUsingCharacterIterator):
+
 2019-07-02  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r246723): ScrollingTreeOverflowScrollProxyNode::m_overflowScrollingNodeID is uninitialized sometimes
