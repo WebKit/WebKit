@@ -1,3 +1,24 @@
+2019-07-02  Michael Saboff  <msaboff@apple.com>
+
+        Exception from For..of loop destructured assignment eliminates TDZ checks in subsequent code
+        https://bugs.webkit.org/show_bug.cgi?id=199395
+
+        Reviewed by Filip Pizlo.
+
+        For destructuring assignmests, the assignment might throw a reference error if
+        the RHS cannot be coerced.  The current bytecode generated for such assignments
+        optimizes out the TDZ check after the coercible check.
+
+        By saving the current state of the TDZ stack before processing the setting of 
+        target destructured values and then restoring afterwards, we won't optimize out
+        later TDZ check(s).
+
+        A similar change of saving / restoring the TDZ stack where exceptions might
+        happen was done for for..in loops in change set r232219.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ObjectPatternNode::bindValue const):
+
 2019-07-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r247041.

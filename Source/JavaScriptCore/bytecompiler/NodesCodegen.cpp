@@ -4304,6 +4304,9 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
         addMethod = generator.emitGetById(generator.newTemporary(), excludedList.get(), generator.propertyNames().builtinNames().addPrivateName());
     }
 
+    BytecodeGenerator::PreservedTDZStack preservedTDZStack;
+    generator.preserveTDZStack(preservedTDZStack);
+
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
         const auto& target = m_targetPatterns[i];
         if (target.bindingType == BindingType::Element) {
@@ -4366,6 +4369,8 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
             target.pattern->bindValue(generator, result.get());
         }
     }
+
+    generator.restoreTDZStack(preservedTDZStack);
 }
 
 void ObjectPatternNode::collectBoundIdentifiers(Vector<Identifier>& identifiers) const
