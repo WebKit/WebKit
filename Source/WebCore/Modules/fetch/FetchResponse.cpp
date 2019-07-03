@@ -240,9 +240,9 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
 
     response->addAbortSteps(request.signal());
 
-    response->m_bodyLoader.emplace(response.get(), WTFMove(responseCallback));
+    response->m_bodyLoader = std::make_unique<BodyLoader>(response.get(), WTFMove(responseCallback));
     if (!response->m_bodyLoader->start(context, request))
-        response->m_bodyLoader = WTF::nullopt;
+        response->m_bodyLoader = nullptr;
 }
 
 const String& FetchResponse::url() const
@@ -280,7 +280,7 @@ void FetchResponse::BodyLoader::didSucceed()
 
     if (m_loader->isStarted()) {
         Ref<FetchResponse> protector(m_response);
-        m_response.m_bodyLoader = WTF::nullopt;
+        m_response.m_bodyLoader = nullptr;
     }
 }
 
@@ -307,7 +307,7 @@ void FetchResponse::BodyLoader::didFail(const ResourceError& error)
     // Check whether didFail is called as part of FetchLoader::start.
     if (m_loader && m_loader->isStarted()) {
         Ref<FetchResponse> protector(m_response);
-        m_response.m_bodyLoader = WTF::nullopt;
+        m_response.m_bodyLoader = nullptr;
     }
 }
 

@@ -1,3 +1,29 @@
+2019-07-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        FetchResponse::BodyLoader should not be movable
+        https://bugs.webkit.org/show_bug.cgi?id=199380
+
+        Reviewed by Youenn Fablet.
+
+        The FetchResponse::BodyLoader class has a FetchLoader member that is
+        initialized in the start() method with the reference of the owning
+        FetchResponse::BodyLoader object. This reference doesn't change when
+        the FetchResponse::BodyLoader object is moved into a different object
+        and the FetchLoader unique_ptr along with it, leading to problems when
+        that FetchLoader tries to invoke the FetchLoaderClient methods on the
+        FetchResponse::BodyLoader object that's been moved from and is possibly
+        already destroyed.
+
+        To avoid this, the FetchResponse::BodyLoader has the move constructor
+        removed and is now managed through std::unique_ptr instead of Optional,
+        ensuring the FetchResponse::BodyLoader object itself isn't moved around.
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::fetch):
+        (WebCore::FetchResponse::BodyLoader::didSucceed):
+        (WebCore::FetchResponse::BodyLoader::didFail):
+        * Modules/fetch/FetchResponse.h:
+
 2019-07-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Assertion fires when animating the 'class' attribute of an SVG element
