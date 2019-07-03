@@ -29,7 +29,6 @@
 
 #include "WHLSLLexer.h"
 #include "WHLSLNamedType.h"
-#include "WHLSLNode.h"
 #include "WHLSLUnnamedType.h"
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>

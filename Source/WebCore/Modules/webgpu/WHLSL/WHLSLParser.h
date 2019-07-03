@@ -63,7 +63,6 @@
 #include "WHLSLMakePointerExpression.h"
 #include "WHLSLNativeFunctionDeclaration.h"
 #include "WHLSLNativeTypeDeclaration.h"
-#include "WHLSLNode.h"
 #include "WHLSLNullLiteral.h"
 #include "WHLSLNumThreadsFunctionAttribute.h"
 #include "WHLSLPointerType.h"

@@ -30,7 +30,6 @@
 #include "WHLSLEntryPointType.h"
 #include "WHLSLFunctionAttribute.h"
 #include "WHLSLLexer.h"
-#include "WHLSLNode.h"
 #include "WHLSLSemantic.h"
 #include "WHLSLUnnamedType.h"
 #include "WHLSLVariableDeclaration.h"
@@ -43,7 +42,7 @@ namespace WHLSL {
 
 namespace AST {
 
-class FunctionDeclaration : public Node {
+class FunctionDeclaration {
 public:
     FunctionDeclaration(Lexer::Token&& origin, AttributeBlock&& attributeBlock, Optional<EntryPointType> entryPointType, UniqueRef<UnnamedType>&& type, String&& name, VariableDeclarations&& parameters, Optional<Semantic>&& semantic, bool isOperator)
         : m_origin(WTFMove(origin))

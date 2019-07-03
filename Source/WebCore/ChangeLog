@@ -1,3 +1,34 @@
+2019-07-03  Robin Morisset  <rmorisset@apple.com>
+
+        [WHLSL] WHLSL::AST::Node is useless
+        https://bugs.webkit.org/show_bug.cgi?id=199391
+
+        Reviewed by Dean Jackson.
+
+        It has no member, no non-trivial method, and we never access an AST node completely generically.
+        So WHLSL::AST::Node can be removed, as a first step towards removing the virtual table pointer from most AST nodes (and avoiding a virtual destructor call at the end of the compiler).
+
+        No new test because there is no functional change.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLAST.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLBaseFunctionAttribute.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLBaseSemantic.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationMember.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionDeclaration.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLNamedType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLReplaceWith.h: Renamed from Source/WebCore/Modules/webgpu/WHLSL/AST/WHLSLNode.h.
+        (WebCore::WHLSL::AST::replaceWith):
+        * Modules/webgpu/WHLSL/AST/WHLSLStructureElement.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeDefinition.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLValue.h:
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.cpp:
+        * Modules/webgpu/WHLSL/WHLSLParser.h:
+        * Modules/webgpu/WHLSL/WHLSLPreserveVariableLifetimes.cpp:
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-07-03  Youenn Fablet  <youenn@apple.com>
 
         Strengthen updating/removing of registrations from the database

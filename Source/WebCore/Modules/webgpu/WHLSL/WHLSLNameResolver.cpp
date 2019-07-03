@@ -39,6 +39,7 @@
 #include "WHLSLNameContext.h"
 #include "WHLSLProgram.h"
 #include "WHLSLPropertyAccessExpression.h"
+#include "WHLSLReplaceWith.h"
 #include "WHLSLResolveOverloadImpl.h"
 #include "WHLSLReturn.h"
 #include "WHLSLScopedSetAdder.h"

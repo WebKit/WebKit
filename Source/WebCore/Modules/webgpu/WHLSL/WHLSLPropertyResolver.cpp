@@ -39,6 +39,7 @@
 #include "WHLSLMakePointerExpression.h"
 #include "WHLSLPointerType.h"
 #include "WHLSLReadModifyWriteExpression.h"
+#include "WHLSLReplaceWith.h"
 #include "WHLSLVariableDeclaration.h"
 #include "WHLSLVariableReference.h"
 #include "WHLSLVisitor.h"

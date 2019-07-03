@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLNode.h"
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -36,7 +35,7 @@ namespace WHLSL {
 
 namespace AST {
 
-class Type : public Node {
+class Type {
 public:
     Type() = default;
 

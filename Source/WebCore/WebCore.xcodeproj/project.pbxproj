@@ -7128,6 +7128,7 @@
 		33503C9F10179AD7003B47E1 /* JSNotification.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotification.cpp; sourceTree = "<group>"; };
 		33503CA010179AD7003B47E1 /* JSNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotification.h; sourceTree = "<group>"; };
 		33503CC61017A1B1003B47E1 /* Notification.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Notification.cpp; sourceTree = "<group>"; };
+		3351F70B22CAD8DA0015B40D /* WHLSLReplaceWith.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLReplaceWith.h; sourceTree = "<group>"; };
 		35C74FD3228A1912000C21A0 /* CSSGridIntegerRepeatValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGridIntegerRepeatValue.cpp; sourceTree = "<group>"; };
 		35C74FD7228A19A6000C21A0 /* CSSGridIntegerRepeatValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSGridIntegerRepeatValue.h; sourceTree = "<group>"; };
 		3662F984047CEDBE5DDDAFAA /* RenderMathMLMenclose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLMenclose.cpp; sourceTree = "<group>"; };
@@ -13327,7 +13328,6 @@
 		C21BF72121CD89DE00227979 /* WHLSLNumThreadsFunctionAttribute.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLNumThreadsFunctionAttribute.h; sourceTree = "<group>"; };
 		C21BF72221CD89DF00227979 /* WHLSLBuiltInSemantic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLBuiltInSemantic.h; sourceTree = "<group>"; };
 		C21BF72321CD89E100227979 /* WHLSLNativeFunctionDeclaration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLNativeFunctionDeclaration.h; sourceTree = "<group>"; };
-		C21BF72421CD89E100227979 /* WHLSLNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLNode.h; sourceTree = "<group>"; };
 		C21BF72521CD89E200227979 /* WHLSLArrayReferenceType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLArrayReferenceType.h; sourceTree = "<group>"; };
 		C21BF72621CD89E300227979 /* WHLSLEnumerationMember.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLEnumerationMember.h; sourceTree = "<group>"; };
 		C21BF72721CD89E400227979 /* WHLSLStructureDefinition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLStructureDefinition.h; sourceTree = "<group>"; };
@@ -17132,7 +17132,6 @@
 				1C33277121CF0BE1000DC9F2 /* WHLSLNamedType.h */,
 				C21BF72321CD89E100227979 /* WHLSLNativeFunctionDeclaration.h */,
 				C21BF72A21CD89E700227979 /* WHLSLNativeTypeDeclaration.h */,
-				C21BF72421CD89E100227979 /* WHLSLNode.h */,
 				C21BF70721CD89C800227979 /* WHLSLNullLiteral.h */,
 				1CB69B3A21DF0403006E846A /* WHLSLNullLiteralType.cpp */,
 				1CB69B3621DED657006E846A /* WHLSLNullLiteralType.h */,
@@ -17142,6 +17141,7 @@
 				C21BF70B21CD89CC00227979 /* WHLSLQualifier.h */,
 				C21BF71B21CD89D900227979 /* WHLSLReadModifyWriteExpression.h */,
 				C21BF70D21CD89CD00227979 /* WHLSLReferenceType.h */,
+				3351F70B22CAD8DA0015B40D /* WHLSLReplaceWith.h */,
 				1CB69B3221DED40B006E846A /* WHLSLResolvableType.h */,
 				C2138A1521DDECE900F516BA /* WHLSLResourceSemantic.cpp */,
 				C21BF70821CD89C900227979 /* WHLSLResourceSemantic.h */,

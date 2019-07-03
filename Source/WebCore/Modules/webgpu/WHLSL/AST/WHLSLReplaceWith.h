@@ -33,21 +33,6 @@ namespace WHLSL {
 
 namespace AST {
 
-class Node {
-public:
-    Node() = default;
-
-    virtual ~Node() = default;
-
-    explicit Node(const Node&) = default;
-    Node(Node&&) = default;
-
-    Node& operator=(const Node&) = default;
-    Node& operator=(Node&&) = default;
-
-private:
-};
-
 template <typename New, typename Old, typename ...Args>
 ALWAYS_INLINE New* replaceWith(Old& old, Args&&... args)
 {
@@ -57,10 +42,6 @@ ALWAYS_INLINE New* replaceWith(Old& old, Args&&... args)
     return new (location) New(std::forward<Args>(args)...);
 }
 
-} // namespace AST
+} } } // namespace WebCore::WHLSL::AST
 
-}
-
-}
-
-#endif
+#endif // ENABLE(WEBGPU)

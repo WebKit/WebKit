@@ -30,6 +30,7 @@
 
 #include "WHLSLAST.h"
 #include "WHLSLASTDumper.h"
+#include "WHLSLReplaceWith.h"
 #include "WHLSLVisitor.h"
 
 namespace WebCore {

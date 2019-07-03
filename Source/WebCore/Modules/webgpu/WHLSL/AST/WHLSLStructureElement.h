@@ -28,7 +28,6 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLLexer.h"
-#include "WHLSLNode.h"
 #include "WHLSLQualifier.h"
 #include "WHLSLSemantic.h"
 #include "WHLSLType.h"
@@ -40,7 +39,7 @@ namespace WHLSL {
 
 namespace AST {
 
-class StructureElement : public Node {
+class StructureElement {
 public:
     StructureElement(Lexer::Token&& origin, Qualifiers&& qualifiers, UniqueRef<UnnamedType>&& type, String&& name, Optional<Semantic> semantic)
         : m_origin(WTFMove(origin))

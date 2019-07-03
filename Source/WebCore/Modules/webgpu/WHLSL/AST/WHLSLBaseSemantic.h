@@ -29,7 +29,6 @@
 
 #include "WHLSLEntryPointType.h"
 #include "WHLSLLexer.h"
-#include "WHLSLNode.h"
 #include <wtf/Optional.h>
 
 namespace WebCore {
@@ -43,7 +42,7 @@ namespace AST {
 class FunctionDefinition;
 class UnnamedType;
 
-class BaseSemantic : public Node {
+class BaseSemantic {
 public:
     BaseSemantic(Lexer::Token&& origin)
         : m_origin(WTFMove(origin))

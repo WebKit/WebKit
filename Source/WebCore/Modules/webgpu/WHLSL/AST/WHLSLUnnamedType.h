@@ -28,7 +28,6 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLLexer.h"
-#include "WHLSLNode.h"
 #include "WHLSLType.h"
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>

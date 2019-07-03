@@ -29,7 +29,6 @@
 
 #include "WHLSLConstantExpression.h"
 #include "WHLSLLexer.h"
-#include "WHLSLNode.h"
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -40,7 +39,7 @@ namespace WHLSL {
 
 namespace AST {
 
-class EnumerationMember : public Node {
+class EnumerationMember {
 public:
     EnumerationMember(Lexer::Token&& origin, String&& name, Optional<ConstantExpression>&& value = WTF::nullopt)
         : m_origin(WTFMove(origin))

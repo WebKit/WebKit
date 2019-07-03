@@ -27,15 +27,13 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLNode.h"
-
 namespace WebCore {
 
 namespace WHLSL {
 
 namespace AST {
 
-class Value : public Node {
+class Value {
 public:
     Value(Lexer::Token&& origin)
         : m_origin(WTFMove(origin))

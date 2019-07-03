@@ -69,7 +69,6 @@
 #include "WHLSLNamedType.h"
 #include "WHLSLNativeFunctionDeclaration.h"
 #include "WHLSLNativeTypeDeclaration.h"
-#include "WHLSLNode.h"
 #include "WHLSLNullLiteral.h"
 #include "WHLSLNullLiteralType.h"
 #include "WHLSLNumThreadsFunctionAttribute.h"
