@@ -682,7 +682,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
         if (networkDataTask->shouldCaptureExtraNetworkLoadMetrics()) {
             networkLoadMetrics.priority = toNetworkLoadPriority(task.priority);
 
-#if HAVE(CFNETWORK_NSURLSESSIONTASKTRANSACTIONMETRICS_SPI)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
             networkLoadMetrics.remoteAddress = String(m._remoteAddressAndPort);
             networkLoadMetrics.connectionIdentifier = String([m._connectionIdentifier UUIDString]);
 #endif
@@ -698,21 +698,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
             }];
             networkLoadMetrics.requestHeaders = WTFMove(requestHeaders);
 
-#if HAVE(CFNETWORK_NSURLSESSIONTASKTRANSACTIONMETRICS_ADDITIONS)
-            networkLoadMetrics.requestHeaderBytesSent = 0;
-            networkLoadMetrics.requestBodyBytesSent = 0;
-            networkLoadMetrics.responseHeaderBytesReceived = 0;
-            networkLoadMetrics.responseBodyBytesReceived = 0;
-            networkLoadMetrics.responseBodyDecodedSize = 0;
-
-            for (NSURLSessionTaskTransactionMetrics *transactionMetrics in metrics.transactionMetrics) {
-                networkLoadMetrics.requestHeaderBytesSent += transactionMetrics.countOfRequestHeaderBytesSent;
-                networkLoadMetrics.requestBodyBytesSent += transactionMetrics.countOfRequestBodyBytesSent;
-                networkLoadMetrics.responseHeaderBytesReceived += transactionMetrics.countOfResponseHeaderBytesReceived;
-                networkLoadMetrics.responseBodyBytesReceived += transactionMetrics.countOfResponseBodyBytesReceived;
-                networkLoadMetrics.responseBodyDecodedSize += transactionMetrics.countOfResponseBodyBytesAfterDecoding;
-            }
-#elif HAVE(CFNETWORK_NSURLSESSIONTASKTRANSACTIONMETRICS_SPI)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
             uint64_t requestHeaderBytesSent = 0;
             uint64_t responseHeaderBytesReceived = 0;
             uint64_t responseBodyBytesReceived = 0;

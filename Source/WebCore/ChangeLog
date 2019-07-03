@@ -1,3 +1,17 @@
+2019-07-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r246616.
+
+        Caused http/tests/inspector/network/har/har-page.html to fail
+        on Catalina.
+
+        Reverted changeset:
+
+        "Web Inspector: Network: replace CFNetwork SPI with new API
+        where able"
+        https://bugs.webkit.org/show_bug.cgi?id=198762
+        https://trac.webkit.org/changeset/246616
+
 2019-07-03  Andres Gonzalez  <andresg_22@apple.com>
 
         Safari hanging while loading pages - WebCore::AccessibilityRenderObject::visiblePositionRangeForLine.
