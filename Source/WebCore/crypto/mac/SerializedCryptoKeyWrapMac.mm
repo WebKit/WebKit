@@ -32,6 +32,7 @@
 #include "LocalizedStrings.h"
 #include <CommonCrypto/CommonSymmetricKeywrap.h>
 #include <crt_externs.h>
+#include <wtf/spi/cocoa/SecuritySPI.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 #include <wtf/CryptographicUtilities.h>

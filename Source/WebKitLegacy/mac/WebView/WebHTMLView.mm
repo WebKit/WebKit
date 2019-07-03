@@ -218,10 +218,6 @@ using namespace WTF;
 - (id)_newFirstResponderAfterResigning;
 @end
 
-@interface NSView (SubviewsIvar)
-@property (nullable, assign, setter=_setSubviewsIvar:) NSMutableArray<__kindof NSView *> *_subviewsIvar;
-@end
-
 #if !HAVE(SUBVIEWS_IVAR_SPI)
 @implementation NSView (SubviewsIvar)
 

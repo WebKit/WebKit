@@ -1,3 +1,12 @@
+2019-07-03  Jonathan Bedard  <jbedard@apple.com>
+
+        [Catalina] Enable WebKit build
+        https://bugs.webkit.org/show_bug.cgi?id=199209
+
+        Reviewed by Darin Adler.
+
+        * wtf/spi/cocoa/SecuritySPI.h: Declare SecTrustedApplicationCreateFromPath(...).
+
 2019-07-03  Keith Miller  <keith_miller@apple.com>
 
         PACCage should first cage leaving PAC bits intact then authenticate

@@ -207,6 +207,12 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 #if PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MAX_ALLOWED >= 60000
 @property NSURLSessionCompanionProxyPreference _companionProxyPreference;
 #endif
+#if HAVE(APP_SSO)
+@property BOOL _preventsAppSSO;
+#endif
+#if HAVE(ALLOWS_SENSITIVE_LOGGING)
+@property BOOL _allowsSensitiveLogging;
+#endif
 @end
 
 @interface NSURLSessionTask ()

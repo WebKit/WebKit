@@ -26,6 +26,10 @@
 PRODUCT_NAME = TestWebKitAPI;
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 
+WK_PRIVATE_FRAMEWORKS_DIR = $(WK_PRIVATE_FRAMEWORKS_DIR_$(USE_INTERNAL_SDK));
+WK_PRIVATE_FRAMEWORKS_DIR_[sdk=mac*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/Mac/$(MAC_OS_X_VERSION_MAJOR);
+FRAMEWORK_SEARCH_PATHS[sdk=mac*] = $(inherited) $(WK_PRIVATE_FRAMEWORK_STUBS_DIR) $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
+
 UNEXPORTED_SYMBOL_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZN7testing4Test16TearDownTestCaseEv -Wl,-unexported_symbol -Wl,__ZN7testing4Test13SetUpTestCaseEv
 
 WK_AUTHKIT_LDFLAGS = $(WK_AUTHKIT_LDFLAGS_$(WK_PLATFORM_NAME));

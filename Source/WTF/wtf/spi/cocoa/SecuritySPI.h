@@ -57,6 +57,10 @@ enum {
 
 WTF_EXTERN_C_BEGIN
 
+#if PLATFORM(MAC)
+OSStatus SecTrustedApplicationCreateFromPath(const char* path, SecTrustedApplicationRef*);
+#endif
+
 SecSignatureHashAlgorithm SecCertificateGetSignatureHashAlgorithm(SecCertificateRef);
 
 WTF_EXTERN_C_END

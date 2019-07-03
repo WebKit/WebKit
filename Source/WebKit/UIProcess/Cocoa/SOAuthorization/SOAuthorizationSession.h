@@ -27,7 +27,7 @@
 
 #if HAVE(APP_SSO)
 
-#include <AppSSO/SOBase.h>
+#include <pal/spi/cocoa/AppSSOSPI.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>

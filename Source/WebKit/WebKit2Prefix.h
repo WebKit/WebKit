@@ -38,6 +38,11 @@
 #include <CoreGraphics/CoreGraphics.h>
 
 #ifdef __OBJC__
+#if !USE(APPLE_INTERNAL_SDK)
+/* SecTask.h declares SecTaskGetCodeSignStatus(...) to
+ * be unavailable on macOS, so do not include that header. */
+#define _SECURITY_SECTASK_H_
+#endif
 #import <Foundation/Foundation.h>
 #if USE(APPKIT)
 #import <Cocoa/Cocoa.h>

@@ -149,6 +149,11 @@
 #endif
 
 #if PLATFORM(MAC)
+#if !USE(APPLE_INTERNAL_SDK)
+/* SecTrustedApplication.h declares SecTrustedApplicationCreateFromPath(...) to
+ * be unavailable on macOS, so do not include that header. */
+#define _SECURITY_SECTRUSTEDAPPLICATION_H_
+#endif
 #include <CoreServices/CoreServices.h>
 #endif
 
