@@ -1,3 +1,17 @@
+2019-07-03  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed, rolling out r246053.
+
+        This changeset caused media playback to break when the hosting app was backgrounded.
+
+        * UIProcess/ApplicationStateTracker.mm:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager init]):
+        (-[WKProcessAssertionBackgroundTaskManager _scheduleReleaseTask]):
+        (-[WKProcessAssertionBackgroundTaskManager _cancelPendingReleaseTask]):
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+        (-[WKProcessAssertionBackgroundTaskManager _releaseBackgroundTask]):
+
 2019-07-03  Alex Christensen  <achristensen@webkit.org>
 
         Use smarter pointers in WKDownloadProgress
