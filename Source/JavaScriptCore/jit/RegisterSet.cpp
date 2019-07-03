@@ -32,6 +32,7 @@
 #include "JSCInlines.h"
 #include "MacroAssembler.h"
 #include "RegisterAtOffsetList.h"
+#include "assembler/RegisterInfo.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {
@@ -45,17 +46,16 @@ RegisterSet RegisterSet::stackRegisters()
 
 RegisterSet RegisterSet::reservedHardwareRegisters()
 {
-#if CPU(ARM64)
-#if PLATFORM(IOS_FAMILY)
-    return RegisterSet(ARM64Registers::x18, ARM64Registers::lr);
-#else
-    return RegisterSet(ARM64Registers::lr);
-#endif // PLATFORM(IOS_FAMILY)
-#elif CPU(ARM_THUMB2)
-    return RegisterSet(ARMRegisters::lr, ARMRegisters::pc);
-#else
-    return { };
-#endif
+    RegisterSet result;
+
+#define SET_IF_RESERVED(id, name, isReserved, isCalleeSaved)    \
+    if (isReserved)                                             \
+        result.set(RegisterNames::id);
+    FOR_EACH_GP_REGISTER(SET_IF_RESERVED)
+    FOR_EACH_FP_REGISTER(SET_IF_RESERVED)
+#undef SET_IF_RESERVED
+
+    return result;
 }
 
 RegisterSet RegisterSet::runtimeTagRegisters()
@@ -111,53 +111,14 @@ RegisterSet RegisterSet::macroScratchRegisters()
 RegisterSet RegisterSet::calleeSaveRegisters()
 {
     RegisterSet result;
-#if CPU(X86)
-    result.set(X86Registers::ebx);
-    result.set(X86Registers::ebp);
-    result.set(X86Registers::edi);
-    result.set(X86Registers::esi);
-#elif CPU(X86_64)
-    result.set(X86Registers::ebx);
-    result.set(X86Registers::ebp);
-#if OS(WINDOWS)
-    result.set(X86Registers::edi);
-    result.set(X86Registers::esi);
-#endif
-    result.set(X86Registers::r12);
-    result.set(X86Registers::r13);
-    result.set(X86Registers::r14);
-    result.set(X86Registers::r15);
-#elif CPU(ARM_THUMB2)
-    result.set(ARMRegisters::r4);
-    result.set(ARMRegisters::r5);
-    result.set(ARMRegisters::r6);
-    result.set(ARMRegisters::r8);
-#if !PLATFORM(IOS_FAMILY)
-    result.set(ARMRegisters::r9);
-#endif
-    result.set(ARMRegisters::r10);
-    result.set(ARMRegisters::r11);
-#elif CPU(ARM64)
-    // We don't include LR in the set of callee-save registers even though it technically belongs
-    // there. This is because we use this set to describe the set of registers that need to be saved
-    // beyond what you would save by the platform-agnostic "preserve return address" and "restore
-    // return address" operations in CCallHelpers.
-    for (
-        ARM64Registers::RegisterID reg = ARM64Registers::x19;
-        reg <= ARM64Registers::x28;
-        reg = static_cast<ARM64Registers::RegisterID>(reg + 1))
-        result.set(reg);
-    result.set(ARM64Registers::fp);
-    for (
-        ARM64Registers::FPRegisterID reg = ARM64Registers::q8;
-        reg <= ARM64Registers::q15;
-        reg = static_cast<ARM64Registers::FPRegisterID>(reg + 1))
-        result.set(reg);
-#elif CPU(MIPS)
-    result.set(MIPSRegisters::s0);
-#else
-    UNREACHABLE_FOR_PLATFORM();
-#endif
+
+#define SET_IF_CALLEESAVED(id, name, isReserved, isCalleeSaved)        \
+    if (isCalleeSaved)                                                 \
+        result.set(RegisterNames::id);
+    FOR_EACH_GP_REGISTER(SET_IF_CALLEESAVED)
+    FOR_EACH_FP_REGISTER(SET_IF_CALLEESAVED)
+#undef SET_IF_CALLEESAVED
+        
     return result;
 }
 

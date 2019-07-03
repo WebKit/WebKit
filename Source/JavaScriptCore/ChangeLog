@@ -1,3 +1,48 @@
+2019-07-03  Paulo Matos  <pmatos@igalia.com>
+
+        Refactoring of architectural Register Information
+        https://bugs.webkit.org/show_bug.cgi?id=198604
+
+        Reviewed by Keith Miller.
+
+        The goal of this patch is to centralize the register information per platform
+        but access it in a platform independent way. The patch as been implemented for all
+        known platforms: ARM64, ARMv7, MIPS, X86 and X86_64. Register information has
+        been centralized in an architecture per-file: each file is called assembler/<arch>Registers.h.
+
+        RegisterInfo.h is used as a forwarding header to choose which register information to load.
+        assembler/<arch>Assembler.h and jit/RegisterSet.cpp use this information in a platform
+        independent way.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::gprName): Use register names from register info file.
+        (JSC::ARM64Assembler::sprName): likewise.
+        (JSC::ARM64Assembler::fprName): likewise.
+        * assembler/ARM64Registers.h: Added.
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::gprName): Use register names from register info file.
+        (JSC::ARMv7Assembler::sprName): likewise.
+        (JSC::ARMv7Assembler::fprName): likewise.
+        * assembler/ARMv7Registers.h: Added.
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::gprName): Use register names from register info file.
+        (JSC::MIPSAssembler::sprName): likewise.
+        (JSC::MIPSAssembler::fprName): likewise.
+        * assembler/MIPSRegisters.h: Added.
+        * assembler/RegisterInfo.h: Added.
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::gprName): Use register names from register info file.
+        (JSC::X86Assembler::sprName): likewise.
+        (JSC::X86Assembler::fprName): likewise.
+        * assembler/X86Registers.h: Added.
+        * assembler/X86_64Registers.h: Added.
+        * jit/GPRInfo.h: Fix typo in comment (s/basline/baseline).
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::reservedHardwareRegisters): Use register properties from register info file.
+        (JSC::RegisterSet::calleeSaveRegisters): likewise.
+
 2019-07-02  Michael Saboff  <msaboff@apple.com>
 
         Exception from For..of loop destructured assignment eliminates TDZ checks in subsequent code

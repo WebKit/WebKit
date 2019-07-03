@@ -32,6 +32,7 @@
 
 #include "AssemblerBuffer.h"
 #include "JITCompilationEffort.h"
+#include "MIPSRegisters.h"
 #include <limits.h>
 #include <wtf/Assertions.h>
 #include <wtf/SegmentedVector.h>
@@ -40,117 +41,27 @@ namespace JSC {
 
 typedef uint32_t MIPSWord;
 
-namespace MIPSRegisters {
+namespace RegisterNames {
 typedef enum : int8_t {
-    r0 = 0,
-    r1,
-    r2,
-    r3,
-    r4,
-    r5,
-    r6,
-    r7,
-    r8,
-    r9,
-    r10,
-    r11,
-    r12,
-    r13,
-    r14,
-    r15,
-    r16,
-    r17,
-    r18,
-    r19,
-    r20,
-    r21,
-    r22,
-    r23,
-    r24,
-    r25,
-    r26,
-    r27,
-    r28,
-    r29,
-    r30,
-    r31,
-    zero = r0,
-    at = r1,
-    v0 = r2,
-    v1 = r3,
-    a0 = r4,
-    a1 = r5,
-    a2 = r6,
-    a3 = r7,
-    t0 = r8,
-    t1 = r9,
-    t2 = r10,
-    t3 = r11,
-    t4 = r12,
-    t5 = r13,
-    t6 = r14,
-    t7 = r15,
-    s0 = r16,
-    s1 = r17,
-    s2 = r18,
-    s3 = r19,
-    s4 = r20,
-    s5 = r21,
-    s6 = r22,
-    s7 = r23,
-    t8 = r24,
-    t9 = r25,
-    k0 = r26,
-    k1 = r27,
-    gp = r28,
-    sp = r29,
-    fp = r30,
-    ra = r31,
+#define REGISTER_ID(id, name, r, cs) id,
+    FOR_EACH_GP_REGISTER(REGISTER_ID)
+#undef REGISTER_ID
+#define REGISTER_ALIAS(id, alias) id = alias,
+    FOR_EACH_REGISTER_ALIAS(REGISTER_ALIAS)
+#undef REGISTER_ALIAS
     InvalidGPRReg = -1,
 } RegisterID;
 
 typedef enum : int8_t {
-    fir = 0,
-    fccr = 25,
-    fexr = 26,
-    fenr = 28,
-    fcsr = 31,
-    pc
+#define REGISTER_ID(id, name, idx) id = idx,
+    FOR_EACH_SP_REGISTER(REGISTER_ID)
+#undef REGISTER_ID
 } SPRegisterID;
 
 typedef enum : int8_t {
-    f0,
-    f1,
-    f2,
-    f3,
-    f4,
-    f5,
-    f6,
-    f7,
-    f8,
-    f9,
-    f10,
-    f11,
-    f12,
-    f13,
-    f14,
-    f15,
-    f16,
-    f17,
-    f18,
-    f19,
-    f20,
-    f21,
-    f22,
-    f23,
-    f24,
-    f25,
-    f26,
-    f27,
-    f28,
-    f29,
-    f30,
-    f31,
+#define REGISTER_ID(id, name, r, cs) id,
+    FOR_EACH_FP_REGISTER(REGISTER_ID)
+#undef REGISTER_ID
     InvalidFPRReg = -1,
 } FPRegisterID;
 
@@ -179,46 +90,31 @@ public:
     {
         ASSERT(id >= firstRegister() && id <= lastRegister());
         static const char* const nameForRegister[numberOfRegisters()] = {
-            "zero", "at", "v0", "v1",
-            "a0", "a1", "a2", "a3",
-            "t0", "t1", "t2", "t3",
-            "t4", "t5", "t6", "t7"
+#define REGISTER_NAME(id, name, r, c) name,
+        FOR_EACH_GP_REGISTER(REGISTER_NAME)
+#undef REGISTER_NAME
         };
         return nameForRegister[id];
     }
 
     static const char* sprName(SPRegisterID id)
     {
-        switch (id) {
-        case MIPSRegisters::fir:
-            return "fir";
-        case MIPSRegisters::fccr:
-            return "fccr";
-        case MIPSRegisters::fexr:
-            return "fexr";
-        case MIPSRegisters::fenr:
-            return "fenr";
-        case MIPSRegisters::fcsr:
-            return "fcsr";
-        case MIPSRegisters::pc:
-            return "pc";
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
+        ASSERT(id >= firstSPRegister() && id <= lastSPRegister());
+        static const char* const nameForRegister[numberOfSPRegisters()] = {
+#define REGISTER_NAME(id, name, idx) name,
+        FOR_EACH_SP_REGISTER(REGISTER_NAME)
+#undef REGISTER_NAME
+        };
+        return nameForRegister[id];
     }
 
     static const char* fprName(FPRegisterID id)
     {
         ASSERT(id >= firstFPRegister() && id <= lastFPRegister());
         static const char* const nameForRegister[numberOfFPRegisters()] = {
-            "f0", "f1", "f2", "f3",
-            "f4", "f5", "f6", "f7",
-            "f8", "f9", "f10", "f11",
-            "f12", "f13", "f14", "f15"
-            "f16", "f17", "f18", "f19"
-            "f20", "f21", "f22", "f23"
-            "f24", "f25", "f26", "f27"
-            "f28", "f29", "f30", "f31"
+#define REGISTER_NAME(id, name, r, cs) name,
+        FOR_EACH_FP_REGISTER(REGISTER_NAME)
+#undef REGISTER_NAME
         };
         return nameForRegister[id];
     }

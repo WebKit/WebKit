@@ -33,7 +33,7 @@ namespace JSC {
 
 enum NoResultTag { NoResult };
 
-// We use the same conventions in the basline JIT as in the LLint. If you
+// We use the same conventions in the baseline JIT as in the LLint. If you
 // change mappings in the GPRInfo, you should change them in the offlineasm
 // compiler adequately. The register naming conventions are described at the
 // top of the LowLevelInterpreter.asm file.

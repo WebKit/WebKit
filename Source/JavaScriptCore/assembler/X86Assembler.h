@@ -30,6 +30,7 @@
 #include "AssemblerBuffer.h"
 #include "AssemblerCommon.h"
 #include "JITCompilationEffort.h"
+#include "RegisterInfo.h"
 #include <limits.h>
 #include <stdint.h>
 #include <wtf/Assertions.h>
@@ -39,7 +40,7 @@ namespace JSC {
 
 inline bool CAN_SIGN_EXTEND_8_32(int32_t value) { return value == (int32_t)(signed char)value; }
 
-namespace X86Registers {
+namespace RegisterNames {
 
 #if COMPILER(MSVC)
 #define JSC_X86_ASM_REGISTER_ID_ENUM_BASE_TYPE
@@ -47,56 +48,25 @@ namespace X86Registers {
 #define JSC_X86_ASM_REGISTER_ID_ENUM_BASE_TYPE : int8_t
 #endif
 
+#define REGISTER_ID(id, name, res, cs) id,
+
 typedef enum JSC_X86_ASM_REGISTER_ID_ENUM_BASE_TYPE {
-    eax,
-    ecx,
-    edx,
-    ebx,
-    esp,
-    ebp,
-    esi,
-    edi,
-#if CPU(X86_64)
-    r8,
-    r9,
-    r10,
-    r11,
-    r12,
-    r13,
-    r14,
-    r15,
-#endif
+    FOR_EACH_GP_REGISTER(REGISTER_ID)
     InvalidGPRReg = -1,
 } RegisterID;
 
 typedef enum JSC_X86_ASM_REGISTER_ID_ENUM_BASE_TYPE {
-    eip,
-    eflags
+    FOR_EACH_SP_REGISTER(REGISTER_ID)                                                     
 } SPRegisterID;
 
 typedef enum JSC_X86_ASM_REGISTER_ID_ENUM_BASE_TYPE {
-    xmm0,
-    xmm1,
-    xmm2,
-    xmm3,
-    xmm4,
-    xmm5,
-    xmm6,
-    xmm7,
-#if CPU(X86_64)
-    xmm8,
-    xmm9,
-    xmm10,
-    xmm11,
-    xmm12,
-    xmm13,
-    xmm14,
-    xmm15,
-#endif
+    FOR_EACH_FP_REGISTER(REGISTER_ID)
     InvalidFPRReg = -1,
 } XMMRegisterID;
 
-} // namespace X86Register
+#undef REGISTER_ID
+
+} // namespace X86Registers
 
 class X86Assembler {
 public:
@@ -137,15 +107,9 @@ public:
     {
         ASSERT(id >= firstRegister() && id <= lastRegister());
         static const char* const nameForRegister[numberOfRegisters()] = {
-#if CPU(X86_64)
-            "rax", "rcx", "rdx", "rbx",
-            "rsp", "rbp", "rsi", "rdi",
-            "r8", "r9", "r10", "r11",
-            "r12", "r13", "r14", "r15"
-#else
-            "eax", "ecx", "edx", "ebx",
-            "esp", "ebp", "esi", "edi",
-#endif
+#define REGISTER_NAME(id, name, res, cs) name,
+        FOR_EACH_GP_REGISTER(REGISTER_NAME)
+#undef REGISTER_NAME
         };
         return nameForRegister[id];
     }
@@ -154,11 +118,9 @@ public:
     {
         ASSERT(id >= firstSPRegister() && id <= lastSPRegister());
         static const char* const nameForRegister[numberOfSPRegisters()] = {
-#if CPU(X86_64)
-            "rip", "rflags"
-#else
-            "eip", "eflags"
-#endif
+#define REGISTER_NAME(id, name, res, cs) name,
+        FOR_EACH_SP_REGISTER(REGISTER_NAME)
+#undef REGISTER_NAME
         };
         return nameForRegister[id];
     }
@@ -167,12 +129,9 @@ public:
     {
         ASSERT(reg >= firstFPRegister() && reg <= lastFPRegister());
         static const char* const nameForRegister[numberOfFPRegisters()] = {
-            "xmm0", "xmm1", "xmm2", "xmm3",
-            "xmm4", "xmm5", "xmm6", "xmm7",
-#if CPU(X86_64)
-            "xmm8", "xmm9", "xmm10", "xmm11",
-            "xmm12", "xmm13", "xmm14", "xmm15"
-#endif
+#define REGISTER_NAME(id, name, res, cs) name,
+        FOR_EACH_FP_REGISTER(REGISTER_NAME)
+#undef REGISTER_NAME
         };
         return nameForRegister[reg];
     }

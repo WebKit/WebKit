@@ -436,7 +436,9 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     API/OpaqueJSString.h
 
     assembler/ARM64Assembler.h
+    assembler/ARM64Registers.h
     assembler/ARMv7Assembler.h
+    assembler/ARMv7Registers.h
     assembler/AbortReason.h
     assembler/AbstractMacroAssembler.h
     assembler/AssemblerBuffer.h
@@ -446,6 +448,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/CodeLocation.h
     assembler/LinkBuffer.h
     assembler/MIPSAssembler.h
+    assembler/MIPSRegisters.h
     assembler/MacroAssembler.h
     assembler/MacroAssemblerARM64.h
     assembler/MacroAssemblerARMv7.h
@@ -456,7 +459,10 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/MacroAssemblerX86Common.h
     assembler/MacroAssemblerX86_64.h
     assembler/Printer.h
+    assembler/RegisterInfo.h
     assembler/X86Assembler.h
+    assembler/X86Registers.h
+    assembler/X86_64Registers.h
 
     bindings/ScriptFunctionCall.h
     bindings/ScriptObject.h
