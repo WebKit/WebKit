@@ -1,3 +1,9 @@
+2019-07-02  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Fix build break introduced in r247058.
+
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp:
+
 2019-07-02  Youenn Fablet  <youenn@apple.com>
 
         StorageManager does not need to be a WorkQueueMessageReceiver anymore

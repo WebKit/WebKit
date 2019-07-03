@@ -27,6 +27,7 @@
 #include "WebKitNavigationPolicyDecision.h"
 #include "WebKitUserContentManagerPrivate.h"
 #include "WebKitWebContextPrivate.h"
+#include "WebPageProxy.h"
 #include "WebScriptMessageHandler.h"
 #include <wtf/URL.h>
 
