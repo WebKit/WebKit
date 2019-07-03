@@ -97,7 +97,7 @@ public:
 
         for (auto& structureElement : structureDefinition.structureElements()) {
             if (structureElement.semantic())
-                m_currentSemantic = &*structureElement.semantic();
+                m_currentSemantic = structureElement.semantic();
             m_path.append(structureElement.name());
             checkErrorAndVisit(structureElement);
             m_path.takeLast();
@@ -149,7 +149,7 @@ public:
     {
         ASSERT(!m_currentSemantic);
         if (variableDeclaration.semantic())
-            m_currentSemantic = &*variableDeclaration.semantic();
+            m_currentSemantic = variableDeclaration.semantic();
         ASSERT(variableDeclaration.type());
         m_path.append(variableDeclaration.name());
         checkErrorAndVisit(*variableDeclaration.type());
@@ -174,7 +174,7 @@ Optional<EntryPointItems> gatherEntryPointItems(const Intrinsics& intrinsics, AS
         if (inputGatherer.error())
             return WTF::nullopt;
     }
-    Gatherer outputGatherer(intrinsics, functionDefinition.semantic() ? &*functionDefinition.semantic() : nullptr);
+    Gatherer outputGatherer(intrinsics, functionDefinition.semantic());
     if (*functionDefinition.entryPointType() != AST::EntryPointType::Compute)
         outputGatherer.checkErrorAndVisit(functionDefinition.type());
     if (outputGatherer.error())

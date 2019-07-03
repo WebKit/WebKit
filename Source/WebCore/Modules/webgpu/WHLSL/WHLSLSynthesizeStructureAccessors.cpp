@@ -47,11 +47,11 @@ bool synthesizeStructureAccessors(Program& program)
             // The ander: operator&.field
             auto createAnder = [&](AST::AddressSpace addressSpace) -> AST::NativeFunctionDeclaration {
                 auto argumentType = makeUniqueRef<AST::PointerType>(Lexer::Token(structureElement.origin()), addressSpace, AST::TypeReference::wrap(Lexer::Token(structureElement.origin()), structureDefinition));
-                auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(structureElement.origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(WTFMove(argumentType)), String(), WTF::nullopt, nullptr);
+                auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(structureElement.origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(WTFMove(argumentType)), String(), nullptr, nullptr);
                 AST::VariableDeclarations parameters;
                 parameters.append(WTFMove(variableDeclaration));
                 auto returnType = makeUniqueRef<AST::PointerType>(Lexer::Token(structureElement.origin()), addressSpace, structureElement.type().clone());
-                AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(structureElement.origin()), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), makeString("operator&.", structureElement.name()), WTFMove(parameters), WTF::nullopt, isOperator));
+                AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(structureElement.origin()), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), makeString("operator&.", structureElement.name()), WTFMove(parameters), nullptr, isOperator));
                 return nativeFunctionDeclaration;
             };
             if (!program.append(createAnder(AST::AddressSpace::Constant))

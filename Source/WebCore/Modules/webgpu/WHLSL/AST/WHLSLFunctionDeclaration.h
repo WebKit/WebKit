@@ -44,15 +44,15 @@ namespace AST {
 
 class FunctionDeclaration {
 public:
-    FunctionDeclaration(Lexer::Token&& origin, AttributeBlock&& attributeBlock, Optional<EntryPointType> entryPointType, UniqueRef<UnnamedType>&& type, String&& name, VariableDeclarations&& parameters, Optional<Semantic>&& semantic, bool isOperator)
+    FunctionDeclaration(Lexer::Token&& origin, AttributeBlock&& attributeBlock, Optional<EntryPointType> entryPointType, UniqueRef<UnnamedType>&& type, String&& name, VariableDeclarations&& parameters, std::unique_ptr<Semantic>&& semantic, bool isOperator)
         : m_origin(WTFMove(origin))
         , m_attributeBlock(WTFMove(attributeBlock))
         , m_entryPointType(entryPointType)
+        , m_isOperator(WTFMove(isOperator))
         , m_type(WTFMove(type))
         , m_name(WTFMove(name))
         , m_parameters(WTFMove(parameters))
         , m_semantic(WTFMove(semantic))
-        , m_isOperator(WTFMove(isOperator))
     {
     }
 
@@ -73,7 +73,7 @@ public:
     bool isCast() const { return m_name == "operator cast"; }
     const VariableDeclarations& parameters() const { return m_parameters; }
     VariableDeclarations& parameters() { return m_parameters; }
-    Optional<Semantic>& semantic() { return m_semantic; }
+    Semantic* semantic() { return m_semantic.get(); }
     bool isOperator() const { return m_isOperator; }
     Lexer::Token origin() { return m_origin; }
 
@@ -81,11 +81,11 @@ private:
     Lexer::Token m_origin;
     AttributeBlock m_attributeBlock;
     Optional<EntryPointType> m_entryPointType;
+    bool m_isOperator;
     UniqueRef<UnnamedType> m_type;
     String m_name;
     VariableDeclarations m_parameters;
-    Optional<Semantic> m_semantic;
-    bool m_isOperator;
+    std::unique_ptr<Semantic> m_semantic;
 };
 
 } // namespace AST

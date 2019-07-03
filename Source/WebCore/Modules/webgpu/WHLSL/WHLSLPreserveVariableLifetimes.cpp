@@ -135,7 +135,7 @@ public:
         bool isEntryPoint = !!functionDefinition.entryPointType();
         if (isEntryPoint) {
             auto structVariableDeclaration = makeUniqueRef<AST::VariableDeclaration>(functionDefinition.origin(), AST::Qualifiers(),
-                m_structType->clone(), String(), WTF::nullopt, nullptr);
+                m_structType->clone(), String(), nullptr, nullptr);
 
             auto structVariableReference = makeUniqueRef<AST::VariableReference>(AST::VariableReference::wrap(structVariableDeclaration));
             structVariableReference->setType(m_structType->clone());
@@ -150,7 +150,7 @@ public:
             makePointerExpression->setTypeAnnotation(AST::RightValue());
 
             auto pointerDeclaration = makeUniqueRef<AST::VariableDeclaration>(functionDefinition.origin(), AST::Qualifiers(),
-                m_pointerToStructType->clone(), "wrapper"_s, WTF::nullopt, WTFMove(makePointerExpression));
+                m_pointerToStructType->clone(), "wrapper"_s, nullptr, WTFMove(makePointerExpression));
             m_structVariable = &pointerDeclaration;
 
             AST::VariableDeclarations pointerVariableDeclarations;
@@ -161,7 +161,7 @@ public:
             functionDefinition.block().statements().insert(1, WTFMove(pointerDeclarationStatement));
         } else {
             auto pointerDeclaration = makeUniqueRef<AST::VariableDeclaration>(functionDefinition.origin(), AST::Qualifiers(),
-                m_pointerToStructType->clone(), "wrapper"_s, WTF::nullopt, nullptr);
+                m_pointerToStructType->clone(), "wrapper"_s, nullptr, nullptr);
             m_structVariable = &pointerDeclaration;
             functionDefinition.parameters().append(WTFMove(pointerDeclaration));
         }
@@ -256,7 +256,7 @@ void preserveVariableLifetimes(Program& program)
     for (auto& pair : escapedVariables) {
         auto* variable = pair.key;
         String name = pair.value;
-        elements.append(AST::StructureElement { Lexer::Token(variable->origin()), { }, variable->type()->clone(), WTFMove(name), WTF::nullopt });
+        elements.append(AST::StructureElement { Lexer::Token(variable->origin()), { }, variable->type()->clone(), WTFMove(name), nullptr });
     }
 
     // Name of this doesn't matter, since we don't use struct names when

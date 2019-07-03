@@ -174,7 +174,7 @@ private:
     Expected<AST::ResourceSemantic, Error> parseResourceSemantic();
     Expected<AST::SpecializationConstantSemantic, Error> parseSpecializationConstantSemantic();
     Expected<AST::StageInOutSemantic, Error> parseStageInOutSemantic();
-    Expected<Optional<AST::Semantic>, Error> parseSemantic();
+    Expected<std::unique_ptr<AST::Semantic>, Error> parseSemantic();
     AST::Qualifiers parseQualifiers();
     Expected<AST::StructureElement, Error> parseStructureElement();
     Expected<AST::StructureDefinition, Error> parseStructureDefinition();

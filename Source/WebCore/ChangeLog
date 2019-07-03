@@ -1,5 +1,57 @@
 2019-07-03  Robin Morisset  <rmorisset@apple.com>
 
+        [WHLSL] "Semantic" should be held by a unique_ptr, not an Optional
+        https://bugs.webkit.org/show_bug.cgi?id=199462
+
+        Reviewed by Myles C. Maxfield.
+
+        Most StructureElement, FunctionDeclaration and (especially) VariableDeclaration don't have a 'Semantic' field.
+        Using an Optional<Semantic> to represent this is a major memory waste, as Semantic is 56 bytes, so Optional<Semantic> is 64 bytes!
+        Putting one level of indirection through a unique_ptr thus saves 56 bytes for each VariableDeclaration (and FunctionDeclaration and StructureElement) that does not have a Semantic,
+        at the low cost of one pointer dereference when accessing the field for those that have one.
+
+        This patch also reorders the fields of FunctionDefinition to save another 8 bytes.
+
+        No new tests as there is no intended functional change.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionDeclaration.h:
+        (WebCore::WHLSL::AST::FunctionDeclaration::FunctionDeclaration):
+        (WebCore::WHLSL::AST::FunctionDeclaration::semantic):
+        * Modules/webgpu/WHLSL/AST/WHLSLReadModifyWriteExpression.h:
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::ReadModifyWriteExpression):
+        * Modules/webgpu/WHLSL/AST/WHLSLStructureElement.h:
+        (WebCore::WHLSL::AST::StructureElement::StructureElement):
+        (WebCore::WHLSL::AST::StructureElement::semantic):
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclaration.h:
+        (WebCore::WHLSL::AST::VariableDeclaration::VariableDeclaration):
+        (WebCore::WHLSL::AST::VariableDeclaration::semantic):
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::resolveWithOperatorAnderIndexer):
+        (WebCore::WHLSL::resolveWithOperatorLength):
+        (WebCore::WHLSL::resolveWithReferenceComparator):
+        * Modules/webgpu/WHLSL/WHLSLGatherEntryPointItems.cpp:
+        (WebCore::WHLSL::Gatherer::visit):
+        (WebCore::WHLSL::gatherEntryPointItems):
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::parseSemantic):
+        * Modules/webgpu/WHLSL/WHLSLParser.h:
+        * Modules/webgpu/WHLSL/WHLSLPreserveVariableLifetimes.cpp:
+        (WebCore::WHLSL::preserveVariableLifetimes):
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp:
+        (WebCore::WHLSL::wrapAnderCallArgument):
+        (WebCore::WHLSL::modify):
+        (WebCore::WHLSL::PropertyResolver::visit):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeArrayOperatorLength.cpp:
+        (WebCore::WHLSL::synthesizeArrayOperatorLength):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.cpp:
+        (WebCore::WHLSL::synthesizeConstructors):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeEnumerationFunctions.cpp:
+        (WebCore::WHLSL::synthesizeEnumerationFunctions):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeStructureAccessors.cpp:
+        (WebCore::WHLSL::synthesizeStructureAccessors):
+
+2019-07-03  Robin Morisset  <rmorisset@apple.com>
+
         [WHLSL] WHLSL::AST::Node is useless
         https://bugs.webkit.org/show_bug.cgi?id=199391
 

@@ -688,28 +688,28 @@ auto Parser::parseStageInOutSemantic() -> Expected<AST::StageInOutSemantic, Erro
     return AST::StageInOutSemantic(WTFMove(*origin), *index);
 }
 
-auto Parser::parseSemantic() -> Expected<Optional<AST::Semantic>, Error>
+auto Parser::parseSemantic() -> Expected<std::unique_ptr<AST::Semantic>, Error>
 {
     if (!tryType(Lexer::Token::Type::Colon))
-        return { WTF::nullopt };
+        return { nullptr };
 
     PEEK(token);
     switch (token->type) {
     case Lexer::Token::Type::Attribute: {
         PARSE(result, StageInOutSemantic);
-        return { AST::Semantic(WTFMove(*result)) };
+        return { std::make_unique<AST::Semantic>(WTFMove(*result)) };
     }
     case Lexer::Token::Type::Specialized:  {
         PARSE(result, SpecializationConstantSemantic);
-        return { AST::Semantic(WTFMove(*result)) };
+        return { std::make_unique<AST::Semantic>(WTFMove(*result)) };
     }
     case Lexer::Token::Type::Register:  {
         PARSE(result, ResourceSemantic);
-        return { AST::Semantic(WTFMove(*result)) };
+        return { std::make_unique<AST::Semantic>(WTFMove(*result)) };
     }
     default:  {
         PARSE(result, BuiltInSemantic);
-        return { AST::Semantic(WTFMove(*result)) };
+        return { std::make_unique<AST::Semantic>(WTFMove(*result)) };
     }
     }
 }
