@@ -1,3 +1,10 @@
+2019-07-03  Aakash Jain  <aakash_jain@apple.com>
+
+        Unreviewed follow-up fix to r247049, default the platform to '*' when platform property is not set.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (PrintConfiguration.run):
+
 2019-07-02  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add build steps to Install Wpe and Gtk dependencies

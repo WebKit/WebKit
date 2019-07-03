@@ -1227,7 +1227,7 @@ class PrintConfiguration(steps.ShellSequence):
 
     def run(self):
         command_list = list(self.command_list_generic)
-        platform = self.getProperty('platform')
+        platform = self.getProperty('platform', '*')
         platform = platform.split('-')[0]
         if platform in ('mac', 'ios', '*'):
             command_list.extend(self.command_list_apple)
