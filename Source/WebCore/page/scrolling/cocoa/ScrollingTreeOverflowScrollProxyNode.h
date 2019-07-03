@@ -50,7 +50,7 @@ protected:
 
     WEBCORE_EXPORT void dumpProperties(TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
-    ScrollingNodeID m_overflowScrollingNodeID;
+    ScrollingNodeID m_overflowScrollingNodeID { 0 };
     RetainPtr<CALayer> m_layer;
 };
 
