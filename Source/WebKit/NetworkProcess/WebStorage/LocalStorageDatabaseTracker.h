@@ -58,6 +58,8 @@ public:
 
         template<class Encoder> void encode(Encoder&) const;
         template<class Decoder> static Optional<OriginDetails> decode(Decoder&);
+
+        OriginDetails isolatedCopy() const { return { originIdentifier.isolatedCopy(), creationTime, modificationTime }; }
     };
     Vector<OriginDetails> originDetails();
 

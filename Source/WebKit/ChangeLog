@@ -1,3 +1,21 @@
+2019-07-03  Youenn Fablet  <youenn@apple.com>
+
+        Make sure to cross-thread copy in StorageManager when hopping back to the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=199423
+
+        Reviewed by Chris Dumez.
+
+        Make sure to isolate copy some strings that may not be isolated in case of ephemeral sessions.
+        Small refactoring to use crossThreadCopy instead of doing vector copy ourselves.
+
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.h:
+        (WebKit::LocalStorageDatabaseTracker::OriginDetails::isolatedCopy const):
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::deleteSessionStorageEntriesForOrigins):
+        (WebKit::StorageManager::getLocalStorageOrigins):
+        (WebKit::StorageManager::getLocalStorageOriginDetails):
+        (WebKit::StorageManager::deleteLocalStorageEntriesForOrigins):
+
 2019-07-02  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Fix build break introduced in r247058.
