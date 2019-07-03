@@ -345,6 +345,7 @@ $(PROJECT_DIR)/Modules/webgpu/GPUVertexAttributeDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUVertexBufferDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUVertexInputDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/NavigatorGPU.idl
+$(PROJECT_DIR)/Modules/webgpu/WHLSL/WHLSLBuildStandardLibraryFunctionMap.py
 $(PROJECT_DIR)/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt
 $(PROJECT_DIR)/Modules/webgpu/WebGPU.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUAdapter.idl

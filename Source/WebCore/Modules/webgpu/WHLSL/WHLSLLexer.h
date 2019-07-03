@@ -46,7 +46,9 @@ public:
         : m_stringView(stringView)
     {
         skipWhitespaceAndComments();
+        m_offsetRingBuffer[0] = m_offset;
         m_ringBuffer[0] = consumeTokenFromStream();
+        m_offsetRingBuffer[1] = m_offset;
         m_ringBuffer[1] = consumeTokenFromStream();
     }
 
@@ -180,25 +182,29 @@ public:
     Optional<Token> consumeToken()
     {
         auto result = m_ringBuffer[m_ringBufferIndex];
+        m_offsetRingBuffer[m_ringBufferIndex] = m_offset;
         m_ringBuffer[m_ringBufferIndex] = consumeTokenFromStream();
         m_ringBufferIndex = (m_ringBufferIndex + 1) % 2;
         return result;
     }
 
-    Optional<Token> peek()
+    Optional<Token> peek() const
     {
         return m_ringBuffer[m_ringBufferIndex];
     }
 
-    Optional<Token> peekFurther()
+    Optional<Token> peekFurther() const
     {
         return m_ringBuffer[(m_ringBufferIndex + 1) % 2];
     }
+
+    Optional<unsigned> position() const { return m_offsetRingBuffer[m_ringBufferIndex]; }
 
     // FIXME: We should not need this
     // https://bugs.webkit.org/show_bug.cgi?id=198357
     struct State {
         Optional<Token> ringBuffer[2];
+        Optional<unsigned> m_offsetRingBuffer[2];
         unsigned ringBufferIndex;
         unsigned offset;
         unsigned lineNumber;
@@ -209,6 +215,8 @@ public:
         State state;
         state.ringBuffer[0] = m_ringBuffer[0];
         state.ringBuffer[1] = m_ringBuffer[1];
+        state.m_offsetRingBuffer[0] = m_offsetRingBuffer[0];
+        state.m_offsetRingBuffer[1] = m_offsetRingBuffer[1];
         state.ringBufferIndex = m_ringBufferIndex;
         state.offset = m_offset;
         state.lineNumber = m_lineNumber;
@@ -219,6 +227,8 @@ public:
     {
         m_ringBuffer[0] = state.ringBuffer[0];
         m_ringBuffer[1] = state.ringBuffer[1];
+        m_offsetRingBuffer[0] = state.m_offsetRingBuffer[0];
+        m_offsetRingBuffer[1] = state.m_offsetRingBuffer[1];
         m_ringBufferIndex = state.ringBufferIndex;
         m_offset = state.offset;
         m_lineNumber = state.lineNumber;
@@ -229,6 +239,8 @@ public:
     {
         m_ringBuffer[0] = WTFMove(state.ringBuffer[0]);
         m_ringBuffer[1] = WTFMove(state.ringBuffer[1]);
+        m_offsetRingBuffer[0] = WTFMove(state.m_offsetRingBuffer[0]);
+        m_offsetRingBuffer[1] = WTFMove(state.m_offsetRingBuffer[1]);
         m_ringBufferIndex = WTFMove(state.ringBufferIndex);
         m_offset = WTFMove(state.offset);
         m_lineNumber = WTFMove(state.lineNumber);
@@ -236,7 +248,7 @@ public:
 
     bool isFullyConsumed() const
     {
-        return m_offset == m_stringView.length();
+        return !peek();
     }
 
     String errorString(const Token& token, const String& message)
@@ -276,6 +288,7 @@ private:
 
     StringView m_stringView;
     Optional<Token> m_ringBuffer[2];
+    Optional<unsigned> m_offsetRingBuffer[2];
     unsigned m_ringBufferIndex { 0 };
     unsigned m_offset { 0 };
     unsigned m_lineNumber { 0 };

@@ -46,7 +46,7 @@
 #include "WHLSLRecursionChecker.h"
 #include "WHLSLRecursiveTypeChecker.h"
 #include "WHLSLSemanticMatcher.h"
-#include "WHLSLStandardLibrary.h"
+#include "WHLSLStandardLibraryUtilities.h"
 #include "WHLSLStatementBehaviorChecker.h"
 #include "WHLSLSynthesizeArrayOperatorLength.h"
 #include "WHLSLSynthesizeConstructors.h"
@@ -110,17 +110,12 @@ static Optional<Program> prepareShared(String& whlslSource)
 {
     Program program;
     Parser parser;
-    auto standardLibrary = String::fromUTF8(WHLSLStandardLibrary, sizeof(WHLSLStandardLibrary));
-    auto parseStdLibFailure = parser.parse(program, standardLibrary, Parser::Mode::StandardLibrary);
-    if (!ASSERT_DISABLED && parseStdLibFailure) {
-        dataLogLn("failed to parse the standard library: ", *parseStdLibFailure);
-        RELEASE_ASSERT_NOT_REACHED();
-    }
     if (auto parseFailure = parser.parse(program, whlslSource, Parser::Mode::User)) {
         if (dumpPassFailure)
             dataLogLn("failed to parse the program: ", *parseFailure);
         return WTF::nullopt;
     }
+    includeStandardLibrary(program, parser);
 
     if (!dumpASTBetweenEachPassIfNeeded(program, "AST after parsing"))
         dumpASTAfterParsingIfNeeded(program);

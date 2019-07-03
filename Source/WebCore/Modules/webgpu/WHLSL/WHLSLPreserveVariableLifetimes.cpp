@@ -189,7 +189,7 @@ public:
 
         // This works because it's illegal to call an entrypoint. Therefore, we can only
         // call functions where we've already appended this struct as its final parameter.
-        if (!callExpression.function()->isNativeFunctionDeclaration())
+        if (!callExpression.function().isNativeFunctionDeclaration())
             callExpression.arguments().append(makeStructVariableReference());
     }
 
