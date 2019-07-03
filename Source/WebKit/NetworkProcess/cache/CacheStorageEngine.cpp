@@ -299,9 +299,9 @@ void Engine::initialize(CompletionCallback&& callback)
     if (!shouldComputeSalt)
         return;
 
-    String saltPath = FileSystem::pathByAppendingComponent(m_rootPath, "salt"_s);
-    m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), saltPath = WTFMove(saltPath)] () mutable {
-        FileSystem::makeAllDirectories(m_rootPath);
+    m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), rootPath = m_rootPath.isolatedCopy()] () mutable {
+        FileSystem::makeAllDirectories(rootPath);
+        String saltPath = FileSystem::pathByAppendingComponent(rootPath, "salt"_s);
         RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), salt = readOrMakeSalt(saltPath)]() mutable {
             if (!weakThis)
                 return;
