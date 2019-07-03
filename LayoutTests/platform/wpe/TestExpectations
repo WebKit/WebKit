@@ -1348,7 +1348,6 @@ webkit.org/b/186100 css3/color-filters/color-filter-opacity.html [ ImageOnlyFail
 
 webkit.org/b/186754 legacy-animation-engine/accessibility/transformed-bounds.html [ Failure ]
 webkit.org/b/186252 legacy-animation-engine/css3/filters/backdrop/animation.html [ Timeout ]
-webkit.org/b/168426 legacy-animation-engine/imported/blink/animations/display-inline-style-adjust.html [ ImageOnlyFailure ]
 
 webkit.org/b/187044 webanimations/opacity-animation-yields-compositing-span.html [ Failure ]
 

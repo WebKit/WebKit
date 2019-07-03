@@ -3323,7 +3323,6 @@ webkit.org/b/168373 media/media-preload-no-delay-loadevent.html [ Failure ]
 
 # [GTK] Some reftest fail with only one or two pixel differences in diff image
 webkit.org/b/168426 fast/multicol/columns-on-body.html [ ImageOnlyFailure ]
-webkit.org/b/168426 legacy-animation-engine/imported/blink/animations/display-inline-style-adjust.html [ ImageOnlyFailure ]
 webkit.org/b/168426 fast/html/details-comment-crash.html [ ImageOnlyFailure ]
 webkit.org/b/168426 svg/clip-path/clip-opacity.html [ ImageOnlyFailure ]
 
