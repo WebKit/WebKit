@@ -2029,16 +2029,6 @@ void NetworkProcess::processDidTransitionToBackground()
     platformProcessDidTransitionToBackground();
 }
 
-// FIXME: We can remove this one by adapting RefCounter.
-class TaskCounter : public RefCounted<TaskCounter> {
-public:
-    explicit TaskCounter(Function<void()>&& callback) : m_callback(WTFMove(callback)) { }
-    ~TaskCounter() { m_callback(); };
-
-private:
-    Function<void()> m_callback;
-};
-
 void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shouldAcknowledgeWhenReadyToSuspend)
 {
 #if PLATFORM(IOS_FAMILY)
@@ -2047,30 +2037,30 @@ void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend 
 
     lowMemoryHandler(Critical::Yes);
 
-    RefPtr<TaskCounter> delayedTaskCounter;
+    RefPtr<CallbackAggregator> callbackAggregator;
     if (shouldAcknowledgeWhenReadyToSuspend == ShouldAcknowledgeWhenReadyToSuspend::Yes) {
-        delayedTaskCounter = adoptRef(new TaskCounter([this] {
+        callbackAggregator = CallbackAggregator::create([this] {
             RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::notifyProcessReadyToSuspend() Sending ProcessReadyToSuspend IPC message", this);
             if (parentProcessConnection())
                 parentProcessConnection()->send(Messages::NetworkProcessProxy::ProcessReadyToSuspend(), 0);
-        }));
+        });
     }
 
-    platformPrepareToSuspend([delayedTaskCounter] { });
-    platformSyncAllCookies([delayedTaskCounter] { });
+    platformPrepareToSuspend([callbackAggregator] { });
+    platformSyncAllCookies([callbackAggregator] { });
 
     for (auto& connection : m_webProcessConnections)
-        connection->cleanupForSuspension([delayedTaskCounter] { });
+        connection->cleanupForSuspension([callbackAggregator] { });
 
 #if ENABLE(SERVICE_WORKER)
     for (auto& server : m_swServers.values()) {
         ASSERT(m_swServers.get(server->sessionID()) == server.get());
-        server->startSuspension([delayedTaskCounter] { });
+        server->startSuspension([callbackAggregator] { });
     }
 #endif
 
     for (auto& session : m_networkSessions)
-        session.value->storageManager().suspend([delayedTaskCounter] { });
+        session.value->storageManager().suspend([callbackAggregator] { });
 }
 
 void NetworkProcess::processWillSuspendImminently()

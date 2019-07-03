@@ -1,3 +1,25 @@
+2019-07-03  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WTF::RefCounted<WebKit::TaskCounter>::deref()
+        https://bugs.webkit.org/show_bug.cgi?id=199453
+        <rdar://problem/51991477>
+
+        Reviewed by Youenn Fablet.
+
+        The crash was caused by StorageManager::suspend() getting called on the main thread but calling
+        its completion handler on a background queue. The completion handler was capturing a TaskCounter
+        object which is RefCounted (not ThreadSafeRefCounted).
+
+        Address the issue by making sure StorageManager::suspend() calls its completion handler on the
+        main thread. Also get rid of TaskCounter and use a WTF::CallbackAggregator instead.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::actualPrepareToSuspend):
+        (WebKit::TaskCounter::TaskCounter): Deleted.
+        (WebKit::TaskCounter::~TaskCounter): Deleted.
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::suspend):
+
 2019-07-03  Youenn Fablet  <youenn@apple.com>
 
         Make sure to cross-thread copy in StorageManager when hopping back to the main thread

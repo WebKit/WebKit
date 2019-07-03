@@ -936,11 +936,14 @@ void StorageManager::suspend(CompletionHandler<void()>&& completionHandler)
         Locker<Lock> stateLocker(m_stateLock);
         ASSERT(m_state != State::Suspended);
 
-        completionHandler();
-
-        if (m_state != State::WillSuspend)
+        if (m_state != State::WillSuspend) {
+            RunLoop::main().dispatch(WTFMove(completionHandler));
             return;
+        }
+
         m_state = State::Suspended;
+        RunLoop::main().dispatch(WTFMove(completionHandler));
+        
         while (m_state == State::Suspended)
             m_stateChangeCondition.wait(m_stateLock);
         ASSERT(m_state == State::Running);
