@@ -1,3 +1,18 @@
+2019-07-03  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] REGRESSION (r244356): Drop down menus collapse without user input - Ebay.com
+        https://bugs.webkit.org/show_bug.cgi?id=199457
+        <rdar://problem/52386563>
+
+        Reviewed by Simon Fraser.
+
+        There's a fixed, 32ms window for observing content changes after the tap is committed. r244356 introduced the fast-click behavior on form elements by omitting this fixed window and
+        dispatch the synthetic click on the target node.
+        This patch preserves the fast-click behavior, but now we stay at hover if the mouseMove event triggers a synchronous actionable visiblity change (as opposed to always proceed with click).
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleSyntheticClick):
+
 2019-07-03  Patrick Griffis  <pgriffis@igalia.com>
 
         [GTK][WPE] Remove Flatpak sandbox

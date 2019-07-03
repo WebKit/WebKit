@@ -575,7 +575,7 @@ static void dispatchSyntheticMouseMove(Frame& mainFrame, const WebCore::FloatPoi
     mainFrame.eventHandler().dispatchSyntheticMouseMove(mouseEvent);
 }
 
-static bool nodeAlwaysTriggersClick(const Node& targetNode)
+static bool nodeTriggersFastPath(const Node& targetNode)
 {
     if (!is<Element>(targetNode))
         return false;
@@ -683,9 +683,9 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
     }
 
     auto observedContentChange = contentChangeObserver.observedContentChange();
-    auto targetNodeTriggersClick = nodeAlwaysTriggersClick(nodeRespondingToClick);
+    auto targetNodeTriggersFastPath = nodeTriggersFastPath(nodeRespondingToClick);
 
-    auto continueContentObservation = !(observedContentChange == WKContentVisibilityChange || targetNodeTriggersClick);
+    auto continueContentObservation = !(observedContentChange == WKContentVisibilityChange || targetNodeTriggersFastPath);
     if (continueContentObservation) {
         // Wait for callback to completePendingSyntheticClickForContentChangeObserver() to decide whether to send the click event.
         const Seconds observationDuration = 32_ms;
@@ -698,11 +698,11 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
         return;
     }
 
-    callOnMainThread([protectedThis = makeRefPtr(this), targetNode = Ref<Node>(nodeRespondingToClick), location, modifiers, observedContentChange, targetNodeTriggersClick, pointerId] {
+    callOnMainThread([protectedThis = makeRefPtr(this), targetNode = Ref<Node>(nodeRespondingToClick), location, modifiers, observedContentChange, pointerId] {
         if (protectedThis->m_isClosed || !protectedThis->corePage())
             return;
 
-        auto shouldStayAtHoverState = observedContentChange == WKContentVisibilityChange && !targetNodeTriggersClick;
+        auto shouldStayAtHoverState = observedContentChange == WKContentVisibilityChange;
         if (shouldStayAtHoverState) {
             // The move event caused new contents to appear. Don't send synthetic click event, but just ensure that the mouse is on the most recent content.
             dispatchSyntheticMouseMove(protectedThis->corePage()->mainFrame(), location, modifiers, pointerId);

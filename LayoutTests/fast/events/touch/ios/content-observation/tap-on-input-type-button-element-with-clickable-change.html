@@ -1,7 +1,7 @@
 <!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
 <html>
 <head>
-<title>This tests the case when the tap target node is a form control element -> "fast" click.</title>
+<title>This tests the case when the tap target node is a form control element but it triggers synchronous actionable visibility change -> "fast" hover.</title>
 <script src="../../../../../resources/basic-gestures.js"></script>
 <style>
 #becomesVisible {
@@ -32,19 +32,23 @@ async function test() {
 </script>
 </head>
 <body onload="test()">
-PASS if 'clicked' text is shown below.<br>
+PASS if 'clicked' text is NOT shown below.<br>
 <input type="button" value="tap this button" id=tapthis>
 <div id=becomesVisible></div>
 <pre id=result></pre>
 <script>
 tapthis.addEventListener("mousemove", function( event ) {
     becomesVisible.style.visibility = "visible";
+    if (window.testRunner)
+        setTimeout("testRunner.notifyDone()", 50);
+}, false);
+
+becomesVisible.addEventListener("click", function( event ) {   
+    result.innerHTML = "clicked hidden";
 }, false);
 
 tapthis.addEventListener("click", function( event ) {   
     result.innerHTML = "clicked";
-    if (window.testRunner)
-        testRunner.notifyDone();
 }, false);
 </script>
 </body>
