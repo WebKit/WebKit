@@ -1,3 +1,15 @@
+2019-07-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [macOS WK2] REGRESSION (r242313): Layout Test scrollingcoordinator/mac/multiple-fixed.html is a flaky time out and image diff
+        https://bugs.webkit.org/show_bug.cgi?id=195635
+
+        Unreviewed test gardening.
+
+        Move test expectation entry to a more specific file.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2019-07-02  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Change whlsl-two-dimensional-array.html to not be flaky on AMD Radeon Pro GPUs
