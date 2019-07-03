@@ -37,6 +37,7 @@
 #include <pal/SessionID.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSProgress;
@@ -64,7 +65,7 @@ class NetworkDataTask;
 class NetworkSession;
 class WebPage;
 
-class Download : public IPC::MessageSender {
+class Download : public IPC::MessageSender, public CanMakeWeakPtr<Download> {
     WTF_MAKE_NONCOPYABLE(Download); WTF_MAKE_FAST_ALLOCATED;
 public:
     Download(DownloadManager&, DownloadID, NetworkDataTask&, const PAL::SessionID& sessionID, const String& suggestedFilename = { });

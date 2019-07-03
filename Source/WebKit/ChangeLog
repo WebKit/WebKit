@@ -1,3 +1,22 @@
+2019-07-03  Alex Christensen  <achristensen@webkit.org>
+
+        Use smarter pointers in WKDownloadProgress
+        https://bugs.webkit.org/show_bug.cgi?id=199456
+        <rdar://problem/51392926>
+
+        Reviewed by Chris Dumez.
+
+        There's still a problem related to our use of raw pointers.  Let's just not use raw pointers.
+
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::publishProgress):
+        * NetworkProcess/Downloads/cocoa/WKDownloadProgress.h:
+        * NetworkProcess/Downloads/cocoa/WKDownloadProgress.mm:
+        (-[WKDownloadProgress performCancel]):
+        (-[WKDownloadProgress initWithDownloadTask:download:URL:sandboxExtension:]):
+        (-[WKDownloadProgress progressCancelled]): Deleted.
+
 2019-07-03  Sam Weinig  <weinig@apple.com>
 
         Adopt simple structured bindings in more places
