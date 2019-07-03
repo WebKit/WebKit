@@ -1,3 +1,21 @@
+2019-07-03  Chris Dumez  <cdumez@apple.com>
+
+        Fix a couple of thread safety issues in ResourceLoadStatisticsStore
+        https://bugs.webkit.org/show_bug.cgi?id=199463
+
+        Reviewed by Alex Christensen.
+
+        The ResourceLoadStatisticsStore object is constructed / used / destroyed on a background queue.
+        It is therefore not safe to use a WeakPtr to the ResourceLoadStatisticsStore on the main thread.
+
+        The safe pattern is to have the ResourceLoadStatisticsStore capture a Ref<> of its m_store before
+        dispatching to the main thread and use this store on the main thread instead of weakThis->m_store.
+        ResourceLoadStatisticsStore's m_store is constructed / used / destroyed on the main thread.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::removeDataRecords):
+        (WebKit::ResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+
 2019-07-03  Youenn Fablet  <youenn@apple.com>
 
         Isolate CacheStorage::Engine path when hopping to a background thread
