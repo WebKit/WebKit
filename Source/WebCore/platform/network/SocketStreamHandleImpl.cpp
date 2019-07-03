@@ -82,9 +82,7 @@ static Optional<std::pair<Vector<uint8_t>, bool>> cookieDataForHandshake(const N
     if (!networkStorageSession)
         return WTF::nullopt;
     
-    String cookieDataString;
-    bool secureCookiesAccessed = false;
-    std::tie(cookieDataString, secureCookiesAccessed) = networkStorageSession->cookieRequestHeaderFieldValue(headerFieldProxy);
+    auto [cookieDataString, secureCookiesAccessed] = networkStorageSession->cookieRequestHeaderFieldValue(headerFieldProxy);
     if (cookieDataString.isEmpty())
         return std::pair<Vector<uint8_t>, bool> { { }, secureCookiesAccessed };
 

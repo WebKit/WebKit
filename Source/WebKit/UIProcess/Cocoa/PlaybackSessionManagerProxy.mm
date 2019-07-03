@@ -320,13 +320,8 @@ void PlaybackSessionManagerProxy::invalidate()
     auto contextMap = WTFMove(m_contextMap);
     m_clientCounts.clear();
 
-    for (auto& tuple : contextMap.values()) {
-        RefPtr<PlaybackSessionModelContext> model;
-        RefPtr<PlatformPlaybackSessionInterface> interface;
-        std::tie(model, interface) = tuple;
-
+    for (auto& [model, interface] : contextMap.values())
         interface->invalidate();
-    }
 }
 
 PlaybackSessionManagerProxy::ModelInterfaceTuple PlaybackSessionManagerProxy::createModelAndInterface(uint64_t contextId)

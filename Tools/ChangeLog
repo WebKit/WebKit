@@ -1,3 +1,18 @@
+2019-07-03  Sam Weinig  <weinig@apple.com>
+
+        Adopt simple structured bindings in more places
+        https://bugs.webkit.org/show_bug.cgi?id=199247
+
+        Reviewed by Alex Christensen.
+
+        Replaces simple uses of std::tie() with structured bindings. Does not touch
+        uses of std::tie() that are not initial declarations, use std::ignore or in
+        case where the binding is captured by a lambda, as structured bindings don't
+        work for those cases yet.
+
+        * TestWebKitAPI/ios/PreferredContentMode.mm:
+        (TestWebKitAPI::TEST):
+
 2019-07-03  Aakash Jain  <aakash_jain@apple.com>
 
         Unreviewed follow-up fix to r247049, default the platform to '*' when platform property is not set.

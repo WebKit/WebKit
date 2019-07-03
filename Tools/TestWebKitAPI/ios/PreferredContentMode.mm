@@ -217,30 +217,32 @@ TEST(PreferredContentMode, SetDefaultWebpagePreferences)
 {
     IPadUserInterfaceSwizzler iPadUserInterface;
 
-    RetainPtr<WKWebView> webView;
-    RetainPtr<ContentModeNavigationDelegate> delegate;
-    std::tie(webView, delegate) = setUpWebViewForPreferredContentModeTesting<WKWebView>();
-    [webView loadHTMLString:@"<pre>Foo</pre>" withPolicyDecisionHandler:^(WKNavigationAction *, WKWebpagePreferences *defaultPreferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
-        EXPECT_EQ(WKContentModeRecommended, defaultPreferences.preferredContentMode);
-        decisionHandler(WKNavigationActionPolicyAllow, defaultPreferences);
-    }];
-    [[webView navigatorUserAgent] shouldContainStrings:@"Mozilla/5.0 (Mac", @"TestWebKitAPI", nil];
-    EXPECT_WK_STREQ("MacIntel", [webView navigatorPlatform]);
+    {
+        auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>();
+        [webView loadHTMLString:@"<pre>Foo</pre>" withPolicyDecisionHandler:^(WKNavigationAction *, WKWebpagePreferences *defaultPreferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+            EXPECT_EQ(WKContentModeRecommended, defaultPreferences.preferredContentMode);
+            decisionHandler(WKNavigationActionPolicyAllow, defaultPreferences);
+        }];
+        [[webView navigatorUserAgent] shouldContainStrings:@"Mozilla/5.0 (Mac", @"TestWebKitAPI", nil];
+        EXPECT_WK_STREQ("MacIntel", [webView navigatorPlatform]);
+    }
 
-    std::tie(webView, delegate) = setUpWebViewForPreferredContentModeTesting<WKWebView>(WKContentModeDesktop);
-    [webView loadHTMLString:@"<pre>Bar</pre>" withPolicyDecisionHandler:^(WKNavigationAction *, WKWebpagePreferences *defaultPreferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
-        EXPECT_EQ(WKContentModeDesktop, defaultPreferences.preferredContentMode);
-        decisionHandler(WKNavigationActionPolicyAllow, defaultPreferences);
-    }];
-    [[webView navigatorUserAgent] shouldContainStrings:@"Mozilla/5.0 (Mac", @"TestWebKitAPI", nil];
-    EXPECT_WK_STREQ("MacIntel", [webView navigatorPlatform]);
+    {
+        auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>(WKContentModeDesktop);
+        [webView loadHTMLString:@"<pre>Bar</pre>" withPolicyDecisionHandler:^(WKNavigationAction *, WKWebpagePreferences *defaultPreferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+            EXPECT_EQ(WKContentModeDesktop, defaultPreferences.preferredContentMode);
+            decisionHandler(WKNavigationActionPolicyAllow, defaultPreferences);
+        }];
+        [[webView navigatorUserAgent] shouldContainStrings:@"Mozilla/5.0 (Mac", @"TestWebKitAPI", nil];
+        EXPECT_WK_STREQ("MacIntel", [webView navigatorPlatform]);
 
-    [webView loadHTMLString:@"<pre>Baz</pre>" withPolicyDecisionHandler:^(WKNavigationAction *, WKWebpagePreferences *defaultPreferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
-        EXPECT_EQ(WKContentModeDesktop, defaultPreferences.preferredContentMode);
-        decisionHandler(WKNavigationActionPolicyAllow, [WKWebpagePreferences preferencesWithContentMode:WKContentModeMobile]);
-    }];
-    [[webView navigatorUserAgent] shouldContainStrings:@"Mozilla/5.0 (iP", @"TestWebKitAPI", nil];
-    EXPECT_TRUE([[webView navigatorPlatform] containsString:@"iP"]);
+        [webView loadHTMLString:@"<pre>Baz</pre>" withPolicyDecisionHandler:^(WKNavigationAction *, WKWebpagePreferences *defaultPreferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+            EXPECT_EQ(WKContentModeDesktop, defaultPreferences.preferredContentMode);
+            decisionHandler(WKNavigationActionPolicyAllow, [WKWebpagePreferences preferencesWithContentMode:WKContentModeMobile]);
+        }];
+        [[webView navigatorUserAgent] shouldContainStrings:@"Mozilla/5.0 (iP", @"TestWebKitAPI", nil];
+        EXPECT_TRUE([[webView navigatorPlatform] containsString:@"iP"]);
+    }
 }
 
 TEST(PreferredContentMode, DesktopModeWithoutNavigationDelegate)
@@ -264,9 +266,7 @@ TEST(PreferredContentMode, DesktopModeOnPhone)
 {
     IPhoneUserInterfaceSwizzler iPhoneUserInterface;
 
-    RetainPtr<WKWebView> webView;
-    RetainPtr<ContentModeNavigationDelegate> delegate;
-    std::tie(webView, delegate) = setUpWebViewForPreferredContentModeTesting<WKWebView>();
+    auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>();
     [webView loadHTMLString:@"<pre>Foo</pre>" withPolicyDecisionHandler:^(WKNavigationAction *, WKWebpagePreferences *defaultPreferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         EXPECT_EQ(WKContentModeRecommended, defaultPreferences.preferredContentMode);
         decisionHandler(WKNavigationActionPolicyAllow, [WKWebpagePreferences preferencesWithContentMode:WKContentModeDesktop]);
@@ -286,9 +286,7 @@ TEST(PreferredContentMode, DesktopModeTopLevelFrameSupercedesSubframe)
 {
     IPadUserInterfaceSwizzler iPadUserInterface;
 
-    RetainPtr<WKWebView> webView;
-    RetainPtr<ContentModeNavigationDelegate> delegate;
-    std::tie(webView, delegate) = setUpWebViewForPreferredContentModeTesting<WKWebView>();
+    auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>();
 
     __block BOOL decidedPolicyForMainFrame = NO;
     __block BOOL decidedPolicyForSubFrame = NO;
@@ -314,9 +312,7 @@ TEST(PreferredContentMode, DesktopModeUsesNativeViewportByDefault)
 {
     IPadUserInterfaceSwizzler iPadUserInterface;
 
-    RetainPtr<WKWebView> webView;
-    RetainPtr<ContentModeNavigationDelegate> delegate;
-    std::tie(webView, delegate) = setUpWebViewForPreferredContentModeTesting<WKWebView>();
+    auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>();
 
     [webView loadTestPageNamed:@"simple" withPolicyDecisionHandler:makeContentModeDecisionHandler(WKContentModeDesktop)];
     EXPECT_EQ(1024, [[webView objectByEvaluatingJavaScript:@"innerWidth"] intValue]);
@@ -334,9 +330,7 @@ TEST(PreferredContentMode, CustomUserAgentOverridesDesktopContentModeUserAgent)
 {
     IPadUserInterfaceSwizzler iPadUserInterface;
 
-    RetainPtr<TestWKWebView> webView;
-    RetainPtr<ContentModeNavigationDelegate> delegate;
-    std::tie(webView, delegate) = setUpWebViewForPreferredContentModeTesting<TestWKWebView>(WKContentModeDesktop);
+    auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<TestWKWebView>(WKContentModeDesktop);
 
     NSString *customUserAgent = @"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36";
     [webView setCustomUserAgent:customUserAgent];
@@ -352,9 +346,7 @@ TEST(PreferredContentMode, DoNotAllowChangingDefaultWebpagePreferencesInDelegate
 {
     IPadUserInterfaceSwizzler iPadUserInterface;
 
-    RetainPtr<TestWKWebView> webView;
-    RetainPtr<ContentModeNavigationDelegate> delegate;
-    std::tie(webView, delegate) = setUpWebViewForPreferredContentModeTesting<TestWKWebView>(WKContentModeDesktop);
+    auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<TestWKWebView>(WKContentModeDesktop);
 
     [webView loadTestPageNamed:@"simple" withPolicyDecisionHandler:^(WKNavigationAction *, WKWebpagePreferences *defaultPreferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         EXPECT_EQ(WKContentModeDesktop, defaultPreferences.preferredContentMode);
@@ -374,9 +366,7 @@ TEST(PreferredContentMode, EffectiveContentModeOnIPad)
 {
     IPadUserInterfaceSwizzler iPadUserInterface;
 
-    RetainPtr<TestWKWebView> webView;
-    RetainPtr<ContentModeNavigationDelegate> delegate;
-    std::tie(webView, delegate) = setUpWebViewForPreferredContentModeTesting<WKWebView>();
+    auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>();
 
     [webView loadTestPageNamed:@"simple" andExpectEffectiveContentMode:WKContentModeDesktop withPolicyDecisionHandler:nil];
     [webView loadTestPageNamed:@"simple2" andExpectEffectiveContentMode:WKContentModeDesktop withPolicyDecisionHandler:makeContentModeDecisionHandler(WKContentModeDesktop)];
@@ -387,9 +377,7 @@ TEST(PreferredContentMode, EffectiveContentModeOnPhone)
 {
     IPhoneUserInterfaceSwizzler iPhoneUserInterface;
 
-    RetainPtr<TestWKWebView> webView;
-    RetainPtr<ContentModeNavigationDelegate> delegate;
-    std::tie(webView, delegate) = setUpWebViewForPreferredContentModeTesting<WKWebView>();
+    auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>();
 
     [webView loadTestPageNamed:@"simple" andExpectEffectiveContentMode:WKContentModeMobile withPolicyDecisionHandler:nil];
     [webView loadTestPageNamed:@"simple2" andExpectEffectiveContentMode:WKContentModeDesktop withPolicyDecisionHandler:makeContentModeDecisionHandler(WKContentModeDesktop)];
@@ -400,9 +388,7 @@ TEST(PreferredContentMode, RecommendedContentModeAtVariousViewWidths)
 {
     IPadUserInterfaceSwizzler iPadUserInterface;
 
-    RetainPtr<TestWKWebView> webView;
-    RetainPtr<ContentModeNavigationDelegate> delegate;
-    std::tie(webView, delegate) = setUpWebViewForPreferredContentModeTesting<WKWebView>({ }, { "TestWebKitAPI" }, CGSizeZero);
+    auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>({ }, { "TestWebKitAPI" }, CGSizeZero);
     [webView loadTestPageNamed:@"simple" andExpectEffectiveContentMode:WKContentModeDesktop withPolicyDecisionHandler:nil];
     [[webView navigatorUserAgent] shouldContainStrings:@"Mozilla/5.0 (Macintosh", @"TestWebKitAPI", nil];
 
@@ -419,20 +405,20 @@ TEST(PreferredContentMode, ApplicationNameForDesktopUserAgent)
 {
     IPadUserInterfaceSwizzler iPadUserInterface;
 
-    RetainPtr<TestWKWebView> webView;
-    RetainPtr<ContentModeNavigationDelegate> delegate;
-    std::tie(webView, delegate) = setUpWebViewForPreferredContentModeTesting<WKWebView>();
-    [webView loadTestPageNamed:@"simple" withPolicyDecisionHandler:^(WKNavigationAction *, WKWebpagePreferences *defaultPreferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
-        defaultPreferences._applicationNameForUserAgentWithModernCompatibility = @"DesktopBrowser";
-        decisionHandler(WKNavigationActionPolicyAllow, defaultPreferences);
-    }];
-    [[webView navigatorUserAgent] shouldContainStrings:@"Mozilla/5.0 (Macintosh", @"DesktopBrowser", nil];
-    EXPECT_WK_STREQ("MacIntel", [webView navigatorPlatform]);
+    {
+        auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>();
+        [webView loadTestPageNamed:@"simple" withPolicyDecisionHandler:^(WKNavigationAction *, WKWebpagePreferences *defaultPreferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+            defaultPreferences._applicationNameForUserAgentWithModernCompatibility = @"DesktopBrowser";
+            decisionHandler(WKNavigationActionPolicyAllow, defaultPreferences);
+        }];
+        [[webView navigatorUserAgent] shouldContainStrings:@"Mozilla/5.0 (Macintosh", @"DesktopBrowser", nil];
+        EXPECT_WK_STREQ("MacIntel", [webView navigatorPlatform]);
+    }
 
     {
         // Don't attempt to change the application name, but still opt into desktop-class browsing;
         // the application name should not default to "Mobile/15E148".
-        std::tie(webView, delegate) = setUpWebViewForPreferredContentModeTesting<WKWebView>(WKContentModeDesktop, { });
+        auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>(WKContentModeDesktop, { });
         [webView loadTestPageNamed:@"simple" withPolicyDecisionHandler:nil];
         NSString *userAgent = [webView navigatorUserAgent];
         EXPECT_FALSE([userAgent containsString:@"Mobile"]);
@@ -441,7 +427,7 @@ TEST(PreferredContentMode, ApplicationNameForDesktopUserAgent)
     {
         // Don't attempt to change the application name, but this time, opt into mobile content. The application
         // name should default to "Mobile/15E148".
-        std::tie(webView, delegate) = setUpWebViewForPreferredContentModeTesting<WKWebView>(WKContentModeMobile, { });
+        auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>(WKContentModeMobile, { });
         [webView loadTestPageNamed:@"simple" withPolicyDecisionHandler:nil];
         NSString *userAgent = [webView navigatorUserAgent];
         EXPECT_TRUE([userAgent containsString:@"Mobile"]);
@@ -449,7 +435,7 @@ TEST(PreferredContentMode, ApplicationNameForDesktopUserAgent)
     }
     {
         // Manually set the application name for user agent to the default value, Mobile/15E148.
-        std::tie(webView, delegate) = setUpWebViewForPreferredContentModeTesting<WKWebView>(WKContentModeDesktop, { "Mobile/15E148" });
+        auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>(WKContentModeDesktop, { "Mobile/15E148" });
         [webView loadTestPageNamed:@"simple" withPolicyDecisionHandler:nil];
         NSString *userAgent = [webView navigatorUserAgent];
         EXPECT_TRUE([userAgent containsString:@"Mobile"]);
@@ -457,7 +443,7 @@ TEST(PreferredContentMode, ApplicationNameForDesktopUserAgent)
     }
     {
         // Manually set the application name for user agent to nil.
-        std::tie(webView, delegate) = setUpWebViewForPreferredContentModeTesting<WKWebView>(WKContentModeDesktop, {{ }});
+        auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>(WKContentModeDesktop, {{ }});
         [webView loadTestPageNamed:@"simple" withPolicyDecisionHandler:nil];
         NSString *userAgent = [webView navigatorUserAgent];
         EXPECT_FALSE([userAgent containsString:@"Mobile"]);

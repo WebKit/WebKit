@@ -96,11 +96,9 @@ void PrefetchCache::storeRedirect(const URL& requestUrl, WebCore::ResourceRespon
 
 void PrefetchCache::clearExpiredEntries()
 {
-    URL requestUrl;
-    WallTime timestamp;
     auto timeout = WallTime::now();
     while (!m_sessionExpirationList.isEmpty()) {
-        std::tie(requestUrl, timestamp) = m_sessionExpirationList.first();
+        auto [requestUrl, timestamp] = m_sessionExpirationList.first();
         auto* resources = m_sessionPrefetches.get();
         ASSERT(resources);
         ASSERT(resources->contains(requestUrl));

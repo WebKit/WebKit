@@ -1199,9 +1199,7 @@ void StyleResolver::adjustRenderStyleForSiteSpecificQuirks(RenderStyle& style, c
 
 static void checkForOrientationChange(RenderStyle& style)
 {
-    FontOrientation fontOrientation;
-    NonCJKGlyphOrientation glyphOrientation;
-    std::tie(fontOrientation, glyphOrientation) = style.fontAndGlyphOrientation();
+    auto [fontOrientation, glyphOrientation] = style.fontAndGlyphOrientation();
 
     const auto& fontDescription = style.fontDescription();
     if (fontDescription.orientation() == fontOrientation && fontDescription.nonCJKGlyphOrientation() == glyphOrientation)

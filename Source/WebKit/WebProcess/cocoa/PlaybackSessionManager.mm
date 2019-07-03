@@ -175,10 +175,7 @@ PlaybackSessionManager::PlaybackSessionManager(WebPage& page)
 
 PlaybackSessionManager::~PlaybackSessionManager()
 {
-    for (auto& tuple : m_contextMap.values()) {
-        RefPtr<PlaybackSessionModelMediaElement> model;
-        RefPtr<PlaybackSessionInterfaceContext> interface;
-        std::tie(model, interface) = tuple;
+    for (auto& [model, interface] : m_contextMap.values()) {
         model->removeClient(*interface);
         model->setMediaElement(nullptr);
 
@@ -229,9 +226,7 @@ PlaybackSessionInterfaceContext& PlaybackSessionManager::ensureInterface(uint64_
 
 void PlaybackSessionManager::removeContext(uint64_t contextId)
 {
-    RefPtr<PlaybackSessionModelMediaElement> model;
-    RefPtr<PlaybackSessionInterfaceContext> interface;
-    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    auto& [model, interface] = ensureModelAndInterface(contextId);
 
     RefPtr<HTMLMediaElement> mediaElement = model->mediaElement();
     model->setMediaElement(nullptr);

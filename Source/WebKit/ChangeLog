@@ -1,3 +1,55 @@
+2019-07-03  Sam Weinig  <weinig@apple.com>
+
+        Adopt simple structured bindings in more places
+        https://bugs.webkit.org/show_bug.cgi?id=199247
+
+        Reviewed by Alex Christensen.
+
+        Replaces simple uses of std::tie() with structured bindings. Does not touch
+        uses of std::tie() that are not initial declarations, use std::ignore or in
+        case where the binding is captured by a lambda, as structured bindings don't
+        work for those cases yet.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::printSpeculativeLoadingDiagnosticMessageCounts):
+        * NetworkProcess/cache/PrefetchCache.cpp:
+        (WebKit::PrefetchCache::clearExpiredEntries):
+        * Platform/IPC/MessageReceiverMap.cpp:
+        (IPC::MessageReceiverMap::removeMessageReceiver):
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        (WebKit::PlaybackSessionManagerProxy::invalidate):
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::invalidate):
+        (WebKit::VideoFullscreenManagerProxy::requestHideAndExitFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::hasMode const):
+        (WebKit::VideoFullscreenManagerProxy::mayAutomaticallyShowVideoPictureInPicture const):
+        (WebKit::VideoFullscreenManagerProxy::isPlayingVideoInEnhancedFullscreen const):
+        (WebKit::VideoFullscreenManagerProxy::applicationDidBecomeActive):
+        (WebKit::VideoFullscreenManagerProxy::setupFullscreenWithID):
+        (WebKit::VideoFullscreenManagerProxy::didCleanupFullscreen):
+        * UIProcess/ios/SmartMagnificationController.mm:
+        (WebKit::SmartMagnificationController::zoomFactorForTargetRect):
+        (WebKit::SmartMagnificationController::didCollectGeometryForSmartMagnificationGesture):
+        (WebKit::SmartMagnificationController::magnify):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit:: const):
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation):
+        (WebKit::WebPage::performDictionaryLookupForSelection):
+        * WebProcess/cocoa/PlaybackSessionManager.mm:
+        (WebKit::PlaybackSessionManager::~PlaybackSessionManager):
+        (WebKit::PlaybackSessionManager::removeContext):
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::~VideoFullscreenManager):
+        (WebKit::VideoFullscreenManager::removeContext):
+        (WebKit::VideoFullscreenManager::enterVideoFullscreenForVideoElement):
+        (WebKit::VideoFullscreenManager::requestVideoContentLayer):
+        (WebKit::VideoFullscreenManager::didSetupFullscreen):
+        (WebKit::VideoFullscreenManager::willExitFullscreen):
+        (WebKit::VideoFullscreenManager::didEnterFullscreen):
+        (WebKit::VideoFullscreenManager::didCleanupFullscreen):
+        (WebKit::VideoFullscreenManager::setVideoLayerFrameFenced):
+
 2019-07-03  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] REGRESSION (r244356): Drop down menus collapse without user input - Ebay.com

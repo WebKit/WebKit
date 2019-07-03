@@ -202,9 +202,7 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
 
     auto& style = parentRenderer.style();
 
-    unsigned startPosition;
-    unsigned endPosition;
-    std::tie(startPosition, endPosition) = selectionStartEnd();
+    auto [startPosition, endPosition] = selectionStartEnd();
 
     unsigned fragmentStartPosition = 0;
     unsigned fragmentEndPosition = 0;

@@ -427,9 +427,7 @@ bool ContentSecurityPolicy::allowInlineScript(const String& contextURL, const WT
     if (overrideContentSecurityPolicy)
         return true;
     bool didNotifyInspector = false;
-    bool foundHashInEnforcedPolicies;
-    bool foundHashInReportOnlyPolicies;
-    std::tie(foundHashInEnforcedPolicies, foundHashInReportOnlyPolicies) = findHashOfContentInPolicies(&ContentSecurityPolicyDirectiveList::violatedDirectiveForScriptHash, scriptContent, m_hashAlgorithmsForInlineScripts);
+    auto [foundHashInEnforcedPolicies, foundHashInReportOnlyPolicies] = findHashOfContentInPolicies(&ContentSecurityPolicyDirectiveList::violatedDirectiveForScriptHash, scriptContent, m_hashAlgorithmsForInlineScripts);
     if (foundHashInEnforcedPolicies && foundHashInReportOnlyPolicies)
         return true;
     auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
@@ -453,9 +451,7 @@ bool ContentSecurityPolicy::allowInlineStyle(const String& contextURL, const WTF
         return true;
     if (m_overrideInlineStyleAllowed)
         return true;
-    bool foundHashInEnforcedPolicies;
-    bool foundHashInReportOnlyPolicies;
-    std::tie(foundHashInEnforcedPolicies, foundHashInReportOnlyPolicies) = findHashOfContentInPolicies(&ContentSecurityPolicyDirectiveList::violatedDirectiveForStyleHash, styleContent, m_hashAlgorithmsForInlineStylesheets);
+    auto [foundHashInEnforcedPolicies, foundHashInReportOnlyPolicies] = findHashOfContentInPolicies(&ContentSecurityPolicyDirectiveList::violatedDirectiveForStyleHash, styleContent, m_hashAlgorithmsForInlineStylesheets);
     if (foundHashInEnforcedPolicies && foundHashInReportOnlyPolicies)
         return true;
     auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {

@@ -85,9 +85,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     
     // Find the frame the point is over.
     HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(roundedIntPoint(floatPoint)));
-    RefPtr<Range> range;
-    NSDictionary *options;
-    std::tie(range, options) = DictionaryLookup::rangeAtHitTestResult(result);
+    auto [range, options] = DictionaryLookup::rangeAtHitTestResult(result);
     if (!range)
         return;
     
@@ -100,9 +98,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 
 void WebPage::performDictionaryLookupForSelection(Frame& frame, const VisibleSelection& selection, TextIndicatorPresentationTransition presentationTransition)
 {
-    RefPtr<Range> selectedRange;
-    NSDictionary *options;
-    std::tie(selectedRange, options) = DictionaryLookup::rangeForSelection(selection);
+    auto [selectedRange, options] = DictionaryLookup::rangeForSelection(selection);
     if (selectedRange)
         performDictionaryLookupForRange(frame, *selectedRange, options, presentationTransition);
 }

@@ -276,8 +276,7 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
             if (treatAsSpace || ideograph || forceLeadingExpansion || forceTrailingExpansion) {
                 // Distribute the run's total expansion evenly over all expansion opportunities in the run.
                 if (m_expansion) {
-                    bool expandLeft, expandRight;
-                    std::tie(expandLeft, expandRight) = expansionLocation(ideograph, treatAsSpace, m_run.ltr(), m_isAfterExpansion, forbidLeadingExpansion, forbidTrailingExpansion, forceLeadingExpansion, forceTrailingExpansion);
+                    auto [expandLeft, expandRight] = expansionLocation(ideograph, treatAsSpace, m_run.ltr(), m_isAfterExpansion, forbidLeadingExpansion, forbidTrailingExpansion, forceLeadingExpansion, forceTrailingExpansion);
                     if (expandLeft) {
                         if (m_run.ltr()) {
                             // Increase previous width

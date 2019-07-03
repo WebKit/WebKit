@@ -219,8 +219,7 @@ inline QualifiedName SVGSMILElement::constructAttributeName() const
     if (parseResult.hasException())
         return anyQName();
 
-    AtomString prefix, localName;
-    std::tie(prefix, localName) = parseResult.releaseReturnValue();
+    auto [prefix, localName] = parseResult.releaseReturnValue();
 
     if (prefix.isNull())
         return { nullAtom(), localName, nullAtom() };

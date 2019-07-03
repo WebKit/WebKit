@@ -54,9 +54,7 @@ void PromiseDeferredTimer::doWork(VM& vm)
     }
 
     while (!m_tasks.isEmpty()) {
-        JSPromiseDeferred* ticket;
-        Task task;
-        std::tie(ticket, task) = m_tasks.takeLast();
+        auto [ticket, task] = m_tasks.takeLast();
         dataLogLnIf(PromiseDeferredTimerInternal::verbose, "Doing work on promise: ", RawPointer(ticket));
 
         // We may have already canceled these promises.

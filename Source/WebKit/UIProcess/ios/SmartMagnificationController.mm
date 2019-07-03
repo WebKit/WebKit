@@ -97,10 +97,7 @@ double SmartMagnificationController::zoomFactorForTargetRect(FloatRect targetRec
 {
     // FIXME: Share some of this code with didCollectGeometryForSmartMagnificationGesture?
 
-    FloatRect adjustedTargetRect;
-    double minimumScale = viewportMinimumScale;
-    double maximumScale = viewportMaximumScale;
-    std::tie(adjustedTargetRect, minimumScale, maximumScale) = smartMagnificationTargetRectAndZoomScales(targetRect, viewportMinimumScale, viewportMaximumScale, !fitEntireRect);
+    auto [adjustedTargetRect, minimumScale, maximumScale] = smartMagnificationTargetRectAndZoomScales(targetRect, viewportMinimumScale, viewportMaximumScale, !fitEntireRect);
 
     double currentScale = [m_contentView _contentZoomScale];
     double targetScale = [m_contentView _targetContentZoomScaleForRect:adjustedTargetRect currentScale:currentScale fitEntireRect:fitEntireRect minimumScale:minimumScale maximumScale:maximumScale];
@@ -118,10 +115,7 @@ void SmartMagnificationController::didCollectGeometryForSmartMagnificationGestur
         [m_contentView _zoomToInitialScaleWithOrigin:origin];
         return;
     }
-    FloatRect adjustedTargetRect;
-    double minimumScale = viewportMinimumScale;
-    double maximumScale = viewportMaximumScale;
-    std::tie(adjustedTargetRect, minimumScale, maximumScale) = smartMagnificationTargetRectAndZoomScales(targetRect, viewportMinimumScale, viewportMaximumScale, !fitEntireRect);
+    auto [adjustedTargetRect, minimumScale, maximumScale] = smartMagnificationTargetRectAndZoomScales(targetRect, viewportMinimumScale, viewportMaximumScale, !fitEntireRect);
 
     // FIXME: Check if text selection wants to consume the double tap before we attempt magnification.
 
@@ -147,10 +141,7 @@ void SmartMagnificationController::didCollectGeometryForSmartMagnificationGestur
 
 void SmartMagnificationController::magnify(FloatPoint origin, FloatRect targetRect, FloatRect visibleContentRect, double viewportMinimumScale, double viewportMaximumScale)
 {
-    FloatRect adjustedTargetRect;
-    double maximumScale = viewportMaximumScale;
-    double minimumScale = viewportMinimumScale;
-    std::tie(adjustedTargetRect, minimumScale, maximumScale) = smartMagnificationTargetRectAndZoomScales(targetRect, viewportMinimumScale, viewportMaximumScale, true);
+    auto [adjustedTargetRect, minimumScale, maximumScale] = smartMagnificationTargetRectAndZoomScales(targetRect, viewportMinimumScale, viewportMaximumScale, true);
 
     [m_contentView _zoomToRect:adjustedTargetRect withOrigin:origin fitEntireRect:NO minimumScale:minimumScale maximumScale:maximumScale minimumScrollDistance:0];
 }

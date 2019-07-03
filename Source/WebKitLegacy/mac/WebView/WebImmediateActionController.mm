@@ -558,9 +558,7 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
     if (!frame)
         return nil;
 
-    RefPtr<Range> dictionaryRange;
-    NSDictionary *options;
-    std::tie(dictionaryRange, options) = DictionaryLookup::rangeAtHitTestResult(_hitTestResult);
+    auto [dictionaryRange, options] = DictionaryLookup::rangeAtHitTestResult(_hitTestResult);
     if (!dictionaryRange)
         return nil;
 

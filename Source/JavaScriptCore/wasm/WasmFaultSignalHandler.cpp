@@ -77,10 +77,7 @@ static SignalAction trapHandler(Signal, SigInfo& sigInfo, PlatformRegisters& con
         if (faultedInActiveFastMemory) {
             dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "found active fast memory for faulting address");
             LockHolder locker(codeLocationsLock);
-            for (auto range : codeLocations.get()) {
-                void* start;
-                void* end;
-                std::tie(start, end) = range;
+            for (auto [start, end] : codeLocations.get()) {
                 dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "function start: ", RawPointer(start), " end: ", RawPointer(end));
                 if (start <= faultingInstruction && faultingInstruction < end) {
                     dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "found match");

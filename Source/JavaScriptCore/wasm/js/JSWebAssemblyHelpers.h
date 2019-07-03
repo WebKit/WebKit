@@ -83,9 +83,7 @@ ALWAYS_INLINE std::pair<const uint8_t*, size_t> getWasmBufferFromValue(ExecState
 ALWAYS_INLINE Vector<uint8_t> createSourceBufferFromValue(VM& vm, ExecState* exec, JSValue value)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    const uint8_t* data;
-    size_t byteSize;
-    std::tie(data, byteSize) = getWasmBufferFromValue(exec, value);
+    auto [data, byteSize] = getWasmBufferFromValue(exec, value);
     RETURN_IF_EXCEPTION(throwScope, Vector<uint8_t>());
 
     Vector<uint8_t> result;

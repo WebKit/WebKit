@@ -80,22 +80,22 @@ void MessageReceiverMap::removeMessageReceiver(StringReference messageReceiverNa
 void MessageReceiverMap::removeMessageReceiver(MessageReceiver& messageReceiver)
 {
     Vector<StringReference> globalReceiversToRemove;
-    for (auto& nameAndReceiver : m_globalMessageReceivers) {
-        if (nameAndReceiver.value == &messageReceiver)
-            globalReceiversToRemove.append(nameAndReceiver.key);
+    for (auto& [name, receiver] : m_globalMessageReceivers) {
+        if (receiver == &messageReceiver)
+            globalReceiversToRemove.append(name);
     }
 
     for (auto& globalReceiverToRemove : globalReceiversToRemove)
         removeMessageReceiver(globalReceiverToRemove);
 
     Vector<std::pair<StringReference, uint64_t>> receiversToRemove;
-    for (auto& nameAndIdAndReceiver : m_messageReceivers) {
-        if (nameAndIdAndReceiver.value == &messageReceiver)
-            receiversToRemove.append(std::make_pair(nameAndIdAndReceiver.key.first, nameAndIdAndReceiver.key.second));
+    for (auto& [nameAndDestinationID, receiver] : m_messageReceivers) {
+        if (receiver == &messageReceiver)
+            receiversToRemove.append(std::make_pair(nameAndDestinationID.first, nameAndDestinationID.second));
     }
 
-    for (auto& receiverToRemove : receiversToRemove)
-        removeMessageReceiver(receiverToRemove.first, receiverToRemove.second);
+    for (auto& [name, destinationID] : receiversToRemove)
+        removeMessageReceiver(name, destinationID);
 }
 
 void MessageReceiverMap::invalidate()

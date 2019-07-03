@@ -59,8 +59,8 @@ static HashCountedSet<String>& allSpeculativeLoadingDiagnosticMessages()
 static void printSpeculativeLoadingDiagnosticMessageCounts()
 {
     LOG(NetworkCacheSpeculativePreloading, "-- Speculative loading statistics --");
-    for (auto& pair : allSpeculativeLoadingDiagnosticMessages())
-        LOG(NetworkCacheSpeculativePreloading, "%s: %u", pair.key.utf8().data(), pair.value);
+    for (auto& [message, count] : allSpeculativeLoadingDiagnosticMessages())
+        LOG(NetworkCacheSpeculativePreloading, "%s: %u", message.utf8().data(), count);
 }
 #endif
 

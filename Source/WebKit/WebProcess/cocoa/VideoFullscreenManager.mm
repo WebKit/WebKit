@@ -122,11 +122,7 @@ VideoFullscreenManager::VideoFullscreenManager(WebPage& page, PlaybackSessionMan
 
 VideoFullscreenManager::~VideoFullscreenManager()
 {
-    for (auto& tuple : m_contextMap.values()) {
-        RefPtr<VideoFullscreenModelVideoElement> model;
-        RefPtr<VideoFullscreenInterfaceContext> interface;
-        std::tie(model, interface) = tuple;
-
+    for (auto& [model, interface] : m_contextMap.values()) {
         model->setVideoElement(nullptr);
         model->removeClient(*interface);
 
@@ -180,9 +176,7 @@ VideoFullscreenInterfaceContext& VideoFullscreenManager::ensureInterface(uint64_
 
 void VideoFullscreenManager::removeContext(uint64_t contextId)
 {
-    RefPtr<VideoFullscreenModelVideoElement> model;
-    RefPtr<VideoFullscreenInterfaceContext> interface;
-    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    auto [model, interface] = ensureModelAndInterface(contextId);
 
     m_playbackSessionManager->removeClientForContext(contextId);
 
@@ -250,9 +244,7 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
     UNUSED_PARAM(addResult);
     ASSERT(addResult.iterator->value == contextId);
 
-    RefPtr<VideoFullscreenModelVideoElement> model;
-    RefPtr<VideoFullscreenInterfaceContext> interface;
-    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    auto [model, interface] = ensureModelAndInterface(contextId);
     addClientForContext(contextId);
     if (!interface->layerHostingContext())
         interface->setLayerHostingContext(LayerHostingContext::createForExternalHostingProcess());
@@ -369,9 +361,7 @@ void VideoFullscreenManager::requestUpdateInlineRect(uint64_t contextId)
 
 void VideoFullscreenManager::requestVideoContentLayer(uint64_t contextId)
 {
-    RefPtr<VideoFullscreenModelVideoElement> model;
-    RefPtr<VideoFullscreenInterfaceContext> interface;
-    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    auto [model, interface] = ensureModelAndInterface(contextId);
 
     CALayer* videoLayer = interface->layerHostingContext()->rootLayer();
 
@@ -406,9 +396,7 @@ void VideoFullscreenManager::didSetupFullscreen(uint64_t contextId)
     LOG(Fullscreen, "VideoFullscreenManager::didSetupFullscreen(%p, %x)", this, contextId);
 
     ASSERT(m_page);
-    RefPtr<VideoFullscreenModelVideoElement> model;
-    RefPtr<VideoFullscreenInterfaceContext> interface;
-    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    auto [model, interface] = ensureModelAndInterface(contextId);
 
 #if PLATFORM(IOS_FAMILY)
     dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), this, contextId] {
@@ -431,9 +419,7 @@ void VideoFullscreenManager::willExitFullscreen(uint64_t contextId)
 {
     LOG(Fullscreen, "VideoFullscreenManager::willExitFullscreen(%p, %x)", this, contextId);
 
-    RefPtr<VideoFullscreenModelVideoElement> model;
-    RefPtr<VideoFullscreenInterfaceContext> interface;
-    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    auto [model, interface] = ensureModelAndInterface(contextId);
 
     RefPtr<HTMLVideoElement> videoElement = model->videoElement();
     if (!videoElement)
@@ -450,9 +436,7 @@ void VideoFullscreenManager::didEnterFullscreen(uint64_t contextId)
 {
     LOG(Fullscreen, "VideoFullscreenManager::didEnterFullscreen(%p, %x)", this, contextId);
 
-    RefPtr<VideoFullscreenModelVideoElement> model;
-    RefPtr<VideoFullscreenInterfaceContext> interface;
-    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    auto [model, interface] = ensureModelAndInterface(contextId);
 
     interface->setIsAnimating(false);
     interface->setIsFullscreen(false);
@@ -510,9 +494,7 @@ void VideoFullscreenManager::didCleanupFullscreen(uint64_t contextId)
 {
     LOG(Fullscreen, "VideoFullscreenManager::didCleanupFullscreen(%p, %x)", this, contextId);
 
-    RefPtr<VideoFullscreenModelVideoElement> model;
-    RefPtr<VideoFullscreenInterfaceContext> interface;
-    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    auto [model, interface] = ensureModelAndInterface(contextId);
 
     if (interface->layerHostingContext()) {
         interface->layerHostingContext()->setRootLayer(nullptr);
@@ -572,9 +554,7 @@ void VideoFullscreenManager::setVideoLayerFrameFenced(uint64_t contextId, WebCor
         return;
     }
 
-    RefPtr<VideoFullscreenModelVideoElement> model;
-    RefPtr<VideoFullscreenInterfaceContext> interface;
-    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    auto [model, interface] = ensureModelAndInterface(contextId);
 
     if (std::isnan(bounds.x()) || std::isnan(bounds.y()) || std::isnan(bounds.width()) || std::isnan(bounds.height())) {
         auto videoRect = inlineVideoFrame(*model->videoElement());

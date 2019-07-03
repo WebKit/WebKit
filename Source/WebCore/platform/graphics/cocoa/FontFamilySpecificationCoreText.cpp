@@ -110,8 +110,7 @@ FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fo
 
         font = preparePlatformFont(font.get(), fontDescription, nullptr, nullptr, { });
 
-        bool syntheticBold, syntheticOblique;
-        std::tie(syntheticBold, syntheticOblique) = computeNecessarySynthesis(fontForSynthesisComputation.get(), fontDescription).boldObliquePair();
+        auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(fontForSynthesisComputation.get(), fontDescription).boldObliquePair();
 
         return std::make_unique<FontPlatformData>(font.get(), size, false, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
     }).iterator->value;
