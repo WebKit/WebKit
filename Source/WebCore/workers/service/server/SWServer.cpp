@@ -83,7 +83,7 @@ SWServer::~SWServer()
 SWServerWorker* SWServer::workerByID(ServiceWorkerIdentifier identifier) const
 {
     auto* worker = SWServerWorker::existingWorkerForIdentifier(identifier);
-    ASSERT(!worker || &worker->server() == this);
+    ASSERT(!worker || worker->server() == this);
     return worker;
 }
 
@@ -177,7 +177,7 @@ void SWServer::removeRegistration(const ServiceWorkerRegistrationKey& key)
 
     m_originStore->remove(topOrigin);
     if (m_registrationStore)
-        m_registrationStore->removeRegistration(*registration);
+        m_registrationStore->removeRegistration(key);
 }
 
 Vector<ServiceWorkerRegistrationData> SWServer::getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL)

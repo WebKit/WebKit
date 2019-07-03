@@ -104,21 +104,35 @@ void RegistrationStore::endSuspension()
 
 void RegistrationStore::updateRegistration(const ServiceWorkerContextData& data)
 {
+    ASSERT(isMainThread());
+    ASSERT(!data.registration.key.isEmpty());
+    if (data.registration.key.isEmpty())
+        return;
+
     m_updatedRegistrations.set(data.registration.key, data);
     scheduleDatabasePushIfNecessary();
 }
 
-void RegistrationStore::removeRegistration(SWServerRegistration& registration)
+void RegistrationStore::removeRegistration(const ServiceWorkerRegistrationKey& key)
 {
+    ASSERT(isMainThread());
+    ASSERT(!key.isEmpty());
+    if (key.isEmpty())
+        return;
+
     ServiceWorkerContextData contextData;
-    contextData.registration.key = registration.key();
-    m_updatedRegistrations.set(registration.key(), WTFMove(contextData));
+    contextData.registration.key = key;
+    m_updatedRegistrations.set(key, WTFMove(contextData));
     scheduleDatabasePushIfNecessary();
 }
 
-void RegistrationStore::addRegistrationFromDatabase(ServiceWorkerContextData&& context)
+void RegistrationStore::addRegistrationFromDatabase(ServiceWorkerContextData&& data)
 {
-    m_server.addRegistrationFromStore(WTFMove(context));
+    ASSERT(!data.registration.key.isEmpty());
+    if (data.registration.key.isEmpty())
+        return;
+
+    m_server.addRegistrationFromStore(WTFMove(data));
 }
 
 void RegistrationStore::databaseFailedToOpen()

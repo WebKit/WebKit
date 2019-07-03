@@ -62,7 +62,7 @@ struct ServiceWorkerFetchResult;
 struct ServiceWorkerRegistrationData;
 class Timer;
 
-class SWServer {
+class SWServer : public CanMakeWeakPtr<SWServer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     class Connection : public CanMakeWeakPtr<Connection> {

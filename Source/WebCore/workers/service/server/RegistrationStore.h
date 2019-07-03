@@ -57,7 +57,7 @@ public:
 
     // Callbacks from the SWServer
     void updateRegistration(const ServiceWorkerContextData&);
-    void removeRegistration(SWServerRegistration&);
+    void removeRegistration(const ServiceWorkerRegistrationKey&);
 
     // Callbacks from the database
     void addRegistrationFromDatabase(ServiceWorkerContextData&&);

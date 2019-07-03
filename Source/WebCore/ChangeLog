@@ -1,3 +1,52 @@
+2019-07-03  Youenn Fablet  <youenn@apple.com>
+
+        Strengthen updating/removing of registrations from the database
+        https://bugs.webkit.org/show_bug.cgi?id=199450
+        rdar://problem/51891395
+
+        Reviewed by Chris Dumez.
+
+        SWServerWorker is ref counted and has a ref to its SWServer.
+        There is thus a possibility for SWServerWorker to live longer than its SWServer.
+        To mitigate this, have SWServerWorker use a WeakPtr<SWServer> and
+        check whether SWServer is null when receiving messages from WebProcess.
+        Make also sure that RegistrationStore updated registration map does not get corrupted by checking
+        the registration keys explicitly.
+
+        Covered by existing tests.
+
+        * workers/service/ServiceWorkerRegistrationKey.h:
+        (WebCore::ServiceWorkerRegistrationKey::operator!= const):
+        (WebCore::ServiceWorkerRegistrationKey::isEmpty const):
+        * workers/service/server/RegistrationStore.cpp:
+        (WebCore::RegistrationStore::updateRegistration):
+        (WebCore::RegistrationStore::removeRegistration):
+        (WebCore::RegistrationStore::addRegistrationFromDatabase):
+        * workers/service/server/RegistrationStore.h:
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::workerByID const):
+        (WebCore::SWServer::removeRegistration):
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::SWServerWorker):
+        (WebCore::m_scriptResourceMap):
+        (WebCore::SWServerWorker::contextData const):
+        (WebCore::SWServerWorker::terminate):
+        (WebCore::SWServerWorker::scriptContextFailedToStart):
+        (WebCore::SWServerWorker::scriptContextStarted):
+        (WebCore::SWServerWorker::didFinishInstall):
+        (WebCore::SWServerWorker::didFinishActivation):
+        (WebCore::SWServerWorker::contextTerminated):
+        (WebCore::SWServerWorker::findClientByIdentifier const):
+        (WebCore::SWServerWorker::matchAll):
+        (WebCore::SWServerWorker::userAgent const):
+        (WebCore::SWServerWorker::claim):
+        (WebCore::SWServerWorker::skipWaiting):
+        (WebCore::SWServerWorker::setHasPendingEvents):
+        (WebCore::SWServerWorker::setState):
+        * workers/service/server/SWServerWorker.h:
+        (WebCore::SWServerWorker::server):
+
 2019-07-03  Sam Weinig  <weinig@apple.com>
 
         Adopt simple structured bindings in more places
