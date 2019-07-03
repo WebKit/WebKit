@@ -195,7 +195,6 @@ UIProcess/glib/WebProcessProxyGLib.cpp
 
 UIProcess/Launcher/glib/ProcessLauncherGLib.cpp
 UIProcess/Launcher/glib/BubblewrapLauncher.cpp
-UIProcess/Launcher/glib/FlatpakLauncher.cpp
 
 UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp
 

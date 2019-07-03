@@ -1,3 +1,26 @@
+2019-07-03  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK][WPE] Remove Flatpak sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=199416
+
+        Reviewed by Michael Catanzaro.
+
+        The flatpak-spawn based sandbox was only a proof of concept and
+        lacks flexibility for our needs so we ended up using it with very
+        permissive permissions and it still imposed limitations that our main
+        bubblewrap sandbox didn't have.
+
+        So in order to get as many applications using the sandbox as possible we
+        will just remove this for now and focus on bubblewrap. At some point
+        it may be possible to improve flatpak-spawn to fit our needs.
+
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/Launcher/glib/FlatpakLauncher.cpp: Removed.
+        * UIProcess/Launcher/glib/FlatpakLauncher.h: Removed.
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2019-07-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r246616.

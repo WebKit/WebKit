@@ -29,7 +29,6 @@
 
 #include "BubblewrapLauncher.h"
 #include "Connection.h"
-#include "FlatpakLauncher.h"
 #include "ProcessExecutablePath.h"
 #include <errno.h>
 #include <fcntl.h>
@@ -50,21 +49,14 @@ static void childSetupFunction(gpointer userData)
     close(socket);
 }
 
-#if OS(LINUX)
+#if ENABLE(BUBBLEWRAP_SANDBOX)
 static bool isInsideFlatpak()
 {
     static int ret = -1;
     if (ret != -1)
         return ret;
 
-    GUniquePtr<GKeyFile> infoFile(g_key_file_new());
-    if (!g_key_file_load_from_file(infoFile.get(), "/.flatpak-info", G_KEY_FILE_NONE, nullptr)) {
-        ret = false;
-        return ret;
-    }
-
-    // If we are in a `flatpak build` session we cannot launch ourselves since we aren't installed.
-    ret = !g_key_file_get_boolean(infoFile.get(), "Instance", "build", nullptr);
+    ret = g_file_test("/.flatpak-info", G_FILE_TEST_EXISTS);
     return ret;
 }
 #endif
@@ -136,19 +128,17 @@ void ProcessLauncher::launchProcess()
 
     GUniqueOutPtr<GError> error;
     GRefPtr<GSubprocess> process;
-#if OS(LINUX)
+
+#if ENABLE(BUBBLEWRAP_SANDBOX)
     const char* sandboxEnv = g_getenv("WEBKIT_FORCE_SANDBOX");
     bool sandboxEnabled = m_launchOptions.extraInitializationData.get("enable-sandbox") == "true";
 
     if (sandboxEnv)
         sandboxEnabled = !strcmp(sandboxEnv, "1");
 
-    if (sandboxEnabled && isInsideFlatpak())
-        process = flatpakSpawn(launcher.get(), m_launchOptions, argv, socketPair.client, &error.outPtr());
-#if ENABLE(BUBBLEWRAP_SANDBOX)
-    else if (sandboxEnabled)
+    // You cannot use bubblewrap within Flatpak so lets ensure it never happens.
+    if (sandboxEnabled && !isInsideFlatpak())
         process = bubblewrapSpawn(launcher.get(), m_launchOptions, argv, &error.outPtr());
-#endif
     else
 #endif
         process = adoptGRef(g_subprocess_launcher_spawnv(launcher.get(), argv, &error.outPtr()));
