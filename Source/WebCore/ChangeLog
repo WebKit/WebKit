@@ -1,3 +1,12 @@
+2019-07-03  Konstantin Tokarev  <annulen@yandex.ru>
+
+        RenderLayerCompositor.cpp should include RenderImage.h
+        https://bugs.webkit.org/show_bug.cgi?id=199478
+
+        Reviewed by Michael Catanzaro.
+
+        * rendering/RenderLayerCompositor.cpp:
+
 2019-07-03  Robin Morisset  <rmorisset@apple.com>
 
         [WHLSL] Remove the phase resolveCallsInFunctions
