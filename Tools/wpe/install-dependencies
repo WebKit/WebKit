@@ -83,6 +83,7 @@ function installDependenciesWithApt {
         libtasn1-6-dev \
         libtool \
         libwebp-dev \
+        libwoff-dev \
         libxml2-dev \
         libxslt1-dev \
         ninja-build \
@@ -188,7 +189,8 @@ function installDependenciesWithPacman {
         sqlite \
         texinfo \
         which \
-        zlib"
+        zlib \
+        woff2"
 
     # These are dependencies necessary for running tests.
     # Note: apache-mod_bw, ruby-json and ruby-highline are available in the AUR
@@ -341,6 +343,7 @@ function installDependenciesWithDnf {
         pulseaudio-libs-devel \
         python3-setuptools \
         wayland-devel \
+        woff2-devel \
         yasm"
 
     # These are dependencies necessary for using webkit-patch

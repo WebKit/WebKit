@@ -7,7 +7,6 @@
 
   <metamodule id="webkitwpe-testing-dependencies">
     <dependencies>
-      <dep package="brotli"/>
       <dep package="glib"/>
       <dep package="libsoup"/>
       <dep package="cairo"/>
@@ -18,7 +17,6 @@
       <dep package="harfbuzz"/>
       <dep package="icu"/>
       <dep package="webkit-gstreamer-testing-dependencies"/>
-      <dep package="woff2"/>
       <dep package="libwpe"/>
       <dep package="wpebackend-fdo"/>
       <dep package="libgpg-error"/>
@@ -55,17 +53,6 @@
       href="https://wpewebkit.org/releases/"/>
   <repository type="tarball" name="webkitgtk-jhbuild-mirror"
       href="http://webkitgtk.org/jhbuild_mirror/"/>
-
-  <cmake id="brotli">
-    <branch repo="github.com" module="google/brotli.git" checkoutdir="brotli" tag="v1.0.1"/>
-  </cmake>
-
-  <cmake id="woff2">
-    <branch repo="github.com" module="google/woff2.git" checkoutdir="woff2" tag="v1.0.2"/>
-    <dependencies>
-      <dep package="brotli"/>
-    </dependencies>
-  </cmake>
 
   <autotools id="libffi" autogen-sh="configure">
     <branch module="libffi/libffi-3.0.10.tar.gz" version="3.0.10"

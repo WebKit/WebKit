@@ -7,8 +7,6 @@
 
   <metamodule id="webkitgtk-testing-dependencies">
     <dependencies>
-      <dep package="brotli"/>
-      <dep package="woff2"/>
       <dep package="cairo"/>
       <dep package="fonts"/>
       <dep package="dicts"/>
@@ -84,17 +82,6 @@
       href="https://www.gnupg.org/ftp/gcrypt/"/>
   <repository type="tarball" name="wpewebkit"
       href="https://wpewebkit.org/releases/"/>
-
-  <cmake id="brotli">
-    <branch repo="github.com" module="google/brotli.git" checkoutdir="brotli" tag="v1.0.5"/>
-  </cmake>
-
-  <cmake id="woff2">
-    <branch repo="github.com" module="google/woff2.git" checkoutdir="woff2" tag="v1.0.2"/>
-    <dependencies>
-      <dep package="brotli"/>
-    </dependencies>
-  </cmake>
 
   <autotools id="cairo"
              autogen-sh="configure">

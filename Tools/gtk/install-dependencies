@@ -139,6 +139,7 @@ function installDependenciesWithApt {
         libvpx-dev \
         libupower-glib-dev \
         libwebp-dev \
+        libwoff-dev \
         libxcomposite-dev \
         libxt-dev \
         libxtst-dev \
@@ -313,7 +314,8 @@ function installDependenciesWithPacman {
         ruby \
         util-linux \
         xorg-font-utils \
-        wayland"
+        wayland \
+        woff2"
 
     # These are dependencies necessary for running tests.
     # Note: apache-mod_bw, ruby-json, and ruby-highline are available in the AUR
@@ -476,7 +478,8 @@ function installDependenciesWithDnf {
         redhat-rpm-config \
         ruby \
         sqlite-devel \
-        upower-devel"
+        upower-devel \
+        woff2-devel"
 
     # These are dependencies necessary for running tests.
     packages="$packages \
