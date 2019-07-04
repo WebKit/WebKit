@@ -78,7 +78,12 @@ CSSAnimationControllerPrivate::CSSAnimationControllerPrivate(Frame& frame)
 {
 }
 
-CSSAnimationControllerPrivate::~CSSAnimationControllerPrivate() = default;
+CSSAnimationControllerPrivate::~CSSAnimationControllerPrivate()
+{
+    // We need to explicitly clear the composite animations here because the
+    // destructor of CompositeAnimation will call members of this class back.
+    m_compositeAnimations.clear();
+}
 
 CompositeAnimation& CSSAnimationControllerPrivate::ensureCompositeAnimation(Element& element)
 {
