@@ -454,16 +454,15 @@
       "type": "Try_Userpass",
       "name": "try",
       "port": 5555,
-      "builderNames": ["Bindings-Tests-EWS", "iOS-12-Build-EWS", "iOS-12-Simulator-Build-EWS",
-                       "macOS-High-Sierra-Release-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS"]
+      "builderNames": ["Bindings-Tests-EWS", "GTK-Webkit2-EWS", "iOS-12-Build-EWS", "iOS-12-Simulator-Build-EWS",
+                       "macOS-High-Sierra-Release-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WPE-EWS"]
     },
     {
       "type": "Try_Userpass",
       "name": "disabled",
       "port": 5556,
-      "builderNames": ["GTK-Webkit2-EWS", "JSC-Tests-EWS",
-                       "iOS-12-Simulator-WK2-Tests-EWS", "macOS-High-Sierra-Release-WK2-Tests-EWS",  "macOS-High-Sierra-Release-WK1-Tests-EWS",
-                       "macOS-High-Sierra-Debug-Build-EWS", "Style-EWS", "WinCairo-EWS", "Windows-EWS", "WPE-EWS"]
+      "builderNames": ["JSC-Tests-EWS", "iOS-12-Simulator-WK2-Tests-EWS", "macOS-High-Sierra-Release-WK2-Tests-EWS",
+                       "macOS-High-Sierra-Release-WK1-Tests-EWS", "macOS-High-Sierra-Debug-Build-EWS", "Style-EWS", "WinCairo-EWS", "Windows-EWS"]
     },
     {
       "type": "Triggerable",

@@ -671,7 +671,16 @@ class CompileWebKit(shell.Compile):
     def evaluateCommand(self, cmd):
         if cmd.didFail():
             self.setProperty('patchFailedToBuild', True)
-            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(), CompileWebKitToT(), AnalyzeCompileWebKitResults()])
+            steps_to_add = [UnApplyPatchIfRequired()]
+            platform = self.getProperty('platform')
+            if platform == 'wpe':
+                steps_to_add.append(InstallWpeDependencies())
+            elif platform == 'gtk':
+                steps_to_add.append(InstallGtkDependencies())
+            steps_to_add.append(CompileWebKitToT())
+            steps_to_add.append(AnalyzeCompileWebKitResults())
+            # Using a single addStepsAfterCurrentStep because of https://github.com/buildbot/buildbot/issues/4874
+            self.build.addStepsAfterCurrentStep(steps_to_add)
         else:
             triggers = self.getProperty('triggers', None)
             if triggers or not self.skipUpload:

@@ -1,3 +1,18 @@
+2019-07-03  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Enable WPE and GTK queues on new EWS
+        https://bugs.webkit.org/show_bug.cgi?id=199234
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/config.json: Enabled the triggers for GTK and WPE builders.
+        * BuildSlaveSupport/ews-build/factories.py: Added required build steps for GTKFactory and WPEFactory.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CompileWebKit.evaluateCommand): Added InstallGtkDependencies/InstallWpeDependencies step before Compiling WebKit without patch.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble): Enable gtk and wpe status-bubbles.
+
 2019-07-03  Sihui Liu  <sihui_liu@apple.com>
 
         Only allow fetching and removing session credentials from WebsiteDataStore

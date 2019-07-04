@@ -572,6 +572,36 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Compiled WebKit')
         return self.runStep()
 
+    def test_success_gtk(self):
+        self.setupStep(CompileWebKit())
+        self.setProperty('platform', 'gtk')
+        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['perl', 'Tools/Scripts/build-webkit', '--release', '--gtk'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Compiled WebKit')
+        return self.runStep()
+
+    def test_success_wpe(self):
+        self.setupStep(CompileWebKit())
+        self.setProperty('platform', 'wpe')
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['perl', 'Tools/Scripts/build-webkit', '--release', '--wpe'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Compiled WebKit')
+        return self.runStep()
+
     def test_failure(self):
         self.setupStep(CompileWebKit())
         self.setProperty('fullPlatform', 'mac-sierra')
