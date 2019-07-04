@@ -36,11 +36,14 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TinyLRUCache.h>
-#include <wtf/glib/GLibUtilities.h>
-#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
+
+#if PLATFORM(GTK)
+#include <wtf/glib/GLibUtilities.h>
+#include <wtf/glib/GUniquePtr.h>
+#endif
 
 namespace WebCore {
 
@@ -85,6 +88,8 @@ static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<Atom
 }
 
 #if ENABLE(DEVELOPER_MODE)
+
+#if PLATFORM(GTK)
 static CString topLevelPath()
 {
     if (const char* topLevelDirectory = g_getenv("WEBKIT_TOP_LEVEL"))
@@ -108,6 +113,7 @@ static CString webkitBuildDirectory()
     GUniquePtr<char> outputDir(g_build_filename(topLevelPath().data(), "WebKitBuild", nullptr));
     return outputDir.get();
 }
+#endif // PLATFORM(GTK)
 
 static void scanTestDictionariesDirectoryIfNecessary(HashMap<AtomString, Vector<String>>& availableLocales)
 {

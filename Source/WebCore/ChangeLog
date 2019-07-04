@@ -1,3 +1,14 @@
+2019-07-04  Konstantin Tokarev  <annulen@yandex.ru>
+
+        HyphenationLibHyphen: Include GLib-related headers only for PLATFORM(GTK)
+        https://bugs.webkit.org/show_bug.cgi?id=199469
+
+        Reviewed by Michael Catanzaro.
+
+        Also added compile guard for a couple of functions used only in GTK port.
+
+        * platform/text/hyphen/HyphenationLibHyphen.cpp:
+
 2019-07-03  Eric Carlson  <eric.carlson@apple.com>
 
         [MSE] Add more debug and error logging
