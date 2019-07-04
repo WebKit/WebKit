@@ -1,3 +1,13 @@
+2019-07-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [webkitpy] test-webkitpy is broken on Linux since r246662
+        https://bugs.webkit.org/show_bug.cgi?id=199493
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitpy/test/main.py:
+        (_supports_building_and_running_lldb_tests): Add a check for None before calling startswith().
+
 2019-07-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Not longer needed to build woff2 on the JHBuild

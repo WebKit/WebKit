@@ -104,7 +104,10 @@ def main():
 def _supports_building_and_running_lldb_tests():
     # FIXME: Remove when test-lldb is in its own script
     # https://bugs.webkit.org/show_bug.cgi?id=187916
-    return not _host.platform.build_version().startswith('19A')
+    build_version = _host.platform.build_version()
+    if build_version is None:
+        return False
+    return not build_version.startswith('19A')
 
 
 def _print_results_as_json(stream, all_test_names, failures, errors):
