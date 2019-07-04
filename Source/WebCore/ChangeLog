@@ -1,3 +1,32 @@
+2019-07-03  Jer Noble  <jer.noble@apple.com>
+
+        HTMLMediaElement can hold onto display sleep assertion while process is suspended.
+        https://bugs.webkit.org/show_bug.cgi?id=199471
+        <rdar://problem/52124320>
+
+        If the WebContent process is suspended before HTMLMediaElement gets a callback telling it
+        that the MediaPlayer has stopped playing, the SleepDisabler may stay set (and hold a display
+        or system sleep assertion) for the entire duration the process is suspended, causing excess
+        power drain.
+
+        Add a PlatformMediaSessionClient method (and an implementation in HTMLMediaElement) which will
+        be called during the preperation for process suspension, and in this callback, clear the
+        SleepDisabler token.
+
+        Reviewed by Eric Carlson.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::shouldDisableSleep const):
+        (WebCore::HTMLMediaElement::processIsSuspendedChanged):
+        * html/HTMLMediaElement.h:
+        * platform/audio/PlatformMediaSession.h:
+        (WebCore::PlatformMediaSessionClient::processIsSuspendedChanged):
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::processWillSuspend):
+        (WebCore::PlatformMediaSessionManager::processDidResume):
+        * platform/audio/PlatformMediaSessionManager.h:
+        (WebCore::PlatformMediaSessionManager::processIsSuspended const):
+
 2019-07-03  Jonathan Bedard  <jbedard@apple.com>
 
         [Catalina] Enable WebKit build

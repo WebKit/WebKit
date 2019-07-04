@@ -6923,6 +6923,9 @@ HTMLMediaElement::SleepType HTMLMediaElement::shouldDisableSleep() const
         return SleepType::System;
 #endif
 
+    if (PlatformMediaSessionManager::sharedManager().processIsSuspended())
+        return SleepType::None;
+
     bool shouldBeAbleToSleep = !hasVideo() || !hasAudio();
 #if ENABLE(MEDIA_STREAM)
     // Remote media stream video tracks may have their corresponding audio tracks being played outside of the media element. Let's ensure to not IDLE the screen in that case.
@@ -7742,6 +7745,12 @@ bool HTMLMediaElement::processingUserGestureForMedia() const
 {
     return document().processingUserGestureForMedia();
 }
+
+void HTMLMediaElement::processIsSuspendedChanged()
+{
+    updateSleepDisabling();
+}
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 void HTMLMediaElement::scheduleUpdateMediaState()

@@ -368,6 +368,10 @@ void PlatformMediaSessionManager::processWillSuspend()
         return;
     m_processIsSuspended = true;
 
+    forEachSession([&] (auto& session) {
+        session.client().processIsSuspendedChanged();
+    });
+
 #if USE(AUDIO_SESSION)
     if (m_becameActive && shouldDeactivateAudioSession()) {
         AudioSession::sharedSession().tryToSetActive(false);
@@ -382,6 +386,10 @@ void PlatformMediaSessionManager::processDidResume()
     if (!m_processIsSuspended)
         return;
     m_processIsSuspended = false;
+
+    forEachSession([&] (auto& session) {
+        session.client().processIsSuspendedChanged();
+    });
 
 #if USE(AUDIO_SESSION)
     if (!m_becameActive && activeAudioSessionRequired()) {

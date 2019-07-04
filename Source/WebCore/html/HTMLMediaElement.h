@@ -894,6 +894,7 @@ private:
     bool canProduceAudio() const final;
     bool processingUserGestureForMedia() const final;
     bool hasMediaStreamSource() const final;
+    void processIsSuspendedChanged() final;
 
     void pageMutedStateDidChange() override;
 

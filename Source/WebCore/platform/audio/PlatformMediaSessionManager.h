@@ -134,6 +134,8 @@ public:
 
     void forEachMatchingSession(const Function<bool(const PlatformMediaSession&)>& predicate, const Function<void(PlatformMediaSession&)>& matchingCallback);
 
+    bool processIsSuspended() const { return m_processIsSuspended; }
+
 protected:
     friend class PlatformMediaSession;
     explicit PlatformMediaSessionManager();
@@ -146,8 +148,6 @@ protected:
     bool anyOfSessions(const Function<bool(const PlatformMediaSession&)>&) const;
 
     AudioHardwareListener* audioHardwareListener() { return m_audioHardwareListener.get(); }
-
-    bool processIsSuspended() const { return m_processIsSuspended; }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }

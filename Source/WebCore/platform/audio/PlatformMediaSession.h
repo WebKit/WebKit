@@ -259,6 +259,8 @@ public:
 
     virtual bool hasMediaStreamSource() const { return false; }
 
+    virtual void processIsSuspendedChanged() { }
+
 protected:
     virtual ~PlatformMediaSessionClient() = default;
 };
