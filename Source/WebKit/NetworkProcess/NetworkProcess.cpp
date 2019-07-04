@@ -1298,6 +1298,9 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
             for (auto& securityOrigin : securityOrigins)
                 callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::Credentials, 0 });
         }
+        auto securityOrigins = WebCore::CredentialStorage::originsWithSessionCredentials();
+        for (auto& securityOrigin : securityOrigins)
+            callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::Credentials, 0 });
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache)) {
@@ -1379,6 +1382,7 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
         if (auto* session = storageSession(sessionID))
             session->credentialStorage().clearCredentials();
+        WebCore::CredentialStorage::clearSessionCredentials();
     }
 
     auto clearTasksHandler = WTF::CallbackAggregator::create([this, callbackID] {
@@ -1516,6 +1520,7 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
             for (auto& originData : originDatas)
                 session->credentialStorage().removeCredentialsWithOrigin(originData);
         }
+        WebCore::CredentialStorage::removeSessionCredentialsWithOrigins(originDatas);
     }
 
     // FIXME: Implement storage quota clearing for these origins.
@@ -1660,14 +1665,18 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessi
     }
 #endif
 
-    /*
-    // FIXME: No API to delete credentials by origin
-    HashSet<String> originsWithCredentials;
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
-        if (storageSession(sessionID))
-            originsWithCredentials = storageSession(sessionID)->credentialStorage().originsWithCredentials();
+        if (auto* session = storageSession(sessionID)) {
+            auto origins = session->credentialStorage().originsWithCredentials();
+            auto originsToDelete = filterForRegistrableDomains(origins, domainsToDeleteAllButCookiesFor, callbackAggregator->m_domains);
+            for (auto& origin : originsToDelete)
+                session->credentialStorage().removeCredentialsWithOrigin(origin);
+        }
+
+        auto origins = WebCore::CredentialStorage::originsWithSessionCredentials();
+        auto originsToDelete = filterForRegistrableDomains(origins, domainsToDeleteAllButCookiesFor, callbackAggregator->m_domains);
+        WebCore::CredentialStorage::removeSessionCredentialsWithOrigins(originsToDelete);
     }
-    */
     
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache)) {
         CacheStorage::Engine::fetchEntries(*this, sessionID, fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes), [this, domainsToDeleteAllButCookiesFor, sessionID, callbackAggregator = callbackAggregator.copyRef()](auto entries) mutable {
@@ -2563,16 +2572,6 @@ StorageQuotaManager& NetworkProcess::storageQuotaManager(PAL::SessionID sessionI
 }
 
 #if !PLATFORM(COCOA)
-void NetworkProcess::originsWithPersistentCredentials(CompletionHandler<void(Vector<WebCore::SecurityOriginData>)>&& completionHandler)
-{
-    completionHandler(Vector<WebCore::SecurityOriginData>());
-}
-
-void NetworkProcess::removeCredentialsWithOrigins(const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&& completionHandler)
-{
-    completionHandler();
-}
-
 void NetworkProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)
 {
 }

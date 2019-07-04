@@ -1,3 +1,26 @@
+2019-07-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Only allow fetching and removing session credentials from WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=199385
+
+        Reviewed by Alex Christensen.
+
+        Fetch and remove only session credentials from NSURLCredentialStorage.
+
+        Modified existing API tests: WKWebsiteDataStore.FetchPersistentCredentials
+
+        * platform/network/CredentialStorage.cpp:
+        (WebCore::CredentialStorage::originsWithCredentials const):
+        (WebCore::CredentialStorage::originsWithSessionCredentials):
+        (WebCore::CredentialStorage::removeSessionCredentialsWithOrigins):
+        (WebCore::CredentialStorage::clearSessionCredentials):
+        * platform/network/CredentialStorage.h:
+        * platform/network/mac/CredentialStorageMac.mm:
+        (WebCore::CredentialStorage::originsWithSessionCredentials):
+        (WebCore::CredentialStorage::removeSessionCredentialsWithOrigins):
+        (WebCore::CredentialStorage::clearSessionCredentials):
+        (WebCore::CredentialStorage::originsWithPersistentCredentials): Deleted.
+
 2019-07-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         The destructor of CSSAnimationControllerPrivate must explicitly clear the composite animations
