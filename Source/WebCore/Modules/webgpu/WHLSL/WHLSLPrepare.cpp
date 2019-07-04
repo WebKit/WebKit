@@ -128,7 +128,6 @@ static Optional<Program> prepareShared(String& whlslSource)
     CHECK_PASS(synthesizeArrayOperatorLength, program);
     CHECK_PASS(resolveTypeNamesInFunctions, program, nameResolver);
     CHECK_PASS(synthesizeConstructors, program);
-    CHECK_PASS(resolveCallsInFunctions, program, nameResolver);
     CHECK_PASS(checkDuplicateFunctions, program);
 
     CHECK_PASS(check, program);

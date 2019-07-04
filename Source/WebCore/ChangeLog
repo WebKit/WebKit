@@ -1,5 +1,38 @@
 2019-07-03  Robin Morisset  <rmorisset@apple.com>
 
+        [WHLSL] Remove the phase resolveCallsInFunctions
+        https://bugs.webkit.org/show_bug.cgi?id=199474
+
+        Reviewed by Myles C. Maxfield.
+
+        This pass only stores into each property access and call expression vectors of all the functions it might be calling, for use by the Checker afterwards.
+        But the checker is perfectly able to compute a pointer to these vectors by itself.
+        So by removing this pass, we gain the following:
+        - One less pass over the AST
+        - No need to copy these vectors (which can be large for heavily overloaded functions, of which there are quite a few in the stdlib)
+        - No need to have these vectors in the expressions, saving 24 bytes per CallExpression and 72 bytes per PropertyAccessExpression
+        - No need to allocate and then destroy these vectors.
+
+        No new tests as there is no intended functional change.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLCallExpression.h:
+        (WebCore::WHLSL::AST::CallExpression::castReturnType):
+        * Modules/webgpu/WHLSL/AST/WHLSLPropertyAccessExpression.h:
+        * Modules/webgpu/WHLSL/WHLSLAutoInitializeVariables.cpp:
+        (WebCore::WHLSL::AutoInitialize::visit):
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::resolveFunction):
+        (WebCore::WHLSL::Checker::finishVisiting):
+        (WebCore::WHLSL::Checker::visit):
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.cpp:
+        (WebCore::WHLSL::NameResolver::NameResolver):
+        (WebCore::WHLSL::NameResolver::visit):
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.h:
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp:
+        (WebCore::WHLSL::prepareShared):
+
+2019-07-03  Robin Morisset  <rmorisset@apple.com>
+
         [WHLSL] Make the destructor of VariableDeclaration non-virtual
         https://bugs.webkit.org/show_bug.cgi?id=199460
 

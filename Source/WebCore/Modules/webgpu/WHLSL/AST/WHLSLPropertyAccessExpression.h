@@ -57,26 +57,10 @@ public:
     virtual String setterFunctionName() const = 0;
     virtual String anderFunctionName() const = 0;
 
-    Vector<std::reference_wrapper<FunctionDeclaration>, 1>& possibleGetterOverloads() { return m_possibleGetterOverloads; }
-    Vector<std::reference_wrapper<FunctionDeclaration>, 1>& possibleSetterOverloads() { return m_possibleSetterOverloads; }
-    Vector<std::reference_wrapper<FunctionDeclaration>, 1>& possibleAnderOverloads() { return m_possibleAnderOverloads; }
     FunctionDeclaration* getterFunction() { return m_getterFunction; }
     FunctionDeclaration* anderFunction() { return m_anderFunction; }
     FunctionDeclaration* threadAnderFunction() { return m_threadAnderFunction; }
     FunctionDeclaration* setterFunction() { return m_setterFunction; }
-
-    void setPossibleGetterOverloads(const Vector<std::reference_wrapper<FunctionDeclaration>, 1>& overloads)
-    {
-        m_possibleGetterOverloads = overloads;
-    }
-    void setPossibleAnderOverloads(const Vector<std::reference_wrapper<FunctionDeclaration>, 1>& overloads)
-    {
-        m_possibleAnderOverloads = overloads;
-    }
-    void setPossibleSetterOverloads(const Vector<std::reference_wrapper<FunctionDeclaration>, 1>& overloads)
-    {
-        m_possibleSetterOverloads = overloads;
-    }
 
     void setGetterFunction(FunctionDeclaration* getterFunction)
     {
@@ -104,9 +88,6 @@ public:
 
 private:
     UniqueRef<Expression> m_base;
-    Vector<std::reference_wrapper<FunctionDeclaration>, 1> m_possibleGetterOverloads;
-    Vector<std::reference_wrapper<FunctionDeclaration>, 1> m_possibleSetterOverloads;
-    Vector<std::reference_wrapper<FunctionDeclaration>, 1> m_possibleAnderOverloads;
     FunctionDeclaration* m_getterFunction { nullptr };
     FunctionDeclaration* m_anderFunction { nullptr };
     FunctionDeclaration* m_threadAnderFunction { nullptr };
