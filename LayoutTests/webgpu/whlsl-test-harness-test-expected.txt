@@ -25,4 +25,9 @@ PASS Return an expected float value.
 PASS Upload and calculate a result from varied argument types. 
 PASS Store into a float4[]. 
 PASS Upload a int[] and store into a int[]. 
+PASS Upload a float4x4[] and store into a float4x4[]. 
+PASS Return an expected float4x4 value. 
+PASS Return an expected float4x4 value. 
+PASS Return an expected float4x4 value. 
+PASS Return an expected float4x4 value. 
 

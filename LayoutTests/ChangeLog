@@ -1,3 +1,27 @@
+2019-07-03  Justin Fan  <justin_fan@apple.com>
+
+        [WHLSL] Support float4x4 in test harness
+        https://bugs.webkit.org/show_bug.cgi?id=199484
+
+        Reviewed by Myles C. Maxfield.
+
+        Support WHLSL float4x4 parameters in the WHLSL test harness.
+
+        * webgpu/js/whlsl-test-harness.js:
+        (isScalar):
+        (convertTypeToArrayType):
+        (convertTypeToWHLSLType):
+        (Data):
+        (makeFloat4):
+        (makeFloat4x4):
+        (processArrays):
+        (async.callFloat4x4Function):
+        (isVectorType): Deleted. Replaced with isScalar.
+
+        Add some float4x4 sanity checks:
+        * webgpu/whlsl-test-harness-test-expected.txt:
+        * webgpu/whlsl-test-harness-test.html:
+
 2019-07-03  Simon Fraser  <simon.fraser@apple.com>
 
         RELEASE_ASSERT in WebCore: WebCore::ScrollingStateTree::insertNode()

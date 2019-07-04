@@ -9,16 +9,18 @@ const Types = Object.freeze({
     UINT: Symbol("uint"),
     FLOAT: Symbol("float"),
     FLOAT4: Symbol("float4"),
-    MAX_SIZE: 16 // This needs to be big enough to hold any singular WHLSL type.
+    FLOAT4X4: Symbol("float4x4"),
+    MAX_SIZE: 64 // This needs to be big enough to hold any singular WHLSL type.
 });
 
-function isVectorType(type)
+function isScalar(type)
 {
     switch(type) {
         case Types.FLOAT4:
-            return true;
-        default: 
+        case Types.FLOAT4X4:
             return false;
+        default:
+            return true;
     }
 }
 
@@ -37,6 +39,7 @@ function convertTypeToArrayType(isWHLSL, type)
             return Uint32Array;
         case Types.FLOAT:
         case Types.FLOAT4:
+        case Types.FLOAT4X4:
             return Float32Array;
         default:
             throw new Error("Invalid TYPE provided!");
@@ -58,6 +61,8 @@ function convertTypeToWHLSLType(type)
             return "float";
         case Types.FLOAT4:
             return "float4";
+        case Types.FLOAT4X4:
+            return "float4x4";
         default:
             throw new Error("Invalid TYPE provided!");
     }
@@ -107,7 +112,7 @@ class Data {
         // However, vector types are also created via an array of scalars.
         // This ensures that buffers of just one vector are usable in a test function.
         if (Array.isArray(values))
-            this._isBuffer = isVectorType(type) ? isBuffer : true;
+            this._isBuffer = isScalar(type) ? true : isBuffer;
         else {
             this._isBuffer = false;
             values = [values];
@@ -434,13 +439,33 @@ function makeFloat(values)
  */
 function makeFloat4(values)
 {
+    const results = processArrays(values, 4);
+    return new Data(harness, Types.FLOAT4, results.values, results.isBuffer);
+}
+
+/**
+ * @param {Array or Array[Array]} values - 1D or 2D array of float values.
+ * The total number of float values must be divisible by 16.
+ * A single 16-element array of floats will be treated as a single float4x4 argument in the shader.
+ * This should follow the glMatrix/OpenGL method of storing 4x4 matrices,
+ * where the x, y, z translation components are the 13th, 14th, and 15th elements respectively.
+ */
+function makeFloat4x4(values)
+{
+    const results = processArrays(values, 16);
+    return new Data(harness, Types.FLOAT4X4, results.values, results.isBuffer);
+}
+
+function processArrays(values, minimumLength)
+{
     const originalLength = values.length;
     // This works because float4 is tightly packed.
     // When implementing other vector types, add padding if needed.
     values = values.flat();
-    if (values.length % 4 != 0)
-        throw new Error("makeFloat4: Invalid number of elements!");
-    return new Data(harness, Types.FLOAT4, values, originalLength === 1 || values.length > 4);
+    if (values.length % minimumLength != 0)
+        throw new Error("Invalid number of elements in non-scalar type!");
+    
+    return { values: values, isBuffer: originalLength === 1 || values.length > minimumLength };
 }
 
 /**
@@ -477,6 +502,11 @@ async function callFloatFunction(functions, name, args)
 async function callFloat4Function(functions, name, args)
 {
     return (await harness.callTypedFunction(Types.FLOAT4, functions, name, args)).subarray(0, 4);
+}
+
+async function callFloat4x4Function(functions, name, args)
+{
+    return (await harness.callTypedFunction(Types.FLOAT4X4, functions, name, args)).subarray(0, 16);
 }
 
 /**
