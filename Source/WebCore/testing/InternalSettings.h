@@ -104,6 +104,7 @@ public:
     ExceptionOr<void> setCustomPasteboardDataEnabled(bool);
     ExceptionOr<void> setIncompleteImageBorderEnabled(bool);
     ExceptionOr<void> setShouldDispatchSyntheticMouseEventsWhenModifyingSelection(bool);
+    ExceptionOr<void> setShouldDispatchSyntheticMouseOutAfterSyntheticClick(bool);
 
     using FrameFlatteningValue = FrameFlattening;
     ExceptionOr<void> setFrameFlattening(FrameFlatteningValue);
@@ -200,6 +201,7 @@ private:
         bool m_inputEventsEnabled;
         bool m_incompleteImageBorderEnabled;
         bool m_shouldDispatchSyntheticMouseEventsWhenModifyingSelection;
+        bool m_shouldDispatchSyntheticMouseOutAfterSyntheticClick { false };
         bool m_shouldDeactivateAudioSession;
         UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
         TextDirection m_systemLayoutDirection;

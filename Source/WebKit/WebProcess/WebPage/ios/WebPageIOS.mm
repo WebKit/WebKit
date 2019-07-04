@@ -779,9 +779,14 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     if (newFocusedElement && newFocusedElement == oldFocusedElement)
         elementDidRefocus(*newFocusedElement);
 
-    // Only send a synthetic mouse out event if synthetic mouse move events were sent; this is true when ContentChangeObserver is enabled.
-    if (nodeRespondingToClick.document().settings().contentChangeObserverEnabled() && !tapWasHandled && nodeRespondingToClick.document().frame())
-        nodeRespondingToClick.document().frame()->eventHandler().dispatchSyntheticMouseOut(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::NoType, 0, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), 0, WebCore::NoTap, pointerId));
+    if (nodeRespondingToClick.document().settings().contentChangeObserverEnabled()) {
+        auto& document = nodeRespondingToClick.document();
+        // Dispatch mouseOut to dismiss tooltip content when tapping on the control bar buttons (cc, settings).
+        if (document.quirks().needsYouTubeMouseOutQuirk()) {
+            if (auto* frame = document.frame())
+                frame->eventHandler().dispatchSyntheticMouseOut(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::NoType, 0, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), 0, WebCore::NoTap, pointerId));
+        }
+    }
 
     if (m_isClosed)
         return;

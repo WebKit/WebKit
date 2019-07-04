@@ -1,3 +1,14 @@
+2019-07-04  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Limit mouseOut dispatching after synthetic click to YouTube.com
+        https://bugs.webkit.org/show_bug.cgi?id=199497
+        <rdar://problem/52361019>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::completeSyntheticClick):
+
 2019-07-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in WebDragClient::startDrag because GraphicsContext is nullptr

@@ -238,6 +238,21 @@ bool Quirks::shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const
     return false;
 }
 
+bool Quirks::needsYouTubeMouseOutQuirk() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (m_document->settings().shouldDispatchSyntheticMouseOutAfterSyntheticClick())
+        return true;
+
+    if (!needsQuirks())
+        return false;
+
+    return equalLettersIgnoringASCIICase(m_document->url().host(), "www.youtube.com");
+#else
+    return false;
+#endif
+}
+
 bool Quirks::shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() const
 {
     if (!needsQuirks())
@@ -391,6 +406,5 @@ bool Quirks::needsYouTubeOverflowScrollQuirk() const
     return false;
 #endif
 }
-
 
 }

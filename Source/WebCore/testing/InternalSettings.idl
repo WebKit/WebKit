@@ -89,6 +89,7 @@ enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
     [MayThrowException] void setFrameFlattening(FrameFlatteningValue frameFlattening);
     [MayThrowException] void setIncompleteImageBorderEnabled(boolean enabled);
     [MayThrowException] void setShouldDispatchSyntheticMouseEventsWhenModifyingSelection(boolean shouldDispatch);
+    [MayThrowException] void setShouldDispatchSyntheticMouseOutAfterSyntheticClick(boolean shouldDispatch);
 
     // RuntimeEnabledFeatures.
     void setIndexedDBWorkersEnabled(boolean enabled);

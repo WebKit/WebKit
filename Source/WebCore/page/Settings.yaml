@@ -840,6 +840,9 @@ shouldDecidePolicyBeforeLoadingQuickLookPreview:
 shouldDispatchSyntheticMouseEventsWhenModifyingSelection:
   initial: false
 
+shouldDispatchSyntheticMouseOutAfterSyntheticClick:
+  initial: false
+
 allowViewportShrinkToFitContent:
   initial: true
 

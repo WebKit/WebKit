@@ -101,6 +101,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_inputEventsEnabled(settings.inputEventsEnabled())
     , m_incompleteImageBorderEnabled(settings.incompleteImageBorderEnabled())
     , m_shouldDispatchSyntheticMouseEventsWhenModifyingSelection(settings.shouldDispatchSyntheticMouseEventsWhenModifyingSelection())
+    , m_shouldDispatchSyntheticMouseOutAfterSyntheticClick(settings.shouldDispatchSyntheticMouseOutAfterSyntheticClick())
     , m_shouldDeactivateAudioSession(PlatformMediaSessionManager::shouldDeactivateAudioSession())
     , m_userInterfaceDirectionPolicy(settings.userInterfaceDirectionPolicy())
     , m_systemLayoutDirection(settings.systemLayoutDirection())
@@ -209,6 +210,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setFrameFlattening(m_frameFlattening);
     settings.setIncompleteImageBorderEnabled(m_incompleteImageBorderEnabled);
     settings.setShouldDispatchSyntheticMouseEventsWhenModifyingSelection(m_shouldDispatchSyntheticMouseEventsWhenModifyingSelection);
+    settings.setShouldDispatchSyntheticMouseOutAfterSyntheticClick(m_shouldDispatchSyntheticMouseOutAfterSyntheticClick);
     PlatformMediaSessionManager::setShouldDeactivateAudioSession(m_shouldDeactivateAudioSession);
 
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
@@ -933,6 +935,14 @@ ExceptionOr<void> InternalSettings::setShouldDispatchSyntheticMouseEventsWhenMod
     if (!m_page)
         return Exception { InvalidAccessError };
     settings().setShouldDispatchSyntheticMouseEventsWhenModifyingSelection(shouldDispatch);
+    return { };
+}
+
+ExceptionOr<void> InternalSettings::setShouldDispatchSyntheticMouseOutAfterSyntheticClick(bool shouldDispatch)
+{
+    if (!m_page)
+        return Exception { InvalidAccessError };
+    settings().setShouldDispatchSyntheticMouseOutAfterSyntheticClick(shouldDispatch);
     return { };
 }
 

@@ -62,6 +62,8 @@ public:
     WEBCORE_EXPORT bool isNeverRichlyEditableForTouchBar() const;
     WEBCORE_EXPORT bool shouldAvoidResizingWhenInputViewBoundsChange() const;
 
+    WEBCORE_EXPORT bool needsYouTubeMouseOutQuirk() const;
+
     bool needsGMailOverflowScrollQuirk() const;
     bool needsYouTubeOverflowScrollQuirk() const;
 
