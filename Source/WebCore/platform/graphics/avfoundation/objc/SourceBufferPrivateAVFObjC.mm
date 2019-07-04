@@ -1098,13 +1098,14 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
     if (platformSample.type != PlatformSample::CMSampleBufferType)
         return;
 
-    DEBUG_LOG(LOGIDENTIFIER, "track ID = ", trackID, ", sample = ", sample.get());
+    auto logSiteIdentifier = LOGIDENTIFIER;
+    DEBUG_LOG(logSiteIdentifier, "track ID = ", trackID, ", sample = ", sample.get());
 
     if (trackID == m_enabledVideoTrackID) {
         CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(platformSample.sample.cmSampleBuffer);
         FloatSize formatSize = FloatSize(CMVideoFormatDescriptionGetPresentationDimensions(formatDescription, true, true));
         if (!m_cachedSize || formatSize != m_cachedSize.value()) {
-            DEBUG_LOG(LOGIDENTIFIER, "size changed to ", formatSize);
+            DEBUG_LOG(logSiteIdentifier, "size changed to ", formatSize);
             bool sizeWasNull = !m_cachedSize;
             m_cachedSize = formatSize;
             if (m_mediaSource) {
@@ -1122,7 +1123,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
             return;
 
         if (m_mediaSource && !m_mediaSource->player()->hasAvailableVideoFrame() && !sample->isNonDisplaying()) {
-            DEBUG_LOG(LOGIDENTIFIER, "adding buffer attachment");
+            DEBUG_LOG(logSiteIdentifier, "adding buffer attachment");
 
             bool havePrerollDecodeWithCompletionHandler = [PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(prerollDecodeWithCompletionHandler:)];
 
@@ -1136,10 +1137,16 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
                 m_mediaSource->player()->setHasAvailableVideoFrame(true);
 #endif
             } else {
+
                 [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
-                [m_displayLayer prerollDecodeWithCompletionHandler:[weakThis = makeWeakPtr(*this)] (BOOL success) mutable {
-                    if (!success || !weakThis)
+                [m_displayLayer prerollDecodeWithCompletionHandler:[this, logSiteIdentifier, weakThis = makeWeakPtr(*this)] (BOOL success) mutable {
+                    if (!weakThis)
                         return;
+
+                    if (!success) {
+                        ERROR_LOG(logSiteIdentifier, "prerollDecodeWithCompletionHandler failed");
+                        return;
+                    }
 
                     callOnMainThread([weakThis = WTFMove(weakThis)] () mutable {
                         if (!weakThis)

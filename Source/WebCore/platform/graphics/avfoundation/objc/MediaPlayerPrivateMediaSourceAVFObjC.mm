@@ -296,8 +296,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::play()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::playInternal()
 {
-    if (currentMediaTime() >= m_mediaSourcePrivate->duration())
+    if (currentMediaTime() >= m_mediaSourcePrivate->duration()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "bailing, current time: ", currentMediaTime(), " greater than duration ", m_mediaSourcePrivate->duration());
         return;
+    }
 
     ALWAYS_LOG(LOGIDENTIFIER);
     m_playing = true;

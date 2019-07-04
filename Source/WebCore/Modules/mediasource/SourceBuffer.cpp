@@ -2017,6 +2017,7 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, const AtomString& 
 
     while (!trackBuffer.decodeQueue.empty()) {
         if (!m_private->isReadyForMoreSamples(trackID)) {
+            DEBUG_LOG(LOGIDENTIFIER, "bailing early, track id ", trackID, " is not ready for more data");
             m_private->notifyClientWhenReadyForMoreSamples(trackID);
             break;
         }
@@ -2036,8 +2037,11 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, const AtomString& 
         MediaTime oneSecond(1, 1);
         if (trackBuffer.lastEnqueuedDecodeKey.first.isValid()
             && trackBuffer.lastEnqueuedDecodeDuration.isValid()
-            && sample->decodeTime() - trackBuffer.lastEnqueuedDecodeKey.first > oneSecond + trackBuffer.lastEnqueuedDecodeDuration)
+            && sample->decodeTime() - trackBuffer.lastEnqueuedDecodeKey.first > oneSecond + trackBuffer.lastEnqueuedDecodeDuration) {
+
+        DEBUG_LOG(LOGIDENTIFIER, "bailing early because of unbuffered gap, new sample: ", sample->decodeTime(), ", last enqueued sample ends: ", trackBuffer.lastEnqueuedDecodeKey.first + trackBuffer.lastEnqueuedDecodeDuration);
             break;
+        }
 
         // Remove the sample from the decode queue now.
         trackBuffer.decodeQueue.erase(trackBuffer.decodeQueue.begin());
