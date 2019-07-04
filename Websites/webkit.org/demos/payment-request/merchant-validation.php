@@ -51,10 +51,20 @@ try {
 }
 
 $validationURL = isset($postedData['validationURL']) ? $postedData['validationURL'] : '';
+$URLcomponents = parse_url($validationURL);
+if (!isset($URLcomponents['scheme']) || !isset($URLcomponents['host']))
+    die('The validation URL is not valid.');
+if ('https' !== strtolower($URLcomponents['scheme']))
+    die('The validation URL scheme is not valid.');
+$validationHost = strtolower($URLcomponents['host']);
+if (!('apple.com' === $validationHost || '.apple.com' === substr($validationHost, -10)))
+    die('The validation URL host is not valid.');
+
 $merchantIdentifier = isset($postedData['merchantIdentifier']) ? $postedData['merchantIdentifier'] : MERCHANT_IDENTIFIER;
 $displayName = isset($postedData['displayName']) ? $postedData['displayName'] : DISPLAY_NAME;
 $intiative = isset($postedData['intiative']) ? $postedData['intiative'] : INITIATIVE;
 $intiativeContext = isset($postedData['intiativeContext']) ? $postedData['intiativeContext'] : INITIATIVE_CONTEXT;
+
 
 $postData = array(
     'merchantIdentifier' => $merchantIdentifier,
