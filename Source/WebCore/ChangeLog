@@ -1,3 +1,21 @@
+2019-07-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Some layers inside overflow:scroll don't move back to correct positions when the contents are shrunk
+        https://bugs.webkit.org/show_bug.cgi?id=199464
+        rdar://problem/52613285
+
+        Reviewed by Sam Weinig.
+        
+        When an overflow scroller's content shrink and it becomes non-scrollable, the 'boundsOrigin' in
+        the ancestor clipping stacks of related layers wouldn't get reset to zero, leaving layers in
+        the wrong place, so always set boundsOrigin to zero on the clipping layers of non-overflow entries
+        in the ancestor clipping stack.
+
+        Test: compositing/scrolling/async-overflow-scrolling/become-non-scrollable-with-child.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+
 2019-07-04  Konstantin Tokarev  <annulen@yandex.ru>
 
         HyphenationLibHyphen: Include GLib-related headers only for PLATFORM(GTK)

@@ -1109,7 +1109,8 @@ void RenderLayerBacking::updateGeometry()
 
                 entry.clippingLayer->setBoundsOrigin(scrollOffset);
                 lastClipLayerRect.moveBy(-scrollOffset);
-            }
+            } else
+                entry.clippingLayer->setBoundsOrigin({ });
         }
 
         parentGraphicsLayerRect = lastClipLayerRect;

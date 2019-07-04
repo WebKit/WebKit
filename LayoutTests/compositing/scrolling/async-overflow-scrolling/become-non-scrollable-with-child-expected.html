@@ -1,0 +1,31 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        #scroller {
+            overflow: scroll;
+            height: 400px;
+            width: 400px;
+            border: 1px solid black;
+        }
+
+        .composited {
+            width: 200px;
+            height: 200px;
+            background-color: green;
+            transform: translateZ(0);
+        }
+
+        .content {
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <section id="scroller">
+        <div class="composited"></div>
+        <div class="content"></div>
+    </section>
+</body>
+</html>
+
