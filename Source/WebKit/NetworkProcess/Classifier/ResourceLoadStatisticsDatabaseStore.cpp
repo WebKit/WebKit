@@ -1099,13 +1099,13 @@ void ResourceLoadStatisticsDatabaseStore::setDomainsAsPrevalent(StdSet<unsigned>
     }
 }
 
-String ResourceLoadStatisticsDatabaseStore::dumpResourceLoadStatistics() const
+void ResourceLoadStatisticsDatabaseStore::dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
     // FIXME(195088): Implement SQLite-based dumping routines.
     ASSERT_NOT_REACHED();
-    return { };
+    completionHandler({ });
 }
 
 bool ResourceLoadStatisticsDatabaseStore::predicateValueForDomain(WebCore::SQLiteStatement& predicateStatement, const RegistrableDomain& domain) const

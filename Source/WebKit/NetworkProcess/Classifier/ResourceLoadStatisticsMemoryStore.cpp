@@ -462,15 +462,21 @@ void ResourceLoadStatisticsMemoryStore::setPrevalentResource(ResourceLoadStatist
     }
 }
     
-String ResourceLoadStatisticsMemoryStore::dumpResourceLoadStatistics() const
+void ResourceLoadStatisticsMemoryStore::dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
+    if (dataRecordsBeingRemoved()) {
+        m_dataRecordRemovalCompletionHandlers.append([this, completionHandler = WTFMove(completionHandler)]() mutable {
+            dumpResourceLoadStatistics(WTFMove(completionHandler));
+        });
+        return;
+    }
 
     StringBuilder result;
     result.appendLiteral("Resource load statistics:\n\n");
     for (auto& mapEntry : m_resourceStatisticsMap.values())
         result.append(mapEntry.toString());
-    return result.toString();
+    completionHandler(result.toString());
 }
 
 bool ResourceLoadStatisticsMemoryStore::isPrevalentResource(const RegistrableDomain& domain) const

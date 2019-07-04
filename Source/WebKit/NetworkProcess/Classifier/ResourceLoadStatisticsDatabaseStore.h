@@ -73,7 +73,7 @@ public:
     bool isRegisteredAsRedirectingTo(const RedirectedFromDomain&, const RedirectedToDomain&) const override;
 
     void clearPrevalentResource(const RegistrableDomain&) override;
-    String dumpResourceLoadStatistics() const override;
+    void dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&&) final;
     bool isPrevalentResource(const RegistrableDomain&) const override;
     bool isVeryPrevalentResource(const RegistrableDomain&) const override;
     void setPrevalentResource(const RegistrableDomain&) override;

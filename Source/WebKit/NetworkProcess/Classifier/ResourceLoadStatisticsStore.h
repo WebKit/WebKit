@@ -119,7 +119,7 @@ public:
     virtual bool isRegisteredAsRedirectingTo(const RedirectedFromDomain&, const RedirectedToDomain&) const = 0;
 
     virtual void clearPrevalentResource(const RegistrableDomain&) = 0;
-    virtual String dumpResourceLoadStatistics() const = 0;
+    virtual void dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&&) = 0;
     virtual bool isPrevalentResource(const RegistrableDomain&) const = 0;
     virtual bool isVeryPrevalentResource(const RegistrableDomain&) const = 0;
     virtual void setPrevalentResource(const RegistrableDomain&) = 0;
@@ -183,14 +183,14 @@ public:
     virtual bool isMemoryStore() const { return false; }
     virtual bool isDatabaseStore()const { return false; }
 
-    bool dataRecordsBeingRemoved() const { return m_dataRecordsBeingRemoved; }
-
 protected:
     static unsigned computeImportance(const WebCore::ResourceLoadStatistics&);
     static Vector<OperatingDate> mergeOperatingDates(const Vector<OperatingDate>& existingDates, Vector<OperatingDate>&& newDates);
     static void debugLogDomainsInBatches(const char* action, const Vector<RegistrableDomain>& domains);
 
     ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore&, WorkQueue&, ShouldIncludeLocalhost);
+    
+    bool dataRecordsBeingRemoved() const { return m_dataRecordsBeingRemoved; }
 
     bool hasStatisticsExpired(const ResourceLoadStatistics&, OperatingDatesWindow) const;
     bool hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow) const;
@@ -234,6 +234,8 @@ protected:
     bool debugModeEnabled() const { return m_debugModeEnabled; }
 
     static constexpr unsigned maxNumberOfRecursiveCallsInRedirectTraceBack { 50 };
+    
+    Vector<CompletionHandler<void()>> m_dataRecordRemovalCompletionHandlers;
 
 private:
     bool shouldRemoveDataRecords() const;

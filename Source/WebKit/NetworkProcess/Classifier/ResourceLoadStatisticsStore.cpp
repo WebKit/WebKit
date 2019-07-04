@@ -214,8 +214,13 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
                 }
                 weakThis->incrementRecordsDeletedCountForDomains(WTFMove(domainsWithDeletedWebsiteData));
                 weakThis->setDataRecordsBeingRemoved(false);
-                weakThis->m_store.tryDumpResourceLoadStatistics();
+                
+                auto dataRecordRemovalCompletionHandlers = WTFMove(weakThis->m_dataRecordRemovalCompletionHandlers);
                 completionHandler();
+                
+                for (auto& dataRecordRemovalCompletionHandler : dataRecordRemovalCompletionHandlers)
+                    dataRecordRemovalCompletionHandler();
+
                 RELEASE_LOG_INFO_IF(weakThis->m_debugLoggingEnabled, ITPDebug, "Done removing data records.");
             });
         });
