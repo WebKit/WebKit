@@ -2120,6 +2120,15 @@ sub shouldRemoveCMakeCache(@)
         }
     }
 
+    # If a change on the JHBuild moduleset has been done, we need to clean the cache as well.
+    if (isGtk() || isWPE()) {
+        my $jhbuildRootDirectory = File::Spec->catdir(getJhbuildPath(), "Root");
+        # The script update-webkit-libs-jhbuild shall re-generate $jhbuildRootDirectory if the moduleset changed.
+        if (-d $jhbuildRootDirectory && $cacheFileModifiedTime < stat($jhbuildRootDirectory)->mtime) {
+            return 1;
+        }
+    }
+
     return 0;
 }
 

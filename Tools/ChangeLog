@@ -1,3 +1,13 @@
+2019-07-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE][CMake] The CMake cache should be clean when the JHBuild is rebuilt
+        https://bugs.webkit.org/show_bug.cgi?id=199449
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitdirs.pm:
+        (shouldRemoveCMakeCache): Clean the CMake cache if we detect that the JHBuild has been rebuilt.
+
 2019-07-01  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK a11y tests fix after r247071
