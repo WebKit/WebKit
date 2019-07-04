@@ -1,3 +1,16 @@
+2019-07-03  Tim Horton  <timothy_horton@apple.com>
+
+        Data Detectors are not working for context menus in clients that use the legacy preview API
+        https://bugs.webkit.org/show_bug.cgi?id=199486
+        <rdar://problem/52117322>
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView assignLegacyDataForContextMenuInteraction]):
+        The Data Detectors code in the legacy preview path is guarded by a
+        #define that did not survive upstreaming. Remove it.
+
 2019-07-03  Chris Dumez  <cdumez@apple.com>
 
         StorageManager::suspend() sometimes fails to call its completion handler
