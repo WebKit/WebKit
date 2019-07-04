@@ -247,7 +247,7 @@ WebProcessCache::CachedProcess::CachedProcess(Ref<WebProcessProxy>&& process)
     , m_evictionTimer(RunLoop::main(), this, &CachedProcess::evictionTimerFired)
 {
     RELEASE_ASSERT(!m_process->pageCount());
-    RELEASE_ASSERT_WITH_MESSAGE(!m_process->websiteDataStore().hasProcess(m_process.get()), "Only processes with pages should be registered with the data store");
+    RELEASE_ASSERT_WITH_MESSAGE(!m_process->websiteDataStore().processes().contains(*m_process), "Only processes with pages should be registered with the data store");
     m_process->setIsInProcessCache(true);
     m_evictionTimer.startOneShot(cachedProcessLifetime);
 }

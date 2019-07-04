@@ -64,7 +64,6 @@
 #include "WebPreferences.h"
 #include "WebPageProxyMessages.h"
 #include "WebPopupMenuProxy.h"
-#include "WebProcessLifetimeTracker.h"
 #include "WebUndoStepID.h"
 #include "WebsitePoliciesData.h"
 #include <WebCore/ActivityState.h>
@@ -408,8 +407,6 @@ public:
     WebsiteDataStore& websiteDataStore() { return m_websiteDataStore; }
 
     void addPreviouslyVisitedPath(const String&);
-
-    WebProcessLifetimeTracker& webProcessLifetimeTracker() { return m_webProcessLifetimeTracker; }
 
 #if ENABLE(DATA_DETECTION)
     NSArray *dataDetectionResults() { return m_dataDetectionResults.get(); }
@@ -1254,9 +1251,6 @@ public:
 
     void didFinishCheckingText(uint64_t requestID, const Vector<WebCore::TextCheckingResult>&);
     void didCancelCheckingText(uint64_t requestID);
-
-    void connectionWillOpen(IPC::Connection&);
-    void webProcessWillShutDown();
 
     void didSaveToPageCache();
         
@@ -2134,8 +2128,6 @@ private:
     Ref<WebProcessProxy> m_process;
     Ref<WebPageGroup> m_pageGroup;
     Ref<WebPreferences> m_preferences;
-
-    WebProcessLifetimeTracker m_webProcessLifetimeTracker { *this };
 
     Ref<WebUserContentControllerProxy> m_userContentController;
     Ref<VisitedLinkStore> m_visitedLinkStore;

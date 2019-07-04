@@ -1,3 +1,68 @@
+2019-07-04  Chris Dumez  <cdumez@apple.com>
+
+        Simplify logic that handles registering WebProcessProxy objects with their WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=199412
+        <rdar://problem/51899751>
+
+        Reviewed by Ryosuke Niwa.
+
+        Simplify logic that handles registering WebProcessProxy objects with their WebsiteDataStore to make
+        it more maintainable and less error-prone (avoid bugs like <rdar://problem/51899751>).
+
+        The following changes were made:
+        1. The WebProcess now registers / unregisters itself directly with its WebsiteDataStore when needed,
+           instead of having the WebPageProxy/ProvisionalPageProxy be in charge of calling the right
+           WebProcessLifetimeTracker / WebProcessLifetimeObserver abstractions.
+        2. The WebProcessLifetimeTracker / WebProcessLifetimeObserver abstractions were dropped. The
+           WebsiteDataStore was the only observer.
+        3. The WebProcessProxy is now registered with its WebsiteDataStore as soon as it has a page (provisional
+           or not) instead of waiting until the process has finished launching. This simplifies the logic a
+           lot and waiting until the process has launched is not needed by the WebsiteDataStore.
+           
+
+        * Sources.txt:
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::ProvisionalPageProxy):
+        (WebKit::ProvisionalPageProxy::~ProvisionalPageProxy):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_resetRecentCrashCountTimer):
+        (WebKit::WebPageProxy::finishAttachingToWebProcess):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::processDidTerminate):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::CachedProcess::CachedProcess):
+        * UIProcess/WebProcessLifetimeObserver.cpp: Removed.
+        * UIProcess/WebProcessLifetimeObserver.h: Removed.
+        * UIProcess/WebProcessLifetimeTracker.cpp: Removed.
+        * UIProcess/WebProcessLifetimeTracker.h: Removed.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::setWebsiteDataStore):
+        (WebKit::WebProcessProxy::updateRegistrationWithDataStore):
+        (WebKit::WebProcessProxy::addProvisionalPageProxy):
+        (WebKit::WebProcessProxy::removeProvisionalPageProxy):
+        (WebKit::WebProcessProxy::connectionWillOpen):
+        (WebKit::WebProcessProxy::processWillShutDown):
+        (WebKit::WebProcessProxy::addExistingWebPage):
+        (WebKit::WebProcessProxy::removeWebPage):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::registerProcess):
+        (WebKit::WebsiteDataStore::unregisterProcess):
+
+        (WebKit::WebsiteDataStore::processPoolForCookieStorageOperations):
+        Drop change that was added in r246097 to work around the fact that WebProcessProxy objects
+        were only registering themselves with their data store after their process had finished
+        launching.
+
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::processPools const):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::processes const):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-07-04  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Limit mouseOut dispatching after synthetic click to YouTube.com

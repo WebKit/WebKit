@@ -445,8 +445,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Pag
     if (!m_configuration->drawsBackground())
         m_backgroundColor = Color(Color::transparent);
 
-    m_webProcessLifetimeTracker.addObserver(m_websiteDataStore);
-
     updateActivityState();
     updateThrottleState();
     updateHiddenPageThrottlingAutoIncreases();
@@ -810,13 +808,6 @@ void WebPageProxy::finishAttachingToWebProcess(IsProcessSwap isProcessSwap)
 {
     ASSERT(m_process->state() != AuxiliaryProcessProxy::State::Terminated);
 
-    if (m_process->state() == AuxiliaryProcessProxy::State::Running) {
-        // In the process-swap case, the ProvisionalPageProxy constructor already took care of calling webPageEnteringWebProcess()
-        // when the process was provisional.
-        if (isProcessSwap != IsProcessSwap::Yes)
-            m_webProcessLifetimeTracker.webPageEnteringWebProcess(m_process);
-    }
-
     updateActivityState();
     updateThrottleState();
 
@@ -1009,8 +1000,6 @@ void WebPageProxy::close()
 #if ENABLE(FULLSCREEN_API)
     m_fullscreenClient = std::make_unique<API::FullscreenClient>();
 #endif
-
-    m_webProcessLifetimeTracker.pageWasInvalidated();
 
     m_process->processPool().removeAllSuspendedPagesForPage(*this);
 
@@ -5195,18 +5184,6 @@ void WebPageProxy::mouseDidMoveOverElement(WebHitTestResultData&& hitTestResultD
     m_uiClient->mouseDidMoveOverElement(*this, hitTestResultData, modifiers, m_process->transformHandlesToObjects(userData.object()).get());
 }
 
-void WebPageProxy::connectionWillOpen(IPC::Connection& connection)
-{
-    ASSERT_UNUSED(connection, &connection == m_process->connection());
-
-    m_webProcessLifetimeTracker.webPageEnteringWebProcess(m_process);
-}
-
-void WebPageProxy::webProcessWillShutDown()
-{
-    m_webProcessLifetimeTracker.webPageLeavingWebProcess(m_process);
-}
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailabilityReason, const String& mimeType, const String& pluginURLString, const String& pluginspageAttributeURLString, const String& frameURLString, const String& pageURLString)
 {
@@ -6830,9 +6807,7 @@ void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
     // For bringup of process swapping, NavigationSwap termination will not go out to clients.
     // If it does *during* process swapping, and the client triggers a reload, that causes bizarre WebKit re-entry.
     // FIXME: This might have to change
-    if (reason == ProcessTerminationReason::NavigationSwap)
-        m_webProcessLifetimeTracker.webPageLeavingWebProcess(m_process);
-    else {
+    if (reason != ProcessTerminationReason::NavigationSwap) {
         navigationState().clearAllNavigations();
         dispatchProcessDidTerminate(reason);
     }

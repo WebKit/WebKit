@@ -220,6 +220,33 @@ void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
 {
     ASSERT(!m_websiteDataStore);
     m_websiteDataStore = &dataStore;
+    updateRegistrationWithDataStore();
+}
+
+void WebProcessProxy::updateRegistrationWithDataStore()
+{
+    if (!m_websiteDataStore)
+        return;
+    
+    bool shouldBeRegistered = processPool().dummyProcessProxy() != this && (pageCount() || provisionalPageCount());
+    if (shouldBeRegistered)
+        m_websiteDataStore->registerProcess(*this);
+    else
+        m_websiteDataStore->unregisterProcess(*this);
+}
+
+void WebProcessProxy::addProvisionalPageProxy(ProvisionalPageProxy& provisionalPage)
+{
+    ASSERT(!m_provisionalPages.contains(&provisionalPage));
+    m_provisionalPages.add(&provisionalPage);
+    updateRegistrationWithDataStore();
+}
+
+void WebProcessProxy::removeProvisionalPageProxy(ProvisionalPageProxy& provisionalPage)
+{
+    ASSERT(m_provisionalPages.contains(&provisionalPage));
+    m_provisionalPages.remove(&provisionalPage);
+    updateRegistrationWithDataStore();
 }
 
 void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
@@ -277,12 +304,6 @@ void WebProcessProxy::connectionWillOpen(IPC::Connection& connection)
 #if ENABLE(SEC_ITEM_SHIM)
     SecItemShimProxy::singleton().initializeConnection(connection);
 #endif
-
-    for (auto& page : m_pageMap.values())
-        page->connectionWillOpen(connection);
-
-    for (auto* provisionalPage : m_provisionalPages)
-        provisionalPage->connectionWillOpen(connection);
 }
 
 void WebProcessProxy::processWillShutDown(IPC::Connection& connection)
@@ -292,9 +313,6 @@ void WebProcessProxy::processWillShutDown(IPC::Connection& connection)
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     processPool().stopDisplayLinks(connection);
 #endif
-
-    for (auto& page : m_pageMap.values())
-        page->webProcessWillShutDown();
 }
 
 void WebProcessProxy::shutDown()
@@ -386,6 +404,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
     m_pageMap.set(webPage.pageID(), &webPage);
     globalPageMap().set(webPage.pageID(), &webPage);
 
+    updateRegistrationWithDataStore();
     updateBackgroundResponsivenessTimer();
 }
 
@@ -411,6 +430,7 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
         m_processPool->pageEndUsingWebsiteDataStore(webPage.pageID(), webPage.websiteDataStore());
 
     removeVisitedLinkStoreUser(webPage.visitedLinkStore(), webPage.pageID());
+    updateRegistrationWithDataStore();
 
     updateBackgroundResponsivenessTimer();
 

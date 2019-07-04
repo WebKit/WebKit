@@ -28,7 +28,6 @@
 #include "LocalStorageDatabaseTracker.h"
 #include "NetworkSessionCreationParameters.h"
 #include "WebDeviceOrientationAndMotionAccessController.h"
-#include "WebProcessLifetimeObserver.h"
 #include "WebsiteDataStoreClient.h"
 #include "WebsiteDataStoreConfiguration.h"
 #include <WebCore/Cookie.h>
@@ -44,6 +43,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
@@ -73,6 +73,7 @@ class DeviceIdHashSaltStorage;
 class SOAuthorizationCoordinator;
 class WebPageProxy;
 class WebProcessPool;
+class WebProcessProxy;
 class WebResourceLoadStatisticsStore;
 enum class WebsiteDataFetchOption;
 enum class WebsiteDataType;
@@ -90,7 +91,7 @@ enum class StorageAccessPromptStatus;
 struct PluginModuleInfo;
 #endif
 
-class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessLifetimeObserver, public Identified<WebsiteDataStore>, public CanMakeWeakPtr<WebsiteDataStore>  {
+class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public Identified<WebsiteDataStore>, public CanMakeWeakPtr<WebsiteDataStore>  {
 public:
     static Ref<WebsiteDataStore> createNonPersistent();
     static Ref<WebsiteDataStore> create(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
@@ -100,6 +101,11 @@ public:
 
     bool isPersistent() const { return !m_sessionID.isEphemeral(); }
     PAL::SessionID sessionID() const { return m_sessionID; }
+    
+    void registerProcess(WebProcessProxy&);
+    void unregisterProcess(WebProcessProxy&);
+    
+    const WeakHashSet<WebProcessProxy>& processes() const { return m_processes; }
 
     bool resourceLoadStatisticsEnabled() const;
     void setResourceLoadStatisticsEnabled(bool);
@@ -310,6 +316,8 @@ private:
 #endif
 
     HashSet<WebCore::Cookie> m_pendingCookies;
+    
+    WeakHashSet<WebProcessProxy> m_processes;
 
     String m_boundInterfaceIdentifier;
     AllowsCellularAccess m_allowsCellularAccess { AllowsCellularAccess::Yes };

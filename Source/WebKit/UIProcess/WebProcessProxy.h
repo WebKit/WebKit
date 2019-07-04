@@ -139,8 +139,8 @@ public:
     enum class EndsUsingDataStore : bool { No, Yes };
     void removeWebPage(WebPageProxy&, EndsUsingDataStore);
 
-    void addProvisionalPageProxy(ProvisionalPageProxy& provisionalPage) { ASSERT(!m_provisionalPages.contains(&provisionalPage)); m_provisionalPages.add(&provisionalPage); }
-    void removeProvisionalPageProxy(ProvisionalPageProxy& provisionalPage) { ASSERT(m_provisionalPages.contains(&provisionalPage)); m_provisionalPages.remove(&provisionalPage); }
+    void addProvisionalPageProxy(ProvisionalPageProxy&);
+    void removeProvisionalPageProxy(ProvisionalPageProxy&);
     
     typename WebPageProxyMap::ValuesConstIteratorRange pages() const { return m_pageMap.values(); }
     unsigned pageCount() const { return m_pageMap.size(); }
@@ -394,6 +394,8 @@ private:
     void didCollectPrewarmInformation(const WebCore::RegistrableDomain&, const WebCore::PrewarmInformation&);
 
     void logDiagnosticMessageForResourceLimitTermination(const String& limitKey);
+    
+    void updateRegistrationWithDataStore();
 
     enum class IsWeak { No, Yes };
     template<typename T> class WeakOrStrongPtr {

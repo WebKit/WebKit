@@ -86,7 +86,6 @@ public:
     void cancel();
 
     void processDidTerminate();
-    void connectionWillOpen(IPC::Connection&);
 
 private:
     // IPC::MessageReceiver
