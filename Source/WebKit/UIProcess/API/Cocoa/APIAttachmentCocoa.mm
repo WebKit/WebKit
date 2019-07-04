@@ -70,6 +70,8 @@ void Attachment::invalidateGeneratedFileWrapper()
 WTF::String Attachment::mimeType() const
 {
     NSString *contentType = m_contentType.isEmpty() ? mimeTypeInferredFromFileExtension(*this) : m_contentType;
+    if (!contentType.length)
+        return nullString();
     if (!isDeclaredOrDynamicTypeIdentifier(contentType))
         return contentType;
 
@@ -79,6 +81,8 @@ WTF::String Attachment::mimeType() const
 WTF::String Attachment::utiType() const
 {
     NSString *contentType = m_contentType.isEmpty() ? mimeTypeInferredFromFileExtension(*this) : m_contentType;
+    if (!contentType.length)
+        return nullString();
     if (isDeclaredOrDynamicTypeIdentifier(contentType))
         return contentType;
 

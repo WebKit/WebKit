@@ -4125,6 +4125,11 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, const ShareableBitmap
             fileName = attachment->fileName();
         }
 
+        if (!utiType.length) {
+            m_page->dragCancelled();
+            return;
+        }
+
         auto provider = adoptNS([[NSFilePromiseProvider alloc] initWithFileType:utiType delegate:(id <NSFilePromiseProviderDelegate>)m_view.getAutoreleased()]);
         auto context = adoptNS([[WKPromisedAttachmentContext alloc] initWithIdentifier:info.attachmentIdentifier blobURL:info.blobURL fileName:fileName]);
         [provider setUserInfo:context.get()];

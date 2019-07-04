@@ -1627,6 +1627,22 @@ TEST(WKAttachmentTestsMac, DragAttachmentAsFilePromise)
     EXPECT_FALSE(isCompletelyTransparent([simulator draggingInfo].draggedImage));
 }
 
+TEST(WKAttachmentTestsMac, DragAttachmentWithNoTypeShouldNotCrash)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAttachmentElementEnabled:YES];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    TestWKWebView *webView = [simulator webView];
+    [webView synchronouslyLoadHTMLString:attachmentEditingTestMarkup];
+
+    [webView stringByEvaluatingJavaScript:@"document.body.appendChild(document.createElement('attachment')); 0"];
+
+    [simulator runFrom:[webView attachmentElementMidPoint] to:CGPointMake(300, 300)];
+
+    NSArray<NSURL *> *urls = [simulator receivePromisedFiles];
+    EXPECT_EQ(0U, urls.count);
+}
+
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)
