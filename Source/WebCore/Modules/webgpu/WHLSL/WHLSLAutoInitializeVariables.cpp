@@ -72,8 +72,9 @@ private:
         auto callExpression = std::make_unique<AST::CallExpression>(variableDeclaration.origin(), WTFMove(functionName), Vector<UniqueRef<AST::Expression>>());
         callExpression->setType(type->clone());
         callExpression->setTypeAnnotation(AST::RightValue());
+        callExpression->setOverloads(m_castFunctions);
         Vector<std::reference_wrapper<ResolvingType>> argumentTypes;
-        auto* function = resolveFunctionOverload(m_castFunctions, argumentTypes, type);
+        auto* function = resolveFunctionOverload(*callExpression->overloads(), argumentTypes, type);
         if (!function) {
             setError();
             return;
