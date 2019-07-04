@@ -1,3 +1,29 @@
+2019-07-03  Simon Fraser  <simon.fraser@apple.com>
+
+        RELEASE_ASSERT in WebCore: WebCore::ScrollingStateTree::insertNode()
+        https://bugs.webkit.org/show_bug.cgi?id=199479
+        rdar://problem/52392556
+
+        Reviewed by Zalan Bujtas.
+        
+        Certain compositing tree updates could leave a layer with a ScrollingProxy role, but having an
+        AncestorClippingStack with no overflow scrolling layers - for example, a related scroller could become
+        scrollable, but we failed to mark the layer with the ancestor clippings stack as needing a geometry update.
+
+        When this happened updateScrollingNodeForScrollingProxyRole() would return 0, causing the next child to be
+        inserted with a parent of 0 (which should only happen for the root), and triggering a release assert in
+        ScrollingStateTree::insertNode().
+
+        Fix by ensuring that updateScrollingNodeForScrollingProxyRole() always returns the existing parentNodeID if we
+        don't have a new node to insert.
+
+        Test: scrollingcoordinator/scrolling-tree/scrolling-proxy-with-no-scrolling-layer.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAncestorClippingStack):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForScrollingProxyRole):
+
 2019-07-03  Konstantin Tokarev  <annulen@yandex.ru>
 
         RenderLayerCompositor.cpp should include RenderImage.h

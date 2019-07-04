@@ -4483,8 +4483,10 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingProxyRole(
 {
     auto* scrollingCoordinator = this->scrollingCoordinator();
     auto* clippingStack = layer.backing()->ancestorClippingStack();
-    if (!clippingStack)
-        return 0;
+    if (!clippingStack) {
+        ASSERT_NOT_REACHED();
+        return treeState.parentNodeID.valueOr(0);
+    }
 
     ScrollingNodeID nodeID = 0;
     for (auto& entry : clippingStack->stack()) {
@@ -4508,13 +4510,16 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingProxyRole(
             auto overflowScrollNodeID = 0;
             if (auto* backing = entry.clipData.clippingLayer->backing())
                 overflowScrollNodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
-        
+
             Vector<ScrollingNodeID> scrollingNodeIDs;
             if (overflowScrollNodeID)
                 scrollingNodeIDs.append(overflowScrollNodeID);
             scrollingCoordinator->setRelatedOverflowScrollingNodes(entry.overflowScrollProxyNodeID, WTFMove(scrollingNodeIDs));
         }
     }
+
+    if (!nodeID)
+        return treeState.parentNodeID.valueOr(0);
 
     return nodeID;
 }

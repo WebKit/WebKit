@@ -1,3 +1,14 @@
+2019-07-03  Simon Fraser  <simon.fraser@apple.com>
+
+        RELEASE_ASSERT in WebCore: WebCore::ScrollingStateTree::insertNode()
+        https://bugs.webkit.org/show_bug.cgi?id=199479
+        rdar://problem/52392556
+
+        Reviewed by Zalan Bujtas.
+
+        * scrollingcoordinator/scrolling-tree/scrolling-proxy-with-no-scrolling-layer-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/scrolling-proxy-with-no-scrolling-layer.html: Added.
+
 2019-07-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Standard library is too big to directly include in WebCore

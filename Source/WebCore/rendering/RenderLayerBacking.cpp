@@ -1575,17 +1575,17 @@ bool RenderLayerBacking::updateAncestorClippingStack(Vector<CompositedClipData>&
     
     if (!m_ancestorClippingStack) {
         m_ancestorClippingStack = std::make_unique<LayerAncestorClippingStack>(WTFMove(clippingData));
-        LOG_WITH_STREAM(Compositing, stream << "layer " << &m_owningLayer << "  ancestorClippingStack " << *m_ancestorClippingStack);
+        LOG_WITH_STREAM(Compositing, stream << "layer " << &m_owningLayer << " ancestorClippingStack " << *m_ancestorClippingStack);
         return true;
     }
     
     if (m_ancestorClippingStack->equalToClipData(clippingData)) {
-        LOG_WITH_STREAM(Compositing, stream << "layer " << &m_owningLayer << "  ancestorClippingStack " << *m_ancestorClippingStack);
+        LOG_WITH_STREAM(Compositing, stream << "layer " << &m_owningLayer << " ancestorClippingStack " << *m_ancestorClippingStack);
         return false;
     }
     
     m_ancestorClippingStack->updateWithClipData(scrollingCoordinator, WTFMove(clippingData));
-    LOG_WITH_STREAM(Compositing, stream << "layer " << &m_owningLayer << "  ancestorClippingStack " << *m_ancestorClippingStack);
+    LOG_WITH_STREAM(Compositing, stream << "layer " << &m_owningLayer << " ancestorClippingStack " << *m_ancestorClippingStack);
     return true;
 }
 
