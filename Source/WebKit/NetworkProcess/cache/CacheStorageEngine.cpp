@@ -459,7 +459,7 @@ void Engine::removeFile(const String& filename)
 
 class ReadOriginsTaskCounter : public RefCounted<ReadOriginsTaskCounter> {
 public:
-    static Ref<ReadOriginsTaskCounter> create(WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)>&& callback)
+    static Ref<ReadOriginsTaskCounter> create(CompletionHandler<void(Vector<WebsiteData::Entry>)>&& callback)
     {
         return adoptRef(*new ReadOriginsTaskCounter(WTFMove(callback)));
     }
@@ -475,16 +475,31 @@ public:
     }
 
 private:
-    explicit ReadOriginsTaskCounter(WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)>&& callback)
+    explicit ReadOriginsTaskCounter(CompletionHandler<void(Vector<WebsiteData::Entry>)>&& callback)
         : m_callback(WTFMove(callback))
     {
     }
 
-    WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)> m_callback;
+    CompletionHandler<void(Vector<WebsiteData::Entry>)> m_callback;
     Vector<WebsiteData::Entry> m_entries;
 };
 
-void Engine::fetchEntries(bool shouldComputeSize, WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)>&& completionHandler)
+void Engine::getDirectories(CompletionHandler<void(const Vector<String>&)>&& completionHandler)
+{
+    m_ioQueue->dispatch([path = m_rootPath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        Vector<String> folderPaths;
+        for (auto& filename : FileSystem::listDirectory(path, "*")) {
+            if (FileSystem::fileIsDirectory(filename, FileSystem::ShouldFollowSymbolicLinks::No))
+                folderPaths.append(filename.isolatedCopy());
+        }
+
+        RunLoop::main().dispatch([folderPaths = WTFMove(folderPaths), completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler(folderPaths);
+        });
+    });
+}
+
+void Engine::fetchEntries(bool shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>)>&& completionHandler)
 {
     if (!shouldPersist()) {
         auto entries = WTF::map(m_caches, [] (auto& pair) {
@@ -494,10 +509,17 @@ void Engine::fetchEntries(bool shouldComputeSize, WTF::CompletionHandler<void(Ve
         return;
     }
 
+    getDirectories([this, weakThis = makeWeakPtr(this), path = m_rootPath.isolatedCopy(), shouldComputeSize, completionHandler = WTFMove(completionHandler)](const auto& folderPaths) mutable {
+        if (!weakThis)
+            return completionHandler({ });
+        fetchDirectoryEntries(shouldComputeSize, folderPaths, WTFMove(completionHandler));
+    });
+}
+
+void Engine::fetchDirectoryEntries(bool shouldComputeSize, const Vector<String>& folderPaths, CompletionHandler<void(Vector<WebsiteData::Entry>)>&& completionHandler)
+{
     auto taskCounter = ReadOriginsTaskCounter::create(WTFMove(completionHandler));
-    for (auto& folderPath : FileSystem::listDirectory(m_rootPath, "*")) {
-        if (!FileSystem::fileIsDirectory(folderPath, FileSystem::ShouldFollowSymbolicLinks::No))
-            continue;
+    for (auto& folderPath : folderPaths) {
         Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [protectedThis = makeRef(*this), shouldComputeSize, taskCounter = taskCounter.copyRef()] (auto&& origin) mutable {
             ASSERT(RunLoop::isMain());
             if (!origin)
@@ -569,12 +591,17 @@ void Engine::clearCachesForOrigin(const WebCore::SecurityOriginData& origin, Com
 void Engine::clearCachesForOriginFromDisk(const WebCore::SecurityOriginData& origin, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
+    getDirectories([this, weakThis = makeWeakPtr(this), origin, completionHandler = WTFMove(completionHandler)](const auto& folderPaths) mutable {
+        if (!weakThis)
+            return completionHandler();
+        clearCachesForOriginFromDirectories(folderPaths, origin, WTFMove(completionHandler));
+    });
+}
 
+void Engine::clearCachesForOriginFromDirectories(const Vector<String>& folderPaths, const WebCore::SecurityOriginData& origin, CompletionHandler<void()>&& completionHandler)
+{
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-
-    for (auto& folderPath : FileSystem::listDirectory(m_rootPath, "*")) {
-        if (!FileSystem::fileIsDirectory(folderPath, FileSystem::ShouldFollowSymbolicLinks::No))
-            continue;
+    for (auto& folderPath : folderPaths) {
         Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [this, protectedThis = makeRef(*this), origin, callbackAggregator = callbackAggregator.copyRef(), folderPath] (Optional<WebCore::ClientOrigin>&& folderOrigin) mutable {
             if (!folderOrigin)
                 return;
