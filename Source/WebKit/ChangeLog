@@ -1,3 +1,15 @@
+2019-07-03  Chris Dumez  <cdumez@apple.com>
+
+        StorageManager::suspend() sometimes fails to call its completion handler
+        https://bugs.webkit.org/show_bug.cgi?id=199482
+
+        Reviewed by Youenn Fablet.
+
+        Make sure the completion handler gets called in the early return cases.
+
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::suspend):
+
 2019-07-03  Youenn Fablet  <youenn@apple.com>
 
         Make CacheStorage::Engine directory listing operations in a background thread

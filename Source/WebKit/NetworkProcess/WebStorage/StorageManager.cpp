@@ -924,6 +924,7 @@ void StorageManager::waitUntilWritesFinished()
 
 void StorageManager::suspend(CompletionHandler<void()>&& completionHandler)
 {
+    CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
     if (!m_localStorageDatabaseTracker)
         return;
 
@@ -932,7 +933,7 @@ void StorageManager::suspend(CompletionHandler<void()>&& completionHandler)
         return;
     m_state = State::WillSuspend;
 
-    m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] () mutable {
+    m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = completionHandlerCaller.release()] () mutable {
         Locker<Lock> stateLocker(m_stateLock);
         ASSERT(m_state != State::Suspended);
 
