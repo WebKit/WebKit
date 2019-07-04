@@ -1,3 +1,31 @@
+2019-07-03  Robin Morisset  <rmorisset@apple.com>
+
+        [WHLSL] Make the destructor of VariableDeclaration non-virtual
+        https://bugs.webkit.org/show_bug.cgi?id=199460
+
+        Reviewed by Myles C. Maxfield.
+
+        Three steps:
+        - Remove WHLSL::AST::Value, inlining it into its children (it is trivial, it just has one field m_origin with a getter and nothing else)
+        - Mark WHLSL::AST::VariableDeclaration final
+        - Now that it inherits from nothing and nothing can inherit from it, there is no reason for it to have any virtual method, including its destructor.
+
+        This not only saves 8 bytes from every variable declaration (for the virtual table pointer), it also should make destructing the AST at the end of compilation a bit faster by removing the virtual destructor call.
+
+        No new tests as there is no intended functional change.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLAST.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.h:
+        (WebCore::WHLSL::AST::Expression::Expression):
+        (WebCore::WHLSL::AST::Expression::origin const):
+        * Modules/webgpu/WHLSL/AST/WHLSLStatement.h:
+        (WebCore::WHLSL::AST::Statement::Statement):
+        (WebCore::WHLSL::AST::Statement::origin const):
+        * Modules/webgpu/WHLSL/AST/WHLSLValue.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclaration.h:
+        * Modules/webgpu/WHLSL/WHLSLParser.h:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-07-03  Sihui Liu  <sihui_liu@apple.com>
 
         Only allow fetching and removing session credentials from WebsiteDataStore

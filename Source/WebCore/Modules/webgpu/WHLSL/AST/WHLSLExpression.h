@@ -30,7 +30,6 @@
 #include "WHLSLAddressSpace.h"
 #include "WHLSLLexer.h"
 #include "WHLSLUnnamedType.h"
-#include "WHLSLValue.h"
 #include <wtf/Optional.h>
 #include <wtf/UniqueRef.h>
 
@@ -40,11 +39,10 @@ namespace WHLSL {
 
 namespace AST {
 
-class Expression : public Value {
-    using Base = Value;
+class Expression {
 public:
     Expression(Lexer::Token&& origin)
-        : Base(WTFMove(origin))
+        : m_origin(WTFMove(origin))
     {
     }
 
@@ -114,7 +112,10 @@ public:
     virtual bool isVariableReference() const { return false; }
     virtual bool isEnumerationMemberLiteral() const { return false; }
 
+    Lexer::Token origin() const { return m_origin; }
+
 private:
+    Lexer::Token m_origin;
     Optional<UniqueRef<UnnamedType>> m_type;
     Optional<TypeAnnotation> m_typeAnnotation;
 };

@@ -98,7 +98,6 @@
 #include "WHLSLUnnamedType.h"
 #include "WHLSLUnsignedIntegerLiteral.h"
 #include "WHLSLUnsignedIntegerLiteralType.h"
-#include "WHLSLValue.h"
 #include "WHLSLVariableDeclaration.h"
 #include "WHLSLVariableDeclarationsStatement.h"
 #include "WHLSLVariableReference.h"

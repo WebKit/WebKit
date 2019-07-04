@@ -28,7 +28,6 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLLexer.h"
-#include "WHLSLValue.h"
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -37,11 +36,10 @@ namespace WHLSL {
 
 namespace AST {
 
-class Statement : public Value {
-    using Base = Value;
+class Statement {
 public:
     Statement(Lexer::Token&& origin)
-        : Base(WTFMove(origin))
+        : m_origin(WTFMove(origin))
     {
     }
 
@@ -65,6 +63,11 @@ public:
     virtual bool isTrap() const { return false; }
     virtual bool isVariableDeclarationsStatement() const { return false; }
     virtual bool isWhileLoop() const { return false; }
+
+    Lexer::Token origin() const { return m_origin; }
+
+private:
+    Lexer::Token m_origin;
 };
 
 using Statements = Vector<UniqueRef<Statement>>;

@@ -13296,7 +13296,6 @@
 		C21BF6F921CD89BD00227979 /* WHLSLSemantic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLSemantic.h; sourceTree = "<group>"; };
 		C21BF6FA21CD89BE00227979 /* WHLSLBaseSemantic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLBaseSemantic.h; sourceTree = "<group>"; };
 		C21BF6FB21CD89BE00227979 /* WHLSLDoWhileLoop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLDoWhileLoop.h; sourceTree = "<group>"; };
-		C21BF6FC21CD89BF00227979 /* WHLSLValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLValue.h; sourceTree = "<group>"; };
 		C21BF6FD21CD89C000227979 /* WHLSLFunctionDeclaration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLFunctionDeclaration.h; sourceTree = "<group>"; };
 		C21BF6FE21CD89C100227979 /* WHLSLStructureElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLStructureElement.h; sourceTree = "<group>"; };
 		C21BF6FF21CD89C200227979 /* WHLSLIfStatement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLIfStatement.h; sourceTree = "<group>"; };
@@ -17176,7 +17175,6 @@
 				C21BF72B21CD89E800227979 /* WHLSLUnsignedIntegerLiteral.h */,
 				1CB69B3B21DF041E006E846A /* WHLSLUnsignedIntegerLiteralType.cpp */,
 				1CB69B3721DED66B006E846A /* WHLSLUnsignedIntegerLiteralType.h */,
-				C21BF6FC21CD89BF00227979 /* WHLSLValue.h */,
 				C21BF71021CD89D000227979 /* WHLSLVariableDeclaration.h */,
 				C21BF71421CD89D300227979 /* WHLSLVariableDeclarationsStatement.h */,
 				C21BF71321CD89D200227979 /* WHLSLVariableReference.h */,
