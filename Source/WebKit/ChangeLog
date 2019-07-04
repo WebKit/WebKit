@@ -1,3 +1,17 @@
+2019-07-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in WebDragClient::startDrag because GraphicsContext is nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=199491
+
+        Reviewed by Wenson Hsieh.
+
+        Added a nullptr check.
+
+        Unfortunately no new tests since we don't have a reproducible test case.
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::convertImageToBitmap):
+
 2019-07-03  Tim Horton  <timothy_horton@apple.com>
 
         Data Detectors are not working for context menus in clients that use the legacy preview API
