@@ -1,5 +1,15 @@
 2019-07-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK] Fix browserperfdash script after r239522
+        https://bugs.webkit.org/show_bug.cgi?id=199496
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitpy/browserperfdash/browserperfdash_runner.py:
+        (BrowserPerfDashRunner.run): Pass None for the new required BenchmarkRunner constructor.
+
+2019-07-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [webkitpy] test-webkitpy is broken on Linux since r246662
         https://bugs.webkit.org/show_bug.cgi?id=199493
 

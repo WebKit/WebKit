@@ -165,7 +165,7 @@ class BrowserPerfDashRunner(object):
                 # Run test and save test info
                 with tempfile.NamedTemporaryFile() as temp_result_file:
                     benchmark_runner_class = benchmark_runner_subclasses[self._args.driver]
-                    runner = benchmark_runner_class(plan, self._args.localCopy, self._args.countOverride, self._args.buildDir, temp_result_file.name, self._args.platform, self._args.browser)
+                    runner = benchmark_runner_class(plan, self._args.localCopy, self._args.countOverride, self._args.buildDir, temp_result_file.name, self._args.platform, self._args.browser, None)
                     runner.execute()
                     _log.info('Finished benchmark plan: {plan_name}'.format(plan_name=plan))
                     # Fill test info for upload
