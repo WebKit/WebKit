@@ -1,3 +1,10 @@
+2019-07-01  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK a11y tests fix after r247071
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::popupValue const):
+
 2019-07-03  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Enable WPE and GTK queues on new EWS
