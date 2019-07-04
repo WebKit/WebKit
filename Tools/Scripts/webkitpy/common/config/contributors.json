@@ -1056,10 +1056,11 @@
       "emails" : [
          "clopez@igalia.com"
       ],
-      "expertise" : "The WebKitGTK port, Tools, Build/test infrastructure",
+      "expertise" : "The WebKitGTK and WPE ports, Tools, Build/test infrastructure",
       "nicks" : [
          "clopez"
-      ]
+      ],
+      "status" : "committer"
    },
    "Carlos Eduardo Ramalho" : {
       "emails" : [
