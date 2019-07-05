@@ -77,7 +77,6 @@
 		1C734B5320788C4800F430EA /* SystemColors.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C734B5220788C4800F430EA /* SystemColors.mm */; };
 		1C7FEB20207C0F2E00D23278 /* BackgroundColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C7FEB1F207C0F2D00D23278 /* BackgroundColor.mm */; };
 		1C9EB8411E380DA1005C6442 /* ComplexTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C9EB8401E380DA1005C6442 /* ComplexTextController.cpp */; };
-		1C9FF0AA22CD4CD200AA6539 /* libcompression.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C9FF0A922CD4C0400AA6539 /* libcompression.tbd */; };
 		1CAD1F861E5CE7DA00AF2C2C /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAD1F851E5CE7DA00AF2C2C /* FontCache.cpp */; };
 		1CF59AE221E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF59AE021E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm */; };
 		1CF59AE321E68932006E37EC /* ForceLightAppearanceInBundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF59ADF21E68925006E37EC /* ForceLightAppearanceInBundle.mm */; };
@@ -1454,7 +1453,6 @@
 		1C734B5220788C4800F430EA /* SystemColors.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemColors.mm; sourceTree = "<group>"; };
 		1C7FEB1F207C0F2D00D23278 /* BackgroundColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BackgroundColor.mm; sourceTree = "<group>"; };
 		1C9EB8401E380DA1005C6442 /* ComplexTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextController.cpp; sourceTree = "<group>"; };
-		1C9FF0A922CD4C0400AA6539 /* libcompression.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcompression.tbd; path = usr/lib/libcompression.tbd; sourceTree = SDKROOT; };
 		1CAD1F851E5CE7DA00AF2C2C /* FontCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontCache.cpp; sourceTree = "<group>"; };
 		1CB9BC371A67482300FE5678 /* WeakPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakPtr.cpp; sourceTree = "<group>"; };
 		1CF0D3781BBF2F3D00B4EF54 /* WKRetainPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKRetainPtr.cpp; sourceTree = "<group>"; };
@@ -2446,7 +2444,6 @@
 			files = (
 				93F56DA71E5F9174003EDE84 /* libicucore.dylib in Frameworks */,
 				143DDE9820C9018B007F76FA /* Security.framework in Frameworks */,
-				1C9FF0AA22CD4CD200AA6539 /* libcompression.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2941,7 +2938,6 @@
 		7C83E0281D0A5CDF00FEBCF3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1C9FF0A922CD4C0400AA6539 /* libcompression.tbd */,
 				7A010BCA1D877C0500EDE72A /* CoreGraphics.framework */,
 				634910DF1E9D3FF300880309 /* CoreLocation.framework */,
 				C20F88A62295B96700D610FA /* CoreText.framework */,

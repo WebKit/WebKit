@@ -307,7 +307,6 @@ Modules/websockets/WorkerThreadableWebSocketChannel.cpp
 Modules/webgpu/GPUCanvasContext.cpp
 Modules/webgpu/NavigatorGPU.cpp
 Modules/webgpu/WHLSL/WHLSLComputeDimensions.cpp
-Modules/webgpu/WHLSL/WHLSLStandardLibraryUtilities.cpp
 Modules/webgpu/WHLSL/WHLSLASTDumper.cpp
 Modules/webgpu/WHLSL/WHLSLAutoInitializeVariables.cpp
 Modules/webgpu/WHLSL/WHLSLInferTypes.cpp

@@ -35,7 +35,6 @@
 #include "WHLSLTypeNamer.h"
 #include "WHLSLVisitor.h"
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -555,7 +554,8 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& callExpression)
         checkErrorAndVisit(argument);
         argumentNames.append(takeLastValue());
     }
-    auto iterator = m_functionMapping.find(&callExpression.function());
+    ASSERT(callExpression.function());
+    auto iterator = m_functionMapping.find(callExpression.function());
     ASSERT(iterator != m_functionMapping.end());
     auto variableName = generateNextVariableName();
     if (!matches(callExpression.resolvedType(), m_intrinsics.voidType()))
@@ -763,7 +763,7 @@ struct SharedMetalFunctionsResult {
     HashMap<AST::FunctionDeclaration*, String> functionMapping;
     String metalFunctions;
 };
-static SharedMetalFunctionsResult sharedMetalFunctions(Program& program, TypeNamer& typeNamer, const HashSet<AST::FunctionDeclaration*>& reachableFunctions)
+static SharedMetalFunctionsResult sharedMetalFunctions(Program& program, TypeNamer& typeNamer)
 {
     StringBuilder stringBuilder;
 
@@ -780,12 +780,10 @@ static SharedMetalFunctionsResult sharedMetalFunctions(Program& program, TypeNam
 
     {
         FunctionDeclarationWriter functionDeclarationWriter(typeNamer, functionMapping);
-        for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations()) {
-            if (reachableFunctions.contains(&nativeFunctionDeclaration))
-                functionDeclarationWriter.visit(nativeFunctionDeclaration);
-        }
+        for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations())
+            functionDeclarationWriter.visit(nativeFunctionDeclaration);
         for (auto& functionDefinition : program.functionDefinitions()) {
-            if (!functionDefinition->entryPointType() && reachableFunctions.contains(&functionDefinition))
+            if (!functionDefinition->entryPointType())
                 functionDeclarationWriter.visit(functionDefinition);
         }
         stringBuilder.append(functionDeclarationWriter.toString());
@@ -795,89 +793,49 @@ static SharedMetalFunctionsResult sharedMetalFunctions(Program& program, TypeNam
     return { WTFMove(functionMapping), stringBuilder.toString() };
 }
 
-class ReachableFunctionsGatherer : public Visitor {
-public:
-    void visit(AST::FunctionDeclaration& functionDeclaration) override
-    {
-        Visitor::visit(functionDeclaration);
-        m_reachableFunctions.add(&functionDeclaration);
-    }
-
-    void visit(AST::CallExpression& callExpression) override
-    {
-        Visitor::visit(callExpression);
-        if (is<AST::FunctionDefinition>(callExpression.function()))
-            checkErrorAndVisit(downcast<AST::FunctionDefinition>(callExpression.function()));
-        else
-            checkErrorAndVisit(downcast<AST::NativeFunctionDeclaration>(callExpression.function()));
-    }
-
-    HashSet<AST::FunctionDeclaration*> takeReachableFunctions() { return WTFMove(m_reachableFunctions); }
-
-private:
-    HashSet<AST::FunctionDeclaration*> m_reachableFunctions;
-};
-
 RenderMetalFunctions metalFunctions(Program& program, TypeNamer& typeNamer, MatchedRenderSemantics&& matchedSemantics, Layout& layout)
 {
-    auto& vertexShaderEntryPoint = *matchedSemantics.vertexShader;
-    auto& fragmentShaderEntryPoint = *matchedSemantics.fragmentShader;
-
-    ReachableFunctionsGatherer reachableFunctionsGatherer;
-    reachableFunctionsGatherer.Visitor::visit(vertexShaderEntryPoint);
-    reachableFunctionsGatherer.Visitor::visit(fragmentShaderEntryPoint);
-    auto reachableFunctions = reachableFunctionsGatherer.takeReachableFunctions();
-
-    auto sharedMetalFunctions = Metal::sharedMetalFunctions(program, typeNamer, reachableFunctions);
+    auto sharedMetalFunctions = Metal::sharedMetalFunctions(program, typeNamer);
 
     StringBuilder stringBuilder;
     stringBuilder.append(sharedMetalFunctions.metalFunctions);
 
+    auto* vertexShaderEntryPoint = matchedSemantics.vertexShader;
+    auto* fragmentShaderEntryPoint = matchedSemantics.fragmentShader;
+
     RenderFunctionDefinitionWriter functionDefinitionWriter(program.intrinsics(), typeNamer, sharedMetalFunctions.functionMapping, WTFMove(matchedSemantics), layout);
-    for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations()) {
-        if (reachableFunctions.contains(&nativeFunctionDeclaration))
-            functionDefinitionWriter.visit(nativeFunctionDeclaration);
-    }
-    for (auto& functionDefinition : program.functionDefinitions()) {
-        if (reachableFunctions.contains(&functionDefinition))
-            functionDefinitionWriter.visit(functionDefinition);
-    }
+    for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations())
+        functionDefinitionWriter.visit(nativeFunctionDeclaration);
+    for (auto& functionDefinition : program.functionDefinitions())
+        functionDefinitionWriter.visit(functionDefinition);
     stringBuilder.append(functionDefinitionWriter.toString());
 
     RenderMetalFunctions result;
     result.metalSource = stringBuilder.toString();
-    result.mangledVertexEntryPointName = sharedMetalFunctions.functionMapping.get(&vertexShaderEntryPoint);
-    result.mangledFragmentEntryPointName = sharedMetalFunctions.functionMapping.get(&fragmentShaderEntryPoint);
+    result.mangledVertexEntryPointName = sharedMetalFunctions.functionMapping.get(vertexShaderEntryPoint);
+    result.mangledFragmentEntryPointName = sharedMetalFunctions.functionMapping.get(fragmentShaderEntryPoint);
     return result;
 }
 
 ComputeMetalFunctions metalFunctions(Program& program, TypeNamer& typeNamer, MatchedComputeSemantics&& matchedSemantics, Layout& layout)
 {
-    auto& entryPoint = *matchedSemantics.shader;
-
-    ReachableFunctionsGatherer reachableFunctionsGatherer;
-    reachableFunctionsGatherer.Visitor::visit(entryPoint);
-    auto reachableFunctions = reachableFunctionsGatherer.takeReachableFunctions();
-
-    auto sharedMetalFunctions = Metal::sharedMetalFunctions(program, typeNamer, reachableFunctions);
+    auto sharedMetalFunctions = Metal::sharedMetalFunctions(program, typeNamer);
 
     StringBuilder stringBuilder;
     stringBuilder.append(sharedMetalFunctions.metalFunctions);
 
+    auto* entryPoint = matchedSemantics.shader;
+
     ComputeFunctionDefinitionWriter functionDefinitionWriter(program.intrinsics(), typeNamer, sharedMetalFunctions.functionMapping, WTFMove(matchedSemantics), layout);
-    for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations()) {
-        if (reachableFunctions.contains(&nativeFunctionDeclaration))
-            functionDefinitionWriter.visit(nativeFunctionDeclaration);
-    }
-    for (auto& functionDefinition : program.functionDefinitions()) {
-        if (reachableFunctions.contains(&functionDefinition))
-            functionDefinitionWriter.visit(functionDefinition);
-    }
+    for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations())
+        functionDefinitionWriter.visit(nativeFunctionDeclaration);
+    for (auto& functionDefinition : program.functionDefinitions())
+        functionDefinitionWriter.visit(functionDefinition);
     stringBuilder.append(functionDefinitionWriter.toString());
 
     ComputeMetalFunctions result;
     result.metalSource = stringBuilder.toString();
-    result.mangledEntryPointName = sharedMetalFunctions.functionMapping.get(&entryPoint);
+    result.mangledEntryPointName = sharedMetalFunctions.functionMapping.get(entryPoint);
     return result;
 }
 

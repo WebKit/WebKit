@@ -1,5 +1,9 @@
 2019-07-05  Babak Shafiei  <bshafiei@apple.com>
 
+        Revert r247115. rdar://problem/51288898
+
+2019-07-05  Babak Shafiei  <bshafiei@apple.com>
+
         Revert r247124. rdar://problem/52687835
 
 2019-07-04  Zalan Bujtas  <zalan@apple.com>

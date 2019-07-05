@@ -564,10 +564,6 @@ platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm
 
 platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp
 
-// Derived Sources
-
-WHLSLStandardLibraryFunctionMap.cpp
-
 #if ENABLE_APPLE_PAY
 
     Modules/applepay/ApplePayContactField.cpp

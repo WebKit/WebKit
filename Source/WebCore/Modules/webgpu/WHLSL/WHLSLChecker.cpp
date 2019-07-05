@@ -194,8 +194,7 @@ static Optional<AST::NativeFunctionDeclaration> resolveByInstantiation(const Str
     } else if (name == "operator==" && types.size() == 2) {
         auto acceptability = [](ResolvingType& resolvingType) -> Acceptability {
             return resolvingType.visit(WTF::makeVisitor([](UniqueRef<AST::UnnamedType>& unnamedType) -> Acceptability {
-                auto& unifyNode = unnamedType->unifyNode();
-                return is<AST::UnnamedType>(unifyNode) && is<AST::ReferenceType>(downcast<AST::UnnamedType>(unifyNode)) ? Acceptability::Yes : Acceptability::No;
+                return is<AST::ReferenceType>(static_cast<AST::UnnamedType&>(unnamedType)) ? Acceptability::Yes : Acceptability::No;
             }, [](RefPtr<ResolvableTypeReference>& resolvableTypeReference) -> Acceptability {
                 return is<AST::NullLiteralType>(resolvableTypeReference->resolvableType()) ? Acceptability::Maybe : Acceptability::No;
             }));
@@ -417,7 +416,7 @@ static bool checkOperatorOverload(const AST::FunctionDefinition& functionDefinit
         || functionDefinition.name() == "operator|"
         || functionDefinition.name() == "operator^"
         || functionDefinition.name() == "operator<<"
-        || functionDefinition.name() == "operator>>")
+        || functionDefinition.name() == "opreator>>")
         return functionDefinition.parameters().size() == 2;
     if (functionDefinition.name() == "operator~")
         return functionDefinition.parameters().size() == 1;
@@ -1138,6 +1137,7 @@ void Checker::visit(AST::VariableReference& variableReference)
 
 void Checker::visit(AST::Return& returnStatement)
 {
+    ASSERT(returnStatement.function());
     if (returnStatement.value()) {
         auto valueInfo = recurseAndGetInfo(*returnStatement.value());
         if (!valueInfo)
