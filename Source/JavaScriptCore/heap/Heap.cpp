@@ -339,6 +339,9 @@ Heap::Heap(VM* vm, HeapType heapType)
 
 Heap::~Heap()
 {
+    // Scribble m_worldState to make it clear that the heap has already been destroyed if we crash in checkConn
+    m_worldState.store(0xbadbeef0u);
+
     forEachSlotVisitor(
         [&] (SlotVisitor& visitor) {
             visitor.clearMarkStacks();

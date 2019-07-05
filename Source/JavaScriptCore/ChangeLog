@@ -1,3 +1,16 @@
+2019-07-05  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Scribble Heap::m_worldState on destructor
+        https://bugs.webkit.org/show_bug.cgi?id=199498
+
+        Reviewed by Sam Weinig.
+
+        The worldState is dumped when we crash due to a failed checkConn, and
+        this will make it clear if the heap has already been destroyed.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::~Heap):
+
 2019-07-03  Sam Weinig  <weinig@apple.com>
 
         Adopt simple structured bindings in more places
