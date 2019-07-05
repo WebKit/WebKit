@@ -2508,6 +2508,9 @@ static void focusedElementPositionInformation(WebPage& page, Element& focusedEle
     VisiblePosition position = frame.visiblePositionForPoint(constrainedPoint);
 
     RefPtr<Range> compositionRange = frame.editor().compositionRange();
+    if (!compositionRange)
+        return;
+
     if (position < compositionRange->startPosition())
         position = compositionRange->startPosition();
     else if (position > compositionRange->endPosition())

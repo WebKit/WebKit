@@ -3077,6 +3077,7 @@ RefPtr<Range> Editor::compositionRange() const
     unsigned length = m_compositionNode->length();
     unsigned start = std::min(m_compositionStart, length);
     unsigned end = std::min(std::max(start, m_compositionEnd), length);
+    // FIXME: Why is this early return neeed?
     if (start >= end)
         return nullptr;
     return Range::create(m_compositionNode->document(), m_compositionNode.get(), start, m_compositionNode.get(), end);
