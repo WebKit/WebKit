@@ -50,6 +50,9 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy 
     case HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
         soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
         break;
+    case HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
+        ASSERT_NOT_REACHED();
+        break;
     }
 
     m_process.forEachNetworkStorageSession([soupPolicy] (const auto& session) {

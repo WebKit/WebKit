@@ -1,3 +1,15 @@
+2019-07-05  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix -Wswitch warning
+
+        We don't support HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain.
+
+        Fun fact, soup's OnlyFromMainDocumentDomain functions the same as Apple's
+        ExclusivelyFromMainDocumentDomain. These should be renamed....
+
+        * NetworkProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+
 2019-07-05  Dean Jackson  <dino@apple.com>
 
         [iOS] Context Menu - Add to Reading List does nothing
