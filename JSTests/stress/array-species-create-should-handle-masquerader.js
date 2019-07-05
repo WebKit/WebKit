@@ -17,5 +17,5 @@ noInline(shouldThrow);
 for (var i = 0; i < 1e5; ++i) {
     shouldThrow(() => {
         new (class extends Array { static get [Symbol.species]() { return makeMasquerader(); } })(1, 2, 3).flat().constructor
-    }, `TypeError: Masquerader is not a constructor`);
+    }, `TypeError: Species construction did not get a valid constructor`);
 }

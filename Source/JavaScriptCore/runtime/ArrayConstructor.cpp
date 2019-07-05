@@ -146,10 +146,4 @@ EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArraySlow(ExecState* e
     return JSValue::encode(jsBoolean(isArraySlowInline(exec, jsCast<ProxyObject*>(exec->uncheckedArgument(0)))));
 }
 
-EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArrayConstructor(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    return JSValue::encode(jsBoolean(jsDynamicCast<ArrayConstructor*>(vm, exec->uncheckedArgument(0))));
-}
-
 } // namespace JSC

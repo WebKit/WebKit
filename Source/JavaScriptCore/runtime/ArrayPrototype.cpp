@@ -213,7 +213,7 @@ enum class SpeciesConstructResult {
     CreatedObject
 };
 
-static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstructArray(ExecState* exec, JSObject* thisObject, unsigned length)
+static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstructArray(ExecState* exec, JSObject* thisObject, uint64_t length)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -238,14 +238,16 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstru
         RETURN_IF_EXCEPTION(scope, exceptionResult());
         if (constructor.isConstructor(vm)) {
             JSObject* constructorObject = jsCast<JSObject*>(constructor);
-            if (exec->lexicalGlobalObject() != constructorObject->globalObject(vm))
-                return std::make_pair(SpeciesConstructResult::FastPath, nullptr);;
+            bool isArrayConstructorFromAnotherRealm = exec->lexicalGlobalObject() != constructorObject->globalObject(vm)
+                && constructorObject->inherits<ArrayConstructor>(vm);
+            if (isArrayConstructorFromAnotherRealm)
+                return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
         }
         if (constructor.isObject()) {
             constructor = constructor.get(exec, vm.propertyNames->speciesSymbol);
             RETURN_IF_EXCEPTION(scope, exceptionResult());
             if (constructor.isNull())
-                return std::make_pair(SpeciesConstructResult::FastPath, nullptr);;
+                return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
         }
     } else {
         // If isArray is false, return ? ArrayCreate(length).
@@ -261,6 +263,28 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstru
     JSObject* newObject = construct(exec, constructor, args, "Species construction did not get a valid constructor");
     RETURN_IF_EXCEPTION(scope, exceptionResult());
     return std::make_pair(SpeciesConstructResult::CreatedObject, newObject);
+}
+
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncSpeciesCreate(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSObject* object = asObject(exec->uncheckedArgument(0));
+    uint64_t length = static_cast<uint64_t>(exec->uncheckedArgument(1).asNumber());
+
+    std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(exec, object, length);
+    EXCEPTION_ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
+    if (UNLIKELY(speciesResult.first == SpeciesConstructResult::Exception))
+        return { };
+    if (speciesResult.first == SpeciesConstructResult::CreatedObject)
+        return JSValue::encode(speciesResult.second);
+
+    if (length > std::numeric_limits<unsigned>::max()) {
+        throwRangeError(exec, scope, "Array size is not a small enough positive integer."_s);
+        return { };
+    }
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(constructEmptyArray(exec, nullptr, length)));
 }
 
 static inline unsigned argumentClampedIndexFromStartOrEnd(ExecState* exec, int argument, unsigned length, unsigned undefinedValue = 0)

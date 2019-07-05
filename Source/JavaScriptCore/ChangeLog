@@ -1,3 +1,33 @@
+2019-07-05  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Clean up ArraySpeciesCreate
+        https://bugs.webkit.org/show_bug.cgi?id=182434
+
+        Reviewed by Yusuke Suzuki.
+
+        We have duplicate code in arraySpeciesCreate, filter, map, concatSlowPath of ArrayPrototype.js
+        and speciesConstructArray of ArrayPrototype.cpp. This patch fixes cross-realm Array constructor
+        detection in native speciesConstructArray, upgrades `length` type to correctly handle large integers,
+        and exposes it as @arraySpeciesCreate. Also removes now unused @isArrayConstructor private function.
+        Native speciesConstructArray is preferred because it has fast path via speciesWatchpointIsValid.
+
+        Thoroughly benchmarked: this change progresses ARES-6 by 0-1%.
+
+        * builtins/ArrayPrototype.js:
+        (filter):
+        (map):
+        (globalPrivate.concatSlowPath):
+        (globalPrivate.arraySpeciesCreate): Deleted.
+        * builtins/BuiltinNames.h:
+        * runtime/ArrayConstructor.cpp:
+        (JSC::arrayConstructorPrivateFuncIsArrayConstructor): Deleted.
+        * runtime/ArrayConstructor.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSpeciesCreate):
+        * runtime/ArrayPrototype.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+
 2019-07-05  Tadeu Zagallo  <tzagallo@apple.com>
 
         Unreviewed, change the value used to scribble Heap::m_worldState

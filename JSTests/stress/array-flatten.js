@@ -77,7 +77,7 @@ array2.constructor = 0;
 
 shouldThrow(() => {
     flat.call(array2);
-}, `TypeError: 0 is not a constructor`);
+}, `TypeError: Species construction did not get a valid constructor`);
 
 var array2 = new realm.Array;
 array2.constructor = undefined;

@@ -50,6 +50,7 @@ namespace JSC {
     macro(arrayIteratorNext) \
     macro(arrayIteratorIsDone) \
     macro(arrayIteratorKind) \
+    macro(arraySpeciesCreate) \
     macro(assert) \
     macro(charCodeAt) \
     macro(executor) \
@@ -132,7 +133,6 @@ namespace JSC {
     macro(hasInstanceBoundFunction) \
     macro(instanceOf) \
     macro(isArraySlow) \
-    macro(isArrayConstructor) \
     macro(isConstructor) \
     macro(concatMemcpy) \
     macro(appendMemcpy) \

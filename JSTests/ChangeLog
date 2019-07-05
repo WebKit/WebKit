@@ -1,3 +1,17 @@
+2019-07-05  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Clean up ArraySpeciesCreate
+        https://bugs.webkit.org/show_bug.cgi?id=182434
+
+        Reviewed by Yusuke Suzuki.
+
+        Adjusts error message expectations in stress tests.
+
+        * stress/array-flatmap.js:
+        * stress/array-flatten.js:
+        * stress/array-species-create-should-handle-masquerader.js:
+        * test262/expectations.yaml: Mark 4 test cases as passing.
+
 2019-07-02  Michael Saboff  <msaboff@apple.com>
 
         Exception from For..of loop assignment eliminates TDZ checks in subsequent code

@@ -50,6 +50,7 @@ protected:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncSpeciesCreate(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncValues(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState*);

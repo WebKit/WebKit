@@ -660,9 +660,6 @@ test/built-ins/Array/prototype/push/throws-if-integer-limit-exceeded.js:
 test/built-ins/Array/prototype/reverse/length-exceeding-integer-limit-with-proxy.js:
   default: 'Test262Error: Expected a StopReverse but got a Test262Error'
   strict mode: 'Test262Error: Expected a StopReverse but got a Test262Error'
-test/built-ins/Array/prototype/slice/create-proto-from-ctor-realm-non-array.js:
-  default: 'Test262Error: Expected SameValue(Â«Â», Â«[object Object]Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«Â», Â«[object Object]Â») to be true'
 test/built-ins/Array/prototype/slice/length-exceeding-integer-limit-proxied-array.js:
   default: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
   strict mode: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
@@ -678,9 +675,6 @@ test/built-ins/Array/prototype/splice/S15.4.4.12_A3_T1.js:
 test/built-ins/Array/prototype/splice/clamps-length-to-integer-limit.js:
   default: 'Test262Error: Length is 2**53 - 1 Expected SameValue(Â«4294967295Â», Â«9007199254740991Â») to be true'
   strict mode: 'Test262Error: Length is 2**53 - 1 Expected SameValue(Â«4294967295Â», Â«9007199254740991Â») to be true'
-test/built-ins/Array/prototype/splice/create-proto-from-ctor-realm-non-array.js:
-  default: 'Test262Error: Expected SameValue(Â«Â», Â«[object Object]Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«Â», Â«[object Object]Â») to be true'
 test/built-ins/Array/prototype/splice/create-proxy.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'

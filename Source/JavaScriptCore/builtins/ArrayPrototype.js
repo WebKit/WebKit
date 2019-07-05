@@ -175,27 +175,7 @@ function filter(callback /*, thisArg */)
         @throwTypeError("Array.prototype.filter callback must be a function");
     
     var thisArg = @argument(1);
-
-    // Do 9.4.2.3 ArraySpeciesCreate
-    var result;
-    var constructor;
-    if (@isArray(array)) {
-        constructor = array.constructor;
-        // We have this check so that if some array from a different global object
-        // calls this map they don't get an array with the Array.prototype of the
-        // other global object.
-        if (@Array !== constructor && @isArrayConstructor(constructor))
-            constructor = @undefined;
-        if (@isObject(constructor)) {
-            constructor = constructor.@speciesSymbol;
-            if (constructor === null)
-                constructor = @undefined;
-        }
-    }
-    if (constructor === @Array || constructor === @undefined)
-        result = @newArrayWithSize(0);
-    else
-        result = new constructor(0);
+    var result = @arraySpeciesCreate(array, 0);
 
     var nextIndex = 0;
     for (var i = 0; i < length; i++) {
@@ -221,27 +201,7 @@ function map(callback /*, thisArg */)
         @throwTypeError("Array.prototype.map callback must be a function");
     
     var thisArg = @argument(1);
-
-    // Do 9.4.2.3 ArraySpeciesCreate
-    var result;
-    var constructor;
-    if (@isArray(array)) {
-        constructor = array.constructor;
-        // We have this check so that if some array from a different global object
-        // calls this map they don't get an array with the Array.prototype of the
-        // other global object.
-        if (@Array !== constructor && @isArrayConstructor(constructor))
-            constructor = @undefined;
-        if (@isObject(constructor)) {
-            constructor = constructor.@speciesSymbol;
-            if (constructor === null)
-                constructor = @undefined;
-        }
-    }
-    if (constructor === @Array || constructor === @undefined)
-        result = @newArrayWithSize(length);
-    else
-        result = new constructor(length);
+    var result = @arraySpeciesCreate(array, length);
 
     for (var i = 0; i < length; i++) {
         if (!(i in array))
@@ -620,28 +580,9 @@ function concatSlowPath()
     "use strict";
 
     var currentElement = @toObject(this, "Array.prototype.concat requires that |this| not be null or undefined");
-
-    var constructor;
-    if (@isArray(currentElement)) {
-        constructor = currentElement.constructor;
-        // We have this check so that if some array from a different global object
-        // calls this map they don't get an array with the Array.prototype of the
-        // other global object.
-        if (@Array !== constructor && @isArrayConstructor(constructor))
-            constructor = @undefined;
-        else if (@isObject(constructor)) {
-            constructor = constructor.@speciesSymbol;
-            if (constructor === null)
-                constructor = @Array;
-        }
-    }
-
     var argCount = arguments.length;
-    var result;
-    if (constructor === @Array || constructor === @undefined)
-        result = @newArrayWithSize(0);
-    else
-        result = new constructor(0);
+
+    var result = @arraySpeciesCreate(currentElement, 0);
     var resultIsArray = @isJSArray(result);
 
     var resultIndex = 0;
@@ -741,33 +682,6 @@ function copyWithin(target, start /*, end */)
     }
 
     return array;
-}
-
-@globalPrivate
-function arraySpeciesCreate(array, length)
-{
-    "use strict";
-
-    if (!@isArray(array))
-        return @newArrayWithSize(length);
-
-    var constructor = array.constructor;
-    var arrayConstructorInRealm = @Array;
-    // We have this check so that if some array from a different global object
-    // calls this map they don't get an array with the Array.prototype of the
-    // other global object.
-    if (arrayConstructorInRealm !== constructor && @isArrayConstructor(constructor))
-        return @newArrayWithSize(length);
-
-    if (@isObject(constructor)) {
-        constructor = constructor.@speciesSymbol;
-        if (@isUndefinedOrNull(constructor))
-            return @newArrayWithSize(length);
-    }
-
-    if (constructor === arrayConstructorInRealm || constructor === @undefined)
-        return @newArrayWithSize(length);
-    return new constructor(length);
 }
 
 @globalPrivate
