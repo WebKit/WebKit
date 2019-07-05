@@ -1,3 +1,14 @@
+2019-07-05  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Unreviewed, change the value used to scribble Heap::m_worldState
+        https://bugs.webkit.org/show_bug.cgi?id=199498
+
+        Follow-up after r247160. The value used to scribble should have the
+        conn bit set.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::~Heap):
+
 2019-07-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r247115.
