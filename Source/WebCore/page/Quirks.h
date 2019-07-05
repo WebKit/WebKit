@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Event.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -51,7 +52,7 @@ public:
     bool hasBrokenEncryptedMediaAPISupportQuirk() const;
 #if ENABLE(TOUCH_EVENTS)
     bool shouldDispatchSimulatedMouseEvents() const;
-    bool shouldDispatchSimulatedMouseEventsOnTarget(EventTarget*) const;
+    Optional<Event::IsCancelable> simulatedMouseEventTypeForTarget(EventTarget*) const;
 #endif
     bool shouldDisablePointerEventsQuirk() const;
     bool needsInputModeNoneImplicitly(const HTMLElement&) const;

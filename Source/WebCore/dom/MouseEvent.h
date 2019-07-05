@@ -54,7 +54,7 @@ public:
     static Ref<MouseEvent> create(const AtomString& eventType, const MouseEventInit&);
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
-    static Ref<MouseEvent> create(const PlatformTouchEvent&, unsigned touchIndex, Ref<WindowProxy>&&);
+    static Ref<MouseEvent> create(const PlatformTouchEvent&, unsigned touchIndex, Ref<WindowProxy>&&, IsCancelable = IsCancelable::Yes);
 #endif
 
     virtual ~MouseEvent();
