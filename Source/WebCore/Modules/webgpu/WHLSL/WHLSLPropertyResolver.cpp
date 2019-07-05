@@ -759,9 +759,16 @@ void PropertyResolver::simplifyRightValue(AST::PropertyAccessExpression& propert
     auto& getterFunction = *propertyAccessExpression.getterFunction();
     Vector<UniqueRef<AST::Expression>> arguments;
     arguments.append(propertyAccessExpression.takeBase());
-    if (is<AST::IndexExpression>(propertyAccessExpression))
-        arguments.append(downcast<AST::IndexExpression>(propertyAccessExpression).takeIndex());
-    auto* callExpression = AST::replaceWith<AST::CallExpression>(propertyAccessExpression, WTFMove(origin), String(getterFunction.name()), WTFMove(arguments));
+    AST::CallExpression* callExpression;
+    if (is<AST::IndexExpression>(propertyAccessExpression)) {
+        auto& indexExpression = downcast<AST::IndexExpression>(propertyAccessExpression);
+        arguments.append(indexExpression.takeIndex());
+        callExpression = AST::replaceWith<AST::CallExpression>(indexExpression, WTFMove(origin), String(getterFunction.name()), WTFMove(arguments));
+    } else {
+        ASSERT(is<AST::DotExpression>(propertyAccessExpression));
+        auto& dotExpression = downcast<AST::DotExpression>(propertyAccessExpression);
+        callExpression = AST::replaceWith<AST::CallExpression>(dotExpression, WTFMove(origin), String(getterFunction.name()), WTFMove(arguments));
+    }
     callExpression->setFunction(getterFunction);
     callExpression->setType(getterFunction.type().clone());
     callExpression->setTypeAnnotation(AST::RightValue());
