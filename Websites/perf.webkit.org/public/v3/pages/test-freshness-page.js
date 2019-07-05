@@ -19,12 +19,12 @@ class TestFreshnessPage extends PageWithHeading {
 
     didConstructShadowTree()
     {
-        const tooltipContainer = this.content('tooltip-container');
-        tooltipContainer.addEventListener('mouseenter', () => {
+        const tooltipTable = this.content('tooltip-table');
+        tooltipTable.addEventListener('mouseenter', () => {
             this._hoveringTooltip = true;
             this.enqueueToRender();
         });
-        tooltipContainer.addEventListener('mouseleave', () => {
+        tooltipTable.addEventListener('mouseleave', () => {
             this._hoveringTooltip = false;
             this.enqueueToRender();
         });
@@ -89,8 +89,9 @@ class TestFreshnessPage extends PageWithHeading {
                     const currentTimeSeries = measurementSet.fetchedTimeSeries('current', false, false);
 
                     let timeForLatestBuild = startTime;
-                    let lastBuildLink = null;
+                    let lastBuild = null;
                     let builder = null;
+                    let commitSetOfLastPoint = null;
                     const lastPoint = currentTimeSeries.lastPoint();
                     if (lastPoint) {
                         timeForLatestBuild = lastPoint.build().buildTime().getTime();
@@ -101,14 +102,15 @@ class TestFreshnessPage extends PageWithHeading {
                                 continue;
                             if (build.buildTime().getTime() >= timeForLatestBuild) {
                                 timeForLatestBuild = build.buildTime().getTime();
-                                lastBuildLink = build.url();
+                                lastBuild = build;
                                 builder = build.builder();
                             }
                         }
+                        commitSetOfLastPoint = lastPoint.commitSet();
                     }
 
                     lastDataPointByMetric.set(metric, {time: timeForLatestBuild, hasCurrentDataPoint: !!lastPoint,
-                        lastBuildLink, builder});
+                        lastBuild, builder, commitSetOfLastPoint});
                     this.enqueueToRender();
                 });
             }
@@ -122,7 +124,8 @@ class TestFreshnessPage extends PageWithHeading {
         this._renderTableLazily.evaluate(this._platforms, this._metrics);
 
         let buildSummaryForCurrentlyHighlightedIndicator = null;
-        let buildLinkForCurrentlyHighlightedIndicator = null;
+        let buildForCurrentlyHighlightedIndicator = null;
+        let commitSetForCurrentHighlightedIndicator = null;
         const builderForCurrentlyHighlightedIndicator = this._currentlyHighlightedIndicator ? this._builderByIndicator.get(this._currentlyHighlightedIndicator) : null;
         for (const [platform, lastDataPointByMetric] of this._lastDataPointByConfiguration.entries()) {
             for (const [metric, lastDataPoint] of lastDataPointByMetric.entries()) {
@@ -136,36 +139,61 @@ class TestFreshnessPage extends PageWithHeading {
                 const indicator = this._indicatorByConfiguration.get(platform).get(metric);
                 if (this._currentlyHighlightedIndicator && this._currentlyHighlightedIndicator === indicator) {
                     buildSummaryForCurrentlyHighlightedIndicator = summary;
-                    buildLinkForCurrentlyHighlightedIndicator = lastDataPoint.lastBuildLink;
+                    buildForCurrentlyHighlightedIndicator = lastDataPoint.lastBuild;
+                    commitSetForCurrentHighlightedIndicator = lastDataPoint.commitSetOfLastPoint;
                 }
                 this._builderByIndicator.set(indicator, lastDataPoint.builder);
                 indicator.update(timeDuration, this._testAgeTolerance, url, builderForCurrentlyHighlightedIndicator && builderForCurrentlyHighlightedIndicator === lastDataPoint.builder);
             }
         }
-        this._renderTooltipLazily.evaluate(this._currentlyHighlightedIndicator, this._hoveringTooltip, buildSummaryForCurrentlyHighlightedIndicator, buildLinkForCurrentlyHighlightedIndicator);
+        this._renderTooltipLazily.evaluate(this._currentlyHighlightedIndicator, this._hoveringTooltip, buildSummaryForCurrentlyHighlightedIndicator, buildForCurrentlyHighlightedIndicator, commitSetForCurrentHighlightedIndicator);
     }
 
-    _renderTooltip(indicator, hoveringTooltip, buildSummary, buildLink)
+    _renderTooltip(indicator, hoveringTooltip, buildSummary, build, commitSet)
     {
         if (!indicator || !buildSummary) {
-            this.content('tooltip-container').style.display = hoveringTooltip ? null : 'none';
+            this.content('tooltip-table').style.display = hoveringTooltip ? null : 'none';
             return;
         }
         const element = ComponentBase.createElement;
+        const link = ComponentBase.createLink;
 
         const rect = indicator.element().getBoundingClientRect();
-        const tooltipContainer = this.content('tooltip-container');
-        tooltipContainer.style.display = null;
+        const tooltipTable = this.content('tooltip-table');
+        tooltipTable.style.display = null;
 
-        const tooltipContainerComputedStyle = getComputedStyle(tooltipContainer);
+        const tooltipContainerComputedStyle = getComputedStyle(tooltipTable);
         const containerMarginTop = parseFloat(tooltipContainerComputedStyle.paddingTop);
         const containerMarginLeft = parseFloat(tooltipContainerComputedStyle.marginLeft);
 
-        tooltipContainer.style.position = 'absolute';
-        tooltipContainer.style.top = rect.top - (tooltipContainer.offsetHeight + containerMarginTop)  + 'px';
-        tooltipContainer.style.left = rect.left + rect.width / 2 - tooltipContainer.offsetWidth / 2 + containerMarginLeft + 'px';
+        tooltipTable.style.position = 'absolute';
+        tooltipTable.style.top = rect.top - (tooltipTable.offsetHeight + containerMarginTop)  + 'px';
+        tooltipTable.style.left = rect.left + rect.width / 2 - tooltipTable.offsetWidth / 2 + containerMarginLeft + 'px';
 
-        this.renderReplace(tooltipContainer, [element('p', buildSummary), buildLink ? element('a', {href: buildLink}, 'Latest Build') : []]);
+        let tableContent = [element('tr', element('td', {colspan: 2}, buildSummary))];
+        if (commitSet.repositories().length)
+            tableContent.push(element('tr', element('th', {colspan: 2}, 'Latest build information')));
+
+        tableContent.push(Repository.sortByNamePreferringOnesWithURL(commitSet.repositories()).map((repository) => {
+            const commit = commitSet.commitForRepository(repository);
+            return element('tr', [
+                element('td', repository.name()),
+                element('td', commit.url() ? link(commit.label(), commit.label(), commit.url(), true) : commit.label())
+            ]);
+        }));
+
+        if (build) {
+            const url = build.url();
+            const buildNumber = build.buildNumber();
+            tableContent.push(element('tr', [
+                element('td', 'Build'),
+                element('td', {colspan: 2}, [
+                    url ? link(buildNumber, build.label(), url, true) : buildNumber
+                ]),
+            ]));
+        }
+
+        this.renderReplace(tooltipTable,  tableContent);
     }
 
     _renderTable(platforms, metrics)
@@ -217,7 +245,7 @@ class TestFreshnessPage extends PageWithHeading {
 
     static htmlTemplate()
     {
-        return `<section class="page-with-heading"><div id="tooltip-container"></div><table id="test-health"></table></section>`;
+        return `<section class="page-with-heading"><table id="tooltip-table"></table><table id="test-health"></table></section>`;
     }
 
     static cssTemplate()
@@ -308,9 +336,8 @@ class TestFreshnessPage extends PageWithHeading {
                 border-right: calc(1.6rem - 1px) solid #F9F9F9;
                 border-top: calc(1.6rem - 1px) solid transparent;
             }
-            #tooltip-container {
+            #tooltip-table {
                 width: 22rem;
-                height: 2rem;
                 background-color: #34495E;
                 opacity: 0.9;
                 margin: 0.3rem;
@@ -318,8 +345,15 @@ class TestFreshnessPage extends PageWithHeading {
                 border-radius: 0.4rem;
                 z-index: 1;
                 text-align: center;
+                display: inline-table;
+                color: white;
             }
-            #tooltip-container::after {
+            #tooltip-table td {
+                overflow: hidden;
+                max-width: 22rem;
+                text-overflow: ellipsis;
+            }
+            #tooltip-table::after {
                 content: " ";
                 position: absolute;
                 top: 100%;
@@ -329,11 +363,7 @@ class TestFreshnessPage extends PageWithHeading {
                 border-style: solid;
                 border-color: #34495E transparent transparent transparent;
             }
-            #tooltip-container p {
-                color: white;
-                margin: 0;
-            }
-            #tooltip-container a {
+            #tooltip-table a {
                 color: #B03A2E;
                 font-weight: bold;
             }
