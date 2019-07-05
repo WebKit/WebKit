@@ -1,4 +1,0 @@
-
-
-FAIL setPointerCapture: outer frame capture pointer active in inner frame assert_unreached: It should not be possible to capture mouse pointer when it's activate in inner frame Reached unreachable code
-
