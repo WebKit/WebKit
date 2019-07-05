@@ -436,6 +436,9 @@ private:
 #endif
 
     void platformSyncAllCookies(CompletionHandler<void()>&&);
+
+    void originsWithPersistentCredentials(CompletionHandler<void(Vector<WebCore::SecurityOriginData>)>&&);
+    void removeCredentialsWithOrigins(const Vector<WebCore::SecurityOriginData>& origins, CompletionHandler<void()>&&);
     
     void registerURLSchemeAsSecure(const String&) const;
     void registerURLSchemeAsBypassingContentSecurityPolicy(const String&) const;

@@ -102,9 +102,9 @@ void CredentialStorage::removeCredentialsWithOrigin(const SecurityOriginData& or
         remove(key.first, key.second);
 }
 
-HashSet<SecurityOriginData> CredentialStorage::originsWithCredentials() const
+Vector<SecurityOriginData> CredentialStorage::originsWithCredentials() const
 {
-    HashSet<SecurityOriginData> origins;
+    Vector<SecurityOriginData> origins;
     for (auto& keyValuePair : m_protectionSpaceToCredentialMap) {
         auto& protectionSpace = keyValuePair.key.second;
         if (protectionSpace.isProxy())
@@ -129,7 +129,7 @@ HashSet<SecurityOriginData> CredentialStorage::originsWithCredentials() const
         }
 
         SecurityOriginData origin { protocol, protectionSpace.host(), static_cast<uint16_t>(protectionSpace.port())};
-        origins.add(WTFMove(origin));
+        origins.append(WTFMove(origin));
     }
     return origins;
 }
@@ -186,20 +186,5 @@ void CredentialStorage::clearCredentials()
     m_originsWithCredentials.clear();
     m_pathToDefaultProtectionSpaceMap.clear();
 }
-
-#if !PLATFORM(COCOA)
-HashSet<SecurityOriginData> CredentialStorage::originsWithSessionCredentials()
-{
-    return { };
-}
-
-void CredentialStorage::removeSessionCredentialsWithOrigins(const Vector<SecurityOriginData>&)
-{
-}
-
-void CredentialStorage::clearSessionCredentials()
-{
-}
-#endif
 
 } // namespace WebCore

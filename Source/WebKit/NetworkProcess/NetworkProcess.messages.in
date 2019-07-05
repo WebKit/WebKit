@@ -168,5 +168,7 @@ messages -> NetworkProcess LegacyReceiver {
     SetAdClickAttributionOverrideTimerForTesting(PAL::SessionID sessionID, bool value) -> () Async
     SetAdClickAttributionConversionURLForTesting(PAL::SessionID sessionID, URL url) -> () Async
     MarkAdClickAttributionsAsExpiredForTesting(PAL::SessionID sessionID) -> () Async
+    OriginsWithPersistentCredentials() -> (Vector<WebCore::SecurityOriginData> origins) Async
+    RemoveCredentialsWithOrigins(Vector<WebCore::SecurityOriginData> origins) -> () Async
     GetLocalStorageOriginDetails(PAL::SessionID sessionID) -> (Vector<WebKit::LocalStorageDatabaseTracker::OriginDetails> details) Async
 }
