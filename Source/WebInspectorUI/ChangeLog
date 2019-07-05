@@ -1,3 +1,18 @@
+2019-07-05  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: current call frame indicator not visible in dark mode
+        https://bugs.webkit.org/show_bug.cgi?id=199047
+        <rdar://problem/51922895>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CallFrameTreeElement.css:
+        (.tree-outline .item.call-frame .status > .status-image):
+        (.tree-outline .item.call-frame.selected .status > .status-image):
+        Replace the CSS variables used for `fill` with their actual color value (in `light` mode),
+        as the semantic "name" of the variable doesn't really match its usage. As an example, the
+        current call frame shouldn't rely on the value of `--border-color`, as it's not a "border".
+
 2019-07-05  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Elements: use a CSS transition when showing/hiding DOM breakpoint gutter
