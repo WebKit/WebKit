@@ -1,3 +1,18 @@
+2019-07-05  Dean Jackson  <dino@apple.com>
+
+        [iOS] Context Menu - Add to Reading List does nothing
+        https://bugs.webkit.org/show_bug.cgi?id=199504
+        <rdar://problem/52554137>
+
+        Reviewed by Anders Carlsson.
+
+        We were holding weak references to the _WKElementAction in
+        the handler provided to UIAction. By the time the handler was
+        called, the object had been deallocated.
+
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (-[_WKElementAction uiActionForElementInfo:]): Use strong references in handler.
+
 2019-07-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         [iOS] Crash in WebKit::WebPage::positionInformation via Range::startPosition

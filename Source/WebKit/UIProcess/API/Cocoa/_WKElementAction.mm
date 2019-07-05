@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "GestureTypes.h"
+#import "Logging.h"
 #import "WKActionSheetAssistant.h"
 #import "WKContentViewInteraction.h"
 #import "_WKActivatedElementInfoInternal.h"
@@ -284,14 +285,10 @@ static _WKElementActionType uiActionIdentifierToElementActionType(UIActionIdenti
     UIImage *image = [_WKElementAction imageForElementActionType:self.type];
     UIActionIdentifier identifier = elementActionTypeToUIActionIdentifier(self.type);
 
-    return [UIAction actionWithTitle:self.title image:image identifier:identifier handler:[weakSelf = WeakObjCPtr<_WKElementAction>(self), weakElementInfo = WeakObjCPtr<_WKActivatedElementInfo>(elementInfo)] (UIAction *) {
-        auto strongSelf = weakSelf.get();
-        if (!strongSelf)
-            return;
-        auto strongElementInfo = weakElementInfo.get();
-        if (!strongElementInfo)
-            return;
-        [strongSelf runActionWithElementInfo:strongElementInfo.get()];
+    return [UIAction actionWithTitle:self.title image:image identifier:identifier handler:[retainedSelf = retainPtr(self), retainedInfo = retainPtr(elementInfo)] (UIAction *) {
+        auto elementAction = retainedSelf.get();
+        RELEASE_LOG(ContextMenu, "Executing action for type: %s", elementActionTypeToUIActionIdentifier([elementAction type]).UTF8String);
+        [elementAction runActionWithElementInfo:retainedInfo.get()];
     }];
 }
 #else
