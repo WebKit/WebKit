@@ -1,5 +1,100 @@
 2019-07-05  Robin Morisset  <rmorisset@apple.com>
 
+        [WHLSL] Optimize the lexer
+        https://bugs.webkit.org/show_bug.cgi?id=199520
+
+        Reviewed by Myles Maxfield.
+
+        This patch includes a number of small optimizations to the lexer:
+        - By creating two new types of Token (Invalid and EOF), we can avoid having to manipulate Optional<Token> everywhere
+        - By combining the lexing of identifiers, keywords and operator names, we can avoid re-reading them several times
+        - By storing mere offsets in the tokens instead of string views, we save space in the common case where the string view is unused (e.g. for keywords)
+        - By storing mere offsets in the tokens instead of line numbers, we can simplify the whitespace and comment lexing; and we can easily recompute the line number on demand
+        - By using templates we can avoid constructing and destructing vectors at runtime every time we call tryTypes, consumeTypes or peekTypes; as well as avoiding a call to find().
+        - I also hoisted the length check out of the loop in Lexer::string()
+        All of this combined brought the time spent in the parser when running LayoutTests/webgpu/whlsl-test-harness-test.html 5 times on my machine from 612ms to 462ms.
+
+        I also removed the 'anyCharacter' method since it was dead code.
+        I also removed Lexer::position(), but it is directly equivalent now to peek().startOffset.
+
+        No new tests as there is no intended functional change.
+
+        * Modules/webgpu/WHLSL/WHLSLLexer.cpp:
+        (WebCore::WHLSL::Lexer::Token::typeName):
+        (WebCore::WHLSL::Lexer::consumeTokenFromStream):
+        (WebCore::WHLSL::Lexer::lineNumberFromOffset):
+        (WebCore::WHLSL::isWhitespace):
+        (WebCore::WHLSL::isNewline):
+        (WebCore::WHLSL::Lexer::skipWhitespaceAndComments):
+        (WebCore::WHLSL::Lexer::digitStar const):
+        (WebCore::WHLSL::Lexer::completeOperatorName const):
+        * Modules/webgpu/WHLSL/WHLSLLexer.h:
+        (WebCore::WHLSL::Lexer::Lexer):
+        (WebCore::WHLSL::Lexer::Token::stringView):
+        (WebCore::WHLSL::Lexer::consumeToken):
+        (WebCore::WHLSL::Lexer::peek const):
+        (WebCore::WHLSL::Lexer::peekFurther const):
+        (WebCore::WHLSL::Lexer::state const):
+        (WebCore::WHLSL::Lexer::setState):
+        (WebCore::WHLSL::Lexer::isFullyConsumed const):
+        (WebCore::WHLSL::Lexer::errorString):
+        (WebCore::WHLSL::Lexer::string const):
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.h:
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::parse):
+        (WebCore::WHLSL::Parser::peek):
+        (WebCore::WHLSL::Parser::peekFurther):
+        (WebCore::WHLSL::Types::includes):
+        (WebCore::WHLSL::Types::appendNameTo):
+        (WebCore::WHLSL::Types<t>::includes):
+        (WebCore::WHLSL::Types<t>::appendNameTo):
+        (WebCore::WHLSL::Parser::peekTypes):
+        (WebCore::WHLSL::Parser::tryType):
+        (WebCore::WHLSL::Parser::tryTypes):
+        (WebCore::WHLSL::Parser::consumeType):
+        (WebCore::WHLSL::Parser::consumeTypes):
+        (WebCore::WHLSL::Parser::consumeIntegralLiteral):
+        (WebCore::WHLSL::Parser::parseConstantExpression):
+        (WebCore::WHLSL::Parser::parseTypeArgument):
+        (WebCore::WHLSL::Parser::parseTypeSuffixAbbreviated):
+        (WebCore::WHLSL::Parser::parseTypeSuffixNonAbbreviated):
+        (WebCore::WHLSL::Parser::parseType):
+        (WebCore::WHLSL::Parser::parseTypeDefinition):
+        (WebCore::WHLSL::Parser::parseBuiltInSemantic):
+        (WebCore::WHLSL::Parser::parseResourceSemantic):
+        (WebCore::WHLSL::Parser::parseQualifiers):
+        (WebCore::WHLSL::Parser::parseStructureElement):
+        (WebCore::WHLSL::Parser::parseStructureDefinition):
+        (WebCore::WHLSL::Parser::parseEnumerationDefinition):
+        (WebCore::WHLSL::Parser::parseEnumerationMember):
+        (WebCore::WHLSL::Parser::parseNativeTypeDeclaration):
+        (WebCore::WHLSL::Parser::parseParameter):
+        (WebCore::WHLSL::Parser::parseComputeFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseVertexOrFragmentFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseRegularFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseBlockBody):
+        (WebCore::WHLSL::Parser::parseSwitchCase):
+        (WebCore::WHLSL::Parser::parseVariableDeclaration):
+        (WebCore::WHLSL::Parser::parseStatement):
+        (WebCore::WHLSL::Parser::parseEffectfulAssignment):
+        (WebCore::WHLSL::Parser::parseLimitedSuffixOperator):
+        (WebCore::WHLSL::Parser::parseSuffixOperator):
+        (WebCore::WHLSL::Parser::completeAssignment):
+        (WebCore::WHLSL::Parser::parsePossibleTernaryConditional):
+        (WebCore::WHLSL::Parser::completePossibleLogicalBinaryOperation):
+        (WebCore::WHLSL::Parser::completePossibleRelationalBinaryOperation):
+        (WebCore::WHLSL::Parser::completePossibleShift):
+        (WebCore::WHLSL::Parser::completePossibleAdd):
+        (WebCore::WHLSL::Parser::completePossibleMultiply):
+        (WebCore::WHLSL::Parser::parsePossiblePrefix):
+        (WebCore::WHLSL::Parser::parseCallExpression):
+        (WebCore::WHLSL::Parser::parseTerm):
+        * Modules/webgpu/WHLSL/WHLSLParser.h:
+        * Modules/webgpu/WHLSL/WHLSLPreserveVariableLifetimes.cpp:
+        (WebCore::WHLSL::anonymousToken):
+
+2019-07-05  Robin Morisset  <rmorisset@apple.com>
+
         [WHLSL] Remove the phase resolveCallsInFunctions
         https://bugs.webkit.org/show_bug.cgi?id=199474
 

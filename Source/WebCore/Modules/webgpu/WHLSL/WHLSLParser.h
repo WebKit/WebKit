@@ -143,11 +143,14 @@ private:
     Unexpected<Error> fail(const String& message, TryToPeek = TryToPeek::Yes);
     Expected<Lexer::Token, Error> peek();
     Expected<Lexer::Token, Error> peekFurther();
-    bool peekTypes(const Vector<Lexer::Token::Type>&);
+    template <Lexer::Token::Type... types>
+    bool peekTypes();
     Optional<Lexer::Token> tryType(Lexer::Token::Type);
-    Optional<Lexer::Token> tryTypes(const Vector<Lexer::Token::Type>&);
+    template <Lexer::Token::Type... types>
+    Optional<Lexer::Token> tryTypes();
     Expected<Lexer::Token, Error> consumeType(Lexer::Token::Type);
-    Expected<Lexer::Token, Error> consumeTypes(const Vector<Lexer::Token::Type>&);
+    template <Lexer::Token::Type... types>
+    Expected<Lexer::Token, Error> consumeTypes();
 
     Expected<Variant<int, unsigned>, Error> consumeIntegralLiteral();
     Expected<unsigned, Error> consumeNonNegativeIntegralLiteral();

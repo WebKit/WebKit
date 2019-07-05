@@ -93,7 +93,7 @@ private:
 
 static ALWAYS_INLINE Lexer::Token anonymousToken(Lexer::Token::Type type)
 {
-    return Lexer::Token { { }, 0, type };
+    return Lexer::Token { 0, 0, type };
 }
 
 class PreserveLifetimes : public Visitor {

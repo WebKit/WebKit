@@ -247,6 +247,10 @@ const char* Lexer::Token::typeName(Type type)
         return "!";
     case Type::At:
         return "@";
+    case Type::EndOfFile:
+        return "EOF";
+    case Type::Invalid:
+        return "LEXING_ERROR";
     }
 }
 
@@ -372,28 +376,31 @@ auto Lexer::recognizeKeyword(unsigned end) -> Optional<Token::Type>
     return WTF::nullopt;
 }
 
-auto Lexer::consumeTokenFromStream() -> Optional<Token>
+auto Lexer::consumeTokenFromStream() -> Token
 {
-    auto prepare = [&](unsigned newOffset, Token::Type type) -> Optional<Token> {
+    auto prepare = [&](unsigned newOffset, Token::Type type) -> Token {
         auto oldOffset = m_offset;
         m_offset = newOffset;
         skipWhitespaceAndComments();
-        return {{ m_stringView.substring(oldOffset, newOffset - oldOffset), m_lineNumber, type }};
+        return { oldOffset, newOffset, type };
     };
 
+    if (auto newOffset = identifier(m_offset)) {
+        if (auto result = recognizeKeyword(*newOffset)) {
+            if (*result == Token::Type::Operator) {
+                if (auto newerOffset = completeOperatorName(*newOffset))
+                    return prepare(*newerOffset, Token::Type::OperatorName);
+            }
+            return prepare(*newOffset, *result);
+        }
+        return prepare(*newOffset, Token::Type::Identifier);
+    }
     if (auto newOffset = floatLiteral(m_offset))
         return prepare(*newOffset, Token::Type::FloatLiteral);
     if (auto newOffset = uintLiteral(m_offset))
         return prepare(*newOffset, Token::Type::UintLiteral);
     if (auto newOffset = intLiteral(m_offset))
         return prepare(*newOffset, Token::Type::IntLiteral);
-    if (auto newOffset = operatorName(m_offset))
-        return prepare(*newOffset, Token::Type::OperatorName);
-    if (auto newOffset = identifier(m_offset)) {
-        if (auto result = recognizeKeyword(*newOffset))
-            return prepare(*newOffset, *result);
-        return prepare(*newOffset, Token::Type::Identifier);
-    }
     // Sorted by length, so longer matches are preferable to shorter matches.
     if (auto newOffset = string(">>=", m_offset))
         return prepare(*newOffset, Token::Type::RightShiftEquals);
@@ -490,19 +497,27 @@ auto Lexer::consumeTokenFromStream() -> Optional<Token>
     if (auto newOffset = character('@', m_offset))
         return prepare(*newOffset, Token::Type::At);
 
-    return WTF::nullopt;
+    if (m_offset == m_stringView.length())
+        return prepare(m_offset, Token::Type::EndOfFile);
+    return prepare(m_offset, Token::Type::Invalid);
 }
 
-void Lexer::skipWhitespaceAndComments()
+unsigned Lexer::lineNumberFromOffset(unsigned targetOffset)
 {
-    unsigned savedOffset;
-    do {
-        savedOffset = m_offset;
-        skipWhitespace();
-        skipLineComment();
-        skipLongComment();
-    } while (savedOffset != m_offset);
+    // Counting from 1 to match most text editors.
+    unsigned lineNumber = 1;
+    for (unsigned offset = 0; offset < targetOffset; ++offset) {
+        if (m_stringView[offset] == '\n')
+            ++lineNumber;
+    }
+    return lineNumber;
 }
+
+// We can take advantage of two properties of Unicode:
+// 1. The consitutent UTF-16 code units for all non-BMP code points are surrogates,
+// which means we'll never see a false match. If we see a BMP code unit, we
+// really have a BMP code point.
+// 2. Everything we're looking for is in BMP
 
 static inline bool isWhitespace(UChar codeUnit)
 {
@@ -528,53 +543,29 @@ static inline bool isNewline(UChar codeUnit)
     }
 }
 
-// We can take advantage of two properties of Unicode:
-// 1. The consitutent UTF-16 code units for all non-BMP code points are surrogates,
-//        which means we'll never see a false match. If we see a BMP code unit, we
-//        really have a BMP code point.
-// 2. Everything we're looking for is in BMP
-
-void Lexer::skipWhitespace()
+void Lexer::skipWhitespaceAndComments()
 {
-    for ( ; m_offset < m_stringView.length() && isWhitespace(m_stringView[m_offset]); ++m_offset) {
-        if (m_stringView[m_offset] == '\r' && m_offset + 1 < m_stringView.length() && m_stringView[m_offset + 1] == '\n') {
+    while (m_offset < m_stringView.length()) {
+        if (isWhitespace(m_stringView[m_offset]))
             ++m_offset;
-            ++m_lineNumber;
-        } else if (isNewline(m_stringView[m_offset]))
-            ++m_lineNumber;
-    }
-}
-
-void Lexer::skipLineComment()
-{
-    if (m_offset + 1 >= m_stringView.length() || m_stringView[m_offset] != '/' || m_stringView[m_offset + 1] != '/')
-        return;
-
-    m_offset += 2;
-    for ( ; m_offset < m_stringView.length() && !isNewline(m_stringView[m_offset]); ++m_offset) { }
-}
-
-void Lexer::skipLongComment()
-{
-    if (m_offset + 1 >= m_stringView.length() || m_stringView[m_offset] != '/' || m_stringView[m_offset + 1] != '*')
-        return;
-
-    m_offset += 2;
-    do {
-        for ( ; m_offset < m_stringView.length() && m_stringView[m_offset] != '*'; ++m_offset) {
-            if (m_stringView[m_offset] == '\r' && m_offset + 1 < m_stringView.length() && m_stringView[m_offset + 1] == '\n') {
-                ++m_offset;
-                ++m_lineNumber;
-            } else if (isNewline(m_stringView[m_offset]))
-                ++m_lineNumber;
-        }
-        if (m_offset < m_stringView.length())
-            ++m_offset;
-        if (m_offset < m_stringView.length() && m_stringView[m_offset] == '/') {
-            ++m_offset;
+        else if (m_stringView[m_offset] == '/' && m_offset + 1 < m_stringView.length()) {
+            if (m_stringView[m_offset + 1] == '/') {
+                // Line comment
+                m_offset += 2;
+                // Note that in the case of \r\n this makes the comment end on the \r. It is fine, as the \n after that is simple whitespace.
+                for ( ; m_offset < m_stringView.length() && !isNewline(m_stringView[m_offset]); ++m_offset) { }
+            } else if (m_stringView[m_offset + 1] == '*') {
+                // Long comment
+                for ( ; m_offset < m_stringView.length() ; ++m_offset) {
+                    if (m_stringView[m_offset] == '*' && m_offset + 1 < m_stringView.length() && m_stringView[m_offset + 1] == '/') {
+                        m_offset += 2;
+                        break;
+                    }
+                }
+            }
+        } else
             break;
-        }
-    } while (m_offset < m_stringView.length());
+    }
 }
 
 // Regular expression are unnecessary; we shouldn't need to compile them.
@@ -676,12 +667,9 @@ Optional<unsigned> Lexer::digit(unsigned offset) const
 
 unsigned Lexer::digitStar(unsigned offset) const
 {
-    while (true) {
-        auto result = digit(offset);
-        if (!result)
-            return offset;
+    while (auto result = digit(offset))
         offset = *result;
-    }
+    return offset;
 }
 
 Optional<unsigned> Lexer::character(char character, unsigned offset) const
@@ -754,67 +742,65 @@ Optional<unsigned> Lexer::identifier(unsigned offset) const
     return validIdentifier(offset);
 }
 
-Optional<unsigned> Lexer::operatorName(unsigned offset) const
+Optional<unsigned> Lexer::completeOperatorName(unsigned offset) const
 {
-    if (auto result = string("operator&.", offset))
+    // Sorted by length, so longer matches are preferable to shorter matches.
+    if (auto result = string("&[]", offset))
+        return result;
+    if (auto result = string("[]=", offset))
+        return result;
+    if (auto result = string(">>", offset))
+        return result;
+    if (auto result = string("<<", offset))
+        return result;
+    if (auto result = string("++", offset))
+        return result;
+    if (auto result = string("--", offset))
+        return result;
+    if (auto result = string("&&", offset))
+        return result;
+    if (auto result = string("||", offset))
+        return result;
+    if (auto result = string(">=", offset))
+        return result;
+    if (auto result = string("<=", offset))
+        return result;
+    if (auto result = string("==", offset))
+        return result;
+    if (auto result = string("[]", offset))
+        return result;
+    if (auto result = string("&.", offset))
         return validIdentifier(*result);
-    if (auto result = string("operator.", offset)) {
-        if ((result = validIdentifier(*result))) {
-            if (auto result2 = character('=', *result))
-                return result2;
-            return *result;
+    if (auto result = character('+', offset))
+        return result;
+    if (auto result = character('-', offset))
+        return result;
+    if (auto result = character('*', offset))
+        return result;
+    if (auto result = character('/', offset))
+        return result;
+    if (auto result = character('%', offset))
+        return result;
+    if (auto result = character('<', offset))
+        return result;
+    if (auto result = character('>', offset))
+        return result;
+    if (auto result = character('!', offset))
+        return result;
+    if (auto result = character('~', offset))
+        return result;
+    if (auto result = character('&', offset))
+        return result;
+    if (auto result = character('^', offset))
+        return result;
+    if (auto result = character('|', offset))
+        return result;
+    if (auto result = character('.', offset)) {
+        if (auto result2 = validIdentifier(*result)) {
+            if (auto result3 = character('=', *result2))
+                return result3;
+            return *result2;
         }
-    }
-    if (auto result = string("operator", offset)) {
-        // Sorted by length, so longer matches are preferable to shorter matches.
-        if (auto result2 = string("&[]", *result))
-            return result2;
-        if (auto result2 = string("[]=", *result))
-            return result2;
-        if (auto result2 = string(">>", *result))
-            return result2;
-        if (auto result2 = string("<<", *result))
-            return result2;
-        if (auto result2 = string("++", *result))
-            return result2;
-        if (auto result2 = string("--", *result))
-            return result2;
-        if (auto result2 = string("&&", *result))
-            return result2;
-        if (auto result2 = string("||", *result))
-            return result2;
-        if (auto result2 = string(">=", *result))
-            return result2;
-        if (auto result2 = string("<=", *result))
-            return result2;
-        if (auto result2 = string("==", *result))
-            return result2;
-        if (auto result2 = string("[]", *result))
-            return result2;
-        if (auto result2 = character('+', *result))
-            return result2;
-        if (auto result2 = character('-', *result))
-            return result2;
-        if (auto result2 = character('*', *result))
-            return result2;
-        if (auto result2 = character('/', *result))
-            return result2;
-        if (auto result2 = character('%', *result))
-            return result2;
-        if (auto result2 = character('<', *result))
-            return result2;
-        if (auto result2 = character('>', *result))
-            return result2;
-        if (auto result2 = character('!', *result))
-            return result2;
-        if (auto result2 = character('~', *result))
-            return result2;
-        if (auto result2 = character('&', *result))
-            return result2;
-        if (auto result2 = character('^', *result))
-            return result2;
-        if (auto result2 = character('|', *result))
-            return result2;
     }
     return WTF::nullopt;
 }

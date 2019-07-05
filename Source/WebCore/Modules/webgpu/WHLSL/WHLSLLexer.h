@@ -57,15 +57,9 @@ public:
     Lexer& operator=(Lexer&&) = default;
 
     struct Token {
-        Token() = delete;
-        Token(const Token&) = default;
-        Token(Token&&) = default;
-        Token& operator=(const Token&) = default;
-        Token& operator=(Token&&) = default;
-
-        StringView stringView;
-        unsigned lineNumber;
-        enum class Type {
+        unsigned startOffset;
+        unsigned endOffset;
+        enum class Type : uint8_t {
             IntLiteral,
             UintLiteral,
             FloatLiteral,
@@ -172,12 +166,19 @@ public:
             Tilde,
             ExclamationPoint,
             At,
-        } type;
+            EndOfFile,
+            Invalid
+        } type {Type::Invalid};
 
         static const char* typeName(Type);
+
+        const StringView stringView(const Lexer& lexer)
+        {
+            return lexer.m_stringView.substring(startOffset, endOffset - startOffset);
+        }
     };
 
-    Optional<Token> consumeToken()
+    Token consumeToken()
     {
         auto result = m_ringBuffer[m_ringBufferIndex];
         m_ringBuffer[m_ringBufferIndex] = consumeTokenFromStream();
@@ -185,12 +186,12 @@ public:
         return result;
     }
 
-    Optional<Token> peek()
+    Token peek() const
     {
         return m_ringBuffer[m_ringBufferIndex];
     }
 
-    Optional<Token> peekFurther()
+    Token peekFurther() const
     {
         return m_ringBuffer[(m_ringBufferIndex + 1) % 2];
     }
@@ -198,10 +199,9 @@ public:
     // FIXME: We should not need this
     // https://bugs.webkit.org/show_bug.cgi?id=198357
     struct State {
-        Optional<Token> ringBuffer[2];
+        Token ringBuffer[2];
         unsigned ringBufferIndex;
         unsigned offset;
-        unsigned lineNumber;
     };
 
     State state() const
@@ -211,7 +211,6 @@ public:
         state.ringBuffer[1] = m_ringBuffer[1];
         state.ringBufferIndex = m_ringBufferIndex;
         state.offset = m_offset;
-        state.lineNumber = m_lineNumber;
         return state;
     }
 
@@ -221,7 +220,6 @@ public:
         m_ringBuffer[1] = state.ringBuffer[1];
         m_ringBufferIndex = state.ringBufferIndex;
         m_offset = state.offset;
-        m_lineNumber = state.lineNumber;
 
     }
 
@@ -231,26 +229,24 @@ public:
         m_ringBuffer[1] = WTFMove(state.ringBuffer[1]);
         m_ringBufferIndex = WTFMove(state.ringBufferIndex);
         m_offset = WTFMove(state.offset);
-        m_lineNumber = WTFMove(state.lineNumber);
     }
 
     bool isFullyConsumed() const
     {
-        return m_offset == m_stringView.length();
+        return peek().type == Token::Type::EndOfFile;
     }
 
     String errorString(const Token& token, const String& message)
     {
-        return makeString("Parse error at line ", token.lineNumber, ": ", message);
+        return makeString("Parse error at line ", lineNumberFromOffset(token.startOffset), ": ", message);
     }
 
 private:
-    Optional<Token> consumeTokenFromStream();
+    Token consumeTokenFromStream();
 
     void skipWhitespaceAndComments();
-    void skipWhitespace();
-    void skipLineComment();
-    void skipLongComment();
+
+    unsigned lineNumberFromOffset(unsigned offset);
 
     Optional<Token::Type> recognizeKeyword(unsigned end);
 
@@ -265,40 +261,29 @@ private:
     Optional<unsigned> digit(unsigned) const;
     unsigned digitStar(unsigned) const;
     Optional<unsigned> character(char, unsigned) const;
-    template<unsigned length> Optional<unsigned> anyCharacter(const char (&string)[length], unsigned) const;
     Optional<unsigned> coreFloatLiteralType1(unsigned) const;
     Optional<unsigned> coreFloatLiteral(unsigned) const;
     Optional<unsigned> floatLiteral(unsigned) const;
     template<unsigned length> Optional<unsigned> string(const char (&string)[length], unsigned) const;
     Optional<unsigned> validIdentifier(unsigned) const;
     Optional<unsigned> identifier(unsigned) const;
-    Optional<unsigned> operatorName(unsigned) const;
+    Optional<unsigned> completeOperatorName(unsigned) const;
 
     StringView m_stringView;
-    Optional<Token> m_ringBuffer[2];
+    Token m_ringBuffer[2];
     unsigned m_ringBufferIndex { 0 };
     unsigned m_offset { 0 };
-    unsigned m_lineNumber { 0 };
 };
 
 template<unsigned length> Optional<unsigned> Lexer::string(const char (&string)[length], unsigned offset) const
 {
+    if (offset + length > m_stringView.length())
+        return WTF::nullopt;
     for (unsigned i = 0; i < length - 1; ++i) {
-        if (offset + i >= m_stringView.length() || m_stringView[offset + i] != string[i])
+        if (m_stringView[offset + i] != string[i])
             return WTF::nullopt;
     }
     return offset + length - 1;
-}
-
-template<unsigned length> Optional<unsigned> Lexer::anyCharacter(const char (&string)[length], unsigned offset) const
-{
-    if (offset >= m_stringView.length())
-        return WTF::nullopt;
-    for (unsigned i = 0; i < length - 1; ++i) {
-        if (m_stringView[offset] == string[i])
-            return offset + 1;
-    }
-    return WTF::nullopt;
 }
 
 } // namespace WHLSL
