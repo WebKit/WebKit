@@ -29,6 +29,7 @@
 
 .content-view.dom-tree .tree-outline.dom {
     -webkit-padding-start: 7px;
+    transition: padding 200ms ease-in-out;
 }
 
 .content-view.dom-tree.show-gutter .tree-outline.dom {
