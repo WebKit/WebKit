@@ -39,6 +39,7 @@
 #include "FontSelectorClient.h"
 #include "FrameDestructionObserver.h"
 #include "GenericTaskQueue.h"
+#include "GraphicsTypes.h"
 #include "MediaProducer.h"
 #include "MutationObserver.h"
 #include "OrientationNotifier.h"
@@ -568,6 +569,7 @@ public:
     WEBCORE_EXPORT bool useDarkAppearance(const RenderStyle*) const;
 
     OptionSet<StyleColor::Options> styleColorOptions(const RenderStyle*) const;
+    CompositeOperator compositeOperatorForBackgroundColor(const Color&, const RenderObject&) const;
 
     WEBCORE_EXPORT Ref<Range> createRange();
 

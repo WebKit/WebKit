@@ -6977,6 +6977,20 @@ OptionSet<StyleColor::Options> Document::styleColorOptions(const RenderStyle* st
     return options;
 }
 
+CompositeOperator Document::compositeOperatorForBackgroundColor(const Color& color, const RenderObject& renderer) const
+{
+    if (LIKELY(!settings().punchOutWhiteBackgroundsInDarkMode() || !Color::isWhiteColor(color) || !renderer.useDarkAppearance()))
+        return CompositeSourceOver;
+
+    auto* frameView = view();
+    if (!frameView)
+        return CompositeSourceOver;
+
+    // Mail on macOS uses a transparent view, and on iOS it is an opaque view. We need to
+    // use different composite modes to get the right results in this case.
+    return frameView->isTransparent() ? CompositeDestinationOut : CompositeDestinationIn;
+}
+
 void Document::didAssociateFormControl(Element& element)
 {
     auto* page = this->page();

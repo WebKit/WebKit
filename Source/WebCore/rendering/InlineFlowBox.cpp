@@ -1369,11 +1369,8 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
     if (!renderer().boxShadowShouldBeAppliedToBackground(adjustedPaintoffset, BackgroundBleedNone, this))
         paintBoxShadow(paintInfo, lineStyle, Normal, paintRect);
 
-    Color color = lineStyle.visitedDependentColor(CSSPropertyBackgroundColor);
-
-    CompositeOperator compositeOp = CompositeSourceOver;
-    if (renderer().document().settings().punchOutWhiteBackgroundsInDarkMode() && Color::isWhiteColor(color) && renderer().useDarkAppearance())
-        compositeOp = CompositeDestinationOut;
+    auto color = lineStyle.visitedDependentColor(CSSPropertyBackgroundColor);
+    auto compositeOp = renderer().document().compositeOperatorForBackgroundColor(color, renderer());
 
     color = lineStyle.colorByApplyingColorFilter(color);
 
