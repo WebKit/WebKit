@@ -140,6 +140,9 @@ std::unique_ptr<Line::Content> Line::close()
                 break;
             }
             run->logicalRect.setTop(logicalTop);
+            // Convert runs from relative to the line top/left to the formatting root's border box top/left.
+            run->logicalRect.moveVertically(this->logicalTop());
+            run->logicalRect.moveHorizontally(this->logicalLeft());
         }
     }
     m_content->setLogicalRect({ logicalTop(), logicalLeft(), contentLogicalWidth(), logicalHeight() });
@@ -167,8 +170,6 @@ void Line::moveLogicalLeft(LayoutUnit delta)
     // Shrink the line and move the items.
     m_logicalTopLeft.move(delta, 0);
     m_lineLogicalWidth -= delta;
-    for (auto& run : m_content->runs())
-        run->logicalRect.moveHorizontally(delta);
 }
 
 void Line::moveLogicalRight(LayoutUnit delta)
@@ -211,7 +212,7 @@ void Line::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::
 void Line::appendInlineContainerStart(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
     auto logicalRect = Display::Rect { };
-    logicalRect.setLeft(contentLogicalRight());
+    logicalRect.setLeft(contentLogicalWidth());
     logicalRect.setWidth(logicalWidth);
 
     if (!m_skipVerticalAligment) {
@@ -264,7 +265,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
     auto canBeExtended = !isCompletelyCollapsed && !inlineItem.isCollapsed();
     
     auto logicalRect = Display::Rect { };
-    logicalRect.setLeft(contentLogicalRight());
+    logicalRect.setLeft(contentLogicalWidth());
     logicalRect.setWidth(logicalWidth);
     if (!m_skipVerticalAligment) {
         auto runHeight = inlineItemContentHeight(inlineItem);
@@ -287,7 +288,7 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit l
     auto horizontalMargin = displayBox.horizontalMargin();    
     auto logicalRect = Display::Rect { };
 
-    logicalRect.setLeft(contentLogicalRight() + horizontalMargin.start);
+    logicalRect.setLeft(contentLogicalWidth() + horizontalMargin.start);
     logicalRect.setWidth(logicalWidth);
     if (!m_skipVerticalAligment) {
         adjustBaselineAndLineHeight(inlineItem, displayBox.marginBoxHeight());
@@ -308,7 +309,7 @@ void Line::appendReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logi
 void Line::appendHardLineBreak(const InlineItem& inlineItem)
 {
     auto logicalRect = Display::Rect { };
-    logicalRect.setLeft(contentLogicalRight());
+    logicalRect.setLeft(contentLogicalWidth());
     logicalRect.setWidth({ });
     if (!m_skipVerticalAligment) {
         adjustBaselineAndLineHeight(inlineItem, { });
