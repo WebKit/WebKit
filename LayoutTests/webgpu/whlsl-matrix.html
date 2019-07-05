@@ -24,19 +24,19 @@ compute void computeShader(device float[] buffer : register(u0), float3 threadID
     if (!allEqual(foo, 0))
         return;
 
-    foo = foo + 1.0;
+    foo = foo + float2x3(float3(1.0, 1.0, 1.0), float3(1.0, 1.0, 1.0));
     if (!allEqual(foo, 1))
         return;
 
-    foo = foo * 8.5;
+    foo = foo * float2x3(float3(8.5, 8.5, 8.5), float3(8.5, 8.5, 8.5));
     if (!allEqual(foo, 8.5))
         return;
 
-    foo = foo - 7.5;
+    foo = foo - float2x3(float3(7.5, 7.5, 7.5), float3(7.5, 7.5, 7.5));
     if (!allEqual(foo, 1))
         return;
 
-    foo = foo + 1.0;
+    foo = foo + float2x3(float3(1.0, 1.0, 1.0), float3(1.0, 1.0, 1.0));
     if (!allEqual(foo, 2))
         return;
 

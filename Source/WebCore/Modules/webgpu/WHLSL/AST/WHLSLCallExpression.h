@@ -67,11 +67,15 @@ public:
 
     bool isCast() { return m_castReturnType; }
     NamedType* castReturnType() { return m_castReturnType; }
-    FunctionDeclaration* function() { return m_function; }
+    FunctionDeclaration& function()
+    {
+        ASSERT(m_function);
+        return *m_function;
+    }
 
     void setFunction(FunctionDeclaration& functionDeclaration)
     {
-        assert(!m_function);
+        ASSERT(!m_function);
         m_function = &functionDeclaration;
     }
 

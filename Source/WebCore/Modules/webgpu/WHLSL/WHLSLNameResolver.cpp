@@ -79,6 +79,8 @@ void NameResolver::visit(AST::TypeReference& typeReference)
     }
 
     Visitor::visit(typeReference);
+    if (error())
+        return;
     if (typeReference.maybeResolvedType()) // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198161 Shouldn't we know by now whether the type has been resolved or not?
         return;
 
@@ -102,6 +104,8 @@ void NameResolver::visit(AST::FunctionDefinition& functionDefinition)
     NameContext newNameContext(&m_nameContext);
     NameResolver newNameResolver(*this, newNameContext);
     checkErrorAndVisit(functionDefinition.type());
+    if (error())
+        return;
     for (auto& parameter : functionDefinition.parameters())
         newNameResolver.checkErrorAndVisit(parameter);
     newNameResolver.checkErrorAndVisit(functionDefinition.block());

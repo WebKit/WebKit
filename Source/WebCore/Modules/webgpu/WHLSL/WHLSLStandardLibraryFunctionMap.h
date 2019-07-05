@@ -23,54 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WHLSLRecursionChecker.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLCallExpression.h"
-#include "WHLSLFunctionDefinition.h"
-#include "WHLSLVisitor.h"
-#include <wtf/HashSet.h>
+#include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 namespace WHLSL {
 
-// Makes sure there is no function recursion.
-class RecursionChecker : public Visitor {
-private:
-    void visit(AST::FunctionDefinition& functionDefinition) override
-    {
-        auto addResult = m_visitingSet.add(&functionDefinition);
-        if (!addResult.isNewEntry) {
-            setError();
-            return;
-        }
-
-        Visitor::visit(functionDefinition);
-
-        auto success = m_visitingSet.remove(&functionDefinition);
-        ASSERT_UNUSED(success, success);
-    }
-
-    void visit(AST::CallExpression& callExpression) override
-    {
-        Visitor::visit(callExpression.function());
-    }
-
-    HashSet<AST::FunctionDefinition*> m_visitingSet;
+struct SubstringLocation {
+    unsigned start;
+    unsigned end;
 };
 
-bool checkRecursion(Program& program)
-{
-    RecursionChecker recursionChecker;
-    recursionChecker.Visitor::visit(program);
-    return !recursionChecker.error();
-}
+HashMap<String, SubstringLocation> computeStandardLibraryFunctionMap();
 
-}
+unsigned firstFunctionOffsetInStandardLibrary();
 
-}
+} // namespace WHLSL
 
-#endif
+} // namespace WebCore
+
+#endif // ENABLE(WEBGPU)

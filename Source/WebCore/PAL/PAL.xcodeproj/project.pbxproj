@@ -102,6 +102,8 @@
 		0CF99CA41F736375007EE793 /* MediaTimeAVFoundation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C00CFD11F68CE4600AAC26D /* MediaTimeAVFoundation.cpp */; };
 		0CF99CA81F738437007EE793 /* CoreMediaSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */; };
 		0CF99CA91F738437007EE793 /* CoreMediaSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 0CF99CA71F738437007EE793 /* CoreMediaSoftLink.h */; };
+		1C022EFE22CFE8E1006DF01B /* Gunzip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C022EFC22CFE8E0006DF01B /* Gunzip.cpp */; };
+		1C022EFF22CFEC53006DF01B /* Gunzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C022EFD22CFE8E1006DF01B /* Gunzip.h */; };
 		1C09D0531E31C44100725F18 /* CryptoDigest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0521E31C44100725F18 /* CryptoDigest.h */; };
 		1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */; };
 		1C09D0581E31C57E00725F18 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0571E31C57E00725F18 /* config.h */; };
@@ -263,6 +265,8 @@
 		0C7785881F45130F00F4EBB6 /* TelephonyUtilitiesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TelephonyUtilitiesSPI.h; sourceTree = "<group>"; };
 		0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoreMediaSoftLink.cpp; sourceTree = "<group>"; };
 		0CF99CA71F738437007EE793 /* CoreMediaSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreMediaSoftLink.h; sourceTree = "<group>"; };
+		1C022EFC22CFE8E0006DF01B /* Gunzip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Gunzip.cpp; sourceTree = "<group>"; };
+		1C022EFD22CFE8E1006DF01B /* Gunzip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gunzip.h; sourceTree = "<group>"; };
 		1C09D03D1E31C32800725F18 /* libPAL.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPAL.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C09D0521E31C44100725F18 /* CryptoDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoDigest.h; sourceTree = "<group>"; };
 		1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoDigestCommonCrypto.cpp; sourceTree = "<group>"; };
@@ -545,6 +549,7 @@
 				0C2DA0651F33CA3300DBC317 /* spi */,
 				A3788E9F1F05B7CE00679425 /* system */,
 				A30D411D1F0DD0AC00B71954 /* text */,
+				1C022EFD22CFE8E1006DF01B /* Gunzip.h */,
 				0C2D9E721EEF5AF600DBC317 /* ExportMacros.h */,
 				F44291621FA52670002CC93E /* FileSizeFormatter.cpp */,
 				F442915F1FA5261E002CC93E /* FileSizeFormatter.h */,
@@ -592,6 +597,7 @@
 		1C4876DE1F8D831300CCEEBD /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				1C022EFC22CFE8E0006DF01B /* Gunzip.cpp */,
 				57FD318822B3592F008D0E8B /* AppSSOSoftLink.h */,
 				57FD318922B3593E008D0E8B /* AppSSOSoftLink.mm */,
 				077E87B0226A460200A2AFF0 /* AVFoundationSoftLink.h */,
@@ -739,6 +745,7 @@
 				1C4876D91F8D7F4E00CCEEBD /* Logging.h in Headers */,
 				44E1A8AF21FA54E600C3048E /* LookupSoftLink.h in Headers */,
 				0C77858B1F45130F00F4EBB6 /* LookupSPI.h in Headers */,
+				1C022EFF22CFEC53006DF01B /* Gunzip.h in Headers */,
 				0C2DA1481F3BEB4900DBC317 /* MachVMSPI.h in Headers */,
 				0C5AF91D1F43A4C7002EAC02 /* MediaPlayerSPI.h in Headers */,
 				0C77858C1F45130F00F4EBB6 /* MediaRemoteSPI.h in Headers */,
@@ -914,6 +921,7 @@
 				F44291681FA52705002CC93E /* FileSizeFormatterCocoa.mm in Sources */,
 				A30D41221F0DD0EA00B71954 /* KillRing.cpp in Sources */,
 				A30D41251F0DD12D00B71954 /* KillRingMac.mm in Sources */,
+				1C022EFE22CFE8E1006DF01B /* Gunzip.cpp in Sources */,
 				1C4876D81F8D7F4E00CCEEBD /* Logging.cpp in Sources */,
 				44E1A8B021FA54EB00C3048E /* LookupSoftLink.mm in Sources */,
 				0CF99CA41F736375007EE793 /* MediaTimeAVFoundation.cpp in Sources */,

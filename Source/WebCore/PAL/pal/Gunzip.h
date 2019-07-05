@@ -23,54 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WHLSLRecursionChecker.h"
+#pragma once
 
-#if ENABLE(WEBGPU)
+#include <wtf/Vector.h>
+#include <wtf/text/LChar.h>
 
-#include "WHLSLCallExpression.h"
-#include "WHLSLFunctionDefinition.h"
-#include "WHLSLVisitor.h"
-#include <wtf/HashSet.h>
+namespace PAL {
 
-namespace WebCore {
-
-namespace WHLSL {
-
-// Makes sure there is no function recursion.
-class RecursionChecker : public Visitor {
-private:
-    void visit(AST::FunctionDefinition& functionDefinition) override
-    {
-        auto addResult = m_visitingSet.add(&functionDefinition);
-        if (!addResult.isNewEntry) {
-            setError();
-            return;
-        }
-
-        Visitor::visit(functionDefinition);
-
-        auto success = m_visitingSet.remove(&functionDefinition);
-        ASSERT_UNUSED(success, success);
-    }
-
-    void visit(AST::CallExpression& callExpression) override
-    {
-        Visitor::visit(callExpression.function());
-    }
-
-    HashSet<AST::FunctionDefinition*> m_visitingSet;
-};
-
-bool checkRecursion(Program& program)
-{
-    RecursionChecker recursionChecker;
-    recursionChecker.Visitor::visit(program);
-    return !recursionChecker.error();
-}
+// This function is only suitable for zip files which are guaranteed to not have any flags set in their headers.
+// See https://tools.ietf.org/html/rfc1952 for more information.
+PAL_EXPORT Vector<LChar> gunzip(const unsigned char* data, size_t length);
 
 }
 
-}
-
-#endif
+using PAL::gunzip;

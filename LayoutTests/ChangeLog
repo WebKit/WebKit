@@ -1,3 +1,16 @@
+2019-07-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Standard library is too big to directly include in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=198186
+        <rdar://problem/51288898>
+
+        Reviewed by Saam Barati.
+
+        The standard library doesn't include any matrix constructors that broadcast a single value
+        to every field in a matrix. https://bugs.webkit.org/show_bug.cgi?id=199333
+
+        * webgpu/whlsl-matrix.html:
+
 2019-07-05  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] REGRESSION (r247015): facebook photo/video upload button is unresponsive to user interaction.
