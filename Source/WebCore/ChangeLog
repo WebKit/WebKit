@@ -1,5 +1,21 @@
 2019-07-04  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] didFinishTransition triggers a nested style recalc via isConsideredClickable
+        https://bugs.webkit.org/show_bug.cgi?id=199506
+        <rdar://problem/52656221>
+
+        Reviewed by Ryosuke Niwa.
+
+        isConsideredClickable() may trigger style update through Node::computeEditability. Let's adjust the observer state in the next runloop. 
+
+        Test: fast/events/touch/ios/content-observation/animation-end-with-visiblity-change-and-recursive-update-style.html
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::didFinishTransition):
+        * page/ios/ContentChangeObserver.h:
+
+2019-07-04  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Limit mouseOut dispatching after synthetic click to YouTube.com
         https://bugs.webkit.org/show_bug.cgi?id=199497
         <rdar://problem/52361019>

@@ -43,7 +43,7 @@ class Animation;
 class DOMTimer;
 class Element;
 
-class ContentChangeObserver {
+class ContentChangeObserver : public CanMakeWeakPtr<ContentChangeObserver> {
 public:
     ContentChangeObserver(Document&);
 

@@ -194,11 +194,16 @@ void ContentChangeObserver::didFinishTransition(const Element& element, CSSPrope
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "didFinishTransition: transition finished (" << &element << ").");
 
-    if (isConsideredHidden(element)) {
-        adjustObservedState(Event::EndedTransitionButFinalStyleIsNotDefiniteYet);
-        return;
-    }
-    adjustObservedState(isConsideredClickable(element, ElementHadRenderer::Yes) ? Event::CompletedTransitionWithClickableContent : Event::CompletedTransitionWithoutClickableContent);
+    // isConsideredClickable may trigger style update through Node::computeEditability. Let's adjust the state in the next runloop.
+    callOnMainThread([weakThis = makeWeakPtr(*this), targetElement = makeWeakPtr(element)] {
+        if (!weakThis || !targetElement)
+            return;
+        if (isConsideredHidden(*targetElement)) {
+            weakThis->adjustObservedState(Event::EndedTransitionButFinalStyleIsNotDefiniteYet);
+            return;
+        }
+        weakThis->adjustObservedState(isConsideredClickable(*targetElement, ElementHadRenderer::Yes) ? Event::CompletedTransitionWithClickableContent : Event::CompletedTransitionWithoutClickableContent);
+    });
 }
 
 void ContentChangeObserver::didRemoveTransition(const Element& element, CSSPropertyID propertyID)
