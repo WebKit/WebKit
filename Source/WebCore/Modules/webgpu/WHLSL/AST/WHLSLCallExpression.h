@@ -71,19 +71,15 @@ public:
     Optional<Vector<std::reference_wrapper<FunctionDeclaration>, 1>>& overloads() { return m_overloads; }
     void setOverloads(const Vector<std::reference_wrapper<FunctionDeclaration>, 1>& overloads)
     {
-        ASSERT(!hasOverloads());
+        assert(!hasOverloads());
         m_overloads = overloads;
     }
 
-    FunctionDeclaration& function()
-    {
-        ASSERT(m_function);
-        return *m_function;
-    }
+    FunctionDeclaration* function() { return m_function; }
 
     void setFunction(FunctionDeclaration& functionDeclaration)
     {
-        ASSERT(!m_function);
+        assert(!m_function);
         m_function = &functionDeclaration;
     }
 

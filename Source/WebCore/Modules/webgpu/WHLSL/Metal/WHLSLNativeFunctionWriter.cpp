@@ -135,6 +135,20 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
 
         ASSERT(nativeFunctionDeclaration.parameters().size() == 1);
         auto metalParameterName = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
+        auto& parameterType = nativeFunctionDeclaration.parameters()[0]->type()->unifyNode();
+        if (is<AST::NamedType>(parameterType)) {
+            auto& parameterNamedType = downcast<AST::NamedType>(parameterType);
+            if (is<AST::NativeTypeDeclaration>(parameterNamedType)) {
+                auto& parameterNativeTypeDeclaration = downcast<AST::NativeTypeDeclaration>(parameterNamedType);
+                if (parameterNativeTypeDeclaration.isAtomic()) {
+                    stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"));
+                    stringBuilder.append("    return atomic_load_explicit(&x, memory_order_relaxed);\n");
+                    stringBuilder.append("}\n");
+                    return stringBuilder.toString();
+                }
+            }
+        }
+
         stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"));
         stringBuilder.append(makeString("    return static_cast<", metalReturnName, ">(x);\n"));
         stringBuilder.append("}\n");
@@ -349,6 +363,11 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         return stringBuilder.toString();
     }
 
+    if (nativeFunctionDeclaration.name() == "f16tof32" || nativeFunctionDeclaration.name() == "f32tof16") {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
+    }
+
     if (nativeFunctionDeclaration.name() == "AllMemoryBarrierWithGroupSync") {
         ASSERT(!nativeFunctionDeclaration.parameters().size());
         stringBuilder.append(makeString("void ", outputFunctionName, "() {\n"));
@@ -387,7 +406,7 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
             auto fourthArgumentAddressSpace = fourthArgumentPointer.addressSpace();
             auto fourthArgumentPointee = typeNamer.mangledNameForType(fourthArgumentPointer.elementType());
             stringBuilder.append(makeString("void ", outputFunctionName, '(', toString(firstArgumentAddressSpace), ' ', firstArgumentPointee, "* object, ", secondArgument, " compare, ", thirdArgument, " desired, ", toString(fourthArgumentAddressSpace), ' ', fourthArgumentPointee, "* out) {\n"));
-            stringBuilder.append("    atomic_compare_exchange_weak_explicit(object, &compare, desired, memory_order_relaxed, memory_order_relaxed);\n");
+            stringBuilder.append("    atomic_compare_exchange_weak_explicit(object, &compare, desired, memory_order_relaxed);\n");
             stringBuilder.append("    *out = compare;\n");
             stringBuilder.append("}\n");
             return stringBuilder.toString();
@@ -403,7 +422,7 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         auto thirdArgumentPointee = typeNamer.mangledNameForType(thirdArgumentPointer.elementType());
         auto name = atomicName(nativeFunctionDeclaration.name().substring("Interlocked"_str.length()));
         stringBuilder.append(makeString("void ", outputFunctionName, '(', toString(firstArgumentAddressSpace), ' ', firstArgumentPointee, "* object, ", secondArgument, " operand, ", toString(thirdArgumentAddressSpace), ' ', thirdArgumentPointee, "* out) {\n"));
-        stringBuilder.append(makeString("    *out = atomic_", name, "_explicit(object, operand, memory_order_relaxed);\n"));
+        stringBuilder.append(makeString("    *out = atomic_fetch_", name, "_explicit(object, operand, memory_order_relaxed);\n"));
         stringBuilder.append("}\n");
         return stringBuilder.toString();
     }
@@ -490,26 +509,6 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         return stringBuilder.toString();
     }
 
-    if (nativeFunctionDeclaration.name() == "load") {
-        ASSERT(nativeFunctionDeclaration.parameters().size() == 1);
-        auto metalParameterName = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
-        auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"));
-        stringBuilder.append("    return atomic_load_explicit(x, memory_order_relaxed);\n");
-        stringBuilder.append("}\n");
-        return stringBuilder.toString();
-    }
-
-    if (nativeFunctionDeclaration.name() == "store") {
-        ASSERT(nativeFunctionDeclaration.parameters().size() == 2);
-        auto metalParameter1Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
-        auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1]->type());
-        stringBuilder.append(makeString("void ", outputFunctionName, '(', metalParameter1Name, " x, ", metalParameter2Name, " y) {\n"));
-        stringBuilder.append("    atomic_store_explicit(x, y, memory_order_relaxed);\n");
-        stringBuilder.append("}\n");
-        return stringBuilder.toString();
-    }
-
     if (nativeFunctionDeclaration.name() == "GetDimensions") {
         auto& textureType = downcast<AST::NativeTypeDeclaration>(downcast<AST::NamedType>(nativeFunctionDeclaration.parameters()[0]->type()->unifyNode()));
 
@@ -534,7 +533,7 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
             ++index;
         }
         String numberOfLevelsTypeName;
-        if (!textureType.isWritableTexture() && textureType.textureDimension() != 1) {
+        if (!textureType.isWritableTexture()) {
             numberOfLevelsTypeName = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[index]->type());
             ++index;
         }

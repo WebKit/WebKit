@@ -196,30 +196,34 @@ public:
         return *m_vectorFloat[2];
     }
 
-    // These functions may have been pruned from the AST if they are unused.
-    AST::NativeFunctionDeclaration* ddx() const
+    AST::NativeFunctionDeclaration& ddx() const
     {
-        return m_ddx;
+        ASSERT(m_ddx);
+        return *m_ddx;
     }
 
-    AST::NativeFunctionDeclaration* ddy() const
+    AST::NativeFunctionDeclaration& ddy() const
     {
-        return m_ddy;
+        ASSERT(m_ddy);
+        return *m_ddy;
     }
 
-    AST::NativeFunctionDeclaration* allMemoryBarrier() const
+    AST::NativeFunctionDeclaration& allMemoryBarrier() const
     {
-        return m_allMemoryBarrier;
+        ASSERT(m_allMemoryBarrier);
+        return *m_allMemoryBarrier;
     }
 
-    AST::NativeFunctionDeclaration* deviceMemoryBarrier() const
+    AST::NativeFunctionDeclaration& deviceMemoryBarrier() const
     {
-        return m_deviceMemoryBarrier;
+        ASSERT(m_deviceMemoryBarrier);
+        return *m_deviceMemoryBarrier;
     }
 
-    AST::NativeFunctionDeclaration* groupMemoryBarrier() const
+    AST::NativeFunctionDeclaration& groupMemoryBarrier() const
     {
-        return m_groupMemoryBarrier;
+        ASSERT(m_groupMemoryBarrier);
+        return *m_groupMemoryBarrier;
     }
 
 private:

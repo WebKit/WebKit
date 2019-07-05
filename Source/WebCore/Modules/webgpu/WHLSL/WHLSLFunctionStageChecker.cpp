@@ -49,16 +49,18 @@ public:
 public:
     void visit(AST::CallExpression& callExpression) override
     {
-        if ((&callExpression.function() == m_intrinsics.ddx() || &callExpression.function() == m_intrinsics.ddy()) && m_entryPointType != AST::EntryPointType::Fragment) {
+        ASSERT(callExpression.function());
+        if ((callExpression.function() == &m_intrinsics.ddx() || callExpression.function() == &m_intrinsics.ddy()) && m_entryPointType != AST::EntryPointType::Fragment) {
             setError();
             return;
         }
-        if ((&callExpression.function() == m_intrinsics.allMemoryBarrier() || &callExpression.function() == m_intrinsics.deviceMemoryBarrier() || &callExpression.function() == m_intrinsics.groupMemoryBarrier())
+        if ((callExpression.function() == &m_intrinsics.allMemoryBarrier() || callExpression.function() == &m_intrinsics.deviceMemoryBarrier() || callExpression.function() == &m_intrinsics.groupMemoryBarrier())
             && m_entryPointType != AST::EntryPointType::Compute) {
             setError();
             return;
         }
-        Visitor::visit(callExpression.function());
+        ASSERT(callExpression.function());
+        Visitor::visit(*callExpression.function());
     }
 
     AST::EntryPointType m_entryPointType;
