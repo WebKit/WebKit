@@ -1,3 +1,14 @@
+2019-07-05  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] REGRESSION (r247015): facebook photo/video upload button is unresponsive to user interaction.
+        https://bugs.webkit.org/show_bug.cgi?id=199502
+        <rdar://problem/52547473>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-touchstart-with-transition3-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-touchstart-with-transition3.html: Added.
+
 2019-07-05  Youenn Fablet  <youenn@apple.com>
 
         [iOS] Local capture MediaStreamTrack does not render in portrait mode

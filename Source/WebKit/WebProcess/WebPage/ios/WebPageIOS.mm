@@ -669,7 +669,7 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
 
     auto& respondingDocument = nodeRespondingToClick.document();
     auto& contentChangeObserver = respondingDocument.contentChangeObserver();
-    auto targetNodeisConsideredHidden = contentChangeObserver.hiddenTouchTarget() == &nodeRespondingToClick || ContentChangeObserver::isConsideredHidden(nodeRespondingToClick);
+    auto targetNodeWentFromHiddenToVisible = contentChangeObserver.hiddenTouchTarget() == &nodeRespondingToClick && !ContentChangeObserver::isConsideredHidden(nodeRespondingToClick);
     {
         LOG_WITH_STREAM(ContentObservation, stream << "handleSyntheticClick: node(" << &nodeRespondingToClick << ") " << location);
         ContentChangeObserver::MouseMovedScope observingScope(respondingDocument);
@@ -680,8 +680,8 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
             return;
     }
 
-    if (targetNodeisConsideredHidden) {
-        LOG(ContentObservation, "handleSyntheticClick: target node is considered hidden -> hover.");
+    if (targetNodeWentFromHiddenToVisible) {
+        LOG(ContentObservation, "handleSyntheticClick: target node was hidden and now is visible -> hover.");
         return;
     }
 

@@ -1,3 +1,20 @@
+2019-07-05  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] REGRESSION (r247015): facebook photo/video upload button is unresponsive to user interaction.
+        https://bugs.webkit.org/show_bug.cgi?id=199502
+        <rdar://problem/52547473>
+
+        Reviewed by Simon Fraser.
+
+        Apparently it's a common practice to put transparent elements over visible click targets (button like divs) and use the invisible
+        elements to catch the user input (e.g. Facebook's Photo/Video button).
+        This patch modifies the original "do not trigger click on invisible targets" heuristic to a more restrictive "do not trigger
+        click if the click target was previously hidden and became visible through touch start".
+        If this still breaks some use cases, we could turn it into YouTube quirk.       
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleSyntheticClick):
+
 2019-07-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r247123.
