@@ -88,12 +88,14 @@ static unsigned moveToNextBreakablePosition(unsigned startPosition, LazyLineBrea
 
 void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const InlineBox& inlineBox)
 {
+    auto text = inlineBox.textContent();
+    if (!text.length())
+        return inlineContent.append(std::make_unique<InlineTextItem>(inlineBox, 0, 0, false, false));
+
     auto& style = inlineBox.style();
     auto preserveNewline = style.preserveNewline();
     auto collapseWhiteSpace = style.collapseWhiteSpace();
-    auto text = inlineBox.textContent();
     LazyLineBreakIterator lineBreakIterator(text);
-
     unsigned currentPosition = 0;
     while (currentPosition < text.length()) {
         // Soft linebreak?

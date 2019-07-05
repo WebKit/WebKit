@@ -236,6 +236,11 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
         m_trimmableContent.clear();
 
     auto shouldCollapseCompletely = [&] {
+        // Empty run.
+        if (!inlineItem.length()) {
+            ASSERT(!logicalWidth);
+            return true;
+        }
         if (!isTrimmable)
             return false;
         // Leading whitespace.

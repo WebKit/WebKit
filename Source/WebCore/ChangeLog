@@ -1,3 +1,19 @@
+2019-07-05  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Empty text node should generate empty InlineTextItem
+        https://bugs.webkit.org/show_bug.cgi?id=199495
+        <rdar://problem/52643225>
+
+        Reviewed by Antti Koivisto.
+
+        Empty text nodes generate empty RenderText renderers but they don't generate inline boxes.
+        This patch aligns LFC with the current rendering code.
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::appendTextContent):
+        * layout/inlineformatting/InlineTextItem.cpp:
+        (WebCore::Layout::InlineTextItem::createAndAppendTextItems):
+
 2019-07-05  Adrian Perez de Castro  <aperez@igalia.com>
 
         [ATK] Do not use C linkage for functions using C++ features
