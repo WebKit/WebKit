@@ -209,11 +209,6 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession&
         return false;
     }
 
-    if (m_processIsSuspended) {
-        ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier(), " returning false because process is suspended");
-        return false;
-    }
-
 #if USE(AUDIO_SESSION)
     if (activeAudioSessionRequired()) {
         if (!AudioSession::sharedSession().tryToSetActive(true)) {
