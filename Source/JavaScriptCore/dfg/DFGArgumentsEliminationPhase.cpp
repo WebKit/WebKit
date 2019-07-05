@@ -604,7 +604,20 @@ private:
                         }
 
                         // This loop considers all nodes up to the nodeIndex, excluding the nodeIndex.
-                        while (nodeIndex--) {
+                        //
+                        // Note: nodeIndex here has a double meaning. Before entering this
+                        // while loop, it refers to the remaining number of nodes that have
+                        // yet to be processed. Inside the look, it refers to the index
+                        // of the current node to process (after we decrement it).
+                        //
+                        // If the remaining number of nodes is 0, we should not decrement nodeIndex.
+                        // Hence, we must only decrement nodeIndex inside the while loop instead of
+                        // in its condition statement. Note that this while loop is embedded in an
+                        // outer for loop. If we decrement nodeIndex in the condition statement, a
+                        // nodeIndex of 0 will become UINT_MAX, and the outer loop will wrongly
+                        // treat this as there being UINT_MAX remaining nodes to process.
+                        while (nodeIndex) {
+                            --nodeIndex;
                             Node* node = block->at(nodeIndex);
                             if (node == candidate)
                                 break;

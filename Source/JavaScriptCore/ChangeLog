@@ -1,3 +1,13 @@
+2019-07-05  Mark Lam  <mark.lam@apple.com>
+
+        ArgumentsEliminationPhase::eliminateCandidatesThatInterfere() should not decrement nodeIndex pass zero.
+        https://bugs.webkit.org/show_bug.cgi?id=199533
+        <rdar://problem/52669111>
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+
 2019-07-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix build failure on ARM64_32
