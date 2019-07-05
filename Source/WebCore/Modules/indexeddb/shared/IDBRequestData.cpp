@@ -98,8 +98,7 @@ void IDBRequestData::isolatedCopy(const IDBRequestData& source, IDBRequestData& 
     destination.m_requestedVersion = source.m_requestedVersion;
     destination.m_requestType = source.m_requestType;
 
-    if (source.m_databaseIdentifier)
-        destination.m_databaseIdentifier = source.m_databaseIdentifier->isolatedCopy();
+    destination.m_databaseIdentifier = source.m_databaseIdentifier.isolatedCopy();
 
     if (source.m_requestIdentifier)
         destination.m_requestIdentifier = std::make_unique<IDBResourceIdentifier>(*source.m_requestIdentifier);

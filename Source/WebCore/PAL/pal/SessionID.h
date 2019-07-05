@@ -80,7 +80,7 @@ private:
 template<class Encoder>
 void SessionID::encode(Encoder& encoder) const
 {
-    ASSERT(isValid());
+    // FIXME: Eliminate places that encode invalid SessionIDs, then ASSERT here that the sessionID is valid.
     encoder << m_sessionID;
 }
 
@@ -104,8 +104,7 @@ Optional<SessionID> SessionID::decode(Decoder& decoder)
     if (!sessionID)
         return WTF::nullopt;
 
-    // FIXME: We should fail to decode an invalid sessionID.
-    ASSERT(SessionID { *sessionID }.isValid());
+    // FIXME: Eliminate places that encode invalid SessionIDs, then fail to decode an invalid sessionID.
     return SessionID { *sessionID };
 }
 

@@ -1,3 +1,15 @@
+2019-07-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r247159.
+
+        IndexedDB layout tests are failing the new assert.
+
+        Reverted changeset:
+
+        "ASSERT that a sessionID is valid when encoding it"
+        https://bugs.webkit.org/show_bug.cgi?id=199302
+        https://trac.webkit.org/changeset/247159
+
 2019-07-05  Youenn Fablet  <youenn@apple.com>
 
         ASSERT that a sessionID is valid when encoding it
