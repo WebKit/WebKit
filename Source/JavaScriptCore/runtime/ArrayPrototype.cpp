@@ -284,7 +284,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSpeciesCreate(ExecState* exec)
         return { };
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(constructEmptyArray(exec, nullptr, length)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(constructEmptyArray(exec, nullptr, static_cast<unsigned>(length))));
 }
 
 static inline unsigned argumentClampedIndexFromStartOrEnd(ExecState* exec, int argument, unsigned length, unsigned undefinedValue = 0)
