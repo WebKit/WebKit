@@ -7,15 +7,17 @@
         <script src="../resources/testharnessreport.js"></script>
     </head>
     <body>
-        <video id="video" autoplay playsInline width="320" height="240"></video>
+        <video id="localVideo" autoplay playsInline width="320" height="240"></video>
+        <video id="remoteVideo" autoplay playsInline width="320" height="240"></video>
+        <canvas id="canvas0" width="320" height="240"></canvas>
         <canvas id="canvas1" width="320" height="240"></canvas>
         <canvas id="canvas2" width="320" height="240"></canvas>
         <canvas id="canvas3" width="320" height="240"></canvas>
         <script src ="routines.js"></script>
         <script>
-function isVideoBlack(id)
+function isVideoBlack(video, canvasId)
 {
-    var canvas = document.getElementById(id);
+    var canvas = document.getElementById(canvasId);
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -30,21 +32,21 @@ function isVideoBlack(id)
     return true;
 }
 
-function pollVideoBlackCheck(expected, id, resolve)
+function pollVideoBlackCheck(expected, video, canvasId, resolve)
 {
-    if (isVideoBlack(id) === expected) {
+    if (isVideoBlack(video, canvasId) === expected) {
         resolve();
         return;
     }
 
-    setTimeout(() => pollVideoBlackCheck(expected, id, resolve), 100);
+    setTimeout(() => pollVideoBlackCheck(expected, video, canvasId, resolve), 100);
 }
 
-function checkVideoBlack(expected, id)
+function checkVideoBlack(expected, video, canvasId)
 {
     return new Promise((resolve, reject) => {
-        pollVideoBlackCheck(expected, id, resolve);
-        setTimeout(() => reject("checkVideoBlack timed out for '" + id + "', expected " + expected), 5000);
+        pollVideoBlackCheck(expected, video, canvasId, resolve);
+        setTimeout(() => reject("checkVideoBlack timed out for '" + canvasId + "', expected " + expected), 5000);
     });
 }
 
@@ -54,6 +56,7 @@ promise_test((test) => {
         testRunner.setUserMediaPermission(true);
 
     return navigator.mediaDevices.getUserMedia({video: {width: 320, height: 240, facingMode: "environment"}}).then((localStream) => {
+        localVideo.srcObject = localStream;
         return new Promise((resolve, reject) => {
             track = localStream.getVideoTracks()[0];
 
@@ -69,30 +72,42 @@ promise_test((test) => {
             setTimeout(() => reject("Test timed out"), 5000);
         });
     }).then((remoteStream) => {
-        video.srcObject = remoteStream;
-        return video.play();
+        remoteVideo.srcObject = remoteStream;
+        return remoteVideo.play();
     });
 }, "Setting video exchange");
 
-promise_test((test) => {
-   return checkVideoBlack(false, "canvas1");
+promise_test(async (test) => {
+   await checkVideoBlack(false, remoteVideo, "canvas0");
+   await waitForVideoSize(remoteVideo, 320, 240);
 }, "Track is enabled, video should not be black");
+
+promise_test(async (test) => {
+    await checkVideoBlack(false, localVideo, "canvas0");
+    await waitForVideoSize(localVideo, 320, 240);
+
+    if (window.internals)
+        window.internals.setCameraMediaStreamTrackOrientation(track, 90);
+
+    await checkVideoBlack(false, localVideo, "canvas1");
+    await waitForVideoSize(localVideo, 240, 320);
+}, "Track is enabled and rotated, local video should not be black and should change size");
 
 promise_test((test) => {
     if (window.internals)
         window.internals.setCameraMediaStreamTrackOrientation(track, 90);
 
-    return checkVideoBlack(false, "canvas1").then(() => {
-        return waitForVideoSize(video, 240, 320);
+    return checkVideoBlack(false, remoteVideo, "canvas2").then(() => {
+        return waitForVideoSize(remoteVideo, 240, 320);
     });
-}, "Track is enabled and rotated, video should not be black and should change size");
+}, "Track is enabled and rotated, remote video should not be black and should change size");
 
 promise_test((test) => {
     if (window.internals)
         window.internals.setCameraMediaStreamTrackOrientation(track, 180);
 
-    return checkVideoBlack(false, "canvas1").then(() => {
-        return waitForVideoSize(video, 320, 240);
+    return checkVideoBlack(false, remoteVideo, "canvas3").then(() => {
+        return waitForVideoSize(remoteVideo, 320, 240);
     });
 }, "Track is enabled and rotated again, video should not be black and should change size");
         </script>

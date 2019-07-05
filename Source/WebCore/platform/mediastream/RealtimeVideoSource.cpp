@@ -92,12 +92,13 @@ void RealtimeVideoSource::sourceMutedChanged()
 void RealtimeVideoSource::sourceSettingsChanged()
 {
     auto rotation = m_source->sampleRotation();
-    if (rotation == MediaSample::VideoRotation::Left || rotation == MediaSample::VideoRotation::Right) {
-        auto size = this->size();
+    auto size = this->size();
+    if (size.isEmpty())
+        size = m_source->size();
+    if (rotation == MediaSample::VideoRotation::Left || rotation == MediaSample::VideoRotation::Right)
         size = size.transposedSize();
-        m_currentSettings.setWidth(size.width());
-        m_currentSettings.setHeight(size.height());
-    }
+    m_currentSettings.setWidth(size.width());
+    m_currentSettings.setHeight(size.height());
 
     forEachObserver([&](auto& observer) {
         observer.sourceSettingsChanged();

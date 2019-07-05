@@ -85,39 +85,11 @@ void MockRealtimeVideoSourceMac::updateSampleBuffer()
         m_imageTransferSession = ImageTransferSessionVT::create(preferedPixelBufferFormat());
 
     auto sampleTime = MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds());
-    auto sampleBuffer = m_imageTransferSession->createMediaSample(imageBuffer->copyImage()->nativeImage().get(), sampleTime, size(), m_deviceOrientation);
+    auto sampleBuffer = m_imageTransferSession->createMediaSample(imageBuffer->copyImage()->nativeImage().get(), sampleTime, size(), sampleRotation());
     if (!sampleBuffer)
         return;
 
-    // We use m_deviceOrientation to emulate sensor orientation
     dispatchMediaSampleToObservers(*sampleBuffer);
-}
-
-void MockRealtimeVideoSourceMac::orientationChanged(int orientation)
-{
-    // FIXME: Do something with m_deviceOrientation. See bug 169822.
-    switch (orientation) {
-    case 0:
-        m_deviceOrientation = MediaSample::VideoRotation::None;
-        break;
-    case 90:
-        m_deviceOrientation = MediaSample::VideoRotation::Right;
-        break;
-    case -90:
-        m_deviceOrientation = MediaSample::VideoRotation::Left;
-        break;
-    case 180:
-        m_deviceOrientation = MediaSample::VideoRotation::UpsideDown;
-        break;
-    default:
-        return;
-    }
-}
-
-void MockRealtimeVideoSourceMac::monitorOrientation(OrientationNotifier& notifier)
-{
-    notifier.addObserver(*this);
-    orientationChanged(notifier.orientation());
 }
 
 } // namespace WebCore

@@ -36,6 +36,7 @@
 #include "FontCascade.h"
 #include "ImageBuffer.h"
 #include "MockMediaDevice.h"
+#include "OrientationNotifier.h"
 #include "RealtimeMediaSourceFactory.h"
 #include "RealtimeVideoCaptureSource.h"
 #include <wtf/RunLoop.h>
@@ -45,7 +46,7 @@ namespace WebCore {
 class FloatRect;
 class GraphicsContext;
 
-class MockRealtimeVideoSource : public RealtimeVideoCaptureSource {
+class MockRealtimeVideoSource : public RealtimeVideoCaptureSource, private OrientationNotifier::Observer {
 public:
 
     static CaptureSourceOrError create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints*);
@@ -60,6 +61,7 @@ protected:
 
     Seconds elapsedTime();
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) override;
+    MediaSample::VideoRotation sampleRotation() const final { return m_deviceOrientation; }
 
 private:
     const RealtimeMediaSourceCapabilities& capabilities() final;
@@ -76,6 +78,10 @@ private:
 
     void generatePresets() final;
 
+    // OrientationNotifier::Observer
+    void orientationChanged(int orientation) final;
+    void monitorOrientation(OrientationNotifier&) final;
+
     void drawAnimation(GraphicsContext&);
     void drawText(GraphicsContext&);
     void drawBoxes(GraphicsContext&);
@@ -83,7 +89,7 @@ private:
     void generateFrame();
     void startCaptureTimer();
 
-    void delaySamples(Seconds) override;
+    void delaySamples(Seconds) final;
 
     bool mockCamera() const { return WTF::holds_alternative<MockCameraProperties>(m_device.properties); }
     bool mockDisplay() const { return WTF::holds_alternative<MockDisplayProperties>(m_device.properties); }
@@ -112,6 +118,7 @@ private:
     Color m_fillColor { Color::black };
     MockMediaDevice m_device;
     RefPtr<VideoPreset> m_preset;
+    MediaSample::VideoRotation m_deviceOrientation { MediaSample::VideoRotation::None };
 };
 
 } // namespace WebCore
