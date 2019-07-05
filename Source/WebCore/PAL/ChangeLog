@@ -1,3 +1,16 @@
+2019-07-05  Youenn Fablet  <youenn@apple.com>
+
+        ASSERT that a sessionID is valid when encoding it
+        https://bugs.webkit.org/show_bug.cgi?id=199302
+
+        Reviewed by Darin Adler.
+
+        ASSERT that a sessionID is valid at encoding/decoding time.
+
+        * pal/SessionID.h:
+        (PAL::SessionID::encode const):
+        (PAL::SessionID::decode):
+
 2019-07-03  Jonathan Bedard  <jbedard@apple.com>
 
         [Catalina] Enable WebKit build
