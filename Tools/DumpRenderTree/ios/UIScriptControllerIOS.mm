@@ -287,6 +287,11 @@ bool UIScriptController::isShowingKeyboard() const
     return false;
 }
 
+bool UIScriptController::hasInputSession() const
+{
+    return false;
+}
+
 double UIScriptController::minimumZoomScale() const
 {
     return gWebScrollView.minimumZoomScale;

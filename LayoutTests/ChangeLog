@@ -1,3 +1,29 @@
+2019-07-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Touching media controls sometimes shows software keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=199490
+        <rdar://problem/52076270>
+
+        Reviewed by Eric Carlson.
+
+        Adds a new layout test to verify that the keyboard only appears after a handled touch event if the focused
+        element is inside a hidden editable area; otherwise, the keyboard should not be present.
+
+        * fast/events/touch/ios/do-not-show-keyboard-after-preventing-touchstart-expected.txt: Added.
+        * fast/events/touch/ios/do-not-show-keyboard-after-preventing-touchstart.html: Added.
+
+        This test passes as long as we didn't begin showing the keyboard after tapping.
+
+        * fast/events/touch/ios/show-keyboard-after-preventing-touchstart-expected.txt:
+        * fast/events/touch/ios/show-keyboard-after-preventing-touchstart.html:
+
+        Adjust this existing test to make the focused textarea hidden.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.hasInputSession):
+
+        Add a new testing hook to check whether there is an active input session.
+
 2019-07-05  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover

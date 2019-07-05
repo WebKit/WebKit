@@ -453,6 +453,11 @@ bool UIScriptController::isShowingKeyboard() const
     return false;
 }
 
+bool UIScriptController::hasInputSession() const
+{
+    return false;
+}
+
 double UIScriptController::zoomScale() const
 {
     return 1;

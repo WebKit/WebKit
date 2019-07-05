@@ -2896,7 +2896,7 @@ void WebPage::dispatchTouchEvent(const WebTouchEvent& touchEvent, bool& handled)
     if (handled && oldFocusedElement) {
         auto newFocusedFrame = makeRefPtr(m_page->focusController().focusedFrame());
         auto newFocusedElement = makeRefPtr(newFocusedFrame ? newFocusedFrame->document()->focusedElement() : nullptr);
-        if (oldFocusedElement == newFocusedElement)
+        if (oldFocusedElement == newFocusedElement && isTransparentOrFullyClipped(*newFocusedElement))
             elementDidRefocus(*newFocusedElement);
     }
 }

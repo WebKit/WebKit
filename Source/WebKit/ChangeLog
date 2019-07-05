@@ -1,3 +1,39 @@
+2019-07-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Touching media controls sometimes shows software keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=199490
+        <rdar://problem/52076270>
+
+        Reviewed by Eric Carlson.
+
+        In r243044, we added a compatibility hack for Google Slides (and other G-suite properties) to allow the on-
+        screen keyboard to show up after a prevented touch event in the case where an element was already focused, even
+        if the touch event handler doesn't explicitly refocus the element. However, this means that if a regular text
+        field (or other form control) has been programmatically focused, then interacting with any other element that
+        prevents default on touchstart will cause us to show the keyboard for that focused element.
+
+        To mitigate this, only fall down this refocusing codepath in the case where the focused element is a hidden
+        editable element (in the style of many Google productivity web apps). For non-hidden editable elements that are
+        already focused, this refocusing logic is not necessary, since the user should be able to interact with the
+        control to show the keyboard anyways; for hidden editable areas, this compatibility hack is actually needed,
+        since there is typically no other way for a user to focus these elements and show an on-screen keyboard.
+
+        Tests:  fast/events/touch/ios/show-keyboard-after-preventing-touchstart.html
+                fast/events/touch/ios/do-not-show-keyboard-after-preventing-touchstart.html
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::dispatchTouchEvent):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::isTransparentOrFullyClipped const):
+
+        Renamed from enclosingLayerIsTransparentOrFullyClipped, and pulled out into a private helper method.
+
+        (WebKit::WebPage::platformEditorState const):
+        (WebKit::WebPage::requestEvasionRectsAboveSelection):
+        (WebKit::WebPage::getFocusedElementInformation):
+        (WebKit::enclosingLayerIsTransparentOrFullyClipped): Deleted.
+
 2019-07-04  Chris Dumez  <cdumez@apple.com>
 
         Simplify logic that handles registering WebProcessProxy objects with their WebsiteDataStore

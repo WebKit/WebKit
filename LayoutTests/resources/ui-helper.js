@@ -372,6 +372,13 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static hasInputSession()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript("uiController.hasInputSession", result => resolve(result === "true"));
+        });
+    }
+
     static isPresentingModally()
     {
         return new Promise(resolve => {

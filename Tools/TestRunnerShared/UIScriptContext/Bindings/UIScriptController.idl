@@ -224,6 +224,7 @@ interface UIScriptController {
     attribute object didShowKeyboardCallback;
     attribute object didHideKeyboardCallback;
     readonly attribute boolean isShowingKeyboard;
+    readonly attribute boolean hasInputSession;
 
     attribute object didShowMenuCallback;
     attribute object didHideMenuCallback;

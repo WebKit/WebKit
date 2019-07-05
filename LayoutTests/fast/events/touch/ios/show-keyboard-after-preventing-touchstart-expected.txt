@@ -1,5 +1,5 @@
 
-Verifies that the keyboard shows up even after preventing default on touchstart. To manually test, tap the textarea; the textarea should remain focused, and the keyboard should appear.
+Verifies that the keyboard shows up even after preventing default on touchstart when focusing a hidden editable area. To manually test, tap the red box; the textarea should remain focused, and the keyboard should appear.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

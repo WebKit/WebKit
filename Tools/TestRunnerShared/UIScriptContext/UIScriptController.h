@@ -163,6 +163,7 @@ public:
     JSValueRef didHideKeyboardCallback() const;
 
     bool isShowingKeyboard() const;
+    bool hasInputSession() const;
 
     void setDidHideMenuCallback(JSValueRef);
     JSValueRef didHideMenuCallback() const;

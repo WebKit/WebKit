@@ -13,22 +13,11 @@ html, body {
 textarea, #target {
     width: 100%;
     height: 100px;
-    position: absolute;
-    top: 0;
 }
 
 #target {
     background-color: tomato;
-    z-index: 1;
     opacity: 0.25;
-}
-
-textarea {
-    opacity: 0;
-}
-
-#description {
-    margin-top: 100px;
 }
 </style>
 </head>
@@ -44,15 +33,15 @@ textarea {
     target = document.getElementById("target");
     target.addEventListener("touchstart", event => event.preventDefault());
 
-    description("Verifies that the keyboard shows up even after preventing default on touchstart when focusing a hidden editable area. To manually test, tap the red box; the textarea should remain focused, and the keyboard should appear.");
+    description("Verifies that the keyboard does not show up even after preventing default on touchstart when a regular input field is focused. To manually test, tap the red box; the keyboard should not appear.");
 
     addEventListener("load", async () => {
         textarea.focus();
-        await UIHelper.activateElementAndWaitForInputSession(target);
-        testPassed("keyboard was shown.");
+        await UIHelper.activateElement(target);
+        await UIHelper.ensurePresentationUpdate();
+        hasInputSession = await UIHelper.hasInputSession();
+        shouldBe("hasInputSession", "false");
         shouldBe("document.activeElement", "textarea");
-        textarea.blur();
-        await UIHelper.waitForKeyboardToHide();
         finishJSTest();
     });
 </script>

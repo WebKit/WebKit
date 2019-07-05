@@ -625,6 +625,11 @@ bool UIScriptController::isShowingKeyboard() const
     return TestController::singleton().mainWebView()->platformView().showingKeyboard;
 }
 
+bool UIScriptController::hasInputSession() const
+{
+    return TestController::singleton().mainWebView()->platformView().isInteractingWithFormControl;
+}
+
 void UIScriptController::applyAutocorrection(JSStringRef newString, JSStringRef oldString, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
