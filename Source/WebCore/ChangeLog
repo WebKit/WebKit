@@ -1,3 +1,17 @@
+2019-07-05  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [ATK] Do not use C linkage for functions using C++ features
+        https://bugs.webkit.org/show_bug.cgi?id=199510
+        <rdar://problem/52674702>
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests needed.
+
+        * accessibility/atk/WebKitAccessible.h: Move function and type declarations involving
+        C++ features outside of the block delimited by the G_BEGIN_DECLS and G_END_DECLS macros,
+        which were setting the C linkage.
+
 2019-07-05  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Respect pointer capture when dispatching mouse boundary events and updating :hover

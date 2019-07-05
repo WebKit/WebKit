@@ -55,6 +55,14 @@ struct _WebKitAccessibleClass {
     AtkObjectClass parentClass;
 };
 
+GType webkit_accessible_get_type(void);
+
+G_END_DECLS
+
+// The definitions below are only used in C++ code, and some use C++ types,
+// therefore they should be outside of the G_BEGIN_DECLS/G_END_DECLS block
+// to make them use the C++ ABI.
+
 enum AtkCachedProperty {
     AtkCachedAccessibleName,
     AtkCachedAccessibleDescription,
@@ -67,8 +75,6 @@ enum AtkCachedProperty {
     AtkCachedImageDescription
 };
 
-GType webkit_accessible_get_type(void);
-
 WebKitAccessible* webkitAccessibleNew(WebCore::AccessibilityObject*);
 
 WebCore::AccessibilityObject& webkitAccessibleGetAccessibilityObject(WebKitAccessible*);
@@ -78,7 +84,5 @@ void webkitAccessibleDetach(WebKitAccessible*);
 bool webkitAccessibleIsDetached(WebKitAccessible*);
 
 const char* webkitAccessibleCacheAndReturnAtkProperty(WebKitAccessible*, AtkCachedProperty, CString&&);
-
-G_END_DECLS
 
 #endif // HAVE(ACCESSIBILITY)
