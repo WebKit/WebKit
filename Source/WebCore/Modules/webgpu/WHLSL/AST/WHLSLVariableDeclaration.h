@@ -32,6 +32,7 @@
 #include "WHLSLQualifier.h"
 #include "WHLSLSemantic.h"
 #include "WHLSLType.h"
+#include "WHLSLValue.h"
 #include <memory>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
@@ -43,11 +44,11 @@ namespace WHLSL {
 
 namespace AST {
 
-class VariableDeclaration final {
-// Final because we made the destructor non-virtual.
+class VariableDeclaration : public Value {
+    using Base = Value;
 public:
     VariableDeclaration(Lexer::Token&& origin, Qualifiers&& qualifiers, Optional<UniqueRef<UnnamedType>>&& type, String&& name, std::unique_ptr<Semantic>&& semantic, std::unique_ptr<Expression>&& initializer)
-        : m_origin(WTFMove(origin))
+        : Base(WTFMove(origin))
         , m_qualifiers(WTFMove(qualifiers))
         , m_type(WTFMove(type))
         , m_name(WTFMove(name))
@@ -56,7 +57,7 @@ public:
     {
     }
 
-    ~VariableDeclaration() = default;
+    virtual ~VariableDeclaration() = default;
 
     VariableDeclaration(const VariableDeclaration&) = delete;
     VariableDeclaration(VariableDeclaration&&) = default;
@@ -83,10 +84,8 @@ public:
         ASSERT(expression);
         m_initializer = WTFMove(expression);
     }
-    Lexer::Token origin() const { return m_origin; }
 
 private:
-    Lexer::Token m_origin;
     Qualifiers m_qualifiers;
     Optional<UniqueRef<UnnamedType>> m_type;
     String m_name;

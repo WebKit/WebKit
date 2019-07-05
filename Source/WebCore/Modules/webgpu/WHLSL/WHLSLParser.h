@@ -88,6 +88,7 @@
 #include "WHLSLTypeDefinition.h"
 #include "WHLSLTypeReference.h"
 #include "WHLSLUnsignedIntegerLiteral.h"
+#include "WHLSLValue.h"
 #include "WHLSLVariableDeclaration.h"
 #include "WHLSLVariableDeclarationsStatement.h"
 #include "WHLSLVariableReference.h"
