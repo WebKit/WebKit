@@ -94,7 +94,7 @@ bool Quirks::shouldIgnoreInvalidSignal() const
         return false;
 
     auto host = m_document->topDocument().url().host();
-    return equalLettersIgnoringASCIICase(host, "www.thrivepatientportal.com");
+    return equalLettersIgnoringASCIICase(host, "www.thrivepatientportal.com") || equalLettersIgnoringASCIICase(host, "www.bnz.co.nz");
 }
 
 bool Quirks::needsFormControlToBeMouseFocusable() const
