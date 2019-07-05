@@ -828,6 +828,7 @@ public:
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
+    void resetPotentialTapSecurityOrigin();
     void handleTouchEventSynchronously(NativeWebTouchEvent&);
     void handleTouchEventAsynchronously(const NativeWebTouchEvent&);
 

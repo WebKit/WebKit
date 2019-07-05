@@ -126,6 +126,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
+    ResetPotentialTapSecurityOrigin()
     TouchEventSync(WebKit::WebTouchEvent event) -> (bool handled) Synchronous
 #endif
 #if !ENABLE(IOS_TOUCH_EVENTS) && ENABLE(TOUCH_EVENTS)

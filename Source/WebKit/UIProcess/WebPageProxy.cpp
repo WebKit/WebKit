@@ -2657,6 +2657,14 @@ void WebPageProxy::handleTouchEventSynchronously(NativeWebTouchEvent& event)
         m_touchAndPointerEventTracking.reset();
 }
 
+void WebPageProxy::resetPotentialTapSecurityOrigin()
+{
+    if (!hasRunningProcess())
+        return;
+
+    m_process->send(Messages::WebPage::ResetPotentialTapSecurityOrigin(), m_pageID);
+}
+
 void WebPageProxy::handleTouchEventAsynchronously(const NativeWebTouchEvent& event)
 {
     if (!hasRunningProcess())

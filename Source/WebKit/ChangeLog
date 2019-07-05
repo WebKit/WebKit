@@ -1,5 +1,49 @@
 2019-07-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Click events on outer page are not being dispatched correctly after touch-zooming within an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=185001
+        <rdar://problem/40569615>
+
+        Reviewed by Simon Fraser.
+
+        Mitigations introduced in r227759 prevent a touch inside a document of origin A to result in a click event being
+        dispatched on an element inside a document of origin B. It accomplishes this by keeping track of the security
+        origin of the last touch via m_potentialTapSecurityOrigin on WebPage. However, there exists a corner case in
+        which m_potentialTapSecurityOrigin, set after touching a document in a subframe, may persist even after the user
+        has finished interacting, causing taps in subsequent documents to not result in synthetic click events due to
+        mismatched potential tap origins.
+
+        This may happen if the first user gesture happens inside an element in a subframe with touch event handlers, but
+        no click event handler (and the touch is additionally not over some clickable element). In this case,
+        m_potentialTapNode is set to null in WebPage::potentialTapAtPosition, and when we consult it in
+        WebPage::commitPotentialTap, we just end up calling commitPotentialTapFailed(); and return early. This means
+        that m_potentialTapNode, m_potentialTapLocation, and (importantly) m_potentialTapSecurityOrigin are not reset.
+        This causes subsequent taps in the top-level document to never dispatch click events, if the security origin
+        does not match with that of the subframe.
+
+        To fix this, we add a new async IPC message from the UI process to the web process to ensure that our current
+        security origin is reset before attempting to handle a tap.
+
+        Test: http/tests/events/touch/ios/click-after-handling-touch-in-cross-origin-frame.https.html
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetPotentialTapSecurityOrigin):
+
+        Reset any stale potential tap security origin if needed.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _webTouchEventsRecognized:]):
+
+        Send the new IPC message when starting a touch.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::resetPotentialTapSecurityOrigin):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2019-07-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Touching media controls sometimes shows software keyboard
         https://bugs.webkit.org/show_bug.cgi?id=199490
         <rdar://problem/52076270>

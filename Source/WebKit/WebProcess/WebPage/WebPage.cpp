@@ -2916,6 +2916,11 @@ void WebPage::touchEventSync(const WebTouchEvent& touchEvent, CompletionHandler<
         reply(handled);
 }
 
+void WebPage::resetPotentialTapSecurityOrigin()
+{
+    m_potentialTapSecurityOrigin = nullptr;
+}
+
 void WebPage::updatePotentialTapSecurityOrigin(const WebTouchEvent& touchEvent, bool wasHandled)
 {
     if (wasHandled)
