@@ -238,19 +238,16 @@ void WebResourceLoadStatisticsTelemetry::calculateAndSubmit(const ResourceLoadSt
     }
     
     // Dispatch on the main thread to make sure the WebPageProxy we're using doesn't go away.
-    RunLoop::main().dispatch([sortedPrevalentResources = WTFMove(sortedPrevalentResources), sortedPrevalentResourcesWithoutUserInteraction = WTFMove(sortedPrevalentResourcesWithoutUserInteraction), prevalentResourcesDaysSinceUserInteraction = WTFMove(prevalentResourcesDaysSinceUserInteraction), resourceLoadStatisticsStore = makeWeakPtr(resourceLoadStatisticsStore)] () {
-        if (!resourceLoadStatisticsStore)
-            return;
-
+    RunLoop::main().dispatch([sortedPrevalentResources = WTFMove(sortedPrevalentResources), sortedPrevalentResourcesWithoutUserInteraction = WTFMove(sortedPrevalentResourcesWithoutUserInteraction), prevalentResourcesDaysSinceUserInteraction = WTFMove(prevalentResourcesDaysSinceUserInteraction), store = makeRef(resourceLoadStatisticsStore.store())] () {
         auto webPageProxy = WebPageProxy::nonEphemeralWebPageProxy();
         if (!webPageProxy) {
             if (notifyPagesWhenTelemetryWasCaptured)
-                notifyPages(0, 0, 0, resourceLoadStatisticsStore->store());
+                notifyPages(0, 0, 0, store);
             return;
         }
         
         if (notifyPagesWhenTelemetryWasCaptured) {
-            notifyPages(sortedPrevalentResources, sortedPrevalentResourcesWithoutUserInteraction, prevalentResourcesDaysSinceUserInteraction.size(), resourceLoadStatisticsStore->store());
+            notifyPages(sortedPrevalentResources, sortedPrevalentResourcesWithoutUserInteraction, prevalentResourcesDaysSinceUserInteraction.size(), store);
             // The notify pages function is for testing so we don't need to do an actual submission.
             return;
         }
@@ -263,7 +260,7 @@ void WebResourceLoadStatisticsTelemetry::calculateAndSubmit(const ResourceLoadSt
         if (prevalentResourcesDaysSinceUserInteraction.size() > 1)
             webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), "medianPrevalentResourcesWithUserInteractionDaysSinceUserInteraction"_s, median(prevalentResourcesDaysSinceUserInteraction), significantFiguresForLoggedValues, ShouldSample::No);
         
-        submitTopLists(sortedPrevalentResources, sortedPrevalentResourcesWithoutUserInteraction, resourceLoadStatisticsStore->store());
+        submitTopLists(sortedPrevalentResources, sortedPrevalentResourcesWithoutUserInteraction, store);
     });
 }
     

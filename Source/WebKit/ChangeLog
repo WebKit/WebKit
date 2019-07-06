@@ -1,3 +1,16 @@
+2019-07-05  Chris Dumez  <cdumez@apple.com>
+
+        Fix thread safety bug in WebResourceLoadStatisticsTelemetry::calculateAndSubmit()
+        https://bugs.webkit.org/show_bug.cgi?id=199536
+
+        Reviewed by Youenn Fablet.
+
+        The resourceLoadStatisticsStore is an object that is created / used / destroyed on the background
+        queue. It is therefore not safe to create a WeakPtr for it and use that WeakPtr on the main thread.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp:
+        (WebKit::WebResourceLoadStatisticsTelemetry::calculateAndSubmit):
+
 2019-07-05  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix -Wswitch warning
