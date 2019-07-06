@@ -1,3 +1,17 @@
+2019-07-06  Michael Saboff  <msaboff@apple.com>
+
+        switch(String) needs to check for exceptions when resolving the string
+        https://bugs.webkit.org/show_bug.cgi?id=199541
+
+        Reviewed by Mark Lam.
+
+        Added exception checks for resolved Strings in switch processing for all tiers.
+
+        * dfg/DFGOperations.cpp:
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+
 2019-07-05  Mark Lam  <mark.lam@apple.com>
 
         ArgumentsEliminationPhase::eliminateCandidatesThatInterfere() should not decrement nodeIndex pass zero.

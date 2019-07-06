@@ -2446,7 +2446,6 @@ char* JIT_OPERATION operationFindSwitchImmTargetForDouble(
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-
     CodeBlock* codeBlock = exec->codeBlock();
     SimpleJumpTable& table = codeBlock->switchJumpTable(tableIndex);
     JSValue value = JSValue::decode(encodedValue);
@@ -2462,16 +2461,26 @@ char* JIT_OPERATION operationSwitchString(ExecState* exec, size_t tableIndex, JS
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    return exec->codeBlock()->stringSwitchJumpTable(tableIndex).ctiForValue(string->value(exec).impl()).executableAddress<char*>();
+    StringImpl* strImpl = string->value(exec).impl();
+
+    RETURN_IF_EXCEPTION(throwScope, nullptr);
+
+    return exec->codeBlock()->stringSwitchJumpTable(tableIndex).ctiForValue(strImpl).executableAddress<char*>();
 }
 
 int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(ExecState* exec, size_t tableIndex, JSString* string)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    return exec->codeBlock()->stringSwitchJumpTable(tableIndex).offsetForValue(string->value(exec).impl(), std::numeric_limits<int32_t>::min());
+    StringImpl* strImpl = string->value(exec).impl();
+
+    RETURN_IF_EXCEPTION(throwScope, 0);
+
+    return exec->codeBlock()->stringSwitchJumpTable(tableIndex).offsetForValue(strImpl, std::numeric_limits<int32_t>::min());
 }
 
 uintptr_t JIT_OPERATION operationCompareStringImplLess(StringImpl* a, StringImpl* b)

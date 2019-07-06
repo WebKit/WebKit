@@ -1317,8 +1317,13 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_string)
     if (!scrutinee.isString())
         JUMP_TO(defaultOffset);
     else {
+        StringImpl* scrutineeStringImpl = asString(scrutinee)->value(exec).impl();
+
+        LLINT_CHECK_EXCEPTION();
+
         CodeBlock* codeBlock = exec->codeBlock();
-        JUMP_TO(codeBlock->stringSwitchJumpTable(bytecode.m_tableIndex).offsetForValue(asString(scrutinee)->value(exec).impl(), defaultOffset));
+
+        JUMP_TO(codeBlock->stringSwitchJumpTable(bytecode.m_tableIndex).offsetForValue(scrutineeStringImpl, defaultOffset));
     }
     LLINT_END();
 }

@@ -2312,12 +2312,16 @@ char* JIT_OPERATION operationSwitchStringWithUnknownKeyType(ExecState* exec, Enc
     NativeCallFrameTracer tracer(&vm, exec);
     JSValue key = JSValue::decode(encodedKey);
     CodeBlock* codeBlock = exec->codeBlock();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     void* result;
     StringJumpTable& jumpTable = codeBlock->stringSwitchJumpTable(tableIndex);
 
     if (key.isString()) {
         StringImpl* value = asString(key)->value(exec).impl();
+
+        RETURN_IF_EXCEPTION(throwScope, nullptr);
+
         result = jumpTable.ctiForValue(value).executableAddress();
     } else
         result = jumpTable.ctiDefault.executableAddress();
