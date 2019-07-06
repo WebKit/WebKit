@@ -1,3 +1,23 @@
+2019-07-05  Robin Morisset  <rmorisset@apple.com>
+
+        [WHLSL] The checker does not need to keep a separate m_typeAnnotations map
+        https://bugs.webkit.org/show_bug.cgi?id=199537
+
+        Reviewed by Myles C. Maxfield.
+
+        Nothing is ever deleted from it, and all of its contents are eventually copied into the expressions.
+        We might as well put the type annotations directly into the expressions in the first place.
+        It is about a 5% speedup of the checker.
+
+        No new test as there is no inteded functional change.
+
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::Checker::assignTypes):
+        (WebCore::WHLSL::Checker::getInfo):
+        (WebCore::WHLSL::Checker::assignType):
+        (WebCore::WHLSL::Checker::forwardType):
+        (WebCore::WHLSL::Checker::visit):
+
 2019-07-05  Youenn Fablet  <youenn@apple.com> and Simon Fraser  <simon.fraser@apple.com>
 
         Trigger a compositing update when video element is changing

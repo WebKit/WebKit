@@ -512,7 +512,6 @@ private:
     void finishVisiting(AST::PropertyAccessExpression&, ResolvingType* additionalArgumentType = nullptr);
 
     HashMap<AST::Expression*, std::unique_ptr<ResolvingType>> m_typeMap;
-    HashMap<AST::Expression*, AST::TypeAnnotation> m_typeAnnotations;
     HashSet<String> m_vertexEntryPoints;
     HashSet<String> m_fragmentEntryPoints;
     HashSet<String> m_computeEntryPoints;
@@ -556,8 +555,6 @@ bool Checker::assignTypes()
             return false;
     }
 
-    for (auto& keyValuePair : m_typeAnnotations)
-        keyValuePair.key->setTypeAnnotation(WTFMove(keyValuePair.value));
     return true;
 }
 
@@ -778,13 +775,12 @@ auto Checker::getInfo(AST::Expression& expression, bool requiresLeftValue) -> Op
     auto typeIterator = m_typeMap.find(&expression);
     ASSERT(typeIterator != m_typeMap.end());
 
-    auto typeAnnotationIterator = m_typeAnnotations.find(&expression);
-    ASSERT(typeAnnotationIterator != m_typeAnnotations.end());
-    if (requiresLeftValue && typeAnnotationIterator->value.isRightValue()) {
+    const auto& typeAnnotation = expression.typeAnnotation();
+    if (requiresLeftValue && typeAnnotation.isRightValue()) {
         setError();
         return WTF::nullopt;
     }
-    return {{ *typeIterator->value, typeAnnotationIterator->value }};
+    return {{ *typeIterator->value, typeAnnotation }};
 }
 
 void Checker::visit(AST::VariableDeclaration& variableDeclaration)
@@ -808,16 +804,14 @@ void Checker::assignType(AST::Expression& expression, UniqueRef<AST::UnnamedType
 {
     auto addResult = m_typeMap.add(&expression, std::make_unique<ResolvingType>(WTFMove(unnamedType)));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    auto typeAnnotationAddResult = m_typeAnnotations.add(&expression, WTFMove(typeAnnotation));
-    ASSERT_UNUSED(typeAnnotationAddResult, typeAnnotationAddResult.isNewEntry);
+    expression.setTypeAnnotation(WTFMove(typeAnnotation));
 }
 
 void Checker::assignType(AST::Expression& expression, RefPtr<ResolvableTypeReference>&& resolvableTypeReference, AST::TypeAnnotation typeAnnotation = AST::RightValue())
 {
     auto addResult = m_typeMap.add(&expression, std::make_unique<ResolvingType>(WTFMove(resolvableTypeReference)));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    auto typeAnnotationAddResult = m_typeAnnotations.add(&expression, WTFMove(typeAnnotation));
-    ASSERT_UNUSED(typeAnnotationAddResult, typeAnnotationAddResult.isNewEntry);
+    expression.setTypeAnnotation(WTFMove(typeAnnotation));
 }
 
 void Checker::forwardType(AST::Expression& expression, ResolvingType& resolvingType, AST::TypeAnnotation typeAnnotation = AST::RightValue())
@@ -829,8 +823,7 @@ void Checker::forwardType(AST::Expression& expression, ResolvingType& resolvingT
         auto addResult = m_typeMap.add(&expression, std::make_unique<ResolvingType>(result.copyRef()));
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }));
-    auto typeAnnotationAddResult = m_typeAnnotations.add(&expression, WTFMove(typeAnnotation));
-    ASSERT_UNUSED(typeAnnotationAddResult, typeAnnotationAddResult.isNewEntry);
+    expression.setTypeAnnotation(WTFMove(typeAnnotation));
 }
 
 void Checker::visit(AST::AssignmentExpression& assignmentExpression)
@@ -838,11 +831,6 @@ void Checker::visit(AST::AssignmentExpression& assignmentExpression)
     auto leftInfo = recurseAndGetInfo(assignmentExpression.left(), true);
     if (!leftInfo)
         return;
-
-    if (leftInfo->typeAnnotation.isRightValue()) {
-        setError();
-        return;
-    }
 
     auto rightInfo = recurseAndGetInfo(assignmentExpression.right());
     if (!rightInfo)
