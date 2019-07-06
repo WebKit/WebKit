@@ -82,6 +82,7 @@
     "web-platform-tests/css/css-text": "import", 
     "web-platform-tests/css/css-ui": "import", 
     "web-platform-tests/css/cssom": "import", 
+    "web-platform-tests/css/cssom-view/": "import", 
     "web-platform-tests/css/geometry/": "import", 
     "web-platform-tests/css/mediaqueries": "import", 
     "web-platform-tests/css/reference": "import", 

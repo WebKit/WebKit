@@ -1,3 +1,145 @@
+2019-07-06  Cathie Chen  <cathiechen@igalia.com>
+
+        Import css/cssom-view testcases from WPT.
+        https://bugs.webkit.org/show_bug.cgi?id=199509
+
+        Reviewed by Frédéric Wang.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/cssom-view/CaretPosition-001.html:
+        * web-platform-tests/css/cssom-view/DOMRectList.html:
+        * web-platform-tests/css/cssom-view/GetBoundingRect.html:
+        * web-platform-tests/css/cssom-view/HTMLBody-ScrollArea_quirksmode.html:
+        * web-platform-tests/css/cssom-view/MediaQueryList-001.html:
+        * web-platform-tests/css/cssom-view/MediaQueryList-with-empty-string.html:
+        * web-platform-tests/css/cssom-view/Screen-pixelDepth-Screen-colorDepth001.html:
+        * web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-001.html:
+        * web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-002.html:
+        * web-platform-tests/css/cssom-view/cssom-getBoxQuads-001.html:
+        * web-platform-tests/css/cssom-view/cssom-getClientRects-002.html:
+        * web-platform-tests/css/cssom-view/cssom-getClientRects.html:
+        * web-platform-tests/css/cssom-view/cssom-view-img-attributes-001.html:
+        * web-platform-tests/css/cssom-view/cssom-view-window-screen-interface.html:
+        * web-platform-tests/css/cssom-view/dom-element-scroll.html:
+        * web-platform-tests/css/cssom-view/elementFromPoint-001.html:
+        * web-platform-tests/css/cssom-view/elementFromPoint-002.html:
+        * web-platform-tests/css/cssom-view/elementFromPoint-003.html:
+        * web-platform-tests/css/cssom-view/elementFromPoint-dynamic-anon-box.html:
+        * web-platform-tests/css/cssom-view/elementFromPoint-mixed-font-sizes.html:
+        * web-platform-tests/css/cssom-view/elementFromPoint-parameters.html:
+        * web-platform-tests/css/cssom-view/elementFromPoint-subpixel-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/elementFromPoint-subpixel.html: Added.
+        * web-platform-tests/css/cssom-view/elementFromPoint.html:
+        * web-platform-tests/css/cssom-view/elementFromPosition.html:
+        * web-platform-tests/css/cssom-view/elementScroll-002.html:
+        * web-platform-tests/css/cssom-view/elementScroll.html:
+        * web-platform-tests/css/cssom-view/elementsFromPoint-iframes.html:
+        * web-platform-tests/css/cssom-view/elementsFromPoint-inline-htb-ltr-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/elementsFromPoint-inline-htb-ltr.html: Added.
+        * web-platform-tests/css/cssom-view/elementsFromPoint-inline-htb-rtl-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/elementsFromPoint-inline-htb-rtl.html: Added.
+        * web-platform-tests/css/cssom-view/elementsFromPoint-inline-vlr-ltr-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/elementsFromPoint-inline-vlr-ltr.html: Added.
+        * web-platform-tests/css/cssom-view/elementsFromPoint-inline-vlr-rtl-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/elementsFromPoint-inline-vlr-rtl.html: Added.
+        * web-platform-tests/css/cssom-view/elementsFromPoint-inline-vrl-ltr-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/elementsFromPoint-inline-vrl-ltr.html: Added.
+        * web-platform-tests/css/cssom-view/elementsFromPoint-inline-vrl-rtl-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/elementsFromPoint-inline-vrl-rtl.html: Added.
+        * web-platform-tests/css/cssom-view/elementsFromPoint-invalid-cases.html:
+        * web-platform-tests/css/cssom-view/elementsFromPoint-shadowroot.html:
+        * web-platform-tests/css/cssom-view/elementsFromPoint-simple.html:
+        * web-platform-tests/css/cssom-view/elementsFromPoint-svg-text.html:
+        * web-platform-tests/css/cssom-view/elementsFromPoint-svg.html:
+        * web-platform-tests/css/cssom-view/elementsFromPoint-table.html:
+        * web-platform-tests/css/cssom-view/elementsFromPoint.html:
+        * web-platform-tests/css/cssom-view/getClientRects-br-htb-ltr-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/getClientRects-br-htb-ltr.html: Added.
+        * web-platform-tests/css/cssom-view/getClientRects-br-htb-rtl-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/getClientRects-br-htb-rtl.html: Added.
+        * web-platform-tests/css/cssom-view/getClientRects-br-vlr-ltr-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/getClientRects-br-vlr-ltr.html: Added.
+        * web-platform-tests/css/cssom-view/getClientRects-br-vlr-rtl-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/getClientRects-br-vlr-rtl.html: Added.
+        * web-platform-tests/css/cssom-view/getClientRects-br-vrl-ltr-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/getClientRects-br-vrl-ltr.html: Added.
+        * web-platform-tests/css/cssom-view/getClientRects-br-vrl-rtl-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/getClientRects-br-vrl-rtl.html: Added.
+        * web-platform-tests/css/cssom-view/getClientRects-inline-expected.html: Added.
+        * web-platform-tests/css/cssom-view/getClientRects-inline.html: Added.
+        * web-platform-tests/css/cssom-view/historical.html:
+        * web-platform-tests/css/cssom-view/htmlelement-offset-width-001.html:
+        * web-platform-tests/css/cssom-view/inheritance-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/inheritance.html: Added.
+        * web-platform-tests/css/cssom-view/interfaces.html:
+        * web-platform-tests/css/cssom-view/long_scroll_composited-expected.html: Added.
+        * web-platform-tests/css/cssom-view/long_scroll_composited.html: Added.
+        * web-platform-tests/css/cssom-view/matchMedia-display-none-iframe-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/matchMedia-display-none-iframe.html: Added.
+        * web-platform-tests/css/cssom-view/matchMedia.xht:
+        * web-platform-tests/css/cssom-view/matchMediaAddListener.html:
+        * web-platform-tests/css/cssom-view/mouseEvent.html:
+        * web-platform-tests/css/cssom-view/negativeMargins.html:
+        * web-platform-tests/css/cssom-view/offsetParent_element_test.html:
+        * web-platform-tests/css/cssom-view/offsetTopLeft-empty-inline-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/offsetTopLeft-empty-inline-offset-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/offsetTopLeft-empty-inline-offset.html: Added.
+        * web-platform-tests/css/cssom-view/offsetTopLeft-empty-inline.html: Added.
+        * web-platform-tests/css/cssom-view/offsetTopLeft-inline-expected.html: Added.
+        * web-platform-tests/css/cssom-view/offsetTopLeft-inline.html: Added.
+        * web-platform-tests/css/cssom-view/offsetTopLeft-leading-space-inline-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/offsetTopLeft-leading-space-inline.html: Added.
+        * web-platform-tests/css/cssom-view/offsetTopLeft-trailing-space-inline-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/offsetTopLeft-trailing-space-inline.html: Added.
+        * web-platform-tests/css/cssom-view/offsetTopLeftInScrollableParent.html:
+        * web-platform-tests/css/cssom-view/outer-svg-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/outer-svg.html: Added.
+        * web-platform-tests/css/cssom-view/resize-event-on-initial-layout-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/resize-event-on-initial-layout.html: Added.
+        * web-platform-tests/css/cssom-view/screenLeftTop-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/screenLeftTop.html: Added.
+        * web-platform-tests/css/cssom-view/scroll-behavior-default-css.html:
+        * web-platform-tests/css/cssom-view/scroll-behavior-element.html:
+        * web-platform-tests/css/cssom-view/scroll-behavior-main-frame-root.html:
+        * web-platform-tests/css/cssom-view/scroll-behavior-main-frame-window.html:
+        * web-platform-tests/css/cssom-view/scroll-behavior-scrollintoview-nested.html:
+        * web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html:
+        * web-platform-tests/css/cssom-view/scroll-behavior-smooth.html:
+        * web-platform-tests/css/cssom-view/scroll-behavior-subframe-root.html:
+        * web-platform-tests/css/cssom-view/scroll-behavior-subframe-window.html:
+        * web-platform-tests/css/cssom-view/scroll-no-layout-box.html:
+        * web-platform-tests/css/cssom-view/scrollIntoView-horizontal-tb-writing-mode-and-rtl-direction-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/scrollIntoView-horizontal-tb-writing-mode-and-rtl-direction.html: Added.
+        * web-platform-tests/css/cssom-view/scrollIntoView-horizontal-tb-writing-mode-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/scrollIntoView-horizontal-tb-writing-mode.html: Added.
+        * web-platform-tests/css/cssom-view/scrollIntoView-scrollMargin.html:
+        * web-platform-tests/css/cssom-view/scrollIntoView-scrollPadding.html:
+        * web-platform-tests/css/cssom-view/scrollIntoView-shadow.html:
+        * web-platform-tests/css/cssom-view/scrollIntoView-smooth.html:
+        * web-platform-tests/css/cssom-view/scrollIntoView-svg-shape-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/scrollIntoView-svg-shape.html: Added.
+        * web-platform-tests/css/cssom-view/scrollIntoView-vertical-lr-writing-mode-and-rtl-direction-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/scrollIntoView-vertical-lr-writing-mode-and-rtl-direction.html: Added.
+        * web-platform-tests/css/cssom-view/scrollIntoView-vertical-lr-writing-mode-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/scrollIntoView-vertical-lr-writing-mode.html: Added.
+        * web-platform-tests/css/cssom-view/scrollIntoView-vertical-rl-writing-mode-expected.txt:
+        * web-platform-tests/css/cssom-view/scrollIntoView-vertical-rl-writing-mode.html:
+        * web-platform-tests/css/cssom-view/scrollWidthHeight.xht:
+        * web-platform-tests/css/cssom-view/scrollWidthHeightWhenNotScrollable.xht:
+        * web-platform-tests/css/cssom-view/scrolling-no-browsing-context.html:
+        * web-platform-tests/css/cssom-view/scrolling-quirks-vs-nonquirks.html:
+        * web-platform-tests/css/cssom-view/scrollingElement.html:
+        * web-platform-tests/css/cssom-view/scrollintoview.html:
+        * web-platform-tests/css/cssom-view/table-client-props.html:
+        * web-platform-tests/css/cssom-view/table-offset-props.html:
+        * web-platform-tests/css/cssom-view/table-scroll-props.html:
+        * web-platform-tests/css/cssom-view/ttwf-js-cssomview-getclientrects-length.html:
+        * web-platform-tests/css/cssom-view/w3c-import.log:
+        * web-platform-tests/css/cssom-view/window-screen-height-immutable.html:
+        * web-platform-tests/css/cssom-view/window-screen-height.html:
+        * web-platform-tests/css/cssom-view/window-screen-width-immutable.html:
+        * web-platform-tests/css/cssom-view/window-screen-width.html:
+
 2019-07-05  Antoine Quint  <graouts@apple.com>
 
         Remove Wincorrect WPT test pointerevents/pointerevent_mouse_pointercapture_inactivate_pointer.html

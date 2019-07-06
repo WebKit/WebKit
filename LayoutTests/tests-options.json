@@ -461,6 +461,9 @@
     "imported/w3c/web-platform-tests/css/css-color/color-resolving-hsl.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/cssom-view/matchMedia.xht": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-default-css.html": [
         "slow"
     ],
@@ -477,6 +480,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-subframe-root.html": [

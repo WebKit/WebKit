@@ -1,3 +1,16 @@
+2019-07-06  Cathie Chen  <cathiechen@igalia.com>
+
+        Import css/cssom-view testcases from WPT.
+        https://bugs.webkit.org/show_bug.cgi?id=199509
+
+        Reviewed by Frédéric Wang.
+
+        * TestExpectations:
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-empty-inline-expected.txt: Added.
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-leading-space-inline-expected.txt: Added.
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-horizontal-tb-writing-mode-and-rtl-direction-expected.txt: Added.
+        * tests-options.json:
+
 2019-07-05  Youenn Fablet  <youenn@apple.com> and Simon Fraser  <simon.fraser@apple.com>
 
         Trigger a compositing update when video element is changing

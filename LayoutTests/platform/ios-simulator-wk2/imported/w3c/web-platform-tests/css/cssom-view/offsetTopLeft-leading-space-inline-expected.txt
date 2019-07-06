@@ -1,0 +1,11 @@
+
+ref
+
+ref
+
+ref
+
+FAIL offsetTop/Left of empty inline elements should work as if they were not empty: 0 assert_equals: offsetLeft expected 16 but got 0
+FAIL offsetTop/Left of empty inline elements should work as if they were not empty: 1 assert_equals: offsetLeft expected 36 but got 0
+FAIL offsetTop/Left of empty inline elements should work as if they were not empty: 2 assert_equals: offsetLeft expected 36 but got 0
+
