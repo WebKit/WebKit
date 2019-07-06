@@ -6584,17 +6584,20 @@ void WebPage::simulateDeviceOrientationChange(double alpha, double beta, double 
 #if ENABLE(SPEECH_SYNTHESIS)
 void WebPage::speakingErrorOccurred()
 {
-    corePage()->speechSynthesisClient()->observer()->speakingErrorOccurred();
+    if (auto observer = corePage()->speechSynthesisClient()->observer())
+        observer->speakingErrorOccurred();
 }
 
 void WebPage::boundaryEventOccurred(bool wordBoundary, unsigned charIndex)
 {
-    corePage()->speechSynthesisClient()->observer()->boundaryEventOccurred(wordBoundary, charIndex);
+    if (auto observer = corePage()->speechSynthesisClient()->observer())
+        observer->boundaryEventOccurred(wordBoundary, charIndex);
 }
 
 void WebPage::voicesDidChange()
 {
-    corePage()->speechSynthesisClient()->observer()->voicesChanged();
+    if (auto observer = corePage()->speechSynthesisClient()->observer())
+        observer->voicesChanged();
 }
 #endif
 
