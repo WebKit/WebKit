@@ -1,3 +1,16 @@
+2019-07-07  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Difficult to control videos on iqiyi.com as the actions are mouse hover
+        https://bugs.webkit.org/show_bug.cgi?id=199542
+        <rdar://problem/51886813>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/tap-on-1px-height-content-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/tap-on-1px-height-content.html: Added.
+        * fast/events/touch/ios/content-observation/tap-on-1px-width-content-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/tap-on-1px-width-content.html: Added.
+
 2019-07-06  Cathie Chen  <cathiechen@igalia.com>
 
         Import css/cssom-view testcases from WPT.

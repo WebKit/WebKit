@@ -1,5 +1,33 @@
 2019-07-07  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] Difficult to control videos on iqiyi.com as the actions are mouse hover
+        https://bugs.webkit.org/show_bug.cgi?id=199542
+        <rdar://problem/51886813>
+
+        Reviewed by Simon Fraser.
+
+        Decouple isVisuallyHidden and isConsideredVisible. Just because an element is not visually hidden (1px wide content)
+        it is not necessarily qualified to be visible in the context of hover heuristic (e.g. iqiyi.com brings up a 1px wide
+        clickable element when hovering over the scrubber. This element is clearly not designed to be actionable.)
+
+        Tests: fast/events/touch/ios/content-observation/tap-on-1px-height-content.html
+               fast/events/touch/ios/content-observation/tap-on-1px-width-content.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::defaultEventHandler):
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::isVisuallyHidden):
+        (WebCore::ContentChangeObserver::isConsideredVisible):
+        (WebCore::ContentChangeObserver::didAddTransition):
+        (WebCore::ContentChangeObserver::didFinishTransition):
+        (WebCore::ContentChangeObserver::willDestroyRenderer):
+        (WebCore::ContentChangeObserver::StyleChangeScope::StyleChangeScope):
+        (WebCore::ContentChangeObserver::StyleChangeScope::~StyleChangeScope):
+        (WebCore::ContentChangeObserver::isConsideredHidden): Deleted.
+        * page/ios/ContentChangeObserver.h:
+
+2019-07-07  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Introduce splitPosition to LineLayout
         https://bugs.webkit.org/show_bug.cgi?id=199558
         <rdar://problem/52737649>

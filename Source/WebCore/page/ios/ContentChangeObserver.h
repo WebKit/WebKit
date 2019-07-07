@@ -49,7 +49,8 @@ public:
 
     WEBCORE_EXPORT void startContentObservationForDuration(Seconds duration);
     WKContentChange observedContentChange() const { return m_observedContentState; }
-    WEBCORE_EXPORT static bool isConsideredHidden(const Node&);
+    WEBCORE_EXPORT static bool isConsideredVisible(const Node&);
+    static bool isVisuallyHidden(const Node&);
 
     void didInstallDOMTimer(const DOMTimer&, Seconds timeout, bool singleShot);
     void didRemoveDOMTimer(const DOMTimer&);

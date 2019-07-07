@@ -43,7 +43,7 @@ namespace WebCore {
 static const Seconds maximumDelayForTimers { 400_ms };
 static const Seconds maximumDelayForTransitions { 300_ms };
 
-bool ContentChangeObserver::isConsideredHidden(const Node& node)
+bool ContentChangeObserver::isVisuallyHidden(const Node& node)
 {
     if (!node.renderStyle())
         return true;
@@ -89,6 +89,24 @@ bool ContentChangeObserver::isConsideredHidden(const Node& node)
             return true;
     }
     return false;
+}
+
+bool ContentChangeObserver::isConsideredVisible(const Node& node)
+{
+    if (isVisuallyHidden(node))
+        return false;
+
+    auto& style = *node.renderStyle();
+    auto width = style.logicalWidth();
+    // 1px width or height content is not considered visible.
+    if (width.isFixed() && width.value() <= 1)
+        return false;
+
+    auto height = style.logicalHeight();
+    if (height.isFixed() && height.value() <= 1)
+        return false;
+
+    return true;
 }
 
 enum class ElementHadRenderer { No, Yes };
@@ -175,7 +193,7 @@ void ContentChangeObserver::didAddTransition(const Element& element, const Anima
     auto transitionEnd = Seconds { transition.duration() + std::max<double>(0, transition.isDelaySet() ? transition.delay() : 0) };
     if (transitionEnd > maximumDelayForTransitions)
         return;
-    if (!isConsideredHidden(element))
+    if (!isVisuallyHidden(element))
         return;
     // In case of multiple transitions, the first tranistion wins (and it has to produce a visible content change in order to show up as hover).
     if (m_elementsWithTransition.contains(&element))
@@ -198,7 +216,7 @@ void ContentChangeObserver::didFinishTransition(const Element& element, CSSPrope
     callOnMainThread([weakThis = makeWeakPtr(*this), targetElement = makeWeakPtr(element)] {
         if (!weakThis || !targetElement)
             return;
-        if (isConsideredHidden(*targetElement)) {
+        if (isVisuallyHidden(*targetElement)) {
             weakThis->adjustObservedState(Event::EndedTransitionButFinalStyleIsNotDefiniteYet);
             return;
         }
@@ -362,7 +380,7 @@ void ContentChangeObserver::willDestroyRenderer(const Element& element)
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "willDestroyRenderer element: " << &element);
 
-    if (!isConsideredHidden(element))
+    if (!isVisuallyHidden(element))
         m_elementsWithDestroyedVisibleRenderer.add(&element);
 }
 
@@ -558,13 +576,13 @@ ContentChangeObserver::StyleChangeScope::StyleChangeScope(Document& document, co
     , m_hadRenderer(element.renderer())
 {
     if (m_contentChangeObserver.shouldObserveVisibilityChangeForElement(element))
-        m_wasHidden = isConsideredHidden(m_element);
+        m_wasHidden = isVisuallyHidden(m_element);
 }
 
 ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
 {
     auto changedFromHiddenToVisible = [&] {
-        return m_wasHidden && !isConsideredHidden(m_element);
+        return m_wasHidden && isConsideredVisible(m_element);
     };
 
     if (changedFromHiddenToVisible() && isConsideredClickable(m_element, m_hadRenderer ? ElementHadRenderer::Yes : ElementHadRenderer::No))
