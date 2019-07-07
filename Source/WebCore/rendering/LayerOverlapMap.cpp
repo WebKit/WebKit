@@ -114,6 +114,7 @@ private:
 
         ClippingScope* addChild(const ClippingScope& child)
         {
+            ASSERT(&layer != &child.layer);
             children.append(child);
             return &children.last();
         }
@@ -198,7 +199,7 @@ void OverlapMapContainer::mergeClippingScopesRecursive(const ClippingScope& sour
             mergeClippingScopesRecursive(sourceChildScope, *destChild);
         } else {
             // New child, just copy the whole subtree.
-            destScope.addChild(sourceScope);
+            destScope.addChild(sourceChildScope);
         }
     }
 }

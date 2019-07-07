@@ -523,7 +523,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
 #if ENABLE(TREE_DEBUGGING)
         if (layersLogEnabled()) {
             LOG(Layers, "RenderLayerCompositor::flushPendingLayerChanges");
-            showGraphicsLayerTree(m_overflowControlsHostLayer.get());
+            showGraphicsLayerTree(rootGraphicsLayer());
         }
 #endif
     }

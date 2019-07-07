@@ -75,7 +75,9 @@ void* URLContext = &URLContext;
     self.tabViewController.parent = self;
     self.tabViewController.modalPresentationStyle = UIModalPresentationPopover;
 
-    [self setCurrentWebView:[self createWebView]];
+    WKWebView *webView = [self createWebView];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org"]]];
+    [self setCurrentWebView:webView];
 }
 
 

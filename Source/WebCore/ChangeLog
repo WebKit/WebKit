@@ -1,3 +1,24 @@
+2019-07-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Long hang when loading a cnn.com page on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=199556
+
+        Reviewed by Zalan Bujtas.
+        
+        Loading https://edition.cnn.com/travel/article/brussels-airlines-flight-to-nowhere/index.html in the iOS 13 sim
+        results in a long hang under OverlapMapContainer::append(). We were creating pathological clipping scopes with
+        thousands of entries, because OverlapMapContainer::mergeClippingScopesRecursive() had a logic error where
+        it added 'sourceScope' to the child instead of 'sourceChildScope'. Add a new assertion to detect that case.
+        
+        I wasn't able to create a testcase that caused a hang, but a number of existing tests would have
+        hit the assertion.
+
+        * rendering/LayerOverlapMap.cpp:
+        (WebCore::OverlapMapContainer::ClippingScope::addChild):
+        (WebCore::OverlapMapContainer::mergeClippingScopesRecursive):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges): Drive-by fix: m_overflowControlsHostLayer is null on iOS, so use rootGraphicsLayer().
+
 2019-07-05  Youenn Fablet  <youenn@apple.com>
 
         Carvana.com needs the fetch AbortSignal quirk
