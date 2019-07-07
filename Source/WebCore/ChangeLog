@@ -1,5 +1,22 @@
 2019-07-07  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Introduce splitPosition to LineLayout
+        https://bugs.webkit.org/show_bug.cgi?id=199558
+        <rdar://problem/52737649>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for breaking runs at line end.
+
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::InlineFormattingContext::LineLayout::LineInput::LineInput):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::placeInlineItems const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::layout const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::computedIntrinsicWidth const):
+
+2019-07-07  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Fix formatting context root for inflow positioned inline containers
         https://bugs.webkit.org/show_bug.cgi?id=199551
         <rdar://problem/52728868>

@@ -59,14 +59,13 @@ private:
     private:
         LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
 
-        struct LineContent {
-            Optional<unsigned> lastInlineItemIndex;
-            Vector<WeakPtr<InlineItem>> floats;
-            std::unique_ptr<Line::Content> runs;
+        struct InlineIndexAndSplitPosition {
+            unsigned index { 0 };
+            Optional<unsigned> splitPosition;
         };
 
         struct LineInput {
-            LineInput(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth, Line::SkipVerticalAligment, unsigned firstInlineItemIndex, const InlineItems&);
+            LineInput(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth, Line::SkipVerticalAligment, InlineIndexAndSplitPosition firstToProcess, const InlineItems&);
             struct HorizontalConstraint {
                 HorizontalConstraint(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth);
 
@@ -76,9 +75,15 @@ private:
             HorizontalConstraint horizontalConstraint;
             // FIXME Alternatively we could just have a second pass with vertical positioning (preferred width computation opts out) 
             Line::SkipVerticalAligment skipVerticalAligment;
-            unsigned firstInlineItemIndex { 0 };
+            InlineIndexAndSplitPosition firstInlineItem;
             const InlineItems& inlineItems;
             Optional<LayoutUnit> floatMinimumLogicalBottom;
+        };
+
+        struct LineContent {
+            Optional<InlineIndexAndSplitPosition> lastCommitted;
+            Vector<WeakPtr<InlineItem>> floats;
+            std::unique_ptr<Line::Content> runs;
         };
         LineContent placeInlineItems(const LineInput&) const;
         void createDisplayRuns(const Line::Content&, const Vector<WeakPtr<InlineItem>>& floats, LayoutUnit widthConstraint) const;
