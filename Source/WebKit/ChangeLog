@@ -1,3 +1,49 @@
+2019-07-06  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Use a gesture recognizer to prevent pinch-to-zoom behavior
+        https://bugs.webkit.org/show_bug.cgi?id=199543
+
+        Reviewed by Dean Jackson.
+
+        We used to set the "enabled" property on the main UIScrollView's UIPinchGestureRecognizer to disable pinch-to-zoom
+        behavior based on the "touch-action" CSS property. This was sub-optimal since this gesture recognizer can be publicly
+        accessible by third-party developers, but also because it set state instead of a run-time solution.
+
+        We now introduce a new WKTouchActionGestureRecognizer dedicated to preventing clearly identified gesture recognizers
+        from being recognized to disable some built-in behavior. As a new touch starts, we record the computed touch-action
+        property for the given touch identifier on the WKTouchActionGestureRecognizer, then WKTouchActionGestureRecognizer
+        determines, by implementing -[canPreventGestureRecognizer:], whether the possibly-prevented gesture recognizer
+        is known to lead to a pinch-to-zoom behavior and whether it contains a touch that should prevent it.
+
+        To support the WKTouchActionGestureRecognizer, WKContentViewInteraction implements the new WKTouchActionGestureRecognizerDelegate
+        protocol to indicate whether the possibly-prevented gesture recognizer is the main UIScrollView's UIPinchGestureRecognizer.
+
+        No new test since this changes the implementation of existing behavior.
+
+        * SourcesCocoa.txt:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView _handleTouchActionsForTouchEvent:]):
+        (-[WKContentView gestureRecognizerMayPinchToZoomWebView:]):
+        (-[WKContentView touchActionActiveTouches]):
+        * UIProcess/ios/WKTouchActionGestureRecognizer.h: Added.
+        * UIProcess/ios/WKTouchActionGestureRecognizer.mm: Added.
+        (-[WKTouchActionGestureRecognizer initWithTouchActionDelegate:]):
+        (-[WKTouchActionGestureRecognizer setTouchActions:forTouchIdentifier:]):
+        (-[WKTouchActionGestureRecognizer clearTouchActionsForTouchIdentifier:]):
+        (-[WKTouchActionGestureRecognizer touchesBegan:withEvent:]):
+        (-[WKTouchActionGestureRecognizer touchesMoved:withEvent:]):
+        (-[WKTouchActionGestureRecognizer touchesEnded:withEvent:]):
+        (-[WKTouchActionGestureRecognizer touchesCancelled:withEvent:]):
+        (-[WKTouchActionGestureRecognizer _updateState]):
+        (-[WKTouchActionGestureRecognizer canBePreventedByGestureRecognizer:]):
+        (-[WKTouchActionGestureRecognizer canPreventGestureRecognizer:]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-07-06  Chris Fleizach  <cfleizach@apple.com>
 
         AX: CrashTracer: com.apple.WebKit.WebContent at WebKit: WebKit::WebSpeechSynthesisClient::speak

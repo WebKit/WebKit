@@ -46,6 +46,7 @@
 #import "WKKeyboardScrollingAnimator.h"
 #import "WKShareSheet.h"
 #import "WKSyntheticTapGestureRecognizer.h"
+#import "WKTouchActionGestureRecognizer.h"
 #import "_WKFormInputSession.h"
 #import <UIKit/UIView.h>
 #import <WebCore/ActivityState.h>
@@ -220,6 +221,10 @@ struct WKAutoCorrectionData {
     RetainPtr<UITapGestureRecognizer> _stylusSingleTapGestureRecognizer;
     RetainPtr<WKInspectorNodeSearchGestureRecognizer> _inspectorNodeSearchGestureRecognizer;
 
+#if ENABLE(POINTER_EVENTS)
+    RetainPtr<WKTouchActionGestureRecognizer> _touchActionGestureRecognizer;
+#endif
+
 #if PLATFORM(MACCATALYST)
     RetainPtr<UIHoverGestureRecognizer> _hoverGestureRecognizer;
     RetainPtr<_UILookupGestureRecognizer> _lookupGestureRecognizer;
@@ -383,6 +388,9 @@ struct WKAutoCorrectionData {
 #endif
 #if ENABLE(DATA_INTERACTION)
     , UIDragInteractionDelegate, UIDropInteractionDelegate
+#endif
+#if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
+    , WKTouchActionGestureRecognizerDelegate
 #endif
 >
 

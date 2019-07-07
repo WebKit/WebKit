@@ -795,6 +795,11 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_stylusSingleTapGestureRecognizer setAllowedTouchTypes:@[ @(UITouchTypePencil) ]];
     [self addGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
 
+#if ENABLE(POINTER_EVENTS)
+    _touchActionGestureRecognizer = adoptNS([[WKTouchActionGestureRecognizer alloc] initWithTouchActionDelegate:self]);
+    [self addGestureRecognizer:_touchActionGestureRecognizer.get()];
+#endif
+
 #if HAVE(LINK_PREVIEW)
     [self _registerPreview];
 #endif
@@ -906,6 +911,10 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_stylusSingleTapGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
 
+#if ENABLE(POINTER_EVENTS)
+    [self removeGestureRecognizer:_touchActionGestureRecognizer.get()];
+#endif
+
     _layerTreeTransactionIdAtLastTouchStart = 0;
 
 #if ENABLE(DATA_INTERACTION)
@@ -976,6 +985,9 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
     [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
 #endif
+#if ENABLE(POINTER_EVENTS)
+    [self removeGestureRecognizer:_touchActionGestureRecognizer.get()];
+#endif
 }
 
 - (void)_addDefaultGestureRecognizers
@@ -991,6 +1003,9 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #if PLATFORM(MACCATALYST)
     [self addGestureRecognizer:_hoverGestureRecognizer.get()];
     [self addGestureRecognizer:_lookupGestureRecognizer.get()];
+#endif
+#if ENABLE(POINTER_EVENTS)
+    [self addGestureRecognizer:_touchActionGestureRecognizer.get()];
 #endif
 }
 
@@ -1362,19 +1377,32 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         if (phase == WebKit::WebPlatformTouchPoint::TouchPressed) {
             auto touchActions = WebKit::touchActionsForPoint(self, touchPoint.location());
             LOG_WITH_STREAM(UIHitTesting, stream << "touchActionsForPoint " << touchPoint.location() << " found " << touchActions);
-            if (!touchActions || touchActions.containsAny({ WebCore::TouchAction::Auto, WebCore::TouchAction::Manipulation }))
+            if (!touchActions || touchActions.contains(WebCore::TouchAction::Auto))
                 continue;
-
+            [_touchActionGestureRecognizer setTouchActions:touchActions forTouchIdentifier:touchPoint.identifier()];
             scrollingCoordinator->setTouchActionsForTouchIdentifier(touchActions, touchPoint.identifier());
-
-            if (!touchActions.contains(WebCore::TouchAction::PinchZoom))
-                _webView.scrollView.pinchGestureRecognizer.enabled = NO;
-            _preventsPanningInXAxis = !touchActions.contains(WebCore::TouchAction::PanX);
-            _preventsPanningInYAxis = !touchActions.contains(WebCore::TouchAction::PanY);
-
-        } else if (phase == WebKit::WebPlatformTouchPoint::TouchReleased || phase == WebKit::WebPlatformTouchPoint::TouchCancelled)
+            _preventsPanningInXAxis = !touchActions.containsAny({ WebCore::TouchAction::PanX, WebCore::TouchAction::Manipulation });
+            _preventsPanningInYAxis = !touchActions.containsAny({ WebCore::TouchAction::PanY, WebCore::TouchAction::Manipulation });
+        } else if (phase == WebKit::WebPlatformTouchPoint::TouchReleased || phase == WebKit::WebPlatformTouchPoint::TouchCancelled) {
+            [_touchActionGestureRecognizer clearTouchActionsForTouchIdentifier:touchPoint.identifier()];
             scrollingCoordinator->clearTouchActionsForTouchIdentifier(touchPoint.identifier());
+        }
     }
+}
+#endif
+
+#pragma mark - WKTouchActionGestureRecognizerDelegate implementation
+
+- (BOOL)gestureRecognizerMayPinchToZoomWebView:(UIGestureRecognizer *)gestureRecognizer
+{
+    // The gesture recognizer is the main UIScrollView's UIPinchGestureRecognizer.
+    return gestureRecognizer == [_webView scrollView].pinchGestureRecognizer;
+}
+
+#if HAVE(UI_WEB_TOUCH_EVENTS_GESTURE_RECOGNIZER_WITH_ACTIVE_TOUCHES_BY_ID)
+- (NSMapTable<NSNumber *, UITouch *> *)touchActionActiveTouches
+{
+    return [_touchEventGestureRecognizer activeTouchesByIdentifier];
 }
 #endif
 
