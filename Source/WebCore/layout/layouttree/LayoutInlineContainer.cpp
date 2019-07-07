@@ -54,6 +54,20 @@ bool InlineContainer::establishesInlineFormattingContext() const
     return false;
 }
 
+const Container& InlineContainer::formattingContextRoot() const
+{
+    // Relatively positioned (inflow) inline container lives in the formatting context where its parent lives unless
+    // the parent establishes a formatting context. This is slightly different from the usual behavior which is containing block driven.
+    //
+    // <div id=outer style="position: absolute">><div id=inner><span style="position: relative">content</span></div></div>
+    // While the relatively positioned inline container (span) is placed relative to its containing block "outer", it lives in the inline
+    // formatting context established by "inner".
+    auto& ancestor = isInFlowPositioned() ? *parent() : *containingBlock();
+    if (ancestor.establishesFormattingContext())
+        return ancestor;
+    return ancestor.formattingContextRoot();
+}
+
 }
 }
 

@@ -174,16 +174,13 @@ const Container* Box::containingBlock() const
 
 const Container& Box::formattingContextRoot() const
 {
-    for (auto* ancestor = containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
-        if (ancestor->establishesFormattingContext())
-            return *ancestor;
-    }
-
-    // Initial containing block always establishes a formatting context.
-    if (isInitialContainingBlock())
-        return downcast<Container>(*this);
-
-    RELEASE_ASSERT_NOT_REACHED();
+    // We should never need to ask this question on the ICB.
+    ASSERT(!isInitialContainingBlock());
+    // A box lives in the same formatting context as its containing block unless the containing block establishes a formatting context.
+    auto& containingBlock = *this->containingBlock();
+    if (containingBlock.establishesFormattingContext())
+        return containingBlock;
+    return containingBlock.formattingContextRoot();
 }
 
 const Container& Box::initialContainingBlock() const

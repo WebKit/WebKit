@@ -42,6 +42,7 @@ public:
     InlineContainer(Optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags = InlineContainerFlag);
 
     bool establishesInlineFormattingContext() const final;
+    const Container& formattingContextRoot() const final;
 };
 
 }

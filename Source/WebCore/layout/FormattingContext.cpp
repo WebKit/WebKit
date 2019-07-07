@@ -135,10 +135,6 @@ void FormattingContext::computeBorderAndPadding(const Box& layoutBox, Optional<U
 
 void FormattingContext::layoutOutOfFlowDescendants(const Box& layoutBox) const
 {
-    // Initial containing block by definition is a containing block.
-    if (!layoutBox.isPositioned() && !layoutBox.isInitialContainingBlock())
-        return;
-
     if (!is<Container>(layoutBox))
         return;
 
