@@ -1403,6 +1403,11 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
     return NO;
 }
 
+- (BOOL)gestureRecognizerMayDoubleTapToZoomWebView:(UIGestureRecognizer *)gestureRecognizer
+{
+    return gestureRecognizer == _doubleTapGestureRecognizer || gestureRecognizer == _twoFingerDoubleTapGestureRecognizer;
+}
+
 - (NSMapTable<NSNumber *, UITouch *> *)touchActionActiveTouches
 {
     return [_touchEventGestureRecognizer activeTouchesByIdentifier];

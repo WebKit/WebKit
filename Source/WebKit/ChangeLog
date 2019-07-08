@@ -1,3 +1,22 @@
+2019-07-08  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] "touch-action: none" does not prevent double-tap-to-zoom
+        https://bugs.webkit.org/show_bug.cgi?id=199571
+        <rdar://problem/51715002>
+
+        Reviewed by Wenson Hsieh.
+
+        We add a new WKTouchActionGestureRecognizerDelegate method to check whether a gesture recognizer may lead to
+        zooming the page as a result of double-tapping, which can be caused by two different gesture recognizers
+        managed by WKContentViewInteraction. If that delegate method returns true and we have "touch-action: none"
+        set for this touch, we cause those gesture recognizers to fail and prevent double-tap-to-zoom behavior.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizerMayDoubleTapToZoomWebView:]):
+        * UIProcess/ios/WKTouchActionGestureRecognizer.h:
+        * UIProcess/ios/WKTouchActionGestureRecognizer.mm:
+        (-[WKTouchActionGestureRecognizer canPreventGestureRecognizer:]):
+
 2019-07-08  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] WebContent processes should not globally allow mach lookup to the AX server.

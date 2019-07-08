@@ -123,6 +123,15 @@ const ui = new (class UIController {
         return this._run(`uiController.singleTapAtPoint(${options.x}, ${options.y})`);
     }
 
+    doubleTapToZoom(options)
+    {
+        const durationInSeconds = 0.35;
+        return new Promise(resolve => this._run(`uiController.doubleTapAtPoint(${options.x}, ${options.y})`).then(() =>
+            setTimeout(resolve, durationInSeconds * 1000)
+        ));
+        return this._run();
+    }
+
     pinchOut(options)
     {
         options.x = options.x || 0;
