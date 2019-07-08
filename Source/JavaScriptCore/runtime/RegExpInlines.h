@@ -155,7 +155,6 @@ ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOff
 #if ENABLE(YARR_JIT)
     if (m_state == JITCode) {
         {
-            ASSERT(m_regExpJITCode);
             PatternContextBufferHolder patternContextBufferHolder(vm, m_regExpJITCode.usesPatternContextBuffer());
 
             if (s.is8Bit())
@@ -269,7 +268,6 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(VM& vm, const String& s, unsigned 
 
     if (m_state == JITCode) {
         {
-            ASSERT(m_regExpJITCode);
             PatternContextBufferHolder patternContextBufferHolder(vm, m_regExpJITCode.usesPatternContextBuffer());
             if (s.is8Bit())
                 result = m_regExpJITCode.execute(s.characters8(), startOffset, s.length(), patternContextBufferHolder.buffer(), patternContextBufferHolder.size());
