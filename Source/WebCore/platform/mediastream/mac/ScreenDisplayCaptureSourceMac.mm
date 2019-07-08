@@ -154,10 +154,20 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
 
         auto weakThis = makeWeakPtr(*this);
         auto frameAvailableBlock = ^(CGDisplayStreamFrameStatus status, uint64_t displayTime, IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef) {
-            if (!weakThis)
+
+            if (!frameSurface || !displayTime)
                 return;
 
-            weakThis->frameAvailable(status, displayTime, frameSurface, updateRef);
+            size_t count;
+            auto* rects = CGDisplayStreamUpdateGetRects(updateRef, kCGDisplayStreamUpdateDirtyRects, &count);
+            if (!rects || !count)
+                return;
+
+            RunLoop::main().dispatch([weakThis, status, frame = DisplaySurface { frameSurface }]() mutable {
+                if (!weakThis)
+                    return;
+                weakThis->newFrame(status, WTFMove(frame));
+            });
         };
 
         m_displayStream = adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, screenWidth, screenHeight, preferedPixelBufferFormat(), (__bridge CFDictionaryRef)streamOptions, m_captureQueue.get(), frameAvailableBlock));
@@ -203,13 +213,7 @@ void ScreenDisplayCaptureSourceMac::stopProducingData()
 
 DisplayCaptureSourceCocoa::DisplayFrameType ScreenDisplayCaptureSourceMac::generateFrame()
 {
-    DisplaySurface currentFrame;
-    {
-        LockHolder lock(m_currentFrameMutex);
-        currentFrame = m_currentFrame.ioSurface();
-    }
-
-    return DisplayCaptureSourceCocoa::DisplayFrameType { RetainPtr<IOSurfaceRef> { currentFrame.ioSurface() } };
+    return DisplayCaptureSourceCocoa::DisplayFrameType { RetainPtr<IOSurfaceRef> { m_currentFrame.ioSurface() } };
 }
 
 void ScreenDisplayCaptureSourceMac::startDisplayStream()
@@ -253,7 +257,7 @@ void ScreenDisplayCaptureSourceMac::displayReconfigurationCallBack(CGDirectDispl
         reinterpret_cast<ScreenDisplayCaptureSourceMac *>(userInfo)->displayWasReconfigured(display, flags);
 }
 
-void ScreenDisplayCaptureSourceMac::frameAvailable(CGDisplayStreamFrameStatus status, uint64_t displayTime, IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef)
+void ScreenDisplayCaptureSourceMac::newFrame(CGDisplayStreamFrameStatus status, DisplaySurface&& newFrame)
 {
     switch (status) {
     case kCGDisplayStreamFrameStatusFrameComplete:
@@ -271,16 +275,7 @@ void ScreenDisplayCaptureSourceMac::frameAvailable(CGDisplayStreamFrameStatus st
         break;
     }
 
-    if (!frameSurface || !displayTime)
-        return;
-
-    size_t count;
-    auto* rects = CGDisplayStreamUpdateGetRects(updateRef, kCGDisplayStreamUpdateDirtyRects, &count);
-    if (!rects || !count)
-        return;
-
-    LockHolder lock(m_currentFrameMutex);
-    m_currentFrame = frameSurface;
+    m_currentFrame = WTFMove(newFrame);
 }
 
 Optional<CaptureDevice> ScreenDisplayCaptureSourceMac::screenCaptureDeviceWithPersistentID(const String& deviceID)
