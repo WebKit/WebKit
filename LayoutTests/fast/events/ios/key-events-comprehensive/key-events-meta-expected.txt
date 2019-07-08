@@ -146,8 +146,8 @@ type: keyup, key: Meta, code: MetaLeft, keyIdentifier: Meta, keyCode: 91, charCo
 
 Test Command + .:
 type: keydown, key: Meta, code: MetaLeft, keyIdentifier: Meta, keyCode: 91, charCode: 0, keyCode: 91, which: 91, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false, location: 1, keyLocation: 1
-type: keydown, key: Escape, code: Period, keyIdentifier: U+001B, keyCode: 27, charCode: 0, keyCode: 27, which: 27, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 0, keyLocation: 0
-type: keypress, key: Escape, code: Period, keyIdentifier: , keyCode: 27, charCode: 27, keyCode: 27, which: 27, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 0, keyLocation: 0
+type: keydown, key: Escape, code: Escape, keyIdentifier: U+001B, keyCode: 27, charCode: 0, keyCode: 27, which: 27, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 0, keyLocation: 0
+type: keypress, key: Escape, code: Escape, keyIdentifier: , keyCode: 27, charCode: 27, keyCode: 27, which: 27, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 0, keyLocation: 0
 type: keyup, key: Meta, code: MetaLeft, keyIdentifier: Meta, keyCode: 91, charCode: 0, keyCode: 91, which: 91, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
 
 Test Command + /:

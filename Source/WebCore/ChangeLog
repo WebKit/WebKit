@@ -1,3 +1,17 @@
+2019-07-08  Daniel Bates  <dabates@apple.com>
+
+        Command + . generates Escape with key identifier Period, should be Escape
+        https://bugs.webkit.org/show_bug.cgi?id=199393
+        <rdar://problem/52498001>
+
+        Reviewed by Wenson Hsieh.
+
+        Remap the key code for Command + . before we compute the Windows virtual key code.
+        Otherwise, the Windows virtual key code reveals the pre-mapped key code.
+
+        * platform/ios/WebEvent.mm:
+        (-[WebEvent initWithKeyEventType:timeStamp:characters:charactersIgnoringModifiers:modifiers:isRepeating:withFlags:withInputManagerHint:keyCode:isTabKey:]):
+
 2019-07-08  Alex Christensen  <achristensen@webkit.org>
 
         Prevent null dereferencing in SubresourceLoader::init's lambda

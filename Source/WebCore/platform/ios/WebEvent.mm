@@ -185,6 +185,17 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
     _modifierFlags = modifiers;
     _keyboardFlags = flags;
     _inputManagerHint = [hint retain];
+
+    BOOL flagsChanged = _keyboardFlags & WebEventKeyboardInputModifierFlagsChanged;
+    if (!flagsChanged) {
+        // Map Command + . to Escape since Apple Smart Keyboards lack an Escape key.
+        // FIXME: This doesn't work for some keyboard layouts, like French. See <rdar://problem/51047011>.
+        if ([charactersIgnoringModifiers isEqualToString:@"."] && (modifiers & WebEventFlagMaskCommandKey)) {
+            keyCode = kHIDUsage_KeyboardEscape;
+            _modifierFlags &= ~WebEventFlagMaskCommandKey;
+        }
+    }
+
     if (keyCode)
         _keyCode = windowsKeyCodeForKeyCode(keyCode);
     else if ([charactersIgnoringModifiers length] == 1) {
@@ -192,12 +203,7 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
         _keyCode = windowsKeyCodeForCharCodeIOS([charactersIgnoringModifiers characterAtIndex:0]);
     }
 
-    if (!(_keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)) {
-        // Map Command + . to Escape since Apple Smart Keyboards lack an Escape key.
-        if ([charactersIgnoringModifiers isEqualToString:@"."] && (modifiers & WebEventFlagMaskCommandKey)) {
-            keyCode = kHIDUsage_KeyboardEscape;
-            _modifierFlags &= ~WebEventFlagMaskCommandKey;
-        }
+    if (!flagsChanged) {
         _characters = [normalizedStringWithAppKitCompatibilityMapping(characters, keyCode) retain];
         _charactersIgnoringModifiers = [normalizedStringWithAppKitCompatibilityMapping(charactersIgnoringModifiers, keyCode) retain];
         _tabKey = tabKey;
