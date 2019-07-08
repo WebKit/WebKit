@@ -388,7 +388,7 @@ private:
 
         State m_state { State::None };
 
-        SwipeDirection m_direction;
+        SwipeDirection m_direction { SwipeDirection::Back };
         RefPtr<WebBackForwardListItem> m_targetItem;
         unsigned m_tickCallbackID { 0 };
 
