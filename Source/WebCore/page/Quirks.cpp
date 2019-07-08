@@ -90,13 +90,7 @@ Optional<LayoutUnit> Quirks::overriddenViewLayoutWidth(LayoutUnit currentViewLay
 
 bool Quirks::shouldIgnoreInvalidSignal() const
 {
-    if (!needsQuirks())
-        return false;
-
-    auto host = m_document->topDocument().url().host();
-    return equalLettersIgnoringASCIICase(host, "www.thrivepatientportal.com")
-        || equalLettersIgnoringASCIICase(host, "www.bnz.co.nz")
-        || equalLettersIgnoringASCIICase(host, "www.carvana.com");
+    return needsQuirks();
 }
 
 bool Quirks::needsFormControlToBeMouseFocusable() const

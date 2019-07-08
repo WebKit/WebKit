@@ -1,3 +1,19 @@
+2019-07-08  Chris Dumez  <cdumez@apple.com>
+
+        Unable to play videos on xfinity.com/stream on macOS Catalina
+        https://bugs.webkit.org/show_bug.cgi?id=199576
+        <rdar://problem/50101264>
+
+        Reviewed by Alex Christensen.
+
+        Enable invalidate Fetch signal quirk for all sites as the blacklist is getting too large and
+        we are finding too much breakage too late in the release cycle.
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::processInvalidSignal):
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldIgnoreInvalidSignal const):
+
 2019-07-08  Youenn Fablet  <youenn@apple.com>
 
         MediaStreamTrackPrivate should always call readyStateChanged on the main thread
