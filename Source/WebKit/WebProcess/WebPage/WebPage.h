@@ -359,7 +359,6 @@ public:
     void didCommitLoad(WebFrame*);
     void willReplaceMultipartContent(const WebFrame&);
     void didReplaceMultipartContent(const WebFrame&);
-    void didFinishDocumentLoad(WebFrame&);
     void didFinishLoad(WebFrame&);
     void show();
     String userAgent(const URL&) const;

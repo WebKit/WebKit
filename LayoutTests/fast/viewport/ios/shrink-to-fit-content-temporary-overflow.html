@@ -48,6 +48,20 @@ jsTestIsAsync = true;
 
 description("This test verifies that a temporary change in content width does not cause the viewport width to permanently expand to try and accomodate the content. To test manually, load the page and check that the box below reads 'PASS'. This test is only intended to run on devices with less than 1200px screen width.");
 
+function forceLayoutByScrollingTo(y) {
+    document.scrollingElement.scrollTo(0, y);
+    return document.scrollingElement.scrollTop;
+}
+
+addEventListener("DOMContentLoaded", () => {
+    forceLayoutByScrollingTo(1);
+    const bar = document.createElement("div");
+    bar.classList.add("bar");
+    document.body.appendChild(bar);
+    forceLayoutByScrollingTo(0);
+    bar.remove();
+});
+
 addEventListener("load", async () => {
     if (!window.testRunner)
         return;
@@ -62,14 +76,5 @@ addEventListener("load", async () => {
 <body>
 <div id="description"></div>
 <div class="square"></div>
-<script>
-const bar = document.createElement("div");
-bar.classList.add("bar");
-document.body.appendChild(bar);
-document.scrollingElement.scrollTo(0, 1);
-document.scrollingElement.scrollTo(0, 0);
-document.scrollingElement.scrollTop;
-bar.remove();
-</script>
 </body>
 </html>

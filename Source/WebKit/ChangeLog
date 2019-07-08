@@ -1,3 +1,33 @@
+2019-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Viewport pops while loading sohu.com, xinhuanet.com, and various other websites
+        https://bugs.webkit.org/show_bug.cgi?id=199575
+        <rdar://problem/51842220>
+
+        Reviewed by Simon Fraser.
+
+        Currently, the shrink-to-fit-content heuristic added to scale desktop sites fit within the viewport on iPadOS
+        only runs during two intervals: after document load, and after page load. On very script-heavy websites, this
+        may cause a visible jump, as rendering may commence well before the document is finished parsing.
+
+        To mitigate this, we move the first opportunity for the shrink-to-fit heuristic from after document, to right
+        after the page transition has completed (before we unfreeze the layer tree).
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishDocumentLoad):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCompletePageTransition):
+        (WebKit::WebPage::didFinishDocumentLoad): Deleted.
+
+        Remove this didFinishDocumentLoad hook, which was only used to schedule the shrink-to-fit timer.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::immediatelyShrinkToFitContent):
+
+        m_mainFrame might be null after page transition completes, so we need to ensure immediatelyShrinkToFitContent is
+        robust in this scenario.
+
 2019-07-08  Chris Dumez  <cdumez@apple.com>
 
         Add threading assertion to WTF::CompletionHandler

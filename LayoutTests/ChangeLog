@@ -1,5 +1,22 @@
 2019-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iPadOS] Viewport pops while loading sohu.com, xinhuanet.com, and various other websites
+        https://bugs.webkit.org/show_bug.cgi?id=199575
+        <rdar://problem/51842220>
+
+        Reviewed by Simon Fraser.
+
+        Adjusts an existing layout test, and introduces a new test to verify that the shrink-to-fit heuristic is given a
+        chance to run before document load. See WebKit ChangeLog for more details.
+
+        * fast/viewport/ios/shrink-to-fit-content-before-document-load-expected.txt: Added.
+        * fast/viewport/ios/shrink-to-fit-content-before-document-load.html: Added.
+        * fast/viewport/ios/shrink-to-fit-content-temporary-overflow.html:
+
+        Tweak this layout test to add the temporarily overflowing element after document load.
+
+2019-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Unable to paste from Notes into Excel 365 spreadsheet
         https://bugs.webkit.org/show_bug.cgi?id=199565
         <rdar://problem/43615497>
