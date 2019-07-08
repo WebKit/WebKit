@@ -1,3 +1,34 @@
+2019-07-08  Charlie Turner  <cturner@igalia.com>
+
+        REGRESSION(r243197): [GStreamer] Web process hangs when scrolling twitter timeline which contains HLS videos
+        https://bugs.webkit.org/show_bug.cgi?id=197558
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Not covered, I have a test locally that would probably trigger the
+        deadlock if the network requests took a realistic amount of time,
+        but from a local webserver the window of time to hit this deadlock
+        is too narrow.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_init): Make the websrc start asynchronously, this
+        allows the main thread to be free to complete resource loader
+        setup.
+        (webKitWebSrcCreate): Calling start() from the create() vfunc is a
+        recipe for deadlock, since BaseSrc holds the streaming lock during
+        seeks, and then calls create(). In these cases, we do not want to
+        notify async-completion, since we've already completed from the
+        necessarily preceeding start() vfunc, and calling it again would
+        require the stream-lock and deadlock us.
+        (webKitWebSrcStart): Refactor to use webKitWebSrcMakeRequest, but
+        ensuring that we do perform an async-complete notification.
+        (webKitWebSrcMakeRequest): What Start() used to be, but now can be
+        toggled when to notify of async-completion. Start() no longer
+        blocks, since the return value of initiating a resource loader is
+        of no interest to the callers.
+        (webKitWebSrcCloseSession): Similarly to Start(), we do not need
+        to wait for the completion of cancelled net requests.
+
 2019-07-08  Chris Dumez  <cdumez@apple.com>
 
         Unable to play videos on xfinity.com/stream on macOS Catalina

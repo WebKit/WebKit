@@ -1,3 +1,19 @@
+2019-07-08  Charlie Turner  <cturner@igalia.com>
+
+        REGRESSION(r243197): [GStreamer] Web process hangs when scrolling twitter timeline which contains HLS videos
+        https://bugs.webkit.org/show_bug.cgi?id=197558
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        On shutdown we can easily deadlock the web process if we don't
+        ensure all network operations are completed before comitting state
+        changes. In HLS, make sure the network operations are cancelled,
+        and also prevent hlsdemux's retry logic from scuppering our
+        efforts.
+
+        * gstreamer/jhbuild.modules: Include the patch.
+        * gstreamer/patches/gst-plugins-bad-do-not-retry-downloads-during-shutdown.patch: Added.
+
 2019-07-08  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Enable only on the most recent version of the supported iOS family

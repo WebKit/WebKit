@@ -156,6 +156,7 @@ static void webKitWebSrcSetProperty(GObject*, guint propertyID, const GValue*, G
 static void webKitWebSrcGetProperty(GObject*, guint propertyID, GValue*, GParamSpec*);
 static GstStateChangeReturn webKitWebSrcChangeState(GstElement*, GstStateChange);
 static GstFlowReturn webKitWebSrcCreate(GstPushSrc*, GstBuffer**);
+static gboolean webKitWebSrcMakeRequest(GstBaseSrc*, bool);
 static gboolean webKitWebSrcStart(GstBaseSrc*);
 static gboolean webKitWebSrcStop(GstBaseSrc*);
 static gboolean webKitWebSrcGetSize(GstBaseSrc*, guint64* size);
@@ -260,6 +261,7 @@ static void webkit_web_src_init(WebKitWebSrc* src)
 
     webkitWebSrcReset(src);
     gst_base_src_set_automatic_eos(GST_BASE_SRC_CAST(src), FALSE);
+    gst_base_src_set_async(GST_BASE_SRC_CAST(src), TRUE);
 }
 
 static void webKitWebSrcDispose(GObject* object)
@@ -361,7 +363,12 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
         uint64_t requestedPosition = priv->requestedPosition;
         webKitWebSrcStop(baseSrc);
         priv->requestedPosition = requestedPosition;
-        webKitWebSrcStart(baseSrc);
+        // Do not notify async-completion, in seeking flows, we will
+        // be called from GstBaseSrc's perform_seek vfunc, which holds
+        // a streaming lock in our frame. Hence, we would deadlock
+        // trying to notify async completion, since that also requires
+        // the streaming lock.
+        webKitWebSrcMakeRequest(baseSrc, false);
     }
 
     {
@@ -497,6 +504,14 @@ static gboolean webKitWebSrcProcessExtraHeaders(GQuark fieldId, const GValue* va
 
 static gboolean webKitWebSrcStart(GstBaseSrc* baseSrc)
 {
+    // This method should only be called by BaseSrc, do not call it
+    // from ourselves unless you ensure the streaming lock is not
+    // held. If it is, you will deadlock the WebProcess.
+    return webKitWebSrcMakeRequest(baseSrc, true);
+}
+
+static gboolean webKitWebSrcMakeRequest(GstBaseSrc* baseSrc, bool notifyAsyncCompletion)
+{
     WebKitWebSrc* src = WEBKIT_WEB_SRC(baseSrc);
     WebKitWebSrcPrivate* priv = src->priv;
 
@@ -582,7 +597,7 @@ static gboolean webKitWebSrcStart(GstBaseSrc* baseSrc)
     request.setHTTPHeaderField(HTTPHeaderName::IcyMetadata, "1");
 
     GRefPtr<WebKitWebSrc> protector = WTF::ensureGRef(src);
-    priv->notifier->notifyAndWait(MainThreadSourceNotification::Start, [protector, request = WTFMove(request)] {
+    priv->notifier->notify(MainThreadSourceNotification::Start, [protector, request = WTFMove(request), src, notifyAsyncCompletion] {
         WebKitWebSrcPrivate* priv = protector->priv;
         if (!priv->loader)
             priv->loader = priv->player->createResourceLoader();
@@ -594,13 +609,16 @@ static gboolean webKitWebSrcStart(GstBaseSrc* baseSrc)
         if (priv->resource) {
             priv->resource->setClient(std::make_unique<CachedResourceStreamingClient>(protector.get(), ResourceRequest(request)));
             GST_DEBUG_OBJECT(protector.get(), "Started request");
+            if (notifyAsyncCompletion)
+                gst_base_src_start_complete(GST_BASE_SRC(src), GST_FLOW_OK);
         } else {
             GST_ERROR_OBJECT(protector.get(), "Failed to setup streaming client");
+            if (notifyAsyncCompletion)
+                gst_base_src_start_complete(GST_BASE_SRC(src), GST_FLOW_ERROR);
             priv->loader = nullptr;
         }
     });
 
-    GST_DEBUG_OBJECT(src, "Resource loader started");
     return TRUE;
 }
 
@@ -609,7 +627,7 @@ static void webKitWebSrcCloseSession(WebKitWebSrc* src)
     WebKitWebSrcPrivate* priv = src->priv;
     GRefPtr<WebKitWebSrc> protector = WTF::ensureGRef(src);
 
-    priv->notifier->notifyAndWait(MainThreadSourceNotification::Stop, [protector, keepAlive = priv->keepAlive] {
+    priv->notifier->notify(MainThreadSourceNotification::Stop, [protector, keepAlive = priv->keepAlive] {
         WebKitWebSrcPrivate* priv = protector->priv;
 
         GST_DEBUG_OBJECT(protector.get(), "Stopping resource loader");

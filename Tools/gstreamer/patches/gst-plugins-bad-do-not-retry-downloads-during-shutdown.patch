@@ -1,0 +1,89 @@
+From 4c21593e5fcd1337b433119b8c7800dc5565f514 Mon Sep 17 00:00:00 2001
+From: Charlie Turner <cturner@igalia.com>
+Date: Tue, 2 Jul 2019 12:27:40 +0100
+Subject: [PATCH] WIP: adaptivedemux: do not retry downloads during shutdown.
+
+---
+ ext/hls/gsthlsdemux.c | 15 +++++++++++++--
+ ext/hls/gsthlsdemux.h |  4 ++++
+ 2 files changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/ext/hls/gsthlsdemux.c b/ext/hls/gsthlsdemux.c
+index 4317d65c3..f9583ad1a 100644
+--- a/ext/hls/gsthlsdemux.c
++++ b/ext/hls/gsthlsdemux.c
+@@ -73,6 +73,7 @@ static gboolean gst_hls_demux_update_playlist (GstHLSDemux * demux,
+     gboolean update, GError ** err);
+ static gchar *gst_hls_src_buf_to_utf8_playlist (GstBuffer * buf);
+ 
++/* FIXME: the return value is never used? */
+ static gboolean gst_hls_demux_change_playlist (GstHLSDemux * demux,
+     guint max_bitrate, gboolean * changed);
+ static GstBuffer *gst_hls_demux_decrypt_fragment (GstHLSDemux * demux,
+@@ -193,6 +194,8 @@ gst_hls_demux_init (GstHLSDemux * demux)
+ 
+   demux->keys = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+   g_mutex_init (&demux->keys_lock);
++
++  demux->cancelling_downloads = FALSE;
+ }
+ 
+ static GstStateChangeReturn
+@@ -205,6 +208,11 @@ gst_hls_demux_change_state (GstElement * element, GstStateChange transition)
+     case GST_STATE_CHANGE_READY_TO_PAUSED:
+       gst_hls_demux_reset (GST_ADAPTIVE_DEMUX_CAST (demux));
+       break;
++    case GST_STATE_CHANGE_PAUSED_TO_READY:
++      GST_DEBUG_OBJECT (demux, "PAUSED->READY cancelling downloads");
++      demux->cancelling_downloads = TRUE;
++      gst_uri_downloader_cancel (GST_ADAPTIVE_DEMUX (demux)->downloader);
++      break;
+     default:
+       break;
+   }
+@@ -1158,6 +1166,8 @@ gst_hls_demux_reset (GstAdaptiveDemux * ademux)
+ {
+   GstHLSDemux *demux = GST_HLS_DEMUX_CAST (ademux);
+ 
++  GST_DEBUG_OBJECT (demux, "resetting");
++
+   GST_M3U8_CLIENT_LOCK (hlsdemux->client);
+   if (demux->master) {
+     gst_hls_master_playlist_unref (demux->master);
+@@ -1379,7 +1389,8 @@ retry:
+   if (download == NULL) {
+     gchar *base_uri;
+ 
+-    if (!update || main_checked || demux->master->is_simple) {
++    if (!update || main_checked || demux->master->is_simple
++        || demux->cancelling_downloads) {
+       g_free (uri);
+       return FALSE;
+     }
+@@ -1612,7 +1623,7 @@ retry_failover_protection:
+     if (changed)
+       *changed = TRUE;
+     stream->discont = TRUE;
+-  } else {
++  } else if (!demux->cancelling_downloads) {
+     GstHLSVariantStream *failover_variant = NULL;
+     GList *failover;
+ 
+diff --git a/ext/hls/gsthlsdemux.h b/ext/hls/gsthlsdemux.h
+index 0cab19627..9c0decabf 100644
+--- a/ext/hls/gsthlsdemux.h
++++ b/ext/hls/gsthlsdemux.h
+@@ -147,6 +147,10 @@ struct _GstHLSDemux
+   GstHLSMasterPlaylist *master;
+ 
+   GstHLSVariantStream  *current_variant;
++
++  /* Set when the parent is state-changing down from PAUSED to avoid
++     making further network requests. */
++  gboolean cancelling_downloads;
+ };
+ 
+ struct _GstHLSDemuxClass
+-- 
+2.17.1
+
