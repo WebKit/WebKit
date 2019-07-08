@@ -6120,10 +6120,10 @@ void Document::addMessage(MessageSource source, MessageLevel level, const String
 
 void Document::postTask(Task&& task)
 {
-    callOnMainThread([documentReference = makeWeakPtr(*this), task = WTFMove(task)]() mutable {
+    callOnMainThread([documentID = identifier(), task = WTFMove(task)]() mutable {
         ASSERT(isMainThread());
 
-        Document* document = documentReference.get();
+        auto* document = allDocumentsMap().get(documentID);
         if (!document)
             return;
 
