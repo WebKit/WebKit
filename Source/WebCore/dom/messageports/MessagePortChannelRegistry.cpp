@@ -157,7 +157,7 @@ void MessagePortChannelRegistry::takeAllMessagesForPort(const MessagePortIdentif
     channel->takeAllMessagesForPort(port, WTFMove(callback));
 }
 
-void MessagePortChannelRegistry::checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback)
+void MessagePortChannelRegistry::checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, Function<void(MessagePortChannelProvider::HasActivity)>&& callback)
 {
     ASSERT(isMainThread());
 

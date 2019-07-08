@@ -182,7 +182,7 @@ void MessagePortChannel::takeAllMessagesForPort(const MessagePortIdentifier& por
     });
 }
 
-void MessagePortChannel::checkRemotePortForActivity(const MessagePortIdentifier& remotePort, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback)
+void MessagePortChannel::checkRemotePortForActivity(const MessagePortIdentifier& remotePort, Function<void(MessagePortChannelProvider::HasActivity)>&& callback)
 {
     ASSERT(isMainThread());
     ASSERT(remotePort == m_ports[0] || remotePort == m_ports[1]);
@@ -207,7 +207,7 @@ void MessagePortChannel::checkRemotePortForActivity(const MessagePortIdentifier&
         return;
     }
 
-    auto outerCallback = CompletionHandler<void(MessagePortChannelProvider::HasActivity)> { [this, protectedThis = makeRef(*this), callback = WTFMove(callback)] (MessagePortChannelProvider::HasActivity hasActivity) mutable {
+    auto outerCallback = Function<void(MessagePortChannelProvider::HasActivity)> { [this, protectedThis = makeRef(*this), callback = WTFMove(callback)] (MessagePortChannelProvider::HasActivity hasActivity) mutable {
         if (hasActivity == MessagePortChannelProvider::HasActivity::Yes) {
             callback(hasActivity);
             return;

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Function.h>
+#include <wtf/MainThread.h>
 
 namespace WTF {
 
@@ -40,6 +41,9 @@ public:
     template<typename CallableType, class = typename std::enable_if<std::is_rvalue_reference<CallableType&&>::value>::type>
     CompletionHandler(CallableType&& callable)
         : m_function(WTFMove(callable))
+#if !ASSERT_DISABLED
+        , m_wasConstructedOnMainThread(isMainThread())
+#endif
     {
     }
 
@@ -55,12 +59,16 @@ public:
 
     Out operator()(In... in)
     {
+        ASSERT(m_wasConstructedOnMainThread == isMainThread());
         ASSERT_WITH_MESSAGE(m_function, "Completion handler should not be called more than once");
         return std::exchange(m_function, nullptr)(std::forward<In>(in)...);
     }
 
 private:
     Function<Out(In...)> m_function;
+#if !ASSERT_DISABLED
+    bool m_wasConstructedOnMainThread;
+#endif
 };
 
 namespace Detail {

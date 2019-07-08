@@ -46,14 +46,20 @@ public:
     virtual void entangleLocalPortInThisProcessToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote) = 0;
     virtual void messagePortDisentangled(const MessagePortIdentifier& local) = 0;
     virtual void messagePortClosed(const MessagePortIdentifier& local) = 0;
+    
+    // FIXME: Ideally the callback would be a CompletionHandler but it is always called on the caller's
+    // thread at the moment.
     virtual void takeAllMessagesForPort(const MessagePortIdentifier&, Function<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&&) = 0;
+
     virtual void postMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget) = 0;
 
     enum class HasActivity {
         Yes,
         No,
     };
-    virtual void checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& callback) = 0;
+    // FIXME: Ideally the callback would be a CompletionHandler but it is always called on the caller's
+    // thread at the moment.
+    virtual void checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, Function<void(HasActivity)>&& callback) = 0;
 
     // Operations that the coordinating process performs (e.g. the UIProcess)
     virtual void checkProcessLocalPortForActivity(const MessagePortIdentifier&, ProcessIdentifier, CompletionHandler<void(HasActivity)>&&) = 0;

@@ -54,7 +54,7 @@ public:
     bool postMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget);
 
     void takeAllMessagesForPort(const MessagePortIdentifier&, Function<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&&);
-    void checkRemotePortForActivity(const MessagePortIdentifier&, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback);
+    void checkRemotePortForActivity(const MessagePortIdentifier&, Function<void(MessagePortChannelProvider::HasActivity)>&& callback);
 
     WEBCORE_EXPORT bool hasAnyMessagesPendingOrInFlight() const;
 

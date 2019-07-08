@@ -128,17 +128,15 @@ void WebMessagePortChannelProvider::checkProcessLocalPortForActivity(const Messa
     ASSERT_NOT_REACHED();
 }
 
-void WebMessagePortChannelProvider::checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& completionHandler)
+void WebMessagePortChannelProvider::checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, Function<void(HasActivity)>&& completionHandler)
 {
     static std::atomic<uint64_t> currentHandlerIdentifier;
     uint64_t identifier = ++currentHandlerIdentifier;
 
     {
         Locker<Lock> locker(m_remoteActivityCallbackLock);
-        auto result = m_remoteActivityCallbacks.ensure(identifier, [completionHandler = WTFMove(completionHandler)]() mutable {
-            return WTFMove(completionHandler);
-        });
-        ASSERT_UNUSED(result, result.isNewEntry);
+        ASSERT(!m_remoteActivityCallbacks.contains(identifier));
+        m_remoteActivityCallbacks.set(identifier, WTFMove(completionHandler));
     }
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::CheckRemotePortForActivity(remoteTarget, identifier), 0);

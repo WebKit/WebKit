@@ -45,7 +45,7 @@ private:
     void messagePortClosed(const WebCore::MessagePortIdentifier& local) final;
     void takeAllMessagesForPort(const WebCore::MessagePortIdentifier&, Function<void(Vector<WebCore::MessageWithMessagePorts>&&, Function<void()>&&)>&&) final;
     void postMessageToRemote(WebCore::MessageWithMessagePorts&&, const WebCore::MessagePortIdentifier& remoteTarget) final;
-    void checkRemotePortForActivity(const WebCore::MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& callback) final;
+    void checkRemotePortForActivity(const WebCore::MessagePortIdentifier& remoteTarget, Function<void(HasActivity)>&& callback) final;
     void checkProcessLocalPortForActivity(const WebCore::MessagePortIdentifier&, WebCore::ProcessIdentifier, CompletionHandler<void(HasActivity)>&&) final;
 
     WebCore::MessagePortChannelRegistry m_registry;
