@@ -1,3 +1,15 @@
+2019-07-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] WebContent processes should not globally allow mach lookup to the AX server.
+        https://bugs.webkit.org/show_bug.cgi?id=199386
+        <rdar://problem/52487468>
+
+        Reviewed by Chris Fleizach.
+
+        Instead, a mach extension for this service should be issued to the WebContent process. This has already been implemented.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-07-08  Claudio Saavedra  <csaavedra@igalia.com>
 
         REGRESSION(r246671): [WPE][GTK] Crash in NetworkProcess since the DNS cache landed

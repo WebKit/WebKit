@@ -71,8 +71,6 @@
 
 (allow mach-register
     (local-name "com.apple.iphone.axserver")) ; Needed for Application Accessibility
-(allow mach-lookup
-    (global-name "com.apple.iphone.axserver-systemwide")) ; Needed to send accessibility notifications.
 
 ;; <rdar://problem/14555119> Access to high quality speech voices
 ;; Needed for WebSpeech
