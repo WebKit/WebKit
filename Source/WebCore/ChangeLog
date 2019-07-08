@@ -1,5 +1,52 @@
 2019-07-08  Chris Dumez  <cdumez@apple.com>
 
+        Fix thread safety issue in Database::scheduleTransactionCallback()
+        https://bugs.webkit.org/show_bug.cgi?id=199557
+
+        Reviewed by Alex Christensen.
+
+        I am working on adding threading assertions to WeakPtr and found a potentially
+        unsafe call to makeWeakPtr() on a Document from Database::scheduleTransactionCallback()
+        via Document::postTask(), on a background database thread. Document is a main thread
+        object and we should therefore not be interacting with it from a background thread.
+
+        For clarity, this patch also switches the webdatabase code to use Document instead
+        of ScriptExecution as type since it is only exposed to Window contexts, not workers.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::Database):
+        (WebCore::Database::~Database):
+        (WebCore::Database::runTransaction):
+        (WebCore::Database::scheduleTransactionCallback):
+        (WebCore::Database::logErrorMessage):
+        (WebCore::Database::securityOrigin):
+        (WebCore::Database::didExceedQuota):
+        * Modules/webdatabase/Database.h:
+        (WebCore::Database::document):
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::DatabaseContext):
+        * Modules/webdatabase/DatabaseContext.h:
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::databaseContext):
+        (WebCore::logOpenDatabaseError):
+        (WebCore::DatabaseManager::openDatabaseBackend):
+        (WebCore::DatabaseManager::tryToOpenDatabaseBackend):
+        (WebCore::DatabaseManager::openDatabase):
+        (WebCore::DatabaseManager::hasOpenDatabases):
+        (WebCore::DatabaseManager::stopDatabases):
+        (WebCore::DatabaseManager::logErrorMessage):
+        * Modules/webdatabase/DatabaseManager.h:
+        * Modules/webdatabase/SQLStatement.cpp:
+        (WebCore::SQLStatement::SQLStatement):
+        * Modules/webdatabase/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::SQLTransaction):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didOpenDatabase):
+        * inspector/agents/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::executeSQL):
+
+2019-07-08  Chris Dumez  <cdumez@apple.com>
+
         Add threading assertion to WTF::CompletionHandler
         https://bugs.webkit.org/show_bug.cgi?id=199516
 

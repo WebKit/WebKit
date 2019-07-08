@@ -1201,7 +1201,7 @@ inline void InspectorInstrumentation::willDestroyCachedResource(CachedResource& 
 inline void InspectorInstrumentation::didOpenDatabase(Database& database)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* instrumentingAgents = instrumentingAgentsForContext(database.scriptExecutionContext()))
+    if (auto* instrumentingAgents = instrumentingAgentsForContext(database.document()))
         didOpenDatabaseImpl(*instrumentingAgents, database);
 }
 

@@ -31,11 +31,11 @@
 #include "DatabaseContext.h"
 #include "DatabaseTask.h"
 #include "DatabaseTracker.h"
+#include "Document.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "PlatformStrategies.h"
 #include "ScriptController.h"
-#include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginData.h"
 #include <wtf/NeverDestroyed.h>
@@ -97,31 +97,31 @@ void DatabaseManager::setIsAvailable(bool available)
     m_databaseIsAvailable = available;
 }
 
-Ref<DatabaseContext> DatabaseManager::databaseContext(ScriptExecutionContext& context)
+Ref<DatabaseContext> DatabaseManager::databaseContext(Document& document)
 {
-    if (auto databaseContext = context.databaseContext())
+    if (auto databaseContext = document.databaseContext())
         return *databaseContext;
-    return adoptRef(*new DatabaseContext(context));
+    return adoptRef(*new DatabaseContext(document));
 }
 
 #if LOG_DISABLED
 
-static inline void logOpenDatabaseError(ScriptExecutionContext&, const String&)
+static inline void logOpenDatabaseError(Document&, const String&)
 {
 }
 
 #else
 
-static void logOpenDatabaseError(ScriptExecutionContext& context, const String& name)
+static void logOpenDatabaseError(Document& document, const String& name)
 {
-    LOG(StorageAPI, "Database %s for origin %s not allowed to be established", name.utf8().data(), context.securityOrigin()->toString().utf8().data());
+    LOG(StorageAPI, "Database %s for origin %s not allowed to be established", name.utf8().data(), document.securityOrigin().toString().utf8().data());
 }
 
 #endif
 
-ExceptionOr<Ref<Database>> DatabaseManager::openDatabaseBackend(ScriptExecutionContext& context, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase)
+ExceptionOr<Ref<Database>> DatabaseManager::openDatabaseBackend(Document& document, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase)
 {
-    auto backend = tryToOpenDatabaseBackend(context, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, FirstTryToOpenDatabase);
+    auto backend = tryToOpenDatabaseBackend(document, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, FirstTryToOpenDatabase);
 
     if (backend.hasException()) {
         if (backend.exception().code() == QuotaExceededError) {
@@ -129,39 +129,31 @@ ExceptionOr<Ref<Database>> DatabaseManager::openDatabaseBackend(ScriptExecutionC
             // The client may want to increase the quota, and we'll give it
             // one more try after if that is the case.
             {
-                // FIXME: What guarantees context.securityOrigin() is non-null?
-                ProposedDatabase proposedDatabase { *this, *context.securityOrigin(), name, displayName, estimatedSize };
-                this->databaseContext(context)->databaseExceededQuota(name, proposedDatabase.details());
+                ProposedDatabase proposedDatabase { *this, document.securityOrigin(), name, displayName, estimatedSize };
+                this->databaseContext(document)->databaseExceededQuota(name, proposedDatabase.details());
             }
-            backend = tryToOpenDatabaseBackend(context, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, RetryOpenDatabase);
+            backend = tryToOpenDatabaseBackend(document, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, RetryOpenDatabase);
         }
     }
 
     if (backend.hasException()) {
         if (backend.exception().code() == InvalidStateError)
-            logErrorMessage(context, backend.exception().message());
+            logErrorMessage(document, backend.exception().message());
         else
-            logOpenDatabaseError(context, name);
+            logOpenDatabaseError(document, name);
     }
 
     return backend;
 }
 
-ExceptionOr<Ref<Database>> DatabaseManager::tryToOpenDatabaseBackend(ScriptExecutionContext& scriptContext, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase,
+ExceptionOr<Ref<Database>> DatabaseManager::tryToOpenDatabaseBackend(Document& document, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase,
     OpenAttempt attempt)
 {
-    if (is<Document>(&scriptContext)) {
-        auto* page = downcast<Document>(scriptContext).page();
-        if (!page || page->usesEphemeralSession())
-            return Exception { SecurityError };
-    }
-
-    if (scriptContext.isWorkerGlobalScope()) {
-        ASSERT_NOT_REACHED();
+    auto* page = document.page();
+    if (!page || page->usesEphemeralSession())
         return Exception { SecurityError };
-    }
 
-    auto backendContext = this->databaseContext(scriptContext);
+    auto backendContext = this->databaseContext(document);
 
     ExceptionOr<void> preflightResult;
     switch (attempt) {
@@ -198,25 +190,25 @@ void DatabaseManager::removeProposedDatabase(ProposedDatabase& database)
     m_proposedDatabases.remove(&database);
 }
 
-ExceptionOr<Ref<Database>> DatabaseManager::openDatabase(ScriptExecutionContext& context, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback)
+ExceptionOr<Ref<Database>> DatabaseManager::openDatabase(Document& document, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback)
 {
     ScriptController::initializeThreading();
 
     bool setVersionInNewDatabase = !creationCallback;
-    auto openResult = openDatabaseBackend(context, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase);
+    auto openResult = openDatabaseBackend(document, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase);
     if (openResult.hasException())
         return openResult.releaseException();
 
     RefPtr<Database> database = openResult.releaseReturnValue();
 
-    auto databaseContext = this->databaseContext(context);
+    auto databaseContext = this->databaseContext(document);
     databaseContext->setHasOpenDatabases();
     InspectorInstrumentation::didOpenDatabase(*database);
 
     if (database->isNew() && creationCallback.get()) {
         LOG(StorageAPI, "Scheduling DatabaseCreationCallbackTask for database %p\n", database.get());
         database->setHasPendingCreationEvent(true);
-        database->m_scriptExecutionContext->postTask([creationCallback, database] (ScriptExecutionContext&) {
+        database->m_document->postTask([creationCallback, database] (ScriptExecutionContext&) {
             creationCallback->handleEvent(*database);
             database->setHasPendingCreationEvent(false);
         });
@@ -225,15 +217,15 @@ ExceptionOr<Ref<Database>> DatabaseManager::openDatabase(ScriptExecutionContext&
     return database.releaseNonNull();
 }
 
-bool DatabaseManager::hasOpenDatabases(ScriptExecutionContext& context)
+bool DatabaseManager::hasOpenDatabases(Document& document)
 {
-    auto databaseContext = context.databaseContext();
+    auto databaseContext = document.databaseContext();
     return databaseContext && databaseContext->hasOpenDatabases();
 }
 
-void DatabaseManager::stopDatabases(ScriptExecutionContext& context, DatabaseTaskSynchronizer* synchronizer)
+void DatabaseManager::stopDatabases(Document& document, DatabaseTaskSynchronizer* synchronizer)
 {
-    auto databaseContext = context.databaseContext();
+    auto databaseContext = document.databaseContext();
     if (!databaseContext || !databaseContext->stopDatabases(synchronizer)) {
         if (synchronizer)
             synchronizer->taskCompleted();
@@ -267,9 +259,9 @@ DatabaseDetails DatabaseManager::detailsForNameAndOrigin(const String& name, Sec
     return DatabaseTracker::singleton().detailsForNameAndOrigin(name, origin.data());
 }
 
-void DatabaseManager::logErrorMessage(ScriptExecutionContext& context, const String& message)
+void DatabaseManager::logErrorMessage(Document& document, const String& message)
 {
-    context.addConsoleMessage(MessageSource::Storage, MessageLevel::Error, message);
+    document.addConsoleMessage(MessageSource::Storage, MessageLevel::Error, message);
 }
 
 #if !PLATFORM(COCOA)

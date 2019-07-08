@@ -39,7 +39,7 @@ class DatabaseCallback;
 class DatabaseContext;
 class DatabaseDetails;
 class DatabaseThread;
-class ScriptExecutionContext;
+class Document;
 class SecurityOrigin;
 class SQLTransaction;
 class SQLTransactionBackend;
@@ -105,7 +105,7 @@ public:
 
     DatabaseContext& databaseContext() { return m_databaseContext; }
     DatabaseThread& databaseThread();
-    ScriptExecutionContext& scriptExecutionContext() { return m_scriptExecutionContext; }
+    Document& document() { return m_document; }
     void logErrorMessage(const String& message);
 
     Vector<String> tableNames();
@@ -147,7 +147,7 @@ private:
     String databaseDebugName() const;
 #endif
 
-    Ref<ScriptExecutionContext> m_scriptExecutionContext;
+    Ref<Document> m_document;
     Ref<SecurityOrigin> m_contextThreadSecurityOrigin;
     Ref<SecurityOrigin> m_databaseThreadSecurityOrigin;
     Ref<DatabaseContext> m_databaseContext;

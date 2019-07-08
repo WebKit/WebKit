@@ -94,14 +94,14 @@ namespace WebCore {
 // DatabaseContext will outlive both regardless of which of the 2 destructs first.
 
 
-DatabaseContext::DatabaseContext(ScriptExecutionContext& context)
-    : ActiveDOMObject(&context)
+DatabaseContext::DatabaseContext(Document& document)
+    : ActiveDOMObject(document)
 {
     // ActiveDOMObject expects this to be called to set internal flags.
     suspendIfNeeded();
 
-    ASSERT(!context.databaseContext());
-    context.setDatabaseContext(this);
+    ASSERT(!document.databaseContext());
+    document.setDatabaseContext(this);
 }
 
 DatabaseContext::~DatabaseContext()

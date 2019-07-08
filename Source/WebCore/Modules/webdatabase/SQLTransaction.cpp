@@ -34,6 +34,7 @@
 #include "DatabaseContext.h"
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
+#include "Document.h"
 #include "Logging.h"
 #include "OriginLock.h"
 #include "SQLError.h"
@@ -59,9 +60,9 @@ Ref<SQLTransaction> SQLTransaction::create(Ref<Database>&& database, RefPtr<SQLT
 
 SQLTransaction::SQLTransaction(Ref<Database>&& database, RefPtr<SQLTransactionCallback>&& callback, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<SQLTransactionWrapper>&& wrapper, bool readOnly)
     : m_database(WTFMove(database))
-    , m_callbackWrapper(WTFMove(callback), &m_database->scriptExecutionContext())
-    , m_successCallbackWrapper(WTFMove(successCallback), &m_database->scriptExecutionContext())
-    , m_errorCallbackWrapper(WTFMove(errorCallback), &m_database->scriptExecutionContext())
+    , m_callbackWrapper(WTFMove(callback), &m_database->document())
+    , m_successCallbackWrapper(WTFMove(successCallback), &m_database->document())
+    , m_errorCallbackWrapper(WTFMove(errorCallback), &m_database->document())
     , m_wrapper(WTFMove(wrapper))
     , m_nextStep(&SQLTransaction::acquireLock)
     , m_readOnly(readOnly)

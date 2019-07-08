@@ -38,9 +38,9 @@ class DatabaseCallback;
 class DatabaseContext;
 class DatabaseManagerClient;
 class DatabaseTaskSynchronizer;
+class Document;
 class Exception;
 class SecurityOrigin;
-class ScriptExecutionContext;
 struct SecurityOriginData;
 
 class DatabaseManager {
@@ -55,14 +55,14 @@ public:
     bool isAvailable();
     WEBCORE_EXPORT void setIsAvailable(bool);
 
-    // This gets a DatabaseContext for the specified ScriptExecutionContext.
+    // This gets a DatabaseContext for the specified Document.
     // If one doesn't already exist, it will create a new one.
-    Ref<DatabaseContext> databaseContext(ScriptExecutionContext&);
+    Ref<DatabaseContext> databaseContext(Document&);
 
-    ExceptionOr<Ref<Database>> openDatabase(ScriptExecutionContext&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&&);
+    ExceptionOr<Ref<Database>> openDatabase(Document&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&&);
 
-    WEBCORE_EXPORT bool hasOpenDatabases(ScriptExecutionContext&);
-    void stopDatabases(ScriptExecutionContext&, DatabaseTaskSynchronizer*);
+    WEBCORE_EXPORT bool hasOpenDatabases(Document&);
+    void stopDatabases(Document&, DatabaseTaskSynchronizer*);
 
     WEBCORE_EXPORT String fullPathForDatabase(SecurityOrigin&, const String& name, bool createIfDoesNotExist = true);
 
@@ -75,14 +75,14 @@ private:
     void platformInitialize(const String& databasePath);
 
     enum OpenAttempt { FirstTryToOpenDatabase, RetryOpenDatabase };
-    ExceptionOr<Ref<Database>> openDatabaseBackend(ScriptExecutionContext&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase);
-    ExceptionOr<Ref<Database>> tryToOpenDatabaseBackend(ScriptExecutionContext&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase, OpenAttempt);
+    ExceptionOr<Ref<Database>> openDatabaseBackend(Document&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase);
+    ExceptionOr<Ref<Database>> tryToOpenDatabaseBackend(Document&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase, OpenAttempt);
 
     class ProposedDatabase;
     void addProposedDatabase(ProposedDatabase&);
     void removeProposedDatabase(ProposedDatabase&);
 
-    static void logErrorMessage(ScriptExecutionContext&, const String& message);
+    static void logErrorMessage(Document&, const String& message);
 
     DatabaseManagerClient* m_client { nullptr };
     bool m_databaseIsAvailable { true };

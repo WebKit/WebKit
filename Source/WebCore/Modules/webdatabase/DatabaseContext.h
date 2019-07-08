@@ -60,13 +60,13 @@ public:
     bool allowDatabaseAccess() const;
     void databaseExceededQuota(const String& name, DatabaseDetails);
 
-    using ActiveDOMObject::scriptExecutionContext;
+    Document* document() const { return downcast<Document>(ActiveDOMObject::scriptExecutionContext()); }
     const SecurityOriginData& securityOrigin() const;
 
     bool isContextThread() const;
 
 private:
-    explicit DatabaseContext(ScriptExecutionContext&);
+    explicit DatabaseContext(Document&);
 
     void stopDatabases() { stopDatabases(nullptr); }
 

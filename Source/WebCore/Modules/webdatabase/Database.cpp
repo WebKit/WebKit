@@ -193,15 +193,15 @@ static inline DatabaseGUID guidForOriginAndName(const String& origin, const Stri
 }
 
 Database::Database(DatabaseContext& context, const String& name, const String& expectedVersion, const String& displayName, unsigned long long estimatedSize)
-    : m_scriptExecutionContext(*context.scriptExecutionContext())
-    , m_contextThreadSecurityOrigin(m_scriptExecutionContext->securityOrigin()->isolatedCopy())
-    , m_databaseThreadSecurityOrigin(m_scriptExecutionContext->securityOrigin()->isolatedCopy())
+    : m_document(*context.document())
+    , m_contextThreadSecurityOrigin(m_document->securityOrigin().isolatedCopy())
+    , m_databaseThreadSecurityOrigin(m_document->securityOrigin().isolatedCopy())
     , m_databaseContext(context)
     , m_name((name.isNull() ? emptyString() : name).isolatedCopy())
     , m_expectedVersion(expectedVersion.isolatedCopy())
     , m_displayName(displayName.isolatedCopy())
     , m_estimatedSize(estimatedSize)
-    , m_filename(DatabaseManager::singleton().fullPathForDatabase(*m_scriptExecutionContext->securityOrigin(), m_name))
+    , m_filename(DatabaseManager::singleton().fullPathForDatabase(m_document->securityOrigin(), m_name))
     , m_databaseAuthorizer(DatabaseAuthorizer::create(unqualifiedInfoTableName))
 {
     {
@@ -226,14 +226,9 @@ DatabaseThread& Database::databaseThread()
 
 Database::~Database()
 {
-    // The reference to the ScriptExecutionContext needs to be cleared on the JavaScript thread.  If we're on that thread already, we can just let the RefPtr's destruction do the dereffing.
-    if (!m_scriptExecutionContext->isContextThread()) {
-        auto passedContext = WTFMove(m_scriptExecutionContext);
-        auto& contextRef = passedContext.get();
-        contextRef.postTask({ScriptExecutionContext::Task::CleanupTask, [passedContext = WTFMove(passedContext), databaseContext = WTFMove(m_databaseContext)] (ScriptExecutionContext& context) {
-            ASSERT_UNUSED(context, &context == passedContext.ptr());
-        }});
-    }
+    // The reference to the Document needs to be cleared on the JavaScript thread. If we're on that thread already, we can just let the RefPtr's destruction do the dereffing.
+    if (!isMainThread())
+        callOnMainThread([document = WTFMove(m_document), databaseContext = WTFMove(m_databaseContext)] { });
 
     // SQLite is "multi-thread safe", but each database handle can only be used
     // on a single thread at a time.
@@ -692,9 +687,8 @@ void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<
     LockHolder locker(m_transactionInProgressMutex);
     if (!m_isTransactionQueueEnabled) {
         if (errorCallback) {
-            RefPtr<SQLTransactionErrorCallback> errorCallbackProtector = WTFMove(errorCallback);
-            m_scriptExecutionContext->postTask([errorCallbackProtector](ScriptExecutionContext&) {
-                errorCallbackProtector->handleEvent(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed"));
+            callOnMainThread([errorCallback = makeRef(*errorCallback)]() {
+                errorCallback->handleEvent(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed"));
             });
         }
         return;
@@ -707,9 +701,8 @@ void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<
 
 void Database::scheduleTransactionCallback(SQLTransaction* transaction)
 {
-    RefPtr<SQLTransaction> transactionProtector(transaction);
-    m_scriptExecutionContext->postTask([transactionProtector] (ScriptExecutionContext&) {
-        transactionProtector->performPendingCallback();
+    callOnMainThread([transaction = makeRefPtr(transaction)] {
+        transaction->performPendingCallback();
     });
 }
 
@@ -757,7 +750,7 @@ void Database::incrementalVacuumIfNeeded()
 
 void Database::logErrorMessage(const String& message)
 {
-    m_scriptExecutionContext->addConsoleMessage(MessageSource::Storage, MessageLevel::Error, message);
+    m_document->addConsoleMessage(MessageSource::Storage, MessageLevel::Error, message);
 }
 
 Vector<String> Database::tableNames()
@@ -779,7 +772,7 @@ Vector<String> Database::tableNames()
 
 SecurityOriginData Database::securityOrigin()
 {
-    if (m_scriptExecutionContext->isContextThread())
+    if (isMainThread())
         return m_contextThreadSecurityOrigin->data();
     if (databaseThread().getThread() == &Thread::current())
         return m_databaseThreadSecurityOrigin->data();
@@ -798,7 +791,7 @@ void Database::didCommitWriteTransaction()
 
 bool Database::didExceedQuota()
 {
-    ASSERT(databaseContext().scriptExecutionContext()->isContextThread());
+    ASSERT(isMainThread());
     auto& tracker = DatabaseTracker::singleton();
     auto oldQuota = tracker.quota(securityOrigin());
     if (estimatedSize() <= oldQuota) {

@@ -278,9 +278,9 @@ void InspectorDatabaseAgent::executeSQL(const String& databaseId, const String& 
         return;
     }
 
-    database->transaction(TransactionCallback::create(&database->scriptExecutionContext(), query, requestCallback.copyRef()),
-        TransactionErrorCallback::create(&database->scriptExecutionContext(), requestCallback.copyRef()),
-        TransactionSuccessCallback::create(&database->scriptExecutionContext()));
+    database->transaction(TransactionCallback::create(&database->document(), query, requestCallback.copyRef()),
+        TransactionErrorCallback::create(&database->document(), requestCallback.copyRef()),
+        TransactionSuccessCallback::create(&database->document()));
 }
 
 String InspectorDatabaseAgent::databaseId(Database& database)
