@@ -1933,3 +1933,42 @@ webkit.org/b/175678 media/W3C/video/events/event_progress.html [ Pass Failure ]
 webkit.org/b/199013 [ Debug Mojave+ ] imported/w3c/web-platform-tests/websockets/Create-Secure-verify-url-set-non-default-port.any.html [ Pass Failure ]
 
 webkit.org/b/190882 [ Mojave+ ] animations/change-one-anim.html [ Pass Failure ]
+
+webkit.org/b/195635 scrollingcoordinator/mac/multiple-fixed.html [ Pass Timeout ]
+
+# <rdar://problem/48781098>
+[ Catalina+ ] fast/images/animated-heics-draw.html [ Pass ]
+[ Catalina+ ] fast/images/animated-heics-verify.html [ Pass ]
+
+# <rdar://problem/40172428>
+[ Catalina+ ] fast/text/font-collection.html [ ImageOnlyFailure ]
+[ Catalina+ ] fast/text/woff2.html [ ImageOnlyFailure ]
+
+# <rdar://problem/43305675>
+[ Catalina+ ] webaudio/silence-after-playback.html [ Failure ]
+
+# <rdar://problem/45056204>
+[ Catalina+ ] http/tests/cookies/third-party-cookie-relaxing.html [ Failure ]
+[ Catalina+ ] http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
+[ Catalina+ ] http/wpt/beacon/cors/cors-preflight-cookie.html [ Failure ]
+
+# <rdar://problem/50383285>
+[ Catalina+ ] imported/w3c/web-platform-tests/css/css-text/writing-system/writing-system-line-break-001.html [ ImageOnlyFailure ]
+
+# <rdar://problem/51055223>
+[ Catalina+ ] js/intl-numberformat.html [ Failure ]
+
+# <rdar://problem/51525184>
+[ Catalina+ ] imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-armenian.html [ ImageOnlyFailure ]
+
+# <rdar://problem/51751581>
+[ Catalina+ ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-schemes.html [ Failure ]
+
+# <rdar://problem/51762717>
+[ Catalina+ ] http/wpt/resource-timing/rt-cors.html [ Pass Failure ]
+[ Catalina+ ] http/wpt/resource-timing/rt-cors.worker.html [ Pass Failure ]
+[ Catalina+ ] http/wpt/resource-timing/rt-initiatorType-css.html [ Pass Failure ]
+[ Catalina+ ] http/wpt/resource-timing/rt-initiatorType.worker.html [ Pass Failure ]
+[ Catalina+ ] http/wpt/resource-timing/rt-initiatorType-script-module.html [ Pass Failure ]
+[ Catalina+ ] http/wpt/resource-timing/rt-initiatorType-element.html [ Pass Failure ]
+[ Catalina+ ] http/wpt/resource-timing/rt-initiatorType-xmlhttprequest.html [ Pass Failure ]

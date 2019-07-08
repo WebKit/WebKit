@@ -1,3 +1,13 @@
+2019-07-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add test expectations and baselines for Catalina
+        https://bugs.webkit.org/show_bug.cgi?id=199328
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort): Increment current version to 10.15 so that baseline search paths are correctly constructed for High Sierra.
+
 2019-07-08  Christopher Reid  <chris.reid@sony.com>
 
         Implement MappedFileData for Windows

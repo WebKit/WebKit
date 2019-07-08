@@ -30,28 +30,28 @@ layer at (0,0) size 785x887
             text run at (350,2) width 24: "one"
         RenderText {#text} at (373,0) size 85x18
           text run at (373,0) width 85: ". Within that "
-        RenderInline {CODE} at (0,0) size 24x15
-          RenderText {#text} at (457,2) size 24x15
-            text run at (457,2) width 24: "div"
-        RenderText {#text} at (480,0) size 77x18
-          text run at (480,0) width 77: ", we have a "
-        RenderInline {CODE} at (0,0) size 9x15
-          RenderText {#text} at (556,2) size 9x15
-            text run at (556,2) width 9: "p"
+        RenderInline {CODE} at (0,0) size 25x15
+          RenderText {#text} at (457,2) size 25x15
+            text run at (457,2) width 25: "div"
+        RenderText {#text} at (481,0) size 77x18
+          text run at (481,0) width 77: ", we have a "
+        RenderInline {CODE} at (0,0) size 8x15
+          RenderText {#text} at (557,2) size 8x15
+            text run at (557,2) width 8: "p"
         RenderText {#text} at (564,0) size 748x36
           text run at (564,0) width 184: " (paragraph) tag, after which"
           text run at (0,18) width 509: "we'd like to insert generated content. One way to do so would be the following:"
       RenderBlock {PRE} at (20,199) size 749x16 [color=#FF0000]
-        RenderInline {CODE} at (0,0) size 445x15
-          RenderText {#text} at (0,0) size 445x15
-            text run at (0,0) width 445: "div.box.one p:after{ content:'generated content here!'; }"
+        RenderInline {CODE} at (0,0) size 447x15
+          RenderText {#text} at (0,0) size 447x15
+            text run at (0,0) width 447: "div.box.one p:after{ content:'generated content here!'; }"
       RenderBlock {P} at (0,230) size 769x19
         RenderText {#text} at (0,0) size 741x18
           text run at (0,0) width 741: "But that doesn't work in Safari. However, if you drop one of the class names, as shown below, it works as expected:"
       RenderBlock {PRE} at (20,264) size 749x16 [color=#008000]
-        RenderInline {CODE} at (0,0) size 414x15
-          RenderText {#text} at (0,0) size 414x15
-            text run at (0,0) width 414: "div.box p:after{ content:'generated content here!'; }"
+        RenderInline {CODE} at (0,0) size 415x15
+          RenderText {#text} at (0,0) size 415x15
+            text run at (0,0) width 415: "div.box p:after{ content:'generated content here!'; }"
       RenderBlock {P} at (0,295) size 769x37
         RenderText {#text} at (0,0) size 294x18
           text run at (0,0) width 294: "Note also that the bug only applies to content "
@@ -67,9 +67,9 @@ layer at (0,0) size 785x887
         RenderText {#text} at (84,18) size 77x18
           text run at (84,18) width 77: " works fine:"
       RenderBlock {PRE} at (20,347) size 749x16 [color=#008000]
-        RenderInline {CODE} at (0,0) size 430x15
-          RenderText {#text} at (0,0) size 430x15
-            text run at (0,0) width 430: "div.box.one:after{ content:'generated content here!'; }"
+        RenderInline {CODE} at (0,0) size 431x15
+          RenderText {#text} at (0,0) size 431x15
+            text run at (0,0) width 431: "div.box.one:after{ content:'generated content here!'; }"
       RenderBlock {HR} at (0,375) size 769x3 [border: (1px inset #000000)]
       RenderBlock {H2} at (0,397) size 769x29
         RenderText {#text} at (0,0) size 477x28

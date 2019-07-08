@@ -54,8 +54,8 @@ layer at (0,0) size 800x600
           RenderInline {TT} at (0,0) size 118x15
             RenderText {#text} at (0,2) size 118x15
               text run at (0,2) width 118: "hyphens: manual"
-          RenderText {#text} at (117,0) size 118x18
-            text run at (117,0) width 118: " with soft hyphens"
+          RenderText {#text} at (117,0) size 119x18
+            text run at (117,0) width 119: " with soft hyphens"
         RenderBlock {DIV} at (0,50) size 344x234 [border: (3px solid #000000)]
           RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
           RenderText {#text} at (7,7) size 330x220

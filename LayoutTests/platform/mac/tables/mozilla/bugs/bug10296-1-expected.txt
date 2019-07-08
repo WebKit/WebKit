@@ -22,9 +22,9 @@ layer at (0,0) size 785x5950
         RenderInline {CODE} at (0,0) size 40x15
           RenderText {#text} at (379,2) size 40x15
             text run at (379,2) width 40: "500px"
-        RenderText {#text} at (418,0) size 764x54
+        RenderText {#text} at (418,0) size 765x54
           text run at (418,0) width 9: ". "
-          text run at (426,0) width 338: "The first one should have the height of the sum of its"
+          text run at (426,0) width 339: "The first one should have the height of the sum of its"
           text run at (0,18) width 40: "rows. "
           text run at (39,18) width 670: "The second and third can be handled however the browser wants, but there just here to make sure it does"
           text run at (0,36) width 144: "something reasonable."
@@ -378,11 +378,11 @@ layer at (0,0) size 785x5950
       RenderBlock {P} at (0,1886) size 769x37
         RenderText {#text} at (0,0) size 218x18
           text run at (0,0) width 218: "However, vertical-align values of "
-        RenderInline {CODE} at (0,0) size 63x15
-          RenderText {#text} at (217,2) size 63x15
-            text run at (217,2) width 63: "baseline"
-        RenderText {#text} at (279,0) size 759x36
-          text run at (279,0) width 480: " (the default, but could be overridden in a UA stylesheet) can make it taller"
+        RenderInline {CODE} at (0,0) size 64x15
+          RenderText {#text} at (217,2) size 64x15
+            text run at (217,2) width 64: "baseline"
+        RenderText {#text} at (280,0) size 759x36
+          text run at (280,0) width 479: " (the default, but could be overridden in a UA stylesheet) can make it taller"
           text run at (0,18) width 60: "than that:"
       RenderTable {TABLE} at (0,1938) size 292x145
         RenderTableSection {TBODY} at (0,0) size 292x144

@@ -50,14 +50,14 @@ layer at (8,8) size 769x1435
               RenderInline {CODE} at (0,0) size 63x30
                 RenderText {#text} at (283,6) size 63x30
                   text run at (283,6) width 63: "HEAD"
-              RenderText {#text} at (345,1) size 381x74
-                text run at (345,1) width 37: " as"
+              RenderText {#text} at (345,1) size 382x74
+                text run at (345,1) width 38: " as"
                 text run at (1,38) width 156: "children of "
               RenderInline {CODE} at (0,0) size 64x30
                 RenderText {#text} at (156,43) size 64x30
                   text run at (156,43) width 64: "HTML"
-              RenderText {#text} at (219,38) size 43x37
-                text run at (219,38) width 43: " - 2"
+              RenderText {#text} at (219,38) size 44x37
+                text run at (219,38) width 44: " - 2"
             RenderBlock {P} at (21,161) size 453x38 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 393x18
                 text run at (1,1) width 393: "If you have any comments to make regarding this test, e-mail"

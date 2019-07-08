@@ -1,3 +1,13 @@
+2019-07-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add test expectations and baselines for Catalina
+        https://bugs.webkit.org/show_bug.cgi?id=199328
+
+        Reviewed by Jonathan Bedard.
+
+        * platfrom/mac/*: Adding Catalina test expectations and baselines.
+        * platform/mac-mojave/*: Migrating Mojave baselines from platform/mac directory.
+
 2019-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] Viewport pops while loading sohu.com, xinhuanet.com, and various other websites
