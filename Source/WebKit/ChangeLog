@@ -1,3 +1,17 @@
+2019-07-08  Claudio Saavedra  <csaavedra@igalia.com>
+
+        REGRESSION(r246671): [WPE][GTK] Crash in NetworkProcess since the DNS cache landed
+        https://bugs.webkit.org/show_bug.cgi?id=199572
+
+        Reviewed by Michael Catanzaro.
+
+        The GError coming from the wrapped resolver shouldn't be freed,
+        but passed onto the caller.
+
+        * NetworkProcess/glib/WebKitCachedResolver.cpp:
+        (webkitCachedResolverLookupByNameAsync):
+        (webkitCachedResolverLookupByNameWithFlagsAsync):
+
 2019-07-07  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] touch-action should affect the behavior of pinch-to-zoom to show tabs in Safari
