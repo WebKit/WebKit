@@ -1,3 +1,18 @@
+2019-07-08  Christopher Reid  <chris.reid@sony.com>
+
+        Implement MappedFileData for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=198269
+
+        Reviewed by Darin Adler.
+
+        Original patch by Fujii Hironori.
+
+        Add Windows implementations for MappedFileData constructor and destructor.
+
+        * wtf/FileSystem.cpp:
+        * wtf/FileSystem.h:
+        * wtf/win/FileSystemWin.cpp:
+
 2019-07-08  Chris Dumez  <cdumez@apple.com>
 
         Add threading assertion to WTF::CompletionHandler

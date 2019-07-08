@@ -274,21 +274,17 @@ bool excludeFromBackup(const String&)
 
 #endif
 
+#if HAVE(MMAP)
+
 MappedFileData::~MappedFileData()
 {
-#if !OS(WINDOWS)
     if (!m_fileData)
         return;
     munmap(m_fileData, m_fileSize);
-#endif
 }
 
 MappedFileData::MappedFileData(const String& filePath, bool& success)
 {
-#if OS(WINDOWS)
-    // FIXME: Implement mapping
-    success = false;
-#else
     CString fsRep = fileSystemRepresentation(filePath);
     int fd = !fsRep.isNull() ? open(fsRep.data(), O_RDONLY) : -1;
     if (fd < 0) {
@@ -327,8 +323,9 @@ MappedFileData::MappedFileData(const String& filePath, bool& success)
     success = true;
     m_fileData = data;
     m_fileSize = size;
-#endif
 }
+
+#endif
 
 PlatformFileHandle openAndLockFile(const String& path, FileOpenMode openMode, OptionSet<FileLockMode> lockMode)
 {

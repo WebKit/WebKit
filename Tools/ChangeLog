@@ -1,3 +1,12 @@
+2019-07-08  Christopher Reid  <chris.reid@sony.com>
+
+        Implement MappedFileData for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=198269
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/PlatformWin.cmake:
+
 2019-07-08  Charlie Turner  <cturner@igalia.com>
 
         REGRESSION(r243197): [GStreamer] Web process hangs when scrolling twitter timeline which contains HLS videos

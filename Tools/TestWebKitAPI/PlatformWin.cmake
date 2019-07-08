@@ -17,7 +17,6 @@ set(test_main_SOURCES
 )
 
 # TestWTF
-list(REMOVE_ITEM TestWTF_SOURCES Tests/WTF/FileSystem.cpp)
 list(APPEND TestWTF_SOURCES
     ${test_main_SOURCES}
     win/UtilitiesWin.cpp

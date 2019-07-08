@@ -588,5 +588,44 @@ bool deleteNonEmptyDirectory(const String& directoryPath)
     return !SHFileOperation(&deleteOperation);
 }
 
+MappedFileData::~MappedFileData()
+{
+    if (!m_fileData)
+        return;
+    UnmapViewOfFile(m_fileData);
+}
+
+MappedFileData::MappedFileData(const String& filePath, bool& success)
+{
+    success = false;
+    auto file = CreateFile(filePath.wideCharacters().data(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (file == INVALID_HANDLE_VALUE)
+        return;
+
+    long long size;
+    if (!getFileSize(file, size) || size > std::numeric_limits<size_t>::max() || size > std::numeric_limits<decltype(m_fileSize)>::max()) {
+        CloseHandle(file);
+        return;
+    }
+
+    if (!size) {
+        CloseHandle(file);
+        success = true;
+        return;
+    }
+
+    auto mapping = CreateFileMapping(file, nullptr, PAGE_READONLY, 0, 0, nullptr);
+    CloseHandle(file);
+    if (!mapping)
+        return;
+
+    m_fileData = MapViewOfFile(mapping, FILE_MAP_READ, 0, 0, size);
+    CloseHandle(mapping);
+    if (!m_fileData)
+        return;
+    m_fileSize = size;
+    success = true;
+}
+
 } // namespace FileSystemImpl
 } // namespace WTF
