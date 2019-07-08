@@ -199,7 +199,7 @@ private:
     GenericTaskQueue<Timer> m_eventTaskQueue;
 
     bool m_ended { false };
-    bool m_isCaptureTrack { false };
+    const bool m_isCaptureTrack { false };
 };
 
 typedef Vector<RefPtr<MediaStreamTrack>> MediaStreamTrackVector;
