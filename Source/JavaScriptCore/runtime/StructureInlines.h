@@ -34,6 +34,20 @@
 
 namespace JSC {
 
+inline Structure* Structure::create(VM& vm, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity)
+{
+    ASSERT(vm.structureStructure);
+    ASSERT(classInfo);
+    if (auto* object = prototype.getObject()) {
+        ASSERT(!object->anyObjectInChainMayInterceptIndexedAccesses(vm) || hasSlowPutArrayStorage(indexingType) || !hasIndexedProperties(indexingType));
+        object->didBecomePrototype();
+    }
+
+    Structure* structure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm, globalObject, prototype, typeInfo, classInfo, indexingType, inlineCapacity);
+    structure->finishCreation(vm);
+    return structure;
+}
+
 inline Structure* Structure::createStructure(VM& vm)
 {
     ASSERT(!vm.structureStructure);
@@ -492,6 +506,7 @@ inline PropertyOffset Structure::removePropertyWithoutTransition(VM&, PropertyNa
 
 ALWAYS_INLINE void Structure::setPrototypeWithoutTransition(VM& vm, JSValue prototype)
 {
+    ASSERT(isValidPrototype(prototype));
     m_prototype.set(vm, this, prototype);
 }
 
