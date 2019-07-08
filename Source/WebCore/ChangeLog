@@ -1,5 +1,47 @@
 2019-07-08  Youenn Fablet  <youenn@apple.com>
 
+        MediaStreamTrackPrivate should always call readyStateChanged on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=199538
+        <rdar://problem/52709106>
+
+        Reviewed by Eric Carlson.
+
+        MediaStreamTrackPrivate is sometimes calling readyStateChanged in a
+        background thread inside its audioSamplesAvailable method.
+        Instead of doing that, we hop to the main thread to call readyStateChanged.
+        Once the call is made in the main thread, MediaStreamTrackPrivate will
+        send the audio samples to its observers.
+
+        To make mock audio source closer to real capture audio sources,
+        audioSamplesAvailable is called on a background thread.
+        RealtimeMediaSource is updated to always be destroyed in the main
+        run loop since it is WebKit2 only.
+
+        Covered by existing tests and making sure the mock audio source calls
+        the audioSamplesAvailable method on a background thread.
+
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::videoSampleAvailable):
+        (WebCore::MediaStreamTrackPrivate::audioSamplesAvailable):
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::scheduleDeferredTask):
+        scheduleDeferredTask may be called from a background thread.
+        It is thus safer to ref the source instead of creating a weak pointer.
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm:
+        (WebCore::MockRealtimeAudioSourceMac::MockRealtimeAudioSourceMac):
+        (WebCore::MockRealtimeAudioSourceMac::emitSampleBuffers):
+        (WebCore::MockRealtimeAudioSourceMac::reconfigure):
+        (WebCore::MockRealtimeAudioSourceMac::render):
+        (WebCore::MockRealtimeAudioSourceMac::settingsDidChange):
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::MockRealtimeAudioSource):
+        (WebCore::MockRealtimeAudioSource::tick):
+        * platform/mock/MockRealtimeAudioSource.h:
+
+2019-07-08  Youenn Fablet  <youenn@apple.com>
+
         Register a MediaStreamTrack as media producer only if it is a capture track
         https://bugs.webkit.org/show_bug.cgi?id=199566
 

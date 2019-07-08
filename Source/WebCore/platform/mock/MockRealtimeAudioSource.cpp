@@ -62,6 +62,7 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&&
 
 MockRealtimeAudioSource::MockRealtimeAudioSource(String&& deviceID, String&& name, String&& hashSalt)
     : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt))
+    , m_workQueue(WorkQueue::create("MockRealtimeAudioSource Render Queue"))
     , m_timer(RunLoop::current(), this, &MockRealtimeAudioSource::tick)
 {
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(persistentID());
@@ -151,7 +152,10 @@ void MockRealtimeAudioSource::tick()
 
     Seconds delta = now - m_lastRenderTime;
     m_lastRenderTime = now;
-    render(delta);
+
+    m_workQueue->dispatch([this, delta, protectedThis = makeRef(*this)] {
+        render(delta);
+    });
 }
 
 void MockRealtimeAudioSource::delaySamples(Seconds delta)

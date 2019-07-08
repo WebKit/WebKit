@@ -242,6 +242,7 @@ bool MediaStreamTrackPrivate::preventSourceFromStopping()
 
 void MediaStreamTrackPrivate::videoSampleAvailable(MediaSample& mediaSample)
 {
+    ASSERT(isMainThread());
     if (!m_haveProducedData) {
         m_haveProducedData = true;
         updateReadyState();
@@ -259,16 +260,21 @@ void MediaStreamTrackPrivate::videoSampleAvailable(MediaSample& mediaSample)
 // May get called on a background thread.
 void MediaStreamTrackPrivate::audioSamplesAvailable(const MediaTime& mediaTime, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
 {
-    if (!m_haveProducedData) {
-        m_haveProducedData = true;
-        updateReadyState();
+    if (!m_hasSentStartProducedData) {
+        callOnMainThread([this, protectedThis = makeRef(*this)] {
+            if (!m_haveProducedData) {
+                m_haveProducedData = true;
+                updateReadyState();
+            }
+            m_hasSentStartProducedData = true;
+        });
+        return;
     }
 
     forEachObserver([&](auto& observer) {
         observer.audioSamplesAvailable(*this, mediaTime, data, description, sampleCount);
     });
 }
-
 
 void MediaStreamTrackPrivate::updateReadyState()
 {

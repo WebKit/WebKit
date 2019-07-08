@@ -41,7 +41,7 @@ class RealtimeMediaSourceCapabilities;
 class WebAudioSourceProvider;
 
 class MediaStreamTrackPrivate final
-    : public RefCounted<MediaStreamTrackPrivate>
+    : public ThreadSafeRefCounted<MediaStreamTrackPrivate, WTF::DestructionThread::Main>
     , public RealtimeMediaSource::Observer
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
@@ -151,6 +151,7 @@ private:
     bool m_isEnabled { true };
     bool m_isEnded { false };
     bool m_haveProducedData { false };
+    bool m_hasSentStartProducedData { false };
     HintValue m_contentHint { HintValue::Empty };
     RefPtr<WebAudioSourceProvider> m_audioSourceProvider;
     Ref<const Logger> m_logger;

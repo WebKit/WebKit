@@ -67,7 +67,7 @@ class RemoteVideoSample;
 struct CaptureSourceOrError;
 
 class WEBCORE_EXPORT RealtimeMediaSource
-    : public ThreadSafeRefCounted<RealtimeMediaSource>
+    : public ThreadSafeRefCounted<RealtimeMediaSource, WTF::DestructionThread::MainRunLoop>
     , public CanMakeWeakPtr<RealtimeMediaSource>
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
