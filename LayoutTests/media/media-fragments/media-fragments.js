@@ -77,7 +77,7 @@
 
     function pause()
     {
-        const maximumStopDelta = 0.5;
+        const maximumStopDelta = 0.75;
         var delta = Math.abs(video.currentTime - fragmentEndTime).toFixed(2);
         reportExpected((delta <= maximumStopDelta), ("video.currentTime - fragmentEndTime"), "<=", maximumStopDelta, delta);
 

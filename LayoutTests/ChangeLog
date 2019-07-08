@@ -1,3 +1,29 @@
+2019-07-08  Charlie Turner  <cturner@igalia.com>
+
+        [GTK] Some media fragment tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=132248
+
+        Reviewed by Eric Carlson.
+
+        These tests look like they're flakey due to a small stop time. I'm
+        surmising that based on the bot's load, we step over the 0.5 mark
+        often. When I run this locally, despite running the fragment tests
+        100 times, I saw no timeouts.
+
+        I have seen crashes in the flakiness dashboard, but I would prefer
+        for these to have separate bugs so that we can squash them rather
+        than allowing them to linger. Having them expected to crash means
+        we have no crash logs to investigate.
+
+        Updated the baselines in the LayoutTests/ directory to reflect the
+        new stop time delta.
+
+        * media/media-fragments/media-fragments.js:
+        (pause): Increase stop delta, on simulator builds the stddev
+        crossed the 0.5s mark, and I suspect on GTK builds, our bots being
+        heavily loaded cause the majority of timeouts.
+        * platform/gtk/TestExpectations: Remove expectations.
+
 2019-07-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add test expectations and baselines for Catalina
