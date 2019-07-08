@@ -1,3 +1,15 @@
+2019-07-08  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Enable only on the most recent version of the supported iOS family
+        https://bugs.webkit.org/show_bug.cgi?id=199562
+        <rdar://problem/52766511>
+
+        Reviewed by Dean Jackson.
+
+        * js/dom/navigator-maxtouchpoints-expected.txt: Since ENABLE_POINTER_EVENTS is now disabled by default, navigator.maxTouchPoints
+        is "undefined" in thed default case.
+        * platform/mac/js/dom/navigator-maxtouchpoints-expected.txt: But 0 on macOS.
+
 2019-07-07  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Difficult to control videos on iqiyi.com as the actions are mouse hover

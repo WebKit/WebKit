@@ -39,9 +39,7 @@
 
 @protocol WKTouchActionGestureRecognizerDelegate <NSObject>
 - (BOOL)gestureRecognizerMayPinchToZoomWebView:(UIGestureRecognizer *)gestureRecognizer;
-#if HAVE(UI_WEB_TOUCH_EVENTS_GESTURE_RECOGNIZER_WITH_ACTIVE_TOUCHES_BY_ID)
 - (NSMapTable<NSNumber *, UITouch *> *)touchActionActiveTouches;
-#endif
 @end
 
 #endif

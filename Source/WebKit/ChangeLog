@@ -1,3 +1,22 @@
+2019-07-08  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Enable only on the most recent version of the supported iOS family
+        https://bugs.webkit.org/show_bug.cgi?id=199562
+        <rdar://problem/52766511>
+
+        Reviewed by Dean Jackson.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cancelPointersForGestureRecognizer:]):
+        (-[WKContentView activeTouchIdentifierForGestureRecognizer:]):
+        (-[WKContentView touchActionActiveTouches]):
+        * UIProcess/ios/WKSyntheticTapGestureRecognizer.m:
+        (-[WKSyntheticTapGestureRecognizer touchesEnded:withEvent:]):
+        * UIProcess/ios/WKTouchActionGestureRecognizer.h:
+        * UIProcess/ios/WKTouchActionGestureRecognizer.mm:
+        (-[WKTouchActionGestureRecognizer canPreventGestureRecognizer:]):
+
 2019-07-08  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] ViewGestureController constructor leaves m_direction uninitialized

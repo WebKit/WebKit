@@ -78,7 +78,7 @@
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     [super touchesEnded:touches withEvent:event];
-#if ENABLE(POINTER_EVENTS) && HAVE(UI_WEB_TOUCH_EVENTS_GESTURE_RECOGNIZER_WITH_ACTIVE_TOUCHES_BY_ID)
+#if ENABLE(POINTER_EVENTS)
     if (!_supportingWebTouchEventsGestureRecognizer)
         return;
 

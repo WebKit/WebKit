@@ -86,7 +86,6 @@
     return NO;
 }
 
-#if HAVE(UI_WEB_TOUCH_EVENTS_GESTURE_RECOGNIZER_WITH_ACTIVE_TOUCHES_BY_ID)
 - (BOOL)canPreventGestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer
 {
     if (_touchActionsByTouchIdentifier.isEmpty())
@@ -111,7 +110,6 @@
 
     return NO;
 }
-#endif
 
 @end
 
