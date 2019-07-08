@@ -1,3 +1,16 @@
+2019-07-08  Alex Christensen  <achristensen@webkit.org>
+
+        Prevent null dereferencing in SubresourceLoader::init's lambda
+        https://bugs.webkit.org/show_bug.cgi?id=199580
+
+        Reviewed by Ryosuke Niwa.
+
+        Crash logs indicate that sometimes m_documentLoader is null.
+        This is similar to https://bugs.webkit.org/show_bug.cgi?id=187360
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::init):
+
 2019-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unable to paste from Notes into Excel 365 spreadsheet

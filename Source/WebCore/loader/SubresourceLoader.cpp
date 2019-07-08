@@ -164,6 +164,11 @@ void SubresourceLoader::init(ResourceRequest&& request, CompletionHandler<void(b
     ResourceLoader::init(WTFMove(request), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (bool initialized) mutable {
         if (!initialized)
             return completionHandler(false);
+        if (!m_documentLoader) {
+            ASSERT_NOT_REACHED();
+            RELEASE_LOG_ERROR(ResourceLoading, "SubresourceLoader::init: resource load canceled because document loader is null (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
+            return completionHandler(false);
+        }
         ASSERT(!reachedTerminalState());
         m_state = Initialized;
         m_documentLoader->addSubresourceLoader(this);
