@@ -1,5 +1,31 @@
 2019-07-08  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Support select all in non-editable element
+        https://bugs.webkit.org/show_bug.cgi?id=199257
+        <rdar://problem/52553667>
+
+        Reviewed by Wenson Hsieh.
+
+        Add a test to ensure that we can perform Select All even when a non-editable element is focused.
+
+        Also disallow testing of Command + A until we fix <https://bugs.webkit.org/show_bug.cgi?id=199475>.
+        Otherwise, the test fast/events/ios/key-events-comprehensive/key-events-meta.html fails since
+        Command + A now triggers page selection even in a non-editable (the purpose of this change)
+        and hence Command + C also triggers the copy command. The triggering of these commands causes
+        the test to fail the Command + A and Command + C sub-tests since no keypress event is dispatched
+        for the key that triggered these key commands. This is expected, but Command + A should not have
+        triggered selection as key-tester.js calls preventDefault() from a keypress handler. That's
+        the bug. See <https://bugs.webkit.org/show_bug.cgi?id=199475> for more details.
+
+        * editing/selection/ios/select-all-non-editable-text-using-keyboard-expected.txt: Added.
+        * editing/selection/ios/select-all-non-editable-text-using-keyboard.html: Added.
+        * fast/events/ios/key-events-comprehensive/key-events-meta-expected.txt: Updated result.
+        * fast/events/ios/resources/key-tester.js: Disallow Command + A until we fix <https://bugs.webkit.org/show_bug.cgi?id=199475>.
+        * platform/ios/TestExpectations: Skip the test until the fix for <rdar://problem/48322899>
+        has shipped.
+
+2019-07-08  Daniel Bates  <dabates@apple.com>
+
         Command + . generates Escape with key identifier Period, should be Escape
         https://bugs.webkit.org/show_bug.cgi?id=199393
         <rdar://problem/52498001>

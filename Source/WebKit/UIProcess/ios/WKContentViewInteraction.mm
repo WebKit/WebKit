@@ -3099,7 +3099,11 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         // By platform convention we don't show Select All in the callout menu for a range selection.
         if ([sender isKindOfClass:UIMenuController.class])
             return !editorState.selectionIsNone && !editorState.selectionIsRange;
+#if USE(UIKIT_KEYBOARD_ADDITIONS)
+        return YES;
+#else
         return !editorState.selectionIsNone && self.hasContent;
+#endif
     }
 
     if (action == @selector(replace:))

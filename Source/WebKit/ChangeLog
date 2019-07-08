@@ -1,3 +1,18 @@
+2019-07-08  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Support select all in non-editable element
+        https://bugs.webkit.org/show_bug.cgi?id=199257
+        <rdar://problem/52553667>
+
+        Reviewed by Wenson Hsieh.
+
+        Unless we are populating the callout bar always advertise that WebKit can perform Select All
+        when building with USE(UIKIT_KEYBOARD_ADDITIONS). This way you can press Command + A to select
+        all text even in a non-editable element just like you can on Mac.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+
 2019-07-08  Chris Dumez  <cdumez@apple.com>
 
         Cleanup uses of NetworkProcess::m_sessionByConnection

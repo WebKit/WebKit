@@ -1,12 +1,6 @@
 This logs DOM keydown, keyup, keypress events that are dispatched when pressing key commands of the form Command + X. Must be run in WebKitTestRunner.
 
 
-Test Command + a:
-type: keydown, key: Meta, code: MetaLeft, keyIdentifier: Meta, keyCode: 91, charCode: 0, keyCode: 91, which: 91, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false, location: 1, keyLocation: 1
-type: keydown, key: a, code: KeyA, keyIdentifier: U+0041, keyCode: 65, charCode: 0, keyCode: 65, which: 65, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false, location: 0, keyLocation: 0
-type: keypress, key: a, code: KeyA, keyIdentifier: , keyCode: 97, charCode: 97, keyCode: 97, which: 97, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false, location: 0, keyLocation: 0
-type: keyup, key: Meta, code: MetaLeft, keyIdentifier: Meta, keyCode: 91, charCode: 0, keyCode: 91, which: 91, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
-
 Test Command + b:
 type: keydown, key: Meta, code: MetaLeft, keyIdentifier: Meta, keyCode: 91, charCode: 0, keyCode: 91, which: 91, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false, location: 1, keyLocation: 1
 type: keydown, key: b, code: KeyB, keyIdentifier: U+0042, keyCode: 66, charCode: 0, keyCode: 66, which: 66, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false, location: 0, keyLocation: 0

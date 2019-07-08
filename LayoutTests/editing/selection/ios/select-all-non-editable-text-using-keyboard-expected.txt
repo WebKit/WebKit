@@ -1,0 +1,10 @@
+Tests pressing Command + a to select all non-editable text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getSelection().toString() is "Here's to the crazy ones.\n\nThe misfits.\n\nThe rebels."
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

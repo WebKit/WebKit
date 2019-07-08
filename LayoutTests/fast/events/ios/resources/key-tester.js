@@ -75,6 +75,9 @@ let disallowedKeyCommands = [
     new KeyCommand("]", ["metaKey"]),
     new KeyCommand("r", ["metaKey"]),
     new KeyCommand("r", ["metaKey", "altKey"]),
+
+    // FIXME: Command + A cannot be prevented from keypress. See <https://bugs.webkit.org/show_bug.cgi?id=199475>.
+    new KeyCommand("a", ["metaKey"]),
 ];
 for (let i = 1; i <= 9; ++i)
     disallowedKeyCommands.push(new KeyCommand(i, ["metaKey"]));
