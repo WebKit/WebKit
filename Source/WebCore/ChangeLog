@@ -1,3 +1,60 @@
+2019-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unable to paste from Notes into Excel 365 spreadsheet
+        https://bugs.webkit.org/show_bug.cgi?id=199565
+        <rdar://problem/43615497>
+
+        Reviewed by Chris Dumez.
+
+        When pasting into Microsoft Excel 365, the copied data is all inserted into a single cell, even when copying a
+        table. To understand why this happens, we first need to understand how Excel's logic for handling paste works.
+        When tapping on the "Paste" button, Excel performs and expects the following:
+
+        1.  Before triggering programmatic paste, move focus into a hidden contenteditable area specifically intended to
+            capture pasted content.
+        2.  Run a promise that resolves immediately; the promise callback restores focus to the originally focused
+            element prior to (1).
+        3.  Invoke programmatic paste using `document.execCommand("Paste")`.
+        4.  The callback scheduled in step (2) then runs, restoring focus to the main editable element representing a
+            table cell.
+
+        However, what ends up happening is this:
+
+        Steps (1)-(3): same as before.
+        4.  We (WebKit) create a temporary Page for the purposes of sanitizing copied web content before exposing it to
+            the paste handler. This involves creating and loading a document; when this is finished, we call into
+            Document::finishedParsing which flushes the microtask queue.
+        5.  This causes us to immediately run the microtask enqueued in step (2), which restores focus to the previously
+            focused element (importantly, this is not the element that was focused in step (1)).
+        6.  The paste commences, and inserts the sanitized fragment into the originally focused element rather than the
+            content editable area intended to capture pasted content.
+
+        Excel's script then gets confused, and does not end up using their special paste logic to handle the paste. The
+        pasted content is instead just inserted as plain text in a cell. To address this, we simply prevent document
+        load in the Page for web content sanitization from triggering a microtask checkpoint; this allows any scheduled
+        main thread microtasks to be deferred until the next turn of the runloop.
+
+        Test: editing/pasteboard/paste-does-not-fire-promises-while-sanitizing-web-content.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::finishedParsing):
+
+        Don't immediately dispatch microtasks when we finish document parsing, in the case where the page is intended
+        only for web content sanitization, since this may end up executing script in the original document. As explained
+        above, this causes compatibility issues when pasting in Excel.
+
+        * editing/markup.cpp:
+        (WebCore::createPageForSanitizingWebContent):
+
+        When creating a page for sanitizing web content, mark it as such.
+
+        * page/Page.h:
+
+        Add a new flag to indicate that a Page is only intended for sanitizing web content.
+
+        (WebCore::Page::setIsForSanitizingWebContent):
+        (WebCore::Page::isForSanitizingWebContent const):
+
 2019-07-08  Konstantin Tokarev  <annulen@yandex.ru>
 
         Remove unused #include "ImageBufferData.h"

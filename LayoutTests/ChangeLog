@@ -1,3 +1,17 @@
+2019-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unable to paste from Notes into Excel 365 spreadsheet
+        https://bugs.webkit.org/show_bug.cgi?id=199565
+        <rdar://problem/43615497>
+
+        Reviewed by Chris Dumez.
+
+        Add a test to verify that promises scheduled right before a programmatic paste resolve in the middle of the
+        paste, while creating a document for web content sanitization. See WebCore ChangeLog for more details.
+
+        * editing/pasteboard/paste-does-not-fire-promises-while-sanitizing-web-content-expected.txt: Added.
+        * editing/pasteboard/paste-does-not-fire-promises-while-sanitizing-web-content.html: Added.
+
 2019-07-08  Chris Dumez  <cdumez@apple.com>
 
         Unable to play videos on xfinity.com/stream on macOS Catalina
