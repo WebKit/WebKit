@@ -29,7 +29,6 @@
 
 #include "ExceptionOr.h"
 #include "ImageBitmapRenderingContextSettings.h"
-#include "ImageBufferData.h"
 #include <memory>
 #include <wtf/RefPtr.h>
 
