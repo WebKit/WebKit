@@ -49,12 +49,12 @@ public:
     void cancel() override;
     void pause() override;
     void resume() override;
-    
+private:
     void setObserver(WeakPtr<WebCore::SpeechSynthesisClientObserver> observer) override { m_observer = observer; }
     WeakPtr<WebCore::SpeechSynthesisClientObserver> observer() const override { return m_observer; }
-    
 
-private:
+    WebCore::SpeechSynthesisClientObserver* corePageObserver() const;
+    
     WebPage& m_page;
     WeakPtr<WebCore::SpeechSynthesisClientObserver> m_observer;
     Vector<RefPtr<WebCore::PlatformSpeechSynthesisVoice>> m_voices;
