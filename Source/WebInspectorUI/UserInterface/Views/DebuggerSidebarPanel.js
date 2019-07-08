@@ -532,10 +532,8 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         } else if (breakpoint instanceof WI.URLBreakpoint) {
             constructor = WI.URLBreakpointTreeElement;
 
-            if (breakpoint === WI.domDebuggerManager.allRequestsBreakpoint) {
-                options.className = WI.DebuggerSidebarPanel.AssertionIconStyleClassName;
+            if (breakpoint === WI.domDebuggerManager.allRequestsBreakpoint)
                 options.title = WI.repeatedUIString.allRequests();
-            }
         } else {
             let sourceCode = breakpoint.sourceCodeLocation && breakpoint.sourceCodeLocation.displaySourceCode;
             if (!sourceCode)

@@ -1,5 +1,26 @@
 2019-07-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Debugger: there should be a different icon for URL breakpoints
+        https://bugs.webkit.org/show_bug.cgi?id=199550
+
+        Reviewed by Joseph Pecoraro.
+
+        Use the same (down|up) arrow icon for the Network Tab and the Network timeline.
+
+        * UserInterface/Views/URLBreakpointTreeElement.js:
+        (WI.URLBreakpointTreeElement):
+        * UserInterface/Views/URLBreakpointTreeElement.css:
+        (.breakpoint.url:not(.breakpoint-paused-icon) .icon): Added.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype._addBreakpoint):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype._addBreakpoint):
+
+        * UserInterface/Images/URLBreakpoint.svg: Added.
+
+2019-07-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Timelines: CPU: the Duration string isn't localized
         https://bugs.webkit.org/show_bug.cgi?id=199582
         <rdar://problem/51698165>

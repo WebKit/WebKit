@@ -26,3 +26,7 @@
 .breakpoint.url .subtitle {
     font-family: Menlo, monospace;
 }
+
+.breakpoint.url:not(.breakpoint-paused-icon) .icon {
+    content: url(../Images/URLBreakpoint.svg);
+}

@@ -954,10 +954,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         } else if (breakpoint instanceof WI.URLBreakpoint) {
             constructor = WI.URLBreakpointTreeElement;
 
-            if (breakpoint === WI.domDebuggerManager.allRequestsBreakpoint) {
-                options.className = "breakpoint-assertion-icon";
+            if (breakpoint === WI.domDebuggerManager.allRequestsBreakpoint)
                 options.title = WI.repeatedUIString.allRequests();
-            }
         } else {
             let sourceCode = breakpoint.sourceCodeLocation && breakpoint.sourceCodeLocation.displaySourceCode;
             if (!sourceCode)
