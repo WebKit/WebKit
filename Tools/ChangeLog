@@ -1,3 +1,16 @@
+2019-07-08  Jonathan Bedard  <jbedard@apple.com>
+
+        test-webkitpy: Explicitly use Python 2.7 lldb library
+        https://bugs.webkit.org/show_bug.cgi?id=199578
+        <rdar://problem/51853557>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/common/system/systemhost.py:
+        (SystemHost.path_to_lldb_python_directory): Explicitly use Python 2.7 lldb libary.
+        * Scripts/webkitpy/test/main.py:
+        (_supports_building_and_running_lldb_tests): Run lldb tests on Catalina again.
+
 2019-07-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add test expectations and baselines for Catalina

@@ -54,7 +54,9 @@ class SystemHost(object):
     def path_to_lldb_python_directory(self):
         if not self.platform.is_mac():
             return ''
-        return self.executive.run_command(['xcrun', 'lldb', '--python-path'], return_stderr=False).rstrip()
+        # Explicitly use Python 2.7
+        path = self.executive.run_command(['xcrun', 'lldb', '--python-path'], return_stderr=False).rstrip()
+        return self.filesystem.join(self.filesystem.dirname(path), 'Python')
 
     @property
     def device_type(self):

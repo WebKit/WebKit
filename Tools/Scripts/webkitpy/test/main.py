@@ -107,7 +107,7 @@ def _supports_building_and_running_lldb_tests():
     build_version = _host.platform.build_version()
     if build_version is None:
         return False
-    return not build_version.startswith('19A')
+    return True
 
 
 def _print_results_as_json(stream, all_test_names, failures, errors):
