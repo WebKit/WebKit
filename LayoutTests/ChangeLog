@@ -1,3 +1,19 @@
+2019-07-08  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] media/video-volume.html broken after switching from cubic to linear scaling
+        https://bugs.webkit.org/show_bug.cgi?id=199505
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        PulseAudio has a conversion process from volume's in
+        double-precision to uint32_t volumes. Depending on the environment
+        can introduce rounding errors. Be more lenient in our comparison
+        code.
+
+        * media/video-volume-expected.txt: Update baseline
+        * media/video-volume.html: Compare volume values within a
+        reasonable tolerance.
+
 2019-07-08  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Enable only on the most recent version of the supported iOS family
