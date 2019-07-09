@@ -607,7 +607,6 @@ static NSInvocation *decodeInvocation(WKRemoteObjectDecoder *decoder)
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Invocation had no type signature"];
 
     NSMethodSignature *remoteMethodSignature = [NSMethodSignature signatureWithObjCTypes:typeSignature.UTF8String];
-    localMethodSignature = remoteMethodSignature;
     if (![localMethodSignature isEqual:remoteMethodSignature])
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Local and remote method signatures are not equal for method \"%s\"", selector ? sel_getName(selector) : "(no selector)"];
 
