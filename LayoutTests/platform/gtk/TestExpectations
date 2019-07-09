@@ -1230,8 +1230,6 @@ webkit.org/b/135050 legacy-animation-engine/animations/animation-end-event-short
 
 webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html [ ImageOnlyFailure Crash Pass ]
 
-webkit.org/b/152043 [ Debug ] http/tests/media/hls [ Timeout Crash ]
-
 webkit.org/b/152642 http/tests/misc/detached-frame-console.html [ Crash Pass Timeout Failure ]
 
 webkit.org/b/153692 imported/blink/fast/css/first-letter-float-block.html [ Crash Pass ]
@@ -1851,9 +1849,6 @@ webkit.org/b/186143 imported/mozilla/css-animations/test_event-dispatch.html [ T
 
 webkit.org/b/184569 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
 
-webkit.org/b/186598 http/tests/media/hls/hls-audio-tracks.html [ Timeout Pass ]
-webkit.org/b/186598 http/tests/media/hls/hls-audio-tracks-has-audio.html [ Timeout Pass ]
-
 # Tests that fail on the EWS queue since we enabled tests there
 webkit.org/b/186638 printing/print-close-crash.html [ Timeout Pass Crash ]
 webkit.org/b/186638 fast/media/print-restores-previous-mediatype.html [ Timeout Pass Crash ]
@@ -2139,8 +2134,6 @@ webkit.org/b/189999 legacy-animation-engine/animations/animation-direction-rever
 webkit.org/b/198823 imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html [ Failure Pass ]
 
 webkit.org/b/198824 media/video-transformed.html [ Failure Pass ]
-
-webkit.org/b/198825 http/tests/media/hls/video-controls-live-stream.html [ Timeout Pass Failure ]
 
 webkit.org/b/198826 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-001.html [ Timeout Pass ]
 
