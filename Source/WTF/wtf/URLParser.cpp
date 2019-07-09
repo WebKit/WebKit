@@ -2294,7 +2294,7 @@ Expected<URLParser::IPv4Address, URLParser::IPv4ParsingError> URLParser::parseIP
         if (!iterator.atEnd() && *iterator == '.') {
             ++iterator;
             if (iterator.atEnd())
-                syntaxViolation(iteratorForSyntaxViolationPosition);
+                didSeeSyntaxViolation = true;
             else if (*iterator == '.')
                 return makeUnexpected(IPv4ParsingError::NotIPv4);
         }
