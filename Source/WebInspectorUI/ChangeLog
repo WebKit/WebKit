@@ -1,5 +1,17 @@
 2019-07-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION: Elements: pasting in the Styles sidebar adds a text node to the DOM tree
+        https://bugs.webkit.org/show_bug.cgi?id=199588
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WI._paste):
+        Bail if `event.defaultPrevented`, as that means that something else has handled (and likely
+        overrode) this event.
+
+2019-07-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: the "x" in the Exception icon overlaps the border
         https://bugs.webkit.org/show_bug.cgi?id=199553
 

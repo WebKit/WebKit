@@ -2623,6 +2623,9 @@ WI._copy = function(event)
 
 WI._paste = function(event)
 {
+    if (event.defaultPrevented)
+        return;
+
     let selection = window.getSelection();
 
     // If there is no selection, pass the paste event on to the focused element or focused ContentView.
