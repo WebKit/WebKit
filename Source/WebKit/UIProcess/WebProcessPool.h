@@ -310,6 +310,7 @@ public:
     void setAllowsAnySSLCertificateForWebSocket(bool);
 
     void clearCachedCredentials();
+    void clearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace&&, CompletionHandler<void()>&&);
     void terminateNetworkProcess();
     void sendNetworkProcessWillSuspendImminently();
     void sendNetworkProcessDidResume();

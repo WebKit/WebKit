@@ -103,6 +103,14 @@ TEST(Challenge, SecIdentity)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
 
     Util::run(&navigationFinished);
+
+    // Clear persistent credentials created by this test.
+    NSURLProtectionSpace *protectionSpace = [[[NSURLProtectionSpace alloc] initWithHost:@"127.0.0.1" port:server.port() protocol:NSURLProtectionSpaceHTTP realm:@"testrealm" authenticationMethod:NSURLAuthenticationMethodHTTPBasic] autorelease];
+    __block bool removedCredential = false;
+    [[webView configuration].processPool _clearPermanentCredentialsForProtectionSpace:protectionSpace completionHandler:^{
+        removedCredential = true;
+    }];
+    Util::run(&removedCredential);
 }
 
 @interface ClientCertificateDelegate : NSObject <WKNavigationDelegate> {
@@ -198,13 +206,12 @@ TEST(Challenge, BasicProposedCredential)
     [webView loadRequest:request.get()];
     Util::run(&navigationFinished);
     EXPECT_TRUE(receivedSecondChallenge);
-    
+
+    // Clear persistent credentials created by this test.
+    NSURLProtectionSpace *protectionSpace = [[[NSURLProtectionSpace alloc] initWithHost:@"127.0.0.1" port:server.port() protocol:NSURLProtectionSpaceHTTP realm:@"testrealm" authenticationMethod:NSURLAuthenticationMethodHTTPBasic] autorelease];
     __block bool removedCredential = false;
-    WKWebsiteDataStore *websiteDataStore = [webView configuration].websiteDataStore;
-    [websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
-        [websiteDataStore removeDataOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] forDataRecords:dataRecords completionHandler:^(void) {
-            removedCredential = true;
-        }];
+    [[webView configuration].processPool _clearPermanentCredentialsForProtectionSpace:protectionSpace completionHandler:^{
+        removedCredential = true;
     }];
     Util::run(&removedCredential);
 }

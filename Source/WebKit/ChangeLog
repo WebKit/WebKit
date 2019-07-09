@@ -1,3 +1,39 @@
+2019-07-09  Sihui Liu  <sihui_liu@apple.com>
+
+        Only allow fetching and removing session credentials from WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=199385
+        <rdar://problem/52622080>
+
+        Reviewed by Alex Christensen.
+
+        Stop sending an extra message to network process for fetching or removing persistent credentials.
+
+        Also introduce a new SPI for clearing persistent credentials created in test.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::clearPermanentCredentialsForProtectionSpace):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::deleteWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::originsWithPersistentCredentials): Deleted.
+        (WebKit::NetworkProcess::removeCredentialsWithOrigins): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::originsWithPersistentCredentials): Deleted.
+        (WebKit::NetworkProcess::removeCredentialsWithOrigins): Deleted.
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _clearPermanentCredentialsForProtectionSpace:completionHandler:]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::clearPermanentCredentialsForProtectionSpace):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::computeWebProcessAccessTypeForDataRemoval):
+        (WebKit::WebsiteDataStore::removeData):
+
 2019-07-09  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Scroll indicators should not show for scrollable content with touch-action: none

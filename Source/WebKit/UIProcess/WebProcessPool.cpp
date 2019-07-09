@@ -1744,6 +1744,12 @@ void WebProcessPool::clearCachedCredentials()
         m_networkProcess->send(Messages::NetworkProcess::ClearCachedCredentials(), 0);
 }
 
+void WebProcessPool::clearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace&& protectionSpace, CompletionHandler<void()>&& completionHandler)
+{
+    if (m_networkProcess)
+        m_networkProcess->sendWithAsyncReply(Messages::NetworkProcess::ClearPermanentCredentialsForProtectionSpace(protectionSpace), WTFMove(completionHandler));
+}
+
 void WebProcessPool::terminateNetworkProcess()
 {
     if (!m_networkProcess)

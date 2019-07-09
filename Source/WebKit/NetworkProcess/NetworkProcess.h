@@ -393,6 +393,7 @@ private:
     void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins, const Vector<String>& cookieHostNames, const Vector<String>& HSTSCacheHostnames, uint64_t callbackID);
 
     void clearCachedCredentials();
+    void clearPermanentCredentialsForProtectionSpace(const WebCore::ProtectionSpace&, CompletionHandler<void()>&&);
 
     void setCacheStorageParameters(PAL::SessionID, String&& cacheStorageDirectory, SandboxExtension::Handle&&);
     void initializeQuotaUsers(WebCore::StorageQuotaManager&, PAL::SessionID, const WebCore::ClientOrigin&);
@@ -436,9 +437,6 @@ private:
 #endif
 
     void platformSyncAllCookies(CompletionHandler<void()>&&);
-
-    void originsWithPersistentCredentials(CompletionHandler<void(Vector<WebCore::SecurityOriginData>)>&&);
-    void removeCredentialsWithOrigins(const Vector<WebCore::SecurityOriginData>& origins, CompletionHandler<void()>&&);
     
     void registerURLSchemeAsSecure(const String&) const;
     void registerURLSchemeAsBypassingContentSecurityPolicy(const String&) const;

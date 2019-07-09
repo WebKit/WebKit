@@ -1,3 +1,20 @@
+2019-07-09  Sihui Liu  <sihui_liu@apple.com>
+
+        Only allow fetching and removing session credentials from WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=199385
+        <rdar://problem/52622080>
+
+        Reviewed by Alex Christensen.
+
+        removeDataOfTypes will no longer remove persistent credentials. We should clear persistent credentials using
+        the new SPI after each test that creates persistent credentials, otherwise the later tests may use credentials
+        left by previous tests and didReceiveAuthenticationChallenge will not be invoked.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebsiteDatastore.mm:
+        (TestWebKitAPI::TEST):
+
 2019-07-09  Alex Christensen  <achristensen@webkit.org>
 
         When parsing an IPv4 address, wait until after deciding it is indeed an IPv4 address before reporting syntax violations

@@ -38,13 +38,69 @@ Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace& pr
     return credential ? Credential(credential) : Credential();
 }
 
-Vector<WebCore::SecurityOriginData> CredentialStorage::originsWithPersistentCredentials()
+HashSet<SecurityOriginData> CredentialStorage::originsWithSessionCredentials()
 {
-    Vector<WebCore::SecurityOriginData> origins;
+    HashSet<SecurityOriginData> origins;
     auto allCredentials = [[NSURLCredentialStorage sharedCredentialStorage] allCredentials];
-    for (NSURLProtectionSpace* key in allCredentials.keyEnumerator)
-        origins.append(WebCore::SecurityOriginData { String(key.protocol), String(key.host), key.port });
+    for (NSURLProtectionSpace* key in allCredentials.keyEnumerator) {
+        for (NSURLProtectionSpace* space in allCredentials) {
+            auto credentials = allCredentials[space];
+            for (NSString* user in credentials) {
+                if (credentials[user].persistence == NSURLCredentialPersistenceForSession) {
+                    origins.add(WebCore::SecurityOriginData { String(key.protocol), String(key.host), key.port });
+                    break;
+                }
+            }
+        }
+    }
     return origins;
+}
+
+void CredentialStorage::removeSessionCredentialsWithOrigins(const Vector<SecurityOriginData>& origins)
+{
+    auto sharedStorage = [NSURLCredentialStorage sharedCredentialStorage];
+    auto allCredentials = [sharedStorage allCredentials];
+    for (auto& origin : origins) {
+        for (NSURLProtectionSpace* space in allCredentials) {
+            if (origin.protocol == String(space.protocol)
+                && origin.host == String(space.host)
+                && origin.port
+                && *origin.port == space.port) {
+                    auto credentials = allCredentials[space];
+                    for (NSString* user in credentials) {
+                        auto credential = credentials[user];
+                        if (credential.persistence == NSURLCredentialPersistenceForSession)
+                            [sharedStorage removeCredential:credential forProtectionSpace:space];
+                }
+            }
+        }
+    }
+}
+
+void CredentialStorage::clearSessionCredentials()
+{
+    auto sharedStorage = [NSURLCredentialStorage sharedCredentialStorage];
+    auto allCredentials = [sharedStorage allCredentials];
+    for (NSURLProtectionSpace* space in allCredentials.keyEnumerator) {
+        auto credentials = allCredentials[space];
+        for (NSString* user in credentials) {
+            auto credential = credentials[user];
+            if (credential.persistence == NSURLCredentialPersistenceForSession)
+                [sharedStorage removeCredential:credential forProtectionSpace:space];
+        }
+    }
+}
+
+void CredentialStorage::clearPermanentCredentialsForProtectionSpace(const ProtectionSpace& protectionSpace)
+{
+    auto sharedStorage = [NSURLCredentialStorage sharedCredentialStorage];
+    auto allCredentials = [sharedStorage allCredentials];
+    auto credentials = allCredentials[protectionSpace.nsSpace()];
+    for (NSString* user in credentials) {
+        auto credential = credentials[user];
+        if (credential.persistence == NSURLCredentialPersistencePermanent)
+            [sharedStorage removeCredential:credentials[user] forProtectionSpace:protectionSpace.nsSpace()];
+    }
 }
 
 } // namespace WebCore
