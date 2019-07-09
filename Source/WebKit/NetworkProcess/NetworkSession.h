@@ -108,7 +108,7 @@ public:
     virtual void addWebSocketTask(WebSocketTask&) { }
 
 protected:
-    NetworkSession(NetworkProcess&, PAL::SessionID, const String& localStorageDirectory, SandboxExtension::Handle&);
+    NetworkSession(NetworkProcess&, PAL::SessionID, String&& localStorageDirectory, SandboxExtension::Handle&);
 
     PAL::SessionID m_sessionID;
     Ref<NetworkProcess> m_networkProcess;

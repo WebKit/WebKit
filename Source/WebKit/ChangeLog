@@ -1,5 +1,49 @@
 2019-07-08  Chris Dumez  <cdumez@apple.com>
 
+        Speculative fix for crashes under LocalStorageDatabaseTracker::databasePath()
+        https://bugs.webkit.org/show_bug.cgi?id=199599
+        <rdar://problem/31169686>
+
+        Reviewed by Ryosuke Niwa.
+
+        Speculative fix for crashes under LocalStorageDatabaseTracker::databasePath():
+        - Add new localStorageDirectory() getter to LocalStorageDatabaseTracker which
+          calls isolatedCopy() on m_localStorageDirectory before returning it.
+          Use it everywhere instead of m_localStorageDirectory since it is not safe
+          to use the same String from various threads like it was done.
+        - Move localStorageDirectory when constructing the LocalStorageDatabaseTracker
+          instead of copying it.
+        - Make sure that LocalStorageDatabaseTracker and StorageManager are both
+          constructed and destroyed on the main thread.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::create):
+        (WebKit::LocalStorageDatabaseTracker::LocalStorageDatabaseTracker):
+        (WebKit::LocalStorageDatabaseTracker::localStorageDirectory const):
+        (WebKit::LocalStorageDatabaseTracker::~LocalStorageDatabaseTracker):
+        (WebKit::LocalStorageDatabaseTracker::deleteAllDatabases):
+        (WebKit::LocalStorageDatabaseTracker::origins const):
+        (WebKit::LocalStorageDatabaseTracker::databasePath const):
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.h:
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::create):
+        (WebKit::StorageManager::StorageManager):
+        (WebKit::StorageManager::~StorageManager):
+        * NetworkProcess/WebStorage/StorageManager.h:
+        * NetworkProcess/WebStorage/ios/LocalStorageDatabaseTrackerIOS.mm:
+        (WebKit::LocalStorageDatabaseTracker::platformMaybeExcludeFromBackup const):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * NetworkProcess/curl/NetworkSessionCurl.cpp:
+        (WebKit::NetworkSessionCurl::NetworkSessionCurl):
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::NetworkSessionSoup):
+
+2019-07-08  Chris Dumez  <cdumez@apple.com>
+
         Use WeakHashSet for WebUserContentControllerProxy::m_processes
         https://bugs.webkit.org/show_bug.cgi?id=199591
         <rdar://problem/52798721>

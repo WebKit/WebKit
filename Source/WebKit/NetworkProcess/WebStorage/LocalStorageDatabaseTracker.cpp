@@ -39,15 +39,17 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<LocalStorageDatabaseTracker> LocalStorageDatabaseTracker::create(Ref<WorkQueue>&& queue, const String& localStorageDirectory)
+Ref<LocalStorageDatabaseTracker> LocalStorageDatabaseTracker::create(Ref<WorkQueue>&& queue, String&& localStorageDirectory)
 {
-    return adoptRef(*new LocalStorageDatabaseTracker(WTFMove(queue), localStorageDirectory));
+    return adoptRef(*new LocalStorageDatabaseTracker(WTFMove(queue), WTFMove(localStorageDirectory)));
 }
 
-LocalStorageDatabaseTracker::LocalStorageDatabaseTracker(Ref<WorkQueue>&& queue, const String& localStorageDirectory)
+LocalStorageDatabaseTracker::LocalStorageDatabaseTracker(Ref<WorkQueue>&& queue, String&& localStorageDirectory)
     : m_queue(WTFMove(queue))
-    , m_localStorageDirectory(localStorageDirectory.isolatedCopy())
+    , m_localStorageDirectory(WTFMove(localStorageDirectory))
 {
+    ASSERT(RunLoop::isMain());
+
     // Make sure the encoding is initialized before we start dispatching things to the queue.
     UTF8Encoding();
 
@@ -57,8 +59,14 @@ LocalStorageDatabaseTracker::LocalStorageDatabaseTracker(Ref<WorkQueue>&& queue,
     });
 }
 
+String LocalStorageDatabaseTracker::localStorageDirectory() const
+{
+    return m_localStorageDirectory.isolatedCopy();
+}
+
 LocalStorageDatabaseTracker::~LocalStorageDatabaseTracker()
 {
+    ASSERT(RunLoop::isMain());
 }
 
 String LocalStorageDatabaseTracker::databasePath(const SecurityOriginData& securityOrigin) const
@@ -82,14 +90,15 @@ void LocalStorageDatabaseTracker::deleteDatabaseWithOrigin(const SecurityOriginD
 
 void LocalStorageDatabaseTracker::deleteAllDatabases()
 {
-    auto paths = FileSystem::listDirectory(m_localStorageDirectory, "*.localstorage");
+    auto localStorageDirectory = this->localStorageDirectory();
+    auto paths = FileSystem::listDirectory(localStorageDirectory, "*.localstorage");
     for (const auto& path : paths) {
         SQLiteFileSystem::deleteDatabaseFile(path);
 
         // FIXME: Call out to the client.
     }
 
-    SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_localStorageDirectory);
+    SQLiteFileSystem::deleteEmptyDatabaseDirectory(localStorageDirectory);
 }
 
 Vector<SecurityOriginData> LocalStorageDatabaseTracker::databasesModifiedSince(WallTime time)
@@ -114,7 +123,7 @@ Vector<SecurityOriginData> LocalStorageDatabaseTracker::databasesModifiedSince(W
 Vector<SecurityOriginData> LocalStorageDatabaseTracker::origins() const
 {
     Vector<SecurityOriginData> databaseOrigins;
-    auto paths = FileSystem::listDirectory(m_localStorageDirectory, "*.localstorage");
+    auto paths = FileSystem::listDirectory(localStorageDirectory(), "*.localstorage");
     
     for (const auto& path : paths) {
         auto filename = FileSystem::pathGetFileName(path);
@@ -150,7 +159,8 @@ Vector<LocalStorageDatabaseTracker::OriginDetails> LocalStorageDatabaseTracker::
 
 String LocalStorageDatabaseTracker::databasePath(const String& filename) const
 {
-    if (!SQLiteFileSystem::ensureDatabaseDirectoryExists(m_localStorageDirectory)) {
+    auto localStorageDirectory = this->localStorageDirectory();
+    if (!SQLiteFileSystem::ensureDatabaseDirectoryExists(localStorageDirectory)) {
         if (!m_localStorageDirectory.isNull())
             LOG_ERROR("Unable to create LocalStorage database path %s", m_localStorageDirectory.utf8().data());
         return String();
@@ -162,7 +172,7 @@ String LocalStorageDatabaseTracker::databasePath(const String& filename) const
     });
 #endif
 
-    return SQLiteFileSystem::appendDatabaseFileNameToPath(m_localStorageDirectory, filename);
+    return SQLiteFileSystem::appendDatabaseFileNameToPath(localStorageDirectory, filename);
 }
 
 } // namespace WebKit

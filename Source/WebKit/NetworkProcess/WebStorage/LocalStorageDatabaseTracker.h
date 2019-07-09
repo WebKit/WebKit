@@ -35,9 +35,9 @@
 
 namespace WebKit {
 
-class LocalStorageDatabaseTracker : public ThreadSafeRefCounted<LocalStorageDatabaseTracker> {
+class LocalStorageDatabaseTracker : public ThreadSafeRefCounted<LocalStorageDatabaseTracker, WTF::DestructionThread::MainRunLoop> {
 public:
-    static Ref<LocalStorageDatabaseTracker> create(Ref<WorkQueue>&&, const String& localStorageDirectory);
+    static Ref<LocalStorageDatabaseTracker> create(Ref<WorkQueue>&&, String&& localStorageDirectory);
     ~LocalStorageDatabaseTracker();
 
     String databasePath(const WebCore::SecurityOriginData&) const;
@@ -64,9 +64,10 @@ public:
     Vector<OriginDetails> originDetails();
 
 private:
-    LocalStorageDatabaseTracker(Ref<WorkQueue>&&, const String& localStorageDirectory);
+    LocalStorageDatabaseTracker(Ref<WorkQueue>&&, String&& localStorageDirectory);
 
     String databasePath(const String& filename) const;
+    String localStorageDirectory() const;
 
     enum DatabaseOpeningStrategy {
         CreateIfNonExistent,
@@ -74,7 +75,9 @@ private:
     };
 
     Ref<WorkQueue> m_queue;
-    String m_localStorageDirectory;
+    
+    // It is not safe to use this member from a background thread, call localStorageDirectory() instead.
+    const String m_localStorageDirectory;
 
 #if PLATFORM(IOS_FAMILY)
     void platformMaybeExcludeFromBackup() const;

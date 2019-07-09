@@ -77,11 +77,11 @@ NetworkStorageSession* NetworkSession::networkStorageSession() const
     return storageSession;
 }
 
-NetworkSession::NetworkSession(NetworkProcess& networkProcess, PAL::SessionID sessionID, const String& localStorageDirectory, SandboxExtension::Handle& handle)
+NetworkSession::NetworkSession(NetworkProcess& networkProcess, PAL::SessionID sessionID, String&& localStorageDirectory, SandboxExtension::Handle& handle)
     : m_sessionID(sessionID)
     , m_networkProcess(networkProcess)
     , m_adClickAttribution(makeUniqueRef<AdClickAttributionManager>(sessionID))
-    , m_storageManager(StorageManager::create(localStorageDirectory))
+    , m_storageManager(StorageManager::create(WTFMove(localStorageDirectory)))
 {
     SandboxExtension::consumePermanently(handle);
     m_adClickAttribution->setPingLoadFunction([this, weakThis = makeWeakPtr(this)](NetworkResourceLoadParameters&& loadParameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler) {

@@ -45,9 +45,9 @@ class WebProcessProxy;
 
 using GetValuesCallback = CompletionHandler<void(const HashMap<String, String>&)>;
 
-class StorageManager : public ThreadSafeRefCounted<StorageManager> {
+class StorageManager : public ThreadSafeRefCounted<StorageManager, WTF::DestructionThread::MainRunLoop> {
 public:
-    static Ref<StorageManager> create(const String& localStorageDirectory);
+    static Ref<StorageManager> create(String&& localStorageDirectory);
     ~StorageManager();
 
     void createSessionStorageNamespace(uint64_t storageNamespaceID, unsigned quotaInBytes);
@@ -77,7 +77,7 @@ public:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>& replyEncoder);
 
 private:
-    explicit StorageManager(const String& localStorageDirectory);
+    explicit StorageManager(String&& localStorageDirectory);
 
     // Message handlers.
     void createLocalStorageMap(IPC::Connection&, uint64_t storageMapID, uint64_t storageNamespaceID, WebCore::SecurityOriginData&&);
