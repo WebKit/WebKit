@@ -306,6 +306,8 @@ public:
     void frameViewDidLayout();
     void rootLayerConfigurationChanged();
 
+    void widgetDidChangeSize(RenderWidget&);
+
     String layerTreeAsText(LayerTreeFlags);
 
     float deviceScaleFactor() const override;

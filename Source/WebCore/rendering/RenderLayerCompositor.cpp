@@ -1985,6 +1985,24 @@ void RenderLayerCompositor::frameViewDidChangeSize()
     }
 }
 
+void RenderLayerCompositor::widgetDidChangeSize(RenderWidget& widget)
+{
+    if (!widget.hasLayer())
+        return;
+
+    auto& layer = *widget.layer();
+
+    LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor " << this << " widgetDidChangeSize (layer " << &layer << ")");
+
+    // Widget size affects answer to requiresCompositingForFrame() so we need to trigger
+    // a compositing update.
+    layer.setNeedsPostLayoutCompositingUpdate();
+    scheduleCompositingLayerUpdate();
+
+    if (layer.isComposited())
+        layer.backing()->updateAfterWidgetResize();
+}
+
 bool RenderLayerCompositor::hasCoordinatedScrolling() const
 {
     auto* scrollingCoordinator = this->scrollingCoordinator();

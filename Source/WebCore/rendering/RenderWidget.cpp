@@ -141,8 +141,8 @@ bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
     if (!weakThis)
         return true;
 
-    if (boundsChanged && isComposited())
-        layer()->backing()->updateAfterWidgetResize();
+    if (boundsChanged)
+        view().compositor().widgetDidChangeSize(*this);
 
     return oldFrameRect.size() != newFrameRect.size();
 }

@@ -304,6 +304,29 @@
         (WebCore::MediaStreamTrack::~MediaStreamTrack):
         * Modules/mediastream/MediaStreamTrack.h:
 
+2019-07-08  Simon Fraser  <simon.fraser@apple.com>
+
+        YouTube embedding iframes in WebView sometimes go blank when the video starts playing
+        https://bugs.webkit.org/show_bug.cgi?id=199600
+        rdar://problem/47806012
+
+        Reviewed by Tim Horton.
+
+        With some combinations of nested iframes that are being resized from empty, and toggling into
+        compositing mode, we'd fail to update compositing in the iframe's enclosing document, so never
+        host the iframes's layers.
+
+        Fix by moving some widget-resize-related code into RenderLayerCompositor::widgetDidChangeSize(),
+        and adding code to schedule a compositing update.
+
+        I was unable to come up with a layout test for this.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::widgetDidChangeSize):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidgetGeometry):
+
 2019-07-08  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Enable only on the most recent version of the supported iOS family
