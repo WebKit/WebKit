@@ -111,6 +111,7 @@ public:
     LayoutSize relativePositionLogicalOffset() const { return style().isHorizontalWritingMode() ? relativePositionOffset() : relativePositionOffset().transposedSize(); }
 
     FloatRect constrainingRectForStickyPosition() const;
+    const RenderBox& enclosingClippingBoxForStickyPosition(const RenderLayer** enclosingClippingLayer = nullptr) const;
     void computeStickyPositionConstraints(StickyPositionViewportConstraints&, const FloatRect& constrainingRect) const;
     LayoutSize stickyPositionOffset() const;
     LayoutSize stickyPositionLogicalOffset() const { return style().isHorizontalWritingMode() ? stickyPositionOffset() : stickyPositionOffset().transposedSize(); }

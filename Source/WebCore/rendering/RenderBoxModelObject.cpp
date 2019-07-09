@@ -441,13 +441,24 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
     return referencePoint;
 }
 
+const RenderBox& RenderBoxModelObject::enclosingClippingBoxForStickyPosition(const RenderLayer** enclosingClippingLayer) const
+{
+    ASSERT(isStickilyPositioned());
+
+    auto* clipLayer = layer()->enclosingOverflowClipLayer(ExcludeSelf);
+    if (enclosingClippingLayer)
+        *enclosingClippingLayer = clipLayer;
+
+    return clipLayer ? downcast<RenderBox>(clipLayer->renderer()) : view();
+}
+
 void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewportConstraints& constraints, const FloatRect& constrainingRect) const
 {
     constraints.setConstrainingRectAtLastLayout(constrainingRect);
 
     RenderBlock* containingBlock = this->containingBlock();
-    RenderLayer* enclosingClippingLayer = layer()->enclosingOverflowClipLayer(ExcludeSelf);
-    RenderBox& enclosingClippingBox = enclosingClippingLayer ? downcast<RenderBox>(enclosingClippingLayer->renderer()) : view();
+    const RenderLayer* enclosingClippingLayer = nullptr;
+    auto& enclosingClippingBox = enclosingClippingBoxForStickyPosition(&enclosingClippingLayer);
 
     LayoutRect containerContentRect;
     if (!enclosingClippingLayer || (containingBlock != &enclosingClippingBox))

@@ -4726,17 +4726,6 @@ RenderLayer* RenderBox::enclosingFloatPaintingLayer() const
     return nullptr;
 }
 
-const RenderBlock& RenderBox::enclosingScrollportBox() const
-{
-    const RenderBlock* ancestor = containingBlock();
-    for (; ancestor; ancestor = ancestor->containingBlock()) {
-        if (ancestor->hasOverflowClip())
-            return *ancestor;
-    }
-    ASSERT_NOT_REACHED();
-    return *ancestor;
-}
-
 LayoutRect RenderBox::logicalVisualOverflowRectForPropagation(const RenderStyle* parentStyle) const
 {
     LayoutRect rect = visualOverflowRectForPropagation(parentStyle);

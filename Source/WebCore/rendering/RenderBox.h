@@ -532,8 +532,6 @@ override;
     void removeFloatingOrPositionedChildFromBlockLists();
     
     RenderLayer* enclosingFloatPaintingLayer() const;
-
-    const RenderBlock& enclosingScrollportBox() const;
     
     virtual Optional<int> firstLineBaseline() const { return Optional<int>(); }
     virtual Optional<int> inlineBlockBaseline(LineDirectionMode) const { return Optional<int>(); } // Returns empty if we should skip this box when computing the baseline of an inline-block.
