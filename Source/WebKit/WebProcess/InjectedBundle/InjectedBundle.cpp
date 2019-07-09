@@ -350,9 +350,7 @@ void InjectedBundle::setPrivateBrowsingEnabled(WebPageGroupProxy* pageGroup, boo
     ASSERT(!hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
     WebProcess::singleton().enablePrivateBrowsingForTesting(enabled);
 
-    const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
-    for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
-        (*iter)->enableLegacyPrivateBrowsing(enabled);
+    PageGroup::pageGroup(pageGroup->identifier())->enableLegacyPrivateBrowsingForTesting(enabled);
 }
 
 void InjectedBundle::setPopupBlockingEnabled(WebPageGroupProxy* pageGroup, bool enabled)

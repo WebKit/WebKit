@@ -1,3 +1,17 @@
+2019-07-09  Chris Dumez  <cdumez@apple.com>
+
+        Cleanup uses of NetworkProcess::m_sessionByConnection
+        https://bugs.webkit.org/show_bug.cgi?id=199586
+
+        Reviewed by Alex Christensen.
+
+        Avoid double HashMap lookups and call add() instead of ensure() when appropriate.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::networkSessionByConnection const):
+        (WebKit::NetworkProcess::webPageWasAdded):
+        (WebKit::NetworkProcess::webProcessWasDisconnected):
+
 2019-07-09  Saagar Jha  <saagarjha@apple.com>
 
         WKObject's minimum object alignment needs to be larger

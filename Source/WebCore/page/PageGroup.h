@@ -58,6 +58,8 @@ public:
     WEBCORE_EXPORT CaptionUserPreferences& captionPreferences();
 #endif
 
+    WEBCORE_EXPORT void enableLegacyPrivateBrowsingForTesting(bool);
+
 private:
     String m_name;
     HashSet<Page*> m_pages;
@@ -67,6 +69,8 @@ private:
 #if ENABLE(VIDEO_TRACK)
     std::unique_ptr<CaptionUserPreferences> m_captionPreferences;
 #endif
+
+    bool m_isLegacyPrivateBrowsingEnabledForTesting { false };
 };
 
 } // namespace WebCore
