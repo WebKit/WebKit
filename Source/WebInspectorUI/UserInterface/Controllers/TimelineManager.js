@@ -1206,7 +1206,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
     _updateAutoCaptureInstruments(targets)
     {
-        let enabledTimelineTypes = this._enabledTimelineTypesSetting.value;
+        let enabledTimelineTypes = this.enabledTimelineTypes;
 
         for (let target of targets) {
             if (!target.TimelineAgent)

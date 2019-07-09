@@ -1,5 +1,17 @@
 2019-07-08  Devin Rousso  <drousso@apple.com>
 
+        Uncaught Exception: Unexpected enum value: CPU
+        https://bugs.webkit.org/show_bug.cgi?id=199564
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.prototype._updateAutoCaptureInstruments):
+        Filter the list of auto-capture instruments based on what's actually supported, instead of
+        directly using the saved list from the `WI.Setting`.
+
+2019-07-08  Devin Rousso  <drousso@apple.com>
+
         Enabling the Layers tab hides the paint flashing button
         https://bugs.webkit.org/show_bug.cgi?id=199549
 
