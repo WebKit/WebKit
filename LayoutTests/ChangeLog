@@ -1,3 +1,25 @@
+2019-07-09  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Add another group of WHLSL JS reference spec tests
+        https://bugs.webkit.org/show_bug.cgi?id=199642
+
+        Reviewed by Robin Morisset.
+
+        * webgpu/whlsl-array-spec-tests-expected.txt: Added.
+        * webgpu/whlsl-array-spec-tests.html: Added.
+        * webgpu/whlsl-enum-spec-tests-expected.txt: Added.
+        * webgpu/whlsl-enum-spec-tests.html: Added.
+        * webgpu/whlsl-equality-expected.txt: Added.
+        * webgpu/whlsl-equality.html: Added.
+        * webgpu/whlsl-matrices-spec-tests-expected.txt: Added.
+        * webgpu/whlsl-matrices-spec-tests.html: Added.
+        * webgpu/whlsl-return-spec-tests-expected.txt: Added.
+        * webgpu/whlsl-return-spec-tests.html: Added.
+        * webgpu/whlsl-simple-getter-setter-expected.txt: Added.
+        * webgpu/whlsl-simple-getter-setter.html: Added.
+        * webgpu/whlsl-simple-while-loop-expected.txt: Added.
+        * webgpu/whlsl-simple-while-loop.html: Added.
+
 2019-07-09  Youenn Fablet  <youenn@apple.com>
 
         XHR CORS requests logged twice in the server
