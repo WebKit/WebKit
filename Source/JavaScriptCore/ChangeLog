@@ -1,3 +1,19 @@
+2019-07-08  Keith Miller  <keith_miller@apple.com>
+
+        Enable Intl.PluralRules and Intl.NumberFormatToParts by default
+        https://bugs.webkit.org/show_bug.cgi?id=199288
+
+        Reviewed by Yusuke Suzuki.
+
+        These features have been around for a while. We should turn them on by default.
+
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototype::finishCreation):
+        * runtime/IntlObject.cpp:
+        (JSC::IntlObject::finishCreation): Deleted.
+        * runtime/IntlObject.h:
+        * runtime/Options.h:
+
 2019-07-08  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Enable only on the most recent version of the supported iOS family

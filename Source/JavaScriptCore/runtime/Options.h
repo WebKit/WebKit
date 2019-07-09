@@ -106,18 +106,6 @@ typedef const char* optionString;
 #define MAXIMUM_NUMBER_OF_FTL_COMPILER_THREADS 8
 #endif
 
-#if ENABLE(EXPERIMENTAL_FEATURES)
-constexpr bool enableIntlNumberFormatToParts = true;
-#else
-constexpr bool enableIntlNumberFormatToParts = false;
-#endif
-
-#if ENABLE(EXPERIMENTAL_FEATURES)
-constexpr bool enableIntlPluralRules = true;
-#else
-constexpr bool enableIntlPluralRules = false;
-#endif
-
 #if ENABLE(WEBASSEMBLY_STREAMING_API)
 constexpr bool enableWebAssemblyStreamingApi = true;
 #else
@@ -504,8 +492,6 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(bool, useEagerWebAssemblyModuleHashing, false, Normal, "Unnamed WebAssembly modules are identified in backtraces through their hash, if available.") \
     v(bool, useWebAssemblyReferences, false, Normal, "Allow types from the wasm references spec.") \
     v(bool, useBigInt, false, Normal, "If true, we will enable BigInt support.") \
-    v(bool, useIntlNumberFormatToParts, enableIntlNumberFormatToParts, Normal, "If true, we will enable Intl.NumberFormat.prototype.formatToParts") \
-    v(bool, useIntlPluralRules, enableIntlPluralRules, Normal, "If true, we will enable Intl.PluralRules.") \
     v(bool, useArrayAllocationProfiling, true, Normal, "If true, we will use our normal array allocation profiling. If false, the allocation profile will always claim to be undecided.") \
     v(bool, forcePolyProto, false, Normal, "If true, create_this will always create an object with a poly proto structure.") \
     v(bool, forceMiniVMMode, false, Normal, "If true, it will force mini VM mode on.") \

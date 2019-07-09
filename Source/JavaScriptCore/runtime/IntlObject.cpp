@@ -99,6 +99,7 @@ namespace JSC {
   Collator              createCollatorConstructor                    DontEnum|PropertyCallback
   DateTimeFormat        createDateTimeFormatConstructor              DontEnum|PropertyCallback
   NumberFormat          createNumberFormatConstructor                DontEnum|PropertyCallback
+  PluralRules           createPluralRulesConstructor                 DontEnum|PropertyCallback
 @end
 */
 
@@ -120,17 +121,6 @@ IntlObject* IntlObject::create(VM& vm, Structure* structure)
     IntlObject* object = new (NotNull, allocateCell<IntlObject>(vm.heap)) IntlObject(vm, structure);
     object->finishCreation(vm);
     return object;
-}
-
-void IntlObject::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
-
-    // Constructor Properties of the Intl Object
-    // https://tc39.github.io/ecma402/#sec-constructor-properties-of-the-intl-object
-    if (Options::useIntlPluralRules())
-        putDirectWithoutTransition(vm, vm.propertyNames->PluralRules, createPluralRulesConstructor(vm, this), static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 Structure* IntlObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

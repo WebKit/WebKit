@@ -51,9 +51,6 @@ public:
 
     DECLARE_INFO;
 
-protected:
-    void finishCreation(VM&);
-
 private:
     IntlObject(VM&, Structure*);
 };

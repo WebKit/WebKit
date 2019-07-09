@@ -1,3 +1,17 @@
+2019-07-08  Keith Miller  <keith_miller@apple.com>
+
+        Enable Intl.PluralRules and Intl.NumberFormatToParts by default
+        https://bugs.webkit.org/show_bug.cgi?id=199288
+
+        Reviewed by Yusuke Suzuki.
+
+        Remove runtime flag from testing.
+
+        * js/intl-numberformat-format-to-parts.html:
+        * js/intl-pluralrules.html:
+        * js/script-tests/intl-numberformat-format-to-parts.js:
+        * js/script-tests/intl-pluralrules.js:
+
 2019-07-08  Daniel Bates  <dabates@apple.com>
 
         [iOS] Support select all in non-editable element

@@ -1,5 +1,4 @@
 //@ skip if $hostOS == "windows" or $hostOS == "darwin" or $hostOS == "linux"
-//@ requireOptions("--useIntlNumberFormatToParts=true")
 
 description("This test checks the behavior of Intl.NumberFormat.prototype.formatToParts as described in the ECMAScript Internationalization API Specification.");
 

@@ -81,8 +81,7 @@ void IntlNumberFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
 {
     Base::finishCreation(vm);
 #if HAVE(ICU_FORMAT_DOUBLE_FOR_FIELDS)
-    if (Options::useIntlNumberFormatToParts())
-        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->formatToParts, IntlNumberFormatPrototypeFuncFormatToParts, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->formatToParts, IntlNumberFormatPrototypeFuncFormatToParts, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
 #else
     UNUSED_PARAM(globalObject);
 #endif
