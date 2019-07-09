@@ -1,3 +1,17 @@
+2019-07-09  Saagar Jha  <saagarjha@apple.com>
+
+        WKObject's minimum object alignment needs to be larger
+        https://bugs.webkit.org/show_bug.cgi?id=199523
+
+        Reviewed by Alex Christensen.
+
+        WKObject's wrapped objects are currently constructed at addresses aligned to 8-byte boundaries, but some
+        classes have more stringent requirements. By querying std::aligned_storage for the alignment of an object
+        larger than anything we can construct, we should be able to satisfy alignment for any of WebKit's types.
+
+        * Shared/Cocoa/APIObject.mm: Use std::aligned_storage in conjunction with alignof to determine
+        minimumObjectAlignment, instead of hardcoding 8.
+
 2019-07-09  Megan Gardner  <megan_gardner@apple.com>
 
         Don't strip out spaces for personalized Autocorrections

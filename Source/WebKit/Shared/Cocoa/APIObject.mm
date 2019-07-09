@@ -90,7 +90,7 @@
 #import "_WKApplicationManifestInternal.h"
 #endif
 
-static const size_t minimumObjectAlignment = 8;
+static const size_t minimumObjectAlignment = alignof(std::aligned_storage<std::numeric_limits<size_t>::max()>::type);
 static_assert(minimumObjectAlignment >= alignof(void*), "Objects should always be at least pointer-aligned.");
 static const size_t maximumExtraSpaceForAlignment = minimumObjectAlignment - alignof(void*);
 
