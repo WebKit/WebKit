@@ -1,3 +1,14 @@
+2019-07-09  Sam Weinig  <weinig@apple.com>
+
+        Add StringBuilder member function which allows makeString() style variadic argument construction
+        https://bugs.webkit.org/show_bug.cgi?id=198997
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
+        Add basic test showing that StringBuilder::flexibleAppend can be used to 
+        append one or more string adaptable types. 
+
 2019-07-09  Sihui Liu  <sihui_liu@apple.com>
 
         Only allow fetching and removing session credentials from WebsiteDataStore

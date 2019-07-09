@@ -1,3 +1,57 @@
+2019-07-09  Sam Weinig  <weinig@apple.com>
+
+        Add StringBuilder member function which allows makeString() style variadic argument construction
+        https://bugs.webkit.org/show_bug.cgi?id=198997
+
+        Reviewed by Darin Adler.
+
+        Adds new StringBuilder::flexibleAppend(...) member function which allows passing one or more 
+        string-adaptable (in the sense that there is StringTypeAdapter specialization for the 
+        type) parameters. This re-ususes the variadic template infrastructure in StringConcatenate.h
+        that is used for makeString(...) allowing for improvements in one to benefit the other.
+
+        The advantage of StringBuilder::flexibleAppend(...) over calling StringBuilder::append(...)
+        multiple times (beyond the code sharing with makeString(...) is that it can avoid unnecessary
+        additional re-allocations when the StringBuilder needs to expand it's capacity. It does this
+        by computing the complete required length for all the passed arguments and then ensuring enough
+        capacity is available. It also reduces the allocation overhead versus the anti-pattern of
+        builder.append(makeString(...)).
+
+        Ideally, this member function should eventually just be called StringBuilder::append(...), but
+        the current overload set for StringBuilder::append(...) makes this complicated due to overloads
+        that take two arguments such as StringBuilder::append(const UChar*, unsigned). Going forward, we
+        should rename or remove those overloads and move to a standard interface. 
+
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::pathByAppendingComponents):
+        Adopt StringBuilder::flexibleAppend, using to combine the append of '/' and component.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::appendUninitialized):
+        (WTF::StringBuilder::appendUninitializedWithoutOverflowCheck):
+        Extract the part of appendUnitialized that doesn't do the overflow check
+        into it's own member function to allow callers that have already done the
+        overflow check to bypass it.
+
+        (WTF::StringBuilder::appendUninitializedWithoutOverflowCheckForUChar):
+        (WTF::StringBuilder::appendUninitializedWithoutOverflowCheckForLChar):
+        Added to allow template member function flexibleAppendFromAdapters to call
+        appendUninitializedWithoutOverflowCheck without moving it to the header.
+        
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::flexibleAppendFromAdapters):
+        (WTF::StringBuilder::flexibleAppend):
+        Modeled on tryMakeStringFromAdapters in StringConcatenate.h, these
+        eagerly compute the required length, expand the buffer and then use
+        the existing string type adaptor accumulation functions used by makeString. 
+
+        * wtf/text/StringConcatenate.h:
+        (WTF::stringTypeAdapterAccumulator):
+        (WTF::tryMakeStringFromAdapters):
+        (WTF::makeStringAccumulator): Deleted.
+        Renames makeStringAccumulator to stringTypeAdapterAccumulator now that it is used
+        by more than just makeString.
+
 2019-07-09  Alex Christensen  <achristensen@webkit.org>
 
         When parsing an IPv4 address, wait until after deciding it is indeed an IPv4 address before reporting syntax violations
