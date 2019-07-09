@@ -90,6 +90,7 @@ class TestFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
         self.getProduct()
+        self.addStep(KillOldProcesses())
         if self.LayoutTestClass:
             self.addStep(self.LayoutTestClass())
         if self.APITestClass:
