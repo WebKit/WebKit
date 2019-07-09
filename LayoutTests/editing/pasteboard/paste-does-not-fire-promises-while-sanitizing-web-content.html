@@ -11,15 +11,20 @@ body {
 
 #copy {
     width: 100%;
-    height: 50px;
+    height: 100%;
     border: 1px dashed black;
 }
 
 #editor {
     width: 100%;
-    height: 100px;
+    height: 200px;
     border: 1px dashed tomato;
     text-align: center;
+}
+
+iframe {
+    width: 100%;
+    height: 200px;
 }
 </style>
 </head>
@@ -27,7 +32,7 @@ body {
 <div id="editor" contenteditable></div>
 <iframe id="copy" src="data:text/html,<div id='copy' style='font-size: 40px; text-align: center;'>Click here to copy</div>
     <script>
-    copy.addEventListener('mousedown', event => {
+    document.body.addEventListener('mousedown', event => {
         getSelection().selectAllChildren(copy);
         document.execCommand('Copy');
         getSelection().removeAllRanges();
@@ -58,6 +63,7 @@ addEventListener("load", async () => {
 
     await UIHelper.activateElement(frame);
     await UIHelper.activateElement(editor);
+    await UIHelper.activateElement(editor);
     checkDone();
 });
 
@@ -66,18 +72,18 @@ editor.addEventListener("mousedown", event => {
     Promise.resolve().then(() => textarea.focus());
     document.execCommand("Paste");
     event.preventDefault();
-});
+}, { "once": true });
 
 editor.addEventListener("paste", () => {
     testPassed("Handled paste.");
     checkDone();
 });
 
-editor.addEventListener("focus", () => testPassed("Focused editor."));
+editor.addEventListener("focus", () => testPassed("Focused editor."), { "once": true });
 textarea.addEventListener("focus", () => {
     testPassed("Focused textarea.");
     checkDone();
-});
+}, { "once": true });
 </script>
 </body>
 </html>
