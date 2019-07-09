@@ -269,6 +269,19 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     return StoreDecision::Yes;
 }
 
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+static bool inline canRequestUseSpeculativeRevalidation(const ResourceRequest& request)
+{
+    if (request.isConditional())
+        return false;
+
+    if (cachePolicyAllowsExpired(request.cachePolicy()))
+        return false;
+
+    return request.requester() != ResourceRequest::Requester::XHR && request.requester() != ResourceRequest::Requester::Fetch;
+}
+#endif
+
 void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameID& frameID, RetrieveCompletionHandler&& completionHandler)
 {
     ASSERT(request.url().protocolIsInHTTPFamily());
@@ -283,7 +296,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
     info.priority = priority;
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    bool canUseSpeculativeRevalidation = m_speculativeLoadManager && !request.isConditional() && !cachePolicyAllowsExpired(request.cachePolicy());
+    bool canUseSpeculativeRevalidation = m_speculativeLoadManager && canRequestUseSpeculativeRevalidation(request);
     if (canUseSpeculativeRevalidation)
         m_speculativeLoadManager->registerLoad(frameID, request, storageKey);
 #endif

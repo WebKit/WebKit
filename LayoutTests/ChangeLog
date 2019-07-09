@@ -1,3 +1,17 @@
+2019-07-09  Youenn Fablet  <youenn@apple.com>
+
+        XHR CORS requests logged twice in the server
+        https://bugs.webkit.org/show_bug.cgi?id=199492
+        <rdar://problem/52757558>
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/fetch/disable-speculative-load-for-xhr-and-fetch-loads-expected.txt: Added.
+        * http/wpt/fetch/disable-speculative-load-for-xhr-and-fetch-loads.html: Added.
+        * http/wpt/fetch/resources/fetch-xhr-load.py: Added.
+        (main):
+        * http/wpt/fetch/resources/xhr-and-fetch.html: Added.
+
 2019-07-09  Rob Buis  <rbuis@igalia.com>
 
         Remove rel=subresource tests

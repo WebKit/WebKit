@@ -1,3 +1,20 @@
+2019-07-09  Youenn Fablet  <youenn@apple.com>
+
+        XHR CORS requests logged twice in the server
+        https://bugs.webkit.org/show_bug.cgi?id=199492
+        <rdar://problem/52757558>
+
+        Reviewed by Chris Dumez.
+
+        Disable speculative loading for XHR and fetch.
+        These speculative requests might have specific headers that are no longer relevant
+        when reloading the page. This might then confuse servers.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::makeStoreDecision):
+        (WebKit::NetworkCache::canRequestUseSpeculativeRevalidation):
+        (WebKit::NetworkCache::Cache::retrieve):
+
 2019-07-09  Chris Dumez  <cdumez@apple.com>
 
         Fix validation of method signature in decodeInvocation()
