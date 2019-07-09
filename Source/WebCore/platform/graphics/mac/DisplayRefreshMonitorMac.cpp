@@ -40,11 +40,17 @@ DisplayRefreshMonitorMac::DisplayRefreshMonitorMac(PlatformDisplayID displayID)
 
 DisplayRefreshMonitorMac::~DisplayRefreshMonitorMac()
 {
-    if (m_displayLink) {
-        CVDisplayLinkStop(m_displayLink);
-        CVDisplayLinkRelease(m_displayLink);
-        m_displayLink = nullptr;
-    }
+    ASSERT(!m_displayLink);
+}
+
+void DisplayRefreshMonitorMac::stop()
+{
+    if (!m_displayLink)
+        return;
+
+    CVDisplayLinkStop(m_displayLink);
+    CVDisplayLinkRelease(m_displayLink);
+    m_displayLink = nullptr;
 }
 
 static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data)
@@ -89,9 +95,9 @@ void DisplayRefreshMonitorMac::displayLinkFired()
 
     setIsPreviousFrameDone(false);
 
-    RunLoop::main().dispatch([weakPtr = makeWeakPtr(*this)] {
-        if (auto* monitor = weakPtr.get())
-            handleDisplayRefreshedNotificationOnMainThread(monitor);
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] {
+        if (m_displayLink)
+            handleDisplayRefreshedNotificationOnMainThread(this);
     });
 }
 

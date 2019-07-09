@@ -57,7 +57,18 @@ private:
 
     DisplayRefreshMonitor* createMonitorForClient(DisplayRefreshMonitorClient&);
 
-    Vector<RefPtr<DisplayRefreshMonitor>> m_monitors;
+    struct DisplayRefreshMonitorWrapper {
+        DisplayRefreshMonitorWrapper(DisplayRefreshMonitorWrapper&&) = default;
+        ~DisplayRefreshMonitorWrapper()
+        {
+            if (monitor)
+                monitor->stop();
+        }
+
+        RefPtr<DisplayRefreshMonitor> monitor;
+    };
+
+    Vector<DisplayRefreshMonitorWrapper> m_monitors;
 };
 
 }

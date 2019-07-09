@@ -45,7 +45,8 @@ DisplayRefreshMonitorManager& DisplayRefreshMonitorManager::sharedManager()
 DisplayRefreshMonitor* DisplayRefreshMonitorManager::createMonitorForClient(DisplayRefreshMonitorClient& client)
 {
     PlatformDisplayID clientDisplayID = client.displayID();
-    for (const RefPtr<DisplayRefreshMonitor>& monitor : m_monitors) {
+    for (auto& monitorWrapper : m_monitors) {
+        auto& monitor = monitorWrapper.monitor;
         if (monitor->displayID() != clientDisplayID)
             continue;
         monitor->addClient(client);
@@ -59,7 +60,7 @@ DisplayRefreshMonitor* DisplayRefreshMonitorManager::createMonitorForClient(Disp
     LOG(RequestAnimationFrame, "DisplayRefreshMonitorManager::createMonitorForClient() - created monitor %p", monitor.get());
     monitor->addClient(client);
     DisplayRefreshMonitor* result = monitor.get();
-    m_monitors.append(WTFMove(monitor));
+    m_monitors.append({ WTFMove(monitor) });
     return result;
 }
 
@@ -78,7 +79,7 @@ void DisplayRefreshMonitorManager::unregisterClient(DisplayRefreshMonitorClient&
 
     PlatformDisplayID clientDisplayID = client.displayID();
     for (size_t i = 0; i < m_monitors.size(); ++i) {
-        RefPtr<DisplayRefreshMonitor> monitor = m_monitors[i];
+        RefPtr<DisplayRefreshMonitor> monitor = m_monitors[i].monitor;
         if (monitor->displayID() != clientDisplayID)
             continue;
         if (monitor->removeClient(client)) {
@@ -108,7 +109,7 @@ void DisplayRefreshMonitorManager::displayDidRefresh(DisplayRefreshMonitor& moni
         return;
     LOG(RequestAnimationFrame, "DisplayRefreshMonitorManager::displayDidRefresh() - destroying monitor %p", &monitor);
 
-    size_t monitorIndex = m_monitors.find(&monitor);
+    size_t monitorIndex = m_monitors.findMatching([&](auto& monitorWrapper) { return monitorWrapper.monitor == &monitor; });
     if (monitorIndex != notFound)
         m_monitors.remove(monitorIndex);
 }
@@ -127,7 +128,8 @@ void DisplayRefreshMonitorManager::windowScreenDidChange(PlatformDisplayID displ
 
 void DisplayRefreshMonitorManager::displayWasUpdated(PlatformDisplayID displayID)
 {
-    for (const auto& monitor : m_monitors) {
+    for (const auto& monitorWrapper : m_monitors) {
+        auto& monitor = monitorWrapper.monitor;
         if (displayID == monitor->displayID() && monitor->hasRequestedRefreshCallback())
             monitor->displayLinkFired();
     }
