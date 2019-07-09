@@ -1,3 +1,26 @@
+2019-07-09  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Scroll indicators should not show for scrollable content with touch-action: none
+        https://bugs.webkit.org/show_bug.cgi?id=199618
+
+        Reviewed by Simon Fraser.
+
+        Even though we correctly didn't scroll when "touch-action: none" was specified on an element, we would only apply
+        scrolling constraints after the panning gesture was recognized and the backing UIScrollView would show its scroll
+        indicators. While this is correct when only "pan-x" or "pan-y" is specified, we should not show the scroll indicators
+        at all for "touch-action: none" since no scrolling should happen.
+
+        To do this, we add a new method to the WKTouchActionGestureRecognizerDelegate protocol to indicate whether a given
+        gesture recognizer may pan content in the WKWebView. If the gesture recognizer is the top-level scroll view or one
+        created within the page to back "overflow: scroll" content or an iframe, we correctly make that gesture recognizer
+        fail to recognize if neither "pan-x" nor "pan-y" is specified for this touch identifier.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizerMayPanWebView:]):
+        * UIProcess/ios/WKTouchActionGestureRecognizer.h:
+        * UIProcess/ios/WKTouchActionGestureRecognizer.mm:
+        (-[WKTouchActionGestureRecognizer canPreventGestureRecognizer:]):
+
 2019-07-09  Chris Dumez  <cdumez@apple.com>
 
         Validate reply block signature in [WKRemoteObjectRegistry _invokeMethod]

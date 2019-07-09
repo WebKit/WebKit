@@ -38,6 +38,7 @@
 @end
 
 @protocol WKTouchActionGestureRecognizerDelegate <NSObject>
+- (BOOL)gestureRecognizerMayPanWebView:(UIGestureRecognizer *)gestureRecognizer;
 - (BOOL)gestureRecognizerMayPinchToZoomWebView:(UIGestureRecognizer *)gestureRecognizer;
 - (BOOL)gestureRecognizerMayDoubleTapToZoomWebView:(UIGestureRecognizer *)gestureRecognizer;
 - (NSMapTable<NSNumber *, UITouch *> *)touchActionActiveTouches;

@@ -1387,6 +1387,19 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
 
 #pragma mark - WKTouchActionGestureRecognizerDelegate implementation
 
+- (BOOL)gestureRecognizerMayPanWebView:(UIGestureRecognizer *)gestureRecognizer
+{
+    // The gesture recognizer is the main UIScrollView's UIPanGestureRecognizer.
+    if (gestureRecognizer == [_webView scrollView].panGestureRecognizer)
+        return YES;
+
+    // The gesture recognizer is a child UIScrollView's UIPanGestureRecognizer created by WebKit.
+    if (gestureRecognizer.view && [gestureRecognizer.view isKindOfClass:[WKChildScrollView class]])
+        return YES;
+
+    return NO;
+}
+
 - (BOOL)gestureRecognizerMayPinchToZoomWebView:(UIGestureRecognizer *)gestureRecognizer
 {
     // The gesture recognizer is the main UIScrollView's UIPinchGestureRecognizer.

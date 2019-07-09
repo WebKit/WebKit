@@ -1,3 +1,16 @@
+2019-07-09  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Scroll indicators should not show for scrollable content with touch-action: none
+        https://bugs.webkit.org/show_bug.cgi?id=199618
+
+        Reviewed by Simon Fraser.
+
+        Add a new test that swipes "overflow: scroll" content which would show scroll indicators without scrolling
+        prior to this patch.
+
+        * pointerevents/ios/touch-action-none-no-scroll-indicators-expected.html: Added.
+        * pointerevents/ios/touch-action-none-no-scroll-indicators.html: Added.
+
 2019-07-09  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer] HLS media test gardening

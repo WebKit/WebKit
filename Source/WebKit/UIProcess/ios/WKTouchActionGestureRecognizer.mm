@@ -91,10 +91,11 @@
     if (_touchActionsByTouchIdentifier.isEmpty())
         return NO;
 
+    auto mayPan = [_touchActionDelegate gestureRecognizerMayPanWebView:preventedGestureRecognizer];
     auto mayPinchToZoom = [_touchActionDelegate gestureRecognizerMayPinchToZoomWebView:preventedGestureRecognizer];
     auto mayDoubleTapToZoom = [_touchActionDelegate gestureRecognizerMayDoubleTapToZoomWebView:preventedGestureRecognizer];
 
-    if (!mayPinchToZoom && !mayDoubleTapToZoom)
+    if (!mayPan && !mayPinchToZoom && !mayDoubleTapToZoom)
         return NO;
 
     // Now that we've established that this gesture recognizer may yield an interaction that is preventable by the "touch-action"
@@ -105,6 +106,10 @@
     for (NSNumber *touchIdentifier in activeTouches) {
         auto iterator = _touchActionsByTouchIdentifier.find([touchIdentifier unsignedIntegerValue]);
         if (iterator != _touchActionsByTouchIdentifier.end() && [[activeTouches objectForKey:touchIdentifier].gestureRecognizers containsObject:preventedGestureRecognizer]) {
+            // Panning is only allowed if "pan-x", "pan-y" or "manipulation" is specified. Additional work is needed to respect individual values, but this takes
+            // care of the case where no panning is allowed.
+            if (mayPan && !iterator->value.containsAny({ WebCore::TouchAction::PanX, WebCore::TouchAction::PanY, WebCore::TouchAction::Manipulation }))
+                return YES;
             // Pinch-to-zoom is only allowed if "pinch-zoom" or "manipulation" is specified.
             if (mayPinchToZoom && !iterator->value.containsAny({ WebCore::TouchAction::PinchZoom, WebCore::TouchAction::Manipulation }))
                 return YES;
