@@ -1,3 +1,14 @@
+2019-07-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add another Protocol Version (iOS 13.0)
+        https://bugs.webkit.org/show_bug.cgi?id=199631
+        <rdar://problem/47538193>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Protocol/Legacy/13.0/InspectorBackendCommands.js: Added.
+        * Versions/Inspector-iOS-13.0.json: Added.
+
 2019-07-08  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: special breakpoints and event targets should be sorted into separate "areas"
