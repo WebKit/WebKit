@@ -598,6 +598,7 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
 
     default:
         ASSERT_NOT_REACHED();
+        return false;
     }
 
     return true;
