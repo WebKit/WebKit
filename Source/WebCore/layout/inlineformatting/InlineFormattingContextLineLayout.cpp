@@ -317,13 +317,11 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
     auto& lineRuns = lineContent.runs();
     for (unsigned index = 0; index < lineRuns.size(); ++index) {
         auto& lineRun = lineRuns.at(index);
-
-        auto& inlineItem = lineRun->inlineItem;
-        auto& logicalRect = lineRun->logicalRect;
-        auto& layoutBox = inlineItem.layoutBox();
+        auto& logicalRect = lineRun->logicalRect();
+        auto& layoutBox = lineRun->layoutBox();
         auto& displayBox = layoutState().displayBoxForLayoutBox(layoutBox);
 
-        if (inlineItem.isHardLineBreak()) {
+        if (lineRun->isLineBreak()) {
             displayBox.setTopLeft(logicalRect.topLeft());
             displayBox.setContentBoxWidth(logicalRect.width());
             displayBox.setContentBoxHeight(logicalRect.height());
@@ -332,7 +330,7 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
         }
 
         // Inline level box (replaced or inline-block)
-        if (inlineItem.isBox()) {
+        if (lineRun->isBox()) {
             auto topLeft = logicalRect.topLeft();
             if (layoutBox.isInFlowPositioned())
                 topLeft += Geometry::inFlowPositionedPositionOffset(layoutState(), layoutBox);
@@ -343,14 +341,14 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
         }
 
         // Inline level container start (<span>)
-        if (inlineItem.isContainerStart()) {
+        if (lineRun->isContainerStart()) {
             displayBox.setTopLeft(logicalRect.topLeft());
             lineBoxRect.expandHorizontally(logicalRect.width());
             continue;
         }
 
         // Inline level container end (</span>)
-        if (inlineItem.isContainerEnd()) {
+        if (lineRun->isContainerEnd()) {
             if (layoutBox.isInFlowPositioned()) {
                 auto inflowOffset = Geometry::inFlowPositionedPositionOffset(layoutState(), layoutBox);
                 displayBox.moveHorizontally(inflowOffset.width());
@@ -366,28 +364,29 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
         }
 
         // Text content. Try to join multiple text runs when possible.
-        ASSERT(lineRun->textContext);        
+        ASSERT(lineRun->isText());
+        auto textContext = lineRun->textContext();   
         const Line::Content::Run* previousLineRun = !index ? nullptr : lineRuns[index - 1].get();
-        if (!lineRun->isCollapsed) {
-            auto previousRunCanBeExtended = previousLineRun ? previousLineRun->canBeExtended : false;
-            auto requiresNewRun = !index || !previousRunCanBeExtended || &layoutBox != &previousLineRun->inlineItem.layoutBox();
+        if (!textContext->isCollapsed) {
+            auto previousRunCanBeExtended = previousLineRun && previousLineRun->textContext() ? previousLineRun->textContext()->canBeExtended : false;
+            auto requiresNewRun = !index || !previousRunCanBeExtended || &layoutBox != &previousLineRun->layoutBox();
             if (requiresNewRun)
-                m_formattingState.addInlineRun(std::make_unique<Display::Run>(logicalRect, Display::Run::TextContext { lineRun->textContext->start, lineRun->textContext->length }));
+                m_formattingState.addInlineRun(std::make_unique<Display::Run>(logicalRect, Display::Run::TextContext { textContext->start, textContext->length }));
             else {
                 auto& lastDisplayRun = m_formattingState.inlineRuns().last();
                 lastDisplayRun->expandHorizontally(logicalRect.width());
-                lastDisplayRun->textContext()->expand(lineRun->textContext->length);
+                lastDisplayRun->textContext()->expand(textContext->length);
             }
             lineBoxRect.expandHorizontally(logicalRect.width());
         }
         // FIXME take content breaking into account when part of the layout box is on the previous line.
-        auto firstInlineRunForLayoutBox = !previousLineRun || &previousLineRun->inlineItem.layoutBox() != &layoutBox;
+        auto firstInlineRunForLayoutBox = !previousLineRun || &previousLineRun->layoutBox() != &layoutBox;
         if (firstInlineRunForLayoutBox) {
             // Setup display box for the associated layout box.
             displayBox.setTopLeft(logicalRect.topLeft());
-            displayBox.setContentBoxWidth(lineRun->isCollapsed ? LayoutUnit() : logicalRect.width());
+            displayBox.setContentBoxWidth(textContext->isCollapsed ? LayoutUnit() : logicalRect.width());
             displayBox.setContentBoxHeight(logicalRect.height());
-        } else if (!lineRun->isCollapsed) {
+        } else if (!textContext->isCollapsed) {
             // FIXME fix it for multirun/multiline.
             displayBox.setContentBoxWidth(displayBox.contentBoxWidth() + logicalRect.width());
         }

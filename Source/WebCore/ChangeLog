@@ -1,3 +1,44 @@
+2019-07-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Remove InlineItem references from inline runs.
+        https://bugs.webkit.org/show_bug.cgi?id=199608
+        <rdar://problem/52812775>
+
+        Reviewed by Antti Koivisto.
+
+        Constructing the inline runs is where we stop using InlineItems in the process of processing the inline content.
+        InlineItems are redundant in the context of Display::Runs.
+        It also enables us to create temporary InlineItems to process split content.  
+
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::InlineFormattingContext::LineLayout::createDisplayRuns const):
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineDescentNeedsCollapsing):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Content::Run::Run):
+        (WebCore::Layout::Line::isVisuallyEmpty const):
+        (WebCore::Layout::Line::close):
+        (WebCore::Layout::Line::removeTrailingTrimmableContent):
+        (WebCore::Layout::Line::trailingTrimmableWidth const):
+        (WebCore::Layout::Line::appendNonBreakableSpace):
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::Line::appendNonReplacedInlineBox):
+        (WebCore::Layout::Line::appendHardLineBreak):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Content::Run::layoutBox const):
+        (WebCore::Layout::Line::Content::Run::logicalRect const):
+        (WebCore::Layout::Line::Content::Run::textContext const):
+        (WebCore::Layout::Line::Content::Run::type const):
+        (WebCore::Layout::Line::Content::Run::isText const):
+        (WebCore::Layout::Line::Content::Run::isBox const):
+        (WebCore::Layout::Line::Content::Run::isLineBreak const):
+        (WebCore::Layout::Line::Content::Run::isContainerStart const):
+        (WebCore::Layout::Line::Content::Run::isContainerEnd const):
+        (WebCore::Layout::Line::Content::Run::adjustLogicalTop):
+        (WebCore::Layout::Line::Content::Run::moveVertically):
+        (WebCore::Layout::Line::Content::Run::moveHorizontally):
+        (WebCore::Layout::Line::Content::Run::setTextIsCollapsed):
+
 2019-07-09  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r244906): Crash in WebCore::positionOffsetValue

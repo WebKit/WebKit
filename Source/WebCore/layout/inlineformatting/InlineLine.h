@@ -57,15 +57,35 @@ public:
             struct TextContext {
                 unsigned start { 0 };
                 unsigned length { 0 };
+                bool isCollapsed { false };
+                bool isWhitespace { false };
+                bool canBeExtended { false };
             };
-            Run(const InlineItem&, const Display::Rect&, TextContext, bool isCollapsed, bool canBeExtended);
+            Run(const InlineItem&, const Display::Rect&);
+            Run(const InlineItem&, const TextContext&, const Display::Rect&);
 
-            const InlineItem& inlineItem;
-            Display::Rect logicalRect;
-            LayoutUnit baseline;
-            Optional<TextContext> textContext;
-            bool isCollapsed { false };
-            bool canBeExtended { false };
+            const Box& layoutBox() const { return m_layoutBox; }
+            const Display::Rect& logicalRect() const { return m_logicalRect; }
+            const Optional<TextContext> textContext() const { return m_textContext; }
+            InlineItem::Type type() const { return m_type; }
+
+            bool isText() const { return m_type == InlineItem::Type::Text; }
+            bool isBox() const { return m_type == InlineItem::Type::Box; }
+            bool isLineBreak() const { return m_type == InlineItem::Type::HardLineBreak; }
+            bool isContainerStart() const { return m_type == InlineItem::Type::ContainerStart; }
+            bool isContainerEnd() const { return m_type == InlineItem::Type::ContainerEnd; }
+
+        private:
+            friend class Line;
+            void adjustLogicalTop(LayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
+            void moveVertically(LayoutUnit offset) { m_logicalRect.moveVertically(offset); }
+            void moveHorizontally(LayoutUnit offset) { m_logicalRect.moveHorizontally(offset); }
+            void setTextIsCollapsed() { m_textContext->isCollapsed = true; }
+
+            const Box& m_layoutBox;
+            const InlineItem::Type m_type;
+            Display::Rect m_logicalRect;
+            Optional<TextContext> m_textContext;
         };
         using Runs = Vector<std::unique_ptr<Run>>;
         const Runs& runs() const { return m_runs; }

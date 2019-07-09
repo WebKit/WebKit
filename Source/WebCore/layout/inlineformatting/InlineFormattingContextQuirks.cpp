@@ -44,19 +44,19 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const LayoutSta
         return false;
 
     for (auto& run : lineContent.runs()) {
-        auto& inlineItem = run->inlineItem;
-        if (inlineItem.style().verticalAlign() != VerticalAlign::Baseline)
+        auto& layoutBox = run->layoutBox();
+        if (layoutBox.style().verticalAlign() != VerticalAlign::Baseline)
             continue;
 
-        switch (inlineItem.type()) {
+        switch (run->type()) {
         case InlineItem::Type::Text:
-            if (!run->isCollapsed)
+            if (!run->textContext() || !run->textContext()->isCollapsed)
                 return false;
             break;
         case InlineItem::Type::HardLineBreak:
             return false;
         case InlineItem::Type::ContainerStart: {
-            auto& displayBox = layoutState.displayBoxForLayoutBox(inlineItem.layoutBox());
+            auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
             if (displayBox.horizontalBorder() || (displayBox.horizontalPadding() && displayBox.horizontalPadding().value()))
                 return false;
             break;
@@ -64,7 +64,6 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const LayoutSta
         case InlineItem::Type::ContainerEnd:
             break;
         case InlineItem::Type::Box: {
-            auto& layoutBox = inlineItem.layoutBox();
             if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
                 auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutBox));
                 ASSERT(!formattingState.lineBoxes().isEmpty());
