@@ -1,3 +1,10 @@
+2019-07-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, address TestExpectations linter warning.
+
+        * TestExpectations: Delete entry for fast/content-observation since
+        the directory doesn't exist anymore.
+
 2019-07-09  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Add another group of WHLSL JS reference spec tests
