@@ -44,6 +44,7 @@ template <typename T>
 class WeakHashSet {
 public:
     typedef HashSet<Ref<WeakPtrImpl>> WeakPtrImplSet;
+    typedef typename WeakPtrImplSet::AddResult AddResult;
 
     class WeakHashSetConstIterator : public std::iterator<std::forward_iterator_tag, T, std::ptrdiff_t, const T*, const T&> {
     private:
@@ -96,9 +97,9 @@ public:
     const_iterator end() const { return WeakHashSetConstIterator(m_set, m_set.end()); }
 
     template <typename U>
-    void add(const U& value)
+    AddResult add(const U& value)
     {
-        m_set.add(*makeWeakPtr<T>(const_cast<U&>(value)).m_impl);
+        return m_set.add(*makeWeakPtr<T>(const_cast<U&>(value)).m_impl);
     }
 
     template <typename U>

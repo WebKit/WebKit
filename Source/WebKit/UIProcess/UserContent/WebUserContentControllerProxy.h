@@ -27,14 +27,15 @@
 
 #include "APIObject.h"
 #include "MessageReceiver.h"
+#include "NetworkProcessProxy.h"
 #include "UserContentControllerIdentifier.h"
 #include <WebCore/PageIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/StringHash.h>
 
 namespace API {
@@ -96,8 +97,8 @@ public:
     void removeAllUserMessageHandlers(API::UserContentWorld&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    void addNetworkProcess(NetworkProcessProxy& proxy) { m_networkProcesses.add(&proxy); }
-    void removeNetworkProcess(NetworkProcessProxy& proxy) { m_networkProcesses.remove(&proxy); }
+    void addNetworkProcess(NetworkProcessProxy& proxy) { m_networkProcesses.add(proxy); }
+    void removeNetworkProcess(NetworkProcessProxy& proxy) { m_networkProcesses.remove(proxy); }
 
     void addContentRuleList(API::ContentRuleList&);
     void removeContentRuleList(const String&);
@@ -119,14 +120,14 @@ private:
     bool shouldSendRemoveUserContentWorldsMessage(API::UserContentWorld&, unsigned numberOfUsesToRemove);
 
     UserContentControllerIdentifier m_identifier;
-    HashSet<WebProcessProxy*> m_processes;
+    WeakHashSet<WebProcessProxy> m_processes;
     Ref<API::Array> m_userScripts;
     Ref<API::Array> m_userStyleSheets;
     HashMap<uint64_t, RefPtr<WebScriptMessageHandler>> m_scriptMessageHandlers;
     HashCountedSet<RefPtr<API::UserContentWorld>> m_userContentWorlds;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    HashSet<NetworkProcessProxy*> m_networkProcesses;
+    WeakHashSet<NetworkProcessProxy> m_networkProcesses;
     HashMap<String, RefPtr<API::ContentRuleList>> m_contentRuleLists;
 #endif
 };

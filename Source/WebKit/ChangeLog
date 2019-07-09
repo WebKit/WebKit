@@ -1,3 +1,36 @@
+2019-07-08  Chris Dumez  <cdumez@apple.com>
+
+        Use WeakHashSet for WebUserContentControllerProxy::m_processes
+        https://bugs.webkit.org/show_bug.cgi?id=199591
+        <rdar://problem/52798721>
+
+        Reviewed by Youenn Fablet.
+
+        Use WeakHashSet for WebUserContentControllerProxy::m_processses for safety. In theory, a WebProcessProxy could
+        stay in the map if we failed to call WebProcessProxy::shutDown() before destroying it.
+
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::~WebUserContentControllerProxy):
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::removeProcess):
+        (WebKit::WebUserContentControllerProxy::addUserContentWorldUse):
+        (WebKit::WebUserContentControllerProxy::removeUserContentWorldUses):
+        (WebKit::WebUserContentControllerProxy::addUserScript):
+        (WebKit::WebUserContentControllerProxy::removeUserScript):
+        (WebKit::WebUserContentControllerProxy::removeAllUserScripts):
+        (WebKit::WebUserContentControllerProxy::addUserStyleSheet):
+        (WebKit::WebUserContentControllerProxy::removeUserStyleSheet):
+        (WebKit::WebUserContentControllerProxy::removeAllUserStyleSheets):
+        (WebKit::WebUserContentControllerProxy::addUserScriptMessageHandler):
+        (WebKit::WebUserContentControllerProxy::removeUserMessageHandlerForName):
+        (WebKit::WebUserContentControllerProxy::removeAllUserMessageHandlers):
+        (WebKit::WebUserContentControllerProxy::addContentRuleList):
+        (WebKit::WebUserContentControllerProxy::removeContentRuleList):
+        (WebKit::WebUserContentControllerProxy::removeAllContentRuleLists):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        (WebKit::WebUserContentControllerProxy::addNetworkProcess):
+        (WebKit::WebUserContentControllerProxy::removeNetworkProcess):
+
 2019-07-08  Daniel Bates  <dabates@apple.com>
 
         [iOS] Support select all in non-editable element
