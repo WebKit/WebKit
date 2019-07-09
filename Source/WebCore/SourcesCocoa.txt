@@ -78,6 +78,7 @@ dom/ios/TouchEvents.cpp
 editing/SelectionRectGatherer.cpp
 editing/SmartReplaceCF.cpp
 
+editing/cocoa/AutofillElements.cpp
 editing/cocoa/DataDetection.mm
 editing/cocoa/DictionaryLookup.mm
 editing/cocoa/EditorCocoa.mm
@@ -98,8 +99,6 @@ editing/mac/EditorMac.mm
 editing/mac/FrameSelectionMac.mm
 editing/mac/TextAlternativeWithRange.mm
 editing/mac/TextUndoInsertionMarkupMac.mm
-
-editing/ios/AutofillElements.cpp
 
 fileapi/FileCocoa.mm
 

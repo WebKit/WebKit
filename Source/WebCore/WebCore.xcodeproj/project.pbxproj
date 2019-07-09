@@ -1445,7 +1445,6 @@
 		516103AF1CADBA770016B4C7 /* IDBValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 516103AE1CADB9A30016B4C7 /* IDBValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5162C7F511F77EFB00612EFE /* SchemeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 5162C7F311F77EFB00612EFE /* SchemeRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5166D3CD1E8ED48F00AD62E3 /* StorageType.h in Headers */ = {isa = PBXBuildFile; fileRef = 5166D3CC1E8ED41100AD62E3 /* StorageType.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51699EE41F608CD500D57D06 /* AutofillElements.h in Headers */ = {isa = PBXBuildFile; fileRef = 51699EE21F608CD500D57D06 /* AutofillElements.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		516C62201950D48700337E75 /* GamepadEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516C621D1950D48700337E75 /* GamepadEvent.cpp */; };
 		516C62211950D48700337E75 /* GamepadEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 516C621E1950D48700337E75 /* GamepadEvent.h */; };
 		516D7D701BB5F0BD00AF7C77 /* IDBConnectionToServerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5185FCBD1BB5CB770012898F /* IDBConnectionToServerDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8117,8 +8116,6 @@
 		51645B531B9F889B00F789CE /* IDBVersionChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBVersionChangeEvent.h; sourceTree = "<group>"; };
 		51645B541B9F88E800F789CE /* IDBCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursor.cpp; sourceTree = "<group>"; };
 		5166D3CC1E8ED41100AD62E3 /* StorageType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageType.h; sourceTree = "<group>"; };
-		51699EE11F608CD500D57D06 /* AutofillElements.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AutofillElements.cpp; sourceTree = "<group>"; };
-		51699EE21F608CD500D57D06 /* AutofillElements.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AutofillElements.h; sourceTree = "<group>"; };
 		516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTreeWalkerCustom.cpp; sourceTree = "<group>"; };
 		516C621D1950D48700337E75 /* GamepadEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GamepadEvent.cpp; sourceTree = "<group>"; };
 		516C621E1950D48700337E75 /* GamepadEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadEvent.h; sourceTree = "<group>"; };
@@ -8922,6 +8919,8 @@
 		5CB37FFD1C62D27800F20188 /* ScrollAnimatorMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimatorMock.h; sourceTree = "<group>"; };
 		5CBC8DAA1AAA302200E1C803 /* MediaAccessibilitySoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaAccessibilitySoftLink.cpp; sourceTree = "<group>"; };
 		5CBC8DAB1AAA302200E1C803 /* MediaAccessibilitySoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaAccessibilitySoftLink.h; sourceTree = "<group>"; };
+		5CCC270622D53B6800964FA0 /* AutofillElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutofillElements.h; sourceTree = "<group>"; };
+		5CCC270722D53B6900964FA0 /* AutofillElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutofillElements.cpp; sourceTree = "<group>"; };
 		5CDD83391E4324BB00621E83 /* RealtimeIncomingVideoSourceCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RealtimeIncomingVideoSourceCocoa.mm; sourceTree = "<group>"; };
 		5CDD83391E4324BB00621E92 /* RealtimeIncomingVideoSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeIncomingVideoSource.cpp; sourceTree = "<group>"; };
 		5CDD833A1E4324BB00621E83 /* RealtimeIncomingVideoSourceCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeIncomingVideoSourceCocoa.h; sourceTree = "<group>"; };
@@ -15606,6 +15605,7 @@
 				FD2DBF1312B048A300ED98C6 /* AudioToolbox.framework in Frameworks */,
 				1AB33DA512551E320024457A /* IOKit.framework in Frameworks */,
 				93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */,
+				1C022F0022CFED68006DF01B /* libcompression.tbd in Frameworks */,
 				93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */,
 				1CFAE3230A6D6A3F0032593D /* libobjc.dylib in Frameworks */,
 				1C09D0591E31C6A900725F18 /* libPAL.a in Frameworks */,
@@ -15613,7 +15613,6 @@
 				379919B21200DE5000EA041C /* libz.dylib in Frameworks */,
 				A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */,
 				5FE1D292178FD1F3001AA3C3 /* Security.framework in Frameworks */,
-				1C022F0022CFED68006DF01B /* libcompression.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18043,8 +18042,6 @@
 		443292C10EBA6D7300E62016 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				51699EE11F608CD500D57D06 /* AutofillElements.cpp */,
-				51699EE21F608CD500D57D06 /* AutofillElements.h */,
 				D0BD4F5A1408850F006839B6 /* DictationCommandIOS.cpp */,
 				D0BD4F5B1408850F006839B6 /* DictationCommandIOS.h */,
 				FED13D390CEA934600D89466 /* EditorIOS.mm */,
@@ -20787,6 +20784,8 @@
 		7C3E510718DF8F1200C112F7 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				5CCC270722D53B6900964FA0 /* AutofillElements.cpp */,
+				5CCC270622D53B6800964FA0 /* AutofillElements.h */,
 				C5227DEF1C3C6DD700F5ED54 /* DataDetection.h */,
 				C5227DF01C3C6DD700F5ED54 /* DataDetection.mm */,
 				937FF3D61A10131B008EBA31 /* DictionaryLookup.mm */,
@@ -28400,7 +28399,6 @@
 				A5A7AA43132F0ECC00D3A3C2 /* AutocapitalizeTypes.h in Headers */,
 				7C1843FE1C8B7283002EB973 /* Autofill.h in Headers */,
 				7C1E97281A9F9834007BF0FB /* AutoFillButtonElement.h in Headers */,
-				51699EE41F608CD500D57D06 /* AutofillElements.h in Headers */,
 				C9D467051E60C465008195FB /* AutoplayEvent.h in Headers */,
 				45830D4E1679B4F800ACF8C3 /* AutoscrollController.h in Headers */,
 				A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */,
