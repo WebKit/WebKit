@@ -1,3 +1,13 @@
+2019-07-09  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should reserialize IPv6 addresses that end with a colon
+        https://bugs.webkit.org/show_bug.cgi?id=199627
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WTF/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2019-07-08  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Do not run unix commands for windows in PrintConfiguration

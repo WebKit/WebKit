@@ -1,3 +1,17 @@
+2019-07-09  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should reserialize IPv6 addresses that end with a colon
+        https://bugs.webkit.org/show_bug.cgi?id=199627
+
+        Reviewed by Brady Eidson.
+
+        When an IPv6 address ends in a colon, the colon should be removed which means the
+        serialized output is different than the input, which the URLParser calls a syntax violation.
+        This matches the URL specification, and I added a unit test that used to assert.
+
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::parseIPv6Host):
+
 2019-07-08  Chris Dumez  <cdumez@apple.com>
 
         Use WeakHashSet for WebUserContentControllerProxy::m_processes

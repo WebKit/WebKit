@@ -2467,6 +2467,8 @@ Optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator<Char
         if (piecePointer == 8 || *c != ':')
             return WTF::nullopt;
         advance(c, hostBegin);
+        if (c.atEnd())
+            syntaxViolation(hostBegin);
 
         immediatelyAfterCompress = false;
     }

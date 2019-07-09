@@ -353,6 +353,7 @@ TEST_F(WTF_URLParser, Basic)
     checkURL("http://[0:f:0:0:f::]:\t123", {"http", "", "", "[0:f:0:0:f::]", 123, "/", "", "", "http://[0:f:0:0:f::]:123/"});
     checkURL("http://[0:f:0:0:f::]:1\t23", {"http", "", "", "[0:f:0:0:f::]", 123, "/", "", "", "http://[0:f:0:0:f::]:123/"});
     checkURL("http://[0:f::f:f:0:0]:/path", {"http", "", "", "[0:f::f:f:0:0]", 0, "/path", "", "", "http://[0:f::f:f:0:0]/path"});
+    checkURL("a://[::2:]", {"a", "", "", "[::2]", 0, "", "", "", "a://[::2]"});
     checkURL("http://[0:f::f:f:0:0]:", {"http", "", "", "[0:f::f:f:0:0]", 0, "/", "", "", "http://[0:f::f:f:0:0]/"});
     checkURL("http://host:10100/path", {"http", "", "", "host", 10100, "/path", "", "", "http://host:10100/path"});
     checkURL("http://host:/path", {"http", "", "", "host", 0, "/path", "", "", "http://host/path"});
