@@ -1063,11 +1063,12 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.allExceptionsBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.uncaughtExceptionsBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.assertionFailuresBreakpoint,
-                (treeElement) => treeElement.representedObject === WI.domDebuggerManager.allRequestsBreakpoint,
                 (treeElement) => treeElement instanceof WI.BreakpointTreeElement || treeElement instanceof WI.ResourceTreeElement || treeElement instanceof WI.ScriptTreeElement,
                 (treeElement) => treeElement instanceof WI.EventBreakpointTreeElement,
                 (treeElement) => treeElement instanceof WI.DOMNodeTreeElement,
+                (treeElement) => treeElement.representedObject === DebuggerSidebarPanel.__windowEventTargetRepresentedObject,
                 (treeElement) => treeElement instanceof WI.DOMBreakpointTreeElement,
+                (treeElement) => treeElement.representedObject === WI.domDebuggerManager.allRequestsBreakpoint,
                 (treeElement) => treeElement instanceof WI.URLBreakpointTreeElement,
             ];
 
