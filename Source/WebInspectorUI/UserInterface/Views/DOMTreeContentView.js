@@ -128,13 +128,11 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         if (this._showRulersButtonNavigationItem)
            items.unshift(this._showRulersButtonNavigationItem);
 
-        if (!WI.settings.experimentalEnableLayersTab.value) {
-            if (this._compositingBordersButtonNavigationItem)
-                items.push(this._compositingBordersButtonNavigationItem);
+        if (this._compositingBordersButtonNavigationItem)
+            items.push(this._compositingBordersButtonNavigationItem);
 
-            if (this._paintFlashingButtonNavigationItem)
-                items.push(this._paintFlashingButtonNavigationItem);
-       }
+        if (this._paintFlashingButtonNavigationItem)
+            items.push(this._paintFlashingButtonNavigationItem);
 
         return items;
     }
@@ -606,9 +604,6 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
     _updateCompositingBordersButtonToMatchPageSettings()
     {
-        if (WI.settings.experimentalEnableLayersTab.value)
-            return;
-
         var button = this._compositingBordersButtonNavigationItem;
 
         // We need to sync with the page settings since these can be controlled

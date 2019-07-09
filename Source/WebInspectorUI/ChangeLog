@@ -1,5 +1,19 @@
 2019-07-08  Devin Rousso  <drousso@apple.com>
 
+        Enabling the Layers tab hides the paint flashing button
+        https://bugs.webkit.org/show_bug.cgi?id=199549
+
+        Reviewed by Joseph Pecoraro.
+
+        Still show the Compositing Borders and Paint Flashing navigation items in the Elements tab
+        even when the Layers tab is enabled (just like the Layers details sidebar).
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView.prototype.get navigationItems):
+        (WI.DOMTreeContentView.prototype._updateCompositingBordersButtonToMatchPageSettings):
+
+2019-07-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION: Elements: pasting in the Styles sidebar adds a text node to the DOM tree
         https://bugs.webkit.org/show_bug.cgi?id=199588
 
