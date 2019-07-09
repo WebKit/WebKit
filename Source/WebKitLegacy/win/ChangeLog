@@ -1,3 +1,26 @@
+2019-07-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] ASSERTION FAILED: info.bmBitsPixel == 32 in createCairoContextWithHDC
+        https://bugs.webkit.org/show_bug.cgi?id=198323
+
+        Reviewed by Per Arne Vollan.
+
+        WebView::paint binds m_backingStoreBitmap to a DC by using
+        SelectObject. WebView::paint can be called recursively, but
+        m_backingStoreBitmap can't be bound to multiple DCs at the same
+        time. Then, SelectObject was failing in such case.
+
+        Call WebCore::Page::updateRendering before binding
+        m_backingStoreBitmap instead of after it.
+
+        Reverted r202744 change which won't be needed since this change.
+
+        * WebView.cpp:
+        (WebView::scrollBackingStore): Removed r202744's change.
+        (WebView::updateBackingStore): Removed m_page->updateRendering().
+        (WebView::paint): Do m_page->updateRendering() before binding m_backingStoreBitmap.
+        * WebView.h: Removed unused WebView::isPainting.
+
 2019-07-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debug: "Reset Web Inspector" should also clear the saved window size and attachment side

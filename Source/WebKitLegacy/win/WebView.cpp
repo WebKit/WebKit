@@ -1015,15 +1015,7 @@ void WebView::scrollBackingStore(FrameView* frameView, int logicalDx, int logica
     HWndDC windowDC(m_viewWindow);
     auto bitmapDC = adoptGDIObject(::CreateCompatibleDC(windowDC));
     HGDIOBJ oldBitmap = ::SelectObject(bitmapDC.get(), m_backingStoreBitmap->get());
-    if (!oldBitmap) {
-        // The ::SelectObject call will fail if m_backingStoreBitmap is already selected into a device context.
-        // This happens when this method is called indirectly from WebView::updateBackingStore during normal WM_PAINT handling.
-        // There is no point continuing, since we would just be scrolling a 1x1 bitmap which is selected into the device context by default.
-        // We can just scroll by repainting the scroll rectangle.
-        RECT scrollRect(scrollViewRect);
-        ::InvalidateRect(m_viewWindow, &scrollRect, FALSE);
-        return;
-    }
+    ASSERT(oldBitmap);
 
     // Scroll the bitmap.
     RECT scrollRectWin(scrollViewRect);
@@ -1164,6 +1156,7 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
         bitmapDCObject = adoptGDIObject(::CreateCompatibleDC(windowDC));
         bitmapDC = bitmapDCObject.get();
         oldBitmap = ::SelectObject(bitmapDC, m_backingStoreBitmap->get());
+        ASSERT(oldBitmap);
 #if USE(DIRECT2D)
         HRESULT hr = m_backingStoreGdiInterop->GetDC(D2D1_DC_INITIALIZE_MODE_COPY, &bitmapDC);
         RELEASE_ASSERT(SUCCEEDED(hr));
@@ -1171,9 +1164,6 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
     }
 
     if (m_backingStoreBitmap && (m_backingStoreDirtyRegion || backingStoreCompletelyDirty)) {
-        // Do a layout first so that everything we render to the backing store is always current.
-        m_page->updateRendering();
-
         Vector<IntRect> paintRects;
         if (!backingStoreCompletelyDirty && m_backingStoreDirtyRegion) {
             RECT regionBox;
@@ -1305,6 +1295,8 @@ void WebView::paint(HDC dc, LPARAM options)
         return;
     }
 
+    m_page->updateRendering();
+
     Frame* coreFrame = core(m_mainFrame);
     if (!coreFrame)
         return;
@@ -1341,8 +1333,6 @@ void WebView::paint(HDC dc, LPARAM options)
         return;
     }
 
-    m_paintCount++;
-
     auto bitmapDC = adoptGDIObject(::CreateCompatibleDC(hdc));
     HGDIOBJ oldBitmap = ::SelectObject(bitmapDC.get(), m_backingStoreBitmap->get());
 
@@ -1376,8 +1366,6 @@ void WebView::paint(HDC dc, LPARAM options)
 #if USE(DIRECT2D)
     m_backingStoreGdiInterop->ReleaseDC(nullptr);
 #endif
-
-    m_paintCount--;
 
     if (active())
         cancelDeleteBackingStoreSoon();

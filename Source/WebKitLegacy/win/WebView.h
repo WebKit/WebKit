@@ -475,8 +475,6 @@ public:
     const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
     bool handleEditingKeyboardEvent(WebCore::KeyboardEvent&);
 
-    bool isPainting() const { return m_paintCount > 0; }
-
     void setToolTip(const WTF::String&);
 
     void registerForIconNotification(bool listen);
@@ -670,7 +668,6 @@ protected:
     COMPtr<IDropTargetHelper> m_dropTargetHelper;
     UChar m_currentCharacterCode { 0 };
     bool m_isBeingDestroyed { false };
-    unsigned m_paintCount { 0 };
     bool m_hasSpellCheckerDocumentTag { false };
     bool m_didClose { false };
     bool m_hasCustomDropTarget { false };
