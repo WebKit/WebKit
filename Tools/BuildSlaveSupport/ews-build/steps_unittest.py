@@ -1832,8 +1832,6 @@ BuildVersion:	17G7024'''),
 
         self.expectRemoteCommands(
             ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
-            ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
-            ExpectShell(command=['date'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Printed configuration')
         return self.runStep()
