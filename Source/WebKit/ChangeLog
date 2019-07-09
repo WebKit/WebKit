@@ -1,3 +1,17 @@
+2019-07-09  Chris Dumez  <cdumez@apple.com>
+
+        Validate reply block signature in [WKRemoteObjectRegistry _invokeMethod]
+        https://bugs.webkit.org/show_bug.cgi?id=199584
+        <rdar://problem/46268249>
+
+        Reviewed by Geoffrey Garen.
+
+        Validate reply block signature in [WKRemoteObjectRegistry _invokeMethod] for robustness.
+
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (validateReplyBlockSignature):
+        (-[_WKRemoteObjectRegistry _invokeMethod:]):
+
 2019-07-09  Alex Christensen  <achristensen@webkit.org>
 
         UserData::decode should return false when decoding an unrecognized type
