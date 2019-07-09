@@ -1,3 +1,19 @@
+2019-07-09  Youenn Fablet  <youenn@apple.com>
+
+        Revert conditional WebPageProxy check to grant universal file read sandbox upon correct sandbox creation
+        https://bugs.webkit.org/show_bug.cgi?id=199622
+        <rdar://problem/52357508>
+
+        Reviewed by Alex Christensen.
+
+        On iOS, the sandbox extension to '/' will usually fail, thus the universal file read sandbox is not granted.
+        This makes WebPageProxy cancel some file:// loads to the application own container.
+        As a short term fix, go back to previous behavior.
+        Covered by testing broken app identified in rdar://problem/52357508.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle):
+
 2019-07-09  Sihui Liu  <sihui_liu@apple.com>
 
         Only allow fetching and removing session credentials from WebsiteDataStore
