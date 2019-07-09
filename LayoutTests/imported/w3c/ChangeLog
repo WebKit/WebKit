@@ -1,3 +1,15 @@
+2019-07-09  Cathie Chen  <cathiechen@igalia.com>
+
+        Support writing-mode and direction for scrollIntoViewOptions.
+        https://bugs.webkit.org/show_bug.cgi?id=161611
+
+        Reviewed by Frédéric Wang and Simon Fraser.
+
+        * web-platform-tests/css/cssom-view/scrollIntoView-horizontal-tb-writing-mode-and-rtl-direction-expected.txt:
+        * web-platform-tests/css/cssom-view/scrollIntoView-vertical-lr-writing-mode-and-rtl-direction-expected.txt:
+        * web-platform-tests/css/cssom-view/scrollIntoView-vertical-lr-writing-mode-expected.txt:
+        * web-platform-tests/css/cssom-view/scrollIntoView-vertical-rl-writing-mode-expected.txt:
+
 2019-07-06  Cathie Chen  <cathiechen@igalia.com>
 
         Import css/cssom-view testcases from WPT.

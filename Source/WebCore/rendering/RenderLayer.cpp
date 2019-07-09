@@ -2623,6 +2623,11 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
         RenderBox* box = renderBox();
         ASSERT(box);
         LayoutRect localExposeRect(box->absoluteToLocalQuad(FloatQuad(FloatRect(absoluteRect))).boundingBox());
+        if (shouldPlaceBlockDirectionScrollbarOnLeft()) {
+            // For direction: rtl; writing-mode: horizontal-tb box, the scroll bar is on the left side. The visible rect
+            // starts from the right side of scroll bar. So the x of localExposeRect should start from the same position too.
+            localExposeRect.moveBy(LayoutPoint(-verticalScrollbarWidth(), 0));
+        }
         LayoutRect layerBounds(0_lu, 0_lu, box->clientWidth(), box->clientHeight());
         LayoutRect revealRect = getRectToExpose(layerBounds, localExposeRect, insideFixed, options.alignX, options.alignY);
 

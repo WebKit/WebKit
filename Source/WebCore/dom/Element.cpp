@@ -701,16 +701,84 @@ void Element::setHovered(bool flag)
         renderer()->theme().stateChanged(*renderer(), ControlStates::HoverState);
 }
 
-// FIXME(webkit.org/b/161611): Take into account orientation/direction.
-inline ScrollAlignment toScrollAlignment(Optional<ScrollLogicalPosition> position, bool isVertical)
+inline ScrollAlignment toScrollAlignmentForInlineDirection(Optional<ScrollLogicalPosition> position, WritingMode writingMode, bool isLTR)
 {
-    switch (position.valueOr(isVertical ? ScrollLogicalPosition::Start : ScrollLogicalPosition::Nearest)) {
-    case ScrollLogicalPosition::Start:
-        return isVertical ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignLeftAlways;
+    switch (position.valueOr(ScrollLogicalPosition::Nearest)) {
+    case ScrollLogicalPosition::Start: {
+        switch (writingMode) {
+        case TopToBottomWritingMode:
+        case BottomToTopWritingMode: {
+            return isLTR ? ScrollAlignment::alignLeftAlways : ScrollAlignment::alignRightAlways;
+        }
+        case LeftToRightWritingMode:
+        case RightToLeftWritingMode: {
+            return isLTR ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignBottomAlways;
+        }
+        default:
+            ASSERT_NOT_REACHED();
+            return ScrollAlignment::alignLeftAlways;
+        }
+    }
     case ScrollLogicalPosition::Center:
         return ScrollAlignment::alignCenterAlways;
-    case ScrollLogicalPosition::End:
-        return isVertical ? ScrollAlignment::alignBottomAlways : ScrollAlignment::alignRightAlways;
+    case ScrollLogicalPosition::End: {
+        switch (writingMode) {
+        case TopToBottomWritingMode:
+        case BottomToTopWritingMode: {
+            return isLTR ? ScrollAlignment::alignRightAlways : ScrollAlignment::alignLeftAlways;
+        }
+        case LeftToRightWritingMode:
+        case RightToLeftWritingMode: {
+            return isLTR ? ScrollAlignment::alignBottomAlways : ScrollAlignment::alignTopAlways;
+        }
+        default:
+            ASSERT_NOT_REACHED();
+            return ScrollAlignment::alignRightAlways;
+        }
+    }
+    case ScrollLogicalPosition::Nearest:
+        return ScrollAlignment::alignToEdgeIfNeeded;
+    default:
+        ASSERT_NOT_REACHED();
+        return ScrollAlignment::alignToEdgeIfNeeded;
+    }
+}
+
+inline ScrollAlignment toScrollAlignmentForBlockDirection(Optional<ScrollLogicalPosition> position, WritingMode writingMode)
+{
+    switch (position.valueOr(ScrollLogicalPosition::Start)) {
+    case ScrollLogicalPosition::Start: {
+        switch (writingMode) {
+        case TopToBottomWritingMode:
+            return ScrollAlignment::alignTopAlways;
+        case BottomToTopWritingMode:
+            return ScrollAlignment::alignBottomAlways;
+        case LeftToRightWritingMode:
+            return ScrollAlignment::alignLeftAlways;
+        case RightToLeftWritingMode:
+            return ScrollAlignment::alignRightAlways;
+        default:
+            ASSERT_NOT_REACHED();
+            return ScrollAlignment::alignTopAlways;
+        }
+    }
+    case ScrollLogicalPosition::Center:
+        return ScrollAlignment::alignCenterAlways;
+    case ScrollLogicalPosition::End: {
+        switch (writingMode) {
+        case TopToBottomWritingMode:
+            return ScrollAlignment::alignBottomAlways;
+        case BottomToTopWritingMode:
+            return ScrollAlignment::alignTopAlways;
+        case LeftToRightWritingMode:
+            return ScrollAlignment::alignRightAlways;
+        case RightToLeftWritingMode:
+            return ScrollAlignment::alignLeftAlways;
+        default:
+            ASSERT_NOT_REACHED();
+            return ScrollAlignment::alignBottomAlways;
+        }
+    }
     case ScrollLogicalPosition::Nearest:
         return ScrollAlignment::alignToEdgeIfNeeded;
     default:
@@ -739,9 +807,18 @@ void Element::scrollIntoView(Optional<Variant<bool, ScrollIntoViewOptions>>&& ar
             options.blockPosition = ScrollLogicalPosition::End;
     }
 
-    ScrollAlignment alignX = toScrollAlignment(options.inlinePosition, false);
-    ScrollAlignment alignY = toScrollAlignment(options.blockPosition, true);
-    renderer()->scrollRectToVisible(absoluteBounds, insideFixed, { SelectionRevealMode::Reveal, alignX, alignY, ShouldAllowCrossOriginScrolling::No });
+    auto writingMode = renderer()->style().writingMode();
+    ScrollAlignment alignX = toScrollAlignmentForInlineDirection(options.inlinePosition, writingMode, renderer()->style().isLeftToRightDirection());
+    ScrollAlignment alignY = toScrollAlignmentForBlockDirection(options.blockPosition, writingMode);
+
+    bool isHorizontal = renderer()->style().isHorizontalWritingMode();
+    ScrollRectToVisibleOptions visibleOptions {
+        SelectionRevealMode::Reveal,
+        isHorizontal ? alignX : alignY,
+        isHorizontal ? alignY : alignX,
+        ShouldAllowCrossOriginScrolling::No
+    };
+    renderer()->scrollRectToVisible(absoluteBounds, insideFixed, visibleOptions);
 }
 
 void Element::scrollIntoView(bool alignToTop) 

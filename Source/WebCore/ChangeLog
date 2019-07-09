@@ -1,3 +1,27 @@
+2019-07-09  Cathie Chen  <cathiechen@igalia.com>
+
+        Support writing-mode and direction for scrollIntoViewOptions.
+        https://bugs.webkit.org/show_bug.cgi?id=161611
+
+        Reviewed by Frédéric Wang and Simon Fraser.
+
+        To determine which physical side to align we need to transform ScrollIntoViewOptions to scrollAlignment.
+        We'll translate the inline and block direction separately. The writing-mode will affect the block scrollAlignment.
+        While both writing-mode and CSS direction will affect the inline scrollAlignment. The argument for scrollRectToVisible
+        should be physical, so if !isHorizontalWritingMode(), we need to switch alignX and alignY.
+
+        For direction: rtl and writing-mode: horizontal-tb box, WebKit puts the scrollbar on the left side. The visible rect
+        starts from the right side of the scroll bar, so localExposeRect should also start from the right side of
+        scroll bar.
+
+        * dom/Element.cpp:
+        (WebCore::toScrollAlignmentForInlineDirection):
+        (WebCore::toScrollAlignmentForBlockDirection):
+        (WebCore::Element::scrollIntoView):
+        (WebCore::toScrollAlignment): Deleted.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+
 2019-07-08  Saam Barati  <sbarati@apple.com>
 
         [WHLSL Import 23 new JS reference spec tests

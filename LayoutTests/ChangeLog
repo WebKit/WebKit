@@ -1,3 +1,12 @@
+2019-07-09  Cathie Chen  <cathiechen@igalia.com>
+
+        Support writing-mode and direction for scrollIntoViewOptions.
+        https://bugs.webkit.org/show_bug.cgi?id=161611
+
+        Reviewed by Frédéric Wang and Simon Fraser.
+
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-horizontal-tb-writing-mode-and-rtl-direction-expected.txt: Removed.
+
 2019-07-08  Saam Barati  <sbarati@apple.com>
 
         [WHLSL Import 23 new JS reference spec tests
