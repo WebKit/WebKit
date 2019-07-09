@@ -1,5 +1,28 @@
 2019-07-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: DOM Debugger: there should be different icons for each type of DOM breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=199552
+
+        Reviewed by Joseph Pecoraro.
+
+        [S] for Subtree Modified
+        [A] for Attribute Modified
+        [R] for Node Removed
+
+        * UserInterface/Views/DOMBreakpointTreeElement.js:
+        (WI.DOMBreakpointTreeElement):
+        * UserInterface/Views/DOMBreakpointTreeElement.css: Added.
+        (.breakpoint.dom.breakpoint-for-subtree-modified:not(.breakpoint-paused-icon) .icon):
+        (.breakpoint.dom.breakpoint-for-attribute-modified:not(.breakpoint-paused-icon) .icon):
+        (.breakpoint.dom.breakpoint-for-node-removed:not(.breakpoint-paused-icon) .icon):
+
+        * UserInterface/Main.html:
+        * UserInterface/Images/DOMBreakpointAttributeModified.svg: Added.
+        * UserInterface/Images/DOMBreakpointNodeRemoved.svg: Added.
+        * UserInterface/Images/DOMBreakpointSubtreeModified.svg: Added.
+
+2019-07-08  Devin Rousso  <drousso@apple.com>
+
         Uncaught Exception: Unexpected enum value: CPU
         https://bugs.webkit.org/show_bug.cgi?id=199564
 

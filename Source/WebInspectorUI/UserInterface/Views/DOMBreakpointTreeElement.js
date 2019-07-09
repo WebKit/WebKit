@@ -29,14 +29,15 @@ WI.DOMBreakpointTreeElement = class DOMBreakpointTreeElement extends WI.GeneralT
     {
         console.assert(breakpoint instanceof WI.DOMBreakpoint);
 
-        if (!className)
-            className = WI.BreakpointTreeElement.GenericLineIconStyleClassName;
+        let classNames = ["breakpoint", "dom", `breakpoint-for-${breakpoint.type}`];
+        if (className)
+            classNames.push(className);
 
         if (!title)
             title = WI.DOMBreakpointTreeElement.displayNameForType(breakpoint.type);
 
         const subtitle = null;
-        super(["breakpoint", "dom", className], title, subtitle, breakpoint);
+        super(classNames, title, subtitle, breakpoint);
 
         this.status = WI.ImageUtilities.useSVGSymbol("Images/Breakpoint.svg");
         this.status.className = WI.BreakpointTreeElement.StatusImageElementStyleClassName;
