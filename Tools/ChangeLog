@@ -1,3 +1,21 @@
+2019-07-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        JSTestGlobalObject.cpp of bindings-generation-tests is failing for Windows Python
+        https://bugs.webkit.org/show_bug.cgi?id=199487
+
+        Reviewed by Ross Kirsling.
+
+        In Windows Python, preprocessor.pm is using cl.exe. cl.exe was
+        failing to open testglobalscope_constructors_file which was
+        created by using tempfile.mkstemp() because it keeps the file
+        open. Use tempfile.mkdtemp() to create temporary files in the
+        temporary directory instead of tempfile.mkstemp().
+
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.run_tests):
+        (BindingsTests.main):
+        (BindingsTests.close_and_remove): Deleted.
+
 2019-07-08  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add KillOldProcesses step before running API or Layout tests

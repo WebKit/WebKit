@@ -174,51 +174,34 @@ class BindingsTests:
 
         return passed
 
-    def close_and_remove(self, temporary_file):
-        os.close(temporary_file[0])
-        os.remove(temporary_file[1])
-
     def main(self):
         current_scm = detect_scm_system(os.curdir)
         os.chdir(os.path.join(current_scm.checkout_root, 'Source'))
 
         all_tests_passed = True
 
+        work_directory = tempfile.mkdtemp()
         input_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test')
-        supplemental_dependency_file = tempfile.mkstemp()
-        window_constructors_file = tempfile.mkstemp()
-        workerglobalscope_constructors_file = tempfile.mkstemp()
-        dedicatedworkerglobalscope_constructors_file = tempfile.mkstemp()
-        serviceworkerglobalscope_constructors_file = tempfile.mkstemp()
-        workletglobalscope_constructors_file = tempfile.mkstemp()
-        paintworkletglobalscope_constructors_file = tempfile.mkstemp()
-        testglobalscope_constructors_file = tempfile.mkstemp()
-        if self.generate_supplemental_dependency(input_directory, supplemental_dependency_file[1], window_constructors_file[1], workerglobalscope_constructors_file[1], dedicatedworkerglobalscope_constructors_file[1], serviceworkerglobalscope_constructors_file[1], workletglobalscope_constructors_file[1], paintworkletglobalscope_constructors_file[1], testglobalscope_constructors_file[1]):
+        supplemental_dependency_file = os.path.join(work_directory, 'supplemental_dependency.tmp')
+        window_constructors_file = os.path.join(work_directory, 'DOMWindowConstructors.idl')
+        workerglobalscope_constructors_file = os.path.join(work_directory, 'WorkerGlobalScopeConstructors.idl')
+        dedicatedworkerglobalscope_constructors_file = os.path.join(work_directory, 'DedicatedWorkerGlobalScopeConstructors.idl')
+        serviceworkerglobalscope_constructors_file = os.path.join(work_directory, 'ServiceWorkerGlobalScopeConstructors.idl')
+        workletglobalscope_constructors_file = os.path.join(work_directory, 'WorkletGlobalScopeConstructors.idl')
+        paintworkletglobalscope_constructors_file = os.path.join(work_directory, 'PaintWorkletGlobalScopeConstructors.idl')
+        testglobalscope_constructors_file = os.path.join(work_directory, 'BindingTestGlobalConstructors.idl')
+        if self.generate_supplemental_dependency(input_directory, supplemental_dependency_file, window_constructors_file, workerglobalscope_constructors_file, dedicatedworkerglobalscope_constructors_file, serviceworkerglobalscope_constructors_file, workletglobalscope_constructors_file, paintworkletglobalscope_constructors_file, testglobalscope_constructors_file):
             print('Failed to generate a supplemental dependency file.')
-            self.close_and_remove(supplemental_dependency_file)
-            self.close_and_remove(window_constructors_file)
-            self.close_and_remove(workerglobalscope_constructors_file)
-            self.close_and_remove(dedicatedworkerglobalscope_constructors_file)
-            self.close_and_remove(serviceworkerglobalscope_constructors_file)
-            self.close_and_remove(workletglobalscope_constructors_file)
-            self.close_and_remove(paintworkletglobalscope_constructors_file)
-            self.close_and_remove(testglobalscope_constructors_file)
+            shutil.rmtree(work_directory)
             return -1
 
         for generator in self.generators:
             input_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test')
             reference_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test', generator)
-            if not self.run_tests(generator, input_directory, reference_directory, supplemental_dependency_file[1]):
+            if not self.run_tests(generator, input_directory, reference_directory, supplemental_dependency_file):
                 all_tests_passed = False
 
-        self.close_and_remove(supplemental_dependency_file)
-        self.close_and_remove(window_constructors_file)
-        self.close_and_remove(workerglobalscope_constructors_file)
-        self.close_and_remove(dedicatedworkerglobalscope_constructors_file)
-        self.close_and_remove(serviceworkerglobalscope_constructors_file)
-        self.close_and_remove(workletglobalscope_constructors_file)
-        self.close_and_remove(paintworkletglobalscope_constructors_file)
-        self.close_and_remove(testglobalscope_constructors_file)
+        shutil.rmtree(work_directory)
 
         if self.json_file_name:
             json_data = {
