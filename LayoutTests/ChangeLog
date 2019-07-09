@@ -1,3 +1,19 @@
+2019-07-09  Rob Buis  <rbuis@igalia.com>
+
+        Remove rel=subresource tests
+        https://bugs.webkit.org/show_bug.cgi?id=199616
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove rel=subresource references by deleting or using rel=prefetch
+        instead.
+
+        * TestExpectations:
+        * fast/dom/HTMLLinkElement/cachedresource-types.html:
+        * http/tests/misc/link-rel-prefetch-and-subresource.html: Removed.
+        * webarchive/test-link-rel-subresource-beforeload-expected.webarchive: Removed.
+        * webarchive/test-link-rel-subresource-beforeload.html: Removed.
+
 2019-07-09  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Scroll indicators should not show for scrollable content with touch-action: none
