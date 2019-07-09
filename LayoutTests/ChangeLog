@@ -1,3 +1,72 @@
+2019-07-09  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r247180. rdar://problem/51597945
+
+    [iOS] Crash in WebKit::WebPage::positionInformation via Range::startPosition
+    https://bugs.webkit.org/show_bug.cgi?id=199503
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    * editing/Editor.cpp:
+    (WebCore::Editor::compositionRange const): Added a FIXME.
+    
+    Source/WebKit:
+    
+    The crash was caused because focusedElementPositionInformation asssumes Editor::compositionRange is not null
+    whenever Editor::hasComposition returns true, which is not necessary the case when Editor::m_compositionNode
+    contains no text (data is of length 0).
+    
+    Fixed the crash by adding an early return for when Editor::compositionRange returns nullptr.
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::focusedElementPositionInformation):
+    
+    Tools:
+    
+    Added UIScriptController.ensurePositionInformationIsUpToDateAt using the existing WKWebView SPI:
+    _requestActivatedElementAtPosition
+    
+    * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+    (WTR::UIScriptController::ensurePositionInformationIsUpToDateAt):
+    * DumpRenderTree/mac/UIScriptControllerMac.mm:
+    (WTR::UIScriptController::ensurePositionInformationIsUpToDateAt):
+    * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+    * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+    (WTR::UIScriptController::ensurePositionInformationIsUpToDateAt):
+    * TestRunnerShared/UIScriptContext/UIScriptController.h:
+    * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+    (WTR::UIScriptController::ensurePositionInformationIsUpToDateAt):
+    * WebKitTestRunner/ios/UIScriptControllerMac.mm:
+    (WTR::UIScriptController::ensurePositionInformationIsUpToDateAt):
+    
+    LayoutTests:
+    
+    Added a regression test for the crash.
+    
+    * editing/input/delete-text-in-composition-expected.txt: Added.
+    * editing/input/delete-text-in-composition.html: Added.
+    * resources/ui-helper.js:
+    (window.UIHelper.ensurePositionInformationUpdateForElement): Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247180 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+            [iOS] Crash in WebKit::WebPage::positionInformation via Range::startPosition
+            https://bugs.webkit.org/show_bug.cgi?id=199503
+
+            Reviewed by Wenson Hsieh.
+
+            Added a regression test for the crash.
+
+            * editing/input/delete-text-in-composition-expected.txt: Added.
+            * editing/input/delete-text-in-composition.html: Added.
+            * resources/ui-helper.js:
+            (window.UIHelper.ensurePositionInformationUpdateForElement): Added.
+
 2019-07-05  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r247167. rdar://problem/52547473

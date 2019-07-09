@@ -67,6 +67,7 @@ public:
     void doAsyncTask(JSValueRef callback);
     void doAfterPresentationUpdate(JSValueRef callback);
     void doAfterNextStablePresentationUpdate(JSValueRef callback);
+    void ensurePositionInformationIsUpToDateAt(long x, long y, JSValueRef callback);
     void doAfterVisibleContentRectUpdate(JSValueRef callback);
 
     void zoomToScale(double scale, JSValueRef callback);

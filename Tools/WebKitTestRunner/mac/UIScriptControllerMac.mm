@@ -59,6 +59,11 @@ void UIScriptController::doAfterNextStablePresentationUpdate(JSValueRef callback
     doAsyncTask(callback);
 }
 
+void UIScriptController::ensurePositionInformationIsUpToDateAt(long, long, JSValueRef callback)
+{
+    doAsyncTask(callback);
+}
+
 void UIScriptController::doAfterVisibleContentRectUpdate(JSValueRef callback)
 {
     doAsyncTask(callback);

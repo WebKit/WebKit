@@ -254,6 +254,25 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static ensurePositionInformationUpdateForElement(element)
+    {
+        const boundingRect = element.getBoundingClientRect();
+        const x = boundingRect.x + 5;
+        const y = boundingRect.y + 5;
+
+        if (!this.isWebKit2()) {
+            testRunner.display();
+            return Promise.resolve();
+        }
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                uiController.ensurePositionInformationIsUpToDateAt(${x}, ${y}, function () {
+                    uiController.uiScriptComplete();
+                });`, resolve);
+        });
+    }
+
     static delayFor(ms)
     {
         return new Promise(resolve => setTimeout(resolve, ms));

@@ -101,6 +101,10 @@ void UIScriptController::doAfterNextStablePresentationUpdate(JSValueRef)
 {
 }
 
+void UIScriptController::ensurePositionInformationIsUpToDateAt(long x, long y, JSValueRef)
+{
+}
+
 void UIScriptController::doAfterVisibleContentRectUpdate(JSValueRef)
 {
 }
