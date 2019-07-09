@@ -205,14 +205,5 @@ const checkFloat4s = (body, argValues = [], expected = [0, 1, 2, 3]) => {
         });
     }, "Return an expected float4 value.");
 }
-
-const webGPUPromiseTest = (testFunc, msg) => {
-    promise_test(async () => { 
-        return testFunc().catch(e => {
-        if (!(e instanceof WebGPUUnsupportedError))
-            throw e;
-        });
-    }, msg);
-}
 </script>
 </html>

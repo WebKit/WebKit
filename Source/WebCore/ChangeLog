@@ -1,3 +1,27 @@
+2019-07-08  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL Import 23 new JS reference spec tests
+        https://bugs.webkit.org/show_bug.cgi?id=199604
+
+        Reviewed by Myles C. Maxfield.
+
+        This patch imports a bunch of JS reference spec tests on our way to
+        completing https://bugs.webkit.org/show_bug.cgi?id=199595
+        
+        It also fixes the recursion checker phase. That phase had two bugs:
+        1. We'd assert after visiting the function declaration that it was
+        still in the set. However, it will not be in the set when we actually
+        detect recursion.
+        2. We would not visit the arguments to a call, so if they contained other
+        calls which were recursive, we would not detect such recursive calls.
+
+        Tests: webgpu/whlsl-int-literal-compare.html
+               webgpu/whlsl-simple-tests.html
+               webgpu/whlsl-type-mismatch.html
+               webgpu/whlsl-uint-bitwise.html
+
+        * Modules/webgpu/WHLSL/WHLSLRecursionChecker.cpp:
+
 2019-07-08  Chris Dumez  <cdumez@apple.com>
 
         Make Document::postTask() safe to call from a background thread

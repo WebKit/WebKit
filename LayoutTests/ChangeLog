@@ -1,3 +1,28 @@
+2019-07-08  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL Import 23 new JS reference spec tests
+        https://bugs.webkit.org/show_bug.cgi?id=199604
+
+        Reviewed by Myles C. Maxfield.
+
+        This moves some stuff down into whlsl-test-harness which are needed by
+        all tests. This also adds a new checkFail that ensures the program never
+        runs (e.g, it has a compile error).
+
+        * webgpu/js/whlsl-test-harness.js:
+        (async.checkFail):
+        (const.webGPUPromiseTest):
+        * webgpu/whlsl-bitwise-bool-ops-expected.txt:
+        * webgpu/whlsl-bitwise-bool-ops.html:
+        * webgpu/whlsl-int-literal-compare-expected.txt: Added.
+        * webgpu/whlsl-int-literal-compare.html: Added.
+        * webgpu/whlsl-simple-tests-expected.txt: Added.
+        * webgpu/whlsl-simple-tests.html: Added.
+        * webgpu/whlsl-type-mismatch-expected.txt: Added.
+        * webgpu/whlsl-type-mismatch.html: Added.
+        * webgpu/whlsl-uint-bitwise-expected.txt: Added.
+        * webgpu/whlsl-uint-bitwise.html: Added.
+
 2019-07-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS 13] paste-does-not-fire-promises-while-sanitizing-web-content.html times out when run with multiple iterations

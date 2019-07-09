@@ -49,6 +49,8 @@ private:
         }
 
         Visitor::visit(functionDefinition);
+        if (error())
+            return;
 
         auto success = m_visitingSet.remove(&functionDefinition);
         ASSERT_UNUSED(success, success);
@@ -56,7 +58,9 @@ private:
 
     void visit(AST::CallExpression& callExpression) override
     {
-        Visitor::visit(callExpression.function());
+        Visitor::visit(callExpression);
+        if (is<AST::FunctionDefinition>(callExpression.function()))
+            checkErrorAndVisit(downcast<AST::FunctionDefinition>(callExpression.function()));
     }
 
     HashSet<AST::FunctionDefinition*> m_visitingSet;
