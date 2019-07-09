@@ -275,7 +275,7 @@ void RenderLayerCompositor::BackingSharingState::updateAfterDescendantTraversal(
         layer.backing()->clearBackingSharingLayers();
 }
 
-#if !LOG_DISABLED
+#if !LOG_DISABLED || ENABLE(TREE_DEBUGGING)
 static inline bool compositingLogEnabled()
 {
     return LogCompositing.state == WTFLogChannelState::On;

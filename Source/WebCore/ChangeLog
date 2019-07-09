@@ -1,5 +1,15 @@
 2019-07-09  Zalan Bujtas  <zalan@apple.com>
 
+        Fix LOG_DISABLED and TREE_DEBUGGING enabled build.
+        https://bugs.webkit.org/show_bug.cgi?id=199623
+        <rdar://problem/52837648>
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderLayerCompositor.cpp:
+
+2019-07-09  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Remove InlineItem references from inline runs.
         https://bugs.webkit.org/show_bug.cgi?id=199608
         <rdar://problem/52812775>
