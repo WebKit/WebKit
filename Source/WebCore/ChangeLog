@@ -1,3 +1,15 @@
+2019-07-09  Alex Christensen  <achristensen@webkit.org>
+
+        Null check HistoryItems given to loadDifferentDocumentItem
+        https://bugs.webkit.org/show_bug.cgi?id=199596
+        <rdar://problem/49884391>
+
+        Reviewed by Ryosuke Niwa.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::retryAfterFailedCacheOnlyMainResourceLoad):
+        Under some rare and mysterious conditions we can have a null provisionalItem when loading from the cache.
+
 2019-07-09  Zalan Bujtas  <zalan@apple.com>
 
         Fix LOG_DISABLED and TREE_DEBUGGING enabled build.
