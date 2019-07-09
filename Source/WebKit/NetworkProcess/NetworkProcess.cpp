@@ -572,8 +572,10 @@ NetworkSession* NetworkProcess::networkSession(const PAL::SessionID& sessionID) 
 
 NetworkSession* NetworkProcess::networkSessionByConnection(IPC::Connection& connection) const
 {
-    auto sessionID = m_sessionByConnection.get(connection.uniqueID());
-    return sessionID.isValid() ? networkSession(sessionID) : nullptr;
+    if (!m_sessionByConnection.contains(connection.uniqueID()))
+        return nullptr;
+
+    return networkSession(m_sessionByConnection.get(connection.uniqueID()));
 }
 
 void NetworkProcess::setSession(const PAL::SessionID& sessionID, Ref<NetworkSession>&& session)
@@ -2671,8 +2673,10 @@ void NetworkProcess::webPageWasAdded(IPC::Connection& connection, PAL::SessionID
     }
     auto& storageManager = session->storageManager();
 
-    auto addResult = m_sessionByConnection.add(connection.uniqueID(), sessionID);
-    ASSERT_UNUSED(addResult, addResult.iterator->value == sessionID);
+    auto connectionID = connection.uniqueID();
+    m_sessionByConnection.ensure(connectionID, [&]() {
+        return sessionID;
+    });
 
     storageManager.createSessionStorageNamespace(pageID.toUInt64(), std::numeric_limits<unsigned>::max());
     storageManager.addAllowedSessionStorageNamespaceConnection(pageID.toUInt64(), connection);
@@ -2699,10 +2703,11 @@ void NetworkProcess::webPageWasRemoved(IPC::Connection& connection, PAL::Session
 
 void NetworkProcess::webProcessWasDisconnected(IPC::Connection& connection)
 {
-    auto sessionID = m_sessionByConnection.take(connection.uniqueID());
-    if (!sessionID.isValid())
+    auto connectionID = connection.uniqueID();
+    if (!m_sessionByConnection.contains(connectionID))
         return;
 
+    auto sessionID = m_sessionByConnection.take(connectionID);
     if (auto* session = networkSession(sessionID))
         session->storageManager().processDidCloseConnection(connection);
 }
