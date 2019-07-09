@@ -32,6 +32,7 @@
 #include "Timer.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <initializer_list>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -87,7 +88,7 @@ public:
     void didCreateCanvasRenderingContext(CanvasRenderingContext&);
     void willDestroyCanvasRenderingContext(CanvasRenderingContext&);
     void didChangeCanvasMemory(CanvasRenderingContext&);
-    void recordCanvasAction(CanvasRenderingContext&, const String&, Vector<RecordCanvasActionVariant>&& = { });
+    void recordCanvasAction(CanvasRenderingContext&, const String&, std::initializer_list<RecordCanvasActionVariant>&& = { });
     void didFinishRecordingCanvasFrame(CanvasRenderingContext&, bool forceDispatch = false);
     void consoleStartRecordingCanvas(CanvasRenderingContext&, JSC::ExecState&, JSC::JSObject* options);
 #if ENABLE(WEBGL)

@@ -29,6 +29,7 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <JavaScriptCore/ScriptCallFrame.h>
 #include <JavaScriptCore/ScriptCallStack.h>
+#include <initializer_list>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -63,7 +64,7 @@ public:
     void resetRecordingData();
     bool hasRecordingData() const;
     bool currentFrameHasData() const;
-    void recordAction(const String&, Vector<RecordCanvasActionVariant>&& = { });
+    void recordAction(const String&, std::initializer_list<RecordCanvasActionVariant>&& = { });
 
     Ref<JSON::ArrayOf<Inspector::Protocol::Recording::Frame>> releaseFrames() { return m_frames.releaseNonNull(); }
 
@@ -109,7 +110,7 @@ private:
     int indexForData(DuplicateDataVariant);
     String stringIndexForKey(const String&);
     Ref<Inspector::Protocol::Recording::InitialState> buildInitialState();
-    Ref<JSON::ArrayOf<JSON::Value>> buildAction(const String&, Vector<RecordCanvasActionVariant>&& = { });
+    Ref<JSON::ArrayOf<JSON::Value>> buildAction(const String&, std::initializer_list<RecordCanvasActionVariant>&& = { });
     Ref<JSON::ArrayOf<JSON::Value>> buildArrayForCanvasGradient(const CanvasGradient&);
     Ref<JSON::ArrayOf<JSON::Value>> buildArrayForCanvasPattern(const CanvasPattern&);
     Ref<JSON::ArrayOf<JSON::Value>> buildArrayForImageData(const ImageData&);

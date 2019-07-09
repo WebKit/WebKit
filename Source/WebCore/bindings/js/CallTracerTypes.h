@@ -42,6 +42,7 @@
 #include <JavaScriptCore/Float32Array.h>
 #include <JavaScriptCore/Int32Array.h>
 #include <JavaScriptCore/Uint32Array.h>
+#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
@@ -53,6 +54,7 @@
 #include "WebGLProgram.h"
 #include "WebGLQuery.h"
 #include "WebGLRenderbuffer.h"
+#include "WebGLRenderingContextBase.h"
 #include "WebGLSampler.h"
 #include "WebGLShader.h"
 #include "WebGLSync.h"
@@ -62,21 +64,30 @@
 #include "WebGLVertexArrayObject.h"
 #endif
 
+#if ENABLE(WEBGL2)
+#include "WebGL2RenderingContext.h"
+#endif
+
 namespace WebCore {
 
 using RecordCanvasActionVariant = Variant<
+    // enum
     CanvasDirection,
     CanvasFillRule,
     CanvasLineCap,
     CanvasLineJoin,
     CanvasTextAlign,
     CanvasTextBaseline,
+    ImageSmoothingQuality,
+
+    // struct
     DOMMatrix2DInit,
+
+    // pointer
     Element*,
     HTMLImageElement*,
     ImageBitmap*,
     ImageData*,
-    ImageSmoothingQuality,
     Path2D*,
 #if ENABLE(WEBGL)
     WebGLBuffer*,
@@ -109,13 +120,35 @@ using RecordCanvasActionVariant = Variant<
     RefPtr<ImageData>,
     RefPtr<Int32Array>,
     RefPtr<Uint32Array>,
+
+    // variant
+    CanvasImageSource,
+    CanvasRenderingContext2DBase::Style,
+#if ENABLE(WEBGL)
+    WebGLRenderingContextBase::BufferDataSource,
+    Optional<WebGLRenderingContextBase::BufferDataSource>,
+    WebGLRenderingContextBase::TexImageSource,
+    Optional<WebGLRenderingContextBase::TexImageSource>,
+#endif
+
+    // array
     Vector<String>,
     Vector<float>,
     Vector<uint32_t>,
     Vector<int32_t>,
+#if ENABLE(WEBGL)
+    WebGLRenderingContextBase::Float32List::VariantType,
+    WebGLRenderingContextBase::Int32List::VariantType,
+#endif
+#if ENABLE(WEBGL2)
+    WebGL2RenderingContext::Uint32List::VariantType,
+#endif
+
+    // basic
     String,
     double,
     float,
+    Optional<float>,
     uint64_t,
     int64_t,
     uint32_t,

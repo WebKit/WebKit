@@ -352,7 +352,10 @@ WI.Recording = class Recording extends WI.Object
                     break;
 
                 case WI.Recording.Swizzle.String:
-                    this._swizzle[index][type] = String(data);
+                    if (Array.isArray(data))
+                        this._swizzle[index][type] = await Promise.all(data.map((item) => this.swizzle(item, WI.Recording.Swizzle.String)));
+                    else
+                        this._swizzle[index][type] = String(data);
                     break;
 
                 case WI.Recording.Swizzle.Image:

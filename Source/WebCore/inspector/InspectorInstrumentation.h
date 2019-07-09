@@ -50,6 +50,7 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerInspectorController.h"
 #include <JavaScriptCore/JSCInlines.h>
+#include <initializer_list>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/RefPtr.h>
 
@@ -269,7 +270,7 @@ public:
     static void didChangeCSSCanvasClientNodes(CanvasBase&);
     static void didCreateCanvasRenderingContext(CanvasRenderingContext&);
     static void didChangeCanvasMemory(CanvasRenderingContext&);
-    static void recordCanvasAction(CanvasRenderingContext&, const String&, Vector<RecordCanvasActionVariant>&& = { });
+    static void recordCanvasAction(CanvasRenderingContext&, const String&, std::initializer_list<RecordCanvasActionVariant>&& = { });
     static void didFinishRecordingCanvasFrame(CanvasRenderingContext&, bool forceDispatch = false);
 #if ENABLE(WEBGL)
     static void didEnableExtension(WebGLRenderingContextBase&, const String&);
@@ -452,7 +453,7 @@ private:
     static void didChangeCSSCanvasClientNodesImpl(InstrumentingAgents&, CanvasBase&);
     static void didCreateCanvasRenderingContextImpl(InstrumentingAgents&, CanvasRenderingContext&);
     static void didChangeCanvasMemoryImpl(InstrumentingAgents&, CanvasRenderingContext&);
-    static void recordCanvasActionImpl(InstrumentingAgents&, CanvasRenderingContext&, const String&, Vector<RecordCanvasActionVariant>&& = { });
+    static void recordCanvasActionImpl(InstrumentingAgents&, CanvasRenderingContext&, const String&, std::initializer_list<RecordCanvasActionVariant>&& = { });
     static void didFinishRecordingCanvasFrameImpl(InstrumentingAgents&, CanvasRenderingContext&, bool forceDispatch = false);
 #if ENABLE(WEBGL)
     static void didEnableExtensionImpl(InstrumentingAgents&, WebGLRenderingContextBase&, const String&);
@@ -1311,7 +1312,7 @@ inline void InspectorInstrumentation::didChangeCanvasMemory(CanvasRenderingConte
         didChangeCanvasMemoryImpl(*instrumentingAgents, context);
 }
 
-inline void InspectorInstrumentation::recordCanvasAction(CanvasRenderingContext& context, const String& name, Vector<RecordCanvasActionVariant>&& parameters)
+inline void InspectorInstrumentation::recordCanvasAction(CanvasRenderingContext& context, const String& name, std::initializer_list<RecordCanvasActionVariant>&& parameters)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context.canvasBase().scriptExecutionContext()))

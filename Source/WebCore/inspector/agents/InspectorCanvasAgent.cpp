@@ -420,7 +420,7 @@ void InspectorCanvasAgent::didChangeCanvasMemory(CanvasRenderingContext& context
         m_frontendDispatcher->canvasMemoryChanged(inspectorCanvas->identifier(), node->memoryCost());
 }
 
-void InspectorCanvasAgent::recordCanvasAction(CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<RecordCanvasActionVariant>&& parameters)
+void InspectorCanvasAgent::recordCanvasAction(CanvasRenderingContext& canvasRenderingContext, const String& name, std::initializer_list<RecordCanvasActionVariant>&& parameters)
 {
     auto inspectorCanvas = findInspectorCanvas(canvasRenderingContext);
     ASSERT(inspectorCanvas);
