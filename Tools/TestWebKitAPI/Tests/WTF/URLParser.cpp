@@ -777,8 +777,11 @@ TEST_F(WTF_URLParser, ParserDifferences)
     checkURLDifferences("http://abcd%7Xefg",
         {"", "", "", "", 0, "", "", "", "http://abcd%7Xefg"},
         {"http", "", "", "abcd%7xefg", 0, "/", "", "", "http://abcd%7xefg/"});
+    checkURL("ws://äAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", {"ws", "", "", "xn--aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-rsb254a", 0, "/", "", "", "ws://xn--aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-rsb254a/"}, TestTabs::No);
+    shouldFail("ws://äAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    checkURL("ws://&äAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", {"ws", "", "", "xn--&aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-ssb254a", 0, "/", "", "", "ws://xn--&aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-ssb254a/"}, TestTabs::No);
+    shouldFail("ws://&äAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
-    
     // URLParser matches Chrome and the spec, but not URL::parse or Firefox.
     checkURLDifferences(utf16String(u"http://０Ｘｃ０．０２５０．０１"),
         {"http", "", "", "192.168.0.1", 0, "/", "", "", "http://192.168.0.1/"},

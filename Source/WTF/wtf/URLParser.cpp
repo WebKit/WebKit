@@ -2567,13 +2567,16 @@ template<typename CharacterType> Optional<URLParser::LCharBuffer> URLParser::dom
     UErrorCode error = U_ZERO_ERROR;
     UIDNAInfo processingDetails = UIDNA_INFO_INITIALIZER;
     int32_t numCharactersConverted = uidna_nameToASCII(&internationalDomainNameTranscoder(), StringView(domain).upconvertedCharacters(), domain.length(), hostnameBuffer, maxDomainLength, &processingDetails, &error);
-    ASSERT(numCharactersConverted <= static_cast<int32_t>(maxDomainLength));
 
     if (U_SUCCESS(error) && !processingDetails.errors) {
+#if ASSERT_DISABLED
+        UNUSED_PARAM(numCharactersConverted);
+#else
         for (int32_t i = 0; i < numCharactersConverted; ++i) {
             ASSERT(isASCII(hostnameBuffer[i]));
             ASSERT(!isASCIIUpper(hostnameBuffer[i]));
         }
+#endif
         ascii.append(hostnameBuffer, numCharactersConverted);
         if (domain != StringView(ascii.data(), ascii.size()))
             syntaxViolation(iteratorForSyntaxViolationPosition);

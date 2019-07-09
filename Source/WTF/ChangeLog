@@ -1,5 +1,22 @@
 2019-07-09  Alex Christensen  <achristensen@webkit.org>
 
+        Remove invalid assertion in URLParser::domainToASCII
+        https://bugs.webkit.org/show_bug.cgi?id=199624
+
+        Reviewed by Brady Eidson.
+
+        When a non-ASCII domain's punycode encoding is longer than 63 characters,
+        the URL is supposed to fail to parse, according to https://www.unicode.org/reports/tr46/#ToASCII
+        We and all other browsers do this.  When uidna_nameToASCII tries to punycode encode such a domain,
+        it can return a number larger than 63.  In this case, processingDetails.errors is UIDNA_ERROR_LABEL_TOO_LONG
+        and we fail to parse as desired and uidna_nameToASCII did not write out of bounds, so it was just the assertion
+        that was wrong.  I added some unit tests that would have hit the assertion and verify that we fail at the correct length.
+
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::domainToASCII):
+
+2019-07-09  Alex Christensen  <achristensen@webkit.org>
+
         URLParser should reserialize IPv6 addresses that end with a colon
         https://bugs.webkit.org/show_bug.cgi?id=199627
 
