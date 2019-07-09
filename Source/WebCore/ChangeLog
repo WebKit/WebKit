@@ -1,5 +1,12 @@
 2019-07-09  Alex Christensen  <achristensen@webkit.org>
 
+        Fix build after r247279
+        https://bugs.webkit.org/show_bug.cgi?id=199640
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2019-07-09  Alex Christensen  <achristensen@webkit.org>
+
         Move AutofillElements.{h,cpp} from editing/ios to editing/cocoa since they're used on macOS
         https://bugs.webkit.org/show_bug.cgi?id=199640
 

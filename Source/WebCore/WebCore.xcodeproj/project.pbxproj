@@ -1893,6 +1893,7 @@
 		5CB37FFF1C62D2A100F20188 /* ScrollAnimatorMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB37FFD1C62D27800F20188 /* ScrollAnimatorMock.h */; };
 		5CBC8DAD1AAA302200E1C803 /* MediaAccessibilitySoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CBC8DAB1AAA302200E1C803 /* MediaAccessibilitySoftLink.h */; };
 		5CBD59592280E926002B22AA /* CustomHeaderFields.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C5D2386227A077C000B9BDA /* CustomHeaderFields.cpp */; };
+		5CCC270922D5483A00964FA0 /* AutofillElements.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCC270622D53B6800964FA0 /* AutofillElements.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CD9F5661AA0F73C00DA45FF /* DFABytecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C39305D1AA0F6A90029C816 /* DFABytecode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CD9F5671AA0F74200DA45FF /* DFABytecodeCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C39305F1AA0F6A90029C816 /* DFABytecodeCompiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CD9F5681AA0F74600DA45FF /* DFABytecodeInterpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C3930611AA0F6A90029C816 /* DFABytecodeInterpreter.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -30043,6 +30044,7 @@
 				7C7761AA1F878AA500F869FD /* JSImageBitmapRenderingContextSettings.h in Headers */,
 				A77979290D6B9E64003851B9 /* JSImageData.h in Headers */,
 				7C193C011F5E11050088F3E6 /* JSImageSmoothingQuality.h in Headers */,
+				5CCC270922D5483A00964FA0 /* AutofillElements.h in Headers */,
 				A86629D309DA2B48009633A6 /* JSInputEvent.h in Headers */,
 				9175CE5E21E281ED00DF2C28 /* JSInspectorAuditAccessibilityObject.h in Headers */,
 				9175CE5C21E281ED00DF2C28 /* JSInspectorAuditDOMObject.h in Headers */,
