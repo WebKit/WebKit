@@ -85,14 +85,46 @@ String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekStat
 #pragma mark -
 #pragma mark MediaPlayerPrivateMediaSourceAVFObjC
 
+class EffectiveRateChangedListener : public ThreadSafeRefCounted<EffectiveRateChangedListener> {
+public:
+    static Ref<EffectiveRateChangedListener> create(MediaPlayerPrivateMediaSourceAVFObjC& client, CMTimebaseRef timebase)
+    {
+        return adoptRef(*new EffectiveRateChangedListener(client, timebase));
+    }
+
+    void effectiveRateChanged()
+    {
+        callOnMainThread([this, protectedThis = makeRef(*this)] {
+            if (m_client)
+                m_client->effectiveRateChanged();
+        });
+    }
+
+    void stop(CMTimebaseRef);
+
+private:
+    EffectiveRateChangedListener(MediaPlayerPrivateMediaSourceAVFObjC&, CMTimebaseRef);
+
+    WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> m_client;
+};
+
 static void CMTimebaseEffectiveRateChangedCallback(CMNotificationCenterRef, const void *listener, CFStringRef, const void *, CFTypeRef)
 {
-    MediaPlayerPrivateMediaSourceAVFObjC* player = (MediaPlayerPrivateMediaSourceAVFObjC*)const_cast<void*>(listener);
-    callOnMainThread([weakThis = makeWeakPtr(player)] {
-        if (!weakThis)
-            return;
-        weakThis->effectiveRateChanged();
-    });
+    auto* effectiveRateChangedListener = (EffectiveRateChangedListener*)const_cast<void*>(listener);
+    effectiveRateChangedListener->effectiveRateChanged();
+}
+
+void EffectiveRateChangedListener::stop(CMTimebaseRef timebase)
+{
+    CMNotificationCenterRef nc = CMNotificationCenterGetDefaultLocalCenter();
+    CMNotificationCenterRemoveListener(nc, this, CMTimebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase);
+}
+
+EffectiveRateChangedListener::EffectiveRateChangedListener(MediaPlayerPrivateMediaSourceAVFObjC& client, CMTimebaseRef timebase)
+    : m_client(makeWeakPtr(client))
+{
+    CMNotificationCenterRef nc = CMNotificationCenterGetDefaultLocalCenter();
+    CMNotificationCenterAddListener(nc, this, CMTimebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase, 0);
 }
 
 MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer* player)
@@ -106,15 +138,12 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     , m_seeking(false)
     , m_loadingProgressed(false)
     , m_videoFullscreenLayerManager(std::make_unique<VideoFullscreenLayerManagerObjC>())
+    , m_effectiveRateChangedListener(EffectiveRateChangedListener::create(*this, [m_synchronizer timebase]))
 #if !RELEASE_LOG_DISABLED
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
 #endif
 {
-    CMTimebaseRef timebase = [m_synchronizer timebase];
-    CMNotificationCenterRef nc = CMNotificationCenterGetDefaultLocalCenter();
-    CMNotificationCenterAddListener(nc, this, CMTimebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase, 0);
-
     auto logSiteIdentifier = LOGIDENTIFIER;
     ALWAYS_LOG(logSiteIdentifier);
     UNUSED_PARAM(logSiteIdentifier);
@@ -150,9 +179,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    CMTimebaseRef timebase = [m_synchronizer timebase];
-    CMNotificationCenterRef nc = CMNotificationCenterGetDefaultLocalCenter();
-    CMNotificationCenterRemoveListener(nc, this, CMTimebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase);
+    m_effectiveRateChangedListener->stop([m_synchronizer timebase]);
 
     if (m_timeJumpedObserver)
         [m_synchronizer removeTimeObserver:m_timeJumpedObserver.get()];

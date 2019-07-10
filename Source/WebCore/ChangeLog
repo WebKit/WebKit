@@ -1,3 +1,28 @@
+2019-07-10  Chris Dumez  <cdumez@apple.com>
+
+        Fix unsafe usage of makeWeakPtr() in CMTimebaseEffectiveRateChangedCallback()
+        https://bugs.webkit.org/show_bug.cgi?id=199656
+
+        Reviewed by Eric Carlson.
+
+        CMTimebaseEffectiveRateChangedCallback() is getting called on a background thread and would call
+        makeWeakPtr() on the MediaPlayerPrivateMediaSourceAVFObjC object, which is not safe because
+        MediaPlayerPrivateMediaSourceAVFObjC is a main thread object.
+
+        To address the issue, move the logic for listening to effective rate changes to its own
+        Listener class which is ThreadSafeRefCounted. Instead of using makeWeakPtr() on the background
+        thread, we now merely ref the thread-safe listener.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::EffectiveRateChangedListener::create):
+        (WebCore::EffectiveRateChangedListener::effectiveRateChanged):
+        (WebCore::CMTimebaseEffectiveRateChangedCallback):
+        (WebCore::EffectiveRateChangedListener::stop):
+        (WebCore::EffectiveRateChangedListener::EffectiveRateChangedListener):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC):
+
 2019-07-10  Antti Koivisto  <antti@apple.com>
 
         Remove TouchActionData

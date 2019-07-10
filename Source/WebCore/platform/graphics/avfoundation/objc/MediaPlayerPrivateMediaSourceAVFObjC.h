@@ -49,6 +49,7 @@ typedef struct __CVBuffer *CVOpenGLTextureRef;
 namespace WebCore {
 
 class CDMSessionMediaSourceAVFObjC;
+class EffectiveRateChangedListener;
 class MediaSourcePrivateAVFObjC;
 class PixelBufferConformerCV;
 class PlatformClockCM;
@@ -328,6 +329,8 @@ private:
     bool m_shouldPlayToTarget { false };
 #endif
     std::unique_ptr<VideoFullscreenLayerManagerObjC> m_videoFullscreenLayerManager;
+
+    Ref<EffectiveRateChangedListener> m_effectiveRateChangedListener;
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
