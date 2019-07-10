@@ -239,8 +239,9 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
     auto afterUpdate = resolvePseudoStyle(element, update, PseudoId::After);
 
 #if ENABLE(POINTER_EVENTS) && PLATFORM(IOS_FAMILY)
-    if (!m_document.quirks().shouldDisablePointerEventsQuirk() && RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled())
-        m_document.updateTouchActionElements(element, *update.style.get());
+    // FIXME: Track this exactly.
+    if (update.style->touchActions() != TouchAction::Auto && !m_document.quirks().shouldDisablePointerEventsQuirk() && RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled())
+        m_document.setMayHaveElementsWithNonAutoTouchAction();
 #endif
 
     return { WTFMove(update), descendantsToResolve, WTFMove(beforeUpdate), WTFMove(afterUpdate) };

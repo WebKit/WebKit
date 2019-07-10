@@ -4458,11 +4458,6 @@ void Document::nodeWillBeRemoved(Node& node)
 
     if (is<Text>(node))
         m_markers->removeMarkers(node);
-
-#if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
-    if (m_touchActionElements && is<Element>(node))
-        m_touchActionElements->remove(&downcast<Element>(node));
-#endif
 }
 
 static Node* fallbackFocusNavigationStartingNodeAfterRemoval(Node& node)
@@ -8187,32 +8182,6 @@ void Document::setPaintWorkletGlobalScopeForName(const String& name, Ref<PaintWo
 {
     auto addResult = m_paintWorkletGlobalScopes.add(name, WTFMove(scope));
     ASSERT_UNUSED(addResult, addResult);
-}
-#endif
-
-#if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
-void Document::updateTouchActionElements(Element& element, const RenderStyle& style)
-{
-    bool changed = false;
-
-    if (style.touchActions() != TouchAction::Auto) {
-        if (!m_touchActionElements)
-            m_touchActionElements = std::make_unique<HashSet<RefPtr<Element>>>();
-        changed |= m_touchActionElements->add(&element).isNewEntry;
-    } else if (m_touchActionElements)
-        changed |= m_touchActionElements->remove(&element);
-
-    if (!changed)
-        return;
-
-    Page* page = this->page();
-    if (!page)
-        return;
-
-    if (FrameView* frameView = view()) {
-        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingCoordinator->frameViewEventTrackingRegionsChanged(*frameView);
-    }
 }
 #endif
 

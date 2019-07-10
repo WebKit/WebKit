@@ -1,3 +1,48 @@
+2019-07-10  Antti Koivisto  <antti@apple.com>
+
+        Remove TouchActionData
+        https://bugs.webkit.org/show_bug.cgi?id=199668
+
+        Reviewed by Simon Fraser.
+
+        TouchActionData structure has been superseded by touch-action regions in EventRegion and is unused.
+        Remove it and the supporting code.
+
+        No functional changes.
+
+        * dom/Document.cpp:
+        (WebCore::Document::nodeWillBeRemoved):
+        (WebCore::Document::updateTouchActionElements): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::mayHaveElementsWithNonAutoTouchAction const):
+        (WebCore::Document::setMayHaveElementsWithNonAutoTouchAction):
+
+        Replace touchActionElements set with a bit that covers the only remaining clients (optimizations).
+        Note that touchActionElements was not deleted when emptied, it had the same "may have" behavior (which
+        is currently needed).
+
+        (WebCore::Document::touchActionElements const): Deleted.
+        * dom/Element.cpp:
+        (WebCore::Element::computedTouchActions const): Deleted.
+        * dom/Element.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::absoluteEventTrackingRegionsForFrame const):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::touchActionDataAtPoint const): Deleted.
+        * page/scrolling/ScrollingTree.h:
+        * platform/EventTrackingRegions.cpp:
+        (WebCore::operator==):
+        * platform/EventTrackingRegions.h:
+        (): Deleted.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateEventRegion):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+
 2019-07-10  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Remove redundant InlineFormattingContext::LineLayout members.

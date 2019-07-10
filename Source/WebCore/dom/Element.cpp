@@ -4326,14 +4326,6 @@ void Element::setAttributeStyleMap(Ref<StylePropertyMap>&& map)
 #endif
 
 #if ENABLE(POINTER_EVENTS)
-OptionSet<TouchAction> Element::computedTouchActions() const
-{
-    if (auto* style = renderOrDisplayContentsStyle())
-        return style->effectiveTouchActions();
-
-    return TouchAction::Auto;
-}
-
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
 ScrollingNodeID Element::nearestScrollingNodeIDUsingTouchOverflowScrolling() const
 {

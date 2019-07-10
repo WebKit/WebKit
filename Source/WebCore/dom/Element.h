@@ -73,10 +73,6 @@ enum SpellcheckAttributeState {
     SpellcheckAttributeDefault
 };
 
-#if ENABLE(POINTER_EVENTS)
-enum class TouchAction : uint8_t;
-#endif
-
 class Element : public ContainerNode {
     WTF_MAKE_ISO_ALLOCATED(Element);
 public:
@@ -606,7 +602,6 @@ public:
     ElementIdentifier createElementIdentifier();
 
 #if ENABLE(POINTER_EVENTS)
-    OptionSet<TouchAction> computedTouchActions() const;
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     ScrollingNodeID nearestScrollingNodeIDUsingTouchOverflowScrolling() const;
 #endif

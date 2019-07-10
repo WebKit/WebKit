@@ -6823,7 +6823,7 @@ void RenderLayer::invalidateEventRegion()
             return true;
 #if ENABLE(POINTER_EVENTS)
         // UI side touch-action resolution.
-        if (renderer().document().touchActionElements())
+        if (renderer().document().mayHaveElementsWithNonAutoTouchAction())
             return true;
 #endif
         return false;

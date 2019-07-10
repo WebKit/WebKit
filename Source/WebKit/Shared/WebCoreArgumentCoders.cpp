@@ -330,40 +330,10 @@ Optional<DOMCacheEngine::Record> ArgumentCoder<DOMCacheEngine::Record>::decode(D
     return {{ WTFMove(identifier), WTFMove(updateResponseCounter), WTFMove(requestHeadersGuard), WTFMove(request), WTFMove(options.value()), WTFMove(referrer), WTFMove(responseHeadersGuard), WTFMove(response), WTFMove(responseBody), responseBodySize }};
 }
 
-#if ENABLE(POINTER_EVENTS)
-void ArgumentCoder<TouchActionData>::encode(Encoder& encoder, const TouchActionData& touchActionData)
-{
-    encoder << touchActionData.touchActions << touchActionData.scrollingNodeID << touchActionData.region;
-}
-
-Optional<TouchActionData> ArgumentCoder<TouchActionData>::decode(Decoder& decoder)
-{
-    Optional<OptionSet<TouchAction>> touchActions;
-    decoder >> touchActions;
-    if (!touchActions)
-        return WTF::nullopt;
-
-    Optional<ScrollingNodeID> scrollingNodeID;
-    decoder >> scrollingNodeID;
-    if (!scrollingNodeID)
-        return WTF::nullopt;
-
-    Optional<Region> region;
-    decoder >> region;
-    if (!region)
-        return WTF::nullopt;
-
-    return {{ WTFMove(*touchActions), WTFMove(*scrollingNodeID), WTFMove(*region) }};
-}
-#endif
-
 void ArgumentCoder<EventTrackingRegions>::encode(Encoder& encoder, const EventTrackingRegions& eventTrackingRegions)
 {
     encoder << eventTrackingRegions.asynchronousDispatchRegion;
     encoder << eventTrackingRegions.eventSpecificSynchronousDispatchRegions;
-#if ENABLE(POINTER_EVENTS)
-    encoder << eventTrackingRegions.touchActionData;
-#endif
 }
 
 bool ArgumentCoder<EventTrackingRegions>::decode(Decoder& decoder, EventTrackingRegions& eventTrackingRegions)
@@ -375,16 +345,8 @@ bool ArgumentCoder<EventTrackingRegions>::decode(Decoder& decoder, EventTracking
     HashMap<String, Region> eventSpecificSynchronousDispatchRegions;
     if (!decoder.decode(eventSpecificSynchronousDispatchRegions))
         return false;
-#if ENABLE(POINTER_EVENTS)
-    Vector<TouchActionData> touchActionData;
-    if (!decoder.decode(touchActionData))
-        return false;
-#endif
     eventTrackingRegions.asynchronousDispatchRegion = WTFMove(*asynchronousDispatchRegion);
     eventTrackingRegions.eventSpecificSynchronousDispatchRegions = WTFMove(eventSpecificSynchronousDispatchRegions);
-#if ENABLE(POINTER_EVENTS)
-    eventTrackingRegions.touchActionData = WTFMove(touchActionData);
-#endif
     return true;
 }
 

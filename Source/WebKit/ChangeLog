@@ -1,3 +1,16 @@
+2019-07-10  Antti Koivisto  <antti@apple.com>
+
+        Remove TouchActionData
+        https://bugs.webkit.org/show_bug.cgi?id=199668
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<EventTrackingRegions>::encode):
+        (IPC::ArgumentCoder<EventTrackingRegions>::decode):
+        (IPC::ArgumentCoder<TouchActionData>::encode): Deleted.
+        (IPC::ArgumentCoder<TouchActionData>::decode): Deleted.
+
 2019-07-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] GUniqueOutPtr::release should return a raw pointer

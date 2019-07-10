@@ -108,25 +108,7 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
     auto* document = frame.document();
     if (!document)
         return EventTrackingRegions();
-    auto eventTrackingRegions = document->eventTrackingRegions();
-
-#if ENABLE(POINTER_EVENTS)
-    if (!document->quirks().shouldDisablePointerEventsQuirk() && RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled()) {
-        if (auto* touchActionElements = frame.document()->touchActionElements()) {
-            auto& touchActionData = eventTrackingRegions.touchActionData;
-            for (const auto& element : *touchActionElements) {
-                ASSERT(element);
-                touchActionData.append({
-                    element->computedTouchActions(),
-                    element->nearestScrollingNodeIDUsingTouchOverflowScrolling(),
-                    element->document().absoluteEventRegionForNode(*element).first
-                });
-            }
-        }
-    }
-#endif
-
-    return eventTrackingRegions;
+    return document->eventTrackingRegions();
 #else
     auto* frameView = frame.view();
     if (!frameView)

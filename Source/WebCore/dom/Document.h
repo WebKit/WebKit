@@ -1233,8 +1233,8 @@ public:
     bool touchEventTargetsContain(Node&) const { return false; }
 #endif
 #if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
-    void updateTouchActionElements(Element&, const RenderStyle&);
-    const HashSet<RefPtr<Element>>* touchActionElements() const { return m_touchActionElements.get(); }
+    bool mayHaveElementsWithNonAutoTouchAction() const { return m_mayHaveElementsWithNonAutoTouchAction; }
+    void setMayHaveElementsWithNonAutoTouchAction() { m_mayHaveElementsWithNonAutoTouchAction = true; }
 #endif
 
     void didAddTouchEventHandler(Node&);
@@ -1819,7 +1819,7 @@ private:
     std::unique_ptr<EventTargetSet> m_touchEventTargets;
 #endif
 #if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
-    std::unique_ptr<HashSet<RefPtr<Element>>> m_touchActionElements;
+    bool m_mayHaveElementsWithNonAutoTouchAction { false };
 #endif
     std::unique_ptr<EventTargetSet> m_wheelEventTargets;
 
