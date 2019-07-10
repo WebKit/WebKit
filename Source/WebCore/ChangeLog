@@ -1,3 +1,14 @@
+2019-07-10  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer] Protect against null samples and samples with null buffers
+        https://bugs.webkit.org/show_bug.cgi?id=199619
+
+        Reviewed by Philippe Normand.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::GstVideoFrameHolder::GstVideoFrameHolder): Assert to enforce non-null samples.
+        (WebCore::GstVideoFrameHolder::updateTexture): Protect against null m_buffer and improperly mapped video frame.
+
 2019-07-09  Andres Gonzalez  <andresg_22@apple.com>
 
         AX: HTML datalist accessibility is not exposed by WebKit

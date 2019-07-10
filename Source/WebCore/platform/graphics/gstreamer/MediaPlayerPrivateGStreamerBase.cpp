@@ -137,6 +137,8 @@ class GstVideoFrameHolder : public TextureMapperPlatformLayerBuffer::UnmanagedBu
 public:
     explicit GstVideoFrameHolder(GstSample* sample, TextureMapperGL::Flags flags, bool gstGLEnabled)
     {
+        RELEASE_ASSERT(GST_IS_SAMPLE(sample));
+
         GstVideoInfo videoInfo;
         if (UNLIKELY(!getSampleVideoInfo(sample, videoInfo)))
             return;
@@ -187,7 +189,7 @@ public:
     {
         ASSERT(!m_textureID);
         GstVideoGLTextureUploadMeta* meta;
-        if ((meta = gst_buffer_get_video_gl_texture_upload_meta(m_buffer))) {
+        if (m_buffer && (meta = gst_buffer_get_video_gl_texture_upload_meta(m_buffer))) {
             if (meta->n_textures == 1) { // BRGx & BGRA formats use only one texture.
                 guint ids[4] = { texture.id(), 0, 0, 0 };
 
@@ -196,8 +198,15 @@ public:
             }
         }
 
+        if (!m_isMapped)
+            return;
+
         int stride = GST_VIDEO_FRAME_PLANE_STRIDE(&m_videoFrame, 0);
         const void* srcData = GST_VIDEO_FRAME_PLANE_DATA(&m_videoFrame, 0);
+
+        if (!srcData)
+            return;
+
         texture.updateContents(srcData, WebCore::IntRect(0, 0, m_size.width(), m_size.height()), WebCore::IntPoint(0, 0), stride);
     }
 
