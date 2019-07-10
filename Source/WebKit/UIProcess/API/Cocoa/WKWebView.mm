@@ -283,12 +283,11 @@ static Optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayS
     RetainPtr<WKFullScreenWindowController> _fullScreenWindowController;
 #endif
 
-    BOOL _overridesViewLayoutSize;
-    CGSize _viewLayoutSizeOverride;
+    Optional<CGSize> _viewLayoutSizeOverride;
     Optional<WebCore::FloatSize> _lastSentViewLayoutSize;
-    BOOL _overridesMaximumUnobscuredSize;
-    CGSize _maximumUnobscuredSizeOverride;
+    Optional<CGSize> _maximumUnobscuredSizeOverride;
     Optional<WebCore::FloatSize> _lastSentMaximumUnobscuredSize;
+
     CGRect _inputViewBounds;
     CGFloat _viewportMetaTagWidth;
     BOOL _viewportMetaTagWidthWasExplicit;
@@ -2868,8 +2867,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (WebCore::FloatSize)activeViewLayoutSize:(const CGRect&)bounds
 {
-    if (_overridesViewLayoutSize)
-        return WebCore::FloatSize(_viewLayoutSizeOverride);
+    if (_viewLayoutSizeOverride)
+        return WebCore::FloatSize(_viewLayoutSizeOverride.value());
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
     return WebCore::FloatSize(UIEdgeInsetsInsetRect(CGRectMake(0, 0, bounds.size.width, bounds.size.height), self._scrollViewSystemContentInset).size);
@@ -2912,9 +2911,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [_scrollView setFrame:bounds];
 
     if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing) {
-        if (!_overridesViewLayoutSize)
+        if (!_viewLayoutSizeOverride)
             [self _dispatchSetViewLayoutSize:[self activeViewLayoutSize:self.bounds]];
-        if (!_overridesMaximumUnobscuredSize)
+        if (!_maximumUnobscuredSizeOverride)
             [self _dispatchSetMaximumUnobscuredSize:WebCore::FloatSize(bounds.size)];
 
         BOOL sizeChanged = NO;
@@ -3177,7 +3176,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 
 static WebCore::FloatSize activeMaximumUnobscuredSize(WKWebView *webView, const CGRect& bounds)
 {
-    return WebCore::FloatSize(webView->_overridesMaximumUnobscuredSize ? webView->_maximumUnobscuredSizeOverride : bounds.size);
+    return WebCore::FloatSize(webView->_maximumUnobscuredSizeOverride.valueOr(bounds.size));
 }
 
 static int32_t activeOrientation(WKWebView *webView)
@@ -5917,20 +5916,19 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 }
 #endif
 
+// Deprecated SPI.
 - (CGSize)_minimumLayoutSizeOverride
 {
-    ASSERT(_overridesViewLayoutSize);
-    return _viewLayoutSizeOverride;
+    ASSERT(_viewLayoutSizeOverride);
+    return _viewLayoutSizeOverride.valueOr(CGSizeZero);
 }
 
 - (void)_setViewLayoutSizeOverride:(CGSize)viewLayoutSizeOverride
 {
-    _overridesViewLayoutSize = YES;
     _viewLayoutSizeOverride = viewLayoutSizeOverride;
 
     if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing)
         [self _dispatchSetViewLayoutSize:WebCore::FloatSize(viewLayoutSizeOverride)];
-
 }
 
 - (UIEdgeInsets)_obscuredInsets
@@ -6020,16 +6018,16 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _interfaceOrientationOverride = UIInterfaceOrientationPortrait;
 }
 
+// Deprecated SPI
 - (CGSize)_maximumUnobscuredSizeOverride
 {
-    ASSERT(_overridesMaximumUnobscuredSize);
-    return _maximumUnobscuredSizeOverride;
+    ASSERT(_maximumUnobscuredSizeOverride);
+    return _maximumUnobscuredSizeOverride.valueOr(CGSizeZero);
 }
 
 - (void)_setMaximumUnobscuredSizeOverride:(CGSize)size
 {
     ASSERT(size.width <= self.bounds.size.width && size.height <= self.bounds.size.height);
-    _overridesMaximumUnobscuredSize = YES;
     _maximumUnobscuredSizeOverride = size;
 
     if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing)
@@ -6095,13 +6093,13 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     CGRect futureUnobscuredRectInSelfCoordinates = UIEdgeInsetsInsetRect(newBounds, _obscuredInsets);
     CGRect contentViewBounds = [_contentView bounds];
 
-    ASSERT_WITH_MESSAGE(!(_overridesViewLayoutSize && newViewLayoutSize.isEmpty()), "Clients controlling the layout size should maintain a valid layout size to minimize layouts.");
+    ASSERT_WITH_MESSAGE(!(_viewLayoutSizeOverride && newViewLayoutSize.isEmpty()), "Clients controlling the layout size should maintain a valid layout size to minimize layouts.");
     if (CGRectIsEmpty(newBounds) || newViewLayoutSize.isEmpty() || CGRectIsEmpty(futureUnobscuredRectInSelfCoordinates) || CGRectIsEmpty(contentViewBounds)) {
         [self _cancelAnimatedResize];
         [self _frameOrBoundsChanged];
-        if (_overridesViewLayoutSize)
+        if (_viewLayoutSizeOverride)
             [self _dispatchSetViewLayoutSize:newViewLayoutSize];
-        if (_overridesMaximumUnobscuredSize)
+        if (_maximumUnobscuredSizeOverride)
             [self _dispatchSetMaximumUnobscuredSize:WebCore::FloatSize(newMaximumUnobscuredSize)];
         if (_overridesInterfaceOrientation)
             [self _dispatchSetDeviceOrientation:newOrientation];
@@ -6308,11 +6306,8 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_clearOverrideLayoutParameters
 {
-    _overridesViewLayoutSize = NO;
-    _viewLayoutSizeOverride = CGSizeZero;
-
-    _overridesMaximumUnobscuredSize = NO;
-    _maximumUnobscuredSizeOverride = CGSizeZero;
+    _viewLayoutSizeOverride = WTF::nullopt;
+    _maximumUnobscuredSizeOverride = WTF::nullopt;
 }
 
 static WTF::Optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary(NSDictionary<NSString *, NSString *> *viewportArgumentPairs, bool viewportFitEnabled)

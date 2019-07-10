@@ -1,3 +1,26 @@
+2019-07-09  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Use Optional<> for two data members of WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=199637
+
+        Reviewed by Tim Horton.
+
+        Use Optional<CGSize> to replace _overridesViewLayoutSize/_viewLayoutSizeOverride
+        and _overridesMaximumUnobscuredSize/_maximumUnobscuredSizeOverride.
+
+        No behavior change.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView activeViewLayoutSize:]):
+        (-[WKWebView _frameOrBoundsChanged]):
+        (activeMaximumUnobscuredSize):
+        (-[WKWebView _minimumLayoutSizeOverride]):
+        (-[WKWebView _setViewLayoutSizeOverride:]):
+        (-[WKWebView _maximumUnobscuredSizeOverride]):
+        (-[WKWebView _setMaximumUnobscuredSizeOverride:]):
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        (-[WKWebView _clearOverrideLayoutParameters]):
+
 2019-07-09  Chris Dumez  <cdumez@apple.com>
 
         Fix integer type encoding / decoding in WKRemoteObjectCoder
