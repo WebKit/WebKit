@@ -37,7 +37,12 @@
 @class WKWebView;
 @protocol NSObject;
 struct CGSize;
+
+#ifdef FOUNDATION_HAS_DIRECTIONAL_GEOMETRY
+typedef NSEdgeInsets UIEdgeInsets;
+#else
 struct UIEdgeInsets;
+#endif
 
 @protocol WKWebViewContentProvider <NSObject>
 

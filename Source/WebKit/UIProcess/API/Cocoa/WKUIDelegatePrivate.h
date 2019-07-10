@@ -81,7 +81,11 @@ typedef NS_ENUM(NSInteger, _WKFocusDirection) {
 
 @protocol WKUIDelegatePrivate <WKUIDelegate>
 
+#ifdef FOUNDATION_HAS_DIRECTIONAL_GEOMETRY
+typedef NSEdgeInsets UIEdgeInsets;
+#else
 struct UIEdgeInsets;
+#endif
 
 @optional
 
