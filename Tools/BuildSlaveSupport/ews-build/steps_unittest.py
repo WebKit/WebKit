@@ -211,7 +211,7 @@ class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['Tools/Scripts/check-webkit-style'],
+                        command=['python', 'Tools/Scripts/check-webkit-style'],
                         )
             + 0,
         )
@@ -226,7 +226,7 @@ class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['Tools/Scripts/check-webkit-style'],
+                        command=['python', 'Tools/Scripts/check-webkit-style'],
                         )
             + 2,
         )
@@ -241,7 +241,7 @@ class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['Tools/Scripts/check-webkit-style'],
+                        command=['python', 'Tools/Scripts/check-webkit-style'],
                         )
             + ExpectShell.log('stdio', stdout='''ERROR: Source/WebCore/layout/FloatingContext.cpp:36:  Code inside a namespace should not be indented.  [whitespace/indent] [4]
 ERROR: Source/WebCore/layout/FormattingContext.h:94:  Weird number of spaces at line-start.  Are you using a 4-space indent?  [whitespace/indent] [3]
@@ -263,7 +263,7 @@ Total errors found: 8 in 48 files''')
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['Tools/Scripts/check-webkit-style'],
+                        command=['python', 'Tools/Scripts/check-webkit-style'],
                         )
             + ExpectShell.log('stdio', stdout='Total errors found: 0 in 6 files')
             + 0,
@@ -279,7 +279,7 @@ Total errors found: 8 in 48 files''')
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['Tools/Scripts/check-webkit-style'],
+                        command=['python', 'Tools/Scripts/check-webkit-style'],
                         )
             + ExpectShell.log('stdio', stdout='Total errors found: 0 in 0 files')
             + 2,
@@ -303,7 +303,7 @@ class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python', 'Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(self.jsonFileName)],
                         logfiles={'json': self.jsonFileName},
                         )
             + 0,
@@ -317,7 +317,7 @@ class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python', 'Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(self.jsonFileName)],
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='FAIL: (JS) JSTestInterface.cpp')
@@ -340,7 +340,7 @@ class TestRunWebKitPerlTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['Tools/Scripts/test-webkitperl'],
+                        command=['perl', 'Tools/Scripts/test-webkitperl'],
                         timeout=120,
                         )
             + 0,
@@ -353,7 +353,7 @@ class TestRunWebKitPerlTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['Tools/Scripts/test-webkitperl'],
+                        command=['perl', 'Tools/Scripts/test-webkitperl'],
                         timeout=120,
                         )
             + ExpectShell.log('stdio', stdout='''Failed tests:  1-3, 5-7, 9, 11-13
@@ -380,7 +380,7 @@ class TestWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['Tools/Scripts/test-webkitpy', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python', 'Tools/Scripts/test-webkitpy', '--json-output={0}'.format(self.jsonFileName)],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         )
@@ -394,7 +394,7 @@ class TestWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['Tools/Scripts/test-webkitpy', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python', 'Tools/Scripts/test-webkitpy', '--json-output={0}'.format(self.jsonFileName)],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         )
@@ -1047,7 +1047,7 @@ class TestCleanWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['Tools/Scripts/clean-webkit'],
+                        command=['python', 'Tools/Scripts/clean-webkit'],
                         )
             + 0,
         )
@@ -1059,7 +1059,7 @@ class TestCleanWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['Tools/Scripts/clean-webkit'],
+                        command=['python', 'Tools/Scripts/clean-webkit'],
                         )
             + ExpectShell.log('stdio', stdout='Unexpected failure.')
             + 2,
@@ -1083,7 +1083,7 @@ class TestUnApplyPatchIfRequired(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['Tools/Scripts/clean-webkit'],
+                        command=['python', 'Tools/Scripts/clean-webkit'],
                         )
             + 0,
         )
@@ -1097,7 +1097,7 @@ class TestUnApplyPatchIfRequired(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['Tools/Scripts/clean-webkit'],
+                        command=['python', 'Tools/Scripts/clean-webkit'],
                         )
             + ExpectShell.log('stdio', stdout='Unexpected failure.')
             + 2,

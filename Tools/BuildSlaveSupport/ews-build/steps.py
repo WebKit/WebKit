@@ -134,7 +134,7 @@ class CleanWorkingDirectory(shell.ShellCommand):
     descriptionDone = ['Cleaned working directory']
     flunkOnFailure = True
     haltOnFailure = True
-    command = ['Tools/Scripts/clean-webkit']
+    command = ['python', 'Tools/Scripts/clean-webkit']
 
     def __init__(self, **kwargs):
         super(CleanWorkingDirectory, self).__init__(logEnviron=False, **kwargs)
@@ -146,7 +146,7 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
     descriptionDone = ['Applied patch']
     flunkOnFailure = True
     haltOnFailure = True
-    command = ['Tools/Scripts/svn-apply', '--force', '.buildbot-diff']
+    command = ['perl', 'Tools/Scripts/svn-apply', '--force', '.buildbot-diff']
 
     def __init__(self, **kwargs):
         super(ApplyPatch, self).__init__(timeout=5 * 60, logEnviron=False, **kwargs)
@@ -479,7 +479,7 @@ class CheckStyle(TestWithFailureCount):
     descriptionDone = ['check-webkit-style']
     flunkOnFailure = True
     failedTestsFormatString = '%d style error%s'
-    command = ['Tools/Scripts/check-webkit-style']
+    command = ['python', 'Tools/Scripts/check-webkit-style']
 
     def countFailures(self, cmd):
         log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
@@ -497,7 +497,7 @@ class RunBindingsTests(shell.ShellCommand):
     flunkOnFailure = True
     jsonFileName = 'bindings_test_results.json'
     logfiles = {'json': jsonFileName}
-    command = ['Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(jsonFileName)]
+    command = ['python', 'Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(jsonFileName)]
 
     def __init__(self, **kwargs):
         super(RunBindingsTests, self).__init__(timeout=5 * 60, logEnviron=False, **kwargs)
@@ -544,7 +544,7 @@ class RunWebKitPerlTests(shell.ShellCommand):
     description = ['webkitperl-tests running']
     descriptionDone = ['webkitperl-tests']
     flunkOnFailure = True
-    command = ['Tools/Scripts/test-webkitperl']
+    command = ['perl', 'Tools/Scripts/test-webkitperl']
 
     def __init__(self, **kwargs):
         super(RunWebKitPerlTests, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
@@ -557,7 +557,7 @@ class RunWebKitPyTests(shell.ShellCommand):
     flunkOnFailure = True
     jsonFileName = 'webkitpy_test_results.json'
     logfiles = {'json': jsonFileName}
-    command = ['Tools/Scripts/test-webkitpy', '--json-output={0}'.format(jsonFileName)]
+    command = ['python', 'Tools/Scripts/test-webkitpy', '--json-output={0}'.format(jsonFileName)]
 
     def __init__(self, **kwargs):
         super(RunWebKitPyTests, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
