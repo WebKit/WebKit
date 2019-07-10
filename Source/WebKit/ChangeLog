@@ -1,3 +1,20 @@
+2019-07-10  Youenn Fablet  <youenn@apple.com>
+
+        Disable speculative loading if cache is not to be used for the load
+        https://bugs.webkit.org/show_bug.cgi?id=199644
+
+        Reviewed by Chris Dumez.
+
+        When the page is reloaded, loads are instructed to not use the cache.
+        It is therefore unneeded to do speculative revalidation.
+        Allow speculative revalidation if the cache policy is either the default HTTP policy or
+        if policy is to refresh all cache data.
+        Covered by added test.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::cachePolicyValidForSpeculativeRevalidation):
+        (WebKit::NetworkCache::canRequestUseSpeculativeRevalidation):
+
 2019-07-10  Alex Christensen  <achristensen@webkit.org>
 
         Fix build after Foundation changes UIEdgeInsets definition
