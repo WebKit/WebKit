@@ -7801,31 +7801,28 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
     } forRequest:request];
 }
 
-- (void)continueContextMenuInteraction:(void(^)(UIContextMenuConfiguration *))completion
+- (void)continueContextMenuInteraction:(void(^)(UIContextMenuConfiguration *))continueWithContextMenuConfiguration
 {
     if (!_positionInformation.touchCalloutEnabled)
-        return completion(nil);
+        return continueWithContextMenuConfiguration(nil);
 
     if (!_positionInformation.isLink && !_positionInformation.isImage && !_positionInformation.isAttachment)
-        return completion(nil);
+        return continueWithContextMenuConfiguration(nil);
 
     URL linkURL = _positionInformation.url;
 
     if (_positionInformation.isLink && linkURL.isEmpty())
-        return completion(nil);
+        return continueWithContextMenuConfiguration(nil);
 
     auto uiDelegate = static_cast<id<WKUIDelegatePrivate>>(_webView.UIDelegate);
-    if (!uiDelegate)
-        return completion(nil);
 
     if (needsDeprecatedPreviewAPI(uiDelegate)) {
-
         if (_positionInformation.isLink) {
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if ([uiDelegate respondsToSelector:@selector(webView:shouldPreviewElement:)]) {
                 auto previewElementInfo = adoptNS([[WKPreviewElementInfo alloc] _initWithLinkURL:linkURL]);
                 if (![uiDelegate webView:_webView shouldPreviewElement:previewElementInfo.get()])
-                    return completion(nil);
+                    return continueWithContextMenuConfiguration(nil);
             }
             ALLOW_DEPRECATED_DECLARATIONS_END
 
@@ -7834,7 +7831,7 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
             if (!linkURL.protocolIsInHTTPFamily()) {
 #if ENABLE(DATA_DETECTION)
                 if (!WebCore::DataDetection::canBePresentedByDataDetectors(linkURL))
-                    return completion(nil);
+                    return continueWithContextMenuConfiguration(nil);
 #endif
             }
         }
@@ -7865,18 +7862,18 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
         };
 
         // FIXME: Should we provide an identifier and ASSERT in delegates if we don't match?
-        return completion([UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:contentPreviewProvider actionProvider:actionMenuProvider]);
+        return continueWithContextMenuConfiguration([UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:contentPreviewProvider actionProvider:actionMenuProvider]);
     }
 
-    auto completionBlock = makeBlockPtr([completion = makeBlockPtr(completion), linkURL = WTFMove(linkURL), weakSelf = WeakObjCPtr<WKContentView>(self)] (UIContextMenuConfiguration *configurationFromWKUIDelegate) mutable {
+    auto completionBlock = makeBlockPtr([continueWithContextMenuConfiguration = makeBlockPtr(continueWithContextMenuConfiguration), linkURL = WTFMove(linkURL), weakSelf = WeakObjCPtr<WKContentView>(self)] (UIContextMenuConfiguration *configurationFromWKUIDelegate) mutable {
 
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
-            return completion(nil);
+            return continueWithContextMenuConfiguration(nil);
 
         if (configurationFromWKUIDelegate) {
             strongSelf->_contextMenuActionProviderDelegateNeedsOverride = YES;
-            completion(configurationFromWKUIDelegate);
+            continueWithContextMenuConfiguration(configurationFromWKUIDelegate);
             return;
         }
 
@@ -7889,7 +7886,7 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
         // FIXME: Support JavaScript urls here. But make sure they don't show a preview.
         // <rdar://problem/50572283>
         if (!linkURL.protocolIsInHTTPFamily() && !WebCore::DataDetection::canBePresentedByDataDetectors(linkURL))
-            return completion(nil);
+            return continueWithContextMenuConfiguration(nil);
 
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
         auto ddContextMenuActionClass = getDDContextMenuActionClass();
@@ -7898,12 +7895,12 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
             UIContextMenuConfiguration *configurationFromDD = [ddContextMenuActionClass contextMenuConfigurationForURL:linkURL identifier:strongSelf->_positionInformation.dataDetectorIdentifier selectedText:[strongSelf selectedText] results:strongSelf->_positionInformation.dataDetectorResults.get() inView:strongSelf.get() context:context menuIdentifier:nil];
             strongSelf->_contextMenuActionProviderDelegateNeedsOverride = YES;
             if (strongSelf->_showLinkPreviews)
-                return completion(configurationFromDD);
-            return completion([UIContextMenuConfiguration configurationWithIdentifier:[configurationFromDD identifier] previewProvider:nil actionProvider:[configurationFromDD actionProvider]]);
+                return continueWithContextMenuConfiguration(configurationFromDD);
+            return continueWithContextMenuConfiguration([UIContextMenuConfiguration configurationWithIdentifier:[configurationFromDD identifier] previewProvider:nil actionProvider:[configurationFromDD actionProvider]]);
         }
         END_BLOCK_OBJC_EXCEPTIONS;
 #endif
-        return completion(nil);
+        return continueWithContextMenuConfiguration(nil);
     });
 
     _contextMenuActionProviderDelegateNeedsOverride = NO;
