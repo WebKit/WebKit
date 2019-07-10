@@ -1,3 +1,15 @@
+2019-07-10  Youenn Fablet  <youenn@apple.com>
+
+        openDatabase property should not be enumerable on DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=199672
+        <rdar://problem/52809000>
+
+        Reviewed by Chris Dumez.
+
+        Test: storage/websql/openDatabase-deprecation.html
+
+        * Modules/webdatabase/DOMWindowWebDatabase.idl:
+
 2019-07-10  Chris Dumez  <cdumez@apple.com>
 
         Fix unsafe usage of makeWeakPtr() in CMTimebaseEffectiveRateChangedCallback()
