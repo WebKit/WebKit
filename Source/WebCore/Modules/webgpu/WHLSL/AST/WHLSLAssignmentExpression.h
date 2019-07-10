@@ -39,8 +39,8 @@ namespace AST {
 
 class AssignmentExpression : public Expression {
 public:
-    AssignmentExpression(Lexer::Token&& origin, UniqueRef<Expression>&& left, UniqueRef<Expression>&& right)
-        : Expression(WTFMove(origin))
+    AssignmentExpression(CodeLocation location, UniqueRef<Expression>&& left, UniqueRef<Expression>&& right)
+        : Expression(location)
         , m_left(WTFMove(left))
         , m_right(WTFMove(right))
     {

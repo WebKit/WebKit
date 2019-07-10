@@ -46,8 +46,8 @@ namespace AST {
 
 class EnumerationDefinition : public NamedType {
 public:
-    EnumerationDefinition(Lexer::Token&& origin, String&& name, UniqueRef<UnnamedType>&& type)
-        : NamedType(WTFMove(origin), WTFMove(name))
+    EnumerationDefinition(CodeLocation location, String&& name, UniqueRef<UnnamedType>&& type)
+        : NamedType(location, WTFMove(name))
         , m_type(WTFMove(type))
     {
     }

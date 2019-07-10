@@ -38,8 +38,8 @@ namespace AST {
 
 class Statement {
 public:
-    Statement(Lexer::Token&& origin)
-        : m_origin(WTFMove(origin))
+    Statement(CodeLocation codeLocation)
+        : m_codeLocation(codeLocation)
     {
     }
 
@@ -64,10 +64,11 @@ public:
     virtual bool isVariableDeclarationsStatement() const { return false; }
     virtual bool isWhileLoop() const { return false; }
 
-    Lexer::Token origin() const { return m_origin; }
+    CodeLocation codeLocation() const { return m_codeLocation; }
+    void updateCodeLocation(CodeLocation location) { m_codeLocation = location; }
 
 private:
-    Lexer::Token m_origin;
+    CodeLocation m_codeLocation;
 };
 
 using Statements = Vector<UniqueRef<Statement>>;

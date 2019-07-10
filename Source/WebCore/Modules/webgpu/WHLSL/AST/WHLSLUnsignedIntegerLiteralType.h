@@ -41,7 +41,7 @@ class TypeReference;
 
 class UnsignedIntegerLiteralType : public ResolvableType {
 public:
-    UnsignedIntegerLiteralType(Lexer::Token&& origin, unsigned value);
+    UnsignedIntegerLiteralType(CodeLocation, unsigned value);
 
     virtual ~UnsignedIntegerLiteralType();
 

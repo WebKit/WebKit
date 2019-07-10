@@ -44,8 +44,8 @@ class UnnamedType;
 
 class BaseSemantic {
 public:
-    BaseSemantic(Lexer::Token&& origin)
-        : m_origin(WTFMove(origin))
+    BaseSemantic(CodeLocation location)
+        : m_codeLocation(location)
     {
     }
 
@@ -63,7 +63,7 @@ public:
     virtual bool isAcceptableForShaderItemDirection(ShaderItemDirection, const Optional<EntryPointType>&) const = 0;
 
 private:
-    Lexer::Token m_origin;
+    CodeLocation m_codeLocation;
 };
 
 } // namespace AST

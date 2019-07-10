@@ -38,8 +38,8 @@ namespace AST {
 
 class SpecializationConstantSemantic : public BaseSemantic {
 public:
-    SpecializationConstantSemantic(Lexer::Token&& origin)
-        : BaseSemantic(WTFMove(origin))
+    SpecializationConstantSemantic(CodeLocation location)
+        : BaseSemantic(location)
     {
     }
 

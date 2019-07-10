@@ -38,8 +38,8 @@ namespace AST {
 
 class Continue : public Statement {
 public:
-    Continue(Lexer::Token&& origin)
-        : Statement(WTFMove(origin))
+    Continue(CodeLocation location)
+        : Statement(location)
     {
     }
 

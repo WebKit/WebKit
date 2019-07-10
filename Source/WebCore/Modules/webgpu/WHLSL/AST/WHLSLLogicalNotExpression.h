@@ -39,8 +39,8 @@ namespace AST {
 
 class LogicalNotExpression : public Expression {
 public:
-    LogicalNotExpression(Lexer::Token&& origin, UniqueRef<Expression>&& operand)
-        : Expression(WTFMove(origin))
+    LogicalNotExpression(CodeLocation location, UniqueRef<Expression>&& operand)
+        : Expression(location)
         , m_operand(WTFMove(operand))
     {
     }

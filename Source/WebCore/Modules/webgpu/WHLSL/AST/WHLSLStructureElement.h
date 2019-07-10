@@ -41,8 +41,8 @@ namespace AST {
 
 class StructureElement {
 public:
-    StructureElement(Lexer::Token&& origin, Qualifiers&& qualifiers, UniqueRef<UnnamedType>&& type, String&& name, std::unique_ptr<Semantic>&& semantic)
-        : m_origin(WTFMove(origin))
+    StructureElement(CodeLocation location, Qualifiers&& qualifiers, UniqueRef<UnnamedType>&& type, String&& name, std::unique_ptr<Semantic>&& semantic)
+        : m_codeLocation(location)
         , m_qualifiers(WTFMove(qualifiers))
         , m_type(WTFMove(type))
         , m_name(WTFMove(name))
@@ -55,13 +55,13 @@ public:
     StructureElement(const StructureElement&) = delete;
     StructureElement(StructureElement&&) = default;
 
-    const Lexer::Token& origin() const { return m_origin; }
+    const CodeLocation& codeLocation() const { return m_codeLocation; }
     UnnamedType& type() { return m_type; }
     const String& name() { return m_name; }
     Semantic* semantic() { return m_semantic.get(); }
 
 private:
-    Lexer::Token m_origin;
+    CodeLocation m_codeLocation;
     Qualifiers m_qualifiers;
     UniqueRef<UnnamedType> m_type;
     String m_name;

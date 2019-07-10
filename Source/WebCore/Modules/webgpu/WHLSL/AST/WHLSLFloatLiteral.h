@@ -39,9 +39,9 @@ namespace AST {
 
 class FloatLiteral : public Expression {
 public:
-    FloatLiteral(Lexer::Token&& origin, float value)
-        : Expression(Lexer::Token(origin))
-        , m_type(WTFMove(origin), value)
+    FloatLiteral(CodeLocation location, float value)
+        : Expression(location)
+        , m_type(location, value)
         , m_value(value)
     {
     }
@@ -61,7 +61,7 @@ public:
 
     FloatLiteral clone() const
     {
-        FloatLiteral result(Lexer::Token(origin()), m_value);
+        FloatLiteral result(codeLocation(), m_value);
         result.m_type = m_type.clone();
         if (auto* resolvedType = m_type.maybeResolvedType())
             result.m_type.resolve(resolvedType->clone());

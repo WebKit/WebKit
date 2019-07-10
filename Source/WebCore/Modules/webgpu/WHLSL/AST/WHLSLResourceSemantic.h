@@ -45,8 +45,8 @@ public:
         Sampler
     };
 
-    ResourceSemantic(Lexer::Token&& origin, Mode mode, unsigned index, unsigned space)
-        : BaseSemantic(WTFMove(origin))
+    ResourceSemantic(CodeLocation location, Mode mode, unsigned index, unsigned space)
+        : BaseSemantic(location)
         , m_mode(mode)
         , m_index(index)
         , m_space(space)

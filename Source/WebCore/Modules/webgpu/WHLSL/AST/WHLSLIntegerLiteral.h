@@ -39,9 +39,9 @@ namespace AST {
 
 class IntegerLiteral : public Expression {
 public:
-    IntegerLiteral(Lexer::Token&& origin, int value)
-        : Expression(Lexer::Token(origin))
-        , m_type(WTFMove(origin), value)
+    IntegerLiteral(CodeLocation location, int value)
+        : Expression(location)
+        , m_type(location, value)
         , m_value(value)
     {
     }
@@ -61,7 +61,7 @@ public:
 
     IntegerLiteral clone() const
     {
-        IntegerLiteral result(Lexer::Token(origin()), m_value);
+        IntegerLiteral result(codeLocation(), m_value);
         result.m_type = m_type.clone();
         if (auto* resolvedType = m_type.maybeResolvedType())
             result.m_type.resolve(resolvedType->clone());

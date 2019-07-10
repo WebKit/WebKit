@@ -41,8 +41,8 @@ namespace AST {
 
 class ReferenceType : public UnnamedType {
 public:
-    ReferenceType(Lexer::Token&& origin, AddressSpace addressSpace, UniqueRef<UnnamedType>&& elementType)
-        : UnnamedType(WTFMove(origin))
+    ReferenceType(CodeLocation location, AddressSpace addressSpace, UniqueRef<UnnamedType>&& elementType)
+        : UnnamedType(location)
         , m_addressSpace(addressSpace)
         , m_elementType(WTFMove(elementType))
     {

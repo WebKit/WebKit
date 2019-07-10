@@ -41,8 +41,8 @@ namespace AST {
 
 class SwitchCase : public Statement {
 public:
-    SwitchCase(Lexer::Token&& origin, Optional<ConstantExpression>&& value, Block&& block)
-        : Statement(WTFMove(origin))
+    SwitchCase(CodeLocation location, Optional<ConstantExpression>&& value, Block&& block)
+        : Statement(location)
         , m_value(WTFMove(value))
         , m_block(WTFMove(block))
     {

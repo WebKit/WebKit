@@ -40,8 +40,8 @@ namespace AST {
 
 class DotExpression : public PropertyAccessExpression {
 public:
-    DotExpression(Lexer::Token&& origin, UniqueRef<Expression>&& base, String&& fieldName)
-        : PropertyAccessExpression(WTFMove(origin), WTFMove(base))
+    DotExpression(CodeLocation location, UniqueRef<Expression>&& base, String&& fieldName)
+        : PropertyAccessExpression(location, WTFMove(base))
         , m_fieldName(WTFMove(fieldName))
     {
     }

@@ -39,8 +39,8 @@ namespace AST {
 
 class TernaryExpression : public Expression {
 public:
-    TernaryExpression(Lexer::Token&& origin, UniqueRef<Expression>&& predicate, UniqueRef<Expression>&& bodyExpression, UniqueRef<Expression>&& elseExpression)
-        : Expression(WTFMove(origin))
+    TernaryExpression(CodeLocation location, UniqueRef<Expression>&& predicate, UniqueRef<Expression>&& bodyExpression, UniqueRef<Expression>&& elseExpression)
+        : Expression(location)
         , m_predicate(WTFMove(predicate))
         , m_bodyExpression(WTFMove(bodyExpression))
         , m_elseExpression(WTFMove(elseExpression))

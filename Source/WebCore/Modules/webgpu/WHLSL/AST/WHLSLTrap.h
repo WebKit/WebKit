@@ -38,8 +38,8 @@ namespace AST {
 
 class Trap : public Statement {
 public:
-    Trap(Lexer::Token&& origin)
-        : Statement(WTFMove(origin))
+    Trap(CodeLocation location)
+        : Statement(location)
     {
     }
 
