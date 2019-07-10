@@ -26,6 +26,10 @@ item 1
 <b>landmark 1</b>
 </div>
 
+<table border=1 role="presentation">
+<tr role="presentation"><td role="presentation">table item 1</td></tr>
+</table>
+
 </div>
 
 <p id="description"></p>
@@ -43,6 +47,7 @@ item 1
         var listItem = root.childAtIndex(1).childAtIndex(0).childAtIndex(0);
         var tableItem = root.childAtIndex(2).childAtIndex(0);
         var landmarkItem = root.childAtIndex(3).childAtIndex(0);
+        var nonTableItem = root.childAtIndex(4);
 
         shouldBe("listItem.traits != initialItem.traits", "true");
         shouldBe("listItem.traits != tableItem.traits", "true");
@@ -52,6 +57,8 @@ item 1
         shouldBe("tableItem.traits != landmarkItem.traits", "true");
 
         shouldBe("landmarkItem.traits != initialItem.traits", "true");
+
+        shouldBe("nonTableItem.traits != tableItem.traits", "true");
     }
 
     successfullyParsed = true;

@@ -1,3 +1,17 @@
+2019-07-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver ignored role="presentation" on <table> HTML elements
+        https://bugs.webkit.org/show_bug.cgi?id=199659
+
+        Reviewed by Zalan Bujtas.
+
+        Only include a table ancestor if it's a table we care about for accessibility.
+
+        Modified Test: accessibility/ios-simulator/tables-lists.html
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityTableAncestor]):
+
 2019-07-10  Robin Morisset  <rmorisset@apple.com>
 
         [WHLSL] Track code locations correctly throughout the compiler to get good error messages

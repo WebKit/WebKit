@@ -1,3 +1,13 @@
+2019-07-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver ignored role="presentation" on <table> HTML elements
+        https://bugs.webkit.org/show_bug.cgi?id=199659
+
+        Reviewed by Zalan Bujtas.
+
+        * accessibility/ios-simulator/tables-lists-expected.txt:
+        * accessibility/ios-simulator/tables-lists.html:
+
 2019-07-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         [iOS] REGRESSION(r244851): Revealing caret sometimes fails when content inset is used

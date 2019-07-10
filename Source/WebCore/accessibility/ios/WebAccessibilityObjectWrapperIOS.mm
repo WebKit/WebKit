@@ -592,9 +592,8 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 
 - (AccessibilityObjectWrapper*)_accessibilityTableAncestor
 {
-    
     if (const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, [] (const AccessibilityObject& object) {
-        return object.isTable();
+        return object.roleValue() == AccessibilityRole::Table;
     }))
         return parent->wrapper();
     return nil;
