@@ -3868,10 +3868,15 @@ void FrameLoader::retryAfterFailedCacheOnlyMainResourceLoad()
     ASSERT(history().provisionalItem() == m_requestedHistoryItem.get());
 
     FrameLoadType loadType = m_loadType;
-    HistoryItem& item = *history().provisionalItem();
+    HistoryItem* item = history().provisionalItem();
 
     stopAllLoaders(ShouldNotClearProvisionalItem);
-    loadDifferentDocumentItem(item, history().currentItem(), loadType, MayNotAttemptCacheOnlyLoadForFormSubmissionItem, ShouldTreatAsContinuingLoad::No);
+    if (item)
+        loadDifferentDocumentItem(*item, history().currentItem(), loadType, MayNotAttemptCacheOnlyLoadForFormSubmissionItem, ShouldTreatAsContinuingLoad::No);
+    else {
+        ASSERT_NOT_REACHED();
+        RELEASE_LOG_ERROR(ResourceLoading, "Retrying load after failed cache-only main resource load failed because there is no provisional history item.");
+    }
 }
 
 ResourceError FrameLoader::cancelledError(const ResourceRequest& request) const
