@@ -1,3 +1,16 @@
+2019-07-10  Jon Lee  <jonlee@apple.com>
+
+        Opt trello.com to mobile UA
+        https://bugs.webkit.org/show_bug.cgi?id=199686
+        rdar://problem/51708119
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::desktopClassBrowsingRecommendedForRequest): Currently the desktop version
+        of the site prevents users from tapping cards to edit them. Opt trello into the mobile
+        UA for now.
+
 2019-07-10  Daniel Bates  <dabates@apple.com>
 
         [iOS] Selection handles "Lollipops" can become gray and stay gray

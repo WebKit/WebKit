@@ -1303,6 +1303,9 @@ static bool desktopClassBrowsingRecommendedForRequest(const WebCore::ResourceReq
     if (equalLettersIgnoringASCIICase(host, "v.china.com.cn"))
         return false;
 
+    if (equalLettersIgnoringASCIICase(host, "trello.com") || host.endsWithIgnoringASCIICase(".trello.com"))
+        return false;
+
     return true;
 }
 
