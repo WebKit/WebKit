@@ -510,7 +510,6 @@
 		5CB305011DE4164800D2C405 /* TransformFeedbackImpl_mock.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB304D71DE4164800D2C405 /* TransformFeedbackImpl_mock.h */; };
 		5CB305021DE4164800D2C405 /* TransformFeedbackImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB304D81DE4164800D2C405 /* TransformFeedbackImpl.h */; };
 		5CB305031DE4164800D2C405 /* VertexArrayImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB304D91DE4164800D2C405 /* VertexArrayImpl.h */; };
-		5CB5E1A71DFB8AF600F90FC9 /* libEGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB300B51DE39E6300D2C405 /* libEGL.cpp */; };
 		5CC7D457191024E4000B8C1F /* ValidateOutputs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC7D450191024E4000B8C1F /* ValidateOutputs.cpp */; };
 		5CC7D458191024E4000B8C1F /* ValidateOutputs.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC7D451191024E4000B8C1F /* ValidateOutputs.h */; };
 		5CC7D46B19102620000B8C1F /* angleutils.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC7D45A19102620000B8C1F /* angleutils.h */; };
@@ -590,6 +589,17 @@
 		5CCD81B01DBFEA5C006066B8 /* ConstantUnion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD81991DBFEA5C006066B8 /* ConstantUnion.cpp */; };
 		5CCD81B51DBFEA5C006066B8 /* QualifierTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD819E1DBFEA5C006066B8 /* QualifierTypes.cpp */; };
 		5CCD81B61DBFEA5C006066B8 /* QualifierTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD819F1DBFEA5C006066B8 /* QualifierTypes.h */; };
+		6E344AB122BC35C3001DDB2C /* entry_points_enum_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E344AAD22BC35C3001DDB2C /* entry_points_enum_autogen.h */; };
+		6E344AB222BC35C3001DDB2C /* entry_points_gles_ext_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E344AAE22BC35C3001DDB2C /* entry_points_gles_ext_autogen.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E344AB322BC35C3001DDB2C /* entry_points_gles_ext_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E344AAF22BC35C3001DDB2C /* entry_points_gles_ext_autogen.cpp */; };
+		6E344AB622BC57C8001DDB2C /* entry_points_gles_1_0_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E344AB422BC57C8001DDB2C /* entry_points_gles_1_0_autogen.cpp */; };
+		6E344AB722BC57C8001DDB2C /* entry_points_gles_1_0_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E344AB522BC57C8001DDB2C /* entry_points_gles_1_0_autogen.h */; };
+		6ED70A0C22CD630E008688CE /* gl.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED70A0922CD630E008688CE /* gl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6ED70A0D22CD630E008688CE /* glext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED70A0A22CD630E008688CE /* glext.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6ED70A0E22CD630E008688CE /* glplatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED70A0B22CD630E008688CE /* glplatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6ED70A1022CD6822008688CE /* glext_angle.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED70A0F22CD6822008688CE /* glext_angle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6EE2FD2D22BAE99C001D369E /* eglext_angle.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE2FD2C22BAE99C001D369E /* eglext_angle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6EE2FD2F22BAE9CD001D369E /* gl2ext_angle.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE2FD2E22BAE9CD001D369E /* gl2ext_angle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		72309A56183C27DE00370B93 /* Tokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72309A55183C27DB00370B93 /* Tokenizer.cpp */; settings = {COMPILER_FLAGS = "-Wno-unreachable-code"; }; };
 		72309A58183C27F300370B93 /* ExpressionParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72309A57183C27F100370B93 /* ExpressionParser.cpp */; settings = {COMPILER_FLAGS = "-Wno-unreachable-code"; }; };
 		A08C3CDC16D6CB61003F0B83 /* ArrayBoundsClamper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A08C3CDA16D6CB61003F0B83 /* ArrayBoundsClamper.cpp */; };
@@ -1049,7 +1059,6 @@
 		5C55D732228274DE00B5BA2C /* Declarator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Declarator.h; sourceTree = "<group>"; };
 		5C9FFF4C19102A000025B8FA /* FlagStd140Structs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlagStd140Structs.cpp; sourceTree = "<group>"; };
 		5C9FFF4D19102A000025B8FA /* FlagStd140Structs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlagStd140Structs.h; sourceTree = "<group>"; };
-		5CB300B51DE39E6300D2C405 /* libEGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = libEGL.cpp; sourceTree = "<group>"; };
 		5CB300B81DE39E6300D2C405 /* resource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resource.h; sourceTree = "<group>"; };
 		5CB300BB1DE39E7500D2C405 /* entry_points_egl_ext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = entry_points_egl_ext.cpp; sourceTree = "<group>"; };
 		5CB300BC1DE39E7500D2C405 /* entry_points_egl_ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = entry_points_egl_ext.h; sourceTree = "<group>"; };
@@ -1237,6 +1246,17 @@
 		5D7C59C51208C68B001C873E /* ANGLE.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ANGLE.xcconfig; sourceTree = "<group>"; };
 		5D7C59C61208C68B001C873E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		6E344AAD22BC35C3001DDB2C /* entry_points_enum_autogen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = entry_points_enum_autogen.h; sourceTree = "<group>"; };
+		6E344AAE22BC35C3001DDB2C /* entry_points_gles_ext_autogen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = entry_points_gles_ext_autogen.h; sourceTree = "<group>"; };
+		6E344AAF22BC35C3001DDB2C /* entry_points_gles_ext_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = entry_points_gles_ext_autogen.cpp; sourceTree = "<group>"; };
+		6E344AB422BC57C8001DDB2C /* entry_points_gles_1_0_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = entry_points_gles_1_0_autogen.cpp; sourceTree = "<group>"; };
+		6E344AB522BC57C8001DDB2C /* entry_points_gles_1_0_autogen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = entry_points_gles_1_0_autogen.h; sourceTree = "<group>"; };
+		6ED70A0922CD630E008688CE /* gl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl.h; path = include/GLES/gl.h; sourceTree = "<group>"; };
+		6ED70A0A22CD630E008688CE /* glext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glext.h; path = include/GLES/glext.h; sourceTree = "<group>"; };
+		6ED70A0B22CD630E008688CE /* glplatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glplatform.h; path = include/GLES/glplatform.h; sourceTree = "<group>"; };
+		6ED70A0F22CD6822008688CE /* glext_angle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glext_angle.h; path = include/GLES/glext_angle.h; sourceTree = "<group>"; };
+		6EE2FD2C22BAE99C001D369E /* eglext_angle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = eglext_angle.h; path = include/EGL/eglext_angle.h; sourceTree = "<group>"; };
+		6EE2FD2E22BAE9CD001D369E /* gl2ext_angle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl2ext_angle.h; path = include/GLES2/gl2ext_angle.h; sourceTree = "<group>"; };
 		72309A55183C27DB00370B93 /* Tokenizer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Tokenizer.cpp; sourceTree = "<group>"; };
 		72309A57183C27F100370B93 /* ExpressionParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExpressionParser.cpp; sourceTree = "<group>"; };
 		A08C3CDA16D6CB61003F0B83 /* ArrayBoundsClamper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArrayBoundsClamper.cpp; path = compiler/ArrayBoundsClamper.cpp; sourceTree = "<group>"; };
@@ -1505,6 +1525,7 @@
 			children = (
 				5C1BAAA61DFB6124002906BB /* egl.h */,
 				5C1BAAA71DFB6124002906BB /* eglext.h */,
+				6EE2FD2C22BAE99C001D369E /* eglext_angle.h */,
 				5C1BAAA81DFB6124002906BB /* eglplatform.h */,
 			);
 			name = EGL;
@@ -1515,6 +1536,7 @@
 			children = (
 				5C1BAA9E1DFB610E002906BB /* gl2.h */,
 				5C1BAA9F1DFB610E002906BB /* gl2ext.h */,
+				6EE2FD2E22BAE9CD001D369E /* gl2ext_angle.h */,
 				5C1BAAA01DFB610E002906BB /* gl2platform.h */,
 			);
 			name = GLES2;
@@ -1696,7 +1718,6 @@
 		5CB300B41DE39E5400D2C405 /* libEGL */ = {
 			isa = PBXGroup;
 			children = (
-				5CB300B51DE39E6300D2C405 /* libEGL.cpp */,
 				5CB300B81DE39E6300D2C405 /* resource.h */,
 			);
 			path = libEGL;
@@ -1709,12 +1730,17 @@
 				5CB300BE1DE39E7500D2C405 /* entry_points_egl.h */,
 				5CB300BB1DE39E7500D2C405 /* entry_points_egl_ext.cpp */,
 				5CB300BC1DE39E7500D2C405 /* entry_points_egl_ext.h */,
+				6E344AAD22BC35C3001DDB2C /* entry_points_enum_autogen.h */,
+				6E344AB422BC57C8001DDB2C /* entry_points_gles_1_0_autogen.cpp */,
+				6E344AB522BC57C8001DDB2C /* entry_points_gles_1_0_autogen.h */,
 				315EBE021FCE456200AC7A89 /* entry_points_gles_2_0_autogen.cpp */,
 				315EBDFE1FCE456100AC7A89 /* entry_points_gles_2_0_autogen.h */,
 				315EBE001FCE456100AC7A89 /* entry_points_gles_3_0_autogen.cpp */,
 				315EBDFD1FCE456100AC7A89 /* entry_points_gles_3_0_autogen.h */,
 				315EBE011FCE456100AC7A89 /* entry_points_gles_3_1_autogen.cpp */,
 				315EBDFF1FCE456100AC7A89 /* entry_points_gles_3_1_autogen.h */,
+				6E344AAF22BC35C3001DDB2C /* entry_points_gles_ext_autogen.cpp */,
+				6E344AAE22BC35C3001DDB2C /* entry_points_gles_ext_autogen.h */,
 				5CB300C71DE39E7500D2C405 /* global_state.cpp */,
 				5CB300C81DE39E7500D2C405 /* global_state.h */,
 				315EBDFC1FCE456100AC7A89 /* proc_table.h */,
@@ -2073,6 +2099,17 @@
 			path = Configurations;
 			sourceTree = "<group>";
 		};
+		6ED70A0822CD62E8008688CE /* GLES */ = {
+			isa = PBXGroup;
+			children = (
+				6ED70A0922CD630E008688CE /* gl.h */,
+				6ED70A0A22CD630E008688CE /* glext.h */,
+				6ED70A0F22CD6822008688CE /* glext_angle.h */,
+				6ED70A0B22CD630E008688CE /* glplatform.h */,
+			);
+			name = GLES;
+			sourceTree = "<group>";
+		};
 		A08C3CD816D6CB35003F0B83 /* third_party */ = {
 			isa = PBXGroup;
 			children = (
@@ -2104,6 +2141,7 @@
 			isa = PBXGroup;
 			children = (
 				5C1BAA931DFB60E2002906BB /* EGL */,
+				6ED70A0822CD62E8008688CE /* GLES */,
 				5C1BAA941DFB60EA002906BB /* GLES2 */,
 				5C1BAA951DFB60EF002906BB /* GLES3 */,
 				FB39D2BD1200F3E600088E69 /* GLSLANG */,
@@ -2269,6 +2307,7 @@
 				315EBDC91FCE44E400AC7A89 /* driver_utils.h in Headers */,
 				5C1BAAAA1DFB6124002906BB /* egl.h in Headers */,
 				5C1BAAAB1DFB6124002906BB /* eglext.h in Headers */,
+				6EE2FD2D22BAE99C001D369E /* eglext_angle.h in Headers */,
 				5CB304E31DE4164800D2C405 /* EGLImplFactory.h in Headers */,
 				5C1BAAAC1DFB6124002906BB /* eglplatform.h in Headers */,
 				5CCD59672284F7960018F2D8 /* EGLSync.h in Headers */,
@@ -2277,9 +2316,12 @@
 				5C55D6A322826B9F00B5BA2C /* EmulatePrecision.h in Headers */,
 				5CB304981DE4157B00D2C405 /* entry_points_egl.h in Headers */,
 				5CB304961DE4157B00D2C405 /* entry_points_egl_ext.h in Headers */,
+				6E344AB122BC35C3001DDB2C /* entry_points_enum_autogen.h in Headers */,
+				6E344AB722BC57C8001DDB2C /* entry_points_gles_1_0_autogen.h in Headers */,
 				315EBE061FCE456200AC7A89 /* entry_points_gles_2_0_autogen.h in Headers */,
 				315EBE051FCE456200AC7A89 /* entry_points_gles_3_0_autogen.h in Headers */,
 				315EBE071FCE456200AC7A89 /* entry_points_gles_3_1_autogen.h in Headers */,
+				6E344AB222BC35C3001DDB2C /* entry_points_gles_ext_autogen.h in Headers */,
 				5C1DBDEB1B0438D300235552 /* Error.h in Headers */,
 				315EBDE91FCE452D00AC7A89 /* ErrorStrings.h in Headers */,
 				5CC7D47119102621000B8C1F /* event_tracer.h in Headers */,
@@ -2312,8 +2354,10 @@
 				5CB301291DE39F1A00D2C405 /* functionsgl_enums.h in Headers */,
 				5CB3012A1DE39F1A00D2C405 /* functionsgl_typedefs.h in Headers */,
 				5CCD59942284FC400018F2D8 /* generatemip.h in Headers */,
+				6ED70A0C22CD630E008688CE /* gl.h in Headers */,
 				5C1BAAA21DFB610E002906BB /* gl2.h in Headers */,
 				5C1BAAA31DFB610E002906BB /* gl2ext.h in Headers */,
+				6EE2FD2F22BAE9CD001D369E /* gl2ext_angle.h in Headers */,
 				5C1BAAA41DFB610E002906BB /* gl2platform.h in Headers */,
 				5C1BAA9A1DFB60FF002906BB /* gl3.h in Headers */,
 				5C1BAA9C1DFB60FF002906BB /* gl31.h in Headers */,
@@ -2321,8 +2365,11 @@
 				5C1BAA9B1DFB60FF002906BB /* gl3platform.h in Headers */,
 				5CCD59602284F7960018F2D8 /* GLES1Renderer.h in Headers */,
 				5CCD59622284F7960018F2D8 /* GLES1State.h in Headers */,
+				6ED70A0D22CD630E008688CE /* glext.h in Headers */,
+				6ED70A1022CD6822008688CE /* glext_angle.h in Headers */,
 				5CB304EC1DE4164800D2C405 /* GLImplFactory.h in Headers */,
 				5CB304A21DE4157B00D2C405 /* global_state.h in Headers */,
+				6ED70A0E22CD630E008688CE /* glplatform.h in Headers */,
 				31012E2D18B97B9B0039062F /* glslang.h in Headers */,
 				31012E3218B97B9B0039062F /* glslang_tab.h in Headers */,
 				5C1DBDF91B0438D300235552 /* HandleAllocator.h in Headers */,
@@ -2683,9 +2730,11 @@
 				5C55D6B222826BC800B5BA2C /* EmulatePrecision.cpp in Sources */,
 				5C1BAAB51DFB6F54002906BB /* entry_points_egl.cpp in Sources */,
 				5C1BAAB61DFB6F58002906BB /* entry_points_egl_ext.cpp in Sources */,
+				6E344AB622BC57C8001DDB2C /* entry_points_gles_1_0_autogen.cpp in Sources */,
 				315EBE0A1FCE456200AC7A89 /* entry_points_gles_2_0_autogen.cpp in Sources */,
 				315EBE081FCE456200AC7A89 /* entry_points_gles_3_0_autogen.cpp in Sources */,
 				315EBE091FCE456200AC7A89 /* entry_points_gles_3_1_autogen.cpp in Sources */,
+				6E344AB322BC35C3001DDB2C /* entry_points_gles_ext_autogen.cpp in Sources */,
 				5C1DBDEA1B0438D300235552 /* Error.cpp in Sources */,
 				315EBDEF1FCE452D00AC7A89 /* es3_copy_conversion_table_autogen.cpp in Sources */,
 				5CC7D47019102621000B8C1F /* event_tracer.cpp in Sources */,
@@ -2736,7 +2785,6 @@
 				5CCD59792284FA830018F2D8 /* IOSurfaceSurfaceCGL.mm in Sources */,
 				315EBD9C1FCE443600AC7A89 /* IsASTDepthBelowLimit.cpp in Sources */,
 				A264F8B616974DED006FAA5A /* Lexer.cpp in Sources */,
-				5CB5E1A71DFB8AF600F90FC9 /* libEGL.cpp in Sources */,
 				5CB304EF1DE4164800D2C405 /* load_functions_table_autogen.cpp in Sources */,
 				5CCD59952284FC400018F2D8 /* loadimage.cpp in Sources */,
 				5CCD59922284FC400018F2D8 /* loadimage_etc.cpp in Sources */,

@@ -32,6 +32,11 @@
 
 #include <ANGLE/entry_points_gles_2_0_autogen.h>
 #include <ANGLE/entry_points_gles_3_0_autogen.h>
+// Skip the inclusion of ANGLE's explicit context entry points for now.
+#define GL_ANGLE_explicit_context
+#define GL_ANGLE_explicit_context_gles1
+typedef void* GLeglContext;
+#include <ANGLE/entry_points_gles_ext_autogen.h>
 
 // Note: this file can't be compiled in the same unified source file
 // as others which include the system's OpenGL headers.
@@ -51,8 +56,8 @@ Extensions3DANGLE::Extensions3DANGLE(GraphicsContext3D* context, bool useIndexed
 {
     // FIXME: ideally, remove this initialization altogether. ANGLE
     // subsumes the responsibility for graphics driver workarounds.
-    m_vendor = String(reinterpret_cast<const char*>(::glGetString(GL_VENDOR)));
-    m_renderer = String(reinterpret_cast<const char*>(::glGetString(GL_RENDERER)));
+    m_vendor = String(reinterpret_cast<const char*>(gl::GetString(GL_VENDOR)));
+    m_renderer = String(reinterpret_cast<const char*>(gl::GetString(GL_RENDERER)));
 
     Vector<String> vendorComponents = m_vendor.convertToASCIILowercase().split(' ');
     if (vendorComponents.contains("nvidia"))
@@ -72,62 +77,22 @@ bool Extensions3DANGLE::supports(const String& name)
     if (!m_initializedAvailableExtensions)
         initializeAvailableExtensions();
 
-    // We explicitly do not support this extension until
-    // we fix the following bug:
-    // https://bugs.webkit.org/show_bug.cgi?id=149734
-    // FIXME: given that ANGLE is in use, rewrite this in terms of
-    // ANGLE queries and enable this extension.
-    if (name == "GL_ANGLE_translated_shader_source")
-        return false;
-
     return supportsExtension(name);
 }
 
 void Extensions3DANGLE::ensureEnabled(const String& name)
 {
-    if (name == "GL_OES_standard_derivatives") {
-        // Enable support in ANGLE (if not enabled already).
-        ANGLEWebKitBridge& compiler = m_context->m_compiler;
-        ShBuiltInResources ANGLEResources = compiler.getResources();
-        if (!ANGLEResources.OES_standard_derivatives) {
-            ANGLEResources.OES_standard_derivatives = 1;
-            compiler.setResources(ANGLEResources);
-        }
-    } else if (name == "GL_EXT_draw_buffers") {
-        // Enable support in ANGLE (if not enabled already).
-        ANGLEWebKitBridge& compiler = m_context->m_compiler;
-        ShBuiltInResources ANGLEResources = compiler.getResources();
-        if (!ANGLEResources.EXT_draw_buffers) {
-            ANGLEResources.EXT_draw_buffers = 1;
-            m_context->getIntegerv(Extensions3D::MAX_DRAW_BUFFERS_EXT, &ANGLEResources.MaxDrawBuffers);
-            compiler.setResources(ANGLEResources);
-        }
-    } else if (name == "GL_EXT_shader_texture_lod") {
-        // Enable support in ANGLE (if not enabled already).
-        ANGLEWebKitBridge& compiler = m_context->m_compiler;
-        ShBuiltInResources ANGLEResources = compiler.getResources();
-        if (!ANGLEResources.EXT_shader_texture_lod) {
-            ANGLEResources.EXT_shader_texture_lod = 1;
-            compiler.setResources(ANGLEResources);
-        }
-    } else if (name == "GL_EXT_frag_depth") {
-        // Enable support in ANGLE (if not enabled already).
-        ANGLEWebKitBridge& compiler = m_context->m_compiler;
-        ShBuiltInResources ANGLEResources = compiler.getResources();
-        if (!ANGLEResources.EXT_frag_depth) {
-            ANGLEResources.EXT_frag_depth = 1;
-            compiler.setResources(ANGLEResources);
-        }
+    // Enable support in ANGLE (if not enabled already).
+    if (m_requestableExtensions.contains(name) && !m_enabledExtensions.contains(name)) {
+        m_context->makeContextCurrent();
+        gl::RequestExtensionANGLE(name.ascii().data());
+        m_enabledExtensions.add(name);
     }
 }
 
 bool Extensions3DANGLE::isEnabled(const String& name)
 {
-    if (name == "GL_OES_standard_derivatives") {
-        ANGLEWebKitBridge& compiler = m_context->m_compiler;
-        return compiler.getResources().OES_standard_derivatives;
-    }
-    return supports(name);
+    return m_availableExtensions.contains(name) || m_enabledExtensions.contains(name);
 }
 
 int Extensions3DANGLE::getGraphicsResetStatusARB()
@@ -137,51 +102,17 @@ int Extensions3DANGLE::getGraphicsResetStatusARB()
 
 String Extensions3DANGLE::getTranslatedShaderSourceANGLE(Platform3DObject shader)
 {
-    // FIXME: port to use ANGLE's implementation directly.
-    ASSERT(shader);
-    int GLshaderType;
-    ANGLEShaderType shaderType;
-
-    ANGLEWebKitBridge& compiler = m_context->m_compiler;
-
-    m_context->getShaderiv(shader, GraphicsContext3D::SHADER_TYPE, &GLshaderType);
-
-    if (GLshaderType == GraphicsContext3D::VERTEX_SHADER)
-        shaderType = SHADER_TYPE_VERTEX;
-    else if (GLshaderType == GraphicsContext3D::FRAGMENT_SHADER)
-        shaderType = SHADER_TYPE_FRAGMENT;
-    else
-        return emptyString(); // Invalid shader type.
-
-    HashMap<Platform3DObject, GraphicsContext3D::ShaderSourceEntry>::iterator result = m_context->m_shaderSourceMap.find(shader);
-
-    if (result == m_context->m_shaderSourceMap.end())
+    int sourceLength = 0;
+    m_context->getShaderiv(shader, GL_TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE, &sourceLength);
+    if (!sourceLength)
         return emptyString();
-
-    GraphicsContext3D::ShaderSourceEntry& entry = result->value;
-
-    String translatedShaderSource;
-    String shaderInfoLog;
-    uint64_t extraCompileOptions = SH_CLAMP_INDIRECT_ARRAY_BOUNDS | SH_UNFOLD_SHORT_CIRCUIT | SH_INIT_OUTPUT_VARIABLES | SH_ENFORCE_PACKING_RESTRICTIONS | SH_LIMIT_EXPRESSION_COMPLEXITY | SH_LIMIT_CALL_STACK_DEPTH | SH_INITIALIZE_UNINITIALIZED_LOCALS;
-
-    if (m_requiresBuiltInFunctionEmulation)
-        extraCompileOptions |= SH_EMULATE_ABS_INT_FUNCTION;
-
-    Vector<std::pair<ANGLEShaderSymbolType, sh::ShaderVariable>> symbols;
-    bool isValid = compiler.compileShaderSource(entry.source.utf8().data(), shaderType, translatedShaderSource, shaderInfoLog, symbols, extraCompileOptions);
-
-    entry.log = shaderInfoLog;
-    entry.isValid = isValid;
-
-    for (const std::pair<ANGLEShaderSymbolType, sh::ShaderVariable>& pair : symbols) {
-        const std::string& name = pair.second.name;
-        entry.symbolMap(pair.first).set(String(name.c_str(), name.length()), pair.second);
-    }
-
-    if (!isValid)
+    Vector<GLchar> name(sourceLength); // GL_TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE includes null termination.
+    int returnedLength = 0;
+    gl::GetTranslatedShaderSourceANGLE(shader, sourceLength, &returnedLength, name.data());
+    if (!returnedLength)
         return emptyString();
-
-    return translatedShaderSource;
+    ASSERT(returnedLength == sourceLength);
+    return String(name.data(), returnedLength);
 }
 
 void Extensions3DANGLE::initializeAvailableExtensions()
@@ -190,11 +121,17 @@ void Extensions3DANGLE::initializeAvailableExtensions()
         GLint numExtensions = 0;
         gl::GetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
         for (GLint i = 0; i < numExtensions; ++i)
-            m_availableExtensions.add(glGetStringi(GL_EXTENSIONS, i));
+            m_availableExtensions.add(gl::GetStringi(GL_EXTENSIONS, i));
+        gl::GetIntegerv(GL_NUM_REQUESTABLE_EXTENSIONS_ANGLE, &numExtensions);
+        for (GLint i = 0; i < numExtensions; ++i)
+            m_requestableExtensions.add(gl::GetStringi(GL_REQUESTABLE_EXTENSIONS_ANGLE, i));
     } else {
         String extensionsString = getExtensions();
         for (auto& extension : extensionsString.split(' '))
             m_availableExtensions.add(extension);
+        extensionsString = String(reinterpret_cast<const char*>(gl::GetString(GL_REQUESTABLE_EXTENSIONS_ANGLE)));
+        for (auto& extension : extensionsString.split(' '))
+            m_requestableExtensions.add(extension);
     }
     m_initializedAvailableExtensions = true;
 }
@@ -217,19 +154,19 @@ void Extensions3DANGLE::getnUniformivEXT(GC3Duint, int, GC3Dsizei, int *)
 void Extensions3DANGLE::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
 {
     // FIXME: consider adding support for APPLE_framebuffer_multisample.
-    gl::BlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
+    gl::BlitFramebufferANGLE(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
 }
 
 void Extensions3DANGLE::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
 {
-    gl::RenderbufferStorageMultisample(target, samples, internalformat, width, height);
+    gl::RenderbufferStorageMultisampleANGLE(target, samples, internalformat, width, height);
 }
 
 Platform3DObject Extensions3DANGLE::createVertexArrayOES()
 {
     m_context->makeContextCurrent();
     GLuint array = 0;
-    gl::GenVertexArrays(1, &array);
+    gl::GenVertexArraysOES(1, &array);
     return array;
 }
 
@@ -239,7 +176,7 @@ void Extensions3DANGLE::deleteVertexArrayOES(Platform3DObject array)
         return;
 
     m_context->makeContextCurrent();
-    gl::DeleteVertexArrays(1, &array);
+    gl::DeleteVertexArraysOES(1, &array);
 }
 
 GC3Dboolean Extensions3DANGLE::isVertexArrayOES(Platform3DObject array)
@@ -248,13 +185,13 @@ GC3Dboolean Extensions3DANGLE::isVertexArrayOES(Platform3DObject array)
         return GL_FALSE;
 
     m_context->makeContextCurrent();
-    return gl::IsVertexArray(array);
+    return gl::IsVertexArrayOES(array);
 }
 
 void Extensions3DANGLE::bindVertexArrayOES(Platform3DObject array)
 {
     m_context->makeContextCurrent();
-    gl::BindVertexArray(array);
+    gl::BindVertexArrayOES(array);
 }
 
 void Extensions3DANGLE::insertEventMarkerEXT(const String&)
@@ -277,30 +214,30 @@ void Extensions3DANGLE::popGroupMarkerEXT(void)
 
 bool Extensions3DANGLE::supportsExtension(const String& name)
 {
-    return m_availableExtensions.contains(name);
+    return m_availableExtensions.contains(name) || m_requestableExtensions.contains(name);
 }
 
 void Extensions3DANGLE::drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs)
 {
-    gl::DrawBuffers(n, bufs);
+    gl::DrawBuffersEXT(n, bufs);
 }
 
 void Extensions3DANGLE::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
 {
     m_context->makeContextCurrent();
-    gl::DrawArraysInstanced(mode, first, count, primcount);
+    gl::DrawArraysInstancedANGLE(mode, first, count, primcount);
 }
 
 void Extensions3DANGLE::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount)
 {
     m_context->makeContextCurrent();
-    gl::DrawElementsInstanced(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)), primcount);
+    gl::DrawElementsInstancedANGLE(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)), primcount);
 }
 
 void Extensions3DANGLE::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
 {
     m_context->makeContextCurrent();
-    gl::VertexAttribDivisor(index, divisor);
+    gl::VertexAttribDivisorANGLE(index, divisor);
 }
 
 String Extensions3DANGLE::getExtensions()

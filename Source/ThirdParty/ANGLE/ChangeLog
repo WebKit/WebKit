@@ -1,3 +1,26 @@
+2019-07-10  Kenneth Russell  <kbr@chromium.org>
+
+        Hook up WebGL's back buffer in ANGLE backend on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=198982
+
+        Reviewed by Alex Christensen.
+
+        Add source files needed to implement and call ANGLE extensions, and
+        export headers necessary for those extensions. Update the script which
+        adjusts include paths to handle the new headers.
+
+        Cherry-pick fix for ANGLE bug crbug.com/angleproject/3669 to support
+        antialias:true for ANGLE-backed WebGL contexts.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * adjust-angle-include-paths.sh:
+        * src/libANGLE/FramebufferAttachment.cpp:
+        (gl::FramebufferAttachment::getTextureImageIndex const): Deleted.
+        * src/libANGLE/FramebufferAttachment.h:
+        (gl::FramebufferAttachment::getTextureImageIndex const):
+        * src/libANGLE/validationES2.cpp:
+        (gl::ValidateBlitFramebufferANGLE):
+
 2019-06-27  Beth Dakin  <bdakin@apple.com>
 
         Upstream use of MACCATALYST

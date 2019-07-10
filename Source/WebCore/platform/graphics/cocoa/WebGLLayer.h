@@ -50,12 +50,20 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 {
     WebCore::GraphicsContext3D* _context;
     float _devicePixelRatio;
-#if USE(OPENGL)
+#if USE(OPENGL) || (USE(ANGLE) && PLATFORM(MAC))
     std::unique_ptr<WebCore::IOSurface> _contentsBuffer;
     std::unique_ptr<WebCore::IOSurface> _drawingBuffer;
     std::unique_ptr<WebCore::IOSurface> _spareBuffer;
     WebCore::IntSize _bufferSize;
     BOOL _usingAlpha;
+#endif
+#if USE(ANGLE) && PLATFORM(MAC)
+    void* _eglDisplay;
+    void* _eglConfig;
+    void* _contentsPbuffer;
+    void* _drawingPbuffer;
+    void* _sparePbuffer;
+    void* _latchedPbuffer;
 #endif
 }
 
@@ -65,9 +73,14 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 - (CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace;
 
-#if USE(OPENGL)
+#if USE(OPENGL) || (USE(ANGLE) && PLATFORM(MAC))
 - (void)allocateIOSurfaceBackingStoreWithSize:(WebCore::IntSize)size usingAlpha:(BOOL)usingAlpha;
 - (void)bindFramebufferToNextAvailableSurface;
+#endif
+
+#if (USE(ANGLE) && PLATFORM(MAC))
+- (void)setEGLDisplay:(void*)eglDisplay andConfig:(void*)eglConfig;
+- (void)dealloc;
 #endif
 
 @end

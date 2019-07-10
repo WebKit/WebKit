@@ -43,6 +43,19 @@
 #import <OpenGL/gl.h>
 #endif
 
+#if USE(ANGLE)
+#define EGL_EGL_PROTOTYPES 0
+#include <ANGLE/egl.h>
+#include <ANGLE/eglext.h>
+#include <ANGLE/eglext_angle.h>
+#include <ANGLE/entry_points_egl.h>
+#include <ANGLE/entry_points_gles_2_0_autogen.h>
+// Skip the inclusion of ANGLE's explicit context entry points for now.
+#define GL_ANGLE_explicit_context
+#include <ANGLE/gl2ext.h>
+#include <ANGLE/gl2ext_angle.h>
+#endif
+
 @implementation WebGLLayer
 
 @synthesize context=_context;
@@ -52,7 +65,7 @@
     _context = context;
     self = [super init];
     _devicePixelRatio = context->getContextAttributes().devicePixelRatio;
-#if USE(OPENGL)
+#if USE(OPENGL) || USE(ANGLE) && PLATFORM(MAC)
     self.contentsOpaque = !context->getContextAttributes().alpha;
     self.transform = CATransform3DIdentity;
     self.contentsScale = _devicePixelRatio;
@@ -62,7 +75,7 @@
     return self;
 }
 
-#if USE(OPENGL)
+#if USE(OPENGL) || (USE(ANGLE) && PLATFORM(MAC))
 // When using an IOSurface as layer contents, we need to flip the
 // layer to take into account that the IOSurface provides content
 // in Y-up. This means that any incoming transform (unlikely, since
@@ -78,12 +91,14 @@
 {
     [super setAnchorPoint:CGPointMake(p.x, 1.0 - p.y)];
 }
+#endif // USE(OPENGL) || (USE(ANGLE) && PLATFORM(MAC))
 
+#if USE(OPENGL)
 static void freeData(void *, const void *data, size_t /* size */)
 {
     fastFree(const_cast<void *>(data));
 }
-#endif
+#endif // USE(OPENGL)
 
 - (CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace
 {
@@ -118,6 +133,7 @@ static void freeData(void *, const void *data, size_t /* size */)
     CGDataProviderRelease(provider);
     return image;
 #else
+    // FIXME: implement.
     UNUSED_PARAM(colorSpace);
     return nullptr;
 #endif
@@ -139,7 +155,23 @@ static void freeData(void *, const void *data, size_t /* size */)
 #elif USE(OPENGL_ES)
     _context->presentRenderbuffer();
 #elif USE(ANGLE)
-    // FIXME: display rendering results via ANGLE.
+    _context->prepareTexture();
+    if (_drawingBuffer) {
+        if (_latchedPbuffer) {
+            GC3Denum texture = _context->platformTexture();
+            gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, texture);
+            if (!EGL_ReleaseTexImage(_eglDisplay, _latchedPbuffer, EGL_BACK_BUFFER)) {
+                // FIXME: report error.
+                notImplemented();
+            }
+            _latchedPbuffer = nullptr;
+        }
+        std::swap(_contentsBuffer, _drawingBuffer);
+        std::swap(_contentsPbuffer, _drawingPbuffer);
+        self.contents = _contentsBuffer->asLayerContents();
+        [self reloadValueForKeyPath:@"contents"];
+        [self bindFramebufferToNextAvailableSurface];
+    }
 #endif
 
     _context->markLayerComposited();
@@ -148,7 +180,23 @@ static void freeData(void *, const void *data, size_t /* size */)
         layer->owner()->platformCALayerLayerDidDisplay(layer);
 }
 
-#if USE(OPENGL)
+#if (USE(ANGLE) && PLATFORM(MAC))
+- (void)setEGLDisplay:(void*)display andConfig:(void*)config
+{
+    _eglDisplay = display;
+    _eglConfig = config;
+}
+
+- (void)dealloc
+{
+    EGL_DestroySurface(_eglDisplay, _contentsPbuffer);
+    EGL_DestroySurface(_eglDisplay, _drawingPbuffer);
+    EGL_DestroySurface(_eglDisplay, _sparePbuffer);
+    [super dealloc];
+}
+#endif
+
+#if USE(OPENGL) || (USE(ANGLE) && PLATFORM(MAC))
 - (void)allocateIOSurfaceBackingStoreWithSize:(WebCore::IntSize)size usingAlpha:(BOOL)usingAlpha
 {
     _bufferSize = size;
@@ -164,10 +212,28 @@ static void freeData(void *, const void *data, size_t /* size */)
     _contentsBuffer->migrateColorSpaceToProperties();
     _drawingBuffer->migrateColorSpaceToProperties();
     _spareBuffer->migrateColorSpaceToProperties();
+
+#if USE(ANGLE) && PLATFORM(MAC)
+    const EGLint surfaceAttributes[] = {
+        EGL_WIDTH, size.width(),
+        EGL_HEIGHT, size.height(),
+        EGL_IOSURFACE_PLANE_ANGLE, 0,
+        EGL_TEXTURE_TARGET, EGL_TEXTURE_RECTANGLE_ANGLE,
+        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, GL_BGRA_EXT,
+        EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,
+        EGL_TEXTURE_TYPE_ANGLE, GL_UNSIGNED_BYTE,
+        EGL_NONE, EGL_NONE
+    };
+
+    _contentsPbuffer = EGL_CreatePbufferFromClientBuffer(_eglDisplay, EGL_IOSURFACE_ANGLE, _contentsBuffer->surface(), _eglConfig, surfaceAttributes);
+    _drawingPbuffer = EGL_CreatePbufferFromClientBuffer(_eglDisplay, EGL_IOSURFACE_ANGLE, _drawingBuffer->surface(), _eglConfig, surfaceAttributes);
+    _sparePbuffer = EGL_CreatePbufferFromClientBuffer(_eglDisplay, EGL_IOSURFACE_ANGLE, _spareBuffer->surface(), _eglConfig, surfaceAttributes);
+#endif
 }
 
 - (void)bindFramebufferToNextAvailableSurface
 {
+#if USE(OPENGL)
     GC3Denum texture = _context->platformTexture();
     glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texture);
 
@@ -180,8 +246,32 @@ static void freeData(void *, const void *data, size_t /* size */)
     // Link the IOSurface to the texture.
     CGLError error = CGLTexImageIOSurface2D(_context->platformGraphicsContext3D(), GL_TEXTURE_RECTANGLE_ARB, internalFormat, _bufferSize.width(), _bufferSize.height(), GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, ioSurface, 0);
     ASSERT_UNUSED(error, error == kCGLNoError);
-}
+#elif USE(ANGLE)
+    GC3Denum texture = _context->platformTexture();
+    gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, texture);
+
+    if (_latchedPbuffer) {
+        if (!EGL_ReleaseTexImage(_eglDisplay, _latchedPbuffer, EGL_BACK_BUFFER)) {
+            // FIXME: report error.
+            notImplemented();
+        }
+        _latchedPbuffer = nullptr;
+    }
+
+    if (_drawingBuffer && _drawingBuffer->isInUse()) {
+        std::swap(_drawingBuffer, _spareBuffer);
+        std::swap(_drawingPbuffer, _sparePbuffer);
+    }
+
+    // Link the IOSurface to the texture via the previously-created pbuffer.
+    if (!EGL_BindTexImage(_eglDisplay, _drawingPbuffer, EGL_BACK_BUFFER)) {
+        // FIXME: report error.
+        notImplemented();
+    }
+    _latchedPbuffer = _drawingPbuffer;
 #endif
+}
+#endif // USE(OPENGL) || (USE(ANGLE) && PLATFORM(MAC))
 
 @end
 

@@ -84,6 +84,8 @@ private:
     virtual void initializeAvailableExtensions();
     bool m_initializedAvailableExtensions;
     HashSet<String> m_availableExtensions;
+    HashSet<String> m_requestableExtensions;
+    HashSet<String> m_enabledExtensions;
 
     // Weak pointer back to GraphicsContext3D.
     GraphicsContext3D* m_context;

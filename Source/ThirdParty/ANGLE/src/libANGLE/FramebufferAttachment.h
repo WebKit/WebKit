@@ -216,6 +216,12 @@ class FramebufferAttachmentObject : public angle::Subject
     virtual rx::FramebufferAttachmentObjectImpl *getAttachmentImpl() const = 0;
 };
 
+inline const ImageIndex &FramebufferAttachment::getTextureImageIndex() const
+{
+    ASSERT(type() == GL_TEXTURE);
+    return mTarget.textureIndex();
+}
+
 inline Extents FramebufferAttachment::getSize() const
 {
     ASSERT(mResource);

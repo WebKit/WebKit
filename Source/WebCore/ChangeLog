@@ -1,3 +1,119 @@
+2019-07-10  Kenneth Russell  <kbr@chromium.org>
+
+        Hook up WebGL's back buffer in ANGLE backend on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=198982
+
+        Reviewed by Alex Christensen.
+
+        Fix a few places which were accidentally calling desktop OpenGL rather
+        than ANGLE. Fix some calls which were using ANGLE's OpenGL ES 3.0
+        entry points rather than the OpenGL ES 2.0 extension APIs, causing
+        them to generate errors in WebGL 1.0's backend. Change
+        Extensions3DANGLE to use ANGLE's requestable extension mechanism.
+
+        Fix framebuffer setup when using ANGLE for WebGL 1.0 contexts, for
+        both antialias:true and false.
+
+        Remove ANGLEWebKitBridge in ANGLE backend. It interfered with the
+        correct operation of ANGLE's internal shader compiler, and was
+        unnecessary given the use of ANGLE. Remove all manual shader name
+        hashing and mapping in ANGLE backend.
+
+        Tested with parts of the WebGL conformance suite and the San
+        Angeles demo, which now runs properly with WebKit's ANGLE backend
+        for WebGL.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::getProgramParameter):
+        (WebCore::WebGLRenderingContextBase::getUniformLocation):
+        (WebCore::WebGLRenderingContextBase::linkProgramWithoutInvalidatingAttribLocations):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/angle/Extensions3DANGLE.cpp:
+        (WebCore::Extensions3DANGLE::Extensions3DANGLE):
+        (WebCore::Extensions3DANGLE::supports):
+        (WebCore::Extensions3DANGLE::ensureEnabled):
+        (WebCore::Extensions3DANGLE::isEnabled):
+        (WebCore::Extensions3DANGLE::getTranslatedShaderSourceANGLE):
+        (WebCore::Extensions3DANGLE::initializeAvailableExtensions):
+        (WebCore::Extensions3DANGLE::blitFramebuffer):
+        (WebCore::Extensions3DANGLE::renderbufferStorageMultisample):
+        (WebCore::Extensions3DANGLE::createVertexArrayOES):
+        (WebCore::Extensions3DANGLE::deleteVertexArrayOES):
+        (WebCore::Extensions3DANGLE::isVertexArrayOES):
+        (WebCore::Extensions3DANGLE::bindVertexArrayOES):
+        (WebCore::Extensions3DANGLE::supportsExtension):
+        (WebCore::Extensions3DANGLE::drawBuffersEXT):
+        (WebCore::Extensions3DANGLE::drawArraysInstanced):
+        (WebCore::Extensions3DANGLE::drawElementsInstanced):
+        (WebCore::Extensions3DANGLE::vertexAttribDivisor):
+        * platform/graphics/angle/Extensions3DANGLE.h:
+        * platform/graphics/angle/GraphicsContext3DANGLE.cpp:
+        (WebCore::GraphicsContext3D::validateAttributes):
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        (WebCore::GraphicsContext3D::attachDepthAndStencilBufferIfNeeded):
+        (WebCore::GraphicsContext3D::resolveMultisamplingIfNecessary):
+        (WebCore::GraphicsContext3D::validateDepthStencil):
+        (WebCore::GraphicsContext3D::prepareTexture):
+        (WebCore::GraphicsContext3D::attachShader):
+        (WebCore::GraphicsContext3D::bindAttribLocation):
+        (WebCore::GraphicsContext3D::compileShader):
+        (WebCore::GraphicsContext3D::compileShaderDirect):
+        (WebCore::GraphicsContext3D::detachShader):
+        (WebCore::GraphicsContext3D::getActiveAttribImpl):
+        (WebCore::GraphicsContext3D::getActiveAttrib):
+        (WebCore::GraphicsContext3D::getActiveUniformImpl):
+        (WebCore::GraphicsContext3D::getActiveUniform):
+        (WebCore::GraphicsContext3D::getAttribLocation):
+        (WebCore::GraphicsContext3D::getAttribLocationDirect):
+        (WebCore::GraphicsContext3D::moveErrorsToSyntheticErrorList):
+        (WebCore::GraphicsContext3D::linkProgram):
+        (WebCore::GraphicsContext3D::shaderSource):
+        (WebCore::GraphicsContext3D::getUnmangledInfoLog):
+        (WebCore::GraphicsContext3D::getShaderiv):
+        (WebCore::GraphicsContext3D::getShaderInfoLog):
+        (WebCore::GraphicsContext3D::getUniformLocation):
+        (WebCore::GraphicsContext3D::createBuffer):
+        (WebCore::GraphicsContext3D::createFramebuffer):
+        (WebCore::GraphicsContext3D::createProgram):
+        (WebCore::GraphicsContext3D::createRenderbuffer):
+        (WebCore::GraphicsContext3D::createShader):
+        (WebCore::GraphicsContext3D::createTexture):
+        (WebCore::GraphicsContext3D::deleteBuffer):
+        (WebCore::GraphicsContext3D::deleteFramebuffer):
+        (WebCore::GraphicsContext3D::deleteProgram):
+        (WebCore::GraphicsContext3D::deleteRenderbuffer):
+        (WebCore::GraphicsContext3D::deleteShader):
+        (WebCore::GraphicsContext3D::deleteTexture):
+        (WebCore::GraphicsContext3D::synthesizeGLError):
+        (): Deleted.
+        (WebCore::setCurrentNameHashMapForShader): Deleted.
+        (WebCore::nameHashForShader): Deleted.
+        (WebCore::GraphicsContext3D::checkVaryingsPacking const): Deleted.
+        (WebCore::GraphicsContext3D::precisionsMatch const): Deleted.
+        (WebCore::generateHashedName): Deleted.
+        (WebCore::GraphicsContext3D::mappedSymbolInShaderSourceMap): Deleted.
+        (WebCore::GraphicsContext3D::mappedSymbolName): Deleted.
+        (WebCore::GraphicsContext3D::originalSymbolInShaderSourceMap): Deleted.
+        (WebCore::GraphicsContext3D::originalSymbolName): Deleted.
+        (WebCore::GraphicsContext3D::getNonBuiltInActiveSymbolCount): Deleted.
+        (WebCore::GraphicsContext3D::getShaderSource): Deleted.
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::makeContextCurrent):
+        (WebCore::GraphicsContext3D::checkGPUStatus):
+        (WebCore::GraphicsContext3D::allocateIOSurfaceBackingStore):
+        (WebCore::GraphicsContext3D::updateFramebufferTextureBackingStoreFromLayer):
+        * platform/graphics/cocoa/WebGLLayer.h:
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        (-[WebGLLayer initWithGraphicsContext3D:]):
+        (-[WebGLLayer copyImageSnapshotWithColorSpace:]):
+        (-[WebGLLayer display]):
+        (-[WebGLLayer setEGLDisplay:andConfig:]):
+        (-[WebGLLayer dealloc]):
+        (-[WebGLLayer allocateIOSurfaceBackingStoreWithSize:usingAlpha:]):
+        (-[WebGLLayer bindFramebufferToNextAvailableSurface]):
+
 2019-07-10  Youenn Fablet  <youenn@apple.com>
 
         openDatabase property should not be enumerable on DOMWindow
