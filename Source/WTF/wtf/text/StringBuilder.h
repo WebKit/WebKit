@@ -231,9 +231,6 @@ public:
     WTF_EXPORT_PRIVATE void appendFixedWidthNumber(float, unsigned decimalPlaces);
     WTF_EXPORT_PRIVATE void appendFixedWidthNumber(double, unsigned decimalPlaces);
 
-    // FIXME: Rename to append(...) after renaming any overloads of append that take more than one argument.
-    template<typename... StringTypes> void flexibleAppend(StringTypes...);
-
     String toString()
     {
         if (!m_string.isNull()) {
@@ -353,18 +350,15 @@ private:
     void allocateBuffer(const LChar* currentCharacters, unsigned requiredLength);
     void allocateBuffer(const UChar* currentCharacters, unsigned requiredLength);
     void allocateBufferUpConvert(const LChar* currentCharacters, unsigned requiredLength);
-    template<typename CharacterType> void reallocateBuffer(unsigned requiredLength);
-    template<typename CharacterType> ALWAYS_INLINE CharacterType* appendUninitialized(unsigned additionalLength);
-    template<typename CharacterType> ALWAYS_INLINE CharacterType* appendUninitializedWithoutOverflowCheck(CheckedInt32 requiredLength);
-    template<typename CharacterType> CharacterType* appendUninitializedSlow(unsigned requiredLength);
-    
-    WTF_EXPORT_PRIVATE UChar* appendUninitializedWithoutOverflowCheckForUChar(CheckedInt32 requiredLength);
-    WTF_EXPORT_PRIVATE LChar* appendUninitializedWithoutOverflowCheckForLChar(CheckedInt32 requiredLength);
-    
-    template<typename CharacterType> ALWAYS_INLINE CharacterType* getBufferCharacters();
+    template <typename CharType>
+    void reallocateBuffer(unsigned requiredLength);
+    template <typename CharType>
+    ALWAYS_INLINE CharType* appendUninitialized(unsigned length);
+    template <typename CharType>
+    CharType* appendUninitializedSlow(unsigned length);
+    template <typename CharType>
+    ALWAYS_INLINE CharType * getBufferCharacters();
     WTF_EXPORT_PRIVATE void reifyString() const;
-
-    template<typename... StringTypeAdapters> void flexibleAppendFromAdapters(StringTypeAdapters...);
 
     mutable String m_string;
     RefPtr<StringImpl> m_buffer;
@@ -380,54 +374,22 @@ private:
 #endif
 };
 
-template<>
+template <>
 ALWAYS_INLINE LChar* StringBuilder::getBufferCharacters<LChar>()
 {
     ASSERT(m_is8Bit);
     return m_bufferCharacters8;
 }
 
-template<>
+template <>
 ALWAYS_INLINE UChar* StringBuilder::getBufferCharacters<UChar>()
 {
     ASSERT(!m_is8Bit);
     return m_bufferCharacters16;
 }
 
-template<typename... StringTypeAdapters>
-void StringBuilder::flexibleAppendFromAdapters(StringTypeAdapters... adapters)
-{
-    auto requiredLength = checkedSum<int32_t>(m_length, adapters.length()...);
-    if (requiredLength.hasOverflowed()) {
-        didOverflow();
-        return;
-    }
-
-    if (m_is8Bit && are8Bit(adapters...)) {
-        LChar* dest = appendUninitializedWithoutOverflowCheckForLChar(requiredLength);
-        if (!dest) {
-            ASSERT(hasOverflowed());
-            return;
-        }
-        stringTypeAdapterAccumulator(dest, adapters...);
-    } else {
-        UChar* dest = appendUninitializedWithoutOverflowCheckForUChar(requiredLength);
-        if (!dest) {
-            ASSERT(hasOverflowed());
-            return;
-        }
-        stringTypeAdapterAccumulator(dest, adapters...);
-    }
-}
-
-template<typename... StringTypes>
-void StringBuilder::flexibleAppend(StringTypes... strings)
-{
-    flexibleAppendFromAdapters(StringTypeAdapter<StringTypes>(strings)...);
-}
-
-template<typename CharacterType>
-bool equal(const StringBuilder& s, const CharacterType* buffer, unsigned length)
+template <typename CharType>
+bool equal(const StringBuilder& s, const CharType* buffer, unsigned length)
 {
     if (s.length() != length)
         return false;
@@ -438,7 +400,7 @@ bool equal(const StringBuilder& s, const CharacterType* buffer, unsigned length)
     return equal(s.characters16(), buffer, length);
 }
 
-template<typename StringType>
+template <typename StringType>
 bool equal(const StringBuilder& a, const StringType& b)
 {
     if (a.length() != b.length())

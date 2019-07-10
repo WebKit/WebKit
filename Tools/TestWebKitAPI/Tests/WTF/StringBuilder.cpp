@@ -116,29 +116,6 @@ TEST(StringBuilderTest, Append)
     }
 }
 
-TEST(StringBuilderTest, FlexibleAppend)
-{
-    {
-        StringBuilder builder;
-        builder.flexibleAppend(String("0123456789"));
-        expectBuilderContent("0123456789", builder);
-        builder.flexibleAppend("abcd");
-        expectBuilderContent("0123456789abcd", builder);
-        builder.flexibleAppend('e');
-        expectBuilderContent("0123456789abcde", builder);
-        builder.flexibleAppend("");
-        expectBuilderContent("0123456789abcde", builder);
-    }
-
-    {
-        StringBuilder builder;
-        builder.flexibleAppend(String("0123456789"), "abcd", 'e', "");
-        expectBuilderContent("0123456789abcde", builder);
-        builder.flexibleAppend(String("A"), "B", 'C', "");
-        expectBuilderContent("0123456789abcdeABC", builder);
-    }
-}
-
 TEST(StringBuilderTest, ToString)
 {
     StringBuilder builder;

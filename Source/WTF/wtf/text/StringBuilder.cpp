@@ -163,7 +163,7 @@ void StringBuilder::allocateBufferUpConvert(const LChar* currentCharacters, unsi
     ASSERT(m_buffer->length() == requiredLength);
 }
 
-template<>
+template <>
 void StringBuilder::reallocateBuffer<LChar>(unsigned requiredLength)
 {
     // If the buffer has only one ref (by this StringBuilder), reallocate it,
@@ -183,7 +183,7 @@ void StringBuilder::reallocateBuffer<LChar>(unsigned requiredLength)
     ASSERT(hasOverflowed() || m_buffer->length() == requiredLength);
 }
 
-template<>
+template <>
 void StringBuilder::reallocateBuffer<UChar>(unsigned requiredLength)
 {
     // If the buffer has only one ref (by this StringBuilder), reallocate it,
@@ -231,28 +231,20 @@ void StringBuilder::reserveCapacity(unsigned newCapacity)
     ASSERT(hasOverflowed() || !newCapacity || m_buffer->length() >= newCapacity);
 }
 
-// Make 'additionalLength' additional capacity be available in m_buffer, update m_string & m_length,
+// Make 'length' additional capacity be available in m_buffer, update m_string & m_length,
 // return a pointer to the newly allocated storage.
 // Returns nullptr if the size of the new builder would have overflowed
-template<typename CharacterType>
-ALWAYS_INLINE CharacterType* StringBuilder::appendUninitialized(unsigned additionalLength)
+template <typename CharType>
+ALWAYS_INLINE CharType* StringBuilder::appendUninitialized(unsigned length)
 {
-    ASSERT(additionalLength);
+    ASSERT(length);
 
     // Calculate the new size of the builder after appending.
-    CheckedInt32 requiredLength = m_length + additionalLength;
+    CheckedInt32 requiredLength = m_length + length;
     if (requiredLength.hasOverflowed()) {
         didOverflow();
         return nullptr;
     }
-
-    return appendUninitializedWithoutOverflowCheck<CharacterType>(requiredLength);
-}
-
-template<typename CharacterType>
-ALWAYS_INLINE CharacterType* StringBuilder::appendUninitializedWithoutOverflowCheck(CheckedInt32 requiredLength)
-{
-    ASSERT(!requiredLength.hasOverflowed());
 
     if (m_buffer && (requiredLength.unsafeGet<unsigned>() <= m_buffer->length())) {
         // If the buffer is valid it must be at least as long as the current builder contents!
@@ -260,26 +252,16 @@ ALWAYS_INLINE CharacterType* StringBuilder::appendUninitializedWithoutOverflowCh
         unsigned currentLength = m_length.unsafeGet();
         m_string = String();
         m_length = requiredLength;
-        return getBufferCharacters<CharacterType>() + currentLength;
+        return getBufferCharacters<CharType>() + currentLength;
     }
     
-    return appendUninitializedSlow<CharacterType>(requiredLength.unsafeGet());
+    return appendUninitializedSlow<CharType>(requiredLength.unsafeGet());
 }
 
-UChar* StringBuilder::appendUninitializedWithoutOverflowCheckForUChar(CheckedInt32 requiredLength)
-{
-    return appendUninitializedWithoutOverflowCheck<UChar>(requiredLength);
-}
-
-LChar* StringBuilder::appendUninitializedWithoutOverflowCheckForLChar(CheckedInt32 requiredLength)
-{
-    return appendUninitializedWithoutOverflowCheck<LChar>(requiredLength);
-}
-
-// Make 'requiredLength' capacity be available in m_buffer, update m_string & m_length,
+// Make 'length' additional capacity be available in m_buffer, update m_string & m_length,
 // return a pointer to the newly allocated storage.
-template<typename CharacterType>
-CharacterType* StringBuilder::appendUninitializedSlow(unsigned requiredLength)
+template <typename CharType>
+CharType* StringBuilder::appendUninitializedSlow(unsigned requiredLength)
 {
     ASSERT(!hasOverflowed());
     ASSERT(requiredLength);
@@ -288,15 +270,15 @@ CharacterType* StringBuilder::appendUninitializedSlow(unsigned requiredLength)
         // If the buffer is valid it must be at least as long as the current builder contents!
         ASSERT(m_buffer->length() >= m_length.unsafeGet<unsigned>());
         
-        reallocateBuffer<CharacterType>(expandedCapacity(capacity(), requiredLength));
+        reallocateBuffer<CharType>(expandedCapacity(capacity(), requiredLength));
     } else {
         ASSERT(m_string.length() == m_length.unsafeGet<unsigned>());
-        allocateBuffer(m_length ? m_string.characters<CharacterType>() : nullptr, expandedCapacity(capacity(), requiredLength));
+        allocateBuffer(m_length ? m_string.characters<CharType>() : nullptr, expandedCapacity(capacity(), requiredLength));
     }
     if (UNLIKELY(hasOverflowed()))
         return nullptr;
 
-    CharacterType* result = getBufferCharacters<CharacterType>() + m_length.unsafeGet();
+    CharType* result = getBufferCharacters<CharType>() + m_length.unsafeGet();
     m_length = requiredLength;
     ASSERT(!hasOverflowed());
     ASSERT(m_buffer->length() >= m_length.unsafeGet<unsigned>());
