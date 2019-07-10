@@ -3320,9 +3320,6 @@ bool WebPage::immediatelyShrinkToFitContent()
     if (m_isClosed)
         return false;
 
-    if (!m_mainFrame)
-        return false;
-
     if (!m_page->settings().allowViewportShrinkToFitContent())
         return false;
 

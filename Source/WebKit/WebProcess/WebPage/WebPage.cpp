@@ -3270,11 +3270,6 @@ void WebPage::didStartPageTransition()
 
 void WebPage::didCompletePageTransition()
 {
-#if ENABLE(VIEWPORT_RESIZING)
-    if (immediatelyShrinkToFitContent())
-        viewportConfigurationChanged(ZoomToInitialScale::Yes);
-#endif
-
     unfreezeLayerTree(LayerTreeFreezeReason::PageTransition);
 
     RELEASE_LOG_IF_ALLOWED("%p - WebPage - Did complete page transition", this);
@@ -5798,6 +5793,16 @@ void WebPage::didCommitLoad(WebFrame* frame)
     updateMainFrameScrollOffsetPinning();
 
     updateMockAccessibilityElementAfterCommittingLoad();
+}
+
+void WebPage::didFinishDocumentLoad(WebFrame& frame)
+{
+    if (!frame.isMainFrame())
+        return;
+
+#if ENABLE(VIEWPORT_RESIZING)
+    scheduleShrinkToFitContent();
+#endif
 }
 
 void WebPage::didFinishLoad(WebFrame& frame)
