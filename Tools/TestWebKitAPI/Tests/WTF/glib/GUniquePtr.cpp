@@ -184,7 +184,7 @@ TEST(WTF_GUniquePtr, OutPtr)
     {
         GUniqueOutPtr<char> a;
         returnOutChar(&a.outPtr());
-        GUniquePtr<char> b = a.release();
+        GUniquePtr<char> b(a.release());
         ASSERT_STREQ(actual.str().c_str(), takeLogStr().c_str());
         actual << "g_free(" << b.get() << ");";
     }

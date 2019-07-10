@@ -108,7 +108,7 @@ static void webkitCachedResolverLookupByNameAsync(GResolver* resolver, const cha
             priv->cache.update(asyncData->hostname, addressListGListToVector(addressList));
             g_task_return_pointer(task.get(), addressList, reinterpret_cast<GDestroyNotify>(g_resolver_free_addresses));
         } else
-            g_task_return_error(task.get(), error.release().release());
+            g_task_return_error(task.get(), error.release());
     }, task.leakRef());
 }
 
@@ -170,7 +170,7 @@ static void webkitCachedResolverLookupByNameWithFlagsAsync(GResolver* resolver, 
             priv->cache.update(asyncData->hostname, addressListGListToVector(addressList), asyncData->dnsCacheType);
             g_task_return_pointer(task.get(), addressList, reinterpret_cast<GDestroyNotify>(g_resolver_free_addresses));
         } else
-            g_task_return_error(task.get(), error.release().release());
+            g_task_return_error(task.get(), error.release());
     }, task.leakRef());
 }
 

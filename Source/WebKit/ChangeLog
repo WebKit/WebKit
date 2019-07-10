@@ -1,3 +1,19 @@
+2019-07-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] GUniqueOutPtr::release should return a raw pointer
+        https://bugs.webkit.org/show_bug.cgi?id=199579
+
+        Reviewed by Carlos Garcia Campos.
+
+        * NetworkProcess/glib/WebKitCachedResolver.cpp:
+        (webkitCachedResolverLookupByNameAsync):
+        (webkitCachedResolverLookupByNameWithFlagsAsync):
+        * UIProcess/API/glib/WebKitFaviconDatabase.cpp:
+        (processPendingIconsForPageURL):
+        (webkit_favicon_database_get_favicon):
+        * UIProcess/API/glib/WebKitUserContentFilterStore.cpp:
+        (webkit_user_content_filter_store_save_from_file):
+
 2019-07-09  Tim Horton  <timothy_horton@apple.com>
 
         Fixed elements appear in the middle of full page screenshots taken when scrolled

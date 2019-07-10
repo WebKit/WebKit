@@ -1,3 +1,18 @@
+2019-07-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] GUniqueOutPtr::release should return a raw pointer
+        https://bugs.webkit.org/show_bug.cgi?id=199579
+
+        Reviewed by Carlos Garcia Campos.
+
+        GUniqueOutPtr::release should release to a raw pointer, rather than a GUniquePtr. If a
+        GUniquePtr is desired, it's trivial to construct one from the raw pointer, but all existing
+        callsites under Source/ would rather have a raw pointer. Currently they have to call
+        release().release() to get the raw pointer, which is annoying.
+
+        * wtf/glib/GUniquePtr.h:
+        (WTF::GUniqueOutPtr::release):
+
 2019-07-09  Sam Weinig  <weinig@apple.com>
 
         Add StringBuilder member function which allows makeString() style variadic argument construction
