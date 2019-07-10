@@ -178,6 +178,7 @@ fast/history/page-cache-notification-non-suspendable.html
 fast/history/page-cache-notification-suspendable.html
 
 # Datalist is not yet enabled.
+accessibility/datalist.html [ Skip ]
 webkit.org/b/98934 fast/forms/datalist [ Skip ]
 
 # ENABLE_INPUT_TYPE_* are not enabled.

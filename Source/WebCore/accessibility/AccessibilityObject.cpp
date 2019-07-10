@@ -48,6 +48,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
+#include "HTMLDataListElement.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLInputElement.h"
@@ -2767,7 +2768,7 @@ String AccessibilityObject::popupValue() const
     auto hasPopup = getAttribute(aria_haspopupAttr).convertToASCIILowercase();
     if (hasPopup.isNull() || hasPopup.isEmpty()) {
         // In ARIA 1.1, the implicit value for combobox became "listbox."
-        if (isComboBox())
+        if (isComboBox() || hasDatalist())
             return "listbox";
         return "false";
     }
@@ -2783,6 +2784,24 @@ String AccessibilityObject::popupValue() const
     // included in the list of allowed values, including an empty string, as if the value
     // false had been provided."
     return "false";
+}
+
+bool AccessibilityObject::hasDatalist() const
+{
+#if ENABLE(DATALIST_ELEMENT)
+    auto datalistId = getAttribute(listAttr);
+    if (datalistId.isNull() || datalistId.isEmpty())
+        return false;
+
+    auto element = this->element();
+    if (!element)
+        return false;
+
+    auto datalist = element->treeScope().getElementById(datalistId);
+    return is<HTMLDataListElement>(datalist);
+#else
+    return false;
+#endif
 }
 
 bool AccessibilityObject::supportsSetSize() const

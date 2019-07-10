@@ -553,6 +553,7 @@ public:
 
     virtual bool hasPopup() const { return false; }
     String popupValue() const;
+    bool hasDatalist() const;
     bool supportsHasPopup() const;
     bool pressedIsPresent() const;
     bool ariaIsMultiline() const;

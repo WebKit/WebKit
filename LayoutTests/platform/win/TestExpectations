@@ -550,6 +550,7 @@ pointer-lock/ [ Skip ]
 http/tests/pointer-lock/ [ Skip ]
 
 # Datalist is unsupported on Windows
+accessibility/datalist.html [ WontFix ]
 fast/forms/datalist [ WontFix ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ WontFix ]
 
