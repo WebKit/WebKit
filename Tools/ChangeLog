@@ -1,3 +1,22 @@
+2019-07-09  Chris Dumez  <cdumez@apple.com>
+
+        Fix integer type encoding / decoding in WKRemoteObjectCoder
+        https://bugs.webkit.org/show_bug.cgi?id=199643
+        <rdar://problem/52732342>
+
+        Reviewed by Anders Carlsson.
+
+        Update API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.h:
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistryPlugIn.mm:
+        (-[RemoteObjectRegistryPlugIn takeUnsignedLongLong:completionHandler:]):
+        (-[RemoteObjectRegistryPlugIn takeLongLong:completionHandler:]):
+        (-[RemoteObjectRegistryPlugIn takeUnsignedLong:completionHandler:]):
+        (-[RemoteObjectRegistryPlugIn takeLong:completionHandler:]):
+
 2019-07-09  Sam Weinig  <weinig@apple.com>
 
         Add StringBuilder member function which allows makeString() style variadic argument construction

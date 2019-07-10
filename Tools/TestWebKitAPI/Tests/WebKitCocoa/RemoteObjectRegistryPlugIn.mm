@@ -84,6 +84,26 @@
     completionHandler(size.width, size.height);
 }
 
+- (void)takeUnsignedLongLong:(unsigned long long)value completionHandler:(void (^)(unsigned long long value))completionHandler
+{
+    completionHandler(value);
+}
+
+- (void)takeLongLong:(long long)value completionHandler:(void (^)(long long value))completionHandler
+{
+    completionHandler(value);
+}
+
+- (void)takeUnsignedLong:(unsigned long)value completionHandler:(void (^)(unsigned long value))completionHandler
+{
+    completionHandler(value);
+}
+
+- (void)takeLong:(long)value completionHandler:(void (^)(long value))completionHandler
+{
+    completionHandler(value);
+}
+
 - (void)doNotCallCompletionHandler:(void (^)())completionHandler
 {
 }

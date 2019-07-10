@@ -92,6 +92,38 @@ TEST(WebKit, RemoteObjectRegistry)
 
         isDone = false;
 
+        [object takeUnsignedLongLong:std::numeric_limits<unsigned long long>::max() completionHandler:^(unsigned long long value) {
+            EXPECT_EQ(std::numeric_limits<unsigned long long>::max(), value);
+            isDone = true;
+        }];
+        TestWebKitAPI::Util::run(&isDone);
+
+        isDone = false;
+
+        [object takeLongLong:std::numeric_limits<long long>::max() completionHandler:^(long long value) {
+            EXPECT_EQ(std::numeric_limits<long long>::max(), value);
+            isDone = true;
+        }];
+        TestWebKitAPI::Util::run(&isDone);
+
+        isDone = false;
+
+        [object takeUnsignedLong:std::numeric_limits<unsigned long>::max() completionHandler:^(unsigned long value) {
+            EXPECT_EQ(std::numeric_limits<unsigned long>::max(), value);
+            isDone = true;
+        }];
+        TestWebKitAPI::Util::run(&isDone);
+
+        isDone = false;
+
+        [object takeLong:std::numeric_limits<long>::max() completionHandler:^(long value) {
+            EXPECT_EQ(std::numeric_limits<long>::max(), value);
+            isDone = true;
+        }];
+        TestWebKitAPI::Util::run(&isDone);
+
+        isDone = false;
+
         class DoneWhenDestroyed : public RefCounted<DoneWhenDestroyed> {
         public:
             ~DoneWhenDestroyed() { isDone = true; }

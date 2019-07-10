@@ -177,7 +177,7 @@ static void encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocati
         }
 
         // long
-        case 'q': {
+        case 'l': {
             long value;
             [invocation getArgument:&value atIndex:i];
 
@@ -186,8 +186,26 @@ static void encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocati
         }
 
         // unsigned long
-        case 'Q': {
+        case 'L': {
             unsigned long value;
+            [invocation getArgument:&value atIndex:i];
+
+            encodeToObjectStream(encoder, @(value));
+            break;
+        }
+
+        // long long
+        case 'q': {
+            long long value;
+            [invocation getArgument:&value atIndex:i];
+
+            encodeToObjectStream(encoder, @(value));
+            break;
+        }
+
+        // unsigned long long
+        case 'Q': {
+            unsigned long long value;
             [invocation getArgument:&value atIndex:i];
 
             encodeToObjectStream(encoder, @(value));
@@ -530,15 +548,29 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
         }
 
         // long
-        case 'q': {
+        case 'l': {
             long value = [decodeObjectFromObjectStream(decoder, { (__bridge CFTypeRef)[NSNumber class] }) longValue];
             [invocation setArgument:&value atIndex:i];
             break;
         }
 
         // unsigned long
-        case 'Q': {
+        case 'L': {
             unsigned long value = [decodeObjectFromObjectStream(decoder, { (__bridge CFTypeRef)[NSNumber class] }) unsignedLongValue];
+            [invocation setArgument:&value atIndex:i];
+            break;
+        }
+
+        // long long
+        case 'q': {
+            long long value = [decodeObjectFromObjectStream(decoder, { (__bridge CFTypeRef)[NSNumber class] }) longLongValue];
+            [invocation setArgument:&value atIndex:i];
+            break;
+        }
+
+        // unsigned long long
+        case 'Q': {
+            unsigned long long value = [decodeObjectFromObjectStream(decoder, { (__bridge CFTypeRef)[NSNumber class] }) unsignedLongLongValue];
             [invocation setArgument:&value atIndex:i];
             break;
         }

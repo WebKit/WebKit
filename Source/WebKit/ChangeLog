@@ -1,5 +1,21 @@
 2019-07-09  Chris Dumez  <cdumez@apple.com>
 
+        Fix integer type encoding / decoding in WKRemoteObjectCoder
+        https://bugs.webkit.org/show_bug.cgi?id=199643
+        <rdar://problem/52732342>
+
+        Reviewed by Anders Carlsson.
+
+        As per [1], q / Q match to long long / unsigned long long, not long / unsigned long.
+
+        [1] https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html#//apple_ref/doc/uid/TP40008048-CH100
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeInvocationArguments):
+        (decodeInvocationArguments):
+
+2019-07-09  Chris Dumez  <cdumez@apple.com>
+
         Cleanup uses of NetworkProcess::m_sessionByConnection
         https://bugs.webkit.org/show_bug.cgi?id=199586
 

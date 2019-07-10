@@ -44,6 +44,10 @@
 - (void)selectionAndClickInformationForClickAtPoint:(NSValue *)pointValue completionHandler:(void (^)(NSDictionary *))completionHandler;
 - (void)takeRange:(NSRange)range completionHandler:(void (^)(NSUInteger location, NSUInteger length))completionHandler;
 - (void)takeSize:(CGSize)size completionHandler:(void (^)(CGFloat width, CGFloat height))completionHandler;
+- (void)takeUnsignedLongLong:(unsigned long long)value completionHandler:(void (^)(unsigned long long value))completionHandler;
+- (void)takeLongLong:(long long)value completionHandler:(void (^)(long long value))completionHandler;
+- (void)takeUnsignedLong:(unsigned long)value completionHandler:(void (^)(unsigned long value))completionHandler;
+- (void)takeLong:(long)value completionHandler:(void (^)(long value))completionHandler;
 - (void)doNotCallCompletionHandler:(void (^)())completionHandler;
 
 @end
