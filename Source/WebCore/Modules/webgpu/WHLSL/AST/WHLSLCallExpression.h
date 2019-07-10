@@ -42,8 +42,8 @@ class NamedType;
 
 class CallExpression : public Expression {
 public:
-    CallExpression(CodeLocation location, String&& name, Vector<UniqueRef<Expression>>&& arguments)
-        : Expression(location)
+    CallExpression(Lexer::Token&& origin, String&& name, Vector<UniqueRef<Expression>>&& arguments)
+        : Expression(WTFMove(origin))
         , m_name(WTFMove(name))
         , m_arguments(WTFMove(arguments))
     {

@@ -41,7 +41,7 @@ namespace AST {
 class EffectfulExpressionStatement : public Statement {
 public:
     EffectfulExpressionStatement(UniqueRef<Expression>&& effectfulExpression)
-        : Statement(effectfulExpression->codeLocation())
+        : Statement(Lexer::Token(effectfulExpression->origin()))
         , m_effectfulExpression(WTFMove(effectfulExpression))
     {
     }

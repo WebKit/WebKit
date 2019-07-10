@@ -37,8 +37,8 @@ namespace AST {
 
 class BaseFunctionAttribute {
 public:
-    BaseFunctionAttribute(CodeLocation location)
-        : m_codeLocation(location)
+    BaseFunctionAttribute(Lexer::Token&& origin)
+        : m_origin(WTFMove(origin))
     {
     }
 
@@ -48,7 +48,7 @@ public:
     BaseFunctionAttribute(BaseFunctionAttribute&&) = default;
 
 private:
-    CodeLocation m_codeLocation;
+    Lexer::Token m_origin;
 };
 
 } // namespace AST

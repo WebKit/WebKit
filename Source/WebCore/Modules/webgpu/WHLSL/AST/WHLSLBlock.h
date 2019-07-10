@@ -39,8 +39,8 @@ namespace AST {
 
 class Block : public Statement {
 public:
-    Block(CodeLocation location, Statements&& statements)
-        : Statement(location)
+    Block(Lexer::Token&& origin, Statements&& statements)
+        : Statement(WTFMove(origin))
         , m_statements(WTFMove(statements))
     {
     }

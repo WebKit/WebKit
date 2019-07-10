@@ -32,7 +32,7 @@ namespace WebCore {
 
 namespace WHLSL {
 
-const char* Token::typeName(Type type)
+const char* Lexer::Token::typeName(Type type)
 {
     switch (type) {
     case Type::IntLiteral:
@@ -382,7 +382,7 @@ auto Lexer::consumeTokenFromStream() -> Token
         auto oldOffset = m_offset;
         m_offset = newOffset;
         skipWhitespaceAndComments();
-        return { { oldOffset, newOffset }, type };
+        return { oldOffset, newOffset, type };
     };
 
     if (auto newOffset = identifier(m_offset)) {

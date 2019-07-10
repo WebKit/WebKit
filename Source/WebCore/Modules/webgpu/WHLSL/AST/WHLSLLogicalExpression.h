@@ -44,8 +44,8 @@ public:
         Or
     };
 
-    LogicalExpression(CodeLocation location, Type type, UniqueRef<Expression>&& left, UniqueRef<Expression>&& right)
-        : Expression(location)
+    LogicalExpression(Lexer::Token&& origin, Type type, UniqueRef<Expression>&& left, UniqueRef<Expression>&& right)
+        : Expression(WTFMove(origin))
         , m_type(type)
         , m_left(WTFMove(left))
         , m_right(WTFMove(right))

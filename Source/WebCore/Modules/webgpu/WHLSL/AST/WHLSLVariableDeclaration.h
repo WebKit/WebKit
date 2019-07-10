@@ -46,8 +46,8 @@ namespace AST {
 class VariableDeclaration final {
 // Final because we made the destructor non-virtual.
 public:
-    VariableDeclaration(CodeLocation codeLocation, Qualifiers&& qualifiers, Optional<UniqueRef<UnnamedType>>&& type, String&& name, std::unique_ptr<Semantic>&& semantic, std::unique_ptr<Expression>&& initializer)
-        : m_codeLocation(codeLocation)
+    VariableDeclaration(Lexer::Token&& origin, Qualifiers&& qualifiers, Optional<UniqueRef<UnnamedType>>&& type, String&& name, std::unique_ptr<Semantic>&& semantic, std::unique_ptr<Expression>&& initializer)
+        : m_origin(WTFMove(origin))
         , m_qualifiers(WTFMove(qualifiers))
         , m_type(WTFMove(type))
         , m_name(WTFMove(name))
@@ -83,10 +83,10 @@ public:
         ASSERT(expression);
         m_initializer = WTFMove(expression);
     }
-    CodeLocation codeLocation() const { return m_codeLocation; }
+    Lexer::Token origin() const { return m_origin; }
 
 private:
-    CodeLocation m_codeLocation;
+    Lexer::Token m_origin;
     Qualifiers m_qualifiers;
     Optional<UniqueRef<UnnamedType>> m_type;
     String m_name;

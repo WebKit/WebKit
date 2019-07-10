@@ -39,8 +39,8 @@ namespace AST {
 
 class NamedType : public Type {
 public:
-    NamedType(CodeLocation location, String&& name)
-        : m_codeLocation(location)
+    NamedType(Lexer::Token&& origin, String&& name)
+        : m_origin(WTFMove(origin))
         , m_name(WTFMove(name))
     {
     }
@@ -50,9 +50,7 @@ public:
     NamedType(const NamedType&) = delete;
     NamedType(NamedType&&) = default;
 
-    CodeLocation codeLocation() const { return m_codeLocation; }
-    void updateCodeLocation(CodeLocation location) { m_codeLocation = location; }
-
+    const Lexer::Token& origin() const { return m_origin; }
     String& name() { return m_name; }
 
     bool isNamedType() const override { return true; }
@@ -65,7 +63,7 @@ public:
     virtual Type& unifyNode() { return *this; }
 
 private:
-    CodeLocation m_codeLocation;
+    Lexer::Token m_origin;
     String m_name;
 };
 

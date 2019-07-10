@@ -38,163 +38,6 @@ namespace WebCore {
 
 namespace WHLSL {
 
-struct Token;
-
-namespace AST {
-
-class CodeLocation {
-public:
-    CodeLocation() = default;
-    CodeLocation(unsigned startOffset, unsigned endOffset)
-        : m_startOffset(startOffset)
-        , m_endOffset(endOffset)
-    { }
-    CodeLocation(const Token&);
-    CodeLocation(const CodeLocation& location1, const CodeLocation& location2)
-        : m_startOffset(location1.startOffset())
-        , m_endOffset(location2.endOffset())
-    { }
-
-    unsigned startOffset() const { return m_startOffset; }
-    unsigned endOffset() const { return m_endOffset; }
-
-private:
-    unsigned m_startOffset { 0 };
-    unsigned m_endOffset { 0 };
-};
-
-} // namespace AST
-
-class Lexer;
-
-struct Token {
-    AST::CodeLocation codeLocation;
-    enum class Type : uint8_t {
-        IntLiteral,
-        UintLiteral,
-        FloatLiteral,
-        Struct,
-        Typedef,
-        Enum,
-        Operator,
-        If,
-        Else,
-        Continue,
-        Break,
-        Switch,
-        Case,
-        Default,
-        Fallthrough,
-        For,
-        While,
-        Do,
-        Return,
-        Trap,
-        Null,
-        True,
-        False,
-        Constant,
-        Device,
-        Threadgroup,
-        Thread,
-        Space,
-        Vertex,
-        Fragment,
-        Compute,
-        NumThreads,
-        SVInstanceID,
-        SVVertexID,
-        PSize,
-        SVPosition,
-        SVIsFrontFace,
-        SVSampleIndex,
-        SVInnerCoverage,
-        SVTarget,
-        SVDepth,
-        SVCoverage,
-        SVDispatchThreadID,
-        SVGroupID,
-        SVGroupIndex,
-        SVGroupThreadID,
-        Attribute,
-        Register,
-        Specialized,
-        Native,
-        Restricted,
-        Underscore,
-        Auto,
-        Protocol,
-        Const,
-        Static,
-        Qualifier,
-        Identifier,
-        OperatorName,
-        EqualsSign,
-        Semicolon,
-        LeftCurlyBracket,
-        RightCurlyBracket,
-        Colon,
-        Comma,
-        LeftParenthesis,
-        RightParenthesis,
-        SquareBracketPair,
-        LeftSquareBracket,
-        RightSquareBracket,
-        Star,
-        LessThanSign,
-        GreaterThanSign,
-        FullStop,
-        PlusEquals,
-        MinusEquals,
-        TimesEquals,
-        DivideEquals,
-        ModEquals,
-        XorEquals,
-        AndEquals,
-        OrEquals,
-        RightShiftEquals,
-        LeftShiftEquals,
-        PlusPlus,
-        MinusMinus,
-        Arrow,
-        QuestionMark,
-        OrOr,
-        AndAnd,
-        Or,
-        Xor,
-        And,
-        LessThanOrEqualTo,
-        GreaterThanOrEqualTo,
-        EqualComparison,
-        NotEqual,
-        RightShift,
-        LeftShift,
-        Plus,
-        Minus,
-        Divide,
-        Mod,
-        Tilde,
-        ExclamationPoint,
-        At,
-        EndOfFile,
-        Invalid
-    } type {Type::Invalid};
-
-    static const char* typeName(Type);
-
-    StringView stringView(const Lexer&) const;
-
-    unsigned startOffset() const
-    {
-        return codeLocation.startOffset();
-    }
-};
-
-AST::CodeLocation::CodeLocation(const Token& token)
-    : m_startOffset(token.codeLocation.startOffset())
-    , m_endOffset(token.codeLocation.endOffset())
-{ }
-
 class Lexer {
 public:
     Lexer() = default;
@@ -213,6 +56,127 @@ public:
     Lexer& operator=(const Lexer&) = delete;
     Lexer& operator=(Lexer&&) = default;
 
+    struct Token {
+        unsigned startOffset;
+        unsigned endOffset;
+        enum class Type : uint8_t {
+            IntLiteral,
+            UintLiteral,
+            FloatLiteral,
+            Struct,
+            Typedef,
+            Enum,
+            Operator,
+            If,
+            Else,
+            Continue,
+            Break,
+            Switch,
+            Case,
+            Default,
+            Fallthrough,
+            For,
+            While,
+            Do,
+            Return,
+            Trap,
+            Null,
+            True,
+            False,
+            Constant,
+            Device,
+            Threadgroup,
+            Thread,
+            Space,
+            Vertex,
+            Fragment,
+            Compute,
+            NumThreads,
+            SVInstanceID,
+            SVVertexID,
+            PSize,
+            SVPosition,
+            SVIsFrontFace,
+            SVSampleIndex,
+            SVInnerCoverage,
+            SVTarget,
+            SVDepth,
+            SVCoverage,
+            SVDispatchThreadID,
+            SVGroupID,
+            SVGroupIndex,
+            SVGroupThreadID,
+            Attribute,
+            Register,
+            Specialized,
+            Native,
+            Restricted,
+            Underscore,
+            Auto,
+            Protocol,
+            Const,
+            Static,
+            Qualifier,
+            Identifier,
+            OperatorName,
+            EqualsSign,
+            Semicolon,
+            LeftCurlyBracket,
+            RightCurlyBracket,
+            Colon,
+            Comma,
+            LeftParenthesis,
+            RightParenthesis,
+            SquareBracketPair,
+            LeftSquareBracket,
+            RightSquareBracket,
+            Star,
+            LessThanSign,
+            GreaterThanSign,
+            FullStop,
+            PlusEquals,
+            MinusEquals,
+            TimesEquals,
+            DivideEquals,
+            ModEquals,
+            XorEquals,
+            AndEquals,
+            OrEquals,
+            RightShiftEquals,
+            LeftShiftEquals,
+            PlusPlus,
+            MinusMinus,
+            Arrow,
+            QuestionMark,
+            OrOr,
+            AndAnd,
+            Or,
+            Xor,
+            And,
+            LessThanOrEqualTo,
+            GreaterThanOrEqualTo,
+            EqualComparison,
+            NotEqual,
+            RightShift,
+            LeftShift,
+            Plus,
+            Minus,
+            Divide,
+            Mod,
+            Tilde,
+            ExclamationPoint,
+            At,
+            EndOfFile,
+            Invalid
+        } type {Type::Invalid};
+
+        static const char* typeName(Type);
+
+        const StringView stringView(const Lexer& lexer)
+        {
+            return lexer.m_stringView.substring(startOffset, endOffset - startOffset);
+        }
+    };
 
     Token consumeToken()
     {
@@ -274,11 +238,10 @@ public:
 
     String errorString(const Token& token, const String& message)
     {
-        return makeString("Parse error at line ", lineNumberFromOffset(token.startOffset()), ": ", message);
+        return makeString("Parse error at line ", lineNumberFromOffset(token.startOffset), ": ", message);
     }
 
 private:
-    friend struct Token;
     Token consumeTokenFromStream();
 
     void skipWhitespaceAndComments();
@@ -321,11 +284,6 @@ template<unsigned length> Optional<unsigned> Lexer::string(const char (&string)[
             return WTF::nullopt;
     }
     return offset + length - 1;
-}
-
-StringView Token::stringView(const Lexer& lexer) const
-{
-    return lexer.m_stringView.substring(codeLocation.startOffset(), codeLocation.endOffset() - codeLocation.startOffset());
 }
 
 } // namespace WHLSL

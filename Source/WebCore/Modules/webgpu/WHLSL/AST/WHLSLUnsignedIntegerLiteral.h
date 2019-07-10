@@ -39,9 +39,9 @@ namespace AST {
 
 class UnsignedIntegerLiteral : public Expression {
 public:
-    UnsignedIntegerLiteral(CodeLocation location, unsigned value)
-        : Expression(location)
-        , m_type(location, value)
+    UnsignedIntegerLiteral(Lexer::Token&& origin, unsigned value)
+        : Expression(Lexer::Token(origin))
+        , m_type(WTFMove(origin), value)
         , m_value(value)
     {
     }
@@ -61,7 +61,7 @@ public:
 
     UnsignedIntegerLiteral clone() const
     {
-        UnsignedIntegerLiteral result(codeLocation(), m_value);
+        UnsignedIntegerLiteral result(Lexer::Token(origin()), m_value);
         result.m_type = m_type.clone();
         if (auto* resolvedType = m_type.maybeResolvedType())
             result.m_type.resolve(resolvedType->clone());

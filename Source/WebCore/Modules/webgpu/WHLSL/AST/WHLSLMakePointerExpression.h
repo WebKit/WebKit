@@ -39,8 +39,8 @@ namespace AST {
 
 class MakePointerExpression : public Expression {
 public:
-    MakePointerExpression(CodeLocation location, UniqueRef<Expression>&& leftValue)
-        : Expression(location)
+    MakePointerExpression(Lexer::Token&& origin, UniqueRef<Expression>&& leftValue)
+        : Expression(WTFMove(origin))
         , m_leftValue(WTFMove(leftValue))
     {
     }

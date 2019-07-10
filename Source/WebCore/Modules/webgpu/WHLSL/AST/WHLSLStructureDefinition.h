@@ -41,8 +41,8 @@ namespace AST {
 
 class StructureDefinition : public NamedType {
 public:
-    StructureDefinition(CodeLocation location, String&& name, StructureElements&& structureElements)
-        : NamedType(location, WTFMove(name))
+    StructureDefinition(Lexer::Token&& origin, String&& name, StructureElements&& structureElements)
+        : NamedType(WTFMove(origin), WTFMove(name))
         , m_structureElements(WTFMove(structureElements))
     {
     }

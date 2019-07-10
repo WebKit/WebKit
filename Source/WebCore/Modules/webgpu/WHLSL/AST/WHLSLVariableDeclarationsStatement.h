@@ -40,8 +40,8 @@ namespace AST {
 
 class VariableDeclarationsStatement : public Statement {
 public:
-    VariableDeclarationsStatement(CodeLocation location, VariableDeclarations&& variableDeclarations)
-        : Statement(location)
+    VariableDeclarationsStatement(Lexer::Token&& origin, VariableDeclarations&& variableDeclarations)
+        : Statement(WTFMove(origin))
         , m_variableDeclarations(WTFMove(variableDeclarations))
     {
     }

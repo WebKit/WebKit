@@ -51,9 +51,9 @@ namespace AST {
  */
 class ReadModifyWriteExpression : public Expression {
 public:
-    static UniqueRef<ReadModifyWriteExpression> create(CodeLocation location, UniqueRef<Expression> lValue)
+    static UniqueRef<ReadModifyWriteExpression> create(Lexer::Token&& origin, UniqueRef<Expression> lValue)
     {
-        return makeUniqueRef<ReadModifyWriteExpression>(location, WTFMove(lValue));
+        return makeUniqueRef<ReadModifyWriteExpression>(WTFMove(origin), WTFMove(lValue));
     }
 
     virtual ~ReadModifyWriteExpression() = default;
@@ -115,11 +115,11 @@ public:
 private:
     template<class U, class... Args> friend UniqueRef<U> WTF::makeUniqueRef(Args&&...);
 
-    ReadModifyWriteExpression(CodeLocation location, UniqueRef<Expression> leftValue)
-        : Expression(location)
+    ReadModifyWriteExpression(Lexer::Token&& origin, UniqueRef<Expression> leftValue)
+        : Expression(Lexer::Token(origin))
         , m_leftValue(WTFMove(leftValue))
-        , m_oldValue(makeUniqueRef<VariableDeclaration>(location, Qualifiers(), WTF::nullopt, String(), nullptr, nullptr))
-        , m_newValue(makeUniqueRef<VariableDeclaration>(location, Qualifiers(), WTF::nullopt, String(), nullptr, nullptr))
+        , m_oldValue(makeUniqueRef<VariableDeclaration>(Lexer::Token(origin), Qualifiers(), WTF::nullopt, String(), nullptr, nullptr))
+        , m_newValue(makeUniqueRef<VariableDeclaration>(WTFMove(origin), Qualifiers(), WTF::nullopt, String(), nullptr, nullptr))
     {
     }
 

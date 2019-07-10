@@ -41,8 +41,8 @@ namespace AST {
 
 class SwitchStatement : public Statement {
 public:
-    SwitchStatement(CodeLocation location, UniqueRef<Expression>&& value, Vector<SwitchCase>&& switchCases)
-        : Statement(location)
+    SwitchStatement(Lexer::Token&& origin, UniqueRef<Expression>&& value, Vector<SwitchCase>&& switchCases)
+        : Statement(WTFMove(origin))
         , m_value(WTFMove(value))
         , m_switchCases(WTFMove(switchCases))
     {

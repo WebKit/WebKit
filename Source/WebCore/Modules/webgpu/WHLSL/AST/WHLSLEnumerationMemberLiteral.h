@@ -41,8 +41,8 @@ class EnumerationMember;
 
 class EnumerationMemberLiteral : public Expression {
 public:
-    EnumerationMemberLiteral(CodeLocation location, String&& left, String&& right)
-        : Expression(location)
+    EnumerationMemberLiteral(Lexer::Token&& origin, String&& left, String&& right)
+        : Expression(WTFMove(origin))
         , m_left(WTFMove(left))
         , m_right(WTFMove(right))
     {
@@ -58,9 +58,9 @@ public:
 
     bool isEnumerationMemberLiteral() const override { return true; }
 
-    static EnumerationMemberLiteral wrap(CodeLocation location, String&& left, String&& right, EnumerationDefinition& enumerationDefinition, EnumerationMember& enumerationMember)
+    static EnumerationMemberLiteral wrap(Lexer::Token&& origin, String&& left, String&& right, EnumerationDefinition& enumerationDefinition, EnumerationMember& enumerationMember)
     {
-        EnumerationMemberLiteral result(location, WTFMove(left), WTFMove(right));
+        EnumerationMemberLiteral result(WTFMove(origin), WTFMove(left), WTFMove(right));
         result.m_enumerationDefinition = &enumerationDefinition;
         result.m_enumerationMember = &enumerationMember;
         return result;
@@ -71,7 +71,7 @@ public:
 
     EnumerationMemberLiteral clone() const
     {
-        auto result = EnumerationMemberLiteral(codeLocation(), String(m_left), String(m_right));
+        auto result = EnumerationMemberLiteral(Lexer::Token(origin()), String(m_left), String(m_right));
         result.m_enumerationMember = m_enumerationMember;
         copyTypeTo(result);
         return result;

@@ -41,8 +41,8 @@ namespace AST {
 
 class EnumerationMember {
 public:
-    EnumerationMember(CodeLocation location, String&& name, Optional<ConstantExpression>&& value = WTF::nullopt)
-        : m_codeLocation(location)
+    EnumerationMember(Lexer::Token&& origin, String&& name, Optional<ConstantExpression>&& value = WTF::nullopt)
+        : m_origin(WTFMove(origin))
         , m_name(WTFMove(name))
         , m_value(WTFMove(value))
     {
@@ -53,7 +53,7 @@ public:
     EnumerationMember(const EnumerationMember&) = delete;
     EnumerationMember(EnumerationMember&&) = default;
 
-    const CodeLocation& codeLocation() const { return m_codeLocation; }
+    const Lexer::Token& origin() const { return m_origin; }
     String name() { return m_name; }
     Optional<ConstantExpression>& value() { return m_value; }
 
@@ -64,7 +64,7 @@ public:
     }
 
 private:
-    CodeLocation m_codeLocation;
+    Lexer::Token m_origin;
     String m_name;
     Optional<ConstantExpression> m_value;
 };

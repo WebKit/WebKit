@@ -44,8 +44,8 @@ namespace AST {
 
 class FunctionDeclaration {
 public:
-    FunctionDeclaration(CodeLocation location, AttributeBlock&& attributeBlock, Optional<EntryPointType> entryPointType, UniqueRef<UnnamedType>&& type, String&& name, VariableDeclarations&& parameters, std::unique_ptr<Semantic>&& semantic, bool isOperator)
-        : m_codeLocation(location)
+    FunctionDeclaration(Lexer::Token&& origin, AttributeBlock&& attributeBlock, Optional<EntryPointType> entryPointType, UniqueRef<UnnamedType>&& type, String&& name, VariableDeclarations&& parameters, std::unique_ptr<Semantic>&& semantic, bool isOperator)
+        : m_origin(WTFMove(origin))
         , m_attributeBlock(WTFMove(attributeBlock))
         , m_entryPointType(entryPointType)
         , m_isOperator(WTFMove(isOperator))
@@ -75,10 +75,10 @@ public:
     VariableDeclarations& parameters() { return m_parameters; }
     Semantic* semantic() { return m_semantic.get(); }
     bool isOperator() const { return m_isOperator; }
-    const CodeLocation& codeLocation() const { return m_codeLocation; }
+    Lexer::Token origin() { return m_origin; }
 
 private:
-    CodeLocation m_codeLocation;
+    Lexer::Token m_origin;
     AttributeBlock m_attributeBlock;
     Optional<EntryPointType> m_entryPointType;
     bool m_isOperator;

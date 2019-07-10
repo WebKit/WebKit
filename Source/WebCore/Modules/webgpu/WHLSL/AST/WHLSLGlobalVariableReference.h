@@ -39,8 +39,8 @@ namespace AST {
 
 class GlobalVariableReference : public Expression {
 public:
-    GlobalVariableReference(CodeLocation location, UniqueRef<Expression>&& base, StructureElement* structField)
-        : Expression(location)
+    GlobalVariableReference(Lexer::Token&& origin, UniqueRef<Expression>&& base, StructureElement* structField)
+        : Expression(WTFMove(origin))
         , m_base(WTFMove(base))
         , m_structField(*structField)
     {

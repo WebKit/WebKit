@@ -41,8 +41,8 @@ namespace AST {
 
 class Expression {
 public:
-    Expression(CodeLocation codeLocation)
-        : m_codeLocation(codeLocation)
+    Expression(Lexer::Token&& origin)
+        : m_origin(WTFMove(origin))
     {
     }
 
@@ -112,11 +112,10 @@ public:
     virtual bool isVariableReference() const { return false; }
     virtual bool isEnumerationMemberLiteral() const { return false; }
 
-    CodeLocation codeLocation() const { return m_codeLocation; }
-    void updateCodeLocation(CodeLocation location) { m_codeLocation = location; }
+    Lexer::Token origin() const { return m_origin; }
 
 private:
-    CodeLocation m_codeLocation;
+    Lexer::Token m_origin;
     Optional<UniqueRef<UnnamedType>> m_type;
     Optional<TypeAnnotation> m_typeAnnotation;
 };

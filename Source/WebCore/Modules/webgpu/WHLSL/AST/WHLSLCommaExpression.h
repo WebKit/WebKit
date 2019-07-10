@@ -40,8 +40,8 @@ namespace AST {
 
 class CommaExpression : public Expression {
 public:
-    CommaExpression(CodeLocation location, Vector<UniqueRef<Expression>>&& list)
-        : Expression(location)
+    CommaExpression(Lexer::Token&& origin, Vector<UniqueRef<Expression>>&& list)
+        : Expression(WTFMove(origin))
         , m_list(WTFMove(list))
     {
     }

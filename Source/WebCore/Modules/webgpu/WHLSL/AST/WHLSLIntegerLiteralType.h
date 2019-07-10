@@ -41,7 +41,7 @@ class TypeReference;
 
 class IntegerLiteralType : public ResolvableType {
 public:
-    IntegerLiteralType(CodeLocation, int value);
+    IntegerLiteralType(Lexer::Token&& origin, int value);
 
     virtual ~IntegerLiteralType();
 

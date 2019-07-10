@@ -69,7 +69,7 @@ private:
 #else
         String functionName = "<zero-init>"_s;
 #endif
-        auto callExpression = std::make_unique<AST::CallExpression>(variableDeclaration.codeLocation(), WTFMove(functionName), Vector<UniqueRef<AST::Expression>>());
+        auto callExpression = std::make_unique<AST::CallExpression>(variableDeclaration.origin(), WTFMove(functionName), Vector<UniqueRef<AST::Expression>>());
         callExpression->setType(type->clone());
         callExpression->setTypeAnnotation(AST::RightValue());
         Vector<std::reference_wrapper<ResolvingType>> argumentTypes;

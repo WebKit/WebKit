@@ -156,15 +156,14 @@ bool synthesizeConstructors(Program& program)
 
     for (auto& unnamedTypeKey : unnamedTypes) {
         auto& unnamedType = unnamedTypeKey.unnamedType();
-        auto location = unnamedType.codeLocation();
 
-        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(location, AST::Qualifiers(), unnamedType.clone(), String(), nullptr, nullptr);
+        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(unnamedType.origin()), AST::Qualifiers(), unnamedType.clone(), String(), nullptr, nullptr);
         AST::VariableDeclarations parameters;
         parameters.append(WTFMove(variableDeclaration));
-        AST::NativeFunctionDeclaration copyConstructor(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, unnamedType.clone(), "operator cast"_str, WTFMove(parameters), nullptr, isOperator));
+        AST::NativeFunctionDeclaration copyConstructor(AST::FunctionDeclaration(Lexer::Token(unnamedType.origin()), AST::AttributeBlock(), WTF::nullopt, unnamedType.clone(), "operator cast"_str, WTFMove(parameters), nullptr, isOperator));
         program.append(WTFMove(copyConstructor));
 
-        AST::NativeFunctionDeclaration defaultConstructor(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, unnamedType.clone(), "operator cast"_str, AST::VariableDeclarations(), nullptr, isOperator));
+        AST::NativeFunctionDeclaration defaultConstructor(AST::FunctionDeclaration(Lexer::Token(unnamedType.origin()), AST::AttributeBlock(), WTF::nullopt, unnamedType.clone(), "operator cast"_str, AST::VariableDeclarations(), nullptr, isOperator));
         if (!program.append(WTFMove(defaultConstructor)))
             return false;
     }
@@ -175,12 +174,10 @@ bool synthesizeConstructors(Program& program)
         if (is<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType)) && downcast<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType)).isAtomic())
             continue;
 
-        auto location = namedType.get().codeLocation();
-
-        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(location, AST::Qualifiers(), UniqueRef<AST::UnnamedType>(AST::TypeReference::wrap(location, namedType.get())), String(), nullptr, nullptr);
+        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(namedType.get().origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(AST::TypeReference::wrap(Lexer::Token(namedType.get().origin()), namedType.get())), String(), nullptr, nullptr);
         AST::VariableDeclarations parameters;
         parameters.append(WTFMove(variableDeclaration));
-        AST::NativeFunctionDeclaration copyConstructor(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(location, namedType.get()), "operator cast"_str, WTFMove(parameters), nullptr, isOperator));
+        AST::NativeFunctionDeclaration copyConstructor(AST::FunctionDeclaration(Lexer::Token(namedType.get().origin()), AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(Lexer::Token(namedType.get().origin()), namedType.get()), "operator cast"_str, WTFMove(parameters), nullptr, isOperator));
         program.append(WTFMove(copyConstructor));
 
         if (is<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType))) {
@@ -188,7 +185,7 @@ bool synthesizeConstructors(Program& program)
             if (nativeTypeDeclaration.isOpaqueType())
                 continue;
         }
-        AST::NativeFunctionDeclaration defaultConstructor(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(location, namedType.get()), "operator cast"_str, AST::VariableDeclarations(), nullptr, isOperator));
+        AST::NativeFunctionDeclaration defaultConstructor(AST::FunctionDeclaration(Lexer::Token(namedType.get().origin()), AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(Lexer::Token(namedType.get().origin()), namedType.get()), "operator cast"_str, AST::VariableDeclarations(), nullptr, isOperator));
         if (!program.append(WTFMove(defaultConstructor)))
             return false;
     }

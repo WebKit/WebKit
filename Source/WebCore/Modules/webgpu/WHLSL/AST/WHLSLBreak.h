@@ -38,8 +38,8 @@ namespace AST {
 
 class Break : public Statement {
 public:
-    Break(CodeLocation location)
-        : Statement(location)
+    Break(Lexer::Token&& origin)
+        : Statement(WTFMove(origin))
     {
     }
 

@@ -81,7 +81,7 @@ void PropertyResolver::visit(AST::FunctionDefinition& functionDefinition)
 {
     Visitor::visit(functionDefinition);
     if (!m_variableDeclarations.isEmpty())
-        functionDefinition.block().statements().insert(0, makeUniqueRef<AST::VariableDeclarationsStatement>(functionDefinition.codeLocation(), WTFMove(m_variableDeclarations)));
+        functionDefinition.block().statements().insert(0, makeUniqueRef<AST::VariableDeclarationsStatement>(Lexer::Token(m_variableDeclarations[0]->origin()), WTFMove(m_variableDeclarations)));
 }
 
 enum class WhichAnder {
@@ -98,23 +98,24 @@ struct AnderCallArgumentResult {
 template <typename ExpressionConstructor, typename TypeConstructor>
 static Optional<AnderCallArgumentResult> wrapAnderCallArgument(UniqueRef<AST::Expression>& expression, UniqueRef<AST::UnnamedType> baseType, bool anderFunction, bool threadAnderFunction)
 {
-    auto location = expression->codeLocation();
     if (auto addressSpace = expression->typeAnnotation().leftAddressSpace()) {
         if (!anderFunction)
             return WTF::nullopt;
-        auto makeArrayReference = makeUniqueRef<ExpressionConstructor>(location, WTFMove(expression));
-        makeArrayReference->setType(makeUniqueRef<TypeConstructor>(location, *addressSpace, WTFMove(baseType)));
+        auto origin = expression->origin();
+        auto makeArrayReference = makeUniqueRef<ExpressionConstructor>(Lexer::Token(origin), WTFMove(expression));
+        makeArrayReference->setType(makeUniqueRef<TypeConstructor>(WTFMove(origin), *addressSpace, WTFMove(baseType)));
         makeArrayReference->setTypeAnnotation(AST::RightValue());
         return {{ WTFMove(makeArrayReference), WTF::nullopt, WhichAnder::Ander }};
     }
     if (threadAnderFunction) {
-        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(location, AST::Qualifiers(), baseType->clone(), String(), nullptr, nullptr);
+        auto origin = expression->origin();
+        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(origin), AST::Qualifiers(), baseType->clone(), String(), nullptr, nullptr);
 
         auto variableReference1 = makeUniqueRef<AST::VariableReference>(AST::VariableReference::wrap(variableDeclaration));
         variableReference1->setType(baseType->clone());
         variableReference1->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread });
 
-        auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(location, WTFMove(variableReference1), WTFMove(expression));
+        auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(Lexer::Token(origin), WTFMove(variableReference1), WTFMove(expression));
         assignmentExpression->setType(baseType->clone());
         assignmentExpression->setTypeAnnotation(AST::RightValue());
 
@@ -122,15 +123,15 @@ static Optional<AnderCallArgumentResult> wrapAnderCallArgument(UniqueRef<AST::Ex
         variableReference2->setType(baseType->clone());
         variableReference2->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread });
 
-        auto expression = makeUniqueRef<ExpressionConstructor>(location, WTFMove(variableReference2));
-        auto resultType = makeUniqueRef<TypeConstructor>(location, AST::AddressSpace::Thread, WTFMove(baseType));
+        auto expression = makeUniqueRef<ExpressionConstructor>(Lexer::Token(origin), WTFMove(variableReference2));
+        auto resultType = makeUniqueRef<TypeConstructor>(Lexer::Token(origin), AST::AddressSpace::Thread, WTFMove(baseType));
         expression->setType(resultType->clone());
         expression->setTypeAnnotation(AST::RightValue());
 
         Vector<UniqueRef<AST::Expression>> expressions;
         expressions.append(WTFMove(assignmentExpression));
         expressions.append(WTFMove(expression));
-        auto commaExpression = makeUniqueRef<AST::CommaExpression>(location, WTFMove(expressions));
+        auto commaExpression = makeUniqueRef<AST::CommaExpression>(WTFMove(origin), WTFMove(expressions));
         commaExpression->setType(WTFMove(resultType));
         commaExpression->setTypeAnnotation(AST::RightValue());
         return {{ WTFMove(commaExpression), { WTFMove(variableDeclaration) }, WhichAnder::ThreadAnder}};
@@ -166,7 +167,6 @@ static Optional<UniqueRef<AST::Expression>> setterCall(AST::PropertyAccessExpres
         arguments.append(WTFMove(variableReference));
     };
 
-    auto location = propertyAccessExpression.codeLocation();
     if (relevantAnder) {
         // *operator&.foo(&v) = newValue
         auto leftValue = leftValueFactory();
@@ -178,16 +178,16 @@ static Optional<UniqueRef<AST::Expression>> setterCall(AST::PropertyAccessExpres
         arguments.append(WTFMove(argument->expression));
         maybeAddIndexArgument(arguments);
 
-        auto callExpression = makeUniqueRef<AST::CallExpression>(location, String(relevantAnder->name()), WTFMove(arguments));
+        auto callExpression = makeUniqueRef<AST::CallExpression>(Lexer::Token(propertyAccessExpression.origin()), String(relevantAnder->name()), WTFMove(arguments));
         callExpression->setType(relevantAnder->type().clone());
         callExpression->setTypeAnnotation(AST::RightValue());
         callExpression->setFunction(*relevantAnder);
 
-        auto dereferenceExpression = makeUniqueRef<AST::DereferenceExpression>(location, WTFMove(callExpression));
+        auto dereferenceExpression = makeUniqueRef<AST::DereferenceExpression>(Lexer::Token(propertyAccessExpression.origin()), WTFMove(callExpression));
         dereferenceExpression->setType(downcast<AST::PointerType>(relevantAnder->type()).elementType().clone());
         dereferenceExpression->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread });
 
-        auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(location, WTFMove(dereferenceExpression), WTFMove(newValue));
+        auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(Lexer::Token(propertyAccessExpression.origin()), WTFMove(dereferenceExpression), WTFMove(newValue));
         assignmentExpression->setType(downcast<AST::PointerType>(relevantAnder->type()).elementType().clone());
         assignmentExpression->setTypeAnnotation(AST::RightValue());
 
@@ -202,12 +202,12 @@ static Optional<UniqueRef<AST::Expression>> setterCall(AST::PropertyAccessExpres
     maybeAddIndexArgument(arguments);
     arguments.append(WTFMove(newValue));
 
-    auto callExpression = makeUniqueRef<AST::CallExpression>(location, String(propertyAccessExpression.setterFunction()->name()), WTFMove(arguments));
+    auto callExpression = makeUniqueRef<AST::CallExpression>(Lexer::Token(propertyAccessExpression.origin()), String(propertyAccessExpression.setterFunction()->name()), WTFMove(arguments));
     callExpression->setType(propertyAccessExpression.setterFunction()->type().clone());
     callExpression->setTypeAnnotation(AST::RightValue());
     callExpression->setFunction(*propertyAccessExpression.setterFunction());
 
-    auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(location, leftValueFactory(), WTFMove(callExpression));
+    auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(Lexer::Token(propertyAccessExpression.origin()), leftValueFactory(), WTFMove(callExpression));
     assignmentExpression->setType(propertyAccessExpression.setterFunction()->type().clone());
     assignmentExpression->setTypeAnnotation(AST::RightValue());
 
@@ -226,8 +226,6 @@ static Optional<UniqueRef<AST::Expression>> getterCall(AST::PropertyAccessExpres
         arguments.append(WTFMove(variableReference));
     };
 
-    auto location = propertyAccessExpression.codeLocation();
-
     if (relevantAnder) {
         // *operator&.foo(&v)
         auto leftValue = leftValueFactory();
@@ -239,12 +237,12 @@ static Optional<UniqueRef<AST::Expression>> getterCall(AST::PropertyAccessExpres
         arguments.append(WTFMove(argument->expression));
         maybeAddIndexArgument(arguments);
 
-        auto callExpression = makeUniqueRef<AST::CallExpression>(location, String(relevantAnder->name()), WTFMove(arguments));
+        auto callExpression = makeUniqueRef<AST::CallExpression>(Lexer::Token(propertyAccessExpression.origin()), String(relevantAnder->name()), WTFMove(arguments));
         callExpression->setType(relevantAnder->type().clone());
         callExpression->setTypeAnnotation(AST::RightValue());
         callExpression->setFunction(*relevantAnder);
 
-        auto dereferenceExpression = makeUniqueRef<AST::DereferenceExpression>(location, WTFMove(callExpression));
+        auto dereferenceExpression = makeUniqueRef<AST::DereferenceExpression>(Lexer::Token(propertyAccessExpression.origin()), WTFMove(callExpression));
         dereferenceExpression->setType(downcast<AST::PointerType>(relevantAnder->type()).elementType().clone());
         dereferenceExpression->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread });
 
@@ -258,7 +256,7 @@ static Optional<UniqueRef<AST::Expression>> getterCall(AST::PropertyAccessExpres
     arguments.append(leftValueFactory());
     maybeAddIndexArgument(arguments);
 
-    auto callExpression = makeUniqueRef<AST::CallExpression>(location, String(propertyAccessExpression.getterFunction()->name()), WTFMove(arguments));
+    auto callExpression = makeUniqueRef<AST::CallExpression>(Lexer::Token(propertyAccessExpression.origin()), String(propertyAccessExpression.getterFunction()->name()), WTFMove(arguments));
     callExpression->setType(propertyAccessExpression.getterFunction()->type().clone());
     callExpression->setTypeAnnotation(AST::RightValue());
     callExpression->setFunction(*propertyAccessExpression.getterFunction());
@@ -315,14 +313,14 @@ static Optional<ModifyResult> modify(AST::PropertyAccessExpression& propertyAcce
     AST::Expression& innerLeftExpression = leftExpression;
 
     // Create "p" variable.
-    auto pointerVariable = makeUniqueRef<AST::VariableDeclaration>(leftExpression->codeLocation(), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(makeUniqueRef<AST::PointerType>(leftExpression->codeLocation(), *leftExpression->typeAnnotation().leftAddressSpace(), leftExpression->resolvedType().clone())), String(), nullptr, nullptr);
+    auto pointerVariable = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(leftExpression->origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(makeUniqueRef<AST::PointerType>(Lexer::Token(leftExpression->origin()), *leftExpression->typeAnnotation().leftAddressSpace(), leftExpression->resolvedType().clone())), String(), nullptr, nullptr);
 
     // Create "q" and "r" variables.
     Vector<UniqueRef<AST::VariableDeclaration>> intermediateVariables;
     intermediateVariables.reserveInitialCapacity(chain.size() - 1);
     for (size_t i = 1; i < chain.size(); ++i) {
         auto& propertyAccessExpression = static_cast<AST::PropertyAccessExpression&>(chain[i]);
-        intermediateVariables.uncheckedAppend(makeUniqueRef<AST::VariableDeclaration>(propertyAccessExpression.codeLocation(), AST::Qualifiers(), propertyAccessExpression.resolvedType().clone(), String(), nullptr, nullptr));
+        intermediateVariables.uncheckedAppend(makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(propertyAccessExpression.origin()), AST::Qualifiers(), propertyAccessExpression.resolvedType().clone(), String(), nullptr, nullptr));
     }
 
     // Consider a[foo()][b] = c;
@@ -353,15 +351,15 @@ static Optional<ModifyResult> modify(AST::PropertyAccessExpression& propertyAcce
             continue;
         }
         auto& indexExpression = downcast<AST::IndexExpression>(propertyAccessExpression);
-        indexVariables.uncheckedAppend(makeUniqueRef<AST::VariableDeclaration>(propertyAccessExpression.codeLocation(), AST::Qualifiers(), indexExpression.indexExpression().resolvedType().clone(), String(), nullptr, nullptr));
+        indexVariables.uncheckedAppend(makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(propertyAccessExpression.origin()), AST::Qualifiers(), indexExpression.indexExpression().resolvedType().clone(), String(), nullptr, nullptr));
     }
 
     Vector<UniqueRef<AST::Expression>> expressions;
 
     // Step 1:
     {
-        auto makePointerExpression = makeUniqueRef<AST::MakePointerExpression>(innerLeftExpression.codeLocation(), WTFMove(leftExpression));
-        makePointerExpression->setType(makeUniqueRef<AST::PointerType>(innerLeftExpression.codeLocation(), *innerLeftExpression.typeAnnotation().leftAddressSpace(), innerLeftExpression.resolvedType().clone()));
+        auto makePointerExpression = makeUniqueRef<AST::MakePointerExpression>(Lexer::Token(innerLeftExpression.origin()), WTFMove(leftExpression));
+        makePointerExpression->setType(makeUniqueRef<AST::PointerType>(Lexer::Token(innerLeftExpression.origin()), *innerLeftExpression.typeAnnotation().leftAddressSpace(), innerLeftExpression.resolvedType().clone()));
         makePointerExpression->setTypeAnnotation(AST::RightValue());
 
         auto variableReference = makeUniqueRef<AST::VariableReference>(AST::VariableReference::wrap(pointerVariable));
@@ -369,7 +367,7 @@ static Optional<ModifyResult> modify(AST::PropertyAccessExpression& propertyAcce
         variableReference->setType(pointerVariable->type()->clone());
         variableReference->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
-        auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(innerLeftExpression.codeLocation(), WTFMove(variableReference), WTFMove(makePointerExpression));
+        auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(Lexer::Token(innerLeftExpression.origin()), WTFMove(variableReference), WTFMove(makePointerExpression));
         assignmentExpression->setType(pointerVariable->type()->clone());
         assignmentExpression->setTypeAnnotation(AST::RightValue());
 
@@ -392,7 +390,7 @@ static Optional<ModifyResult> modify(AST::PropertyAccessExpression& propertyAcce
         variableReference->setType(pointerVariable->type()->clone());
         variableReference->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
-        auto dereferenceExpression = makeUniqueRef<AST::DereferenceExpression>(propertyAccessExpression.codeLocation(), WTFMove(variableReference));
+        auto dereferenceExpression = makeUniqueRef<AST::DereferenceExpression>(Lexer::Token(propertyAccessExpression.origin()), WTFMove(variableReference));
         ASSERT(pointerVariable->type());
         dereferenceExpression->setType(downcast<AST::PointerType>(*pointerVariable->type()).elementType().clone());
         dereferenceExpression->setTypeAnnotation(AST::LeftValue { downcast<AST::PointerType>(*pointerVariable->type()).addressSpace() });
@@ -409,7 +407,7 @@ static Optional<ModifyResult> modify(AST::PropertyAccessExpression& propertyAcce
         variableReference->setType(indexVariable->get().type()->clone());
         variableReference->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
-        auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(propertyAccessExpression.codeLocation(), WTFMove(variableReference), indexExpression.takeIndex());
+        auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(Lexer::Token(propertyAccessExpression.origin()), WTFMove(variableReference), indexExpression.takeIndex());
         assignmentExpression->setType(indexVariable->get().type()->clone());
         assignmentExpression->setTypeAnnotation(AST::RightValue());
 
@@ -433,7 +431,7 @@ static Optional<ModifyResult> modify(AST::PropertyAccessExpression& propertyAcce
         variableReference->setType(variableDeclaration.type()->clone());
         variableReference->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
-        auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(propertyAccessExpression.codeLocation(), WTFMove(variableReference), WTFMove(*callExpression));
+        auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(Lexer::Token(propertyAccessExpression.origin()), WTFMove(variableReference), WTFMove(*callExpression));
         assignmentExpression->setType(variableDeclaration.type()->clone());
         assignmentExpression->setTypeAnnotation(AST::RightValue());
 
@@ -488,7 +486,7 @@ static Optional<ModifyResult> modify(AST::PropertyAccessExpression& propertyAcce
             variableReference->setType(pointerVariable->type()->clone());
             variableReference->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
-            auto dereferenceExpression = makeUniqueRef<AST::DereferenceExpression>(propertyAccessExpression.codeLocation(), WTFMove(variableReference));
+            auto dereferenceExpression = makeUniqueRef<AST::DereferenceExpression>(Lexer::Token(propertyAccessExpression.origin()), WTFMove(variableReference));
             ASSERT(pointerVariable->type());
             dereferenceExpression->setType(downcast<AST::PointerType>(*pointerVariable->type()).elementType().clone());
             dereferenceExpression->setTypeAnnotation(AST::LeftValue { downcast<AST::PointerType>(*pointerVariable->type()).addressSpace() });
@@ -536,8 +534,8 @@ void PropertyResolver::visit(AST::AssignmentExpression& assignmentExpression)
     }
     simplifyLeftValue(modifyResult->innerLeftValue);
 
-    auto location = assignmentExpression.codeLocation();
-    auto* commaExpression = AST::replaceWith<AST::CommaExpression>(assignmentExpression, location, WTFMove(modifyResult->expressions));
+    Lexer::Token origin = assignmentExpression.origin();
+    auto* commaExpression = AST::replaceWith<AST::CommaExpression>(assignmentExpression, WTFMove(origin), WTFMove(modifyResult->expressions));
     commaExpression->setType(WTFMove(type));
     commaExpression->setTypeAnnotation(AST::RightValue());
 
@@ -551,9 +549,6 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
     if (error())
         return;
 
-    auto location = readModifyWriteExpression.codeLocation();
-    auto leftValueLocation = readModifyWriteExpression.leftValue().codeLocation();
-
     if (readModifyWriteExpression.leftValue().typeAnnotation().leftAddressSpace()) {
         // Consider a++;
         // This would get transformed into:
@@ -566,14 +561,15 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
         simplifyLeftValue(readModifyWriteExpression.leftValue());
 
         auto baseType = readModifyWriteExpression.leftValue().resolvedType().clone();
-        auto pointerType = makeUniqueRef<AST::PointerType>(leftValueLocation, *readModifyWriteExpression.leftValue().typeAnnotation().leftAddressSpace(), baseType->clone());
+        auto pointerType = makeUniqueRef<AST::PointerType>(Lexer::Token(readModifyWriteExpression.leftValue().origin()), *readModifyWriteExpression.leftValue().typeAnnotation().leftAddressSpace(), baseType->clone());
 
-        auto pointerVariable = makeUniqueRef<AST::VariableDeclaration>(leftValueLocation, AST::Qualifiers(), UniqueRef<AST::UnnamedType>(pointerType->clone()), String(), nullptr, nullptr);
+        auto pointerVariable = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(readModifyWriteExpression.leftValue().origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(pointerType->clone()), String(), nullptr, nullptr);
 
         Vector<UniqueRef<AST::Expression>> expressions;
 
         {
-            auto makePointerExpression = makeUniqueRef<AST::MakePointerExpression>(leftValueLocation, readModifyWriteExpression.takeLeftValue());
+            auto origin = Lexer::Token(readModifyWriteExpression.leftValue().origin());
+            auto makePointerExpression = makeUniqueRef<AST::MakePointerExpression>(Lexer::Token(origin), readModifyWriteExpression.takeLeftValue());
             makePointerExpression->setType(pointerType->clone());
             makePointerExpression->setTypeAnnotation(AST::RightValue());
 
@@ -581,7 +577,7 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
             variableReference->setType(pointerType->clone());
             variableReference->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
-            auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(leftValueLocation, WTFMove(variableReference), WTFMove(makePointerExpression));
+            auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(WTFMove(origin), WTFMove(variableReference), WTFMove(makePointerExpression));
             assignmentExpression->setType(pointerType->clone());
             assignmentExpression->setTypeAnnotation(AST::RightValue());
 
@@ -593,7 +589,7 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
             variableReference1->setType(pointerType->clone());
             variableReference1->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
-            auto dereferenceExpression = makeUniqueRef<AST::DereferenceExpression>(location, WTFMove(variableReference1));
+            auto dereferenceExpression = makeUniqueRef<AST::DereferenceExpression>(Lexer::Token(readModifyWriteExpression.origin()), WTFMove(variableReference1));
             dereferenceExpression->setType(baseType->clone());
             dereferenceExpression->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
@@ -601,7 +597,7 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
             variableReference2->setType(baseType->clone());
             variableReference2->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
-            auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(location, WTFMove(variableReference2), WTFMove(dereferenceExpression));
+            auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(Lexer::Token(readModifyWriteExpression.origin()), WTFMove(variableReference2), WTFMove(dereferenceExpression));
             assignmentExpression->setType(baseType->clone());
             assignmentExpression->setTypeAnnotation(AST::RightValue());
 
@@ -614,7 +610,7 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
             variableReference->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
             auto newValueExpression = readModifyWriteExpression.takeNewValueExpression();
-            auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(location, WTFMove(variableReference), WTFMove(newValueExpression));
+            auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(Lexer::Token(readModifyWriteExpression.origin()), WTFMove(variableReference), WTFMove(newValueExpression));
             assignmentExpression->setType(baseType->clone());
             assignmentExpression->setTypeAnnotation(AST::RightValue());
 
@@ -626,7 +622,7 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
             variableReference1->setType(pointerType->clone());
             variableReference1->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
-            auto dereferenceExpression = makeUniqueRef<AST::DereferenceExpression>(location, WTFMove(variableReference1));
+            auto dereferenceExpression = makeUniqueRef<AST::DereferenceExpression>(Lexer::Token(readModifyWriteExpression.origin()), WTFMove(variableReference1));
             dereferenceExpression->setType(baseType->clone());
             dereferenceExpression->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
@@ -634,7 +630,7 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
             variableReference2->setType(baseType->clone());
             variableReference2->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
-            auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(location, WTFMove(dereferenceExpression), WTFMove(variableReference2));
+            auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(Lexer::Token(readModifyWriteExpression.origin()), WTFMove(dereferenceExpression), WTFMove(variableReference2));
             assignmentExpression->setType(baseType->clone());
             assignmentExpression->setTypeAnnotation(AST::RightValue());
 
@@ -648,7 +644,8 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
         UniqueRef<AST::VariableDeclaration> oldVariableDeclaration = readModifyWriteExpression.takeOldValue();
         UniqueRef<AST::VariableDeclaration> newVariableDeclaration = readModifyWriteExpression.takeNewValue();
 
-        auto* commaExpression = AST::replaceWith<AST::CommaExpression>(readModifyWriteExpression, location, WTFMove(expressions));
+        Lexer::Token origin = readModifyWriteExpression.origin();
+        auto* commaExpression = AST::replaceWith<AST::CommaExpression>(readModifyWriteExpression, WTFMove(origin), WTFMove(expressions));
         commaExpression->setType(WTFMove(type));
         commaExpression->setTypeAnnotation(AST::RightValue());
 
@@ -673,7 +670,7 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
             variableReference->setType(readModifyWriteExpression.leftValue().resolvedType().clone());
             variableReference->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
-            auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(leftValueLocation, WTFMove(variableReference), WTFMove(*lastGetterCallExpression));
+            auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(Lexer::Token(readModifyWriteExpression.leftValue().origin()), WTFMove(variableReference), WTFMove(*lastGetterCallExpression));
             assignmentExpression->setType(readModifyWriteExpression.leftValue().resolvedType().clone());
             assignmentExpression->setTypeAnnotation(AST::RightValue());
 
@@ -686,7 +683,7 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
             variableReference->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
             auto newValueExpression = readModifyWriteExpression.takeNewValueExpression();
-            auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(leftValueLocation, WTFMove(variableReference), WTFMove(newValueExpression));
+            auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(Lexer::Token(readModifyWriteExpression.leftValue().origin()), WTFMove(variableReference), WTFMove(newValueExpression));
             assignmentExpression->setType(readModifyWriteExpression.leftValue().resolvedType().clone());
             assignmentExpression->setTypeAnnotation(AST::RightValue());
 
@@ -713,7 +710,8 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
     UniqueRef<AST::VariableDeclaration> oldVariableDeclaration = readModifyWriteExpression.takeOldValue();
     UniqueRef<AST::VariableDeclaration> newVariableDeclaration = readModifyWriteExpression.takeNewValue();
 
-    auto* commaExpression = AST::replaceWith<AST::CommaExpression>(readModifyWriteExpression, location, WTFMove(modifyResult->expressions));
+    Lexer::Token origin = readModifyWriteExpression.origin();
+    auto* commaExpression = AST::replaceWith<AST::CommaExpression>(readModifyWriteExpression, WTFMove(origin), WTFMove(modifyResult->expressions));
     commaExpression->setType(WTFMove(type));
     commaExpression->setTypeAnnotation(AST::RightValue());
 
@@ -730,23 +728,24 @@ static Optional<AnderCallArgumentResult> anderCallArgument(AST::PropertyAccessEx
 
 void PropertyResolver::simplifyRightValue(AST::PropertyAccessExpression& propertyAccessExpression)
 {
-    auto location = propertyAccessExpression.codeLocation();
+    Lexer::Token origin = propertyAccessExpression.origin();
 
     checkErrorAndVisit(propertyAccessExpression.base());
 
     if (auto argument = anderCallArgument(propertyAccessExpression)) {
         auto* anderFunction = argument->whichAnder == WhichAnder::ThreadAnder ? propertyAccessExpression.threadAnderFunction() : propertyAccessExpression.anderFunction();
         ASSERT(anderFunction);
+        auto origin = propertyAccessExpression.origin();
         Vector<UniqueRef<AST::Expression>> arguments;
         arguments.append(WTFMove(argument->expression));
         if (is<AST::IndexExpression>(propertyAccessExpression))
             arguments.append(downcast<AST::IndexExpression>(propertyAccessExpression).takeIndex());
-        auto callExpression = makeUniqueRef<AST::CallExpression>(location, String(anderFunction->name()), WTFMove(arguments));
+        auto callExpression = makeUniqueRef<AST::CallExpression>(Lexer::Token(origin), String(anderFunction->name()), WTFMove(arguments));
         callExpression->setType(anderFunction->type().clone());
         callExpression->setTypeAnnotation(AST::RightValue());
         callExpression->setFunction(*anderFunction);
 
-        auto* dereferenceExpression = AST::replaceWith<AST::DereferenceExpression>(propertyAccessExpression, location, WTFMove(callExpression));
+        auto* dereferenceExpression = AST::replaceWith<AST::DereferenceExpression>(propertyAccessExpression, WTFMove(origin), WTFMove(callExpression));
         dereferenceExpression->setType(downcast<AST::PointerType>(anderFunction->type()).elementType().clone());
         dereferenceExpression->setTypeAnnotation(AST::LeftValue { downcast<AST::PointerType>(anderFunction->type()).addressSpace() });
 
@@ -764,11 +763,11 @@ void PropertyResolver::simplifyRightValue(AST::PropertyAccessExpression& propert
     if (is<AST::IndexExpression>(propertyAccessExpression)) {
         auto& indexExpression = downcast<AST::IndexExpression>(propertyAccessExpression);
         arguments.append(indexExpression.takeIndex());
-        callExpression = AST::replaceWith<AST::CallExpression>(indexExpression, location, String(getterFunction.name()), WTFMove(arguments));
+        callExpression = AST::replaceWith<AST::CallExpression>(indexExpression, WTFMove(origin), String(getterFunction.name()), WTFMove(arguments));
     } else {
         ASSERT(is<AST::DotExpression>(propertyAccessExpression));
         auto& dotExpression = downcast<AST::DotExpression>(propertyAccessExpression);
-        callExpression = AST::replaceWith<AST::CallExpression>(dotExpression, location, String(getterFunction.name()), WTFMove(arguments));
+        callExpression = AST::replaceWith<AST::CallExpression>(dotExpression, WTFMove(origin), String(getterFunction.name()), WTFMove(arguments));
     }
     callExpression->setFunction(getterFunction);
     callExpression->setType(getterFunction.type().clone());
@@ -791,7 +790,7 @@ void LeftValueSimplifier::finishVisiting(AST::PropertyAccessExpression& property
 
     Visitor::visit(propertyAccessExpression.base());
 
-    auto location = propertyAccessExpression.codeLocation();
+    Lexer::Token origin = propertyAccessExpression.origin();
     auto* anderFunction = propertyAccessExpression.anderFunction();
 
     auto argument = anderCallArgument(propertyAccessExpression);
@@ -803,12 +802,12 @@ void LeftValueSimplifier::finishVisiting(AST::PropertyAccessExpression& property
     arguments.append(WTFMove(argument->expression));
     if (is<AST::IndexExpression>(propertyAccessExpression))
         arguments.append(downcast<AST::IndexExpression>(propertyAccessExpression).takeIndex());
-    auto callExpression = makeUniqueRef<AST::CallExpression>(location, String(anderFunction->name()), WTFMove(arguments));
+    auto callExpression = makeUniqueRef<AST::CallExpression>(Lexer::Token(origin), String(anderFunction->name()), WTFMove(arguments));
     callExpression->setType(anderFunction->type().clone());
     callExpression->setTypeAnnotation(AST::RightValue());
     callExpression->setFunction(*anderFunction);
 
-    auto* dereferenceExpression = AST::replaceWith<AST::DereferenceExpression>(propertyAccessExpression, location, WTFMove(callExpression));
+    auto* dereferenceExpression = AST::replaceWith<AST::DereferenceExpression>(propertyAccessExpression, WTFMove(origin), WTFMove(callExpression));
     dereferenceExpression->setType(downcast<AST::PointerType>(anderFunction->type()).elementType().clone());
     dereferenceExpression->setTypeAnnotation(AST::LeftValue { downcast<AST::PointerType>(anderFunction->type()).addressSpace() });
 }

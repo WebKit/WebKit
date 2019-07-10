@@ -46,12 +46,12 @@ bool synthesizeStructureAccessors(Program& program)
         for (auto& structureElement : structureDefinition->structureElements()) {
             // The ander: operator&.field
             auto createAnder = [&](AST::AddressSpace addressSpace) -> AST::NativeFunctionDeclaration {
-                auto argumentType = makeUniqueRef<AST::PointerType>(structureElement.codeLocation(), addressSpace, AST::TypeReference::wrap(structureElement.codeLocation(), structureDefinition));
-                auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(structureElement.codeLocation(), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(WTFMove(argumentType)), String(), nullptr, nullptr);
+                auto argumentType = makeUniqueRef<AST::PointerType>(Lexer::Token(structureElement.origin()), addressSpace, AST::TypeReference::wrap(Lexer::Token(structureElement.origin()), structureDefinition));
+                auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(structureElement.origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(WTFMove(argumentType)), String(), nullptr, nullptr);
                 AST::VariableDeclarations parameters;
                 parameters.append(WTFMove(variableDeclaration));
-                auto returnType = makeUniqueRef<AST::PointerType>(structureElement.codeLocation(), addressSpace, structureElement.type().clone());
-                AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(structureElement.codeLocation(), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), makeString("operator&.", structureElement.name()), WTFMove(parameters), nullptr, isOperator));
+                auto returnType = makeUniqueRef<AST::PointerType>(Lexer::Token(structureElement.origin()), addressSpace, structureElement.type().clone());
+                AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(structureElement.origin()), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), makeString("operator&.", structureElement.name()), WTFMove(parameters), nullptr, isOperator));
                 return nativeFunctionDeclaration;
             };
             if (!program.append(createAnder(AST::AddressSpace::Constant))

@@ -88,7 +88,7 @@ static Optional<UniqueRef<AST::UnnamedType>> matchAndCommit(AST::Type& unifyNode
         return WTF::nullopt;
     if (is<AST::NamedType>(unifyNode)) {
         auto& namedUnifyNode = downcast<AST::NamedType>(unifyNode);
-        auto result = AST::TypeReference::wrap(namedUnifyNode.codeLocation(), namedUnifyNode);
+        auto result = AST::TypeReference::wrap(Lexer::Token(namedUnifyNode.origin()), namedUnifyNode);
         resolvableType.resolve(result->clone());
         return { WTFMove(result) };
     }

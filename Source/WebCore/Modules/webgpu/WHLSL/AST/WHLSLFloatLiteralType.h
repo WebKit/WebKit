@@ -41,7 +41,7 @@ class TypeReference;
 
 class FloatLiteralType : public ResolvableType {
 public:
-    FloatLiteralType(CodeLocation, float value);
+    FloatLiteralType(Lexer::Token&& origin, float value);
 
     virtual ~FloatLiteralType();
 

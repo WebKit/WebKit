@@ -38,8 +38,8 @@ namespace AST {
 
 class BooleanLiteral : public Expression {
 public:
-    BooleanLiteral(CodeLocation location, bool value)
-        : Expression(location)
+    BooleanLiteral(Lexer::Token&& origin, bool value)
+        : Expression(WTFMove(origin))
         , m_value(value)
     {
     }
@@ -58,7 +58,7 @@ public:
 
     BooleanLiteral clone() const
     {
-        BooleanLiteral result(codeLocation(), m_value);
+        BooleanLiteral result(Lexer::Token(origin()), m_value);
         copyTypeTo(result);
         return result;
     }

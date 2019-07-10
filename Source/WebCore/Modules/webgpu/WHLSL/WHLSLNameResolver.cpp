@@ -213,7 +213,8 @@ void NameResolver::visit(AST::DotExpression& dotExpression)
                 AST::EnumerationDefinition& enumerationDefinition = downcast<AST::EnumerationDefinition>(type);
                 auto memberName = dotExpression.fieldName();
                 if (auto* member = enumerationDefinition.memberByName(memberName)) {
-                    auto enumerationMemberLiteral = AST::EnumerationMemberLiteral::wrap(dotExpression.codeLocation(), WTFMove(baseName), WTFMove(memberName), enumerationDefinition, *member);
+                    Lexer::Token origin = dotExpression.origin();
+                    auto enumerationMemberLiteral = AST::EnumerationMemberLiteral::wrap(WTFMove(origin), WTFMove(baseName), WTFMove(memberName), enumerationDefinition, *member);
                     AST::replaceWith<AST::EnumerationMemberLiteral>(dotExpression, WTFMove(enumerationMemberLiteral));
                     return;
                 }

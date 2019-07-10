@@ -56,8 +56,8 @@ public:
         SVGroupThreadID
     };
 
-    BuiltInSemantic(CodeLocation location, Variable variable, Optional<unsigned>&& targetIndex = WTF::nullopt)
-        : BaseSemantic(location)
+    BuiltInSemantic(Lexer::Token&& origin, Variable variable, Optional<unsigned>&& targetIndex = WTF::nullopt)
+        : BaseSemantic(WTFMove(origin))
         , m_variable(variable)
         , m_targetIndex(WTFMove(targetIndex))
     {

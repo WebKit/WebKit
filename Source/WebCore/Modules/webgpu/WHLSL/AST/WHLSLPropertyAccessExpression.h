@@ -40,8 +40,8 @@ namespace AST {
 
 class PropertyAccessExpression : public Expression {
 public:
-    PropertyAccessExpression(CodeLocation location, UniqueRef<Expression>&& base)
-        : Expression(location)
+    PropertyAccessExpression(Lexer::Token&& origin, UniqueRef<Expression>&& base)
+        : Expression(WTFMove(origin))
         , m_base(WTFMove(base))
     {
     }

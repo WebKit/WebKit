@@ -38,8 +38,8 @@ namespace AST {
 
 class StageInOutSemantic : public BaseSemantic {
 public:
-    StageInOutSemantic(CodeLocation location, unsigned index)
-        : BaseSemantic(location)
+    StageInOutSemantic(Lexer::Token&& origin, unsigned index)
+        : BaseSemantic(WTFMove(origin))
         , m_index(index)
     {
     }

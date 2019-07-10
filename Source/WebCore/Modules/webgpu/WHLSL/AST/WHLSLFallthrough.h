@@ -38,8 +38,8 @@ namespace AST {
 
 class Fallthrough : public Statement {
 public:
-    Fallthrough(CodeLocation location)
-        : Statement(location)
+    Fallthrough(Lexer::Token&& origin)
+        : Statement(WTFMove(origin))
     {
     }
 

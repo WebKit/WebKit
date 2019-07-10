@@ -40,8 +40,8 @@ namespace AST {
 
 class VariableReference : public Expression {
 public:
-    VariableReference(CodeLocation location, String&& name)
-        : Expression(location)
+    VariableReference(Lexer::Token&& origin, String&& name)
+        : Expression(WTFMove(origin))
         , m_name(WTFMove(name))
     {
     }
@@ -53,7 +53,7 @@ public:
 
     static VariableReference wrap(VariableDeclaration& variableDeclaration)
     {
-        VariableReference result(variableDeclaration.codeLocation());
+        VariableReference result(Lexer::Token(variableDeclaration.origin()));
         result.m_variable = &variableDeclaration;
         result.m_name = variableDeclaration.name();
         return result;
@@ -71,8 +71,8 @@ public:
     }
 
 private:
-    VariableReference(CodeLocation location)
-        : Expression(location)
+    VariableReference(Lexer::Token&& origin)
+        : Expression(WTFMove(origin))
     {
     }
 

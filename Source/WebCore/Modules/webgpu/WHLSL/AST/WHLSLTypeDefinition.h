@@ -41,8 +41,8 @@ namespace AST {
 
 class TypeDefinition : public NamedType {
 public:
-    TypeDefinition(CodeLocation location, String&& name, UniqueRef<UnnamedType>&& type)
-        : NamedType(location, WTFMove(name))
+    TypeDefinition(Lexer::Token&& origin, String&& name, UniqueRef<UnnamedType>&& type)
+        : NamedType(WTFMove(origin), WTFMove(name))
         , m_type(WTFMove(type))
     {
     }

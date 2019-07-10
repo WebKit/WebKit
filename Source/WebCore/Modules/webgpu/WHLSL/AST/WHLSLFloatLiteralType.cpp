@@ -38,9 +38,9 @@ namespace WHLSL {
 
 namespace AST {
 
-FloatLiteralType::FloatLiteralType(CodeLocation location, float value)
+FloatLiteralType::FloatLiteralType(Lexer::Token&& origin, float value)
     : m_value(value)
-    , m_preferredType(makeUniqueRef<TypeReference>(location, "float"_str, TypeArguments()))
+    , m_preferredType(makeUniqueRef<TypeReference>(WTFMove(origin), "float"_str, TypeArguments()))
 {
 }
 
@@ -74,7 +74,7 @@ unsigned FloatLiteralType::conversionCost(const UnnamedType& unnamedType) const
 
 FloatLiteralType FloatLiteralType::clone() const
 {
-    FloatLiteralType result(m_preferredType->codeLocation(), m_value);
+    FloatLiteralType result(Lexer::Token(m_preferredType->origin()), m_value);
     if (auto* type = maybeResolvedType())
         result.resolve(type->clone());
     result.m_preferredType = m_preferredType->cloneTypeReference();
