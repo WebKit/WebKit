@@ -1,0 +1,6 @@
+
+PASS overrideSubscriptStruct 
+PASS overrideSubscriptStructAndDoStores 
+PASS overrideSubscriptStructAndUsePointers 
+PASS overrideSubscriptStructAndUsePointersIncorrectly 
+
