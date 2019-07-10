@@ -260,6 +260,7 @@ public:
     // If set, overrides the default "m_layoutViewportOrigin, size of initial containing block" rect.
     // Used with delegated scrolling (i.e. iOS).
     WEBCORE_EXPORT void setLayoutViewportOverrideRect(Optional<LayoutRect>, TriggerLayoutOrNot = TriggerLayoutOrNot::Yes);
+    Optional<LayoutRect> layoutViewportOverrideRect() const { return m_layoutViewportOverrideRect; }
 
     WEBCORE_EXPORT void setVisualViewportOverrideRect(Optional<LayoutRect>);
 

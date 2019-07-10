@@ -3690,7 +3690,14 @@ void WebPage::computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintI
         reply(1);
         IntSize snapshotSize { FloatSize { printInfo.availablePaperWidth, printInfo.availablePaperHeight } };
         IntRect snapshotRect { {0, 0}, snapshotSize };
+
+        auto& frameView = *m_page->mainFrame().view();
+        auto originalLayoutViewportOverrideRect = frameView.layoutViewportOverrideRect();
+        frameView.setLayoutViewportOverrideRect(LayoutRect(snapshotRect));
+
         auto pdfData = pdfSnapshotAtSize(snapshotRect, snapshotSize, 0);
+
+        frameView.setLayoutViewportOverrideRect(originalLayoutViewportOverrideRect);
         send(Messages::WebPageProxy::DrawToPDFCallback(IPC::DataReference(CFDataGetBytePtr(pdfData.get()), CFDataGetLength(pdfData.get())), callbackID));
         return;
     }

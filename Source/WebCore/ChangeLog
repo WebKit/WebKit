@@ -1,3 +1,14 @@
+2019-07-09  Tim Horton  <timothy_horton@apple.com>
+
+        Fixed elements appear in the middle of full page screenshots taken when scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=199649
+        <rdar://problem/52476226>
+
+        Reviewed by Simon Fraser.
+
+        * page/FrameView.h:
+        Expose a getter for the layout viewport override rect.
+
 2019-07-09  Alex Christensen  <achristensen@webkit.org>
 
         Fix build after r247279
