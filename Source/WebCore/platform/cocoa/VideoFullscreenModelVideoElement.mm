@@ -29,19 +29,19 @@
 #import "VideoFullscreenModelVideoElement.h"
 
 #import "DOMWindow.h"
+#import "Event.h"
+#import "EventListener.h"
+#import "EventNames.h"
+#import "HTMLElement.h"
+#import "HTMLVideoElement.h"
 #import "History.h"
 #import "Logging.h"
 #import "MediaControlsHost.h"
+#import "Page.h"
 #import "PlaybackSessionModelMediaElement.h"
+#import "TextTrackList.h"
+#import "TimeRanges.h"
 #import <QuartzCore/CoreAnimation.h>
-#import <WebCore/Event.h>
-#import <WebCore/EventListener.h>
-#import <WebCore/EventNames.h>
-#import <WebCore/HTMLElement.h>
-#import <WebCore/HTMLVideoElement.h>
-#import <WebCore/Page.h>
-#import <WebCore/TextTrackList.h>
-#import <WebCore/TimeRanges.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SoftLinking.h>
 

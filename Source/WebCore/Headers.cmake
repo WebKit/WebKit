@@ -374,6 +374,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/Document.h
     dom/DocumentEventQueue.h
     dom/DocumentFragment.h
+    dom/DocumentFullscreen.h
     dom/DocumentIdentifier.h
     dom/DocumentMarker.h
     dom/DocumentMarkerController.h

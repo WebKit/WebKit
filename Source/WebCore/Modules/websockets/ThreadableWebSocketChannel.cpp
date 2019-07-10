@@ -90,6 +90,8 @@ Optional<ThreadableWebSocketChannel::ValidatedURL> ThreadableWebSocketChannel::v
             validatedURL.areCookiesAllowed = !results.summary.blockedCookies;
         }
     }
+#else
+    UNUSED_PARAM(document);
 #endif
     return validatedURL;
 }

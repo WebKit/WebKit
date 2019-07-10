@@ -105,6 +105,7 @@ list(APPEND PAL_SOURCES
 
     cf/CoreMediaSoftLink.cpp
 
+    cocoa/AVFoundationSoftLink.mm
     cocoa/FileSizeFormatterCocoa.mm
     cocoa/PassKitSoftLink.mm
 

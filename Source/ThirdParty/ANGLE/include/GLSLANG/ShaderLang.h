@@ -8,7 +8,7 @@
 
 #include <stddef.h>
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) && !defined(BUILDING_WITH_CMAKE)
 #include "khrplatform.h"
 #else
 #include "../KHR/khrplatform.h"

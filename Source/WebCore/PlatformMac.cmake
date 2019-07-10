@@ -144,7 +144,7 @@ list(APPEND WebCore_SOURCES
     dom/DataTransferMac.mm
     dom/SlotAssignment.cpp
 
-    editing/ios/AutofillElements.cpp
+    editing/cocoa/AutofillElements.cpp
 
     editing/mac/AlternativeTextUIController.mm
     editing/mac/EditorMac.mm
@@ -162,6 +162,8 @@ list(APPEND WebCore_SOURCES
     page/mac/ServicesOverlayController.mm
     page/mac/TextIndicatorWindow.mm
     page/mac/WheelEventDeltaFilterMac.mm
+
+    page/scrolling/ScrollingTreeScrollingNodeDelegate.cpp
 
     page/scrolling/mac/ScrollingCoordinatorMac.mm
     page/scrolling/mac/ScrollingMomentumCalculatorMac.mm
@@ -302,6 +304,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cocoa/WebGLLayer.mm
     platform/graphics/cocoa/WebGPULayer.mm
 
+    platform/graphics/cv/ImageRotationSessionVT.mm
     platform/graphics/cv/PixelBufferConformerCV.cpp
     platform/graphics/cv/TextureCacheCV.mm
     platform/graphics/cv/VideoTextureCopierCV.cpp
@@ -430,6 +433,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     bridge/objc/WebScriptObject.h
     bridge/objc/WebScriptObjectPrivate.h
 
+    editing/cocoa/AutofillElements.h
     editing/cocoa/DataDetection.h
     editing/cocoa/HTMLConverter.h
 
@@ -568,7 +572,14 @@ set(ADDITIONAL_BINDINGS_DEPENDENCIES
     ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
     ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
 )
-set(CSS_VALUE_PLATFORM_DEFINES WTF_PLATFORM_MAC=1)
+set(CSS_VALUE_PLATFORM_DEFINES "WTF_PLATFORM_MAC=1 HAVE_OS_DARK_MODE_SUPPORT=1")
+
+add_custom_command(
+    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/WHLSLStandardLibraryFunctionMap.cpp
+    MAIN_DEPENDENCY Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt
+    DEPENDS Modules/webgpu/WHLSL/WHLSLBuildStandardLibraryFunctionMap.py
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/Modules/webgpu/WHLSL/WHLSLBuildStandardLibraryFunctionMap.py ${WEBCORE_DIR}/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt ${WebCore_DERIVED_SOURCES_DIR}/WHLSLStandardLibraryFunctionMap.cpp
+    VERBATIM)
 
 list(APPEND WebCoreTestSupport_LIBRARIES PRIVATE WebCore)
 list(APPEND WebCoreTestSupport_SOURCES
