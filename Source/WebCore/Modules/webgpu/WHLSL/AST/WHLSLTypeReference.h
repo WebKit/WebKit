@@ -44,8 +44,8 @@ class NamedType;
 
 class TypeReference : public UnnamedType {
 public:
-    TypeReference(Lexer::Token&& origin, String&& name, TypeArguments&& typeArguments)
-        : UnnamedType(WTFMove(origin))
+    TypeReference(CodeLocation location, String&& name, TypeArguments&& typeArguments)
+        : UnnamedType(location)
         , m_name(WTFMove(name))
         , m_typeArguments(WTFMove(typeArguments))
     {
@@ -56,7 +56,7 @@ public:
     TypeReference(const TypeReference&) = delete;
     TypeReference(TypeReference&&) = default;
 
-    static UniqueRef<TypeReference> wrap(Lexer::Token&& origin, NamedType& resolvedType);
+    static UniqueRef<TypeReference> wrap(CodeLocation, NamedType& resolvedType);
 
     bool isTypeReference() const override { return true; }
 
@@ -88,7 +88,7 @@ public:
 
     UniqueRef<TypeReference> cloneTypeReference() const
     {
-        auto result = makeUniqueRef<TypeReference>(Lexer::Token(origin()), String(m_name), AST::clone(m_typeArguments));
+        auto result = makeUniqueRef<TypeReference>(codeLocation(), String(m_name), AST::clone(m_typeArguments));
         if (m_resolvedType)
             result->setResolvedType(*m_resolvedType);
         return result;

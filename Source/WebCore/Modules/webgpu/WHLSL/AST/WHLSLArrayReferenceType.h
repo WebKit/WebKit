@@ -41,8 +41,8 @@ namespace AST {
 class ArrayReferenceType : public ReferenceType {
     using Base = ReferenceType;
 public:
-    ArrayReferenceType(Lexer::Token&& origin, AddressSpace addressSpace, UniqueRef<UnnamedType>&& elementType)
-        : Base(WTFMove(origin), addressSpace, WTFMove(elementType))
+    ArrayReferenceType(CodeLocation location, AddressSpace addressSpace, UniqueRef<UnnamedType>&& elementType)
+        : Base(location, addressSpace, WTFMove(elementType))
     {
     }
 
@@ -55,7 +55,7 @@ public:
 
     UniqueRef<UnnamedType> clone() const override
     {
-        return makeUniqueRef<ArrayReferenceType>(Lexer::Token(origin()), addressSpace(), elementType().clone());
+        return makeUniqueRef<ArrayReferenceType>(codeLocation(), addressSpace(), elementType().clone());
     }
 
     unsigned hash() const override

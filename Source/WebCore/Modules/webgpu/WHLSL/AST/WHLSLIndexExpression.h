@@ -39,8 +39,8 @@ namespace AST {
 
 class IndexExpression : public PropertyAccessExpression {
 public:
-    IndexExpression(Lexer::Token&& origin, UniqueRef<Expression>&& base, UniqueRef<Expression>&& index)
-        : PropertyAccessExpression(WTFMove(origin), WTFMove(base))
+    IndexExpression(CodeLocation location, UniqueRef<Expression>&& base, UniqueRef<Expression>&& index)
+        : PropertyAccessExpression(location, WTFMove(base))
         , m_index(WTFMove(index))
     {
     }

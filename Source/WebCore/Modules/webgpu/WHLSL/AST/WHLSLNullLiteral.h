@@ -39,8 +39,8 @@ namespace AST {
 
 class NullLiteral : public Expression {
 public:
-    NullLiteral(Lexer::Token&& origin)
-        : Expression(WTFMove(origin))
+    NullLiteral(CodeLocation location)
+        : Expression(location)
     {
     }
 
@@ -58,7 +58,7 @@ public:
 
     NullLiteral clone() const
     {
-        auto result = NullLiteral(Lexer::Token(origin()));
+        auto result = NullLiteral(codeLocation());
         if (auto* resolvedType = m_type.maybeResolvedType())
             result.m_type.resolve(resolvedType->clone());
         copyTypeTo(result);

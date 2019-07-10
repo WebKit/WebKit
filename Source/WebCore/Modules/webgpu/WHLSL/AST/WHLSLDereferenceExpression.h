@@ -39,8 +39,8 @@ namespace AST {
 
 class DereferenceExpression : public Expression {
 public:
-    DereferenceExpression(Lexer::Token&& origin, UniqueRef<Expression>&& pointer)
-        : Expression(WTFMove(origin))
+    DereferenceExpression(CodeLocation location, UniqueRef<Expression>&& pointer)
+        : Expression(location)
         , m_pointer(WTFMove(pointer))
     {
     }

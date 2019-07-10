@@ -37,8 +37,8 @@ namespace AST {
 
 class NumThreadsFunctionAttribute : public BaseFunctionAttribute {
 public:
-    NumThreadsFunctionAttribute(Lexer::Token&& origin, unsigned width, unsigned height, unsigned depth)
-        : BaseFunctionAttribute(WTFMove(origin))
+    NumThreadsFunctionAttribute(CodeLocation location, unsigned width, unsigned height, unsigned depth)
+        : BaseFunctionAttribute(location)
         , m_width(width)
         , m_height(height)
         , m_depth(depth)

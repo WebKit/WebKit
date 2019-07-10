@@ -41,8 +41,8 @@ namespace AST {
 
 class NativeTypeDeclaration : public NamedType {
 public:
-    NativeTypeDeclaration(Lexer::Token&& origin, String&& name, TypeArguments&& typeArguments)
-        : NamedType(WTFMove(origin), WTFMove(name))
+    NativeTypeDeclaration(CodeLocation location, String&& name, TypeArguments&& typeArguments)
+        : NamedType(location, WTFMove(name))
         , m_typeArguments(WTFMove(typeArguments))
     {
     }

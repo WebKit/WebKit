@@ -40,8 +40,8 @@ namespace AST {
 
 class WhileLoop : public Statement {
 public:
-    WhileLoop(Lexer::Token&& origin, UniqueRef<Expression>&& conditional, UniqueRef<Statement>&& body)
-        : Statement(WTFMove(origin))
+    WhileLoop(CodeLocation location, UniqueRef<Expression>&& conditional, UniqueRef<Statement>&& body)
+        : Statement(location)
         , m_conditional(WTFMove(conditional))
         , m_body(WTFMove(body))
     {

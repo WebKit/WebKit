@@ -41,8 +41,8 @@ namespace AST {
 
 class IfStatement : public Statement {
 public:
-    IfStatement(Lexer::Token&& origin, UniqueRef<Expression>&& conditional, UniqueRef<Statement>&& body, Optional<UniqueRef<Statement>>&& elseBody)
-        : Statement(WTFMove(origin))
+    IfStatement(CodeLocation location, UniqueRef<Expression>&& conditional, UniqueRef<Statement>&& body, Optional<UniqueRef<Statement>>&& elseBody)
+        : Statement(location)
         , m_conditional(WTFMove(conditional))
         , m_body(WTFMove(body))
         , m_elseBody(WTFMove(elseBody))

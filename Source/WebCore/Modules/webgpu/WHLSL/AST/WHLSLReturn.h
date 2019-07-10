@@ -41,8 +41,8 @@ namespace AST {
 
 class Return : public Statement {
 public:
-    Return(Lexer::Token&& origin, Optional<UniqueRef<Expression>>&& value)
-        : Statement(WTFMove(origin))
+    Return(CodeLocation location, Optional<UniqueRef<Expression>>&& value)
+        : Statement(location)
         , m_value(WTFMove(value))
     {
     }

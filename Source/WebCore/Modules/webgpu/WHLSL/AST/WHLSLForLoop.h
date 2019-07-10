@@ -44,8 +44,8 @@ namespace AST {
 
 class ForLoop : public Statement {
 public:
-    ForLoop(Lexer::Token&& origin, Variant<UniqueRef<Statement>, UniqueRef<Expression>>&& initialization, Optional<UniqueRef<Expression>>&& condition, Optional<UniqueRef<Expression>>&& increment, UniqueRef<Statement>&& body)
-        : Statement(WTFMove(origin))
+    ForLoop(CodeLocation location, Variant<UniqueRef<Statement>, UniqueRef<Expression>>&& initialization, Optional<UniqueRef<Expression>>&& condition, Optional<UniqueRef<Expression>>&& increment, UniqueRef<Statement>&& body)
+        : Statement(location)
         , m_initialization(WTFMove(initialization))
         , m_condition(WTFMove(condition))
         , m_increment(WTFMove(increment))

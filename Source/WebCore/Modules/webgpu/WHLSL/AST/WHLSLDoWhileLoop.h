@@ -40,8 +40,8 @@ namespace AST {
 
 class DoWhileLoop : public Statement {
 public:
-    DoWhileLoop(Lexer::Token&& origin, UniqueRef<Statement>&& body, UniqueRef<Expression>&& conditional)
-        : Statement(WTFMove(origin))
+    DoWhileLoop(CodeLocation location, UniqueRef<Statement>&& body, UniqueRef<Expression>&& conditional)
+        : Statement(location)
         , m_body(WTFMove(body))
         , m_conditional(WTFMove(conditional))
     {

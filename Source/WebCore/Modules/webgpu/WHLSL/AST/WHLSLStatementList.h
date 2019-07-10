@@ -40,8 +40,8 @@ namespace AST {
 class StatementList : public Statement {
     using Base = Statement;
 public:
-    StatementList(Lexer::Token&& origin, Statements&& statements)
-        : Base(WTFMove(origin))
+    StatementList(CodeLocation location, Statements&& statements)
+        : Base(location)
         , m_statements(WTFMove(statements))
     { }
 
