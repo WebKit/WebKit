@@ -1,3 +1,29 @@
+2019-07-09  Chris Dumez  <cdumez@apple.com>
+
+        Stop using GenericTaskQueue from multiple threads
+        https://bugs.webkit.org/show_bug.cgi?id=199652
+
+        Reviewed by Geoffrey Garen.
+
+        WebCoreAVFLoaderDelegate was calling GenericTaskQueue::enqueueTask() from a background thread,
+        which is not safe because the implementation of enqueueTask() calls makeWeakPtr() on the
+        GenericTaskQueue (a main thread object).
+
+        Update WebCoreAVFLoaderDelegate to use callOnMainThread() instead.
+
+        * platform/GenericTaskQueue.h:
+        Stop last template parameter which was used exclusively by WebCoreAVFLoaderDelegate to try and
+        make GenericTaskQueue thread-safe.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (-[WebCoreAVFMovieObserver metadataLoaded]):
+        (-[WebCoreAVFMovieObserver didEnd:]):
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+        (-[WebCoreAVFMovieObserver legibleOutput:didOutputAttributedStrings:nativeSampleBuffers:forItemTime:]):
+        (-[WebCoreAVFMovieObserver outputSequenceWasFlushed:]):
+        (-[WebCoreAVFLoaderDelegate resourceLoader:shouldWaitForLoadingOfRequestedResource:]):
+        (-[WebCoreAVFLoaderDelegate resourceLoader:didCancelLoadingRequest:]):
+
 2019-07-09  Tim Horton  <timothy_horton@apple.com>
 
         Fixed elements appear in the middle of full page screenshots taken when scrolled

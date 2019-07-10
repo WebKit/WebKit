@@ -71,8 +71,8 @@ private:
     Deque<WTF::Function<void()>> m_pendingTasks;
 };
 
-template <typename T, typename C = unsigned>
-class GenericTaskQueue : public CanMakeWeakPtr<GenericTaskQueue<T, C>> {
+template <typename T>
+class GenericTaskQueue : public CanMakeWeakPtr<GenericTaskQueue<T>> {
 public:
     GenericTaskQueue()
         : m_dispatcher()
@@ -124,7 +124,7 @@ public:
 
 private:
     TaskDispatcher<T> m_dispatcher;
-    C m_pendingTasks { 0 };
+    unsigned m_pendingTasks { 0 };
     bool m_isClosed { false };
 };
 

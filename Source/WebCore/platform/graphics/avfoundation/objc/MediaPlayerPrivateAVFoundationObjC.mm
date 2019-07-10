@@ -169,7 +169,6 @@ enum MediaPlayerAVFoundationObservationContext {
 @interface WebCoreAVFMovieObserver : NSObject <AVPlayerItemLegibleOutputPushDelegate>
 {
     WeakPtr<MediaPlayerPrivateAVFoundationObjC> m_player;
-    GenericTaskQueue<Timer, std::atomic<unsigned>> m_taskQueue;
     int m_delayCallbacks;
 }
 -(id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)callback;
@@ -184,7 +183,6 @@ enum MediaPlayerAVFoundationObservationContext {
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
 @interface WebCoreAVFLoaderDelegate : NSObject<AVAssetResourceLoaderDelegate> {
     WeakPtr<MediaPlayerPrivateAVFoundationObjC> m_player;
-    GenericTaskQueue<Timer, std::atomic<unsigned>> m_taskQueue;
 }
 - (id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player;
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest;
@@ -3287,7 +3285,7 @@ NSArray* playerKVOProperties()
 
 - (void)metadataLoaded
 {
-    m_taskQueue.enqueueTask([player = m_player] {
+    callOnMainThread([player = m_player] {
         if (player)
             player->metadataLoaded();
     });
@@ -3296,7 +3294,7 @@ NSArray* playerKVOProperties()
 - (void)didEnd:(NSNotification *)unusedNotification
 {
     UNUSED_PARAM(unusedNotification);
-    m_taskQueue.enqueueTask([player = m_player] {
+    callOnMainThread([player = m_player] {
         if (player)
             player->didEnd();
     });
@@ -3304,7 +3302,7 @@ NSArray* playerKVOProperties()
 
 - (void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(MediaPlayerAVFoundationObservationContext)context
 {
-    m_taskQueue.enqueueTask([player = m_player, keyPath = retainPtr(keyPath), change = retainPtr(change), object = retainPtr(object), context] {
+    callOnMainThread([player = m_player, keyPath = retainPtr(keyPath), change = retainPtr(change), object = retainPtr(object), context] {
         if (!player)
             return;
         id newValue = [change valueForKey:NSKeyValueChangeNewKey];
@@ -3407,7 +3405,7 @@ NSArray* playerKVOProperties()
 {
     UNUSED_PARAM(output);
 
-    m_taskQueue.enqueueTask([player = m_player, strings = retainPtr(strings), nativeSamples = retainPtr(nativeSamples), itemTime] {
+    callOnMainThread([player = m_player, strings = retainPtr(strings), nativeSamples = retainPtr(nativeSamples), itemTime] {
         if (!player)
             return;
         MediaTime time = std::max(PAL::toMediaTime(itemTime), MediaTime::zeroTime());
@@ -3419,7 +3417,7 @@ NSArray* playerKVOProperties()
 {
     UNUSED_PARAM(output);
 
-    m_taskQueue.enqueueTask([player = m_player] {
+    callOnMainThread([player = m_player] {
         if (player)
             player->flushCues();
     });
@@ -3446,7 +3444,7 @@ NSArray* playerKVOProperties()
     if (!m_player)
         return NO;
 
-    m_taskQueue.enqueueTask([player = m_player, loadingRequest = retainPtr(loadingRequest)] {
+    callOnMainThread([player = m_player, loadingRequest = retainPtr(loadingRequest)] {
         if (!player) {
             [loadingRequest finishLoadingWithError:nil];
             return;
@@ -3470,7 +3468,7 @@ NSArray* playerKVOProperties()
 - (void)resourceLoader:(AVAssetResourceLoader *)resourceLoader didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest
 {
     UNUSED_PARAM(resourceLoader);
-    m_taskQueue.enqueueTask([player = m_player, loadingRequest = retainPtr(loadingRequest)] {
+    callOnMainThread([player = m_player, loadingRequest = retainPtr(loadingRequest)] {
         if (player)
             player->didCancelLoadingRequest(loadingRequest.get());
     });
