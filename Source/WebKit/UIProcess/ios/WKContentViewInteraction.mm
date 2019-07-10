@@ -76,6 +76,7 @@
 #import "WebProcessProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKElementAction.h"
+#import "_WKElementActionInternal.h"
 #import "_WKFocusedElementInfo.h"
 #import "_WKInputDelegate.h"
 #import "_WKTextInputContextInternal.h"
@@ -7861,6 +7862,8 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
             return strongSelf->_contextMenuLegacyPreviewController.get();
         };
 
+        _page->startInteractionWithElementAtPosition(_positionInformation.request.point);
+
         // FIXME: Should we provide an identifier and ASSERT in delegates if we don't match?
         return continueWithContextMenuConfiguration([UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:contentPreviewProvider actionProvider:actionMenuProvider]);
     }
@@ -7872,6 +7875,7 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
             return continueWithContextMenuConfiguration(nil);
 
         if (configurationFromWKUIDelegate) {
+            strongSelf->_page->startInteractionWithElementAtPosition(strongSelf->_positionInformation.request.point);
             strongSelf->_contextMenuActionProviderDelegateNeedsOverride = YES;
             continueWithContextMenuConfiguration(configurationFromWKUIDelegate);
             return;
@@ -7894,6 +7898,7 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
             NSDictionary *context = [strongSelf dataDetectionContextForPositionInformation:strongSelf->_positionInformation];
             UIContextMenuConfiguration *configurationFromDD = [ddContextMenuActionClass contextMenuConfigurationForURL:linkURL identifier:strongSelf->_positionInformation.dataDetectorIdentifier selectedText:[strongSelf selectedText] results:strongSelf->_positionInformation.dataDetectorResults.get() inView:strongSelf.get() context:context menuIdentifier:nil];
             strongSelf->_contextMenuActionProviderDelegateNeedsOverride = YES;
+            strongSelf->_page->startInteractionWithElementAtPosition(strongSelf->_positionInformation.request.point);
             if (strongSelf->_showLinkPreviews)
                 return continueWithContextMenuConfiguration(configurationFromDD);
             return continueWithContextMenuConfiguration([UIContextMenuConfiguration configurationWithIdentifier:[configurationFromDD identifier] previewProvider:nil actionProvider:[configurationFromDD actionProvider]]);
@@ -8120,6 +8125,8 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
             ALLOW_DEPRECATED_DECLARATIONS_END
         }
     }
+
+    _page->stopInteraction();
 
     _contextMenuLegacyPreviewController = nullptr;
     _contextMenuLegacyMenu = nullptr;

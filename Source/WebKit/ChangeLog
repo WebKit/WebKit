@@ -1,3 +1,44 @@
+2019-07-10  Dean Jackson  <dino@apple.com>
+
+        Share or Copy image from context menu does not share the correct data
+        https://bugs.webkit.org/show_bug.cgi?id=199681
+        <rdar://problem/50538771>
+
+        Reviewed by Tim Horton.
+
+        The UIContextMenuInteraction calls didEndInteraction before executing the
+        actions of a selected menu item. This means we were assuming the interaction
+        had finished before performing the action triggered in the interaction, ending
+        up in the state where we had forgotten which element we were working with.
+
+        Rather than ask for UIKit to change, I'm just starting the interaction again
+        as the action is run. Thankfully we already had the location of the interaction.
+        There is a small risk that the page has changed in the meantime, but I'm not
+        sure what to do about that.
+
+        While here, I moved a method only used by us into _WKElementActionInternal,
+        and changed the location stored by _WKActivatedElementInfo from a CGPoint
+        to an WebCore::IntPoint (since it doesn't escape WebKit).
+
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.mm: Use a WebCore::IntPoint rather than a CGPoint.
+        (-[_WKActivatedElementInfo _initWithType:URL:imageURL:location:title:ID:rect:image:]):
+        (-[_WKActivatedElementInfo _initWithType:URL:imageURL:location:title:ID:rect:image:userInfo:]):
+        (-[_WKActivatedElementInfo _interactionLocation]):
+        * UIProcess/API/Cocoa/_WKActivatedElementInfoInternal.h:
+
+        * UIProcess/API/Cocoa/_WKElementAction.h: Move uiActionForElementInfo to Internal.
+        * UIProcess/API/Cocoa/_WKElementActionInternal.h:
+
+        * UIProcess/API/Cocoa/_WKElementAction.mm: When executing the handlers, restart the interaction
+        using the location in _WKActivatedElementInfo.
+        (+[_WKElementAction _elementActionWithType:customTitle:assistant:]):
+
+        * UIProcess/ios/WKContentViewInteraction.mm: Explicitly start and stop interactions at
+        the appropriate points in the UIContextMenu flow. This isn't really needed since we're
+        doing it in the handlers, but it will be correct if the UIKit delegate order changes.
+        (-[WKContentView continueContextMenuInteraction:]):
+        (-[WKContentView contextMenuInteractionDidEnd:]):
+
 2019-07-10  Chris Dumez  <cdumez@apple.com>
 
         Crash under IPC::Connection::waitForMessage()

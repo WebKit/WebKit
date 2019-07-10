@@ -67,8 +67,6 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 - (void)runActionWithElementInfo:(_WKActivatedElementInfo *)info WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(9.0));
 
-- (UIAction *)uiActionForElementInfo:(_WKActivatedElementInfo *)elementInfo WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(13.0));
-
 @property (nonatomic, readonly) _WKElementActionType type;
 @property (nonatomic, readonly) NSString* title;
 @property (nonatomic, copy) WKElementActionDismissalHandler dismissalHandler;

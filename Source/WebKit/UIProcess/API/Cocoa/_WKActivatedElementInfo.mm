@@ -41,7 +41,7 @@
     RetainPtr<NSURL> _URL;
     RetainPtr<NSURL> _imageURL;
     RetainPtr<NSString> _title;
-    CGPoint _interactionLocation;
+    WebCore::IntPoint _interactionLocation;
     RetainPtr<NSString> _ID;
     RefPtr<WebKit::ShareableBitmap> _image;
 #if PLATFORM(IOS_FAMILY)
@@ -88,12 +88,12 @@
 }
 #endif
 
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(CGPoint)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(const WebCore::IntPoint&)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image
 {
     return [self _initWithType:type URL:url imageURL:imageURL location:location title:title ID:ID rect:rect image:image userInfo:nil];
 }
 
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(CGPoint)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image userInfo:(NSDictionary *)userInfo
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(const WebCore::IntPoint&)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image userInfo:(NSDictionary *)userInfo
 {
     if (!(self = [super init]))
         return nil;
@@ -133,7 +133,7 @@
     return _ID.get();
 }
 
-- (CGPoint)_interactionLocation
+- (WebCore::IntPoint)_interactionLocation
 {
     return _interactionLocation;
 }

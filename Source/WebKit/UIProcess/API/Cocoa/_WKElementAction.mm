@@ -123,7 +123,11 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
     case _WKElementActionTypeCopy:
         title = WEB_UI_STRING_KEY("Copy", "Copy (ActionSheet)", "Title for Copy Link or Image action button");
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
+            if ([assistant.delegate respondsToSelector:@selector(actionSheetAssistant:willStartInteractionWithElement:)])
+                [assistant.delegate actionSheetAssistant:assistant willStartInteractionWithElement:actionInfo];
             [assistant.delegate actionSheetAssistant:assistant performAction:WebKit::SheetAction::Copy];
+            if ([assistant.delegate respondsToSelector:@selector(actionSheetAssistantDidStopInteraction:)])
+                [assistant.delegate actionSheetAssistantDidStopInteraction:assistant];
         };
         break;
     case _WKElementActionTypeOpen:
@@ -135,7 +139,11 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
     case _WKElementActionTypeSaveImage:
         title = WEB_UI_STRING("Add to Photos", "Title for Add to Photos action button");
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
+            if ([assistant.delegate respondsToSelector:@selector(actionSheetAssistant:willStartInteractionWithElement:)])
+                [assistant.delegate actionSheetAssistant:assistant willStartInteractionWithElement:actionInfo];
             [assistant.delegate actionSheetAssistant:assistant performAction:WebKit::SheetAction::SaveImage];
+            if ([assistant.delegate respondsToSelector:@selector(actionSheetAssistantDidStopInteraction:)])
+                [assistant.delegate actionSheetAssistantDidStopInteraction:assistant];
         };
         break;
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)
