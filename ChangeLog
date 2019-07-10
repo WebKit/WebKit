@@ -1,3 +1,21 @@
+2019-07-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Enable support for CSS_COMPOSITING
+        https://bugs.webkit.org/show_bug.cgi?id=199513
+
+        Reviewed by Michael Catanzaro.
+
+        This feature is needed to support the CSS properties "mix-blend-mode" and "isolation".
+        Enable it for all ports except for AppleWin (doesn't build).
+
+        It has been tested that it builds on the EWS bots of all the ports enabled (for those that have an EWS).
+        Also, for the GTK and WPE ports it also has been tested that the feature works fine on most of the cases and that doesn't cause regressions.
+
+        * Source/cmake/OptionsFTW.cmake: Enable the feature.
+        * Source/cmake/OptionsMac.cmake: Use the new default.
+        * Source/cmake/OptionsWin.cmake: Enable for WinCairo only.
+        * Source/cmake/WebKitFeatures.cmake: Enable it Globally
+
 2019-06-28  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Build WebCore

@@ -1,3 +1,104 @@
+2019-07-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Enable support for CSS_COMPOSITING
+        https://bugs.webkit.org/show_bug.cgi?id=199513
+
+        Reviewed by Michael Catanzaro.
+
+        Rebaseline the tests that pass after enabling CSS_COMPOSITING.
+        The feature works is most of the cases, but there are still some tests/cases not working.
+
+        There are also some new failures marked related to SVG blending (css3/blending/svg*), but those were already failing before.
+        So its unrelated to this change.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css3/blending/background-blend-mode-default-value-expected.png:
+        * platform/gtk/css3/blending/background-blend-mode-different-image-formats-expected.png:
+        * platform/gtk/css3/blending/background-blend-mode-image-color-expected.png:
+        * platform/gtk/css3/blending/background-blend-mode-image-image-expected.png:
+        * platform/gtk/css3/blending/background-blend-mode-single-layer-no-blending-expected.png:
+        * platform/gtk/css3/blending/blend-mode-background-expected.png:
+        * platform/gtk/css3/blending/blend-mode-background-expected.txt:
+        * platform/gtk/css3/blending/blend-mode-isolation-flags-append-non-stacking-context-blending-expected.png: Added.
+        * platform/gtk/css3/blending/blend-mode-isolation-flags-append-non-stacking-context-blending-expected.txt: Added.
+        * platform/gtk/css3/blending/blend-mode-isolation-flags-append-stacking-context-blending-expected.png: Added.
+        * platform/gtk/css3/blending/blend-mode-isolation-flags-append-stacking-context-blending-expected.txt: Added.
+        * platform/gtk/css3/blending/blend-mode-isolation-flags-turn-off-blending-expected.png: Added.
+        * platform/gtk/css3/blending/blend-mode-isolation-flags-turn-off-blending-expected.txt: Added.
+        * platform/gtk/css3/blending/blend-mode-isolation-flags-turn-off-blending-no-isolation-expected.png: Added.
+        * platform/gtk/css3/blending/blend-mode-isolation-flags-turn-off-blending-no-isolation-expected.txt: Added.
+        * platform/gtk/css3/blending/blend-mode-isolation-flags-turn-off-stacking-context-expected.png: Added.
+        * platform/gtk/css3/blending/blend-mode-isolation-flags-turn-off-stacking-context-expected.txt: Added.
+        * platform/gtk/css3/blending/blend-mode-isolation-flags-turn-on-blending-expected.png: Added.
+        * platform/gtk/css3/blending/blend-mode-isolation-flags-turn-on-blending-expected.txt: Added.
+        * platform/gtk/css3/blending/blend-mode-isolation-flags-turn-on-stacking-context-expected.png: Added.
+        * platform/gtk/css3/blending/blend-mode-isolation-flags-turn-on-stacking-context-expected.txt: Added.
+        * platform/gtk/css3/blending/blend-mode-overflow-expected.png: Added.
+        * platform/gtk/css3/blending/blend-mode-overflow-expected.txt: Added.
+        * platform/gtk/css3/blending/blend-mode-simple-expected.png: Added.
+        * platform/gtk/css3/blending/blend-mode-simple-expected.txt: Added.
+        * platform/gtk/css3/blending/repaint/blend-mode-turn-off-isolation-no-effect-expected.txt: Added.
+        * platform/gtk/css3/blending/svg-blend-layer-blend-expected.png:
+        * platform/gtk/css3/blending/svg-blend-layer-blend-expected.txt:
+        * platform/gtk/css3/blending/svg-blend-layer-clip-path-expected.png: Added.
+        * platform/gtk/css3/blending/svg-blend-layer-clip-path-expected.txt: Added.
+        * platform/gtk/css3/blending/svg-blend-layer-filter-expected.png:
+        * platform/gtk/css3/blending/svg-blend-layer-filter-expected.txt:
+        * platform/gtk/css3/blending/svg-blend-layer-mask-expected.png:
+        * platform/gtk/css3/blending/svg-blend-layer-mask-expected.txt:
+        * platform/gtk/css3/blending/svg-blend-layer-opacity-expected.png:
+        * platform/gtk/css3/blending/svg-blend-layer-opacity-expected.txt:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/css3/blending/background-blend-mode-default-value-expected.png: Added.
+        * platform/wpe/css3/blending/background-blend-mode-default-value-expected.txt: Added.
+        * platform/wpe/css3/blending/background-blend-mode-different-image-formats-expected.png: Added.
+        * platform/wpe/css3/blending/background-blend-mode-different-image-formats-expected.txt: Added.
+        * platform/wpe/css3/blending/background-blend-mode-gif-color-2-expected.png: Added.
+        * platform/wpe/css3/blending/background-blend-mode-gif-color-2-expected.txt: Added.
+        * platform/wpe/css3/blending/background-blend-mode-gif-color-expected.png: Added.
+        * platform/wpe/css3/blending/background-blend-mode-gif-color-expected.txt: Added.
+        * platform/wpe/css3/blending/background-blend-mode-image-color-expected.png: Added.
+        * platform/wpe/css3/blending/background-blend-mode-image-color-expected.txt: Added.
+        * platform/wpe/css3/blending/background-blend-mode-image-image-expected.png: Added.
+        * platform/wpe/css3/blending/background-blend-mode-image-image-expected.txt: Added.
+        * platform/wpe/css3/blending/background-blend-mode-single-layer-no-blending-expected.png: Added.
+        * platform/wpe/css3/blending/background-blend-mode-single-layer-no-blending-expected.txt: Added.
+        * platform/wpe/css3/blending/blend-mode-background-expected.png: Added.
+        * platform/wpe/css3/blending/blend-mode-background-expected.txt: Copied from LayoutTests/platform/gtk/css3/blending/blend-mode-background-expected.txt.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-append-non-stacking-context-blending-expected.png: Added.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-append-non-stacking-context-blending-expected.txt: Added.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-append-stacking-context-blending-expected.png: Added.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-append-stacking-context-blending-expected.txt: Added.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-remove-non-stacking-context-blending-expected.png: Added.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-remove-non-stacking-context-blending-expected.txt: Added.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-remove-stacking-context-blending-expected.png: Added.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-remove-stacking-context-blending-expected.txt: Added.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-turn-off-blending-expected.png: Added.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-turn-off-blending-expected.txt: Added.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-turn-off-blending-no-isolation-expected.png: Added.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-turn-off-blending-no-isolation-expected.txt: Added.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-turn-off-stacking-context-expected.png: Added.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-turn-off-stacking-context-expected.txt: Added.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-turn-on-blending-expected.png: Added.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-turn-on-blending-expected.txt: Added.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-turn-on-stacking-context-expected.png: Added.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-turn-on-stacking-context-expected.txt: Added.
+        * platform/wpe/css3/blending/blend-mode-overflow-expected.png: Added.
+        * platform/wpe/css3/blending/blend-mode-overflow-expected.txt: Added.
+        * platform/wpe/css3/blending/blend-mode-simple-expected.png: Added.
+        * platform/wpe/css3/blending/blend-mode-simple-expected.txt: Added.
+        * platform/wpe/css3/blending/repaint/blend-mode-turn-off-isolation-no-effect-expected.txt: Added.
+        * platform/wpe/css3/blending/svg-blend-layer-blend-expected.png: Added.
+        * platform/wpe/css3/blending/svg-blend-layer-blend-expected.txt: Added.
+        * platform/wpe/css3/blending/svg-blend-layer-clip-path-expected.png: Added.
+        * platform/wpe/css3/blending/svg-blend-layer-clip-path-expected.txt: Added.
+        * platform/wpe/css3/blending/svg-blend-layer-filter-expected.png: Added.
+        * platform/wpe/css3/blending/svg-blend-layer-filter-expected.txt: Added.
+        * platform/wpe/css3/blending/svg-blend-layer-mask-expected.png: Added.
+        * platform/wpe/css3/blending/svg-blend-layer-mask-expected.txt: Added.
+        * platform/wpe/css3/blending/svg-blend-layer-opacity-expected.png: Added.
+        * platform/wpe/css3/blending/svg-blend-layer-opacity-expected.txt: Added.
+
 2019-07-09  Andres Gonzalez  <andresg_22@apple.com>
 
         AX: HTML datalist accessibility is not exposed by WebKit
