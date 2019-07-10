@@ -1,3 +1,32 @@
+2019-07-10  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Optimize join of large empty arrays
+        https://bugs.webkit.org/show_bug.cgi?id=199636
+
+        Reviewed by Mark Lam.
+
+        Replicate the behavior of `str.repeat(count)` when performing `new Array(count + 1).join(str)`.
+        I added two new microbenchmarks:
+        - large-empty-array-join, which does not use the result of the join and runs ~44x faster and uses ~18x less memory.
+        - large-empty-array-join-resolve-rope, which uses the result of the join and runs 2x faster.
+
+                                                    baseline                    diff
+        large-empty-array-join                2713.9698+-72.7621    ^     61.2335+-10.4836       ^ definitely 44.3217x faster
+        large-empty-array-join-resolve-string   26.5517+-0.3995     ^     12.9309+-0.5516        ^ definitely 2.0533x faster
+
+        large-empty-array-join memory usage with baseline (dirty):
+            733012 kB current_mem
+            756824 kB lifetime_peak
+
+        large-empty-array-join memory usage with diff (dirty):
+            41904 kB current_mem
+            41972 kB lifetime_peak
+
+        Additionally, I ran JetStream2, sunspider and v8-spider and all were neutral.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::fastJoin):
+
 2019-07-08  Keith Miller  <keith_miller@apple.com>
 
         Enable Intl.PluralRules and Intl.NumberFormatToParts by default

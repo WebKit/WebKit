@@ -540,6 +540,25 @@ inline JSValue fastJoin(ExecState& state, JSObject* thisObject, StringView separ
             if (separator.is8Bit())
                 RELEASE_AND_RETURN(scope, repeatCharacter(state, separator.characters8()[0], length - 1));
             RELEASE_AND_RETURN(scope, repeatCharacter(state, separator.characters16()[0], length - 1));
+        default:
+            JSString* result = jsEmptyString(&state);
+            if (length <= 1)
+                return result;
+
+            JSString* operand = jsString(&vm, separator.toString());
+            RETURN_IF_EXCEPTION(scope, { });
+            unsigned count = length - 1;
+            for (;;) {
+                if (count & 1) {
+                    result = jsString(&state, result, operand);
+                    RETURN_IF_EXCEPTION(scope, { });
+                }
+                count >>= 1;
+                if (!count)
+                    return result;
+                operand = jsString(&state, operand, operand);
+                RETURN_IF_EXCEPTION(scope, { });
+            }
         }
         }
     }
