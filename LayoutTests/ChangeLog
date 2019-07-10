@@ -1,3 +1,53 @@
+2019-07-09  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Import another round of JS spec tests
+        https://bugs.webkit.org/show_bug.cgi?id=199647
+
+        Reviewed by Myles C. Maxfield.
+
+        This patch also removes the unneded <!-- webkit-test-runner [ experimental:WebGPUEnabled=true ] -->
+        comments in various tests.
+
+        * webgpu/bind-groups.html:
+        * webgpu/blit-commands.html:
+        * webgpu/map-read-buffers.html:
+        * webgpu/map-write-buffers.html:
+        * webgpu/msl-harness-test.html:
+        * webgpu/pipeline-layouts.html:
+        * webgpu/queue-creation.html:
+        * webgpu/render-command-encoding.html:
+        * webgpu/shader-modules.html:
+        * webgpu/textures-textureviews.html:
+        * webgpu/whlsl-array-spec-tests.html:
+        * webgpu/whlsl-bad-ander-expected.txt: Added.
+        * webgpu/whlsl-bad-ander.html: Added.
+        * webgpu/whlsl-bad-literals-expected.txt: Added.
+        * webgpu/whlsl-bad-literals.html: Added.
+        * webgpu/whlsl-bitwise-bool-ops.html:
+        * webgpu/whlsl-enum-spec-tests.html:
+        * webgpu/whlsl-equality.html:
+        * webgpu/whlsl-float-math-expected.txt: Added.
+        * webgpu/whlsl-float-math.html: Added.
+        * webgpu/whlsl-index-getter-setter-expected.txt: Added.
+        * webgpu/whlsl-index-getter-setter.html: Added.
+        * webgpu/whlsl-int-bit-math-expected.txt: Added.
+        * webgpu/whlsl-int-bit-math.html: Added.
+        * webgpu/whlsl-int-literal-compare.html:
+        * webgpu/whlsl-make-array-ref-spec-tests-expected.txt: Added.
+        * webgpu/whlsl-make-array-ref-spec-tests.html: Added.
+        * webgpu/whlsl-matrices-spec-tests.html:
+        * webgpu/whlsl-pointer-spec-tests-expected.txt: Added.
+        * webgpu/whlsl-pointer-spec-tests.html: Added.
+        * webgpu/whlsl-postfix-prefix-expected.txt: Added.
+        * webgpu/whlsl-postfix-prefix.html: Added.
+        * webgpu/whlsl-return-spec-tests.html:
+        * webgpu/whlsl-simple-getter-setter.html:
+        * webgpu/whlsl-simple-tests.html:
+        * webgpu/whlsl-simple-while-loop.html:
+        * webgpu/whlsl-test-harness-test.html:
+        * webgpu/whlsl-type-mismatch.html:
+        * webgpu/whlsl-uint-bitwise.html:
+
 2019-07-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, address TestExpectations linter warning.

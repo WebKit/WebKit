@@ -1,0 +1,5 @@
+
+PASS makeArrayRefFromArrayRef 
+PASS makeArrayRefFromLocal 
+PASS makeArrayRefFromPointer 
+
