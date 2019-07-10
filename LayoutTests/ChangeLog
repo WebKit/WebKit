@@ -1,3 +1,15 @@
+2019-07-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [iOS] REGRESSION(r244851): Revealing caret sometimes fails when content inset is used
+        https://bugs.webkit.org/show_bug.cgi?id=199662
+
+        Reviewed by Simon Fraser.
+
+        Added a regression test.
+
+        * editing/selection/ios/autoscroll-with-top-content-inset-2-expected.txt: Added.
+        * editing/selection/ios/autoscroll-with-top-content-inset-2.html: Added.
+
 2019-07-10  Saam Barati  <sbarati@apple.com>
 
         [WHLSL Import more JS reference spec tests

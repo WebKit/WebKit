@@ -1,3 +1,21 @@
+2019-07-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [iOS] REGRESSION(r244851): Revealing caret sometimes fails when content inset is used
+        https://bugs.webkit.org/show_bug.cgi?id=199662
+
+        Reviewed by Simon Fraser.
+
+        The bug was caused by ScrollableArea::maximumScrollPosition using ScrollableArea::visibleSize, which does not
+        take the content insets into account correctly, rather than FrameView::visualViewportRectExpandedByContentInsets,
+        which does, and is used for "viewRect" in RenderLayer::scrollRectToVisible.
+
+        Override the maximum scroll position using visualViewportRectExpandedByContentInsets in iOS to fix the issue.
+
+        Test: editing/selection/ios/autoscroll-with-top-content-inset-2.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible): Fixed the bug.
+
 2019-07-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r247316.
