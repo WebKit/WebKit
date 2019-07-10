@@ -2941,7 +2941,13 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 - (void)tintColorDidChange
 {
     [super tintColorDidChange];
+
+    BOOL shouldUpdateTextSelection = self.isFirstResponder && [self canShowNonEmptySelectionView];
+    if (shouldUpdateTextSelection)
+        [_textSelectionAssistant deactivateSelection];
     [self _updateInteractionTintColor];
+    if (shouldUpdateTextSelection)
+        [_textSelectionAssistant activateSelection];
 }
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender

@@ -1,3 +1,17 @@
+2019-07-10  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Selection handles "Lollipops" can become gray and stay gray
+        https://bugs.webkit.org/show_bug.cgi?id=198852
+        <rdar://problem/51736130>
+
+        Reviewed by Wenson Hsieh.
+
+        Tell the text interaction assistant to update the selection UI when the tint color changes.
+        We do this by way of deactivating and activating selection.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView tintColorDidChange]):
+
 2019-07-10  Dean Jackson  <dino@apple.com>
 
         Share or Copy image from context menu does not share the correct data
