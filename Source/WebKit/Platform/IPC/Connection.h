@@ -353,7 +353,7 @@ private:
     HashMap<uint64_t, ReplyHandler> m_replyHandlers;
 
     struct WaitForMessageState;
-    WaitForMessageState* m_waitingForMessage;
+    WaitForMessageState* m_waitingForMessage { nullptr };
 
     class SyncMessageState;
 

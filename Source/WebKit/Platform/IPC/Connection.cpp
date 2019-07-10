@@ -260,7 +260,6 @@ Connection::Connection(Identifier identifier, bool isServer, Client& client)
     , m_inDispatchMessageCount(0)
     , m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount(0)
     , m_didReceiveInvalidMessage(false)
-    , m_waitingForMessage(nullptr)
     , m_shouldWaitForSyncReplies(true)
 {
     ASSERT(RunLoop::isMain());
@@ -468,6 +467,7 @@ Seconds Connection::timeoutRespectingIgnoreTimeoutsForTesting(Seconds timeout) c
 std::unique_ptr<Decoder> Connection::waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, Seconds timeout, OptionSet<WaitForOption> waitForOptions)
 {
     ASSERT(RunLoop::isMain());
+    auto protectedThis = makeRef(*this);
 
     timeout = timeoutRespectingIgnoreTimeoutsForTesting(timeout);
 
@@ -494,7 +494,11 @@ std::unique_ptr<Decoder> Connection::waitForMessage(StringReference messageRecei
 
     // Don't even start waiting if we have InterruptWaitingIfSyncMessageArrives and there's a sync message already in the queue.
     if (hasIncomingSynchronousMessage && waitForOptions.contains(WaitForOption::InterruptWaitingIfSyncMessageArrives)) {
-        m_waitingForMessage = nullptr;
+#if !ASSERT_DISABLED
+        std::lock_guard<Lock> lock(m_waitForMessageMutex);
+        // We don't support having multiple clients waiting for messages.
+        ASSERT(!m_waitingForMessage);
+#endif
         return nullptr;
     }
 
@@ -505,6 +509,8 @@ std::unique_ptr<Decoder> Connection::waitForMessage(StringReference messageRecei
 
         // We don't support having multiple clients waiting for messages.
         ASSERT(!m_waitingForMessage);
+        if (m_waitingForMessage)
+            return nullptr;
 
         m_waitingForMessage = &waitingForMessage;
     }

@@ -1,3 +1,33 @@
+2019-07-10  Chris Dumez  <cdumez@apple.com>
+
+        Crash under IPC::Connection::waitForMessage()
+        https://bugs.webkit.org/show_bug.cgi?id=199680
+        <rdar://problem/52500561>
+
+        Reviewed by Tim Horton.
+
+        IPC::Connection::waitForMessage() is crashing due to a null defererence of
+        m_waitingForMessage. Since m_waitingForMessage is only ever set to null in
+        waitForMessage(), this seems to imply we've re-entered waitForMessage().
+        This is in theory possible since the loop inside waitForMessage() calls
+        SyncMessageState::singleton().dispatchMessages() on every iteration to
+        process incoming synchronous IPC messages. In theory, one of these sync
+        IPC messages could run code which ends up calling waitForAndDispatchImmediately()
+        (and thus waitForMessage()).
+
+        We had a debug assertion to try and catch re-entrancy with a comment stating
+        "We don't support having multiple clients waiting for messages." but we
+        would not see those in release and we would crash with a null dereference
+        instead.
+
+        To address the crashes in release, return early in case of re-entrancy
+        (we would still hit an assertion in debug).
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::Connection):
+        (IPC::Connection::waitForMessage):
+        * Platform/IPC/Connection.h:
+
 2019-07-10  Tim Horton  <timothy_horton@apple.com>
 
         Context menus are not presented for WKWebViews that don't have UIDelegates
