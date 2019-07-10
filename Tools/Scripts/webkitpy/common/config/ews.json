@@ -58,7 +58,7 @@
         "port": "jsc-only",
         "name": "jsc-mips-ews",
         "group": "jsc",
-        "runTests": false,
+        "runTests": true,
         "watchers": [
             "guijemont@igalia.com"
         ]
