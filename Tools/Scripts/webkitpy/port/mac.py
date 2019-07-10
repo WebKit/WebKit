@@ -277,6 +277,9 @@ class MacPort(DarwinPort):
         # FIXME: Remove this after <rdar://problem/51191120> is fixed.
         logging_patterns.append((re.compile('GVA warning: getFreeDRMInstanceCount, maxDRMInstanceCount: .*\n'), ''))
 
+        # FIXME: Remove this after <rdar://problem/52897406> is fixed.
+        logging_patterns.append((re.compile('VPA info:.*\n'), ''))
+
         return logging_patterns
 
     def stderr_patterns_to_strip(self):
