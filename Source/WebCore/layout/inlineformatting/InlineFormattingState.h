@@ -48,14 +48,13 @@ public:
     InlineFormattingState(Ref<FloatingState>&&, LayoutState&);
     virtual ~InlineFormattingState();
 
-    void addInlineTextItem();
-
     InlineItems& inlineItems() { return m_inlineItems; }
-    InlineRuns& inlineRuns() { return m_inlineRuns; }
-    LineBoxes& lineBoxes() { return m_lineBoxes; }
-
     void addInlineItem(std::unique_ptr<InlineItem>&& inlineItem) { m_inlineItems.append(WTFMove(inlineItem)); }
+
+    InlineRuns& inlineRuns() { return m_inlineRuns; }
     void addInlineRun(std::unique_ptr<Display::Run>&& inlineRun) { m_inlineRuns.append(WTFMove(inlineRun)); }
+
+    LineBoxes& lineBoxes() { return m_lineBoxes; }
     void addLineBox(LineBox lineBox) { m_lineBoxes.append(lineBox); }
 
 private:

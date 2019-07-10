@@ -53,11 +53,11 @@ private:
     class LineLayout {
     public:
         LineLayout(const InlineFormattingContext&);
-        void layout(LayoutUnit widthConstraint) const;
-        LayoutUnit computedIntrinsicWidth(LayoutUnit widthConstraint) const;
+        void layout(const InlineItems&, LayoutUnit widthConstraint) const;
+        LayoutUnit computedIntrinsicWidth(const InlineItems&, LayoutUnit widthConstraint) const;
 
     private:
-        LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
+        LayoutState& layoutState() const { return m_layoutState; }
 
         struct InlineIndexAndSplitPosition {
             unsigned index { 0 };
@@ -87,15 +87,10 @@ private:
         };
         LineContent placeInlineItems(const LineInput&) const;
         void createDisplayRuns(const Line::Content&, const Vector<WeakPtr<InlineItem>>& floats, LayoutUnit widthConstraint) const;
-        void alignRuns(TextAlignMode, unsigned firstRunIndex, LayoutUnit availableWidth) const;
+        void alignRuns(TextAlignMode, InlineRuns&, unsigned firstRunIndex, LayoutUnit availableWidth) const;
 
     private:
-        static void justifyRuns(Line&);
-
-    private:
-        const InlineFormattingContext& m_formattingContext;
-        InlineFormattingState& m_formattingState;
-        FloatingState& m_floatingState;
+        LayoutState& m_layoutState;
         const Container& m_formattingRoot;
     };
 

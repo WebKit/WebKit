@@ -1,3 +1,29 @@
+2019-07-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Remove redundant InlineFormattingContext::LineLayout members.
+        https://bugs.webkit.org/show_bug.cgi?id=199654
+        <rdar://problem/52869206>
+
+        Reviewed by Antti Koivisto.
+
+        Some of the members are actually only needed in selected functions.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout const):
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthConstraints const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::LineLayout::layoutState const):
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::InlineFormattingContext::LineLayout::LineLayout):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::layout const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::computedIntrinsicWidth const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::createDisplayRuns const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::alignRuns const):
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::inlineItems):
+        (WebCore::Layout::InlineFormattingState::inlineRuns):
+        (WebCore::Layout::InlineFormattingState::lineBoxes):
+
 2019-07-10  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer] Protect against null samples and samples with null buffers

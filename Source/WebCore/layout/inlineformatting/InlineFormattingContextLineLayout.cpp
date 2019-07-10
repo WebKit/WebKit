@@ -87,10 +87,8 @@ InlineFormattingContext::LineLayout::LineInput::LineInput(LayoutPoint logicalTop
 }
 
 InlineFormattingContext::LineLayout::LineLayout(const InlineFormattingContext& inlineFormattingContext)
-    : m_formattingContext(inlineFormattingContext)
-    , m_formattingState(m_formattingContext.formattingState())
-    , m_floatingState(m_formattingState.floatingState())
-    , m_formattingRoot(downcast<Container>(m_formattingContext.root()))
+    : m_layoutState(inlineFormattingContext.layoutState())
+    , m_formattingRoot(downcast<Container>(inlineFormattingContext.root()))
 {
 }
 
@@ -206,21 +204,23 @@ InlineFormattingContext::LineLayout::LineContent InlineFormattingContext::LineLa
     return closeLine();
 }
 
-void InlineFormattingContext::LineLayout::layout(LayoutUnit widthConstraint) const
+void InlineFormattingContext::LineLayout::layout(const InlineItems& inlineItems, LayoutUnit widthConstraint) const
 {
-    ASSERT(!m_formattingState.inlineItems().isEmpty());
+    ASSERT(!inlineItems.isEmpty());
 
     auto& formattingRootDisplayBox = layoutState().displayBoxForLayoutBox(m_formattingRoot);
+    auto& floatingState = layoutState().establishedFormattingState(m_formattingRoot).floatingState();
+
     auto lineLogicalTop = formattingRootDisplayBox.contentBoxTop();
     auto lineLogicalLeft = formattingRootDisplayBox.contentBoxLeft();
 
     auto applyFloatConstraint = [&](auto& lineInput) {
         // Check for intruding floats and adjust logical left/available width for this line accordingly.
-        if (m_floatingState.isEmpty())
+        if (floatingState.isEmpty())
             return;
         auto availableWidth = lineInput.horizontalConstraint.availableLogicalWidth;
         auto lineLogicalLeft = lineInput.horizontalConstraint.logicalTopLeft.x();
-        auto floatConstraints = m_floatingState.constraints({ lineLogicalTop }, m_formattingRoot);
+        auto floatConstraints = floatingState.constraints({ lineLogicalTop }, m_formattingRoot);
         // Check if these constraints actually put limitation on the line.
         if (floatConstraints.left && floatConstraints.left->x <= formattingRootDisplayBox.contentBoxLeft())
             floatConstraints.left = { };
@@ -250,7 +250,6 @@ void InlineFormattingContext::LineLayout::layout(LayoutUnit widthConstraint) con
         lineInput.horizontalConstraint.logicalTopLeft.setX(lineLogicalLeft);
     };
 
-    auto& inlineItems = m_formattingState.inlineItems();
     InlineIndexAndSplitPosition currentInlineItem;
     while (currentInlineItem.index < inlineItems.size()) {
         auto lineInput = LineInput { { lineLogicalLeft, lineLogicalTop }, widthConstraint, Line::SkipVerticalAligment::No, currentInlineItem, inlineItems };
@@ -269,10 +268,9 @@ void InlineFormattingContext::LineLayout::layout(LayoutUnit widthConstraint) con
     }
 }
 
-LayoutUnit InlineFormattingContext::LineLayout::computedIntrinsicWidth(LayoutUnit widthConstraint) const
+LayoutUnit InlineFormattingContext::LineLayout::computedIntrinsicWidth(const InlineItems& inlineItems, LayoutUnit widthConstraint) const
 {
     LayoutUnit maximumLineWidth;
-    auto& inlineItems = m_formattingState.inlineItems();
     InlineIndexAndSplitPosition currentInlineItem;
     while (currentInlineItem.index < inlineItems.size()) {
         auto lineContent = placeInlineItems({ { }, widthConstraint, Line::SkipVerticalAligment::Yes, currentInlineItem, inlineItems });
@@ -287,7 +285,9 @@ LayoutUnit InlineFormattingContext::LineLayout::computedIntrinsicWidth(LayoutUni
 
 void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content& lineContent, const Vector<WeakPtr<InlineItem>>& floats, LayoutUnit widthConstraint) const
 {
-    auto floatingContext = FloatingContext { m_floatingState };
+    auto& formattingState = downcast<InlineFormattingState>(layoutState().establishedFormattingState(m_formattingRoot));
+    auto& floatingState = formattingState.floatingState();
+    auto floatingContext = FloatingContext { floatingState };
 
     // Move floats to their final position.
     for (auto floatItem : floats) {
@@ -298,17 +298,17 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
         displayBox.setTopLeft({ lineContent.logicalLeft(), lineContent.logicalTop() });
         // Float it.
         displayBox.setTopLeft(floatingContext.positionForFloat(floatBox));
-        m_floatingState.append(floatBox);
+        floatingState.append(floatBox);
     }
 
     if (lineContent.isEmpty()) {
         // Spec tells us to create a zero height, empty line box.
         auto lineBoxRect = Display::Rect { lineContent.logicalTop(), lineContent.logicalLeft(), 0 , 0 };
-        m_formattingState.addLineBox({ lineBoxRect, lineContent.baseline(), lineContent.baselineOffset() });
+        formattingState.addLineBox({ lineBoxRect, lineContent.baseline(), lineContent.baselineOffset() });
         return;
     }
 
-    auto& inlineDisplayRuns = m_formattingState.inlineRuns(); 
+    auto& inlineDisplayRuns = formattingState.inlineRuns();
     Optional<unsigned> previousLineLastRunIndex = inlineDisplayRuns.isEmpty() ? Optional<unsigned>() : inlineDisplayRuns.size() - 1;
     // 9.4.2 Inline formatting contexts
     // A line box is always tall enough for all of the boxes it contains.
@@ -325,7 +325,7 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
             displayBox.setTopLeft(logicalRect.topLeft());
             displayBox.setContentBoxWidth(logicalRect.width());
             displayBox.setContentBoxHeight(logicalRect.height());
-            m_formattingState.addInlineRun(std::make_unique<Display::Run>(logicalRect));
+            formattingState.addInlineRun(std::make_unique<Display::Run>(logicalRect));
             continue;
         }
 
@@ -336,7 +336,7 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
                 topLeft += Geometry::inFlowPositionedPositionOffset(layoutState(), layoutBox);
             displayBox.setTopLeft(topLeft);
             lineBoxRect.expandHorizontally(logicalRect.width());
-            m_formattingState.addInlineRun(std::make_unique<Display::Run>(logicalRect));
+            formattingState.addInlineRun(std::make_unique<Display::Run>(logicalRect));
             continue;
         }
 
@@ -371,9 +371,9 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
             auto previousRunCanBeExtended = previousLineRun && previousLineRun->textContext() ? previousLineRun->textContext()->canBeExtended : false;
             auto requiresNewRun = !index || !previousRunCanBeExtended || &layoutBox != &previousLineRun->layoutBox();
             if (requiresNewRun)
-                m_formattingState.addInlineRun(std::make_unique<Display::Run>(logicalRect, Display::Run::TextContext { textContext->start, textContext->length }));
+                formattingState.addInlineRun(std::make_unique<Display::Run>(logicalRect, Display::Run::TextContext { textContext->start, textContext->length }));
             else {
-                auto& lastDisplayRun = m_formattingState.inlineRuns().last();
+                auto& lastDisplayRun = formattingState.inlineRuns().last();
                 lastDisplayRun->expandHorizontally(logicalRect.width());
                 lastDisplayRun->textContext()->expand(textContext->length);
             }
@@ -392,8 +392,8 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
         }
     }
     // FIXME linebox needs to be ajusted after content alignment.
-    m_formattingState.addLineBox({ lineBoxRect, lineContent.baseline(), lineContent.baselineOffset() });
-    alignRuns(m_formattingRoot.style().textAlign(), previousLineLastRunIndex.valueOr(-1) + 1, widthConstraint - lineContent.logicalWidth());
+    formattingState.addLineBox({ lineBoxRect, lineContent.baseline(), lineContent.baselineOffset() });
+    alignRuns(m_formattingRoot.style().textAlign(), inlineDisplayRuns, previousLineLastRunIndex.valueOr(-1) + 1, widthConstraint - lineContent.logicalWidth());
 }
 
 static Optional<LayoutUnit> horizontalAdjustmentForAlignment(TextAlignMode align, LayoutUnit remainingWidth)
@@ -418,13 +418,12 @@ static Optional<LayoutUnit> horizontalAdjustmentForAlignment(TextAlignMode align
     return { };
 }
 
-void InlineFormattingContext::LineLayout::alignRuns(TextAlignMode textAlign, unsigned firstRunIndex, LayoutUnit availableWidth) const
+void InlineFormattingContext::LineLayout::alignRuns(TextAlignMode textAlign, InlineRuns& inlineDisplayRuns, unsigned firstRunIndex, LayoutUnit availableWidth) const
 {
     auto adjustment = horizontalAdjustmentForAlignment(textAlign, availableWidth);
     if (!adjustment)
         return;
 
-    auto& inlineDisplayRuns = m_formattingState.inlineRuns(); 
     for (unsigned index = firstRunIndex; index < inlineDisplayRuns.size(); ++index)
         inlineDisplayRuns[index]->moveHorizontally(*adjustment);
 }
