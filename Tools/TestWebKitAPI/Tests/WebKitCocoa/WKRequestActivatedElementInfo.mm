@@ -30,6 +30,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKWebView.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/_WKActivatedElementInfo.h>
 #import <wtf/RetainPtr.h>
 
@@ -131,6 +132,25 @@ TEST(WebKit, RequestActivatedElementInfoForBrokenImage)
         finished = true;
     }];
     
+    TestWebKitAPI::Util::run(&finished);
+}
+
+TEST(WebKit, RequestActivatedElementInfoForAttachment)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAttachmentElementEnabled:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    [webView loadHTMLString:@"<html><head><meta name='viewport' content='initial-scale=1'></head><body style='margin: 0px;'><attachment  /></body></html>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    __block bool finished = false;
+    [webView _requestActivatedElementAtPosition:CGPointMake(20, 20) completionBlock:^(_WKActivatedElementInfo *elementInfo) {
+        EXPECT_TRUE(elementInfo.type == _WKActivatedElementTypeAttachment);
+
+        finished = true;
+    }];
+
     TestWebKitAPI::Util::run(&finished);
 }
 

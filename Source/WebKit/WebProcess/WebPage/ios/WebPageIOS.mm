@@ -2523,7 +2523,7 @@ static void focusedElementPositionInformation(WebPage& page, Element& focusedEle
     info.isNearMarkedText = !(deltaX > kHitAreaWidth || deltaYFromTheTop > kHitAreaHeight || deltaYFromTheBottom > kHitAreaHeight);
 }
 
-static void linkIndicatorPositionInformation(WebPage& page, Element& element, Element& linkElement, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+static void linkIndicatorPositionInformation(WebPage& page, Element& linkElement, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
 {
     if (!request.includeLinkIndicator)
         return;
@@ -2635,7 +2635,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
         info.isLink = true;
         info.url = linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr)));
 
-        linkIndicatorPositionInformation(page, element, *linkElement, request, info);
+        linkIndicatorPositionInformation(page, *linkElement, request, info);
 #if ENABLE(DATA_DETECTION)
         dataDetectorLinkPositionInformation(element, info);
 #endif
@@ -2662,8 +2662,9 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
     // We don't want to select blocks that are larger than 97% of the visible area of the document.
     if (is<HTMLAttachmentElement>(*hitNode)) {
         info.isAttachment = true;
-        const HTMLAttachmentElement& attachment = downcast<HTMLAttachmentElement>(*hitNode);
+        HTMLAttachmentElement& attachment = downcast<HTMLAttachmentElement>(*hitNode);
         info.title = attachment.attachmentTitle();
+        linkIndicatorPositionInformation(page, attachment, request, info);
         if (attachment.file())
             info.url = URL::fileURLWithFileSystemPath(downcast<HTMLAttachmentElement>(*hitNode).file()->path());
     } else {
@@ -2725,14 +2726,8 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
             info.image = shareableBitmapSnapshotForNode(element);
     }
 
-    if (!(info.isLink || info.isImage)) {
+    if (!(info.isLink || info.isImage))
         selectionPositionInformation(*this, request, info);
-
-        if (info.isAttachment && request.includeSnapshot) {
-            Element& element = downcast<Element>(*hitNode);
-            info.image = shareableBitmapSnapshotForNode(element);
-        }
-    }
 
     // Prevent the callout bar from showing when tapping on the datalist button.
 #if ENABLE(DATALIST_ELEMENT)

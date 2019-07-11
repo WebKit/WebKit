@@ -1,3 +1,26 @@
+2019-07-10  Tim Horton  <timothy_horton@apple.com>
+
+        Long pressing on attachments will crash the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=199696
+        <rdar://problem/52920241>
+
+        Reviewed by Dean Jackson.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::linkIndicatorPositionInformation):
+        (WebKit::elementPositionInformation):
+        (WebKit::selectionPositionInformation):
+        (WebKit::WebPage::positionInformation):
+        Instead of one-off creating a node snapshot for <attachment>, just
+        use TextIndicator. This way, we get an estimated background color,
+        paint at the right resolution, etc.
+
+        Also, hitNode was often null where we were previously calling
+        shareableBitmapSnapshotForNode, because it depends on the element
+        having click event handlers. selectionPositionInformation() re-hit-tests
+        more permissively to find the <attachment>, so moving this code
+        inside that function ensures that we don't try to snapshot a null node.
+
 2019-07-10  Dean Jackson  <dino@apple.com>
 
         Safari’s context menu actions are missing options
