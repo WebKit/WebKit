@@ -237,7 +237,9 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
         
             // Quirk for content-blocker interference with Google's anti-flicker optimization (rdar://problem/45968770).
             // https://developers.google.com/optimize/
-            if (currentDocument->settings().googleAntiFlickerOptimizationQuirkEnabled() && url == "https://www.google-analytics.com/analytics.js"_str) {
+            if (currentDocument->settings().googleAntiFlickerOptimizationQuirkEnabled()
+                && ((equalLettersIgnoringASCIICase(url.host(), "www.google-analytics.com") && equalLettersIgnoringASCIICase(url.path(), "/analytics.js"))
+                    || (equalLettersIgnoringASCIICase(url.host(), "www.googletagmanager.com") && equalLettersIgnoringASCIICase(url.path(), "/gtm.js")))) {
                 if (auto* frame = currentDocument->frame())
                     frame->script().evaluate(ScriptSourceCode { "try { window.dataLayer.hide.end(); console.log('Called window.dataLayer.hide.end() in frame ' + document.URL + ' because the content blocker blocked the load of the https://www.google-analytics.com/analytics.js script'); } catch (e) { }"_s });
             }

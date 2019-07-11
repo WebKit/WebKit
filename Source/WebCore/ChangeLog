@@ -1,5 +1,19 @@
 2019-07-11  Chris Dumez  <cdumez@apple.com>
 
+        Pages using Google Tag Manager Google's anti-flicker optimization may take ~5 seconds to do initial paint
+        https://bugs.webkit.org/show_bug.cgi?id=199704
+        <rdar://problem/52966461>
+
+        Reviewed by Geoffrey Garen.
+
+        Apply the same fix as r246764 for when "https://www.googletagmanager.com/gtm.js" load is blocked by a content
+        extension to avoid delaying initial paint by ~5 seconds. This was tested on https://www.formula1.com/en.html.
+
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentRuleListsForLoad):
+
+2019-07-11  Chris Dumez  <cdumez@apple.com>
+
         Disable RGB10 IOSurface pixel format for Mac Catalyst
         https://bugs.webkit.org/show_bug.cgi?id=199712
         <rdar://problem/52793584>
