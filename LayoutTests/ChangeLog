@@ -1,3 +1,26 @@
+2019-07-11  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Implement support for ARIA roles insertion, deletion, subscript, superscript, and time
+        https://bugs.webkit.org/show_bug.cgi?id=199692
+
+        Reviewed by Chris Fleizach.
+
+        Add the new roles to the existing role-exposure tests and update expectations accordingly.
+
+        * accessibility/gtk/object-attributes-expected.txt:
+        * accessibility/gtk/object-attributes.html:
+        * accessibility/gtk/xml-roles-exposed-expected.txt:
+        * accessibility/gtk/xml-roles-exposed.html:
+        * accessibility/roles-computedRoleString.html:
+        * accessibility/roles-exposed.html:
+        * platform/gtk/accessibility/roles-computedRoleString-expected.txt:
+        * platform/gtk/accessibility/roles-exposed-expected.txt:
+        * platform/mac-wk2/accessibility/roles-exposed-expected.txt:
+        * platform/mac/accessibility/roles-computedRoleString-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+        * platform/wpe/accessibility/roles-computedRoleString-expected.txt:
+        * platform/wpe/accessibility/roles-exposed-expected.txt:
+
 2019-07-10  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Import all tests that pass without compiler changes from the JS reference test suite

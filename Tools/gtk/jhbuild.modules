@@ -272,15 +272,15 @@
   </autotools>
 
   <meson id="atk" mesonargs="-Dintrospection=false">
-    <branch module="pub/GNOME/sources/atk/2.32/atk-2.32.0.tar.xz" version="2.32.0"
+    <branch module="pub/GNOME/sources/atk/2.33/atk-2.33.3.tar.xz" version="2.33.3"
             repo="ftp.gnome.org"
-            hash="sha256:cb41feda7fe4ef0daa024471438ea0219592baf7c291347e5a858bb64e4091cc"/>
+            hash="sha256:532d1081e87b9f0a8d71733101e791818442fa1896531621d1aecc189e1a4ffe"/>
   </meson>
 
   <meson id="at-spi2-core" mesonargs="-Dintrospection=no">
-    <branch module="pub/GNOME/sources/at-spi2-core/2.32/at-spi2-core-2.32.1.tar.xz" version="2.32.1"
+    <branch module="pub/GNOME/sources/at-spi2-core/2.33/at-spi2-core-2.33.2.tar.xz" version="2.33.2"
             repo="ftp.gnome.org"
-            hash="sha256:3c2aa937ebfaca2c86569bce9b16a34fbe20d69ef0c58846313b1c42f53b0d53">
+            hash="sha256:0e3f44707cccf9ec9098f84abdf91ea654c919eac3c688400f8d261383cc2abe">
     </branch>
     <dependencies>
       <dep package="glib"/>
@@ -288,9 +288,9 @@
   </meson>
 
   <meson id="at-spi2-atk">
-    <branch module="pub/GNOME/sources/at-spi2-atk/2.32/at-spi2-atk-2.32.0.tar.xz" version="2.32.0"
+    <branch module="pub/GNOME/sources/at-spi2-atk/2.33/at-spi2-atk-2.33.2.tar.xz" version="2.33.2"
             repo="ftp.gnome.org"
-            hash="sha256:0b51e6d339fa2bcca3a3e3159ccea574c67b107f1ac8b00047fa60e34ce7a45c">
+            hash="sha256:64d4351b245d717ec6f4f81fd40fe67481ff8e62d3893d465f01e71d9a3db3d3">
     </branch>
     <dependencies>
       <dep package="glib"/>

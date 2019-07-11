@@ -1,3 +1,18 @@
+2019-07-11  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Implement support for ARIA roles insertion, deletion, subscript, superscript, and time
+        https://bugs.webkit.org/show_bug.cgi?id=199692
+
+        Reviewed by Chris Fleizach.
+
+        Add support for output of AXDeletion and AXInsertion roles for tests.
+        Update GTK and WPE jhbuild modules to use version of ATK and AT-SPI2
+        which include ROLE_CONTENT_DELETION and ROLE_CONTENT_INSERTION.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        * gtk/jhbuild.modules:
+        * wpe/jhbuild.modules:
+
 2019-07-11  Adrian Perez de Castro  <aperez@igalia.com>
 
         [ews-build] Remove workers {ltilve,tanty}-gtk-wk2-ews from configuration

@@ -21,6 +21,9 @@ Odd	Even
 
 4
 
+foo
+bar
+baz
 This tests the exposure of Atk object attributes.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -215,10 +218,67 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
 ------------
+AXRole: AXDeletion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 8.00000, 392.000 }
+AXSize: { 784.000, 19.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: foo
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: xml-roles:deletion, computed-role:deletion, tag:del, toolkit:WebKitGtk
+------------
+AXRole: AXInsertion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 8.00000, 410.000 }
+AXSize: { 784.000, 19.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: bar
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: xml-roles:insertion, computed-role:insertion, tag:ins, toolkit:WebKitGtk
+------------
+AXRole: AXStatic
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 8.00000, 428.000 }
+AXSize: { 784.000, 19.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: baz
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:time, tag:time, toolkit:WebKitGtk
+------------
 AXRole: AXParagraph
 AXParent: AXWebArea
 AXChildren: 2
-AXPosition:  { 8.00000, 408.000 }
+AXPosition:  { 8.00000, 462.000 }
 AXSize: { 784.000, 53.0000 }
 AXTitle: 
 AXDescription: 

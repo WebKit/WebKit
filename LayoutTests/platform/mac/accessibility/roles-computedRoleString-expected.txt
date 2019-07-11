@@ -7,6 +7,7 @@ PASS: a[href] -> link.
 PASS: article -> article. 
 PASS: aside -> complementary. 
 PASS: button -> button. 
+PASS: del -> deletion. 
 PASS: dfn -> definition. 
 PASS: dl -> . 
 PASS: footer -> contentinfo. 
@@ -41,7 +42,7 @@ PASS: input[type='text'] -> .
 PASS: input[type='time'] -> . 
 PASS: input[type='url'] -> . 
 PASS: input[type='week'] -> . 
-PASS: ins -> . 
+PASS: ins -> insertion. 
 PASS: mark -> . 
 PASS: math -> math. 
 PASS: meter -> meter. 
@@ -61,8 +62,8 @@ PASS: option -> option.
 PASS: optgroup -> option. 
 PASS: option -> option. 
 PASS: option -> option. 
-PASS: sub -> . 
-PASS: sup -> . 
+PASS: sub -> subscript. 
+PASS: sup -> superscript. 
 PASS: table -> table. 
 PASS: tr -> row. 
 PASS: th -> columnheader. 
@@ -78,7 +79,7 @@ PASS: td[role="gridcell"] -> gridcell.
 PASS: tr -> row. 
 PASS: td[role="gridcell"] -> gridcell. 
 PASS: textarea -> textbox. 
-PASS: time -> . 
+PASS: time -> time. 
 PASS: ul -> list. 
 PASS: li -> listitem. 
 PASS: var -> . 
@@ -107,6 +108,7 @@ PASS: div[role="combobox"] -> combobox.
 PASS: div[role="complementary"] -> complementary. 
 PASS: div[role="contentinfo"] -> contentinfo. 
 PASS: div[role="definition"] -> definition. 
+PASS: div[role="deletion"] -> deletion. 
 PASS: div[role="dialog"] -> dialog. 
 PASS: div[role="directory"] -> list. 
 PASS: div[role="document"] -> document. 
@@ -124,6 +126,7 @@ PASS: div[role="feed"] -> feed.
 PASS: div[role="group"] -> group. 
 PASS: div[role="heading"] -> heading. 
 PASS: div[role="img"] -> img. 
+PASS: div[role="insertion"] -> insertion. 
 PASS: div[role="link"] -> link. 
 PASS: div[role="list"] -> list. 
 PASS: div[role="listitem"] -> listitem. 
@@ -157,11 +160,14 @@ PASS: div[role="separator"] -> separator.
 PASS: div[role="slider"] -> slider. 
 PASS: div[role="spinbutton"] -> spinbutton. 
 PASS: div[role="status"] -> status. 
+PASS: div[role="subscript"] -> subscript. 
+PASS: div[role="superscript"] -> superscript. 
 PASS: div[role="tablist"] -> tablist. 
 PASS: div[role="tab"] -> tab. 
 PASS: div[role="tabpanel"] -> tabpanel. 
 PASS: div[role="textbox"] -> . 
 PASS: div[role="term"] -> term. 
+PASS: div[role="time"] -> time. 
 PASS: div[role="timer"] -> timer. 
 PASS: div[role="toolbar"] -> toolbar. 
 PASS: div[role="tooltip"] -> tooltip. 

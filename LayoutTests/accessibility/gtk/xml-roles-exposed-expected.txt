@@ -250,6 +250,25 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:definition, xml-roles:definition, tag:div, toolkit:WebKitGtk
 ------------
+AXRole: AXDeletion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:deletion, xml-roles:deletion, tag:div, toolkit:WebKitGtk
+------------
 AXRole: AXDialog
 AXParent: AXWebArea
 AXChildren: 0
@@ -420,6 +439,25 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:img, xml-roles:img, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXInsertion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:insertion, xml-roles:insertion, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXLink
 AXParent: AXWebArea
@@ -802,6 +840,44 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: atomic:true, relevant:additions text, live:polite, container-live-role:status, container-atomic:true, container-relevant:additions text, container-live:polite, computed-role:status, xml-roles:status, tag:div, toolkit:WebKitGtk
 ------------
+AXRole: AXSubscript
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:subscript, xml-roles:subscript, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXSuperscript
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:superscript, xml-roles:superscript, tag:div, toolkit:WebKitGtk
+------------
 AXRole: AXToggleButton
 AXParent: AXWebArea
 AXChildren: 0
@@ -858,6 +934,25 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: xml-roles:textbox, readonly:false, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXStatic
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:time, xml-roles:time, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXTimer
 AXParent: AXWebArea

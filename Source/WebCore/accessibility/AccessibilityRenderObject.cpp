@@ -2813,8 +2813,17 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (m_renderer->isSVGRoot())
         return AccessibilityRole::SVGRoot;
     
-    if (isStyleFormatGroup())
+    if (isStyleFormatGroup()) {
+        if (node->hasTagName(delTag))
+            return AccessibilityRole::Deletion;
+        if (node->hasTagName(insTag))
+            return AccessibilityRole::Insertion;
+        if (node->hasTagName(subTag))
+            return AccessibilityRole::Subscript;
+        if (node->hasTagName(supTag))
+            return AccessibilityRole::Superscript;
         return is<RenderInline>(*m_renderer) ? AccessibilityRole::Inline : AccessibilityRole::TextGroup;
+    }
     
     if (node && node->hasTagName(ddTag))
         return AccessibilityRole::DescriptionListDetail;

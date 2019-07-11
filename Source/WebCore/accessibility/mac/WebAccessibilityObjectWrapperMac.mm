@@ -2176,6 +2176,10 @@ static AccessibilityRoleMap createAccessibilityRoleMap()
         { AccessibilityRole::GraphicsObject, NSAccessibilityGroupRole },
         { AccessibilityRole::GraphicsSymbol, NSAccessibilityImageRole },
         { AccessibilityRole::Caption, NSAccessibilityGroupRole },
+        { AccessibilityRole::Deletion, NSAccessibilityGroupRole },
+        { AccessibilityRole::Insertion, NSAccessibilityGroupRole },
+        { AccessibilityRole::Subscript, NSAccessibilityGroupRole },
+        { AccessibilityRole::Superscript, NSAccessibilityGroupRole },
     };
     AccessibilityRoleMap roleMap;
     for (auto& role : roles)
@@ -2381,6 +2385,15 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (m_object->isSwitch())
         return NSAccessibilitySwitchSubrole;
 
+    if (role == AccessibilityRole::Insertion)
+        return @"AXInsertStyleGroup";
+    if (role == AccessibilityRole::Deletion)
+        return @"AXDeleteStyleGroup";
+    if (role == AccessibilityRole::Superscript)
+        return @"AXSuperscriptStyleGroup";
+    if (role == AccessibilityRole::Subscript)
+        return @"AXSubscriptStyleGroup";
+
     if (m_object->isStyleFormatGroup()) {
         if (Node* node = m_object->node()) {
             if (node->hasTagName(kbdTag))
@@ -2395,14 +2408,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 return @"AXVariableStyleGroup";
             if (node->hasTagName(citeTag))
                 return @"AXCiteStyleGroup";
-            if (node->hasTagName(insTag))
-                return @"AXInsertStyleGroup";
-            if (node->hasTagName(delTag))
-                return @"AXDeleteStyleGroup";
-            if (node->hasTagName(supTag))
-                return @"AXSuperscriptStyleGroup";
-            if (node->hasTagName(subTag))
-                return @"AXSubscriptStyleGroup";
         }
     }
     

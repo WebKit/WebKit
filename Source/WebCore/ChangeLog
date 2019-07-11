@@ -1,3 +1,43 @@
+2019-07-11  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Implement support for ARIA roles insertion, deletion, subscript, superscript, and time
+        https://bugs.webkit.org/show_bug.cgi?id=199692
+
+        Reviewed by Chris Fleizach.
+
+        Create new AccessibilityRole types which correspond to the new ARIA roles and
+        update AccessibilityRenderObject::determineAccessibilityRole() to assign these
+        internal roles to the related HTML elements.
+
+        Update both ATK and Mac to recognize these new internal roles. In addition, update
+        the ATK mappings for the ins and del elements to ATK_ROLE_CONTENT_INSERTION and
+        ATK_ROLE_CONTENT_DELETION respectively. Also expose "insertion" and "deletion" via
+        the AtkObject xml-roles attribute so that this information is not completely absent
+        for GTK or WPE built against earlier versions of ATK.
+
+        Remove AccessibilityObject's isSubscriptStyleGroup() and isSuperscriptStyleGroup().
+        These two methods were only being used by ATK and are no longer needed for platform
+        role mapping.
+
+        No new tests. Instead add the roles to the existing role-exposure tests.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::initializeRoleMap):
+        (WebCore::AccessibilityObject::isSubscriptStyleGroup const): Deleted.
+        (WebCore::AccessibilityObject::isSuperscriptStyleGroup const): Deleted.
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/atk/WebKitAccessible.cpp:
+        (webkitAccessibleGetAttributes):
+        (atkRole):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper determineIsAccessibilityElement]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilityRoleMap):
+        (-[WebAccessibilityObjectWrapper subrole]):
+
 2019-07-11  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][MediaStream] Use the new dispatchMediaSampleToObservers to dispatch new buffers

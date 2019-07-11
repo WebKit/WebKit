@@ -874,6 +874,11 @@ div[role=definition]
       AXSubrole: AXDefinition
       AXRoleDescription: definition
       
+div[role=deletion]
+      AXRole: AXGroup
+      AXSubrole: AXDeleteStyleGroup
+      AXRoleDescription: group
+      
 div[role=dialog]
       AXRole: AXGroup
       AXSubrole: AXApplicationDialog
@@ -1159,6 +1164,11 @@ div[role=img]
       AXSubrole: 
       AXRoleDescription: image
       
+div[role=insertion]
+      AXRole: AXGroup
+      AXSubrole: AXInsertStyleGroup
+      AXRoleDescription: group
+      
 div[role=link]
       AXRole: AXLink
       AXSubrole: 
@@ -1334,6 +1344,16 @@ div[role=status]
       AXSubrole: AXApplicationStatus
       AXRoleDescription: application status
       
+div[role=subscript]
+      AXRole: AXGroup
+      AXSubrole: AXSubscriptStyleGroup
+      AXRoleDescription: group
+      
+div[role=superscript]
+      AXRole: AXGroup
+      AXSubrole: AXSuperscriptStyleGroup
+      AXRoleDescription: group
+      
 div[role=switch]
       AXRole: AXCheckBox
       AXSubrole: AXSwitch
@@ -1363,6 +1383,11 @@ div[role=textbox]
       AXRole: AXTextField
       AXSubrole: 
       AXRoleDescription: text field
+      
+div[role=time]
+      AXRole: AXGroup
+      AXSubrole: AXTimeGroup
+      AXRoleDescription: group
       
 div[role=timer]
       AXRole: AXGroup

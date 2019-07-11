@@ -50,10 +50,10 @@ code
       AXRole: AXStatic
       
 del:not([datetime])
-      AXRole: AXStatic
+      AXRole: AXDeletion
       
 del[datetime]
-      AXRole: AXStatic
+      AXRole: AXDeletion
       
 dfn
       AXRole: AXDefinition
@@ -203,10 +203,10 @@ input[type='week']
       AXRole: AXTextField
       
 ins:not([datetime])
-      AXRole: AXStatic
+      AXRole: AXInsertion
       
 ins[datetime]
-      AXRole: AXStatic
+      AXRole: AXInsertion
       
 map
       AXRole: 
@@ -523,6 +523,9 @@ div[role=contentinfo]
 div[role=definition]
       AXRole: AXDefinition
       
+div[role=deletion]
+      AXRole: AXDeletion
+      
 div[role=dialog]
       AXRole: AXDialog
       
@@ -694,6 +697,9 @@ div[role=heading]
 div[role=img]
       AXRole: AXImage
       
+div[role=insertion]
+      AXRole: AXInsertion
+      
 div[role=link]
       AXRole: AXLink
       
@@ -799,6 +805,12 @@ div[role=spinbutton]
 div[role=status]
       AXRole: AXStatusBar
       
+div[role=subscript]
+      AXRole: AXSubscript
+      
+div[role=superscript]
+      AXRole: AXSuperscript
+      
 div[role=switch]
       AXRole: AXToggleButton
       
@@ -816,6 +828,9 @@ div[role=term]
       
 div[role=textbox]
       AXRole: AXTextField
+      
+div[role=time]
+      AXRole: AXStatic
       
 div[role=timer]
       AXRole: AXTimer
