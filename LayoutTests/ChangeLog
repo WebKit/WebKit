@@ -1,3 +1,9 @@
+2019-07-11  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening. Update expectations after r247346.
+
+        * platform/gtk/TestExpectations:
+
 2019-07-11  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement support for ARIA roles insertion, deletion, subscript, superscript, and time

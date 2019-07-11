@@ -292,15 +292,10 @@ webkit.org/b/169916 css3/blending/svg-blend-difference.html [ Missing Failure ]
 webkit.org/b/169916 css3/blending/svg-blend-exclusion.html [ Missing Failure ]
 webkit.org/b/169916 css3/blending/svg-blend-hard-light.html [ Missing Failure ]
 webkit.org/b/169916 css3/blending/svg-blend-lighten.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-multiply-alpha.html [ Failure ]
 webkit.org/b/169916 css3/blending/svg-blend-multiply.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-normal.html [ Failure ]
 webkit.org/b/169916 css3/blending/svg-blend-overlay.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-plus-darker.html [ Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-plus-lighter.html [ Failure ]
 webkit.org/b/169916 css3/blending/svg-blend-screen.html [ Missing Failure ]
 webkit.org/b/169916 css3/blending/svg-blend-soft-light.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-isolation-isolated-group.html [ ImageOnlyFailure ]
 
 # Failures related with compositing tests.
 webkit.org/b/169918 compositing/animation/animation-backing.html [ Failure Pass ]
@@ -2127,11 +2122,14 @@ webkit.org/b/198828 editing/pasteboard/4989774.html [ Failure Pass ]
 webkit.org/b/198828 editing/pasteboard/paste-line-endings-002.html [ Failure Pass ]
 webkit.org/b/198828 editing/pasteboard/paste-list-002.html [ Failure Pass ]
 webkit.org/b/198828 editing/pasteboard/paste-list-003.html [ Failure Pass ]
-webkit.org/b/198828 editing/pasteboard/avoid-copying-body-with-background.html [ Failure ]
-webkit.org/b/198828 editing/pasteboard/contenteditable-pre.html [ Failure ]
-webkit.org/b/198828 editing/pasteboard/paste-list-004.html [ Failure ]
+webkit.org/b/198828 editing/pasteboard/avoid-copying-body-with-background.html [ Failure Pass ]
+webkit.org/b/198828 editing/pasteboard/contenteditable-pre.html [ Failure Pass ]
+webkit.org/b/198828 editing/pasteboard/paste-list-004.html [ Failure Pass ]
 webkit.org/b/198828 editing/pasteboard/paste-text-008.html [ Failure ]
 webkit.org/b/198828 editing/pasteboard/paste-text-012.html [ Failure ]
+webkit.org/b/198828 editing/pasteboard/paste-line-endings-001.html [ Failure Pass ]
+webkit.org/b/198828 editing/pasteboard/paste-text-002.html [ Failure Pass ]
+webkit.org/b/198828 editing/pasteboard/drag-drop-iframe-refresh-crash.html [ Timeout Pass ]
 
 webkit.org/b/198830 media/W3C/audio/events/event_canplay.html [ Crash Pass ]
 webkit.org/b/198830 media/event-attributes.html [ Crash Failure Timeout ]
@@ -2149,6 +2147,14 @@ webkit.org/b/198830 media/video-size-intrinsic-scale.html [ Crash Failure ]
 webkit.org/b/198830 media/video-src.html [ Crash Pass ]
 webkit.org/b/198830 media/video-timeupdate-reverse-play.html [ Crash Pass ]
 webkit.org/b/198830 media/video-trackmenu-selection.html [ Crash Timeout ]
+webkit.org/b/198830 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadedmetadata_noautoplay.html [ Crash Pass ]
+webkit.org/b/198830 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_playing_noautoplay.html [ Crash Pass ]
+webkit.org/b/198830 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_playing.html [ Crash Pass ]
+webkit.org/b/198830 media/audio-controls-rendering.html [ Crash Pass ]
+webkit.org/b/198830 media/media-fullscreen-inline.html [ Crash Pass ]
+webkit.org/b/198830 media/W3C/video/events/event_canplay.html [ Crash Pass ]
+webkit.org/b/198830 media/W3C/video/paused/paused_false_during_play.html [ Crash Pass ]
+webkit.org/b/198830 media/W3C/video/readyState/readyState_during_playing.html [ Crash Pass ]
 
 webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Pass Failure ]
 
@@ -2967,7 +2973,7 @@ webkit.org/b/107818 media/controls-styling.html [ Failure Timeout ]
 
 # New chromium based controls
 webkit.org/b/107825 media/audio-delete-while-step-button-clicked.html [ Failure Timeout ]
-webkit.org/b/107825 media/nodesFromRect-shadowContent.html [ Failure ]
+webkit.org/b/107825 media/nodesFromRect-shadowContent.html [ Failure Crash ]
 webkit.org/b/107825 media/video-controls-fullscreen-volume.html [ Failure ]
 
 # Test marked in TestExpectations as failing on non-retina displays, passing on GTK port
@@ -3307,7 +3313,7 @@ webkit.org/b/173410 fast/canvas/canvas-createPattern-video-loading.html [ Failur
 
 webkit.org/b/173413 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-after-content-change.html [ Failure ]
 
-webkit.org/b/143702 media/progress-events-generated-correctly.html [ Timeout Failure Pass ]
+webkit.org/b/143702 media/progress-events-generated-correctly.html [ Timeout Failure Pass Crash ]
 
 webkit.org/b/174460 fast/canvas/canvas-blend-image.html [ Failure ]
 webkit.org/b/174460 fast/canvas/canvas-blend-solid.html [ Failure ]
