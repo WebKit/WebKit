@@ -25,14 +25,6 @@
       "platform": "gtk"
     },
     {
-      "name": "tanty-gtk-wk2-ews",
-      "platform": "gtk"
-    },
-    {
-      "name": "ltilve-gtk-wk2-ews",
-      "platform": "gtk"
-    },
-    {
       "name": "igalia-wpe-ews",
       "platform": "wpe"
     },
@@ -301,7 +293,7 @@
       "platform": "gtk",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "workernames": ["igalia1-gtk-wk2-ews", "igalia2-gtk-wk2-ews", "igalia3-gtk-wk2-ews", "igalia4-gtk-wk2-ews", "aperez-gtk-ews", "tanty-gtk-wk2-ews", "ltilve-gtk-wk2-ews"]
+      "workernames": ["igalia1-gtk-wk2-ews", "igalia2-gtk-wk2-ews", "igalia3-gtk-wk2-ews", "igalia4-gtk-wk2-ews", "aperez-gtk-ews"]
     },
     {
       "name": "iOS-12-Build-EWS",
