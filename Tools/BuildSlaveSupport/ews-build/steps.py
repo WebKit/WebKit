@@ -89,6 +89,7 @@ class ConfigureBuild(buildstep.BuildStep):
 class CheckOutSource(git.Git):
     name = 'clean-and-update-working-directory'
     CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR = (0, 2)
+    haltOnFailure = False
 
     def __init__(self, **kwargs):
         self.repourl = 'https://git.webkit.org/git/WebKit.git'
