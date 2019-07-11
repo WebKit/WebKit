@@ -38,6 +38,8 @@ namespace Layout {
 
 class FloatingState;
 class InlineContainer;
+struct LineContent;
+struct LineInput;
 
 // This class implements the layout logic for inline formatting contexts.
 // https://www.w3.org/TR/CSS22/visuren.html#inline-formatting
@@ -58,33 +60,6 @@ private:
 
     private:
         LayoutState& layoutState() const { return m_layoutState; }
-
-        struct InlineIndexAndSplitPosition {
-            unsigned index { 0 };
-            Optional<unsigned> splitPosition;
-        };
-
-        struct LineInput {
-            LineInput(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth, Line::SkipVerticalAligment, InlineIndexAndSplitPosition firstToProcess, const InlineItems&);
-            struct HorizontalConstraint {
-                HorizontalConstraint(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth);
-
-                LayoutPoint logicalTopLeft;
-                LayoutUnit availableLogicalWidth;
-            };
-            HorizontalConstraint horizontalConstraint;
-            // FIXME Alternatively we could just have a second pass with vertical positioning (preferred width computation opts out) 
-            Line::SkipVerticalAligment skipVerticalAligment;
-            InlineIndexAndSplitPosition firstInlineItem;
-            const InlineItems& inlineItems;
-            Optional<LayoutUnit> floatMinimumLogicalBottom;
-        };
-
-        struct LineContent {
-            Optional<InlineIndexAndSplitPosition> lastCommitted;
-            Vector<WeakPtr<InlineItem>> floats;
-            std::unique_ptr<Line::Content> runs;
-        };
         LineContent placeInlineItems(const LineInput&) const;
         void createDisplayRuns(const Line::Content&, const Vector<WeakPtr<InlineItem>>& floats, LayoutUnit widthConstraint) const;
         void alignRuns(TextAlignMode, InlineRuns&, unsigned firstRunIndex, LayoutUnit availableWidth) const;

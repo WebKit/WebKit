@@ -1,3 +1,23 @@
+2019-07-11  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Cleanup InlineFormattingContext::LineLayout class.
+        https://bugs.webkit.org/show_bug.cgi?id=199702
+        <rdar://problem/52931733>
+
+        Reviewed by Sam Weinig.
+
+        Move some structs to .cpp. They don't need to pollute the class declaration. 
+
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::LineLayout::layoutState const):
+        (): Deleted.
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::LineInput::HorizontalConstraint::HorizontalConstraint):
+        (WebCore::Layout::LineInput::LineInput):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::placeInlineItems const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::LineInput::HorizontalConstraint::HorizontalConstraint): Deleted.
+        (WebCore::Layout::InlineFormattingContext::LineLayout::LineInput::LineInput): Deleted.
+
 2019-07-11  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement support for ARIA roles insertion, deletion, subscript, superscript, and time

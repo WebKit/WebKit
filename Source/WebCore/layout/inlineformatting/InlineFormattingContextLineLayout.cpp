@@ -41,6 +41,33 @@
 namespace WebCore {
 namespace Layout {
 
+struct InlineIndexAndSplitPosition {
+    unsigned index { 0 };
+    Optional<unsigned> splitPosition;
+};
+
+struct LineInput {
+    LineInput(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth, Line::SkipVerticalAligment, InlineIndexAndSplitPosition firstToProcess, const InlineItems&);
+    struct HorizontalConstraint {
+        HorizontalConstraint(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth);
+
+        LayoutPoint logicalTopLeft;
+        LayoutUnit availableLogicalWidth;
+    };
+    HorizontalConstraint horizontalConstraint;
+    // FIXME Alternatively we could just have a second pass with vertical positioning (preferred width computation opts out) 
+    Line::SkipVerticalAligment skipVerticalAligment;
+    InlineIndexAndSplitPosition firstInlineItem;
+    const InlineItems& inlineItems;
+    Optional<LayoutUnit> floatMinimumLogicalBottom;
+};
+
+struct LineContent {
+    Optional<InlineIndexAndSplitPosition> lastCommitted;
+    Vector<WeakPtr<InlineItem>> floats;
+    std::unique_ptr<Line::Content> runs;
+};
+
 struct UncommittedContent {
     struct Run {
         const InlineItem& inlineItem;
@@ -72,13 +99,13 @@ void UncommittedContent::reset()
     m_width = 0;
 }
 
-InlineFormattingContext::LineLayout::LineInput::HorizontalConstraint::HorizontalConstraint(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth)
+LineInput::HorizontalConstraint::HorizontalConstraint(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth)
     : logicalTopLeft(logicalTopLeft)
     , availableLogicalWidth(availableLogicalWidth)
 {
 }
 
-InlineFormattingContext::LineLayout::LineInput::LineInput(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth, Line::SkipVerticalAligment skipVerticalAligment, InlineIndexAndSplitPosition firstToProcess, const InlineItems& inlineItems)
+LineInput::LineInput(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth, Line::SkipVerticalAligment skipVerticalAligment, InlineIndexAndSplitPosition firstToProcess, const InlineItems& inlineItems)
     : horizontalConstraint(logicalTopLeft, availableLogicalWidth)
     , skipVerticalAligment(skipVerticalAligment)
     , firstInlineItem(firstToProcess)
@@ -123,7 +150,7 @@ static LayoutUnit inlineItemWidth(const LayoutState& layoutState, const InlineIt
     return displayBox.width();
 }
 
-InlineFormattingContext::LineLayout::LineContent InlineFormattingContext::LineLayout::placeInlineItems(const LineInput& lineInput) const
+LineContent InlineFormattingContext::LineLayout::placeInlineItems(const LineInput& lineInput) const
 {
     auto initialLineConstraints = Line::InitialConstraints {
         lineInput.horizontalConstraint.logicalTopLeft,
