@@ -35,7 +35,7 @@ from twisted.python import failure, log
 from twisted.trial import unittest
 
 from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, ApplyPatch, ArchiveBuiltProduct, ArchiveTestResults,
-                   CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckStyle, CleanBuild, CleanWorkingDirectory,
+                   CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckStyle, CleanBuild, CleanUpGitIndexLock, CleanWorkingDirectory,
                    CompileJSCOnly, CompileJSCOnlyToT, CompileWebKit, CompileWebKitToT, ConfigureBuild,
                    DownloadBuiltProduct, ExtractBuiltProduct, ExtractTestResults, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
                    PrintConfiguration, ReRunAPITests, ReRunJavaScriptCoreTests, RunAPITests, RunAPITestsWithoutPatch,
@@ -475,6 +475,42 @@ class TestCleanBuild(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Deleted WebKitBuild directory (failure)')
+        return self.runStep()
+
+
+class TestCleanUpGitIndexLock(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(CleanUpGitIndexLock())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=120,
+                        logEnviron=False,
+                        command=['rm', '-f', '.git/index.lock'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Deleted .git/index.lock')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(CleanUpGitIndexLock())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=120,
+                        logEnviron=False,
+                        command=['rm', '-f', '.git/index.lock'],
+                        )
+            + ExpectShell.log('stdio', stdout='Unexpected error.')
+            + 1,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Deleted .git/index.lock (failure)')
         return self.runStep()
 
 

@@ -102,10 +102,26 @@ class CheckOutSource(git.Git):
                                                 **kwargs)
 
     def getResultSummary(self):
+        if self.results == FAILURE:
+            self.build.addStepsAfterCurrentStep([CleanUpGitIndexLock()])
+
         if self.results != SUCCESS:
             return {u'step': u'Failed to updated working directory'}
         else:
             return {u'step': u'Cleaned and updated working directory'}
+
+
+class CleanUpGitIndexLock(shell.ShellCommand):
+    name = 'clean-git-index-lock'
+    command = ['rm', '-f', '.git/index.lock']
+    descriptionDone = ['Deleted .git/index.lock']
+
+    def __init__(self, **kwargs):
+        super(CleanUpGitIndexLock, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
+
+    def evaluateCommand(self, cmd):
+        self.build.buildFinished(['Git issue, retrying build'], RETRY)
+        return super(CleanUpGitIndexLock, self).evaluateCommand(cmd)
 
 
 class CheckOutSpecificRevision(shell.ShellCommand):
