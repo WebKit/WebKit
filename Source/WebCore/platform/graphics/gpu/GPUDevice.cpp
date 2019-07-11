@@ -46,6 +46,7 @@
 #include "GPUSwapChainDescriptor.h"
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
+#include <algorithm>
 #include <wtf/Optional.h>
 
 namespace WebCore {
@@ -106,6 +107,40 @@ RefPtr<GPUQueue> GPUDevice::tryGetQueue() const
 void GPUDevice::setSwapChain(RefPtr<GPUSwapChain>&& swapChain)
 {
     m_swapChain = WTFMove(swapChain);
+}
+
+void GPUDevice::pushErrorScope(GPUErrorFilter filter)
+{
+    m_errorScopes.append(ErrorScope { filter, WTF::nullopt });
+}
+
+void GPUDevice::popErrorScope(ErrorCallback&& callback)
+{
+    if (!m_platformDevice)
+        callback(WTF::nullopt, "GPUDevice::popErrorScope(): Invalid GPUDevice!");
+    else if (m_errorScopes.isEmpty())
+        callback(WTF::nullopt, "GPUDevice::popErrorScope(): No error scope exists!");
+    else {
+        auto scope = m_errorScopes.takeLast();
+        callback(scope.filter == GPUErrorFilter::None ? WTF::nullopt : WTFMove(scope.error), { });
+    }
+}
+
+void GPUDevice::registerError(const String& message, GPUErrorFilter filter)
+{
+    auto iterator = std::find_if(m_errorScopes.rbegin(), m_errorScopes.rend(), [filter](const ErrorScope& scope) {
+        return scope.filter == GPUErrorFilter::None || scope.filter == filter;
+    });
+
+    // FIXME: https://webkit.org/b/199676 Uncaptured errors need to be fired as GPUUncapturedErrorEvents.
+    if (iterator == m_errorScopes.rend())
+        return;
+
+    // If the scope has already captured an error, ignore this new one.
+    if (iterator->error)
+        return;
+
+    iterator->error = createError(filter, message);
 }
 
 } // namespace WebCore

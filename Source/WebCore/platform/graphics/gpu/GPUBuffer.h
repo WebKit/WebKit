@@ -108,7 +108,7 @@ private:
     };
 
     GPUBuffer(PlatformBufferSmartPtr&&, Ref<GPUDevice>&&, size_t, OptionSet<GPUBufferUsage::Flags>, bool);
-    static bool validateBufferUsage(const GPUDevice&, OptionSet<GPUBufferUsage::Flags>);
+    static bool validateBufferUsage(GPUDevice&, OptionSet<GPUBufferUsage::Flags>);
 
     JSC::ArrayBuffer* stagingBufferForRead();
     JSC::ArrayBuffer* stagingBufferForWrite();

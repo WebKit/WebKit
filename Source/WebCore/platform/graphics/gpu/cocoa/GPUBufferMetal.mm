@@ -42,7 +42,7 @@ namespace WebCore {
 static constexpr auto readOnlyFlags = OptionSet<GPUBufferUsage::Flags> { GPUBufferUsage::Flags::Index, GPUBufferUsage::Flags::Vertex, GPUBufferUsage::Flags::Uniform, GPUBufferUsage::Flags::TransferSource };
 
 
-bool GPUBuffer::validateBufferUsage(const GPUDevice& device, OptionSet<GPUBufferUsage::Flags> usage)
+bool GPUBuffer::validateBufferUsage(GPUDevice& device, OptionSet<GPUBufferUsage::Flags> usage)
 {
     if (!device.platformDevice()) {
         LOG(WebGPU, "GPUBuffer::tryCreate(): Invalid GPUDevice!");
@@ -50,7 +50,7 @@ bool GPUBuffer::validateBufferUsage(const GPUDevice& device, OptionSet<GPUBuffer
     }
 
     if (usage.containsAll({ GPUBufferUsage::Flags::MapWrite, GPUBufferUsage::Flags::MapRead })) {
-        LOG(WebGPU, "GPUBuffer::tryCreate(): Buffer cannot have both MAP_READ and MAP_WRITE usage!");
+        device.registerError("GPUBuffer::tryCreate(): Buffer cannot have both MAP_READ and MAP_WRITE usage!");
         return false;
     }
 
@@ -67,7 +67,7 @@ RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, const GPUBufferD
     // MTLBuffer size (NSUInteger) is 32 bits on some platforms.
     NSUInteger size = 0;
     if (!WTF::convertSafely(descriptor.size, size)) {
-        LOG(WebGPU, "GPUBuffer::tryCreate(): Buffer size is too large!");
+        device->registerError("", GPUErrorFilter::OutOfMemory);
         return nullptr;
     }
 
@@ -102,7 +102,7 @@ RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, const GPUBufferD
     END_BLOCK_OBJC_EXCEPTIONS;
 
     if (!mtlBuffer) {
-        LOG(WebGPU, "GPUBuffer::tryCreate(): Unable to create MTLBuffer!");
+        device->registerError("", GPUErrorFilter::OutOfMemory);
         return nullptr;
     }
 

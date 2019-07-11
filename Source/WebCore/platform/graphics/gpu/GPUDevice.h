@@ -27,11 +27,17 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUError.h"
+#include "GPUErrorFilter.h"
 #include "GPUQueue.h"
 #include "GPUSwapChain.h"
+#include <wtf/Function.h>
+#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/WTFString.h>
 
 OBJC_PROTOCOL(MTLDevice);
 
@@ -57,7 +63,7 @@ struct GPUSamplerDescriptor;
 struct GPUShaderModuleDescriptor;
 struct GPUSwapChainDescriptor;
 struct GPUTextureDescriptor;
-    
+
 using PlatformDevice = MTLDevice;
 using PlatformDeviceSmartPtr = RetainPtr<MTLDevice>;
 
@@ -84,12 +90,25 @@ public:
     GPUSwapChain* swapChain() const { return m_swapChain.get(); }
     void setSwapChain(RefPtr<GPUSwapChain>&&);
 
+    void pushErrorScope(GPUErrorFilter);
+
+    using ErrorCallback = WTF::Function<void(Optional<GPUError>&&, const String&)>;
+    void popErrorScope(ErrorCallback&&);
+    void registerError(const String&, GPUErrorFilter = GPUErrorFilter::Validation);
+
 private:
+    struct ErrorScope {
+        const GPUErrorFilter filter;
+        Optional<GPUError> error;
+    };
+
     explicit GPUDevice(PlatformDeviceSmartPtr&&);
 
     PlatformDeviceSmartPtr m_platformDevice;
     mutable RefPtr<GPUQueue> m_queue;
     RefPtr<GPUSwapChain> m_swapChain;
+
+    Vector<ErrorScope> m_errorScopes;
 };
 
 } // namespace WebCore

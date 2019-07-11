@@ -367,6 +367,7 @@ Modules/webgpu/WebGPUComputePassEncoder.cpp
 Modules/webgpu/WebGPUComputePipeline.cpp
 Modules/webgpu/WebGPUComputePipelineDescriptor.cpp
 Modules/webgpu/WebGPUDevice.cpp
+Modules/webgpu/WebGPUDeviceErrorScopes.cpp
 Modules/webgpu/WebGPUQueue.cpp
 Modules/webgpu/WebGPUPipelineLayout.cpp
 Modules/webgpu/WebGPUPipelineLayoutDescriptor.cpp
@@ -1827,6 +1828,8 @@ platform/graphics/filters/SourceGraphic.cpp
 platform/graphics/filters/SpotLightSource.cpp
 
 platform/graphics/gpu/GPUDevice.cpp
+platform/graphics/gpu/GPUError.cpp
+platform/graphics/gpu/GPUValidationError.cpp
 platform/graphics/gpu/GPUPipelineLayout.cpp
 platform/graphics/gpu/GPUProgrammablePassEncoder.cpp
 
@@ -2756,9 +2759,11 @@ JSGPUBufferDescriptor.cpp
 JSGPUBufferUsage.cpp
 JSGPUCompareFunction.cpp
 JSGPUDepthStencilStateDescriptor.cpp
+JSGPUErrorFilter.cpp
 JSGPUExtent3D.cpp
 JSGPULoadOp.cpp
 JSGPUOrigin3D.cpp
+JSGPUOutOfMemoryError.cpp
 JSGPURequestAdapterOptions.cpp
 JSGPUSamplerDescriptor.cpp
 JSGPUShaderStageBit.cpp
@@ -2766,6 +2771,7 @@ JSGPUStoreOp.cpp
 JSGPUTextureDescriptor.cpp
 JSGPUTextureFormat.cpp
 JSGPUTextureUsage.cpp
+JSGPUValidationError.cpp
 JSGPUVertexAttributeDescriptor.cpp
 JSGPUVertexBufferDescriptor.cpp
 JSGPUVertexInputDescriptor.cpp
@@ -3318,6 +3324,7 @@ JSWebGPUComputePassEncoder.cpp
 JSWebGPUComputePipeline.cpp
 JSWebGPUComputePipelineDescriptor.cpp
 JSWebGPUDevice.cpp
+JSWebGPUDeviceErrorScopes.cpp
 JSWebGPUQueue.cpp
 JSWebGPUPipelineDescriptorBase.cpp
 JSWebGPUPipelineLayout.cpp

@@ -480,9 +480,11 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/GPUColorWriteBits.idl
     Modules/webgpu/GPUCompareFunction.idl
     Modules/webgpu/GPUDepthStencilStateDescriptor.idl
+    Modules/webgpu/GPUErrorFilter.idl
     Modules/webgpu/GPUExtent3D.idl
     Modules/webgpu/GPULoadOp.idl
     Modules/webgpu/GPUOrigin3D.idl
+    Modules/webgpu/GPUOutOfMemoryError.idl
     Modules/webgpu/GPURequestAdapterOptions.idl
     Modules/webgpu/GPUSamplerDescriptor.idl
     Modules/webgpu/GPUShaderStageBit.idl
@@ -490,6 +492,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/GPUTextureDescriptor.idl
     Modules/webgpu/GPUTextureFormat.idl
     Modules/webgpu/GPUTextureUsage.idl
+    Modules/webgpu/GPUValidationError.idl
     Modules/webgpu/GPUVertexAttributeDescriptor.idl
     Modules/webgpu/GPUVertexBufferDescriptor.idl
     Modules/webgpu/GPUVertexInputDescriptor.idl
@@ -508,6 +511,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPUComputePipeline.idl
     Modules/webgpu/WebGPUComputePipelineDescriptor.idl
     Modules/webgpu/WebGPUDevice.idl
+    Modules/webgpu/WebGPUDeviceErrorScopes.idl
     Modules/webgpu/WebGPUPipelineDescriptorBase.idl
     Modules/webgpu/WebGPUPipelineLayout.idl
     Modules/webgpu/WebGPUPipelineLayoutDescriptor.idl

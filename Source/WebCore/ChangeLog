@@ -1,3 +1,61 @@
+2019-07-11  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Implement GPUError and error scopes
+        https://bugs.webkit.org/show_bug.cgi?id=199655
+
+        Reviewed by Myles C. Maxfield.
+
+        Add GPUErrorFilter, GPUError, and the ability to push and pop error scopes on a GPUDevice.
+        This will allow us to check for WebGPU errors from JavaScript.
+        Currently, only some GPUBuffer creation errors are reported for testing; more errors will follow in later patches.
+
+        Test: webgpu/error-scopes-test.html
+
+        * Modules/webgpu/GPUErrorFilter.idl: Added.
+        * Modules/webgpu/GPUOutOfMemoryError.idl: Added.
+        * Modules/webgpu/GPUValidationError.idl: Added.
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::pushErrorScope):
+        (WebCore::WebGPUDevice::popErrorScope): Resolve the Promise here, since GPUDevice shouldn't worry about DOM layer.
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUDeviceErrorScopes.cpp: Added.
+        (WebCore::WebGPUDeviceErrorScopes::pushErrorScope): Delegates to WebGPUDevice.
+        (WebCore::WebGPUDeviceErrorScopes::popErrorScope): Ditto.
+        * Modules/webgpu/WebGPUDeviceErrorScopes.h: Added.
+        * Modules/webgpu/WebGPUDeviceErrorScopes.idl: Added.
+        * platform/graphics/gpu/GPUBuffer.h:
+        * platform/graphics/gpu/GPUDevice.cpp: The actual error stack lives here.
+        (WebCore::GPUDevice::pushErrorScope):
+        (WebCore::GPUDevice::popErrorScope): Calls a callback with a GPUError, if any.
+        (WebCore::GPUDevice::registerError): Actually creates GPUErrors.
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/GPUError.cpp: Added.
+        (WebCore::createError): Factory function for various error types.
+        * platform/graphics/gpu/GPUError.h: Added.
+        * platform/graphics/gpu/GPUErrorFilter.h: Added.
+        * platform/graphics/gpu/GPUOutOfMemoryError.h: Added.
+        (WebCore::GPUOutOfMemoryError::create):
+        * platform/graphics/gpu/GPUValidationError.cpp: Added.
+        (WebCore::GPUValidationError::create):
+        (WebCore::GPUValidationError::GPUValidationError):
+        * platform/graphics/gpu/GPUValidationError.h: Added.
+        (WebCore::GPUValidationError::message const):
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::validateBufferUsage): Create an actual GPUValidationError :)
+        (WebCore::GPUBuffer::tryCreate): Create GPUOutOfMemoryErrors where appropriate.
+
+        Add file/name references:
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
+        Missing includes:
+        * Modules/webgpu/WHLSL/WHLSLCheckTextureReferences.cpp:
+
 2019-07-11  Tim Horton  <timothy_horton@apple.com>
 
         Null deref of RenderView under FrameView::setNeedsCompositingConfigurationUpdate
