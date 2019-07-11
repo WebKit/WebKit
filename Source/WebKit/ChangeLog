@@ -1,3 +1,17 @@
+2019-07-10  Dean Jackson  <dino@apple.com>
+
+        Safari’s context menu actions are missing options
+        https://bugs.webkit.org/show_bug.cgi?id=199694
+        <rdar://problem/52726822>
+
+        Reviewed by Tim Horton.
+
+        One of the most embarrassing errors I've ever made. I was returning
+        early when something existed, instead of when it didn't exist.
+        (*cough* tests *cough*)
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
 2019-07-10  Jon Lee  <jonlee@apple.com>
 
         Opt trello.com to mobile UA

@@ -7633,7 +7633,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 static NSArray<UIMenuElement *> *menuElementsFromLegacyPreview(UIViewController *previewViewController)
 {
-    if (previewViewController)
+    if (!previewViewController)
         return nil;
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
