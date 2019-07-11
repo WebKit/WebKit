@@ -109,6 +109,7 @@ use constant {
     tvOS        => "tvOS",
     watchOS     => "watchOS",
     Mac         => "Mac",
+    MacCatalyst => "MacCatalyst",
     JSCOnly     => "JSCOnly",
     PlayStation => "PlayStation",
     WinCairo    => "WinCairo",
@@ -489,6 +490,7 @@ sub argumentsForConfiguration()
     push(@args, '--release') if ($configuration =~ "^Release");
     push(@args, '--ios-device') if (defined $xcodeSDK && $xcodeSDK =~ /^iphoneos/);
     push(@args, '--ios-simulator') if (defined $xcodeSDK && $xcodeSDK =~ /^iphonesimulator/);
+    push(@args, '--maccatalyst') if (defined $xcodeSDK && $xcodeSDK =~ /^maccatalyst/);
     push(@args, '--32-bit') if ($architecture eq "x86" and !isWin64());
     push(@args, '--64-bit') if (isWin64());
     push(@args, '--gtk') if isGtk();
@@ -574,6 +576,9 @@ sub determineXcodeSDK
     if (checkForArgumentAndRemoveFromARGV("--watchos-simulator")) {
         $xcodeSDK ||= "watchsimulator";
     }
+    if (checkForArgumentAndRemoveFromARGV("--maccatalyst")) {
+        $xcodeSDK ||= "maccatalyst";
+    }
     return if !defined $xcodeSDK;
     
     # Prefer the internal version of an sdk, if it exists.
@@ -609,6 +614,7 @@ sub xcodeSDKPlatformName()
     return "macosx" if $xcodeSDK =~ /macosx/i;
     return "watchos" if $xcodeSDK =~ /watchos/i;
     return "watchsimulator" if $xcodeSDK =~ /watchsimulator/i;
+    return "maccatalyst" if $xcodeSDK =~ /maccatalyst/i;
     die "Couldn't determine platform name from Xcode SDK";
 }
 
@@ -720,7 +726,7 @@ sub determineConfigurationProductDir
             $configurationProductDir = "$baseProductDir";
         } else {
             $configurationProductDir = "$baseProductDir/$configuration";
-            $configurationProductDir .= "-" . xcodeSDKPlatformName() if isEmbeddedWebKit();
+            $configurationProductDir .= "-" . xcodeSDKPlatformName() if isEmbeddedWebKit() || isMacCatalystWebKit();
         }
     }
 }
@@ -1187,6 +1193,8 @@ sub determinePortName()
             $portName = tvOS;
         } elsif (willUseWatchDeviceSDK() || willUseWatchSimulatorSDK()) {
             $portName = watchOS;
+        } elsif (willUseMacCatalystSDK()) {
+            $portName = MacCatalyst;
         } else {
             $portName = Mac;
         }
@@ -1416,9 +1424,14 @@ sub isAppleMacWebKit()
     return portName() eq Mac;
 }
 
+sub isMacCatalystWebKit()
+{
+    return portName() eq MacCatalyst;
+}
+
 sub isAppleCocoaWebKit()
 {
-    return isAppleMacWebKit() || isEmbeddedWebKit();
+    return isAppleMacWebKit() || isEmbeddedWebKit() || isMacCatalystWebKit();
 }
 
 sub isAppleWinWebKit()
@@ -1502,6 +1515,11 @@ sub willUseWatchDeviceSDK()
 sub willUseWatchSimulatorSDK()
 {
     return xcodeSDKPlatformName() eq "watchsimulator";
+}
+
+sub willUseMacCatalystSDK()
+{
+    return xcodeSDKPlatformName() eq "maccatalyst";
 }
 
 sub determineNmPath()

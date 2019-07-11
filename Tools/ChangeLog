@@ -1,3 +1,23 @@
+2019-07-10  Dean Jackson  <dino@apple.com>
+
+        Support MacCatalyst in run-webkit-app
+        https://bugs.webkit.org/show_bug.cgi?id=199690
+
+        Reviewed by Tim Horton.
+
+        Add a --maccatalyst option to run-webkit-app that
+        can launch MacCatalyst applications with a built WebKit.
+
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration):
+        (determineXcodeSDK):
+        (xcodeSDKPlatformName):
+        (determineConfigurationProductDir):
+        (determinePortName):
+        (isCatalystWebKit):
+        (isAppleCocoaWebKit):
+        (willUseCatalystSDK):
+
 2019-07-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         [MacOS] Filter VPA info logged to stdout
