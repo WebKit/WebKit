@@ -569,6 +569,11 @@ public:
         m_assembler.msub<64>(dest, mulLeft, mulRight, ARM64Registers::zr);
     }
 
+    void multiplySignExtend32(RegisterID left, RegisterID right, RegisterID dest)
+    {
+        m_assembler.smull(dest, left, right);
+    }
+
     void div32(RegisterID dividend, RegisterID divisor, RegisterID dest)
     {
         m_assembler.sdiv<32>(dest, dividend, divisor);

@@ -220,6 +220,7 @@ public:
 
     class ConstrainedValueCollection {
     public:
+
         ConstrainedValueCollection(const StackmapValue& value)
             : m_value(value)
         {
@@ -233,6 +234,12 @@ public:
 
         class iterator {
         public:
+            using iterator_category = std::forward_iterator_tag;
+            using value_type = ConstrainedValue;
+            using difference_type = int;
+            using pointer = void;
+            using reference = ConstrainedValue;
+
             iterator()
                 : m_collection(nullptr)
                 , m_index(0)
