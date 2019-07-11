@@ -47,8 +47,10 @@ typedef void(^TaskStateChangedCallbackType)(BKSProcessTaskState);
 {
     RELEASE_LOG(ProcessSuspension, "%p -[WKProcessTaskStateObserverDelegate process:taskStateDidChange:], process(%p), newState(%d)", self, process, (int)newState);
 
-    if (self.taskStateChangedCallback)
-        self.taskStateChangedCallback(newState);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.taskStateChangedCallback)
+            self.taskStateChangedCallback(newState);
+    });
 }
 @end
 
