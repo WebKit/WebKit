@@ -22,7 +22,7 @@
 
 #pragma once
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #include <atk/atk.h>
 #include <wtf/text/WTFString.h>
@@ -85,4 +85,4 @@ bool webkitAccessibleIsDetached(WebKitAccessible*);
 
 const char* webkitAccessibleCacheAndReturnAtkProperty(WebKitAccessible*, AtkCachedProperty, CString&&);
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY)

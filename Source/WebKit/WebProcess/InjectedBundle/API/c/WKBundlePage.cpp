@@ -234,7 +234,7 @@ void WKBundlePageInsertNewlineInQuotedContent(WKBundlePageRef pageRef)
 
 void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
 {
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     if (!pageRef)
         return 0;
     
@@ -261,7 +261,7 @@ void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
 
 void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
 {
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     if (!pageRef)
         return 0;
     
@@ -284,14 +284,14 @@ void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
 
 void WKAccessibilityEnableEnhancedAccessibility(bool enable)
 {
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility(enable);
 #endif
 }
 
 bool WKAccessibilityEnhancedAccessibilityEnabled()
 {
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     return WebCore::AXObjectCache::accessibilityEnhancedUserInterfaceEnabled();
 #else
     return false;

@@ -1,3 +1,27 @@
+2019-07-11  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [WPE][GTK] Build failure with ENABLE_ACCESSIBILITY=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=199625
+
+        Added ENABLE(ACCESSIBILITY) and replaced HAVE(ACCESSIBILITY)
+        with ENABLE(ACCESSIBILITY) in the code.
+
+        Additionally, the TestRunner code generator now honors the
+        Conditional IDL format.
+
+        Reviewed by Konstantin Tokarev.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        * WebKitTestRunner/InjectedBundle/AccessibilityTextMarker.cpp:
+        * WebKitTestRunner/InjectedBundle/AccessibilityTextMarkerRange.cpp:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityController.idl:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityTextMarker.idl:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityTextMarkerRange.idl:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm:
+        (_generateImplementationFile):
+
 2019-07-11  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add build step to clean up .git/index.lock file

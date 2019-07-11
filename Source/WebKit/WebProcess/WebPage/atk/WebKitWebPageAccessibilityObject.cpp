@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebKitWebPageAccessibilityObject.h"
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #include "WebPage.h"
 #include <WebCore/AXObjectCache.h>
@@ -157,4 +157,4 @@ AtkObject* webkitWebPageAccessibilityObjectNew(WebPage* page)
     return object;
 }
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY)

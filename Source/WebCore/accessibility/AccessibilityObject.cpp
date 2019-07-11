@@ -106,14 +106,14 @@ void AccessibilityObject::detach(AccessibilityDetachmentType detachmentType, AXO
     // no children are left with dangling pointers to their parent.
     clearChildren();
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     setWrapper(nullptr);
 #endif
 }
 
 bool AccessibilityObject::isDetached() const
 {
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     return !wrapper();
 #else
     return true;
@@ -1791,7 +1791,7 @@ bool AccessibilityObject::contentEditableAttributeIsEnabled(Element* element)
     return contentEditableValue.isEmpty() || equalLettersIgnoringASCIICase(contentEditableValue, "true");
 }
     
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 int AccessibilityObject::lineForPosition(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull() || !node())
@@ -1861,7 +1861,7 @@ unsigned AccessibilityObject::doAXLineForIndex(unsigned index)
     return lineForPosition(visiblePositionForIndex(index, false));
 }
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 void AccessibilityObject::updateBackingStore()
 {
     if (!axObjectCache())
@@ -1925,7 +1925,7 @@ FrameView* AccessibilityObject::documentFrameView() const
     return object->documentFrameView();
 }
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::children(bool updateChildrenIfNeeded)
 {
     if (updateChildrenIfNeeded)
@@ -2048,7 +2048,7 @@ const String AccessibilityObject::defaultLiveRegionStatusForRole(AccessibilityRo
     }
 }
     
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 const String& AccessibilityObject::actionVerb() const
 {
 #if !PLATFORM(IOS_FAMILY)

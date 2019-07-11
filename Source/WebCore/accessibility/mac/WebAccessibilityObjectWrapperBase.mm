@@ -29,7 +29,7 @@
 #import "config.h"
 #import "WebAccessibilityObjectWrapperBase.h"
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #import "AXIsolatedTree.h"
 #import "AXIsolatedTreeNode.h"
@@ -812,4 +812,4 @@ AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicateParamet
 
 @end
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY)

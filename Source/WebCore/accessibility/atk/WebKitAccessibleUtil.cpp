@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WebKitAccessibleUtil.h"
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"

@@ -86,7 +86,7 @@
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
-#if HAVE(ACCESSIBILITY) && USE(ATK)
+#if ENABLE(ACCESSIBILITY) && USE(ATK)
 typedef struct _AtkObject AtkObject;
 #include <wtf/glib/GRefPtr.h>
 #endif
@@ -1678,7 +1678,7 @@ private:
     RetainPtr<NSDictionary> m_dataDetectionContext;
 #endif
 
-#if HAVE(ACCESSIBILITY) && USE(ATK)
+#if ENABLE(ACCESSIBILITY) && USE(ATK)
     GRefPtr<AtkObject> m_accessibilityObject;
 #endif
 

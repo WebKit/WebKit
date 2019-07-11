@@ -21,7 +21,7 @@
 
 #pragma once
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #include <atk/atk.h>
 #include <wtf/text/WTFString.h>
@@ -68,4 +68,4 @@ bool selectionBelongsToObject(WebCore::AccessibilityObject*, WebCore::VisibleSel
 
 WebCore::AccessibilityObject* objectFocusedAndCaretOffsetUnignored(WebCore::AccessibilityObject*, int& offset);
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY)

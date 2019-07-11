@@ -21,10 +21,10 @@
 
 #pragma once
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #include <atk/atk.h>
 
 void webkitAccessibleImageInterfaceInit(AtkImageIface*);
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY)

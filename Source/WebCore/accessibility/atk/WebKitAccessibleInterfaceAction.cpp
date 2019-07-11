@@ -32,7 +32,7 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceAction.h"
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #include "AccessibilityObject.h"
 #include "NotImplemented.h"

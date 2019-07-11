@@ -56,7 +56,7 @@ public:
 
     struct wpe_view_backend* viewBackend();
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     AtkObject* accessible();
 #endif
 

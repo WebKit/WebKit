@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #include <atk/atk.h>
 
@@ -62,4 +62,4 @@ AtkObject* webkitWebPageAccessibilityObjectNew(WebKit::WebPage*);
 
 G_END_DECLS
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY)

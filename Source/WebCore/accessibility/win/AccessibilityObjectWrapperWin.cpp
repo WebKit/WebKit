@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AccessibilityObjectWrapperWin.h"
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
@@ -82,4 +82,4 @@ void AccessibilityObjectWrapper::accessibilityAttributeValue(const AtomString& a
 
 } // namespace WebCore
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY)

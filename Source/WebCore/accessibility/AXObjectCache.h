@@ -198,7 +198,7 @@ public:
     Ref<AXIsolatedTreeNode> createIsolatedAccessibilityTreeHierarchy(AccessibilityObject&, AXID, AXIsolatedTree&, Vector<Ref<AXIsolatedTreeNode>>&);
 #endif
     
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     WEBCORE_EXPORT static void enableAccessibility();
     WEBCORE_EXPORT static void disableAccessibility();
 
@@ -497,7 +497,7 @@ public:
     explicit AXAttributeCacheEnabler(AXObjectCache *cache);
     ~AXAttributeCacheEnabler();
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 private:
     AXObjectCache* m_cache;
 #endif
@@ -507,7 +507,7 @@ bool nodeHasRole(Node*, const String& role);
 // This will let you know if aria-hidden was explicitly set to false.
 bool isNodeAriaVisible(Node*);
     
-#if !HAVE(ACCESSIBILITY)
+#if !ENABLE(ACCESSIBILITY)
 inline AccessibilityObjectInclusion AXComputedObjectAttributeCache::getIgnored(AXID) const { return AccessibilityObjectInclusion::DefaultBehavior; }
 inline AccessibilityReplacedText::AccessibilityReplacedText(const VisibleSelection&) { }
 inline void AccessibilityReplacedText::postTextStateChangeNotification(AXObjectCache*, AXTextEditType, const String&, const VisibleSelection&) { }

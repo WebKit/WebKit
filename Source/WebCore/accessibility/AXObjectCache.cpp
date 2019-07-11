@@ -28,7 +28,7 @@
 
 #include "config.h"
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #include "AXObjectCache.h"
 
@@ -3102,4 +3102,4 @@ AXTextChange AXObjectCache::textChangeForEditType(AXTextEditType type)
     
 } // namespace WebCore
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY)

@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceTableCell.h"
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #include "AccessibilityObject.h"
 #include "AccessibilityTable.h"
@@ -166,4 +166,4 @@ void webkitAccessibleTableCellInterfaceInit(AtkTableCellIface* iface)
     iface->get_table = webkitAccessibleTableCellGetTable;
 }
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY)

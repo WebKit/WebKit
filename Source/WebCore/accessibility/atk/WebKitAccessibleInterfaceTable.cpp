@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceTable.h"
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #include "AccessibilityListBox.h"
 #include "AccessibilityObject.h"

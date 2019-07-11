@@ -29,7 +29,7 @@
 #import "config.h"
 #import "WebAccessibilityObjectWrapperMac.h"
 
-#if HAVE(ACCESSIBILITY) && PLATFORM(MAC)
+#if ENABLE(ACCESSIBILITY) && PLATFORM(MAC)
 
 #import "AXObjectCache.h"
 #import "AccessibilityARIAGridRow.h"
@@ -4646,4 +4646,4 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end
 
-#endif // HAVE(ACCESSIBILITY) && PLATFORM(MAC)
+#endif // ENABLE(ACCESSIBILITY) && PLATFORM(MAC)

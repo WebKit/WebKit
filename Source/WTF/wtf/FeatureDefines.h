@@ -404,6 +404,10 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_3D_TRANSFORMS 0
 #endif
 
+#if !defined(ENABLE_ACCESSIBILITY)
+#define ENABLE_ACCESSIBILITY 1
+#endif
+
 #if !defined(ENABLE_ACCELERATED_2D_CANVAS)
 #define ENABLE_ACCELERATED_2D_CANVAS 0
 #endif

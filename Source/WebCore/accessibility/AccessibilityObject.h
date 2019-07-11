@@ -949,7 +949,7 @@ public:
     bool isDOMHidden() const;
     bool isHidden() const { return isAXHidden() || isDOMHidden(); }
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     AccessibilityObjectWrapper* wrapper() const override { return m_wrapper.get(); }
     void setWrapper(AccessibilityObjectWrapper* wrapper) { m_wrapper = wrapper; }
 #else
@@ -962,7 +962,7 @@ public:
     void overrideAttachmentParent(AccessibilityObject*) { }
 #endif
     
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     // a platform-specific method for determining if an attachment is ignored
     bool accessibilityIgnoreAttachment() const;
     // gives platforms the opportunity to indicate if and how an object should be included
@@ -1044,7 +1044,7 @@ protected:
 
     AccessibilityObject* radioGroupAncestor() const;
 
-#if HAVE(ACCESSIBILITY) && USE(ATK)
+#if ENABLE(ACCESSIBILITY) && USE(ATK)
     bool allowsTextRanges() const;
     unsigned getLengthForTextRange() const;
 #else
@@ -1061,7 +1061,7 @@ protected:
 #endif
 };
 
-#if !HAVE(ACCESSIBILITY)
+#if !ENABLE(ACCESSIBILITY)
 inline const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::children(bool) { return m_children; }
 inline const String& AccessibilityObject::actionVerb() const { return emptyString(); }
 inline int AccessibilityObject::lineForPosition(const VisiblePosition&) const { return -1; }

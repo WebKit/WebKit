@@ -37,7 +37,7 @@
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/NotImplemented.h>
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 #include <atk/atk.h>
 #endif
 
@@ -413,7 +413,7 @@ void PageClientImpl::requestDOMPasteAccess(const WebCore::IntRect&, const String
     completionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
 }
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 AtkObject* PageClientImpl::accessible()
 {
     return ATK_OBJECT(m_view.accessible());

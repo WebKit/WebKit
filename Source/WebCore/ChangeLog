@@ -1,3 +1,76 @@
+2019-07-11  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [WPE][GTK] Build failure with ENABLE_ACCESSIBILITY=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=199625
+
+        Added ENABLE(ACCESSIBILITY) and replaced HAVE(ACCESSIBILITY)
+        with ENABLE(ACCESSIBILITY) in the code.
+
+        Additionally, the TestRunner code generator now honors the
+        Conditional IDL format.
+
+        No new tests as there is no intended functional change
+
+        Reviewed by Konstantin Tokarev.
+
+        * accessibility/AXObjectCache.cpp:
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::detach):
+        (WebCore::AccessibilityObject::isDetached const):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        * accessibility/atk/AccessibilityObjectAtk.cpp:
+        * accessibility/atk/WebKitAccessible.cpp:
+        * accessibility/atk/WebKitAccessible.h:
+        * accessibility/atk/WebKitAccessibleHyperlink.cpp:
+        * accessibility/atk/WebKitAccessibleHyperlink.h:
+        * accessibility/atk/WebKitAccessibleInterfaceAction.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceAction.h:
+        * accessibility/atk/WebKitAccessibleInterfaceComponent.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceComponent.h:
+        * accessibility/atk/WebKitAccessibleInterfaceDocument.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceDocument.h:
+        * accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceEditableText.h:
+        * accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.h:
+        * accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceHypertext.h:
+        * accessibility/atk/WebKitAccessibleInterfaceImage.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceImage.h:
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.h:
+        * accessibility/atk/WebKitAccessibleInterfaceTable.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceTable.h:
+        * accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceTableCell.h:
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceText.h:
+        * accessibility/atk/WebKitAccessibleInterfaceValue.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceValue.h:
+        * accessibility/atk/WebKitAccessibleUtil.cpp:
+        * accessibility/atk/WebKitAccessibleUtil.h:
+        * accessibility/ios/AXObjectCacheIOS.mm:
+        * accessibility/ios/AccessibilityObjectIOS.mm:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        * accessibility/mac/AccessibilityObjectBase.mm:
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        * accessibility/win/AccessibilityObjectWin.cpp:
+        * accessibility/win/AccessibilityObjectWrapperWin.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction):
+        * editing/FrameSelection.h:
+        * editing/atk/FrameSelectionAtk.cpp:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setInnerTextValue):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+
 2019-07-11  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Implement GPUError and error scopes

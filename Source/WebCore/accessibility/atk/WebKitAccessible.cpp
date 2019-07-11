@@ -32,7 +32,7 @@
 #include "config.h"
 #include "WebKitAccessible.h"
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #include "AXObjectCache.h"
 #include "AccessibilityList.h"
@@ -1369,4 +1369,4 @@ const char* webkitAccessibleCacheAndReturnAtkProperty(WebKitAccessible* accessib
     return (*propertyPtr).data();
 }
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY)

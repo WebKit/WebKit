@@ -26,6 +26,8 @@
 #include "config.h"
 #include "AccessibilityController.h"
 
+#if ENABLE(ACCESSIBILITY)
+
 #include "AccessibilityUIElement.h"
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
@@ -95,3 +97,5 @@ RefPtr<AccessibilityUIElement> AccessibilityController::elementAtPoint(int x, in
 }
 
 } // namespace WTR
+#endif // ENABLE(ACCESSIBILITY)
+

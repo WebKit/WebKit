@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface AccessibilityTextMarkerRange {
+[
+    Conditional=ACCESSIBILITY,
+] interface AccessibilityTextMarkerRange {
     boolean isEqual(AccessibilityTextMarkerRange otherMarkerRange);
 };
 

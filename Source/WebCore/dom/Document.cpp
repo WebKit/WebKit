@@ -2478,7 +2478,7 @@ void Document::prepareForDestruction()
 
     m_undoManager->removeAllItems();
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     if (this != &topDocument()) {
         // Let the ax cache know that this subframe goes out of scope.
         if (auto* cache = existingAXObjectCache())

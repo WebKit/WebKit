@@ -399,8 +399,13 @@ EOF
 EOF
 
     unshift(@contents, map { "#include \"$_\"\n" } sort keys(%contentsIncludes));
+    my $conditionalString = $$self{codeGenerator}->GenerateConditionalString($interface);
+    unshift(@contents, "\n#if ${conditionalString}\n\n") if $conditionalString;
+
     unshift(@contents, "#include \"config.h\"\n");
     unshift(@contents, @contentsPrefix);
+
+    push(@contents, "\n#endif // ${conditionalString}\n") if $conditionalString;
 
     return { name => $filename, contents => \@contents };
 }

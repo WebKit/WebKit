@@ -559,7 +559,7 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
     String previousValue = innerTextValueFrom(*innerText);
     bool textIsChanged = value != previousValue;
     if (textIsChanged || !innerText->hasChildNodes()) {
-#if HAVE(ACCESSIBILITY) && !PLATFORM(COCOA)
+#if ENABLE(ACCESSIBILITY) && !PLATFORM(COCOA)
         if (textIsChanged && renderer()) {
             if (AXObjectCache* cache = document().existingAXObjectCache())
                 cache->postNotification(this, AXObjectCache::AXValueChanged, TargetObservableParent);
@@ -576,7 +576,7 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
                 innerText->appendChild(HTMLBRElement::create(document()));
         }
 
-#if HAVE(ACCESSIBILITY) && PLATFORM(COCOA)
+#if ENABLE(ACCESSIBILITY) && PLATFORM(COCOA)
         if (textIsChanged && renderer()) {
             if (AXObjectCache* cache = document().existingAXObjectCache())
                 cache->deferTextReplacementNotificationForTextControl(*this, previousValue);

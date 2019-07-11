@@ -20,7 +20,7 @@
 #include "config.h"
 #include "AXObjectCache.h"
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #include "AccessibilityObject.h"
 #include "AccessibilityRenderObject.h"

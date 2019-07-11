@@ -104,7 +104,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
         // get_accessible
         [](void* data) -> void*
         {
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
             auto& view = *reinterpret_cast<View*>(data);
             return view.accessible();
 #else
@@ -175,7 +175,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
 
 View::~View()
 {
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     if (m_accessible)
         webkitWebViewAccessibleSetWebView(m_accessible.get(), nullptr);
 #endif
@@ -225,7 +225,7 @@ void View::close()
     m_pageProxy->close();
 }
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 WebKitWebViewAccessible* View::accessible() const
 {
     if (!m_accessible)

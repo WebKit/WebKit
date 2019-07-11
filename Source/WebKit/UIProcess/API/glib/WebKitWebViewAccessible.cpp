@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebKitWebViewAccessible.h"
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #include <wtf/glib/WTFGType.h>
 
@@ -113,4 +113,4 @@ void webkitWebViewAccessibleSetWebView(WebKitWebViewAccessible* accessible, gpoi
         atk_object_notify_state_change(ATK_OBJECT(accessible), ATK_STATE_DEFUNCT, FALSE);
 }
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY)

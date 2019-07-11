@@ -30,7 +30,7 @@
 #include "TextControlInnerElements.h"
 #include <glib-object.h>
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 namespace WebCore {
 
@@ -190,4 +190,4 @@ unsigned AccessibilityObject::getLengthForTextRange() const
 
 } // namespace WebCore
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY)

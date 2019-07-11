@@ -26,7 +26,7 @@
 #import "config.h"
 #import "AXObjectCache.h"
 
-#if HAVE(ACCESSIBILITY) && PLATFORM(MAC)
+#if ENABLE(ACCESSIBILITY) && PLATFORM(MAC)
 
 #import "AXIsolatedTreeNode.h"
 #import "AccessibilityObject.h"
@@ -559,4 +559,4 @@ void AXObjectCache::platformPerformDeferredCacheUpdate()
 
 }
 
-#endif // HAVE(ACCESSIBILITY) && PLATFORM(MAC)
+#endif // ENABLE(ACCESSIBILITY) && PLATFORM(MAC)

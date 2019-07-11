@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(ACCESSIBILITY)
+
 #include "AccessibilityUIElement.h"
 
 #include "JSAccessibilityUIElement.h"
@@ -108,3 +111,4 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousSentenceStartTex
 #endif
 
 } // namespace WTR
+#endif // ENABLE(ACCESSIBILITY)

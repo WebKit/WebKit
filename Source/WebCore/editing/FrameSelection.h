@@ -313,7 +313,7 @@ private:
     LayoutUnit lineDirectionPointForBlockDirectionNavigation(EPositionType);
 
     AXTextStateChangeIntent textSelectionIntent(EAlteration, SelectionDirection, TextGranularity);
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     void notifyAccessibilityForSelectionChange(const AXTextStateChangeIntent&);
 #else
     void notifyAccessibilityForSelectionChange(const AXTextStateChangeIntent&) { }
@@ -387,7 +387,7 @@ inline void FrameSelection::clearTypingStyle()
 }
 
 #if !(PLATFORM(COCOA) || USE(ATK))
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 inline void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChangeIntent&)
 {
 }

@@ -33,7 +33,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 #include "WebKitWebViewAccessible.h"
 #include <wtf/glib/GRefPtr.h>
 #endif
@@ -83,7 +83,7 @@ public:
     void setFullScreen(bool fullScreenState) { m_fullScreenModeActive = fullScreenState; };
 #endif
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     WebKitWebViewAccessible* accessible() const;
 #endif
 
@@ -106,7 +106,7 @@ private:
     bool m_fullScreenModeActive { false };
 #endif
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     mutable GRefPtr<WebKitWebViewAccessible> m_accessible;
 #endif
 };

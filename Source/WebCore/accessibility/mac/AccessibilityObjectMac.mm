@@ -30,7 +30,7 @@
 #import "RenderObject.h"
 #import "Settings.h"
 
-#if HAVE(ACCESSIBILITY) && PLATFORM(MAC)
+#if ENABLE(ACCESSIBILITY) && PLATFORM(MAC)
 
 #import "WebAccessibilityObjectWrapperMac.h"
 #import "Widget.h"
@@ -130,4 +130,4 @@ void AccessibilityObject::setCaretBrowsingEnabled(bool on)
 
 } // WebCore
 
-#endif // HAVE(ACCESSIBILITY) && PLATFORM(MAC)
+#endif // ENABLE(ACCESSIBILITY) && PLATFORM(MAC)
