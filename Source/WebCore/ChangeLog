@@ -1,3 +1,17 @@
+2019-07-11  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][MediaStream] Use the new dispatchMediaSampleToObservers to dispatch new buffers
+        https://bugs.webkit.org/show_bug.cgi?id=199689
+
+        Reviewed by Philippe Normand.
+
+        We already have tests for this.
+
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        (WebCore::GStreamerVideoCaptureSource::processNewFrame):
+        (WebCore::GStreamerVideoCaptureSource::newSampleCallback):
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.h:
+
 2019-07-10  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] With modal overlay and body overflow:hidden, can't access all the content
