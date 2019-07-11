@@ -1,3 +1,28 @@
+2019-07-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Layers: Uncaught Exception: Request with id = 2 failed. {"code":-32601,"message":"'Page' domain was not found","data":[{"code":-32601,"message":"'Page' domain was not found"}]}
+        https://bugs.webkit.org/show_bug.cgi?id=199555
+
+        Reviewed by Joseph Pecoraro.
+
+        Use modern inspected target support checking, and defer agent commands until a target is
+        available.
+
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView):
+        (WI.Layers3DContentView.prototype._showPaintRectsSettingChanged):
+        (WI.Layers3DContentView.prototype._updateCompositingBordersButtonState):
+        (WI.Layers3DContentView.prototype._toggleCompositingBorders):
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+        (WI.DOMTreeContentView.prototype._toggleCompositingBorders):
+        (WI.DOMTreeContentView.prototype._updateCompositingBordersButtonToMatchPageSettings):
+        (WI.DOMTreeContentView.prototype._showPaintRectsSettingChanged):
+        (WI.DOMTreeContentView.prototype._showPrintStylesChanged):
+        (WI.DOMTreeContentView.prototype._showRulersChanged):
+        Drive-by: apply the same changes to the Elements tab for when the Layers tab isn't enabled.
+
 2019-07-09  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: replace WTF::Vector with std::initializer_list in CallTracer to avoid dynamic allocations
