@@ -22,6 +22,7 @@ async function run()
     window.scrollTo(0, 0);
     await UIHelper.ensurePresentationUpdate();
     await UIHelper.enterText('hello');
+    await UIHelper.ensurePresentationUpdate();
 
     const keyboardRect = await UIHelper.inputViewBounds();
     const scrollTop = document.scrollingElement.scrollTop;

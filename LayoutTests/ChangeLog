@@ -1,3 +1,9 @@
+2019-07-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make the test added in r247327 more reliable.
+
+        * editing/selection/ios/autoscroll-with-top-content-inset-2.html:
+
 2019-07-11  Russell Epstein  <russell_e@apple.com>
 
         Layout Test fast/viewport/ios/viewport-shrink-to-fit-on-new-navigation.html is Failing Consistently on iOS-WK2.
