@@ -1,3 +1,24 @@
+2019-07-11  Chris Dumez  <cdumez@apple.com>
+
+        Fix non thread-safe usage of makeWeakPtr() in MediaPlayerPrivateMediaFoundation
+        https://bugs.webkit.org/show_bug.cgi?id=199700
+
+        Reviewed by Eric Carlson.
+
+        The code was calling makeWeakPtr() on a main-thread object, from a background thread.
+        This is not thread safe. To address the issue, this patches creates the WeakPtr ahead
+        of time, on the main thread. 
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::MediaPlayerPrivateMediaFoundation):
+        (WebCore::MediaPlayerPrivateMediaFoundation::endCreatedMediaSource):
+        (WebCore::MediaPlayerPrivateMediaFoundation::endGetEvent):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::processInputNotify):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+        (WebCore::MediaPlayerPrivateMediaFoundation::ThreadSafeWrapper::create):
+        (WebCore::MediaPlayerPrivateMediaFoundation::ThreadSafeWrapper::wrapped):
+        (WebCore::MediaPlayerPrivateMediaFoundation::ThreadSafeWrapper::ThreadSafeWrapper):
+
 2019-07-11  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Cleanup InlineFormattingContext::LineLayout class.
