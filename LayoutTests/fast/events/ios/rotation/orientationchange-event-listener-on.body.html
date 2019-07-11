@@ -30,34 +30,38 @@
 
             testRunner.runUIScript(getRotationUIScript(), function(result) {
                 debug('After rotation');
-
+                shouldBe("eventListenerCalls", "4");
                 finishJSTest();
             });
         }
+
+        eventListenerCalls = 0;
         window.addEventListener('resize', function() {
-            testPassed("In window's resize event listener");
+            ++eventListenerCalls;
         }, false);
 
         window.addEventListener('orientationchange', function() {
-            testPassed("In window's orientationchange event listener");
+            ++eventListenerCalls;
         }, false);
 
         document.body.addEventListener('resize', function() {
             testFailed("In body's resize event listener");
+            ++eventListenerCalls;
         }, false);
 
         document.body.addEventListener('orientationchange', function() {
             testFailed("In body's orientationchange event listener");
+            ++eventListenerCalls;
         }, false);
 
         function bodyOrientationChange()
         {
-            testPassed("In body's onorientationchange event handler");
+            ++eventListenerCalls;
         }
 
         function bodyResize()
         {
-            testPassed("In body's onresize event handler");
+            ++eventListenerCalls;
         }
 
         window.addEventListener('load', doTest, false);

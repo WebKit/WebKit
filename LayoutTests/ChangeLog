@@ -1,3 +1,17 @@
+2019-07-11  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] fast/events/ios/rotation/orientationchange-event-listener-on.body.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=199732
+        <rdar://problem/52693087>
+
+        Reviewed by Alex Christensen.
+
+        Stop logging in each event listener to not be reliant on the order in which listener are called.
+        Instead, simply make sure all event listeners that should be called were actually called.
+
+        * fast/events/ios/rotation/orientationchange-event-listener-on.body-expected.txt:
+        * fast/events/ios/rotation/orientationchange-event-listener-on.body.html:
+
 2019-07-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make the test added in r247327 more reliable.
