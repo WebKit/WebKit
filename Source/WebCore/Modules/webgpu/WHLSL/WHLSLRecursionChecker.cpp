@@ -40,20 +40,29 @@ namespace WHLSL {
 // Makes sure there is no function recursion.
 class RecursionChecker : public Visitor {
 private:
+    void visit(Program& program) override
+    {
+        for (auto& functionDefinition : program.functionDefinitions())
+            checkErrorAndVisit(functionDefinition);
+    }
+
     void visit(AST::FunctionDefinition& functionDefinition) override
     {
-        auto addResult = m_visitingSet.add(&functionDefinition);
+        if (m_finishedVisiting.contains(&functionDefinition))
+            return;
+
+        auto addResult = m_startedVisiting.add(&functionDefinition);
         if (!addResult.isNewEntry) {
             setError();
             return;
         }
 
         Visitor::visit(functionDefinition);
-        if (error())
-            return;
 
-        auto success = m_visitingSet.remove(&functionDefinition);
-        ASSERT_UNUSED(success, success);
+        {
+            auto addResult = m_finishedVisiting.add(&functionDefinition);
+            ASSERT_UNUSED(addResult, addResult.isNewEntry);
+        }
     }
 
     void visit(AST::CallExpression& callExpression) override
@@ -63,7 +72,8 @@ private:
             checkErrorAndVisit(downcast<AST::FunctionDefinition>(callExpression.function()));
     }
 
-    HashSet<AST::FunctionDefinition*> m_visitingSet;
+    HashSet<AST::FunctionDefinition*> m_startedVisiting;
+    HashSet<AST::FunctionDefinition*> m_finishedVisiting;
 };
 
 bool checkRecursion(Program& program)

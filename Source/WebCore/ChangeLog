@@ -1,3 +1,21 @@
+2019-07-10  Robin Morisset  <rmorisset@apple.com>
+
+        [WHLSL] The recursion checker should not have quadratic complexity
+        https://bugs.webkit.org/show_bug.cgi?id=199688
+
+        Reviewed by Saam Barati.
+
+        I fix it by using two different hash sets, tracking which functions we have started visiting, and which we have finished visiting.
+        The difference are those that are currently "on the stack", and calling any of those is an error.
+        As a bonus, I also overrode visit(Program&), so that we only bother visiting function definitions.
+
+        On whlsl-compute.html ran 5 times, this patch reduces the time spent in the recursion checker from 26ms to 12ms.
+        It is likely to be a much bigger win on larger programs (since it took the complexity from quadratic to linear).
+
+        No new tests as there is no intended functional change.
+
+        * Modules/webgpu/WHLSL/WHLSLRecursionChecker.cpp:
+
 2019-07-10  Sihui Liu  <sihui_liu@apple.com>
 
         Crash at WebCore::IDBServer::MemoryObjectStoreCursor::incrementReverseIterator
