@@ -270,7 +270,7 @@ void MemoryObjectStoreCursor::incrementReverseIterator(IDBKeyDataSet& set, const
         didResetIterator = true;
     }
 
-    if (*m_iterator == set.end())
+    if (!m_iterator || *m_iterator == set.end())
         return;
 
     if (key.isValid()) {
