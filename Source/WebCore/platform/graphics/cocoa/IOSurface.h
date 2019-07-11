@@ -31,7 +31,7 @@
 #include "GraphicsContext.h"
 #include "IntSize.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 #define HAVE_IOSURFACE_RGB10 1
 #endif
 
