@@ -1,3 +1,21 @@
+2019-07-11  Sihui Liu  <sihui_liu@apple.com>
+
+        StorageArea should not be destructed on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=199713
+        <rdar://problem/52911900>
+
+        Reviewed by Alex Christensen.
+
+        After r246079, LocalStorageNameSpace could be destructed on the main thread and it may hold the last reference 
+        to StorageArea. Then we saw the crashes that StorageArea was wrongly destructed on the main thread.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::~NetworkSession):
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::waitUntilTasksFinished):
+        (WebKit::StorageManager::waitUntilWritesFinished): Deleted.
+        * NetworkProcess/WebStorage/StorageManager.h:
+
 2019-07-11  Tim Horton  <timothy_horton@apple.com>
 
         Null deref of Range under WebPage::startAutoscrollAtPosition

@@ -57,7 +57,7 @@ public:
     void cloneSessionStorageNamespace(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID);
 
     void processDidCloseConnection(IPC::Connection&);
-    void waitUntilWritesFinished();
+    void waitUntilTasksFinished();
     void suspend(CompletionHandler<void()>&&);
     void resume();
 

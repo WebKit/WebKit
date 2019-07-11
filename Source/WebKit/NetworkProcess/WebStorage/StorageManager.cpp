@@ -907,7 +907,7 @@ void StorageManager::clear(IPC::Connection& connection, WebCore::SecurityOriginD
     });
 }
 
-void StorageManager::waitUntilWritesFinished()
+void StorageManager::waitUntilTasksFinished()
 {
     BinarySemaphore semaphore;
     m_queue->dispatch([this, &semaphore] {
@@ -919,6 +919,8 @@ void StorageManager::waitUntilWritesFinished()
 
         for (auto& connectionStorageAreaPair : connectionAndStorageMapIDPairsToRemove)
             m_storageAreasByConnection.remove(connectionStorageAreaPair);
+
+        m_localStorageNamespaces.clear();
 
         semaphore.signal();
     });

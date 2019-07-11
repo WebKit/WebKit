@@ -95,7 +95,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, PAL::SessionID se
 NetworkSession::~NetworkSession()
 {
     m_storageManager->resume();
-    m_storageManager->waitUntilWritesFinished();
+    m_storageManager->waitUntilTasksFinished();
 }
 
 void NetworkSession::invalidateAndCancel()
