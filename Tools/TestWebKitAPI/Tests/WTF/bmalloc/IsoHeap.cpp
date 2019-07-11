@@ -313,10 +313,17 @@ TEST(bmalloc, ScavengedMemoryShouldBeReused)
     static IsoHeap<double> heap;
 
     auto run = [] (unsigned numPagesToCommit) {
-        auto* ptr1 = heap.allocate();
-
+        std::vector<void*> lowerTierPtrs;
         std::vector<void*> ptrs;
 
+        // Let's exhaust the capacity of the lower tier.
+        for (unsigned i = 0; i < IsoPage<decltype(heap)::Config>::numObjects; ++i) {
+            void* ptr = heap.allocate();
+            CHECK(ptr);
+            lowerTierPtrs.push_back(ptr);
+        }
+
+        // After that, allocating pointers in the upper tier.
         for (unsigned i = 0; ;i++) {
             void* ptr = heap.allocate();
             CHECK(ptr);
@@ -325,24 +332,33 @@ TEST(bmalloc, ScavengedMemoryShouldBeReused)
                 break;
         }
 
-        std::set<void*> uniquedPtrs = toptrset(ptrs);
+        std::set<void*> uniquedPtrsOfUpperTiers = toptrset(ptrs);
+        CHECK(ptrs.size() == uniquedPtrsOfUpperTiers.size());
 
-        heap.deallocate(ptr1);
-        for (unsigned i = 0; i < IsoPage<decltype(heap)::Config>::numObjects - 1; i++) {
-            heap.deallocate(ptrs[i]);
-            uniquedPtrs.erase(ptrs[i]);
+        std::set<void*> uniquedPtrs = uniquedPtrsOfUpperTiers;
+        for (void* ptr : lowerTierPtrs)
+            uniquedPtrs.insert(ptr);
+
+        // We do keep pointers in the lower tier while deallocating pointers in the upper tier.
+        // Then, after the scavenge, the pages of the upper tier should be reused.
+
+        for (void* ptr : ptrs) {
+            heap.deallocate(ptr);
+            uniquedPtrs.erase(ptr);
         }
 
         scavenge();
         assertHasOnlyObjects(heap, uniquedPtrs);
 
-        // FIXME: This only seems to pass when lldb is attached but the scavenger thread isn't running...
-        // see: https://bugs.webkit.org/show_bug.cgi?id=198384
-        // auto* ptr2 = heap.allocate();
-        // CHECK(ptr1 == ptr2);
+        auto* ptr2 = heap.allocate();
+        CHECK(uniquedPtrsOfUpperTiers.find(ptr2) != uniquedPtrsOfUpperTiers.end());
+        heap.deallocate(ptr2);
+
+        for (void* ptr : lowerTierPtrs)
+            heap.deallocate(ptr);
     };
 
-    run(2);
+    run(5);
 }
 
 template<size_t N>

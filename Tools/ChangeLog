@@ -1,3 +1,35 @@
+2019-07-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Flaky API Test TestWTF.bmalloc.ScavengedMemoryShouldBeReused
+        https://bugs.webkit.org/show_bug.cgi?id=199524
+        <rdar://problem/52783816>
+
+        Reviewed by Saam Barati.
+
+        This test is white-box one and it has strong assumption how IsoHeap allocates pages.
+        But this test has several problems.
+
+        1. IsoPage::numObjects is not the exact number of how many we allocate objects. This
+           number is calculated by pageSize / sizeof(T), and this does not account the header
+           size of IsoPage. So, # of objects per IsoPage is less than numObjects. Since sizeof(double)
+           is very small, we can have many objects in one IsoPage. As a result, we need a large
+           bitmap in IsoPage. This reduces # of objects in IsoPage largely. So, `ptrs.size()` becomes
+           less than numObjects.
+
+        2. We now have lower tier of allocation in IsoHeap. It means that we allocate 8 objects in
+           shared page (page is shared, but memory is pinned for a specific type) before using IsoHeap's
+           page. This also makes the intention of this test wrong.
+
+        Due to (1), we access OoB of ptrs vector, passing a garbage to IsoHeap::deallocate, and crashing.
+
+        We make this test robust while we still keep this test white-box one to test the critical feature
+        of IsoHeap. We first exhaust lower tier of IsoHeap, and after that, start testing the memory. We
+        allocate many pointers, deallocate them, allocate one pointer while keeping pointers in the lower
+        tier live, and check whether the deallocated memory is reused.
+
+        * TestWebKitAPI/Tests/WTF/bmalloc/IsoHeap.cpp:
+        (TEST):
+
 2019-07-11  Pablo Saavedra  <psaavedra@igalia.com>
 
         [WPE][GTK] Build failure with ENABLE_ACCESSIBILITY=OFF
