@@ -1010,8 +1010,6 @@ public:
 #if JSC_OBJC_API_ENABLED
     JSWrapperMap* wrapperMap() const { return m_wrapperMap.get(); }
     void setWrapperMap(JSWrapperMap* map) { m_wrapperMap = map; }
-    void setAPIWrapper(void* apiWrapper) { m_apiWrapper = apiWrapper; }
-    void* apiWrapper() const { return m_apiWrapper; }
 #endif
 #ifdef JSC_GLIB_API_ENABLED
     WrapperMap* wrapperMap() const { return m_wrapperMap.get(); }
@@ -1054,7 +1052,6 @@ private:
     bool m_needsSiteSpecificQuirks { false };
 #if JSC_OBJC_API_ENABLED
     RetainPtr<JSWrapperMap> m_wrapperMap;
-    void* m_apiWrapper { nullptr };
 #endif
 #ifdef JSC_GLIB_API_ENABLED
     std::unique_ptr<WrapperMap> m_wrapperMap;

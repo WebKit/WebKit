@@ -85,15 +85,13 @@
     };
 
     [self ensureWrapperMap];
-
-    toJSGlobalObject(m_context)->setAPIWrapper((__bridge void*)self);
+    [m_virtualMachine addContext:self forGlobalContextRef:m_context];
 
     return self;
 }
 
 - (void)dealloc
 {
-    toJSGlobalObject(m_context)->setAPIWrapper((__bridge void*)nil);
     m_exception.clear();
     JSGlobalContextRelease(m_context);
     [m_virtualMachine release];
@@ -310,7 +308,7 @@
         context.exception = exceptionValue;
     };
 
-    toJSGlobalObject(m_context)->setAPIWrapper((__bridge void*)self);
+    [m_virtualMachine addContext:self forGlobalContextRef:m_context];
 
     return self;
 }
@@ -360,7 +358,7 @@
 
 - (JSWrapperMap *)wrapperMap
 {
-    return toJSGlobalObject(m_context)->wrapperMap();
+    return toJS(m_context)->lexicalGlobalObject()->wrapperMap();
 }
 
 - (JSValue *)wrapperForJSObject:(JSValueRef)value
@@ -371,7 +369,8 @@
 
 + (JSContext *)contextWithJSGlobalContextRef:(JSGlobalContextRef)globalContext
 {
-    JSContext *context = (__bridge JSContext *)toJSGlobalObject(globalContext)->apiWrapper();
+    JSVirtualMachine *virtualMachine = [JSVirtualMachine virtualMachineWithContextGroupRef:toRef(&toJS(globalContext)->vm())];
+    JSContext *context = [virtualMachine contextForGlobalContextRef:globalContext];
     if (!context)
         context = [[[JSContext alloc] initWithGlobalContextRef:globalContext] autorelease];
     return context;

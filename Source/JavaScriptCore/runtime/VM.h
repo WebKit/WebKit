@@ -833,10 +833,6 @@ public:
     RTTraceList* m_rtTraceList;
 #endif
 
-#if JSC_OBJC_API_ENABLED
-    void* m_apiWrapper { nullptr };
-#endif
-
     JS_EXPORT_PRIVATE void resetDateCache();
 
     RegExpCache* regExpCache() { return m_regExpCache; }
