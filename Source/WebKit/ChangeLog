@@ -1,3 +1,17 @@
+2019-07-11  Alex Christensen  <achristensen@webkit.org>
+
+        Use mobile UA on jsfiddle.net
+        https://bugs.webkit.org/show_bug.cgi?id=199687
+        <rdar://problem/50839844>
+
+        Reviewed by Maciej Stachowiak.
+
+        Text selection does not work on iPads using desktop UA.
+        This isn't the best solution, but it's certainly *a* solution.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::desktopClassBrowsingRecommendedForRequest):
+
 2019-07-11  Jonathan Bedard  <jbedard@apple.com>
 
         [iOS 13] Enable WebKit build

@@ -1288,6 +1288,9 @@ static bool desktopClassBrowsingRecommendedForRequest(const WebCore::ResourceReq
     if (equalLettersIgnoringASCIICase(host, "live.iqiyi.com") || host.endsWithIgnoringASCIICase(".live.iqiyi.com"))
         return false;
 
+    if (equalLettersIgnoringASCIICase(host, "jsfiddle.net") || host.endsWithIgnoringASCIICase(".jsfiddle.net"))
+        return false;
+
     if (equalLettersIgnoringASCIICase(host, "video.sina.com.cn") || host.endsWithIgnoringASCIICase(".video.sina.com.cn"))
         return false;
 
