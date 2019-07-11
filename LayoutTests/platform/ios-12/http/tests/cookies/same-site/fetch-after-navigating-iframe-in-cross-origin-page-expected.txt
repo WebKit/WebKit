@@ -1,0 +1,25 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Tests that Same-Site cookies for 127.0.0.1 are not sent with a frame navigation for a frame embedded in a page with a different origin.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Cookies sent with HTTP request:
+PASS Do not have cookie "strict".
+PASS Do not have cookie "implicit-strict".
+PASS Do not have cookie "strict-because-invalid-SameSite-value".
+PASS Do not have cookie "lax".
+
+Cookies visible in DOM:
+PASS Do not have DOM cookie "strict".
+PASS Do not have DOM cookie "implicit-strict".
+PASS Do not have DOM cookie "strict-because-invalid-SameSite-value".
+PASS Do not have DOM cookie "lax".
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

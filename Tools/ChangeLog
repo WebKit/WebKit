@@ -1,3 +1,24 @@
+2019-07-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add test expectations and baselines for iOS 13
+        https://bugs.webkit.org/show_bug.cgi?id=199329
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort): Increment current version to 13.
+        * Scripts/webkitpy/port/ios_device_unittest.py: Update unit tests.
+        (IOSDeviceTest.test_layout_test_searchpath_with_apple_additions):
+        (IOSDeviceTest.test_layout_test_searchpath_without_apple_additions):
+        (IOSDeviceTest.test_layout_searchpath_wih_device_type):
+        * Scripts/webkitpy/port/ios_simulator_unittest.py: Ditto.
+        (IOSSimulatorTest.make_port):
+        (IOSSimulatorTest.test_layout_test_searchpath_with_apple_additions):
+        (IOSSimulatorTest.test_layout_test_searchpath_without_apple_additions):
+        (IOSSimulatorTest.test_layout_searchpath_wih_device_type):
+        * Scripts/webkitpy/port/ios_testcase.py: Ditto.
+        (IOSTest.make_port):
+
 2019-07-11  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement support for ARIA roles insertion, deletion, subscript, superscript, and time

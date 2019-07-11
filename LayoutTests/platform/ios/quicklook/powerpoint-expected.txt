@@ -36,11 +36,6 @@ iframe {
 {
 -webkit-text-size-adjust: none;
 }
-@media screen {
-body {
-background: #ACB2BB;
-}
-}
 @media print {
 div.loading-slide {
 display: none;
@@ -82,10 +77,18 @@ overflow:hidden;
 page-break-inside: avoid;
 margin-top: 5px;
 }
+div.slide:first-of-type {
+ &amp;nbsp;margin-top: 0;
+}
 div.loading-slide
 {
 position: absolute;
 background:#BBBBBB;
+}
+@media screen {
+body {
+background: #ACB2BB;
+}
 }
 &lt;/style&gt;&lt;style type="text/css"&gt;div.slide, div.loading-slide { width: 1024; height: 768;}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;style type="text/css"&gt;
 .s0.s0.s0 {background-color:#ffffff; top:0; left:0; width:1024; height:768; position:absolute;}

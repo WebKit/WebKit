@@ -13,20 +13,20 @@ layer at (0,0) size 800x844
         RenderText {#text} at (0,1) size 91x22
           text run at (0,1) width 91: "100 Weight"
       RenderBlock {P} at (0,116) size 784x20
-        RenderText {#text} at (0,0) size 661x20
-          text run at (0,0) width 661: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+        RenderText {#text} at (0,0) size 635x20
+          text run at (0,0) width 635: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
       RenderBlock {H2} at (0,152) size 784x24
         RenderText {#text} at (0,1) size 93x22
           text run at (0,1) width 93: "200 Weight"
       RenderBlock {P} at (0,192) size 784x20
-        RenderText {#text} at (0,0) size 661x20
-          text run at (0,0) width 661: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+        RenderText {#text} at (0,0) size 643x20
+          text run at (0,0) width 643: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
       RenderBlock {H2} at (0,228) size 784x24
         RenderText {#text} at (0,1) size 93x22
           text run at (0,1) width 93: "300 Weight"
       RenderBlock {P} at (0,268) size 784x20
-        RenderText {#text} at (0,0) size 661x20
-          text run at (0,0) width 661: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+        RenderText {#text} at (0,0) size 658x20
+          text run at (0,0) width 658: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
       RenderBlock {H2} at (0,304) size 784x24
         RenderText {#text} at (0,1) size 94x22
           text run at (0,1) width 94: "400 Weight"
@@ -61,11 +61,11 @@ layer at (0,0) size 800x844
         RenderText {#text} at (0,1) size 94x22
           text run at (0,1) width 94: "800 Weight"
       RenderBlock {P} at (0,724) size 784x20
-        RenderText {#text} at (0,0) size 741x20
-          text run at (0,0) width 741: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+        RenderText {#text} at (0,0) size 740x20
+          text run at (0,0) width 740: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
       RenderBlock {H2} at (0,760) size 784x24
         RenderText {#text} at (0,1) size 94x22
           text run at (0,1) width 94: "900 Weight"
       RenderBlock {P} at (0,800) size 784x20
-        RenderText {#text} at (0,0) size 741x20
-          text run at (0,0) width 741: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+        RenderText {#text} at (0,0) size 762x20
+          text run at (0,0) width 762: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"

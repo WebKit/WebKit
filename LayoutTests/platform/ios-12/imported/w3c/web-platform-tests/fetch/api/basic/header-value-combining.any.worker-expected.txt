@@ -1,0 +1,8 @@
+
+PASS response.headers.get('content-length') expects 0 
+PASS response.headers.get('content-length') expects 0, 0 
+FAIL response.headers.get('double-trouble') expects ,  assert_equals: expected (string) ", " but got (object) null
+PASS response.headers.get('foo-test') expects 1, 2, 3 
+FAIL response.headers.get('heya') expects , , 1, , , 2 assert_equals: expected ", \v\f, 1, , , 2" but got ", , 1, , , 2"
+PASS response.headers.get('www-authenticate') expects 1, 2, 3, 4 
+

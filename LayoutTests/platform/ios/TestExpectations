@@ -1137,12 +1137,6 @@ fast/viewport/ios/viewport-fit-cover.html [ Pass ]
 fast/viewport/ios/viewport-fit-auto.html [ Pass ]
 fast/css/variables/env/ios [ Pass ]
 
-# Dark mode not supported on iOS
-css-dark-mode [ Skip ]
-
-# Test Dark Mode CSS support for light mode on older systems.
-css-dark-mode/older-systems [ Pass ]
-
 ###
 # Known failures
 ##
@@ -3184,18 +3178,8 @@ fast/gradients/conic-two-hints.html [ Pass ]
 # <rdar://problem/36455339> LayoutTest compositing/ios/overflow-scroll-touch-tiles.html is a flaky failure
 compositing/ios/overflow-scroll-touch-tiles.html [ Pass Failure ]
 
-# <rdar://problem/36639117> REGRESSION: LayoutTest svg/custom/subpaths-moveto-only-rendering.svg is failing
-svg/custom/subpaths-moveto-only-rendering.svg [ Failure ]
-
 # <rdar://problem/37406043> LayoutTest fast/events/focusing-element-with-tabindex-by-tap-or-click.html is a flaky failure
 fast/events/focusing-element-with-tabindex-by-tap-or-click.html [ Pass Failure ]
-
-# <rdar://problem/40952038> quicklook/keynote.html and quicklook/pages.html are failing with a 0.09% image diff
-quicklook/keynote.html [ ImageOnlyFailure ]
-quicklook/pages.html [ ImageOnlyFailure ]
-
-# <rdar://problem/41546587> REGRESSION: LayoutTest compositing/contents-scale/non-decomposable-matrix.html is failing
-compositing/contents-scale/non-decomposable-matrix.html [ ImageOnlyFailure ]
 
 # <rdar://problem/41546970> REGRESSION: LayoutTest media/media-fullscreen-loop-inline.html is a flaky timeout
 media/media-fullscreen-loop-inline.html [ Pass Timeout ]
@@ -3255,3 +3239,118 @@ editing/selection/ios/select-non-editable-text-using-keyboard.html [ Skip ]
 editing/selection/ios/select-all-non-editable-text-using-keyboard.html [ Skip ]
 
 webkit.org/b/199472 fast/events/ios/keydown-keyup-keypress-keys-in-non-editable-using-chinese-keyboard.html [ Skip ]
+
+# Dark Mode is iOS 13 and later.
+css-dark-mode [ Pass ]
+css-dark-mode/older-systems [ Skip ]
+
+fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-after-hiding-auto-fill-strong-password-button.html [ Pass ]
+fast/forms/auto-fill-button/caps-lock-indicator-should-not-be-visible-when-auto-fill-strong-password-button-is-visible.html [ Pass ]
+fast/forms/password-scrolled-after-caps-lock-toggled.html [ Pass ]
+
+# <rdar://problem/48781098> HEIF and HEICS images are supported only on iOS 13
+fast/images/animated-heics-draw.html [ Pass ]
+fast/images/animated-heics-verify.html [ Pass ]
+
+# <rdar://problem/40172428> REGRESSION: LayoutTests fast/text/font-collection.html and fast/text/woff2.html are failing
+fast/text/font-collection.html [ ImageOnlyFailure ]
+
+# <rdar://problem/40952038> quicklook/keynote.html and quicklook/pages.html are failing with a 0.09% image diff
+quicklook/keynote.html [ ImageOnlyFailure ]
+quicklook/pages.html [ ImageOnlyFailure ]
+
+# <rdar://problem/41546587> REGRESSION: LayoutTest compositing/contents-scale/non-decomposable-matrix.html is failing
+compositing/contents-scale/non-decomposable-matrix.html [ ImageOnlyFailure ]
+
+# <rdar://problem/36639117> REGRESSION: LayoutTest svg/custom/subpaths-moveto-only-rendering.svg is failing
+svg/custom/subpaths-moveto-only-rendering.svg [ Failure ]
+
+# <rdar://problem/45056204> REGRESSION (iOS 13): Three cookie layout tests failing
+http/tests/cookies/third-party-cookie-relaxing.html [ Failure ]
+http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
+http/wpt/beacon/cors/cors-preflight-cookie.html [ Failure ]
+
+# <rdar://problem/45468497> REGRESSION (iOS 13): fast/images/pdf-as-image-with-annotations.html is failing the image only test
+fast/images/pdf-as-image-with-annotations.html [ ImageOnlyFailure ]
+
+# <rdar://problem/46082677> REGRESSION (iOS 13): Layout test fast/attachment/attachment-title-with-rtl.html is failing
+fast/attachment/attachment-title-with-rtl.html [ ImageOnlyFailure ]
+
+fast/forms/textfield-no-linebreak.html [ ImageOnlyFailure ]
+
+# <rdar://problem/47855174> REGRESSION (iOS 13?): Layout tests http/wpt/mediarecorder/MediaRecorder-dataavailable.html and http/wpt/mediarecorder/MediaRecorder-mock-dataavailable.html are failing
+http/wpt/mediarecorder/MediaRecorder-dataavailable.html [ Failure ]
+http/wpt/mediarecorder/MediaRecorder-mock-dataavailable.html [ Failure ]
+
+# <rdar://problem/47897726> REGRESSION (iOS 13): Multiple media tests failing
+media/audio-controls-timeline-in-media-document.html [ Failure ]
+media/controls-strict.html [ Failure ]
+media/video-controls-rendering.html [ Failure ]
+media/video-currentTime.html [ Failure ]
+media/video-ended-event-negative-playback.html [ Failure ]
+media/video-played-collapse.html [ Failure ]
+media/video-played-ranges-1.html [ Failure ]
+media/video-played-reset.html [ Failure ]
+
+# <rdar://problem/47898237> REGRESSION (iOS 13): Multiple quicklook tests failing
+quicklook/powerpoint-legacy.html [ Failure ]
+quicklook/powerpoint.html [ Failure ]
+
+# Skip tests timing out for <rdar://problem/48616298>
+fast/viewport/ios/constant-width-viewport-after-changing-view-scale.html [ Skip ]
+fast/viewport/ios/ignore-minimum-device-width-for-page-with-viewport-device-width.html [ Skip ]
+
+# <rdar://problem/51055223> (iOS 13): jsc-layout-tests.yaml/js/script-tests/intl-numberformat.js.layout is failing
+js/intl-numberformat.html [ Failure ]
+
+# <rdar://problem/50892567> REGRESSION (iOS 13): CrashTracer: com.apple.WebKit.WebContent.Development at com.apple.WebKit: _ZN6WebKit19fallbackIconForFileEP5NSURL
+fast/forms/file/file-reset-in-change-using-open-panel-with-icon.html [ Skip ]
+
+# <rdar://problem/47907453>
+webgl/2.0.0/conformance/context/context-hidden-alpha.html [ Failure ]
+
+# <rdar://problem/51751386> REGRESSION (iOS 13?): fast/inline/hidpi-outline-auto-* layout tests failing with 0.01% diffs
+fast/inline/hidpi-outline-auto-negative-offset-with-border-radius.html [ ImageOnlyFailure ]
+fast/inline/hidpi-outline-auto-with-border-radius-horizontal-ltr.html [ ImageOnlyFailure ]
+fast/inline/hidpi-outline-auto-with-border-radius-horizontal-rtl.html [ ImageOnlyFailure ]
+fast/inline/hidpi-outline-auto-with-border-radius-vertical-ltr.html [ ImageOnlyFailure ]
+fast/inline/hidpi-outline-auto-with-border-radius-vertical-rtl.html [ ImageOnlyFailure ]
+fast/inline/hidpi-outline-auto-with-fractional-radius.html [ ImageOnlyFailure ]
+fast/inline/hidpi-outline-auto-with-one-focusring-rect.html [ ImageOnlyFailure ]
+
+# <rdar://problem/50383285> REGRESSION: Layout test imported/w3c/web-platform-tests/css/css-text/writing-system/writing-system-line-break-001.html is failing
+imported/w3c/web-platform-tests/css/css-text/writing-system/writing-system-line-break-001.html [ ImageOnlyFailure ]
+
+# <rdar://problem/51762717> 7 http/wpt/resource-timing/rt* tests are flaky failures on iOS 13 and Catalina bots
+http/wpt/resource-timing/rt-cors.html [ Pass Failure ]
+http/wpt/resource-timing/rt-cors.worker.html [ Pass Failure ]
+http/wpt/resource-timing/rt-initiatorType-css.html [ Pass Failure ]
+http/wpt/resource-timing/rt-initiatorType.worker.html [ Pass Failure ]
+http/wpt/resource-timing/rt-initiatorType-script-module.html [ Pass Failure ]
+http/wpt/resource-timing/rt-initiatorType-element.html [ Pass Failure ]
+http/wpt/resource-timing/rt-initiatorType-xmlhttprequest.html [ Pass Failure ]
+
+# <rdar://problem/51766135> imported/w3c/web-platform-tests/preload/ tests landed failing after import
+imported/w3c/web-platform-tests/preload/dynamic-adding-preload-imagesrcset.html [ Failure ]
+imported/w3c/web-platform-tests/preload/link-header-preload-imagesrcset.html [ Failure ]
+
+# <rdar://problem/51826131> REGRESSION (r241747) 2 Layout tests are failing on Internal iOS 13 iOS / iPad Simulator testers fast/repaint/placeholder-after-caps-lock-hidden.html imported/blink/svg/custom/focus-ring-2.svg
+imported/blink/svg/custom/focus-ring-2.svg [ ImageOnlyFailure ]
+fast/repaint/placeholder-after-caps-lock-hidden.html [ Failure ]
+
+# <rdar://problem/51827049> REGRESSION (iOS 13?) Layout test fast/viewport/ios/use-minimum-device-width-for-page-without-viewport-meta.html is a highly flaky timeout on iOS 13 iOS Simulator
+fast/viewport/ios/use-minimum-device-width-for-page-without-viewport-meta.html [ Pass Timeout Failure ]
+
+# <rdar://problem/51828203> 2 platform/ipad/fast/viewport/viewport* Layout tests are timing out on iOS 13
+platform/ipad/fast/viewport/viewport-overriden-by-minimum-effective-width-if-ignore-meta-viewport.html [ Timeout ]
+platform/ipad/fast/viewport/viewport-unchanged-by-minimum-effective-width-if-not-ignore-meta-viewport.html [ Timeout ]
+
+# <rdar://problem/52699129> fast/forms/datalist/datalist-show-hide.html and fast/forms/datalist/datalist-textinput-suggestions-order.html are timing out on iOS 13
+fast/forms/datalist/datalist-show-hide.html [ Timeout ]
+fast/forms/datalist/datalist-textinput-suggestions-order.html [ Timeout ]
+
+# <rdar://problem/52594556> REGRESSION: Layout test fast/text/international/system-language/han-quotes.html is failing
+fast/text/international/system-language/han-quotes.html [ ImageOnlyFailure ]
+
+# <rdar://problem/52689856> storage/websql/test-authorizer.html is failing
+storage/websql/test-authorizer.html [ Failure ]
