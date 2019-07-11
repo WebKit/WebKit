@@ -44,7 +44,7 @@ namespace AST {
 
 class ForLoop : public Statement {
 public:
-    ForLoop(CodeLocation location, Variant<UniqueRef<Statement>, UniqueRef<Expression>>&& initialization, Optional<UniqueRef<Expression>>&& condition, Optional<UniqueRef<Expression>>&& increment, UniqueRef<Statement>&& body)
+    ForLoop(CodeLocation location, Variant<UniqueRef<Statement>, UniqueRef<Expression>>&& initialization, std::unique_ptr<Expression>&& condition, std::unique_ptr<Expression>&& increment, UniqueRef<Statement>&& body)
         : Statement(location)
         , m_initialization(WTFMove(initialization))
         , m_condition(WTFMove(condition))
@@ -63,14 +63,14 @@ public:
     bool isForLoop() const override { return true; }
 
     Variant<UniqueRef<Statement>, UniqueRef<Expression>>& initialization() { return m_initialization; }
-    Expression* condition() { return m_condition ? &*m_condition : nullptr; }
-    Expression* increment() { return m_increment ? &*m_increment : nullptr; }
+    Expression* condition() { return m_condition.get(); }
+    Expression* increment() { return m_increment.get(); }
     Statement& body() { return m_body; }
 
 private:
     Variant<UniqueRef<Statement>, UniqueRef<Expression>> m_initialization;
-    Optional<UniqueRef<Expression>> m_condition;
-    Optional<UniqueRef<Expression>> m_increment;
+    std::unique_ptr<Expression> m_condition;
+    std::unique_ptr<Expression> m_increment;
     UniqueRef<Statement> m_body;
 };
 

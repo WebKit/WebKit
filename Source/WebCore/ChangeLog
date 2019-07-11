@@ -1,5 +1,31 @@
 2019-07-10  Robin Morisset  <rmorisset@apple.com>
 
+        [WHLSL] Optional<UniqueRef<T>> -> std::unique_ptr in Return/IfStatement/ForLoop
+        https://bugs.webkit.org/show_bug.cgi?id=199695
+
+        Reviewed by Dean Jackson.
+
+        Trivial patch that saves 8 bytes per Return/If, and 16 bytes per For loop.
+
+        No new tests as there is no intended functional change.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLForLoop.h:
+        (WebCore::WHLSL::AST::ForLoop::ForLoop):
+        (WebCore::WHLSL::AST::ForLoop::condition):
+        (WebCore::WHLSL::AST::ForLoop::increment):
+        * Modules/webgpu/WHLSL/AST/WHLSLIfStatement.h:
+        (WebCore::WHLSL::AST::IfStatement::IfStatement):
+        (WebCore::WHLSL::AST::IfStatement::elseBody):
+        * Modules/webgpu/WHLSL/AST/WHLSLReturn.h:
+        (WebCore::WHLSL::AST::Return::Return):
+        (WebCore::WHLSL::AST::Return::value):
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::parseIfStatement):
+        (WebCore::WHLSL::Parser::parseForLoop):
+        (WebCore::WHLSL::Parser::parseStatement):
+
+2019-07-10  Robin Morisset  <rmorisset@apple.com>
+
         [WHLSL] The recursion checker should not have quadratic complexity
         https://bugs.webkit.org/show_bug.cgi?id=199688
 

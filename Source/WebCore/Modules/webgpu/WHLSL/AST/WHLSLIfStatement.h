@@ -41,7 +41,7 @@ namespace AST {
 
 class IfStatement : public Statement {
 public:
-    IfStatement(CodeLocation location, UniqueRef<Expression>&& conditional, UniqueRef<Statement>&& body, Optional<UniqueRef<Statement>>&& elseBody)
+    IfStatement(CodeLocation location, UniqueRef<Expression>&& conditional, UniqueRef<Statement>&& body, std::unique_ptr<Statement>&& elseBody)
         : Statement(location)
         , m_conditional(WTFMove(conditional))
         , m_body(WTFMove(body))
@@ -58,12 +58,12 @@ public:
 
     Expression& conditional() { return m_conditional; }
     Statement& body() { return m_body; }
-    Statement* elseBody() { return m_elseBody ? &*m_elseBody : nullptr; }
+    Statement* elseBody() { return m_elseBody.get(); }
 
 private:
     UniqueRef<Expression> m_conditional;
     UniqueRef<Statement> m_body;
-    Optional<UniqueRef<Statement>> m_elseBody;
+    std::unique_ptr<Statement> m_elseBody;
 };
 
 } // namespace AST

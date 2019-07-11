@@ -1080,10 +1080,10 @@ auto Parser::parseIfStatement() -> Expected<AST::IfStatement, Error>
     CONSUME_TYPE(rightParenthesis, RightParenthesis);
     PARSE(body, Statement);
 
-    Optional<UniqueRef<AST::Statement>> elseBody;
+    std::unique_ptr<AST::Statement> elseBody(nullptr);
     if (tryType(Token::Type::Else)) {
         PARSE(parsedElseBody, Statement);
-        elseBody = WTFMove(*parsedElseBody);
+        elseBody = (*parsedElseBody).moveToUniquePtr();
     }
 
     auto endOffset = m_lexer.peek().startOffset();
@@ -1150,19 +1150,19 @@ auto Parser::parseForLoop() -> Expected<AST::ForLoop, Error>
     auto parseRemainder = [&](Variant<UniqueRef<AST::Statement>, UniqueRef<AST::Expression>>&& initialization) -> Expected<AST::ForLoop, Error> {
         CONSUME_TYPE(semicolon, Semicolon);
 
-        Optional<UniqueRef<AST::Expression>> condition = WTF::nullopt;
+        std::unique_ptr<AST::Expression> condition(nullptr);
         if (!tryType(Token::Type::Semicolon)) {
             if (auto expression = parseExpression())
-                condition = { WTFMove(*expression) };
+                condition = (*expression).moveToUniquePtr();
             else
                 return Unexpected<Error>(expression.error());
             CONSUME_TYPE(secondSemicolon, Semicolon);
         }
 
-        Optional<UniqueRef<AST::Expression>> increment = WTF::nullopt;
+        std::unique_ptr<AST::Expression> increment(nullptr);
         if (!tryType(Token::Type::RightParenthesis)) {
             if (auto expression = parseExpression())
-                increment = { WTFMove(*expression) };
+                increment = (*expression).moveToUniquePtr();
             else
                 return Unexpected<Error>(expression.error());
             CONSUME_TYPE(rightParenthesis, RightParenthesis);
@@ -1309,12 +1309,12 @@ auto Parser::parseStatement() -> Expected<UniqueRef<AST::Statement>, Error>
     case Token::Type::Return: {
         auto returnToken = m_lexer.consumeToken();
         if (auto semicolon = tryType(Token::Type::Semicolon)) {
-            auto returnObject = AST::Return(WTFMove(returnToken), WTF::nullopt);
+            auto returnObject = AST::Return(WTFMove(returnToken), nullptr);
             return { makeUniqueRef<AST::Return>(WTFMove(returnObject)) };
         }
         PARSE(expression, Expression);
         CONSUME_TYPE(finalSemicolon, Semicolon);
-        auto returnObject = AST::Return(WTFMove(returnToken), { WTFMove(*expression) });
+        auto returnObject = AST::Return(WTFMove(returnToken), (*expression).moveToUniquePtr());
         return { makeUniqueRef<AST::Return>(WTFMove(returnObject)) };
     }
     case Token::Type::Constant:
