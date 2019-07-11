@@ -1,3 +1,43 @@
+2019-07-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        MobileSafari may crash under -[UIKeyboardTaskExecutionContext transferExecutionToMainThreadWithTask:]
+        https://bugs.webkit.org/show_bug.cgi?id=199701
+        <rdar://problem/52590170>
+
+        Reviewed by Tim Horton.
+
+        Mitigates a crash wherein we end up calling the completion handler of
+        -requestAutocorrectionContextWithCompletionHandler: within a nested call
+        to -requestAutocorrectionContextWithCompletionHandler:. In this particular
+        case, a sync `window.open` from the web process to the UI process happens
+        while the UI process is already handling a sync autocorrection context
+        request. This causes the UI process to try and immediately dispatch the
+        incoming sync message to avoid deadlock. However, Safari's logic to create
+        and set up a new web view when opening a new window makes the new view the
+        first responder, which then prompts UIKit logic to request an autocorrection
+        context for the new web view.
+
+        To avoid the issue for now, simply use -resignFirstResponder as a cue to invoke
+        pending autocorrection context handlers in the original web view before UIKit
+        tries to request autocorrection context in the newly created view.
+
+        I attempted to write a test for this, but realized that we only end up hitting
+        the debug assertion pointed out in <https://webkit.org/b/199680>; we should be
+        able to write a test for this in the future, if we teach Connection to handle
+        multiple outgoing sync messages.
+
+        For the time being, I've attached a manual test case to the bug.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView resignFirstResponderForWebView]):
+        (-[WKContentView _cancelPendingAutocorrectionContextHandler]):
+
+        Add a new helper to signify that a pending autocorrection context handler should be cancelled (invoked
+        immediately with empty data). Use this in a few places where we currently explicitly pass
+        -[WKAutocorrectionContext emptyAutocorrectionContext].
+
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+
 2019-07-10  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] With modal overlay and body overflow:hidden, can't access all the content
