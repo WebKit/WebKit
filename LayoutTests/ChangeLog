@@ -1,3 +1,63 @@
+2019-07-10  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Import all tests that pass without compiler changes from the JS reference test suite
+        https://bugs.webkit.org/show_bug.cgi?id=199595
+
+        Rubber stamped by Robin Morisset.
+
+        * webgpu/whlsl-argument-evaluation-order-expected.txt: Added.
+        * webgpu/whlsl-argument-evaluation-order.html: Added.
+        * webgpu/whlsl-array-length-spec-tests-expected.txt: Added.
+        * webgpu/whlsl-array-length-spec-tests.html: Added.
+        * webgpu/whlsl-array-spec-tests-expected.txt:
+        * webgpu/whlsl-array-spec-tests.html:
+        * webgpu/whlsl-bad-add-expected.txt: Added.
+        * webgpu/whlsl-bad-add.html: Added.
+        * webgpu/whlsl-bools-expected.txt: Added.
+        * webgpu/whlsl-bools.html: Added.
+        * webgpu/whlsl-casts-expected.txt: Added.
+        * webgpu/whlsl-casts.html: Added.
+        * webgpu/whlsl-comment-parsing-expected.txt: Added.
+        * webgpu/whlsl-comment-parsing.html: Added.
+        * webgpu/whlsl-copy-expected.txt: Added.
+        * webgpu/whlsl-copy.html: Added.
+        * webgpu/whlsl-dereference-ordering-expected.txt: Added.
+        * webgpu/whlsl-dereference-ordering.html: Added.
+        * webgpu/whlsl-double-not-expected.txt: Added.
+        * webgpu/whlsl-double-not.html: Added.
+        * webgpu/whlsl-duplicates-expected.txt: Added.
+        * webgpu/whlsl-duplicates.html: Added.
+        * webgpu/whlsl-increment-decrement-expected.txt: Added.
+        * webgpu/whlsl-increment-decrement.html: Added.
+        * webgpu/whlsl-index-ander-expected.txt: Added.
+        * webgpu/whlsl-index-ander.html: Added.
+        * webgpu/whlsl-index-setter-getter-expected.txt: Added.
+        * webgpu/whlsl-index-setter-getter.html: Added.
+        * webgpu/whlsl-logical-negation-expected.txt: Added.
+        * webgpu/whlsl-logical-negation.html: Added.
+        * webgpu/whlsl-lots-of-local-variables-expected.txt: Added.
+        * webgpu/whlsl-lots-of-local-variables.html: Added.
+        * webgpu/whlsl-lvalues-expected.txt: Added.
+        * webgpu/whlsl-lvalues.html: Added.
+        * webgpu/whlsl-null-arg-expected.txt: Added.
+        * webgpu/whlsl-null-arg.html: Added.
+        * webgpu/whlsl-operator-overload-expected.txt: Added.
+        * webgpu/whlsl-operator-overload.html: Added.
+        * webgpu/whlsl-overload-expected.txt: Added.
+        * webgpu/whlsl-overload.html: Added.
+        * webgpu/whlsl-setter-spec-tests-expected.txt: Added.
+        * webgpu/whlsl-setter-spec-tests.html: Added.
+        * webgpu/whlsl-store-null-expected.txt: Added.
+        * webgpu/whlsl-store-null.html: Added.
+        * webgpu/whlsl-struct-expected.txt: Added.
+        * webgpu/whlsl-struct.html: Added.
+        * webgpu/whlsl-switch-expected.txt: Added.
+        * webgpu/whlsl-switch.html: Added.
+        * webgpu/whlsl-variable-shadowing-expected.txt: Added.
+        * webgpu/whlsl-variable-shadowing.html: Added.
+        * webgpu/whlsl-vector-syntax-expected.txt: Added.
+        * webgpu/whlsl-vector-syntax.html: Added.
+
 2019-07-10  Truitt Savell  <tsavell@apple.com>
 
         Marking webgpu/whlsl-builtin-vectors-2.html as Slow after https://trac.webkit.org/changeset/247319/webkit

@@ -4,4 +4,5 @@ PASS assignLength
 PASS assignLengthHelper 
 PASS buildArrayThenSumIt 
 PASS buildArrayThenSumItUsingArrayReference 
+PASS passingArrayToFunction 
 

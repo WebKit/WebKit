@@ -95,6 +95,28 @@ whlslTests.buildArrayThenSumItUsingArrayReference = async () => {
     assert_equals(await callIntFunction(program, "foo", []), 42 * 5 + 42 * 41 / 2);
 }
 
+whlslTests.passingArrayToFunction = async () =>
+{
+    let program = `
+        int foo()
+        {
+            int[10] arr;
+            for (uint i = 0; i < arr.length; i++)
+                arr[i] = int(i) + 1;
+            return sum(arr);
+        }
+
+        int sum(int[10] xs)
+        {
+            int t = 0;
+            for (uint i = 0; i < xs.length; i++)
+                t = t + xs[i];
+            return t;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", []), 55);
+}
+
 runTests(whlslTests);
 </script>
 </html>

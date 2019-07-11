@@ -1,0 +1,7 @@
+
+PASS indexSetterWithNoGetterOverload 
+PASS indexSetterWithNoGetterOverloadFixed 
+PASS notLoneIndexSetter 
+PASS loneIndexSetter 
+PASS loneIndexSetterPointer 
+
