@@ -8009,10 +8009,17 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     if (!containerView.window)
         return nil;
 
+    if (frameInRootViewCoordinates.isEmpty())
+        return nil;
+
     auto parameters = adoptNS([[UIPreviewParameters alloc] init]);
     UIView *snapshotView = [rootView resizableSnapshotViewFromRect:frameInRootViewCoordinates afterScreenUpdates:NO withCapInsets:UIEdgeInsetsZero];
 
     CGRect frameInContainerViewCoordinates = [rootView convertRect:frameInRootViewCoordinates toView:containerView];
+
+    if (CGRectIsEmpty(frameInContainerViewCoordinates))
+        return nil;
+
     snapshotView.frame = frameInContainerViewCoordinates;
 
     CGPoint centerInContainerViewCoordinates = CGPointMake(CGRectGetMidX(frameInContainerViewCoordinates), CGRectGetMidY(frameInContainerViewCoordinates));

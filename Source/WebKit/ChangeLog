@@ -1,3 +1,19 @@
+2019-07-11  Dean Jackson  <dino@apple.com>
+
+        CrashTracer: Regression : MobileSafari at UIKit: -[CALayerAccessibility__UIKit__QuartzCore setBounds:]
+        https://bugs.webkit.org/show_bug.cgi?id=199720
+        <rdar://problem/51470469>
+
+        Reviewed by Tim Horton.
+
+        Speculative fix after confirming that this crash can occur when
+        a zero width/height view is used for a UITargetedPreview. We
+        already guarded against this in the default flow, but not in
+        the fallback path where we take a view snapshot.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (createFallbackTargetedPreview): Return early if rectangles are empty.
+
 2019-07-11  Alex Christensen  <achristensen@webkit.org>
 
         Use mobile UA on jsfiddle.net
