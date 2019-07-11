@@ -57,6 +57,7 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const Scrolli
     , m_synchronousScrollingReasons(stateNode.synchronousScrollingReasons())
     , m_behaviorForFixed(stateNode.scrollBehaviorForFixedElements())
     , m_fixedElementsLayoutRelativeToFrame(stateNode.fixedElementsLayoutRelativeToFrame())
+    , m_visualViewportIsSmallerThanLayoutViewport(stateNode.visualViewportIsSmallerThanLayoutViewport())
     , m_asyncFrameOrOverflowScrollingEnabled(stateNode.asyncFrameOrOverflowScrollingEnabled())
 {
     if (hasChangedProperty(RootContentsLayer))
@@ -102,6 +103,7 @@ void ScrollingStateFrameScrollingNode::setPropertyChangedBitsAfterReattach()
     setPropertyChangedBit(BehaviorForFixedElements);
     setPropertyChangedBit(TopContentInset);
     setPropertyChangedBit(FixedElementsLayoutRelativeToFrame);
+    setPropertyChangedBit(VisualViewportIsSmallerThanLayoutViewport);
     setPropertyChangedBit(AsyncFrameOrOverflowScrollingEnabled);
     setPropertyChangedBit(LayoutViewport);
     setPropertyChangedBit(MinLayoutViewportOrigin);
@@ -255,6 +257,15 @@ void ScrollingStateFrameScrollingNode::setFooterLayer(const LayerRepresentation&
     setPropertyChanged(FooterLayer);
 }
 
+void ScrollingStateFrameScrollingNode::setVisualViewportIsSmallerThanLayoutViewport(bool visualViewportIsSmallerThanLayoutViewport)
+{
+    if (visualViewportIsSmallerThanLayoutViewport == m_visualViewportIsSmallerThanLayoutViewport)
+        return;
+    
+    m_visualViewportIsSmallerThanLayoutViewport = visualViewportIsSmallerThanLayoutViewport;
+    setPropertyChanged(VisualViewportIsSmallerThanLayoutViewport);
+}
+
 void ScrollingStateFrameScrollingNode::setFixedElementsLayoutRelativeToFrame(bool fixedElementsLayoutRelativeToFrame)
 {
     if (fixedElementsLayoutRelativeToFrame == m_fixedElementsLayoutRelativeToFrame)
@@ -328,6 +339,9 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingS
         ts.dumpProperty("Scrolling on main thread because:", ScrollingCoordinator::synchronousScrollingReasonsAsText(m_synchronousScrollingReasons));
     
     ts.dumpProperty("behavior for fixed", m_behaviorForFixed);
+
+    if (m_visualViewportIsSmallerThanLayoutViewport)
+        ts.dumpProperty("visual viewport smaller than layout viewport", m_visualViewportIsSmallerThanLayoutViewport);
 
     if (m_fixedElementsLayoutRelativeToFrame)
         ts.dumpProperty("fixed elements lay out relative to frame", m_fixedElementsLayoutRelativeToFrame);

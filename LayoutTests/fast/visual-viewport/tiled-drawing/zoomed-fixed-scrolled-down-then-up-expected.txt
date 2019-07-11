@@ -18,6 +18,7 @@
   (min layout viewport origin (0,0))
   (max layout viewport origin (1223,1436))
   (behavior for fixed 0)
+  (visual viewport smaller than layout viewport 1)
   (children 4
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeTop)

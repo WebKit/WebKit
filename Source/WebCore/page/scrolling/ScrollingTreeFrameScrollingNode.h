@@ -44,6 +44,7 @@ public:
     SynchronousScrollingReasons synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
     bool shouldUpdateScrollLayerPositionSynchronously() const { return m_synchronousScrollingReasons; }
     bool fixedElementsLayoutRelativeToFrame() const { return m_fixedElementsLayoutRelativeToFrame; }
+    bool visualViewportIsSmallerThanLayoutViewport() const { return m_visualViewportIsSmallerThanLayoutViewport; }
 
     FloatSize viewToContentsOffset(const FloatPoint& scrollPosition) const;
     FloatRect layoutViewportForScrollPosition(const FloatPoint& visibleContentOrigin, float scale) const;
@@ -88,6 +89,7 @@ private:
     ScrollBehaviorForFixedElements m_behaviorForFixed { StickToDocumentBounds };
     
     bool m_fixedElementsLayoutRelativeToFrame { false };
+    bool m_visualViewportIsSmallerThanLayoutViewport { false };
 };
 
 } // namespace WebCore

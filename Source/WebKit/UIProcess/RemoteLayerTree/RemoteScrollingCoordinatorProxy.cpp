@@ -244,7 +244,10 @@ String RemoteScrollingCoordinatorProxy::scrollingTreeAsText() const
 bool RemoteScrollingCoordinatorProxy::hasScrollableMainFrame() const
 {
     auto* rootNode = m_scrollingTree->rootNode();
-    return rootNode && rootNode->canHaveScrollbars();
+    if (!rootNode)
+        return false;
+
+    return rootNode->canHaveScrollbars() || rootNode->visualViewportIsSmallerThanLayoutViewport();
 }
 
 #if ENABLE(POINTER_EVENTS)

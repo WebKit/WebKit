@@ -61,6 +61,7 @@ public:
         BehaviorForFixedElements,
         TopContentInset,
         FixedElementsLayoutRelativeToFrame,
+        VisualViewportIsSmallerThanLayoutViewport,
         AsyncFrameOrOverflowScrollingEnabled,
         LayoutViewport,
         MinLayoutViewportOrigin,
@@ -122,6 +123,10 @@ public:
     const LayerRepresentation& footerLayer() const { return m_footerLayer; }
     WEBCORE_EXPORT void setFooterLayer(const LayerRepresentation&);
 
+    // True when the visual viewport is smaller than the layout viewport, indicating that panning should be possible.
+    bool visualViewportIsSmallerThanLayoutViewport() const { return m_visualViewportIsSmallerThanLayoutViewport; }
+    WEBCORE_EXPORT void setVisualViewportIsSmallerThanLayoutViewport(bool);
+
     // These are more like Settings, and should probably move to the Scrolling{State}Tree itself.
     bool fixedElementsLayoutRelativeToFrame() const { return m_fixedElementsLayoutRelativeToFrame; }
     WEBCORE_EXPORT void setFixedElementsLayoutRelativeToFrame(bool);
@@ -157,6 +162,7 @@ private:
     SynchronousScrollingReasons m_synchronousScrollingReasons { 0 };
     ScrollBehaviorForFixedElements m_behaviorForFixed { StickToDocumentBounds };
     bool m_fixedElementsLayoutRelativeToFrame { false };
+    bool m_visualViewportIsSmallerThanLayoutViewport { false };
     bool m_asyncFrameOrOverflowScrollingEnabled { false };
 };
 

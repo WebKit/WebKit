@@ -3243,6 +3243,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
     auto layoutViewportSize = FrameView::expandedLayoutViewportSize(frameView.baseLayoutViewportSize(), LayoutSize(documentRect.size()), settings.layoutViewportHeightExpansionFactor());
     LayoutRect layoutViewportRect = FrameView::computeUpdatedLayoutViewportRect(frameView.layoutViewportRect(), documentRect, LayoutSize(newUnobscuredContentRect.size()), LayoutRect(newUnobscuredContentRect), layoutViewportSize, frameView.minStableLayoutViewportOrigin(), frameView.maxStableLayoutViewportOrigin(), FrameView::LayoutViewportConstraint::ConstrainedToDocumentRect);
     frameView.setLayoutViewportOverrideRect(layoutViewportRect);
+    frameView.layoutOrVisualViewportChanged();
 
     frameView.setCustomSizeForResizeEvent(expandedIntSize(targetUnobscuredRectInScrollViewCoordinates.size()));
     setDeviceOrientation(deviceOrientation);
@@ -3640,7 +3641,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
             scheduleFullEditorStateUpdate();
         }
 
-        frameView.didUpdateViewportOverrideRects();
+        frameView.layoutOrVisualViewportChanged();
     }
 
     if (!visibleContentRectUpdateInfo.isChangingObscuredInsetsInteractively())

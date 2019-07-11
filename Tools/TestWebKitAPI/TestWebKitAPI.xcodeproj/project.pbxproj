@@ -50,6 +50,7 @@
 		0F4FFA9E1ED3AA8500F7111F /* SnapshotViaRenderInContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F4FFA9D1ED3AA8500F7111F /* SnapshotViaRenderInContext.mm */; };
 		0F5651F71FCE4DDC00310FBC /* NoHistoryItemScrollToFragment.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F5651F61FCE4DDB00310FBC /* NoHistoryItemScrollToFragment.mm */; };
 		0F5651F91FCE513500310FBC /* scroll-to-anchor.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0F5651F81FCE50E800310FBC /* scroll-to-anchor.html */; };
+		0FF1134E22D68679009A81DA /* ScrollViewScrollabilityTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FF1134D22D68679009A81DA /* ScrollViewScrollabilityTests.mm */; };
 		115EB3431EE0BA03003C2C0A /* ViewportSizeForViewportUnits.mm in Sources */ = {isa = PBXBuildFile; fileRef = 115EB3421EE0B720003C2C0A /* ViewportSizeForViewportUnits.mm */; };
 		1171B24F219F49CD00CB897D /* FirstMeaningfulPaintMilestone_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11B7FD21219F46DD0069B27F /* FirstMeaningfulPaintMilestone_Bundle.cpp */; };
 		118153442208B7AC00B2CCD2 /* deferred-script-load.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 118153432208B7AC00B2CCD2 /* deferred-script-load.html */; };
@@ -1051,7 +1052,6 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
-				93D119FC22C680F7009BE3C7 /* localstorage-open-window-private.html in Copy Resources */,
 				55A817FF2181021A0004A39A /* 100x100-red.tga in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				55A81800218102210004A39A /* 400x400-green.png in Copy Resources */,
@@ -1257,6 +1257,7 @@
 				9368A25E229EFB4700A829CA /* local-storage-process-suspends-1.html in Copy Resources */,
 				9368A25F229EFB4700A829CA /* local-storage-process-suspends-2.html in Copy Resources */,
 				8C10AF98206467920018FD90 /* localstorage-empty-string-value.html in Copy Resources */,
+				93D119FC22C680F7009BE3C7 /* localstorage-open-window-private.html in Copy Resources */,
 				51E6A8961D2F1CA700C004B6 /* LocalStorageClear.html in Copy Resources */,
 				46C519E61D3563FD00DAA51A /* LocalStorageNullEntries.html in Copy Resources */,
 				46C519E71D3563FD00DAA51A /* LocalStorageNullEntries.localstorage in Copy Resources */,
@@ -1411,6 +1412,7 @@
 		0FC6C4CE141034AD005B7F0C /* MetaAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetaAllocator.cpp; sourceTree = "<group>"; };
 		0FE447971B76F1E3009498EB /* ParkingLot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParkingLot.cpp; sourceTree = "<group>"; };
 		0FEAE3671B7D19CB00CE17F2 /* Condition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Condition.cpp; sourceTree = "<group>"; };
+		0FF1134D22D68679009A81DA /* ScrollViewScrollabilityTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollViewScrollabilityTests.mm; sourceTree = "<group>"; };
 		0FFC45A41B73EBE20085BD62 /* Lock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Lock.cpp; sourceTree = "<group>"; };
 		115EB3421EE0B720003C2C0A /* ViewportSizeForViewportUnits.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewportSizeForViewportUnits.mm; sourceTree = "<group>"; };
 		118153432208B7AC00B2CCD2 /* deferred-script-load.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "deferred-script-load.html"; sourceTree = "<group>"; };
@@ -2802,6 +2804,7 @@
 				5C7148942123A40700FDE3C5 /* WKWebsiteDatastore.mm */,
 				371195AA1FE5797700A1FB92 /* WKWebViewAlwaysShowsScroller.mm */,
 				2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */,
+				CDD68F0C22C18317000CF0AE /* WKWebViewCloseAllMediaPresentations.mm */,
 				5CB3CE381FA1691700C3A2D6 /* WKWebViewConfiguration.mm */,
 				7C417F311D19E14800B8EF53 /* WKWebViewDefaultNavigationDelegate.mm */,
 				46E66A8F1F0D75590026D83C /* WKWebViewDiagnosticLogging.mm */,
@@ -2815,7 +2818,6 @@
 				93F56DA81E5F9181003EDE84 /* WKWebViewSnapshot.mm */,
 				CD7F89DB22A86CDA00D683AE /* WKWebViewSuspendAllMediaPlayback.mm */,
 				9984FACA1CFFAEEE008D198C /* WKWebViewTextInput.mm */,
-				CDD68F0C22C18317000CF0AE /* WKWebViewCloseAllMediaPresentations.mm */,
 			);
 			name = "WebKit Cocoa";
 			path = WebKitCocoa;
@@ -2923,6 +2925,7 @@
 				7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */,
 				F464AF9120BB66EA007F9B18 /* RenderingProgressTests.mm */,
 				F4C8797E2059D8D3009CD00B /* ScrollViewInsetTests.mm */,
+				0FF1134D22D68679009A81DA /* ScrollViewScrollabilityTests.mm */,
 				CE6E819F20A6935F00E2C80F /* SetTimeoutFunction.mm */,
 				4433A395208044130091ED57 /* SynchronousTimeoutTests.mm */,
 				F45E15742112CE6200307E82 /* TestInputDelegate.h */,
@@ -4353,7 +4356,6 @@
 				CA38459620AE17A900990D3B /* LocalStorageDatabaseTracker.mm in Sources */,
 				46C519DA1D355AB200DAA51A /* LocalStorageNullEntries.mm in Sources */,
 				8C10AF99206467A90018FD90 /* LocalStoragePersistence.mm in Sources */,
-				CDD68F0D22C18317000CF0AE /* WKWebViewCloseAllMediaPresentations.mm in Sources */,
 				7A6A2C701DCCFA8C00C0D085 /* LocalStorageQuirkTest.mm in Sources */,
 				076E507F1F4513D6006E9F5A /* Logging.cpp in Sources */,
 				CE1866491F72E8F100A0CAB6 /* MarkedText.cpp in Sources */,
@@ -4460,6 +4462,7 @@
 				CDC0932B21C872C10030C4B0 /* ScrollingDoesNotPauseMedia.mm in Sources */,
 				7CCE7F121A411AE600447C4C /* ScrollPinningBehaviors.cpp in Sources */,
 				F4C8797F2059D8D3009CD00B /* ScrollViewInsetTests.mm in Sources */,
+				0FF1134E22D68679009A81DA /* ScrollViewScrollabilityTests.mm in Sources */,
 				CE06DF9B1E1851F200E570C9 /* SecurityOrigin.cpp in Sources */,
 				5769C50B1D9B0002000847FB /* SerializedCryptoKeyWrap.mm in Sources */,
 				51EB12941FDF052500A5A1BD /* ServiceWorkerBasic.mm in Sources */,
@@ -4596,6 +4599,7 @@
 				371195AB1FE5797700A1FB92 /* WKWebViewAlwaysShowsScroller.mm in Sources */,
 				514958BE1F7427AC00E87BAD /* WKWebViewAutofillTests.mm in Sources */,
 				2EFF06D71D8AF34A0004BB30 /* WKWebViewCandidateTests.mm in Sources */,
+				CDD68F0D22C18317000CF0AE /* WKWebViewCloseAllMediaPresentations.mm in Sources */,
 				5CB3CE391FA1697F00C3A2D6 /* WKWebViewConfiguration.mm in Sources */,
 				A14FC5851B89739100D107EB /* WKWebViewConfigurationExtras.mm in Sources */,
 				7C417F331D19E14800B8EF53 /* WKWebViewDefaultNavigationDelegate.mm in Sources */,

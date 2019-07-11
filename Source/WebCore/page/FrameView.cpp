@@ -1676,10 +1676,7 @@ void FrameView::updateLayoutViewport()
             LayoutPoint newOrigin = computeLayoutViewportOrigin(visualViewportRect(), minStableLayoutViewportOrigin(), maxStableLayoutViewportOrigin(), layoutViewport, StickToDocumentBounds);
             setLayoutViewportOverrideRect(LayoutRect(newOrigin, m_layoutViewportOverrideRect.value().size()));
         }
-        if (frame().settings().visualViewportAPIEnabled()) {
-            if (auto* window = frame().window())
-                window->visualViewport().update();
-        }
+        layoutOrVisualViewportChanged();
         return;
     }
 
@@ -1688,10 +1685,7 @@ void FrameView::updateLayoutViewport()
         setBaseLayoutViewportOrigin(newLayoutViewportOrigin);
         LOG_WITH_STREAM(Scrolling, stream << "layoutViewport changed to " << layoutViewportRect());
     }
-    if (frame().settings().visualViewportAPIEnabled()) {
-        if (auto* window = frame().window())
-            window->visualViewport().update();
-    }
+    layoutOrVisualViewportChanged();
 }
 
 LayoutPoint FrameView::minStableLayoutViewportOrigin() const
@@ -2764,16 +2758,22 @@ void FrameView::updateTiledBackingAdaptiveSizing()
     tiledBacking->setScrollability(computeScrollability());
 }
 
-#if PLATFORM(IOS_FAMILY)
-
-void FrameView::didUpdateViewportOverrideRects()
+// FIXME: This shouldn't be called from outside; FrameView should call it when the relevant viewports change.
+void FrameView::layoutOrVisualViewportChanged()
 {
     if (!frame().settings().visualViewportAPIEnabled())
         return;
 
     if (auto* window = frame().window())
         window->visualViewport().update();
+
+    if (auto* page = frame().page()) {
+        if (auto* scrollingCoordinator = page->scrollingCoordinator())
+            scrollingCoordinator->frameViewVisualViewportChanged(*this);
+    }
 }
+
+#if PLATFORM(IOS_FAMILY)
 
 void FrameView::unobscuredContentSizeChanged()
 {

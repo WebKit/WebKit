@@ -2025,7 +2025,16 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 #if ENABLE(ASYNC_SCROLLING)
     bool hasDockedInputView = !CGRectIsEmpty(_inputViewBounds);
     bool isZoomed = layerTreeTransaction.pageScaleFactor() > layerTreeTransaction.initialScaleFactor();
-    [_scrollView _setScrollEnabledInternal:_page->scrollingCoordinatorProxy()->hasScrollableMainFrame() || hasDockedInputView || isZoomed];
+
+    bool scrollingNeededToRevealUI = false;
+    if (_maximumUnobscuredSizeOverride) {
+        auto unobscuredContentRect = _page->unobscuredContentRect();
+        auto maxUnobscuredSize = _page->maximumUnobscuredSize();
+        scrollingNeededToRevealUI = maxUnobscuredSize.width() == unobscuredContentRect.width() && maxUnobscuredSize.height() == unobscuredContentRect.height();
+    }
+
+    bool scrollingEnabled = _page->scrollingCoordinatorProxy()->hasScrollableMainFrame() || hasDockedInputView || isZoomed || scrollingNeededToRevealUI;
+    [_scrollView _setScrollEnabledInternal:scrollingEnabled];
 #endif
     if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing] && ![_scrollView _isAnimatingZoom] && [_scrollView zoomScale] != layerTreeTransaction.pageScaleFactor()) {
         LOG_WITH_STREAM(VisibleRects, stream << " updating scroll view with pageScaleFactor " << layerTreeTransaction.pageScaleFactor());
@@ -6300,6 +6309,8 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride
 {
+    LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView " << _page->pageID() << " _overrideLayoutParametersWithMinimumLayoutSize:" << WebCore::FloatSize(minimumLayoutSize) << " maximumUnobscuredSizeOverride:" << WebCore::FloatSize(maximumUnobscuredSizeOverride) << "]");
+
     [self _setViewLayoutSizeOverride:minimumLayoutSize];
     [self _setMaximumUnobscuredSizeOverride:maximumUnobscuredSizeOverride];
 }

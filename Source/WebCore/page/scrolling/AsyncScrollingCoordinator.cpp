@@ -150,6 +150,29 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
 #endif
 }
 
+void AsyncScrollingCoordinator::frameViewVisualViewportChanged(FrameView& frameView)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+
+    if (!coordinatesScrollingForFrameView(frameView))
+        return;
+    
+    // If the root layer does not have a ScrollingStateNode, then we should create one.
+    auto* node = m_scrollingStateTree->stateNodeForID(frameView.scrollingNodeID());
+    if (!node)
+        return;
+
+    auto& frameScrollingNode = downcast<ScrollingStateFrameScrollingNode>(*node);
+
+    auto visualViewportIsSmallerThanLayoutViewport = [](const FrameView& frameView) {
+        auto layoutViewport = frameView.layoutViewportRect();
+        auto visualViewport = frameView.visualViewportRect();
+        return visualViewport.width() < layoutViewport.width() || visualViewport.height() < layoutViewport.height();
+    };
+    frameScrollingNode.setVisualViewportIsSmallerThanLayoutViewport(visualViewportIsSmallerThanLayoutViewport(frameView));
+}
+
 void AsyncScrollingCoordinator::updateExpectsWheelEventTestTriggerWithFrameView(const FrameView& frameView)
 {
     auto* page = frameView.frame().page();
@@ -630,6 +653,14 @@ void AsyncScrollingCoordinator::setFrameScrollingNodeState(ScrollingNodeID nodeI
     frameScrollingNode.setMaxLayoutViewportOrigin(frameView.maxStableLayoutViewportOrigin());
 
     frameScrollingNode.setFixedElementsLayoutRelativeToFrame(frameView.fixedElementsLayoutRelativeToFrame());
+
+    auto visualViewportIsSmallerThanLayoutViewport = [](const FrameView& frameView) {
+        auto layoutViewport = frameView.layoutViewportRect();
+        auto visualViewport = frameView.visualViewportRect();
+        return visualViewport.width() < layoutViewport.width() || visualViewport.height() < layoutViewport.height();
+    };
+    frameScrollingNode.setVisualViewportIsSmallerThanLayoutViewport(visualViewportIsSmallerThanLayoutViewport(frameView));
+    
     frameScrollingNode.setScrollBehaviorForFixedElements(frameView.scrollBehaviorForFixedElements());
 }
 

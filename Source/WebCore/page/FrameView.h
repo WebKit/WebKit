@@ -273,7 +273,9 @@ public:
     // This is different than visibleContentRect() in that it ignores negative (or overly positive)
     // offsets from rubber-banding, and it takes zooming into account. 
     LayoutRect viewportConstrainedVisibleContentRect() const;
-    
+
+    WEBCORE_EXPORT void layoutOrVisualViewportChanged();
+
     LayoutRect rectForFixedPositionLayout() const;
 
     void viewportContentsChanged();
@@ -595,10 +597,6 @@ public:
 
     void updateTiledBackingAdaptiveSizing();
     TiledBacking::Scrollability computeScrollability() const;
-
-#if PLATFORM(IOS_FAMILY)
-    WEBCORE_EXPORT void didUpdateViewportOverrideRects();
-#endif
 
     void addPaintPendingMilestones(OptionSet<LayoutMilestone>);
     void firePaintRelatedMilestonesIfNeeded();

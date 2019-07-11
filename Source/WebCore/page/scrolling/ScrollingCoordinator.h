@@ -95,6 +95,9 @@ public:
     // Should be called whenever the set of fixed objects changes.
     void frameViewFixedObjectsDidChange(FrameView&);
 
+    // Should be called whenever the FrameView's visual viewport changed.
+    virtual void frameViewVisualViewportChanged(FrameView&) { }
+
     // Called whenever the non-fast scrollable region changes for reasons other than layout.
     virtual void frameViewEventTrackingRegionsChanged(FrameView&) { }
 

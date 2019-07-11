@@ -69,6 +69,9 @@ void ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(const ScrollingS
     if (state.hasChangedProperty(ScrollingStateFrameScrollingNode::TopContentInset))
         m_topContentInset = state.topContentInset();
 
+    if (state.hasChangedProperty(ScrollingStateFrameScrollingNode::VisualViewportIsSmallerThanLayoutViewport))
+        m_visualViewportIsSmallerThanLayoutViewport = state.visualViewportIsSmallerThanLayoutViewport();
+
     if (state.hasChangedProperty(ScrollingStateFrameScrollingNode::FixedElementsLayoutRelativeToFrame))
         m_fixedElementsLayoutRelativeToFrame = state.fixedElementsLayoutRelativeToFrame();
 
@@ -158,6 +161,8 @@ void ScrollingTreeFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingSt
     ts.dumpProperty("behavior for fixed", m_behaviorForFixed);
     if (m_fixedElementsLayoutRelativeToFrame)
         ts.dumpProperty("fixed elements lay out relative to frame", m_fixedElementsLayoutRelativeToFrame);
+    if (m_visualViewportIsSmallerThanLayoutViewport)
+        ts.dumpProperty("visual viewport is smaller than layout viewport", m_visualViewportIsSmallerThanLayoutViewport);
 }
 
 

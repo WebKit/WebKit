@@ -1,3 +1,34 @@
+2019-07-10  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] With modal overlay and body overflow:hidden, can't access all the content
+        https://bugs.webkit.org/show_bug.cgi?id=199693
+        rdar://problem/51930364
+
+        Reviewed by Tim Horton.
+
+        A page with overflow:hidden on the root needs to be scrollable if:
+        * it's zoomed
+        * the visual viewport is smaller than the layout viewport (including visible keyboard)
+        * scrolling is required to hide MobileSafari's squishy bars
+
+        This patch does the last two, plumbing a "visual viewport is smaller than layout viewport"
+        bit up from WebCore via the scrolling tree (that way, when it changes we automatically trigger
+        a commit), and checking for squished bars in WKWebView.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::decode):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+        (-[WKWebView _overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride:]):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::hasScrollableMainFrame const):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::maximumUnobscuredSize const):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2019-07-10  Tim Horton  <timothy_horton@apple.com>
 
         Long pressing on attachments will crash the WebContent process
