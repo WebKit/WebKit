@@ -1,3 +1,18 @@
+2019-07-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r247314.
+        https://bugs.webkit.org/show_bug.cgi?id=199721
+
+        Caused performance regression. (Requested by deanj on
+        #webkit).
+
+        Reverted changeset:
+
+        "Disable speculative loading if cache is not to be used for
+        the load"
+        https://bugs.webkit.org/show_bug.cgi?id=199644
+        https://trac.webkit.org/changeset/247314
+
 2019-07-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add test expectations and baselines for iOS 13

@@ -270,29 +270,12 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
 }
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-static bool cachePolicyValidForSpeculativeRevalidation(WebCore::ResourceRequestCachePolicy policy)
-{
-    switch (policy) {
-    case WebCore::ResourceRequestCachePolicy::ReturnCacheDataElseLoad:
-    case WebCore::ResourceRequestCachePolicy::ReturnCacheDataDontLoad:
-    case WebCore::ResourceRequestCachePolicy::ReloadIgnoringCacheData:
-        return false;
-    case WebCore::ResourceRequestCachePolicy::UseProtocolCachePolicy:
-    case WebCore::ResourceRequestCachePolicy::RefreshAnyCacheData:
-        return true;
-    case WebCore::ResourceRequestCachePolicy::DoNotUseAnyCache:
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-    return false;
-}
-
 static bool inline canRequestUseSpeculativeRevalidation(const ResourceRequest& request)
 {
     if (request.isConditional())
         return false;
 
-    if (cachePolicyValidForSpeculativeRevalidation(request.cachePolicy()))
+    if (cachePolicyAllowsExpired(request.cachePolicy()))
         return false;
 
     return request.requester() != ResourceRequest::Requester::XHR && request.requester() != ResourceRequest::Requester::Fetch;
