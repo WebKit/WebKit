@@ -34,7 +34,7 @@ namespace WebCore {
 LocalCurrentTraitCollection::LocalCurrentTraitCollection(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    m_savedTraitCollection = [PAL::getUITraitCollectionClass() _currentTraitCollection];
+    m_savedTraitCollection = [PAL::getUITraitCollectionClass() currentTraitCollection];
     m_usingDarkAppearance = useDarkAppearance;
     m_usingElevatedUserInterfaceLevel = useElevatedUserInterfaceLevel;
 
@@ -42,7 +42,7 @@ LocalCurrentTraitCollection::LocalCurrentTraitCollection(bool useDarkAppearance,
     auto backgroundLevelTrait = [PAL::getUITraitCollectionClass() traitCollectionWithUserInterfaceLevel:m_usingElevatedUserInterfaceLevel ? UIUserInterfaceLevelElevated : UIUserInterfaceLevelBase];
     auto newTraitCollection = [PAL::getUITraitCollectionClass() traitCollectionWithTraitsFromCollections:@[ m_savedTraitCollection.get(), userInterfaceStyleTrait, backgroundLevelTrait ]];
 
-    [PAL::getUITraitCollectionClass() _setCurrentTraitCollection:newTraitCollection];
+    [PAL::getUITraitCollectionClass() setCurrentTraitCollection:newTraitCollection];
 #else
     UNUSED_PARAM(useDarkAppearance);
     UNUSED_PARAM(useElevatedUserInterfaceLevel);
@@ -52,11 +52,11 @@ LocalCurrentTraitCollection::LocalCurrentTraitCollection(bool useDarkAppearance,
 LocalCurrentTraitCollection::LocalCurrentTraitCollection(UITraitCollection *traitCollection)
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    m_savedTraitCollection = [PAL::getUITraitCollectionClass() _currentTraitCollection];
+    m_savedTraitCollection = [PAL::getUITraitCollectionClass() currentTraitCollection];
     m_usingDarkAppearance = traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
     m_usingElevatedUserInterfaceLevel = traitCollection.userInterfaceLevel == UIUserInterfaceLevelElevated;
 
-    [PAL::getUITraitCollectionClass() _setCurrentTraitCollection:traitCollection];
+    [PAL::getUITraitCollectionClass() setCurrentTraitCollection:traitCollection];
 #else
     UNUSED_PARAM(traitCollection);
 #endif
@@ -65,7 +65,7 @@ LocalCurrentTraitCollection::LocalCurrentTraitCollection(UITraitCollection *trai
 LocalCurrentTraitCollection::~LocalCurrentTraitCollection()
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    [PAL::getUITraitCollectionClass() _setCurrentTraitCollection:m_savedTraitCollection.get()];
+    [PAL::getUITraitCollectionClass() setCurrentTraitCollection:m_savedTraitCollection.get()];
 #endif
 }
 

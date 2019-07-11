@@ -55,9 +55,9 @@
 @class ARQuickLookWebKitItem;
 
 @interface ARQuickLookWebKitItem : QLItem
-- (instancetype)initWithPreviewItemProvider:(NSItemProvider *_Nonnull)itemProvider contentType:(NSString *_Nonnull)contentType previewTitle:(NSString *_Nonnull)previewTitle fileSize:(NSNumber *_Nonnull)fileSize previewItem:(ARQuickLookPreviewItem *)previewItem;
+- (instancetype)initWithPreviewItemProvider:(NSItemProvider *)itemProvider contentType:(NSString *)contentType previewTitle:(NSString *)previewTitle fileSize:(NSNumber *)fileSize previewItem:(ARQuickLookPreviewItem *)previewItem;
 @end
-#endif
 
 #endif
 
+#endif

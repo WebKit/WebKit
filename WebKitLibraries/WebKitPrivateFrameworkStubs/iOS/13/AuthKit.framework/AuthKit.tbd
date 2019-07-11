@@ -1,0 +1,8 @@
+--- !tapi-tbd-v3
+archs:           [ x86_64, arm64, arm64e ]
+install-name:    '/System/Library/PrivateFrameworks/AuthKit.framework/AuthKit'
+platform: ios
+exports:
+  - archs:           [ x86_64, arm64, arm64e ]
+    objc-classes:    [ AKAuthorizationController ]
+...

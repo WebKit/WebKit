@@ -1,3 +1,19 @@
+2019-07-11  Jonathan Bedard  <jbedard@apple.com>
+
+        [iOS 13] Enable WebKit build
+        https://bugs.webkit.org/show_bug.cgi?id=199481
+        <rdar://problem/52619048>
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/cocoa/NSProgressSPI.h: We need the NSProgress SPI in public builds because NSProgress API
+        is marked unavailable on iOS, watchOS and tvOS.
+        * pal/spi/ios/CoreUISPI.h: Add CUIStyleEffectConfiguration.appearanceName SPI.
+        * pal/spi/ios/DataDetectorsUISPI.h: Add UIContextMenuConfiguration.contextMenuConfigurationForURL SPI.
+        * pal/spi/ios/SystemPreviewSPI.h: Add ARQuickLookWebKitItem.initWithPreviewItemProvider SPI.
+        * pal/spi/ios/UIKitSPI.h: Add systemBrownColor, UIColor.tableCellDefaultSelectionTintColor should be marked nullable.
+        * pal/spi/mac/AVFoundationSPI.h: Add AVOutputDevice.name SPI.
+
 2019-07-10  Alex Christensen  <achristensen@webkit.org>
 
         Allow CMake to build WebCore on Mac

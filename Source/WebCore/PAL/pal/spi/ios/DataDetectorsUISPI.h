@@ -53,6 +53,7 @@
 @class UIContextMenuConfiguration;
 @interface DDContextMenuAction
 + (UIContextMenuConfiguration *)contextMenuConfigurationWithURL:(NSURL *)URL inView:(UIView *)view context:(NSDictionary *)context menuIdentifier:(NSString *)menuIdentifier;
++ (UIContextMenuConfiguration *)contextMenuConfigurationForURL:(NSURL *)URL identifier:(NSString *)identifier selectedText:(NSString *)selectedText results:(NSArray *) results inView: (UIView *) view context:(NSDictionary *)context menuIdentifier:(NSString *)menuIdentifier;
 @end
 #endif
 

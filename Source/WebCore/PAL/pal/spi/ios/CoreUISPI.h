@@ -39,6 +39,7 @@
 
 @interface CUIStyleEffectConfiguration ()
 @property (nonatomic) BOOL useSimplifiedEffect;
+@property (nonatomic, copy) NSString *appearanceName;
 @end
 
 @interface CUICatalog : NSObject

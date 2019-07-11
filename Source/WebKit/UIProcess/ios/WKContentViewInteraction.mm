@@ -5420,8 +5420,10 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 #if HAVE(MENU_CONTROLLER_SHOW_HIDE_API)
     [controller showMenuFromView:self rect:rect];
 #else
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [controller setTargetRect:rect inView:self];
     [controller setMenuVisible:YES animated:YES];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
@@ -5431,7 +5433,9 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 #if HAVE(MENU_CONTROLLER_SHOW_HIDE_API)
     [controller hideMenuFromView:self];
 #else
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [controller setMenuVisible:NO animated:YES];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 

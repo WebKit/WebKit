@@ -66,8 +66,6 @@ WTF_EXTERN_C_END
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
 #endif
 
-NS_ASSUME_NONNULL_BEGIN
-
 typedef NS_ENUM(NSInteger, UIApplicationSceneClassicMode) {
     UIApplicationSceneClassicModeOriginalPad = 4,
 };
@@ -109,6 +107,7 @@ typedef enum {
 @interface UIColor ()
 
 + (UIColor *)systemBlueColor;
++ (UIColor *)systemBrownColor;
 + (UIColor *)systemGrayColor;
 + (UIColor *)systemGreenColor;
 + (UIColor *)systemOrangeColor;
@@ -140,11 +139,9 @@ typedef enum {
 + (UIViewController *)viewControllerForView:(UIView *)view;
 @end
 
-NS_ASSUME_NONNULL_END
-
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
 @interface NSURL ()
-@property (nonatomic, copy, nullable, setter=_setTitle:) NSString *_title;
+@property (nonatomic, copy, setter=_setTitle:) NSString *_title;
 @end
 #endif
 

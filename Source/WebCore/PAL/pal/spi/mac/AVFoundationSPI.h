@@ -69,12 +69,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class AVOutputContext;
 @class AVOutputDevice;
+
 @interface AVOutputContext : NSObject <NSSecureCoding>
 @property (nonatomic, readonly) NSString *deviceName;
 + (instancetype)outputContext;
 + (nullable AVOutputContext *)sharedAudioPresentationOutputContext;
 @property (readonly) BOOL supportsMultipleOutputDevices;
 @property (readonly) NSArray<AVOutputDevice *> *outputDevices;
+@end
+
+@interface AVOutputDevice : NSObject
+@property (nonatomic, readonly) NSString *name;
 @end
 
 #if !PLATFORM(IOS_FAMILY)

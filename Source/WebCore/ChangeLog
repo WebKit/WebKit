@@ -1,3 +1,17 @@
+2019-07-11  Jonathan Bedard  <jbedard@apple.com>
+
+        [iOS 13] Enable WebKit build
+        https://bugs.webkit.org/show_bug.cgi?id=199481
+        <rdar://problem/52619048>
+
+        Reviewed by Tim Horton.
+
+        No new tests, iOS 13 test expectations will be migrated in the near future.
+
+        * platform/ios/LocalCurrentTraitCollection.mm:
+        (WebCore::LocalCurrentTraitCollection::LocalCurrentTraitCollection): Remove underscore from currentTraitCollection.
+        (WebCore::LocalCurrentTraitCollection::~LocalCurrentTraitCollection): Remove underscore from setCurrentTraitCollection.
+
 2019-07-11  Chris Dumez  <cdumez@apple.com>
 
         Fix non thread-safe usage of makeWeakPtr() in MediaPlayerPrivateMediaFoundation
