@@ -2921,7 +2921,7 @@ void FrameView::setNeedsLayoutAfterViewConfigurationChange()
 void FrameView::setNeedsCompositingConfigurationUpdate()
 {
     RenderView* renderView = this->renderView();
-    if (renderView->usesCompositing()) {
+    if (renderView && renderView->usesCompositing()) {
         if (auto* rootLayer = renderView->layer())
             rootLayer->setNeedsCompositingConfigurationUpdate();
         renderView->compositor().scheduleCompositingLayerUpdate();
