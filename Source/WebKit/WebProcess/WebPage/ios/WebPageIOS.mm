@@ -1763,19 +1763,23 @@ void WebPage::moveSelectionByOffset(int32_t offset, CallbackID callbackID)
     
 void WebPage::startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow)
 {
-    if (m_focusedElement && m_focusedElement->renderer())
+    if (m_focusedElement && m_focusedElement->renderer()) {
         m_page->mainFrame().eventHandler().startSelectionAutoscroll(m_focusedElement->renderer(), positionInWindow);
-    else {
-        Frame& frame = m_page->focusController().focusedOrMainFrame();
-        VisibleSelection selection = frame.selection().selection();
-        if (selection.isRange()) {
-            RefPtr<Range> range = frame.selection().toNormalizedRange();
-            Node& node = range->startContainer();
-            auto* renderer = node.renderer();
-            if (renderer)
-                m_page->mainFrame().eventHandler().startSelectionAutoscroll(renderer, positionInWindow);
-        }
+        return;
     }
+    
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    VisibleSelection selection = frame.selection().selection();
+    if (!selection.isRange())
+        return;
+    RefPtr<Range> range = frame.selection().toNormalizedRange();
+    if (!range)
+        return;
+    auto* renderer = range->startContainer().renderer();
+    if (!renderer)
+        return;
+
+    m_page->mainFrame().eventHandler().startSelectionAutoscroll(renderer, positionInWindow);
 }
     
 void WebPage::cancelAutoscroll()
