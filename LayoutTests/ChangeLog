@@ -1,3 +1,12 @@
+2019-07-10  Truitt Savell  <tsavell@apple.com>
+
+        Marking webgpu/whlsl-builtin-vectors-2.html as Slow after https://trac.webkit.org/changeset/247319/webkit
+        https://bugs.webkit.org/show_bug.cgi?id=199651
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2019-07-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver ignored role="presentation" on <table> HTML elements
