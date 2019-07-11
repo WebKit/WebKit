@@ -1336,7 +1336,7 @@ webkit.org/b/176030 http/tests/websocket/tests/hybi/send-object-tostring-check.h
 
 webkit.org/b/199013 [ Debug ] imported/w3c/web-platform-tests/websockets/Create-Secure-verify-url-set-non-default-port.any.html [ Pass Failure ]
 
-webkit.org/b/196495 fast/viewport/ios/viewport-shrink-to-fit-on-new-navigation.html [ Pass Failure ]
+webkit.org/b/196495 fast/viewport/ios/viewport-shrink-to-fit-on-new-navigation.html [ Failure ]
 
 webkit.org/b/199071 [ Release ] imported/blink/fast/css/user-select-none.html [ Pass ImageOnlyFailure ]
 
