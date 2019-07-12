@@ -1,3 +1,15 @@
+2019-07-12  Alex Christensen  <achristensen@webkit.org>
+
+        Begin unifying WebKitLegacy sources
+        https://bugs.webkit.org/show_bug.cgi?id=199730
+
+        Reviewed by Keith Miller.
+
+        * Sources.txt: Added.
+        * SourcesCocoa.txt: Added.
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+        * scripts/generate-unified-sources.sh: Added.
+
 2019-07-03  Jonathan Bedard  <jbedard@apple.com>
 
         [Catalina] Enable WebKit build

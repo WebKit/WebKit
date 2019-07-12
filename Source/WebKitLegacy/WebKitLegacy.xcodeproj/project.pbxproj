@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		5C9D925022D7E835008E9266 /* Generate Unified Sources */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5C9D925422D7E836008E9266 /* Build configuration list for PBXAggregateTarget "Generate Unified Sources" */;
+			buildPhases = (
+				5C9D925722D7E849008E9266 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Generate Unified Sources";
+			productName = "Generate Unified Sources";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		065AD5A30B0C32C7005A2B1D /* WebContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 065AD5A10B0C32C7005A2B1D /* WebContextMenuClient.h */; };
 		065AD5A40B0C32C7005A2B1D /* WebContextMenuClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 065AD5A20B0C32C7005A2B1D /* WebContextMenuClient.mm */; };
@@ -147,9 +161,19 @@
 		598AD9281201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm in Sources */ = {isa = PBXBuildFile; fileRef = 598AD9271201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm */; };
 		598AD92A1201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 598AD9291201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h */; };
 		598ADA461202275000ABAE4E /* WebDeviceOrientationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 598ADA451202275000ABAE4E /* WebDeviceOrientationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5C40CD2122D8F9C000E9DAD5 /* PopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C01CB82173435C900C5D807 /* PopupMenuMac.mm */; };
+		5C40CD2222D8F9C300E9DAD5 /* SearchPopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C01CB84173435C900C5D807 /* SearchPopupMenuMac.mm */; };
+		5C9D925A22D7E8AD008E9266 /* Sources.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5C9D925822D7E8AD008E9266 /* Sources.txt */; };
+		5C9D925B22D7E8AD008E9266 /* SourcesCocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5C9D925922D7E8AD008E9266 /* SourcesCocoa.txt */; };
 		5C9EF2F521F061BE003BDC56 /* PageStorageSessionProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C9EF2F421F061BE003BDC56 /* PageStorageSessionProvider.h */; };
 		5CA46E7821F1451D00CE86B4 /* NetworkStorageSessionMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CA46E7621F1451D00CE86B4 /* NetworkStorageSessionMap.h */; };
-		5CA46E7921F1451D00CE86B4 /* NetworkStorageSessionMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CA46E7721F1451D00CE86B4 /* NetworkStorageSessionMap.cpp */; };
+		5CC19FCC22D7F28D00BBC952 /* UnifiedSource1-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FB822D7F23B00BBC952 /* UnifiedSource1-mm.mm */; };
+		5CC19FCD22D7F28D00BBC952 /* UnifiedSource1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FBB22D7F23B00BBC952 /* UnifiedSource1.cpp */; };
+		5CC19FCE22D7F28D00BBC952 /* UnifiedSource2-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FBE22D7F23C00BBC952 /* UnifiedSource2-mm.mm */; };
+		5CC19FCF22D7F28D00BBC952 /* UnifiedSource2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FBA22D7F23B00BBC952 /* UnifiedSource2.cpp */; };
+		5CC19FD022D7F28D00BBC952 /* UnifiedSource3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FBD22D7F23B00BBC952 /* UnifiedSource3.cpp */; };
+		5CC19FD122D7F28D00BBC952 /* UnifiedSource5-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FBC22D7F23B00BBC952 /* UnifiedSource5-mm.mm */; };
+		5CC19FD222D7F28D00BBC952 /* UnifiedSource5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FB922D7F23B00BBC952 /* UnifiedSource5.cpp */; };
 		5CE44F4A206D70EA003EFD01 /* PingHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE44F49206D70E9003EFD01 /* PingHandle.h */; };
 		5D7BF8140C2A1D90008CE06D /* WebInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D7BF8120C2A1D90008CE06D /* WebInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5D7BF8150C2A1D90008CE06D /* WebInspector.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D7BF8130C2A1D90008CE06D /* WebInspector.mm */; };
@@ -168,9 +192,7 @@
 		65FFB7FD0AD0B7D30048CD05 /* WebDocumentLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65FFB7FB0AD0B7D30048CD05 /* WebDocumentLoaderMac.mm */; };
 		7A8FF0D11075024A00A80A08 /* WebInspectorPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A8FF0D01075024A00A80A08 /* WebInspectorPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C01CB85173435C900C5D807 /* PopupMenuMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C01CB81173435C900C5D807 /* PopupMenuMac.h */; };
-		7C01CB86173435C900C5D807 /* PopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C01CB82173435C900C5D807 /* PopupMenuMac.mm */; };
 		7C01CB87173435C900C5D807 /* SearchPopupMenuMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C01CB83173435C900C5D807 /* SearchPopupMenuMac.h */; };
-		7C01CB88173435C900C5D807 /* SearchPopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C01CB84173435C900C5D807 /* SearchPopupMenuMac.mm */; };
 		7C1FB3C21846E8E1001A03D8 /* WebAllowDenyPolicyListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1FB3C11846E8E1001A03D8 /* WebAllowDenyPolicyListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E6FEF0808985A7200C44C3F /* WebScriptDebugDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E6FEF0908985A7200C44C3F /* WebScriptDebugDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E6FEF0608985A7200C44C3F /* WebScriptDebugDelegate.mm */; };
@@ -734,11 +756,9 @@
 		A5DEFC0F11D5343E00885273 /* WebDatabaseQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC0D11D5343E00885273 /* WebDatabaseQuotaManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5DEFC1011D5343E00885273 /* WebDatabaseQuotaManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5DEFC0E11D5343E00885273 /* WebDatabaseQuotaManager.mm */; };
 		A5DEFC1311D5344B00885273 /* WebApplicationCacheQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC1111D5344B00885273 /* WebApplicationCacheQuotaManager.h */; };
-		A5DEFC1411D5344B00885273 /* WebApplicationCacheQuotaManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5DEFC1211D5344B00885273 /* WebApplicationCacheQuotaManager.mm */; };
 		A70936AF0B5608DC00CDB48E /* WebDragClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A70936AD0B5608DC00CDB48E /* WebDragClient.h */; };
 		A70936B00B5608DC00CDB48E /* WebDragClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = A70936AE0B5608DC00CDB48E /* WebDragClient.mm */; };
 		AB9FBBBB0F8582B0006ADC43 /* WebDOMOperationsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = AB9FBBBA0F8582B0006ADC43 /* WebDOMOperationsInternal.h */; };
-		B6CE5C24100BC5CE00219936 /* WebApplicationCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */; };
 		B6CE5C25100BC5F500219936 /* WebApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B804176F1217A83100466BAE /* WebInspectorFrontend.h in Headers */ = {isa = PBXBuildFile; fileRef = B804176D1217A83100466BAE /* WebInspectorFrontend.h */; };
 		B80417701217A83100466BAE /* WebInspectorFrontend.mm in Sources */ = {isa = PBXBuildFile; fileRef = B804176E1217A83100466BAE /* WebInspectorFrontend.mm */; };
@@ -782,7 +802,6 @@
 		E15663190FB61C1F00C199CA /* WebDownload.mm in Sources */ = {isa = PBXBuildFile; fileRef = E15663180FB61C1F00C199CA /* WebDownload.mm */; };
 		E169836211346D1B00894115 /* ProxyRuntimeObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E169836111346D1B00894115 /* ProxyRuntimeObject.h */; };
 		E169836C11346D5600894115 /* ProxyRuntimeObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = E169836B11346D5600894115 /* ProxyRuntimeObject.mm */; };
-		E4AEF97B1C0DF4BC00B01727 /* WebResourceLoadScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4AEF9791C0DF4BC00B01727 /* WebResourceLoadScheduler.cpp */; };
 		E4AEF97C1C0DF4BC00B01727 /* WebResourceLoadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AEF97A1C0DF4BC00B01727 /* WebResourceLoadScheduler.h */; };
 		ED5B9524111B725A00472298 /* WebLocalizableStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED5B9523111B725A00472298 /* WebLocalizableStrings.mm */; };
 		ED7F6D8B0980683500C235ED /* WebNSDataExtrasPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -805,6 +824,16 @@
 			script = "exec \"${SRCROOT}/scripts/postprocess-header-rule\"\n";
 		};
 /* End PBXBuildRule section */
+
+/* Begin PBXContainerItemProxy section */
+		5C9D925522D7E841008E9266 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5C9D925022D7E835008E9266;
+			remoteInfo = "Generate Unified Sources";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		535E08CB2254637200DF00CA /* Copy Mig Files into Private Framework Headers */ = {
@@ -1012,9 +1041,18 @@
 		598AD9271201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDeviceOrientationProviderMock.mm; sourceTree = "<group>"; };
 		598AD9291201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationProviderMockInternal.h; sourceTree = "<group>"; };
 		598ADA451202275000ABAE4E /* WebDeviceOrientationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationProvider.h; sourceTree = "<group>"; };
+		5C9D925822D7E8AD008E9266 /* Sources.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sources.txt; sourceTree = "<group>"; };
+		5C9D925922D7E8AD008E9266 /* SourcesCocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourcesCocoa.txt; sourceTree = "<group>"; };
 		5C9EF2F421F061BE003BDC56 /* PageStorageSessionProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PageStorageSessionProvider.h; path = WebCoreSupport/PageStorageSessionProvider.h; sourceTree = SOURCE_ROOT; };
 		5CA46E7621F1451D00CE86B4 /* NetworkStorageSessionMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkStorageSessionMap.h; path = WebCoreSupport/NetworkStorageSessionMap.h; sourceTree = SOURCE_ROOT; };
 		5CA46E7721F1451D00CE86B4 /* NetworkStorageSessionMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkStorageSessionMap.cpp; path = WebCoreSupport/NetworkStorageSessionMap.cpp; sourceTree = SOURCE_ROOT; };
+		5CC19FB822D7F23B00BBC952 /* UnifiedSource1-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource1-mm.mm"; sourceTree = "<group>"; };
+		5CC19FB922D7F23B00BBC952 /* UnifiedSource5.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource5.cpp; sourceTree = "<group>"; };
+		5CC19FBA22D7F23B00BBC952 /* UnifiedSource2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource2.cpp; sourceTree = "<group>"; };
+		5CC19FBB22D7F23B00BBC952 /* UnifiedSource1.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource1.cpp; sourceTree = "<group>"; };
+		5CC19FBC22D7F23B00BBC952 /* UnifiedSource5-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource5-mm.mm"; sourceTree = "<group>"; };
+		5CC19FBD22D7F23B00BBC952 /* UnifiedSource3.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource3.cpp; sourceTree = "<group>"; };
+		5CC19FBE22D7F23C00BBC952 /* UnifiedSource2-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource2-mm.mm"; sourceTree = "<group>"; };
 		5CE44F49206D70E9003EFD01 /* PingHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PingHandle.h; path = WebCoreSupport/PingHandle.h; sourceTree = SOURCE_ROOT; };
 		5D7BF8120C2A1D90008CE06D /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebInspector.h; sourceTree = "<group>"; };
 		5D7BF8130C2A1D90008CE06D /* WebInspector.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspector.mm; sourceTree = "<group>"; };
@@ -1655,6 +1693,8 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
+				5C9D925822D7E8AD008E9266 /* Sources.txt */,
+				5C9D925922D7E8AD008E9266 /* SourcesCocoa.txt */,
 				1C6CB03E0AA6391D00D23BFD /* MigrateHeaders.make */,
 				F5F732D202FF4D4F01A80180 /* WebKit.exp */,
 				319A3F4D1885E5FB00E0C900 /* WebKit.mac.exp */,
@@ -1664,6 +1704,7 @@
 				535E08C52254604E00DF00CA /* postprocess-header-rule */,
 				A182B74F199E7B8F001FD95A /* postprocess-headers.sh */,
 				6508A4A7099B375F00BCBF45 /* Default Delegates */,
+				5C9D925C22D7E95C008E9266 /* Derived Sources */,
 				F57D194A034E732C01A80180 /* DOM */,
 				25A8176801B5474B0ECA149E /* History */,
 				254DC334016E1D3F0ECA149E /* Misc */,
@@ -1947,6 +1988,29 @@
 				51E94C3506C0321200A9B09E /* WebPDFView.mm */,
 			);
 			name = PDF;
+			sourceTree = "<group>";
+		};
+		5C9D925C22D7E95C008E9266 /* Derived Sources */ = {
+			isa = PBXGroup;
+			children = (
+				5C9D925D22D7E9B5008E9266 /* unified-sources */,
+			);
+			name = "Derived Sources";
+			path = DerivedSources/WebKitLegacy;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5C9D925D22D7E9B5008E9266 /* unified-sources */ = {
+			isa = PBXGroup;
+			children = (
+				5CC19FB822D7F23B00BBC952 /* UnifiedSource1-mm.mm */,
+				5CC19FBB22D7F23B00BBC952 /* UnifiedSource1.cpp */,
+				5CC19FBE22D7F23C00BBC952 /* UnifiedSource2-mm.mm */,
+				5CC19FBA22D7F23B00BBC952 /* UnifiedSource2.cpp */,
+				5CC19FBD22D7F23B00BBC952 /* UnifiedSource3.cpp */,
+				5CC19FBC22D7F23B00BBC952 /* UnifiedSource5-mm.mm */,
+				5CC19FB922D7F23B00BBC952 /* UnifiedSource5.cpp */,
+			);
+			path = "unified-sources";
 			sourceTree = "<group>";
 		};
 		6508A4A7099B375F00BCBF45 /* Default Delegates */ = {
@@ -3179,6 +3243,7 @@
 				535E08C322545B4C00DF00CA /* PBXBuildRule */,
 			);
 			dependencies = (
+				5C9D925622D7E841008E9266 /* PBXTargetDependency */,
 			);
 			name = WebKitLegacy;
 			productInstallPath = /System/Library/Frameworks;
@@ -3192,8 +3257,15 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				DefaultBuildSystemTypeForWorkspace = Original;
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 1000;
+				TargetAttributes = {
+					5C9D925022D7E835008E9266 = {
+						CreatedOnToolsVersion = 11.0;
+						ProvisioningStyle = Automatic;
+					};
+				};
 			};
 			buildConfigurationList = 149C283208902B0F008A9EFC /* Build configuration list for PBXProject "WebKitLegacy" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -3215,6 +3287,7 @@
 			projectRoot = "";
 			targets = (
 				9398100A0824BF01008DF038 /* WebKitLegacy */,
+				5C9D925022D7E835008E9266 /* Generate Unified Sources */,
 			);
 		};
 /* End PBXProject section */
@@ -3225,6 +3298,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				29AEF960134C76FB00FE5096 /* OutlookQuirksUserScript.js in Resources */,
+				5C9D925A22D7E8AD008E9266 /* Sources.txt in Resources */,
+				5C9D925B22D7E8AD008E9266 /* SourcesCocoa.txt in Resources */,
 				939810B70824BF01008DF038 /* url_icon.tiff in Resources */,
 				939810B50824BF01008DF038 /* WebAuthenticationPanel.xib in Resources */,
 				5DE83A7A0D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.xib in Resources */,
@@ -3292,6 +3367,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names DOM Web _Web || exit $?\nfi";
+		};
+		5C9D925722D7E849008E9266 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/scripts/generate-unified-sources.sh",
+				"$(SRCROOT)/Sources.txt",
+				"$(SRCROOT)/SourcesCocoa.txt",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/UnifiedSources-output.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "scripts/generate-unified-sources.sh\n";
 		};
 		5D0D54210E98631D0029E223 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3485,25 +3581,29 @@
 				1AAF5CEB0EDDE1FE008D883D /* NetscapePluginHostManager.mm in Sources */,
 				1AAF5CED0EDDE1FE008D883D /* NetscapePluginHostProxy.mm in Sources */,
 				1AAF5CEF0EDDE1FE008D883D /* NetscapePluginInstanceProxy.mm in Sources */,
-				5CA46E7921F1451D00CE86B4 /* NetworkStorageSessionMap.cpp in Sources */,
 				939810DD0824BF01008DF038 /* npapi.mm in Sources */,
 				93D4379C1D57ABEF00AB85EA /* ObjCEventListener.mm in Sources */,
 				93D4379E1D57ABEF00AB85EA /* ObjCNodeFilterCondition.mm in Sources */,
 				A10C1D601820300E0036883A /* PopupMenuIOS.mm in Sources */,
-				7C01CB86173435C900C5D807 /* PopupMenuMac.mm in Sources */,
+				5C40CD2122D8F9C000E9DAD5 /* PopupMenuMac.mm in Sources */,
 				1A2DBEA00F251E3A0036F8A6 /* ProxyInstance.mm in Sources */,
 				E169836C11346D5600894115 /* ProxyRuntimeObject.mm in Sources */,
 				A10C1D611820300E0036883A /* SearchPopupMenuIOS.cpp in Sources */,
-				7C01CB88173435C900C5D807 /* SearchPopupMenuMac.mm in Sources */,
+				5C40CD2222D8F9C300E9DAD5 /* SearchPopupMenuMac.mm in Sources */,
 				1A6B31311A51F3A900422975 /* StorageAreaImpl.cpp in Sources */,
 				1A6B31331A51F3A900422975 /* StorageAreaSync.cpp in Sources */,
 				1A6B31351A51F3A900422975 /* StorageNamespaceImpl.cpp in Sources */,
 				1A6B31371A51F3A900422975 /* StorageSyncManager.cpp in Sources */,
 				1A6B31391A51F3A900422975 /* StorageThread.cpp in Sources */,
 				1A6B313B1A51F3A900422975 /* StorageTracker.cpp in Sources */,
+				5CC19FCC22D7F28D00BBC952 /* UnifiedSource1-mm.mm in Sources */,
+				5CC19FCD22D7F28D00BBC952 /* UnifiedSource1.cpp in Sources */,
+				5CC19FCE22D7F28D00BBC952 /* UnifiedSource2-mm.mm in Sources */,
+				5CC19FCF22D7F28D00BBC952 /* UnifiedSource2.cpp in Sources */,
+				5CC19FD022D7F28D00BBC952 /* UnifiedSource3.cpp in Sources */,
+				5CC19FD122D7F28D00BBC952 /* UnifiedSource5-mm.mm in Sources */,
+				5CC19FD222D7F28D00BBC952 /* UnifiedSource5.cpp in Sources */,
 				CEDA12DB152CBE6800D9E08D /* WebAlternativeTextClient.mm in Sources */,
-				B6CE5C24100BC5CE00219936 /* WebApplicationCache.mm in Sources */,
-				A5DEFC1411D5344B00885273 /* WebApplicationCacheQuotaManager.mm in Sources */,
 				9398111D0824BF01008DF038 /* WebArchive.mm in Sources */,
 				939810CF0824BF01008DF038 /* WebAuthenticationPanel.m in Sources */,
 				939810BC0824BF01008DF038 /* WebBackForwardList.mm in Sources */,
@@ -3630,7 +3730,6 @@
 				939810F80824BF01008DF038 /* WebPreferences.mm in Sources */,
 				1A6A208D1886154600E50F5F /* WebProgressTrackerClient.mm in Sources */,
 				9398111A0824BF01008DF038 /* WebResource.mm in Sources */,
-				E4AEF97B1C0DF4BC00B01727 /* WebResourceLoadScheduler.cpp in Sources */,
 				7E6FEF0908985A7200C44C3F /* WebScriptDebugDelegate.mm in Sources */,
 				C0167BF90D7F5DD00028696E /* WebScriptDebugger.mm in Sources */,
 				C0B1F7E910AC8E3100C925D9 /* WebScriptWorld.mm in Sources */,
@@ -3662,6 +3761,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5C9D925622D7E841008E9266 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5C9D925022D7E835008E9266 /* Generate Unified Sources */;
+			targetProxy = 5C9D925522D7E841008E9266 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		5DE83A740D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.xib */ = {
@@ -3737,6 +3844,30 @@
 			};
 			name = Production;
 		};
+		5C9D925122D7E836008E9266 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5C9D925222D7E836008E9266 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5C9D925322D7E836008E9266 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -3756,6 +3887,16 @@
 				149C283308902B0F008A9EFC /* Debug */,
 				149C283408902B0F008A9EFC /* Release */,
 				149C283608902B0F008A9EFC /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		5C9D925422D7E836008E9266 /* Build configuration list for PBXAggregateTarget "Generate Unified Sources" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C9D925122D7E836008E9266 /* Debug */,
+				5C9D925222D7E836008E9266 /* Release */,
+				5C9D925322D7E836008E9266 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
