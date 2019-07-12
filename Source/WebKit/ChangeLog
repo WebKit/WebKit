@@ -1,3 +1,13 @@
+2019-07-12  Timothy Hatcher  <timothy@apple.com>
+
+        Drop DarkModeCSSEnabled as an experimental feature and always enable it.
+        https://bugs.webkit.org/show_bug.cgi?id=199725
+        rdar://problem/52970972
+
+        Reviewed by Megan Gardner.
+
+        * Shared/WebPreferences.yaml: Removed DarkModeCSSEnabled.
+
 2019-07-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         New York font erroneously gets synthetic bold

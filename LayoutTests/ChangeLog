@@ -1,3 +1,28 @@
+2019-07-12  Timothy Hatcher  <timothy@apple.com>
+
+        Drop DarkModeCSSEnabled as an experimental feature and always enable it.
+        https://bugs.webkit.org/show_bug.cgi?id=199725
+        rdar://problem/52970972
+
+        Reviewed by Megan Gardner.
+
+        Removed <!-- webkit-test-runner [ experimental:DarkModeCSSEnabled=true ] -->
+        from all dark mode tests.
+
+        * css-dark-mode/color-scheme-css-parse.html:
+        * css-dark-mode/color-scheme-css.html:
+        * css-dark-mode/color-scheme-meta.html:
+        * css-dark-mode/color-scheme-priority.html:
+        * css-dark-mode/color-scheme-scrollbar.html:
+        * css-dark-mode/default-colors.html:
+        * css-dark-mode/older-syntax/supported-color-schemes-css.html:
+        * css-dark-mode/older-syntax/supported-color-schemes-meta.html:
+        * css-dark-mode/older-systems/color-scheme-css.html:
+        * css-dark-mode/older-systems/color-scheme-meta.html:
+        * css-dark-mode/older-systems/prefers-color-scheme.html:
+        * css-dark-mode/prefers-color-scheme-picture-element.html:
+        * css-dark-mode/prefers-color-scheme.html:
+
 2019-07-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         New York font erroneously gets synthetic bold

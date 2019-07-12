@@ -1,3 +1,28 @@
+2019-07-12  Timothy Hatcher  <timothy@apple.com>
+
+        Drop DarkModeCSSEnabled as an experimental feature and always enable it.
+        https://bugs.webkit.org/show_bug.cgi?id=199725
+        rdar://problem/52970972
+
+        Reviewed by Megan Gardner.
+
+        Tests: css-dark-mode
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::prefersColorSchemeEvaluate):
+        * css/MediaQueryExpression.cpp:
+        (WebCore::featureWithValidIdent):
+        (WebCore::isFeatureValidWithoutValue):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::process):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setDarkModeCSSEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::darkModeCSSEnabled const): Deleted.
+
 2019-07-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Refactor ShadowBlur: remove some class variables and use function parameters instead.

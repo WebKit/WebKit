@@ -767,8 +767,6 @@ static bool prefersDarkInterfaceEvaluate(CSSValue* value, const CSSToLengthConve
 #if ENABLE(DARK_MODE_CSS)
 static bool prefersColorSchemeEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().darkModeCSSEnabled());
-
     if (!value)
         return true;
 

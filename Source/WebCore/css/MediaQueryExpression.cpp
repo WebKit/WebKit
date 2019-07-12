@@ -55,7 +55,7 @@ static inline bool featureWithValidIdent(const AtomString& mediaFeature, const C
     || mediaFeature == MediaFeatureNames::displayMode
 #endif
 #if ENABLE(DARK_MODE_CSS)
-    || (mediaFeature == MediaFeatureNames::prefersColorScheme && RuntimeEnabledFeatures::sharedFeatures().darkModeCSSEnabled())
+    || (mediaFeature == MediaFeatureNames::prefersColorScheme)
 #endif
     || mediaFeature == MediaFeatureNames::prefersReducedMotion
     || (mediaFeature == MediaFeatureNames::prefersDarkInterface && (context.useSystemAppearance || isUASheetBehavior(context.mode)));
@@ -168,7 +168,7 @@ static inline bool isFeatureValidWithoutValue(const AtomString& mediaFeature, co
         || mediaFeature == MediaFeatureNames::prefersReducedMotion
         || (mediaFeature == MediaFeatureNames::prefersDarkInterface && (context.useSystemAppearance || isUASheetBehavior(context.mode)))
 #if ENABLE(DARK_MODE_CSS)
-        || (mediaFeature == MediaFeatureNames::prefersColorScheme && RuntimeEnabledFeatures::sharedFeatures().darkModeCSSEnabled())
+        || (mediaFeature == MediaFeatureNames::prefersColorScheme)
 #endif
         || mediaFeature == MediaFeatureNames::devicePixelRatio
         || mediaFeature == MediaFeatureNames::resolution

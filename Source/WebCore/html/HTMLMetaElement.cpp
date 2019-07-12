@@ -92,7 +92,7 @@ void HTMLMetaElement::process()
     else if (RuntimeEnabledFeatures::sharedFeatures().disabledAdaptationsMetaTagEnabled() && equalLettersIgnoringASCIICase(name(), "disabled-adaptations"))
         document().processDisabledAdaptations(contentValue);
 #if ENABLE(DARK_MODE_CSS)
-    else if (RuntimeEnabledFeatures::sharedFeatures().darkModeCSSEnabled() && (equalLettersIgnoringASCIICase(name(), "color-scheme") || equalLettersIgnoringASCIICase(name(), "supported-color-schemes")))
+    else if (equalLettersIgnoringASCIICase(name(), "color-scheme") || equalLettersIgnoringASCIICase(name(), "supported-color-schemes"))
         document().processColorScheme(contentValue);
 #endif
 #if PLATFORM(IOS_FAMILY)

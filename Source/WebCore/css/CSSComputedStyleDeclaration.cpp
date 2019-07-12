@@ -4029,9 +4029,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
 
 #if ENABLE(DARK_MODE_CSS)
         case CSSPropertyColorScheme: {
-            if (!RuntimeEnabledFeatures::sharedFeatures().darkModeCSSEnabled())
-                return nullptr;
-
             auto colorScheme = style.colorScheme();
             if (colorScheme.isAuto())
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
