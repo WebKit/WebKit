@@ -1058,9 +1058,16 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     // Inspector resources are in a directory with assumed access.
     ASSERT_WITH_SECURITY_IMPLICATION(!WebKit::isInspectorPage(*this));
 
-    // FIXME: universal file read access should be set if the sandbox extension is successfully created: rdar://problem/52357508.
-    SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly, sandboxExtensionHandle);
-    willAcquireUniversalFileReadSandboxExtension(process);
+    if (SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly, sandboxExtensionHandle)) {
+        willAcquireUniversalFileReadSandboxExtension(process);
+        return;
+    }
+
+    // We failed to issue an universal file read access sandbox, fall back to issuing one for the base URL instead.
+    auto baseURL = URL(URL(), url.baseAsString());
+    auto basePath = baseURL.fileSystemPath();
+    if (!basePath.isNull() && SandboxExtension::createHandle(basePath, SandboxExtension::Type::ReadOnly, sandboxExtensionHandle))
+        m_process->assumeReadAccessToBaseURL(*this, baseURL);
 }
 
 #if !PLATFORM(COCOA)

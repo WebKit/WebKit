@@ -1,3 +1,21 @@
+2019-07-12  Chris Dumez  <cdumez@apple.com>
+
+        Regression(macOS Catalina): Cannot quick look html documents in Mail
+        https://bugs.webkit.org/show_bug.cgi?id=199754
+        <rdar://problem/51304961>
+
+        Reviewed by Geoff Garen.
+
+        If the client asks us to load a file URL but does not provide a resource path, WebKit
+        would fallback to issuing a sandbox extension for /. This no longer works on mac OS
+        Catalina and it would thus fail to load the file.
+
+        To address the issue, if the attempt to create a sandbox extension for / fails, we now
+        fall back to issuing one for the file's baseURL (path of containing folder).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle):
+
 2019-07-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         WebBackForwardListItem::setPageState should receive pageState by rvalue reference
