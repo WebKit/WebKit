@@ -1,3 +1,28 @@
+2019-07-12  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Elements: always show all navigation bar items, but disable those that wouldn't work
+        https://bugs.webkit.org/show_bug.cgi?id=199594
+
+        Reviewed by Ross Kirsling.
+
+        Reorder the navigation items of the Elements tab (left to right):
+         - Show rulers
+         - Force print media styles
+         - Force Dark Appearance / Force Light Appearance
+         - Show compositing borders
+         - Enable paint flashing
+         - Show shadow DOM nodes
+        This way, "related" (e.g. print styles and dark/light appearance both relate to CSS media)
+        toggles are grouped closer together.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+        (WI.DOMTreeContentView.prototype.get navigationItems):
+        (WI.DOMTreeContentView.prototype._defaultAppearanceDidChange):
+        (WI.DOMTreeContentView.prototype._toggleAppearance):
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-07-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Layers: Uncaught Exception: Request with id = 2 failed. {"code":-32601,"message":"'Page' domain was not found","data":[{"code":-32601,"message":"'Page' domain was not found"}]}
