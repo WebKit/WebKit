@@ -109,7 +109,7 @@ public:
     bool isProducingData() const { return m_isProducingData; }
     void start();
     void stop();
-    void requestToEnd(Observer& callingObserver);
+    virtual void requestToEnd(Observer& callingObserver);
 
     bool muted() const { return m_muted; }
     void setMuted(bool);
@@ -232,6 +232,8 @@ private:
     virtual void startProducingData() { }
     virtual void stopProducingData() { }
     virtual void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) { }
+
+    virtual void stopBeingObserved() { stop(); }
 
     virtual void hasEnded() { }
 

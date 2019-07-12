@@ -1,3 +1,13 @@
+2019-07-12  Youenn Fablet  <youenn@apple.com>
+
+        Stopping a cloned MediaStream video track should not stop any other video track
+        https://bugs.webkit.org/show_bug.cgi?id=199635
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/mediastreamtrack-video-clone-expected.txt:
+        * fast/mediastream/mediastreamtrack-video-clone.html:
+
 2019-07-12  Timothy Hatcher  <timothy@apple.com>
 
         Drop DarkModeCSSEnabled as an experimental feature and always enable it.

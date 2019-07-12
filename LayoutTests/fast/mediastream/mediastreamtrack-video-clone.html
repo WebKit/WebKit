@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Clone a video track.</title>
+    <script src="../../resources/gc.js"></script>
     <script src="../../resources/testharness.js"></script>
     <script src="../../resources/testharnessreport.js"></script>
 </head>
@@ -105,6 +106,38 @@
         }, "Check cloned track settings after applying width+height constraints to original track");
     }, "Setup for width+height test");
 
+    promise_test(async (t) => {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 100, height: 100 } });
+        const streamClone = stream.clone();
+
+        video1.srcObject = streamClone;
+        stream.getVideoTracks()[0].stop();
+
+        await video1.play();
+        assert_equals(video1.videoWidth, 100);
+    }, "Stopping a track should not stop its clone");
+
+    promise_test(async (t) => {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 100, height: 100 } });
+        const streamClone = stream.clone();
+
+        video1.srcObject = stream;
+        streamClone.getVideoTracks()[0].stop();
+
+        await video1.play();
+        assert_equals(video1.videoWidth, 100);
+    }, "Stopping a cloned track should not stop the original track");
+
+    promise_test(async (t) => {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 100, height: 100 } });
+        stream.clone().getVideoTracks()[0].stop();
+        gc();
+
+        video1.srcObject = stream;
+
+        await video1.play();
+        assert_equals(video1.videoWidth, 100);
+    }, "Collecting a cloned track should not stop the original track");
     </script>
 </body>
 </html>

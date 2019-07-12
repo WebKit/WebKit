@@ -69,10 +69,9 @@ void RealtimeMediaSource::addObserver(RealtimeMediaSource::Observer& observer)
 void RealtimeMediaSource::removeObserver(RealtimeMediaSource::Observer& observer)
 {
     auto locker = holdLock(m_observersLock);
-
     m_observers.remove(&observer);
     if (m_observers.isEmpty())
-        stop();
+        stopBeingObserved();
 }
 
 void RealtimeMediaSource::setInterrupted(bool interrupted, bool pageMuted)

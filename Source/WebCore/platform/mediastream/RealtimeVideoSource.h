@@ -46,6 +46,8 @@ private:
     bool supportsSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> frameRate) final;
     void setSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> frameRate) final;
     Ref<RealtimeMediaSource> clone() final;
+    void requestToEnd(RealtimeMediaSource::Observer& callingObserver) final;
+    void stopBeingObserved() final;
 
     const RealtimeMediaSourceCapabilities& capabilities() final { return m_source->capabilities(); }
     const RealtimeMediaSourceSettings& settings() final { return m_currentSettings; }

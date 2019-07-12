@@ -118,6 +118,16 @@ bool RealtimeVideoSource::preventSourceFromStopping()
     return hasObserverPreventingStopping;
 }
 
+void RealtimeVideoSource::requestToEnd(RealtimeMediaSource::Observer&)
+{
+    m_source->requestToEnd(*this);
+}
+
+void RealtimeVideoSource::stopBeingObserved()
+{
+    m_source->requestToEnd(*this);
+}
+
 void RealtimeVideoSource::sourceStopped()
 {
     if (m_source->captureDidFail()) {
