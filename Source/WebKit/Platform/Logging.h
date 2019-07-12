@@ -82,6 +82,7 @@ extern "C" {
     M(Selection) \
     M(ServiceWorker) \
     M(SessionState) \
+    M(Storage) \
     M(StorageAPI) \
     M(TextInput) \
     M(UIHitTesting) \

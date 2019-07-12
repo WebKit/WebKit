@@ -1,5 +1,21 @@
 2019-07-12  Youenn Fablet  <youenn@apple.com>
 
+        Add release logging for quota checks
+        https://bugs.webkit.org/show_bug.cgi?id=199697
+
+        Reviewed by Alex Christensen.
+
+        Log whether a request to extend quota is made and the result of the request.
+        This logging should happen in the networking process.
+        No change of behavior.
+
+        * platform/Logging.h:
+        * storage/StorageQuotaManager.cpp:
+        (WebCore::StorageQuotaManager::askForMoreSpace):
+        (WebCore::StorageQuotaManager::processPendingRequests):
+
+2019-07-12  Youenn Fablet  <youenn@apple.com>
+
         Stopping a cloned MediaStream video track should not stop any other video track
         https://bugs.webkit.org/show_bug.cgi?id=199635
 

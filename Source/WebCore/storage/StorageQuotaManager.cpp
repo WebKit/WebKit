@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StorageQuotaManager.h"
 
+#include "Logging.h"
 #include "StorageQuotaUser.h"
 
 namespace WebCore {
@@ -155,10 +156,15 @@ void StorageQuotaManager::askForMoreSpace(uint64_t spaceIncrease)
 {
     ASSERT(shouldAskForMoreSpace(spaceIncrease));
     ASSERT(!m_isWaitingForSpaceIncreaseResponse);
+
+    RELEASE_LOG(Storage, "%p - StorageQuotaManager::askForMoreSpace %" PRIu64, this, spaceIncrease);
     m_isWaitingForSpaceIncreaseResponse = true;
     m_spaceIncreaseRequester(m_quota, spaceUsage(), spaceIncrease, [this, weakThis = makeWeakPtr(*this)](Optional<uint64_t> newQuota) {
         if (!weakThis)
             return;
+
+        RELEASE_LOG(Storage, "%p - StorageQuotaManager::askForMoreSpace received response %" PRIu64, this, newQuota ? *newQuota : 0);
+
         m_isWaitingForSpaceIncreaseResponse = false;
         processPendingRequests(newQuota, ShouldDequeueFirstPendingRequest::Yes);
     });
@@ -180,8 +186,11 @@ void StorageQuotaManager::processPendingRequests(Optional<uint64_t> newQuota, Sh
 
     if (shouldDequeueFirstPendingRequest == ShouldDequeueFirstPendingRequest::Yes) {
         auto request = m_pendingRequests.takeFirst();
-        auto decision = shouldAskForMoreSpace(request.spaceIncrease) ? Decision::Deny : Decision::Grant;
-        request.callback(decision);
+        bool shouldAllowRequest = !shouldAskForMoreSpace(request.spaceIncrease);
+
+        RELEASE_LOG(Storage, "%p - StorageQuotaManager::processPendingRequests first request decision is %d", this, shouldAllowRequest);
+
+        request.callback(shouldAllowRequest ? Decision::Grant : Decision::Deny);
     }
 
     while (!m_pendingRequests.isEmpty()) {
