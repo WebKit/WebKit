@@ -67,6 +67,7 @@
 #include "WebGPUSwapChain.h"
 #include "WebGPUTexture.h"
 #include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -80,12 +81,13 @@ RefPtr<WebGPUDevice> WebGPUDevice::tryCreate(Ref<const WebGPUAdapter>&& adapter)
 WebGPUDevice::WebGPUDevice(Ref<const WebGPUAdapter>&& adapter, Ref<GPUDevice>&& device)
     : m_adapter(WTFMove(adapter))
     , m_device(WTFMove(device))
+    , m_errorScopes(GPUErrorScopes::create())
 {
 }
 
 Ref<WebGPUBuffer> WebGPUDevice::createBuffer(const GPUBufferDescriptor& descriptor) const
 {
-    auto buffer = m_device->tryCreateBuffer(descriptor);
+    auto buffer = m_device->tryCreateBuffer(descriptor, GPUBufferMappedOption::NotMapped, m_errorScopes.copyRef());
     return WebGPUBuffer::create(WTFMove(buffer));
 }
 
@@ -93,7 +95,7 @@ Vector<JSC::JSValue> WebGPUDevice::createBufferMapped(JSC::ExecState& state, con
 {
     JSC::JSValue wrappedArrayBuffer = JSC::jsNull();
 
-    auto buffer = m_device->tryCreateBuffer(descriptor, true);
+    auto buffer = m_device->tryCreateBuffer(descriptor, GPUBufferMappedOption::IsMapped, m_errorScopes.copyRef());
     if (buffer) {
         auto arrayBuffer = buffer->mapOnCreation();
         wrappedArrayBuffer = toJS(&state, JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), arrayBuffer);
@@ -184,19 +186,14 @@ Ref<WebGPUQueue> WebGPUDevice::getQueue() const
     return makeRef(*m_queue.get());
 }
 
-void WebGPUDevice::pushErrorScope(GPUErrorFilter filter) const
+void WebGPUDevice::popErrorScope(ErrorPromise&& promise)
 {
-    m_device->pushErrorScope(filter);
-}
-
-void WebGPUDevice::popErrorScope(ErrorPromise&& promise) const
-{
-    m_device->popErrorScope([promise = WTFMove(promise)] (Optional<GPUError>&& error, const String& failMessage) mutable {
-        if (failMessage.isEmpty())
-            promise.resolve(error);
-        else
-            promise.reject(Exception { OperationError, failMessage });
-    });
+    String failMessage;
+    Optional<GPUError> error = m_errorScopes->popErrorScope(failMessage);
+    if (failMessage.isEmpty())
+        promise.resolve(error);
+    else
+        promise.reject(Exception { OperationError, "GPUDevice::popErrorScope(): " + failMessage });
 }
 
 } // namespace WebCore

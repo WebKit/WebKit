@@ -1829,6 +1829,7 @@ platform/graphics/filters/SpotLightSource.cpp
 
 platform/graphics/gpu/GPUDevice.cpp
 platform/graphics/gpu/GPUError.cpp
+platform/graphics/gpu/GPUErrorScopes.cpp
 platform/graphics/gpu/GPUValidationError.cpp
 platform/graphics/gpu/GPUPipelineLayout.cpp
 platform/graphics/gpu/GPUProgrammablePassEncoder.cpp

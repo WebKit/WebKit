@@ -1,3 +1,50 @@
+2019-07-12  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Move error scopes out of GPUDevice for more portable error generation
+        https://bugs.webkit.org/show_bug.cgi?id=199740
+
+        Reviewed by Myles C. Maxfield.
+
+        Move error generation into a separate RefCounted class to allow GPU objects to generate 
+        errors independent of any GPUDevice.
+        Create GPUObjectBase to delegate error generation and refactor GPUBuffer to inherit from GPUObjectBase.
+
+        No behavior change or new tests. Error scopes covered by error-scopes-test.html.
+
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::WebGPUDevice): Now creates a GPUErrorGenerator.
+        (WebCore::WebGPUDevice::createBuffer const): Pass the GPUErrorGenerator to any created GPUBuffer.
+        (WebCore::WebGPUDevice::createBufferMapped const): Ditto.
+        (WebCore::WebGPUDevice::popErrorScope): Shouldn't be const. Can just ask for the GPUError rather than passing a lambda.
+        (WebCore::WebGPUDevice::pushErrorScope const): Deleted.
+        (WebCore::WebGPUDevice::popErrorScope const): Deleted.
+        * Modules/webgpu/WebGPUDevice.h:
+        (WebCore::WebGPUDevice::pushErrorScope):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/GPUBuffer.h: Now inherits from GPUObjectBase for error generation ease.
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::tryCreateBuffer): Ensure GPUBuffers reference the GPUErrorGenerator.
+        (WebCore::GPUDevice::pushErrorScope): Deleted. No longer needed here.
+        (WebCore::GPUDevice::popErrorScope): Deleted.
+        (WebCore::GPUDevice::registerError): Deleted.
+        * platform/graphics/gpu/GPUDevice.h: Move error scope logic out.
+        * platform/graphics/gpu/GPUErrorGenerator.cpp: Added.
+        (WebCore::GPUErrorGenerator::pushErrorScope):
+        (WebCore::GPUErrorGenerator::popErrorScope):
+        (WebCore::GPUErrorGenerator::generateError):
+        * platform/graphics/gpu/GPUErrorGenerator.h: Added.
+        (WebCore::GPUErrorGenerator::create):
+        * platform/graphics/gpu/GPUObjectBase.h: Added.
+        (WebCore::GPUObjectBase::generateError):
+        (WebCore::GPUObjectBase::GPUObjectBase):
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm: Use the GPUErrorGenerator directly during buffer creation.
+        (WebCore::GPUBuffer::validateBufferUsage):
+        (WebCore::GPUBuffer::tryCreate):
+        (WebCore::GPUBuffer::GPUBuffer):
+        * platform/graphics/gpu/cocoa/GPUQueueMetal.mm:
+        (WebCore::GPUQueue::submit): Prevent possible null dereference.
+
 2019-07-12  Youenn Fablet  <youenn@apple.com>
 
         Add release logging for quota checks

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,18 +27,33 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUBufferUsage.h"
+#include "GPUError.h"
+#include "GPUErrorFilter.h"
+#include <wtf/Optional.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-struct GPUBufferDescriptor {
-    uint64_t size;
-    GPUBufferUsageFlags usage;
-};
+class GPUErrorScopes : public RefCounted<GPUErrorScopes> {
+public:
+    static Ref<GPUErrorScopes> create() { return adoptRef(*new GPUErrorScopes); }
 
-enum class GPUBufferMappedOption {
-    IsMapped,
-    NotMapped
+    void pushErrorScope(GPUErrorFilter);
+    Optional<GPUError> popErrorScope(String& failMessage);
+    void generateError(const String&, GPUErrorFilter = GPUErrorFilter::Validation);
+
+private:
+    struct ErrorScope {
+        const GPUErrorFilter filter;
+        Optional<GPUError> error;
+    };
+
+    GPUErrorScopes() = default;
+
+    Vector<ErrorScope> m_errorScopes;
 };
 
 } // namespace WebCore

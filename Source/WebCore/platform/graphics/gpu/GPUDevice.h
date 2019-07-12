@@ -27,17 +27,13 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUError.h"
-#include "GPUErrorFilter.h"
 #include "GPUQueue.h"
 #include "GPUSwapChain.h"
 #include <wtf/Function.h>
 #include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/text/WTFString.h>
 
 OBJC_PROTOCOL(MTLDevice);
 
@@ -47,6 +43,7 @@ class GPUBindGroupLayout;
 class GPUBuffer;
 class GPUCommandBuffer;
 class GPUComputePipeline;
+class GPUErrorScopes;
 class GPUPipelineLayout;
 class GPURenderPipeline;
 class GPUSampler;
@@ -64,6 +61,8 @@ struct GPUShaderModuleDescriptor;
 struct GPUSwapChainDescriptor;
 struct GPUTextureDescriptor;
 
+enum class GPUBufferMappedOption;
+
 using PlatformDevice = MTLDevice;
 using PlatformDeviceSmartPtr = RetainPtr<MTLDevice>;
 
@@ -71,7 +70,7 @@ class GPUDevice : public RefCounted<GPUDevice>, public CanMakeWeakPtr<GPUDevice>
 public:
     static RefPtr<GPUDevice> tryCreate(const Optional<GPURequestAdapterOptions>&);
 
-    RefPtr<GPUBuffer> tryCreateBuffer(const GPUBufferDescriptor&, bool isMappedOnCreation = false);
+    RefPtr<GPUBuffer> tryCreateBuffer(const GPUBufferDescriptor&, GPUBufferMappedOption, Ref<GPUErrorScopes>&&);
     RefPtr<GPUTexture> tryCreateTexture(const GPUTextureDescriptor&) const;
     RefPtr<GPUSampler> tryCreateSampler(const GPUSamplerDescriptor&) const;
 
@@ -90,25 +89,12 @@ public:
     GPUSwapChain* swapChain() const { return m_swapChain.get(); }
     void setSwapChain(RefPtr<GPUSwapChain>&&);
 
-    void pushErrorScope(GPUErrorFilter);
-
-    using ErrorCallback = WTF::Function<void(Optional<GPUError>&&, const String&)>;
-    void popErrorScope(ErrorCallback&&);
-    void registerError(const String&, GPUErrorFilter = GPUErrorFilter::Validation);
-
 private:
-    struct ErrorScope {
-        const GPUErrorFilter filter;
-        Optional<GPUError> error;
-    };
-
     explicit GPUDevice(PlatformDeviceSmartPtr&&);
 
     PlatformDeviceSmartPtr m_platformDevice;
     mutable RefPtr<GPUQueue> m_queue;
     RefPtr<GPUSwapChain> m_swapChain;
-
-    Vector<ErrorScope> m_errorScopes;
 };
 
 } // namespace WebCore
