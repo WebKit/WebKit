@@ -592,7 +592,7 @@ void WebProcessProxy::updateBackForwardItem(const BackForwardListItemState& item
     if (!item || !isAllowedToUpdateBackForwardItem(*item))
         return;
 
-    item->setPageState(itemState.pageState);
+    item->setPageState(PageState { itemState.pageState });
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

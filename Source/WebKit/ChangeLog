@@ -1,3 +1,20 @@
+2019-07-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        WebBackForwardListItem::setPageState should receive pageState by rvalue reference
+        https://bugs.webkit.org/show_bug.cgi?id=199535
+
+        Reviewed by Alex Christensen
+
+        Coverity is complaining here about copying PageState by value in the parameter list. It's
+        sort of a false positive, in that the PageState really does need to be copied here, so this
+        is the best we can do. But pass by value and then WTFMove() is a pretty strange way to write
+        it. Passing by rvalue reference would be better. This makes the copy more clear.
+
+        * Shared/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::setPageState):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::updateBackForwardItem):
+
 2019-07-12  Youenn Fablet  <youenn@apple.com>
 
         Add release logging for quota checks

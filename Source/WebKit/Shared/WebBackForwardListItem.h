@@ -60,7 +60,7 @@ public:
     WebCore::ProcessIdentifier lastProcessIdentifier() const { return m_lastProcessIdentifier; }
     void setLastProcessIdentifier(const WebCore::ProcessIdentifier& identifier) { m_lastProcessIdentifier = identifier; }
 
-    void setPageState(PageState pageState) { m_itemState.pageState = WTFMove(pageState); }
+    void setPageState(PageState&& pageState) { m_itemState.pageState = WTFMove(pageState); }
     const PageState& pageState() const { return m_itemState.pageState; }
 
     const String& originalURL() const { return m_itemState.pageState.mainFrameState.originalURLString; }
