@@ -125,8 +125,10 @@ private:
 #endif
 };
 
-typedef ContiguousData<double> ContiguousDoubles;
-typedef ContiguousData<WriteBarrier<Unknown>> ContiguousJSValues;
+using ContiguousDoubles = ContiguousData<double>;
+using ContiguousJSValues = ContiguousData<WriteBarrier<Unknown>>;
+using ConstContiguousDoubles = ContiguousData<const double>;
+using ConstContiguousJSValues = ContiguousData<const WriteBarrier<Unknown>>;
 
 class Butterfly {
     WTF_MAKE_NONCOPYABLE(Butterfly);
@@ -189,6 +191,13 @@ public:
     ContiguousJSValues contiguousInt32() { return ContiguousJSValues(indexingPayload<WriteBarrier<Unknown>>(), vectorLength()); }
     ContiguousDoubles contiguousDouble() { return ContiguousDoubles(indexingPayload<double>(), vectorLength()); }
     ContiguousJSValues contiguous() { return ContiguousJSValues(indexingPayload<WriteBarrier<Unknown>>(), vectorLength()); }
+
+    template<typename T>
+    const T* indexingPayload() const { return reinterpret_cast_ptr<const T*>(this); }
+    const ArrayStorage* arrayStorage() const { return indexingPayload<ArrayStorage>(); }
+    ConstContiguousJSValues contiguousInt32() const { return ConstContiguousJSValues(indexingPayload<WriteBarrier<Unknown>>(), vectorLength()); }
+    ConstContiguousDoubles contiguousDouble() const { return ConstContiguousDoubles(indexingPayload<double>(), vectorLength()); }
+    ConstContiguousJSValues contiguous() const { return ConstContiguousJSValues(indexingPayload<WriteBarrier<Unknown>>(), vectorLength()); }
     
     static Butterfly* fromContiguous(WriteBarrier<Unknown>* contiguous)
     {
