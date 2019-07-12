@@ -18,6 +18,7 @@ fast/visual-viewport/ios/ [ Pass ]
 scrollingcoordinator [ Pass ]
 scrollingcoordinator/mac [ Skip ]
 fast/web-share [ Pass ]
+editing/caret/ios [ Pass ]
 editing/find [ Pass ]
 editing/input/ios [ Pass ]
 editing/pasteboard/ios [ Pass ]
@@ -694,6 +695,7 @@ editing/undo/undo-delete-boundary.html [ Failure ]
 editing/undo/undo-delete.html [ Failure ]
 editing/undo/undo-misspellings.html [ Failure ]
 editing/undo/undo-typing-001.html [ Failure ]
+editing/caret/ios/emoji.html [ Failure ]
 
 # Editing tests that time out:
 editing/selection/designmode-no-caret.html

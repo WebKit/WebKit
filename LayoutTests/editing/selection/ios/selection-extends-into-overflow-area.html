@@ -1,0 +1,95 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
+    <title></title>
+    <style>
+        #editable {
+            width: 300px;
+            height: 300px;
+            border: 1px solid black;
+            font-family: monospace;
+            line-height: 1.5em;
+        }
+        
+        .output {
+            margin-left: 60px;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function selectTextAt(tapX, tapY)
+        {
+            return new Promise(resolve => {
+                testRunner.runUIScript(`
+                    (function() {
+                        uiController.longPressAtPoint(${tapX}, ${tapY}, function() {
+                            uiController.uiScriptComplete("Done");
+                        });
+                    })();`, resolve);
+            });
+        }
+
+        function rectToString(rect)
+        {
+            return `(left = ${Math.round(rect.left)}, top = ${Math.round(rect.top)}, width = ${Math.round(rect.width)}, height = ${Math.round(rect.height)})`;
+        }
+
+        async function runTest()
+        {
+            let container = document.getElementById('editable');
+            await UIHelper.activateAndWaitForInputSessionAt(25, 25);
+
+            await selectTextAt(25, 400)
+            const selectionRects = await UIHelper.getUISelectionRects();
+            let rectsString = "";
+            for (let rect of selectionRects)
+                rectsString += rectToString(rect) + ' ';
+
+            document.querySelector("#selection-rects").textContent = rectsString;
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+    <div id="editable" contenteditable>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+    </div>
+
+<div class="output">Selection rects: <span id="selection-rects"></span></div>
+
+</body>
+</html>

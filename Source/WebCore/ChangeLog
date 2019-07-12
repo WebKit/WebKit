@@ -498,6 +498,33 @@
 
         * platform/graphics/cocoa/IOSurface.h:
 
+2019-07-11  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Can't place caret or select in content that overflows a contenteditable element
+        https://bugs.webkit.org/show_bug.cgi?id=199741
+        rdar://problem/50545233
+
+        Reviewed by Wenson Hsieh.
+
+        Various code paths for editing used renderer->absoluteBoundingBoxRect(), which is the border
+        box of the element (or a set of line boxes for inline elements) converted to absolute
+        coordinates. This excludes overflow content, but contenteditable needs to be able to
+        place the caret in overflow content, and allow selection rects to be in the overflow area
+        (if the element has visible overflow).
+
+        Try to clean this up by adding some static helpers on WebPage for accessing the relevant
+        rects, and use them in code call from visiblePositionInFocusedNodeForPoint(), and
+        code that is input to selectionClipRect.
+        
+        This changes selectionClipRect to use the padding box (excluding borders), which is a progression.
+
+        Tests: editing/caret/ios/caret-in-overflow-area.html
+               editing/selection/ios/place-selection-in-overflow-area.html
+               editing/selection/ios/selection-extends-into-overflow-area.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::DragCaretController::editableElementRectInRootViewCoordinates const):
+
 2019-07-11  Jonathan Bedard  <jbedard@apple.com>
 
         [iOS 13] Enable WebKit build

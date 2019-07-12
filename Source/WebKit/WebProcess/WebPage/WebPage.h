@@ -1202,7 +1202,15 @@ public:
 
     bool firstFlushAfterCommit() const { return m_firstFlushAfterCommit; }
     void setFirstFlushAfterCommit(bool f) { m_firstFlushAfterCommit = f; }
-    
+
+#if PLATFORM(IOS_FAMILY)
+    // This excludes layout overflow, includes borders.
+    static WebCore::IntRect rootViewBoundsForElement(const WebCore::Element&);
+    // These include layout overflow for overflow:visible elements, but exclude borders.
+    static WebCore::IntRect absoluteInteractionBoundsForElement(const WebCore::Element&);
+    static WebCore::IntRect rootViewInteractionBoundsForElement(const WebCore::Element&);
+#endif // PLATFORM(IOS_FAMILY)
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -1235,6 +1243,7 @@ private:
     void updateViewportSizeForCSSViewportUnits();
 
     static void convertSelectionRectsToRootView(WebCore::FrameView*, Vector<WebCore::SelectionRect>&);
+
     void getFocusedElementInformation(FocusedElementInformation&);
     void platformInitializeAccessibility();
     void generateSyntheticEditingCommand(SyntheticEditingCommandType);

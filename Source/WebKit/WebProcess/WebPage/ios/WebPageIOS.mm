@@ -264,7 +264,7 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
     if (!selection.isNone()) {
         if (m_focusedElement && m_focusedElement->renderer()) {
             auto& renderer = *m_focusedElement->renderer();
-            postLayoutData.focusedElementRect = view->contentsToRootView(renderer.absoluteBoundingBoxRect());
+            postLayoutData.focusedElementRect = rootViewInteractionBoundsForElement(*m_focusedElement);
             postLayoutData.caretColor = renderer.style().caretColor();
         }
         if (result.isContentEditable) {
@@ -1248,33 +1248,24 @@ void WebPage::setForceAlwaysUserScalable(bool userScalable)
     m_viewportConfiguration.setForceAlwaysUserScalable(userScalable);
 }
 
-static FloatQuad innerFrameQuad(const Frame& frame, const Element& focusedElement)
+static IntRect elementBoundsInFrame(const Frame& frame, const Element& focusedElement)
 {
     frame.document()->updateLayoutIgnorePendingStylesheets();
-    RenderElement* renderer = nullptr;
-    if (focusedElement.hasTagName(HTMLNames::textareaTag) || focusedElement.hasTagName(HTMLNames::inputTag) || focusedElement.hasTagName(HTMLNames::selectTag))
-        renderer = focusedElement.renderer();
-    else if (auto* rootEditableElement = focusedElement.rootEditableElement())
-        renderer = rootEditableElement->renderer();
     
-    if (!renderer)
-        return FloatQuad();
+    if (focusedElement.hasTagName(HTMLNames::textareaTag) || focusedElement.hasTagName(HTMLNames::inputTag) || focusedElement.hasTagName(HTMLNames::selectTag))
+        return WebPage::absoluteInteractionBoundsForElement(focusedElement);
 
-    auto& style = renderer->style();
-    IntRect boundingBox = renderer->absoluteBoundingBoxRect(true /* use transforms*/);
+    if (auto* rootEditableElement = focusedElement.rootEditableElement())
+        return WebPage::absoluteInteractionBoundsForElement(*rootEditableElement);
 
-    boundingBox.move(style.borderLeftWidth(), style.borderTopWidth());
-    boundingBox.setWidth(boundingBox.width() - style.borderLeftWidth() - style.borderRightWidth());
-    boundingBox.setHeight(boundingBox.height() - style.borderBottomWidth() - style.borderTopWidth());
-
-    return FloatQuad(boundingBox);
+    return { };
 }
 
 static IntPoint constrainPoint(const IntPoint& point, const Frame& frame, const Element& focusedElement)
 {
     ASSERT(&focusedElement.document() == frame.document());
     const int DEFAULT_CONSTRAIN_INSET = 2;
-    IntRect innerFrame = innerFrameQuad(frame, focusedElement).enclosingBoundingBox();
+    IntRect innerFrame = elementBoundsInFrame(frame, focusedElement);
     IntPoint constrainedPoint = point;
 
     int minX = innerFrame.x() + DEFAULT_CONSTRAIN_INSET;
@@ -1568,7 +1559,7 @@ static RefPtr<Range> rangeAtWordBoundaryForPosition(Frame* frame, const VisibleP
     return (base < extent) ? Range::create(*frame->document(), base, extent) : Range::create(*frame->document(), extent, base);
 }
 
-static IntRect elementRectInRootViewCoordinates(const Element& element)
+IntRect WebPage::rootViewBoundsForElement(const Element& element)
 {
     auto* frame = element.document().frame();
     if (!frame)
@@ -1585,6 +1576,54 @@ static IntRect elementRectInRootViewCoordinates(const Element& element)
     return view->contentsToRootView(renderer->absoluteBoundingBoxRect());
 }
 
+IntRect WebPage::absoluteInteractionBoundsForElement(const Element& element)
+{
+    auto* frame = element.document().frame();
+    if (!frame)
+        return { };
+
+    auto* view = frame->view();
+    if (!view)
+        return { };
+
+    auto* renderer = element.renderer();
+    if (!renderer)
+        return { };
+
+    if (is<RenderBox>(*renderer)) {
+        auto& box = downcast<RenderBox>(*renderer);
+
+        FloatRect rect;
+        // FIXME: want borders or not?
+        if (box.style().isOverflowVisible())
+            rect = box.layoutOverflowRect();
+        else
+            rect = box.clientBoxRect();
+        return box.localToAbsoluteQuad(rect).enclosingBoundingBox();
+    }
+
+    auto& style = renderer->style();
+    FloatRect boundingBox = renderer->absoluteBoundingBoxRect(true /* use transforms*/);
+    // This is wrong. It's subtracting borders after converting to absolute coords on something that probably doesn't represent a rectangular element.
+    boundingBox.move(style.borderLeftWidth(), style.borderTopWidth());
+    boundingBox.setWidth(boundingBox.width() - style.borderLeftWidth() - style.borderRightWidth());
+    boundingBox.setHeight(boundingBox.height() - style.borderBottomWidth() - style.borderTopWidth());
+    return enclosingIntRect(boundingBox);
+}
+
+IntRect WebPage::rootViewInteractionBoundsForElement(const Element& element)
+{
+    auto* frame = element.document().frame();
+    if (!frame)
+        return { };
+
+    auto* view = frame->view();
+    if (!view)
+        return { };
+
+    return view->contentsToRootView(absoluteInteractionBoundsForElement(element));
+}
+
 void WebPage::clearSelection()
 {
     m_startingGestureRange = nullptr;
@@ -1599,7 +1638,7 @@ void WebPage::dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch tou
 
     IntRect focusedElementRect;
     if (m_focusedElement)
-        focusedElementRect = elementRectInRootViewCoordinates(*m_focusedElement);
+        focusedElementRect = rootViewInteractionBoundsForElement(*m_focusedElement);
 
     if (focusedElementRect.isEmpty())
         return;
@@ -2834,7 +2873,7 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
     information.lastInteractionLocation = m_lastInteractionLocation;
 
     if (auto* renderer = m_focusedElement->renderer()) {
-        information.elementRect = elementRectInRootViewCoordinates(*m_focusedElement);
+        information.elementRect = rootViewInteractionBoundsForElement(*m_focusedElement);
         information.nodeFontSize = renderer->style().fontDescription().computedSize();
 
         bool inFixed = false;
@@ -2853,11 +2892,11 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
     information.allowsUserScaling = m_viewportConfiguration.allowsUserScaling();
     information.allowsUserScalingIgnoringAlwaysScalable = m_viewportConfiguration.allowsUserScalingIgnoringAlwaysScalable();
     if (auto* nextElement = nextAssistableElement(m_focusedElement.get(), *m_page, true)) {
-        information.nextNodeRect = elementRectInRootViewCoordinates(*nextElement);
+        information.nextNodeRect = rootViewBoundsForElement(*nextElement);
         information.hasNextNode = true;
     }
     if (auto* previousElement = nextAssistableElement(m_focusedElement.get(), *m_page, false)) {
-        information.previousNodeRect = elementRectInRootViewCoordinates(*previousElement);
+        information.previousNodeRect = rootViewBoundsForElement(*previousElement);
         information.hasPreviousNode = true;
     }
     information.focusedElementIdentifier = m_currentFocusedElementIdentifier;

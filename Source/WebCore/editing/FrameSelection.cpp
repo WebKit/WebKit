@@ -133,7 +133,7 @@ IntRect DragCaretController::editableElementRectInRootViewCoordinates() const
         return { };
 
     if (auto* view = editableContainer->document().view())
-        return view->contentsToRootView(renderer->absoluteBoundingBoxRect());
+        return view->contentsToRootView(renderer->absoluteBoundingBoxRect()); // FIXME: Wrong for elements with visible layout overflow.
 
     return { };
 }

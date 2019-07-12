@@ -521,10 +521,10 @@ TEST(KeyboardInputTests, SelectionClipRectsWhenPresentingInputView)
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><input>"];
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.querySelector('input').focus()"];
 
-    EXPECT_EQ(10, selectionClipRect.origin.x);
-    EXPECT_EQ(10, selectionClipRect.origin.y);
-    EXPECT_EQ(136, selectionClipRect.size.width);
-    EXPECT_EQ(22, selectionClipRect.size.height);
+    EXPECT_EQ(11, selectionClipRect.origin.x);
+    EXPECT_EQ(11, selectionClipRect.origin.y);
+    EXPECT_EQ(134, selectionClipRect.size.width);
+    EXPECT_EQ(20, selectionClipRect.size.height);
 }
 
 } // namespace TestWebKitAPI

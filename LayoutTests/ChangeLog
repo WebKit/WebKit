@@ -169,6 +169,28 @@
         https://bugs.webkit.org/show_bug.cgi?id=199644
         https://trac.webkit.org/changeset/247314
 
+2019-07-11  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Can't place caret or select in content that overflows a contenteditable element
+        https://bugs.webkit.org/show_bug.cgi?id=199741
+        rdar://problem/50545233
+
+        Reviewed by Wenson Hsieh.
+        
+        Re-enable editing/caret/ios, fixing the result of emoji.html which for some reason was
+        checked in as an html file (the test still fails).
+
+        * editing/caret/ios/caret-in-overflow-area-expected.txt: Added.
+        * editing/caret/ios/caret-in-overflow-area.html: Added.
+        * editing/caret/ios/emoji-expected.txt: Renamed from LayoutTests/editing/caret/ios/emoji-expected.html.
+        * editing/caret/ios/fixed-caret-position-after-scroll-expected.txt:
+        * editing/caret/ios/fixed-caret-position-after-scroll.html:
+        * editing/selection/ios/place-selection-in-overflow-area-expected.txt: Added.
+        * editing/selection/ios/place-selection-in-overflow-area.html: Added.
+        * editing/selection/ios/selection-extends-into-overflow-area-expected.txt: Added.
+        * editing/selection/ios/selection-extends-into-overflow-area.html: Added.
+        * platform/ios-wk2/TestExpectations:
+
 2019-07-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add test expectations and baselines for iOS 13
