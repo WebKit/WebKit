@@ -1,5 +1,17 @@
 2019-07-11  Youenn Fablet  <youenn@apple.com>
 
+        Register a MediaStreamTrack as media producer only if it is a capture track
+        https://bugs.webkit.org/show_bug.cgi?id=199566
+        <rdar://problem/52761361>
+
+        Addressing post-landing comment to simplify setMuted call.
+        Unreviewed.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+
+2019-07-11  Youenn Fablet  <youenn@apple.com>
+
         Protect CoreAudioSharedUnit::m_clients for accessing in different threads simultaneously
         https://bugs.webkit.org/show_bug.cgi?id=199717
 

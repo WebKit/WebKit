@@ -71,7 +71,7 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
 
     if (auto document = this->document()) {
         if (document->page() && document->page()->mutedState())
-            setMuted(document->page()->mutedState());
+            setMuted(true);
         document->addAudioProducer(*this);
     }
 }
