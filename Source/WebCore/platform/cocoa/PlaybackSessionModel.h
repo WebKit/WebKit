@@ -110,6 +110,7 @@ public:
     virtual void isPictureInPictureSupportedChanged(bool) { }
     virtual void pictureInPictureActiveChanged(bool) { }
     virtual void ensureControlsManager() { }
+    virtual void modelDestroyed() { }
 };
 
 }

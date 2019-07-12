@@ -1,3 +1,34 @@
+2019-07-11  Chris Dumez  <cdumez@apple.com>
+
+        Drop non thread-safe usage of WeakPtr in PlaybackSessionInterfaceAVKit
+        https://bugs.webkit.org/show_bug.cgi?id=199698
+
+        Reviewed by Eric Carlson.
+
+        The PlaybackSessionInterfaceAVKit constructor was making a weakPtr on the UI Thread
+        of an WebThread object. The WeakPtr would then be used as a data member throughout
+        the class on the UIThread. This is not thread-safe.
+
+        This patch switches to using a raw pointer instead of a WeakPtr. This is a partial
+        rollout of r243337, which turned the raw pointer into a WeakPtr for hardening
+        purposes. For extra safety, this patch updates the VideoFullscreenControllerContext
+        so that it notifies its clients (i.e. PlaybackSessionInterfaceAVKit) that it is
+        getting destroyed, so that they can null-out their m_playbackSessionModel data
+        member. This gives the sames guarantees than WeakPtr but in a thread-safe way.
+
+        * platform/cocoa/PlaybackSessionModel.h:
+        (WebCore::PlaybackSessionModelClient::modelDestroyed):
+        * platform/ios/PlaybackSessionInterfaceAVKit.h:
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        (WebCore::PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit):
+        (WebCore::PlaybackSessionInterfaceAVKit::~PlaybackSessionInterfaceAVKit):
+        (WebCore::PlaybackSessionInterfaceAVKit::playbackSessionModel const):
+        (WebCore::PlaybackSessionInterfaceAVKit::modelDestroyed):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::~VideoFullscreenControllerContext):
+        (VideoFullscreenControllerContext::addClient):
+        (VideoFullscreenControllerContext::removeClient):
+
 2019-07-11  Simon Fraser  <simon.fraser@apple.com>
 
         Fix builds where HAVE_DESIGN_SYSTEM_UI_FONTS is not defined.

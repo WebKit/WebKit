@@ -109,6 +109,8 @@ public:
         return adoptRef(*new VideoFullscreenControllerContext);
     }
 
+    ~VideoFullscreenControllerContext();
+
     void setController(WebVideoFullscreenController* controller) { m_controller = controller; }
     void setUpFullscreen(HTMLVideoElement&, UIView *, HTMLMediaElementEnums::VideoFullscreenMode);
     void exitFullscreen();
@@ -215,6 +217,18 @@ private:
     RetainPtr<UIView> m_videoFullscreenView;
     RetainPtr<WebVideoFullscreenController> m_controller;
 };
+
+VideoFullscreenControllerContext::~VideoFullscreenControllerContext()
+{
+    auto notifyClientsModelWasDestroyed = [this] {
+        while (!m_playbackClients.isEmpty())
+            (*m_playbackClients.begin())->modelDestroyed();
+    };
+    if (isUIThread())
+        notifyClientsModelWasDestroyed();
+    else
+        dispatch_sync(dispatch_get_main_queue(), WTFMove(notifyClientsModelWasDestroyed));
+}
 
 #pragma mark VideoFullscreenChangeObserver
 
@@ -543,12 +557,14 @@ void VideoFullscreenControllerContext::volumeChanged(double volume)
 
 void VideoFullscreenControllerContext::addClient(VideoFullscreenModelClient& client)
 {
+    ASSERT(isUIThread());
     ASSERT(!m_fullscreenClients.contains(&client));
     m_fullscreenClients.add(&client);
 }
 
 void VideoFullscreenControllerContext::removeClient(VideoFullscreenModelClient& client)
 {
+    ASSERT(isUIThread());
     ASSERT(m_fullscreenClients.contains(&client));
     m_fullscreenClients.remove(&client);
 }

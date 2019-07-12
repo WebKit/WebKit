@@ -51,8 +51,9 @@ using namespace PAL;
 
 PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit(PlaybackSessionModel& model)
     : m_playerController(adoptNS([[WebAVPlayerController alloc] init]))
-    , m_playbackSessionModel(makeWeakPtr(model))
+    , m_playbackSessionModel(&model)
 {
+    ASSERT(isUIThread());
     model.addClient(*this);
     [m_playerController setPlaybackSessionInterface:this];
     [m_playerController setDelegate:&model];
@@ -71,6 +72,7 @@ PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit(PlaybackSessionMode
 
 PlaybackSessionInterfaceAVKit::~PlaybackSessionInterfaceAVKit()
 {
+    ASSERT(isUIThread());
     [m_playerController setPlaybackSessionInterface:nullptr];
     [m_playerController setExternalPlaybackActive:false];
 
@@ -79,7 +81,7 @@ PlaybackSessionInterfaceAVKit::~PlaybackSessionInterfaceAVKit()
 
 PlaybackSessionModel* PlaybackSessionInterfaceAVKit::playbackSessionModel() const
 {
-    return m_playbackSessionModel.get();
+    return m_playbackSessionModel;
 }
 
 void PlaybackSessionInterfaceAVKit::durationChanged(double duration)
@@ -217,6 +219,13 @@ void PlaybackSessionInterfaceAVKit::invalidate()
     [m_playerController setDelegate:nullptr];
     m_playbackSessionModel->removeClient(*this);
     m_playbackSessionModel = nullptr;
+}
+
+void PlaybackSessionInterfaceAVKit::modelDestroyed()
+{
+    ASSERT(isUIThread());
+    invalidate();
+    ASSERT(!m_playbackSessionModel);
 }
 
 }

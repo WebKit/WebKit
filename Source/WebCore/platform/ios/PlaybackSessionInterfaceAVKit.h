@@ -77,6 +77,7 @@ public:
     WEBCORE_EXPORT void wirelessVideoPlaybackDisabledChanged(bool) override;
     WEBCORE_EXPORT void mutedChanged(bool) override;
     WEBCORE_EXPORT void volumeChanged(double) override;
+    WEBCORE_EXPORT void modelDestroyed() override;
 
     WEBCORE_EXPORT virtual void invalidate();
 
@@ -86,7 +87,7 @@ protected:
     WEBCORE_EXPORT PlaybackSessionInterfaceAVKit(PlaybackSessionModel&);
 
     RetainPtr<WebAVPlayerController> m_playerController;
-    WeakPtr<PlaybackSessionModel> m_playbackSessionModel;
+    PlaybackSessionModel* m_playbackSessionModel { nullptr };
 };
 
 }
