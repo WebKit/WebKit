@@ -296,6 +296,7 @@ webkit.org/b/169916 css3/blending/svg-blend-multiply.html [ Missing Failure ]
 webkit.org/b/169916 css3/blending/svg-blend-overlay.html [ Missing Failure ]
 webkit.org/b/169916 css3/blending/svg-blend-screen.html [ Missing Failure ]
 webkit.org/b/169916 css3/blending/svg-blend-soft-light.html [ Missing Failure ]
+webkit.org/b/169916 imported/blink/css3/blending/mix-blend-mode-with-squashing-layer.html [ ImageOnlyFailure ]
 
 # Failures related with compositing tests.
 webkit.org/b/169918 compositing/animation/animation-backing.html [ Failure Pass ]

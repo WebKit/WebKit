@@ -471,7 +471,6 @@ webkit.org/b/169916 css3/blending/svg-blend-plus-darker.html [ Missing Failure ]
 webkit.org/b/169916 css3/blending/svg-blend-plus-lighter.html [ Missing Failure ]
 webkit.org/b/169916 css3/blending/svg-blend-screen.html [ Missing Failure ]
 webkit.org/b/169916 css3/blending/svg-blend-soft-light.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-isolation-isolated-group.html [ ImageOnlyFailure ]
 
 
 #////////////////////////////////////////////////////////////////////////////////////////

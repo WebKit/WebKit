@@ -1,3 +1,40 @@
+2019-07-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Rebaseline css3/blending tests with an empty homedir.
+
+        It seems this tests are sensible to some configuration of some
+        library as they produce different output (the layers with more left
+        margin) depending on that. The test pass on both cases, but the
+        check with the expected result fails, so it is flagged as failing.
+
+        This rebaselines the results to those that happen when running with
+        an empty/temporal homedir on Debian 10 to match what happens on the
+        bots. For more info see bugs 169916 and 199738.
+
+        Unreviewed gardening commit.
+
+        * platform/gtk/css3/blending/svg-blend-layer-blend-expected.png:
+        * platform/gtk/css3/blending/svg-blend-layer-blend-expected.txt:
+        * platform/gtk/css3/blending/svg-blend-layer-clip-path-expected.png:
+        * platform/gtk/css3/blending/svg-blend-layer-clip-path-expected.txt:
+        * platform/gtk/css3/blending/svg-blend-layer-filter-expected.png:
+        * platform/gtk/css3/blending/svg-blend-layer-filter-expected.txt:
+        * platform/gtk/css3/blending/svg-blend-layer-mask-expected.png:
+        * platform/gtk/css3/blending/svg-blend-layer-mask-expected.txt:
+        * platform/gtk/css3/blending/svg-blend-layer-opacity-expected.png:
+        * platform/gtk/css3/blending/svg-blend-layer-opacity-expected.txt:
+        * platform/wpe/TestExpectations: css3/blending/svg-isolation-isolated-group.html passes with an empty homedir.
+        * platform/wpe/css3/blending/svg-blend-layer-blend-expected.png:
+        * platform/wpe/css3/blending/svg-blend-layer-blend-expected.txt:
+        * platform/wpe/css3/blending/svg-blend-layer-clip-path-expected.png:
+        * platform/wpe/css3/blending/svg-blend-layer-clip-path-expected.txt:
+        * platform/wpe/css3/blending/svg-blend-layer-filter-expected.png:
+        * platform/wpe/css3/blending/svg-blend-layer-filter-expected.txt:
+        * platform/wpe/css3/blending/svg-blend-layer-mask-expected.png:
+        * platform/wpe/css3/blending/svg-blend-layer-mask-expected.txt:
+        * platform/wpe/css3/blending/svg-blend-layer-opacity-expected.png:
+        * platform/wpe/css3/blending/svg-blend-layer-opacity-expected.txt:
+
 2019-07-11  Chris Dumez  <cdumez@apple.com>
 
         [iOS] fast/events/ios/rotation/orientationchange-event-listener-on.body.html is flaky
