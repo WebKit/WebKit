@@ -1,3 +1,21 @@
+2019-07-12  Justin Michaud  <justin_michaud@apple.com>
+
+        B3 should reduce (integer) Sub(Neg(x), y) to Neg(Add(x, y))
+        https://bugs.webkit.org/show_bug.cgi?id=196371
+
+        Reviewed by Keith Miller.
+
+        Adding these strength reductions gives 2x a (x86) and 3x (arm64) performance improvement
+        on the microbenchmark.
+
+        * b3/B3ReduceStrength.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testSubSub):
+        (JSC::B3::testSubSub2):
+        (JSC::B3::testSubAdd):
+        (JSC::B3::testSubFirstNeg):
+        (JSC::B3::run):
+
 2019-07-12  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] Add ValueBitLShift into DFG

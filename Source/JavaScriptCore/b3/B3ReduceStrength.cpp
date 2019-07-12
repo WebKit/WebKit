@@ -651,6 +651,39 @@ private:
                     break;
                 }
 
+                // Turn this: Sub(Neg(value), value2)
+                // Into this: Neg(Add(value, value2))
+                if (m_value->child(0)->opcode() == Neg) {
+                    replaceWithNew<Value>(Neg, m_value->origin(),
+                        m_insertionSet.insert<Value>(m_index, Add, m_value->origin(), m_value->child(0)->child(0), m_value->child(1)));
+                    break;
+                }
+
+                // Turn this: Sub(Sub(a, b), c)
+                // Into this: Sub(a, Add(b, c))
+                if (m_value->child(0)->opcode() == Sub) {
+                    replaceWithNew<Value>(Sub, m_value->origin(), m_value->child(0)->child(0),
+                        m_insertionSet.insert<Value>(m_index, Add, m_value->origin(), m_value->child(0)->child(1), m_value->child(1)));
+                    break;
+                }
+
+                // Turn this: Sub(a, Sub(b, c))
+                // Into this: Add(Sub(a, b), c)
+                if (m_value->child(1)->opcode() == Sub) {
+                    replaceWithNew<Value>(Add, m_value->origin(),
+                        m_insertionSet.insert<Value>(m_index, Sub, m_value->origin(), m_value->child(0), m_value->child(1)->child(0)),
+                        m_value->child(1)->child(1));
+                    break;
+                }
+
+                // Turn this: Sub(Add(a, b), c)
+                // Into this: Add(a, Sub(b, c))
+                if (m_value->child(0)->opcode() == Add) {
+                    replaceWithNew<Value>(Add, m_value->origin(), m_value->child(0)->child(0),
+                        m_insertionSet.insert<Value>(m_index, Sub, m_value->origin(), m_value->child(0)->child(1), m_value->child(1)));
+                    break;
+                }
+
                 if (handleMulDistributivity())
                     break;
             }

@@ -2190,6 +2190,69 @@ void testNegValueSubOne(int a)
     CHECK(compileAndRun<int>(proc, a) == -a - 1);
 }
 
+void testSubSub(int a, int b, int c)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Sub, Origin(),
+            root->appendNew<Value>(proc, Sub, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)));
+
+    CHECK(compileAndRun<int>(proc, a, b, c) == (a-b)-c);
+}
+
+void testSubSub2(int a, int b, int c)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Sub, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<Value>(proc, Sub, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2))));
+
+    CHECK(compileAndRun<int>(proc, a, b, c) == a-(b-c));
+}
+
+void testSubAdd(int a, int b, int c)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Sub, Origin(),
+            root->appendNew<Value>(proc, Add, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)));
+
+    CHECK(compileAndRun<int>(proc, a, b, c) == (a+b)-c);
+}
+
+void testSubFirstNeg(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Sub, Origin(),
+            root->appendNew<Value>(proc, Neg, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+
+    CHECK(compileAndRun<int>(proc, a, b) == (-a)-b);
+}
+
 void testSubImmArg(int a, int b)
 {
     Procedure proc;
@@ -17456,6 +17519,11 @@ void run(const char* filter)
     RUN_UNARY(testNegValueSubOne, int32Operands());
     RUN_BINARY(testNegMulArgImm, int64Operands(), int64Operands());
     RUN_TERNARY(testSubMulMulArgs, int64Operands(), int64Operands(), int64Operands());
+
+    RUN_TERNARY(testSubSub, int32Operands(), int32Operands(), int32Operands());
+    RUN_TERNARY(testSubSub2, int32Operands(), int32Operands(), int32Operands());
+    RUN_TERNARY(testSubAdd, int32Operands(), int32Operands(), int32Operands());
+    RUN_BINARY(testSubFirstNeg, int32Operands(), int32Operands());
 
     RUN(testSubArgs32(1, 1));
     RUN(testSubArgs32(1, 2));

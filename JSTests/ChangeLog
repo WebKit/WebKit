@@ -1,3 +1,13 @@
+2019-07-12  Justin Michaud  <justin_michaud@apple.com>
+
+        B3 should reduce (integer) Sub(Neg(x), y) to Neg(Add(x, y))
+        https://bugs.webkit.org/show_bug.cgi?id=196371
+
+        Reviewed by Keith Miller.
+
+        * microbenchmarks/mul-immediate-sub.js: Added.
+        (doTest):
+
 2019-07-12  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] Add ValueBitLShift into DFG
