@@ -1,3 +1,16 @@
+2019-07-12  Pawel Stanek  <p.stanek@metrological.com>
+
+        Connection::waitForSyncReply() uses wall time clock for timeout
+        https://bugs.webkit.org/show_bug.cgi?id=198712
+        Due to a nature of the system time (it might not be set, jump, be off
+        by a lot) it is better to use monotonically increasing time which is
+        exactly what's used in a similar place i.e. Connection::waitForMessage()
+        
+        Reviewed by Alex Christensen.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::waitForSyncReply):
+
 2019-07-12  Timothy Hatcher  <timothy@apple.com>
 
         Drop DarkModeCSSEnabled as an experimental feature and always enable it.

@@ -590,7 +590,7 @@ std::unique_ptr<Decoder> Connection::sendSyncMessage(uint64_t syncRequestID, std
 std::unique_ptr<Decoder> Connection::waitForSyncReply(uint64_t syncRequestID, Seconds timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
     timeout = timeoutRespectingIgnoreTimeoutsForTesting(timeout);
-    WallTime absoluteTime = WallTime::now() + timeout;
+    MonotonicTime absoluteTime = MonotonicTime::now() + timeout;
 
     willSendSyncMessage(sendSyncOptions);
     
