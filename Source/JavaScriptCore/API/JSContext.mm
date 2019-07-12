@@ -146,6 +146,32 @@
     return [JSValue valueWithJSValueRef:toRef(vm, result) inContext:self];
 }
 
+- (JSValue *)dependencyIdentifiersForModuleJSScript:(JSScript *)script
+{
+    JSC::ExecState* exec = toJS(m_context);
+    JSC::VM& vm = exec->vm();
+    JSC::JSLockHolder locker(vm);
+
+    if (script.type != kJSScriptTypeModule) {
+        self.exceptionHandler(self, [JSValue valueWithNewErrorFromMessage:@"script is not a module" inContext:self]);
+        return [JSValue valueWithUndefinedInContext:self];
+    }
+
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    JSC::JSArray* result = exec->lexicalGlobalObject()->moduleLoader()->dependencyKeysIfEvaluated(exec, JSC::jsString(&vm, [[script sourceURL] absoluteString]));
+    if (scope.exception()) {
+        JSValueRef exceptionValue = toRef(exec, scope.exception()->value());
+        scope.clearException();
+        return [self valueFromNotifyException:exceptionValue];
+    }
+
+    if (!result) {
+        self.exceptionHandler(self, [JSValue valueWithNewErrorFromMessage:@"script has not run in context or was not evaluated successfully" inContext:self]);
+        return [JSValue valueWithUndefinedInContext:self];
+    }
+    return [JSValue valueWithJSValueRef:toRef(vm, result) inContext:self];
+}
+
 - (void)setException:(JSValue *)value
 {
     JSC::ExecState* exec = toJS(m_context);

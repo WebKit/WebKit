@@ -43,7 +43,7 @@ typedef NS_ENUM(NSInteger, JSScriptType) {
 };
 
 
-JSC_CLASS_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA))
+JSC_CLASS_AVAILABLE(macos(10.15), ios(13.0))
 @interface JSScript : NSObject
 
 /*!

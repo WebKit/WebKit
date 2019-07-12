@@ -92,12 +92,7 @@ if (DEVELOPER_MODE)
     WEBKIT_EXECUTABLE(testdfg)
 
     file(COPY
-        "${JAVASCRIPTCORE_DIR}/API/tests/testapi.js"
-        DESTINATION
-        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/testapiScripts
-    )
-    file(COPY
-        "${JAVASCRIPTCORE_DIR}/API/tests/testapi-function-overrides.js"
+        "${JAVASCRIPTCORE_DIR}/API/tests/testapiScripts"
         DESTINATION
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/testapiScripts
     )

@@ -369,3 +369,20 @@ async function requestImportModule(key, parameters, fetcher)
     this.linkAndEvaluateModule(entry.key, fetcher);
     return this.getModuleNamespaceObject(entry.module);
 }
+
+function dependencyKeysIfEvaluated(key)
+{
+    "use strict";
+
+    let entry = this.registry.@get(key);
+    if (!entry || !entry.evaluated)
+        return null;
+
+    let dependencies = entry.dependencies;
+    let length = dependencies.length;
+    let result = new @Array(length);
+    for (let i = 0; i < length; ++i)
+        result[i] = dependencies[i].key;
+
+    return result;
+}

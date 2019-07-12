@@ -1946,7 +1946,7 @@ static void testFetchWithTwoCycle()
                     error:nil]]];
             } else if ([identifier isEqualToObject:@"file:///foo.js"]) {
                 [resolve callWithArguments:@[[JSScript scriptOfType:kJSScriptTypeModule 
-                    withSource:@"import \"directory/bar.js\"; globalThis.ran = null; export let n = null;"
+                    withSource:@"import \"./directory/bar.js\"; globalThis.ran = null; export let n = null;"
                     andSourceURL:[NSURL fileURLWithPath:@"/foo.js"]
                     andBytecodeCache:nil
                     inVirtualMachine:[context virtualMachine]
@@ -1977,7 +1977,7 @@ static void testFetchWithThreeCycle()
                     error:nil]]];
             } else if ([identifier isEqualToObject:@"file:///foo.js"]) {
                 [resolve callWithArguments:@[[JSScript scriptOfType:kJSScriptTypeModule 
-                    withSource:@"import \"otherDirectory/baz.js\"; export let n = null;"
+                    withSource:@"import \"./otherDirectory/baz.js\"; export let n = null;"
                     andSourceURL:[NSURL fileURLWithPath:@"/foo.js"] 
                     andBytecodeCache:nil
                     inVirtualMachine:[context virtualMachine]
@@ -2107,7 +2107,7 @@ static NSURL* cacheFileInDataVault(NSString* name)
 static void testModuleBytecodeCache()
 {
     @autoreleasepool {
-        NSString *fooSource = @"import 'otherDirectory/baz.js'; export let n = null;";
+        NSString *fooSource = @"import './otherDirectory/baz.js'; export let n = null;";
         NSString *barSource = @"import { n } from '../foo.js'; export let foo = () => n;";
         NSString *bazSource = @"import { foo } from '../directory/bar.js'; globalThis.ran = null; export let exp = foo();";
 
@@ -2428,15 +2428,19 @@ static void testBytecodeCacheValidation()
 @interface JSContextFileLoaderDelegate : JSContext <JSModuleLoaderDelegate>
 
 + (instancetype)newContext;
+- (JSScript *)fetchModuleScript:(NSString *)relativePath;
 
 @end
 
 @implementation JSContextFileLoaderDelegate {
+    NSMutableDictionary<NSString *, JSScript *> *m_keyToScript;
 }
 
 + (instancetype)newContext
 {
     auto *result = [[JSContextFileLoaderDelegate alloc] init];
+    result.moduleLoaderDelegate = result;
+    result->m_keyToScript = [[NSMutableDictionary<NSString *, JSScript *> alloc] init];
     return result;
 }
 
@@ -2459,18 +2463,45 @@ static NSURL *resolvePathToScripts()
     return [NSURL fileURLWithPath:@"./testapiScripts/" isDirectory:YES relativeToURL:base];
 }
 
+- (JSScript *)fetchModuleScript:(NSString *)relativePath
+{
+    auto *filePath = [NSURL URLWithString:relativePath relativeToURL:resolvePathToScripts()];
+    if (auto *script = [self findScriptForKey:[filePath absoluteString]])
+        return script;
+    NSError *error;
+    auto *result = [JSScript scriptOfType:kJSScriptTypeModule memoryMappedFromASCIIFile:filePath withSourceURL:filePath andBytecodeCache:nil inVirtualMachine:[self virtualMachine] error:&error];
+    if (!result) {
+        NSLog(@"%@\n", error);
+        CRASH();
+    }
+    [m_keyToScript setObject:result forKey:[filePath absoluteString]];
+    return result;
+}
+
+- (JSScript *)findScriptForKey:(NSString *)key
+{
+    return [m_keyToScript objectForKey:key];
+}
+
 - (void)context:(JSContext *)context fetchModuleForIdentifier:(JSValue *)identifier withResolveHandler:(JSValue *)resolve andRejectHandler:(JSValue *)reject
 {
     NSURL *filePath = [NSURL URLWithString:[identifier toString]];
+    // FIXME: We should fix this: https://bugs.webkit.org/show_bug.cgi?id=199714
+    if (auto *script = [self findScriptForKey:[identifier toString]]) {
+        [resolve callWithArguments:@[script]];
+        return;
+    }
+
     auto* script = [JSScript scriptOfType:kJSScriptTypeModule
         memoryMappedFromASCIIFile:filePath
         withSourceURL:filePath
         andBytecodeCache:nil 
         inVirtualMachine:context.virtualMachine
         error:nil];
-    if (script)
+    if (script) {
+        [m_keyToScript setObject:script forKey:[identifier toString]];
         [resolve callWithArguments:@[script]];
-    else
+    } else
         [reject callWithArguments:@[[JSValue valueWithNewErrorFromMessage:@"Unable to create Script" inContext:context]]];
 }
 
@@ -2604,6 +2635,111 @@ static void testJSScriptURL()
     }
 }
 
+static void testDependenciesArray()
+{
+    @autoreleasepool {
+        auto *context = [JSContextFileLoaderDelegate newContext];
+
+        JSScript *entryScript = [context fetchModuleScript:@"./dependencyListTests/dependenciesEntry.js"];
+
+        JSValue *promise = [context evaluateJSScript:entryScript];
+        [promise invokeMethod:@"then" withArguments:@[^(JSValue *) {
+            checkResult(@"module ran successfully", true);
+        }, ^(JSValue *) {
+            checkResult(@"module ran successfully", false);
+        }]];
+
+        checkResult(@"looking up the entry script should find the same script again.", [context findScriptForKey:[entryScript.sourceURL absoluteString]] == entryScript);
+
+        auto *deps = [context dependencyIdentifiersForModuleJSScript:entryScript];
+
+        checkResult(@"deps should be an array", [deps isArray]);
+        checkResult(@"deps should have two entries", [deps[@"length"] isEqualToObject:@(2)]);
+
+        checkResult(@"first dependency should be foo.js", [[[[context fetchModuleScript:@"./dependencyListTests/foo.js"] sourceURL] absoluteString] isEqual:[deps[@(0)] toString]]);
+        checkResult(@"second dependency should be bar.js", [[[[context fetchModuleScript:@"./dependencyListTests/bar.js"] sourceURL] absoluteString] isEqual:[deps[@(1)] toString]]);
+    }
+}
+
+static void testDependenciesEvaluationError()
+{
+    @autoreleasepool {
+        auto *context = [JSContextFileLoaderDelegate newContext];
+
+        JSScript *entryScript = [context fetchModuleScript:@"./dependencyListTests/referenceError.js"];
+
+        JSValue *promise = [context evaluateJSScript:entryScript];
+        [promise invokeMethod:@"then" withArguments:@[^(JSValue *) {
+            checkResult(@"module failed successfully", false);
+        }, ^(JSValue *) {
+            checkResult(@"module failed successfully", true);
+        }]];
+
+        auto *deps = [context dependencyIdentifiersForModuleJSScript:entryScript];
+        checkResult(@"deps should be an Array", [deps isArray]);
+        checkResult(@"first dependency should be foo.js", [[[[context fetchModuleScript:@"./dependencyListTests/foo.js"] sourceURL] absoluteString] isEqual:[deps[@(0)] toString]]);
+    }
+}
+
+static void testDependenciesSyntaxError()
+{
+    @autoreleasepool {
+        auto *context = [JSContextFileLoaderDelegate newContext];
+
+        JSScript *entryScript = [context fetchModuleScript:@"./dependencyListTests/syntaxError.js"];
+
+        JSValue *promise = [context evaluateJSScript:entryScript];
+        [promise invokeMethod:@"then" withArguments:@[^(JSValue *) {
+            checkResult(@"module failed successfully", false);
+        }, ^(JSValue *) {
+            checkResult(@"module failed successfully", true);
+        }]];
+
+        auto *deps = [context dependencyIdentifiersForModuleJSScript:entryScript];
+        checkResult(@"deps should be undefined", [deps isUndefined]);
+        checkResult(@"there should be a pending exception on the context", context.exception);
+    }
+}
+
+static void testDependenciesBadImportId()
+{
+    @autoreleasepool {
+        auto *context = [JSContextFileLoaderDelegate newContext];
+
+        JSScript *entryScript = [context fetchModuleScript:@"./dependencyListTests/badModuleImportId.js"];
+
+        JSValue *promise = [context evaluateJSScript:entryScript];
+        [promise invokeMethod:@"then" withArguments:@[^(JSValue *) {
+            checkResult(@"module failed successfully", false);
+        }, ^(JSValue *) {
+            checkResult(@"module failed successfully", true);
+        }]];
+
+        auto *deps = [context dependencyIdentifiersForModuleJSScript:entryScript];
+        checkResult(@"deps should be undefined", [deps isUndefined]);
+        checkResult(@"there should be a pending exception on the context", context.exception);
+    }
+}
+
+static void testDependenciesMissingImport()
+{
+    @autoreleasepool {
+        auto *context = [JSContextFileLoaderDelegate newContext];
+
+        JSScript *entryScript = [context fetchModuleScript:@"./dependencyListTests/missingImport.js"];
+
+        JSValue *promise = [context evaluateJSScript:entryScript];
+        [promise invokeMethod:@"then" withArguments:@[^(JSValue *) {
+            checkResult(@"module failed successfully", false);
+        }, ^(JSValue *) {
+            checkResult(@"module failed successfully", true);
+        }]];
+
+        auto *deps = [context dependencyIdentifiersForModuleJSScript:entryScript];
+        checkResult(@"deps should be undefined", [deps isUndefined]);
+        checkResult(@"there should be a pending exception on the context", context.exception);
+    }
+}
 
 @protocol ToString <JSExport>
 - (NSString *)toString;
@@ -2707,6 +2843,12 @@ void testObjectiveCAPI(const char* filter)
     // File loading
     RUN(testLoadBasicFileLegacySPI());
     RUN(testLoadBasicFile());
+
+    RUN(testDependenciesArray());
+    RUN(testDependenciesSyntaxError());
+    RUN(testDependenciesEvaluationError());
+    RUN(testDependenciesBadImportId());
+    RUN(testDependenciesMissingImport());
 
     RUN(promiseWithExecutor(Resolution::ResolveEager));
     RUN(promiseWithExecutor(Resolution::RejectEager));

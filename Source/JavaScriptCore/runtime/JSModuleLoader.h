@@ -84,6 +84,7 @@ public:
 
     // Utility functions.
     JSModuleNamespaceObject* getModuleNamespaceObject(ExecState*, JSValue moduleRecord);
+    JSArray* dependencyKeysIfEvaluated(ExecState*, JSValue key);
 
 protected:
     void finishCreation(ExecState*, VM&, JSGlobalObject*);

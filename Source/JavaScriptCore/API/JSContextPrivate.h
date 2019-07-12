@@ -84,7 +84,7 @@
 @property (setter=_setDebuggerRunLoop:) CFRunLoopRef _debuggerRunLoop JSC_API_AVAILABLE(macos(10.10), ios(8.0));
 
 /*! @abstract The delegate the context will use when trying to load a module. Note, this delegate will be ignored for contexts returned by UIWebView. */
-@property (nonatomic, weak) id <JSModuleLoaderDelegate> moduleLoaderDelegate JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+@property (nonatomic, weak) id <JSModuleLoaderDelegate> moduleLoaderDelegate JSC_API_AVAILABLE(macos(10.15), ios(13.0));
 
 /*!
  @method
@@ -94,7 +94,17 @@
 
  Otherwise, if the script was created with kJSScriptTypeModule, the module will be run asynchronously and will return a promise resolved when the module and any transitive dependencies are loaded. The module loader will treat the script as if it had been returned from a delegate call to moduleLoaderDelegate. This mirrors the JavaScript dynamic import operation.
  */
-- (JSValue *)evaluateJSScript:(JSScript *)script;
+// FIXME: Before making this public need to fix: https://bugs.webkit.org/show_bug.cgi?id=199714
+- (JSValue *)evaluateJSScript:(JSScript *)script JSC_API_AVAILABLE(macos(10.15), ios(13.0));
+
+/*!
+ @method
+ @abstract Get the identifiers of the modules a JSScript depends on in this context.
+ @param script the JSScript to determine the dependencies of.
+ @result An Array containing all the identifiers of modules script depends on.
+ @discussion If the provided JSScript was not created with kJSScriptTypeModule, an exception will be thrown. Also, if the script has not already been evaluated in this context an error will be throw.
+ */
+- (JSValue *)dependencyIdentifiersForModuleJSScript:(JSScript *)script JSC_API_AVAILABLE(macos(10.15), ios(13.0));
 
 @end
 

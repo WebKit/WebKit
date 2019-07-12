@@ -69,6 +69,33 @@ const GlobalObjectMethodTable JSAPIGlobalObject::s_globalObjectMethodTable = {
     nullptr, // instantiateStreaming
 };
 
+static Expected<URL, String> computeValidImportSpecifier(const URL& base, const String& specifier)
+{
+    URL absoluteURL(URL(), specifier);
+    if (absoluteURL.isValid())
+        return absoluteURL;
+
+    if (!specifier.startsWith('/') && !specifier.startsWith("./") && !specifier.startsWith("../"))
+        return makeUnexpected(makeString("Module specifier: "_s, specifier, " does not start with \"/\", \"./\", or \"../\"."_s));
+
+    if (specifier.startsWith('/')) {
+        absoluteURL = URL(URL({ }, "file://"), specifier);
+        if (absoluteURL.isValid())
+            return absoluteURL;
+    }
+
+    if (base == URL())
+        return makeUnexpected("Could not determine the base URL for loading."_s);
+
+    if (!base.isValid())
+        return makeUnexpected(makeString("Referrering script's url is not valid: "_s, base.string()));
+
+    absoluteURL = URL(base, specifier);
+    if (absoluteURL.isValid())
+        return absoluteURL;
+    return makeUnexpected(makeString("Could not form valid URL from identifier and base. Tried:"_s, absoluteURL.string()));
+}
+
 Identifier JSAPIGlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader*, JSValue key, JSValue referrer, JSValue)
 {
     VM& vm = exec->vm();
@@ -76,23 +103,22 @@ Identifier JSAPIGlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, 
     ASSERT_UNUSED(globalObject, globalObject == exec->lexicalGlobalObject());
     ASSERT(key.isString() || key.isSymbol());
     String name =  key.toWTFString(exec);
+    RETURN_IF_EXCEPTION(scope, { });
 
+    URL base;
     if (JSString* referrerString = jsDynamicCast<JSString*>(vm, referrer)) {
         String value = referrerString->value(exec);
-        URL referrerURL({ }, value);
         RETURN_IF_EXCEPTION(scope, { });
+        URL referrerURL({ }, value);
         RELEASE_ASSERT(referrerURL.isValid());
-
-        URL url = URL(referrerURL, name);
-        if (url.isValid())
-            return Identifier::fromString(exec, url);
-    } else {
-        URL url = URL({ }, name);
-        if (url.isValid())
-            return Identifier::fromString(exec, url);
+        base = WTFMove(referrerURL);
     }
 
-    throwVMError(exec, scope, "Could not form valid URL from identifier and base"_s);
+    auto result = computeValidImportSpecifier(base, name);
+    if (result)
+        return Identifier::fromString(&vm, result.value());
+
+    throwVMError(exec, scope, createError(exec, result.error()));
     return { };
 }
 
@@ -121,33 +147,12 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* g
         return reject(exception);
     }
 
-    URL absoluteURL(URL(), specifier);
-    if (absoluteURL.isValid())
-        return import(absoluteURL);
-
-    if (!specifier.startsWith('/') && !specifier.startsWith("./") && !specifier.startsWith("../"))
-        return reject(createError(exec, makeString("Module specifier: ", specifier, " does not start with \"/\", \"./\", or \"../\"."_s)));
-
-    if (specifier.startsWith('/')) {
-        absoluteURL = URL(URL({ }, "file://"), specifier);
-        if (absoluteURL.isValid())
-            return import(absoluteURL);
-    }
-
-    auto noBaseErrorMessage = "Could not determine the base URL for loading."_s;
-    if (sourceOrigin.isNull())
-        return reject(createError(exec, makeString(noBaseErrorMessage, " Referring script has no URL."_s)));
-
-    auto referrer = sourceOrigin.string();
+    String referrer = !sourceOrigin.isNull() ? sourceOrigin.string() : String();
     URL baseURL(URL(), referrer);
-    if (!baseURL.isValid())
-        return reject(createError(exec, makeString(noBaseErrorMessage, " Referring script's URL is not valid: "_s, baseURL.string())));
-
-    URL url(baseURL, specifier);
-    if (!url.isValid())
-        return reject(createError(exec, makeString("could not determine a valid URL for module specifier. Tried: "_s, url.string())));
-
-    return import(url);
+    auto result = computeValidImportSpecifier(baseURL, specifier);
+    if (result)
+        return import(result.value());
+    return reject(createError(exec, result.error()));
 }
 
 JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader*, JSValue key, JSValue, JSValue)

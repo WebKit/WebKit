@@ -1,3 +1,65 @@
+2019-07-12  Keith Miller  <keith_miller@apple.com>
+
+        Add API to get all the dependencies of a given JSScript
+        https://bugs.webkit.org/show_bug.cgi?id=199746
+
+        Reviewed by Saam Barati.
+
+        The method only returns the dependencies if the module was
+        actually evaluated. Technically, we know what the dependencies are
+        at the satisfy phase but for API simplicity we only provide that
+        information if the module graph was complete enough to at least
+        run.
+
+        This patch also fixes an issue where we would allow import
+        specifiers that didn't start "./" or "/". For reference, We have
+        this restriction to be consistent with the web/node. The
+        restriction exists in order to preserve namespace for
+        builtin-modules.
+
+        Lastly, this patch makes it so that we copy all scripts in the
+        API/tests/testapiScripts directory so they don't have to be
+        individually added to the xcode project.
+
+        * API/JSAPIGlobalObject.mm:
+        (JSC::computeValidImportSpecifier):
+        (JSC::JSAPIGlobalObject::moduleLoaderResolve):
+        (JSC::JSAPIGlobalObject::moduleLoaderImportModule):
+        * API/JSContext.mm:
+        (-[JSContext dependencyIdentifiersForModuleJSScript:]):
+        * API/JSContextPrivate.h:
+        * API/JSScript.h:
+        * API/tests/testapi.mm:
+        (testFetchWithTwoCycle):
+        (testFetchWithThreeCycle):
+        (testModuleBytecodeCache):
+        (+[JSContextFileLoaderDelegate newContext]):
+        (-[JSContextFileLoaderDelegate fetchModuleScript:]):
+        (-[JSContextFileLoaderDelegate findScriptForKey:]):
+        (-[JSContextFileLoaderDelegate context:fetchModuleForIdentifier:withResolveHandler:andRejectHandler:]):
+        (testDependenciesArray):
+        (testDependenciesEvaluationError):
+        (testDependenciesSyntaxError):
+        (testDependenciesBadImportId):
+        (testDependenciesMissingImport):
+        (testObjectiveCAPI):
+        * API/tests/testapiScripts/dependencyListTests/badModuleImportId.js: Added.
+        * API/tests/testapiScripts/dependencyListTests/bar.js: Added.
+        * API/tests/testapiScripts/dependencyListTests/dependenciesEntry.js: Added.
+        * API/tests/testapiScripts/dependencyListTests/foo.js: Added.
+        * API/tests/testapiScripts/dependencyListTests/missingImport.js: Added.
+        * API/tests/testapiScripts/dependencyListTests/referenceError.js: Added.
+        * API/tests/testapiScripts/dependencyListTests/syntaxError.js: Added.
+        * API/tests/testapiScripts/testapi-function-overrides.js: Renamed from Source/JavaScriptCore/API/tests/testapi-function-overrides.js.
+        * API/tests/testapiScripts/testapi.js: Renamed from Source/JavaScriptCore/API/tests/testapi.js.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/ModuleLoader.js:
+        (dependencyKeysIfEvaluated):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::dependencyKeysIfEvaluated):
+        * runtime/JSModuleLoader.h:
+        * shell/CMakeLists.txt:
+
 2019-07-12  Justin Michaud  <justin_michaud@apple.com>
 
         B3 should reduce (integer) Sub(Neg(x), y) to Neg(Add(x, y))
