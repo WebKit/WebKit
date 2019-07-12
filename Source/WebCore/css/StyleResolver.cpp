@@ -1936,6 +1936,7 @@ void StyleResolver::initializeFontStyle()
     fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
     setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueMedium, false, document()));
     fontDescription.setShouldAllowUserInstalledFonts(settings().shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No);
+    fontDescription.setShouldAllowDesignSystemUIFonts(settings().shouldAllowDesignSystemUIFonts());
     setFontDescription(WTFMove(fontDescription));
 }
 

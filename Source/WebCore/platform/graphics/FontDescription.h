@@ -97,6 +97,7 @@ public:
     FontOpticalSizing opticalSizing() const { return static_cast<FontOpticalSizing>(m_opticalSizing); }
     FontStyleAxis fontStyleAxis() const { return m_fontStyleAxis ? FontStyleAxis::ital : FontStyleAxis::slnt; }
     AllowUserInstalledFonts shouldAllowUserInstalledFonts() const { return static_cast<AllowUserInstalledFonts>(m_shouldAllowUserInstalledFonts); }
+    bool shouldAllowDesignSystemUIFonts() const { return m_shouldAllowDesignSystemUIFonts; }
 
     void setComputedSize(float s) { m_computedSize = clampToFloat(s); }
     void setItalic(Optional<FontSelectionValue> italic) { m_fontSelectionRequest.slope = italic; }
@@ -132,6 +133,7 @@ public:
     void setOpticalSizing(FontOpticalSizing sizing) { m_opticalSizing = static_cast<unsigned>(sizing); }
     void setFontStyleAxis(FontStyleAxis axis) { m_fontStyleAxis = axis == FontStyleAxis::ital; }
     void setShouldAllowUserInstalledFonts(AllowUserInstalledFonts shouldAllowUserInstalledFonts) { m_shouldAllowUserInstalledFonts = static_cast<unsigned>(shouldAllowUserInstalledFonts); }
+    void setShouldAllowDesignSystemUIFonts(bool allow) { m_shouldAllowDesignSystemUIFonts = allow; }
 
     static AtomString platformResolveGenericFamily(UScriptCode, const AtomString& locale, const AtomString& familyName);
 
@@ -168,6 +170,7 @@ private:
     unsigned m_opticalSizing : 1; // FontOpticalSizing
     unsigned m_fontStyleAxis : 1; // Whether "font-style: italic" or "font-style: oblique 20deg" was specified
     unsigned m_shouldAllowUserInstalledFonts : 1; // AllowUserInstalledFonts: If this description is allowed to match a user-installed font
+    unsigned m_shouldAllowDesignSystemUIFonts : 1; // Whether -apple-system-ui-serif, -apple-system-ui-monospaced, and -apple-system-ui-rounded are supported
 };
 
 inline bool FontDescription::operator==(const FontDescription& other) const
@@ -202,7 +205,8 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_variantEastAsianRuby == other.m_variantEastAsianRuby
         && m_opticalSizing == other.m_opticalSizing
         && m_fontStyleAxis == other.m_fontStyleAxis
-        && m_shouldAllowUserInstalledFonts == other.m_shouldAllowUserInstalledFonts;
+        && m_shouldAllowUserInstalledFonts == other.m_shouldAllowUserInstalledFonts
+        && m_shouldAllowDesignSystemUIFonts == other.m_shouldAllowDesignSystemUIFonts;
 }
 
 }

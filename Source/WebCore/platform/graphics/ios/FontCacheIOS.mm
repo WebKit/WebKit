@@ -33,6 +33,7 @@
 
 #import "FontCascade.h"
 #import "RenderThemeIOS.h"
+#import "SystemFontDatabaseCoreText.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/CoreTextSPI.h>
 #import <wtf/HashSet.h>
@@ -128,9 +129,11 @@ static RetainPtr<CTFontDescriptorRef> systemFontDescriptor(FontSelectionValue we
     return adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), static_cast<CFDictionaryRef>(attributes.get())));
 }
 
-RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomString& family, FontSelectionRequest request, float size, AllowUserInstalledFonts allowUserInstalledFonts)
+RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomString& family, const FontDescription& fontDescription, float size, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     // FIXME: See comment in FontCascadeDescription::effectiveFamilyAt() in FontDescriptionCocoa.cpp
+    const auto& request = fontDescription.fontSelectionRequest();
+
     if (family.startsWith("UICTFontTextStyle")) {
         CTFontSymbolicTraits traits = (isFontWeightBold(request.weight) || FontCache::singleton().shouldMockBoldSystemFontForAccessibility() ? kCTFontTraitBold : 0) | (isItalic(request.slope) ? kCTFontTraitItalic : 0);
         RetainPtr<CFStringRef> familyNameStr = family.string().createCFString();
@@ -140,6 +143,7 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomString& family,
         return createFontForInstalledFonts(fontDescriptor.get(), size, allowUserInstalledFonts);
     }
 
+    // FIXME: Migrate this to use SystemFontDatabaseCoreText like the design system-ui block below.
     if (equalLettersIgnoringASCIICase(family, "-webkit-system-font") || equalLettersIgnoringASCIICase(family, "-apple-system") || equalLettersIgnoringASCIICase(family, "-apple-system-font") || equalLettersIgnoringASCIICase(family, "system-ui")) {
         auto fontDescriptor = systemFontDescriptor(request.weight, isFontWeightBold(request.weight), isItalic(request.slope), size);
         return createFontForInstalledFonts(fontDescriptor.get(), size, allowUserInstalledFonts);

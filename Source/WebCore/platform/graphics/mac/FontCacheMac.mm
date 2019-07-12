@@ -33,6 +33,7 @@
 #import "Font.h"
 #import "FontCascade.h"
 #import "FontPlatformData.h"
+#import "SystemFontDatabaseCoreText.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/CoreTextSPI.h>
 
@@ -73,9 +74,12 @@ static CGFloat toNSFontWeight(FontSelectionValue fontWeight)
     return NSFontWeightBlack;
 }
 
-RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomString& family, FontSelectionRequest request, float size, AllowUserInstalledFonts allowUserInstalledFonts)
+RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomString& family, const FontDescription& fontDescription, float size, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     // FIXME: See comment in FontCascadeDescription::effectiveFamilyAt() in FontDescriptionCocoa.cpp
+    const auto& request = fontDescription.fontSelectionRequest();
+
+    // FIXME: Migrate this to use SystemFontDatabaseCoreText like the design system-ui block below.
     if (equalLettersIgnoringASCIICase(family, "-webkit-system-font") || equalLettersIgnoringASCIICase(family, "-apple-system") || equalLettersIgnoringASCIICase(family, "-apple-system-font") || equalLettersIgnoringASCIICase(family, "system-ui")) {
         RetainPtr<CTFontRef> result = toCTFont([NSFont systemFontOfSize:size weight:toNSFontWeight(request.weight)]);
         if (isItalic(request.slope)) {

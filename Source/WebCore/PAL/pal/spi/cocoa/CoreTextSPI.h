@@ -111,6 +111,11 @@ extern const CFStringRef kCTFontCSSWidthAttribute;
 extern const CFStringRef kCTFontDescriptorTextStyleAttribute;
 extern const CFStringRef kCTFontUIFontDesignTrait;
 
+extern const CFStringRef kCTFontUIFontDesignDefault;
+extern const CFStringRef kCTFontUIFontDesignSerif;
+extern const CFStringRef kCTFontUIFontDesignMonospaced;
+extern const CFStringRef kCTFontUIFontDesignRounded;
+
 extern const CFStringRef kCTFrameMaximumNumberOfLinesAttributeName;
 
 bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);

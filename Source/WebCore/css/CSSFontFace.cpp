@@ -594,6 +594,13 @@ AllowUserInstalledFonts CSSFontFace::allowUserInstalledFonts() const
     return AllowUserInstalledFonts::Yes;
 }
 
+bool CSSFontFace::shouldAllowDesignSystemUIFonts() const
+{
+    if (m_fontSelector && m_fontSelector->document())
+        return m_fontSelector->document()->settings().shouldAllowDesignSystemUIFonts();
+    return false;
+}
+
 static Settings::FontLoadTimingOverride fontLoadTimingOverride(CSSFontSelector* fontSelector)
 {
     auto overrideValue = Settings::FontLoadTimingOverride::None;

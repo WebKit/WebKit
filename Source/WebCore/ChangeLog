@@ -1,3 +1,91 @@
+2019-07-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        New York font erroneously gets synthetic bold
+        https://bugs.webkit.org/show_bug.cgi?id=199653
+        <rdar://problem/51692592>
+
+        Reviewed by Simon Fraser.
+
+        This patch adds support for -apple-system-ui-serif, -apple-system-ui-monospaced,
+        and -apple-system-ui-rounded, behind an SPI that is off-by-default. We don't want
+        to expose these fonts to the web because we don't a standardization story for them
+        yet, but we do want some apps to be able to use them.
+
+        WebKit clients who want to use these fonts can set
+        -[WKPreferences _shouldAllowDesignSystemUIFonts] = YES.
+
+        The patch generalizes our existing system-ui infrastructure to handle these three
+        additional fonts. It also explicitly disables the unsupported dot-prefixed names
+        so they don't leak out into Web content.
+
+        Tests: fast/text/design-system-ui-10.html
+               fast/text/design-system-ui-11.html
+               fast/text/design-system-ui-12.html
+               fast/text/design-system-ui-13.html
+               fast/text/design-system-ui-14.html
+               fast/text/design-system-ui-15.html
+               fast/text/design-system-ui-16.html
+               fast/text/design-system-ui-2.html
+               fast/text/design-system-ui-3.html
+               fast/text/design-system-ui-4.html
+               fast/text/design-system-ui-5.html
+               fast/text/design-system-ui-6.html
+               fast/text/design-system-ui-7.html
+               fast/text/design-system-ui-8.html
+               fast/text/design-system-ui-9.html
+               fast/text/design-system-ui.html
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::shouldAllowDesignSystemUIFonts const):
+        * css/CSSFontFace.h:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::load):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::initializeFontStyle):
+        * page/Settings.yaml:
+        * platform/graphics/FontDescription.cpp:
+        (WebCore::m_shouldAllowDesignSystemUIFonts):
+        (WebCore::m_shouldAllowUserInstalledFonts): Deleted.
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::shouldAllowDesignSystemUIFonts const):
+        (WebCore::FontDescription::setShouldAllowDesignSystemUIFonts):
+        (WebCore::FontDescription::operator== const):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::platformFontLookupWithFamily):
+        (WebCore::fontWithFamily):
+        * platform/graphics/cocoa/FontCacheCoreText.h:
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::systemFontUse):
+        (WebCore::systemFontCascadeList):
+        (WebCore::FontCascadeDescription::effectiveFamilyCount const):
+        (WebCore::FontCascadeDescription::effectiveFamilyAt const):
+        (WebCore::isSystemFontString): Deleted.
+        (WebCore::isUIFontTextStyle): Deleted.
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::ctFont const):
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp:
+        (WebCore::SystemFontDatabaseCoreText::createSystemUI):
+        (WebCore::SystemFontDatabaseCoreText::createDesignSystemUI):
+        (WebCore::SystemFontDatabaseCoreText::createTextStyle):
+        (WebCore::SystemFontDatabaseCoreText::cascadeList):
+        (WebCore::SystemFontDatabaseCoreText::applyWeightItalicsAndFallbackBehavior):
+        (WebCore::SystemFontDatabaseCoreText::systemFontParameters):
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.h:
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::platformFontWithFamilySpecialCase):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::platformFontWithFamilySpecialCase):
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setShouldAllowDesignSystemUIFonts):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2019-07-11  Pablo Saavedra  <psaavedra@igalia.com>
 
         [WPE][GTK] Build failure with ENABLE_ACCESSIBILITY=OFF

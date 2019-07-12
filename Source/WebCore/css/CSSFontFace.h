@@ -162,6 +162,7 @@ public:
     bool purgeable() const;
 
     AllowUserInstalledFonts allowUserInstalledFonts() const;
+    bool shouldAllowDesignSystemUIFonts() const;
 
     void updateStyleIfNeeded();
 
