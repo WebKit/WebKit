@@ -663,7 +663,7 @@ public:
         case BitRShift:
             m_jit.rshift32(op1, Imm32(shiftAmount), result);
             break;
-        case BitLShift:
+        case ArithBitLShift:
             m_jit.lshift32(op1, Imm32(shiftAmount), result);
             break;
         case BitURShift:
@@ -679,7 +679,7 @@ public:
         case BitRShift:
             m_jit.rshift32(op1, shiftAmount, result);
             break;
-        case BitLShift:
+        case ArithBitLShift:
             m_jit.lshift32(op1, shiftAmount, result);
             break;
         case BitURShift:
@@ -1334,6 +1334,7 @@ public:
     void compileValueBitwiseOp(Node*);
 
     void emitUntypedRightShiftBitOp(Node*);
+    void compileValueLShiftOp(Node*);
     void compileShiftOp(Node*);
 
     template <typename Generator, typename RepatchingFunction, typename NonRepatchingFunction>

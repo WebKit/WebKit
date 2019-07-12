@@ -64,7 +64,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ArithBitOr:
     case ArithBitXor:
     case BitRShift:
-    case BitLShift:
+    case ArithBitLShift:
     case BitURShift:
     case CheckStructure:
     case CheckStructureOrEmpty:
@@ -93,6 +93,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ValueBitXor:
     case ValueBitOr:
     case ValueBitNot:
+    case ValueBitLShift:
     case ValueNegate:
     case ValueAdd:
     case ValueSub:

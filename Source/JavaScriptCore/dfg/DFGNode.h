@@ -1694,6 +1694,7 @@ public:
         case ValueBitOr:
         case ValueBitXor:
         case ValueBitNot:
+        case ValueBitLShift:
         case CallObjectConstructor:
         case LoadKeyFromMapBucket:
         case LoadValueFromMapBucket:

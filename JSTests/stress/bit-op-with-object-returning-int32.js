@@ -46,3 +46,13 @@ for (var i = 0; i < 10000; i++)
 
 assert(numberOfDFGCompiles(bitNot) <= 1, true);
 
+function bitLShift(a, b) {
+    return a << b;
+}
+noInline(bitLShift);
+
+for (var i = 0; i < 10000; i++)
+    assert(bitLShift(o, 3), 0b1101000);
+
+assert(numberOfDFGCompiles(bitLShift) <= 1, true);
+

@@ -3509,7 +3509,7 @@ bool ByteCodeParser::handleIntrinsicGetter(VirtualRegister result, SpeculatedTyp
         // We can use a BitLShift here because typed arrays will never have a byteLength
         // that overflows int32.
         Node* shiftNode = jsConstant(jsNumber(logSize));
-        set(result, addToGraph(BitLShift, lengthNode, shiftNode));
+        set(result, addToGraph(ArithBitLShift, lengthNode, shiftNode));
 
         return true;
     }
@@ -5031,7 +5031,12 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpLshift>();
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
-            set(bytecode.m_dst, addToGraph(BitLShift, op1, op2));
+            if (op1->hasNumberOrAnyIntResult() && op2->hasNumberOrAnyIntResult())
+                set(bytecode.m_dst, addToGraph(ArithBitLShift, op1, op2));
+            else {
+                SpeculatedType prediction = getPredictionWithoutOSRExit();
+                set(bytecode.m_dst, addToGraph(ValueBitLShift, OpInfo(), OpInfo(prediction), op1, op2));
+            }
             NEXT_OPCODE(op_lshift);
         }
 

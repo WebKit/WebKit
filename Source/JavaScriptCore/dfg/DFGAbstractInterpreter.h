@@ -218,6 +218,8 @@ private:
     void clobberWorld();
     void didFoldClobberWorld();
     
+    bool handleConstantBinaryBitwiseOp(Node*);
+
     template<typename Functor>
     void forAllValues(unsigned indexInBlock, Functor&);
     

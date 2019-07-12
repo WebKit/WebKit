@@ -84,7 +84,7 @@ bool doesGC(Graph& graph, Node* node)
     case ArithBitAnd:
     case ArithBitOr:
     case ArithBitXor:
-    case BitLShift:
+    case ArithBitLShift:
     case BitRShift:
     case BitURShift:
     case ValueToInt32:
@@ -375,6 +375,7 @@ bool doesGC(Graph& graph, Node* node)
     case ValueBitAnd:
     case ValueBitOr:
     case ValueBitXor:
+    case ValueBitLShift:
     case ValueAdd:
     case ValueSub:
     case ValueMul:

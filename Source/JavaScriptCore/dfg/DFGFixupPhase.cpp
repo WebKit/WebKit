@@ -215,12 +215,14 @@ private:
             break;
         }
 
+        case ValueBitLShift:
         case ValueBitXor:
         case ValueBitOr:
         case ValueBitAnd: {
             if (Node::shouldSpeculateBigInt(node->child1().node(), node->child2().node())) {
                 fixEdge<BigIntUse>(node->child1());
                 fixEdge<BigIntUse>(node->child2());
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
 
@@ -229,8 +231,7 @@ private:
                 fixEdge<UntypedUse>(node->child2());
                 break;
             }
-
-            // In such case, we need to fallback to ArithBitOp
+            
             switch (op) {
             case ValueBitXor:
                 node->setOp(ArithBitXor);
@@ -240,6 +241,9 @@ private:
                 break;
             case ValueBitAnd:
                 node->setOp(ArithBitAnd);
+                break;
+            case ValueBitLShift:
+                node->setOp(ArithBitLShift);
                 break;
             default:
                 DFG_CRASH(m_graph, node, "Unexpected node during ValueBit operation fixup");
@@ -277,6 +281,7 @@ private:
             break;
         }
 
+        case ArithBitLShift: 
         case ArithBitXor:
         case ArithBitOr:
         case ArithBitAnd: {
@@ -286,7 +291,6 @@ private:
         }
 
         case BitRShift:
-        case BitLShift:
         case BitURShift: {
             if (Node::shouldSpeculateUntypedForBitOps(node->child1().node(), node->child2().node())) {
                 fixEdge<UntypedUse>(node->child1());

@@ -3861,6 +3861,34 @@ void SpeculativeJIT::emitUntypedRightShiftBitOp(Node* node)
     return;
 }
 
+void SpeculativeJIT::compileValueLShiftOp(Node* node)
+{
+    Edge& leftChild = node->child1();
+    Edge& rightChild = node->child2();
+
+    if (node->binaryUseKind() == BigIntUse) {
+        SpeculateCellOperand left(this, leftChild);
+        SpeculateCellOperand right(this, rightChild);
+        GPRReg leftGPR = left.gpr();
+        GPRReg rightGPR = right.gpr();
+
+        speculateBigInt(leftChild, leftGPR);
+        speculateBigInt(rightChild, rightGPR);
+
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+
+        callOperation(operationBitLShiftBigInt, resultGPR, leftGPR, rightGPR);
+        m_jit.exceptionCheck();
+        cellResult(resultGPR, node);
+        return;
+    }
+
+    ASSERT(leftChild.useKind() == UntypedUse && rightChild.useKind() == UntypedUse);
+    emitUntypedBitOp<JITLeftShiftGenerator, operationValueBitLShift>(node);
+}
+
 void SpeculativeJIT::compileShiftOp(Node* node)
 {
     NodeType op = node->op();
@@ -3869,9 +3897,6 @@ void SpeculativeJIT::compileShiftOp(Node* node)
 
     if (leftChild.useKind() == UntypedUse || rightChild.useKind() == UntypedUse) {
         switch (op) {
-        case BitLShift:
-            emitUntypedBitOp<JITLeftShiftGenerator, operationValueBitLShift>(node);
-            return;
         case BitRShift:
         case BitURShift:
             emitUntypedRightShiftBitOp(node);

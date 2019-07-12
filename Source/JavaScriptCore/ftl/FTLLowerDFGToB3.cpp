@@ -853,8 +853,11 @@ private:
         case BitRShift:
             compileBitRShift();
             break;
-        case BitLShift:
-            compileBitLShift();
+        case ArithBitLShift:
+            compileArithBitLShift();
+            break;
+        case ValueBitLShift:
+            compileValueBitLShift();
             break;
         case BitURShift:
             compileBitURShift();
@@ -3184,17 +3187,28 @@ private:
             m_out.bitAnd(lowInt32(m_node->child2()), m_out.constInt32(31))));
     }
     
-    void compileBitLShift()
+    void compileArithBitLShift()
     {
-        if (m_node->isBinaryUseKind(UntypedUse)) {
-            emitBinaryBitOpSnippet<JITLeftShiftGenerator>(operationValueBitLShift);
-            return;
-        }
         setInt32(m_out.shl(
             lowInt32(m_node->child1()),
             m_out.bitAnd(lowInt32(m_node->child2()), m_out.constInt32(31))));
     }
     
+    void compileValueBitLShift()
+    {
+        if (m_node->isBinaryUseKind(BigIntUse)) {
+            LValue left = lowBigInt(m_node->child1());
+            LValue right = lowBigInt(m_node->child2());
+            
+            LValue result = vmCall(pointerType(), m_out.operation(operationBitLShiftBigInt), m_callFrame, left, right);
+            setJSValue(result);
+            return;
+        }
+
+        ASSERT(m_node->isBinaryUseKind(UntypedUse));
+        emitBinaryBitOpSnippet<JITLeftShiftGenerator>(operationValueBitLShift);
+    }
+
     void compileBitURShift()
     {
         if (m_node->isBinaryUseKind(UntypedUse)) {

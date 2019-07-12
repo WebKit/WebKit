@@ -176,6 +176,7 @@ JSCell* JIT_OPERATION operationPowBigInt(ExecState*, JSCell* op1, JSCell* op2) W
 JSCell* JIT_OPERATION operationBitAndBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationBitNotBigInt(ExecState*, JSCell* op1) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationBitOrBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationBitLShiftBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationAddBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationBitXorBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 size_t JIT_OPERATION operationSameValue(ExecState*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;

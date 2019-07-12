@@ -179,6 +179,22 @@ private:
             break;
         }
 
+        case ValueBitLShift: {
+            SpeculatedType left = node->child1()->prediction();
+            SpeculatedType right = node->child2()->prediction();
+
+            if (left && right) {
+                if (isBigIntSpeculation(left) && isBigIntSpeculation(right))
+                    changed |= mergePrediction(SpecBigInt);
+                else if (isFullNumberOrBooleanSpeculationExpectingDefined(left) && isFullNumberOrBooleanSpeculationExpectingDefined(right))
+                    changed |= mergePrediction(SpecInt32Only);
+                else
+                    changed |= mergePrediction(node->getHeapPrediction());
+            }
+
+            break;
+        }
+
         case ValueAdd: {
             SpeculatedType left = node->child1()->prediction();
             SpeculatedType right = node->child2()->prediction();
@@ -768,7 +784,7 @@ private:
         case ArithBitOr:
         case ArithBitXor:
         case BitRShift:
-        case BitLShift:
+        case ArithBitLShift:
         case BitURShift:
         case ArithIMul:
         case ArithClz32: {
@@ -1137,6 +1153,7 @@ private:
         case ValueDiv:
         case ValueMod:
         case ValuePow:
+        case ValueBitLShift:
         case ArithAdd:
         case ArithSub:
         case ArithNegate:

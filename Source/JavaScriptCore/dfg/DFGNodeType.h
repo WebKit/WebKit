@@ -121,7 +121,8 @@ namespace JSC { namespace DFG {
     macro(ArithBitOr, NodeResultInt32) \
     macro(ValueBitXor, NodeResultJS | NodeMustGenerate) \
     macro(ArithBitXor, NodeResultInt32) \
-    macro(BitLShift, NodeResultInt32) \
+    macro(ArithBitLShift, NodeResultInt32) \
+    macro(ValueBitLShift, NodeResultJS | NodeMustGenerate) \
     macro(BitRShift, NodeResultInt32) \
     macro(BitURShift, NodeResultInt32) \
     /* Bitwise operators call ToInt32 on their operands. */\

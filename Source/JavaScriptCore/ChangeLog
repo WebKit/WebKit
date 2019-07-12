@@ -1,3 +1,112 @@
+2019-07-12  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add ValueBitLShift into DFG
+        https://bugs.webkit.org/show_bug.cgi?id=192664
+
+        Reviewed by Saam Barati.
+
+        This patch is splitting the `BitLShift` into `ArithBitLShift` and
+        `ValueBitLShift` to handle BigInt speculation more efficiently during
+        DFG and FTL layers. Following the same approach of other `ValueBitOps`,
+        `ValueBitLShift` handles Untyped and BigInt speculations, while
+        `ArithBitLShift` handles number and boolean operands and always results into
+        Int32. 
+
+        * bytecode/BytecodeList.rb:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/Opcode.h:
+        * dfg/DFGAbstractInterpreter.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::handleConstantBinaryBitwiseOp):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
+        We moved `BitLShift` constant fold rules to a new method
+        `handleConstantBinaryBitwiseOp` to be reused by `ArithBitLShift` and
+        `ValueBitLShift`. This also enables support of constant folding on other
+        bitwise operations like `ValueBitAnd`, `ValueBitOr` and `ValueBitXor`, when
+        their binary use kind is UntypedUse. Such cases can happen on those
+        nodes because fixup phase is conservative.
+
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::isWithinPowerOfTwo):
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicGetter):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
+        We parse `op_lshift` as `ArithBitLShift` when its operands are numbers.
+        Otherwise, we fallback to `ValueBitLShift` and rely on fixup phase to
+        convert `ValueBitLShift` into `ArithBitLShift` when possible.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
+        `ArithBitLShift` has the same clobberize rules as former `BitLShift`.
+        `ValueBitLShift` only clobberize world when it is UntypedUse.
+
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+
+        `ValueBitLShift` can GC when `BigIntUse` because it allocates new
+        JSBigInts to perform this operation. It also can GC on UntypedUse
+        because of observable user code.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+        `ValueBitLShift` and `ArithBitLShift` has the same fixup rules of
+        other binary bitwise operations. In the case of `ValueBitLShift`
+        We check if we should speculate on BigInt or Untyped and fallback to
+        `ArithBitLShift` when both cheks fail.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+
+        We updated `operationValueBitLShift` to handle BigInt cases. Also, we
+        added `operationBitLShiftBigInt` that is used when we compile
+        `ValueBitLValueBitLShift(BigIntUse)`.
+
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+
+        `ValueBitLShift`'s prediction propagation rules differs from other
+        bitwise operations, because using only heap prediction for this node causes
+        significant performance regression on Octane's zlib and mandreel.
+        The reason is because of cases where a function is compiled but the
+        instruction `op_lshift` was never executed before. If we use
+        `getPrediction()` we will emit a `ForceOSRExit`, resulting in more OSR
+        than desired. To solve such issue, we are then using
+        `getPredictionWithoutOSR()` and falling back to `getHeapPrediction()`
+        only on cases where we can't rely on node's input types.
+
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueLShiftOp):
+        (JSC::DFG::SpeculativeJIT::compileShiftOp):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::shiftOp):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithBitLShift):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitLShift):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBitLShift): Deleted.
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
 2019-07-12  Keith Miller  <keith_miller@apple.com>
 
         getIndexQuickly should be const

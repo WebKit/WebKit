@@ -545,6 +545,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpBitor, profile)
         LINK(OpBitnot, profile)
         LINK(OpBitxor, profile)
+        LINK(OpLshift, profile)
 
         LINK(OpGetById, profile)
 

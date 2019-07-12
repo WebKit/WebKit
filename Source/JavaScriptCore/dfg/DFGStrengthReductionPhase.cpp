@@ -92,7 +92,7 @@ private:
             handleCommutativity();
             break;
             
-        case BitLShift:
+        case ArithBitLShift:
         case BitRShift:
         case BitURShift:
             if (m_node->child1().useKind() != UntypedUse && m_node->child2()->isInt32Constant() && !(m_node->child2()->asInt32() & 0x1f)) {

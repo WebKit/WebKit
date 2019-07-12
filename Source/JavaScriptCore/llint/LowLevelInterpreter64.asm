@@ -1146,7 +1146,7 @@ macro bitOpProfiled(opcodeName, opcodeStruct, operation)
     commonBitOp(llintOpWithProfile, opcodeName, opcodeStruct, operation)
 end
 
-bitOp(lshift, OpLshift,
+bitOpProfiled(lshift, OpLshift,
     macro (left, right) lshifti left, right end)
 
 

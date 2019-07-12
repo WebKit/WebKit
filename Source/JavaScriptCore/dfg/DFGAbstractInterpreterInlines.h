@@ -234,6 +234,51 @@ inline ToThisResult isToThisAnIdentity(VM& vm, bool isStrictMode, AbstractValue&
 }
 
 template<typename AbstractStateType>
+bool AbstractInterpreter<AbstractStateType>::handleConstantBinaryBitwiseOp(Node* node)
+{
+    JSValue left = forNode(node->child1()).value();
+    JSValue right = forNode(node->child2()).value();
+    if (left && right && left.isInt32() && right.isInt32()) {
+        int32_t a = left.asInt32();
+        int32_t b = right.asInt32();
+        if (node->isBinaryUseKind(UntypedUse))
+            didFoldClobberWorld();
+        NodeType op = node->op();
+        switch (op) {
+        case ValueBitAnd:
+        case ArithBitAnd:
+            setConstant(node, JSValue(a & b));
+            break;
+        case ValueBitOr:
+        case ArithBitOr:
+            setConstant(node, JSValue(a | b));
+            break;
+        case ValueBitXor:
+        case ArithBitXor:
+            setConstant(node, JSValue(a ^ b));
+            break;
+        case BitRShift:
+            setConstant(node, JSValue(a >> (static_cast<uint32_t>(b) & 0x1f)));
+            break;
+        case ValueBitLShift:
+        case ArithBitLShift:
+            setConstant(node, JSValue(a << (static_cast<uint32_t>(b) & 0x1f)));
+            break;
+        case BitURShift:
+            setConstant(node, JSValue(static_cast<int32_t>(static_cast<uint32_t>(a) >> (static_cast<uint32_t>(b) & 0x1f))));
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+template<typename AbstractStateType>
 bool AbstractInterpreter<AbstractStateType>::handleConstantDivOp(Node* node)
 {
     JSValue left = forNode(node->child1()).value();
@@ -463,6 +508,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ValueBitXor:
     case ValueBitAnd:
     case ValueBitOr:
+    case ValueBitLShift: {
+        if (handleConstantBinaryBitwiseOp(node))
+            break;
+
         if (node->binaryUseKind() == BigIntUse)
             setTypeForNode(node, SpecBigInt);
         else {
@@ -470,12 +519,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setTypeForNode(node, SpecInt32Only | SpecBigInt);
         }
         break;
+    }
             
     case ArithBitAnd:
     case ArithBitOr:
     case ArithBitXor:
     case BitRShift:
-    case BitLShift:
+    case ArithBitLShift:
     case BitURShift: {
         if (node->child1().useKind() == UntypedUse || node->child2().useKind() == UntypedUse) {
             clobberWorld();
@@ -483,36 +533,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
 
-        JSValue left = forNode(node->child1()).value();
-        JSValue right = forNode(node->child2()).value();
-        if (left && right && left.isInt32() && right.isInt32()) {
-            int32_t a = left.asInt32();
-            int32_t b = right.asInt32();
-            switch (node->op()) {
-            case ArithBitAnd:
-                setConstant(node, JSValue(a & b));
-                break;
-            case ArithBitOr:
-                setConstant(node, JSValue(a | b));
-                break;
-            case ArithBitXor:
-                setConstant(node, JSValue(a ^ b));
-                break;
-            case BitRShift:
-                setConstant(node, JSValue(a >> (static_cast<uint32_t>(b) & 0x1f)));
-                break;
-            case BitLShift:
-                setConstant(node, JSValue(a << (static_cast<uint32_t>(b) & 0x1f)));
-                break;
-            case BitURShift:
-                setConstant(node, JSValue(static_cast<int32_t>(static_cast<uint32_t>(a) >> (static_cast<uint32_t>(b) & 0x1f))));
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-                break;
-            }
+        if (handleConstantBinaryBitwiseOp(node))
             break;
-        }
         
         if (node->op() == ArithBitAnd
             && (isBoolInt32Speculation(forNode(node->child1()).m_type) ||
