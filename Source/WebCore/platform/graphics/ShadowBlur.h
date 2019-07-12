@@ -83,7 +83,7 @@ public:
 private:
     void updateShadowBlurValues();
 
-    void drawShadowBuffer(GraphicsContext&);
+    void drawShadowBuffer(GraphicsContext&, ImageBuffer&, const FloatPoint&, const FloatSize&);
 
     void adjustBlurRadius(const AffineTransform&);
 
@@ -92,20 +92,27 @@ private:
         InnerShadow
     };
 
-    IntSize calculateLayerBoundingRect(const AffineTransform&, const FloatRect& layerArea, const IntRect& clipRect);
+    struct LayerImageProperties {
+        FloatSize shadowedResultSize; // Size of the result of shadowing which is same as shadowedRect + blurred edges.
+        FloatPoint layerOrigin; // Top-left corner of the (possibly clipped) bounding rect to draw the shadow to.
+        FloatSize layerSize; // Size of layerImage pixels that need blurring.
+        FloatSize layerContextTranslation; // Translation to apply to layerContext for the shadow to be correctly clipped.
+    };
+
+    Optional<ShadowBlur::LayerImageProperties> calculateLayerBoundingRect(const AffineTransform&, const FloatRect& layerArea, const IntRect& clipRect);
     IntSize templateSize(const IntSize& blurredEdgeSize, const FloatRoundedRect::Radii&) const;
 
-    void blurShadowBuffer(const IntSize& templateSize);
-    void blurAndColorShadowBuffer(const IntSize& templateSize);
+    void blurShadowBuffer(ImageBuffer& layerImage, const IntSize& templateSize);
+    void blurAndColorShadowBuffer(ImageBuffer& layerImage, const IntSize& templateSize);
 
-    void drawInsetShadowWithoutTiling(const AffineTransform&, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const IntSize& layerSize, const DrawBufferCallback&);
+    void drawInsetShadowWithoutTiling(const AffineTransform&, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const LayerImageProperties&, const DrawBufferCallback&);
     void drawInsetShadowWithTiling(const AffineTransform&, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize, const DrawImageCallback&, const FillRectWithHoleCallback&);
 
-    void drawRectShadowWithoutTiling(const AffineTransform&, const FloatRoundedRect& shadowedRect, const IntSize& layerSize, const DrawBufferCallback&);
-    void drawRectShadowWithTiling(const AffineTransform&, const FloatRoundedRect& shadowedRect, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize, const DrawImageCallback&, const FillRectCallback&);
+    void drawRectShadowWithoutTiling(const AffineTransform&, const FloatRoundedRect& shadowedRect, const LayerImageProperties&, const DrawBufferCallback&);
+    void drawRectShadowWithTiling(const AffineTransform&, const FloatRoundedRect& shadowedRect, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize, const DrawImageCallback&, const FillRectCallback&, const LayerImageProperties&);
 
-    void drawLayerPiecesAndFillCenter(const FloatRect& shadowBounds, const FloatRoundedRect::Radii&, const IntSize& roundedRadius, const IntSize& templateSize, const DrawImageCallback&, const FillRectCallback&);
-    void drawLayerPieces(const FloatRect& shadowBounds, const FloatRoundedRect::Radii&, const IntSize& roundedRadius, const IntSize& templateSize, const DrawImageCallback&);
+    void drawLayerPiecesAndFillCenter(ImageBuffer& layerImage, const FloatRect& shadowBounds, const FloatRoundedRect::Radii&, const IntSize& roundedRadius, const IntSize& templateSize, const DrawImageCallback&, const FillRectCallback&);
+    void drawLayerPieces(ImageBuffer& layerImage, const FloatRect& shadowBounds, const FloatRoundedRect::Radii&, const IntSize& roundedRadius, const IntSize& templateSize, const DrawImageCallback&);
 
     IntSize blurredEdgeSize() const;
 
@@ -114,13 +121,6 @@ private:
     Color m_color;
     FloatSize m_blurRadius;
     FloatSize m_offset;
-
-    ImageBuffer* m_layerImage { nullptr }; // Buffer to where the temporary shadow will be drawn to.
-
-    FloatSize m_shadowedResultSize; // Size of the result of shadowing which is same as shadowedRect + blurred edges.
-    FloatPoint m_layerOrigin; // Top-left corner of the (possibly clipped) bounding rect to draw the shadow to.
-    FloatSize m_layerSize; // Size of m_layerImage pixels that need blurring.
-    FloatSize m_layerContextTranslation; // Translation to apply to m_layerContext for the shadow to be correctly clipped.
 
     bool m_shadowsIgnoreTransforms { false };
 };

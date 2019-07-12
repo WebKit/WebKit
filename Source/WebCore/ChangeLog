@@ -1,3 +1,34 @@
+2019-07-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Refactor ShadowBlur: remove some class variables and use function parameters instead.
+        https://bugs.webkit.org/show_bug.cgi?id=199511
+
+        Reviewed by Said Abou-Hallawa.
+
+        On the ShadowBlur class it is confusing to know if the status of the m_layerImage buffer or the
+        values calculated by calculateLayerBoundingRect() are valid between the different function calls.
+
+        To avoid this problem, pass this values as function parameters instead of storing them in the class.
+
+        No new tests, no intended behaviour change.
+
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::ShadowBlur):
+        (WebCore::ShadowBlur::calculateLayerBoundingRect):
+        (WebCore::ShadowBlur::drawShadowBuffer):
+        (WebCore::ShadowBlur::drawRectShadow): Pass the parameters from the callback.
+        (WebCore::ShadowBlur::drawInsetShadow): Ditto.
+        (WebCore::ShadowBlur::drawRectShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawRectShadowWithTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithTiling):
+        (WebCore::ShadowBlur::drawLayerPieces):
+        (WebCore::ShadowBlur::drawLayerPiecesAndFillCenter):
+        (WebCore::ShadowBlur::blurShadowBuffer):
+        (WebCore::ShadowBlur::blurAndColorShadowBuffer):
+        (WebCore::ShadowBlur::drawShadowLayer):
+        * platform/graphics/ShadowBlur.h: Use a struct to pass the values calculated on calculateLayerBoundingRect().
+
 2019-07-12  Adrian Perez de Castro  <aperez@igalia.com>
 
         [ATK] Avoid unneeded call to to core(selection) in listObjectForSelection()
