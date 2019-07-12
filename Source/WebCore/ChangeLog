@@ -1,3 +1,15 @@
+2019-07-11  Chris Dumez  <cdumez@apple.com>
+
+        Fix non-thread safe use of makeWeakPtr() under MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::processInputNotify()
+        https://bugs.webkit.org/show_bug.cgi?id=199727
+
+        Reviewed by Eric Carlson.
+
+        Stop calling makeWeakPtr() on a main thread object from a background thread.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::processInputNotify):
+
 2019-07-11  Youenn Fablet  <youenn@apple.com>
 
         Register a MediaStreamTrack as media producer only if it is a capture track
