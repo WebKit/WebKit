@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		5C9D921422D7DA02008E9266 /* Generate Unified Sources */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5C9D921922D7DA02008E9266 /* Build configuration list for PBXAggregateTarget "Generate Unified Sources" */;
+			buildPhases = (
+				5C9D921C22D7DA33008E9266 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Generate Unified Sources";
+			productName = All;
+		};
 		7C83E02B1D0A5E1000FEBCF3 /* All */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 7C83E02C1D0A5E1000FEBCF3 /* Build configuration list for PBXAggregateTarget "All" */;
@@ -42,7 +53,6 @@
 		0E404A8C2166DE0A008271BA /* InjectedBundleNodeHandleIsSelectElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E404A8A2166DDF8008271BA /* InjectedBundleNodeHandleIsSelectElement.mm */; };
 		0EBBCC661FFF9E0C00FA42AB /* pop-up-check.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0EBBCC651FFF9DCE00FA42AB /* pop-up-check.html */; };
 		0F139E771A423A5B00F590F5 /* WeakObjCPtr.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E751A423A5300F590F5 /* WeakObjCPtr.mm */; };
-		0F139E781A423A6B00F590F5 /* PlatformUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */; };
 		0F139E791A42457000F590F5 /* PlatformUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */; };
 		0F2C20B81DCD545000542D9E /* Time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2C20B71DCD544800542D9E /* Time.cpp */; };
 		0F30CB5C1FCE1796004B5323 /* ConcurrentPtrHashSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F30CB5B1FCE1792004B5323 /* ConcurrentPtrHashSet.cpp */; };
@@ -94,7 +104,6 @@
 		2D00065F1C1F589A0088E6A7 /* WKPDFViewResizeCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D00065D1C1F58940088E6A7 /* WKPDFViewResizeCrash.mm */; };
 		2D08E9372267D0F4002518DA /* ReparentWebViewTimeout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D08E9362267D0F3002518DA /* ReparentWebViewTimeout.mm */; };
 		2D1646E21D1862CD00015A1A /* DeferredViewInWindowStateChange.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D1646E11D1862CD00015A1A /* DeferredViewInWindowStateChange.mm */; };
-		2D1C04A71D76298B000A6816 /* TestNavigationDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D1C04A61D76298B000A6816 /* TestNavigationDelegate.mm */; };
 		2D21FE591F04642900B58E7D /* WKPDFViewStablePresentationUpdateCallback.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D21FE581F04642800B58E7D /* WKPDFViewStablePresentationUpdateCallback.mm */; };
 		2D2BEB2D22324E5F005544CA /* RequestTextInputContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2BEB2C22324E5F005544CA /* RequestTextInputContext.mm */; };
 		2D2D13B3229F408B005068AF /* DeviceManagementRestrictions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2D13B2229F408B005068AF /* DeviceManagementRestrictions.mm */; };
@@ -144,7 +153,6 @@
 		2EFF06C51D8867760004BB30 /* change-video-source-on-click.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EFF06C41D8867700004BB30 /* change-video-source-on-click.html */; };
 		2EFF06C71D886A580004BB30 /* change-video-source-on-end.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EFF06C61D886A560004BB30 /* change-video-source-on-end.html */; };
 		2EFF06CD1D8A429A0004BB30 /* input-field-in-scrollable-document.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EFF06CC1D8A42910004BB30 /* input-field-in-scrollable-document.html */; };
-		2EFF06D41D8AEDBB0004BB30 /* TestWKWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF06D31D8AEDBB0004BB30 /* TestWKWebView.mm */; };
 		2EFF06D71D8AF34A0004BB30 /* WKWebViewCandidateTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */; };
 		313C3A0221E567C300DBA86E /* SystemPreviewBlobNaming.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 313C3A0121E5677A00DBA86E /* SystemPreviewBlobNaming.html */; };
 		315118101DB1AE4000176304 /* ExtendedColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3151180F1DB1ADD500176304 /* ExtendedColor.cpp */; };
@@ -332,7 +340,17 @@
 		5C838F7F1DB04F900082858F /* LoadInvalidURLRequest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57901FAE1CAF137100ED64F9 /* LoadInvalidURLRequest.mm */; };
 		5C8BC799218CF44700813886 /* NetworkProcess.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C8BC798218CF3E900813886 /* NetworkProcess.mm */; };
 		5C973F5C1F58EF8B00359C27 /* WebGLPolicy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C973F5B1F58EF0A00359C27 /* WebGLPolicy.mm */; };
-		5C9B548E223C4CBE00B150C4 /* TCPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C9B548C223C4BF500B150C4 /* TCPServer.cpp */; };
+		5C9D922C22D7DE12008E9266 /* UnifiedSource1-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D922922D7DE01008E9266 /* UnifiedSource1-mm.mm */; };
+		5C9D922D22D7DE19008E9266 /* UnifiedSource2-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D922B22D7DE01008E9266 /* UnifiedSource2-mm.mm */; };
+		5C9D922E22D7DE1C008E9266 /* UnifiedSource1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D922A22D7DE01008E9266 /* UnifiedSource1.cpp */; };
+		5C9D922F22D7DE1F008E9266 /* UnifiedSource2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D922822D7DE00008E9266 /* UnifiedSource2.cpp */; };
+		5C9D923122D7E0EB008E9266 /* ClassMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A530E21B8976900DBB99C /* ClassMethodSwizzler.mm */; };
+		5C9D923822D7E2B0008E9266 /* UnifiedSource3-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D923422D7E235008E9266 /* UnifiedSource3-mm.mm */; };
+		5C9D923922D7E2B0008E9266 /* UnifiedSource3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D923622D7E235008E9266 /* UnifiedSource3.cpp */; };
+		5C9D923A22D7E2B0008E9266 /* UnifiedSource4-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D923722D7E235008E9266 /* UnifiedSource4-mm.mm */; };
+		5C9D923B22D7E2B0008E9266 /* UnifiedSource4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D923222D7E235008E9266 /* UnifiedSource4.cpp */; };
+		5C9D923C22D7E2B0008E9266 /* UnifiedSource5-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D923522D7E235008E9266 /* UnifiedSource5-mm.mm */; };
+		5C9D923D22D7E2B0008E9266 /* UnifiedSource5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D923322D7E235008E9266 /* UnifiedSource5.cpp */; };
 		5C9E56851DF9145400C9EE33 /* WebsitePolicies.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9E56841DF9143D00C9EE33 /* WebsitePolicies.mm */; };
 		5C9E56871DF914AE00C9EE33 /* contentBlockerCheck.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C9E56861DF9148E00C9EE33 /* contentBlockerCheck.html */; };
 		5C9E59411D3EB5AC00E3C62E /* ApplicationCache.db in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C9E593E1D3EB1DE00E3C62E /* ApplicationCache.db */; };
@@ -500,9 +518,6 @@
 		7CCE7EA91A411A1D00447C4C /* TestBrowsingContextLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29AB8AA2164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm */; };
 		7CCE7EAB1A411A2400447C4C /* WebKitAgnosticTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = C08587BD13FE956C001EF4E5 /* WebKitAgnosticTest.mm */; };
 		7CCE7EAC1A411A3400447C4C /* Counters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6BBD8B19CEA63000C1F5E0 /* Counters.cpp */; };
-		7CCE7EAD1A411A3400447C4C /* JavaScriptTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0ADBE7A12FCA4D000D2C129 /* JavaScriptTest.cpp */; };
-		7CCE7EAE1A411A3400447C4C /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };
-		7CCE7EAF1A411A3800447C4C /* PlatformUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */; };
 		7CCE7EB21A411A5100447C4C /* MemoryCacheAddImageToCacheIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */; };
 		7CCE7EB31A411A7E00447C4C /* AcceptsFirstMouse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 379028B514FABD92007E6B43 /* AcceptsFirstMouse.mm */; };
 		7CCE7EB41A411A7E00447C4C /* AttributedString.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55F119F1516834F00915916 /* AttributedString.mm */; };
@@ -715,10 +730,8 @@
 		A1409AD91E7254D4004949D9 /* password-protected.pages in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1409AD81E7254AC004949D9 /* password-protected.pages */; };
 		A14AAB631E78D7DE00C1ADC2 /* WKPDFView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14AAB611E78D7DE00C1ADC2 /* WKPDFView.mm */; };
 		A14AAB651E78DC5400C1ADC2 /* encrypted.pdf in Copy Resources */ = {isa = PBXBuildFile; fileRef = A14AAB641E78DC3F00C1ADC2 /* encrypted.pdf */; };
-		A14FC5851B89739100D107EB /* WKWebViewConfigurationExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC5831B89739100D107EB /* WKWebViewConfigurationExtras.mm */; };
 		A14FC5881B8991BF00D107EB /* ContentFiltering.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC5861B8991B600D107EB /* ContentFiltering.mm */; };
 		A14FC58B1B89927100D107EB /* ContentFilteringPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC5891B89927100D107EB /* ContentFilteringPlugIn.mm */; };
-		A14FC5901B8AE36F00D107EB /* TestProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC58E1B8AE36500D107EB /* TestProtocol.mm */; };
 		A155022A1E05020B00A24C57 /* DuplicateCompletionHandlerCalls.mm in Sources */ = {isa = PBXBuildFile; fileRef = A15502281E05020B00A24C57 /* DuplicateCompletionHandlerCalls.mm */; };
 		A155022C1E050D0300A24C57 /* duplicate-completion-handler-calls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A155022B1E050BC500A24C57 /* duplicate-completion-handler-calls.html */; };
 		A16F66BA1C40EB4F00BD4D24 /* ContentFiltering.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A16F66B91C40EA2000BD4D24 /* ContentFiltering.html */; };
@@ -916,13 +929,11 @@
 		F442851D2140DF2900CCDA22 /* NSFontPanelTesting.mm in Sources */ = {isa = PBXBuildFile; fileRef = F442851C2140DF2900CCDA22 /* NSFontPanelTesting.mm */; };
 		F4451C761EB8FD890020C5DA /* two-paragraph-contenteditable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4451C751EB8FD7C0020C5DA /* two-paragraph-contenteditable.html */; };
 		F44A531121B8990300DBB99C /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531021B8976900DBB99C /* InstanceMethodSwizzler.mm */; };
-		F44A531221B8990A00DBB99C /* ClassMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A530E21B8976900DBB99C /* ClassMethodSwizzler.mm */; };
 		F44C79FF20F9E8710014478C /* ParserYieldTokenTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44C79FE20F9E8710014478C /* ParserYieldTokenTests.mm */; };
 		F44C7A0020F9EEBF0014478C /* ParserYieldTokenPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44C79FB20F9E50C0014478C /* ParserYieldTokenPlugIn.mm */; };
 		F44C7A0520FAAE3C0014478C /* text-with-deferred-script.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F44C7A0420FAAE320014478C /* text-with-deferred-script.html */; };
 		F44D06451F395C26001A0E29 /* editor-state-test-harness.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F44D06441F395C0D001A0E29 /* editor-state-test-harness.html */; };
 		F44D06471F39627A001A0E29 /* EditorStateTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44D06461F395C4D001A0E29 /* EditorStateTests.mm */; };
-		F44D064A1F3962F2001A0E29 /* EditingTestHarness.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44D06491F3962E3001A0E29 /* EditingTestHarness.mm */; };
 		F45033F5206BEC95009351CE /* TextAutosizingBoost.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45033F4206BEC95009351CE /* TextAutosizingBoost.mm */; };
 		F4512E131F60C44600BB369E /* DataTransferItem-getAsEntry.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4512E121F60C43400BB369E /* DataTransferItem-getAsEntry.html */; };
 		F4517B672054C49500C26721 /* TestWKWebViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4517B662054C49500C26721 /* TestWKWebViewController.mm */; };
@@ -992,6 +1003,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5C9D922122D7DC84008E9266 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5C9D921422D7DA02008E9266;
+			remoteInfo = "Generate Unified Sources";
+		};
 		7C83E0241D0A5B2500FEBCF3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -1791,6 +1809,18 @@
 		5C973F5B1F58EF0A00359C27 /* WebGLPolicy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGLPolicy.mm; sourceTree = "<group>"; };
 		5C9B548C223C4BF500B150C4 /* TCPServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCPServer.cpp; sourceTree = "<group>"; };
 		5C9B548D223C4BF500B150C4 /* TCPServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCPServer.h; sourceTree = "<group>"; };
+		5C9D921D22D7DBF7008E9266 /* Sources.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sources.txt; sourceTree = "<group>"; };
+		5C9D921E22D7DBF8008E9266 /* SourcesCocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourcesCocoa.txt; sourceTree = "<group>"; };
+		5C9D922822D7DE00008E9266 /* UnifiedSource2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource2.cpp; sourceTree = "<group>"; };
+		5C9D922922D7DE01008E9266 /* UnifiedSource1-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource1-mm.mm"; sourceTree = "<group>"; };
+		5C9D922A22D7DE01008E9266 /* UnifiedSource1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource1.cpp; sourceTree = "<group>"; };
+		5C9D922B22D7DE01008E9266 /* UnifiedSource2-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource2-mm.mm"; sourceTree = "<group>"; };
+		5C9D923222D7E235008E9266 /* UnifiedSource4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource4.cpp; sourceTree = "<group>"; };
+		5C9D923322D7E235008E9266 /* UnifiedSource5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource5.cpp; sourceTree = "<group>"; };
+		5C9D923422D7E235008E9266 /* UnifiedSource3-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource3-mm.mm"; sourceTree = "<group>"; };
+		5C9D923522D7E235008E9266 /* UnifiedSource5-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource5-mm.mm"; sourceTree = "<group>"; };
+		5C9D923622D7E235008E9266 /* UnifiedSource3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource3.cpp; sourceTree = "<group>"; };
+		5C9D923722D7E235008E9266 /* UnifiedSource4-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource4-mm.mm"; sourceTree = "<group>"; };
 		5C9E56841DF9143D00C9EE33 /* WebsitePolicies.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebsitePolicies.mm; sourceTree = "<group>"; };
 		5C9E56861DF9148E00C9EE33 /* contentBlockerCheck.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = contentBlockerCheck.html; sourceTree = "<group>"; };
 		5C9E593E1D3EB1DE00E3C62E /* ApplicationCache.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = ApplicationCache.db; sourceTree = "<group>"; };
@@ -2494,6 +2524,9 @@
 		08FB7794FE84155DC02AAC07 /* TestWebKitAPI */ = {
 			isa = PBXGroup;
 			children = (
+				5C9D922622D7DD7B008E9266 /* Derived Sources */,
+				5C9D921D22D7DBF7008E9266 /* Sources.txt */,
+				5C9D921E22D7DBF8008E9266 /* SourcesCocoa.txt */,
 				08FB7795FE84155DC02AAC07 /* Source */,
 				BCB9EB66112366D800A137E0 /* Tests */,
 				BC90957D12554CEA00083756 /* Configurations */,
@@ -2910,6 +2943,32 @@
 				53FCDE6A229EFFB900598ECF /* IsoHeap.cpp */,
 			);
 			path = bmalloc;
+			sourceTree = "<group>";
+		};
+		5C9D922622D7DD7B008E9266 /* Derived Sources */ = {
+			isa = PBXGroup;
+			children = (
+				5C9D922722D7DD8B008E9266 /* unified-sources */,
+			);
+			name = "Derived Sources";
+			path = DerivedSources/TestWebKitAPI;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5C9D922722D7DD8B008E9266 /* unified-sources */ = {
+			isa = PBXGroup;
+			children = (
+				5C9D922922D7DE01008E9266 /* UnifiedSource1-mm.mm */,
+				5C9D922A22D7DE01008E9266 /* UnifiedSource1.cpp */,
+				5C9D922B22D7DE01008E9266 /* UnifiedSource2-mm.mm */,
+				5C9D922822D7DE00008E9266 /* UnifiedSource2.cpp */,
+				5C9D923422D7E235008E9266 /* UnifiedSource3-mm.mm */,
+				5C9D923622D7E235008E9266 /* UnifiedSource3.cpp */,
+				5C9D923722D7E235008E9266 /* UnifiedSource4-mm.mm */,
+				5C9D923222D7E235008E9266 /* UnifiedSource4.cpp */,
+				5C9D923522D7E235008E9266 /* UnifiedSource5-mm.mm */,
+				5C9D923322D7E235008E9266 /* UnifiedSource5.cpp */,
+			);
+			path = "unified-sources";
 			sourceTree = "<group>";
 		};
 		7560917619259C59009EF06E /* ios */ = {
@@ -3913,6 +3972,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5C9D922222D7DC84008E9266 /* PBXTargetDependency */,
 			);
 			name = TestWebKitAPILibrary;
 			productName = TestWebKitAPILibrary;
@@ -4015,6 +4075,7 @@
 			projectRoot = "";
 			targets = (
 				7C83E02B1D0A5E1000FEBCF3 /* All */,
+				5C9D921422D7DA02008E9266 /* Generate Unified Sources */,
 				7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */,
 				7C83DE951D0A590C00FEBCF3 /* TestWTFLibrary */,
 				8DD76F960486AA7600D96B5E /* TestWebKitAPI */,
@@ -4034,6 +4095,30 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5C9D921C22D7DA33008E9266 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/generate-unified-sources.sh",
+				"$(SRCROOT)/Sources.txt",
+				"$(SRCROOT)/SourcesCocoa.txt",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/UnifiedSources-output.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/generate-unified-sources.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		7C83DE961D0A590C00FEBCF3 /* Sources */ = {
@@ -4175,7 +4260,6 @@
 				57303BC9200824D300355965 /* CBORValueTest.cpp in Sources */,
 				57303BCA20082C0100355965 /* CBORWriterTest.cpp in Sources */,
 				5C23DF0B2246015800F454B6 /* Challenge.mm in Sources */,
-				F44A531221B8990A00DBB99C /* ClassMethodSwizzler.mm in Sources */,
 				7CCE7EE61A411AE600447C4C /* CloseFromWithinCreatePage.cpp in Sources */,
 				7CCE7EB71A411A7E00447C4C /* CloseNewWindowInNavigationPolicyDelegate.mm in Sources */,
 				7CCE7EE51A411AE600447C4C /* CloseThenTerminate.cpp in Sources */,
@@ -4249,7 +4333,6 @@
 				A155022A1E05020B00A24C57 /* DuplicateCompletionHandlerCalls.mm in Sources */,
 				7CCE7EBE1A411A7E00447C4C /* DynamicDeviceScaleFactor.mm in Sources */,
 				5C0BF8921DD599B600B00328 /* EarlyKVOCrash.mm in Sources */,
-				F44D064A1F3962F2001A0E29 /* EditingTestHarness.mm in Sources */,
 				7CCE7EE01A411A9A00447C4C /* EditorCommands.mm in Sources */,
 				F44D06471F39627A001A0E29 /* EditorStateTests.mm in Sources */,
 				7CCE7EBF1A411A7E00447C4C /* ElementAtPointInWebFrame.mm in Sources */,
@@ -4331,7 +4414,6 @@
 				5C0BF8931DD599BD00B00328 /* IsNavigationActionTrusted.mm in Sources */,
 				CD5FF49F2162E943004BD86F /* ISOBox.cpp in Sources */,
 				5C69BDD51F82A7EF000F4F4B /* JavaScriptDuringNavigation.mm in Sources */,
-				7CCE7EAD1A411A3400447C4C /* JavaScriptTest.cpp in Sources */,
 				7CCE7EA51A411A0800447C4C /* JavaScriptTestMac.mm in Sources */,
 				5C0160C121A132460077FA32 /* JITEnabled.mm in Sources */,
 				E35FC7B222B82A7300F32F98 /* JSLockTakesWebThreadLock.mm in Sources */,
@@ -4411,8 +4493,6 @@
 				51D8C1902267B26D00797E40 /* PDFLinkReferrer.mm in Sources */,
 				7C83E0531D0A643A00FEBCF3 /* PendingAPIRequestURL.cpp in Sources */,
 				3FCC4FE51EC4E8520076E37C /* PictureInPictureDelegate.mm in Sources */,
-				7CCE7EAF1A411A3800447C4C /* PlatformUtilities.cpp in Sources */,
-				0F139E781A423A6B00F590F5 /* PlatformUtilitiesCocoa.mm in Sources */,
 				7CCE7EA61A411A0F00447C4C /* PlatformUtilitiesMac.mm in Sources */,
 				7CCE7EA71A411A1300447C4C /* PlatformWebViewMac.mm in Sources */,
 				83BAEE8D1EF4625500DDE894 /* PluginLoadClientPolicies.mm in Sources */,
@@ -4497,7 +4577,6 @@
 				7CCE7EA81A411A1900447C4C /* SyntheticBackingScaleFactorWindow.m in Sources */,
 				1C734B5320788C4800F430EA /* SystemColors.mm in Sources */,
 				2D70059621EDA0C6003463CB /* TabOutOfWebView.mm in Sources */,
-				5C9B548E223C4CBE00B150C4 /* TCPServer.cpp in Sources */,
 				7CCE7F161A411AE600447C4C /* TerminateTwice.cpp in Sources */,
 				7CCE7EA91A411A1D00447C4C /* TestBrowsingContextLoadDelegate.mm in Sources */,
 				5CE7594922A883D200C12409 /* TestContextMenuDriver.mm in Sources */,
@@ -4506,12 +4585,8 @@
 				F4F5BB5221667BAA002D06B9 /* TestFontOptions.mm in Sources */,
 				F45E15762112CE6200307E82 /* TestInputDelegate.mm in Sources */,
 				F45D3891215A7B4B002A2979 /* TestInspectorBar.mm in Sources */,
-				2D1C04A71D76298B000A6816 /* TestNavigationDelegate.mm in Sources */,
-				A14FC5901B8AE36F00D107EB /* TestProtocol.mm in Sources */,
-				7CCE7EAE1A411A3400447C4C /* TestsController.cpp in Sources */,
 				5774AA6821FBBF7800AF2A1B /* TestSOAuthorization.mm in Sources */,
 				F4CD74C920FDB49600DE3794 /* TestURLSchemeHandler.mm in Sources */,
-				2EFF06D41D8AEDBB0004BB30 /* TestWKWebView.mm in Sources */,
 				F4517B672054C49500C26721 /* TestWKWebViewController.mm in Sources */,
 				F45033F5206BEC95009351CE /* TextAutosizingBoost.mm in Sources */,
 				93E6193B1F931B3A00AF245E /* TextCodec.cpp in Sources */,
@@ -4522,6 +4597,16 @@
 				57152B7821DD4E8D000C37CA /* U2fCommandConstructorTest.cpp in Sources */,
 				5CB40B4E1F4B98D3007DC7B9 /* UIDelegate.mm in Sources */,
 				F46849BE1EEF58E400B937FE /* UIPasteboardTests.mm in Sources */,
+				5C9D922E22D7DE1C008E9266 /* UnifiedSource1.cpp in Sources */,
+				5C9D922C22D7DE12008E9266 /* UnifiedSource1-mm.mm in Sources */,
+				5C9D922F22D7DE1F008E9266 /* UnifiedSource2.cpp in Sources */,
+				5C9D922D22D7DE19008E9266 /* UnifiedSource2-mm.mm in Sources */,
+				5C9D923822D7E2B0008E9266 /* UnifiedSource3-mm.mm in Sources */,
+				5C9D923922D7E2B0008E9266 /* UnifiedSource3.cpp in Sources */,
+				5C9D923B22D7E2B0008E9266 /* UnifiedSource4.cpp in Sources */,
+				5C9D923A22D7E2B0008E9266 /* UnifiedSource4-mm.mm in Sources */,
+				5C9D923C22D7E2B0008E9266 /* UnifiedSource5-mm.mm in Sources */,
+				5C9D923D22D7E2B0008E9266 /* UnifiedSource5.cpp in Sources */,
 				5C6E27A7224EEBEA00128736 /* URLCanonicalization.mm in Sources */,
 				E3A1E77F21B25B39008C6007 /* URLParserTextEncoding.cpp in Sources */,
 				7CCE7F271A411AF600447C4C /* UserContentController.mm in Sources */,
@@ -4601,7 +4686,6 @@
 				2EFF06D71D8AF34A0004BB30 /* WKWebViewCandidateTests.mm in Sources */,
 				CDD68F0D22C18317000CF0AE /* WKWebViewCloseAllMediaPresentations.mm in Sources */,
 				5CB3CE391FA1697F00C3A2D6 /* WKWebViewConfiguration.mm in Sources */,
-				A14FC5851B89739100D107EB /* WKWebViewConfigurationExtras.mm in Sources */,
 				7C417F331D19E14800B8EF53 /* WKWebViewDefaultNavigationDelegate.mm in Sources */,
 				46E66A901F0D75590026D83C /* WKWebViewDiagnosticLogging.mm in Sources */,
 				2DB647881F4163D60051A89E /* WKWebViewDoesNotLogDuringInitialization.mm in Sources */,
@@ -4624,6 +4708,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9BD4239A1E04BD9800200395 /* AttributedSubstringForProposedRangeWithImage.mm in Sources */,
+				5C9D923122D7E0EB008E9266 /* ClassMethodSwizzler.mm in Sources */,
 				2E7765CD16C4D80A00BA2BB1 /* mainIOS.mm in Sources */,
 				2E7765CF16C4D81100BA2BB1 /* mainMac.mm in Sources */,
 				5797FE311EB15A6800B2F4A0 /* NavigationClientDefaultCrypto.cpp in Sources */,
@@ -4717,6 +4802,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5C9D922222D7DC84008E9266 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5C9D921422D7DA02008E9266 /* Generate Unified Sources */;
+			targetProxy = 5C9D922122D7DC84008E9266 /* PBXContainerItemProxy */;
+		};
 		7C83E0251D0A5B2500FEBCF3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 7C83DE951D0A590C00FEBCF3 /* TestWTFLibrary */;
@@ -4777,6 +4867,20 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC90957F12554CF900083756 /* DebugRelease.xcconfig */;
 			buildSettings = {
+			};
+			name = Release;
+		};
+		5C9D921A22D7DA02008E9266 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5C9D921B22D7DA02008E9266 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -4881,6 +4985,15 @@
 			buildConfigurations = (
 				1DEB927908733DD40010E9CD /* Debug */,
 				1DEB927A08733DD40010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5C9D921922D7DA02008E9266 /* Build configuration list for PBXAggregateTarget "Generate Unified Sources" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C9D921A22D7DA02008E9266 /* Debug */,
+				5C9D921B22D7DA02008E9266 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

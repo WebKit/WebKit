@@ -1,3 +1,16 @@
+2019-07-12  Alex Christensen  <achristensen@webkit.org>
+
+        Begin unifying TestWebKitAPI build
+        https://bugs.webkit.org/show_bug.cgi?id=199728
+
+        Reviewed by Keith Miller.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Scripts/generate-unified-sources.sh: Added.
+        * TestWebKitAPI/Sources.txt: Added.
+        * TestWebKitAPI/SourcesCocoa.txt: Added.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
 2019-07-12  Zhifei Fang  <zhifei_fang@apple.com>
 
         run-javascriptcore-tests won't report test results for testmasm, testair, testb3, testdfg and test api
