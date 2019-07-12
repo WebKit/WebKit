@@ -145,7 +145,7 @@ TEST(Challenge, SecIdentity)
 @end
 
 #if HAVE(SEC_KEY_PROXY)
-TEST(Challenge, DISABLED_ClientCertificate)
+TEST(Challenge, ClientCertificate)
 {
     using namespace TestWebKitAPI;
     TCPServer server(TCPServer::Protocol::HTTPSWithClientCertificateRequest, TCPServer::respondWithOK);
@@ -159,7 +159,7 @@ TEST(Challenge, DISABLED_ClientCertificate)
     auto& methods = [delegate authenticationMethods];
     EXPECT_EQ(methods.size(), 2ull);
     EXPECT_TRUE([methods[0] isEqualToString:NSURLAuthenticationMethodServerTrust]);
-    EXPECT_TRUE([methods[2] isEqualToString:NSURLAuthenticationMethodClientCertificate]);
+    EXPECT_TRUE([methods[1] isEqualToString:NSURLAuthenticationMethodClientCertificate]);
 }
 #endif
 

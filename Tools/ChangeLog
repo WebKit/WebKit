@@ -1,5 +1,17 @@
 2019-07-12  Alex Christensen  <achristensen@webkit.org>
 
+        Enable client certificate authentication unit test
+        https://bugs.webkit.org/show_bug.cgi?id=199735
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TEST):
+        I originally wrote this in https://bugs.webkit.org/show_bug.cgi?id=197800 but it was disabled because it crashed.
+        I found what was crashing.  I was reading out of bounds on my vector of 2 strings :(
+
+2019-07-12  Alex Christensen  <achristensen@webkit.org>
+
         Begin unifying TestWebKitAPI build
         https://bugs.webkit.org/show_bug.cgi?id=199728
 
