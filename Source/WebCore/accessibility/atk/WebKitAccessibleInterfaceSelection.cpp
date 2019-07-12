@@ -50,10 +50,8 @@ static AccessibilityObject* core(AtkSelection* selection)
     return &webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(selection));
 }
 
-static AccessibilityObject* listObjectForSelection(AtkSelection* selection)
+static AccessibilityObject* listObjectForCoreSelection(AccessibilityObject* coreSelection)
 {
-    AccessibilityObject* coreSelection = core(selection);
-
     // Only list boxes and menu lists supported so far.
     if (!coreSelection->isListBox() && !coreSelection->isMenuList())
         return nullptr;
@@ -83,7 +81,7 @@ static AccessibilityObject* optionFromList(AtkSelection* selection, gint index)
         return nullptr;
 
     // Need to select the proper list object depending on the type.
-    AccessibilityObject* listObject = listObjectForSelection(selection);
+    AccessibilityObject* listObject = listObjectForCoreSelection(coreSelection);
     if (!listObject)
         return nullptr;
 
