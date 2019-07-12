@@ -1,3 +1,10 @@
+2019-07-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix builds where HAVE_DESIGN_SYSTEM_UI_FONTS is not defined.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::fontWithFamilySpecialCase):
+
 2019-07-11  Justin Fan  <justin_fan@apple.com>
 
         Unreviewed build fix.
