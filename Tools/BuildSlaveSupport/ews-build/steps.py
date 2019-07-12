@@ -833,6 +833,8 @@ class RunWebKitTests(shell.Test):
     description = ['layout-tests running']
     descriptionDone = ['layout-tests']
     resultDirectory = 'layout-test-results'
+    jsonFileName = 'layout-test-results/full_results.json'
+    logfiles = {'json': jsonFileName}
     command = ['python', 'Tools/Scripts/run-webkit-tests',
                '--no-build',
                '--no-new-test-results',
