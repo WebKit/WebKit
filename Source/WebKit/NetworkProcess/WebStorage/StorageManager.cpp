@@ -356,10 +356,8 @@ StorageManager::LocalStorageNamespace::~LocalStorageNamespace()
 
 auto StorageManager::LocalStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin, IsEphemeral isEphemeral) -> Ref<StorageArea>
 {
-    RefPtr<StorageArea> protectedStorageArea;
     return *m_storageAreaMap.ensure(securityOrigin, [&]() mutable {
-        protectedStorageArea = StorageArea::create(isEphemeral == IsEphemeral::Yes ? nullptr : this, WTFMove(securityOrigin), m_quotaInBytes);
-        return protectedStorageArea.get();
+        return StorageArea::create(isEphemeral == IsEphemeral::Yes ? nullptr : this, WTFMove(securityOrigin), m_quotaInBytes);
     }).iterator->value;
 }
 

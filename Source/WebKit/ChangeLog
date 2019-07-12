@@ -1,3 +1,13 @@
+2019-07-12  Youenn Fablet  <youenn@apple.com>
+
+        Remove unneeded variable in LocalStorageNamespace::getOrCreateStorageArea
+        https://bugs.webkit.org/show_bug.cgi?id=199477
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::LocalStorageNamespace::getOrCreateStorageArea):
+
 2019-07-12  Pawel Stanek  <p.stanek@metrological.com>
 
         Connection::waitForSyncReply() uses wall time clock for timeout
