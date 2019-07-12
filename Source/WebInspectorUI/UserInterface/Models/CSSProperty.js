@@ -440,6 +440,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
                 const lineDelta = 0;
                 const columnDelta = 0;
                 this._ownerStyle.shiftPropertiesAfter(this, lineDelta, columnDelta, forceRemove);
+                this._ownerStyle.updatePropertiesModifiedState();
             }
             return;
         }
