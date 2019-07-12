@@ -1,3 +1,17 @@
+2019-07-12  Alex Christensen  <achristensen@webkit.org>
+
+        Change RELEASE_ASSERT in DocumentWriter::addData to ASSERT and early return
+        https://bugs.webkit.org/show_bug.cgi?id=199756
+        <rdar://problem/51554775>
+
+        Reviewed by Brady Eidson.
+
+        Attempts to reach this assertion were unsuccessful, but sometimes this assertion crashes.
+        Let's change it to an early return to prevent crashes.
+
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::addData):
+
 2019-07-12  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Move error scopes out of GPUDevice for more portable error generation

@@ -237,7 +237,10 @@ void DocumentWriter::addData(const char* bytes, size_t length)
 {
     // FIXME: Change these to ASSERT once https://bugs.webkit.org/show_bug.cgi?id=80427 has been resolved.
     RELEASE_ASSERT(m_state != State::NotStarted);
-    RELEASE_ASSERT(m_state != State::Finished);
+    if (m_state == State::Finished) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
     ASSERT(m_parser);
     m_parser->appendBytes(*this, bytes, length);
 }
