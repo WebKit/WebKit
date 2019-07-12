@@ -128,7 +128,10 @@ private:
     void devicesChanged();
     void captureFailed();
 
-    Vector<std::reference_wrapper<CoreAudioCaptureSource>> m_clients;
+    void forEachClient(const Function<void(CoreAudioCaptureSource&)>& apply) const;
+
+    HashSet<CoreAudioCaptureSource*> m_clients;
+    mutable RecursiveLock m_clientsLock;
 
     AudioUnit m_ioUnit { nullptr };
 
@@ -196,14 +199,30 @@ CoreAudioSharedUnit::CoreAudioSharedUnit()
 
 void CoreAudioSharedUnit::addClient(CoreAudioCaptureSource& client)
 {
-    m_clients.append(client);
+    auto locker = holdLock(m_clientsLock);
+    m_clients.add(&client);
 }
 
 void CoreAudioSharedUnit::removeClient(CoreAudioCaptureSource& client)
 {
-    m_clients.removeAllMatching([&](const auto& item) {
-        return &client == &item.get();
-    });
+    auto locker = holdLock(m_clientsLock);
+    m_clients.remove(&client);
+}
+
+void CoreAudioSharedUnit::forEachClient(const Function<void(CoreAudioCaptureSource&)>& apply) const
+{
+    Vector<CoreAudioCaptureSource*> clientsCopy;
+    {
+        auto locker = holdLock(m_clientsLock);
+        clientsCopy = copyToVector(m_clients);
+    }
+    for (auto* client : clientsCopy) {
+        auto locker = holdLock(m_clientsLock);
+        // Make sure the client has not been destroyed.
+        if (!m_clients.contains(client))
+            continue;
+        apply(*client);
+    }
 }
 
 void CoreAudioSharedUnit::setCaptureDevice(String&& persistentID, uint32_t captureDeviceID)
@@ -509,10 +528,10 @@ OSStatus CoreAudioSharedUnit::processMicrophoneSamples(AudioUnitRenderActionFlag
     if (m_volume != 1.0)
         m_microphoneSampleBuffer->applyGain(m_volume);
 
-    for (CoreAudioCaptureSource& client : m_clients) {
+    forEachClient([&](auto& client) {
         if (client.isProducingData())
             client.audioSamplesAvailable(MediaTime(sampleTime, m_microphoneProcFormat.sampleRate()), m_microphoneSampleBuffer->bufferList(), m_microphoneProcFormat, inNumberFrames);
-    }
+    });
     return noErr;
 }
 
@@ -656,11 +675,17 @@ void CoreAudioSharedUnit::verifyIsCapturing()
 void CoreAudioSharedUnit::captureFailed()
 {
     RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::captureFailed - capture failed");
-    for (CoreAudioCaptureSource& client : m_clients)
+    forEachClient([](auto& client) {
         client.captureFailed();
+    });
 
     m_producingCount = 0;
-    m_clients.clear();
+
+    {
+        auto locker = holdLock(m_clientsLock);
+        m_clients.clear();
+    }
+
     stopInternal();
     cleanupAudioUnit();
 }
