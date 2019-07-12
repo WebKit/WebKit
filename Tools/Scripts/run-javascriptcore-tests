@@ -92,6 +92,8 @@ my $createTarball = 0;
 my $remoteHost = 0;
 my $failFast = 1;
 my %jsonData = ();
+my @testResults = ();
+my $isTestFailed = 0;
 my $remoteConfigFile;
 my $jsonFileName;
 my $verbose = 0;
@@ -398,15 +400,37 @@ sub runTest {
     my $exitStatus = exitStatus($testResult);
     print "$testName completed with rc=$testResult ($exitStatus)\n\n";
 
+    my $testStatus = ($exitStatus == 0)? JSON::PP::true: JSON::PP::false;
+    if ($testResult) {
+        $isTestFailed = 1;
+        push @testResults, $testName;
+    }
     if (defined($jsonFileName)) {
-        my $testStatus = ($exitStatus == 0)? JSON::PP::true: JSON::PP::false;
         $jsonData{$jsonTestStatusName} = $testStatus;
     }
 
     if ($testResult && $failFast) {
+        reportTestFailures();
         writeJsonDataIfApplicable();
         exit exitStatus($testResult);
     }
+}
+
+sub reportTestFailures {
+  my $numJSCtestFailures = @testResults;
+  if ($numJSCtestFailures) {
+      print "\n** The following JSC test binaries failures have been introduced:\n";
+      foreach my $testFailure (@testResults) {
+          print "\t$testFailure\n";
+      }
+  }
+  print "\n";
+
+  print "Results for JSC test binaries:\n";
+  printThingsFound($numJSCtestFailures, "failure", "failures", "found");
+  print "    OK.\n" if $numJSCtestFailures == 0;
+
+  print "\n";
 }
 
 if ($runTestMasm) { runTest("testmasm", "allMasmTestsPassed") }
@@ -420,6 +444,11 @@ if ($runTestAPI) { runTest("testapi", "allApiTestsPassed") }
 chdirWebKit();
 
 runJSCStressTests();
+reportTestFailures();
+
+if ($isTestFailed) {
+  exit(1);
+}
 
 sub runJSCStressTests
 {
@@ -573,6 +602,7 @@ sub runJSCStressTests
     my $numJSCStressFailures = @jscStressFailList;
 
     if ($numJSCStressFailures) {
+        $isTestFailed = 1;
         print "\n** The following JSC stress test failures have been introduced:\n";
         foreach my $testFailure (@jscStressFailList) {
             print "\t$testFailure\n";
@@ -591,7 +621,6 @@ sub runJSCStressTests
     }
 
     writeJsonDataIfApplicable();
-    exit(1) if $numJSCStressFailures;
 }
 
 sub readAllLines
