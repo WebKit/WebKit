@@ -1,3 +1,18 @@
+2019-07-12  Megan Gardner  <megan_gardner@apple.com>
+
+        Turn off two finger gestures for editable non-scaled content
+        https://bugs.webkit.org/show_bug.cgi?id=199739
+        <rdar://problem/52107190>
+
+        Reviewed by Tim Horton.
+
+        This gesture is blocking a selection gesture. Turn it off as it is not
+        even being used in editable content.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView _didChangeWebViewEditability]):
+
 2019-07-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         SOAuthorizationSession::presentViewController should check WebPageProxy::isClosed()

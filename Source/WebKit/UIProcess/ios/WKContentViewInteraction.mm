@@ -788,6 +788,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_twoFingerSingleTapGestureRecognizer setNumberOfTouchesRequired:2];
     [_twoFingerSingleTapGestureRecognizer setDelaysTouchesEnded:NO];
     [_twoFingerSingleTapGestureRecognizer setDelegate:self];
+    [_twoFingerSingleTapGestureRecognizer setEnabled:!_webView._editable];
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 
     _stylusSingleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_stylusSingleTapRecognized:)]);
@@ -4106,6 +4107,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     if ([_formAccessoryView respondsToSelector:@selector(setNextPreviousItemsVisible:)])
         [_formAccessoryView setNextPreviousItemsVisible:!_webView._editable];
+    
+    [_twoFingerSingleTapGestureRecognizer setEnabled:!_webView._editable];
 }
 
 - (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion
