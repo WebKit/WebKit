@@ -183,7 +183,7 @@ void SOAuthorizationSession::presentViewController(SOAuthorizationViewController
 {
     ASSERT(m_state == State::Active);
     // Only expect at most one UI session for the whole authorization session.
-    if (!m_page || m_viewController) {
+    if (!m_page || m_page->isClosed() || m_viewController) {
         uiCallback(NO, adoptNS([[NSError alloc] initWithDomain:SOErrorDomain code:kSOErrorAuthorizationPresentationFailed userInfo:nil]).get());
         return;
     }

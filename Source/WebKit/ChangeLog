@@ -1,3 +1,17 @@
+2019-07-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        SOAuthorizationSession::presentViewController should check WebPageProxy::isClosed()
+        https://bugs.webkit.org/show_bug.cgi?id=199755
+        <rdar://problem/52323585>
+
+        Reviewed by Chris Dumez.
+
+        WebPageProxy::pageClient() is not guaranteed to be non null all the time. Therefore, we should check
+        WebPageProxy::isClosed() before using it.
+
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        (WebKit::SOAuthorizationSession::presentViewController):
+
 2019-07-12  Chris Dumez  <cdumez@apple.com>
 
         Regression(macOS Catalina): Cannot quick look html documents in Mail
