@@ -1,3 +1,15 @@
+2019-07-13  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add accessibility support to WKDataListSuggestionsView.
+        https://bugs.webkit.org/show_bug.cgi?id=199772
+        <rdar://problem/47095851>
+
+        Reviewed by Chris Fleizach.
+
+        Localizable strings for accessibility announcements.
+
+        * en.lproj/Localizable.strings:
+
 2019-07-13  Chris Dumez  <cdumez@apple.com>
 
         Drop non thread-safe usage of WeakPtr in VideoFullscreenInterfaceAVKit

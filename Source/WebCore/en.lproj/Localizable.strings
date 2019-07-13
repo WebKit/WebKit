@@ -775,6 +775,12 @@
 /* Menu section heading for subtitles */
 "Subtitles" = "Subtitles";
 
+/* Accessibility announcement for the data list suggestions dropdown going away. */
+"Suggestions list hidden." = "Suggestions list hidden.";
+
+/* Accessibility announcement that the suggestions list became visible. The format argument is for the first option in the list. */
+"Suggestions list visible, %@" = "Suggestions list visible, %@";
+
 /* Undo action name */
 "Superscript (Undo action name)" = "Superscript";
 

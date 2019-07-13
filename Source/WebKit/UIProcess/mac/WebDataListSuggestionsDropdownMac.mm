@@ -30,6 +30,7 @@
 
 #import "WebPageProxy.h"
 #import <WebCore/IntRect.h>
+#import <WebCore/LocalizedStrings.h>
 #import <pal/spi/cocoa/NSColorSPI.h>
 
 static const CGFloat dropdownTopMargin = 2;
@@ -352,6 +353,14 @@ void WebDataListSuggestionsDropdownMac::close()
     [_table setVisibleRect:[_enclosingWindow frame]];
 }
 
+- (void)notifyAccessibilityClients:(NSString *)info
+{
+    NSDictionary<NSAccessibilityNotificationUserInfoKey, id> *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+        NSAccessibilityPriorityKey, @(NSAccessibilityPriorityHigh),
+        NSAccessibilityAnnouncementKey, info, nil];
+    NSAccessibilityPostNotificationWithUserInfo(NSApp, NSAccessibilityAnnouncementRequestedNotification, userInfo);
+}
+
 - (void)moveSelectionByDirection:(const String&)direction
 {
     size_t size = _suggestions.size();
@@ -368,6 +377,10 @@ void WebDataListSuggestionsDropdownMac::close()
         newSelection = (direction == "Up") ? (size - 1) : 0;
 
     [_table setActiveRow:newSelection];
+
+    // Notify accessibility clients of new selection.
+    NSString *currentSelectedString = [self currentSelectedString];
+    [self notifyAccessibilityClients:currentSelectedString];
 }
 
 - (void)invalidate
@@ -383,6 +396,10 @@ void WebDataListSuggestionsDropdownMac::close()
     [[_view window] removeChildWindow:_enclosingWindow.get()];
     [_enclosingWindow close];
     _enclosingWindow = nil;
+
+    // Notify accessibility clients that datalist went away.
+    NSString *info = WEB_UI_STRING("Suggestions list hidden.", "Accessibility announcement for the data list suggestions dropdown going away.");
+    [self notifyAccessibilityClients:info];
 }
 
 - (NSRect)dropdownRectForElementRect:(const WebCore::IntRect&)rect
@@ -399,6 +416,11 @@ void WebDataListSuggestionsDropdownMac::close()
     [_table reload];
     [[_view window] addChildWindow:_enclosingWindow.get() ordered:NSWindowAbove];
     [[_table enclosingScrollView] flashScrollers];
+
+    // Notify accessibility clients of datalist becoming visible.
+    NSString *currentSelectedString = [self currentSelectedString];
+    NSString *info = [NSString stringWithFormat:WEB_UI_STRING("Suggestions list visible, %@", "Accessibility announcement that the suggestions list became visible. The format argument is for the first option in the list."), currentSelectedString];
+    [self notifyAccessibilityClients:info];
 }
 
 - (void)selectedRow:(NSTableView *)sender
