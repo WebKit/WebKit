@@ -55,7 +55,8 @@
 namespace WebCore {
 
 MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* player)
-    : m_player(player)
+    : m_weakThis(makeWeakPtr(*this))
+    , m_player(player)
     , m_queuedNotifications()
     , m_queueMutex()
     , m_networkState(MediaPlayer::Empty)
@@ -774,7 +775,7 @@ void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification
     if (delayDispatch && !m_mainThreadCallPending) {
         m_mainThreadCallPending = true;
 
-        callOnMainThread([weakThis = makeWeakPtr(*this)] {
+        callOnMainThread([weakThis = m_weakThis] {
             if (!weakThis)
                 return;
 
@@ -807,7 +808,7 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
         }
         
         if (!m_queuedNotifications.isEmpty() && !m_mainThreadCallPending) {
-            callOnMainThread([weakThis = makeWeakPtr(*this)] {
+            callOnMainThread([weakThis = m_weakThis] {
                 if (!weakThis)
                     return;
 

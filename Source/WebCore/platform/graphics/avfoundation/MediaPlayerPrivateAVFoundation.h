@@ -327,6 +327,7 @@ protected:
     const URL& resolvedURL() const { return m_resolvedURL; }
 
 private:
+    WeakPtr<MediaPlayerPrivateAVFoundation> m_weakThis;
     MediaPlayer* m_player;
 
     WTF::Function<void()> m_pendingSeek;
