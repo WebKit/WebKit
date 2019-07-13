@@ -2628,7 +2628,7 @@ static bool isContextClick(const PlatformMouseEvent& event)
 static bool handleContextMenuEvent(const PlatformMouseEvent& platformMouseEvent, WebPage* page)
 {
     IntPoint point = page->corePage()->mainFrame().view()->windowToContents(platformMouseEvent.position());
-    HitTestResult result = page->corePage()->mainFrame().eventHandler().hitTestResultAtPoint(point);
+    HitTestResult result = page->corePage()->mainFrame().eventHandler().hitTestResultAtPoint(point, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
 
     Frame* frame = &page->corePage()->mainFrame();
     if (result.innerNonSharedNode())
@@ -5217,7 +5217,7 @@ void WebPage::getSelectedRangeAsync(CallbackID callbackID)
 
 void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, CallbackID callbackID)
 {
-    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point);
+    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
     Frame* frame = result.innerNonSharedNode() ? result.innerNodeFrame() : &m_page->focusController().focusedOrMainFrame();
     
     RefPtr<Range> range = frame->rangeForPoint(result.roundedPointInInnerNodeFrame());

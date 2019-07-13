@@ -84,7 +84,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     }
     
     // Find the frame the point is over.
-    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(roundedIntPoint(floatPoint)));
+    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(roundedIntPoint(floatPoint)), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
     auto [range, options] = DictionaryLookup::rangeAtHitTestResult(result);
     if (!range)
         return;

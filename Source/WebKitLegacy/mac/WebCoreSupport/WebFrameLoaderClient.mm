@@ -1584,7 +1584,7 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& act
 
     if (auto mouseEventData = action.mouseEventData()) {
         WebElementDictionary *element = [[WebElementDictionary alloc]
-            initWithHitTestResult:core(m_webFrame.get())->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation)];
+            initWithHitTestResult:core(m_webFrame.get())->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent)];
         [result setObject:element forKey:WebActionElementKey];
         [element release];
 

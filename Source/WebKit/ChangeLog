@@ -1,3 +1,28 @@
+2019-07-13  Zalan Bujtas  <zalan@apple.com>
+
+        Cannot bring up custom media controls at all on v.youku.com
+        https://bugs.webkit.org/show_bug.cgi?id=199699
+        <rdar://problem/51835327>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp:
+        (WebKit::InjectedBundleNavigationAction::InjectedBundleNavigationAction):
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::hitTest const):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleContextMenuEvent):
+        (WebKit::WebPage::characterIndexForPointAsync):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleStylusSingleTapAtPoint):
+        (WebKit::textInteractionPositionInformation):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::shouldDelayWindowOrderingEvent):
+        (WebKit::WebPage::acceptsFirstMouse):
+        (WebKit::WebPage::performImmediateActionHitTestAtLocation):
+
 2019-07-12  Andy Estes  <aestes@apple.com>
 
         [Cocoa] -loadFileURL:allowingReadAccessToURL: should fully resolve file URLs

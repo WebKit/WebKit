@@ -7089,7 +7089,7 @@ static CGImageRef selectionImage(Frame* frame, bool forceBlackText)
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return nil;
-    HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active
+    HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent
         | (allow ? 0 : HitTestRequest::DisallowUserAgentShadowContent);
     return [[[WebElementDictionary alloc] initWithHitTestResult:coreFrame->eventHandler().hitTestResultAtPoint(IntPoint(point), hitType)] autorelease];
 }

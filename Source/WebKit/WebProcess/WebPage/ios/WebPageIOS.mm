@@ -1022,7 +1022,7 @@ void WebPage::handleStylusSingleTapAtPoint(const WebCore::IntPoint& point, uint6
     auto& frame = m_page->focusController().focusedOrMainFrame();
 
     auto pointInDocument = frame.view()->rootViewToContents(point);
-    HitTestResult hitTest = frame.eventHandler().hitTestResultAtPoint(pointInDocument, HitTestRequest::ReadOnly | HitTestRequest::Active);
+    HitTestResult hitTest = frame.eventHandler().hitTestResultAtPoint(pointInDocument, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent);
 
     Node* node = hitTest.innerNonSharedNode();
     if (!node)
@@ -2729,7 +2729,7 @@ static void textInteractionPositionInformation(WebPage& page, const HTMLInputEle
     if (!input.list())
         return;
 
-    HitTestResult result = page.corePage()->mainFrame().eventHandler().hitTestResultAtPoint(request.point, HitTestRequest::ReadOnly | HitTestRequest::Active);
+    HitTestResult result = page.corePage()->mainFrame().eventHandler().hitTestResultAtPoint(request.point, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent);
     if (result.innerNode() == input.dataListButtonElement())
         info.preventTextInteraction = true;
 }

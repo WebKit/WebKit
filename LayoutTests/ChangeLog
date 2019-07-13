@@ -1,3 +1,16 @@
+2019-07-13  Zalan Bujtas  <zalan@apple.com>
+
+        Cannot bring up custom media controls at all on v.youku.com
+        https://bugs.webkit.org/show_bug.cgi?id=199699
+        <rdar://problem/51835327>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/visibility-hidden-iframe-click-expected.txt: Added.
+        * fast/events/touch/ios/visibility-hidden-iframe-click.html: Added.
+        * fast/events/touch/ios/visibility-hidden-nested-iframe-click-expected.txt: Added.
+        * fast/events/touch/ios/visibility-hidden-nested-iframe-click.html: Added.
+
 2019-07-12  Youenn Fablet  <youenn@apple.com>
 
         Stopping a cloned MediaStream video track should not stop any other video track

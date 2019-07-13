@@ -1,3 +1,33 @@
+2019-07-13  Zalan Bujtas  <zalan@apple.com>
+
+        Cannot bring up custom media controls at all on v.youku.com
+        https://bugs.webkit.org/show_bug.cgi?id=199699
+        <rdar://problem/51835327>
+
+        Reviewed by Simon Fraser.
+
+        The "find the node under the finger" heuristic should only find nodes that are visible to hit-testing.
+
+        When the user taps on the screen, we run a "find the best node under the finger" heuristic and use the node's location
+        to dispatch the associated event (e.g. mousePressed).
+        Ideally the "best node under the finger" and the final target node for the associated event are the same.
+        However these two methods configure the hit-testing process differently which could lead to node mismatch.
+        The "best node" heuristic calls hit-testing with AllowChildFrameContent. This flag allows hit-testing to descend into
+        subframes even if the subframe is not visible to hit-testing (visibility: hidden).
+        While event dispatching never descends into subfames through hit-testing, but instead it forwards the dispatching to subframes that are visible to hit-testing.
+
+        This patch addresses the mismatching node issue by calling the descending version of hit-testing with a flag that enforces visiblity check before descending into a subframe.
+
+        Tests: fast/events/touch/ios/visibility-hidden-iframe-click.html
+               fast/events/touch/ios/visibility-hidden-nested-iframe-click.html
+
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::hitTestResultAtViewportLocation):
+        * rendering/HitTestRequest.h:
+        (WebCore::HitTestRequest::skipsChildFrameContentInvisibleToHitTest const):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::nodeAtPoint):
+
 2019-07-13  Chris Dumez  <cdumez@apple.com>
 
         Fix non thread-safe usage of makeWeakPtr() in MediaPlayerPrivateAVFoundation

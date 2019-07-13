@@ -1207,8 +1207,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, HitTe
     if (!document)
         return result;
 
-    // hitTestResultAtPoint is specifically used to hitTest into all frames, thus it always allows child frame content.
-    HitTestRequest request(hitType | HitTestRequest::AllowChildFrameContent);
+    HitTestRequest request(hitType);
     document->hitTest(request, result);
     if (!request.readOnly())
         m_frame.document()->updateHoverActiveState(request, result.targetElement());
@@ -4158,7 +4157,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         if (pointState == PlatformTouchPoint::TouchPressed) {
             HitTestResult result;
             if (freshTouchEvents) {
-                result = hitTestResultAtPoint(pagePoint, hitType);
+                result = hitTestResultAtPoint(pagePoint, hitType | HitTestRequest::AllowChildFrameContent);
                 m_originatingTouchPointTargetKey = touchPointTargetKey;
             } else if (m_originatingTouchPointDocument.get() && m_originatingTouchPointDocument->frame()) {
                 LayoutPoint pagePointInOriginatingDocument = documentPointForWindowPoint(*m_originatingTouchPointDocument->frame(), point.pos());

@@ -164,7 +164,7 @@ std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event
     if (!frame)
         return nullptr;
 
-    auto result = frame->eventHandler().hitTestResultAtPoint(mouseEvent.absoluteLocation());
+    auto result = frame->eventHandler().hitTestResultAtPoint(mouseEvent.absoluteLocation(), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
     if (!result.innerNonSharedNode())
         return nullptr;
 

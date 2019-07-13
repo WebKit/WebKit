@@ -182,7 +182,7 @@ CGRect Frame::renderRectForPoint(CGPoint point, bool* isReplaced, float* fontSiz
     if (!layer)
         return CGRectZero;
 
-    HitTestResult result = eventHandler().hitTestResultAtPoint(IntPoint(roundf(point.x), roundf(point.y)));
+    HitTestResult result = eventHandler().hitTestResultAtPoint(IntPoint(roundf(point.x), roundf(point.y)), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
 
     Node* node = result.innerNode();
     if (!node)
@@ -226,7 +226,7 @@ CGRect Frame::renderRectForPoint(CGPoint point, bool* isReplaced, float* fontSiz
 void Frame::betterApproximateNode(const IntPoint& testPoint, const NodeQualifier& nodeQualifierFunction, Node*& best, Node* failedNode, IntPoint& bestPoint, IntRect& bestRect, const IntRect& testRect)
 {
     IntRect candidateRect;
-    Node* candidate = nodeQualifierFunction(eventHandler().hitTestResultAtPoint(testPoint), failedNode, &candidateRect);
+    Node* candidate = nodeQualifierFunction(eventHandler().hitTestResultAtPoint(testPoint, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowVisibleChildFrameContentOnly), failedNode, &candidateRect);
 
     // Bail if we have no candidate, or the candidate is already equal to our current best node,
     // or our candidate is the avoidedNode and there is a current best node.
@@ -261,7 +261,8 @@ bool Frame::hitTestResultAtViewportLocation(const FloatPoint& viewportLocation, 
         return false;
 
     center = view->windowToContents(roundedIntPoint(viewportLocation));
-    hitTestResult = eventHandler().hitTestResultAtPoint(center);
+    HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowVisibleChildFrameContentOnly;
+    hitTestResult = eventHandler().hitTestResultAtPoint(center, hitType);
     return true;
 }
 
@@ -310,7 +311,7 @@ Node* Frame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation
             IntSize testOffset(testOffsets[n] * searchRadius, testOffsets[n + 1] * searchRadius);
             IntPoint testPoint = testCenter + testOffset;
 
-            HitTestResult candidateInfo = eventHandler().hitTestResultAtPoint(testPoint);
+            HitTestResult candidateInfo = eventHandler().hitTestResultAtPoint(testPoint, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
             Node* candidateNode = nodeQualifierFunction(candidateInfo, 0, 0);
             if (candidateNode && candidateNode->isDescendantOf(originalApproximateNode)) {
                 approximateNode = candidateNode;

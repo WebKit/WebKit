@@ -590,7 +590,7 @@ void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event,
 
     bool result = false;
 #if ENABLE(DRAG_SUPPORT)
-    HitTestResult hitResult = frame.eventHandler().hitTestResultAtPoint(frame.view()->windowToContents(event.position()), HitTestRequest::ReadOnly | HitTestRequest::Active);
+    HitTestResult hitResult = frame.eventHandler().hitTestResultAtPoint(frame.view()->windowToContents(event.position()), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent);
     if (hitResult.isSelected())
         result = frame.eventHandler().eventMayStartDrag(platform(event));
 #endif
@@ -607,7 +607,7 @@ void WebPage::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& ev
 
     auto& frame = m_page->focusController().focusedOrMainFrame();
 
-    HitTestResult hitResult = frame.eventHandler().hitTestResultAtPoint(frame.view()->windowToContents(event.position()), HitTestRequest::ReadOnly | HitTestRequest::Active);
+    HitTestResult hitResult = frame.eventHandler().hitTestResultAtPoint(frame.view()->windowToContents(event.position()), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent);
     frame.eventHandler().setActivationEventNumber(eventNumber);
     bool result = false;
 #if ENABLE(DRAG_SUPPORT)
@@ -838,7 +838,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     }
 
     IntPoint locationInContentCoordinates = mainFrame.view()->rootViewToContents(roundedIntPoint(locationInViewCoordinates));
-    HitTestResult hitTestResult = mainFrame.eventHandler().hitTestResultAtPoint(locationInContentCoordinates);
+    HitTestResult hitTestResult = mainFrame.eventHandler().hitTestResultAtPoint(locationInContentCoordinates, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
 
     bool immediateActionHitTestPreventsDefault = false;
     Element* element = hitTestResult.targetElement();
@@ -946,7 +946,7 @@ std::tuple<RefPtr<WebCore::Range>, NSDictionary *> WebPage::lookupTextAtLocation
         return { nullptr, nil };
 
     auto point = roundedIntPoint(locationInViewCoordinates);
-    auto result = mainFrame.eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point));
+    auto result = mainFrame.eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
     return DictionaryLookup::rangeAtHitTestResult(result);
 }
 

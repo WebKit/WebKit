@@ -644,7 +644,7 @@ RefPtr<InjectedBundleHitTestResult> WebFrame::hitTest(const IntPoint point) cons
     if (!m_coreFrame)
         return nullptr;
 
-    return InjectedBundleHitTestResult::create(m_coreFrame->eventHandler().hitTestResultAtPoint(point, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowUserAgentShadowContent));
+    return InjectedBundleHitTestResult::create(m_coreFrame->eventHandler().hitTestResultAtPoint(point, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent));
 }
 
 bool WebFrame::getDocumentBackgroundColor(double* red, double* green, double* blue, double* alpha)

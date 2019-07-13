@@ -1,3 +1,20 @@
+2019-07-13  Zalan Bujtas  <zalan@apple.com>
+
+        Cannot bring up custom media controls at all on v.youku.com
+        https://bugs.webkit.org/show_bug.cgi?id=199699
+        <rdar://problem/51835327>
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::actionDictionary const):
+        * WebView/WebFrame.mm:
+        (-[WebFrame elementAtPoint:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView elementAtPoint:allowShadowContent:]):
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController performHitTestAtPoint:]):
+
 2019-07-12  Alex Christensen  <achristensen@webkit.org>
 
         Begin unifying WebKitLegacy sources

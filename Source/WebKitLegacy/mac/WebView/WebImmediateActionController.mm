@@ -149,7 +149,7 @@ using namespace WebCore;
     if (!coreFrame)
         return;
 
-    _hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(IntPoint(viewPoint));
+    _hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(IntPoint(viewPoint), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
     coreFrame->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
 
     if (Element* element = _hitTestResult.targetElement())

@@ -104,7 +104,7 @@ InjectedBundleNavigationAction::InjectedBundleNavigationAction(WebFrame* frame, 
     , m_shouldTryAppLinks(navigationAction.shouldOpenExternalURLsPolicy() == ShouldOpenExternalURLsPolicy::ShouldAllow)
 {
     if (auto mouseEventData = navigationAction.mouseEventData()) {
-        m_hitTestResult = InjectedBundleHitTestResult::create(frame->coreFrame()->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation));
+        m_hitTestResult = InjectedBundleHitTestResult::create(frame->coreFrame()->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent));
         m_mouseButton = mouseButtonForMouseEventData(mouseEventData);
         m_syntheticClickType = syntheticClickTypeForNavigationAction(navigationAction);
         m_clickLocationInRootViewCoordinates = clickLocationInRootViewCoordinatesForNavigationAction(navigationAction);

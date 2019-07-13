@@ -113,7 +113,7 @@ HRESULT WebActionPropertyBag::Read(LPCOLESTR pszPropName, VARIANT *pVar, IErrorL
     if (isEqual(pszPropName, WebActionElementKey)) {
         if (auto mouseEvent = m_action.mouseEventData()) {
             V_VT(pVar) = VT_UNKNOWN;
-            V_UNKNOWN(pVar) = WebElementPropertyBag::createInstance(m_frame->eventHandler().hitTestResultAtPoint(mouseEvent->absoluteLocation));
+            V_UNKNOWN(pVar) = WebElementPropertyBag::createInstance(m_frame->eventHandler().hitTestResultAtPoint(mouseEvent->absoluteLocation, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent));
             return S_OK;
         }
     }
