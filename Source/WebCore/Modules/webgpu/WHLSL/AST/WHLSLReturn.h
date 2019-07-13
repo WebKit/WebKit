@@ -56,12 +56,8 @@ public:
 
     Expression* value() { return m_value.get(); }
 
-    FunctionDefinition* function() { return m_function; }
-    void setFunction(FunctionDefinition* functionDefinition) { m_function = functionDefinition; }
-
 private:
     std::unique_ptr<Expression> m_value;
-    FunctionDefinition* m_function { nullptr };
 };
 
 } // namespace AST

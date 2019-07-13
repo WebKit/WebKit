@@ -517,6 +517,7 @@ private:
     HashSet<String> m_computeEntryPoints;
     const Intrinsics& m_intrinsics;
     Program& m_program;
+    AST::FunctionDefinition* m_currentFunction { nullptr };
 };
 
 void Checker::visit(Program& program)
@@ -572,6 +573,7 @@ bool Checker::checkShaderType(const AST::FunctionDefinition& functionDefinition)
 
 void Checker::visit(AST::FunctionDefinition& functionDefinition)
 {
+    m_currentFunction = &functionDefinition;
     if (functionDefinition.entryPointType()) {
         if (!checkShaderType(functionDefinition)) {
             setError();
@@ -1144,12 +1146,12 @@ void Checker::visit(AST::Return& returnStatement)
         auto valueInfo = recurseAndGetInfo(*returnStatement.value());
         if (!valueInfo)
             return;
-        if (!matchAndCommit(valueInfo->resolvingType, returnStatement.function()->type()))
+        if (!matchAndCommit(valueInfo->resolvingType, m_currentFunction->type()))
             setError();
         return;
     }
 
-    if (!matches(returnStatement.function()->type(), m_intrinsics.voidType()))
+    if (!matches(m_currentFunction->type(), m_intrinsics.voidType()))
         setError();
 }
 

@@ -28,7 +28,6 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLCallExpression.h"
 #include "WHLSLDoWhileLoop.h"
 #include "WHLSLDotExpression.h"
 #include "WHLSLEnumerationDefinition.h"
@@ -38,10 +37,8 @@
 #include "WHLSLIfStatement.h"
 #include "WHLSLNameContext.h"
 #include "WHLSLProgram.h"
-#include "WHLSLPropertyAccessExpression.h"
 #include "WHLSLReplaceWith.h"
 #include "WHLSLResolveOverloadImpl.h"
-#include "WHLSLReturn.h"
 #include "WHLSLScopedSetAdder.h"
 #include "WHLSLTypeReference.h"
 #include "WHLSLVariableDeclaration.h"
@@ -61,7 +58,6 @@ NameResolver::NameResolver(NameResolver& parentResolver, NameContext& nameContex
     : m_nameContext(nameContext)
     , m_parentNameResolver(&parentResolver)
 {
-    setCurrentFunctionDefinition(parentResolver.m_currentFunction);
 }
 
 NameResolver::~NameResolver()
@@ -190,18 +186,6 @@ void NameResolver::visit(AST::VariableReference& variableReference)
     }
 }
 
-void NameResolver::visit(AST::Return& returnStatement)
-{
-    ASSERT(m_currentFunction);
-    returnStatement.setFunction(m_currentFunction);
-    Visitor::visit(returnStatement);
-}
-
-void NameResolver::visit(AST::PropertyAccessExpression& propertyAccessExpression)
-{
-    Visitor::visit(propertyAccessExpression);
-}
-
 void NameResolver::visit(AST::DotExpression& dotExpression)
 {
     if (is<AST::VariableReference>(dotExpression.base())) {
@@ -224,11 +208,6 @@ void NameResolver::visit(AST::DotExpression& dotExpression)
     }
 
     Visitor::visit(dotExpression);
-}
-
-void NameResolver::visit(AST::CallExpression& callExpression)
-{
-    Visitor::visit(callExpression);
 }
 
 void NameResolver::visit(AST::EnumerationMemberLiteral& enumerationMemberLiteral)
@@ -288,12 +267,10 @@ bool resolveNamesInTypes(Program& program, NameResolver& nameResolver)
 bool resolveTypeNamesInFunctions(Program& program, NameResolver& nameResolver)
 {
     for (auto& functionDefinition : program.functionDefinitions()) {
-        nameResolver.setCurrentFunctionDefinition(&functionDefinition);
         nameResolver.checkErrorAndVisit(functionDefinition);
         if (nameResolver.error())
             return false;
     }
-    nameResolver.setCurrentFunctionDefinition(nullptr);
     for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations()) {
         nameResolver.checkErrorAndVisit(nativeFunctionDeclaration);
         if (nameResolver.error())
