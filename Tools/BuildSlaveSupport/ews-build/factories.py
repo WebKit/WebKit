@@ -138,7 +138,10 @@ class WindowsFactory(Factory):
 
 
 class WinCairoFactory(Factory):
-    pass
+    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, True, triggers, additionalArguments)
+        self.addStep(KillOldProcesses())
+        self.addStep(CompileWebKit(skipUpload=True))
 
 
 class GTKFactory(Factory):
