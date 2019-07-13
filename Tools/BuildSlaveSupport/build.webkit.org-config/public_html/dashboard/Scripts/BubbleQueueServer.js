@@ -36,7 +36,6 @@ BubbleQueueServer = function()
         "mac-wk2-ews": {platform: Dashboard.Platform.macOSHighSierra, shortName: "mac-wk2", title: "WebKit2\xa0Release\xa0Tests\xa0EWS"},
         "mac-debug-ews": {platform: Dashboard.Platform.macOSHighSierra, shortName: "mac-debug", title: "WebKit1\xa0Debug\xa0Tests\xa0EWS"},
         "win-ews": {platform: Dashboard.Platform.Windows10, shortName: "win", title: "WebKit1\xa0Release\xa0Build\xa0EWS"},
-        "wincairo-ews": {platform: Dashboard.Platform.WinCairo, shortName: "wincairo", title: "WebKit1\xa0Release\xa0Build\xa0EWS"},
     };
 
     BaseObject.call(this);
