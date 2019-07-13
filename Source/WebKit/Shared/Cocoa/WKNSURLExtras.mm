@@ -47,6 +47,7 @@
 
 - (String)_web_originalDataAsWTFString
 {
+    // FIXME: Why is it OK to ignore base URL here?
     CString originalData;
     WTF::getURLBytes((__bridge CFURLRef)self, originalData);
     return String::fromUTF8(originalData);

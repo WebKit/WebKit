@@ -1,3 +1,14 @@
+2019-07-12  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] -loadFileURL:allowingReadAccessToURL: should fully resolve file URLs
+        https://bugs.webkit.org/show_bug.cgi?id=199768
+        <rdar://problem/52002206>
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/LoadFileURL.mm:
+        (TEST):
+
 2019-07-12  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Remove wincairo queue from old EWS and dashboard

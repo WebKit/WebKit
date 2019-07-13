@@ -66,3 +66,18 @@ TEST(WKWebView, LoadTwoFiles)
     [delegate waitForDidFinishNavigation];
     EXPECT_WK_STREQ(webView.get()._resourceDirectoryURL.path, file.URLByDeletingLastPathComponent.path);
 }
+
+TEST(WKWebView, LoadRelativeFileURL)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    
+    auto delegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    
+    NSString *path = [NSBundle.mainBundle pathForResource:@"simple" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"];
+    NSURL *baseURL = [NSURL fileURLWithPath:path.stringByDeletingLastPathComponent];
+    NSURL *fileURL = [NSURL fileURLWithPath:path.lastPathComponent relativeToURL:baseURL];
+    EXPECT_NOT_NULL([webView loadFileURL:fileURL allowingReadAccessToURL:fileURL.URLByDeletingLastPathComponent]);
+    [delegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView _resourceDirectoryURL].path, fileURL.URLByDeletingLastPathComponent.path);
+}

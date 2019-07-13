@@ -1,3 +1,30 @@
+2019-07-12  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] -loadFileURL:allowingReadAccessToURL: should fully resolve file URLs
+        https://bugs.webkit.org/show_bug.cgi?id=199768
+        <rdar://problem/52002206>
+
+        Reviewed by Geoffrey Garen.
+
+        -loadFileURL:allowingReadAccessToURL: used -_web_originalDataAsWTFString from WKNSURLExtras
+        to convert the file and read access NSURLs to strings, which under the hood calls
+        CFURLGetBytes(). CFURLGetBytes() gets the URL's string without considering the base URL, so
+        if the client creates a URL like this:
+
+            NSURL *url = [NSURL fileURLWithPath:@"tmpfile.txt" relativeToURL:[NSURL fileURLWithPath:@"/tmp"]]
+
+        ... then -_web_originalDataAsWTFString will merely return the string "tmpfile.txt". When
+        that is later converted back to a URL in WebPageProxy::loadFile(), we lose track of the base
+        component and refuse to load something that no longer looks like a file: URL.
+
+        Fixed this by fully resolving the URLs passed to -loadFileURL:allowingReadAccessToURL: when
+        converting to strings by using -[NSURL absoluteString] instead of -_web_originalDataAsWTFString.
+
+        * Shared/Cocoa/WKNSURLExtras.mm:
+        (-[NSURL _web_originalDataAsWTFString]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadFileURL:allowingReadAccessToURL:]):
+
 2019-07-12  Megan Gardner  <megan_gardner@apple.com>
 
         Turn off two finger gestures for editable non-scaled content
