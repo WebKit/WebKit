@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class WrappedMockRealtimeAudioSource;
 class MockGStreamerAudioCaptureSource final : public GStreamerAudioCaptureSource, RealtimeMediaSource::Observer {
 public:
     MockGStreamerAudioCaptureSource(String&& deviceID, String&& name, String&& hashSalt);
@@ -39,11 +40,10 @@ private:
     void startProducingData() final;
     const RealtimeMediaSourceSettings& settings() final;
     const RealtimeMediaSourceCapabilities& capabilities() final;
+    void captureFailed() final;
+    void videoSampleAvailable(MediaSample&) final { };
 
-    void captureFailed();
-    std::unique_ptr<RealtimeMediaSource> m_wrappedSource;
-
-    void videoSampleAvailable(MediaSample&) override { };
+    Ref<WrappedMockRealtimeAudioSource> m_wrappedSource;
 };
 
 } // namespace WebCore

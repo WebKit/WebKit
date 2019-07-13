@@ -1,3 +1,37 @@
+2019-07-12  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Mock GStreamer realtime sources should keep a Ref of their mock realtime media sources
+        https://bugs.webkit.org/show_bug.cgi?id=194326
+
+        WrappedMockRealtimeVideoSource is a subclass of RealtimeMediaSource which is refcounted, we can't
+        use a unique_ptr on those.
+
+        Also changed m_wrappedSource type to its actual type so it is cleaner even if needed
+        to upcast it to RealtimeMediaSource so some method that are made private in the mock
+        can still be called.
+
+        Reviewed by Youenn Fablet.
+
+        This fixes MediaStream tests
+
+        * platform/mediastream/gstreamer/MockGStreamerAudioCaptureSource.cpp:
+        (WebCore::WrappedMockRealtimeAudioSource::create):
+        (WebCore::WrappedMockRealtimeAudioSource::asRealtimeMediaSource):
+        (WebCore::WrappedMockRealtimeAudioSource::WrappedMockRealtimeAudioSource):
+        (WebCore::m_wrappedSource):
+        (WebCore::MockGStreamerAudioCaptureSource::startProducingData):
+        (WebCore::MockGStreamerAudioCaptureSource::settings):
+        (WebCore::MockGStreamerAudioCaptureSource::capabilities):
+        * platform/mediastream/gstreamer/MockGStreamerAudioCaptureSource.h:
+        * platform/mediastream/gstreamer/MockGStreamerVideoCaptureSource.cpp:
+        (WebCore::WrappedMockRealtimeVideoSource::create):
+        (WebCore::WrappedMockRealtimeVideoSource::asRealtimeMediaSource):
+        (WebCore::WrappedMockRealtimeVideoSource::WrappedMockRealtimeVideoSource):
+        (WebCore::m_wrappedSource):
+        (WebCore::MockGStreamerVideoCaptureSource::settings):
+        (WebCore::MockGStreamerVideoCaptureSource::capabilities):
+        * platform/mediastream/gstreamer/MockGStreamerVideoCaptureSource.h:
+
 2019-07-12  Alex Christensen  <achristensen@webkit.org>
 
         Change RELEASE_ASSERT in DocumentWriter::addData to ASSERT and early return

@@ -33,9 +33,14 @@ namespace WebCore {
 
 class WrappedMockRealtimeVideoSource : public MockRealtimeVideoSource {
 public:
-    WrappedMockRealtimeVideoSource(String&& deviceID, String&& name, String&& hashSalt)
-        : MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
+    static Ref<WrappedMockRealtimeVideoSource> create(String&& deviceID, String&& name, String&& hashSalt)
     {
+        return adoptRef(*new WrappedMockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)));
+    }
+
+    RealtimeMediaSource& asRealtimeMediaSource()
+    {
+        return *this;
     }
 
     void updateSampleBuffer()
@@ -58,6 +63,12 @@ public:
         auto gstSample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
 
         videoSampleAvailable(MediaSampleGStreamer::create(WTFMove(gstSample), FloatSize(), String()));
+    }
+
+private:
+    WrappedMockRealtimeVideoSource(String&& deviceID, String&& name, String&& hashSalt)
+        : MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
+    {
     }
 };
 
@@ -97,7 +108,7 @@ void MockGStreamerVideoCaptureSource::videoSampleAvailable(MediaSample& sample)
 
 MockGStreamerVideoCaptureSource::MockGStreamerVideoCaptureSource(String&& deviceID, String&& name, String&& hashSalt)
     : GStreamerVideoCaptureSource(String { deviceID }, String { name }, String { hashSalt }, "appsrc")
-    , m_wrappedSource(std::make_unique<WrappedMockRealtimeVideoSource>(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)))
+    , m_wrappedSource(WrappedMockRealtimeVideoSource::create(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)))
 {
     m_wrappedSource->addObserver(*this);
 }
@@ -120,13 +131,13 @@ void MockGStreamerVideoCaptureSource::applyConstraints(const MediaConstraints& c
 
 const RealtimeMediaSourceSettings& MockGStreamerVideoCaptureSource::settings()
 {
-    return m_wrappedSource->settings();
+    return m_wrappedSource->asRealtimeMediaSource().settings();
 }
 
 const RealtimeMediaSourceCapabilities& MockGStreamerVideoCaptureSource::capabilities()
 {
-    m_capabilities = m_wrappedSource->capabilities();
-    m_currentSettings = m_wrappedSource->settings();
+    m_capabilities = m_wrappedSource->asRealtimeMediaSource().capabilities();
+    m_currentSettings = m_wrappedSource->asRealtimeMediaSource().settings();
     return m_capabilities.value();
 }
 

@@ -43,11 +43,11 @@ private:
     void stopProducingData() final;
     void startProducingData() final;
     const RealtimeMediaSourceSettings& settings() final;
-    std::unique_ptr<RealtimeMediaSource> m_wrappedSource;
     const RealtimeMediaSourceCapabilities& capabilities() final;
-    void captureFailed() override;
+    void captureFailed() final;
+    void videoSampleAvailable(MediaSample&) final;
 
-    void videoSampleAvailable(MediaSample&) override;
+    Ref<WrappedMockRealtimeVideoSource> m_wrappedSource;
 };
 
 } // namespace WebCore
