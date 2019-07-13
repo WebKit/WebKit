@@ -48,7 +48,7 @@ class SubmitToEWS(View):
         except:
             return HttpResponse("Invalid patch id {}".format(request.POST.get('patch_id')))
 
-        _log.debug('SubmitToEWS::patch: {}'.format(patch_id))
+        _log.info('SubmitToEWS::patch: {}'.format(patch_id))
         if Patch.is_patch_sent_to_buildbot(patch_id):
             _log.info('SubmitToEWS::patch {} already submitted'.format(patch_id))
             if request.POST.get('next_action') == 'return_to_bubbles':

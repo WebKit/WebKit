@@ -1,3 +1,13 @@
+2019-07-12  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Enable logging for clicking SubmitToEWS button
+        https://bugs.webkit.org/show_bug.cgi?id=199757
+
+        Unreviewed minor infrastructure fix.
+
+        * BuildSlaveSupport/ews-app/ews/views/submittoews.py:
+        (SubmitToEWS.post): Change logging level from debug to info.
+
 2019-07-12  Alex Christensen  <achristensen@webkit.org>
 
         Enable client certificate authentication unit test
