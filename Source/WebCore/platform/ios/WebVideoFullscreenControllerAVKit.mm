@@ -223,6 +223,8 @@ VideoFullscreenControllerContext::~VideoFullscreenControllerContext()
     auto notifyClientsModelWasDestroyed = [this] {
         while (!m_playbackClients.isEmpty())
             (*m_playbackClients.begin())->modelDestroyed();
+        while (!m_fullscreenClients.isEmpty())
+            (*m_fullscreenClients.begin())->modelDestroyed();
     };
     if (isUIThread())
         notifyClientsModelWasDestroyed();

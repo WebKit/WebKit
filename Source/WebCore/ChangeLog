@@ -1,3 +1,35 @@
+2019-07-13  Chris Dumez  <cdumez@apple.com>
+
+        Drop non thread-safe usage of WeakPtr in VideoFullscreenInterfaceAVKit
+        https://bugs.webkit.org/show_bug.cgi?id=199775
+
+        Reviewed by Eric Carlson.
+
+        The VideoFullscreenInterfaceAVKit constructor was making a weakPtr on the UI Thread
+        of an WebThread object. The WeakPtr would then be used as a data member throughout
+        the class on the UIThread. This is not thread-safe.
+
+        This patch switches to using a raw pointer instead of a WeakPtr. This is a partial
+        rollout of r243298, which turned the raw pointer into a WeakPtr for hardening
+        purposes. For extra safety, this patch updates the VideoFullscreenControllerContext
+        so that it notifies its clients (i.e. PlaybackSessionInterfaceAVKit) that it is
+        getting destroyed, so that they can null-out their m_videoFullscreenModel &
+        m_fullscreenChangeObserver data members. This gives the sames guarantees as WeakPtr
+        but in a thread-safe way.
+
+        This is very similar to the fix that was done for PlaybackSessionInterfaceAVKit in
+        r247380.
+
+        * platform/cocoa/VideoFullscreenModel.h:
+        (WebCore::VideoFullscreenModelClient::modelDestroyed):
+        * platform/ios/VideoFullscreenInterfaceAVKit.h:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::setVideoFullscreenModel):
+        (VideoFullscreenInterfaceAVKit::setVideoFullscreenChangeObserver):
+        (VideoFullscreenInterfaceAVKit::modelDestroyed):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::~VideoFullscreenControllerContext):
+
 2019-07-13  Zalan Bujtas  <zalan@apple.com>
 
         Cannot bring up custom media controls at all on v.youku.com

@@ -760,7 +760,7 @@ void VideoFullscreenInterfaceAVKit::setVideoFullscreenModel(VideoFullscreenModel
     if (m_videoFullscreenModel)
         m_videoFullscreenModel->removeClient(*this);
 
-    m_videoFullscreenModel = makeWeakPtr(model);
+    m_videoFullscreenModel = model;
 
     if (m_videoFullscreenModel) {
         m_videoFullscreenModel->addClient(*this);
@@ -779,7 +779,7 @@ void VideoFullscreenInterfaceAVKit::setVideoFullscreenModel(VideoFullscreenModel
 
 void VideoFullscreenInterfaceAVKit::setVideoFullscreenChangeObserver(VideoFullscreenChangeObserver* observer)
 {
-    m_fullscreenChangeObserver = makeWeakPtr(observer);
+    m_fullscreenChangeObserver = observer;
 }
 
 void VideoFullscreenInterfaceAVKit::hasVideoChanged(bool hasVideo)
@@ -928,6 +928,12 @@ void VideoFullscreenInterfaceAVKit::invalidate()
     m_fullscreenChangeObserver = nullptr;
     
     cleanupFullscreen();
+}
+
+void VideoFullscreenInterfaceAVKit::modelDestroyed()
+{
+    ASSERT(isUIThread());
+    invalidate();
 }
 
 void VideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()

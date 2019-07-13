@@ -74,6 +74,7 @@ public:
     // VideoFullscreenModelClient
     WEBCORE_EXPORT void hasVideoChanged(bool) final;
     WEBCORE_EXPORT void videoDimensionsChanged(const FloatSize&) final;
+    WEBCORE_EXPORT void modelDestroyed() final;
 
     // PlaybackSessionModelClient
     WEBCORE_EXPORT void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) final;
@@ -127,7 +128,7 @@ public:
     Mode m_currentMode;
     Mode m_targetMode;
 
-    VideoFullscreenModel* videoFullscreenModel() const { return m_videoFullscreenModel.get(); }
+    VideoFullscreenModel* videoFullscreenModel() const { return m_videoFullscreenModel; }
     bool shouldExitFullscreenWithReason(ExitFullScreenReason);
     HTMLMediaElementEnums::VideoFullscreenMode mode() const { return m_currentMode.mode(); }
     bool allowsPictureInPicturePlayback() const { return m_allowsPictureInPicturePlayback; }
@@ -171,8 +172,8 @@ protected:
     Ref<PlaybackSessionInterfaceAVKit> m_playbackSessionInterface;
     RetainPtr<WebAVPlayerViewControllerDelegate> m_playerViewControllerDelegate;
     RetainPtr<WebAVPlayerViewController> m_playerViewController;
-    WeakPtr<VideoFullscreenModel> m_videoFullscreenModel;
-    WeakPtr<VideoFullscreenChangeObserver> m_fullscreenChangeObserver;
+    VideoFullscreenModel* m_videoFullscreenModel { nullptr };
+    VideoFullscreenChangeObserver* m_fullscreenChangeObserver { nullptr };
 
     // These are only used when fullscreen is presented in a separate window.
     RetainPtr<UIWindow> m_window;
