@@ -1,3 +1,23 @@
+2019-07-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't do async overflow scrolling for visibility:hidden scrollers
+        https://bugs.webkit.org/show_bug.cgi?id=199779
+
+        Reviewed by Dean Jackson.
+        
+        An overflow:scroll with visibility:hidden is not scrollable on macOS, even if it has visible
+        content. So disable async overflow:scroll when the scroller has non-visible visibility (this also
+        takes visibility on ancestors into account).
+        
+        visibility:hidden overflow:scroll can be common because some JS libraries use it
+        (https://github.com/wnr/element-resize-detector).
+
+        Test: compositing/scrolling/async-overflow-scrolling/visibility-hidden-scrollers.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::canUseCompositedScrolling const): Don't use hasVisibleContent() because
+        that's affected by  visible children.
+
 2019-07-13  Robin Morisset  <rmorisset@apple.com>
 
         [WHLSL] Return statements don't need to keep track of the function they're in

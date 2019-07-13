@@ -2271,11 +2271,12 @@ LayoutSize RenderLayer::offsetFromAncestor(const RenderLayer* ancestorLayer, Col
 
 bool RenderLayer::canUseCompositedScrolling() const
 {
+    bool isVisible = renderer().style().visibility() == Visibility::Visible;
     if (renderer().settings().asyncOverflowScrollingEnabled())
-        return scrollsOverflow();
+        return isVisible && scrollsOverflow();
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(OVERFLOW_SCROLLING_TOUCH)
-    return scrollsOverflow() && (renderer().style().useTouchOverflowScrolling() || renderer().settings().alwaysUseAcceleratedOverflowScroll());
+    return isVisible && scrollsOverflow() && (renderer().style().useTouchOverflowScrolling() || renderer().settings().alwaysUseAcceleratedOverflowScroll());
 #else
     return false;
 #endif
