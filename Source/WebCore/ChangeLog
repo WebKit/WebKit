@@ -1,3 +1,91 @@
+2019-07-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Text autosizing] [iPadOS] Further adjust our heuristics to determine text autosizing candidates
+        https://bugs.webkit.org/show_bug.cgi?id=199780
+        <rdar://problem/52289088>
+
+        Reviewed by Simon Fraser.
+
+        Our current idempotent text autosizing candidate heuristic makes the right judgment call most of the time, but
+        there is still a large batch of text autosizing bugs left unfixed by the first iteration of the heuristic added
+        in r246781. This patch attempts to address most of these bugs by adjusting the decision-tree-based heuristic
+        once again, mostly with improvements to the model generation pipeline.
+
+        During the first iteration, I placed emphasis on tuning the max tree depth and min leaf size hyperparameters
+        when coming up with my decision tree, and didn't consider the inclusion or exclusion of each feature as a
+        hyperparameters. As such, the trees generated using the pipeline tended to use too many features, and as a
+        result, tended to have cross-validation overall accuracy scores hovering around 73%.
+
+        In this revised model generation pipeline, I now consider the inclusion of each feature (along with max depth
+        and min leaf size, as before) as a hyperparameter. Since this increases the number of hyperparameters by many
+        orders of magnitude, a naive grid search (as described in the prior ChangeLog entry) is no longer a tractible
+        procedure for tuning hyperparameters to the training algorithm.
+
+        Instead, I now use a stochastic greedy algorithm to search for good sets of hyperparameters; this process begins
+        with seeding some number (usually 20-24) of "searchers" with completely randomized sets of hyperparameters (i.e.
+        random max depth, random leaf size, and random subsets of features). I then evaluate the average performance of
+        each set of hyperparameters by using them to generate 2000 decision trees over 90% of the training data, and
+        then cross-validating these trees against the remaining 10%. These cross-validation scores are aggregated into a
+        single confusion matrix, which is then passed into a loss function that computes a single value indicating how
+        well training with the set of hyperparameters generalized to cross-validation data. After experimenting with
+        various loss functions, I settled on the following:
+
+        `k(false positive rate)^2 + (false negative rate)^2`
+
+        ...where a constant k is chosen to penalize false positives (i.e. broken layout) more harshly than false
+        negatives (small text). Additionally, squaring the false negative and false positive rates seems to help avoid
+        converging on solutions that heavily favor reducing only false positives or false negatives, or vice versa.
+
+        The stochastic algorithm starts by computing a loss value for the randomly generated configuration. Then, for
+        an indefinite number of iterations, it randomly mutates the configuration (e.g. by adding or removing features,
+        or changing min leaf size or max tree depth) and computes a new loss value for the mutated configuration. If the
+        mutated configuration performs better (i.e. achieves lower loss) than the current configuration, I set the
+        current configuration to be the mutated configuration. Otherwise, I keep the current (non-mutated) configuration
+        as-is. The stochastic algorithm then proceeds, ad-infinitum, with this current configuration.
+
+        Of course, since each mutation is small, this strategy so far is prone to leaving each searcher stuck in local
+        optima. To mitigate this, for each searcher, I keep track of a side-table of configurations that have already
+        been tested; when random mutations would normally lead to testing a configuration that has already been tested,
+        each searcher instead increases the chance of applying additional mutations. This has the effect of searchers
+        initially exhausting similar configurations, and expanding to test more and more dissimilar configurations as
+        the local alternatives all turn out to be worse. This allows searchers to effectively jump out of local optima
+        after being stuck for a long time.
+
+        So, using these strategies, I simultaneously ran a handful of searchers until they all appeared to converge
+        (a process that takes 8-12 hours on my current dataset). Many of the searchers achieved configurations with
+        cross-validation scores of 81% and above, up from the 73% of the previous attempt. These additionally have the
+        added bonus of reducing the number of features, often making the final trees themselves shallower and simpler to
+        understand than before.
+
+        This patch introduces one such decision tree generated using a set of hyperparameters acquired via this
+        stochasic search algorithm; it appears to simultaneously use fewer features, and achieve better cross-validation
+        performance.
+
+        Test: fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-candidates.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyleForTextAutosizing):
+
+        Adjust the early return to bail if either (1) the element is a candidate and the computed size is already equal
+        to the boosted size, or (2) the element is not a candidate and the computed size is already equal to the
+        specified size. Since the autosizing candidate heuristic depends on styles specified on the element itself (as
+        opposed to styles on any element in the ancestor chain), a parent may be an autosizing candidate, but a child of
+        it may not.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::isIdempotentTextAutosizingCandidate const):
+
+        Revamp the idempotent text autosizing candidate heuristic. See the explanation above for more details.
+
+        * rendering/style/RenderStyle.h:
+
+        Remove some bits from RenderStyle's autosizeStatus, now that we care about fewer bits of information from the
+        inherited flags.
+
+        * rendering/style/TextSizeAdjustment.cpp:
+        (WebCore::AutosizeStatus::updateStatus):
+        * rendering/style/TextSizeAdjustment.h:
+
 2019-07-13  Simon Fraser  <simon.fraser@apple.com>
 
         Don't do async overflow scrolling for visibility:hidden scrollers

@@ -25,8 +25,9 @@ if (window.internals) {
 <div style="background: green;"><span id="target12" style="font-size: 12px; height: 20px; position: fixed; float: right;">Test</span></div>
 <div style="background: green;"><span id="target13" style="font-size: 12px; height: 20px; position: fixed; float: right; overflow-x: hidden; width: 100px;">Test</span></div>
 <div style="background: green;"><span id="target14" style="font-size: 12px; height: 20px; width: 100px; float: right;">Test</span></div>
-<div style="background: green;"><span id="target15" style="overflow-y: hidden; float: right;">Test</span></div>
-<div style="background: green;"><span id="target16" style="float: right;">Test</span></div>
+<div style="background: green;"><span id="target15" style="font-size: 12px; overflow-y: hidden; float: right;">Test</span></div>
+<div style="background: green;"><span id="target16" style="font-size: 12px; float: right;">Test</span></div>
+<div style="background: green;"><span id="target17" style="font-size: 12px; -webkit-text-size-adjust: 100%;">Test</span></div>
 <script>
 let result;
 function check(name, shouldGetAutosized) {
@@ -55,18 +56,19 @@ result = Number.parseInt(window.getComputedStyle(target).getPropertyValue("font-
 let result2 = Number.parseInt(window.getComputedStyle(comparison).getPropertyValue("font-size"));
 shouldBeGreaterThanOrEqual("result", "result2");
 
-check("target8", true);
+check("target8", false);
 check("target9", true);
 check("target10", true);
 
 // Below are some common scenarios where we prefer (or prefer to not) adjust text size. These examples are inspired by
 // common patterns in real webpages.
 check("target11", true);
-check("target12", false);
-check("target13", true);
+check("target12", true);
+check("target13", false);
 check("target14", false);
 check("target15", true);
 check("target16", true);
+check("target17", false);
 </script>
 <script src="../../../../resources/js-test-post.js"></script>
 </body>

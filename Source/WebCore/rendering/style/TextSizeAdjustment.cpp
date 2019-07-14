@@ -49,23 +49,14 @@ void AutosizeStatus::updateStatus(RenderStyle& style)
     if (style.display() == DisplayType::None)
         result.add(Fields::DisplayNone);
 
-    if (style.hasOutOfFlowPosition())
-        result.add(Fields::OutOfFlowPosition);
-
     if (style.height().isFixed())
         result.add(Fields::FixedHeight);
 
     if (style.width().isFixed())
         result.add(Fields::FixedWidth);
 
-    if (style.maxWidth().isFixed())
-        result.add(Fields::FixedMaxWidth);
-
     if (style.overflowX() == Overflow::Hidden)
         result.add(Fields::OverflowXHidden);
-
-    if (style.overflowY() == Overflow::Hidden)
-        result.add(Fields::OverflowYHidden);
 
     if (style.isFloating())
         result.add(Fields::Floating);

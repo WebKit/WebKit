@@ -500,23 +500,47 @@ bool RenderStyle::isIdempotentTextAutosizingCandidate() const
         return false;
 
     if (fields.contains(AutosizeStatus::Fields::FixedHeight)) {
-        if (whiteSpace() == WhiteSpace::NoWrap)
+        if (fields.contains(AutosizeStatus::Fields::FixedWidth)) {
+            if (whiteSpace() == WhiteSpace::NoWrap) {
+                if (width().isFixed())
+                    return false;
+
+                return true;
+            }
+
+            if (fields.contains(AutosizeStatus::Fields::Floating))
+                return false;
+
+            if (fields.contains(AutosizeStatus::Fields::OverflowXHidden))
+                return false;
+
             return true;
+        }
 
-        if (fields.contains(AutosizeStatus::Fields::Floating))
-            return fields.contains(AutosizeStatus::Fields::OutOfFlowPosition) && fields.contains(AutosizeStatus::Fields::OverflowXHidden);
+        if (fields.contains(AutosizeStatus::Fields::OverflowXHidden)) {
+            if (fields.contains(AutosizeStatus::Fields::Floating))
+                return false;
 
-        if (fields.contains(AutosizeStatus::Fields::FixedWidth))
-            return !fields.contains(AutosizeStatus::Fields::OutOfFlowPosition);
+            return true;
+        }
+
+        return true;
     }
 
-    if (fields.contains(AutosizeStatus::Fields::Floating))
-        return true;
+    if (width().isFixed())
+        return false;
 
-    if (fields.contains(AutosizeStatus::Fields::FixedWidth))
-        return fields.contains(AutosizeStatus::Fields::OverflowYHidden);
+    if (textSizeAdjust().isPercentage() && textSizeAdjust().percentage() == 100) {
+        if (fields.contains(AutosizeStatus::Fields::Floating))
+            return true;
 
-    return !fields.contains(AutosizeStatus::Fields::OverflowYHidden) && !fields.contains(AutosizeStatus::Fields::FixedMaxWidth);
+        if (fields.contains(AutosizeStatus::Fields::FixedWidth))
+            return true;
+
+        return false;
+    }
+
+    return true;
 }
 
 AutosizeStatus RenderStyle::autosizeStatus() const

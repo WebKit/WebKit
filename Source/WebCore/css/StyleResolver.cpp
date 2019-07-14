@@ -907,16 +907,18 @@ void StyleResolver::adjustRenderStyleForTextAutosizing(RenderStyle& style, const
         style.setLineHeight({ minimumLineHeight, Fixed });
     };
 
-    if (!style.isIdempotentTextAutosizingCandidate())
-        return adjustLineHeightIfNeeded(style.computedFontSize());
-
     auto fontDescription = style.fontDescription();
-    auto initialComputedFontSize = fontDescription.computedSize(); 
-    auto adjustedFontSize = AutosizeStatus::idempotentTextSize(fontDescription.specifiedSize(), initialScale);
-    if (initialComputedFontSize == adjustedFontSize)
+    auto initialComputedFontSize = fontDescription.computedSize();
+    auto specifiedFontSize = fontDescription.specifiedSize();
+    bool isCandidate = style.isIdempotentTextAutosizingCandidate();
+    if (!isCandidate && WTF::areEssentiallyEqual(initialComputedFontSize, specifiedFontSize))
         return;
 
-    fontDescription.setComputedSize(adjustedFontSize);
+    auto adjustedFontSize = AutosizeStatus::idempotentTextSize(fontDescription.specifiedSize(), initialScale);
+    if (isCandidate && WTF::areEssentiallyEqual(initialComputedFontSize, adjustedFontSize))
+        return;
+
+    fontDescription.setComputedSize(isCandidate ? adjustedFontSize : specifiedFontSize);
     style.setFontDescription(WTFMove(fontDescription));
     style.fontCascade().update(&document().fontSelector());
     adjustLineHeightIfNeeded(adjustedFontSize);

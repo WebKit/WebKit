@@ -57,9 +57,6 @@ public:
         FixedWidth = 1 << 2,
         Floating = 1 << 3,
         OverflowXHidden = 1 << 4,
-        OverflowYHidden = 1 << 5,
-        OutOfFlowPosition = 1 << 6,
-        FixedMaxWidth = 1 << 7
         // Adding new values requires giving RenderStyle::InheritedFlags::autosizeStatus additional bits.
     };
 

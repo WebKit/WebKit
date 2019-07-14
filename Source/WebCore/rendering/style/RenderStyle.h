@@ -1835,9 +1835,9 @@ private:
         // 48 bits
 
 #if ENABLE(TEXT_AUTOSIZING)
-        unsigned autosizeStatus : 8;
+        unsigned autosizeStatus : 5;
 #endif
-        // 56 bits
+        // 53 bits
     };
 
     // This constructor is used to implement the replace operation.
