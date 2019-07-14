@@ -102,6 +102,9 @@ RenderObject::SetLayoutNeededForbiddenScope::~SetLayoutNeededForbiddenScope()
 
 struct SameSizeAsRenderObject {
     virtual ~SameSizeAsRenderObject() = default; // Allocate vtable pointer.
+#if !ASSERT_DISABLED
+    bool weakPtrFactorWasConstructedOnMainThread;
+#endif
     void* pointers[5];
 #ifndef NDEBUG
     unsigned m_debugBitfields : 2;

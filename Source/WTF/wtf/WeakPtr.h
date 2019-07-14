@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/MainThread.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -114,7 +115,13 @@ class WeakPtrFactory {
     WTF_MAKE_NONCOPYABLE(WeakPtrFactory<T>);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WeakPtrFactory() = default;
+    WeakPtrFactory()
+#if !ASSERT_DISABLED
+        : m_wasConstructedOnMainThread(isMainThread())
+#endif
+    {
+    }
+
     ~WeakPtrFactory()
     {
         if (!m_impl)
@@ -124,6 +131,7 @@ public:
 
     WeakPtr<T> createWeakPtr(T& object) const
     {
+        ASSERT(m_wasConstructedOnMainThread == isMainThread());
         if (!m_impl)
             m_impl = WeakPtrImpl::create(&object);
 
@@ -133,6 +141,7 @@ public:
 
     WeakPtr<const T> createWeakPtr(const T& object) const
     {
+        ASSERT(m_wasConstructedOnMainThread == isMainThread());
         if (!m_impl)
             m_impl = WeakPtrImpl::create(const_cast<T*>(&object));
 
@@ -153,6 +162,9 @@ private:
     template<typename> friend class WeakHashSet;
 
     mutable RefPtr<WeakPtrImpl> m_impl;
+#if !ASSERT_DISABLED
+    bool m_wasConstructedOnMainThread;
+#endif
 };
 
 template<typename T> class CanMakeWeakPtr {

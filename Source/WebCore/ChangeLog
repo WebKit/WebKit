@@ -1,3 +1,13 @@
+2019-07-14  Chris Dumez  <cdumez@apple.com>
+
+        Add threading assertion to WeakPtrFactory::createWeakPtr()
+        https://bugs.webkit.org/show_bug.cgi?id=199639
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/ScrollableArea.cpp:
+        * rendering/RenderObject.cpp:
+
 2019-07-14  Dean Jackson  <dino@apple.com>
 
         WebGL not supported on WKWebView on UIKit for Mac
