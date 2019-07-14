@@ -180,7 +180,7 @@ Ref<GraphicsContext3D> GraphicsContext3D::createShared(GraphicsContext3D& shared
     return context;
 }
 
-#if PLATFORM(MAC) && USE(OPENGL)
+#if PLATFORM(MAC) && USE(OPENGL) // FIXME: This probably should be just USE(OPENGL) - see <rdar://53062794>.
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 static void setGPUByRegistryID(PlatformGraphicsContext3D contextObj, CGLPixelFormatObj pixelFormatObj, IORegistryGPUID preferredGPUID)
@@ -265,11 +265,8 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     : m_attrs(attrs)
     , m_private(std::make_unique<GraphicsContext3DPrivate>(this))
 {
-#if USE(ANGLE)
-    // In the ANGLE backend, the only shader compiler instantiated is
-    // the one ANGLE uses internally.
-#else
-#if PLATFORM(IOS_FAMILY)
+#if !USE(ANGLE)
+#if USE(OPENGL_ES)
     if (m_attrs.isWebGL2)
         m_compiler = ANGLEWebKitBridge(SH_ESSL_OUTPUT, SH_WEBGL2_SPEC);
     else
@@ -277,8 +274,8 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
 #else
     if (m_attrs.isWebGL2)
         m_compiler = ANGLEWebKitBridge(SH_GLSL_410_CORE_OUTPUT, SH_WEBGL2_SPEC);
-#endif // PLATFORM(IOS_FAMILY)
-#endif // USE(ANGLE)
+#endif // USE(OPENGL_ES)
+#endif // !USE(ANGLE)
 
 #if USE(OPENGL_ES)
     UNUSED_PARAM(hostWindow);
@@ -296,6 +293,12 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     CGLPixelFormatObj pixelFormatObj = 0;
     GLint numPixelFormats = 0;
     
+#if HAVE(APPLE_GRAPHICS_CONTROL)
+    m_powerPreferenceUsedForCreation = (hasLowAndHighPowerGPUs() && attrs.powerPreference == GraphicsContext3DPowerPreference::HighPerformance) ? GraphicsContext3DPowerPreference::HighPerformance : GraphicsContext3DPowerPreference::Default;
+#else
+    m_powerPreferenceUsedForCreation = GraphicsContext3DPowerPreference::Default;
+#endif
+
     // If we're configured to demand the software renderer, we'll
     // do so. We attempt to create contexts in this order:
     //
@@ -308,31 +311,30 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     //
     // 4) closest to 32 bit RGBA/16 bit depth/software renderer
     //
-    // If none of that works, we simply fail and set m_contextObj to 0.
+    // If none of that works, we fail and leave m_contextObj as nullptr.
 
     bool useMultisampling = m_attrs.antialias;
-
-#if HAVE(APPLE_GRAPHICS_CONTROL)
-    m_powerPreferenceUsedForCreation = (hasLowAndHighPowerGPUs() && attrs.powerPreference == GraphicsContext3DPowerPreference::HighPerformance) ? GraphicsContext3DPowerPreference::HighPerformance : GraphicsContext3DPowerPreference::Default;
-#else
-    m_powerPreferenceUsedForCreation = GraphicsContext3DPowerPreference::Default;
-#endif
 
     setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, true, false, useMultisampling, attrs.isWebGL2, allowOfflineRenderers());
     CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
 
     if (!numPixelFormats) {
-        setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, false, false, useMultisampling, attrs.isWebGL2, allowOfflineRenderers());
+        setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, true, false, useMultisampling, attrs.isWebGL2, allowOfflineRenderers());
         CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
 
         if (!numPixelFormats) {
-            setPixelFormat(attribs, 32, 16, !attrs.forceSoftwareRenderer, false, false, useMultisampling, attrs.isWebGL2, allowOfflineRenderers());
+            setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, false, false, useMultisampling, attrs.isWebGL2, allowOfflineRenderers());
             CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
 
-            if (!attrs.forceSoftwareRenderer && !numPixelFormats) {
-                setPixelFormat(attribs, 32, 16, false, false, true, false, attrs.isWebGL2, allowOfflineRenderers());
+            if (!numPixelFormats) {
+                setPixelFormat(attribs, 32, 16, !attrs.forceSoftwareRenderer, false, false, useMultisampling, attrs.isWebGL2, allowOfflineRenderers());
                 CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
-                useMultisampling = false;
+
+                if (!attrs.forceSoftwareRenderer && !numPixelFormats) {
+                    setPixelFormat(attribs, 32, 16, false, false, true, false, attrs.isWebGL2, allowOfflineRenderers());
+                    CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
+                    useMultisampling = false;
+                }
             }
         }
     }
@@ -344,7 +346,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     GLint abortOnBlacklist = 0;
     CGLSetParameter(m_contextObj, kCGLCPAbortOnGPURestartStatusBlacklisted, &abortOnBlacklist);
     
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) // FIXME: This probably should be USE(OPENGL) - see <rdar://53062794>.
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     auto gpuID = (hostWindow && hostWindow->displayID()) ? gpuIDForDisplay(hostWindow->displayID()) : primaryGPUID();
@@ -814,6 +816,10 @@ bool GraphicsContext3D::allowOfflineRenderers() const
     // m_displayMask will not be set in this case.
     if (primaryOpenGLDisplayMask())
         return true;
+#elif PLATFORM(MACCATALYST)
+    // FIXME: <rdar://53062794> We're very inconsistent about WEBPROCESS_WINDOWSERVER_BLOCKING
+    // and MAC/MACCATALYST and OPENGL/OPENGLES.
+    return true;
 #endif
         
 #if HAVE(APPLE_GRAPHICS_CONTROL)
