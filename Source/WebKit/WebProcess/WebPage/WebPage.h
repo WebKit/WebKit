@@ -1225,6 +1225,7 @@ private:
     void platformReinitialize();
     void platformDetach();
     void platformEditorState(WebCore::Frame&, EditorState& result, IncludePostLayoutDataHint) const;
+    void platformWillPerformEditingCommand();
     void sendEditorStateUpdate();
 
 #if PLATFORM(COCOA)
@@ -1956,6 +1957,10 @@ private:
     std::unique_ptr<LayerHostingContext> m_contextForVisibilityPropagation;
 #endif
 };
+
+#if !PLATFORM(IOS_FAMILY)
+inline void WebPage::platformWillPerformEditingCommand() { }
+#endif
 
 } // namespace WebKit
 

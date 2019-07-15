@@ -56,6 +56,7 @@ public:
 #endif
     bool shouldDisablePointerEventsQuirk() const;
     bool needsInputModeNoneImplicitly(const HTMLElement&) const;
+    bool needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const;
 
     WEBCORE_EXPORT bool shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const;
     WEBCORE_EXPORT bool shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() const;

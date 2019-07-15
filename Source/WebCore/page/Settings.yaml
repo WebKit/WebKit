@@ -162,6 +162,15 @@ googleAntiFlickerOptimizationQuirkEnabled:
 needsKeyboardEventDisambiguationQuirks:
   initial: false
 
+# This is an iOS-specific quirk. Unlike Mac, keyboard operations are asynchronous and hence a DOM update as
+# a result of text insertion or deletion does not occur within the same event loop iteration as a dispatched
+# DOM keydown event. Some sites, notably Google Sheets, schedule timers on keypress and expect on a DOM update
+# to have occurred on expiration. When enabled, this quirk puts all such scheduled timers in a holding tank
+# until the keyboard performs the insertion or deletion. This gives Google Sheets the illusion that the DOM
+# update happened within the same event loop iteration that the keypress event was dispatched in.
+needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk:
+  initial: false
+
 treatsAnyTextCSSLinkAsStylesheet:
   initial: false
 shrinksStandaloneImagesToFit:

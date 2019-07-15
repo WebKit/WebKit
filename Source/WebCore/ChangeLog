@@ -1,3 +1,82 @@
+2019-07-15  Daniel Bates  <dabates@apple.com>
+
+        Typing into a cell in a Google Sheet lags behind by one character
+        https://bugs.webkit.org/show_bug.cgi?id=199587
+        <rdar://problem/51616845>
+
+        Reviewed by Brent Fulgham.
+
+        Add a Google Sheets quirk. Put all DOM timers scheduled from keydown and keypress event listeners
+        into a holding tank. The timers continue to tick, but are barred from executing their action until
+        the next text insertion or deletion or 32 ms (on device) have elapsed, whichever is sooner. We only
+        allocate a holding tank once per document, only if the quirk is active, and this allocation is done
+        when the document schedules a timer on keydown or keypress. The holding tank lives for the lifetime
+        of the document.
+
+        The story behind the quirk:
+
+        On keypress Google Sheets schedules timers and expects that a DOM update will occur (i.e. text
+        will be inserted or deleted) within the same event loop iteration as the dispatched keypress. The
+        UI Events spec. [1] makes no such guarantee of when a DOM update must occur in relation to the keypress
+        event. It could happen in the same event loop iteration as the key press (as Google expects), the
+        next iteration, 500ms later, 2 minutes later, etc. What the spec does guarantee is that by the time
+        a DOM input event is dispatched that the DOM will be updated. And this is the solution to the problem
+        Google Sheets is trying to solve, but is doing so using pre-IE 9 technology (though similar
+        functionality was available via onpropertychange in IE < 9).
+
+        See also <https://github.com/w3c/uievents/issues/238>, which is tracking a spec. text update for
+        this quirk.
+
+        Test: fast/events/ios/dom-update-on-keydown-quirk.html
+
+        [1] <https://w3c.github.io/uievents/> (Editor's Draft, 14 October 2018)
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add some files to the project.
+
+        * dom/Document.cpp:
+        (WebCore::Document::domTimerHoldingTank): Added.
+        * dom/Document.h:
+        (WebCore::Document::domTimerHoldingTankIfExists): Added.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::install): Put the newly instantiated timer into the holding tank.
+        (WebCore::DOMTimer::removeById): Remove the timer from the holding tank.
+        (WebCore::DOMTimer::fired): Check if the timer is in the holding tank. If it is and it is a one-
+        shot timer then schedule it for the next event loop iteration. If it's a repeating timer just
+        let it continue ticking. Otherwise, do what we no now and execute the timer's action. The reason
+        we do not suspend timers in the holding tank is because:
+            1. Far out timers (Google Sheets registers timers as far out as 5 minutes!) are not penalized.
+            Though smart supension logic could avoid this. See (3).
+
+            2. Empirical observations indicate that the keyboard will perform the insertion or deletion
+            reasonably quickly (not the same event loop iteration as the keydown, but within two iterations out).
+            So, the timers in the holding tank are short-lived.
+
+            3. Simplifies the code. There is no need to keep additional bookkeeping to track multiple timer
+            suspension reasons (timers currently can only have one suspension reason) or alternatively defer
+            scheduling a timer until a later time and computing a new "fair" firing time when scheduled.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::internalKeyEvent): Place a token on the stack to put all DOM timers
+        scheduled on keydown and keypress into the holding tank if the quirk is enabled.
+        * page/Quirks.cpp:
+        (WebCore::Quirks::needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand const): Added.
+        * page/Quirks.h:
+        * page/Settings.yaml: Added setting so that this quirk can be enabled from a layout test. This setting
+        also lets us enable the quirk for all sites or for certain third-party apps if desired.
+        * page/ios/DOMTimerHoldingTank.cpp: Added.
+        (WebCore::DOMTimerHoldingTank::DOMTimerHoldingTank):
+        (WebCore::DOMTimerHoldingTank::add):
+        (WebCore::DOMTimerHoldingTank::remove):
+        (WebCore::DOMTimerHoldingTank::contains):
+        (WebCore::DOMTimerHoldingTank::removeAll):
+        (WebCore::DOMTimerHoldingTank::stopExceededMaximumHoldTimer):
+        * page/ios/DOMTimerHoldingTank.h: Added.
+        (WebCore::DeferDOMTimersForScope::DeferDOMTimersForScope):
+        (WebCore::DeferDOMTimersForScope::~DeferDOMTimersForScope):
+        (WebCore::DeferDOMTimersForScope::isDeferring):
+
 2019-07-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r247397, r247378, r247366.

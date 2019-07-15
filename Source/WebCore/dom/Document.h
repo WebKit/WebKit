@@ -106,6 +106,7 @@ class ConstantPropertyMap;
 class ContentChangeObserver;
 class DOMImplementation;
 class DOMSelection;
+class DOMTimerHoldingTank;
 class DOMWindow;
 class DOMWrapperWorld;
 class Database;
@@ -883,6 +884,9 @@ public:
     void processWebAppOrientations();
 
     WEBCORE_EXPORT ContentChangeObserver& contentChangeObserver();
+
+    DOMTimerHoldingTank* domTimerHoldingTankIfExists() { return m_domTimerHoldingTank.get(); }
+    DOMTimerHoldingTank& domTimerHoldingTank();
 #endif
     
     void processViewport(const String& features, ViewportArguments::Type origin);
@@ -2044,6 +2048,7 @@ private:
     Ref<UndoManager> m_undoManager;
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<ContentChangeObserver> m_contentChangeObserver;
+    std::unique_ptr<DOMTimerHoldingTank> m_domTimerHoldingTank;
 #endif
 
     HashMap<Element*, ElementIdentifier> m_identifiedElementsMap;
