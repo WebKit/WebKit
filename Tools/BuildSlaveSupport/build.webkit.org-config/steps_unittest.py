@@ -122,18 +122,6 @@ class RunJavaScriptCoreTestsTest(unittest.TestCase):
         self.assertResults(FAILURE, ["5 JSC tests failed"], 1,  """Results for JSC stress tests:
     5 failures found.""")
 
-    def test_jsc_stress_failures_with_binary_results_output(self):
-        self.assertResults(FAILURE, ["8 JSC tests failed"], 1,  """Results for JSC stress tests:
-    5 failures found.
-Results for JSC test binaries:
-    3 failures found.""")
-
-    def test_jsc_stress_failures_with_binary_result_output(self):
-        self.assertResults(FAILURE, ["6 JSC tests failed"], 1,  """Results for JSC stress tests:
-    5 failures found.
-Results for JSC test binaries:
-    1 failure found.""")
-
 
 class RunTest262TestsTest(unittest.TestCase):
     def assertResults(self, expected_result, expected_text, rc, stdio):

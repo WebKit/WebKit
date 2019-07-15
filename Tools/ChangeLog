@@ -1,3 +1,17 @@
+2019-07-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r247393.
+        https://bugs.webkit.org/show_bug.cgi?id=199797
+
+        broke mips and arm EWS (Requested by guijemont on #webkit).
+
+        Reverted changeset:
+
+        "run-javascriptcore-tests won't report test results for
+        testmasm, testair, testb3, testdfg and test api"
+        https://bugs.webkit.org/show_bug.cgi?id=199489
+        https://trac.webkit.org/changeset/247393
+
 2019-07-12  Andy Estes  <aestes@apple.com>
 
         [Cocoa] -loadFileURL:allowingReadAccessToURL: should fully resolve file URLs
