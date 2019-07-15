@@ -1,3 +1,14 @@
+2019-07-15  Rob Buis  <rbuis@igalia.com>
+
+        MathML WPT test for RadicalDegreeBottomRaisePercent fails
+        https://bugs.webkit.org/show_bug.cgi?id=183631
+
+        Reviewed by Frédéric Wang.
+
+        Adjust test expectation.
+
+        * web-platform-tests/mathml/presentation-markup/radicals/root-parameters-1-expected.txt:
+
 2019-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Improve wasm wpt test results by fixing miscellaneous issues
