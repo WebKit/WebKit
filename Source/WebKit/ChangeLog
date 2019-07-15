@@ -1,3 +1,21 @@
+2019-07-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [iOS] SOAuthorizationSession should tell AppSSO whether the UIClient is capable of showing the extension UI
+        https://bugs.webkit.org/show_bug.cgi?id=199790
+        <rdar://problem/52790112>
+
+        Reviewed by Brent Fulgham.
+
+        On iOS, WebKit relies on a SPI -[WKUIDelegatePrivate _presentingViewControllerForWebView:] to present the
+        extension UI. However, third party clients often don't implement this SPI. Therefore, WebKit will not be
+        able to present the extension UI for them.
+
+        To be able to show the extension UI for third party WebKit clients, WebKit should unset SOAuthorization.enableEmbeddedAuthorizationViewController
+        whenever clients don't implement the above SPI such that AppSSO could show the UI in their UI process.
+
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        (WebKit::SOAuthorizationSession::start):
+
 2019-07-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION: Chase app crashes immediately after authentication

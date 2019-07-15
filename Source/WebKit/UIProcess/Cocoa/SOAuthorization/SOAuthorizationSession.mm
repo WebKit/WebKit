@@ -33,7 +33,7 @@
 #import "APINavigationAction.h"
 #import "APIUIClient.h"
 #import "SOAuthorizationLoadPolicy.h"
-#import "WKUIDelegate.h"
+#import "WKUIDelegatePrivate.h"
 #import "WebPageProxy.h"
 #import "WebSiteDataStore.h"
 #import <WebCore/ResourceResponse.h>
@@ -128,6 +128,11 @@ void SOAuthorizationSession::start()
             @"initiatingAction": @(static_cast<NSInteger>(m_action))
         };
         [m_soAuthorization setAuthorizationOptions:authorizationOptions];
+
+#if PLATFORM(IOS)
+        if (![fromWebPageProxy(*m_page).UIDelegate respondsToSelector:@selector(_presentingViewControllerForWebView:)])
+            [m_soAuthorization setEnableEmbeddedAuthorizationViewController:NO];
+#endif
 
         auto *nsRequest = m_navigationAction->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
         [m_soAuthorization beginAuthorizationWithURL:nsRequest.URL httpHeaders:nsRequest.allHTTPHeaderFields httpBody:nsRequest.HTTPBody];
