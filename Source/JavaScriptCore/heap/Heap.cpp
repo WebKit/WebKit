@@ -254,8 +254,11 @@ protected:
             m_heap.notifyThreadStopping(locker);
             return PollResult::Stop;
         }
-        if (m_heap.shouldCollectInCollectorThread(locker))
+        if (m_heap.shouldCollectInCollectorThread(locker)) {
+            m_heap.m_collectorThreadIsRunning = true;
             return PollResult::Work;
+        }
+        m_heap.m_collectorThreadIsRunning = false;
         return PollResult::Wait;
     }
     
@@ -268,6 +271,11 @@ protected:
     void threadDidStart() override
     {
         Thread::registerGCThread(GCThreadType::Main);
+    }
+
+    void threadIsStopping(const AbstractLocker&) override
+    {
+        m_heap.m_collectorThreadIsRunning = false;
     }
 
 private:
@@ -1240,9 +1248,6 @@ NEVER_INLINE bool Heap::runNotRunningPhase(GCConductor conn)
         auto locker = holdLock(*m_threadLock);
         if (m_requests.isEmpty())
             return false;
-        // Check if the mutator has stolen the conn while the collector transitioned from End to NotRunning
-        if (conn == GCConductor::Collector && !!(m_worldState.load() & mutatorHasConnBit))
-            return false;
     }
     
     return changePhase(conn, CollectorPhase::Begin);
@@ -2121,7 +2126,7 @@ Heap::Ticket Heap::requestCollection(GCRequest request)
     // right now. This is an optimization that prevents the collector thread from ever starting in most
     // cases.
     ASSERT(m_lastServedTicket <= m_lastGrantedTicket);
-    if ((m_lastServedTicket == m_lastGrantedTicket) && (m_currentPhase == CollectorPhase::NotRunning)) {
+    if ((m_lastServedTicket == m_lastGrantedTicket) && !m_collectorThreadIsRunning) {
         if (false)
             dataLog("Taking the conn.\n");
         m_worldState.exchangeOr(mutatorHasConnBit);
