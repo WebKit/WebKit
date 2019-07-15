@@ -1,0 +1,31 @@
+
+PASS Missing arguments: get 
+PASS Branding: get 
+PASS Missing arguments: set 
+PASS Branding: set 
+FAIL Basic assert_throws: undefined: table.get(-1) function "() => table.get(-1)" threw object "TypeError: Expect an integer argument in the range: [0, 2^32 - 1]" ("TypeError") expected object "RangeError" ("RangeError")
+FAIL Growing assert_throws: undefined: table.get(-1) function "() => table.get(-1)" threw object "TypeError: Expect an integer argument in the range: [0, 2^32 - 1]" ("TypeError") expected object "RangeError" ("RangeError")
+FAIL Setting out-of-bounds assert_throws: undefined: table.get(-1) function "() => table.get(-1)" threw object "TypeError: Expect an integer argument in the range: [0, 2^32 - 1]" ("TypeError") expected object "RangeError" ("RangeError")
+FAIL Setting non-function assert_throws: undefined: table.get(-1) function "() => table.get(-1)" threw object "TypeError: Expect an integer argument in the range: [0, 2^32 - 1]" ("TypeError") expected object "RangeError" ("RangeError")
+FAIL Setting non-wasm function assert_throws: undefined: table.get(-1) function "() => table.get(-1)" threw object "TypeError: Expect an integer argument in the range: [0, 2^32 - 1]" ("TypeError") expected object "RangeError" ("RangeError")
+FAIL Setting non-wasm arrow function assert_throws: undefined: table.get(-1) function "() => table.get(-1)" threw object "TypeError: Expect an integer argument in the range: [0, 2^32 - 1]" ("TypeError") expected object "RangeError" ("RangeError")
+PASS Getting out-of-range argument: undefined 
+PASS Setting out-of-range argument: undefined 
+PASS Getting out-of-range argument: NaN 
+PASS Setting out-of-range argument: NaN 
+PASS Getting out-of-range argument: Infinity 
+PASS Setting out-of-range argument: Infinity 
+PASS Getting out-of-range argument: -Infinity 
+PASS Setting out-of-range argument: -Infinity 
+PASS Getting out-of-range argument: -1 
+PASS Setting out-of-range argument: -1 
+PASS Getting out-of-range argument: 4294967296 
+PASS Setting out-of-range argument: 4294967296 
+PASS Getting out-of-range argument: 68719476736 
+PASS Setting out-of-range argument: 68719476736 
+PASS Getting out-of-range argument: "0x100000000" 
+PASS Setting out-of-range argument: "0x100000000" 
+PASS Getting out-of-range argument: object "[object Object]" 
+PASS Setting out-of-range argument: object "[object Object]" 
+PASS Order of argument conversion 
+

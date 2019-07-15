@@ -50,10 +50,10 @@
 #include <JavaScriptCore/CodeBlock.h>
 #include <JavaScriptCore/JSInternalPromise.h>
 #include <JavaScriptCore/JSInternalPromiseDeferred.h>
+#include <JavaScriptCore/JSWebAssembly.h>
 #include <JavaScriptCore/Microtask.h>
 #include <JavaScriptCore/PromiseDeferredTimer.h>
 #include <JavaScriptCore/StrongInlines.h>
-#include <JavaScriptCore/WebAssemblyPrototype.h>
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>
 
@@ -446,7 +446,7 @@ void JSDOMWindowBase::compileStreaming(JSC::JSGlobalObject* globalObject, JSC::E
     if (auto inputResponse = JSFetchResponse::toWrapped(vm, source)) {
         handleResponseOnStreamingAction(globalObject, exec, inputResponse, promise, [promise] (JSC::ExecState* exec, const char* data, size_t byteSize) mutable {
             if (auto arrayBuffer = tryAllocate(exec, promise, data, byteSize))
-                JSC::WebAssemblyPrototype::webAssemblyModuleValidateAsync(exec, promise, WTFMove(*arrayBuffer));
+                JSC::JSWebAssembly::webAssemblyModuleValidateAsync(exec, promise, WTFMove(*arrayBuffer));
         });
     } else
         promise->reject(exec, createTypeError(exec, "first argument must be an Response or Promise for Response"_s));
@@ -465,7 +465,7 @@ void JSDOMWindowBase::instantiateStreaming(JSC::JSGlobalObject* globalObject, JS
     if (auto inputResponse = JSFetchResponse::toWrapped(vm, source)) {
         handleResponseOnStreamingAction(globalObject, exec, inputResponse, promise, [promise, importedObject] (JSC::ExecState* exec, const char* data, size_t byteSize) mutable {
             if (auto arrayBuffer = tryAllocate(exec, promise, data, byteSize))
-                JSC::WebAssemblyPrototype::webAssemblyModuleInstantinateAsync(exec, promise, WTFMove(*arrayBuffer), importedObject);
+                JSC::JSWebAssembly::webAssemblyModuleInstantinateAsync(exec, promise, WTFMove(*arrayBuffer), importedObject);
         });
     } else
         promise->reject(exec, createTypeError(exec, "first argument must be an Response or Promise for Response"_s));

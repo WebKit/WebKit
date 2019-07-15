@@ -2,7 +2,7 @@ import * as assert from '../assert.js';
 import Builder from '../Builder.js';
 
 assert.isFunction(WebAssembly.compile);
-assert.isFunction(WebAssembly.__proto__.compile);
+assert.truthy(WebAssembly.hasOwnProperty('compile'));
 assert.eq(WebAssembly.compile.length, 1);
 
 async function testPromiseAPI() {

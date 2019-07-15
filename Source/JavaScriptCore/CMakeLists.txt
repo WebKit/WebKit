@@ -108,7 +108,6 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     wasm/js/WebAssemblyMemoryPrototype.cpp
     wasm/js/WebAssemblyModuleConstructor.cpp
     wasm/js/WebAssemblyModulePrototype.cpp
-    wasm/js/WebAssemblyPrototype.cpp
     wasm/js/WebAssemblyRuntimeErrorConstructor.cpp
     wasm/js/WebAssemblyRuntimeErrorPrototype.cpp
     wasm/js/WebAssemblyTableConstructor.cpp
@@ -1011,8 +1010,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmPageCount.h
     wasm/WasmTierUpCount.h
 
+    wasm/js/JSWebAssembly.h
     wasm/js/JSWebAssemblyModule.h
-    wasm/js/WebAssemblyPrototype.h
 
 
     yarr/RegularExpression.h
@@ -1220,7 +1219,6 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/StringPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/TypedArrayConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/TypedArrayPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/WebAssemblyPrototype.js
 )
 
 add_custom_command(

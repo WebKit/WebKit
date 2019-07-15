@@ -57,7 +57,7 @@ $(PROJECT_DIR)/builtins/StringIteratorPrototype.js
 $(PROJECT_DIR)/builtins/StringPrototype.js
 $(PROJECT_DIR)/builtins/TypedArrayConstructor.js
 $(PROJECT_DIR)/builtins/TypedArrayPrototype.js
-$(PROJECT_DIR)/builtins/WebAssemblyPrototype.js
+$(PROJECT_DIR)/builtins/WebAssembly.js
 $(PROJECT_DIR)/bytecode/BytecodeList.rb
 $(PROJECT_DIR)/create_hash_table
 $(PROJECT_DIR)/disassembler/udis86/optable.xml
@@ -183,7 +183,6 @@ $(PROJECT_DIR)/wasm/js/WebAssemblyMemoryConstructor.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyMemoryPrototype.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyModuleConstructor.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyModulePrototype.cpp
-$(PROJECT_DIR)/wasm/js/WebAssemblyPrototype.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyRuntimeErrorConstructor.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyRuntimeErrorPrototype.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyTableConstructor.cpp

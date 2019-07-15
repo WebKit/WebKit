@@ -28,31 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSObject.h"
-#include "JSWebAssemblyCompileError.h"
-#include "JSWebAssemblyInstance.h"
-#include "JSWebAssemblyLinkError.h"
-#include "JSWebAssemblyMemory.h"
-#include "JSWebAssemblyModule.h"
-#include "JSWebAssemblyRuntimeError.h"
-#include "JSWebAssemblyTable.h"
-#include "WebAssemblyCompileErrorConstructor.h"
-#include "WebAssemblyCompileErrorPrototype.h"
-#include "WebAssemblyFunction.h"
-#include "WebAssemblyInstanceConstructor.h"
-#include "WebAssemblyInstancePrototype.h"
-#include "WebAssemblyLinkErrorConstructor.h"
-#include "WebAssemblyLinkErrorPrototype.h"
-#include "WebAssemblyMemoryConstructor.h"
-#include "WebAssemblyMemoryPrototype.h"
-#include "WebAssemblyModuleConstructor.h"
-#include "WebAssemblyModulePrototype.h"
-#include "WebAssemblyModuleRecord.h"
-#include "WebAssemblyPrototype.h"
-#include "WebAssemblyRuntimeErrorConstructor.h"
-#include "WebAssemblyRuntimeErrorPrototype.h"
-#include "WebAssemblyTableConstructor.h"
-#include "WebAssemblyTablePrototype.h"
-#include "WebAssemblyToJSCallee.h"
+#include "JSPromiseDeferred.h"
 
 namespace JSC {
 
@@ -66,12 +42,19 @@ public:
 
     DECLARE_INFO;
 
+    JS_EXPORT_PRIVATE static void webAssemblyModuleValidateAsync(ExecState*, JSPromiseDeferred*, Vector<uint8_t>&&);
+    JS_EXPORT_PRIVATE static void webAssemblyModuleInstantinateAsync(ExecState*, JSPromiseDeferred*, Vector<uint8_t>&&, JSObject*);
+    static JSValue instantiate(ExecState*, JSPromiseDeferred*, const Identifier&, JSValue);
+
 protected:
-    void finishCreation(VM&);
+    void finishCreation(VM&, JSGlobalObject*);
 
 private:
     JSWebAssembly(VM&, Structure*);
 };
+
+EncodedJSValue JSC_HOST_CALL webAssemblyCompileStreamingInternal(ExecState*);
+EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateStreamingInternal(ExecState*);
 
 } // namespace JSC
 

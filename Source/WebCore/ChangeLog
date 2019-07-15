@@ -1,3 +1,65 @@
+2019-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Improve wasm wpt test results by fixing miscellaneous issues
+        https://bugs.webkit.org/show_bug.cgi?id=199783
+
+        Reviewed by Mark Lam.
+
+        Remove WebAssemblyPrototype.
+
+        Tests: imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/global/toString.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/global/toString.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/global/value-set.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/global/value-set.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/global/valueOf.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/global/valueOf.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/instance/exports.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/instance/exports.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/instance/toString.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/instance/toString.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/interface.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/interface.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/memory/buffer.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/memory/buffer.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/memory/constructor.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/memory/constructor.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/memory/grow.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/memory/grow.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/memory/toString.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/memory/toString.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/module/constructor.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/module/constructor.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/module/customSections.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/module/customSections.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/module/exports.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/module/exports.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/module/imports.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/module/imports.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/module/toString.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/module/toString.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/table/constructor.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/table/constructor.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/table/get-set.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/table/get-set.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/table/grow.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/table/grow.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/table/length.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/table/length.any.worker.html
+               imported/w3c/web-platform-tests/wasm/jsapi/table/toString.any.html
+               imported/w3c/web-platform-tests/wasm/jsapi/table/toString.any.worker.html
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::compileStreaming):
+        (WebCore::JSDOMWindowBase::instantiateStreaming):
+
 2019-07-15  Youenn Fablet  <youenn@apple.com>
 
         Enable a debug WebRTC mode without any encryption
