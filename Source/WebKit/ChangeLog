@@ -1,3 +1,42 @@
+2019-07-15  Brady Eidson  <beidson@apple.com>
+
+        Make WKURLSchemeTask thread safe.
+        <rdar://problem/50471863> and https://bugs.webkit.org/show_bug.cgi?id=199764
+
+        Reviewed by Alex Christensen.
+
+        Punt most of the WKURLSchemeTask operations back to the main thread.
+        Make accessing the NSURLRequest be thread safe with lock protection.
+
+        * UIProcess/API/Cocoa/WKURLSchemeTask.mm:
+        (getExceptionTypeFromMainRunLoop):
+        (-[WKURLSchemeTaskImpl dealloc]):
+        (-[WKURLSchemeTaskImpl request]):
+        (-[WKURLSchemeTaskImpl _requestOnlyIfCached]):
+        (-[WKURLSchemeTaskImpl didReceiveResponse:]):
+        (-[WKURLSchemeTaskImpl didReceiveData:]):
+        (-[WKURLSchemeTaskImpl didFinish]):
+        (-[WKURLSchemeTaskImpl didFailWithError:]):
+        (-[WKURLSchemeTaskImpl _didPerformRedirection:newRequest:]):
+
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::WebURLSchemeTask):
+        (WebKit::WebURLSchemeTask::~WebURLSchemeTask):
+        (WebKit::WebURLSchemeTask::didPerformRedirection):
+        (WebKit::WebURLSchemeTask::didReceiveResponse):
+        (WebKit::WebURLSchemeTask::didReceiveData):
+        (WebKit::WebURLSchemeTask::didComplete):
+        (WebKit::WebURLSchemeTask::pageDestroyed):
+        (WebKit::WebURLSchemeTask::stop):
+        (WebKit::WebURLSchemeTask::nsRequest const):
+
+        * UIProcess/WebURLSchemeTask.h:
+        (WebKit::WebURLSchemeTask::identifier const):
+        (WebKit::WebURLSchemeTask::pageID const):
+        (WebKit::WebURLSchemeTask::process):
+        (WebKit::WebURLSchemeTask::process const): Deleted.
+        (WebKit::WebURLSchemeTask::request const): Deleted.
+
 2019-07-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Followup to r247439

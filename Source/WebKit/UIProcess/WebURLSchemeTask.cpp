@@ -50,10 +50,18 @@ WebURLSchemeTask::WebURLSchemeTask(WebURLSchemeHandler& handler, WebPageProxy& p
     , m_request(WTFMove(request))
     , m_syncCompletionHandler(WTFMove(syncCompletionHandler))
 {
+    ASSERT(RunLoop::isMain());
+}
+
+WebURLSchemeTask::~WebURLSchemeTask()
+{
+    ASSERT(RunLoop::isMain());
 }
 
 auto WebURLSchemeTask::didPerformRedirection(WebCore::ResourceResponse&& response, WebCore::ResourceRequest&& request) -> ExceptionType
 {
+    ASSERT(RunLoop::isMain());
+
     if (m_stopped)
         return ExceptionType::TaskAlreadyStopped;
     
@@ -69,7 +77,11 @@ auto WebURLSchemeTask::didPerformRedirection(WebCore::ResourceResponse&& respons
     if (isSync())
         m_syncResponse = response;
 
-    m_request = request;
+    {
+        LockHolder locker(m_requestLock);
+        m_request = request;
+    }
+
     m_process->send(Messages::WebPage::URLSchemeTaskDidPerformRedirection(m_urlSchemeHandler->identifier(), m_identifier, response, request), m_page->pageID());
 
     return ExceptionType::None;
@@ -77,6 +89,8 @@ auto WebURLSchemeTask::didPerformRedirection(WebCore::ResourceResponse&& respons
 
 auto WebURLSchemeTask::didReceiveResponse(const ResourceResponse& response) -> ExceptionType
 {
+    ASSERT(RunLoop::isMain());
+
     if (m_stopped)
         return ExceptionType::TaskAlreadyStopped;
 
@@ -99,6 +113,8 @@ auto WebURLSchemeTask::didReceiveResponse(const ResourceResponse& response) -> E
 
 auto WebURLSchemeTask::didReceiveData(Ref<SharedBuffer>&& buffer) -> ExceptionType
 {
+    ASSERT(RunLoop::isMain());
+
     if (m_stopped)
         return ExceptionType::TaskAlreadyStopped;
 
@@ -124,6 +140,8 @@ auto WebURLSchemeTask::didReceiveData(Ref<SharedBuffer>&& buffer) -> ExceptionTy
 
 auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
 {
+    ASSERT(RunLoop::isMain());
+
     if (m_stopped)
         return ExceptionType::TaskAlreadyStopped;
 
@@ -154,22 +172,38 @@ auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
 
 void WebURLSchemeTask::pageDestroyed()
 {
+    ASSERT(RunLoop::isMain());
     ASSERT(m_page);
+
     m_page = nullptr;
     m_process = nullptr;
     m_stopped = true;
     
-    if (isSync())
+    if (isSync()) {
+        LockHolder locker(m_requestLock);
         m_syncCompletionHandler({ }, failedCustomProtocolSyncLoad(m_request), { });
+    }
 }
 
 void WebURLSchemeTask::stop()
 {
+    ASSERT(RunLoop::isMain());
     ASSERT(!m_stopped);
+
     m_stopped = true;
 
-    if (isSync())
+    if (isSync()) {
+        LockHolder locker(m_requestLock);
         m_syncCompletionHandler({ }, failedCustomProtocolSyncLoad(m_request), { });
+    }
 }
+
+#if PLATFORM(COCOA)
+NSURLRequest *WebURLSchemeTask::nsRequest() const
+{
+    LockHolder locker(m_requestLock);
+    return m_request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
+}
+#endif
 
 } // namespace WebKit
