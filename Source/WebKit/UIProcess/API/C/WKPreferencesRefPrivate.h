@@ -91,10 +91,6 @@ WK_EXPORT void WKPreferencesSetWebGLEnabled(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetWebGLEnabled(WKPreferencesRef);
 
 // Defaults to false.
-WK_EXPORT void WKPreferencesSetForceSoftwareWebGLRendering(WKPreferencesRef, bool);
-WK_EXPORT bool WKPreferencesGetForceSoftwareWebGLRendering(WKPreferencesRef);
-
-// Defaults to false.
 WK_EXPORT void WKPreferencesSetAccelerated2DCanvasEnabled(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetAccelerated2DCanvasEnabled(WKPreferencesRef);
 

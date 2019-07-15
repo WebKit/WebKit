@@ -98,57 +98,6 @@ public:
     ~GraphicsContext3DPrivate() { }
 };
 
-#if USE(OPENGL)
-
-static void setPixelFormat(Vector<CGLPixelFormatAttribute>& attribs, int colorBits, int depthBits, bool accelerated, bool supersample, bool closest, bool antialias, bool isWebGL2, bool allowOfflineRenderers)
-{
-    attribs.clear();
-    
-    attribs.append(kCGLPFAColorSize);
-    attribs.append(static_cast<CGLPixelFormatAttribute>(colorBits));
-    attribs.append(kCGLPFADepthSize);
-    attribs.append(static_cast<CGLPixelFormatAttribute>(depthBits));
-
-    // This attribute, while mentioning offline renderers, is actually
-    // allowing us to request the integrated graphics on a dual GPU
-    // system, and not force the discrete GPU.
-    // See https://developer.apple.com/library/mac/technotes/tn2229/_index.html
-    if (allowOfflineRenderers)
-        attribs.append(kCGLPFAAllowOfflineRenderers);
-
-    if (accelerated)
-        attribs.append(kCGLPFAAccelerated);
-    else {
-        attribs.append(kCGLPFARendererID);
-        attribs.append(static_cast<CGLPixelFormatAttribute>(kCGLRendererGenericFloatID));
-    }
-        
-    if (supersample && !antialias)
-        attribs.append(kCGLPFASupersample);
-
-    if (closest)
-        attribs.append(kCGLPFAClosestPolicy);
-
-    if (antialias) {
-        attribs.append(kCGLPFAMultisample);
-        attribs.append(kCGLPFASampleBuffers);
-        attribs.append(static_cast<CGLPixelFormatAttribute>(1));
-        attribs.append(kCGLPFASamples);
-        attribs.append(static_cast<CGLPixelFormatAttribute>(4));
-    }
-
-    if (isWebGL2) {
-        // FIXME: Instead of backing a WebGL2 GraphicsContext3D with a OpenGL 4 context, we should instead back it with ANGLE.
-        // Use an OpenGL 4 context for now until the ANGLE backend is ready.
-        attribs.append(kCGLPFAOpenGLProfile);
-        attribs.append(static_cast<CGLPixelFormatAttribute>(kCGLOGLPVersion_GL4_Core));
-    }
-        
-    attribs.append(static_cast<CGLPixelFormatAttribute>(0));
-}
-
-#endif // USE(OPENGL)
-
 RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
 {
     // This implementation doesn't currently support rendering directly to the HostWindow.
@@ -289,55 +238,50 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     if (m_attrs.isWebGL2)
         ::glEnable(GraphicsContext3D::PRIMITIVE_RESTART_FIXED_INDEX);
 #elif USE(OPENGL)
-    Vector<CGLPixelFormatAttribute> attribs;
-    CGLPixelFormatObj pixelFormatObj = 0;
-    GLint numPixelFormats = 0;
-    
+
 #if HAVE(APPLE_GRAPHICS_CONTROL)
     m_powerPreferenceUsedForCreation = (hasLowAndHighPowerGPUs() && attrs.powerPreference == GraphicsContext3DPowerPreference::HighPerformance) ? GraphicsContext3DPowerPreference::HighPerformance : GraphicsContext3DPowerPreference::Default;
 #else
     m_powerPreferenceUsedForCreation = GraphicsContext3DPowerPreference::Default;
 #endif
 
-    // If we're configured to demand the software renderer, we'll
-    // do so. We attempt to create contexts in this order:
-    //
-    // 1) 32 bit RGBA/32 bit depth/supersampled
-    // 2) 32 bit RGBA/32 bit depth
-    // 3) 32 bit RGBA/16 bit depth
-    //
-    // If we were not forced into software mode already, our final attempt is
-    // to try that:
-    //
-    // 4) closest to 32 bit RGBA/16 bit depth/software renderer
-    //
-    // If none of that works, we fail and leave m_contextObj as nullptr.
-
     bool useMultisampling = m_attrs.antialias;
 
-    setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, true, false, useMultisampling, attrs.isWebGL2, allowOfflineRenderers());
-    CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
+    Vector<CGLPixelFormatAttribute> attribs;
+    CGLPixelFormatObj pixelFormatObj = 0;
+    GLint numPixelFormats = 0;
 
-    if (!numPixelFormats) {
-        setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, true, false, useMultisampling, attrs.isWebGL2, allowOfflineRenderers());
-        CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
+    attribs.append(kCGLPFAAccelerated);
+    attribs.append(kCGLPFAColorSize);
+    attribs.append(static_cast<CGLPixelFormatAttribute>(32));
+    attribs.append(kCGLPFADepthSize);
+    attribs.append(static_cast<CGLPixelFormatAttribute>(32));
 
-        if (!numPixelFormats) {
-            setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, false, false, useMultisampling, attrs.isWebGL2, allowOfflineRenderers());
-            CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
+    // This attribute, while mentioning offline renderers, is actually
+    // allowing us to request the integrated graphics on a dual GPU
+    // system, and not force the discrete GPU.
+    // See https://developer.apple.com/library/mac/technotes/tn2229/_index.html
+    if (allowOfflineRenderers())
+        attribs.append(kCGLPFAAllowOfflineRenderers);
 
-            if (!numPixelFormats) {
-                setPixelFormat(attribs, 32, 16, !attrs.forceSoftwareRenderer, false, false, useMultisampling, attrs.isWebGL2, allowOfflineRenderers());
-                CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
-
-                if (!attrs.forceSoftwareRenderer && !numPixelFormats) {
-                    setPixelFormat(attribs, 32, 16, false, false, true, false, attrs.isWebGL2, allowOfflineRenderers());
-                    CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
-                    useMultisampling = false;
-                }
-            }
-        }
+    if (useMultisampling) {
+        attribs.append(kCGLPFAMultisample);
+        attribs.append(kCGLPFASampleBuffers);
+        attribs.append(static_cast<CGLPixelFormatAttribute>(1));
+        attribs.append(kCGLPFASamples);
+        attribs.append(static_cast<CGLPixelFormatAttribute>(4));
     }
+
+    if (attrs.isWebGL2) {
+        // FIXME: Instead of backing a WebGL2 GraphicsContext3D with a OpenGL 4 context, we should instead back it with ANGLE.
+        // Use an OpenGL 4 context for now until the ANGLE backend is ready.
+        attribs.append(kCGLPFAOpenGLProfile);
+        attribs.append(static_cast<CGLPixelFormatAttribute>(kCGLOGLPVersion_GL4_Core));
+    }
+
+    attribs.append(static_cast<CGLPixelFormatAttribute>(0));
+
+    CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
 
     if (!numPixelFormats)
         return;

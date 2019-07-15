@@ -2939,7 +2939,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setSubpixelCSSOMElementMetricsEnabled([preferences subpixelCSSOMElementMetricsEnabled]);
     settings.setSubpixelAntialiasedLayerTextEnabled([preferences subpixelAntialiasedLayerTextEnabled]);
 
-    settings.setForceSoftwareWebGLRendering([preferences forceSoftwareWebGLRendering]);
     settings.setForceWebGLUsesLowPower([preferences forceLowPowerGPUForWebGL]);
     settings.setAccelerated2dCanvasEnabled([preferences accelerated2dCanvasEnabled]);
     settings.setLoadDeferringEnabled(shouldEnableLoadDeferring());

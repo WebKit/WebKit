@@ -506,7 +506,6 @@ public:
         [NSNumber numberWithBool:NO],   WebKitSimpleLineLayoutDebugBordersEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShowRepaintCounterPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitWebGLEnabledPreferenceKey,
-        [NSNumber numberWithBool:NO],  WebKitForceSoftwareWebGLRenderingPreferenceKey,
         [NSNumber numberWithBool:YES],   WebKitForceWebGLUsesLowPowerPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitAccelerated2dCanvasEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey,
@@ -2142,16 +2141,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setWebGL2Enabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitWebGL2EnabledPreferenceKey];
-}
-
-- (BOOL)forceSoftwareWebGLRendering
-{
-    return [self _boolValueForKey:WebKitForceSoftwareWebGLRenderingPreferenceKey];
-}
-
-- (void)setForceSoftwareWebGLRendering:(BOOL)forced
-{
-    [self _setBoolValue:forced forKey:WebKitForceSoftwareWebGLRenderingPreferenceKey];
 }
 
 - (BOOL)forceLowPowerGPUForWebGL

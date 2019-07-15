@@ -237,8 +237,6 @@ webGLErrorsToConsoleEnabled:
   initial: true
 unhandledPromiseRejectionToConsoleEnabled:
   initial: true
-forceSoftwareWebGLRendering:
-  initial: false
 forceWebGLUsesLowPower:
   initial: false
 accelerated2dCanvasEnabled:

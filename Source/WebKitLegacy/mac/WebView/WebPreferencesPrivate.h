@@ -275,9 +275,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (BOOL)webGL2Enabled;
 - (void)setWebGL2Enabled:(BOOL)enabled;
 
-- (BOOL)forceSoftwareWebGLRendering;
-- (void)setForceSoftwareWebGLRendering:(BOOL)forced;
-
 - (BOOL)forceLowPowerGPUForWebGL;
 - (void)setForceWebGLUsesLowPower:(BOOL)forceLowPower;
 

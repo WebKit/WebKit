@@ -160,7 +160,7 @@ void GraphicsContext3DManager::addContext(GraphicsContext3D* context, HostWindow
     ASSERT(context);
     if (!context)
         return;
-    
+
 #if PLATFORM(MAC) && !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     if (!m_contexts.size())
         CGDisplayRegisterReconfigurationCallback(displayWasReconfigured, nullptr);
@@ -173,7 +173,8 @@ void GraphicsContext3DManager::addContext(GraphicsContext3D* context, HostWindow
 
 void GraphicsContext3DManager::removeContext(GraphicsContext3D* context)
 {
-    ASSERT(m_contexts.contains(context));
+    if (!m_contexts.contains(context))
+        return;
     m_contexts.removeFirst(context);
     m_contextWindowMap.remove(context);
     removeContextRequiringHighPerformance(context);
@@ -207,6 +208,9 @@ void GraphicsContext3DManager::addContextRequiringHighPerformance(GraphicsContex
 
 void GraphicsContext3DManager::removeContextRequiringHighPerformance(GraphicsContext3D* context)
 {
+    if (!context)
+        return;
+
     if (!m_contextsRequiringHighPerformance.contains(context))
         return;
     

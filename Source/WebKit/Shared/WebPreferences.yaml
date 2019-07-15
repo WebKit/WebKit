@@ -130,10 +130,6 @@ WebGLEnabled:
   type: bool
   defaultValue: true
 
-ForceSoftwareWebGLRendering:
-  type: bool
-  defaultValue: false
-
 Accelerated2dCanvasEnabled:
   type: bool
   defaultValue: false
