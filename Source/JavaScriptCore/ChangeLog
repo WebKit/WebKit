@@ -1,3 +1,16 @@
+2019-07-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, rolling out r247440.
+
+        Broke builds
+
+        Reverted changeset:
+
+        "[JSC] Improve wasm wpt test results by fixing miscellaneous
+        issues"
+        https://bugs.webkit.org/show_bug.cgi?id=199783
+        https://trac.webkit.org/changeset/247440
+
 2019-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Improve wasm wpt test results by fixing miscellaneous issues

@@ -343,7 +343,6 @@
     "web-platform-tests/visual-viewport": "import", 
     "web-platform-tests/wai-aria": "skip", 
     "web-platform-tests/wasm": "skip", 
-    "web-platform-tests/wasm/jsapi": "import", 
     "web-platform-tests/web-animations": "skip", 
     "web-platform-tests/web-nfc": "skip", 
     "web-platform-tests/webaudio": "import", 

@@ -51,7 +51,6 @@
 #include "JSCInlines.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSWebAssembly.h"
-#include "JSWebAssemblyModule.h"
 #include "LinkBuffer.h"
 #include "ModuleNamespaceAccessCase.h"
 #include "PolymorphicAccess.h"
@@ -63,8 +62,6 @@
 #include "StructureStubInfo.h"
 #include "SuperSampler.h"
 #include "ThunkGenerators.h"
-#include "WebAssemblyFunction.h"
-#include "WebAssemblyToJSCallee.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
 #include <wtf/StringPrintStream.h>

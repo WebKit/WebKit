@@ -79,13 +79,13 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyTable(ExecState* exec)
     uint32_t initial = toNonWrappingUint32(exec, initialSizeValue);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    // In WebIDL, "present" means that [[Get]] result is undefined, not [[HasProperty]] result.
-    // https://heycam.github.io/webidl/#idl-dictionaries
     Optional<uint32_t> maximum;
     Identifier maximumIdent = Identifier::fromString(&vm, "maximum");
-    JSValue maxSizeValue = memoryDescriptor->get(exec, maximumIdent);
+    bool hasProperty = memoryDescriptor->hasProperty(exec, maximumIdent);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    if (!maxSizeValue.isUndefined()) {
+    if (hasProperty) {
+        JSValue maxSizeValue = memoryDescriptor->get(exec, maximumIdent);
+        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         maximum = toNonWrappingUint32(exec, maxSizeValue);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
@@ -127,7 +127,7 @@ void WebAssemblyTableConstructor::finishCreation(VM& vm, WebAssemblyTablePrototy
 {
     Base::finishCreation(vm, "Table"_s, NameVisibility::Visible, NameAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
 }
 
 WebAssemblyTableConstructor::WebAssemblyTableConstructor(VM& vm, Structure* structure)

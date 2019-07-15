@@ -2,7 +2,7 @@ import * as assert from '../assert.js';
 import Builder from '../Builder.js';
 
 assert.isFunction(WebAssembly.validate);
-assert.truthy(WebAssembly.hasOwnProperty('validate'));
+assert.isFunction(WebAssembly.__proto__.validate);
 assert.eq(WebAssembly.validate.length, 1);
 
 {

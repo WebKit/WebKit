@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Oleksandr Skachkov <gskachkov@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,51 +28,36 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSDestructibleObject.h"
 #include "JSObject.h"
-#include "JSWebAssemblyCompileError.h"
-#include "JSWebAssemblyInstance.h"
-#include "JSWebAssemblyLinkError.h"
-#include "JSWebAssemblyMemory.h"
-#include "JSWebAssemblyModule.h"
-#include "JSWebAssemblyRuntimeError.h"
-#include "JSWebAssemblyTable.h"
-#include "WebAssemblyCompileErrorConstructor.h"
-#include "WebAssemblyCompileErrorPrototype.h"
-#include "WebAssemblyFunction.h"
-#include "WebAssemblyInstanceConstructor.h"
-#include "WebAssemblyInstancePrototype.h"
-#include "WebAssemblyLinkErrorConstructor.h"
-#include "WebAssemblyLinkErrorPrototype.h"
-#include "WebAssemblyMemoryConstructor.h"
-#include "WebAssemblyMemoryPrototype.h"
-#include "WebAssemblyModuleConstructor.h"
-#include "WebAssemblyModulePrototype.h"
-#include "WebAssemblyModuleRecord.h"
-#include "WebAssemblyPrototype.h"
-#include "WebAssemblyRuntimeErrorConstructor.h"
-#include "WebAssemblyRuntimeErrorPrototype.h"
-#include "WebAssemblyTableConstructor.h"
-#include "WebAssemblyTablePrototype.h"
-#include "WebAssemblyToJSCallee.h"
 
 namespace JSC {
 
-class JSWebAssembly final : public JSNonFinalObject {
+class JSPromiseDeferred;
+
+class WebAssemblyPrototype final : public JSNonFinalObject {
 public:
-    using Base = JSNonFinalObject;
+    typedef JSNonFinalObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    static JSWebAssembly* create(VM&, JSGlobalObject*, Structure*);
+    static WebAssemblyPrototype* create(VM&, JSGlobalObject*, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE static void webAssemblyModuleValidateAsync(ExecState*, JSPromiseDeferred*, Vector<uint8_t>&&);
+    JS_EXPORT_PRIVATE static void webAssemblyModuleInstantinateAsync(ExecState*, JSPromiseDeferred*, Vector<uint8_t>&&, JSObject*);
 
     DECLARE_INFO;
 
+    static JSValue instantiate(ExecState*, JSPromiseDeferred*, const Identifier&, JSValue);
+
 protected:
-    void finishCreation(VM&);
+    void finishCreation(VM&, JSGlobalObject*);
 
 private:
-    JSWebAssembly(VM&, Structure*);
+    WebAssemblyPrototype(VM&, Structure*);
 };
+
+EncodedJSValue JSC_HOST_CALL webAssemblyCompileStreamingInternal(ExecState*);
+EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateStreamingInternal(ExecState*);
 
 } // namespace JSC
 

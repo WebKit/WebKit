@@ -1,3 +1,0 @@
-
-PASS Object.prototype.toString on an Memory 
-

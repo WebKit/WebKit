@@ -79,12 +79,12 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(ExecState* exec
 
     Wasm::PageCount maximumPageCount;
     {
-        // In WebIDL, "present" means that [[Get]] result is undefined, not [[HasProperty]] result.
-        // https://heycam.github.io/webidl/#idl-dictionaries
         Identifier maximum = Identifier::fromString(&vm, "maximum");
-        JSValue maxSizeValue = memoryDescriptor->get(exec, maximum);
+        bool hasProperty = memoryDescriptor->hasProperty(exec, maximum);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        if (!maxSizeValue.isUndefined()) {
+        if (hasProperty) {
+            JSValue maxSizeValue = memoryDescriptor->get(exec, maximum);
+            RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
             uint32_t size = toNonWrappingUint32(exec, maxSizeValue);
             RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
             if (!Wasm::PageCount::isValid(size))
@@ -136,7 +136,7 @@ void WebAssemblyMemoryConstructor::finishCreation(VM& vm, WebAssemblyMemoryProto
 {
     Base::finishCreation(vm, "Memory"_s, NameVisibility::Visible, NameAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
 }
 
 WebAssemblyMemoryConstructor::WebAssemblyMemoryConstructor(VM& vm, Structure* structure)

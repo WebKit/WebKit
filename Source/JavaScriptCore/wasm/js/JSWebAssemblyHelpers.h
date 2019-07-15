@@ -39,21 +39,15 @@ ALWAYS_INLINE uint32_t toNonWrappingUint32(ExecState* exec, JSValue value)
 {
     VM& vm = exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-
-    if (value.isUInt32())
-        return value.asUInt32();
-
-    double doubleValue = value.toNumber(exec);
+    double doubleValue = value.toInteger(exec);
     RETURN_IF_EXCEPTION(throwScope, { });
-
-    if (!std::isnan(doubleValue) && !std::isinf(doubleValue)) {
-        double truncedValue = trunc(doubleValue);
-        if (truncedValue >= 0 && truncedValue <= UINT_MAX)
-            return static_cast<uint32_t>(truncedValue);
+    if (doubleValue < 0 || doubleValue > UINT_MAX) {
+        throwException(exec, throwScope,
+            createRangeError(exec, "Expect an integer argument in the range: [0, 2^32 - 1]"_s));
+        return { };
     }
 
-    throwException(exec, throwScope, createTypeError(exec, "Expect an integer argument in the range: [0, 2^32 - 1]"_s));
-    return { };
+    return static_cast<uint32_t>(doubleValue);
 }
 
 ALWAYS_INLINE std::pair<const uint8_t*, size_t> getWasmBufferFromValue(ExecState* exec, JSValue value)

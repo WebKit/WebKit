@@ -1,5 +1,0 @@
-
-PASS Branding 
-PASS Setting (sloppy mode) 
-PASS Setting (strict mode) 
-

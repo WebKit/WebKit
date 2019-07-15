@@ -59,9 +59,9 @@ const ClassInfo WebAssemblyModuleConstructor::s_info = { "Function", &Base::s_in
 
 /* Source for WebAssemblyModuleConstructor.lut.h
  @begin constructorTableWebAssemblyModule
- customSections webAssemblyModuleCustomSections Function 2
- imports        webAssemblyModuleImports        Function 1
- exports        webAssemblyModuleExports        Function 1
+ customSections webAssemblyModuleCustomSections DontEnum|Function 2
+ imports        webAssemblyModuleImports        DontEnum|Function 1
+ exports        webAssemblyModuleExports        DontEnum|Function 1
  @end
  */
 
@@ -71,14 +71,11 @@ EncodedJSValue JSC_HOST_CALL webAssemblyModuleCustomSections(ExecState* exec)
     auto* globalObject = exec->lexicalGlobalObject();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    if (UNLIKELY(exec->argumentCount() < 2))
-        return JSValue::encode(throwException(exec, throwScope, createNotEnoughArgumentsError(exec)));
-
-    JSWebAssemblyModule* module = jsDynamicCast<JSWebAssemblyModule*>(vm, exec->uncheckedArgument(0));
+    JSWebAssemblyModule* module = jsDynamicCast<JSWebAssemblyModule*>(vm, exec->argument(0));
     if (!module)
         return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, "WebAssembly.Module.customSections called with non WebAssembly.Module argument"_s)));
 
-    const String sectionNameString = exec->uncheckedArgument(1).getString(exec);
+    const String sectionNameString = exec->argument(1).getString(exec);
     RETURN_IF_EXCEPTION(throwScope, { });
 
     JSArray* result = constructEmptyArray(exec, nullptr, globalObject);
@@ -206,7 +203,7 @@ void WebAssemblyModuleConstructor::finishCreation(VM& vm, WebAssemblyModuleProto
 {
     Base::finishCreation(vm, "Module"_s, NameVisibility::Visible, NameAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
 }
 
 WebAssemblyModuleConstructor::WebAssemblyModuleConstructor(VM& vm, Structure* structure)
