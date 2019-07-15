@@ -1,3 +1,24 @@
+2019-07-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] GitHub breaks on FreeBSD because of "unsupported browser"
+        https://bugs.webkit.org/show_bug.cgi?id=199745
+
+        Reviewed by Carlos Garcia Campos.
+
+        It's been a while since I last updated the fake version numbers in our user agent, both for
+        the user agent quirks for naughty websites and also the Safari version in our standard user
+        agent. Update them. This should fix github.com on FreeBSD at least. I also noticed some
+        wonkiness on Google Docs recently that I thought required this update, but I didn't do
+        anything about it at the time because I wasn't able to reproduce the issue when I tried
+        again later.
+
+        This could absolutely break websites, because the web is awful, but that's calculated risk.
+
+        * platform/UserAgentQuirks.cpp:
+        (WebCore::UserAgentQuirks::stringForQuirk):
+        * platform/glib/UserAgentGLib.cpp:
+        (WebCore::buildUserAgentString):
+
 2019-07-14  Chris Dumez  <cdumez@apple.com>
 
         Add threading assertion to WeakPtrFactory::createWeakPtr()
