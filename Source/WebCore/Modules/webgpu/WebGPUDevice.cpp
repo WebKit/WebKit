@@ -28,7 +28,6 @@
 
 #if ENABLE(WEBGPU)
 
-#include "Exception.h"
 #include "GPUBindGroup.h"
 #include "GPUBindGroupBinding.h"
 #include "GPUBindGroupDescriptor.h"
@@ -43,8 +42,6 @@
 #include "GPUShaderModuleDescriptor.h"
 #include "GPUTextureDescriptor.h"
 #include "JSDOMConvertBufferSource.h"
-#include "JSGPUOutOfMemoryError.h"
-#include "JSGPUValidationError.h"
 #include "JSWebGPUBuffer.h"
 #include "Logging.h"
 #include "WebGPUBindGroup.h"
@@ -66,7 +63,6 @@
 #include "WebGPUShaderModuleDescriptor.h"
 #include "WebGPUSwapChain.h"
 #include "WebGPUTexture.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -182,21 +178,6 @@ Ref<WebGPUQueue> WebGPUDevice::getQueue() const
         m_queue = WebGPUQueue::create(m_device->tryGetQueue());
 
     return makeRef(*m_queue.get());
-}
-
-void WebGPUDevice::pushErrorScope(GPUErrorFilter filter) const
-{
-    m_device->pushErrorScope(filter);
-}
-
-void WebGPUDevice::popErrorScope(ErrorPromise&& promise) const
-{
-    m_device->popErrorScope([promise = WTFMove(promise)] (Optional<GPUError>&& error, const String& failMessage) mutable {
-        if (failMessage.isEmpty())
-            promise.resolve(error);
-        else
-            promise.reject(Exception { OperationError, failMessage });
-    });
 }
 
 } // namespace WebCore

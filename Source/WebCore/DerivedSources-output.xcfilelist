@@ -609,8 +609,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCompareFunction.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCompareFunction.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUDepthStencilStateDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUDepthStencilStateDescriptor.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUErrorFilter.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUErrorFilter.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUExtent3D.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUExtent3D.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUInputStateDescriptor.cpp
@@ -619,8 +617,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPULoadOp.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPULoadOp.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUOrigin3D.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUOrigin3D.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUOutOfMemoryError.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUOutOfMemoryError.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURequestAdapterOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURequestAdapterOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUSamplerDescriptor.cpp
@@ -635,8 +631,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureFormat.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureFormat.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureUsage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureUsage.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUValidationError.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUValidationError.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUVertexAttributeDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUVertexAttributeDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUVertexBufferDescriptor.cpp
@@ -1949,8 +1943,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUComputePipelineDescriptor.c
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUComputePipelineDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUDevice.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUDevice.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUDeviceErrorScopes.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUDeviceErrorScopes.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUPipelineDescriptorBase.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUPipelineDescriptorBase.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUPipelineLayout.cpp
