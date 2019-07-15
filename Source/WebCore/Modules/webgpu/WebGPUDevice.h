@@ -28,7 +28,6 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUDevice.h"
-#include "GPUErrorScopes.h"
 #include "JSDOMPromiseDeferred.h"
 #include "WebGPUAdapter.h"
 #include "WebGPUQueue.h"
@@ -100,8 +99,8 @@ public:
 
     Ref<WebGPUQueue> getQueue() const;
 
-    void pushErrorScope(GPUErrorFilter filter) { m_errorScopes->pushErrorScope(filter); }
-    void popErrorScope(ErrorPromise&&);
+    void pushErrorScope(GPUErrorFilter) const;
+    void popErrorScope(ErrorPromise&&) const;
 
 private:
     WebGPUDevice(Ref<const WebGPUAdapter>&&, Ref<GPUDevice>&&);
@@ -109,8 +108,6 @@ private:
     Ref<const WebGPUAdapter> m_adapter;
     Ref<GPUDevice> m_device;
     mutable RefPtr<WebGPUQueue> m_queue;
-
-    Ref<GPUErrorScopes> m_errorScopes;
 };
 
 } // namespace WebCore

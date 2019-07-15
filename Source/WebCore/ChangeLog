@@ -1,3 +1,7 @@
+2019-07-15  Alan Coon  <alancoon@apple.com>
+
+        Revert r247397. rdar://problem/53118665
+
 2019-07-15  Youenn Fablet  <youenn@apple.com>
 
         Filter SDP c lines
