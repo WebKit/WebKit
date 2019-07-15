@@ -4423,3 +4423,5 @@ webkit.org/b/197371 http/wpt/prefetch/link-prefetch-main-resource-redirect.html 
 webkit.org/b/198112 http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ]
 
 webkit.org/b/198679 fast/events/fire-mousedown-while-pressing-mouse-button.html [ Failure ]
+
+imported/w3c/web-platform-tests/wasm [ Skip ]

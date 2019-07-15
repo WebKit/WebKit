@@ -125,6 +125,13 @@
 #include "JSWeakObjectRef.h"
 #include "JSWeakSet.h"
 #include "JSWebAssembly.h"
+#include "JSWebAssemblyCompileError.h"
+#include "JSWebAssemblyInstance.h"
+#include "JSWebAssemblyLinkError.h"
+#include "JSWebAssemblyMemory.h"
+#include "JSWebAssemblyModule.h"
+#include "JSWebAssemblyRuntimeError.h"
+#include "JSWebAssemblyTable.h"
 #include "JSWithScope.h"
 #include "LazyClassStructureInlines.h"
 #include "LazyPropertyInlines.h"
@@ -178,7 +185,22 @@
 #include "WeakObjectRefPrototype.h"
 #include "WeakSetConstructor.h"
 #include "WeakSetPrototype.h"
-#include "WebAssemblyPrototype.h"
+#include "WebAssemblyCompileErrorConstructor.h"
+#include "WebAssemblyCompileErrorPrototype.h"
+#include "WebAssemblyFunction.h"
+#include "WebAssemblyInstanceConstructor.h"
+#include "WebAssemblyInstancePrototype.h"
+#include "WebAssemblyLinkErrorConstructor.h"
+#include "WebAssemblyLinkErrorPrototype.h"
+#include "WebAssemblyMemoryConstructor.h"
+#include "WebAssemblyMemoryPrototype.h"
+#include "WebAssemblyModuleConstructor.h"
+#include "WebAssemblyModulePrototype.h"
+#include "WebAssemblyModuleRecord.h"
+#include "WebAssemblyRuntimeErrorConstructor.h"
+#include "WebAssemblyRuntimeErrorPrototype.h"
+#include "WebAssemblyTableConstructor.h"
+#include "WebAssemblyTablePrototype.h"
 #include "WebAssemblyToJSCallee.h"
 #include <wtf/RandomNumber.h>
 
@@ -1060,7 +1082,6 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
 
 #if ENABLE(WEBASSEMBLY)
     if (Wasm::isSupported()) {
-        auto* webAssemblyPrototype = WebAssemblyPrototype::create(vm, this, WebAssemblyPrototype::createStructure(vm, this, m_objectPrototype.get()));
         m_webAssemblyModuleRecordStructure.initLater(
             [] (const Initializer<Structure>& init) {
                 init.set(WebAssemblyModuleRecord::createStructure(init.vm, init.owner, init.owner->m_objectPrototype.get()));
@@ -1081,7 +1102,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
             [] (const Initializer<Structure>& init) {
                 init.set(WebAssemblyToJSCallee::createStructure(init.vm, init.owner, jsNull()));
             });
-        auto* webAssembly = JSWebAssembly::create(vm, this, JSWebAssembly::createStructure(vm, this, webAssemblyPrototype));
+        auto* webAssembly = JSWebAssembly::create(vm, this, JSWebAssembly::createStructure(vm, this, m_objectPrototype.get()));
         putDirectWithoutTransition(vm, Identifier::fromString(exec, "WebAssembly"), webAssembly, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
 #define CREATE_WEBASSEMBLY_PROTOTYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase) \

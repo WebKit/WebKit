@@ -1,0 +1,16 @@
+
+PASS Missing arguments 
+PASS Branding 
+FAIL Basic assert_throws: before: table.get(-1) function "() => table.get(-1)" threw object "TypeError: Expect an integer argument in the range: [0, 2^32 - 1]" ("TypeError") expected object "RangeError" ("RangeError")
+FAIL Reached maximum assert_throws: before: table.get(-1) function "() => table.get(-1)" threw object "TypeError: Expect an integer argument in the range: [0, 2^32 - 1]" ("TypeError") expected object "RangeError" ("RangeError")
+FAIL Exceeded maximum assert_throws: before: table.get(-1) function "() => table.get(-1)" threw object "TypeError: Expect an integer argument in the range: [0, 2^32 - 1]" ("TypeError") expected object "RangeError" ("RangeError")
+PASS Out-of-range argument: undefined 
+PASS Out-of-range argument: NaN 
+PASS Out-of-range argument: Infinity 
+PASS Out-of-range argument: -Infinity 
+PASS Out-of-range argument: -1 
+PASS Out-of-range argument: 4294967296 
+PASS Out-of-range argument: 68719476736 
+PASS Out-of-range argument: "0x100000000" 
+PASS Out-of-range argument: object "[object Object]" 
+

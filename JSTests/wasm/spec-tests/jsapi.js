@@ -230,7 +230,7 @@ test(() => {
     const moduleImportsDesc = Object.getOwnPropertyDescriptor(Module, 'imports');
     assert_equals(typeof moduleImportsDesc.value, "function");
     assert_equals(moduleImportsDesc.writable, true);
-    assert_equals(moduleImportsDesc.enumerable, false);
+    assert_equals(moduleImportsDesc.enumerable, true);
     assert_equals(moduleImportsDesc.configurable, true);
 }, "'WebAssembly.Module.imports' data property");
 
@@ -265,7 +265,7 @@ test(() => {
     const moduleExportsDesc = Object.getOwnPropertyDescriptor(Module, 'exports');
     assert_equals(typeof moduleExportsDesc.value, "function");
     assert_equals(moduleExportsDesc.writable, true);
-    assert_equals(moduleExportsDesc.enumerable, false);
+    assert_equals(moduleExportsDesc.enumerable, true);
     assert_equals(moduleExportsDesc.configurable, true);
 }, "'WebAssembly.Module.exports' data property");
 
@@ -296,7 +296,7 @@ test(() => {
     const customSectionsDesc = Object.getOwnPropertyDescriptor(Module, 'customSections');
     assert_equals(typeof customSectionsDesc.value, "function");
     assert_equals(customSectionsDesc.writable, true);
-    assert_equals(customSectionsDesc.enumerable, false);
+    assert_equals(customSectionsDesc.enumerable, true);
     assert_equals(customSectionsDesc.configurable, true);
 }, "'WebAssembly.Module.customSections' data property");
 
@@ -307,7 +307,7 @@ test(() => {
     assertThrows(() => moduleCustomSections(), TypeError);
     assertThrows(() => moduleCustomSections(undefined), TypeError);
     assertThrows(() => moduleCustomSections({}), TypeError);
-    var arr = moduleCustomSections(emptyModule);
+    var arr = moduleCustomSections(emptyModule, undefined);
     assert_equals(arr instanceof Array, true);
     assert_equals(arr.length, 0);
 }, "'WebAssembly.Module.customSections' method");
@@ -367,7 +367,7 @@ test(() => {
     const exportsDesc = Object.getOwnPropertyDescriptor(instanceProto, 'exports');
     assert_equals(typeof exportsDesc.get, "function");
     assert_equals(exportsDesc.set, undefined);
-    assert_equals(exportsDesc.enumerable, false);
+    assert_equals(exportsDesc.enumerable, true);
     assert_equals(exportsDesc.configurable, true);
     const exportsGetter = exportsDesc.get;
     assertThrows(() => exportsGetter.call(), TypeError);
@@ -415,11 +415,11 @@ test(() => {
     assertThrows(() => Memory(), TypeError);
     assertThrows(() => new Memory(1), TypeError);
     assertThrows(() => new Memory({initial:{valueOf() { throw new Error("here")}}}), Error);
-    assertThrows(() => new Memory({initial:-1}), RangeError);
-    assertThrows(() => new Memory({initial:Math.pow(2,32)}), RangeError);
+    assertThrows(() => new Memory({initial:-1}), TypeError);
+    assertThrows(() => new Memory({initial:Math.pow(2,32)}), TypeError);
     assertThrows(() => new Memory({initial:1, maximum: Math.pow(2,32)/Math.pow(2,14) }), RangeError);
     assertThrows(() => new Memory({initial:2, maximum:1 }), RangeError);
-    assertThrows(() => new Memory({maximum: -1 }), RangeError);
+    assertThrows(() => new Memory({maximum: -1 }), TypeError);
     assert_equals(new Memory({initial:1}) instanceof Memory, true);
     assert_equals(new Memory({initial:1.5}).buffer.byteLength, WasmPage);
 }, "'WebAssembly.Memory' constructor function");
@@ -451,7 +451,7 @@ test(() => {
     const bufferDesc = Object.getOwnPropertyDescriptor(memoryProto, 'buffer');
     assert_equals(typeof bufferDesc.get, "function");
     assert_equals(bufferDesc.set, undefined);
-    assert_equals(bufferDesc.enumerable, false);
+    assert_equals(bufferDesc.enumerable, true);
     assert_equals(bufferDesc.configurable, true);
 }, "'WebAssembly.Memory.prototype.buffer' accessor property");
 
@@ -467,7 +467,7 @@ test(() => {
 test(() => {
     const memGrowDesc = Object.getOwnPropertyDescriptor(memoryProto, 'grow');
     assert_equals(typeof memGrowDesc.value, "function");
-    assert_equals(memGrowDesc.enumerable, false);
+    assert_equals(memGrowDesc.enumerable, true);
     assert_equals(memGrowDesc.configurable, true);
 }, "'WebAssembly.Memory.prototype.grow' data property");
 
@@ -477,8 +477,8 @@ test(() => {
     assert_equals(memGrow.length, 1);
     assertThrows(() => memGrow.call(), TypeError);
     assertThrows(() => memGrow.call({}), TypeError);
-    assertThrows(() => memGrow.call(mem1, -1), RangeError);
-    assertThrows(() => memGrow.call(mem1, Math.pow(2,32)), RangeError);
+    assertThrows(() => memGrow.call(mem1, -1), TypeError);
+    assertThrows(() => memGrow.call(mem1, Math.pow(2,32)), TypeError);
     var mem = new Memory({initial:1, maximum:2});
     var buf = mem.buffer;
     assert_equals(buf.byteLength, WasmPage);
@@ -516,10 +516,10 @@ test(() => {
     assertThrows(() => new Table({initial:1, element:"any"}), TypeError);
     assertThrows(() => new Table({initial:1, element:{valueOf() { return "funcref" }}}), TypeError);
     assertThrows(() => new Table({initial:{valueOf() { throw new Error("here")}}, element:"funcref"}), Error);
-    assertThrows(() => new Table({initial:-1, element:"funcref"}), RangeError);
-    assertThrows(() => new Table({initial:Math.pow(2,32), element:"funcref"}), RangeError);
+    assertThrows(() => new Table({initial:-1, element:"funcref"}), TypeError);
+    assertThrows(() => new Table({initial:Math.pow(2,32), element:"funcref"}), TypeError);
     assertThrows(() => new Table({initial:2, maximum:1, element:"funcref"}), RangeError);
-    assertThrows(() => new Table({initial:2, maximum:Math.pow(2,32), element:"funcref"}), RangeError);
+    assertThrows(() => new Table({initial:2, maximum:Math.pow(2,32), element:"funcref"}), TypeError);
     assert_equals(new Table({initial:1, element:"funcref"}) instanceof Table, true);
     assert_equals(new Table({initial:1.5, element:"funcref"}) instanceof Table, true);
     assert_equals(new Table({initial:1, maximum:1.5, element:"funcref"}) instanceof Table, true);
@@ -553,7 +553,7 @@ test(() => {
     const lengthDesc = Object.getOwnPropertyDescriptor(tableProto, 'length');
     assert_equals(typeof lengthDesc.get, "function");
     assert_equals(lengthDesc.set, undefined);
-    assert_equals(lengthDesc.enumerable, false);
+    assert_equals(lengthDesc.enumerable, true);
     assert_equals(lengthDesc.configurable, true);
 }, "'WebAssembly.Table.prototype.length' accessor data property");
 
@@ -570,7 +570,7 @@ test(() => {
 test(() => {
     const getDesc = Object.getOwnPropertyDescriptor(tableProto, 'get');
     assert_equals(typeof getDesc.value, "function");
-    assert_equals(getDesc.enumerable, false);
+    assert_equals(getDesc.enumerable, true);
     assert_equals(getDesc.configurable, true);
 }, "'WebAssembly.Table.prototype.get' data property");
 
@@ -585,15 +585,15 @@ test(() => {
     assert_equals(get.call(tbl1, 1.5), null);
     assertThrows(() => get.call(tbl1, 2), RangeError);
     assertThrows(() => get.call(tbl1, 2.5), RangeError);
-    assertThrows(() => get.call(tbl1, -1), RangeError);
-    assertThrows(() => get.call(tbl1, Math.pow(2,33)), RangeError);
+    assertThrows(() => get.call(tbl1, -1), TypeError);
+    assertThrows(() => get.call(tbl1, Math.pow(2,33)), TypeError);
     assertThrows(() => get.call(tbl1, {valueOf() { throw new Error("hi") }}), Error);
 }, "'WebAssembly.Table.prototype.get' method");
 
 test(() => {
     const setDesc = Object.getOwnPropertyDescriptor(tableProto, 'set');
     assert_equals(typeof setDesc.value, "function");
-    assert_equals(setDesc.enumerable, false);
+    assert_equals(setDesc.enumerable, true);
     assert_equals(setDesc.configurable, true);
 }, "'WebAssembly.Table.prototype.set' data property");
 
@@ -605,8 +605,8 @@ test(() => {
     assertThrows(() => set.call({}), TypeError);
     assertThrows(() => set.call(tbl1, 0), TypeError);
     assertThrows(() => set.call(tbl1, 2, null), RangeError);
-    assertThrows(() => set.call(tbl1, -1, null), RangeError);
-    assertThrows(() => set.call(tbl1, Math.pow(2,33), null), RangeError);
+    assertThrows(() => set.call(tbl1, -1, null), TypeError);
+    assertThrows(() => set.call(tbl1, Math.pow(2,33), null), TypeError);
     assertThrows(() => set.call(tbl1, 0, undefined), TypeError);
     assertThrows(() => set.call(tbl1, 0, {}), TypeError);
     assertThrows(() => set.call(tbl1, 0, function() {}), TypeError);
@@ -619,7 +619,7 @@ test(() => {
 test(() => {
     const tblGrowDesc = Object.getOwnPropertyDescriptor(tableProto, 'grow');
     assert_equals(typeof tblGrowDesc.value, "function");
-    assert_equals(tblGrowDesc.enumerable, false);
+    assert_equals(tblGrowDesc.enumerable, true);
     assert_equals(tblGrowDesc.configurable, true);
 }, "'WebAssembly.Table.prototype.grow' data property");
 
@@ -629,8 +629,8 @@ test(() => {
     assert_equals(tblGrow.length, 1);
     assertThrows(() => tblGrow.call(), TypeError);
     assertThrows(() => tblGrow.call({}), TypeError);
-    assertThrows(() => tblGrow.call(tbl1, -1), RangeError);
-    assertThrows(() => tblGrow.call(tbl1, Math.pow(2,32)), RangeError);
+    assertThrows(() => tblGrow.call(tbl1, -1), TypeError);
+    assertThrows(() => tblGrow.call(tbl1, Math.pow(2,32)), TypeError);
     var tbl = new Table({element:"funcref", initial:1, maximum:2});
     assert_equals(tbl.length, 1);
     assert_equals(tbl.grow(0), 1);

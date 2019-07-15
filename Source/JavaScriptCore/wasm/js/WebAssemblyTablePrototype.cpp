@@ -48,10 +48,10 @@ const ClassInfo WebAssemblyTablePrototype::s_info = { "WebAssembly.Table", &Base
 
 /* Source for WebAssemblyTablePrototype.lut.h
  @begin prototypeTableWebAssemblyTable
- length webAssemblyTableProtoFuncLength DontEnum|Accessor 0
- grow   webAssemblyTableProtoFuncGrow   DontEnum|Function 1
- get    webAssemblyTableProtoFuncGet    DontEnum|Function 1
- set    webAssemblyTableProtoFuncSet    DontEnum|Function 2
+ length webAssemblyTableProtoFuncLength Accessor 0
+ grow   webAssemblyTableProtoFuncGrow   Function 1
+ get    webAssemblyTableProtoFuncGet    Function 1
+ set    webAssemblyTableProtoFuncSet    Function 2
  @end
  */
 

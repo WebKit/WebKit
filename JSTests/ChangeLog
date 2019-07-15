@@ -1,3 +1,21 @@
+2019-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Improve wasm wpt test results by fixing miscellaneous issues
+        https://bugs.webkit.org/show_bug.cgi?id=199783
+
+        Reviewed by Mark Lam.
+
+        Fix our spec tests.
+
+        * wasm/js-api/Module-compile.js:
+        * wasm/js-api/test_basic_api.js:
+        (const.c.in.constructorProperties.switch):
+        * wasm/js-api/validate.js:
+        * wasm/js-api/web-assembly-instantiate.js:
+        * wasm/spec-tests/jsapi.js:
+        (testJSAPI.get test):
+        (testJSAPI.set test):
+
 2019-07-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r247440.

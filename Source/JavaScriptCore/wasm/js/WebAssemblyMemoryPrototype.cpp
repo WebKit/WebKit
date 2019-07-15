@@ -48,8 +48,8 @@ const ClassInfo WebAssemblyMemoryPrototype::s_info = { "WebAssembly.Memory", &Ba
 
 /* Source for WebAssemblyMemoryPrototype.lut.h
 @begin prototypeTableWebAssemblyMemory
- grow   webAssemblyMemoryProtoFuncGrow   DontEnum|Function 1
- buffer webAssemblyMemoryProtoFuncBuffer DontEnum|Accessor 0
+ grow   webAssemblyMemoryProtoFuncGrow   Function 1
+ buffer webAssemblyMemoryProtoFuncBuffer Accessor 0
 @end
 */
 

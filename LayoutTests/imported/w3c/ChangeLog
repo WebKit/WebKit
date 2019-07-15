@@ -1,3 +1,262 @@
+2019-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Improve wasm wpt test results by fixing miscellaneous issues
+        https://bugs.webkit.org/show_bug.cgi?id=199783
+
+        Reviewed by Mark Lam.
+
+        Import web-platform-tests/wasm/jsapi. Some of tests are failing just because imported wpt tests are old.
+        They are fixed in the upstream. When upgrading wpt tests, we can mark them PASS.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/wasm/jsapi/assertions.js: Added.
+        (assert_function_name):
+        (assert_function_length):
+        * web-platform-tests/wasm/jsapi/bad-imports.js: Added.
+        (test_bad_imports):
+        * web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.html: Added.
+        * web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.js: Added.
+        (test_bad_imports):
+        * web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/constructor/w3c-import.log: Added.
+        * web-platform-tests/wasm/jsapi/global/constructor.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/global/constructor.any.html: Added.
+        * web-platform-tests/wasm/jsapi/global/constructor.any.js: Added.
+        (assert_Global):
+        (test):
+        (test.get assert_array_equals):
+        (string_appeared_here.test):
+        (string_appeared_here.toString):
+        (string_appeared_here.valueOf):
+        (string_appeared_here.name.format_value):
+        * web-platform-tests/wasm/jsapi/global/constructor.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/global/constructor.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/global/toString.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/global/toString.any.html: Added.
+        * web-platform-tests/wasm/jsapi/global/toString.any.js: Added.
+        (test):
+        * web-platform-tests/wasm/jsapi/global/toString.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/global/toString.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/global/value-set.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/global/value-set.any.html: Added.
+        * web-platform-tests/wasm/jsapi/global/value-set.any.js: Added.
+        (test):
+        (string_appeared_here.name.of.immutableOptions.test):
+        (string_appeared_here.name.of.mutableOptions.test):
+        * web-platform-tests/wasm/jsapi/global/value-set.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/global/value-set.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/global/valueOf.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/global/valueOf.any.html: Added.
+        * web-platform-tests/wasm/jsapi/global/valueOf.any.js: Added.
+        (test):
+        * web-platform-tests/wasm/jsapi/global/valueOf.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/global/valueOf.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/global/w3c-import.log: Added.
+        * web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.html: Added.
+        * web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.js: Added.
+        (test_bad_imports):
+        * web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/instance/constructor.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/instance/constructor.any.html: Added.
+        * web-platform-tests/wasm/jsapi/instance/constructor.any.js: Added.
+        (assert_exported_function):
+        * web-platform-tests/wasm/jsapi/instance/constructor.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/instance/constructor.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/instance/exports.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/instance/exports.any.html: Added.
+        * web-platform-tests/wasm/jsapi/instance/exports.any.js: Added.
+        (setup):
+        (test):
+        * web-platform-tests/wasm/jsapi/instance/exports.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/instance/exports.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/instance/toString.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/instance/toString.any.html: Added.
+        * web-platform-tests/wasm/jsapi/instance/toString.any.js: Added.
+        (test):
+        * web-platform-tests/wasm/jsapi/instance/toString.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/instance/toString.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/instance/w3c-import.log: Added.
+        * web-platform-tests/wasm/jsapi/interface.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/interface.any.html: Added.
+        * web-platform-tests/wasm/jsapi/interface.any.js: Added.
+        (test_operations):
+        (test):
+        (const.name.of.interfaces.test):
+        * web-platform-tests/wasm/jsapi/interface.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/interface.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/memory/buffer.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/memory/buffer.any.html: Added.
+        * web-platform-tests/wasm/jsapi/memory/buffer.any.js: Added.
+        (test):
+        * web-platform-tests/wasm/jsapi/memory/buffer.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/memory/buffer.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/memory/constructor.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/memory/constructor.any.html: Added.
+        * web-platform-tests/wasm/jsapi/memory/constructor.any.js: Added.
+        (assert_Memory):
+        (test):
+        (const.value.of.outOfRangeValues.test):
+        (test.get new):
+        (test.get assert_array_equals):
+        * web-platform-tests/wasm/jsapi/memory/constructor.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/memory/constructor.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/memory/grow.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/memory/grow.any.html: Added.
+        * web-platform-tests/wasm/jsapi/memory/grow.any.js: Added.
+        (assert_ArrayBuffer):
+        (test):
+        (valueOf):
+        (const.value.of.outOfRangeValues.test):
+        * web-platform-tests/wasm/jsapi/memory/grow.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/memory/grow.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/memory/toString.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/memory/toString.any.html: Added.
+        * web-platform-tests/wasm/jsapi/memory/toString.any.js: Added.
+        (test):
+        * web-platform-tests/wasm/jsapi/memory/toString.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/memory/toString.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/memory/w3c-import.log: Added.
+        * web-platform-tests/wasm/jsapi/module/constructor.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/module/constructor.any.html: Added.
+        * web-platform-tests/wasm/jsapi/module/constructor.any.js: Added.
+        (setup):
+        (test):
+        * web-platform-tests/wasm/jsapi/module/constructor.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/module/constructor.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/module/customSections.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/module/customSections.any.html: Added.
+        * web-platform-tests/wasm/jsapi/module/customSections.any.js: Added.
+        (assert_ArrayBuffer):
+        (assert_sections):
+        (setup):
+        (test):
+        * web-platform-tests/wasm/jsapi/module/customSections.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/module/customSections.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/module/exports.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/module/exports.any.html: Added.
+        * web-platform-tests/wasm/jsapi/module/exports.any.js: Added.
+        (setup):
+        (assert_ModuleExportDescriptor):
+        (assert_exports):
+        (test):
+        * web-platform-tests/wasm/jsapi/module/exports.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/module/exports.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/module/imports.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/module/imports.any.html: Added.
+        * web-platform-tests/wasm/jsapi/module/imports.any.js: Added.
+        (assert_ModuleImportDescriptor):
+        (assert_imports):
+        (setup):
+        (test):
+        * web-platform-tests/wasm/jsapi/module/imports.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/module/imports.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/module/toString.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/module/toString.any.html: Added.
+        * web-platform-tests/wasm/jsapi/module/toString.any.js: Added.
+        (test):
+        * web-platform-tests/wasm/jsapi/module/toString.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/module/toString.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/module/w3c-import.log: Added.
+        * web-platform-tests/wasm/jsapi/table/assertions.js: Added.
+        (assert_equal_to_array):
+        * web-platform-tests/wasm/jsapi/table/constructor.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/constructor.any.html: Added.
+        * web-platform-tests/wasm/jsapi/table/constructor.any.js: Added.
+        (assert_Table):
+        (test):
+        (const.value.of.outOfRangeValues.test):
+        (test.get const):
+        * web-platform-tests/wasm/jsapi/table/constructor.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/constructor.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/table/get-set.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/get-set.any.html: Added.
+        * web-platform-tests/wasm/jsapi/table/get-set.any.js: Added.
+        (setup):
+        (test):
+        (test.set assert_equal_to_array):
+        (test.const.fn):
+        (valueOf):
+        (const.value.of.outOfRangeValues.test):
+        * web-platform-tests/wasm/jsapi/table/get-set.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/get-set.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/table/grow.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/grow.any.html: Added.
+        * web-platform-tests/wasm/jsapi/table/grow.any.js: Added.
+        (nulls):
+        (test):
+        (valueOf):
+        (const.value.of.outOfRangeValues.test):
+        * web-platform-tests/wasm/jsapi/table/grow.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/grow.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/table/length.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/length.any.html: Added.
+        * web-platform-tests/wasm/jsapi/table/length.any.js: Added.
+        (test):
+        * web-platform-tests/wasm/jsapi/table/length.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/length.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/table/toString.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/toString.any.html: Added.
+        * web-platform-tests/wasm/jsapi/table/toString.any.js: Added.
+        (test):
+        * web-platform-tests/wasm/jsapi/table/toString.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/toString.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/table/w3c-import.log: Added.
+        * web-platform-tests/wasm/jsapi/w3c-import.log: Added.
+        * web-platform-tests/wasm/jsapi/wasm-constants.js: Added.
+        (bytes):
+        (bytesWithHeader):
+        (makeSig):
+        (makeSig_v_x):
+        (makeSig_v_xx):
+        (makeSig_r_v):
+        (makeSig_r_x):
+        (makeSig_r_xx):
+        (assertTraps):
+        (assertWasmThrows):
+        * web-platform-tests/wasm/jsapi/wasm-module-builder.js: Added.
+        (Binary.prototype.emit_u8):
+        (Binary.prototype.emit_u16):
+        (Binary.prototype.emit_u32):
+        (Binary.prototype.emit_u32v):
+        (Binary.prototype.emit_bytes):
+        (Binary.prototype.emit_string):
+        (Binary.prototype.emit_header):
+        (Binary.prototype.emit_section):
+        (Binary):
+        (WasmFunctionBuilder):
+        (WasmFunctionBuilder.prototype.exportAs):
+        (WasmFunctionBuilder.prototype.exportFunc):
+        (WasmFunctionBuilder.prototype.addBody):
+        (WasmFunctionBuilder.prototype.addLocals):
+        (WasmFunctionBuilder.prototype.end):
+        (WasmGlobalBuilder):
+        (WasmGlobalBuilder.prototype.exportAs):
+        (WasmModuleBuilder):
+        (WasmModuleBuilder.prototype.addStart):
+        (WasmModuleBuilder.prototype.addMemory):
+        (WasmModuleBuilder.prototype.addExplicitSection):
+        (WasmModuleBuilder.prototype.addType):
+        (WasmModuleBuilder.prototype.addGlobal):
+        (WasmModuleBuilder.prototype.addFunction):
+        (WasmModuleBuilder.prototype.addImport):
+        (WasmModuleBuilder.prototype.addImportedGlobal):
+        (WasmModuleBuilder.prototype.addImportedMemory):
+        (WasmModuleBuilder.prototype.addImportedTable):
+        (WasmModuleBuilder.prototype.addExport):
+        (WasmModuleBuilder.prototype.addExportOfKind):
+        (WasmModuleBuilder.prototype.addDataSegment):
+        (WasmModuleBuilder.prototype.exportMemoryAs):
+        (WasmModuleBuilder.prototype.addFunctionTableInit):
+        (WasmModuleBuilder.prototype.appendToTable):
+        (WasmModuleBuilder.prototype.setFunctionTableLength):
+        (WasmModuleBuilder.prototype.toArray):
+        (WasmModuleBuilder.prototype.toBuffer):
+        (WasmModuleBuilder.prototype.instantiate):
+
 2019-07-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r247440.

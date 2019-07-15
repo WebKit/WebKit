@@ -45,7 +45,7 @@ const ClassInfo WebAssemblyInstancePrototype::s_info = { "WebAssembly.Instance",
 
 /* Source for WebAssemblyInstancePrototype.lut.h
  @begin prototypeTableWebAssemblyInstance
- exports webAssemblyInstanceProtoFuncExports DontEnum|Accessor 0
+ exports webAssemblyInstanceProtoFuncExports Accessor 0
  @end
  */
 

@@ -41,12 +41,12 @@
 #include "JSModuleNamespaceObject.h"
 #include "JSModuleRecord.h"
 #include "JSSourceCode.h"
+#include "JSWebAssembly.h"
 #include "ModuleAnalyzer.h"
 #include "Nodes.h"
 #include "ObjectConstructor.h"
 #include "Parser.h"
 #include "ParserError.h"
-#include "WebAssemblyPrototype.h"
 
 namespace JSC {
 
@@ -413,7 +413,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderParseModule(ExecState* exec)
 
 #if ENABLE(WEBASSEMBLY)
     if (sourceCode.provider()->sourceType() == SourceProviderSourceType::WebAssembly)
-        return JSValue::encode(WebAssemblyPrototype::instantiate(exec, deferred, moduleKey, jsSourceCode));
+        return JSValue::encode(JSWebAssembly::instantiate(exec, deferred, moduleKey, jsSourceCode));
 #endif
 
     CodeProfiling profile(sourceCode);
