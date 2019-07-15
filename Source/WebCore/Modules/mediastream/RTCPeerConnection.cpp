@@ -52,6 +52,7 @@
 #include "RTCIceCandidate.h"
 #include "RTCPeerConnectionIceEvent.h"
 #include "RTCSessionDescription.h"
+#include "Settings.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
@@ -89,6 +90,13 @@ RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext& context)
     , m_backend(PeerConnectionBackend::create(*this))
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+
+#if !RELEASE_LOG_DISABLED
+    auto* page = downcast<Document>(context).page();
+    if (page && !page->settings().webRTCEncryptionEnabled())
+        ALWAYS_LOG(LOGIDENTIFIER, "encryption is disabled");
+#endif
+
     if (!m_backend)
         m_connectionState = RTCPeerConnectionState::Closed;
 }

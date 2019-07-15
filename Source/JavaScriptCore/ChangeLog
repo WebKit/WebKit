@@ -1,3 +1,13 @@
+2019-07-15  Youenn Fablet  <youenn@apple.com>
+
+        Enable a debug WebRTC mode without any encryption
+        https://bugs.webkit.org/show_bug.cgi?id=199177
+        <rdar://problem/52074986>
+
+        Reviewed by Eric Carlson.
+
+        * inspector/protocol/Page.json:
+
 2019-07-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, attempt to fix production builds after r247403.

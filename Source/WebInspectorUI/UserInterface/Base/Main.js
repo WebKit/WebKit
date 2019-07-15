@@ -2258,6 +2258,7 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
                     {name: WI.UIString("Allow Media Capture on Insecure Sites"), setting: PageAgent.Setting.MediaCaptureRequiresSecureConnection, value: false},
                     {name: WI.UIString("Disable ICE Candidate Restrictions"), setting: PageAgent.Setting.ICECandidateFilteringEnabled, value: false},
                     {name: WI.UIString("Use Mock Capture Devices"), setting: PageAgent.Setting.MockCaptureDevicesEnabled, value: true},
+                    {name: WI.UIString("Disable Encryption"), setting: PageAgent.Setting.WebRTCEncryptionEnabled, value: false},
                 ],
             ],
         },

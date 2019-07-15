@@ -527,6 +527,7 @@ void Internals::resetToConsistentState(Page& page)
     WebCore::useRealRTCPeerConnectionFactory(rtcProvider);
     rtcProvider.disableNonLocalhostConnections();
     RuntimeEnabledFeatures::sharedFeatures().setWebRTCVP8CodecEnabled(true);
+    page.settings().setWebRTCEncryptionEnabled(true);
 #endif
 
     page.settings().setStorageAccessAPIEnabled(false);
@@ -1505,6 +1506,14 @@ void Internals::clearPeerConnectionFactory()
 void Internals::applyRotationForOutgoingVideoSources(RTCPeerConnection& connection)
 {
     connection.applyRotationForOutgoingVideoSources();
+}
+
+void Internals::setEnableWebRTCEncryption(bool value)
+{
+#if USE(LIBWEBRTC)
+    if (auto* page = contextDocument()->page())
+        page->settings().setWebRTCEncryptionEnabled(value);
+#endif
 }
 #endif
 

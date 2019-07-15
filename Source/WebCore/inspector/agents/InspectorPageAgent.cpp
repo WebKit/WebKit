@@ -93,6 +93,7 @@ using namespace Inspector;
     macro(MockCaptureDevicesEnabled) \
     macro(NeedsSiteSpecificQuirks) \
     macro(ScriptEnabled) \
+    macro(WebRTCEncryptionEnabled) \
     macro(WebSecurityEnabled)
 
 static bool decodeBuffer(const char* buffer, unsigned size, const String& textEncodingName, String* result)

@@ -297,6 +297,17 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
     return createPeerConnection(observer, *factoryAndThreads.networkManager, *factoryAndThreads.packetSocketFactory, WTFMove(configuration), nullptr);
 }
 
+void LibWebRTCProvider::setEnableWebRTCEncryption(bool enableWebRTCEncryption)
+{
+    auto* factory = this->factory();
+    if (!factory)
+        return;
+
+    webrtc::PeerConnectionFactoryInterface::Options options;
+    options.disable_encryption = !enableWebRTCEncryption;
+    m_factory->SetOptions(options);
+}
+
 rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, rtc::NetworkManager& networkManager, rtc::PacketSocketFactory& packetSocketFactory, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration, std::unique_ptr<webrtc::AsyncResolverFactory>&& asyncResolveFactory)
 {
     auto& factoryAndThreads = getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer);

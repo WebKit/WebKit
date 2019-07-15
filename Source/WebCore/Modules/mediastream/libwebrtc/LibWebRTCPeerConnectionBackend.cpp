@@ -46,6 +46,7 @@
 #include "RealtimeOutgoingAudioSource.h"
 #include "RealtimeOutgoingVideoSource.h"
 #include "RuntimeEnabledFeatures.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -57,6 +58,8 @@ static std::unique_ptr<PeerConnectionBackend> createLibWebRTCPeerConnectionBacke
     auto* page = downcast<Document>(*peerConnection.scriptExecutionContext()).page();
     if (!page)
         return nullptr;
+
+    page->libWebRTCProvider().setEnableWebRTCEncryption(page->settings().webRTCEncryptionEnabled());
 
     return std::make_unique<LibWebRTCPeerConnectionBackend>(peerConnection, page->libWebRTCProvider());
 }

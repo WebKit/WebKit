@@ -335,6 +335,7 @@ localizedStrings["Dimensions"] = "Dimensions";
 localizedStrings["Disable Breakpoint"] = "Disable Breakpoint";
 localizedStrings["Disable Breakpoints"] = "Disable Breakpoints";
 localizedStrings["Disable Descendant Breakpoints"] = "Disable Descendant Breakpoints";
+localizedStrings["Disable Encryption"] = "Disable Encryption";
 localizedStrings["Disable Event Listener"] = "Disable Event Listener";
 localizedStrings["Disable ICE Candidate Restrictions"] = "Disable ICE Candidate Restrictions";
 localizedStrings["Disable Program"] = "Disable Program";

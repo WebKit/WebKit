@@ -116,6 +116,7 @@ public:
     void clearFactory() { m_factory = nullptr; }
 
     void setEnableLogging(bool);
+    void setEnableWebRTCEncryption(bool);
 
 protected:
     LibWebRTCProvider() = default;

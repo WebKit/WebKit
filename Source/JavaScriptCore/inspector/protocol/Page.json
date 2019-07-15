@@ -15,6 +15,7 @@
                 "MockCaptureDevicesEnabled",
                 "NeedsSiteSpecificQuirks",
                 "ScriptEnabled",
+                "WebRTCEncryptionEnabled",
                 "WebSecurityEnabled"
             ]
         },

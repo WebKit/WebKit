@@ -1,5 +1,16 @@
 2019-07-15  Youenn Fablet  <youenn@apple.com>
 
+        Enable a debug WebRTC mode without any encryption
+        https://bugs.webkit.org/show_bug.cgi?id=199177
+        <rdar://problem/52074986>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/disable-encryption-expected.txt: Added.
+        * webrtc/disable-encryption.html: Added.
+
+2019-07-15  Youenn Fablet  <youenn@apple.com>
+
         Filter SDP c lines
         https://bugs.webkit.org/show_bug.cgi?id=199791
 

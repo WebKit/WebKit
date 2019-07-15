@@ -850,6 +850,10 @@ shouldDispatchSyntheticMouseOutAfterSyntheticClick:
 allowViewportShrinkToFitContent:
   initial: true
 
+webRTCEncryptionEnabled:
+  initial: true
+  inspectorOverride: true
+
 # Deprecated
 
 iceCandidateFilteringEnabled:
