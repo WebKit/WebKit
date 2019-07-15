@@ -4643,7 +4643,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (BOOL)_isEditable
 {
-    return _page->isEditable();
+    return _page && _page->isEditable();
 }
 
 - (void)_setEditable:(BOOL)editable

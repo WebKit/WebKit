@@ -1,3 +1,21 @@
+2019-07-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION: Chase app crashes immediately after authentication
+        https://bugs.webkit.org/show_bug.cgi?id=199798
+        <rdar://problem/53106179>
+
+        Reviewed by Alex Christensen.
+
+        After r247411, we sometimes try to consult `_page` from WKWebView, before WKWebView's `_page` has been set. This
+        happens under a check for -[WKWebView _isEditable], from within -[WKContentView setupInteraction], which happens
+        if the host app is not linked on the iOS 12 SDK or earlier. To mitigate this, simply add a null check in
+        -_isEditable.
+
+        There's currently no great way to test this, since we don't have a mechanism for simulating linked-on checks.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isEditable]):
+
 2019-07-13  Andres Gonzalez  <andresg_22@apple.com>
 
         Add accessibility support to WKDataListSuggestionsView.
