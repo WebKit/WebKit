@@ -1,3 +1,13 @@
+2019-07-15  Greg Doolittle <gr3g@apple.com>
+
+        Web Inspector: AXI: Audit: Typos in Accessibility audits
+        https://bugs.webkit.org/show_bug.cgi?id=199716
+        <rdar://problem/52721711>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/AuditManager.js:
+
 2019-07-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Device Settings: update Safari user agent from 12.2 to 13.0
