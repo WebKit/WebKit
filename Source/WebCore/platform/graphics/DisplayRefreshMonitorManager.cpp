@@ -128,8 +128,10 @@ void DisplayRefreshMonitorManager::windowScreenDidChange(PlatformDisplayID displ
 
 void DisplayRefreshMonitorManager::displayWasUpdated(PlatformDisplayID displayID)
 {
-    for (const auto& monitorWrapper : m_monitors) {
-        auto& monitor = monitorWrapper.monitor;
+    Vector<RefPtr<DisplayRefreshMonitor>> monitors = WTF::map(m_monitors, [](auto& monitorWrapper) {
+        return monitorWrapper.monitor;
+    });
+    for (auto& monitor : monitors) {
         if (displayID == monitor->displayID() && monitor->hasRequestedRefreshCallback())
             monitor->displayLinkFired();
     }

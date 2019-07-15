@@ -1,3 +1,18 @@
+2019-07-15  Chris Dumez  <cdumez@apple.com>
+
+        Crash under DisplayRefreshMonitorManager::displayWasUpdated()
+        https://bugs.webkit.org/show_bug.cgi?id=199808
+        <rdar://problem/53070144>
+
+        Reviewed by Geoffrey Garen.
+
+        Copy m_monitors before iterating over it because the calling displayLinkFired() on the
+        monitor may end up calling DisplayRefreshMonitorManager::displayDidRefresh() synchronously,
+        which removes the monitor from m_monitors.
+
+        * platform/graphics/DisplayRefreshMonitorManager.cpp:
+        (WebCore::DisplayRefreshMonitorManager::displayWasUpdated):
+
 2019-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Improve wasm wpt test results by fixing miscellaneous issues
