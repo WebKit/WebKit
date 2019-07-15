@@ -1,3 +1,9 @@
+2019-07-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, attempt to fix production builds after r247403.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2019-07-15  Tadeu Zagallo  <tzagallo@apple.com>
 
         Concurrent GC should not rely on current phase to determine if it's safe to steal conn
