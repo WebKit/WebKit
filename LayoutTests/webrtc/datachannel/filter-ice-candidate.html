@@ -24,8 +24,10 @@ promise_test((test) => {
                 return;
             }
             assert_equals(pc.localDescription.sdp.indexOf("a=candidate"), -1);
+            assert_true(pc.localDescription.sdp.indexOf("c=IN IP4 0.0.0.0") != -1 || pc.localDescription.sdp.indexOf("c=IN IP6 ::") != -1);
             if (counter === 0) {
                 pc.createOffer().then((offer) => {
+                    assert_true(offer.sdp.indexOf("c=IN IP4 0.0.0.0") != -1 || pc.localDescription.sdp.indexOf("c=IN IP6 ::") != -1);
                     assert_equals(offer.sdp.indexOf("a=candidate"), -1);
                     resolve();
                 });
@@ -54,10 +56,12 @@ promise_test((test) => {
                 counter++;
                 return;
             }
+            assert_true(pc.localDescription.sdp.indexOf("c=IN IP4 0.0.0.0") == -1 && pc.localDescription.sdp.indexOf("c=IN IP6 ::") === -1);
             assert_false(pc.localDescription.sdp.indexOf("a=candidate") === -1);
             if (counter !== 0) {
                 // Redoing an offer now that we have some candidates.
                 pc.createOffer().then((offer) => {
+                    assert_true(offer.sdp.indexOf("c=IN IP4 0.0.0.0") == -1 && pc.localDescription.sdp.indexOf("c=IN IP6 ::") === -1);
                     assert_false(offer.sdp.indexOf("a=candidate") === -1);
                     resolve();
                 });

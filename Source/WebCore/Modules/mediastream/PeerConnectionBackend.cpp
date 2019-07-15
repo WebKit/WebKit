@@ -412,7 +412,11 @@ String PeerConnectionBackend::filterSDP(String&& sdp) const
 
     StringBuilder filteredSDP;
     sdp.split('\n', [&filteredSDP](StringView line) {
-        if (!line.startsWith("a=candidate"))
+        if (line.startsWith("c=IN IP4"))
+            filteredSDP.append("c=IN IP4 0.0.0.0");
+        else if (line.startsWith("c=IN IP6"))
+            filteredSDP.append("c=IN IP6 ::");
+        else if (!line.startsWith("a=candidate"))
             filteredSDP.append(line);
         else if (line.find(" host ", 11) == notFound)
             filteredSDP.append(filterICECandidate(line.toString()));

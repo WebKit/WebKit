@@ -1,3 +1,17 @@
+2019-07-15  Youenn Fablet  <youenn@apple.com>
+
+        Filter SDP c lines
+        https://bugs.webkit.org/show_bug.cgi?id=199791
+
+        Reviewed by Eric Carlson.
+
+        As discussed in https://github.com/rtcweb-wg/mdns-ice-candidates/issues/91,
+        use 0.0.0.0 for c lines when filtering the SDP.
+        Covered by updated test.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::filterSDP const):
+
 2019-07-15  Zalan Bujtas  <zalan@apple.com>
 
         naver.com: Video stops when tapping on the video to use buttons
