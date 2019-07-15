@@ -290,8 +290,11 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
         return true;
     if (equalLettersIgnoringASCIICase(host, "trailers.apple.com"))
         return true;
-    if (equalLettersIgnoringASCIICase(host, "naver.com") || host.endsWithIgnoringASCIICase(".naver.com"))
+    if (equalLettersIgnoringASCIICase(host, "naver.com"))
         return true;
+    // Disable the quirk for tv.naver.com subdomain to be able to simulate hover on videos.
+    if (host.endsWithIgnoringASCIICase(".naver.com"))
+        return !equalLettersIgnoringASCIICase(host, "tv.naver.com");
     return false;
 }
 

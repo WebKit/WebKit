@@ -1,3 +1,18 @@
+2019-07-15  Zalan Bujtas  <zalan@apple.com>
+
+        naver.com: Video stops when tapping on the video to use buttons
+        https://bugs.webkit.org/show_bug.cgi?id=199784
+        <rdar://problem/48068610>
+
+        Reviewed by Maciej Stachowiak.
+
+        Opt out of simulated mouse event sending for tv.naver.com.
+        When tv.naver.com receives the simulated mouseUp at touchEnd, it pauses the video right away and calls preventDefault()
+        which prevents us from running the hover heuristics.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldDispatchSimulatedMouseEvents const):
+
 2019-07-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] GitHub breaks on FreeBSD because of "unsupported browser"
