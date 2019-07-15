@@ -377,35 +377,35 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
     send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(attributedString, rangeToSend, callbackID));
 }
 
-void WebPage::fontAtSelection(CompletionHandler<void(const FontInfo&, double, bool)>&& reply)
+void WebPage::fontAtSelection(CallbackID callbackID)
 {
     bool selectionHasMultipleFonts = false;
     auto& frame = m_page->focusController().focusedOrMainFrame();
 
     if (frame.selection().selection().isNone()) {
-        reply({ }, 0, false);
+        send(Messages::WebPageProxy::FontAtSelectionCallback({ }, 0, false, callbackID));
         return;
     }
 
     auto* font = frame.editor().fontForSelection(selectionHasMultipleFonts);
     if (!font) {
-        reply({ }, 0, false);
+        send(Messages::WebPageProxy::FontAtSelectionCallback({ }, 0, false, callbackID));
         return;
     }
 
     auto ctFont = font->getCTFont();
     if (!ctFont) {
-        reply({ }, 0, false);
+        send(Messages::WebPageProxy::FontAtSelectionCallback({ }, 0, false, callbackID));
         return;
     }
 
     auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont));
     if (!fontDescriptor) {
-        reply({ }, 0, false);
+        send(Messages::WebPageProxy::FontAtSelectionCallback({ }, 0, false, callbackID));
         return;
     }
 
-    reply({ adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get())) }, CTFontGetSize(ctFont), selectionHasMultipleFonts);
+    send(Messages::WebPageProxy::FontAtSelectionCallback({ adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get())) }, CTFontGetSize(ctFont), selectionHasMultipleFonts, callbackID));
 }
     
 
