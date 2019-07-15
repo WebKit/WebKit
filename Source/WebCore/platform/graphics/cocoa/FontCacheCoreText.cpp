@@ -1266,11 +1266,6 @@ static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, 
         if (!cascadeList.isEmpty())
             return createFontForInstalledFonts(cascadeList[0].get(), size, allowUserInstalledFonts);
     }
-#else
-    UNUSED_PARAM(family);
-    UNUSED_PARAM(fontDescription);
-    UNUSED_PARAM(size);
-    UNUSED_PARAM(allowUserInstalledFonts);
 #endif
 
     return nullptr;
