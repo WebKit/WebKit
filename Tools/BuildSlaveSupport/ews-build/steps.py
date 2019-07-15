@@ -844,6 +844,10 @@ class RunWebKitTests(shell.Test):
                WithProperties('--%(configuration)s')]
 
     def start(self):
+        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        self.incorrectLayoutLines = []
         platform = self.getProperty('platform')
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
         additionalArguments = self.getProperty('additionalArguments')
@@ -855,9 +859,76 @@ class RunWebKitTests(shell.Test):
             self.setCommand(self.command + additionalArguments)
         return shell.Test.start(self)
 
+    # FIXME: This will break if run-webkit-tests changes its default log formatter.
+    nrwt_log_message_regexp = re.compile(r'\d{2}:\d{2}:\d{2}(\.\d+)?\s+\d+\s+(?P<message>.*)')
+
+    def _strip_python_logging_prefix(self, line):
+        match_object = self.nrwt_log_message_regexp.match(line)
+        if match_object:
+            return match_object.group('message')
+        return line
+
+    def _parseRunWebKitTestsOutput(self, logText):
+        incorrectLayoutLines = []
+        expressions = [
+            ('flakes', re.compile(r'Unexpected flakiness.+\((\d+)\)')),
+            ('new passes', re.compile(r'Expected to .+, but passed:\s+\((\d+)\)')),
+            ('missing results', re.compile(r'Regressions: Unexpected missing results\s+\((\d+)\)')),
+            ('failures', re.compile(r'Regressions: Unexpected.+\((\d+)\)')),
+        ]
+        testFailures = {}
+
+        for line in logText.splitlines():
+            if line.find('Exiting early') >= 0 or line.find('leaks found') >= 0:
+                incorrectLayoutLines.append(self._strip_python_logging_prefix(line))
+                continue
+            for name, expression in expressions:
+                match = expression.search(line)
+
+                if match:
+                    testFailures[name] = testFailures.get(name, 0) + int(match.group(1))
+                    break
+
+                # FIXME: Parse file names and put them in results
+
+        for name in testFailures:
+            incorrectLayoutLines.append(str(testFailures[name]) + ' ' + name)
+
+        self.incorrectLayoutLines = incorrectLayoutLines
+
+    def commandComplete(self, cmd):
+        shell.Test.commandComplete(self, cmd)
+        logText = self.log_observer.getStdout() + self.log_observer.getStderr()
+        self._parseRunWebKitTestsOutput(logText)
+
+    def evaluateResult(self, cmd):
+        result = SUCCESS
+
+        if self.incorrectLayoutLines:
+            if len(self.incorrectLayoutLines) == 1:
+                line = self.incorrectLayoutLines[0]
+                if line.find('were new') >= 0 or line.find('was new') >= 0 or line.find(' leak') >= 0:
+                    return WARNINGS
+
+            for line in self.incorrectLayoutLines:
+                if line.find('flakes') >= 0 or line.find('new passes') >= 0 or line.find('missing results') >= 0:
+                    result = WARNINGS
+                else:
+                    return FAILURE
+
+        # Return code from Tools/Scripts/layout_tests/run_webkit_tests.py.
+        # This means that an exception was raised when running run-webkit-tests and
+        # was never handled.
+        if cmd.rc == 254:
+            return RETRY
+        if cmd.rc != 0:
+            return FAILURE
+
+        return result
+
     def evaluateCommand(self, cmd):
-        rc = super(RunWebKitTests, self).evaluateCommand(cmd)
-        if rc == SUCCESS:
+        rc = self.evaluateResult(cmd)
+        if rc == SUCCESS or rc == WARNINGS:
             message = 'Passed layout tests'
             self.descriptionDone = message
             self.build.results = SUCCESS
@@ -865,6 +936,15 @@ class RunWebKitTests(shell.Test):
         else:
             self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(), ExtractTestResults(), ReRunWebKitTests()])
         return rc
+
+    def getResultSummary(self):
+        status = self.name
+
+        if self.results != SUCCESS and self.incorrectLayoutLines:
+            status = u' '.join(self.incorrectLayoutLines)
+            return {u'step': status}
+
+        return super(RunWebKitTests, self).getResultSummary()
 
 
 class ReRunWebKitTests(RunWebKitTests):

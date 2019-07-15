@@ -1,3 +1,19 @@
+2019-07-15  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Parse and display layout test failures
+        https://bugs.webkit.org/show_bug.cgi?id=199709
+
+        Rubber-stamped by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitTests.start): Initialize log_observer.
+        (RunWebKitTests._strip_python_logging_prefix): Copied from similar code in build.webkit.org buildbot config.
+        (RunWebKitTests._parseRunWebKitTestsOutput): Ditto.
+        (RunWebKitTests.commandComplete): Gather and parse the stdout and stderr logs.
+        (RunWebKitTests.evaluateResult): Analyze the results and decide build status.
+        (RunWebKitTests.getResultSummary): Update build and step summary.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added and updated unit-tests.
+
 2019-07-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r247393.

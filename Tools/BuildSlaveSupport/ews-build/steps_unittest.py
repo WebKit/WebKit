@@ -975,6 +975,39 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
         return self.runStep()
 
+    def test_warnings(self):
+        self.setupStep(RunWebKitTests())
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-new-test-results', '--no-show-results', '--exit-after-n-failures', '30', '--skip-failing-tests', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
+                        )
+            + 0
+            + ExpectShell.log('stdio', stdout='''Unexpected flakiness: timeouts (2)
+                              imported/blink/storage/indexeddb/blob-valid-before-commit.html [ Timeout Pass ]
+                              storage/indexeddb/modern/deleteindex-2.html [ Timeout Pass ]'''),
+        )
+        self.expectOutcome(result=WARNINGS, state_string='2 flakes')
+        return self.runStep()
+
+    def test_unexpected_error(self):
+        self.setupStep(RunWebKitTests())
+        self.setProperty('fullPlatform', 'mac-highsierra')
+        self.setProperty('configuration', 'debug')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-new-test-results', '--no-show-results', '--exit-after-n-failures', '30', '--skip-failing-tests', '--debug', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
+                        )
+            + ExpectShell.log('stdio', stdout='Unexpected error.')
+            + 254,
+        )
+        self.expectOutcome(result=RETRY, state_string='layout-tests (retry)')
+        return self.runStep()
+
+
     def test_failure(self):
         self.setupStep(RunWebKitTests())
         self.setProperty('fullPlatform', 'ios-simulator')
