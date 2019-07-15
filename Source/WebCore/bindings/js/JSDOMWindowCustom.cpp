@@ -619,4 +619,12 @@ JSValue JSDOMWindow::openDatabase(JSC::ExecState& state) const
     return JSFunction::createFunctionThatMasqueradesAsUndefined(vm, state.lexicalGlobalObject(), 4, name, jsDOMWindowInstanceFunctionOpenDatabase, NoIntrinsic);
 }
 
+void JSDOMWindow::setOpenDatabase(JSC::ExecState& state, JSC::JSValue value)
+{
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&state, wrapped(), ThrowSecurityError))
+        return;
+
+    replaceStaticPropertySlot(state.vm(), this, Identifier::fromString(&state.vm(), "openDatabase"), value);
+}
+
 } // namespace WebCore

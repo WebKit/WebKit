@@ -1,3 +1,15 @@
+2019-07-15  Sihui Liu  <sihui_liu@apple.com>
+
+        window.openDatabase is not writable
+        https://bugs.webkit.org/show_bug.cgi?id=199737
+        <rdar://problem/52551332>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebSQLBasics.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/opendatabase-always-exists.html:
+
 2019-07-15  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Parse and display layout test failures

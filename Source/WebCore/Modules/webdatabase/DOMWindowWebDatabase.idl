@@ -25,5 +25,5 @@
  */
 
 partial interface DOMWindow {
-    [CustomGetter, NotEnumerable] readonly attribute any openDatabase;
+    [Custom, NotEnumerable] attribute any openDatabase;
 };

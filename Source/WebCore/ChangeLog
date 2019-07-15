@@ -1,3 +1,21 @@
+2019-07-15  Sihui Liu  <sihui_liu@apple.com>
+
+        window.openDatabase is not writable
+        https://bugs.webkit.org/show_bug.cgi?id=199737
+        <rdar://problem/52551332>
+
+        Reviewed by Chris Dumez.
+
+        In r246707 we made openDatabase an undetectable attribute of window, and it was set to be read-only. This broke 
+        some sites which replace window.openDatabase with their own implementation when window.openDatabase does not 
+        exists or WebSQL is not implemented. 
+
+        This patch removes the readonly property and adds a setter for openDatabase.
+
+        * Modules/webdatabase/DOMWindowWebDatabase.idl:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setOpenDatabase):
+
 2019-07-15  Youenn Fablet  <youenn@apple.com>
 
         Filter SDP c lines
