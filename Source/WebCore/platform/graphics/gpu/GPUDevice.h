@@ -29,8 +29,6 @@
 
 #include "GPUQueue.h"
 #include "GPUSwapChain.h"
-#include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
@@ -43,7 +41,6 @@ class GPUBindGroupLayout;
 class GPUBuffer;
 class GPUCommandBuffer;
 class GPUComputePipeline;
-class GPUErrorScopes;
 class GPUPipelineLayout;
 class GPURenderPipeline;
 class GPUSampler;
@@ -60,9 +57,7 @@ struct GPUSamplerDescriptor;
 struct GPUShaderModuleDescriptor;
 struct GPUSwapChainDescriptor;
 struct GPUTextureDescriptor;
-
-enum class GPUBufferMappedOption;
-
+    
 using PlatformDevice = MTLDevice;
 using PlatformDeviceSmartPtr = RetainPtr<MTLDevice>;
 
@@ -70,7 +65,7 @@ class GPUDevice : public RefCounted<GPUDevice>, public CanMakeWeakPtr<GPUDevice>
 public:
     static RefPtr<GPUDevice> tryCreate(const Optional<GPURequestAdapterOptions>&);
 
-    RefPtr<GPUBuffer> tryCreateBuffer(const GPUBufferDescriptor&, GPUBufferMappedOption, Ref<GPUErrorScopes>&&);
+    RefPtr<GPUBuffer> tryCreateBuffer(const GPUBufferDescriptor&, bool isMappedOnCreation = false);
     RefPtr<GPUTexture> tryCreateTexture(const GPUTextureDescriptor&) const;
     RefPtr<GPUSampler> tryCreateSampler(const GPUSamplerDescriptor&) const;
 

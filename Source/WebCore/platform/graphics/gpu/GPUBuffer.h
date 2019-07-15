@@ -29,7 +29,6 @@
 
 #include "DeferrableTask.h"
 #include "GPUBufferUsage.h"
-#include "GPUObjectBase.h"
 #include <wtf/Function.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
@@ -52,8 +51,6 @@ class GPUDevice;
 
 struct GPUBufferDescriptor;
 
-enum class GPUBufferMappedOption;
-
 #if USE(METAL)
 using PlatformBuffer = MTLBuffer;
 #else
@@ -61,7 +58,7 @@ using PlatformBuffer = void;
 #endif
 using PlatformBufferSmartPtr = RetainPtr<PlatformBuffer>;
 
-class GPUBuffer : public GPUObjectBase {
+class GPUBuffer : public RefCounted<GPUBuffer> {
 public:
     enum class State {
         Mapped,
@@ -71,7 +68,7 @@ public:
 
     ~GPUBuffer();
 
-    static RefPtr<GPUBuffer> tryCreate(Ref<GPUDevice>&&, const GPUBufferDescriptor&, GPUBufferMappedOption, Ref<GPUErrorScopes>&&);
+    static RefPtr<GPUBuffer> tryCreate(Ref<GPUDevice>&&, const GPUBufferDescriptor&, bool isMappedOnCreation);
 
     PlatformBuffer *platformBuffer() const { return m_platformBuffer.get(); }
     size_t byteLength() const { return m_byteLength; }
@@ -110,8 +107,8 @@ private:
         PendingMappingCallback(MappingCallback&&);
     };
 
-    GPUBuffer(PlatformBufferSmartPtr&&, Ref<GPUDevice>&&, size_t, OptionSet<GPUBufferUsage::Flags>, GPUBufferMappedOption, Ref<GPUErrorScopes>&&);
-    static bool validateBufferUsage(GPUDevice&, OptionSet<GPUBufferUsage::Flags>, GPUErrorScopes&);
+    GPUBuffer(PlatformBufferSmartPtr&&, Ref<GPUDevice>&&, size_t, OptionSet<GPUBufferUsage::Flags>, bool);
+    static bool validateBufferUsage(const GPUDevice&, OptionSet<GPUBufferUsage::Flags>);
 
     JSC::ArrayBuffer* stagingBufferForRead();
     JSC::ArrayBuffer* stagingBufferForWrite();

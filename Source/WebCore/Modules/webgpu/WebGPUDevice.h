@@ -28,8 +28,6 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUDevice.h"
-#include "GPUErrorScopes.h"
-#include "JSDOMPromiseDeferred.h"
 #include "WebGPUAdapter.h"
 #include "WebGPUQueue.h"
 #include "WebGPUSwapChainDescriptor.h"
@@ -45,8 +43,6 @@ class JSValue;
 
 namespace WebCore {
 
-class GPUOutOfMemoryError;
-class GPUValidationError;
 class ScriptExecutionContext;
 class WebGPUBindGroup;
 class WebGPUBindGroupLayout;
@@ -69,11 +65,6 @@ struct WebGPUComputePipelineDescriptor;
 struct WebGPUPipelineLayoutDescriptor;
 struct WebGPURenderPipelineDescriptor;
 struct WebGPUShaderModuleDescriptor;
-
-enum class GPUErrorFilter;
-
-using ErrorIDLUnion = IDLUnion<IDLInterface<GPUOutOfMemoryError>, IDLInterface<GPUValidationError>>;
-using ErrorPromise = DOMPromiseDeferred<IDLNullable<ErrorIDLUnion>>;
 
 class WebGPUDevice : public RefCounted<WebGPUDevice> {
 public:
@@ -100,17 +91,12 @@ public:
 
     Ref<WebGPUQueue> getQueue() const;
 
-    void pushErrorScope(GPUErrorFilter filter) { m_errorScopes->pushErrorScope(filter); }
-    void popErrorScope(ErrorPromise&&);
-
 private:
     WebGPUDevice(Ref<const WebGPUAdapter>&&, Ref<GPUDevice>&&);
 
     Ref<const WebGPUAdapter> m_adapter;
     Ref<GPUDevice> m_device;
     mutable RefPtr<WebGPUQueue> m_queue;
-
-    Ref<GPUErrorScopes> m_errorScopes;
 };
 
 } // namespace WebCore

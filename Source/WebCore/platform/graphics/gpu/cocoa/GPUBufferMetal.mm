@@ -42,7 +42,7 @@ namespace WebCore {
 static constexpr auto readOnlyFlags = OptionSet<GPUBufferUsage::Flags> { GPUBufferUsage::Flags::Index, GPUBufferUsage::Flags::Vertex, GPUBufferUsage::Flags::Uniform, GPUBufferUsage::Flags::TransferSource };
 
 
-bool GPUBuffer::validateBufferUsage(GPUDevice& device, OptionSet<GPUBufferUsage::Flags> usage, GPUErrorScopes& errorScopes)
+bool GPUBuffer::validateBufferUsage(const GPUDevice& device, OptionSet<GPUBufferUsage::Flags> usage)
 {
     if (!device.platformDevice()) {
         LOG(WebGPU, "GPUBuffer::tryCreate(): Invalid GPUDevice!");
@@ -50,7 +50,7 @@ bool GPUBuffer::validateBufferUsage(GPUDevice& device, OptionSet<GPUBufferUsage:
     }
 
     if (usage.containsAll({ GPUBufferUsage::Flags::MapWrite, GPUBufferUsage::Flags::MapRead })) {
-        errorScopes.generateError("GPUBuffer::tryCreate(): Buffer cannot have both MAP_READ and MAP_WRITE usage!");
+        LOG(WebGPU, "GPUBuffer::tryCreate(): Buffer cannot have both MAP_READ and MAP_WRITE usage!");
         return false;
     }
 
@@ -62,23 +62,23 @@ bool GPUBuffer::validateBufferUsage(GPUDevice& device, OptionSet<GPUBufferUsage:
     return true;
 }
 
-RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, const GPUBufferDescriptor& descriptor, GPUBufferMappedOption isMapped, Ref<GPUErrorScopes>&& errorScopes)
+RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, const GPUBufferDescriptor& descriptor, bool isMappedOnCreation)
 {
     // MTLBuffer size (NSUInteger) is 32 bits on some platforms.
     NSUInteger size = 0;
     if (!WTF::convertSafely(descriptor.size, size)) {
-        errorScopes->generateError("", GPUErrorFilter::OutOfMemory);
+        LOG(WebGPU, "GPUBuffer::tryCreate(): Buffer size is too large!");
         return nullptr;
     }
 
     auto usage = OptionSet<GPUBufferUsage::Flags>::fromRaw(descriptor.usage);
-    if (!validateBufferUsage(device.get(), usage, errorScopes))
+    if (!validateBufferUsage(device.get(), usage))
         return nullptr;
 
 #if PLATFORM(MAC)
     // copyBufferToBuffer calls require 4-byte alignment. "Unmapping" a mapped-on-creation GPUBuffer
     // that is otherwise unmappable requires such a copy to upload data.
-    if (isMapped == GPUBufferMappedOption::IsMapped
+    if (isMappedOnCreation
         && !usage.containsAny({ GPUBufferUsage::Flags::MapWrite, GPUBufferUsage::Flags::MapRead })
         && descriptor.size % 4) {
         LOG(WebGPU, "GPUBuffer::tryCreate(): Data must be aligned to a multiple of 4 bytes!");
@@ -102,20 +102,19 @@ RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, const GPUBufferD
     END_BLOCK_OBJC_EXCEPTIONS;
 
     if (!mtlBuffer) {
-        errorScopes->generateError("", GPUErrorFilter::OutOfMemory);
+        LOG(WebGPU, "GPUBuffer::tryCreate(): Unable to create MTLBuffer!");
         return nullptr;
     }
 
-    return adoptRef(*new GPUBuffer(WTFMove(mtlBuffer), WTFMove(device), size, usage, isMapped, WTFMove(errorScopes)));
+    return adoptRef(*new GPUBuffer(WTFMove(mtlBuffer), WTFMove(device), size, usage, isMappedOnCreation));
 }
 
-GPUBuffer::GPUBuffer(RetainPtr<MTLBuffer>&& buffer, Ref<GPUDevice>&& device, size_t size, OptionSet<GPUBufferUsage::Flags> usage, GPUBufferMappedOption isMapped, Ref<GPUErrorScopes>&& errorScopes)
-    : GPUObjectBase(WTFMove(errorScopes))
-    , m_platformBuffer(WTFMove(buffer))
+GPUBuffer::GPUBuffer(RetainPtr<MTLBuffer>&& buffer, Ref<GPUDevice>&& device, size_t size, OptionSet<GPUBufferUsage::Flags> usage, bool isMapped)
+    : m_platformBuffer(WTFMove(buffer))
     , m_device(WTFMove(device))
     , m_byteLength(size)
     , m_usage(usage)
-    , m_isMappedFromCreation(isMapped == GPUBufferMappedOption::IsMapped)
+    , m_isMappedFromCreation(isMapped)
 {
 }
 

@@ -30,7 +30,6 @@
 
 #include "WHLSLCallExpression.h"
 #include "WHLSLFunctionDefinition.h"
-#include "WHLSLProgram.h"
 #include "WHLSLVisitor.h"
 #include <wtf/HashSet.h>
 
