@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebGLStateTracker.h"
 
+#if ENABLE(WEBGL)
+
 namespace WebCore {
 
 WebGLStateTracker::WebGLStateTracker(StateChangeHandler&& handler)
@@ -51,3 +53,5 @@ void WebGLStateTracker::updateWebGLState()
 }
 
 } // namespace WebCore
+
+#endif

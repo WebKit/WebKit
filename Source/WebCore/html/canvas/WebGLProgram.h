@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBGL)
+
 #include "WebGLSharedObject.h"
 #include <wtf/Forward.h>
 
@@ -83,3 +85,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif

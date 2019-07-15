@@ -32,6 +32,7 @@
 
 #include "GraphicsContext.h"
 #include "IntRect.h"
+#include "Logging.h"
 #include <wtf/UUID.h>
 
 #if PLATFORM(COCOA)

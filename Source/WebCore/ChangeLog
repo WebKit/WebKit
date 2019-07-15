@@ -1,3 +1,21 @@
+2019-07-14  Dean Jackson  <dino@apple.com>
+
+        Move more WebGL things into unified builds
+        https://bugs.webkit.org/show_bug.cgi?id=199787
+
+        Reviewed by Wenson Hsieh.
+
+        Unify as many WebGL files as possible.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/canvas/WebGLFramebuffer.cpp:
+        * html/canvas/WebGLObject.h: Move a helper function into an inline.
+        (WebCore::objectOrZero):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+
 2019-07-15  Keith Rollin  <krollin@apple.com>
 
         Add missing webgpu includes

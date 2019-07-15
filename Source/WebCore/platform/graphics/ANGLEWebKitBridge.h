@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBGL)
+
 #if USE(LIBEPOXY)
 // libepoxy headers have to be included before <ANGLE/ShaderLang.h> in order to avoid
 // picking up khrplatform.h inclusion that's done in ANGLE.
@@ -99,3 +101,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif

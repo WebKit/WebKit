@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBGL)
+
 #include "GraphicsContext3D.h"
 
 namespace WebCore {
@@ -75,4 +77,11 @@ private:
     bool m_deleted { false };
 };
 
+inline Platform3DObject objectOrZero(WebGLObject* object)
+{
+    return object ? object->object() : 0;
+}
+
 } // namespace WebCore
+
+#endif

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBGL)
+
 #include "ANGLEWebKitBridge.h"
 #include "GraphicsContext3DAttributes.h"
 #include "GraphicsTypes3D.h"
@@ -1571,3 +1573,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif

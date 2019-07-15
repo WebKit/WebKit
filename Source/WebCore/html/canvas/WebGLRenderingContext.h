@@ -25,10 +25,10 @@
 
 #pragma once
 
+#if ENABLE(WEBGL)
+
 #include "WebGLRenderingContextBase.h"
 #include <memory>
-
-#if ENABLE(WEBGL)
 
 namespace WebCore {
 

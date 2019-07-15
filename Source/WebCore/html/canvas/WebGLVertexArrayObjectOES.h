@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBGL)
+
 #include "WebGLVertexArrayObjectBase.h"
 
 namespace WebCore {
@@ -39,3 +41,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif

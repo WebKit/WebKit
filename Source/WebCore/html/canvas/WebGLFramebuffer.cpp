@@ -37,11 +37,6 @@ namespace WebCore {
 
 namespace {
 
-    Platform3DObject objectOrZero(WebGLObject* object)
-    {
-        return object ? object->object() : 0;
-    }
-
     class WebGLRenderbufferAttachment : public WebGLFramebuffer::WebGLAttachment {
     public:
         static Ref<WebGLFramebuffer::WebGLAttachment> create(WebGLRenderbuffer*);

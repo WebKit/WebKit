@@ -32,7 +32,7 @@
 #include "WebGLRenderingContextBase.h"
 
 namespace WebCore {
-    
+
 Ref<WebGLSync> WebGLSync::create(WebGLRenderingContextBase& ctx)
 {
     return adoptRef(*new WebGLSync(ctx));

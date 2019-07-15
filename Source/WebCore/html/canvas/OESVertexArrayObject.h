@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBGL)
+
 #include "GraphicsTypes3D.h"
 #include "WebGLExtension.h"
 
@@ -47,3 +49,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif

@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#include <mutex>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>

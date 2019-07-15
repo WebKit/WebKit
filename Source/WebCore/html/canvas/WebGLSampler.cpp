@@ -32,7 +32,7 @@
 #include "WebGLRenderingContextBase.h"
 
 namespace WebCore {
-    
+
 Ref<WebGLSampler> WebGLSampler::create(WebGLRenderingContextBase& ctx)
 {
     return adoptRef(*new WebGLSampler(ctx));

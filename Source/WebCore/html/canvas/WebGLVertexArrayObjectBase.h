@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBGL)
+
 #include "WebGLBuffer.h"
 #include "WebGLContextObject.h"
 
@@ -38,7 +40,7 @@ public:
     struct VertexAttribState {
         bool isBound() const { return bufferBinding && bufferBinding->object(); }
         bool validateBinding() const { return !enabled || isBound(); }
-        
+
         bool enabled { false };
         RefPtr<WebGLBuffer> bufferBinding;
         GC3Dsizei bytesPerElement { 0 };
@@ -76,3 +78,5 @@ protected:
 };
 
 } // namespace WebCore
+
+#endif

@@ -26,6 +26,8 @@
 
 #pragma once
 
+#if ENABLE(WEBGL)
+
 #include "WebGLProgram.h"
 #include <wtf/RefCounted.h>
 
@@ -54,3 +56,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif

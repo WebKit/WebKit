@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBGL)
+
 #include "WebGLSharedObject.h"
 #include <wtf/Vector.h>
 
@@ -141,3 +143,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif

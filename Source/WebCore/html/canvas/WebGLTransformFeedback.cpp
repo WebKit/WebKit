@@ -32,7 +32,7 @@
 #include "WebGLRenderingContextBase.h"
 
 namespace WebCore {
-    
+
 Ref<WebGLTransformFeedback> WebGLTransformFeedback::create(WebGLRenderingContextBase& ctx)
 {
     return adoptRef(*new WebGLTransformFeedback(ctx));

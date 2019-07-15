@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBGL)
+
 #include "GraphicsContext3DAttributes.h"
 #include <wtf/Function.h>
 #include <wtf/RefCounter.h>
@@ -51,3 +53,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif

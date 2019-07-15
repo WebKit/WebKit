@@ -121,7 +121,6 @@
 #include "VisitedLinkState.h"
 #include "VisitedLinkStore.h"
 #include "VoidCallback.h"
-#include "WebGLStateTracker.h"
 #include "WheelEventDeltaFilter.h"
 #include "Widget.h"
 #include <wtf/FileSystem.h>
@@ -151,6 +150,10 @@
 
 #if ENABLE(DATA_INTERACTION)
 #include "SelectionRect.h"
+#endif
+
+#if ENABLE(WEBGL)
+#include "WebGLStateTracker.h"
 #endif
 
 namespace WebCore {
@@ -233,7 +236,9 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_validationMessageClient(WTFMove(pageConfiguration.validationMessageClient))
     , m_diagnosticLoggingClient(WTFMove(pageConfiguration.diagnosticLoggingClient))
     , m_performanceLoggingClient(WTFMove(pageConfiguration.performanceLoggingClient))
+#if ENABLE(WEBGL)
     , m_webGLStateTracker(WTFMove(pageConfiguration.webGLStateTracker))
+#endif
 #if ENABLE(SPEECH_SYNTHESIS)
     , m_speechSynthesisClient(WTFMove(pageConfiguration.speechSynthesisClient))
 #endif

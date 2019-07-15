@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBGL)
+
 #include "WebGLContextObject.h"
 #include "WebGLSharedObject.h"
 #include <wtf/RefCounted.h>
@@ -128,3 +130,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif

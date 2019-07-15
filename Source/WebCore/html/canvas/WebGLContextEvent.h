@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBGL)
+
 #include "Event.h"
 
 namespace WebCore {
@@ -58,3 +60,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif

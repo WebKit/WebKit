@@ -695,7 +695,9 @@ public:
     Optional<CompositingPolicy> compositingPolicyOverride() const { return m_compositingPolicyOverride; }
     void setCompositingPolicyOverride(Optional<CompositingPolicy> policy) { m_compositingPolicyOverride = policy; }
 
+#if ENABLE(WEBGL)
     WebGLStateTracker* webGLStateTracker() const { return m_webGLStateTracker.get(); }
+#endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
     SpeechSynthesisClient* speechSynthesisClient() const { return m_speechSynthesisClient.get(); }
@@ -796,8 +798,10 @@ private:
     std::unique_ptr<ValidationMessageClient> m_validationMessageClient;
     std::unique_ptr<DiagnosticLoggingClient> m_diagnosticLoggingClient;
     std::unique_ptr<PerformanceLoggingClient> m_performanceLoggingClient;
-    
+
+#if ENABLE(WEBGL)
     std::unique_ptr<WebGLStateTracker> m_webGLStateTracker;
+#endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
     std::unique_ptr<SpeechSynthesisClient> m_speechSynthesisClient;

@@ -27,6 +27,8 @@
 
 #pragma once
 
+#if ENABLE(WEBGL)
+
 #include "GraphicsContext3DAttributes.h"
 
 namespace WebCore {
@@ -35,3 +37,5 @@ using WebGLPowerPreference = GraphicsContext3DPowerPreference;
 using WebGLContextAttributes = GraphicsContext3DAttributes;
 
 } // namespace WebCore
+
+#endif

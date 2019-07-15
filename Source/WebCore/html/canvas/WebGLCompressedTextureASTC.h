@@ -25,18 +25,20 @@
 
 #pragma once
 
+#if ENABLE(WEBGL)
+
 #include "WebGLExtension.h"
 
 namespace WebCore {
-    
+
 class WebGLCompressedTextureASTC final : public WebGLExtension {
 public:
     explicit WebGLCompressedTextureASTC(WebGLRenderingContextBase&);
     virtual ~WebGLCompressedTextureASTC();
-    
+
     ExtensionName getName() const override;
     Vector<String> getSupportedProfiles();
-    
+
     static bool supported(const WebGLRenderingContextBase&);
 private:
     bool m_isHDRSupported : 1;
@@ -44,3 +46,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif

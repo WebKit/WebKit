@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBGL)
+
 #include "WebGLSharedObject.h"
 
 namespace WebCore {
@@ -42,3 +44,5 @@ protected:
 };
 
 } // namespace WebCore
+
+#endif
