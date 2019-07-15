@@ -1,3 +1,7 @@
+2019-07-15  Alan Coon  <alancoon@apple.com>
+
+        Revert r247377. rdar://problem/53125241
+
 2019-07-14  Chris Dumez  <cdumez@apple.com>
 
         Add threading assertion to WeakPtrFactory::createWeakPtr()

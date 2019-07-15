@@ -1126,10 +1126,6 @@ ShouldAllowUserInstalledFonts:
   type: bool
   defaultValue: true
 
-ShouldAllowDesignSystemUIFonts:
-  type: bool
-  defaultValue: false
-
 MediaCapabilitiesEnabled:
   type: bool
   defaultValue: true

@@ -1,5 +1,9 @@
 2019-07-15  Alan Coon  <alancoon@apple.com>
 
+        Revert r247377. rdar://problem/53125241
+
+2019-07-15  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247436. rdar://problem/53106179
 
     REGRESSION: Chase app crashes immediately after authentication
