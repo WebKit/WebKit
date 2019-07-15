@@ -1,3 +1,17 @@
+2019-07-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS 10.15] Cannot unbold selected text when the system font is used
+        https://bugs.webkit.org/show_bug.cgi?id=199788
+        <rdar://problem/52142570>
+
+        Reviewed by Tim Horton.
+
+        Add a new API test to verify that bolding and unbolding updates the
+        shared font manager's selected font.
+
+        * TestWebKitAPI/Tests/mac/FontManagerTests.mm:
+        (TestWebKitAPI::TEST):
+
 2019-07-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         [iOS] SOAuthorizationSession should tell AppSSO whether the UIClient is capable of showing the extension UI

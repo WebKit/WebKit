@@ -33,6 +33,7 @@
 #import "DataReference.h"
 #import "EditingRange.h"
 #import "EditorState.h"
+#import "FontInfo.h"
 #import "InjectedBundleHitTestResult.h"
 #import "PDFKitImports.h"
 #import "PDFPlugin.h"
@@ -376,22 +377,35 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
     send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(attributedString, rangeToSend, callbackID));
 }
 
-void WebPage::fontAtSelection(CallbackID callbackID)
+void WebPage::fontAtSelection(CompletionHandler<void(const FontInfo&, double, bool)>&& reply)
 {
-    String fontName;
-    double fontSize = 0;
     bool selectionHasMultipleFonts = false;
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-    
-    if (!frame.selection().selection().isNone()) {
-        if (auto* font = frame.editor().fontForSelection(selectionHasMultipleFonts)) {
-            if (auto ctFont = font->getCTFont()) {
-                fontName = adoptCF(CTFontCopyPostScriptName(ctFont)).get();
-                fontSize = CTFontGetSize(ctFont);
-            }
-        }
+    auto& frame = m_page->focusController().focusedOrMainFrame();
+
+    if (frame.selection().selection().isNone()) {
+        reply({ }, 0, false);
+        return;
     }
-    send(Messages::WebPageProxy::FontAtSelectionCallback(fontName, fontSize, selectionHasMultipleFonts, callbackID));
+
+    auto* font = frame.editor().fontForSelection(selectionHasMultipleFonts);
+    if (!font) {
+        reply({ }, 0, false);
+        return;
+    }
+
+    auto ctFont = font->getCTFont();
+    if (!ctFont) {
+        reply({ }, 0, false);
+        return;
+    }
+
+    auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont));
+    if (!fontDescriptor) {
+        reply({ }, 0, false);
+        return;
+    }
+
+    reply({ adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get())) }, CTFontGetSize(ctFont), selectionHasMultipleFonts);
 }
     
 

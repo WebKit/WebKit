@@ -1,3 +1,43 @@
+2019-07-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS 10.15] Cannot unbold selected text when the system font is used
+        https://bugs.webkit.org/show_bug.cgi?id=199788
+        <rdar://problem/52142570>
+
+        Reviewed by Tim Horton.
+
+        In macOS 10.15, +[NSFont fontWithName:size:] no longer recognizes system fonts (of name
+        ".SFNS-*") and returns nil instead. However, our existing implementation of
+        WebPageProxy::fontAtSelection works by grabbing the font name in the web process, and
+        sending it over to the UI process, where it is mapped to an NSFont. As a result, this always
+        results in a nil font in macOS 10.15, which causes us to never update NSFontManager's
+        selected font. In turn, this means that once selected text is bolded, it can't be unbolded
+        via NSFontManager, since NSFontManager thinks that the text is still not bold.
+
+        To fix this, we simply encode and send a platform FontInfo instead of sending the font name.
+        This allows the UI process to reconstruct NSFonts from font attribute dictionaries instead,
+        and update the font manager.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateFontManagerIfNeeded):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::fontAtSelection):
+
+        Refactor this to send a FontInfo (containing a font attribute dictionary) instead of a font
+        name.
+
+        (WebKit::WebPageProxy::fontAtSelectionCallback): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Change FontAtSelection to use sendWithAsyncReply instead of sending a callback ID. This also
+        allows us to remove FontAtSelectionCallback.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::fontAtSelection):
+
 2019-07-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         [iOS] SOAuthorizationSession should tell AppSSO whether the UIClient is capable of showing the extension UI
