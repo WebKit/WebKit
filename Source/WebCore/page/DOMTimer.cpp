@@ -43,7 +43,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include "ContentChangeObserver.h"
-#include "DOMTimerHoldingTank.h"
 #endif
 
 namespace WebCore {
@@ -197,12 +196,8 @@ int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<Scheduled
     if (NestedTimersMap* nestedTimers = NestedTimersMap::instanceForContext(context))
         nestedTimers->add(timer->m_timeoutId, *timer);
 #if PLATFORM(IOS_FAMILY)
-    if (is<Document>(context)) {
-        auto& document = downcast<Document>(context);
-        document.contentChangeObserver().didInstallDOMTimer(*timer, timeout, singleShot);
-        if (DeferDOMTimersForScope::isDeferring())
-            document.domTimerHoldingTank().add(*timer);
-    }
+    if (is<Document>(context))
+        downcast<Document>(context).contentChangeObserver().didInstallDOMTimer(*timer, timeout, singleShot);
 #endif
     return timer->m_timeoutId;
 }
@@ -218,11 +213,8 @@ void DOMTimer::removeById(ScriptExecutionContext& context, int timeoutId)
 #if PLATFORM(IOS_FAMILY)
     if (is<Document>(context)) {
         auto& document = downcast<Document>(context);
-        if (auto* timer = document.findTimeout(timeoutId)) {
+        if (auto* timer = document.findTimeout(timeoutId))
             document.contentChangeObserver().didRemoveDOMTimer(*timer);
-            if (auto* holdingTank = document.domTimerHoldingTankIfExists())
-                holdingTank->remove(*timer);
-        }
     }
 #endif
 
@@ -291,17 +283,6 @@ void DOMTimer::fired()
 
     ASSERT(scriptExecutionContext());
     ScriptExecutionContext& context = *scriptExecutionContext();
-
-#if PLATFORM(IOS_FAMILY)
-    if (is<Document>(context)) {
-        auto& document = downcast<Document>(context);
-        if (auto* holdingTank = document.domTimerHoldingTankIfExists(); holdingTank && holdingTank->contains(*this)) {
-            if (!repeatInterval())
-                startOneShot(0_s);
-            return;
-        }
-    }
-#endif
 
     DOMTimerFireState fireState(context, std::min(m_nestingLevel + 1, maxTimerNestingLevel));
 
