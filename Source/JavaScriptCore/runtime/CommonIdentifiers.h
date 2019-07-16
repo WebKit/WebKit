@@ -53,6 +53,7 @@
     macro(SharedArrayBuffer) \
     macro(String) \
     macro(Symbol) \
+    macro(WeakRef) \
     macro(__defineGetter__) \
     macro(__defineSetter__) \
     macro(__lookupGetter__) \

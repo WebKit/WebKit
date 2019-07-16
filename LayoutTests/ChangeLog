@@ -1,3 +1,21 @@
+2019-07-15  Keith Miller  <keith_miller@apple.com>
+
+        JSGlobalObject type macros should support feature flags and WeakRef should have one
+        https://bugs.webkit.org/show_bug.cgi?id=199601
+
+        Reviewed by Mark Lam.
+
+        Add JSC option requirements for WeakRef tests.
+
+        * js/script-tests/weakref-async-is-collected.js:
+        * js/script-tests/weakref-eventually-collects-values.js:
+        * js/script-tests/weakref-microtasks-dont-collect.js:
+        * js/script-tests/weakref-weakset-consistency.js:
+        * js/weakref-async-is-collected.html:
+        * js/weakref-eventually-collects-values.html:
+        * js/weakref-microtasks-dont-collect.html:
+        * js/weakref-weakset-consistency.html:
+
 2019-07-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r247444.

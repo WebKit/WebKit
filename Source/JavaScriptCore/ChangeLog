@@ -1,5 +1,31 @@
 2019-07-15  Keith Miller  <keith_miller@apple.com>
 
+        JSGlobalObject type macros should support feature flags and WeakRef should have one
+        https://bugs.webkit.org/show_bug.cgi?id=199601
+
+        Reviewed by Mark Lam.
+
+        This patch refactors the various builtin type macros to have a
+        parameter, which is the feature flag enabling it.  Since most
+        builtin types are enabled by default this patch adds a new global
+        bool typeExposedByDefault for clarity. Note, because static hash
+        tables have no concept of feature flags we can't use feature flags
+        with lazy properties. This is probably not a big deal as features
+        that are off by default won't be allocated anywhere we care about
+        memory usage anyway.
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::stringObjectStructure const):
+        (JSC::JSGlobalObject::bigIntObjectStructure const): Deleted.
+        * runtime/Options.h:
+        * wasm/js/JSWebAssembly.cpp:
+
+2019-07-15  Keith Miller  <keith_miller@apple.com>
+
         A Possible Issue of Object.create method
         https://bugs.webkit.org/show_bug.cgi?id=199744
 
