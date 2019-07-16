@@ -85,6 +85,7 @@ class SwitchCase;
 class SwitchStatement;
 class Trap;
 class VariableDeclarationsStatement;
+class WhileLoop;
 class VariableDeclaration;
 class AssignmentExpression;
 class CallExpression;
@@ -165,6 +166,7 @@ public:
     virtual void visit(AST::SwitchStatement&);
     virtual void visit(AST::Trap&);
     virtual void visit(AST::VariableDeclarationsStatement&);
+    virtual void visit(AST::WhileLoop&);
     virtual void visit(AST::VariableDeclaration&);
     virtual void visit(AST::AssignmentExpression&);
     virtual void visit(AST::CallExpression&);

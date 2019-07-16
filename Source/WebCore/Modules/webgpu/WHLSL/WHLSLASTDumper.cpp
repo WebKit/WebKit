@@ -393,6 +393,14 @@ void ASTDumper::visit(AST::Continue&)
     m_out.print("continue");
 }
 
+void ASTDumper::visit(AST::WhileLoop& whileLoop)
+{
+    m_out.print("while (");
+    visit(whileLoop.conditional());
+    m_out.print(")");
+    visit(whileLoop.body());
+}
+
 void ASTDumper::visit(AST::DoWhileLoop& doWhileLoop)
 {
     m_out.print("do ");
@@ -404,10 +412,18 @@ void ASTDumper::visit(AST::DoWhileLoop& doWhileLoop)
 
 void ASTDumper::visit(AST::ForLoop& forLoop)
 {
-    m_out.print("for (; ");
-    visit(forLoop.condition());
+    m_out.print("for (");
+    WTF::visit(WTF::makeVisitor([&](UniqueRef<AST::Statement>& statement) {
+        visit(statement);
+    }, [&](UniqueRef<AST::Expression>& expression) {
+        visit(expression);
+    }), forLoop.initialization());
     m_out.print("; ");
-    visit(forLoop.increment());
+    if (forLoop.condition())
+        visit(*forLoop.condition());
+    m_out.print("; ");
+    if (forLoop.increment())
+        visit(*forLoop.increment());
     m_out.print(") ");
     visit(forLoop.body());
 }

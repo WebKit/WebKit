@@ -331,10 +331,10 @@ void Visitor::visit(AST::Statement& statement)
         checkErrorAndVisit(downcast<AST::SwitchStatement>(statement));
     else if (is<AST::Trap>(statement))
         checkErrorAndVisit(downcast<AST::Trap>(statement));
-    else {
-        ASSERT(is<AST::VariableDeclarationsStatement>(statement));
+    else if (is<AST::VariableDeclarationsStatement>(statement))
         checkErrorAndVisit(downcast<AST::VariableDeclarationsStatement>(statement));
-    }
+    else
+        checkErrorAndVisit(downcast<AST::WhileLoop>(statement));
 }
 
 void Visitor::visit(AST::Break&)
@@ -427,8 +427,15 @@ void Visitor::visit(AST::Fallthrough&)
 
 void Visitor::visit(AST::ForLoop& forLoop)
 {
-    checkErrorAndVisit(forLoop.condition());
-    checkErrorAndVisit(forLoop.increment());
+    WTF::visit(WTF::makeVisitor([&](UniqueRef<AST::Statement>& statement) {
+        checkErrorAndVisit(statement);
+    }, [&](UniqueRef<AST::Expression>& expression) {
+        checkErrorAndVisit(expression);
+    }), forLoop.initialization());
+    if (forLoop.condition())
+        checkErrorAndVisit(*forLoop.condition());
+    if (forLoop.increment())
+        checkErrorAndVisit(*forLoop.increment());
     checkErrorAndVisit(forLoop.body());
 }
 
@@ -468,6 +475,12 @@ void Visitor::visit(AST::VariableDeclarationsStatement& variableDeclarationsStat
 {
     for (auto& variableDeclaration : variableDeclarationsStatement.variableDeclarations())
         checkErrorAndVisit(variableDeclaration.get());
+}
+
+void Visitor::visit(AST::WhileLoop& whileLoop)
+{
+    checkErrorAndVisit(whileLoop.conditional());
+    checkErrorAndVisit(whileLoop.body());
 }
 
 void Visitor::visit(AST::VariableDeclaration& variableDeclaration)

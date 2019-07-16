@@ -62,6 +62,7 @@ public:
     virtual bool isSwitchStatement() const { return false; }
     virtual bool isTrap() const { return false; }
     virtual bool isVariableDeclarationsStatement() const { return false; }
+    virtual bool isWhileLoop() const { return false; }
 
     CodeLocation codeLocation() const { return m_codeLocation; }
     void updateCodeLocation(CodeLocation location) { m_codeLocation = location; }

@@ -27,47 +27,47 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLNameContext.h"
-#include "WHLSLVisitor.h"
-#include <wtf/HashSet.h>
+#include "WHLSLExpression.h"
+#include "WHLSLLexer.h"
+#include "WHLSLStatement.h"
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
 namespace WHLSL {
 
-class Program;
+namespace AST {
 
-class NameResolver : public Visitor {
+class WhileLoop : public Statement {
 public:
-    NameResolver(NameContext&);
-    NameResolver(NameResolver&, NameContext&);
+    WhileLoop(CodeLocation location, UniqueRef<Expression>&& conditional, UniqueRef<Statement>&& body)
+        : Statement(location)
+        , m_conditional(WTFMove(conditional))
+        , m_body(WTFMove(body))
+    {
+    }
 
-    virtual ~NameResolver();
+    virtual ~WhileLoop() = default;
+
+    WhileLoop(const WhileLoop&) = delete;
+    WhileLoop(WhileLoop&&) = default;
+
+    bool isWhileLoop() const override { return true; }
+
+    Expression& conditional() { return m_conditional; }
+    Statement& body() { return m_body; }
 
 private:
-    void visit(AST::FunctionDefinition&) override;
-    void visit(AST::NativeFunctionDeclaration&) override;
-    void visit(AST::TypeReference&) override;
-    void visit(AST::Block&) override;
-    void visit(AST::IfStatement&) override;
-    void visit(AST::WhileLoop&) override;
-    void visit(AST::DoWhileLoop&) override;
-    void visit(AST::ForLoop&) override;
-    void visit(AST::VariableDeclaration&) override;
-    void visit(AST::VariableReference&) override;
-    void visit(AST::DotExpression&) override;
-    void visit(AST::EnumerationMemberLiteral&) override;
-
-    NameContext& m_nameContext;
-    HashSet<AST::TypeReference*> m_typeReferences;
-    NameResolver* m_parentNameResolver { nullptr };
+    UniqueRef<Expression> m_conditional;
+    UniqueRef<Statement> m_body;
 };
 
-bool resolveNamesInTypes(Program&, NameResolver&);
-bool resolveTypeNamesInFunctions(Program&, NameResolver&);
+} // namespace AST
 
-} // namespace WHLSL
+}
 
-} // namespace WebCore
+}
 
-#endif // ENABLE(WEBGPU)
+SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(WhileLoop, isWhileLoop())
+
+#endif

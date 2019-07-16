@@ -1,3 +1,17 @@
+2019-07-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r247493.
+        https://bugs.webkit.org/show_bug.cgi?id=199841
+
+        "The new whlsl-for-loop.html test is failing on the bots"
+        (Requested by rmorisset on #webkit).
+
+        Reverted changeset:
+
+        "[WHLSL] Desugar for loops and while loops"
+        https://bugs.webkit.org/show_bug.cgi?id=199726
+        https://trac.webkit.org/changeset/247493
+
 2019-07-16  Per Arne Vollan  <pvollan@apple.com>
 
         Prewarm font cache with more fonts

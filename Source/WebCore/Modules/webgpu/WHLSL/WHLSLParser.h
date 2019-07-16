@@ -91,6 +91,7 @@
 #include "WHLSLVariableDeclaration.h"
 #include "WHLSLVariableDeclarationsStatement.h"
 #include "WHLSLVariableReference.h"
+#include "WHLSLWhileLoop.h"
 #include <wtf/Expected.h>
 #include <wtf/Optional.h>
 #include <wtf/PrintStream.h>
@@ -202,14 +203,14 @@ private:
     Expected<AST::IfStatement, Error> parseIfStatement();
     Expected<AST::SwitchStatement, Error> parseSwitchStatement();
     Expected<AST::SwitchCase, Error> parseSwitchCase();
-    Expected<AST::Block, Error> parseForLoop();
-    Expected<AST::ForLoop, Error> parseWhileLoop();
+    Expected<AST::ForLoop, Error> parseForLoop();
+    Expected<AST::WhileLoop, Error> parseWhileLoop();
     Expected<AST::DoWhileLoop, Error> parseDoWhileLoop();
     Expected<AST::VariableDeclaration, Error> parseVariableDeclaration(UniqueRef<AST::UnnamedType>&&);
     Expected<AST::VariableDeclarationsStatement, Error> parseVariableDeclarations();
-    Expected<UniqueRef<AST::Statement>, Error> parseStatement(bool allowVariableDeclaration = false);
+    Expected<UniqueRef<AST::Statement>, Error> parseStatement();
 
-    Expected<UniqueRef<AST::Statement>, Error> parseEffectfulExpression();
+    Expected<UniqueRef<AST::Expression>, Error> parseEffectfulExpression();
     Expected<UniqueRef<AST::Expression>, Error> parseEffectfulAssignment();
     struct SuffixExpression {
         SuffixExpression(UniqueRef<AST::Expression>&& result, bool success)
