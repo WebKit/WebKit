@@ -1,3 +1,13 @@
+2019-07-16  Joonghun Park  <pjh0718@gmail.com>
+
+        [GTK] Fix a build warning in JavaScriptCore/API/tests/testapi.c
+        https://bugs.webkit.org/show_bug.cgi?id=199824
+
+        Reviewed by Alex Christensen.
+
+        * API/tests/testapi.c:
+        (main):
+
 2019-07-15  Keith Miller  <keith_miller@apple.com>
 
         JSGlobalObject type macros should support feature flags and WeakRef should have one

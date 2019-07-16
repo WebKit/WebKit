@@ -1389,7 +1389,8 @@ int main(int argc, char* argv[])
 
 #if !OS(WINDOWS)
     char resolvedPath[PATH_MAX];
-    realpath(argv[0], resolvedPath); 
+    if (!realpath(argv[0], resolvedPath))
+        fprintf(stdout, "Could not get the absolute pathname for: %s\n", argv[0]);
     char* newCWD = dirname(resolvedPath);
     if (chdir(newCWD))
         fprintf(stdout, "Could not chdir to: %s\n", newCWD);
