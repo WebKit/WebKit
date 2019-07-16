@@ -67,7 +67,7 @@ struct ScrollAlignment {
 
     static const ScrollAlignment alignCenterIfNotVisible;
     static const ScrollAlignment alignToEdgeIfNotVisible;
-    static const ScrollAlignment alignCenterIfNeeded;
+    WEBCORE_EXPORT static const ScrollAlignment alignCenterIfNeeded;
     WEBCORE_EXPORT static const ScrollAlignment alignToEdgeIfNeeded;
     WEBCORE_EXPORT static const ScrollAlignment alignCenterAlways;
     static const ScrollAlignment alignTopAlways;

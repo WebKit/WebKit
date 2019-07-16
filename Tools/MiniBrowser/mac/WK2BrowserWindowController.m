@@ -47,6 +47,24 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 static const int testHeaderBannerHeight = 42;
 static const int testFooterBannerHeight = 58;
 
+@interface MiniBrowserNSTextFinder : NSTextFinder
+
+@property (nonatomic, copy) dispatch_block_t hideInterfaceCallback;
+
+@end
+
+@implementation MiniBrowserNSTextFinder
+
+- (void)performAction:(NSTextFinderAction)op
+{
+    [super performAction:op];
+
+    if (op == NSTextFinderActionHideFindInterface && _hideInterfaceCallback)
+        _hideInterfaceCallback();
+}
+
+@end
+
 @interface WK2BrowserWindowController () <NSTextFinderBarContainer, WKNavigationDelegate, WKUIDelegate, _WKIconLoadingDelegate>
 @end
 
@@ -58,7 +76,7 @@ static const int testFooterBannerHeight = 58;
 
     BOOL _useShrinkToFit;
 
-    NSTextFinder *_textFinder;
+    MiniBrowserNSTextFinder *_textFinder;
     NSView *_textFindBarView;
     BOOL _findBarVisible;
 }
@@ -97,11 +115,16 @@ static const int testFooterBannerHeight = 58;
 
     _zoomTextOnly = NO;
 
-    _textFinder = [[NSTextFinder alloc] init];
+    _webView._usePlatformFindUI = NO;
+
+    _textFinder = [[MiniBrowserNSTextFinder alloc] init];
     _textFinder.incrementalSearchingEnabled = YES;
-    _textFinder.incrementalSearchingShouldDimContentView = YES;
+    _textFinder.incrementalSearchingShouldDimContentView = NO;
     _textFinder.client = _webView;
     _textFinder.findBarContainer = self;
+    _textFinder.hideInterfaceCallback = ^{
+        [_webView _hideFindUI];
+    };
 }
 
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration

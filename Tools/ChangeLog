@@ -1,3 +1,21 @@
+2019-07-16  Tim Horton  <timothy_horton@apple.com>
+
+        NSTextFinder holes don't scroll with the page
+        https://bugs.webkit.org/show_bug.cgi?id=199815
+        <rdar://problem/52280514>
+
+        Reviewed by Simon Fraser.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[MiniBrowserNSTextFinder performAction:]):
+        (-[WK2BrowserWindowController awakeFromNib]):
+        Adopt the WebKit UI in MiniBrowser. Also, override NSTextFinder's
+        -performAction: so that we can intercept the close action and
+        hide our own find UI, since there is no delegate for that action yet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FindInPage.mm:
+        (TEST):
+
 2019-07-15  Keith Miller  <keith_miller@apple.com>
 
         JSGlobalObject type macros should support feature flags and WeakRef should have one

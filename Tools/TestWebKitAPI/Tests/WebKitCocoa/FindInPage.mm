@@ -142,6 +142,37 @@ TEST(WebKit, FindInPage)
     EXPECT_EQ((NSUInteger)1000, [result.matches count]);
 }
 
+TEST(WebKit, FindInPageWithPlatformPresentation)
+{
+    // This should be the same as above, but does not generate rects or images, so that AppKit won't paint its find UI.
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 200, 200)]);
+    [webView _setOverrideDeviceScaleFactor:2];
+    [webView _setUsePlatformFindUI:NO];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    // Find all matches, but recieve no rects.
+    auto result = findMatches(webView.get(), @"Birthday");
+    EXPECT_EQ((NSUInteger)360, [result.matches count]);
+    RetainPtr<FindMatch> match = [result.matches objectAtIndex:0];
+    EXPECT_EQ((NSUInteger)0, [match textRects].count);
+
+    // Ensure that no image is generated.
+    __block bool generateTextImageDone = false;
+    [match generateTextImage:^(NSImage *image) {
+        EXPECT_EQ(image, nullptr);
+        generateTextImageDone = true;
+    }];
+    TestWebKitAPI::Util::run(&generateTextImageDone);
+
+    // Ensure that we cap the number of matches. There are actually 1600, but we only get the first 1000.
+    result = findMatches(webView.get(), @" ");
+    EXPECT_EQ((NSUInteger)1000, [result.matches count]);
+}
+
 TEST(WebKit, FindInPageWrapping)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);

@@ -1,3 +1,71 @@
+2019-07-16  Tim Horton  <timothy_horton@apple.com>
+
+        NSTextFinder holes don't scroll with the page
+        https://bugs.webkit.org/show_bug.cgi?id=199815
+        <rdar://problem/52280514>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _usePlatformFindUI]):
+        (-[WKWebView _setUsePlatformFindUI:]):
+        (-[WKWebView _ensureTextFinderClient]):
+        Add a bit so that clients can choose whether they want our find UI,
+        which respects scrolling, or the system find UI, which works when
+        doing multi-document searches. Right now you can't have both.
+
+        (-[WKWebView scrollFindMatchToVisible:]):
+        Implement and plumb scrollFindMatchToVisible.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::indicateFindMatch):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::indicateFindMatch):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Plumb indicateFindMatch to FindController.
+
+        * UIProcess/mac/WKTextFinderClient.h:
+        * UIProcess/mac/WKTextFinderClient.mm:
+        (-[WKTextFinderClient initWithPage:view:usePlatformFindUI:]):
+        Store whether or not we are using the platform find UI.
+
+        (-[WKTextFinderClient findMatchesForString:relativeToMatch:findOptions:maxResults:resultCollector:]):
+        If using WebKit find UI, turn on our UI in the options passed to findString[Matches].
+
+        (-[WKTextFinderClient scrollFindMatchToVisible:]):
+        If using WebKit find UI, when the platform tells us to reveal a find match, indicate it.
+
+        (-[WKTextFinderClient didFindStringMatchesWithRects:didWrapAround:]):
+        If using WebKit find UI, lie to the platform and return no rects so that it doesn't paint a yellow rectangle.
+
+        (-[WKTextFinderClient getImageForMatchResult:completionHandler:]):
+        If using WebKit find UI, lie to the platform and return no image so that it doesn't paint a yellow rectangle.
+
+        (-[WKTextFinderClient initWithPage:view:]): Deleted.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+        Make it possible to use our find UI with 'findStringMatches'; since the platform
+        find infrastrucutre depends on knowing about all matches up front, we need
+        to use 'findStringMatches' instead of 'findString', but we had never combined
+        that with our UI. Don't throw away the other matches when we indicate one, and
+        don't send DidFindString in the case we are coming from 'findStringMatches'.
+        This all needs a bit of cleanup in the future.
+
+        (WebKit::FindController::findString):
+        Tell updateFindUIAfterPageScroll that we are 'findString' so that it uses its normal behavior.
+
+        (WebKit::FindController::findStringMatches):
+        Tell updateFindUIAfterPageScroll that we are 'findStringMatches' so that it uses the adjusted behavior.
+
+        (WebKit::FindController::indicateFindMatch):
+        Add 'indicateFindMatch', which both selects the match and moves the indicator there.
+
+        * WebProcess/WebPage/FindController.h:
+
 2019-07-16  Chris Dumez  <cdumez@apple.com>
 
         Speed up StorageManager::getValues()
