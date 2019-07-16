@@ -1,3 +1,35 @@
+2019-07-15  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Matrix memory layout should match HLSL by laying out columns linearly
+        https://bugs.webkit.org/show_bug.cgi?id=199215
+
+        Reviewed by Myles C. Maxfield.
+
+        This patch makes it so that we lay out matrices in memory in the same
+        way HLSL does. This is by laying out columns linearly in memory. So a float4x4
+        composed by this series of floats in memory:
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        
+        composes this logical matrix:
+        [[ 0,  4,  8, 12]
+         [ 1,  5,  9, 13]
+         [ 2,  6, 10, 14]
+         [ 3,  7, 11, 15]]
+        
+        To implement this, we switch to using an array to represent the memory
+        contents linear memory layout of a matrix. So the matrix float4x3 will now
+        be an array<float, 12> in metal. Then, we change the indexed getter and
+        setter methods for matrices to load and store from and to the correct
+        memory locations. The memory layout of matrices is observable to WHLSL
+        when using a matrix as an input/output to a shader.
+
+        Test: webgpu/whlsl-matrix-memory-layout.html
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeFunction):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeTypeWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeType):
+
 2019-07-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Text autosizing] [iPadOS] Product label text is clipped in portrait mode on the front page of sephora.com

@@ -42,8 +42,9 @@ const arrayArgMakers = {
     "float4x4": makeFloat4x4
 };
 
-const float4x4expected = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-const float4expected = float4x4expected.slice(0, 4);
+const float4x4expected = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15];
+const float4x4ColumnExpected = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+const float4expected = [0, 1, 2, 3];
 
 let whlslTests = {};
 
@@ -172,7 +173,7 @@ whlslTests.float4x4tests = () => {
         arg[i] = i;
         multiple4x4args.push(arg);
     }
-    checkArrays("float4x4", "return in0 + in1 + in2 + in3 + in4 + in5 + in6 + in7 + in8 + in9 + in10 + in11 + in12 + in13 + in14 + in15;", multiple4x4args, float4x4expected);
+    checkArrays("float4x4", "return in0 + in1 + in2 + in3 + in4 + in5 + in6 + in7 + in8 + in9 + in10 + in11 + in12 + in13 + in14 + in15;", multiple4x4args, float4x4ColumnExpected);
     checkArrays("float4x4", "return in0[0];", [[float4x4expected]], float4x4expected);
 };
 

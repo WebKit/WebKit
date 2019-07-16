@@ -250,12 +250,18 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         return stringBuilder.toString();
     }
 
-    auto numberOfMatrixRows = [&] {
+    auto matrixDimension = [&] (unsigned typeArgumentIndex) -> unsigned {
         auto& typeReference = downcast<AST::TypeReference>(*nativeFunctionDeclaration.parameters()[0]->type());
         auto& matrixType = downcast<AST::NativeTypeDeclaration>(downcast<AST::TypeReference>(downcast<AST::TypeDefinition>(typeReference.resolvedType()).type()).resolvedType());
         ASSERT(matrixType.name() == "matrix");
         ASSERT(matrixType.typeArguments().size() == 3);
-        return String::number(WTF::get<AST::ConstantExpression>(matrixType.typeArguments()[1]).integerLiteral().value());
+        return WTF::get<AST::ConstantExpression>(matrixType.typeArguments()[typeArgumentIndex]).integerLiteral().value();
+    };
+    auto numberOfMatrixRows = [&] {
+        return matrixDimension(1);
+    };
+    auto numberOfMatrixColumns = [&] {
+        return matrixDimension(2);
     };
 
     if (nativeFunctionDeclaration.name() == "operator[]") {
@@ -263,9 +269,20 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         auto metalParameter1Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
         auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1]->type());
         auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
+
+        unsigned numberOfRows = numberOfMatrixRows();
+        unsigned numberOfColumns = numberOfMatrixColumns();
+
         stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " m, ", metalParameter2Name, " i) {\n"));
-        stringBuilder.append(makeString("    if (i < ", numberOfMatrixRows(), ") return m[i];\n"));
-        stringBuilder.append(makeString("    return ", metalReturnName, "(0);\n"));
+        stringBuilder.append(makeString("    if (i >= ", numberOfRows, ") return ", metalReturnName, "(0);\n"));
+        stringBuilder.append(makeString("    ", metalReturnName, " result;\n"));
+        stringBuilder.append("    result[0] = m[i];\n");
+        stringBuilder.append(makeString("    result[1] = m[i + ", numberOfRows, "];\n"));
+        if (numberOfColumns >= 3)
+            stringBuilder.append(makeString("    result[2] = m[i + ", numberOfRows * 2, "];\n"));
+        if (numberOfColumns >= 4)
+            stringBuilder.append(makeString("    result[3] = m[i + ", numberOfRows * 3, "];\n"));
+        stringBuilder.append("    return result;\n");
         stringBuilder.append("}\n");
         return stringBuilder.toString();
     }
@@ -276,9 +293,19 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1]->type());
         auto metalParameter3Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[2]->type());
         auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
+
+        unsigned numberOfRows = numberOfMatrixRows();
+        unsigned numberOfColumns = numberOfMatrixColumns();
+
         stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " m, ", metalParameter2Name, " i, ", metalParameter3Name, " v) {\n"));
-        stringBuilder.append(makeString("    if (i < ", numberOfMatrixRows(), ") m[i] = v;\n"));
-        stringBuilder.append("    return m;\n");
+        stringBuilder.append(makeString("    if (i >= ", numberOfRows, ") return m;\n"));
+        stringBuilder.append(makeString("    m[i] = v[0];\n"));
+        stringBuilder.append(makeString("    m[i + ", numberOfRows, "] = v[1];\n"));
+        if (numberOfColumns >= 3)
+            stringBuilder.append(makeString("    m[i + ", numberOfRows * 2, "] = v[2];\n"));
+        if (numberOfColumns >= 4)
+            stringBuilder.append(makeString("    m[i + ", numberOfRows * 3, "] = v[3];\n"));
+        stringBuilder.append("    return m;");
         stringBuilder.append("}\n");
         return stringBuilder.toString();
     }
