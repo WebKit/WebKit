@@ -1238,7 +1238,6 @@ private:
     void didReceiveSyncWebPageMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
 #if PLATFORM(IOS_FAMILY)
-    WebCore::FloatSize viewLayoutSizeAdjustedForQuirks(const WebCore::FloatSize&);
     void resetViewportDefaultConfiguration(WebFrame* mainFrame, bool hasMobileDocType = false);
     enum class ZoomToInitialScale { No, Yes };
     void viewportConfigurationChanged(ZoomToInitialScale = ZoomToInitialScale::No);

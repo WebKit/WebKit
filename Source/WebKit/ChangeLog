@@ -1,3 +1,19 @@
+2019-07-15  Zalan Bujtas  <zalan@apple.com>
+
+        outlook.live.com has odd viewport with edge gap
+        https://bugs.webkit.org/show_bug.cgi?id=199822
+        <rdar://problem/53029072>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setViewportConfigurationViewLayoutSize):
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::resetViewportDefaultConfiguration):
+        (WebKit::WebPage::immediatelyShrinkToFitContent):
+        (WebKit::WebPage::viewLayoutSizeAdjustedForQuirks): Deleted.
+
 2019-07-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         New York font erroneously gets synthetic bold

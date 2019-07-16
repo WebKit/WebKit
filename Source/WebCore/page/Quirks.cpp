@@ -57,37 +57,6 @@ inline bool Quirks::needsQuirks() const
     return m_document && m_document->settings().needsSiteSpecificQuirks();
 }
 
-bool Quirks::shouldIgnoreShrinkToFitContent() const
-{
-#if PLATFORM(IOS_FAMILY)
-    if (!needsQuirks())
-        return false;
-
-    auto host = m_document->topDocument().url().host();
-    if (equalLettersIgnoringASCIICase(host, "outlook.live.com"))
-        return true;
-#endif
-    return false;
-}
-
-Optional<LayoutUnit> Quirks::overriddenViewLayoutWidth(LayoutUnit currentViewLayoutWidth) const
-{
-#if PLATFORM(IOS_FAMILY)
-    if (!needsQuirks())
-        return { };
-
-    auto host = m_document->topDocument().url().host();
-    if (equalLettersIgnoringASCIICase(host, "outlook.live.com")) {
-        if (currentViewLayoutWidth <= 989 || currentViewLayoutWidth >= 1132)
-            return { };
-        return { 989 };
-    }
-#else
-    UNUSED_PARAM(currentViewLayoutWidth);
-#endif
-    return { };
-}
-
 bool Quirks::shouldIgnoreInvalidSignal() const
 {
     return needsQuirks();
