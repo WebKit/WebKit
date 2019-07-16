@@ -26,9 +26,14 @@
 #include "config.h"
 #include "WHLSLCheckTextureReferences.h"
 
-#include "WHLSLInferTypes.h"
-
 #if ENABLE(WEBGPU)
+
+#include "WHLSLArrayReferenceType.h"
+#include "WHLSLArrayType.h"
+#include "WHLSLInferTypes.h"
+#include "WHLSLNativeTypeDeclaration.h"
+#include "WHLSLPointerType.h"
+#include "WHLSLVisitor.h"
 
 namespace WebCore {
 

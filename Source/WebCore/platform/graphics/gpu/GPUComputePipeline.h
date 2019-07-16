@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUObjectBase.h"
 #include "WHLSLPrepare.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -43,16 +44,16 @@ struct GPUComputePipelineDescriptor;
 using PlatformComputePipeline = MTLComputePipelineState;
 using PlatformComputePipelineSmartPtr = RetainPtr<MTLComputePipelineState>;
 
-class GPUComputePipeline : public RefCounted<GPUComputePipeline> {
+class GPUComputePipeline : public GPUObjectBase {
 public:
-    static RefPtr<GPUComputePipeline> tryCreate(const GPUDevice&, const GPUComputePipelineDescriptor&);
+    static RefPtr<GPUComputePipeline> tryCreate(const GPUDevice&, const GPUComputePipelineDescriptor&, Ref<GPUErrorScopes>&&);
 
     const PlatformComputePipeline* platformComputePipeline() const { return m_platformComputePipeline.get(); }
 
     WHLSL::ComputeDimensions computeDimensions() const { return m_computeDimensions; }
 
 private:
-    GPUComputePipeline(PlatformComputePipelineSmartPtr&&, WHLSL::ComputeDimensions);
+    GPUComputePipeline(PlatformComputePipelineSmartPtr&&, WHLSL::ComputeDimensions, Ref<GPUErrorScopes>&&);
 
     PlatformComputePipelineSmartPtr m_platformComputePipeline;
     WHLSL::ComputeDimensions m_computeDimensions { 0, 0, 0 };

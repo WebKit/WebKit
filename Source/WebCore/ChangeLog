@@ -1,3 +1,142 @@
+2019-07-16  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Convert GPUComputePipeline LOG statements to generate GPUErrors
+        https://bugs.webkit.org/show_bug.cgi?id=199773
+
+        Reviewed by Myles C. Maxfield.
+
+        Generate a GPUError if GPUComputePipeline creation fails.
+        Rework the WHLSL test harness to take advantage of this.
+
+        Test: webgpu/compute-pipeline-errors.html
+
+        * Modules/webgpu/WebGPUComputePipelineDescriptor.cpp:
+        (WebCore::WebGPUComputePipelineDescriptor::tryCreateGPUComputePipelineDescriptor const):
+        * Modules/webgpu/WebGPUComputePipelineDescriptor.h:
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createComputePipeline const):
+        * platform/graphics/gpu/GPUBuffer.h:
+        * platform/graphics/gpu/GPUComputePipeline.h: 
+                Now inherits from GPUObjectBase, though this isn't super useful yet
+                since GPUComputePipeline itself does not expose any operations that can error. 
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::tryCreateComputePipeline const):
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::validateBufferUsage):
+        * platform/graphics/gpu/cocoa/GPUComputePipelineMetal.mm:
+        (WebCore::trySetMetalFunctions):
+        (WebCore::trySetFunctions):
+        (WebCore::convertComputePipelineDescriptor):
+        (WebCore::tryCreateMTLComputePipelineState):
+        (WebCore::GPUComputePipeline::tryCreate):
+        (WebCore::GPUComputePipeline::GPUComputePipeline):
+
+2019-07-11  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Move error scopes out of GPUDevice for more portable error generation
+        https://bugs.webkit.org/show_bug.cgi?id=199740
+
+        Reviewed by Myles C. Maxfield.
+
+        Move error generation into a separate RefCounted class to allow GPU objects to generate 
+        errors independent of any GPUDevice.
+        Create GPUObjectBase to delegate error generation and refactor GPUBuffer to inherit from GPUObjectBase.
+
+        No behavior change or new tests. Error scopes covered by error-scopes-test.html.
+
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::WebGPUDevice): Now creates a GPUErrorGenerator.
+        (WebCore::WebGPUDevice::createBuffer const): Pass the GPUErrorGenerator to any created GPUBuffer.
+        (WebCore::WebGPUDevice::createBufferMapped const): Ditto.
+        (WebCore::WebGPUDevice::popErrorScope): Shouldn't be const. Can just ask for the GPUError rather than passing a lambda.
+        (WebCore::WebGPUDevice::pushErrorScope const): Deleted.
+        (WebCore::WebGPUDevice::popErrorScope const): Deleted.
+        * Modules/webgpu/WebGPUDevice.h:
+        (WebCore::WebGPUDevice::pushErrorScope):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/GPUBuffer.h: Now inherits from GPUObjectBase for error generation ease.
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::tryCreateBuffer): Ensure GPUBuffers reference the GPUErrorGenerator.
+        (WebCore::GPUDevice::pushErrorScope): Deleted. No longer needed here.
+        (WebCore::GPUDevice::popErrorScope): Deleted.
+        (WebCore::GPUDevice::registerError): Deleted.
+        * platform/graphics/gpu/GPUDevice.h: Move error scope logic out.
+        * platform/graphics/gpu/GPUErrorGenerator.cpp: Added.
+        (WebCore::GPUErrorGenerator::pushErrorScope):
+        (WebCore::GPUErrorGenerator::popErrorScope):
+        (WebCore::GPUErrorGenerator::generateError):
+        * platform/graphics/gpu/GPUErrorGenerator.h: Added.
+        (WebCore::GPUErrorGenerator::create):
+        * platform/graphics/gpu/GPUObjectBase.h: Added.
+        (WebCore::GPUObjectBase::generateError):
+        (WebCore::GPUObjectBase::GPUObjectBase):
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm: Use the GPUErrorGenerator directly during buffer creation.
+        (WebCore::GPUBuffer::validateBufferUsage):
+        (WebCore::GPUBuffer::tryCreate):
+        (WebCore::GPUBuffer::GPUBuffer):
+        * platform/graphics/gpu/cocoa/GPUQueueMetal.mm:
+        (WebCore::GPUQueue::submit): Prevent possible null dereference.
+
+2019-07-10  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Implement GPUError and error scopes
+        https://bugs.webkit.org/show_bug.cgi?id=199655
+
+        Reviewed by Myles C. Maxfield.
+
+        Add GPUErrorFilter, GPUError, and the ability to push and pop error scopes on a GPUDevice.
+        This will allow us to check for WebGPU errors from JavaScript.
+        Currently, only some GPUBuffer creation errors are reported for testing; more errors will follow in later patches.
+
+        Test: webgpu/error-scopes-test.html
+
+        * Modules/webgpu/GPUErrorFilter.idl: Added.
+        * Modules/webgpu/GPUOutOfMemoryError.idl: Added.
+        * Modules/webgpu/GPUValidationError.idl: Added.
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::pushErrorScope):
+        (WebCore::WebGPUDevice::popErrorScope): Resolve the Promise here, since GPUDevice shouldn't worry about DOM layer.
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUDeviceErrorScopes.cpp: Added.
+        (WebCore::WebGPUDeviceErrorScopes::pushErrorScope): Delegates to WebGPUDevice.
+        (WebCore::WebGPUDeviceErrorScopes::popErrorScope): Ditto.
+        * Modules/webgpu/WebGPUDeviceErrorScopes.h: Added.
+        * Modules/webgpu/WebGPUDeviceErrorScopes.idl: Added.
+        * platform/graphics/gpu/GPUBuffer.h:
+        * platform/graphics/gpu/GPUDevice.cpp: The actual error stack lives here.
+        (WebCore::GPUDevice::pushErrorScope):
+        (WebCore::GPUDevice::popErrorScope): Calls a callback with a GPUError, if any.
+        (WebCore::GPUDevice::registerError): Actually creates GPUErrors.
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/GPUError.cpp: Added.
+        (WebCore::createError): Factory function for various error types.
+        * platform/graphics/gpu/GPUError.h: Added.
+        * platform/graphics/gpu/GPUErrorFilter.h: Added.
+        * platform/graphics/gpu/GPUOutOfMemoryError.h: Added.
+        (WebCore::GPUOutOfMemoryError::create):
+        * platform/graphics/gpu/GPUValidationError.cpp: Added.
+        (WebCore::GPUValidationError::create):
+        (WebCore::GPUValidationError::GPUValidationError):
+        * platform/graphics/gpu/GPUValidationError.h: Added.
+        (WebCore::GPUValidationError::message const):
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::validateBufferUsage): Create an actual GPUValidationError :)
+        (WebCore::GPUBuffer::tryCreate): Create GPUOutOfMemoryErrors where appropriate.
+
+        Add file/name references:
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
+        Missing includes:
+        * Modules/webgpu/WHLSL/WHLSLCheckTextureReferences.cpp:
+
 2019-07-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r247493.

@@ -29,17 +29,17 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUComputePipelineDescriptor.h"
-#include "Logging.h"
+#include "GPUErrorScopes.h"
 
 namespace WebCore {
 
-Optional<GPUComputePipelineDescriptor> WebGPUComputePipelineDescriptor::tryCreateGPUComputePipelineDescriptor() const
+Optional<GPUComputePipelineDescriptor> WebGPUComputePipelineDescriptor::tryCreateGPUComputePipelineDescriptor(GPUErrorScopes& errorScopes) const
 {
     auto pipelineLayout = layout ? makeRefPtr(layout->pipelineLayout()) : nullptr;
 
     auto compute = computeStage.tryCreateGPUPipelineStageDescriptor();
     if (!compute) {
-        LOG(WebGPU, "GPUDevice::createComputePipeline(): Invalid GPUPipelineStageDescriptor!");
+        errorScopes.generateError("GPUDevice::createComputePipeline(): Invalid GPUPipelineStageDescriptor!");
         return WTF::nullopt;
     }
 

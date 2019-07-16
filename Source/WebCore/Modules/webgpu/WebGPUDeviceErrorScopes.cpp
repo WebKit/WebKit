@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebGPUDeviceErrorScopes.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPUBufferUsage.h"
+#include "GPUErrorFilter.h"
 
 namespace WebCore {
 
-struct GPUBufferDescriptor {
-    uint64_t size;
-    GPUBufferUsageFlags usage;
-};
+void WebGPUDeviceErrorScopes::pushErrorScope(WebGPUDevice& device, GPUErrorFilter filter)
+{
+    device.pushErrorScope(filter);
+}
 
-enum class GPUBufferMappedOption {
-    IsMapped,
-    NotMapped
-};
+void WebGPUDeviceErrorScopes::popErrorScope(WebGPUDevice& device, ErrorPromise&& promise)
+{
+    device.popErrorScope(WTFMove(promise));
+}
 
 } // namespace WebCore
 

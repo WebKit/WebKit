@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,18 +27,12 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUBufferUsage.h"
-
 namespace WebCore {
-
-struct GPUBufferDescriptor {
-    uint64_t size;
-    GPUBufferUsageFlags usage;
-};
-
-enum class GPUBufferMappedOption {
-    IsMapped,
-    NotMapped
+    
+enum class GPUErrorFilter {
+    None,
+    OutOfMemory,
+    Validation,
 };
 
 } // namespace WebCore

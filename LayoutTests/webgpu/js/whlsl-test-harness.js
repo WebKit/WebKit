@@ -253,7 +253,7 @@ kernel void _compute_main(device _compute_args& args [[buffer(0)]])
 `;
         }
         const code = this._shaderHeader + functions + entryPointCode;
-        this._callFunction(code, argsLayouts, argsResourceBindings);
+        await this._callFunction(code, argsLayouts, argsResourceBindings);
     
         try {
             var result = await this._resultBuffer.mapReadAsync();
@@ -301,6 +301,43 @@ kernel void _compute_main(device _compute_args& args [[buffer(0)]])
         }
         const code = this._shaderHeader + functions + entryPointCode;
         this._callFunction(code, argsLayouts, argsResourceBindings);
+    }
+
+    /**
+     * Assert that malformed shader code does not compile.
+     * @param {String} source - Custom code to be tested.
+     */
+    async checkCompileFail(source)
+    {
+        if (this._device === undefined)
+            return;
+        
+        let entryPointCode;
+        if (this.isWHLSL) {
+            entryPointCode = `
+[numthreads(1, 1, 1)]
+compute void _compute_main() { }`;
+        } else {
+            entryPointCode = `
+kernel void _compute_main() { }`;
+        }
+
+        const code = this._shaderHeader + source + entryPointCode;
+
+        this._device.pushErrorScope("validation");
+        
+        const shaders = this._device.createShaderModule({ code: code, isWHLSL: this._isWHLSL });
+    
+        this._device.createComputePipeline({
+            computeStage: {
+                module: shaders,
+                entryPoint: "_compute_main"
+            }
+        });
+
+        const error = await this._device.popErrorScope();
+        if (!error)
+            throw new Error("Compiler error: shader code did not fail to compile!");
     }
 
     get device() { return this._device; }
@@ -359,10 +396,8 @@ kernel void _compute_main(device _compute_args& args [[buffer(0)]])
         return [argsLayouts, argsResourceBindings, argsDeclarations, functionCallArgs];
     }
 
-    _callFunction(code, argsLayouts, argsResourceBindings)
+    async _callFunction(code, argsLayouts, argsResourceBindings)
     {
-        const shaders = this._device.createShaderModule({ code: code, isWHLSL: this._isWHLSL });
-
         const bindGroupLayout = this._device.createBindGroupLayout({
             bindings: argsLayouts
         });
@@ -374,7 +409,10 @@ kernel void _compute_main(device _compute_args& args [[buffer(0)]])
             bindings: argsResourceBindings
         });
 
-        // FIXME: Compile errors should be caught and reported here.
+        this._device.pushErrorScope("validation");
+
+        const shaders = this._device.createShaderModule({ code: code, isWHLSL: this._isWHLSL });
+    
         const pipeline = this._device.createComputePipeline({
             layout: pipelineLayout,
             computeStage: {
@@ -391,6 +429,10 @@ kernel void _compute_main(device _compute_args& args [[buffer(0)]])
         passEncoder.endPass();
         
         this._device.getQueue().submit([commandEncoder.finish()]);
+
+        const error = await this._device.popErrorScope();
+        if (error)
+            throw new Error(error.message);
     }
 }
 
@@ -509,61 +551,9 @@ async function callFloat4x4Function(functions, name, args)
     return (await harness.callTypedFunction(Types.FLOAT4X4, functions, name, args)).subarray(0, 16);
 }
 
-async function checkFail(source) {
-    // FIXME: Make this handle errors with proper messages once we implement the API for that.
-    const name = "____test_name____";
-    const program = `
-        ${source}
-
-        [numthreads(1, 1, 1)]
-        compute void ${name}(device int[] buffer : register(u0), float3 threadID : SV_DispatchThreadID) {
-            buffer[0] = 1;
-        }
-    `;
-    const device = await getBasicDevice();
-    const shaderModule = device.createShaderModule({code: program, isWHLSL: true});
-    const computeStage = {module: shaderModule, entryPoint: name};
-
-    const bindGroupLayoutDescriptor = {bindings: [{binding: 0, visibility: 7, type: "storage-buffer"}]};
-    const bindGroupLayout = device.createBindGroupLayout(bindGroupLayoutDescriptor);
-    const pipelineLayoutDescriptor = {bindGroupLayouts: [bindGroupLayout]};
-    const pipelineLayout = device.createPipelineLayout(pipelineLayoutDescriptor);
-
-    const computePipelineDescriptor = {computeStage, layout: pipelineLayout};
-    const computePipeline = device.createComputePipeline(computePipelineDescriptor);
-
-    const size = Int32Array.BYTES_PER_ELEMENT * 1;
-
-    const bufferDescriptor = {size, usage: GPUBufferUsage.MAP_WRITE | GPUBufferUsage.TRANSFER_SRC};
-    const buffer = device.createBuffer(bufferDescriptor);
-    const bufferArrayBuffer = await buffer.mapWriteAsync();
-    const bufferInt32Array = new Int32Array(bufferArrayBuffer);
-    bufferInt32Array[0] = 0;
-    buffer.unmap();
-
-    const resultsBufferDescriptor = {size, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.TRANSFER_DST | GPUBufferUsage.MAP_READ};
-    const resultsBuffer = device.createBuffer(resultsBufferDescriptor);
-
-    const bufferBinding = {buffer: resultsBuffer, size};
-    const bindGroupBinding = {binding: 0, resource: bufferBinding};
-    const bindGroupDescriptor = {layout: bindGroupLayout, bindings: [bindGroupBinding]};
-    const bindGroup = device.createBindGroup(bindGroupDescriptor);
-
-    const commandEncoder = device.createCommandEncoder(); // {}
-    commandEncoder.copyBufferToBuffer(buffer, 0, resultsBuffer, 0, size);
-    const computePassEncoder = commandEncoder.beginComputePass();
-    computePassEncoder.setPipeline(computePipeline);
-    computePassEncoder.setBindGroup(0, bindGroup);
-    computePassEncoder.dispatch(1, 1, 1);
-    computePassEncoder.endPass();
-    const commandBuffer = commandEncoder.finish();
-    device.getQueue().submit([commandBuffer]);
-
-    const resultsArrayBuffer = await resultsBuffer.mapReadAsync();
-    let resultsInt32Array = new Int32Array(resultsArrayBuffer);
-    if (resultsInt32Array[0] !== 0)
-        throw new Error("program did not fail to compile");
-    resultsBuffer.unmap();
+async function checkFail(source) 
+{
+    return (await harness.checkCompileFail(source));
 }
 
 /**

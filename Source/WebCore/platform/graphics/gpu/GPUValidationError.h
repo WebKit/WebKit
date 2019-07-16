@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,18 +27,22 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUBufferUsage.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-struct GPUBufferDescriptor {
-    uint64_t size;
-    GPUBufferUsageFlags usage;
-};
+class GPUValidationError : public RefCounted<GPUValidationError> {
+public:
+    static Ref<GPUValidationError> create(const String& message);
 
-enum class GPUBufferMappedOption {
-    IsMapped,
-    NotMapped
+    String message() const { return m_message; }
+
+private:
+    explicit GPUValidationError(const String& message);
+
+    String m_message;
 };
 
 } // namespace WebCore

@@ -33,10 +33,12 @@
 
 namespace WebCore {
 
+class GPUErrorScopes;
+
 struct GPUComputePipelineDescriptor;
 
 struct WebGPUComputePipelineDescriptor : WebGPUPipelineDescriptorBase {
-    Optional<GPUComputePipelineDescriptor> tryCreateGPUComputePipelineDescriptor() const;
+    Optional<GPUComputePipelineDescriptor> tryCreateGPUComputePipelineDescriptor(GPUErrorScopes&) const;
 
     WebGPUPipelineStageDescriptor computeStage;
 };

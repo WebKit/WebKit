@@ -96,7 +96,7 @@ void GPUQueue::submit(Vector<Ref<GPUCommandBuffer>>&& commandBuffers)
         END_BLOCK_OBJC_EXCEPTIONS;
     }
 
-    if (m_presentTask.hasPendingTask() || !m_device->swapChain())
+    if (m_presentTask.hasPendingTask() || !m_device || !m_device->swapChain())
         return;
 
     // If a GPUSwapChain exists, ensure that a present is scheduled after all command buffers.

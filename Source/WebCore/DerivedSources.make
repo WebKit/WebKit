@@ -386,9 +386,11 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/GPUBufferUsage.idl \
     $(WebCore)/Modules/webgpu/GPUCompareFunction.idl \
     $(WebCore)/Modules/webgpu/GPUDepthStencilStateDescriptor.idl \
+    $(WebCore)/Modules/webgpu/GPUErrorFilter.idl \
     $(WebCore)/Modules/webgpu/GPUExtent3D.idl \
     $(WebCore)/Modules/webgpu/GPULoadOp.idl \
     $(WebCore)/Modules/webgpu/GPUOrigin3D.idl \
+    $(WebCore)/Modules/webgpu/GPUOutOfMemoryError.idl \
     $(WebCore)/Modules/webgpu/GPURequestAdapterOptions.idl \
     $(WebCore)/Modules/webgpu/GPUSamplerDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUShaderStageBit.idl \
@@ -396,6 +398,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/GPUTextureDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUTextureFormat.idl \
     $(WebCore)/Modules/webgpu/GPUTextureUsage.idl \
+    $(WebCore)/Modules/webgpu/GPUValidationError.idl \
     $(WebCore)/Modules/webgpu/GPUVertexAttributeDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUVertexBufferDescriptor.idl \
 	$(WebCore)/Modules/webgpu/GPUVertexInputDescriptor.idl \
@@ -414,6 +417,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPUComputePipeline.idl \
     $(WebCore)/Modules/webgpu/WebGPUComputePipelineDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUDevice.idl \
+	$(WebCore)/Modules/webgpu/WebGPUDeviceErrorScopes.idl \
     $(WebCore)/Modules/webgpu/WebGPUQueue.idl \
     $(WebCore)/Modules/webgpu/WebGPUPipelineDescriptorBase.idl \
     $(WebCore)/Modules/webgpu/WebGPUPipelineLayout.idl \

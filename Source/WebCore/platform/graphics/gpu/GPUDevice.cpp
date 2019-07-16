@@ -35,6 +35,7 @@
 #include "GPUCommandBuffer.h"
 #include "GPUComputePipeline.h"
 #include "GPUComputePipelineDescriptor.h"
+#include "GPUErrorScopes.h"
 #include "GPUPipelineLayout.h"
 #include "GPUPipelineLayoutDescriptor.h"
 #include "GPURenderPipeline.h"
@@ -46,13 +47,14 @@
 #include "GPUSwapChainDescriptor.h"
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
+#include <algorithm>
 #include <wtf/Optional.h>
 
 namespace WebCore {
 
-RefPtr<GPUBuffer> GPUDevice::tryCreateBuffer(const GPUBufferDescriptor& descriptor, bool isMappedOnCreation)
+RefPtr<GPUBuffer> GPUDevice::tryCreateBuffer(const GPUBufferDescriptor& descriptor, GPUBufferMappedOption isMapped, Ref<GPUErrorScopes>&& errorScopes)
 {
-    return GPUBuffer::tryCreate(makeRef(*this), descriptor, isMappedOnCreation);
+    return GPUBuffer::tryCreate(makeRef(*this), descriptor, isMapped, WTFMove(errorScopes));
 }
 
 RefPtr<GPUTexture> GPUDevice::tryCreateTexture(const GPUTextureDescriptor& descriptor) const
@@ -85,9 +87,9 @@ RefPtr<GPURenderPipeline> GPUDevice::tryCreateRenderPipeline(const GPURenderPipe
     return GPURenderPipeline::tryCreate(*this, descriptor);
 }
 
-RefPtr<GPUComputePipeline> GPUDevice::tryCreateComputePipeline(const GPUComputePipelineDescriptor& descriptor) const
+RefPtr<GPUComputePipeline> GPUDevice::tryCreateComputePipeline(const GPUComputePipelineDescriptor& descriptor, Ref<GPUErrorScopes>&& errorScopes) const
 {
-    return GPUComputePipeline::tryCreate(*this, descriptor);
+    return GPUComputePipeline::tryCreate(*this, descriptor, WTFMove(errorScopes));
 }
 
 RefPtr<GPUCommandBuffer> GPUDevice::tryCreateCommandBuffer() const

@@ -30,4 +30,6 @@ PASS Return an expected float4x4 value.
 PASS Return an expected float4x4 value. 
 PASS Return an expected float4x4 value. 
 PASS Return an expected float4x4 value. 
+PASS Code should not compile, and no error is reported. 
+PASS Successfully compiling code in checkFail is an error. 
 

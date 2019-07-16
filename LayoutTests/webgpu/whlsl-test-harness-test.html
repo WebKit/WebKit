@@ -177,6 +177,18 @@ whlslTests.float4x4tests = () => {
     checkArrays("float4x4", "return in0[0];", [[float4x4expected]], float4x4expected);
 };
 
+whlslTests.checkFailTests = () => {
+    webGPUPromiseTest(() => {
+        return checkFail(`Doors and corners, kid. That's where they getcha.`);
+    }, "Code should not compile, and no error is reported.");
+
+    webGPUPromiseTest(() => {
+        return checkFail("").catch(e => {
+            assert_true(e instanceof Error, "An expected Error was caught.");
+        });
+    }, "Successfully compiling code in checkFail is an error.")
+};
+
 window.addEventListener("load", () => {
     try {
         for (const name in whlslTests) {

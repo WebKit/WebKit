@@ -149,3 +149,43 @@ async function mapWriteDataToBuffer(buffer, data, offset = 0) {
     writeArray.set(new Uint8Array(data), offset);
     buffer.unmap();
 }
+
+/*** Functions below this line require WPT testharness.js and testharnessreport.js. ***/
+
+function runTestsWithDevice(tests) {
+    window.addEventListener("load", async () => {
+        try {
+            var device = await getBasicDevice();
+        } catch (e) { /* WebGPU is not supported. */ }
+    
+        for (let name in tests)
+            devicePromiseTest(device, tests[name], name);
+    });
+}
+
+function devicePromiseTest(device, func, name) {
+    promise_test(async () => {
+        if (device === undefined)
+            return Promise.resolve();
+        return func(device);
+    }, name);
+};
+
+// Asserting errors.
+
+const popValidationError = device => device.popErrorScope().then(error => assertValidationError(error));
+const popMemoryError = device => device.popErrorScope().then(error => assertMemoryError(error));
+const popNullError = device => device.popErrorScope().then(error => assertNull(error));
+const assertNull = error => {
+    let assertionMsg = "No error expected!";
+    if (error && error.message)
+        assertionMsg += " Got: " + error.message;
+    assert_true(error === null, assertionMsg);
+};
+const assertValidationError = error => {
+    let assertionMsg = "Expected validation error: ";
+    if (error && error.message)
+        assertionMsg += error.message;
+    assert_true(error instanceof GPUValidationError, assertionMsg);
+};
+const assertMemoryError = error => assert_true(error instanceof GPUOutOfMemoryError, "Expected out-of-memory error!");

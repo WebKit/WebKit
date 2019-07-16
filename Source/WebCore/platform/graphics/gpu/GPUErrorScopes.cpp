@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "GPUErrorScopes.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPUBufferUsage.h"
-
 namespace WebCore {
 
-struct GPUBufferDescriptor {
-    uint64_t size;
-    GPUBufferUsageFlags usage;
-};
+void GPUErrorScopes::pushErrorScope(GPUErrorFilter filter)
+{
+    m_errorScopes.append(ErrorScope { filter, WTF::nullopt });
+}
 
-enum class GPUBufferMappedOption {
-    IsMapped,
-    NotMapped
-};
+Optional<GPUError> GPUErrorScopes::popErrorScope(String& failMessage)
+{
+    if (m_errorScopes.isEmpty()) {
+        failMessage = "No error scope exists!";
+        return WTF::nullopt;
+    }
+
+    auto scope = m_errorScopes.takeLast();
+    return scope.filter == GPUErrorFilter::None ? WTF::nullopt : scope.error;
+}
+
+void GPUErrorScopes::generateError(const String& message, GPUErrorFilter filter)
+{
+    auto iterator = std::find_if(m_errorScopes.rbegin(), m_errorScopes.rend(), [filter](const ErrorScope& scope) {
+        return scope.filter == GPUErrorFilter::None || scope.filter == filter;
+    });
+
+    // FIXME: https://webkit.org/b/199676 Uncaptured errors need to be fired as GPUUncapturedErrorEvents.
+    if (iterator == m_errorScopes.rend())
+        return;
+
+    // If the scope has already captured an error, ignore this new one.
+    if (iterator->error)
+        return;
+
+    iterator->error = createError(filter, message);
+}
 
 } // namespace WebCore
 

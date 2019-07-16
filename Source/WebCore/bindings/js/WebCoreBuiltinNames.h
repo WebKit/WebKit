@@ -94,6 +94,7 @@ namespace WebCore {
     macro(GPUComputePassEncoder) \
     macro(GPUComputePipeline) \
     macro(GPUDevice) \
+    macro(GPUOutOfMemoryError) \
     macro(GPUPipelineLayout) \
     macro(GPUProgrammablePassEncoder) \
     macro(GPUQueue) \
@@ -106,6 +107,7 @@ namespace WebCore {
     macro(GPUTexture) \
     macro(GPUTextureUsage) \
     macro(GPUTextureView) \
+    macro(GPUValidationError) \
     macro(HTMLAttachmentElement) \
     macro(HTMLAudioElement) \
     macro(HTMLDataListElement) \

@@ -1,3 +1,42 @@
+2019-07-16  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Convert GPUComputePipeline LOG statements to generate GPUErrors
+        https://bugs.webkit.org/show_bug.cgi?id=199773
+
+        Reviewed by Myles C. Maxfield.
+
+        Add a test to ensure GPUComputePipeline errors generate correctly.
+        Rework checkFail in the WHLSL test harness to check for GPUError.
+
+        * webgpu/compute-pipeline-errors-expected.txt: Added.
+        * webgpu/compute-pipeline-errors.html: Added.
+        * webgpu/error-scopes-test.html:
+        * webgpu/js/webgpu-functions.js:
+        (runTestsWithDevice): Runs tests in an object all with the same device.
+        * webgpu/js/whlsl-test-harness.js: Add shader compilation error checking.
+        (Harness.prototype.async.callTypedFunction):
+        (Harness.prototype.async.checkCompileFail):
+        (Harness.prototype.async._callFunction):
+        (Harness):
+        (async.checkFail):
+        (Harness.prototype._callFunction): Deleted.
+        * webgpu/whlsl-recursive-structs-expected.txt: Remove a WHLSL compiler buggy test.
+        * webgpu/whlsl-recursive-structs.html:
+        * webgpu/whlsl-test-harness-test-expected.txt:
+        * webgpu/whlsl-test-harness-test.html:
+
+2019-07-10  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Implement GPUError and error scopes
+        https://bugs.webkit.org/show_bug.cgi?id=199655
+
+        Reviewed by Myles C. Maxfield.
+
+        Add a test to cover the cases outlined in the WebGPU error handling design doc.
+
+        * webgpu/error-scopes-test-expected.txt: Added.
+        * webgpu/error-scopes-test.html: Added.
+
 2019-07-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r247493.

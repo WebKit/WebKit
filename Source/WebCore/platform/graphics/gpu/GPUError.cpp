@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "GPUError.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPUBufferUsage.h"
+#include "GPUErrorFilter.h"
 
 namespace WebCore {
 
-struct GPUBufferDescriptor {
-    uint64_t size;
-    GPUBufferUsageFlags usage;
-};
-
-enum class GPUBufferMappedOption {
-    IsMapped,
-    NotMapped
-};
+Optional<GPUError> createError(GPUErrorFilter filter, const String& message)
+{
+    switch (filter) {
+    case GPUErrorFilter::OutOfMemory:
+        return GPUError(RefPtr<GPUOutOfMemoryError>(GPUOutOfMemoryError::create()));
+    case GPUErrorFilter::Validation:
+        return GPUError(RefPtr<GPUValidationError>(GPUValidationError::create(message)));
+    default:
+        ASSERT_NOT_REACHED();
+        return WTF::nullopt;
+    }
+}
 
 } // namespace WebCore
 
