@@ -1986,15 +1986,84 @@ test/built-ins/TypedArrayConstructors/of/new-instance-using-custom-ctor.js:
 test/built-ins/WeakMap/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object WeakMap]Â», Â«[object WeakMap]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object WeakMap]Â», Â«[object WeakMap]Â») to be true'
+test/built-ins/WeakRef/constructor.js:
+  default: 'Test262Error: typeof WeakRef is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+  strict mode: 'Test262Error: typeof WeakRef is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+test/built-ins/WeakRef/instance-extensible.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/length.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/name.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/newtarget-prototype-is-not-object.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/prop-desc.js:
+  default: 'Test262Error: obj should have an own property WeakRef'
+  strict mode: 'Test262Error: obj should have an own property WeakRef'
 test/built-ins/WeakRef/proto-from-ctor-realm.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object WeakRef]Â», Â«[object WeakRef]Â») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object WeakRef]Â», Â«[object WeakRef]Â») to be true'
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/proto.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/prototype-from-newtarget-abrupt.js:
+  default: 'Test262Error: Expected a Test262Error but got a ReferenceError'
+  strict mode: 'Test262Error: Expected a Test262Error but got a ReferenceError'
+test/built-ins/WeakRef/prototype-from-newtarget-custom.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/prototype-from-newtarget.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/prototype/Symbol.toStringTag.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/prototype/constructor.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/prototype/deref/custom-this.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
 test/built-ins/WeakRef/prototype/deref/gc-cleanup-not-prevented-with-wr-deref.js:
-  default: "TypeError: $262.gc is not a function. (In '$262.gc()', '$262.gc' is undefined)"
-  strict mode: "TypeError: $262.gc is not a function. (In '$262.gc()', '$262.gc' is undefined)"
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/prototype/deref/length.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/prototype/deref/name.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/prototype/deref/prop-desc.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/prototype/deref/return-target.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
 test/built-ins/WeakRef/prototype/deref/this-does-not-have-internal-target-throws.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/prototype/deref/this-not-object-throws.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/prototype/prop-desc.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/prototype/proto.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/returns-new-object-from-constructor.js:
+  default: "ReferenceError: Can't find variable: WeakRef"
+  strict mode: "ReferenceError: Can't find variable: WeakRef"
+test/built-ins/WeakRef/target-not-object-throws.js:
+  default: 'Test262Error: typeof WeakRef is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+  strict mode: 'Test262Error: typeof WeakRef is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+test/built-ins/WeakRef/undefined-newtarget-throws.js:
+  default: 'Test262Error: typeof WeakRef is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+  strict mode: 'Test262Error: typeof WeakRef is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
 test/built-ins/WeakSet/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object WeakSet]Â», Â«[object WeakSet]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object WeakSet]Â», Â«[object WeakSet]Â») to be true'

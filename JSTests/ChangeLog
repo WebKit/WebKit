@@ -1,3 +1,9 @@
+2019-07-16  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, test262 gardening.
+
+        * test262/expectations.yaml:
+
 2019-07-15  Keith Miller  <keith_miller@apple.com>
 
         A Possible Issue of Object.create method
