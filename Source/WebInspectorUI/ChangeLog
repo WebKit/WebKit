@@ -1,3 +1,15 @@
+2019-07-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Changes panel should be strictly LTR
+        https://bugs.webkit.org/show_bug.cgi?id=199767
+
+        Reviewed by Joseph Pecoraro.
+
+        Changes panel is primarily CSS code and CSS is strictly LTR.
+
+        * UserInterface/Views/ChangesDetailsSidebarPanel.js:
+        (WI.ChangesDetailsSidebarPanel):
+
 2019-07-15  Youenn Fablet  <youenn@apple.com>
 
         Enable a debug WebRTC mode without any encryption

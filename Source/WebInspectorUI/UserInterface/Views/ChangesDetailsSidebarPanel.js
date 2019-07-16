@@ -30,6 +30,7 @@ WI.ChangesDetailsSidebarPanel = class ChangesDetailsSidebarPanel extends WI.DOMD
         super("changes-details", WI.UIString("Changes"));
 
         this.element.classList.add("changes-panel");
+        this.element.dir = "ltr";
     }
 
     // Public
