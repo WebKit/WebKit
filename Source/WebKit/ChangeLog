@@ -1,3 +1,13 @@
+2019-07-16  Frederic Wang  <fwang@igalia.com>
+
+        Fix build warning because of missing super_class initializer
+        https://bugs.webkit.org/show_bug.cgi?id=199825
+
+        Reviewed by Jonathan Bedard.
+
+        * UIProcess/ios/WKContentView.mm:
+        (keyCommandsPlaceholderHackForEvernote):
+
 2019-07-16  Tim Horton  <timothy_horton@apple.com>
 
         NSTextFinder holes don't scroll with the page

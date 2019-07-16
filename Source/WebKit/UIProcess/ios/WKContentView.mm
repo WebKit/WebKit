@@ -149,10 +149,7 @@
 // as soon as reasonably possible. See <rdar://problem/51759247>.
 static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 {
-    struct objc_super super { 0 };
-    super.receiver = self;
-    super.super_class = class_getSuperclass(object_getClass(self));
-
+    struct objc_super super = { self, class_getSuperclass(object_getClass(self)) };
     using SuperKeyCommandsFunction = NSArray *(*)(struct objc_super*, SEL);
     return reinterpret_cast<SuperKeyCommandsFunction>(&objc_msgSendSuper)(&super, @selector(keyCommands));
 }
