@@ -1,3 +1,18 @@
+2019-07-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [ Mojave WK1 ] Some Image tests are flakey failures and are failing in tandem with zoomed in or blank image results
+        https://bugs.webkit.org/show_bug.cgi?id=193108
+
+        Reviewed by Simon Fraser.
+
+        Add a workaround for <rdar://problem/17084993> in createBitmapContextFromWebView().
+        Re-request the snapshot at kCGWindowImageNominalResolution if it was captured
+        at the wrong scale.
+
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (takeWindowSnapshot):
+        (createBitmapContextFromWebView):
+
 2019-07-15  Brady Eidson  <beidson@apple.com>
 
         Make WKURLSchemeTask thread safe.
