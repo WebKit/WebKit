@@ -166,11 +166,11 @@ bool getFileSize(const String& path, long long& resultSize)
 
 bool getFileSize(PlatformFileHandle handle, long long& resultSize)
 {
-    auto info = g_file_io_stream_query_info(handle, G_FILE_ATTRIBUTE_STANDARD_SIZE, nullptr, nullptr);
+    GRefPtr<GFileInfo> info = adoptGRef(g_file_io_stream_query_info(handle, G_FILE_ATTRIBUTE_STANDARD_SIZE, nullptr, nullptr));
     if (!info)
         return false;
 
-    resultSize = g_file_info_get_size(info);
+    resultSize = g_file_info_get_size(info.get());
     return true;
 }
 
@@ -284,7 +284,7 @@ bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
         return false;
 
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(filename.data()));
-    GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_filesystem_info(file.get(), G_FILE_ATTRIBUTE_FILESYSTEM_FREE, 0, 0));
+    GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_filesystem_info(file.get(), G_FILE_ATTRIBUTE_FILESYSTEM_FREE, nullptr, nullptr));
     if (!fileInfo)
         return false;
 
@@ -329,10 +329,10 @@ Vector<String> listDirectory(const String& path, const String& filter)
 String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
 {
     GUniquePtr<gchar> filename(g_strdup_printf("%s%s", prefix.utf8().data(), createCanonicalUUIDString().utf8().data()));
-    GUniquePtr<gchar> tempPath(g_build_filename(g_get_tmp_dir(), filename.get(), NULL));
+    GUniquePtr<gchar> tempPath(g_build_filename(g_get_tmp_dir(), filename.get(), nullptr));
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(tempPath.get()));
 
-    handle = g_file_create_readwrite(file.get(), G_FILE_CREATE_NONE, 0, 0);
+    handle = g_file_create_readwrite(file.get(), G_FILE_CREATE_NONE, nullptr, nullptr);
     if (!isHandleValid(handle))
         return String();
     return String::fromUTF8(tempPath.get());
@@ -345,17 +345,17 @@ PlatformFileHandle openFile(const String& path, FileOpenMode mode)
         return invalidPlatformFileHandle;
 
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(filename.data()));
-    GFileIOStream* ioStream = 0;
+    GRefPtr<GFileIOStream> ioStream;
     if (mode == FileOpenMode::Read)
-        ioStream = g_file_open_readwrite(file.get(), 0, 0);
+        ioStream = adoptGRef(g_file_open_readwrite(file.get(), nullptr, nullptr));
     else if (mode == FileOpenMode::Write) {
         if (g_file_test(filename.data(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR)))
-            ioStream = g_file_open_readwrite(file.get(), 0, 0);
+            ioStream = adoptGRef(g_file_open_readwrite(file.get(), nullptr, nullptr));
         else
-            ioStream = g_file_create_readwrite(file.get(), G_FILE_CREATE_NONE, 0, 0);
+            ioStream = adoptGRef(g_file_create_readwrite(file.get(), G_FILE_CREATE_NONE, nullptr, nullptr));
     }
 
-    return ioStream;
+    return ioStream.leakRef();
 }
 
 void closeFile(PlatformFileHandle& handle)
@@ -385,11 +385,8 @@ long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin o
         ASSERT_NOT_REACHED();
     }
 
-    if (!g_seekable_seek(G_SEEKABLE(g_io_stream_get_input_stream(G_IO_STREAM(handle))),
-        offset, seekType, 0, 0))
-    {
+    if (!g_seekable_seek(G_SEEKABLE(g_io_stream_get_input_stream(G_IO_STREAM(handle))), offset, seekType, nullptr, nullptr))
         return -1;
-    }
     return g_seekable_tell(G_SEEKABLE(g_io_stream_get_input_stream(G_IO_STREAM(handle))));
 }
 
@@ -397,7 +394,7 @@ int writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
     gsize bytesWritten;
     g_output_stream_write_all(g_io_stream_get_output_stream(G_IO_STREAM(handle)),
-        data, length, &bytesWritten, 0, 0);
+        data, length, &bytesWritten, nullptr, nullptr);
     return bytesWritten;
 }
 
@@ -406,7 +403,7 @@ int readFromFile(PlatformFileHandle handle, char* data, int length)
     GUniqueOutPtr<GError> error;
     do {
         gssize bytesRead = g_input_stream_read(g_io_stream_get_input_stream(G_IO_STREAM(handle)),
-            data, length, 0, &error.outPtr());
+            data, length, nullptr, &error.outPtr());
         if (bytesRead >= 0)
             return bytesRead;
     } while (error && error->code == G_FILE_ERROR_INTR);

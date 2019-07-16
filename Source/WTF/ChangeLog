@@ -1,3 +1,25 @@
+2019-07-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Improvements and fixes in FileSystemGlib.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=199800
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use nullptr.
+
+        Fix a GFileInfo leak in getFileSize.
+
+        Use GRefPtr to clarify ownership of the GFileIOStream in openFile.
+
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::getFileSize):
+        (WTF::FileSystemImpl::getVolumeFreeSpace):
+        (WTF::FileSystemImpl::openTemporaryFile):
+        (WTF::FileSystemImpl::openFile):
+        (WTF::FileSystemImpl::seekFile):
+        (WTF::FileSystemImpl::writeToFile):
+        (WTF::FileSystemImpl::readFromFile):
+
 2019-07-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         New York font erroneously gets synthetic bold
