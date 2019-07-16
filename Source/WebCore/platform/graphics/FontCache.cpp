@@ -488,6 +488,10 @@ FontCache::PrewarmInformation FontCache::collectPrewarmInformation() const
     return { };
 }
 
+void FontCache::prewarmGlobally()
+{
+}
+
 void FontCache::prewarm(const PrewarmInformation&)
 {
 }

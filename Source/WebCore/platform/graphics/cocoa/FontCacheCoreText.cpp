@@ -36,6 +36,7 @@
 
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 
 #define HAS_CORE_TEXT_WIDTH_ATTRIBUTE ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000))
@@ -1619,6 +1620,25 @@ void FontCache::prewarm(const PrewarmInformation& prewarmInformation)
             }
         }
     });
+}
+
+void FontCache::prewarmGlobally()
+{
+    if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
+        return;
+
+    Vector<String> families = std::initializer_list<String> {
+        "Arial"_s,
+        "Helvetica"_s,
+        "Helvetica Neue"_s,
+        "SF Pro Text"_s,
+        "Times"_s,
+        "Times New Roman"_s,
+    };
+
+    FontCache::PrewarmInformation prewarmInfo;
+    prewarmInfo.seenFamilies = WTFMove(families);
+    FontCache::singleton().prewarm(prewarmInfo);
 }
 
 }

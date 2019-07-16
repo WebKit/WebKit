@@ -1,3 +1,24 @@
+2019-07-16  Per Arne Vollan  <pvollan@apple.com>
+
+        Prewarm font cache with more fonts
+        https://bugs.webkit.org/show_bug.cgi?id=199283
+
+        Reviewed by Myles C. Maxfield.
+
+        Use the existing prewarm method in FontCache to prewarm the cache with a set of font family names.
+        The font list consists of some of the fonts used by the 10 most popular sites on Alexa top sites.
+        This is a confirmed improvement in page load time.
+
+        No new tests, covered by existing tests.
+
+        * page/ProcessWarming.cpp:
+        (WebCore::ProcessWarming::prewarmGlobally):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::prewarmGlobally):
+        * platform/graphics/FontCache.h:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::prewarmGlobally):
+
 2019-07-16  Robin Morisset  <rmorisset@apple.com>
 
         [WHLSL] Desugar for loops and while loops

@@ -58,7 +58,7 @@ void ProcessWarming::initializeNames()
     XMLNames::init();
     WebKitFontFamilyNames::init();
 }
-    
+
 void ProcessWarming::prewarmGlobally()
 {
     initializeNames();
@@ -72,14 +72,8 @@ void ProcessWarming::prewarmGlobally()
     // Prewarms JS VM.
     commonVM();
 
-#if USE(PLATFORM_SYSTEM_FALLBACK_LIST)
-    // Cache system UI font fallbacks. Almost every web process needs these.
-    // Initializing one size is sufficient to warm CoreText caches.
-    FontCascadeDescription systemFontDescription;
-    systemFontDescription.setOneFamily("system-ui");
-    systemFontDescription.setComputedSize(11);
-    systemFontDescription.effectiveFamilyCount();
-#endif
+    // Prewarm font cache
+    FontCache::singleton().prewarmGlobally();
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     TelephoneNumberDetector::isSupported();

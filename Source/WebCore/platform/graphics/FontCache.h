@@ -252,6 +252,7 @@ public:
     };
     PrewarmInformation collectPrewarmInformation() const;
     void prewarm(const PrewarmInformation&);
+    void prewarmGlobally();
 
 private:
     FontCache();
