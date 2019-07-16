@@ -52,7 +52,7 @@ private:
 class AutosizeStatus {
 public:
     enum class Fields : uint8_t {
-        DisplayNone = 1 << 0,
+        AvoidSubtree = 1 << 0,
         FixedHeight = 1 << 1,
         FixedWidth = 1 << 2,
         Floating = 1 << 3,
