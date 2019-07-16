@@ -62,7 +62,7 @@ FontCascadeDescription::FontCascadeDescription()
 {
 }
 
-#if !USE_PLATFORM_SYSTEM_FALLBACK_LIST
+#if !USE(PLATFORM_SYSTEM_FALLBACK_LIST)
 
 unsigned FontCascadeDescription::effectiveFamilyCount() const
 {

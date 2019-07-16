@@ -1237,7 +1237,7 @@ static void invalidateFontCache()
         return;
     }
 
-#if USE_PLATFORM_SYSTEM_FALLBACK_LIST
+#if USE(PLATFORM_SYSTEM_FALLBACK_LIST)
     SystemFontDatabaseCoreText::singleton().clear();
 #endif
     clearFontFamilySpecificationCoreTextCache();
@@ -1393,7 +1393,7 @@ static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValu
 
     CFIndex coveredLength = 0;
     RetainPtr<CTFontRef> result;
-#if !USE_PLATFORM_SYSTEM_FALLBACK_LIST && (PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && TARGET_OS_IOS))
+#if !USE(PLATFORM_SYSTEM_FALLBACK_LIST) && (PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && TARGET_OS_IOS))
     result = adoptCF(CTFontCreatePhysicalFontForCharactersWithLanguage(font, characters, length, localeString.get(), &coveredLength));
 #else
     result = adoptCF(CTFontCreateForCharactersWithLanguage(font, characters, length, localeString.get(), &coveredLength));

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-#if USE_PLATFORM_SYSTEM_FALLBACK_LIST
+#if USE(PLATFORM_SYSTEM_FALLBACK_LIST)
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -121,7 +121,7 @@ unsigned FontCascadeDescription::effectiveFamilyCount() const
 FontFamilySpecification FontCascadeDescription::effectiveFamilyAt(unsigned index) const
 {
     // The special cases in this function need to match the behavior in FontCacheIOS.mm and FontCacheMac.mm. On systems
-    // where USE_PLATFORM_SYSTEM_FALLBACK_LIST is set to true, this code is used for regular (element style) lookups,
+    // where USE(PLATFORM_SYSTEM_FALLBACK_LIST) is set to true, this code is used for regular (element style) lookups,
     // and the code in FontDescriptionCocoa.cpp is used when src:local(special-cased-name) is specified inside an
     // @font-face block.
     // FIXME: Currently, an @font-face block corresponds to a single item in the font-family: fallback list, which
@@ -144,7 +144,7 @@ FontFamilySpecification FontCascadeDescription::effectiveFamilyAt(unsigned index
     return nullAtom();
 }
 
-#endif // USE_PLATFORM_SYSTEM_FALLBACK_LIST
+#endif // USE(PLATFORM_SYSTEM_FALLBACK_LIST)
 
 static String computeSpecializedChineseLocale()
 {

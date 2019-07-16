@@ -31,8 +31,6 @@
 #include <unicode/uscript.h>
 #include <wtf/MathExtras.h>
 
-#define USE_PLATFORM_SYSTEM_FALLBACK_LIST ((PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300))
-
 namespace WebCore {
 
 using namespace WebKitFontFamilyNames;

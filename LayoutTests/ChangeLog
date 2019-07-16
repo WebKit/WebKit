@@ -1,3 +1,46 @@
+2019-07-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        New York font erroneously gets synthetic bold
+        https://bugs.webkit.org/show_bug.cgi?id=199653
+        <rdar://problem/51692592>
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+        * fast/text/design-system-ui-10-expected-mismatch.html: Added.
+        * fast/text/design-system-ui-10.html: Added.
+        * fast/text/design-system-ui-11-expected-mismatch.html: Added.
+        * fast/text/design-system-ui-11.html: Added.
+        * fast/text/design-system-ui-12-expected-mismatch.html: Added.
+        * fast/text/design-system-ui-12.html: Added.
+        * fast/text/design-system-ui-13-expected-mismatch.html: Added.
+        * fast/text/design-system-ui-13.html: Added.
+        * fast/text/design-system-ui-14-expected-mismatch.html: Added.
+        * fast/text/design-system-ui-14.html: Added.
+        * fast/text/design-system-ui-15-expected-mismatch.html: Added.
+        * fast/text/design-system-ui-15.html: Added.
+        * fast/text/design-system-ui-16-expected-mismatch.html: Added.
+        * fast/text/design-system-ui-16.html: Added.
+        * fast/text/design-system-ui-2-expected.html: Added.
+        * fast/text/design-system-ui-2.html: Added.
+        * fast/text/design-system-ui-3-expected-mismatch.html: Added.
+        * fast/text/design-system-ui-3.html: Added.
+        * fast/text/design-system-ui-4-expected-mismatch.html: Added.
+        * fast/text/design-system-ui-4.html: Added.
+        * fast/text/design-system-ui-5-expected-mismatch.html: Added.
+        * fast/text/design-system-ui-5.html: Added.
+        * fast/text/design-system-ui-6-expected.html: Added.
+        * fast/text/design-system-ui-6.html: Added.
+        * fast/text/design-system-ui-7-expected.html: Added.
+        * fast/text/design-system-ui-7.html: Added.
+        * fast/text/design-system-ui-8-expected-mismatch.html: Added.
+        * fast/text/design-system-ui-8.html: Added.
+        * fast/text/design-system-ui-9-expected-mismatch.html: Added.
+        * fast/text/design-system-ui-9.html: Added.
+        * fast/text/design-system-ui-expected.html: Added.
+        * fast/text/design-system-ui.html: Added.
+        * platform/mac/TestExpectations:
+
 2019-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Improve wasm wpt test results by fixing miscellaneous issues
