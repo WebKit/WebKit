@@ -1,3 +1,15 @@
+2019-07-16  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Cancel ongoing content observation when tap is failed/cancelled
+        https://bugs.webkit.org/show_bug.cgi?id=199828
+        <rdar://problem/53152696>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::commitPotentialTapFailed):
+        (WebKit::WebPage::cancelPotentialTap):
+
 2019-07-15  Alex Christensen  <achristensen@webkit.org>
 
         Remove redundant WebsiteDataStoreConfiguration member

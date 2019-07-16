@@ -1126,6 +1126,7 @@ void WebPage::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, uint64
 
 void WebPage::commitPotentialTapFailed()
 {
+    ContentChangeObserver::didCancelPotentialTap(m_page->mainFrame());
     if (!m_page->focusController().focusedOrMainFrame().selection().selection().isContentEditable())
         clearSelection();
 
@@ -1135,8 +1136,7 @@ void WebPage::commitPotentialTapFailed()
 
 void WebPage::cancelPotentialTap()
 {
-    if (m_potentialTapNode)
-        m_potentialTapNode->document().contentChangeObserver().willNotProceedWithClick();
+    ContentChangeObserver::didCancelPotentialTap(m_page->mainFrame());
     cancelPotentialTapInFrame(*m_mainFrame);
 }
 

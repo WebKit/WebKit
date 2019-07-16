@@ -150,6 +150,12 @@ static void willNotProceedWithClick(Frame& mainFrame)
     }
 }
 
+void ContentChangeObserver::didCancelPotentialTap(Frame& mainFrame)
+{
+    LOG(ContentObservation, "didCancelPotentialTap: cancel ongoing content change observing.");
+    WebCore::willNotProceedWithClick(mainFrame);
+}
+
 void ContentChangeObserver::didRecognizeLongPress(Frame& mainFrame)
 {
     LOG(ContentObservation, "didRecognizeLongPress: cancel ongoing content change observing.");
