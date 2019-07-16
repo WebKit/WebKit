@@ -1,3 +1,24 @@
+2019-07-16  Rob Buis  <rbuis@igalia.com>
+
+        Remove support for beforeload on link=prefetch
+        https://bugs.webkit.org/show_bug.cgi?id=199632
+
+        Reviewed by Youenn Fablet.
+
+        Add tests to verify that beforeload event is not called for link
+        rel=prefetch.
+
+
+        * TestExpectations:
+        * fast/dom/HTMLLinkElement/prefetch-beforeload-expected.txt: Removed.
+        * fast/dom/HTMLLinkElement/prefetch-beforeload.html: Removed.
+        * http/wpt/prefetch/beforeload-dynamic-expected.txt: Added.
+        * http/wpt/prefetch/beforeload-dynamic.html: Added.
+        * http/wpt/prefetch/beforeload-expected.txt: Added.
+        * http/wpt/prefetch/beforeload.html: Added.
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2019-07-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         [macOS WK2] Layout Test http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html is a flaky timeout

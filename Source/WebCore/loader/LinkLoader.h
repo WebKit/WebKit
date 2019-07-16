@@ -60,7 +60,7 @@ public:
     explicit LinkLoader(LinkLoaderClient&);
     virtual ~LinkLoader();
 
-    bool loadLink(const LinkLoadParameters&, Document&);
+    void loadLink(const LinkLoadParameters&, Document&);
     static Optional<CachedResource::Type> resourceTypeFromAsAttribute(const String& as);
 
     enum class MediaAttributeCheck { MediaAttributeEmpty, MediaAttributeNotEmpty, SkipMediaAttributeCheck };

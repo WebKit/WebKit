@@ -273,8 +273,7 @@ void HTMLLinkElement::process()
         attributeWithoutSynchronization(imagesizesAttr)
     };
 
-    if (!m_linkLoader.loadLink(params, document()))
-        return;
+    m_linkLoader.loadLink(params, document());
 
     bool treatAsStyleSheet = m_relAttribute.isStyleSheet
         || (document().settings().treatsAnyTextCSSLinkAsStylesheet() && m_type.containsIgnoringASCIICase("text/css"));

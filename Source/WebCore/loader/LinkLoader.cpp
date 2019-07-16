@@ -283,7 +283,7 @@ std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const Lin
 
 void LinkLoader::prefetchIfNeeded(const LinkLoadParameters& params, Document& document)
 {
-    if (!params.relAttribute.isLinkPrefetch || !params.href.isValid() || !document.frame() || !m_client.shouldLoadLink())
+    if (!params.href.isValid() || !document.frame())
         return;
 
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().linkPrefetchEnabled());
@@ -316,7 +316,7 @@ void LinkLoader::cancelLoad()
         m_preloadResourceClient->clear();
 }
 
-bool LinkLoader::loadLink(const LinkLoadParameters& params, Document& document)
+void LinkLoader::loadLink(const LinkLoadParameters& params, Document& document)
 {
     if (params.relAttribute.isDNSPrefetch) {
         // FIXME: The href attribute of the link element can be in "//hostname" form, and we shouldn't attempt
@@ -327,6 +327,11 @@ bool LinkLoader::loadLink(const LinkLoadParameters& params, Document& document)
 
     preconnectIfNeeded(params, document);
 
+    if (params.relAttribute.isLinkPrefetch) {
+        prefetchIfNeeded(params, document);
+        return;
+    }
+
     if (m_client.shouldLoadLink()) {
         auto resourceClient = preloadIfNeeded(params, document, this);
         if (m_preloadResourceClient)
@@ -334,10 +339,6 @@ bool LinkLoader::loadLink(const LinkLoadParameters& params, Document& document)
         if (resourceClient)
             m_preloadResourceClient = WTFMove(resourceClient);
     }
-
-    prefetchIfNeeded(params, document);
-
-    return true;
 }
 
 }
