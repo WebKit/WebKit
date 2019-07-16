@@ -2737,8 +2737,6 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         return;
     }
 
-    GraphicsContextStateStackChecker checker(context);
-
     OptionSet<RenderLayer::PaintLayerFlag> paintFlags;
     if (paintingPhase.contains(GraphicsLayerPaintingPhase::Background))
         paintFlags.add(RenderLayer::PaintLayerPaintingCompositingBackgroundPhase);
