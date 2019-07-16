@@ -128,7 +128,6 @@ protected:
     void visit(AST::SwitchCase&) override;
     void visit(AST::Trap&) override;
     void visit(AST::VariableDeclarationsStatement&) override;
-    void visit(AST::WhileLoop&) override;
     void visit(AST::IntegerLiteral&) override;
     void visit(AST::UnsignedIntegerLiteral&) override;
     void visit(AST::FloatLiteral&) override;
@@ -350,24 +349,9 @@ void FunctionDefinitionWriter::visit(AST::DoWhileLoop& doWhileLoop)
     emitLoop(LoopConditionLocation::AfterBody, &doWhileLoop.conditional(), nullptr, doWhileLoop.body());
 }
 
-void FunctionDefinitionWriter::visit(AST::WhileLoop& whileLoop)
-{
-    emitLoop(LoopConditionLocation::BeforeBody, &whileLoop.conditional(), nullptr, whileLoop.body());
-}
-
 void FunctionDefinitionWriter::visit(AST::ForLoop& forLoop)
 {
-    m_stringBuilder.append("{\n");
-
-    WTF::visit(WTF::makeVisitor([&](AST::Statement& statement) {
-        checkErrorAndVisit(statement);
-    }, [&](UniqueRef<AST::Expression>& expression) {
-        checkErrorAndVisit(expression);
-        takeLastValue(); // We don't need to do anything with the result.
-    }), forLoop.initialization());
-
-    emitLoop(LoopConditionLocation::BeforeBody, forLoop.condition(), forLoop.increment(), forLoop.body());
-    m_stringBuilder.append("}\n");
+    emitLoop(LoopConditionLocation::BeforeBody, &forLoop.condition(), &forLoop.increment(), forLoop.body());
 }
 
 void FunctionDefinitionWriter::visit(AST::IfStatement& ifStatement)

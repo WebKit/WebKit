@@ -1,3 +1,19 @@
+2019-07-16  Robin Morisset  <rmorisset@apple.com>
+
+        [WHLSL] Desugar for loops and while loops
+        https://bugs.webkit.org/show_bug.cgi?id=199726
+
+        Reviewed by Myles C. Maxfield.
+
+        I added the for-loop tests from Test.mjs (with help from Saam).
+        I did not add the foo9 and foo10 tests, as they are forbidden by the behavior checker in the C++ implementation (and by the spec).
+
+        I also changed one test from whlsl-return-spec-tests.html to assert_fail, because it relied on a lone variable declaration in an if, which is forbidden by the spec.
+
+        * webgpu/whlsl-for-loop-expected.txt: Added.
+        * webgpu/whlsl-for-loop.html: Added.
+        * webgpu/whlsl-return-spec-tests.html:
+
 2019-07-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Text autosizing] [iPadOS] Paragraph text on the front page of LinkedIn.com is not boosted

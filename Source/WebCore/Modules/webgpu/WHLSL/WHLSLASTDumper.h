@@ -100,7 +100,6 @@ public:
     void visit(AST::SwitchStatement&) override;
     void visit(AST::Trap&) override;
     void visit(AST::VariableDeclarationsStatement&) override;
-    void visit(AST::WhileLoop&) override;
     void visit(AST::VariableDeclaration&) override;
     void visit(AST::AssignmentExpression&) override;
     void visit(AST::CallExpression&) override;

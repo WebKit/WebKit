@@ -1,3 +1,53 @@
+2019-07-16  Robin Morisset  <rmorisset@apple.com>
+
+        [WHLSL] Desugar for loops and while loops
+        https://bugs.webkit.org/show_bug.cgi?id=199726
+
+        Reviewed by Myles C. Maxfield.
+
+        This patch makes loops behave a lot more similarly to the spec.
+        In particular, while loops are just degenerate for loops, so they can be desugared in the parser.
+        And for loops can themselves be heavily desugared, into having no initializer, one condition and one increment
+        by putting any initializer in a block around the loop, putting true in the condition if there is none, and putting any litteral in the increment if there is none.
+
+        Debugging this patch revealed an unrelated bug where the parser would generate an empty comma expression on ";", which the checker would then choke on.
+        The parser now generates an empty block in that case (as specified in the spec), which fixes the problem.
+
+        Finally, while updating the NameResolver for the new structure of loops I realized that it was needlessly generating extra NameContext.
+        They are not expected by the spec, that forbids naked variable declarations outside of blocks anyway.
+        So I removed this unnecessary work, and fixed the parser to correctly forbid such naked variable declarations.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLAST.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLForLoop.h:
+        (WebCore::WHLSL::AST::ForLoop::ForLoop):
+        (WebCore::WHLSL::AST::ForLoop::condition):
+        (WebCore::WHLSL::AST::ForLoop::increment):
+        * Modules/webgpu/WHLSL/AST/WHLSLStatement.h:
+        (WebCore::WHLSL::AST::Statement::isVariableDeclarationsStatement const):
+        * Modules/webgpu/WHLSL/AST/WHLSLWhileLoop.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        * Modules/webgpu/WHLSL/WHLSLASTDumper.cpp:
+        (WebCore::WHLSL::ASTDumper::visit):
+        * Modules/webgpu/WHLSL/WHLSLASTDumper.h:
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::Checker::visit):
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.cpp:
+        (WebCore::WHLSL::NameResolver::visit):
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.h:
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::parseBlockBody):
+        (WebCore::WHLSL::Parser::parseForLoop):
+        (WebCore::WHLSL::Parser::parseWhileLoop):
+        (WebCore::WHLSL::Parser::parseStatement):
+        (WebCore::WHLSL::Parser::parseEffectfulExpression):
+        * Modules/webgpu/WHLSL/WHLSLParser.h:
+        * Modules/webgpu/WHLSL/WHLSLStatementBehaviorChecker.cpp:
+        * Modules/webgpu/WHLSL/WHLSLVisitor.cpp:
+        (WebCore::WHLSL::Visitor::visit):
+        * Modules/webgpu/WHLSL/WHLSLVisitor.h:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-07-16  Tim Horton  <timothy_horton@apple.com>
 
         NSTextFinder holes don't scroll with the page

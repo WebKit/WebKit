@@ -57,7 +57,6 @@
 #include "WHLSLSwitchStatement.h"
 #include "WHLSLTernaryExpression.h"
 #include "WHLSLVisitor.h"
-#include "WHLSLWhileLoop.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
@@ -501,7 +500,6 @@ private:
     void visit(AST::LogicalNotExpression&) override;
     void visit(AST::LogicalExpression&) override;
     void visit(AST::IfStatement&) override;
-    void visit(AST::WhileLoop&) override;
     void visit(AST::DoWhileLoop&) override;
     void visit(AST::ForLoop&) override;
     void visit(AST::SwitchStatement&) override;
@@ -1247,13 +1245,6 @@ void Checker::visit(AST::IfStatement& ifStatement)
         checkErrorAndVisit(*ifStatement.elseBody());
 }
 
-void Checker::visit(AST::WhileLoop& whileLoop)
-{
-    if (!recurseAndRequireBoolType(whileLoop.conditional()))
-        return;
-    checkErrorAndVisit(whileLoop.body());
-}
-
 void Checker::visit(AST::DoWhileLoop& doWhileLoop)
 {
     checkErrorAndVisit(doWhileLoop.body());
@@ -1262,19 +1253,9 @@ void Checker::visit(AST::DoWhileLoop& doWhileLoop)
 
 void Checker::visit(AST::ForLoop& forLoop)
 {
-    WTF::visit(WTF::makeVisitor([&](UniqueRef<AST::Statement>& statement) {
-        checkErrorAndVisit(statement);
-    }, [&](UniqueRef<AST::Expression>& expression) {
-        checkErrorAndVisit(expression);
-    }), forLoop.initialization());
-    if (error())
+    if (!recurseAndRequireBoolType(forLoop.condition()))
         return;
-    if (forLoop.condition()) {
-        if (!recurseAndRequireBoolType(*forLoop.condition()))
-            return;
-    }
-    if (forLoop.increment())
-        checkErrorAndVisit(*forLoop.increment());
+    checkErrorAndVisit(forLoop.increment());
     checkErrorAndVisit(forLoop.body());
 }
 
@@ -1434,7 +1415,7 @@ void Checker::visit(AST::SwitchStatement& switchStatement)
 
 void Checker::visit(AST::CommaExpression& commaExpression)
 {
-    ASSERT(commaExpression.list().size() > 0);
+    ASSERT(!commaExpression.list().isEmpty());
     Visitor::visit(commaExpression);
     if (error())
         return;

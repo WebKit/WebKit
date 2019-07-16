@@ -101,6 +101,5 @@
 #include "WHLSLVariableDeclaration.h"
 #include "WHLSLVariableDeclarationsStatement.h"
 #include "WHLSLVariableReference.h"
-#include "WHLSLWhileLoop.h"
 
 #endif

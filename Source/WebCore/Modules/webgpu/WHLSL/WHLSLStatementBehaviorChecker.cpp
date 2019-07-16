@@ -44,7 +44,6 @@
 #include "WHLSLTrap.h"
 #include "WHLSLVariableDeclarationsStatement.h"
 #include "WHLSLVisitor.h"
-#include "WHLSLWhileLoop.h"
 #include <cstdint>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
@@ -109,22 +108,7 @@ private:
 
     void visit(AST::ForLoop& forLoop) override
     {
-        // The initialization always has a behavior of Nothing, which we already add unconditionally below,
-        // so we can just ignore the initialization.
-
         checkErrorAndVisit(forLoop.body());
-        if (error())
-            return;
-        auto b = m_stack.takeLast();
-        b.remove(Behavior::Break);
-        b.remove(Behavior::Continue);
-        b.add(Behavior::Nothing);
-        m_stack.append(b);
-    }
-
-    void visit(AST::WhileLoop& whileLoop) override
-    {
-        checkErrorAndVisit(whileLoop.body());
         if (error())
             return;
         auto b = m_stack.takeLast();

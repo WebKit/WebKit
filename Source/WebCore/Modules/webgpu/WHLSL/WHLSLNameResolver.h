@@ -50,7 +50,6 @@ private:
     void visit(AST::TypeReference&) override;
     void visit(AST::Block&) override;
     void visit(AST::IfStatement&) override;
-    void visit(AST::WhileLoop&) override;
     void visit(AST::DoWhileLoop&) override;
     void visit(AST::ForLoop&) override;
     void visit(AST::VariableDeclaration&) override;

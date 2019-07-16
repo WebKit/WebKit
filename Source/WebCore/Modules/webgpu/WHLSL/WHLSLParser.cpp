@@ -1063,7 +1063,8 @@ auto Parser::parseBlockBody() -> Expected<AST::Block, Error>
 
     AST::Statements statements;
     while (!peekTypes<Token::Type::RightCurlyBracket, Token::Type::Case, Token::Type::Default>()) {
-        PARSE(statement, Statement);
+        bool allowVariableDeclarations = true;
+        PARSE(statement, Statement, allowVariableDeclarations);
         statements.append(WTFMove(*statement));
     }
 
@@ -1142,51 +1143,52 @@ auto Parser::parseSwitchCase() -> Expected<AST::SwitchCase, Error>
     }
 }
 
-auto Parser::parseForLoop() -> Expected<AST::ForLoop, Error>
+auto Parser::parseForLoop() -> Expected<AST::Block, Error>
 {
     CONSUME_TYPE(origin, For);
     CONSUME_TYPE(leftParenthesis, LeftParenthesis);
 
-    auto parseRemainder = [&](Variant<UniqueRef<AST::Statement>, UniqueRef<AST::Expression>>&& initialization) -> Expected<AST::ForLoop, Error> {
-        CONSUME_TYPE(semicolon, Semicolon);
-
-        std::unique_ptr<AST::Expression> condition(nullptr);
-        if (!tryType(Token::Type::Semicolon)) {
-            if (auto expression = parseExpression())
-                condition = (*expression).moveToUniquePtr();
-            else
-                return Unexpected<Error>(expression.error());
-            CONSUME_TYPE(secondSemicolon, Semicolon);
-        }
-
-        std::unique_ptr<AST::Expression> increment(nullptr);
-        if (!tryType(Token::Type::RightParenthesis)) {
-            if (auto expression = parseExpression())
-                increment = (*expression).moveToUniquePtr();
-            else
-                return Unexpected<Error>(expression.error());
-            CONSUME_TYPE(rightParenthesis, RightParenthesis);
-        }
-
-        PARSE(body, Statement);
-        AST::CodeLocation location(origin->codeLocation,  (*body)->codeLocation());
-        return AST::ForLoop(location, WTFMove(initialization), WTFMove(condition), WTFMove(increment), WTFMove(*body));
-    };
 
     auto variableDeclarations = backtrackingScope<Expected<AST::VariableDeclarationsStatement, Error>>([&]() {
         return parseVariableDeclarations();
     });
-    if (variableDeclarations) {
-        UniqueRef<AST::Statement> declarationStatement = makeUniqueRef<AST::VariableDeclarationsStatement>(WTFMove(*variableDeclarations));
-        return parseRemainder(WTFMove(declarationStatement));
+    Optional<UniqueRef<AST::Statement>> initialization;
+    if (variableDeclarations)
+        initialization = static_cast<UniqueRef<AST::Statement>>(makeUniqueRef<AST::VariableDeclarationsStatement>(WTFMove(*variableDeclarations)));
+    else {
+        PARSE(effectfulExpression, EffectfulExpression);
+        initialization = WTFMove(*effectfulExpression);
     }
 
-    PARSE(effectfulExpression, EffectfulExpression);
+    CONSUME_TYPE(semicolon, Semicolon);
 
-    return parseRemainder(WTFMove(*effectfulExpression));
+    Optional<UniqueRef<AST::Expression>> condition;
+    auto secondSemicolon = tryType(Token::Type::Semicolon);
+    if (!secondSemicolon) {
+        PARSE(expression, Expression);
+        condition = WTFMove(*expression);
+        CONSUME_TYPE(secondSemicolon, Semicolon);
+    } else
+        condition = static_cast<UniqueRef<AST::Expression>>(makeUniqueRef<AST::BooleanLiteral>(*secondSemicolon, true));
+
+    Optional<UniqueRef<AST::Expression>> increment;
+    auto rightParenthesis = tryType(Token::Type::RightParenthesis);
+    if (!rightParenthesis) {
+        PARSE(expression, Expression);
+        increment = WTFMove(*expression);
+        CONSUME_TYPE(rightParenthesis, RightParenthesis);
+    } else
+        increment = static_cast<UniqueRef<AST::Expression>>(makeUniqueRef<AST::BooleanLiteral>(*origin, true)); // FIXME: NullLiteral would make more sense, but is buggy right now. Anything side-effect free is fine.
+
+    PARSE(body, Statement);
+    AST::CodeLocation location(origin->codeLocation,  (*body)->codeLocation());
+
+    auto forLoop = makeUniqueRef<AST::ForLoop>(location, WTFMove(*condition), WTFMove(*increment), WTFMove(*body));
+    AST::Statements statements = Vector<UniqueRef<AST::Statement>>::from(WTFMove(*initialization), WTFMove(forLoop));
+    return AST::Block(location, WTFMove(statements));
 }
 
-auto Parser::parseWhileLoop() -> Expected<AST::WhileLoop, Error>
+auto Parser::parseWhileLoop() -> Expected<AST::ForLoop, Error>
 {
     CONSUME_TYPE(origin, While);
     CONSUME_TYPE(leftParenthesis, LeftParenthesis);
@@ -1195,7 +1197,8 @@ auto Parser::parseWhileLoop() -> Expected<AST::WhileLoop, Error>
     PARSE(body, Statement);
 
     AST::CodeLocation location(origin->codeLocation,  (*body)->codeLocation());
-    return AST::WhileLoop(location, WTFMove(*conditional), WTFMove(*body));
+    auto increment = makeUniqueRef<AST::BooleanLiteral>(*origin, true); // FIXME: NullLiteral would make more sense, but is buggy right now. Anything side-effect free is fine.
+    return AST::ForLoop(location, WTFMove(*conditional), WTFMove(increment), WTFMove(*body));
 }
 
 auto Parser::parseDoWhileLoop() -> Expected<AST::DoWhileLoop, Error>
@@ -1254,7 +1257,7 @@ auto Parser::parseVariableDeclarations() -> Expected<AST::VariableDeclarationsSt
     return AST::VariableDeclarationsStatement({ origin->startOffset(), endOffset }, WTFMove(result));
 }
 
-auto Parser::parseStatement() -> Expected<UniqueRef<AST::Statement>, Error>
+auto Parser::parseStatement(bool allowVariableDeclarations) -> Expected<UniqueRef<AST::Statement>, Error>
 {
     PEEK(token);
     switch (token->type) {
@@ -1272,11 +1275,11 @@ auto Parser::parseStatement() -> Expected<UniqueRef<AST::Statement>, Error>
     }
     case Token::Type::For: {
         PARSE(forLoop, ForLoop);
-        return { makeUniqueRef<AST::ForLoop>(WTFMove(*forLoop)) };
+        return { makeUniqueRef<AST::Block>(WTFMove(*forLoop)) };
     }
     case Token::Type::While: {
         PARSE(whileLoop, WhileLoop);
-        return { makeUniqueRef<AST::WhileLoop>(WTFMove(*whileLoop)) };
+        return { makeUniqueRef<AST::ForLoop>(WTFMove(*whileLoop)) };
     }
     case Token::Type::Do: {
         PARSE(doWhileLoop, DoWhileLoop);
@@ -1346,27 +1349,33 @@ auto Parser::parseStatement() -> Expected<UniqueRef<AST::Statement>, Error>
     }
 
     {
-        auto effectfulExpression = backtrackingScope<Expected<UniqueRef<AST::Expression>, Error>>([&]() -> Expected<UniqueRef<AST::Expression>, Error> {
+        auto effectfulExpressionStatement = backtrackingScope<Expected<UniqueRef<AST::Statement>, Error>>([&]() -> Expected<UniqueRef<AST::Statement>, Error> {
             PARSE(result, EffectfulExpression);
             CONSUME_TYPE(semicolon, Semicolon);
             return result;
         });
-        if (effectfulExpression)
-            return { makeUniqueRef<AST::EffectfulExpressionStatement>(WTFMove(*effectfulExpression)) };
+        if (effectfulExpressionStatement)
+            return effectfulExpressionStatement;
     }
 
-    PARSE(variableDeclarations, VariableDeclarations);
-    CONSUME_TYPE(semicolon, Semicolon);
-    return { makeUniqueRef<AST::VariableDeclarationsStatement>(WTFMove(*variableDeclarations)) };
+    if (allowVariableDeclarations) {
+        PARSE(variableDeclarations, VariableDeclarations);
+        CONSUME_TYPE(semicolon, Semicolon);
+        return { makeUniqueRef<AST::VariableDeclarationsStatement>(WTFMove(*variableDeclarations)) };
+    }
+
+    return Unexpected<Error>("A variable declaration is only valid inside a block");
 }
 
-auto Parser::parseEffectfulExpression() -> Expected<UniqueRef<AST::Expression>, Error>
+auto Parser::parseEffectfulExpression() -> Expected<UniqueRef<AST::Statement>, Error>
 {
     PEEK(origin);
-    Vector<UniqueRef<AST::Expression>> expressions;
-    if (origin->type == Token::Type::Semicolon)
-        return { makeUniqueRef<AST::CommaExpression>(*origin, WTFMove(expressions)) };
+    if (origin->type == Token::Type::Semicolon) {
+        AST::Statements statements;
+        return { makeUniqueRef<AST::Block>(*origin, WTFMove(statements)) };
+    }
 
+    Vector<UniqueRef<AST::Expression>> expressions;
     PARSE(effectfulExpression, EffectfulAssignment);
     expressions.append(WTFMove(*effectfulExpression));
 
@@ -1376,10 +1385,11 @@ auto Parser::parseEffectfulExpression() -> Expected<UniqueRef<AST::Expression>, 
     }
 
     if (expressions.size() == 1)
-        return WTFMove(expressions[0]);
+        return { makeUniqueRef<AST::EffectfulExpressionStatement>(WTFMove(expressions[0])) };
     unsigned endOffset = m_lexer.peek().startOffset();
     AST::CodeLocation location(origin->startOffset(), endOffset);
-    return { makeUniqueRef<AST::CommaExpression>(location, WTFMove(expressions)) };
+    auto expression = makeUniqueRef<AST::CommaExpression>(location, WTFMove(expressions));
+    return { makeUniqueRef<AST::EffectfulExpressionStatement>(WTFMove(expression)) };
 }
 
 auto Parser::parseEffectfulAssignment() -> Expected<UniqueRef<AST::Expression>, Error>

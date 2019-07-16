@@ -111,17 +111,16 @@ whlslTests.returnIf = async () => {
                 return 11;
             }
         `);
-
-    program = `
-        int foo(int x)
-        {
-            int y = 6;
-            if (x == 7)
-                int y = 8;
-            return y;
-        }
-    `;
-    assert_equals(await callIntFunction(program, "foo", [makeInt(7)]), 6);
+    await checkFail(
+        `
+            int foo(int x)
+            {
+                int y = 6;
+                if (x == 7)
+                    int y = 8;
+                return y;
+            }
+        `);
 };
 
 whlslTests.returnReferenceToSameParameter = async () => {

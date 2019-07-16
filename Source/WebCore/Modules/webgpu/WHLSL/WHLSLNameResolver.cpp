@@ -43,7 +43,6 @@
 #include "WHLSLTypeReference.h"
 #include "WHLSLVariableDeclaration.h"
 #include "WHLSLVariableReference.h"
-#include "WHLSLWhileLoop.h"
 
 namespace WebCore {
 
@@ -120,48 +119,33 @@ void NameResolver::visit(AST::IfStatement& ifStatement)
     if (error())
         return;
 
-    {
-        NameContext nameContext(&m_nameContext);
-        NameResolver newNameResolver(*this, nameContext);
-        newNameResolver.checkErrorAndVisit(ifStatement.body());
-    }
+    checkErrorAndVisit(ifStatement.body());
     if (error())
         return;
 
-    if (ifStatement.elseBody()) {
-        NameContext nameContext(&m_nameContext);
-        NameResolver newNameResolver(*this, nameContext);
-        newNameResolver.checkErrorAndVisit(*ifStatement.elseBody());
-    }
-}
-
-void NameResolver::visit(AST::WhileLoop& whileLoop)
-{
-    checkErrorAndVisit(whileLoop.conditional());
-    if (error())
-        return;
-
-    NameContext nameContext(&m_nameContext);
-    NameResolver newNameResolver(*this, nameContext);
-    newNameResolver.checkErrorAndVisit(whileLoop.body());
+    if (ifStatement.elseBody())
+        checkErrorAndVisit(*ifStatement.elseBody());
 }
 
 void NameResolver::visit(AST::DoWhileLoop& whileLoop)
 {
-    {
-        NameContext nameContext(&m_nameContext);
-        NameResolver newNameResolver(*this, nameContext);
-        newNameResolver.checkErrorAndVisit(whileLoop.body());
-    }
+    checkErrorAndVisit(whileLoop.body());
+    if (error())
+        return;
 
     checkErrorAndVisit(whileLoop.conditional());
 }
 
 void NameResolver::visit(AST::ForLoop& forLoop)
 {
-    NameContext nameContext(&m_nameContext);
-    NameResolver newNameResolver(*this, nameContext);
-    newNameResolver.Visitor::visit(forLoop);
+    checkErrorAndVisit(forLoop.condition());
+    if (error())
+        return;
+    checkErrorAndVisit(forLoop.increment());
+    if (error())
+        return;
+
+    checkErrorAndVisit(forLoop.body());
 }
 
 void NameResolver::visit(AST::VariableDeclaration& variableDeclaration)

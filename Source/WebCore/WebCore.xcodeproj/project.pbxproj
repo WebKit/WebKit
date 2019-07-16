@@ -13256,7 +13256,6 @@
 		C21BF70121CD89C400227979 /* WHLSLDereferenceExpression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLDereferenceExpression.h; sourceTree = "<group>"; };
 		C21BF70221CD89C400227979 /* WHLSLEnumerationMemberLiteral.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLEnumerationMemberLiteral.h; sourceTree = "<group>"; };
 		C21BF70321CD89C500227979 /* WHLSLReturn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLReturn.h; sourceTree = "<group>"; };
-		C21BF70421CD89C600227979 /* WHLSLWhileLoop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLWhileLoop.h; sourceTree = "<group>"; };
 		C21BF70521CD89C700227979 /* WHLSLFunctionAttribute.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLFunctionAttribute.h; sourceTree = "<group>"; };
 		C21BF70621CD89C700227979 /* WHLSLCommaExpression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLCommaExpression.h; sourceTree = "<group>"; };
 		C21BF70721CD89C800227979 /* WHLSLNullLiteral.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLNullLiteral.h; sourceTree = "<group>"; };
@@ -17132,7 +17131,6 @@
 				C21BF71021CD89D000227979 /* WHLSLVariableDeclaration.h */,
 				C21BF71421CD89D300227979 /* WHLSLVariableDeclarationsStatement.h */,
 				C21BF71321CD89D200227979 /* WHLSLVariableReference.h */,
-				C21BF70421CD89C600227979 /* WHLSLWhileLoop.h */,
 			);
 			path = AST;
 			sourceTree = "<group>";
