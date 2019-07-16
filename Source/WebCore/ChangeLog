@@ -1,3 +1,20 @@
+2019-07-16  Youenn Fablet  <youenn@apple.com>
+
+        [iOS] Make sure the first camera device in the list is the front camera
+        https://bugs.webkit.org/show_bug.cgi?id=199811
+        <rdar://problem/53125157>
+
+        Reviewed by Jer Noble.
+
+        Some websites call getUserMedia with a deviceId constraint and theey pick the
+        first deviceId in the list provided by enumerateDevices.
+        On iOS, this is the back camera which is often not what is expected by WebRTC applications.
+        Instead, make sure the first camera device is the front camera.
+
+        Manually tested.
+
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+
 2019-07-16  Chris Dumez  <cdumez@apple.com>
 
         Speed up StorageManager::getValues()
