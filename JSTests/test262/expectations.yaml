@@ -882,8 +882,201 @@ test/built-ins/Date/prototype/toUTCString/negative-year.js:
 test/built-ins/Error/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«ErrorÂ», Â«ErrorÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«ErrorÂ», Â«ErrorÂ») to be true'
-test/built-ins/Function/StrictFunction_restricted-properties.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/Symbol.toStringTag.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-job-not-active-throws.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-length.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-missing-internal-throws.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-name.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-not-object-throws.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-prop-desc.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/proto.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/constructor.js:
+  default: 'Test262Error: typeof FinalizationGroup is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+  strict mode: 'Test262Error: typeof FinalizationGroup is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+test/built-ins/FinalizationGroup/gc-has-one-chance-to-call-cleanupCallback.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/instance-extensible.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/length.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/name.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/newtarget-prototype-is-not-object.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prop-desc.js:
+  default: 'Test262Error: obj should have an own property FinalizationGroup'
+  strict mode: 'Test262Error: obj should have an own property FinalizationGroup'
+test/built-ins/FinalizationGroup/proto-from-ctor-realm.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/proto.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype-from-newtarget-abrupt.js:
+  default: 'Test262Error: Expected a Test262Error but got a ReferenceError'
+  strict mode: 'Test262Error: Expected a Test262Error but got a ReferenceError'
+test/built-ins/FinalizationGroup/prototype-from-newtarget-custom.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype-from-newtarget.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/Symbol.toStringTag.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/cleanupSome/callback-iterator-proto.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/cleanupSome/callback-not-callable-throws.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/cleanupSome/cleanup-prevented-with-reference.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/cleanupSome/cleanup-prevented-with-unregister.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/cleanupSome/cleanupcallback-iterator-proto.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/cleanupSome/custom-this.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/cleanupSome/gc-cleanup-not-prevented-with-wr-deref.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/cleanupSome/iterator-dynamic.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/cleanupSome/iterator-holdings-multiple-values.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/cleanupSome/length.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/cleanupSome/name.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/cleanupSome/prop-desc.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/cleanupSome/this-does-not-have-internal-cells-throws.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/cleanupSome/this-not-object-throws.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/constructor.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/prop-desc.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/proto.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/register/custom-this.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/register/holdings-any-value-type.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/register/holdings-same-as-target.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/register/length.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/register/name.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/register/prop-desc.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/register/return-undefined-register-itself.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/register/return-undefined.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/register/target-not-object-throws.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/register/this-does-not-have-internal-target-throws.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/register/this-not-object-throws.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/register/unregisterToken-not-object-or-undefined-throws.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/register/unregisterToken-same-as-holdings-and-target.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/register/unregisterToken-same-as-holdings.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/register/unregisterToken-same-as-target.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/unregister/custom-this.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/unregister/length.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/unregister/name.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/unregister/prop-desc.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/unregister/this-does-not-have-internal-cells-throws.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/unregister/this-not-object-throws.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/unregister/unregister.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/prototype/unregister/unregisterToken-not-object-throws.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/returns-new-object-from-constructor.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
+test/built-ins/FinalizationGroup/target-not-callable-throws.js:
+  default: 'Test262Error: typeof FinalizationGroup is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+  strict mode: 'Test262Error: typeof FinalizationGroup is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+test/built-ins/FinalizationGroup/undefined-newtarget-throws.js:
+  default: 'Test262Error: typeof FinalizationGroup is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+  strict mode: 'Test262Error: typeof FinalizationGroup is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+test/built-ins/FinalizationGroup/unnaffected-by-poisoned-cleanupCallback.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
 test/built-ins/Function/call-bind-this-realm-undef.js:
   default: 'Test262Error: implicit undefined Expected SameValue(Â«[object global]Â», Â«[object Undefined]Â») to be true'
   strict mode: 'Test262Error: implicit undefined Expected SameValue(Â«[object global]Â», Â«[object Undefined]Â») to be true'
@@ -911,12 +1104,6 @@ test/built-ins/Function/prototype/bind/length-exceeds-int32.js:
 test/built-ins/Function/prototype/bind/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
-test/built-ins/Function/prototype/restricted-property-arguments.js:
-  default: "ReferenceError: Can't find variable: verifyNotEnumerable"
-  strict mode: "ReferenceError: Can't find variable: verifyNotEnumerable"
-test/built-ins/Function/prototype/restricted-property-caller.js:
-  default: "ReferenceError: Can't find variable: verifyNotEnumerable"
-  strict mode: "ReferenceError: Can't find variable: verifyNotEnumerable"
 test/built-ins/Function/prototype/toString/AsyncFunction.js:
   default: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
   strict mode: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
@@ -1083,12 +1270,21 @@ test/built-ins/Object/proto-from-ctor.js:
 test/built-ins/Object/prototype/toString/proxy-function.js:
   default: 'Test262Error: function proxy Expected SameValue(Â«[object Object]Â», Â«[object Function]Â») to be true'
   strict mode: 'Test262Error: function proxy Expected SameValue(Â«[object Object]Â», Â«[object Function]Â») to be true'
-test/built-ins/Object/subclass-object-arg.js:
-  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«1Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«1Â») to be true'
+test/built-ins/Object/prototype/toString/symbol-tag-non-str-builtin.js:
+  default: 'Test262Error: Expected SameValue(Â«[object Math]Â», Â«[object Object]Â») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«[object Math]Â», Â«[object Object]Â») to be true'
+test/built-ins/Object/prototype/toString/symbol-tag-non-str-proxy-function.js:
+  default: 'Test262Error: generator function proxy without Symbol.toStringTag Expected SameValue(Â«[object Object]Â», Â«[object Function]Â») to be true'
+  strict mode: 'Test262Error: generator function proxy without Symbol.toStringTag Expected SameValue(Â«[object Object]Â», Â«[object Function]Â») to be true'
+test/built-ins/Promise/all/invoke-resolve-get-error-close.js:
+  default: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
 test/built-ins/Promise/all/resolve-element-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Promise/allSettled/invoke-resolve-get-error-close.js:
+  default: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
 test/built-ins/Promise/allSettled/reject-element-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -1101,6 +1297,9 @@ test/built-ins/Promise/get-prototype-abrupt-executor-not-callable.js:
 test/built-ins/Promise/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object Promise]Â», Â«[object Promise]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Promise]Â», Â«[object Promise]Â») to be true'
+test/built-ins/Promise/race/invoke-resolve-get-error-close.js:
+  default: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
 test/built-ins/Promise/reject-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -1787,6 +1986,15 @@ test/built-ins/TypedArrayConstructors/of/new-instance-using-custom-ctor.js:
 test/built-ins/WeakMap/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object WeakMap]Â», Â«[object WeakMap]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object WeakMap]Â», Â«[object WeakMap]Â») to be true'
+test/built-ins/WeakRef/proto-from-ctor-realm.js:
+  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object WeakRef]Â», Â«[object WeakRef]Â») to be true'
+  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object WeakRef]Â», Â«[object WeakRef]Â») to be true'
+test/built-ins/WeakRef/prototype/deref/gc-cleanup-not-prevented-with-wr-deref.js:
+  default: "TypeError: $262.gc is not a function. (In '$262.gc()', '$262.gc' is undefined)"
+  strict mode: "TypeError: $262.gc is not a function. (In '$262.gc()', '$262.gc' is undefined)"
+test/built-ins/WeakRef/prototype/deref/this-does-not-have-internal-target-throws.js:
+  default: "ReferenceError: Can't find variable: FinalizationGroup"
+  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
 test/built-ins/WeakSet/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object WeakSet]Â», Â«[object WeakSet]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object WeakSet]Â», Â«[object WeakSet]Â») to be true'
@@ -1817,15 +2025,6 @@ test/intl402/DateTimeFormat/constructor-options-order-dayPeriod.js:
 test/intl402/DateTimeFormat/constructor-options-order-fractionalSecondDigits.js:
   default: 'Test262Error: Expected [second, localeMatcher, second, timeZoneName, formatMatcher] and [second, fractionalSecondDigits, localeMatcher, second, timeZoneName, fractionalSecondDigits, formatMatcher] to have the same contents. undefined'
   strict mode: 'Test262Error: Expected [second, localeMatcher, second, timeZoneName, formatMatcher] and [second, fractionalSecondDigits, localeMatcher, second, timeZoneName, fractionalSecondDigits, formatMatcher] to have the same contents. undefined'
-test/intl402/DateTimeFormat/constructor-options-order-quarter.js:
-  default: 'Test262Error: Expected [year, month, year, month] and [year, quarter, month, year, quarter, month] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected [year, month, year, month] and [year, quarter, month, year, quarter, month] to have the same contents. undefined'
-test/intl402/DateTimeFormat/constructor-options-quarter-invalid.js:
-  default: 'Test262Error: new Intl.DateTimeFormat("en", { quarter: "" }) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: new Intl.DateTimeFormat("en", { quarter: "" }) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/DateTimeFormat/constructor-options-quarter-valid.js:
-  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«longÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«longÂ») to be true'
 test/intl402/DateTimeFormat/constructor-options-throwing-getters-dayPeriod.js:
   default: 'Test262Error: Exception from dayPeriod getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Exception from dayPeriod getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
@@ -1838,18 +2037,39 @@ test/intl402/DateTimeFormat/constructor-options-throwing-getters-quarter.js:
 test/intl402/DateTimeFormat/numbering-system-calendar-options.js:
   default: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(Â«arabÂ», Â«latnÂ») to be true"
   strict mode: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(Â«arabÂ», Â«latnÂ») to be true"
+test/intl402/DateTimeFormat/prototype/format/dayPeriod-long-en.js:
+  default: 'Test262Error: 00:00, long format Expected SameValue(Â«12/12/2017Â», Â«at nightÂ») to be true'
+  strict mode: 'Test262Error: 00:00, long format Expected SameValue(Â«12/12/2017Â», Â«at nightÂ») to be true'
+test/intl402/DateTimeFormat/prototype/format/dayPeriod-narrow-en.js:
+  default: 'Test262Error: 00:00, narrow format Expected SameValue(Â«12/12/2017Â», Â«at nightÂ») to be true'
+  strict mode: 'Test262Error: 00:00, narrow format Expected SameValue(Â«12/12/2017Â», Â«at nightÂ») to be true'
+test/intl402/DateTimeFormat/prototype/format/dayPeriod-short-en.js:
+  default: 'Test262Error: 00:00, short format Expected SameValue(Â«12/12/2017Â», Â«at nightÂ») to be true'
+  strict mode: 'Test262Error: 00:00, short format Expected SameValue(Â«12/12/2017Â», Â«at nightÂ») to be true'
 test/intl402/DateTimeFormat/prototype/format/format-function-name.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
+test/intl402/DateTimeFormat/prototype/format/fractionalSecondDigits.js:
+  default: 'Test262Error: 1 fractionalSecondDigits round down Expected SameValue(Â«02:03Â», Â«02:03.2Â») to be true'
+  strict mode: 'Test262Error: 1 fractionalSecondDigits round down Expected SameValue(Â«02:03Â», Â«02:03.2Â») to be true'
+test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-long-en.js:
+  default: 'Test262Error: length should be 1, 00:00, long format Expected SameValue(Â«5Â», Â«1Â») to be true'
+  strict mode: 'Test262Error: length should be 1, 00:00, long format Expected SameValue(Â«5Â», Â«1Â») to be true'
+test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-narrow-en.js:
+  default: 'Test262Error: length should be 1, 00:00, narrow format Expected SameValue(Â«5Â», Â«1Â») to be true'
+  strict mode: 'Test262Error: length should be 1, 00:00, narrow format Expected SameValue(Â«5Â», Â«1Â») to be true'
+test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-short-en.js:
+  default: 'Test262Error: length should be 1, 00:00, short format Expected SameValue(Â«5Â», Â«1Â») to be true'
+  strict mode: 'Test262Error: length should be 1, 00:00, short format Expected SameValue(Â«5Â», Â«1Â») to be true'
+test/intl402/DateTimeFormat/prototype/formatToParts/fractionalSecondDigits.js:
+  default: 'Test262Error: length should be 5, 1 fractionalSecondDigits round down Expected SameValue(Â«3Â», Â«5Â») to be true'
+  strict mode: 'Test262Error: length should be 5, 1 fractionalSecondDigits round down Expected SameValue(Â«3Â», Â«5Â») to be true'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/order-dayPeriod.js:
   default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, hour, hourCycle, hour12, minute] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, dayPeriod, hour, minute] to have the same contents. undefined'
   strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, hour, hourCycle, hour12, minute] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, dayPeriod, hour, minute] to have the same contents. undefined'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/order-fractionalSecondDigits.js:
   default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, minute, second] and [locale, calendar, numberingSystem, timeZone, minute, second, fractionalSecondDigits] to have the same contents. undefined'
   strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, minute, second] and [locale, calendar, numberingSystem, timeZone, minute, second, fractionalSecondDigits] to have the same contents. undefined'
-test/intl402/DateTimeFormat/prototype/resolvedOptions/order-quarter.js:
-  default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, year, month, day] and [locale, calendar, numberingSystem, timeZone, year, quarter, month, day] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, year, month, day] and [locale, calendar, numberingSystem, timeZone, year, quarter, month, day] to have the same contents. undefined'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/order.js:
   default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, weekday, era, year, month, day, hour, hourCycle, hour12, minute, second, timeZoneName] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, weekday, era, year, month, day, hour, minute, second, timeZoneName] to have the same contents. undefined'
   strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, weekday, era, year, month, day, hour, hourCycle, hour12, minute, second, timeZoneName] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, weekday, era, year, month, day, hour, minute, second, timeZoneName] to have the same contents. undefined'
@@ -1871,6 +2091,9 @@ test/intl402/NumberFormat/prototype/format/format-negative-numbers.js:
 test/intl402/NumberFormat/prototype/resolvedOptions/order.js:
   default: 'Test262Error: Expected [locale, numberingSystem, style, currency, currencyDisplay, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, useGrouping] and [locale, numberingSystem, style, currency, currencyDisplay, minimumIntegerDigits, minimumSignificantDigits, maximumSignificantDigits, useGrouping] to have the same contents. undefined'
   strict mode: 'Test262Error: Expected [locale, numberingSystem, style, currency, currencyDisplay, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, useGrouping] and [locale, numberingSystem, style, currency, currencyDisplay, minimumIntegerDigits, minimumSignificantDigits, maximumSignificantDigits, useGrouping] to have the same contents. undefined'
+test/intl402/fallback-locales-are-supported.js:
+  default: "Test262Error: Locale zh-Hans-CN is supported, but fallback zh-Hans isn't. Expected SameValue(Â«-1Â», Â«-1Â») to be false (Testing with Collator.)"
+  strict mode: "Test262Error: Locale zh-Hans-CN is supported, but fallback zh-Hans isn't. Expected SameValue(Â«-1Â», Â«-1Â») to be false (Testing with Collator.)"
 test/intl402/supportedLocalesOf-returned-array-elements-are-not-frozen.js:
   default: 'Test262Error: Property 0 of object returned by SupportedLocales is not writable. Expected SameValue(Â«falseÂ», Â«trueÂ») to be true (Testing with Collator.)'
   strict mode: 'Test262Error: Property 0 of object returned by SupportedLocales is not writable. Expected SameValue(Â«falseÂ», Â«trueÂ») to be true (Testing with Collator.)'
@@ -2190,6 +2413,9 @@ test/language/expressions/class/elements/syntax/valid/grammar-static-ctor-gen-me
 test/language/expressions/class/name.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
+test/language/expressions/class/poisoned-underscore-proto.js:
+  default: 'Test262Error: should not be called'
+  strict mode: 'Test262Error: should not be called'
 test/language/expressions/compound-assignment/S11.13.2_A5.10_T1.js:
   default: "ReferenceError: Can't find variable: x"
 test/language/expressions/compound-assignment/S11.13.2_A5.10_T2.js:
@@ -2472,9 +2698,15 @@ test/language/expressions/prefix-increment/S11.4.4_A5_T5.js:
 test/language/expressions/prefix-increment/S11.4.4_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
+test/language/expressions/super/call-poisoned-underscore-proto.js:
+  default: 'Test262Error: should not be called'
+  strict mode: 'Test262Error: should not be called'
 test/language/expressions/super/call-proto-not-ctor.js:
   default: 'Test262Error: did not perform ArgumentsListEvaluation Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: did not perform ArgumentsListEvaluation Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
+test/language/expressions/super/prop-poisoned-underscore-proto.js:
+  default: 'Test262Error: should not be called'
+  strict mode: 'Test262Error: should not be called'
 test/language/expressions/yield/star-iterable.js:
   default: 'Test262Error: First result `done` flag Expected SameValue(Â«falseÂ», Â«undefinedÂ») to be true'
   strict mode: 'Test262Error: First result `done` flag Expected SameValue(Â«falseÂ», Â«undefinedÂ») to be true'
@@ -2639,6 +2871,9 @@ test/language/statements/class/elements/syntax/valid/grammar-static-ctor-async-m
 test/language/statements/class/elements/syntax/valid/grammar-static-ctor-gen-meth-valid.js:
   default: "SyntaxError: Cannot declare a generator function named 'constructor'."
   strict mode: "SyntaxError: Cannot declare a generator function named 'constructor'."
+test/language/statements/class/poisoned-underscore-proto.js:
+  default: 'Test262Error: should not be called'
+  strict mode: 'Test262Error: should not be called'
 test/language/statements/class/subclass/bound-function.js:
   default: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'

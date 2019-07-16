@@ -1,4 +1,5 @@
-// Copyright (C) 2012-2019 Mozilla Corporation, Igalia S.L. All rights reserved.
+// Copyright 2012 Mozilla Corporation. All rights reserved.
+// Copyright 2019 Igalia S.L. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---

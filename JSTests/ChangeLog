@@ -1,3 +1,507 @@
+2019-07-15  Keith Miller  <keith_miller@apple.com>
+
+        Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=199801
+
+        Rubber-stamped by Yusuke Suzuki.
+
+        * test262/expectations.yaml:
+        * test262/latest-changes-summary.txt:
+        * test262/test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/Symbol.toStringTag.js: Added.
+        (fg.new.FinalizationGroup):
+        (callback):
+        * test262/test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-job-not-active-throws.js: Added.
+        (fg.new.FinalizationGroup):
+        (callback):
+        * test262/test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-length.js: Added.
+        (fg.new.FinalizationGroup):
+        (callback):
+        * test262/test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-missing-internal-throws.js: Added.
+        (fg.new.FinalizationGroup):
+        (callback):
+        * test262/test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-name.js: Added.
+        (fg.new.FinalizationGroup):
+        (callback):
+        * test262/test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-not-object-throws.js: Added.
+        (fg.new.FinalizationGroup):
+        (callback):
+        * test262/test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-prop-desc.js: Added.
+        (fg.new.FinalizationGroup):
+        (callback):
+        * test262/test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/proto.js: Added.
+        (callback):
+        (fg.new.FinalizationGroup):
+        * test262/test/built-ins/FinalizationGroup/constructor.js: Added.
+        * test262/test/built-ins/FinalizationGroup/gc-has-one-chance-to-call-cleanupCallback.js: Added.
+        (cb):
+        (fg.new.FinalizationGroup):
+        (emptyCells):
+        (async.fn):
+        (fn.then.async):
+        * test262/test/built-ins/FinalizationGroup/instance-extensible.js: Added.
+        (fg.new.FinalizationGroup):
+        * test262/test/built-ins/FinalizationGroup/length.js: Added.
+        * test262/test/built-ins/FinalizationGroup/name.js: Added.
+        * test262/test/built-ins/FinalizationGroup/newtarget-prototype-is-not-object.js: Added.
+        (newTarget):
+        (fn):
+        * test262/test/built-ins/FinalizationGroup/prop-desc.js: Added.
+        * test262/test/built-ins/FinalizationGroup/proto-from-ctor-realm.js: Added.
+        (fn):
+        * test262/test/built-ins/FinalizationGroup/proto.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype-from-newtarget-abrupt.js: Added.
+        (newTarget):
+        * test262/test/built-ins/FinalizationGroup/prototype-from-newtarget-custom.js: Added.
+        (newTarget):
+        * test262/test/built-ins/FinalizationGroup/prototype-from-newtarget.js: Added.
+        (fg.new.FinalizationGroup):
+        * test262/test/built-ins/FinalizationGroup/prototype/Symbol.toStringTag.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/callback-iterator-proto.js: Added.
+        (callback):
+        (fg.new.FinalizationGroup):
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/callback-not-callable-throws.js: Added.
+        (fg.new.FinalizationGroup):
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/cleanup-prevented-with-reference.js: Added.
+        (cb):
+        (fg.new.FinalizationGroup):
+        (emptyCells):
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/cleanup-prevented-with-unregister.js: Added.
+        (fg.new.FinalizationGroup):
+        (fg.cleanupSome.cb):
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/cleanupcallback-iterator-proto.js: Added.
+        (callback):
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/custom-this.js: Added.
+        (fn):
+        (cb):
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/gc-cleanup-not-prevented-with-wr-deref.js: Added.
+        (cb):
+        (fg.new.FinalizationGroup):
+        (emptyCells):
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/iterator-dynamic.js: Added.
+        (fg.new.FinalizationGroup):
+        (callback):
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/iterator-holdings-multiple-values.js: Added.
+        (fg.new.FinalizationGroup):
+        (callback):
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/length.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/name.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/poisoned-callback-throws.js: Added.
+        (poisoned):
+        (fg.new.FinalizationGroup):
+        (emptyCells):
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/poisoned-cleanup-callback-throws.js: Added.
+        (poisoned):
+        (emptyCells):
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/prop-desc.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/return-undefined-with-gc.js: Added.
+        (fn):
+        (cb):
+        (emptyCells):
+        (prototype.assert.sameValue.fg.cleanupSome):
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/return-undefined.js: Added.
+        (fn):
+        (cb):
+        (poisoned):
+        (assert.sameValue.fg.cleanupSome):
+        (prototype.assert.sameValue.fg.cleanupSome):
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/this-does-not-have-internal-cells-throws.js: Added.
+        (cb):
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/this-not-object-throws.js: Added.
+        (cb):
+        * test262/test/built-ins/FinalizationGroup/prototype/constructor.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/prop-desc.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/proto.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/register/custom-this.js: Added.
+        (fn):
+        * test262/test/built-ins/FinalizationGroup/prototype/register/holdings-any-value-type.js: Added.
+        (fn):
+        * test262/test/built-ins/FinalizationGroup/prototype/register/holdings-same-as-target.js: Added.
+        (fg.new.FinalizationGroup):
+        * test262/test/built-ins/FinalizationGroup/prototype/register/length.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/register/name.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/register/prop-desc.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/register/return-undefined-register-itself.js: Added.
+        (fn):
+        * test262/test/built-ins/FinalizationGroup/prototype/register/return-undefined.js: Added.
+        (fn):
+        * test262/test/built-ins/FinalizationGroup/prototype/register/target-not-object-throws.js: Added.
+        (fg.new.FinalizationGroup):
+        * test262/test/built-ins/FinalizationGroup/prototype/register/this-does-not-have-internal-target-throws.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/register/this-not-object-throws.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/register/unregisterToken-not-object-or-undefined-throws.js: Added.
+        (fg.new.FinalizationGroup):
+        * test262/test/built-ins/FinalizationGroup/prototype/register/unregisterToken-same-as-holdings-and-target.js: Added.
+        (fg.new.FinalizationGroup):
+        * test262/test/built-ins/FinalizationGroup/prototype/register/unregisterToken-same-as-holdings.js: Added.
+        (fg.new.FinalizationGroup):
+        * test262/test/built-ins/FinalizationGroup/prototype/register/unregisterToken-same-as-target.js: Added.
+        (fg.new.FinalizationGroup):
+        * test262/test/built-ins/FinalizationGroup/prototype/unregister/custom-this.js: Added.
+        (fn):
+        * test262/test/built-ins/FinalizationGroup/prototype/unregister/length.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/unregister/name.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/unregister/prop-desc.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/unregister/this-does-not-have-internal-cells-throws.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/unregister/this-not-object-throws.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/unregister/unregister.js: Added.
+        (fn):
+        * test262/test/built-ins/FinalizationGroup/prototype/unregister/unregisterToken-not-object-throws.js: Added.
+        (fg.new.FinalizationGroup):
+        * test262/test/built-ins/FinalizationGroup/returns-new-object-from-constructor.js: Added.
+        (cleanupCallback):
+        (let.key.of.Object.getOwnPropertyNames):
+        (set for):
+        * test262/test/built-ins/FinalizationGroup/target-not-callable-throws.js: Added.
+        * test262/test/built-ins/FinalizationGroup/undefined-newtarget-throws.js: Added.
+        (FinalizationGroup):
+        * test262/test/built-ins/FinalizationGroup/unnaffected-by-poisoned-cleanupCallback.js: Added.
+        (cleanupCallback):
+        (let.key.of.Object.getOwnPropertyNames):
+        (set for):
+        * test262/test/built-ins/Function/StrictFunction_restricted-properties.js:
+        * test262/test/built-ins/Function/prototype/bind/BoundFunction_restricted-properties.js:
+        * test262/test/built-ins/Function/prototype/restricted-property-arguments.js:
+        * test262/test/built-ins/Function/prototype/restricted-property-caller.js:
+        * test262/test/built-ins/Object/prototype/toString/proxy-function-async.js: Added.
+        (asyncProxy.new.Proxy.async):
+        * test262/test/built-ins/Object/prototype/toString/proxy-function.js:
+        (asyncProxy.new.Proxy.async):
+        * test262/test/built-ins/Object/prototype/toString/symbol-tag-non-str-builtin.js: Added.
+        (setIter.set Symbol):
+        (set defaultTag):
+        (gen):
+        (get return):
+        (set new):
+        * test262/test/built-ins/Object/prototype/toString/symbol-tag-non-str-proxy-function.js: Added.
+        (generatorProxy.new.Proxy):
+        (asyncProxy.new.Proxy.async):
+        * test262/test/built-ins/Object/subclass-object-arg.js:
+        * test262/test/built-ins/Promise/all/invoke-resolve-get-error-close.js:
+        * test262/test/built-ins/Promise/all/resolve-element-function-name.js:
+        * test262/test/built-ins/Promise/allSettled/invoke-resolve-get-error-close.js:
+        * test262/test/built-ins/Promise/allSettled/reject-element-function-name.js:
+        * test262/test/built-ins/Promise/allSettled/resolve-element-function-name.js:
+        * test262/test/built-ins/Promise/executor-function-name.js:
+        * test262/test/built-ins/Promise/race/invoke-resolve-get-error-close.js:
+        * test262/test/built-ins/Promise/reject-function-name.js:
+        * test262/test/built-ins/Promise/resolve-function-name.js:
+        * test262/test/built-ins/Set/prototype/values/does-not-have-setdata-internal-slot-weakset.js:
+        * test262/test/built-ins/WeakRef/constructor.js: Added.
+        * test262/test/built-ins/WeakRef/instance-extensible.js: Added.
+        * test262/test/built-ins/WeakRef/length.js: Added.
+        * test262/test/built-ins/WeakRef/name.js: Added.
+        * test262/test/built-ins/WeakRef/newtarget-prototype-is-not-object.js: Added.
+        (newTarget):
+        * test262/test/built-ins/WeakRef/prop-desc.js: Added.
+        * test262/test/built-ins/WeakRef/proto-from-ctor-realm.js: Added.
+        * test262/test/built-ins/WeakRef/proto.js: Added.
+        * test262/test/built-ins/WeakRef/prototype-from-newtarget-abrupt.js: Added.
+        (newTarget):
+        * test262/test/built-ins/WeakRef/prototype-from-newtarget-custom.js: Added.
+        (newTarget):
+        * test262/test/built-ins/WeakRef/prototype-from-newtarget.js: Added.
+        * test262/test/built-ins/WeakRef/prototype/Symbol.toStringTag.js: Added.
+        * test262/test/built-ins/WeakRef/prototype/constructor.js: Added.
+        * test262/test/built-ins/WeakRef/prototype/deref/custom-this.js: Added.
+        * test262/test/built-ins/WeakRef/prototype/deref/gc-cleanup-not-prevented-with-wr-deref.js: Added.
+        (emptyCells):
+        * test262/test/built-ins/WeakRef/prototype/deref/length.js: Added.
+        * test262/test/built-ins/WeakRef/prototype/deref/name.js: Added.
+        * test262/test/built-ins/WeakRef/prototype/deref/prop-desc.js: Added.
+        * test262/test/built-ins/WeakRef/prototype/deref/return-target.js: Added.
+        * test262/test/built-ins/WeakRef/prototype/deref/this-does-not-have-internal-target-throws.js: Added.
+        (fg.new.FinalizationGroup):
+        * test262/test/built-ins/WeakRef/prototype/deref/this-not-object-throws.js: Added.
+        * test262/test/built-ins/WeakRef/prototype/prop-desc.js: Added.
+        * test262/test/built-ins/WeakRef/prototype/proto.js: Added.
+        * test262/test/built-ins/WeakRef/returns-new-object-from-constructor.js: Added.
+        (let.key.of.Object.getOwnPropertyNames):
+        (set for):
+        * test262/test/built-ins/WeakRef/target-not-object-throws.js: Added.
+        * test262/test/built-ins/WeakRef/undefined-newtarget-throws.js: Added.
+        * test262/test/intl402/BigInt/prototype/toLocaleString/builtin.js:
+        * test262/test/intl402/BigInt/prototype/toLocaleString/default-options-object-prototype.js:
+        * test262/test/intl402/BigInt/prototype/toLocaleString/length.js:
+        * test262/test/intl402/BigInt/prototype/toLocaleString/returns-same-results-as-NumberFormat.js:
+        * test262/test/intl402/BigInt/prototype/toLocaleString/taint-Intl-NumberFormat.js:
+        * test262/test/intl402/BigInt/prototype/toLocaleString/this-value-invalid.js:
+        * test262/test/intl402/BigInt/prototype/toLocaleString/throws-same-exceptions-as-NumberFormat.js:
+        * test262/test/intl402/DateTimeFormat/constructor-options-order-quarter.js: Removed.
+        * test262/test/intl402/DateTimeFormat/constructor-options-quarter-invalid.js: Removed.
+        * test262/test/intl402/DateTimeFormat/constructor-options-quarter-valid.js: Removed.
+        * test262/test/intl402/DateTimeFormat/prototype/format/dayPeriod-long-en.js: Added.
+        * test262/test/intl402/DateTimeFormat/prototype/format/dayPeriod-narrow-en.js: Added.
+        * test262/test/intl402/DateTimeFormat/prototype/format/dayPeriod-short-en.js: Added.
+        * test262/test/intl402/DateTimeFormat/prototype/format/fractionalSecondDigits.js: Added.
+        * test262/test/intl402/DateTimeFormat/prototype/formatRange/argument-date-string.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRange/argument-near-time-boundaries.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRange/argument-to-integer.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRange/builtin.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRange/prop-desc.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRangeToParts/argument-date-string.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRangeToParts/argument-near-time-boundaries.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRangeToParts/argument-to-integer.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRangeToParts/builtin.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRangeToParts/prop-desc.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-long-en.js: Added.
+        (assertParts):
+        (assertPartsNumeric):
+        * test262/test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-narrow-en.js: Added.
+        (assertParts):
+        (assertPartsNumeric):
+        * test262/test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-short-en.js: Added.
+        (assertParts):
+        (assertPartsNumeric):
+        * test262/test/intl402/DateTimeFormat/prototype/formatToParts/fractionalSecondDigits.js: Added.
+        (assertParts):
+        * test262/test/intl402/DateTimeFormat/prototype/resolvedOptions/order-quarter.js: Removed.
+        * test262/test/intl402/DateTimeFormat/taint-Object-prototype-quarter.js: Removed.
+        * test262/test/intl402/RelativeTimeFormat/prototype/format/en-us-numeric-auto.js:
+        * test262/test/intl402/RelativeTimeFormat/prototype/formatToParts/en-us-numeric-auto.js:
+        * test262/test/language/expressions/arrow-function/ArrowFunction_restricted-properties.js:
+        * test262/test/language/expressions/class/elements/private-field-access-on-inner-arrow-function.js: Added.
+        (C.prototype.method):
+        * test262/test/language/expressions/class/elements/private-field-access-on-inner-function.js: Added.
+        (C.prototype.method.innerFunction):
+        (C.prototype.method):
+        * test262/test/language/expressions/class/elements/private-getter-access-on-inner-arrow-function.js: Added.
+        (C):
+        (C.method):
+        * test262/test/language/expressions/class/elements/private-getter-access-on-inner-function.js: Added.
+        (C):
+        (C.method.innerFunction):
+        (C.method):
+        * test262/test/language/expressions/class/elements/private-getter-is-not-a-own-property.js: Added.
+        (C):
+        (C.checkPrivateGetter):
+        * test262/test/language/expressions/class/elements/private-method-access-on-inner-arrow-function.js: Added.
+        (C):
+        (C.method):
+        * test262/test/language/expressions/class/elements/private-method-access-on-inner-function.js: Added.
+        (C):
+        (C.method.innerFunction):
+        (C.method):
+        * test262/test/language/expressions/class/elements/private-method-is-not-a-own-property.js: Added.
+        (C):
+        (C.checkPrivateMethod):
+        * test262/test/language/expressions/class/elements/private-setter-access-on-inner-arrow-function.js: Added.
+        (C):
+        (C.method):
+        * test262/test/language/expressions/class/elements/private-setter-access-on-inner-function.js: Added.
+        (C):
+        (C.method.innerFunction):
+        (C.method):
+        * test262/test/language/expressions/class/elements/private-setter-is-not-a-own-property.js: Added.
+        (C):
+        (C.checkPrivateSetter):
+        * test262/test/language/expressions/class/elements/prod-private-getter-before-super-return-in-field-initializer.js:
+        * test262/test/language/expressions/class/elements/prod-private-method-before-super-return-in-field-initializer.js:
+        * test262/test/language/expressions/class/elements/prod-private-setter-before-super-return-in-field-initializer.js:
+        * test262/test/language/expressions/class/poisoned-underscore-proto.js: Added.
+        * test262/test/language/expressions/class/private-getter-brand-check-multiple-evaluations-of-class-eval-indirect.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (let.classStringExpression):
+        (let.classStringExpression.access):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/class/private-getter-brand-check-multiple-evaluations-of-class-eval.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (let.classStringExpression):
+        (let.classStringExpression.access):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/class/private-getter-brand-check-multiple-evaluations-of-class-factory.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (const.C):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/class/private-getter-brand-check-multiple-evaluations-of-class-function-ctor.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (let.classStringExpression.return.prototype.m):
+        (let.classStringExpression.return.prototype.access):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/class/private-getter-brand-check-multiple-evaluations-of-class-realm-function-ctor.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (let.classStringExpression.return.prototype.m):
+        (let.classStringExpression.return.prototype.access):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/class/private-getter-brand-check-multiple-evaluations-of-class-realm.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (let.classStringExpression):
+        (let.classStringExpression.access):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/class/private-method-brand-check-multiple-evaluations-of-class-eval-indirect.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (let.classStringExpression.prototype.m):
+        (let.classStringExpression.prototype.access):
+        (let.classStringExpression):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/class/private-method-brand-check-multiple-evaluations-of-class-eval.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (let.classStringExpression.prototype.m):
+        (let.classStringExpression.prototype.access):
+        (let.classStringExpression):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/class/private-method-brand-check-multiple-evaluations-of-class-factory.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (const.C):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/class/private-method-brand-check-multiple-evaluations-of-class-function-ctor.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (let.classStringExpression.return.C.prototype.m):
+        (let.classStringExpression.return.C.prototype.access):
+        (let.classStringExpression.return.C):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/class/private-method-brand-check-multiple-evaluations-of-class-realm-function-ctor.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (let.classStringExpression.return.C.prototype.m):
+        (let.classStringExpression.return.C.prototype.access):
+        (let.classStringExpression.return.C):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/class/private-method-brand-check-multiple-evaluations-of-class-realm.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (let.classStringExpression):
+        (let.classStringExpression.access):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/class/private-setter-brand-check-multiple-evaluations-of-class-eval-indirect.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (let.classStringExpression):
+        (let.classStringExpression.access):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/class/private-setter-brand-check-multiple-evaluations-of-class-eval.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (let.classStringExpression):
+        (let.classStringExpression.access):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/class/private-setter-brand-check-multiple-evaluations-of-class-factory.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (const.C):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/class/private-setter-brand-check-multiple-evaluations-of-class-function-ctor.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (let.classStringExpression.return.prototype.m):
+        (let.classStringExpression.return.prototype.access):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/class/private-setter-brand-check-multiple-evaluations-of-class-realm-function-ctor.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (let.classStringExpression.return.prototype.m):
+        (let.classStringExpression.return.prototype.access):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/class/private-setter-brand-check-multiple-evaluations-of-class-realm.js: Copied from JSTests/test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js.
+        (let.classStringExpression):
+        (let.classStringExpression.access):
+        (let.createAndInstantiateClass):
+        * test262/test/language/expressions/new.target/unary-expr.js: Added.
+        (new):
+        (async):
+        * test262/test/language/expressions/super/call-poisoned-underscore-proto.js: Added.
+        (A):
+        * test262/test/language/expressions/super/prop-poisoned-underscore-proto.js: Added.
+        * test262/test/language/identifiers/vals-cjk-escaped.js: Added.
+        * test262/test/language/identifiers/vals-cjk.js: Added.
+        * test262/test/language/statements/class/elements/private-class-field-on-frozen-objects.js:
+        * test262/test/language/statements/class/elements/private-field-access-on-inner-arrow-function.js: Added.
+        (C.prototype.method):
+        (C):
+        * test262/test/language/statements/class/elements/private-field-access-on-inner-function.js: Added.
+        (C.prototype.method.innerFunction):
+        (C.prototype.method):
+        (C):
+        * test262/test/language/statements/class/elements/private-field-is-not-clobbered-by-computed-property.js: Added.
+        (C.prototype.checkPrivateField):
+        (C):
+        * test262/test/language/statements/class/elements/private-field-visible-to-direct-eval-on-initializer.js: Added.
+        (C):
+        * test262/test/language/statements/class/elements/private-field-visible-to-direct-eval.js: Added.
+        (C.prototype.getWithEval):
+        (C):
+        (D):
+        * test262/test/language/statements/class/elements/private-getter-access-on-inner-arrow-function.js: Added.
+        (C.prototype.get m):
+        (C.prototype.method):
+        (C):
+        * test262/test/language/statements/class/elements/private-getter-access-on-inner-function.js: Added.
+        (C.prototype.get m):
+        (C.prototype.method.innerFunction):
+        (C.prototype.method):
+        (C):
+        * test262/test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js:
+        (let.createAndInstantiateClass):
+        * test262/test/language/statements/class/elements/private-getter-is-not-a-own-property.js: Added.
+        (C.prototype.get m):
+        (C.prototype.checkPrivateGetter):
+        (C):
+        * test262/test/language/statements/class/elements/private-getter-is-not-clobbered-by-computed-property.js: Added.
+        (C.prototype.get m):
+        (C.prototype.checkPrivateGetter):
+        (C):
+        * test262/test/language/statements/class/elements/private-getter-visible-to-direct-eval-on-initializer.js: Added.
+        (C.prototype.get m):
+        (C):
+        * test262/test/language/statements/class/elements/private-getter-visible-to-direct-eval.js: Added.
+        (C.prototype.get m):
+        (C.prototype.getWithEval):
+        (C):
+        (D.prototype.get m):
+        (D):
+        * test262/test/language/statements/class/elements/private-method-access-on-inner-arrow-function.js: Added.
+        (C.prototype.m):
+        (C.prototype.method):
+        (C):
+        * test262/test/language/statements/class/elements/private-method-access-on-inner-function.js: Added.
+        (C.prototype.m):
+        (C.prototype.method.innerFunction):
+        (C.prototype.method):
+        (C):
+        * test262/test/language/statements/class/elements/private-method-is-not-a-own-property.js: Added.
+        (C.prototype.m):
+        (C.prototype.checkPrivateMethod):
+        (C):
+        * test262/test/language/statements/class/elements/private-method-is-not-clobbered-by-computed-property.js: Added.
+        (C.prototype.m):
+        (C.prototype.checkPrivateMethod):
+        (C):
+        * test262/test/language/statements/class/elements/private-method-visible-to-direct-eval-on-initializer.js: Added.
+        (C.prototype.m):
+        (C):
+        * test262/test/language/statements/class/elements/private-method-visible-to-direct-eval.js: Added.
+        (C.prototype.m):
+        (C.prototype.getWithEval):
+        (C):
+        (D.prototype.m):
+        (D):
+        * test262/test/language/statements/class/elements/private-setter-access-on-inner-arrow-function.js: Added.
+        (C.prototype.set m):
+        (C.prototype.method):
+        (C):
+        * test262/test/language/statements/class/elements/private-setter-access-on-inner-function.js: Added.
+        (C.prototype.set m):
+        (C.prototype.method.innerFunction):
+        (C.prototype.method):
+        (C):
+        * test262/test/language/statements/class/elements/private-setter-is-not-a-own-property.js: Added.
+        (C.prototype.set m):
+        (C.prototype.checkPrivateSetter):
+        (C):
+        * test262/test/language/statements/class/elements/private-setter-is-not-clobbered-by-computed-property.js: Added.
+        (C.prototype.set m):
+        (C.prototype.checkPrivateSetter):
+        (C):
+        * test262/test/language/statements/class/elements/private-setter-visible-to-direct-eval-on-initializer.js: Added.
+        (C.prototype.set m):
+        (C):
+        * test262/test/language/statements/class/elements/private-setter-visible-to-direct-eval.js: Added.
+        (C.prototype.set m):
+        (C.prototype.setWithEval):
+        (C):
+        (D.prototype.set m):
+        (D):
+        * test262/test/language/statements/class/elements/prod-private-getter-before-super-return-in-field-initializer.js:
+        * test262/test/language/statements/class/elements/prod-private-method-before-super-return-in-field-initializer.js:
+        * test262/test/language/statements/class/elements/prod-private-setter-before-super-return-in-field-initializer.js:
+        * test262/test/language/statements/class/elements/super-access-inside-a-private-getter.js: Added.
+        (A.prototype.method):
+        (A):
+        (C.prototype.get m):
+        (C.prototype.access):
+        (C):
+        * test262/test/language/statements/class/elements/super-access-inside-a-private-method.js: Added.
+        (A.prototype.method):
+        (A):
+        (C.prototype.m):
+        (C.prototype.access):
+        (C):
+        * test262/test/language/statements/class/elements/super-access-inside-a-private-setter.js: Added.
+        (A.prototype.method):
+        (A):
+        (C.prototype.set m):
+        (C.prototype.access):
+        (C):
+        * test262/test/language/statements/class/poisoned-underscore-proto.js: Added.
+        (A):
+        * test262/test/language/statements/function/13.2-30-s.js:
+        * test262/test262-Revision.txt:
+
 2019-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Improve wasm wpt test results by fixing miscellaneous issues

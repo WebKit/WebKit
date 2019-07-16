@@ -1,7 +1,7 @@
 // Copyright (C) 2015 Caitlin Potter. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
-/*--- 
+/*---
 description: >
     Functions created using ArrowFunction syntactic form do not have
     own properties "caller" or "arguments", but inherit them from

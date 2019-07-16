@@ -45,4 +45,4 @@ Object.defineProperty(Promise, 'resolve', {
 Promise.allSettled(iter);
 
 assert.sameValue(nextCount, 0);
-assert.sameValue(returnCount, 0);
+assert.sameValue(returnCount, 1);
