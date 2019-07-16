@@ -1,3 +1,15 @@
+2019-07-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Make WKURLSchemeTask thread safe
+        https://bugs.webkit.org/show_bug.cgi?id=199764
+
+        Unreviewed build fix for WinCairo port.
+
+        Source\WebKit\UIProcess\socket\RemoteInspectorProtocolHandler.cpp(82): error C2039: 'request': is not a member of 'WebKit::WebURLSchemeTask'
+
+        * UIProcess/WebURLSchemeTask.h:
+        (WebKit::WebURLSchemeTask::request const): Restored WebURLSchemeTask::request with a threading assertion.
+
 2019-07-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r247444.

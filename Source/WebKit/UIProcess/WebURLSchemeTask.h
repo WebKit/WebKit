@@ -66,6 +66,9 @@ public:
 #if PLATFORM(COCOA)
     NSURLRequest *nsRequest() const;
 #endif
+#if PLATFORM(WIN)
+    const WebCore::ResourceRequest& request() const { ASSERT(RunLoop::isMain()); return m_request; }
+#endif
 
     enum class ExceptionType {
         DataAlreadySent,
