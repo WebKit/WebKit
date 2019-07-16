@@ -1,3 +1,12 @@
+2019-07-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        New York font erroneously gets synthetic bold
+        https://bugs.webkit.org/show_bug.cgi?id=199653
+
+        Unreviewed MacCatalyst build fix.
+
+        * wtf/Platform.h:
+
 2019-07-16  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Improvements and fixes in FileSystemGlib.cpp
