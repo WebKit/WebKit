@@ -278,12 +278,14 @@
     (iokit-property "IOSurfaceAcceleratorCapabilitiesDict")
     (iokit-property-regex #"^MetalPlugin(Name|ClassName)")
     (iokit-property "Protocol Characteristics")
+    (iokit-property "als-colorCfg") ;; <rdar://problem/52903475>
     (iokit-property "artwork-device-idiom") ;; <rdar://problem/49497720>
     (iokit-property "artwork-device-subtype")
     (iokit-property "artwork-display-gamut") ;; <rdar://problem/49497788>
     (iokit-property "artwork-dynamic-displaymode") ;; <rdar://problem/49497720>
     (iokit-property "artwork-scale-factor") ;; <rdar://problem/49497788>
     (iokit-property-regex #"(canvas-height|canvas-width)")
+    (iokit-property "chip-id") ;; <rdar://problem/52903477>
     (iokit-property "class-code")
     (iokit-property "color-accuracy-index")
     (iokit-property "compatible") ;; <rdar://problem/47523516>
@@ -300,8 +302,12 @@
     (iokit-property "oled-display") ;; <rdar://problem/51322072>
     (iokit-property "product-description") ;; <rdar://problem/49497788>
     (iokit-property "product-id")
+    (iokit-property "region-info") ;; <rdar://problem/52903475>
+    (iokit-property "regulatory-model-number") ;; <rdar://problem/52903475>
+    (iokit-property "soc-generation") ;; <rdar://problem/52903476>
     (iokit-property "software-behavior")
     (iokit-property "vendor-id")
+    (iokit-property "udid-version") ;; <rdar://problem/52903475>
     (iokit-property "ui-pip") ;; <rdar://problem/48867037>
 )
 

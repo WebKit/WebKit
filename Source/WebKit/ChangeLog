@@ -1,3 +1,13 @@
+2019-07-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Update WebContent Process sandbox based on user seed data
+        https://bugs.webkit.org/show_bug.cgi?id=199799
+        <rdar://problem/52903477>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-07-16  Andy Estes  <aestes@apple.com>
 
         [macCatalyst] Do not include WebKitLegacy.h in WebKit.h
