@@ -5,8 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS Object.create() threw exception TypeError: Object prototype may only be an Object or null..
 PASS Object.create('a string') threw exception TypeError: Object prototype may only be an Object or null..
-PASS Object.create({}, 'a string') threw exception TypeError: Property descriptor list must be an Object..
-PASS Object.create(null, 'a string') threw exception TypeError: Property descriptor list must be an Object..
+PASS Object.create({}, 'a string') threw exception TypeError: Property description must be an object..
+PASS Object.create(null, 'a string') threw exception TypeError: Property description must be an object..
 PASS JSON.stringify(Object.create(null,{property:{value:'foo', enumerable:true}, property2:{value:'foo', enumerable:true}})) is '{"property":"foo","property2":"foo"}'
 PASS JSON.stringify(Object.create({},{property:{value:'foo', enumerable:true}, property2:{value:'foo', enumerable:true}})) is '{"property":"foo","property2":"foo"}'
 PASS JSON.stringify(Object.create({},{property:{value:'foo'}, property2:{value:'foo', enumerable:true}})) is '{"property2":"foo"}'

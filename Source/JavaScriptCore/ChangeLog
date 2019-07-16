@@ -1,3 +1,16 @@
+2019-07-15  Keith Miller  <keith_miller@apple.com>
+
+        A Possible Issue of Object.create method
+        https://bugs.webkit.org/show_bug.cgi?id=199744
+
+        Reviewed by Yusuke Suzuki.
+
+        We should call toObject on the properties argument if it was not undefined.
+        See: https://tc39.es/ecma262/#sec-object.create
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorCreate):
+
 2019-07-15  Saagar Jha  <saagarjha@apple.com>
 
         Keyword lookup can use memcmp to get around unaligned load undefined behavior

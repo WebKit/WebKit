@@ -669,9 +669,10 @@ EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState* exec)
         : constructEmptyObject(exec, exec->lexicalGlobalObject()->nullPrototypeObjectStructure());
     if (exec->argument(1).isUndefined())
         return JSValue::encode(newObject);
-    if (!exec->argument(1).isObject())
-        return throwVMTypeError(exec, scope, "Property descriptor list must be an Object."_s);
-    RELEASE_AND_RETURN(scope, JSValue::encode(defineProperties(exec, newObject, asObject(exec->argument(1)))));
+    JSObject* properties = exec->uncheckedArgument(1).toObject(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(defineProperties(exec, newObject, properties)));
 }
 
 enum class IntegrityLevel {
