@@ -1,3 +1,16 @@
+2019-07-16  Chris Dumez  <cdumez@apple.com>
+
+        Speed up StorageManager::getValues()
+        https://bugs.webkit.org/show_bug.cgi?id=199812
+
+        Reviewed by Alex Christensen.
+
+        * Storage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::importItems):
+        * Storage/StorageAreaImpl.h:
+        * Storage/StorageAreaSync.cpp:
+        (WebKit::StorageAreaSync::performImport):
+
 2019-07-12  Alex Christensen  <achristensen@webkit.org>
 
         Begin unifying WebKitLegacy sources

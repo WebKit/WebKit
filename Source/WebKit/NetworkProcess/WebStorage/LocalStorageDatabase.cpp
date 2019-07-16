@@ -171,7 +171,7 @@ void LocalStorageDatabase::importItems(StorageMap& storageMap)
     if (!m_database.isOpen())
         return;
 
-    SQLiteStatement query(m_database, "SELECT key, value FROM ItemTable");
+    SQLiteStatement query(m_database, "SELECT key, value FROM ItemTable"_str);
     if (query.prepare() != SQLITE_OK) {
         LOG_ERROR("Unable to select items from ItemTable for local storage");
         return;
@@ -184,7 +184,7 @@ void LocalStorageDatabase::importItems(StorageMap& storageMap)
         String key = query.getColumnText(0);
         String value = query.getColumnBlobAsString(1);
         if (!key.isNull() && !value.isNull())
-            items.set(key, value);
+            items.add(WTFMove(key), WTFMove(value));
         result = query.step();
     }
 
@@ -193,7 +193,7 @@ void LocalStorageDatabase::importItems(StorageMap& storageMap)
         return;
     }
 
-    storageMap.importItems(items);
+    storageMap.importItems(WTFMove(items));
 }
 
 void LocalStorageDatabase::setItem(const String& key, const String& value)

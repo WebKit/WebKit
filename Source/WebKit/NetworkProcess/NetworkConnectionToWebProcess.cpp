@@ -49,7 +49,6 @@
 #include "PreconnectTask.h"
 #include "ServiceWorkerFetchTaskMessages.h"
 #include "StorageManager.h"
-#include "StorageManagerMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebIDBConnectionToClient.h"
@@ -232,13 +231,6 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
         return paymentCoordinator().didReceiveMessage(connection, decoder);
 #endif
 
-    if (decoder.messageReceiverName() == Messages::StorageManager::messageReceiverName()) {
-        if (auto* session = m_networkProcess->networkSessionByConnection(connection)) {
-            session->storageManager().didReceiveMessage(connection, decoder);
-            return;
-        }
-    }
-
     ASSERT_NOT_REACHED();
 }
 
@@ -277,13 +269,6 @@ void NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& conne
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinatorProxy::messageReceiverName())
         return paymentCoordinator().didReceiveSyncMessage(connection, decoder, reply);
 #endif
-
-    if (decoder.messageReceiverName() == Messages::StorageManager::messageReceiverName()) {
-        if (auto* session = m_networkProcess->networkSessionByConnection(connection)) {
-            session->storageManager().didReceiveSyncMessage(connection, decoder, reply);
-            return;
-        }
-    }
 
     ASSERT_NOT_REACHED();
 }

@@ -307,21 +307,19 @@ void Connection::addWorkQueueMessageReceiver(StringReference messageReceiverName
 {
     ASSERT(RunLoop::isMain());
 
-    m_connectionQueue->dispatch([protectedThis = makeRef(*this), messageReceiverName = WTFMove(messageReceiverName), workQueue = &workQueue, workQueueMessageReceiver]() mutable {
-        ASSERT(!protectedThis->m_workQueueMessageReceivers.contains(messageReceiverName));
+    std::lock_guard<Lock> lock(m_workQueueMessageReceiversMutex);
+    ASSERT(!m_workQueueMessageReceivers.contains(messageReceiverName));
 
-        protectedThis->m_workQueueMessageReceivers.add(messageReceiverName, std::make_pair(workQueue, workQueueMessageReceiver));
-    });
+    m_workQueueMessageReceivers.add(messageReceiverName, std::make_pair(&workQueue, workQueueMessageReceiver));
 }
 
 void Connection::removeWorkQueueMessageReceiver(StringReference messageReceiverName)
 {
     ASSERT(RunLoop::isMain());
 
-    m_connectionQueue->dispatch([protectedThis = makeRef(*this), messageReceiverName = WTFMove(messageReceiverName)]() mutable {
-        ASSERT(protectedThis->m_workQueueMessageReceivers.contains(messageReceiverName));
-        protectedThis->m_workQueueMessageReceivers.remove(messageReceiverName);
-    });
+    std::lock_guard<Lock> lock(m_workQueueMessageReceiversMutex);
+    ASSERT(m_workQueueMessageReceivers.contains(messageReceiverName));
+    m_workQueueMessageReceivers.remove(messageReceiverName);
 }
 
 void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceiver& workQueueMessageReceiver, Decoder& decoder)
@@ -693,7 +691,7 @@ void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
         return;
     }
 
-    if (!m_workQueueMessageReceivers.isValidKey(message->messageReceiverName())) {
+    if (!WorkQueueMessageReceiverMap::isValidKey(message->messageReceiverName())) {
         RefPtr<Connection> protectedThis(this);
         StringReference messageReceiverNameReference = message->messageReceiverName();
         String messageReceiverName(messageReceiverNameReference.isEmpty() ? "<unknown message receiver>" : String(messageReceiverNameReference.data(), messageReceiverNameReference.size()));
@@ -706,13 +704,8 @@ void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
         return;
     }
 
-    auto it = m_workQueueMessageReceivers.find(message->messageReceiverName());
-    if (it != m_workQueueMessageReceivers.end()) {
-        it->value.first->dispatch([protectedThis = makeRef(*this), workQueueMessageReceiver = it->value.second, decoder = WTFMove(message)]() mutable {
-            protectedThis->dispatchWorkQueueMessageReceiverMessage(*workQueueMessageReceiver, *decoder);
-        });
+    if (dispatchMessageToWorkQueueReceiver(message))
         return;
-    }
 
 #if HAVE(QOS_CLASSES)
     if (message->isSyncMessage() && m_shouldBoostMainThreadOnSyncMessage) {
@@ -987,12 +980,35 @@ void Connection::dispatchMessage(Decoder& decoder)
         handler(&decoder);
         return;
     }
+
     m_client.didReceiveMessage(*this, decoder);
+}
+
+bool Connection::dispatchMessageToWorkQueueReceiver(std::unique_ptr<Decoder>& message)
+{
+    std::lock_guard<Lock> lock(m_workQueueMessageReceiversMutex);
+    auto it = m_workQueueMessageReceivers.find(message->messageReceiverName());
+    if (it != m_workQueueMessageReceivers.end()) {
+        it->value.first->dispatch([protectedThis = makeRef(*this), workQueueMessageReceiver = it->value.second, decoder = WTFMove(message)]() mutable {
+            protectedThis->dispatchWorkQueueMessageReceiverMessage(*workQueueMessageReceiver, *decoder);
+        });
+        return true;
+    }
+    return false;
 }
 
 void Connection::dispatchMessage(std::unique_ptr<Decoder> message)
 {
+    ASSERT(RunLoop::isMain());
     if (!isValid())
+        return;
+
+    // Messages to WorkQueueMessageReceivers are normally dispatched from the IPC WorkQueue. However, there is a race if
+    // a client adds itself as a WorkQueueMessageReceiver as a result of receiving an IPC message on the main thread.
+    // The message might have already been dispatched from the IPC WorkQueue to the main thread by the time the
+    // client registers itself as a WorkQueueMessageReceiver. To address this, we check again for messages receivers
+    // once the message arrives on the main thread.
+    if (dispatchMessageToWorkQueueReceiver(message))
         return;
 
     if (message->shouldUseFullySynchronousModeForTesting()) {
