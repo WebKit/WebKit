@@ -1,3 +1,24 @@
+2019-07-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Text autosizing] [iPadOS] Paragraph text on the front page of LinkedIn.com is not boosted
+        https://bugs.webkit.org/show_bug.cgi?id=199827
+        <rdar://problem/53152660>
+
+        Reviewed by Zalan Bujtas.
+
+        After r247467, we try to avoid boosting some text that might cause vertical overflow due to line height
+        increasing inside a container that expects a fixed integer number of lines. However, in the case of
+        linkedin.com, the line height specified is a fixed value of 26px, which greatly exceeds the specified font size
+        of 14px. In this case, it's safe to boost font size, since doing so would not affect the line height at all.
+
+        To handle this case, don't avoid text autosizing due to the "fixed number of lines" heuristic if the line height
+        is fixed, and is much larger than the font size.
+
+        Test: fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-candidates.html
+
+        * rendering/style/TextSizeAdjustment.cpp:
+        (WebCore::AutosizeStatus::updateStatus):
+
 2019-07-16  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Cancel ongoing content observation when tap is failed/cancelled

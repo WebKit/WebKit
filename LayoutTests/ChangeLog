@@ -1,3 +1,16 @@
+2019-07-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Text autosizing] [iPadOS] Paragraph text on the front page of LinkedIn.com is not boosted
+        https://bugs.webkit.org/show_bug.cgi?id=199827
+        <rdar://problem/53152660>
+
+        Reviewed by Zalan Bujtas.
+
+        Add a new test case, inspired by paragraph text in a post on linkedin.com. This text should get autosized.
+
+        * fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-candidates-expected.txt:
+        * fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-candidates.html:
+
 2019-07-16  Rob Buis  <rbuis@igalia.com>
 
         Remove support for beforeload on link=prefetch

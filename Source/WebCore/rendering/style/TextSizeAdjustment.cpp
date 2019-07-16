@@ -53,6 +53,10 @@ void AutosizeStatus::updateStatus(RenderStyle& style)
         if (!style.lineHeight().isSpecified() || style.whiteSpace() == WhiteSpace::NoWrap)
             return false;
 
+        const float maximumDifferenceBetweenFixedLineHeightAndFontSize = 6;
+        if (style.lineHeight().isFixed() && style.lineHeight().value() - style.fontDescription().specifiedSize() > maximumDifferenceBetweenFixedLineHeightAndFontSize)
+            return false;
+
         Optional<Length> heightOrMaxHeightAsLength;
         if (style.height().isFixed() && style.maxHeight().isAuto())
             heightOrMaxHeightAsLength = style.height();
