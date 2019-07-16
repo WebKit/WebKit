@@ -56,9 +56,6 @@ public:
     const String& javaScriptConfigurationDirectory() const { return m_javaScriptConfigurationDirectory; }
     void setJavaScriptConfigurationDirectory(String&& directory) { m_javaScriptConfigurationDirectory = WTFMove(directory); }
     
-    const String& webStorageDirectory() const { return m_webStorageDirectory; }
-    void setWebStorageDirectory(String&& directory) { m_webStorageDirectory = WTFMove(directory); }
-
     const String& indexedDBDatabaseDirectory() const { return m_indexedDBDatabaseDirectory; }
     void setIndexedDBDatabaseDirectory(String&& directory) { m_indexedDBDatabaseDirectory = WTFMove(directory); }
 
@@ -117,7 +114,6 @@ private:
     String m_networkCacheDirectory;
     String m_applicationCacheDirectory;
     String m_applicationCacheFlatFileSubdirectoryName;
-    String m_webStorageDirectory;
     String m_mediaCacheDirectory;
     String m_indexedDBDatabaseDirectory;
     String m_serviceWorkerRegistrationDirectory;

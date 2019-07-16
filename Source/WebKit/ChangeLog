@@ -1,3 +1,23 @@
+2019-07-15  Alex Christensen  <achristensen@webkit.org>
+
+        Remove redundant WebsiteDataStoreConfiguration member
+        https://bugs.webkit.org/show_bug.cgi?id=199820
+
+        Reviewed by Geoffrey Garen.
+
+        m_webStorageDirectory was only used for _WKWebsiteDataStoreConfiguration._webStorageDirectory's backing,
+        which was copied over to m_localStorageDirectory of a new object in WKWebsiteDataStore's _initWithConfiguration.
+        This is a baby step towards cleaning up this mess with no behavior change.  I see no reason to rename the SPI.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration _webStorageDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration _setWebStorageDirectory:]):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::webStorageDirectory const): Deleted.
+        (WebKit::WebsiteDataStoreConfiguration::setWebStorageDirectory): Deleted.
+
 2019-07-15  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Make WKURLSchemeTask thread safe

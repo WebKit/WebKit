@@ -65,7 +65,7 @@ static void checkURLArgument(NSURL *url)
 
 - (NSURL *)_webStorageDirectory
 {
-    return [NSURL fileURLWithPath:_configuration->webStorageDirectory() isDirectory:YES];
+    return [NSURL fileURLWithPath:_configuration->localStorageDirectory() isDirectory:YES];
 }
 
 - (void)_setWebStorageDirectory:(NSURL *)url
@@ -73,7 +73,7 @@ static void checkURLArgument(NSURL *url)
     if (!_configuration->isPersistent())
         [NSException raise:NSInvalidArgumentException format:@"Cannot set _webStorageDirectory on a non-persistent _WKWebsiteDataStoreConfiguration."];
     checkURLArgument(url);
-    _configuration->setWebStorageDirectory(url.path);
+    _configuration->setLocalStorageDirectory(url.path);
 }
 
 - (NSURL *)_indexedDBDatabaseDirectory
