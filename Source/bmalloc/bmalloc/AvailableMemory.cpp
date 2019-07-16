@@ -32,6 +32,7 @@
 #include "PerProcess.h"
 #include "Scavenger.h"
 #include "Sizes.h"
+#include <array>
 #include <mutex>
 #if BOS(DARWIN)
 #if BPLATFORM(IOS_FAMILY)
