@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Test the WHLSL test harness.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.simpleWhile = async () => {
+    let program = `
+        int foo(int x)
+        {
+            while (x < 13)
+                x = x * 2;
+            return x;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", [makeInt(1)]), 16);
+}
+
+runTests(whlslTests);
+</script>
+</html>

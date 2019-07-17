@@ -967,4 +967,4 @@ webkit.org/b/195635 scrollingcoordinator/mac/multiple-fixed.html [ Pass Timeout 
 # <rdar://problem/51524958> REGRESSION: [ Catalina WK2 ] http/wpt/webauthn/public-key-credential-create-success-u2f.https.html is failing
 [ Catalina+ ] http/wpt/webauthn/public-key-credential-create-success-u2f.https.html [ Failure ]
 
-webkit.org/b/199651 [ Mojave Debug ] webgpu/whlsl-builtin-vectors-2.html [ Slow ]
+webkit.org/b/199651 [ Mojave Debug ] webgpu/whlsl/builtin-vectors-2.html [ Slow ]

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Test the WHLSL test harness.</title>
+<script src="js/test-harness.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const epsilon = 0.0001;
+
+const whlslTests = {};
+
+whlslTests.boolBitAnd = async () => {
+    const source = `
+        bool foo(bool a, bool b)
+        {
+            return a & b;
+        }
+    `;
+
+    {
+        let result = await callBoolFunction(source, "foo", [makeBool(true), makeBool(true)]);
+        assert_equals(result, true, "Test returned expected value.");
+    }
+
+    {
+        let result = await callBoolFunction(source, "foo", [makeBool(false), makeBool(false)]);
+        assert_equals(result, false, "Test returned expected value.");
+    }
+
+    {
+        let result = await callBoolFunction(source, "foo", [makeBool(true), makeBool(false)]);
+        assert_equals(result, false, "Test returned expected value.");
+    }
+
+    {
+        let result = await callBoolFunction(source, "foo", [makeBool(false), makeBool(true)]);
+        assert_equals(result, false, "Test returned expected value.");
+    }
+};
+
+whlslTests.boolBitOr = async () => {
+    const source = `
+        bool foo(bool a, bool b)
+        {
+            return a | b;
+        }
+    `;
+
+    {
+        let result = await callBoolFunction(source, "foo", [makeBool(true), makeBool(true)]);
+        assert_equals(result, true, "Test returned expected value.");
+    }
+
+    {
+        let result = await callBoolFunction(source, "foo", [makeBool(false), makeBool(false)]);
+        assert_equals(result, false, "Test returned expected value.");
+    }
+
+    {
+        let result = await callBoolFunction(source, "foo", [makeBool(true), makeBool(false)]);
+        assert_equals(result, true, "Test returned expected value.");
+    }
+
+    {
+        let result = await callBoolFunction(source, "foo", [makeBool(false), makeBool(true)]);
+        assert_equals(result, true, "Test returned expected value.");
+    }
+};
+
+whlslTests.boolBitXor = async () => {
+    const source = `
+        bool foo(bool a, bool b)
+        {
+            return a ^ b;
+        }
+    `;
+
+    {
+        let result = await callBoolFunction(source, "foo", [makeBool(true), makeBool(true)]);
+        assert_equals(result, false, "Test returned expected value.");
+    }
+
+    {
+        let result = await callBoolFunction(source, "foo", [makeBool(false), makeBool(false)]);
+        assert_equals(result, false, "Test returned expected value.");
+    }
+
+    {
+        let result = await callBoolFunction(source, "foo", [makeBool(true), makeBool(false)]);
+        assert_equals(result, true, "Test returned expected value.");
+    }
+
+    {
+        let result = await callBoolFunction(source, "foo", [makeBool(false), makeBool(true)]);
+        assert_equals(result, true, "Test returned expected value.");
+    }
+};
+
+whlslTests.boolBitNot = async () => {
+    const source = `
+        bool foo(bool a)
+        {
+            return ~a;
+        }
+    `;
+
+    {
+        let result = await callBoolFunction(source, "foo", [makeBool(true)]);
+        assert_equals(result, false, "Test returned expected value.");
+    }
+
+    {
+        let result = await callBoolFunction(source, "foo", [makeBool(false)]);
+        assert_equals(result, true, "Test returned expected value.");
+    }
+};
+
+runTests(whlslTests);
+</script>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Lvalues.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.lValues = async () => {
+    await checkFail(`
+        int foo()
+        {
+            int x = 0;
+            thread int* y = &(x++);
+            return *y;
+        }
+    `); 
+    await checkFail(`
+        int foo()
+        {
+            int x = 0;
+            thread int* y = &(++x);
+            return *y;
+        }
+    `); 
+    await checkFail(`
+        int foo()
+        {
+            int x = 0;
+            thread int* y = &(x = 3);
+            return *y;
+        }
+    `); 
+    await checkFail(`
+        int foo()
+        {
+            int x = 0;
+            thread int* y = &3;
+            return *y;
+        }
+    `); 
+    await checkFail(`
+        int bar(int x) {
+            return x + 1;
+        }
+        int foo()
+        {
+            int x = 0;
+            thread int* y = &bar(3);
+            return *y;
+        }
+    `); 
+    await checkFail(`
+        int foo()
+        {
+            int x = 0;
+            thread int* y = &(7, x);
+            return *y;
+        }
+    `);
+    await checkFail(`
+        enum Days {
+            Monday,
+            Tuesday
+        }
+        int foo()
+        {
+            int x = 0;
+            thread int* y = &(Days.Monday);
+            return *y;
+        }
+    `); 
+    await checkFail(`
+        int foo()
+        {
+            thread bool* y = &(true && false);
+            return *y;
+        }
+    `); 
+    await checkFail(`
+        int foo()
+        {
+            thread bool* y = &(!true);
+            return *y;
+        }
+    `); 
+    const program = `
+        int foo()
+        {
+            int x = 3;
+            thread int* y = &x;
+            return *y;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", []), 3);
+};
+
+runTests(whlslTests);
+</script>
+</html>
+
+

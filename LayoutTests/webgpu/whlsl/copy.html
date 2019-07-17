@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Copying.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.copyArray = async () =>
+{
+    let program = `
+        int foo()
+        {
+            int[10] xs;
+            for (uint i = 0; i < xs.length; i++)
+                xs[i] = int(i) + 1;
+            int[10] ys = xs;
+            for (uint i = 0; i < xs.length; i++)
+                xs[i] = 0;
+            int sum = 0;
+            for (uint i = 0; i < ys.length; i++)
+                sum = sum + ys[i];
+            return sum;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", []), 55);
+}
+
+runTests(whlslTests);
+</script>
+</html>

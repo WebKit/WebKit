@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Test prefix/postfix.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.switchBreak = async () =>
+{
+    let program = `
+        int foo(int x)
+        {
+            int result = 0;
+            switch (x) {
+            case 767:
+                result += 27;
+                break;
+            case 69:
+                result += 7624;
+                break;
+            default:
+                result += 49;
+                break;
+            }
+            return result;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", [makeInt(767)]), 27);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(69)]), 7624);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(0)]), 49);
+}
+
+runTests(whlslTests);
+</script>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Test structs.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.emptyStruct = async () =>
+{
+    let program = `
+        struct Thingy { }
+        int foo()
+        {
+            Thingy thingy;
+            return 46;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", []), 46);
+};
+
+whlslTests.settingAnArrayInsideAStruct = async () =>
+{
+    let program = `
+        struct Foo {
+            int[1] array;
+        }
+        int foo()
+        {
+            Foo foo;
+            thread Foo* bar = &foo;
+            bar->array[0] = 21;
+            return foo.array[0];
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", []), 21);
+};
+
+runTests(whlslTests);
+</script>
+</html>

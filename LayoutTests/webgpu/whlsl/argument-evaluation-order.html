@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Copying.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.evaluationOrderForArguments = async () => {
+    const program = `
+        int foo() { return *bar(10) + *bar(20); }
+
+        thread int* bar(int value)
+        {
+            int x = value;
+            return &x;
+        }
+
+        int baz() { return plus(bar(10), bar(20)); }
+
+        int plus(thread int* x, thread int* y)
+        {
+            return *x + *y;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", []), 30);
+    assert_equals(await callIntFunction(program, "baz", []), 40);
+};
+
+runTests(whlslTests);
+</script>
+</html>
+
