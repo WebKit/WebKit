@@ -1,3 +1,14 @@
+2019-07-17  Olivier Blin  <olivier.blin@softathome.com>
+
+        Web Inspector: application/xml content not shown
+        https://bugs.webkit.org/show_bug.cgi?id=199861
+
+        Reviewed by Devin Rousso.
+
+        * inspector/unit-tests/mimetype-utilities-expected.txt:
+        * inspector/unit-tests/mimetype-utilities.html:
+        Test for shouldTreatMIMETypeAsText.
+
 2019-07-17  Daniel Bates  <dabates@apple.com>
 
         Typing into a cell in a Google Sheet lags behind by one character

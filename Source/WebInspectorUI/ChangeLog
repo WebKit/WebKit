@@ -1,3 +1,24 @@
+2019-07-17  Olivier Blin  <olivier.blin@softathome.com>
+
+        Web Inspector: application/xml content not shown
+        https://bugs.webkit.org/show_bug.cgi?id=199861
+
+        Reviewed by Devin Rousso.
+
+        application/xml content from XHR requests was not shown in the
+        inspector, an error message was displayed instead.
+
+        application/xml content should be treated as text, since
+        application/xml is the standard mimetype for XML content.
+        Apache serves XML content with the application/xml mimetype by
+        default.
+
+        * UserInterface/Base/MIMETypeUtilities.js:
+        (WI.fileExtensionForMIMEType):
+        Report "xml" extension for "application/xml" mimetype.
+        (WI.shouldTreatMIMETypeAsText):
+        Treat XML files as text.
+
 2019-07-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Changes panel should be strictly LTR
