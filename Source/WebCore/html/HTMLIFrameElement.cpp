@@ -119,28 +119,7 @@ void HTMLIFrameElement::setReferrerPolicyForBindings(const AtomString& value)
 
 String HTMLIFrameElement::referrerPolicyForBindings() const
 {
-    switch (referrerPolicy()) {
-    case ReferrerPolicy::NoReferrer:
-        return "no-referrer"_s;
-    case ReferrerPolicy::UnsafeUrl:
-        return "unsafe-url"_s;
-    case ReferrerPolicy::Origin:
-        return "origin"_s;
-    case ReferrerPolicy::OriginWhenCrossOrigin:
-        return "origin-when-cross-origin"_s;
-    case ReferrerPolicy::SameOrigin:
-        return "same-origin"_s;
-    case ReferrerPolicy::StrictOrigin:
-        return "strict-origin"_s;
-    case ReferrerPolicy::StrictOriginWhenCrossOrigin:
-        return "strict-origin-when-cross-origin"_s;
-    case ReferrerPolicy::NoReferrerWhenDowngrade:
-        return "no-referrer-when-downgrade"_s;
-    case ReferrerPolicy::EmptyString:
-        return { };
-    }
-    ASSERT_NOT_REACHED();
-    return { };
+    return referrerPolicyToString(referrerPolicy());
 }
 
 ReferrerPolicy HTMLIFrameElement::referrerPolicy() const

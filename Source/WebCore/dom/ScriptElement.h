@@ -23,6 +23,7 @@
 
 #include "ContainerNode.h"
 #include "LoadableScript.h"
+#include "ReferrerPolicy.h"
 #include "UserGestureIndicator.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/text/TextPosition.h>
@@ -113,6 +114,7 @@ private:
     virtual bool hasDeferAttribute() const = 0;
     virtual bool hasSourceAttribute() const = 0;
     virtual bool hasNoModuleAttribute() const = 0;
+    virtual ReferrerPolicy referrerPolicy() const = 0;
 
     Element& m_element;
     WTF::OrdinalNumber m_startLineNumber;

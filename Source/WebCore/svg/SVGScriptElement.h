@@ -65,6 +65,7 @@ private:
     bool hasAsyncAttribute() const final { return false; }
     bool hasDeferAttribute() const final { return false; }
     bool hasNoModuleAttribute() const final { return false; }
+    ReferrerPolicy referrerPolicy() const final { return ReferrerPolicy::EmptyString; }
     bool hasSourceAttribute() const final { return hasAttribute(SVGNames::hrefAttr) || hasAttribute(XLinkNames::hrefAttr); }
 
     void dispatchLoadEvent() final { SVGExternalResourcesRequired::dispatchLoadEvent(); }

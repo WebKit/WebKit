@@ -44,6 +44,10 @@ public:
     WEBCORE_EXPORT void setCrossOrigin(const AtomString&);
     WEBCORE_EXPORT String crossOrigin() const;
 
+    void setReferrerPolicyForBindings(const AtomString&);
+    String referrerPolicyForBindings() const;
+    ReferrerPolicy referrerPolicy() const final;
+
     using HTMLElement::ref;
     using HTMLElement::deref;
 

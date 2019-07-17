@@ -161,7 +161,7 @@ public:
         if (!LinkLoader::isSupportedType(type.value(), m_typeAttribute))
             return nullptr;
 
-        auto request = std::make_unique<PreloadRequest>(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, type.value(), m_mediaAttribute, m_moduleScript);
+        auto request = std::make_unique<PreloadRequest>(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, type.value(), m_mediaAttribute, m_moduleScript, m_referrerPolicy);
         request->setCrossOriginMode(m_crossOriginMode);
         request->setNonce(m_nonceAttribute);
 
@@ -236,8 +236,13 @@ private:
             if (match(attributeName, typeAttr)) {
                 m_moduleScript = equalLettersIgnoringASCIICase(attributeValue, "module") ? PreloadRequest::ModuleScript::Yes : PreloadRequest::ModuleScript::No;
                 break;
-            } else if (match(attributeName, nonceAttr))
+            } else if (match(attributeName, nonceAttr)) {
                 m_nonceAttribute = attributeValue;
+                break;
+            } else if (match(attributeName, referrerpolicyAttr)) {
+                m_referrerPolicy = parseReferrerPolicy(attributeValue, ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
+                break;
+            }
             processImageAndScriptAttribute(attributeName, attributeValue);
             break;
         case TagId::Link:
@@ -370,6 +375,7 @@ private:
     bool m_inputIsImage;
     float m_deviceScaleFactor;
     PreloadRequest::ModuleScript m_moduleScript { PreloadRequest::ModuleScript::No };
+    ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };
 };
 
 TokenPreloadScanner::TokenPreloadScanner(const URL& documentURL, float deviceScaleFactor)

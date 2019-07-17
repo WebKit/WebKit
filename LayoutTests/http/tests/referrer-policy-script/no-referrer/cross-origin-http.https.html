@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests the behavior of no-referrer referrer policy when cross origin from HTTPS to HTTP.");
+jsTestIsAsync = true;
+
+if (window.internals)
+    internals.settings.setAllowRunningOfInsecureContent(true);
+
+function checkReferrer(value) {
+    referrer = value;
+    // Should be the empty string
+    shouldBeEqualToString("referrer", "");
+    finishJSTest();
+}
+</script>
+<script src="http://localhost:8000/referrer-policy/resources/script.php" referrerpolicy="no-referrer"></script>
+</body>
+</html>

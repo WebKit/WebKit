@@ -40,7 +40,7 @@ public:
 
 private:
     InlineClassicScript(const String& nonce, const String& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree)
-        : ScriptElementCachedScriptFetcher(nonce, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree)
+        : ScriptElementCachedScriptFetcher(nonce, ReferrerPolicy::EmptyString, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree)
     {
     }
 };

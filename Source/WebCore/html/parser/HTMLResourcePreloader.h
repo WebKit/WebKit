@@ -37,13 +37,14 @@ public:
         Yes,
         No,
     };
-    PreloadRequest(const String& initiator, const String& resourceURL, const URL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute, ModuleScript moduleScript)
+    PreloadRequest(const String& initiator, const String& resourceURL, const URL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute, ModuleScript moduleScript, const ReferrerPolicy& referrerPolicy)
         : m_initiator(initiator)
         , m_resourceURL(resourceURL)
         , m_baseURL(baseURL.isolatedCopy())
         , m_resourceType(resourceType)
         , m_mediaAttribute(mediaAttribute)
         , m_moduleScript(moduleScript)
+        , m_referrerPolicy(referrerPolicy)
     {
     }
 
@@ -68,6 +69,7 @@ private:
     String m_crossOriginMode;
     String m_nonceAttribute;
     ModuleScript m_moduleScript;
+    ReferrerPolicy m_referrerPolicy;
 };
 
 typedef Vector<std::unique_ptr<PreloadRequest>> PreloadRequestStream;

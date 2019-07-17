@@ -56,6 +56,7 @@ CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(D
     options.contentSecurityPolicyImposition = hasKnownNonce ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
     options.integrity = WTFMove(integrity);
+    options.referrerPolicy = m_referrerPolicy;
 
     auto request = createPotentialAccessControlRequest(sourceURL, document, crossOriginMode, WTFMove(options));
     request.upgradeInsecureRequestIfNeeded(document);

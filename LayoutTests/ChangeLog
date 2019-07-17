@@ -1,3 +1,63 @@
+2019-07-17  Rob Buis  <rbuis@igalia.com>
+
+        Add referrerpolicy attribute support for <script> elements
+        https://bugs.webkit.org/show_bug.cgi?id=185550
+
+        Reviewed by Youenn Fablet.
+
+        Add tests for scripts with various referrerpolicy attribute values.
+
+        * http/tests/referrer-policy-script/no-referrer-when-downgrade/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy-script/no-referrer-when-downgrade/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy-script/no-referrer-when-downgrade/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy-script/no-referrer-when-downgrade/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy-script/no-referrer-when-downgrade/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy-script/no-referrer-when-downgrade/same-origin.html: Added.
+        * http/tests/referrer-policy-script/no-referrer/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy-script/no-referrer/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy-script/no-referrer/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy-script/no-referrer/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy-script/no-referrer/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy-script/no-referrer/same-origin.html: Added.
+        * http/tests/referrer-policy-script/origin-when-cross-origin/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy-script/origin-when-cross-origin/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy-script/origin-when-cross-origin/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy-script/origin-when-cross-origin/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy-script/origin-when-cross-origin/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy-script/origin-when-cross-origin/same-origin.html: Added.
+        * http/tests/referrer-policy-script/origin/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy-script/origin/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy-script/origin/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy-script/origin/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy-script/origin/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy-script/origin/same-origin.html: Added.
+        * http/tests/referrer-policy-script/same-origin/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy-script/same-origin/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy-script/same-origin/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy-script/same-origin/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy-script/same-origin/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy-script/same-origin/same-origin.html: Added.
+        * http/tests/referrer-policy-script/strict-origin-when-cross-origin/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy-script/strict-origin-when-cross-origin/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy-script/strict-origin-when-cross-origin/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy-script/strict-origin-when-cross-origin/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy-script/strict-origin-when-cross-origin/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy-script/strict-origin-when-cross-origin/same-origin.html: Added.
+        * http/tests/referrer-policy-script/strict-origin/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy-script/strict-origin/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy-script/strict-origin/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy-script/strict-origin/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy-script/strict-origin/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy-script/strict-origin/same-origin.html: Added.
+        * http/tests/referrer-policy-script/unsafe-url/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy-script/unsafe-url/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy-script/unsafe-url/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy-script/unsafe-url/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy-script/unsafe-url/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy-script/unsafe-url/same-origin.html: Added.
+        * http/tests/referrer-policy/resources/script.php: Added.
+        * platform/win/TestExpectations:
+
 2019-07-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Move WHLSL tests to their own folder
