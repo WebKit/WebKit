@@ -628,28 +628,46 @@ void UniqueIDBDatabase::startVersionChangeTransaction()
     ASSERT(m_currentOpenDBRequest->isOpenRequest());
     ASSERT(m_versionChangeDatabaseConnection);
 
-    auto operation = WTFMove(m_currentOpenDBRequest);
-
-    uint64_t requestedVersion = operation->requestData().requestedVersion();
+    uint64_t requestedVersion = m_currentOpenDBRequest->requestData().requestedVersion();
     if (!requestedVersion)
         requestedVersion = m_databaseInfo->version() ? m_databaseInfo->version() : 1;
 
-    addOpenDatabaseConnection(*m_versionChangeDatabaseConnection);
-
     m_versionChangeTransaction = &m_versionChangeDatabaseConnection->createVersionChangeTransaction(requestedVersion);
-    m_databaseInfo->setVersion(requestedVersion);
 
-    m_inProgressTransactions.set(m_versionChangeTransaction->info().identifier(), m_versionChangeTransaction);
-    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::beginTransactionInBackingStore, m_versionChangeTransaction->info()));
-
-    auto result = IDBResultData::openDatabaseUpgradeNeeded(operation->requestData().requestIdentifier(), *m_versionChangeTransaction);
-    operation->connection().didOpenDatabase(result);
+    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performStartVersionChangeTransaction, m_versionChangeTransaction->info()));
 }
 
-void UniqueIDBDatabase::beginTransactionInBackingStore(const IDBTransactionInfo& info)
+void UniqueIDBDatabase::performStartVersionChangeTransaction(const IDBTransactionInfo& info)
 {
-    LOG(IndexedDB, "(db) UniqueIDBDatabase::beginTransactionInBackingStore");
-    m_backingStore->beginTransaction(info);
+    LOG(IndexedDB, "(db) UniqueIDBDatabase::performStartVersionChangeTransaction");
+
+    IDBError error = m_backingStore->beginTransaction(info);
+    postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformStartVersionChangeTransaction, error));
+}
+
+void UniqueIDBDatabase::didPerformStartVersionChangeTransaction(const IDBError& error)
+{
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformStartVersionChangeTransaction");
+
+    if (m_hardClosedForUserDelete)
+        return;
+
+    auto operation = WTFMove(m_currentOpenDBRequest);
+    IDBResultData result;
+    if (error.isNull()) {
+        addOpenDatabaseConnection(*m_versionChangeDatabaseConnection);
+        m_databaseInfo->setVersion(m_versionChangeTransaction->info().newVersion());
+        m_inProgressTransactions.set(m_versionChangeTransaction->info().identifier(), m_versionChangeTransaction);
+        result = IDBResultData::openDatabaseUpgradeNeeded(operation->requestData().requestIdentifier(), *m_versionChangeTransaction);
+        operation->connection().didOpenDatabase(result);
+    } else {
+        m_versionChangeTransaction = nullptr;
+        m_versionChangeDatabaseConnection = nullptr;
+        result = IDBResultData::error(operation->requestData().requestIdentifier(), error);
+        operation->connection().didOpenDatabase(result);
+    }
+
+    invokeOperationAndTransactionTimer();
 }
 
 void UniqueIDBDatabase::maybeNotifyConnectionsOfVersionChange()
