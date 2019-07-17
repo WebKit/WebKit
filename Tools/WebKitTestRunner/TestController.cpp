@@ -806,6 +806,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetInteractiveFormValidationEnabled(preferences, true);
     WKPreferencesSetDataTransferItemsEnabled(preferences, true);
     WKPreferencesSetCustomPasteboardDataEnabled(preferences, true);
+    WKPreferencesSetDialogElementEnabled(preferences, true);
 
     WKPreferencesSetMockScrollbarsEnabled(preferences, options.useMockScrollbars);
     WKPreferencesSetNeedsSiteSpecificQuirks(preferences, options.needsSiteSpecificQuirks);

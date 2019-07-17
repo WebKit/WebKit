@@ -620,6 +620,7 @@ public:
         [NSNumber numberWithBool:YES], WebKitCustomElementsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitDataTransferItemsEnabledPreferenceKey,
         [NSNumber numberWithBool:NO], WebKitCustomPasteboardDataEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitDialogElementEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitModernMediaControlsEnabledPreferenceKey,
         [NSNumber numberWithBool:NO], WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey,
 
@@ -3044,6 +3045,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setCustomPasteboardDataEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitCustomPasteboardDataEnabledPreferenceKey];
+}
+
+- (BOOL)dialogElementEnabled
+{
+    return [self _boolValueForKey:WebKitDialogElementEnabledPreferenceKey];
+}
+
+- (void)setDialogElementEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitDialogElementEnabledPreferenceKey];
 }
 
 - (BOOL)cacheAPIEnabled

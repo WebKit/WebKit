@@ -39,6 +39,7 @@ dd interfaceName=HTMLElement
 del interfaceName=HTMLModElement
 details
 dfn interfaceName=HTMLElement
+dialog interfaceName=HTMLDialogElement, runtimeEnabled=dialogElement
 dir interfaceName=HTMLDirectoryElement
 div
 dl interfaceName=HTMLDListElement

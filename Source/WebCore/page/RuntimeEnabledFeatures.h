@@ -198,6 +198,9 @@ public:
     void setWebSQLDisabled(bool isDisabled) { m_webSQLEnabled = !isDisabled; }
     bool webSQLEnabled() const { return m_webSQLEnabled; }
 
+    void setDialogElementEnabled(bool isEnabled) { m_dialogElementEnabled = isEnabled; }
+    bool dialogElementEnabled() const { return m_dialogElementEnabled; }
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     void setAttachmentElementEnabled(bool areEnabled) { m_isAttachmentElementEnabled = areEnabled; }
     bool attachmentElementEnabled() const { return m_isAttachmentElementEnabled; }
@@ -413,6 +416,7 @@ private:
     bool m_CSSCustomPropertiesAndValuesEnabled { false };
     bool m_pointerEventsEnabled { true };
     bool m_syntheticEditingCommandsEnabled { true };
+    bool m_dialogElementEnabled { false };
     bool m_webSQLEnabled { true };
     bool m_pageAtRuleSupportEnabled { false };
 

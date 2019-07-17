@@ -1,3 +1,36 @@
+2019-07-17  Alex Christensen  <achristensen@webkit.org>
+
+        Add a runtime-disabled dialog element skeleton
+        https://bugs.webkit.org/show_bug.cgi?id=199839
+
+        Reviewed by Ryosuke Niwa.
+
+        Beginning implementation of https://html.spec.whatwg.org/multipage/interactive-elements.html#the-dialog-element
+        Covered by rebaselining WPT tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * html/HTMLDialogElement.cpp: Added.
+        (WebCore::HTMLDialogElement::HTMLDialogElement):
+        (WebCore::HTMLDialogElement::open):
+        (WebCore::HTMLDialogElement::setOpen):
+        (WebCore::HTMLDialogElement::returnValue):
+        (WebCore::HTMLDialogElement::setReturnValue):
+        (WebCore::HTMLDialogElement::show):
+        (WebCore::HTMLDialogElement::showModal):
+        (WebCore::HTMLDialogElement::close):
+        * html/HTMLDialogElement.h: Added.
+        * html/HTMLDialogElement.idl: Added.
+        * html/HTMLTagNames.in:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setDialogElementEnabled):
+        (WebCore::RuntimeEnabledFeatures::dialogElementEnabled const):
+
 2019-07-17  Youenn Fablet  <youenn@apple.com>
 
         Hop to the main thread when doing logging in RealtimeIncomingVideoSourceCocoa

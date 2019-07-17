@@ -1,3 +1,20 @@
+2019-07-17  Alex Christensen  <achristensen@webkit.org>
+
+        Add a runtime-disabled dialog element skeleton
+        https://bugs.webkit.org/show_bug.cgi?id=199839
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences dialogElementEnabled]):
+        (-[WebPreferences setDialogElementEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+        Add SPI to enable the dialog element for tests.
+
 2019-07-15  Dean Jackson  <dino@apple.com>
 
         [WebGL] Remove software rendering and simplify context creation on macOS

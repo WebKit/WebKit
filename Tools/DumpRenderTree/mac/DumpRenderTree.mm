@@ -977,6 +977,7 @@ static void resetWebPreferencesToConsistentValues()
 
     [preferences setDataTransferItemsEnabled:YES];
     [preferences setCustomPasteboardDataEnabled:YES];
+    [preferences setDialogElementEnabled:YES];
 
     [preferences setWebGL2Enabled:YES];
 

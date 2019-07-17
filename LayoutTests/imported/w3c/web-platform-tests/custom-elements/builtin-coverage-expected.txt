@@ -863,6 +863,14 @@ FAIL wbr: document.createElement() should instantiate a customized built-in elem
 FAIL wbr: innerHTML should instantiate a customized built-in element assert_equals: expected function "class extends HTMLElement {}" but got function "function HTMLElement() {
     [native code]
 }"
+PASS dialog: Define a customized built-in element 
+FAIL dialog: Operator 'new' should instantiate a customized built-in element function is not a constructor (evaluating 'super(...args)')
+FAIL dialog: document.createElement() should instantiate a customized built-in element assert_equals: expected function "class extends HTMLDialogElement {}" but got function "function HTMLDialogElement() {
+    [native code]
+}"
+FAIL dialog: innerHTML should instantiate a customized built-in element assert_equals: expected function "class extends HTMLDialogElement {}" but got function "function HTMLDialogElement() {
+    [native code]
+}"
 PASS slot: Define a customized built-in element 
 FAIL slot: Operator 'new' should instantiate a customized built-in element function is not a constructor (evaluating 'super(...args)')
 FAIL slot: document.createElement() should instantiate a customized built-in element assert_equals: expected function "class extends HTMLSlotElement {}" but got function "function HTMLSlotElement() {

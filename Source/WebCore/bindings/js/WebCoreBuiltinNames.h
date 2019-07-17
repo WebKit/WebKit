@@ -110,6 +110,7 @@ namespace WebCore {
     macro(GPUValidationError) \
     macro(HTMLAttachmentElement) \
     macro(HTMLAudioElement) \
+    macro(HTMLDialogElement) \
     macro(HTMLDataListElement) \
     macro(HTMLMenuItemElement) \
     macro(HTMLSlotElement) \

@@ -1720,6 +1720,16 @@ bool WKPreferencesGetCustomPasteboardDataEnabled(WKPreferencesRef preferencesRef
     return toImpl(preferencesRef)->customPasteboardDataEnabled();
 }
 
+void WKPreferencesSetDialogElementEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setDialogElementEnabled(flag);
+}
+
+bool WKPreferencesGetDialogElementEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->dialogElementEnabled();
+}
+
 void WKPreferencesSetWebShareEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setWebShareEnabled(flag);

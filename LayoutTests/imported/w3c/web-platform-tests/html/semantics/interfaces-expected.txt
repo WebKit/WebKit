@@ -69,8 +69,8 @@ PASS Interfaces for details
 PASS Interfaces for DETAILS 
 PASS Interfaces for dfn 
 PASS Interfaces for DFN 
-FAIL Interfaces for dialog assert_equals: Element dialog should have HTMLDialogElement as its primary interface. expected "[object HTMLDialogElement]" but got "[object HTMLUnknownElement]"
-FAIL Interfaces for DIALOG assert_equals: Element DIALOG should have HTMLDialogElement as its primary interface. expected "[object HTMLDialogElement]" but got "[object HTMLUnknownElement]"
+PASS Interfaces for dialog 
+PASS Interfaces for DIALOG 
 PASS Interfaces for dir 
 PASS Interfaces for DIR 
 PASS Interfaces for directory 

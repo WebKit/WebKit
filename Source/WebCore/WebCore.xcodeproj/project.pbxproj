@@ -8895,6 +8895,9 @@
 		5CE5D9A81DB899FC00CE7A8D /* JSTextDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextDecoder.h; sourceTree = "<group>"; };
 		5CE5D9A91DB899FC00CE7A8D /* JSTextEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextEncoder.cpp; sourceTree = "<group>"; };
 		5CE5D9AA1DB899FC00CE7A8D /* JSTextEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextEncoder.h; sourceTree = "<group>"; };
+		5CFB20D622DE830400ED2B76 /* HTMLDialogElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDialogElement.cpp; sourceTree = "<group>"; };
+		5CFB20D822DE830500ED2B76 /* HTMLDialogElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDialogElement.idl; sourceTree = "<group>"; };
+		5CFB20D922DE830600ED2B76 /* HTMLDialogElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDialogElement.h; sourceTree = "<group>"; };
 		5CFC434E192406A900A0D3B5 /* PointerLockController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointerLockController.cpp; sourceTree = "<group>"; };
 		5CFC434F192406A900A0D3B5 /* PointerLockController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointerLockController.h; sourceTree = "<group>"; };
 		5D21A80013ECE5DF00BB7064 /* WebVTTParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebVTTParser.cpp; sourceTree = "<group>"; };
@@ -21368,6 +21371,9 @@
 				D359D786129CA2710006E5D2 /* HTMLDetailsElement.cpp */,
 				D359D787129CA2710006E5D2 /* HTMLDetailsElement.h */,
 				D359D788129CA2710006E5D2 /* HTMLDetailsElement.idl */,
+				5CFB20D622DE830400ED2B76 /* HTMLDialogElement.cpp */,
+				5CFB20D922DE830600ED2B76 /* HTMLDialogElement.h */,
+				5CFB20D822DE830500ED2B76 /* HTMLDialogElement.idl */,
 				A8EA79ED0A1916DF00A8EF5F /* HTMLDirectoryElement.cpp */,
 				A8EA79EE0A1916DF00A8EF5F /* HTMLDirectoryElement.h */,
 				1A85B1D90A1B23A400D8C87C /* HTMLDirectoryElement.idl */,

@@ -1194,6 +1194,11 @@ SourceBufferChangeTypeEnabled:
   defaultValue: true
   condition: ENABLE(MEDIA_SOURCE)
 
+DialogElementEnabled:
+  type: bool
+  defaultValue: false
+  webcoreBinding: RuntimeEnabledFeatures
+
 EncryptedMediaAPIEnabled:
   type: bool
   defaultValue: true

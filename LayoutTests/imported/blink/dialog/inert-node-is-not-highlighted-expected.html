@@ -2,9 +2,12 @@
 <html>
 <head>
 <style>
+/*
+ // FIXME: Once dialog element is fully implemented, we should uncomment this.
 body p, span {
     -webkit-user-select: none;
 }
+ */
 
 ::backdrop {
     display: none;
@@ -28,8 +31,13 @@ none (crbug.com/147490).</p>
 <script>
 dialog = document.querySelector('dialog');
 dialog.showModal();
+
+ // FIXME: Once dialog element is fully implemented, we should replace this line with the commented lines.
+document.execCommand('SelectAll');
+/*
 selectable = document.querySelector('#selectable');
 window.getSelection().selectAllChildren(selectable);
+ */
 </script>
 </body>
 </html>

@@ -1,18 +1,3 @@
-CONSOLE MESSAGE: line 27: TypeError: document.querySelector("dialog").showModal is not a function. (In 'document.querySelector("dialog").showModal()', 'document.querySelector("dialog").showModal' is undefined)
-CONSOLE MESSAGE: line 27: TypeError: document.querySelector("dialog").showModal is not a function. (In 'document.querySelector("dialog").showModal()', 'document.querySelector("dialog").showModal' is undefined)
-CONSOLE MESSAGE: line 27: TypeError: document.querySelector("dialog").showModal is not a function. (In 'document.querySelector("dialog").showModal()', 'document.querySelector("dialog").showModal' is undefined)
-CONSOLE MESSAGE: line 27: TypeError: document.querySelector("dialog").showModal is not a function. (In 'document.querySelector("dialog").showModal()', 'document.querySelector("dialog").showModal' is undefined)
-CONSOLE MESSAGE: line 27: TypeError: document.querySelector("dialog").showModal is not a function. (In 'document.querySelector("dialog").showModal()', 'document.querySelector("dialog").showModal' is undefined)
-CONSOLE MESSAGE: line 27: TypeError: document.querySelector("dialog").showModal is not a function. (In 'document.querySelector("dialog").showModal()', 'document.querySelector("dialog").showModal' is undefined)
-CONSOLE MESSAGE: line 27: TypeError: document.querySelector("dialog").showModal is not a function. (In 'document.querySelector("dialog").showModal()', 'document.querySelector("dialog").showModal' is undefined)
-CONSOLE MESSAGE: line 27: TypeError: document.querySelector("dialog").showModal is not a function. (In 'document.querySelector("dialog").showModal()', 'document.querySelector("dialog").showModal' is undefined)
-CONSOLE MESSAGE: line 27: TypeError: document.querySelector("dialog").showModal is not a function. (In 'document.querySelector("dialog").showModal()', 'document.querySelector("dialog").showModal' is undefined)
-CONSOLE MESSAGE: line 27: TypeError: document.querySelector("dialog").showModal is not a function. (In 'document.querySelector("dialog").showModal()', 'document.querySelector("dialog").showModal' is undefined)
-CONSOLE MESSAGE: line 27: TypeError: document.querySelector("dialog").showModal is not a function. (In 'document.querySelector("dialog").showModal()', 'document.querySelector("dialog").showModal' is undefined)
-CONSOLE MESSAGE: line 27: TypeError: document.querySelector("dialog").showModal is not a function. (In 'document.querySelector("dialog").showModal()', 'document.querySelector("dialog").showModal' is undefined)
-CONSOLE MESSAGE: line 27: TypeError: document.querySelector("dialog").showModal is not a function. (In 'document.querySelector("dialog").showModal()', 'document.querySelector("dialog").showModal' is undefined)
-CONSOLE MESSAGE: line 27: TypeError: document.querySelector("dialog").showModal is not a function. (In 'document.querySelector("dialog").showModal()', 'document.querySelector("dialog").showModal' is undefined)
-CONSOLE MESSAGE: line 27: TypeError: document.querySelector("dialog").showModal is not a function. (In 'document.querySelector("dialog").showModal()', 'document.querySelector("dialog").showModal' is undefined)
 
 FAIL horizontal-tb: tall viewport assert_equals: expected "45px" but got "auto"
 FAIL horizontal-tb: wide viewport assert_equals: expected "15px" but got "auto"

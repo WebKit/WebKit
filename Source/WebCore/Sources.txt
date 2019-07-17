@@ -1106,6 +1106,7 @@ html/HTMLDListElement.cpp
 html/HTMLDataElement.cpp
 html/HTMLDataListElement.cpp
 html/HTMLDetailsElement.cpp
+html/HTMLDialogElement.cpp
 html/HTMLDirectoryElement.cpp
 html/HTMLDivElement.cpp
 html/HTMLDocument.cpp
@@ -2846,6 +2847,7 @@ JSHTMLDListElement.cpp
 JSHTMLDataElement.cpp
 JSHTMLDataListElement.cpp
 JSHTMLDetailsElement.cpp
+JSHTMLDialogElement.cpp
 JSHTMLDirectoryElement.cpp
 JSHTMLDivElement.cpp
 JSHTMLDocument.cpp

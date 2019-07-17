@@ -671,6 +671,7 @@ $(PROJECT_DIR)/html/HTMLDListElement.idl
 $(PROJECT_DIR)/html/HTMLDataElement.idl
 $(PROJECT_DIR)/html/HTMLDataListElement.idl
 $(PROJECT_DIR)/html/HTMLDetailsElement.idl
+$(PROJECT_DIR)/html/HTMLDialogElement.idl
 $(PROJECT_DIR)/html/HTMLDirectoryElement.idl
 $(PROJECT_DIR)/html/HTMLDivElement.idl
 $(PROJECT_DIR)/html/HTMLDocument.idl

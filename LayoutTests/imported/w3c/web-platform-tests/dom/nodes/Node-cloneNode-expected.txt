@@ -26,7 +26,7 @@ PASS createElement(col)
 PASS createElement(colgroup) 
 PASS createElement(data) 
 FAIL createElement(datalist) assert_true: HTMLDataListElement is not supported expected true got false
-FAIL createElement(dialog) assert_true: HTMLDialogElement is not supported expected true got false
+PASS createElement(dialog) 
 PASS createElement(dd) 
 PASS createElement(del) 
 PASS createElement(details) 

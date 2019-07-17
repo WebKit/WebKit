@@ -786,6 +786,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/HTMLDataElement.idl
     html/HTMLDataListElement.idl
     html/HTMLDetailsElement.idl
+    html/HTMLDialogElement.idl
     html/HTMLDirectoryElement.idl
     html/HTMLDivElement.idl
     html/HTMLDocument.idl
