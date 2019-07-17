@@ -2374,10 +2374,10 @@ void webkitWebViewPrintFrame(WebKitWebView* webView, WebFrameProxy* frame)
 }
 #endif
 
-void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WebFrameProxy* frame, uint64_t resourceIdentifier, WebKitURIRequest* request)
+void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WebFrameProxy& frame, uint64_t resourceIdentifier, WebKitURIRequest* request)
 {
     WebKitWebViewPrivate* priv = webView->priv;
-    bool isMainResource = frame->isMainFrame() && !priv->mainResource;
+    bool isMainResource = frame.isMainFrame() && !priv->mainResource;
     WebKitWebResource* resource = webkitWebResourceCreate(frame, request, isMainResource);
     if (isMainResource)
         priv->mainResource = resource;
