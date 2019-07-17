@@ -34,7 +34,7 @@ class IOSInlineMediaControls extends InlineMediaControls
 
         this.element.classList.add("ios");
 
-        this._pinchGestureRecognizer = new PinchGestureRecognizer(this.element, this);
+        this._updateGestureRecognizers();
     }
 
     // Public
@@ -47,11 +47,18 @@ class IOSInlineMediaControls extends InlineMediaControls
     set showsStartButton(flag)
     {
         super.showsStartButton = flag;
+        this._updateGestureRecognizers();
+    }
 
-        if (!flag)
-            delete this._tapGestureRecognizer;
-        else if (!this._tapGestureRecognizer)
-            this._tapGestureRecognizer = new TapGestureRecognizer(this.element, this);
+    get visible()
+    {
+        return super.visible;
+    }
+
+    set visible(flag)
+    {
+        super.visible = flag;
+        this._updateGestureRecognizers();
     }
 
     // Protected
@@ -66,8 +73,29 @@ class IOSInlineMediaControls extends InlineMediaControls
 
     // Private
 
+    _updateGestureRecognizers()
+    {
+        const shouldListenToPinches = this.visible;
+        const shouldListenToTaps = this.visible && this.showsStartButton;
+
+        if (shouldListenToPinches && !this._pinchGestureRecognizer)
+            this._pinchGestureRecognizer = new PinchGestureRecognizer(this.element, this);
+        else if (!shouldListenToPinches && this._pinchGestureRecognizer) {
+            this._pinchGestureRecognizer.enabled = false;
+            delete this._pinchGestureRecognizer;
+        }
+
+        if (shouldListenToTaps && !this._tapGestureRecognizer)
+            this._tapGestureRecognizer = new TapGestureRecognizer(this.element, this);
+        else if (!shouldListenToTaps && this._tapGestureRecognizer) {
+            this._tapGestureRecognizer.enabled = false;
+            delete this._tapGestureRecognizer;
+        }
+    }
+
     _pinchGestureRecognizerStateDidChange(recognizer)
     {
+        console.assert(this.visible);
         if (recognizer.state !== GestureRecognizer.States.Ended && recognizer.state !== GestureRecognizer.States.Changed)
             return;
 
@@ -77,7 +105,7 @@ class IOSInlineMediaControls extends InlineMediaControls
 
     _tapGestureRecognizerStateDidChange(recognizer)
     {
-        console.assert(this.showsStartButton);
+        console.assert(this.visible && this.showsStartButton);
         if (recognizer.state === GestureRecognizer.States.Recognized && this.delegate && typeof this.delegate.iOSInlineMediaControlsRecognizedTapGesture === "function")
             this.delegate.iOSInlineMediaControlsRecognizedTapGesture();
     }

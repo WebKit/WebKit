@@ -1,3 +1,32 @@
+2019-07-17  Antoine Quint  <graouts@apple.com>
+
+        Unable to bring up custom media controls on iOS for video.sina.cn
+        https://bugs.webkit.org/show_bug.cgi?id=199889
+        <rdar://problem/51883919>
+
+        Reviewed by Dean Jackson.
+
+        Videos on video.sina.cn by default have the "controls" attribute and are set not to autoplay. This means that the original state
+        of the media controls are set to show the built-in media controls and also show the prominent play button to begin playback. The
+        display of the play button also requires a tap gesture recognizer, which calls preventDefault() when the "touchend" is received
+        to prevent double-tap-to-zoom, but also has the side-effect of preventing a "click" event from being dispatched for a tap.
+
+        The video.sina.cn code would eventually remove the "controls" attribute, which would make the built-in media controls not visible,
+        but still participate in hit-testing because we keep the shadow DOM around in order to potentially show the Airplay or picture-in-picture
+        placards. Additionally, we wouldn't disable the tap gesture recognizer when the "controls" attribute was removed.
+
+        We now ensure that both gesture recognizers used by iOS inline media controls are only enabled when media controls are visible.
+
+        Test: media/modern-media-controls/media-controller/ios/media-controller-allows-click-over-video-with-no-controls.html
+
+        * Modules/modern-media-controls/controls/ios-inline-media-controls.js:
+        (IOSInlineMediaControls.prototype.set showsStartButton):
+        (IOSInlineMediaControls.prototype.get visible):
+        (IOSInlineMediaControls.prototype.set visible):
+        (IOSInlineMediaControls.prototype._updateGestureRecognizers):
+        (IOSInlineMediaControls.prototype._tapGestureRecognizerStateDidChange):
+        (IOSInlineMediaControls.prototype._pinchGestureRecognizerStateDidChange):
+
 2019-07-17  Christopher Reid  <chris.reid@sony.com>
 
         Bytecode cache should use FileSystem
