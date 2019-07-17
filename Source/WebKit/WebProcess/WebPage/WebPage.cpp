@@ -1260,7 +1260,9 @@ PluginView* WebPage::pluginViewForFrame(Frame* frame)
 
 void WebPage::executeEditingCommand(const String& commandName, const String& argument)
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    platformWillPerformEditingCommand();
+
+    auto& frame = m_page->focusController().focusedOrMainFrame();
 
     if (PluginView* pluginView = focusedPluginViewForFrame(frame)) {
         pluginView->handleEditingCommand(commandName, argument);
@@ -5175,7 +5177,9 @@ void WebPage::setTextAsync(const String& text)
 
 void WebPage::insertTextAsync(const String& text, const EditingRange& replacementEditingRange, InsertTextOptions&& options)
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    platformWillPerformEditingCommand();
+
+    auto& frame = m_page->focusController().focusedOrMainFrame();
 
     Ref<Frame> protector(frame);
 
@@ -5249,7 +5253,9 @@ void WebPage::firstRectForCharacterRangeAsync(const EditingRange& editingRange, 
 
 void WebPage::setCompositionAsync(const String& text, const Vector<CompositionUnderline>& underlines, const EditingRange& selection, const EditingRange& replacementEditingRange)
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    platformWillPerformEditingCommand();
+
+    auto& frame = m_page->focusController().focusedOrMainFrame();
 
     if (frame.selection().selection().isContentEditable()) {
         RefPtr<Range> replacementRange;
@@ -5265,6 +5271,8 @@ void WebPage::setCompositionAsync(const String& text, const Vector<CompositionUn
 
 void WebPage::confirmCompositionAsync()
 {
+    platformWillPerformEditingCommand();
+
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     frame.editor().confirmComposition();
 }

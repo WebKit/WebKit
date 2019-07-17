@@ -63,6 +63,7 @@
 #import <WebCore/AutofillElements.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ContentChangeObserver.h>
+#import <WebCore/DOMTimerHoldingTank.h>
 #import <WebCore/DataDetection.h>
 #import <WebCore/DiagnosticLoggingClient.h>
 #import <WebCore/DiagnosticLoggingKeys.h>
@@ -272,6 +273,15 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
                 postLayoutData.editableRootIsTransparentOrFullyClipped = isTransparentOrFullyClipped(*container);
         }
         computeEditableRootHasContentAndPlainText(selection, postLayoutData);
+    }
+}
+
+void WebPage::platformWillPerformEditingCommand()
+{
+    auto& frame = m_page->focusController().focusedOrMainFrame();
+    if (auto* document = frame.document()) {
+        if (auto* holdingTank = document->domTimerHoldingTankIfExists())
+            holdingTank->removeAll();
     }
 }
 

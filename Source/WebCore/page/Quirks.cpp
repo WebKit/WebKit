@@ -317,6 +317,22 @@ bool Quirks::shouldDisablePointerEventsQuirk() const
     return false;
 }
 
+bool Quirks::needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (m_document->settings().needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk())
+        return true;
+
+    if (!needsQuirks())
+        return false;
+
+    auto& url = m_document->topDocument().url();
+    return equalLettersIgnoringASCIICase(url.host(), "docs.google.com") && url.path().startsWithIgnoringASCIICase("/spreadsheets/");
+#else
+    return false;
+#endif
+}
+
 // FIXME(<rdar://problem/50394969>): Remove after desmos.com adopts inputmode="none".
 bool Quirks::needsInputModeNoneImplicitly(const HTMLElement& element) const
 {
