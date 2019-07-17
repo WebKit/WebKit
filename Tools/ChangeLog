@@ -1,3 +1,28 @@
+2019-07-17  Sam Weinig  <weinig@apple.com>
+
+        Add StringBuilder member function which allows makeString() style variadic argument construction
+        https://bugs.webkit.org/show_bug.cgi?id=198997
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
+        Add basic test showing that StringBuilder::flexibleAppend can be used to 
+        append one or more string adaptable types. 
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Add WTFStringUtilities.cpp
+
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
+        Add basic test showing that StringBuilder::flexibleAppend can be used to 
+        append one or more string adaptable types. 
+
+        * TestWebKitAPI/Tests/WTF/StringOperators.cpp:
+        * TestWebKitAPI/WTFStringUtilities.cpp: Added.
+        * TestWebKitAPI/WTFStringUtilities.h:
+        Move WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING() and wtfStringCopyCount to WTFStringUtilities.h/cpp
+        to allow for a single definition of StringTypeAdapter<String, void> which is required for ODR.
+
 2019-07-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the file superfluously added in r247535.

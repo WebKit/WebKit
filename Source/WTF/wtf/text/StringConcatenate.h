@@ -248,16 +248,16 @@ inline bool are8Bit(Adapter adapter, Adapters ...adapters)
 }
 
 template<typename ResultType, typename Adapter>
-inline void makeStringAccumulator(ResultType* result, Adapter adapter)
+inline void stringTypeAdapterAccumulator(ResultType* result, Adapter adapter)
 {
     adapter.writeTo(result);
 }
 
 template<typename ResultType, typename Adapter, typename... Adapters>
-inline void makeStringAccumulator(ResultType* result, Adapter adapter, Adapters ...adapters)
+inline void stringTypeAdapterAccumulator(ResultType* result, Adapter adapter, Adapters ...adapters)
 {
     adapter.writeTo(result);
-    makeStringAccumulator(result + adapter.length(), adapters...);
+    stringTypeAdapterAccumulator(result + adapter.length(), adapters...);
 }
 
 template<typename StringTypeAdapter, typename... StringTypeAdapters>
@@ -276,7 +276,7 @@ String tryMakeStringFromAdapters(StringTypeAdapter adapter, StringTypeAdapters .
         if (!resultImpl)
             return String();
 
-        makeStringAccumulator(buffer, adapter, adapters...);
+        stringTypeAdapterAccumulator(buffer, adapter, adapters...);
 
         return resultImpl;
     }
@@ -286,7 +286,7 @@ String tryMakeStringFromAdapters(StringTypeAdapter adapter, StringTypeAdapters .
     if (!resultImpl)
         return String();
 
-    makeStringAccumulator(buffer, adapter, adapters...);
+    stringTypeAdapterAccumulator(buffer, adapter, adapters...);
 
     return resultImpl;
 }

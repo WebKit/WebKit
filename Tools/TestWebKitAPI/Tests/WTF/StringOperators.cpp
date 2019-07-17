@@ -25,9 +25,7 @@
 
 #include "config.h"
 
-#define WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING() (++wtfStringCopyCount)
-
-static int wtfStringCopyCount;
+#include "WTFStringUtilities.h"
 
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>

@@ -30,6 +30,10 @@
 
 #pragma once
 
+#define WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING() (++wtfStringCopyCount)
+
+extern int wtfStringCopyCount;
+
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
