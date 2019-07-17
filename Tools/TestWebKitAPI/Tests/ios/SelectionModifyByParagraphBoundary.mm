@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-#include "SelectionModifyByParagraphBoundary.h"
 
 #if PLATFORM(IOS_FAMILY)
 

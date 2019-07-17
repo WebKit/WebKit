@@ -1,3 +1,10 @@
+2019-07-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the file superfluously added in r247535.
+
+        * TestWebKitAPI/Tests/ios/SelectionModifyByParagraphBoundary.h: Removed.
+        * TestWebKitAPI/Tests/ios/SelectionModifyByParagraphBoundary.mm:
+
 2019-07-17  Alex Christensen  <achristensen@webkit.org>
 
         Add a runtime-disabled dialog element skeleton
