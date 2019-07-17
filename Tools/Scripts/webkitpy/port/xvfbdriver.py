@@ -93,30 +93,16 @@ class XvfbDriver(Driver):
         return os.environ.get('XVFB_SCREEN_DEPTH', '24')
 
     def _setup_environ_for_test(self):
-        environment = self._port.setup_environ_for_server(self._server_name)
-        display_id = self._xvfb_run(environment)
+        port_server_environment = self._port.setup_environ_for_server(self._server_name)
+        driver_environment = super(XvfbDriver, self)._setup_environ_for_test()
+        display_id = self._xvfb_run(port_server_environment)
 
         # We must do this here because the DISPLAY number depends on _worker_number
-        environment['DISPLAY'] = ":%d" % display_id
-        environment['UNDER_XVFB'] = 'yes'
-        environment['GDK_BACKEND'] = 'x11'
-        environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
-        if self._driver_tempdir is not None:
-            environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
-            # Currently on WebKit2, there is no API for setting the application
-            # cache directory. Each worker should have it's own and it should be
-            # cleaned afterwards, so we set it to inside the temporary folder by
-            # prepending XDG_CACHE_HOME with DUMPRENDERTREE_TEMP.
-            environment['XDG_CACHE_HOME'] = self._port.host.filesystem.join(str(self._driver_tempdir), 'appcache')
-        return environment
-
-    def _start(self, pixel_tests, per_test_args):
-        self.stop()
-        self._driver_tempdir = self._port._driver_tempdir(self._target_host)
-        self._crashed_process_name = None
-        self._crashed_pid = None
-        self._server_process = self._port._server_process_constructor(self._port, self._server_name, self.cmd_line(pixel_tests, per_test_args), self._setup_environ_for_test())
-        self._server_process.start()
+        driver_environment['DISPLAY'] = ":%d" % display_id
+        driver_environment['UNDER_XVFB'] = 'yes'
+        driver_environment['GDK_BACKEND'] = 'x11'
+        driver_environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
+        return driver_environment
 
     def stop(self):
         super(XvfbDriver, self).stop()
