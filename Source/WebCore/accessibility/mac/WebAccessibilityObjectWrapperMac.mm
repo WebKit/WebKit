@@ -4247,7 +4247,9 @@ IGNORE_WARNINGS_END
     }
     
     if ([attribute isEqualToString:@"AXTextMarkerRangeForLine"]) {
-        VisiblePositionRange vpRange = m_object->visiblePositionRangeForLine([number intValue]);
+        VisiblePositionRange vpRange;
+        if ([number unsignedIntegerValue] != NSNotFound)
+            vpRange = m_object->visiblePositionRangeForLine([number unsignedIntValue]);
         return [self textMarkerRangeFromVisiblePositions:vpRange.start endPosition:vpRange.end];
     }
     
