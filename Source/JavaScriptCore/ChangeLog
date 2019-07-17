@@ -1,3 +1,65 @@
+2019-07-17  Mark Lam  <mark.lam@apple.com>
+
+        ArgumentsEliminationPhase should insert KillStack nodes before PutStack nodes that it adds.
+        https://bugs.webkit.org/show_bug.cgi?id=199821
+        <rdar://problem/52452328>
+
+        Reviewed by Filip Pizlo.
+
+        Excluding the ArgumentsEliminationPhase, PutStack nodes are converted from SetLocal
+        nodes in the SSAConversionPhase.  SetLocal nodes are always preceded by MovHint nodes,
+        and the SSAConversionPhase always inserts a KillStack node before a MovHint node.
+        Hence, a PutStack node is always preceded by a KillStack node.
+
+        However, the ArgumentsEliminationPhase can convert LoadVarargs nodes into a series
+        of one or more PutStacks nodes, and it prepends MovHint nodes before the PutStack
+        nodes.  However, it neglects to prepend KillStack nodes as well.  Since the
+        ArgumentsEliminationPhase runs after the SSAConversionPhase, the PutStack nodes
+        added during ArgumentsElimination will not be preceded by KillStack nodes.
+
+        This patch fixes this by inserting a KillStack in the ArgumentsEliminationPhase
+        before it inserts a MovHint and a PutStack node.
+
+        Consider this test case which can manifest the above issue as a crash:
+
+            function inlinee(value) {
+                ...
+                let tmp = value + 1;
+            }
+
+            function reflect() {
+                return inlinee.apply(undefined, arguments);
+            }
+
+            function test(arr) {
+                let object = inlinee.apply(undefined, arr);   // Uses a lot of SetArgumentMaybe nodes.
+                reflect();    // Calls with a LoadVararg, which gets converted into a PutStack of a constant.
+            }
+
+        In this test case, we have a scenario where a SetArgumentMaybe's stack
+        slot is reused as the stack slot for a PutStack later.  Here, the PutStack will
+        put a constant undefined value.  Coincidentally, the SetArgumentMaybe may also
+        initialize that stack slot to a constant undefined value.  Note that by the time
+        the PutStack executes, the SetArgumentMaybe's stack slot is dead.  The liveness of
+        these 2 values are distinct.
+
+        However, because we were missing a KillStack before the PutStack, OSR availability
+        analysis gets misled into thinking that the PutStack constant value is still in the
+        stack slot because the value left there by the SetArgumentMaybe hasn't been killed
+        off yet.  As a result, OSR exit code will attempt to recover the PutStack's undefined
+        constant by loading from the stack slot instead of materializing it.  Since
+        SetArgumentMaybe may not actually initialize the stack slot, we get a crash in OSR
+        exit when we try to recover the PutStack constant value from the stack slot, and
+        end up using what ever junk value we read from there.
+
+        Fixing the ArgumentsEliminationPhase to insert KillStack before the PutStack
+        removes this conflation of the PutStack's constant value with the SetArgumentMaybe's
+        constant value in the same stack slot.  And, OSR availability analysis will no
+        longer be misled to load the PutStack's constant value from the stack, but will
+        materialize the constant instead.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+
 2019-07-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r247505.

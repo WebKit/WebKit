@@ -861,6 +861,9 @@ private:
                             nodeIndex, node->origin.withExitOK(canExit),
                             jsNumber(argumentCountIncludingThis));
                         insertionSet.insertNode(
+                            nodeIndex, SpecNone, KillStack, node->origin.takeValidExit(canExit),
+                            OpInfo(varargsData->count.offset()));
+                        insertionSet.insertNode(
                             nodeIndex, SpecNone, MovHint, node->origin.takeValidExit(canExit),
                             OpInfo(varargsData->count.offset()), Edge(argumentCountIncludingThisNode));
                         insertionSet.insertNode(
@@ -874,6 +877,8 @@ private:
                         StackAccessData* data =
                             m_graph.m_stackAccessData.add(reg, FlushedJSValue);
                         
+                        insertionSet.insertNode(
+                            nodeIndex, SpecNone, KillStack, node->origin.takeValidExit(canExit), OpInfo(reg.offset()));
                         insertionSet.insertNode(
                             nodeIndex, SpecNone, MovHint, node->origin.takeValidExit(canExit),
                             OpInfo(reg.offset()), Edge(value));
