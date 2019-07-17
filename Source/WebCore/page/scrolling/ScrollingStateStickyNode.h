@@ -57,6 +57,7 @@ private:
 
     void setPropertyChangedBitsAfterReattach() override;
 
+    FloatPoint computeLayerPosition(const LayoutRect& viewportRect) const;
     void reconcileLayerPositionForViewportRect(const LayoutRect& viewportRect, ScrollingLayerPositionAction) override;
 
     void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;

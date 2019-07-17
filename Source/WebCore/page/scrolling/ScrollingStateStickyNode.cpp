@@ -30,6 +30,10 @@
 
 #include "GraphicsLayer.h"
 #include "Logging.h"
+#include "ScrollingStateFixedNode.h"
+#include "ScrollingStateFrameScrollingNode.h"
+#include "ScrollingStateOverflowScrollProxyNode.h"
+#include "ScrollingStateOverflowScrollingNode.h"
 #include "ScrollingStateTree.h"
 #include "ScrollingTree.h"
 #include <wtf/text/TextStream.h>
@@ -76,9 +80,45 @@ void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportCon
     setPropertyChanged(ViewportConstraints);
 }
 
+FloatPoint ScrollingStateStickyNode::computeLayerPosition(const LayoutRect& viewportRect) const
+{
+    // This logic follows ScrollingTreeStickyNode::computeLayerPosition().
+    auto computeLayerPositionForScrollingNode = [&](ScrollingStateNode& scrollingStateNode) {
+        FloatRect constrainingRect;
+        if (is<ScrollingStateFrameScrollingNode>(scrollingStateNode))
+            constrainingRect = viewportRect;
+        else {
+            auto& overflowScrollingNode = downcast<ScrollingStateOverflowScrollingNode>(scrollingStateNode);
+            constrainingRect = FloatRect(overflowScrollingNode.scrollPosition(), m_constraints.constrainingRectAtLastLayout().size());
+        }
+        return m_constraints.layerPositionForConstrainingRect(constrainingRect);
+    };
+
+    for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
+        if (is<ScrollingStateOverflowScrollProxyNode>(*ancestor)) {
+            auto& overflowProxyNode = downcast<ScrollingStateOverflowScrollProxyNode>(*ancestor);
+            auto overflowNode = scrollingStateTree().stateNodeForID(overflowProxyNode.overflowScrollingNode());
+            if (!overflowNode)
+                break;
+
+            return computeLayerPositionForScrollingNode(*overflowNode);
+        }
+
+        if (is<ScrollingStateScrollingNode>(*ancestor))
+            return computeLayerPositionForScrollingNode(*ancestor);
+
+        if (is<ScrollingStateFixedNode>(*ancestor) || is<ScrollingStateStickyNode>(*ancestor)) {
+            // FIXME: Do we need scrolling tree nodes at all for nested cases?
+            return m_constraints.layerPositionAtLastLayout();
+        }
+    }
+    ASSERT_NOT_REACHED();
+    return m_constraints.layerPositionAtLastLayout();
+}
+
 void ScrollingStateStickyNode::reconcileLayerPositionForViewportRect(const LayoutRect& viewportRect, ScrollingLayerPositionAction action)
 {
-    FloatPoint position = m_constraints.layerPositionForConstrainingRect(viewportRect);
+    FloatPoint position = computeLayerPosition(viewportRect);
     if (layer().representsGraphicsLayer()) {
         auto* graphicsLayer = static_cast<GraphicsLayer*>(layer());
 

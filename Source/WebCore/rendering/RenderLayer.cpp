@@ -303,6 +303,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_hasVisibleDescendant(false)
     , m_registeredScrollableArea(false)
     , m_isFixedIntersectingViewport(false)
+    , m_behavesAsFixed(false)
     , m_3DTransformedDescendantStatusDirty(true)
     , m_has3DTransformedDescendant(false)
     , m_hasCompositingDescendant(false)
@@ -948,6 +949,7 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, OptionSet
     m_repaintStatus = NeedsNormalRepaint;
     m_hasTransformedAncestor = flags.contains(SeenTransformedLayer);
     m_has3DTransformedAncestor = flags.contains(Seen3DTransformedLayer);
+    m_behavesAsFixed = flags.contains(SeenFixedLayer);
     setHasCompositedScrollingAncestor(flags.contains(SeenCompositedScrollingLayer));
 
     // Update the reflection's position and size.
@@ -964,7 +966,13 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, OptionSet
         if (!transform()->isAffine())
             flags.add(Seen3DTransformedLayer);
     }
-    
+
+    // Fixed inside transform behaves like absolute (per spec).
+    if (renderer().isFixedPositioned() && !m_hasTransformedAncestor) {
+        m_behavesAsFixed = true;
+        flags.add(SeenFixedLayer);
+    }
+
     if (hasCompositedScrollableOverflow())
         flags.add(SeenCompositedScrollingLayer);
 
@@ -6930,7 +6938,7 @@ void showLayerTree(const WebCore::RenderObject* renderer)
 static void outputPaintOrderTreeLegend(TextStream& stream)
 {
     stream.nextLine();
-    stream << "(S)tacking Context/(F)orced SC/O(P)portunistic SC, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, (C)omposited, (P)rovides backing/uses (p)rovided backing/paints to (a)ncestor, (c)omposited descendant, (s)scrolling ancestor\n"
+    stream << "(S)tacking Context/(F)orced SC/O(P)portunistic SC, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, Behaves as fi(x)ed, (C)omposited, (P)rovides backing/uses (p)rovided backing/paints to (a)ncestor, (c)omposited descendant, (s)scrolling ancestor\n"
         "Dirty (z)-lists, Dirty (n)ormal flow lists\n"
         "Traversal needs: requirements (t)raversal on descendants, (b)acking or hierarchy traversal on descendants, (r)equirements traversal on all descendants, requirements traversal on all (s)ubsequent layers, (h)ierarchy traversal on all descendants, update of paint (o)rder children\n"
         "Update needs:    post-(l)ayout requirements, (g)eometry, (k)ids geometry, (c)onfig, layer conne(x)ion, (s)crolling tree\n";
@@ -6955,6 +6963,7 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
     stream << (layer.renderer().hasTransformRelatedProperty() ? "T" : "-");
     stream << (layer.hasFilter() ? "F" : "-");
     stream << (layer.renderer().isFixedPositioned() ? "X" : "-");
+    stream << (layer.behavesAsFixed() ? "x" : "-");
     stream << (layer.isComposited() ? "C" : "-");
     
     auto compositedPaintingDestinationString = [&layer]() {

@@ -3,9 +3,13 @@
 <html>
 <head>
   <style>
-    #fixed1, #fixed2 {
-        background-color: silver;
-    }
+      .fixed {
+          position: fixed;
+          width: 10px;
+          height: 10px;
+          background-color: silver;
+          transform: translateX(0); /* Defeat clip to viewport */
+      }
   </style>
   <script type="text/javascript">
     if (window.testRunner && window.internals) {
@@ -13,13 +17,18 @@
       internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
 
       addEventListener("load", function() {
-        document.getElementById("layerTree1").innerText = internals.layerTreeAsText(document);
+        let layers1 = internals.layerTreeAsText(document);
         document.getElementById("fixed1").style.top = "50px";
         document.getElementById("fixed2").style.height = "10px";
-        document.getElementById("layerTree2").innerText = internals.layerTreeAsText(document);
+
+        let layers2 = internals.layerTreeAsText(document);
         document.getElementById("fixed1").style.top = "-100px";
         document.getElementById("fixed2").style.height = "0px";
-        document.getElementById("layerTree3").innerText = internals.layerTreeAsText(document);
+
+        let layers3 = internals.layerTreeAsText(document);
+        document.getElementById("layerTree1").innerText = layers1;
+        document.getElementById("layerTree2").innerText = layers2;
+        document.getElementById("layerTree3").innerText = layers3;
       }, false);
     }
   </script>
@@ -32,8 +41,7 @@
   <pre id="layerTree2"></pre>
   Layer tree when the fixed elements are out-of-view again (should be blank):
   <pre id="layerTree3"></pre>
-  <div id="fixed1" style="position: fixed; top: -100px; left: 100px; width: 10px; height: 10px"></div>
-  <div id="fixed2" style="position: fixed; top: 100px; left: 100px; width: 10px; height: 0px"></div>
+  <div id="fixed1" class="fixed" style="top: -100px; left: 100px;"></div>
+  <div id="fixed2" class="fixed" style="top: 100px; left: 100px; height: 0px"></div>
 </body>
 </html>
-

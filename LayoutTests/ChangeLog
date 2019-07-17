@@ -1,3 +1,17 @@
+2019-07-17  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Avoid lots of compositing backing store for offscreen position:fixed descendants
+        https://bugs.webkit.org/show_bug.cgi?id=199819
+        rdar://problem/51977416
+
+        Reviewed by Zalan Bujtas.
+
+        * compositing/layer-creation/fixed-position-change-out-of-view-in-view.html:
+        * compositing/layer-creation/fixed-position-descendants-out-of-view-expected.txt: Added.
+        * compositing/layer-creation/fixed-position-descendants-out-of-view.html: Added.
+        * compositing/layer-creation/fixed-position-out-of-view.html:
+        * platform/ios-wk2/fast/scrolling/ios/reconcile-layer-position-recursive-expected.txt: Added.
+
 2019-07-17  Alex Christensen  <achristensen@webkit.org>
 
         Add a runtime-disabled dialog element skeleton

@@ -1,3 +1,80 @@
+2019-07-17  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Avoid lots of compositing backing store for offscreen position:fixed descendants
+        https://bugs.webkit.org/show_bug.cgi?id=199819
+        rdar://problem/51977416
+
+        Reviewed by Zalan Bujtas.
+
+        There was code to ensure that position:fixed layers and their descendants don't have their
+        backing store detached (thrown away to save memory when offscreen), since that can trigger
+        flashing when async scrolling moves layers in and out of the visual viewport.
+
+        However, some pages have many descendant layers of positon:fixed which entrain backing
+        store, because, for example, they have a stack of translated-offscreen menu elements inside
+        a fixed header, and those elements may composite because of overflow:scroll.
+
+        To avoid using too much memory on such pages, allow backing store detachment for fixed
+        layers that are outside the layout viewport. Add a flag to RenderLayer that's set for layers
+        which are fixed, or descendants of fixed, and consult that flag in
+        updateAllowsBackingStoreDetaching(). The logic there is similar to
+        RenderLayerCompositor::requiresCompositingForPosition().
+        
+        I considered allowing all position:fixed to composite (since this patch would keep most of
+        the memory saving), but historically we've avoided compositing out-of-viewport
+        position:fixed because it's quite common to have them with negative z-index, and compositing
+        those has significant compositing knock-on effects.
+        
+        GraphicsLayer flushing no longer needs to track the viewport-constrained status of layers,
+        so remove that code.
+        
+        This patch removes backing-store pinning for sticky layers.
+        scrolling/ios/reconcile-layer-position-recursive.html then revealed a bug in
+        ScrollingStateStickyNode::reconcileLayerPositionForViewportRect(), which was assuming that
+        the sticky element was scrolled by the page, causing a bad layer position to get sync'd onto
+        the layer. Fixed by copying code from ScrollingTreeStickyNode that is smarter about
+        computing layer positions.
+        
+        This patch fixes jetsams on kmart.com.au in iOS 13 beta.
+
+        Test: compositing/layer-creation/fixed-position-descendants-out-of-view.html
+
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        (WebCore::ScrollingStateStickyNode::computeLayerPosition const):
+        (WebCore::ScrollingStateStickyNode::reconcileLayerPositionForViewportRect):
+        * page/scrolling/ScrollingStateStickyNode.h:
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setAllowsBackingStoreDetaching):
+        (WebCore::GraphicsLayer::allowsBackingStoreDetaching const):
+        (WebCore::GraphicsLayer::setIsViewportConstrained): Deleted.
+        (WebCore::GraphicsLayer::isViewportConstrained const): Deleted.
+        (WebCore::GraphicsLayer::setCanDetachBackingStore): Deleted.
+        (WebCore::GraphicsLayer::canDetachBackingStore const): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush const):
+        (WebCore::GraphicsLayerCA::setVisibleAndCoverageRects):
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::updateCoverage):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::outputPaintOrderTreeLegend):
+        (WebCore::outputPaintOrderTreeRecursive):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAllowsBackingStoreDetaching):
+        (WebCore::RenderLayerBacking::updateOverflowControlsLayers):
+        (WebCore::RenderLayerBacking::setIsScrollCoordinatedWithViewportConstrainedRole): Deleted.
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition const):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinationForLayer):
+
 2019-07-17  Chris Dumez  <cdumez@apple.com>
 
         Avoid unnecessary copy of monitors under DisplayRefreshMonitorManager::displayWasUpdated()
