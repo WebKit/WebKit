@@ -135,7 +135,7 @@ void WebAudioSourceProviderAVFObjC::prepare(const AudioStreamBasicDescription& f
     m_outputDescription = CAAudioStreamDescription(outputDescription);
 
     if (!m_dataSource)
-        m_dataSource = AudioSampleDataSource::create(kRingBufferDuration * sampleRate);
+        m_dataSource = AudioSampleDataSource::create(kRingBufferDuration * sampleRate, *m_captureSource);
     m_dataSource->setInputFormat(m_inputDescription.value());
     m_dataSource->setOutputFormat(m_outputDescription.value());
 

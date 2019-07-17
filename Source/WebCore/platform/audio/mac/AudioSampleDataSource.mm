@@ -31,6 +31,7 @@
 #include "CAAudioStreamDescription.h"
 #include "CARingBuffer.h"
 #include "Logging.h"
+#include "MediaStreamTrackPrivate.h"
 #include <AudioToolbox/AudioConverter.h>
 #include <mach/mach.h>
 #include <mach/mach_time.h>
@@ -45,14 +46,18 @@ namespace WebCore {
 using namespace PAL;
 using namespace JSC;
 
-Ref<AudioSampleDataSource> AudioSampleDataSource::create(size_t maximumSampleCount)
+Ref<AudioSampleDataSource> AudioSampleDataSource::create(size_t maximumSampleCount, MediaStreamTrackPrivate& track)
 {
-    return adoptRef(*new AudioSampleDataSource(maximumSampleCount));
+    return adoptRef(*new AudioSampleDataSource(maximumSampleCount, track));
 }
 
-AudioSampleDataSource::AudioSampleDataSource(size_t maximumSampleCount)
+AudioSampleDataSource::AudioSampleDataSource(size_t maximumSampleCount, MediaStreamTrackPrivate& track)
     : m_inputSampleOffset(MediaTime::invalidTime())
     , m_maximumSampleCount(maximumSampleCount)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(track.logger())
+    , m_logIdentifier(track.logIdentifier())
+#endif
 {
 }
 
@@ -89,8 +94,11 @@ OSStatus AudioSampleDataSource::setupConverter()
         return 0;
 
     OSStatus err = AudioConverterNew(&m_inputDescription->streamDescription(), &m_outputDescription->streamDescription(), &m_converter);
-    if (err)
-        LOG_ERROR("AudioSampleDataSource::setupConverter(%p) - AudioConverterNew returned error %d (%.4s)", this, (int)err, (char*)&err);
+    if (err) {
+        dispatch_async(dispatch_get_main_queue(), [this, protectedThis = makeRefPtr(*this), err] {
+            ERROR_LOG("AudioConverterNew returned error ", err);
+        });
+    }
 
     return err;
 
@@ -161,7 +169,9 @@ void AudioSampleDataSource::pushSamplesInternal(const AudioBufferList& bufferLis
 
     if (m_inputSampleOffset == MediaTime::invalidTime()) {
         m_inputSampleOffset = MediaTime(1 - sampleTime.timeValue(), sampleTime.timeScale());
-        LOG(MediaCaptureSamples, "@@ pushSamples: input sample offset is %lld, m_maximumSampleCount = %zu", m_inputSampleOffset.timeValue(), m_maximumSampleCount);
+        dispatch_async(dispatch_get_main_queue(), [inputSampleOffset = m_inputSampleOffset.timeValue(), maximumSampleCount = m_maximumSampleCount, this, protectedThis = makeRefPtr(*this)] {
+            ERROR_LOG("pushSamples: input sample offset is ", inputSampleOffset, ", maximumSampleCount = ", maximumSampleCount);
+        });
     }
     sampleTime += m_inputSampleOffset;
 
@@ -248,7 +258,7 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
 
 #if !LOG_DISABLED
     dispatch_async(dispatch_get_main_queue(), [sampleCount, timeStamp, sampleOffset = m_outputSampleOffset] {
-        LOG(MediaCaptureSamples, "** pullSamples: asking for %ld samples at time = %lld (was %lld)", sampleCount, timeStamp, timeStamp - sampleOffset);
+        LOG(MediaCaptureSamples, "** pullSamplesInternal: asking for %ld samples at time = %lld (was %lld)", sampleCount, timeStamp, timeStamp - sampleOffset);
     });
 #endif
 
@@ -261,9 +271,11 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
         else
             framesAvailable = timeStamp + sampleCount - endFrame;
 
-#if !LOG_DISABLED
-        dispatch_async(dispatch_get_main_queue(), [timeStamp, startFrame, endFrame, framesAvailable] {
-            LOG(MediaCaptureSamples, "** pullSamplesInternal: sample %lld is not completely in range [%lld .. %lld], returning %lld frames", timeStamp, startFrame, endFrame, framesAvailable);
+#if !RELEASE_LOG_DISABLED
+        dispatch_async(dispatch_get_main_queue(), [timeStamp, startFrame, endFrame, framesAvailable, sampleCount, this, protectedThis = makeRefPtr(*this)] {
+            ALWAYS_LOG("sample ", timeStamp, " is not completely in range [", startFrame, " .. ", endFrame, "], returning ", framesAvailable, " frames");
+            if (framesAvailable < sampleCount)
+                ERROR_LOG("not enough data available, returning zeroes");
         });
 #endif
 
@@ -350,6 +362,19 @@ bool AudioSampleDataSource::pullSamples(AudioSampleBufferList& buffer, size_t sa
 
     return true;
 }
+
+#if !RELEASE_LOG_DISABLED
+void AudioSampleDataSource::setLogger(Ref<const Logger>&& logger, const void* logIdentifier)
+{
+    m_logger = WTFMove(logger);
+    m_logIdentifier = logIdentifier;
+}
+
+WTFLogChannel& AudioSampleDataSource::logChannel() const
+{
+    return LogWebRTC;
+}
+#endif
 
 } // namespace WebCore
 

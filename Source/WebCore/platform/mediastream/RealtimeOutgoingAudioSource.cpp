@@ -40,10 +40,6 @@ namespace WebCore {
 
 RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource(Ref<MediaStreamTrackPrivate>&& source)
     : m_audioSource(WTFMove(source))
-#if !RELEASE_LOG_DISABLED
-    , m_logger(m_audioSource->logger())
-    , m_logIdentifier(m_audioSource->logIdentifier())
-#endif
 {
 }
 
@@ -66,6 +62,7 @@ void RealtimeOutgoingAudioSource::unobserveSource()
 
 bool RealtimeOutgoingAudioSource::setSource(Ref<MediaStreamTrackPrivate>&& newSource)
 {
+    ALWAYS_LOG("Changing source to ", newSource->logIdentifier());
     auto locker = holdLock(m_sinksLock);
     bool hasSinks = !m_sinks.isEmpty();
 
@@ -74,6 +71,8 @@ bool RealtimeOutgoingAudioSource::setSource(Ref<MediaStreamTrackPrivate>&& newSo
     m_audioSource = WTFMove(newSource);
     if (hasSinks)
         observeSource();
+
+    sourceUpdated();
 
     return true;
 }

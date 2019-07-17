@@ -1,3 +1,46 @@
+2019-07-17  Youenn Fablet  <youenn@apple.com>
+
+        Add release logging to AudioSampleDataSource
+        https://bugs.webkit.org/show_bug.cgi?id=199814
+        <rdar://problem/53128140>
+
+        Reviewed by Eric Carlson.
+
+        Use release logging for AudioSampleDataSource in case of errors.
+        This requires passing a logger and a logger identifier.
+        For that purpose, pass a MediaStreamTrackPrivate to it constructor
+        and reuse its logger and log identifier.
+
+        For each log, hop to the main thread as release logging requires to be done in the main thread.
+        Add specific handling for RealtimeOutgoingAudioSource as its MediaStreamTrack can change in case of replaceTrack.
+        In that case, we change of logger when changing the MediaStreamTrackPrivate.
+
+        No observable change of behavior, covered by existing tests.
+
+        * platform/audio/mac/AudioSampleDataSource.h:
+        * platform/audio/mac/AudioSampleDataSource.mm:
+        (WebCore::AudioSampleDataSource::create):
+        (WebCore::AudioSampleDataSource::AudioSampleDataSource):
+        (WebCore::AudioSampleDataSource::setupConverter):
+        (WebCore::AudioSampleDataSource::pushSamplesInternal):
+        (WebCore::AudioSampleDataSource::pullSamplesInternal):
+        (WebCore::AudioSampleDataSource::setLogger):
+        (WebCore::AudioSampleDataSource::logChannel const):
+        * platform/mediastream/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::setSource):
+        * platform/mediastream/RealtimeOutgoingAudioSource.h:
+        (WebCore::RealtimeOutgoingAudioSource::sourceUpdated):
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp:
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable):
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.h:
+        Instead of using its own logger/identifier member field, reuse its MediaStreamTrackPrivate.
+        * platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceCocoa::RealtimeOutgoingAudioSourceCocoa):
+        (WebCore::RealtimeOutgoingAudioSourceCocoa::sourceUpdated):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.h:
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+        (WebCore::WebAudioSourceProviderAVFObjC::prepare):
+
 2019-07-17  Kenneth Russell  <kbr@chromium.org>
 
         Make ANGLE work inside WebKit2's sandbox

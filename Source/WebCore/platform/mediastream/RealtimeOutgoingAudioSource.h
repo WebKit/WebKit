@@ -82,8 +82,8 @@ protected:
 
 #if !RELEASE_LOG_DISABLED
     // LoggerHelper API
-    const Logger& logger() const final { return m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    const Logger& logger() const final { return m_audioSource->logger(); }
+    const void* logIdentifier() const final { return m_audioSource->logIdentifier(); }
     const char* logClassName() const final { return "RealtimeOutgoingAudioSource"; }
     WTFLogChannel& logChannel() const final;
 #endif
@@ -115,6 +115,7 @@ private:
     virtual bool isReachingBufferedAudioDataHighLimit() { return false; };
     virtual bool isReachingBufferedAudioDataLowLimit() { return false; };
     virtual bool hasBufferedEnoughData() { return false; };
+    virtual void sourceUpdated() { }
 
     // MediaStreamTrackPrivate::Observer API
     void trackMutedChanged(MediaStreamTrackPrivate&) final { sourceMutedChanged(); }
@@ -133,8 +134,6 @@ private:
     HashSet<webrtc::AudioTrackSinkInterface*> m_sinks;
 
 #if !RELEASE_LOG_DISABLED
-    mutable Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
     size_t m_chunksSent { 0 };
 #endif
 };

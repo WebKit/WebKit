@@ -50,6 +50,7 @@ private:
     bool isReachingBufferedAudioDataHighLimit() final;
     bool isReachingBufferedAudioDataLowLimit() final;
     bool hasBufferedEnoughData() final;
+    void sourceUpdated() final;
 
     void pullAudioData() final;
 

@@ -46,7 +46,7 @@ static inline AudioStreamBasicDescription libwebrtcAudioFormat(Float64 sampleRat
 
 RealtimeOutgoingAudioSourceCocoa::RealtimeOutgoingAudioSourceCocoa(Ref<MediaStreamTrackPrivate>&& audioSource)
     : RealtimeOutgoingAudioSource(WTFMove(audioSource))
-    , m_sampleConverter(AudioSampleDataSource::create(LibWebRTCAudioFormat::sampleRate * 2))
+    , m_sampleConverter(AudioSampleDataSource::create(LibWebRTCAudioFormat::sampleRate * 2, source()))
 {
 }
 
@@ -143,6 +143,13 @@ void RealtimeOutgoingAudioSourceCocoa::pullAudioData()
         m_readCount += chunkSampleCount;
         sendAudioFrames(m_audioBuffer.data(), LibWebRTCAudioFormat::sampleSize, m_outputStreamDescription.sampleRate(), m_outputStreamDescription.numberOfChannels(), chunkSampleCount);
     });
+}
+
+void RealtimeOutgoingAudioSourceCocoa::sourceUpdated()
+{
+#if !RELEASE_LOG_DISABLED
+    m_sampleConverter->setLogger(source().logger(), source().logIdentifier());
+#endif
 }
 
 } // namespace WebCore

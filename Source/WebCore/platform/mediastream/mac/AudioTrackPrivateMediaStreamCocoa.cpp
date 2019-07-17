@@ -191,7 +191,7 @@ void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& s
         m_inputDescription = std::make_unique<CAAudioStreamDescription>(inputDescription);
         m_outputDescription = std::make_unique<CAAudioStreamDescription>(outputDescription);
 
-        m_dataSource = AudioSampleDataSource::create(description.sampleRate() * 2);
+        m_dataSource = AudioSampleDataSource::create(description.sampleRate() * 2, streamTrack());
 
         if (m_dataSource->setInputFormat(inputDescription) || m_dataSource->setOutputFormat(outputDescription)) {
             AudioComponentInstanceDispose(remoteIOUnit);
