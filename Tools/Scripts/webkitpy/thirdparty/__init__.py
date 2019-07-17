@@ -91,6 +91,8 @@ class AutoinstallImportHook(object):
             self._install_mechanize()
         elif '.pep8' in fullname:
             self._install_pep8()
+        elif '.pycodestyle' in fullname:
+            self._install_pycodestyle()
         elif '.pylint' in fullname:
             self._install_pylint()
         elif '.coverage' in fullname:
@@ -129,6 +131,9 @@ class AutoinstallImportHook(object):
     def _install_pep8(self):
         self._install("https://files.pythonhosted.org/packages/source/p/pep8/pep8-0.5.0.tar.gz",
                              "pep8-0.5.0/pep8.py")
+    def _install_pycodestyle(self):
+        self._install("https://files.pythonhosted.org/packages/source/p/pycodestyle/pycodestyle-2.5.0.tar.gz",
+                             "pycodestyle-2.5.0/pycodestyle.py")
 
     def _install_mozlog(self):
         self._ensure_autoinstalled_dir_is_in_sys_path()

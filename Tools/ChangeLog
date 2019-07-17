@@ -1,3 +1,27 @@
+2019-07-17  Jonathan Bedard  <jbedard@apple.com>
+
+        check-webkit-style: Add limited Python3 support
+        https://bugs.webkit.org/show_bug.cgi?id=199870
+
+        Rubber-stamped by Aakash Jain.
+
+        Since new services will be added in the near future which are Python 3, we
+        need to support Python 3 style checks. For now, assume all Python files are
+        Python 2 unless otherwise specified.
+
+        * Scripts/webkitpy/style/checker.py:
+        (_all_categories): Add pycodestyle to valid categories for testing.
+        (CheckerDispatcher._create_checker): Check that the provided Python file is in
+        one of the declared Python 3 directories.
+        * Scripts/webkitpy/style/checkers/python.py:
+        (Python3Checker): Add Python 3 checker, which doesn't lint and uses pycodestyle
+        instead of pep8.
+        (Python3Checker.__init__):
+        (Python3Checker.check):
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module): Support auto-installing pycodestyle.
+        (AutoinstallImportHook._install_pycodestyle):
+
 2019-07-17  Sam Weinig  <weinig@apple.com>
 
         Add StringBuilder member function which allows makeString() style variadic argument construction

@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
+# Copyright (C) 2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -127,3 +128,28 @@ class _FilteredStringIO(StringIO):
             if msg == '\n':
                 return True
         return False
+
+
+class Python3Checker(object):
+    def __init__(self, file_path, handle_style_error):
+        self._file_path = file_path
+        self._handle_style_error = handle_style_error
+
+    def check(self, lines):
+        from webkitpy.thirdparty.autoinstalled import pycodestyle
+
+        def handler(line_number, offset, text, check):
+            # Text is of the form 'E### <description of error>'
+            code = text[:4]
+            message = text[5:]
+            category = "pycodestyle/" + code
+            self._handle_style_error(
+                line_number=line_number,
+                category=category,
+                confidence=5,
+                message=message,
+            )
+
+        checker = pycodestyle.Checker(self._file_path)
+        checker.report_error = handler
+        checker.check_all()
