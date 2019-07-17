@@ -1,3 +1,11 @@
+2019-07-17  Russell Epstein  <russell_e@apple.com>
+
+        Adding self to contributors.json
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-07-17  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Parse full_results.json for layout-tests

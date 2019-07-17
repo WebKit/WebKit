@@ -4671,6 +4671,12 @@
       ],
       "status" : "reviewer"
    },
+   "Russell Epstein" : {
+      "emails" : [
+         "repstein@apple.com"
+      ],
+      "status" : "committer"
+   },
    "Ruth Fong" : {
       "emails" : [
          "ruthiecftg@gmail.com",
