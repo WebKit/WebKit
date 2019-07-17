@@ -289,7 +289,10 @@ config("angle_gpu_info_util_config") {
 }
 
 angle_static_library("angle_gpu_info_util") {
-  public_configs += [ ":angle_gpu_info_util_config" ]
+  public_configs += [
+    ":angle_gpu_info_util_config",
+    ":angle_backend_config",
+  ]
   public_deps = [
     ":angle_common",
   ]
@@ -305,7 +308,7 @@ angle_static_library("angle_gpu_info_util") {
   if (is_win) {
     sources += libangle_gpu_info_util_win_sources
     libs += [ "setupapi.lib" ]
-    defines += [ "GPU_INFO_USE_SETUPAPI" ]
+    libs += [ "dxgi.lib" ]
   }
 
   if (is_linux || is_fuchsia) {
@@ -443,14 +446,11 @@ angle_source_set("angle_version") {
   ]
 }
 
-config("libANGLE_config") {
-  cflags = []
+config("angle_backend_config") {
   defines = []
-  libs = []
-  ldflags = []
+
   if (angle_enable_d3d9) {
     defines += [ "ANGLE_ENABLE_D3D9" ]
-    ldflags += [ "/DELAYLOAD:d3d9.dll" ]
   }
   if (angle_enable_d3d11) {
     defines += [ "ANGLE_ENABLE_D3D11" ]
@@ -472,6 +472,16 @@ config("libANGLE_config") {
   }
   if (angle_enable_null) {
     defines += [ "ANGLE_ENABLE_NULL" ]
+  }
+}
+
+config("libANGLE_config") {
+  cflags = []
+  defines = []
+  libs = []
+  ldflags = []
+  if (angle_enable_d3d9) {
+    ldflags += [ "/DELAYLOAD:d3d9.dll" ]
   }
   defines += [ "LIBANGLE_IMPLEMENTATION" ]
 
@@ -665,7 +675,10 @@ angle_static_library("libANGLE") {
   }
 
   configs += [ ":debug_annotations_config" ]
-  public_configs += [ ":libANGLE_config" ]
+  public_configs += [
+    ":libANGLE_config",
+    ":angle_backend_config",
+  ]
 
   # Windows ARM64 is available since 10.0.16299 so no need to copy
   # d3dcompiler_47.dll because this file is available as inbox.

@@ -238,12 +238,12 @@ bool CMDeviceIDToDeviceAndVendorID(const std::string &id, uint32_t *vendorId, ui
     return success;
 }
 
-void FindPrimaryGPU(SystemInfo *info)
+void FindActiveGPU(SystemInfo *info)
 {
     ASSERT(!info->gpus.empty());
 
-    // On dual-GPU systems we assume the non-Intel GPU is the primary one.
-    int primary   = 0;
+    // On dual-GPU systems we assume the non-Intel GPU is the graphics one.
+    int active    = 0;
     bool hasIntel = false;
     for (size_t i = 0; i < info->gpus.size(); ++i)
     {
@@ -251,16 +251,17 @@ void FindPrimaryGPU(SystemInfo *info)
         {
             hasIntel = true;
         }
-        if (IsIntel(info->gpus[primary].vendorId))
+        if (IsIntel(info->gpus[active].vendorId))
         {
-            primary = static_cast<int>(i);
+            active = static_cast<int>(i);
         }
     }
 
     // Assume that a combination of NVIDIA or AMD with Intel means Optimus or AMD Switchable
-    info->primaryGPUIndex = primary;
-    info->isOptimus       = hasIntel && IsNVIDIA(info->gpus[primary].vendorId);
-    info->isAMDSwitchable = hasIntel && IsAMD(info->gpus[primary].vendorId);
+    info->activeGPUIndex  = active;
+    info->primaryGPUIndex = active;
+    info->isOptimus       = hasIntel && IsNVIDIA(info->gpus[active].vendorId);
+    info->isAMDSwitchable = hasIntel && IsAMD(info->gpus[active].vendorId);
 }
 
 void PrintSystemInfo(const SystemInfo &info)
@@ -289,7 +290,6 @@ void PrintSystemInfo(const SystemInfo &info)
 
     std::cout << "\n";
     std::cout << "Active GPU: " << info.activeGPUIndex << "\n";
-    std::cout << "Primary GPU: " << info.primaryGPUIndex << "\n";
 
     std::cout << "\n";
     std::cout << "Optimus: " << (info.isOptimus ? "true" : "false") << "\n";
@@ -307,10 +307,6 @@ void PrintSystemInfo(const SystemInfo &info)
     if (!info.machineModelVersion.empty())
     {
         std::cout << "Machine Model Version: " << info.machineModelVersion << "\n";
-    }
-    if (!info.primaryDisplayDeviceId.empty())
-    {
-        std::cout << "Primary Display Device: " << info.primaryDisplayDeviceId << "\n";
     }
     std::cout << std::endl;
 }

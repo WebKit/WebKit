@@ -58,12 +58,12 @@ struct SystemInfo
 
     std::vector<GPUDeviceInfo> gpus;
 
-    // Index of the primary GPU (the discrete one on dual GPU systems) in `gpus`.
-    // Will never be -1 after a successful GetSystemInfo.
-    int primaryGPUIndex = -1;
-    // Index of the currently active GPU in `gpus`, can be -1 if the active GPU could not be
-    // detected.
+    // Index of the GPU expected to be used for 3D graphics. Based on a best-guess heuristic on
+    // some platforms. On windows, this is accurate.
     int activeGPUIndex = -1;
+
+    // Deprecated, same as activeGPUIndex
+    int primaryGPUIndex = -1;
 
     bool isOptimus       = false;
     bool isAMDSwitchable = false;
@@ -78,9 +78,6 @@ struct SystemInfo
 
     // Only available on macOS
     std::string machineModelVersion;
-
-    // Only available on Windows, set even on failure.
-    std::string primaryDisplayDeviceId;
 };
 
 // Gathers information about the system without starting a GPU driver and returns them in `info`.

@@ -1,3 +1,17 @@
+2019-07-17  Kenneth Russell  <kbr@chromium.org>
+
+        Make ANGLE work inside WebKit2's sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=199844
+
+        Reviewed by Alex Christensen.
+
+        Fix missing #import introduced at the last minute while removing
+        some debugging code in the last patch.
+
+        Tested with San Angeles WebGL demo and some conformance tests.
+
+        * platform/graphics/cocoa/WebGLLayer.mm:
+
 2019-07-17  Andres Gonzalez  <andresg_22@apple.com>
 
         Hang in WebCore::AccessibilityRenderObject::visiblePositionRangeForLine.

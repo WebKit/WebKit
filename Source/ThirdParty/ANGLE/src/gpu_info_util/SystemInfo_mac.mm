@@ -72,22 +72,6 @@ bool GetEntryProperty(io_registry_entry_t entry, CFStringRef name, uint32_t *val
     return true;
 }
 
-// CGDisplayIOServicePort is deprecated as of macOS 10.9, but has no replacement, see
-// https://crbug.com/650837
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
-// Find the info of the current GPU.
-bool GetActiveGPU(VendorID *vendorId, DeviceID *deviceId)
-{
-    io_registry_entry_t port = CGDisplayIOServicePort(kCGDirectMainDisplay);
-
-    return GetEntryProperty(port, CFSTR("vendor-id"), vendorId) &&
-           GetEntryProperty(port, CFSTR("device-id"), deviceId);
-}
-
-#pragma clang diagnostic pop
-
 // Gathers the vendor and device IDs for the PCI GPUs
 bool GetPCIDevices(std::vector<GPUDeviceInfo> *devices)
 {
@@ -145,26 +129,7 @@ bool GetSystemInfo(SystemInfo *info)
         return false;
     }
 
-    // Find the active GPU
-    {
-        VendorID activeVendor;
-        DeviceID activeDevice;
-        if (!GetActiveGPU(&activeVendor, &activeDevice))
-        {
-            return false;
-        }
-
-        for (size_t i = 0; i < info->gpus.size(); ++i)
-        {
-            if (info->gpus[i].vendorId == activeVendor && info->gpus[i].deviceId == activeDevice)
-            {
-                info->activeGPUIndex = static_cast<int>(i);
-                break;
-            }
-        }
-    }
-
-    FindPrimaryGPU(info);
+    FindActiveGPU(info);
 
     // Figure out whether this is a dual-GPU system.
     //

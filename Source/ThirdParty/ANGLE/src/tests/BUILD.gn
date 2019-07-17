@@ -541,6 +541,7 @@ if (build_angle_gles1_conform_tests) {
     configs += [
       "${angle_root}:libANGLE_config",
       "${angle_root}:library_name_config",
+      "${angle_root}:angle_backend_config",
     ]
 
     if (is_android) {

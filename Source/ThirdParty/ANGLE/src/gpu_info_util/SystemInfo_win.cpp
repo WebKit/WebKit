@@ -14,18 +14,8 @@
 // Windows.h needs to be included first
 #include <windows.h>
 
-#if defined(GPU_INFO_USE_SETUPAPI)
-// Remove parts of commctrl.h that have compile errors
-#    define NOTOOLBAR
-#    define NOTOOLTIPS
-#    include <cfgmgr32.h>
-#    include <setupapi.h>
-#elif defined(GPU_INFO_USE_DXGI)
-#    include <d3d10.h>
-#    include <dxgi.h>
-#else
-#    error "SystemInfo_win needs at least GPU_INFO_USE_SETUPAPI or GPU_INFO_USE_DXGI defined"
-#endif
+#include <d3d10.h>
+#include <dxgi.h>
 
 #include <array>
 #include <sstream>
@@ -35,110 +25,6 @@ namespace angle
 
 namespace
 {
-
-// Returns the CM device ID of the primary GPU.
-std::string GetPrimaryDisplayDeviceId()
-{
-    DISPLAY_DEVICEA displayDevice;
-    displayDevice.cb = sizeof(DISPLAY_DEVICEA);
-
-    for (int i = 0; EnumDisplayDevicesA(nullptr, i, &displayDevice, 0); ++i)
-    {
-        if (displayDevice.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE)
-        {
-            return displayDevice.DeviceID;
-        }
-    }
-
-    return "";
-}
-
-#if defined(GPU_INFO_USE_SETUPAPI)
-
-std::string GetRegistryStringValue(HKEY key, const char *valueName)
-{
-    std::array<char, 255> value;
-    DWORD valueSize = sizeof(value);
-    if (RegQueryValueExA(key, valueName, nullptr, nullptr, reinterpret_cast<LPBYTE>(value.data()),
-                         &valueSize) == ERROR_SUCCESS)
-    {
-        return value.data();
-    }
-    return "";
-}
-
-// Gathers information about the devices from the registry. The reason why we aren't using
-// a dedicated API such as DXGI is that we need information like the driver vendor and date.
-// DXGI doesn't provide a way to know the device registry key from an IDXGIAdapter.
-bool GetDevicesFromRegistry(std::vector<GPUDeviceInfo> *devices)
-{
-    // Display adapter class GUID from
-    // https://msdn.microsoft.com/en-us/library/windows/hardware/ff553426%28v=vs.85%29.aspx
-    GUID displayClass = {
-        0x4d36e968, 0xe325, 0x11ce, {0xbf, 0xc1, 0x08, 0x00, 0x2b, 0xe1, 0x03, 0x18}};
-
-    HDEVINFO deviceInfo = SetupDiGetClassDevsW(&displayClass, nullptr, nullptr, DIGCF_PRESENT);
-
-    if (deviceInfo == INVALID_HANDLE_VALUE)
-    {
-        return false;
-    }
-
-    // This iterates over the devices of the "Display adapter" class
-    DWORD deviceIndex = 0;
-    SP_DEVINFO_DATA deviceData;
-    deviceData.cbSize = sizeof(deviceData);
-    while (SetupDiEnumDeviceInfo(deviceInfo, deviceIndex++, &deviceData))
-    {
-        // The device and vendor IDs can be gathered directly, but information about the driver
-        // requires some registry digging
-        char fullDeviceID[MAX_DEVICE_ID_LEN];
-        if (CM_Get_Device_IDA(deviceData.DevInst, fullDeviceID, MAX_DEVICE_ID_LEN, 0) != CR_SUCCESS)
-        {
-            continue;
-        }
-
-        GPUDeviceInfo device;
-
-        if (!CMDeviceIDToDeviceAndVendorID(fullDeviceID, &device.vendorId, &device.deviceId))
-        {
-            continue;
-        }
-
-        // The driver key will end with something like {<displayClass>}/<4 digit number>.
-        std::array<WCHAR, 255> value;
-        if (!SetupDiGetDeviceRegistryPropertyW(deviceInfo, &deviceData, SPDRP_DRIVER, nullptr,
-                                               reinterpret_cast<PBYTE>(value.data()), sizeof(value),
-                                               nullptr))
-        {
-            continue;
-        }
-
-        std::wstring driverKey = L"System\\CurrentControlSet\\Control\\Class\\";
-        driverKey += value.data();
-
-        HKEY key;
-        if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, driverKey.c_str(), 0, KEY_QUERY_VALUE, &key) !=
-            ERROR_SUCCESS)
-        {
-            continue;
-        }
-
-        device.driverVersion = GetRegistryStringValue(key, "DriverVersion");
-        device.driverDate    = GetRegistryStringValue(key, "DriverDate");
-        device.driverVendor  = GetRegistryStringValue(key, "ProviderName");
-
-        RegCloseKey(key);
-
-        devices->push_back(device);
-    }
-
-    SetupDiDestroyDeviceInfoList(deviceInfo);
-
-    return true;
-}
-
-#elif defined(GPU_INFO_USE_DXGI)
 
 bool GetDevicesFromDXGI(std::vector<GPUDeviceInfo> *devices)
 {
@@ -185,63 +71,33 @@ bool GetDevicesFromDXGI(std::vector<GPUDeviceInfo> *devices)
 
     factory->Release();
 
-    return true;
+    return (i > 0);
 }
-
-#else
-#    error
-#endif
 
 }  // anonymous namespace
 
 bool GetSystemInfo(SystemInfo *info)
 {
-    // Get the CM device ID first so that it is returned even in error cases.
-    info->primaryDisplayDeviceId = GetPrimaryDisplayDeviceId();
-
-#if defined(GPU_INFO_USE_SETUPAPI)
-    if (!GetDevicesFromRegistry(&info->gpus))
-    {
-        return false;
-    }
-#elif defined(GPU_INFO_USE_DXGI)
     if (!GetDevicesFromDXGI(&info->gpus))
     {
         return false;
     }
-#else
-#    error
-#endif
 
     if (info->gpus.size() == 0)
     {
         return false;
     }
 
-    FindPrimaryGPU(info);
+    // Call FindActiveGPU to populate activeGPUIndex, isOptimus, and isAMDSwitchable.
+    FindActiveGPU(info);
 
-    // Override the primary GPU index with what we gathered from EnumDisplayDevices
-    uint32_t primaryVendorId = 0;
-    uint32_t primaryDeviceId = 0;
+    // Override activeGPUIndex. The first index returned by EnumAdapters is the active GPU. We
+    // can override the heuristic to find the active GPU
+    info->activeGPUIndex = 0;
+    // Deprecated: set primaryGPUIndex to the same index.
+    info->primaryGPUIndex = 0;
 
-    if (!CMDeviceIDToDeviceAndVendorID(info->primaryDisplayDeviceId, &primaryVendorId,
-                                       &primaryDeviceId))
-    {
-        return false;
-    }
-
-    bool foundPrimary = false;
-    for (size_t i = 0; i < info->gpus.size(); ++i)
-    {
-        if (info->gpus[i].vendorId == primaryVendorId && info->gpus[i].deviceId == primaryDeviceId)
-        {
-            info->primaryGPUIndex = static_cast<int>(i);
-            foundPrimary          = true;
-        }
-    }
-    ASSERT(foundPrimary);
-
-    // nvd3d9wrap.dll is loaded into all processes when Optimus is enabled.
+    // Override isOptimus. nvd3d9wrap.dll is loaded into all processes when Optimus is enabled.
     HMODULE nvd3d9wrap = GetModuleHandleW(L"nvd3d9wrap.dll");
     info->isOptimus    = nvd3d9wrap != nullptr;
 
