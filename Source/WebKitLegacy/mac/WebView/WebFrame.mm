@@ -1339,7 +1339,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     WebCore::Frame *frame = core(self);
     FloatPoint viewportLocation(*aViewportLocation);
     FloatPoint adjustedLocation;
-    WebCore::Node *node = frame->nodeRespondingToClickEvents(viewportLocation, adjustedLocation);
+    WebCore::Node *node = frame->approximateNodeAtViewportLocationLegacy(viewportLocation, adjustedLocation);
     *aViewportLocation = adjustedLocation;
     return kit(node);
 }
