@@ -27,6 +27,7 @@
 
 #import "WKFormPeripheral.h"
 #import <wtf/Forward.h>
+#import <wtf/RetainPtr.h>
 
 @class WKContentView;
 

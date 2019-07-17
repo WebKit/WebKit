@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import <UIKit/UIGestureRecognizerSubclass.h>
+#import <wtf/RetainPtr.h>
 
 @implementation WKSyntheticTapGestureRecognizer {
     id _gestureIdentifiedTarget;
@@ -37,6 +38,7 @@
     SEL _gestureFailedAction;
     id _resetTarget;
     SEL _resetAction;
+    RetainPtr<NSNumber> _lastActiveTouchIdentifier;
 }
 
 - (void)setGestureIdentifiedTarget:(id)target action:(SEL)action
@@ -92,6 +94,11 @@
         }
     }
 #endif
+}
+
+- (NSNumber*)lastActiveTouchIdentifier
+{
+    return _lastActiveTouchIdentifier.get();
 }
 
 @end

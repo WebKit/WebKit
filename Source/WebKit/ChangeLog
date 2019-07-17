@@ -1,3 +1,21 @@
+2019-07-16  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION: fast/events/watchos/double-tap-to-zoom* tests crashing in com.apple.WebKit: -[WKContentView(WKInteraction) _singleTapDidReset:]
+        https://bugs.webkit.org/show_bug.cgi?id=199840
+        <rdar://problem/52856531>
+
+        Reviewed by Wenson Hsieh.
+
+        We need to ensure the NSNumber used for -[WKSyntheticTapGestureRecognizer lastActiveTouchIdentifier] is retained. This innocent change required
+        the use of RetainPtr<>, which required the move to an Objective-C++ file, which lead to a change in the order files are unified, which lead to
+        build errors, which leads to a much bigger patch than just the source change necessary to fix the crash.
+
+        * SourcesCocoa.txt:
+        * UIProcess/ios/WKSyntheticTapGestureRecognizer.mm: Renamed from Source/WebKit/UIProcess/ios/WKSyntheticTapGestureRecognizer.m.
+        * UIProcess/ios/forms/WKFormPeripheralBase.h:
+        * UIProcess/ios/forms/WKFormPeripheralBase.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-07-16  Brent Fulgham  <bfulgham@apple.com>
 
         Update WebContent Process sandbox based on user seed data

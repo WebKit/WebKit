@@ -1,3 +1,16 @@
+2019-07-16  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION: fast/events/watchos/double-tap-to-zoom* tests crashing in com.apple.WebKit: -[WKContentView(WKInteraction) _singleTapDidReset:]
+        https://bugs.webkit.org/show_bug.cgi?id=199840
+        <rdar://problem/52856531>
+
+        Reviewed by Wenson Hsieh.
+
+        Fix a build error that occured when building for the watchOS Simulator in the debug configuration.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForScrollingProxyRole):
+
 2019-07-16  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Convert GPUComputePipeline LOG statements to generate GPUErrors
