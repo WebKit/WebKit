@@ -1700,6 +1700,8 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase
     gtk_widget_queue_resize_no_redraw(GTK_WIDGET(webkitWebViewBase));
 
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea());
+    webkitWebViewBaseUpdateAcceleratedCompositingMode(webkitWebViewBase, drawingArea->layerTreeContext());
 
     if (priv->viewGestureController)
         priv->viewGestureController->connectToProcess();

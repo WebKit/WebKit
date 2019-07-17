@@ -48,6 +48,7 @@ public:
 #endif
 
     bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
+    const LayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
 
 private:
     // DrawingAreaProxy

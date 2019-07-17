@@ -1,3 +1,19 @@
+2019-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] No web view updates after swapping web process if AC mode is forced
+        https://bugs.webkit.org/show_bug.cgi?id=199826
+
+        Reviewed by Michael Catanzaro.
+
+        This is because when AC mode is forced the provisional page creates a drawing area that is always in AC
+        mode. When swapping processes, the current drawing area is destroyed (which exists AC mode) and the provisional
+        one is set. From that point the web process is in AC mode but the UI process isn't. We need to update the
+        compositing mode when swapping processes.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDidExitWebProcess):
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.h:
+
 2019-07-16  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: fast/events/watchos/double-tap-to-zoom* tests crashing in com.apple.WebKit: -[WKContentView(WKInteraction) _singleTapDidReset:]
