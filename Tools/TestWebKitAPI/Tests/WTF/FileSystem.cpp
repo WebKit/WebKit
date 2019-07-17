@@ -94,7 +94,7 @@ private:
 TEST_F(FileSystemTest, MappingMissingFile)
 {
     bool success;
-    FileSystem::MappedFileData mappedFileData(String("not_existing_file"), success);
+    FileSystem::MappedFileData mappedFileData(String("not_existing_file"), FileSystem::MappedFileMode::Shared, success);
     EXPECT_FALSE(success);
     EXPECT_TRUE(!mappedFileData);
 }
@@ -102,7 +102,7 @@ TEST_F(FileSystemTest, MappingMissingFile)
 TEST_F(FileSystemTest, MappingExistingFile)
 {
     bool success;
-    FileSystem::MappedFileData mappedFileData(tempFilePath(), success);
+    FileSystem::MappedFileData mappedFileData(tempFilePath(), FileSystem::MappedFileMode::Shared, success);
     EXPECT_TRUE(success);
     EXPECT_TRUE(!!mappedFileData);
     EXPECT_TRUE(mappedFileData.size() == strlen(FileSystemTestData));
@@ -112,7 +112,7 @@ TEST_F(FileSystemTest, MappingExistingFile)
 TEST_F(FileSystemTest, MappingExistingEmptyFile)
 {
     bool success;
-    FileSystem::MappedFileData mappedFileData(tempEmptyFilePath(), success);
+    FileSystem::MappedFileData mappedFileData(tempEmptyFilePath(), FileSystem::MappedFileMode::Shared, success);
     EXPECT_TRUE(success);
     EXPECT_TRUE(!mappedFileData);
 }

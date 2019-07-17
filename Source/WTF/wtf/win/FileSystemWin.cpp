@@ -470,6 +470,14 @@ long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin o
     return largeOffset.QuadPart;
 }
 
+bool truncateFile(PlatformFileHandle handle, long long offset)
+{
+    FILE_END_OF_FILE_INFO eofInfo;
+    eofInfo.EndOfFile.QuadPart = offset;
+
+    return SetFileInformationByHandle(handle, FileEndOfFileInfo, &eofInfo, sizeof(FILE_END_OF_FILE_INFO));
+}
+
 int writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
     if (!isHandleValid(handle))
@@ -588,43 +596,43 @@ bool deleteNonEmptyDirectory(const String& directoryPath)
     return !SHFileOperation(&deleteOperation);
 }
 
-MappedFileData::~MappedFileData()
+bool unmapViewOfFile(void* buffer, size_t)
 {
-    if (!m_fileData)
-        return;
-    UnmapViewOfFile(m_fileData);
+    return UnmapViewOfFile(buffer);
 }
 
-MappedFileData::MappedFileData(const String& filePath, bool& success)
+MappedFileData::MappedFileData(const String& filePath, MappedFileMode mode, bool& success)
 {
-    success = false;
     auto file = CreateFile(filePath.wideCharacters().data(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-    if (file == INVALID_HANDLE_VALUE)
-        return;
+
+    success = mapFileHandle(file, mode);
+    closeFile(file);
+}
+
+bool MappedFileData::mapFileHandle(PlatformFileHandle handle, MappedFileMode)
+{
+    if (!isHandleValid(handle))
+        return false;
 
     long long size;
-    if (!getFileSize(file, size) || size > std::numeric_limits<size_t>::max() || size > std::numeric_limits<decltype(m_fileSize)>::max()) {
-        CloseHandle(file);
-        return;
+    if (!getFileSize(handle, size) || size > std::numeric_limits<size_t>::max() || size > std::numeric_limits<decltype(m_fileSize)>::max()) {
+        return false;
     }
 
     if (!size) {
-        CloseHandle(file);
-        success = true;
-        return;
+        return true;
     }
 
-    auto mapping = CreateFileMapping(file, nullptr, PAGE_READONLY, 0, 0, nullptr);
-    CloseHandle(file);
+    auto mapping = CreateFileMapping(handle, nullptr, PAGE_READONLY, 0, 0, nullptr);
     if (!mapping)
-        return;
+        return false;
 
     m_fileData = MapViewOfFile(mapping, FILE_MAP_READ, 0, 0, size);
     CloseHandle(mapping);
     if (!m_fileData)
-        return;
+        return false;
     m_fileSize = size;
-    success = true;
+    return true;
 }
 
 } // namespace FileSystemImpl

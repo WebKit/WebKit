@@ -223,7 +223,7 @@ add_custom_command(
 if (WTF_OS_MAC_OS_X)
     execute_process(COMMAND bash -c "date +'%s'" OUTPUT_VARIABLE BUILD_TIME OUTPUT_STRIP_TRAILING_WHITESPACE)
 else ()
-    set(BUILD_TIME 0)
+    string(TIMESTAMP BUILD_TIME "%s")
 endif ()
 
 file(WRITE ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeCacheVersion.h "#define JSC_BYTECODE_CACHE_VERSION ${BUILD_TIME}\n")

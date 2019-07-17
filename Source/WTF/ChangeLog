@@ -1,3 +1,23 @@
+2019-07-17  Christopher Reid  <chris.reid@sony.com>
+
+        Bytecode cache should use FileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=199759
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/FileSystem.cpp:
+        * wtf/FileSystem.h:
+        Add support for creating MappedFileData from a preexisting file handle
+        for use with locked files. Also support creating MappedFileData
+        with either private or shared mappings.
+
+        * wtf/UUID.cpp:
+        Avoid ASSERT with returning a LazyNeverDestroyed object that hasn't been created.
+
+        * wtf/glib/FileSystemGlib.cpp:
+        * wtf/win/FileSystemWin.cpp:
+        Add truncateFile implementations.
+
 2019-07-17  Sam Weinig  <weinig@apple.com>
 
         Add StringBuilder member function which allows makeString() style variadic argument construction
