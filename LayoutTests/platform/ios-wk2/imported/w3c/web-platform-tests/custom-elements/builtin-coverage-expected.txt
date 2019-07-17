@@ -871,6 +871,14 @@ FAIL datalist: document.createElement() should instantiate a customized built-in
 FAIL datalist: innerHTML should instantiate a customized built-in element assert_equals: expected function "class extends HTMLDataListElement {}" but got function "function HTMLDataListElement() {
     [native code]
 }"
+PASS dialog: Define a customized built-in element 
+FAIL dialog: Operator 'new' should instantiate a customized built-in element function is not a constructor (evaluating 'super(...args)')
+FAIL dialog: document.createElement() should instantiate a customized built-in element assert_equals: expected function "class extends HTMLDialogElement {}" but got function "function HTMLDialogElement() {
+    [native code]
+}"
+FAIL dialog: innerHTML should instantiate a customized built-in element assert_equals: expected function "class extends HTMLDialogElement {}" but got function "function HTMLDialogElement() {
+    [native code]
+}"
 PASS slot: Define a customized built-in element 
 FAIL slot: Operator 'new' should instantiate a customized built-in element function is not a constructor (evaluating 'super(...args)')
 FAIL slot: document.createElement() should instantiate a customized built-in element assert_equals: expected function "class extends HTMLSlotElement {}" but got function "function HTMLSlotElement() {
