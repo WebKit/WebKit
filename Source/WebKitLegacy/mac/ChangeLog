@@ -1,3 +1,13 @@
+2019-07-17  Antoine Quint  <graouts@apple.com>
+
+        Disable Pointer Events prior to watchOS 6
+        https://bugs.webkit.org/show_bug.cgi?id=199890
+        <rdar://problem/53206113>
+
+        Reviewed by Dean Jackson.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-07-17  Zalan Bujtas  <zalan@apple.com>
 
         Unable to tap buttons at top of Wells Fargo app’s Payees screen
