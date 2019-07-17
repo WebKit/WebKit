@@ -45,12 +45,9 @@ DisplayRefreshMonitorManager& DisplayRefreshMonitorManager::sharedManager()
 DisplayRefreshMonitor* DisplayRefreshMonitorManager::createMonitorForClient(DisplayRefreshMonitorClient& client)
 {
     PlatformDisplayID clientDisplayID = client.displayID();
-    for (auto& monitorWrapper : m_monitors) {
-        auto& monitor = monitorWrapper.monitor;
-        if (monitor->displayID() != clientDisplayID)
-            continue;
-        monitor->addClient(client);
-        return monitor.get();
+    if (auto* existingMonitor = monitorForDisplayID(clientDisplayID)) {
+        existingMonitor->addClient(client);
+        return existingMonitor;
     }
 
     auto monitor = DisplayRefreshMonitor::create(client);
@@ -78,15 +75,13 @@ void DisplayRefreshMonitorManager::unregisterClient(DisplayRefreshMonitorClient&
         return;
 
     PlatformDisplayID clientDisplayID = client.displayID();
-    for (size_t i = 0; i < m_monitors.size(); ++i) {
-        RefPtr<DisplayRefreshMonitor> monitor = m_monitors[i].monitor;
-        if (monitor->displayID() != clientDisplayID)
-            continue;
-        if (monitor->removeClient(client)) {
-            if (!monitor->hasClients())
-                m_monitors.remove(i);
-        }
+    auto index = findMonitorForDisplayID(clientDisplayID);
+    if (index == notFound)
         return;
+    RefPtr<DisplayRefreshMonitor> monitor = m_monitors[index].monitor;
+    if (monitor->removeClient(client)) {
+        if (!monitor->hasClients())
+            m_monitors.remove(index);
     }
 }
 
@@ -109,9 +104,9 @@ void DisplayRefreshMonitorManager::displayDidRefresh(DisplayRefreshMonitor& moni
         return;
     LOG(RequestAnimationFrame, "DisplayRefreshMonitorManager::displayDidRefresh() - destroying monitor %p", &monitor);
 
-    size_t monitorIndex = m_monitors.findMatching([&](auto& monitorWrapper) { return monitorWrapper.monitor == &monitor; });
-    if (monitorIndex != notFound)
-        m_monitors.remove(monitorIndex);
+    m_monitors.removeFirstMatching([&](auto& monitorWrapper) {
+        return monitorWrapper.monitor == &monitor;
+    });
 }
 
 void DisplayRefreshMonitorManager::windowScreenDidChange(PlatformDisplayID displayID, DisplayRefreshMonitorClient& client)
@@ -128,13 +123,22 @@ void DisplayRefreshMonitorManager::windowScreenDidChange(PlatformDisplayID displ
 
 void DisplayRefreshMonitorManager::displayWasUpdated(PlatformDisplayID displayID)
 {
-    Vector<RefPtr<DisplayRefreshMonitor>> monitors = WTF::map(m_monitors, [](auto& monitorWrapper) {
-        return monitorWrapper.monitor;
+    auto* monitor = monitorForDisplayID(displayID);
+    if (monitor && monitor->hasRequestedRefreshCallback())
+        monitor->displayLinkFired();
+}
+
+size_t DisplayRefreshMonitorManager::findMonitorForDisplayID(PlatformDisplayID displayID) const
+{
+    return m_monitors.findMatching([&](auto& monitorWrapper) {
+        return monitorWrapper.monitor->displayID() == displayID;
     });
-    for (auto& monitor : monitors) {
-        if (displayID == monitor->displayID() && monitor->hasRequestedRefreshCallback())
-            monitor->displayLinkFired();
-    }
+}
+
+DisplayRefreshMonitor* DisplayRefreshMonitorManager::monitorForDisplayID(PlatformDisplayID displayID) const
+{
+    auto index = findMonitorForDisplayID(displayID);
+    return index == notFound ? nullptr : m_monitors[index].monitor.get();
 }
 
 }

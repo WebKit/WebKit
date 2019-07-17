@@ -1,3 +1,24 @@
+2019-07-17  Chris Dumez  <cdumez@apple.com>
+
+        Avoid unnecessary copy of monitors under DisplayRefreshMonitorManager::displayWasUpdated()
+        https://bugs.webkit.org/show_bug.cgi?id=199847
+
+        Reviewed by Said Abou-Hallawa.
+
+        There is always one one monitor in m_monitors for a given displayID so there is
+        no need to copy the monitors inside DisplayRefreshMonitorManager::displayWasUpdated()
+        and no need to iterate over all of them. This patch also factors a bit differently
+        so that it becomes more obvious.
+
+        * platform/graphics/DisplayRefreshMonitorManager.cpp:
+        (WebCore::DisplayRefreshMonitorManager::createMonitorForClient):
+        (WebCore::DisplayRefreshMonitorManager::unregisterClient):
+        (WebCore::DisplayRefreshMonitorManager::displayDidRefresh):
+        (WebCore::DisplayRefreshMonitorManager::displayWasUpdated):
+        (WebCore::DisplayRefreshMonitorManager::findMonitorForDisplay const):
+        (WebCore::DisplayRefreshMonitorManager::monitorForDisplay const):
+        * platform/graphics/DisplayRefreshMonitorManager.h:
+
 2019-07-17  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: error in starting version change transaction may be neglected

@@ -55,6 +55,9 @@ private:
     DisplayRefreshMonitorManager() { }
     virtual ~DisplayRefreshMonitorManager();
 
+    size_t findMonitorForDisplayID(PlatformDisplayID) const;
+    DisplayRefreshMonitor* monitorForDisplayID(PlatformDisplayID) const;
+
     DisplayRefreshMonitor* createMonitorForClient(DisplayRefreshMonitorClient&);
 
     struct DisplayRefreshMonitorWrapper {
