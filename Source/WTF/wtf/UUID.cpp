@@ -66,8 +66,8 @@ String createCanonicalUUIDString()
 
 String bootSessionUUIDString()
 {
-    static LazyNeverDestroyed<String> bootSessionUUID;
 #if OS(DARWIN)
+    static LazyNeverDestroyed<String> bootSessionUUID;
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
         size_t uuidLength = 37;
@@ -76,8 +76,10 @@ String bootSessionUUIDString()
             return;
         bootSessionUUID.construct(static_cast<const char*>(uuid), uuidLength - 1);
     });
-#endif
     return bootSessionUUID;
+#else
+    return String();
+#endif
 }
 
 } // namespace WTF

@@ -46,12 +46,10 @@ public:
         return adoptRef(*new CachedBytecode(CachePayload::makeEmptyPayload()));
     }
 
-#if !OS(WINDOWS)
-    static Ref<CachedBytecode> create(void* data, size_t size, LeafExecutableMap&& leafExecutables = { })
+    static Ref<CachedBytecode> create(FileSystem::MappedFileData&& data, LeafExecutableMap&& leafExecutables = { })
     {
-        return adoptRef(*new CachedBytecode(CachePayload::makeMappedPayload(data, size), WTFMove(leafExecutables)));
+        return adoptRef(*new CachedBytecode(CachePayload::makeMappedPayload(WTFMove(data)), WTFMove(leafExecutables)));
     }
-#endif
 
     static Ref<CachedBytecode> create(MallocPtr<uint8_t>&& data, size_t size, LeafExecutableMap&& leafExecutables)
     {

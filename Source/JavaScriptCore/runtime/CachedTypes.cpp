@@ -88,7 +88,7 @@ public:
         ptrdiff_t m_offset;
     };
 
-    Encoder(VM& vm, int fd = -1)
+    Encoder(VM& vm, FileSystem::PlatformFileHandle fd = FileSystem::invalidPlatformFileHandle)
         : m_vm(vm)
         , m_fd(fd)
         , m_baseOffset(0)
@@ -152,12 +152,8 @@ public:
             return nullptr;
         m_currentPage->alignEnd();
 
-        if (m_fd != -1) {
-#if !OS(WINDOWS)
+        if (FileSystem::isHandleValid(m_fd)) {
             return releaseMapped(error);
-#else
-            RELEASE_ASSERT_NOT_REACHED();
-#endif
         }
 
         size_t size = m_baseOffset + m_currentPage->size();
@@ -172,17 +168,16 @@ public:
     }
 
 private:
-#if !OS(WINDOWS)
     RefPtr<CachedBytecode> releaseMapped(BytecodeCacheError& error)
     {
         size_t size = m_baseOffset + m_currentPage->size();
-        if (ftruncate(m_fd, size)) {
+        if (!FileSystem::truncateFile(m_fd, size)) {
             error = BytecodeCacheError::StandardError(errno);
             return nullptr;
         }
 
         for (const auto& page : m_pages) {
-            ssize_t bytesWritten = write(m_fd, page.buffer(), page.size());
+            int bytesWritten = FileSystem::writeToFile(m_fd, reinterpret_cast<char*>(page.buffer()), page.size());
             if (bytesWritten == -1) {
                 error = BytecodeCacheError::StandardError(errno);
                 return nullptr;
@@ -194,15 +189,15 @@ private:
             }
         }
 
-        void* buffer = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, m_fd, 0);
-        if (buffer == MAP_FAILED) {
+        bool success;
+        FileSystem::MappedFileData mappedFileData(m_fd, FileSystem::MappedFileMode::Private, success);
+        if (!success) {
             error = BytecodeCacheError::StandardError(errno);
             return nullptr;
         }
 
-        return CachedBytecode::create(buffer, size, WTFMove(m_leafExecutables));
+        return CachedBytecode::create(WTFMove(mappedFileData), WTFMove(m_leafExecutables));
     }
-#endif
 
     class Page {
     public:
@@ -270,7 +265,7 @@ private:
     }
 
     VM& m_vm;
-    int m_fd;
+    FileSystem::PlatformFileHandle m_fd;
     ptrdiff_t m_baseOffset;
     Page* m_currentPage;
     Vector<Page> m_pages;
@@ -2376,7 +2371,7 @@ void encodeCodeBlock(Encoder& encoder, const SourceCodeKey& key, const UnlinkedC
     entry->encode(encoder, { key, jsCast<const UnlinkedCodeBlockType*>(codeBlock) });
 }
 
-RefPtr<CachedBytecode> encodeCodeBlock(VM& vm, const SourceCodeKey& key, const UnlinkedCodeBlock* codeBlock, int fd, BytecodeCacheError& error)
+RefPtr<CachedBytecode> encodeCodeBlock(VM& vm, const SourceCodeKey& key, const UnlinkedCodeBlock* codeBlock, FileSystem::PlatformFileHandle fd, BytecodeCacheError& error)
 {
     const ClassInfo* classInfo = codeBlock->classInfo(vm);
 
@@ -2394,7 +2389,7 @@ RefPtr<CachedBytecode> encodeCodeBlock(VM& vm, const SourceCodeKey& key, const U
 RefPtr<CachedBytecode> encodeCodeBlock(VM& vm, const SourceCodeKey& key, const UnlinkedCodeBlock* codeBlock)
 {
     BytecodeCacheError error;
-    return encodeCodeBlock(vm, key, codeBlock, -1, error);
+    return encodeCodeBlock(vm, key, codeBlock, FileSystem::invalidPlatformFileHandle, error);
 }
 
 RefPtr<CachedBytecode> encodeFunctionCodeBlock(VM& vm, const UnlinkedFunctionCodeBlock* codeBlock, BytecodeCacheError& error)

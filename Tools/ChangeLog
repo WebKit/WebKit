@@ -1,3 +1,12 @@
+2019-07-16  Christopher Reid  <chris.reid@sony.com>
+
+        Bytecode cache should use FileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=199759
+
+        Reviewed by Yusuke Suzuki.
+
+        * TestWebKitAPI/Tests/WTF/FileSystem.cpp:
+
 2019-07-16  Jonathan Bedard  <jbedard@apple.com>
 
         svn-create-patch duplicates diffs when adding directories

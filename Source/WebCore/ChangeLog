@@ -1,3 +1,12 @@
+2019-07-16  Christopher Reid  <chris.reid@sony.com>
+
+        Bytecode cache should use FileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=199759
+
+        Reviewed by Yusuke Suzuki.
+
+        * platform/SharedBuffer.cpp:
+
 2019-07-16  Simon Fraser  <simon.fraser@apple.com>
 
         Fix includes and make a constructor explicit to avoid unified-sources-triggered test failures

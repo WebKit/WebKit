@@ -390,6 +390,11 @@ long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin o
     return g_seekable_tell(G_SEEKABLE(g_io_stream_get_input_stream(G_IO_STREAM(handle))));
 }
 
+bool truncateFile(PlatformFileHandle handle, long long offset)
+{
+    return g_seekable_truncate(G_SEEKABLE(g_io_stream_get_output_stream(G_IO_STREAM(handle))), offset, nullptr, nullptr);
+}
+
 int writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
     gsize bytesWritten;
