@@ -28,6 +28,8 @@ from buildbot.steps.source import git
 from buildbot.steps.worker import CompositeStepMixin
 from twisted.internet import defer
 
+from layout_test_failures import LayoutTestFailures
+
 import json
 import re
 import requests
@@ -846,6 +848,8 @@ class RunWebKitTests(shell.Test):
     def start(self):
         self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
         self.addLogObserver('stdio', self.log_observer)
+        self.log_observer_json = logobserver.BufferLogObserver()
+        self.addLogObserver('json', self.log_observer_json)
 
         self.incorrectLayoutLines = []
         platform = self.getProperty('platform')
@@ -899,6 +903,13 @@ class RunWebKitTests(shell.Test):
     def commandComplete(self, cmd):
         shell.Test.commandComplete(self, cmd)
         logText = self.log_observer.getStdout() + self.log_observer.getStderr()
+        logTextJson = self.log_observer_json.getStdout()
+
+        first_results = LayoutTestFailures.results_from_string(logTextJson)
+
+        if first_results:
+            self.setProperty('first_results_exceed_failure_limit', first_results.did_exceed_test_failure_limit)
+            self.setProperty('first_run_failures', first_results.failing_tests)
         self._parseRunWebKitTestsOutput(logText)
 
     def evaluateResult(self, cmd):
@@ -962,6 +973,18 @@ class ReRunWebKitTests(RunWebKitTests):
             self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(identifier='rerun'), ExtractTestResults(identifier='rerun'), UnApplyPatchIfRequired(), CompileWebKitToT(), RunWebKitTestsWithoutPatch()])
         return rc
 
+    def commandComplete(self, cmd):
+        shell.Test.commandComplete(self, cmd)
+        logText = self.log_observer.getStdout() + self.log_observer.getStderr()
+        logTextJson = self.log_observer_json.getStdout()
+
+        second_results = LayoutTestFailures.results_from_string(logTextJson)
+
+        if second_results:
+            self.setProperty('second_results_exceed_failure_limit', second_results.did_exceed_test_failure_limit)
+            self.setProperty('second_run_failures', second_results.failing_tests)
+        self._parseRunWebKitTestsOutput(logText)
+
 
 class RunWebKitTestsWithoutPatch(RunWebKitTests):
     name = 'run-layout-tests-without-patch'
@@ -970,6 +993,18 @@ class RunWebKitTestsWithoutPatch(RunWebKitTests):
         rc = shell.Test.evaluateCommand(self, cmd)
         self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(identifier='clean-tree'), ExtractTestResults(identifier='clean-tree')])
         return rc
+
+    def commandComplete(self, cmd):
+        shell.Test.commandComplete(self, cmd)
+        logText = self.log_observer.getStdout() + self.log_observer.getStderr()
+        logTextJson = self.log_observer_json.getStdout()
+
+        clean_tree_results = LayoutTestFailures.results_from_string(logTextJson)
+
+        if clean_tree_results:
+            self.setProperty('clean_tree_results_exceed_failure_limit', clean_tree_results.did_exceed_test_failure_limit)
+            self.setProperty('clean_tree_run_failures', clean_tree_results.failing_tests)
+        self._parseRunWebKitTestsOutput(logText)
 
 
 class RunWebKit1Tests(RunWebKitTests):

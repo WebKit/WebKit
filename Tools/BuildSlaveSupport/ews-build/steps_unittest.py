@@ -124,6 +124,9 @@ class BuildStepMixinAdditions(BuildStepMixin):
     def setProperty(self, name, value, source='Unknown'):
         self.properties.setProperty(name, value, source)
 
+    def getProperty(self, name):
+        return self.properties.getProperty(name)
+
     def expectAddedURLs(self, added_urls):
         self._expected_added_urls = added_urls
 
@@ -956,6 +959,12 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         self.jsonFileName = 'layout-test-results/full_results.json'
+        self.results_json_regressions = '''ADD_RESULTS({"tests":{"imported":{"w3c":{"web-platform-tests":{"IndexedDB":{"interleaved-cursors-large.html":{"report":"REGRESSION","expected":"PASS","actual":"TEXT"}},"wasm":{"jsapi":{"interface.any.html":{"report":"REGRESSION","expected":"PASS","actual":"TEXT"},"instance":{"constructor-bad-imports.any.html":{"report":"REGRESSION","expected":"PASS","actual":"TEXT"}},"global":{"constructor.any.html":{"report":"REGRESSION","expected":"PASS","actual":"TEXT"},"constructor.any.worker.html":{"report":"REGRESSION","expected":"PASS","actual":"TEXT"},"toString.any.html":{"report":"REGRESSION","expected":"PASS","actual":"TEXT"}},"constructor":{"instantiate-bad-imports.any.html":{"report":"REGRESSION","expected":"PASS","actual":"TEXT"},"instantiate-bad-imports.any.worker.html":{"report":"REGRESSION","expected":"PASS","actual":"TEXT"}},"interface.any.worker.html":{"report":"REGRESSION","expected":"PASS","actual":"TEXT"}}}}},"blink":{"storage":{"indexeddb":{"blob-valid-before-commit.html":{"report":"REGRESSION","expected":"PASS","actual":"TIMEOUT","has_stderr":true}}}}}},"skipped":23256,"num_regressions":10,"other_crashes":{},"interrupted":true,"num_missing":0,"layout_tests_dir":"/Volumes/Data/worker/iOS-12-Simulator-WK2-Tests-EWS/build/LayoutTests","version":4,"num_passes":32056,"pixel_tests_enabled":false,"date":"06:21AM on July 15, 2019","has_pretty_patch":true,"fixable":23267,"num_flaky":0,"uses_expectations_file":true});
+        '''
+        self.results_json_flakes = '''ADD_RESULTS({"tests":{"http":{"tests":{"workers":{"service":{"service-worker-resource-timing.https.html":{"report":"FLAKY","expected":"PASS","actual":"TIMEOUT PASS","has_stderr":true}}},"xmlhttprequest":{"post-content-type-document.html":{"report":"FLAKY","expected":"PASS","actual":"TIMEOUT PASS"}}}},"imported":{"blink":{"storage":{"indexeddb":{"blob-valid-before-commit.html":{"report":"FLAKY","expected":"PASS","actual":"TIMEOUT PASS","has_stderr":true}}},"fast":{"text":{"international":{"repaint-glyph-bounds.html":{"report":"FLAKY","expected":"PASS","actual":"IMAGE PASS","reftest_type":["=="],"image_diff_percent":0.08}}}}}}},"skipped":13176,"num_regressions":0,"other_crashes":{},"interrupted":false,"num_missing":0,"layout_tests_dir":"/Volumes/Data/worker/iOS-12-Simulator-WK2-Tests-EWS/build/LayoutTests","version":4,"num_passes":42185,"pixel_tests_enabled":false,"date":"06:54AM on July 17, 2019","has_pretty_patch":true,"fixable":55356,"num_flaky":4,"uses_expectations_file":true});
+        '''
+        self.results_json_mix_flakes_and_regression = '''ADD_RESULTS({"tests":{"http":{"tests":{"IndexedDB":{"collect-IDB-objects.https.html":{"report":"FLAKY","expected":"PASS","actual":"TEXT PASS"}},"xmlhttprequest":{"on-network-timeout-error-during-preflight.html":{"report":"FLAKY","expected":"PASS","actual":"TIMEOUT PASS"}}}},"transitions":{"lengthsize-transition-to-from-auto.html":{"report":"FLAKY","expected":"PASS","actual":"TIMEOUT PASS"}},"imported":{"blink":{"storage":{"indexeddb":{"blob-valid-before-commit.html":{"report":"FLAKY","expected":"PASS","actual":"TIMEOUT PASS","has_stderr":true}}}}},"fast":{"text":{"font-weight-fallback.html":{"report":"FLAKY","expected":"PASS","actual":"TIMEOUT PASS","has_stderr":true,"reftest_type":["=="]}},"scrolling":{"ios":{"reconcile-layer-position-recursive.html":{"report":"REGRESSION","expected":"PASS","actual":"TEXT"}}}}},"skipped":13174,"num_regressions":1,"other_crashes":{},"interrupted":false,"num_missing":0,"layout_tests_dir":"/Volumes/Data/worker/iOS-12-Simulator-WK2-Tests-EWS/build/LayoutTests","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM on July 16, 2019","has_pretty_patch":true,"fixable":55329,"num_flaky":5,"uses_expectations_file":true});
+        '''
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -992,6 +1001,70 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=WARNINGS, state_string='2 flakes')
         return self.runStep()
 
+    def test_parse_results_json_regression(self):
+        self.setupStep(RunWebKitTests())
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-new-test-results', '--no-show-results', '--exit-after-n-failures', '30', '--skip-failing-tests', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
+                        )
+            + 2
+            + ExpectShell.log('json', stdout=self.results_json_regressions),
+        )
+        self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('first_results_exceed_failure_limit'), True)
+        self.assertEqual(self.getProperty('first_run_failures'),
+                            ["imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html",
+                             "imported/w3c/web-platform-tests/wasm/jsapi/interface.any.html",
+                             "imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.html",
+                             "imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.html",
+                             "imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.worker.html",
+                             "imported/w3c/web-platform-tests/wasm/jsapi/global/toString.any.html",
+                             "imported/w3c/web-platform-tests/wasm/jsapi/interface.any.worker.html",
+                             "imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.html",
+                             "imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html",
+                             "imported/blink/storage/indexeddb/blob-valid-before-commit.html"])
+        return rc
+
+    def test_parse_results_json_flakes(self):
+        self.setupStep(RunWebKitTests())
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-new-test-results', '--no-show-results', '--exit-after-n-failures', '30', '--skip-failing-tests', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
+                        )
+            + 0
+            + ExpectShell.log('json', stdout=self.results_json_flakes),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('first_results_exceed_failure_limit'), False)
+        self.assertEqual(self.getProperty('first_run_failures'), [])
+        return rc
+
+    def test_parse_results_json_flakes_and_regressions(self):
+        self.setupStep(RunWebKitTests())
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-new-test-results', '--no-show-results', '--exit-after-n-failures', '30', '--skip-failing-tests', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
+                        )
+            + 2
+            + ExpectShell.log('json', stdout=self.results_json_mix_flakes_and_regression),
+        )
+        self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('first_results_exceed_failure_limit'), False)
+        self.assertEqual(self.getProperty('first_run_failures'), ['fast/scrolling/ios/reconcile-layer-position-recursive.html'])
+        return rc
+
     def test_unexpected_error(self):
         self.setupStep(RunWebKitTests())
         self.setProperty('fullPlatform', 'mac-highsierra')
@@ -1006,7 +1079,6 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=RETRY, state_string='layout-tests (retry)')
         return self.runStep()
-
 
     def test_failure(self):
         self.setupStep(RunWebKitTests())

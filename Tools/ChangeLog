@@ -1,3 +1,22 @@
+2019-07-17  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Parse full_results.json for layout-tests
+        https://bugs.webkit.org/show_bug.cgi?id=199804
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitTests.start): Monitor json output.
+        (RunWebKitTests.commandComplete): Read json output, parse the results and set Buildbot properties accordingly. These
+        properties would be used in subsequent AnalyzeLayoutTests build step to determine whether the failures are introduced
+        by the patch or are pre-existing.
+        (ReRunWebKitTests.commandComplete): Ditto.
+        (RunWebKitTestsWithoutPatch.commandComplete): Ditto.
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (BuildStepMixinAdditions.getProperty): Added.
+        (TestRunWebKitTests.test_parse_results_json): Added unit-tests.
+        * BuildSlaveSupport/ews-build/layout_test_failures.py: Parse full_results.json and generate list of failing tests.
+
 2019-07-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r247512.
