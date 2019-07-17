@@ -1,3 +1,10 @@
+2019-07-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed test gardening for WinCairo port
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2019-07-17  Rob Buis  <rbuis@igalia.com>
 
         Add referrerpolicy attribute support for <script> elements

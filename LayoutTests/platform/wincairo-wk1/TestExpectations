@@ -276,16 +276,7 @@ webkit.org/b/182626 accessibility/aria-hidden-updates-alldescendants.html [ Fail
 
 webkit.org/b/183955 accessibility/row-with-aria-role-in-native-table.html [ Failure ]
 
-[ Debug ] accessibility/add-children-pseudo-element.html [ Crash ]
-[ Debug ] accessibility/aria-controls-with-tabs.html [ Crash ]
-[ Debug ] accessibility/aria-roles.html [ Crash ]
-[ Debug ] accessibility/contenteditable-hidden-div.html [ Crash ]
-[ Debug ] accessibility/disabled-controls-not-focusable.html [ Crash ]
-[ Debug ] accessibility/form-control-value-settable.html [ Crash ]
 [ Debug ] accessibility/removed-anonymous-block-child-causes-crash.html [ Crash ]
-[ Debug ] accessibility/removed-continuation-element-causes-crash.html [ Crash ]
-[ Debug ] accessibility/win/focus-events.html [ Skip ]
-[ Debug ] accessibility/win/text-role.html [ Crash ]
 
 ################################################################################
 ########################    End Accessibility Issues    ########################
