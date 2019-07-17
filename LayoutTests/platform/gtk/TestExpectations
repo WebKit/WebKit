@@ -1267,6 +1267,8 @@ webkit.org/b/199010 css2.1/t1204-order-01-d.html [ Pass Crash ]
 webkit.org/b/199014 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Pass Crash ]
 webkit.org/b/199018 fast/mediastream/RTCPeerConnection-add-removeTrack.html [ Crash ]
 
+webkit.org/b/199440 fast/mediastream/mediastreamtrack-video-clone.html [ Failure Timeout Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1433,7 +1435,7 @@ webkit.org/b/58337 fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html 
 
 # media/audio-garbage-collect.html is flaky
 # https://bugs.webkit.org/show_bug.cgi?id=72698
-webkit.org/b/72698 media/audio-garbage-collect.html [ Timeout Pass ]
+webkit.org/b/72698 media/audio-garbage-collect.html [ Timeout Failure Pass ]
 
 # Tests showing flakiness in the bot
 Bug(GTK) editing/pasteboard/smart-paste-004.html [ Failure Pass ]
@@ -2001,7 +2003,7 @@ webkit.org/b/128255 compositing/columns/composited-rl-paginated-repaint.html [ P
 
 webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 
-webkit.org/b/177322 [ Debug ] imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html [ Pass Failure ]
+webkit.org/b/177322 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html [ Pass Failure ]
 
 webkit.org/b/193624 compositing/fixed-with-main-thread-scrolling.html [ Pass ImageOnlyFailure ]
 
@@ -2512,6 +2514,8 @@ webkit.org/b/198113 fast/mediastream/media-stream-page-muted.html [ Timeout ]
 
 webkit.org/b/198118 media/playlist-inherits-user-gesture.html [ Timeout ]
 
+webkit.org/b/199442 http/tests/contentextensions/make-https.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2866,7 +2870,8 @@ webkit.org/b/107118 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 
 webkit.org/b/108973 fast/css/negative-text-indent-in-inline-block.html [ ImageOnlyFailure ]
 
-webkit.org/b/109469 fast/events/mouse-cursor-image-set.html [ Failure ]
+webkit.org/b/109469 [ Release ] fast/events/mouse-cursor-image-set.html [ Failure ]
+webkit.org/b/109469 [ Debug ] fast/events/mouse-cursor-image-set.html [ Crash ]
 
 webkit.org/b/110446 svg/as-background-image/svg-transformed-background.html [ ImageOnlyFailure ]
 
@@ -3790,6 +3795,30 @@ webkit.org/b/199008 fast/repaint/fixed-table-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/199008 fast/repaint/fixed.html [ ImageOnlyFailure ]
 
 webkit.org/b/199009 fast/text/variations/optical-sizing-units.html [ ImageOnlyFailure ]
+
+webkit.org/b/199859 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-001.html [ ImageOnlyFailure ]
+
+webkit.org/b/199860 accessibility/button-with-aria-haspopup-role.html [ Failure ]
+webkit.org/b/199868 accessibility/gtk/aria-haspopup.html [ Failure ]
+
+webkit.org/b/199440 fast/mediastream/apply-constraints-video.html [ Failure ]
+webkit.org/b/199440 fast/mediastream/getUserMedia-video-rescaling.html [ Failure ]
+
+webkit.org/b/199437 compositing/geometry/limit-layer-bounds-clipping-ancestor.html [ Failure ]
+
+webkit.org/b/199441 http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
+
+webkit.org/b/199872 http/tests/inspector/network/resource-sizes-network.html [ Failure ]
+
+webkit.org/b/199873 imported/w3c/web-platform-tests/service-workers/service-worker/ready.https.html [ Failure ]
+
+webkit.org/b/199874 imported/w3c/web-platform-tests/websockets/bufferedAmount-unchanged-by-sync-xhr.any.worker.html [ Failure ]
+
+webkit.org/b/199876 webaudio/oscillator-custom.html [ Failure ]
+webkit.org/b/199876 webaudio/oscillator-sawtooth.html [ Failure ]
+webkit.org/b/199876 webaudio/oscillator-sine.html [ Failure ]
+webkit.org/b/199876 webaudio/oscillator-square.html [ Failure ]
+webkit.org/b/199876 webaudio/oscillator-triangle.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

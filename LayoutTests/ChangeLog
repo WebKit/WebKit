@@ -1,3 +1,14 @@
+2019-07-17  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=199878
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/compositing/overflow/textarea-scroll-touch-expected.txt:
+        * platform/gtk/fast/events/shadow-event-path-2-expected.txt:
+        * platform/gtk/fast/events/shadow-event-path-expected.txt:
+        * platform/wpe/TestExpectations:
+
 2019-07-17  Olivier Blin  <olivier.blin@softathome.com>
 
         Web Inspector: application/xml content not shown
