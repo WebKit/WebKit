@@ -110,13 +110,14 @@ private:
             WebImage* image = static_cast<WebImage*>(message.get("Snapshot"));
             webKitWebViewDidReceiveSnapshot(webView, callbackID->value(), image);
 #endif
-        } else
-            ASSERT_NOT_REACHED();
+        }
     }
 
     void didReceiveMessageFromInjectedBundle(WebProcessPool&, const String& messageName, API::Object* messageBody) override
     {
-        ASSERT(messageBody->type() == API::Object::Type::Dictionary);
+        if (messageBody->type() != API::Object::Type::Dictionary)
+            return;
+
         API::Dictionary& message = *static_cast<API::Dictionary*>(messageBody);
 
         CString messageNameUTF8 = messageName.utf8();
@@ -127,8 +128,7 @@ private:
                 return;
 
             didReceiveWebViewMessageFromInjectedBundle(webView, messageNameUTF8.data() + strlen("WebPage."), message);
-        } else
-            ASSERT_NOT_REACHED();
+        }
     }
 
     RefPtr<API::Object> getInjectedBundleInitializationUserData(WebProcessPool&) override

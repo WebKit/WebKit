@@ -1,5 +1,16 @@
 2019-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] Do not assert when receiving invalid data in injected bundle messages
+        https://bugs.webkit.org/show_bug.cgi?id=199830
+
+        Reviewed by Michael Catanzaro.
+
+        Just silently ignore them to avoid UI process crashes.
+
+        * UIProcess/API/glib/WebKitInjectedBundleClient.cpp:
+
+2019-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] No web view updates after swapping web process if AC mode is forced
         https://bugs.webkit.org/show_bug.cgi?id=199826
 
