@@ -34,7 +34,7 @@ namespace WebCore {
 class TransformOperations {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TransformOperations(bool makeIdentity = false);
+    explicit TransformOperations(bool makeIdentity = false);
     
     bool operator==(const TransformOperations& o) const;
     bool operator!=(const TransformOperations& o) const

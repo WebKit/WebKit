@@ -1,3 +1,17 @@
+2019-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix includes and make a constructor explicit to avoid unified-sources-triggered test failures
+        https://bugs.webkit.org/show_bug.cgi?id=199849
+
+        Reviewed by Wenson Hsieh.
+        
+        webkit.org/b/199587 triggered some unexpected test failures because of unified sources include
+        order. The TextStream operator in ScrollingTreeOverflowScrollingNode::dumpProperties() was invoking
+        the implicit constructor of TransformOperations.
+
+        * page/scrolling/ScrollingTreeOverflowScrollingNode.cpp: Include TextStream.h
+        * platform/graphics/transforms/TransformOperations.h: Make ctor explicit.
+
 2019-07-16  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: fast/events/watchos/double-tap-to-zoom* tests crashing in com.apple.WebKit: -[WKContentView(WKInteraction) _singleTapDidReset:]
