@@ -45,7 +45,7 @@ class XvfbDriverTest(unittest.TestCase):
     def make_driver(self, worker_number=0, xorg_running=False, executive=None):
         port = Port(MockSystemHost(log_executive=True, executive=executive), 'xvfbdrivertestport', options=MockOptions(configuration='Release'))
         port._config.build_directory = lambda configuration: "/mock-build"
-        port._test_runner_process_constructor = MockServerProcess
+        port._server_process_constructor = MockServerProcess
         if xorg_running:
             port._executive._running_pids['Xorg'] = 108
 
@@ -55,7 +55,7 @@ class XvfbDriverTest(unittest.TestCase):
         driver._xvfb_pipe = lambda: (3, 4)
         driver._xvfb_read_display_id = lambda x: 1
         driver._xvfb_close_pipe = lambda p: None
-        driver._port_server_environment = port.setup_environ_for_server(port.driver_name())
+        driver._environment = port.setup_environ_for_server(port.driver_name())
         return driver
 
     def cleanup_driver(self, driver):
@@ -72,13 +72,13 @@ class XvfbDriverTest(unittest.TestCase):
 
     def test_start(self):
         driver = self.make_driver()
-        expected_logs = ("MOCK popen: ['Xvfb', '-displayfd', '4', '-screen', '0', '1024x768x24', '-nolisten', 'tcp'], env=%s\n" % driver._port_server_environment)
+        expected_logs = ("MOCK popen: ['Xvfb', '-displayfd', '4', '-screen', '0', '1024x768x24', '-nolisten', 'tcp'], env=%s\n" % driver._environment)
         self.assertDriverStartSuccessful(driver, expected_logs=expected_logs, expected_display=":1")
         self.cleanup_driver(driver)
 
     def test_start_arbitrary_worker_number(self):
         driver = self.make_driver(worker_number=17)
-        expected_logs = ("MOCK popen: ['Xvfb', '-displayfd', '4', '-screen', '0', '1024x768x24', '-nolisten', 'tcp'], env=%s\n" % driver._port_server_environment)
+        expected_logs = ("MOCK popen: ['Xvfb', '-displayfd', '4', '-screen', '0', '1024x768x24', '-nolisten', 'tcp'], env=%s\n" % driver._environment)
         self.assertDriverStartSuccessful(driver, expected_logs=expected_logs, expected_display=":1", pixel_tests=True)
         self.cleanup_driver(driver)
 

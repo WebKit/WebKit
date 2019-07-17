@@ -55,7 +55,7 @@ class WestonDriver(Driver):
         self._xvfbdriver = XvfbDriver(*args, **kwargs)
 
     def _setup_environ_for_test(self):
-        driver_environment = super(WestonDriver, self)._setup_environ_for_test()
+        driver_environment = self._port.setup_environ_for_server(self._server_name)
         driver_environment['DISPLAY'] = ":%d" % self._xvfbdriver._xvfb_run(driver_environment)
         weston_socket = 'WKTesting-weston-%032x' % random.getrandbits(128)
         weston_command = ['weston', '--socket=%s' % weston_socket, '--width=1024', '--height=768', '--use-pixman']
@@ -67,12 +67,25 @@ class WestonDriver(Driver):
         # Give Weston a bit of time to set itself up.
         time.sleep(self._startup_delay_secs)
 
+        driver_environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
+        if self._driver_tempdir is not None:
+            # Currently on WebKit2, there is no API for setting the application cache directory.
+            # Each worker should have its own and it should be cleaned afterwards, when the worker stops.
+            driver_environment['XDG_CACHE_HOME'] = self._port.host.filesystem.join(str(self._driver_tempdir), 'appcache')
+            driver_environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
         driver_environment['WAYLAND_DISPLAY'] = weston_socket
         driver_environment['GDK_BACKEND'] = 'wayland'
         if driver_environment.get('DISPLAY'):
             del driver_environment['DISPLAY']
         return driver_environment
 
+    def _start(self, pixel_tests, per_test_args):
+        self.stop()
+        self._driver_tempdir = self._port._driver_tempdir(self._target_host)
+        self._crashed_process_name = None
+        self._crashed_pid = None
+        self._server_process = self._port._server_process_constructor(self._port, self._server_name, self.cmd_line(pixel_tests, per_test_args), self._setup_environ_for_test())
+        self._server_process.start()
 
     def stop(self):
         super(WestonDriver, self).stop()
@@ -80,3 +93,4 @@ class WestonDriver(Driver):
             # The Weston process is terminated instead of killed, giving the Weston a chance to clean up after itself.
             self._weston_process.terminate()
             self._weston_process = None
+

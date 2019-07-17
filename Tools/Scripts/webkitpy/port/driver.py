@@ -432,12 +432,6 @@ class Driver(object):
         environment['SQLITE_EXEMPT_PATH_FROM_VNODE_GUARDS'] = os.path.realpath(environment['DUMPRENDERTREE_TEMP'])
         environment['__XPC_SQLITE_EXEMPT_PATH_FROM_VNODE_GUARDS'] = environment['SQLITE_EXEMPT_PATH_FROM_VNODE_GUARDS']
 
-        if sys.platform.startswith('linux'):
-            # Currently on WebKit2, there is no API for setting the application cache directory.
-            # Each worker should have it's own and it should be cleaned afterwards.
-            # Set it to inside the temporary folder by prepending XDG_CACHE_HOME with DRIVER_TEMPDIR.
-            environment['XDG_CACHE_HOME'] = self._port.host.filesystem.join(str(self._driver_tempdir), 'appcache')
-
         if self._profiler:
             environment = self._profiler.adjusted_environment(environment)
         return environment

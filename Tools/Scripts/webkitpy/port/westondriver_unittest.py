@@ -53,7 +53,7 @@ class WestonDriverTest(unittest.TestCase):
     def make_driver(self):
         port = Port(MockSystemHost(log_executive=True), 'westondrivertestport', options=MockOptions(configuration='Release'))
         port._config.build_directory = lambda configuration: "/mock_build"
-        port._test_runner_process_constructor = MockServerProcess
+        port._server_process_constructor = MockServerProcess
 
         driver = WestonDriver(port, worker_number=0, pixel_tests=True)
         driver._startup_delay_secs = 0
