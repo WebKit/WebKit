@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2004, 2006, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,22 +39,15 @@ public:
     WEBCORE_EXPORT void setLocation(const String&);
     void setLocation(JSC::ExecState&, const String&);
 
-    ScrollbarMode scrollingMode() const final { return m_scrolling; }
-    
-    int marginWidth() const { return m_marginWidth; }
-    int marginHeight() const { return m_marginHeight; }
+    ScrollbarMode scrollingMode() const final;
 
     WEBCORE_EXPORT int width();
     WEBCORE_EXPORT int height();
 
-    bool canContainRangeEndPoint() const final { return false; }
-
-    bool isURLAllowed(const URL&) const override;
-
 protected:
     HTMLFrameElementBase(const QualifiedName&, Document&);
 
-    bool isURLAllowed() const;
+    bool canLoad() const;
 
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
@@ -62,22 +55,22 @@ protected:
     void didAttachRenderers() override;
 
 private:
+    bool canLoadScriptURL(const URL&) const final;
+
+    bool canLoadURL(const String& relativeURL) const;
+    bool canLoadURL(const URL&) const;
+
+    bool canContainRangeEndPoint() const final { return false; }
+
     bool supportsFocus() const final;
     void setFocus(bool) final;
     
     bool isURLAttribute(const Attribute&) const final;
     bool isHTMLContentAttribute(const Attribute&) const final;
 
-    bool isFrameElementBase() const final { return true; }
-
     void openURL(LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
 
     AtomString m_URL;
-
-    ScrollbarMode m_scrolling;
-
-    int m_marginWidth;
-    int m_marginHeight;
 };
 
 } // namespace WebCore

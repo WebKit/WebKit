@@ -28,6 +28,8 @@
 
 #include "FocusController.h"
 #include "FullscreenManager.h"
+#include "HTMLFrameElement.h"
+#include "HTMLIFrameElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLOptionElement.h"
 #include "RenderScrollbar.h"
@@ -344,13 +346,14 @@ ALWAYS_INLINE bool scrollbarMatchesCornerPresentPseudoClass(const SelectorChecke
 }
 
 #if ENABLE(FULLSCREEN_API)
+
 ALWAYS_INLINE bool matchesFullScreenPseudoClass(const Element& element)
 {
     // While a Document is in the fullscreen state, and the document's current fullscreen
     // element is an element in the document, the 'full-screen' pseudoclass applies to
     // that element. Also, an <iframe>, <object> or <embed> element whose child browsing
     // context's Document is in the fullscreen state has the 'full-screen' pseudoclass applied.
-    if (element.isFrameElementBase() && element.containsFullScreenElement())
+    if (is<HTMLFrameElementBase>(element) && element.containsFullScreenElement())
         return true;
     if (!element.document().fullscreenManager().isFullscreen())
         return false;
@@ -384,9 +387,11 @@ ALWAYS_INLINE bool matchesFullScreenControlsHiddenPseudoClass(const Element& ele
         return false;
     return element.document().fullscreenManager().areFullscreenControlsHidden();
 }
+
 #endif
 
 #if ENABLE(VIDEO_TRACK)
+
 ALWAYS_INLINE bool matchesFutureCuePseudoClass(const Element& element)
 {
     return is<WebVTTElement>(element) && !downcast<WebVTTElement>(element).isPastNode();
@@ -396,6 +401,7 @@ ALWAYS_INLINE bool matchesPastCuePseudoClass(const Element& element)
 {
     return is<WebVTTElement>(element) && downcast<WebVTTElement>(element).isPastNode();
 }
+
 #endif
 
 } // namespace WebCore

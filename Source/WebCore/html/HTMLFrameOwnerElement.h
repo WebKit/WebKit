@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,7 +27,6 @@
 
 namespace WebCore {
 
-class DOMWindow;
 class Frame;
 class RenderWidget;
 class SVGDocument;
@@ -59,20 +58,22 @@ public:
 
     void scheduleInvalidateStyleAndLayerComposition();
 
-    virtual bool isURLAllowed(const URL&) const { return true; }
+    virtual bool canLoadScriptURL(const URL&) const = 0;
 
     virtual ReferrerPolicy referrerPolicy() const { return ReferrerPolicy::EmptyString; }
 
 protected:
     HTMLFrameOwnerElement(const QualifiedName& tagName, Document&);
     void setSandboxFlags(SandboxFlags);
+    bool canAddSubframe() const;
+    bool isProhibitedSelfReference(const URL&) const;
 
 private:
     bool isKeyboardFocusable(KeyboardEvent*) const override;
     bool isFrameOwnerElement() const final { return true; }
 
-    Frame* m_contentFrame;
-    SandboxFlags m_sandboxFlags;
+    Frame* m_contentFrame { nullptr };
+    SandboxFlags m_sandboxFlags { SandboxNone };
 };
 
 class SubframeLoadingDisabler {

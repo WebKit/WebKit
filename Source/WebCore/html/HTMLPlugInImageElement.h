@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -85,8 +85,8 @@ protected:
     HTMLImageLoader* imageLoader() { return m_imageLoader.get(); }
     void updateImageLoaderWithNewURLSoon();
 
-    bool allowedToLoadFrameURL(const String& url);
-    bool wouldLoadAsPlugIn(const String& url, const String& serviceType);
+    bool canLoadURL(const String& relativeURL) const;
+    bool wouldLoadAsPlugIn(const String& relativeURL, const String& serviceType);
 
     void scheduleUpdateForAfterStyleResolution();
 
@@ -97,7 +97,8 @@ private:
     bool isPlugInImageElement() const final { return true; }
     bool isRestartedPlugin() const final { return m_isRestartedPlugin; }
 
-    bool allowedToLoadPluginContent(const String& url, const String& mimeType) const;
+    bool canLoadPlugInContent(const String& relativeURL, const String& mimeType) const;
+    bool canLoadURL(const URL&) const;
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 

@@ -47,7 +47,8 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameTree.h>
 #include <WebCore/FrameView.h>
-#include <WebCore/HTMLFrameElementBase.h>
+#include <WebCore/HTMLFrameElement.h>
+#include <WebCore/HTMLIFrameElement.h>
 #include <WebCore/HTMLOptGroupElement.h>
 #include <WebCore/HTMLOptionElement.h>
 #include <WebCore/HTMLSelectElement.h>
@@ -368,12 +369,12 @@ void WebAutomationSessionProxy::resolveChildFrameWithNodeHandle(WebCore::PageIde
     }
 
     WebCore::Element* coreElement = elementForNodeHandle(*frame, nodeHandle);
-    if (!coreElement || !coreElement->isFrameElementBase()) {
+    if (!is<WebCore::HTMLFrameElementBase>(coreElement)) {
         completionHandler(frameNotFoundErrorType, 0);
         return;
     }
 
-    WebCore::Frame* coreFrameFromElement = static_cast<WebCore::HTMLFrameElementBase*>(coreElement)->contentFrame();
+    WebCore::Frame* coreFrameFromElement = downcast<WebCore::HTMLFrameElementBase>(*coreElement).contentFrame();
     if (!coreFrameFromElement) {
         completionHandler(frameNotFoundErrorType, 0);
         return;

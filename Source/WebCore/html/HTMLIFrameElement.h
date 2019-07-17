@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2004, 2006, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,7 +39,6 @@ public:
     DOMTokenList& sandbox();
 
     RenderIFrame* renderer() const;
-    const String& allow() const { return m_allow; }
 
     void setReferrerPolicyForBindings(const AtomString&);
     String referrerPolicyForBindings() const;
@@ -58,7 +57,6 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
     std::unique_ptr<DOMTokenList> m_sandbox;
-    String m_allow;
     mutable Optional<FeaturePolicy> m_featurePolicy;
 };
 

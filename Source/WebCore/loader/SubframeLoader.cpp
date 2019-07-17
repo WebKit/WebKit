@@ -100,7 +100,7 @@ bool SubframeLoader::requestFrame(HTMLFrameOwnerElement& ownerElement, const Str
     if (!frame)
         return false;
 
-    if (!scriptURL.isEmpty() && ownerElement.isURLAllowed(scriptURL)) {
+    if (!scriptURL.isEmpty() && ownerElement.canLoadScriptURL(scriptURL)) {
         // FIXME: Some sites rely on the javascript:'' loading synchronously, which is why we have this special case.
         // Blink has the same workaround (https://bugs.chromium.org/p/chromium/issues/detail?id=923585).
         if (urlString == "javascript:''" || urlString == "javascript:\"\"")

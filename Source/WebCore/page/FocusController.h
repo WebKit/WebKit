@@ -39,7 +39,6 @@ class Document;
 class Element;
 class FocusNavigationScope;
 class Frame;
-class HTMLFrameOwnerElement;
 class IntRect;
 class KeyboardEvent;
 class Node;

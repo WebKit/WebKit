@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -154,23 +154,35 @@ bool HTMLPlugInImageElement::isImageType()
     return Image::supportsType(m_serviceType);
 }
 
-// We don't use m_url, as it may not be the final URL that the object loads, depending on <param> values.
-bool HTMLPlugInImageElement::allowedToLoadFrameURL(const String& url)
+bool HTMLPlugInImageElement::canLoadURL(const String& relativeURL) const
 {
-    URL completeURL = document().completeURL(url);
-    if (contentFrame() && WTF::protocolIsJavaScript(completeURL) && !document().securityOrigin().canAccess(contentDocument()->securityOrigin()))
+    return canLoadURL(document().completeURL(relativeURL));
+}
+
+// Note that unlike HTMLFrameElementBase::canLoadURL this uses ScriptController::canAccessFromCurrentOrigin.
+bool HTMLPlugInImageElement::canLoadURL(const URL& completeURL) const
+{
+    // FIXME: This assumes we are adding a new subframe; incorrectly prevents modifying an existing one once we are at the limit.
+    if (!canAddSubframe())
         return false;
-    return document().frame()->isURLAllowed(completeURL);
+
+    if (WTF::protocolIsJavaScript(completeURL)) {
+        RefPtr<Document> contentDocument = this->contentDocument();
+        if (contentDocument && !document().securityOrigin().canAccess(contentDocument->securityOrigin()))
+            return false;
+    }
+
+    return !isProhibitedSelfReference(completeURL);
 }
 
 // We don't use m_url, or m_serviceType as they may not be the final values
 // that <object> uses depending on <param> values.
-bool HTMLPlugInImageElement::wouldLoadAsPlugIn(const String& url, const String& serviceType)
+bool HTMLPlugInImageElement::wouldLoadAsPlugIn(const String& relativeURL, const String& serviceType)
 {
     ASSERT(document().frame());
     URL completedURL;
-    if (!url.isEmpty())
-        completedURL = document().completeURL(url);
+    if (!relativeURL.isEmpty())
+        completedURL = document().completeURL(relativeURL);
     return document().frame()->loader().client().objectContentType(completedURL, serviceType) == ObjectContentType::PlugIn;
 }
 
@@ -762,15 +774,15 @@ void HTMLPlugInImageElement::defaultEventHandler(Event& event)
     HTMLPlugInElement::defaultEventHandler(event);
 }
 
-bool HTMLPlugInImageElement::allowedToLoadPluginContent(const String& url, const String& mimeType) const
+bool HTMLPlugInImageElement::canLoadPlugInContent(const String& relativeURL, const String& mimeType) const
 {
     // Elements in user agent show tree should load whatever the embedding document policy is.
     if (isInUserAgentShadowTree())
         return true;
 
     URL completedURL;
-    if (!url.isEmpty())
-        completedURL = document().completeURL(url);
+    if (!relativeURL.isEmpty())
+        completedURL = document().completeURL(relativeURL);
 
     ASSERT(document().contentSecurityPolicy());
     const ContentSecurityPolicy& contentSecurityPolicy = *document().contentSecurityPolicy();
@@ -785,22 +797,22 @@ bool HTMLPlugInImageElement::allowedToLoadPluginContent(const String& url, const
     return contentSecurityPolicy.allowPluginType(mimeType, declaredMimeType, completedURL);
 }
 
-bool HTMLPlugInImageElement::requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
+bool HTMLPlugInImageElement::requestObject(const String& relativeURL, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     ASSERT(document().frame());
 
-    if (url.isEmpty() && mimeType.isEmpty())
+    if (relativeURL.isEmpty() && mimeType.isEmpty())
         return false;
 
-    if (!allowedToLoadPluginContent(url, mimeType)) {
+    if (!canLoadPlugInContent(relativeURL, mimeType)) {
         renderEmbeddedObject()->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginBlockedByContentSecurityPolicy);
         return false;
     }
 
-    if (HTMLPlugInElement::requestObject(url, mimeType, paramNames, paramValues))
+    if (HTMLPlugInElement::requestObject(relativeURL, mimeType, paramNames, paramValues))
         return true;
     
-    return document().frame()->loader().subframeLoader().requestObject(*this, url, getNameAttribute(), mimeType, paramNames, paramValues);
+    return document().frame()->loader().subframeLoader().requestObject(*this, relativeURL, getNameAttribute(), mimeType, paramNames, paramValues);
 }
 
 void HTMLPlugInImageElement::updateImageLoaderWithNewURLSoon()

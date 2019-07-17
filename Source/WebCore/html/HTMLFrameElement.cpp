@@ -51,7 +51,7 @@ Ref<HTMLFrameElement> HTMLFrameElement::create(const QualifiedName& tagName, Doc
 bool HTMLFrameElement::rendererIsNeeded(const RenderStyle&)
 {
     // For compatibility, frames render even when display: none is set.
-    return isURLAllowed();
+    return canLoad();
 }
 
 RenderPtr<RenderElement> HTMLFrameElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

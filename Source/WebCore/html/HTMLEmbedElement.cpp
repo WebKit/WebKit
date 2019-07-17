@@ -154,14 +154,13 @@ void HTMLEmbedElement::updateWidget(CreatePlugins createPlugins)
 
     // Note these pass m_url and m_serviceType to allow better code sharing with
     // <object> which modifies url and serviceType before calling these.
-    if (!allowedToLoadFrameURL(m_url)) {
+    if (!canLoadURL(m_url)) {
         setNeedsWidgetUpdate(false);
         return;
     }
 
-    // FIXME: It's sadness that we have this special case here.
-    //        See http://trac.webkit.org/changeset/25128 and
-    //        plugins/netscape-plugin-setwindow-size.html
+    // FIXME: It's unfortunate that we have this special case here.
+    // See http://trac.webkit.org/changeset/25128 and the plugins/netscape-plugin-setwindow-size.html test.
     if (createPlugins == CreatePlugins::No && wouldLoadAsPlugIn(m_url, m_serviceType))
         return;
 
@@ -186,8 +185,9 @@ void HTMLEmbedElement::updateWidget(CreatePlugins createPlugins)
     if (!renderer()) // Do not load the plugin if beforeload removed this element or its renderer.
         return;
 
-    // beforeLoad could have changed the document. Make sure the URL is still safe to load.
-    if (!allowedToLoadFrameURL(m_url))
+    // Dispatching a beforeLoad event could have executed code that changed the document.
+    // Make sure the URL is still safe to load.
+    if (!canLoadURL(m_url))
         return;
 
     // FIXME: beforeLoad could have detached the renderer!  Just like in the <object> case above.

@@ -265,14 +265,13 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
     parametersForPlugin(paramNames, paramValues, url, serviceType);
 
     // Note: url is modified above by parametersForPlugin.
-    if (!allowedToLoadFrameURL(url)) {
+    if (!canLoadURL(url)) {
         setNeedsWidgetUpdate(false);
         return;
     }
 
-    // FIXME: It's sadness that we have this special case here.
-    //        See http://trac.webkit.org/changeset/25128 and
-    //        plugins/netscape-plugin-setwindow-size.html
+    // FIXME: It's unfortunate that we have this special case here.
+    // See http://trac.webkit.org/changeset/25128 and the plugins/netscape-plugin-setwindow-size.html test.
     if (createPlugins == CreatePlugins::No && wouldLoadAsPlugIn(url, serviceType))
         return;
 
@@ -283,7 +282,9 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
     if (!renderer()) // Do not load the plugin if beforeload removed this element or its renderer.
         return;
 
-    bool success = beforeLoadAllowedLoad && hasValidClassId() && allowedToLoadFrameURL(url);
+    // Dispatching a beforeLoad event could have executed code that changed the document.
+    // Make sure the URL is still safe to load.
+    bool success = beforeLoadAllowedLoad && hasValidClassId() && canLoadURL(url);
     if (success)
         success = requestObject(url, serviceType, paramNames, paramValues);
     if (!success && hasFallbackContent())

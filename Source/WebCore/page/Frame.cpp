@@ -963,23 +963,6 @@ void Frame::deviceOrPageScaleFactorChanged()
         root->compositor().deviceOrPageScaleFactorChanged();
 }
 
-bool Frame::isURLAllowed(const URL& url) const
-{
-    // We allow one level of self-reference because some sites depend on that,
-    // but we don't allow more than one.
-    if (m_page->subframeCount() >= Page::maxNumberOfFrames)
-        return false;
-    bool foundSelfReference = false;
-    for (const Frame* frame = this; frame; frame = frame->tree().parent()) {
-        if (equalIgnoringFragmentIdentifier(frame->document()->url(), url)) {
-            if (foundSelfReference)
-                return false;
-            foundSelfReference = true;
-        }
-    }
-    return true;
-}
-
 bool Frame::isAlwaysOnLoggingAllowed() const
 {
     return page() && page()->isAlwaysOnLoggingAllowed();

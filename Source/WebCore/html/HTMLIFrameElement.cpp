@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Ericsson AB. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -53,10 +53,11 @@ Ref<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tagName, D
 
 DOMTokenList& HTMLIFrameElement::sandbox()
 {
-    if (!m_sandbox)
+    if (!m_sandbox) {
         m_sandbox = std::make_unique<DOMTokenList>(*this, sandboxAttr, [](Document&, StringView token) {
             return SecurityContext::isSupportedSandboxPolicy(token);
         });
+    }
     return *m_sandbox;
 }
 
@@ -97,14 +98,14 @@ void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomStri
         if (!invalidTokens.isNull())
             document().addConsoleMessage(MessageSource::Other, MessageLevel::Error, "Error while parsing the 'sandbox' attribute: " + invalidTokens);
     } else if (name == allowAttr)
-        m_allow = value;
+        m_featurePolicy = WTF::nullopt;
     else
         HTMLFrameElementBase::parseAttribute(name, value);
 }
 
 bool HTMLIFrameElement::rendererIsNeeded(const RenderStyle& style)
 {
-    return isURLAllowed() && style.display() != DisplayType::None;
+    return style.display() != DisplayType::None && canLoad();
 }
 
 RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
@@ -132,7 +133,7 @@ ReferrerPolicy HTMLIFrameElement::referrerPolicy() const
 const FeaturePolicy& HTMLIFrameElement::featurePolicy() const
 {
     if (!m_featurePolicy)
-        m_featurePolicy = FeaturePolicy::parse(document(), m_allow);
+        m_featurePolicy = FeaturePolicy::parse(document(), attributeWithoutSynchronization(allowAttr));
     return *m_featurePolicy;
 }
 

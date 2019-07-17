@@ -1,3 +1,141 @@
+2019-07-17  Darin Adler  <darin@apple.com>
+
+        No need for isURLAllowed function in Frame
+        https://bugs.webkit.org/show_bug.cgi?id=120266
+
+        Reviewed by Alex Christensen.
+
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::matchesFullScreenPseudoClass): Use is<> instead of
+        the isFrameElementBase function. Also updated includes and spacing.
+
+        * dom/Document.cpp:
+        (WebCore::Document::resolveStyle): Shortened an old, long comment
+        that happened to mention HTMLFrameElementBase::isURLAllowed by name.
+
+        * dom/Element.h: Deleted isFrameElementBase.
+
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::updateWidget): Tweaked comment.
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::insertedIntoAncestor): Moved comment from
+        here to didFinishInsertingNode, since the code it's talking about is there.
+        Also got rid of unnecessary local variable.
+        (WebCore::HTMLBodyElement::didFinishInsertingNode): Moved comment here
+        and elaborated a bit. Also changed the code to copy margin attributes in a
+        simpler way without requiring special getter functions. There is a slight
+        behavior change here, but seems unlikely to affect any websites or tests.
+        Would be good to add better test coverage, which I think should be done
+        when fixing the problems described in the FIXME.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget): allowedToLoadFrameURL -> canLoadURL
+        Also Tweaked comments.
+
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::rendererIsNeeded): isURLAllowed -> canLoad
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::HTMLFrameElementBase): Removed initial
+        values for no-longer-needed data members.
+
+        (WebCore::HTMLFrameElementBase::canLoadScriptURL const): Renamed from
+        isURLAllowed. Also refactored so it now calls canLoadURL.
+        (WebCore::HTMLFrameElementBase::canLoad const): Renamed from isURLAllowed.
+        Also added FIXME comments about multiple ways that this code incorrectly
+        handles the empty string. Might inspire some tests and future fixes.
+        (WebCore::HTMLFrameElementBase::canLoadURL const): Renamed from isURLAllowed.
+        Added an overload that takes a relative URL string largely to make this
+        more parallel with the similar code in HTMLPlugInImageElement. Refactored
+        to call canAddSubframe and isProhibitedSelfReference, removing the need
+        to call Frame::isURLAllowed.
+        (WebCore::HTMLFrameElementBase::openURL): isURLAllowed -> canLoad
+        (WebCore::HTMLFrameElementBase::parseAttribute): Removed unneeded code
+        to parse marginwidth, marginheight, and scrolling, which are now done
+        as needed instead. Might have to add code back if we ever add code to
+        make these cause dynamic updates when changed, but that was not the
+        behavior of the existing code.
+        (WebCore::HTMLFrameElementBase::scrollingMode const): Changed to call
+        attributeWithoutSynchronization rather than reading from a data member.
+
+        * html/HTMLFrameElementBase.h: Moved scrollingMode into the .cpp file.
+        Removed marginWidth and marginHeight since they are no longer called.
+        Made canContainRangeEndPoint override be private. Renamed isURLAllowed
+        to canLoad/canLoadScriptURL/canLoadURL. Removed unneeded isFrameElementBase
+        since is<HTMLFrameElementBase> already works without it. Removed unneeded
+        data members m_scrolling, m_marginWidth, and m_marginHeight.
+
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::HTMLFrameOwnerElement): Moved initialization
+        of m_contentFrame and m_sandboxFlags to the header.
+        (WebCore::HTMLFrameOwnerElement::clearContentFrame): 0 -> nullptr
+        (WebCore::HTMLFrameOwnerElement::canAddSubframe const): Added. Code was moved
+        here from multiple functions that enforced the subframe count limit.
+        (WebCore::HTMLFrameOwnerElement::isProhibitedSelfReference const): Added.
+        Moved code here from Frame::isURLAllowed so it's easy to use as needed.
+
+        * html/HTMLFrameOwnerElement.h: Renamed isURLAllowed to canLoadScriptURL.
+        Added protected canAddSubframe and isProhibitedSelfReference functions.
+        Initialized the data members here.
+
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::sandbox): Added braces for multi-line if statement.
+        (WebCore::HTMLIFrameElement::parseAttribute): Removed unneeded storage of the
+        allow attribute value. Added missing code to invalidate m_featurePolicy when
+        the allow attribute changes. This could change behavior, but unlikely to affect
+        any websites of tests. Would be good to add a test for this.
+        (WebCore::HTMLIFrameElement::rendererIsNeeded): isURLAllowed -> canLoad. Also
+        reordered the code to be more efficient for display: none (why not?).
+        (WebCore::HTMLIFrameElement::featurePolicy const): Use attributeWithoutSynchronization
+        to read the allow attribute rather than using a data member.
+
+        * html/HTMLIFrameElement.h: Removed the unneeded allow function member and
+        m_allow data member since DOM reflection takes care of the function and the
+        featurePolicy function can get the attribute without a data member.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget): allowedToLoadFrameURL -> canLoadURL
+        Also tweaked comments.
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::canLoadScriptURL const): Added. Code moved here
+        from HTMLFrameOwnerElement::isURLAllowed. Added comment about why this is not
+        necessarily correct and might need improvement.
+
+        * html/HTMLPlugInElement.h: Added private override of canLoadScriptURL.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::canLoadURL const): Renamed from
+        allowedToLoadFrameURL and refactored into two functions to match the
+        structure of the similar function in HTMLFrameElementBase. Also refactored
+        to use canAddSubframe and isProhibitedSelfReference rather than Frame::isURLAllowed.
+        (WebCore::HTMLPlugInImageElement::canLoadPlugInContent const): Renamed from
+        allowedToLoadPluginContent.
+        (WebCore::HTMLPlugInImageElement::requestObject): allowedToLoadPluginContent
+        -> canLoadPlugInContent
+
+        * html/HTMLPlugInImageElement.h: Renamed functions as mentioned above.
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestFrame): isURLAllowed -> canLoadScriptURL
+
+        * page/FocusController.h: Removed unneeded forward declaration of HTMLFrameOwnerElement.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::isURLAllowed const): Deleted.
+        * page/Frame.h: Ditto.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::init): Removed code to initialize m_margins, since nothing
+        was looking at it after that.
+        (WebCore::FrameView::setMarginWidth): Deleted.
+        (WebCore::FrameView::setMarginHeight): Deleted.
+
+        * page/FrameView.h: Removed marginWidth, marginHeight, setMarginWidth,
+        setMarginHeight, and m_margins because there was no code anywhere calling
+        marginWidth or marginHeight, and no other side effects of these functions.
+
 2019-07-17  Alex Christensen  <achristensen@webkit.org>
 
         Add a runtime-disabled dialog element skeleton

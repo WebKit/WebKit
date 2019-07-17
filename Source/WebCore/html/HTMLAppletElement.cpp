@@ -117,9 +117,8 @@ void HTMLAppletElement::updateWidget(CreatePlugins createPlugins)
 #if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(createPlugins);
 #else
-    // FIXME: It's sadness that we have this special case here.
-    //        See http://trac.webkit.org/changeset/25128 and
-    //        plugins/netscape-plugin-setwindow-size.html
+    // FIXME: It's unfortunate that we have this special case here.
+    // See http://trac.webkit.org/changeset/25128 and the plugins/netscape-plugin-setwindow-size.html test.
     if (createPlugins == CreatePlugins::No)
         return;
 

@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -186,32 +186,27 @@ Node::InsertedIntoAncestorResult HTMLBodyElement::insertedIntoAncestor(Insertion
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (!insertionType.connectedToDocument)
         return InsertedIntoAncestorResult::Done;
-
-    // FIXME: It's surprising this is web compatible since it means a marginwidth and marginheight attribute can
-    // magically appear on the <body> of all documents embedded through <iframe> or <frame>.
-    // FIXME: Perhaps this code should be in attach() instead of here.
-    auto ownerElement = makeRefPtr(document().ownerElement());
-    if (!is<HTMLFrameElementBase>(ownerElement))
+    if (!is<HTMLFrameElementBase>(document().ownerElement()))
         return InsertedIntoAncestorResult::Done;
-
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
 void HTMLBodyElement::didFinishInsertingNode()
 {
-    auto ownerElement = makeRefPtr(document().ownerElement());
-    RELEASE_ASSERT(is<HTMLFrameElementBase>(ownerElement));
-    auto& ownerFrameElement = downcast<HTMLFrameElementBase>(*ownerElement);
+    ASSERT(is<HTMLFrameElementBase>(document().ownerElement()));
+    auto ownerElement = makeRef(*document().ownerElement());
 
-    // Read values from the owner before setting any attributes, since setting an attribute can run arbitrary
-    // JavaScript, which might delete the owner element.
-    int marginWidth = ownerFrameElement.marginWidth();
-    int marginHeight = ownerFrameElement.marginHeight();
-
-    if (marginWidth != -1)
-        setIntegralAttribute(marginwidthAttr, marginWidth);
-    if (marginHeight != -1)
-        setIntegralAttribute(marginheightAttr, marginHeight);
+    // FIXME: It's surprising this is web compatible since it means marginwidth and marginheight attributes
+    // appear or get overwritten on body elements of a document embedded through <iframe> or <frame>.
+    // Better to find a way to do addHTMLLengthToStyle based on the attributes from the frame element,
+    // without modifying the body element's attributes. Could also add code so we can respond to updates
+    // to the frame element attributes.
+    auto marginWidth = ownerElement->attributeWithoutSynchronization(marginwidthAttr);
+    if (!marginWidth.isNull())
+        setAttributeWithoutSynchronization(marginwidthAttr, marginWidth);
+    auto marginHeight = ownerElement->attributeWithoutSynchronization(marginheightAttr);
+    if (!marginHeight.isNull())
+        setAttributeWithoutSynchronization(marginheightAttr, marginHeight);
 }
 
 bool HTMLBodyElement::isURLAttribute(const Attribute& attribute) const

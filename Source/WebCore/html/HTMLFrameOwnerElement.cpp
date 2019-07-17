@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,6 +25,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "RenderWidget.h"
+#include "ScriptController.h"
 #include "ShadowRoot.h"
 #include "SVGDocument.h"
 #include "StyleTreeResolver.h"
@@ -37,8 +38,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFrameOwnerElement);
 
 HTMLFrameOwnerElement::HTMLFrameOwnerElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
-    , m_contentFrame(nullptr)
-    , m_sandboxFlags(SandboxNone)
 {
 }
 
@@ -69,7 +68,7 @@ void HTMLFrameOwnerElement::clearContentFrame()
     if (!m_contentFrame)
         return;
 
-    m_contentFrame = 0;
+    m_contentFrame = nullptr;
 
     for (RefPtr<ContainerNode> node = this; node; node = node->parentOrShadowHostNode())
         node->decrementConnectedSubframeCount();
@@ -77,8 +76,7 @@ void HTMLFrameOwnerElement::clearContentFrame()
 
 void HTMLFrameOwnerElement::disconnectContentFrame()
 {
-    if (RefPtr<Frame> frame = contentFrame()) {
-        Ref<Frame> protect(*frame);
+    if (RefPtr<Frame> frame = m_contentFrame) {
         frame->loader().frameDetached();
         frame->disconnectOwnerElement();
     }
@@ -128,6 +126,27 @@ void HTMLFrameOwnerElement::scheduleInvalidateStyleAndLayerComposition()
         });
     } else
         invalidateStyleAndLayerComposition();
+}
+
+bool HTMLFrameOwnerElement::canAddSubframe() const
+{
+    // FIXME: Might be safer to return false when page is null, but need to test in case we rely on returning true.
+    auto* page = document().page();
+    return !page || page->subframeCount() < Page::maxNumberOfFrames;
+}
+
+bool HTMLFrameOwnerElement::isProhibitedSelfReference(const URL& completeURL) const
+{
+    // We allow one level of self-reference because some websites depend on that, but we don't allow more than one.
+    bool foundOneSelfReference = false;
+    for (auto* frame = document().frame(); frame; frame = frame->tree().parent()) {
+        if (equalIgnoringFragmentIdentifier(frame->document()->url(), completeURL)) {
+            if (foundOneSelfReference)
+                return true;
+            foundOneSelfReference = true;
+        }
+    }
+    return false;
 }
 
 bool SubframeLoadingDisabler::canLoadFrame(HTMLFrameOwnerElement& owner)

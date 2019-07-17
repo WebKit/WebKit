@@ -1886,12 +1886,8 @@ void Document::resolveStyle(ResolveStyleType type)
             element->updateShadowTree();
     }
 
-    // FIXME: We should update style on our ancestor chain before proceeding (especially for seamless),
-    // however doing so currently causes several tests to crash, as Frame::setDocument calls Document::attach
-    // before setting the DOMWindow on the Frame, or the SecurityOrigin on the document. The attach, in turn
-    // resolves style (here) and then when we resolve style on the parent chain, we may end up
-    // re-attaching our containing iframe, which when asked HTMLFrameElementBase::isURLAllowed
-    // hits a null-dereference due to security code always assuming the document has a SecurityOrigin.
+    // FIXME: We should update style on our ancestor chain before proceeding, however doing so at
+    // the time this comment was originally written caused several tests to crash.
 
     {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;

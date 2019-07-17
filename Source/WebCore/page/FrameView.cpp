@@ -316,28 +316,18 @@ void FrameView::init()
 {
     reset();
 
-    m_margins = LayoutSize(-1, -1); // undefined
     m_size = LayoutSize();
 
-    // Propagate the marginwidth/height and scrolling modes to the view.
-    Element* ownerElement = frame().ownerElement();
-    if (is<HTMLFrameElementBase>(ownerElement)) {
-        HTMLFrameElementBase& frameElement = downcast<HTMLFrameElementBase>(*ownerElement);
-        if (frameElement.scrollingMode() == ScrollbarAlwaysOff)
-            setCanHaveScrollbars(false);
-        LayoutUnit marginWidth = frameElement.marginWidth();
-        LayoutUnit marginHeight = frameElement.marginHeight();
-        if (marginWidth != -1)
-            setMarginWidth(marginWidth);
-        if (marginHeight != -1)
-            setMarginHeight(marginHeight);
-    }
+    // Propagate the scrolling mode to the view.
+    auto* ownerElement = frame().ownerElement();
+    if (is<HTMLFrameElementBase>(ownerElement) && downcast<HTMLFrameElementBase>(*ownerElement).scrollingMode() == ScrollbarAlwaysOff)
+        setCanHaveScrollbars(false);
 
     Page* page = frame().page();
     if (page && page->chrome().client().shouldPaintEntireContents())
         setPaintsEntireContents(true);
 }
-    
+
 void FrameView::prepareForDetach()
 {
     detachCustomScrollbars();
@@ -489,18 +479,6 @@ bool FrameView::scheduleAnimation()
         return false;
     page->chrome().scheduleAnimation();
     return true;
-}
-
-void FrameView::setMarginWidth(LayoutUnit w)
-{
-    // make it update the rendering area when set
-    m_margins.setWidth(w);
-}
-
-void FrameView::setMarginHeight(LayoutUnit h)
-{
-    // make it update the rendering area when set
-    m_margins.setHeight(h);
 }
 
 FrameFlattening FrameView::effectiveFrameFlattening() const
