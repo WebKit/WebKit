@@ -85,7 +85,6 @@
 #include <type_traits>
 #include <wtf/Box.h>
 #include <wtf/CommaPrinter.h>
-#include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
@@ -1004,6 +1003,7 @@ public:
 
     void commitCachedBytecode() const override
     {
+#if OS(DARWIN)
         if (!cacheEnabled() || !m_cachedBytecode || !m_cachedBytecode->hasUpdates())
             return;
 
@@ -1012,33 +1012,32 @@ public:
         });
 
         String filename = cachePath();
-        auto fd = FileSystem::openAndLockFile(filename, FileSystem::FileOpenMode::Write, {FileSystem::FileLockMode::Exclusive, FileSystem::FileLockMode::Nonblocking});
-        if (!FileSystem::isHandleValid(fd))
+        int fd = open(filename.utf8().data(), O_CREAT | O_WRONLY | O_TRUNC | O_EXLOCK | O_NONBLOCK, 0666);
+        if (fd == -1)
             return;
 
         auto closeFD = makeScopeExit([&] {
-            FileSystem::unlockAndCloseFile(fd);
+            close(fd);
         });
 
-        long long fileSize;
-        if (!FileSystem::getFileSize(fd, fileSize))
-            return;
-
-        size_t cacheFileSize;
-        if (!WTF::convertSafely(fileSize, cacheFileSize) || cacheFileSize != m_cachedBytecode->size()) {
+        struct stat sb;
+        int res = fstat(fd, &sb);
+        size_t size = static_cast<size_t>(sb.st_size);
+        if (res || size != m_cachedBytecode->size()) {
             // The bytecode cache has already been updated
             return;
         }
 
-        if (!FileSystem::truncateFile(fd, m_cachedBytecode->sizeForUpdate()))
+        if (ftruncate(fd, m_cachedBytecode->sizeForUpdate()))
             return;
 
         m_cachedBytecode->commitUpdates([&] (off_t offset, const void* data, size_t size) {
-            long long result = FileSystem::seekFile(fd, offset, FileSystem::FileSeekOrigin::Beginning);
+            off_t result = lseek(fd, offset, SEEK_SET);
             ASSERT_UNUSED(result, result != -1);
-            size_t bytesWritten = static_cast<size_t>(FileSystem::writeToFile(fd, static_cast<const char*>(data), size));
+            size_t bytesWritten = static_cast<size_t>(write(fd, data, size));
             ASSERT_UNUSED(bytesWritten, bytesWritten == size);
         });
+#endif
     }
 
 private:
@@ -1047,12 +1046,14 @@ private:
         if (!cacheEnabled())
             return static_cast<const char*>(nullptr);
         const char* cachePath = Options::diskCachePath();
-        String filename = FileSystem::encodeForFileName(sourceOrigin().string());
-        return FileSystem::pathByAppendingComponent(cachePath, makeString(source().toString().hash(), '-', filename, ".bytecode-cache"));
+        String filename = sourceOrigin().string();
+        filename.replace('/', '_');
+        return makeString(cachePath, '/', source().toString().hash(), '-', filename, ".bytecode-cache");
     }
 
     void loadBytecode() const
     {
+#if OS(DARWIN)
         if (!cacheEnabled())
             return;
 
@@ -1060,21 +1061,25 @@ private:
         if (filename.isNull())
             return;
 
-        auto fd = FileSystem::openAndLockFile(filename, FileSystem::FileOpenMode::Read, {FileSystem::FileLockMode::Shared, FileSystem::FileLockMode::Nonblocking});
-        if (!FileSystem::isHandleValid(fd))
+        int fd = open(filename.utf8().data(), O_RDONLY | O_SHLOCK | O_NONBLOCK);
+        if (fd == -1)
             return;
 
         auto closeFD = makeScopeExit([&] {
-            FileSystem::unlockAndCloseFile(fd);
+            close(fd);
         });
 
-        bool success;
-        FileSystem::MappedFileData mappedFileData(fd, FileSystem::MappedFileMode::Private, success);
-
-        if (!success)
+        struct stat sb;
+        int res = fstat(fd, &sb);
+        size_t size = static_cast<size_t>(sb.st_size);
+        if (res || !size)
             return;
 
-        m_cachedBytecode = CachedBytecode::create(WTFMove(mappedFileData));
+        void* buffer = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, 0);
+        if (buffer == MAP_FAILED)
+            return;
+        m_cachedBytecode = CachedBytecode::create(buffer, size);
+#endif
     }
 
     ShellSourceProvider(const String& source, const SourceOrigin& sourceOrigin, URL&& url, const TextPosition& startPosition, SourceProviderSourceType sourceType)

@@ -25,14 +25,15 @@
 
 #pragma once
 
-#include <wtf/FileSystem.h>
 #include <wtf/MallocPtr.h>
 
 namespace JSC {
 
 class CachePayload {
 public:
-    JS_EXPORT_PRIVATE static CachePayload makeMappedPayload(FileSystem::MappedFileData&&);
+#if !OS(WINDOWS)
+    JS_EXPORT_PRIVATE static CachePayload makeMappedPayload(void*, size_t);
+#endif
     JS_EXPORT_PRIVATE static CachePayload makeMallocPayload(MallocPtr<uint8_t>&&, size_t);
     JS_EXPORT_PRIVATE static CachePayload makeEmptyPayload();
 

@@ -32,10 +32,12 @@
 
 namespace JSC {
 
-CachePayload CachePayload::makeMappedPayload(FileSystem::MappedFileData&& data)
+#if !OS(WINDOWS)
+CachePayload CachePayload::makeMappedPayload(void* data, size_t size)
 {
-    return CachePayload(true, data.leakHandle(), data.size());
+    return CachePayload(true, data, size);
 }
+#endif
 
 CachePayload CachePayload::makeMallocPayload(MallocPtr<uint8_t>&& data, size_t size)
 {
@@ -74,7 +76,11 @@ void CachePayload::freeData()
     if (!m_data)
         return;
     if (m_mapped) {
-        FileSystem::unmapViewOfFile(m_data, m_size);
+#if !OS(WINDOWS)
+        munmap(m_data, m_size);
+#else
+        RELEASE_ASSERT_NOT_REACHED();
+#endif
     } else
         fastFree(m_data);
 }

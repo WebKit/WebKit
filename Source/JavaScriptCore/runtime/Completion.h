@@ -24,7 +24,6 @@
 
 #include "CallData.h"
 #include "JSCJSValue.h"
-#include <wtf/FileSystem.h>
 #include <wtf/NakedPtr.h>
 
 namespace JSC {
@@ -44,8 +43,8 @@ JS_EXPORT_PRIVATE bool checkSyntax(VM&, const SourceCode&, ParserError&);
 JS_EXPORT_PRIVATE bool checkSyntax(ExecState*, const SourceCode&, JSValue* exception = 0);
 JS_EXPORT_PRIVATE bool checkModuleSyntax(ExecState*, const SourceCode&, ParserError&);
 
-JS_EXPORT_PRIVATE RefPtr<CachedBytecode> generateProgramBytecode(VM&, const SourceCode&, FileSystem::PlatformFileHandle fd, BytecodeCacheError&);
-JS_EXPORT_PRIVATE RefPtr<CachedBytecode> generateModuleBytecode(VM&, const SourceCode&, FileSystem::PlatformFileHandle fd, BytecodeCacheError&);
+JS_EXPORT_PRIVATE RefPtr<CachedBytecode> generateProgramBytecode(VM&, const SourceCode&, int fd, BytecodeCacheError&);
+JS_EXPORT_PRIVATE RefPtr<CachedBytecode> generateModuleBytecode(VM&, const SourceCode&, int fd, BytecodeCacheError&);
 
 JS_EXPORT_PRIVATE JSValue evaluate(ExecState*, const SourceCode&, JSValue thisValue, NakedPtr<Exception>& returnedException);
 inline JSValue evaluate(ExecState* exec, const SourceCode& sourceCode, JSValue thisValue = JSValue())

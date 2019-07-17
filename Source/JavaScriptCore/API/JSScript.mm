@@ -130,7 +130,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     bool success = false;
     String systemPath = filePathURL.fileSystemPath();
-    FileSystem::MappedFileData fileData(systemPath, FileSystem::MappedFileMode::Shared, success);
+    FileSystem::MappedFileData fileData(systemPath, success);
     if (!success)
         return createError([NSString stringWithFormat:@"File at path %@ could not be mapped.", static_cast<NSString *>(systemPath)], error);
 
@@ -153,19 +153,22 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (!m_cachePath)
         return;
 
-    auto fd = FileSystem::openAndLockFile([m_cachePath path].UTF8String, FileSystem::FileOpenMode::Read, {FileSystem::FileLockMode::Exclusive, FileSystem::FileLockMode::Nonblocking});
-    if (!FileSystem::isHandleValid(fd))
+    int fd = open([m_cachePath path].UTF8String, O_RDONLY | O_EXLOCK | O_NONBLOCK, 0666);
+    if (fd == -1)
         return;
     auto closeFD = makeScopeExit([&] {
-        FileSystem::unlockAndCloseFile(fd);
+        close(fd);
     });
 
-    bool success;
-    FileSystem::MappedFileData mappedFile(fd, FileSystem::MappedFileMode::Private, success);
-    if (!success)
+    struct stat sb;
+    int res = fstat(fd, &sb);
+    size_t size = static_cast<size_t>(sb.st_size);
+    if (res || !size)
         return;
 
-    Ref<JSC::CachedBytecode> cachedBytecode = JSC::CachedBytecode::create(WTFMove(mappedFile));
+    void* buffer = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, 0);
+
+    Ref<JSC::CachedBytecode> cachedBytecode = JSC::CachedBytecode::create(buffer, size);
 
     JSC::VM& vm = [m_virtualMachine vm];
     JSC::SourceCode sourceCode = [self sourceCode];
@@ -288,7 +291,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     if (cacheError.isValid()) {
         m_cachedBytecode = JSC::CachedBytecode::create();
-        FileSystem::truncateFile(fd, 0);
+        ftruncate(fd, 0);
         error = makeString("Unable to generate bytecode for this JSScript because: ", cacheError.message());
         return NO;
     }

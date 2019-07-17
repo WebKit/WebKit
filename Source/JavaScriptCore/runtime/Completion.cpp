@@ -92,7 +92,7 @@ bool checkModuleSyntax(ExecState* exec, const SourceCode& source, ParserError& e
     return true;
 }
 
-RefPtr<CachedBytecode> generateProgramBytecode(VM& vm, const SourceCode& source, FileSystem::PlatformFileHandle fd, BytecodeCacheError& error)
+RefPtr<CachedBytecode> generateProgramBytecode(VM& vm, const SourceCode& source, int fd, BytecodeCacheError& error)
 {
     JSLockHolder lock(vm);
     RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
@@ -112,7 +112,7 @@ RefPtr<CachedBytecode> generateProgramBytecode(VM& vm, const SourceCode& source,
     return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ProgramType, strictMode, scriptMode, fd, error, { });
 }
 
-RefPtr<CachedBytecode> generateModuleBytecode(VM& vm, const SourceCode& source, FileSystem::PlatformFileHandle fd, BytecodeCacheError& error)
+RefPtr<CachedBytecode> generateModuleBytecode(VM& vm, const SourceCode& source, int fd, BytecodeCacheError& error)
 {
     JSLockHolder lock(vm);
     RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());

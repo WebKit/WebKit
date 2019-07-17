@@ -71,7 +71,7 @@ SharedBuffer::SharedBuffer(GstMappedBuffer& mappedBuffer)
 RefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath)
 {
     bool mappingSuccess;
-    FileSystem::MappedFileData mappedFileData(filePath, FileSystem::MappedFileMode::Shared, mappingSuccess);
+    FileSystem::MappedFileData mappedFileData(filePath, mappingSuccess);
 
     if (!mappingSuccess)
         return SharedBuffer::createFromReadingFile(filePath);
