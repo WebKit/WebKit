@@ -1,3 +1,15 @@
+2019-07-17  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r247501.
+
+        Introduced 100 failures on Mojave WK2.
+
+        Reverted changeset:
+
+        "[WHLSL] Move WHLSL tests to their own folder"
+        https://bugs.webkit.org/show_bug.cgi?id=199838
+        https://trac.webkit.org/changeset/247501
+
 2019-07-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed test gardening for WinCairo port
