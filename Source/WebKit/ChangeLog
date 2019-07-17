@@ -1,3 +1,28 @@
+2019-07-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [iOS] Option + Up or Down Arrow key doesn’t move cursor past paragraph boundaries in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=199851
+
+        Reviewed by Wenson Hsieh.
+
+        The bug was caused by the difference in the way AppKit and UIKit responds to Option + Up / Down.
+
+        On macOS, AppKit sends moveForward before sending moveToStartOfParagraph and moveBackward
+        before sending moveToEndOfParagraph. As a result, when Option + Down is pressed when we are at
+        the end of a line, we would first move to the beginning of the next line (i.e. after the line break)
+        before moving or extending selection with the paragraph boundary granurality.
+
+        On iOS, UIKit only calls _moveToStartOfParagraph without moving forward by a character. As a result,
+        moving forward by the paragraph boundary granurality immediately stops when we're starting at the
+        end of a line when Option + Down is pressed. Option + Up case is similar.
+
+        Fix the bug on iOS by emulating what happens on macOS. Namely, move the selection forward or backward
+        by the character granurality before moving by the paragraph boundary granurality.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _moveToStartOfParagraph:withHistory:]):
+        (-[WKContentView _moveToEndOfParagraph:withHistory:]):
+
 2019-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK and WPE debug build after r247508
