@@ -1,3 +1,15 @@
+2019-07-16  Jonathan Bedard  <jbedard@apple.com>
+
+        svn-create-patch duplicates diffs when adding directories
+        https://bugs.webkit.org/show_bug.cgi?id=199842
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/svn-create-patch:
+        (findKind): Add function which returns what 'kind' of file the provided path is.
+        (generateFileList): If the path is a directory and being added, don't add it.
+        Instead, rely on the fact that its children will be added.
+
 2019-07-16  Tim Horton  <timothy_horton@apple.com>
 
         NSTextFinder holes don't scroll with the page

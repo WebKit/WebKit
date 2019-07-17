@@ -51,6 +51,7 @@ use VCSUtils;
 sub binarycmp($$);
 sub diffOptionsForFile($);
 sub findBaseUrl($);
+sub findKind($);
 sub findMimeType($;$);
 sub findModificationType($);
 sub findSourceFileAndRevision($);
@@ -174,6 +175,24 @@ sub findBaseUrl($)
     }
     close INFO;
     return $baseUrl;
+}
+
+sub findKind($)
+{
+    my ($path) = @_;
+    my $kind;
+    my $escapedInfoPath = escapeSubversionPath($path);
+
+    print STDERR "Performing \"svn info '$escapedInfoPath'\"\n" if $verbose;
+
+    open INFO, "svn info '$escapedInfoPath' |" or die;
+    while (<INFO>) {
+        if (/^Node Kind: (.+?)[\r\n]*$/) {
+            $kind = $1;
+        }
+    }
+    close INFO;
+    return $kind;
 }
 
 sub findMimeType($;$)
@@ -326,6 +345,10 @@ sub generateFileList($\%)
         # svn diff -N doesn't work on svn 1.9, so only return top-level deletions.
         if ($modificationType eq "deletion") {
             push @deletedFiles, $path;
+            next;
+        }
+
+        if (findKind($path) eq "directory") {
             next;
         }
 
