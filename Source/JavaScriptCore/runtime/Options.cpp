@@ -421,6 +421,9 @@ static void recomputeDependentOptions()
         Options::useWebAssembly() = false;
     }
 
+    if (!jitEnabledByDefault() && !Options::useJIT())
+        Options::useLLInt() = true;
+
     if (!Options::useWebAssembly())
         Options::useFastTLSForWasmContext() = false;
     

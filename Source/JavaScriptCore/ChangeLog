@@ -1,3 +1,18 @@
+2019-07-17  Keith Miller  <keith_miller@apple.com>
+
+        Force useLLInt to true on arm64_32
+        https://bugs.webkit.org/show_bug.cgi?id=199882
+        <rdar://problem/53207586>
+
+        Reviewed by Yusuke Suzuki.
+
+        Some jsc tests set useLLInt=false but on arm64_32 we don't support the JIT.
+        This causes the option coherency checker to get angry. We should force
+        useLLInt=true on arm64_32 unless useJIT=true.
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2019-07-17  Christopher Reid  <chris.reid@sony.com>
 
         Bytecode cache should use FileSystem
