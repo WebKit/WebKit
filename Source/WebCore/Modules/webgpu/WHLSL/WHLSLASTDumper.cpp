@@ -502,11 +502,6 @@ void ASTDumper::visit(AST::Return& returnStatement)
     }
 }
 
-void ASTDumper::visit(AST::Trap&)
-{
-    m_out.print("trap");
-}
-
 void ASTDumper::visit(AST::SwitchStatement& switchStatement)
 {
     m_out.print("switch (");

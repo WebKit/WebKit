@@ -90,7 +90,6 @@
 #include "WHLSLSwitchCase.h"
 #include "WHLSLSwitchStatement.h"
 #include "WHLSLTernaryExpression.h"
-#include "WHLSLTrap.h"
 #include "WHLSLType.h"
 #include "WHLSLTypeArgument.h"
 #include "WHLSLTypeDefinition.h"

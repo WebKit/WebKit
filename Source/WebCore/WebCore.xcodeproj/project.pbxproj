@@ -13244,7 +13244,6 @@
 		C2138A1521DDECE900F516BA /* WHLSLResourceSemantic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLResourceSemantic.cpp; sourceTree = "<group>"; };
 		C2138A1621DDECFB00F516BA /* WHLSLSpecializationConstantSemantic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLSpecializationConstantSemantic.cpp; sourceTree = "<group>"; };
 		C2138A1721DDED0D00F516BA /* WHLSLStageInOutSemantic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLStageInOutSemantic.cpp; sourceTree = "<group>"; };
-		C21BF6F321CD89AD00227979 /* WHLSLTrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLTrap.h; sourceTree = "<group>"; };
 		C21BF6F421CD89B300227979 /* WHLSLFunctionDefinition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLFunctionDefinition.h; sourceTree = "<group>"; };
 		C21BF6F521CD89B500227979 /* WHLSLContinue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLContinue.h; sourceTree = "<group>"; };
 		C21BF6F621CD89B700227979 /* WHLSLBooleanLiteral.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLBooleanLiteral.h; sourceTree = "<group>"; };
@@ -17141,7 +17140,6 @@
 				C21BF71921CD89D700227979 /* WHLSLSwitchCase.h */,
 				C21BF73121CD89EE00227979 /* WHLSLSwitchStatement.h */,
 				C21BF71C21CD89DA00227979 /* WHLSLTernaryExpression.h */,
-				C21BF6F321CD89AD00227979 /* WHLSLTrap.h */,
 				C21BF71D21CD89DB00227979 /* WHLSLType.h */,
 				C288C72D21C991DA002DF5CA /* WHLSLTypeArgument.cpp */,
 				C21BF71121CD89D100227979 /* WHLSLTypeArgument.h */,

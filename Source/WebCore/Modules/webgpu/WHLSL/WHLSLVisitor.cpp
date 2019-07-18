@@ -329,8 +329,6 @@ void Visitor::visit(AST::Statement& statement)
         checkErrorAndVisit(downcast<AST::SwitchCase>(statement));
     else if (is<AST::SwitchStatement>(statement))
         checkErrorAndVisit(downcast<AST::SwitchStatement>(statement));
-    else if (is<AST::Trap>(statement))
-        checkErrorAndVisit(downcast<AST::Trap>(statement));
     else if (is<AST::VariableDeclarationsStatement>(statement))
         checkErrorAndVisit(downcast<AST::VariableDeclarationsStatement>(statement));
     else
@@ -465,10 +463,6 @@ void Visitor::visit(AST::SwitchStatement& switchStatement)
     checkErrorAndVisit(switchStatement.value());
     for (auto& switchCase : switchStatement.switchCases())
         checkErrorAndVisit(switchCase);
-}
-
-void Visitor::visit(AST::Trap&)
-{
 }
 
 void Visitor::visit(AST::VariableDeclarationsStatement& variableDeclarationsStatement)

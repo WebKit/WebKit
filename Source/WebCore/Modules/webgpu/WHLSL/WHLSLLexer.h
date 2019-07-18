@@ -89,7 +89,6 @@ struct Token {
         While,
         Do,
         Return,
-        Trap,
         Null,
         True,
         False,

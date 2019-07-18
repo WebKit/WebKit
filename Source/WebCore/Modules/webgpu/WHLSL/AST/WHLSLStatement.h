@@ -60,7 +60,6 @@ public:
     virtual bool isStatementList() const { return false; }
     virtual bool isSwitchCase() const { return false; }
     virtual bool isSwitchStatement() const { return false; }
-    virtual bool isTrap() const { return false; }
     virtual bool isVariableDeclarationsStatement() const { return false; }
     virtual bool isWhileLoop() const { return false; }
 

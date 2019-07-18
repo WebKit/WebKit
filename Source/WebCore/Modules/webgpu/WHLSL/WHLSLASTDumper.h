@@ -98,7 +98,6 @@ public:
     void visit(AST::Return&) override;
     void visit(AST::SwitchCase&) override;
     void visit(AST::SwitchStatement&) override;
-    void visit(AST::Trap&) override;
     void visit(AST::VariableDeclarationsStatement&) override;
     void visit(AST::WhileLoop&) override;
     void visit(AST::VariableDeclaration&) override;

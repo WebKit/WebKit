@@ -126,7 +126,6 @@ protected:
     void visit(AST::Return&) override;
     void visit(AST::SwitchStatement&) override;
     void visit(AST::SwitchCase&) override;
-    void visit(AST::Trap&) override;
     void visit(AST::VariableDeclarationsStatement&) override;
     void visit(AST::WhileLoop&) override;
     void visit(AST::IntegerLiteral&) override;
@@ -415,12 +414,6 @@ void FunctionDefinitionWriter::visit(AST::SwitchCase& switchCase)
     SetForScope<Optional<BreakContext>> breakContext(m_currentBreakContext, BreakContext::Switch);
     checkErrorAndVisit(switchCase.block());
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195812 Figure out whether we need to break or fallthrough.
-}
-
-void FunctionDefinitionWriter::visit(AST::Trap&)
-{
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195811 Implement this
-    notImplemented();
 }
 
 void FunctionDefinitionWriter::visit(AST::VariableDeclarationsStatement& variableDeclarationsStatement)

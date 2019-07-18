@@ -73,8 +73,6 @@ const char* Token::typeName(Type type)
         return "do";
     case Type::Return:
         return "return";
-    case Type::Trap:
-        return "trap";
     case Type::Null:
         return "null";
     case Type::True:
@@ -289,8 +287,6 @@ auto Lexer::recognizeKeyword(unsigned end) -> Optional<Token::Type>
         return Token::Type::Do;
     if (substring == "return")
         return Token::Type::Return;
-    if (substring == "trap")
-        return Token::Type::Trap;
     if (substring == "null")
         return Token::Type::Null;
     if (substring == "true")

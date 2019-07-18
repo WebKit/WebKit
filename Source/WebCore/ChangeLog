@@ -1,5 +1,37 @@
 2019-07-17  Robin Morisset  <rmorisset@apple.com>
 
+        [WHLSL] Remove traps from the compiler
+        https://bugs.webkit.org/show_bug.cgi?id=195811
+        <rdar://problem/50746299>
+
+        Reviewed by Myles Maxfield.
+
+        Remove the Trap statement from the language, see https://github.com/gpuweb/WHLSL/issues/301.
+
+        No new tests, as this part of the language was already untested, and we are removing it, not adding anything.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLAST.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLStatement.h:
+        (WebCore::WHLSL::AST::Statement::isSwitchStatement const):
+        * Modules/webgpu/WHLSL/AST/WHLSLTrap.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        * Modules/webgpu/WHLSL/WHLSLASTDumper.cpp:
+        * Modules/webgpu/WHLSL/WHLSLASTDumper.h:
+        * Modules/webgpu/WHLSL/WHLSLLexer.cpp:
+        (WebCore::WHLSL::Token::typeName):
+        (WebCore::WHLSL::Lexer::recognizeKeyword):
+        * Modules/webgpu/WHLSL/WHLSLLexer.h:
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::parseStatement):
+        * Modules/webgpu/WHLSL/WHLSLParser.h:
+        * Modules/webgpu/WHLSL/WHLSLStatementBehaviorChecker.cpp:
+        * Modules/webgpu/WHLSL/WHLSLVisitor.cpp:
+        (WebCore::WHLSL::Visitor::visit):
+        * Modules/webgpu/WHLSL/WHLSLVisitor.h:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2019-07-17  Robin Morisset  <rmorisset@apple.com>
+
         [WHLSL] checkRecursiveType should not have exponential complexity.
         https://bugs.webkit.org/show_bug.cgi?id=199835
 

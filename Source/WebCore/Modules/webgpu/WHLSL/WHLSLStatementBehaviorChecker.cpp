@@ -41,7 +41,6 @@
 #include "WHLSLReturn.h"
 #include "WHLSLSwitchCase.h"
 #include "WHLSLSwitchStatement.h"
-#include "WHLSLTrap.h"
 #include "WHLSLVariableDeclarationsStatement.h"
 #include "WHLSLVisitor.h"
 #include "WHLSLWhileLoop.h"
@@ -86,11 +85,6 @@ private:
     }
 
     void visit(AST::Return&) override
-    {
-        m_stack.append({ Behavior::Return });
-    }
-
-    void visit(AST::Trap&) override
     {
         m_stack.append({ Behavior::Return });
     }

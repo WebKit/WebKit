@@ -1300,12 +1300,6 @@ auto Parser::parseStatement() -> Expected<UniqueRef<AST::Statement>, Error>
         auto fallthroughObject = AST::Fallthrough(WTFMove(fallthroughToken));
         return { makeUniqueRef<AST::Fallthrough>(WTFMove(fallthroughObject)) };
     }
-    case Token::Type::Trap: {
-        auto trapToken = m_lexer.consumeToken();
-        CONSUME_TYPE(semicolon, Semicolon);
-        auto trapObject = AST::Trap(WTFMove(trapToken));
-        return { makeUniqueRef<AST::Trap>(WTFMove(trapObject)) };
-    }
     case Token::Type::Return: {
         auto returnToken = m_lexer.consumeToken();
         if (auto semicolon = tryType(Token::Type::Semicolon)) {
