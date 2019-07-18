@@ -1,5 +1,40 @@
 2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r247459. rdar://problem/53229552
+
+    Crash under DisplayRefreshMonitorManager::displayWasUpdated()
+    https://bugs.webkit.org/show_bug.cgi?id=199808
+    <rdar://problem/53070144>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Copy m_monitors before iterating over it because the calling displayLinkFired() on the
+    monitor may end up calling DisplayRefreshMonitorManager::displayDidRefresh() synchronously,
+    which removes the monitor from m_monitors.
+    
+    * platform/graphics/DisplayRefreshMonitorManager.cpp:
+    (WebCore::DisplayRefreshMonitorManager::displayWasUpdated):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247459 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-15  Chris Dumez  <cdumez@apple.com>
+
+            Crash under DisplayRefreshMonitorManager::displayWasUpdated()
+            https://bugs.webkit.org/show_bug.cgi?id=199808
+            <rdar://problem/53070144>
+
+            Reviewed by Geoffrey Garen.
+
+            Copy m_monitors before iterating over it because the calling displayLinkFired() on the
+            monitor may end up calling DisplayRefreshMonitorManager::displayDidRefresh() synchronously,
+            which removes the monitor from m_monitors.
+
+            * platform/graphics/DisplayRefreshMonitorManager.cpp:
+            (WebCore::DisplayRefreshMonitorManager::displayWasUpdated):
+
+2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r247450. rdar://problem/53229577
 
     Add missing webgpu includes
