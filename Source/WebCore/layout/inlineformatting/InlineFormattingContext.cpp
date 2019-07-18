@@ -94,7 +94,7 @@ void InlineFormattingContext::layout() const
     formattingState().inlineRuns().clear();
 
     collectInlineContent();
-    LineLayout(*this).layout(formattingState().inlineItems(), availableWidth);
+    InlineLayout(*this).layout(formattingState().inlineItems(), availableWidth);
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root << ")");
 }
 
@@ -140,7 +140,7 @@ void InlineFormattingContext::computeIntrinsicWidthConstraints() const
             auto intrinsicWidths = layoutState.formattingStateForBox(*formattingRoot).intrinsicWidthConstraints(*formattingRoot);
             layoutState.displayBoxForLayoutBox(*formattingRoot).setContentBoxWidth(availableWidth ? intrinsicWidths->maximum : intrinsicWidths->minimum);
         }
-        return LineLayout(*this).computedIntrinsicWidth(formattingState().inlineItems(), availableWidth);
+        return InlineLayout(*this).computedIntrinsicWidth(formattingState().inlineItems(), availableWidth);
     };
 
     auto intrinsicWidthConstraints = Geometry::constrainByMinMaxWidth(root, { maximumLineWidth(0), maximumLineWidth(LayoutUnit::max()) });

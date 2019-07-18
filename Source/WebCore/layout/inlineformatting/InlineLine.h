@@ -39,8 +39,8 @@ class Line {
     WTF_MAKE_ISO_ALLOCATED(Line);
 public:
     struct InitialConstraints {
-        LayoutPoint topLeft;
-        LayoutUnit availableWidth;
+        LayoutPoint logicalTopLeft;
+        LayoutUnit availableLogicalWidth;
         struct HeightAndBaseline {
             LayoutUnit height;
             LayoutUnit baselineOffset;

@@ -53,11 +53,11 @@ Line::Content::Run::Run(const InlineItem& inlineItem, const TextContext& textCon
 Line::Line(const LayoutState& layoutState, const InitialConstraints& initialConstraints, SkipVerticalAligment skipVerticalAligment)
     : m_layoutState(layoutState)
     , m_content(std::make_unique<Line::Content>())
-    , m_logicalTopLeft(initialConstraints.topLeft)
+    , m_logicalTopLeft(initialConstraints.logicalTopLeft)
     , m_baseline({ initialConstraints.heightAndBaseline.baselineOffset, initialConstraints.heightAndBaseline.height - initialConstraints.heightAndBaseline.baselineOffset })
     , m_initialStrut(initialConstraints.heightAndBaseline.strut)
     , m_lineLogicalHeight(initialConstraints.heightAndBaseline.height)
-    , m_lineLogicalWidth(initialConstraints.availableWidth)
+    , m_lineLogicalWidth(initialConstraints.availableLogicalWidth)
     , m_skipVerticalAligment(skipVerticalAligment == SkipVerticalAligment::Yes)
 {
 }

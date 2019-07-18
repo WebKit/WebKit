@@ -1,3 +1,57 @@
+2019-07-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] InlineFormattingContext::LineLayout::placeInlineItems is getting too complex.
+        https://bugs.webkit.org/show_bug.cgi?id=199898
+        <rdar://problem/53235958>
+
+        Reviewed by Antti Koivisto.
+
+        It's time to restructure LineLayout::placeInlineItems to be able to expand it further.
+        Introduce the LineLayout class. This class is responsible to place the inline items on the current line.
+        (Rename InlineFormattingContext::lineLayout -> InlineFormattingContext::InlineLayout and
+        use Line::InitialConstraints in LineInput)
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout const):
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthConstraints const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::LineLayout::layoutState const): Deleted.
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::inlineItemWidth):
+        (WebCore::Layout::LineLayout::layoutState const):
+        (WebCore::Layout::LineLayout::UncommittedContent::runs):
+        (WebCore::Layout::LineLayout::UncommittedContent::isEmpty const):
+        (WebCore::Layout::LineLayout::UncommittedContent::size const):
+        (WebCore::Layout::LineLayout::UncommittedContent::width const):
+        (WebCore::Layout::LineLayout::UncommittedContent::add):
+        (WebCore::Layout::LineLayout::UncommittedContent::reset):
+        (WebCore::Layout::LineLayout::LineLayout):
+        (WebCore::Layout::LineLayout::commitPendingContent):
+        (WebCore::Layout::LineLayout::close):
+        (WebCore::Layout::LineLayout::layout):
+        (WebCore::Layout::LineInput::LineInput):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::InlineLayout):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::layout const):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::computedIntrinsicWidth const):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::createDisplayRuns const):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::alignRuns const):
+        (WebCore::Layout::UncommittedContent::runs): Deleted.
+        (WebCore::Layout::UncommittedContent::isEmpty const): Deleted.
+        (WebCore::Layout::UncommittedContent::size const): Deleted.
+        (WebCore::Layout::UncommittedContent::width const): Deleted.
+        (WebCore::Layout::UncommittedContent::add): Deleted.
+        (WebCore::Layout::UncommittedContent::reset): Deleted.
+        (WebCore::Layout::LineInput::HorizontalConstraint::HorizontalConstraint): Deleted.
+        (WebCore::Layout::InlineFormattingContext::LineLayout::LineLayout): Deleted.
+        (WebCore::Layout::InlineFormattingContext::LineLayout::placeInlineItems const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::LineLayout::layout const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::LineLayout::computedIntrinsicWidth const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::LineLayout::createDisplayRuns const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::LineLayout::alignRuns const): Deleted.
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Line):
+        * layout/inlineformatting/InlineLine.h:
+
 2019-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] MOUSE_CURSOR_SCALE is not implemented

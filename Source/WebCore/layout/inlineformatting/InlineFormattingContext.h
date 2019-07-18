@@ -52,9 +52,9 @@ public:
 private:
     void computeIntrinsicWidthConstraints() const override;
 
-    class LineLayout {
+    class InlineLayout {
     public:
-        LineLayout(const InlineFormattingContext&);
+        InlineLayout(const InlineFormattingContext&);
         void layout(const InlineItems&, LayoutUnit widthConstraint) const;
         LayoutUnit computedIntrinsicWidth(const InlineItems&, LayoutUnit widthConstraint) const;
 
