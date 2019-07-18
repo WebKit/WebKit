@@ -1,5 +1,40 @@
 2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r247466. rdar://problem/53228860
+
+    [ Mojave WK1 ] Some Image tests are flakey failures and are failing in tandem with zoomed in or blank image results
+    https://bugs.webkit.org/show_bug.cgi?id=193108
+    
+    Patch by Said Abou-Hallawa <sabouhallawa@apple.com> on 2019-07-15
+    Reviewed by Simon Fraser.
+    
+    Add a workaround for <rdar://problem/17084993> in createBitmapContextFromWebView().
+    Re-request the snapshot at kCGWindowImageNominalResolution if it was captured
+    at the wrong scale.
+    
+    * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+    (takeWindowSnapshot):
+    (createBitmapContextFromWebView):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247466 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            [ Mojave WK1 ] Some Image tests are flakey failures and are failing in tandem with zoomed in or blank image results
+            https://bugs.webkit.org/show_bug.cgi?id=193108
+
+            Reviewed by Simon Fraser.
+
+            Add a workaround for <rdar://problem/17084993> in createBitmapContextFromWebView().
+            Re-request the snapshot at kCGWindowImageNominalResolution if it was captured
+            at the wrong scale.
+
+            * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+            (takeWindowSnapshot):
+            (createBitmapContextFromWebView):
+
+2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r247461. rdar://problem/53229637
 
     Make WKURLSchemeTask thread safe.
