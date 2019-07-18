@@ -1,14 +1,48 @@
 2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
 
-        Cherry-pick r247486. rdar://problem/53229738
+        Cherry-pick r247487. rdar://problem/53229629
 
-    Speed up StorageManager::getValues()
-    https://bugs.webkit.org/show_bug.cgi?id=199812
+    Remove "GraphicsContext 0x7ffd8765f6b0 stack changed by" logging
+    https://bugs.webkit.org/show_bug.cgi?id=199834
     
-    Reviewed by Alex Christensen.
+    Reviewed by Dean Jackson.
     
-    Source/WebCore:
+    I inadvertently left in a couple of GraphicsContextStateStackChecker (used to detect mismatched
+    GraphicsContext save/restore) in r246725, so remove them.
     
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::paintLayerContents):
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::RenderLayerBacking::paintIntoLayer):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247487 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
+
+            Cherry-pick r247486. rdar://problem/53229738
+
+        Speed up StorageManager::getValues()
+        https://bugs.webkit.org/show_bug.cgi?id=199812
+
+        Reviewed by Alex Christensen.
+
+        Source/WebCore:
+
+2019-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove "GraphicsContext 0x7ffd8765f6b0 stack changed by" logging
+        https://bugs.webkit.org/show_bug.cgi?id=199834
+
+        Reviewed by Dean Jackson.
+
+        I inadvertently left in a couple of GraphicsContextStateStackChecker (used to detect mismatched
+        GraphicsContext save/restore) in r246725, so remove them.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+
     * storage/StorageMap.cpp:
     (WebCore::StorageMap::importItems):
     * storage/StorageMap.h:
