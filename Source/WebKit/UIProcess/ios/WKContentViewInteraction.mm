@@ -2234,6 +2234,10 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     if (_suppressSelectionAssistantReasons)
         return NO;
+    
+    // Don't allow double tap text gestures in noneditable content.
+    if (!self.isFocusingElement && gesture == UIWKGestureDoubleTap)
+        return NO;
 
     WebKit::InteractionInformationRequest request(WebCore::roundedIntPoint(point));
     if (![self ensurePositionInformationIsUpToDate:request])
@@ -2254,10 +2258,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     // If we're currently focusing an editable element, only allow the selection to move within that focused element.
     if (self.isFocusingElement)
         return _positionInformation.nodeAtPositionIsFocusedElement;
-    
-    // Don't allow double tap text gestures in noneditable content.
-    if (gesture == UIWKGestureDoubleTap)
-        return NO;
 
     // If we're selecting something, don't activate highlight.
     if (gesture == UIWKGestureLoupe && [self hasSelectablePositionAtPoint:point])
