@@ -42,13 +42,12 @@ static GRefPtr<GdkCursor> createNamedCursor(const char* name)
 
 static GRefPtr<GdkCursor> createCustomCursor(Image* image, const IntPoint& hotSpot)
 {
-    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(image->getGdkPixbuf());
-
-    if (!image->nativeImageForCurrentFrame() || !pixbuf)
-        return 0;
+    RefPtr<cairo_surface_t> surface = image->nativeImageForCurrentFrame();
+    if (!surface)
+        return nullptr;
 
     IntPoint effectiveHotSpot = determineHotSpot(image, hotSpot);
-    return adoptGRef(gdk_cursor_new_from_pixbuf(gdk_display_get_default(), pixbuf.get(), effectiveHotSpot.x(), effectiveHotSpot.y()));
+    return adoptGRef(gdk_cursor_new_from_surface(gdk_display_get_default(), surface.get(), effectiveHotSpot.x(), effectiveHotSpot.y()));
 }
 
 void Cursor::ensurePlatformCursor() const

@@ -1,3 +1,14 @@
+2019-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] MOUSE_CURSOR_SCALE is not implemented
+        https://bugs.webkit.org/show_bug.cgi?id=109469
+
+        Reviewed by Darin Adler.
+
+        Enable MOUSE_CURSOR_SCALE for the GTK port.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2019-07-11  Pablo Saavedra  <psaavedra@igalia.com>
 
         [WPE][GTK] Build failure with ENABLE_ACCESSIBILITY=OFF
