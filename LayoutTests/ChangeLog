@@ -1,3 +1,12 @@
+2019-07-18  Truitt Savell  <tsavell@apple.com>
+
+        Rebaseline imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering.html
+        https://bugs.webkit.org/show_bug.cgi?id=199839
+
+        Unreviewed test gardening.
+
+        * platform/ios/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering-expected.txt:
+
 2019-07-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed test gardening for WinCairo port
