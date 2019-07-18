@@ -46,7 +46,7 @@ public:
 
     WEBCORE_EXPORT bool contains(const String& key) const;
 
-    WEBCORE_EXPORT void importItems(const HashMap<String, String>&);
+    WEBCORE_EXPORT void importItems(HashMap<String, String>&&);
     const HashMap<String, String>& items() const { return m_map; }
 
     unsigned quota() const { return m_quotaSize; }

@@ -347,7 +347,7 @@ void StorageAreaSync::performImport()
         return;
     }
 
-    m_storageArea->importItems(itemMap);
+    m_storageArea->importItems(WTFMove(itemMap));
 
     markImported();
 }

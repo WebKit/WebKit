@@ -67,7 +67,7 @@ public:
     void close();
 
     // Only called from a background thread.
-    void importItems(const HashMap<String, String>& items);
+    void importItems(HashMap<String, String>&& items);
 
     // Used to clear a StorageArea and close db before backing db file is deleted.
     void clearForOriginDeletion();

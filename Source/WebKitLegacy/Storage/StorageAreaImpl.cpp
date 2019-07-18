@@ -194,11 +194,11 @@ bool StorageAreaImpl::contains(const String& key)
     return m_storageMap->contains(key);
 }
 
-void StorageAreaImpl::importItems(const HashMap<String, String>& items)
+void StorageAreaImpl::importItems(HashMap<String, String>&& items)
 {
     ASSERT(!m_isShutdown);
 
-    m_storageMap->importItems(items);
+    m_storageMap->importItems(WTFMove(items));
 }
 
 void StorageAreaImpl::close()

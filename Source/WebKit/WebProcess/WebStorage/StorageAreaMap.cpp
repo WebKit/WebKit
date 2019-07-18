@@ -181,7 +181,7 @@ void StorageAreaMap::loadValuesIfNeeded()
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::StorageManager::GetValues(m_securityOrigin->data(), m_storageMapID, m_currentSeed), Messages::StorageManager::GetValues::Reply(values), 0);
 
     m_storageMap = StorageMap::create(m_quotaInBytes);
-    m_storageMap->importItems(values);
+    m_storageMap->importItems(WTFMove(values));
 
     // We want to ignore all changes until we get the DidGetValues message.
     m_hasPendingGetValues = true;
