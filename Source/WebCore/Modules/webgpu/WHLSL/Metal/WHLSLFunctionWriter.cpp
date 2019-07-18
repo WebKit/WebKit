@@ -30,6 +30,8 @@
 
 #include "NotImplemented.h"
 #include "WHLSLAST.h"
+#include "WHLSLEntryPointScaffolding.h"
+#include "WHLSLInferTypes.h"
 #include "WHLSLNativeFunctionWriter.h"
 #include "WHLSLProgram.h"
 #include "WHLSLTypeNamer.h"
