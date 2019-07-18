@@ -1,3 +1,17 @@
+2019-07-17  Megan Gardner  <megan_gardner@apple.com>
+
+        Early Out of positionInfomation check if possible
+        https://bugs.webkit.org/show_bug.cgi?id=199885
+        <rdar://problem/53229413>
+
+        This is an early-out check that happens after most of the work is done.
+        Move it to happen before we make all these calls, if in the end, we will not use the information.
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+
 2019-07-17  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, add debug logging to help diagnose flaky crashes on the bots.
