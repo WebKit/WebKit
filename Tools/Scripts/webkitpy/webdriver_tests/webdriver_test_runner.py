@@ -60,6 +60,7 @@ class WebDriverTestRunner(object):
             if not os.path.isfile(os.path.join(self._tests_dir, test)):
                 _log.warning('Test %s does not exist' % test)
 
+        self._display_driver.start(False, [])
         env = self._display_driver._setup_environ_for_test()
         self._runners = [runner_cls(self._port, driver, env, self._expectations) for runner_cls in self.RUNNER_CLASSES]
 

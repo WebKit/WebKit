@@ -80,6 +80,7 @@ def main(script_name, argv):
     # Create the Port-specific driver.
     port._display_server = options.display_server
     display_driver = port.create_driver(worker_number=0, no_timeout=True)._make_driver(pixel_tests=False)
+    display_driver.start(False, [])
     if not display_driver.check_driver(port):
         raise RuntimeError("Failed to check driver %s" % display_driver.__class__.__name__)
     os.environ.update(display_driver._setup_environ_for_test())

@@ -45,21 +45,9 @@ class WaylandDriver(Driver):
         return True
 
     def _setup_environ_for_test(self):
-        driver_environment = self._port.setup_environ_for_server(self._server_name)
+        driver_environment = super(WaylandDriver, self)._setup_environ_for_test()
         self._port._copy_value_from_environ_if_set(driver_environment, 'WAYLAND_DISPLAY')
         self._port._copy_value_from_environ_if_set(driver_environment, 'WAYLAND_SOCKET')
         driver_environment['GDK_BACKEND'] = 'wayland'
         driver_environment['EGL_PLATFORM'] = 'wayland'
-        driver_environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
-        if self._driver_tempdir is not None:
-            driver_environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
-            driver_environment['XDG_CACHE_HOME'] = self._port.host.filesystem.join(str(self._driver_tempdir), 'appcache')
         return driver_environment
-
-    def _start(self, pixel_tests, per_test_args):
-        super(WaylandDriver, self).stop()
-        self._driver_tempdir = self._port._driver_tempdir(self._target_host)
-        self._crashed_process_name = None
-        self._crashed_pid = None
-        self._server_process = self._port._server_process_constructor(self._port, self._server_name, self.cmd_line(pixel_tests, per_test_args), self._setup_environ_for_test())
-        self._server_process.start()

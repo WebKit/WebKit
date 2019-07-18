@@ -1,3 +1,43 @@
+2019-07-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE][webkitpy] Refactor drivers to use the base driver for setting up the environment and start the drivers.
+        https://bugs.webkit.org/show_bug.cgi?id=199855
+
+        Reviewed by Michael Catanzaro.
+
+        The webkitpy drivers for GTK and WPE use their own versions for setting
+        up the environment and starting/stopping the drivers.
+        This refactors those drivers to use the base class driver functions.
+        As a benefit we get some fixes like support for setting the profiler
+        environment variables, and a simpler code.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._setup_environ_for_driver): This already correctly setups LOCAL_RESOURCE_ROOT and DUMPRENDERTREE_TEMP.
+        Add the remaining environment variable XDG_CACHE_HOME that is needed for Linux.
+        * Scripts/webkitpy/port/headlessdriver.py:
+        (HeadlessDriver._setup_environ_for_test):
+        * Scripts/webkitpy/port/waylanddriver.py:
+        (WaylandDriver._setup_environ_for_test):
+        * Scripts/webkitpy/port/westondriver.py:
+        (WestonDriver._setup_environ_for_test):
+        (WestonDriver.stop):
+        * Scripts/webkitpy/port/westondriver_unittest.py: now mock _test_runner_process_constructor as base driver does.
+        (WestonDriverTest.make_driver):
+        * Scripts/webkitpy/port/xorgdriver.py:
+        (XorgDriver._setup_environ_for_test):
+        * Scripts/webkitpy/port/xvfbdriver.py: the xvfb binary is started with the port server env
+        (XvfbDriver._setup_environ_for_test):
+        * Scripts/webkitpy/port/xvfbdriver_unittest.py: rename the variable to make clearer that it uses the port server env.
+        (XvfbDriverTest.make_driver):
+        (XvfbDriverTest.test_start):
+        (XvfbDriverTest.test_start_arbitrary_worker_number):
+        * Scripts/webkitpy/w3c/wpt_runner.py:
+        (main): Start the driver before trying to get its environment to define all the environment variables.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner.py:
+        (WebDriverTestRunner.__init__): Ditto.
+        * glib/api_test_runner.py:
+        (TestRunner._setup_testing_environment): Ditto.
+
 2019-07-17  Antoine Quint  <graouts@apple.com>
 
         Disable Pointer Events prior to watchOS 6

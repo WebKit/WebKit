@@ -105,6 +105,7 @@ class TestRunner(object):
         return driver
 
     def _setup_testing_environment(self):
+        self._driver.start(False, [])
         self._test_env = self._driver._setup_environ_for_test()
         self._test_env["TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"] = common.top_level_path("Tools", "TestWebKitAPI", "Tests", "WebKit")
         self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.library_build_path()
