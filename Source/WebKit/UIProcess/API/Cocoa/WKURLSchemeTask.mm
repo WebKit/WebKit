@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,20 @@
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/SharedBuffer.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/MainThread.h>
+
+static WebKit::WebURLSchemeTask::ExceptionType getExceptionTypeFromMainRunLoop(Function<WebKit::WebURLSchemeTask::ExceptionType ()>&& function)
+{
+    if (RunLoop::isMain())
+        return function();
+
+    WebKit::WebURLSchemeTask::ExceptionType exceptionType;
+    callOnMainRunLoopAndWait([function = WTFMove(function), &exceptionType] {
+        exceptionType = function();
+    });
+
+    return exceptionType;
+}
 
 static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType exceptionType)
 {
@@ -60,48 +74,75 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
 
 - (void)dealloc
 {
-    _urlSchemeTask->API::URLSchemeTask::~URLSchemeTask();
+    auto func = [task = WTFMove(_urlSchemeTask)] () mutable {
+        task->API::URLSchemeTask::~URLSchemeTask();
+    };
+
+    if (RunLoop::isMain())
+        func();
+    else
+        callOnMainRunLoop(WTFMove(func));
 
     [super dealloc];
 }
 
 - (NSURLRequest *)request
 {
-    return _urlSchemeTask->task().request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
+    return _urlSchemeTask->task().nsRequest();
 }
 
 - (BOOL)_requestOnlyIfCached
 {
-    return _urlSchemeTask->task().request().cachePolicy() == WebCore::ResourceRequestCachePolicy::ReturnCacheDataDontLoad;
+    return _urlSchemeTask->task().nsRequest().cachePolicy == NSURLRequestReturnCacheDataDontLoad;
 }
 
 - (void)didReceiveResponse:(NSURLResponse *)response
 {
-    auto result = _urlSchemeTask->task().didReceiveResponse(response);
+    auto function = [protectedSelf = retainPtr(self), self, protectedResponse = retainPtr(response), response] {
+        return _urlSchemeTask->task().didReceiveResponse(response);
+    };
+
+    auto result = getExceptionTypeFromMainRunLoop(WTFMove(function));
     raiseExceptionIfNecessary(result);
 }
 
 - (void)didReceiveData:(NSData *)data
 {
-    auto result = _urlSchemeTask->task().didReceiveData(WebCore::SharedBuffer::create(data));
+    auto function = [protectedSelf = retainPtr(self), self, protectedData = retainPtr(data), data] () mutable {
+        return _urlSchemeTask->task().didReceiveData(WebCore::SharedBuffer::create(data));
+    };
+
+    auto result = getExceptionTypeFromMainRunLoop(WTFMove(function));
     raiseExceptionIfNecessary(result);
 }
 
 - (void)didFinish
 {
-    auto result = _urlSchemeTask->task().didComplete({ });
+    auto function = [protectedSelf = retainPtr(self), self] {
+        return _urlSchemeTask->task().didComplete({ });
+    };
+
+    auto result = getExceptionTypeFromMainRunLoop(WTFMove(function));
     raiseExceptionIfNecessary(result);
 }
 
 - (void)didFailWithError:(NSError *)error
 {
-    auto result = _urlSchemeTask->task().didComplete(error);
+    auto function = [protectedSelf = retainPtr(self), self, protectedError = retainPtr(error), error] {
+        return _urlSchemeTask->task().didComplete(error);
+    };
+
+    auto result = getExceptionTypeFromMainRunLoop(WTFMove(function));
     raiseExceptionIfNecessary(result);
 }
 
 - (void)_didPerformRedirection:(NSURLResponse *)response newRequest:(NSURLRequest *)request
 {
-    auto result = _urlSchemeTask->task().didPerformRedirection(response, request);
+    auto function = [protectedSelf = retainPtr(self), self, protectedResponse = retainPtr(response), response, protectedRequest = retainPtr(request), request] {
+        return _urlSchemeTask->task().didPerformRedirection(response, request);
+    };
+
+    auto result = getExceptionTypeFromMainRunLoop(WTFMove(function));
     raiseExceptionIfNecessary(result);
 }
 

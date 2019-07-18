@@ -34,8 +34,11 @@
 #import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebKit.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
+#import <wtf/Threading.h>
 #import <wtf/Vector.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
@@ -692,3 +695,41 @@ TEST(URLSchemeHandler, XHRPost)
     TestWebKitAPI::Util::run(&done);
 }
 
+TEST(URLSchemeHandler, Threads)
+{
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    auto handler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"threads"];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+
+    static bool done;
+    static id<WKURLSchemeTask> theTask;
+    static RefPtr<Thread> theThread;
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        theTask = task;
+        [task retain];
+        theThread = Thread::create("A", [task] {
+            auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+            [task didReceiveResponse:response.get()];
+            [task didFinish];
+            done = true;
+        });
+    }];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"threads://main.html"]]];
+
+    TestWebKitAPI::Util::run(&done);
+
+    handler = nil;
+    configuration = nil;
+    webView = nil;
+    theThread = nullptr;
+    [pool drain];
+
+    Thread::create("B", [] {
+        [theTask release];
+        theTask = nil;
+    })->waitForCompletion();
+}
