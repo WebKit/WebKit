@@ -131,6 +131,10 @@
 #include "RuntimeEnabledFeatures.h"
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include "DOMTimerHoldingTank.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -3340,6 +3344,10 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     
     if (accessibilityPreventsEventPropagation(keydown))
         keydown->stopPropagation();
+
+#if PLATFORM(IOS_FAMILY)
+    DeferDOMTimersForScope deferralScope { m_frame.document()->quirks().needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() };
+#endif
 
     element->dispatchEvent(keydown);
     if (handledByInputMethod)

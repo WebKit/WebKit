@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<input id="input">
+<script>
+const expectedValue = "["; // [ chosen to avoid having to handle or disable iOS auto capitalization. 
+
+let input = document.getElementById("input");
+
+function done()
+{
+    document.body.removeChild(input);
+    finishJSTest();
+}
+
+async function runTest()
+{
+    if (window.internals.settings)
+        internals.settings.setNeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk(true);
+
+    if (window.testRunner)
+        await UIHelper.callFunctionAndWaitForEvent(() => UIHelper.activateElement(input), input, "focus");
+
+    function checkResult(event) {
+        // Note that scheduling a timer from an Input event handler is for aesthetics only: to make the
+        // logged Input event be ordered like the spec'ed DOM dispatch event order. By the time the Input
+        // event fires the DOM is guaranteed to have been updated. So, no timer is needed.
+        window.setTimeout(() => {
+            debug(`<br>For ${event.type}:`);
+            shouldBeEqualToString('document.getElementById("input").value', expectedValue);
+            if (event.type === "keyup")
+                done();
+        }, 0);
+    }
+
+    for (let eventName of ["keydown", "keypress", "keyup", "input"])
+        input.addEventListener(eventName, checkResult, { once: true });
+
+    if (window.testRunner)
+        UIHelper.keyDown(expectedValue);
+}
+
+window.jsTestIsAsync = true;
+description("This tests that the value of the field is updated by the time any timer scheduled on keydown, keypress, or keyup fires. To run this test manually, focus the text field and press <kbd>[</kbd>.");
+
+runTest();
+</script>
+</body>
+</html>
