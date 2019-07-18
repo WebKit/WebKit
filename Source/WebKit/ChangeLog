@@ -1,5 +1,47 @@
 2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r247483. rdar://problem/53229618
+
+    [ContentChangeObserver] Cancel ongoing content observation when tap is failed/cancelled
+    https://bugs.webkit.org/show_bug.cgi?id=199828
+    <rdar://problem/53152696>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    This patch ensures that we stop the content observation (initiated by touch start) when the tap
+    is cancelled/failed.
+    
+    Not testable.
+    
+    * page/ios/ContentChangeObserver.cpp:
+    (WebCore::ContentChangeObserver::didCancelPotentialTap):
+    * page/ios/ContentChangeObserver.h:
+    
+    Source/WebKit:
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::commitPotentialTapFailed):
+    (WebKit::WebPage::cancelPotentialTap):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247483 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-16  Zalan Bujtas  <zalan@apple.com>
+
+            [ContentChangeObserver] Cancel ongoing content observation when tap is failed/cancelled
+            https://bugs.webkit.org/show_bug.cgi?id=199828
+            <rdar://problem/53152696>
+
+            Reviewed by Wenson Hsieh.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::commitPotentialTapFailed):
+            (WebKit::WebPage::cancelPotentialTap):
+
+2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r247470. rdar://problem/53229634
 
     outlook.live.com has odd viewport with edge gap

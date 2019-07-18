@@ -59,14 +59,15 @@ public:
     void didFinishTransition(const Element&, CSSPropertyID);
     void didRemoveTransition(const Element&, CSSPropertyID);
 
-    WEBCORE_EXPORT void willNotProceedWithClick();
     WEBCORE_EXPORT static void didRecognizeLongPress(Frame& mainFrame);
     WEBCORE_EXPORT static void didPreventDefaultForEvent(Frame& mainFrame);
+    WEBCORE_EXPORT static void didCancelPotentialTap(Frame& mainFrame);
 
     void didSuspendActiveDOMObjects();
     void willDetachPage();
 
     void willDestroyRenderer(const Element&);
+    void willNotProceedWithClick();
 
     void setHiddenTouchTarget(Element& targetElement) { m_hiddenTouchTargetElement = makeWeakPtr(targetElement); }
     void resetHiddenTouchTarget() { m_hiddenTouchTargetElement = { }; }
