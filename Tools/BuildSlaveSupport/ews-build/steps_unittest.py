@@ -34,7 +34,7 @@ from twisted.internet import error, reactor
 from twisted.python import failure, log
 from twisted.trial import unittest
 
-from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, ApplyPatch, ArchiveBuiltProduct, ArchiveTestResults,
+from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeLayoutTestsResults, ApplyPatch, ArchiveBuiltProduct, ArchiveTestResults,
                    CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckStyle, CleanBuild, CleanUpGitIndexLock, CleanWorkingDirectory,
                    CompileJSCOnly, CompileJSCOnlyToT, CompileWebKit, CompileWebKitToT, ConfigureBuild,
                    DownloadBuiltProduct, ExtractBuiltProduct, ExtractTestResults, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
@@ -1134,6 +1134,111 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
         return self.runStep()
 
+
+class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(AnalyzeLayoutTestsResults())
+        self.setProperty('first_results_exceed_failure_limit', False)
+        self.setProperty('second_results_exceed_failure_limit', False)
+        self.setProperty('clean_tree_results_exceed_failure_limit', False)
+        self.setProperty('clean_tree_run_failures', [])
+
+    def test_failure_introduced_by_patch(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ["jquery/offset.html"])
+        self.setProperty('second_run_failures', ["jquery/offset.html"])
+        self.expectOutcome(result=FAILURE, state_string='Found 1 new Test failure: jquery/offset.html (failure)')
+        return self.runStep()
+
+    def test_failure_on_clean_tree(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ["jquery/offset.html"])
+        self.setProperty('second_run_failures', ["jquery/offset.html"])
+        self.setProperty('clean_tree_run_failures', ["jquery/offset.html"])
+        self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
+        return self.runStep()
+
+    def test_flaky_and_consistent_failures_without_clean_tree_failures(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['test1', 'test2'])
+        self.setProperty('second_run_failures', ['test1'])
+        self.expectOutcome(result=FAILURE, state_string='Found 1 new Test failure: test1 (failure)')
+        return self.runStep()
+
+    def test_flaky_and_inconsistent_failures_without_clean_tree_failures(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['test1', 'test2'])
+        self.setProperty('second_run_failures', ['test3'])
+        self.expectOutcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by patch, retrying build (retry)')
+        return self.runStep()
+
+    def test_flaky_and_inconsistent_failures_with_clean_tree_failures(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['test1', 'test2'])
+        self.setProperty('second_run_failures', ['test3'])
+        self.setProperty('clean_tree_run_failures', ['test1', 'test2', 'test3'])
+        self.expectOutcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by patch, retrying build (retry)')
+        return self.runStep()
+
+    def test_flaky_and_consistent_failures_with_clean_tree_failures(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['test1', 'test2'])
+        self.setProperty('second_run_failures', ['test1'])
+        self.setProperty('clean_tree_run_failures', ['test1', 'test2'])
+        self.expectOutcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by patch, retrying build (retry)')
+        return self.runStep()
+
+    def test_first_run_exceed_failure_limit(self):
+        self.configureStep()
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures',  ['test{}'.format(i) for i in range(0, 30)])
+        self.setProperty('second_run_failures', [])
+        self.expectOutcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by patch, retrying build (retry)')
+        return self.runStep()
+
+    def test_second_run_exceed_failure_limit(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', [])
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures',  ['test{}'.format(i) for i in range(0, 30)])
+        self.expectOutcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by patch, retrying build (retry)')
+        return self.runStep()
+
+    def test_clean_tree_exceed_failure_limit(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['test1'])
+        self.setProperty('second_run_failures', ['test1'])
+        self.setProperty('clean_tree_results_exceed_failure_limit', True)
+        self.setProperty('clean_tree_run_failures',  ['test{}'.format(i) for i in range(0, 30)])
+        self.expectOutcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by patch, retrying build (retry)')
+        return self.runStep()
+
+    def test_clean_tree_has_lot_of_failures(self):
+        self.configureStep()
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures', ['test{}'.format(i) for i in range(0, 30)])
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures', ['test{}'.format(i) for i in range(0, 30)])
+        self.setProperty('clean_tree_run_failures', ['test{}'.format(i) for i in range(0, 27)])
+        self.expectOutcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by patch, retrying build (retry)')
+        return self.runStep()
+
+    def test_clean_tree_has_some_failures(self):
+        self.configureStep()
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures', ['test{}'.format(i) for i in range(0, 30)])
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures', ['test{}'.format(i) for i in range(0, 30)])
+        self.setProperty('clean_tree_run_failures', ['test{}'.format(i) for i in range(0, 10)])
+        self.expectOutcome(result=FAILURE, state_string='Found 30 new Test failures: test1, test0, test3, test2, test5, test4, test7, test6, test9, test8, test24, test25, test26, test27, test20, test21, test22, test23, test28, test29, test19, test18, test11, test10, test13, test12, test15, test14, test17, test16 (failure)')
+        return self.runStep()
 
 class TestCheckOutSpecificRevision(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):

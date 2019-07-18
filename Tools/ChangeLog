@@ -1,3 +1,23 @@
+2019-07-18  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add build step to AnalyzeLayoutTestsResults
+        https://bugs.webkit.org/show_bug.cgi?id=199877
+
+        Reviewed by Jonathan Bedard.
+
+        Logic is ported from webkitpy/tool/bot/patchanalysistask.py::_retry_layout_tests()
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitTestsWithoutPatch.evaluateCommand): invoke AnalyzeLayoutTestsResults step.
+        (AnalyzeLayoutTestsResults): Build step to analyze layout-test results.
+        (AnalyzeLayoutTestsResults.report_failure):
+        (AnalyzeLayoutTestsResults.report_pre_existing_failures):
+        (AnalyzeLayoutTestsResults.retry_build):
+        (AnalyzeLayoutTestsResults._results_failed_different_tests):
+        (AnalyzeLayoutTestsResults._report_flaky_tests):
+        (AnalyzeLayoutTestsResults.start):
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+
 2019-07-18  Alex Christensen  <achristensen@webkit.org>
 
         Move NetworkCache ownership from NetworkProcess to NetworkSession
