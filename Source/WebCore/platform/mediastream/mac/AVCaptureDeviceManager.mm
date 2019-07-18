@@ -145,6 +145,11 @@ static inline bool isDefaultVideoCaptureDeviceFirst(const Vector<CaptureDevice>&
     return devices[0].persistentId() == defaultDeviceID;
 }
 
+static inline bool isVideoDevice(AVCaptureDevice *device)
+{
+    return [device hasMediaType:AVMediaTypeVideo] || [device hasMediaType:AVMediaTypeMuxed];
+}
+
 void AVCaptureDeviceManager::refreshCaptureDevices()
 {
     if (!m_avCaptureDevices) {
@@ -158,6 +163,20 @@ void AVCaptureDeviceManager::refreshCaptureDevices()
     Vector<CaptureDevice> deviceList;
 
     auto* defaultVideoDevice = [PAL::getAVCaptureDeviceClass() defaultDeviceWithMediaType: AVMediaTypeVideo];
+#if PLATFORM(IOS)
+    if ([defaultVideoDevice position] != AVCaptureDevicePositionFront) {
+        defaultVideoDevice = nullptr;
+        for (AVCaptureDevice *platformDevice in currentDevices) {
+            if (!isVideoDevice(platformDevice))
+                continue;
+
+            if ([platformDevice position] == AVCaptureDevicePositionFront) {
+                defaultVideoDevice = platformDevice;
+                break;
+            }
+        }
+    }
+#endif
 
     bool deviceHasChanged = false;
     if (defaultVideoDevice) {
@@ -165,7 +184,7 @@ void AVCaptureDeviceManager::refreshCaptureDevices()
         deviceHasChanged = !isDefaultVideoCaptureDeviceFirst(captureDevices(), defaultVideoDevice.uniqueID);
     }
     for (AVCaptureDevice *platformDevice in currentDevices) {
-        if (![platformDevice hasMediaType:AVMediaTypeVideo] && ![platformDevice hasMediaType:AVMediaTypeMuxed])
+        if (!isVideoDevice(platformDevice))
             continue;
 
         if (!deviceHasChanged && !isMatchingExistingCaptureDevice(platformDevice))

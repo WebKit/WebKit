@@ -1,5 +1,44 @@
 2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r247489. rdar://problem/53229754
+
+    [iOS] Make sure the first camera device in the list is the front camera
+    https://bugs.webkit.org/show_bug.cgi?id=199811
+    <rdar://problem/53125157>
+    
+    Reviewed by Jer Noble.
+    
+    Some websites call getUserMedia with a deviceId constraint and theey pick the
+    first deviceId in the list provided by enumerateDevices.
+    On iOS, this is the back camera which is often not what is expected by WebRTC applications.
+    Instead, make sure the first camera device is the front camera.
+    
+    Manually tested.
+    
+    * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247489 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-16  Youenn Fablet  <youenn@apple.com>
+
+            [iOS] Make sure the first camera device in the list is the front camera
+            https://bugs.webkit.org/show_bug.cgi?id=199811
+            <rdar://problem/53125157>
+
+            Reviewed by Jer Noble.
+
+            Some websites call getUserMedia with a deviceId constraint and theey pick the
+            first deviceId in the list provided by enumerateDevices.
+            On iOS, this is the back camera which is often not what is expected by WebRTC applications.
+            Instead, make sure the first camera device is the front camera.
+
+            Manually tested.
+
+            * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+
+2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r247487. rdar://problem/53229629
 
     Remove "GraphicsContext 0x7ffd8765f6b0 stack changed by" logging
