@@ -116,3 +116,5 @@
 }
 
 @end
+
+#undef IMPL

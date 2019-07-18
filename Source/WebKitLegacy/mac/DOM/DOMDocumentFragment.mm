@@ -99,3 +99,5 @@ DOMDocumentFragment *kit(WebCore::DocumentFragment* value)
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMDocumentFragment*>(kit(static_cast<WebCore::Node*>(value)));
 }
+
+#undef IMPL

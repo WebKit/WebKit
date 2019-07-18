@@ -77,3 +77,5 @@ DOMNodeList *kit(WebCore::NodeList* value)
     addDOMWrapper(wrapper, value);
     return [wrapper autorelease];
 }
+
+#undef IMPL

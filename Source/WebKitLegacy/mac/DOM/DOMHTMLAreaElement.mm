@@ -216,3 +216,5 @@ WebCore::HTMLAreaElement* core(DOMHTMLAreaElement *wrapper)
 {
     return wrapper ? reinterpret_cast<WebCore::HTMLAreaElement*>(wrapper->_internal) : 0;
 }
+
+#undef IMPL

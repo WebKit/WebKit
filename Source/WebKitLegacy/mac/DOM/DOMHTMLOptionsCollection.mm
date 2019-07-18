@@ -120,3 +120,5 @@ DOMHTMLOptionsCollection *kit(WebCore::HTMLOptionsCollection* value)
     addDOMWrapper(wrapper, value);
     return [wrapper autorelease];
 }
+
+#undef IMPL

@@ -85,3 +85,5 @@ DOMCSSValue *kit(WebCore::DeprecatedCSSOMValue* value)
     addDOMWrapper(wrapper, value);
     return [wrapper autorelease];
 }
+
+#undef IMPL

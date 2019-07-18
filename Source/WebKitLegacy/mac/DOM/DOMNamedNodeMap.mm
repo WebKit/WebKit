@@ -132,3 +132,5 @@ DOMNamedNodeMap *kit(WebCore::NamedNodeMap* value)
     addDOMWrapper(wrapper, value);
     return [wrapper autorelease];
 }
+
+#undef IMPL

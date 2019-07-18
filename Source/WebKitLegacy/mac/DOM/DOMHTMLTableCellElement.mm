@@ -225,3 +225,5 @@ DOMHTMLTableCellElement *kit(WebCore::HTMLTableCellElement* value)
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMHTMLTableCellElement*>(kit(static_cast<WebCore::Node*>(value)));
 }
+
+#undef IMPL

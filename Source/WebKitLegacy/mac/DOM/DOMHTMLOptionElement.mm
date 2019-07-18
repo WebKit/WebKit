@@ -131,3 +131,5 @@ DOMHTMLOptionElement *kit(WebCore::HTMLOptionElement* value)
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMHTMLOptionElement*>(kit(static_cast<WebCore::Node*>(value)));
 }
+
+#undef IMPL

@@ -158,3 +158,5 @@
 }
 
 @end
+
+#undef IMPL

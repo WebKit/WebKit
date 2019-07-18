@@ -337,3 +337,5 @@
 @end
 
 #endif // ENABLE(VIDEO)
+
+#undef IMPL

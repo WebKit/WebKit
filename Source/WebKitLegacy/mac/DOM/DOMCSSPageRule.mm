@@ -61,3 +61,5 @@
 }
 
 @end
+
+#undef IMPL

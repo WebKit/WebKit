@@ -103,3 +103,5 @@ DOMTokenList *kit(WebCore::DOMTokenList* value)
     addDOMWrapper(wrapper, value);
     return [wrapper autorelease];
 }
+
+#undef IMPL

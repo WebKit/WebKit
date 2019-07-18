@@ -77,3 +77,5 @@ DOMBlob *kit(WebCore::Blob* value)
     addDOMWrapper(wrapper, value);
     return [wrapper autorelease];
 }
+
+#undef IMPL

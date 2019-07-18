@@ -197,3 +197,5 @@ DOMEvent *kit(WebCore::Event* value)
     addDOMWrapper(wrapper, value);
     return [wrapper autorelease];
 }
+
+#undef IMPL

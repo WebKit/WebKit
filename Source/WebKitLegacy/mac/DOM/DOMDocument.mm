@@ -817,3 +817,5 @@ DOMDocument *kit(WebCore::Document* value)
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMDocument*>(kit(static_cast<WebCore::Node*>(value)));
 }
+
+#undef IMPL

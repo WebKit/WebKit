@@ -77,3 +77,5 @@
 }
 
 @end
+
+#undef IMPL

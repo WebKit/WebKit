@@ -97,3 +97,5 @@ DOMAttr *kit(WebCore::Attr* value)
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMAttr*>(kit(static_cast<WebCore::Node*>(value)));
 }
+
+#undef IMPL

@@ -44,3 +44,5 @@ DOMCDATASection *kit(WebCore::CDATASection* value)
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMCDATASection*>(kit(static_cast<WebCore::Node*>(value)));
 }
+
+#undef IMPL

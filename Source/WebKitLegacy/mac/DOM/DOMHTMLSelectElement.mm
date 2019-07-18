@@ -216,3 +216,5 @@ WebCore::HTMLSelectElement* core(DOMHTMLSelectElement *wrapper)
 {
     return wrapper ? reinterpret_cast<WebCore::HTMLSelectElement*>(wrapper->_internal) : 0;
 }
+
+#undef IMPL

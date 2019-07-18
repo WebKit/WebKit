@@ -101,3 +101,5 @@ WebCore::HTMLStyleElement* core(DOMHTMLStyleElement *wrapper)
 {
     return wrapper ? reinterpret_cast<WebCore::HTMLStyleElement*>(wrapper->_internal) : 0;
 }
+
+#undef IMPL

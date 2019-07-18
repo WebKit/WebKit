@@ -120,3 +120,5 @@ DOMStyleSheet *kit(WebCore::StyleSheet* value)
     addDOMWrapper(wrapper, value);
     return [wrapper autorelease];
 }
+
+#undef IMPL

@@ -156,3 +156,5 @@ DOMCSSStyleDeclaration *kit(WebCore::CSSStyleDeclaration* value)
     addDOMWrapper(wrapper, value);
     return [wrapper autorelease];
 }
+
+#undef IMPL

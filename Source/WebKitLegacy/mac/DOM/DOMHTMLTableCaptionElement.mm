@@ -63,3 +63,5 @@ DOMHTMLTableCaptionElement *kit(WebCore::HTMLTableCaptionElement* value)
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMHTMLTableCaptionElement*>(kit(static_cast<WebCore::Node*>(value)));
 }
+
+#undef IMPL

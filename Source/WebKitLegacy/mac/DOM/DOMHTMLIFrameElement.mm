@@ -200,3 +200,5 @@
 }
 
 @end
+
+#undef IMPL

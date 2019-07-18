@@ -112,3 +112,5 @@
 }
 
 @end
+
+#undef IMPL

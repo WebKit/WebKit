@@ -186,3 +186,5 @@ DOMHTMLFormElement *kit(WebCore::HTMLFormElement* value)
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMHTMLFormElement*>(kit(static_cast<WebCore::Node*>(value)));
 }
+
+#undef IMPL

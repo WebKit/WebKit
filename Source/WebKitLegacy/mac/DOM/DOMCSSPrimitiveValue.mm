@@ -114,3 +114,5 @@ DOMCSSPrimitiveValue *kit(WebCore::DeprecatedCSSOMPrimitiveValue* value)
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMCSSPrimitiveValue*>(kit(static_cast<WebCore::DeprecatedCSSOMValue*>(value)));
 }
+
+#undef IMPL

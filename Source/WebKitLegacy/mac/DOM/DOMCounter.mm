@@ -83,3 +83,5 @@ DOMCounter *kit(WebCore::DeprecatedCSSOMCounter* value)
     addDOMWrapper(wrapper, value);
     return [wrapper autorelease];
 }
+
+#undef IMPL

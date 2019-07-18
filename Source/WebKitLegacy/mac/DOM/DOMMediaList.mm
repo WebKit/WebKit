@@ -103,3 +103,5 @@ DOMMediaList *kit(WebCore::MediaList* value)
     addDOMWrapper(wrapper, value);
     return [wrapper autorelease];
 }
+
+#undef IMPL

@@ -117,3 +117,5 @@ WebCore::WindowProxy* toWindowProxy(DOMAbstractView *view)
         return nil;
     return &window->frame()->windowProxy();
 }
+
+#undef IMPL

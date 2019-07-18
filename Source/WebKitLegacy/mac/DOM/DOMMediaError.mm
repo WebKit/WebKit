@@ -78,3 +78,5 @@ DOMMediaError *kit(WebCore::MediaError* value)
 }
 
 #endif // ENABLE(VIDEO)
+
+#undef IMPL

@@ -90,3 +90,5 @@ DOMRect *kit(WebCore::DeprecatedCSSOMRect* value)
     addDOMWrapper(wrapper, value);
     return [wrapper autorelease];
 }
+
+#undef IMPL

@@ -308,3 +308,5 @@ DOMRange *kit(WebCore::Range* value)
     addDOMWrapper(wrapper, value);
     return [wrapper autorelease];
 }
+
+#undef IMPL

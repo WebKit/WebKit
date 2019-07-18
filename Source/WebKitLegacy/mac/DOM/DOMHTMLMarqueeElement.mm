@@ -184,3 +184,5 @@
 }
 
 @end
+
+#undef IMPL

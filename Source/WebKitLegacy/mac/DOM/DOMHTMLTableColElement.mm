@@ -117,3 +117,5 @@ WebCore::HTMLTableColElement* core(DOMHTMLTableColElement *wrapper)
 {
     return wrapper ? reinterpret_cast<WebCore::HTMLTableColElement*>(wrapper->_internal) : 0;
 }
+
+#undef IMPL

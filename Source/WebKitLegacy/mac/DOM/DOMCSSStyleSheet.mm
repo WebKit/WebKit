@@ -102,3 +102,5 @@ DOMCSSStyleSheet *kit(WebCore::CSSStyleSheet* value)
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMCSSStyleSheet*>(kit(static_cast<WebCore::StyleSheet*>(value)));
 }
+
+#undef IMPL

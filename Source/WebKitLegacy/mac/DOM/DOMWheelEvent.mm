@@ -105,3 +105,5 @@ WebCore::WheelEvent* core(DOMWheelEvent *wrapper)
 {
     return wrapper ? reinterpret_cast<WebCore::WheelEvent*>(wrapper->_internal) : 0;
 }
+
+#undef IMPL

@@ -64,3 +64,5 @@ DOMProcessingInstruction *kit(WebCore::ProcessingInstruction* value)
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMProcessingInstruction*>(kit(static_cast<WebCore::Node*>(value)));
 }
+
+#undef IMPL

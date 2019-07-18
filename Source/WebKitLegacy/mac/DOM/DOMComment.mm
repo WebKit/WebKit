@@ -44,3 +44,5 @@ DOMComment *kit(WebCore::Comment* value)
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMComment*>(kit(static_cast<WebCore::Node*>(value)));
 }
+
+#undef IMPL

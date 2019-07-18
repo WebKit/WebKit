@@ -39,3 +39,5 @@
 @implementation DOMCSSUnknownRule
 
 @end
+
+#undef IMPL

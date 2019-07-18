@@ -722,3 +722,5 @@ DOMHTMLInputElement *kit(WebCore::HTMLInputElement* value)
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMHTMLInputElement*>(kit(static_cast<WebCore::Node*>(value)));
 }
+
+#undef IMPL

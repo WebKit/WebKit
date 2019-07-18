@@ -1,3 +1,14 @@
+2019-07-18  Alex Christensen  <achristensen@webkit.org>
+
+        Unify builds in WebKitLegacy/mac/DOM
+        https://bugs.webkit.org/show_bug.cgi?id=199771
+
+        Reviewed by Geoffrey Garen.
+
+        * SourcesCocoa.txt:
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+        * scripts/generate-unified-sources.sh:
+
 2019-07-16  Chris Dumez  <cdumez@apple.com>
 
         Speed up StorageManager::getValues()

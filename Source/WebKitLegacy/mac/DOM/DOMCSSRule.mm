@@ -100,3 +100,5 @@ DOMCSSRule *kit(WebCore::CSSRule* value)
     addDOMWrapper(wrapper, value);
     return [wrapper autorelease];
 }
+
+#undef IMPL

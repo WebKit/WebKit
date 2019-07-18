@@ -63,3 +63,5 @@ DOMText *kit(WebCore::Text* value)
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMText*>(kit(static_cast<WebCore::Node*>(value)));
 }
+
+#undef IMPL

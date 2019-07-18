@@ -71,3 +71,5 @@ DOMNativeXPathNSResolver *kit(WebCore::XPathNSResolver* impl)
     addDOMWrapper(wrapper, impl);
     return [wrapper autorelease];    
 }
+
+#undef IMPL

@@ -83,3 +83,5 @@ DOMFileList *kit(WebCore::FileList* value)
     addDOMWrapper(wrapper, value);
     return [wrapper autorelease];
 }
+
+#undef IMPL

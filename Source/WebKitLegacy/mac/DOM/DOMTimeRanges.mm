@@ -89,3 +89,5 @@ DOMTimeRanges *kit(WebCore::TimeRanges* value)
 }
 
 #endif // ENABLE(VIDEO)
+
+#undef IMPL

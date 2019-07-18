@@ -287,3 +287,5 @@ WebCore::HTMLImageElement* core(DOMHTMLImageElement *wrapper)
 {
     return wrapper ? reinterpret_cast<WebCore::HTMLImageElement*>(wrapper->_internal) : 0;
 }
+
+#undef IMPL

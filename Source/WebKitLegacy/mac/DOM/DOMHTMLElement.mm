@@ -296,3 +296,5 @@ DOMHTMLElement *kit(WebCore::HTMLElement* value)
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMHTMLElement*>(kit(static_cast<WebCore::Node*>(value)));
 }
+
+#undef IMPL

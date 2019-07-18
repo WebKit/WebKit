@@ -58,3 +58,5 @@ DOMFile *kit(WebCore::File* value)
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMFile*>(kit(static_cast<WebCore::Blob*>(value)));
 }
+
+#undef IMPL
