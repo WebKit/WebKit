@@ -81,7 +81,7 @@ bool GetSystemInfo(SystemInfo *info)
         return false;
     }
 
-    FindPrimaryGPU(info);
+    FindActiveGPU(info);
 
     for (size_t i = 0; i < info->gpus.size(); ++i)
     {
@@ -118,9 +118,9 @@ bool GetSystemInfo(SystemInfo *info)
             }
         }
 
-        // In dual-GPU cases the PCI scan sometimes only gives us the Intel GPU.
-        // If we are able to query for the Nvidia driver version, it means there
-        // was hidden Nvidia GPU, so we add it to the list and make it primary.
+        // In dual-GPU cases the PCI scan sometimes only gives us the Intel GPU. If we are able to
+        // query for the Nvidia driver version, it means there was hidden Nvidia GPU, so we add it
+        // to the list.
         if (IsIntel(gpu->vendorId) && info->gpus.size() == 1)
         {
             std::string version;

@@ -1,3 +1,75 @@
+2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r247521. rdar://problem/53229717
+
+    Make ANGLE work inside WebKit2's sandbox
+    https://bugs.webkit.org/show_bug.cgi?id=199844
+    
+    Patch by Kenneth Russell <kbr@chromium.org> on 2019-07-17
+    Reviewed by Alex Christensen.
+    
+    Source/ThirdParty/ANGLE:
+    
+    Cherry-pick fix for crbug.com/angleproject/3383 to eliminate use
+    of deprecated API in SystemInfo_mac.mm.
+    
+    * BUILD.gn:
+    * src/gpu_info_util/SystemInfo.cpp:
+    (angle::FindActiveGPU):
+    (angle::PrintSystemInfo):
+    (angle::FindPrimaryGPU): Deleted.
+    * src/gpu_info_util/SystemInfo.h:
+    * src/gpu_info_util/SystemInfo_internal.h:
+    * src/gpu_info_util/SystemInfo_linux.cpp:
+    (angle::GetSystemInfo):
+    * src/gpu_info_util/SystemInfo_mac.mm:
+    (angle::GetSystemInfo):
+    * src/gpu_info_util/SystemInfo_win.cpp:
+    (angle::GetSystemInfo):
+    * src/tests/BUILD.gn:
+    * src/tests/test_expectations/GPUTestConfig.cpp:
+    * src/tests/test_utils/angle_test_instantiate.cpp:
+    (angle::IsConfigWhitelisted):
+    
+    Source/WebCore:
+    
+    Fix missing #import introduced at the last minute while removing
+    some debugging code in the last patch.
+    
+    Tested with San Angeles WebGL demo and some conformance tests.
+    
+    * platform/graphics/cocoa/WebGLLayer.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247521 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-17  Kenneth Russell  <kbr@chromium.org>
+
+            Make ANGLE work inside WebKit2's sandbox
+            https://bugs.webkit.org/show_bug.cgi?id=199844
+
+            Reviewed by Alex Christensen.
+
+            Cherry-pick fix for crbug.com/angleproject/3383 to eliminate use
+            of deprecated API in SystemInfo_mac.mm.
+
+            * BUILD.gn:
+            * src/gpu_info_util/SystemInfo.cpp:
+            (angle::FindActiveGPU):
+            (angle::PrintSystemInfo):
+            (angle::FindPrimaryGPU): Deleted.
+            * src/gpu_info_util/SystemInfo.h:
+            * src/gpu_info_util/SystemInfo_internal.h:
+            * src/gpu_info_util/SystemInfo_linux.cpp:
+            (angle::GetSystemInfo):
+            * src/gpu_info_util/SystemInfo_mac.mm:
+            (angle::GetSystemInfo):
+            * src/gpu_info_util/SystemInfo_win.cpp:
+            (angle::GetSystemInfo):
+            * src/tests/BUILD.gn:
+            * src/tests/test_expectations/GPUTestConfig.cpp:
+            * src/tests/test_utils/angle_test_instantiate.cpp:
+            (angle::IsConfigWhitelisted):
+
 2019-07-10  Alex Christensen  <achristensen@webkit.org>
 
         Allow CMake to build WebCore on Mac

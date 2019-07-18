@@ -33,6 +33,7 @@
 #import "GraphicsLayer.h"
 #import "GraphicsLayerCA.h"
 #import "ImageBufferUtilitiesCG.h"
+#import "NotImplemented.h"
 #import "PlatformCALayer.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/FastMalloc.h>
