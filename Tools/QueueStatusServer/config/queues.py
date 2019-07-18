@@ -33,7 +33,6 @@ from datetime import timedelta
 all_queue_names = [
     "commit-queue",
     "style-queue",
-    "ios-sim-ews",
     "jsc-ews",
     "jsc-mips-ews",
     "jsc-armv7-ews",

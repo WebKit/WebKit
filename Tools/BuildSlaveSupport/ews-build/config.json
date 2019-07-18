@@ -311,7 +311,7 @@
       "platform": "ios-simulator-12",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "triggers": ["api-tests-ios-sim-ews"],
+      "triggers": ["api-tests-ios-sim-ews", "ios-12-sim-wk2-tests-ews"],
       "workernames": ["ews152", "ews154", "ews156", "ews157"]
     },
     {
@@ -453,7 +453,7 @@
       "type": "Try_Userpass",
       "name": "disabled",
       "port": 5556,
-      "builderNames": ["JSC-Tests-EWS", "iOS-12-Simulator-WK2-Tests-EWS", "macOS-High-Sierra-Release-WK2-Tests-EWS",
+      "builderNames": ["JSC-Tests-EWS", "macOS-High-Sierra-Release-WK2-Tests-EWS",
                        "macOS-High-Sierra-Release-WK1-Tests-EWS", "macOS-High-Sierra-Debug-Build-EWS", "Style-EWS", "Windows-EWS"]
     },
     {
@@ -461,6 +461,13 @@
       "name": "macos-high-sierra-debug-wk1-tests-ews",
       "builderNames": [
         "macOS-High-Sierra-Debug-WK1-Tests-EWS"
+      ]
+    },
+    {
+      "type": "Triggerable",
+      "name": "ios-12-sim-wk2-tests-ews",
+      "builderNames": [
+        "iOS-12-Simulator-WK2-Tests-EWS"
       ]
     },
     {

@@ -1,5 +1,17 @@
 2019-07-18  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Enable iOS WK2 tester queue on new EWS
+        https://bugs.webkit.org/show_bug.cgi?id=199867
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/config.json: Enabled the triggers for ios-wk2 queue.
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py: Enabled ios-sim (builder) and ios-wk2 (tester) bubbles.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueServer.js: Removed ios-sim queue from bot-watcher's dashboard.
+        * QueueStatusServer/config/queues.py: Removed ios-sim queue from old EWS.
+
+2019-07-18  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Add build step to AnalyzeLayoutTestsResults
         https://bugs.webkit.org/show_bug.cgi?id=199877
 
