@@ -1,3 +1,13 @@
+2019-07-17  Megan Gardner  <megan_gardner@apple.com>
+
+        Set WordIsNearTap flag, was not being set at all before
+        https://bugs.webkit.org/show_bug.cgi?id=199880
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectWithGesture):
+
 2019-07-17  Jiewen Tan  <jiewen_tan@apple.com>
 
         Provide a NSURL cateogry to tell AppSSO Kerberos URLs
