@@ -1,5 +1,40 @@
 2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r247480. rdar://problem/53229746
+
+    Hop to main thread for release logging in RealtimeIncomingAudioSource
+    https://bugs.webkit.org/show_bug.cgi?id=199813
+    
+    Reviewed by Eric Carlson.
+    
+    LoggerHelper routines allow logging messages in system console and inspector console.
+    These routines iterate through a Vector of log observers which is not thread safe.
+    Document, the main log observer, also expects to be called on the main thread.
+    Manually tested (writing a layout test for this would require more than 2 seconds).
+    
+    * platform/mediastream/mac/RealtimeIncomingAudioSourceCocoa.cpp:
+    (WebCore::RealtimeIncomingAudioSourceCocoa::OnData):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247480 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-16  Youenn Fablet  <youenn@apple.com>
+
+            Hop to main thread for release logging in RealtimeIncomingAudioSource
+            https://bugs.webkit.org/show_bug.cgi?id=199813
+
+            Reviewed by Eric Carlson.
+
+            LoggerHelper routines allow logging messages in system console and inspector console.
+            These routines iterate through a Vector of log observers which is not thread safe.
+            Document, the main log observer, also expects to be called on the main thread.
+            Manually tested (writing a layout test for this would require more than 2 seconds).
+
+            * platform/mediastream/mac/RealtimeIncomingAudioSourceCocoa.cpp:
+            (WebCore::RealtimeIncomingAudioSourceCocoa::OnData):
+
+2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r247470. rdar://problem/53229634
 
     outlook.live.com has odd viewport with edge gap
