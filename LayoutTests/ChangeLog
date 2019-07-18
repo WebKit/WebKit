@@ -1,3 +1,14 @@
+2019-07-17  Robin Morisset  <rmorisset@apple.com>
+
+        [WHLSL] The lexer should not choke on a single '/'
+        https://bugs.webkit.org/show_bug.cgi?id=199886
+
+        Reviewed by Myles Maxfield.
+
+        Added a new basic test of division.
+
+        * webgpu/whlsl/float-math.html:
+
 2019-07-17  Antoine Quint  <graouts@apple.com>
 
         Unable to bring up custom media controls on iOS for video.sina.cn

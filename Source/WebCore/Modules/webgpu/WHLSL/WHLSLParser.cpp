@@ -1618,10 +1618,24 @@ auto Parser::parsePossibleTernaryConditional() -> Expected<UniqueRef<AST::Expres
     }
 
     expression = completePossibleShift(WTFMove(*expression));
+    if (!expression)
+        return Unexpected<Error>(expression.error());
+
     expression = completePossibleMultiply(WTFMove(*expression));
+    if (!expression)
+        return Unexpected<Error>(expression.error());
+
     expression = completePossibleAdd(WTFMove(*expression));
+    if (!expression)
+        return Unexpected<Error>(expression.error());
+
     expression = completePossibleRelationalBinaryOperation(WTFMove(*expression));
+    if (!expression)
+        return Unexpected<Error>(expression.error());
+
     expression = completePossibleLogicalBinaryOperation(WTFMove(*expression));
+    if (!expression)
+        return Unexpected<Error>(expression.error());
 
     PEEK(nextToken);
     if (nextToken->type == Token::Type::QuestionMark)

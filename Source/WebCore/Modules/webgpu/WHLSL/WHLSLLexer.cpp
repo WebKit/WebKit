@@ -558,7 +558,8 @@ void Lexer::skipWhitespaceAndComments()
                         break;
                     }
                 }
-            }
+            } else
+                break;
         } else
             break;
     }

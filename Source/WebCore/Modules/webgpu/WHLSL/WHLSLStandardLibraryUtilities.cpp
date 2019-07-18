@@ -33,6 +33,7 @@
 #include "WHLSLStandardLibrary.h"
 #include "WHLSLStandardLibraryFunctionMap.h"
 #include "WHLSLVisitor.h"
+#include <wtf/DataLog.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <pal/Gunzip.h>
@@ -74,9 +75,17 @@ private:
     HashSet<String> m_functionNames;
 };
 
-void includeStandardLibrary(Program& program, Parser& parser)
+void includeStandardLibrary(Program& program, Parser& parser, bool parseFullStandardLibrary)
 {
     static NeverDestroyed<String> standardLibrary(decompressAndDecodeStandardLibrary());
+    if (parseFullStandardLibrary) {
+        if (auto parseFailure = parser.parse(program, standardLibrary.get(), Parser::Mode::StandardLibrary)) {
+            dataLogLn("failed to parse the (full) standard library: ", *parseFailure);
+            ASSERT_NOT_REACHED();
+        }
+        return;
+    }
+
     static NeverDestroyed<HashMap<String, SubstringLocation>> standardLibraryFunctionMap(computeStandardLibraryFunctionMap());
 
     auto stringView = StringView(standardLibrary.get()).substring(0, firstFunctionOffsetInStandardLibrary());
@@ -100,8 +109,11 @@ void includeStandardLibrary(Program& program, Parser& parser)
             if (iterator == standardLibraryFunctionMap.get().end())
                 continue;
             auto stringView = StringView(standardLibrary.get()).substring(iterator->value.start, iterator->value.end - iterator->value.start);
-            auto parseFailure = parser.parse(program, stringView, Parser::Mode::StandardLibrary);
-            ASSERT_UNUSED(parseFailure, !parseFailure);
+            if (auto parseFailure = parser.parse(program, stringView, Parser::Mode::StandardLibrary)) {
+                dataLogLn("failed to parse the (partial) standard library: ", *parseFailure);
+                ASSERT_NOT_REACHED();
+                return;
+            }
             allFunctionNames.add(name);
         }
         for ( ; nativeFunctionDeclarationsCount < program.nativeFunctionDeclarations().size(); ++nativeFunctionDeclarationsCount)

@@ -36,7 +36,7 @@ namespace WHLSL {
 class Parser;
 class Program;
 
-void includeStandardLibrary(Program&, Parser&);
+void includeStandardLibrary(Program&, Parser&, bool parseFullStandardLibrary);
 
 }
 

@@ -64,6 +64,8 @@ static constexpr bool dumpASTAtEnd = false;
 static constexpr bool alwaysDumpPassFailures = false;
 static constexpr bool dumpPassFailure = dumpASTBeforeEachPass || dumpASTAfterParsing || dumpASTAtEnd || alwaysDumpPassFailures;
 
+static constexpr bool parseFullStandardLibrary = false;
+
 static bool dumpASTIfNeeded(bool shouldDump, Program& program, const char* message)
 {
     if (shouldDump) {
@@ -115,7 +117,7 @@ static Optional<Program> prepareShared(String& whlslSource)
             dataLogLn("failed to parse the program: ", *parseFailure);
         return WTF::nullopt;
     }
-    includeStandardLibrary(program, parser);
+    includeStandardLibrary(program, parser, parseFullStandardLibrary);
 
     if (!dumpASTBetweenEachPassIfNeeded(program, "AST after parsing"))
         dumpASTAfterParsingIfNeeded(program);

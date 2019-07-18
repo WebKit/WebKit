@@ -37,6 +37,10 @@ whlslTests.floatMath = async () => {
             float x = 7.5;
             return float(x);
         }
+        bool div()
+        {
+            return 0.5 / 2 == 0.25;
+        }
     `;
 
     assert_equals(await callBoolFunction(program,  "foo", []), true);
@@ -44,6 +48,7 @@ whlslTests.floatMath = async () => {
     assert_equals(await callFloatFunction(program, "foo9", []), 7.5);
     assert_equals(await callFloatFunction(program, "foo12", []), 7);
     assert_equals(await callFloatFunction(program, "foo13", []), 7.5);
+    assert_equals(await callBoolFunction(program, "div", []), true);
 
     await checkFail(
         `
