@@ -98,10 +98,13 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
     , m_fileReferences(connection.resolveBlobReferences(m_parameters))
     , m_isAllowedToAskUserForCredentials { m_parameters.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials }
     , m_bufferingTimer { *this, &NetworkResourceLoader::bufferingTimerFired }
-    , m_cache { sessionID().isEphemeral() ? nullptr : connection.networkProcess().cache() }
     , m_shouldCaptureExtraNetworkLoadMetrics(m_connection->captureExtraNetworkLoadMetricsEnabled())
 {
     ASSERT(RunLoop::isMain());
+
+    if (auto* session = connection.networkProcess().networkSession(sessionID()))
+        m_cache = session->cache();
+
     // FIXME: This is necessary because of the existence of EmptyFrameLoaderClient in WebCore.
     //        Once bug 116233 is resolved, this ASSERT can just be "m_webPageID && m_webFrameID"
     ASSERT((m_parameters.webPageID && m_parameters.webFrameID) || m_parameters.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials);

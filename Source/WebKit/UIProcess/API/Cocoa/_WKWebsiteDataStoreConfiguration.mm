@@ -89,6 +89,19 @@ static void checkURLArgument(NSURL *url)
     _configuration->setIndexedDBDatabaseDirectory(url.path);
 }
 
+- (NSURL *)networkCacheDirectory
+{
+    return [NSURL fileURLWithPath:_configuration->networkCacheDirectory() isDirectory:YES];
+}
+
+- (void)setNetworkCacheDirectory:(NSURL *)url
+{
+    if (!_configuration->isPersistent())
+        [NSException raise:NSInvalidArgumentException format:@"Cannot set networkCacheDirectory on a non-persistent _WKWebsiteDataStoreConfiguration."];
+    checkURLArgument(url);
+    _configuration->setNetworkCacheDirectory(url.path);
+}
+
 - (NSURL *)_webSQLDatabaseDirectory
 {
     return [NSURL fileURLWithPath:_configuration->webSQLDatabaseDirectory() isDirectory:YES];

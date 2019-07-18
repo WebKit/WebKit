@@ -27,6 +27,7 @@
 #include "NetworkSession.h"
 
 #include "AdClickAttributionManager.h"
+#include "Logging.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkResourceLoadParameters.h"
@@ -77,13 +78,25 @@ NetworkStorageSession* NetworkSession::networkStorageSession() const
     return storageSession;
 }
 
-NetworkSession::NetworkSession(NetworkProcess& networkProcess, PAL::SessionID sessionID, String&& localStorageDirectory, SandboxExtension::Handle& handle)
-    : m_sessionID(sessionID)
+NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
+    : m_sessionID(parameters.sessionID)
     , m_networkProcess(networkProcess)
-    , m_adClickAttribution(makeUniqueRef<AdClickAttributionManager>(sessionID))
-    , m_storageManager(StorageManager::create(WTFMove(localStorageDirectory)))
+    , m_adClickAttribution(makeUniqueRef<AdClickAttributionManager>(parameters.sessionID))
+    , m_storageManager(StorageManager::create(String(parameters.localStorageDirectory)))
 {
-    SandboxExtension::consumePermanently(handle);
+    if (!m_sessionID.isEphemeral()) {
+        String networkCacheDirectory = parameters.networkCacheDirectory;
+        if (networkCacheDirectory.isNull())
+            networkCacheDirectory = networkProcess.diskCacheDirectory();
+        else
+            SandboxExtension::consumePermanently(parameters.networkCacheDirectoryExtensionHandle);
+
+        m_cache = NetworkCache::Cache::open(networkProcess, networkCacheDirectory, networkProcess.cacheOptions());
+        if (!m_cache)
+            RELEASE_LOG_ERROR(NetworkCache, "Failed to initialize the WebKit network disk cache");
+    }
+
+    SandboxExtension::consumePermanently(parameters.localStorageDirectoryExtensionHandle);
     m_adClickAttribution->setPingLoadFunction([this, weakThis = makeWeakPtr(this)](NetworkResourceLoadParameters&& loadParameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler) {
         if (!weakThis)
             return;

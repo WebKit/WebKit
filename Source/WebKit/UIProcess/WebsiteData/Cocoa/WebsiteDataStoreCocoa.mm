@@ -112,6 +112,11 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     if (!localStorageDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(localStorageDirectory, localStorageDirectoryExtensionHandle);
 
+    auto networkCacheDirectory = resolvedNetworkCacheDirectory();
+    SandboxExtension::Handle networkCacheDirectoryExtensionHandle;
+    if (!networkCacheDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(networkCacheDirectory, networkCacheDirectoryExtensionHandle);
+
     bool shouldIncludeLocalhostInResourceLoadStatistics = isSafari;
     WebsiteDataStoreParameters parameters;
     parameters.networkSessionParameters = {
@@ -135,7 +140,9 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         m_configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting(),
         WTFMove(resourceLoadStatisticsManualPrevalentResource),
         WTFMove(localStorageDirectory),
-        WTFMove(localStorageDirectoryExtensionHandle)
+        WTFMove(localStorageDirectoryExtensionHandle),
+        WTFMove(networkCacheDirectory),
+        WTFMove(networkCacheDirectoryExtensionHandle),
     };
     networkingHasBegun();
 

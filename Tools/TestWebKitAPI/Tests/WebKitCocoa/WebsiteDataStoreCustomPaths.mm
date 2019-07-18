@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "PlatformUtilities.h"
+#import "TCPServer.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
@@ -520,4 +521,36 @@ TEST(WebKit, ApplicationIdentifiers)
     EXPECT_TRUE([[exception reason] isEqualToString:@"_setSourceApplicationBundleIdentifier cannot be called after networking has begun"]);
     EXPECT_TRUE([websiteDataStore._sourceApplicationBundleIdentifier isEqualToString:@"otheridentifier"]);
     EXPECT_TRUE([[websiteDataStoreConfiguration sourceApplicationBundleIdentifier] isEqualToString:@"testidentifier"]);
+}
+
+TEST(WebKit, NetworkCacheDirectory)
+{
+    using namespace TestWebKitAPI;
+    TCPServer server([] (int socket) {
+        TCPServer::read(socket);
+        const char* response =
+        "HTTP/1.1 200 OK\r\n"
+        "Cache-Control: max-age=1000000\r\n"
+        "Content-Length: 6\r\n\r\n"
+        "Hello!";
+        TCPServer::write(socket, response, strlen(response));
+    });
+    
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"CustomPathsTest"] isDirectory:YES];
+    
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [websiteDataStoreConfiguration setNetworkCacheDirectory:tempDir];
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setWebsiteDataStore:[[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()] autorelease]];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
+    NSString *path = tempDir.path;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    while (![fileManager fileExistsAtPath:path])
+        Util::spinRunLoop();
+    NSError *error = nil;
+    [fileManager removeItemAtPath:path error:&error];
+    EXPECT_FALSE(error);
 }

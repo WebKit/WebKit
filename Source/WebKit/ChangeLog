@@ -1,3 +1,61 @@
+2019-07-18  Alex Christensen  <achristensen@webkit.org>
+
+        Move NetworkCache ownership from NetworkProcess to NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=199817
+
+        Reviewed by Geoff Garen.
+
+        I also added SPI to set the path of the NetworkCache with an API test.
+        If this new SPI is not used, it falls back to getting the cache location from the NetworkProcess to maintain compatibility.
+        We still get options, cache size, and cache model from the NetworkProcess.  Those should be migrated with new SPI later.
+        Clearing the cache and other operations now iterate the NetworkSessions instead of assuming there is only one cache.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::deleteWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::registrableDomainsWithWebsiteData):
+        (WebKit::NetworkProcess::setCacheModel):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::diskCacheDirectory const):
+        (WebKit::NetworkProcess::cacheOptions const):
+        (WebKit::NetworkProcess::cache): Deleted.
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::m_shouldCaptureExtraNetworkLoadMetrics):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::cache):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::open):
+        (WebKit::NetworkCache::Cache::Cache):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        (WebKit::NetworkProcess::clearDiskCache):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * NetworkProcess/curl/NetworkSessionCurl.cpp:
+        (WebKit::NetworkSessionCurl::NetworkSessionCurl):
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::NetworkSessionSoup):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _initWithConfiguration:]):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration networkCacheDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration setNetworkCacheDirectory:]):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::resolveDirectoriesIfNecessary):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::resolvedNetworkCacheDirectory const):
+
 2019-07-18  Chris Dumez  <cdumez@apple.com>
 
         Regression(r247486) Multiple Layout Tests in http/tests/cache/* are crashing on iOS Debug WK2

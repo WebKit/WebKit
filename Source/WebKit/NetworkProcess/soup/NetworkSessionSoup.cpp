@@ -40,7 +40,7 @@ namespace WebKit {
 using namespace WebCore;
 
 NetworkSessionSoup::NetworkSessionSoup(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
-    : NetworkSession(networkProcess, parameters.sessionID, WTFMove(parameters.localStorageDirectory), parameters.localStorageDirectoryExtensionHandle)
+    : NetworkSession(networkProcess, parameters)
 {
     networkStorageSession()->setCookieObserverHandler([this] {
         this->networkProcess().supplement<WebCookieManager>()->notifyCookiesDidChange(m_sessionID);

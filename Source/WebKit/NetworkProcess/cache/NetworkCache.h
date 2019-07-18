@@ -87,17 +87,18 @@ enum class UseDecision {
 
 using GlobalFrameID = std::pair<WebCore::PageIdentifier, uint64_t /*webFrameID*/>;
 
+enum class CacheOption : uint8_t {
+    // In testing mode we try to eliminate sources of randomness. Cache does not shrink and there are no read timeouts.
+    TestingMode = 1 << 0,
+    RegisterNotify = 1 << 1,
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+    SpeculativeRevalidation = 1 << 2,
+#endif
+};
+
 class Cache : public RefCounted<Cache> {
 public:
-    enum class Option {
-        // In testing mode we try to eliminate sources of randomness. Cache does not shrink and there are no read timeouts.
-        TestingMode = 1 << 0,
-        RegisterNotify = 1 << 1,
-#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-        SpeculativeRevalidation = 1 << 2,
-#endif
-    };
-    static RefPtr<Cache> open(NetworkProcess&, const String& cachePath, OptionSet<Option>);
+    static RefPtr<Cache> open(NetworkProcess&, const String& cachePath, OptionSet<CacheOption>);
 
     void setCapacity(size_t);
 
@@ -148,7 +149,7 @@ public:
     ~Cache();
 
 private:
-    Cache(NetworkProcess&, Ref<Storage>&&, OptionSet<Option> options);
+    Cache(NetworkProcess&, Ref<Storage>&&, OptionSet<CacheOption>);
 
     Key makeCacheKey(const WebCore::ResourceRequest&);
 

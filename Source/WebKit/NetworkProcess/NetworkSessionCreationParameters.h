@@ -92,6 +92,8 @@ struct NetworkSessionCreationParameters {
 
     String localStorageDirectory;
     SandboxExtension::Handle localStorageDirectoryExtensionHandle;
+    String networkCacheDirectory;
+    SandboxExtension::Handle networkCacheDirectoryExtensionHandle;
 };
 
 } // namespace WebKit

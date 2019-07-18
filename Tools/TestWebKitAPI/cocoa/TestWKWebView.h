@@ -52,6 +52,7 @@
 - (void)loadTestPageNamed:(NSString *)pageName;
 - (void)synchronouslyLoadHTMLString:(NSString *)html;
 - (void)synchronouslyLoadHTMLString:(NSString *)html baseURL:(NSURL *)url;
+- (void)synchronouslyLoadRequest:(NSURLRequest *)request;
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName;
 - (BOOL)_synchronouslyExecuteEditCommand:(NSString *)command argument:(NSString *)argument;
 - (void)expectElementTagsInOrder:(NSArray<NSString *> *)tagNames;

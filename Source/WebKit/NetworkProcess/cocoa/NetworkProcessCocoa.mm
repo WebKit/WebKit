@@ -117,17 +117,13 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
         return;
 
     SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
-    OptionSet<NetworkCache::Cache::Option> cacheOptions { NetworkCache::Cache::Option::RegisterNotify };
+    m_cacheOptions = { NetworkCache::CacheOption::RegisterNotify };
     if (parameters.shouldUseTestingNetworkSession)
-        cacheOptions.add(NetworkCache::Cache::Option::TestingMode);
+        m_cacheOptions.add(NetworkCache::CacheOption::TestingMode);
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     if (parameters.shouldEnableNetworkCacheSpeculativeRevalidation)
-        cacheOptions.add(NetworkCache::Cache::Option::SpeculativeRevalidation);
+        m_cacheOptions.add(NetworkCache::CacheOption::SpeculativeRevalidation);
 #endif
-
-    m_cache = NetworkCache::Cache::open(*this, m_diskCacheDirectory, cacheOptions);
-    if (!m_cache)
-        RELEASE_LOG_ERROR(NetworkCache, "Failed to initialize the WebKit network disk cache");
 
     // Disable NSURLCache.
     auto urlCache(adoptNS([[NSURLCache alloc] initWithMemoryCapacity:0 diskCapacity:0 diskPath:nil]));
@@ -200,15 +196,13 @@ void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<vo
     if (!m_clearCacheDispatchGroup)
         m_clearCacheDispatchGroup = dispatch_group_create();
 
-    auto* cache = this->cache();
-    if (!cache) {
-        completionHandler();
-        return;
-    }
-
     auto group = m_clearCacheDispatchGroup;
-    dispatch_group_async(group, dispatch_get_main_queue(), makeBlockPtr([cache, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
-        cache->clear(modifiedSince, WTFMove(completionHandler));
+    dispatch_group_async(group, dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = makeRef(*this), modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
+        auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
+        for (auto& session : networkSessions().values()) {
+            if (auto* cache = session->cache())
+                cache->clear(modifiedSince, [aggregator = aggregator.copyRef()] () { });
+        }
     }).get());
 }
 

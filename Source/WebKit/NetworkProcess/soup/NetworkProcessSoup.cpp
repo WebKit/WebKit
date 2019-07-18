@@ -29,6 +29,7 @@
 
 #include "NetworkCache.h"
 #include "NetworkProcessCreationParameters.h"
+#include "NetworkSession.h"
 #include "ResourceCachesToClear.h"
 #include "WebCookieManager.h"
 #include "WebKitCachedResolver.h"
@@ -38,6 +39,7 @@
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RAMSize.h>
 #include <wtf/glib/GRefPtr.h>
@@ -115,13 +117,11 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 
     SoupNetworkSession::clearOldSoupCache(FileSystem::directoryName(m_diskCacheDirectory));
 
-    OptionSet<NetworkCache::Cache::Option> cacheOptions { NetworkCache::Cache::Option::RegisterNotify };
+    OptionSet<NetworkCache::CacheOption> cacheOptions { NetworkCache::CacheOption::RegisterNotify };
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     if (parameters.shouldEnableNetworkCacheSpeculativeRevalidation)
-        cacheOptions.add(NetworkCache::Cache::Option::SpeculativeRevalidation);
+        cacheOptions.add(NetworkCache::CacheOption::SpeculativeRevalidation);
 #endif
-
-    m_cache = NetworkCache::Cache::open(*this, m_diskCacheDirectory, cacheOptions);
 
     supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy, OptionalCallbackID());
 
@@ -156,11 +156,11 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
 
 void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)
 {
-    if (!m_cache) {
-        completionHandler();
-        return;
+    auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    for (auto& session : networkSessions().values()) {
+        if (auto* cache = session->cache())
+            cache->clear(modifiedSince, [aggregator = aggregator.copyRef()] () { });
     }
-    m_cache->clear(modifiedSince, WTFMove(completionHandler));
 }
 
 void NetworkProcess::platformTerminate()

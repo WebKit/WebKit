@@ -1357,11 +1357,12 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
         });
     }
 #endif
-
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache)) {
-        fetchDiskCacheEntries(cache(), sessionID, fetchOptions, [callbackAggregator = WTFMove(callbackAggregator)](auto entries) mutable {
-            callbackAggregator->m_websiteData.entries.appendVector(entries);
-        });
+        for (auto& session : networkSessions().values()) {
+            fetchDiskCacheEntries(session->cache(), sessionID, fetchOptions, [callbackAggregator = WTFMove(callbackAggregator)](auto entries) mutable {
+                callbackAggregator->m_websiteData.entries.appendVector(entries);
+            });
+        }
     }
 }
 
@@ -1516,8 +1517,10 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     }
 #endif
 
-    if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
-        clearDiskCacheEntries(cache(), originDatas, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
+    if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral()) {
+        for (auto& session : networkSessions().values())
+            clearDiskCacheEntries(session->cache(), originDatas, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
+    }
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
         if (auto* session = storageSession(sessionID)) {
@@ -1748,19 +1751,21 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessi
         });
     }
 #endif
-    
-    if (websiteDataTypes.contains(WebsiteDataType::DiskCache)) {
-        fetchDiskCacheEntries(cache(), sessionID, fetchOptions, [this, domainsToDeleteAllButCookiesFor, callbackAggregator = callbackAggregator.copyRef()](auto entries) mutable {
 
-            Vector<SecurityOriginData> entriesToDelete;
-            for (auto& entry : entries) {
-                if (!domainsToDeleteAllButCookiesFor.contains(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host)))
-                    continue;
-                entriesToDelete.append(entry.origin);
-                callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host));
-            }
-            clearDiskCacheEntries(cache(), entriesToDelete, [callbackAggregator = callbackAggregator.copyRef()] { });
-        });
+    if (websiteDataTypes.contains(WebsiteDataType::DiskCache)) {
+        for (auto& session : networkSessions().values()) {
+            fetchDiskCacheEntries(session->cache(), sessionID, fetchOptions, [domainsToDeleteAllButCookiesFor, callbackAggregator = callbackAggregator.copyRef(), session = session.copyRef()](auto entries) mutable {
+
+                Vector<SecurityOriginData> entriesToDelete;
+                for (auto& entry : entries) {
+                    if (!domainsToDeleteAllButCookiesFor.contains(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host)))
+                        continue;
+                    entriesToDelete.append(entry.origin);
+                    callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host));
+                }
+                clearDiskCacheEntries(session->cache(), entriesToDelete, [callbackAggregator = callbackAggregator.copyRef()] { });
+            });
+        }
     }
 
     auto dataTypesForUIProcess = WebsiteData::filter(websiteDataTypes, WebsiteDataProcessType::UI);
@@ -1882,9 +1887,11 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
 #endif
     
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache)) {
-        fetchDiskCacheEntries(cache(), sessionID, fetchOptions, [callbackAggregator = callbackAggregator.copyRef()](auto entries) mutable {
-            callbackAggregator->m_websiteData.entries.appendVector(entries);
-        });
+        for (auto& session : networkSessions().values()) {
+            fetchDiskCacheEntries(session->cache(), sessionID, fetchOptions, [callbackAggregator = callbackAggregator.copyRef()](auto entries) mutable {
+                callbackAggregator->m_websiteData.entries.appendVector(entries);
+            });
+        }
     }
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -1976,9 +1983,11 @@ void NetworkProcess::setCacheModel(CacheModel cacheModel)
         diskFreeSize /= KB * 1000;
         calculateURLCacheSizes(cacheModel, diskFreeSize, urlCacheMemoryCapacity, urlCacheDiskCapacity);
     }
-
-    if (m_cache)
-        m_cache->setCapacity(urlCacheDiskCapacity);
+    
+    for (auto& session : networkSessions().values()) {
+        if (auto* cache = session->cache())
+            cache->setCapacity(urlCacheDiskCapacity);
+    }
 }
 
 void NetworkProcess::setCanHandleHTTPSServerTrustEvaluation(bool value)

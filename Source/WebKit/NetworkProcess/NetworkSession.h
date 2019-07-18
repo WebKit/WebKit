@@ -59,7 +59,11 @@ class WebSocketTask;
 struct NetworkSessionCreationParameters;
 
 enum class WebsiteDataType;
-    
+
+namespace NetworkCache {
+class Cache;
+}
+
 class NetworkSession : public RefCounted<NetworkSession>, public CanMakeWeakPtr<NetworkSession> {
 public:
     static Ref<NetworkSession> create(NetworkProcess&, NetworkSessionCreationParameters&&);
@@ -100,6 +104,8 @@ public:
     void addKeptAliveLoad(Ref<NetworkResourceLoader>&&);
     void removeKeptAliveLoad(NetworkResourceLoader&);
 
+    NetworkCache::Cache* cache() { return m_cache.get(); }
+
     PrefetchCache& prefetchCache() { return m_prefetchCache; }
     void clearPrefetchCache() { m_prefetchCache.clear(); }
 
@@ -108,7 +114,7 @@ public:
     virtual void addWebSocketTask(WebSocketTask&) { }
 
 protected:
-    NetworkSession(NetworkProcess&, PAL::SessionID, String&& localStorageDirectory, SandboxExtension::Handle&);
+    NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
     PAL::SessionID m_sessionID;
     Ref<NetworkProcess> m_networkProcess;
@@ -130,6 +136,7 @@ protected:
 #if !ASSERT_DISABLED
     bool m_isInvalidated { false };
 #endif
+    RefPtr<NetworkCache::Cache> m_cache;
 };
 
 } // namespace WebKit

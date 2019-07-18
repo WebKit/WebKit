@@ -111,12 +111,12 @@ struct WebsiteDataStoreParameters;
 class WebSWOriginStore;
 #endif
 
-namespace CacheStorage {
-class Engine;
+namespace NetworkCache {
+enum class CacheOption : uint8_t;
 }
 
-namespace NetworkCache {
-class Cache;
+namespace CacheStorage {
+class Engine;
 }
 
 class NetworkProcess : public AuxiliaryProcess, private DownloadManager::Client, public ThreadSafeRefCounted<NetworkProcess>
@@ -160,8 +160,6 @@ public:
 
     AuthenticationManager& authenticationManager();
     DownloadManager& downloadManager();
-
-    NetworkCache::Cache* cache() { return m_cache.get(); }
 
     void setSession(const PAL::SessionID&, Ref<NetworkSession>&&);
     NetworkSession* networkSession(const PAL::SessionID&) const final;
@@ -343,6 +341,9 @@ public:
     void addKeptAliveLoad(Ref<NetworkResourceLoader>&&);
     void removeKeptAliveLoad(NetworkResourceLoader&);
 
+    const String& diskCacheDirectory() const { return m_diskCacheDirectory; }
+    const OptionSet<NetworkCache::CacheOption>& cacheOptions() const { return m_cacheOptions; }
+    
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
     std::unique_ptr<WebCore::NetworkStorageSession> platformCreateDefaultStorageSession() const;
@@ -489,8 +490,6 @@ private:
 
     HashMap<PAL::SessionID, Ref<CacheStorage::Engine>> m_cacheEngines;
 
-    RefPtr<NetworkCache::Cache> m_cache;
-
     typedef HashMap<const char*, std::unique_ptr<NetworkProcessSupplement>, PtrHash<const char*>> NetworkProcessSupplementMap;
     NetworkProcessSupplementMap m_supplements;
 
@@ -566,6 +565,8 @@ private:
     uint32_t m_downloadMonitorSpeedMultiplier { 1 };
 
     HashMap<IPC::Connection::UniqueID, PAL::SessionID> m_sessionByConnection;
+
+    OptionSet<NetworkCache::CacheOption> m_cacheOptions;
 };
 
 } // namespace WebKit

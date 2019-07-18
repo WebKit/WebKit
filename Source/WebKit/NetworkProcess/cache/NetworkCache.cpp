@@ -59,9 +59,9 @@ static const AtomString& resourceType()
     return resource;
 }
 
-RefPtr<Cache> Cache::open(NetworkProcess& networkProcess, const String& cachePath, OptionSet<Option> options)
+RefPtr<Cache> Cache::open(NetworkProcess& networkProcess, const String& cachePath, OptionSet<CacheOption> options)
 {
-    auto storage = Storage::open(cachePath, options.contains(Option::TestingMode) ? Storage::Mode::AvoidRandomness : Storage::Mode::Normal);
+    auto storage = Storage::open(cachePath, options.contains(CacheOption::TestingMode) ? Storage::Mode::AvoidRandomness : Storage::Mode::Normal);
 
     LOG(NetworkCache, "(NetworkProcess) opened cache storage, success %d", !!storage);
 
@@ -78,12 +78,12 @@ static void dumpFileChanged(Cache* cache)
 }
 #endif
 
-Cache::Cache(NetworkProcess& networkProcess, Ref<Storage>&& storage, OptionSet<Option> options)
+Cache::Cache(NetworkProcess& networkProcess, Ref<Storage>&& storage, OptionSet<CacheOption> options)
     : m_storage(WTFMove(storage))
     , m_networkProcess(networkProcess)
 {
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    if (options.contains(Option::SpeculativeRevalidation)) {
+    if (options.contains(CacheOption::SpeculativeRevalidation)) {
         m_lowPowerModeNotifier = std::make_unique<WebCore::LowPowerModeNotifier>([this](bool isLowPowerModeEnabled) {
             ASSERT(WTF::RunLoop::isMain());
             if (isLowPowerModeEnabled)
@@ -98,7 +98,7 @@ Cache::Cache(NetworkProcess& networkProcess, Ref<Storage>&& storage, OptionSet<O
     }
 #endif
 
-    if (options.contains(Option::RegisterNotify)) {
+    if (options.contains(CacheOption::RegisterNotify)) {
 #if PLATFORM(COCOA)
         // Triggers with "notifyutil -p com.apple.WebKit.Cache.dump".
         int token;

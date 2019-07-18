@@ -1,3 +1,16 @@
+2019-07-18  Alex Christensen  <achristensen@webkit.org>
+
+        Move NetworkCache ownership from NetworkProcess to NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=199817
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView synchronouslyLoadRequest:]):
+
 2019-07-18  Youenn Fablet  <youenn@apple.com>
 
         Make sure to set kCTFontFallbackOptionAttribute to kCTFontFallbackOptionSystem for system fonts

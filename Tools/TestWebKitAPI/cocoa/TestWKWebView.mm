@@ -71,6 +71,12 @@ SOFT_LINK_CLASS(UIKit, UIWindow)
     [self loadRequest:request];
 }
 
+- (void)synchronouslyLoadRequest:(NSURLRequest *)request
+{
+    [self loadRequest:request];
+    [self _test_waitForDidFinishNavigation];
+}
+
 - (void)synchronouslyLoadHTMLString:(NSString *)html baseURL:(NSURL *)url
 {
     [self loadHTMLString:html baseURL:url];
