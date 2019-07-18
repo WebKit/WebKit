@@ -1071,6 +1071,16 @@
         "description": "Allows pages to override default editing behaviors and to monitor DOM changes due to user input."
     },
     {
+        "name": "Input modalities (inputmode attribute)",
+        "status": {
+            "status": "Supported",
+            "enabled-by-default": false
+        },
+        "url": "https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/inputmode",
+        "description": "Allows pages to specify what kind of input mechanism would be most suitable to a given form control or a contenteditable element."
+    },
+    {
         "name": "Interaction Media Features (pointer, hover, any-pointer, any-hover)",
         "status": {
             "status": "Supported",

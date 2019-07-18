@@ -1,3 +1,14 @@
+2019-07-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add inputmode to the feature status page
+        https://bugs.webkit.org/show_bug.cgi?id=199884
+
+        Reviewed by Wenson Hsieh.
+
+        Added as supported.
+
+        * features.json:
+
 2019-07-17  Antoine Quint  <graouts@apple.com>
 
         Disable Pointer Events prior to watchOS 6
