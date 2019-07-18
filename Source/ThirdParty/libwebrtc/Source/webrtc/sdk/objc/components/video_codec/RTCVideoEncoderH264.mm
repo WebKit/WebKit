@@ -671,38 +671,36 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
 
 #if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
 #if ENABLE_VCP_ENCODER
-  if (!_useVCP) {
-    CFBooleanRef hwaccl_enabled = nullptr;
-    if (status == noErr) {
-      status = VTSessionCopyProperty(_vtCompressionSession,
-                                 kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder,
-                                 nullptr,
-                                 &hwaccl_enabled);
-    }
-    if (status == noErr && (CFBooleanGetValue(hwaccl_enabled))) {
-      RTC_LOG(LS_INFO) << "Compression session created with hw accl enabled";
-    } else {
-      [self destroyCompressionSession];
+  CFBooleanRef hwaccl_enabled = nullptr;
+  if (status == noErr) {
+    status = VTSessionCopyProperty(_vtCompressionSession,
+                               kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder,
+                               nullptr,
+                               &hwaccl_enabled);
+  }
+  if (status == noErr && (CFBooleanGetValue(hwaccl_enabled))) {
+    RTC_LOG(LS_INFO) << "Compression session created with hw accl enabled";
+  } else {
+    [self destroyCompressionSession];
 
-      // Use VCP instead.
-      int usageValue = 1;
-      auto usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
-      CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_Usage, usage);
-      CFRelease(usage);
+    // Use VCP instead.
+    int usageValue = 1;
+    auto usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
+    CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_Usage, usage);
+    CFRelease(usage);
 
-      RTC_LOG(LS_INFO) << "Compression session created with VCP";
-      status =
-          webrtc::VCPCompressionSessionCreate(nullptr,  // use default allocator
-                                 _width,
-                                 _height,
-                                 kVCPCodecType4CC_H264,
-                                 encoderSpecs,
-                                 sourceAttributes,
-                                 nullptr,  // use default compressed data allocator
-                                 compressionOutputCallback,
-                                 nullptr,
-                                 &_vcpCompressionSession);
-    }
+    RTC_LOG(LS_INFO) << "Compression session created with VCP";
+    status =
+        webrtc::VCPCompressionSessionCreate(nullptr,  // use default allocator
+                               _width,
+                               _height,
+                               kVCPCodecType4CC_H264,
+                               encoderSpecs,
+                               sourceAttributes,
+                               nullptr,  // use default compressed data allocator
+                               compressionOutputCallback,
+                               nullptr,
+                               &_vcpCompressionSession);
   }
 #else
   if (status != noErr) {

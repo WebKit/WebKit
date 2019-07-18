@@ -1,3 +1,38 @@
+2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r247526. rdar://problem/53229680
+
+    Use VCP SPI in case creation of a compression session with VTB for 'h264.rtvc' fails
+    https://bugs.webkit.org/show_bug.cgi?id=199863
+    <rdar://problem/52922217>
+    
+    Reviewed by Darin Adler.
+    
+    Calling VTCompressionSessionCreate with kVTVideoEncoderList_EncoderID "com.apple.videotoolbox.videoencoder.h264.rtvc"
+    fails on some platforms. In such a case, use VCP SPI if available as a fallback.
+    Covered by exisiting webrtc tests on these specific platforms.
+    
+    * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+    (-[RTCSingleVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247526 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-17  Youenn Fablet  <youenn@apple.com>
+
+            Use VCP SPI in case creation of a compression session with VTB for 'h264.rtvc' fails
+            https://bugs.webkit.org/show_bug.cgi?id=199863
+            <rdar://problem/52922217>
+
+            Reviewed by Darin Adler.
+
+            Calling VTCompressionSessionCreate with kVTVideoEncoderList_EncoderID "com.apple.videotoolbox.videoencoder.h264.rtvc"
+            fails on some platforms. In such a case, use VCP SPI if available as a fallback.
+            Covered by exisiting webrtc tests on these specific platforms.
+
+            * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+            (-[RTCSingleVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+
 2019-06-28  Dean Jackson  <dino@apple.com>
 
         unable to build WebRTC for iOS Simulator
