@@ -258,6 +258,7 @@ struct AttributedString;
 struct BackForwardListItemState;
 struct DataDetectionResult;
 struct EditorState;
+struct FontInfo;
 struct InsertTextOptions;
 struct InteractionInformationAtPosition;
 struct InteractionInformationRequest;
@@ -810,7 +811,7 @@ public:
 #if PLATFORM(MAC)
     void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool registerUndoGroup = false);
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, CallbackID);
-    void fontAtSelection(CallbackID);
+    void fontAtSelection(CompletionHandler<void(const FontInfo&, double, bool)>&&);
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(SERVICE_CONTROLS)

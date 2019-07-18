@@ -506,6 +506,37 @@ TEST(FontManagerTests, AddAndRemoveColorsUsingFontOptions)
     EXPECT_NULL(attributes[NSBackgroundColorAttributeName]);
 }
 
+TEST(FontManagerTests, SetSelectedSystemFontAfterTogglingBold)
+{
+    NSFontManager *fontManager = NSFontManager.sharedFontManager;
+
+    auto webView = webViewForFontManagerTesting(NSFontManager.sharedFontManager, @"<body style='font-family: system-ui;' contenteditable>Foo</body>");
+    [webView selectWord:nil];
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+    auto initialSelectedFont = retainPtr([fontManager selectedFont]);
+
+    [webView _synchronouslyExecuteEditCommand:@"ToggleBold" argument:nil];
+    [webView waitForNextPresentationUpdate];
+    auto selectedFontAfterBolding = retainPtr([fontManager selectedFont]);
+
+    [webView _synchronouslyExecuteEditCommand:@"ToggleBold" argument:nil];
+    [webView waitForNextPresentationUpdate];
+    auto selectedFontAfterUnbolding = retainPtr([fontManager selectedFont]);
+
+    [webView _synchronouslyExecuteEditCommand:@"ToggleBold" argument:nil];
+    [webView waitForNextPresentationUpdate];
+    auto selectedFontAfterBoldingAgain = retainPtr([fontManager selectedFont]);
+
+    EXPECT_WK_STREQ([initialSelectedFont fontName], [selectedFontAfterUnbolding fontName]);
+    EXPECT_WK_STREQ([selectedFontAfterBolding fontName], [selectedFontAfterBoldingAgain fontName]);
+    EXPECT_FALSE([[initialSelectedFont fontName] isEqual:[selectedFontAfterBolding fontName]]);
+    EXPECT_EQ([initialSelectedFont pointSize], 16.);
+    EXPECT_EQ([selectedFontAfterBolding pointSize], 16.);
+    EXPECT_EQ([selectedFontAfterUnbolding pointSize], 16.);
+    EXPECT_EQ([selectedFontAfterBoldingAgain pointSize], 16.);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC)
