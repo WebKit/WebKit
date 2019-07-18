@@ -1,3 +1,20 @@
+2019-07-18  Alex Christensen  <achristensen@webkit.org>
+
+        Rebase fast/forms/ios/delete-in-input-in-iframe.html after r244141
+        https://bugs.webkit.org/show_bug.cgi?id=199875
+        <rdar://problem/50060561>
+
+        Reviewed by Megan Gardner.
+
+        In r202295, we added an ios-specific quirk to prevent scrolling on iOS because of UIKit/WebKit scrolling discrepancies.
+        In r244141, we changed the scrolling behavior to be more like macOS, and the test was broken.  Since this was an intentional
+        change and the bugs reported in rdar://problem/26805722 (initially fixed by r202295) and rdar://problem/49225507 (fixed by r244141)
+        are both behaving as desired, the intentional change in r244141 should be reflected by new test expectations.
+        We do want typing in an input field in an iframe to scroll as we type.
+
+        * fast/forms/ios/delete-in-input-in-iframe-expected.txt:
+        * fast/forms/ios/delete-in-input-in-iframe.html:
+
 2019-07-18  Youenn Fablet  <youenn@apple.com>
 
         Make sure to set kCTFontFallbackOptionAttribute to kCTFontFallbackOptionSystem for system fonts
