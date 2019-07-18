@@ -153,7 +153,6 @@ public:
             break;
         case ScrollCoordinationRole::ViewportConstrained:
             m_viewportConstrainedNodeID = nodeID;
-            setIsScrollCoordinatedWithViewportConstrainedRole(nodeID);
             break;
         case ScrollCoordinationRole::Positioning:
             m_positioningNodeID = nodeID;
@@ -162,7 +161,6 @@ public:
     }
 
     ScrollingNodeID scrollingNodeIDForChildren() const;
-    void setIsScrollCoordinatedWithViewportConstrainedRole(bool);
 
     bool hasMaskLayer() const { return m_maskLayer; }
     bool hasChildClippingMaskLayer() const { return m_childClippingMaskLayer != nullptr; }
@@ -209,6 +207,8 @@ public:
     bool setCompositedBounds(const LayoutRect&);
     // Returns true if changed.
     bool updateCompositedBounds();
+    
+    void updateAllowsBackingStoreDetaching(const LayoutRect& absoluteBounds);
 
     void updateEventRegion();
     

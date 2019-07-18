@@ -403,7 +403,7 @@ GraphicsLayerCA::GraphicsLayerCA(Type layerType, GraphicsLayerClient& client)
     : GraphicsLayer(layerType, client)
     , m_needsFullRepaint(false)
     , m_usingBackdropLayerType(false)
-    , m_isViewportConstrained(false)
+    , m_allowsBackingStoreDetaching(true)
     , m_intersectsCoverageRect(false)
     , m_hasEverPainted(false)
     , m_hasDescendantsWithRunningTransformAnimations(false)
@@ -1312,8 +1312,7 @@ bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const CommitState&
 
     auto bounds = FloatRect(m_boundsOrigin, size());
 
-    bool isViewportConstrained = m_isViewportConstrained || commitState.ancestorIsViewportConstrained;
-    bool intersectsCoverageRect = isViewportConstrained || rects.coverageRect.intersects(bounds);
+    bool intersectsCoverageRect = rects.coverageRect.intersects(bounds);
     if (intersectsCoverageRect != m_intersectsCoverageRect)
         return true;
 
@@ -1323,8 +1322,6 @@ bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const CommitState&
                 return true;
         }
     }
-
-    childCommitState.ancestorIsViewportConstrained |= m_isViewportConstrained;
 
     if (m_maskLayer) {
         auto& maskLayerCA = downcast<GraphicsLayerCA>(*m_maskLayer);
@@ -1470,7 +1467,7 @@ bool GraphicsLayerCA::adjustCoverageRect(VisibleAndCoverageRects& rects, const F
     return true;
 }
 
-void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& rects, bool isViewportConstrained)
+void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& rects)
 {
     bool visibleRectChanged = rects.visibleRect != m_visibleRect;
     bool coverageRectChanged = rects.coverageRect != m_coverageRect;
@@ -1484,7 +1481,7 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
     }
 
     // FIXME: we need to take reflections into account when determining whether this layer intersects the coverage rect.
-    bool intersectsCoverageRect = isViewportConstrained || rects.coverageRect.intersects(bounds);
+    bool intersectsCoverageRect = rects.coverageRect.intersects(bounds);
     if (intersectsCoverageRect != m_intersectsCoverageRect) {
         addUncommittedChanges(CoverageRectChanged);
         m_intersectsCoverageRect = intersectsCoverageRect;
@@ -1538,7 +1535,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
             localState.setLastPlanarSecondaryQuad(&secondaryQuad);
         }
     }
-    setVisibleAndCoverageRects(rects, m_isViewportConstrained || commitState.ancestorIsViewportConstrained);
+    setVisibleAndCoverageRects(rects);
 
     if (commitState.ancestorStartedOrEndedTransformAnimation)
         addUncommittedChanges(CoverageRectChanged);
@@ -1601,10 +1598,8 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
         affectedByTransformAnimation = true;
     }
     
-    childCommitState.ancestorIsViewportConstrained |= m_isViewportConstrained;
-
     if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer.get())) {
-        maskLayer->setVisibleAndCoverageRects(rects, m_isViewportConstrained || commitState.ancestorIsViewportConstrained);
+        maskLayer->setVisibleAndCoverageRects(rects);
         maskLayer->commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition, layerTypeChanged);
     }
 
@@ -2415,32 +2410,34 @@ void GraphicsLayerCA::updateCoverage(const CommitState& commitState)
         backing->setCoverageRect(m_coverageRect);
     }
 
-    if (canDetachBackingStore()) {
-        bool requiresBacking = m_intersectsCoverageRect
-            || commitState.ancestorWithTransformAnimationIntersectsCoverageRect // FIXME: Compute backing exactly for descendants of animating layers.
-            || (isRunningTransformAnimation() && !animationExtent()); // Create backing if we don't know the animation extent.
+    bool requiresBacking = m_intersectsCoverageRect
+        || !allowsBackingStoreDetaching()
+        || commitState.ancestorWithTransformAnimationIntersectsCoverageRect // FIXME: Compute backing exactly for descendants of animating layers.
+        || (isRunningTransformAnimation() && !animationExtent()); // Create backing if we don't know the animation extent.
 
 #if !LOG_DISABLED
-        if (requiresBacking) {
-            auto reasonForBacking = [&]() -> const char* {
-                if (m_intersectsCoverageRect)
-                    return "intersectsCoverageRect";
-                
-                if (commitState.ancestorWithTransformAnimationIntersectsCoverageRect)
-                    return "ancestor with transform";
-                
-                return "has transform animation with unknown extent";
-            };
-            LOG_WITH_STREAM(Layers, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " setBackingStoreAttached: " << requiresBacking << " (" << reasonForBacking() << ")");
-        } else
-            LOG_WITH_STREAM(Layers, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " setBackingStoreAttached: " << requiresBacking);
+    if (requiresBacking) {
+        auto reasonForBacking = [&]() -> const char* {
+            if (m_intersectsCoverageRect)
+                return "intersectsCoverageRect";
+            
+            if (!allowsBackingStoreDetaching())
+                return "backing detachment disallowed";
+
+            if (commitState.ancestorWithTransformAnimationIntersectsCoverageRect)
+                return "ancestor with transform";
+            
+            return "has transform animation with unknown extent";
+        };
+        LOG_WITH_STREAM(Layers, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " setBackingStoreAttached: " << requiresBacking << " (" << reasonForBacking() << ")");
+    } else
+        LOG_WITH_STREAM(Layers, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " setBackingStoreAttached: " << requiresBacking);
 #endif
 
-        m_layer->setBackingStoreAttached(requiresBacking);
-        if (m_layerClones) {
-            for (auto& layer : m_layerClones->primaryLayerClones.values())
-                layer->setBackingStoreAttached(requiresBacking);
-        }
+    m_layer->setBackingStoreAttached(requiresBacking);
+    if (m_layerClones) {
+        for (auto& layer : m_layerClones->primaryLayerClones.values())
+            layer->setBackingStoreAttached(requiresBacking);
     }
 
     m_sizeAtLastCoverageRectUpdate = m_size;
@@ -3639,6 +3636,15 @@ String GraphicsLayerCA::displayListAsText(DisplayList::AsTextFlags flags) const
     return m_displayList->asText(flags);
 }
 
+void GraphicsLayerCA::setAllowsBackingStoreDetaching(bool allowDetaching)
+{
+    if (allowDetaching == m_allowsBackingStoreDetaching)
+        return;
+
+    m_allowsBackingStoreDetaching = allowDetaching;
+    noteLayerPropertyChanged(CoverageRectChanged);
+}
+
 void GraphicsLayerCA::setIsTrackingDisplayListReplay(bool isTracking)
 {
     if (isTracking == m_isTrackingDisplayListReplay)
@@ -4116,15 +4122,6 @@ void GraphicsLayerCA::updateOpacityOnLayer()
             clone.value->setOpacity(m_opacity);
         }
     }
-}
-
-void GraphicsLayerCA::setIsViewportConstrained(bool isViewportConstrained)
-{
-    if (isViewportConstrained == m_isViewportConstrained)
-        return;
-
-    m_isViewportConstrained = isViewportConstrained;
-    noteLayerPropertyChanged(CoverageRectChanged);
 }
 
 void GraphicsLayerCA::deviceOrPageScaleFactorChanged()

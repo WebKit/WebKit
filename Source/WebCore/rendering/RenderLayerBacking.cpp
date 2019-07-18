@@ -721,6 +721,37 @@ bool RenderLayerBacking::updateCompositedBounds()
     return setCompositedBounds(layerBounds);
 }
 
+void RenderLayerBacking::updateAllowsBackingStoreDetaching(const LayoutRect& absoluteBounds)
+{
+    auto setAllowsBackingStoreDetaching = [&](bool allowDetaching) {
+        m_graphicsLayer->setAllowsBackingStoreDetaching(allowDetaching);
+        if (m_foregroundLayer)
+            m_foregroundLayer->setAllowsBackingStoreDetaching(allowDetaching);
+        if (m_backgroundLayer)
+            m_backgroundLayer->setAllowsBackingStoreDetaching(allowDetaching);
+        if (m_scrolledContentsLayer)
+            m_scrolledContentsLayer->setAllowsBackingStoreDetaching(allowDetaching);
+    };
+
+    if (!m_owningLayer.behavesAsFixed()) {
+        setAllowsBackingStoreDetaching(true);
+        return;
+    }
+
+    // We'll allow detaching if the layer is outside the layout viewport. Fixed layers inside
+    // the layout viewport can be revealed by async scrolling, so we want to pin their backing store.
+    FrameView& frameView = renderer().view().frameView();
+    LayoutRect fixedLayoutRect;
+    if (frameView.useFixedLayout())
+        fixedLayoutRect = renderer().view().unscaledDocumentRect();
+    else
+        fixedLayoutRect = frameView.rectForFixedPositionLayout();
+
+    bool allowDetaching = !fixedLayoutRect.intersects(absoluteBounds);
+    LOG_WITH_STREAM(Compositing, stream << "RenderLayerBacking (layer " << &m_owningLayer << ") updateAllowsBackingStoreDetaching - absoluteBounds " << absoluteBounds << " layoutViewportRect " << fixedLayoutRect << ", allowDetaching " << allowDetaching);
+    setAllowsBackingStoreDetaching(allowDetaching);
+}
+
 void RenderLayerBacking::updateAfterWidgetResize()
 {
     if (!is<RenderWidget>(renderer()))
@@ -1690,7 +1721,7 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
     if (needsHorizontalScrollbarLayer) {
         if (!m_layerForHorizontalScrollbar) {
             m_layerForHorizontalScrollbar = createGraphicsLayer("horizontal scrollbar");
-            m_layerForHorizontalScrollbar->setCanDetachBackingStore(false);
+            m_layerForHorizontalScrollbar->setAllowsBackingStoreDetaching(false);
             horizontalScrollbarLayerChanged = true;
         }
     } else if (m_layerForHorizontalScrollbar) {
@@ -1703,7 +1734,7 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
     if (needsVerticalScrollbarLayer) {
         if (!m_layerForVerticalScrollbar) {
             m_layerForVerticalScrollbar = createGraphicsLayer("vertical scrollbar");
-            m_layerForVerticalScrollbar->setCanDetachBackingStore(false);
+            m_layerForVerticalScrollbar->setAllowsBackingStoreDetaching(false);
             verticalScrollbarLayerChanged = true;
         }
     } else if (m_layerForVerticalScrollbar) {
@@ -1716,7 +1747,7 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
     if (needsScrollCornerLayer) {
         if (!m_layerForScrollCorner) {
             m_layerForScrollCorner = createGraphicsLayer("scroll corner");
-            m_layerForScrollCorner->setCanDetachBackingStore(false);
+            m_layerForScrollCorner->setAllowsBackingStoreDetaching(false);
             scrollCornerLayerChanged = true;
         }
     } else if (m_layerForScrollCorner) {
@@ -1994,11 +2025,6 @@ ScrollingNodeID RenderLayerBacking::scrollingNodeIDForChildren() const
     }
 
     return m_positioningNodeID;
-}
-
-void RenderLayerBacking::setIsScrollCoordinatedWithViewportConstrainedRole(bool viewportCoordinated)
-{
-    m_graphicsLayer->setIsViewportConstrained(viewportCoordinated);
 }
 
 float RenderLayerBacking::compositingOpacity(float rendererOpacity) const

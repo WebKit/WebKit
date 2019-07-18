@@ -982,7 +982,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
             layerWillComposite();
         }
     }
-    
+
     for (auto* childLayer : layer.normalFlowLayers())
         computeCompositingRequirements(&layer, *childLayer, overlapMap, currentState, backingSharingState, anyDescendantHas3DTransform);
 
@@ -1069,6 +1069,9 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     bool layerContributesToOverlap = (currentState.compositingAncestor && !currentState.compositingAncestor->isRenderViewLayer()) || currentState.backingSharingAncestor;
     updateOverlapMap(overlapMap, layer, layerExtent, didPushOverlapContainer, layerContributesToOverlap, becameCompositedAfterDescendantTraversal && !descendantsAddedToOverlap);
+
+    if (layer.isComposited())
+        layer.backing()->updateAllowsBackingStoreDetaching(layerExtent.bounds);
 
     overlapMap.geometryMap().popMappingsToAncestor(ancestorLayer);
 
@@ -2971,7 +2974,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
     ASSERT(container);
 
     // Don't promote fixed position elements that are descendants of a non-view container, e.g. transformed elements.
-    // They will stay fixed wrt the container rather than the enclosing frame.j
+    // They will stay fixed wrt the container rather than the enclosing frame.
     if (container != &m_renderView) {
         queryData.nonCompositedForPositionReason = RenderLayer::NotCompositedForNonViewContainer;
         return false;
@@ -3754,7 +3757,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     if (requiresHorizontalScrollbarLayer()) {
         if (!m_layerForHorizontalScrollbar) {
             m_layerForHorizontalScrollbar = GraphicsLayer::create(graphicsLayerFactory(), *this);
-            m_layerForHorizontalScrollbar->setCanDetachBackingStore(false);
+            m_layerForHorizontalScrollbar->setAllowsBackingStoreDetaching(false);
             m_layerForHorizontalScrollbar->setShowDebugBorder(m_showDebugBorders);
             m_layerForHorizontalScrollbar->setName("horizontal scrollbar container");
 #if PLATFORM(COCOA) && USE(CA)
@@ -3775,7 +3778,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     if (requiresVerticalScrollbarLayer()) {
         if (!m_layerForVerticalScrollbar) {
             m_layerForVerticalScrollbar = GraphicsLayer::create(graphicsLayerFactory(), *this);
-            m_layerForVerticalScrollbar->setCanDetachBackingStore(false);
+            m_layerForVerticalScrollbar->setAllowsBackingStoreDetaching(false);
             m_layerForVerticalScrollbar->setShowDebugBorder(m_showDebugBorders);
             m_layerForVerticalScrollbar->setName("vertical scrollbar container");
 #if PLATFORM(COCOA) && USE(CA)
@@ -3796,7 +3799,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     if (requiresScrollCornerLayer()) {
         if (!m_layerForScrollCorner) {
             m_layerForScrollCorner = GraphicsLayer::create(graphicsLayerFactory(), *this);
-            m_layerForScrollCorner->setCanDetachBackingStore(false);
+            m_layerForScrollCorner->setAllowsBackingStoreDetaching(false);
             m_layerForScrollCorner->setShowDebugBorder(m_showDebugBorders);
             m_layerForScrollCorner->setName("scroll corner");
 #if PLATFORM(COCOA) && USE(CA)
@@ -4312,18 +4315,14 @@ ScrollingNodeID RenderLayerCompositor::updateScrollCoordinationForLayer(RenderLa
 {
     auto roles = coordinatedScrollingRolesForLayer(layer);
 
-    bool isViewportConstrained = roles.contains(ScrollCoordinationRole::ViewportConstrained);
 #if PLATFORM(IOS_FAMILY)
     if (m_legacyScrollingLayerCoordinator) {
-        if (isViewportConstrained)
+        if (roles.contains(ScrollCoordinationRole::ViewportConstrained))
             m_legacyScrollingLayerCoordinator->addViewportConstrainedLayer(layer);
         else
             m_legacyScrollingLayerCoordinator->removeViewportConstrainedLayer(layer);
     }
 #endif
-
-    // GraphicsLayers need to know whether they are viewport-constrained.
-    layer.backing()->setIsScrollCoordinatedWithViewportConstrainedRole(isViewportConstrained);
 
     if (!hasCoordinatedScrolling()) {
         // If this frame isn't coordinated, it cannot contain any scrolling tree nodes.
