@@ -57,6 +57,7 @@ public:
     void removeItem(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea, const String& key);
     void clear(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea);
     bool contains(const String& key);
+    bool prewarm();
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -104,6 +105,7 @@ private:
     HashCountedSet<String> m_pendingValueChanges;
 
     bool m_isDisconnected { true };
+    bool m_didPrewarm { false };
 };
 
 } // namespace WebKit

@@ -1,3 +1,42 @@
+2019-07-17  Chris Dumez  <cdumez@apple.com>
+
+        Prewarm local storage in the NetworkProcess to reduce WebContent process hangs
+        https://bugs.webkit.org/show_bug.cgi?id=199879
+        <rdar://problem/53217757>
+
+        Reviewed by Ryosuke Niwa.
+
+        When JS accesses window.localStorage for the first time, we end up doing a
+        synchronous IPC to the network process to pull in all items in the local
+        storage for the origin. If the network process does not have this data in
+        memory, it has to read it from a database on disk, which may take a significant
+        amount of time and hang the WebContent process during this time.
+
+        To alleviate this problem, this patch introduces prewarming on the local storage
+        in the network process when loading a given origin in the WebContent process.
+        This way, in most cases, when the JS accesses window.localStorage for the first
+        time, the synchronous IPC to the network process returns much faster (measured
+        50-100ms for a very large database, down from 250-300ms), as it only needs to
+        IPC the data over, without the need to fetch it from disk.
+
+        As a safety net to avoid excessive prewarming, we currently prewarm at most 5
+        security origins per page load.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::commitData):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::prewarmLocalStorageIfNecessary):
+        * page/DOMWindow.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::didPrewarmLocalStorage):
+        (WebCore::Frame::mayPrewarmLocalStorage const):
+        * page/Frame.h:
+        * storage/Storage.cpp:
+        (WebCore::Storage::prewarm):
+        * storage/Storage.h:
+        * storage/StorageArea.h:
+        (WebCore::StorageArea::prewarm):
+
 2019-07-17  Robin Morisset  <rmorisset@apple.com>
 
         [WHLSL] The lexer should not choke on a single '/'

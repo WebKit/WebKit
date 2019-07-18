@@ -86,7 +86,8 @@ private:
     void createSessionStorageMap(IPC::Connection&, uint64_t storageMapID, uint64_t storageNamespaceID, WebCore::SecurityOriginData&&);
     void destroyStorageMap(IPC::Connection&, uint64_t storageMapID);
 
-    void getValues(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageMapID, uint64_t storageMapSeed, GetValuesCallback&&);
+    void getValues(IPC::Connection&, uint64_t storageMapID, uint64_t storageMapSeed, GetValuesCallback&&);
+    void prewarm(IPC::Connection&, uint64_t storageMapID);
     void setItem(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString);
     void setItems(IPC::Connection&, uint64_t storageMapID, const HashMap<String, String>& items);
     void removeItem(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString);

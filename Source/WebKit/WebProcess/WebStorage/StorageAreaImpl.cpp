@@ -73,6 +73,11 @@ String StorageAreaImpl::item(const String& key)
     return m_storageAreaMap->item(key);
 }
 
+bool StorageAreaImpl::prewarm()
+{
+    return m_storageAreaMap->prewarm();
+}
+
 void StorageAreaImpl::setItem(Frame* sourceFrame, const String& key, const String& value, bool& quotaException)
 {
     ASSERT(!value.isNull());

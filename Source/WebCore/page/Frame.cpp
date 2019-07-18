@@ -117,6 +117,9 @@ static const Seconds scrollFrequency { 1000_s / 60. };
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, frameCounter, ("Frame"));
 
+// We prewarm local storage for at most 5 origins in a given page.
+static const unsigned maxlocalStoragePrewarmingCount { 5 };
+
 static inline Frame* parentFromOwnerElement(HTMLFrameOwnerElement* ownerElement)
 {
     if (!ownerElement)
@@ -973,6 +976,19 @@ void Frame::dropChildren()
     ASSERT(isMainFrame());
     while (Frame* child = tree().firstChild())
         tree().removeChild(*child);
+}
+
+void Frame::didPrewarmLocalStorage()
+{
+    ASSERT(isMainFrame());
+    ASSERT(m_localStoragePrewarmingCount < maxlocalStoragePrewarmingCount);
+    ++m_localStoragePrewarmingCount;
+}
+
+bool Frame::mayPrewarmLocalStorage() const
+{
+    ASSERT(isMainFrame());
+    return m_localStoragePrewarmingCount < maxlocalStoragePrewarmingCount;
 }
 
 void Frame::selfOnlyRef()
