@@ -230,9 +230,13 @@ bool Quirks::shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAr
 #if ENABLE(TOUCH_EVENTS)
 bool Quirks::isAmazon() const
 {
+    return topPrivatelyControlledDomain(m_document->topDocument().url().host().toString()).startsWith("amazon.");
+}
+
+bool Quirks::isGoogleMaps() const
+{
     auto& url = m_document->topDocument().url();
-    auto host = url.host();
-    return equalLettersIgnoringASCIICase(host, "amazon.com") || host.endsWithIgnoringASCIICase(".amazon.com");
+    return topPrivatelyControlledDomain(url.host().toString()).startsWith("google.") && url.path().startsWithIgnoringASCIICase("/maps/");
 }
 
 bool Quirks::shouldDispatchSimulatedMouseEvents() const
@@ -248,6 +252,8 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
         return false;
 
     if (isAmazon())
+        return true;
+    if (isGoogleMaps())
         return true;
 
     auto& url = m_document->topDocument().url();
@@ -266,8 +272,6 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
     if (equalLettersIgnoringASCIICase(host, "msn.com") || host.endsWithIgnoringASCIICase(".msn.com"))
         return true;
     if (equalLettersIgnoringASCIICase(host, "flipkart.com") || host.endsWithIgnoringASCIICase(".flipkart.com"))
-        return true;
-    if (equalLettersIgnoringASCIICase(host, "www.google.com") && url.path().startsWithIgnoringASCIICase("/maps/"))
         return true;
     if (equalLettersIgnoringASCIICase(host, "trailers.apple.com"))
         return true;
@@ -303,14 +307,13 @@ Optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(EventTarg
         return { };
 
     // On Google Maps, we want to limit simulated mouse events to dragging the little man that allows entering into Street View.
-    auto& url = m_document->topDocument().url();
-    auto host = url.host();
-    if (equalLettersIgnoringASCIICase(host, "www.google.com") && url.path().startsWithIgnoringASCIICase("/maps/")) {
+    if (isGoogleMaps()) {
         if (is<Element>(target) && downcast<Element>(target)->getAttribute("class") == "widget-expand-button-pegman-icon")
             return Event::IsCancelable::Yes;
         return { };
     }
 
+    auto host = m_document->topDocument().url().host();
     if (equalLettersIgnoringASCIICase(host, "desmos.com") || host.endsWithIgnoringASCIICase(".desmos.com"))
         return Event::IsCancelable::No;
 
