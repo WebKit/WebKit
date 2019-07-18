@@ -64,19 +64,19 @@ static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC glImageTargetTexture2D;
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<AcceleratedBackingStoreWayland> AcceleratedBackingStoreWayland::create(WebPageProxy& webPage)
+bool AcceleratedBackingStoreWayland::checkRequirements()
 {
 #if USE(WPE_RENDERER)
     if (!glImageTargetTexture2D) {
         if (!wpe_fdo_initialize_for_egl_display(PlatformDisplay::sharedDisplay().eglDisplay()))
-            return nullptr;
+            return false;
 
         std::unique_ptr<WebCore::GLContext> eglContext = GLContext::createOffscreenContext();
         if (!eglContext)
-            return nullptr;
+            return false;
 
         if (!eglContext->makeContextCurrent())
-            return nullptr;
+            return false;
 
 #if USE(OPENGL_ES)
         std::unique_ptr<Extensions3DOpenGLES> glExtensions = std::make_unique<Extensions3DOpenGLES>(nullptr,  false);
@@ -89,12 +89,18 @@ std::unique_ptr<AcceleratedBackingStoreWayland> AcceleratedBackingStoreWayland::
 
     if (!glImageTargetTexture2D) {
         WTFLogAlways("AcceleratedBackingStoreWPE requires glEGLImageTargetTexture2D.");
-        return nullptr;
+        return false;
     }
+
+    return true;
 #else
-    if (!WaylandCompositor::singleton().isRunning())
-        return nullptr;
+    return WaylandCompositor::singleton().isRunning();
 #endif
+}
+
+std::unique_ptr<AcceleratedBackingStoreWayland> AcceleratedBackingStoreWayland::create(WebPageProxy& webPage)
+{
+    ASSERT(checkRequirements());
     return std::unique_ptr<AcceleratedBackingStoreWayland>(new AcceleratedBackingStoreWayland(webPage));
 }
 

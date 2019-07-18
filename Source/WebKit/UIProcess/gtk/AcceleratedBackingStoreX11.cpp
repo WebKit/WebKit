@@ -103,11 +103,15 @@ private:
     HashMap<Damage, WTF::Function<void()>> m_notifyFunctions;
 };
 
-std::unique_ptr<AcceleratedBackingStoreX11> AcceleratedBackingStoreX11::create(WebPageProxy& webPage)
+bool AcceleratedBackingStoreX11::checkRequirements()
 {
     auto& display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay());
-    if (!display.supportsXComposite() || !display.supportsXDamage(s_damageEventBase, s_damageErrorBase))
-        return nullptr;
+    return display.supportsXComposite() && display.supportsXDamage(s_damageEventBase, s_damageErrorBase);
+}
+
+std::unique_ptr<AcceleratedBackingStoreX11> AcceleratedBackingStoreX11::create(WebPageProxy& webPage)
+{
+    ASSERT(checkRequirements());
     return std::unique_ptr<AcceleratedBackingStoreX11>(new AcceleratedBackingStoreX11(webPage));
 }
 

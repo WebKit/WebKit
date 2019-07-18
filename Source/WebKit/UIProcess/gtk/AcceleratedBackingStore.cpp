@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AcceleratedBackingStore.h"
 
+#include "HardwareAccelerationManager.h"
 #include "WebPageProxy.h"
 #include <WebCore/CairoUtilities.h>
 #include <WebCore/PlatformDisplay.h>
@@ -41,8 +42,26 @@
 namespace WebKit {
 using namespace WebCore;
 
+bool AcceleratedBackingStore::checkRequirements()
+{
+#if PLATFORM(WAYLAND) && USE(EGL)
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
+        return AcceleratedBackingStoreWayland::checkRequirements();
+#endif
+#if PLATFORM(X11)
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
+        return AcceleratedBackingStoreX11::checkRequirements();
+#endif
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
+}
+
 std::unique_ptr<AcceleratedBackingStore> AcceleratedBackingStore::create(WebPageProxy& webPage)
 {
+    if (!HardwareAccelerationManager::singleton().canUseHardwareAcceleration())
+        return nullptr;
+
 #if PLATFORM(WAYLAND) && USE(EGL)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
         return AcceleratedBackingStoreWayland::create(webPage);

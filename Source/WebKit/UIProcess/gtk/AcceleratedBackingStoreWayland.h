@@ -52,6 +52,7 @@ class WebPageProxy;
 class AcceleratedBackingStoreWayland final : public AcceleratedBackingStore {
     WTF_MAKE_NONCOPYABLE(AcceleratedBackingStoreWayland); WTF_MAKE_FAST_ALLOCATED;
 public:
+    static bool checkRequirements();
     static std::unique_ptr<AcceleratedBackingStoreWayland> create(WebPageProxy&);
     ~AcceleratedBackingStoreWayland();
 

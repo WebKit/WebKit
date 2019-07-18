@@ -1,3 +1,43 @@
+2019-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crash in webkitWebViewBaseRenderHostFileDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=199402
+
+        Reviewed by Michael Catanzaro.
+
+        There are two problems here:
+
+         - We need to ensure that the checks we do in HardwareAccelerationManager to disable AC mode are the same
+           as the ones done in AcceleratedBackingStore create() methods. This is not the case for WPE renderer.
+         - Some of the places where accelerateBackingStore is used, can be called even if AC mode is disabled, so we
+           need to null-check there before using the backing store.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDraw): Add an assert to ensure accelerateBackingStore is not nullptr here.
+        (webkitWebViewBaseEnterAcceleratedCompositingMode): Ditto.
+        (webkitWebViewBaseUpdateAcceleratedCompositingMode): Ditto.
+        (webkitWebViewBaseExitAcceleratedCompositingMode): Ditto.
+        (webkitWebViewBaseMakeGLContextCurrent): Ditto.
+        (webkitWebViewBaseDidRelaunchWebProcess): Null-check accelerateBackingStore before using it.
+        (webkitWebViewBasePageClosed): Ditto.
+        (webkitWebViewBaseRenderHostFileDescriptor): Ditto.
+        * UIProcess/gtk/AcceleratedBackingStore.cpp:
+        (WebKit::AcceleratedBackingStore::checkRequirements): Call AcceleratedBackingStoreWayland::checkRequirements()
+        or AcceleratedBackingStoreX11::checkRequirements() depending on the current display.
+        (WebKit::AcceleratedBackingStore::create): Return early if AC mode is disabled in HardwareAccelerationManager.
+        * UIProcess/gtk/AcceleratedBackingStore.h:
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::checkRequirements): Check requirements for hardware acceleration in Wayland.
+        (WebKit::AcceleratedBackingStoreWayland::create): Assert that requirements are present.
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.h:
+        * UIProcess/gtk/AcceleratedBackingStoreX11.cpp:
+        (WebKit::AcceleratedBackingStoreX11::checkRequirements): Check requirements for hardware acceleration in X11.
+        (WebKit::AcceleratedBackingStoreX11::create): Assert that requirements are present.
+        * UIProcess/gtk/AcceleratedBackingStoreX11.h:
+        * UIProcess/gtk/HardwareAccelerationManager.cpp:
+        (WebKit::HardwareAccelerationManager::HardwareAccelerationManager): Use
+        AcceleratedBackingStore::checkRequirements() to decide whether to disable AC mode.
+
 2019-07-17  Megan Gardner  <megan_gardner@apple.com>
 
         Early Out of positionInfomation check if possible

@@ -585,9 +585,10 @@ static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
     if (showingNavigationSnapshot)
         cairo_push_group(cr);
 
-    if (drawingArea->isInAcceleratedCompositingMode())
+    if (drawingArea->isInAcceleratedCompositingMode()) {
+        ASSERT(webViewBase->priv->acceleratedBackingStore);
         webViewBase->priv->acceleratedBackingStore->paint(cr, clipRect);
-    else {
+    } else {
         WebCore::Region unpaintedRegion; // This is simply unused.
         drawingArea->paint(cr, clipRect, unpaintedRegion);
     }
@@ -1663,21 +1664,25 @@ void webkitWebViewBaseResetClickCounter(WebKitWebViewBase* webkitWebViewBase)
 
 void webkitWebViewBaseEnterAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase, const LayerTreeContext& layerTreeContext)
 {
+    ASSERT(webkitWebViewBase->priv->acceleratedBackingStore);
     webkitWebViewBase->priv->acceleratedBackingStore->update(layerTreeContext);
 }
 
 void webkitWebViewBaseUpdateAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase, const LayerTreeContext& layerTreeContext)
 {
+    ASSERT(webkitWebViewBase->priv->acceleratedBackingStore);
     webkitWebViewBase->priv->acceleratedBackingStore->update(layerTreeContext);
 }
 
 void webkitWebViewBaseExitAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase)
 {
+    ASSERT(webkitWebViewBase->priv->acceleratedBackingStore);
     webkitWebViewBase->priv->acceleratedBackingStore->update(LayerTreeContext());
 }
 
 bool webkitWebViewBaseMakeGLContextCurrent(WebKitWebViewBase* webkitWebViewBase)
 {
+    ASSERT(webkitWebViewBase->priv->acceleratedBackingStore);
     return webkitWebViewBase->priv->acceleratedBackingStore->makeContextCurrent();
 }
 
@@ -1700,8 +1705,10 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase
     gtk_widget_queue_resize_no_redraw(GTK_WIDGET(webkitWebViewBase));
 
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
-    auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea());
-    webkitWebViewBaseUpdateAcceleratedCompositingMode(webkitWebViewBase, drawingArea->layerTreeContext());
+    if (priv->acceleratedBackingStore) {
+        auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea());
+        priv->acceleratedBackingStore->update(drawingArea->layerTreeContext());
+    }
 
     if (priv->viewGestureController)
         priv->viewGestureController->connectToProcess();
@@ -1713,7 +1720,8 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase
 
 void webkitWebViewBasePageClosed(WebKitWebViewBase* webkitWebViewBase)
 {
-    webkitWebViewBase->priv->acceleratedBackingStore->update(LayerTreeContext());
+    if (webkitWebViewBase->priv->acceleratedBackingStore)
+        webkitWebViewBase->priv->acceleratedBackingStore->update({ });
 }
 
 RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase* webkitWebViewBase)
@@ -1817,6 +1825,8 @@ void webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase* webkitWebViewBase, con
 #if USE(WPE_RENDERER)
 int webkitWebViewBaseRenderHostFileDescriptor(WebKitWebViewBase* webkitWebViewBase)
 {
+    if (!webkitWebViewBase->priv->acceleratedBackingStore)
+        return -1;
     return webkitWebViewBase->priv->acceleratedBackingStore->renderHostFileDescriptor();
 }
 #endif
