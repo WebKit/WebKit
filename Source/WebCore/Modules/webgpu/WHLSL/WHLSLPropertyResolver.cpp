@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLArrayType.h"
 #include "WHLSLAssignmentExpression.h"
 #include "WHLSLCallExpression.h"
 #include "WHLSLCommaExpression.h"
@@ -35,6 +36,7 @@
 #include "WHLSLDotExpression.h"
 #include "WHLSLFunctionDeclaration.h"
 #include "WHLSLFunctionDefinition.h"
+#include "WHLSLIndexExpression.h"
 #include "WHLSLMakeArrayReferenceExpression.h"
 #include "WHLSLMakePointerExpression.h"
 #include "WHLSLPointerType.h"

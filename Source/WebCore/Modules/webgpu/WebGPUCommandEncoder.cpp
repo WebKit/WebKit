@@ -31,6 +31,7 @@
 #include "GPUComputePassEncoder.h"
 #include "GPURenderPassDescriptor.h"
 #include "GPURenderPassEncoder.h"
+#include "Logging.h"
 #include "WebGPUBuffer.h"
 #include "WebGPUComputePassEncoder.h"
 #include "WebGPURenderPassDescriptor.h"

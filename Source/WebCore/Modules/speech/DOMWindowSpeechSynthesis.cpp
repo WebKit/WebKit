@@ -34,6 +34,7 @@
 #if ENABLE(SPEECH_SYNTHESIS)
 
 #include "DOMWindow.h"
+#include "Page.h"
 
 namespace WebCore {
 

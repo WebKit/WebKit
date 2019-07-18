@@ -1,3 +1,20 @@
+2019-07-17  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
+        Add missing #include's
+        https://bugs.webkit.org/show_bug.cgi?id=199856
+
+        Reviewed by Simon Fraser.
+
+        The missing headers were found during development when unified sources changed.
+
+        No new tests required. Adding #include's only.
+
+        * Modules/speech/DOMWindowSpeechSynthesis.cpp:
+        * Modules/webgpu/WHLSL/WHLSLAutoInitializeVariables.cpp:
+        * Modules/webgpu/WHLSL/WHLSLPreserveVariableLifetimes.cpp:
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp:
+        * Modules/webgpu/WebGPUCommandEncoder.cpp:
+
 2019-07-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add inputmode to the feature status page

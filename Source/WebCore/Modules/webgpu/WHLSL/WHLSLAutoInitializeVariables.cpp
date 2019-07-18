@@ -31,6 +31,7 @@
 #include "WHLSLAST.h"
 #include "WHLSLASTDumper.h"
 #include "WHLSLNameContext.h"
+#include "WHLSLProgram.h"
 #include "WHLSLResolveOverloadImpl.h"
 #include "WHLSLResolvingType.h"
 #include "WHLSLVisitor.h"
