@@ -1,3 +1,9 @@
+2019-07-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Unreviewed build fix after r247549.
+
+        * Modules/webgpu/WHLSL/WHLSLRecursiveTypeChecker.cpp:
+
 2019-07-17  Robin Morisset  <rmorisset@apple.com>
 
         [WHLSL] Remove traps from the compiler
