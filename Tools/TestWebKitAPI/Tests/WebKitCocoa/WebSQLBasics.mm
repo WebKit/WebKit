@@ -64,5 +64,5 @@ TEST(WebSQL, OpenDatabaseAlwaysExists)
 
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     RetainPtr<NSString> string = (NSString *)[lastScriptMessage body];
-    EXPECT_WK_STREQ(@"Web SQL is deprecated", string.get());
+    EXPECT_WK_STREQ(@"openDatabase tests passed", string.get());
 }
