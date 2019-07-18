@@ -1,3 +1,24 @@
+2019-07-18  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION: Panning on an Amazon product image scrolls the page on iPadOS
+        https://bugs.webkit.org/show_bug.cgi?id=199905
+        <rdar://problem/49124529>
+
+        Reviewed by Dean Jackson.
+
+        Amazon product pages include images that the user can touch and pan to show zoomed details in a side image. This
+        currently works on iPadOS thanks to the dispatch of simulated "mousemove" events on the product image, but the site
+        doesn't call preventDefault() when handling those events as it wasn't necessary for macOS.
+
+        We add a new quirk that will indicate that a given element is such a product image.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::isAmazon const):
+        (WebCore::Quirks::shouldDispatchSimulatedMouseEvents const):
+        (WebCore::Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented const):
+        (WebCore::Quirks::simulatedMouseEventTypeForTarget const):
+        * page/Quirks.h:
+
 2019-07-18  Youenn Fablet  <youenn@apple.com>
 
         Make sure to set kCTFontFallbackOptionAttribute to kCTFontFallbackOptionSystem for system fonts
