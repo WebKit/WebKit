@@ -1,5 +1,42 @@
 2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r247519. rdar://problem/53229612
+
+    Hang in WebCore::AccessibilityRenderObject::visiblePositionRangeForLine.
+    https://bugs.webkit.org/show_bug.cgi?id=199845
+    <rdar://problem/53121017>
+    
+    Patch by Andres Gonzalez <andresg_22@apple.com> on 2019-07-17
+    Reviewed by Chris Fleizach.
+    
+    - Added check for upper bound NSNotFound for parameter to visiblePositionRangeForLine.
+    - Fixed signed/unsigned issue for AXTextMarkerRangeForLine attribute.
+    
+    * accessibility/AccessibilityRenderObject.cpp:
+    (WebCore::AccessibilityRenderObject::visiblePositionRangeForLine const):
+    * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+    (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247519 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-17  Andres Gonzalez  <andresg_22@apple.com>
+
+            Hang in WebCore::AccessibilityRenderObject::visiblePositionRangeForLine.
+            https://bugs.webkit.org/show_bug.cgi?id=199845
+            <rdar://problem/53121017>
+
+            Reviewed by Chris Fleizach.
+
+            - Added check for upper bound NSNotFound for parameter to visiblePositionRangeForLine.
+            - Fixed signed/unsigned issue for AXTextMarkerRangeForLine attribute.
+
+            * accessibility/AccessibilityRenderObject.cpp:
+            (WebCore::AccessibilityRenderObject::visiblePositionRangeForLine const):
+            * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+            (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
+2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r247504. rdar://problem/53229614
 
     Fix includes and make a constructor explicit to avoid unified-sources-triggered test failures

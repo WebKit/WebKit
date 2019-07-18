@@ -1978,7 +1978,9 @@ VisiblePositionRange AccessibilityRenderObject::visiblePositionRangeForLine(unsi
     while (--lineCount) {
         savedVisiblePos = visiblePos;
         visiblePos = nextLinePosition(visiblePos, 0);
-        if (visiblePos.isNull() || visiblePos == savedVisiblePos)
+        if (visiblePos.isNull()
+            || visiblePos == savedVisiblePos
+            || visiblePos.equals(savedVisiblePos))
             return VisiblePositionRange();
     }
     
