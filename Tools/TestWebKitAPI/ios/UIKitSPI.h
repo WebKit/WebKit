@@ -32,6 +32,7 @@
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIBarButtonItemGroup_Private.h>
 #import <UIKit/UICalloutBar.h>
+#import <UIKit/UIKeyboardImpl.h>
 #import <UIKit/UIKeyboard_Private.h>
 #import <UIKit/UIResponder_Private.h>
 #import <UIKit/UITextInputMultiDocument.h>
@@ -76,6 +77,8 @@ WTF_EXTERN_C_END
 @end
 
 @class WebEvent;
+
+@class UITextInputArrowKeyHistory;
 
 @protocol UITextInputPrivate <UITextInput, UITextInputTraits_Private>
 - (UITextInputTraits *)textInputTraits;
