@@ -1,5 +1,21 @@
 2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r247485. rdar://problem/53229615
+
+    Unreviewed, test262 gardening.
+    
+    * test262/expectations.yaml:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247485 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-16  Keith Miller  <keith_miller@apple.com>
+
+            Unreviewed, test262 gardening.
+
+            * test262/expectations.yaml:
+
+2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r247469. rdar://problem/53229615
 
     Update test262
