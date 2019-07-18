@@ -102,6 +102,19 @@ static void checkURLArgument(NSURL *url)
     _configuration->setNetworkCacheDirectory(url.path);
 }
 
+- (NSURL *)deviceIdHashSaltsStorageDirectory
+{
+    return [NSURL fileURLWithPath:_configuration->deviceIdHashSaltsStorageDirectory() isDirectory:YES];
+}
+
+- (void)setDeviceIdHashSaltsStorageDirectory:(NSURL *)url
+{
+    if (!_configuration->isPersistent())
+        [NSException raise:NSInvalidArgumentException format:@"Cannot set deviceIdHashSaltsStorageDirectory on a non-persistent _WKWebsiteDataStoreConfiguration."];
+    checkURLArgument(url);
+    _configuration->setDeviceIdHashSaltsStorageDirectory(url.path);
+}
+
 - (NSURL *)_webSQLDatabaseDirectory
 {
     return [NSURL fileURLWithPath:_configuration->webSQLDatabaseDirectory() isDirectory:YES];

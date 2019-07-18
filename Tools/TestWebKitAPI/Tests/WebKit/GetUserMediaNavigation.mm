@@ -34,7 +34,9 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 
 static bool okToProceed = false;
 static bool shouldReleaseInEnumerate = false;
@@ -97,6 +99,36 @@ TEST(WebKit, NavigateDuringDeviceEnumeration)
     shouldReleaseInEnumerate = true;
     [webView loadTestPageNamed:@"enumerateMediaDevices"];
     TestWebKitAPI::Util::run(&okToProceed);
+}
+
+TEST(WebKit, DeviceIdHashSaltsDirectory)
+{
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"CustomPathsTest"] isDirectory:YES];
+    NSURL *hashSaltLocation = [tempDir URLByAppendingPathComponent:@"1"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    EXPECT_FALSE([fileManager fileExistsAtPath:hashSaltLocation.path]);
+    
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [websiteDataStoreConfiguration setDeviceIdHashSaltsStorageDirectory:tempDir];
+    
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:[[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()] autorelease]];
+    auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    auto preferences = [configuration preferences];
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    preferences._mediaDevicesEnabled = YES;
+    preferences._mockCaptureDevicesEnabled = YES;
+    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
+    auto delegate = adoptNS([[NavigationWhileGetUserMediaPromptDisplayedUIDelegate alloc] init]);
+    webView.UIDelegate = delegate.get();
+    
+    [webView loadTestPageNamed:@"enumerateMediaDevices"];
+    
+    while (![fileManager fileExistsAtPath:hashSaltLocation.path])
+        Util::spinRunLoop();
+    NSError *error = nil;
+    [fileManager removeItemAtPath:tempDir.path error:&error];
+    EXPECT_FALSE(error);
 }
 
 } // namespace TestWebKitAPI

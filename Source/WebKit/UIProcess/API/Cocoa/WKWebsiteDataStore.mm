@@ -250,6 +250,8 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
             config->setServiceWorkerRegistrationDirectory(configuration._serviceWorkerRegistrationDirectory.path);
         if (configuration.networkCacheDirectory)
             config->setNetworkCacheDirectory(configuration.networkCacheDirectory.path);
+        if (configuration.deviceIdHashSaltsStorageDirectory)
+            config->setDeviceIdHashSaltsStorageDirectory(configuration.deviceIdHashSaltsStorageDirectory.path);
     } else {
         RELEASE_ASSERT(!configuration._webStorageDirectory);
         RELEASE_ASSERT(!configuration._webSQLDatabaseDirectory);
@@ -259,6 +261,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         RELEASE_ASSERT(!configuration._cacheStorageDirectory);
         RELEASE_ASSERT(!configuration._serviceWorkerRegistrationDirectory);
         RELEASE_ASSERT(!configuration.networkCacheDirectory);
+        RELEASE_ASSERT(!configuration.deviceIdHashSaltsStorageDirectory);
     }
 
     if (configuration.sourceApplicationBundleIdentifier)
