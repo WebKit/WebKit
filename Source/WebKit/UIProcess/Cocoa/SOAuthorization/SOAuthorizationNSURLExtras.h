@@ -25,9 +25,12 @@
 
 #pragma once
 
-// FIXME rdar://problem/50028246 Remove the following once the radar is fixed.
 @interface NSURL (SOAuthorizationExtras)
 
+// FIXME: <rdar://problem/50028246> Remove the following once the radar is fixed.
 + (BOOL)_web_canPerformAuthorizationWithURL:(NSURL *)url;
+
+// FIXME: <rdar://problem/53224485> Remove the following once the radar is fixed.
++ (BOOL)_web_willPerformSOKerberosAuthorizationWithURL:(NSURL *)url;
 
 @end

@@ -39,4 +39,13 @@
 #endif
 }
 
++ (BOOL)_web_willPerformSOKerberosAuthorizationWithURL:(NSURL *)url
+{
+#if HAVE(APP_SSO)
+    return [PAL::getSOAuthorizationClass() canPerformAuthorizationWithURL:url responseCode:401];
+#else
+    return false;
+#endif
+}
+
 @end
