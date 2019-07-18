@@ -58,4 +58,7 @@
 #import <WebKit/WKWebsiteDataRecord.h>
 #import <WebKit/WKWebsiteDataStore.h>
 #import <WebKit/WKWindowFeatures.h>
+
+#if !defined(TARGET_OS_IOSMAC) || !TARGET_OS_IOSMAC
 #import <WebKit/WebKitLegacy.h>
+#endif

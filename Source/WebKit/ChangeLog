@@ -1,5 +1,30 @@
 2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r247494. rdar://problem/53229554
+
+    [macCatalyst] Do not include WebKitLegacy.h in WebKit.h
+    https://bugs.webkit.org/show_bug.cgi?id=199833
+    <rdar://problem/53036744>
+    
+    Reviewed by Tim Horton.
+    
+    * Shared/API/Cocoa/WebKit.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247494 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-16  Andy Estes  <aestes@apple.com>
+
+            [macCatalyst] Do not include WebKitLegacy.h in WebKit.h
+            https://bugs.webkit.org/show_bug.cgi?id=199833
+            <rdar://problem/53036744>
+
+            Reviewed by Tim Horton.
+
+            * Shared/API/Cocoa/WebKit.h:
+
+2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r247490. rdar://problem/53229559
 
     NSTextFinder holes don't scroll with the page
