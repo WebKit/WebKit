@@ -1133,8 +1133,11 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @property (nonatomic, readonly) UIKeyboardInputMode *currentInputModeInPreference;
 @end
 
+@class CALayerHost;
+
 @interface _UILayerHostView : UIView
 - (instancetype)initWithFrame:(CGRect)frame pid:(pid_t)pid contextID:(uint32_t)contextID;
+@property (nonatomic, readonly, retain) CALayerHost *layerHost;
 @end
 
 @interface _UIRemoteView : _UILayerHostView
