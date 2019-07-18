@@ -191,6 +191,7 @@ private:
     void performIterateCursor(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBIterateCursorData&);
     void performPrefetchCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier);
 
+    void performStartVersionChangeTransaction(const IDBTransactionInfo&);
     void performActivateTransactionInBackingStore(uint64_t callbackIdentifier, const IDBTransactionInfo&);
     void performUnconditionalDeleteBackingStore();
     void shutdownForClose();
@@ -214,6 +215,8 @@ private:
     void didPerformIterateCursor(uint64_t callbackIdentifier, const IDBError&, const IDBGetResult&);
     void didPerformCommitTransaction(uint64_t callbackIdentifier, const IDBError&, const IDBResourceIdentifier& transactionIdentifier);
     void didPerformAbortTransaction(uint64_t callbackIdentifier, const IDBError&, const IDBResourceIdentifier& transactionIdentifier);
+
+    void didPerformStartVersionChangeTransaction(const IDBError&);
     void didPerformActivateTransactionInBackingStore(uint64_t callbackIdentifier, const IDBError&);
     void didPerformUnconditionalDeleteBackingStore();
     void didShutdownForClose();
