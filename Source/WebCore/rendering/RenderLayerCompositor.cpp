@@ -4525,7 +4525,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingProxyRole(
             ASSERT(entry.clipData.clippingLayer);
             ASSERT(entry.clipData.clippingLayer->isComposited());
 
-            auto overflowScrollNodeID = 0;
+            ScrollingNodeID overflowScrollNodeID = 0;
             if (auto* backing = entry.clipData.clippingLayer->backing())
                 overflowScrollNodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
 

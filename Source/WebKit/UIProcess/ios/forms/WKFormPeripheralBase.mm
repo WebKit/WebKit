@@ -28,9 +28,9 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "WKContentView.h"
+#import "UIKitSPI.h"
+#import "WKContentViewInteraction.h"
 #import <pal/spi/cocoa/IOKitSPI.h>
-#import <wtf/RetainPtr.h>
 
 @implementation WKFormPeripheralBase {
     RetainPtr<NSObject <WKFormControl>> _control;
