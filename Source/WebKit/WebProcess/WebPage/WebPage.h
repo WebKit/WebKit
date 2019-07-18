@@ -811,7 +811,7 @@ public:
 #if PLATFORM(MAC)
     void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool registerUndoGroup = false);
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, CallbackID);
-    void fontAtSelection(CompletionHandler<void(const FontInfo&, double, bool)>&&);
+    void fontAtSelection(CallbackID);
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(SERVICE_CONTROLS)

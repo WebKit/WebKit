@@ -241,13 +241,26 @@ void WebPageProxy::attributedStringForCharacterRangeCallback(const AttributedStr
     callback->performCallbackWithReturnValue(string, actualRange);
 }
 
-void WebPageProxy::fontAtSelection(Function<void(const FontInfo&, double, bool)>&& callback)
+void WebPageProxy::fontAtSelection(Function<void(const FontInfo&, double, bool, CallbackBase::Error)>&& callback)
 {
     if (!hasRunningProcess()) {
-        callback({ }, 0, false);
+        callback({ }, 0, false, CallbackBase::Error::Unknown);
         return;
     }
-    m_process->connection()->sendWithAsyncReply(Messages::WebPage::FontAtSelection(), WTFMove(callback), m_pageID);
+
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
+    process().send(Messages::WebPage::FontAtSelection(callbackID), m_pageID);
+}
+
+void WebPageProxy::fontAtSelectionCallback(const FontInfo& fontInfo, double fontSize, bool selectionHasMultipleFonts, CallbackID callbackID)
+{
+    auto callback = m_callbacks.take<FontAtSelectionCallback>(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        return;
+    }
+
+    callback->performCallbackWithReturnValue(fontInfo, fontSize, selectionHasMultipleFonts);
 }
 
 String WebPageProxy::stringSelectionForPasteboard()

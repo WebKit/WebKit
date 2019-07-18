@@ -2810,7 +2810,10 @@ void WebViewImpl::updateFontManagerIfNeeded()
     if (!fontPanelIsVisible && !m_page->editorState().isContentRichlyEditable)
         return;
 
-    m_page->fontAtSelection([](const FontInfo& fontInfo, double fontSize, bool selectionHasMultipleFonts) {
+    m_page->fontAtSelection([](const FontInfo& fontInfo, double fontSize, bool selectionHasMultipleFonts, CallbackBase::Error error) {
+        if (error != CallbackBase::Error::None)
+            return;
+
         NSDictionary *attributeDictionary = (__bridge NSDictionary *)fontInfo.fontAttributeDictionary.get();
         if (!attributeDictionary)
             return;

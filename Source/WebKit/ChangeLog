@@ -1,5 +1,53 @@
 2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r247460. rdar://problem/53229628
+
+    Followup to r247439
+    https://bugs.webkit.org/show_bug.cgi?id=199788
+    <rdar://problem/52142570>
+    
+    Reviewed by Tim Horton.
+    
+    As it turns out, sending modern async completion-handler based IPC messages while processing incoming sync
+    messages results in a debug assertion. Instead of migrating FontAtSelection to the new async IPC mechanism,
+    restore the older CallbackID-based async IPC.
+    
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebPageProxy.messages.in:
+    * UIProcess/mac/WebPageProxyMac.mm:
+    (WebKit::WebPageProxy::fontAtSelection):
+    (WebKit::WebPageProxy::fontAtSelectionCallback):
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/WebPage.messages.in:
+    * WebProcess/WebPage/mac/WebPageMac.mm:
+    (WebKit::WebPage::fontAtSelection):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247460 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Followup to r247439
+            https://bugs.webkit.org/show_bug.cgi?id=199788
+            <rdar://problem/52142570>
+
+            Reviewed by Tim Horton.
+
+            As it turns out, sending modern async completion-handler based IPC messages while processing incoming sync
+            messages results in a debug assertion. Instead of migrating FontAtSelection to the new async IPC mechanism,
+            restore the older CallbackID-based async IPC.
+
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * UIProcess/mac/WebPageProxyMac.mm:
+            (WebKit::WebPageProxy::fontAtSelection):
+            (WebKit::WebPageProxy::fontAtSelectionCallback):
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::fontAtSelection):
+
+2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r247439. rdar://problem/53229628
 
     [macOS 10.15] Cannot unbold selected text when the system font is used
