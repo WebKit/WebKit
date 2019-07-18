@@ -1,3 +1,16 @@
+2019-07-18  Youenn Fablet  <youenn@apple.com>
+
+        Make sure to set kCTFontFallbackOptionAttribute to kCTFontFallbackOptionSystem for system fonts
+        https://bugs.webkit.org/show_bug.cgi?id=199769
+        <rdar://problem/49390297>
+
+        Reviewed by Myles C. Maxfield.
+
+        Add a font containing one extended character not found in system fonts.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/fonts/FakeHelvetica-SingleExtendedCharacter.ttf: Added.
+
 2019-07-18  Konstantin Tokarev  <annulen@yandex.ru>
 
         Unreviewed, Add Olivier Blin as contributor

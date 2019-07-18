@@ -28,6 +28,7 @@
 #include "Font.h"
 
 #include <CoreText/CoreText.h>
+#include <pal/spi/cocoa/CoreTextSPI.h>
 
 namespace WebCore {
 
@@ -52,5 +53,13 @@ CFDictionaryRef Font::getCFStringAttributes(bool enableKerning, FontOrientation 
 
     return attributesDictionary.get();
 }
+
+#if HAVE(DISALLOWABLE_USER_INSTALLED_FONTS)
+bool Font::isUserInstalledFont() const
+{
+    auto isUserInstalledFont = adoptCF(static_cast<CFBooleanRef>(CTFontCopyAttribute(getCTFont(), kCTFontUserInstalledAttribute)));
+    return isUserInstalledFont && CFBooleanGetValue(isUserInstalledFont.get());
+}
+#endif
 
 } // namespace WebCore

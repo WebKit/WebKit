@@ -1,3 +1,32 @@
+2019-07-18  Youenn Fablet  <youenn@apple.com>
+
+        Make sure to set kCTFontFallbackOptionAttribute to kCTFontFallbackOptionSystem for system fonts
+        https://bugs.webkit.org/show_bug.cgi?id=199769
+        <rdar://problem/49390297>
+
+        Reviewed by Myles C. Maxfield.
+
+        When getting a system font, set the appropriate attribute so that it
+        does not fallback to a user initiated font.
+        Add an ASSERT that checks that the font in use is not a user font if
+        policy is to not use user installed fonts.
+
+        Tests: fast/text/user-installed-fonts/extended-character-with-user-font.html
+               fast/text/user-installed-fonts/extended-character.html
+
+        * platform/graphics/Font.h:
+        * platform/graphics/FontCascadeFonts.cpp:
+        (WebCore::FontCascadeFonts::glyphDataForSystemFallback):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont):
+        (WebCore::FontDatabase::singletonAllowingUserInstalledFonts):
+        (WebCore::FontDatabase::singletonDisallowingUserInstalledFonts):
+        (WebCore::addAttributesForInstalledFonts):
+        (WebCore::addAttributesForWebFonts):
+        (WebCore::installedFontMandatoryAttributes):
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+        (WebCore::Font::isUserInstalledFont const):
+
 2019-07-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] InlineFormattingContext::LineLayout::placeInlineItems is getting too complex.

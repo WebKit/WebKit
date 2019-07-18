@@ -1,3 +1,20 @@
+2019-07-18  Youenn Fablet  <youenn@apple.com>
+
+        Make sure to set kCTFontFallbackOptionAttribute to kCTFontFallbackOptionSystem for system fonts
+        https://bugs.webkit.org/show_bug.cgi?id=199769
+        <rdar://problem/49390297>
+
+        Reviewed by Myles C. Maxfield.
+
+        Tests require WTR and recent MacOS, hence why they are disabled elsewhere.
+
+        * TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * fast/text/user-installed-fonts/extended-character-expected.html: Added.
+        * fast/text/user-installed-fonts/extended-character-with-user-font-expected-mismatch.html: Added.
+        * fast/text/user-installed-fonts/extended-character-with-user-font.html: Added.
+        * fast/text/user-installed-fonts/extended-character.html: Added.
+
 2019-07-18  Truitt Savell  <tsavell@apple.com>
 
         Rebaseline imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering.html
