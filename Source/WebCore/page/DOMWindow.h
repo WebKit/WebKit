@@ -181,6 +181,8 @@ public:
 
     void showModalDialog(const String& urlString, const String& dialogFeaturesString, DOMWindow& activeWindow, DOMWindow& firstWindow, const WTF::Function<void(DOMWindow&)>& prepareDialogFunction);
 
+    void prewarmLocalStorageIfNecessary();
+
     void alert(const String& message = emptyString());
     bool confirm(const String& message);
     String prompt(const String& message, const String& defaultValue);

@@ -290,6 +290,9 @@ public:
     bool isURLAllowed(const URL&) const;
     WEBCORE_EXPORT bool isAlwaysOnLoggingAllowed() const;
 
+    void didPrewarmLocalStorage();
+    bool mayPrewarmLocalStorage() const;
+
 // ========
 
     void selfOnlyRef();
@@ -349,6 +352,7 @@ private:
     unsigned m_navigationDisableCount { 0 };
     unsigned m_selfOnlyRefCount { 0 };
     bool m_hasHadUserInteraction { false };
+    unsigned m_localStoragePrewarmingCount { 0 };
 
 protected:
     UniqueRef<EventHandler> m_eventHandler;

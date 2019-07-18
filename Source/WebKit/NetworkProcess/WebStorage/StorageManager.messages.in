@@ -26,7 +26,8 @@ messages -> StorageManager {
     CreateSessionStorageMap(uint64_t storageMapID, uint64_t storageNamespaceID, struct WebCore::SecurityOriginData securityOriginData) WantsConnection
     DestroyStorageMap(uint64_t storageMapID) WantsConnection
 
-    GetValues(struct WebCore::SecurityOriginData securityOriginData, uint64_t storageMapID, uint64_t storageMapSeed) -> (HashMap<String, String> values) Synchronous WantsConnection
+    Prewarm(uint64_t storageMapID) WantsConnection
+    GetValues(uint64_t storageMapID, uint64_t storageMapSeed) -> (HashMap<String, String> values) Synchronous WantsConnection
 
     SetItem(struct WebCore::SecurityOriginData securityOriginData, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, String key, String value, String urlString) WantsConnection
     SetItems(uint64_t storageMapID, HashMap<String, String> items) WantsConnection

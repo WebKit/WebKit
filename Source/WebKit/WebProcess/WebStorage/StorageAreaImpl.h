@@ -61,6 +61,7 @@ private:
     void decrementAccessCount() override;
     void closeDatabaseIfIdle() override;
     const WebCore::SecurityOriginData& securityOrigin() const override;
+    bool prewarm() final;
 
     uint64_t m_storageAreaID;
     Ref<StorageAreaMap> m_storageAreaMap;

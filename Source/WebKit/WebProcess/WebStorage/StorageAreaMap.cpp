@@ -178,13 +178,24 @@ void StorageAreaMap::loadValuesIfNeeded()
     // FIXME: This should use a special sendSync flag to indicate that we don't want to process incoming messages while waiting for a reply.
     // (This flag does not yet exist). Since loadValuesIfNeeded() ends up being called from within JavaScript code, processing incoming synchronous messages
     // could lead to weird reentrency bugs otherwise.
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::StorageManager::GetValues(m_securityOrigin->data(), m_storageMapID, m_currentSeed), Messages::StorageManager::GetValues::Reply(values), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::StorageManager::GetValues(m_storageMapID, m_currentSeed), Messages::StorageManager::GetValues::Reply(values), 0);
 
     m_storageMap = StorageMap::create(m_quotaInBytes);
     m_storageMap->importItems(WTFMove(values));
 
     // We want to ignore all changes until we get the DidGetValues message.
     m_hasPendingGetValues = true;
+}
+
+bool StorageAreaMap::prewarm()
+{
+    if (m_didPrewarm || m_storageMap)
+        return false;
+    m_didPrewarm = true;
+
+    connect();
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManager::Prewarm(m_storageMapID), 0);
+    return true;
 }
 
 void StorageAreaMap::didGetValues(uint64_t storageMapSeed)
