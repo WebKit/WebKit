@@ -225,31 +225,43 @@ void SpeechSynthesis::boundaryEventOccurred(PlatformSpeechSynthesisUtterance& ut
 
 void SpeechSynthesis::didStartSpeaking()
 {
+    if (!m_currentSpeechUtterance)
+        return;
     didStartSpeaking(*m_currentSpeechUtterance->platformUtterance());
 }
 
 void SpeechSynthesis::didFinishSpeaking()
 {
+    if (!m_currentSpeechUtterance)
+        return;
     didFinishSpeaking(*m_currentSpeechUtterance->platformUtterance());
 }
 
 void SpeechSynthesis::didPauseSpeaking()
 {
+    if (!m_currentSpeechUtterance)
+        return;
     didPauseSpeaking(*m_currentSpeechUtterance->platformUtterance());
 }
 
 void SpeechSynthesis::didResumeSpeaking()
 {
+    if (!m_currentSpeechUtterance)
+        return;
     didResumeSpeaking(*m_currentSpeechUtterance->platformUtterance());
 }
 
 void SpeechSynthesis::speakingErrorOccurred()
 {
+    if (!m_currentSpeechUtterance)
+        return;
     speakingErrorOccurred(*m_currentSpeechUtterance->platformUtterance());
 }
 
 void SpeechSynthesis::boundaryEventOccurred(bool wordBoundary, unsigned charIndex)
 {
+    if (!m_currentSpeechUtterance)
+        return;
     boundaryEventOccurred(*m_currentSpeechUtterance->platformUtterance(), wordBoundary ? SpeechBoundary::SpeechWordBoundary : SpeechBoundary::SpeechSentenceBoundary, charIndex);
 }
 

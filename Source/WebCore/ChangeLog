@@ -1,3 +1,22 @@
+2019-07-18  Per Arne Vollan  <pvollan@apple.com>
+
+        Crash under WebPage::boundaryEventOccurred
+        https://bugs.webkit.org/show_bug.cgi?id=199907
+
+        Reviewed by Chris Fleizach.
+
+        Add null pointer checks.
+
+        No new tests, since I have not been able to reproduce this in a test.
+
+        * Modules/speech/SpeechSynthesis.cpp:
+        (WebCore::SpeechSynthesis::didStartSpeaking):
+        (WebCore::SpeechSynthesis::didFinishSpeaking):
+        (WebCore::SpeechSynthesis::didPauseSpeaking):
+        (WebCore::SpeechSynthesis::didResumeSpeaking):
+        (WebCore::SpeechSynthesis::speakingErrorOccurred):
+        (WebCore::SpeechSynthesis::boundaryEventOccurred):
+
 2019-07-18  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] The button and buttons properties are incorrect on iOS
