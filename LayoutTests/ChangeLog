@@ -1,3 +1,19 @@
+2019-07-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS Sim] Multiple quicklook tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=191711
+
+        Reviewed by Simon Fraser.
+
+        Rebaseline expected results for quicklook layout tests.
+
+        * platform/ios/TestExpectations:
+        * platform/ios/quicklook/powerpoint-expected.txt:
+        * platform/ios/quicklook/powerpoint-legacy-expected.txt:
+        * platform/ios/quicklook/resources/numbers-expected.pdf:
+        * quicklook/resources/keynote-expected.pdf:
+        * quicklook/resources/pages-expected.pdf:
+
 2019-07-18  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] The button and buttons properties are incorrect on iOS

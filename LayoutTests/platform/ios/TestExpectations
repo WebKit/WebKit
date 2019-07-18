@@ -3219,8 +3219,6 @@ fast/events/touch/ios/pointer-events-with-modifiers.html [ Skip ]
 webkit.org/b/191707 imported/w3c/web-platform-tests/webrtc/simplecall-no-ssrcs.https.html [ Skip ]
 webkit.org/b/191707 imported/w3c/web-platform-tests/webrtc/simplecall.https.html [ Skip ]
 
-webkit.org/b/191711 quicklook/numbers.html [ ImageOnlyFailure ]
-
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Pass Failure ]
 
 webkit.org/b/175678 media/W3C/video/events/event_progress.html [ Pass Failure ]
@@ -3255,10 +3253,6 @@ fast/images/animated-heics-verify.html [ Pass ]
 # <rdar://problem/40172428> REGRESSION: LayoutTests fast/text/font-collection.html and fast/text/woff2.html are failing
 fast/text/font-collection.html [ ImageOnlyFailure ]
 
-# <rdar://problem/40952038> quicklook/keynote.html and quicklook/pages.html are failing with a 0.09% image diff
-quicklook/keynote.html [ ImageOnlyFailure ]
-quicklook/pages.html [ ImageOnlyFailure ]
-
 # <rdar://problem/41546587> REGRESSION: LayoutTest compositing/contents-scale/non-decomposable-matrix.html is failing
 compositing/contents-scale/non-decomposable-matrix.html [ ImageOnlyFailure ]
 
@@ -3291,10 +3285,6 @@ media/video-ended-event-negative-playback.html [ Failure ]
 media/video-played-collapse.html [ Failure ]
 media/video-played-ranges-1.html [ Failure ]
 media/video-played-reset.html [ Failure ]
-
-# <rdar://problem/47898237> REGRESSION (iOS 13): Multiple quicklook tests failing
-quicklook/powerpoint-legacy.html [ Failure ]
-quicklook/powerpoint.html [ Failure ]
 
 # Skip tests timing out for <rdar://problem/48616298>
 fast/viewport/ios/constant-width-viewport-after-changing-view-scale.html [ Skip ]
