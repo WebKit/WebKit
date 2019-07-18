@@ -1,5 +1,28 @@
 2019-07-18  Antoine Quint  <graouts@apple.com>
 
+        REGRESSION: Unable to enable simulated mouse events using the runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=199909
+        <rdar://problem/53254895>
+
+        Reviewed by Dean Jackson.
+
+        The fix for wkb.ug/199508 (r247152) broke the ability enable simulated mouse events using the runtime flag.
+        We now add a check for the flag in Quirks::shouldDispatchSimulatedMouseEvents() so that the runtime flag
+        overrides the content of that function. This is more practical and allows for a quick override using the flag.
+
+        Additionally, we need only call shouldDispatchSimulatedMouseEvents() in simulatedMouseEventTypeForTarget() since
+        that function already calls needsQuirks().
+
+        * dom/EventNames.h:
+        (WebCore::EventNames::isTouchRelatedEventType const):
+        * dom/Node.cpp:
+        (WebCore::Node::moveNodeToNewDocument):
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldDispatchSimulatedMouseEvents const):
+        (WebCore::Quirks::simulatedMouseEventTypeForTarget const):
+
+2019-07-18  Antoine Quint  <graouts@apple.com>
+
         REGRESSION: Panning on an Amazon product image scrolls the page on iPadOS
         https://bugs.webkit.org/show_bug.cgi?id=199905
         <rdar://problem/49124529>

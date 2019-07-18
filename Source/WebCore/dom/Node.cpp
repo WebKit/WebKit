@@ -2061,7 +2061,7 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
 
         unsigned numTouchEventListeners = 0;
 #if ENABLE(TOUCH_EVENTS)
-        if (newDocument.quirks().shouldDispatchSimulatedMouseEvents() || RuntimeEnabledFeatures::sharedFeatures().mouseEventsSimulationEnabled()) {
+        if (newDocument.quirks().shouldDispatchSimulatedMouseEvents()) {
             for (auto& name : eventNames().extendedTouchRelatedEventNames())
                 numTouchEventListeners += eventListeners(name).size();
         } else {

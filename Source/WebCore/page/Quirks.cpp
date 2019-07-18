@@ -32,6 +32,7 @@
 #include "HTMLMetaElement.h"
 #include "HTMLObjectElement.h"
 #include "LayoutUnit.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -236,6 +237,9 @@ bool Quirks::isAmazon() const
 
 bool Quirks::shouldDispatchSimulatedMouseEvents() const
 {
+    if (RuntimeEnabledFeatures::sharedFeatures().mouseEventsSimulationEnabled())
+        return true;
+
     if (!needsQuirks())
         return false;
 
@@ -295,7 +299,7 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
 
 Optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(EventTarget* target) const
 {
-    if (!needsQuirks() || !shouldDispatchSimulatedMouseEvents())
+    if (!shouldDispatchSimulatedMouseEvents())
         return { };
 
     // On Google Maps, we want to limit simulated mouse events to dragging the little man that allows entering into Street View.
