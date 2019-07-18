@@ -4,7 +4,7 @@
 /*---
 description: Private methods are installed "when super returns" and no earlier (call in field initializer) (field definitions in a class declaration)
 esid: prod-FieldDefinition
-features: [class-methods-private, class]
+features: [class-methods-private, class-fields-public, class]
 flags: [generated]
 info: |
     SuperCall: super Arguments

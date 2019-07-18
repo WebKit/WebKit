@@ -1,7 +1,7 @@
 // Copyright (C) 2015 Caitlin Potter. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
-/*--- 
+/*---
 description: >
     ECMAScript Function objects defined using syntactic constructors
     in strict mode code do not have own properties "caller" or

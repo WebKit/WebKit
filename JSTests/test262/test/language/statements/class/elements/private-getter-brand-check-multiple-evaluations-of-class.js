@@ -22,12 +22,12 @@ features: [class, class-methods-private]
 let createAndInstantiateClass = function () {
   class C {
     get #m() { return 'test262'; }
-    
+
     access(o) {
       return o.#m;
     }
   }
-  
+
   let c = new C();
   return c;
 };

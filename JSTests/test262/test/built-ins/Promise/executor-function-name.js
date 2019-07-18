@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 25.4.1.5.1
+esid: sec-getcapabilitiesexecutor-functions
 description: The `name` property of GetCapabilitiesExecutor functions
 info: |
   A GetCapabilitiesExecutor function is an anonymous built-in function.
@@ -22,3 +22,4 @@ function NotPromise(executor) {
 Promise.resolve.call(NotPromise);
 
 assert.sameValue(Object.prototype.hasOwnProperty.call(executorFunction, "name"), false);
+assert.sameValue(executorFunction.name, "");

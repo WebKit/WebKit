@@ -52,4 +52,4 @@ Object.defineProperty(Promise, 'resolve', {
 Promise.race(iter);
 
 assert.sameValue(nextCount, 0);
-assert.sameValue(returnCount, 0);
+assert.sameValue(returnCount, 1);

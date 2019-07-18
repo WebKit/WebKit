@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 25.4.4.1.2
+esid: sec-promise.all-resolve-element-functions
 description: The `name` property of Promise.all Resolve Element functions
 info: |
   A promise resolve function is an anonymous built-in function.
@@ -29,3 +29,4 @@ NotPromise.resolve = function(v) {
 Promise.all.call(NotPromise, [thenable]);
 
 assert.sameValue(Object.prototype.hasOwnProperty.call(resolveElementFunction, "name"), false);
+assert.sameValue(resolveElementFunction.name, "");
