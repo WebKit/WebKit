@@ -72,7 +72,7 @@ void ProcessWarming::prewarmGlobally()
     // Prewarms JS VM.
     commonVM();
 
-#if USE_PLATFORM_SYSTEM_FALLBACK_LIST
+#if USE(PLATFORM_SYSTEM_FALLBACK_LIST)
     // Cache system UI font fallbacks. Almost every web process needs these.
     // Initializing one size is sufficient to warm CoreText caches.
     FontCascadeDescription systemFontDescription;

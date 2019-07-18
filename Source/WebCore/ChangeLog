@@ -1,5 +1,59 @@
 2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r247465. rdar://problem/53229731
+
+    New York font erroneously gets synthetic bold
+    https://bugs.webkit.org/show_bug.cgi?id=199653
+    
+    Unreviewed watchOS build fix.
+    
+    Source/WebCore:
+    
+    * page/ProcessWarming.cpp:
+    (WebCore::ProcessWarming::prewarmGlobally):
+    * page/cocoa/MemoryReleaseCocoa.mm:
+    (WebCore::platformReleaseMemory):
+    * platform/graphics/FontCascadeDescription.cpp:
+    * platform/graphics/FontDescription.h:
+    * platform/graphics/cocoa/FontCacheCoreText.cpp:
+    (WebCore::invalidateFontCache):
+    (WebCore::lookupFallbackFont):
+    * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+    (WebCore::FontCascadeDescription::effectiveFamilyAt const):
+    * platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp:
+    (WebCore::FontFamilySpecificationCoreText::fontRanges const):
+    * platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp:
+    
+    Source/WTF:
+    
+    * wtf/Platform.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247465 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            New York font erroneously gets synthetic bold
+            https://bugs.webkit.org/show_bug.cgi?id=199653
+
+            Unreviewed watchOS build fix.
+
+            * page/ProcessWarming.cpp:
+            (WebCore::ProcessWarming::prewarmGlobally):
+            * page/cocoa/MemoryReleaseCocoa.mm:
+            (WebCore::platformReleaseMemory):
+            * platform/graphics/FontCascadeDescription.cpp:
+            * platform/graphics/FontDescription.h:
+            * platform/graphics/cocoa/FontCacheCoreText.cpp:
+            (WebCore::invalidateFontCache):
+            (WebCore::lookupFallbackFont):
+            * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+            (WebCore::FontCascadeDescription::effectiveFamilyAt const):
+            * platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp:
+            (WebCore::FontFamilySpecificationCoreText::fontRanges const):
+            * platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp:
+
+2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r247459. rdar://problem/53229552
 
     Crash under DisplayRefreshMonitorManager::displayWasUpdated()
