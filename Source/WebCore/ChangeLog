@@ -1,5 +1,25 @@
 2019-07-18  Antoine Quint  <graouts@apple.com>
 
+        [Pointer Events] The button and buttons properties are incorrect on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=199910
+        <rdar://problem/52778374>
+
+        Reviewed by Dean Jackson.
+
+        The button and buttons properties were always set to 0 on iOS. We now use the correct values such that
+        button is always 0 except for "pointermove" where it's -1, and "buttons" is 1 as long as the pointer is
+        in contact with the touch surface.
+
+        Tests: pointerevents/ios/pointer-event-button-and-buttons-pointer-cancel.html
+               pointerevents/ios/pointer-event-button-and-buttons.html
+
+        * dom/ios/PointerEventIOS.cpp:
+        (WebCore::buttonForType):
+        (WebCore::buttonsForType):
+        (WebCore::PointerEvent::PointerEvent):
+
+2019-07-18  Antoine Quint  <graouts@apple.com>
+
         REGRESSION: Unable to enable simulated mouse events using the runtime flag
         https://bugs.webkit.org/show_bug.cgi?id=199909
         <rdar://problem/53254895>
