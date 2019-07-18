@@ -1972,3 +1972,11 @@ webkit.org/b/195635 scrollingcoordinator/mac/multiple-fixed.html [ Pass Timeout 
 [ Catalina+ ] http/wpt/resource-timing/rt-initiatorType-script-module.html [ Pass Failure ]
 [ Catalina+ ] http/wpt/resource-timing/rt-initiatorType-element.html [ Pass Failure ]
 [ Catalina+ ] http/wpt/resource-timing/rt-initiatorType-xmlhttprequest.html [ Pass Failure ]
+
+# These tests require the design system ui fonts to be installed.
+[ Catalina+ ] fast/text/design-system-ui-11.html [ Pass ]
+[ Catalina+ ] fast/text/design-system-ui-12.html [ Pass ]
+[ Catalina+ ] fast/text/design-system-ui-13.html [ Pass ]
+[ Catalina+ ] fast/text/design-system-ui-14.html [ Pass ]
+[ Catalina+ ] fast/text/design-system-ui-15.html [ Pass ]
+[ Catalina+ ] fast/text/design-system-ui-16.html [ Pass ]

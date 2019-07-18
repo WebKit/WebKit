@@ -1181,6 +1181,15 @@ static FontLookup platformFontLookupWithFamily(const AtomString& family, FontSel
     if (!isSystemFont(family) && whitelist.size() && !whitelist.contains(family))
         return { nullptr };
 
+    if (equalLettersIgnoringASCIICase(family, ".applesystemuifontserif")
+        || equalLettersIgnoringASCIICase(family, ".sf ns mono")
+        || equalLettersIgnoringASCIICase(family, ".sf ui mono")
+        || equalLettersIgnoringASCIICase(family, ".applesystemuifontrounded")) {
+        // If you want to use these fonts, set the shouldAllowDesignSystemUIFonts Setting and use
+        // -apple-system-ui-serif, -apple-system-ui-monospaced, and -apple-system-ui-rounded.
+        return { nullptr };
+    }
+
     auto& fontDatabase = allowUserInstalledFonts == AllowUserInstalledFonts::Yes ? FontDatabase::singletonAllowingUserInstalledFonts() : FontDatabase::singletonDisallowingUserInstalledFonts();
     const auto& familyFonts = fontDatabase.collectionForFamily(family.string());
     if (familyFonts.isEmpty()) {
@@ -1238,16 +1247,42 @@ static void invalidateFontCache()
     FontCache::singleton().invalidate();
 }
 
+static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, const FontDescription& fontDescription, float size, AllowUserInstalledFonts allowUserInstalledFonts)
+{
+#if HAVE(DESIGN_SYSTEM_UI_FONTS)
+    if (!fontDescription.shouldAllowDesignSystemUIFonts())
+        return nullptr;
+
+    Optional<SystemFontDatabaseCoreText::ClientUse> designSystemUI;
+    if (equalLettersIgnoringASCIICase(family, "-apple-system-ui-serif"))
+        designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUISerif;
+    else if (equalLettersIgnoringASCIICase(family, "-apple-system-ui-monospaced"))
+        designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUIMonospaced;
+    else if (equalLettersIgnoringASCIICase(family, "-apple-system-ui-rounded"))
+        designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUIRounded;
+
+    if (designSystemUI) {
+        auto cascadeList = SystemFontDatabaseCoreText::singleton().cascadeList(fontDescription, family, *designSystemUI, allowUserInstalledFonts);
+        if (!cascadeList.isEmpty())
+            return createFontForInstalledFonts(cascadeList[0].get(), size, allowUserInstalledFonts);
+    }
+#endif
+
+    return nullptr;
+}
+
 static RetainPtr<CTFontRef> fontWithFamily(const AtomString& family, const FontDescription& fontDescription, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities, float size)
 {
     if (family.isEmpty())
         return nullptr;
 
-    const auto& request = fontDescription.fontSelectionRequest();
     FontLookup fontLookup;
-    fontLookup.result = platformFontWithFamilySpecialCase(family, request, size, fontDescription.shouldAllowUserInstalledFonts());
-    if (!fontLookup.result)
-        fontLookup = platformFontLookupWithFamily(family, request, size, fontDescription.shouldAllowUserInstalledFonts());
+    fontLookup.result = platformFontWithFamilySpecialCase(family, fontDescription, size, fontDescription.shouldAllowUserInstalledFonts());
+    if (!fontLookup.result) {
+        fontLookup.result = fontWithFamilySpecialCase(family, fontDescription, size, fontDescription.shouldAllowUserInstalledFonts());
+        if (!fontLookup.result)
+            fontLookup = platformFontLookupWithFamily(family, fontDescription.fontSelectionRequest(), size, fontDescription.shouldAllowUserInstalledFonts());
+    }
     return preparePlatformFont(fontLookup.result.get(), fontDescription, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities, !fontLookup.createdFromPostScriptName);
 }
 

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "FontDescription.h"
+#include "FontCascadeDescription.h"
 
 #include "SystemFontDatabaseCoreText.h"
 #include <mutex>
@@ -33,14 +33,6 @@
 namespace WebCore {
 
 #if USE_PLATFORM_SYSTEM_FALLBACK_LIST
-
-static inline bool isSystemFontString(const AtomString& string)
-{
-    return equalLettersIgnoringASCIICase(string, "-webkit-system-font")
-        || equalLettersIgnoringASCIICase(string, "-apple-system")
-        || equalLettersIgnoringASCIICase(string, "-apple-system-font")
-        || equalLettersIgnoringASCIICase(string, "system-ui");
-}
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -53,9 +45,30 @@ template<typename T, typename U, std::size_t size> inline std::array<T, size> co
 {
     return convertArray<T>(array, std::make_index_sequence<size> { });
 }
+#endif
 
-static inline bool isUIFontTextStyle(const AtomString& string)
+static inline Optional<SystemFontDatabaseCoreText::ClientUse> matchSystemFontUse(const AtomString& string, bool shouldAllowDesignSystemUIFonts)
 {
+    if (equalLettersIgnoringASCIICase(string, "-webkit-system-font")
+        || equalLettersIgnoringASCIICase(string, "-apple-system")
+        || equalLettersIgnoringASCIICase(string, "-apple-system-font")
+        || equalLettersIgnoringASCIICase(string, "system-ui"))
+        return SystemFontDatabaseCoreText::ClientUse::ForSystemUI;
+
+#if HAVE(DESIGN_SYSTEM_UI_FONTS)
+    if (shouldAllowDesignSystemUIFonts) {
+        if (equalLettersIgnoringASCIICase(string, "-apple-system-ui-serif"))
+            return SystemFontDatabaseCoreText::ClientUse::ForSystemUISerif;
+        if (equalLettersIgnoringASCIICase(string, "-apple-system-ui-monospaced"))
+            return SystemFontDatabaseCoreText::ClientUse::ForSystemUIMonospaced;
+        if (equalLettersIgnoringASCIICase(string, "-apple-system-ui-rounded"))
+            return SystemFontDatabaseCoreText::ClientUse::ForSystemUIRounded;
+    }
+#else
+    UNUSED_PARAM(shouldAllowDesignSystemUIFonts);
+#endif
+
+#if PLATFORM(IOS_FAMILY)
     static const CFStringRef styles[] = {
         kCTUIFontTextStyleHeadline,
         kCTUIFontTextStyleBody,
@@ -79,11 +92,14 @@ static inline bool isUIFontTextStyle(const AtomString& string)
     };
     
     static auto strings { makeNeverDestroyed(convertArray<AtomString>(styles)) };
-    return std::find(strings.get().begin(), strings.get().end(), string) != strings.get().end();
-}
+    if (std::find(strings.get().begin(), strings.get().end(), string) != strings.get().end())
+        return SystemFontDatabaseCoreText::ClientUse::ForTextStyle;
 #endif
 
-static inline Vector<RetainPtr<CTFontDescriptorRef>> systemFontCascadeList(const FontCascadeDescription& description, const AtomString& cssFamily, SystemFontDatabaseCoreText::ClientUse clientUse, AllowUserInstalledFonts allowUserInstalledFonts)
+    return WTF::nullopt;
+}
+
+static inline Vector<RetainPtr<CTFontDescriptorRef>> systemFontCascadeList(const FontDescription& description, const AtomString& cssFamily, SystemFontDatabaseCoreText::ClientUse clientUse, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     return SystemFontDatabaseCoreText::singleton().cascadeList(description, cssFamily, clientUse, allowUserInstalledFonts);
 }
@@ -94,12 +110,8 @@ unsigned FontCascadeDescription::effectiveFamilyCount() const
     unsigned result = 0;
     for (unsigned i = 0; i < familyCount(); ++i) {
         const auto& cssFamily = familyAt(i);
-        if (isSystemFontString(cssFamily))
-            result += systemFontCascadeList(*this, cssFamily, SystemFontDatabaseCoreText::ClientUse::ForSystemUI, shouldAllowUserInstalledFonts()).size();
-#if PLATFORM(IOS_FAMILY)
-        else if (isUIFontTextStyle(cssFamily))
-            result += systemFontCascadeList(*this, cssFamily, SystemFontDatabaseCoreText::ClientUse::ForTextStyle, shouldAllowUserInstalledFonts()).size();
-#endif
+        if (auto use = matchSystemFontUse(cssFamily, shouldAllowDesignSystemUIFonts()))
+            result += systemFontCascadeList(*this, cssFamily, *use, shouldAllowUserInstalledFonts()).size();
         else
             ++result;
     }
@@ -117,20 +129,12 @@ FontFamilySpecification FontCascadeDescription::effectiveFamilyAt(unsigned index
     // These two behaviors should be unified, which would hopefully allow us to delete this duplicate code.
     for (unsigned i = 0; i < familyCount(); ++i) {
         const auto& cssFamily = familyAt(i);
-        if (isSystemFontString(cssFamily)) {
-            auto cascadeList = systemFontCascadeList(*this, cssFamily, SystemFontDatabaseCoreText::ClientUse::ForSystemUI, shouldAllowUserInstalledFonts());
+        if (auto use = matchSystemFontUse(cssFamily, shouldAllowDesignSystemUIFonts())) {
+            auto cascadeList = systemFontCascadeList(*this, cssFamily, *use, shouldAllowUserInstalledFonts());
             if (index < cascadeList.size())
                 return FontFamilySpecification(cascadeList[index].get());
             index -= cascadeList.size();
         }
-#if PLATFORM(IOS_FAMILY)
-        else if (isUIFontTextStyle(cssFamily)) {
-            auto cascadeList = systemFontCascadeList(*this, cssFamily, SystemFontDatabaseCoreText::ClientUse::ForTextStyle, shouldAllowUserInstalledFonts());
-            if (index < cascadeList.size())
-                return FontFamilySpecification(cascadeList[index].get());
-            index -= cascadeList.size();
-        }
-#endif
         else if (!index)
             return cssFamily;
         else

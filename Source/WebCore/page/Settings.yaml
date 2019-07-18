@@ -738,6 +738,10 @@ shouldAllowUserInstalledFonts:
   initial: true
   onChange: setNeedsRecalcStyleInAllFrames
 
+shouldAllowDesignSystemUIFonts:
+  initial: false
+  onChange: setNeedsRecalcStyleInAllFrames
+
 resizeObserverEnabled:
   initial: false
   conditional: RESIZE_OBSERVER
