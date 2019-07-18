@@ -34,6 +34,8 @@ Checking target17:
 PASS result is 12
 Checking target18:
 PASS result is 12
+Checking target19:
+PASS result is >= 13
 PASS successfullyParsed is true
 
 TEST COMPLETE
@@ -55,4 +57,5 @@ Test
 Test
 Test 
 Test 
+Test
 Test
