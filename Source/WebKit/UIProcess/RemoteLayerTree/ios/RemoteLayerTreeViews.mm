@@ -234,7 +234,7 @@ UIScrollView *findActingScrollParent(UIScrollView *scrollView, const RemoteLayer
         layer.allowsHitTesting = NO;
 #endif
     }
-    
+
     return self;
 }
 
@@ -247,6 +247,22 @@ UIScrollView *findActingScrollParent(UIScrollView *scrollView, const RemoteLayer
 
 #if USE(UIREMOTEVIEW_CONTEXT_HOSTING)
 @implementation WKUIRemoteView
+
+- (instancetype)initWithFrame:(CGRect)frame pid:(pid_t)pid contextID:(uint32_t)contextID
+{
+    self = [super initWithFrame:frame pid:pid contextID:contextID];
+    if (!self)
+        return nil;
+
+#if PLATFORM(MACCATALYST)
+    // When running iOS apps on macOS, kCAContextIgnoresHitTest isn't respected; instead, we avoid
+    // hit-testing to the remote context by disabling hit-testing on its host layer. See
+    // <rdar://problem/40591107> for more details.
+    self.layerHost.allowsHitTesting = NO;
+#endif
+
+    return self;
+}
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
