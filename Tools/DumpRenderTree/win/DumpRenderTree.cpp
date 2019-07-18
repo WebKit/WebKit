@@ -45,6 +45,7 @@
 #include "WorkQueue.h"
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <JavaScriptCore/Options.h>
 #include <JavaScriptCore/TestRunnerUtils.h>
 #include <WebKitLegacy/WebKit.h>
 #include <WebKitLegacy/WebKitCOMAPI.h>
@@ -65,6 +66,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringHash.h>
 
@@ -941,8 +943,25 @@ static void setDefaultsToConsistentValuesForTesting()
 #endif
 }
 
+static void setJSCOptions(const TestOptions& options)
+{
+    static WTF::StringBuilder savedOptions;
+
+    if (!savedOptions.isEmpty()) {
+        JSC::Options::setOptions(savedOptions.toString().ascii().data());
+        savedOptions.clear();
+    }
+
+    if (options.jscOptions.length()) {
+        JSC::Options::dumpAllOptionsInALine(savedOptions);
+        JSC::Options::setOptions(options.jscOptions.c_str());
+    }
+}
+
 static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& options)
 {
+    setJSCOptions(options);
+
     COMPtr<IWebView> webView;
     if (FAILED(frame->webView(&webView))) 
         return;

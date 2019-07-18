@@ -1841,6 +1841,8 @@ static void setJSCOptions(const TestOptions& options)
 
 static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& options)
 {
+    setJSCOptions(options);
+
     WebView *webView = [mainFrame webView];
 
 #if PLATFORM(IOS_FAMILY)
@@ -1914,8 +1916,6 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
     // Clear the contents of the general pasteboard
     [[NSPasteboard generalPasteboard] declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
 #endif
-
-    setJSCOptions(options);
 
     WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(options.additionalSupportedImageTypes.c_str());
 
