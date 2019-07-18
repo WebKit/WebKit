@@ -937,6 +937,7 @@ http/tests/preconnect [ Skip ]
 http/tests/preload [ Skip ]
 http/tests/quicklook [ Skip ]
 http/tests/referrer-policy-iframe [ Skip ]
+http/tests/referrer-policy-script [ Skip ]
 
 # All timing out
 http/tests/resourceLoadStatistics [ Skip ]
@@ -1208,9 +1209,6 @@ webkit.org/b/179296 fast/css/object-fit/object-fit-object.html [ ImageOnlyFailur
 webkit.org/b/179296 fast/css/object-position/object-position-embed.html [ ImageOnlyFailure ]
 webkit.org/b/179296 fast/css/object-position/object-position-object.html [ ImageOnlyFailure ]
 
-[ Release ] fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
-[ Debug ] fast/css/will-change/will-change-creates-stacking-context.html [ Skip ]
-
 # TODO CSS3_TEXT is disabled on Windows
 fast/css3-text/ [ Skip ]
 
@@ -1420,7 +1418,7 @@ webkit.org/b/179613 editing/execCommand/underline-selection-containing-image.htm
 
 webkit.org/b/182129 editing/input/reveal-edit-on-paste-vertically.html [ Failure ]
 
-[ Debug ] editing/caret/emoji.html [ Skip ]
+editing/caret/emoji.html [ Failure ]
 editing/deleting/delete-emoji.html [ Failure ]
 editing/deleting/delete-emoji-9.html [ Pass Failure ]
 editing/input/caret-at-the-edge-of-input.html [ Pass Failure ]
@@ -1619,9 +1617,13 @@ workers/bomb.html [ Skip ]
 [ Debug ] js/stack-overflow-regexp.html [ Skip ]
 [ Debug ] loader/load-defer-resume-crash.html [ Skip ]
 
+css1/font_properties/font_family.html [ Failure Pass ]
+css2.1/t1503-c522-font-family-00-b.html [ Failure Pass ]
 css3/flexbox/flexbox-baseline-margins.html [ Failure ]
+fast/css/font-face-multiple-faces.html [ Failure Pass ]
 fast/dom/adopt-attribute-crash.svg [ Failure ]
 fast/harness/render-tree-as-text-options.html [ Failure ]
+fonts/fantasy.html [ Failure Pass ]
 http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
 http/tests/IndexedDB/storage-limit-2.https.html [ Failure ]
 http/tests/IndexedDB/storage-limit.https.html [ Failure ]
