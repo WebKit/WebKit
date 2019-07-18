@@ -1,5 +1,23 @@
 2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r247458. rdar://problem/53229545
+
+    Unreviewed, a build fix after r247437
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/TestSOAuthorization.mm:
+    Added platform guard towards -[WKUIDelegate _presentingViewControllerForWebView:].
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247458 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+            Unreviewed, a build fix after r247437
+
+            * TestWebKitAPI/Tests/WebKitCocoa/TestSOAuthorization.mm:
+            Added platform guard towards -[WKUIDelegate _presentingViewControllerForWebView:].
+
+2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r247439. rdar://problem/53229628
 
     [macOS 10.15] Cannot unbold selected text when the system font is used

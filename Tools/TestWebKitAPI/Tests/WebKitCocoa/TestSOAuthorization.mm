@@ -207,10 +207,12 @@ static const char* samlResponse =
     });
 }
 
+#if PLATFORM(IOS)
 - (UIViewController *)_presentingViewControllerForWebView:(WKWebView *)webView
 {
     return nil;
 }
+#endif
 
 @end
 
