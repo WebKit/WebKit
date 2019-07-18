@@ -1,3 +1,19 @@
+2019-07-17  Robin Morisset  <rmorisset@apple.com>
+
+        [WHLSL] checkRecursiveType should not have exponential complexity.
+        https://bugs.webkit.org/show_bug.cgi?id=199835
+
+        Reviewed by Myles Maxfield.
+
+        The change is very similar to that in https://bugs.webkit.org/show_bug.cgi?id=199688.
+        Just keep track of which types have already been visited, and don't visit them again.
+
+        No new tests as there is no intended functional change.
+
+        * Modules/webgpu/WHLSL/WHLSLRecursiveTypeChecker.cpp:
+        (WebCore::WHLSL::RecursiveTypeChecker::visit):
+        (WebCore::WHLSL::checkRecursiveTypes):
+
 2019-07-17  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
 
         Add missing #include's
