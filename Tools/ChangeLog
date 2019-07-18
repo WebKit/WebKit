@@ -1,5 +1,24 @@
 2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r247536. rdar://problem/53229635
+
+    Remove the file superfluously added in r247535.
+    
+    * TestWebKitAPI/Tests/ios/SelectionModifyByParagraphBoundary.h: Removed.
+    * TestWebKitAPI/Tests/ios/SelectionModifyByParagraphBoundary.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247536 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Remove the file superfluously added in r247535.
+
+            * TestWebKitAPI/Tests/ios/SelectionModifyByParagraphBoundary.h: Removed.
+            * TestWebKitAPI/Tests/ios/SelectionModifyByParagraphBoundary.mm:
+
+2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r247524. rdar://problem/53229635
 
     [iOS] Option + Up or Down Arrow key doesn’t move cursor past paragraph boundaries in WebKit2
