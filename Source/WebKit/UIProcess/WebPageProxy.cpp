@@ -3574,6 +3574,11 @@ void WebPageProxy::selectFindMatch(int32_t matchIndex)
     m_process->send(Messages::WebPage::SelectFindMatch(matchIndex), m_pageID);
 }
 
+void WebPageProxy::indicateFindMatch(int32_t matchIndex)
+{
+    m_process->send(Messages::WebPage::IndicateFindMatch(matchIndex), m_pageID);
+}
+
 void WebPageProxy::hideFindUI()
 {
     m_process->send(Messages::WebPage::HideFindUI(), m_pageID);

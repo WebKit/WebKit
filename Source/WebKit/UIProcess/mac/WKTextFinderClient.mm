@@ -72,9 +72,19 @@ private:
         [m_textFinderClient didGetImageForMatchResult:image];
     }
 
-    void didFindString(WebPageProxy*, const String&, const Vector<WebCore::IntRect>& matchRects, uint32_t, int32_t, bool didWrapAround) override
+    void didFindString(WebPageProxy*, const String&, const Vector<WebCore::IntRect>& matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrapAround) override
     {
-        [m_textFinderClient didFindStringMatchesWithRects:{ matchRects } didWrapAround:didWrapAround];
+        Vector<Vector<WebCore::IntRect>> allMatches;
+        if (matchCount != static_cast<unsigned>(kWKMoreThanMaximumMatchCount)) {
+            // Synthesize a vector of match rects for all `matchCount` matches,
+            // filling in the actual rects for the one that we received.
+            // The rest will remain empty, but it's important to NSTextFinder
+            // that they at least exist.
+            allMatches.resize(matchCount);
+            allMatches[matchIndex].appendVector(matchRects);
+        }
+
+        [m_textFinderClient didFindStringMatchesWithRects:allMatches didWrapAround:didWrapAround];
     }
 
     void didFailToFindString(WebPageProxy*, const String& string) override
@@ -138,13 +148,14 @@ private:
 @end
 
 @implementation WKTextFinderClient {
-    WebKit::WebPageProxy *_page;
+    WebKit::WebPageProxy* _page;
     NSView *_view;
     Deque<WTF::Function<void(NSArray *, bool didWrap)>> _findReplyCallbacks;
     Deque<WTF::Function<void(NSImage *)>> _imageReplyCallbacks;
+    BOOL _usePlatformFindUI;
 }
 
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view
+- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view usePlatformFindUI:(BOOL)usePlatformFindUI
 {
     self = [super init];
 
@@ -153,6 +164,7 @@ private:
 
     _page = &page;
     _view = view;
+    _usePlatformFindUI = usePlatformFindUI;
     
     _page->setFindMatchesClient(std::make_unique<WebKit::TextFinderFindClient>(self));
     _page->setFindClient(std::make_unique<WebKit::TextFinderFindClient>(self));
@@ -202,6 +214,12 @@ private:
     if (findOptions & NSTextFinderAsynchronousDocumentFindOptionsStartsWith)
         kitFindOptions |= WebKit::FindOptionsAtWordStarts;
 
+    if (!_usePlatformFindUI) {
+        kitFindOptions |= WebKit::FindOptionsShowOverlay;
+        kitFindOptions |= WebKit::FindOptionsShowFindIndicator;
+        kitFindOptions |= WebKit::FindOptionsDetermineMatchIndex;
+    }
+
     RetainPtr<NSProgress> progress = [NSProgress progressWithTotalUnitCount:1];
     auto copiedResultCollector = Block_copy(resultCollector);
     _findReplyCallbacks.append([progress, copiedResultCollector] (NSArray *matches, bool didWrap) {
@@ -235,6 +253,17 @@ private:
     _page->selectFindMatch(textFinderMatch.index);
 }
 
+- (void)scrollFindMatchToVisible:(id <NSTextFinderAsynchronousDocumentFindMatch>)findMatch
+{
+    if (_usePlatformFindUI)
+        return;
+
+    ASSERT([findMatch isKindOfClass:[WKTextFinderMatch class]]);
+
+    WKTextFinderMatch *textFinderMatch = static_cast<WKTextFinderMatch *>(findMatch);
+    _page->indicateFindMatch(textFinderMatch.index);
+}
+
 #pragma mark - FindMatchesClient
 
 static RetainPtr<NSArray> arrayFromRects(const Vector<WebCore::IntRect>& matchRects)
@@ -254,7 +283,12 @@ static RetainPtr<NSArray> arrayFromRects(const Vector<WebCore::IntRect>& matchRe
     unsigned matchCount = rectsForMatches.size();
     RetainPtr<NSMutableArray> matchObjects = adoptNS([[NSMutableArray alloc] initWithCapacity:matchCount]);
     for (unsigned i = 0; i < matchCount; i++) {
-        RetainPtr<NSArray> nsMatchRects = arrayFromRects(rectsForMatches[i]);
+        RetainPtr<NSArray> nsMatchRects;
+
+        if (_usePlatformFindUI)
+            nsMatchRects = arrayFromRects(rectsForMatches[i]);
+        else
+            nsMatchRects = @[];
         RetainPtr<WKTextFinderMatch> match = adoptNS([[WKTextFinderMatch alloc] initWithClient:self view:_view index:i rects:nsMatchRects.get()]);
         [matchObjects addObject:match.get()];
     }
@@ -278,6 +312,11 @@ static RetainPtr<NSArray> arrayFromRects(const Vector<WebCore::IntRect>& matchRe
 
 - (void)getImageForMatchResult:(id <NSTextFinderAsynchronousDocumentFindMatch>)findMatch completionHandler:(void (^)(NSImage *generatedImage))completionHandler
 {
+    if (!_usePlatformFindUI) {
+        completionHandler(nil);
+        return;
+    }
+
     ASSERT([findMatch isKindOfClass:[WKTextFinderMatch class]]);
 
     WKTextFinderMatch *textFinderMatch = static_cast<WKTextFinderMatch *>(findMatch);

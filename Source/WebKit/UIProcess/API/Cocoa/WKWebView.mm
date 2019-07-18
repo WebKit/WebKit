@@ -273,6 +273,8 @@ static Optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayS
     Optional<BOOL> _resolutionForShareSheetImmediateCompletionForTesting;
     RetainPtr<WKSafeBrowsingWarning> _safeBrowsingWarning;
 
+    BOOL _usePlatformFindUI;
+
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
 
@@ -769,6 +771,8 @@ static void validate(WKWebViewConfiguration *configuration)
     _page->setDiagnosticLoggingClient(std::make_unique<WebKit::DiagnosticLoggingClient>(self));
 
     _iconLoadingDelegate = std::make_unique<WebKit::IconLoadingDelegate>(self);
+
+    _usePlatformFindUI = YES;
 
     [self _setUpSQLiteDatabaseTrackerClient];
 
@@ -4319,10 +4323,24 @@ IGNORE_WARNINGS_END
 }
 #endif
 
+- (BOOL)_usePlatformFindUI
+{
+    return _usePlatformFindUI;
+}
+
+- (void)_setUsePlatformFindUI:(BOOL)usePlatformFindUI
+{
+    _usePlatformFindUI = usePlatformFindUI;
+
+    if (_textFinderClient)
+        [self _hideFindUI];
+    _textFinderClient = nil;
+}
+
 - (WKTextFinderClient *)_ensureTextFinderClient
 {
     if (!_textFinderClient)
-        _textFinderClient = adoptNS([[WKTextFinderClient alloc] initWithPage:*_page view:self]);
+        _textFinderClient = adoptNS([[WKTextFinderClient alloc] initWithPage:*_page view:self usePlatformFindUI:_usePlatformFindUI]);
     return _textFinderClient.get();
 }
 
@@ -4334,6 +4352,11 @@ IGNORE_WARNINGS_END
 - (void)replaceMatches:(NSArray *)matches withString:(NSString *)replacementString inSelectionOnly:(BOOL)selectionOnly resultCollector:(void (^)(NSUInteger replacementCount))resultCollector
 {
     [[self _ensureTextFinderClient] replaceMatches:matches withString:replacementString inSelectionOnly:selectionOnly resultCollector:resultCollector];
+}
+
+- (void)scrollFindMatchToVisible:(id<NSTextFinderAsynchronousDocumentFindMatch>)match
+{
+    [[self _ensureTextFinderClient] scrollFindMatchToVisible:match];
 }
 
 - (NSView *)documentContainerView

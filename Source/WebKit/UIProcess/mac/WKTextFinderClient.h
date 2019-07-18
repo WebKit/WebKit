@@ -38,7 +38,7 @@ class WebPageProxy;
 
 @interface WKTextFinderClient : NSObject
 
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view;
+- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view usePlatformFindUI:(BOOL)usePlatformFindUI;
 - (void)willDestroyView:(NSView *)view;
 
 @end

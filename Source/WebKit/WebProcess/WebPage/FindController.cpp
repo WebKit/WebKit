@@ -130,7 +130,7 @@ static Frame* frameWithSelection(Page* page)
     return 0;
 }
 
-void FindController::updateFindUIAfterPageScroll(bool found, const String& string, FindOptions options, unsigned maxMatchCount, DidWrap didWrap)
+void FindController::updateFindUIAfterPageScroll(bool found, const String& string, FindOptions options, unsigned maxMatchCount, DidWrap didWrap, FindUIOriginator originator)
 {
     Frame* selectedFrame = frameWithSelection(m_webPage->corePage());
     
@@ -190,14 +190,21 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
                 m_foundStringMatchIndex -= matchCount;
         }
 
-        m_findMatches.clear();
-        Vector<IntRect> matchRects;
-        if (auto range = m_webPage->corePage()->selection().firstRange()) {
-            range->absoluteTextRects(matchRects);
-            m_findMatches.append(range);
-        }
+        // If updating UI after finding an individual match, update the current
+        // match rects and inform the UI process that we succeeded.
+        // If we're doing a multi-result search and just updating the indicator,
+        // this would blow away the results for the other matches.
+        // FIXME: This whole class needs a much clearer division between these two paths.
+        if (originator == FindUIOriginator::FindString) {
+            m_findMatches.clear();
+            Vector<IntRect> matchRects;
+            if (auto range = m_webPage->corePage()->selection().firstRange()) {
+                range->absoluteTextRects(matchRects);
+                m_findMatches.append(range);
+            }
 
-        m_webPage->send(Messages::WebPageProxy::DidFindString(string, matchRects, matchCount, m_foundStringMatchIndex, didWrap == DidWrap::Yes));
+            m_webPage->send(Messages::WebPageProxy::DidFindString(string, matchRects, matchCount, m_foundStringMatchIndex, didWrap == DidWrap::Yes));
+        }
     }
 
     if (!shouldShowOverlay) {
@@ -267,7 +274,7 @@ void FindController::findString(const String& string, FindOptions options, unsig
 
     RefPtr<WebPage> protectedWebPage = m_webPage;
     m_webPage->drawingArea()->dispatchAfterEnsuringUpdatedScrollPosition([protectedWebPage, found, string, options, maxMatchCount, didWrap] () {
-        protectedWebPage->findController().updateFindUIAfterPageScroll(found, string, options, maxMatchCount, didWrap);
+        protectedWebPage->findController().updateFindUIAfterPageScroll(found, string, options, maxMatchCount, didWrap, FindUIOriginator::FindString);
     });
 }
 
@@ -286,6 +293,14 @@ void FindController::findStringMatches(const String& string, FindOptions options
     }
 
     m_webPage->send(Messages::WebPageProxy::DidFindStringMatches(string, matchRects, indexForSelection));
+
+    if (!(options & FindOptionsShowOverlay || options & FindOptionsShowFindIndicator))
+        return;
+
+    bool found = !m_findMatches.isEmpty();
+    m_webPage->drawingArea()->dispatchAfterEnsuringUpdatedScrollPosition([protectedWebPage = makeRefPtr(m_webPage), found, string, options, maxMatchCount] () {
+        protectedWebPage->findController().updateFindUIAfterPageScroll(found, string, options, maxMatchCount, DidWrap::No, FindUIOriginator::FindStringMatches);
+    });
 }
 
 void FindController::getImageForFindMatch(uint32_t matchIndex)
@@ -323,6 +338,19 @@ void FindController::selectFindMatch(uint32_t matchIndex)
     if (!frame)
         return;
     frame->selection().setSelection(VisibleSelection(*m_findMatches[matchIndex]));
+}
+
+void FindController::indicateFindMatch(uint32_t matchIndex)
+{
+    selectFindMatch(matchIndex);
+
+    Frame* selectedFrame = frameWithSelection(m_webPage->corePage());
+    if (!selectedFrame)
+        return;
+
+    selectedFrame->selection().revealSelection();
+
+    updateFindIndicator(*selectedFrame, !!m_findPageOverlay);
 }
 
 void FindController::hideFindUI()

@@ -4087,6 +4087,11 @@ void WebPage::selectFindMatch(uint32_t matchIndex)
     findController().selectFindMatch(matchIndex);
 }
 
+void WebPage::indicateFindMatch(uint32_t matchIndex)
+{
+    findController().indicateFindMatch(matchIndex);
+}
+
 void WebPage::hideFindUI()
 {
     findController().hideFindUI();
