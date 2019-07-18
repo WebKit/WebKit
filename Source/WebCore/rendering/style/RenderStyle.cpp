@@ -496,7 +496,7 @@ bool RenderStyle::isIdempotentTextAutosizingCandidate() const
 {
     // Refer to <rdar://problem/51826266> for more information regarding how this function was generated.
     auto fields = OptionSet<AutosizeStatus::Fields>::fromRaw(m_inheritedFlags.autosizeStatus);
-    if (fields.contains(AutosizeStatus::Fields::DisplayNone))
+    if (fields.contains(AutosizeStatus::Fields::AvoidSubtree))
         return false;
 
     if (fields.contains(AutosizeStatus::Fields::FixedHeight)) {

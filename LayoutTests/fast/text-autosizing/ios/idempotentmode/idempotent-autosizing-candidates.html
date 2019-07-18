@@ -28,6 +28,13 @@ if (window.internals) {
 <div style="background: green;"><span id="target15" style="font-size: 12px; overflow-y: hidden; float: right;">Test</span></div>
 <div style="background: green;"><span id="target16" style="font-size: 12px; float: right;">Test</span></div>
 <div style="background: green;"><span id="target17" style="font-size: 12px; -webkit-text-size-adjust: 100%;">Test</span></div>
+<div style="background: green; line-height: 1.25; max-height: 45px; font-size: 12px;">
+    <span>Test</span>
+    <br>
+    <span id="target18">Test</span>
+    <br>
+    <span>Test</span>
+</div>
 <script>
 let result;
 function check(name, shouldGetAutosized) {
@@ -69,6 +76,7 @@ check("target14", false);
 check("target15", true);
 check("target16", true);
 check("target17", false);
+check("target18", false);
 </script>
 <script src="../../../../resources/js-test-post.js"></script>
 </body>
