@@ -1,3 +1,23 @@
+2019-07-18  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r247486) Multiple Layout Tests in http/tests/cache/* are crashing on iOS Debug WK2
+        https://bugs.webkit.org/show_bug.cgi?id=199892
+        <rdar://problem/53230217>
+
+        Reviewed by Geoffrey Garen.
+
+        The StorageManager was unregistering itself as a WorkQueueMessageReceiver on a given IPC
+        connection too early. As a result, we would sometimes receive a 'StorageManager:DestroyStorageMap'
+        IPC in NetworkConnectionToWebProcess::didReceiveMessage() with nobody to process it, which would
+        trigger an assertion. To address the issue, we stop unregistering the StorageManager as a
+        WorkQueueMessageReceiver inside removeAllowedSessionStorageNamespaceConnection(). Instead, we
+        let the logic inside processDidCloseConnection() take care of it once the connection closes.
+
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::removeAllowedSessionStorageNamespaceConnection):
+        (WebKit::StorageManager::processDidCloseConnection):
+        * NetworkProcess/WebStorage/StorageManager.h:
+
 2019-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Crash in webkitWebViewBaseRenderHostFileDescriptor
