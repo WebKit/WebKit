@@ -258,17 +258,17 @@ Optional<String> PaymentCoordinator::validatedPaymentNetwork(Document&, unsigned
 
 bool PaymentCoordinator::shouldEnableApplePayAPIs(Document& document) const
 {
-    if (m_client.supportsUnrestrictedApplePay()) {
-        RELEASE_LOG_IF_ALLOWED("shouldEnableApplePayAPIs() -> true (unrestricted client)");
+    if (m_client.supportsUnrestrictedApplePay())
         return true;
-    }
 
     bool shouldEnableAPIs = true;
     document.page()->userContentProvider().forEachUserScript([&](DOMWrapperWorld&, const UserScript&) {
         shouldEnableAPIs = false;
     });
 
-    RELEASE_LOG_IF_ALLOWED("shouldEnableApplePayAPIs() -> %d", shouldEnableAPIs);
+    if (!shouldEnableAPIs)
+        RELEASE_LOG_IF_ALLOWED("shouldEnableApplePayAPIs() -> false (user scripts)");
+
     return shouldEnableAPIs;
 }
 

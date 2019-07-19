@@ -1,3 +1,15 @@
+2019-07-19  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Log less in PaymentCoordinator::shouldEnableApplePayAPIs()
+        https://bugs.webkit.org/show_bug.cgi?id=199958
+
+        Reviewed by Tim Horton.
+
+        Only log when APIs are disabled due to user scripts.
+
+        * Modules/applepay/PaymentCoordinator.cpp:
+        (WebCore::PaymentCoordinator::shouldEnableApplePayAPIs const):
+
 2019-07-19  Dean Jackson  <dino@apple.com>
 
         Add a menu item to toggle between showing and hiding link previews
