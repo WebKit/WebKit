@@ -1,3 +1,19 @@
+2019-07-19  Rob Buis  <rbuis@igalia.com>
+
+        Remove some unneeded code in MathOperator
+        https://bugs.webkit.org/show_bug.cgi?id=199935
+
+        Reviewed by Frédéric Wang.
+
+        The initialize method is unneeded since the member
+        variables all use default initialization.
+
+        No new tests, not changing behavior.
+
+        * rendering/mathml/MathOperator.cpp:
+        (WebCore::MathOperator::MathOperator):
+        (WebCore::MathOperator::GlyphAssemblyData::initialize): Deleted.
+
 2019-07-18  Antoine Quint  <graouts@apple.com>
 
         Enable simulated mouse events quirk for soundcloud.com
