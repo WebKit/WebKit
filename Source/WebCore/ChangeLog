@@ -1,3 +1,22 @@
+2019-07-18  Antoine Quint  <graouts@apple.com>
+
+        Enable simulated mouse events quirk for soundcloud.com
+        https://bugs.webkit.org/show_bug.cgi?id=199908
+        <rdar://problem/52915981>
+
+        Reviewed by Brent Fulgham.
+
+        Scrubbing on soundcloud.com relies on mouse events alone when displaying on iPad with the desktop UA string.
+        Opting into the simulated mouse events quirk makes scrubbing work and we also ensure that page scrolling is
+        disabled as a result of scrubbing by returning true in shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented().
+
+        Also making a drive-by fix in shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented() to use a reference
+        instead of a pointer when downcasting a null-checked pointer.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldDispatchSimulatedMouseEvents const):
+        (WebCore::Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented const):
+
 2019-07-18  Per Arne Vollan  <pvollan@apple.com>
 
         Prewarm font cache with more fonts

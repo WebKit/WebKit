@@ -27,6 +27,7 @@
 #include "Quirks.h"
 
 #include "CustomHeaderFields.h"
+#include "DOMTokenList.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "HTMLMetaElement.h"
@@ -275,6 +276,8 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
         return true;
     if (equalLettersIgnoringASCIICase(host, "trailers.apple.com"))
         return true;
+    if (equalLettersIgnoringASCIICase(host, "soundcloud.com"))
+        return true;
     if (equalLettersIgnoringASCIICase(host, "naver.com"))
         return true;
     // Disable the quirk for tv.naver.com subdomain to be able to simulate hover on videos.
@@ -291,12 +294,15 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
     if (isAmazon() && is<Element>(target)) {
         // When panning on an Amazon product image, we're either touching on the #magnifierLens element
         // or its previous sibling.
-        auto* element = downcast<Element>(target);
-        if (element->getIdAttribute() == "magnifierLens")
+        auto& element = downcast<Element>(*target);
+        if (element.getIdAttribute() == "magnifierLens")
             return true;
-        if (auto* sibling = element->nextElementSibling())
+        if (auto* sibling = element.nextElementSibling())
             return sibling->getIdAttribute() == "magnifierLens";
     }
+
+    if (equalLettersIgnoringASCIICase(m_document->topDocument().url().host(), "soundcloud.com") && is<Element>(target))
+        return downcast<Element>(*target).classList().contains("sceneLayer");
 
     return false;
 }
