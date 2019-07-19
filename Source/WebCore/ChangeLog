@@ -1,3 +1,19 @@
+2019-07-18  Per Arne Vollan  <pvollan@apple.com>
+
+        Prewarm font cache with more fonts
+        https://bugs.webkit.org/show_bug.cgi?id=199283
+
+        Reviewed by Myles C. Maxfield.
+
+        Initialize the list of families requiring system fallback in the prewarming information struct, since
+        this was part of the original, approved patch, and is needed for the performance improvement.
+
+        No new tests, covered by existing tests.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::fontFamiliesForPrewarming):
+        (WebCore::FontCache::prewarmGlobally):
+
 2019-07-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r247531.

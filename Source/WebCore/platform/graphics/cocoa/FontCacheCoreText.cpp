@@ -1649,12 +1649,9 @@ void FontCache::prewarm(const PrewarmInformation& prewarmInformation)
     });
 }
 
-void FontCache::prewarmGlobally()
+static Vector<String>& fontFamiliesForPrewarming()
 {
-    if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
-        return;
-
-    Vector<String> families = std::initializer_list<String> {
+    static NeverDestroyed<Vector<String>> families = std::initializer_list<String> {
         "Arial"_s,
         "Helvetica"_s,
         "Helvetica Neue"_s,
@@ -1662,9 +1659,17 @@ void FontCache::prewarmGlobally()
         "Times"_s,
         "Times New Roman"_s,
     };
+    return families;
+}
+
+void FontCache::prewarmGlobally()
+{
+    if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
+        return;
 
     FontCache::PrewarmInformation prewarmInfo;
-    prewarmInfo.seenFamilies = WTFMove(families);
+    prewarmInfo.seenFamilies = fontFamiliesForPrewarming();
+    prewarmInfo.fontNamesRequiringSystemFallback = fontFamiliesForPrewarming();
     FontCache::singleton().prewarm(prewarmInfo);
 }
 
