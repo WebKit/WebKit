@@ -1,3 +1,16 @@
+2019-07-19  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] Flush get_range calls during PAUSED->READY in WebKitWebSource
+        https://bugs.webkit.org/show_bug.cgi?id=199934
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Unit testing not applicable.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcChangeState): A well-behaved element should unblock streaming threads
+        during a PAUSED->READY transition, so do that here.
+
 2019-07-19  Rob Buis  <rbuis@igalia.com>
 
         Remove some unneeded code in MathOperator

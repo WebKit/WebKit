@@ -776,7 +776,13 @@ static GstStateChangeReturn webKitWebSrcChangeState(GstElement* element, GstStat
     case GST_STATE_CHANGE_READY_TO_NULL:
         webKitWebSrcCloseSession(src);
         break;
-    default:
+    case GST_STATE_CHANGE_PAUSED_TO_READY: {
+        LockHolder locker(src->priv->responseLock);
+        GST_DEBUG_OBJECT(src, "PAUSED->READY cancelling network requests");
+        src->priv->isFlushing = true;
+        src->priv->responseCondition.notifyOne();
+        break;
+    } default:
         break;
     }
 
