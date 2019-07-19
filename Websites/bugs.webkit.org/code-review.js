@@ -577,6 +577,7 @@ var CODE_REVIEW_UNITTEST;
       var statusBubbleNewEWS = document.createElement('iframe');
       statusBubbleNewEWS.src  = 'https://ews.webkit.org/status-bubble/' + attachment_id + '/';
       // Can't append the HTML because we need to set the onload handler before appending the iframe to the DOM.
+      statusBubbleNewEWS.scrolling = "no";
       statusBubbleNewEWS.onload = function () { handleStatusBubbleLoadNewEWS(this); };
       $('.statusBubble').append(statusBubbleNewEWS);
 

@@ -1,3 +1,12 @@
+2019-07-19  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] EWS status-bubbles are sometimes multi-row with scroll-bar
+        https://bugs.webkit.org/show_bug.cgi?id=199939
+
+        Reviewed by Jonathan Bedard.
+
+        * code-review.js: Disable scrolling.
+
 2019-06-05  Ling Ho  <lingcherd_ho@apple.com>
 
         Add support of zxcvbn password strength checker to bugs.webkit.org website.
