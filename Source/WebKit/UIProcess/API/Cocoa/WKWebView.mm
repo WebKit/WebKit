@@ -1466,7 +1466,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
 - (BOOL)_isBackground
 {
-    if ([self _isDisplayingPDF])
+    if (![self usesStandardContentView] && [_customContentView respondsToSelector:@selector(web_isBackground)])
         return [_customContentView web_isBackground];
     return [_contentView isBackground];
 }

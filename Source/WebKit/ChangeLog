@@ -1,3 +1,25 @@
+2019-07-19  Tim Horton  <timothy_horton@apple.com>
+
+        Web Content process gets stuck suspended after navigating away from a system preview
+        https://bugs.webkit.org/show_bug.cgi?id=199965
+        <rdar://problem/53109004>
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isBackground]):
+        * UIProcess/ios/WKSystemPreviewView.h:
+        * UIProcess/ios/WKSystemPreviewView.mm:
+        (-[WKSystemPreviewView web_initWithFrame:webView:mimeType:]):
+        (-[WKSystemPreviewView web_isBackground]):
+        Apply the fix from r193481 to WKSystemPreviewView as well, having it
+        become a WKApplicationStateTrackingView and plumbing that through
+        to our is-background machinery.
+
+        We really, really should instead have WKWebView itself be the application
+        state tracking view, but that is a bigger change (and has some implications
+        for full-screen video and whatnot).
+
 2019-07-19  Dean Jackson  <dino@apple.com>
 
         Provide correct names for UIContextMenuInteraction API replacements

@@ -25,12 +25,13 @@
 
 #if USE(SYSTEM_PREVIEW)
 
+#import "WKApplicationStateTrackingView.h"
 #import "WKWebViewContentProvider.h"
 #import <QuickLook/QuickLook.h>
 #import <UIKit/UIKit.h>
 #import <pal/spi/ios/QuickLookSPI.h>
 
-@interface WKSystemPreviewView : UIView <WKWebViewContentProvider, QLPreviewItemDataProvider>
+@interface WKSystemPreviewView : WKApplicationStateTrackingView <WKWebViewContentProvider, QLPreviewItemDataProvider>
 
 @end
 
