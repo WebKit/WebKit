@@ -1,3 +1,36 @@
+2019-07-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Remove pywebsockets from thirdparty
+        https://bugs.webkit.org/show_bug.cgi?id=199710
+
+        Reviewed by Jonathan Bedard.
+
+        We have a very old version of pywebsocket in webkitpy thirdparty, but we are also importing pywebsocket as part
+        of wpt tools. We can simply use the wpt one for all websocket tests and remove the old copy from sources.
+
+        * Scripts/webkitpy/layout_tests/servers/websocket_server.py:
+        (PyWebSocket._prepare_config): Use pywebsocket from imported w3c tools directory.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/COPYING: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/__init__.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/_stream_base.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/_stream_hixie75.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/_stream_hybi.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/common.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/dispatch.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/extensions.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/__init__.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/_base.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/hybi.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/hybi00.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/headerparserhandler.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/http_header_util.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/memorizingfile.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/msgutil.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/mux.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/standalone.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/stream.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/util.py: Removed.
+
 2019-07-18  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Move resultsdbpy to WebKit

@@ -16,12 +16,12 @@
     var closeEvent;
 
     ws.onopen = function() {
-        ws.close();
+        testPassed("open event fired");
+        finishJSTest();
     };
 
-    ws.onclose = function(event) {
-        closeEvent = event;
-        shouldBeTrue("closeEvent.isTrusted");
+    ws.onerror = function(event) {
+        testFailed("error event fired");
         finishJSTest();
     };
 </script>

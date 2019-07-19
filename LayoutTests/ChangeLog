@@ -1,3 +1,19 @@
+2019-07-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Remove pywebsockets from thirdparty
+        https://bugs.webkit.org/show_bug.cgi?id=199710
+
+        Reviewed by Jonathan Bedard.
+
+        Update two tests that timeout with the new pywebsocket version, because the server doesn't close the connection
+        after handshake.AbortedByUserException(). Simply assume onopen to be called a success in handshake like other
+        tests using handshake.AbortedByUserException() do.
+
+        * http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers.html:
+        * http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html:
+
 2019-07-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [iOS Sim] Multiple quicklook tests are failing

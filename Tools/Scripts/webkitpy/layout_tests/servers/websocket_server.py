@@ -117,11 +117,10 @@ class PyWebSocket(http_server.Lighttpd):
         output_log = self._filesystem.join(self._output_dir, log_file_name + "-out.txt")
         self._wsout = self._filesystem.open_text_file_for_writing(output_log)
 
-        from webkitpy.thirdparty import mod_pywebsocket
         python_interp = sys.executable
-        # FIXME: Use self._filesystem.path_to_module(self.__module__) instead of __file__
-        # I think this is trying to get the chrome directory?  Doesn't the port object know that?
-        pywebsocket_base = self._filesystem.join(self._filesystem.dirname(self._filesystem.dirname(self._filesystem.dirname(self._filesystem.abspath(__file__)))), 'thirdparty')
+        wpt_tools_base = self._filesystem.join(self._layout_tests, "imported", "w3c", "web-platform-tests", "tools")
+        pywebsocket_base = self._filesystem.join(wpt_tools_base, "pywebsocket")
+        pywebsocket_deps = [self._filesystem.join(wpt_tools_base, "third_party", "six")]
         pywebsocket_script = self._filesystem.join(pywebsocket_base, 'mod_pywebsocket', 'standalone.py')
         start_cmd = [
             python_interp, '-u', pywebsocket_script,
@@ -152,7 +151,7 @@ class PyWebSocket(http_server.Lighttpd):
         self._start_cmd = start_cmd
         server_name = self._filesystem.basename(pywebsocket_script)
         self._env = self._port_obj.setup_environ_for_server(server_name)
-        self._env['PYTHONPATH'] = (pywebsocket_base + os.path.pathsep + self._env.get('PYTHONPATH', ''))
+        self._env['PYTHONPATH'] = os.path.pathsep.join([pywebsocket_base] + pywebsocket_deps + [self._env.get('PYTHONPATH', '')])
 
     def _remove_stale_logs(self):
         try:
