@@ -1117,6 +1117,9 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 - (void)_setContentOffsetWithDecelerationAnimation:(CGPoint)contentOffset;
 - (CGPoint)_adjustedContentOffsetForContentOffset:(CGPoint)contentOffset;
 - (void)_flashScrollIndicatorsPersistingPreviousFlashes:(BOOL)persisting;
+
+@property (nonatomic) BOOL tracksImmediatelyWhileDecelerating;
+@property (nonatomic, getter=_avoidsJumpOnInterruptedBounce, setter=_setAvoidsJumpOnInterruptedBounce:) BOOL _avoidsJumpOnInterruptedBounce;
 @end
 
 @interface UIPeripheralHost (IPI)

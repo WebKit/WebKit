@@ -690,6 +690,11 @@ static void validate(WKWebViewConfiguration *configuration)
     [_scrollView setInternalDelegate:self];
     [_scrollView setBouncesZoom:YES];
 
+    if ([_scrollView respondsToSelector:@selector(_setAvoidsJumpOnInterruptedBounce:)]) {
+        [_scrollView setTracksImmediatelyWhileDecelerating:NO];
+        [_scrollView _setAvoidsJumpOnInterruptedBounce:YES];
+    }
+
     if ([_configuration _editableImagesEnabled])
         [_scrollView panGestureRecognizer].allowedTouchTypes = @[ @(UITouchTypeDirect) ];
 
