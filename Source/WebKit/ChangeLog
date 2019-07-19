@@ -1,5 +1,17 @@
 2019-07-18  Alex Christensen  <achristensen@webkit.org>
 
+        Fix warning when importing WebKit in Swift
+        https://bugs.webkit.org/show_bug.cgi?id=199914
+        <rdar://problem/52854930>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/NSAttributedString.h:
+        Declare NSAttributedString and update a swift name.
+        This fix was proposed by Argyrios Kyrtzidis.
+
+2019-07-18  Alex Christensen  <achristensen@webkit.org>
+
         Add and test _WKWebsiteDataStoreConfiguration.deviceIdHashSaltsStorageDirectory SPI
         https://bugs.webkit.org/show_bug.cgi?id=199923
 

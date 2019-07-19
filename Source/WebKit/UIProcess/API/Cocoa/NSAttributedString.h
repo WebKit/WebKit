@@ -32,6 +32,8 @@
 #import <AppKit/NSAttributedString.h>
 #endif
 
+@class NSAttributedString;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /*!
@@ -41,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
  directory may be loaded by WebKit.
 */
 WK_EXTERN NSAttributedStringDocumentReadingOptionKey const NSReadAccessURLDocumentOption
-    NS_SWIFT_NAME(NSAttributedStringDocumentReadingOptionKey.readAccessURL) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+    NS_SWIFT_NAME(readAccessURL) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*!
  @abstract Type definition for the completion handler block used to get asynchronous attributed strings.
