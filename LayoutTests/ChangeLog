@@ -1,3 +1,15 @@
+2019-07-19  Antoine Quint  <graouts@apple.com>
+
+        Unable to bring up custom media controls on iOS for video.sina.cn
+        https://bugs.webkit.org/show_bug.cgi?id=199889
+        <rdar://problem/51883919>
+
+        Unreviewed test gardening.
+
+        This new test can only run on Internal bots.
+
+        * platform/ios/TestExpectations:
+
 2019-07-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Remove pywebsockets from thirdparty

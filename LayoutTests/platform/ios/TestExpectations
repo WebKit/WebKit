@@ -2960,6 +2960,7 @@ webkit.org/b/166062 media/modern-media-controls/placard-support/placard-support-
 media/modern-media-controls/button/button.html [ Skip ]
 media/modern-media-controls/button/button-active-state.html [ Skip ]
 media/modern-media-controls/fullscreen-support/fullscreen-support-press.html [ Skip ]
+media/modern-media-controls/media-controller/ios/media-controller-allows-click-over-video-with-no-controls.html [ Skip ]
 media/modern-media-controls/media-controller/ios/media-controller-ios-only-enable-tap-gesture-recognizer-with-fades-when-idle.html [ Skip ]
 media/modern-media-controls/media-controller/ios/media-controller-stop-updates-in-fullscreen.html [ Skip ]
 media/modern-media-controls/mute-support/mute-support-press-on-button.html [ Skip ]
