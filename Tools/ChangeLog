@@ -1,3 +1,13 @@
+2019-07-19  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Display pre-existing Layout test failure names in the build summary
+        https://bugs.webkit.org/show_bug.cgi?id=199941
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeLayoutTestsResults.report_pre_existing_failures):
+
 2019-07-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] run-webkit-tests should run with a temporal homedir

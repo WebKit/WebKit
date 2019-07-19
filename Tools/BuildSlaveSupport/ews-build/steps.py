@@ -1027,7 +1027,8 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
         self.build.results = SUCCESS
         self.descriptionDone = 'Passed layout tests'
         pluralSuffix = 's' if len(clean_tree_failures) > 1 else ''
-        message = 'Found {} pre-existing test failure{}'.format(len(clean_tree_failures), pluralSuffix)
+        clean_tree_failures_string = ', '.join([failure_name for failure_name in clean_tree_failures])
+        message = 'Found {} pre-existing test failure{}: {}'.format(len(clean_tree_failures), pluralSuffix, clean_tree_failures_string)
         self.build.buildFinished([message], SUCCESS)
         return defer.succeed(None)
 
