@@ -1,3 +1,78 @@
+2019-07-18  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r247566. rdar://problem/53279081
+
+    Make sure to set kCTFontFallbackOptionAttribute to kCTFontFallbackOptionSystem for system fonts
+    https://bugs.webkit.org/show_bug.cgi?id=199769
+    <rdar://problem/49390297>
+    
+    Reviewed by Myles C. Maxfield.
+    
+    Source/WebCore:
+    
+    When getting a system font, set the appropriate attribute so that it
+    does not fallback to a user initiated font.
+    Add an ASSERT that checks that the font in use is not a user font if
+    policy is to not use user installed fonts.
+    
+    Tests: fast/text/user-installed-fonts/extended-character-with-user-font.html
+           fast/text/user-installed-fonts/extended-character.html
+    
+    * platform/graphics/Font.h:
+    * platform/graphics/FontCascadeFonts.cpp:
+    (WebCore::FontCascadeFonts::glyphDataForSystemFallback):
+    * platform/graphics/cocoa/FontCacheCoreText.cpp:
+    (WebCore::preparePlatformFont):
+    (WebCore::FontDatabase::singletonAllowingUserInstalledFonts):
+    (WebCore::FontDatabase::singletonDisallowingUserInstalledFonts):
+    (WebCore::addAttributesForInstalledFonts):
+    (WebCore::addAttributesForWebFonts):
+    (WebCore::installedFontMandatoryAttributes):
+    * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+    (WebCore::Font::isUserInstalledFont const):
+    
+    Source/WTF:
+    
+    * wtf/Platform.h:
+    
+    Tools:
+    
+    Add a font containing one extended character not found in system fonts.
+    
+    * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+    * WebKitTestRunner/fonts/FakeHelvetica-SingleExtendedCharacter.ttf: Added.
+    
+    LayoutTests:
+    
+    Tests require WTR and recent MacOS, hence why they are disabled elsewhere.
+    
+    * TestExpectations:
+    * platform/mac-wk2/TestExpectations:
+    * fast/text/user-installed-fonts/extended-character-expected.html: Added.
+    * fast/text/user-installed-fonts/extended-character-with-user-font-expected-mismatch.html: Added.
+    * fast/text/user-installed-fonts/extended-character-with-user-font.html: Added.
+    * fast/text/user-installed-fonts/extended-character.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247566 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-18  Youenn Fablet  <youenn@apple.com>
+
+            Make sure to set kCTFontFallbackOptionAttribute to kCTFontFallbackOptionSystem for system fonts
+            https://bugs.webkit.org/show_bug.cgi?id=199769
+            <rdar://problem/49390297>
+
+            Reviewed by Myles C. Maxfield.
+
+            Tests require WTR and recent MacOS, hence why they are disabled elsewhere.
+
+            * TestExpectations:
+            * platform/mac-wk2/TestExpectations:
+            * fast/text/user-installed-fonts/extended-character-expected.html: Added.
+            * fast/text/user-installed-fonts/extended-character-with-user-font-expected-mismatch.html: Added.
+            * fast/text/user-installed-fonts/extended-character-with-user-font.html: Added.
+            * fast/text/user-installed-fonts/extended-character.html: Added.
+
 2019-07-17  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r247544. rdar://problem/53230040

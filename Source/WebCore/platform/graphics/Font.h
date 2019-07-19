@@ -204,6 +204,10 @@ public:
     const BitVector& glyphsSupportedByAllPetiteCaps() const;
 #endif
 
+#if HAVE(DISALLOWABLE_USER_INSTALLED_FONTS)
+    bool isUserInstalledFont() const;
+#endif
+
     bool canRenderCombiningCharacterSequence(const UChar*, size_t) const;
     bool applyTransforms(GlyphBufferGlyph*, GlyphBufferAdvance*, size_t glyphCount, bool enableKerning, bool requiresShaping) const;
 

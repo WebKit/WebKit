@@ -96,6 +96,7 @@
 		2E749BF21891EBFA007FC175 /* EventSenderProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E63ED7A1891ACE9002A7AFC /* EventSenderProxyIOS.mm */; };
 		31DA8A3D1E7205CC00E1DF2F /* IOSLayoutTestCommunication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3148A0531E6F85B600D3B316 /* IOSLayoutTestCommunication.cpp */; };
 		41C5378E21F13414008B1FAD /* TestWebsiteDataStoreDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41C5378D21F1333C008B1FAD /* TestWebsiteDataStoreDelegate.mm */; };
+		41D5B62622DD9D36000F4C4A /* FakeHelvetica-SingleExtendedCharacter.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 41D5B62522DD9D36000F4C4A /* FakeHelvetica-SingleExtendedCharacter.ttf */; };
 		4430AE191F82C4FD0099915A /* GeneratedTouchesDebugWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4430AE171F82C4EE0099915A /* GeneratedTouchesDebugWindow.mm */; };
 		51058AD51D678820009A538C /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41230E16138C78BF00BCCFCA /* libWebCoreTestSupport.dylib */; };
 		51058AD61D678825009A538C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5169CA1445222D00E0A9D7 /* WebKit.framework */; };
@@ -300,6 +301,7 @@
 		4181731B138AD39D0057AAA4 /* WebCoreTestSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreTestSupport.h; path = WebCoreTestSupport/WebCoreTestSupport.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		41C5378C21F1333C008B1FAD /* TestWebsiteDataStoreDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestWebsiteDataStoreDelegate.h; path = cocoa/TestWebsiteDataStoreDelegate.h; sourceTree = "<group>"; };
 		41C5378D21F1333C008B1FAD /* TestWebsiteDataStoreDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestWebsiteDataStoreDelegate.mm; path = cocoa/TestWebsiteDataStoreDelegate.mm; sourceTree = "<group>"; };
+		41D5B62522DD9D36000F4C4A /* FakeHelvetica-SingleExtendedCharacter.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "FakeHelvetica-SingleExtendedCharacter.ttf"; path = "fonts/FakeHelvetica-SingleExtendedCharacter.ttf"; sourceTree = "<group>"; };
 		4429FC5E1627089600F66D8B /* WorkQueueManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueueManager.cpp; sourceTree = "<group>"; };
 		4429FC611627089600F66D8B /* WorkQueueManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueueManager.h; sourceTree = "<group>"; };
 		4430AE171F82C4EE0099915A /* GeneratedTouchesDebugWindow.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GeneratedTouchesDebugWindow.mm; sourceTree = "<group>"; };
@@ -749,6 +751,7 @@
 				1CBA02931FD86EA100179C7D /* FakeHelvetica-Helvetica-500.ttf */,
 				1CBA02921FD86EA100179C7D /* FakeHelvetica-Helvetica2-400.ttf */,
 				1CBA02951FD86EA100179C7D /* FakeHelvetica-Helvetica2-500.ttf */,
+				41D5B62522DD9D36000F4C4A /* FakeHelvetica-SingleExtendedCharacter.ttf */,
 				1CA211C71BCA107300B2101F /* FontWithFeatures.otf */,
 				1CA211C81BCA107300B2101F /* FontWithFeatures.ttf */,
 				BC25186311D15D54002EBC01 /* InjectedBundle-Info.plist */,
@@ -1028,6 +1031,7 @@
 				1CBA02981FD87DF000179C7D /* FakeHelvetica-Helvetica-500.ttf in Resources */,
 				1CBA02971FD87DEE00179C7D /* FakeHelvetica-Helvetica2-400.ttf in Resources */,
 				1CBA02961FD87DEC00179C7D /* FakeHelvetica-Helvetica2-500.ttf in Resources */,
+				41D5B62622DD9D36000F4C4A /* FakeHelvetica-SingleExtendedCharacter.ttf in Resources */,
 				1CA211C91BCA107300B2101F /* FontWithFeatures.otf in Resources */,
 				1CA211CA1BCA107300B2101F /* FontWithFeatures.ttf in Resources */,
 				6510A78411EC643800410867 /* WebKitWeightWatcher100.ttf in Resources */,
