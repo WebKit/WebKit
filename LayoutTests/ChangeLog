@@ -1,3 +1,16 @@
+2019-07-19  Alex Christensen  <achristensen@webkit.org>
+
+        Rebase fast/forms/ios/typing-in-input-in-iframe.html after r244141
+        https://bugs.webkit.org/show_bug.cgi?id=199875
+        <rdar://problem/50060561>
+
+        Reviewed by Megan Gardner.
+
+        With r247571 and its justification, we need to rebase another test.
+
+        * fast/forms/ios/typing-in-input-in-iframe-expected.txt:
+        * fast/forms/ios/typing-in-input-in-iframe.html:
+
 2019-07-19  Antoine Quint  <graouts@apple.com>
 
         Unable to bring up custom media controls on iOS for video.sina.cn
