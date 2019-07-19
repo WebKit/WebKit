@@ -31,7 +31,6 @@
 #include <WebCore/StorageMap.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
-#include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
 
@@ -113,7 +112,7 @@ private:
     HashMap<uint64_t, RefPtr<SessionStorageNamespace>> m_sessionStorageNamespaces;
 
     HashMap<std::pair<IPC::Connection::UniqueID, uint64_t>, RefPtr<StorageArea>> m_storageAreasByConnection;
-    HashCountedSet<IPC::Connection::UniqueID> m_connections;
+    HashSet<IPC::Connection::UniqueID> m_connections;
 
     enum class State {
         Running,
