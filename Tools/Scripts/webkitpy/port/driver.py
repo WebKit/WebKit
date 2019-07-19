@@ -437,6 +437,10 @@ class Driver(object):
             # Each worker should have it's own and it should be cleaned afterwards.
             # Set it to inside the temporary folder by prepending XDG_CACHE_HOME with DRIVER_TEMPDIR.
             environment['XDG_CACHE_HOME'] = self._port.host.filesystem.join(str(self._driver_tempdir), 'appcache')
+            # Use an empty/volatile home inside DRIVER_TEMPDIR to ensure that the test results
+            # are not affected by the user settings of any library.
+            environment['HOME'] = self._port.host.filesystem.join(str(self._driver_tempdir), 'home')
+            self._target_host.filesystem.maybe_make_directory(environment['HOME'])
 
         if self._profiler:
             environment = self._profiler.adjusted_environment(environment)

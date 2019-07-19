@@ -1,3 +1,22 @@
+2019-07-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] run-webkit-tests should run with a temporal homedir
+        https://bugs.webkit.org/show_bug.cgi?id=199738
+
+        Reviewed by Michael Catanzaro.
+
+        Run the tests with an empty homedir that is created inside the driver tmpdir.
+        The driver tmpdir is a random directory created for each test runner that is purged after the run.
+
+        This is done to ensure that the test results are not affected by the user settings of any library.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._setup_environ_for_driver):
+        * Scripts/webkitpy/port/driver_unittest.py:
+        (DriverTest.test_setup_environ_base_vars):
+        (DriverTest):
+        (DriverTest.test_create_temporal_home_dir):
+
 2019-07-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Remove pywebsockets from thirdparty

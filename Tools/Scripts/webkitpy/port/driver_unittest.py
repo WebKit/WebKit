@@ -357,8 +357,7 @@ class DriverTest(unittest.TestCase):
     def test_setup_environ_base_vars(self):
         # This are essential environment variables that should be copied
         # as part of base:setup_environ_for_server for all drivers
-        environ_keep_yes = {'HOME': '/home/igalia',
-                           'PATH': '/bin:/usr/sbin:/usr/bin',
+        environ_keep_yes = {'PATH': '/bin:/usr/sbin:/usr/bin',
                            'WEBKIT_TESTFONTS': '/opt/webkit/WebKitBuild/WKTestFonts',
                            'WEBKIT_OUTPUTDIR': '/opt/webkit/WebKitBuild/Release',
                            'LANG': 'en_US.utf8'}
@@ -379,3 +378,16 @@ class DriverTest(unittest.TestCase):
             for var in environ_keep_yes.keys():
                     self.assertIn(var, environment_driver_test)
                     self.assertEqual(environment_driver_test[var], environ_keep_yes[var])
+
+    def test_create_temporal_home_dir(self):
+        environ_user = {'HOME': '/home/igalia'}
+        with patch('os.environ', environ_user), patch('sys.platform', 'linux2'):
+            port = self.make_port()
+            port._test_runner_process_constructor = MockServerProcess
+            driver = Driver(port, None, pixel_tests=False)
+            driver.start(True, [])
+            environ_driver = driver._setup_environ_for_test()
+            self.assertNotEquals(environ_driver['HOME'], environ_user['HOME'])
+            self.assertIn(str(driver._driver_tempdir), environ_driver['HOME'])
+            self.assertNotIn(str(driver._driver_tempdir), environ_user['HOME'])
+            self.assertTrue(port._filesystem.isdir(environ_driver['HOME']))
