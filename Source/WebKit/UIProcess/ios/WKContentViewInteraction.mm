@@ -5159,6 +5159,20 @@ static bool mayContainSelectableText(WebKit::InputType type)
     }
 }
 
+static bool shouldShowKeyboardForElement(const WebKit::FocusedElementInformation& information)
+{
+    if (information.inputMode == WebCore::InputMode::None)
+        return false;
+
+    if (information.elementType == WebKit::InputType::Drawing)
+        return false;
+
+    if (mayContainSelectableText(information.elementType))
+        return true;
+
+    return !currentUserInterfaceIdiomIsPad();
+}
+
 static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::FocusedElementInformation& elementInfo, const WebKit::EditorState& editorState)
 {
     WebCore::IntRect elementInteractionRect;
@@ -5205,6 +5219,8 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 - (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode activityStateChanges:(OptionSet<WebCore::ActivityState::Flag>)activityStateChanges userObject:(NSObject <NSSecureCoding> *)userObject
 {
     SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, hasFocusedElement(_focusedElementInformation) };
+    SetForScope<BOOL> isFocusingElementWithKeyboardForScope { _isFocusingElementWithKeyboard, shouldShowKeyboardForElement(information) };
+
     auto inputViewUpdateDeferrer = std::exchange(_inputViewUpdateDeferrer, nullptr);
 
     _didAccessoryTabInitiateFocus = _isChangingFocusUsingAccessoryTab;
@@ -5398,6 +5414,20 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
     if (!_isChangingFocus)
         _didAccessoryTabInitiateFocus = NO;
+}
+
+- (BOOL)shouldIgnoreKeyboardWillHideNotification
+{
+    // Ignore keyboard will hide notifications sent during rotation. They're just there for
+    // backwards compatibility reasons and processing the will hide notification would
+    // temporarily screw up the unobscured view area.
+    if (UIPeripheralHost.sharedInstance.rotationState)
+        return YES;
+
+    if (_isChangingFocus && _isFocusingElementWithKeyboard)
+        return YES;
+
+    return NO;
 }
 
 - (void)_hardwareKeyboardAvailabilityChanged

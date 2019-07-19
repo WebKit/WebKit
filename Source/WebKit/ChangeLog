@@ -1,3 +1,49 @@
+2019-07-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Entering 2FA code on idmsa.apple.com causes unexpected scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=199949
+        <rdar://problem/49944428>
+
+        Reviewed by Tim Horton and Megan Gardner.
+
+        Since at least iOS 11, -[UIScrollView _adjustForAutomaticKeyboardInfo:animated:lastAdjustment:] adjusts the
+        scroll view's content offset to account for updated keyboard bottom insets. In WebKit, we call this method
+        whenever keyboard geometry changes (based on system notifications, such as UIKeyboardWillHideNotification).
+
+        When switching between focused form fields, we hide the keyboard for the previous focused element prior to
+        showing the keyboard for the newly focused element. This means that we will actually dismiss the keyboard in the
+        process of changing the focused element, which posts keyboard geometry notifications, which causes us to scroll
+        WKScrollView.
+
+        On iOS 12, this would be immediately followed by re-presenting the keyboard for the new focused element, which
+        causes us to adjust the scroll view back to its original position right away; this means that the scrolling that
+        happens as a result of adjusting for the keyboard insets after dismissal doesn't result in any visible change.
+
+        However, on iOS 13, after r239441 and r244546, we now defer scrolling and zooming to reveal the focused element
+        until later; this means the scrolling that happens as a result of initially dismissing the keyboard now causes a
+        consistent jump in the scroll view's scroll position (whereas on iOS 12, this only happens rarely, and the jump
+        is also less noticeable).
+
+        To mitigate this, we detect the case where we're moving focus from one element to another; if we're about to
+        show a keyboard for the newly focused element, then we should avoid scrolling as a result of the impending
+        "keyboard will hide" notification.
+
+        Test: fast/forms/ios/no-scrolling-when-moving-focus-between-adjacent-fields.html
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _keyboardChangedWithInfo:adjustScrollView:]):
+        (-[WKWebView _keyboardWillHide:]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (shouldShowKeyboardForElement):
+
+        Add a helper to determine whether we're focusing an element which presents a "keyboard" (i.e. a UIKit input
+        view, as opposed to modal select pickers, modal date pickers, or fields with inputmode="none", for which we
+        don't show an input view).
+
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+        (-[WKContentView shouldIgnoreKeyboardWillHideNotification]):
+
 2019-07-18  Alex Christensen  <achristensen@webkit.org>
 
         Fix warning when importing WebKit in Swift

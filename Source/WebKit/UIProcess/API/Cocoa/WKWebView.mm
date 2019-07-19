@@ -3329,6 +3329,9 @@ static int32_t activeOrientation(WKWebView *webView)
         SetForScope<BOOL> insetAdjustmentGuard(_currentlyAdjustingScrollViewInsetsForKeyboard, YES);
         [_scrollView _adjustForAutomaticKeyboardInfo:keyboardInfo animated:YES lastAdjustment:&_lastAdjustmentForScroller];
         CGFloat bottomInsetAfterAdjustment = [_scrollView contentInset].bottom;
+        // FIXME: This "total bottom content inset adjustment" mechanism hasn't worked since iOS 11, since -_adjustForAutomaticKeyboardInfo:animated:lastAdjustment:
+        // no longer sets -[UIScrollView contentInset] for apps linked on or after iOS 11. We should consider removing this logic, since the original bug this was
+        // intended to fix, <rdar://problem/23202254>, remains fixed through other means.
         if (bottomInsetBeforeAdjustment != bottomInsetAfterAdjustment)
             _totalScrollViewBottomInsetAdjustmentForKeyboard += bottomInsetAfterAdjustment - bottomInsetBeforeAdjustment;
     }
@@ -3371,10 +3374,7 @@ static int32_t activeOrientation(WKWebView *webView)
 
 - (void)_keyboardWillHide:(NSNotification *)notification
 {
-    // Ignore keyboard will hide notifications sent during rotation. They're just there for
-    // backwards compatibility reasons and processing the will hide notification would
-    // temporarily screw up the unobscured view area.
-    if ([[UIPeripheralHost sharedInstance] rotationState])
+    if ([_contentView shouldIgnoreKeyboardWillHideNotification])
         return;
 
     [self _keyboardChangedWithInfo:notification.userInfo adjustScrollView:YES];
