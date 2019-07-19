@@ -158,7 +158,6 @@ SOFT_LINK_CONSTANT(ManagedConfiguration, MCFeatureDefinitionLookupAllowed, NSStr
 
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
-static NSString * const webkitShowLinkPreviewsPreferenceChangedNotification = @"WebKitShowLinkPreviewsPreferenceChanged";
 #endif
 
 #if PLATFORM(WATCHOS)
@@ -7581,11 +7580,6 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
             [previewClickInteraction setDriver:driver];
             [driver setDelegate:(id<_UIClickInteractionDriverDelegate>)previewClickInteraction];
         }
-
-        [self _showLinkPreviewsPreferenceChanged:nil];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_showLinkPreviewsPreferenceChanged:) name:webkitShowLinkPreviewsPreferenceChangedNotification object:nil];
-
         return;
     }
 #endif
@@ -7606,8 +7600,6 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 
         [self removeInteraction:_contextMenuInteraction.get()];
         _contextMenuInteraction = nil;
-
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:webkitShowLinkPreviewsPreferenceChangedNotification object:nil];
         return;
     }
 #endif
@@ -7619,16 +7611,6 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 }
 
 #if USE(UICONTEXTMENU)
-
-- (void)_showLinkPreviewsPreferenceChanged:(NSNotification *)notification
-{
-    Boolean keyExistsAndHasValidFormat = false;
-    Boolean prefValue = CFPreferencesGetAppBooleanValue((__bridge CFStringRef)webkitShowLinkPreviewsPreferenceKey, kCFPreferencesCurrentApplication, &keyExistsAndHasValidFormat);
-    if (keyExistsAndHasValidFormat)
-        _showLinkPreviews = prefValue;
-    else
-        _showLinkPreviews = YES;
-}
 
 static bool needsDeprecatedPreviewAPI(id<WKUIDelegate> delegate)
 {
@@ -7708,7 +7690,7 @@ static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(const RetainPtr<
     return actions;
 }
 
-static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewViewController, const RetainPtr<NSArray>& defaultElementActions, RetainPtr<_WKActivatedElementInfo> elementInfo, NSString *title)
+static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewViewController, const RetainPtr<NSArray>& defaultElementActions, RetainPtr<_WKActivatedElementInfo> elementInfo, NSString *title = nil)
 {
     auto actions = menuElementsFromLegacyPreview(previewViewController);
     if (!actions)
@@ -7717,18 +7699,30 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     return [UIMenu menuWithTitle:title children:actions];
 }
 
-static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url, const String& title)
+static UIMenu *menuWithShowLinkPreviewAction(UIMenu *originalMenu)
 {
-    if (isLink && !showLinkPreviews) {
-        if (!url.isEmpty()) {
-            if (WTF::protocolIsJavaScript(url))
-                return WEB_UI_STRING_KEY("JavaScript", "JavaScript Action Sheet Title", "Title for action sheet for JavaScript link");
-            return WTF::userVisibleString(url);
-        }
-    } else if (!isLink && !title.isEmpty())
-        return title;
+    if (!originalMenu)
+        return nil;
 
-    return nil;
+    // Look for a UIAction that has the WKElementActionTypeToggleShowLinkPreviewsIdentifier.
+    NSUInteger result = [originalMenu.children indexOfObjectPassingTest:^BOOL(UIMenuElement *element, NSUInteger index, BOOL *stop) {
+        if (![element isKindOfClass:[UIAction class]])
+            return NO;
+        if ([(UIAction *)element identifier] == WKElementActionTypeToggleShowLinkPreviewsIdentifier) {
+            *stop = YES;
+            return YES;
+        }
+        return NO;
+    }];
+    if (result != NSNotFound)
+        return originalMenu;
+
+    // We didn't find one, so make a new UIMenu with the toggle action.
+    NSMutableArray<UIMenuElement *> *menuElements = [NSMutableArray arrayWithCapacity:(originalMenu.children.count + 1)];
+    [menuElements addObjectsFromArray:originalMenu.children];
+    _WKElementAction *toggleAction = [_WKElementAction elementActionWithType:_WKElementActionToggleShowLinkPreviews];
+    [menuElements addObject:[toggleAction uiActionForElementInfo:nil]];
+    return [originalMenu menuByReplacingChildren:menuElements];
 }
 
 - (void)assignLegacyDataForContextMenuInteraction
@@ -7763,6 +7757,7 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
         if ([uiDelegate respondsToSelector:@selector(webView:previewingViewControllerForElement:defaultActions:)]) {
             auto defaultActions = wkLegacyPreviewActionsFromElementActions(defaultActionsFromAssistant.get(), elementInfo.get());
             auto previewElementInfo = adoptNS([[WKPreviewElementInfo alloc] _initWithLinkURL:url]);
+            // FIXME: Clients using this legacy API will always show their previewViewController and ignore _showLinkPreviews.
             previewViewController = [uiDelegate webView:_webView previewingViewControllerForElement:previewElementInfo.get() defaultActions:defaultActions];
         } else if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:defaultActions:elementInfo:)])
             previewViewController = [uiDelegate _webView:_webView previewViewControllerForURL:url defaultActions:defaultActionsFromAssistant.get() elementInfo:elementInfo.get()];
@@ -7782,15 +7777,14 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
                     _contextMenuLegacyPreviewController = dataDetectorsResult.get().previewProvider();
                 if (dataDetectorsResult && dataDetectorsResult.get().actionProvider) {
                     auto menuElements = menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
-                    _contextMenuLegacyMenu = dataDetectorsResult.get().actionProvider(menuElements);
+                    _contextMenuLegacyMenu = menuWithShowLinkPreviewAction(dataDetectorsResult.get().actionProvider(menuElements));
                 }
                 END_BLOCK_OBJC_EXCEPTIONS;
             }
             return;
         }
 
-        auto menuTitle = titleForMenu(true, _showLinkPreviews, url, _positionInformation.title);
-        _contextMenuLegacyMenu = menuFromLegacyPreviewOrDefaultActions(previewViewController, defaultActionsFromAssistant, elementInfo, menuTitle);
+        _contextMenuLegacyMenu = menuFromLegacyPreviewOrDefaultActions(previewViewController, defaultActionsFromAssistant, elementInfo);
 
     } else if (_positionInformation.isImage) {
         NSURL *nsURL = (NSURL *)url;
@@ -7817,11 +7811,10 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
             previewViewController = [[WKImagePreviewViewController alloc] initWithCGImage:cgImage defaultActions:defaultActionsFromAssistant.get() elementInfo:elementInfo.get()];
         ALLOW_DEPRECATED_DECLARATIONS_END
 
-        auto menuTitle = titleForMenu(false, _showLinkPreviews, url, _positionInformation.title);
-        _contextMenuLegacyMenu = menuFromLegacyPreviewOrDefaultActions(previewViewController, defaultActionsFromAssistant, elementInfo, menuTitle);
+        _contextMenuLegacyMenu = menuFromLegacyPreviewOrDefaultActions(previewViewController, defaultActionsFromAssistant, elementInfo, _positionInformation.title);
     }
 
-    _contextMenuLegacyPreviewController = _showLinkPreviews ? previewViewController : nullptr;
+    _contextMenuLegacyPreviewController = previewViewController;
 }
 
 - (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location
@@ -7838,6 +7831,10 @@ static NSString *titleForMenu(bool isLink, bool showLinkPreviews, const URL& url
 
     if (!_webView.configuration._longPressActionsEnabled)
         return completion(nil);
+
+    _showLinkPreviews = true;
+    if (NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:webkitShowLinkPreviewsPreferenceKey])
+        _showLinkPreviews = value.boolValue;
 
     const auto position = [interaction locationInView:self];
     WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint(position) };

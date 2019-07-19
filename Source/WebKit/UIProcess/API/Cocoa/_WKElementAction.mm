@@ -60,6 +60,10 @@ static UIActionIdentifier const WKElementActionTypeShareIdentifier = @"WKElement
 static UIActionIdentifier const WKElementActionTypeOpenInNewTabIdentifier = @"WKElementActionTypeOpenInNewTab";
 static UIActionIdentifier const WKElementActionTypeOpenInNewWindowIdentifier = @"WKElementActionTypeOpenInNewWindow";
 static UIActionIdentifier const WKElementActionTypeDownloadIdentifier = @"WKElementActionTypeDownload";
+UIActionIdentifier const WKElementActionTypeToggleShowLinkPreviewsIdentifier = @"WKElementActionTypeToggleShowLinkPreviews";
+
+static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
+static NSString * const webkitShowLinkPreviewsPreferenceChangedNotification = @"WebKitShowLinkPreviewsPreferenceChanged";
 
 @implementation _WKElementAction  {
     RetainPtr<NSString> _title;
@@ -160,6 +164,17 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
             [assistant.delegate actionSheetAssistant:assistant shareElementWithURL:actionInfo.URL ?: actionInfo.imageURL rect:actionInfo.boundingRect];
         };
         break;
+    case _WKElementActionToggleShowLinkPreviews: {
+        bool showingLinkPreviews = true;
+        if (NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:webkitShowLinkPreviewsPreferenceKey])
+            showingLinkPreviews = value.boolValue;
+
+        title = showingLinkPreviews ? WEB_UI_STRING("Hide Link Previews", "Title for Hide Link Previews action button") : WEB_UI_STRING("Show Link Previews", "Title for Show Link Previews action button");
+        handler = ^(WKActionSheetAssistant *, _WKActivatedElementInfo *) {
+            [[NSUserDefaults standardUserDefaults] setBool:!showingLinkPreviews forKey:webkitShowLinkPreviewsPreferenceKey];
+        };
+        break;
+    }
     default:
         [NSException raise:NSInvalidArgumentException format:@"There is no standard web element action of type %ld.", (long)type];
         return nil;
@@ -224,6 +239,8 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         return [UIImage systemImageNamed:@"square.grid.2x2"];
     case _WKElementActionTypeDownload:
         return [UIImage systemImageNamed:@"arrow.down.circle"];
+    case _WKElementActionToggleShowLinkPreviews:
+        return [UIImage systemImageNamed:@"eye.fill"];
     }
 }
 
@@ -252,6 +269,8 @@ static UIActionIdentifier elementActionTypeToUIActionIdentifier(_WKElementAction
         return WKElementActionTypeOpenInNewWindowIdentifier;
     case _WKElementActionTypeDownload:
         return WKElementActionTypeDownloadIdentifier;
+    case _WKElementActionToggleShowLinkPreviews:
+        return WKElementActionTypeToggleShowLinkPreviewsIdentifier;
     }
 }
 
@@ -279,6 +298,8 @@ static _WKElementActionType uiActionIdentifierToElementActionType(UIActionIdenti
         return _WKElementActionTypeOpenInNewWindow;
     if ([identifier isEqualToString:WKElementActionTypeDownloadIdentifier])
         return _WKElementActionTypeDownload;
+    if ([identifier isEqualToString:WKElementActionTypeToggleShowLinkPreviewsIdentifier])
+        return _WKElementActionToggleShowLinkPreviews;
 
     return _WKElementActionTypeCustom;
 }

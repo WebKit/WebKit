@@ -1,3 +1,48 @@
+2019-07-19  Dean Jackson  <dino@apple.com>
+
+        Add a menu item to toggle between showing and hiding link previews
+        https://bugs.webkit.org/show_bug.cgi?id=199940
+        <rdar://problem/53032288>
+
+        Reviewed by Beth Dakin.
+
+        Add a new _WKElementAction that toggles the display of link previews
+        in context menus, and add it to the default set of actions we provide
+        for links.
+
+        When a UIAction is created from this new _WKElementAction type,
+        it can be identified by WKElementActionTypeToggleShowLinkPreviewsIdentifier.
+        This allows us to check a UIMenu provided by a delegate to make sure
+        that they have provided the toggle menu item. If they haven't, we add it
+        back.
+
+        The preference for showing links is moved from kCFPreferencesAnyApplication
+        to standard user defaults, so that it can be set no matter what the
+        hosting application is.
+
+        * UIProcess/API/Cocoa/_WKElementAction.h: New action type.
+        * UIProcess/API/Cocoa/_WKElementAction.mm: 
+        (+[_WKElementAction _elementActionWithType:customTitle:assistant:]):
+        (+[_WKElementAction imageForElementActionType:]): Use eye.fill for now.
+        I'll need to check with HI to see if there is a more appropriate glyph.
+        (elementActionTypeToUIActionIdentifier):
+        (uiActionIdentifierToElementActionType):
+
+        * UIProcess/ios/WKActionSheetAssistant.mm: Add the toggle action to
+        the default set.
+        (-[WKActionSheetAssistant defaultActionsForLinkSheet:]):
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _registerPreview]): No need to listen for CFPreferences
+        notifications any more.
+        (-[WKContentView _unregisterPreview]):
+        (menuWithShowLinkPreviewAction): New method that adds the UIAction
+        for toggling previews to a UIMenu if necessary.
+        (-[WKContentView assignLegacyDataForContextMenuInteraction]):
+        (-[WKContentView _contextMenuInteraction:configurationForMenuAtLocation:completion:]):
+        (-[WKContentView _showLinkPreviewsPreferenceChanged:]): Deleted.
+        (titleForMenu): Deleted. URL text previews will be provided separately.
+
 2019-07-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Entering 2FA code on idmsa.apple.com causes unexpected scrolling
