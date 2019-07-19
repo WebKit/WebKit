@@ -90,6 +90,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
         WI.consoleManager.addEventListener(WI.ConsoleManager.Event.IssueAdded, this._issueWasAdded, this);
 
+        this._sourceCode.addEventListener(WI.SourceCode.Event.FormatterDidChange, this._handleFormatterDidChange, this);
         if (this._sourceCode instanceof WI.SourceMapResource || this._sourceCode.sourceMaps.length > 0)
             WI.notifications.addEventListener(WI.Notification.GlobalModifierKeysDidChange, this._updateTokenTrackingControllerState, this);
         else
@@ -176,12 +177,9 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             }
         }
 
-        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.IssueAdded, this._issueWasAdded, this);
-
-        if (this._sourceCode instanceof WI.SourceMapResource || this._sourceCode.sourceMaps.length > 0)
-            WI.notifications.removeEventListener(WI.Notification.GlobalModifierKeysDidChange, this._updateTokenTrackingControllerState, this);
-        else
-            this._sourceCode.removeEventListener(WI.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
+        WI.consoleManager.removeEventListener(null, null, this);
+        WI.notifications.removeEventListener(null, null, this);
+        this._sourceCode.removeEventListener(null, null, this);
     }
 
     canBeFormatted()
@@ -1262,25 +1260,16 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             return;
         }
 
-        // Multiple breakpoints.
-        let removeBreakpoints = () => {
-            for (let breakpoint of breakpoints) {
-                if (WI.debuggerManager.isBreakpointRemovable(breakpoint))
-                    WI.debuggerManager.removeBreakpoint(breakpoint);
-            }
-        };
-
         let shouldDisable = breakpoints.some((breakpoint) => !breakpoint.disabled);
-        let toggleBreakpoints = (shouldDisable) => {
+        contextMenu.appendItem(shouldDisable ? WI.UIString("Disable Breakpoints") : WI.UIString("Enable Breakpoints"), () => {
             for (let breakpoint of breakpoints)
                 breakpoint.disabled = shouldDisable;
-        };
+        });
 
-        if (shouldDisable)
-            contextMenu.appendItem(WI.UIString("Disable Breakpoints"), toggleBreakpoints);
-        else
-            contextMenu.appendItem(WI.UIString("Enable Breakpoints"), toggleBreakpoints);
-        contextMenu.appendItem(WI.UIString("Delete Breakpoints"), removeBreakpoints);
+        contextMenu.appendItem(WI.UIString("Delete Breakpoints"), () => {
+            for (let breakpoint of breakpoints)
+                WI.debuggerManager.removeBreakpoint(breakpoint);
+        });
     }
 
     textEditorBreakpointAdded(textEditor, lineNumber, columnNumber)
@@ -1387,24 +1376,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
                 this._sourceCode.resource.formatterSourceMap = this.formatterSourceMap;
         }
 
-        // Some breakpoints / issues may have moved, some might not have. Just go through
-        // and remove and reinsert all the breakpoints / issues.
-
-        var oldBreakpointMap = this._breakpointMap;
-        this._breakpointMap = {};
-
-        for (var lineNumber in oldBreakpointMap) {
-            for (var columnNumber in oldBreakpointMap[lineNumber]) {
-                var breakpoint = oldBreakpointMap[lineNumber][columnNumber];
-                var newLineInfo = this._editorLineInfoForSourceCodeLocation(breakpoint.sourceCodeLocation);
-                this._addBreakpointWithEditorLineInfo(breakpoint, newLineInfo);
-                this.setBreakpointInfoForLineAndColumn(lineNumber, columnNumber, null);
-                this.setBreakpointInfoForLineAndColumn(newLineInfo.lineNumber, newLineInfo.columnNumber, this._breakpointInfoForBreakpoint(breakpoint));
-            }
-        }
-
-        this._reinsertAllIssues();
-        this._reinsertAllThreadIndicators();
+        this._handleFormatterDidChange();
     }
 
     textEditorExecutionHighlightRange(currentPosition, callback)
@@ -1605,6 +1577,31 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             this._typeTokenAnnotator.refresh();
         if (this._basicBlockAnnotator && this._basicBlockAnnotator.isActive())
             this._basicBlockAnnotator.refresh();
+    }
+
+    _handleFormatterDidChange(event)
+    {
+        if (this._ignoreAllBreakpointLocationUpdates)
+            return;
+
+        // Some breakpoints / issues may have moved, some might not have. Just go through
+        // and remove and reinsert all the breakpoints / issues.
+
+        var oldBreakpointMap = this._breakpointMap;
+        this._breakpointMap = {};
+
+        for (var lineNumber in oldBreakpointMap) {
+            for (var columnNumber in oldBreakpointMap[lineNumber]) {
+                var breakpoint = oldBreakpointMap[lineNumber][columnNumber];
+                var newLineInfo = this._editorLineInfoForSourceCodeLocation(breakpoint.sourceCodeLocation);
+                this._addBreakpointWithEditorLineInfo(breakpoint, newLineInfo);
+                this.setBreakpointInfoForLineAndColumn(lineNumber, columnNumber, null);
+                this.setBreakpointInfoForLineAndColumn(newLineInfo.lineNumber, newLineInfo.columnNumber, this._breakpointInfoForBreakpoint(breakpoint));
+            }
+        }
+
+        this._reinsertAllIssues();
+        this._reinsertAllThreadIndicators();
     }
 
     _sourceCodeSourceMapAdded(event)
