@@ -2551,6 +2551,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)clearSelection
 {
+#if USE(UIKIT_KEYBOARD_ADDITIONS)
+    _seenHardwareKeyDownInNonEditableElement = NO;
+#endif
     [self _elementDidBlur];
     _page->clearSelection();
 }
@@ -5394,6 +5397,13 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     _focusedElementInformation.shouldAvoidResizingWhenInputViewBoundsChange = false;
     _inputPeripheral = nil;
     _focusRequiresStrongPasswordAssistance = NO;
+
+#if USE(UIKIT_KEYBOARD_ADDITIONS)
+    // When defocusing an editable element reset a seen keydown before calling -_hideKeyboard so that we
+    // re-evaluate whether we still need a keyboard when UIKit calls us back in -_requiresKeyboardWhenFirstResponder.
+    if (editableChanged)
+        _seenHardwareKeyDownInNonEditableElement = NO;
+#endif
 
     [self _hideKeyboard];
 

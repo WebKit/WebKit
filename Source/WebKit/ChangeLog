@@ -1,3 +1,41 @@
+2019-07-19  Daniel Bates  <dabates@apple.com>
+
+        [iOS] REGRESSION (r241734): Autocorrection highlight should hide when field becomes defocused
+        https://bugs.webkit.org/show_bug.cgi?id=199807
+        <rdar://problem/52760259>
+
+        Reviewed by Wenson Hsieh.
+
+        Sometimes the correction highlight may not hide when defocusing an editable field.
+        This occurs only when a person pressed a key in a non-editable element beforehand.
+        We need to reset some state to force a re-computation of whether a keyboard is still
+        needed whenever an element is defocused (blurred in web paralance).
+
+        Following r241734 both editable and non-editable key events are handled using the same
+        code path. This is accomplished by having WKContentView's -_requiresKeyboardWhenFirstResponder
+        return YES to tell UIKit it needs a keyboard even when there is no editable element focused.
+        As a result UIKit retains all the keyboard state, including keeping the correction highlight
+        visible. Prior to r241734 WKContentView's -_requiresKeyboardWhenFirstResponder would not return
+        YES when a non-editable element was focused and hence UIKit would tear down the keyboard
+        and its state, including the correction highlight. In r245154, we made keyboard instantiate
+        for a focused non-editable element lazy as a performance optimization. Although r245154
+        kept the r241734 behavior (just made it lazy) it re-wrote the code in such a way that we
+        can utilize it as a hook to fix this bug. In particular, we now clear the bit about a
+        seen keydown in a non-editable element whenever we are defocusing an editable element
+        before we reload the input views, as part of hiding the keyboard. On the reload, UIKit
+        will call -_requiresKeyboardWhenFirstResponder, WebKit will respond with NO now that
+        a non-editable element is focused and hence UIKit will do what it did pre r241734: tear
+        down the keyboard.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didCommitLoadForMainFrame]): Clear the bit about a seen keydown here
+        so that we don't keep the keyboard around on a new page commit. This includes the case
+        when the same page is reloaded. There is not much advantage to keeping the keyboard
+        around across reloads and not doing so will reduce our memory footprint. 
+        (-[WKContentView _elementDidBlur]): Clear the same bit as well when defocusing an
+        editable element. This will cause UIKit to tear down the keyboard on reload removing
+        the correction highlight.
+
 2019-07-19  Dean Jackson  <dino@apple.com>
 
         Add a menu item to toggle between showing and hiding link previews
