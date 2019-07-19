@@ -1,3 +1,20 @@
+2019-07-19  Antoine Quint  <graouts@apple.com>
+
+        Links stop working after long-pressing a link (WK1)
+        https://bugs.webkit.org/show_bug.cgi?id=199952
+        <rdar://problem/52291860>
+
+        Reviewed by Wenson Hsieh.
+
+        Test: fast/events/touch/ios/click-after-long-press.html
+
+        When EventHandler::tryToBeginDragAtPoint() is called, we must reset m_mousePressed to false so that
+        WebChromeClientIOS::observedContentChange() is called by EventHandler::mousePressed() when we would
+        process the next tap after a drag interaction.
+
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::tryToBeginDragAtPoint):
+
 2019-07-19  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: error in starting version change transaction may be neglected
