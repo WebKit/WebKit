@@ -1,3 +1,111 @@
+2019-07-18  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Move resultsdbpy to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=199837
+        <rdar://problem/53172130>
+
+        Rubber-stamped by Aakash Jain.
+
+        Moving the entirety of the resultsdbpy library, which provides utilities to build
+        a database designed to store, visualize and organize test results, into WebKit.
+
+        * Scripts/webkitpy/style/checker.py:
+        (CheckerDispatcher._create_checker): resulltsdbpy is a Python 3 library.
+        * resultsdbpy: Added.
+        * resultsdbpy/MANIFEST.in: Added.
+        * resultsdbpy/README.md: Added.
+        * resultsdbpy/resultsdbpy: Added.
+        * resultsdbpy/resultsdbpy/__init__.py: Added.
+        * resultsdbpy/resultsdbpy/controller: Added.
+        * resultsdbpy/resultsdbpy/controller/__init__.py: Added.
+        * resultsdbpy/resultsdbpy/controller/api_routes.py: Added.
+        * resultsdbpy/resultsdbpy/controller/ci_controller.py: Added.
+        * resultsdbpy/resultsdbpy/controller/ci_controller_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/controller/commit.py: Added.
+        * resultsdbpy/resultsdbpy/controller/commit_controller.py: Added.
+        * resultsdbpy/resultsdbpy/controller/commit_controller_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/controller/commit_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/controller/configuration.py: Added.
+        * resultsdbpy/resultsdbpy/controller/configuration_controller.py: Added.
+        * resultsdbpy/resultsdbpy/controller/configuration_controller_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/controller/configuration_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/controller/suite_controller.py: Added.
+        * resultsdbpy/resultsdbpy/controller/suite_controller_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/controller/test_controller.py: Added.
+        * resultsdbpy/resultsdbpy/controller/test_controller_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/controller/upload_controller.py: Added.
+        * resultsdbpy/resultsdbpy/controller/upload_controller_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/flask_support: Added.
+        * resultsdbpy/resultsdbpy/flask_support/__init__.py: Added.
+        * resultsdbpy/resultsdbpy/flask_support/authed_blueprint.py: Added.
+        * resultsdbpy/resultsdbpy/flask_support/flask_test_context.py: Added.
+        * resultsdbpy/resultsdbpy/flask_support/flask_testcase.py: Added.
+        * resultsdbpy/resultsdbpy/flask_support/util.py: Added.
+        * resultsdbpy/resultsdbpy/flask_support/util_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/model: Added.
+        * resultsdbpy/resultsdbpy/model/__init__.py: Added.
+        * resultsdbpy/resultsdbpy/model/cassandra_context.py: Added.
+        * resultsdbpy/resultsdbpy/model/cassandra_context_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/model/casserole.py: Added.
+        * resultsdbpy/resultsdbpy/model/casserole_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/model/ci_context.py: Added.
+        * resultsdbpy/resultsdbpy/model/ci_context_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/model/commit_context.py: Added.
+        * resultsdbpy/resultsdbpy/model/commit_context_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/model/configuration_context.py: Added.
+        * resultsdbpy/resultsdbpy/model/configuration_context_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/model/docker-compose.yml: Added.
+        * resultsdbpy/resultsdbpy/model/docker.py: Added.
+        * resultsdbpy/resultsdbpy/model/docker_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/model/mock_cassandra_context.py: Added.
+        * resultsdbpy/resultsdbpy/model/mock_model_factory.py: Added.
+        * resultsdbpy/resultsdbpy/model/mock_repository.py: Added.
+        * resultsdbpy/resultsdbpy/model/model.py: Added.
+        * resultsdbpy/resultsdbpy/model/partitioned_redis.py: Added.
+        * resultsdbpy/resultsdbpy/model/partitioned_redis_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/model/redis_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/model/repository.py: Added.
+        * resultsdbpy/resultsdbpy/model/repository_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/model/suite_context.py: Added.
+        * resultsdbpy/resultsdbpy/model/suite_context_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/model/test_context.py: Added.
+        * resultsdbpy/resultsdbpy/model/test_context_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/model/upload_context.py: Added.
+        * resultsdbpy/resultsdbpy/model/upload_context_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/model/wait_for_docker_test_case.py: Added.
+        * resultsdbpy/resultsdbpy/run-tests: Added.
+        * resultsdbpy/resultsdbpy/view: Added.
+        * resultsdbpy/resultsdbpy/view/__init__.py: Added.
+        * resultsdbpy/resultsdbpy/view/ci_view.py: Added.
+        * resultsdbpy/resultsdbpy/view/commit_view.py: Added.
+        * resultsdbpy/resultsdbpy/view/commit_view_unittest.py: Added.
+        * resultsdbpy/resultsdbpy/view/site_menu.py: Added.
+        * resultsdbpy/resultsdbpy/view/static: Added.
+        * resultsdbpy/resultsdbpy/view/static/css: Added.
+        * resultsdbpy/resultsdbpy/view/static/css/commit.css: Added.
+        * resultsdbpy/resultsdbpy/view/static/css/drawer.css: Added.
+        * resultsdbpy/resultsdbpy/view/static/css/search.css: Added.
+        * resultsdbpy/resultsdbpy/view/static/css/timeline.css: Added.
+        * resultsdbpy/resultsdbpy/view/static/js: Added.
+        * resultsdbpy/resultsdbpy/view/static/js/commit.js: Added.
+        * resultsdbpy/resultsdbpy/view/static/js/common.js: Added.
+        * resultsdbpy/resultsdbpy/view/static/js/configuration.js: Added.
+        * resultsdbpy/resultsdbpy/view/static/js/drawer.js: Added.
+        * resultsdbpy/resultsdbpy/view/static/js/search.js: Added.
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js: Added.
+        * resultsdbpy/resultsdbpy/view/suite_view.py: Added.
+        * resultsdbpy/resultsdbpy/view/templates: Added.
+        * resultsdbpy/resultsdbpy/view/templates/base.html: Added.
+        * resultsdbpy/resultsdbpy/view/templates/commit.html: Added.
+        * resultsdbpy/resultsdbpy/view/templates/commits.html: Added.
+        * resultsdbpy/resultsdbpy/view/templates/documentation.html: Added.
+        * resultsdbpy/resultsdbpy/view/templates/error.html: Added.
+        * resultsdbpy/resultsdbpy/view/templates/search.html: Added.
+        * resultsdbpy/resultsdbpy/view/templates/suite_results.html: Added.
+        * resultsdbpy/resultsdbpy/view/view_routes.py: Added.
+        * resultsdbpy/resultsdbpy/view/view_routes_unittest.py: Added.
+        * resultsdbpy/setup.py: Added.
+
 2019-07-18  Alex Christensen  <achristensen@webkit.org>
 
         Add and test _WKWebsiteDataStoreConfiguration.deviceIdHashSaltsStorageDirectory SPI

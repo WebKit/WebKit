@@ -702,7 +702,7 @@ class CheckerDispatcher(object):
             else:
                 checker = JSONChecker(file_path, handle_style_error)
         elif file_type == FileType.PYTHON:
-            python3_paths = []
+            python3_paths = ['Tools/resultsdbpy']
             for partial in python3_paths:
                 if file_path.startswith(partial):
                     return Python3Checker(file_path, handle_style_error)

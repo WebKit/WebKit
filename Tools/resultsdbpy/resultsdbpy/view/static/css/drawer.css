@@ -1,0 +1,89 @@
+/*
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+:root {
+    --boldInverseColor: var(--black);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --boldInverseColor: var(--white);
+    }
+}
+
+.drawer.left.display {
+    width: 300px;
+}
+
+.drawer-control {
+    left: 0;
+    top: 50%;
+    height: 80px;
+    width: 15px;
+    cursor: pointer;
+    -webkit-backdrop-filter: blur(5px) brightness(88%);
+    backdrop-filter: blur(5px) brightness(88%);
+    position: fixed;
+    transition: 0.5s;
+    border: none;
+    z-index: calc(var(--topZIndex) + 1);
+}
+
+.drawer-control:hover {
+    background-color: rgba(157, 204, 254, 0.74902);
+}
+
+.collapsed {
+    left: 0;
+    background-color: var(--blurBackgroundColorGrey);
+    box-shadow: 0px 0px 5px 1px var(--grey);
+}
+
+.collapsed>div {
+  width: 0; 
+  height: 0;
+  position: absolute;
+  top: 32px;
+  left: 2px;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid black;
+}
+
+.extended {
+    left: 285px;
+    background-color: var(--blurBackgroundColor);
+}
+
+.extended>div {
+  width: 0; 
+  height: 0;
+  position: absolute;
+  top: 32px;
+  left: 2px;
+  border-bottom: 10px solid transparent;
+  border-right:10px solid black;
+  border-top: 10px solid transparent;
+}
