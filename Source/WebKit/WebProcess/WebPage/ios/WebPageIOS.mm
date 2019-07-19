@@ -1364,6 +1364,7 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
                 if (distanceBetweenPositions(position, result) > 1)
                     result = wordRange->endPosition();
             }
+            flags = WordIsNearTap;
         } else if (atBoundaryOfGranularity(position, WordGranularity, DirectionBackward)) {
             // The position is at the end of a word.
             result = position;
