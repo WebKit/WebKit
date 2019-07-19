@@ -50,6 +50,7 @@ public:
     bool hasBrokenEncryptedMediaAPISupportQuirk() const;
 #if ENABLE(TOUCH_EVENTS)
     bool shouldDispatchSimulatedMouseEvents() const;
+    bool shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTarget*) const;
     Optional<Event::IsCancelable> simulatedMouseEventTypeForTarget(EventTarget*) const;
 #endif
     bool shouldDisablePointerEventsQuirk() const;
@@ -69,6 +70,10 @@ public:
 
 private:
     bool needsQuirks() const;
+
+#if ENABLE(TOUCH_EVENTS)
+    bool isAmazon() const;
+#endif
 
     WeakPtr<Document> m_document;
 

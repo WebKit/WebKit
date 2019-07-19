@@ -227,6 +227,13 @@ bool Quirks::shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAr
 }
 
 #if ENABLE(TOUCH_EVENTS)
+bool Quirks::isAmazon() const
+{
+    auto& url = m_document->topDocument().url();
+    auto host = url.host();
+    return equalLettersIgnoringASCIICase(host, "amazon.com") || host.endsWithIgnoringASCIICase(".amazon.com");
+}
+
 bool Quirks::shouldDispatchSimulatedMouseEvents() const
 {
     if (!needsQuirks())
@@ -236,11 +243,12 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
     if (!loader || loader->simulatedMouseEventsDispatchPolicy() != SimulatedMouseEventsDispatchPolicy::Allow)
         return false;
 
+    if (isAmazon())
+        return true;
+
     auto& url = m_document->topDocument().url();
     auto host = url.host();
 
-    if (equalLettersIgnoringASCIICase(host, "amazon.com") || host.endsWithIgnoringASCIICase(".amazon.com"))
-        return true;
     if (equalLettersIgnoringASCIICase(host, "wix.com") || host.endsWithIgnoringASCIICase(".wix.com"))
         return true;
     if ((equalLettersIgnoringASCIICase(host, "desmos.com") || host.endsWithIgnoringASCIICase(".desmos.com")) && url.path().startsWithIgnoringASCIICase("/calculator/"))
@@ -267,6 +275,24 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
     return false;
 }
 
+bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTarget* target) const
+{
+    if (!needsQuirks() || !shouldDispatchSimulatedMouseEvents())
+        return false;
+
+    if (isAmazon() && is<Element>(target)) {
+        // When panning on an Amazon product image, we're either touching on the #magnifierLens element
+        // or its previous sibling.
+        auto* element = downcast<Element>(target);
+        if (element->getIdAttribute() == "magnifierLens")
+            return true;
+        if (auto* sibling = element->nextElementSibling())
+            return sibling->getIdAttribute() == "magnifierLens";
+    }
+
+    return false;
+}
+
 Optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(EventTarget* target) const
 {
     if (!needsQuirks() || !shouldDispatchSimulatedMouseEvents())
@@ -285,7 +311,7 @@ Optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(EventTarg
         return Event::IsCancelable::No;
 
     return Event::IsCancelable::Yes;
-}   
+}
 #endif
 
 bool Quirks::shouldAvoidResizingWhenInputViewBoundsChange() const
