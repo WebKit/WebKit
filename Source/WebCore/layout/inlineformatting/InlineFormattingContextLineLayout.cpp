@@ -72,24 +72,28 @@ static LayoutUnit inlineItemWidth(const LayoutState& layoutState, const InlineIt
     return displayBox.width();
 }
 
-struct InlineIndexAndSplitPosition {
+struct IndexAndRange {
     unsigned index { 0 };
-    Optional<unsigned> splitPosition;
+    struct Range {
+        unsigned start { 0 };
+        unsigned length { 0 };
+    };
+    Optional<Range> partialContext;
 };
 
 struct LineInput {
-    LineInput(const Line::InitialConstraints& initialLineConstraints, Line::SkipVerticalAligment, InlineIndexAndSplitPosition firstToProcess, const InlineItems&);
+    LineInput(const Line::InitialConstraints& initialLineConstraints, Line::SkipVerticalAligment, IndexAndRange firstToProcess, const InlineItems&);
 
     Line::InitialConstraints initialConstraints;
     // FIXME Alternatively we could just have a second pass with vertical positioning (preferred width computation opts out) 
     Line::SkipVerticalAligment skipVerticalAligment;
-    InlineIndexAndSplitPosition firstInlineItem;
+    IndexAndRange firstInlineItem;
     const InlineItems& inlineItems;
     Optional<LayoutUnit> floatMinimumLogicalBottom;
 };
 
 struct LineContent {
-    Optional<InlineIndexAndSplitPosition> lastCommitted;
+    Optional<IndexAndRange> lastCommitted;
     Vector<WeakPtr<InlineItem>> floats;
     std::unique_ptr<Line::Content> runs;
 };
@@ -102,6 +106,8 @@ public:
 
 private:
     const LayoutState& layoutState() const { return m_layoutState; }
+    enum class IsEndOfLine { No, Yes };
+    IsEndOfLine placeInlineItem(const InlineItem&);
     void commitPendingContent();
     LineContent close();
     
@@ -132,7 +138,6 @@ private:
     UncommittedContent m_uncommittedContent;
     unsigned m_committedInlineItemCount { 0 };
     Vector<WeakPtr<InlineItem>> m_floats;
-    Optional<unsigned> m_splitPosition;
 };
 
 void LineLayout::UncommittedContent::add(const InlineItem& inlineItem, LayoutUnit logicalWidth)
@@ -170,62 +175,82 @@ LineContent LineLayout::close()
     ASSERT(m_committedInlineItemCount || m_lineHasFloatBox);
     if (!m_committedInlineItemCount)
         return LineContent { WTF::nullopt, WTFMove(m_floats), m_line.close() };
-    auto lastCommitedItem = InlineIndexAndSplitPosition { m_lineInput.firstInlineItem.index + (m_committedInlineItemCount - 1), m_splitPosition };
+    // FIXME Add partial context if applicable.
+    auto lastCommitedItem = IndexAndRange { m_lineInput.firstInlineItem.index + (m_committedInlineItemCount - 1), { } };
     return LineContent { lastCommitedItem, WTFMove(m_floats), m_line.close() };
+}
+
+LineLayout::IsEndOfLine LineLayout::placeInlineItem(const InlineItem& inlineItem)
+{
+    auto availableWidth = m_line.availableWidth() - m_uncommittedContent.width();
+    auto currentLogicalRight = m_line.contentLogicalRight() + m_uncommittedContent.width();
+    auto itemLogicalWidth = inlineItemWidth(layoutState(), inlineItem, currentLogicalRight);
+
+    // FIXME: Ensure LineContext::trimmableWidth includes uncommitted content if needed.
+    auto lineIsConsideredEmpty = !m_line.hasContent() && !m_lineHasFloatBox;
+    auto breakingContext = m_lineBreaker.breakingContext(inlineItem, itemLogicalWidth, { availableWidth, currentLogicalRight, m_line.trailingTrimmableWidth(), lineIsConsideredEmpty });
+    if (breakingContext.isAtBreakingOpportunity)
+        commitPendingContent();
+
+    // Content does not fit the current line.
+    if (breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Wrap)
+        return IsEndOfLine::Yes;
+
+    // Partial content stays on the current line.
+    if (breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Split) {
+        ASSERT(inlineItem.isText());
+
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return IsEndOfLine::Yes;
+    }
+
+    ASSERT(breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Keep);
+    if (inlineItem.isFloat()) {
+        auto& floatBox = inlineItem.layoutBox();
+        ASSERT(layoutState().hasDisplayBox(floatBox));
+        // Shrink available space for current line and move existing inline runs.
+        auto floatBoxWidth = layoutState().displayBoxForLayoutBox(floatBox).marginBoxWidth();
+        floatBox.isLeftFloatingPositioned() ? m_line.moveLogicalLeft(floatBoxWidth) : m_line.moveLogicalRight(floatBoxWidth);
+        m_floats.append(makeWeakPtr(inlineItem));
+        ++m_committedInlineItemCount;
+        m_lineHasFloatBox = true;
+        return IsEndOfLine::No;
+    }
+
+    m_uncommittedContent.add(inlineItem, itemLogicalWidth);
+    if (breakingContext.isAtBreakingOpportunity)
+        commitPendingContent();
+
+    return inlineItem.isHardLineBreak() ? IsEndOfLine::Yes : IsEndOfLine::No;
 }
 
 LineContent LineLayout::layout()
 {
     // Iterate through the inline content and place the inline boxes on the current line.
-    for (auto inlineItemIndex = m_lineInput.firstInlineItem.index; inlineItemIndex < m_lineInput.inlineItems.size(); ++inlineItemIndex) {
-        auto availableWidth = m_line.availableWidth() - m_uncommittedContent.width();
-        auto currentLogicalRight = m_line.contentLogicalRight() + m_uncommittedContent.width();
-        auto& inlineItem = m_lineInput.inlineItems[inlineItemIndex];
-        auto itemLogicalWidth = inlineItemWidth(layoutState(), *inlineItem, currentLogicalRight);
+    // Start with the partial text from the previous line.
+    auto firstInlineItem = m_lineInput.firstInlineItem;
+    unsigned firstNonPartialIndex = firstInlineItem.index;
+    if (firstInlineItem.partialContext) {
+        // Handle partial inline item (split text from the previous line).
+        auto& originalTextItem = m_lineInput.inlineItems[firstInlineItem.index];
+        RELEASE_ASSERT(originalTextItem->isText());
 
-        // FIXME: Ensure LineContext::trimmableWidth includes uncommitted content if needed.
-        auto lineIsConsideredEmpty = !m_line.hasContent() && !m_lineHasFloatBox;
-        auto breakingContext = m_lineBreaker.breakingContext(*inlineItem, itemLogicalWidth, { availableWidth, currentLogicalRight, m_line.trailingTrimmableWidth(), lineIsConsideredEmpty });
-        if (breakingContext.isAtBreakingOpportunity)
-            commitPendingContent();
-
-        // Content does not fit the current line.
-        if (breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Wrap)
+        auto textRange = *firstInlineItem.partialContext;
+        auto partialInlineItem = downcast<InlineTextItem>(*originalTextItem).split(textRange.start, textRange.length);
+        if (placeInlineItem(partialInlineItem) == IsEndOfLine::Yes)
             return close();
+        ++firstNonPartialIndex;
+    }
 
-        // Partial content stays on the current line. 
-        if (breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Split) {
-            ASSERT(inlineItem->isText());
-
-            ASSERT_NOT_IMPLEMENTED_YET();
-            return close();
-        }
-
-        ASSERT(breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Keep);
-        if (inlineItem->isFloat()) {
-            auto& floatBox = inlineItem->layoutBox();
-            ASSERT(layoutState().hasDisplayBox(floatBox));
-            // Shrink availble space for current line and move existing inline runs.
-            auto floatBoxWidth = layoutState().displayBoxForLayoutBox(floatBox).marginBoxWidth();
-            floatBox.isLeftFloatingPositioned() ? m_line.moveLogicalLeft(floatBoxWidth) : m_line.moveLogicalRight(floatBoxWidth);
-            m_floats.append(makeWeakPtr(*inlineItem));
-            ++m_committedInlineItemCount;
-            m_lineHasFloatBox = true;
-            continue;
-        }
-
-        m_uncommittedContent.add(*inlineItem, itemLogicalWidth);
-        if (breakingContext.isAtBreakingOpportunity)
-            commitPendingContent();
-
-        if (inlineItem->isHardLineBreak())
+    for (auto inlineItemIndex = firstNonPartialIndex; inlineItemIndex < m_lineInput.inlineItems.size(); ++inlineItemIndex) {
+        if (placeInlineItem(*m_lineInput.inlineItems[inlineItemIndex]) == IsEndOfLine::Yes)
             return close();
     }
     commitPendingContent();
     return close();
 }
 
-LineInput::LineInput(const Line::InitialConstraints& initialLineConstraints, Line::SkipVerticalAligment skipVerticalAligment, InlineIndexAndSplitPosition firstToProcess, const InlineItems& inlineItems)
+LineInput::LineInput(const Line::InitialConstraints& initialLineConstraints, Line::SkipVerticalAligment skipVerticalAligment, IndexAndRange firstToProcess, const InlineItems& inlineItems)
     : initialConstraints(initialLineConstraints)
     , skipVerticalAligment(skipVerticalAligment)
     , firstInlineItem(firstToProcess)
@@ -285,7 +310,7 @@ void InlineFormattingContext::InlineLayout::layout(const InlineItems& inlineItem
         lineInput.initialConstraints.logicalTopLeft.setX(lineLogicalLeft);
     };
 
-    InlineIndexAndSplitPosition currentInlineItem;
+    IndexAndRange currentInlineItem;
     while (currentInlineItem.index < inlineItems.size()) {
         auto lineInput = LineInput { { { lineLogicalLeft, lineLogicalTop }, widthConstraint, Quirks::lineHeightConstraints(layoutState(), m_formattingRoot) }, Line::SkipVerticalAligment::No, currentInlineItem, inlineItems };
         applyFloatConstraint(lineInput);
@@ -306,7 +331,7 @@ void InlineFormattingContext::InlineLayout::layout(const InlineItems& inlineItem
 LayoutUnit InlineFormattingContext::InlineLayout::computedIntrinsicWidth(const InlineItems& inlineItems, LayoutUnit widthConstraint) const
 {
     LayoutUnit maximumLineWidth;
-    InlineIndexAndSplitPosition currentInlineItem;
+    IndexAndRange currentInlineItem;
     while (currentInlineItem.index < inlineItems.size()) {
         auto lineContent = LineLayout(layoutState(), { { { }, widthConstraint, Quirks::lineHeightConstraints(layoutState(), m_formattingRoot) }, Line::SkipVerticalAligment::Yes, currentInlineItem, inlineItems }).layout();
         currentInlineItem = { lineContent.lastCommitted->index + 1, WTF::nullopt };

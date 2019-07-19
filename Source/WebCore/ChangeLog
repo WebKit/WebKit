@@ -1,3 +1,31 @@
+2019-07-19  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add partial content handling
+        https://bugs.webkit.org/show_bug.cgi?id=199930
+
+        Reviewed by Antti Koivisto.
+
+        Move the actual inline item placement to a dedicated functions. This enables us to
+        construct a dedicated InlineItem for the partial content and pass it in to this function.
+
+        <span>The quick brown fox jumps over the lazy dog</span> <- inline content
+        [The][ ][quick][ ][brown][ ][fox][ ][jumps][ ][over][ ][the][ ][lazy][ ][dog] <- InlineItems
+
+        Line breaking:
+        [The][ ][qu]
+        [ick] <- Partial InlineItem (position: 6 length: 3) from [quick] (position: 4 length: 5)
+
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::LineLayout::close):
+        (WebCore::Layout::LineLayout::placeInlineItem):
+        (WebCore::Layout::LineLayout::layout):
+        (WebCore::Layout::LineInput::LineInput):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::layout const):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::computedIntrinsicWidth const):
+        * layout/inlineformatting/InlineTextItem.cpp:
+        (WebCore::Layout::InlineTextItem::split):
+        * layout/inlineformatting/InlineTextItem.h:
+
 2019-07-19  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer] Flush get_range calls during PAUSED->READY in WebKitWebSource

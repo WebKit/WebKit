@@ -46,6 +46,8 @@ public:
     bool isWhitespace() const { return m_isWhitespace; }
     bool isCollapsed() const { return m_isCollapsed; }
 
+    InlineTextItem split(unsigned splitPosition, unsigned length);
+
 private:
     unsigned m_start { 0 };
     unsigned m_length { 0 };

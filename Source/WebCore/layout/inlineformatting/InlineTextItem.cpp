@@ -127,6 +127,13 @@ InlineTextItem::InlineTextItem(const InlineBox& inlineBox, unsigned start, unsig
 {
 }
 
+InlineTextItem InlineTextItem::split(unsigned splitPosition, unsigned length)
+{
+    RELEASE_ASSERT(splitPosition >= this->start());
+    RELEASE_ASSERT(splitPosition + length <= end());
+    return { downcast<InlineBox>(layoutBox()), splitPosition, length, isWhitespace(), isCollapsed() };
+}
+
 }
 }
 #endif
