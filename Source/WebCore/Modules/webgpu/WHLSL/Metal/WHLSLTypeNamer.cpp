@@ -413,7 +413,7 @@ void TypeNamer::emitNamedTypeDefinition(AST::NamedType& namedType, HashSet<AST::
         auto& baseType = enumerationDefinition.type().unifyNode();
         stringBuilder.append(makeString("enum class ", mangledNameForType(enumerationDefinition), " : ", mangledNameForType(downcast<AST::NamedType>(baseType)), " {\n"));
         for (auto& enumerationMember : enumerationDefinition.enumerationMembers())
-            stringBuilder.append(makeString("    ", mangledNameForEnumerationMember(enumerationMember), ",\n"));
+            stringBuilder.append(makeString("    ", mangledNameForEnumerationMember(enumerationMember), " = ", enumerationMember.get().value(), ",\n"));
         stringBuilder.append("};\n");
     } else if (is<AST::NativeTypeDeclaration>(namedType)) {
         // Native types already have definitions. There's nothing to do.

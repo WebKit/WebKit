@@ -143,10 +143,8 @@ void Visitor::visit(AST::StructureElement& structureElement)
         checkErrorAndVisit(*structureElement.semantic());
 }
 
-void Visitor::visit(AST::EnumerationMember& enumerationMember)
+void Visitor::visit(AST::EnumerationMember&)
 {
-    if (enumerationMember.value())
-        checkErrorAndVisit(*enumerationMember.value());
 }
 
 void Visitor::visit(AST::FunctionDeclaration& functionDeclaration)

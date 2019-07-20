@@ -134,11 +134,7 @@ void ASTDumper::visit(AST::EnumerationDefinition& enumerationDefinition)
 
 void ASTDumper::visit(AST::EnumerationMember& enumerationMember)
 {
-    m_out.print(enumerationMember.name());
-    if (enumerationMember.value()) {
-        m_out.print(" = ");
-        visit(*enumerationMember.value());
-    }
+    m_out.print(enumerationMember.name(), " = ", enumerationMember.value());
 }
 
 void ASTDumper::visit(AST::FunctionDefinition& functionDefinition)

@@ -826,7 +826,9 @@ auto Parser::parseEnumerationDefinition() -> Expected<AST::EnumerationDefinition
 
     CONSUME_TYPE(leftCurlyBracket, LeftCurlyBracket);
 
-    PARSE(firstEnumerationMember, EnumerationMember);
+    int64_t nextValue = 0;
+    PARSE(firstEnumerationMember, EnumerationMember, nextValue);
+    nextValue = firstEnumerationMember->value() + 1;
 
     AST::EnumerationDefinition result({ }, name->stringView(m_lexer).toString(), WTFMove(*type));
     auto success = result.add(WTFMove(*firstEnumerationMember));
@@ -834,7 +836,8 @@ auto Parser::parseEnumerationDefinition() -> Expected<AST::EnumerationDefinition
         return fail("Cannot add enumeration member"_str);
 
     while (tryType(Token::Type::Comma)) {
-        PARSE(member, EnumerationMember);
+        PARSE(member, EnumerationMember, nextValue);
+        nextValue = member->value() + 1;
         success = result.add(WTFMove(*member));
         if (!success)
             return fail("Cannot add enumeration member"_str);
@@ -846,16 +849,30 @@ auto Parser::parseEnumerationDefinition() -> Expected<AST::EnumerationDefinition
     return WTFMove(result);
 }
 
-auto Parser::parseEnumerationMember() -> Expected<AST::EnumerationMember, Error>
+auto Parser::parseEnumerationMember(int64_t defaultValue) -> Expected<AST::EnumerationMember, Error>
 {
     CONSUME_TYPE(identifier, Identifier);
     auto name = identifier->stringView(m_lexer).toString();
 
     if (tryType(Token::Type::EqualsSign)) {
         PARSE(constantExpression, ConstantExpression);
-        return AST::EnumerationMember(*identifier, WTFMove(name), WTFMove(*constantExpression));
+
+        Optional<int64_t> value;
+        constantExpression->visit(WTF::makeVisitor([&](AST::IntegerLiteral& integerLiteral) {
+            value = integerLiteral.value();
+        }, [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) {
+            value = unsignedIntegerLiteral.value();
+        }, [&](AST::FloatLiteral&) {
+        }, [&](AST::NullLiteral&) {
+        }, [&](AST::BooleanLiteral&) {
+        }, [&](AST::EnumerationMemberLiteral&) {
+        }));
+
+        if (!value)
+            return Unexpected<Error>("enum initialization values can only be an int or uint constant.");
+        return AST::EnumerationMember(*identifier, WTFMove(name), *value);
     }
-    return AST::EnumerationMember(*identifier, WTFMove(name));
+    return AST::EnumerationMember(*identifier, WTFMove(name), defaultValue);
 }
 
 auto Parser::parseNativeTypeDeclaration() -> Expected<AST::NativeTypeDeclaration, Error>

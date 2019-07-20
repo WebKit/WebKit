@@ -41,10 +41,10 @@ namespace AST {
 
 class EnumerationMember {
 public:
-    EnumerationMember(CodeLocation location, String&& name, Optional<ConstantExpression>&& value = WTF::nullopt)
+    EnumerationMember(CodeLocation location, String&& name, int64_t value)
         : m_codeLocation(location)
         , m_name(WTFMove(name))
-        , m_value(WTFMove(value))
+        , m_value(value)
     {
     }
 
@@ -55,18 +55,12 @@ public:
 
     const CodeLocation& codeLocation() const { return m_codeLocation; }
     String name() { return m_name; }
-    Optional<ConstantExpression>& value() { return m_value; }
-
-    void setValue(ConstantExpression&& value)
-    {
-        ASSERT(!m_value);
-        m_value = WTFMove(value);
-    }
+    int64_t value() { return m_value; }
 
 private:
     CodeLocation m_codeLocation;
     String m_name;
-    Optional<ConstantExpression> m_value;
+    int64_t m_value;
 };
 
 using EnumerationMembers = Vector<EnumerationMember>;

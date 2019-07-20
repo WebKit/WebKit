@@ -1,3 +1,52 @@
+2019-07-20  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Make enums work
+        https://bugs.webkit.org/show_bug.cgi?id=199634
+
+        Reviewed by Robin Morisset.
+
+        This patch makes enums work. There were a couple changes needed to do this work:
+        1. In the metal codegen, we were emitting code like "EnumType.EnumValue"
+        instead of "EnumType::EnumValue".
+        
+        2. Inside the enumeration declaration AST node, we track enums in a HashMap
+        because we need to look up names of enum values in that map in parts of the
+        compiler. However, HashMap is not ordered but we were relying on the iteration
+        order of it to generate the default values of enums. E.g, in: "enum { Foo = 10, Bar }",
+        Bar should be 11. However, there was no guarantee that we iterated over Bar
+        after Foo. Instead, we just track the default values as we parse an enum
+        inside of the parser. This allows us to continue to keep using HashMap without
+        also adding an auxiliary data structure (or using more memory in some way) to
+        track the order of the enum elements.
+        
+        I've also filed a patch to do follow-up work on implementing the correct
+        operational behavior when constructing an enum from its underlying type when
+        the underlying value does not match any enum value:
+        https://bugs.webkit.org/show_bug.cgi?id=199853
+
+        Tests: webgpu/whlsl/enums-2.html
+               webgpu/whlsl/enums.html
+
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationMember.h:
+        (WebCore::WHLSL::AST::EnumerationMember::EnumerationMember):
+        (WebCore::WHLSL::AST::EnumerationMember::value):
+        (WebCore::WHLSL::AST::EnumerationMember::setValue): Deleted.
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::constantExpressionString):
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp:
+        (WebCore::WHLSL::Metal::TypeNamer::emitNamedTypeDefinition):
+        * Modules/webgpu/WHLSL/WHLSLASTDumper.cpp:
+        (WebCore::WHLSL::ASTDumper::visit):
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::Checker::visit):
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::parseEnumerationDefinition):
+        (WebCore::WHLSL::Parser::parseEnumerationMember):
+        * Modules/webgpu/WHLSL/WHLSLParser.h:
+        * Modules/webgpu/WHLSL/WHLSLVisitor.cpp:
+        (WebCore::WHLSL::Visitor::visit):
+
 2019-07-19  Youenn Fablet  <youenn@apple.com>
 
         Remote WebInspector should enable mock capture devices in UIProcess if doing it in WebProcess

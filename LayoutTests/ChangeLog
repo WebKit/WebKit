@@ -1,3 +1,15 @@
+2019-07-20  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Make enums work
+        https://bugs.webkit.org/show_bug.cgi?id=199634
+
+        Reviewed by Robin Morisset.
+
+        * webgpu/whlsl/enums-2-expected.txt: Added.
+        * webgpu/whlsl/enums-2.html: Added.
+        * webgpu/whlsl/enums-expected.txt: Added.
+        * webgpu/whlsl/enums.html: Added.
+
 2019-07-19  Jonathan Bedard  <jbedard@apple.com>
 
         fast/scrolling/ipad/* tests running on Mac

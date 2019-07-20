@@ -627,17 +627,6 @@ static Optional<UniqueRef<AST::UnnamedType>> matchAndCommit(ResolvingType& resol
     }));
 }
 
-static Optional<UniqueRef<AST::UnnamedType>> matchAndCommit(ResolvingType& resolvingType, AST::NamedType& namedType)
-{
-    return resolvingType.visit(WTF::makeVisitor([&](UniqueRef<AST::UnnamedType>& resolvingType) -> Optional<UniqueRef<AST::UnnamedType>> {
-        if (matches(resolvingType, namedType))
-            return resolvingType->clone();
-        return WTF::nullopt;
-    }, [&](RefPtr<ResolvableTypeReference>& resolvingType) -> Optional<UniqueRef<AST::UnnamedType>> {
-        return matchAndCommit(namedType, resolvingType->resolvableType());
-    }));
-}
-
 static Optional<UniqueRef<AST::UnnamedType>> commit(ResolvingType& resolvingType)
 {
     return resolvingType.visit(WTF::makeVisitor([&](UniqueRef<AST::UnnamedType>& unnamedType) -> Optional<UniqueRef<AST::UnnamedType>> {
@@ -651,6 +640,7 @@ static Optional<UniqueRef<AST::UnnamedType>> commit(ResolvingType& resolvingType
 
 void Checker::visit(AST::EnumerationDefinition& enumerationDefinition)
 {
+    bool isSigned;
     auto* baseType = ([&]() -> AST::NativeTypeDeclaration* {
         checkErrorAndVisit(enumerationDefinition.type());
         auto& baseType = enumerationDefinition.type().unifyNode();
@@ -662,6 +652,7 @@ void Checker::visit(AST::EnumerationDefinition& enumerationDefinition)
         auto& nativeTypeDeclaration = downcast<AST::NativeTypeDeclaration>(namedType);
         if (!nativeTypeDeclaration.isInt())
             return nullptr;
+        isSigned = nativeTypeDeclaration.isSigned();
         return &nativeTypeDeclaration;
     })();
     if (!baseType) {
@@ -671,71 +662,25 @@ void Checker::visit(AST::EnumerationDefinition& enumerationDefinition)
 
     auto enumerationMembers = enumerationDefinition.enumerationMembers();
 
-    auto matchAndCommitMember = [&](AST::EnumerationMember& member) -> bool {
-        return member.value()->visit(WTF::makeVisitor([&](AST::Expression& value) -> bool {
-            auto valueInfo = recurseAndGetInfo(value);
-            if (!valueInfo)
-                return false;
-            return static_cast<bool>(matchAndCommit(valueInfo->resolvingType, *baseType));
-        }));
-    };
-
     for (auto& member : enumerationMembers) {
-        if (!member.get().value())
-            continue;
-
-        if (!matchAndCommitMember(member)) {
-            setError();
-            return;
-        }
-    }
-
-    int64_t nextValue = 0;
-    for (auto& member : enumerationMembers) {
-        if (member.get().value()) {
-            auto value = member.get().value()->visit(WTF::makeVisitor([&](AST::IntegerLiteral& integerLiteral) -> int64_t {
-                return integerLiteral.valueForSelectedType();
-            }, [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) -> int64_t {
-                return unsignedIntegerLiteral.valueForSelectedType();
-            }, [&](auto&) -> int64_t {
-                ASSERT_NOT_REACHED();
-                return 0;
-            }));
-            nextValue = baseType->successor()(value);
-        } else {
-            if (nextValue > std::numeric_limits<int>::max()) {
-                ASSERT(nextValue <= std::numeric_limits<unsigned>::max());
-                member.get().setValue(AST::ConstantExpression(AST::UnsignedIntegerLiteral(member.get().codeLocation(), static_cast<unsigned>(nextValue))));
-            }
-            ASSERT(nextValue >= std::numeric_limits<int>::min());
-            member.get().setValue(AST::ConstantExpression(AST::IntegerLiteral(member.get().codeLocation(), static_cast<int>(nextValue))));
-
-            if (!matchAndCommitMember(member)) {
+        int64_t value = member.get().value();
+        if (isSigned) {
+            if (static_cast<int64_t>(static_cast<int32_t>(value)) != value) {
                 setError();
                 return;
             }
-
-            nextValue = baseType->successor()(nextValue);
+        } else {
+            if (static_cast<int64_t>(static_cast<uint32_t>(value)) != value) {
+                setError();
+                return;
+            }
         }
     }
 
-    auto getValue = [&](AST::EnumerationMember& member) -> int64_t {
-        ASSERT(member.value());
-        auto value = member.value()->visit(WTF::makeVisitor([&](AST::IntegerLiteral& integerLiteral) -> int64_t {
-            return integerLiteral.value();
-        }, [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) -> int64_t {
-            return unsignedIntegerLiteral.value();
-        }, [&](auto&) -> int64_t {
-            ASSERT_NOT_REACHED();
-            return 0;
-        }));
-        return value;
-    };
-
     for (size_t i = 0; i < enumerationMembers.size(); ++i) {
-        auto value = getValue(enumerationMembers[i].get());
+        auto value = enumerationMembers[i].get().value();
         for (size_t j = i + 1; j < enumerationMembers.size(); ++j) {
-            auto otherValue = getValue(enumerationMembers[j].get());
+            auto otherValue = enumerationMembers[j].get().value();
             if (value == otherValue) {
                 setError();
                 return;
@@ -745,7 +690,7 @@ void Checker::visit(AST::EnumerationDefinition& enumerationDefinition)
 
     bool foundZero = false;
     for (auto& member : enumerationMembers) {
-        if (!getValue(member.get())) {
+        if (!member.get().value()) {
             foundZero = true;
             break;
         }

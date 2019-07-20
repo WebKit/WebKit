@@ -183,7 +183,7 @@ private:
     Expected<AST::StructureElement, Error> parseStructureElement();
     Expected<AST::StructureDefinition, Error> parseStructureDefinition();
     Expected<AST::EnumerationDefinition, Error> parseEnumerationDefinition();
-    Expected<AST::EnumerationMember, Error> parseEnumerationMember();
+    Expected<AST::EnumerationMember, Error> parseEnumerationMember(int64_t defaultValue);
     Expected<AST::NativeTypeDeclaration, Error> parseNativeTypeDeclaration();
     Expected<AST::NumThreadsFunctionAttribute, Error> parseNumThreadsFunctionAttribute();
     Expected<AST::AttributeBlock, Error> parseAttributeBlock();

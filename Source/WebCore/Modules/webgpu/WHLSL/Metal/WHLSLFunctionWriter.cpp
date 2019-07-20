@@ -475,7 +475,7 @@ void FunctionDefinitionWriter::visit(AST::EnumerationMemberLiteral& enumerationM
     ASSERT(enumerationMemberLiteral.enumerationDefinition());
     auto variableName = generateNextVariableName();
     auto mangledTypeName = m_typeNamer.mangledNameForType(enumerationMemberLiteral.resolvedType());
-    m_stringBuilder.append(makeString(mangledTypeName, ' ', variableName, " = ", mangledTypeName, '.', m_typeNamer.mangledNameForEnumerationMember(*enumerationMemberLiteral.enumerationMember()), ";\n"));
+    m_stringBuilder.append(makeString(mangledTypeName, ' ', variableName, " = ", mangledTypeName, "::", m_typeNamer.mangledNameForEnumerationMember(*enumerationMemberLiteral.enumerationMember()), ";\n"));
     appendRightValue(enumerationMemberLiteral, variableName);
 }
 
@@ -700,7 +700,7 @@ String FunctionDefinitionWriter::constantExpressionString(AST::ConstantExpressio
     }, [&](AST::EnumerationMemberLiteral& enumerationMemberLiteral) -> String {
         ASSERT(enumerationMemberLiteral.enumerationDefinition());
         ASSERT(enumerationMemberLiteral.enumerationDefinition());
-        return makeString(m_typeNamer.mangledNameForType(*enumerationMemberLiteral.enumerationDefinition()), '.', m_typeNamer.mangledNameForEnumerationMember(*enumerationMemberLiteral.enumerationMember()));
+        return makeString(m_typeNamer.mangledNameForType(*enumerationMemberLiteral.enumerationDefinition()), "::", m_typeNamer.mangledNameForEnumerationMember(*enumerationMemberLiteral.enumerationMember()));
     }));
 }
 
