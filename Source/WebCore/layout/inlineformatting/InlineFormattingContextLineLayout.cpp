@@ -49,7 +49,7 @@ static LayoutUnit inlineItemWidth(const LayoutState& layoutState, const InlineIt
     if (is<InlineTextItem>(inlineItem)) {
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
         auto end = inlineTextItem.isCollapsed() ? inlineTextItem.start() + 1 : inlineTextItem.end();
-        return TextUtil::width(downcast<InlineBox>(inlineTextItem.layoutBox()), inlineTextItem.start(), end, contentLogicalLeft);
+        return TextUtil::width(inlineTextItem.inlineBox(), inlineTextItem.start(), end, contentLogicalLeft);
     }
 
     auto& layoutBox = inlineItem.layoutBox();
@@ -115,7 +115,6 @@ private:
         struct Run {
             const InlineItem& inlineItem;
             LayoutUnit logicalWidth;
-            // FIXME: add optional breaking context (start and end position) for split text content.
         };
         void add(const InlineItem&, LayoutUnit logicalWidth);
         void reset();
@@ -138,6 +137,8 @@ private:
     UncommittedContent m_uncommittedContent;
     unsigned m_committedInlineItemCount { 0 };
     Vector<WeakPtr<InlineItem>> m_floats;
+    std::unique_ptr<InlineTextItem> m_leadingPartialInlineTextItem;
+    std::unique_ptr<InlineTextItem> m_trailingPartialInlineTextItem;
 };
 
 void LineLayout::UncommittedContent::add(const InlineItem& inlineItem, LayoutUnit logicalWidth)
@@ -175,8 +176,13 @@ LineContent LineLayout::close()
     ASSERT(m_committedInlineItemCount || m_lineHasFloatBox);
     if (!m_committedInlineItemCount)
         return LineContent { WTF::nullopt, WTFMove(m_floats), m_line.close() };
-    // FIXME Add partial context if applicable.
-    auto lastCommitedItem = IndexAndRange { m_lineInput.firstInlineItem.index + (m_committedInlineItemCount - 1), { } };
+
+    auto lastInlineItemIndex = m_lineInput.firstInlineItem.index + m_committedInlineItemCount - 1;
+    Optional<IndexAndRange::Range> partialContext;
+    if (m_trailingPartialInlineTextItem)
+        partialContext = IndexAndRange::Range { m_trailingPartialInlineTextItem->start(), m_trailingPartialInlineTextItem->length() };
+
+    auto lastCommitedItem = IndexAndRange { lastInlineItemIndex, partialContext };
     return LineContent { lastCommitedItem, WTFMove(m_floats), m_line.close() };
 }
 
@@ -199,8 +205,13 @@ LineLayout::IsEndOfLine LineLayout::placeInlineItem(const InlineItem& inlineItem
     // Partial content stays on the current line.
     if (breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Split) {
         ASSERT(inlineItem.isText());
-
-        ASSERT_NOT_IMPLEMENTED_YET();
+        auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
+        auto splitData = TextUtil::split(inlineTextItem.inlineBox(), inlineTextItem.start(), inlineTextItem.length(), itemLogicalWidth, availableWidth, currentLogicalRight);
+        // Construct a partial trailing inline item.
+        ASSERT(!m_trailingPartialInlineTextItem);
+        m_trailingPartialInlineTextItem = inlineTextItem.split(splitData.start, splitData.length);
+        m_uncommittedContent.add(*m_trailingPartialInlineTextItem, splitData.logicalWidth);
+        commitPendingContent();
         return IsEndOfLine::Yes;
     }
 
@@ -236,8 +247,10 @@ LineContent LineLayout::layout()
         RELEASE_ASSERT(originalTextItem->isText());
 
         auto textRange = *firstInlineItem.partialContext;
-        auto partialInlineItem = downcast<InlineTextItem>(*originalTextItem).split(textRange.start, textRange.length);
-        if (placeInlineItem(partialInlineItem) == IsEndOfLine::Yes)
+        // Construct a partial leading inline item.
+        ASSERT(!m_leadingPartialInlineTextItem);
+        m_leadingPartialInlineTextItem = downcast<InlineTextItem>(*originalTextItem).split(textRange.start, textRange.length);
+        if (placeInlineItem(*m_leadingPartialInlineTextItem) == IsEndOfLine::Yes)
             return close();
         ++firstNonPartialIndex;
     }

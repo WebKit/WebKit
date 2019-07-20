@@ -97,6 +97,34 @@ bool TextUtil::isTrimmableContent(const InlineItem& inlineItem)
     return inlineTextItem.isWhitespace() && inlineTextItem.style().collapseWhiteSpace();
 }
 
+TextUtil::SplitData TextUtil::split(const InlineBox& inlineBox, unsigned startPosition, unsigned length, LayoutUnit textWidth, LayoutUnit availableWidth, LayoutUnit contentLogicalLeft)
+{
+    // FIXME This should take hypens into account.
+    ASSERT(availableWidth >= 0);
+    auto left = startPosition;
+    // Pathological case of (extremely)long string and narrow lines.
+    // Adjust the range so that we can pick a reasonable midpoint.
+    LayoutUnit averageCharacterWidth = textWidth / length;
+    auto right = std::min<unsigned>(left + (2 * availableWidth / averageCharacterWidth).toUnsigned(), (startPosition + length - 1));
+    // Preserve the left width for the final split position so that we don't need to remeasure the left side again.
+    LayoutUnit leftSideWidth = 0;
+    while (left < right) {
+        auto middle = (left + right) / 2;
+        auto width = TextUtil::width(inlineBox, startPosition, middle + 1, contentLogicalLeft);
+        if (width < availableWidth) {
+            left = middle + 1;
+            leftSideWidth = width;
+        } else if (width > availableWidth)
+            right = middle;
+        else {
+            right = middle + 1;
+            leftSideWidth = width;
+            break;
+        }
+    }
+    return { startPosition, right - startPosition, leftSideWidth };
+}
+
 }
 }
 #endif

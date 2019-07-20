@@ -32,11 +32,19 @@
 namespace WebCore {
 namespace Layout {
 
+class InlineBox;
+
 class TextUtil {
 public:
     static LayoutUnit width(const InlineBox&, unsigned from, unsigned to, LayoutUnit contentLogicalLeft);
     static Optional<unsigned> hyphenPositionBefore(const InlineItem&, unsigned from, unsigned length);
     static bool isTrimmableContent(const InlineItem&);
+    struct SplitData {
+        unsigned start { 0 };
+        unsigned length { 0 };
+        LayoutUnit logicalWidth;
+    };
+    static SplitData split(const InlineBox&, unsigned startPosition, unsigned length, LayoutUnit textWidth, LayoutUnit availableWidth, LayoutUnit contentLogicalLeft);
 
 private:
     static LayoutUnit fixedPitchWidth(String, const RenderStyle&, unsigned from, unsigned to, LayoutUnit contentLogicalLeft);
