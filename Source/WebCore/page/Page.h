@@ -388,6 +388,7 @@ public:
 #if ENABLE(TEXT_AUTOSIZING)
     float textAutosizingWidth() const { return m_textAutosizingWidth; }
     void setTextAutosizingWidth(float textAutosizingWidth) { m_textAutosizingWidth = textAutosizingWidth; }
+    WEBCORE_EXPORT void recomputeTextAutoSizingInAllFrames();
 #endif
 
     const FloatBoxExtent& fullscreenInsets() const { return m_fullscreenInsets; }

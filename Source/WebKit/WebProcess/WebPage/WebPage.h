@@ -1251,8 +1251,6 @@ private:
     void handleSyntheticClick(WebCore::Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebKit::WebEvent::Modifier>, WebCore::PointerID = WebCore::mousePointerID);
     void completeSyntheticClick(WebCore::Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebKit::WebEvent::Modifier>, WebCore::SyntheticClickType, WebCore::PointerID = WebCore::mousePointerID);
     void sendTapHighlightForNodeIfNecessary(uint64_t requestID, WebCore::Node*);
-    void resetTextAutosizing();
-    void resetIdempotentTextAutosizingIfNeeded(double previousInitialScale);
     WebCore::VisiblePosition visiblePositionInFocusedNodeForPoint(const WebCore::Frame&, const WebCore::IntPoint&, bool isInteractingWithFocusedElement);
     RefPtr<WebCore::Range> rangeForGranularityAtPoint(WebCore::Frame&, const WebCore::IntPoint&, uint32_t granularity, bool isInteractingWithFocusedElement);
     void setFocusedFrameBeforeSelectingTextAtLocation(const WebCore::IntPoint&);
@@ -1264,6 +1262,11 @@ private:
     WebAutocorrectionContext autocorrectionContext();
     bool applyAutocorrectionInternal(const String& correction, const String& originalText);
     bool shouldIgnoreMetaViewport() const;
+#endif
+#if ENABLE(TEXT_AUTOSIZING)
+    void textAutoSizingAdjustmentTimerFired();
+    void resetTextAutosizing();
+    void resetIdempotentTextAutosizingIfNeeded(double previousInitialScale);
 #endif
 
 #if ENABLE(VIEWPORT_RESIZING)
@@ -1955,6 +1958,9 @@ private:
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     std::unique_ptr<LayerHostingContext> m_contextForVisibilityPropagation;
+#endif
+#if ENABLE(TEXT_AUTOSIZING)
+    WebCore::Timer m_textAutoSizingAdjustmentTimer;
 #endif
 };
 

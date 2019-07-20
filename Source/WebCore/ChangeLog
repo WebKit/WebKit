@@ -1,3 +1,27 @@
+2019-07-20  Zalan Bujtas  <zalan@apple.com>
+
+        [Text autosizing] Do not nuke the style on dynamicViewportSizeUpdate
+        https://bugs.webkit.org/show_bug.cgi?id=199718
+        <rdar://problem/53344961>
+
+        Reviewed by Simon Fraser.
+
+        When the page scale changes (e.g. as the result of shink to fit mode) we need to visit all the text content on the page and check whether they need to be boosted.
+        Currently we call setNeedsRecalcStyleInAllFrames() to accomplish it. Unfortunatelly setNeedsRecalcStyleInAllFrames destroys all the style information which means that the
+        subsequent styleResolve() needs to start from scratch.
+        This patch addresses this issue by directly adjusting the computed style information when text boosting is required and schedules layout accordingly. We also trigger this style adjusting
+        on a timer so that rapid dynamicViewportSizeUpdate() calls won't trigger redundant layouts.
+
+        * css/StyleResolver.cpp:
+        (WebCore::hasTextChild):
+        (WebCore::StyleResolver::adjustRenderStyleForTextAutosizing):
+        (WebCore::hasTextChildren): Deleted.
+        * css/StyleResolver.h:
+        * page/FrameView.h:
+        * page/Page.cpp:
+        (WebCore::Page::invalidateTextAutoSizeInAllFrames):
+        * page/Page.h:
+
 2019-07-20  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Make enums work

@@ -1,3 +1,24 @@
+2019-07-20  Zalan Bujtas  <zalan@apple.com>
+
+        [Text autosizing] Do not nuke the style on dynamicViewportSizeUpdate
+        https://bugs.webkit.org/show_bug.cgi?id=199718
+        <rdar://problem/53344961>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_textAutoSizingAdjustmentTimer):
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::didCommitLoad):
+        (WebKit::WebPage::textAutoSizingAdjustmentTimerFired):
+        (WebKit::m_shrinkToFitContentTimer): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::resetIdempotentTextAutosizingIfNeeded):
+        (WebKit::WebPage::resetTextAutosizing):
+        (WebKit::WebPage::viewportConfigurationChanged):
+
 2019-07-19  Youenn Fablet  <youenn@apple.com>
 
         Remote WebInspector should enable mock capture devices in UIProcess if doing it in WebProcess

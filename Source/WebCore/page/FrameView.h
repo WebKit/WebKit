@@ -397,6 +397,8 @@ public:
     void updateIsVisuallyNonEmpty();
     void updateSignificantRenderedTextMilestoneIfNeeded();
     bool isVisuallyNonEmpty() const { return m_isVisuallyNonEmpty; }
+    WEBCORE_EXPORT bool qualifiesAsVisuallyNonEmpty() const;
+
     WEBCORE_EXPORT void enableAutoSizeMode(bool enable, const IntSize& minSize);
     WEBCORE_EXPORT void setAutoSizeFixedMinimumHeight(int);
     bool isAutoSizeEnabled() const { return m_shouldAutoSize; }
@@ -786,7 +788,6 @@ private:
 
     void markRootOrBodyRendererDirty() const;
 
-    bool qualifiesAsVisuallyNonEmpty() const;
     bool qualifiesAsSignificantRenderedText() const;
     void updateHasReachedSignificantRenderedTextThreshold();
 
