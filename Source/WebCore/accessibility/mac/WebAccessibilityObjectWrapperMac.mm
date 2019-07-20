@@ -3830,6 +3830,14 @@ IGNORE_WARNINGS_END
     return m_object->replaceTextInRange(string, PlainTextRange(range));
 }
 
+- (BOOL)accessibilityInsertText:(NSString *)text
+{
+    if (![self updateObjectBackingStore])
+        return NO;
+
+    return m_object->insertText(text);
+}
+
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName
 IGNORE_WARNINGS_END

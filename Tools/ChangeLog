@@ -1,3 +1,22 @@
+2019-07-20  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add accessibilityInsertText for text insertion in edit fields.
+        https://bugs.webkit.org/show_bug.cgi?id=199973
+
+        Reviewed by Chris Fleizach.
+
+        Glue code to run new LayoutTests.
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::insertText):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::insertText):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::insertText):
+        * WebKitTestRunner/InjectedBundle/win/AccessibilityUIElementWin.cpp:
+        (WTR::AccessibilityUIElement::insertText):
+
 2019-07-19  Zhifei Fang  <zhifei_fang@apple.com>
 
         Move webkit.css to opensource to support resultsdbpy's frontend

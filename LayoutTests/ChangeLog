@@ -1,3 +1,17 @@
+2019-07-20  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add accessibilityInsertText for text insertion in edit fields.
+        https://bugs.webkit.org/show_bug.cgi?id=199973
+
+        Reviewed by Chris Fleizach.
+
+        Tests for inserting a newline in the middle of a text line and checking
+        that the insertion point and text ranges are correct.
+        * accessibility/insert-newline-expected.txt: Added.
+        * accessibility/insert-newline.html: Added.
+        * accessibility/ios-simulator/insert-newline-expected.txt: Added.
+        * accessibility/ios-simulator/insert-newline.html: Added.
+
 2019-07-20  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Make enums work

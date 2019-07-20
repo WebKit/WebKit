@@ -3,6 +3,7 @@
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 #
 
+accessibility/insert-newline.html [ Pass ]
 css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
 fast/frames/sandboxed-iframe-close-top-noclose.html [ Failure ]
 fast/multicol/flexbox-rows.html [ Skip ]

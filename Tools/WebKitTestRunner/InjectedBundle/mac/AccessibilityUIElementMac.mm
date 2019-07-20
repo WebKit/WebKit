@@ -75,6 +75,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 
 @interface NSObject (WebKitAccessibilityAdditions)
 - (BOOL)accessibilityReplaceRange:(NSRange)range withText:(NSString *)string;
+- (BOOL)accessibilityInsertText:(NSString *)text;
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount;
 - (NSUInteger)accessibilityIndexOfChild:(id)child;
 - (NSUInteger)accessibilityArrayAttributeCount:(NSString *)attribute;
@@ -1876,7 +1877,15 @@ bool AccessibilityUIElement::replaceTextInRange(JSStringRef string, int location
     END_AX_OBJC_EXCEPTIONS
     return false;
 }
-    
+
+bool AccessibilityUIElement::insertText(JSStringRef text)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    return [m_element accessibilityInsertText:[NSString stringWithJSStringRef:text]];
+    END_AX_OBJC_EXCEPTIONS
+    return false;
+}
+
 RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForBounds(int x, int y, int width, int height)
 {
     BEGIN_AX_OBJC_EXCEPTIONS

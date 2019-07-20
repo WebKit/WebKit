@@ -1,3 +1,29 @@
+2019-07-20  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add accessibilityInsertText for text insertion in edit fields.
+        https://bugs.webkit.org/show_bug.cgi?id=199973
+
+        Reviewed by Chris Fleizach.
+
+        Tests: accessibility/insert-newline.html
+               accessibility/ios-simulator/insert-newline.html
+
+        Accessibility clients like VoiceOver and Voice Control were entering
+        text in text fields by replacing the entire content of the field
+        (SetValue) and then setting the insertion point to the appropriate
+        offset (SetSelectedTextRange). accessibilityInsertText gives a simpler
+        interface to clients to insert text at the insertion point location.
+        In addition, this provides a workaround for the issue encountered with
+        the previous method when inserting a linebreak.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::insertText):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityInsertText:]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityInsertText:]):
+
 2019-07-20  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
         REGRESSION(r246033/r246496): [GTK] Kinetic scrolling doesn't work
