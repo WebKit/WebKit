@@ -284,6 +284,11 @@ void WebInspector::elementSelectionChanged(bool active)
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::ElementSelectionChanged(active), m_page->pageID());
 }
 
+void WebInspector::setMockCaptureDevicesEnabledOverride(Optional<bool> enabled)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::SetMockCaptureDevicesEnabledOverride(enabled), m_page->pageID());
+}
+
 bool WebInspector::canAttachWindow()
 {
     if (!m_page->corePage())

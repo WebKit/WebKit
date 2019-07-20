@@ -1,3 +1,33 @@
+2019-07-19  Youenn Fablet  <youenn@apple.com>
+
+        Remote WebInspector should enable mock capture devices in UIProcess if doing it in WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=199924
+        <rdar://problem/50552067>
+
+        Reviewed by Devin Rousso.
+
+        Add IPC plumbery to pass inspector override value for mock capture devices.
+        Add an override in UserMediaPermissionRequestManagerProxy so that the value stays in sync with web inspector.
+        The override will be removed when web inspector goes away.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs const):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        (WebKit::UserMediaPermissionRequestManagerProxy::setMockCaptureDevicesEnabledOverride):
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::setMockCaptureDevicesEnabled):
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setMockCaptureDevicesEnabledOverride):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::setMockCaptureDevicesEnabled):
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::setMockCaptureDevicesEnabled):
+        * WebProcess/WebPage/WebInspector.h:
+
 2019-07-19  Tim Horton  <timothy_horton@apple.com>
 
         Web Content process gets stuck suspended after navigating away from a system preview

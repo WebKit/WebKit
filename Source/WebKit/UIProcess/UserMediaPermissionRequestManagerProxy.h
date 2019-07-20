@@ -85,6 +85,8 @@ public:
         Prompt
     };
 
+    void setMockCaptureDevicesEnabledOverride(Optional<bool> enabled) { m_mockDevicesEnabledOverride = enabled; }
+
 private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;
@@ -150,6 +152,7 @@ private:
 #endif
     bool m_hasFilteredDeviceList { false };
     uint64_t m_hasPendingCapture { 0 };
+    Optional<bool> m_mockDevicesEnabledOverride;
 };
 
 String convertEnumerationToString(UserMediaPermissionRequestManagerProxy::RequestAction);
