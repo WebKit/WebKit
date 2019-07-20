@@ -57,11 +57,12 @@ public:
 
     bool isBlockFormattingState() const { return m_type == Type::Block; }
     bool isInlineFormattingState() const { return m_type == Type::Inline; }
+    bool isTableFormattingState() const { return m_type == Type::Table; }
 
     LayoutState& layoutState() const { return m_layoutState; }
 
 protected:
-    enum class Type { Block, Inline };
+    enum class Type { Block, Inline, Table };
     FormattingState(Ref<FloatingState>&&, Type, LayoutState&);
 
 private:

@@ -1416,6 +1416,9 @@ layout/layouttree/LayoutInlineContainer.cpp
 layout/layouttree/LayoutLineBreakBox.cpp
 layout/layouttree/LayoutReplaced.cpp
 layout/layouttree/LayoutTreeBuilder.cpp
+layout/tableformatting/TableFormattingContext.cpp
+layout/tableformatting/TableFormattingState.cpp
+layout/tableformatting/TableInvalidation.cpp
 
 loader/AdClickAttribution.cpp
 loader/CanvasActivityRecord.cpp

@@ -1,5 +1,32 @@
 2019-07-20  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Introduce table formatting context.
+        https://bugs.webkit.org/show_bug.cgi?id=199979
+        <rdar://problem/53346292>
+
+        Reviewed by Antti Koivisto.
+
+        Add the basic class structure for the table formatting context.
+        https://www.w3.org/TR/CSS22/tables.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/FormattingState.h:
+        (WebCore::Layout::FormattingState::isTableFormattingState const):
+        * layout/tableformatting/TableFormattingContext.cpp: Added.
+        (WebCore::Layout::TableFormattingContext::TableFormattingContext):
+        (WebCore::Layout::TableFormattingContext::layout const):
+        * layout/tableformatting/TableFormattingContext.h: Added.
+        * layout/tableformatting/TableFormattingState.cpp: Added.
+        (WebCore::Layout::TableFormattingState::TableFormattingState):
+        (WebCore::Layout::TableFormattingState::~TableFormattingState):
+        * layout/tableformatting/TableFormattingState.h: Added.
+        * layout/tableformatting/TableInvalidation.cpp: Added.
+        (WebCore::Layout::TableInvalidation::invalidate):
+        * layout/tableformatting/TableInvalidation.h: Added.
+
+2019-07-20  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add support for mid-word break.
         https://bugs.webkit.org/show_bug.cgi?id=199976
         <rdar://problem/53337349>
