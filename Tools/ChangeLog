@@ -1,3 +1,24 @@
+2019-07-19  Zhifei Fang  <zhifei_fang@apple.com>
+
+        Move Ref.js to WebKit to support resultsdbpy's frontend
+        https://bugs.webkit.org/show_bug.cgi?id=199956
+
+        Reviewed by Jonathan Bedard.
+
+        * resultsdbpy/resultsdbpy/view/static/js/drawer.js:
+        * resultsdbpy/resultsdbpy/view/static/js/search.js:
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        * resultsdbpy/resultsdbpy/view/static/library/js/Ref.js: Added.
+        * resultsdbpy/resultsdbpy/view/static/library/js/Utils.js: Added.
+        * resultsdbpy/resultsdbpy/view/static/library/js/components/BaseComponents.js: Added.
+        * resultsdbpy/resultsdbpy/view/static/library/js/components/TimelineComponents.js: Added.
+        * resultsdbpy/resultsdbpy/view/templates/base.html:
+        * resultsdbpy/resultsdbpy/view/templates/commits.html:
+        * resultsdbpy/resultsdbpy/view/templates/documentation.html:
+        * resultsdbpy/resultsdbpy/view/templates/search.html:
+        * resultsdbpy/resultsdbpy/view/templates/suite_results.html:
+        * resultsdbpy/resultsdbpy/view/view_routes.py:
+
 2019-07-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [webkitpy] Allow the testrunner driver to setup the environment completely without needing to start the server process.

@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-import {DOM, REF} from '/library/ref.js';
+import {DOM, REF} from '/library/js/Ref.js';
 import {QueryModifier, paramsToQuery} from '/assets/js/common.js';
 
 const LIMIT = 10;

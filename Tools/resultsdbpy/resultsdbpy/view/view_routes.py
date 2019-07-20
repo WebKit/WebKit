@@ -111,14 +111,8 @@ class ViewRoutes(AuthedBlueprint):
     def library(self, path):
         AssertRequest.no_query()
         AssertRequest.is_type()
-        result = {
-            # FIXME: These links are currently dead
-            'ref.js': self.cache_resource('https://build.webkit.org/dashboard/devices/Scripts/Ref.js'),
-            'webkit.css': self.cache_resource('https://build.webkit.org/dashboard/Styles/webkit.css'),
-        }.get(path, None)
-        if not result:
-            abort(404, description=f'{path} is not a known library')
-        return result
+        path_split = os.path.split(path)
+        return send_from_directory(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/library', *path_split[:-1]), path_split[-1])
 
     def response_500(self, error=InternalServerError()):
         if isinstance(error, HTTPException):

@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-import {DOM, REF} from '/library/ref.js';
+import {DOM, REF} from '/library/js/Ref.js';
 import {QueryModifier} from '/assets/js/common.js';
 import {Configuration} from '/assets/js/configuration.js'
 
@@ -95,7 +95,7 @@ function BranchSelector(callback) {
                     return `<option selected value="${branch}">${branch}</option>`;
                 return `<option value="${branch}">${branch}</option>`;
             }).join('');
-        }, 
+        },
     });
 
     fetch('api/commits/branches').then(response => {
@@ -269,7 +269,7 @@ function ConfigurationSelectors(callback) {
                                 </label>
                             </div>`;
                     }).join('')}`);
-            }, 
+            },
         });
         configurationsDefinedCallbacks.push(() => {
             ref.setState(configurations);

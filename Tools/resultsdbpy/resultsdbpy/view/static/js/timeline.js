@@ -24,7 +24,7 @@
 import {CommitBank} from '/assets/js/commit.js';
 import {Configuration} from '/assets/js/configuration.js';
 import {deepCompare, ErrorDisplay, paramsToQuery, queryToParams} from '/assets/js/common.js';
-import {DOM, REF} from '/library/ref.js';
+import {DOM, REF} from '/library/js/Ref.js';
 
 
 const DEFAULT_LIMIT = 100;
@@ -420,7 +420,7 @@ class Timeline {
                 }
                 --currentCommitIndex;
             }
-            
+
         }
 
         repositories = [...repositories];
