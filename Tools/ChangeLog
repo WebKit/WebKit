@@ -1,5 +1,17 @@
 2019-07-19  Zhifei Fang  <zhifei_fang@apple.com>
 
+        Move webkit.css to opensource to support resultsdbpy's frontend
+        https://bugs.webkit.org/show_bug.cgi?id=199957
+
+        Reviewed by Jonathan Bedard.
+
+        * resultsdbpy/resultsdbpy/view/static/library/css/docs.yaml: Added.
+        * resultsdbpy/resultsdbpy/view/static/library/css/generate-webkit-css-docs: Added.
+        * resultsdbpy/resultsdbpy/view/static/library/css/index.html: Added.
+        * resultsdbpy/resultsdbpy/view/static/library/css/webkit.css: Added.
+
+2019-07-19  Zhifei Fang  <zhifei_fang@apple.com>
+
         Move Ref.js to WebKit to support resultsdbpy's frontend
         https://bugs.webkit.org/show_bug.cgi?id=199956
 
