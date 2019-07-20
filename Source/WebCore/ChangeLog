@@ -1,3 +1,18 @@
+2019-07-20  Alexander Mikhaylenko  <exalm7659@gmail.com>
+
+        REGRESSION(r246033/r246496): [GTK] Kinetic scrolling doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=199322
+
+        Reviewed by Michael Catanzaro.
+
+        Check ENABLE(KINETIC_SCROLLING) instead of ENABLE(ASYNC_SCROLLING) for kinetic scrolling.
+
+        * platform/PlatformWheelEvent.h:
+        * platform/generic/ScrollAnimatorGeneric.cpp:
+        (WebCore::ScrollAnimatorGeneric::handleWheelEvent):
+        * platform/gtk/PlatformWheelEventGtk.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2019-07-20  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Introduce table formatting context.

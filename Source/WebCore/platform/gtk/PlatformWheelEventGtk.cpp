@@ -92,11 +92,11 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_wheelTicksX = m_deltaX;
     m_wheelTicksY = m_deltaY;
 
-#if ENABLE(ASYNC_SCROLLING)
+#if ENABLE(KINETIC_SCROLLING)
     m_phase = gdk_event_is_scroll_stop_event(reinterpret_cast<GdkEvent*>(event)) ?
         PlatformWheelEventPhaseEnded :
         PlatformWheelEventPhaseChanged;
-#endif // ENABLE(ASYNC_SCROLLING)
+#endif // ENABLE(KINETIC_SCROLLING)
 
     gdouble x, y, rootX, rootY;
     gdk_event_get_coords(reinterpret_cast<GdkEvent*>(event), &x, &y);

@@ -132,7 +132,7 @@ bool ScrollAnimatorGeneric::handleWheelEvent(const PlatformWheelEvent& event)
         return (event.timestamp() - otherEvent.timestamp()) > scrollCaptureThreshold;
     });
 
-#if ENABLE(ASYNC_SCROLLING)
+#if ENABLE(KINETIC_SCROLLING)
     if (event.isEndOfNonMomentumScroll()) {
         // We don't need to add the event to the history as its delta will be (0, 0).
         static_cast<ScrollAnimationKinetic*>(m_kineticAnimation.get())->start(m_currentPosition, computeVelocity(), m_scrollableArea.horizontalScrollbar(), m_scrollableArea.verticalScrollbar());
