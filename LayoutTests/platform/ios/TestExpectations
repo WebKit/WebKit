@@ -3226,7 +3226,6 @@ webkit.org/b/175678 media/W3C/video/events/event_progress.html [ Pass Failure ]
 
 # These tests depend on the implementation of "modern compatibility mode" in WebKitAdditions.
 platform/ipad/fast/css/webkit-overflow-scrolling-parsing-modern-compatibility-mode.html [ Skip ]
-fast/scrolling/ipad/overflow-scrolling-touch-enabled-stacking-modern-compatibility-mode.html [ Skip ]
 
 webkit.org/b/197778 [ Debug ] webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Slow ]
 
