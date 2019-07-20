@@ -1,3 +1,28 @@
+2019-07-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [webkitpy] Allow the testrunner driver to setup the environment completely without needing to start the server process.
+        https://bugs.webkit.org/show_bug.cgi?id=199945
+
+        Reviewed by Michael Catanzaro.
+
+        Refactor the code to create the Driver temporal directories inside Driver._setup_environ_for_driver().
+        This allows external callers to setup the environment for running tests by calling that method without needing to start the server process.
+        When this callers finish testing, it is enough with calling either Driver.stop() or Driver._delete_temporal_directories().
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._setup_environ_for_driver):
+        (Driver._create_temporal_directories):
+        (Driver):
+        (Driver._start):
+        (Driver._delete_temporal_directories):
+        (Driver.stop):
+        * Scripts/webkitpy/w3c/wpt_runner.py: Not needed anymore to start the driver since this doesnt need the server process running.
+        (main):
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner.py: Ditto.
+        (WebDriverTestRunner.__init__):
+        * glib/api_test_runner.py:
+        (TestRunner._setup_testing_environment): Ditto.
+
 2019-07-19  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Display pre-existing Layout test failure names in the build summary

@@ -410,6 +410,8 @@ class Driver(object):
             environment[variable] = path
 
     def _setup_environ_for_driver(self, environment):
+        self._port._clear_global_caches_and_temporary_files()
+        self._create_temporal_directories()
         build_root_path = str(self._port._build_path())
         self._append_environment_variable_path(environment, 'DYLD_LIBRARY_PATH', build_root_path)
         self._append_environment_variable_path(environment, '__XPC_DYLD_LIBRARY_PATH', build_root_path)
@@ -451,17 +453,19 @@ class Driver(object):
         environment = self._setup_environ_for_driver(environment)
         return environment
 
-    def _start(self, pixel_tests, per_test_args):
-        self.stop()
+    def _create_temporal_directories(self):
         # Each driver process should be using individual directories under _driver_tempdir (which is deleted when stopping),
         # however some subsystems on some platforms could end up using process default ones.
-        self._port._clear_global_caches_and_temporary_files()
-        self._driver_tempdir = self._port._driver_tempdir(self._target_host)
-        self._driver_user_directory_suffix = os.path.basename(str(self._driver_tempdir))
-        user_cache_directory = self._port._path_to_user_cache_directory(self._driver_user_directory_suffix)
-        if user_cache_directory:
-            self._target_host.filesystem.maybe_make_directory(user_cache_directory)
-            self._driver_user_cache_directory = user_cache_directory
+        if self._driver_tempdir is None:
+            self._driver_tempdir = self._port._driver_tempdir(self._target_host)
+            self._driver_user_directory_suffix = os.path.basename(str(self._driver_tempdir))
+            user_cache_directory = self._port._path_to_user_cache_directory(self._driver_user_directory_suffix)
+            if user_cache_directory:
+                self._target_host.filesystem.maybe_make_directory(user_cache_directory)
+                self._driver_user_cache_directory = user_cache_directory
+
+    def _start(self, pixel_tests, per_test_args):
+        self.stop()
         environment = self._setup_environ_for_test()
         self._crashed_process_name = None
         self._crashed_pid = None
@@ -477,19 +481,21 @@ class Driver(object):
         # Remote drivers will override this method to return the pid on the device.
         return self._server_process.pid()
 
-    def stop(self):
-        if self._server_process:
-            self._server_process.stop(self._port.driver_stop_timeout())
-            self._server_process = None
-            if self._profiler:
-                self._profiler.profile_after_exit()
-
+    def _delete_temporal_directories(self):
         if self._driver_tempdir:
             self._target_host.filesystem.rmtree(str(self._driver_tempdir))
             self._driver_tempdir = None
         if self._driver_user_cache_directory:
             self._target_host.filesystem.rmtree(self._driver_user_cache_directory)
             self._driver_user_cache_directory = None
+
+    def stop(self):
+        if self._server_process:
+            self._server_process.stop(self._port.driver_stop_timeout())
+            self._server_process = None
+            if self._profiler:
+                self._profiler.profile_after_exit()
+        self._delete_temporal_directories()
 
     def cmd_line(self, pixel_tests, per_test_args):
         cmd = self._command_wrapper()
