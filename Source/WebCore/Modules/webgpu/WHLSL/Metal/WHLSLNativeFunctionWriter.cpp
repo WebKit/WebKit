@@ -31,6 +31,7 @@
 #include "NotImplemented.h"
 #include "WHLSLAddressSpace.h"
 #include "WHLSLArrayType.h"
+#include "WHLSLEnumerationDefinition.h"
 #include "WHLSLInferTypes.h"
 #include "WHLSLIntrinsics.h"
 #include "WHLSLNamedType.h"
@@ -123,7 +124,8 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
 {
     StringBuilder stringBuilder;
     if (nativeFunctionDeclaration.isCast()) {
-        auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
+        auto& returnType = nativeFunctionDeclaration.type();
+        auto metalReturnName = typeNamer.mangledNameForType(returnType);
         if (!nativeFunctionDeclaration.parameters().size()) {
             stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, "() {\n"));
             stringBuilder.append(makeString("    ", metalReturnName, " x;\n"));
@@ -134,8 +136,28 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         }
 
         ASSERT(nativeFunctionDeclaration.parameters().size() == 1);
-        auto metalParameterName = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
+        auto& parameterType = *nativeFunctionDeclaration.parameters()[0]->type();
+        auto metalParameterName = typeNamer.mangledNameForType(parameterType);
         stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"));
+
+        {
+            auto isEnumerationDefinition = [] (auto& type) {
+                return is<AST::NamedType>(type) && is<AST::EnumerationDefinition>(downcast<AST::NamedType>(type));
+            };
+            auto& unifiedReturnType = returnType.unifyNode();
+            if (isEnumerationDefinition(unifiedReturnType) && !isEnumerationDefinition(parameterType.unifyNode())) { 
+                auto& enumerationDefinition = downcast<AST::EnumerationDefinition>(downcast<AST::NamedType>(unifiedReturnType));
+                stringBuilder.append("    switch (x) {\n");
+                bool hasZeroCase = false;
+                for (auto& member : enumerationDefinition.enumerationMembers()) {
+                    hasZeroCase |= !member.get().value();
+                    stringBuilder.append(makeString("        case ", member.get().value(), ": break;\n"));
+                }
+                ASSERT_UNUSED(hasZeroCase, hasZeroCase);
+                stringBuilder.append("        default: x = 0; break; }\n");
+            }
+        }
+
         stringBuilder.append(makeString("    return static_cast<", metalReturnName, ">(x);\n"));
         stringBuilder.append("}\n");
         return stringBuilder.toString();

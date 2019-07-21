@@ -1,3 +1,13 @@
+2019-07-21  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Return the zero-value enum in the enum-from-integer constructor when the integer is not a valid enum value
+        https://bugs.webkit.org/show_bug.cgi?id=199853
+
+        Reviewed by Dean Jackson.
+
+        * webgpu/whlsl/enum-integer-constructor-expected.txt: Added.
+        * webgpu/whlsl/enum-integer-constructor.html: Added.
+
 2019-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Fast and complex text codepaths disagree about how to lay out bopomofo with tone marks
