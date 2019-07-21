@@ -949,8 +949,10 @@ void Checker::finishVisiting(AST::PropertyAccessExpression& propertyAccessExpres
     if (!baseInfo)
         return;
     auto baseUnnamedType = commit(baseInfo->resolvingType);
-    if (!baseUnnamedType)
+    if (!baseUnnamedType) {
+        setError();
         return;
+    }
 
     AST::FunctionDeclaration* getterFunction = nullptr;
     AST::UnnamedType* getterReturnType = nullptr;
