@@ -1310,6 +1310,7 @@ html/parser/XSSAuditor.cpp
 html/parser/XSSAuditorDelegate.cpp
 
 html/shadow/AutoFillButtonElement.cpp
+html/shadow/DataListButtonElement.cpp
 html/shadow/DetailsMarkerControl.cpp
 html/shadow/MediaControlElementTypes.cpp
 html/shadow/MediaControlElements.cpp

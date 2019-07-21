@@ -1,3 +1,13 @@
+2019-07-21  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Add DataListButtonElement.cpp to unified sources
+        https://bugs.webkit.org/show_bug.cgi?id=199989
+
+        Reviewed by Michael Catanzaro.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-07-21  Andres Gonzalez  <andresg_22@apple.com>
 
         Add accessibilityInsertText for text insertion in edit fields.
