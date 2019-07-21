@@ -58,7 +58,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSRange)_accessibilitySelectedTextRange;
 - (void)_accessibilitySetSelectedTextRange:(NSRange)range;
 - (BOOL)accessibilityReplaceRange:(NSRange)range withText:(NSString *)string;
-- (BOOL)accessibilityInsertText:(NSString *)text;
+- (BOOL)_accessibilityInsertText:(NSString *)text;
 - (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function withContext:(void*)context;
 - (CGFloat)_accessibilityMinValue;
 - (CGFloat)_accessibilityMaxValue;
@@ -1166,7 +1166,7 @@ bool AccessibilityUIElement::replaceTextInRange(JSStringRef string, int location
 
 bool AccessibilityUIElement::insertText(JSStringRef text)
 {
-    return [m_element accessibilityInsertText:[NSString stringWithJSStringRef:text]];
+    return [m_element _accessibilityInsertText:[NSString stringWithJSStringRef:text]];
 }
 
 RefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForPoint(int x, int y)

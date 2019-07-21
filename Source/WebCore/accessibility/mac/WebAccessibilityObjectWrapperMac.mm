@@ -3830,7 +3830,7 @@ IGNORE_WARNINGS_END
     return m_object->replaceTextInRange(string, PlainTextRange(range));
 }
 
-- (BOOL)accessibilityInsertText:(NSString *)text
+- (BOOL)_accessibilityInsertText:(NSString *)text
 {
     if (![self updateObjectBackingStore])
         return NO;

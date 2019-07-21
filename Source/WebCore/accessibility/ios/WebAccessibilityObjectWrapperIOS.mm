@@ -2561,7 +2561,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return m_object->replaceTextInRange(string, PlainTextRange(range));
 }
 
-- (BOOL)accessibilityInsertText:(NSString *)text
+- (BOOL)_accessibilityInsertText:(NSString *)text
 {
     if (![self _prepareAccessibilityCall])
         return NO;
