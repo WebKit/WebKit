@@ -1,3 +1,20 @@
+2019-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Fast and complex text codepaths disagree about how to lay out bopomofo with tone marks
+        https://bugs.webkit.org/show_bug.cgi?id=199912
+        <rdar://problem/52182454>
+
+        Reviewed by Simon Fraser.
+
+        This is because CoreText has special composition rules for CJK languages, which we don't have in our simple
+        text codepath. Rather than implementing the composition rules in WebKit, we can simply disable them in
+        CoreText.
+
+        Test: fast/text/international/system-language/composition.html
+
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+        (WebCore::Font::getCFStringAttributes const):
+
 2019-07-20  Andres Gonzalez  <andresg_22@apple.com>
 
         Add accessibilityInsertText for text insertion in edit fields.

@@ -1,3 +1,20 @@
+2019-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Fast and complex text codepaths disagree about how to lay out bopomofo with tone marks
+        https://bugs.webkit.org/show_bug.cgi?id=199912
+        <rdar://problem/52182454>
+
+        Reviewed by Simon Fraser.
+
+        * css3/font-feature-font-face-local-expected.html:
+        * css3/font-feature-font-face-local.html:
+        * editing/mac/selection/word-thai-expected.txt:
+        * editing/mac/selection/word-thai.html:
+        * fast/text/international/system-language/composition-expected.txt: Added.
+        * fast/text/international/system-language/composition.html: Added.
+        * platform/ios/fast/text/crash-complex-text-surrogate-expected.txt:
+        * svg/custom/glyph-selection-arabic-forms-expected.txt:
+
 2019-07-20  Andres Gonzalez  <andresg_22@apple.com>
 
         Add accessibilityInsertText for text insertion in edit fields.
