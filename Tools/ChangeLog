@@ -1,3 +1,15 @@
+2019-07-20  Chris Dumez  <cdumez@apple.com>
+
+        Speed up HashTable decoding by reserving capacity and avoiding rehashing
+        https://bugs.webkit.org/show_bug.cgi?id=199982
+
+        Reviewed by Saam Barati.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST):
+
 2019-07-20  Andres Gonzalez  <andresg_22@apple.com>
 
         Add accessibilityInsertText for text insertion in edit fields.

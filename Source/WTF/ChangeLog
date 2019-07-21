@@ -1,3 +1,21 @@
+2019-07-20  Chris Dumez  <cdumez@apple.com>
+
+        Speed up HashTable decoding by reserving capacity and avoiding rehashing
+        https://bugs.webkit.org/show_bug.cgi?id=199982
+
+        Reviewed by Saam Barati.
+
+        Introduce reserveInitialCapacity() on HashMap to reserve capacity on a
+        HashMap and cut down on rehashing cost when possible.
+
+        * wtf/HashMap.h:
+        * wtf/HashTable.h:
+        (WTF::HashTable::reserveInitialCapacity):
+
+        * wtf/persistence/PersistentCoders.h:
+        Use HashMap::reserveInitialCapacity() in the HashMap persistent decoder for
+        performance.
+
 2019-07-20  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
         REGRESSION(r246033/r246496): [GTK] Kinetic scrolling doesn't work
