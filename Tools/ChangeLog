@@ -1,3 +1,19 @@
+2019-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [WK1] UIWebView always jumps to the top left corner when scrolling to reveal the selection
+        https://bugs.webkit.org/show_bug.cgi?id=200013
+        <rdar://problem/52526901>
+
+        Reviewed by Simon Fraser.
+
+        Add a new API test to verify that inserting text in UIWebView causes the document to scroll.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/ScrollToRevealSelection.mm: Added.
+        (-[LegacyLoadingDelegate webViewDidFinishLoad:]):
+        (-[LegacyLoadingDelegate waitForDidFinishLoad]):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2019-07-22  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(rUnknown): YouTube playback pauses when switching to a new tab

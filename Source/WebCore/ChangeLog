@@ -1,3 +1,33 @@
+2019-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [WK1] UIWebView always jumps to the top left corner when scrolling to reveal the selection
+        https://bugs.webkit.org/show_bug.cgi?id=200013
+        <rdar://problem/52526901>
+
+        Reviewed by Simon Fraser.
+
+        After <https://trac.webkit.org/r244141>, we no longer attempt to scroll to reveal the text selection in
+        UIWebView after changing the selection, due to how we use the legacy document view rect in legacy WebKit when
+        computing the visual viewport. This causes the viewRect in RenderLayer::scrollRectToVisible to be the same size
+        as the content size, which then causes us to always scroll to the origin when revealing the selection.
+
+        To make selection revealing work again in legacy WebKit, conditionally restore the old behavior of using the
+        unobscured content rect as the view rect, only in the case where scrolling is delegated and the platform widget
+        is present.
+
+        Test: WebKitLegacy.ScrollToRevealSelection
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::viewRectExpandedByContentInsets const):
+        (WebCore::FrameView::visualViewportRectExpandedByContentInsets const): Deleted.
+
+        Additionally rename visualViewportRectExpandedByContentInsets to viewRectExpandedByContentInsets, to reflect the
+        fact that this may either be the visual viewport rect or unobscured content rect.
+
+        * page/FrameView.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+
 2019-07-22  Brent Fulgham  <bfulgham@apple.com>
 
         Correct web audio-related crash in seed reports

@@ -2689,7 +2689,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
 #else
             // FIXME: ContentInsets should be taken care of in UI process side. webkit.org/b/199682
             // To do that, getRectToExpose needs to return the additional scrolling to do beyond content rect.
-            LayoutRect viewRect = frameView.visualViewportRectExpandedByContentInsets();
+            LayoutRect viewRect = frameView.viewRectExpandedByContentInsets();
 
             // FIXME: webkit.org/b/199683 FrameView::visibleContentRect is wrong when content insets are present
             maxScrollPosition = frameView.scrollPositionFromOffset(ScrollPosition(frameView.totalContentsSize() - flooredIntSize(viewRect.size())));

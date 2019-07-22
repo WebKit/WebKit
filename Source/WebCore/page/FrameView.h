@@ -327,7 +327,7 @@ public:
     WEBCORE_EXPORT static LayoutRect rectForViewportConstrainedObjects(const LayoutRect& visibleContentRect, const LayoutSize& totalContentsSize, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame, ScrollBehaviorForFixedElements);
 #endif
 
-    IntRect visualViewportRectExpandedByContentInsets() const;
+    IntRect viewRectExpandedByContentInsets() const;
     
     bool fixedElementsLayoutRelativeToFrame() const;
 

@@ -928,6 +928,7 @@
 		F41AB9AA1EF4696B0083FA08 /* textarea-to-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F41AB9951EF4692C0083FA08 /* textarea-to-input.html */; };
 		F42D634422A1729F00D2FB3A /* AutocorrectionTestsIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F42D634322A1729F00D2FB3A /* AutocorrectionTestsIOS.mm */; };
 		F42DA5161D8CEFE400336F40 /* large-input-field-focus-onload.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F42DA5151D8CEFDB00336F40 /* large-input-field-focus-onload.html */; };
+		F434CA1A22E65BCA005DDB26 /* ScrollToRevealSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = F434CA1922E65BCA005DDB26 /* ScrollToRevealSelection.mm */; };
 		F43E3BBF20DADA1E00A4E7ED /* WKScrollViewTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F43E3BBE20DADA1E00A4E7ED /* WKScrollViewTests.mm */; };
 		F43E3BC120DADBC500A4E7ED /* fixed-nav-bar.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F43E3BC020DADB8000A4E7ED /* fixed-nav-bar.html */; };
 		F442851D2140DF2900CCDA22 /* NSFontPanelTesting.mm in Sources */ = {isa = PBXBuildFile; fileRef = F442851C2140DF2900CCDA22 /* NSFontPanelTesting.mm */; };
@@ -2365,6 +2366,7 @@
 		F41AB99E1EF4692C0083FA08 /* div-and-large-image.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "div-and-large-image.html"; sourceTree = "<group>"; };
 		F42D634322A1729F00D2FB3A /* AutocorrectionTestsIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AutocorrectionTestsIOS.mm; sourceTree = "<group>"; };
 		F42DA5151D8CEFDB00336F40 /* large-input-field-focus-onload.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "large-input-field-focus-onload.html"; path = "Tests/WebKitCocoa/large-input-field-focus-onload.html"; sourceTree = SOURCE_ROOT; };
+		F434CA1922E65BCA005DDB26 /* ScrollToRevealSelection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = ScrollToRevealSelection.mm; path = ScrollToRevealSelection.mm; sourceTree = "<group>"; };
 		F43E3BBE20DADA1E00A4E7ED /* WKScrollViewTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKScrollViewTests.mm; sourceTree = "<group>"; };
 		F43E3BC020DADB8000A4E7ED /* fixed-nav-bar.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "fixed-nav-bar.html"; sourceTree = "<group>"; };
 		F442851B2140DF2900CCDA22 /* NSFontPanelTesting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSFontPanelTesting.h; sourceTree = "<group>"; };
@@ -2566,8 +2568,8 @@
 				BC131AA8117131FC00B69727 /* TestsController.cpp */,
 				BCB9E7C711234E3A00A137E0 /* TestsController.h */,
 				7C83E0361D0A5F7000FEBCF3 /* Utilities.h */,
-				44A622C114A0E2B60048515B /* WTFStringUtilities.h */,
 				7CBD5A2222DE42A6004A9E32 /* WTFStringUtilities.cpp */,
+				44A622C114A0E2B60048515B /* WTFStringUtilities.h */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -3907,6 +3909,7 @@
 				CDC8E4851BC5B19400594FEC /* AudioSessionCategoryIOS.mm */,
 				E35FC7B122B82A6D00F32F98 /* JSLockTakesWebThreadLock.mm */,
 				CDC0932A21C872C10030C4B0 /* ScrollingDoesNotPauseMedia.mm */,
+				F434CA1922E65BCA005DDB26 /* ScrollToRevealSelection.mm */,
 				0F4FFA9D1ED3AA8500F7111F /* SnapshotViaRenderInContext.mm */,
 			);
 			path = ios;
@@ -4137,7 +4140,6 @@
 			files = (
 				7C83DE991D0A590C00FEBCF3 /* AtomString.cpp in Sources */,
 				1ADAD1501D77A9F600212586 /* BlockPtr.mm in Sources */,
-				7CBD5A2322DE42A6004A9E32 /* WTFStringUtilities.cpp in Sources */,
 				7C83DE9C1D0A590C00FEBCF3 /* BloomFilter.cpp in Sources */,
 				7C83DEA01D0A590C00FEBCF3 /* CheckedArithmeticOperations.cpp in Sources */,
 				0F30CB5C1FCE1796004B5323 /* ConcurrentPtrHashSet.cpp in Sources */,
@@ -4214,6 +4216,7 @@
 				37C7CC2D1EA4146B007BD956 /* WeakLinking.cpp in Sources */,
 				57C3FA661F7C248F009D4B80 /* WeakPtr.cpp in Sources */,
 				7C83DF631D0A590C00FEBCF3 /* WTFString.cpp in Sources */,
+				7CBD5A2322DE42A6004A9E32 /* WTFStringUtilities.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4293,7 +4296,6 @@
 				5C3B1D2622A74F6700BCF4D0 /* ContextMenus.mm in Sources */,
 				5C2936931D5BF70D00DEAB1E /* CookieAcceptPolicy.mm in Sources */,
 				51D1249B1E785425002B2820 /* CookieManager.cpp in Sources */,
-				7C74C8FA22DFBA9600DA2DAB /* WTFStringUtilities.cpp in Sources */,
 				5C19A5241FD0F60100EEA323 /* CookiePrivateBrowsing.mm in Sources */,
 				9B1F6F781F90558400B55744 /* CopyHTML.mm in Sources */,
 				9999108B1F393C96008AD455 /* Copying.mm in Sources */,
@@ -4553,6 +4555,7 @@
 				CE0947372063223B003C9BA0 /* SchemeRegistry.mm in Sources */,
 				CDC0932B21C872C10030C4B0 /* ScrollingDoesNotPauseMedia.mm in Sources */,
 				7CCE7F121A411AE600447C4C /* ScrollPinningBehaviors.cpp in Sources */,
+				F434CA1A22E65BCA005DDB26 /* ScrollToRevealSelection.mm in Sources */,
 				F4C8797F2059D8D3009CD00B /* ScrollViewInsetTests.mm in Sources */,
 				0FF1134E22D68679009A81DA /* ScrollViewScrollabilityTests.mm in Sources */,
 				CE06DF9B1E1851F200E570C9 /* SecurityOrigin.cpp in Sources */,
@@ -4712,6 +4715,7 @@
 				93F56DA91E5F919D003EDE84 /* WKWebViewSnapshot.mm in Sources */,
 				CD7F89DC22A86CDA00D683AE /* WKWebViewSuspendAllMediaPlayback.mm in Sources */,
 				9984FACC1CFFAF60008D198C /* WKWebViewTextInput.mm in Sources */,
+				7C74C8FA22DFBA9600DA2DAB /* WTFStringUtilities.cpp in Sources */,
 				9C64DC321D76198A004B598E /* YouTubePluginReplacement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
