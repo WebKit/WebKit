@@ -51,7 +51,6 @@ public:
     LayoutUnit descent() const { return m_descent; }
     LayoutUnit italicCorrection() const { return m_italicCorrection; }
 
-    void stretchTo(const RenderStyle&, LayoutUnit ascent, LayoutUnit descent);
     void stretchTo(const RenderStyle&, LayoutUnit width);
 
     void paint(const RenderStyle&, PaintInfo&, const LayoutPoint&);
