@@ -60,7 +60,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithWebsiteDataSto
     configuration->m_mediaKeysStorageDirectory = legacyConfiguration.mediaKeysStorageDirectory();
     configuration->m_resourceLoadStatisticsDirectory = legacyConfiguration.resourceLoadStatisticsDirectory();
     configuration->m_webSQLDatabaseDirectory = legacyConfiguration.webSQLDatabaseDirectory();
-    configuration->m_javaScriptConfigurationDirectory = legacyConfiguration.javaScriptConfigurationDirectory();
 
     return configuration;
 }
@@ -76,7 +75,6 @@ ProcessPoolConfiguration::ProcessPoolConfiguration()
     , m_webSQLDatabaseDirectory(WebsiteDataStore::defaultWebSQLDatabaseDirectory())
     , m_mediaKeysStorageDirectory(WebsiteDataStore::defaultMediaKeysStorageDirectory())
     , m_resourceLoadStatisticsDirectory(WebsiteDataStore::defaultResourceLoadStatisticsDirectory())
-    , m_javaScriptConfigurationDirectory(WebsiteDataStore::defaultJavaScriptConfigurationDirectory())
 {
 }
 
