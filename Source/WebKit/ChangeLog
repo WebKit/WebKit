@@ -1,3 +1,20 @@
+2019-07-22  Dean Jackson  <dino@apple.com>
+
+        WebKit SPI fix for [ClickyOrb] Audio continues playing after dismissing a video preview in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=200011
+        <rdar://problem/53409457>
+
+        Reviewed by Tim Horton.
+
+        Don't check for the SPI @selector(_webView:contextMenuDidEndForElement:)
+        on the WKUIDelegate so that clients that got caught implementing the
+        SPI before moving to the real API can still clean-up state. In other words,
+        don't force a client that only implements that method to move completely
+        to the new API.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (needsDeprecatedPreviewAPI):
+
 2019-07-22  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(rUnknown): YouTube playback pauses when switching to a new tab
