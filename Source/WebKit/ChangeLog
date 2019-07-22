@@ -1,3 +1,13 @@
+2019-07-22  Megan Gardner  <megan_gardner@apple.com>
+
+        Remove Staging for scrolling bug
+        https://bugs.webkit.org/show_bug.cgi?id=199894
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKUIWKTextInteractionAssistant scrollSelectionToVisible]): Deleted.
+
 2019-07-22  Brent Fulgham  <bfulgham@apple.com>
 
         Correct web audio-related crash in seed reports
