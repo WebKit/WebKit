@@ -1,3 +1,17 @@
+2019-07-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [webkitpy] Add an unit test for setting up the driver environment without starting it.
+        https://bugs.webkit.org/show_bug.cgi?id=199945
+
+        Reviewed by Michael Catanzaro.
+
+        This adds an unit test for the change implemented in r247663.
+
+        * Scripts/webkitpy/port/driver_unittest.py:
+        (DriverTest.test_setup_environ_base_vars):
+        (DriverTest):
+        (DriverTest.test_setup_environ_without_starting_driver):
+
 2019-07-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [WebKit2] Add limited support for -isPosition:atBoundary:inDirection: in WKContentView

@@ -379,6 +379,19 @@ class DriverTest(unittest.TestCase):
                     self.assertIn(var, environment_driver_test)
                     self.assertEqual(environment_driver_test[var], environ_keep_yes[var])
 
+    def test_setup_environ_without_starting_driver(self):
+        environ_user = {'WEBKIT_OUTPUTDIR': '/opt/webkit/WebKitBuild/Release'}
+        with patch('os.environ', environ_user):
+            port = self.make_port()
+            driver = Driver(port, None, pixel_tests=False)
+            self.assertEqual(driver._driver_tempdir, None)
+            environ_driver = driver._setup_environ_for_test()
+            self.assertNotEqual(driver._driver_tempdir, None)
+            self.assertTrue(port._filesystem.isdir(str(driver._driver_tempdir)))
+            for var in environ_driver:
+                self.assertNotEqual(var, None)
+                self.assertNotEqual(environ_driver[var], None)
+
     def test_create_temporal_home_dir(self):
         environ_user = {'HOME': '/home/igalia'}
         with patch('os.environ', environ_user), patch('sys.platform', 'linux2'):
