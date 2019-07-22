@@ -29,6 +29,7 @@
 #include "APIPageConfiguration.h"
 #include "WKAPICast.h"
 #include "WebPageGroup.h"
+#include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include "WebUserContentControllerProxy.h"
 

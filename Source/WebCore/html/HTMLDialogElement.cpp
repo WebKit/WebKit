@@ -26,6 +26,8 @@
 #include "config.h"
 #include "HTMLDialogElement.h"
 
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLDialogElement);

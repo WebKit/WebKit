@@ -27,6 +27,7 @@
 
 #include "NetworkDataTask.h"
 #include <WebCore/NetworkLoadInformation.h>
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>

@@ -28,6 +28,7 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
+#include "Document.h"
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 

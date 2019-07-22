@@ -28,6 +28,7 @@
 #include "JSCast.h"
 #include "ParserModes.h"
 #include "VariableEnvironment.h"
+#include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/MallocPtr.h>
 

@@ -30,6 +30,7 @@
 #include <WebCore/ContentSecurityPolicyResponseHeaders.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/NetworkLoadInformation.h>
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceError.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>

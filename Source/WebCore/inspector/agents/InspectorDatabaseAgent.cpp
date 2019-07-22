@@ -32,6 +32,7 @@
 
 #include "Database.h"
 #include "DatabaseTracker.h"
+#include "Document.h"
 #include "InspectorDatabaseResource.h"
 #include "InstrumentingAgents.h"
 #include "SQLError.h"
@@ -47,7 +48,6 @@
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Vector.h>
-
 
 namespace WebCore {
 

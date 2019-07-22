@@ -28,6 +28,7 @@
 
 #include "APIMessageListener.h"
 #include "WKAPICast.h"
+#include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include <wtf/text/WTFString.h>
 

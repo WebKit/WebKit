@@ -1,3 +1,16 @@
+2019-07-22  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed non-unified build fix.
+
+        * Modules/webdatabase/DatabaseContext.h:
+        * html/HTMLDialogElement.cpp:
+        * html/HTMLScriptElement.cpp:
+        * inspector/agents/InspectorDatabaseAgent.cpp:
+        * workers/service/server/SWServerWorker.cpp:
+        * workers/service/server/SWServerWorker.h:
+        * worklets/WorkletGlobalScope.cpp:
+        * worklets/WorkletGlobalScope.h:
+
 2019-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [WK1] UIWebView always jumps to the top left corner when scrolling to reveal the selection

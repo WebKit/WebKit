@@ -42,6 +42,7 @@
 #include "WKString.h"
 #include "WebCertificateInfo.h"
 #include "WebContextInjectedBundleClient.h"
+#include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>

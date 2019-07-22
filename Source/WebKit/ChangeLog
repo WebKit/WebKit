@@ -1,3 +1,17 @@
+2019-07-22  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed non-unified build fix.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.h:
+        * NetworkProcess/NetworkLoadChecker.h:
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/API/C/WKPageConfigurationRef.cpp:
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        * UIProcess/WebPageInjectedBundleClient.cpp:
+        * UIProcess/WebPreferences.cpp:
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::PendingMessage::PendingMessage):
+
 2019-07-22  Megan Gardner  <megan_gardner@apple.com>
 
         Remove Staging for scrolling bug

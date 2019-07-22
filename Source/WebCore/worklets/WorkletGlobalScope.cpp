@@ -29,7 +29,6 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
-#include "Document.h"
 #include "Frame.h"
 #include "InspectorInstrumentation.h"
 #include "JSWorkletGlobalScope.h"
@@ -37,7 +36,6 @@
 #include "SecurityOriginPolicy.h"
 #include "Settings.h"
 #include "WorkletScriptController.h"
-
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/ScriptCallStack.h>

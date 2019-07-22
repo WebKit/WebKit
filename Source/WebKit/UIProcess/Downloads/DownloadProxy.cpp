@@ -33,6 +33,7 @@
 #include "DownloadProxyMap.h"
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxy.h"
+#include "WebPageProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProtectionSpace.h"

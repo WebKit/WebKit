@@ -28,6 +28,7 @@
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Text.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>

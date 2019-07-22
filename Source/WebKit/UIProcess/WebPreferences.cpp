@@ -27,6 +27,7 @@
 #include "WebPreferences.h"
 
 #include "WebPageGroup.h"
+#include "WebPageProxy.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcessPool.h"
 #include <WebCore/LibWebRTCProvider.h>

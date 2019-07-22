@@ -163,8 +163,8 @@ WebSocketChannel::SendResult WebSocketChannel::send(const JSC::ArrayBuffer& bina
 class BlobLoader final : public WebCore::FileReaderLoaderClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BlobLoader(WebCore::Document* document, Blob& blob, CompletionHandler<void()>&& completionHandler)
-        : m_loader(std::make_unique<FileReaderLoader>(FileReaderLoader::ReadAsArrayBuffer, this))
+    BlobLoader(WebCore::Document* document, WebCore::Blob& blob, CompletionHandler<void()>&& completionHandler)
+        : m_loader(std::make_unique<WebCore::FileReaderLoader>(WebCore::FileReaderLoader::ReadAsArrayBuffer, this))
         , m_completionHandler(WTFMove(completionHandler))
     {
         m_loader->start(document, blob);
@@ -225,7 +225,7 @@ public:
     {
     }
 
-    PendingMessage(WebCore::Document* document, Blob& blob, CompletionHandler<void()>&& completionHandler)
+    PendingMessage(WebCore::Document* document, WebCore::Blob& blob, CompletionHandler<void()>&& completionHandler)
         : m_type(Type::Blob)
         , m_blobLoader(std::make_unique<BlobLoader>(document, blob, WTFMove(completionHandler)))
     {

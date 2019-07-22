@@ -37,13 +37,13 @@
 #include "ServiceWorkerRegistrationKey.h"
 #include "ServiceWorkerTypes.h"
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class SWServer;
 class SWServerRegistration;
 class SWServerToContextConnection;
-struct ServiceWorkerClientData;
 struct ServiceWorkerClientIdentifier;
 struct ServiceWorkerClientQueryOptions;
 struct ServiceWorkerContextData;

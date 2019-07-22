@@ -28,12 +28,12 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
+#include "Document.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptSourceCode.h"
 #include "WorkerEventQueue.h"
-
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <pal/SessionID.h>

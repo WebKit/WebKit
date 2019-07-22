@@ -31,6 +31,7 @@
 #include "SWServer.h"
 #include "SWServerRegistration.h"
 #include "SWServerToContextConnection.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
