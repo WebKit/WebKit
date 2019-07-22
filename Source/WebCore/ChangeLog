@@ -1,3 +1,19 @@
+2019-07-22  Per Arne Vollan  <pvollan@apple.com>
+
+        Prewarmed font does not find any matches
+        https://bugs.webkit.org/show_bug.cgi?id=200007
+
+        Reviewed by Brent Fulgham.
+
+        Prewarming the font name 'SF Pro Text' does not find any matches. The font name ".SF NS Text/Display"
+        should be used instead. Also add 'Lucida Grande' to the list of prewarmed font, since it is used as
+        fallback font in many cases.
+
+        No new tests, covered by existing tests.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::fontFamiliesForPrewarming):
+
 2019-07-22  Youenn Fablet  <youenn@apple.com>
 
         Make sure the player underlying volume is correctly set after creating a new player

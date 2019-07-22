@@ -1652,10 +1652,12 @@ void FontCache::prewarm(const PrewarmInformation& prewarmInformation)
 static Vector<String>& fontFamiliesForPrewarming()
 {
     static NeverDestroyed<Vector<String>> families = std::initializer_list<String> {
+        ".SF NS Text"_s,
+        ".SF NS Display"_s,
         "Arial"_s,
         "Helvetica"_s,
         "Helvetica Neue"_s,
-        "SF Pro Text"_s,
+        "Lucida Grande"_s,
         "Times"_s,
         "Times New Roman"_s,
     };
