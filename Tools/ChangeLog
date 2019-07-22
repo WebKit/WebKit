@@ -1,3 +1,19 @@
+2019-07-22  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add an EWS to run services tests
+        https://bugs.webkit.org/show_bug.cgi?id=199994
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/config.json: Added Services-EWS configuration.
+        * BuildSlaveSupport/ews-build/factories.py: Added ServicesFactory.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CheckPatchRelevance): Run this EWS only for patches with changes in relevant files.
+        (RunEWSUnitTests): Build step to run EWS unit-tests.
+        (RunEWSBuildbotCheckConfig): Build step to run buildbot checkconfig command.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py: Added services status-bubble.
+
 2019-07-22  Youenn Fablet  <youenn@apple.com>
 
         Disable MediaRecorder for legacy WebKit

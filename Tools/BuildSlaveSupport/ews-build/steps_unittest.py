@@ -39,8 +39,8 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeL
                    CompileJSCOnly, CompileJSCOnlyToT, CompileWebKit, CompileWebKitToT, ConfigureBuild,
                    DownloadBuiltProduct, ExtractBuiltProduct, ExtractTestResults, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
                    PrintConfiguration, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch,
-                   RunBindingsTests, RunJavaScriptCoreTests, RunJavaScriptCoreTestsToT, RunWebKit1Tests, RunWebKitPerlTests,
-                   RunWebKitPyTests, RunWebKitTests, TestWithFailureCount, Trigger, TransferToS3, UnApplyPatchIfRequired,
+                   RunBindingsTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests, RunJavaScriptCoreTests, RunJavaScriptCoreTestsToT, RunWebKit1Tests,
+                   RunWebKitPerlTests, RunWebKitPyTests, RunWebKitTests, TestWithFailureCount, Trigger, TransferToS3, UnApplyPatchIfRequired,
                    UploadBuiltProduct, UploadTestResults, ValidatePatch)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
@@ -406,6 +406,78 @@ FAILED (failures=1, errors=0)''')
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='webkitpy-tests (failure)')
+        return self.runStep()
+
+
+class TestRunEWSBuildbotCheckConfig(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(RunEWSBuildbotCheckConfig())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='build/Tools/BuildSlaveSupport/ews-build',
+                        timeout=120,
+                        logEnviron=False,
+                        command=['buildbot', 'checkconfig'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Passed buildbot checkconfig')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(RunEWSBuildbotCheckConfig())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='build/Tools/BuildSlaveSupport/ews-build',
+                        timeout=120,
+                        logEnviron=False,
+                        command=['buildbot', 'checkconfig'],
+                        )
+            + ExpectShell.log('stdio', stdout='Configuration Errors:  builder(s) iOS-12-Debug-Build-EWS have no schedulers to drive them')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed buildbot checkconfig')
+        return self.runStep()
+
+
+class TestRunEWSUnitTests(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(RunEWSUnitTests())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=120,
+                        logEnviron=False,
+                        command=['python', 'Tools/BuildSlaveSupport/ews-build/runUnittests.py'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Passed EWS unit tests')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(RunEWSUnitTests())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=120,
+                        logEnviron=False,
+                        command=['python', 'Tools/BuildSlaveSupport/ews-build/runUnittests.py'],
+                        )
+            + ExpectShell.log('stdio', stdout='Unhandled Error. Traceback (most recent call last): Keys in cmd missing from expectation: [logfiles.json]')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed EWS unit tests')
         return self.runStep()
 
 

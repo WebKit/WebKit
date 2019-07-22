@@ -27,7 +27,7 @@ from buildbot.steps import trigger
 from steps import (ApplyPatch, CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance,
                    CheckStyle, CompileJSCOnly, CompileJSCOnlyToT, CompileWebKit, ConfigureBuild,
                    DownloadBuiltProduct, ExtractBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
-                   PrintConfiguration, ReRunJavaScriptCoreTests, RunAPITests, RunBindingsTests,
+                   PrintConfiguration, ReRunJavaScriptCoreTests, RunAPITests, RunBindingsTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests,
                    RunJavaScriptCoreTests, RunJavaScriptCoreTestsToT, RunWebKit1Tests, RunWebKitPerlTests,
                    RunWebKitPyTests, RunWebKitTests, UnApplyPatchIfRequired, ValidatePatch)
 
@@ -158,3 +158,10 @@ class WPEFactory(Factory):
         self.addStep(KillOldProcesses())
         self.addStep(InstallWpeDependencies())
         self.addStep(CompileWebKit(skipUpload=True))
+
+
+class ServicesFactory(Factory):
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, checkRelevance=True)
+        self.addStep(RunEWSUnitTests())
+        self.addStep(RunEWSBuildbotCheckConfig())

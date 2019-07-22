@@ -439,6 +439,13 @@
       "factory": "APITestsFactory",
       "platform": "*",
       "workernames": ["ews119", "ews150", "ews153", "ews155"]
+    },
+    {
+      "name": "Services-EWS",
+      "shortname": "services",
+      "factory": "ServicesFactory",
+      "platform": "*",
+      "workernames": ["ews151"]
     }
   ],
   "schedulers": [
@@ -447,7 +454,7 @@
       "name": "try",
       "port": 5555,
       "builderNames": ["Bindings-Tests-EWS", "GTK-Webkit2-EWS", "iOS-12-Build-EWS", "iOS-12-Simulator-Build-EWS",
-                       "macOS-High-Sierra-Release-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WPE-EWS", "WinCairo-EWS"]
+                       "macOS-High-Sierra-Release-Build-EWS", "Services-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WPE-EWS", "WinCairo-EWS"]
     },
     {
       "type": "Try_Userpass",

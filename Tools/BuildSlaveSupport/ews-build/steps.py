@@ -206,6 +206,10 @@ class CheckPatchRelevance(buildstep.BuildStep):
         'Tools',
     ]
 
+    services_paths = [
+        'Tools/BuildSlaveSupport/ews-build',
+    ]
+
     jsc_paths = [
         'JSTests/',
         'Source/JavaScriptCore/',
@@ -234,6 +238,7 @@ class CheckPatchRelevance(buildstep.BuildStep):
 
     group_to_paths_mapping = {
         'bindings': bindings_paths,
+        'services-ews': services_paths,
         'jsc': jsc_paths,
         'webkitpy': webkitpy_paths,
     }
@@ -567,6 +572,34 @@ class RunWebKitPerlTests(shell.ShellCommand):
 
     def __init__(self, **kwargs):
         super(RunWebKitPerlTests, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
+
+
+class RunEWSUnitTests(shell.ShellCommand):
+    name = 'ews-unit-tests'
+    description = ['ews-unit-tests running']
+    command = ['python', 'Tools/BuildSlaveSupport/ews-build/runUnittests.py']
+
+    def __init__(self, **kwargs):
+        super(RunEWSUnitTests, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {u'step': u'Passed EWS unit tests'}
+        return {u'step': u'Failed EWS unit tests'}
+
+
+class RunEWSBuildbotCheckConfig(shell.ShellCommand):
+    name = 'buildbot-check-config'
+    description = ['buildbot-checkconfig running']
+    command = ['buildbot', 'checkconfig']
+
+    def __init__(self, **kwargs):
+        super(RunEWSBuildbotCheckConfig, self).__init__(workdir='build/Tools/BuildSlaveSupport/ews-build', timeout=2 * 60, logEnviron=False, **kwargs)
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {u'step': u'Passed buildbot checkconfig'}
+        return {u'step': u'Failed buildbot checkconfig'}
 
 
 class RunWebKitPyTests(shell.ShellCommand):
