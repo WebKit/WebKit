@@ -1,3 +1,13 @@
+2019-07-22  Zhifei Fang  <zhifei_fang@apple.com>
+
+        Need to skip test cache directory data vault for non internal build
+        https://bugs.webkit.org/show_bug.cgi?id=199951
+
+        Reviewed by Alexey Proskuryakov.
+
+        * API/tests/testapi.mm:
+        (testBytecodeCacheValidation): "Cache directory `/private/tmp` is not a data vault" this error message will only be created for internal build see JSScript.mm:97
+
 2019-07-17  Antoine Quint  <graouts@apple.com>
 
         Disable Pointer Events prior to watchOS 6

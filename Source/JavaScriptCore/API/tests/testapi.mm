@@ -2405,7 +2405,9 @@ static void testBytecodeCacheValidation()
         testInvalidCacheURL([NSURL URLWithString:@""], @"Cache path `` is not a local file");
         testInvalidCacheURL([NSURL URLWithString:@"file:///"], @"Cache path `/` already exists and is not a file");
         testInvalidCacheURL([NSURL URLWithString:@"file:///a/b/c/d/e"], @"Cache directory `/a/b/c/d` is not a directory or does not exist");
+#if USE(APPLE_INTERNAL_SDK)
         testInvalidCacheURL([NSURL URLWithString:@"file:///private/tmp/file.cache"], @"Cache directory `/private/tmp` is not a data vault");
+#endif
     }
 
 #if USE(APPLE_INTERNAL_SDK)
