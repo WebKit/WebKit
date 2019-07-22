@@ -1,3 +1,18 @@
+2019-07-22  Youenn Fablet  <youenn@apple.com>
+
+        Make sure to unref captured lambda variables given to _strictTrustEvaluate in the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=199948
+
+        Reviewed by Alex Christensen.
+
+        Use a weak pointer instead of a Ref for the NetworkSession.
+        Add a null check in processServerTrustEvaluation for extra safety if we decide to remove the data task NetworkSession ref.
+        Make sure to move the NetworkDataTask ref in the completion handler so that the unrefing is done in the main thread.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (processServerTrustEvaluation):
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+
 2019-07-22  Alex Christensen  <achristensen@webkit.org>
 
         Don't always look for a JSC configuration file after r247685
