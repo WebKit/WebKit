@@ -1,3 +1,32 @@
+2019-07-22  Youenn Fablet  <youenn@apple.com>
+
+        Make sure the player underlying volume is correctly set after creating a new player
+        https://bugs.webkit.org/show_bug.cgi?id=199974
+        <rdar://problem/52762559>
+
+        Reviewed by Eric Carlson.
+
+        When creating a player before starting to play, the volume might not be correctly initialized.
+        Fix that by updating the volume like done for rate and muted state.
+        A future refactoring should probably move that code in MediaPlayer.
+
+        Add an internal API to query the volume value from the underlying player.
+
+        Test: http/tests/media/audio-volume-zero.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateVolume):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        (WebCore::HTMLMediaElement::effectiveVolume const):
+        (WebCore::HTMLMediaElement::effectiveMuted const):
+        * html/HTMLMediaElement.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::privatePlayerVolume):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * testing/Internals.mm:
+        (WebCore::Internals::privatePlayerVolume):
+
 2019-07-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Page: mark any WebCore::Setting inspector override as UNLIKELY
