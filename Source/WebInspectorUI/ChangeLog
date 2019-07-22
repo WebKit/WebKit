@@ -1,3 +1,15 @@
+2019-07-22  Devin Rousso  <drousso@apple.com>
+
+        Localization: change fps to FPS
+        <rdar://problem/53342508>
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.js:
+        (WI.RenderingFrameTimelineOverviewGraph.prototype._updateDividers.createDividerAtPosition):
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-07-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Issues toggling multiple breakpoints on one line

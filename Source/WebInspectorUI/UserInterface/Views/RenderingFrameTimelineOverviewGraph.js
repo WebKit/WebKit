@@ -194,7 +194,7 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
 
                 var label = document.createElement("div");
                 label.classList.add("label");
-                label.innerText = WI.UIString("%d fps").format(framesPerSecond);
+                label.innerText = WI.UIString("%d FPS").format(framesPerSecond);
                 divider.appendChild(label);
 
                 this.element.appendChild(divider);
