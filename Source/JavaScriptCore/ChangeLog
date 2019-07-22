@@ -1,3 +1,56 @@
+2019-07-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make DFG Local CSE and AI conservative for huge basic block
+        https://bugs.webkit.org/show_bug.cgi?id=199929
+        <rdar://problem/49309924>
+
+        Reviewed by Filip Pizlo.
+
+        In CNN page, the main thread hangs several seconds. On less-powerful devices (like iPhone7), it hangs for ~11 seconds. This is not an acceptable behavior.
+        The reason of this is that the DFG compiler takes too long time in the compilation for a particular function. It takes 8765 ms even in powerful x64 machine!
+        DFG compiler is concurrent one. However, when GC requires all the peripheral threads to be stopped, the main thread needs to wait for the DFG compiler's stop.
+        DFG compiler stops at GC safepoints, and they are inserted between DFG phases. So, if some of DFG phases take very long time, the main thread is blocked during that.
+        As a result, the main thread is blocked due to this pathological compilation.
+
+        By measuring the time taken in each DFG phase, we found that our AI and CSE phase have a problem having quadratic complexity for # of DFG nodes in a basic block.
+        In this patch, we add a threshold for # of DFG nodes in a basic block. If a basic block exceeds this threshold, we use conservative but O(1) algorithm for AI and Local CSE phase.
+        We did not add this threshold for Global CSE since FTL has another bytecode cost threshold which prevents us from compiling the large functions. But on the other hand,
+        DFG should compile them because DFG is intended to be a fast compiler even for a bit larger CodeBlock.
+
+        We first attempted to reduce the threshold for DFG compilation. We are using 100000 bytecode cost for DFG compilation and it is very large. However, we found that bytecode cost
+        is not the problem in CNN page. The problematic function has 67904 cost, and it takes 8765 ms in x64 machine. However, JetStream2/octane-zlib has 61949 function and it only takes
+        ~400 ms. This difference comes from the # of DFG nodes in a basic block. The problematic function has 43297 DFG nodes in one basic block and it makes AI and Local CSE super time-consuming.
+        Rather than relying on the bytecode cost which a bit indirectly related to this pathological compile-time, we should look into # of DFG nodes in a basic block which is more directly
+        related to this problem. And we also found that 61949's Octane-zlib function is very critical for performance. This fact makes a bit hard to pick a right threshold: 67904 causes the problem,
+        and 61949 must be compiled. This is why this patch is introducing conservative analysis instead of adjusting the threshold for DFG.
+
+        This patch has two changes.
+
+        1. DFG AI has structure transition tracking which has quadratic complexity
+
+        Structure transition tracking takes very long time since its complexity is O(N^2) where N is # of DFG nodes in a basic block.
+        CNN has very pathological script and it shows 43297 DFG nodes. We should reduce the complexity of this algorithm.
+        For now, we just say "structures are clobbered" if # of DFG nodes in a basic block exceeds the threshold (20000).
+        We could improve the current algorithm from O(N^2) to O(2N) without being conservative, and I'm tracking this in [1].
+
+        2. DFG Local CSE has quadratic complexity
+
+        Local CSE's clobbering iterates all the impure heap values to remove the clobbered one. Since # of impure heap values tend to be proportional to # of DFG nodes we visited,
+        each CSE for a basic block gets O(N^2) complexity. To avoid this, we introduce HugeMap. This has the same interface to LargeMap and SmallMap in CSE, but its clobbering
+        implementation just clears the map completely. We can further make this O(N) without introducing conservative behavior by using epochs. For now, we do not see such a huge basic block in
+        JetStream2 and Speedometer2 so I'll track it in a separate bug[2].
+
+        This patch reduces the compilation time from ~11 seconds to ~200 ms.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=199959
+        [2]: https://bugs.webkit.org/show_bug.cgi?id=200014
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::observeTransition):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::observeTransitions):
+        * dfg/DFGCSEPhase.cpp:
+        * runtime/Options.h:
+
 2019-07-22  Zhifei Fang  <zhifei_fang@apple.com>
 
         Need to skip test cache directory data vault for non internal build

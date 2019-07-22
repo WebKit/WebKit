@@ -4093,6 +4093,14 @@ template<typename AbstractStateType>
 void AbstractInterpreter<AbstractStateType>::observeTransition(
     unsigned clobberLimit, RegisteredStructure from, RegisteredStructure to)
 {
+    // Stop performing precise structure transition tracking.
+    // Precise structure transition tracking shows quadratic complexity for # of nodes in a basic block.
+    // If it is too large, we conservatively clobber all the structures.
+    if (m_state.block()->size() > Options::maxDFGNodesInBasicBlockForPreciseAnalysis()) {
+        clobberStructures();
+        return;
+    }
+
     AbstractValue::TransitionObserver transitionObserver(from, to);
     forAllValues(clobberLimit, transitionObserver);
     
@@ -4108,6 +4116,14 @@ void AbstractInterpreter<AbstractStateType>::observeTransitions(
     if (vector.isEmpty())
         return;
     
+    // Stop performing precise structure transition tracking.
+    // Precise structure transition tracking shows quadratic complexity for # of nodes in a basic block.
+    // If it is too large, we conservatively clobber all the structures.
+    if (m_state.block()->size() > Options::maxDFGNodesInBasicBlockForPreciseAnalysis()) {
+        clobberStructures();
+        return;
+    }
+
     AbstractValue::TransitionsObserver transitionsObserver(vector);
     forAllValues(clobberLimit, transitionsObserver);
     

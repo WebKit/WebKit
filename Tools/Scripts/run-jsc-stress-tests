@@ -492,7 +492,7 @@ EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", 
 # NOTE: Tests rely on this using scribbleFreeCells.
 NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100", "--scribbleFreeCells=true"]
 B3O1_OPTIONS = ["--defaultB3OptLevel=1"]
-B3O0_OPTIONS = ["--defaultB3OptLevel=0"]
+B3O0_OPTIONS = ["--maxDFGNodesInBasicBlockForPreciseAnalysis=100", "--defaultB3OptLevel=0"]
 FTL_OPTIONS = ["--useFTLJIT=true"]
 PROBE_OSR_EXIT_OPTION = ["--useProbeOSRExit=true"]
 
