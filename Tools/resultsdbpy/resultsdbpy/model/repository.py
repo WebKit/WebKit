@@ -320,10 +320,13 @@ class WebKitRepository(SVNRepository):
                     previous_response = self.request(previous_url) if previous_url else None
                     if previous_response and previous_response.status_code != 200:
                         continue
-                    if len(current_response.text) == (len(previous_response.text) if previous_response else 0):
-                        continue
 
-                    if len(current_response.text) < (len(previous_response.text) if previous_response else 0):
+                    previous_response_length = 0
+                    if previous_response:
+                        previous_response_length = len(previous_response.text)
+                    if len(current_response.text) == previous_response_length:
+                        continue
+                    if not previous_response_length or len(current_response.text) < previous_response_length:
                         changelogs[changelog] = current_response.text
                     else:
                         changelogs[changelog] = current_response.text[0:-len(previous_response.text)]

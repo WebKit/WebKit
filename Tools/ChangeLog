@@ -1,3 +1,13 @@
+2019-07-22  Jonathan Bedard  <jbedard@apple.com>
+
+        resultsdbpy: Handle case where the previous commit doesn't have the changelog
+        https://bugs.webkit.org/show_bug.cgi?id=200015
+
+        Reviewed by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/model/repository.py:
+        (WebKitRepository.commit_for_id.diff_changelogs): Allow the previous_response to be None.
+
 2019-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [WK1] UIWebView always jumps to the top left corner when scrolling to reveal the selection
