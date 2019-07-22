@@ -134,6 +134,8 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
     encoder << editableRootIsTransparentOrFullyClipped;
     encoder << caretColor;
     encoder << atStartOfSentence;
+    encoder << selectionStartIsAtParagraphBoundary;
+    encoder << selectionEndIsAtParagraphBoundary;
 #endif
 #if PLATFORM(MAC)
     encoder << candidateRequestStartPosition;
@@ -196,6 +198,10 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
     if (!decoder.decode(result.caretColor))
         return false;
     if (!decoder.decode(result.atStartOfSentence))
+        return false;
+    if (!decoder.decode(result.selectionStartIsAtParagraphBoundary))
+        return false;
+    if (!decoder.decode(result.selectionEndIsAtParagraphBoundary))
         return false;
 #endif
 #if PLATFORM(MAC)

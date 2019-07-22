@@ -112,6 +112,8 @@ struct EditorState {
         bool editableRootIsTransparentOrFullyClipped { false };
         WebCore::Color caretColor;
         bool atStartOfSentence { false };
+        bool selectionStartIsAtParagraphBoundary { false };
+        bool selectionEndIsAtParagraphBoundary { false };
 #endif
 #if PLATFORM(MAC)
         uint64_t candidateRequestStartPosition { 0 };

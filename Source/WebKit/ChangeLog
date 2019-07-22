@@ -1,3 +1,31 @@
+2019-07-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [WebKit2] Add limited support for -isPosition:atBoundary:inDirection: in WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=199993
+        <rdar://problem/49523528>
+
+        Reviewed by Beth Dakin.
+
+        Add support for -isPosition:atBoundary:inDirection:, only in the cases where the given position is the start or
+        and position and the given granularity is UITextGranularityParagraph.
+
+        Test: EditorStateTests.ParagraphBoundary
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode const):
+        (WebKit::EditorState::PostLayoutData::decode):
+        * Shared/EditorState.h:
+
+        Add a couple of bits to indicate whether the selection start or end positions are at paragraph boundaries.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView isPosition:atBoundary:inDirection:]):
+
+        Implement this to return selectionStartIsAtParagraphBoundary or selectionEndIsAtParagraphBoundary.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const):
+
 2019-07-20  Chris Dumez  <cdumez@apple.com>
 
         Speed up HashTable decoding by reserving capacity and avoiding rehashing

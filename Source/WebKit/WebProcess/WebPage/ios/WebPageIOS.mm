@@ -273,6 +273,8 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
                 postLayoutData.editableRootIsTransparentOrFullyClipped = isTransparentOrFullyClipped(*container);
         }
         computeEditableRootHasContentAndPlainText(selection, postLayoutData);
+        postLayoutData.selectionStartIsAtParagraphBoundary = atBoundaryOfGranularity(selection.visibleStart(), TextGranularity::ParagraphGranularity, SelectionDirection::DirectionBackward);
+        postLayoutData.selectionEndIsAtParagraphBoundary = atBoundaryOfGranularity(selection.visibleEnd(), TextGranularity::ParagraphGranularity, SelectionDirection::DirectionForward);
     }
 }
 
