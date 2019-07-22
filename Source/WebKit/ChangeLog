@@ -1,3 +1,18 @@
+2019-07-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] WebSockets: use new api to send text messages
+        https://bugs.webkit.org/show_bug.cgi?id=199936
+
+        Reviewed by Michael Catanzaro.
+
+        New API allows to include null character in text messages.
+
+        * NetworkProcess/soup/WebSocketTaskSoup.cpp:
+        (WebKit::WebSocketTask::didReceiveMessageCallback): Pass data size to String::fromUTF8().
+        (WebKit::WebSocketTask::sendString): Use soup_websocket_connection_send_message() instead of
+        soup_websocket_connection_send_text() when available. Also use
+        StrictConversionReplacingUnpairedSurrogatesWithFFFD options when converting to UTF-8.
+
 2019-07-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [WebKit2] Add limited support for -isPosition:atBoundary:inDirection: in WKContentView
