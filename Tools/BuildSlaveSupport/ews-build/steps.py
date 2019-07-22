@@ -962,8 +962,8 @@ class ReRunWebKitTests(RunWebKitTests):
     name = 're-run-layout-tests'
 
     def evaluateCommand(self, cmd):
-        rc = shell.Test.evaluateCommand(self, cmd)
-        if rc == SUCCESS:
+        rc = self.evaluateResult(cmd)
+        if rc == SUCCESS or rc == WARNINGS:
             message = 'Passed layout tests'
             self.descriptionDone = message
             self.build.results = SUCCESS

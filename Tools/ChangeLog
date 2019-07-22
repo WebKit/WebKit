@@ -1,3 +1,16 @@
+2019-07-22  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] ReRunWebKitTests should use similar logic for evaluateCommand as RunWebKitTests
+        https://bugs.webkit.org/show_bug.cgi?id=199980
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ReRunWebKitTests.evaluateCommand): Updatd to use similar logic as RunWebKitTests.
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestRunWebKitTests): Modified to make it generic so as to re-use tests.
+        (TestReRunWebKitTests): Run all TestRunWebKitTests unit-tests for ReRunWebKitTests as well.
+
 2019-07-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [webkitpy] Add an unit test for setting up the driver environment without starting it.

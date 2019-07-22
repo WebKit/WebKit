@@ -38,7 +38,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeL
                    CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckStyle, CleanBuild, CleanUpGitIndexLock, CleanWorkingDirectory,
                    CompileJSCOnly, CompileJSCOnlyToT, CompileWebKit, CompileWebKitToT, ConfigureBuild,
                    DownloadBuiltProduct, ExtractBuiltProduct, ExtractTestResults, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
-                   PrintConfiguration, ReRunAPITests, ReRunJavaScriptCoreTests, RunAPITests, RunAPITestsWithoutPatch,
+                   PrintConfiguration, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch,
                    RunBindingsTests, RunJavaScriptCoreTests, RunJavaScriptCoreTestsToT, RunWebKit1Tests, RunWebKitPerlTests,
                    RunWebKitPyTests, RunWebKitTests, TestWithFailureCount, Trigger, TransferToS3, UnApplyPatchIfRequired,
                    UploadBuiltProduct, UploadTestResults, ValidatePatch)
@@ -970,8 +970,13 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
-    def test_success(self):
+    def configureStep(self):
         self.setupStep(RunWebKitTests())
+        self.property_exceed_failure_limit = 'first_results_exceed_failure_limit'
+        self.property_failures = 'first_run_failures'
+
+    def test_success(self):
+        self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
@@ -985,7 +990,7 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
     def test_warnings(self):
-        self.setupStep(RunWebKitTests())
+        self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
@@ -1002,7 +1007,7 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
     def test_parse_results_json_regression(self):
-        self.setupStep(RunWebKitTests())
+        self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
@@ -1015,8 +1020,8 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('first_results_exceed_failure_limit'), True)
-        self.assertEqual(self.getProperty('first_run_failures'),
+        self.assertEqual(self.getProperty(self.property_exceed_failure_limit), True)
+        self.assertEqual(self.getProperty(self.property_failures),
                             ["imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html",
                              "imported/w3c/web-platform-tests/wasm/jsapi/interface.any.html",
                              "imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.html",
@@ -1030,7 +1035,7 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         return rc
 
     def test_parse_results_json_flakes(self):
-        self.setupStep(RunWebKitTests())
+        self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
@@ -1043,12 +1048,12 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('first_results_exceed_failure_limit'), False)
-        self.assertEqual(self.getProperty('first_run_failures'), [])
+        self.assertEqual(self.getProperty(self.property_exceed_failure_limit), False)
+        self.assertEqual(self.getProperty(self.property_failures), [])
         return rc
 
     def test_parse_results_json_flakes_and_regressions(self):
-        self.setupStep(RunWebKitTests())
+        self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
@@ -1061,12 +1066,12 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('first_results_exceed_failure_limit'), False)
-        self.assertEqual(self.getProperty('first_run_failures'), ['fast/scrolling/ios/reconcile-layer-position-recursive.html'])
+        self.assertEqual(self.getProperty(self.property_exceed_failure_limit), False)
+        self.assertEqual(self.getProperty(self.property_failures), ['fast/scrolling/ios/reconcile-layer-position-recursive.html'])
         return rc
 
     def test_unexpected_error(self):
-        self.setupStep(RunWebKitTests())
+        self.configureStep()
         self.setProperty('fullPlatform', 'mac-highsierra')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
@@ -1081,7 +1086,7 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
     def test_failure(self):
-        self.setupStep(RunWebKitTests())
+        self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
@@ -1094,6 +1099,13 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
         return self.runStep()
+
+
+class TestReRunWebKitTests(TestRunWebKitTests):
+    def configureStep(self):
+        self.setupStep(ReRunWebKitTests())
+        self.property_exceed_failure_limit = 'second_results_exceed_failure_limit'
+        self.property_failures = 'second_run_failures'
 
 
 class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
