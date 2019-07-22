@@ -223,6 +223,31 @@ static void checkURLArgument(NSURL *url)
     _configuration->setSourceApplicationSecondaryIdentifier(identifier);
 }
 
+- (NSURL *)applicationCacheDirectory
+{
+    return [NSURL fileURLWithPath:_configuration->applicationCacheDirectory() isDirectory:YES];
+}
+
+- (void)setApplicationCacheDirectory:(NSURL *)url
+{
+    if (!_configuration->isPersistent())
+        [NSException raise:NSInvalidArgumentException format:@"Cannot set applicationCacheDirectory on a non-persistent _WKWebsiteDataStoreConfiguration."];
+    checkURLArgument(url);
+    _configuration->setApplicationCacheDirectory(url.path);
+}
+
+- (NSString *)applicationCacheFlatFileSubdirectoryName
+{
+    return _configuration->applicationCacheFlatFileSubdirectoryName();
+}
+
+- (void)setApplicationCacheFlatFileSubdirectoryName:(NSString *)name
+{
+    if (!_configuration->isPersistent())
+        [NSException raise:NSInvalidArgumentException format:@"Cannot set applicationCacheFlatFileSubdirectoryName on a non-persistent _WKWebsiteDataStoreConfiguration."];
+    _configuration->setApplicationCacheFlatFileSubdirectoryName(name);
+}
+
 - (BOOL)deviceManagementRestrictionsEnabled
 {
     return _configuration->deviceManagementRestrictionsEnabled();

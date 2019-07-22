@@ -1,5 +1,28 @@
 2019-07-22  Alex Christensen  <achristensen@webkit.org>
 
+        Add SPI to _WKWebsiteDataStoreConfiguration for configuring application cache storage location
+        https://bugs.webkit.org/show_bug.cgi?id=199954
+
+        Reviewed by Geoff Garen.
+
+        This is a step towards removing WebsiteDataStore::legacyDefaultDataStoreConfiguration
+        Covered by a new API test.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _initWithConfiguration:]):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration applicationCacheDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration setApplicationCacheDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration applicationCacheFlatFileSubdirectoryName]):
+        (-[_WKWebsiteDataStoreConfiguration setApplicationCacheFlatFileSubdirectoryName:]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::sendWebProcessDataStoreParameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::applicationCacheFlatFileSubdirectoryName const):
+
+2019-07-22  Alex Christensen  <achristensen@webkit.org>
+
         Add SPI _WKProcessPoolConfiguration.javaScriptConfigurationDirectory
         https://bugs.webkit.org/show_bug.cgi?id=199917
 

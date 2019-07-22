@@ -1,5 +1,15 @@
 2019-07-22  Alex Christensen  <achristensen@webkit.org>
 
+        Add SPI to _WKWebsiteDataStoreConfiguration for configuring application cache storage location
+        https://bugs.webkit.org/show_bug.cgi?id=199954
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
+2019-07-22  Alex Christensen  <achristensen@webkit.org>
+
         Add SPI _WKProcessPoolConfiguration.javaScriptConfigurationDirectory
         https://bugs.webkit.org/show_bug.cgi?id=199917
 

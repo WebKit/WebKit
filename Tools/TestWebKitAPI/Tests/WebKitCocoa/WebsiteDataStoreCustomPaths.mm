@@ -554,3 +554,60 @@ TEST(WebKit, NetworkCacheDirectory)
     [fileManager removeItemAtPath:path error:&error];
     EXPECT_FALSE(error);
 }
+
+TEST(WebKit, ApplicationCacheDirectories)
+{
+    using namespace TestWebKitAPI;
+    TCPServer server([] (int socket) {
+        TCPServer::read(socket);
+        const char* firstResponse =
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Length: 31\r\n\r\n"
+        "<html manifest='test.appcache'>";
+        TCPServer::write(socket, firstResponse, strlen(firstResponse));
+        
+        TCPServer::read(socket);
+        const char* secondResponse =
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Length: 35\r\n\r\n"
+        "CACHE MANIFEST\n"
+        "index.html\n"
+        "test.mp4\n";
+        TCPServer::write(socket, secondResponse, strlen(secondResponse));
+
+        TCPServer::read(socket);
+        TCPServer::write(socket, firstResponse, strlen(firstResponse));
+        
+        const char* videoResponse =
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Type: video/test\r\n"
+        "Content-Length: 5\r\n\r\n"
+        "test!";
+        TCPServer::read(socket);
+        TCPServer::write(socket, videoResponse, strlen(videoResponse));
+    });
+    
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"CustomPathsTest"] isDirectory:YES];
+    NSString *path = tempDir.path;
+    NSString *subdirectoryPath = [path stringByAppendingPathComponent:@"testsubdirectory"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    EXPECT_FALSE([fileManager fileExistsAtPath:subdirectoryPath]);
+
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+
+    [websiteDataStoreConfiguration setApplicationCacheDirectory:tempDir];
+    [websiteDataStoreConfiguration setApplicationCacheFlatFileSubdirectoryName:@"testsubdirectory"];
+    
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setWebsiteDataStore:[[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()] autorelease]];
+    
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/index.html", server.port()]]]];
+
+    while (![fileManager fileExistsAtPath:subdirectoryPath])
+        Util::spinRunLoop();
+
+    NSError *error = nil;
+    [fileManager removeItemAtPath:path error:&error];
+    EXPECT_FALSE(error);
+}
