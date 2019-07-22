@@ -1,3 +1,13 @@
+2019-07-22  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Timeline header is too small
+        https://bugs.webkit.org/show_bug.cgi?id=199955
+
+        Reviewed by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/css/timeline.css:
+        (.timeline>.header): Make timeline header larder to fit configuration names.
+
 2019-07-22  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to _WKWebsiteDataStoreConfiguration for configuring application cache storage location

@@ -30,3 +30,7 @@
 .dot.crash {
     background-color: var(--purpleLight);
 }
+
+.timeline>.header {
+    width: 200px;
+}
