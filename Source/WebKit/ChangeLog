@@ -1,3 +1,17 @@
+2019-07-22  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI _WKProcessPoolConfiguration.javaScriptConfigurationDirectory
+        https://bugs.webkit.org/show_bug.cgi?id=199917
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration javaScriptConfigurationDirectory]):
+        (-[_WKProcessPoolConfiguration setJavaScriptConfigurationDirectory:]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::sendWebProcessDataStoreParameters):
+
 2019-07-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] WebSockets: use new api to send text messages

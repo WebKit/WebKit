@@ -45,6 +45,8 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic) NSUInteger wirelessContextIdentifier WK_API_DEPRECATED("Use of this API is no longer necessary and can be removed", ios(10.12, WK_IOS_TBA));
 #endif
 
+@property (nonatomic, nullable, copy) NSURL *javaScriptConfigurationDirectory WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 // Network Process properties
 // FIXME: These should be be per-session/data store when we support multiple non-persistent sessions/data stores.
 

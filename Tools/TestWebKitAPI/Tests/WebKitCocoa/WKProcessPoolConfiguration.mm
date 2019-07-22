@@ -24,8 +24,10 @@
  */
 
 #import "config.h"
-#import <WebKit/WKFoundation.h>
 
+#import "Utilities.h"
+#import <WebKit/WKFoundation.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
 
@@ -80,4 +82,40 @@ TEST(WKProcessPoolConfiguration, Copy)
     EXPECT_EQ([configuration prewarmsProcessesAutomatically], [copy prewarmsProcessesAutomatically]);
     EXPECT_EQ([configuration pageCacheEnabled], [copy pageCacheEnabled]);
     EXPECT_EQ([configuration suppressesConnectionTerminationOnSystemChange], [copy suppressesConnectionTerminationOnSystemChange]);
+}
+
+TEST(WKProcessPoolConfiguration, JavaScriptConfiguration)
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"CustomPathsTest"] isDirectory:YES];
+    NSError *error = nil;
+    BOOL success = [fileManager createDirectoryAtURL:tempDir withIntermediateDirectories:YES attributes:nil error:&error];
+    EXPECT_TRUE(success);
+    EXPECT_FALSE(error);
+
+    NSData *contents = [@""
+    "processName =~ /WebContent/ {\n"
+        "logFile = \"Log.txt\"\n"
+        "jscOptions {\n"
+            "dumpOptions = 1\n"
+            "dumpDFGDisassembly = true\n"
+        "}\n"
+    "}"
+    "" dataUsingEncoding:NSUTF8StringEncoding];
+    BOOL result = [contents writeToURL:[tempDir URLByAppendingPathComponent:@"JSC.config"] atomically:YES];
+    EXPECT_TRUE(result);
+
+    auto poolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [poolConfiguration setJavaScriptConfigurationDirectory:tempDir];
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:[[[WKProcessPool alloc] _initWithConfiguration:poolConfiguration.get()] autorelease]];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView loadHTMLString:@"<html>hello</html>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+
+    NSString *path = [tempDir URLByAppendingPathComponent:@"Log.txt"].path;
+    while (![fileManager fileExistsAtPath:path])
+        TestWebKitAPI::Util::spinRunLoop();
+    [fileManager removeItemAtPath:tempDir.path error:&error];
+    EXPECT_FALSE(error);
 }
