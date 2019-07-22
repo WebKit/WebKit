@@ -40,7 +40,6 @@ std::unique_ptr<SleepDisabler> SleepDisabler::create(const char* reason, Type ty
 
 SleepDisablerCocoa::SleepDisablerCocoa(const char* reason, Type type)
     : SleepDisabler(reason, type)
-    , m_sleepAssertion(0)
 {
     RetainPtr<CFStringRef> reasonCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
 

@@ -35,7 +35,7 @@ using ICUConverterPtr = std::unique_ptr<UConverter, void (*)(UConverter*)>;
 
 class TextCodecICU : public TextCodec {
 public:
-    TextCodecICU(const char* encoding, const char* canonicalConverterName);
+    explicit TextCodecICU(const char* encoding, const char* canonicalConverterName);
     virtual ~TextCodecICU();
 
     static void registerEncodingNames(EncodingNameRegistrar);

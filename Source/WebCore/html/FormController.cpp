@@ -79,7 +79,7 @@ static inline Optional<FormControlState> deserializeFormControlState(const Vecto
 
 class FormElementKey {
 public:
-    FormElementKey(AtomStringImpl* = 0, AtomStringImpl* = 0);
+    explicit FormElementKey(AtomStringImpl* = nullptr, AtomStringImpl* = nullptr);
     ~FormElementKey();
     FormElementKey(const FormElementKey&);
     FormElementKey& operator=(const FormElementKey&);
@@ -229,13 +229,13 @@ void SavedFormState::serializeTo(Vector<String>& stateVector) const
 
 void SavedFormState::appendControlState(const AtomString& name, const AtomString& type, const FormControlState& state)
 {
-    m_stateForNewFormElements.add({ name.impl(), type.impl() }, Deque<FormControlState> { }).iterator->value.append(state);
+    m_stateForNewFormElements.add(FormElementKey { name.impl(), type.impl() }, Deque<FormControlState> { }).iterator->value.append(state);
     ++m_controlStateCount;
 }
 
 FormControlState SavedFormState::takeControlState(const AtomString& name, const AtomString& type)
 {
-    auto iterator = m_stateForNewFormElements.find({ name.impl(), type.impl() });
+    auto iterator = m_stateForNewFormElements.find(FormElementKey { name.impl(), type.impl() });
     if (iterator == m_stateForNewFormElements.end())
         return { };
 

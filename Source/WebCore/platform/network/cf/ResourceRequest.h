@@ -41,7 +41,7 @@ namespace WebCore {
 
 class ResourceRequest : public ResourceRequestBase {
 public:
-    ResourceRequest(const String& url) 
+    explicit ResourceRequest(const String& url) 
         : ResourceRequestBase(URL({ }, url), ResourceRequestCachePolicy::UseProtocolCachePolicy)
     {
     }

@@ -35,7 +35,7 @@
 namespace WebCore {
 
 struct SynthesisPair {
-    SynthesisPair(bool needsSyntheticBold, bool needsSyntheticOblique)
+    explicit SynthesisPair(bool needsSyntheticBold, bool needsSyntheticOblique)
         : needsSyntheticBold(needsSyntheticBold)
         , needsSyntheticOblique(needsSyntheticOblique)
     {

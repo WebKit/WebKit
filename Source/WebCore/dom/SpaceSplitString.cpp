@@ -103,7 +103,7 @@ void SpaceSplitString::set(const AtomString& inputString, bool shouldFoldCase)
 
 class TokenIsEqualToCStringTokenProcessor {
 public:
-    TokenIsEqualToCStringTokenProcessor(const char* referenceString, unsigned referenceStringLength)
+    explicit TokenIsEqualToCStringTokenProcessor(const char* referenceString, unsigned referenceStringLength)
         : m_referenceString(referenceString)
         , m_referenceStringLength(referenceStringLength)
         , m_referenceStringWasFound(false)

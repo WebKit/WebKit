@@ -35,7 +35,7 @@ namespace WebCore {
 
 class DirectConvolver {
 public:
-    DirectConvolver(size_t inputBlockSize);
+    explicit DirectConvolver(size_t inputBlockSize);
 
     void process(AudioFloatArray* convolutionKernel, const float* sourceP, float* destP, size_t framesToProcess);
 

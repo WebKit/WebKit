@@ -40,7 +40,7 @@ namespace WebCore {
 class RasterShapeIntervals {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RasterShapeIntervals(unsigned size, int offset = 0)
+    explicit RasterShapeIntervals(unsigned size, int offset = 0)
         : m_offset(offset)
     {
         m_intervals.resize(clampTo<int>(size));

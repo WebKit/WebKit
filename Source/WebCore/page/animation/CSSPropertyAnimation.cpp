@@ -438,7 +438,7 @@ class AnimationPropertyWrapperBase {
     WTF_MAKE_NONCOPYABLE(AnimationPropertyWrapperBase);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    AnimationPropertyWrapperBase(CSSPropertyID prop)
+    explicit AnimationPropertyWrapperBase(CSSPropertyID prop)
         : m_prop(prop)
     {
     }

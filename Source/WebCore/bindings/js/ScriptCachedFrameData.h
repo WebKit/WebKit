@@ -43,7 +43,7 @@ class DOMWrapperWorld;
 class ScriptCachedFrameData {
     WTF_MAKE_NONCOPYABLE(ScriptCachedFrameData); WTF_MAKE_FAST_ALLOCATED;
 public:
-    ScriptCachedFrameData(Frame&);
+    explicit ScriptCachedFrameData(Frame&);
     ~ScriptCachedFrameData();
 
     void restore(Frame&);

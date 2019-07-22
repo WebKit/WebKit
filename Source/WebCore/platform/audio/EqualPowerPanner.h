@@ -33,7 +33,7 @@ namespace WebCore {
 
 class EqualPowerPanner : public Panner {
 public:
-    EqualPowerPanner(float sampleRate);
+    explicit EqualPowerPanner(float sampleRate);
 
     void pan(double azimuth, double elevation, const AudioBus* inputBus, AudioBus* outputBuf, size_t framesToProcess) override;
 

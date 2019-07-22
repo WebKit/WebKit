@@ -65,7 +65,7 @@ WidthIterator::WidthIterator(const FontCascade* font, const TextRun& run, HashSe
 
 struct OriginalAdvancesForCharacterTreatedAsSpace {
 public:
-    OriginalAdvancesForCharacterTreatedAsSpace(bool isSpace, float advanceBefore, float advanceAt)
+    explicit OriginalAdvancesForCharacterTreatedAsSpace(bool isSpace, float advanceBefore, float advanceAt)
         : characterIsSpace(isSpace)
         , advanceBeforeCharacter(advanceBefore)
         , advanceAtCharacter(advanceAt)

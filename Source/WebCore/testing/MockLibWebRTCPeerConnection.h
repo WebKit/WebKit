@@ -112,7 +112,7 @@ private:
 
 class MockLibWebRTCIceCandidate : public webrtc::IceCandidateInterface {
 public:
-    MockLibWebRTCIceCandidate(const char* sdp, const char* sdpMid)
+    explicit MockLibWebRTCIceCandidate(const char* sdp, const char* sdpMid)
         : m_sdp(sdp)
         , m_sdpMid(sdpMid) { }
 

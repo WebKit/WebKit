@@ -40,7 +40,7 @@ namespace IDBServer {
 class IndexValueEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    IndexValueEntry(bool unique);
+    explicit IndexValueEntry(bool unique);
     ~IndexValueEntry();
 
     void addKey(const IDBKeyData&);

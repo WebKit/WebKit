@@ -39,7 +39,7 @@ namespace WebCore {
 class DownSampler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    DownSampler(size_t inputBlockSize);
+    explicit DownSampler(size_t inputBlockSize);
 
     // The destination buffer |destP| is of size sourceFramesToProcess / 2.
     void process(const float* sourceP, float* destP, size_t sourceFramesToProcess);

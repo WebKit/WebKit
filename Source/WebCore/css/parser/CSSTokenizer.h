@@ -45,7 +45,7 @@ class CSSTokenizer {
     WTF_MAKE_NONCOPYABLE(CSSTokenizer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CSSTokenizer(const String&);
+    explicit CSSTokenizer(const String&);
     CSSTokenizer(const String&, CSSParserObserverWrapper&); // For the inspector
 
     CSSParserTokenRange tokenRange() const;

@@ -142,13 +142,13 @@ struct PromisedAttachmentInfo;
         RefPtr<Document> m_documentUnderMouse; // The document the mouse was last dragged over.
         RefPtr<Document> m_dragInitiator; // The Document (if any) that initiated the drag.
         RefPtr<HTMLInputElement> m_fileInputElementUnderMouse;
-        unsigned m_numberOfItemsToBeAccepted;
+        unsigned m_numberOfItemsToBeAccepted { 0 };
         DragHandlingMethod m_dragHandlingMethod { DragHandlingMethod::None };
 
-        DragDestinationAction m_dragDestinationAction;
-        DragSourceAction m_dragSourceAction;
-        bool m_didInitiateDrag;
-        DragOperation m_sourceDragOperation; // Set in startDrag when a drag starts from a mouse down within WebKit
+        DragDestinationAction m_dragDestinationAction { DragDestinationActionNone };
+        DragSourceAction m_dragSourceAction { DragSourceActionNone };
+        bool m_didInitiateDrag { false };
+        DragOperation m_sourceDragOperation { DragOperationNone }; // Set in startDrag when a drag starts from a mouse down within WebKit
         IntPoint m_dragOffset;
         URL m_draggingImageURL;
         bool m_isPerformingDrop { false };

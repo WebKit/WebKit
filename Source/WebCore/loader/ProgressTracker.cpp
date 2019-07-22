@@ -65,7 +65,7 @@ static const Seconds progressNotificationTimeInterval { 200_ms };
 struct ProgressItem {
     WTF_MAKE_NONCOPYABLE(ProgressItem); WTF_MAKE_FAST_ALLOCATED;
 public:
-    ProgressItem(long long length)
+    explicit ProgressItem(long long length)
         : bytesReceived(0)
         , estimatedLength(length)
     {

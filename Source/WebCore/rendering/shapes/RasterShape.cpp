@@ -36,7 +36,7 @@ namespace WebCore {
 
 class MarginIntervalGenerator {
 public:
-    MarginIntervalGenerator(unsigned radius);
+    explicit MarginIntervalGenerator(unsigned radius);
     void set(int y, const IntShapeInterval&);
     IntShapeInterval intervalAt(int y) const;
 

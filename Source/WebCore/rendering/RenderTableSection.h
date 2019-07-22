@@ -42,7 +42,7 @@ enum CollapsedBorderSide {
 // Helper class for paintObject.
 struct CellSpan {
 public:
-    CellSpan(unsigned start, unsigned end)
+    explicit CellSpan(unsigned start, unsigned end)
         : start(start)
         , end(end)
     {

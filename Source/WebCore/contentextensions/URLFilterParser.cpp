@@ -40,7 +40,7 @@ namespace ContentExtensions {
 
 class PatternParser {
 public:
-    PatternParser(bool patternIsCaseSensitive)
+    explicit PatternParser(bool patternIsCaseSensitive)
         : m_patternIsCaseSensitive(patternIsCaseSensitive)
         , m_parseStatus(URLFilterParser::Ok)
     {

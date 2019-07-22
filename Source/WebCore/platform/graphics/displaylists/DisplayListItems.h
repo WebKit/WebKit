@@ -162,7 +162,7 @@ private:
 
 class DrawingItem : public Item {
 public:
-    DrawingItem(ItemType type)
+    explicit DrawingItem(ItemType type)
         : Item(type)
     {
     }

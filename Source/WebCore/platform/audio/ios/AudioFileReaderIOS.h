@@ -43,8 +43,8 @@ class AudioBus;
 
 class AudioFileReader {
 public:
-    AudioFileReader(const char* filePath);
-    AudioFileReader(const void* data, size_t dataSize);
+    explicit AudioFileReader(const char* filePath);
+    explicit AudioFileReader(const void* data, size_t dataSize);
     ~AudioFileReader();
 
     RefPtr<AudioBus> createBus(float sampleRate, bool mixToMono); // Returns nullptr on error

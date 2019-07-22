@@ -40,7 +40,7 @@ class AudioBus;
 class MultiChannelResampler {
     WTF_MAKE_FAST_ALLOCATED;
 public:   
-    MultiChannelResampler(double scaleFactor, unsigned numberOfChannels);
+    explicit MultiChannelResampler(double scaleFactor, unsigned numberOfChannels);
     
     // Process given AudioSourceProvider for streaming applications.
     void process(AudioSourceProvider*, AudioBus* destination, size_t framesToProcess);

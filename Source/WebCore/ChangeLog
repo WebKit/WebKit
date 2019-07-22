@@ -1,3 +1,74 @@
+2019-07-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Make some constructors explicit
+        https://bugs.webkit.org/show_bug.cgi?id=199981
+
+        Reviewed by Daniel Bates.
+
+        Make explicit public constructors of objects that take POD or String& arguments,
+        to reduce the changes of the compiler doing implicit conversions.
+
+        * Modules/indexeddb/server/IndexValueEntry.h:
+        * Modules/indexeddb/server/IndexValueStore.h:
+        * Modules/indexeddb/shared/IDBDatabaseInfo.h:
+        * Modules/webdatabase/ChangeVersionData.h:
+        (WebCore::ChangeVersionData::ChangeVersionData):
+        * Modules/webdatabase/OriginLock.h:
+        * Modules/websockets/WebSocketExtensionParser.h:
+        (WebCore::WebSocketExtensionParser::WebSocketExtensionParser):
+        * bindings/js/ScriptCachedFrameData.h:
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::PatternParser::PatternParser):
+        * css/parser/CSSTokenizer.h:
+        * css/parser/SizesAttributeParser.h:
+        * dom/SpaceSplitString.cpp:
+        (WebCore::TokenIsEqualToCStringTokenProcessor::TokenIsEqualToCStringTokenProcessor):
+        * html/FormController.cpp:
+        (WebCore::SavedFormState::appendControlState):
+        (WebCore::SavedFormState::takeControlState):
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressItem::ProgressItem):
+        * page/DragController.cpp:
+        (WebCore::DragController::DragController):
+        (WebCore::DragController::performDragOperation):
+        * page/DragController.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::AnimationPropertyWrapperBase::AnimationPropertyWrapperBase):
+        * page/ios/DOMTimerHoldingTank.h:
+        (WebCore::DeferDOMTimersForScope::DeferDOMTimersForScope):
+        * platform/CountedUserActivity.h:
+        (WebCore::CountedUserActivity::CountedUserActivity):
+        * platform/audio/DirectConvolver.h:
+        * platform/audio/DownSampler.h:
+        * platform/audio/DynamicsCompressorKernel.h:
+        * platform/audio/EqualPowerPanner.h:
+        * platform/audio/MultiChannelResampler.h:
+        * platform/audio/ReverbAccumulationBuffer.h:
+        * platform/audio/ReverbInputBuffer.h:
+        * platform/audio/SincResampler.cpp:
+        * platform/audio/UpSampler.h:
+        * platform/audio/ios/AudioFileReaderIOS.h:
+        * platform/audio/mac/AudioFileReaderMac.h:
+        * platform/audio/mac/AudioSessionMac.cpp:
+        (WebCore::AudioSessionPrivate::AudioSessionPrivate):
+        * platform/cf/KeyedDecoderCF.h:
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::OriginalAdvancesForCharacterTreatedAsSpace::OriginalAdvancesForCharacterTreatedAsSpace):
+        * platform/graphics/cocoa/FontCacheCoreText.h:
+        (WebCore::SynthesisPair::SynthesisPair):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::DrawingItem::DrawingItem):
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/text/TextCodecICU.h:
+        * rendering/RenderTableSection.h:
+        (WebCore::CellSpan::CellSpan):
+        * rendering/shapes/RasterShape.cpp:
+        * rendering/shapes/RasterShape.h:
+        (WebCore::RasterShapeIntervals::RasterShapeIntervals):
+        * testing/MockLibWebRTCPeerConnection.h:
+        (WebCore::MockLibWebRTCIceCandidate::MockLibWebRTCIceCandidate):
+
 2019-07-22  Rob Buis  <rbuis@igalia.com>
 
         Remove some unneeded code in MathOperator

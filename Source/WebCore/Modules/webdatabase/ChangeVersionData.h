@@ -31,7 +31,7 @@ namespace WebCore {
 
 class ChangeVersionData {
 public:
-    ChangeVersionData(String oldVersion, String newVersion)
+    explicit ChangeVersionData(String oldVersion, String newVersion)
         : m_oldVersion(oldVersion), m_newVersion(newVersion) { }
 
     String oldVersion() const { return m_oldVersion; }

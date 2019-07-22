@@ -53,7 +53,7 @@ private:
 
 class DeferDOMTimersForScope {
 public:
-    DeferDOMTimersForScope(bool enable)
+    explicit DeferDOMTimersForScope(bool enable)
         : m_previousIsDeferring { s_isDeferring }
     {
         if (enable)

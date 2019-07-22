@@ -41,7 +41,7 @@ class MediaQuerySet;
     
 class SizesAttributeParser {
 public:
-    SizesAttributeParser(const String&, const Document&);
+    explicit SizesAttributeParser(const String&, const Document&);
 
     float length();
 

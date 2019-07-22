@@ -38,7 +38,7 @@ namespace WebCore {
 
 class WebSocketExtensionParser {
 public:
-    WebSocketExtensionParser(const char* start, const char* end)
+    explicit WebSocketExtensionParser(const char* start, const char* end)
         : m_current(start)
         , m_end(end)
     {

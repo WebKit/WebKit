@@ -37,7 +37,7 @@ namespace WebCore {
 
 class DynamicsCompressorKernel {
 public:
-    DynamicsCompressorKernel(float sampleRate, unsigned numberOfChannels);
+    explicit DynamicsCompressorKernel(float sampleRate, unsigned numberOfChannels);
 
     void setNumberOfChannels(unsigned);
 

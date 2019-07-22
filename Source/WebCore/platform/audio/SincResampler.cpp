@@ -146,7 +146,7 @@ namespace {
 
 class BufferSourceProvider : public AudioSourceProvider {
 public:
-    BufferSourceProvider(const float* source, size_t numberOfSourceFrames)
+    explicit BufferSourceProvider(const float* source, size_t numberOfSourceFrames)
         : m_source(source)
         , m_sourceFramesAvailable(numberOfSourceFrames)
     {

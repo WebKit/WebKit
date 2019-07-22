@@ -32,9 +32,8 @@ namespace WebCore {
 
 class CountedUserActivity {
 public:
-    CountedUserActivity(const char* description)
+    explicit CountedUserActivity(const char* description)
         : m_activity(description)
-        , m_count(0)
     {
     }
 
@@ -52,7 +51,7 @@ public:
 
 private:
     UserActivity m_activity;
-    size_t m_count;
+    size_t m_count { 0 };
 };
 
 } // namespace WebCore
