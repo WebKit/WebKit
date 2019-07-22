@@ -424,7 +424,6 @@
     (global-name "com.apple.containermanagerd")
     (global-name "com.apple.coremedia.assetcacheinspector")
     (global-name "com.apple.coremedia.audiodeviceclock")
-    (global-name "com.apple.coremedia.audioprocessingtap.xpc")
     (global-name "com.apple.coremedia.endpointremotecontrolsession.xpc")
     (global-name "com.apple.coremedia.sandboxserver")
     (global-name "com.apple.coremedia.videocompositor")

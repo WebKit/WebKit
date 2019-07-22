@@ -1,3 +1,17 @@
+2019-07-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct web audio-related crash in seed reports
+        https://bugs.webkit.org/show_bug.cgi?id=200009
+        <rdar://problem/51565203>
+
+        Reviewed by Per Arne Vollan.
+
+        Revise the iOS sandbox to allow the WebContent process to communicate with
+        the 'com.apple.coremedia.audioprocessingtap.xpc' service, which is needed by
+        some types of WebAudio.
+
+        * WebProcess/com.apple.WebKit.WebContent.sb.in:
+
 2019-07-22  Dean Jackson  <dino@apple.com>
 
         WebKit SPI fix for [ClickyOrb] Audio continues playing after dismissing a video preview in Safari
