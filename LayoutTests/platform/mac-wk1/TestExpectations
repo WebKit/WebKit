@@ -770,3 +770,5 @@ webkit.org/b/199242 [ Debug ] http/tests/performance/performance-resource-timing
 
 # <rdar://problem/51529033> REGRESSION: [ Catalina WK1 ] compositing/geometry/composited-frame-contents.html is failing
 [ Catalina+ ] compositing/geometry/composited-frame-contents.html  [ ImageOnlyFailure ]
+
+webkit.org/b/200002 [ Mojave Debug ] imported/blink/storage/indexeddb/blob-basics-metadata.html [ Timeout ]

@@ -1,3 +1,12 @@
+2019-07-22  Truitt Savell  <tsavell@apple.com>
+
+        [ Mojave Debug WK1 ] Layout Test imported/blink/storage/indexeddb/blob-basics-metadata.html is Timing out (200002)
+        https://bugs.webkit.org/show_bug.cgi?id=200002
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2019-07-21  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Checker needs to setError() when a property access node can't commit its base type
