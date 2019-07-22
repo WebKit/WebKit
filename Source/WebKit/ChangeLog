@@ -1,3 +1,19 @@
+2019-07-22  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(rUnknown): YouTube playback pauses when switching to a new tab
+        https://bugs.webkit.org/show_bug.cgi?id=199971
+        <rdar://problem/51951218>
+
+        Reviewed by Alex Christensen.
+
+        When we get a message notifying us that the view has been removed from the window, we unconditionally
+        ask the fullscreen manager to exit fullscreen, which has the side effect (on iOS) of pausing the video
+        unconditionally. Only ask the fullscreen manager to exit fullscreen if there is actually a video in
+        fullscreen mode.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewDidLeaveWindow):
+
 2019-07-22  Youenn Fablet  <youenn@apple.com>
 
         Make sure to unref captured lambda variables given to _strictTrustEvaluate in the main thread

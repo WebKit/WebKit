@@ -868,6 +868,7 @@
 		CDC9442E1EF1FC080059C3C4 /* MediaStreamTrackDetached.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDC9442C1EF1FC080059C3C4 /* MediaStreamTrackDetached.mm */; };
 		CDC9442F1EF205D60059C3C4 /* mediastreamtrack-detached.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CDC9442B1EF1FBD20059C3C4 /* mediastreamtrack-detached.html */; };
 		CDCFA7AA1E45183200C2433D /* SampleMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCFA7A91E45122F00C2433D /* SampleMap.cpp */; };
+		CDCFFEC122E26A1500DF4223 /* NoPauseWhenSwitchingTabs.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDCFFEC022E268D500DF4223 /* NoPauseWhenSwitchingTabs.mm */; };
 		CDD68F0D22C18317000CF0AE /* WKWebViewCloseAllMediaPresentations.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDD68F0C22C18317000CF0AE /* WKWebViewCloseAllMediaPresentations.mm */; };
 		CDE195B51CFE0B880053D256 /* FullscreenTopContentInset.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CDE195B21CFE0ADE0053D256 /* FullscreenTopContentInset.html */; };
 		CDF0B78A216D48DC00421ECC /* CloseWebViewDuringEnterFullscreen.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDF0B789216D484300421ECC /* CloseWebViewDuringEnterFullscreen.mm */; };
@@ -2288,6 +2289,7 @@
 		CDC9442B1EF1FBD20059C3C4 /* mediastreamtrack-detached.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "mediastreamtrack-detached.html"; sourceTree = "<group>"; };
 		CDC9442C1EF1FC080059C3C4 /* MediaStreamTrackDetached.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaStreamTrackDetached.mm; sourceTree = "<group>"; };
 		CDCFA7A91E45122F00C2433D /* SampleMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SampleMap.cpp; sourceTree = "<group>"; };
+		CDCFFEC022E268D500DF4223 /* NoPauseWhenSwitchingTabs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NoPauseWhenSwitchingTabs.mm; sourceTree = "<group>"; };
 		CDD68F0C22C18317000CF0AE /* WKWebViewCloseAllMediaPresentations.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewCloseAllMediaPresentations.mm; sourceTree = "<group>"; };
 		CDE195B21CFE0ADE0053D256 /* FullscreenTopContentInset.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = FullscreenTopContentInset.html; sourceTree = "<group>"; };
 		CDE195B31CFE0ADE0053D256 /* FullscreenTopContentInset.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FullscreenTopContentInset.mm; sourceTree = "<group>"; };
@@ -2739,6 +2741,7 @@
 				6351992722275C6A00890AD3 /* NavigationAction.mm */,
 				5C8BC798218CF3E900813886 /* NetworkProcess.mm */,
 				5CAE4637201937CD0051610F /* NetworkProcessCrashNonPersistentDataStore.mm */,
+				CDCFFEC022E268D500DF4223 /* NoPauseWhenSwitchingTabs.mm */,
 				CD2D0D19213465560018C784 /* NowPlaying.mm */,
 				2ECFF5541D9B12F800B55394 /* NowPlayingControlsTests.mm */,
 				A10F047C1E3AD29C00C95E19 /* NSFileManagerExtras.mm */,
@@ -4720,6 +4723,7 @@
 				9BD4239A1E04BD9800200395 /* AttributedSubstringForProposedRangeWithImage.mm in Sources */,
 				5C9D923122D7E0EB008E9266 /* ClassMethodSwizzler.mm in Sources */,
 				2E7765CD16C4D80A00BA2BB1 /* mainIOS.mm in Sources */,
+				CDCFFEC122E26A1500DF4223 /* NoPauseWhenSwitchingTabs.mm in Sources */,
 				2E7765CF16C4D81100BA2BB1 /* mainMac.mm in Sources */,
 				5797FE311EB15A6800B2F4A0 /* NavigationClientDefaultCrypto.cpp in Sources */,
 				7AD3FE8E1D76131200B169A4 /* TransformationMatrix.cpp in Sources */,

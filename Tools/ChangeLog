@@ -1,3 +1,15 @@
+2019-07-22  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(rUnknown): YouTube playback pauses when switching to a new tab
+        https://bugs.webkit.org/show_bug.cgi?id=199971
+        <rdar://problem/51951218>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/NoPauseWhenSwitchingTabs.mm: Added.
+        (TestWebKitAPI::TEST):
+
 2019-07-22  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add an EWS to run services tests
