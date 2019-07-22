@@ -2551,9 +2551,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)clearSelection
 {
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
-    _seenHardwareKeyDownInNonEditableElement = NO;
-#endif
     [self _elementDidBlur];
     _page->clearSelection();
 }
@@ -3914,6 +3911,16 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     // are enabled when a single tap is first recognized. This avoids tests running in sequence and simulating taps
     // in the same location to trigger double-tap recognition.
     [self _setDoubleTapGesturesEnabled:NO];
+}
+
+- (void)_didCommitLoadForMainFrame
+{
+#if USE(UIKIT_KEYBOARD_ADDITIONS)
+    _seenHardwareKeyDownInNonEditableElement = NO;
+#endif
+    [self _elementDidBlur];
+    [self _cancelLongPressGestureRecognizer];
+    [_webView _didCommitLoadForMainFrame];
 }
 
 #if !USE(UIKIT_KEYBOARD_ADDITIONS)

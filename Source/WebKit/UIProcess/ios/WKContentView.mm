@@ -578,13 +578,6 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 }
 #endif
 
-- (void)_didCommitLoadForMainFrame
-{
-    [self _elementDidBlur];
-    [self _cancelLongPressGestureRecognizer];
-    [_webView _didCommitLoadForMainFrame];
-}
-
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
 {
     CGSize contentsSize = layerTreeTransaction.contentsSize();

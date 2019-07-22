@@ -102,7 +102,6 @@ class WebProcessPool;
 - (void)_showInspectorHighlight:(const WebCore::Highlight&)highlight;
 - (void)_hideInspectorHighlight;
 
-- (void)_didCommitLoadForMainFrame;
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;
 - (void)_layerTreeCommitComplete;
 
