@@ -28,6 +28,7 @@
 #include "config.h"
 #include "Settings.h"
 
+#include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "SettingsDefaultValues.h"
 
@@ -75,8 +76,10 @@ Settings::~Settings()
 <%= @setting.parameterType %> Settings::<%= @setting.getterFunctionName %>() const
 {
 <%- if @setting.hasInspectorOverride? -%>
-    if (m_<%= @setting.name %>InspectorOverride)
+    if (UNLIKELY(m_<%= @setting.name %>InspectorOverride)) {
+        ASSERT(InspectorInstrumentation::hasFrontends());
         return m_<%= @setting.name %>InspectorOverride.value();
+    }
 <%- end -%>
     return m_<%= @setting.name %>;
 }
@@ -99,8 +102,10 @@ void Settings::<%= @setting.setterFunctionName %>(<%= @setting.parameterType %> 
 <%= @setting.parameterType %> Settings::<%= @setting.getterFunctionName %>() const
 {
 <%- if @setting.hasInspectorOverride? -%>
-    if (m_<%= @setting.name %>InspectorOverride)
+    if (UNLIKELY(m_<%= @setting.name %>InspectorOverride)) {
+        ASSERT(InspectorInstrumentation::hasFrontends());
         return m_<%= @setting.name %>InspectorOverride.value();
+    }
 <%- end -%>
     return m_<%= @setting.name %>;
 }

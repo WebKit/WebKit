@@ -1,3 +1,12 @@
+2019-07-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Page: mark any WebCore::Setting inspector override as UNLIKELY
+        https://bugs.webkit.org/show_bug.cgi?id=199925
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/SettingsTemplates/Settings.cpp.erb:
+
 2019-07-22  Simon Fraser  <simon.fraser@apple.com>
 
         Make some constructors explicit
