@@ -1,3 +1,20 @@
+2019-07-22  Youenn Fablet  <youenn@apple.com>
+
+        Disable MediaRecorder for legacy WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=200001
+        <rdar://problem/53400030>
+
+        Reviewed by Eric Carlson.
+
+        Disable MediaRecorder by default in legacy WebKit.
+        Add SPI to set/get this preference.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences _mediaRecorderEnabled]):
+        (-[WebPreferences _setMediaRecorderEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+
 2019-07-18  Alex Christensen  <achristensen@webkit.org>
 
         Unify builds in WebKitLegacy/mac/DOM

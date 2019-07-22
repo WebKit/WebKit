@@ -1,3 +1,16 @@
+2019-07-22  Youenn Fablet  <youenn@apple.com>
+
+        Disable MediaRecorder for legacy WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=200001
+        <rdar://problem/53400030>
+
+        Reviewed by Eric Carlson.
+
+        Enable MediaRecorder for testing purposes.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+
 2019-07-22  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Timeline header is too small

@@ -729,6 +729,8 @@ WebView *createWebViewAndOffscreenWindow()
     [WebView registerURLSchemeAsLocal:@"feeds"];
     [WebView registerURLSchemeAsLocal:@"feedsearch"];
 
+    [[webView preferences] _setMediaRecorderEnabled:YES];
+
 #if PLATFORM(MAC)
     [webView setWindowOcclusionDetectionEnabled:NO];
     [WebView _setFontWhitelist:fontWhitelist()];
