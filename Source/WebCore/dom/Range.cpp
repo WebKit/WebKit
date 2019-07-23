@@ -1853,6 +1853,12 @@ Vector<FloatRect> Range::borderAndTextRects(CoordinateSpace space, OptionSet<Bou
         }
     }
 
+    if (rectOptions.contains(BoundingRectBehavior::IgnoreTinyRects)) {
+        rects.removeAllMatching([&] (const FloatRect& rect) -> bool {
+            return rect.area() <= 1;
+        });
+    }
+
     return rects;
 }
 

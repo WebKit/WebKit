@@ -1,3 +1,22 @@
+2019-07-23  Tim Horton  <timothy_horton@apple.com>
+
+        Long press hint of AirPods buy buttons are tall and narrow during animation
+        https://bugs.webkit.org/show_bug.cgi?id=200036
+        <rdar://problem/53145697>
+
+        Reviewed by Wenson Hsieh.
+
+        New test: fast/text-indicator/text-indicator-with-tiny-child.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::borderAndTextRects const):
+        * dom/Range.h:
+        Add a BoundingRectBehavior that ignores 1x1 and smaller rects.
+
+        * page/TextIndicator.cpp:
+        (WebCore::absoluteBoundingRectForRange):
+        Enable IgnoreTinyRects.
+
 2019-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS 10.15] Web process crashes when attempting to show the font panel via Font > Show Fonts

@@ -1,3 +1,14 @@
+2019-07-23  Tim Horton  <timothy_horton@apple.com>
+
+        Long press hint of AirPods buy buttons are tall and narrow during animation
+        https://bugs.webkit.org/show_bug.cgi?id=200036
+        <rdar://problem/53145697>
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/text-indicator/text-indicator-with-tiny-child-expected.txt: Added.
+        * fast/text-indicator/text-indicator-with-tiny-child.html: Added.
+
 2019-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS 10.15] Web process crashes when attempting to show the font panel via Font > Show Fonts
