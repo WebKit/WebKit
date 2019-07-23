@@ -34,6 +34,7 @@
 @class UIImage;
 
 typedef NSString *UIActionIdentifier;
+WK_EXPORT extern UIActionIdentifier const WKElementActionTypeToggleShowLinkPreviewsIdentifier;
 
 typedef void (^WKElementActionHandler)(_WKActivatedElementInfo *);
 typedef BOOL (^WKElementActionDismissalHandler)(void);
@@ -52,6 +53,7 @@ typedef NS_ENUM(NSInteger, _WKElementActionType) {
     _WKElementActionTypeOpenInNewTab WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
     _WKElementActionTypeOpenInNewWindow WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
     _WKElementActionTypeDownload WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
+    _WKElementActionToggleShowLinkPreviews WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
 } WK_API_AVAILABLE(macos(10.10), ios(8.0));
 
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
@@ -64,6 +66,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 + (UIImage *)imageForElementActionType:(_WKElementActionType)actionType WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(13.0));
 + (_WKElementActionType)elementActionTypeForUIActionIdentifier:(UIActionIdentifier)identifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(13.0));
+- (UIAction *)uiActionForElementInfo:(_WKActivatedElementInfo *)elementInfo;
 
 - (void)runActionWithElementInfo:(_WKActivatedElementInfo *)info WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(9.0));
 

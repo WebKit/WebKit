@@ -373,6 +373,9 @@
 /* Hide Media Controls context menu item */
 "Hide Controls" = "Hide Controls";
 
+/* Title for Hide Link Previews action button */
+"Hide Link Previews" = "Hide Link Previews";
+
 /* menu item title */
 "Hide Spelling and Grammar" = "Hide Spelling and Grammar";
 
@@ -696,6 +699,9 @@
 
 /* Show fonts context menu item */
 "Show Fonts" = "Show Fonts";
+
+/* Title for Show Link Previews action button */
+"Show Link Previews" = "Show Link Previews";
 
 /* menu item title */
 "Show Spelling and Grammar" = "Show Spelling and Grammar";
