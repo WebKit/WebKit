@@ -1,5 +1,19 @@
 2019-07-22  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix WebView iframe rendering in macOS Catalina
+        https://bugs.webkit.org/show_bug.cgi?id=200022
+        rdar://problem/49102040
+
+        Reviewed by Darin Adler.
+
+        Adapt to internal NSView method renames in Catalina.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _recursive:displayRectIgnoringOpacity:inContext:stopAtLayerBackedViews:_recursive:displayRectIgnoringOpacity:inContext:shouldChangeFontReferenceColor:stopAtLayerBackedViews:_recursive:displayRectIgnoringOpacity:inContext:shouldChangeFontReferenceColor:_recursive:displayRectIgnoringOpacity:inContext:topView:]):
+        (-[WebHTMLView _recursive:displayRectIgnoringOpacity:inContext:shouldChangeFontReferenceColor:stopAtLayerBackedViews:_recursive:displayRectIgnoringOpacity:inContext:shouldChangeFontReferenceColor:_recursive:displayRectIgnoringOpacity:inContext:topView:]): Deleted.
+
+2019-07-22  Simon Fraser  <simon.fraser@apple.com>
+
         Enable CSSOMViewScrollingAPIEnabled in WebKit1
         https://bugs.webkit.org/show_bug.cgi?id=200008
         rdar://problem/53409062

@@ -1,3 +1,17 @@
+2019-07-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix WebView iframe rendering in macOS Catalina
+        https://bugs.webkit.org/show_bug.cgi?id=200022
+        rdar://problem/49102040
+
+        Reviewed by Darin Adler.
+        
+        New test for rendering of overlapping iframes, defects when we fail to setAsideSubviews
+        in WebView. 
+
+        * fast/frames/frames-not-double-painted-expected.html: Added.
+        * fast/frames/frames-not-double-painted.html: Added.
+
 2019-07-22  Youenn Fablet  <youenn@apple.com>
 
         Make sure the player underlying volume is correctly set after creating a new player
