@@ -231,6 +231,23 @@
 
 2019-07-22  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix crashes in ScrollingStateNode::insertChild()
+        https://bugs.webkit.org/show_bug.cgi?id=200023
+        rdar://problem/53265378
+
+        Reviewed by Darin Adler.
+
+        Crash data suggest that ScrollingStateNode::insertChild() can be passed an index that
+        is larger than the size of the vector, causing crashes.
+
+        Fix defensively by falling back to append() if the passed index is equal to or larger
+        than the size of the children vector.
+
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::insertChild):
+
+2019-07-22  Simon Fraser  <simon.fraser@apple.com>
+
         Make some constructors explicit
         https://bugs.webkit.org/show_bug.cgi?id=199981
 
