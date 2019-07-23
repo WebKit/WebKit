@@ -256,6 +256,10 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
             config->setApplicationCacheDirectory(configuration.applicationCacheDirectory.path);
         if (configuration.applicationCacheFlatFileSubdirectoryName)
             config->setApplicationCacheFlatFileSubdirectoryName(configuration.applicationCacheFlatFileSubdirectoryName);
+        if (configuration.mediaCacheDirectory)
+            config->setMediaCacheDirectory(configuration.mediaCacheDirectory.path);
+        if (configuration.mediaKeysStorageDirectory)
+            config->setMediaKeysStorageDirectory(configuration.mediaKeysStorageDirectory.path);
     } else {
         RELEASE_ASSERT(!configuration._webStorageDirectory);
         RELEASE_ASSERT(!configuration._webSQLDatabaseDirectory);
@@ -267,6 +271,8 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         RELEASE_ASSERT(!configuration.networkCacheDirectory);
         RELEASE_ASSERT(!configuration.deviceIdHashSaltsStorageDirectory);
         RELEASE_ASSERT(!configuration.applicationCacheDirectory);
+        RELEASE_ASSERT(!configuration.mediaCacheDirectory);
+        RELEASE_ASSERT(!configuration.mediaKeysStorageDirectory);
     }
 
     if (configuration.sourceApplicationBundleIdentifier)

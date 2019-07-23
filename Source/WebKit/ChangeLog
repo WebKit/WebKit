@@ -1,3 +1,23 @@
+2019-07-23  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI for setting media cache and key location on _WKWebsiteDataStoreConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=199972
+
+        Reviewed by Jer Noble.
+
+        This is a step towards removing WebsiteDataStore::legacyDefaultDataStoreConfiguration
+        I added a unit test for the media cache location,
+        but the media key location can't reasonably be unit tested in an open source project.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _initWithConfiguration:]):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration mediaCacheDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration setMediaCacheDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration mediaKeysStorageDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration setMediaKeysStorageDirectory:]):
+
 2019-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS 10.15] Web process crashes when attempting to show the font panel via Font > Show Fonts

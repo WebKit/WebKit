@@ -284,7 +284,8 @@ template<> Vector<uint8_t> TCPServer::read(Socket socket)
 {
     uint8_t buffer[1000];
     auto bytesRead = ::read(socket, buffer, sizeof(buffer));
-    ASSERT_UNUSED(bytesRead, bytesRead > 0);
+    if (bytesRead <= 0)
+        return { };
     ASSERT(static_cast<size_t>(bytesRead) < sizeof(buffer));
 
     Vector<uint8_t> vector;
@@ -303,7 +304,8 @@ template<> Vector<uint8_t> TCPServer::read(SSL* ssl)
 {
     uint8_t buffer[1000];
     auto bytesRead = SSL_read(ssl, buffer, sizeof(buffer));
-    ASSERT_UNUSED(bytesRead, bytesRead > 0);
+    if (bytesRead <= 0)
+        return { };
     ASSERT(static_cast<size_t>(bytesRead) < sizeof(buffer));
 
     Vector<uint8_t> vector;

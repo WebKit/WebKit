@@ -42,6 +42,7 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/Deque.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/WTFString.h>
 
 static bool receivedScriptMessage;
 static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
@@ -611,3 +612,78 @@ TEST(WebKit, ApplicationCacheDirectories)
     [fileManager removeItemAtPath:path error:&error];
     EXPECT_FALSE(error);
 }
+
+// FIXME: investigate why this test times out on High Sierra
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
+TEST(WebKit, MediaCache)
+{
+    std::atomic<bool> done = false;
+    using namespace TestWebKitAPI;
+    RetainPtr<NSData> data = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"]];
+    uint64_t dataLength = [data length];
+
+    TCPServer server([&] (int socket) {
+        TCPServer::read(socket);
+        const char* firstResponse =
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Type: text/html\r\n"
+        "Content-Length: 55\r\n\r\n"
+        "<video><source src='test.mp4' type='video/mp4'></video>";
+        TCPServer::write(socket, firstResponse, strlen(firstResponse));
+
+        while (!done) {
+            auto bytes = TCPServer::read(socket);
+            if (done)
+                break;
+            StringView request(static_cast<const LChar*>(bytes.data()), bytes.size());
+            String rangeBytes = "Range: bytes="_s;
+            auto begin = request.find(StringView(rangeBytes), 0);
+            ASSERT(begin != notFound);
+            auto dash = request.find('-', begin);
+            ASSERT(dash != notFound);
+            auto end = request.find('\r', dash);
+            ASSERT(end != notFound);
+
+            auto rangeBegin = *request.substring(begin + rangeBytes.length(), dash - begin - rangeBytes.length()).toUInt64Strict();
+            auto rangeEnd = *request.substring(dash + 1, end - dash - 1).toUInt64Strict();
+
+            NSString *responseHeaderString = [NSString stringWithFormat:
+                @"HTTP/1.1 206 Partial Content\r\n"
+                "Content-Range: bytes %llu-%llu/%llu\r\n"
+                "Content-Length: %llu\r\n\r\n",
+                rangeBegin, rangeEnd, dataLength, rangeEnd - rangeBegin];
+            NSData *responseHeader = [responseHeaderString dataUsingEncoding:NSUTF8StringEncoding];
+            NSData *responseBody = [data subdataWithRange:NSMakeRange(rangeBegin, rangeEnd - rangeBegin)];
+            NSMutableData *response = [NSMutableData dataWithCapacity:responseHeader.length + responseBody.length];
+            [response appendData:responseHeader];
+            [response appendData:responseBody];
+            TCPServer::write(socket, response.bytes, response.length);
+        }
+    });
+
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"CustomPathsTest"] isDirectory:YES];
+    NSString *path = tempDir.path;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    EXPECT_FALSE([fileManager fileExistsAtPath:path]);
+
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [websiteDataStoreConfiguration setMediaCacheDirectory:tempDir];
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setWebsiteDataStore:[[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()] autorelease]];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
+
+    NSError *error = nil;
+    while (![fileManager contentsOfDirectoryAtPath:path error:&error].count)
+        Util::spinRunLoop();
+    EXPECT_FALSE(error);
+
+    done = true;
+    [[webView configuration].processPool _terminateNetworkProcess];
+
+    [fileManager removeItemAtPath:path error:&error];
+    EXPECT_FALSE(error);
+}
+#endif
