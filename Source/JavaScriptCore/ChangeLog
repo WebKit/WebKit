@@ -1,3 +1,16 @@
+2019-07-23  Justin Michaud  <justin_michaud@apple.com>
+
+        Sometimes we miss removable CheckInBounds
+        https://bugs.webkit.org/show_bug.cgi?id=200018
+
+        Reviewed by Saam Barati.
+
+        We failed to remove the CheckInBounds bounds because we did not see that the index was nonnegative. This is because we do not see the relationship between the two
+        separate zero constants that appear in the IR for the given test case. This patch re-adds the hack to de-duplicate m_zero that was removed in 
+        <https://trac.webkit.org/changeset/241228/webkit>.
+
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+
 2019-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] Each IsoPage gets 1MB VA because VMHeap::tryAllocateLargeChunk rounds up

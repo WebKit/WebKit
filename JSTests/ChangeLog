@@ -1,3 +1,13 @@
+2019-07-23  Justin Michaud  <justin_michaud@apple.com>
+
+        Sometimes we miss removable CheckInBounds
+        https://bugs.webkit.org/show_bug.cgi?id=200018
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/typed-array-sum.js: Added.
+        (doTest):
+
 2019-07-16  Mark Lam  <mark.lam@apple.com>
 
         ArgumentsEliminationPhase should insert KillStack nodes before PutStack nodes that it adds.
