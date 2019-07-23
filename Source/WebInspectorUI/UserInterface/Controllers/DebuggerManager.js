@@ -490,10 +490,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this._breakpoints.push(breakpoint);
 
-        if (!breakpoint.disabled) {
-            const specificTarget = undefined;
-            this._setBreakpoint(breakpoint, specificTarget);
-        }
+        if (!breakpoint.disabled)
+            this._setBreakpoint(breakpoint);
 
         if (!this._restoringBreakpoints)
             WI.objectStores.breakpoints.putObject(breakpoint);
@@ -999,10 +997,12 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (!breakpoint.identifier)
             return;
 
-        function didRemoveBreakpoint(error)
+        function didRemoveBreakpoint(target, error)
         {
-            if (error)
-                console.error(error);
+            if (error) {
+                WI.reportInternalError(error);
+                return;
+            }
 
             this._breakpointIdMap.delete(breakpoint.identifier);
 
@@ -1011,16 +1011,16 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             // Don't reset resolved here since we want to keep disabled breakpoints looking like they
             // are resolved in the user interface. They will get marked as unresolved in reset.
 
-            if (typeof callback === "function")
-                callback();
+            if (callback)
+                callback(target);
         }
 
         if (breakpoint.contentIdentifier) {
             for (let target of WI.targets)
-                target.DebuggerAgent.removeBreakpoint(breakpoint.identifier, didRemoveBreakpoint.bind(this));
+                target.DebuggerAgent.removeBreakpoint(breakpoint.identifier, didRemoveBreakpoint.bind(this, target));
         } else if (breakpoint.scriptIdentifier) {
             let target = breakpoint.target;
-            target.DebuggerAgent.removeBreakpoint(breakpoint.identifier, didRemoveBreakpoint.bind(this));
+            target.DebuggerAgent.removeBreakpoint(breakpoint.identifier, didRemoveBreakpoint.bind(this, target));
         }
     }
 
@@ -1034,10 +1034,10 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return;
 
         // Remove the breakpoint with its old id.
-        this._removeBreakpoint(breakpoint, () => {
+        this._removeBreakpoint(breakpoint, (target) => {
             // Add the breakpoint at its new lineNumber and get a new id.
             this._restoringBreakpoints = true;
-            this._setBreakpoint(breakpoint);
+            this._setBreakpoint(breakpoint, target);
             this._restoringBreakpoints = false;
 
             this.dispatchEventToListeners(WI.DebuggerManager.Event.BreakpointMoved, {breakpoint});
@@ -1101,10 +1101,10 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return;
 
         // Remove the breakpoint with its old id.
-        this._removeBreakpoint(breakpoint, () => {
+        this._removeBreakpoint(breakpoint, (target) => {
             // Add the breakpoint with its new properties and get a new id.
             this._restoringBreakpoints = true;
-            this._setBreakpoint(breakpoint);
+            this._setBreakpoint(breakpoint, target);
             this._restoringBreakpoints = false;
         });
     }

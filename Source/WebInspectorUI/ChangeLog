@@ -1,5 +1,31 @@
 2019-07-22  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Uncaught Exception: Breakpoint at specified location already exists.
+        https://bugs.webkit.org/show_bug.cgi?id=197034
+        <rdar://problem/50049004>
+
+        Reviewed by Joseph Pecoraro.
+
+        When "adjusting" a `WI.Breakpoint` (e.g. removing and then re-adding with a different
+        configuration), make sure to only re-add the `WI.Breakpoint` to the `WI.Target` it was just
+        removed from, rather to all `WI.targets`.
+
+        Since we iterate over `WI.targets` in both `WI.DebuggerManager.prototype._setBreakpoint` and
+        `WI.DebuggerManager.prototype._removeBreakpoint`, we ended up iterating `WI.targets` twice.
+
+        Each time the `WI.Breakpoint` is removed from a `WI.Target`, pass the `WI.Target` to the
+        `callback` given to `WI.DebuggerManager.prototype._removeBreakpoint`, so that the eventual
+        call to `WI.DebuggerManager.prototype._setBreakpoint` can reuse it as the `specificTarget`,
+        instead of iterating `WI.targets` (meaning we only iterate it once).
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype.addBreakpoint):
+        (WI.DebuggerManager.prototype._removeBreakpoint.didRemoveBreakpoint):
+        (WI.DebuggerManager.prototype._breakpointDisplayLocationDidChange):
+        (WI.DebuggerManager.prototype._breakpointEditablePropertyDidChange):
+
+2019-07-22  Devin Rousso  <drousso@apple.com>
+
         Localization: change fps to FPS
         <rdar://problem/53342508>
 
