@@ -706,6 +706,7 @@
 		9B7A37C41F8AEBA5004AA228 /* CopyURL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B7A37C21F8AEBA5004AA228 /* CopyURL.mm */; };
 		9B7D740F1F8378770006C432 /* paste-rtfd.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9B7D740E1F8377E60006C432 /* paste-rtfd.html */; };
 		9BAD7F3E22690F2000F8DA66 /* DeallocWebViewInEventListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9BAD7F3D22690F1400F8DA66 /* DeallocWebViewInEventListener.mm */; };
+		9BAE177B22E2BBFB00DF3098 /* cocoa-writer-markup-with-system-fonts.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9BAE177A22E2BB6B00DF3098 /* cocoa-writer-markup-with-system-fonts.html */; };
 		9BCB7C2820130600003E7C0C /* PasteHTML.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9BCB7C2620130600003E7C0C /* PasteHTML.mm */; };
 		9BCD411A206DBCA3001D71BE /* mso-list-on-h4.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9BCD4119206D5ED7001D71BE /* mso-list-on-h4.html */; };
 		9BD4239A1E04BD9800200395 /* AttributedSubstringForProposedRangeWithImage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9BD423991E04BD9800200395 /* AttributedSubstringForProposedRangeWithImage.mm */; };
@@ -1075,6 +1076,7 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				9BAE177B22E2BBFB00DF3098 /* cocoa-writer-markup-with-system-fonts.html in Copy Resources */,
 				55A817FF2181021A0004A39A /* 100x100-red.tga in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				55A81800218102210004A39A /* 400x400-green.png in Copy Resources */,
@@ -2034,6 +2036,7 @@
 		9B7A37C21F8AEBA5004AA228 /* CopyURL.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CopyURL.mm; sourceTree = "<group>"; };
 		9B7D740E1F8377E60006C432 /* paste-rtfd.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "paste-rtfd.html"; sourceTree = "<group>"; };
 		9BAD7F3D22690F1400F8DA66 /* DeallocWebViewInEventListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DeallocWebViewInEventListener.mm; sourceTree = "<group>"; };
+		9BAE177A22E2BB6B00DF3098 /* cocoa-writer-markup-with-system-fonts.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "cocoa-writer-markup-with-system-fonts.html"; sourceTree = "<group>"; };
 		9BCB7C2620130600003E7C0C /* PasteHTML.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteHTML.mm; sourceTree = "<group>"; };
 		9BCD4119206D5ED7001D71BE /* mso-list-on-h4.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "mso-list-on-h4.html"; sourceTree = "<group>"; };
 		9BD423991E04BD9800200395 /* AttributedSubstringForProposedRangeWithImage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttributedSubstringForProposedRangeWithImage.mm; sourceTree = "<group>"; };
@@ -3259,6 +3262,7 @@
 				51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */,
 				5120C83B1E674E350025B250 /* WebsiteDataStoreCustomPaths.html */,
 				2E131C171D83A97E001BA36C /* wide-autoplaying-video-with-audio.html */,
+				9BAE177A22E2BB6B00DF3098 /* cocoa-writer-markup-with-system-fonts.html */,
 			);
 			name = Resources;
 			sourceTree = "<group>";

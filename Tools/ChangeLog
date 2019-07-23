@@ -1,3 +1,17 @@
+2019-07-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebKit should strip away system font names from the pasted content
+        https://bugs.webkit.org/show_bug.cgi?id=199975
+        <rdar://problem/53336353>
+
+        Reviewed by Darin Adler.
+
+        Added a test to strip away system font names such as ".AppleSystemUIFont", ".SFUI-Regular", and ".SF UI Mono".
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteHTML.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/cocoa-writer-markup-with-system-fonts.html: Added.
+
 2019-07-22  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] EWS fails to parse multi-line full_results.json

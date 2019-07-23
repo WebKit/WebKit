@@ -197,6 +197,8 @@ public:
     Vector<String> systemFontFamilies();
     void platformInit();
 
+    static bool isSystemFontForbiddenForEditing(const String&);
+
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT static void setFontWhitelist(const Vector<String>&);
 #endif

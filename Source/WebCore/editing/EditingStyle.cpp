@@ -29,6 +29,7 @@
 
 #include "ApplyStyleCommand.h"
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSFontFamily.h"
 #include "CSSFontStyleValue.h"
 #include "CSSParser.h"
 #include "CSSRuleList.h"
@@ -37,6 +38,8 @@
 #include "CSSValuePool.h"
 #include "Editing.h"
 #include "Editor.h"
+#include "FontCache.h"
+#include "FontCascade.h"
 #include "Frame.h"
 #include "HTMLFontElement.h"
 #include "HTMLInterchange.h"
@@ -1279,6 +1282,21 @@ void EditingStyle::mergeStyleFromRules(StyledElement& element)
     m_mutableStyle = styleFromMatchedRules;
 }
 
+static bool usesForbiddenSystemFontAsOnlyFontFamilyName(CSSValue& value)
+{
+    if (!is<CSSValueList>(value) || downcast<CSSValueList>(value).length() != 1)
+        return false;
+
+    auto& item = *downcast<CSSValueList>(value).item(0);
+    if (!is<CSSPrimitiveValue>(item))
+        return false;
+
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(item);
+    if (!primitiveValue.isFontFamily())
+        return false;
+    return FontCache::isSystemFontForbiddenForEditing(primitiveValue.fontFamily().familyName);
+}
+
 void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement& element)
 {
     mergeStyleFromRules(element);
@@ -1289,18 +1307,27 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement& element)
     auto fromComputedStyle = MutableStyleProperties::create();
     ComputedStyleExtractor computedStyle(&element);
 
+    bool shouldRemoveFontFamily = false;
     {
         unsigned propertyCount = m_mutableStyle->propertyCount();
         for (unsigned i = 0; i < propertyCount; ++i) {
             StyleProperties::PropertyReference property = m_mutableStyle->propertyAt(i);
-            CSSValue* value = property.value();
-            if (!is<CSSPrimitiveValue>(*value))
+            CSSValue& value = *property.value();
+            if (property.id() == CSSPropertyFontFamily && usesForbiddenSystemFontAsOnlyFontFamilyName(value)) {
+                shouldRemoveFontFamily = true;
                 continue;
-            if (downcast<CSSPrimitiveValue>(*value).isPercentage()) {
+            }
+            if (!is<CSSPrimitiveValue>(value))
+                continue;
+            if (downcast<CSSPrimitiveValue>(value).isPercentage()) {
                 if (auto computedPropertyValue = computedStyle.propertyValue(property.id()))
                     fromComputedStyle->addParsedProperty(CSSProperty(property.id(), WTFMove(computedPropertyValue)));
             }
         }
+    }
+    if (shouldRemoveFontFamily) {
+        m_mutableStyle->removeProperty(CSSPropertyFontFamily);
+        fromComputedStyle->removeProperty(CSSPropertyFontFamily);
     }
     m_mutableStyle->mergeAndOverrideOnConflict(fromComputedStyle.get());
 }

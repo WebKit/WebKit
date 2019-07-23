@@ -1,3 +1,17 @@
+2019-07-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebKit should strip away system font names from the pasted content
+        https://bugs.webkit.org/show_bug.cgi?id=199975
+        <rdar://problem/53336353>
+
+        Reviewed by Darin Adler.
+
+        Added a test for ClipboardData.getData returning the original markup and execCommand('insertHTML', ~)
+        not stripping away system font names.
+
+        * editing/pasteboard/paste-cocoa-writer-markup-with-system-fonts-expected.txt: Added.
+        * editing/pasteboard/paste-cocoa-writer-markup-with-system-fonts.html: Added.
+
 2019-07-22  Simon Fraser  <simon.fraser@apple.com>
 
         Fix WebView iframe rendering in macOS Catalina

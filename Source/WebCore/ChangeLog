@@ -1,3 +1,45 @@
+2019-07-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebKit should strip away system font names from the pasted content
+        https://bugs.webkit.org/show_bug.cgi?id=199975
+        <rdar://problem/53336353>
+
+        Reviewed by Darin Adler.
+
+        Cocoa HTML Writer sometimes generate system font names such as ".AppleSystemUIFont", ".SFUI-Regular", and ".SF UI Mono".
+        We need to strip away these font names upon paste to avoid these font names falling back to Times New Roman.
+
+        Added the code to strip these font names away in EditingStyle::mergeStyleFromRulesForSerialization, which is used by
+        StylizedMarkupAccumulator to generate HTML during copy. This works because WebContentReader::readWebArchive invokes
+        sanitizeMarkupWithArchive which inserts the pasteboard content into a temporary document then re-serializes back to HTML
+        using StylizedMarkupAccumulator before the actual pasting happens.
+
+        This approach has a few benefits over stripping away these font names in ReplaceSelectionCommand:
+
+        1. It would only affect clients that opts-in to copy & paste sanitization. e.g. it won't affect legacy WebKit clients
+        and those that opt out of pasteboard content sanitization.
+
+        2. It preserves font names such as ".SF Blah" that a website may insert as some kind of house keeping purposes if ever.
+        While we don't have any evidence that there is any such a website but it's a real risk nonetheless. The copy side fix would
+        only affect cross-site and cross-app pasting, which is rare and less likely to affect real user scenarios.
+
+        3. It avoids exposing bogus .Apple* or .SF* font names to websites that directly use event.clipboardData.getData.
+        Indeed stripping away bogus markup like this is one of the key features / benefit of using copy & paste sanitization.
+
+        Test: editing/pasteboard/paste-cocoa-writer-markup-with-system-fonts.html
+
+        * editing/EditingStyle.cpp:
+        (WebCore::usesForbiddenSystemFontAsOnlyFontFamilyName): Added.
+        (WebCore::EditingStyle::mergeStyleFromRulesForSerialization): Added the code to remove font-family property when needed.
+        * platform/graphics/FontCache.h:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::isSystemFont): Moved.
+        (WebCore::FontCache::isSystemFontForbiddenForEditing): Added.
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::FontCache::isSystemFontForbiddenForEditing): Added. Always returns false.
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::isSystemFontForbiddenForEditing): Ditto.
+
 2019-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] Each IsoPage gets 1MB VA because VMHeap::tryAllocateLargeChunk rounds up
