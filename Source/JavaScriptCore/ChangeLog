@@ -1,3 +1,16 @@
+2019-07-22  Saam Barati  <sbarati@apple.com>
+
+        Turn off Wasm fast memory on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=200016
+        <rdar://problem/53417726>
+
+        Reviewed by Yusuke Suzuki.
+
+        We turned them on when we disabled Gigacage on iOS. However, we re-enabled
+        Gigacage on iOS, but forgot to turn wasm fast memories back off.
+
+        * runtime/Options.h:
+
 2019-07-22  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed non-unified build fix.
