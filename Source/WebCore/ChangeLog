@@ -1,5 +1,50 @@
 2019-07-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247701. rdar://problem/53449745
+
+    Correct web audio-related crash in seed reports
+    https://bugs.webkit.org/show_bug.cgi?id=200009
+    <rdar://problem/51565203>
+    
+    Reviewed by Per Arne Vollan.
+    
+    Source/WebCore:
+    
+    Update the 'createMix' method to do proper return value checking so that
+    we can clear the result of MTAudioProcessingTapCreate if the create operation
+    failed.
+    
+    * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+    (WebCore::AudioSourceProviderAVFObjC::createMix):
+    
+    Source/WebKit:
+    
+    Revise the iOS sandbox to allow the WebContent process to communicate with
+    the 'com.apple.coremedia.audioprocessingtap.xpc' service, which is needed by
+    some types of WebAudio.
+    
+    * WebProcess/com.apple.WebKit.WebContent.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247701 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-22  Brent Fulgham  <bfulgham@apple.com>
+
+            Correct web audio-related crash in seed reports
+            https://bugs.webkit.org/show_bug.cgi?id=200009
+            <rdar://problem/51565203>
+
+            Reviewed by Per Arne Vollan.
+
+            Update the 'createMix' method to do proper return value checking so that
+            we can clear the result of MTAudioProcessingTapCreate if the create operation
+            failed.
+
+            * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+            (WebCore::AudioSourceProviderAVFObjC::createMix):
+
+2019-07-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247652. rdar://problem/53423997
 
     Add a menu item to toggle between showing and hiding link previews
