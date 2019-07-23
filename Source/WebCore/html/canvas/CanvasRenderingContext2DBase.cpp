@@ -913,7 +913,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::setTransform(DOMMatrix2DInit&& m
     if (checkValid.hasException())
         return checkValid.releaseException();
 
-    setTransform(matrixInit.a.valueOr(1), matrixInit.b.valueOr(0), matrixInit.c.valueOr(0), matrixInit.d.valueOr(1), matrixInit.e.valueOr(0), matrixInit.f.valueOr(0));
+    setTransform(matrixInit.m11.value(), matrixInit.m12.value(), matrixInit.m21.value(), matrixInit.m22.value(), matrixInit.m41.value(), matrixInit.m42.value());
     return { };
 }
 

@@ -1,3 +1,24 @@
+2019-07-23  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        CanvasRenderingContext2D.setTransfrom() reads only the aliases attributes of DOMMatrix2DInit
+        https://bugs.webkit.org/show_bug.cgi?id=199850
+
+        Reviewed by Simon Fraser.
+
+        The validateAndFixup step of DOMMatrix2DInit sets the matrix attributes 
+        (m** fields) from the aliases attributes (a, b, c, d, e, f) if the former
+        ones do not exist and the later ones exist. See
+        https://www.w3.org/TR/geometry-1/#dommatrixinit-dictionary and
+        DOMMatrixReadOnly::validateAndFixup(DOMMatrix2DInit& init).
+
+        Since CanvasRenderingContext2DBase::setTransform() validates and fixes
+        the input DOMMatrix2DInit, it should rely on matrix attributes.
+
+        Test: fast/canvas/setTransfrom-aliases-transform.html
+
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::setTransform):
+
 2019-07-23  Tim Horton  <timothy_horton@apple.com>
 
         Long press hint of AirPods buy buttons are tall and narrow during animation
