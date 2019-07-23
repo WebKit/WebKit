@@ -209,6 +209,7 @@ http/tests/security/xss-DENIED-xsl-external-entity.xml [ Skip ]
 http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-sync-xhr-in-main-frame.html [ Skip ]
 
 webkit.org/b/187230 editing/mac/pasteboard/can-copy-url-without-title.html [ Skip ]
+webkit.org/b/187230 editing/mac/style/do-not-crash-when-showing-font-panel.html [ Skip ]
 
 ### END OF (1) Failures with bug reports
 ########################################

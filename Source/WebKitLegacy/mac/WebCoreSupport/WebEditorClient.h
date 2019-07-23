@@ -175,6 +175,15 @@ private:
 
     void registerUndoOrRedoStep(WebCore::UndoStep&, bool isRedo);
 
+    bool canShowFontPanel() const final
+    {
+#if PLATFORM(MAC)
+        return true;
+#else
+        return false;
+#endif
+    }
+
     WebView *m_webView;
     RetainPtr<WebEditorUndoTarget> m_undoTarget;
     bool m_haveUndoRedoOperations { false };

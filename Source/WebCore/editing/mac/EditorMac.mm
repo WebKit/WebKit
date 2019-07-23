@@ -63,6 +63,10 @@ using namespace HTMLNames;
 
 void Editor::showFontPanel()
 {
+    auto* client = this->client();
+    if (!client || !client->canShowFontPanel())
+        return;
+
     [[NSFontManager sharedFontManager] orderFrontFontPanel:nil];
 }
 

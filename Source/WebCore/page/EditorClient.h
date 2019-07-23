@@ -184,6 +184,8 @@ public:
     virtual bool supportsGlobalSelection() { return false; }
 
     virtual bool performTwoStepDrop(DocumentFragment&, Range& destination, bool isMove) = 0;
+
+    virtual bool canShowFontPanel() const = 0;
 };
 
 }

@@ -1,3 +1,19 @@
+2019-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS 10.15] Web process crashes when attempting to show the font panel via Font > Show Fonts
+        https://bugs.webkit.org/show_bug.cgi?id=200021
+        <rdar://problem/53301325>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a new layout test to verify that attempting to show the font panel doesn't crash the web process in WebKit2.
+        This test is skipped in WebKit1, since EventSender::contextClick() in WebKit1 only returns an array of strings
+        corresponding to the titles of each menu item.
+
+        * editing/mac/style/do-not-crash-when-showing-font-panel-expected.txt: Added.
+        * editing/mac/style/do-not-crash-when-showing-font-panel.html: Added.
+        * platform/mac-wk1/TestExpectations:
+
 2019-07-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebKit should strip away system font names from the pasted content

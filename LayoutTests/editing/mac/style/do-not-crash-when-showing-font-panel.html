@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+    #target {
+        font-size: 50px;
+        margin: 0;
+    }
+</style>
+</head>
+<body contenteditable>
+    <p id="target">WebKit</p>
+</body>
+<p id="description"></p>
+<p id="console"></p>
+<script>
+addEventListener("load", () => {
+    description("This test verifies that choosing 'Font' > 'Show Fonts' via context menu doesn't crash the web process. To test manually, right click 'WebKit' above and choose Font > Show Fonts.");
+    if (!window.eventSender)
+        return;
+
+    eventSender.mouseMoveTo(40, 40);
+
+    const fontMenuItem = eventSender.contextClick().find(item => item.title === "Font");
+    if (fontMenuItem)
+        testPassed("Found the 'Font' menu item.");
+    else
+        testFailed("Failed to find the 'Font' menu item.");
+
+    const showFontsItem = fontMenuItem.children.find(item => item.title === "Show Fonts");
+    if (showFontsItem)
+        testPassed("Found the 'Show Fonts' submenu item.");
+    else
+        testFailed("Failed to find the 'Show Fonts' submenu item.");
+
+    showFontsItem.click();
+    testPassed("Clicked the 'Show Fonts' item.");
+});
+</script>
+</body>
+</html>

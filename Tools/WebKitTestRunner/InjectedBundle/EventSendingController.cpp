@@ -66,6 +66,27 @@ static JSValueRef getMenuItemTitleCallback(JSContextRef context, JSObjectRef obj
     return JSValueMakeString(context, toJS(wkTitle).get());
 }
 
+static JSClassRef getMenuItemClass();
+
+static JSValueRef getMenuItemChildrenCallback(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
+{
+    MenuItemPrivateData* privateData = static_cast<MenuItemPrivateData*>(JSObjectGetPrivate(object));
+    auto children = adoptWK(WKContextMenuCopySubmenuItems(privateData->m_item.get()));
+
+    JSValueRef arrayResult = JSObjectMakeArray(context, 0, 0, 0);
+    if (!WKArrayGetSize(children.get()))
+        return arrayResult;
+
+    JSObjectRef arrayObject = JSValueToObject(context, arrayResult, 0);
+    for (size_t i = 0; i < WKArrayGetSize(children.get()); ++i) {
+        auto item = static_cast<WKContextMenuItemRef>(WKArrayGetItemAtIndex(children.get(), i));
+        auto* privateData = new MenuItemPrivateData(InjectedBundle::singleton().page()->page(), item);
+        JSObjectSetPropertyAtIndex(context, arrayObject, i, JSObjectMake(context, getMenuItemClass(), privateData), 0);
+    }
+
+    return arrayResult;
+}
+
 static JSStaticFunction staticMenuItemFunctions[] = {
     { "click", menuItemClickCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { 0, 0, 0 }
@@ -73,6 +94,7 @@ static JSStaticFunction staticMenuItemFunctions[] = {
 
 static JSStaticValue staticMenuItemValues[] = {
     { "title", getMenuItemTitleCallback, 0, kJSPropertyAttributeReadOnly },
+    { "children", getMenuItemChildrenCallback, 0, kJSPropertyAttributeReadOnly },
     { 0, 0, 0, 0 }
 };
 

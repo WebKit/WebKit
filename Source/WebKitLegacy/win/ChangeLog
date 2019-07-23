@@ -1,3 +1,15 @@
+2019-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS 10.15] Web process crashes when attempting to show the font panel via Font > Show Fonts
+        https://bugs.webkit.org/show_bug.cgi?id=200021
+        <rdar://problem/53301325>
+
+        Reviewed by Ryosuke Niwa.
+
+        Implement a new editing client hook.
+
+        * WebCoreSupport/WebEditorClient.h:
+
 2019-07-13  Zalan Bujtas  <zalan@apple.com>
 
         Cannot bring up custom media controls at all on v.youku.com

@@ -1,3 +1,16 @@
+2019-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS 10.15] Web process crashes when attempting to show the font panel via Font > Show Fonts
+        https://bugs.webkit.org/show_bug.cgi?id=200021
+        <rdar://problem/53301325>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add support for grabbing the child menu items of a context menu item.
+
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::getMenuItemChildrenCallback):
+
 2019-07-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebKit should strip away system font names from the pasted content
