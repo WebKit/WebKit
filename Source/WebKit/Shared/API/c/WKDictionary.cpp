@@ -38,7 +38,6 @@ WKTypeID WKDictionaryGetTypeID()
 WK_EXPORT WKDictionaryRef WKDictionaryCreate(const WKStringRef* keys, const WKTypeRef* values, size_t numberOfValues)
 {
     API::Dictionary::MapType map;
-    map.reserveInitialCapacity(numberOfValues);
     for (size_t i = 0; i < numberOfValues; ++i)
         map.add(WebKit::toImpl(keys[i])->string(), WebKit::toImpl(values[i]));
 
