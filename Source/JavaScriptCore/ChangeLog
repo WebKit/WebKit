@@ -1,3 +1,15 @@
+2019-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] Each IsoPage gets 1MB VA because VMHeap::tryAllocateLargeChunk rounds up
+        https://bugs.webkit.org/show_bug.cgi?id=200024
+
+        Reviewed by Saam Barati.
+
+        Discussed and we decided to use this VM tag for IsoHeap instead of CLoop stack.
+
+        * interpreter/CLoopStack.cpp:
+        (JSC::CLoopStack::CLoopStack):
+
 2019-07-22  Saam Barati  <sbarati@apple.com>
 
         Turn off Wasm fast memory on iOS

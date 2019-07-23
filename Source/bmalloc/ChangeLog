@@ -1,5 +1,30 @@
 2019-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [bmalloc] Each IsoPage gets 1MB VA because VMHeap::tryAllocateLargeChunk rounds up
+        https://bugs.webkit.org/show_bug.cgi?id=200024
+
+        Reviewed by Saam Barati.
+
+        When we allocate IsoHeap's page, we reused VMHeap::tryAllocateLargeChunk. However, this function is originally designed
+        to be used for Large allocation in bmalloc (e.g. allocating Chunk in bmalloc). As a result, this function rounds up the
+        requested size with 1MB (bmalloc::chunkSize). As a result, all IsoHeap's 16KB page gets 1MB VA while it just uses 16KB of
+        the allocated region. This leads to VA exhaustion since IsoHeap now uses 64x VA than we expected!
+
+        This patch fixes the above VA exhaustion issue by allocating a page by using tryVMAllocate. When allocating a page, we start
+        using a VM tag for IsoHeap. We discussed at e-mail and we decided reusing a VM tag previously assigned to CLoop Stack since
+        this is less profitable. Since this tag is not Malloc-related tag, Leaks tool can scan memory region conservatively without
+        registering allocated region into Zone, which was previously done in VMHeap and that's why we reused VMHeap for IsoHeap.
+
+        * bmalloc/BVMTags.h:
+        * bmalloc/IsoPage.cpp:
+        (bmalloc::IsoPageBase::allocatePageMemory):
+        * bmalloc/IsoTLS.cpp:
+        (bmalloc::IsoTLS::ensureEntries):
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmAllocate):
+
+2019-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, follow-up fix for tls->size() access
         https://bugs.webkit.org/show_bug.cgi?id=200019
 

@@ -130,9 +130,9 @@ inline void* tryVMAllocate(size_t vmSize, VMTag usage = VMTag::Malloc)
     return result;
 }
 
-inline void* vmAllocate(size_t vmSize)
+inline void* vmAllocate(size_t vmSize, VMTag usage = VMTag::Malloc)
 {
-    void* result = tryVMAllocate(vmSize);
+    void* result = tryVMAllocate(vmSize, usage);
     RELEASE_BASSERT(result);
     return result;
 }
@@ -189,9 +189,9 @@ inline void* tryVMAllocate(size_t vmAlignment, size_t vmSize, VMTag usage = VMTa
     return aligned;
 }
 
-inline void* vmAllocate(size_t vmAlignment, size_t vmSize)
+inline void* vmAllocate(size_t vmAlignment, size_t vmSize, VMTag usage = VMTag::Malloc)
 {
-    void* result = tryVMAllocate(vmAlignment, vmSize);
+    void* result = tryVMAllocate(vmAlignment, vmSize, usage);
     RELEASE_BASSERT(result);
     return result;
 }

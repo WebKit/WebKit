@@ -83,8 +83,9 @@ const char* displayNameForVMTag(unsigned tag)
     case VM_MEMORY_LAYERKIT: return "CoreAnimation";
     case VM_MEMORY_IMAGEIO: return "ImageIO";
     case VM_MEMORY_CGIMAGE: return "CG image";
+    case VM_MEMORY_JAVASCRIPT_CORE: return "Gigacage";
     case VM_MEMORY_JAVASCRIPT_JIT_EXECUTABLE_ALLOCATOR: return "JSC JIT";
-    case VM_MEMORY_JAVASCRIPT_CORE: return "WebAssembly";
+    case VM_MEMORY_JAVASCRIPT_JIT_REGISTER_FILE: return "IsoHeap";
     case VM_MEMORY_MALLOC: return "malloc";
     case VM_MEMORY_MALLOC_HUGE: return "malloc (huge)";
     case VM_MEMORY_MALLOC_LARGE: return "malloc (large)";
@@ -151,10 +152,12 @@ static unsigned categoryForVMTag(unsigned tag)
     case VM_MEMORY_IMAGEIO:
     case VM_MEMORY_CGIMAGE:
         return MemoryCategory::Images;
+    case VM_MEMORY_JAVASCRIPT_JIT_REGISTER_FILE:
+        return MemoryCategory::IsoHeap;
     case VM_MEMORY_JAVASCRIPT_JIT_EXECUTABLE_ALLOCATOR:
         return MemoryCategory::JSJIT;
     case VM_MEMORY_JAVASCRIPT_CORE:
-        return MemoryCategory::WebAssembly;
+        return MemoryCategory::Gigacage;
     case VM_MEMORY_MALLOC:
     case VM_MEMORY_MALLOC_HUGE:
     case VM_MEMORY_MALLOC_LARGE:

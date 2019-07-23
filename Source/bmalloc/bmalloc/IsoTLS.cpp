@@ -100,7 +100,7 @@ IsoTLS* IsoTLS::ensureEntries(unsigned offset)
         size_t requiredSize = sizeForCapacity(requiredCapacity);
         size_t goodSize = roundUpToMultipleOf(vmPageSize(), requiredSize);
         size_t goodCapacity = capacityForSize(goodSize);
-        void* memory = vmAllocate(goodSize);
+        void* memory = vmAllocate(goodSize, VMTag::IsoHeap);
         IsoTLS* newTLS = new (memory) IsoTLS();
         newTLS->m_capacity = goodCapacity;
         if (tls) {

@@ -59,7 +59,7 @@ CLoopStack::CLoopStack(VM& vm)
     capacity = WTF::roundUpToMultipleOf(pageSize(), capacity);
     ASSERT(capacity && isPageAligned(capacity));
 
-    m_reservation = PageReservation::reserve(WTF::roundUpToMultipleOf(commitSize(), capacity), OSAllocator::JSVMStackPages);
+    m_reservation = PageReservation::reserve(WTF::roundUpToMultipleOf(commitSize(), capacity), OSAllocator::UnknownUsage);
 
     auto* bottomOfStack = highAddress();
     setCLoopStackLimit(bottomOfStack);

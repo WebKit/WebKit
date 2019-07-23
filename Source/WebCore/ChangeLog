@@ -1,3 +1,21 @@
+2019-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] Each IsoPage gets 1MB VA because VMHeap::tryAllocateLargeChunk rounds up
+        https://bugs.webkit.org/show_bug.cgi?id=200024
+
+        Reviewed by Saam Barati.
+
+        Changed how we interpret VM tags. Add IsoHeap VM tag support, and rename WebAssembly tag
+        to Gigacage tag.
+
+        * page/ResourceUsageData.h:
+        * page/ResourceUsageOverlay.h:
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::HistoricResourceUsageData::HistoricResourceUsageData):
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::displayNameForVMTag):
+        (WebCore::categoryForVMTag):
+
 2019-07-22  Youenn Fablet  <youenn@apple.com>
 
         Fix inspector override conversion in InspectorPageAgent::overrideSetting
