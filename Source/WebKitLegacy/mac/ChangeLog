@@ -1,3 +1,20 @@
+2019-07-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Enable CSSOMViewScrollingAPIEnabled in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=200008
+        rdar://problem/53409062
+
+        Reviewed by Tim Horton.
+
+        Default WebKitCSSOMViewScrollingAPIEnabledPreferenceKey to YES, so that 
+        CSSOMViewScrollingAPIEnabled is on for both WebKit1 and WebKit2.
+
+        DumpRenderTree already turns this preference on, so this change is not
+        detected by tests.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2019-07-22  Youenn Fablet  <youenn@apple.com>
 
         Disable MediaRecorder for legacy WebKit
