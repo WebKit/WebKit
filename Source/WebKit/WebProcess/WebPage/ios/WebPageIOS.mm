@@ -3053,7 +3053,9 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         information.isAutocorrect = false;
     }
 
-    information.shouldAvoidResizingWhenInputViewBoundsChange = m_focusedElement->document().quirks().shouldAvoidResizingWhenInputViewBoundsChange();
+    auto& quirks = m_focusedElement->document().quirks();
+    information.shouldAvoidResizingWhenInputViewBoundsChange = quirks.shouldAvoidResizingWhenInputViewBoundsChange();
+    information.shouldAvoidScrollingWhenFocusedContentIsVisible = quirks.shouldAvoidScrollingWhenFocusedContentIsVisible();
 }
 
 void WebPage::autofillLoginCredentials(const String& username, const String& password)

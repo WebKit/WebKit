@@ -107,6 +107,7 @@ void FocusedElementInformation::encode(IPC::Encoder& encoder) const
     encoder << shouldSynthesizeKeyEventsForEditing;
     encoder << isSpellCheckingEnabled;
     encoder << shouldAvoidResizingWhenInputViewBoundsChange;
+    encoder << shouldAvoidScrollingWhenFocusedContentIsVisible;
 }
 
 bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInformation& result)
@@ -232,6 +233,9 @@ bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInfo
         return false;
 
     if (!decoder.decode(result.shouldAvoidResizingWhenInputViewBoundsChange))
+        return false;
+
+    if (!decoder.decode(result.shouldAvoidScrollingWhenFocusedContentIsVisible))
         return false;
 
     return true;

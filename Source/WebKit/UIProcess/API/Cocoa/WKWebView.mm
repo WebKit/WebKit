@@ -2422,7 +2422,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     focusedElementRectInNewScale.moveBy([_contentView frame].origin);
 
     BOOL selectionRectIsNotNull = !selectionRectInDocumentCoordinates.isZero();
-    if (!forceScroll) {
+    BOOL doNotScrollWhenContentIsAlreadyVisible = !forceScroll || [_contentView _shouldAvoidScrollingWhenFocusedContentIsVisible];
+    if (doNotScrollWhenContentIsAlreadyVisible) {
         CGRect currentlyVisibleRegionInWebViewCoordinates;
         currentlyVisibleRegionInWebViewCoordinates.origin = unobscuredScrollViewRectInWebViewCoordinates.origin;
         currentlyVisibleRegionInWebViewCoordinates.origin.y += visibleOffsetFromTop;
