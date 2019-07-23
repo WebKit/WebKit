@@ -813,12 +813,9 @@ void WebResourceLoadStatisticsStore::scheduleCookieBlockingUpdate(CompletionHand
             return;
         }
 
-        auto callbackAggregator = CallbackAggregator::create([completionHandler = WTFMove(completionHandler)] () mutable {
+        m_statisticsStore->updateCookieBlocking([completionHandler = WTFMove(completionHandler)]() mutable {
             postTaskReply(WTFMove(completionHandler));
         });
-        
-        if (m_statisticsStore)
-            m_statisticsStore->updateCookieBlocking([callbackAggregator = callbackAggregator.copyRef()]() { });
     });
 }
 
@@ -832,12 +829,9 @@ void WebResourceLoadStatisticsStore::scheduleCookieBlockingUpdateForDomains(cons
             return;
         }
 
-        auto callbackAggregator = CallbackAggregator::create([completionHandler = WTFMove(completionHandler)] () mutable {
+        m_statisticsStore->updateCookieBlockingForDomains(domainsToBlock, [completionHandler = WTFMove(completionHandler)]() mutable {
             postTaskReply(WTFMove(completionHandler));
         });
-
-        if (m_statisticsStore)
-            m_statisticsStore->updateCookieBlockingForDomains(domainsToBlock, [callbackAggregator = callbackAggregator.copyRef()]() { });
     });
 }
 
@@ -851,12 +845,9 @@ void WebResourceLoadStatisticsStore::scheduleClearBlockingStateForDomains(const 
             return;
         }
 
-        auto callbackAggregator = CallbackAggregator::create([completionHandler = WTFMove(completionHandler)] () mutable {
+        m_statisticsStore->clearBlockingStateForDomains(domains, [completionHandler = WTFMove(completionHandler)]() mutable {
             postTaskReply(WTFMove(completionHandler));
         });
-
-        if (m_statisticsStore)
-            m_statisticsStore->clearBlockingStateForDomains(domains, [callbackAggregator = callbackAggregator.copyRef()]() { });
     });
 }
 

@@ -1,3 +1,17 @@
+2019-07-23  Chris Dumez  <cdumez@apple.com>
+
+        Get rid of unnecessary callback aggregators in WebResourceLoadStatisticsStore
+        https://bugs.webkit.org/show_bug.cgi?id=200042
+
+        Reviewed by Brent Fulgham.
+
+        Only 1 asynchronous function is called so there is nothing to "aggregate".
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookieBlockingUpdate):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookieBlockingUpdateForDomains):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearBlockingStateForDomains):
+
 2019-07-23  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Tapping the search field on a search results page on zillow.com shows and immediately dismisses the keyboard
