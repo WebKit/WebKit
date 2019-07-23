@@ -36,8 +36,6 @@
 + (instancetype)_elementActionWithType:(_WKElementActionType)type title:(NSString *)title actionHandler:(WKElementActionHandler)actionHandler;
 - (void)_runActionWithElementInfo:(_WKActivatedElementInfo *)info forActionSheetAssistant:(WKActionSheetAssistant *)assistant;
 
-- (UIAction *)uiActionForElementInfo:(_WKActivatedElementInfo *)elementInfo;
-
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
