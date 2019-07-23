@@ -92,6 +92,8 @@ public:
     unsigned capacity() const;
     bool isEmpty() const;
 
+    void reserveInitialCapacity(unsigned keyCount) { m_impl.reserveInitialCapacity(keyCount); }
+
     // iterators iterate over pairs of keys and values
     iterator begin();
     iterator end();

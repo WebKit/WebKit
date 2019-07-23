@@ -378,6 +378,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
             return WTF::nullopt;
 
         HashMapType hashMap;
+        hashMap.reserveInitialCapacity(hashMapSize);
         for (uint32_t i = 0; i < hashMapSize; ++i) {
             Optional<KeyArg> key;
             decoder >> key;
