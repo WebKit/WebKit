@@ -819,6 +819,10 @@ WI.Resource = class Resource extends WI.SourceCode
 
     requestContentFromBackend()
     {
+        let specialContentPromise = WI.SourceCode.generateSpecialContentForURL(this._url);
+        if (specialContentPromise)
+            return specialContentPromise;
+
         // If we have the requestIdentifier we can get the actual response for this specific resource.
         // Otherwise the content will be cached resource data, which might not exist anymore.
         if (this._requestIdentifier)

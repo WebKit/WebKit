@@ -37,6 +37,19 @@ WI.SourceCode = class SourceCode extends WI.Object
         this._requestContentPromise = null;
     }
 
+    // Static
+
+    static generateSpecialContentForURL(url)
+    {
+        if (url === "about:blank") {
+            return Promise.resolve({
+                content: "",
+                message: WI.unlocalizedString("about:blank")
+            });
+        }
+        return null;
+    }
+
     // Public
 
     get displayName()
@@ -197,6 +210,7 @@ WI.SourceCode = class SourceCode extends WI.Object
         let rawContent = parameters.content || parameters.body || parameters.text || parameters.scriptSource;
         let content = rawContent;
         let error = parameters.error;
+        let message = parameters.message;
         if (parameters.base64Encoded)
             content = content ? decodeBase64ToBlob(content, this.mimeType) : "";
 
@@ -212,6 +226,7 @@ WI.SourceCode = class SourceCode extends WI.Object
 
         return Promise.resolve({
             error,
+            message,
             sourceCode: this,
             content,
             rawContent,

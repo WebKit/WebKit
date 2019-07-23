@@ -214,9 +214,6 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
 
         this._codeCoverageButtonNavigationItem.enabled = this._textEditor.canShowCoverageHints();
         this._codeCoverageButtonNavigationItem.activated = WI.settings.enableControlFlowProfiler.value;
-
-        if (!this._textEditor.string)
-            this.showGenericNoContentMessage();
     }
 
     _togglePrettyPrint(event)

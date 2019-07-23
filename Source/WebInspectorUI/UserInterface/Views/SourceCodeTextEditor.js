@@ -527,6 +527,11 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         if (parameters.error)
             return;
 
+        if (parameters.message) {
+            this._showMessage(parameters.message);
+            return;
+        }
+
         var sourceCode = parameters.sourceCode;
         var content = sourceCode.content;
         var base64Encoded = parameters.base64Encoded;
@@ -548,6 +553,12 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         this._populateWithContent(content);
 
         this.repeatReveal = false;
+    }
+
+    _showMessage(message)
+    {
+        this.element.removeChildren();
+        this.element.appendChild(WI.createMessageTextView(message));
     }
 
     _breakpointStatusDidChange(event)

@@ -185,6 +185,10 @@ WI.Script = class Script extends WI.SourceCode
 
     requestContentFromBackend()
     {
+        let specialContentPromise = WI.SourceCode.generateSpecialContentForURL(this._url);
+        if (specialContentPromise)
+            return specialContentPromise;
+
         if (!this._id) {
             // There is no identifier to request content with. Return false to cause the
             // pending callbacks to get null content.

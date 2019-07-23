@@ -135,6 +135,11 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
             return;
         }
 
+        if (parameters.message) {
+            this.showMessage(parameters.message);
+            return;
+        }
+
         // Content is ready to show, call the public method now.
         console.assert(!this._hasContent());
         console.assert(parameters.sourceCode === this._resource);
