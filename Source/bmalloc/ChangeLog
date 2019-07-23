@@ -1,3 +1,19 @@
+2019-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] IsoTLS is not deallocated in TLS destructor
+        https://bugs.webkit.org/show_bug.cgi?id=200019
+
+        Reviewed by Mark Lam.
+
+        TLS destructor for IsoTLS needs to deallocate memory used for IsoTLS itself.
+        While we are correctly deallocating old IsoTLS when extending it to the new one,
+        we lack deallocation when the thread is destroyed. IsoTLS is per-thread, so we
+        should destroy IsoTLS when a thread finishes.
+
+        * bmalloc/IsoTLS.cpp:
+        (bmalloc::IsoTLS::ensureEntries):
+        (bmalloc::IsoTLS::destructor):
+
 2019-07-12  Keith Miller  <keith_miller@apple.com>
 
         Increase JSValue cage size on iOS and reduce the max slide
