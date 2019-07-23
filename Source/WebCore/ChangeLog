@@ -1,3 +1,19 @@
+2019-07-22  Youenn Fablet  <youenn@apple.com>
+
+        Fix inspector override conversion in InspectorPageAgent::overrideSetting
+        https://bugs.webkit.org/show_bug.cgi?id=200017
+
+        Reviewed by Devin Rousso.
+
+        Covered by inspector/page/overrideSetting-MockCaptureDevicesEnabled.html
+        which should not fail on bots not having cameras
+
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::toOptionalBool):
+        (WebCore::InspectorPageAgent::overrideSetting):
+        Previously, the conversion for the mock capture value was implicit from a bool pointer to an optional.
+        Make an explicit conversion as done for regular settings.
+
 2019-07-22  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed non-unified build fix.
