@@ -1,3 +1,28 @@
+2019-07-23  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: CrashTracer: com.apple.WebKit.WebContent at WebKit: WebKit::WebSpeechSynthesisClient::speak
+        https://bugs.webkit.org/show_bug.cgi?id=199988
+
+        Reviewed by Per Arne Vollan.
+
+        Improvements to WebSpeechSynthesis to avoid crashing and improve correctness.
+        - Reset and cancel speech jobs on page close or reload (otherwise the synthesizer keeps talking after your page is gone)
+        - Have a separate speech finish callback mechanism, use the start speaking callback when the synthesizer tells us.
+        - Move an assert on utterance state to only apply when we use the in process synthesizer.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::didStartSpeaking):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reload):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::resetSpeechSynthesizer):
+        (WebKit::WebPageProxy::speechSynthesisSetFinishedCallback):
+        (WebKit::WebPageProxy::speechSynthesisSpeak):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp:
+        (WebKit::WebSpeechSynthesisClient::speak):
+
 2019-07-23  Chris Dumez  <cdumez@apple.com>
 
         Get rid of unnecessary callback aggregators in WebResourceLoadStatisticsStore

@@ -291,6 +291,11 @@ void PlatformSpeechSynthesizer::cancel()
     [m_platformSpeechWrapper.get() cancel];
 }
 
+void PlatformSpeechSynthesizer::resetState()
+{
+    [m_platformSpeechWrapper.get() cancel];
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS) && PLATFORM(IOS_FAMILY)
