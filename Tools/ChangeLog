@@ -1,3 +1,17 @@
+2019-07-23  Alicia Boya García  <aboya@igalia.com>
+
+        [WTF] Add DataMutex and MainThreadData wrappers
+        https://bugs.webkit.org/show_bug.cgi?id=199831
+
+        Reviewed by Alex Christensen.
+
+        Added a very simple test that checks that DataMutex<T> indeed takes
+        the lock and indeed holds data.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/Tests/WTF/DataMutex.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2019-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS 10.15] Web process crashes when attempting to show the font panel via Font > Show Fonts

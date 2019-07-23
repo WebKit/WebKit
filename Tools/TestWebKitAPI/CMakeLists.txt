@@ -33,6 +33,7 @@ set(TestWTF_SOURCES
     Tests/WTF/Condition.cpp
     Tests/WTF/CrossThreadCopier.cpp
     Tests/WTF/CrossThreadTask.cpp
+    Tests/WTF/DataMutex.cpp
     Tests/WTF/DateMath.cpp
     Tests/WTF/Deque.cpp
     Tests/WTF/EnumTraits.cpp

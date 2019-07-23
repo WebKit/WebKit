@@ -1,3 +1,54 @@
+2019-07-23  Alicia Boya García  <aboya@igalia.com>
+
+        [WTF] Add DataMutex and MainThreadData wrappers
+        https://bugs.webkit.org/show_bug.cgi?id=199831
+
+        Reviewed by Alex Christensen.
+
+        This patch adds two new wrapper classes:
+
+        DataMutex<T> stores an instance of T in a private member along with a
+        mutex. In order to use its fields, users need to instantiate a
+        DataMutex<T>::LockedWrapper instance in the stack. This class uses
+        RAII to lock and unlock the mutex in construction and destruction
+        respectively, and by using the arrow operator lets the user access T's
+        members.
+
+        This way, DataMutex<T> prevents most instances of accidental access to
+        data fields that should only be read and modified in an atomic matter.
+
+        Still, both the Lock and the LockHolder are exposed once the user has
+        taken the lock so that special cases such as waiting for a condition
+        variable or performing an early unlock are doable.
+
+        MainThreadData<T> is another wrapper class, in this case for data
+        fields that should only be accessed from the main thread. In this
+        case, it works similar to a smart pointer, except that (1) there is no
+        actual memory indirection, T is stored directly inside
+        MainThreadData<T> and (2) attempts to use the -> or * operator have an
+        isMainThread() assertion.
+
+        Together, these two wrapper classes make it easier to write
+        multi-threaded code in a safer, more self-documented way by letting
+        the author group data into structures that have certain access safety
+        requirements.
+
+        These structures were originally part of the new GStreamer
+        WebKitMediaSrc rework patch: https://bugs.webkit.org/show_bug.cgi?id=199719
+
+        * wtf/CMakeLists.txt:
+        * wtf/DataMutex.h: Added.
+        (WTF::DataMutex::DataMutex):
+        (WTF::DataMutex::LockedWrapper::LockedWrapper):
+        (WTF::DataMutex::LockedWrapper::operator->):
+        (WTF::DataMutex::LockedWrapper::operator*):
+        (WTF::DataMutex::LockedWrapper::mutex):
+        (WTF::DataMutex::LockedWrapper::lockHolder):
+        * wtf/MainThreadData.h: Added.
+        (WTF::MainThreadData::MainThreadData):
+        (WTF::MainThreadData::operator->):
+        (WTF::MainThreadData::operator*):
+
 2019-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] Each IsoPage gets 1MB VA because VMHeap::tryAllocateLargeChunk rounds up
