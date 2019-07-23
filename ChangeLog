@@ -1,3 +1,9 @@
+2019-07-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.25.3 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers
+
 2019-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] MOUSE_CURSOR_SCALE is not implemented

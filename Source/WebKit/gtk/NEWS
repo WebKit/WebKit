@@ -1,4 +1,25 @@
 ================
+WebKitGTK 2.25.3
+================
+
+What's new in WebKitGTK+ 2.25.3?
+
+  - Remove support for GTK2 NPAPI plugins.
+  - Fix web view updates after swapping web process if accelerated compositing mode is forced.
+  - Make kinetic scrolling work again.
+  - Fix position of emoji chooser when page is scrolled.
+  - Fix web process deadlock when scrolling twitter timeline which contains HLS videos.
+  - Make navigation gesture use dark fallback background color color on dark themes.
+  - Make Previous/Next gesture work in RTL mode.
+  - Support cancelling touchscreen back/forward gesture.
+  - Add user agent quirk to make github work in FreeBSD.
+  - Fix content disappearing when using CSS transforms.
+  - Fix some radio streams that could not be played.
+  - Fix video pause that sometimes caused to skip to finish.
+  - Fix volume level changes when playing a video.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.25.2
 ================
 
