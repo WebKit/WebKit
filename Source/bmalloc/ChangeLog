@@ -1,5 +1,14 @@
 2019-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, follow-up fix for tls->size() access
+        https://bugs.webkit.org/show_bug.cgi?id=200019
+
+        * bmalloc/IsoTLS.cpp:
+        (bmalloc::IsoTLS::ensureEntries):
+        (bmalloc::IsoTLS::destructor):
+
+2019-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [bmalloc] IsoTLS is not deallocated in TLS destructor
         https://bugs.webkit.org/show_bug.cgi?id=200019
 
