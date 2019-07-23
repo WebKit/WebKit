@@ -1,3 +1,15 @@
+2019-07-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Emoji chooser is misplaced after scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=199996
+
+        Reviewed by Michael Catanzaro.
+
+        Convert caret rectangle coordinates to root view.
+
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::showEmojiPicker):
+
 2019-07-22  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed non-unified build fix.
