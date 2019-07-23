@@ -1,3 +1,15 @@
+2019-07-22  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] EWS fails to parse multi-line full_results.json
+        https://bugs.webkit.org/show_bug.cgi?id=199992
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/ews-build/layout_test_failures.py:
+        (LayoutTestFailures.results_from_string): Concatenate content into single line.
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (test_parse_results_json_with_newlines): Unit-test to cover this scenario.
+
 2019-07-22  Jonathan Bedard  <jbedard@apple.com>
 
         resultsdbpy: Handle case where the previous commit doesn't have the changelog

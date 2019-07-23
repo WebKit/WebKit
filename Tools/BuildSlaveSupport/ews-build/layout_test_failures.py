@@ -51,6 +51,8 @@ class LayoutTestFailures(object):
             return None
 
         content_string = cls.strip_json_wrapper(string)
+        # Workaround for https://github.com/buildbot/buildbot/issues/4906
+        content_string = ''.join(content_string.splitlines())
         json_dict = json.loads(content_string)
 
         failing_tests = []
