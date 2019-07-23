@@ -216,9 +216,13 @@ void AudioSourceProviderAVFObjC::createMix()
     };
 
     MTAudioProcessingTapRef tap = nullptr;
-    MTAudioProcessingTapCreate(kCFAllocatorDefault, &callbacks, 1, &tap);
+    OSStatus status = MTAudioProcessingTapCreate(kCFAllocatorDefault, &callbacks, 1, &tap);
     ASSERT(tap);
     ASSERT(m_tap == tap);
+    if (status != noErr) {
+        m_tap = nullptr;
+        return;
+    }
 
     RetainPtr<AVMutableAudioMixInputParameters> parameters = adoptNS([PAL::allocAVMutableAudioMixInputParametersInstance() init]);
     [parameters setAudioTapProcessor:m_tap.get()];
