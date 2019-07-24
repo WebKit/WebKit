@@ -1961,9 +1961,6 @@ webkit.org/b/195635 scrollingcoordinator/mac/multiple-fixed.html [ Pass Timeout 
 # <rdar://problem/51525184>
 [ Catalina+ ] imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-armenian.html [ ImageOnlyFailure ]
 
-# <rdar://problem/51751581>
-[ Catalina+ ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-schemes.html [ Failure ]
-
 # <rdar://problem/51762717>
 [ Catalina+ ] http/wpt/resource-timing/rt-cors.html [ Pass Failure ]
 [ Catalina+ ] http/wpt/resource-timing/rt-cors.worker.html [ Pass Failure ]
@@ -1972,6 +1969,9 @@ webkit.org/b/195635 scrollingcoordinator/mac/multiple-fixed.html [ Pass Timeout 
 [ Catalina+ ] http/wpt/resource-timing/rt-initiatorType-script-module.html [ Pass Failure ]
 [ Catalina+ ] http/wpt/resource-timing/rt-initiatorType-element.html [ Pass Failure ]
 [ Catalina+ ] http/wpt/resource-timing/rt-initiatorType-xmlhttprequest.html [ Pass Failure ]
+
+# <rdar://problem/52689856> storage/websql/test-authorizer.html is failing
+[ Catalina+ ] storage/websql/test-authorizer.html [ Failure ]
 
 # These tests require the design system ui fonts to be installed.
 [ Catalina+ ] fast/text/design-system-ui-11.html [ Pass ]

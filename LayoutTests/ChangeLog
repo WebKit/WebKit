@@ -1,3 +1,9 @@
+2019-07-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, update test expectations for Catalina.
+
+        * platform/mac/TestExpectations:
+
 2019-07-24  Alicia Boya García  <aboya@igalia.com>
 
         [MSE] Reenqueue after removeCodedFrames()
