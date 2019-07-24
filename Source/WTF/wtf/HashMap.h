@@ -65,6 +65,11 @@ private:
     using IdentityTranslatorType = typename HashTableType::IdentityTranslatorType;
 
 public:
+    /*
+     * Since figuring out the entries of an iterator is confusing, here is a cheat sheet:
+     * const KeyType& key = iterator->key;
+     * ValueType& value = iterator->value;
+     */
     using iterator = HashTableIteratorAdapter<HashTableType, KeyValuePairType>;
     using const_iterator = HashTableConstIteratorAdapter<HashTableType, KeyValuePairType>;
 
@@ -73,6 +78,11 @@ public:
     using ValuesIteratorRange = SizedIteratorRange<HashMap, typename iterator::Values>;
     using ValuesConstIteratorRange = SizedIteratorRange<HashMap, typename const_iterator::Values>;
 
+    /*
+     * Since figuring out the entries of an AddResult is confusing, here is a cheat sheet:
+     * iterator iter = addResult.iterator;
+     * bool isNewEntry = addResult.isNewEntry;
+     */
     using AddResult = typename HashTableType::AddResult;
 
 public:

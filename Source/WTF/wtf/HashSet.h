@@ -45,8 +45,18 @@ private:
         HashFunctions, ValueTraits, ValueTraits> HashTableType;
 
 public:
+    /*
+     * Since figuring out the entries of an iterator is confusing, here is a cheat sheet:
+     * const KeyType& key = iterator->key;
+     */
     typedef HashTableConstIteratorAdapter<HashTableType, ValueType> iterator;
     typedef HashTableConstIteratorAdapter<HashTableType, ValueType> const_iterator;
+
+    /*
+     * Since figuring out the entries of an AddResult is confusing, here is a cheat sheet:
+     * iterator iter = addResult.iterator;
+     * bool isNewEntry = addResult.isNewEntry;
+     */
     typedef typename HashTableType::AddResult AddResult;
 
     HashSet()
