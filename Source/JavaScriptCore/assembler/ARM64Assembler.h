@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2910,7 +2910,27 @@ public:
         return m_jumpsToLink;
     }
 
+#if CPU(ARM64E)
+    class CopyFunction {
+        typedef void* (*Func)(void*, const void*, size_t);
+    public:
+        CopyFunction(Func func)
+            : m_func(func)
+        {
+            assertIsNullOrTaggedWith(func, CopyFunctionPtrTag);
+        }
+
+        void* operator()(void* dst, const void* src, size_t size)
+        {
+            return ptrauth_auth_function(m_func, ptrauth_key_process_dependent_code, CopyFunctionPtrTag)(dst, src, size);
+        }
+
+    private:
+        Func m_func;
+    };
+#else
     typedef void* (*CopyFunction)(void*, const void*, size_t);
+#endif
 
     static void ALWAYS_INLINE link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction8, uint8_t* to, CopyFunction copy)
     {
@@ -2977,7 +2997,7 @@ protected:
     }
 
     template<bool isCall>
-    static void linkJumpOrCall(int* from, const int* fromInstruction, void* to, CopyFunction copy = performJITMemcpy)
+    static void linkJumpOrCall(int* from, const int* fromInstruction, void* to, CopyFunction copy = tagCFunctionPtr<CopyFunctionPtrTag>(performJITMemcpy))
     {
         bool link;
         int imm26;
@@ -2998,7 +3018,7 @@ protected:
     }
 
     template<bool isDirect>
-    static void linkCompareAndBranch(Condition condition, bool is64Bit, RegisterID rt, int* from, const int* fromInstruction, void* to, CopyFunction copy = performJITMemcpy)
+    static void linkCompareAndBranch(Condition condition, bool is64Bit, RegisterID rt, int* from, const int* fromInstruction, void* to, CopyFunction copy = tagCFunctionPtr<CopyFunctionPtrTag>(performJITMemcpy))
     {
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
@@ -3026,7 +3046,7 @@ protected:
     }
 
     template<bool isDirect>
-    static void linkConditionalBranch(Condition condition, int* from, const int* fromInstruction, void* to, CopyFunction copy = performJITMemcpy)
+    static void linkConditionalBranch(Condition condition, int* from, const int* fromInstruction, void* to, CopyFunction copy = tagCFunctionPtr<CopyFunctionPtrTag>(performJITMemcpy))
     {
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
@@ -3054,7 +3074,7 @@ protected:
     }
 
     template<bool isDirect>
-    static void linkTestAndBranch(Condition condition, unsigned bitNumber, RegisterID rt, int* from, const int* fromInstruction, void* to, CopyFunction copy = performJITMemcpy)
+    static void linkTestAndBranch(Condition condition, unsigned bitNumber, RegisterID rt, int* from, const int* fromInstruction, void* to, CopyFunction copy = tagCFunctionPtr<CopyFunctionPtrTag>(performJITMemcpy))
     {
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));

@@ -1,3 +1,34 @@
+2019-07-24  Mark Lam  <mark.lam@apple.com>
+
+        performJITMemcpy should be PACed with a non-zero diversifier when passed and called via a pointer.
+        https://bugs.webkit.org/show_bug.cgi?id=200100
+        <rdar://problem/53474939>
+
+        Reviewed by Yusuke Suzuki.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::CopyFunction::CopyFunction):
+        (JSC::ARM64Assembler::CopyFunction::operator()):
+        - I choose to use ptrauth_auth_function() here instead of retagCodePtr() because
+          retagCodePtr() would auth, assert, and re-pac the pointer.  This is needed in
+          general because retagCodePtr() doesn't know that you will consume the pointer
+          immediately (and therefore crash imminently if a failed auth is encountered).
+          Since we know here that we will call with the auth'ed pointer immediately, we
+          can skip the assert.
+
+          This also has the benefit of letting Clang do a peephole optimization to emit
+          a blrab instruction with the intended diversifier, instead of emitting multiple
+          instructions to auth the pointer into a C function, and then using a blraaz to
+          do a C function call.
+
+        (JSC::ARM64Assembler::linkJumpOrCall):
+        (JSC::ARM64Assembler::linkCompareAndBranch):
+        (JSC::ARM64Assembler::linkConditionalBranch):
+        (JSC::ARM64Assembler::linkTestAndBranch):
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        * runtime/JSCPtrTag.h:
+
 2019-07-24  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: print the target of `console.screenshot` last so the target is the closest item to the image
