@@ -279,11 +279,6 @@ void MediaPlayerPrivateMediaFoundation::setVolume(float volume)
         m_volume = volume;
 }
 
-bool MediaPlayerPrivateMediaFoundation::supportsMuting() const
-{
-    return true;
-}
-
 void MediaPlayerPrivateMediaFoundation::setMuted(bool muted)
 {
     setAllChannelVolumes(muted ? 0.0 : m_volume);

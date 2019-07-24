@@ -121,7 +121,6 @@ private:
 
     void setVolume(float) override;
     void setMuted(bool) override;
-    bool supportsMuting() const override { return true; }
 
     bool supportsScanning() const override { return false; }
 

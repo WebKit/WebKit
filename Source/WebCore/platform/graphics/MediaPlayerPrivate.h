@@ -118,7 +118,6 @@ public:
     virtual float volume() const { return 1; }
 #endif
 
-    virtual bool supportsMuting() const { return false; }
     virtual void setMuted(bool) { }
 
     virtual bool hasClosedCaptions() const { return false; }    

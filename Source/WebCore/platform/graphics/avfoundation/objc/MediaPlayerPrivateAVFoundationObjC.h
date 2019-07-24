@@ -171,7 +171,6 @@ private:
     bool platformPaused() const override;
     MediaTime currentMediaTime() const override;
     void setVolume(float) override;
-    bool supportsMuting() const override { return true; }
     void setMuted(bool) override;
     void setClosedCaptionsVisible(bool) override;
     void paint(GraphicsContext&, const FloatRect&) override;

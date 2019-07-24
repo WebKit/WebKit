@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-class MediaPlayerPrivateMediaFoundation : public MediaPlayerPrivateInterface, public CanMakeWeakPtr<MediaPlayerPrivateMediaFoundation> {
+class MediaPlayerPrivateMediaFoundation final : public MediaPlayerPrivateInterface, public CanMakeWeakPtr<MediaPlayerPrivateMediaFoundation> {
 public:
     explicit MediaPlayerPrivateMediaFoundation(MediaPlayer*);
     ~MediaPlayerPrivateMediaFoundation();
@@ -56,49 +56,48 @@ public:
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
     static bool isAvailable();
 
-    void load(const String& url) override;
-    void cancelLoad() override;
+    void load(const String& url) final;
+    void cancelLoad() final;
 
-    void play() override;
-    void pause() override;
+    void play() final;
+    void pause() final;
 
-    bool supportsFullscreen() const override;
+    bool supportsFullscreen() const final;
 
-    FloatSize naturalSize() const override;
+    FloatSize naturalSize() const final;
 
-    bool hasVideo() const override;
-    bool hasAudio() const override;
+    bool hasVideo() const final;
+    bool hasAudio() const final;
 
-    void setVisible(bool) override;
+    void setVisible(bool) final;
 
-    bool seeking() const override;
-    void seek(float) override;
+    bool seeking() const final;
+    void seek(float) final;
 
-    void setRate(float) override;
+    void setRate(float) final;
 
-    float duration() const override;
+    float duration() const final;
 
-    float currentTime() const override;
+    float currentTime() const final;
 
-    bool paused() const override;
+    bool paused() const final;
 
-    void setVolume(float) override;
+    void setVolume(float) final;
 
-    bool supportsMuting() const override;
-    void setMuted(bool) override;
+    void setMuted(bool) final;
 
-    MediaPlayer::NetworkState networkState() const override;
-    MediaPlayer::ReadyState readyState() const override;
+    MediaPlayer::NetworkState networkState() const final;
+    MediaPlayer::ReadyState readyState() const final;
 
-    float maxTimeSeekable() const override;
+    float maxTimeSeekable() const final;
 
-    std::unique_ptr<PlatformTimeRanges> buffered() const override;
+    std::unique_ptr<PlatformTimeRanges> buffered() const final;
 
-    bool didLoadingProgress() const override;
+    bool didLoadingProgress() const final;
 
-    void setSize(const IntSize&) override;
+    void setSize(const IntSize&) final;
 
-    void paint(GraphicsContext&, const FloatRect&) override;
+    void paint(GraphicsContext&, const FloatRect&) final;
 
 private:
     WeakPtr<MediaPlayerPrivateMediaFoundation> m_weakThis;

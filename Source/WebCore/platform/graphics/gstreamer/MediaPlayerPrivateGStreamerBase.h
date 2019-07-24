@@ -112,7 +112,6 @@ public:
     bool ensureGstGLContext();
     GstContext* requestGLContext(const char* contextType);
 #endif
-    bool supportsMuting() const override { return true; }
     void setMuted(bool) override;
     bool muted() const;
 

@@ -189,7 +189,6 @@ private:
     bool paused() const override;
 
     void setVolume(float volume) override;
-    bool supportsMuting() const override { return true; }
     void setMuted(bool) override;
 
     bool supportsScanning() const override;

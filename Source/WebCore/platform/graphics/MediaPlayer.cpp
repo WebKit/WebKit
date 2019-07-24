@@ -100,71 +100,70 @@ static RefPtr<Logger>& nullLogger()
 
 // a null player to make MediaPlayer logic simpler
 
-class NullMediaPlayerPrivate : public MediaPlayerPrivateInterface {
+class NullMediaPlayerPrivate final : public MediaPlayerPrivateInterface {
 public:
     explicit NullMediaPlayerPrivate(MediaPlayer*) { }
 
-    void load(const String&) override { }
+    void load(const String&) final { }
 #if ENABLE(MEDIA_SOURCE)
-    void load(const String&, MediaSourcePrivateClient*) override { }
+    void load(const String&, MediaSourcePrivateClient*) final { }
 #endif
 #if ENABLE(MEDIA_STREAM)
-    void load(MediaStreamPrivate&) override { }
+    void load(MediaStreamPrivate&) final { }
 #endif
-    void cancelLoad() override { }
+    void cancelLoad() final { }
 
-    void prepareToPlay() override { }
-    void play() override { }
-    void pause() override { }
+    void prepareToPlay() final { }
+    void play() final { }
+    void pause() final { }
 
-    PlatformLayer* platformLayer() const override { return 0; }
+    PlatformLayer* platformLayer() const final { return 0; }
 
-    FloatSize naturalSize() const override { return FloatSize(); }
+    FloatSize naturalSize() const final { return FloatSize(); }
 
-    bool hasVideo() const override { return false; }
-    bool hasAudio() const override { return false; }
+    bool hasVideo() const final { return false; }
+    bool hasAudio() const final { return false; }
 
-    void setVisible(bool) override { }
+    void setVisible(bool) final { }
 
-    double durationDouble() const override { return 0; }
+    double durationDouble() const final { return 0; }
 
-    double currentTimeDouble() const override { return 0; }
-    void seekDouble(double) override { }
-    bool seeking() const override { return false; }
+    double currentTimeDouble() const final { return 0; }
+    void seekDouble(double) final { }
+    bool seeking() const final { return false; }
 
-    void setRateDouble(double) override { }
-    void setPreservesPitch(bool) override { }
-    bool paused() const override { return true; }
+    void setRateDouble(double) final { }
+    void setPreservesPitch(bool) final { }
+    bool paused() const final { return true; }
 
-    void setVolumeDouble(double) override { }
+    void setVolumeDouble(double) final { }
 
-    bool supportsMuting() const override { return false; }
-    void setMuted(bool) override { }
+    void setMuted(bool) final { }
 
-    bool hasClosedCaptions() const override { return false; }
-    void setClosedCaptionsVisible(bool) override { };
+    bool hasClosedCaptions() const final { return false; }
+    void setClosedCaptionsVisible(bool) final { };
 
-    MediaPlayer::NetworkState networkState() const override { return MediaPlayer::Empty; }
-    MediaPlayer::ReadyState readyState() const override { return MediaPlayer::HaveNothing; }
+    MediaPlayer::NetworkState networkState() const final { return MediaPlayer::Empty; }
+    MediaPlayer::ReadyState readyState() const final { return MediaPlayer::HaveNothing; }
 
-    float maxTimeSeekable() const override { return 0; }
-    double minTimeSeekable() const override { return 0; }
-    std::unique_ptr<PlatformTimeRanges> buffered() const override { return std::make_unique<PlatformTimeRanges>(); }
+    float maxTimeSeekable() const final { return 0; }
+    double minTimeSeekable() const final { return 0; }
+    std::unique_ptr<PlatformTimeRanges> buffered() const final { return std::make_unique<PlatformTimeRanges>(); }
 
-    double seekableTimeRangesLastModifiedTime() const override { return 0; }
-    double liveUpdateInterval() const override { return 0; }
+    double seekableTimeRangesLastModifiedTime() const final { return 0; }
+    double liveUpdateInterval() const final { return 0; }
 
-    unsigned long long totalBytes() const override { return 0; }
-    bool didLoadingProgress() const override { return false; }
+    unsigned long long totalBytes() const final { return 0; }
+    bool didLoadingProgress() const final { return false; }
 
-    void setSize(const IntSize&) override { }
+    void setSize(const IntSize&) final { }
 
-    void paint(GraphicsContext&, const FloatRect&) override { }
+    void paint(GraphicsContext&, const FloatRect&) final { }
 
-    bool canLoadPoster() const override { return false; }
-    void setPoster(const String&) override { }
+    bool canLoadPoster() const final { return false; }
+    void setPoster(const String&) final { }
 
-    bool hasSingleSecurityOrigin() const override { return true; }
+    bool hasSingleSecurityOrigin() const final { return true; }
 };
 
 class NullMediaPlayerClient : public MediaPlayerClient {
@@ -777,9 +776,7 @@ double MediaPlayer::volume() const
 void MediaPlayer::setVolume(double volume)
 {
     m_volume = volume;
-
-    if (m_private->supportsMuting() || !m_muted)
-        m_private->setVolumeDouble(volume);
+    m_private->setVolumeDouble(volume);
 }
 
 bool MediaPlayer::muted() const
@@ -791,10 +788,7 @@ void MediaPlayer::setMuted(bool muted)
 {
     m_muted = muted;
 
-    if (m_private->supportsMuting())
-        m_private->setMuted(muted);
-    else
-        m_private->setVolume(muted ? 0 : m_volume);
+    m_private->setMuted(muted);
 }
 
 bool MediaPlayer::hasClosedCaptions() const
