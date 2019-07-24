@@ -1,3 +1,23 @@
+2019-07-24  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Reenqueue after removeCodedFrames()
+        https://bugs.webkit.org/show_bug.cgi?id=199749
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Before this patch, SourceBuffer::removeCodedFrames() did not trigger
+        an immediate reenqueue, but rather just set the `needsReenqueuing`
+        flag, deferring it for the next append... but there may not be another
+        append! In that case, the removed frames would still wrongly play.
+
+        This is the case for instance in tests where a single long media
+        append is done and then "cropped" with SourceBuffer.erase().
+
+        Test: media/media-source/media-source-erase-after-last-append.html
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::removeCodedFrames):
+
 2019-07-24  Jer Noble  <jer.noble@apple.com>
 
         Add per-document autoplay quirk for netflix.com.

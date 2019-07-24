@@ -1,3 +1,16 @@
+2019-07-24  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Reenqueue after removeCodedFrames()
+        https://bugs.webkit.org/show_bug.cgi?id=199749
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Added a test that checks that when an .erase() is performed after the
+        last append the erased frames are indeed not played.
+
+        * media/media-source/media-source-erase-after-last-append-expected.txt: Added.
+        * media/media-source/media-source-erase-after-last-append.html: Added.
+
 2019-07-24  Russell Epstein  <repstein@apple.com>
 
         Remove test expectation for fast/events/ios/keydown-keyup-keypress-keys-in-non-editable-using-chinese-keyboard.html

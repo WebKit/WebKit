@@ -832,7 +832,10 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
 
     // 2. Let end be the end presentation timestamp for the removal range.
     // 3. For each track buffer in this source buffer, run the following steps:
-    for (auto& trackBuffer : m_trackBufferMap.values()) {
+    for (auto& trackBufferKeyValue : m_trackBufferMap) {
+        TrackBuffer& trackBuffer = trackBufferKeyValue.value;
+        AtomString trackID = trackBufferKeyValue.key;
+
         // 3.1. Let remove end timestamp be the current value of duration
         // 3.2 If this track buffer has a random access point timestamp that is greater than or equal to end, then update
         // remove end timestamp to that random access point timestamp.
@@ -884,8 +887,11 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
         if (trackBuffer.lastEnqueuedPresentationTime.isValid() && currentMediaTime < trackBuffer.lastEnqueuedPresentationTime) {
             PlatformTimeRanges possiblyEnqueuedRanges(currentMediaTime, trackBuffer.lastEnqueuedPresentationTime);
             possiblyEnqueuedRanges.intersectWith(erasedRanges);
-            if (possiblyEnqueuedRanges.length())
+            if (possiblyEnqueuedRanges.length()) {
                 trackBuffer.needsReenqueueing = true;
+                DEBUG_LOG(LOGIDENTIFIER, "the range in removeCodedFrames() includes already enqueued samples, reenqueueing from ", currentMediaTime);
+                reenqueueMediaForTime(trackBuffer, trackID, currentMediaTime);
+            }
         }
 
         erasedRanges.invert();
