@@ -1,3 +1,36 @@
+2019-07-24  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/53458020
+
+    Disable Web Animations in WebKitLegacy https://bugs.webkit.org/show_bug.cgi?id=200041 <rdar://problem/53458020>
+    
+    Reviewed by Jon Lee.
+    
+    We want this disabled for WebKitLegacy in shipping branches.
+    
+    Source/WebKitLegacy/mac:
+    
+    * WebView/WebPreferences.mm:
+    (+[WebPreferences initialize]):
+    
+    Source/WebKitLegacy/win:
+    
+    * WebPreferences.cpp:
+    (WebPreferences::initializeDefaultSettings):
+
+    2019-07-23  Keith Rollin  <krollin@apple.com>
+
+            Disable Web Animations in WebKitLegacy
+            https://bugs.webkit.org/show_bug.cgi?id=200041
+            <rdar://problem/53458020>
+
+            Reviewed by Jon Lee.
+
+            We want this disabled for WebKitLegacy in shipping branches.
+
+            * WebPreferences.cpp:
+            (WebPreferences::initializeDefaultSettings):
+
 2019-07-13  Zalan Bujtas  <zalan@apple.com>
 
         Cannot bring up custom media controls at all on v.youku.com

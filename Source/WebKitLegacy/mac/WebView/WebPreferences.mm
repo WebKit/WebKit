@@ -641,7 +641,7 @@ public:
         [NSNumber numberWithBool:NO], WebKitDownloadAttributeEnabledPreferenceKey,
 #endif
         [NSNumber numberWithBool:NO], WebKitDirectoryUploadEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES], WebKitWebAnimationsEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitWebAnimationsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitPointerEventsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitSyntheticEditingCommandsEnabledPreferenceKey,
 
