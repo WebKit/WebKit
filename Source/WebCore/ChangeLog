@@ -1,5 +1,57 @@
 2019-07-24  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/53483188
+
+    Disable ENABLE_LAYOUT_FORMATTING_CONTEXT https://bugs.webkit.org/show_bug.cgi?id=200038 <rdar://problem/53457282>
+    
+    Reviewed by Zalan Bujtas.
+    
+    This feature is not complete. It is enabled for the trunk, but needs
+    to be disabled in branches for shipping products.
+    
+    Source/JavaScriptCore:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebCore:
+    
+    No new tests -- this change does not add any new functionality.
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebCore/PAL:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebKit:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebKitLegacy/mac:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Tools:
+    
+    * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
+    2019-07-23  Keith Rollin  <krollin@apple.com>
+
+            Disable ENABLE_LAYOUT_FORMATTING_CONTEXT
+            https://bugs.webkit.org/show_bug.cgi?id=200038
+            <rdar://problem/53457282>
+
+            Reviewed by Zalan Bujtas.
+
+            This feature is not complete. It is enabled for the trunk, but needs
+            to be disabled in branches for shipping products.
+
+            No new tests -- this change does not add any new functionality.
+
+            * Configurations/FeatureDefines.xcconfig:
+
+2019-07-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247746. rdar://problem/53483297
 
     [iOS] Tapping the search field on a search results page on zillow.com shows and immediately dismisses the keyboard
