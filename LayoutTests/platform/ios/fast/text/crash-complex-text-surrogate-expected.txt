@@ -35,10 +35,10 @@ layer at (0,0) size 800x664
       RenderBR {BR} at (0,0) size 0x0
       RenderInline {ACRONYM} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,406) size 118x46
+      RenderText {#text} at (0,406) size 137x46
         text run at (0,406) width 45: "s is:"
         text run at (0,420) width 27: "{,}"
-        text run at (0,438) width 118: "\x{A888}{0}P{P}\\7H\\8"
+        text run at (0,438) width 137: "\x{A888}{0}P{P}\\7H\\8"
       RenderBR {BR} at (0,0) size 0x0
       RenderText {#text} at (0,452) size 71x14
         text run at (0,452) width 71: "f is: gi"

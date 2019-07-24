@@ -1,5 +1,61 @@
 2019-07-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247674. rdar://problem/53483295
+
+    [iOS] Fast and complex text codepaths disagree about how to lay out bopomofo with tone marks
+    https://bugs.webkit.org/show_bug.cgi?id=199912
+    <rdar://problem/52182454>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    This is because CoreText has special composition rules for CJK languages, which we don't have in our simple
+    text codepath. Rather than implementing the composition rules in WebKit, we can simply disable them in
+    CoreText.
+    
+    Test: fast/text/international/system-language/composition.html
+    
+    * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+    (WebCore::Font::getCFStringAttributes const):
+    
+    Source/WebCore/PAL:
+    
+    * pal/spi/cocoa/CoreTextSPI.h:
+    
+    LayoutTests:
+    
+    * css3/font-feature-font-face-local-expected.html:
+    * css3/font-feature-font-face-local.html:
+    * editing/mac/selection/word-thai-expected.txt:
+    * editing/mac/selection/word-thai.html:
+    * fast/text/international/system-language/composition-expected.txt: Added.
+    * fast/text/international/system-language/composition.html: Added.
+    * platform/ios/fast/text/crash-complex-text-surrogate-expected.txt:
+    * svg/custom/glyph-selection-arabic-forms-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247674 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [iOS] Fast and complex text codepaths disagree about how to lay out bopomofo with tone marks
+            https://bugs.webkit.org/show_bug.cgi?id=199912
+            <rdar://problem/52182454>
+
+            Reviewed by Simon Fraser.
+
+            This is because CoreText has special composition rules for CJK languages, which we don't have in our simple
+            text codepath. Rather than implementing the composition rules in WebKit, we can simply disable them in
+            CoreText.
+
+            Test: fast/text/international/system-language/composition.html
+
+            * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+            (WebCore::Font::getCFStringAttributes const):
+
+2019-07-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247671. rdar://problem/53501841
 
     Add accessibilityInsertText for text insertion in edit fields.
