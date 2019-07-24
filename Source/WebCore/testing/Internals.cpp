@@ -5125,6 +5125,7 @@ Internals::TextIndicatorInfo::TextIndicatorInfo()
 
 Internals::TextIndicatorInfo::TextIndicatorInfo(const WebCore::TextIndicatorData& data)
     : textBoundingRectInRootViewCoordinates(DOMRect::create(data.textBoundingRectInRootViewCoordinates))
+    , textRectsInBoundingRectCoordinates(DOMRectList::create(data.textRectsInBoundingRectCoordinates))
 {
 }
     

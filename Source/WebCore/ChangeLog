@@ -1,3 +1,44 @@
+2019-07-24  Tim Horton  <timothy_horton@apple.com>
+
+        Daring Fireball long press highlights are unnecessarily inflated due to false illegibility
+        https://bugs.webkit.org/show_bug.cgi?id=200064
+
+        Reviewed by Geoff Garen.
+
+        If we consider text illegible on the given estimated background color,
+        we bail from doing a tightly fitted selection-only TextIndicator and
+        instead just paint the page without modification into the indicator,
+        causing ugly overlap and an excessively inflated indicator.
+
+        Change the mechanism we use to determine illegibility to be based on
+        a standard, instead of a constant chosen by hand 13 years ago.
+
+        Test: fast/text-indicator/text-indicator-with-low-contrast-text.html
+
+        * platform/graphics/ColorUtilities.cpp:
+        (WebCore::luminance):
+        Fix a typo.
+
+        (WebCore::contrastRatio):
+        Add a function that computes the contrast ratio given two colors using
+        the formula from WCAG.
+
+        * platform/graphics/ColorUtilities.h:
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::textColorIsLegibleAgainstBackgroundColor):
+        Make use of WCAG's minimum legible contrast ratio instead of an
+        arbitrary color difference cutoff for determining whether we consider
+        text legible. It seems sensible and also considers the text on DF readable
+        (which it seems to be to me!).
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::TextIndicatorInfo::TextIndicatorInfo):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Expose all of the text rects to Internals, not just the bounding rect.
+        Expose some more TextIndicator options to Internals so that we can
+        turn on the legibility mechanism.
+
 2019-07-24  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: print the target of `console.screenshot` last so the target is the closest item to the image
