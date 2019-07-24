@@ -41,6 +41,9 @@ CFDictionaryRef Font::getCFStringAttributes(bool enableKerning, FontOrientation 
     attributesDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 4, &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     CFDictionarySetValue(attributesDictionary.get(), kCTFontAttributeName, platformData().ctFont());
+    auto paragraphStyle = adoptCF(CTParagraphStyleCreate(nullptr, 0));
+    CTParagraphStyleSetCompositionLanguage(paragraphStyle.get(), kCTCompositionLanguageNone);
+    CFDictionarySetValue(attributesDictionary.get(), kCTParagraphStyleAttributeName, paragraphStyle.get());
 
     if (!enableKerning) {
         const float zero = 0;
