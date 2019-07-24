@@ -1,3 +1,17 @@
+2019-07-23  Keith Rollin  <krollin@apple.com>
+
+        Remove rest of NavigatorContentUtils support
+        https://bugs.webkit.org/show_bug.cgi?id=200052
+        <rdar://problem/53467357>
+
+        Reviewed by Alex Christensen.
+
+        Bug 196070 removes most of the support for the never-used
+        NavigatorContentUtils facility. However, there were still a couple of
+        left-over references after that change. This patch sweeps those up.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2019-07-23  Alex Christensen  <achristensen@webkit.org>
 
         Move javaScriptConfigurationDirectory SPI from _WKProcessPoolConfiguration to WKProcessPoolPrivate to make it runtime switchable
