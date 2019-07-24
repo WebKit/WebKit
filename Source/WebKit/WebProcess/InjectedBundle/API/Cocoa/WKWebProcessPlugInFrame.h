@@ -27,7 +27,7 @@
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
-#import <JavaScriptCore/JSContext.h>
+#import <JavaScriptCore/JavaScriptCore.h>
 
 @class _WKFrameHandle;
 @class WKWebProcessPlugInHitTestResult;

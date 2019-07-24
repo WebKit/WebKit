@@ -1,3 +1,16 @@
+2019-07-24  Tim Horton  <timothy_horton@apple.com>
+
+        Module-enabled users of WKWebProcessPlugInFrame.h fail to build; duplicate declaration
+        https://bugs.webkit.org/show_bug.cgi?id=200095
+        <rdar://problem/53512407>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h:
+        Import <JavaScriptCore/JavaScriptCore.h> (the module header) instead of
+        <JavaScriptCore/JSContext.h> directly, otherwise we can end up getting
+        JSContext.h included twice, to the compiler's chagrin.
+
 2019-07-24  Brady Eidson  <beidson@apple.com>
 
         Crash in WebContent process with custom schemes.
