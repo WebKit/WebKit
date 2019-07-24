@@ -94,8 +94,6 @@ public:
 
     ~WebResourceLoadStatisticsStore();
 
-    void didDestroyNetworkSession();
-
     static const OptionSet<WebsiteDataType>& monitoredDataTypes();
 
     WorkQueue& statisticsQueue() { return m_statisticsQueue.get(); }

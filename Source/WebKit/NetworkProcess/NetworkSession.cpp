@@ -107,11 +107,6 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 
 NetworkSession::~NetworkSession()
 {
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (m_resourceLoadStatistics)
-        m_resourceLoadStatistics->didDestroyNetworkSession();
-#endif
-
     m_storageManager->resume();
     m_storageManager->waitUntilTasksFinished();
 }
