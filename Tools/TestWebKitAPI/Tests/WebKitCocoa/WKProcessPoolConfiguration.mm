@@ -105,8 +105,9 @@ TEST(WKProcessPool, JavaScriptConfiguration)
     BOOL result = [contents writeToURL:[tempDir URLByAppendingPathComponent:@"JSC.config"] atomically:YES];
     EXPECT_TRUE(result);
 
-    auto webView = adoptNS([[WKWebView alloc] init]);
-    [webView configuration].processPool._javaScriptConfigurationDirectory = tempDir;
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().processPool._javaScriptConfigurationDirectory = tempDir;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
     [webView loadHTMLString:@"<html>hello</html>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
 
     NSString *path = [tempDir URLByAppendingPathComponent:@"Log.txt"].path;

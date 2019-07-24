@@ -1,3 +1,13 @@
+2019-07-23  Alex Christensen  <achristensen@webkit.org>
+
+        Fix iOS API test after r247759
+        https://bugs.webkit.org/show_bug.cgi?id=200045
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKProcessPoolConfiguration.mm:
+        (TEST):
+        In the iOS simulator, the WebProcess was being started before we were setting the value on the WKProcessPool.
+        To fix this, set the value on the WKProcessPool before making the WKWebView.  This makes the test always pass on Mac and iOS.
+
 2019-07-23  Keith Rollin  <krollin@apple.com>
 
         Remove rest of NavigatorContentUtils support
