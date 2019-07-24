@@ -1,3 +1,28 @@
+2019-07-23  Alex Christensen  <achristensen@webkit.org>
+
+        Move javaScriptConfigurationDirectory SPI from _WKProcessPoolConfiguration to WKProcessPoolPrivate to make it runtime switchable
+        https://bugs.webkit.org/show_bug.cgi?id=200045
+
+        Reviewed by Mark Lam.
+
+        This allows me to maintain the status quo in Safari.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _javaScriptConfigurationDirectory]):
+        (-[WKProcessPool _setJavaScriptConfigurationDirectory:]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration javaScriptConfigurationDirectory]): Deleted.
+        (-[_WKProcessPoolConfiguration setJavaScriptConfigurationDirectory:]): Deleted.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::legacyWebsiteDataStoreConfiguration):
+        (WebKit::WebProcessPool::sendWebProcessDataStoreParameters):
+        * UIProcess/WebProcessPool.h:
+
 2019-07-23  Russell Epstein  <repstein@apple.com>
 
         Unreviewed, rolling out r247745.

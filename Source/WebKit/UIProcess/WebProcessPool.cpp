@@ -220,7 +220,6 @@ static Ref<WebsiteDataStoreConfiguration> legacyWebsiteDataStoreConfiguration(AP
     configuration->setIndexedDBDatabaseDirectory(String(processPoolConfiguration.indexedDBDatabaseDirectory()));
     configuration->setResourceLoadStatisticsDirectory(String(processPoolConfiguration.resourceLoadStatisticsDirectory()));
     configuration->setNetworkCacheDirectory(String(processPoolConfiguration.diskCacheDirectory()));
-    configuration->setJavaScriptConfigurationDirectory(String(processPoolConfiguration.javaScriptConfigurationDirectory()));
 
     return configuration;
 }
@@ -893,9 +892,9 @@ void WebProcessPool::sendWebProcessDataStoreParameters(WebProcessProxy& process,
         SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaKeyStorageDirectory, SandboxExtension::Type::ReadWrite, parameters.mediaKeyStorageDirectoryExtensionHandle);
 
     
-    if (auto& directory = configuration().javaScriptConfigurationDirectory(); !directory.isEmpty())
-        parameters.javaScriptConfigurationDirectory = directory;
-    if (javaScriptConfigurationFileEnabled())
+    if (!m_javaScriptConfigurationDirectory.isEmpty())
+        parameters.javaScriptConfigurationDirectory = m_javaScriptConfigurationDirectory;
+    else if (javaScriptConfigurationFileEnabled())
         parameters.javaScriptConfigurationDirectory = websiteDataStore.resolvedJavaScriptConfigurationDirectory();
     if (!parameters.javaScriptConfigurationDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(parameters.javaScriptConfigurationDirectory, SandboxExtension::Type::ReadWrite, parameters.javaScriptConfigurationDirectoryExtensionHandle);

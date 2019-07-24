@@ -114,9 +114,6 @@ public:
     const WTF::String& resourceLoadStatisticsDirectory() const { return m_resourceLoadStatisticsDirectory; }
     void setResourceLoadStatisticsDirectory(const WTF::String& resourceLoadStatisticsDirectory) { m_resourceLoadStatisticsDirectory = resourceLoadStatisticsDirectory; }
 
-    const WTF::String& javaScriptConfigurationDirectory() const { return m_javaScriptConfigurationDirectory; }
-    void setJavaScriptConfigurationDirectory(const WTF::String& javaScriptConfigurationDirectory) { m_javaScriptConfigurationDirectory = javaScriptConfigurationDirectory; }
-
     const Vector<WTF::String>& cachePartitionedURLSchemes() { return m_cachePartitionedURLSchemes; }
     void setCachePartitionedURLSchemes(Vector<WTF::String>&& cachePartitionedURLSchemes) { m_cachePartitionedURLSchemes = WTFMove(cachePartitionedURLSchemes); }
 
@@ -205,7 +202,6 @@ private:
     WTF::String m_webSQLDatabaseDirectory;
     WTF::String m_mediaKeysStorageDirectory;
     WTF::String m_resourceLoadStatisticsDirectory;
-    WTF::String m_javaScriptConfigurationDirectory;
     Vector<WTF::String> m_cachePartitionedURLSchemes;
     Vector<WTF::String> m_alwaysRevalidatedURLSchemes;
     Vector<WTF::CString> m_additionalReadAccessAllowedPaths;

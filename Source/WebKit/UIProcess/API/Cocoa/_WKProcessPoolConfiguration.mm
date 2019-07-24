@@ -110,18 +110,6 @@
     return _processPoolConfiguration->setAttrStyleEnabled(enabled);
 }
 
-- (NSURL *)javaScriptConfigurationDirectory
-{
-    return [NSURL fileURLWithPath:_processPoolConfiguration->javaScriptConfigurationDirectory() isDirectory:YES];
-}
-
-- (void)setJavaScriptConfigurationDirectory:(NSURL *)directory
-{
-    if (directory && ![directory isFileURL])
-        [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", directory];
-    _processPoolConfiguration->setJavaScriptConfigurationDirectory(directory.path);
-}
-
 - (NSArray<NSURL *> *)additionalReadAccessAllowedURLs
 {
     auto paths = _processPoolConfiguration->additionalReadAccessAllowedPaths();
