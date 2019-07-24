@@ -107,9 +107,24 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 
 NetworkSession::~NetworkSession()
 {
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    destroyResourceLoadStatistics();
+#endif
+
     m_storageManager->resume();
     m_storageManager->waitUntilTasksFinished();
 }
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+void NetworkSession::destroyResourceLoadStatistics()
+{
+    if (!m_resourceLoadStatistics)
+        return;
+
+    m_resourceLoadStatistics->didDestroyNetworkSession();
+    m_resourceLoadStatistics = nullptr;
+}
+#endif
 
 void NetworkSession::invalidateAndCancel()
 {
@@ -129,7 +144,7 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
 {
     ASSERT(!m_isInvalidated);
     if (!enable) {
-        m_resourceLoadStatistics = nullptr;
+        destroyResourceLoadStatistics();
         return;
     }
 

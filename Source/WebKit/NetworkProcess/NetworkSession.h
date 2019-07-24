@@ -116,6 +116,10 @@ public:
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    void destroyResourceLoadStatistics();
+#endif
+
     PAL::SessionID m_sessionID;
     Ref<NetworkProcess> m_networkProcess;
     HashSet<NetworkDataTask*> m_dataTaskSet;
