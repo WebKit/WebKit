@@ -2332,6 +2332,12 @@ bool AccessibilityUIElement::replaceTextInRange(JSStringRef, int, int)
     return false;
 }
 
+bool AccessibilityUIElement::insertText(JSStringRef)
+{
+    notImplemented();
+    return false;
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
 {
     notImplemented();

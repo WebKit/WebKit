@@ -991,6 +991,12 @@ bool AccessibilityUIElement::replaceTextInRange(JSStringRef, int, int)
     return false;
 }
 
+bool AccessibilityUIElement::insertText(JSStringRef)
+{
+    notImplemented();
+    return false;
+}
+
 } // namespace  WTF
 
 #endif // HAVE(ACCESSIBILITY)
