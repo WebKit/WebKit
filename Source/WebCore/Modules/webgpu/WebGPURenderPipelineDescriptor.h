@@ -34,8 +34,10 @@
 
 namespace WebCore {
 
+class GPUErrorScopes;
+
 struct WebGPURenderPipelineDescriptor : WebGPUPipelineDescriptorBase, GPURenderPipelineDescriptorBase {
-    Optional<GPURenderPipelineDescriptor> tryCreateGPURenderPipelineDescriptor() const;
+    Optional<GPURenderPipelineDescriptor> tryCreateGPURenderPipelineDescriptor(GPUErrorScopes&) const;
 
     WebGPUPipelineStageDescriptor vertexStage;
     Optional<WebGPUPipelineStageDescriptor> fragmentStage;

@@ -158,8 +158,10 @@ function runTestsWithDevice(tests) {
             var device = await getBasicDevice();
         } catch (e) { /* WebGPU is not supported. */ }
     
-        for (let name in tests)
-            devicePromiseTest(device, tests[name], name);
+        for (let name in tests) {
+            if (!name.startsWith("_"))
+                devicePromiseTest(device, tests[name], name);
+        }
     });
 }
 

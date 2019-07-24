@@ -1,3 +1,17 @@
+2019-07-23  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Implement errors for GPURenderPipeline creation
+        https://bugs.webkit.org/show_bug.cgi?id=200046
+
+        Reviewed by Myles C. Maxfield.
+
+        Add test to cover reproducible render pipeline creation errors.
+
+        * webgpu/js/webgpu-functions.js:
+        (runTestsWithDevice):
+        * webgpu/render-pipeline-errors-expected.txt: Added.
+        * webgpu/render-pipeline-errors.html: Added.
+
 2019-07-23  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         CanvasRenderingContext2D.setTransfrom() reads only the aliases attributes of DOMMatrix2DInit

@@ -82,9 +82,9 @@ RefPtr<GPUShaderModule> GPUDevice::tryCreateShaderModule(const GPUShaderModuleDe
     return GPUShaderModule::tryCreate(*this, descriptor);
 }
 
-RefPtr<GPURenderPipeline> GPUDevice::tryCreateRenderPipeline(const GPURenderPipelineDescriptor& descriptor) const
+RefPtr<GPURenderPipeline> GPUDevice::tryCreateRenderPipeline(const GPURenderPipelineDescriptor& descriptor, GPUErrorScopes& errorScopes) const
 {
-    return GPURenderPipeline::tryCreate(*this, descriptor);
+    return GPURenderPipeline::tryCreate(*this, descriptor, errorScopes);
 }
 
 RefPtr<GPUComputePipeline> GPUDevice::tryCreateComputePipeline(const GPUComputePipelineDescriptor& descriptor, Ref<GPUErrorScopes>&& errorScopes) const

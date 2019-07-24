@@ -43,7 +43,10 @@ public:
 
     void pushErrorScope(GPUErrorFilter);
     Optional<GPUError> popErrorScope(String& failMessage);
+
     void generateError(const String&, GPUErrorFilter = GPUErrorFilter::Validation);
+    void generatePrefixedError(const String&, GPUErrorFilter = GPUErrorFilter::Validation);
+    void setErrorPrefix(const String& prefix) { m_prefix = prefix; }
 
 private:
     struct ErrorScope {
@@ -54,6 +57,7 @@ private:
     GPUErrorScopes() = default;
 
     Vector<ErrorScope> m_errorScopes;
+    String m_prefix;
 };
 
 } // namespace WebCore

@@ -78,7 +78,7 @@ public:
     Ref<GPUPipelineLayout> createPipelineLayout(GPUPipelineLayoutDescriptor&&) const;
 
     RefPtr<GPUShaderModule> tryCreateShaderModule(const GPUShaderModuleDescriptor&) const;
-    RefPtr<GPURenderPipeline> tryCreateRenderPipeline(const GPURenderPipelineDescriptor&) const;
+    RefPtr<GPURenderPipeline> tryCreateRenderPipeline(const GPURenderPipelineDescriptor&, GPUErrorScopes&) const;
     RefPtr<GPUComputePipeline> tryCreateComputePipeline(const GPUComputePipelineDescriptor&, Ref<GPUErrorScopes>&&) const;
 
     RefPtr<GPUCommandBuffer> tryCreateCommandBuffer() const;

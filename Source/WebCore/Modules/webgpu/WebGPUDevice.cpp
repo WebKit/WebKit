@@ -154,11 +154,13 @@ Ref<WebGPUShaderModule> WebGPUDevice::createShaderModule(const WebGPUShaderModul
 
 Ref<WebGPURenderPipeline> WebGPUDevice::createRenderPipeline(const WebGPURenderPipelineDescriptor& descriptor) const
 {
-    auto gpuDescriptor = descriptor.tryCreateGPURenderPipelineDescriptor();
+    m_errorScopes->setErrorPrefix("GPUDevice.createRenderPipeline(): ");
+
+    auto gpuDescriptor = descriptor.tryCreateGPURenderPipelineDescriptor(m_errorScopes);
     if (!gpuDescriptor)
         return WebGPURenderPipeline::create(nullptr);
 
-    auto pipeline = m_device->tryCreateRenderPipeline(*gpuDescriptor);
+    auto pipeline = m_device->tryCreateRenderPipeline(*gpuDescriptor, m_errorScopes);
     return WebGPURenderPipeline::create(WTFMove(pipeline));
 }
 

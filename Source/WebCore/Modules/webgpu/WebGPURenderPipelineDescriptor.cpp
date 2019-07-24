@@ -28,11 +28,11 @@
 
 #if ENABLE(WEBGPU)
 
-#include "Logging.h"
+#include "GPUErrorScopes.h"
 
 namespace WebCore {
 
-Optional<GPURenderPipelineDescriptor> WebGPURenderPipelineDescriptor::tryCreateGPURenderPipelineDescriptor() const
+Optional<GPURenderPipelineDescriptor> WebGPURenderPipelineDescriptor::tryCreateGPURenderPipelineDescriptor(GPUErrorScopes& errorScopes) const
 {
     auto pipelineLayout = layout ? makeRefPtr(layout->pipelineLayout()) : nullptr;
 
@@ -43,7 +43,7 @@ Optional<GPURenderPipelineDescriptor> WebGPURenderPipelineDescriptor::tryCreateG
         fragment = fragmentStage->tryCreateGPUPipelineStageDescriptor();
 
     if (!vertex || (fragmentStage && !fragment)) {
-        LOG(WebGPU, "WebGPUDevice::createRenderPipeline(): Invalid GPUPipelineStageDescriptor!");
+        errorScopes.generatePrefixedError("Invalid GPUPipelineStageDescriptor!");
         return WTF::nullopt;
     }
 

@@ -1,3 +1,39 @@
+2019-07-23  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Implement errors for GPURenderPipeline creation
+        https://bugs.webkit.org/show_bug.cgi?id=200046
+
+        Reviewed by Myles C. Maxfield.
+
+        Replacing error logging in GPURenderPipeline creation with GPUError generation. 
+        Update GPUErrorScopes to re-use an error message prefix for less boiler-plate.
+
+        Test: webgpu/render-pipeline-errors.html
+
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createRenderPipeline const):
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.cpp:
+        (WebCore::WebGPURenderPipelineDescriptor::tryCreateGPURenderPipelineDescriptor const):
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.h:
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::tryCreateRenderPipeline const):
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/GPUErrorScopes.cpp:
+        (WebCore::GPUErrorScopes::generatePrefixedError):
+        * platform/graphics/gpu/GPUErrorScopes.h:
+        (WebCore::GPUErrorScopes::setErrorPrefix):
+        * platform/graphics/gpu/GPURenderPipeline.h:
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::tryCreateMtlDepthStencilState):
+        (WebCore::trySetVertexInput):
+        (WebCore::trySetColorStates):
+        (WebCore::trySetMetalFunctions):
+        (WebCore::trySetFunctions):
+        (WebCore::convertRenderPipelineDescriptor):
+        (WebCore::tryCreateMtlRenderPipelineState):
+        (WebCore::GPURenderPipeline::tryCreate):
+        (WebCore::GPURenderPipeline::GPURenderPipeline):
+
 2019-07-23  Konstantin Tokarev  <annulen@yandex.ru>
 
         ImageDecoderDirect2D::hotSpot() should return WTF::nullopt instead of default constructed value

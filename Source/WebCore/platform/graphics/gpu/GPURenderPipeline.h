@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUObjectBase.h"
 #include "GPURenderPipelineDescriptor.h"
 #include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
@@ -45,9 +46,9 @@ class GPUDevice;
 using PlatformRenderPipeline = MTLRenderPipelineState;
 using PlatformRenderPipelineSmartPtr = RetainPtr<MTLRenderPipelineState>;
 
-class GPURenderPipeline : public RefCounted<GPURenderPipeline> {
+class GPURenderPipeline : public GPUObjectBase {
 public:
-    static RefPtr<GPURenderPipeline> tryCreate(const GPUDevice&, const GPURenderPipelineDescriptor&);
+    static RefPtr<GPURenderPipeline> tryCreate(const GPUDevice&, const GPURenderPipelineDescriptor&, GPUErrorScopes&);
 
 #if USE(METAL)
     MTLDepthStencilState *depthStencilState() const { return m_depthStencilState.get(); }
@@ -58,7 +59,7 @@ public:
 
 private:
 #if USE(METAL)
-    GPURenderPipeline(RetainPtr<MTLDepthStencilState>&&, PlatformRenderPipelineSmartPtr&&, GPUPrimitiveTopology, Optional<GPUIndexFormat>);
+    GPURenderPipeline(RetainPtr<MTLDepthStencilState>&&, PlatformRenderPipelineSmartPtr&&, GPUPrimitiveTopology, Optional<GPUIndexFormat>, GPUErrorScopes&);
 
     RetainPtr<MTLDepthStencilState> m_depthStencilState;
 #endif // USE(METAL)
