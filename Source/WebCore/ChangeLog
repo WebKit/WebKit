@@ -1,3 +1,15 @@
+2019-07-24  Jer Noble  <jer.noble@apple.com>
+
+        Add per-document autoplay quirk for netflix.com.
+        https://bugs.webkit.org/show_bug.cgi?id=200058
+
+        Reviewed by Eric Carlson.
+
+        Opt netflix.com into the desktop-style per-document autoplay quirk.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::needsPerDocumentAutoplayBehavior const):
+
 2019-07-24  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer] Don't crash with empty video src

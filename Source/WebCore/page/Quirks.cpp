@@ -103,7 +103,8 @@ bool Quirks::needsPerDocumentAutoplayBehavior() const
     ASSERT(m_document == &m_document->topDocument());
     return needsQuirks() && allowedAutoplayQuirks(*m_document).contains(AutoplayQuirk::PerDocumentAutoplayBehavior);
 #else
-    return false;
+    auto host = m_document->topDocument().url().host();
+    return equalLettersIgnoringASCIICase(host, "netflix.com") || host.endsWithIgnoringASCIICase(".netflix.com");
 #endif
 }
 
