@@ -1,3 +1,17 @@
+2019-07-24  Brady Eidson  <beidson@apple.com>
+
+        Crash in WebContent process with custom schemes.
+        <rdar://problem/52968793> and https://bugs.webkit.org/show_bug.cgi?id=200062
+
+        Reviewed by Andy Estes.
+
+        Almost everywhere in WebURLSchemeTaskProxy where we call processNextPendingTask() we first protect the task with a ref.
+        But not in didReceiveData.
+        So lets do that.
+
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.cpp:
+        (WebKit::WebURLSchemeTaskProxy::didReceiveData): Protect this.
+
 2019-07-24  Alex Christensen  <achristensen@webkit.org>
 
         Null check CompletionHandler in WebPreviewLoaderClient::didReceivePassword
