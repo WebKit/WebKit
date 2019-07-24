@@ -99,7 +99,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
         this._renderRepeatCount();
 
         if (this._message.type === WI.ConsoleMessage.MessageType.Image) {
-            this._element.classList.add("console-image-container");
+            this._element.classList.add("console-image");
             this._element.addEventListener("contextmenu", this._handleContextMenu.bind(this));
         }
     }
@@ -256,7 +256,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
                         args = args.concat(this._message.parameters);
                 }
                 this._appendFormattedArguments(element, args);
-                break;
+                return;
 
             case WI.ConsoleMessage.MessageType.Assert:
                 var args = [WI.UIString("Assertion Failed")];
@@ -268,54 +268,74 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
                         args = args.concat(this._message.parameters);
                 }
                 this._appendFormattedArguments(element, args);
-                break;
+                return;
 
             case WI.ConsoleMessage.MessageType.Dir:
                 var obj = this._message.parameters ? this._message.parameters[0] : undefined;
                 this._appendFormattedArguments(element, ["%O", obj]);
-                break;
+                return;
 
             case WI.ConsoleMessage.MessageType.Table:
                 var args = this._message.parameters;
                 element.appendChild(this._formatParameterAsTable(args));
                 this._extraParameters = null;
-                break;
+                return;
 
             case WI.ConsoleMessage.MessageType.StartGroup:
             case WI.ConsoleMessage.MessageType.StartGroupCollapsed:
                 var args = this._message.parameters || [this._message.messageText || WI.UIString("Group")];
                 this._formatWithSubstitutionString(args, element);
                 this._extraParameters = null;
-                break;
+                return;
 
             case WI.ConsoleMessage.MessageType.Timing: {
                 let args = [this._message.messageText];
                 if (this._extraParameters)
                     args = args.concat(this._extraParameters);
                 this._appendFormattedArguments(element, args);
-                break;
+                return;
             }
 
             case WI.ConsoleMessage.MessageType.Image: {
-                let img = element.appendChild(document.createElement("img"));
-                img.classList.add("console-image", "show-grid");
-                img.src = this._message.messageText;
-                img.setAttribute("filename", WI.FileUtilities.screenshotString() + ".png");
-                img.addEventListener("load", (event) => {
-                    if (img.width >= img.height)
-                        img.width = img.width / window.devicePixelRatio;
-                    else
-                        img.height = img.height / window.devicePixelRatio;
-                });
-                break;
-            }
+                if (this._message.level === WI.ConsoleMessage.MessageLevel.Log) {
+                    if (this._message.parameters.length > 1) {
+                        this._appendFormattedArguments(element, this._message.parameters.slice(1));
 
-            default:
-                var args = this._message.parameters || [this._message.messageText];
-                this._appendFormattedArguments(element, args);
+                        element.appendChild(document.createElement("hr"));
+                    }
+
+                    let target = this._message.parameters[0];
+                    if (target === "Viewport")
+                        target = WI.UIString("Viewport");
+                    this._appendFormattedArguments(element, [target]);
+
+                    if (this._message.messageText) {
+                        let img = element.appendChild(document.createElement("img"));
+                        img.classList.add("show-grid");
+                        img.src = this._message.messageText;
+                        img.setAttribute("filename", WI.FileUtilities.screenshotString() + ".png");
+                        img.addEventListener("load", (event) => {
+                            if (img.width >= img.height)
+                                img.width = img.width / window.devicePixelRatio;
+                            else
+                                img.height = img.height / window.devicePixelRatio;
+                        });
+                    }
+                    return;
+                }
+
+                if (this._message.level === WI.ConsoleMessage.MessageLevel.Error) {
+                    let args = [this._message.messageText];
+                    if (this._extraParameters)
+                        args = args.concat(this._extraParameters);
+                    this._appendFormattedArguments(element, args);
+                    return;
+                }
+
+                console.assert();
                 break;
             }
-            return;
+            }
         }
 
         // FIXME: Better handle WI.ConsoleMessage.MessageSource.Network once it has request info.
@@ -944,7 +964,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
 
     _handleContextMenu(event)
     {
-        let image = event.target.closest(".console-image");
+        let image = event.target.closest(".console-image > .console-message-body > img");
         if (!image)
             return;
 

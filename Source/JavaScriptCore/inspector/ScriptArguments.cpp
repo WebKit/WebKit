@@ -66,7 +66,7 @@ JSC::ExecState* ScriptArguments::globalState() const
     return nullptr;
 }
 
-bool ScriptArguments::getFirstArgumentAsString(String& result)
+bool ScriptArguments::getFirstArgumentAsString(String& result) const
 {
     if (!argumentCount())
         return false;

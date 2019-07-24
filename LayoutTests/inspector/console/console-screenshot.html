@@ -4,17 +4,15 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
 
-function createDetachedTest3()
+function createDetachedTest()
 {
     let div = document.createElement("div");
-    div.id = "test3";
+    div.id = "detached";
     return div;
 }
 
 function test()
 {
-    InspectorTest.debug();
-
     let suite = InspectorTest.createAsyncSuite("console.screenshot");
 
     function addTest({name, expression, imageMessageAddedCallback, shouldError}) {
@@ -48,37 +46,49 @@ function test()
     }
 
     addTest({
-        name: "console.screenshot.SingleNode",
-        expression: `console.screenshot(document.querySelector("#test1"))`,
+        name: "console.screenshot.Node.SingleArgument",
+        expression: `console.screenshot(document.querySelector("#testNode"))`,
         async imageMessageAddedCallback(message) {
             InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
 
             let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
-            InspectorTest.assert(img.width === 2, "The image width should be 2px.");
-            InspectorTest.assert(img.height === 2, "The image height should be 2px.");
+            InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
+            InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
         },
     });
 
     addTest({
-        name: "console.screenshot.MultipleNodes", 
-        expression: `console.screenshot(document.querySelector("#test2"), document.querySelector("#test1"))`,
+        name: "console.screenshot.Node.MultipleArguments",
+        expression: `console.screenshot(document.querySelector("#testNode"), "test")`,
         async imageMessageAddedCallback(message) {
             InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
 
             let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
-            InspectorTest.assert(img.width === 2, "The image width should be 2px.");
-            InspectorTest.assert(img.height === 2, "The image height should be 2px.");
+            InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
+            InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
         },
     });
 
     addTest({
-        name: "console.screenshot.DetachedNode",  
-        expression: `console.screenshot(createDetachedTest3())`,
+        name: "console.screenshot.Node.DetachedNonScreenshotable",
+        expression: `console.screenshot(createDetachedTest())`,
         shouldError: true,
     });
 
     addTest({
-        name: "console.screenshot.NoArguments", 
+        name: "console.screenshot.NonScreenshotableTarget",
+        expression: `console.screenshot(42)`,
+        async imageMessageAddedCallback(message) {
+            InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
+
+            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
+            InspectorTest.expectGreaterThan(img.width, 2, "The image width should be greater than 2px.");
+            InspectorTest.expectGreaterThan(img.height, 2, "The image height should be greater than 2px.");
+        },
+    });
+
+    addTest({
+        name: "console.screenshot.NoArguments",
         expression: `console.screenshot()`,
         async imageMessageAddedCallback(message) {
             InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
@@ -95,24 +105,17 @@ function test()
 </head>
 <body onload="runTest()">
     <p>Tests for the console.screenshot API.</p>
-    <div id="test1"></div>
-    <div id="test2"></div>
-    <div id="test3"></div>
+    <div id="testNode"></div>
     <style>
-    #test1 {
+    #testNode {
         width: 2px;
         height: 2px;
         background-color: red;
     }
-    #test2 {
+    #detached {
         width: 2px;
         height: 2px;
         background-color: blue;
-    }
-    #test3 {
-        width: 2px;
-        height: 2px;
-        background-color: green;
     }
     </style>
 </body>

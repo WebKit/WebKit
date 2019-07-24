@@ -71,15 +71,28 @@
     -webkit-user-select: none;
 }
 
-.console-message-body > .console-image {
-    max-width: 500px;
-    max-height: 500px;
-    box-shadow: 1px 2px 6px hsla(0, 0%, 0%, 0.58);
-}
-
 .console-message-body > .show-grid {
     /* Prevents the light blue highlight from being visible in the checkerboard. */
     --checkerboard-light-square: white;
+}
+
+.console-image > .console-message-body > :matches(hr, img) {
+    display: block;
+    margin: 4px 0;
+}
+
+.console-image > .console-message-body > hr {
+    height: 1px;
+    background-image: linear-gradient(to right, var(--border-color) 50%, transparent 50%);
+    background-size: 10px 1px;
+    background-repeat: repeat-x;
+    border: none;
+}
+
+.console-image > .console-message-body > img {
+    max-width: 500px;
+    max-height: 500px;
+    box-shadow: 1px 2px 6px hsla(0, 0%, 0%, 0.5);
 }
 
 .console-message.expandable .console-top-level-message::before {
@@ -193,7 +206,7 @@ body[dir=rtl] .console-message.expandable .console-top-level-message::before {
     content: url(../Images/Log.svg);
 }
 
-.console-log-level.console-image-container::before {
+.console-log-level.console-image::before {
     content: url(../Images/ConsoleImage.svg);
 }
 

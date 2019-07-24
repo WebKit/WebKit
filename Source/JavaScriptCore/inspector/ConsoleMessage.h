@@ -75,6 +75,7 @@ public:
 
     void incrementCount() { ++m_repeatCount; }
 
+    const RefPtr<ScriptArguments>& arguments() const { return m_arguments; }
     unsigned argumentCount() const;
 
     bool isEqual(ConsoleMessage* msg) const;

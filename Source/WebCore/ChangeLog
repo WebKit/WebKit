@@ -1,3 +1,29 @@
+2019-07-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: print the target of `console.screenshot` last so the target is the closest item to the image
+        https://bugs.webkit.org/show_bug.cgi?id=199308
+
+        Reviewed by Joseph Pecoraro.
+
+        Right now, evaluating `console.screenshot(document, "test", 1);` will log a message to the
+        console with `#document`, `"test"`, and `1`, all on different lines (togglable by a
+        disclosure triangle) since `#document` isn't stringifiable.
+
+        The ideal situation would be to have `"test"` and `1` logged on the same line, and then have
+        `#document` be in a disclosure triangle. This way, you can "label" your images using
+        additional arguments (e.g. `console.screenshot(document.images[1], "second image");`), as
+        well as provide other data.
+
+        If the only argument was the target, it should print as if it was `console.log(target);`.
+
+        If there are no arguments, it should print the text "Viewport"` before the image.
+
+        Test: inspector/console/console-screenshot.html
+
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::addMessage):
+        (WebCore::PageConsoleClient::screenshot):
+
 2019-07-24  Alicia Boya García  <aboya@igalia.com>
 
         [MSE] Reenqueue after removeCodedFrames()

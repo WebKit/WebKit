@@ -53,7 +53,7 @@ public:
 
     JSC::ExecState* globalState() const;
 
-    bool getFirstArgumentAsString(String& result);
+    bool getFirstArgumentAsString(String& result) const;
     bool isEqual(const ScriptArguments&) const;
 
 private:

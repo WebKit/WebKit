@@ -1194,6 +1194,7 @@ localizedStrings["Very High"] = "Very High";
 localizedStrings["View Image"] = "View Image";
 localizedStrings["View Recording"] = "View Recording";
 localizedStrings["View Shader"] = "View Shader";
+localizedStrings["Viewport"] = "Viewport";
 localizedStrings["Visible"] = "Visible";
 localizedStrings["Waiting"] = "Waiting";
 localizedStrings["Waiting for canvas contexts created by script or CSS."] = "Waiting for canvas contexts created by script or CSS.";

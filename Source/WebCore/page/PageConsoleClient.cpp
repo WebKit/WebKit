@@ -105,11 +105,22 @@ void PageConsoleClient::unmute()
 
 void PageConsoleClient::addMessage(std::unique_ptr<Inspector::ConsoleMessage>&& consoleMessage)
 {
-    if (consoleMessage->source() != MessageSource::CSS && consoleMessage->type() != MessageType::Image && !m_page.usesEphemeralSession()) {
-        m_page.chrome().client().addMessageToConsole(consoleMessage->source(), consoleMessage->level(), consoleMessage->message(), consoleMessage->line(), consoleMessage->column(), consoleMessage->url());
+    if (!m_page.usesEphemeralSession()) {
+        String message;
+        if (consoleMessage->type() == MessageType::Image) {
+            ASSERT(consoleMessage->arguments());
+            consoleMessage->arguments()->getFirstArgumentAsString(message);
+        } else
+            message = consoleMessage->message();
+        m_page.chrome().client().addMessageToConsole(consoleMessage->source(), consoleMessage->level(), message, consoleMessage->line(), consoleMessage->column(), consoleMessage->url());
 
-        if (m_page.settings().logsPageMessagesToSystemConsoleEnabled() || shouldPrintExceptions())
-            ConsoleClient::printConsoleMessage(MessageSource::ConsoleAPI, MessageType::Log, consoleMessage->level(), consoleMessage->message(), consoleMessage->url(), consoleMessage->line(), consoleMessage->column());
+        if (UNLIKELY(m_page.settings().logsPageMessagesToSystemConsoleEnabled() || shouldPrintExceptions())) {
+            if (consoleMessage->type() == MessageType::Image) {
+                ASSERT(consoleMessage->arguments());
+                ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, MessageType::Log, consoleMessage->level(), consoleMessage->arguments()->globalState(), *consoleMessage->arguments());
+            } else
+                ConsoleClient::printConsoleMessage(MessageSource::ConsoleAPI, MessageType::Log, consoleMessage->level(), consoleMessage->message(), consoleMessage->url(), consoleMessage->line(), consoleMessage->column());
+        }
     }
 
     InspectorInstrumentation::addMessageToConsole(m_page, WTFMove(consoleMessage));
@@ -261,44 +272,41 @@ void PageConsoleClient::recordEnd(JSC::ExecState* state, Ref<ScriptArguments>&& 
 
 void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&& arguments)
 {
-    FAST_RETURN_IF_NO_FRONTENDS(void());
+    String dataURL;
+    JSC::JSValue target;
 
-    Frame& frame = m_page.mainFrame();
+    if (arguments->argumentCount()) {
+        auto possibleTarget = arguments->argumentAt(0);
 
-    std::unique_ptr<ImageBuffer> snapshot;
+        if (auto* node = JSNode::toWrapped(state->vm(), possibleTarget)) {
+            target = possibleTarget;
+            if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+                if (auto snapshot = WebCore::snapshotNode(m_page.mainFrame(), *node))
+                    dataURL = snapshot->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
+            }
+        }
+    }
 
-    auto* target = objectArgumentAt(arguments, 0);
-    if (target) {
-        auto* node = JSNode::toWrapped(state->vm(), target);
-        if (!node)
+    if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+        if (!target) {
+            // If no target is provided, capture an image of the viewport.
+            IntRect imageRect(IntPoint::zero(), m_page.mainFrame().view()->sizeForVisibleContent());
+            if (auto snapshot = WebCore::snapshotFrameRect(m_page.mainFrame(), imageRect, SnapshotOptionsInViewCoordinates))
+                dataURL = snapshot->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
+        }
+
+        if (dataURL.isEmpty()) {
+            addMessage(std::make_unique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Image, MessageLevel::Error, "Could not capture screenshot"_s, WTFMove(arguments)));
             return;
-
-        snapshot = WebCore::snapshotNode(frame, *node);
-    } else {
-        // If no target is provided, capture an image of the viewport.
-        IntRect imageRect(IntPoint::zero(), frame.view()->sizeForVisibleContent());
-        snapshot = WebCore::snapshotFrameRect(frame, imageRect, SnapshotOptionsInViewCoordinates);
+        }
     }
 
-    if (!snapshot) {
-        addMessage(std::make_unique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Error, "Could not capture screenshot"_s, arguments.copyRef()));
-        return;
-    }
-
-    String dataURL = snapshot->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
-    if (dataURL.isEmpty()) {
-        addMessage(std::make_unique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Error, "Could not capture screenshot"_s, arguments.copyRef()));
-        return;
-    }
-
-    if (target) {
-        // Log the argument before sending the image for it.
-        String messageText;
-        arguments->getFirstArgumentAsString(messageText);
-        addMessage(std::make_unique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Log, messageText, arguments.copyRef()));
-    }
-
-    addMessage(std::make_unique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Image, MessageLevel::Log, dataURL));
+    Vector<JSC::Strong<JSC::Unknown>> adjustedArguments;
+    adjustedArguments.append({ state->vm(), target ? target : JSC::jsNontrivialString(state, "Viewport"_s) });
+    for (size_t i = (!target ? 0 : 1); i < arguments->argumentCount(); ++i)
+        adjustedArguments.append({ state->vm(), arguments->argumentAt(i) });
+    arguments = ScriptArguments::create(*state, WTFMove(adjustedArguments));
+    addMessage(std::make_unique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Image, MessageLevel::Log, dataURL, WTFMove(arguments)));
 }
 
 } // namespace WebCore
