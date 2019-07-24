@@ -1,3 +1,21 @@
+2019-07-24  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer] Don't crash with empty video src
+        https://bugs.webkit.org/show_bug.cgi?id=200081
+
+        When a <video> element is set to load empty or about:blank, a player is still
+        created, but no pipeline is loaded. This patch fixes some assertion errors that
+        manifested in that case.
+
+        Reviewed by Philippe Normand.
+
+        Test: imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_crash_empty_src.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::loadFull):
+        (WebCore::MediaPlayerPrivateGStreamer::platformDuration const):
+        (WebCore::MediaPlayerPrivateGStreamer::paused const):
+
 2019-07-23  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Implement errors for GPURenderPipeline creation

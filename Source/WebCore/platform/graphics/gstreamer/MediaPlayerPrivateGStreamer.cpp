@@ -280,8 +280,10 @@ void MediaPlayerPrivateGStreamer::loadFull(const String& urlString, const String
     }
 
     URL url(URL(), urlString);
-    if (url.protocolIsAbout())
+    if (url.protocolIsAbout()) {
+        loadingFailed(MediaPlayer::FormatError, MediaPlayer::HaveNothing, true);
         return;
+    }
 
     if (!m_pipeline)
         createGSTPlayBin(url, pipelineName);
@@ -480,6 +482,9 @@ void MediaPlayerPrivateGStreamer::pause()
 
 MediaTime MediaPlayerPrivateGStreamer::platformDuration() const
 {
+    if (!m_pipeline)
+        return MediaTime::invalidTime();
+
     GST_TRACE_OBJECT(pipeline(), "errorOccured: %s, pipeline state: %s", boolForPrinting(m_errorOccured), gst_element_state_get_name(GST_STATE(m_pipeline.get())));
     if (m_errorOccured)
         return MediaTime::invalidTime();
@@ -643,6 +648,9 @@ void MediaPlayerPrivateGStreamer::updatePlaybackRate()
 
 bool MediaPlayerPrivateGStreamer::paused() const
 {
+    if (!m_pipeline)
+        return true;
+
     if (m_isEndReached) {
         GST_DEBUG_OBJECT(pipeline(), "Ignoring pause at EOS");
         return true;
