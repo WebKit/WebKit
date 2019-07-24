@@ -1,3 +1,25 @@
+2019-07-24  Zhifei Fang  <zhifei_fang@apple.com>
+
+        run-javascriptcore-tests won't report test results for testmasm, testair, testb3, testdfg and test api
+        https://bugs.webkit.org/show_bug.cgi?id=199489
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (RunJavaScriptCoreTests.start): Skip run jsc test binaries for mips, armv7, aarch64.
+        (RunJavaScriptCoreTests.countFailures): Pick up the test binaires failure to total failures count
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+        * Scripts/run-javascriptcore-tests: The script now failed wether the run-jsc-stress-tests failed or test binaries failed.
+        (runTest): Record test binary failure
+        (reportTestFailures): Report test binary failure
+        (runJSCStressTests): 
+        * Scripts/webkitpy/common/config/ports.py: Skip run jsc test binaries for those need to run remotely
+        (JscOnlyPort.build_jsc_command):
+        (JscOnlyPort):
+        (JscOnlyPort.run_javascriptcore_tests_command):
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+        (DeprecatedPortTest.test_jsconly_port):
+
 2019-07-24  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: settings().textAutosizingEnabled() && settings().textAutosizingUsesIdempotentMode() in WebCore::Page::recomputeTextAutoSizingInAllFrames()

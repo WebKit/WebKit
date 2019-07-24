@@ -331,6 +331,10 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
 
     def start(self):
         platform = self.getProperty('platform')
+        architecture = self.getProperty("architecture")
+        # Currently run-javascriptcore-test doesn't support run javascript core test binaries list below remotely
+        if architecture in ['mips', 'armv7', 'aarch64']:
+            self.command += ['--no-testmasm', '--no-testair', '--no-testb3', '--no-testdfg', '--no-testapi']
         # Linux bots have currently problems with JSC tests that try to use large amounts of memory.
         # Check: https://bugs.webkit.org/show_bug.cgi?id=175140
         if platform in ('gtk', 'wpe'):
@@ -344,16 +348,21 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
 
     def countFailures(self, cmd):
         logText = cmd.logs['stdio'].getText()
+        count = 0
 
         match = re.search(r'^Results for JSC stress tests:\r?\n\s+(\d+) failure', logText, re.MULTILINE)
         if match:
-            return int(match.group(1))
+            count += int(match.group(1))
+
+        match = re.search(r'Results for JSC test binaries:\r?\n\s+(\d+) failure', logText, re.MULTILINE)
+        if match:
+            count += int(match.group(1))
 
         match = re.search(r'^Results for Mozilla tests:\r?\n\s+(\d+) regression', logText, re.MULTILINE)
         if match:
-            return int(match.group(1))
+            count += int(match.group(1))
 
-        return 0
+        return count
 
 
 class RunRemoteJavaScriptCoreTests(RunJavaScriptCoreTests):

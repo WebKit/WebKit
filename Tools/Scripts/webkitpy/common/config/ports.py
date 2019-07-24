@@ -243,3 +243,15 @@ class JscOnlyPort(DeprecatedPort):
         command = self.script_shell_command("build-jsc")
         command.append("--jsc-only")
         return self._append_build_style_flag(command, build_style)
+
+    def run_javascriptcore_tests_command(self, build_style=None):
+        command = self.script_shell_command("run-javascriptcore-tests")
+        command.append("--no-fail-fast")
+        command.append("--no-testmasm")
+        command.append("--no-testair")
+        command.append("--no-testb3")
+        command.append("--no-testdfg")
+        command.append("--no-testapi")
+        if 'JSCTESTS_OPTIONS' in os.environ:
+            command += os.environ['JSCTESTS_OPTIONS'].split()
+        return self._append_build_style_flag(command, build_style)
