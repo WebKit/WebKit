@@ -1,5 +1,12 @@
 2019-07-24  Alicia Boya García  <aboya@igalia.com>
 
+        Unreviewed: Added missing expectation file for video_crash_empty_src.html
+        https://bugs.webkit.org/show_bug.cgi?id=200081
+
+        * web-platform-tests/html/semantics/embedded-content/the-video-element/video_crash_empty_src-expected.txt: Added.
+
+2019-07-24  Alicia Boya García  <aboya@igalia.com>
+
         [GStreamer] Don't crash with empty video src
         https://bugs.webkit.org/show_bug.cgi?id=200081
 
