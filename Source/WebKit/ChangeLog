@@ -1,3 +1,14 @@
+2019-07-24  Alex Christensen  <achristensen@webkit.org>
+
+        Null check CompletionHandler in WebPreviewLoaderClient::didReceivePassword
+        https://bugs.webkit.org/show_bug.cgi?id=200080
+        <rdar://problem/37275772>
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/WebCoreSupport/ios/WebPreviewLoaderClient.cpp:
+        (WebKit::WebPreviewLoaderClient::didReceivePassword):
+
 2019-07-24  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebKit:WTF::Detail::CallableWrapper<WebKit::ResourceLoadStatisticsMemoryStore::updateCookieBlocking(WTF::CompletionHandler<void ()>&&)::$_32::operator()()::'lambda'(), void>::call
