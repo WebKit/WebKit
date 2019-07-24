@@ -1,3 +1,40 @@
+2019-07-23  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebKit:WTF::Detail::CallableWrapper<WebKit::ResourceLoadStatisticsMemoryStore::updateCookieBlocking(WTF::CompletionHandler<void ()>&&)::$_32::operator()()::'lambda'(), void>::call
+        https://bugs.webkit.org/show_bug.cgi?id=200071
+        <rdar://problem/53335583>
+
+        Reviewed by Brent Fulgham and Youenn Fablet.
+
+        The WebResourceLoadStatisticsStore is a main thread object. In its destructor, it was dispatching
+        to the background queue to destroy the m_statisticsStore / m_persistentStorage data members, which
+        live on the background queue. It would then synchronously wait for the background queue to finish
+        destroying them. The idea was to guarantee that the ResourceLoadStatisticsMemoryStore and the
+        ResourceLoadStatisticsPersistentStorage would never outlive the WebResourceLoadStatisticsStore,
+        given that they keep a raw pointer back to the WebResourceLoadStatisticsStore (via m_store data
+        member).
+
+        The issue is that *while* the WebResourceLoadStatisticsStore destructor is running on the main
+        thread, the background queue may be running code in ResourceLoadStatisticsMemoryStore or
+        ResourceLoadStatisticsPersistentStorage which refs the WebResourceLoadStatisticsStore, even
+        though its ref count has already reached 0. It is actually a common pattern in
+        ResourceLoadStatisticsMemoryStore to call RunLoop::main().dispatch() and ref their m_store in
+        the lambda, so that they can interact with the WebResourceLoadStatisticsStore.
+
+        To address the issue, we now destroy m_statisticsStore / m_persistentStorage *before* the
+        WebResourceLoadStatisticsStore destructor runs. The NetworkSession destructor now calls
+        WebResourceLoadStatisticsStore::didDestroyNetworkSession() which takes care of destroying
+        m_statisticsStore / m_persistentStorage on the background queue, synchronously. The
+        WebResourceLoadStatisticsStore destructor will only run later, once all remaining references
+        to it are gone.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::didDestroyNetworkSession):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::~NetworkSession):
+
 2019-07-23  Alex Christensen  <achristensen@webkit.org>
 
         Move javaScriptConfigurationDirectory SPI from _WKProcessPoolConfiguration to WKProcessPoolPrivate to make it runtime switchable
