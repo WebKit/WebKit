@@ -490,6 +490,10 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         this._mouseDownIndex = NaN;
         this._element.classList.remove("selecting");
 
+        // "copy" and "cut" events won't fire on SpreadsheetCSSStyleDeclarationEditor unless it has text selected.
+        // Placing a text caret inside of a property has no visible effects but it allows the events to fire.
+        this._propertiesEditor.placeTextCaretInFocusedProperty();
+
         window.removeEventListener("mousemove", this._boundHandleWindowMouseMove);
         this._mouseDownPoint = null;
     }

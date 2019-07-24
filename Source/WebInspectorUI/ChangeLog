@@ -1,5 +1,31 @@
 2019-07-23  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Styles: Command-X should cut selected properties
+        https://bugs.webkit.org/show_bug.cgi?id=199341
+
+        Reviewed by Devin Rousso.
+
+        Implement cutting of selected CSS properties in the style editor.
+        Unify cutting and copying logic wherever possible.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.initialLayout):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.placeTextCaretInFocusedProperty): Added.
+        Cut/copy events could only fire on SpreadsheetCSSStyleDeclarationEditor element if it
+        has selection inside of it. Placing text caret at the beginning of the focused property
+        ensures that.
+
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyCopy): Deleted.
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._handleKeyDown):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._copySelectedProperties): Added.
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._removeSelectedProperties): Added.
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._stopSelection):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        Remove old copying logic.
+
+2019-07-23  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Display "Resource has no content" for about:blank iframes instead of an error
         https://bugs.webkit.org/show_bug.cgi?id=198029
 

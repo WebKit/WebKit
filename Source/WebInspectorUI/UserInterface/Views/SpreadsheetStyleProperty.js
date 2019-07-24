@@ -73,8 +73,6 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 this._toggle();
                 this._select();
             }, this._element);
-
-            this._element.copyHandler = this;
         }
     }
 
@@ -334,11 +332,6 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         let matches = matchesName || matchesValue;
         this._contentElement.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInPropertyClassName, !matches);
         return matches;
-    }
-
-    handleCopyEvent(event)
-    {
-        this._delegate.spreadsheetStylePropertyCopy(event, this);
     }
 
     // SpreadsheetTextField delegate
