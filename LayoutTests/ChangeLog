@@ -1,5 +1,12 @@
 2019-07-24  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed test gardening, land expectations for rdar://53324867.
+
+        * platform/ios-12/fast/events/touch/ios/pointer-events-with-modifiers-expected.txt: Copied from LayoutTests/platform/ios/fast/events/touch/ios/pointer-events-with-modifiers-expected.txt.
+        * platform/ios/fast/events/touch/ios/pointer-events-with-modifiers-expected.txt:
+
+2019-07-24  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, update test expectations for Catalina.
 
         * platform/mac/TestExpectations:
