@@ -424,4 +424,12 @@ bool Quirks::needsYouTubeOverflowScrollQuirk() const
 #endif
 }
 
+bool Quirks::shouldAvoidScrollingWhenFocusedContentIsVisible() const
+{
+    if (!needsQuirks())
+        return false;
+
+    return equalLettersIgnoringASCIICase(m_document->url().host(), "www.zillow.com");
+}
+
 }
