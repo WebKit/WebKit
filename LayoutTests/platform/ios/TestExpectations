@@ -3236,8 +3236,6 @@ media/controls-after-reload.html [ Skip ]
 editing/selection/ios/select-non-editable-text-using-keyboard.html [ Skip ]
 editing/selection/ios/select-all-non-editable-text-using-keyboard.html [ Skip ]
 
-webkit.org/b/199472 fast/events/ios/keydown-keyup-keypress-keys-in-non-editable-using-chinese-keyboard.html [ Skip ]
-
 # Dark Mode is iOS 13 and later.
 css-dark-mode [ Pass ]
 css-dark-mode/older-systems [ Skip ]

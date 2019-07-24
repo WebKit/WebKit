@@ -1,3 +1,12 @@
+2019-07-24  Russell Epstein  <repstein@apple.com>
+
+        Remove test expectation for fast/events/ios/keydown-keyup-keypress-keys-in-non-editable-using-chinese-keyboard.html
+        <rdar://problem/52608620>
+
+        Unreviewed Test Gardening.
+
+        * platform/ios/TestExpectations:
+
 2019-07-23  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Implement errors for GPURenderPipeline creation
