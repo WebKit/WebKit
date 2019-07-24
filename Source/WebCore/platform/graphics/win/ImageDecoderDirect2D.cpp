@@ -125,7 +125,7 @@ RepetitionCount ImageDecoderDirect2D::repetitionCount() const
 
 Optional<IntPoint> ImageDecoderDirect2D::hotSpot() const
 {
-    return IntPoint();
+    return WTF::nullopt;
 }
 
 IntSize ImageDecoderDirect2D::frameSizeAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
