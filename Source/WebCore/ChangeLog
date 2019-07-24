@@ -1,5 +1,65 @@
 2019-07-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247746. rdar://problem/53483297
+
+    [iOS] Tapping the search field on a search results page on zillow.com shows and immediately dismisses the keyboard
+    https://bugs.webkit.org/show_bug.cgi?id=200044
+    <rdar://problem/53103732>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    1. The keyboard gets dismissed as the result of scroll event.
+    2. The (horizontal)scroll event is initiated by WebKit as we try to re-center the content.
+    3. The content gets off-centered as the result of the newly constructed drop-down menu which slightly sticks out of the document to the right (layout overflows).
+    
+    It works with shipping version of iOS because _zoomToFocusRect operates on stale viewport information (see r244494 for the progression).
+    This patch applies a site specific quirk to restore shipping behavior.
+    
+    * page/Quirks.cpp:
+    (WebCore::Quirks::shouldAvoidScrollingWhenFocusedContentIsVisible const):
+    * page/Quirks.h:
+    
+    Source/WebKit:
+    
+    * Shared/FocusedElementInformation.cpp:
+    (WebKit::FocusedElementInformation::encode const):
+    (WebKit::FocusedElementInformation::decode):
+    * Shared/FocusedElementInformation.h:
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _zoomToFocusRect:selectionRect:insideFixed:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+    * UIProcess/ios/WKContentViewInteraction.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView _elementDidBlur]):
+    (-[WKContentView _shouldAvoidScrollingWhenFocusedContentIsVisible]):
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::getFocusedElementInformation):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247746 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-23  Zalan Bujtas  <zalan@apple.com>
+
+            [iOS] Tapping the search field on a search results page on zillow.com shows and immediately dismisses the keyboard
+            https://bugs.webkit.org/show_bug.cgi?id=200044
+            <rdar://problem/53103732>
+
+            Reviewed by Wenson Hsieh.
+
+            1. The keyboard gets dismissed as the result of scroll event.
+            2. The (horizontal)scroll event is initiated by WebKit as we try to re-center the content.
+            3. The content gets off-centered as the result of the newly constructed drop-down menu which slightly sticks out of the document to the right (layout overflows).
+
+            It works with shipping version of iOS because _zoomToFocusRect operates on stale viewport information (see r244494 for the progression).
+            This patch applies a site specific quirk to restore shipping behavior.
+
+            * page/Quirks.cpp:
+            (WebCore::Quirks::shouldAvoidScrollingWhenFocusedContentIsVisible const):
+            * page/Quirks.h:
+
+2019-07-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247674. rdar://problem/53483189
 
     [iOS] Fast and complex text codepaths disagree about how to lay out bopomofo with tone marks
