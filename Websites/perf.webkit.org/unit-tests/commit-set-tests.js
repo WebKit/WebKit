@@ -410,8 +410,8 @@ describe('CommitSet', () => {
         it('should describe commit difference', () => {
             assert.equal(CommitSet.diff(oneCommitSet(), commitSetWithAnotherWebKitCommit()), 'WebKit: webkit-commit-0 - webkit-commit-1');
             assert.equal(CommitSet.diff(commitSetWithSVNCommit(), anotherCommitSetWithSVNCommit()), 'WebKit: r12345-r45678');
-            assert.equal(CommitSet.diff(commitSetWithGitCommit(), anotherCommitSetWithGitCommit()), 'WebKit-Git: 13a0590d..2f8dd332');
-            assert.equal(CommitSet.diff(commitSetWithTwoCommits(), anotherCommitSetWithTwoCommits()), 'WebKit: r12345-r45678 WebKit-Git: 13a0590d..2f8dd332');
+            assert.equal(CommitSet.diff(commitSetWithGitCommit(), anotherCommitSetWithGitCommit()), 'WebKit-Git: 13a0590d34f2..2f8dd3321d4f');
+            assert.equal(CommitSet.diff(commitSetWithTwoCommits(), anotherCommitSetWithTwoCommits()), 'WebKit: r12345-r45678 WebKit-Git: 13a0590d34f2..2f8dd3321d4f');
         });
 
         it('should describe commit root and patch difference', () => {

@@ -54,7 +54,7 @@ class CommitLog extends DataModelObject {
         if (parseInt(revision) == revision) // e.g. r12345
             return 'r' + revision;
         if (revision.length == 40) // e.g. git hash
-            return revision.substring(0, 8);
+            return revision.substring(0, 12);
         return revision;
     }
     title() { return this._repository.name() + ' at ' + this.label(); }
@@ -74,7 +74,7 @@ class CommitLog extends DataModelObject {
         if (parseInt(from) == from)// e.g. r12345.
             label = `r${from}-r${this.revision()}`;
         else if (to.length == 40) // e.g. git hash
-            label = `${from.substring(0, 8)}..${to.substring(0, 8)}`;
+            label = `${from.substring(0, 12)}..${to.substring(0, 12)}`;
         else
             label = `${from} - ${to}`;
 
