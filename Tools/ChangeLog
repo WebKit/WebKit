@@ -1,3 +1,21 @@
+2019-07-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [webkitperl] prepare-ChangeLog_unittest/parser_unittests.pl is failing on Windows Perl
+        https://bugs.webkit.org/show_bug.cgi?id=199927
+
+        Reviewed by Alex Christensen.
+
+        convertAbsolutepathToWebKitPath was failing to convert paths on
+        Windows Perl due to path separators mismatch.
+
+        Renamed convertAbsolutepathToWebKitPath to
+        convertAbsolutePathToRelativeUnixPath, and changed it to replace
+        paths to relative Unix paths.
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/parser_unittests.pl:
+        (convertAbsolutePathToRelativeUnixPath): Added.
+        (convertAbsolutepathToWebKitPath): Deleted.
+
 2019-07-23  Alex Christensen  <achristensen@webkit.org>
 
         Fix iOS API test after r247759

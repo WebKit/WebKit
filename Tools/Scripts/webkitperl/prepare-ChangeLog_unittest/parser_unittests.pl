@@ -35,7 +35,7 @@ use lib File::Spec->catdir($FindBin::Bin, "..");
 use LoadAsModule qw(PrepareChangeLog prepare-ChangeLog);
 
 sub captureOutput($);
-sub convertAbsolutepathToWebKitPath($);
+sub convertAbsolutePathToRelativeUnixPath($$);
 sub readTestFiles($);
 
 use constant EXPECTED_RESULTS_SUFFIX => "-expected.txt";
@@ -73,8 +73,8 @@ foreach my $test (@testSet) {
     my @ranges;
     my ($stdout, $stderr) = captureOutput(sub { @ranges = $parser->(\*FH, $test->{inputFile}); });
     close FH;
-    $stdout = convertAbsolutepathToWebKitPath($stdout);
-    $stderr = convertAbsolutepathToWebKitPath($stderr);
+    $stdout = convertAbsolutePathToRelativeUnixPath($stdout, $test->{inputFile});
+    $stderr = convertAbsolutePathToRelativeUnixPath($stderr, $test->{inputFile});
 
     my %actualOutput = (ranges => \@ranges, stdout => $stdout, stderr => $stderr);
     if ($resetResults) {
@@ -130,12 +130,17 @@ sub captureOutput($)
     return ($stdout, $stderr);
 }
 
-sub convertAbsolutepathToWebKitPath($)
+sub convertAbsolutePathToRelativeUnixPath($$)
 {
-    my $string = shift;
-    my $sourceDir = LoadAsModule::sourceDir();
+    my ($string, $path) = @_;
+    my $sourceDir = LoadAsModule::unixPath(LoadAsModule::sourceDir());
+    my $relativeUnixPath = LoadAsModule::unixPath($path);
     $sourceDir .= "/" unless $sourceDir =~ m-/$-;
-    $string =~ s/$sourceDir//g;
+    my $quotedSourceDir = quotemeta($sourceDir);
+    $relativeUnixPath  =~ s/$quotedSourceDir//;
+    my $quotedPath = quotemeta($path);
+    $string =~ s/$quotedPath/$relativeUnixPath/g;
+    $string =~ s/\r//g;
     return $string;
 }
 
