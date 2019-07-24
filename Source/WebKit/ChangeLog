@@ -1,5 +1,9 @@
 2019-07-23  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Revert r247700. rdar://problem/53456070
+
+2019-07-23  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r247701. rdar://problem/53449750
 
     Correct web audio-related crash in seed reports
