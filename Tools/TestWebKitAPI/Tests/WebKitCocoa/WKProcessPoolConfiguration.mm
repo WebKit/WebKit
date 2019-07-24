@@ -84,7 +84,7 @@ TEST(WKProcessPoolConfiguration, Copy)
     EXPECT_EQ([configuration suppressesConnectionTerminationOnSystemChange], [copy suppressesConnectionTerminationOnSystemChange]);
 }
 
-TEST(WKProcessPool, JavaScriptConfiguration)
+TEST(WKProcessPoolConfiguration, JavaScriptConfiguration)
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"CustomPathsTest"] isDirectory:YES];
@@ -105,8 +105,12 @@ TEST(WKProcessPool, JavaScriptConfiguration)
     BOOL result = [contents writeToURL:[tempDir URLByAppendingPathComponent:@"JSC.config"] atomically:YES];
     EXPECT_TRUE(result);
 
-    auto webView = adoptNS([[WKWebView alloc] init]);
-    [webView configuration].processPool._javaScriptConfigurationDirectory = tempDir;
+    auto poolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [poolConfiguration setJavaScriptConfigurationDirectory:tempDir];
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:[[[WKProcessPool alloc] _initWithConfiguration:poolConfiguration.get()] autorelease]];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     [webView loadHTMLString:@"<html>hello</html>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
 
     NSString *path = [tempDir URLByAppendingPathComponent:@"Log.txt"].path;
