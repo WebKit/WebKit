@@ -714,6 +714,7 @@ public:
     virtual void setSelectedTextRange(const PlainTextRange&) { }
     virtual void setValue(const String&) { }
     bool replaceTextInRange(const String&, const PlainTextRange&);
+    bool insertText(const String&);
 
     virtual void setValue(float) { }
     virtual void setSelected(bool) { }

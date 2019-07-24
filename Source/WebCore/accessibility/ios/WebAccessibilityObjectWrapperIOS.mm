@@ -2561,6 +2561,14 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return m_object->replaceTextInRange(string, PlainTextRange(range));
 }
 
+- (BOOL)accessibilityInsertText:(NSString *)text
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+
+    return m_object->insertText(text);
+}
+
 // A convenience method for getting the accessibility objects of a NSRange. Currently used only by DRT.
 - (NSArray *)elementsForRange:(NSRange)range
 {

@@ -75,6 +75,7 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (NSAttributedString *)attributedStringForElement;
 - (NSArray *)elementsForRange:(NSRange)range;
 - (NSString *)selectionRangeString;
+- (BOOL)accessibilityInsertText:(NSString *)text;
 - (CGPoint)accessibilityClickPoint;
 - (void)accessibilityModifySelection:(WebCore::TextGranularity)granularity increase:(BOOL)increase;
 - (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function withContext:(void*)context;
@@ -482,6 +483,11 @@ AccessibilityTextMarkerRange AccessibilityUIElement::selectedTextMarkerRange()
 bool AccessibilityUIElement::replaceTextInRange(JSStringRef, int, int)
 {
     return false;
+}
+
+bool AccessibilityUIElement::insertText(JSStringRef text)
+{
+    return [m_element accessibilityInsertText:[NSString stringWithJSStringRef:text]];
 }
 
 void AccessibilityUIElement::resetSelectedTextMarkerRange()

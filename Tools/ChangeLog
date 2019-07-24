@@ -1,3 +1,78 @@
+2019-07-24  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r247671. rdar://problem/53501836
+
+    Add accessibilityInsertText for text insertion in edit fields.
+    https://bugs.webkit.org/show_bug.cgi?id=199973
+    
+    Patch by Andres Gonzalez <andresg_22@apple.com> on 2019-07-20
+    Reviewed by Chris Fleizach.
+    
+    Source/WebCore:
+    
+    Tests: accessibility/insert-newline.html
+           accessibility/ios-simulator/insert-newline.html
+    
+    Accessibility clients like VoiceOver and Voice Control were entering
+    text in text fields by replacing the entire content of the field
+    (SetValue) and then setting the insertion point to the appropriate
+    offset (SetSelectedTextRange). accessibilityInsertText gives a simpler
+    interface to clients to insert text at the insertion point location.
+    In addition, this provides a workaround for the issue encountered with
+    the previous method when inserting a linebreak.
+    
+    * accessibility/AccessibilityObject.cpp:
+    (WebCore::AccessibilityObject::insertText):
+    * accessibility/AccessibilityObject.h:
+    * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+    (-[WebAccessibilityObjectWrapper accessibilityInsertText:]):
+    * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+    (-[WebAccessibilityObjectWrapper accessibilityInsertText:]):
+    
+    Tools:
+    
+    Glue code to run new LayoutTests.
+    * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+    * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+    * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+    (WTR::AccessibilityUIElement::insertText):
+    * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+    (WTR::AccessibilityUIElement::insertText):
+    * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+    (WTR::AccessibilityUIElement::insertText):
+    * WebKitTestRunner/InjectedBundle/win/AccessibilityUIElementWin.cpp:
+    (WTR::AccessibilityUIElement::insertText):
+    
+    LayoutTests:
+    
+    Tests for inserting a newline in the middle of a text line and checking
+    that the insertion point and text ranges are correct.
+    * accessibility/insert-newline-expected.txt: Added.
+    * accessibility/insert-newline.html: Added.
+    * accessibility/ios-simulator/insert-newline-expected.txt: Added.
+    * accessibility/ios-simulator/insert-newline.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247671 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-20  Andres Gonzalez  <andresg_22@apple.com>
+
+            Add accessibilityInsertText for text insertion in edit fields.
+            https://bugs.webkit.org/show_bug.cgi?id=199973
+
+            Reviewed by Chris Fleizach.
+
+            Glue code to run new LayoutTests.
+            * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+            * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+            * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+            (WTR::AccessibilityUIElement::insertText):
+            * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+            (WTR::AccessibilityUIElement::insertText):
+            * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+            (WTR::AccessibilityUIElement::insertText):
+            * WebKitTestRunner/InjectedBundle/win/AccessibilityUIElementWin.cpp:
+            (WTR::AccessibilityUIElement::insertText):
+
 2019-07-24  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/53483188
