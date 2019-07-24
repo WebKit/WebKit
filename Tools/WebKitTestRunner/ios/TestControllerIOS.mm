@@ -133,6 +133,7 @@ void TestController::platformResetPreferencesToConsistentValues()
 {
     WKPreferencesRef preferences = platformPreferences();
     WKPreferencesSetTextAutosizingEnabled(preferences, false);
+    WKPreferencesSetTextAutosizingUsesIdempotentMode(preferences, false);
     WKPreferencesSetContentChangeObserverEnabled(preferences, false);
     [(__bridge WKPreferences *)preferences _setShouldIgnoreMetaViewport:NO];
 }

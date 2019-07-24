@@ -1,3 +1,20 @@
+2019-07-24  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: settings().textAutosizingEnabled() && settings().textAutosizingUsesIdempotentMode() in WebCore::Page::recomputeTextAutoSizingInAllFrames()
+        https://bugs.webkit.org/show_bug.cgi?id=200079
+        <rdar://problem/53474325>
+
+        Reviewed by Wenson Hsieh.
+
+        Do not reset idempotent values when the text autosizing is off.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetTextAutosizingUsesIdempotentMode):
+        (WKPreferencesGetTextAutosizingUsesIdempotentMode):
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::resetIdempotentTextAutosizingIfNeeded):
+
 2019-07-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r247766.

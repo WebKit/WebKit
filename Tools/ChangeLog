@@ -1,3 +1,16 @@
+2019-07-24  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: settings().textAutosizingEnabled() && settings().textAutosizingUsesIdempotentMode() in WebCore::Page::recomputeTextAutoSizingInAllFrames()
+        https://bugs.webkit.org/show_bug.cgi?id=200079
+        <rdar://problem/53474325>
+
+        Reviewed by Wenson Hsieh.
+
+        Reset textAutosizingUsesIdempotentMode when transitioning to a new test.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+
 2019-07-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [webkitperl] prepare-ChangeLog_unittest/parser_unittests.pl is failing on Windows Perl

@@ -244,6 +244,10 @@ WK_EXPORT bool WKPreferencesGetEncodingDetectorEnabled(WKPreferencesRef preferen
 WK_EXPORT void WKPreferencesSetTextAutosizingEnabled(WKPreferencesRef preferences, bool textAutosizingEnabled);
 WK_EXPORT bool WKPreferencesGetTextAutosizingEnabled(WKPreferencesRef preferences);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetTextAutosizingUsesIdempotentMode(WKPreferencesRef preferences, bool textAutosizingUsesIdempotentModeEnabled);
+WK_EXPORT bool WKPreferencesGetTextAutosizingUsesIdempotentMode(WKPreferencesRef preferences);
+
 // Defaults to true.
 WK_EXPORT void WKPreferencesSetQTKitEnabled(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetQTKitEnabled(WKPreferencesRef preferencesRef);

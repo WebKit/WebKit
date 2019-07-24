@@ -3334,7 +3334,7 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
 #if ENABLE(TEXT_AUTOSIZING)
 void WebPage::resetIdempotentTextAutosizingIfNeeded(double previousInitialScale)
 {
-    if (!m_page->settings().textAutosizingUsesIdempotentMode())
+    if (!m_page->settings().textAutosizingEnabled() || !m_page->settings().textAutosizingUsesIdempotentMode())
         return;
 
     const float minimumScaleChangeBeforeRecomputingTextAutosizing = 0.01;
