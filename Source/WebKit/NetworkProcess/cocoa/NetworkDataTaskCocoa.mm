@@ -85,7 +85,7 @@ void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeede
     UNUSED_PARAM(shouldContentEncodingSniff);
 #endif
 
-    auto& cocoaSession = static_cast<NetworkSessionCocoa&>(m_session.get());
+    auto& cocoaSession = static_cast<NetworkSessionCocoa&>(*m_session);
     if (shouldContentSniff
 #if USE(CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE)
         && shouldContentEncodingSniff
@@ -168,11 +168,20 @@ static void updateTaskWithFirstPartyForSameSiteCookies(NSURLSessionDataTask* tas
 #endif
 }
 
+static inline bool computeIsAlwaysOnLoggingAllowed(NetworkSession& session)
+{
+    if (session.networkProcess().sessionIsControlledByAutomation(session.sessionID()))
+        return true;
+
+    return session.sessionID().isAlwaysOnLoggingAllowed();
+}
+
 NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, uint64_t frameID, WebCore::PageIdentifier pageID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly, bool dataTaskIsForMainFrameNavigation, bool dataTaskIsForMainResourceNavigationForAnyFrame, Optional<NetworkActivityTracker> networkActivityTracker)
     : NetworkDataTask(session, client, requestWithCredentials, storedCredentialsPolicy, shouldClearReferrerOnHTTPSToHTTPRedirect, dataTaskIsForMainFrameNavigation)
     , m_frameID(frameID)
     , m_pageID(pageID)
     , m_isForMainResourceNavigationForAnyFrame(dataTaskIsForMainResourceNavigationForAnyFrame)
+    , m_isAlwaysOnLoggingAllowed(computeIsAlwaysOnLoggingAllowed(session))
 {
     if (m_scheduledFailureType != NoFailure)
         return;
@@ -212,7 +221,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     NSURLRequest *nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
     applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, shouldContentSniff == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), shouldContentEncodingSniff == WebCore::ContentEncodingSniffingPolicy::Sniff);
 
-    auto& cocoaSession = static_cast<NetworkSessionCocoa&>(m_session.get());
+    auto& cocoaSession = static_cast<NetworkSessionCocoa&>(*m_session);
     switch (storedCredentialsPolicy) {
     case WebCore::StoredCredentialsPolicy::Use:
         m_task = [cocoaSession.m_sessionWithCredentialStorage dataTaskWithRequest:nsRequest];
@@ -269,10 +278,10 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
 NetworkDataTaskCocoa::~NetworkDataTaskCocoa()
 {
-    if (!m_task)
+    if (!m_task || !m_session)
         return;
 
-    auto& cocoaSession = static_cast<NetworkSessionCocoa&>(m_session.get());
+    auto& cocoaSession = static_cast<NetworkSessionCocoa&>(*m_session);
     switch (m_storedCredentialsPolicy) {
     case WebCore::StoredCredentialsPolicy::Use:
         ASSERT(cocoaSession.m_dataTaskMapWithCredentials.get([m_task taskIdentifier]) == this);
@@ -505,7 +514,7 @@ void NetworkDataTaskCocoa::resume()
     if (m_scheduledFailureType != NoFailure)
         m_failureTimer.startOneShot(0_s);
 
-    auto& cocoaSession = static_cast<NetworkSessionCocoa&>(m_session.get());
+    auto& cocoaSession = static_cast<NetworkSessionCocoa&>(*m_session);
     if (cocoaSession.deviceManagementRestrictionsEnabled() && m_isForMainResourceNavigationForAnyFrame) {
         auto didDetermineDeviceRestrictionPolicyForURL = makeBlockPtr([this, protectedThis = makeRef(*this)](BOOL isBlocked) {
             callOnMainThread([this, protectedThis = makeRef(*this), isBlocked] {
@@ -561,10 +570,7 @@ WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge
 
 bool NetworkDataTaskCocoa::isAlwaysOnLoggingAllowed() const
 {
-    if (m_session->networkProcess().sessionIsControlledByAutomation(m_session->sessionID()))
-        return true;
-
-    return m_session->sessionID().isAlwaysOnLoggingAllowed();
+    return m_isAlwaysOnLoggingAllowed;
 }
 
 String NetworkDataTaskCocoa::description() const

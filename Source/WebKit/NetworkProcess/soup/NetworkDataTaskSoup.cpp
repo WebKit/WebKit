@@ -80,7 +80,8 @@ NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTas
 NetworkDataTaskSoup::~NetworkDataTaskSoup()
 {
     clearRequest();
-    m_session->unregisterNetworkDataTask(*this);
+    if (m_session)
+        m_session->unregisterNetworkDataTask(*this);
 }
 
 String NetworkDataTaskSoup::suggestedFilename() const
@@ -111,7 +112,7 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request)
         return;
     }
 
-    GRefPtr<SoupRequest> soupRequest = adoptGRef(soup_session_request_uri(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), soupURI.get(), nullptr));
+    GRefPtr<SoupRequest> soupRequest = adoptGRef(soup_session_request_uri(static_cast<NetworkSessionSoup&>(*m_session).soupSession(), soupURI.get(), nullptr));
     if (!soupRequest) {
         scheduleFailure(InvalidURLFailure);
         return;
@@ -164,7 +165,7 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request)
 
     g_signal_connect(m_soupMessage.get(), "got-headers", G_CALLBACK(gotHeadersCallback), this);
     g_signal_connect(m_soupMessage.get(), "wrote-body-data", G_CALLBACK(wroteBodyDataCallback), this);
-    g_signal_connect(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), "authenticate",  G_CALLBACK(authenticateCallback), this);
+    g_signal_connect(static_cast<NetworkSessionSoup&>(*m_session).soupSession(), "authenticate",  G_CALLBACK(authenticateCallback), this);
     g_signal_connect(m_soupMessage.get(), "network-event", G_CALLBACK(networkEventCallback), this);
     g_signal_connect(m_soupMessage.get(), "restarted", G_CALLBACK(restartedCallback), this);
     g_signal_connect(m_soupMessage.get(), "starting", G_CALLBACK(startingCallback), this);
@@ -187,10 +188,12 @@ void NetworkDataTaskSoup::clearRequest()
     m_cancellable = nullptr;
     if (m_soupMessage) {
         g_signal_handlers_disconnect_matched(m_soupMessage.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-        soup_session_cancel_message(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), m_soupMessage.get(), SOUP_STATUS_CANCELLED);
+        if (m_session)
+            soup_session_cancel_message(static_cast<NetworkSessionSoup&>(*m_session).soupSession(), m_soupMessage.get(), SOUP_STATUS_CANCELLED);
         m_soupMessage = nullptr;
     }
-    g_signal_handlers_disconnect_matched(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+    if (m_session)
+        g_signal_handlers_disconnect_matched(static_cast<NetworkSessionSoup&>(*m_session).soupSession(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 }
 
 void NetworkDataTaskSoup::resume()
@@ -236,7 +239,7 @@ void NetworkDataTaskSoup::cancel()
     m_state = State::Canceling;
 
     if (m_soupMessage)
-        soup_session_cancel_message(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), m_soupMessage.get(), SOUP_STATUS_CANCELLED);
+        soup_session_cancel_message(static_cast<NetworkSessionSoup&>(*m_session).soupSession(), m_soupMessage.get(), SOUP_STATUS_CANCELLED);
 
     g_cancellable_cancel(m_cancellable.get());
 
@@ -433,7 +436,7 @@ void NetworkDataTaskSoup::applyAuthenticationToRequest(ResourceRequest& request)
 
 void NetworkDataTaskSoup::authenticateCallback(SoupSession* session, SoupMessage* soupMessage, SoupAuth* soupAuth, gboolean retrying, NetworkDataTaskSoup* task)
 {
-    ASSERT(session == static_cast<NetworkSessionSoup&>(task->m_session.get()).soupSession());
+    ASSERT(session == static_cast<NetworkSessionSoup&>(task->*m_session).soupSession());
 
     // We don't return early here in case the given soupMessage is different to m_soupMessage when
     // it's proxy authentication and the request URL is HTTPS, because in that case libsoup uses a
@@ -481,7 +484,7 @@ void NetworkDataTaskSoup::authenticate(AuthenticationChallenge&& challenge)
         }
     }
 
-    soup_session_pause_message(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), challenge.soupMessage());
+    soup_session_pause_message(static_cast<NetworkSessionSoup&>(*m_session).soupSession(), challenge.soupMessage());
 
     // We could also do this before we even start the request, but that would be at the expense
     // of all request latency, versus a one-time latency for the small subset of requests that
@@ -535,7 +538,7 @@ void NetworkDataTaskSoup::continueAuthenticate(AuthenticationChallenge&& challen
             soup_auth_authenticate(challenge.soupAuth(), credential.user().utf8().data(), credential.password().utf8().data());
         }
 
-        soup_session_unpause_message(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), challenge.soupMessage());
+        soup_session_unpause_message(static_cast<NetworkSessionSoup&>(*m_session).soupSession(), challenge.soupMessage());
     });
 }
 

@@ -46,10 +46,10 @@ std::unique_ptr<NetworkSocketChannel> NetworkSocketChannel::create(NetworkConnec
     return result;
 }
 
-NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connection, RefPtr<NetworkSession>&& session, const ResourceRequest& request, const String& protocol, uint64_t identifier)
+NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connection, NetworkSession* session, const ResourceRequest& request, const String& protocol, uint64_t identifier)
     : m_connectionToWebProcess(connection)
     , m_identifier(identifier)
-    , m_session(WTFMove(session))
+    , m_session(makeWeakPtr(session))
 {
     if (!m_session)
         return;
@@ -63,11 +63,11 @@ NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connec
 
 NetworkSocketChannel::~NetworkSocketChannel()
 {
-    if (!m_socket)
-        return;
+    if (m_session)
+        m_session->removeWebSocketTask(*m_socket);
 
-    m_socket->cancel();
-    m_session->removeWebSocketTask(*m_socket);
+    if (m_socket)
+        m_socket->cancel();
 }
 
 void NetworkSocketChannel::sendString(const String& message, CompletionHandler<void()>&& callback)

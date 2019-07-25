@@ -100,6 +100,7 @@ private:
 #endif
 
     bool m_isForMainResourceNavigationForAnyFrame { false };
+    bool m_isAlwaysOnLoggingAllowed { false };
 };
 
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge&);

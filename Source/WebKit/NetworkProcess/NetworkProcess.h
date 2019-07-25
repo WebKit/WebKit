@@ -161,13 +161,13 @@ public:
     AuthenticationManager& authenticationManager();
     DownloadManager& downloadManager();
 
-    void setSession(const PAL::SessionID&, Ref<NetworkSession>&&);
+    void setSession(const PAL::SessionID&, std::unique_ptr<NetworkSession>&&);
     NetworkSession* networkSession(const PAL::SessionID&) const final;
     NetworkSession* networkSessionByConnection(IPC::Connection&) const;
     void destroySession(const PAL::SessionID&);
 
     // Needed for test infrastructure
-    HashMap<PAL::SessionID, Ref<NetworkSession>>& networkSessions() { return m_networkSessions; }
+    HashMap<PAL::SessionID, std::unique_ptr<NetworkSession>>& networkSessions() { return m_networkSessions; }
 
     void forEachNetworkStorageSession(const Function<void(WebCore::NetworkStorageSession&)>&);
     WebCore::NetworkStorageSession* storageSession(const PAL::SessionID&) const;
@@ -496,7 +496,7 @@ private:
     HashSet<PAL::SessionID> m_sessionsControlledByAutomation;
     HashMap<PAL::SessionID, Vector<CacheStorageRootPathCallback>> m_cacheStorageParametersCallbacks;
 
-    HashMap<PAL::SessionID, Ref<NetworkSession>> m_networkSessions;
+    HashMap<PAL::SessionID, std::unique_ptr<NetworkSession>> m_networkSessions;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>> m_networkStorageSessions;
     mutable std::unique_ptr<WebCore::NetworkStorageSession> m_defaultNetworkStorageSession;
     NetworkBlobRegistry m_networkBlobRegistry;

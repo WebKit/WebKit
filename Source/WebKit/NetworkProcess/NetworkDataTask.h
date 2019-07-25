@@ -143,7 +143,7 @@ protected:
 
     FailureType m_scheduledFailureType { NoFailure };
     WebCore::Timer m_failureTimer;
-    Ref<NetworkSession> m_session;
+    WeakPtr<NetworkSession> m_session;
     NetworkDataTaskClient* m_client { nullptr };
     PendingDownload* m_pendingDownload { nullptr };
     DownloadID m_pendingDownloadID;

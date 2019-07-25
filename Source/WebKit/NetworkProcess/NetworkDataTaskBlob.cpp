@@ -86,7 +86,8 @@ NetworkDataTaskBlob::~NetworkDataTaskBlob()
         fileReference->revokeFileAccess();
 
     clearStream();
-    m_session->unregisterNetworkDataTask(*this);
+    if (m_session)
+        m_session->unregisterNetworkDataTask(*this);
 }
 
 void NetworkDataTaskBlob::clearStream()
@@ -455,6 +456,7 @@ void NetworkDataTaskBlob::download()
 {
     ASSERT(isDownload());
     ASSERT(m_pendingDownloadLocation);
+    ASSERT(m_session);
 
     LOG(NetworkSession, "%p - NetworkDataTaskBlob::download to %s", this, m_pendingDownloadLocation.utf8().data());
 

@@ -56,7 +56,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<NetworkSession> NetworkSession::create(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
+std::unique_ptr<NetworkSession> NetworkSession::create(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
 {
 #if PLATFORM(COCOA)
     return NetworkSessionCocoa::create(networkProcess, WTFMove(parameters));

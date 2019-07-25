@@ -47,7 +47,9 @@ class LegacyCustomProtocolManager;
 class NetworkSessionCocoa final : public NetworkSession {
     friend class NetworkDataTaskCocoa;
 public:
-    static Ref<NetworkSession> create(NetworkProcess&, NetworkSessionCreationParameters&&);
+    static std::unique_ptr<NetworkSession> create(NetworkProcess&, NetworkSessionCreationParameters&&);
+
+    NetworkSessionCocoa(NetworkProcess&, NetworkSessionCreationParameters&&);
     ~NetworkSessionCocoa();
 
     void initializeEphemeralStatelessCookielessSession();
@@ -80,8 +82,6 @@ public:
     DMFWebsitePolicyMonitor *deviceManagementPolicyMonitor();
 
 private:
-    NetworkSessionCocoa(NetworkProcess&, NetworkSessionCreationParameters&&);
-
     void invalidateAndCancel() override;
     void clearCredentials() override;
     bool shouldLogCookieInformation() const override { return m_shouldLogCookieInformation; }

@@ -33,7 +33,6 @@
 #include <pal/SessionID.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
 #include <wtf/Seconds.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
@@ -64,9 +63,9 @@ namespace NetworkCache {
 class Cache;
 }
 
-class NetworkSession : public RefCounted<NetworkSession>, public CanMakeWeakPtr<NetworkSession> {
+class NetworkSession : public CanMakeWeakPtr<NetworkSession> {
 public:
-    static Ref<NetworkSession> create(NetworkProcess&, NetworkSessionCreationParameters&&);
+    static std::unique_ptr<NetworkSession> create(NetworkProcess&, NetworkSessionCreationParameters&&);
     virtual ~NetworkSession();
 
     virtual void invalidateAndCancel();

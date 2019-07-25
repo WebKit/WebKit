@@ -1,3 +1,58 @@
+2019-07-25  Youenn Fablet  <youenn@apple.com>
+
+        Make NetworkSession no longer RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=200020
+
+        This allows to have a simpler memory management model where
+        NetworkSession cannot live once removed from the network process session map.
+        This requires some additional null checks, especially in NetworkDataTask.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * NetworkProcess/curl/NetworkSessionCurl.h:
+        * NetworkProcess/soup/NetworkSessionSoup.h:
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::~NetworkDataTaskBlob):
+        (WebKit::NetworkDataTaskBlob::download):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::lowMemoryHandler):
+        (WebKit::NetworkProcess::setSession):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::setResourceLoadStatisticsEnabled):
+        (WebKit::NetworkProcess::deleteWebsiteDataForRegistrableDomains):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::networkSessions):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::create):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/NetworkSocketChannel.cpp:
+        (WebKit::NetworkSocketChannel::NetworkSocketChannel):
+        (WebKit::NetworkSocketChannel::~NetworkSocketChannel):
+        * NetworkProcess/NetworkSocketChannel.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeeded):
+        (WebKit::computeIsAlwaysOnLoggingAllowed):
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::~NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::resume):
+        (WebKit::NetworkDataTaskCocoa::isAlwaysOnLoggingAllowed const):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate initWithNetworkSession:withCredentials:]):
+        (WebKit::NetworkSessionCocoa::create):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::createRequest):
+        (WebKit::NetworkDataTaskSoup::clearRequest):
+        (WebKit::NetworkDataTaskSoup::cancel):
+        (WebKit::NetworkDataTaskSoup::authenticateCallback):
+        (WebKit::NetworkDataTaskSoup::authenticate):
+        (WebKit::NetworkDataTaskSoup::continueAuthenticate):
+
 2019-07-25  Chris Dumez  <cdumez@apple.com>
 
         Avoid some unnecessary HashMap copies

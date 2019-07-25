@@ -37,20 +37,18 @@ struct NetworkSessionCreationParameters;
 
 class NetworkSessionSoup final : public NetworkSession {
 public:
-    static Ref<NetworkSession> create(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
+    static std::unique_ptr<NetworkSession> create(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
     {
-        return adoptRef(*new NetworkSessionSoup(networkProcess, WTFMove(parameters)));
+        return std::make_unique<NetworkSessionSoup>(networkProcess, WTFMove(parameters));
     }
+    NetworkSessionSoup(NetworkProcess&, NetworkSessionCreationParameters&&);
     ~NetworkSessionSoup();
 
     SoupSession* soupSession() const;
 
 private:
-    NetworkSessionSoup(NetworkProcess&, NetworkSessionCreationParameters&&);
-
-    std::unique_ptr<WebSocketTask> createWebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol) override;
-
-    void clearCredentials() override;
+    std::unique_ptr<WebSocketTask> createWebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol) final;
+    void clearCredentials() final;
 };
 
 } // namespace WebKit

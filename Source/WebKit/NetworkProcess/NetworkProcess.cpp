@@ -85,6 +85,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/text/AtomString.h>
 
 #if ENABLE(SEC_ITEM_SHIM)
@@ -274,7 +275,7 @@ void NetworkProcess::lowMemoryHandler(Critical critical)
     WTF::releaseFastMallocFreeMemory();
 
     for (auto& networkSession : m_networkSessions.values())
-        networkSession.get().clearPrefetchCache();
+        networkSession->clearPrefetchCache();
 }
 
 void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&& parameters)
@@ -576,7 +577,7 @@ NetworkSession* NetworkProcess::networkSessionByConnection(IPC::Connection& conn
     return sessionID.isValid() ? networkSession(sessionID) : nullptr;
 }
 
-void NetworkProcess::setSession(const PAL::SessionID& sessionID, Ref<NetworkSession>&& session)
+void NetworkProcess::setSession(const PAL::SessionID& sessionID, std::unique_ptr<NetworkSession>&& session)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(sessionID.isValid());
@@ -596,7 +597,7 @@ void NetworkProcess::destroySession(const PAL::SessionID& sessionID)
     ASSERT(sessionID != PAL::SessionID::defaultSessionID());
 
     if (auto session = m_networkSessions.take(sessionID))
-        session->get().invalidateAndCancel();
+        session->invalidateAndCancel();
     m_networkStorageSessions.remove(sessionID);
     m_sessionsControlledByAutomation.remove(sessionID);
     CacheStorage::Engine::destroyEngine(*this, sessionID);
@@ -1146,7 +1147,7 @@ void NetworkProcess::setShouldClassifyResourcesBeforeDataRecordsRemoval(PAL::Ses
 void NetworkProcess::setResourceLoadStatisticsEnabled(bool enabled)
 {
     for (auto& networkSession : m_networkSessions.values())
-        networkSession.get().setResourceLoadStatisticsEnabled(enabled);
+        networkSession->setResourceLoadStatisticsEnabled(enabled);
 }
 
 void NetworkProcess::setResourceLoadStatisticsDebugMode(PAL::SessionID sessionID, bool debugMode, CompletionHandler<void()>&& completionHandler)
@@ -1754,7 +1755,9 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessi
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache)) {
         for (auto& session : networkSessions().values()) {
-            fetchDiskCacheEntries(session->cache(), sessionID, fetchOptions, [domainsToDeleteAllButCookiesFor, callbackAggregator = callbackAggregator.copyRef(), session = session.copyRef()](auto entries) mutable {
+            fetchDiskCacheEntries(session->cache(), sessionID, fetchOptions, [domainsToDeleteAllButCookiesFor, callbackAggregator = callbackAggregator.copyRef(), session = makeWeakPtr(session.get())](auto entries) mutable {
+                if (!session)
+                    return;
 
                 Vector<SecurityOriginData> entriesToDelete;
                 for (auto& entry : entries) {

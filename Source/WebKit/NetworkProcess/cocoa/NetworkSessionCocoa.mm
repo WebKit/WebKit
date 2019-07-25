@@ -329,7 +329,7 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
     , NSURLSessionWebSocketDelegate
 #endif
 > {
-    RefPtr<WebKit::NetworkSessionCocoa> _session;
+    WeakPtr<WebKit::NetworkSessionCocoa> _session;
     bool _withCredentials;
 }
 
@@ -346,7 +346,7 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
     if (!self)
         return nil;
 
-    _session = &session;
+    _session = makeWeakPtr(session);
     _withCredentials = withCredentials;
 
     return self;
@@ -896,9 +896,9 @@ void NetworkSessionCocoa::setCTDataConnectionServiceType(const String& type)
 }
 #endif
 
-Ref<NetworkSession> NetworkSessionCocoa::create(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
+std::unique_ptr<NetworkSession> NetworkSessionCocoa::create(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
 {
-    return adoptRef(*new NetworkSessionCocoa(networkProcess, WTFMove(parameters)));
+    return std::make_unique<NetworkSessionCocoa>(networkProcess, WTFMove(parameters));
 }
 
 static NSDictionary *proxyDictionary(const URL& httpProxy, const URL& httpsProxy)
@@ -934,8 +934,6 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     , m_loadThrottleLatency(parameters.loadThrottleLatency)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-
-    relaxAdoptionRequirement();
 
 #if !ASSERT_DISABLED
     sessionsCreated = true;
