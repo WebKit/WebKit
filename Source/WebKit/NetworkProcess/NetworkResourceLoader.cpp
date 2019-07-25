@@ -218,11 +218,18 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
         ASSERT(m_parameters.options.mode == FetchOptions::Mode::Navigate);
         if (auto* session = m_connection->networkProcess().networkSession(sessionID())) {
             if (auto entry = session->prefetchCache().take(request.url())) {
+                // FIXME: Deal with credentials (https://bugs.webkit.org/show_bug.cgi?id=200000)
                 if (!entry->redirectRequest.isNull()) {
+                    auto cacheEntry = m_cache->makeRedirectEntry(request, entry->response, entry->redirectRequest);
+                    loader->retrieveCacheEntryInternal(WTFMove(cacheEntry), ResourceRequest { request });
                     auto maxAgeCap = validateCacheEntryForMaxAgeCapValidation(request, entry->redirectRequest, entry->response);
                     m_cache->storeRedirect(request, entry->response, entry->redirectRequest, maxAgeCap);
-                } else
-                    m_cache->store(request, entry->response, entry->releaseBuffer(), nullptr);
+                    return;
+                }
+                auto cacheEntry = m_cache->makeEntry(request, entry->response, entry->releaseBuffer());
+                loader->retrieveCacheEntryInternal(WTFMove(cacheEntry), ResourceRequest { request });
+                m_cache->store(request, entry->response, entry->releaseBuffer(), nullptr);
+                return;
             }
         }
     }
@@ -239,33 +246,38 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
             loader->startNetworkLoad(WTFMove(request), FirstLoad::Yes);
             return;
         }
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-        if (entry->hasReachedPrevalentResourceAgeCap()) {
-            RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Resource has reached prevalent resource age cap (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID.toUInt64(), m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
-            m_cacheEntryForMaxAgeCapValidation = WTFMove(entry);
-            ResourceRequest revalidationRequest = originalRequest();
-            loader->startNetworkLoad(WTFMove(revalidationRequest), FirstLoad::Yes);
-            return;
-        }
-#endif
-        if (entry->redirectRequest()) {
-            RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Handling redirect (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID.toUInt64(), m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
-            loader->dispatchWillSendRequestForCacheEntry(WTFMove(request), WTFMove(entry));
-            return;
-        }
-        if (loader->m_parameters.needsCertificateInfo && !entry->response().certificateInfo()) {
-            RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Resource does not have required certificate (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID.toUInt64(), m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
-            loader->startNetworkLoad(WTFMove(request), FirstLoad::Yes);
-            return;
-        }
-        if (entry->needsValidation() || request.cachePolicy() == WebCore::ResourceRequestCachePolicy::RefreshAnyCacheData) {
-            RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Validating cache entry (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID.toUInt64(), m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
-            loader->validateCacheEntry(WTFMove(entry));
-            return;
-        }
-        RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Retrieved resource from cache (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID.toUInt64(), m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
-        loader->didRetrieveCacheEntry(WTFMove(entry));
+        loader->retrieveCacheEntryInternal(WTFMove(entry), WTFMove(request));
     });
+}
+
+void NetworkResourceLoader::retrieveCacheEntryInternal(std::unique_ptr<NetworkCache::Entry>&& entry, WebCore::ResourceRequest&& request)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (entry->hasReachedPrevalentResourceAgeCap()) {
+        RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Resource has reached prevalent resource age cap (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID.toUInt64(), m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
+        m_cacheEntryForMaxAgeCapValidation = WTFMove(entry);
+        ResourceRequest revalidationRequest = originalRequest();
+        startNetworkLoad(WTFMove(revalidationRequest), FirstLoad::Yes);
+        return;
+    }
+#endif
+    if (entry->redirectRequest()) {
+        RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Handling redirect (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID.toUInt64(), m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
+        dispatchWillSendRequestForCacheEntry(WTFMove(request), WTFMove(entry));
+        return;
+    }
+    if (m_parameters.needsCertificateInfo && !entry->response().certificateInfo()) {
+        RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Resource does not have required certificate (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID.toUInt64(), m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
+        startNetworkLoad(WTFMove(request), FirstLoad::Yes);
+        return;
+    }
+    if (entry->needsValidation() || request.cachePolicy() == WebCore::ResourceRequestCachePolicy::RefreshAnyCacheData) {
+        RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Validating cache entry (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID.toUInt64(), m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
+        validateCacheEntry(WTFMove(entry));
+        return;
+    }
+    RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Retrieved resource from cache (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID.toUInt64(), m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
+    didRetrieveCacheEntry(WTFMove(entry));
 }
 
 void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoad load)

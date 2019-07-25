@@ -1,3 +1,23 @@
+2019-07-25  Rob Buis  <rbuis@igalia.com>
+
+        Make storing cross-origin top-level prefetches in HTTP cache optional
+        https://bugs.webkit.org/show_bug.cgi?id=199499
+
+        Reviewed by Youenn Fablet.
+
+        Remove unneeded Cache-Control headers and verify that Cache-Control
+        effects whether the navigation gets stored in the disk cache or not.
+
+        * http/tests/cache/resources/prefetched-main-resource-iframe.php:
+        * http/tests/cache/resources/prefetched-main-resource.php:
+        * http/wpt/prefetch/link-prefetch-skip-disk-cache-expected.txt: Added.
+        * http/wpt/prefetch/link-prefetch-skip-disk-cache.html: Added.
+        * http/wpt/prefetch/resources/main-resource-skip-disk-cache.py: Added.
+        (main):
+        * http/wpt/prefetch/resources/navigate-skip-disk-cache.html: Added.
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2019-07-25  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r247817.
