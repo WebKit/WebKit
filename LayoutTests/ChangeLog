@@ -1,5 +1,15 @@
 2019-07-24  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: support `console.screenshot` with detached Nodes that are graphical
+        https://bugs.webkit.org/show_bug.cgi?id=199309
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/console/console-screenshot.html:
+        * inspector/console/console-screenshot-expected.txt:
+
+2019-07-24  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: support `console.screenshot` with ImageData and ImageBitmap
         https://bugs.webkit.org/show_bug.cgi?id=199304
 

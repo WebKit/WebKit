@@ -11,6 +11,26 @@ function createDetachedTest()
     return div;
 }
 
+function testHTMLImageElement() {
+    // 2x2 red square
+    let image = document.createElement("img");
+    image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=";
+    image.addEventListener("load", async (event) => {
+        console.screenshot(image);
+    });
+}
+
+function testHTMLPictureElement() {
+    let picture = document.createElement("picture");
+
+    // 2x2 red square
+    let image = picture.appendChild(document.createElement("img"));
+    image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=";
+    image.addEventListener("load", async (event) => {
+        console.screenshot(picture);
+    });
+}
+
 function testImageBitmap() {
     // 2x2 red square
     let image = document.createElement("img");
@@ -77,6 +97,30 @@ function test()
     addTest({
         name: "console.screenshot.Node.MultipleArguments",
         expression: `console.screenshot(document.querySelector("#testNode"), "test")`,
+        async imageMessageAddedCallback(message) {
+            InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
+
+            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
+            InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
+            InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
+        },
+    });
+
+    addTest({
+        name: "console.screenshot.Node.DetachedScreenshotable.Image",
+        expression: `testHTMLImageElement()`,
+        async imageMessageAddedCallback(message) {
+            InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
+
+            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
+            InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
+            InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
+        },
+    });
+
+    addTest({
+        name: "console.screenshot.Node.DetachedScreenshotable.Picture",
+        expression: `testHTMLPictureElement()`,
         async imageMessageAddedCallback(message) {
             InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
 

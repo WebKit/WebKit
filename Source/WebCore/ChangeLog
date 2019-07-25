@@ -1,3 +1,15 @@
+2019-07-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: support `console.screenshot` with detached Nodes that are graphical
+        https://bugs.webkit.org/show_bug.cgi?id=199309
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: inspector/console/console-screenshot.html
+
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::screenshot):
+
 2019-07-24  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Use bmalloc instead of system malloc for WHLSL data structures

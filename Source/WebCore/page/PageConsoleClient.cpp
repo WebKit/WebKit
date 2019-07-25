@@ -29,13 +29,19 @@
 #include "config.h"
 #include "PageConsoleClient.h"
 
+#include "CachedImage.h"
 #include "CanvasRenderingContext2D.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
+#include "ElementChildIterator.h"
 #include "Frame.h"
 #include "FrameSnapshotting.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLImageElement.h"
+#include "HTMLPictureElement.h"
+#include "HTMLVideoElement.h"
+#include "Image.h"
 #include "ImageBitmap.h"
 #include "ImageBitmapRenderingContext.h"
 #include "ImageBuffer.h"
@@ -285,7 +291,38 @@ void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&&
         if (auto* node = JSNode::toWrapped(state->vm(), possibleTarget)) {
             target = possibleTarget;
             if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
-                if (auto snapshot = WebCore::snapshotNode(m_page.mainFrame(), *node))
+                std::unique_ptr<ImageBuffer> snapshot;
+
+                // Only try to do something special for subclasses of Node if they're detached from the DOM tree.
+                if (!node->document().contains(node)) {
+                    auto snapshotImageElement = [&snapshot] (HTMLImageElement& imageElement) {
+                        if (auto* cachedImage = imageElement.cachedImage()) {
+                            auto* image = cachedImage->image();
+                            if (image && image != &Image::nullImage()) {
+                                snapshot = ImageBuffer::create(image->size(), RenderingMode::Unaccelerated);
+                                snapshot->context().drawImage(*image, FloatPoint(0, 0));
+                            }
+                        }
+                    };
+
+                    if (is<HTMLImageElement>(node))
+                        snapshotImageElement(downcast<HTMLImageElement>(*node));
+                    else if (is<HTMLPictureElement>(node)) {
+                        if (auto* firstImage = childrenOfType<HTMLImageElement>(downcast<HTMLPictureElement>(*node)).first())
+                            snapshotImageElement(*firstImage);
+                    } else if (is<HTMLVideoElement>(node)) {
+                        auto& videoElement = downcast<HTMLVideoElement>(*node);
+                        unsigned videoWidth = videoElement.videoWidth();
+                        unsigned videoHeight = videoElement.videoHeight();
+                        snapshot = ImageBuffer::create(FloatSize(videoWidth, videoHeight), RenderingMode::Unaccelerated);
+                        videoElement.paintCurrentFrameInContext(snapshot->context(), FloatRect(0, 0, videoWidth, videoHeight));
+                    }
+                }
+
+                if (!snapshot)
+                    snapshot = WebCore::snapshotNode(m_page.mainFrame(), *node);
+
+                if (snapshot)
                     dataURL = snapshot->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
             }
         } else if (auto* imageData = JSImageData::toWrapped(state->vm(), possibleTarget)) {
