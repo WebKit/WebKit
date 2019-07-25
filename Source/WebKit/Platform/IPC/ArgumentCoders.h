@@ -397,7 +397,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
             }
         }
 
-        return WTFMove(hashMap);
+        return hashMap;
     }
 
     static bool decode(Decoder& decoder, HashMapType& hashMap)
