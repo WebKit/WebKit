@@ -38,6 +38,7 @@
 #include "Document.h"
 #include "FontVariantBuilder.h"
 #include "JSFontFace.h"
+#include "Quirks.h"
 #include "StyleProperties.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
@@ -59,7 +60,7 @@ ExceptionOr<Ref<FontFace>> FontFace::create(Document& document, const String& fa
 
     bool dataRequiresAsynchronousLoading = true;
 
-    auto setFamilyResult = result->setFamily(family);
+    auto setFamilyResult = result->setFamily(document, family);
     if (setFamilyResult.hasException())
         return setFamilyResult.releaseException();
 
@@ -148,15 +149,19 @@ RefPtr<CSSValue> FontFace::parseString(const String& string, CSSPropertyID prope
     return CSSParser::parseFontFaceDescriptor(propertyID, string, HTMLStandardMode);
 }
 
-ExceptionOr<void> FontFace::setFamily(const String& family)
+ExceptionOr<void> FontFace::setFamily(Document& document, const String& family)
 {
     if (family.isEmpty())
         return Exception { SyntaxError };
 
+    String familyNameToUse = family;
+    if (familyNameToUse.contains('\'') && document.quirks().shouldStripQuotationMarkInFontFaceSetFamily())
+        familyNameToUse = family.removeCharacters([](auto character) { return character == '\''; });
+
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=196381 Don't use a list here.
     // See consumeFontFamilyDescriptor() in CSSPropertyParser.cpp for why we're using it.
     auto list = CSSValueList::createCommaSeparated();
-    list->append(CSSValuePool::singleton().createFontFamilyValue(family));
+    list->append(CSSValuePool::singleton().createFontFamilyValue(familyNameToUse));
     bool success = m_backing->setFamilies(list);
     if (!success)
         return Exception { SyntaxError };

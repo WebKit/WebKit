@@ -47,7 +47,7 @@ dictionary FontFaceDescriptors {
     ConstructorMayThrowException,
     Constructor(DOMString family, (DOMString or BinaryData) source, optional FontFaceDescriptors descriptors)
 ] interface FontFace {
-    attribute DOMString family;
+    [SetterCallWith=Document] attribute DOMString family;
     attribute DOMString style;
     attribute DOMString weight;
     attribute DOMString stretch;

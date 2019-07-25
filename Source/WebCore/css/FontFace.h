@@ -55,7 +55,7 @@ public:
     static Ref<FontFace> create(CSSFontFace&);
     virtual ~FontFace();
 
-    ExceptionOr<void> setFamily(const String&);
+    ExceptionOr<void> setFamily(Document&, const String&);
     ExceptionOr<void> setStyle(const String&);
     ExceptionOr<void> setWeight(const String&);
     ExceptionOr<void> setStretch(const String&);

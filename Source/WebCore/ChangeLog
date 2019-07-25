@@ -1,3 +1,32 @@
+2019-07-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r243637): Some web fonts fail to load on Google docs
+        https://bugs.webkit.org/show_bug.cgi?id=200106
+
+        Reviewed by Geoffrey Garen.
+
+        Prior to r243637, WebKit threw an exception if the font family name didn't parse as a CSS identifier in the setter
+        of `family` IDL attribute of FontFace interface because WebKit implemented the old spec faithfully unlike Chrome
+        and Firefox which basically treated it as a string and didn't throw any exception. [1]
+
+        To account for this browser behavior difference, Google docs implemented a workaround for Safari which is to wrap
+        some identifiers in font family names with quotation marks: `docs-Amatic SC` as `'docs-Amatic SC'` and
+        `docs-Playfair Display` as `docs-'Playfair Display'`. Unfortunately, this in turn causes the latest Safari to
+        not match these font face family with those that appear in stylesheet since we no longer parse it as a CSS identifier.
+
+        This patch adds a site specific quirk for Google docs to undo this workaround by stripping away single quotation marks.
+
+        [1] See https://github.com/w3c/csswg-drafts/issues/3776 for the context.
+
+        * css/FontFace.cpp:
+        (WebCore::FontFace::create):
+        (WebCore::FontFace::setFamily):
+        * css/FontFace.h:
+        * css/FontFace.idl:
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldStripQuotationMarkInFontFaceSetFamily const):
+        * page/Quirks.h:
+
 2019-07-25  Dean Jackson  <dino@apple.com>
 
         Add helper for ignoring deprecated implementation warnings

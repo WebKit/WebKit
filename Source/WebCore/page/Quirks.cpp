@@ -137,6 +137,15 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
     return m_hasBrokenEncryptedMediaAPISupportQuirk.value();
 }
 
+bool Quirks::shouldStripQuotationMarkInFontFaceSetFamily() const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->topDocument().url().host();
+    return equalLettersIgnoringASCIICase(host, "docs.google.com");
+}
+
 bool Quirks::isTouchBarUpdateSupressedForHiddenContentEditable() const
 {
 #if PLATFORM(MAC)
