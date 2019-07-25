@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLCodeLocation.h"
+#include "WHLSLError.h"
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringConcatenate.h>

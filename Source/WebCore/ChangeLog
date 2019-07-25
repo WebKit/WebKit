@@ -1,3 +1,9 @@
+2019-07-25  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Speculative build fix for tvOS of missing include.
+
+        * Modules/webgpu/WHLSL/WHLSLLexer.h:
+
 2019-07-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix -Wunused-parameter warning
