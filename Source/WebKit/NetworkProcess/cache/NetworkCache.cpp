@@ -275,22 +275,10 @@ static bool inline canRequestUseSpeculativeRevalidation(const ResourceRequest& r
     if (request.isConditional())
         return false;
 
-    if (request.requester() == ResourceRequest::Requester::XHR || request.requester() != ResourceRequest::Requester::Fetch)
+    if (cachePolicyAllowsExpired(request.cachePolicy()))
         return false;
 
-    switch (request.cachePolicy()) {
-    case WebCore::ResourceRequestCachePolicy::ReturnCacheDataElseLoad:
-    case WebCore::ResourceRequestCachePolicy::ReturnCacheDataDontLoad:
-    case WebCore::ResourceRequestCachePolicy::ReloadIgnoringCacheData:
-        return false;
-    case WebCore::ResourceRequestCachePolicy::UseProtocolCachePolicy:
-    case WebCore::ResourceRequestCachePolicy::RefreshAnyCacheData:
-        return true;
-    case WebCore::ResourceRequestCachePolicy::DoNotUseAnyCache:
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-    return false;
+    return request.requester() != ResourceRequest::Requester::XHR && request.requester() != ResourceRequest::Requester::Fetch;
 }
 #endif
 

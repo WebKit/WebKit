@@ -1,3 +1,0 @@
-
-PASS Ensure image is not speculatively loaded after a reload 
-
