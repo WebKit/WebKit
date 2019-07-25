@@ -1,6 +1,8 @@
 CONSOLE MESSAGE: [object HTMLDivElement]
 CONSOLE MESSAGE: [object HTMLDivElement]
 CONSOLE MESSAGE: [object HTMLDivElement]
+CONSOLE MESSAGE: [object ImageData]
+CONSOLE MESSAGE: [object ImageBitmap]
 CONSOLE MESSAGE: [object CanvasRenderingContext2D]
 CONSOLE MESSAGE: Viewport
 CONSOLE MESSAGE: Viewport
@@ -22,6 +24,18 @@ PASS: The image height should be 2px.
 
 -- Running test case: console.screenshot.Node.DetachedNonScreenshotable
 PASS: Could not capture screenshot
+
+-- Running test case: console.screenshot.ImageData
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.ImageBitmap
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
 
 -- Running test case: console.screenshot.CanvasRenderingContext2D
 PASS: The added message should be an image.

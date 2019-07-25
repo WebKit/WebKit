@@ -11,6 +11,16 @@ function createDetachedTest()
     return div;
 }
 
+function testImageBitmap() {
+    // 2x2 red square
+    let image = document.createElement("img");
+    image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=";
+    image.addEventListener("load", async (event) => {
+        let imageBitmap = await createImageBitmap(image);
+        console.screenshot(imageBitmap);
+    });
+}
+
 function createCanvas2DTest() {
     let canvas = document.createElement("canvas");
     canvas.width = 2;
@@ -80,6 +90,30 @@ function test()
         name: "console.screenshot.Node.DetachedNonScreenshotable",
         expression: `console.screenshot(createDetachedTest())`,
         shouldError: true,
+    });
+
+    addTest({
+        name: "console.screenshot.ImageData",
+        expression: `console.screenshot(new ImageData(2, 2))`,
+        async imageMessageAddedCallback(message) {
+            InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
+
+            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
+            InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
+            InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
+        },
+    });
+
+    addTest({
+        name: "console.screenshot.ImageBitmap",
+        expression: `testImageBitmap()`,
+        async imageMessageAddedCallback(message) {
+            InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
+
+            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
+            InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
+            InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
+        },
     });
 
     addTest({

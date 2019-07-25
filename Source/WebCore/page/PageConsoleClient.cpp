@@ -36,15 +36,19 @@
 #include "Frame.h"
 #include "FrameSnapshotting.h"
 #include "HTMLCanvasElement.h"
+#include "ImageBitmap.h"
 #include "ImageBitmapRenderingContext.h"
 #include "ImageBuffer.h"
+#include "ImageData.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "IntRect.h"
 #include "JSCanvasRenderingContext2D.h"
 #include "JSExecState.h"
 #include "JSHTMLCanvasElement.h"
+#include "JSImageBitmap.h"
 #include "JSImageBitmapRenderingContext.h"
+#include "JSImageData.h"
 #include "JSNode.h"
 #include "JSOffscreenCanvas.h"
 #include "Node.h"
@@ -283,6 +287,22 @@ void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&&
             if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
                 if (auto snapshot = WebCore::snapshotNode(m_page.mainFrame(), *node))
                     dataURL = snapshot->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
+            }
+        } else if (auto* imageData = JSImageData::toWrapped(state->vm(), possibleTarget)) {
+            target = possibleTarget;
+            if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+                auto sourceSize = imageData->size();
+                if (auto imageBuffer = ImageBuffer::create(sourceSize, RenderingMode::Unaccelerated)) {
+                    IntRect sourceRect(IntPoint(), sourceSize);
+                    imageBuffer->putByteArray(*imageData->data(), AlphaPremultiplication::Unpremultiplied, sourceSize, sourceRect, IntPoint());
+                    dataURL = imageBuffer->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
+                }
+            }
+        } else if (auto* imageBitmap = JSImageBitmap::toWrapped(state->vm(), possibleTarget)) {
+            target = possibleTarget;
+            if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+                if (auto* imageBuffer = imageBitmap->buffer())
+                    dataURL = imageBuffer->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
             }
         } else if (auto* context = canvasRenderingContext(state->vm(), possibleTarget)) {
             auto& canvas = context->canvasBase();
