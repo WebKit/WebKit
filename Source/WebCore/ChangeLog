@@ -1,3 +1,22 @@
+2019-07-25  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Add optional logging for phase timings
+        https://bugs.webkit.org/show_bug.cgi?id=200099
+
+        Reviewed by Dean Jackson.
+
+        As we're doing WHLSL compiler speedup work, it helps to be able to
+        log phase times. I think a few of us have written such patches locally.
+        In this patch, I'm adding a way to easily switch this logging on and
+        off by flipping a "constexpr bool" and rebuilding.
+
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp:
+        (WebCore::WHLSL::logPhaseTimes):
+        (WebCore::WHLSL::PhaseTimer::PhaseTimer):
+        (WebCore::WHLSL::PhaseTimer::~PhaseTimer):
+        (WebCore::WHLSL::prepareShared):
+        (WebCore::WHLSL::prepare):
+
 2019-07-25  Chris Dumez  <cdumez@apple.com>
 
         Avoid some unnecessary HashMap copies

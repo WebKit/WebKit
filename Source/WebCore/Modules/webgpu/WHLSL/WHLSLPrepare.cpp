@@ -52,6 +52,7 @@
 #include "WHLSLSynthesizeConstructors.h"
 #include "WHLSLSynthesizeEnumerationFunctions.h"
 #include "WHLSLSynthesizeStructureAccessors.h"
+#include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
 
 namespace WebCore {
@@ -63,6 +64,7 @@ static constexpr bool dumpASTAfterParsing = false;
 static constexpr bool dumpASTAtEnd = false;
 static constexpr bool alwaysDumpPassFailures = false;
 static constexpr bool dumpPassFailure = dumpASTBeforeEachPass || dumpASTAfterParsing || dumpASTAtEnd || alwaysDumpPassFailures;
+static constexpr bool dumpPhaseTimes = false;
 
 static constexpr bool parseFullStandardLibrary = false;
 
@@ -92,9 +94,47 @@ static bool dumpASTAtEndIfNeeded(Program& program)
     return dumpASTIfNeeded(dumpASTAtEnd, program, "AST at end");
 }
 
+using PhaseTimes = Vector<std::pair<String, Seconds>>;
+
+static void logPhaseTimes(PhaseTimes& phaseTimes)
+{
+    if (!dumpPhaseTimes)
+        return;
+
+    for (auto& entry : phaseTimes)
+        dataLogLn(entry.first, ": ", entry.second.milliseconds(), " ms");
+}
+
+class PhaseTimer {
+public:
+    PhaseTimer(const char* phaseName, PhaseTimes& phaseTimes)
+        : m_phaseTimes(phaseTimes)
+    {
+        if (dumpPhaseTimes) {
+            m_phaseName = phaseName;
+            m_start = MonotonicTime::now();
+        }
+    }
+
+    ~PhaseTimer()
+    {
+        if (dumpPhaseTimes) {
+            auto totalTime = MonotonicTime::now() - m_start;
+            m_phaseTimes.append({ m_phaseName, totalTime });
+        }
+    }
+
+
+private:
+    String m_phaseName;
+    PhaseTimes& m_phaseTimes;
+    MonotonicTime m_start;
+};
+
 #define CHECK_PASS(pass, ...) \
     do { \
         dumpASTBetweenEachPassIfNeeded(program, "AST before " # pass); \
+        PhaseTimer phaseTimer(#pass, phaseTimes); \
         if (!pass(__VA_ARGS__)) { \
             if (dumpPassFailure) \
                 dataLogLn("failed pass: " # pass); \
@@ -104,20 +144,29 @@ static bool dumpASTAtEndIfNeeded(Program& program)
 
 #define RUN_PASS(pass, ...) \
     do { \
+        PhaseTimer phaseTimer(#pass, phaseTimes); \
         dumpASTBetweenEachPassIfNeeded(program, "AST before " # pass); \
         pass(__VA_ARGS__); \
     } while (0)
 
-static Optional<Program> prepareShared(String& whlslSource)
+static Optional<Program> prepareShared(PhaseTimes& phaseTimes, String& whlslSource)
 {
     Program program;
     Parser parser;
-    if (auto parseFailure = parser.parse(program, whlslSource, Parser::Mode::User)) {
-        if (dumpPassFailure)
-            dataLogLn("failed to parse the program: ", *parseFailure);
-        return WTF::nullopt;
+
+    {
+        PhaseTimer phaseTimer("parse", phaseTimes);
+        if (auto parseFailure = parser.parse(program, whlslSource, Parser::Mode::User)) {
+            if (dumpPassFailure)
+                dataLogLn("failed to parse the program: ", *parseFailure);
+            return WTF::nullopt;
+        }
     }
-    includeStandardLibrary(program, parser, parseFullStandardLibrary);
+
+    {
+        PhaseTimer phaseTimer("includeStandardLibrary", phaseTimes);
+        includeStandardLibrary(program, parser, parseFullStandardLibrary);
+    }
 
     if (!dumpASTBetweenEachPassIfNeeded(program, "AST after parsing"))
         dumpASTAfterParsingIfNeeded(program);
@@ -151,14 +200,30 @@ static Optional<Program> prepareShared(String& whlslSource)
 
 Optional<RenderPrepareResult> prepare(String& whlslSource, RenderPipelineDescriptor& renderPipelineDescriptor)
 {
-    auto program = prepareShared(whlslSource);
-    if (!program)
-        return WTF::nullopt;
-    auto matchedSemantics = matchSemantics(*program, renderPipelineDescriptor);
-    if (!matchedSemantics)
-        return WTF::nullopt;
+    PhaseTimes phaseTimes;
+    Metal::RenderMetalCode generatedCode;
 
-    auto generatedCode = Metal::generateMetalCode(*program, WTFMove(*matchedSemantics), renderPipelineDescriptor.layout);
+    {
+        PhaseTimer phaseTimer("prepare total", phaseTimes);
+        auto program = prepareShared(phaseTimes, whlslSource);
+        if (!program)
+            return WTF::nullopt;
+
+        Optional<MatchedRenderSemantics> matchedSemantics;
+        {
+            PhaseTimer phaseTimer("matchSemantics", phaseTimes);
+            matchedSemantics = matchSemantics(*program, renderPipelineDescriptor);
+            if (!matchedSemantics)
+                return WTF::nullopt;
+        }
+
+        {
+            PhaseTimer phaseTimer("generateMetalCode", phaseTimes);
+            generatedCode = Metal::generateMetalCode(*program, WTFMove(*matchedSemantics), renderPipelineDescriptor.layout);
+        }
+    }
+
+    logPhaseTimes(phaseTimes);
 
     RenderPrepareResult result;
     result.metalSource = WTFMove(generatedCode.metalSource);
@@ -169,17 +234,38 @@ Optional<RenderPrepareResult> prepare(String& whlslSource, RenderPipelineDescrip
 
 Optional<ComputePrepareResult> prepare(String& whlslSource, ComputePipelineDescriptor& computePipelineDescriptor)
 {
-    auto program = prepareShared(whlslSource);
-    if (!program)
-        return WTF::nullopt;
-    auto matchedSemantics = matchSemantics(*program, computePipelineDescriptor);
-    if (!matchedSemantics)
-        return WTF::nullopt;
-    auto computeDimensions = WHLSL::computeDimensions(*program, *matchedSemantics->shader);
-    if (!computeDimensions)
-        return WTF::nullopt;
+    PhaseTimes phaseTimes;
+    Metal::ComputeMetalCode generatedCode;
+    Optional<ComputeDimensions> computeDimensions;
 
-    auto generatedCode = Metal::generateMetalCode(*program, WTFMove(*matchedSemantics), computePipelineDescriptor.layout);
+    {
+        PhaseTimer phaseTimer("prepare total", phaseTimes);
+        auto program = prepareShared(phaseTimes, whlslSource);
+        if (!program)
+            return WTF::nullopt;
+
+        Optional<MatchedComputeSemantics> matchedSemantics;
+        {
+            PhaseTimer phaseTimer("matchSemantics", phaseTimes);
+            matchedSemantics = matchSemantics(*program, computePipelineDescriptor);
+            if (!matchedSemantics)
+                return WTF::nullopt;
+        }
+
+        {
+            PhaseTimer phaseTimer("computeDimensions", phaseTimes);
+            computeDimensions = WHLSL::computeDimensions(*program, *matchedSemantics->shader);
+            if (!computeDimensions)
+                return WTF::nullopt;
+        }
+
+        {
+            PhaseTimer phaseTimer("generateMetalCode", phaseTimes);
+            generatedCode = Metal::generateMetalCode(*program, WTFMove(*matchedSemantics), computePipelineDescriptor.layout);
+        }
+    }
+
+    logPhaseTimes(phaseTimes);
 
     ComputePrepareResult result;
     result.metalSource = WTFMove(generatedCode.metalSource);
