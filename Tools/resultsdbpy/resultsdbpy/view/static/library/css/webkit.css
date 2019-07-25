@@ -1750,17 +1750,15 @@ pre {
 .timeline>.content {
   overflow-x: auto;
   overflow-y: hidden;
-  width: calc(100% - 140px);
   padding: 0;
   margin: 0;
   vertical-align: middle;
-  /*display: flex;*/;
+  flex: auto;
 }
 
 .timeline>.header {
   margin: 0;
   text-align: right;
-  width: 140px;
   border: none;
   vertical-align: middle;
   display: block;
@@ -1768,6 +1766,7 @@ pre {
   overflow: auto;
   position: relative;
   border-left: 1px solid var(--borderColorInlineElement);
+  flex: none;
 }
 
 .timeline>.header .series {
