@@ -1,3 +1,26 @@
+2019-07-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r244995): Assertion failure when addEventListener to an SVGElement which has an. instance in shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=200083
+
+        Reviewed by Ryosuke Niwa.
+
+        When adding an event listener to an SVGElement, the same event listener
+        has to be add to all the instances of SVGElement in the shadow tree. See
+        SVGElement::addEventListener().
+
+        In r244995, an assertion was added to ensure if the event listener is
+        attached to an event target, the new event target has be the same as the
+        attached one. This assertion isn't correct for the event targets which 
+        were copied from the targetElement sub tree of an SVGUseElement to the
+        shadow tree.
+
+        Test: svg/custom/add-event-listener-shadow-tree-element.html
+
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::isCloneInShadowTreeOfSVGUseElement):
+        (WebCore::JSLazyEventListener::checkValidityForEventTarget):
+
 2019-07-25  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r247821.

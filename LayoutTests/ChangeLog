@@ -1,3 +1,13 @@
+2019-07-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r244995): Assertion failure when addEventListener to an SVGElement which has an. instance in shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=200083
+
+        Reviewed by Ryosuke Niwa.
+
+        * svg/custom/add-event-listener-shadow-tree-element-expected.txt: Added.
+        * svg/custom/add-event-listener-shadow-tree-element.html: Added.
+
 2019-07-25  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r247821.

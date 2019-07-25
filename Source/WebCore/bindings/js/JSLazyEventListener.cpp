@@ -26,6 +26,7 @@
 #include "Frame.h"
 #include "JSNode.h"
 #include "QualifiedName.h"
+#include "SVGElement.h"
 #include "ScriptController.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/FunctionConstructor.h>
@@ -80,12 +81,29 @@ JSLazyEventListener::JSLazyEventListener(CreationArguments&& arguments, const St
 }
 
 #if !ASSERT_DISABLED
+static inline bool isCloneInShadowTreeOfSVGUseElement(Node& originalNode, EventTarget& eventTarget)
+{
+    if (!eventTarget.isNode())
+        return false;
+
+    auto& node = downcast<Node>(eventTarget);
+    if (!is<SVGElement>(node))
+        return false;
+
+    auto& element = downcast<SVGElement>(node);
+    if (!element.correspondingElement())
+        return false;
+
+    ASSERT(element.isInShadowTree());
+    return &originalNode == element.correspondingElement();
+}
+
 // This is to help find the underlying cause of <rdar://problem/24314027>.
 void JSLazyEventListener::checkValidityForEventTarget(EventTarget& eventTarget)
 {
     if (eventTarget.isNode()) {
         ASSERT(m_originalNode);
-        ASSERT(static_cast<EventTarget*>(m_originalNode.get()) == &eventTarget);
+        ASSERT(static_cast<EventTarget*>(m_originalNode.get()) == &eventTarget || isCloneInShadowTreeOfSVGUseElement(*m_originalNode, eventTarget));
     } else
         ASSERT(!m_originalNode);
 }
