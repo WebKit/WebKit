@@ -1,3 +1,36 @@
+2019-07-25  Dean Jackson  <dino@apple.com>
+
+        Add helper for ignoring deprecated implementation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=200135
+
+        Reviewed by Wenson Hsieh.
+
+        Add ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN/END macro which
+        is IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+
+        * Misc/WebDownload.mm:
+        (-[WebDownload initWithRequest:delegate:]):
+        * Misc/WebIconDatabase.mm:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WebBaseNetscapePluginView IGNORE_WARNINGS_END]): Deleted.
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WebDynamicScrollBarsView IGNORE_WARNINGS_END]): Deleted.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView draggingSourceOperationMaskForLocal:]):
+        (-[WebHTMLView draggedImage:endedAt:operation:]):
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+        (-[WebHTMLView accessibilityAttributeValue:]):
+        (-[WebHTMLView ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WebHTMLView characterIndexForPoint:]):
+        (-[WebHTMLView firstRectForCharacterRange:]):
+        (-[WebHTMLView attributedSubstringFromRange:]):
+        (-[WebHTMLView setMarkedText:selectedRange:]):
+        (-[WebHTMLView doCommandBySelector:]):
+        (-[WebHTMLView insertText:]):
+        (-[WebHTMLView IGNORE_WARNINGS_END]): Deleted.
+
 2019-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS 10.15] Web process crashes when attempting to show the font panel via Font > Show Fonts

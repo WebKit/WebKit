@@ -167,9 +167,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [self presentPopoverAnimated:NO];
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (_isRotating)
         return;

@@ -1310,9 +1310,9 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const Visibl
     return textMarkerRangeFromVisiblePositions(m_object->axObjectCache(), startPosition, endPosition);
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray*)accessibilityActionNames
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (![self updateObjectBackingStore])
         return nil;
@@ -1446,9 +1446,9 @@ IGNORE_WARNINGS_END
     return additional;
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray*)accessibilityAttributeNames
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (![self updateObjectBackingStore])
         return nil;
@@ -2618,9 +2618,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 // FIXME: split up this function in a better way.
 // suggestions: Use a hash table that maps attribute names to function calls,
 // or maybe pointers to member functions
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)accessibilityAttributeValue:(NSString*)attributeName
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (![self updateObjectBackingStore])
         return nil;
@@ -3501,9 +3501,9 @@ IGNORE_WARNINGS_END
     return NSAccessibilityUnignoredAncestor(self);
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (BOOL)accessibilityIsAttributeSettable:(NSString*)attributeName
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (![self updateObjectBackingStore])
         return NO;
@@ -3556,9 +3556,9 @@ IGNORE_WARNINGS_END
 // AppKit's id mapping tables. We do this in detach by calling unregisterUniqueIdForUIElement.
 //
 // Registering an object is also required for observing notifications. Only registered objects can be observed.
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (BOOL)accessibilityIsIgnored
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (![self updateObjectBackingStore])
         return YES;
@@ -3568,9 +3568,9 @@ IGNORE_WARNINGS_END
     return _axBackingObject->accessibilityIsIgnored();
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray* )accessibilityParameterizedAttributeNames
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (![self updateObjectBackingStore])
         return nil;
@@ -3789,9 +3789,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     m_object->scrollToGlobalPoint(IntPoint(point));
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)accessibilityPerformAction:(NSString*)action
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (![self updateObjectBackingStore])
         return;
@@ -3838,9 +3838,9 @@ IGNORE_WARNINGS_END
     return m_object->insertText(text);
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
 #if PLATFORM(MAC)
     // In case anything we do by changing values causes an alert or other modal
@@ -3963,9 +3963,9 @@ static RenderObject* rendererForView(NSView* view)
     return nil;
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSString*)accessibilityActionDescription:(NSString*)action
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     // we have no custom actions
     return NSAccessibilityActionDescription(action);
@@ -4094,9 +4094,9 @@ static void formatForDebugger(const VisiblePositionRange& range, char* buffer, u
 }
 #endif
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)accessibilityAttributeValue:(NSString*)attribute forParameter:(id)parameter
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     id textMarker = nil;
     id textMarkerRange = nil;

@@ -1,3 +1,15 @@
+2019-07-25  Dean Jackson  <dino@apple.com>
+
+        Add helper for ignoring deprecated implementation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=200135
+
+        Reviewed by Wenson Hsieh.
+
+        Add ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN/END macro which
+        is IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+
+        * wtf/Compiler.h:
+
 2019-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] Add IsoHeap test to ensure that IsoHeap pages are not allocating too large VA

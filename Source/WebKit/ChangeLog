@@ -1,3 +1,68 @@
+2019-07-25  Dean Jackson  <dino@apple.com>
+
+        Add helper for ignoring deprecated implementation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=200135
+
+        Reviewed by Wenson Hsieh.
+
+        Add ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN/END macro which
+        is IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+
+        * UIProcess/API/Cocoa/LegacyBundleForClass.mm:
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (IGNORE_WARNINGS_BEGIN): Deleted.
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.mm:
+        (IGNORE_WARNINGS_BEGIN): Deleted.
+        * UIProcess/API/Cocoa/WKConnection.mm:
+        (IGNORE_WARNINGS_BEGIN): Deleted.
+        * UIProcess/API/Cocoa/WKPreviewElementInfo.mm:
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (IGNORE_WARNINGS_BEGIN): Deleted.
+        * UIProcess/API/Cocoa/WKTypeRefWrapper.mm:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WKWebView draggedImage:endedAt:operation:]):
+        (-[WKWebView accessibilityAttributeValue:]):
+        (-[WKWebView accessibilityAttributeValue:forParameter:]):
+        (-[WKWebView namesOfPromisedFilesDroppedAtDestination:]):
+        (-[WKWebView IGNORE_WARNINGS_END]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WKWebViewConfiguration _setWebsiteDataStore:]):
+        (-[WKWebViewConfiguration IGNORE_WARNINGS_END]): Deleted.
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.mm:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WKView draggedImage:endedAt:operation:]):
+        (-[WKView accessibilityAttributeValue:]):
+        (-[WKView accessibilityAttributeValue:forParameter:]):
+        (-[WKView namesOfPromisedFilesDroppedAtDestination:]):
+        (-[WKView IGNORE_WARNINGS_END]): Deleted.
+        * UIProcess/WKImagePreviewViewController.mm:
+        (-[WKImagePreviewViewController ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WKImagePreviewViewController IGNORE_WARNINGS_END]): Deleted.
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+        (-[WKAirPlayRoutePicker popoverControllerDidDismissPopover:]):
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel popoverControllerDidDismissPopover:]):
+        * UIProcess/ios/forms/WKFormPopover.mm:
+        (-[WKRotatingPopover popoverControllerDidDismissPopover:]):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFPluginAccessibilityObject ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WKPDFPluginAccessibilityObject accessibilityAttributeValue:]):
+        (-[WKPDFPluginAccessibilityObject accessibilityAttributeValue:forParameter:]):
+        (-[WKPDFPluginAccessibilityObject accessibilityPerformAction:]):
+        (-[WKPDFPluginAccessibilityObject accessibilityIsAttributeSettable:]):
+        (-[WKPDFPluginAccessibilityObject accessibilitySetValue:forAttribute:]):
+        (-[WKPDFPluginAccessibilityObject IGNORE_WARNINGS_END]): Deleted.
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WKAccessibilityWebPageObject accessibilityIsAttributeSettable:]):
+        (-[WKAccessibilityWebPageObject accessibilitySetValue:forAttribute:]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:forParameter:]):
+        (-[WKAccessibilityWebPageObject IGNORE_WARNINGS_END]): Deleted.
+
 2019-07-25  Youenn Fablet  <youenn@apple.com>
 
         Make NetworkSession no longer RefCounted

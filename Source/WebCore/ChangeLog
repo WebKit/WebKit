@@ -1,3 +1,29 @@
+2019-07-25  Dean Jackson  <dino@apple.com>
+
+        Add helper for ignoring deprecated implementation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=200135
+
+        Reviewed by Wenson Hsieh.
+
+        Add ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN/END macro which
+        is IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[WebAccessibilityObjectWrapper accessibilityIsAttributeSettable:]):
+        (-[WebAccessibilityObjectWrapper accessibilityPerformAction:]):
+        (-[WebAccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+        (-[WebAccessibilityObjectWrapper accessibilityActionDescription:]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        (-[WebAccessibilityObjectWrapper IGNORE_WARNINGS_END]): Deleted.
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVStreamDataParserListener streamDataParserWillProvideContentKeyRequestInitializationData:forTrackID:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didProvideContentKeyRequestInitializationData:forTrackID:]):
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveAuthenticationChallenge:]):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:canAuthenticateAgainstProtectionSpace:]):
+
 2019-07-25  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Speculative build fix for tvOS of missing include.
