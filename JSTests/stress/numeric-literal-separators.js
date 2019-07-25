@@ -94,3 +94,13 @@ shouldThrow('1e+2__2', SyntaxError);
 shouldThrow('1e-_2', SyntaxError);
 shouldThrow('1e-2_', SyntaxError);
 shouldThrow('1e-2__2', SyntaxError);
+
+shouldThrow('01_1', SyntaxError);
+shouldThrow('01_9', SyntaxError);
+shouldThrow('09_1', SyntaxError);
+shouldThrow('0100_001', SyntaxError);
+shouldThrow('0100_009', SyntaxError);
+shouldThrow('0900_001', SyntaxError);
+shouldThrow('010000000000_1', SyntaxError);
+shouldThrow('010000000000_9', SyntaxError);
+shouldThrow('090000000000_1', SyntaxError);

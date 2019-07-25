@@ -18,9 +18,6 @@ function assertThrowSyntaxError(input) {
 let n = 0n;
 assert(n === 0n);
 
-n = 00n;
-assert(n === 0n);
-
 // Binary representation
 
 n = 0b1111n;
@@ -105,3 +102,6 @@ assertThrowSyntaxError("100nn");
 assertThrowSyntaxError("1a0nn");
 assertThrowSyntaxError("10E20n");
 assertThrowSyntaxError("--10n");
+assertThrowSyntaxError("00n");
+assertThrowSyntaxError("01n");
+assertThrowSyntaxError("09n");

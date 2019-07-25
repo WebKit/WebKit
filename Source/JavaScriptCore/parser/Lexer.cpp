@@ -1625,6 +1625,8 @@ template <typename T>
 ALWAYS_INLINE auto Lexer<T>::parseOctal() -> Optional<NumberParseResult>
 {
     ASSERT(isASCIIOctalDigit(m_current));
+    ASSERT(!m_buffer8.size() || (m_buffer8.size() == 1 && m_buffer8[0] == '0'));
+    bool isLegacyLiteral = m_buffer8.size();
 
     // Optimization: most octal values fit into 4 bytes.
     uint32_t octalValue = 0;
@@ -1636,7 +1638,7 @@ ALWAYS_INLINE auto Lexer<T>::parseOctal() -> Optional<NumberParseResult>
 
     do {
         if (m_current == '_') {
-            if (UNLIKELY(!isASCIIOctalDigit(peek(1))))
+            if (UNLIKELY(!isASCIIOctalDigit(peek(1)) || isLegacyLiteral))
                 return WTF::nullopt;
 
             shift();
@@ -1656,7 +1658,7 @@ ALWAYS_INLINE auto Lexer<T>::parseOctal() -> Optional<NumberParseResult>
 
     while (isASCIIOctalDigitOrSeparator(m_current)) {
         if (m_current == '_') {
-            if (UNLIKELY(!isASCIIOctalDigit(peek(1))))
+            if (UNLIKELY(!isASCIIOctalDigit(peek(1)) || isLegacyLiteral))
                 return WTF::nullopt;
 
             shift();
@@ -1666,7 +1668,7 @@ ALWAYS_INLINE auto Lexer<T>::parseOctal() -> Optional<NumberParseResult>
         shift();
     }
 
-    if (UNLIKELY(Options::useBigInt() && m_current == 'n'))
+    if (UNLIKELY(Options::useBigInt() && m_current == 'n') && !isLegacyLiteral)
         return NumberParseResult { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
 
     if (isASCIIDigit(m_current))
@@ -1679,6 +1681,7 @@ template <typename T>
 ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> Optional<NumberParseResult>
 {
     ASSERT(isASCIIDigit(m_current) || m_buffer8.size());
+    bool isLegacyLiteral = m_buffer8.size() && isASCIIDigitOrSeparator(m_current);
 
     // Optimization: most decimal values fit into 4 bytes.
     uint32_t decimalValue = 0;
@@ -1694,7 +1697,7 @@ ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> Optional<NumberParseResult>
 
         do {
             if (m_current == '_') {
-                if (UNLIKELY(!isASCIIDigit(peek(1))))
+                if (UNLIKELY(!isASCIIDigit(peek(1)) || isLegacyLiteral))
                     return WTF::nullopt;
 
                 shift();
@@ -1715,7 +1718,7 @@ ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> Optional<NumberParseResult>
 
     while (isASCIIDigitOrSeparator(m_current)) {
         if (m_current == '_') {
-            if (UNLIKELY(!isASCIIDigit(peek(1))))
+            if (UNLIKELY(!isASCIIDigit(peek(1)) || isLegacyLiteral))
                 return WTF::nullopt;
 
             shift();
@@ -1725,7 +1728,7 @@ ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> Optional<NumberParseResult>
         shift();
     }
     
-    if (UNLIKELY(Options::useBigInt() && m_current == 'n'))
+    if (UNLIKELY(Options::useBigInt() && m_current == 'n' && !isLegacyLiteral))
         return NumberParseResult { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
 
     return WTF::nullopt;
