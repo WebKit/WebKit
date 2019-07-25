@@ -277,11 +277,7 @@ static void drawFragmentHighlight(GraphicsContext& context, Node& node, const Hi
 
 static void drawShapeHighlight(GraphicsContext& context, Node& node, Highlight::Bounds& bounds)
 {
-    Element* element = effectiveElementForNode(node);
-    if (!element)
-        return;
-
-    RenderObject* renderer = element->renderer();
+    RenderObject* renderer = node.renderer();
     if (!renderer || !is<RenderBox>(renderer))
         return;
 
@@ -289,11 +285,14 @@ static void drawShapeHighlight(GraphicsContext& context, Node& node, Highlight::
     if (!shapeOutsideInfo)
         return;
 
-    const Color shapeHighlightColor(96, 82, 127, 204);
+    Frame* containingFrame = node.document().frame();
+    if (!containingFrame)
+        return;
 
-    Frame* containingFrame = element->document().frame();
     FrameView* containingView = containingFrame->view();
     FrameView* mainView = containingFrame->page()->mainFrame().view();
+
+    const Color shapeHighlightColor(96, 82, 127, 204);
 
     Shape::DisplayPaths paths;
     shapeOutsideInfo->computedShape().buildDisplayPaths(paths);
@@ -843,7 +842,7 @@ void InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     if (!element)
         return;
 
-    RenderObject* renderer = element->renderer();
+    RenderObject* renderer = node.renderer();
     if (!renderer)
         return;
 
@@ -871,9 +870,9 @@ void InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     }
 
     String elementPseudoType;
-    if (element->isBeforePseudoElement())
+    if (node.isBeforePseudoElement())
         elementPseudoType = "::before"_s;
-    else if (element->isAfterPseudoElement())
+    else if (node.isAfterPseudoElement())
         elementPseudoType = "::after"_s;
 
     String elementWidth;
@@ -883,7 +882,7 @@ void InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
         elementWidth = String::number(adjustForAbsoluteZoom(roundToInt(modelObject->offsetWidth()), *modelObject));
         elementHeight = String::number(adjustForAbsoluteZoom(roundToInt(modelObject->offsetHeight()), *modelObject));
     } else {
-        FrameView* containingView = element->document().frame()->view();
+        FrameView* containingView = node.document().frame()->view();
         IntRect boundingBox = snappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));
         elementWidth = String::number(boundingBox.width());
         elementHeight = String::number(boundingBox.height());
@@ -894,8 +893,8 @@ void InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
         WebCore::AXObjectCache::enableAccessibility();
 
     String elementRole;
-    if (AXObjectCache* axObjectCache = element->document().axObjectCache()) {
-        if (AccessibilityObject* axObject = axObjectCache->getOrCreate(element))
+    if (AXObjectCache* axObjectCache = node.document().axObjectCache()) {
+        if (AccessibilityObject* axObject = axObjectCache->getOrCreate(&node))
             elementRole = axObject->computedRoleString();
     }
 
