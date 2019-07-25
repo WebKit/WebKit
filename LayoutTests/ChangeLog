@@ -1,3 +1,12 @@
+2019-07-25  Russell Epstein  <repstein@apple.com>
+
+        rdar://53551736 (Layout Test editing/pasteboard/paste-and-sanitize.html is a Flaky Failure on iOS 13).
+
+        Unreviewed Test Gardening.
+
+        * platform/ios-12/TestExpectations: Test is passing on iOS 12
+        * platform/ios/TestExpectations: Marking test as flaky on iOS 13
+
 2019-07-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (r244995): Assertion failure when addEventListener to an SVGElement which has an. instance in shadow tree
