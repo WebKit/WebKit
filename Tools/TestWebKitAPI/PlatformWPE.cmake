@@ -6,6 +6,7 @@ add_custom_target(TestWebKitAPI-forwarding-headers
 )
 
 list(APPEND TestWebKit_DEPENDENCIES TestWebKitAPI-forwarding-headers)
+add_dependencies(TestWebKitAPIInjectedBundle TestWebKitAPI-forwarding-headers)
 
 include_directories(SYSTEM
     ${CAIRO_INCLUDE_DIRS}

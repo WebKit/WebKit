@@ -6,6 +6,7 @@ add_custom_target(TestWebKitAPI-forwarding-headers
 )
 
 list(APPEND TestWebKit_DEPENDENCIES TestWebKitAPI-forwarding-headers)
+add_dependencies(TestWebKitAPIInjectedBundle TestWebKitAPI-forwarding-headers)
 
 set(test_main_SOURCES gtk/main.cpp)
 

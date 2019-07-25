@@ -1,3 +1,14 @@
+2019-07-24  Fujii Hironori  <fujii.hironori@gmail.com>
+
+        [GTK][WPE][CMake] failing to build TestWebKitAPIInjectedBundle due to missing forwarding headers
+        https://bugs.webkit.org/show_bug.cgi?id=200073
+
+        Reviewed by Michael Catanzaro.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWPE.cmake:
+        Added add_dependencies(TestWebKitAPIInjectedBundle TestWebKitAPI-forwarding-headers).
+
 2019-07-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [webkitperl] runCommand doesn't work in Windows Perl
