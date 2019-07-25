@@ -233,12 +233,8 @@ static JSC::JSObject* objectArgumentAt(ScriptArguments& arguments, unsigned inde
     return arguments.argumentCount() > index ? arguments.argumentAt(index).getObject() : nullptr;
 }
 
-static CanvasRenderingContext* canvasRenderingContext(JSC::VM& vm, ScriptArguments& arguments)
+static CanvasRenderingContext* canvasRenderingContext(JSC::VM& vm, JSC::JSValue target)
 {
-    auto* target = objectArgumentAt(arguments, 0);
-    if (!target)
-        return nullptr;
-
     if (auto* canvas = JSHTMLCanvasElement::toWrapped(vm, target))
         return canvas->renderingContext();
     if (auto* canvas = JSOffscreenCanvas::toWrapped(vm, target))
@@ -260,14 +256,18 @@ static CanvasRenderingContext* canvasRenderingContext(JSC::VM& vm, ScriptArgumen
 
 void PageConsoleClient::record(JSC::ExecState* state, Ref<ScriptArguments>&& arguments)
 {
-    if (auto* context = canvasRenderingContext(state->vm(), arguments))
-        InspectorInstrumentation::consoleStartRecordingCanvas(*context, *state, objectArgumentAt(arguments, 1));
+    if (auto* target = objectArgumentAt(arguments, 0)) {
+        if (auto* context = canvasRenderingContext(state->vm(), target))
+            InspectorInstrumentation::consoleStartRecordingCanvas(*context, *state, objectArgumentAt(arguments, 1));
+    }
 }
 
 void PageConsoleClient::recordEnd(JSC::ExecState* state, Ref<ScriptArguments>&& arguments)
 {
-    if (auto* context = canvasRenderingContext(state->vm(), arguments))
-        InspectorInstrumentation::didFinishRecordingCanvasFrame(*context, true);
+    if (auto* target = objectArgumentAt(arguments, 0)) {
+        if (auto* context = canvasRenderingContext(state->vm(), target))
+            InspectorInstrumentation::didFinishRecordingCanvasFrame(*context, true);
+    }
 }
 
 void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&& arguments)
@@ -284,6 +284,29 @@ void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&&
                 if (auto snapshot = WebCore::snapshotNode(m_page.mainFrame(), *node))
                     dataURL = snapshot->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
             }
+        } else if (auto* context = canvasRenderingContext(state->vm(), possibleTarget)) {
+            auto& canvas = context->canvasBase();
+            if (is<HTMLCanvasElement>(canvas)) {
+                target = possibleTarget;
+                if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+#if ENABLE(WEBGL)
+                    if (is<WebGLRenderingContextBase>(context))
+                        downcast<WebGLRenderingContextBase>(context)->setPreventBufferClearForInspector(true);
+#endif
+
+                    auto result = downcast<HTMLCanvasElement>(canvas).toDataURL("image/png"_s);
+
+#if ENABLE(WEBGL)
+                    if (is<WebGLRenderingContextBase>(context))
+                        downcast<WebGLRenderingContextBase>(context)->setPreventBufferClearForInspector(false);
+#endif
+
+                    if (!result.hasException())
+                        dataURL = result.releaseReturnValue().string;
+                }
+            }
+
+            // FIXME: <https://webkit.org/b/180833> Web Inspector: support OffscreenCanvas for Canvas related operations
         }
     }
 

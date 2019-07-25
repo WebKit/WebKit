@@ -11,6 +11,13 @@ function createDetachedTest()
     return div;
 }
 
+function createCanvas2DTest() {
+    let canvas = document.createElement("canvas");
+    canvas.width = 2;
+    canvas.height = 2;
+    return canvas.getContext("2d");
+}
+
 function test()
 {
     let suite = InspectorTest.createAsyncSuite("console.screenshot");
@@ -73,6 +80,18 @@ function test()
         name: "console.screenshot.Node.DetachedNonScreenshotable",
         expression: `console.screenshot(createDetachedTest())`,
         shouldError: true,
+    });
+
+    addTest({
+        name: "console.screenshot.CanvasRenderingContext2D",
+        expression: `console.screenshot(createCanvas2DTest())`,
+        async imageMessageAddedCallback(message) {
+            InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
+
+            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
+            InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
+            InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
+        },
     });
 
     addTest({
