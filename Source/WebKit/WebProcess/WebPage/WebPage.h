@@ -49,6 +49,7 @@
 #include "SharedMemory.h"
 #include "UserData.h"
 #include "WebBackForwardListProxy.h"
+#include "WebPageMessages.h"
 #include "WebURLSchemeHandler.h"
 #include "WebUndoStepID.h"
 #include "WebUserContentController.h"
@@ -1166,10 +1167,10 @@ public:
     void didReceiveWebPageMessage(IPC::Connection&, IPC::Decoder&);
 
     template<typename T>
-    bool sendSyncWithDelayedReply(T&& message, typename T::Reply&& reply)
+    bool sendSyncWithDelayedReply(T&& message, typename T::Reply&& reply, OptionSet<IPC::SendSyncOption> sendSyncOptions = { })
     {
         cancelGesturesBlockedOnSynchronousReplies();
-        return sendSync(WTFMove(message), WTFMove(reply), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
+        return sendSync(WTFMove(message), WTFMove(reply), Seconds::infinity(), sendSyncOptions | IPC::SendSyncOption::InformPlatformProcessWillSuspend);
     }
 
     WebCore::DOMPasteAccessResponse requestDOMPasteAccess(const String& originIdentifier);
@@ -1290,6 +1291,8 @@ private:
 #if PLATFORM(MAC)
     bool executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>&, WebCore::KeyboardEvent*);
 #endif
+
+    void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(Messages::WebPage::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply::DelayedReply&&);
 
     void updateDrawingAreaLayerTreeFreezeState();
     bool markLayersVolatileImmediatelyIfPossible();

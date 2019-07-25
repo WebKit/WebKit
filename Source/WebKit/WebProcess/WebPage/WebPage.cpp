@@ -5885,6 +5885,11 @@ void WebPage::didRemoveMenuItemElement(HTMLMenuItemElement& element)
 #endif
 }
 
+void WebPage::testProcessIncomingSyncMessagesWhenWaitingForSyncReply(Messages::WebPage::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply::DelayedReply&& reply)
+{
+    reply(true);
+}
+
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
 static const int primarySnapshottedPlugInSearchLimit = 3000;
 static const float primarySnapshottedPlugInSearchBucketSize = 1.1;

@@ -1,3 +1,22 @@
+2019-07-25  Chris Dumez  <cdumez@apple.com>
+
+        Avoid UI Process hangs when the WebContent process is showing JS prompts / alerts
+        https://bugs.webkit.org/show_bug.cgi?id=200107
+        <rdar://problem/53034592>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage for SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply.
+        Without the flag on the sendSync from the WebContent process of the
+        NetworkConnectionToWebProcess::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply IPC, the
+        test would hang. This is because the WebContent process sends a sync IPC to the network process,
+        which in turns sends one to the UIProcess, which itself sends one back to the WebContent process.
+        This would attempt to re-enter the WebContent process which is currently sending a sync IPC, which
+        is not allowed by default.
+
+        * fast/misc/testProcessIncomingSyncMessagesWhenWaitingForSyncReply-expected.txt: Added.
+        * fast/misc/testProcessIncomingSyncMessagesWhenWaitingForSyncReply.html: Added.
+
 2019-07-25  Rob Buis  <rbuis@igalia.com>
 
         Make storing cross-origin top-level prefetches in HTTP cache optional

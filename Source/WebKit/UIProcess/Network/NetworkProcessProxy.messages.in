@@ -31,6 +31,8 @@ messages -> NetworkProcessProxy LegacyReceiver {
 
     DidSyncAllCookies()
 
+    TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebCore::PageIdentifier webPageID) -> (bool handled) Synchronous
+
     ProcessReadyToSuspend()
     SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
 

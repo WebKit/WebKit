@@ -331,6 +331,8 @@ public:
     bool isOverwriteModeEnabled();
     void toggleOverwriteModeEnabled();
 
+    bool testProcessIncomingSyncMessagesWhenWaitingForSyncReply();
+
     ExceptionOr<RefPtr<Range>> rangeOfString(const String&, RefPtr<Range>&&, const Vector<String>& findOptions);
     ExceptionOr<unsigned> countMatchesForText(const String&, const Vector<String>& findOptions, const String& markMatches);
     ExceptionOr<unsigned> countFindMatches(const String&, const Vector<String>& findOptions);

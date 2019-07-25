@@ -381,6 +381,8 @@ public:
     virtual void assistiveTechnologyMakeFirstResponder() { }
 #endif
 
+    virtual bool testProcessIncomingSyncMessagesWhenWaitingForSyncReply() { return true; }
+
 #if PLATFORM(IOS_FAMILY)
     // FIXME: Come up with a more descriptive name for this function and make it platform independent (if possible).
     virtual bool isStopping() = 0;

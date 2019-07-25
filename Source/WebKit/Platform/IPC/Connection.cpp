@@ -98,6 +98,9 @@ public:
     // from that connection and put the other messages back in the queue.
     void dispatchMessages(Connection* allowedConnection);
 
+    void incrementProcessIncomingSyncMessagesWhenWaitingForSyncReplyCount() { ++m_processIncomingSyncMessagesWhenWaitingForSyncReplyCount; }
+    void decrementProcessIncomingSyncMessagesWhenWaitingForSyncReplyCount() { --m_processIncomingSyncMessagesWhenWaitingForSyncReplyCount; }
+
 private:
     void dispatchMessageAndResetDidScheduleDispatchMessagesForConnection(Connection&);
 
@@ -114,6 +117,8 @@ private:
         std::unique_ptr<Decoder> message;
     };
     Vector<ConnectionAndIncomingMessage> m_messagesToDispatchWhileWaitingForSyncReply;
+
+    std::atomic<unsigned> m_processIncomingSyncMessagesWhenWaitingForSyncReplyCount { 0 };
 };
 
 Connection::SyncMessageState& Connection::SyncMessageState::singleton()
@@ -134,7 +139,16 @@ Connection::SyncMessageState::SyncMessageState()
 
 bool Connection::SyncMessageState::processIncomingMessage(Connection& connection, std::unique_ptr<Decoder>& message)
 {
-    if (!message->shouldDispatchMessageWhenWaitingForSyncReply())
+    bool shouldDispatchMessageWhenWaitingForSyncReply = message->shouldDispatchMessageWhenWaitingForSyncReply();
+
+    // We dispatch synchronous messages even if shouldDispatchMessageWhenWaitingForSyncReply returns false if the
+    // sendSync() used SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply. This is used for some messages
+    // in the WebContent process (which normally does not dispatch messages when waiting for a sync reply), to avoid
+    // hangs.
+    if (!shouldDispatchMessageWhenWaitingForSyncReply && message->isSyncMessage() && m_processIncomingSyncMessagesWhenWaitingForSyncReplyCount.load())
+        shouldDispatchMessageWhenWaitingForSyncReply = true;
+
+    if (!shouldDispatchMessageWhenWaitingForSyncReply)
         return false;
 
     ConnectionAndIncomingMessage connectionAndIncomingMessage { connection, WTFMove(message) };
@@ -565,10 +579,16 @@ std::unique_ptr<Decoder> Connection::sendSyncMessage(uint64_t syncRequestID, std
     // First send the message.
     sendMessage(WTFMove(encoder), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 
+    if (sendSyncOptions.contains(SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply))
+        SyncMessageState::singleton().incrementProcessIncomingSyncMessagesWhenWaitingForSyncReplyCount();
+
     // Then wait for a reply. Waiting for a reply could involve dispatching incoming sync messages, so
     // keep an extra reference to the connection here in case it's invalidated.
     Ref<Connection> protect(*this);
     std::unique_ptr<Decoder> reply = waitForSyncReply(syncRequestID, timeout, sendSyncOptions);
+
+    if (sendSyncOptions.contains(SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply))
+        SyncMessageState::singleton().decrementProcessIncomingSyncMessagesWhenWaitingForSyncReplyCount();
 
     --m_inSendSyncCount;
 

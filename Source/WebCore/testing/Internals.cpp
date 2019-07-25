@@ -2275,6 +2275,13 @@ void Internals::setAutomaticLinkDetectionEnabled(bool enabled)
 #endif
 }
 
+bool Internals::testProcessIncomingSyncMessagesWhenWaitingForSyncReply()
+{
+    ASSERT(contextDocument());
+    ASSERT(contextDocument()->page());
+    return contextDocument()->page()->chrome().client().testProcessIncomingSyncMessagesWhenWaitingForSyncReply();
+}
+
 void Internals::setAutomaticDashSubstitutionEnabled(bool enabled)
 {
     if (!contextDocument() || !contextDocument()->frame())
