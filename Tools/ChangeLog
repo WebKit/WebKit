@@ -1,3 +1,11 @@
+2019-07-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Add Takashi Komori and Tomoki Imai as contributors
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] Add IsoHeap test to ensure that IsoHeap pages are not allocating too large VA
