@@ -115,7 +115,7 @@ public:
     static const bool needsDestruction = true;
 
     template<typename, SubspaceAccess>
-    static void subspaceFor(VM&) { }
+    static IsoSubspace* subspaceFor(VM&) { return nullptr; }
 
     DECLARE_INFO;
 

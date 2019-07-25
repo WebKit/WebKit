@@ -25,12 +25,23 @@
 
 #pragma once
 
+#include "IsoSubspace.h"
 #include "MarkedBlock.h"
+#include "MarkedSpace.h"
 #include <wtf/Packed.h>
 
 namespace JSC {
 
 template<typename T>
-using PackedCellPtr = PackedAlignedPtr<T, MarkedBlock::atomSize>;
+class PackedCellPtr : public PackedAlignedPtr<T, MarkedBlock::atomSize> {
+public:
+    using Base = PackedAlignedPtr<T, MarkedBlock::atomSize>;
+    PackedCellPtr(T* pointer)
+        : Base(pointer)
+    {
+        static_assert((sizeof(T) <= MarkedSpace::largeCutoff && std::is_final<T>::value) || isAllocatedFromIsoSubspace<T>::value, "LargeAllocation does not have 16byte alignment");
+        ASSERT(!(bitwise_cast<uintptr_t>(pointer) & (16 - 1)));
+    }
+};
 
 } // namespace JSC

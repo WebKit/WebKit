@@ -107,26 +107,8 @@ public:
     void setHasReifiedName() { m_hasReifiedName = true; }
 
     bool hasAllocationProfileClearingWatchpoint() const { return !!m_allocationProfileClearingWatchpoint; }
-    Watchpoint* createAllocationProfileClearingWatchpoint()
-    {
-        RELEASE_ASSERT(!hasAllocationProfileClearingWatchpoint());
-        m_allocationProfileClearingWatchpoint = std::make_unique<AllocationProfileClearingWatchpoint>(this);
-        return m_allocationProfileClearingWatchpoint.get();
-    }
-
-    class AllocationProfileClearingWatchpoint final : public Watchpoint {
-    public:
-        AllocationProfileClearingWatchpoint(FunctionRareData* rareData)
-            : Watchpoint(Watchpoint::Type::FunctionRareDataAllocationProfileClearing)
-            , m_rareData(rareData)
-        { }
-
-        void fireInternal(VM&, const FireDetail&);
-
-    private:
-        // Own destructor may not be called. Keep members trivially destructible.
-        JSC_WATCHPOINT_FIELD(PackedCellPtr<FunctionRareData>, m_rareData);
-    };
+    Watchpoint* createAllocationProfileClearingWatchpoint();
+    class AllocationProfileClearingWatchpoint;
 
 protected:
     FunctionRareData(VM&);
@@ -156,5 +138,26 @@ private:
     bool m_hasReifiedLength { false };
     bool m_hasReifiedName { false };
 };
+
+class FunctionRareData::AllocationProfileClearingWatchpoint final : public Watchpoint {
+public:
+    AllocationProfileClearingWatchpoint(FunctionRareData* rareData)
+        : Watchpoint(Watchpoint::Type::FunctionRareDataAllocationProfileClearing)
+        , m_rareData(rareData)
+    { }
+
+    void fireInternal(VM&, const FireDetail&);
+
+private:
+    // Own destructor may not be called. Keep members trivially destructible.
+    JSC_WATCHPOINT_FIELD(PackedCellPtr<FunctionRareData>, m_rareData);
+};
+
+inline Watchpoint* FunctionRareData::createAllocationProfileClearingWatchpoint()
+{
+    RELEASE_ASSERT(!hasAllocationProfileClearingWatchpoint());
+    m_allocationProfileClearingWatchpoint = std::make_unique<AllocationProfileClearingWatchpoint>(this);
+    return m_allocationProfileClearingWatchpoint.get();
+}
 
 } // namespace JSC

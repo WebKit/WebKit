@@ -26,6 +26,7 @@
 #pragma once
 
 #include "BytecodeStructs.h"
+#include "CodeBlock.h"
 #include "ObjectPropertyCondition.h"
 #include "PackedCellPtr.h"
 #include "Watchpoint.h"

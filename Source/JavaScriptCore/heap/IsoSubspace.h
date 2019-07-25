@@ -27,6 +27,7 @@
 
 #include "BlockDirectory.h"
 #include "Subspace.h"
+#include "SubspaceAccess.h"
 #include <wtf/SinglyLinkedListWithTail.h>
 
 namespace JSC {
@@ -68,6 +69,11 @@ ALWAYS_INLINE Allocator IsoSubspace::allocatorForNonVirtual(size_t size, Allocat
 }
 
 #define ISO_SUBSPACE_INIT(heap, heapCellType, type) ("Isolated " #type " Space", (heap), (heapCellType), sizeof(type))
+
+template<typename T>
+struct isAllocatedFromIsoSubspace {
+    static constexpr bool value = std::is_same<std::invoke_result_t<decltype(T::template subspaceFor<T, SubspaceAccess::OnMainThread>), VM&>, IsoSubspace*>::value;
+};
 
 } // namespace JSC
 

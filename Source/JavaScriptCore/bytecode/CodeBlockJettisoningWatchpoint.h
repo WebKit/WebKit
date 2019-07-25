@@ -25,12 +25,11 @@
 
 #pragma once
 
+#include "CodeBlock.h"
 #include "PackedCellPtr.h"
 #include "Watchpoint.h"
 
 namespace JSC {
-
-class CodeBlock;
 
 class CodeBlockJettisoningWatchpoint final : public Watchpoint {
 public:

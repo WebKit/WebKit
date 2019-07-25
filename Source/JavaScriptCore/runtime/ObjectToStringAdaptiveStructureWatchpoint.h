@@ -27,6 +27,7 @@
 
 #include "ObjectPropertyCondition.h"
 #include "PackedCellPtr.h"
+#include "StructureRareData.h"
 #include "Watchpoint.h"
 
 namespace JSC {
