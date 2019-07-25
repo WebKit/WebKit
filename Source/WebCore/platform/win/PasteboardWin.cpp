@@ -355,8 +355,9 @@ void Pasteboard::read(PasteboardFileReader& reader)
     for (auto& filename : list->value)
         reader.readFilename(filename);
 #else
+    UNUSED_PARAM(reader);
     notImplemented();
-    return { };
+    return;
 #endif
 }
 

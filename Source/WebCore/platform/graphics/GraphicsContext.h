@@ -284,6 +284,14 @@ public:
     };
     GraphicsContext(PaintInvalidationReasons);
 
+#if USE(DIRECT2D)
+    enum class BitmapRenderingContextType : uint8_t {
+        CPUMemory,
+        GPUMemory
+    };
+    WEBCORE_EXPORT GraphicsContext(PlatformGraphicsContext*, BitmapRenderingContextType);
+#endif
+
     WEBCORE_EXPORT bool hasPlatformContext() const;
     WEBCORE_EXPORT PlatformGraphicsContext* platformContext() const;
 
@@ -337,6 +345,10 @@ public:
 
 #if USE(CG) || USE(DIRECT2D) || USE(CAIRO)
     WEBCORE_EXPORT void drawNativeImage(const NativeImagePtr&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, BlendMode = BlendMode::Normal, ImageOrientation = ImageOrientation());
+#endif
+
+#if USE(DIRECT2D)
+    void drawDeviceBitmap(const COMPtr<ID2D1Bitmap>&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, BlendMode = BlendMode::Normal, ImageOrientation = ImageOrientation());
 #endif
 
 #if USE(CG) || USE(DIRECT2D)
@@ -607,6 +619,7 @@ private:
 
 #if USE(DIRECT2D)
     void platformInit(HDC, ID2D1RenderTarget**, RECT, bool hasAlpha = false);
+    void platformInit(PlatformGraphicsContext*, BitmapRenderingContextType);
     void drawWithoutShadow(const FloatRect& boundingRect, const WTF::Function<void(ID2D1RenderTarget*)>&);
     void drawWithShadow(const FloatRect& boundingRect, const WTF::Function<void(ID2D1RenderTarget*)>&);
 #endif

@@ -1,3 +1,92 @@
+2019-07-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Use IWICBitmap (rather than ID2D1Bitmap) for NativeImagePtr on FTW
+        https://bugs.webkit.org/show_bug.cgi?id=200093
+
+        Reviewed by Dean Jackson.
+
+        When I wrote the original Direct2D code, I did not realize that the backing memory for the
+        ID2D1Bitmap was inaccessible since it is effectively a representation of GPU memory. There
+        is no API to access or modify the pixels.
+
+        Instead, MSDN documentation indicates that we should be using IWICBitmap objects, which are
+        converted to ID2D1Bitmap objects when things are ready to be rendered.
+
+        This makes it possible to use the TextureMapper backend to do efficient compositing and tile
+        drawing, since the data backing the bitmap can now be accessed and manipulated, allowing us
+        to support filters and other effects.
+
+        * PlatformFTW.cmake:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::supportedImageMIMETypesForEncoding):
+        * platform/graphics/ANGLEWebKitBridge.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/NativeImage.h:
+        * platform/graphics/OpenGLShims.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::platformLayer const):
+        * platform/graphics/texmap/BitmapTexture.cpp:
+        (WebCore::BitmapTexture::updateContents):
+        * platform/graphics/texmap/BitmapTextureGL.cpp:
+        (WebCore::BitmapTextureGL::updateContents):
+        * platform/graphics/texmap/GraphicsContext3DTextureMapper.cpp:
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::platformInit):
+        (WebCore::GraphicsContextPlatformPrivate::setAlpha):
+        (WebCore::GraphicsContext::drawNativeImage):
+        (WebCore::GraphicsContext::drawDeviceBitmap):
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::beginDraw):
+        (WebCore::GraphicsContextPlatformPrivate::endDraw):
+        (WebCore::GraphicsContext::drawPattern):
+        (WebCore::GraphicsContext::clipPath):
+        * platform/graphics/win/GraphicsContextPlatformPrivateDirect2D.h:
+        * platform/graphics/win/ImageBufferDataDirect2D.cpp:
+        (WebCore::ImageBufferData::getData const):
+        (WebCore::ImageBufferData::putData):
+        * platform/graphics/win/ImageBufferDataDirect2D.h:
+        (): Deleted.
+        * platform/graphics/win/ImageBufferDirect2D.cpp:
+        (WebCore::ImageBuffer::createCompatibleBuffer):
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::createCroppedImageIfNecessary):
+        (WebCore::createBitmapImageAfterScalingIfNeeded):
+        (WebCore::ImageBuffer::copyImage const):
+        (WebCore::ImageBuffer::sinkIntoNativeImage):
+        (WebCore::ImageBuffer::copyNativeImage const):
+        (WebCore::ImageBuffer::draw):
+        * platform/graphics/win/ImageDecoderDirect2D.cpp:
+        (WebCore::ImageDecoderDirect2D::createFrameImageAtIndex):
+        * platform/graphics/win/ImageDirect2D.cpp:
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+        * platform/graphics/win/NativeImageDirect2D.cpp:
+        (WebCore::imagingFactory):
+        (WebCore::nativeImageSize):
+        (WebCore::nativeImageHasAlpha):
+        (WebCore::nativeImageSinglePixelSolidColor):
+        (WebCore::drawNativeImage):
+        (WebCore::clearNativeImageSubimages):
+        * platform/graphics/win/PathDirect2D.cpp:
+        (WebCore::Path::strokeContains const):
+        * platform/graphics/win/PatternDirect2D.cpp:
+        (WebCore::Pattern::createPlatformPattern const):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::read):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::shouldRespectImageOrientation const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::adjustTiledBackingCoverage):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImage):
+
 2019-07-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r243637): Some web fonts fail to load on Google docs

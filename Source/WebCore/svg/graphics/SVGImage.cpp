@@ -68,6 +68,7 @@
 
 #if USE(DIRECT2D)
 #include "COMPtr.h"
+#include "ImageDecoderDirect2D.h"
 #include <d2d1.h>
 #endif
 
@@ -232,21 +233,24 @@ NativeImagePtr SVGImage::nativeImage(const GraphicsContext* targetContext)
     if (!m_page || !targetContext)
         return nullptr;
 
-    auto platformContext = targetContext->platformContext();
-    ASSERT(platformContext);
+    COMPtr<IWICBitmap> nativeImage;
+    HRESULT hr = ImageDecoderDirect2D::systemImagingFactory()->CreateBitmap(rect().width(), rect().height(), GUID_WICPixelFormat32bppPRGBA, WICBitmapCacheOnLoad, &nativeImage);
+    if (!SUCCEEDED(hr))
+        return nullptr;
+
+    auto targetProperties = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
+        D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
+        0, 0, D2D1_RENDER_TARGET_USAGE_NONE, D2D1_FEATURE_LEVEL_DEFAULT);
 
     // Draw the SVG into a bitmap.
-    COMPtr<ID2D1BitmapRenderTarget> nativeImageTarget;
-    HRESULT hr = platformContext->CreateCompatibleRenderTarget(IntSize(rect().size()), &nativeImageTarget);
-    ASSERT(SUCCEEDED(hr));
+    COMPtr<ID2D1RenderTarget> nativeImageTarget;
+    hr = GraphicsContext::systemFactory()->CreateWicBitmapRenderTarget(nativeImage.get(), &targetProperties, &nativeImageTarget);
+    if (!nativeImageTarget || !SUCCEEDED(hr))
+        return nullptr;
 
-    GraphicsContext localContext(nativeImageTarget.get());
+    GraphicsContext localContext(nativeImageTarget.get(), GraphicsContext::BitmapRenderingContextType::CPUMemory);
 
     draw(localContext, rect(), rect(), CompositeSourceOver, BlendMode::Normal, DecodingMode::Synchronous, ImageOrientationDescription());
-
-    COMPtr<ID2D1Bitmap> nativeImage;
-    hr = nativeImageTarget->GetBitmap(&nativeImage);
-    ASSERT(SUCCEEDED(hr));
 
     return nativeImage;
 }

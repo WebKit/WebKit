@@ -27,6 +27,7 @@
 #include "config.h"
 #include "BitmapTexture.h"
 
+#include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "ImageBuffer.h"
 #include "TextureMapper.h"
@@ -53,6 +54,11 @@ void BitmapTexture::updateContents(TextureMapper&, GraphicsLayer* sourceLayer, c
     context.translate(-sourceRect.x(), -sourceRect.y());
 
     sourceLayer->paintGraphicsLayerContents(context, sourceRect);
+
+#if USE(DIRECT2D)
+    // We can't access the bits in the image buffer with an active beginDraw.
+    context.endDraw();
+#endif
 
     RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
     if (!image)

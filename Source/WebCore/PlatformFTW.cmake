@@ -1,7 +1,6 @@
 include(platform/Curl.cmake)
 include(platform/ImageDecoders.cmake)
-# FIXME: Enable
-# include(platform/TextureMapper.cmake)
+include(platform/TextureMapper.cmake)
 
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${DirectX_INCLUDE_DIRS}"
@@ -14,38 +13,174 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/win"
     "${WEBCORE_DIR}/platform/mediacapabilities"
     "${WEBCORE_DIR}/platform/network/win"
-    "${WEBCORE_DIR}/platform/win")
+    "${WEBCORE_DIR}/platform/win"
+)
+
+list(APPEND WebCore_INCLUDE_DIRECTORIES
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
+)
 
 list(APPEND WebCore_SOURCES
+    accessibility/win/AXObjectCacheWin.cpp
+    accessibility/win/AccessibilityObjectWin.cpp
+    accessibility/win/AccessibilityObjectWrapperWin.cpp
+
+    editing/win/EditorWin.cpp
+
+    html/HTMLSelectElementWin.cpp
+
+    page/win/DragControllerWin.cpp
+    page/win/EventHandlerWin.cpp
+    page/win/FrameWin.cpp
     page/win/FrameWinDirect2D.cpp
 
+    platform/Cursor.cpp
+    platform/LocalizedStrings.cpp
+    platform/StaticPasteboard.cpp
+
+    platform/audio/PlatformMediaSessionManager.cpp
+
+    platform/generic/KeyedDecoderGeneric.cpp
+    platform/generic/KeyedEncoderGeneric.cpp
+
+    platform/graphics/GLContext.cpp
+    platform/graphics/GraphicsContext3DPrivate.cpp
+    platform/graphics/PlatformDisplay.cpp
+
+    platform/graphics/egl/GLContextEGL.cpp
+
+    platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
+    platform/graphics/opengl/Extensions3DOpenGLES.cpp
+    platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
+    platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp
+    platform/graphics/opengl/TemporaryOpenGLSetting.cpp
+
+    platform/graphics/opentype/OpenTypeUtilities.cpp
+
+    platform/graphics/win/ColorDirect2D.cpp
+    platform/graphics/win/ComplexTextControllerDirectWrite.cpp
+    platform/graphics/win/DIBPixelData.cpp
+    platform/graphics/win/FloatPointDirect2D.cpp
+    platform/graphics/win/FloatRectDirect2D.cpp
+    platform/graphics/win/FloatSizeDirect2D.cpp
+    platform/graphics/win/FontCacheWin.cpp
     platform/graphics/win/FontCascadeDirect2D.cpp
     platform/graphics/win/FontCustomPlatformData.cpp
     platform/graphics/win/FontPlatformDataDirect2D.cpp
+    platform/graphics/win/FontPlatformDataWin.cpp
+    platform/graphics/win/FontWin.cpp
     platform/graphics/win/GlyphPageTreeNodeDirect2D.cpp
     platform/graphics/win/GradientDirect2D.cpp
+    platform/graphics/win/GraphicsContext3DDirect2D.cpp
     platform/graphics/win/GraphicsContextDirect2D.cpp
-    platform/graphics/win/GraphicsLayerDirect2D.cpp
+    platform/graphics/win/GraphicsContextWin.cpp
+    platform/graphics/win/IconWin.cpp
     platform/graphics/win/ImageBufferDataDirect2D.cpp
     platform/graphics/win/ImageBufferDirect2D.cpp
     platform/graphics/win/ImageDecoderDirect2D.cpp
     platform/graphics/win/ImageDirect2D.cpp
+    platform/graphics/win/ImageWin.cpp
+    platform/graphics/win/IntPointWin.cpp
+    platform/graphics/win/IntRectWin.cpp
+    platform/graphics/win/IntSizeWin.cpp
     platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp
     platform/graphics/win/NativeImageDirect2D.cpp
     platform/graphics/win/PathDirect2D.cpp
     platform/graphics/win/PatternDirect2D.cpp
+    platform/graphics/win/SimpleFontDataWin.cpp
     platform/graphics/win/SimpleFontDataDirect2D.cpp
     platform/graphics/win/TextAnalyzerHelper.cpp
+    platform/graphics/win/TransformationMatrixDirect2D.cpp
+    platform/graphics/win/TransformationMatrixWin.cpp
+    platform/graphics/win/UniscribeController.cpp
 
     platform/network/win/CurlSSLHandleWin.cpp
+    platform/network/win/DownloadBundleWin.cpp
+    platform/network/win/NetworkStateNotifierWin.cpp
 
+    platform/text/Hyphenation.cpp
     platform/text/win/LocaleWin.cpp
 
+    platform/win/BString.cpp
+    platform/win/BitmapInfo.cpp
+    platform/win/ClipboardUtilitiesWin.cpp
+    platform/win/CursorWin.cpp
+    platform/win/DefWndProcWindowClass.cpp
     platform/win/DelayLoadedModulesEnumerator.cpp
+    platform/win/DragDataWin.cpp
     platform/win/DragImageDirect2D.cpp
+    platform/win/DragImageWin.cpp
+    platform/win/EventLoopWin.cpp
+    platform/win/GDIObjectCounter.cpp
+    platform/win/GDIUtilities.cpp
     platform/win/ImportedFunctionsEnumerator.cpp
     platform/win/ImportedModulesEnumerator.cpp
+    platform/win/KeyEventWin.cpp
+    platform/win/LocalizedStringsWin.cpp
+    platform/win/LoggingWin.cpp
+    platform/win/MIMETypeRegistryWin.cpp
+    platform/win/MainThreadSharedTimerWin.cpp
     platform/win/PEImage.cpp
+    platform/win/PasteboardWin.cpp
+    platform/win/PlatformMouseEventWin.cpp
+    platform/win/PlatformScreenWin.cpp
+    platform/win/PopupMenuWin.cpp
+    platform/win/SSLKeyGeneratorWin.cpp
+    platform/win/ScrollbarThemeWin.cpp
+    platform/win/SearchPopupMenuDB.cpp
+    platform/win/SearchPopupMenuWin.cpp
+    platform/win/SharedBufferWin.cpp
+    platform/win/StructuredExceptionHandlerSuppressor.cpp
+    platform/win/SystemInfo.cpp
+    platform/win/UserAgentWin.cpp
+    platform/win/WCDataObject.cpp
+    platform/win/WebCoreBundleWin.cpp
+    platform/win/WebCoreInstanceHandle.cpp
+    platform/win/WebCoreTextRenderer.cpp
+    platform/win/WheelEventWin.cpp
+    platform/win/WidgetWin.cpp
+    platform/win/WindowMessageBroadcaster.cpp
+
+    rendering/RenderThemeWin.cpp
+)
+
+list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    accessibility/win/AccessibilityObjectWrapperWin.h
+
+    page/win/FrameWin.h
+
+    platform/graphics/win/DIBPixelData.h
+    platform/graphics/win/FullScreenController.h
+    platform/graphics/win/FullScreenControllerClient.h
+    platform/graphics/win/ImageBufferDataDirect2D.h
+    platform/graphics/win/LocalWindowsContext.h
+    platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h
+    platform/graphics/win/SharedGDIObject.h
+
+    platform/win/BString.h
+    platform/win/BitmapInfo.h
+    platform/win/COMPtr.h
+    platform/win/DefWndProcWindowClass.h
+    platform/win/GDIObjectCounter.h
+    platform/win/GDIUtilities.h
+    platform/win/HWndDC.h
+    platform/win/PopupMenuWin.h
+    platform/win/ScrollbarThemeWin.h
+    platform/win/SearchPopupMenuDB.h
+    platform/win/SearchPopupMenuWin.h
+    platform/win/SystemInfo.h
+    platform/win/WCDataObject.h
+    platform/win/WebCoreBundleWin.h
+    platform/win/WebCoreInstanceHandle.h
+    platform/win/WebCoreTextRenderer.h
+    platform/win/WindowMessageBroadcaster.h
+    platform/win/WindowMessageListener.h
+    platform/win/WindowsTouch.h
+)
+
+list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
+    ${WEBCORE_DIR}/css/themeWin.css
+    ${WEBCORE_DIR}/css/themeWinQuirks.css
 )
 
 list(APPEND WebCore_LIBRARIES
@@ -64,5 +199,25 @@ list(APPEND WebCore_LIBRARIES
 list(APPEND WebCoreTestSupport_LIBRARIES
     shlwapi
 )
+
+file(COPY
+    "${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsApple.css"
+    "${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsApple.js"
+    DESTINATION
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources
+)
+
+if (EXISTS ${WEBKIT_LIBRARIES_DIR}/etc/ssl/cert.pem)
+    make_directory(${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/certificates)
+    file(COPY
+        ${WEBKIT_LIBRARIES_DIR}/etc/ssl/cert.pem
+        DESTINATION
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/certificates
+    )
+    file(RENAME
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/certificates/cert.pem
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/certificates/cacert.pem
+    )
+endif ()
 
 set(WebCore_OUTPUT_NAME WebCore${DEBUG_SUFFIX})

@@ -20,8 +20,13 @@
 #ifndef OpenGLShims_h
 #define OpenGLShims_h
 
+#if OS(WINDOWS)
+#include <GL/gl.h>
+#include <GLES2/gl2.h>
+#else
 #include <GL/gl.h>
 #include <GL/glext.h>
+#endif
 
 #if defined(GL_ES_VERSION_2_0)
 // Some openGL ES systems miss this typedef.
@@ -37,6 +42,7 @@ OpenGLFunctionTable* openGLFunctionTable();
 
 #if OS(WINDOWS)
 #define GLAPIENTRY __stdcall
+typedef char GLchar;
 #else
 #define GLAPIENTRY
 #endif

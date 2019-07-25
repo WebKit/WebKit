@@ -44,8 +44,6 @@ namespace WebCore {
 
 RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication, const IntRect& rect, const IntSize& size, bool /* accelerateRendering */, float /* resolutionScale */) const
 {
-    auto platformContext = context->platformContext();
-
     auto numBytes = rect.area<RecordOverflow>() * 4;
     if (numBytes.hasOverflowed())
         return nullptr;
@@ -55,47 +53,31 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication, const
     if (!resultData)
         return nullptr;
 
-    BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(size);
+    WICRect rcLock = { 0, 0, rect.width(), rect.height() };
 
-    void* pixels = nullptr;
-    auto bitmap = adoptGDIObject(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
+    // We cannot access the data backing an IWICBitmap while an active draw session is open.
+    context->endDraw();
 
-    HWndDC windowDC(nullptr);
-    auto bitmapDC = adoptGDIObject(::CreateCompatibleDC(windowDC));
-    HGDIOBJ oldBitmap = ::SelectObject(bitmapDC.get(), bitmap.get());
+    COMPtr<IWICBitmapLock> bitmapDataLock;
+    HRESULT hr = bitmapSource->Lock(&rcLock, WICBitmapLockRead, &bitmapDataLock);
+    if (SUCCEEDED(hr)) {
+        UINT bufferSize = 0;
+        WICInProcPointer dataPtr = nullptr;
+        hr = bitmapDataLock->GetDataPointer(&bufferSize, &dataPtr);
+        if (SUCCEEDED(hr))
+            memcpy(result->data(), reinterpret_cast<char*>(dataPtr), numBytes.unsafeGet());
+    }
 
-    COMPtr<ID2D1GdiInteropRenderTarget> gdiRenderTarget;
-    HRESULT hr = platformContext->QueryInterface(__uuidof(ID2D1GdiInteropRenderTarget), (void**)&gdiRenderTarget);
-    if (FAILED(hr))
-        return nullptr;
+    // Once we are done modifying the data, unlock the bitmap
+    bitmapDataLock = nullptr;
 
-    HDC hdc = nullptr;
-    hr = gdiRenderTarget->GetDC(D2D1_DC_INITIALIZE_MODE_COPY, &hdc);
-
-    BOOL ok = ::BitBlt(bitmapDC.get(), 0, 0, rect.width(), rect.height(), hdc, rect.x(), rect.y(), SRCCOPY);
-
-    RECT updateRect = { 0, 0, 0, 0 };
-    hr = gdiRenderTarget->ReleaseDC(&updateRect);
-
-    if (!ok)
-        return nullptr;
-
-    memcpy(result->data(), pixels, numBytes.unsafeGet());
+    context->beginDraw();
 
     return result;
 }
 
 void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplication sourceFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool /* accelerateRendering */, float resolutionScale)
 {
-    auto platformContext = context->platformContext();
-    COMPtr<ID2D1BitmapRenderTarget> renderTarget(Query, platformContext);
-    if (!renderTarget)
-        return;
-
-    COMPtr<ID2D1Bitmap> bitmap;
-    HRESULT hr = renderTarget->GetBitmap(&bitmap);
-    ASSERT(SUCCEEDED(hr));
-
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
 
@@ -132,7 +114,33 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
     if (width <= 0 || height <= 0)
         return;
 
+    // We cannot access the data backing an IWICBitmap while an active draw session is open.
+    context->endDraw();
+
+    WICRect rcLock = { 0, 0, sourceSize.width(), sourceSize.height() };
+
+    COMPtr<IWICBitmapLock> bitmapDataLock;
+    HRESULT hr = bitmapSource->Lock(&rcLock, WICBitmapLockWrite, &bitmapDataLock);
+    if (!SUCCEEDED(hr))
+        return;
+
+    UINT stride = 0;
+    hr = bitmapDataLock->GetStride(&stride);
+    if (!SUCCEEDED(hr))
+        return;
+
+    UINT bufferSize = 0;
+    WICInProcPointer dataPtr = nullptr;
+    hr = bitmapDataLock->GetDataPointer(&bufferSize, &dataPtr);
+    if (!SUCCEEDED(hr))
+        return;
+
+    ASSERT(bufferSize == source.byteLength());
+
     unsigned srcBytesPerRow = 4 * sourceSize.width();
+
+    ASSERT(srcBytesPerRow == stride);
+
     const uint8_t* srcRows = source.data() + (originy * srcBytesPerRow + originx * 4).unsafeGet();
 
     auto row = makeUniqueArray<uint8_t>(srcBytesPerRow);
@@ -150,12 +158,15 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
                 reinterpret_cast<uint32_t*>(row.get() + basex)[0] = reinterpret_cast<const uint32_t*>(srcRows + basex)[0];
         }
 
-        D2D1_RECT_U dstRect = D2D1::RectU(destPoint.x(), destPoint.y() + y, destPoint.x() + size.width(), destPoint.y() + y + 1);
-        hr = bitmap->CopyFromMemory(&dstRect, row.get(), srcBytesPerRow);
-        ASSERT(SUCCEEDED(hr));
+        memcpy(reinterpret_cast<char*>(dataPtr + y * srcBytesPerRow), row.get(), srcBytesPerRow);
 
         srcRows += srcBytesPerRow;
     }
+
+    // Once we are done modifying the data, unlock the bitmap
+    bitmapDataLock = nullptr;
+
+    context->beginDraw();
 }
 
 } // namespace WebCore

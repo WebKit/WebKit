@@ -257,8 +257,10 @@ GraphicsContext3D::~GraphicsContext3D()
     ::glDeleteTextures(1, &m_intermediateTexture);
 #endif
 
+#if USE(CAIRO)
     if (m_vao)
         deleteVertexArray(m_vao);
+#endif
 
     auto* activeContext = activeContexts().takeLast([this](auto* it) { return it == this; });
     ASSERT_UNUSED(activeContext, !!activeContext);

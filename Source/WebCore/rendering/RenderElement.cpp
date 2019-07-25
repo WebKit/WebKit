@@ -2032,7 +2032,7 @@ bool RenderElement::checkForRepaintDuringLayout() const
 
 RespectImageOrientationEnum RenderElement::shouldRespectImageOrientation() const
 {
-#if USE(CG) || USE(CAIRO)
+#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
     // This can only be enabled for ports which honor the orientation flag in their drawing code.
     if (document().isImageDocument())
         return RespectImageOrientation;

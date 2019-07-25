@@ -39,7 +39,7 @@ namespace WebCore {
 class GraphicsContextPlatformPrivate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GraphicsContextPlatformPrivate(ID2D1RenderTarget*);
+    GraphicsContextPlatformPrivate(ID2D1RenderTarget*, GraphicsContext::BitmapRenderingContextType);
     ~GraphicsContextPlatformPrivate();
 
     enum Direct2DLayerType { AxisAlignedClip, LayerClip };
@@ -98,6 +98,7 @@ private:
     void recomputeStrokeStyle();
 
     COMPtr<ID2D1RenderTarget> m_renderTarget;
+    const GraphicsContext::BitmapRenderingContextType m_rendererType;
     HashMap<uint32_t, COMPtr<ID2D1SolidColorBrush>> m_solidColoredBrushCache;
     COMPtr<ID2D1SolidColorBrush> m_whiteBrush;
     COMPtr<ID2D1SolidColorBrush> m_zeroBrush;
@@ -125,6 +126,8 @@ private:
     D2D1_LINE_JOIN m_lineJoin { D2D1_LINE_JOIN_MITER };
     StrokeStyle m_strokeStyle { SolidStroke };
     DashArray m_dashes;
+
+    unsigned beginDrawCount { 0 };
 
     float m_miterLimit { 10.0f };
     float m_dashOffset { 0 };

@@ -77,8 +77,8 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext& ctxt, const Float
     size_t frames = frameCount();
     for (size_t i = 0; i < frames; ++i) {
         auto image = frameImageAtIndex(i).get();
-        auto imageSize = image->GetSize();
-        if (image && clampTo<size_t>(imageSize.height) == static_cast<size_t>(srcSize.height()) && clampTo<size_t>(imageSize.width) == static_cast<size_t>(srcSize.width())) {
+        auto imageSize = nativeImageSize(image);
+        if (image && clampTo<int>(imageSize.height()) == static_cast<int>(srcSize.height()) && clampTo<int>(imageSize.width()) == static_cast<int>(srcSize.width())) {
             size_t currentFrame = m_currentFrame;
             m_currentFrame = i;
             draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, srcSize.width(), srcSize.height()), compositeOp, BlendMode::Normal, DecodingMode::Synchronous, ImageOrientationDescription());

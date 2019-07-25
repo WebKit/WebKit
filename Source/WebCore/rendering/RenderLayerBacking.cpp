@@ -401,7 +401,8 @@ void RenderLayerBacking::adjustTiledBackingCoverage()
 {
     if (m_isFrameLayerWithTiledBacking) {
         auto tileCoverage = computePageTiledBackingCoverage(m_owningLayer);
-        tiledBacking()->setTileCoverage(tileCoverage);
+        if (auto* tiledBacking = this->tiledBacking())
+            tiledBacking->setTileCoverage(tileCoverage);
     }
 
     if (m_owningLayer.hasCompositedScrollableOverflow() && m_scrolledContentsLayer) {

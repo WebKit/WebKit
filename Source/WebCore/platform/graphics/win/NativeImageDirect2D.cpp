@@ -33,12 +33,33 @@
 #include "IntSize.h"
 #include "NotImplemented.h"
 #include <d2d1.h>
+#include <wincodec.h>
 
 namespace WebCore {
 
+static IWICImagingFactory* imagingFactory()
+{
+    static IWICImagingFactory* imagingFactory = nullptr;
+    if (!imagingFactory) {
+        HRESULT hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&imagingFactory));
+        RELEASE_ASSERT(SUCCEEDED(hr));
+    }
+
+    return imagingFactory;
+}
+
 IntSize nativeImageSize(const NativeImagePtr& image)
 {
-    return image ? IntSize(image->GetSize()) : IntSize();
+    UINT width = 0;
+    UINT height = 0;
+    if (!image)
+        return { };
+
+    HRESULT hr = image->GetSize(&width, &height);
+    if (!SUCCEEDED(hr))
+        return { };
+
+    return IntSize(width, height);
 }
 
 bool nativeImageHasAlpha(const NativeImagePtr& image)
@@ -46,8 +67,28 @@ bool nativeImageHasAlpha(const NativeImagePtr& image)
     if (!image)
         return false;
 
-    auto alphaMode = image->GetPixelFormat().alphaMode;
-    return (alphaMode >= D2D1_ALPHA_MODE_PREMULTIPLIED) && (alphaMode <= D2D1_ALPHA_MODE_STRAIGHT);
+    WICPixelFormatGUID pixelFormatGUID = { };
+    HRESULT hr = image->GetPixelFormat(&pixelFormatGUID);
+    if (!SUCCEEDED(hr))
+        return false;
+
+    // FIXME: Should we just check the pixelFormatGUID for relevant ID's we use?
+
+    COMPtr<IWICComponentInfo> componentInfo;
+    hr = imagingFactory()->CreateComponentInfo(pixelFormatGUID, &componentInfo);
+    if (!SUCCEEDED(hr))
+        return false;
+
+    COMPtr<IWICPixelFormatInfo> pixelFormatInfo(Query, componentInfo.get());
+    if (!pixelFormatInfo)
+        return false;
+
+    UINT channelCount = 0;
+    hr = pixelFormatInfo->GetChannelCount(&channelCount);
+    if (!SUCCEEDED(hr))
+        return false;
+
+    return channelCount > 3;
 }
 
 Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
@@ -74,7 +115,12 @@ void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, cons
 
     float opacity = 1.0f;
 
-    platformContext->DrawBitmap(image.get(), destRect, opacity, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, adjustedSrcRect);
+    COMPtr<ID2D1Bitmap> bitmap;
+    HRESULT hr = platformContext->CreateBitmapFromWicBitmap(image.get(), &bitmap);
+    if (!SUCCEEDED(hr))
+        return;
+
+    platformContext->DrawBitmap(bitmap.get(), destRect, opacity, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, adjustedSrcRect);
     context.flush();
 }
 

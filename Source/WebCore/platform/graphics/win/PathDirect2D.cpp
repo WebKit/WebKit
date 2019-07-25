@@ -249,7 +249,7 @@ bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) 
 
     ASSERT(applier);
 
-    GraphicsContext scratchContext(scratchRenderTarget());
+    GraphicsContext scratchContext(scratchRenderTarget(), GraphicsContext::BitmapRenderingContextType::GPUMemory);
     applier->strokeStyle(&scratchContext);
 
     BOOL containsPoint = false;

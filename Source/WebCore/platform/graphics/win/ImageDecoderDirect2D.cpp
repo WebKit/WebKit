@@ -236,7 +236,7 @@ void ImageDecoderDirect2D::setTargetContext(ID2D1RenderTarget* renderTarget)
 
 NativeImagePtr ImageDecoderDirect2D::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions&)
 {
-    if (!m_nativeDecoder || !m_renderTarget)
+    if (!m_nativeDecoder)
         return nullptr;
 
     COMPtr<IWICBitmapFrameDecode> frame;
@@ -249,12 +249,12 @@ NativeImagePtr ImageDecoderDirect2D::createFrameImageAtIndex(size_t index, Subsa
     if (!SUCCEEDED(hr))
         return nullptr;
 
-    hr = converter->Initialize(frame.get(), GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, nullptr, 0.f, WICBitmapPaletteTypeCustom);
+    hr = converter->Initialize(frame.get(), GUID_WICPixelFormat32bppPRGBA, WICBitmapDitherTypeNone, nullptr, 0.f, WICBitmapPaletteTypeCustom);
     if (!SUCCEEDED(hr))
         return nullptr;
 
-    COMPtr<ID2D1Bitmap> bitmap;
-    hr = m_renderTarget->CreateBitmapFromWicBitmap(converter.get(), nullptr, &bitmap);
+    COMPtr<IWICBitmap> bitmap;
+    hr = systemImagingFactory()->CreateBitmapFromSource(converter.get(), WICBitmapCacheOnDemand, &bitmap);
     if (!SUCCEEDED(hr))
         return nullptr;
 

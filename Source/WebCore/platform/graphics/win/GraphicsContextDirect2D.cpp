@@ -31,6 +31,7 @@
 #include "FloatRoundedRect.h"
 #include "GraphicsContextPlatformPrivateDirect2D.h"
 #include "ImageBuffer.h"
+#include "ImageDecoderDirect2D.h"
 #include "Logging.h"
 #include "NotImplemented.h"
 #include <d2d1.h>
@@ -54,7 +55,7 @@ GraphicsContext::GraphicsContext(HDC hdc, ID2D1DCRenderTarget** renderTarget, RE
 
     // Create a DC render target.
     auto targetProperties = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
-        D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE),
+        D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
         0, 0, D2D1_RENDER_TARGET_USAGE_NONE, D2D1_FEATURE_LEVEL_DEFAULT);
 
     HRESULT hr = GraphicsContext::systemFactory()->CreateDCRenderTarget(&targetProperties, renderTarget);
@@ -62,7 +63,12 @@ GraphicsContext::GraphicsContext(HDC hdc, ID2D1DCRenderTarget** renderTarget, RE
 
     (*renderTarget)->BindDC(hdc, &rect);
 
-    m_data = new GraphicsContextPlatformPrivate(*renderTarget);
+    m_data = new GraphicsContextPlatformPrivate(*renderTarget, BitmapRenderingContextType::GPUMemory);
+}
+
+GraphicsContext::GraphicsContext(PlatformGraphicsContext* platformGraphicsContext, BitmapRenderingContextType rendererType)
+{
+    platformInit(platformGraphicsContext, rendererType);
 }
 
 ID2D1Factory* GraphicsContext::systemFactory()
@@ -106,7 +112,7 @@ void GraphicsContext::platformInit(HDC hdc, bool hasAlpha)
     DIBPixelData pixelData(bitmap);
 
     auto targetProperties = D2D1::RenderTargetProperties();
-    targetProperties.pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE);
+    targetProperties.pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
 
     COMPtr<ID2D1DCRenderTarget> renderTarget;
     HRESULT hr = systemFactory()->CreateDCRenderTarget(&targetProperties, &renderTarget);
@@ -118,7 +124,7 @@ void GraphicsContext::platformInit(HDC hdc, bool hasAlpha)
     if (!SUCCEEDED(hr))
         return;
 
-    m_data = new GraphicsContextPlatformPrivate(renderTarget.get());
+    m_data = new GraphicsContextPlatformPrivate(renderTarget.get(), BitmapRenderingContextType::GPUMemory);
     m_data->m_hdc = hdc;
     // Make sure the context starts in sync with our state.
     setPlatformFillColor(fillColor());
@@ -129,10 +135,15 @@ void GraphicsContext::platformInit(HDC hdc, bool hasAlpha)
 
 void GraphicsContext::platformInit(ID2D1RenderTarget* renderTarget)
 {
+    platformInit(renderTarget, BitmapRenderingContextType::GPUMemory);
+}
+
+void GraphicsContext::platformInit(ID2D1RenderTarget* renderTarget, BitmapRenderingContextType renderingType)
+{
     if (!renderTarget)
         return;
 
-    m_data = new GraphicsContextPlatformPrivate(renderTarget);
+    m_data = new GraphicsContextPlatformPrivate(renderTarget, renderingType);
 
     // Make sure the context starts in sync with our state.
     setPlatformFillColor(fillColor());
@@ -195,7 +206,17 @@ void GraphicsContext::restorePlatformState()
     // FIXME: m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::drawNativeImage(const COMPtr<ID2D1Bitmap>& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
+void GraphicsContext::drawNativeImage(const COMPtr<IWICBitmap>& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
+{
+    COMPtr<ID2D1Bitmap> deviceBitmap;
+    HRESULT hr = platformContext()->CreateBitmapFromWicBitmap(image.get(), &deviceBitmap);
+    if (!SUCCEEDED(hr))
+        return;
+
+    drawDeviceBitmap(deviceBitmap, imageSize, destRect, srcRect, op, blendMode, orientation);
+}
+
+void GraphicsContext::drawDeviceBitmap(const COMPtr<ID2D1Bitmap>& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
 {
     if (paintingDisabled())
         return;
@@ -281,7 +302,7 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     DIBPixelData pixelData(sourceBitmap.get());
     ASSERT(pixelData.bitsPerPixel() == 32);
 
-    auto bitmapProperties = D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE));
+    auto bitmapProperties = D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED));
 
     COMPtr<ID2D1Bitmap> bitmap;
     HRESULT hr = platformContext()->CreateBitmap(pixelData.size(), pixelData.buffer(), pixelData.bytesPerRow(), &bitmapProperties, &bitmap);
@@ -322,13 +343,15 @@ void GraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect, DocumentM
 {
 }
 
-GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(ID2D1RenderTarget* renderTarget)
+GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(ID2D1RenderTarget* renderTarget, GraphicsContext::BitmapRenderingContextType renderingType)
     : m_renderTarget(renderTarget)
+    , m_rendererType(renderingType)
 {
     if (!m_renderTarget)
         return;
 
-    beginDraw();
+    if (m_rendererType == GraphicsContext::BitmapRenderingContextType::GPUMemory)
+        beginDraw();
 }
 
 GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
@@ -336,7 +359,8 @@ GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
     if (!m_renderTarget)
         return;
 
-    endDraw();
+    if (beginDrawCount)
+        endDraw();
 }
 
 COMPtr<ID2D1SolidColorBrush> GraphicsContextPlatformPrivate::brushWithColor(const D2D1_COLOR_F& color)
@@ -424,6 +448,7 @@ void GraphicsContextPlatformPrivate::beginDraw()
 {
     ASSERT(m_renderTarget.get());
     m_renderTarget->BeginDraw();
+    ++beginDrawCount;
 }
 
 void GraphicsContextPlatformPrivate::endDraw()
@@ -433,7 +458,9 @@ void GraphicsContextPlatformPrivate::endDraw()
     HRESULT hr = m_renderTarget->EndDraw(&first, &second);
 
     if (!SUCCEEDED(hr))
-        WTFLogAlways("Failed in GraphicsContextPlatformPrivate::endDraw: hr=%ld, first=%ld, second=%ld", hr, first, second);
+        WTFLogAlways("Failed in GraphicsContextPlatformPrivate::endDraw: hr=%xd, first=%ld, second=%ld", hr, first, second);
+
+    --beginDrawCount;
 }
 
 void GraphicsContextPlatformPrivate::restore()
@@ -579,6 +606,8 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const
     // If we only want a subset of the bitmap, we need to create a cropped bitmap image. According to the documentation,
     // this does not allocate new bitmap memory.
     if (image.width() > destRect.width() || image.height() > destRect.height()) {
+        ASSERT(0);
+        /*
         float dpiX = 0;
         float dpiY = 0;
         tileImage->GetDpi(&dpiX, &dpiY);
@@ -591,10 +620,16 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const
             if (SUCCEEDED(hr))
                 tileImage = subImage;
         }
+        */
     }
 
+    COMPtr<ID2D1Bitmap> bitmap;
+    HRESULT hr = context->CreateBitmapFromWicBitmap(tileImage.get(), nullptr, &bitmap);
+    if (!SUCCEEDED(hr))
+        return;
+
     COMPtr<ID2D1BitmapBrush> patternBrush;
-    HRESULT hr = context->CreateBitmapBrush(tileImage.get(), &bitmapBrushProperties, &brushProperties, &patternBrush);
+    hr = context->CreateBitmapBrush(bitmap.get(), &bitmapBrushProperties, &brushProperties, &patternBrush);
     ASSERT(SUCCEEDED(hr));
     if (!SUCCEEDED(hr))
         return;

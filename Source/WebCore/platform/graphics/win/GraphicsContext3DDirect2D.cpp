@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2016 Apple Inc.  All rights reserved.
- * Copyright (C) 2007-2008 Torch Mobile, Inc.
- * Copyright (C) 2012 Company 100 Inc.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,51 +20,41 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "GraphicsContext3D.h"
 
-#include "GraphicsTypes.h"
-#include "ImageOrientation.h"
+#if ENABLE(GRAPHICS_CONTEXT_3D) && USE(DIRECT2D)
 
-#if USE(CG)
-#include <wtf/RetainPtr.h>
-typedef struct CGImage* CGImageRef;
-#elif USE(CAIRO)
-#include "RefPtrCairo.h"
-#elif USE(WINGDI)
-#include "SharedBitmap.h"
-#endif
-
-#if USE(DIRECT2D)
 #include "COMPtr.h"
+#include "NotImplemented.h"
 #include <d2d1.h>
-#include <wincodec.h>
-#endif
+#include <d2d1effects.h>
 
 namespace WebCore {
 
-class Color;
-class FloatRect;
-class IntSize;
-class GraphicsContext;
+GraphicsContext3D::ImageExtractor::~ImageExtractor() = default;
 
-#if USE(CG)
-typedef RetainPtr<CGImageRef> NativeImagePtr;
-#elif USE(DIRECT2D)
-typedef COMPtr<IWICBitmap> NativeImagePtr;
-#elif USE(CAIRO)
-typedef RefPtr<cairo_surface_t> NativeImagePtr;
-#elif USE(WINGDI)
-typedef RefPtr<SharedBitmap> NativeImagePtr;
-#endif
+bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+{
+    if (!m_image)
+        return false;
 
-IntSize nativeImageSize(const NativeImagePtr&);
-bool nativeImageHasAlpha(const NativeImagePtr&);
-Color nativeImageSinglePixelSolidColor(const NativeImagePtr&);
+    notImplemented();
 
-void drawNativeImage(const NativeImagePtr&, GraphicsContext&, const FloatRect&, const FloatRect&, const IntSize&, CompositeOperator, BlendMode, const ImageOrientation&);
-void clearNativeImageSubimages(const NativeImagePtr&);
-    
+    return true;
 }
+
+void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, const IntSize& imageSize, const IntSize& canvasSize, GraphicsContext& context)
+{
+    if (!imagePixels || imageSize.isEmpty() || canvasSize.isEmpty())
+        return;
+
+    notImplemented();
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(GRAPHICS_CONTEXT_3D) && USE(DIRECT2D)

@@ -249,7 +249,7 @@ Extensions3D& GraphicsContext3D::getExtensions()
 }
 #endif
 
-#if PLATFORM(WIN) && !USE(CAIRO)
+#if PLATFORM(WIN) && USE(CA)
 RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes attributes, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
 {
     // This implementation doesn't currently support rendering directly to the HostWindow.
