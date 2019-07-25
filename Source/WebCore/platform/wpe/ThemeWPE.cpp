@@ -67,7 +67,10 @@ void ThemeWPE::paint(ControlPart part, ControlStates& states, GraphicsContext& c
         paintRadio(states, context, zoomedRect, zoomFactor);
         break;
     case PushButtonPart:
-        paintButton(states, context, zoomedRect, zoomFactor);
+    case DefaultButtonPart:
+    case ButtonPart:
+    case SquareButtonPart:
+        paintButton(part, states, context, zoomedRect, zoomFactor);
         break;
     default:
         break;
@@ -129,11 +132,13 @@ void ThemeWPE::paintRadio(ControlStates& states, GraphicsContext& context, const
     }
 }
 
-void ThemeWPE::paintButton(ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float)
+void ThemeWPE::paintButton(ControlPart part, ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float)
 {
     GraphicsContextStateSaver stateSaver(context);
 
-    FloatSize corner(2, 2);
+    float roundness = (part == SquareButtonPart) ? 0 : 2;
+
+    FloatSize corner(roundness, roundness);
     FloatRoundedRect roundedRect(zoomedRect, corner, corner, corner, corner);
     Path path;
     path.addRoundedRect(roundedRect);
