@@ -30,7 +30,9 @@
 #include <bmalloc/bmalloc.h>
 #include <bmalloc/Environment.h>
 #include <bmalloc/IsoHeapInlines.h>
+#include <wtf/ResourceUsage.h>
 #include <wtf/Threading.h>
+#include <wtf/VMTags.h>
 #include <wtf/WeakRandom.h>
 
 #include <cmath>
@@ -40,23 +42,6 @@
 
 using namespace bmalloc;
 using namespace bmalloc::api;
-
-#define RUN(test) do {                          \
-if (!shouldRun(#test))                  \
-break;                              \
-puts(#test "...");                      \
-test;                                   \
-puts(#test ": OK!");                    \
-} while (false)
-
-// Nothing fancy for now; we just use the existing WTF assertion machinery.
-#define CHECK(x) do {                                                   \
-if (!!(x))                                                      \
-break;                                                      \
-fprintf(stderr, "%s:%d: in %s: assertion %s failed.\n",         \
-__FILE__, __LINE__, __PRETTY_FUNCTION__, #x);               \
-abort();                                                        \
-} while (false)
 
 static std::set<void*> toptrset(const std::vector<void*>& ptrs)
 {
@@ -81,7 +66,7 @@ static void assertEmptyPointerSet(const std::set<void*>& pointers)
     for (void* ptr : pointers)
         printf(" %p", ptr);
     printf("\n");
-    CHECK(pointers.empty());
+    EXPECT_TRUE(pointers.empty());
 }
 
 template<typename heapType>
@@ -111,7 +96,7 @@ static void assertHasOnlyObjects(IsoHeap<heapType>& heap, std::set<void*> pointe
     std::lock_guard<bmalloc::Mutex> locker(impl.lock);
     impl.forEachLiveObject(
         [&] (void* object) {
-            CHECK(pointers.erase(object) == 1);
+            EXPECT_EQ(pointers.erase(object), 1U);
         });
     assertEmptyPointerSet(pointers);
 }
@@ -124,14 +109,14 @@ static void assertClean(IsoHeap<heapType>& heap)
         auto& impl = heap.impl();
         {
             std::lock_guard<bmalloc::Mutex> locker(impl.lock);
-            CHECK(!impl.numLiveObjects());
+            EXPECT_FALSE(impl.numLiveObjects());
         }
     }
     heap.scavenge();
     if (!Environment::get()->isDebugHeapEnabled()) {
         auto& impl = heap.impl();
         std::lock_guard<bmalloc::Mutex> locker(impl.lock);
-        CHECK(!impl.numCommittedPages());
+        EXPECT_FALSE(impl.numCommittedPages());
     }
 }
 
@@ -139,11 +124,11 @@ TEST(bmalloc, IsoSimple)
 {
     static IsoHeap<double> heap;
     void* ptr1 = heap.allocate();
-    CHECK(ptr1);
+    EXPECT_TRUE(ptr1);
     void* ptr2 = heap.allocate();
-    CHECK(ptr2);
-    CHECK(ptr1 != ptr2);
-    CHECK(std::abs(static_cast<char*>(ptr1) - static_cast<char*>(ptr2)) >= 8);
+    EXPECT_TRUE(ptr2);
+    EXPECT_NE(ptr1, ptr2);
+    EXPECT_GE(std::abs(static_cast<char*>(ptr1) - static_cast<char*>(ptr2)), 8);
     assertHasObjects(heap, {ptr1, ptr2});
     heap.deallocate(ptr1);
     heap.deallocate(ptr2);
@@ -154,11 +139,11 @@ TEST(bmalloc, IsoSimpleScavengeBeforeDealloc)
 {
     static IsoHeap<double> heap;
     void* ptr1 = heap.allocate();
-    CHECK(ptr1);
+    EXPECT_TRUE(ptr1);
     void* ptr2 = heap.allocate();
-    CHECK(ptr2);
-    CHECK(ptr1 != ptr2);
-    CHECK(std::abs(static_cast<char*>(ptr1) - static_cast<char*>(ptr2)) >= 8);
+    EXPECT_TRUE(ptr2);
+    EXPECT_NE(ptr1, ptr2);
+    EXPECT_GE(std::abs(static_cast<char*>(ptr1) - static_cast<char*>(ptr2)), 8);
     scavengeThisThread();
     assertHasOnlyObjects(heap, {ptr1, ptr2});
     heap.deallocate(ptr1);
@@ -172,7 +157,7 @@ TEST(bmalloc, IsoFlipFlopFragmentedPages)
     std::vector<void*> ptrs;
     for (unsigned i = 100000; i--;) {
         void* ptr = heap.allocate();
-        CHECK(ptr);
+        EXPECT_TRUE(ptr);
         ptrs.push_back(ptr);
     }
     for (unsigned i = 0; i < ptrs.size(); i += 2) {
@@ -192,10 +177,10 @@ TEST(bmalloc, IsoFlipFlopFragmentedPagesScavengeInMiddle)
     std::vector<void*> ptrs;
     for (unsigned i = 100000; i--;) {
         void* ptr = heap.allocate();
-        CHECK(ptr);
+        EXPECT_TRUE(ptr);
         ptrs.push_back(ptr);
     }
-    CHECK(toptrset(ptrs).size() == ptrs.size());
+    EXPECT_EQ(toptrset(ptrs).size(), ptrs.size());
     for (unsigned i = 0; i < ptrs.size(); i += 2) {
         heap.deallocate(ptrs[i]);
         ptrs[i] = nullptr;
@@ -212,7 +197,7 @@ TEST(bmalloc, IsoFlipFlopFragmentedPagesScavengeInMiddle)
         ptrs.push_back(heap.allocate());
     {
         std::lock_guard<bmalloc::Mutex> locker(impl.lock);
-        CHECK(numCommittedPagesBefore == impl.numCommittedPages());
+        EXPECT_EQ(numCommittedPagesBefore, impl.numCommittedPages());
     }
     for (void* ptr : ptrs)
         heap.deallocate(ptr);
@@ -225,10 +210,10 @@ TEST(bmalloc, IsoFlipFlopFragmentedPagesScavengeInMiddle288)
     std::vector<void*> ptrs;
     for (unsigned i = 100000; i--;) {
         void* ptr = heap.allocate();
-        CHECK(ptr);
+        EXPECT_TRUE(ptr);
         ptrs.push_back(ptr);
     }
-    CHECK(toptrset(ptrs).size() == ptrs.size());
+    EXPECT_EQ(toptrset(ptrs).size(), ptrs.size());
     for (unsigned i = 0; i < ptrs.size(); i += 2) {
         heap.deallocate(ptrs[i]);
         ptrs[i] = nullptr;
@@ -245,7 +230,7 @@ TEST(bmalloc, IsoFlipFlopFragmentedPagesScavengeInMiddle288)
         ptrs.push_back(heap.allocate());
     {
         std::lock_guard<bmalloc::Mutex> locker(impl.lock);
-        CHECK(numCommittedPagesBefore == impl.numCommittedPages());
+        EXPECT_EQ(numCommittedPagesBefore, impl.numCommittedPages());
     }
     for (void* ptr : ptrs)
         heap.deallocate(ptr);
@@ -260,7 +245,7 @@ TEST(bmalloc, IsoMallocAndFreeFast)
         ptr = heap.allocate();
         heap.deallocate(ptr);
     }
-    CHECK(!IsoPageBase::pageFor(ptr)->isShared());
+    EXPECT_FALSE(IsoPageBase::pageFor(ptr)->isShared());
 }
 
 class BisoMalloced {
@@ -319,21 +304,21 @@ TEST(bmalloc, ScavengedMemoryShouldBeReused)
         // Let's exhaust the capacity of the lower tier.
         for (unsigned i = 0; i < IsoPage<decltype(heap)::Config>::numObjects; ++i) {
             void* ptr = heap.allocate();
-            CHECK(ptr);
+            EXPECT_TRUE(ptr);
             lowerTierPtrs.push_back(ptr);
         }
 
         // After that, allocating pointers in the upper tier.
         for (unsigned i = 0; ;i++) {
             void* ptr = heap.allocate();
-            CHECK(ptr);
+            EXPECT_TRUE(ptr);
             ptrs.push_back(ptr);
             if (heap.impl().numCommittedPages() == numPagesToCommit)
                 break;
         }
 
         std::set<void*> uniquedPtrsOfUpperTiers = toptrset(ptrs);
-        CHECK(ptrs.size() == uniquedPtrsOfUpperTiers.size());
+        EXPECT_EQ(ptrs.size(), uniquedPtrsOfUpperTiers.size());
 
         std::set<void*> uniquedPtrs = uniquedPtrsOfUpperTiers;
         for (void* ptr : lowerTierPtrs)
@@ -351,7 +336,7 @@ TEST(bmalloc, ScavengedMemoryShouldBeReused)
         assertHasOnlyObjects(heap, uniquedPtrs);
 
         auto* ptr2 = heap.allocate();
-        CHECK(uniquedPtrsOfUpperTiers.find(ptr2) != uniquedPtrsOfUpperTiers.end());
+        EXPECT_NE(uniquedPtrsOfUpperTiers.find(ptr2), uniquedPtrsOfUpperTiers.end());
         heap.deallocate(ptr2);
 
         for (void* ptr : lowerTierPtrs)
@@ -2480,5 +2465,66 @@ TEST(bmalloc, IsoHeapMultipleThreads)
     for (auto& thread : threads)
         thread->waitForCompletion();
 }
+
+#if PLATFORM(COCOA)
+static void allocateAndDeallocate()
+{
+    static IsoHeap<double> heap;
+    std::vector<void*> ptrs;
+    // This exhausts # of instances assigned to IsoHeap shared tier.
+    for (unsigned i = 0; i < 100; ++i)
+        ptrs.push_back(heap.allocate());
+    for (void* ptr : ptrs)
+        heap.deallocate(ptr);
+    heap.scavenge();
+}
+
+TEST(bmalloc, IsoHeapIsoTLSLeak)
+{
+    allocateAndDeallocate();
+    auto before = pagesPerVMTag();
+    for (unsigned i = 0; i < 1000; ++i) {
+        auto thread = Thread::create("IsoHeapStress", allocateAndDeallocate);
+        thread->waitForCompletion();
+    }
+    auto after = pagesPerVMTag();
+    // Previously, we have an issue that every thread leaks 1~ page. The underlying IsoHeap implementation can add some IsoPages during this test and it would change the value of this,
+    // but we can relatively non-flakily say that such an implementation change would not add 100 more pages, and if we have a leak in IsoTLS, it is larger than 1000 pages and this test correctly catch the issue.
+    EXPECT_LT((static_cast<int64_t>(after[VM_MEMORY_JAVASCRIPT_JIT_REGISTER_FILE].reserved) - static_cast<int64_t>(before[VM_MEMORY_JAVASCRIPT_JIT_REGISTER_FILE].reserved)) * static_cast<int64_t>(WTF::vmPageSize()), 100 * static_cast<int64_t>(WTF::vmPageSize()));
+}
+
+TEST(bmalloc, IsoHeapIsoPageAllocatingOnePage)
+{
+    struct LargeData {
+        std::array<double, 256> data;
+    };
+    static IsoHeap<LargeData> heap;
+
+    std::vector<void*> ptrs;
+    for (unsigned i = 0; i < 50; ++i)
+        ptrs.push_back(heap.allocate());
+    for (void* ptr : ptrs)
+        heap.deallocate(ptr);
+    heap.scavenge();
+    ptrs.clear();
+
+    auto before = pagesPerVMTag();
+
+    for (unsigned i = 0; i < 16000; ++i)
+        ptrs.push_back(heap.allocate());
+    for (auto* ptr : ptrs)
+        heap.deallocate(ptr);
+    heap.scavenge();
+    ptrs.clear();
+
+    auto after = pagesPerVMTag();
+    // This number (50MB) heavily relies on the underlying implementation of IsoHeap. To make this test less-flaky, we picked a bit large number than the current one, 50MB,
+    // to make this test work even if the underlying implementation of IsoHeap is changed, e.g. adding more # of IsoHeap shared tier instances.
+    // Currently, this number says 31MB in macOS, so 50MB threshold can catch the issue if the catastrophic thing happens. For example, if we revert https://bugs.webkit.org/show_bug.cgi?id=200024,
+    // we will see 2GB VA allocations here, which can be caught by this test. We can adjust this threshold if the underlying implementation is largely changed and this number
+    EXPECT_LT((static_cast<int64_t>(after[VM_MEMORY_JAVASCRIPT_JIT_REGISTER_FILE].reserved) - static_cast<int64_t>(before[VM_MEMORY_JAVASCRIPT_JIT_REGISTER_FILE].reserved)) * static_cast<int64_t>(WTF::vmPageSize()), (50 << 20));
+}
+
+#endif
 
 #endif

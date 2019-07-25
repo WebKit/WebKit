@@ -43,7 +43,6 @@
 		0C2DA1451F3BEB4900DBC317 /* IOSurfaceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA1291F3BEB4900DBC317 /* IOSurfaceSPI.h */; };
 		0C2DA1461F3BEB4900DBC317 /* IOTypesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA12A1F3BEB4900DBC317 /* IOTypesSPI.h */; };
 		0C2DA1471F3BEB4900DBC317 /* URLFormattingSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA12B1F3BEB4900DBC317 /* URLFormattingSPI.h */; };
-		0C2DA1481F3BEB4900DBC317 /* MachVMSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA12C1F3BEB4900DBC317 /* MachVMSPI.h */; };
 		0C2DA1491F3BEB4900DBC317 /* NEFilterSourceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA12D1F3BEB4900DBC317 /* NEFilterSourceSPI.h */; };
 		0C2DA14A1F3BEB4900DBC317 /* NSAttributedStringSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA12E1F3BEB4900DBC317 /* NSAttributedStringSPI.h */; };
 		0C2DA14B1F3BEB4900DBC317 /* NSButtonCellSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA12F1F3BEB4900DBC317 /* NSButtonCellSPI.h */; };
@@ -207,7 +206,6 @@
 		0C2DA1291F3BEB4900DBC317 /* IOSurfaceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOSurfaceSPI.h; sourceTree = "<group>"; };
 		0C2DA12A1F3BEB4900DBC317 /* IOTypesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOTypesSPI.h; sourceTree = "<group>"; };
 		0C2DA12B1F3BEB4900DBC317 /* URLFormattingSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLFormattingSPI.h; sourceTree = "<group>"; };
-		0C2DA12C1F3BEB4900DBC317 /* MachVMSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachVMSPI.h; sourceTree = "<group>"; };
 		0C2DA12D1F3BEB4900DBC317 /* NEFilterSourceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEFilterSourceSPI.h; sourceTree = "<group>"; };
 		0C2DA12E1F3BEB4900DBC317 /* NSAttributedStringSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAttributedStringSPI.h; sourceTree = "<group>"; };
 		0C2DA12F1F3BEB4900DBC317 /* NSButtonCellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSButtonCellSPI.h; sourceTree = "<group>"; };
@@ -418,7 +416,6 @@
 				0C2DA1291F3BEB4900DBC317 /* IOSurfaceSPI.h */,
 				0C2DA12A1F3BEB4900DBC317 /* IOTypesSPI.h */,
 				0C5AF9121F43A4C7002EAC02 /* LaunchServicesSPI.h */,
-				0C2DA12C1F3BEB4900DBC317 /* MachVMSPI.h */,
 				1CC3ACE722BD7EB800F360F0 /* MetalSPI.h */,
 				0C2DA12D1F3BEB4900DBC317 /* NEFilterSourceSPI.h */,
 				0C2DA12E1F3BEB4900DBC317 /* NSAttributedStringSPI.h */,
@@ -549,10 +546,10 @@
 				0C2DA0651F33CA3300DBC317 /* spi */,
 				A3788E9F1F05B7CE00679425 /* system */,
 				A30D411D1F0DD0AC00B71954 /* text */,
-				1C022EFD22CFE8E1006DF01B /* Gunzip.h */,
 				0C2D9E721EEF5AF600DBC317 /* ExportMacros.h */,
 				F44291621FA52670002CC93E /* FileSizeFormatter.cpp */,
 				F442915F1FA5261E002CC93E /* FileSizeFormatter.h */,
+				1C022EFD22CFE8E1006DF01B /* Gunzip.h */,
 				A39DE74D1F7C443C007BCB00 /* HysteresisActivity.h */,
 				1C4876D61F8D7F4E00CCEEBD /* Logging.cpp */,
 				1C4876D71F8D7F4E00CCEEBD /* Logging.h */,
@@ -597,12 +594,12 @@
 		1C4876DE1F8D831300CCEEBD /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				1C022EFC22CFE8E0006DF01B /* Gunzip.cpp */,
 				57FD318822B3592F008D0E8B /* AppSSOSoftLink.h */,
 				57FD318922B3593E008D0E8B /* AppSSOSoftLink.mm */,
 				077E87B0226A460200A2AFF0 /* AVFoundationSoftLink.h */,
 				077E87AF226A460200A2AFF0 /* AVFoundationSoftLink.mm */,
 				F44291661FA52705002CC93E /* FileSizeFormatterCocoa.mm */,
+				1C022EFC22CFE8E0006DF01B /* Gunzip.cpp */,
 				A1F63C9D21A4DBF7006FB43B /* PassKitSoftLink.h */,
 				A1F63C9E21A4DBF7006FB43B /* PassKitSoftLink.mm */,
 			);
@@ -730,6 +727,7 @@
 				0C2D9E731EEF5AF600DBC317 /* ExportMacros.h in Headers */,
 				F44291601FA5261E002CC93E /* FileSizeFormatter.h in Headers */,
 				0C5AF91B1F43A4C7002EAC02 /* GraphicsServicesSPI.h in Headers */,
+				1C022EFF22CFEC53006DF01B /* Gunzip.h in Headers */,
 				A102658E1F567E9D00B4C844 /* HIServicesSPI.h in Headers */,
 				A10265891F56747A00B4C844 /* HIToolboxSPI.h in Headers */,
 				A39DE74E1F7C443D007BCB00 /* HysteresisActivity.h in Headers */,
@@ -745,8 +743,6 @@
 				1C4876D91F8D7F4E00CCEEBD /* Logging.h in Headers */,
 				44E1A8AF21FA54E600C3048E /* LookupSoftLink.h in Headers */,
 				0C77858B1F45130F00F4EBB6 /* LookupSPI.h in Headers */,
-				1C022EFF22CFEC53006DF01B /* Gunzip.h in Headers */,
-				0C2DA1481F3BEB4900DBC317 /* MachVMSPI.h in Headers */,
 				0C5AF91D1F43A4C7002EAC02 /* MediaPlayerSPI.h in Headers */,
 				0C77858C1F45130F00F4EBB6 /* MediaRemoteSPI.h in Headers */,
 				0C00CFD41F68CE4600AAC26D /* MediaTimeAVFoundation.h in Headers */,
@@ -919,9 +915,9 @@
 				A1175B581F6B470500C4B9F0 /* DefaultSearchProvider.cpp in Sources */,
 				F44291641FA52670002CC93E /* FileSizeFormatter.cpp in Sources */,
 				F44291681FA52705002CC93E /* FileSizeFormatterCocoa.mm in Sources */,
+				1C022EFE22CFE8E1006DF01B /* Gunzip.cpp in Sources */,
 				A30D41221F0DD0EA00B71954 /* KillRing.cpp in Sources */,
 				A30D41251F0DD12D00B71954 /* KillRingMac.mm in Sources */,
-				1C022EFE22CFE8E1006DF01B /* Gunzip.cpp in Sources */,
 				1C4876D81F8D7F4E00CCEEBD /* Logging.cpp in Sources */,
 				44E1A8B021FA54EB00C3048E /* LookupSoftLink.mm in Sources */,
 				0CF99CA41F736375007EE793 /* MediaTimeAVFoundation.cpp in Sources */,

@@ -26,7 +26,7 @@
 #include "IsoPage.h"
 
 #include "PerProcess.h"
-#include "VMHeap.h"
+#include "VMAllocate.h"
 
 namespace bmalloc {
 

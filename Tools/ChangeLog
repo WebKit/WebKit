@@ -1,3 +1,23 @@
+2019-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] Add IsoHeap test to ensure that IsoHeap pages are not allocating too large VA
+        https://bugs.webkit.org/show_bug.cgi?id=200103
+
+        Reviewed by Mark Lam.
+
+        This patch adds tests to TestWTF IsoHeap tests to ensure that IsoHeap's component is not leaking pages or not allocating too large VAs for memory allocation.
+        We use VMTag to get the system view of the allocated VAs and check whether it is not incredibly large.
+
+        While the tests are white-box tests (it means that this is a bit flaky to the implementation changes of IsoHeap), I adjusted some threshold to make this less-flaky
+        to the future implementation changes while it catches the severe issues we had.
+
+        * TestWebKitAPI/Tests/WTF/bmalloc/IsoHeap.cpp:
+        (assertEmptyPointerSet):
+        (assertHasOnlyObjects):
+        (assertClean):
+        (TEST):
+        (allocateAndDeallocate):
+
 2019-07-24  Fujii Hironori  <fujii.hironori@gmail.com>
 
         [CMake] CMAKE_SHARED_LINKER_FLAGS drops "-Wl,--no-undefined"

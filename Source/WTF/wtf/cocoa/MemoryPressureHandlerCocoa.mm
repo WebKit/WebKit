@@ -30,6 +30,7 @@
 #import <mach/task_info.h>
 #import <malloc/malloc.h>
 #import <notify.h>
+#import <wtf/ResourceUsage.h>
 #import <wtf/spi/darwin/DispatchSPI.h>
 
 #define ENABLE_FMW_FOOTPRINT_COMPARISON 0

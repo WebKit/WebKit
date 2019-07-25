@@ -50,6 +50,7 @@
 #include "TextPainter.h"
 #include "WorkerThread.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/ResourceUsage.h>
 #include <wtf/SystemTracing.h>
 
 #if PLATFORM(COCOA)

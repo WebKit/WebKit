@@ -190,6 +190,7 @@ set(WTF_PUBLIC_HEADERS
     RefCountedLeakCounter.h
     RefCounter.h
     RefPtr.h
+    ResourceUsage.h
     RetainPtr.h
     RunLoop.h
     RunLoopTimer.h

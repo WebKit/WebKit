@@ -30,7 +30,6 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/IOSurfaceSPI.h
     spi/cocoa/IOTypesSPI.h
     spi/cocoa/LaunchServicesSPI.h
-    spi/cocoa/MachVMSPI.h
     spi/cocoa/NEFilterSourceSPI.h
     spi/cocoa/NSAttributedStringSPI.h
     spi/cocoa/NSButtonCellSPI.h

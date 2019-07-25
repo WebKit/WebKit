@@ -25,6 +25,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     spi/cf/CFStringSPI.h
 
     spi/cocoa/CFXPCBridgeSPI.h
+    spi/cocoa/MachVMSPI.h
     spi/cocoa/SecuritySPI.h
     spi/cocoa/objcSPI.h
 
@@ -58,6 +59,7 @@ list(APPEND WTF_SOURCES
     cocoa/MemoryFootprintCocoa.cpp
     cocoa/MemoryPressureHandlerCocoa.mm
     cocoa/NSURLExtras.mm
+    cocoa/ResourceUsageCocoa.cpp
     cocoa/URLCocoa.mm
     cocoa/WorkQueueCocoa.cpp
 

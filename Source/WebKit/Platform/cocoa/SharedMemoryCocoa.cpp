@@ -34,9 +34,9 @@
 #include <mach/mach_error.h>
 #include <mach/mach_port.h>
 #include <mach/vm_map.h>
-#include <pal/spi/cocoa/MachVMSPI.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/RefPtr.h>
+#include <wtf/spi/cocoa/MachVMSPI.h>
 
 namespace WebKit {
 

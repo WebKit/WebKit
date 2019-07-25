@@ -1,3 +1,14 @@
+2019-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] Add IsoHeap test to ensure that IsoHeap pages are not allocating too large VA
+        https://bugs.webkit.org/show_bug.cgi?id=200103
+
+        Reviewed by Mark Lam.
+
+        Move MachVMSPI.h from PAL to WTF.
+
+        * Platform/cocoa/SharedMemoryCocoa.cpp:
+
 2019-07-24  Youenn Fablet  <youenn@apple.com>
 
         Disable speculative loading if cache is not to be used for the load

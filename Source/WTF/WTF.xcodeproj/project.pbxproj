@@ -164,6 +164,7 @@
 		E38C41251EB4E04C0042957D /* CPUTimeCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38C41241EB4E04C0042957D /* CPUTimeCocoa.cpp */; };
 		E38C41281EB4E0680042957D /* CPUTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38C41261EB4E0680042957D /* CPUTime.cpp */; };
 		E38D6E271F5522E300A75CC4 /* StringBuilderJSON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38D6E261F5522E300A75CC4 /* StringBuilderJSON.cpp */; };
+		E392FA2722E92BFF00ECDC73 /* ResourceUsageCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E392FA2622E92BFF00ECDC73 /* ResourceUsageCocoa.cpp */; };
 		E3A32BC41FC830E2007D7E76 /* JSValueMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3A32BC21FC830E2007D7E76 /* JSValueMalloc.cpp */; };
 		E4A0AD391A96245500536DF6 /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD371A96245500536DF6 /* WorkQueue.cpp */; };
 		E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */; };
@@ -659,6 +660,7 @@
 		E300E521203D645F00DA79BE /* UniqueArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueArray.h; sourceTree = "<group>"; };
 		E311FB151F0A568B003C08DE /* ThreadGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadGroup.cpp; sourceTree = "<group>"; };
 		E311FB161F0A568B003C08DE /* ThreadGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadGroup.h; sourceTree = "<group>"; };
+		E31BDE2822E913CC0029B105 /* MachVMSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachVMSPI.h; sourceTree = "<group>"; };
 		E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformRegisters.h; sourceTree = "<group>"; };
 		E33D5F871FBED66700BF625E /* RecursableLambda.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecursableLambda.h; sourceTree = "<group>"; };
 		E34CD0D022810A020020D299 /* Packed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Packed.h; sourceTree = "<group>"; };
@@ -670,6 +672,7 @@
 		E38C41261EB4E0680042957D /* CPUTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CPUTime.cpp; sourceTree = "<group>"; };
 		E38C41271EB4E0680042957D /* CPUTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPUTime.h; sourceTree = "<group>"; };
 		E38D6E261F5522E300A75CC4 /* StringBuilderJSON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringBuilderJSON.cpp; sourceTree = "<group>"; };
+		E392FA2622E92BFF00ECDC73 /* ResourceUsageCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceUsageCocoa.cpp; sourceTree = "<group>"; };
 		E3A32BC21FC830E2007D7E76 /* JSValueMalloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSValueMalloc.cpp; sourceTree = "<group>"; };
 		E3A32BC31FC830E2007D7E76 /* JSValueMalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSValueMalloc.h; sourceTree = "<group>"; };
 		E3CF76902115D6BA0091DE48 /* CompactPointerTuple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactPointerTuple.h; sourceTree = "<group>"; };
@@ -1358,6 +1361,7 @@
 			isa = PBXGroup;
 			children = (
 				9384B73E20DEA284005B73B2 /* CFXPCBridgeSPI.h */,
+				E31BDE2822E913CC0029B105 /* MachVMSPI.h */,
 				93D191CF20CAECE800C51B8E /* objcSPI.h */,
 				A5098B011C16A4F900087797 /* SecuritySPI.h */,
 			);
@@ -1424,6 +1428,7 @@
 				AD89B6B91E64150F0090707F /* MemoryPressureHandlerCocoa.mm */,
 				5CC0EE872162BC2200A1A842 /* NSURLExtras.h */,
 				5CC0EE882162BC2200A1A842 /* NSURLExtras.mm */,
+				E392FA2622E92BFF00ECDC73 /* ResourceUsageCocoa.cpp */,
 				A30D412C1F0DE0BA00B71954 /* SoftLinking.h */,
 				5CC0EE862162BC2200A1A842 /* URLCocoa.mm */,
 				E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */,
@@ -1594,6 +1599,7 @@
 				A8A47414151A825B004123FF /* RandomNumber.cpp in Sources */,
 				0FEC3C5E1F368A9700F59B6C /* ReadWriteLock.cpp in Sources */,
 				A8A4741A151A825B004123FF /* RefCountedLeakCounter.cpp in Sources */,
+				E392FA2722E92BFF00ECDC73 /* ResourceUsageCocoa.cpp in Sources */,
 				2CDED0F318115C85004DBA70 /* RunLoop.cpp in Sources */,
 				2CDED0EF18115C38004DBA70 /* RunLoopCF.cpp in Sources */,
 				A3EE5C3E21FFAC7D00FABD61 /* RunLoopTimerCF.cpp in Sources */,
