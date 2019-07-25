@@ -4503,7 +4503,7 @@ bool Internals::userPrefersReducedMotion() const
 }
 
 #if ENABLE(VIDEO)
-double Internals::privatePlayerVolume(const HTMLMediaElement& element)
+double Internals::privatePlayerVolume(const HTMLMediaElement&)
 {
     return 0;
 }

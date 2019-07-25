@@ -1,3 +1,10 @@
+2019-07-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix -Wunused-parameter warning
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::privatePlayerVolume):
+
 2019-07-25  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Add descriptive error messages
