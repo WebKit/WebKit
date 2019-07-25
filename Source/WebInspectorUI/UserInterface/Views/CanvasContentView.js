@@ -113,7 +113,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
             let canvasElementButtonNavigationItem = new WI.ButtonNavigationItem("canvas-element", WI.UIString("Canvas Element"), "Images/Markup.svg", 16, 16);
             canvasElementButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-            canvasElementButtonNavigationItem.element.addEventListener("mousedown", this._handleCanvasElementButtonMouseDown.bind(this));
+            WI.addMouseDownContextMenuHandlers(canvasElementButtonNavigationItem.element, this._populateCanvasElementButtonContextMenu.bind(this));
             navigationBar.addNavigationItem(canvasElementButtonNavigationItem);
 
             navigationBar.addNavigationItem(this._refreshButtonNavigationItem);
@@ -134,12 +134,12 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
             this._viewShaderButton = document.createElement("img");
             this._viewShaderButton.classList.add("view-shader");
             this._viewShaderButton.title = WI.UIString("View Shader");
-            this._viewShaderButton.addEventListener("mousedown", this._handleViewShaderButtonMouseDown.bind(this));
+            WI.addMouseDownContextMenuHandlers(this._viewShaderButton, this._populateViewShaderButtonContextMenu.bind(this));
 
             this._viewRecordingButton = document.createElement("img");
             this._viewRecordingButton.classList.add("view-recording");
             this._viewRecordingButton.title = WI.UIString("View Recording");
-            this._viewRecordingButton.addEventListener("mousedown", this._handleViewRecordingButtonMouseDown.bind(this));
+            WI.addMouseDownContextMenuHandlers(this._viewRecordingButton, this._populateViewRecordingButtonContextMenu.bind(this));
 
             this._updateViewRelatedItems();
 
@@ -290,18 +290,8 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         });
     }
 
-    _handleCanvasElementButtonMouseDown(event)
+    _populateCanvasElementButtonContextMenu(contextMenu)
     {
-        if (this._ignoreCanvasElementButtonMouseDown)
-            return;
-
-        this._ignoreCanvasElementButtonMouseDown = true;
-
-        let contextMenu = WI.ContextMenu.createFromEvent(event);
-        contextMenu.addBeforeShowCallback(() => {
-            this._ignoreCanvasElementButtonMouseDown = false;
-        });
-
         if (this._canvasNode)
             WI.appendContextMenuItemsForDOMNode(contextMenu, this._canvasNode);
 
@@ -317,8 +307,6 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
                 WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
             });
         });
-
-        contextMenu.show();
     }
 
     _showGridButtonClicked()
@@ -405,65 +393,41 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
             this._viewRelatedItemsContainer.appendChild(this._viewRecordingButton);
     }
 
-    _handleViewShaderButtonMouseDown(event)
+    _populateViewShaderButtonContextMenu(contextMenu, event)
     {
-        if (this._ignoreViewShaderButtonMouseDown)
-            return;
-
         let shaderPrograms = this.representedObject.shaderProgramCollection;
         console.assert(shaderPrograms.size);
         if (!shaderPrograms.size)
             return;
 
-        if (shaderPrograms.size === 1) {
+        if (event.button === 0 && shaderPrograms.size === 1) {
             WI.showRepresentedObject(Array.from(shaderPrograms)[0]);
             return;
         }
-
-        this._ignoreViewShaderButtonMouseDown = true;
-
-        let contextMenu = WI.ContextMenu.createFromEvent(event);
-        contextMenu.addBeforeShowCallback(() => {
-            this._ignoreViewShaderButtonMouseDown = false;
-        });
 
         for (let shaderProgram of shaderPrograms) {
             contextMenu.appendItem(shaderProgram.displayName, () => {
                 WI.showRepresentedObject(shaderProgram);
             });
         }
-
-        contextMenu.show();
     }
 
-    _handleViewRecordingButtonMouseDown(event)
+    _populateViewRecordingButtonContextMenu(contextMenu, event)
     {
-        if (this._ignoreViewRecordingButtonMouseDown)
-            return;
-
         let recordings = this.representedObject.recordingCollection;
         console.assert(recordings.size);
         if (!recordings.size)
             return;
 
-        if (recordings.size === 1) {
+        if (event.button === 0 && recordings.size === 1) {
             WI.showRepresentedObject(Array.from(recordings)[0]);
             return;
         }
-
-        this._ignoreViewRecordingButtonMouseDown = true;
-
-        let contextMenu = WI.ContextMenu.createFromEvent(event);
-        contextMenu.addBeforeShowCallback(() => {
-            this._ignoreViewRecordingButtonMouseDown = false;
-        });
 
         for (let recording of recordings) {
             contextMenu.appendItem(recording.displayName, () => {
                 WI.showRepresentedObject(recording);
             });
         }
-
-        contextMenu.show();
     }
 };

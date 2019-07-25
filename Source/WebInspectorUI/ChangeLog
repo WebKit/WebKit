@@ -1,5 +1,46 @@
 2019-07-24  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION: no context menu items work when context menu clicking on "Add Breakpoint"
+        https://bugs.webkit.org/show_bug.cgi?id=199953
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.addMouseDownContextMenuHandlers): Added.
+        Create a helper function for managing elements that show a context menu on "mousedown".
+
+        * UserInterface/Base/SearchUtilities.js:
+        (WI.SearchUtilities.createSettingsButton):
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView.prototype.initialLayout):
+        (WI.CanvasContentView.prototype._populateCanvasElementButtonContextMenu): Added.
+        (WI.CanvasContentView.prototype._populateViewShaderButtonContextMenu): Added.
+        (WI.CanvasContentView.prototype._populateViewRecordingButtonContextMenu): Added.
+        (WI.CanvasContentView.prototype._handleCanvasElementButtonMouseDown): Deleted.
+        (WI.CanvasContentView.prototype._handleViewShaderButtonMouseDown): Deleted.
+        (WI.CanvasContentView.prototype._handleViewRecordingButtonMouseDown): Deleted.
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel):
+        (WI.DebuggerSidebarPanel.prototype._populateCreateBreakpointContextMenu): Added.
+        (WI.DebuggerSidebarPanel.prototype._handleCreateBreakpointMouseDown): Deleted.
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype._populateResourceGroupingModeContextMenu): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._populateCreateBreakpointContextMenu): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._handleResourceGroupingModeMouseDown): Deleted.
+        (WI.SourcesNavigationSidebarPanel.prototype._handleCreateBreakpointMouseDown): Deleted.
+
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar):
+        (WI.TabBar.prototype._handleTabPickerTabContextMenu): Deleted.
+        * UserInterface/Views/LegacyTabBar.js:
+        (WI.LegacyTabBar):
+        (WI.LegacyTabBar.prototype._handleTabPickerTabContextMenu): Deleted.
+        Remove the "contextmenu" handler on the tab picker, as that's already used by the entire
+        tab bar to show/hide tabs.
+
+2019-07-24  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: print the target of `console.screenshot` last so the target is the closest item to the image
         https://bugs.webkit.org/show_bug.cgi?id=199308
 

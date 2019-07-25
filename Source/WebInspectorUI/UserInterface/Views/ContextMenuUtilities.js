@@ -23,6 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+WI.addMouseDownContextMenuHandlers = function(element, populateContextMenuCallback)
+{
+    let ignoreMouseDown = false;
+    element.addEventListener("mousedown", (event) => {
+        if (event.button !== 0)
+            return;
+
+        event.stop();
+
+        if (ignoreMouseDown)
+            return;
+
+        ignoreMouseDown = true;
+
+        let contextMenu = WI.ContextMenu.createFromEvent(event);
+        contextMenu.addBeforeShowCallback(() => {
+            ignoreMouseDown = false;
+        });
+
+        populateContextMenuCallback(contextMenu, event);
+
+        contextMenu.show();
+    });
+
+    element.addEventListener("contextmenu", (event) => {
+        let contextMenu = WI.ContextMenu.createFromEvent(event);
+        populateContextMenuCallback(contextMenu, event);
+    });
+};
+
 WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocation)
 {
     console.assert(contextMenu instanceof WI.ContextMenu);

@@ -55,7 +55,6 @@ WI.LegacyTabBar = class LegacyTabBar extends WI.View
 
         this._tabPickerTabBarItem = new WI.PinnedTabBarItem("Images/TabPicker.svg", WI.UIString("Show hidden tabs"));
         this._tabPickerTabBarItem.element.classList.add("tab-picker");
-        this._tabPickerTabBarItem.element.addEventListener("contextmenu", this._handleTabPickerTabContextMenu.bind(this));
         this.addTabBarItem(this._tabPickerTabBarItem, {suppressAnimations: true});
     }
 
@@ -848,19 +847,6 @@ WI.LegacyTabBar = class LegacyTabBar extends WI.View
     _handleNewTabClick(event)
     {
         WI.showNewTabTab();
-    }
-
-    _handleTabPickerTabContextMenu(event)
-    {
-        if (!this._hiddenTabBarItems.length)
-            return;
-
-        let contextMenu = WI.ContextMenu.createFromEvent(event);
-        for (let item of this._hiddenTabBarItems) {
-            contextMenu.appendItem(item.title, () => {
-                this.selectedTabBarItem = item;
-            });
-        }
     }
 
     _handleNewTabMouseEnter(event)

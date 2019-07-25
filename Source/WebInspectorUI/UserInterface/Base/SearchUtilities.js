@@ -72,22 +72,10 @@ WI.SearchUtilities = class SearchUtilities {
     {
         console.assert(!isEmptyObject(settings));
 
-        let ignoreMouseDown = false;
-
         let button = document.createElement("button");
-        button.addEventListener("mousedown", (event) => {
-            event.stop();
-
-            if (ignoreMouseDown)
-                return;
-
-            ignoreMouseDown = true;
-
-            let contextMenu = WI.ContextMenu.createFromEvent(event);
-            contextMenu.addBeforeShowCallback(() => {
-                ignoreMouseDown = false;
-            });
-
+        button.classList.add("search-settings");
+        button.tabIndex = -1;
+        WI.addMouseDownContextMenuHandlers(button, (contextMenu) => {
             if (settings.caseSensitive) {
                 contextMenu.appendCheckboxItem(WI.UIString("Case Sensitive", "Case Sensitive @ Context Menu", "Context menu label for whether searches should be case sensitive."), () => {
                     settings.caseSensitive.value = !settings.caseSensitive.value;
@@ -99,11 +87,7 @@ WI.SearchUtilities = class SearchUtilities {
                     settings.regularExpression.value = !settings.regularExpression.value;
                 }, settings.regularExpression.value);
             }
-
-            contextMenu.show();
         });
-        button.classList.add("search-settings");
-        button.tabIndex = -1;
 
         button.appendChild(WI.ImageUtilities.useSVGSymbol("Images/Gear.svg", "glyph"));
 
