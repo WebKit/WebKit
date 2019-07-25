@@ -842,6 +842,16 @@ void PageClientImpl::didChangeDragCaretRect(const IntRect& previousCaretRect, co
 }
 #endif
 
+Seconds PageClientImpl::doubleTapForDoubleClickDelay()
+{
+    return Seconds { [m_contentView _doubleTapForDoubleClickDelay] };
+}
+
+float PageClientImpl::doubleTapForDoubleClickRadius()
+{
+    return [m_contentView _doubleTapForDoubleClickRadius];
+}
+
 #if USE(QUICK_LOOK)
 void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName, WTF::Function<void(const String&)>&& completionHandler)
 {
