@@ -832,27 +832,16 @@ void WebPage::handleTap(const IntPoint& point, OptionSet<WebEvent::Modifier> mod
         handleSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers);
 }
 
-bool WebPage::handlePotentialDoubleTapForDoubleClickAtPoint(OptionSet<WebEvent::Modifier> modifiers, uint64_t lastLayerTreeTransactionId)
+void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, OptionSet<WebEvent::Modifier> modifiers, uint64_t lastLayerTreeTransactionId)
 {
-    if (!m_lastCommittedTapTimestamp || !m_lastCommittedTapLocation)
-        return false;
-
-    auto millisecondsSinceLastTap = (MonotonicTime::now() - *m_lastCommittedTapTimestamp).milliseconds();
-    if (millisecondsSinceLastTap > m_doubleTapForDoubleClickDelay.milliseconds())
-        return false;
-
-    auto distanceBetweenTaps = sqrtf(pow(m_potentialTapLocation.x() - m_lastCommittedTapLocation->x(), 2) + pow(m_potentialTapLocation.y() - m_lastCommittedTapLocation->y(), 2));
-    if (distanceBetweenTaps > m_doubleTapForDoubleClickRadius)
-        return false;
-
     FloatPoint adjustedPoint;
-    auto* nodeRespondingToDoubleClick = m_page->mainFrame().nodeRespondingToDoubleClickEvent(m_potentialTapLocation, adjustedPoint);
+    auto* nodeRespondingToDoubleClick = m_page->mainFrame().nodeRespondingToDoubleClickEvent(point, adjustedPoint);
     if (!nodeRespondingToDoubleClick)
-        return false;
+        return;
 
     auto* frameRespondingToDoubleClick = nodeRespondingToDoubleClick->document().frame();
     if (!frameRespondingToDoubleClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToDoubleClick)->firstLayerTreeTransactionIDAfterDidCommitLoad())
-        return false;
+        return;
 
     bool shiftKey = modifiers.contains(WebEvent::Modifier::ShiftKey);
     bool ctrlKey = modifiers.contains(WebEvent::Modifier::ControlKey);
@@ -861,9 +850,8 @@ bool WebPage::handlePotentialDoubleTapForDoubleClickAtPoint(OptionSet<WebEvent::
     auto roundedAdjustedPoint = roundedIntPoint(adjustedPoint);
     nodeRespondingToDoubleClick->document().frame()->eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MousePressed, 2, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), 0, WebCore::NoTap));
     if (m_isClosed)
-        return false;
+        return;
     nodeRespondingToDoubleClick->document().frame()->eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MouseReleased, 2, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), 0, WebCore::NoTap));
-    return true;
 }
 
 void WebPage::requestFocusedElementInformation(WebKit::CallbackID callbackID)
@@ -1084,12 +1072,6 @@ void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoi
 
 void WebPage::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, uint64_t lastLayerTreeTransactionId, WebCore::PointerID pointerId)
 {
-    auto currentPotentialTapLocation = m_potentialTapLocation; 
-    auto updateLastCommittedLocationAndTimestamp = [&] {
-        m_lastCommittedTapTimestamp = MonotonicTime::now();
-        m_lastCommittedTapLocation = currentPotentialTapLocation;
-    };
-
     auto invalidTargetForSingleClick = !m_potentialTapNode;
     if (!invalidTargetForSingleClick) {
         bool targetRenders = m_potentialTapNode->renderer();
@@ -1098,10 +1080,8 @@ void WebPage::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, uint64
         invalidTargetForSingleClick = !targetRenders && !is<HTMLAreaElement>(m_potentialTapNode.get());
     }
     if (invalidTargetForSingleClick) {
-        // When the node has no click eventlistener, but it may have a dblclick one.
-        handlePotentialDoubleTapForDoubleClickAtPoint(modifiers, lastLayerTreeTransactionId);
         commitPotentialTapFailed();
-        return updateLastCommittedLocationAndTimestamp();
+        return;
     }
 
     FloatPoint adjustedPoint;
@@ -1110,7 +1090,7 @@ void WebPage::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, uint64
 
     if (!frameRespondingToClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad()) {
         commitPotentialTapFailed();
-        return updateLastCommittedLocationAndTimestamp();
+        return;
     }
 
     if (m_potentialTapNode == nodeRespondingToClick) {
@@ -1121,19 +1101,13 @@ void WebPage::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, uint64
             commitPotentialTapFailed();
         } else
 #endif
-        {
-            if (handlePotentialDoubleTapForDoubleClickAtPoint(modifiers, lastLayerTreeTransactionId))
-                commitPotentialTapFailed();
-            else
-                handleSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers, pointerId);
-        }
+            handleSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers, pointerId);
     } else
         commitPotentialTapFailed();
 
     m_potentialTapNode = nullptr;
     m_potentialTapLocation = FloatPoint();
     m_potentialTapSecurityOrigin = nullptr;
-    return updateLastCommittedLocationAndTimestamp();
 }
 
 void WebPage::commitPotentialTapFailed()
