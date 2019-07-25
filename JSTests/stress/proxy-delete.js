@@ -93,6 +93,47 @@ function assert(b) {
 }
 
 {
+    let target = new Proxy({}, {
+        isExtensible: function() {
+            throw new Error("should not be called if [[GetOwnProperty]] returns undefined");
+        }
+    });
+    let proxy = new Proxy(target, {
+        deleteProperty: function() {
+            return true;
+        }
+    });
+    for (let i = 0; i < 500; i++) {
+        assert(delete proxy.nonExistentProperty);
+    }
+}
+
+{
+    let calls;
+    let target = new Proxy({}, {
+        getOwnPropertyDescriptor: function() {
+            calls.push('getOwnPropertyDescriptor');
+            return { configurable: true };
+        },
+        isExtensible: function() {
+            calls.push('isExtensible');
+            return true;
+        }
+    });
+    let proxy = new Proxy(target, {
+        deleteProperty: function() {
+            calls.push('trap');
+            return true;
+        }
+    });
+    for (let i = 0; i < 500; i++) {
+        calls = [];
+        assert(delete proxy.prop);
+        assert(calls.join() == 'trap,getOwnPropertyDescriptor,isExtensible');
+    }
+}
+
+{
     let target = {};
     let error = null;
     let handler = {

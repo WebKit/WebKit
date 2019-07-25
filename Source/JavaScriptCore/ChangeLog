@@ -1,3 +1,26 @@
+2019-07-24  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Three checks are missing in Proxy internal methods
+        https://bugs.webkit.org/show_bug.cgi?id=198630
+
+        Reviewed by Darin Adler.
+
+        Add three missing checks in Proxy internal methods.
+        These checks are necessary to maintain the invariants of the essential internal methods.
+        (https://github.com/tc39/ecma262/pull/666)
+
+        1. [[GetOwnProperty]] shouldn't return non-configurable and non-writable descriptor when the target's property is writable.
+        2. [[Delete]] should return `false` when the target has property and is not extensible.
+        3. [[DefineOwnProperty]] should return `true` for a non-writable input descriptor when the target's property is non-configurable and writable.
+
+        Shipping in SpiderMonkey since https://hg.mozilla.org/integration/autoland/rev/3a06bc818bc4 (version 69)
+        Shipping in V8 since https://chromium.googlesource.com/v8/v8.git/+/e846ad9fa5109428be50b1989314e0e4e7267919
+
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty): Add writability check.
+        (JSC::ProxyObject::performDelete): Add extensibility check.
+        (JSC::ProxyObject::performDefineOwnProperty): Add writability check.
+
 2019-07-24  Mark Lam  <mark.lam@apple.com>
 
         Remove some unused code.

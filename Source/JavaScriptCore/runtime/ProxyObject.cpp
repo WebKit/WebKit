@@ -287,6 +287,10 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
             throwVMTypeError(exec, scope, "Result from 'getOwnPropertyDescriptor' can't be non-configurable when the 'target' doesn't have it as an own property or if it is a configurable own property on 'target'"_s);
             return false;
         }
+        if (trapResultAsDescriptor.writablePresent() && !trapResultAsDescriptor.writable() && targetPropertyDescriptor.writable()) {
+            throwVMTypeError(exec, scope, "Result from 'getOwnPropertyDescriptor' can't be non-configurable and non-writable when the target's property is writable"_s);
+            return false;
+        }
     }
 
     if (trapResultAsDescriptor.isAccessorDescriptor()) {
@@ -662,6 +666,12 @@ bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, Defa
             throwVMTypeError(exec, scope, "Proxy handler's 'deleteProperty' method should return false when the target's property is not configurable"_s);
             return false;
         }
+        bool targetIsExtensible = target->isExtensible(exec);
+        RETURN_IF_EXCEPTION(scope, false);
+        if (!targetIsExtensible) {
+            throwVMTypeError(exec, scope, "Proxy handler's 'deleteProperty' method should return false when the target has property and is not extensible"_s);
+            return false;
+        }
     }
 
     RETURN_IF_EXCEPTION(scope, false);
@@ -885,6 +895,12 @@ bool ProxyObject::performDefineOwnProperty(ExecState* exec, PropertyName propert
     if (settingConfigurableToFalse && targetDescriptor.configurable()) {
         throwVMTypeError(exec, scope, "Proxy's 'defineProperty' trap did not define a non-configurable property on its target even though the input descriptor to the trap said it must do so"_s);
         return false;
+    }
+    if (targetDescriptor.isDataDescriptor() && !targetDescriptor.configurable() && targetDescriptor.writable()) {
+        if (descriptor.writablePresent() && !descriptor.writable()) {
+            throwTypeError(exec, scope, "Proxy's 'defineProperty' trap returned true for a non-writable input descriptor when the target's property is non-configurable and writable"_s);
+            return false;
+        }
     }
     
     return true;

@@ -1,3 +1,13 @@
+2019-07-24  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Three checks are missing in Proxy internal methods
+        https://bugs.webkit.org/show_bug.cgi?id=198630
+
+        Reviewed by Darin Adler.
+
+        * stress/proxy-delete.js: Assert isExtensible is called in correct order.
+        * test262/expectations.yaml: Mark 6 test cases as passing.
+
 2019-07-23  Justin Michaud  <justin_michaud@apple.com>
 
         Sometimes we miss removable CheckInBounds
