@@ -1393,6 +1393,9 @@ ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location
 ExpressionNode* ASTBuilder::makeBinaryNode(const JSTokenLocation& location, int token, std::pair<ExpressionNode*, BinaryOpInfo> lhs, std::pair<ExpressionNode*, BinaryOpInfo> rhs)
 {
     switch (token) {
+    case COALESCE:
+        return new (m_parserArena) CoalesceNode(location, lhs.first, rhs.first);
+
     case OR:
         return new (m_parserArena) LogicalOpNode(location, lhs.first, rhs.first, OpLogicalOr);
 

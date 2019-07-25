@@ -1,3 +1,47 @@
+2019-07-25  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [ESNext] Implement nullish coalescing
+        https://bugs.webkit.org/show_bug.cgi?id=200072
+
+        Reviewed by Darin Adler.
+
+        Implement the nullish coalescing proposal, which has now reached Stage 3 at TC39.
+
+        This introduces a ?? operator which:
+          - acts like || but checks for nullishness instead of truthiness
+          - has a precedence lower than || (or any other binary operator)
+          - must be disambiguated with parentheses when combined with || or &&
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CoalesceNode::emitBytecode): Added.
+        Bytecode must use OpIsUndefinedOrNull and not OpNeqNull because of document.all.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::makeBinaryNode):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::lexWithoutClearingLineTerminator):
+        * parser/NodeConstructors.h:
+        (JSC::CoalesceNode::CoalesceNode): Added.
+        * parser/Nodes.h:
+        Introduce new token and AST node.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseBinaryExpression):
+        Implement early error.
+
+        * parser/ParserTokens.h:
+        Since this patch needs to shift the value of every binary operator token anyway,
+        let's only bother to increment their LSBs when we actually have a precedence conflict.
+
+        * parser/ResultType.h:
+        (JSC::ResultType::definitelyIsNull const): Added.
+        (JSC::ResultType::mightBeUndefinedOrNull const): Added.
+        (JSC::ResultType::forCoalesce): Added.
+        We can do better than forLogicalOp here; let's be as accurate as possible.
+
+        * runtime/Options.h:
+        Add runtime feature flag.
+
 2019-07-24  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Three checks are missing in Proxy internal methods

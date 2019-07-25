@@ -2338,6 +2338,21 @@ void LogicalOpNode::emitBytecodeInConditionContext(BytecodeGenerator& generator,
     generator.emitNodeInConditionContext(m_expr2, trueTarget, falseTarget, fallThroughMode);
 }
 
+// ------------------------------ CoalesceNode ----------------------------
+
+RegisterID* CoalesceNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    RefPtr<RegisterID> temp = generator.tempDestination(dst);
+    Ref<Label> target = generator.newLabel();
+
+    generator.emitNode(temp.get(), m_expr1);
+    generator.emitJumpIfFalse(generator.emitUnaryOp<OpIsUndefinedOrNull>(generator.newTemporary(), temp.get()), target.get());
+    generator.emitNodeInTailPosition(temp.get(), m_expr2);
+    generator.emitLabel(target.get());
+
+    return generator.move(dst, temp.get());
+}
+
 // ------------------------------ ConditionalNode ------------------------------
 
 RegisterID* ConditionalNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)

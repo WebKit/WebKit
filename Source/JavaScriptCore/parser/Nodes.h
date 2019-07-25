@@ -1305,6 +1305,17 @@ namespace JSC {
         ExpressionNode* m_expr2;
     };
 
+    class CoalesceNode final : public ExpressionNode {
+    public:
+        CoalesceNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2);
+
+    private:
+        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        ExpressionNode* m_expr1;
+        ExpressionNode* m_expr2;
+    };
+
     // The ternary operator, "m_logical ? m_expr1 : m_expr2"
     class ConditionalNode final : public ExpressionNode {
     public:

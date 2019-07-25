@@ -2153,8 +2153,13 @@ start:
         shift();
         break;
     case CharacterQuestion:
-        token = QUESTION;
         shift();
+        if (Options::useNullishCoalescing() && m_current == '?') {
+            shift();
+            token = COALESCE;
+            break;
+        }
+        token = QUESTION;
         break;
     case CharacterTilde:
         token = TILDE;

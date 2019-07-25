@@ -669,6 +669,13 @@ namespace JSC {
     {
     }
 
+    inline CoalesceNode::CoalesceNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2)
+        : ExpressionNode(location, ResultType::forCoalesce(expr1->resultDescriptor(), expr2->resultDescriptor()))
+        , m_expr1(expr1)
+        , m_expr2(expr2)
+    {
+    }
+
     inline ConditionalNode::ConditionalNode(const JSTokenLocation& location, ExpressionNode* logical, ExpressionNode* expr1, ExpressionNode* expr2)
         : ExpressionNode(location)
         , m_logical(logical)

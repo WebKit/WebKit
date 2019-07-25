@@ -76,6 +76,16 @@ namespace JSC {
             return (m_bits & TypeBits) == TypeMaybeBigInt;
         }
 
+        constexpr bool definitelyIsNull() const
+        {
+            return (m_bits & TypeBits) == TypeMaybeNull;
+        }
+
+        constexpr bool mightBeUndefinedOrNull() const
+        {
+            return m_bits & (TypeMaybeNull | TypeMaybeOther);
+        }
+
         constexpr bool mightBeNumber() const
         {
             return m_bits & TypeMaybeNumber;
@@ -169,6 +179,15 @@ namespace JSC {
                 return stringType();
             if (op1.definitelyIsBigInt() && op2.definitelyIsBigInt())
                 return bigIntType();
+            return unknownType();
+        }
+
+        static constexpr ResultType forCoalesce(ResultType op1, ResultType op2)
+        {
+            if (op1.definitelyIsNull())
+                return op2;
+            if (!op1.mightBeUndefinedOrNull())
+                return op1;
             return unknownType();
         }
 
