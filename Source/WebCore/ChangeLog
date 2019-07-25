@@ -1,3 +1,90 @@
+2019-07-24  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Use bmalloc instead of system malloc for WHLSL data structures
+        https://bugs.webkit.org/show_bug.cgi?id=200063
+
+        Rubber-stamped by Sam Weinig.
+
+        This is a 25-30% WHLSL compile time speedup on Justin's textured-cube demo
+        and a ~40% compile time speedup on the hello-cube demo.
+        
+        The phases that speed up from this are:
+        checker
+        includeStandardLibrary
+        autoInitializeVariables
+        resolveProperties
+
+        * Modules/webgpu/WHLSL/AST/WHLSLAddressSpace.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayReferenceType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLAssignmentExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLBaseFunctionAttribute.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLBaseSemantic.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLBlock.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLBooleanLiteral.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLBreak.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLBuiltInSemantic.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLCallExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLCommaExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLConstantExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLContinue.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLDereferenceExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLDoWhileLoop.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLDotExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLEffectfulExpressionStatement.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationDefinition.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationMember.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationMemberLiteral.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLFallthrough.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteral.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLForLoop.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionDeclaration.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionDefinition.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLGlobalVariableReference.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLIfStatement.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLIndexExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteral.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLLogicalExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLLogicalNotExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLMakeArrayReferenceExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLMakePointerExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLNamedType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLNativeFunctionDeclaration.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLNativeTypeDeclaration.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLNullLiteral.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLNullLiteralType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLNumThreadsFunctionAttribute.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLPointerType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLPropertyAccessExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLReadModifyWriteExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLReferenceType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLResolvableType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLReturn.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLSpecializationConstantSemantic.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLStageInOutSemantic.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLStatement.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLStatementList.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLStructureDefinition.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLStructureElement.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLSwitchCase.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLSwitchStatement.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLTernaryExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeDefinition.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeReference.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteral.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclaration.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclarationsStatement.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableReference.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLWhileLoop.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp:
+
 2019-07-24  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: support `console.screenshot` with ImageData and ImageBitmap

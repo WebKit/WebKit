@@ -29,6 +29,7 @@
 
 #include "WHLSLLexer.h"
 #include "WHLSLStatement.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -38,6 +39,7 @@ namespace WHLSL {
 namespace AST {
 
 class StatementList : public Statement {
+    WTF_MAKE_FAST_ALLOCATED;
     using Base = Statement;
 public:
     StatementList(CodeLocation location, Statements&& statements)

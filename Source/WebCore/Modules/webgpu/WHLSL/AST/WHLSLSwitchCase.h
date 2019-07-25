@@ -31,6 +31,7 @@
 #include "WHLSLConstantExpression.h"
 #include "WHLSLLexer.h"
 #include "WHLSLStatement.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/Optional.h>
 
 namespace WebCore {
@@ -40,6 +41,7 @@ namespace WHLSL {
 namespace AST {
 
 class SwitchCase : public Statement {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     SwitchCase(CodeLocation location, Optional<ConstantExpression>&& value, Block&& block)
         : Statement(location)

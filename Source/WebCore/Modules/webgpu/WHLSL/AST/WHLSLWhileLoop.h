@@ -30,6 +30,7 @@
 #include "WHLSLExpression.h"
 #include "WHLSLLexer.h"
 #include "WHLSLStatement.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -39,6 +40,7 @@ namespace WHLSL {
 namespace AST {
 
 class WhileLoop : public Statement {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WhileLoop(CodeLocation location, UniqueRef<Expression>&& conditional, UniqueRef<Statement>&& body)
         : Statement(location)

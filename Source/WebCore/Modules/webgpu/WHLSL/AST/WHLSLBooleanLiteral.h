@@ -29,6 +29,7 @@
 
 #include "WHLSLExpression.h"
 #include "WHLSLLexer.h"
+#include <wtf/FastMalloc.h>
 
 namespace WebCore {
 
@@ -37,6 +38,7 @@ namespace WHLSL {
 namespace AST {
 
 class BooleanLiteral : public Expression {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     BooleanLiteral(CodeLocation location, bool value)
         : Expression(location)

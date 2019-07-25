@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include <wtf/FastMalloc.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -36,6 +37,7 @@ namespace WHLSL {
 namespace AST {
 
 class Type {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Type() = default;
 

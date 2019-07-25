@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include <cstdint>
+#include <wtf/FastMalloc.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {
@@ -70,6 +71,7 @@ struct RightValue {
 
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198158 This wrapper might not be necessary.
 class TypeAnnotation {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     TypeAnnotation()
 #if !ASSERT_DISABLED

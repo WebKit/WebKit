@@ -29,6 +29,7 @@
 
 #include "WHLSLExpression.h"
 #include "WHLSLLexer.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -38,6 +39,7 @@ namespace WHLSL {
 namespace AST {
 
 class LogicalExpression : public Expression {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Type : uint8_t {
         And,

@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLLexer.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -37,6 +38,7 @@ namespace WHLSL {
 namespace AST {
 
 class Statement {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Statement(CodeLocation codeLocation)
         : m_codeLocation(codeLocation)

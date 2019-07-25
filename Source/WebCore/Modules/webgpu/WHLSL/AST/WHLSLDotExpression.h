@@ -29,6 +29,7 @@
 
 #include "WHLSLLexer.h"
 #include "WHLSLPropertyAccessExpression.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/StringConcatenate.h>
 
@@ -39,6 +40,7 @@ namespace WHLSL {
 namespace AST {
 
 class DotExpression : public PropertyAccessExpression {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DotExpression(CodeLocation location, UniqueRef<Expression>&& base, String&& fieldName)
         : PropertyAccessExpression(location, WTFMove(base))

@@ -29,6 +29,7 @@
 
 #include "WHLSLLexer.h"
 #include "WHLSLStatement.h"
+#include <wtf/FastMalloc.h>
 
 namespace WebCore {
 
@@ -37,6 +38,7 @@ namespace WHLSL {
 namespace AST {
 
 class Break : public Statement {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Break(CodeLocation location)
         : Statement(location)

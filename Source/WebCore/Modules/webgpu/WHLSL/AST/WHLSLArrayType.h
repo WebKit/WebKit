@@ -30,6 +30,7 @@
 #include "WHLSLLexer.h"
 #include "WHLSLTypeArgument.h"
 #include "WHLSLUnnamedType.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,6 +41,7 @@ namespace WHLSL {
 namespace AST {
 
 class ArrayType : public UnnamedType {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ArrayType(CodeLocation location, UniqueRef<UnnamedType>&& elementType, unsigned numElements)
         : UnnamedType(location)

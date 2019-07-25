@@ -30,6 +30,7 @@
 #include "WHLSLLexer.h"
 #include "WHLSLNamedType.h"
 #include "WHLSLUnnamedType.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,6 +41,7 @@ namespace WHLSL {
 namespace AST {
 
 class TypeDefinition : public NamedType {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     TypeDefinition(CodeLocation location, String&& name, UniqueRef<UnnamedType>&& type)
         : NamedType(location, WTFMove(name))

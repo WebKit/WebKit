@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLLexer.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -40,6 +41,7 @@ class EnumerationDefinition;
 class EnumerationMember;
 
 class EnumerationMemberLiteral : public Expression {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     EnumerationMemberLiteral(CodeLocation location, String&& left, String&& right)
         : Expression(location)

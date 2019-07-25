@@ -29,6 +29,7 @@
 
 #include "WHLSLConstantExpression.h"
 #include "WHLSLLexer.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -40,6 +41,7 @@ namespace WHLSL {
 namespace AST {
 
 class EnumerationMember {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     EnumerationMember(CodeLocation location, String&& name, int64_t value)
         : m_codeLocation(location)

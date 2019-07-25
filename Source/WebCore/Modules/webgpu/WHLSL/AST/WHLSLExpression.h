@@ -30,6 +30,7 @@
 #include "WHLSLAddressSpace.h"
 #include "WHLSLLexer.h"
 #include "WHLSLUnnamedType.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/Optional.h>
 #include <wtf/UniqueRef.h>
 
@@ -40,6 +41,7 @@ namespace WHLSL {
 namespace AST {
 
 class Expression {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Expression(CodeLocation codeLocation)
         : m_codeLocation(codeLocation)

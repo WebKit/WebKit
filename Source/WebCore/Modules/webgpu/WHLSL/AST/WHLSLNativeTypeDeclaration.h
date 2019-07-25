@@ -31,6 +31,7 @@
 #include "WHLSLNamedType.h"
 #include "WHLSLTypeArgument.h"
 #include "WHLSLTypeReference.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -40,6 +41,7 @@ namespace WHLSL {
 namespace AST {
 
 class NativeTypeDeclaration : public NamedType {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     NativeTypeDeclaration(CodeLocation location, String&& name, TypeArguments&& typeArguments)
         : NamedType(location, WTFMove(name))

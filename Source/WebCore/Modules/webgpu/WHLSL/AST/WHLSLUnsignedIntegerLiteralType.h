@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLResolvableType.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,6 +41,7 @@ namespace AST {
 class TypeReference;
 
 class UnsignedIntegerLiteralType : public ResolvableType {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     UnsignedIntegerLiteralType(CodeLocation, unsigned value);
 

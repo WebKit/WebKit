@@ -33,6 +33,7 @@
 #include "WHLSLSemantic.h"
 #include "WHLSLUnnamedType.h"
 #include "WHLSLVariableDeclaration.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,6 +44,7 @@ namespace WHLSL {
 namespace AST {
 
 class FunctionDeclaration {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FunctionDeclaration(CodeLocation location, AttributeBlock&& attributeBlock, Optional<EntryPointType> entryPointType, UniqueRef<UnnamedType>&& type, String&& name, VariableDeclarations&& parameters, std::unique_ptr<Semantic>&& semantic, bool isOperator)
         : m_codeLocation(location)

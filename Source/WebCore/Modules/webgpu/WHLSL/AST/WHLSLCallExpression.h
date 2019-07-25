@@ -30,6 +30,7 @@
 #include "WHLSLExpression.h"
 #include "WHLSLFunctionDeclaration.h"
 #include "WHLSLLexer.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -41,6 +42,7 @@ namespace AST {
 class NamedType;
 
 class CallExpression : public Expression {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CallExpression(CodeLocation location, String&& name, Vector<UniqueRef<Expression>>&& arguments)
         : Expression(location)

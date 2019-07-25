@@ -32,6 +32,7 @@
 #include "WHLSLVariableDeclaration.h"
 #include "WHLSLVariableReference.h"
 #include <memory>
+#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -50,6 +51,7 @@ namespace AST {
  *  7. Return the result
  */
 class ReadModifyWriteExpression : public Expression {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static UniqueRef<ReadModifyWriteExpression> create(CodeLocation location, UniqueRef<Expression> lValue)
     {

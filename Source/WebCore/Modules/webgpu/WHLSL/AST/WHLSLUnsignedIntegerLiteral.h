@@ -30,6 +30,7 @@
 #include "WHLSLExpression.h"
 #include "WHLSLLexer.h"
 #include "WHLSLUnsignedIntegerLiteralType.h"
+#include <wtf/FastMalloc.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ namespace WHLSL {
 namespace AST {
 
 class UnsignedIntegerLiteral : public Expression {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     UnsignedIntegerLiteral(CodeLocation location, unsigned value)
         : Expression(location)

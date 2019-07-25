@@ -30,6 +30,7 @@
 #include "WHLSLAddressSpace.h"
 #include "WHLSLLexer.h"
 #include "WHLSLUnnamedType.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,6 +41,7 @@ namespace WHLSL {
 namespace AST {
 
 class ReferenceType : public UnnamedType {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ReferenceType(CodeLocation location, AddressSpace addressSpace, UniqueRef<UnnamedType>&& elementType)
         : UnnamedType(location)

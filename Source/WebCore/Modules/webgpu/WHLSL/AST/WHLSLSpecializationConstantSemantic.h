@@ -29,6 +29,7 @@
 
 #include "WHLSLBaseSemantic.h"
 #include "WHLSLLexer.h"
+#include <wtf/FastMalloc.h>
 
 namespace WebCore {
 
@@ -37,6 +38,7 @@ namespace WHLSL {
 namespace AST {
 
 class SpecializationConstantSemantic : public BaseSemantic {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     SpecializationConstantSemantic(CodeLocation location)
         : BaseSemantic(location)

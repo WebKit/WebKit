@@ -30,6 +30,7 @@
 #include "WHLSLType.h"
 #include "WHLSLUnnamedType.h"
 #include <memory>
+#include <wtf/FastMalloc.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ namespace WHLSL {
 namespace AST {
 
 class ResolvableType : public Type {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ResolvableType() = default;
 

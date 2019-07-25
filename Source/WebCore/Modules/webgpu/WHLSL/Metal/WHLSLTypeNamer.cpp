@@ -43,6 +43,7 @@
 #include "WHLSLVisitor.h"
 #include <algorithm>
 #include <functional>
+#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Optional.h>
@@ -58,6 +59,7 @@ namespace WHLSL {
 namespace Metal {
 
 class BaseTypeNameNode {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     BaseTypeNameNode(BaseTypeNameNode* parent, String&& mangledName)
         : m_parent(parent)
@@ -84,6 +86,7 @@ private:
 };
 
 class ArrayTypeNameNode : public BaseTypeNameNode {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ArrayTypeNameNode(BaseTypeNameNode* parent, String&& mangledName, unsigned numElements)
         : BaseTypeNameNode(parent, WTFMove(mangledName))
@@ -99,6 +102,7 @@ private:
 };
 
 class ArrayReferenceTypeNameNode : public BaseTypeNameNode {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ArrayReferenceTypeNameNode(BaseTypeNameNode* parent, String&& mangledName, AST::AddressSpace addressSpace)
         : BaseTypeNameNode(parent, WTFMove(mangledName))
@@ -114,6 +118,7 @@ private:
 };
 
 class PointerTypeNameNode : public BaseTypeNameNode {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PointerTypeNameNode(BaseTypeNameNode* parent, String&& mangledName, AST::AddressSpace addressSpace)
         : BaseTypeNameNode(parent, WTFMove(mangledName))
@@ -129,6 +134,7 @@ private:
 };
 
 class ReferenceTypeNameNode : public BaseTypeNameNode {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ReferenceTypeNameNode(BaseTypeNameNode* parent, String&& mangledName, AST::NamedType& namedType)
         : BaseTypeNameNode(parent, WTFMove(mangledName))
@@ -344,6 +350,7 @@ BaseTypeNameNode* TypeNamer::insert(AST::UnnamedType& unnamedType, Vector<Unique
 }
 
 class MetalTypeDeclarationWriter : public Visitor {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     MetalTypeDeclarationWriter(std::function<String(AST::NamedType&)>&& mangledNameForNamedType)
         : m_mangledNameForNamedType(WTFMove(mangledNameForNamedType))

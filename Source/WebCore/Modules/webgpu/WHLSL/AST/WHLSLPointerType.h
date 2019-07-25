@@ -29,6 +29,7 @@
 
 #include "WHLSLLexer.h"
 #include "WHLSLReferenceType.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,6 +40,7 @@ namespace WHLSL {
 namespace AST {
 
 class PointerType : public ReferenceType {
+    WTF_MAKE_FAST_ALLOCATED;
     using Base = ReferenceType;
 public:
     PointerType(CodeLocation location, AddressSpace addressSpace, UniqueRef<UnnamedType> elementType)

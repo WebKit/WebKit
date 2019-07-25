@@ -30,6 +30,7 @@
 #include "WHLSLLexer.h"
 #include "WHLSLNamedType.h"
 #include "WHLSLStructureElement.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,6 +41,7 @@ namespace WHLSL {
 namespace AST {
 
 class StructureDefinition : public NamedType {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     StructureDefinition(CodeLocation location, String&& name, StructureElements&& structureElements)
         : NamedType(location, WTFMove(name))

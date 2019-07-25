@@ -31,6 +31,7 @@
 #include "WHLSLNamedType.h"
 #include "WHLSLTypeArgument.h"
 #include "WHLSLUnnamedType.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,6 +44,7 @@ namespace AST {
 class NamedType;
 
 class TypeReference : public UnnamedType {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     TypeReference(CodeLocation location, String&& name, TypeArguments&& typeArguments)
         : UnnamedType(location)

@@ -33,6 +33,7 @@
 #include "WHLSLIntegerLiteral.h"
 #include "WHLSLNullLiteral.h"
 #include "WHLSLUnsignedIntegerLiteral.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {
@@ -45,6 +46,7 @@ namespace AST {
 // so this is a wrapper class to make sure that doesn't happen. As soon as we don't
 // have to support Sierra, this can be migrated to a Variant proper.
 class ConstantExpression {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ConstantExpression(IntegerLiteral&& integerLiteral)
         : m_variant(WTFMove(integerLiteral))

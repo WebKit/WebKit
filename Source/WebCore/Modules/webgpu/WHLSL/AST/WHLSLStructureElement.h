@@ -31,6 +31,7 @@
 #include "WHLSLQualifier.h"
 #include "WHLSLSemantic.h"
 #include "WHLSLType.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -40,6 +41,7 @@ namespace WHLSL {
 namespace AST {
 
 class StructureElement {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     StructureElement(CodeLocation location, Qualifiers&& qualifiers, UniqueRef<UnnamedType>&& type, String&& name, std::unique_ptr<Semantic>&& semantic)
         : m_codeLocation(location)

@@ -30,6 +30,7 @@
 #include "WHLSLLexer.h"
 #include "WHLSLStatement.h"
 #include "WHLSLVariableDeclaration.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -39,6 +40,7 @@ namespace WHLSL {
 namespace AST {
 
 class VariableDeclarationsStatement : public Statement {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     VariableDeclarationsStatement(CodeLocation location, VariableDeclarations&& variableDeclarations)
         : Statement(location)

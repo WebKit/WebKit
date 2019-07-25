@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLBaseFunctionAttribute.h"
+#include <wtf/FastMalloc.h>
 
 namespace WebCore {
 
@@ -36,6 +37,7 @@ namespace WHLSL {
 namespace AST {
 
 class NumThreadsFunctionAttribute : public BaseFunctionAttribute {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     NumThreadsFunctionAttribute(CodeLocation location, unsigned width, unsigned height, unsigned depth)
         : BaseFunctionAttribute(location)

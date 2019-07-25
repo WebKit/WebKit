@@ -29,6 +29,7 @@
 
 #include "WHLSLBaseSemantic.h"
 #include "WHLSLLexer.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/Optional.h>
 
 namespace WebCore {
@@ -38,6 +39,7 @@ namespace WHLSL {
 namespace AST {
 
 class BuiltInSemantic : public BaseSemantic {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Variable : uint8_t {
         SVInstanceID,

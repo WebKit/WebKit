@@ -33,6 +33,7 @@
 #include "WHLSLSemantic.h"
 #include "WHLSLType.h"
 #include <memory>
+#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -44,6 +45,7 @@ namespace WHLSL {
 namespace AST {
 
 class VariableDeclaration final {
+    WTF_MAKE_FAST_ALLOCATED;
 // Final because we made the destructor non-virtual.
 public:
     VariableDeclaration(CodeLocation codeLocation, Qualifiers&& qualifiers, Optional<UniqueRef<UnnamedType>>&& type, String&& name, std::unique_ptr<Semantic>&& semantic, std::unique_ptr<Expression>&& initializer)

@@ -29,6 +29,7 @@
 
 #include "WHLSLBlock.h"
 #include "WHLSLFunctionDeclaration.h"
+#include <wtf/FastMalloc.h>
 
 namespace WebCore {
 
@@ -37,6 +38,7 @@ namespace WHLSL {
 namespace AST {
 
 class FunctionDefinition : public FunctionDeclaration {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FunctionDefinition(FunctionDeclaration&& functionDeclaration, Block&& block)
         : FunctionDeclaration(WTFMove(functionDeclaration))

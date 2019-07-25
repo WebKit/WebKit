@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLResolvableType.h"
+#include <wtf/FastMalloc.h>
 
 namespace WebCore {
 
@@ -36,6 +37,7 @@ namespace WHLSL {
 namespace AST {
 
 class NullLiteralType : public ResolvableType {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     NullLiteralType() = default;
 

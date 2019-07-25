@@ -32,6 +32,7 @@
 #include "WHLSLNamedType.h"
 #include "WHLSLUnnamedType.h"
 #include <memory>
+#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
@@ -45,6 +46,7 @@ namespace WHLSL {
 namespace AST {
 
 class EnumerationDefinition : public NamedType {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     EnumerationDefinition(CodeLocation location, String&& name, UniqueRef<UnnamedType>&& type)
         : NamedType(location, WTFMove(name))

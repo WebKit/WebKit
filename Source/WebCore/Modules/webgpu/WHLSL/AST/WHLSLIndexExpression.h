@@ -29,6 +29,7 @@
 
 #include "WHLSLLexer.h"
 #include "WHLSLPropertyAccessExpression.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -38,6 +39,7 @@ namespace WHLSL {
 namespace AST {
 
 class IndexExpression : public PropertyAccessExpression {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     IndexExpression(CodeLocation location, UniqueRef<Expression>&& base, UniqueRef<Expression>&& index)
         : PropertyAccessExpression(location, WTFMove(base))
