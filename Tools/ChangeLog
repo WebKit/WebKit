@@ -1,3 +1,23 @@
+2019-07-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [webkitperl] runCommand doesn't work in Windows Perl
+        https://bugs.webkit.org/show_bug.cgi?id=199900
+
+        Reviewed by Don Olmstead.
+
+        runCommand was always failing implicit fork by using 'open' with
+        '-|' in Windows Perl. Explicitly specify the command to 'open' not
+        to do the implicit fork.
+
+        There is one more difference between Windows and Unix. 'open'
+        successes on Windows even for non existent command while it fails
+        on Unix. So, return the same error code on Unix as well as
+        Windows.
+
+        * Scripts/VCSUtils.pm: Specified the command to 'open'.
+        * Scripts/webkitperl/VCSUtils_unittest/runCommand.pl: 'echo'
+        command is not available on Windows. Use Perl ($^X) instead.
+
 2019-07-24  Priyanka Agarwal  <pagarwal999@apple.com>
 
         Allow Clients to Add Fields to the AutoFillContext Dictionary.

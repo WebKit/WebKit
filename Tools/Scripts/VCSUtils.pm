@@ -2398,26 +2398,20 @@ sub escapeSubversionPath($)
 
 sub runCommand(@)
 {
-    my @args = @_;
-    my $pid = open(CHILD, "-|");
-    if (!defined($pid)) {
-        die "Failed to fork(): $!";
-    }
-    if ($pid) {
-        # Parent process
-        my $childStdout;
-        while (<CHILD>) {
-            $childStdout .= $_;
-        }
-        close(CHILD);
-        my %childOutput;
-        $childOutput{exitStatus} = exitStatus($?);
-        $childOutput{stdout} = $childStdout if $childStdout;
-        return \%childOutput;
-    }
-    # Child process
     # FIXME: Consider further hardening of this function, including sanitizing the environment.
-    exec { $args[0] } @args or die "Failed to exec(): $!";
+    my $ok = open(CHILD, "-|", @_);
+    if (!$ok) {
+        return { exitStatus => 1 };
+    }
+    my $childStdout;
+    while (<CHILD>) {
+        $childStdout .= $_;
+    }
+    close(CHILD);
+    my %childOutput;
+    $childOutput{exitStatus} = exitStatus($?);
+    $childOutput{stdout} = $childStdout if $childStdout;
+    return \%childOutput;
 }
 
 sub gitCommitForSVNRevision

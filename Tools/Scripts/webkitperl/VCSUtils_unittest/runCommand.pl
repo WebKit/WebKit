@@ -30,26 +30,24 @@ use warnings;
 use Test::More;
 use VCSUtils;
 
-use constant ENOENT => 2; # See <errno.h>
-
 # The array of test cases.
 my @testCaseHashRefs = (
 {
     # New test
     testName => "Simple",
-    inputArgs => ["echo", "hello"],
+    inputArgs => [$^X, "-e", "print \@ARGV", "hello"],
     expectedReturn => {
         exitStatus => 0,
-        stdout => "hello\n"
+        stdout => "hello"
     }
 },
 {
     # New test
     testName => "Multiple commands",
-    inputArgs => ["echo", "first-command;echo second-command"],
+    inputArgs => [$^X, "-e", "print \@ARGV", "first-command;echo second-command"],
     expectedReturn => {
         exitStatus => 0,
-        stdout => "first-command;echo second-command\n"
+        stdout => "first-command;echo second-command"
     }
 },
 {
@@ -57,7 +55,7 @@ my @testCaseHashRefs = (
     testName => "Non-existent command",
     inputArgs => ["/usr/bin/non-existent-command"],
     expectedReturn => {
-        exitStatus => ENOENT
+        exitStatus => 1
     }
 }
 );
