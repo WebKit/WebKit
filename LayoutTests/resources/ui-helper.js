@@ -254,6 +254,21 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static ensureStablePresentationUpdate()
+    {
+        if (!this.isWebKit2()) {
+            testRunner.display();
+            return Promise.resolve();
+        }
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                uiController.doAfterNextStablePresentationUpdate(function() {
+                    uiController.uiScriptComplete();
+                });`, resolve);
+        });
+    }
+
     static ensurePositionInformationUpdateForElement(element)
     {
         const boundingRect = element.getBoundingClientRect();
@@ -966,6 +981,18 @@ window.UIHelper = class UIHelper {
                 uiController.${animatedResize ? "simulateRotationLikeSafari" : "simulateRotation"}("${orientationName}", function() {
                     uiController.doAfterVisibleContentRectUpdate(() => uiController.uiScriptComplete());
                 });
+            })()`, resolve);
+        });
+    }
+
+    static getScrollingTree()
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                return uiController.scrollingTreeAsText;
             })()`, resolve);
         });
     }

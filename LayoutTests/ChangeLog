@@ -229,6 +229,20 @@
         * fast/canvas/setTransfrom-aliases-transform-expected.html: Added.
         * fast/canvas/setTransfrom-aliases-transform.html: Added.
 
+2019-07-24  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] A top fixed bar can flicker when scrolling with the keyboard up
+        https://bugs.webkit.org/show_bug.cgi?id=200105
+        rdar://problem/52871975
+
+        Reviewed by Wenson Hsieh.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.ensureStablePresentationUpdate.return.new.Promise):
+        (window.UIHelper.ensureStablePresentationUpdate):
+        * scrollingcoordinator/ios/fixed-scrolling-with-keyboard-expected.txt: Added.
+        * scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html: Added.
+
 2019-07-23  Tim Horton  <timothy_horton@apple.com>
 
         Long press hint of AirPods buy buttons are tall and narrow during animation

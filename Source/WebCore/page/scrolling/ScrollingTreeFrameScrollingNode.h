@@ -78,6 +78,7 @@ private:
     FloatRect m_layoutViewport;
     FloatPoint m_minLayoutViewportOrigin;
     FloatPoint m_maxLayoutViewportOrigin;
+    Optional<FloatSize> m_overrideVisualViewportSize;
     
     float m_frameScaleFactor { 1 };
     float m_topContentInset { 0 };

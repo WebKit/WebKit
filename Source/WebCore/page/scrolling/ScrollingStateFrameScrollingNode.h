@@ -66,6 +66,7 @@ public:
         LayoutViewport,
         MinLayoutViewportOrigin,
         MaxLayoutViewportOrigin,
+        OverrideVisualViewportSize,
     };
 
     float frameScaleFactor() const { return m_frameScaleFactor; }
@@ -88,6 +89,9 @@ public:
 
     FloatPoint maxLayoutViewportOrigin() const { return m_maxLayoutViewportOrigin; }
     WEBCORE_EXPORT void setMaxLayoutViewportOrigin(const FloatPoint&);
+
+    Optional<FloatSize> overrideVisualViewportSize() const { return m_overrideVisualViewportSize; };
+    WEBCORE_EXPORT void setOverrideVisualViewportSize(Optional<FloatSize>);
 
     int headerHeight() const { return m_headerHeight; }
     WEBCORE_EXPORT void setHeaderHeight(int);
@@ -154,6 +158,7 @@ private:
     FloatRect m_layoutViewport;
     FloatPoint m_minLayoutViewportOrigin;
     FloatPoint m_maxLayoutViewportOrigin;
+    Optional<FloatSize> m_overrideVisualViewportSize;
 
     float m_frameScaleFactor { 1 };
     float m_topContentInset { 0 };
