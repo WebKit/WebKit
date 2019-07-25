@@ -27,50 +27,43 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLBlock.h"
-#include "WHLSLCodeLocation.h"
-#include "WHLSLConstantExpression.h"
-#include "WHLSLStatement.h"
-#include <wtf/FastMalloc.h>
-#include <wtf/Optional.h>
-
 namespace WebCore {
 
 namespace WHLSL {
 
-namespace AST {
+struct Token;
 
-class SwitchCase : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
+class CodeLocation {
 public:
-    SwitchCase(CodeLocation location, Optional<ConstantExpression>&& value, Block&& block)
-        : Statement(location)
-        , m_value(WTFMove(value))
-        , m_block(WTFMove(block))
+    CodeLocation() = default;
+    CodeLocation(unsigned startOffset, unsigned endOffset)
+        : m_startOffset(startOffset)
+        , m_endOffset(endOffset)
+    { }
+    CodeLocation(const Token&);
+    CodeLocation(const CodeLocation& location1, const CodeLocation& location2)
+        : m_startOffset(location1.startOffset())
+        , m_endOffset(location2.endOffset())
+    { }
+
+    unsigned startOffset() const { return m_startOffset; }
+    unsigned endOffset() const { return m_endOffset; }
+
+    bool operator==(const CodeLocation& other) const 
     {
+        return m_startOffset == other.m_startOffset
+            && m_endOffset == other.m_endOffset;
     }
-
-    virtual ~SwitchCase() = default;
-
-    SwitchCase(const SwitchCase&) = delete;
-    SwitchCase(SwitchCase&&) = default;
-
-    bool isSwitchCase() const override { return true; }
-
-    Optional<ConstantExpression>& value() { return m_value; }
-    Block& block() { return m_block; }
+    bool operator!=(const CodeLocation& other) const { return !(*this == other); }
+    explicit operator bool() const { return *this != CodeLocation(); }
 
 private:
-    Optional<ConstantExpression> m_value;
-    Block m_block;
+    unsigned m_startOffset { std::numeric_limits<unsigned>::max() };
+    unsigned m_endOffset { std::numeric_limits<unsigned>::max() };
 };
 
-} // namespace AST
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-}
-
-SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(SwitchCase, isSwitchCase())
-
-#endif
+#endif // ENABLE(WEBGPU)

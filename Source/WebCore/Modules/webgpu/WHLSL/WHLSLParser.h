@@ -46,6 +46,7 @@
 #include "WHLSLEffectfulExpressionStatement.h"
 #include "WHLSLEnumerationDefinition.h"
 #include "WHLSLEnumerationMember.h"
+#include "WHLSLError.h"
 #include "WHLSLExpression.h"
 #include "WHLSLFallthrough.h"
 #include "WHLSLFloatLiteral.h"
@@ -106,21 +107,7 @@ public:
         User
     };
 
-    struct Error {
-        Error(String&& error)
-            : error(WTFMove(error))
-        {
-        }
-
-        String error;
-
-        void dump(PrintStream& out) const
-        {
-            out.print(error);
-        }
-    };
-
-    Optional<Error> parse(Program&, StringView, Mode);
+    Expected<void, Error> parse(Program&, StringView, Mode);
 
 private:
     // FIXME: We should not need this
@@ -158,13 +145,13 @@ private:
     Expected<AST::TypeArgument, Error> parseTypeArgument();
     Expected<AST::TypeArguments, Error> parseTypeArguments();
     struct TypeSuffixAbbreviated {
-        AST::CodeLocation location;
+        CodeLocation location;
         Token token;
         Optional<unsigned> numElements;
     };
     Expected<TypeSuffixAbbreviated, Error> parseTypeSuffixAbbreviated();
     struct TypeSuffixNonAbbreviated {
-        AST::CodeLocation location;
+        CodeLocation location;
         Token token;
         Optional<AST::AddressSpace> addressSpace;
         Optional<unsigned> numElements;

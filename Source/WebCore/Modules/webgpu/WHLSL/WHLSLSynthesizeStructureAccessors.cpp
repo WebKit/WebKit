@@ -39,7 +39,7 @@ namespace WebCore {
 
 namespace WHLSL {
 
-bool synthesizeStructureAccessors(Program& program)
+Expected<void, Error> synthesizeStructureAccessors(Program& program)
 {
     bool isOperator = true;
     for (auto& structureDefinition : program.structureDefinitions()) {
@@ -58,10 +58,10 @@ bool synthesizeStructureAccessors(Program& program)
                 || !program.append(createAnder(AST::AddressSpace::Device))
                 || !program.append(createAnder(AST::AddressSpace::Threadgroup))
                 || !program.append(createAnder(AST::AddressSpace::Thread)))
-                return false;
+                return makeUnexpected(Error("Can not create ander"));
         }
     }
-    return true;
+    return { };
 }
 
 } // namespace WHLSL

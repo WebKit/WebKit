@@ -54,7 +54,7 @@ private:
 
         auto addResult = m_startedVisiting.add(&functionDefinition);
         if (!addResult.isNewEntry) {
-            setError();
+            setError(Error("Cannot use recursion in the call graph.", functionDefinition.codeLocation()));
             return;
         }
 
@@ -77,11 +77,11 @@ private:
     HashSet<AST::FunctionDefinition*> m_finishedVisiting;
 };
 
-bool checkRecursion(Program& program)
+Expected<void, Error> checkRecursion(Program& program)
 {
     RecursionChecker recursionChecker;
     recursionChecker.Visitor::visit(program);
-    return !recursionChecker.error();
+    return recursionChecker.result();
 }
 
 }

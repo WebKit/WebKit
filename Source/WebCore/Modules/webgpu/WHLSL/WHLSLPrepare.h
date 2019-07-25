@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLError.h"
 #include "WHLSLPipelineDescriptor.h"
 #include <wtf/text/WTFString.h>
 
@@ -34,13 +35,12 @@ namespace WebCore {
 
 namespace WHLSL {
 
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=195682 Generate descriptive error messages and return them here.
 struct RenderPrepareResult {
     String metalSource;
     String mangledVertexEntryPointName;
     String mangledFragmentEntryPointName;
 };
-Optional<RenderPrepareResult> prepare(String& whlslSource, RenderPipelineDescriptor&);
+Expected<RenderPrepareResult, String> prepare(String& whlslSource, RenderPipelineDescriptor&);
 
 struct ComputeDimensions {
     unsigned width;
@@ -53,7 +53,7 @@ struct ComputePrepareResult {
     String mangledEntryPointName;
     ComputeDimensions computeDimensions;
 };
-Optional<ComputePrepareResult> prepare(String& whlslSource, ComputePipelineDescriptor&);
+Expected<ComputePrepareResult, String> prepare(String& whlslSource, ComputePipelineDescriptor&);
 
 } // namespace WHLSL
 

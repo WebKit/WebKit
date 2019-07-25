@@ -27,8 +27,8 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLCodeLocation.h"
 #include "WHLSLEnumerationMember.h"
-#include "WHLSLLexer.h"
 #include "WHLSLNamedType.h"
 #include "WHLSLUnnamedType.h"
 #include <memory>

@@ -27,50 +27,38 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLBlock.h"
 #include "WHLSLCodeLocation.h"
-#include "WHLSLConstantExpression.h"
-#include "WHLSLStatement.h"
-#include <wtf/FastMalloc.h>
-#include <wtf/Optional.h>
+#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 namespace WHLSL {
 
-namespace AST {
-
-class SwitchCase : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
+class Error {
 public:
-    SwitchCase(CodeLocation location, Optional<ConstantExpression>&& value, Block&& block)
-        : Statement(location)
-        , m_value(WTFMove(value))
-        , m_block(WTFMove(block))
+    Error(String&& message, CodeLocation codeLocation)
+        : m_message(WTFMove(message))
+        , m_location(codeLocation)
     {
     }
 
-    virtual ~SwitchCase() = default;
+    Error(String&& message)
+        : m_message(WTFMove(message))
+    {
+    }
 
-    SwitchCase(const SwitchCase&) = delete;
-    SwitchCase(SwitchCase&&) = default;
-
-    bool isSwitchCase() const override { return true; }
-
-    Optional<ConstantExpression>& value() { return m_value; }
-    Block& block() { return m_block; }
+    CodeLocation codeLocation() const { return m_location; }
+    String message() const { return m_message; }
 
 private:
-    Optional<ConstantExpression> m_value;
-    Block m_block;
+    String m_message;
+    CodeLocation m_location;
 };
 
-} // namespace AST
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-}
-
-SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(SwitchCase, isSwitchCase())
-
-#endif
+#endif // ENABLE(WEBGPU)

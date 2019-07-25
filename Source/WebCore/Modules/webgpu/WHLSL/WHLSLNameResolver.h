@@ -27,8 +27,10 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLError.h"
 #include "WHLSLNameContext.h"
 #include "WHLSLVisitor.h"
+#include <wtf/Expected.h>
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -63,8 +65,8 @@ private:
     NameResolver* m_parentNameResolver { nullptr };
 };
 
-bool resolveNamesInTypes(Program&, NameResolver&);
-bool resolveTypeNamesInFunctions(Program&, NameResolver&);
+Expected<void, Error> resolveNamesInTypes(Program&, NameResolver&);
+Expected<void, Error> resolveTypeNamesInFunctions(Program&, NameResolver&);
 
 } // namespace WHLSL
 

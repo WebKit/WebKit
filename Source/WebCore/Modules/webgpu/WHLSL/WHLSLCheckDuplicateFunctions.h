@@ -27,13 +27,15 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLError.h"
 #include "WHLSLProgram.h"
+#include <wtf/Expected.h>
 
 namespace WebCore {
 
 namespace WHLSL {
 
-bool checkDuplicateFunctions(const Program&);
+Expected<void, Error> checkDuplicateFunctions(const Program&);
 
 }
 

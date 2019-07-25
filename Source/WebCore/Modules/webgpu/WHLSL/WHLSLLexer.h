@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLCodeLocation.h"
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringConcatenate.h>
@@ -38,37 +39,10 @@ namespace WebCore {
 
 namespace WHLSL {
 
-struct Token;
-
-namespace AST {
-
-class CodeLocation {
-public:
-    CodeLocation() = default;
-    CodeLocation(unsigned startOffset, unsigned endOffset)
-        : m_startOffset(startOffset)
-        , m_endOffset(endOffset)
-    { }
-    inline CodeLocation(const Token&);
-    CodeLocation(const CodeLocation& location1, const CodeLocation& location2)
-        : m_startOffset(location1.startOffset())
-        , m_endOffset(location2.endOffset())
-    { }
-
-    unsigned startOffset() const { return m_startOffset; }
-    unsigned endOffset() const { return m_endOffset; }
-
-private:
-    unsigned m_startOffset { 0 };
-    unsigned m_endOffset { 0 };
-};
-
-} // namespace AST
-
 class Lexer;
 
 struct Token {
-    AST::CodeLocation codeLocation;
+    CodeLocation codeLocation;
     enum class Type : uint8_t {
         IntLiteral,
         UintLiteral,
@@ -189,7 +163,7 @@ struct Token {
     }
 };
 
-AST::CodeLocation::CodeLocation(const Token& token)
+inline CodeLocation::CodeLocation(const Token& token)
     : m_startOffset(token.codeLocation.startOffset())
     , m_endOffset(token.codeLocation.endOffset())
 { }
@@ -273,8 +247,10 @@ public:
 
     String errorString(const Token& token, const String& message)
     {
-        return makeString("Parse error at line ", lineNumberFromOffset(token.startOffset()), ": ", message);
+        return makeString("Parse error at line ", lineAndColumnNumberFromOffset(m_stringView, token.startOffset()).line, ": ", message);
     }
+
+    static String errorString(const StringView& source, Error);
 
 private:
     friend struct Token;
@@ -282,7 +258,11 @@ private:
 
     void skipWhitespaceAndComments();
 
-    unsigned lineNumberFromOffset(unsigned offset);
+    struct LineAndColumn {
+        unsigned line;
+        unsigned column;
+    };
+    static LineAndColumn lineAndColumnNumberFromOffset(const StringView&, unsigned offset);
 
     Optional<Token::Type> recognizeKeyword(unsigned end);
 

@@ -29,7 +29,6 @@
 
 #include "WHLSLExpression.h"
 #include "WHLSLFunctionDeclaration.h"
-#include "WHLSLLexer.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 

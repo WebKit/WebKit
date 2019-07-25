@@ -65,7 +65,7 @@ private:
                 return true;
             }), functionAttribute);
             if (!success) {
-                setError();
+                setError(Error("Cannot declare multiple numthread attributes.", functionDeclaration.codeLocation()));
                 return;
             }
         }
@@ -79,7 +79,7 @@ Optional<ComputeDimensions> computeDimensions(Program& program, AST::FunctionDef
 {
     ComputeDimensionsVisitor computeDimensions(entryPoint);
     computeDimensions.Visitor::visit(program);
-    if (computeDimensions.error())
+    if (computeDimensions.hasError())
         return WTF::nullopt;
     return computeDimensions.computeDimensions();
 }

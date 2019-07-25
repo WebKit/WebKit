@@ -28,7 +28,6 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLExpression.h"
-#include "WHLSLLexer.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>

@@ -1,5 +1,217 @@
 2019-07-25  Saam Barati  <sbarati@apple.com>
 
+        [WHLSL] Add descriptive error messages
+        https://bugs.webkit.org/show_bug.cgi?id=195682
+        <rdar://problem/50746322>
+
+        Reviewed by Myles C. Maxfield.
+
+        This patch adds error messages to the WHLSL compiler. I'm taking a first pass
+        at having decent error messages everywhere we set an error. However, we will
+        probably refine these messages to be more accurate and descriptive over time.
+        
+        Passes that can fail no longer return a boolean. Instead, they return Expected<void, Error>.
+        From Error, we can generate a descriptive error message. Visitor::setError now
+        requires an Error as an argument. So anywhere in Visitor that might fail is
+        now required to provide an error message.
+        
+        In a follow-up to this, we should actually make our checkFail tests test that
+        they get the expected error message: https://bugs.webkit.org/show_bug.cgi?id=200049
+
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayReferenceType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLAssignmentExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLBaseFunctionAttribute.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLBaseSemantic.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLBlock.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLBooleanLiteral.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLBreak.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLBuiltInSemantic.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLCallExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLCommaExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLContinue.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLDereferenceExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLDoWhileLoop.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLDotExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLEffectfulExpressionStatement.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationDefinition.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationMember.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationMemberLiteral.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLFallthrough.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteral.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLForLoop.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionDeclaration.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLGlobalVariableReference.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLIfStatement.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLIndexExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteral.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLLogicalExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLLogicalNotExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLMakeArrayReferenceExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLMakePointerExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLNamedType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLNativeTypeDeclaration.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLNullLiteral.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLPointerType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLPropertyAccessExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLQualifier.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLReadModifyWriteExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLReferenceType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLReturn.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLSpecializationConstantSemantic.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLStageInOutSemantic.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLStatement.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLStatementList.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLStructureDefinition.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLStructureElement.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLSwitchCase.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLSwitchStatement.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLTernaryExpression.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeArgument.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeDefinition.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeReference.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteral.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclaration.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclarationsStatement.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableReference.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLWhileLoop.h:
+        * Modules/webgpu/WHLSL/WHLSLAutoInitializeVariables.cpp:
+        (WebCore::WHLSL::AutoInitialize::visit):
+        (WebCore::WHLSL::autoInitializeVariables):
+        * Modules/webgpu/WHLSL/WHLSLAutoInitializeVariables.h:
+        * Modules/webgpu/WHLSL/WHLSLCheckDuplicateFunctions.cpp:
+        (WebCore::WHLSL::checkDuplicateFunctions):
+        * Modules/webgpu/WHLSL/WHLSLCheckDuplicateFunctions.h:
+        * Modules/webgpu/WHLSL/WHLSLCheckTextureReferences.cpp:
+        (WebCore::WHLSL::TextureReferencesChecker::visit):
+        (WebCore::WHLSL::checkTextureReferences):
+        * Modules/webgpu/WHLSL/WHLSLCheckTextureReferences.h:
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::resolveWithOperatorAnderIndexer):
+        (WebCore::WHLSL::resolveWithOperatorLength):
+        (WebCore::WHLSL::resolveWithReferenceComparator):
+        (WebCore::WHLSL::resolveByInstantiation):
+        (WebCore::WHLSL::resolveFunction):
+        (WebCore::WHLSL::checkSemantics):
+        (WebCore::WHLSL::Checker::assignTypes):
+        (WebCore::WHLSL::Checker::visit):
+        (WebCore::WHLSL::Checker::recurseAndGetInfo):
+        (WebCore::WHLSL::Checker::getInfo):
+        (WebCore::WHLSL::Checker::finishVisiting):
+        (WebCore::WHLSL::Checker::recurseAndRequireBoolType):
+        (WebCore::WHLSL::check):
+        * Modules/webgpu/WHLSL/WHLSLChecker.h:
+        * Modules/webgpu/WHLSL/WHLSLCodeLocation.h: Added.
+        (WebCore::WHLSL::CodeLocation::CodeLocation):
+        (WebCore::WHLSL::CodeLocation::startOffset const):
+        (WebCore::WHLSL::CodeLocation::endOffset const):
+        (WebCore::WHLSL::CodeLocation::operator== const):
+        (WebCore::WHLSL::CodeLocation::operator!= const):
+        (WebCore::WHLSL::CodeLocation::operator bool const):
+        * Modules/webgpu/WHLSL/WHLSLComputeDimensions.cpp:
+        (WebCore::WHLSL::computeDimensions):
+        * Modules/webgpu/WHLSL/WHLSLError.h: Added.
+        (WebCore::WHLSL::Error::Error):
+        (WebCore::WHLSL::Error::codeLocation const):
+        (WebCore::WHLSL::Error::message const):
+        * Modules/webgpu/WHLSL/WHLSLFunctionStageChecker.cpp:
+        (WebCore::WHLSL::checkFunctionStages):
+        * Modules/webgpu/WHLSL/WHLSLFunctionStageChecker.h:
+        * Modules/webgpu/WHLSL/WHLSLGatherEntryPointItems.cpp:
+        (WebCore::WHLSL::Gatherer::reset):
+        (WebCore::WHLSL::Gatherer::visit):
+        (WebCore::WHLSL::gatherEntryPointItems):
+        * Modules/webgpu/WHLSL/WHLSLGatherEntryPointItems.h:
+        * Modules/webgpu/WHLSL/WHLSLLexer.cpp:
+        (WebCore::WHLSL::Lexer::lineAndColumnNumberFromOffset):
+        (WebCore::WHLSL::Lexer::errorString):
+        (WebCore::WHLSL::Lexer::lineNumberFromOffset): Deleted.
+        * Modules/webgpu/WHLSL/WHLSLLexer.h:
+        (WebCore::WHLSL::CodeLocation::CodeLocation):
+        (WebCore::WHLSL::Lexer::errorString):
+        (WebCore::WHLSL::AST::CodeLocation::CodeLocation): Deleted.
+        (WebCore::WHLSL::AST::CodeLocation::startOffset const): Deleted.
+        (WebCore::WHLSL::AST::CodeLocation::endOffset const): Deleted.
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.cpp:
+        (WebCore::WHLSL::NameResolver::~NameResolver):
+        (WebCore::WHLSL::NameResolver::visit):
+        (WebCore::WHLSL::resolveNamesInTypes):
+        (WebCore::WHLSL::resolveTypeNamesInFunctions):
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.h:
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::parse):
+        (WebCore::WHLSL::intLiteralToInt):
+        (WebCore::WHLSL::uintLiteralToUint):
+        (WebCore::WHLSL::floatLiteralToFloat):
+        (WebCore::WHLSL::recognizeSimpleUnsignedInteger):
+        (WebCore::WHLSL::Parser::parseTypeArgument):
+        (WebCore::WHLSL::Parser::parseType):
+        (WebCore::WHLSL::Parser::parseForLoop):
+        (WebCore::WHLSL::Parser::parseWhileLoop):
+        (WebCore::WHLSL::Parser::parseEffectfulExpression):
+        (WebCore::WHLSL::Parser::parseLimitedSuffixOperator):
+        (WebCore::WHLSL::Parser::parseSuffixOperator):
+        (WebCore::WHLSL::Parser::parseExpression):
+        (WebCore::WHLSL::Parser::completeTernaryConditional):
+        (WebCore::WHLSL::Parser::completeAssignment):
+        (WebCore::WHLSL::Parser::completePossibleLogicalBinaryOperation):
+        (WebCore::WHLSL::Parser::completePossibleRelationalBinaryOperation):
+        (WebCore::WHLSL::Parser::completePossibleShift):
+        (WebCore::WHLSL::Parser::completePossibleAdd):
+        (WebCore::WHLSL::Parser::completePossibleMultiply):
+        (WebCore::WHLSL::Parser::parsePossiblePrefix):
+        (WebCore::WHLSL::Parser::parseCallExpression):
+        * Modules/webgpu/WHLSL/WHLSLParser.h:
+        (WebCore::WHLSL::Parser::Error::Error): Deleted.
+        (WebCore::WHLSL::Parser::Error::dump const): Deleted.
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp:
+        (WebCore::WHLSL::prepareShared):
+        (WebCore::WHLSL::prepare):
+        * Modules/webgpu/WHLSL/WHLSLPrepare.h:
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp:
+        (WebCore::WHLSL::setterCall):
+        (WebCore::WHLSL::getterCall):
+        (WebCore::WHLSL::modify):
+        (WebCore::WHLSL::PropertyResolver::visit):
+        * Modules/webgpu/WHLSL/WHLSLRecursionChecker.cpp:
+        (WebCore::WHLSL::checkRecursion):
+        * Modules/webgpu/WHLSL/WHLSLRecursionChecker.h:
+        * Modules/webgpu/WHLSL/WHLSLRecursiveTypeChecker.cpp:
+        (WebCore::WHLSL::checkRecursiveTypes):
+        * Modules/webgpu/WHLSL/WHLSLRecursiveTypeChecker.h:
+        * Modules/webgpu/WHLSL/WHLSLStandardLibraryUtilities.cpp:
+        (WebCore::WHLSL::includeStandardLibrary):
+        * Modules/webgpu/WHLSL/WHLSLStatementBehaviorChecker.cpp:
+        (WebCore::WHLSL::checkStatementBehavior):
+        * Modules/webgpu/WHLSL/WHLSLStatementBehaviorChecker.h:
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeArrayOperatorLength.cpp:
+        (WebCore::WHLSL::synthesizeArrayOperatorLength):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeArrayOperatorLength.h:
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.cpp:
+        (WebCore::WHLSL::synthesizeConstructors):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.h:
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeEnumerationFunctions.cpp:
+        (WebCore::WHLSL::synthesizeEnumerationFunctions):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeEnumerationFunctions.h:
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeStructureAccessors.cpp:
+        (WebCore::WHLSL::synthesizeStructureAccessors):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeStructureAccessors.h:
+        * Modules/webgpu/WHLSL/WHLSLVisitor.h:
+        (WebCore::WHLSL::Visitor::hasError const):
+        (WebCore::WHLSL::Visitor::expectedError):
+        (WebCore::WHLSL::Visitor::checkErrorAndVisit):
+        (WebCore::WHLSL::Visitor::setError):
+        (WebCore::WHLSL::Visitor::error const): Deleted.
+        (): Deleted.
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/cocoa/GPUComputePipelineMetal.mm:
+        (WebCore::trySetFunctions):
+
+2019-07-25  Saam Barati  <sbarati@apple.com>
+
         [WHLSL] Add optional logging for phase timings
         https://bugs.webkit.org/show_bug.cgi?id=200099
 

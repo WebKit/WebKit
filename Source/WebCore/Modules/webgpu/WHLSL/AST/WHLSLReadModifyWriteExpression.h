@@ -28,7 +28,6 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLExpression.h"
-#include "WHLSLLexer.h"
 #include "WHLSLVariableDeclaration.h"
 #include "WHLSLVariableReference.h"
 #include <memory>

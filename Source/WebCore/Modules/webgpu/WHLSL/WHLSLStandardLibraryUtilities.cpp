@@ -79,8 +79,9 @@ void includeStandardLibrary(Program& program, Parser& parser, bool parseFullStan
 {
     static NeverDestroyed<String> standardLibrary(decompressAndDecodeStandardLibrary());
     if (parseFullStandardLibrary) {
-        if (auto parseFailure = parser.parse(program, standardLibrary.get(), Parser::Mode::StandardLibrary)) {
-            dataLogLn("failed to parse the (full) standard library: ", *parseFailure);
+        auto parseResult = parser.parse(program, standardLibrary.get(), Parser::Mode::StandardLibrary);
+        if (!parseResult) {
+            dataLogLn("failed to parse the (full) standard library: ", Lexer::errorString(StringView(standardLibrary), parseResult.error()));
             ASSERT_NOT_REACHED();
         }
         return;
@@ -89,8 +90,8 @@ void includeStandardLibrary(Program& program, Parser& parser, bool parseFullStan
     static NeverDestroyed<HashMap<String, SubstringLocation>> standardLibraryFunctionMap(computeStandardLibraryFunctionMap());
 
     auto stringView = StringView(standardLibrary.get()).substring(0, firstFunctionOffsetInStandardLibrary());
-    auto parseFailure = parser.parse(program, stringView, Parser::Mode::StandardLibrary);
-    ASSERT_UNUSED(parseFailure, !parseFailure);
+    auto parseResult = parser.parse(program, stringView, Parser::Mode::StandardLibrary);
+    ASSERT_UNUSED(parseResult, parseResult);
 
     NameFinder nameFinder;
     nameFinder.Visitor::visit(program);
@@ -109,8 +110,9 @@ void includeStandardLibrary(Program& program, Parser& parser, bool parseFullStan
             if (iterator == standardLibraryFunctionMap.get().end())
                 continue;
             auto stringView = StringView(standardLibrary.get()).substring(iterator->value.start, iterator->value.end - iterator->value.start);
-            if (auto parseFailure = parser.parse(program, stringView, Parser::Mode::StandardLibrary)) {
-                dataLogLn("failed to parse the (partial) standard library: ", *parseFailure);
+            auto parseResult = parser.parse(program, stringView, Parser::Mode::StandardLibrary);
+            if (!parseResult) {
+                dataLogLn("failed to parse the (partial) standard library: ", Lexer::errorString(stringView, parseResult.error()));
                 ASSERT_NOT_REACHED();
                 return;
             }

@@ -27,9 +27,11 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLError.h"
 #include "WHLSLFunctionAttribute.h"
 #include "WHLSLSemantic.h"
 #include "WHLSLTypeArgument.h"
+#include <wtf/Expected.h>
 
 namespace WebCore {
 
@@ -178,23 +180,24 @@ public:
     virtual void visit(AST::TernaryExpression&);
     virtual void visit(AST::VariableReference&);
 
-    bool error() const { return m_error; }
+    bool hasError() const { return !m_expectedError; }
+    Expected<void, Error> result() { return m_expectedError; }
 
     template<typename T> void checkErrorAndVisit(T& x)
     {
-        if (!m_error)
+        if (!hasError())
             visit(x);
     }
 
 protected:
-    void setError()
+    void setError(Error error)
     {
-        ASSERT(!m_error);
-        m_error = true;
+        ASSERT(!hasError());
+        m_expectedError = makeUnexpected(error);
     }
 
 private:
-    bool m_error { false }; // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195682 Migrate this to be some sort of descriptive string.
+    Expected<void, Error> m_expectedError;
 };
 
 } // namespace WHLSL

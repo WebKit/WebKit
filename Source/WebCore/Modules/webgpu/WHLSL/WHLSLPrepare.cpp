@@ -135,10 +135,11 @@ private:
     do { \
         dumpASTBetweenEachPassIfNeeded(program, "AST before " # pass); \
         PhaseTimer phaseTimer(#pass, phaseTimes); \
-        if (!pass(__VA_ARGS__)) { \
+        auto result = pass(__VA_ARGS__); \
+        if (!result) { \
             if (dumpPassFailure) \
-                dataLogLn("failed pass: " # pass); \
-            return WTF::nullopt; \
+                dataLogLn("failed pass: " # pass, Lexer::errorString(whlslSource, result.error())); \
+            return makeUnexpected(Lexer::errorString(whlslSource, result.error())); \
         } \
     } while (0)
 
@@ -149,17 +150,18 @@ private:
         pass(__VA_ARGS__); \
     } while (0)
 
-static Optional<Program> prepareShared(PhaseTimes& phaseTimes, String& whlslSource)
+static Expected<Program, String> prepareShared(PhaseTimes& phaseTimes, String& whlslSource)
 {
     Program program;
     Parser parser;
 
     {
         PhaseTimer phaseTimer("parse", phaseTimes);
-        if (auto parseFailure = parser.parse(program, whlslSource, Parser::Mode::User)) {
+        auto parseResult = parser.parse(program, whlslSource, Parser::Mode::User);
+        if (!parseResult) {
             if (dumpPassFailure)
-                dataLogLn("failed to parse the program: ", *parseFailure);
-            return WTF::nullopt;
+                dataLogLn("failed to parse the program: ", Lexer::errorString(whlslSource, parseResult.error()));
+            return makeUnexpected(Lexer::errorString(whlslSource, parseResult.error()));
         }
     }
 
@@ -198,7 +200,7 @@ static Optional<Program> prepareShared(PhaseTimes& phaseTimes, String& whlslSour
     return program;
 }
 
-Optional<RenderPrepareResult> prepare(String& whlslSource, RenderPipelineDescriptor& renderPipelineDescriptor)
+Expected<RenderPrepareResult, String> prepare(String& whlslSource, RenderPipelineDescriptor& renderPipelineDescriptor)
 {
     PhaseTimes phaseTimes;
     Metal::RenderMetalCode generatedCode;
@@ -207,14 +209,14 @@ Optional<RenderPrepareResult> prepare(String& whlslSource, RenderPipelineDescrip
         PhaseTimer phaseTimer("prepare total", phaseTimes);
         auto program = prepareShared(phaseTimes, whlslSource);
         if (!program)
-            return WTF::nullopt;
+            return makeUnexpected(program.error());
 
         Optional<MatchedRenderSemantics> matchedSemantics;
         {
             PhaseTimer phaseTimer("matchSemantics", phaseTimes);
             matchedSemantics = matchSemantics(*program, renderPipelineDescriptor);
             if (!matchedSemantics)
-                return WTF::nullopt;
+                return makeUnexpected(Lexer::errorString(whlslSource, Error("Could not match semantics"_str)));
         }
 
         {
@@ -232,7 +234,7 @@ Optional<RenderPrepareResult> prepare(String& whlslSource, RenderPipelineDescrip
     return result;
 }
 
-Optional<ComputePrepareResult> prepare(String& whlslSource, ComputePipelineDescriptor& computePipelineDescriptor)
+Expected<ComputePrepareResult, String> prepare(String& whlslSource, ComputePipelineDescriptor& computePipelineDescriptor)
 {
     PhaseTimes phaseTimes;
     Metal::ComputeMetalCode generatedCode;
@@ -242,21 +244,21 @@ Optional<ComputePrepareResult> prepare(String& whlslSource, ComputePipelineDescr
         PhaseTimer phaseTimer("prepare total", phaseTimes);
         auto program = prepareShared(phaseTimes, whlslSource);
         if (!program)
-            return WTF::nullopt;
+            return makeUnexpected(program.error());
 
         Optional<MatchedComputeSemantics> matchedSemantics;
         {
             PhaseTimer phaseTimer("matchSemantics", phaseTimes);
             matchedSemantics = matchSemantics(*program, computePipelineDescriptor);
             if (!matchedSemantics)
-                return WTF::nullopt;
+                return makeUnexpected(Lexer::errorString(whlslSource, Error("Could not match semantics"_str)));
         }
 
         {
             PhaseTimer phaseTimer("computeDimensions", phaseTimes);
             computeDimensions = WHLSL::computeDimensions(*program, *matchedSemantics->shader);
             if (!computeDimensions)
-                return WTF::nullopt;
+                return makeUnexpected(Lexer::errorString(whlslSource, Error("Could not match compute dimensions"_str)));
         }
 
         {

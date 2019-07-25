@@ -76,7 +76,7 @@ private:
         Vector<std::reference_wrapper<ResolvingType>> argumentTypes;
         auto* function = resolveFunctionOverload(m_castFunctions, argumentTypes, type);
         if (!function) {
-            setError();
+            setError(Error("Cannot find the default constructor for variable.", variableDeclaration.codeLocation()));
             return;
         }
         callExpression->setFunction(*function);
@@ -88,11 +88,11 @@ private:
     Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& m_castFunctions;
 };
 
-bool autoInitializeVariables(Program& program)
+Expected<void, Error> autoInitializeVariables(Program& program)
 {
     AutoInitialize autoInitialize(program.nameContext());
     autoInitialize.Visitor::visit(program);
-    return !autoInitialize.error();
+    return autoInitialize.result();
 }
 
 } // namespace WHLSL

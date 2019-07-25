@@ -59,7 +59,7 @@ namespace WHLSL {
         return Unexpected<Error>(name.error());
 
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195682 Return a better error code from this, and report it to JavaScript.
-auto Parser::parse(Program& program, StringView stringView, Mode mode) -> Optional<Error>
+auto Parser::parse(Program& program, StringView stringView, Mode mode) -> Expected<void, Error>
 {
     m_lexer = Lexer(stringView);
     m_mode = mode;
@@ -68,28 +68,28 @@ auto Parser::parse(Program& program, StringView stringView, Mode mode) -> Option
         auto token = m_lexer.peek();
         switch (token.type) {
         case Token::Type::Invalid:
-            return WTF::nullopt;
+            return { };
         case Token::Type::Semicolon:
             m_lexer.consumeToken();
             continue;
         case Token::Type::Typedef: {
             auto typeDefinition = parseTypeDefinition();
             if (!typeDefinition)
-                return typeDefinition.error();
+                return makeUnexpected(typeDefinition.error());
             program.append(WTFMove(*typeDefinition));
             continue;
         }
         case Token::Type::Struct: {
             auto structureDefinition = parseStructureDefinition();
             if (!structureDefinition)
-                return structureDefinition.error();
+                return makeUnexpected(structureDefinition.error());
             program.append(WTFMove(*structureDefinition));
             continue;
         }
         case Token::Type::Enum: {
             auto enumerationDefinition = parseEnumerationDefinition();
             if (!enumerationDefinition)
-                return enumerationDefinition.error();
+                return makeUnexpected(enumerationDefinition.error());
             program.append(WTFMove(*enumerationDefinition));
             continue;
         }
@@ -97,31 +97,31 @@ auto Parser::parse(Program& program, StringView stringView, Mode mode) -> Option
             ASSERT(m_mode == Mode::StandardLibrary);
             auto furtherToken = peekFurther();
             if (!furtherToken)
-                return WTF::nullopt;
+                return { };
             if (furtherToken->type == Token::Type::Typedef) {
                 auto nativeTypeDeclaration = parseNativeTypeDeclaration();
                 if (!nativeTypeDeclaration)
-                    return nativeTypeDeclaration.error();
+                    return makeUnexpected(nativeTypeDeclaration.error());
                 program.append(WTFMove(*nativeTypeDeclaration));
                 continue;
             }
             auto nativeFunctionDeclaration = parseNativeFunctionDeclaration();
             if (!nativeFunctionDeclaration)
-                return nativeFunctionDeclaration.error();
+                return makeUnexpected(nativeFunctionDeclaration.error());
             program.append(WTFMove(*nativeFunctionDeclaration));
             continue;
         }
         default: {
             auto functionDefinition = parseFunctionDefinition();
             if (!functionDefinition)
-                return functionDefinition.error();
+                return makeUnexpected(functionDefinition.error());
             program.append(WTFMove(*functionDefinition));
             continue;
         }
         }
     }
 
-    return WTF::nullopt;
+    return { };
 }
 
 auto Parser::fail(const String& message, TryToPeek tryToPeek) -> Unexpected<Error>
@@ -241,7 +241,7 @@ static int digitValue(UChar character)
     return character - 'A' + 10;
 }
 
-static Expected<int, Parser::Error> intLiteralToInt(StringView text)
+static Expected<int, Error> intLiteralToInt(StringView text)
 {
     bool negate = false;
     if (text.startsWith("-"_str)) {
@@ -260,21 +260,21 @@ static Expected<int, Parser::Error> intLiteralToInt(StringView text)
         auto previous = result;
         result = result * base + digit;
         if (result < previous)
-            return Unexpected<Parser::Error>(Parser::Error(makeString("int literal ", text, " is out of bounds")));
+            return makeUnexpected(Error(makeString("int literal ", text, " is out of bounds")));
     }
     if (negate) {
         static_assert(sizeof(int64_t) > sizeof(unsigned) && sizeof(int64_t) > sizeof(int), "This code would be wrong otherwise");
         int64_t intResult = -static_cast<int64_t>(result);
         if (intResult < static_cast<int64_t>(std::numeric_limits<int>::min()))
-            return Unexpected<Parser::Error>(Parser::Error(makeString("int literal ", text, " is out of bounds")));
+            return makeUnexpected(Error(makeString("int literal ", text, " is out of bounds")));
         return { static_cast<int>(intResult) };
     }
     if (result > static_cast<unsigned>(std::numeric_limits<int>::max()))
-        return Unexpected<Parser::Error>(Parser::Error(makeString("int literal ", text, " is out of bounds")));
+        return makeUnexpected(Error(makeString("int literal ", text, " is out of bounds")));
     return { static_cast<int>(result) };
 }
 
-static Expected<unsigned, Parser::Error> uintLiteralToUint(StringView text)
+static Expected<unsigned, Error> uintLiteralToUint(StringView text)
 {
     unsigned base = 10;
     if (text.startsWith("0x"_str)) {
@@ -289,17 +289,17 @@ static Expected<unsigned, Parser::Error> uintLiteralToUint(StringView text)
         auto previous = result;
         result = result * base + digit;
         if (result < previous)
-            return Unexpected<Parser::Error>(Parser::Error(makeString("uint literal ", text, " is out of bounds")));
+            return makeUnexpected(Error(makeString("uint literal ", text, " is out of bounds")));
     }
     return { result };
 }
 
-static Expected<float, Parser::Error> floatLiteralToFloat(StringView text)
+static Expected<float, Error> floatLiteralToFloat(StringView text)
 {
     size_t parsedLength;
     auto result = parseDouble(text, parsedLength);
     if (parsedLength != text.length())
-        return Unexpected<Parser::Error>(Parser::Error(makeString("Cannot parse float ", text)));
+        return makeUnexpected(Error(makeString("Cannot parse float ", text)));
     return static_cast<float>(result);
 }
 
@@ -343,18 +343,18 @@ auto Parser::consumeNonNegativeIntegralLiteral() -> Expected<unsigned, Error>
     return fail("int literal is negative"_str);
 }
 
-static Expected<unsigned, Parser::Error> recognizeSimpleUnsignedInteger(StringView stringView)
+static Expected<unsigned, Error> recognizeSimpleUnsignedInteger(StringView stringView)
 {
     unsigned result = 0;
     if (stringView.length() < 1)
-        return Unexpected<Parser::Error>(Parser::Error(makeString("Simple unsigned literal ", stringView, " is too short")));
+        return makeUnexpected(Error(makeString("Simple unsigned literal ", stringView, " is too short")));
     for (auto codePoint : stringView.codePoints()) {
         if (codePoint < '0' || codePoint > '9')
-            return Unexpected<Parser::Error>(Parser::Error(makeString("Simple unsigned literal ", stringView, " isn't of the form [0-9]+")));
+            return makeUnexpected(Error(makeString("Simple unsigned literal ", stringView, " isn't of the form [0-9]+")));
         auto previous = result;
         result = result * 10 + (codePoint - '0');
         if (result < previous)
-            return Unexpected<Parser::Error>(Parser::Error(makeString("Simple unsigned literal ", stringView, " is out of bounds")));
+            return makeUnexpected(Error(makeString("Simple unsigned literal ", stringView, " is out of bounds")));
     }
     return result;
 }
@@ -415,7 +415,7 @@ auto Parser::parseTypeArgument() -> Expected<AST::TypeArgument, Error>
         return AST::TypeArgument(WTFMove(*constantExpression));
     }
     CONSUME_TYPE(result, Identifier);
-    AST::CodeLocation location(*result);
+    CodeLocation location(*result);
     return AST::TypeArgument(makeUniqueRef<AST::TypeReference>(location, result->stringView(m_lexer).toString(), AST::TypeArguments()));
 }
 
@@ -534,7 +534,7 @@ auto Parser::parseType() -> Expected<UniqueRef<AST::UnnamedType>, Error>
             break;
         }
         auto constructTypeFromSuffixAbbreviated = [&](const TypeSuffixAbbreviated& typeSuffixAbbreviated, UniqueRef<AST::UnnamedType>&& previous) -> UniqueRef<AST::UnnamedType> {
-            AST::CodeLocation location(*addressSpaceToken, typeSuffixAbbreviated.location);
+            CodeLocation location(*addressSpaceToken, typeSuffixAbbreviated.location);
             switch (typeSuffixAbbreviated.token.type) {
             case Token::Type::Star:
                 return { makeUniqueRef<AST::PointerType>(location, addressSpace, WTFMove(previous)) };
@@ -565,7 +565,7 @@ auto Parser::parseType() -> Expected<UniqueRef<AST::UnnamedType>, Error>
     }
 
     auto constructTypeFromSuffixNonAbbreviated = [&](const TypeSuffixNonAbbreviated& typeSuffixNonAbbreviated, UniqueRef<AST::UnnamedType>&& previous) -> UniqueRef<AST::UnnamedType> {
-        AST::CodeLocation location(*name, typeSuffixNonAbbreviated.location);
+        CodeLocation location(*name, typeSuffixNonAbbreviated.location);
         switch (typeSuffixNonAbbreviated.token.type) {
         case Token::Type::Star:
             return { makeUniqueRef<AST::PointerType>(location, *typeSuffixNonAbbreviated.addressSpace, WTFMove(previous)) };
@@ -1186,7 +1186,7 @@ auto Parser::parseForLoop() -> Expected<AST::ForLoop, Error>
         }
 
         PARSE(body, Statement);
-        AST::CodeLocation location(origin->codeLocation,  (*body)->codeLocation());
+        CodeLocation location(origin->codeLocation,  (*body)->codeLocation());
         return AST::ForLoop(location, WTFMove(initialization), WTFMove(condition), WTFMove(increment), WTFMove(*body));
     };
 
@@ -1211,7 +1211,7 @@ auto Parser::parseWhileLoop() -> Expected<AST::WhileLoop, Error>
     CONSUME_TYPE(rightParenthesis, RightParenthesis);
     PARSE(body, Statement);
 
-    AST::CodeLocation location(origin->codeLocation,  (*body)->codeLocation());
+    CodeLocation location(origin->codeLocation,  (*body)->codeLocation());
     return AST::WhileLoop(location, WTFMove(*conditional), WTFMove(*body));
 }
 
@@ -1389,7 +1389,7 @@ auto Parser::parseEffectfulExpression() -> Expected<UniqueRef<AST::Expression>, 
     if (expressions.size() == 1)
         return WTFMove(expressions[0]);
     unsigned endOffset = m_lexer.peek().startOffset();
-    AST::CodeLocation location(origin->startOffset(), endOffset);
+    CodeLocation location(origin->startOffset(), endOffset);
     return { makeUniqueRef<AST::CommaExpression>(location, WTFMove(expressions)) };
 }
 
@@ -1433,14 +1433,14 @@ auto Parser::parseLimitedSuffixOperator(UniqueRef<AST::Expression>&& previous) -
         auto identifier = consumeType(Token::Type::Identifier);
         if (!identifier)
             return SuffixExpression(WTFMove(previous), false);
-        AST::CodeLocation location(previous->codeLocation(), *identifier);
+        CodeLocation location(previous->codeLocation(), *identifier);
         return SuffixExpression(makeUniqueRef<AST::DotExpression>(location, WTFMove(previous), identifier->stringView(m_lexer).toString()), true);
     }
     case Token::Type::Arrow: {
         auto identifier = consumeType(Token::Type::Identifier);
         if (!identifier)
             return SuffixExpression(WTFMove(previous), false);
-        AST::CodeLocation location(previous->codeLocation(), *identifier);
+        CodeLocation location(previous->codeLocation(), *identifier);
         return SuffixExpression(makeUniqueRef<AST::DotExpression>(location, makeUniqueRef<AST::DereferenceExpression>(location, WTFMove(previous)), identifier->stringView(m_lexer).toString()), true);
     }
     default: {
@@ -1449,7 +1449,7 @@ auto Parser::parseLimitedSuffixOperator(UniqueRef<AST::Expression>&& previous) -
         if (!expression)
             return SuffixExpression(WTFMove(previous), false);
         if (auto rightSquareBracket = consumeType(Token::Type::RightSquareBracket)) {
-            AST::CodeLocation location(previous->codeLocation(), *rightSquareBracket);
+            CodeLocation location(previous->codeLocation(), *rightSquareBracket);
             return SuffixExpression(makeUniqueRef<AST::IndexExpression>(location, WTFMove(previous), WTFMove(*expression)), true);
         }
         return SuffixExpression(WTFMove(previous), false);
@@ -1473,14 +1473,14 @@ auto Parser::parseSuffixOperator(UniqueRef<AST::Expression>&& previous) -> Suffi
         auto identifier = consumeType(Token::Type::Identifier);
         if (!identifier)
             return SuffixExpression(WTFMove(previous), false);
-        AST::CodeLocation location(previous->codeLocation(), *identifier);
+        CodeLocation location(previous->codeLocation(), *identifier);
         return SuffixExpression(makeUniqueRef<AST::DotExpression>(location, WTFMove(previous), identifier->stringView(m_lexer).toString()), true);
     }
     case Token::Type::Arrow: {
         auto identifier = consumeType(Token::Type::Identifier);
         if (!identifier)
             return SuffixExpression(WTFMove(previous), false);
-        AST::CodeLocation location(previous->codeLocation(), *identifier);
+        CodeLocation location(previous->codeLocation(), *identifier);
         return SuffixExpression(makeUniqueRef<AST::DotExpression>(location, makeUniqueRef<AST::DereferenceExpression>(WTFMove(*suffix), WTFMove(previous)), identifier->stringView(m_lexer).toString()), true);
     }
     case Token::Type::LeftSquareBracket: {
@@ -1488,13 +1488,13 @@ auto Parser::parseSuffixOperator(UniqueRef<AST::Expression>&& previous) -> Suffi
         if (!expression)
             return SuffixExpression(WTFMove(previous), false);
         if (auto rightSquareBracket = consumeType(Token::Type::RightSquareBracket)) {
-            AST::CodeLocation location(previous->codeLocation(), *rightSquareBracket);
+            CodeLocation location(previous->codeLocation(), *rightSquareBracket);
             return SuffixExpression(makeUniqueRef<AST::IndexExpression>(location, WTFMove(previous), WTFMove(*expression)), true);
         }
         return SuffixExpression(WTFMove(previous), false);
     }
     case Token::Type::PlusPlus: {
-        AST::CodeLocation location(previous->codeLocation(), *suffix);
+        CodeLocation location(previous->codeLocation(), *suffix);
         auto result = AST::ReadModifyWriteExpression::create(location, WTFMove(previous));
         Vector<UniqueRef<AST::Expression>> callArguments;
         callArguments.append(result->oldVariableReference());
@@ -1504,7 +1504,7 @@ auto Parser::parseSuffixOperator(UniqueRef<AST::Expression>&& previous) -> Suffi
     }
     default: {
         ASSERT(suffix->type == Token::Type::MinusMinus);
-        AST::CodeLocation location(previous->codeLocation(), *suffix);
+        CodeLocation location(previous->codeLocation(), *suffix);
         auto result = AST::ReadModifyWriteExpression::create(location, WTFMove(previous));
         Vector<UniqueRef<AST::Expression>> callArguments;
         callArguments.append(result->oldVariableReference());
@@ -1530,7 +1530,7 @@ auto Parser::parseExpression() -> Expected<UniqueRef<AST::Expression>, Error>
     if (expressions.size() == 1)
         return WTFMove(expressions[0]);
     auto endOffset = m_lexer.peek().startOffset();
-    AST::CodeLocation location(startOffset, endOffset);
+    CodeLocation location(startOffset, endOffset);
     return { makeUniqueRef<AST::CommaExpression>(location, WTFMove(expressions)) };
 }
 
@@ -1541,11 +1541,11 @@ auto Parser::completeTernaryConditional(UniqueRef<AST::Expression>&& predicate) 
     CONSUME_TYPE(colon, Colon);
     PARSE(elseExpression, PossibleTernaryConditional);
 
-    AST::CodeLocation predicateLocation = predicate->codeLocation();
+    CodeLocation predicateLocation = predicate->codeLocation();
     Vector<UniqueRef<AST::Expression>> castArguments;
     castArguments.append(WTFMove(predicate));
     auto boolCast = makeUniqueRef<AST::CallExpression>(predicateLocation, "bool"_str, WTFMove(castArguments));
-    AST::CodeLocation location(predicateLocation, (*elseExpression)->codeLocation());
+    CodeLocation location(predicateLocation, (*elseExpression)->codeLocation());
     return { makeUniqueRef<AST::TernaryExpression>(location, WTFMove(boolCast), WTFMove(*bodyExpression), WTFMove(*elseExpression)) };
 }
 
@@ -1567,7 +1567,7 @@ auto Parser::completeAssignment(UniqueRef<AST::Expression>&& left) -> Expected<U
         return Unexpected<Error>(assignmentOperator.error());
 
     PARSE(right, PossibleTernaryConditional);
-    AST::CodeLocation location = { left->codeLocation(), (*right)->codeLocation() };
+    CodeLocation location = { left->codeLocation(), (*right)->codeLocation() };
 
     if (assignmentOperator->type == Token::Type::EqualsSign)
         return { makeUniqueRef<AST::AssignmentExpression>(location, WTFMove(left), WTFMove(*right))};
@@ -1676,7 +1676,7 @@ auto Parser::completePossibleLogicalBinaryOperation(UniqueRef<AST::Expression>&&
         Token::Type::And
         >()) {
         PARSE(next, PossibleRelationalBinaryOperation);
-        AST::CodeLocation location(previous->codeLocation(), (*next)->codeLocation());
+        CodeLocation location(previous->codeLocation(), (*next)->codeLocation());
 
         switch (logicalBinaryOperation->type) {
         case Token::Type::OrOr:
@@ -1730,7 +1730,7 @@ auto Parser::completePossibleRelationalBinaryOperation(UniqueRef<AST::Expression
         Token::Type::NotEqual
         >()) {
         PARSE(next, PossibleShift);
-        AST::CodeLocation location(previous->codeLocation(), (*next)->codeLocation());
+        CodeLocation location(previous->codeLocation(), (*next)->codeLocation());
 
         Vector<UniqueRef<AST::Expression>> callArguments;
         callArguments.append(WTFMove(previous));
@@ -1782,7 +1782,7 @@ auto Parser::completePossibleShift(UniqueRef<AST::Expression>&& previous) -> Exp
         Token::Type::RightShift
         >()) {
         PARSE(next, PossibleAdd);
-        AST::CodeLocation location(previous->codeLocation(), (*next)->codeLocation());
+        CodeLocation location(previous->codeLocation(), (*next)->codeLocation());
 
         Vector<UniqueRef<AST::Expression>> callArguments;
         callArguments.append(WTFMove(previous));
@@ -1817,7 +1817,7 @@ auto Parser::completePossibleAdd(UniqueRef<AST::Expression>&& previous) -> Expec
         Token::Type::Minus
         >()) {
         PARSE(next, PossibleMultiply);
-        AST::CodeLocation location(previous->codeLocation(), (*next)->codeLocation());
+        CodeLocation location(previous->codeLocation(), (*next)->codeLocation());
 
         Vector<UniqueRef<AST::Expression>> callArguments;
         callArguments.append(WTFMove(previous));
@@ -1853,7 +1853,7 @@ auto Parser::completePossibleMultiply(UniqueRef<AST::Expression>&& previous) -> 
         Token::Type::Mod
         >()) {
         PARSE(next, PossiblePrefix);
-        AST::CodeLocation location(previous->codeLocation(), (*next)->codeLocation());
+        CodeLocation location(previous->codeLocation(), (*next)->codeLocation());
 
         Vector<UniqueRef<AST::Expression>> callArguments;
         callArguments.append(WTFMove(previous));
@@ -1893,7 +1893,7 @@ auto Parser::parsePossiblePrefix(bool *isEffectful) -> Expected<UniqueRef<AST::E
         Token::Type::Star
     >()) {
         PARSE(next, PossiblePrefix);
-        AST::CodeLocation location(*prefix, (*next)->codeLocation());
+        CodeLocation location(*prefix, (*next)->codeLocation());
 
         switch (prefix->type) {
         case Token::Type::PlusPlus: {
@@ -2011,7 +2011,7 @@ auto Parser::parseCallExpression() -> Expected<UniqueRef<AST::Expression>, Error
     }
 
     CONSUME_TYPE(rightParenthesis, RightParenthesis);
-    AST::CodeLocation location(*name, *rightParenthesis);
+    CodeLocation location(*name, *rightParenthesis);
 
     return { makeUniqueRef<AST::CallExpression>(location, WTFMove(callName), WTFMove(arguments)) };
 }

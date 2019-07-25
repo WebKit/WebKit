@@ -27,13 +27,16 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLError.h"
+#include <wtf/Expected.h>
+
 namespace WebCore {
 
 namespace WHLSL {
 
 class Program;
 
-bool check(Program&);
+Expected<void, Error> check(Program&);
 
 }
 

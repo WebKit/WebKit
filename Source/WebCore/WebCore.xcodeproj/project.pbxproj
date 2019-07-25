@@ -6391,6 +6391,7 @@
 		1CAF347E0A6C405200ABE06E /* WebScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptObject.h; sourceTree = "<group>"; };
 		1CAF347F0A6C405200ABE06E /* WebScriptObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebScriptObject.mm; sourceTree = "<group>"; };
 		1CAF34800A6C405200ABE06E /* WebScriptObjectPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptObjectPrivate.h; sourceTree = "<group>"; };
+		1CB5FE8822DEBC8B009440E2 /* WHLSLError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLError.h; sourceTree = "<group>"; };
 		1CB69B3221DED40B006E846A /* WHLSLResolvableType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLResolvableType.h; sourceTree = "<group>"; };
 		1CB69B3421DED63A006E846A /* WHLSLFloatLiteralType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLFloatLiteralType.h; sourceTree = "<group>"; };
 		1CB69B3521DED649006E846A /* WHLSLIntegerLiteralType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLIntegerLiteralType.h; sourceTree = "<group>"; };
@@ -8323,6 +8324,7 @@
 		51FB67DA1AE6B5E400D06C5A /* ContentExtensionStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentExtensionStyleSheet.h; sourceTree = "<group>"; };
 		52131E5A1C4F15610033F802 /* VideoFullscreenInterfaceMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenInterfaceMac.mm; sourceTree = "<group>"; };
 		5215862C229377B7005925EF /* WHLSLAST.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLAST.h; sourceTree = "<group>"; };
+		522BAB9622E6A36200C54CE9 /* WHLSLCodeLocation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLCodeLocation.h; sourceTree = "<group>"; };
 		522DA3D3229E1D390042D151 /* WHLSLGlobalVariableReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLGlobalVariableReference.h; sourceTree = "<group>"; };
 		522E1A172297D6D400E5D36A /* WHLSLPreserveVariableLifetimes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLPreserveVariableLifetimes.cpp; sourceTree = "<group>"; };
 		522E1A192297D6D400E5D36A /* WHLSLPreserveVariableLifetimes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLPreserveVariableLifetimes.h; sourceTree = "<group>"; };
@@ -25518,8 +25520,10 @@
 				1C840B9721EC400700D0500D /* WHLSLChecker.h */,
 				1C281C6D22B87B9800691C00 /* WHLSLCheckTextureReferences.cpp */,
 				1C281C6E22B87B9800691C00 /* WHLSLCheckTextureReferences.h */,
+				522BAB9622E6A36200C54CE9 /* WHLSLCodeLocation.h */,
 				1C86CA4B22AA19FF001BF961 /* WHLSLComputeDimensions.cpp */,
 				1C86CA4C22AA19FF001BF961 /* WHLSLComputeDimensions.h */,
+				1CB5FE8822DEBC8B009440E2 /* WHLSLError.h */,
 				1CA0C2E421EED12A00A11860 /* WHLSLFunctionStageChecker.cpp */,
 				1CA0C2E521EED12A00A11860 /* WHLSLFunctionStageChecker.h */,
 				1C840B9921EC400800D0500D /* WHLSLGatherEntryPointItems.cpp */,

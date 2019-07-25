@@ -84,7 +84,7 @@ public:
         if (!nativeTypeDeclaration.isNumber()
             && !nativeTypeDeclaration.isVector()
             && !nativeTypeDeclaration.isMatrix())
-            setError();
+            setError(Error("Use of native type is not a POD in entrypoint semantic.", nativeTypeDeclaration.codeLocation()));
     }
 
     void visit(AST::StructureDefinition& structureDefinition) override
@@ -102,14 +102,14 @@ public:
         Visitor::visit(arrayType);
     }
 
-    void visit(AST::PointerType&) override
+    void visit(AST::PointerType& pointerType) override
     {
-        setError();
+        setError(Error("Illegal use of pointer in entrypoint semantic.", pointerType.codeLocation()));
     }
 
-    void visit(AST::ArrayReferenceType&) override
+    void visit(AST::ArrayReferenceType& arrayReferenceType) override
     {
-        setError();
+        setError(Error("Illegal use of array reference in entrypoint semantic.", arrayReferenceType.codeLocation()));
     }
 
     void visit(AST::TypeReference& typeReference) override
@@ -118,7 +118,7 @@ public:
     }
 };
 
-static AST::NativeFunctionDeclaration resolveWithOperatorAnderIndexer(AST::CodeLocation location, AST::ArrayReferenceType& firstArgument, const Intrinsics& intrinsics)
+static AST::NativeFunctionDeclaration resolveWithOperatorAnderIndexer(CodeLocation location, AST::ArrayReferenceType& firstArgument, const Intrinsics& intrinsics)
 {
     const bool isOperator = true;
     auto returnType = makeUniqueRef<AST::PointerType>(location, firstArgument.addressSpace(), firstArgument.elementType().clone());
@@ -128,7 +128,7 @@ static AST::NativeFunctionDeclaration resolveWithOperatorAnderIndexer(AST::CodeL
     return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator&[]", String::ConstructFromLiteral), WTFMove(parameters), nullptr, isOperator));
 }
 
-static AST::NativeFunctionDeclaration resolveWithOperatorLength(AST::CodeLocation location, AST::UnnamedType& firstArgument, const Intrinsics& intrinsics)
+static AST::NativeFunctionDeclaration resolveWithOperatorLength(CodeLocation location, AST::UnnamedType& firstArgument, const Intrinsics& intrinsics)
 {
     const bool isOperator = true;
     auto returnType = AST::TypeReference::wrap(location, intrinsics.uintType());
@@ -137,7 +137,7 @@ static AST::NativeFunctionDeclaration resolveWithOperatorLength(AST::CodeLocatio
     return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator.length", String::ConstructFromLiteral), WTFMove(parameters), nullptr, isOperator));
 }
 
-static AST::NativeFunctionDeclaration resolveWithReferenceComparator(AST::CodeLocation location, ResolvingType& firstArgument, ResolvingType& secondArgument, const Intrinsics& intrinsics)
+static AST::NativeFunctionDeclaration resolveWithReferenceComparator(CodeLocation location, ResolvingType& firstArgument, ResolvingType& secondArgument, const Intrinsics& intrinsics)
 {
     const bool isOperator = true;
     auto returnType = AST::TypeReference::wrap(location, intrinsics.boolType());
@@ -165,7 +165,7 @@ enum class Acceptability {
     No
 };
 
-static Optional<AST::NativeFunctionDeclaration> resolveByInstantiation(const String& name, AST::CodeLocation location, const Vector<std::reference_wrapper<ResolvingType>>& types, const Intrinsics& intrinsics)
+static Optional<AST::NativeFunctionDeclaration> resolveByInstantiation(const String& name, CodeLocation location, const Vector<std::reference_wrapper<ResolvingType>>& types, const Intrinsics& intrinsics)
 {
     if (name == "operator&[]" && types.size() == 2) {
         auto* firstArgumentArrayRef = types[0].get().visit(WTF::makeVisitor([](UniqueRef<AST::UnnamedType>& unnamedType) -> AST::ArrayReferenceType* {
@@ -217,7 +217,7 @@ static Optional<AST::NativeFunctionDeclaration> resolveByInstantiation(const Str
     return WTF::nullopt;
 }
 
-static AST::FunctionDeclaration* resolveFunction(Program& program, Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>* possibleOverloads, Vector<std::reference_wrapper<ResolvingType>>& types, const String& name, AST::CodeLocation location, const Intrinsics& intrinsics, AST::NamedType* castReturnType = nullptr)
+static AST::FunctionDeclaration* resolveFunction(Program& program, Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>* possibleOverloads, Vector<std::reference_wrapper<ResolvingType>>& types, const String& name, CodeLocation location, const Intrinsics& intrinsics, AST::NamedType* castReturnType = nullptr)
 {
     if (possibleOverloads) {
         if (AST::FunctionDeclaration* function = resolveFunctionOverload(*possibleOverloads, types, castReturnType))
@@ -296,7 +296,7 @@ static bool checkSemantics(Vector<EntryPointItem>& inputItems, Vector<EntryPoint
                     podChecker.checkErrorAndVisit(downcast<AST::ArrayType>(*item.unnamedType).type());
                 else
                     continue;
-                if (podChecker.error())
+                if (podChecker.hasError())
                     return false;
             }
             return true;
@@ -460,7 +460,7 @@ public:
 
     void visit(Program&) override;
 
-    bool assignTypes();
+    Expected<void, Error> assignTypes();
 
 private:
     bool checkShaderType(const AST::FunctionDefinition&);
@@ -538,7 +538,7 @@ void Checker::visit(Program& program)
         checkErrorAndVisit(program.nativeFunctionDeclarations()[i]);
 }
 
-bool Checker::assignTypes()
+Expected<void, Error> Checker::assignTypes()
 {
     for (auto& keyValuePair : m_typeMap) {
         auto success = keyValuePair.value->visit(WTF::makeVisitor([&](UniqueRef<AST::UnnamedType>& unnamedType) -> bool {
@@ -553,10 +553,10 @@ bool Checker::assignTypes()
             return true;
         }));
         if (!success)
-            return false;
+            return makeUnexpected(Error("Could not resolve the type of a constant."));
     }
 
-    return true;
+    return { };
 }
 
 bool Checker::checkShaderType(const AST::FunctionDefinition& functionDefinition)
@@ -576,21 +576,21 @@ void Checker::visit(AST::FunctionDefinition& functionDefinition)
     m_currentFunction = &functionDefinition;
     if (functionDefinition.entryPointType()) {
         if (!checkShaderType(functionDefinition)) {
-            setError();
+            setError(Error("Duplicate entrypoint function.", functionDefinition.codeLocation()));
             return;
         }
         auto entryPointItems = gatherEntryPointItems(m_intrinsics, functionDefinition);
         if (!entryPointItems) {
-            setError();
+            setError(entryPointItems.error());
             return;
         }
         if (!checkSemantics(entryPointItems->inputs, entryPointItems->outputs, functionDefinition.entryPointType(), m_intrinsics)) {
-            setError();
+            setError(Error("Bad semantics for entrypoint.", functionDefinition.codeLocation()));
             return;
         }
     }
     if (!checkOperatorOverload(functionDefinition, m_intrinsics, m_program.nameContext())) {
-        setError();
+        setError(Error("Operator does not match expected signature.", functionDefinition.codeLocation()));
         return;
     }
 
@@ -656,7 +656,7 @@ void Checker::visit(AST::EnumerationDefinition& enumerationDefinition)
         return &nativeTypeDeclaration;
     })();
     if (!baseType) {
-        setError();
+        setError(Error("Invalid base type for enum.", enumerationDefinition.codeLocation()));
         return;
     }
 
@@ -666,12 +666,12 @@ void Checker::visit(AST::EnumerationDefinition& enumerationDefinition)
         int64_t value = member.get().value();
         if (isSigned) {
             if (static_cast<int64_t>(static_cast<int32_t>(value)) != value) {
-                setError();
+                setError(Error("Invalid enumeration value.", member.get().codeLocation()));
                 return;
             }
         } else {
             if (static_cast<int64_t>(static_cast<uint32_t>(value)) != value) {
-                setError();
+                setError(Error("Invalid enumeration value.", member.get().codeLocation()));
                 return;
             }
         }
@@ -682,7 +682,7 @@ void Checker::visit(AST::EnumerationDefinition& enumerationDefinition)
         for (size_t j = i + 1; j < enumerationMembers.size(); ++j) {
             auto otherValue = enumerationMembers[j].get().value();
             if (value == otherValue) {
-                setError();
+                setError(Error("Cannot declare duplicate enumeration values.", enumerationMembers[j].get().codeLocation()));
                 return;
             }
         }
@@ -696,7 +696,7 @@ void Checker::visit(AST::EnumerationDefinition& enumerationDefinition)
         }
     }
     if (!foundZero) {
-        setError();
+        setError(Error("enum definition must contain a zero value.", enumerationDefinition.codeLocation()));
         return;
     }
 }
@@ -712,7 +712,7 @@ void Checker::visit(AST::TypeReference& typeReference)
 auto Checker::recurseAndGetInfo(AST::Expression& expression, bool requiresLeftValue) -> Optional<RecurseInfo>
 {
     Visitor::visit(expression);
-    if (error())
+    if (hasError())
         return WTF::nullopt;
     return getInfo(expression, requiresLeftValue);
 }
@@ -724,7 +724,7 @@ auto Checker::getInfo(AST::Expression& expression, bool requiresLeftValue) -> Op
 
     const auto& typeAnnotation = expression.typeAnnotation();
     if (requiresLeftValue && typeAnnotation.isRightValue()) {
-        setError();
+        setError(Error("Unexpected rvalue.", expression.codeLocation()));
         return WTF::nullopt;
     }
     return {{ *typeIterator->value, typeAnnotation }};
@@ -741,7 +741,7 @@ void Checker::visit(AST::VariableDeclaration& variableDeclaration)
         if (!initializerInfo)
             return;
         if (!matchAndCommit(initializerInfo->resolvingType, lhsType)) {
-            setError();
+            setError(Error("Declared variable type does not match its initializer's type.", variableDeclaration.codeLocation()));
             return;
         }
     }
@@ -785,7 +785,7 @@ void Checker::visit(AST::AssignmentExpression& assignmentExpression)
 
     auto resultType = matchAndCommit(leftInfo->resolvingType, rightInfo->resolvingType);
     if (!resultType) {
-        setError();
+        setError(Error("Left hand side of assignment does not match the type of the right hand side.", assignmentExpression.codeLocation()));
         return;
     }
 
@@ -807,7 +807,7 @@ void Checker::visit(AST::ReadModifyWriteExpression& readModifyWriteExpression)
     if (Optional<UniqueRef<AST::UnnamedType>> matchedType = matchAndCommit(leftValueInfo->resolvingType, newValueInfo->resolvingType))
         readModifyWriteExpression.newValue().setType(WTFMove(matchedType.value()));
     else {
-        setError();
+        setError(Error("Base of the read-modify-write expression does not match the type of the new value.", readModifyWriteExpression.codeLocation()));
         return;
     }
 
@@ -848,7 +848,7 @@ void Checker::visit(AST::DereferenceExpression& dereferenceExpression)
         return &downcast<AST::PointerType>(unnamedUnifyType);
     })(unnamedType);
     if (!pointerType) {
-        setError();
+        setError(Error("Cannot dereference a non-pointer type.", dereferenceExpression.codeLocation()));
         return;
     }
 
@@ -863,13 +863,13 @@ void Checker::visit(AST::MakePointerExpression& makePointerExpression)
 
     auto leftAddressSpace = leftValueInfo->typeAnnotation.leftAddressSpace();
     if (!leftAddressSpace) {
-        setError();
+        setError(Error("Cannot take the address of a non lvalue.", makePointerExpression.codeLocation()));
         return;
     }
 
     auto* leftValueType = getUnnamedType(leftValueInfo->resolvingType);
     if (!leftValueType) {
-        setError();
+        setError(Error("Cannot take the address of a value without a type.", makePointerExpression.codeLocation()));
         return;
     }
 
@@ -884,7 +884,7 @@ void Checker::visit(AST::MakeArrayReferenceExpression& makeArrayReferenceExpress
 
     auto* leftValueType = getUnnamedType(leftValueInfo->resolvingType);
     if (!leftValueType) {
-        setError();
+        setError(Error("Cannot make an array reference of a value without a type.", makeArrayReferenceExpression.codeLocation()));
         return;
     }
 
@@ -900,7 +900,7 @@ void Checker::visit(AST::MakeArrayReferenceExpression& makeArrayReferenceExpress
 
         auto leftAddressSpace = leftValueInfo->typeAnnotation.leftAddressSpace();
         if (!leftAddressSpace) {
-            setError();
+            setError(Error("Cannot make an array reference from a non-left-value.", makeArrayReferenceExpression.codeLocation()));
             return;
         }
 
@@ -914,7 +914,7 @@ void Checker::visit(AST::MakeArrayReferenceExpression& makeArrayReferenceExpress
 
     auto leftAddressSpace = leftValueInfo->typeAnnotation.leftAddressSpace();
     if (!leftAddressSpace) {
-        setError();
+        setError(Error("Cannot make an array reference from a non-left-value.", makeArrayReferenceExpression.codeLocation()));
         return;
     }
 
@@ -950,7 +950,7 @@ void Checker::finishVisiting(AST::PropertyAccessExpression& propertyAccessExpres
         return;
     auto baseUnnamedType = commit(baseInfo->resolvingType);
     if (!baseUnnamedType) {
-        setError();
+        setError(Error("Cannot resolve the type of the base of a property access expression.", propertyAccessExpression.codeLocation()));
         return;
     }
 
@@ -999,32 +999,32 @@ void Checker::finishVisiting(AST::PropertyAccessExpression& propertyAccessExpres
     }
 
     if (leftAddressSpace && !anderFunction && !getterFunction) {
-        setError();
+        setError(Error("Property access instruction must either have an ander or a getter.", propertyAccessExpression.codeLocation()));
         return;
     }
 
     if (!leftAddressSpace && !threadAnderFunction && !getterFunction) {
-        setError();
+        setError(Error("Property access instruction must either have a thread ander or a getter.", propertyAccessExpression.codeLocation()));
         return;
     }
 
     if (threadAnderFunction && getterFunction) {
-        setError();
+        setError(Error("Cannot have both a thread ander and a getter.", propertyAccessExpression.codeLocation()));
         return;
     }
 
     if (anderFunction && threadAnderFunction && !matches(*anderReturnType, *threadAnderReturnType)) {
-        setError();
+        setError(Error("Return type of ander must match the return type of the thread ander.", propertyAccessExpression.codeLocation()));
         return;
     }
 
     if (getterFunction && anderFunction && !matches(*getterReturnType, *anderReturnType)) {
-        setError();
+        setError(Error("Return type of ander must match the return type of the getter.", propertyAccessExpression.codeLocation()));
         return;
     }
 
     if (getterFunction && threadAnderFunction && !matches(*getterReturnType, *threadAnderReturnType)) {
-        setError();
+        setError(Error("Return type of the thread ander must match the return type of the getter.", propertyAccessExpression.codeLocation()));
         return;
     }
 
@@ -1046,7 +1046,7 @@ void Checker::finishVisiting(AST::PropertyAccessExpression& propertyAccessExpres
     }
 
     if (setterFunction && !getterFunction) {
-        setError();
+        setError(Error("Cannot define a setter function without a corresponding getter.", propertyAccessExpression.codeLocation()));
         return;
     }
 
@@ -1094,12 +1094,12 @@ void Checker::visit(AST::Return& returnStatement)
         if (!valueInfo)
             return;
         if (!matchAndCommit(valueInfo->resolvingType, m_currentFunction->type()))
-            setError();
+            setError(Error("Type of the return value must match the return type of the function.", returnStatement.codeLocation()));
         return;
     }
 
     if (!matches(m_currentFunction->type(), m_intrinsics.voidType()))
-        setError();
+        setError(Error("Cannot return a value from a void function.", returnStatement.codeLocation()));
 }
 
 void Checker::visit(AST::PointerType&)
@@ -1163,7 +1163,7 @@ bool Checker::recurseAndRequireBoolType(AST::Expression& expression)
     if (!expressionInfo)
         return false;
     if (!isBoolType(expressionInfo->resolvingType)) {
-        setError();
+        setError(Error("Expected bool type from expression.", expression.codeLocation()));
         return false;
     }
     return true;
@@ -1214,7 +1214,7 @@ void Checker::visit(AST::ForLoop& forLoop)
     }, [&](UniqueRef<AST::Expression>& expression) {
         checkErrorAndVisit(expression);
     }), forLoop.initialization());
-    if (error())
+    if (hasError())
         return;
     if (forLoop.condition()) {
         if (!recurseAndRequireBoolType(*forLoop.condition()))
@@ -1244,7 +1244,7 @@ void Checker::visit(AST::SwitchStatement& switchStatement)
         return &valueNamedUnifyNode;
     })();
     if (!valueType) {
-        setError();
+        setError(Error("Invalid type for the expression condition of the switch statement.", switchStatement.codeLocation()));
         return;
     }
 
@@ -1270,7 +1270,7 @@ void Checker::visit(AST::SwitchStatement& switchStatement)
             return matches(*valueType, *enumerationMemberLiteral.enumerationDefinition());
         }));
         if (!success) {
-            setError();
+            setError(Error("Invalid type for switch case.", switchCase.codeLocation()));
             return;
         }
     }
@@ -1284,7 +1284,7 @@ void Checker::visit(AST::SwitchStatement& switchStatement)
                 continue;
 
             if (!static_cast<bool>(firstCase.value())) {
-                setError();
+                setError(Error("Cannot define multiple default cases in switch statement.", secondCase.codeLocation()));
                 return;
             }
 
@@ -1316,7 +1316,7 @@ void Checker::visit(AST::SwitchStatement& switchStatement)
                 return true;
             }));
             if (!success) {
-                setError();
+                setError(Error("Cannot define duplicate case statements in a switch.", secondCase.codeLocation()));
                 return;
             }
         }
@@ -1356,7 +1356,7 @@ void Checker::visit(AST::SwitchStatement& switchStatement)
                 return false;
             });
             if (!success) {
-                setError();
+                setError(Error("Switch cases must be exhaustive or you must define a default case.", switchStatement.codeLocation()));
                 return;
             }
         } else {
@@ -1371,7 +1371,7 @@ void Checker::visit(AST::SwitchStatement& switchStatement)
             }
             for (auto& enumerationMember : downcast<AST::EnumerationDefinition>(*valueType).enumerationMembers()) {
                 if (!values.contains(&enumerationMember.get())) {
-                    setError();
+                    setError(Error("Switch cases over an enum must be exhaustive or you must define a default case.", switchStatement.codeLocation()));
                     return;
                 }
             }
@@ -1383,7 +1383,7 @@ void Checker::visit(AST::CommaExpression& commaExpression)
 {
     ASSERT(commaExpression.list().size() > 0);
     Visitor::visit(commaExpression);
-    if (error())
+    if (hasError())
         return;
     auto lastInfo = getInfo(commaExpression.list().last());
     forwardType(commaExpression, lastInfo->resolvingType);
@@ -1400,7 +1400,7 @@ void Checker::visit(AST::TernaryExpression& ternaryExpression)
     
     auto resultType = matchAndCommit(bodyInfo->resolvingType, elseInfo->resolvingType);
     if (!resultType) {
-        setError();
+        setError(Error("lhs and rhs of a ternary expression must match.", ternaryExpression.codeLocation()));
         return;
     }
 
@@ -1431,19 +1431,21 @@ void Checker::visit(AST::CallExpression& callExpression)
         }
     }
     if (!functions) {
-        setError();
+        setError(Error("Could not find any functions with appropriate name.", callExpression.codeLocation()));
         return;
     }
 
     auto* function = resolveFunction(m_program, functions, types, callExpression.name(), callExpression.codeLocation(), m_intrinsics, callExpression.castReturnType());
     if (!function) {
-        setError();
+        // FIXME: Add better error messages for why we can't resolve to one of the overrides.
+        // https://bugs.webkit.org/show_bug.cgi?id=200133
+        setError(Error("Cannot resolve function call to a concrete callee. Make sure you are using compatible types.", callExpression.codeLocation()));
         return;
     }
 
     for (size_t i = 0; i < function->parameters().size(); ++i) {
         if (!matchAndCommit(types[i].get(), *function->parameters()[i]->type())) {
-            setError();
+            setError(Error(makeString("Invalid type for parameter number ", i + 1, " in function call."), callExpression.codeLocation()));
             return;
         }
     }
@@ -1453,12 +1455,12 @@ void Checker::visit(AST::CallExpression& callExpression)
     assignType(callExpression, function->type().clone());
 }
 
-bool check(Program& program)
+Expected<void, Error> check(Program& program)
 {
     Checker checker(program.intrinsics(), program);
     checker.checkErrorAndVisit(program);
-    if (checker.error())
-        return false;
+    if (checker.hasError())
+        return checker.result();
     return checker.assignTypes();
 }
 

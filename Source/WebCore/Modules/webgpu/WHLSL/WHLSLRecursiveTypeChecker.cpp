@@ -57,7 +57,7 @@ do { \
         return; \
     auto resultStartedVisiting = m_startedVisiting.add(t); \
     if (!resultStartedVisiting.isNewEntry) { \
-        setError(); \
+        setError(Error("Cannot declare recursive types.", (t)->codeLocation())); \
         return; \
     } \
 } while (false);
@@ -102,14 +102,14 @@ void RecursiveTypeChecker::visit(AST::ReferenceType&)
 {
 }
 
-bool checkRecursiveTypes(Program& program)
+Expected<void, Error> checkRecursiveTypes(Program& program)
 {
     RecursiveTypeChecker recursiveTypeChecker;
     for (auto& typeDefinition : program.typeDefinitions())
         recursiveTypeChecker.checkErrorAndVisit(typeDefinition);
     for (auto& structureDefinition : program.structureDefinitions())
         recursiveTypeChecker.checkErrorAndVisit(structureDefinition);
-    return !recursiveTypeChecker.error();
+    return recursiveTypeChecker.result();
 }
 
 } // namespace WHLSL

@@ -62,27 +62,27 @@ NameResolver::NameResolver(NameResolver& parentResolver, NameContext& nameContex
 
 NameResolver::~NameResolver()
 {
-    if (error() && m_parentNameResolver)
-        m_parentNameResolver->setError();
+    if (hasError() && m_parentNameResolver)
+        m_parentNameResolver->setError(result().error());
 }
 
 void NameResolver::visit(AST::TypeReference& typeReference)
 {
     ScopedSetAdder<AST::TypeReference*> adder(m_typeReferences, &typeReference);
     if (!adder.isNewEntry()) {
-        setError();
+        setError(Error("Cannot use recursive type arguments.", typeReference.codeLocation()));
         return;
     }
 
     Visitor::visit(typeReference);
-    if (error())
+    if (hasError())
         return;
     if (typeReference.maybeResolvedType()) // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198161 Shouldn't we know by now whether the type has been resolved or not?
         return;
 
     auto* candidates = m_nameContext.getTypes(typeReference.name());
     if (candidates == nullptr) {
-        setError();
+        setError(Error("Cannot find type reference.", typeReference.codeLocation()));
         return;
     }
     for (auto& candidate : *candidates)
@@ -90,7 +90,7 @@ void NameResolver::visit(AST::TypeReference& typeReference)
     if (auto result = resolveTypeOverloadImpl(*candidates, typeReference.typeArguments()))
         typeReference.setResolvedType(*result);
     else {
-        setError();
+        setError(Error("Cannot resolve type arguments.", typeReference.codeLocation()));
         return;
     }
 }
@@ -100,7 +100,7 @@ void NameResolver::visit(AST::FunctionDefinition& functionDefinition)
     NameContext newNameContext(&m_nameContext);
     NameResolver newNameResolver(*this, newNameContext);
     checkErrorAndVisit(functionDefinition.type());
-    if (error())
+    if (hasError())
         return;
     for (auto& parameter : functionDefinition.parameters())
         newNameResolver.checkErrorAndVisit(parameter);
@@ -117,7 +117,7 @@ void NameResolver::visit(AST::Block& block)
 void NameResolver::visit(AST::IfStatement& ifStatement)
 {
     checkErrorAndVisit(ifStatement.conditional());
-    if (error())
+    if (hasError())
         return;
 
     {
@@ -125,7 +125,7 @@ void NameResolver::visit(AST::IfStatement& ifStatement)
         NameResolver newNameResolver(*this, nameContext);
         newNameResolver.checkErrorAndVisit(ifStatement.body());
     }
-    if (error())
+    if (hasError())
         return;
 
     if (ifStatement.elseBody()) {
@@ -138,7 +138,7 @@ void NameResolver::visit(AST::IfStatement& ifStatement)
 void NameResolver::visit(AST::WhileLoop& whileLoop)
 {
     checkErrorAndVisit(whileLoop.conditional());
-    if (error())
+    if (hasError())
         return;
 
     NameContext nameContext(&m_nameContext);
@@ -167,7 +167,7 @@ void NameResolver::visit(AST::ForLoop& forLoop)
 void NameResolver::visit(AST::VariableDeclaration& variableDeclaration)
 {
     if (!m_nameContext.add(variableDeclaration)) {
-        setError();
+        setError(Error("Cannot declare duplicate variables.", variableDeclaration.codeLocation()));
         return;
     }
     Visitor::visit(variableDeclaration);
@@ -181,7 +181,7 @@ void NameResolver::visit(AST::VariableReference& variableReference)
     if (auto* variable = m_nameContext.getVariable(variableReference.name()))
         variableReference.setVariable(*variable);
     else {
-        setError();
+        setError(Error("Cannot find the variable declaration.", variableReference.codeLocation()));
         return;
     }
 }
@@ -201,7 +201,7 @@ void NameResolver::visit(AST::DotExpression& dotExpression)
                     AST::replaceWith<AST::EnumerationMemberLiteral>(dotExpression, WTFMove(enumerationMemberLiteral));
                     return;
                 }
-                setError();
+                setError(Error("No enum member matches the used name.", dotExpression.codeLocation()));
                 return;
             }
         }
@@ -227,7 +227,7 @@ void NameResolver::visit(AST::EnumerationMemberLiteral& enumerationMemberLiteral
         }
     }
     
-    setError();
+    setError(Error("Cannot resolve enumeration member literal.", enumerationMemberLiteral.codeLocation()));
 }
 
 void NameResolver::visit(AST::NativeFunctionDeclaration& nativeFunctionDeclaration)
@@ -239,44 +239,44 @@ void NameResolver::visit(AST::NativeFunctionDeclaration& nativeFunctionDeclarati
 
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198167 Make sure all the names have been resolved.
 
-bool resolveNamesInTypes(Program& program, NameResolver& nameResolver)
+Expected<void, Error> resolveNamesInTypes(Program& program, NameResolver& nameResolver)
 {
     for (auto& typeDefinition : program.typeDefinitions()) {
         nameResolver.checkErrorAndVisit(typeDefinition);
-        if (nameResolver.error())
-            return false;
+        if (nameResolver.hasError())
+            return nameResolver.result();
     }
     for (auto& structureDefinition : program.structureDefinitions()) {
         nameResolver.checkErrorAndVisit(structureDefinition);
-        if (nameResolver.error())
-            return false;
+        if (nameResolver.hasError())
+            return nameResolver.result();
     }
     for (auto& enumerationDefinition : program.enumerationDefinitions()) {
         nameResolver.checkErrorAndVisit(enumerationDefinition);
-        if (nameResolver.error())
-            return false;
+        if (nameResolver.hasError())
+            return nameResolver.result();
     }
     for (auto& nativeTypeDeclaration : program.nativeTypeDeclarations()) {
         nameResolver.checkErrorAndVisit(nativeTypeDeclaration);
-        if (nameResolver.error())
-            return false;
+        if (nameResolver.hasError())
+            return nameResolver.result();
     }
-    return true;
+    return { };
 }
 
-bool resolveTypeNamesInFunctions(Program& program, NameResolver& nameResolver)
+Expected<void, Error> resolveTypeNamesInFunctions(Program& program, NameResolver& nameResolver)
 {
     for (auto& functionDefinition : program.functionDefinitions()) {
         nameResolver.checkErrorAndVisit(functionDefinition);
-        if (nameResolver.error())
-            return false;
+        if (nameResolver.hasError())
+            return nameResolver.result();
     }
     for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations()) {
         nameResolver.checkErrorAndVisit(nativeFunctionDeclaration);
-        if (nameResolver.error())
-            return false;
+        if (nameResolver.hasError())
+            return nameResolver.result();
     }
-    return true;
+    return { };
 }
 
 } // namespace WHLSL

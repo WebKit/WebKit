@@ -29,7 +29,6 @@
 
 #include "WHLSLExpression.h"
 #include "WHLSLFloatLiteralType.h"
-#include "WHLSLLexer.h"
 #include <wtf/FastMalloc.h>
 
 namespace WebCore {

@@ -76,7 +76,7 @@ static Optional<WHLSL::ComputeDimensions> trySetFunctions(const char* const func
 
         auto whlslCompileResult = WHLSL::prepare(whlslSource, *whlslDescriptor);
         if (!whlslCompileResult) {
-            errorScopes.generateError(makeString(functionName, ": WHLSL compilation failed!"));
+            errorScopes.generateError(makeString("WHLSL compilation failed. ", whlslCompileResult.error()));
             return WTF::nullopt;
         }
 

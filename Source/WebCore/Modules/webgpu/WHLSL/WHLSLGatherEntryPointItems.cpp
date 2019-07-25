@@ -58,6 +58,7 @@ public:
     void reset()
     {
         m_currentSemantic = nullptr;
+        m_currentVariableLocation = { };
     }
 
     Vector<EntryPointItem> takeEntryPointItems()
@@ -68,7 +69,7 @@ public:
     void visit(AST::EnumerationDefinition&)
     {
         if (!m_currentSemantic) {
-            setError();
+            setError(Error("Expected semantic for entrypoint argument.", m_currentVariableLocation));
             return;
         }
         m_entryPointItems.append(EntryPointItem(m_typeReferences.last().get(), *m_currentSemantic, m_path));
@@ -77,11 +78,11 @@ public:
     void visit(AST::NativeTypeDeclaration& nativeTypeDeclaration)
     {
         if (!m_currentSemantic) {
-            setError();
+            setError(Error("Expected semantic for entrypoint argument.", m_currentVariableLocation));
             return;
         }
         if (matches(nativeTypeDeclaration, m_intrinsics.voidType())) {
-            setError();
+            setError(Error("Unexpected void type for entrypoint argument.", m_currentVariableLocation));
             return;
         }
 
@@ -91,7 +92,7 @@ public:
     void visit(AST::StructureDefinition& structureDefinition)
     {
         if (m_currentSemantic) {
-            setError();
+            setError(Error("Unexpected semantic for struct entrypoint argument.", m_currentVariableLocation));
             return;
         }
 
@@ -121,7 +122,7 @@ public:
     void visit(AST::PointerType& pointerType)
     {
         if (!m_currentSemantic) {
-            setError();
+            setError(Error("Expected semantic for entrypoint argument.", m_currentVariableLocation));
             return;
         }
         m_entryPointItems.append(EntryPointItem(pointerType, *m_currentSemantic, m_path));
@@ -130,7 +131,7 @@ public:
     void visit(AST::ArrayReferenceType& arrayReferenceType)
     {
         if (!m_currentSemantic) {
-            setError();
+            setError(Error("Expected semantic for entrypoint argument.", m_currentVariableLocation));
             return;
         }
         m_entryPointItems.append(EntryPointItem(arrayReferenceType, *m_currentSemantic, m_path));
@@ -139,7 +140,7 @@ public:
     void visit(AST::ArrayType& arrayType)
     {
         if (!m_currentSemantic) {
-            setError();
+            setError(Error("Expected semantic for entrypoint argument.", m_currentVariableLocation));
             return;
         }
         m_entryPointItems.append(EntryPointItem(arrayType, *m_currentSemantic, m_path));
@@ -148,6 +149,7 @@ public:
     void visit(AST::VariableDeclaration& variableDeclaration)
     {
         ASSERT(!m_currentSemantic);
+        m_currentVariableLocation = variableDeclaration.codeLocation();
         if (variableDeclaration.semantic())
             m_currentSemantic = variableDeclaration.semantic();
         ASSERT(variableDeclaration.type());
@@ -160,25 +162,26 @@ private:
     Vector<String> m_path;
     const Intrinsics& m_intrinsics;
     AST::Semantic* m_currentSemantic { nullptr };
+    CodeLocation m_currentVariableLocation;
     Vector<std::reference_wrapper<AST::TypeReference>> m_typeReferences;
     Vector<EntryPointItem> m_entryPointItems;
 };
 
-Optional<EntryPointItems> gatherEntryPointItems(const Intrinsics& intrinsics, AST::FunctionDefinition& functionDefinition)
+Expected<EntryPointItems, Error> gatherEntryPointItems(const Intrinsics& intrinsics, AST::FunctionDefinition& functionDefinition)
 {
     ASSERT(functionDefinition.entryPointType());
     Gatherer inputGatherer(intrinsics);
     for (auto& parameter : functionDefinition.parameters()) {
         inputGatherer.reset();
         inputGatherer.checkErrorAndVisit(parameter);
-        if (inputGatherer.error())
-            return WTF::nullopt;
+        if (inputGatherer.hasError())
+            return makeUnexpected(inputGatherer.result().error());
     }
     Gatherer outputGatherer(intrinsics, functionDefinition.semantic());
     if (*functionDefinition.entryPointType() != AST::EntryPointType::Compute)
         outputGatherer.checkErrorAndVisit(functionDefinition.type());
-    if (outputGatherer.error())
-        return WTF::nullopt;
+    if (outputGatherer.hasError())
+        return makeUnexpected(outputGatherer.result().error());
 
     return {{ inputGatherer.takeEntryPointItems(), outputGatherer.takeEntryPointItems() }};
 }

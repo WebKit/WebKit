@@ -92,7 +92,7 @@ private:
     void visit(AST::DoWhileLoop& doWhileLoop) override
     {
         checkErrorAndVisit(doWhileLoop.body());
-        if (error())
+        if (hasError())
             return;
         auto b = m_stack.takeLast();
         b.remove(Behavior::Break);
@@ -107,7 +107,7 @@ private:
         // so we can just ignore the initialization.
 
         checkErrorAndVisit(forLoop.body());
-        if (error())
+        if (hasError())
             return;
         auto b = m_stack.takeLast();
         b.remove(Behavior::Break);
@@ -119,7 +119,7 @@ private:
     void visit(AST::WhileLoop& whileLoop) override
     {
         checkErrorAndVisit(whileLoop.body());
-        if (error())
+        if (hasError())
             return;
         auto b = m_stack.takeLast();
         b.remove(Behavior::Break);
@@ -143,13 +143,13 @@ private:
         OptionSet<Behavior> reduction = { };
         for (auto& switchCase : switchStatement.switchCases()) {
             checkErrorAndVisit(switchCase);
-            if (error())
+            if (hasError())
                 return;
             auto b = m_stack.takeLast();
             reduction = reduction | b;
         }
         if (reduction.contains(Behavior::Nothing)) {
-            setError();
+            setError(Error("Switch statement must end in a break/fallthrough/return", switchStatement.codeLocation()));
             return;
         }
         reduction.remove(Behavior::Break);
@@ -161,13 +161,13 @@ private:
     void visit(AST::IfStatement& ifStatement) override
     {
         checkErrorAndVisit(ifStatement.body());
-        if (error())
+        if (hasError())
             return;
         auto b = m_stack.takeLast();
         OptionSet<Behavior> bPrime;
         if (ifStatement.elseBody()) {
             checkErrorAndVisit(*ifStatement.elseBody());
-            if (error())
+            if (hasError())
                 return;
             bPrime = m_stack.takeLast();
         } else
@@ -190,22 +190,22 @@ private:
         OptionSet<Behavior> reduction = { };
         for (size_t i = 0; i < block.statements().size() - 1; ++i) {
             checkErrorAndVisit(block.statements()[i]);
-            if (error())
+            if (hasError())
                 return;
             auto b = m_stack.takeLast();
             if (!b.contains(Behavior::Nothing)) {
-                setError();
+                setError(Error("Statement inside an inner block must be reachable.", block.statements()[i]->codeLocation()));
                 return;
             }
             b.remove(Behavior::Nothing);
             if (b.contains(Behavior::Fallthrough)) {
-                setError();
+                setError(Error("Fallthrough must be the last statement in a block.", block.statements()[i]->codeLocation()));
                 return;
             }
             reduction = reduction | b;
         }
         checkErrorAndVisit(block.statements()[block.statements().size() - 1]);
-        if (error())
+        if (hasError())
             return;
         auto b = m_stack.takeLast();
         m_stack.append(reduction | b);
@@ -219,25 +219,25 @@ private:
     Vector<OptionSet<Behavior>> m_stack;
 };
 
-bool checkStatementBehavior(Program& program)
+Expected<void, Error> checkStatementBehavior(Program& program)
 {
     StatementBehaviorChecker statementBehaviorChecker;
     for (auto& functionDefinition : program.functionDefinitions()) {
         statementBehaviorChecker.Visitor::visit(functionDefinition);
-        if (statementBehaviorChecker.error())
-            return false;
+        if (statementBehaviorChecker.hasError())
+            return statementBehaviorChecker.result();
         auto behavior = statementBehaviorChecker.takeFunctionBehavior();
         if (matches(functionDefinition->type(), program.intrinsics().voidType())) {
             behavior.remove(StatementBehaviorChecker::Behavior::Return);
             behavior.remove(StatementBehaviorChecker::Behavior::Nothing);
             if (behavior != OptionSet<StatementBehaviorChecker::Behavior>())
-                return false;
+                return makeUnexpected(Error("Cannot end a void function with a break, continue, or fallthrough."));
         } else {
             if (behavior != StatementBehaviorChecker::Behavior::Return)
-                return false;
+                return makeUnexpected(Error("Non-void functions must return a value on all code paths."));
         }
     }
-    return true;
+    return { };
 }
 
 } // namespace WHLSL

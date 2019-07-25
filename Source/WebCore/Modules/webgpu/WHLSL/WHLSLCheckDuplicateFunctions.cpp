@@ -115,9 +115,9 @@ private:
     const AST::FunctionDeclaration* m_function { nullptr };
 };
 
-bool checkDuplicateFunctions(const Program& program)
+Expected<void, Error> checkDuplicateFunctions(const Program& program)
 {
-    auto passesStaticChecks = [&] (const AST::FunctionDeclaration& function) {
+    auto passesStaticChecks = [&] (const AST::FunctionDeclaration& function) -> Expected<void, Error> {
         if (function.name() == "operator&[]" && function.parameters().size() == 2
             && is<AST::ArrayReferenceType>(static_cast<const AST::UnnamedType&>(*function.parameters()[0]->type()))) {
             auto& type = static_cast<const AST::UnnamedType&>(*function.parameters()[1]->type());
@@ -127,44 +127,45 @@ bool checkDuplicateFunctions(const Program& program)
                     if (is<AST::NativeTypeDeclaration>(*resolvedType)) {
                         auto& nativeTypeDeclaration = downcast<AST::NativeTypeDeclaration>(*resolvedType);
                         if (nativeTypeDeclaration.name() == "uint")
-                            return false;
+                            return makeUnexpected(Error("Cannot define array reference ander."));
                     }
                 }
             }
         } else if (function.name() == "operator.length" && function.parameters().size() == 1
             && (is<AST::ArrayReferenceType>(static_cast<const AST::UnnamedType&>(*function.parameters()[0]->type()))
             || is<AST::ArrayType>(static_cast<const AST::UnnamedType&>(*function.parameters()[0]->type()))))
-            return false;
+            return makeUnexpected(Error("Cannot define operator.length for an array."));
         else if (function.name() == "operator=="
             && function.parameters().size() == 2
             && is<AST::ReferenceType>(static_cast<const AST::UnnamedType&>(*function.parameters()[0]->type()))
             && is<AST::ReferenceType>(static_cast<const AST::UnnamedType&>(*function.parameters()[1]->type()))
             && matches(*function.parameters()[0]->type(), *function.parameters()[1]->type()))
-            return false;
+            return makeUnexpected(Error("Cannot define operator== on two reference types."));
         else if (function.isCast() && function.parameters().isEmpty()) {
             auto& unifyNode = function.type().unifyNode();
             if (is<AST::NamedType>(unifyNode) && is<AST::NativeTypeDeclaration>(downcast<AST::NamedType>(unifyNode))) {
                 auto& nativeTypeDeclaration = downcast<AST::NativeTypeDeclaration>(downcast<AST::NamedType>(unifyNode));
                 if (nativeTypeDeclaration.isOpaqueType())
-                    return false;
+                    return makeUnexpected(Error("Cannot define a cast on an opaque type."));
             }
         }
 
-        return true;
+        return { };
     };
 
     HashSet<DuplicateFunctionKey, DuplicateFunctionKey::Hash, DuplicateFunctionKey::Traits> functions;
 
-    auto add = [&] (const AST::FunctionDeclaration& function) {
+    auto add = [&] (const AST::FunctionDeclaration& function) -> Expected<void, Error> {
         auto addResult = functions.add(DuplicateFunctionKey { function });
         if (!addResult.isNewEntry)
-            return false;
+            return makeUnexpected(Error("Found duplicate function"));
         return passesStaticChecks(function);
     };
 
     for (auto& functionDefinition : program.functionDefinitions()) {
-        if (!add(functionDefinition.get()))
-            return false;
+        auto addResult = add(functionDefinition.get());
+        if (!addResult)
+            return addResult;
     }
 
     for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations()) {
@@ -180,10 +181,10 @@ bool checkDuplicateFunctions(const Program& program)
         // https://bugs.webkit.org/show_bug.cgi?id=198861
         // ASSERT(passesStaticChecks(nativeFunctionDeclaration.get()));
         if (functions.contains(DuplicateFunctionKey { nativeFunctionDeclaration.get() }))
-            return false;
+            return makeUnexpected(Error("Duplicate native function."));
     }
 
-    return true;
+    return { };
 }
 
 } // namespace WHLSL
