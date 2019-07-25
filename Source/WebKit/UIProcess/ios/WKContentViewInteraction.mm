@@ -849,6 +849,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     _outstandingPositionInformationRequest = WTF::nullopt;
 
     _focusRequiresStrongPasswordAssistance = NO;
+    _additionalContextForStrongPasswordAssistance = nil;
     _waitingForEditDragSnapshot = NO;
 
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
@@ -5313,8 +5314,14 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     [_webView _resetFocusPreservationCount];
 
     _focusRequiresStrongPasswordAssistance = NO;
+    _additionalContextForStrongPasswordAssistance = nil;
     if ([inputDelegate respondsToSelector:@selector(_webView:focusRequiresStrongPasswordAssistance:)])
         _focusRequiresStrongPasswordAssistance = [inputDelegate _webView:_webView focusRequiresStrongPasswordAssistance:focusedElementInfo.get()];
+
+    if ([inputDelegate respondsToSelector:@selector(_webViewAdditionalContextForStrongPasswordAssistance:)])
+        _additionalContextForStrongPasswordAssistance = [inputDelegate _webViewAdditionalContextForStrongPasswordAssistance:_webView];
+    else
+        _additionalContextForStrongPasswordAssistance = @{ };
 
     bool delegateImplementsWillStartInputSession = [inputDelegate respondsToSelector:@selector(_webView:willStartInputSession:)];
     bool delegateImplementsDidStartInputSession = [inputDelegate respondsToSelector:@selector(_webView:didStartInputSession:)];
@@ -5403,6 +5410,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     _focusedElementInformation.shouldAvoidScrollingWhenFocusedContentIsVisible = false;
     _inputPeripheral = nil;
     _focusRequiresStrongPasswordAssistance = NO;
+    _additionalContextForStrongPasswordAssistance = nil;
 
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
     // When defocusing an editable element reset a seen keydown before calling -_hideKeyboard so that we
@@ -6777,7 +6785,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         return nil;
 
     if (provideStrongPasswordAssistance)
-        return @{ @"_automaticPasswordKeyboard" : @YES };
+        return @{ @"_automaticPasswordKeyboard" : @YES, @"strongPasswordAdditionalContext" : _additionalContextForStrongPasswordAssistance.get() };
 
     NSURL *platformURL = _focusedElementInformation.representingPageURL;
     if (platformURL)

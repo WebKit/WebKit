@@ -1,3 +1,35 @@
+2019-07-24  Priyanka Agarwal  <pagarwal999@apple.com>
+
+        Allow Clients to Add Fields to the AutoFillContext Dictionary.
+        https://bugs.webkit.org/show_bug.cgi?id=199326
+        rdar://problem/42816957
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (TestWebKitAPI::TEST): Created a test to check that the auto fill context
+        is being properly populated with additional context dictionary.
+
+        * TestWebKitAPI/Tests/ios/TestInputDelegate.h:
+        * TestWebKitAPI/Tests/ios/TestInputDelegate.mm:
+        (-[TestInputDelegate setWebViewAdditionalContextForStrongPasswordAssistanceHandler:]): Setting the handler for the function
+        which will populate the additional autofill context dictionary.
+
+        (-[TestInputDelegate webViewAdditionalContextForStrongPasswordAssistanceHandler]): Returns the handler for the function which
+        populates the additional autofill context dictionary.
+
+        (-[TestInputDelegate _webViewAdditionalContextForStrongPasswordAssistance:]): Function which populates the additional autofill
+        context dictionary.
+
+        (-[TestInputDelegate setFocusRequiresStrongPasswordAssistanceHandler:]): Setting the handler for the function which checks if the 
+        input field requires strong password work.
+
+        (-[TestInputDelegate focusRequiresStrongPasswordAssistanceHandler]): Returns the handler for the function which checks if the
+        input field requires strong password work.
+
+        (-[TestInputDelegate _webView:focusRequiresStrongPasswordAssistance:]): Function which checks if the input field requires strong
+        password work.
+
 2019-07-24  Zhifei Fang  <zhifei_fang@apple.com>
 
         run-javascriptcore-tests won't report test results for testmasm, testair, testb3, testdfg and test api

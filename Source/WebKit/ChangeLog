@@ -1,3 +1,24 @@
+2019-07-24  Priyanka Agarwal  <pagarwal999@apple.com>
+
+        Allow Clients to Add Fields to the AutoFillContext Dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=199326
+        rdar://problem/42816957
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/_WKInputDelegate.h:
+        Added function declaration for function which returns additional dictionary for autofillcontext
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        Created dictionary for additional autofillcontext
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+        Populating additional dictionary for autofillcontext
+
+        (-[WKContentView _autofillContext]):
+        Adding new dictionary to the returned autofillcontext
+
 2019-07-24  Chris Dumez  <cdumez@apple.com>
 
         Regression(r247400): Unable to log into AIB Mobile Banking App

@@ -527,6 +527,34 @@ TEST(KeyboardInputTests, SelectionClipRectsWhenPresentingInputView)
     EXPECT_EQ(20, selectionClipRect.size.height);
 }
 
+TEST(KeyboardInputTests, TestWebViewAdditionalContextForStrongPasswordAssistance)
+{
+    NSDictionary *expected = @{ @"strongPasswordAdditionalContext" : @"testUUID" };
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    [inputDelegate setWebViewAdditionalContextForStrongPasswordAssistanceHandler:[&] (WKWebView *) {
+        return expected;
+    }];
+
+    [inputDelegate setFocusRequiresStrongPasswordAssistanceHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) {
+        return YES;
+    }];
+
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<input type='password' id='input'>"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.getElementById('input').focus()"];
+
+    NSDictionary *actual = [[webView textInputContentView] _autofillContext];
+    EXPECT_TRUE([[actual allValues] containsObject:expected]);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)
