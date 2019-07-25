@@ -36,12 +36,16 @@ set(WebKitTestNetscapePlugIn_INCLUDE_DIRECTORIES
     ${WTF_DIR}
 )
 
+set(WebKitTestNetscapePlugIn_LIBRARIES
+    WebKit::WTF
+)
+
 if (MOZ_X11)
     set(WebKitTestNetscapePlugIn_SYSTEM_INCLUDE_DIRECTORIES
         ${X11_INCLUDE_DIR}
     )
 
-    set(WebKitTestNetscapePlugIn_LIBRARIES
+    list(APPEND WebKitTestNetscapePlugIn_LIBRARIES
         ${X11_LIBRARIES}
     )
 

@@ -1,3 +1,20 @@
+2019-07-24  Fujii Hironori  <fujii.hironori@gmail.com>
+
+        [CMake] CMAKE_SHARED_LINKER_FLAGS drops "-Wl,--no-undefined"
+        https://bugs.webkit.org/show_bug.cgi?id=200074
+
+        Reviewed by Michael Catanzaro.
+
+        Although WebKitCompilerFlags.cmake adds "-Wl,--no-undefined" to
+        CMAKE_SHARED_LINKER_FLAGS, it wasn't effective because
+        OptionsCommon.cmake inadvertently override the value with
+        CMAKE_EXE_LINKER_FLAGS as:
+
+        > set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ...")
+
+        * Source/cmake/OptionsCommon.cmake: Use string(APPEND) to modify
+        CMAKE_*_LINKER_FLAGS variables to avoid typos.
+
 2019-07-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.25.3 release

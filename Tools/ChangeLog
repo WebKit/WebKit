@@ -1,5 +1,18 @@
 2019-07-24  Fujii Hironori  <fujii.hironori@gmail.com>
 
+        [CMake] CMAKE_SHARED_LINKER_FLAGS drops "-Wl,--no-undefined"
+        https://bugs.webkit.org/show_bug.cgi?id=200074
+
+        Reviewed by Michael Catanzaro.
+
+        There was a latent issue. PluginTest::indicateTestFailure was
+        using WTF::sleep without linking WTF.
+
+        * DumpRenderTree/TestNetscapePlugIn/CMakeLists.txt:
+        Added WebKit::WTF to WebKitTestNetscapePlugIn_LIBRARIES.
+
+2019-07-24  Fujii Hironori  <fujii.hironori@gmail.com>
+
         [GTK][WPE][CMake] failing to build TestWebKitAPIInjectedBundle due to missing forwarding headers
         https://bugs.webkit.org/show_bug.cgi?id=200073
 
