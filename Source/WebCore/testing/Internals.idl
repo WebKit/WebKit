@@ -781,6 +781,4 @@ enum CompositingPolicy {
     void setIsPlayingToAutomotiveHeadUnit(boolean value);
 
     TextIndicatorInfo textIndicatorForRange(Range range, TextIndicatorOptions options);
-
-    void addPrefetchLoadEventListener(HTMLLinkElement link, EventListener? callback);
 };

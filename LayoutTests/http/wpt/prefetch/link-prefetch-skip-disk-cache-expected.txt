@@ -1,3 +1,0 @@
-
-PASS Verify that navigating to a main resource can skip disk cache. 
-

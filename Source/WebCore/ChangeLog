@@ -1,3 +1,16 @@
+2019-07-25  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r247821.
+
+        Caused two crashing Layout Tests
+
+        Reverted changeset:
+
+        "Make storing cross-origin top-level prefetches in HTTP cache
+        optional"
+        https://bugs.webkit.org/show_bug.cgi?id=199499
+        https://trac.webkit.org/changeset/247821
+
 2019-07-25  Chris Dumez  <cdumez@apple.com>
 
         Avoid UI Process hangs when the WebContent process is showing JS prompts / alerts

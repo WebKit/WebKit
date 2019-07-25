@@ -48,7 +48,7 @@ public:
     virtual ~HTMLLinkElement();
 
     URL href() const;
-    WEBCORE_EXPORT const AtomString& rel() const;
+    const AtomString& rel() const;
 
     String target() const final;
 
