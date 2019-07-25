@@ -78,7 +78,7 @@ void WebPluginInfoProvider::setPluginLoadClientPolicy(WebCore::PluginLoadClientP
         versionsToPolicies = policiesByIdentifier.get(bundleIdentifierToSet);
 
     versionsToPolicies.set(versionStringToSet, clientPolicy);
-    policiesByIdentifier.set(bundleIdentifierToSet, versionsToPolicies);
+    policiesByIdentifier.set(bundleIdentifierToSet, WTFMove(versionsToPolicies));
     m_hostsToPluginIdentifierData.set(hostToSet, policiesByIdentifier);
 
     clearPagesPluginData();

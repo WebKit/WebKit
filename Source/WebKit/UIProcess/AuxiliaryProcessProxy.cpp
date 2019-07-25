@@ -86,7 +86,7 @@ void AuxiliaryProcessProxy::connect()
     ASSERT(!m_processLauncher);
     ProcessLauncher::LaunchOptions launchOptions;
     getLaunchOptions(launchOptions);
-    m_processLauncher = ProcessLauncher::create(this, launchOptions);
+    m_processLauncher = ProcessLauncher::create(this, WTFMove(launchOptions));
 }
 
 void AuxiliaryProcessProxy::terminate()

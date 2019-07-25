@@ -83,9 +83,9 @@ public:
 #endif
     };
 
-    static Ref<ProcessLauncher> create(Client* client, const LaunchOptions& launchOptions)
+    static Ref<ProcessLauncher> create(Client* client, LaunchOptions&& launchOptions)
     {
-        return adoptRef(*new ProcessLauncher(client, launchOptions));
+        return adoptRef(*new ProcessLauncher(client, WTFMove(launchOptions)));
     }
 
     bool isLaunching() const { return m_isLaunching; }
@@ -95,7 +95,7 @@ public:
     void invalidate();
 
 private:
-    ProcessLauncher(Client*, const LaunchOptions& launchOptions);
+    ProcessLauncher(Client*, LaunchOptions&&);
 
     void launchProcess();
     void didFinishLaunchingProcess(ProcessID, IPC::Connection::Identifier);

@@ -1,3 +1,13 @@
+2019-07-25  Chris Dumez  <cdumez@apple.com>
+
+        Avoid some unnecessary HashMap copies
+        https://bugs.webkit.org/show_bug.cgi?id=200129
+
+        Reviewed by Youenn Fablet.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::addRegistrationFromStore):
+
 2019-07-25  Joshua Watt  <JPEW.hacker@gmail.com>
 
         [WPE] Draw other button types

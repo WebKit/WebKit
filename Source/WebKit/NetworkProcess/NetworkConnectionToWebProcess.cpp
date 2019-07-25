@@ -312,11 +312,9 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-    auto idbConnections = m_webIDBConnections;
+    auto idbConnections = std::exchange(m_webIDBConnections, { });
     for (auto& connection : idbConnections.values())
         connection->disconnectedFromWebProcess();
-
-    m_webIDBConnections.clear();
 #endif
     
 #if ENABLE(SERVICE_WORKER)

@@ -1,3 +1,21 @@
+2019-07-25  Chris Dumez  <cdumez@apple.com>
+
+        Avoid some unnecessary HashMap copies
+        https://bugs.webkit.org/show_bug.cgi?id=200129
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::connect):
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::ProcessLauncher):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        (WebKit::ProcessLauncher::create):
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp:
+        (WebKit::WebPluginInfoProvider::setPluginLoadClientPolicy):
+
 2019-07-25  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r247821.
