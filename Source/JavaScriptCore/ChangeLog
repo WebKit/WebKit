@@ -1,5 +1,19 @@
 2019-07-24  Mark Lam  <mark.lam@apple.com>
 
+        Remove some unused code.
+        https://bugs.webkit.org/show_bug.cgi?id=200101
+
+        Reviewed by Yusuke Suzuki.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::zap): Deleted.
+        * heap/MarkedBlock.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendToMutatorMarkStack): Deleted.
+        * heap/SlotVisitor.h:
+
+2019-07-24  Mark Lam  <mark.lam@apple.com>
+
         performJITMemcpy should be PACed with a non-zero diversifier when passed and called via a pointer.
         https://bugs.webkit.org/show_bug.cgi?id=200100
         <rdar://problem/53474939>

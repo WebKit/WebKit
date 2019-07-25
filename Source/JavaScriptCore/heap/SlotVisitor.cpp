@@ -296,11 +296,6 @@ ALWAYS_INLINE void SlotVisitor::appendToMarkStack(ContainerType& container, JSCe
     m_collectorStack.append(cell);
 }
 
-void SlotVisitor::appendToMutatorMarkStack(const JSCell* cell)
-{
-    m_mutatorStack.append(cell);
-}
-
 void SlotVisitor::markAuxiliary(const void* base)
 {
     HeapCell* cell = bitwise_cast<HeapCell*>(base);
