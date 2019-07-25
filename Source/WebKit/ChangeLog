@@ -1,5 +1,20 @@
 2019-07-25  Dean Jackson  <dino@apple.com>
 
+        WebKit/UIProcess/ios/WKContentViewInteraction.mm: error: implementing deprecated method contextMenuInteractionWillPresent
+        https://bugs.webkit.org/show_bug.cgi?id=200136
+        <rdar://problem/53547698>
+
+        Reviewed by Wenson Hsieh.
+
+        Ignore deprecation warnings for these UIContextMenuInteraction delegates.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView contextMenuInteractionWillPresent:]):
+        (-[WKContentView contextMenuInteraction:willCommitWithAnimator:]):
+        (-[WKContentView contextMenuInteractionDidEnd:]):
+
+2019-07-25  Dean Jackson  <dino@apple.com>
+
         Add helper for ignoring deprecated implementation warnings
         https://bugs.webkit.org/show_bug.cgi?id=200135
 
