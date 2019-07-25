@@ -214,8 +214,9 @@ JSValue SparseArrayEntry::getNonSparseMode() const
 
 void SparseArrayValueMap::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    Base::visitChildren(cell, visitor);
     SparseArrayValueMap* thisObject = jsCast<SparseArrayValueMap*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(cell, visitor);
     {
         auto locker = holdLock(thisObject->cellLock());
         for (auto& entry : thisObject->m_map)

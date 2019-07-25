@@ -74,6 +74,7 @@ void JSModuleRecord::finishCreation(ExecState* exec, VM& vm)
 void JSModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSModuleRecord* thisObject = jsCast<JSModuleRecord*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_moduleProgramExecutable);
 }

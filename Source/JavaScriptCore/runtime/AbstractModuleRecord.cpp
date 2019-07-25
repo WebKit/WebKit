@@ -71,6 +71,7 @@ void AbstractModuleRecord::finishCreation(ExecState* exec, VM& vm)
 void AbstractModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     AbstractModuleRecord* thisObject = jsCast<AbstractModuleRecord*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_moduleEnvironment);
     visitor.append(thisObject->m_moduleNamespaceObject);

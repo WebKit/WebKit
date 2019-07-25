@@ -164,6 +164,7 @@ void JSArrayBufferView::finishCreation(VM& vm)
 void JSArrayBufferView::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(cell, visitor);
 
     if (thisObject->hasArrayBuffer()) {

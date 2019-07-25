@@ -55,6 +55,7 @@ void ExecutableToCodeBlockEdge::visitChildren(JSCell* cell, SlotVisitor& visitor
 {
     VM& vm = visitor.vm();
     ExecutableToCodeBlockEdge* edge = jsCast<ExecutableToCodeBlockEdge*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(cell, info());
     Base::visitChildren(cell, visitor);
 
     CodeBlock* codeBlock = edge->m_codeBlock.get();

@@ -48,6 +48,7 @@ void StructureChain::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     StructureChain* thisObject = jsCast<StructureChain*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
     if (WriteBarrier<Structure>* vector = thisObject->m_vector.get()) {
         size_t i = 0;
         while (vector[i])

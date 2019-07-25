@@ -95,6 +95,7 @@ void SymbolTable::finishCreation(VM& vm)
 void SymbolTable::visitChildren(JSCell* thisCell, SlotVisitor& visitor)
 {
     SymbolTable* thisSymbolTable = jsCast<SymbolTable*>(thisCell);
+    ASSERT_GC_OBJECT_INHERITS(thisSymbolTable, info());
     Base::visitChildren(thisSymbolTable, visitor);
 
     visitor.append(thisSymbolTable->m_arguments);

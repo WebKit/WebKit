@@ -87,8 +87,9 @@ void JSPropertyNameEnumerator::destroy(JSCell* cell)
 
 void JSPropertyNameEnumerator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    Base::visitChildren(cell, visitor);
     JSPropertyNameEnumerator* thisObject = jsCast<JSPropertyNameEnumerator*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(cell, visitor);
     auto locker = holdLock(thisObject->cellLock());
     for (auto& propertyName : thisObject->m_propertyNames)
         visitor.append(propertyName);

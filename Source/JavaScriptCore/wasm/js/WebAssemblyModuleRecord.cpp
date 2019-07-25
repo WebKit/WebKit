@@ -81,6 +81,7 @@ void WebAssemblyModuleRecord::finishCreation(ExecState* exec, VM& vm, const Wasm
 void WebAssemblyModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     WebAssemblyModuleRecord* thisObject = jsCast<WebAssemblyModuleRecord*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_instance);
     visitor.append(thisObject->m_startFunction);

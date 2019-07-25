@@ -222,6 +222,7 @@ public:
 
     static void visitChildren(JSCell* thisObject, SlotVisitor& visitor)
     {
+        ASSERT_GC_OBJECT_INHERITS(thisObject, info());
         Base::visitChildren(thisObject, visitor);
         visitor.addOpaqueRoot(thisObject);
     }
@@ -325,6 +326,7 @@ public:
 
     static void visitChildren(JSCell* cell, SlotVisitor& visitor)
     {
+        ASSERT_GC_OBJECT_INHERITS(cell, info());
         Base::visitChildren(cell, visitor);
         ImpureGetter* thisObject = jsCast<ImpureGetter*>(cell);
         visitor.append(thisObject->m_delegate);

@@ -70,6 +70,7 @@ void JSModuleEnvironment::finishCreation(VM& vm, JSValue initialValue, AbstractM
 void JSModuleEnvironment::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSModuleEnvironment* thisObject = jsCast<JSModuleEnvironment*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.appendValues(thisObject->variables(), thisObject->symbolTable()->scopeSize());
     visitor.append(thisObject->moduleRecordSlot());

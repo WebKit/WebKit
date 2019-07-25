@@ -113,6 +113,7 @@ size_t JSString::estimatedSize(JSCell* cell, VM& vm)
 void JSString::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSString* thisObject = asString(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     
     uintptr_t pointer = thisObject->m_fiber;

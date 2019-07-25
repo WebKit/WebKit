@@ -34,6 +34,7 @@ const ClassInfo JSImmutableButterfly::s_info = { "Immutable Butterfly", nullptr,
 
 void JSImmutableButterfly::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
+    ASSERT_GC_OBJECT_INHERITS(cell, info());
     Base::visitChildren(cell, visitor);
     if (!hasContiguous(cell->indexingType())) {
         ASSERT(hasDouble(cell->indexingType()) || hasInt32(cell->indexingType()));

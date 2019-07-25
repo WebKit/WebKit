@@ -516,6 +516,7 @@ template<typename Adaptor>
 void JSGenericTypedArrayView<Adaptor>::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
     TypedArrayMode mode;

@@ -1,3 +1,47 @@
+2019-07-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make visitChildren implementation more idiomatic
+        https://bugs.webkit.org/show_bug.cgi?id=200121
+
+        Reviewed by Mark Lam.
+
+        This patch makes visitChildren implementations more idiomatic: cast, assert, and calling Base::visitChildren.
+        While this does not find interesting issues, it is still nice to have consistent implementations.
+        StructureChain::visitChildren missed Base::visitChildren, but it does not have much effect since StructureChain
+        is immortal cell.
+
+        * bytecode/ExecutableToCodeBlockEdge.cpp:
+        (JSC::ExecutableToCodeBlockEdge::visitChildren):
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::visitChildren):
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::visitChildren):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::visitChildren):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren):
+        * runtime/JSImmutableButterfly.cpp:
+        (JSC::JSImmutableButterfly::visitChildren):
+        * runtime/JSModuleEnvironment.cpp:
+        (JSC::JSModuleEnvironment::visitChildren):
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::visitChildren):
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::visitChildren):
+        * runtime/JSString.cpp:
+        (JSC::JSString::visitChildren):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::visitChildren):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::visitChildren):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::visitChildren):
+        * tools/JSDollarVM.cpp:
+        (JSC::Root::visitChildren):
+        (JSC::ImpureGetter::visitChildren):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::visitChildren):
+
 2019-07-25  Ross Kirsling  <ross.kirsling@sony.com>
 
         [ESNext] Implement nullish coalescing
