@@ -194,22 +194,17 @@ class Dot {
             return render('dot success');
 
         let key = 'failed';
-        let value = this.failed - this.timeout;
-        if (this.timeout) {
+        if (this.timeout)
             key = 'timeout';
-            value = this.timeout - this.crash;
-        }
-        if (this.crash) {
+        if (this.crash)
             key = 'crash';
-            value = this.timeout;
-        }
 
         if (!this.combined)
-            return render(`dot ${key}`, `<div class="tag" style="color:var(--boldInverseColor)">${value}</div>`);
+            return render(`dot ${key}`, `<div class="tag" style="color:var(--boldInverseColor)">${this.failed}</div>`);
 
         return render(`dot ${key}`, `<div class="tag" style="color:var(--boldInverseColor)">
                 ${function() {
-                    let percent = Math.ceil(value / self.count * 100 - .5);
+                    let percent = Math.ceil(this.failed / self.count * 100 - .5);
                     if (percent > 0)
                         return percent;
                     return '<1';

@@ -1,3 +1,13 @@
+2019-07-25  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Color should be the worst result, count should include all results
+        https://bugs.webkit.org/show_bug.cgi?id=200127
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (Dot.prototype.toString): Do not differentiate the count based on the prevailing failure type.
+
 2019-07-25  Zhifei Fang  <zhifei_fang@apple.com>
 
         [Timeline]: Make timeline header width automatic, instead of fixed width
