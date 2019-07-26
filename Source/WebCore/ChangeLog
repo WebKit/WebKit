@@ -1,3 +1,20 @@
+2019-07-25  Tim Horton  <timothy_horton@apple.com>
+
+        Subpixel fringes around TextIndicator snapshots at non-integral scale factors
+        https://bugs.webkit.org/show_bug.cgi?id=200145
+
+        Reviewed by Simon Fraser.
+
+        * page/FrameSnapshotting.cpp:
+        (WebCore::snapshotFrameRectWithClip):
+        * page/FrameSnapshotting.h:
+        * page/TextIndicator.cpp:
+        (WebCore::snapshotOptionsForTextIndicatorOptions):
+        Round the scale factor up, and snappily enclose the clip rects.
+
+        TextIndicator doesn't require the use of the precise scale factor that
+        the page is painted at, but we want it to be sharp, so we overshoot!
+
 2019-07-25  Brent Fulgham  <bfulgham@apple.com>
 
         Use IWICBitmap (rather than ID2D1Bitmap) for NativeImagePtr on FTW

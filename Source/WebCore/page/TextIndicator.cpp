@@ -132,7 +132,7 @@ static bool hasNonInlineOrReplacedElements(const Range& range)
 
 static SnapshotOptions snapshotOptionsForTextIndicatorOptions(TextIndicatorOptions options)
 {
-    SnapshotOptions snapshotOptions = SnapshotOptionsNone;
+    SnapshotOptions snapshotOptions = SnapshotOptionsPaintWithIntegralScaleFactor;
 
     if (!(options & TextIndicatorOptionPaintAllContent)) {
         if (options & TextIndicatorOptionPaintBackgrounds)
