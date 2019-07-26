@@ -1,3 +1,16 @@
+2019-07-25  Fujii Hironori  <fujii.hironori@gmail.com>
+
+        [GTK] Indistinguishable overloaded callback function inspectorViewDestroyed if RemoteWebInspectorProxyGtk.cpp and WebInspectorProxyGtk.cpp are in a unified build bundle
+        https://bugs.webkit.org/show_bug.cgi?id=200123
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/gtk/RemoteWebInspectorProxyGtk.cpp:
+        (WebKit::remoteInspectorViewDestroyed): Added.
+        (WebKit::RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow):
+        (WebKit::inspectorViewDestroyed): Deleted.
+        Renamed inspectorViewDestroyed to remoteInspectorViewDestroyed.
+
 2019-07-25  Jiewen Tan  <jiewen_tan@apple.com>
 
         WebPageProxy::receivedPolicyDecision should check navigation ID before clear pendingAPIRequest
