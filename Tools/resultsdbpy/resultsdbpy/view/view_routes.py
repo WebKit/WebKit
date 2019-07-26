@@ -70,6 +70,7 @@ class ViewRoutes(AuthedBlueprint):
         )
 
         self.add_url_rule('/', 'main', self.suites.search, methods=('GET',))
+        self.add_url_rule('/search', 'search', self.suites.search, methods=('GET',))
 
         self.add_url_rule('/documentation', 'documentation', self.documentation, methods=('GET',))
 
