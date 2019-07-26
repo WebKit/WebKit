@@ -270,9 +270,14 @@ public:
     static_assert(sizeof(uintptr_t) == sizeof(uint64_t), "");
     class CompactFibers {
     public:
+        static constexpr uintptr_t addressMask = (1ULL << WTF_CPU_EFFECTIVE_ADDRESS_WIDTH) - 1;
         JSString* fiber1() const
         {
+#if CPU(LITTLE_ENDIAN)
+            return bitwise_cast<JSString*>(WTF::unalignedLoad<uintptr_t>(&m_fiber1Lower) & addressMask);
+#else
             return bitwise_cast<JSString*>(static_cast<uintptr_t>(m_fiber1Lower) | (static_cast<uintptr_t>(m_fiber1Upper) << 32));
+#endif
         }
 
         void initializeFiber1(JSString* fiber)
@@ -284,7 +289,14 @@ public:
 
         JSString* fiber2() const
         {
+#if CPU(LITTLE_ENDIAN)
+            // This access exceeds the sizeof(JSRopeString). But this is OK because JSRopeString is always allocated in MarkedBlock,
+            // and the last JSRopeString cell in the block has some subsequent bytes which are used for MarkedBlock::Footer.
+            // So the following access does not step over the page boundary in which the latter page does not have read permission.
+            return bitwise_cast<JSString*>(WTF::unalignedLoad<uintptr_t>(&m_fiber2Lower) & addressMask);
+#else
             return bitwise_cast<JSString*>(static_cast<uintptr_t>(m_fiber2Lower) | (static_cast<uintptr_t>(m_fiber2Upper) << 16));
+#endif
         }
         void initializeFiber2(JSString* fiber)
         {

@@ -302,6 +302,9 @@ public:
     static constexpr size_t footerSize = blockSize - payloadSize;
 
     static_assert(payloadSize == ((blockSize - sizeof(MarkedBlock::Footer)) & ~(atomSize - 1)), "Payload size computed the alternate way should give the same result");
+    // Some of JSCell types assume that the last JSCell in a MarkedBlock has a subsequent memory region (Footer) that can still safely accessed.
+    // For example, JSRopeString assumes that it can safely access up to 2 bytes beyond the JSRopeString cell.
+    static_assert(sizeof(Footer) >= sizeof(uint16_t));
     
     static MarkedBlock::Handle* tryCreate(Heap&, AlignedMemoryAllocator*);
         
