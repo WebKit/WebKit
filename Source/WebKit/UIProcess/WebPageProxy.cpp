@@ -7211,8 +7211,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.keyboardIsAttached = isInHardwareKeyboardMode();
     parameters.overrideViewportArguments = m_overrideViewportArguments;
     parameters.canShowWhileLocked = m_configuration->canShowWhileLocked();
-    parameters.doubleTapForDoubleClickDelay = pageClient().doubleTapForDoubleClickDelay();
-    parameters.doubleTapForDoubleClickRadius = pageClient().doubleTapForDoubleClickRadius();
 #endif
 
 #if PLATFORM(MAC)

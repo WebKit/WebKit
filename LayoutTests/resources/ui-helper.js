@@ -181,6 +181,27 @@ window.UIHelper = class UIHelper {
         return UIHelper.activateAt(x, y);
     }
 
+    static activateElementAtHumanSpeed(element)
+    {
+        const x = element.offsetLeft + element.offsetWidth / 2;
+        const y = element.offsetTop + element.offsetHeight / 2;
+
+        if (!this.isWebKit2() || !this.isIOSFamily()) {
+            eventSender.mouseMoveTo(x, y);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+            return Promise.resolve();
+        }
+
+        return new Promise(async (resolve) => {
+            await new Promise(resolveAfterDelay => setTimeout(resolveAfterDelay, 350));
+            testRunner.runUIScript(`
+                uiController.singleTapAtPoint(${x}, ${y}, function() {
+                    uiController.uiScriptComplete();
+                });`, resolve);
+        });
+    }
+
     static async doubleActivateAt(x, y)
     {
         if (this.isIOSFamily())

@@ -1,3 +1,48 @@
+2019-07-26  Zalan Bujtas  <zalan@apple.com>
+
+        Unable to tap/double tap to open files/folders in Google Drive in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=200096
+        <rdar://problem/52748552>
+
+        Reviewed by Wenson Hsieh.
+
+        This patch reverts to the original double-tap-for-double-click implementation (see r244775 and r246347 for more information).
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::doubleTapForDoubleClickDelay): Deleted.
+        (WebKit::PageClientImpl::doubleTapForDoubleClickRadius): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]): Do not recognize the single and double gestures the same time.
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView _doubleTapRecognizedForDoubleClick:]):
+        (-[WKContentView _didStartProvisionalLoadForMainFrame]):
+        (-[WKContentView _ensureNonBlockingDoubleTapGestureRecognizer]): Deleted.
+        (-[WKContentView _doubleTapForDoubleClickDelay]): Deleted.
+        (-[WKContentView _doubleTapForDoubleClickRadius]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::handleDoubleTapForDoubleClickAtPoint):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleDoubleTapForDoubleClickAtPoint):
+        (WebKit::WebPage::commitPotentialTap):
+        (WebKit::WebPage::handlePotentialDoubleTapForDoubleClickAtPoint): Deleted.
+
 2019-07-26  Eric Liang  <ericliang@apple.com>
 
         AX: web process should load correct bundle path for MACCATALYST
