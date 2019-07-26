@@ -68,6 +68,8 @@
 #include "Editor.h"
 #include "Element.h"
 #include "EventHandler.h"
+#include "EventListener.h"
+#include "EventNames.h"
 #include "ExtendableEvent.h"
 #include "ExtensionStyleSheets.h"
 #include "FetchResponse.h"
@@ -5142,6 +5144,12 @@ Internals::TextIndicatorInfo Internals::textIndicatorForRange(const Range& range
 {
     auto indicator = TextIndicator::createWithRange(range, options.core(), TextIndicatorPresentationTransition::None);
     return indicator->data();
+}
+
+void Internals::addPrefetchLoadEventListener(HTMLLinkElement& link, RefPtr<EventListener>&& listener)
+{
+    if (RuntimeEnabledFeatures::sharedFeatures().linkPrefetchEnabled() && equalLettersIgnoringASCIICase(link.rel(), "prefetch"))
+        link.addEventListener(eventNames().loadEvent, listener.releaseNonNull(), false);
 }
 
 } // namespace WebCore

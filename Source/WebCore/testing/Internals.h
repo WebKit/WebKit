@@ -59,6 +59,7 @@ class DOMURL;
 class DOMWindow;
 class Document;
 class Element;
+class EventListener;
 class ExtendableEvent;
 class FetchResponse;
 class File;
@@ -865,6 +866,8 @@ public:
     };
 
     TextIndicatorInfo textIndicatorForRange(const Range&, TextIndicatorOptions);
+
+    void addPrefetchLoadEventListener(HTMLLinkElement&, RefPtr<EventListener>&&);
 
 private:
     explicit Internals(Document&);

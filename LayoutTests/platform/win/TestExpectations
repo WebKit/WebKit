@@ -4424,6 +4424,7 @@ webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource.html [ Skip ]
 webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource-iframe.html [ Skip ]
 
 webkit.org/b/197371 http/wpt/prefetch/link-prefetch-main-resource-redirect.html [ Skip ]
+webkit.org/b/199499 http/wpt/prefetch/link-prefetch-skip-disk-cache.html [ Skip ]
 
 webkit.org/b/199632 http/wpt/prefetch/beforeload.html [ Skip ]
 webkit.org/b/199632 http/wpt/prefetch/beforeload-dynamic.html [ Skip ]

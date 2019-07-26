@@ -129,6 +129,7 @@ private:
 
     void tryStoreAsCacheEntry();
     void retrieveCacheEntry(const WebCore::ResourceRequest&);
+    void retrieveCacheEntryInternal(std::unique_ptr<NetworkCache::Entry>&&, WebCore::ResourceRequest&&);
     void didRetrieveCacheEntry(std::unique_ptr<NetworkCache::Entry>);
     void sendResultForCacheEntry(std::unique_ptr<NetworkCache::Entry>);
     void validateCacheEntry(std::unique_ptr<NetworkCache::Entry>);
