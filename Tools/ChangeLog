@@ -1,5 +1,21 @@
 2019-07-26  Jonathan Bedard  <jbedard@apple.com>
 
+        results.webkit.org: Support buildbot 0.8 CI links
+        https://bugs.webkit.org/show_bug.cgi?id=200146
+
+        Reviewed by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/model/ci_context.py:
+        (BuildbotEightURLFactory): Buildbot 0.8 link factory.
+        (BuildbotEightURLFactory.__init__):
+        (BuildbotEightURLFactory.url):
+        * resultsdbpy/resultsdbpy/model/ci_context_unittest.py:
+        (URLFactoryTest.test_old_builder_url):
+        (URLFactoryTest):
+        (URLFactoryTest.test_old_worker_url):
+
+2019-07-26  Jonathan Bedard  <jbedard@apple.com>
+
         results.webkit.org: Suite results shouldn't be the landing page
         https://bugs.webkit.org/show_bug.cgi?id=200090
 

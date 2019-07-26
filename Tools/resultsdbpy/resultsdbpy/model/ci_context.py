@@ -22,9 +22,11 @@
 
 import calendar
 import json
+import logging
 import requests
 import sys
 import time
+import urllib.parse
 
 from cassandra.cqlengine import columns
 from datetime import datetime
@@ -206,6 +208,23 @@ class CIContext(UploadCallbackContext):
         return self._find_urls(self.URLsByStartTime, *args, **kwargs)
 
 
+class BuildbotEightURLFactory(object):
+    SCHEME = 'https://'
+
+    def __init__(self, master):
+        self.master = master
+
+    def url(self, builder_name=None, build_number=None, worker_name=None, should_fetch=False):
+        if builder_name:
+            if build_number:
+                return self.SCHEME + urllib.parse.quote(f'{self.master}/builders/{builder_name}/builds/{build_number}')
+            return self.SCHEME + urllib.parse.quote(f'{self.master}/builders/{builder_name}')
+        elif worker_name:
+            return f'{self.SCHEME}{self.master}/buildslaves/{worker_name}'
+
+        return None
+
+
 class BuildbotURLFactory(object):
     SCHEME = 'https://'
     BUILDER_KEY = '_builder_'
@@ -253,25 +272,22 @@ class BuildbotURLFactory(object):
             should_fetch = False
 
         while True:
-            if builder_name and not worker_name:
+            if builder_name:
                 builder_id = self.redis.get(f'{self.master}_{self.BUILDER_KEY}_{builder_name}')
                 if builder_id:
                     if build_number:
                         return self._build_url(builder_id=builder_id.decode('utf-8'), build_number=build_number)
                     return self._builder_url(builder_id=builder_id.decode('utf-8'))
 
-            elif worker_name and not builder_name and not build_number:
+            elif worker_name:
                 worker_id = self.redis.get(f'{self.master}_{self.WORKER_KEY}_{worker_name}')
                 if worker_id:
                     return self._worker_url(worker_id=worker_id.decode('utf-8'))
-
-            else:
-                # We can't generate a URL for the provided combination
-                return None
 
             if not should_fetch:
                 break
             self.fetch()
             should_fetch = False
 
+        logging.error(f'Could not generate URL for CI links from {self.master}')
         return None
