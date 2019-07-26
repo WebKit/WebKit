@@ -497,10 +497,6 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
     }
 
     if (auto* document = m_frame.document()) {
-        // FIXME: HTML5 doesn't tell us to set the state to complete when aborting, but we do anyway to match legacy behavior.
-        // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10537
-        document->setReadyState(Document::Complete);
-
         // FIXME: Should the DatabaseManager watch for something like ActiveDOMObject::stop() rather than being special-cased here?
         DatabaseManager::singleton().stopDatabases(*document, nullptr);
     }

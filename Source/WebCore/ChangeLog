@@ -1,3 +1,20 @@
+2019-07-26  Brady Eidson  <beidson@apple.com>
+
+        Do not fire readystatechange events at documents about to get replaced by javascript URLs.
+        <rdar://problem/51665406> and https://bugs.webkit.org/show_bug.cgi?id=198786
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: http/tests/dom/ready-state-on-javascript-replace.html
+
+        We were firing too many readystatechange events, more than other browsers.
+        Our behavior on this test with this patch now matches Chrome.
+
+        (There was even an ancient FIXME alluding to this referencing a spec issue, and that issues has long been resolvedv)
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+
 2019-07-26  Zalan Bujtas  <zalan@apple.com>
 
         [iPadOS] wix.com cannot select a template to edit or view

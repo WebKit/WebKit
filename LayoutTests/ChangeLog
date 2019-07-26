@@ -1,3 +1,13 @@
+2019-07-26  Brady Eidson  <beidson@apple.com>
+
+        Do not fire readystatechange events at documents about to get replaced by javascript URLs.
+        <rdar://problem/51665406> and https://bugs.webkit.org/show_bug.cgi?id=198786
+
+        Reviewed by Ryosuke Niwa.
+
+        * http/tests/dom/ready-state-on-javascript-replace-expected.txt: Added.
+        * http/tests/dom/ready-state-on-javascript-replace.html: Added.
+
 2019-07-26  Chris Dumez  <cdumez@apple.com>
 
         [iOS] WebPage::TouchEventSync() & WebPage::GetPositionInformation() sync IPC causes UIProcess hangs
