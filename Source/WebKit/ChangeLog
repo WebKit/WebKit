@@ -1,3 +1,15 @@
+2019-07-26  Chris Dumez  <cdumez@apple.com>
+
+        Crashes under XPCServiceMain() / mach_msg_trap() due to sandboxing
+        https://bugs.webkit.org/show_bug.cgi?id=200173
+        <rdar://problem/53594973>
+
+        Reviewed by Per Arne Vollan.
+
+        Allow a few more syscalls as they appear to be needed by mach_msg_trap().
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-07-26  Daniel Bates  <dabates@apple.com>
 
         [iOS] REGRESSION: Keyboard dismisses and reappears when typing 2FA pin on appleid.apple.com
