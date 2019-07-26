@@ -159,6 +159,18 @@ class CleanWorkingDirectory(shell.ShellCommand):
         super(CleanWorkingDirectory, self).__init__(logEnviron=False, **kwargs)
 
 
+class UpdateWorkingDirectory(shell.ShellCommand):
+    name = 'update-working-directory'
+    description = ['update-workring-directory running']
+    descriptionDone = ['Updated working directory']
+    flunkOnFailure = True
+    haltOnFailure = True
+    command = ['perl', 'Tools/Scripts/update-webkit']
+
+    def __init__(self, **kwargs):
+        super(UpdateWorkingDirectory, self).__init__(logEnviron=False, **kwargs)
+
+
 class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
     name = 'apply-patch'
     description = ['applying-patch']
@@ -504,6 +516,9 @@ class CheckStyle(TestWithFailureCount):
     flunkOnFailure = True
     failedTestsFormatString = '%d style error%s'
     command = ['python', 'Tools/Scripts/check-webkit-style']
+
+    def __init__(self, **kwargs):
+        super(CheckStyle, self).__init__(logEnviron=False, **kwargs)
 
     def countFailures(self, cmd):
         log_text = self.log_observer.getStdout() + self.log_observer.getStderr()

@@ -41,7 +41,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeL
                    PrintConfiguration, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch,
                    RunBindingsTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests, RunJavaScriptCoreTests, RunJavaScriptCoreTestsToT, RunWebKit1Tests,
                    RunWebKitPerlTests, RunWebKitPyTests, RunWebKitTests, TestWithFailureCount, Trigger, TransferToS3, UnApplyPatchIfRequired,
-                   UploadBuiltProduct, UploadTestResults, ValidatePatch)
+                   UpdateWorkingDirectory, UploadBuiltProduct, UploadTestResults, ValidatePatch)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
 from buildbot.test.fake.fakebuild import FakeBuild
@@ -214,6 +214,7 @@ class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/check-webkit-style'],
                         )
             + 0,
@@ -229,6 +230,7 @@ class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/check-webkit-style'],
                         )
             + 2,
@@ -244,6 +246,7 @@ class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/check-webkit-style'],
                         )
             + ExpectShell.log('stdio', stdout='''ERROR: Source/WebCore/layout/FloatingContext.cpp:36:  Code inside a namespace should not be indented.  [whitespace/indent] [4]
@@ -266,6 +269,7 @@ Total errors found: 8 in 48 files''')
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/check-webkit-style'],
                         )
             + ExpectShell.log('stdio', stdout='Total errors found: 0 in 6 files')
@@ -282,6 +286,7 @@ Total errors found: 8 in 48 files''')
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/check-webkit-style'],
                         )
             + ExpectShell.log('stdio', stdout='Total errors found: 0 in 0 files')
@@ -1425,6 +1430,40 @@ class TestCleanWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Cleaned working directory (failure)')
+        return self.runStep()
+
+
+class TestUpdateWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(UpdateWorkingDirectory())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['perl', 'Tools/Scripts/update-webkit'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Updated working directory')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(UpdateWorkingDirectory())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['perl', 'Tools/Scripts/update-webkit'],
+                        )
+            + ExpectShell.log('stdio', stdout='Unexpected failure.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Updated working directory (failure)')
         return self.runStep()
 
 

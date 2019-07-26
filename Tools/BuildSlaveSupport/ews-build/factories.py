@@ -29,7 +29,7 @@ from steps import (ApplyPatch, CheckOutSource, CheckOutSpecificRevision, CheckPa
                    DownloadBuiltProduct, ExtractBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
                    PrintConfiguration, ReRunJavaScriptCoreTests, RunAPITests, RunBindingsTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests,
                    RunJavaScriptCoreTests, RunJavaScriptCoreTestsToT, RunWebKit1Tests, RunWebKitPerlTests,
-                   RunWebKitPyTests, RunWebKitTests, UnApplyPatchIfRequired, ValidatePatch)
+                   RunWebKitPyTests, RunWebKitTests, UnApplyPatchIfRequired, UpdateWorkingDirectory, ValidatePatch)
 
 
 class Factory(factory.BuildFactory):
@@ -48,9 +48,15 @@ class Factory(factory.BuildFactory):
         self.addStep(ApplyPatch())
 
 
-class StyleFactory(Factory):
-    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
+class StyleFactory(factory.BuildFactory):
+    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
+        factory.BuildFactory.__init__(self)
+        self.addStep(ConfigureBuild(platform, configuration, architectures, False, triggers, additionalArguments))
+        self.addStep(ValidatePatch())
+        self.addStep(PrintConfiguration())
+        self.addStep(CheckOutSource())
+        self.addStep(UpdateWorkingDirectory())
+        self.addStep(ApplyPatch())
         self.addStep(CheckStyle())
 
 

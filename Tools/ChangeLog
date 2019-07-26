@@ -1,3 +1,15 @@
+2019-07-26  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Use update-webkit script in Style EWS
+        https://bugs.webkit.org/show_bug.cgi?id=193196
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (StyleFactory): Updated to use CheckOutSource step as well.
+        * BuildSlaveSupport/ews-build/steps.py: Added build-step to UpdateWorkingDirectory.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+
 2019-07-26  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Support buildbot 0.8 CI links
