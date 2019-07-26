@@ -116,7 +116,12 @@ void ScrollingStateNode::insertChild(Ref<ScrollingStateNode>&& childNode, size_t
         m_children = std::make_unique<Vector<RefPtr<ScrollingStateNode>>>();
     }
 
-    m_children->insert(index, WTFMove(childNode));
+    if (index > m_children->size()) {
+        ASSERT_NOT_REACHED();  // Crash data suggest we can get here.
+        m_children->append(WTFMove(childNode));
+    } else
+        m_children->insert(index, WTFMove(childNode));
+    
     setPropertyChanged(ChildNodes);
 }
 
