@@ -68,7 +68,7 @@ private:
     float m_value;
     // This is a unique_ptr to resolve a circular dependency between
     // ConstantExpression -> LiteralType -> TypeReference -> TypeArguments -> ConstantExpression
-    UniqueRef<TypeReference> m_preferredType;
+    Ref<TypeReference> m_preferredType;
 };
 
 } // namespace AST

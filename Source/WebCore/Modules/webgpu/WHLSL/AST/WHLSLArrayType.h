@@ -42,12 +42,17 @@ namespace AST {
 
 class ArrayType : public UnnamedType {
     WTF_MAKE_FAST_ALLOCATED;
-public:
-    ArrayType(CodeLocation location, UniqueRef<UnnamedType>&& elementType, unsigned numElements)
+    ArrayType(CodeLocation location, Ref<UnnamedType> elementType, unsigned numElements)
         : UnnamedType(location)
         , m_elementType(WTFMove(elementType))
         , m_numElements(numElements)
     {
+    }
+public:
+
+    static Ref<ArrayType> create(CodeLocation location, Ref<UnnamedType> elementType, unsigned numElements)
+    {
+        return adoptRef(*new ArrayType(location, WTFMove(elementType), numElements));
     }
 
     virtual ~ArrayType() = default;
@@ -60,11 +65,6 @@ public:
     const UnnamedType& type() const { return m_elementType; }
     UnnamedType& type() { return m_elementType; }
     unsigned numElements() const { return m_numElements; }
-
-    UniqueRef<UnnamedType> clone() const override
-    {
-        return makeUniqueRef<ArrayType>(codeLocation(), m_elementType->clone(), m_numElements);
-    }
 
     unsigned hash() const override
     {
@@ -81,7 +81,7 @@ public:
     }
 
 private:
-    UniqueRef<UnnamedType> m_elementType;
+    Ref<UnnamedType> m_elementType;
     unsigned m_numElements;
 };
 

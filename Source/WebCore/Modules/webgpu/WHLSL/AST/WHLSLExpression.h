@@ -64,7 +64,7 @@ public:
         return *m_type;
     }
 
-    void setType(UniqueRef<UnnamedType>&& type)
+    void setType(Ref<UnnamedType> type)
     {
         ASSERT(!m_type);
         m_type = WTFMove(type);
@@ -87,7 +87,7 @@ public:
     void copyTypeTo(Expression& other) const
     {
         if (auto* resolvedType = const_cast<Expression*>(this)->maybeResolvedType())
-            other.setType(resolvedType->clone());
+            other.setType(*resolvedType);
         if (auto* typeAnnotation = maybeTypeAnnotation())
             other.setTypeAnnotation(TypeAnnotation(*typeAnnotation));
     }
@@ -119,7 +119,7 @@ public:
 
 private:
     CodeLocation m_codeLocation;
-    Optional<UniqueRef<UnnamedType>> m_type;
+    RefPtr<UnnamedType> m_type;
     Optional<TypeAnnotation> m_typeAnnotation;
 };
 

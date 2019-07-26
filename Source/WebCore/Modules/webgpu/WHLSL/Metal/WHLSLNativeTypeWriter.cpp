@@ -68,8 +68,8 @@ String writeNativeType(AST::NativeTypeDeclaration& nativeTypeDeclaration)
         return "sampler"_str;
     if (nativeTypeDeclaration.name() == "vector") {
         ASSERT(nativeTypeDeclaration.typeArguments().size() == 2);
-        ASSERT(WTF::holds_alternative<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
-        auto& typeReference = WTF::get<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]);
+        ASSERT(WTF::holds_alternative<Ref<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
+        auto& typeReference = WTF::get<Ref<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]);
         auto& unifyNode = typeReference->unifyNode();
         auto& namedType = downcast<AST::NamedType>(unifyNode);
         auto& parameterType = downcast<AST::NativeTypeDeclaration>(namedType);
@@ -111,8 +111,8 @@ String writeNativeType(AST::NativeTypeDeclaration& nativeTypeDeclaration)
     }
     if (nativeTypeDeclaration.name() == "matrix") {
         ASSERT(nativeTypeDeclaration.typeArguments().size() == 3);
-        ASSERT(WTF::holds_alternative<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
-        auto& typeReference = WTF::get<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]);
+        ASSERT(WTF::holds_alternative<Ref<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
+        auto& typeReference = WTF::get<Ref<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]);
         auto& unifyNode = typeReference->unifyNode();
         auto& namedType = downcast<AST::NamedType>(unifyNode);
         auto& parameterType = downcast<AST::NativeTypeDeclaration>(namedType);
@@ -137,8 +137,8 @@ String writeNativeType(AST::NativeTypeDeclaration& nativeTypeDeclaration)
         return makeString("array<", prefix, ", ", columns * rows, ">");
     }
     ASSERT(nativeTypeDeclaration.typeArguments().size() == 1);
-    ASSERT(WTF::holds_alternative<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
-    auto& typeReference = WTF::get<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]);
+    ASSERT(WTF::holds_alternative<Ref<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
+    auto& typeReference = WTF::get<Ref<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]);
     auto prefix = ([&]() -> String {
         if (nativeTypeDeclaration.name() == "Texture1D")
             return "texture1d"_str;

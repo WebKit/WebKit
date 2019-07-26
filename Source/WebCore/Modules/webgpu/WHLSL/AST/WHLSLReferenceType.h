@@ -42,13 +42,14 @@ namespace AST {
 
 class ReferenceType : public UnnamedType {
     WTF_MAKE_FAST_ALLOCATED;
-public:
-    ReferenceType(CodeLocation location, AddressSpace addressSpace, UniqueRef<UnnamedType>&& elementType)
+protected:
+    ReferenceType(CodeLocation location, AddressSpace addressSpace, Ref<UnnamedType> elementType)
         : UnnamedType(location)
         , m_addressSpace(addressSpace)
         , m_elementType(WTFMove(elementType))
     {
     }
+public:
 
     virtual ~ReferenceType() = default;
 
@@ -68,7 +69,7 @@ public:
 
 private:
     AddressSpace m_addressSpace;
-    UniqueRef<UnnamedType> m_elementType;
+    Ref<UnnamedType> m_elementType;
 };
 
 } // namespace AST

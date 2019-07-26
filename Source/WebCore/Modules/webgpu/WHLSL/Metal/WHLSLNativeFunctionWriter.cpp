@@ -101,8 +101,8 @@ static AST::NamedType& vectorInnerType(AST::NativeTypeDeclaration& nativeTypeDec
         return nativeTypeDeclaration;
 
     ASSERT(nativeTypeDeclaration.typeArguments().size() == 2);
-    ASSERT(WTF::holds_alternative<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
-    return WTF::get<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0])->resolvedType();
+    ASSERT(WTF::holds_alternative<Ref<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
+    return WTF::get<Ref<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0])->resolvedType();
 }
 
 static const char* vectorSuffix(int vectorLength)

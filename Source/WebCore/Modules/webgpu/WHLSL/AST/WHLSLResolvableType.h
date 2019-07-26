@@ -74,13 +74,13 @@ public:
         return *m_resolvedType;
     }
 
-    void resolve(UniqueRef<UnnamedType>&& type)
+    void resolve(Ref<UnnamedType> type)
     {
         m_resolvedType = WTFMove(type);
     }
 
 private:
-    Optional<UniqueRef<UnnamedType>> m_resolvedType;
+    RefPtr<UnnamedType> m_resolvedType;
 };
 
 } // namespace AST

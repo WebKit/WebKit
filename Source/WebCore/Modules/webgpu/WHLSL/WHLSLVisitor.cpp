@@ -161,7 +161,7 @@ void Visitor::visit(AST::TypeArgument& typeArgument)
 {
     WTF::visit(WTF::makeVisitor([&](AST::ConstantExpression& constantExpression) {
         checkErrorAndVisit(constantExpression);
-    }, [&](UniqueRef<AST::TypeReference>& typeReference) {
+    }, [&](Ref<AST::TypeReference>& typeReference) {
         checkErrorAndVisit(typeReference);
     }), typeArgument);
 }

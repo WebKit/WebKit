@@ -59,7 +59,7 @@ public:
         unsigned hash = IntHash<size_t>::hash(m_function->parameters().size());
         hash ^= m_function->name().hash();
         for (size_t i = 0; i < m_function->parameters().size(); ++i)
-            hash ^= m_function->parameters()[i]->type().value()->hash();
+            hash ^= m_function->parameters()[i]->type()->hash();
 
         if (m_function->isCast())
             hash ^= m_function->type().hash();

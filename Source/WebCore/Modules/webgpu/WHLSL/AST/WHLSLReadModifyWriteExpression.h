@@ -119,8 +119,8 @@ private:
     ReadModifyWriteExpression(CodeLocation location, UniqueRef<Expression> leftValue)
         : Expression(location)
         , m_leftValue(WTFMove(leftValue))
-        , m_oldValue(makeUniqueRef<VariableDeclaration>(location, Qualifiers(), WTF::nullopt, String(), nullptr, nullptr))
-        , m_newValue(makeUniqueRef<VariableDeclaration>(location, Qualifiers(), WTF::nullopt, String(), nullptr, nullptr))
+        , m_oldValue(makeUniqueRef<VariableDeclaration>(location, Qualifiers(), nullptr, String(), nullptr, nullptr))
+        , m_newValue(makeUniqueRef<VariableDeclaration>(location, Qualifiers(), nullptr, String(), nullptr, nullptr))
     {
     }
 

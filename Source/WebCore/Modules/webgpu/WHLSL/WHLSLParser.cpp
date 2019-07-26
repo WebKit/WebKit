@@ -416,7 +416,7 @@ auto Parser::parseTypeArgument() -> Expected<AST::TypeArgument, Error>
     }
     CONSUME_TYPE(result, Identifier);
     CodeLocation location(*result);
-    return AST::TypeArgument(makeUniqueRef<AST::TypeReference>(location, result->stringView(m_lexer).toString(), AST::TypeArguments()));
+    return AST::TypeArgument(AST::TypeReference::create(location, result->stringView(m_lexer).toString(), AST::TypeArguments()));
 }
 
 auto Parser::parseTypeArguments() -> Expected<AST::TypeArguments, Error>
@@ -505,7 +505,7 @@ auto Parser::parseTypeSuffixNonAbbreviated() -> Expected<TypeSuffixNonAbbreviate
     return {{ { *token }, *token, { addressSpace }, WTF::nullopt }};
 }
 
-auto Parser::parseType() -> Expected<UniqueRef<AST::UnnamedType>, Error>
+auto Parser::parseType() -> Expected<Ref<AST::UnnamedType>, Error>
 {
     auto addressSpaceToken = tryTypes<
         Token::Type::Constant,
@@ -533,20 +533,20 @@ auto Parser::parseType() -> Expected<UniqueRef<AST::UnnamedType>, Error>
             addressSpace = AST::AddressSpace::Thread;
             break;
         }
-        auto constructTypeFromSuffixAbbreviated = [&](const TypeSuffixAbbreviated& typeSuffixAbbreviated, UniqueRef<AST::UnnamedType>&& previous) -> UniqueRef<AST::UnnamedType> {
+        auto constructTypeFromSuffixAbbreviated = [&](const TypeSuffixAbbreviated& typeSuffixAbbreviated, Ref<AST::UnnamedType>&& previous) -> Ref<AST::UnnamedType> {
             CodeLocation location(*addressSpaceToken, typeSuffixAbbreviated.location);
             switch (typeSuffixAbbreviated.token.type) {
             case Token::Type::Star:
-                return { makeUniqueRef<AST::PointerType>(location, addressSpace, WTFMove(previous)) };
+                return { AST::PointerType::create(location, addressSpace, WTFMove(previous)) };
             case Token::Type::SquareBracketPair:
-                return { makeUniqueRef<AST::ArrayReferenceType>(location, addressSpace, WTFMove(previous)) };
+                return { AST::ArrayReferenceType::create(location, addressSpace, WTFMove(previous)) };
             default:
                 ASSERT(typeSuffixAbbreviated.token.type == Token::Type::LeftSquareBracket);
-                return { makeUniqueRef<AST::ArrayType>(location, WTFMove(previous), *typeSuffixAbbreviated.numElements) };
+                return { AST::ArrayType::create(location, WTFMove(previous), *typeSuffixAbbreviated.numElements) };
             }
         };
         PARSE(firstTypeSuffixAbbreviated, TypeSuffixAbbreviated);
-        UniqueRef<AST::UnnamedType> result = makeUniqueRef<AST::TypeReference>(WTFMove(*addressSpaceToken), name->stringView(m_lexer).toString(), WTFMove(*typeArguments));
+        Ref<AST::UnnamedType> result = AST::TypeReference::create(WTFMove(*addressSpaceToken), name->stringView(m_lexer).toString(), WTFMove(*typeArguments));
         auto next = constructTypeFromSuffixAbbreviated(*firstTypeSuffixAbbreviated, WTFMove(result));
         result = WTFMove(next);
         while (true) {
@@ -564,19 +564,19 @@ auto Parser::parseType() -> Expected<UniqueRef<AST::UnnamedType>, Error>
         return WTFMove(result);
     }
 
-    auto constructTypeFromSuffixNonAbbreviated = [&](const TypeSuffixNonAbbreviated& typeSuffixNonAbbreviated, UniqueRef<AST::UnnamedType>&& previous) -> UniqueRef<AST::UnnamedType> {
+    auto constructTypeFromSuffixNonAbbreviated = [&](const TypeSuffixNonAbbreviated& typeSuffixNonAbbreviated, Ref<AST::UnnamedType>&& previous) -> Ref<AST::UnnamedType> {
         CodeLocation location(*name, typeSuffixNonAbbreviated.location);
         switch (typeSuffixNonAbbreviated.token.type) {
         case Token::Type::Star:
-            return { makeUniqueRef<AST::PointerType>(location, *typeSuffixNonAbbreviated.addressSpace, WTFMove(previous)) };
+            return { AST::PointerType::create(location, *typeSuffixNonAbbreviated.addressSpace, WTFMove(previous)) };
         case Token::Type::SquareBracketPair:
-            return { makeUniqueRef<AST::ArrayReferenceType>(location, *typeSuffixNonAbbreviated.addressSpace, WTFMove(previous)) };
+            return { AST::ArrayReferenceType::create(location, *typeSuffixNonAbbreviated.addressSpace, WTFMove(previous)) };
         default:
             ASSERT(typeSuffixNonAbbreviated.token.type == Token::Type::LeftSquareBracket);
-            return { makeUniqueRef<AST::ArrayType>(location, WTFMove(previous), *typeSuffixNonAbbreviated.numElements) };
+            return { AST::ArrayType::create(location, WTFMove(previous), *typeSuffixNonAbbreviated.numElements) };
         }
     };
-    UniqueRef<AST::UnnamedType> result = makeUniqueRef<AST::TypeReference>(*name, name->stringView(m_lexer).toString(), WTFMove(*typeArguments));
+    Ref<AST::UnnamedType> result = AST::TypeReference::create(*name, name->stringView(m_lexer).toString(), WTFMove(*typeArguments));
     while (true) {
         PEEK(nextToken);
         if (nextToken->type != Token::Type::Star
@@ -814,12 +814,12 @@ auto Parser::parseEnumerationDefinition() -> Expected<AST::EnumerationDefinition
     CONSUME_TYPE(origin, Enum);
     CONSUME_TYPE(name, Identifier);
 
-    auto type = ([&]() -> Expected<UniqueRef<AST::UnnamedType>, Error> {
+    auto type = ([&]() -> Expected<Ref<AST::UnnamedType>, Error> {
         if (tryType(Token::Type::Colon)) {
             PARSE(parsedType, Type);
             return WTFMove(*parsedType);
         }
-        return { makeUniqueRef<AST::TypeReference>(*origin, "int"_str, AST::TypeArguments()) };
+        return { AST::TypeReference::create(*origin, "int"_str, AST::TypeArguments()) };
     })();
     if (!type)
         return Unexpected<Error>(type.error());
@@ -1228,7 +1228,7 @@ auto Parser::parseDoWhileLoop() -> Expected<AST::DoWhileLoop, Error>
     return AST::DoWhileLoop({ *origin, *semicolon}, WTFMove(*body), WTFMove(*conditional));
 }
 
-auto Parser::parseVariableDeclaration(UniqueRef<AST::UnnamedType>&& type) -> Expected<AST::VariableDeclaration, Error>
+auto Parser::parseVariableDeclaration(Ref<AST::UnnamedType>&& type) -> Expected<AST::VariableDeclaration, Error>
 {
     PEEK(origin);
 
@@ -1253,7 +1253,7 @@ auto Parser::parseVariableDeclarations() -> Expected<AST::VariableDeclarationsSt
 
     PARSE(type, Type);
 
-    auto firstVariableDeclaration = parseVariableDeclaration((*type)->clone());
+    auto firstVariableDeclaration = parseVariableDeclaration(type->copyRef());
     if (!firstVariableDeclaration)
         return Unexpected<Error>(firstVariableDeclaration.error());
 
@@ -1261,7 +1261,7 @@ auto Parser::parseVariableDeclarations() -> Expected<AST::VariableDeclarationsSt
     result.append(makeUniqueRef<AST::VariableDeclaration>(WTFMove(*firstVariableDeclaration)));
 
     while (tryType(Token::Type::Comma)) {
-        auto variableDeclaration = parseVariableDeclaration((*type)->clone());
+        auto variableDeclaration = parseVariableDeclaration(type->copyRef());
         if (!variableDeclaration)
             return Unexpected<Error>(variableDeclaration.error());
         result.append(makeUniqueRef<AST::VariableDeclaration>(WTFMove(*variableDeclaration)));

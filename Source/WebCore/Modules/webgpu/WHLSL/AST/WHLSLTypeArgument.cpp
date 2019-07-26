@@ -51,8 +51,8 @@ TypeArgument clone(const TypeArgument& typeArgument)
 {
     return WTF::visit(WTF::makeVisitor([](const ConstantExpression& constantExpression) -> TypeArgument {
         return constantExpression.clone();
-    }, [](const UniqueRef<TypeReference>& typeReference) -> TypeArgument {
-        return typeReference->cloneTypeReference();
+    }, [](const Ref<TypeReference>& typeReference) -> TypeArgument {
+        return typeReference.copyRef();
     }), typeArgument);
 }
 

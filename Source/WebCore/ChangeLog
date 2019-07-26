@@ -1,3 +1,156 @@
+2019-07-26  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] UnnamedType should be reference counted
+        https://bugs.webkit.org/show_bug.cgi?id=200098
+
+        Reviewed by Dean Jackson.
+
+        This patch makes UnnamedType reference counted. The motivation for doing this
+        is I measured how many times we were cloning UnnamedTypes, and I found we were
+        doing it ~433,000 times in some of Justin's demos. This is hugely wasteful,
+        given that an UnnamedType is immutable in the sense that once the type is
+        resolved, it will never change. So instead of repeatedly cloning the same
+        type, and having Expression point to a UniqueRef of UnnamedType, we should
+        instead make UnnamedType reference counted, and have expressions point to a
+        potentially shared UnnamedType.
+        
+        Doing this is hugely beneficial to WHLSL compile times. On Justin's demos,
+        these are the results I'm getting:
+        
+        hello-triangle: neutral
+        hello-cube: 55% faster
+        compute-blur: 35% faster
+        textured-cube: 49% faster
+
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayReferenceType.h:
+        (WebCore::WHLSL::AST::ArrayReferenceType::ArrayReferenceType):
+        (WebCore::WHLSL::AST::ArrayReferenceType::create):
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayType.h:
+        (WebCore::WHLSL::AST::ArrayType::ArrayType):
+        (WebCore::WHLSL::AST::ArrayType::create):
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationDefinition.h:
+        (WebCore::WHLSL::AST::EnumerationDefinition::EnumerationDefinition):
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.h:
+        (WebCore::WHLSL::AST::Expression::setType):
+        (WebCore::WHLSL::AST::Expression::copyTypeTo const):
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteral.h:
+        (WebCore::WHLSL::AST::FloatLiteral::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.cpp:
+        (WebCore::WHLSL::AST::FloatLiteralType::FloatLiteralType):
+        (WebCore::WHLSL::AST::FloatLiteralType::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionDeclaration.h:
+        (WebCore::WHLSL::AST::FunctionDeclaration::FunctionDeclaration):
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteral.h:
+        (WebCore::WHLSL::AST::IntegerLiteral::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.cpp:
+        (WebCore::WHLSL::AST::IntegerLiteralType::IntegerLiteralType):
+        (WebCore::WHLSL::AST::IntegerLiteralType::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLNullLiteral.h:
+        (WebCore::WHLSL::AST::NullLiteral::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLPointerType.h:
+        (WebCore::WHLSL::AST::PointerType::PointerType):
+        (WebCore::WHLSL::AST::PointerType::create):
+        * Modules/webgpu/WHLSL/AST/WHLSLReadModifyWriteExpression.h:
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::ReadModifyWriteExpression):
+        * Modules/webgpu/WHLSL/AST/WHLSLReferenceType.h:
+        (WebCore::WHLSL::AST::ReferenceType::ReferenceType):
+        * Modules/webgpu/WHLSL/AST/WHLSLResolvableType.h:
+        (WebCore::WHLSL::AST::ResolvableType::resolve):
+        * Modules/webgpu/WHLSL/AST/WHLSLStructureElement.h:
+        (WebCore::WHLSL::AST::StructureElement::StructureElement):
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeArgument.cpp:
+        (WebCore::WHLSL::AST::clone):
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeArgument.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeDefinition.h:
+        (WebCore::WHLSL::AST::TypeDefinition::TypeDefinition):
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeReference.cpp:
+        (WebCore::WHLSL::AST::TypeReference::wrap):
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeReference.h:
+        (WebCore::WHLSL::AST::TypeReference::create):
+        (WebCore::WHLSL::AST::TypeReference::cloneTypeReference const): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteral.h:
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteral::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.cpp:
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteralType::UnsignedIntegerLiteralType):
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteralType::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclaration.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::vectorInnerType):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeTypeWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeType):
+        * Modules/webgpu/WHLSL/WHLSLAutoInitializeVariables.cpp:
+        (WebCore::WHLSL::AutoInitialize::visit):
+        * Modules/webgpu/WHLSL/WHLSLCheckDuplicateFunctions.cpp:
+        (WebCore::WHLSL::DuplicateFunctionKey::hash const):
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::resolveWithOperatorAnderIndexer):
+        (WebCore::WHLSL::resolveWithOperatorLength):
+        (WebCore::WHLSL::resolveWithReferenceComparator):
+        (WebCore::WHLSL::resolveByInstantiation):
+        (WebCore::WHLSL::checkOperatorOverload):
+        (WebCore::WHLSL::Checker::assignTypes):
+        (WebCore::WHLSL::matchAndCommit):
+        (WebCore::WHLSL::commit):
+        (WebCore::WHLSL::Checker::assignConcreteType):
+        (WebCore::WHLSL::Checker::assignType):
+        (WebCore::WHLSL::Checker::forwardType):
+        (WebCore::WHLSL::Checker::visit):
+        (WebCore::WHLSL::getUnnamedType):
+        (WebCore::WHLSL::argumentTypeForAndOverload):
+        (WebCore::WHLSL::Checker::finishVisiting):
+        (WebCore::WHLSL::Checker::isBoolType):
+        * Modules/webgpu/WHLSL/WHLSLInferTypes.cpp:
+        (WebCore::WHLSL::matchAndCommit):
+        (WebCore::WHLSL::commit):
+        (WebCore::WHLSL::inferTypesForTypeArguments):
+        (WebCore::WHLSL::inferTypesForCallImpl):
+        * Modules/webgpu/WHLSL/WHLSLInferTypes.h:
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.cpp:
+        (WebCore::WHLSL::Intrinsics::addVector):
+        (WebCore::WHLSL::Intrinsics::addMatrix):
+        (WebCore::WHLSL::Intrinsics::addTexture):
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::parseTypeArgument):
+        (WebCore::WHLSL::Parser::parseType):
+        (WebCore::WHLSL::Parser::parseEnumerationDefinition):
+        (WebCore::WHLSL::Parser::parseVariableDeclaration):
+        (WebCore::WHLSL::Parser::parseVariableDeclarations):
+        * Modules/webgpu/WHLSL/WHLSLParser.h:
+        * Modules/webgpu/WHLSL/WHLSLPreserveVariableLifetimes.cpp:
+        (WebCore::WHLSL::PreserveLifetimes::PreserveLifetimes):
+        (WebCore::WHLSL::PreserveLifetimes::makeStructVariableReference):
+        (WebCore::WHLSL::PreserveLifetimes::assignVariableIntoStruct):
+        (WebCore::WHLSL::preserveVariableLifetimes):
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp:
+        (WebCore::WHLSL::wrapAnderCallArgument):
+        (WebCore::WHLSL::anderCallArgument):
+        (WebCore::WHLSL::setterCall):
+        (WebCore::WHLSL::getterCall):
+        (WebCore::WHLSL::modify):
+        (WebCore::WHLSL::PropertyResolver::visit):
+        (WebCore::WHLSL::PropertyResolver::simplifyRightValue):
+        (WebCore::WHLSL::LeftValueSimplifier::finishVisiting):
+        * Modules/webgpu/WHLSL/WHLSLResolveOverloadImpl.cpp:
+        (WebCore::WHLSL::conversionCost):
+        * Modules/webgpu/WHLSL/WHLSLResolvingType.h:
+        (WebCore::WHLSL::ResolvingType::ResolvingType):
+        (WebCore::WHLSL::ResolvingType::getUnnamedType):
+        (WebCore::WHLSL::ResolvingType::visit):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeArrayOperatorLength.cpp:
+        (WebCore::WHLSL::synthesizeArrayOperatorLength):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.cpp:
+        (WebCore::WHLSL::synthesizeConstructors):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeEnumerationFunctions.cpp:
+        (WebCore::WHLSL::synthesizeEnumerationFunctions):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeStructureAccessors.cpp:
+        (WebCore::WHLSL::synthesizeStructureAccessors):
+        * Modules/webgpu/WHLSL/WHLSLVisitor.cpp:
+        (WebCore::WHLSL::Visitor::visit):
+
 2019-07-26  Takashi Komori  <Takashi.Komori@sony.com>
 
         [curl] Heap corruption in ~CurlResponse

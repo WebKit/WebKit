@@ -37,12 +37,12 @@ namespace WHLSL {
 
 namespace AST {
 
-UniqueRef<TypeReference> TypeReference::wrap(CodeLocation location, NamedType& resolvedType)
+Ref<TypeReference> TypeReference::wrap(CodeLocation location, NamedType& resolvedType)
 {
     TypeArguments typeArguments;
     if (is<NativeTypeDeclaration>(resolvedType))
         typeArguments = AST::clone(downcast<NativeTypeDeclaration>(resolvedType).typeArguments());
-    auto result = makeUniqueRef<TypeReference>(location, String(resolvedType.name()), WTFMove(typeArguments));
+    auto result = TypeReference::create(location, String(resolvedType.name()), WTFMove(typeArguments));
     result->setResolvedType(resolvedType);
     return result;
 }

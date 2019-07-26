@@ -43,7 +43,7 @@ namespace AST {
 class TypeDefinition : public NamedType {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TypeDefinition(CodeLocation location, String&& name, UniqueRef<UnnamedType>&& type)
+    TypeDefinition(CodeLocation location, String&& name, Ref<UnnamedType> type)
         : NamedType(location, WTFMove(name))
         , m_type(WTFMove(type))
     {
@@ -69,7 +69,7 @@ public:
     }
 
 private:
-    UniqueRef<UnnamedType> m_type;
+    Ref<UnnamedType> m_type;
 };
 
 } // namespace AST

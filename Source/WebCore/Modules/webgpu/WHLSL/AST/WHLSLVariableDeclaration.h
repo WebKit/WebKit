@@ -47,7 +47,7 @@ class VariableDeclaration final {
     WTF_MAKE_FAST_ALLOCATED;
 // Final because we made the destructor non-virtual.
 public:
-    VariableDeclaration(CodeLocation codeLocation, Qualifiers&& qualifiers, Optional<UniqueRef<UnnamedType>>&& type, String&& name, std::unique_ptr<Semantic>&& semantic, std::unique_ptr<Expression>&& initializer)
+    VariableDeclaration(CodeLocation codeLocation, Qualifiers&& qualifiers, RefPtr<UnnamedType> type, String&& name, std::unique_ptr<Semantic>&& semantic, std::unique_ptr<Expression>&& initializer)
         : m_codeLocation(codeLocation)
         , m_qualifiers(WTFMove(qualifiers))
         , m_type(WTFMove(type))
@@ -67,12 +67,12 @@ public:
     // We use this for ReadModifyWrite expressions, since we don't know the type of their
     // internal variables until the checker runs. All other variables should start life out
     // with a type.
-    void setType(UniqueRef<UnnamedType> type)
+    void setType(Ref<UnnamedType> type)
     {
         ASSERT(!m_type);
         m_type = WTFMove(type);
     }
-    const Optional<UniqueRef<UnnamedType>>& type() const { return m_type; }
+    const RefPtr<UnnamedType>& type() const { return m_type; }
     UnnamedType* type() { return m_type ? &*m_type : nullptr; }
     Semantic* semantic() { return m_semantic.get(); }
     Expression* initializer() { return m_initializer.get(); }
@@ -89,7 +89,7 @@ public:
 private:
     CodeLocation m_codeLocation;
     Qualifiers m_qualifiers;
-    Optional<UniqueRef<UnnamedType>> m_type;
+    RefPtr<UnnamedType> m_type;
     String m_name;
     std::unique_ptr<Semantic> m_semantic;
     std::unique_ptr<Expression> m_initializer;

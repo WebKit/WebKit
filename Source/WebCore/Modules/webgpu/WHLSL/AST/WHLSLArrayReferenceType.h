@@ -42,10 +42,15 @@ namespace AST {
 class ArrayReferenceType : public ReferenceType {
     WTF_MAKE_FAST_ALLOCATED;
     using Base = ReferenceType;
-public:
-    ArrayReferenceType(CodeLocation location, AddressSpace addressSpace, UniqueRef<UnnamedType>&& elementType)
+
+    ArrayReferenceType(CodeLocation location, AddressSpace addressSpace, Ref<UnnamedType> elementType)
         : Base(location, addressSpace, WTFMove(elementType))
     {
+    }
+public:
+    static Ref<ArrayReferenceType> create(CodeLocation location, AddressSpace addressSpace, Ref<UnnamedType> elementType)
+    {
+        return adoptRef(*new ArrayReferenceType(location, addressSpace, WTFMove(elementType)));
     }
 
     virtual ~ArrayReferenceType() = default;
@@ -54,11 +59,6 @@ public:
     ArrayReferenceType(ArrayReferenceType&&) = default;
 
     bool isArrayReferenceType() const override { return true; }
-
-    UniqueRef<UnnamedType> clone() const override
-    {
-        return makeUniqueRef<ArrayReferenceType>(codeLocation(), addressSpace(), elementType().clone());
-    }
 
     unsigned hash() const override
     {

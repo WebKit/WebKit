@@ -46,7 +46,7 @@ namespace AST {
 class FunctionDeclaration {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FunctionDeclaration(CodeLocation location, AttributeBlock&& attributeBlock, Optional<EntryPointType> entryPointType, UniqueRef<UnnamedType>&& type, String&& name, VariableDeclarations&& parameters, std::unique_ptr<Semantic>&& semantic, bool isOperator)
+    FunctionDeclaration(CodeLocation location, AttributeBlock&& attributeBlock, Optional<EntryPointType> entryPointType, Ref<UnnamedType> type, String&& name, VariableDeclarations&& parameters, std::unique_ptr<Semantic>&& semantic, bool isOperator)
         : m_codeLocation(location)
         , m_attributeBlock(WTFMove(attributeBlock))
         , m_entryPointType(entryPointType)
@@ -84,7 +84,7 @@ private:
     AttributeBlock m_attributeBlock;
     Optional<EntryPointType> m_entryPointType;
     bool m_isOperator;
-    UniqueRef<UnnamedType> m_type;
+    Ref<UnnamedType> m_type;
     String m_name;
     VariableDeclarations m_parameters;
     std::unique_ptr<Semantic> m_semantic;

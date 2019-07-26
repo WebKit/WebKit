@@ -41,7 +41,7 @@ static unsigned conversionCost(AST::FunctionDeclaration& candidate, const Vector
 {
     unsigned conversionCost = 0;
     for (size_t i = 0; i < candidate.parameters().size(); ++i) {
-        conversionCost += argumentTypes[i].get().visit(WTF::makeVisitor([&](UniqueRef<AST::UnnamedType>&) -> unsigned {
+        conversionCost += argumentTypes[i].get().visit(WTF::makeVisitor([&](Ref<AST::UnnamedType>&) -> unsigned {
             return 0;
         }, [&](RefPtr<ResolvableTypeReference>& resolvableTypeReference) -> unsigned {
             return resolvableTypeReference->resolvableType().conversionCost(*candidate.parameters()[i]->type());

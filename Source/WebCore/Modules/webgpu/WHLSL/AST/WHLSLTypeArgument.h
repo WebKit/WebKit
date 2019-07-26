@@ -40,7 +40,7 @@ namespace AST {
 
 class TypeReference;
 
-using TypeArgument = Variant<ConstantExpression, UniqueRef<TypeReference>>;
+using TypeArgument = Variant<ConstantExpression, Ref<TypeReference>>;
 using TypeArguments = Vector<TypeArgument>;
 
 TypeArgument clone(const TypeArgument&);

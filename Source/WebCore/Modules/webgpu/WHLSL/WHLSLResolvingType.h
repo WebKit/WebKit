@@ -80,12 +80,12 @@ public:
     {
     }
 
-    ResolvingType(UniqueRef<AST::UnnamedType>&& v)
+    ResolvingType(Ref<AST::UnnamedType> v)
         : m_inner(WTFMove(v))
     {
     }
 
-    ResolvingType(RefPtr<ResolvableTypeReference>&& v)
+    ResolvingType(RefPtr<ResolvableTypeReference> v)
         : m_inner(WTFMove(v))
     {
     }
@@ -105,18 +105,18 @@ public:
 
     AST::UnnamedType* getUnnamedType()
     {
-        if (WTF::holds_alternative<UniqueRef<AST::UnnamedType>>(m_inner))
-            return &WTF::get<UniqueRef<AST::UnnamedType>>(m_inner);
+        if (WTF::holds_alternative<Ref<AST::UnnamedType>>(m_inner))
+            return WTF::get<Ref<AST::UnnamedType>>(m_inner).ptr();
         return nullptr;
     }
 
-    template <typename Visitor> auto visit(const Visitor& visitor) -> decltype(WTF::visit(visitor, std::declval<Variant<UniqueRef<AST::UnnamedType>, RefPtr<ResolvableTypeReference>>&>()))
+    template <typename Visitor> auto visit(const Visitor& visitor) -> decltype(WTF::visit(visitor, std::declval<Variant<Ref<AST::UnnamedType>, RefPtr<ResolvableTypeReference>>&>()))
     {
         return WTF::visit(visitor, m_inner);
     }
 
 private:
-    Variant<UniqueRef<AST::UnnamedType>, RefPtr<ResolvableTypeReference>> m_inner;
+    Variant<Ref<AST::UnnamedType>, RefPtr<ResolvableTypeReference>> m_inner;
 };
 
 }

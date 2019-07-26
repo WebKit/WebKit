@@ -46,11 +46,11 @@ Expected<void, Error> synthesizeStructureAccessors(Program& program)
         for (auto& structureElement : structureDefinition->structureElements()) {
             // The ander: operator&.field
             auto createAnder = [&](AST::AddressSpace addressSpace) -> AST::NativeFunctionDeclaration {
-                auto argumentType = makeUniqueRef<AST::PointerType>(structureElement.codeLocation(), addressSpace, AST::TypeReference::wrap(structureElement.codeLocation(), structureDefinition));
-                auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(structureElement.codeLocation(), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(WTFMove(argumentType)), String(), nullptr, nullptr);
+                auto argumentType = AST::PointerType::create(structureElement.codeLocation(), addressSpace, AST::TypeReference::wrap(structureElement.codeLocation(), structureDefinition));
+                auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(structureElement.codeLocation(), AST::Qualifiers(), WTFMove(argumentType), String(), nullptr, nullptr);
                 AST::VariableDeclarations parameters;
                 parameters.append(WTFMove(variableDeclaration));
-                auto returnType = makeUniqueRef<AST::PointerType>(structureElement.codeLocation(), addressSpace, structureElement.type().clone());
+                auto returnType = AST::PointerType::create(structureElement.codeLocation(), addressSpace, structureElement.type());
                 AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(structureElement.codeLocation(), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), makeString("operator&.", structureElement.name()), WTFMove(parameters), nullptr, isOperator));
                 return nativeFunctionDeclaration;
             };

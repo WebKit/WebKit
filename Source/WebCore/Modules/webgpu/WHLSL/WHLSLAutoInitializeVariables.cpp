@@ -71,7 +71,7 @@ private:
         String functionName = "<zero-init>"_s;
 #endif
         auto callExpression = std::make_unique<AST::CallExpression>(variableDeclaration.codeLocation(), WTFMove(functionName), Vector<UniqueRef<AST::Expression>>());
-        callExpression->setType(type->clone());
+        callExpression->setType(*type);
         callExpression->setTypeAnnotation(AST::RightValue());
         Vector<std::reference_wrapper<ResolvingType>> argumentTypes;
         auto* function = resolveFunctionOverload(m_castFunctions, argumentTypes, type);

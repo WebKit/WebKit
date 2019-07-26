@@ -287,9 +287,9 @@ bool Intrinsics::addVector(AST::NativeTypeDeclaration& nativeTypeDeclaration)
         return false;
 
     ASSERT(nativeTypeDeclaration.typeArguments().size() == 2);
-    ASSERT(WTF::holds_alternative<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
+    ASSERT(WTF::holds_alternative<Ref<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
     ASSERT(WTF::holds_alternative<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[1]));
-    auto& innerType = static_cast<AST::TypeReference&>(WTF::get<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
+    auto& innerType = static_cast<AST::TypeReference&>(WTF::get<Ref<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
     auto& lengthExpression = WTF::get<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[1]);
     ASSERT(!innerType.typeArguments().size());
     AST::NativeTypeDeclaration** array;
@@ -326,10 +326,10 @@ bool Intrinsics::addMatrix(AST::NativeTypeDeclaration& nativeTypeDeclaration)
         return false;
 
     ASSERT(nativeTypeDeclaration.typeArguments().size() == 3);
-    ASSERT(WTF::holds_alternative<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
+    ASSERT(WTF::holds_alternative<Ref<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
     ASSERT(WTF::holds_alternative<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[1]));
     ASSERT(WTF::holds_alternative<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[2]));
-    auto& innerType = static_cast<AST::TypeReference&>(WTF::get<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
+    auto& innerType = static_cast<AST::TypeReference&>(WTF::get<Ref<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
     auto& rowExpression = WTF::get<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[1]);
     auto& columnExpression = WTF::get<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[2]);
     ASSERT(!innerType.typeArguments().size());
@@ -411,8 +411,8 @@ void Intrinsics::addDepthTexture(AST::NativeTypeDeclaration& nativeTypeDeclarati
 void Intrinsics::addTexture(AST::NativeTypeDeclaration& nativeTypeDeclaration)
 {
     ASSERT(nativeTypeDeclaration.typeArguments().size() == 1);
-    ASSERT(WTF::holds_alternative<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
-    auto& innerType = static_cast<AST::TypeReference&>(WTF::get<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
+    ASSERT(WTF::holds_alternative<Ref<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
+    auto& innerType = static_cast<AST::TypeReference&>(WTF::get<Ref<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
     ASSERT(!innerType.typeArguments().size());
     if (addFullTexture(nativeTypeDeclaration, innerType)) {
         m_textureSet.add(&nativeTypeDeclaration);

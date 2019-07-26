@@ -42,7 +42,7 @@ namespace AST {
 
 UnsignedIntegerLiteralType::UnsignedIntegerLiteralType(CodeLocation location, unsigned value)
     : m_value(value)
-    , m_preferredType(makeUniqueRef<TypeReference>(location, "uint"_str, TypeArguments()))
+    , m_preferredType(TypeReference::create(location, "uint"_str, TypeArguments()))
 {
 }
 
@@ -80,8 +80,8 @@ UnsignedIntegerLiteralType UnsignedIntegerLiteralType::clone() const
 {
     UnsignedIntegerLiteralType result(m_preferredType->codeLocation(), m_value);
     if (auto* type = maybeResolvedType())
-        result.resolve(type->clone());
-    result.m_preferredType = m_preferredType->cloneTypeReference();
+        result.resolve(const_cast<AST::UnnamedType&>(*type));
+    result.m_preferredType = m_preferredType.copyRef();
     return result;
 }
 

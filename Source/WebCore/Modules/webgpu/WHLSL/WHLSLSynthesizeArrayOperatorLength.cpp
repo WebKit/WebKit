@@ -66,7 +66,7 @@ Expected<void, Error> synthesizeArrayOperatorLength(Program& program)
 
     for (auto& arrayType : arrayTypes) {
         auto location = arrayType.get().codeLocation();
-        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(location, AST::Qualifiers(), arrayType.get().clone(), String(), nullptr, nullptr);
+        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(location, AST::Qualifiers(), &arrayType.get(), String(), nullptr, nullptr);
         AST::VariableDeclarations parameters;
         parameters.append(WTFMove(variableDeclaration));
         AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(location, program.intrinsics().uintType()), "operator.length"_str, WTFMove(parameters), nullptr, isOperator));
