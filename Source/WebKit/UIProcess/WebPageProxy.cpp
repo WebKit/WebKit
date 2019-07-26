@@ -4630,7 +4630,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 
     auto transaction = m_pageLoadState.transaction();
 
-    bool fromAPI = navigationID == m_pageLoadState.pendingAPIRequest().navigationID;
+    bool fromAPI = request.url() == m_pageLoadState.pendingAPIRequestURL();
     if (!fromAPI)
         m_pageLoadState.clearPendingAPIRequest(transaction);
 

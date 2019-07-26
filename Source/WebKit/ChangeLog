@@ -1,3 +1,11 @@
+2019-07-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, build fix after r247851
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        Reverts an unnecessary change.
+
 2019-07-25  Fujii Hironori  <fujii.hironori@gmail.com>
 
         [GTK] Indistinguishable overloaded callback function inspectorViewDestroyed if RemoteWebInspectorProxyGtk.cpp and WebInspectorProxyGtk.cpp are in a unified build bundle
