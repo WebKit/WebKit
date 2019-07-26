@@ -1,3 +1,11 @@
+2019-07-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix in NetworkDataTaskSoup.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::authenticateCallback):
+        Fix incorrect use of the dereferencing operator introduced in r247831.
+
 2019-07-25  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, build fix after r247851

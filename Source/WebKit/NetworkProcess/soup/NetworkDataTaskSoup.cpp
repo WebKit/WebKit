@@ -436,7 +436,7 @@ void NetworkDataTaskSoup::applyAuthenticationToRequest(ResourceRequest& request)
 
 void NetworkDataTaskSoup::authenticateCallback(SoupSession* session, SoupMessage* soupMessage, SoupAuth* soupAuth, gboolean retrying, NetworkDataTaskSoup* task)
 {
-    ASSERT(session == static_cast<NetworkSessionSoup&>(task->*m_session).soupSession());
+    ASSERT(session == static_cast<NetworkSessionSoup&>(*task->m_session).soupSession());
 
     // We don't return early here in case the given soupMessage is different to m_soupMessage when
     // it's proxy authentication and the request URL is HTTPS, because in that case libsoup uses a
