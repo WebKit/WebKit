@@ -110,7 +110,6 @@ bool SpeechSynthesis::paused() const
 
 void SpeechSynthesis::startSpeakingImmediately(SpeechSynthesisUtterance& utterance)
 {
-    ASSERT(!m_currentSpeechUtterance);
     utterance.setStartTime(MonotonicTime::now());
     m_currentSpeechUtterance = &utterance;
     m_isPaused = false;
@@ -152,12 +151,12 @@ void SpeechSynthesis::cancel()
     m_utteranceQueue.clear();
     if (m_speechSynthesisClient)
         m_speechSynthesisClient->cancel();
-    else if (m_platformSpeechSynthesizer)
+    else if (m_platformSpeechSynthesizer) {
         m_platformSpeechSynthesizer->cancel();
+        // The platform should have called back immediately and cleared the current utterance.
+        ASSERT(!m_currentSpeechUtterance);
+    }
     current = nullptr;
-
-    // The platform should have called back immediately and cleared the current utterance.
-    ASSERT(!m_currentSpeechUtterance);
 }
 
 void SpeechSynthesis::pause()

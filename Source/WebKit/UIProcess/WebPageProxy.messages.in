@@ -558,6 +558,7 @@ messages -> WebPageProxy {
 #if ENABLE(SPEECH_SYNTHESIS)
     SpeechSynthesisVoiceList() -> (Vector<WebKit::WebSpeechSynthesisVoice> voiceList) Synchronous
     SpeechSynthesisSpeak(String text, String lang, float volume, float rate, float pitch, MonotonicTime startTime, String voiceURI, String voiceName, String voiceLang, bool localService, bool defaultVoice) -> () Async
+    SpeechSynthesisSetFinishedCallback() -> () Async
     SpeechSynthesisCancel()
     SpeechSynthesisPause() -> () Async
     SpeechSynthesisResume() -> () Async

@@ -1533,6 +1533,7 @@ public:
 #if ENABLE(SPEECH_SYNTHESIS)
     void speechSynthesisVoiceList(CompletionHandler<void(Vector<WebSpeechSynthesisVoice>&&)>&&);
     void speechSynthesisSpeak(const String&, const String&, float volume, float rate, float pitch, MonotonicTime startTime, const String& voiceURI, const String& voiceName, const String& voiceLang, bool localService, bool defaultVoice, CompletionHandler<void()>&&);
+    void speechSynthesisSetFinishedCallback(CompletionHandler<void()>&&);
     void speechSynthesisCancel();
     void speechSynthesisPause(CompletionHandler<void()>&&);
     void speechSynthesisResume(CompletionHandler<void()>&&);
@@ -2092,6 +2093,7 @@ private:
 
     struct SpeechSynthesisData;
     SpeechSynthesisData& speechSynthesisData();
+    void resetSpeechSynthesizer();
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -2529,6 +2531,7 @@ private:
     struct SpeechSynthesisData {
         std::unique_ptr<WebCore::PlatformSpeechSynthesizer> synthesizer;
         RefPtr<WebCore::PlatformSpeechSynthesisUtterance> utterance;
+        CompletionHandler<void()> speakingStartedCompletionHandler;
         CompletionHandler<void()> speakingFinishedCompletionHandler;
         CompletionHandler<void()> speakingPausedCompletionHandler;
         CompletionHandler<void()> speakingResumedCompletionHandler;
