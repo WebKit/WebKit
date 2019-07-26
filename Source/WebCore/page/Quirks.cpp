@@ -30,6 +30,7 @@
 #include "DOMTokenList.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "FrameLoader.h"
 #include "HTMLMetaElement.h"
 #include "HTMLObjectElement.h"
 #include "LayoutUnit.h"
@@ -453,6 +454,30 @@ bool Quirks::shouldAvoidScrollingWhenFocusedContentIsVisible() const
         return false;
 
     return equalLettersIgnoringASCIICase(m_document->url().host(), "www.zillow.com");
+}
+
+bool Quirks::shouldOpenAsAboutBlank(const String& stringToOpen) const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    auto openerURL = m_document->url();
+    if (!equalLettersIgnoringASCIICase(openerURL.host(), "docs.google.com"))
+        return false;
+
+    if (!m_document->frame() || !m_document->frame()->loader().userAgentForJavaScript(openerURL).contains("Macintosh"))
+        return false;
+
+    URL urlToOpen { URL { }, stringToOpen };
+    if (!urlToOpen.protocolIsAbout())
+        return false;
+
+    return !equalLettersIgnoringASCIICase(urlToOpen.host(), "blank") && !equalLettersIgnoringASCIICase(urlToOpen.host(), "srcdoc");
+#else
+    UNUSED_PARAM(stringToOpen);
+    return false;
+#endif
 }
 
 }

@@ -70,6 +70,8 @@ public:
     bool needsGMailOverflowScrollQuirk() const;
     bool needsYouTubeOverflowScrollQuirk() const;
 
+    bool shouldOpenAsAboutBlank(const String&) const;
+
 private:
     bool needsQuirks() const;
 

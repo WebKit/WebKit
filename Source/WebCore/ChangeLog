@@ -1,3 +1,26 @@
+2019-07-26  Youenn Fablet  <youenn@apple.com>
+
+        slides.google.com: opening speaker notes while presenting causes a fatal error in the web app on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=199933
+        <rdar://problem/53034345>
+
+        Reviewed by Darin Adler.
+
+        docs.google.com might sometimes try to window.open an about URL that not about:blank or about:srcdoc.
+        In that case, WebKit is opening a window but is considering that the window is cross origin with its opener.
+        This breaks docs.google.com as they want to access the website.
+        Add a site-specific hack so as to treat all about URLs being opened through window.open as about:blank.
+
+        Manually tested on docs.google.com website.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+        (WebCore::DOMWindow::open):
+        * page/Quirks.cpp:
+        (WebCore::Quirks::needsYouTubeOverflowScrollQuirk const):
+        (WebCore::Quirks::shouldOpenAsAboutBlank const):
+        * page/Quirks.h:
+
 2019-07-26  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
         REGRESSION(r246496): [GTK] Tapping the web view scrolls up a bit
