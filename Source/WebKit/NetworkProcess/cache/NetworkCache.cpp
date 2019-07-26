@@ -71,7 +71,7 @@ RefPtr<Cache> Cache::open(NetworkProcess& networkProcess, const String& cachePat
     return adoptRef(*new Cache(networkProcess, storage.releaseNonNull(), options));
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
 static void dumpFileChanged(Cache* cache)
 {
     cache->dumpContentsToFile();
@@ -106,7 +106,7 @@ Cache::Cache(NetworkProcess& networkProcess, Ref<Storage>&& storage, OptionSet<C
             dumpContentsToFile();
         });
 #endif
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
         // Triggers with "touch $cachePath/dump".
         CString dumpFilePath = fileSystemRepresentation(pathByAppendingComponent(m_storage->basePath(), "dump"));
         GRefPtr<GFile> dumpFile = adoptGRef(g_file_new_for_path(dumpFilePath.data()));
