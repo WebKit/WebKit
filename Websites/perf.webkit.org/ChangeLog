@@ -1,3 +1,14 @@
+2019-07-25  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Fix a bug that cannot update builder password on builders administrative page.
+        https://bugs.webkit.org/show_bug.cgi?id=200154
+
+        Reviewed by Ryosuke Niwa.
+
+        'builders' administrative page should be able to update password for a builder.
+
+        * public/admin/builders.php: Should be able to update builder password.
+
 2019-07-23  Dewei Zhu  <dewei_zhu@apple.com>
 
         Use 12 digits to show a git commit.

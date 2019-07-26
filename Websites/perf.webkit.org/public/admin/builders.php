@@ -14,7 +14,7 @@ if ($db) {
     } else if ($action == 'update') {
         if (update_field('builders', 'builder', 'name') || update_field('builders', 'builder', 'build_url'))
             regenerate_manifest();
-        else if (update_field('build_slaves', 'slave', 'password_hash', hash('sha256', $_POST['new_password'])))
+        else if (update_field('builders', 'builder', 'password_hash', hash('sha256', $_POST['new_password'])))
             regenerate_manifest();
         else
             notice('Invalid parameters.');
