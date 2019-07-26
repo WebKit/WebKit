@@ -1,3 +1,17 @@
+2019-07-26  Eric Liang  <ericliang@apple.com>
+
+        AX: web process should load correct bundle path for MACCATALYST
+        https://bugs.webkit.org/show_bug.cgi?id=200122
+
+        Reviewed by Brent Fulgham.
+
+        Added the path to accessibility bundle for Mac Catalyst.
+        Added sandbox profile to read accessibility settings.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::registerWithAccessibility):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-07-26  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
         REGRESSION(r246496): [GTK] Tapping the web view scrolls up a bit

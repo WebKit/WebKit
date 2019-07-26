@@ -481,6 +481,7 @@
 (allow user-preference-read
     (preference-domain
         "kCFPreferencesAnyApplication"
+        "com.apple.Accessibility"
         "com.apple.ATS"
         "com.apple.CoreGraphics"
         "com.apple.DownloadAssessment"
