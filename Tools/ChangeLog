@@ -1,3 +1,20 @@
+2019-07-26  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Add switch to filter results by expectation
+        https://bugs.webkit.org/show_bug.cgi?id=200134
+
+        Rubber-stamped by Aakash Jain.
+
+        Users of the results database should be able to easily differentiate tests which are expected
+        to fail verse tests which are unexpectedly failing.
+
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (Timeline.render): Respect the willFilterExpected variable.
+        (LegendLabel): Generates html for label in the legend.
+        (Legend): Add switch for filter results.
+        * resultsdbpy/resultsdbpy/view/templates/search.html: GIve Legend callback to re-render timelines.
+        * resultsdbpy/resultsdbpy/view/templates/suite_results.html:
+
 2019-07-26  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Use update-webkit script in Style EWS

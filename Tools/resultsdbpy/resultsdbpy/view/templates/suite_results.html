@@ -141,7 +141,11 @@ class MainView {
     }
     render(suites) {
         let children = this.children;
-        return Legend() + suites.map(suite => {
+        return Legend(() => {
+            for (let suite in children) {
+                children[suite].rerender();
+            }
+        }, true) + suites.map(suite => {
             return `<div class="section">
                     <div class="header">
                         <div class="title">${suite}</div>

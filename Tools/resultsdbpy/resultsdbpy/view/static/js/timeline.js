@@ -24,7 +24,7 @@
 import {CommitBank} from '/assets/js/commit.js';
 import {Configuration} from '/assets/js/configuration.js';
 import {deepCompare, ErrorDisplay, paramsToQuery, queryToParams} from '/assets/js/common.js';
-import {DOM, REF} from '/library/js/Ref.js';
+import {DOM, EventStream, REF} from '/library/js/Ref.js';
 
 
 const DEFAULT_LIMIT = 100;
@@ -69,6 +69,7 @@ class Expectations
         return result;
     }
 }
+let willFilterExpected = false;
 
 function tickForCommit(commit, scale) {
     let params = {
@@ -533,17 +534,19 @@ class Timeline {
                                     if (pairForIndex.results[resultIndex].stats)
                                         dots[configurationKey].push(new Dot(
                                             pairForIndex.results[resultIndex].stats.tests_run,
-                                            pairForIndex.results[resultIndex].stats.tests_unexpected_failed,
-                                            pairForIndex.results[resultIndex].stats.tests_unexpected_timedout,
-                                            pairForIndex.results[resultIndex].stats.tests_unexpected_crashed,
+                                            pairForIndex.results[resultIndex].stats[`tests${willFilterExpected ? '_unexpected_' : '_'}failed`],
+                                            pairForIndex.results[resultIndex].stats[`tests${willFilterExpected ? '_unexpected_' : '_'}timedout`],
+                                            pairForIndex.results[resultIndex].stats[`tests${willFilterExpected ? '_unexpected_' : '_'}crashed`],
                                             false,
                                             buildLink,
                                         ));
                                     else {
-                                        const resultId = Expectations.stringToStateId(Expectations.unexpectedResults(
-                                            pairForIndex.results[resultIndex].actual,
-                                            pairForIndex.results[resultIndex].expected,
-                                        ));
+                                        let resultId = Expectations.stringToStateId(pairForIndex.results[resultIndex].actual);
+                                        if (willFilterExpected)
+                                            resultId = Expectations.stringToStateId(Expectations.unexpectedResults(
+                                                pairForIndex.results[resultIndex].actual,
+                                                pairForIndex.results[resultIndex].expected,
+                                            ));
 
                                         dots[configurationKey].push(new Dot(
                                             1,
@@ -600,29 +603,81 @@ class Timeline {
     }
 }
 
-function Legend() {
-    return `<div class="content">
-            <br>
-            <div class="lengend timeline">
-                <div class="item">
-                    <div class="dot success"></div>
-                    <div class="label">All Tests Passed</div>
-                </div>
-                <div class="item">
-                    <div class="dot failed"></div>
-                    <div class="label">Some Tests Failed</div>
-                </div>
-                <div class="item">
-                    <div class="dot timeout"></div>
-                    <div class="label">Some Tests Timed-Out</div>
-                </div>
-                <div class="item">
-                    <div class="dot crash"></div>
-                    <div class="label">Some Tests Crashed</div>
-                </div>
+function LegendLabel(eventStream, filterExpectedText, filterUnexpectedText) {
+    let ref = REF.createRef({
+        state: willFilterExpected,
+        onStateUpdate: (element, state) => {
+            if (state) element.innerText = filterExpectedText;
+            else element.innerText = filterUnexpectedText;
+        }
+    });
+    eventStream.action((willFilterExpected) => ref.setState(willFilterExpected));
+    return `<div class="label" ref="${ref}"></div>`;
+} 
+
+function Legend(callback=null, plural=false) {
+    let updateLabelEvents = new EventStream();
+    let result = `<br>
+         <div class="lengend timeline">
+            <div class="item">
+                <div class="dot success"></div>
+                ${LegendLabel(
+                    updateLabelEvents,
+                    plural ? 'No unexpected results' : 'Result expected',
+                    plural ? 'All tests passed' : 'Test passed',
+                )}
+            </div>
+            <div class="item">
+                <div class="dot failed"></div>
+                ${LegendLabel(
+                    updateLabelEvents,
+                    plural ? 'Some tests unexpectedly failed' : 'Unexpectedly failed',
+                    plural ? 'Some tests failed' : 'Test failed',
+                )}
+            </div>
+            <div class="item">
+                <div class="dot timeout"></div>
+                ${LegendLabel(
+                    updateLabelEvents,
+                    plural ? 'Some tests unexpectedly timed out' : 'Unexpectedly timed out',
+                    plural ? 'Some tests timed out' : 'Test timed out',
+                )}
+            </div>
+            <div class="item">
+                <div class="dot crash"></div>
+                ${LegendLabel(
+                    updateLabelEvents,
+                    plural ? 'Some tests unexpectedly crashed' : 'Unexpectedly crashed',
+                    plural ? 'Some tests crashed' : 'Test crashed',
+                )}
             </div>
             <br>
         </div>`;
+
+    if (callback) {
+        const swtch = REF.createRef({
+            onElementMount: (element) => {
+                element.onchange = () => {
+                    if (element.checked)
+                        willFilterExpected = true;
+                    else
+                        willFilterExpected = false;
+                    updateLabelEvents.add(willFilterExpected);
+                    callback();
+                };
+            },
+        });
+
+        result += `<div class="input" style="width:400px">
+            <label>Filter expected results</label>
+            <label class="switch">
+                <input type="checkbox"${willFilterExpected ? ' checked': ''} ref="${swtch}">
+                <span class="slider"></span>
+            </label>
+        </div>`;
+    }
+
+    return `<div class="content">${result}</div><br>`;
 }
 
 export {Legend, Timeline, Expectations};

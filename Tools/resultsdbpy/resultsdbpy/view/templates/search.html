@@ -127,7 +127,11 @@ class SearchView {
                 }
 
                 if (diff.children)
-                    DOM.inject(element, Legend() + diff.children.map(renderChild).join(''));
+                    DOM.inject(element, Legend(() => {
+                        self.ref.state.children.forEach((child) => {
+                            child.timeline.rerender();
+                        });
+                    }, false) + diff.children.map(renderChild).join(''));
                 if (diff.prepending) {
                     diff.prepending.forEach(child => {
                         DOM.after(element.firstElementChild, renderChild(child));
