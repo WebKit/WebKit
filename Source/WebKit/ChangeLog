@@ -1,3 +1,49 @@
+2019-07-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebPageProxy::receivedPolicyDecision should check navigation ID before clear pendingAPIRequest
+        https://bugs.webkit.org/show_bug.cgi?id=200108
+        <rdar://problem/53521238>
+
+        Reviewed by Chris Dumez.
+
+        Assuming there are two loads happening one after another. There is an issue when clients save
+        the first decisionHandler and then call WKNavigationActionPolicyCancel for it right after the
+        second decisionHandler received, -[WKWebView URL] could return a null string even though it is
+        loading the second one.
+
+        To solve that, this patch pairs a navigationID with the pendingAPIRequestURL such that
+        WebPageProxy::receivedPolicyDecision could clear the pendingAPIRequestURL only if
+        the passed navigation ID matches the current one.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::reset):
+        (WebKit::PageLoadState::activeURL):
+        (WebKit::PageLoadState::estimatedProgress):
+        (WebKit::PageLoadState::pendingAPIRequestURL const):
+        (WebKit::PageLoadState::pendingAPIRequest const):
+        (WebKit::PageLoadState::setPendingAPIRequest):
+        (WebKit::PageLoadState::clearPendingAPIRequest):
+        (WebKit::PageLoadState::isLoading):
+        (WebKit::PageLoadState::setPendingAPIRequestURL): Deleted.
+        (WebKit::PageLoadState::clearPendingAPIRequestURL): Deleted.
+        * UIProcess/PageLoadState.h:
+        (WebKit::PageLoadState::setPendingAPIRequest):
+        (WebKit::PageLoadState::setPendingAPIRequestURL): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::launchProcessForReload):
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::loadDataWithNavigationShared):
+        (WebKit::WebPageProxy::loadAlternateHTML):
+        (WebKit::WebPageProxy::loadWebArchiveData):
+        (WebKit::WebPageProxy::reload):
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2019-07-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r247806.

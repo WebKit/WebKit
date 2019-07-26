@@ -32,15 +32,18 @@
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 static bool shouldCancelNavigation;
+static bool shouldDelayDecision;
 static bool createdWebView;
 static bool decidedPolicy;
 static bool finishedNavigation;
 static RetainPtr<WKNavigationAction> action;
 static RetainPtr<WKWebView> newWebView;
+static BlockPtr<void(WKNavigationActionPolicy)> delayedDecision;
 
 static NSString *firstURL = @"data:text/html,First";
 static NSString *secondURL = @"data:text/html,Second";
@@ -59,6 +62,14 @@ static NSString *secondURL = @"data:text/html,Second";
             decisionHandler(WKNavigationActionPolicyCancel);
             decidedPolicy = true;
         });
+        return;
+    }
+
+    if (shouldDelayDecision) {
+        if (delayedDecision)
+            delayedDecision(WKNavigationActionPolicyCancel);
+        delayedDecision = makeBlockPtr(decisionHandler);
+        decidedPolicy = true;
         return;
     }
 
@@ -591,6 +602,25 @@ TEST(WebKit, DecidePolicyForNavigationActionForPOSTFormSubmissionThatRedirectsTo
     [TestProtocol unregister];
     newWebView = nullptr;
     action = nullptr;
+}
+
+TEST(WebKit, DelayDecidePolicyForNavigationAction)
+{
+    shouldDelayDecision = true;
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    auto controller = adoptNS([[DecidePolicyForNavigationActionController alloc] init]);
+    [webView setNavigationDelegate:controller.get()];
+
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    TestWebKitAPI::Util::run(&decidedPolicy);
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    TestWebKitAPI::Util::sleep(0.5); // Wait until the pending api request gets clear.
+    EXPECT_TRUE([[webView URL] isEqual:testURL.get()]);
+
+    shouldDelayDecision = false;
+    delayedDecision(WKNavigationActionPolicyCancel);
 }
 
 static size_t calls;

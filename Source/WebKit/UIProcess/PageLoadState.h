@@ -113,6 +113,11 @@ public:
         PageLoadState* m_pageLoadState;
     };
 
+    struct PendingAPIRequest {
+        uint64_t navigationID { 0 };
+        String url;
+    };
+
     void addObserver(Observer&);
     void removeObserver(Observer&);
 
@@ -144,8 +149,9 @@ public:
     const URL& resourceDirectoryURL() const;
 
     const String& pendingAPIRequestURL() const;
-    void setPendingAPIRequestURL(const Transaction::Token&, const String& pendingAPIRequestURL, const URL& resourceDirectoryPath = { });
-    void clearPendingAPIRequestURL(const Transaction::Token&);
+    const PendingAPIRequest& pendingAPIRequest() const;
+    void setPendingAPIRequest(const Transaction::Token&, PendingAPIRequest&& pendingAPIRequest, const URL& resourceDirectoryPath = { });
+    void clearPendingAPIRequest(const Transaction::Token&);
 
     void didStartProvisionalLoad(const Transaction::Token&, const String& url, const String& unreachableURL);
     void didExplicitOpen(const Transaction::Token&, const String& url);
@@ -207,7 +213,7 @@ private:
         State state;
         bool hasInsecureContent;
 
-        String pendingAPIRequestURL;
+        PendingAPIRequest pendingAPIRequest;
 
         String provisionalURL;
         String url;

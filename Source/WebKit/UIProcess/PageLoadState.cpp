@@ -154,7 +154,7 @@ void PageLoadState::reset(const Transaction::Token& token)
     m_uncommittedState.state = State::Finished;
     m_uncommittedState.hasInsecureContent = false;
 
-    m_uncommittedState.pendingAPIRequestURL = String();
+    m_uncommittedState.pendingAPIRequest = { };
     m_uncommittedState.provisionalURL = String();
     m_uncommittedState.url = String();
 
@@ -182,8 +182,8 @@ String PageLoadState::activeURL(const Data& data)
     // If there is a currently pending URL, it is the active URL,
     // even when there's no main frame yet, as it might be the
     // first API request.
-    if (!data.pendingAPIRequestURL.isNull())
-        return data.pendingAPIRequestURL;
+    if (!data.pendingAPIRequest.url.isNull())
+        return data.pendingAPIRequest.url;
 
     if (!data.unreachableURL.isEmpty())
         return data.unreachableURL;
@@ -223,7 +223,7 @@ bool PageLoadState::hasOnlySecureContent() const
 
 double PageLoadState::estimatedProgress(const Data& data)
 {
-    if (!data.pendingAPIRequestURL.isNull())
+    if (!data.pendingAPIRequest.url.isNull())
         return initialProgressValue;
 
     return data.estimatedProgress;
@@ -236,7 +236,12 @@ double PageLoadState::estimatedProgress() const
 
 const String& PageLoadState::pendingAPIRequestURL() const
 {
-    return m_committedState.pendingAPIRequestURL;
+    return m_committedState.pendingAPIRequest.url;
+}
+
+auto PageLoadState::pendingAPIRequest() const -> const PendingAPIRequest&
+{
+    return m_committedState.pendingAPIRequest;
 }
 
 const URL& PageLoadState::resourceDirectoryURL() const
@@ -244,17 +249,17 @@ const URL& PageLoadState::resourceDirectoryURL() const
     return m_committedState.resourceDirectoryURL;
 }
 
-void PageLoadState::setPendingAPIRequestURL(const Transaction::Token& token, const String& pendingAPIRequestURL, const URL& resourceDirectoryURL)
+void PageLoadState::setPendingAPIRequest(const Transaction::Token& token, PendingAPIRequest&& pendingAPIRequest, const URL& resourceDirectoryURL)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
-    m_uncommittedState.pendingAPIRequestURL = pendingAPIRequestURL;
+    m_uncommittedState.pendingAPIRequest = WTFMove(pendingAPIRequest);
     m_uncommittedState.resourceDirectoryURL = resourceDirectoryURL;
 }
 
-void PageLoadState::clearPendingAPIRequestURL(const Transaction::Token& token)
+void PageLoadState::clearPendingAPIRequest(const Transaction::Token& token)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
-    m_uncommittedState.pendingAPIRequestURL = String();
+    m_uncommittedState.pendingAPIRequest = { };
 }
 
 void PageLoadState::didExplicitOpen(const Transaction::Token& token, const String& url)
@@ -410,7 +415,7 @@ void PageLoadState::setNetworkRequestsInProgress(const Transaction::Token& token
 
 bool PageLoadState::isLoading(const Data& data)
 {
-    if (!data.pendingAPIRequestURL.isNull())
+    if (!data.pendingAPIRequest.url.isNull())
         return true;
 
     switch (data.state) {

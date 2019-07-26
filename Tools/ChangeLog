@@ -1,3 +1,17 @@
+2019-07-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebPageProxy::receivedPolicyDecision should check navigation ID before clear pendingAPIRequest
+        https://bugs.webkit.org/show_bug.cgi?id=200108
+        <rdar://problem/53521238>
+
+        Reviewed by Chris Dumez.
+
+        Added an API test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DecidePolicyForNavigationAction.mm:
+        (-[DecidePolicyForNavigationActionController webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (TEST):
+
 2019-07-25  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Color should be the worst result, count should include all results
