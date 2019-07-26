@@ -5281,8 +5281,13 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         }
     }();
 
-    if (blurPreviousNode)
+    if (blurPreviousNode) {
+        // Defer view updates until the end of this function to avoid a noticeable flash when switching focus
+        // between elements that require the keyboard.
+        if (!inputViewUpdateDeferrer)
+            inputViewUpdateDeferrer = std::make_unique<WebKit::InputViewUpdateDeferrer>(self);
         [self _elementDidBlur];
+    }
 
 #if HAVE(PENCILKIT)
     if (information.elementType == WebKit::InputType::Drawing)
