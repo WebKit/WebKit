@@ -657,7 +657,7 @@ public:
 #if ENABLE(MEDIA_STREAM)
         [NSNumber numberWithBool:NO], WebKitMediaDevicesEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitMediaStreamEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES], WebKitMediaRecorderEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitMediaRecorderEnabledPreferenceKey,
 #endif
 #if ENABLE(WEB_RTC)
         [NSNumber numberWithBool:YES], WebKitPeerConnectionEnabledPreferenceKey,
@@ -1574,6 +1574,16 @@ public:
 - (NSTimeInterval)_backForwardCacheExpirationInterval
 {
     return (NSTimeInterval)[self _floatValueForKey:WebKitBackForwardCacheExpirationIntervalKey];
+}
+
+- (BOOL)_mediaRecorderEnabled
+{
+    return [self _boolValueForKey:WebKitMediaRecorderEnabledPreferenceKey];
+}
+
+- (void)_setMediaRecorderEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitMediaRecorderEnabledPreferenceKey];
 }
 
 #if PLATFORM(IOS_FAMILY)
