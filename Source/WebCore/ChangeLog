@@ -1,3 +1,46 @@
+2019-07-25  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r247620. rdar://problem/53519933
+
+    Crash under WebPage::boundaryEventOccurred
+    https://bugs.webkit.org/show_bug.cgi?id=199907
+    
+    Reviewed by Chris Fleizach.
+    
+    Add null pointer checks.
+    
+    No new tests, since I have not been able to reproduce this in a test.
+    
+    * Modules/speech/SpeechSynthesis.cpp:
+    (WebCore::SpeechSynthesis::didStartSpeaking):
+    (WebCore::SpeechSynthesis::didFinishSpeaking):
+    (WebCore::SpeechSynthesis::didPauseSpeaking):
+    (WebCore::SpeechSynthesis::didResumeSpeaking):
+    (WebCore::SpeechSynthesis::speakingErrorOccurred):
+    (WebCore::SpeechSynthesis::boundaryEventOccurred):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247620 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-18  Per Arne Vollan  <pvollan@apple.com>
+
+            Crash under WebPage::boundaryEventOccurred
+            https://bugs.webkit.org/show_bug.cgi?id=199907
+
+            Reviewed by Chris Fleizach.
+
+            Add null pointer checks.
+
+            No new tests, since I have not been able to reproduce this in a test.
+
+            * Modules/speech/SpeechSynthesis.cpp:
+            (WebCore::SpeechSynthesis::didStartSpeaking):
+            (WebCore::SpeechSynthesis::didFinishSpeaking):
+            (WebCore::SpeechSynthesis::didPauseSpeaking):
+            (WebCore::SpeechSynthesis::didResumeSpeaking):
+            (WebCore::SpeechSynthesis::speakingErrorOccurred):
+            (WebCore::SpeechSynthesis::boundaryEventOccurred):
+
 2019-07-24  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r247746. rdar://problem/53483298
