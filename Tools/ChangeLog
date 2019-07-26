@@ -1,3 +1,13 @@
+2019-07-26  Jonathan Bedard  <jbedard@apple.com>
+
+        Follow-up fix: results.webkit.org: Color should be the worst result, count should include all results
+        https://bugs.webkit.org/show_bug.cgi?id=200127
+
+        Unreviewed follow-up fix.
+
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (Dot.toString): Use self instead of this in render callback.
+
 2019-07-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         WebPageProxy::receivedPolicyDecision should check navigation ID before clear pendingAPIRequest

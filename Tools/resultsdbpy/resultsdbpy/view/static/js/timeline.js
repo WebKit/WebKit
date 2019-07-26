@@ -204,7 +204,7 @@ class Dot {
 
         return render(`dot ${key}`, `<div class="tag" style="color:var(--boldInverseColor)">
                 ${function() {
-                    let percent = Math.ceil(this.failed / self.count * 100 - .5);
+                    let percent = Math.ceil(self.failed / self.count * 100 - .5);
                     if (percent > 0)
                         return percent;
                     return '<1';
