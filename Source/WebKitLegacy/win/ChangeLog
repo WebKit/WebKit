@@ -1,3 +1,21 @@
+2019-07-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WK1] The inspected webview window is misplaced after changing Web Inspector frontend window height
+        https://bugs.webkit.org/show_bug.cgi?id=200152
+
+        Reviewed by Brent Fulgham.
+
+        In WebInspectorFrontendClient::setAttachedWindowHeight, the size
+        of m_inspectedWebViewHwnd was changed to the whole host window
+        size. But, it's too tall because MiniBrowser's host window has a
+        toolbar. The toolbar height should be taken into account.
+
+        Change to the height of m_inspectedWebViewHwnd to the sum of
+        inspected WebView and inspector frontend WebView heights.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorFrontendClient::setAttachedWindowHeight):
+
 2019-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS 10.15] Web process crashes when attempting to show the font panel via Font > Show Fonts

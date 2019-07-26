@@ -327,17 +327,21 @@ void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned height)
     RECT hostWindowRect;
     GetClientRect(hostWindow, &hostWindowRect);
 
+    RECT frontendRect;
+    GetClientRect(m_frontendWebViewHwnd, &frontendRect);
+
     RECT inspectedRect;
     GetClientRect(m_inspectedWebViewHwnd, &inspectedRect);
 
-    int totalHeight = hostWindowRect.bottom - hostWindowRect.top;
+    int hostWindowHeight = hostWindowRect.bottom;
     int webViewWidth = inspectedRect.right - inspectedRect.left;
+    int webViewHeight = frontendRect.bottom + inspectedRect.bottom;
 
-    SetWindowPos(m_frontendWebViewHwnd, 0, 0, totalHeight - height, webViewWidth, height, SWP_NOZORDER);
+    SetWindowPos(m_frontendWebViewHwnd, 0, 0, hostWindowHeight - height, webViewWidth, height, SWP_NOZORDER);
 
     // We want to set the inspected web view height to the totalHeight, because the height adjustment
     // of the inspected web view happens in onWebViewWindowPosChanging, not here.
-    SetWindowPos(m_inspectedWebViewHwnd, 0, 0, 0, webViewWidth, totalHeight, SWP_NOZORDER);
+    SetWindowPos(m_inspectedWebViewHwnd, 0, 0, hostWindowHeight - webViewHeight, webViewWidth, webViewHeight, SWP_NOZORDER);
 
     RedrawWindow(m_frontendWebViewHwnd, 0, 0, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW);
     RedrawWindow(m_inspectedWebViewHwnd, 0, 0, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW);
