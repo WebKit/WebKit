@@ -69,7 +69,7 @@ class ViewRoutes(AuthedBlueprint):
             site_menu=self.site_menu,
         )
 
-        self.add_url_rule('/', 'main', self.suites.results, methods=('GET',))
+        self.add_url_rule('/', 'main', self.suites.search, methods=('GET',))
 
         self.add_url_rule('/documentation', 'documentation', self.documentation, methods=('GET',))
 
@@ -78,14 +78,14 @@ class ViewRoutes(AuthedBlueprint):
         self.add_url_rule('/commit/previous', 'commit_previous', self.commits.previous, methods=('GET',))
         self.add_url_rule('/commit/next', 'commit_next', self.commits.next, methods=('GET',))
         self.add_url_rule('/commits', 'commits', self.commits.commits, methods=('GET',))
-        self.add_url_rule('/search', 'search', self.suites.search, methods=('GET',))
+        self.add_url_rule('/suites', 'suites', self.suites.results, methods=('GET',))
 
         self.add_url_rule('/urls/queue', 'urls-queue', self.ci.queue, methods=('GET',))
         self.add_url_rule('/urls/worker', 'urls-worker', self.ci.worker, methods=('GET',))
         self.add_url_rule('/urls/build', 'urls-build', self.ci.build, methods=('GET',))
 
         self.site_menu.add_endpoint('Main', self.name + '.main')
-        self.site_menu.add_endpoint('Search', self.name + '.search')
+        self.site_menu.add_endpoint('Suites', self.name + '.suites')
         self.site_menu.add_endpoint('Documentation', self.name + '.documentation')
         self.site_menu.add_endpoint('Commits', self.name + '.commits')
 

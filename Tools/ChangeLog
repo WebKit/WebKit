@@ -1,5 +1,18 @@
 2019-07-26  Jonathan Bedard  <jbedard@apple.com>
 
+        results.webkit.org: Suite results shouldn't be the landing page
+        https://bugs.webkit.org/show_bug.cgi?id=200090
+
+        Reviewed by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/templates/suite_results.html: Remove search bar.
+        * resultsdbpy/resultsdbpy/view/view_routes.py:
+        (ViewRoutes.__init__): Make search the landing page instead of suite results.
+        * resultsdbpy/resultsdbpy/view/view_routes_unittest.py:
+        (WebSiteUnittest.test_main):
+
+2019-07-26  Jonathan Bedard  <jbedard@apple.com>
+
         Follow-up fix: results.webkit.org: Color should be the worst result, count should include all results
         https://bugs.webkit.org/show_bug.cgi?id=200127
 

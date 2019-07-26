@@ -35,7 +35,6 @@ import {deepCompare, ErrorDisplay, queryToParams, paramsToQuery} from '/assets/j
 import {Configuration} from '/assets/js/configuration.js';
 import {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider} from '/assets/js/drawer.js';
 import {DOM, REF} from '/library/js/Ref.js';
-import {SearchBar} from '/assets/js/search.js';
 import {Legend, Timeline} from '/assets/js/timeline.js';
 
 const DEFAULT_LIMIT = 100;
@@ -163,21 +162,6 @@ DOM.inject(document.getElementById('app'), `${Drawer([
     }),
     ConfigurationSelectors(() => {view.reload()}),
 ])}
-${SearchBar(function () {
-    if (!arguments.length) {
-        console.error('No tests to search for');
-        return;
-    }
-    let params = queryToParams(document.URL.split('?')[1]);
-    params.suite = [];
-    params.test = [];
-
-    for (let i = 0; i < arguments.length; i++) {
-        params.suite.push(arguments[i].suite);
-        params.test.push(arguments[i].test);
-    }
-    window.location.assign("search?" + paramsToQuery(params));
-}, SUITES)}
 ${view}
 `);
 
