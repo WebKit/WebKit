@@ -35,6 +35,7 @@
 #include "NetworkLoadMetrics.h"
 #include "ResourceError.h"
 #include "SharedBuffer.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>
 
@@ -106,13 +107,11 @@ void CurlRequest::start()
 
     ASSERT(isMainThread());
 
-    auto url = m_request.url().isolatedCopy();
-
     if (std::isnan(m_requestStartTime))
         m_requestStartTime = MonotonicTime::now().isolatedCopy();
 
-    if (url.isLocalFile())
-        invokeDidReceiveResponseForFile(url);
+    if (m_request.url().isLocalFile())
+        invokeDidReceiveResponseForFile(m_request.url());
     else
         startWithJobManager();
 }
@@ -579,7 +578,7 @@ void CurlRequest::setupSendData(bool forPutMethod)
     m_curlHandle->setReadCallbackFunction(willSendDataCallback, this);
 }
 
-void CurlRequest::invokeDidReceiveResponseForFile(URL& url)
+void CurlRequest::invokeDidReceiveResponseForFile(const URL& url)
 {
     // Since the code in didReceiveHeader() will not have run for local files
     // the code to set the URL and fire didReceiveResponse is never run,
@@ -589,15 +588,17 @@ void CurlRequest::invokeDidReceiveResponseForFile(URL& url)
     ASSERT(isMainThread());
     ASSERT(url.isLocalFile());
 
-    m_response.url = url;
-    m_response.statusCode = 200;
-
     // Determine the MIME type based on the path.
-    m_response.headers.append(String("Content-Type: " + MIMETypeRegistry::getMIMETypeForPath(m_response.url.path())));
+    auto mimeType = MIMETypeRegistry::getMIMETypeForPath(url.path());
 
     // DidReceiveResponse must not be called immediately
-    runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this)]() {
-        invokeDidReceiveResponse(m_response, Action::StartTransfer);
+    runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this), url = crossThreadCopy(url), mimeType = crossThreadCopy(WTFMove(mimeType))]() mutable {
+        CurlResponse response;
+        response.url = WTFMove(url);
+        response.statusCode = 200;
+        response.headers.append("Content-Type: " + mimeType);
+
+        invokeDidReceiveResponse(response, Action::StartTransfer);
     });
 }
 
