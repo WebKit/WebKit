@@ -1,4 +1,4 @@
-Test for the SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply sendSync flag
+Test for the SendSyncOption::ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply sendSync flag
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

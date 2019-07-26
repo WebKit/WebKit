@@ -1,3 +1,16 @@
+2019-07-26  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] WebPage::TouchEventSync() & WebPage::GetPositionInformation() sync IPC causes UIProcess hangs
+        https://bugs.webkit.org/show_bug.cgi?id=200138
+        <rdar://problem/52698157>
+
+        Reviewed by Geoffrey Garen.
+
+        Update existing layout test accordingly.
+
+        * fast/misc/{testProcessIncomingSyncMessagesWhenWaitingForUnboundedReply-expected.txt: Renamed from LayoutTests/fast/misc/testProcessIncomingSyncMessagesWhenWaitingForSyncReply-expected.txt.
+        * fast/misc/{testProcessIncomingSyncMessagesWhenWaitingForUnboundedReply.html: Renamed from LayoutTests/fast/misc/testProcessIncomingSyncMessagesWhenWaitingForSyncReply.html.
+
 2019-07-26  Zalan Bujtas  <zalan@apple.com>
 
         Unable to tap/double tap to open files/folders in Google Drive in Safari

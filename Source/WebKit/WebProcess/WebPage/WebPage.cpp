@@ -316,8 +316,8 @@ static const Seconds pageScrollHysteresisDuration { 300_ms };
 static const Seconds initialLayerVolatilityTimerInterval { 20_ms };
 static const Seconds maximumLayerVolatilityTimerInterval { 2_s };
 
-#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Layers, __VA_ARGS__)
-#define RELEASE_LOG_ERROR_IF_ALLOWED(...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), Layers, __VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - WebPage::" fmt, this, ##__VA_ARGS__)
+#define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - WebPage::" fmt, this, ##__VA_ARGS__)
 
 class SendStopResponsivenessTimer {
 public:
@@ -2556,14 +2556,14 @@ void WebPage::layerVolatilityTimerFired()
     if (didSucceed || newInterval > maximumLayerVolatilityTimerInterval) {
         m_layerVolatilityTimer.stop();
         if (didSucceed)
-            RELEASE_LOG_IF_ALLOWED("%p - WebPage - Succeeded in marking layers as volatile", this);
+            RELEASE_LOG_IF_ALLOWED(Layers, "layerVolatilityTimerFired: Succeeded in marking layers as volatile");
         else
-            RELEASE_LOG_IF_ALLOWED("%p - WebPage - Failed to mark layers as volatile within %gms", this, maximumLayerVolatilityTimerInterval.milliseconds());
+            RELEASE_LOG_IF_ALLOWED(Layers, "layerVolatilityTimerFired: Failed to mark layers as volatile within %gms", maximumLayerVolatilityTimerInterval.milliseconds());
         callVolatilityCompletionHandlers(didSucceed);
         return;
     }
 
-    RELEASE_LOG_ERROR_IF_ALLOWED("%p - WebPage - Failed to mark all layers as volatile, will retry in %g ms", this, newInterval.milliseconds());
+    RELEASE_LOG_ERROR_IF_ALLOWED(Layers, "layerVolatilityTimerFired: Failed to mark all layers as volatile, will retry in %g ms", newInterval.milliseconds());
     m_layerVolatilityTimer.startRepeating(newInterval);
 }
 
@@ -2574,7 +2574,7 @@ bool WebPage::markLayersVolatileImmediatelyIfPossible()
 
 void WebPage::markLayersVolatile(WTF::Function<void (bool)>&& completionHandler)
 {
-    RELEASE_LOG_IF_ALLOWED("%p - WebPage::markLayersVolatile()", this);
+    RELEASE_LOG_IF_ALLOWED(Layers, "markLayersVolatile");
 
     if (m_layerVolatilityTimer.isActive())
         m_layerVolatilityTimer.stop();
@@ -2585,22 +2585,22 @@ void WebPage::markLayersVolatile(WTF::Function<void (bool)>&& completionHandler)
     bool didSucceed = markLayersVolatileImmediatelyIfPossible();
     if (didSucceed || m_isSuspendedUnderLock) {
         if (didSucceed)
-            RELEASE_LOG_IF_ALLOWED("%p - WebPage - Successfully marked layers as volatile", this);
+            RELEASE_LOG_IF_ALLOWED(Layers, "markLayersVolatile: Successfully marked layers as volatile");
         else {
             // If we get suspended when locking the screen, it is expected that some IOSurfaces cannot be marked as purgeable so we do not keep retrying.
-            RELEASE_LOG_IF_ALLOWED("%p - WebPage - Did what we could to mark IOSurfaces as purgeable after locking the screen", this);
+            RELEASE_LOG_IF_ALLOWED(Layers, "markLayersVolatile: Did what we could to mark IOSurfaces as purgeable after locking the screen");
         }
         callVolatilityCompletionHandlers(didSucceed);
         return;
     }
 
-    RELEASE_LOG_IF_ALLOWED("%p - Failed to mark all layers as volatile, will retry in %g ms", this, initialLayerVolatilityTimerInterval.milliseconds());
+    RELEASE_LOG_IF_ALLOWED(Layers, "markLayersVolatile: Failed to mark all layers as volatile, will retry in %g ms", initialLayerVolatilityTimerInterval.milliseconds());
     m_layerVolatilityTimer.startRepeating(initialLayerVolatilityTimerInterval);
 }
 
 void WebPage::cancelMarkLayersVolatile()
 {
-    RELEASE_LOG_IF_ALLOWED("%p - WebPage::cancelMarkLayersVolatile()", this);
+    RELEASE_LOG_IF_ALLOWED(Layers, "cancelMarkLayersVolatile");
     m_layerVolatilityTimer.stop();
     m_markLayersAsVolatileCompletionHandlers.clear();
 }
@@ -2910,6 +2910,12 @@ void WebPage::dispatchTouchEvent(const WebTouchEvent& touchEvent, bool& handled)
 
 void WebPage::touchEventSync(const WebTouchEvent& touchEvent, CompletionHandler<void(bool)>&& reply)
 {
+    // Avoid UIProcess hangs when the WebContent process is stuck on a sync IPC.
+    if (IPC::UnboundedSynchronousIPCScope::hasOngoingUnboundedSyncIPC()) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(Process, "touchEventSync - Not processing because the process is stuck on unbounded sync IPC");
+        return reply(true);
+    }
+
     m_pendingSynchronousTouchEventReply = WTFMove(reply);
 
     EventDispatcher::TouchEventQueue queuedEvents;
@@ -3279,7 +3285,7 @@ void WebPage::didCompletePageTransition()
 {
     unfreezeLayerTree(LayerTreeFreezeReason::PageTransition);
 
-    RELEASE_LOG_IF_ALLOWED("%p - WebPage - Did complete page transition", this);
+    RELEASE_LOG_IF_ALLOWED(Layers, "didCompletePageTransition: Did complete page transition");
 
     bool isInitialEmptyDocument = !m_mainFrame;
     if (!isInitialEmptyDocument)
@@ -3544,7 +3550,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
 #if !PLATFORM(GTK) && !PLATFORM(WIN)
     if (!settings.acceleratedCompositingEnabled()) {
-        RELEASE_LOG_IF_ALLOWED("%p - WebPage - acceleratedCompositingEnabled setting was false. WebKit cannot function in this mode; changing setting to true", this);
+        RELEASE_LOG_IF_ALLOWED(Layers, "updatePreferences: acceleratedCompositingEnabled setting was false. WebKit cannot function in this mode; changing setting to true");
         settings.setAcceleratedCompositingEnabled(true);
     }
 #endif
@@ -5885,6 +5891,7 @@ void WebPage::didRemoveMenuItemElement(HTMLMenuItemElement& element)
 
 void WebPage::testProcessIncomingSyncMessagesWhenWaitingForSyncReply(Messages::WebPage::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply::DelayedReply&& reply)
 {
+    RELEASE_ASSERT(IPC::UnboundedSynchronousIPCScope::hasOngoingUnboundedSyncIPC());
     reply(true);
 }
 

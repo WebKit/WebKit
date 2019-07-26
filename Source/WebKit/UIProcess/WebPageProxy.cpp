@@ -2669,7 +2669,7 @@ void WebPageProxy::handleTouchEventSynchronously(NativeWebTouchEvent& event)
 
     m_process->responsivenessTimer().start();
     bool handled = false;
-    bool replyReceived = m_process->sendSync(Messages::WebPage::TouchEventSync(event), Messages::WebPage::TouchEventSync::Reply(handled), m_pageID, 1_s);
+    bool replyReceived = m_process->sendSync(Messages::WebPage::TouchEventSync(event), Messages::WebPage::TouchEventSync::Reply(handled), m_pageID, 1_s, IPC::SendSyncOption::ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply);
     // If the sync request has timed out, we should consider the event handled. The Web Process is too busy to answer any questions, so the default action is also likely to have issues.
     if (!replyReceived)
         handled = true;

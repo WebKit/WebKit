@@ -39,6 +39,7 @@ namespace IPC {
 
 class DataReference;
 class ImportanceAssertion;
+enum class ShouldDispatchWhenWaitingForSyncReply;
 
 class Decoder {
     WTF_MAKE_FAST_ALLOCATED;
@@ -54,7 +55,7 @@ public:
     uint64_t destinationID() const { return m_destinationID; }
 
     bool isSyncMessage() const;
-    bool shouldDispatchMessageWhenWaitingForSyncReply() const;
+    ShouldDispatchWhenWaitingForSyncReply shouldDispatchMessageWhenWaitingForSyncReply() const;
     bool shouldUseFullySynchronousModeForTesting() const;
 
 #if PLATFORM(MAC)

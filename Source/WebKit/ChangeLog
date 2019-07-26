@@ -1,3 +1,70 @@
+2019-07-26  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] WebPage::TouchEventSync() & WebPage::GetPositionInformation() sync IPC causes UIProcess hangs
+        https://bugs.webkit.org/show_bug.cgi?id=200138
+        <rdar://problem/52698157>
+
+        Reviewed by Geoffrey Garen.
+
+        Revert most of r247822 and use an alternative approach to address hangs. In this patch, the proposal
+        is to add a SendSyncOption::ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply flag on the
+        WebPage::TouchEventSync() & WebPage::GetPositionInformation() sendSync() calls in the UIProcess.
+        Those will cause this IPCs to get dispatched right away in the WebContent process, even if the
+        WebContent process is itself currently stuck on unbounded (i.e. potentially slow) synchronous IPC
+        (JS alerts / prompts & sync XHR). Because re-entering WebCore on sync IPC is generally unsafe, this
+        patch also updates the WebPage::getPositionInformation() & WebPage::touchEventSync() to return early
+        (i.e. cancelled) if they get called while the WebContent process is stuck on a slow sendSync.
+
+        This approach should address the UIProcess hangs caused by the WebPage::TouchEventSync() and
+        WebPage::GetPositionInformation() sync IPC messages when the WebContent process is busy on a slow XHR
+        or a JS prompt / alert. It should be safe because we do not re-enter WebCore. The only drawback is that
+        those IPCs will be cancelled (early return with default value) when the WebContent process is busy.
+        However, I am being told that this is likely acceptable in practice.        
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::SyncMessageState::processIncomingMessage):
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::sendSyncMessage):
+        (IPC::Connection::dispatchMessage):
+        * Platform/IPC/Connection.h:
+        (IPC::UnboundedSynchronousIPCScope::UnboundedSynchronousIPCScope):
+        (IPC::UnboundedSynchronousIPCScope::~UnboundedSynchronousIPCScope):
+        (IPC::UnboundedSynchronousIPCScope::hasOngoingUnboundedSyncIPC):
+        * Platform/IPC/Decoder.cpp:
+        (IPC::Decoder::shouldDispatchMessageWhenWaitingForSyncReply const):
+        * Platform/IPC/Decoder.h:
+        * Platform/IPC/Encoder.cpp:
+        (IPC::Encoder::shouldDispatchMessageWhenWaitingForSyncReply const):
+        (IPC::Encoder::setShouldDispatchMessageWhenWaitingForSyncReply):
+        (IPC::Encoder::wrapForTesting):
+        * Platform/IPC/Encoder.h:
+        * Platform/IPC/MessageFlags.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::testProcessIncomingSyncMessagesWhenWaitingForSyncReply):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleTouchEventSynchronously):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView ensurePositionInformationIsUpToDate:]):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::testProcessIncomingSyncMessagesWhenWaitingForSyncReply):
+        (WebKit::WebChromeClient::runJavaScriptAlert):
+        (WebKit::WebChromeClient::runJavaScriptConfirm):
+        (WebKit::WebChromeClient::runJavaScriptPrompt):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::layerVolatilityTimerFired):
+        (WebKit::WebPage::markLayersVolatile):
+        (WebKit::WebPage::cancelMarkLayersVolatile):
+        (WebKit::WebPage::touchEventSync):
+        (WebKit::WebPage::didCompletePageTransition):
+        (WebKit::WebPage::updatePreferences):
+        (WebKit::WebPage::testProcessIncomingSyncMessagesWhenWaitingForSyncReply):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::sendSyncWithDelayedReply):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2019-07-26  Zalan Bujtas  <zalan@apple.com>
 
         Unable to tap/double tap to open files/folders in Google Drive in Safari

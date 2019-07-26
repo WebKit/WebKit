@@ -88,9 +88,13 @@ bool Decoder::isSyncMessage() const
     return m_messageFlags & SyncMessage;
 }
 
-bool Decoder::shouldDispatchMessageWhenWaitingForSyncReply() const
+ShouldDispatchWhenWaitingForSyncReply Decoder::shouldDispatchMessageWhenWaitingForSyncReply() const
 {
-    return m_messageFlags & DispatchMessageWhenWaitingForSyncReply;
+    if (m_messageFlags & DispatchMessageWhenWaitingForSyncReply)
+        return ShouldDispatchWhenWaitingForSyncReply::Yes;
+    if (m_messageFlags & DispatchMessageWhenWaitingForUnboundedSyncReply)
+        return ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC;
+    return ShouldDispatchWhenWaitingForSyncReply::No;
 }
 
 bool Decoder::shouldUseFullySynchronousModeForTesting() const

@@ -27,6 +27,7 @@
 #include "Connection.h"
 
 #include "Logging.h"
+#include "MessageFlags.h"
 #include <memory>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
@@ -48,6 +49,8 @@ namespace IPC {
 // The IPC connection gets killed if the incoming message queue reaches 50000 messages before the main thread has a chance to dispatch them.
 const size_t maxPendingIncomingMessagesKillingThreshold { 50000 };
 #endif
+
+std::atomic<unsigned> UnboundedSynchronousIPCScope::unboundedSynchronousIPCCount = 0;
 
 struct Connection::ReplyHandler {
     RefPtr<FunctionDispatcher> dispatcher;
@@ -98,9 +101,6 @@ public:
     // from that connection and put the other messages back in the queue.
     void dispatchMessages(Connection* allowedConnection);
 
-    void incrementProcessIncomingSyncMessagesWhenWaitingForSyncReplyCount() { ++m_processIncomingSyncMessagesWhenWaitingForSyncReplyCount; }
-    void decrementProcessIncomingSyncMessagesWhenWaitingForSyncReplyCount() { --m_processIncomingSyncMessagesWhenWaitingForSyncReplyCount; }
-
 private:
     void dispatchMessageAndResetDidScheduleDispatchMessagesForConnection(Connection&);
 
@@ -117,8 +117,6 @@ private:
         std::unique_ptr<Decoder> message;
     };
     Vector<ConnectionAndIncomingMessage> m_messagesToDispatchWhileWaitingForSyncReply;
-
-    std::atomic<unsigned> m_processIncomingSyncMessagesWhenWaitingForSyncReplyCount { 0 };
 };
 
 Connection::SyncMessageState& Connection::SyncMessageState::singleton()
@@ -139,17 +137,16 @@ Connection::SyncMessageState::SyncMessageState()
 
 bool Connection::SyncMessageState::processIncomingMessage(Connection& connection, std::unique_ptr<Decoder>& message)
 {
-    bool shouldDispatchMessageWhenWaitingForSyncReply = message->shouldDispatchMessageWhenWaitingForSyncReply();
-
-    // We dispatch synchronous messages even if shouldDispatchMessageWhenWaitingForSyncReply returns false if the
-    // sendSync() used SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply. This is used for some messages
-    // in the WebContent process (which normally does not dispatch messages when waiting for a sync reply), to avoid
-    // hangs.
-    if (!shouldDispatchMessageWhenWaitingForSyncReply && message->isSyncMessage() && m_processIncomingSyncMessagesWhenWaitingForSyncReplyCount.load())
-        shouldDispatchMessageWhenWaitingForSyncReply = true;
-
-    if (!shouldDispatchMessageWhenWaitingForSyncReply)
+    switch (message->shouldDispatchMessageWhenWaitingForSyncReply()) {
+    case ShouldDispatchWhenWaitingForSyncReply::No:
         return false;
+    case ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC:
+        if (!UnboundedSynchronousIPCScope::hasOngoingUnboundedSyncIPC())
+            return false;
+        break;
+    case ShouldDispatchWhenWaitingForSyncReply::Yes:
+        break;
+    }
 
     ConnectionAndIncomingMessage connectionAndIncomingMessage { connection, WTFMove(message) };
 
@@ -433,7 +430,9 @@ bool Connection::sendMessage(std::unique_ptr<Encoder> encoder, OptionSet<SendOpt
     if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForSyncReply)
         && (!m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage
             || m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount))
-        encoder->setShouldDispatchMessageWhenWaitingForSyncReply(true);
+        encoder->setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply::Yes);
+    else if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply))
+        encoder->setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC);
 
     {
         std::lock_guard<Lock> lock(m_outgoingMessagesMutex);
@@ -577,18 +576,16 @@ std::unique_ptr<Decoder> Connection::sendSyncMessage(uint64_t syncRequestID, std
     ++m_inSendSyncCount;
 
     // First send the message.
-    sendMessage(WTFMove(encoder), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    OptionSet<SendOption> sendOptions = IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply;
+    if (sendSyncOptions.contains(SendSyncOption::ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply))
+        sendOptions = sendOptions | IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply;
 
-    if (sendSyncOptions.contains(SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply))
-        SyncMessageState::singleton().incrementProcessIncomingSyncMessagesWhenWaitingForSyncReplyCount();
+    sendMessage(WTFMove(encoder), sendOptions);
 
     // Then wait for a reply. Waiting for a reply could involve dispatching incoming sync messages, so
     // keep an extra reference to the connection here in case it's invalidated.
     Ref<Connection> protect(*this);
     std::unique_ptr<Decoder> reply = waitForSyncReply(syncRequestID, timeout, sendSyncOptions);
-
-    if (sendSyncOptions.contains(SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply))
-        SyncMessageState::singleton().decrementProcessIncomingSyncMessagesWhenWaitingForSyncReplyCount();
 
     --m_inSendSyncCount;
 
@@ -1040,8 +1037,11 @@ void Connection::dispatchMessage(std::unique_ptr<Decoder> message)
     }
 
     m_inDispatchMessageCount++;
+    
+    bool isDispatchingMessageWhileWaitingForSyncReply = (message->shouldDispatchMessageWhenWaitingForSyncReply() == ShouldDispatchWhenWaitingForSyncReply::Yes)
+        || (message->shouldDispatchMessageWhenWaitingForSyncReply() == ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC && UnboundedSynchronousIPCScope::hasOngoingUnboundedSyncIPC());
 
-    if (message->shouldDispatchMessageWhenWaitingForSyncReply())
+    if (isDispatchingMessageWhileWaitingForSyncReply)
         m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount++;
 
     bool oldDidReceiveInvalidMessage = m_didReceiveInvalidMessage;
@@ -1057,7 +1057,7 @@ void Connection::dispatchMessage(std::unique_ptr<Decoder> message)
 
     // FIXME: For synchronous messages, we should not decrement the counter until we send a response.
     // Otherwise, we would deadlock if processing the message results in a sync message back after we exit this function.
-    if (message->shouldDispatchMessageWhenWaitingForSyncReply())
+    if (isDispatchingMessageWhileWaitingForSyncReply)
         m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount--;
 
     if (message->shouldUseFullySynchronousModeForTesting())

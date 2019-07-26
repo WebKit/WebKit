@@ -61,14 +61,15 @@ enum class SendOption {
     // Whether this message should be dispatched when waiting for a sync reply.
     // This is the default for synchronous messages.
     DispatchMessageEvenWhenWaitingForSyncReply = 1 << 0,
-    IgnoreFullySynchronousMode = 1 << 1,
+    DispatchMessageEvenWhenWaitingForUnboundedSyncReply = 1 << 1,
+    IgnoreFullySynchronousMode = 1 << 2,
 };
 
 enum class SendSyncOption {
     // Use this to inform that this sync call will suspend this process until the user responds with input.
     InformPlatformProcessWillSuspend = 1 << 0,
     UseFullySynchronousModeForTesting = 1 << 1,
-    ProcessIncomingSyncMessagesWhenWaitingForSyncReply = 1 << 2,
+    ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply = 1 << 2,
 };
 
 enum class WaitForOption {
@@ -553,5 +554,29 @@ template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t des
     m_client.didReceiveMessage(*this, *decoder);
     return true;
 }
+
+class UnboundedSynchronousIPCScope {
+public:
+    UnboundedSynchronousIPCScope()
+    {
+        ASSERT(RunLoop::isMain());
+        ++unboundedSynchronousIPCCount;
+    }
+
+    ~UnboundedSynchronousIPCScope()
+    {
+        ASSERT(RunLoop::isMain());
+        ASSERT(unboundedSynchronousIPCCount);
+        --unboundedSynchronousIPCCount;
+    }
+
+    static bool hasOngoingUnboundedSyncIPC()
+    {
+        return unboundedSynchronousIPCCount.load() > 0;
+    }
+
+private:
+    static std::atomic<unsigned> unboundedSynchronousIPCCount;
+};
 
 } // namespace IPC
