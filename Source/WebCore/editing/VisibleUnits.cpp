@@ -232,7 +232,7 @@ static const InlineBox* logicallyPreviousBox(const VisiblePosition& visiblePosit
         if (!previousRoot)
             break;
 
-        previousBox = leafBoxes.previousTextOrLineBreakBox(previousRoot, 0);
+        previousBox = leafBoxes.previousTextOrLineBreakBox(previousRoot, &startBox->root() == previousRoot ? startBox : nullptr);
         if (previousBox) {
             previousBoxInDifferentLine = true;
             return previousBox;
@@ -273,7 +273,7 @@ static const InlineBox* logicallyNextBox(const VisiblePosition& visiblePosition,
         if (!nextRoot)
             break;
 
-        nextBox = leafBoxes.nextTextOrLineBreakBox(nextRoot, 0);
+        nextBox = leafBoxes.nextTextOrLineBreakBox(nextRoot, &startBox->root() == nextRoot ? startBox : nullptr);
         if (nextBox) {
             nextBoxInDifferentLine = true;
             return nextBox;

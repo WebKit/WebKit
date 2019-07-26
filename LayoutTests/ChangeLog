@@ -1,3 +1,20 @@
+2019-07-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Moving right by word boundary right before an object element followed by a br element hangs
+        https://bugs.webkit.org/show_bug.cgi?id=200144
+
+        Reviewed by Simon Fraser.
+
+        Added regression tests. The second test case involes non-word characters "%)" which are skipped like whitespaces
+        for the purposes of moving right or left by word granularity. The third test case involves RTL text.
+
+        * editing/selection/move-by-word-visually-across-object-element-1-expected.txt: Added.
+        * editing/selection/move-by-word-visually-across-object-element-1.html: Added.
+        * editing/selection/move-by-word-visually-across-object-element-2-expected.txt: Added.
+        * editing/selection/move-by-word-visually-across-object-element-2.html: Added.
+        * editing/selection/move-by-word-visually-across-object-element-3-expected.txt: Added.
+        * editing/selection/move-by-word-visually-across-object-element-3.html: Added.
+
 2019-07-26  Brady Eidson  <beidson@apple.com>
 
         Do not fire readystatechange events at documents about to get replaced by javascript URLs.
