@@ -1,3 +1,17 @@
+2019-07-26  Zalan Bujtas  <zalan@apple.com>
+
+        [iPadOS] wix.com cannot select a template to edit or view
+        https://bugs.webkit.org/show_bug.cgi?id=200174
+        <rdar://problem/53281296>
+
+        Reviewed by Simon Fraser.
+
+        Opt out of simulated mouse event sending for template selection on wix.com.
+        When wix.com receives a simulated mouse event during the touch events, it calls preventDefault() which prevents us from running the hover heuristics -> no click.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldDispatchSimulatedMouseEvents const):
+
 2019-07-26  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] UnnamedType should be reference counted

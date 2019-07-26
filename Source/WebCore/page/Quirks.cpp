@@ -271,8 +271,10 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
     auto& url = m_document->topDocument().url();
     auto host = url.host();
 
-    if (equalLettersIgnoringASCIICase(host, "wix.com") || host.endsWithIgnoringASCIICase(".wix.com"))
-        return true;
+    if (equalLettersIgnoringASCIICase(host, "wix.com") || host.endsWithIgnoringASCIICase(".wix.com")) {
+        // Disable simulated mouse dispatching for template selection.
+        return !url.path().startsWithIgnoringASCIICase("/website/templates/");
+    }
     if ((equalLettersIgnoringASCIICase(host, "desmos.com") || host.endsWithIgnoringASCIICase(".desmos.com")) && url.path().startsWithIgnoringASCIICase("/calculator/"))
         return true;
     if (equalLettersIgnoringASCIICase(host, "figma.com") || host.endsWithIgnoringASCIICase(".figma.com"))
