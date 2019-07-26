@@ -205,6 +205,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, WebWhe
 
     GdkScrollDirection direction;
     if (!gdk_event_get_scroll_direction(event, &direction)) {
+        direction = GDK_SCROLL_SMOOTH;
         double deltaX, deltaY;
         if (gdk_event_get_scroll_deltas(event, &deltaX, &deltaY))
             wheelTicks = FloatSize(-deltaX, -deltaY);
@@ -223,6 +224,8 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, WebWhe
             break;
         case GDK_SCROLL_RIGHT:
             wheelTicks = FloatSize(-1, 0);
+            break;
+        case GDK_SCROLL_SMOOTH:
             break;
         default:
             ASSERT_NOT_REACHED();

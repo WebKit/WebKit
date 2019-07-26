@@ -1,3 +1,20 @@
+2019-07-26  Alexander Mikhaylenko  <exalm7659@gmail.com>
+
+        REGRESSION(r246496): [GTK] Tapping the web view scrolls up a bit
+        https://bugs.webkit.org/show_bug.cgi?id=200084
+
+        Reviewed by Carlos Garcia Campos.
+
+        gdk_event_get_scroll_direction() returns false, but also sets direction to GDK_SCROLL_UP if
+        the direction was GDK_SCROLL_SMOOTH. Relying on zero deltas in this case is not correct, because
+        they can also be zero with GDK_SCROLL_SMOOTH. In this case, set the direction manually to avoid
+        that.
+
+        See https://gitlab.gnome.org/GNOME/gtk/issues/2048
+
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebWheelEvent):
+
 2019-07-26  Loïc Yhuel  <loic.yhuel@softathome.com>
 
         [WPE] Support disk cache dumping like GTK

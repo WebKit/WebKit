@@ -63,6 +63,7 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_deltaY = 0;
     GdkScrollDirection direction;
     if (!gdk_event_get_scroll_direction(reinterpret_cast<GdkEvent*>(event), &direction)) {
+        direction = GDK_SCROLL_SMOOTH;
         gdouble deltaX, deltaY;
         if (gdk_event_get_scroll_deltas(reinterpret_cast<GdkEvent*>(event), &deltaX, &deltaY)) {
             m_deltaX = -deltaX;
@@ -84,6 +85,8 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
             break;
         case GDK_SCROLL_RIGHT:
             m_deltaX = -delta;
+            break;
+        case GDK_SCROLL_SMOOTH:
             break;
         default:
             ASSERT_NOT_REACHED();
