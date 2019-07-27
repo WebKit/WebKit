@@ -1,3 +1,60 @@
+2019-07-26  Mark Lam  <mark.lam@apple.com>
+
+        Add crash diagnostics for debugging unexpected zapped cells.
+        https://bugs.webkit.org/show_bug.cgi?id=200149
+        <rdar://problem/53570112>
+
+        Reviewed by Yusuke Suzuki, Saam Barati, and Michael Saboff.
+
+        Add a check for zapped cells in SlotVisitor::appendToMarkStack() and
+        SlotVisitor::visitChildren().  If a zapped cell is detected, we will crash with
+        some diagnostic info.
+
+        To facilitate this, we've made the following changes:
+        1. Changed FreeCell to preserve the 1st 8 bytes.  This is fine to do because all
+           cells are at least 16 bytes long.
+        2. Changed HeapCell::zap() to only zap the structureID.  Leave the rest of the
+           cell header info intact (including the cell JSType).
+        3. Changed HeapCell::zap() to record the reason for zapping the cell.  We stash
+           the reason immediately after the first 8 bytes.  This is the same location as
+           FreeCell::scrambledNext.  However, since a cell is not expected to be zapped
+           and on the free list at the same time, it is also fine to do this.
+        4. Added a few utility functions to MarkedBlock for checking if a cell points
+           into the block.
+        5. Added VMInspector and JSDollarVM utilities to dump in-use subspace hashes.
+        6. Added some comments to document the hashes of known subspaces.
+
+        * heap/FreeList.h:
+        (JSC::FreeCell::offsetOfScrambledNext):
+        * heap/HeapCell.h:
+        (JSC::HeapCell::zap):
+        (JSC::HeapCell::isZapped const):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::stopAllocating):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::Handle::start const):
+        (JSC::MarkedBlock::Handle::end const):
+        (JSC::MarkedBlock::Handle::contains const):
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::specializedSweep):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::forEachSubspace):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendToMarkStack):
+        (JSC::SlotVisitor::visitChildren):
+        (JSC::SlotVisitor::reportZappedCellAndCrash):
+        * heap/SlotVisitor.h:
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitAllocateWithNonNullAllocator):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionDumpSubspaceHashes):
+        (JSC::JSDollarVM::finishCreation):
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::dumpSubspaceHashes):
+        * tools/VMInspector.h:
+
 2019-07-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use unalignedLoad for JSRopeString fiber accesses

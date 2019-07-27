@@ -265,29 +265,29 @@ VM::VM(VMType vmType, HeapType heapType)
     , webAssemblyCodeBlockHeapCellType(std::make_unique<JSWebAssemblyCodeBlockHeapCellType>())
     , webAssemblyFunctionHeapCellType(std::make_unique<WebAssemblyFunctionHeapCellType>())
 #endif
-    , primitiveGigacageAuxiliarySpace("Primitive Gigacage Auxiliary", heap, auxiliaryHeapCellType.get(), primitiveGigacageAllocator.get())
-    , jsValueGigacageAuxiliarySpace("JSValue Gigacage Auxiliary", heap, auxiliaryHeapCellType.get(), jsValueGigacageAllocator.get())
-    , immutableButterflyJSValueGigacageAuxiliarySpace("ImmutableButterfly Gigacage JSCellWithInteriorPointers", heap, immutableButterflyHeapCellType.get(), jsValueGigacageAllocator.get())
-    , cellSpace("JSCell", heap, cellHeapCellType.get(), fastMallocAllocator.get())
-    , jsValueGigacageCellSpace("JSValue Gigacage JSCell", heap, cellHeapCellType.get(), jsValueGigacageAllocator.get())
-    , destructibleCellSpace("Destructible JSCell", heap, destructibleCellHeapCellType.get(), fastMallocAllocator.get())
-    , stringSpace("JSString", heap, stringHeapCellType.get(), fastMallocAllocator.get())
-    , destructibleObjectSpace("JSDestructibleObject", heap, destructibleObjectHeapCellType.get(), fastMallocAllocator.get())
-    , eagerlySweptDestructibleObjectSpace("Eagerly Swept JSDestructibleObject", heap, destructibleObjectHeapCellType.get(), fastMallocAllocator.get())
-    , executableToCodeBlockEdgeSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ExecutableToCodeBlockEdge)
-    , functionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSFunction)
-    , internalFunctionSpace ISO_SUBSPACE_INIT(heap, destructibleObjectHeapCellType.get(), InternalFunction)
-    , nativeExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), NativeExecutable)
-    , propertyTableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), PropertyTable)
-    , structureRareDataSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), StructureRareData)
-    , structureSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), Structure)
-    , symbolTableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), SymbolTable)
+    , primitiveGigacageAuxiliarySpace("Primitive Gigacage Auxiliary", heap, auxiliaryHeapCellType.get(), primitiveGigacageAllocator.get()) // Hash:0x3e7cd762
+    , jsValueGigacageAuxiliarySpace("JSValue Gigacage Auxiliary", heap, auxiliaryHeapCellType.get(), jsValueGigacageAllocator.get()) // Hash:0x241e946
+    , immutableButterflyJSValueGigacageAuxiliarySpace("ImmutableButterfly Gigacage JSCellWithInteriorPointers", heap, immutableButterflyHeapCellType.get(), jsValueGigacageAllocator.get()) // Hash:0x7a945300
+    , cellSpace("JSCell", heap, cellHeapCellType.get(), fastMallocAllocator.get()) // Hash:0xadfb5a79
+    , jsValueGigacageCellSpace("JSValue Gigacage JSCell", heap, cellHeapCellType.get(), jsValueGigacageAllocator.get()) // Hash:0x2f5b102b
+    , destructibleCellSpace("Destructible JSCell", heap, destructibleCellHeapCellType.get(), fastMallocAllocator.get()) // Hash:0xbfff3d73
+    , stringSpace("JSString", heap, stringHeapCellType.get(), fastMallocAllocator.get()) // Hash:0x90cf758f
+    , destructibleObjectSpace("JSDestructibleObject", heap, destructibleObjectHeapCellType.get(), fastMallocAllocator.get()) // Hash:0x4f5ed7a9
+    , eagerlySweptDestructibleObjectSpace("Eagerly Swept JSDestructibleObject", heap, destructibleObjectHeapCellType.get(), fastMallocAllocator.get()) // Hash:0x6ebf28e2
+    , executableToCodeBlockEdgeSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ExecutableToCodeBlockEdge) // Hash:0x7b730b20
+    , functionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSFunction) // Hash:0x800fca72
+    , internalFunctionSpace ISO_SUBSPACE_INIT(heap, destructibleObjectHeapCellType.get(), InternalFunction) // Hash:0xf845c464
+    , nativeExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), NativeExecutable) // Hash:0x67567f95
+    , propertyTableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), PropertyTable) // Hash:0xc6bc9f12
+    , structureRareDataSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), StructureRareData) // Hash:0xaca4e62d
+    , structureSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), Structure) // Hash:0x1f1bcdca
+    , symbolTableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), SymbolTable) // Hash:0xc5215afd
     , executableToCodeBlockEdgesWithConstraints(executableToCodeBlockEdgeSpace)
     , executableToCodeBlockEdgesWithFinalizers(executableToCodeBlockEdgeSpace)
-    , codeBlockSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), CodeBlock)
-    , functionExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), FunctionExecutable)
-    , programExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), ProgramExecutable)
-    , unlinkedFunctionExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), UnlinkedFunctionExecutable)
+    , codeBlockSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), CodeBlock) // Hash:0x77e66ec9
+    , functionExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), FunctionExecutable) // Hash:0x5d158f3
+    , programExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), ProgramExecutable) // Hash:0x527c77e7
+    , unlinkedFunctionExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), UnlinkedFunctionExecutable) // Hash:0xf6b828d9
     , vmType(vmType)
     , clientData(0)
     , topEntryFrame(nullptr)
@@ -1243,22 +1243,22 @@ void VM::ensureShadowChicken()
     }
 
 
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(boundFunctionSpace, cellHeapCellType.get(), JSBoundFunction)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackFunctionSpace, destructibleObjectHeapCellType.get(), JSCallbackFunction)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(customGetterSetterFunctionSpace, cellHeapCellType.get(), JSCustomGetterSetterFunction)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(errorInstanceSpace, destructibleObjectHeapCellType.get(), ErrorInstance)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(nativeStdFunctionSpace, cellHeapCellType.get(), JSNativeStdFunction)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(proxyRevokeSpace, destructibleObjectHeapCellType.get(), ProxyRevoke)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakMapSpace, destructibleObjectHeapCellType.get(), JSWeakMap)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakSetSpace, destructibleObjectHeapCellType.get(), JSWeakSet)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakObjectRefSpace, cellHeapCellType.get(), JSWeakObjectRef)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(boundFunctionSpace, cellHeapCellType.get(), JSBoundFunction) // Hash:0xd7916d41
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackFunctionSpace, destructibleObjectHeapCellType.get(), JSCallbackFunction) // Hash:0xe7648ebc
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(customGetterSetterFunctionSpace, cellHeapCellType.get(), JSCustomGetterSetterFunction) // Hash:0x18091000
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(errorInstanceSpace, destructibleObjectHeapCellType.get(), ErrorInstance) // Hash:0x3f40d4a
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(nativeStdFunctionSpace, cellHeapCellType.get(), JSNativeStdFunction) // Hash:0x70ed61e4
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(proxyRevokeSpace, destructibleObjectHeapCellType.get(), ProxyRevoke) // Hash:0xb506a939
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakMapSpace, destructibleObjectHeapCellType.get(), JSWeakMap) // Hash:0x662b12a3
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakSetSpace, destructibleObjectHeapCellType.get(), JSWeakSet) // Hash:0x4c781b30
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakObjectRefSpace, cellHeapCellType.get(), JSWeakObjectRef) // Hash:0x8ec68f1f
 #if JSC_OBJC_API_ENABLED
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(objCCallbackFunctionSpace, destructibleObjectHeapCellType.get(), ObjCCallbackFunction)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(objCCallbackFunctionSpace, destructibleObjectHeapCellType.get(), ObjCCallbackFunction) // Hash:0x10f610b8
 #endif
 #if ENABLE(WEBASSEMBLY)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyCodeBlockSpace, webAssemblyCodeBlockHeapCellType.get(), JSWebAssemblyCodeBlock)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyFunctionSpace, webAssemblyFunctionHeapCellType.get(), WebAssemblyFunction)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyWrapperFunctionSpace, cellHeapCellType.get(), WebAssemblyWrapperFunction)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyCodeBlockSpace, webAssemblyCodeBlockHeapCellType.get(), JSWebAssemblyCodeBlock) // Hash:0x9ad995cd
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyFunctionSpace, webAssemblyFunctionHeapCellType.get(), WebAssemblyFunction) // Hash:0x8b7c32db
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyWrapperFunctionSpace, cellHeapCellType.get(), WebAssemblyWrapperFunction) // Hash:0xd4a5ff01
 #endif
 
 #undef DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW
@@ -1273,8 +1273,8 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyWrapperFunctionSpace, cellHea
         return &m_##name->space; \
     }
 
-DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW(evalExecutableSpace, destructibleCellHeapCellType.get(), EvalExecutable)
-DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW(moduleProgramExecutableSpace, destructibleCellHeapCellType.get(), ModuleProgramExecutable)
+DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW(evalExecutableSpace, destructibleCellHeapCellType.get(), EvalExecutable) // Hash:0x958e3e9d
+DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW(moduleProgramExecutableSpace, destructibleCellHeapCellType.get(), ModuleProgramExecutable) // Hash:0x6506fa3c
 
 #undef DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW
 

@@ -286,8 +286,13 @@ template<typename ContainerType>
 ALWAYS_INLINE void SlotVisitor::appendToMarkStack(ContainerType& container, JSCell* cell)
 {
     ASSERT(m_heap.isMarked(cell));
+#if CPU(X86_64)
+    if (UNLIKELY(cell->isZapped()))
+        reportZappedCellAndCrash(cell);
+#else
     ASSERT(!cell->isZapped());
-    
+#endif
+
     container.noteMarked();
     
     m_visitCount++;
@@ -385,7 +390,17 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
     default:
         // FIXME: This could be so much better.
         // https://bugs.webkit.org/show_bug.cgi?id=162462
+#if CPU(X86_64)
+        Structure* structure = cell->structure(vm());
+        if (LIKELY(structure)) {
+            const MethodTable* methodTable = &structure->classInfo()->methodTable;
+            methodTable->visitChildren(const_cast<JSCell*>(cell), *this);
+            break;
+        }
+        reportZappedCellAndCrash(const_cast<JSCell*>(cell));
+#else
         cell->methodTable(vm())->visitChildren(const_cast<JSCell*>(cell), *this);
+#endif
         break;
     }
     
@@ -803,5 +818,43 @@ void SlotVisitor::addParallelConstraintTask(RefPtr<SharedTask<void(SlotVisitor&)
     
     m_currentSolver->addParallelTask(task, *m_currentConstraint);
 }
+
+#if CPU(X86_64)
+NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void SlotVisitor::reportZappedCellAndCrash(JSCell* cell)
+{
+    MarkedBlock::Handle* foundBlock = nullptr;
+    uint32_t* cellWords = reinterpret_cast_ptr<uint32_t*>(this);
+
+    uintptr_t cellAddress = bitwise_cast<uintptr_t>(cell);
+    uintptr_t headerWord = cellWords[1];
+    uintptr_t zapReason = cellWords[2];
+    unsigned subspaceHash = 0;
+    size_t cellSize = 0;
+
+    // FIXME: This iteration may crash because the mutator may race against us
+    // to add / remove blocks. That said, this should be rare and is not too
+    // detrimental to the purpose of this function. We will crash imminently
+    // anyway, and the most profitable crash info comes from the crash trace.
+    // If the race does not crash this iteration (which should be the common
+    // case), then we'll get additional info to debug the crash with. If the
+    // race does crash this iteration, then we still have the crash trace to
+    // work with.
+    // https://bugs.webkit.org/show_bug.cgi?id=200183
+    m_heap.objectSpace().forEachBlock([&] (MarkedBlock::Handle* block) {
+        if (block->contains(cell)) {
+            foundBlock = block;
+            return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    });
+
+    if (foundBlock) {
+        subspaceHash = StringHasher::computeHash(foundBlock->subspace()->name());
+        cellSize = foundBlock->cellSize();
+    }
+
+    CRASH_WITH_INFO(cellAddress, headerWord, zapReason, subspaceHash, cellSize);
+}
+#endif // CPU(X86_64)
 
 } // namespace JSC

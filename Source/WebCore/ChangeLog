@@ -1,3 +1,19 @@
+2019-07-26  Mark Lam  <mark.lam@apple.com>
+
+        Add crash diagnostics for debugging unexpected zapped cells.
+        https://bugs.webkit.org/show_bug.cgi?id=200149
+        <rdar://problem/53570112>
+
+        Reviewed by Yusuke Suzuki, Saam Barati, and Michael Saboff.
+
+        No new tests because this is a feature for debugging crashes.  It has been tested
+        manually by modifying the code to force a crash at the point of interest.
+
+        Added some comments to document the hashes of known subspaces.
+
+        * bindings/js/WebCoreJSClientData.cpp:
+        (WebCore::JSVMClientData::JSVMClientData):
+
 2019-07-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Moving right by word boundary right before an object element followed by a br element hangs
