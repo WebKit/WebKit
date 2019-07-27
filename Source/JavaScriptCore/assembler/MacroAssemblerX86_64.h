@@ -1103,6 +1103,36 @@ public:
         return branchTest64(cond, reg, scratchRegister());
     }
 
+    Jump branchTestBit64(ResultCondition cond, RegisterID testValue, TrustedImm32 bit)
+    {
+        m_assembler.btw_ir(static_cast<unsigned>(bit.m_value) % 64, testValue);
+        if (cond == NonZero)
+            return Jump(m_assembler.jb());
+        if (cond == Zero)
+            return Jump(m_assembler.jae());
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    Jump branchTestBit64(ResultCondition cond, Address testValue, TrustedImm32 bit)
+    {
+        m_assembler.btw_im(static_cast<unsigned>(bit.m_value) % 64, testValue.offset, testValue.base);
+        if (cond == NonZero)
+            return Jump(m_assembler.jb());
+        if (cond == Zero)
+            return Jump(m_assembler.jae());
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    Jump branchTestBit64(ResultCondition cond, RegisterID reg, RegisterID bit)
+    {
+        m_assembler.btw_ir(bit, reg);
+        if (cond == NonZero)
+            return Jump(m_assembler.jb());
+        if (cond == Zero)
+            return Jump(m_assembler.jae());
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
     void test64(ResultCondition cond, RegisterID reg, TrustedImm32 mask, RegisterID dest)
     {
         if (mask.m_value == -1)

@@ -293,6 +293,161 @@ static Vector<int32_t> int32Operands()
     };
 }
 
+#if CPU(X86_64)
+static Vector<int64_t> int64Operands()
+{
+    return Vector<int64_t> {
+        0,
+        1,
+        -1,
+        2,
+        -2,
+        42,
+        -42,
+        64,
+        std::numeric_limits<int32_t>::max(),
+        std::numeric_limits<int32_t>::min(),
+        std::numeric_limits<int64_t>::max(),
+        std::numeric_limits<int64_t>::min(),
+    };
+}
+#endif
+
+#if CPU(X86_64)
+void testBranchTestBit32RegReg()
+{
+    for (uint32_t value : int32Operands()) {
+        auto test = compile([=] (CCallHelpers& jit) {
+            jit.emitFunctionPrologue();
+
+            auto branch = jit.branchTestBit32(MacroAssembler::NonZero, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1);
+            jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+            auto done = jit.jump();
+            branch.link(&jit);
+            jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+            done.link(&jit);
+
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+
+        for (uint32_t value2 : int32Operands())
+            CHECK_EQ(invoke<int>(test, value, value2), (value>>(value2%32))&1);
+    }
+}
+
+void testBranchTestBit32RegImm()
+{
+    for (uint32_t value : int32Operands()) {
+        auto test = compile([=] (CCallHelpers& jit) {
+            jit.emitFunctionPrologue();
+
+            auto branch = jit.branchTestBit32(MacroAssembler::NonZero, GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(value));
+            jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+            auto done = jit.jump();
+            branch.link(&jit);
+            jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+            done.link(&jit);
+
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+
+        for (uint32_t value2 : int32Operands())
+            CHECK_EQ(invoke<int>(test, value2), (value2>>(value%32))&1);
+    }
+}
+
+void testBranchTestBit32AddrImm()
+{
+    for (uint32_t value : int32Operands()) {
+        auto test = compile([=] (CCallHelpers& jit) {
+            jit.emitFunctionPrologue();
+
+            auto branch = jit.branchTestBit32(MacroAssembler::NonZero, MacroAssembler::Address(GPRInfo::argumentGPR0, 0), CCallHelpers::TrustedImm32(value));
+            jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+            auto done = jit.jump();
+            branch.link(&jit);
+            jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+            done.link(&jit);
+
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+
+        for (uint32_t value2 : int32Operands())
+            CHECK_EQ(invoke<int>(test, &value2), (value2>>(value%32))&1);
+    }
+}
+
+void testBranchTestBit64RegReg()
+{
+    for (uint64_t value : int64Operands()) {
+        auto test = compile([=] (CCallHelpers& jit) {
+            jit.emitFunctionPrologue();
+
+            auto branch = jit.branchTestBit64(MacroAssembler::NonZero, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1);
+            jit.move(CCallHelpers::TrustedImm64(0), GPRInfo::returnValueGPR);
+            auto done = jit.jump();
+            branch.link(&jit);
+            jit.move(CCallHelpers::TrustedImm64(1), GPRInfo::returnValueGPR);
+            done.link(&jit);
+
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+
+        for (uint64_t value2 : int64Operands())
+            CHECK_EQ(invoke<long int>(test, value, value2), (value>>(value2%64))&1);
+    }
+}
+
+void testBranchTestBit64RegImm()
+{
+    for (uint64_t value : int64Operands()) {
+        auto test = compile([=] (CCallHelpers& jit) {
+            jit.emitFunctionPrologue();
+
+            auto branch = jit.branchTestBit64(MacroAssembler::NonZero, GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(value));
+            jit.move(CCallHelpers::TrustedImm64(0), GPRInfo::returnValueGPR);
+            auto done = jit.jump();
+            branch.link(&jit);
+            jit.move(CCallHelpers::TrustedImm64(1), GPRInfo::returnValueGPR);
+            done.link(&jit);
+
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+
+        for (uint64_t value2 : int64Operands())
+            CHECK_EQ(invoke<long int>(test, value2), (value2>>(value%64))&1);
+    }
+}
+
+void testBranchTestBit64AddrImm()
+{
+    for (uint64_t value : int64Operands()) {
+        auto test = compile([=] (CCallHelpers& jit) {
+            jit.emitFunctionPrologue();
+
+            auto branch = jit.branchTestBit64(MacroAssembler::NonZero, MacroAssembler::Address(GPRInfo::argumentGPR0, 0), CCallHelpers::TrustedImm32(value));
+            jit.move(CCallHelpers::TrustedImm64(0), GPRInfo::returnValueGPR);
+            auto done = jit.jump();
+            branch.link(&jit);
+            jit.move(CCallHelpers::TrustedImm64(1), GPRInfo::returnValueGPR);
+            done.link(&jit);
+
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+
+        for (uint64_t value2 : int64Operands())
+            CHECK_EQ(invoke<long int>(test, &value2), (value2>>(value%64))&1);
+    }
+}
+
+#endif
+
 void testCompareDouble(MacroAssembler::DoubleCondition condition)
 {
     double arg1 = 0;
@@ -1136,6 +1291,15 @@ void run(const char* filter)
     RUN(testCompareDouble(MacroAssembler::DoubleLessThanOrUnordered));
     RUN(testCompareDouble(MacroAssembler::DoubleLessThanOrEqualOrUnordered));
     RUN(testMul32WithImmediates());
+
+#if CPU(X86_64)
+    RUN(testBranchTestBit32RegReg());
+    RUN(testBranchTestBit32RegImm());
+    RUN(testBranchTestBit32AddrImm());
+    RUN(testBranchTestBit64RegReg());
+    RUN(testBranchTestBit64RegImm());
+    RUN(testBranchTestBit64AddrImm());
+#endif
 
 #if CPU(ARM64)
     RUN(testMul32SignExtend());

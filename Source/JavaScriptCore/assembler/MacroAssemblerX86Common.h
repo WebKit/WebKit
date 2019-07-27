@@ -2644,6 +2644,36 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
+    Jump branchTestBit32(ResultCondition cond, RegisterID reg, TrustedImm32 bit)
+    {
+        m_assembler.bt_ir(static_cast<unsigned>(bit.m_value) % 32, reg);
+        if (cond == NonZero)
+            return Jump(m_assembler.jb());
+        if (cond == Zero)
+            return Jump(m_assembler.jae());
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    Jump branchTestBit32(ResultCondition cond, Address testValue, TrustedImm32 bit)
+    {
+        m_assembler.bt_im(static_cast<unsigned>(bit.m_value) % 32, testValue.offset, testValue.base);
+        if (cond == NonZero)
+            return Jump(m_assembler.jb());
+        if (cond == Zero)
+            return Jump(m_assembler.jae());
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    Jump branchTestBit32(ResultCondition cond, RegisterID reg, RegisterID bit)
+    {
+        m_assembler.bt_ir(bit, reg);
+        if (cond == NonZero)
+            return Jump(m_assembler.jb());
+        if (cond == Zero)
+            return Jump(m_assembler.jae());
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
     void test32(RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
         if (mask.m_value == -1)

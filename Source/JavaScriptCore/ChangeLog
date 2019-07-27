@@ -1,3 +1,48 @@
+2019-07-27  Justin Michaud  <justin_michaud@apple.com>
+
+        [X86] Emit BT instruction for shift + mask in B3
+        https://bugs.webkit.org/show_bug.cgi?id=199891
+
+        Reviewed by Keith Miller.
+
+        - Add a new BranchTestBit air opcode, matching the intel bt instruction
+        - Select this instruction for the following patterns:
+          if (a & (1<<b))
+          if ((a>>b)&1)
+          if ((~a>>b)&1)
+          if (~a & (1<<b))
+        - 15% perf progression on the nonconstant microbenchmark, neutral otherwise.
+        - Note: we cannot fuse loads when we have bitBase=Load, bitOffset=Tmp, since the X86 instruction has 
+          different behaviour in this mode. It will read past the current dword/qword instead of wrapping around.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchTestBit32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::branchTestBit64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::bt_ir):
+        (JSC::X86Assembler::bt_im):
+        (JSC::X86Assembler::btw_ir):
+        (JSC::X86Assembler::btw_im):
+        * assembler/testmasm.cpp:
+        (JSC::int64Operands):
+        (JSC::testBranchTestBit32RegReg):
+        (JSC::testBranchTestBit32RegImm):
+        (JSC::testBranchTestBit32AddrImm):
+        (JSC::testBranchTestBit64RegReg):
+        (JSC::testBranchTestBit64RegImm):
+        (JSC::testBranchTestBit64AddrImm):
+        (JSC::run):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testBranchBitTest32TmpImm):
+        (JSC::B3::testBranchBitTest32AddrImm):
+        (JSC::B3::testBranchBitTest32TmpTmp):
+        (JSC::B3::testBranchBitTest64TmpTmp):
+        (JSC::B3::testBranchBitTest64AddrTmp):
+        (JSC::B3::run):
+
 2019-07-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Potential GC fix for JSPropertyNameEnumerator

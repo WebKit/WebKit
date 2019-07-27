@@ -8754,6 +8754,261 @@ void testComplex(unsigned numVars, unsigned numConstructs)
     dataLog(toCString("    That took ", (after - before).milliseconds(), " ms.\n"));
 }
 
+void testBranchBitTest32TmpImm(uint32_t value, uint32_t imm)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    Value* testValue = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* bitOffset = root->appendNew<Const32Value>(proc, Origin(), imm);
+
+    Value* one = root->appendNew<Const32Value>(proc, Origin(), 1);
+    Value* bitTest = root->appendNew<Value>(
+        proc, BitAnd, Origin(),
+        root->appendNew<Value>(proc, SShr, Origin(), testValue, bitOffset),
+        one);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(),
+        bitTest,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compileProc(proc);
+    CHECK_EQ(invoke<uint32_t>(*code, value), (value>>(imm%32))&1);
+}
+
+void testBranchBitTest32AddrImm(uint32_t value, uint32_t imm)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    Value* testValue = root->appendNew<MemoryValue>(
+        proc, Load, Int32, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* bitOffset = root->appendNew<Const32Value>(proc, Origin(), imm);
+
+    Value* one = root->appendNew<Const32Value>(proc, Origin(), 1);
+    Value* bitTest = root->appendNew<Value>(
+        proc, BitAnd, Origin(),
+        root->appendNew<Value>(proc, SShr, Origin(), testValue, bitOffset),
+        one);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(),
+        bitTest,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compileProc(proc);
+    CHECK_EQ(invoke<uint32_t>(*code, &value), (value>>(imm%32))&1);
+}
+
+void testBranchBitTest32TmpTmp(uint32_t value, uint32_t value2)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    Value* testValue = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* bitOffset = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+
+    Value* one = root->appendNew<Const32Value>(proc, Origin(), 1);
+    Value* bitTest = root->appendNew<Value>(
+        proc, BitAnd, Origin(),
+        root->appendNew<Value>(proc, SShr, Origin(), testValue, bitOffset),
+        one);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(),
+        bitTest,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compileProc(proc);
+    CHECK_EQ(invoke<uint32_t>(*code, value, value2), (value>>(value2%32))&1);
+}
+
+void testBranchBitTest64TmpTmp(uint64_t value, uint64_t value2)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    Value* testValue = root->appendNew<Value>(proc, BitXor, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        root->appendNew<Const64Value>(proc, Origin(), -1l));
+    Value* bitOffset = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+
+    Value* one = root->appendNew<Const64Value>(proc, Origin(), 1);
+    Value* bitTest = root->appendNew<Value>(
+        proc, BitAnd, Origin(),
+        testValue,
+        root->appendNew<Value>(proc, Shl, Origin(), one, bitOffset));
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(),
+        bitTest,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const64Value>(proc, Origin(), 0));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const64Value>(proc, Origin(), 1));
+
+    auto code = compileProc(proc);
+    CHECK_EQ(invoke<uint64_t>(*code, value, value2), (value>>(value2%64))&1);
+}
+
+void testBranchBitTest64AddrTmp(uint64_t value, uint64_t value2)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    Value* testValue = root->appendNew<MemoryValue>(
+        proc, Load, Int64, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* bitOffset = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+
+    Value* one = root->appendNew<Const64Value>(proc, Origin(), 1);
+    Value* bitTest = root->appendNew<Value>(
+        proc, BitAnd, Origin(),
+        testValue,
+        root->appendNew<Value>(proc, Shl, Origin(), one, bitOffset));
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(),
+        bitTest,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const64Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const64Value>(proc, Origin(), 0));
+
+    auto code = compileProc(proc);
+    CHECK_EQ(invoke<uint64_t>(*code, &value, value2), (value>>(value2%64))&1);
+}
+
+void testBranchBitTestNegation(uint64_t value, uint64_t value2)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    Value* testValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* bitOffset = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* shift = root->appendNew<Value>(proc, SShr, Origin(), testValue, bitOffset);
+
+    Value* one = root->appendNew<Const64Value>(proc, Origin(), 1);
+    Value* bitTest = root->appendNew<Value>(
+        proc, BitAnd, Origin(),
+        root->appendNew<Value>(proc, BitXor, Origin(), shift, root->appendNew<Const64Value>(proc, Origin(), -1l)),
+        one);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(),
+        bitTest,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const64Value>(proc, Origin(), 0));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const64Value>(proc, Origin(), 1));
+
+    auto code = compileProc(proc);
+    CHECK_EQ(invoke<uint64_t>(*code, value, value2), (value>>(value2%64))&1);
+}
+
+void testBranchBitTestNegation2(uint64_t value, uint64_t value2)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    Value* testValue = root->appendNew<Value>(proc, BitXor, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        root->appendNew<Const64Value>(proc, Origin(), -1l));
+    Value* bitOffset = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* shift = root->appendNew<Value>(proc, SShr, Origin(), testValue, bitOffset);
+
+    Value* one = root->appendNew<Const64Value>(proc, Origin(), 1);
+    Value* bitTest = root->appendNew<Value>(
+        proc, BitAnd, Origin(),
+        shift,
+        one);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(),
+        bitTest,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const64Value>(proc, Origin(), 0));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const64Value>(proc, Origin(), 1));
+
+    auto code = compileProc(proc);
+    CHECK_EQ(invoke<uint64_t>(*code, value, value2), (value>>(value2%64))&1);
+}
+
 void testSimplePatchpoint()
 {
     Procedure proc;
@@ -18117,6 +18372,14 @@ void run(const char* filter)
     RUN(testComplex(4, 128));
     RUN(testComplex(4, 256));
     RUN(testComplex(4, 384));
+
+    RUN_BINARY(testBranchBitTest32TmpImm, int32Operands(), int32Operands());
+    RUN_BINARY(testBranchBitTest32AddrImm, int32Operands(), int32Operands());
+    RUN_BINARY(testBranchBitTest32TmpTmp, int32Operands(), int32Operands());
+    RUN_BINARY(testBranchBitTest64TmpTmp, int64Operands(), int64Operands());
+    RUN_BINARY(testBranchBitTest64AddrTmp, int64Operands(), int64Operands());
+    RUN_BINARY(testBranchBitTestNegation, int64Operands(), int64Operands());
+    RUN_BINARY(testBranchBitTestNegation2, int64Operands(), int64Operands());
 
     RUN(testSimplePatchpoint());
     RUN(testSimplePatchpointWithoutOuputClobbersGPArgs());

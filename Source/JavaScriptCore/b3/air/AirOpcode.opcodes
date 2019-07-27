@@ -1161,6 +1161,16 @@ BranchTest32 U:G:32, U:G:32, U:G:32 /branch
     x86: ResCond, Addr, Tmp
     x86: ResCond, Index, BitImm
 
+x86_64: BranchTestBit64 U:G:32, U:G:64, U:G:8 /branch
+    ResCond, Tmp, Imm
+    ResCond, Addr, Imm
+    ResCond, Tmp, Tmp
+
+x86: BranchTestBit32 U:G:32, U:G:32, U:G:8 /branch
+    ResCond, Tmp, Imm
+    ResCond, Addr, Imm
+    ResCond, Tmp, Tmp
+
 BranchDouble U:G:32, U:F:64, U:F:64 /branch
     DoubleCond, Tmp, Tmp
 

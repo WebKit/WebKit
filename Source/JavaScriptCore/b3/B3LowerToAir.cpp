@@ -3325,7 +3325,84 @@ private:
         case Branch: {
             if (canBeInternal(m_value->child(0))) {
                 Value* branchChild = m_value->child(0);
+
                 switch (branchChild->opcode()) {
+                case BitAnd: {
+                    Value* andValue = branchChild->child(0);
+                    Value* andMask = branchChild->child(1);
+                    Air::Opcode opcode = opcodeForType(BranchTestBit32, BranchTestBit64, andValue->type());
+
+                    Value* testValue = nullptr;
+                    Value* bitOffset = nullptr;
+                    Value* internalNode = nullptr;
+                    Value* negationNode = nullptr;
+                    bool inverted = false;
+
+                    // if (~(val >> x)&1)
+                    if (andMask->isInt(1)
+                        && andValue->opcode() == BitXor && (andValue->child(1)->isInt32(-1) || andValue->child(1)->isInt64(-1l))
+                        && (andValue->child(0)->opcode() == SShr || andValue->child(0)->opcode() == ZShr)) {
+
+                        negationNode = andValue;
+                        testValue = andValue->child(0)->child(0);
+                        bitOffset = andValue->child(0)->child(1);
+                        internalNode = andValue->child(0);
+                        inverted = !inverted;
+                    }
+
+                    // Turn if ((val >> x)&1) -> Bt val x
+                    if (andMask->isInt(1) && (andValue->opcode() == SShr || andValue->opcode() == ZShr)) {
+                        testValue = andValue->child(0);
+                        bitOffset = andValue->child(1);
+                        internalNode = andValue;
+                    }
+
+                    // Turn if (val & (1<<x)) -> Bt val x
+                    if ((andMask->opcode() == Shl) && andMask->child(0)->isInt(1)) {
+                        testValue = andValue;
+                        bitOffset = andMask->child(1);
+                        internalNode = andMask;
+                    }
+
+                    // if (~val & (1<<x)) or if ((~val >> x)&1)
+                    if (!negationNode && testValue && testValue->opcode() == BitXor && (testValue->child(1)->isInt32(-1) || testValue->child(1)->isInt64(-1l))) {
+                        negationNode = testValue;
+                        testValue = testValue->child(0);
+                        inverted = !inverted;
+                    }
+
+                    if (testValue && bitOffset) {
+                        for (auto& basePromise : Vector<ArgPromise>::from(loadPromise(testValue), tmpPromise(testValue))) {
+                            bool hasLoad = basePromise.kind() != Arg::Tmp;
+                            bool canMakeInternal = (hasLoad ? canBeInternal(testValue) : !m_locked.contains(testValue))
+                                && (!negationNode || canBeInternal(negationNode))
+                                && (!internalNode || canBeInternal(internalNode));
+
+                            if (basePromise && canMakeInternal) {
+                                if (bitOffset->hasInt() && isValidForm(opcode, Arg::ResCond, basePromise.kind(), Arg::Imm)) {
+                                    commitInternal(branchChild);
+                                    commitInternal(internalNode);
+                                    if (hasLoad)
+                                        commitInternal(testValue);
+                                    commitInternal(negationNode);
+                                    append(basePromise.inst(opcode, m_value, Arg::resCond(MacroAssembler::NonZero).inverted(inverted), basePromise.consume(*this), Arg::imm(bitOffset->asInt())));
+                                    return;
+                                }
+
+                                if (!m_locked.contains(bitOffset) && isValidForm(opcode, Arg::ResCond, basePromise.kind(), Arg::Tmp)) {
+                                    commitInternal(branchChild);
+                                    commitInternal(internalNode);
+                                    if (hasLoad)
+                                        commitInternal(testValue);
+                                    commitInternal(negationNode);
+                                    append(basePromise.inst(opcode, m_value, Arg::resCond(MacroAssembler::NonZero).inverted(inverted), basePromise.consume(*this), tmp(bitOffset)));
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
                 case AtomicWeakCAS:
                     commitInternal(branchChild);
                     appendCAS(branchChild, false);

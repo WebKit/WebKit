@@ -1,3 +1,18 @@
+2019-07-27  Justin Michaud  <justin_michaud@apple.com>
+
+        [X86] Emit BT instruction for shift + mask in B3
+        https://bugs.webkit.org/show_bug.cgi?id=199891
+
+        Reviewed by Keith Miller.
+
+        * microbenchmarks/bit-test-constant.js: Added.
+        (let.glob.0.doTest):
+        * microbenchmarks/bit-test-load.js: Added.
+        (let.glob.0.let.arr.new.Int32Array.8.doTest):
+        (i):
+        * microbenchmarks/bit-test-nonconstant.js: Added.
+        (let.glob.0.doTest):
+
 2019-07-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Potential GC fix for JSPropertyNameEnumerator
