@@ -30,6 +30,7 @@
 #include "SOAuthorizationSession.h"
 #include "WebViewDidMoveToWindowObserver.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
@@ -62,7 +63,10 @@ private:
 
     virtual void beforeStart() = 0;
 
+    bool pageActiveURLDidChangeDuringWaiting() const;
+
     Callback m_callback;
+    String m_waitingPageActiveURL;
 };
 
 } // namespace WebKit

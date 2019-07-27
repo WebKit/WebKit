@@ -1,3 +1,22 @@
+2019-07-26  Jiewen Tan  <jiewen_tan@apple.com>
+
+        NavigationSOAuthorizationSession should check the active URL of the responding page after waking up from waiting
+        https://bugs.webkit.org/show_bug.cgi?id=200150
+        <rdar://problem/53280170>
+
+        Reviewed by Brent Fulgham.
+
+        NavigationSOAuthorizationSession should check the active URL of the responding page after waking up from waiting
+        as the page might have already changed the location.
+
+        * UIProcess/Cocoa/SOAuthorization/NavigationSOAuthorizationSession.h:
+        * UIProcess/Cocoa/SOAuthorization/NavigationSOAuthorizationSession.mm:
+        (WebKit::NavigationSOAuthorizationSession::shouldStartInternal):
+        (WebKit::NavigationSOAuthorizationSession::webViewDidMoveToWindow):
+        (WebKit::NavigationSOAuthorizationSession::pageActiveURLDidChangeDuringWaiting const):
+        * UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.mm:
+        (WebKit::SubFrameSOAuthorizationSession::abortInternal):
+
 2019-07-26  Chris Dumez  <cdumez@apple.com>
 
         Crashes under XPCServiceMain() / mach_msg_trap() due to sandboxing

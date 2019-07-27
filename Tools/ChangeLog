@@ -1,3 +1,14 @@
+2019-07-26  Jiewen Tan  <jiewen_tan@apple.com>
+
+        NavigationSOAuthorizationSession should check the active URL of the responding page after waking up from waiting
+        https://bugs.webkit.org/show_bug.cgi?id=200150
+        <rdar://problem/53280170>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TestSOAuthorization.mm:
+        (TestWebKitAPI::TEST):
+
 2019-07-26  Jonathan Bedard  <jbedard@apple.com>
 
         Follow-up fix: results.webkit.org: Suite results shouldn't be the landing page
