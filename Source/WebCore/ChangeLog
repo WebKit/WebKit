@@ -1,3 +1,13 @@
+2019-07-26  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Remove invalid assertion after r247878.
+        We were essentially asserting all UnnamedType* were
+        unique. But my patch made this no longer the case by
+        design to make things faster.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp:
+        (WebCore::WHLSL::Metal::TypeNamer::insert):
+
 2019-07-26  Mark Lam  <mark.lam@apple.com>
 
         Add crash diagnostics for debugging unexpected zapped cells.
