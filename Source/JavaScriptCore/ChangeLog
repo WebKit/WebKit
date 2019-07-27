@@ -1,3 +1,41 @@
+2019-07-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Potential GC fix for JSPropertyNameEnumerator
+        https://bugs.webkit.org/show_bug.cgi?id=200151
+
+        Reviewed by Mark Lam.
+
+        We have been seeing some JSPropertyNameEnumerator::visitChildren crashes for a long time. The crash frequency itself is not high, but it has existed for a long time.
+        The crash happens when visiting m_propertyNames. It is also possible that this crash is caused by random corruption somewhere, but JSPropertyNameEnumerator
+        has some tricky (and potentially dangerous) implementations anyway.
+
+        1. JSPropertyNameEnumerator have Vector<WriteBarrier<JSString>> and it is extended in finishCreation with a lock.
+           We should use Auxiliary memory for this use case. And we should set this memory in the constructor so that
+           we do not extend it in finishCreation, and we do not need a lock.
+        2. JSPropertyNameEnumerator gets StructureID before allocating JSPropertyNameEnumerator. This is potentially dangerous because the conservative scan
+           cannot find the Structure* since we could only have StructureID. Since allocation code happens after StructureID is retrieved, it is possible that
+           the allocation causes GC and Structure* is collected.
+
+        In this patch, we align JSPropertyNameEnumerator implementation to the modern one to avoid using Vector<WriteBarrier<JSString>>. And we can make JSPropertyNameEnumerator
+        a non-destructible cell. Since JSCell's destructor is one of the cause of various issues, we should avoid it if we can.
+
+        No behavior change. This patch adds a test stressing JSPropertyNameEnumerator.
+
+        * dfg/DFGOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::create):
+        (JSC::JSPropertyNameEnumerator::JSPropertyNameEnumerator):
+        (JSC::JSPropertyNameEnumerator::finishCreation):
+        (JSC::JSPropertyNameEnumerator::visitChildren):
+        (JSC::JSPropertyNameEnumerator::destroy): Deleted.
+        * runtime/JSPropertyNameEnumerator.h:
+        * runtime/VM.cpp:
+        (JSC::VM::emptyPropertyNameEnumeratorSlow):
+        * runtime/VM.h:
+        (JSC::VM::emptyPropertyNameEnumerator):
+
 2019-07-26  Mark Lam  <mark.lam@apple.com>
 
         Add crash diagnostics for debugging unexpected zapped cells.

@@ -2162,7 +2162,7 @@ JSCell* JIT_OPERATION operationGetPropertyEnumerator(ExecState* exec, EncodedJSV
 
     JSValue base = JSValue::decode(encodedBase);
     if (base.isUndefinedOrNull())
-        return JSPropertyNameEnumerator::create(vm);
+        return vm.emptyPropertyNameEnumerator();
 
     JSObject* baseObject = base.toObject(exec);
     RETURN_IF_EXCEPTION(scope, { });

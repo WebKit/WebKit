@@ -972,7 +972,7 @@ SLOW_PATH_DECL(slow_path_get_property_enumerator)
     auto bytecode = pc->as<OpGetPropertyEnumerator>();
     JSValue baseValue = GET(bytecode.m_base).jsValue();
     if (baseValue.isUndefinedOrNull())
-        RETURN(JSPropertyNameEnumerator::create(vm));
+        RETURN(vm.emptyPropertyNameEnumerator());
 
     JSObject* base = baseValue.toObject(exec);
     CHECK_EXCEPTION();

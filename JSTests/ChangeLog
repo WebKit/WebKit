@@ -1,3 +1,13 @@
+2019-07-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Potential GC fix for JSPropertyNameEnumerator
+        https://bugs.webkit.org/show_bug.cgi?id=200151
+
+        Reviewed by Mark Lam.
+
+        * stress/for-in-stress.js: Added.
+        (keys):
+
 2019-07-25  Ross Kirsling  <ross.kirsling@sony.com>
 
         Legacy numeric literals should not permit separators or BigInt

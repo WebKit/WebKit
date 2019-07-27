@@ -123,6 +123,7 @@ class JSCustomGetterSetterFunction;
 class JSDestructibleObjectHeapCellType;
 class JSGlobalObject;
 class JSObject;
+class JSPropertyNameEnumerator;
 class JSRunLoopTimer;
 class JSStringHeapCellType;
 class JSWebAssemblyCodeBlockHeapCellType;
@@ -545,7 +546,7 @@ public:
     Strong<Structure> m_setIteratorStructure;
     Strong<Structure> m_mapIteratorStructure;
 
-    Strong<JSCell> emptyPropertyNameEnumerator;
+    Strong<JSPropertyNameEnumerator> m_emptyPropertyNameEnumerator;
 
     Strong<JSCell> m_sentinelSetBucket;
     Strong<JSCell> m_sentinelMapBucket;
@@ -596,6 +597,13 @@ public:
         if (LIKELY(m_sentinelMapBucket))
             return m_sentinelMapBucket.get();
         return sentinelMapBucketSlow();
+    }
+
+    JSPropertyNameEnumerator* emptyPropertyNameEnumerator()
+    {
+        if (LIKELY(m_emptyPropertyNameEnumerator))
+            return m_emptyPropertyNameEnumerator.get();
+        return emptyPropertyNameEnumeratorSlow();
     }
 
     WeakGCMap<SymbolImpl*, Symbol, PtrHash<SymbolImpl*>> symbolImplToSymbolMap;
@@ -953,6 +961,7 @@ private:
     JS_EXPORT_PRIVATE Structure* mapIteratorStructureSlow();
     JSCell* sentinelSetBucketSlow();
     JSCell* sentinelMapBucketSlow();
+    JSPropertyNameEnumerator* emptyPropertyNameEnumeratorSlow();
 
     void updateStackLimits();
 

@@ -34,14 +34,10 @@ namespace JSC {
 
 class JSPropertyNameEnumerator final : public JSCell {
 public:
-    typedef JSCell Base;
+    using Base = JSCell;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static JSPropertyNameEnumerator* create(VM&);
     static JSPropertyNameEnumerator* create(VM&, Structure*, uint32_t, uint32_t, PropertyNameArray&&);
-
-    static const bool needsDestruction = true;
-    static void destroy(JSCell*);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -50,11 +46,11 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JSString* propertyNameAtIndex(uint32_t index) const
+    JSString* propertyNameAtIndex(uint32_t index)
     {
-        if (index >= m_propertyNames.size())
+        if (index >= sizeOfPropertyNames())
             return nullptr;
-        return m_propertyNames[index].get();
+        return m_propertyNames.get()[index].get();
     }
 
     StructureChain* cachedPrototypeChain() const { return m_prototypeChain.get(); }
@@ -71,6 +67,7 @@ public:
     uint32_t endStructurePropertyIndex() const { return m_endStructurePropertyIndex; }
     uint32_t endGenericPropertyIndex() const { return m_endGenericPropertyIndex; }
     uint32_t cachedInlineCapacity() const { return m_cachedInlineCapacity; }
+    uint32_t sizeOfPropertyNames() const { return endGenericPropertyIndex(); }
     static ptrdiff_t cachedStructureIDOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_cachedStructureID); }
     static ptrdiff_t indexedLengthOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_indexedLength); }
     static ptrdiff_t endStructurePropertyIndexOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_endStructurePropertyIndex); }
@@ -78,18 +75,18 @@ public:
     static ptrdiff_t cachedInlineCapacityOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_cachedInlineCapacity); }
     static ptrdiff_t cachedPropertyNamesVectorOffset()
     {
-        return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_propertyNames) + Vector<WriteBarrier<JSString>>::dataMemoryOffset();
+        return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_propertyNames);
     }
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
-    JSPropertyNameEnumerator(VM&, StructureID, uint32_t);
-    void finishCreation(VM&, uint32_t, uint32_t, RefPtr<PropertyNameArrayData>&&);
+    JSPropertyNameEnumerator(VM&, Structure*, uint32_t, uint32_t, WriteBarrier<JSString>*, unsigned);
+    void finishCreation(VM&, RefPtr<PropertyNameArrayData>&&);
 
-    Vector<WriteBarrier<JSString>> m_propertyNames;
-    StructureID m_cachedStructureID;
+    AuxiliaryBarrier<WriteBarrier<JSString>*> m_propertyNames;
     WriteBarrier<StructureChain> m_prototypeChain;
+    StructureID m_cachedStructureID;
     uint32_t m_indexedLength;
     uint32_t m_endStructurePropertyIndex;
     uint32_t m_endGenericPropertyIndex;

@@ -1308,6 +1308,15 @@ JSCell* VM::sentinelMapBucketSlow()
     return sentinel;
 }
 
+JSPropertyNameEnumerator* VM::emptyPropertyNameEnumeratorSlow()
+{
+    ASSERT(!m_emptyPropertyNameEnumerator);
+    PropertyNameArray propertyNames(this, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
+    auto* enumerator = JSPropertyNameEnumerator::create(*this, nullptr, 0, 0, WTFMove(propertyNames));
+    m_emptyPropertyNameEnumerator.set(*this, enumerator);
+    return enumerator;
+}
+
 JSGlobalObject* VM::vmEntryGlobalObject(const CallFrame* callFrame) const
 {
     if (callFrame && callFrame->isGlobalExec()) {
