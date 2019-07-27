@@ -841,6 +841,7 @@
         (syscall-number SYS_close)
         (syscall-number SYS_unlink)
         (syscall-number SYS_chmod)
+        (syscall-number SYS_chmod_extended)
         (syscall-number SYS_getuid)
         (syscall-number SYS_geteuid)
         (syscall-number SYS_recvfrom)
@@ -975,6 +976,7 @@
         (syscall-number SYS_terminate_with_payload) ;; <rdar://problem/50026580>
         (syscall-number SYS_quotactl) ;; <rdar://problem/49945031>
         (syscall-number SYS_stat64_extended) ;; <rdar://problem/50473330>
+        (syscall-number SYS_lstat_extended)
         (syscall-number SYS_lstat64_extended)
         (syscall-number SYS_iopolicysys)
         (syscall-number SYS_workq_open)

@@ -1,3 +1,17 @@
+2019-07-27  Chris Dumez  <cdumez@apple.com>
+
+        Allow more syscalls in the WebContent process' sandbox profile
+        https://bugs.webkit.org/show_bug.cgi?id=200182
+        <rdar://problem/53594973>
+
+        Reviewed by Geoffrey Garen.
+
+        I reviewed all crash traces attached to the radar and found the following
+        syscalls that we not yet allowed by the WebContent process's sandbox
+        profile.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-07-26  Jiewen Tan  <jiewen_tan@apple.com>
 
         NavigationSOAuthorizationSession should check the active URL of the responding page after waking up from waiting
