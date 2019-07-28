@@ -344,7 +344,7 @@ static bool trySetMetalFunctions(MTLLibrary *vertexMetalLibrary, MTLLibrary *fra
 
         auto function = adoptNS([vertexMetalLibrary newFunctionWithName:vertexEntryPointName]);
         if (!function) {
-            errorScopes.generatePrefixedError(makeString("Cannot create vertex MTLFunction \"", vertexEntryPointName, "\"!"));
+            errorScopes.generatePrefixedError(makeString("Cannot create vertex MTLFunction '", vertexEntryPointName, "'!"));
             return false;
         }
 
@@ -363,7 +363,7 @@ static bool trySetMetalFunctions(MTLLibrary *vertexMetalLibrary, MTLLibrary *fra
         auto function = adoptNS([fragmentMetalLibrary newFunctionWithName:fragmentEntryPointName]);
 
         if (!function) {
-            errorScopes.generatePrefixedError(makeString("Cannot create fragment MTLFunction \"", fragmentEntryPointName, "\"!"));
+            errorScopes.generatePrefixedError(makeString("Cannot create fragment MTLFunction '", fragmentEntryPointName, "'!"));
             return false;
         }
 
@@ -392,7 +392,7 @@ static bool trySetFunctions(const GPUPipelineStageDescriptor& vertexStage, const
 
         auto whlslCompileResult = WHLSL::prepare(whlslSource, *whlslDescriptor);
         if (!whlslCompileResult) {
-            errorScopes.generatePrefixedError("WHLSL compilation failed!");
+            errorScopes.generatePrefixedError(makeString("WHLSL compile error: ", whlslCompileResult.error()));
             return false;
         }
 

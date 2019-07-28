@@ -50,7 +50,7 @@ bool GPUBuffer::validateBufferUsage(const GPUDevice& device, OptionSet<GPUBuffer
     }
 
     if (usage.containsAll({ GPUBufferUsage::Flags::MapWrite, GPUBufferUsage::Flags::MapRead })) {
-        errorScopes.generateError("GPUBuffer::tryCreate(): Buffer cannot have both MAP_READ and MAP_WRITE usage!");
+        errorScopes.generatePrefixedError("Buffer cannot have both MAP_READ and MAP_WRITE usage!");
         return false;
     }
 
@@ -62,17 +62,17 @@ bool GPUBuffer::validateBufferUsage(const GPUDevice& device, OptionSet<GPUBuffer
     return true;
 }
 
-RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, const GPUBufferDescriptor& descriptor, GPUBufferMappedOption isMapped, Ref<GPUErrorScopes>&& errorScopes)
+RefPtr<GPUBuffer> GPUBuffer::tryCreate(GPUDevice& device, const GPUBufferDescriptor& descriptor, GPUBufferMappedOption isMapped, GPUErrorScopes& errorScopes)
 {
     // MTLBuffer size (NSUInteger) is 32 bits on some platforms.
     NSUInteger size = 0;
     if (!WTF::convertSafely(descriptor.size, size)) {
-        errorScopes->generateError("", GPUErrorFilter::OutOfMemory);
+        errorScopes.generateError("", GPUErrorFilter::OutOfMemory);
         return nullptr;
     }
 
     auto usage = OptionSet<GPUBufferUsage::Flags>::fromRaw(descriptor.usage);
-    if (!validateBufferUsage(device.get(), usage, errorScopes))
+    if (!validateBufferUsage(device, usage, errorScopes))
         return nullptr;
 
 #if PLATFORM(MAC)
@@ -97,22 +97,22 @@ RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, const GPUBufferD
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    mtlBuffer = adoptNS([device->platformDevice() newBufferWithLength:static_cast<NSUInteger>(descriptor.size) options:resourceOptions]);
+    mtlBuffer = adoptNS([device.platformDevice() newBufferWithLength:static_cast<NSUInteger>(descriptor.size) options:resourceOptions]);
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
     if (!mtlBuffer) {
-        errorScopes->generateError("", GPUErrorFilter::OutOfMemory);
+        errorScopes.generateError("", GPUErrorFilter::OutOfMemory);
         return nullptr;
     }
 
-    return adoptRef(*new GPUBuffer(WTFMove(mtlBuffer), WTFMove(device), size, usage, isMapped, WTFMove(errorScopes)));
+    return adoptRef(*new GPUBuffer(WTFMove(mtlBuffer), device, size, usage, isMapped, errorScopes));
 }
 
-GPUBuffer::GPUBuffer(RetainPtr<MTLBuffer>&& buffer, Ref<GPUDevice>&& device, size_t size, OptionSet<GPUBufferUsage::Flags> usage, GPUBufferMappedOption isMapped, Ref<GPUErrorScopes>&& errorScopes)
-    : GPUObjectBase(WTFMove(errorScopes))
+GPUBuffer::GPUBuffer(RetainPtr<MTLBuffer>&& buffer, GPUDevice& device, size_t size, OptionSet<GPUBufferUsage::Flags> usage, GPUBufferMappedOption isMapped, GPUErrorScopes& errorScopes)
+    : GPUObjectBase(makeRef(errorScopes))
     , m_platformBuffer(WTFMove(buffer))
-    , m_device(WTFMove(device))
+    , m_device(makeRef(device))
     , m_byteLength(size)
     , m_usage(usage)
     , m_isMappedFromCreation(isMapped == GPUBufferMappedOption::IsMapped)

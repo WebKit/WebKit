@@ -56,7 +56,6 @@ public:
     virtual ~ArrayReferenceType() = default;
 
     ArrayReferenceType(const ArrayReferenceType&) = delete;
-    ArrayReferenceType(ArrayReferenceType&&) = default;
 
     bool isArrayReferenceType() const override { return true; }
 

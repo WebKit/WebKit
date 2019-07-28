@@ -70,7 +70,7 @@ class GPUDevice : public RefCounted<GPUDevice>, public CanMakeWeakPtr<GPUDevice>
 public:
     static RefPtr<GPUDevice> tryCreate(const Optional<GPURequestAdapterOptions>&);
 
-    RefPtr<GPUBuffer> tryCreateBuffer(const GPUBufferDescriptor&, GPUBufferMappedOption, Ref<GPUErrorScopes>&&);
+    RefPtr<GPUBuffer> tryCreateBuffer(const GPUBufferDescriptor&, GPUBufferMappedOption, GPUErrorScopes&);
     RefPtr<GPUTexture> tryCreateTexture(const GPUTextureDescriptor&) const;
     RefPtr<GPUSampler> tryCreateSampler(const GPUSamplerDescriptor&) const;
 
@@ -79,7 +79,7 @@ public:
 
     RefPtr<GPUShaderModule> tryCreateShaderModule(const GPUShaderModuleDescriptor&) const;
     RefPtr<GPURenderPipeline> tryCreateRenderPipeline(const GPURenderPipelineDescriptor&, GPUErrorScopes&) const;
-    RefPtr<GPUComputePipeline> tryCreateComputePipeline(const GPUComputePipelineDescriptor&, Ref<GPUErrorScopes>&&) const;
+    RefPtr<GPUComputePipeline> tryCreateComputePipeline(const GPUComputePipelineDescriptor&, GPUErrorScopes&) const;
 
     RefPtr<GPUCommandBuffer> tryCreateCommandBuffer() const;
 

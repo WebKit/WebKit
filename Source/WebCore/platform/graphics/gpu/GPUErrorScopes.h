@@ -45,7 +45,7 @@ public:
     Optional<GPUError> popErrorScope(String& failMessage);
 
     void generateError(const String&, GPUErrorFilter = GPUErrorFilter::Validation);
-    void generatePrefixedError(const String&, GPUErrorFilter = GPUErrorFilter::Validation);
+    void generatePrefixedError(const String&);
     void setErrorPrefix(const String& prefix) { m_prefix = prefix; }
 
 private:

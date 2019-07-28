@@ -1,3 +1,51 @@
+2019-07-27  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Update GPUComputePipeline errors to match GPURenderPipeline implementation
+        https://bugs.webkit.org/show_bug.cgi?id=200097
+
+        Reviewed by Myles C. Maxfield.
+
+        Remove passing around a functionName in GPUComputePipeline creation in favor of setting it on the GPUErrorScopes.
+        Also, WebGPU objects no longer create new Ref<>s unless object creation succeeds.
+
+        No new tests. Covered by existing tests.
+
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createBuffer const):
+        (WebCore::WebGPUDevice::createBufferMapped const):
+        (WebCore::WebGPUDevice::createComputePipeline const):
+        * platform/graphics/gpu/GPUBuffer.h:
+        * platform/graphics/gpu/GPUComputePipeline.h:
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::tryCreateBuffer):
+        (WebCore::GPUDevice::tryCreateComputePipeline const):
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/GPUErrorScopes.cpp:
+        (WebCore::GPUErrorScopes::generatePrefixedError): Only validaton errors have messages right now.
+        * platform/graphics/gpu/GPUErrorScopes.h:
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::validateBufferUsage):
+        (WebCore::GPUBuffer::tryCreate):
+        (WebCore::GPUBuffer::GPUBuffer):
+        * platform/graphics/gpu/cocoa/GPUComputePipelineMetal.mm:
+        (WebCore::trySetMetalFunctions):
+        (WebCore::trySetFunctions):
+        (WebCore::convertComputePipelineDescriptor):
+        (WebCore::tryCreateMTLComputePipelineState):
+        (WebCore::GPUComputePipeline::tryCreate):
+        (WebCore::GPUComputePipeline::GPUComputePipeline):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::trySetMetalFunctions):
+        (WebCore::trySetFunctions):
+
+        These classes were made RefCounted in a previous patch; remove their move ctors to fix build.
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayReferenceType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLPointerType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLReferenceType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeReference.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.h:
+
 2019-07-27  Andres Gonzalez  <andresg_22@apple.com>
 
         Expose the aria-label attribute for <video> elements.

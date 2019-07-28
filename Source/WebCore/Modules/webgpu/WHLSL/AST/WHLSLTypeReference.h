@@ -60,7 +60,6 @@ public:
     virtual ~TypeReference() = default;
 
     TypeReference(const TypeReference&) = delete;
-    TypeReference(TypeReference&&) = default;
 
     static Ref<TypeReference> wrap(CodeLocation, NamedType& resolvedType);
 

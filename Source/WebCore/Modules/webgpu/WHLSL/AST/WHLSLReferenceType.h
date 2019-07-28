@@ -54,7 +54,6 @@ public:
     virtual ~ReferenceType() = default;
 
     ReferenceType(const ReferenceType&) = delete;
-    ReferenceType(ReferenceType&&) = default;
 
     bool isReferenceType() const override { return true; }
 

@@ -46,14 +46,14 @@ using PlatformComputePipelineSmartPtr = RetainPtr<MTLComputePipelineState>;
 
 class GPUComputePipeline : public GPUObjectBase {
 public:
-    static RefPtr<GPUComputePipeline> tryCreate(const GPUDevice&, const GPUComputePipelineDescriptor&, Ref<GPUErrorScopes>&&);
+    static RefPtr<GPUComputePipeline> tryCreate(const GPUDevice&, const GPUComputePipelineDescriptor&, GPUErrorScopes&);
 
     const PlatformComputePipeline* platformComputePipeline() const { return m_platformComputePipeline.get(); }
 
     WHLSL::ComputeDimensions computeDimensions() const { return m_computeDimensions; }
 
 private:
-    GPUComputePipeline(PlatformComputePipelineSmartPtr&&, WHLSL::ComputeDimensions, Ref<GPUErrorScopes>&&);
+    GPUComputePipeline(PlatformComputePipelineSmartPtr&&, WHLSL::ComputeDimensions, GPUErrorScopes&);
 
     PlatformComputePipelineSmartPtr m_platformComputePipeline;
     WHLSL::ComputeDimensions m_computeDimensions { 0, 0, 0 };

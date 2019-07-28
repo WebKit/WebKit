@@ -71,7 +71,7 @@ public:
 
     ~GPUBuffer();
 
-    static RefPtr<GPUBuffer> tryCreate(Ref<GPUDevice>&&, const GPUBufferDescriptor&, GPUBufferMappedOption, Ref<GPUErrorScopes>&&);
+    static RefPtr<GPUBuffer> tryCreate(GPUDevice&, const GPUBufferDescriptor&, GPUBufferMappedOption, GPUErrorScopes&);
 
     PlatformBuffer *platformBuffer() const { return m_platformBuffer.get(); }
     size_t byteLength() const { return m_byteLength; }
@@ -110,7 +110,7 @@ private:
         PendingMappingCallback(MappingCallback&&);
     };
 
-    GPUBuffer(PlatformBufferSmartPtr&&, Ref<GPUDevice>&&, size_t, OptionSet<GPUBufferUsage::Flags>, GPUBufferMappedOption, Ref<GPUErrorScopes>&&);
+    GPUBuffer(PlatformBufferSmartPtr&&, GPUDevice&, size_t, OptionSet<GPUBufferUsage::Flags>, GPUBufferMappedOption, GPUErrorScopes&);
     static bool validateBufferUsage(const GPUDevice&, OptionSet<GPUBufferUsage::Flags>, GPUErrorScopes&);
 
     JSC::ArrayBuffer* stagingBufferForRead();

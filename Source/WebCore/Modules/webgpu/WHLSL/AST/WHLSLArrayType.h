@@ -58,7 +58,6 @@ public:
     virtual ~ArrayType() = default;
 
     ArrayType(const ArrayType&) = delete;
-    ArrayType(ArrayType&&) = default;
 
     bool isArrayType() const override { return true; }
 

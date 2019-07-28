@@ -51,7 +51,6 @@ public:
     virtual ~UnnamedType() = default;
 
     UnnamedType(const UnnamedType&) = delete;
-    UnnamedType(UnnamedType&&) = default;
 
     bool isUnnamedType() const override { return true; }
     virtual bool isTypeReference() const { return false; }

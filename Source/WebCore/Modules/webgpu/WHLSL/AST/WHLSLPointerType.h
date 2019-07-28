@@ -57,7 +57,6 @@ public:
     virtual ~PointerType() = default;
 
     PointerType(const PointerType&) = delete;
-    PointerType(PointerType&&) = default;
 
     bool isPointerType() const override { return true; }
 
