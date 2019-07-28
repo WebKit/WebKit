@@ -2839,15 +2839,16 @@ static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize 
 {
     auto toIndex = [](TouchAction touchAction) -> unsigned {
         switch (touchAction) {
-        case TouchAction::Manipulation:
-            return 1;
-        case TouchAction::PanX:
-            return 2;
-        case TouchAction::PanY:
-            return 3;
-        case TouchAction::PinchZoom:
-            return 4;
         case TouchAction::None:
+            return 1;
+        case TouchAction::Manipulation:
+            return 2;
+        case TouchAction::PanX:
+            return 3;
+        case TouchAction::PanY:
+            return 4;
+        case TouchAction::PinchZoom:
+            return 5;
         case TouchAction::Auto:
             break;
         }
@@ -2860,6 +2861,7 @@ static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize 
         FloatSize phase;
     };
     static const TouchActionAndRGB actionsAndColors[] = {
+        { TouchAction::Auto, "auto"_s, { } },
         { TouchAction::None, "none"_s, { } },
         { TouchAction::Manipulation, "manip"_s, { } },
         { TouchAction::PanX, "pan-x"_s, { } },
