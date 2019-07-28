@@ -1,3 +1,18 @@
+2019-07-27  Andres Gonzalez  <andresg_22@apple.com>
+
+        Expose the aria-label attribute for <video> elements.
+        https://bugs.webkit.org/show_bug.cgi?id=200169
+        <rdar://problem/51754558>
+
+        Reviewed by Chris Fleizach.
+
+        Tests: accessibility/ios-simulator/media-with-aria-label.html
+               accessibility/media-with-aria-label.html
+
+        We now expose the <video> element to accessibility clients as long as auto-play is not enabled.
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityIsWebInteractiveVideo]):
+
 2019-07-26  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Remove invalid assertion after r247878.

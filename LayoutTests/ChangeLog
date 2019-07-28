@@ -1,3 +1,17 @@
+2019-07-27  Andres Gonzalez  <andresg_22@apple.com>
+
+        Expose the aria-label attribute for <video> elements.
+        https://bugs.webkit.org/show_bug.cgi?id=200169
+        <rdar://problem/51754558>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/media-with-aria-label-expected.txt: Added.
+        * accessibility/ios-simulator/media-with-aria-label.html: Added.
+        * accessibility/media-with-aria-label-expected.txt: Added.
+        * accessibility/media-with-aria-label.html: Added.
+        * platform/win/TestExpectations:
+
 2019-07-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Moving right by word boundary right before an object element followed by a br element hangs
