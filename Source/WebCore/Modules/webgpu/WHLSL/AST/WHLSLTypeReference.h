@@ -32,6 +32,8 @@
 #include "WHLSLTypeArgument.h"
 #include "WHLSLUnnamedType.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Nonmovable.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,8 +45,10 @@ namespace AST {
 
 class NamedType;
 
-class TypeReference : public UnnamedType {
+class TypeReference final : public UnnamedType {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(TypeReference);
+    WTF_MAKE_NONMOVABLE(TypeReference);
     TypeReference(CodeLocation location, String&& name, TypeArguments&& typeArguments)
         : UnnamedType(location)
         , m_name(WTFMove(name))
@@ -58,8 +62,6 @@ public:
     }
 
     virtual ~TypeReference() = default;
-
-    TypeReference(const TypeReference&) = delete;
 
     static Ref<TypeReference> wrap(CodeLocation, NamedType& resolvedType);
 

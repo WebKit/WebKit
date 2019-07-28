@@ -30,6 +30,8 @@
 #include "WHLSLCodeLocation.h"
 #include "WHLSLReferenceType.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Nonmovable.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,6 +43,8 @@ namespace AST {
 
 class ArrayReferenceType : public ReferenceType {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(ArrayReferenceType);
+    WTF_MAKE_NONMOVABLE(ArrayReferenceType);
     using Base = ReferenceType;
 
     ArrayReferenceType(CodeLocation location, AddressSpace addressSpace, Ref<UnnamedType> elementType)
@@ -54,8 +58,6 @@ public:
     }
 
     virtual ~ArrayReferenceType() = default;
-
-    ArrayReferenceType(const ArrayReferenceType&) = delete;
 
     bool isArrayReferenceType() const override { return true; }
 

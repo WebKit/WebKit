@@ -30,6 +30,8 @@
 #include "WHLSLCodeLocation.h"
 #include "WHLSLReferenceType.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Nonmovable.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,8 +41,10 @@ namespace WHLSL {
 
 namespace AST {
 
-class PointerType : public ReferenceType {
+class PointerType final : public ReferenceType {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(PointerType);
+    WTF_MAKE_NONMOVABLE(PointerType);
     using Base = ReferenceType;
 
     PointerType(CodeLocation location, AddressSpace addressSpace, Ref<UnnamedType> elementType)
@@ -55,8 +59,6 @@ public:
     }
 
     virtual ~PointerType() = default;
-
-    PointerType(const PointerType&) = delete;
 
     bool isPointerType() const override { return true; }
 
