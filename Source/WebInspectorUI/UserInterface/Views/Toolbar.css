@@ -61,7 +61,7 @@ body.mac-platform:not(.docked) {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    min-width: -webkit-min-content;
+    min-width: min-content;
     -webkit-padding-start: 6px;
     -webkit-padding-end: 2px;
 }
@@ -69,7 +69,7 @@ body.mac-platform:not(.docked) {
 .toolbar .item-section {
     display: flex;
     flex: 1;
-    min-width: -webkit-min-content;
+    min-width: min-content;
 }
 
 .toolbar .item-section.left {

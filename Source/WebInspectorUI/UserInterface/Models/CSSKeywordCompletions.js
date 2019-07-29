@@ -496,22 +496,22 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "auto"
     ],
     "width": [
-        "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()"
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "calc()"
     ],
     "height": [
-        "intrinsic", "min-intrinsic", "calc()"
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "calc()"
     ],
     "max-width": [
-        "none", "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()"
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "none", "calc()"
     ],
     "min-width": [
-        "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()"
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "calc()"
     ],
     "max-height": [
-        "none", "intrinsic", "min-intrinsic", "calc()"
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "none", "calc()"
     ],
     "min-height": [
-        "intrinsic", "min-intrinsic", "calc()"
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "calc()"
     ],
     "letter-spacing": [
         "normal", "calc()"
@@ -684,13 +684,13 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "auto"
     ],
     "grid-auto-columns": [
-        "auto", "-webkit-max-content", "-webkit-min-content", "minmax()",
+        "auto", "max-content", "-webkit-max-content", "min-content", "-webkit-min-content", "minmax()",
     ],
     "grid-auto-flow": [
         "row", "column", "dense"
     ],
     "grid-auto-rows": [
-        "auto", "-webkit-max-content", "-webkit-min-content", "minmax()",
+        "auto", "max-content", "-webkit-max-content", "min-content", "-webkit-min-content", "minmax()",
     ],
     "grid-column": [
         "auto"
@@ -717,10 +717,10 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "none"
     ],
     "grid-template-columns": [
-        "none", "auto", "-webkit-max-content", "-webkit-min-content", "minmax()", "repeat()"
+        "none", "auto", "max-content", "-webkit-max-content", "min-content", "-webkit-min-content", "minmax()", "repeat()"
     ],
     "grid-template-rows": [
-        "none", "auto", "-webkit-max-content", "-webkit-min-content", "minmax()", "repeat()"
+        "none", "auto", "max-content", "-webkit-max-content", "min-content", "-webkit-min-content", "minmax()", "repeat()"
     ],
     "scroll-snap-align": [
         "none", "start", "center", "end"
@@ -889,10 +889,10 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "none", "baseline", "contain",
     ],
     "-webkit-logical-height": [
-        "intrinsic", "min-intrinsic", "calc()",
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "calc()"
     ],
     "-webkit-logical-width": [
-        "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()",
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "calc()"
     ],
     "-webkit-margin-after-collapse": [
         "collapse", "separate", "discard",
@@ -913,16 +913,16 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "none", "scroll", "slide", "alternate",
     ],
     "-webkit-max-logical-height": [
-        "none", "intrinsic", "min-intrinsic", "calc()",
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "none", "calc()"
     ],
     "-webkit-max-logical-width": [
-        "none", "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()",
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "none", "calc()"
     ],
     "-webkit-min-logical-height": [
-        "intrinsic", "min-intrinsic", "calc()",
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "calc()"
     ],
     "-webkit-min-logical-width": [
-        "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()",
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "calc()"
     ],
     "-webkit-nbsp-mode": [
         "normal", "space",

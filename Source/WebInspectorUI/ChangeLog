@@ -1,3 +1,19 @@
+2019-07-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add -webkit-* keywords for *-height CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=200240
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
+        * UserInterface/Views/Main.css:
+        (.message-text-view):
+        * UserInterface/Views/Toolbar.css:
+        (.toolbar .control-section):
+        (.toolbar .item-section):
+        Replace `-webkit-min-content` with `min-content`.
+
 2019-07-26  Greg Doolittle  <gr3g@apple.com>
 
         Web Inspector: AXI: Audit: Typo of "some" as "somee"
