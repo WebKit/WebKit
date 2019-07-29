@@ -65,7 +65,6 @@ public:
 protected:
     HTMLFrameOwnerElement(const QualifiedName& tagName, Document&);
     void setSandboxFlags(SandboxFlags);
-    bool canAddSubframe() const;
     bool isProhibitedSelfReference(const URL&) const;
 
 private:

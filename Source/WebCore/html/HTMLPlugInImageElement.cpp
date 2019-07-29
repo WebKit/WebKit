@@ -159,13 +159,9 @@ bool HTMLPlugInImageElement::canLoadURL(const String& relativeURL) const
     return canLoadURL(document().completeURL(relativeURL));
 }
 
-// Note that unlike HTMLFrameElementBase::canLoadURL this uses ScriptController::canAccessFromCurrentOrigin.
+// Note that unlike HTMLFrameElementBase::canLoadURL this uses SecurityOrigin::canAccess.
 bool HTMLPlugInImageElement::canLoadURL(const URL& completeURL) const
 {
-    // FIXME: This assumes we are adding a new subframe; incorrectly prevents modifying an existing one once we are at the limit.
-    if (!canAddSubframe())
-        return false;
-
     if (WTF::protocolIsJavaScript(completeURL)) {
         RefPtr<Document> contentDocument = this->contentDocument();
         if (contentDocument && !document().securityOrigin().canAccess(contentDocument->securityOrigin()))

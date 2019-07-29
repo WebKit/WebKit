@@ -1,3 +1,14 @@
+2019-07-29  Sergei Glazunov  <glazunov@google.com>
+
+        The maximum subframe count check should not be skipped for empty URLs.
+        https://bugs.webkit.org/show_bug.cgi?id=200032
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/connected-subframe-counter-overflow-expected.txt: Added.
+        * fast/dom/connected-subframe-counter-overflow.html: Added.
+        * fast/frames/lots-of-iframes-expected.txt:
+
 2019-07-29  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION: WebSockets no longer work in Service Workers

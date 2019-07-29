@@ -2487,6 +2487,7 @@ void Document::prepareForDestruction()
         NavigationDisabler navigationDisabler(m_frame);
         disconnectDescendantFrames();
     }
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_frame || !m_frame->tree().childCount());
 
     if (m_domWindow && m_frame)
         m_domWindow->willDetachDocumentFromFrame();

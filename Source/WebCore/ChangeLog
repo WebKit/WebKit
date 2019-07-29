@@ -1,3 +1,27 @@
+2019-07-29  Sergei Glazunov  <glazunov@google.com>
+
+        The maximum subframe count check should not be skipped for empty URLs.
+        https://bugs.webkit.org/show_bug.cgi?id=200032
+
+        Reviewed by Ryosuke Niwa.
+
+        Move the check closer to the actual frame creation code in `loadSubframe`.
+
+        Test: fast/dom/connected-subframe-counter-overflow.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction): Assert that all child frames have been detached.
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::canLoad const):
+        (WebCore::HTMLFrameElementBase::canLoadURL const):
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::canAddSubframe const): Deleted.
+        * html/HTMLFrameOwnerElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::canLoadURL const):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadSubframe):
+
 2019-07-29  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] ChromeClient::observedContentChange() name is misleading

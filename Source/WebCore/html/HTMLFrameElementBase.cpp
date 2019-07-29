@@ -61,7 +61,6 @@ bool HTMLFrameElementBase::canLoad() const
 {
     // FIXME: Why is it valuable to return true when m_URL is empty?
     // FIXME: After openURL replaces an empty URL with the blank URL, this may no longer necessarily return true.
-    // FIXME: It does not seem correct to skip the maximum subframe count check when m_URL is empty.
     return m_URL.isEmpty() || canLoadURL(m_URL);
 }
 
@@ -73,10 +72,6 @@ bool HTMLFrameElementBase::canLoadURL(const String& relativeURL) const
 // Note that unlike HTMLPlugInImageElement::canLoadURL this uses ScriptController::canAccessFromCurrentOrigin.
 bool HTMLFrameElementBase::canLoadURL(const URL& completeURL) const
 {
-    // FIXME: This assumes we are adding a new subframe; incorrectly prevents modifying an existing one once we are at the limit.
-    if (!canAddSubframe())
-        return false;
-
     if (WTF::protocolIsJavaScript(completeURL)) {
         RefPtr<Document> contentDocument = this->contentDocument();
         if (contentDocument && !ScriptController::canAccessFromCurrentOrigin(contentDocument->frame(), document()))

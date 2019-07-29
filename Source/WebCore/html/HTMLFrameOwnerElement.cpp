@@ -128,13 +128,6 @@ void HTMLFrameOwnerElement::scheduleInvalidateStyleAndLayerComposition()
         invalidateStyleAndLayerComposition();
 }
 
-bool HTMLFrameOwnerElement::canAddSubframe() const
-{
-    // FIXME: Might be safer to return false when page is null, but need to test in case we rely on returning true.
-    auto* page = document().page();
-    return !page || page->subframeCount() < Page::maxNumberOfFrames;
-}
-
 bool HTMLFrameOwnerElement::isProhibitedSelfReference(const URL& completeURL) const
 {
     // We allow one level of self-reference because some websites depend on that, but we don't allow more than one.
