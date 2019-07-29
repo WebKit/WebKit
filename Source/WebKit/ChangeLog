@@ -1,3 +1,19 @@
+2019-07-29  Dean Jackson  <dino@apple.com>
+
+        Contextual menu does not present when holding an embedded photo but works with link and attachments
+        https://bugs.webkit.org/show_bug.cgi?id=200239
+        <rdar://problem/53318733>
+
+        Reviewed by Tim Horton.
+
+        If the user long-pressed on an image, and the client implemented the new API but did
+        not provide a configuration, we were not falling back to the default behaviour of
+        giving a menu allowing the user to copy/share/save the image.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView continueContextMenuInteraction:]): If we get through the delegates,
+        and the element is an image, return the default configuration.
+
 2019-07-29  Chris Dumez  <cdumez@apple.com>
 
         Remove unnecessary null check under WebResourceLoadStatisticsStore::hasStorageAccess()
