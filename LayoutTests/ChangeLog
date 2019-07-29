@@ -1,3 +1,30 @@
+2019-07-28  Tim Horton  <timothy_horton@apple.com>
+
+        Reorganize UIScriptController into platform-specific subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=200027
+
+        Reviewed by Simon Fraser.
+
+        * http/tests/contentdispositionattachmentsandbox/resources/referer-header-stripped.js:
+        (onload):
+        This test both uses event sender to click, and UIScriptController to "tap".
+        Since singleTapAtPoint is unimplemented on macOS, it really just ended
+        up doing nothing, but now it asserts. Only click or tap, but not both.
+
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        Skip some tests for unimplemented or unsupported features.
+
+        * platform/mac/fast/events/autoscroll-when-input-is-offscreen-expected.txt: Removed.
+        * platform/mac/fast/events/autoscroll-with-software-keyboard-expected.txt: Removed.
+        Remove unneeded test results.
+
+        * swipe/resources/swipe-test.js:
+        (playEventStream):
+        playBackEventStream is unimplemented on iOS. Also, it's not necessary
+        for simulated swipe to send events at all on iOS, so just bail, which
+        is equivalent to what used to happen.
+
 2019-07-27  Andres Gonzalez  <andresg_22@apple.com>
 
         Expose the aria-label attribute for <video> elements.

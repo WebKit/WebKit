@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "UIScriptController.h"
+#import "UIScriptControllerMac.h"
 
 #import "DumpRenderTree.h"
 #import "UIScriptContext.h"
@@ -40,7 +40,12 @@
 
 namespace WTR {
 
-void UIScriptController::doAsyncTask(JSValueRef callback)
+Ref<UIScriptController> UIScriptController::create(UIScriptContext& context)
+{
+    return adoptRef(*new UIScriptControllerMac(context));
+}
+
+void UIScriptControllerMac::doAsyncTask(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
@@ -51,27 +56,7 @@ void UIScriptController::doAsyncTask(JSValueRef callback)
     });
 }
 
-void UIScriptController::doAfterPresentationUpdate(JSValueRef callback)
-{
-    return doAsyncTask(callback);
-}
-
-void UIScriptController::doAfterNextStablePresentationUpdate(JSValueRef callback)
-{
-    doAsyncTask(callback);
-}
-
-void UIScriptController::ensurePositionInformationIsUpToDateAt(long x, long y, JSValueRef callback)
-{
-    doAsyncTask(callback);
-}
-
-void UIScriptController::doAfterVisibleContentRectUpdate(JSValueRef callback)
-{
-    doAsyncTask(callback);
-}
-
-void UIScriptController::replaceTextAtRange(JSStringRef text, int location, int length)
+void UIScriptControllerMac::replaceTextAtRange(JSStringRef text, int location, int length)
 {
     auto textToInsert = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, text));
     auto rangeAttribute = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:NSStringFromRange(NSMakeRange(location == -1 ? NSNotFound : location, length)), NSTextInputReplacementRangeAttributeName, nil]);
@@ -80,41 +65,28 @@ void UIScriptController::replaceTextAtRange(JSStringRef text, int location, int 
     [mainFrame.webView insertText:textAndRange.get()];
 }
 
-void UIScriptController::zoomToScale(double scale, JSValueRef callback)
+void UIScriptControllerMac::zoomToScale(double scale, JSValueRef callback)
 {
-    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-
     WebView *webView = [mainFrame webView];
     [webView _scaleWebView:scale atOrigin:NSZeroPoint];
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
-    });
+    doAsyncTask(callback);
 }
 
-void UIScriptController::resignFirstResponder()
+double UIScriptControllerMac::zoomScale() const
 {
+    return mainFrame.webView._viewScaleFactor;
 }
 
-void UIScriptController::setViewScale(double)
+void UIScriptControllerMac::simulateAccessibilitySettingsChangeNotification(JSValueRef callback)
 {
+    NSNotificationCenter *center = [[NSWorkspace sharedWorkspace] notificationCenter];
+    [center postNotificationName:NSWorkspaceAccessibilityDisplayOptionsDidChangeNotification object:[mainFrame webView]];
+
+    doAsyncTask(callback);
 }
 
-void UIScriptController::setMinimumEffectiveWidth(double)
-{
-}
-
-void UIScriptController::setAllowsViewportShrinkToFit(bool)
-{
-}
-
-void UIScriptController::simulateAccessibilitySettingsChangeNotification(JSValueRef)
-{
-}
-
-JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
+JSObjectRef UIScriptControllerMac::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
 {
 #if JSC_OBJC_API_ENABLED
     WebView *webView = [mainFrame webView];
@@ -127,7 +99,7 @@ JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfac
 #endif
 }
 
-void UIScriptController::overridePreference(JSStringRef preferenceRef, JSStringRef valueRef)
+void UIScriptControllerMac::overridePreference(JSStringRef preferenceRef, JSStringRef valueRef)
 {
     WebPreferences *preferences = mainFrame.webView.preferences;
 
@@ -136,19 +108,7 @@ void UIScriptController::overridePreference(JSStringRef preferenceRef, JSStringR
         preferences.minimumFontSize = [(__bridge NSString *)value.get() doubleValue];
 }
 
-void UIScriptController::simulateRotation(DeviceOrientation*, JSValueRef)
-{
-}
-
-void UIScriptController::simulateRotationLikeSafari(DeviceOrientation*, JSValueRef)
-{
-}
-
-void UIScriptController::findString(JSStringRef, unsigned long options, unsigned long maxCount)
-{
-}
-
-void UIScriptController::removeViewFromWindow(JSValueRef callback)
+void UIScriptControllerMac::removeViewFromWindow(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
@@ -162,7 +122,7 @@ void UIScriptController::removeViewFromWindow(JSValueRef callback)
     });
 }
 
-void UIScriptController::addViewToWindow(JSValueRef callback)
+void UIScriptControllerMac::addViewToWindow(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
@@ -176,65 +136,12 @@ void UIScriptController::addViewToWindow(JSValueRef callback)
     });
 }
 
-void UIScriptController::beginBackSwipe(JSValueRef callback)
-{
-}
-
-void UIScriptController::completeBackSwipe(JSValueRef callback)
-{
-}
-
-void UIScriptController::platformPlayBackEventStream(JSStringRef, JSValueRef)
-{
-}
-
-void UIScriptController::firstResponderSuppressionForWebView(bool)
-{
-}
-
-void UIScriptController::makeWindowContentViewFirstResponder()
-{
-}
-
-bool UIScriptController::isWindowContentViewFirstResponder() const
-{
-    return false;
-}
-
-bool UIScriptController::isShowingDataListSuggestions() const
-{
-    return false;
-}
-
-void UIScriptController::setShareSheetCompletesImmediatelyWithResolution(bool)
-{
-}
-    
-JSObjectRef UIScriptController::calendarType() const
-{
-    return nullptr;
-}
-
-void UIScriptController::setDefaultCalendarType(JSStringRef calendarIdentifier)
-{
-}
-
-void UIScriptController::toggleCapsLock(JSValueRef callback)
+void UIScriptControllerMac::toggleCapsLock(JSValueRef callback)
 {
     doAsyncTask(callback);
 }
 
-JSRetainPtr<JSStringRef> UIScriptController::lastUndoLabel() const
-{
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> UIScriptController::firstRedoLabel() const
-{
-    return nullptr;
-}
-
-NSUndoManager *UIScriptController::platformUndoManager() const
+NSUndoManager *UIScriptControllerMac::platformUndoManager() const
 {
     return nil;
 }

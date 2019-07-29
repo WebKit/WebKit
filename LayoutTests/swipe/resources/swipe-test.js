@@ -64,6 +64,12 @@ function completeSwipeGesture(callback)
 function playEventStream(stream, callback)
 {
     log("playEventStream");
+    if (testRunner.isIOSFamily) {
+        // FIXME: This test should probably not log playEventStream
+        // on iOS, where it doesn't actually do it.
+        setTimeout(callback, 0);
+        return;
+    }
     testRunner.runUIScript(`
     (function() {
         uiController.playBackEventStream(\`${stream}\`, function() {

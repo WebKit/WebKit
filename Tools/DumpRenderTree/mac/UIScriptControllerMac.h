@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Alexander Mikhaylenko <exalm7659@gmail.com>
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "UIScriptControllerGtk.h"
+#pragma once
 
-#include "PlatformWebView.h"
-#include "TestController.h"
-#include <WebKit/WKViewPrivate.h>
+#import "UIScriptController.h"
+
+#if PLATFORM(MAC)
 
 namespace WTR {
 
-Ref<UIScriptController> UIScriptController::create(UIScriptContext& context)
-{
-    return adoptRef(*new UIScriptControllerGtk(context));
+class UIScriptControllerMac : public UIScriptController {
+public:
+    explicit UIScriptControllerMac(UIScriptContext& context)
+        : UIScriptController(context)
+    {
+    }
+
+    void doAsyncTask(JSValueRef) override;
+    void replaceTextAtRange(JSStringRef, int, int) override;
+    void zoomToScale(double, JSValueRef) override;
+    double zoomScale() const override;
+    JSObjectRef contentsOfUserInterfaceItem(JSStringRef) const override;
+    void overridePreference(JSStringRef, JSStringRef) override;
+    void removeViewFromWindow(JSValueRef) override;
+    void addViewToWindow(JSValueRef) override;
+    void toggleCapsLock(JSValueRef) override;
+    void simulateAccessibilitySettingsChangeNotification(JSValueRef) override;
+    NSUndoManager *platformUndoManager() const override;
+};
+
 }
 
-void UIScriptControllerGtk::beginBackSwipe(JSValueRef callback)
-{
-    auto* webView = TestController::singleton().mainWebView()->platformView();
-
-    WKViewBeginBackSwipeForTesting(webView);
-}
-
-void UIScriptControllerGtk::completeBackSwipe(JSValueRef callback)
-{
-    auto* webView = TestController::singleton().mainWebView()->platformView();
-
-    WKViewCompleteBackSwipeForTesting(webView);
-}
-
-} // namespace WTR
+#endif // PLATFORM(MAC)

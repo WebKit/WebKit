@@ -18,9 +18,7 @@ onload = function() {
             eventSender.mouseMoveTo(x, y);
             eventSender.mouseDown();
             eventSender.mouseUp();
-        }
-
-        if (testRunner.runUIScript)
+        } else if (testRunner.runUIScript)
             testRunner.runUIScript("(function() { uiController.singleTapAtPoint(" + x + ", " + y + "); })()");
     }
 }

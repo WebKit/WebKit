@@ -227,6 +227,10 @@ storage/storagequota-query-usage.html
 storage/storagequota-request-quota.html
 fast/workers/worker-storagequota-query-usage.html
 
+# Software keyboard is not supported.
+fast/events/autoscroll-with-software-keyboard.html [ Skip ]
+fast/events/autoscroll-when-input-is-offscreen.html [ Skip ]
+
 # HTTP 204 (No Content) should be ignored
 webkit.org/b/60206 http/tests/navigation/response204.html
 
@@ -1098,8 +1102,8 @@ webkit.org/b/187622 [ Debug ] inspector/view/asynchronous-layout.html [ Pass Tim
 
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
-# Touch events is not enabled on Mac
-webkit.org/b/149592 fast/shadow-dom/touch-event-ios.html [ Failure ]
+# Touch events are not enabled on Mac
+webkit.org/b/149592 fast/shadow-dom/touch-event-ios.html [ Skip ]
 
 webkit.org/b/149819 [ Debug Sierra+ ] compositing/video/video-poster.html [ Pass Crash ]
 

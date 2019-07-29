@@ -291,6 +291,8 @@
 		29CFBA0F122736E600BC30C0 /* AccessibilityTextMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTextMarker.cpp; sourceTree = "<group>"; };
 		29CFBA2D12273A1000BC30C0 /* AccessibilityTextMarkerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityTextMarkerMac.mm; path = mac/AccessibilityTextMarkerMac.mm; sourceTree = "<group>"; };
 		2CE88FA117124CEE00734FC0 /* JavaScriptThreading.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptThreading.cpp; sourceTree = "<group>"; };
+		2D0BEE1422E599B60092B738 /* UIScriptControllerMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UIScriptControllerMac.h; path = mac/UIScriptControllerMac.h; sourceTree = "<group>"; };
+		2D0BEE1622EACE8E0092B738 /* UIScriptControllerIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UIScriptControllerIOS.h; path = ios/UIScriptControllerIOS.h; sourceTree = "<group>"; };
 		2D403EA215087142005358D2 /* LayoutTestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LayoutTestHelper.m; path = mac/LayoutTestHelper.m; sourceTree = "<group>"; };
 		2D403F19150871F9005358D2 /* LayoutTestHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LayoutTestHelper; sourceTree = BUILT_PRODUCTS_DIR; };
 		31117B3A15D9A56A00163BC8 /* MockWebNotificationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MockWebNotificationProvider.h; path = mac/MockWebNotificationProvider.h; sourceTree = "<group>"; };
@@ -554,6 +556,7 @@
 		0F6A0DFF1D6E0F8600F1C9A8 /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				2D0BEE1622EACE8E0092B738 /* UIScriptControllerIOS.h */,
 				0F18E70C1D6BAC8C0027E547 /* UIScriptControllerIOS.mm */,
 			);
 			name = ios;
@@ -562,6 +565,7 @@
 		0F6A0E001D6E0F8A00F1C9A8 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				2D0BEE1422E599B60092B738 /* UIScriptControllerMac.h */,
 				0F18E70E1D6BACB60027E547 /* UIScriptControllerMac.mm */,
 			);
 			name = mac;

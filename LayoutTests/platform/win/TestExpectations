@@ -210,6 +210,17 @@ webkit.org/b/29287 http/tests/local/fileapi/ [ Skip ]
 webkit.org/b/29287 http/tests/local/blob/send-hybrid-blob.html [ Skip ]
 webkit.org/b/29287 http/tests/local/formdata/ [ Skip ]
 
+# Software keyboard is not supported.
+fast/events/autoscroll-with-software-keyboard.html [ Skip ]
+fast/events/autoscroll-when-input-is-offscreen.html [ Skip ]
+
+# UIScriptController::zoomToScale is not supported.
+fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Skip ]
+fast/visual-viewport/client-rects-relative-to-layout-viewport.html [ Skip ]
+
+# UIScriptController::removeViewFromWindow/addViewToWindow is not supported.
+pageoverlay/overlay-remove-reinsert-view.html [ Skip ]
+
 # TODO Need Blob.slice support
 http/tests/local/blob/send-sliced-data-blob.html [ Skip ]
 
@@ -3085,8 +3096,8 @@ webkit.org/b/152411 http/tests/contentdispositionattachmentsandbox/referer-heade
 webkit.org/b/152411 http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-unsafe-url.html [ Failure ]
 webkit.org/b/152411 http/tests/contentdispositionattachmentsandbox/referer-header-stripped.html [ Failure ]
 
-# Touch events is not enabled on Windows
-webkit.org/b/149592 fast/shadow-dom/touch-event-ios.html [ Failure ]
+# Touch events are not enabled on Windows
+webkit.org/b/149592 fast/shadow-dom/touch-event-ios.html [ Skip ]
 
 # The SVG -> OTF Font converter outputs 'kern' tables instead of 'GPOS' tables.
 webkit.org/b/137204 fast/text/svg-font-face-with-kerning.html [ Failure ]
@@ -3562,8 +3573,6 @@ fast/text/system-font-fallback-emoji.html [ Failure ]
 fast/text/web-font-load-invisible-during-loading.html [ Failure ]
 fast/url/standard-url.html [ Failure ]
 fast/url/tab-and-newline-stripping.html [ Failure ]
-fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Failure ]
-fast/visual-viewport/client-rects-relative-to-layout-viewport.html [ Failure ]
 fast/visual-viewport/rubberbanding-viewport-rects-extended-background.html [ Failure ]
 http/tests/frame-throttling/raf-throttle-in-cross-origin-subframe.html [ Failure ]
 http/tests/misc/form-blob-challenge.html [ Failure ]
@@ -3579,7 +3588,6 @@ http/tests/security/credentials-iframes.html [ Failure ]
 http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html [ Failure ]
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Failure ]
 js/shared-array-buffer-webgl.html [ Failure ]
-pageoverlay/overlay-remove-reinsert-view.html [ Failure ]
 storage/indexeddb/version-change-event-basic.html [ Failure ]
 storage/indexeddb/wasm-exceptions.html [ Failure ]
 streams/pipe-to.html [ Failure ]

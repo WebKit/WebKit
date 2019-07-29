@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Alexander Mikhaylenko <exalm7659@gmail.com>
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "UIScriptControllerGtk.h"
+#pragma once
 
-#include "PlatformWebView.h"
-#include "TestController.h"
-#include <WebKit/WKViewPrivate.h>
+#import "UIScriptController.h"
+
+#if PLATFORM(IOS_FAMILY)
 
 namespace WTR {
 
-Ref<UIScriptController> UIScriptController::create(UIScriptContext& context)
-{
-    return adoptRef(*new UIScriptControllerGtk(context));
+class UIScriptControllerIOS : public UIScriptController {
+public:
+    explicit UIScriptControllerIOS(UIScriptContext& context)
+        : UIScriptController(context)
+    {
+    }
+
+    void doAsyncTask(JSValueRef callback) override;
+    void zoomToScale(double scale, JSValueRef callback) override;
+    double zoomScale() const override;
+    double contentOffsetX() const override;
+    double contentOffsetY() const override;
+    void scrollToOffset(long x, long y) override;
+    void immediateScrollToOffset(long x, long y) override;
+    void immediateZoomToScale(double scale) override;
+    double minimumZoomScale() const override;
+    double maximumZoomScale() const override;
+    JSObjectRef contentVisibleRect() const override;
+};
+
 }
-
-void UIScriptControllerGtk::beginBackSwipe(JSValueRef callback)
-{
-    auto* webView = TestController::singleton().mainWebView()->platformView();
-
-    WKViewBeginBackSwipeForTesting(webView);
-}
-
-void UIScriptControllerGtk::completeBackSwipe(JSValueRef callback)
-{
-    auto* webView = TestController::singleton().mainWebView()->platformView();
-
-    WKViewCompleteBackSwipeForTesting(webView);
-}
-
-} // namespace WTR
+#endif // PLATFORM(IOS_FAMILY)

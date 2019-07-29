@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "UIScriptController.h"
+#import "UIScriptControllerCocoa.h"
 
 #import "PlatformWebView.h"
 #import "StringFunctions.h"
@@ -36,31 +36,32 @@
 
 namespace WTR {
 
-void UIScriptController::setViewScale(double scale)
+UIScriptControllerCocoa::UIScriptControllerCocoa(UIScriptContext& context)
+    : UIScriptController(context)
 {
-    TestController::singleton().mainWebView()->platformView()._viewScale = scale;
 }
 
-void UIScriptController::setMinimumEffectiveWidth(double effectiveWidth)
+TestRunnerWKWebView *UIScriptControllerCocoa::webView() const
 {
-    TestController::singleton().mainWebView()->platformView()._minimumEffectiveDeviceWidth = effectiveWidth;
+    return TestController::singleton().mainWebView()->platformView();
 }
 
-void UIScriptController::setAllowsViewportShrinkToFit(bool allows)
+void UIScriptControllerCocoa::setViewScale(double scale)
 {
-#if PLATFORM(IOS_FAMILY)
-    TestController::singleton().mainWebView()->platformView()._allowsViewportShrinkToFit = allows;
-#else
-    UNUSED_PARAM(allows);
-#endif
+    webView()._viewScale = scale;
 }
 
-void UIScriptController::resignFirstResponder()
+void UIScriptControllerCocoa::setMinimumEffectiveWidth(double effectiveWidth)
 {
-    [TestController::singleton().mainWebView()->platformView() resignFirstResponder];
+    webView()._minimumEffectiveDeviceWidth = effectiveWidth;
 }
 
-void UIScriptController::doAsyncTask(JSValueRef callback)
+void UIScriptControllerCocoa::resignFirstResponder()
+{
+    [webView() resignFirstResponder];
+}
+
+void UIScriptControllerCocoa::doAsyncTask(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
@@ -71,13 +72,12 @@ void UIScriptController::doAsyncTask(JSValueRef callback)
     });
 }
 
-void UIScriptController::setShareSheetCompletesImmediatelyWithResolution(bool resolved)
+void UIScriptControllerCocoa::setShareSheetCompletesImmediatelyWithResolution(bool resolved)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    [webView _setShareSheetCompletesImmediatelyWithResolutionForTesting:resolved];
+    [webView() _setShareSheetCompletesImmediatelyWithResolutionForTesting:resolved];
 }
 
-void UIScriptController::removeViewFromWindow(JSValueRef callback)
+void UIScriptControllerCocoa::removeViewFromWindow(JSValueRef callback)
 {
     // FIXME: On iOS, we never invoke the completion callback that's passed in. Fixing this causes the layout
     // test pageoverlay/overlay-remove-reinsert-view.html to start failing consistently on iOS. It seems like
@@ -100,7 +100,7 @@ void UIScriptController::removeViewFromWindow(JSValueRef callback)
 #endif // PLATFORM(MAC)
 }
 
-void UIScriptController::addViewToWindow(JSValueRef callback)
+void UIScriptControllerCocoa::addViewToWindow(JSValueRef callback)
 {
 #if PLATFORM(MAC)
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
@@ -120,10 +120,9 @@ void UIScriptController::addViewToWindow(JSValueRef callback)
 #endif // PLATFORM(MAC)
 }
 
-void UIScriptController::overridePreference(JSStringRef preferenceRef, JSStringRef valueRef)
+void UIScriptControllerCocoa::overridePreference(JSStringRef preferenceRef, JSStringRef valueRef)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    WKPreferences *preferences = webView.configuration.preferences;
+    WKPreferences *preferences = webView().configuration.preferences;
 
     String preference = toWTFString(toWK(preferenceRef));
     String value = toWTFString(toWK(valueRef));
@@ -131,35 +130,33 @@ void UIScriptController::overridePreference(JSStringRef preferenceRef, JSStringR
         preferences.minimumFontSize = value.toDouble();
 }
 
-void UIScriptController::findString(JSStringRef string, unsigned long options, unsigned long maxCount)
+void UIScriptControllerCocoa::findString(JSStringRef string, unsigned long options, unsigned long maxCount)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    [webView _findString:toWTFString(toWK(string)) options:options maxCount:maxCount];
+    [webView() _findString:toWTFString(toWK(string)) options:options maxCount:maxCount];
 }
 
-JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
+JSObjectRef UIScriptControllerCocoa::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    NSDictionary *contentDictionary = [webView _contentsOfUserInterfaceItem:toWTFString(toWK(interfaceItem))];
+    NSDictionary *contentDictionary = [webView() _contentsOfUserInterfaceItem:toWTFString(toWK(interfaceItem))];
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:contentDictionary inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
-void UIScriptController::setDefaultCalendarType(JSStringRef calendarIdentifier)
+void UIScriptControllerCocoa::setDefaultCalendarType(JSStringRef calendarIdentifier)
 {
     TestController::singleton().setDefaultCalendarType((__bridge NSString *)adoptCF(JSStringCopyCFString(kCFAllocatorDefault, calendarIdentifier)).get());
 }
 
-JSRetainPtr<JSStringRef> UIScriptController::lastUndoLabel() const
+JSRetainPtr<JSStringRef> UIScriptControllerCocoa::lastUndoLabel() const
 {
     return adopt(JSStringCreateWithCFString((__bridge CFStringRef)platformUndoManager().undoActionName));
 }
 
-JSRetainPtr<JSStringRef> UIScriptController::firstRedoLabel() const
+JSRetainPtr<JSStringRef> UIScriptControllerCocoa::firstRedoLabel() const
 {
     return adopt(JSStringCreateWithCFString((__bridge CFStringRef)platformUndoManager().redoActionName));
 }
 
-NSUndoManager *UIScriptController::platformUndoManager() const
+NSUndoManager *UIScriptControllerCocoa::platformUndoManager() const
 {
     return platformContentView().undoManager;
 }

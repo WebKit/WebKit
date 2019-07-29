@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Alexander Mikhaylenko <exalm7659@gmail.com>
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "UIScriptControllerGtk.h"
+#pragma once
 
-#include "PlatformWebView.h"
-#include "TestController.h"
-#include <WebKit/WKViewPrivate.h>
+#import "UIScriptControllerCocoa.h"
+
+OBJC_CLASS WKWebView;
 
 namespace WTR {
 
-Ref<UIScriptController> UIScriptController::create(UIScriptContext& context)
-{
-    return adoptRef(*new UIScriptControllerGtk(context));
-}
+class UIScriptControllerMac : public UIScriptControllerCocoa {
+public:
+    explicit UIScriptControllerMac(UIScriptContext& context)
+        : UIScriptControllerCocoa(context)
+    {
+    }
 
-void UIScriptControllerGtk::beginBackSwipe(JSValueRef callback)
-{
-    auto* webView = TestController::singleton().mainWebView()->platformView();
-
-    WKViewBeginBackSwipeForTesting(webView);
-}
-
-void UIScriptControllerGtk::completeBackSwipe(JSValueRef callback)
-{
-    auto* webView = TestController::singleton().mainWebView()->platformView();
-
-    WKViewCompleteBackSwipeForTesting(webView);
-}
+    void replaceTextAtRange(JSStringRef, int, int) override;
+    void zoomToScale(double, JSValueRef) override;
+    double zoomScale() const override;
+    void simulateAccessibilitySettingsChangeNotification(JSValueRef) override;
+    bool isShowingDataListSuggestions() const override;
+    void beginBackSwipe(JSValueRef) override;
+    void completeBackSwipe(JSValueRef) override;
+    void playBackEventStream(JSStringRef, JSValueRef) override;
+    void firstResponderSuppressionForWebView(bool) override;
+    void makeWindowContentViewFirstResponder() override;
+    bool isWindowContentViewFirstResponder() const override;
+    void toggleCapsLock(JSValueRef) override;
+    NSView *platformContentView() const override;
+};
 
 } // namespace WTR

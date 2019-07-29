@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "UIScriptController.h"
+#import "UIScriptControllerIOS.h"
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -128,96 +128,88 @@ static NSArray<UIView *> *findAllViewsInHierarchyOfType(UIView *view, Class view
     return views.autorelease();
 }
 
-void UIScriptController::checkForOutstandingCallbacks()
+Ref<UIScriptController> UIScriptController::create(UIScriptContext& context)
+{
+    return adoptRef(*new UIScriptControllerIOS(context));
+}
+
+void UIScriptControllerIOS::checkForOutstandingCallbacks()
 {
     if (![[HIDEventGenerator sharedHIDEventGenerator] checkForOutstandingCallbacks])
         [NSException raise:@"WebKitTestRunnerTestProblem" format:@"The test completed before all synthesized events had been handled. Perhaps you're calling notifyDone() too early?"];
 }
 
-void UIScriptController::doAfterPresentationUpdate(JSValueRef callback)
+void UIScriptControllerIOS::doAfterPresentationUpdate(JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    [webView _doAfterNextPresentationUpdate:^{
+    [webView() _doAfterNextPresentationUpdate:^{
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
     }];
 }
 
-void UIScriptController::doAfterNextStablePresentationUpdate(JSValueRef callback)
+void UIScriptControllerIOS::doAfterNextStablePresentationUpdate(JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    [webView _doAfterNextStablePresentationUpdate:^() {
+    [webView() _doAfterNextStablePresentationUpdate:^() {
         if (m_context)
             m_context->asyncTaskComplete(callbackID);
     }];
 }
 
-void UIScriptController::ensurePositionInformationIsUpToDateAt(long x, long y, JSValueRef callback)
+void UIScriptControllerIOS::ensurePositionInformationIsUpToDateAt(long x, long y, JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    [webView _requestActivatedElementAtPosition:CGPointMake(x, y) completionBlock:^(_WKActivatedElementInfo *) {
+    [webView() _requestActivatedElementAtPosition:CGPointMake(x, y) completionBlock:^(_WKActivatedElementInfo *) {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
     }];
 }
 
-void UIScriptController::doAfterVisibleContentRectUpdate(JSValueRef callback)
+void UIScriptControllerIOS::doAfterVisibleContentRectUpdate(JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    [webView _doAfterNextVisibleContentRectUpdate:^ {
+    [webView() _doAfterNextVisibleContentRectUpdate:^ {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
     }];
 }
 
-void UIScriptController::zoomToScale(double scale, JSValueRef callback)
+void UIScriptControllerIOS::zoomToScale(double scale, JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    [webView zoomToScale:scale animated:YES completionHandler:^{
+    [webView() zoomToScale:scale animated:YES completionHandler:^{
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
     }];
 }
 
-void UIScriptController::retrieveSpeakSelectionContent(JSValueRef callback)
+void UIScriptControllerIOS::retrieveSpeakSelectionContent(JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
     
-    [webView accessibilityRetrieveSpeakSelectionContentWithCompletionHandler:^() {
+    [webView() accessibilityRetrieveSpeakSelectionContentWithCompletionHandler:^() {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
     }];
 }
 
-JSRetainPtr<JSStringRef> UIScriptController::accessibilitySpeakSelectionContent() const
+JSRetainPtr<JSStringRef> UIScriptControllerIOS::accessibilitySpeakSelectionContent() const
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return adopt(JSStringCreateWithCFString((CFStringRef)webView.accessibilitySpeakSelectionContent));
+    return adopt(JSStringCreateWithCFString((CFStringRef)webView().accessibilitySpeakSelectionContent));
 }
 
-void UIScriptController::simulateAccessibilitySettingsChangeNotification(JSValueRef callback)
+void UIScriptControllerIOS::simulateAccessibilitySettingsChangeNotification(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    auto* webView = TestController::singleton().mainWebView()->platformView();
+    auto* webView = this->webView();
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center postNotificationName:UIAccessibilityInvertColorsStatusDidChangeNotification object:webView];
 
@@ -228,10 +220,9 @@ void UIScriptController::simulateAccessibilitySettingsChangeNotification(JSValue
     }];
 }
 
-double UIScriptController::zoomScale() const
+double UIScriptControllerIOS::zoomScale() const
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return webView.scrollView.zoomScale;
+    return webView().scrollView.zoomScale;
 }
 
 static CGPoint globalToContentCoordinates(TestRunnerWKWebView *webView, long x, long y)
@@ -243,11 +234,11 @@ static CGPoint globalToContentCoordinates(TestRunnerWKWebView *webView, long x, 
     return point;
 }
 
-void UIScriptController::touchDownAtPoint(long x, long y, long touchCount, JSValueRef callback)
+void UIScriptControllerIOS::touchDownAtPoint(long x, long y, long touchCount, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    auto location = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y);
+    auto location = globalToContentCoordinates(webView(), x, y);
     [[HIDEventGenerator sharedHIDEventGenerator] touchDown:location touchCount:touchCount completionBlock:^{
         if (!m_context)
             return;
@@ -255,11 +246,11 @@ void UIScriptController::touchDownAtPoint(long x, long y, long touchCount, JSVal
     }];
 }
 
-void UIScriptController::liftUpAtPoint(long x, long y, long touchCount, JSValueRef callback)
+void UIScriptControllerIOS::liftUpAtPoint(long x, long y, long touchCount, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
     
-    auto location = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y);
+    auto location = globalToContentCoordinates(webView(), x, y);
     [[HIDEventGenerator sharedHIDEventGenerator] liftUp:location touchCount:touchCount completionBlock:^{
         if (!m_context)
             return;
@@ -267,12 +258,12 @@ void UIScriptController::liftUpAtPoint(long x, long y, long touchCount, JSValueR
     }];
 }
 
-void UIScriptController::singleTapAtPoint(long x, long y, JSValueRef callback)
+void UIScriptControllerIOS::singleTapAtPoint(long x, long y, JSValueRef callback)
 {
     singleTapAtPointWithModifiers(x, y, nullptr, callback);
 }
 
-void UIScriptController::singleTapAtPointWithModifiers(long x, long y, JSValueRef modifierArray, JSValueRef callback)
+void UIScriptControllerIOS::singleTapAtPointWithModifiers(long x, long y, JSValueRef modifierArray, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
@@ -280,7 +271,7 @@ void UIScriptController::singleTapAtPointWithModifiers(long x, long y, JSValueRe
     for (auto& modifierFlag : modifierFlags)
         [[HIDEventGenerator sharedHIDEventGenerator] keyDown:modifierFlag];
 
-    [[HIDEventGenerator sharedHIDEventGenerator] tap:globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y) completionBlock:^{
+    [[HIDEventGenerator sharedHIDEventGenerator] tap:globalToContentCoordinates(webView(), x, y) completionBlock:^{
         if (!m_context)
             return;
         for (size_t i = modifierFlags.size(); i; ) {
@@ -295,22 +286,22 @@ void UIScriptController::singleTapAtPointWithModifiers(long x, long y, JSValueRe
     }];
 }
 
-void UIScriptController::doubleTapAtPoint(long x, long y, JSValueRef callback)
+void UIScriptControllerIOS::doubleTapAtPoint(long x, long y, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    [[HIDEventGenerator sharedHIDEventGenerator] doubleTap:globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y) completionBlock:^{
+    [[HIDEventGenerator sharedHIDEventGenerator] doubleTap:globalToContentCoordinates(webView(), x, y) completionBlock:^{
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
     }];
 }
 
-void UIScriptController::stylusDownAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback)
+void UIScriptControllerIOS::stylusDownAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    auto location = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y);
+    auto location = globalToContentCoordinates(webView(), x, y);
     [[HIDEventGenerator sharedHIDEventGenerator] stylusDownAtPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure completionBlock:^{
         if (!m_context)
             return;
@@ -318,11 +309,11 @@ void UIScriptController::stylusDownAtPoint(long x, long y, float azimuthAngle, f
     }];
 }
 
-void UIScriptController::stylusMoveToPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback)
+void UIScriptControllerIOS::stylusMoveToPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    auto location = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y);
+    auto location = globalToContentCoordinates(webView(), x, y);
     [[HIDEventGenerator sharedHIDEventGenerator] stylusMoveToPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure completionBlock:^{
         if (!m_context)
             return;
@@ -330,11 +321,11 @@ void UIScriptController::stylusMoveToPoint(long x, long y, float azimuthAngle, f
     }];
 }
 
-void UIScriptController::stylusUpAtPoint(long x, long y, JSValueRef callback)
+void UIScriptControllerIOS::stylusUpAtPoint(long x, long y, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    auto location = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y);
+    auto location = globalToContentCoordinates(webView(), x, y);
     [[HIDEventGenerator sharedHIDEventGenerator] stylusUpAtPoint:location completionBlock:^{
         if (!m_context)
             return;
@@ -342,12 +333,12 @@ void UIScriptController::stylusUpAtPoint(long x, long y, JSValueRef callback)
     }];
 }
 
-void UIScriptController::stylusTapAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback)
+void UIScriptControllerIOS::stylusTapAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback)
 {
     stylusTapAtPointWithModifiers(x, y, azimuthAngle, altitudeAngle, pressure, nullptr, callback);
 }
 
-void UIScriptController::stylusTapAtPointWithModifiers(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef modifierArray, JSValueRef callback)
+void UIScriptControllerIOS::stylusTapAtPointWithModifiers(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef modifierArray, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
@@ -355,7 +346,7 @@ void UIScriptController::stylusTapAtPointWithModifiers(long x, long y, float azi
     for (auto& modifierFlag : modifierFlags)
         [[HIDEventGenerator sharedHIDEventGenerator] keyDown:modifierFlag];
 
-    auto location = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y);
+    auto location = globalToContentCoordinates(webView(), x, y);
     [[HIDEventGenerator sharedHIDEventGenerator] stylusTapAtPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure completionBlock:^{
         if (!m_context)
             return;
@@ -371,36 +362,38 @@ void UIScriptController::stylusTapAtPointWithModifiers(long x, long y, float azi
     }];
 }
 
-void convertCoordinates(NSMutableDictionary *event)
+void convertCoordinates(TestRunnerWKWebView *webView, NSMutableDictionary *event)
 {
     if (event[HIDEventTouchesKey]) {
         for (NSMutableDictionary *touch in event[HIDEventTouchesKey]) {
-            auto location = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), (long)[touch[HIDEventXKey] doubleValue], (long)[touch[HIDEventYKey]doubleValue]);
+            auto location = globalToContentCoordinates(webView, (long)[touch[HIDEventXKey] doubleValue], (long)[touch[HIDEventYKey]doubleValue]);
             touch[HIDEventXKey] = @(location.x);
             touch[HIDEventYKey] = @(location.y);
         }
     }
 }
 
-void UIScriptController::sendEventStream(JSStringRef eventsJSON, JSValueRef callback)
+void UIScriptControllerIOS::sendEventStream(JSStringRef eventsJSON, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     String jsonString = eventsJSON->string();
     auto eventInfo = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[(NSString *)jsonString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves error:nil]);
+
+    auto *webView = this->webView();
     
     for (NSMutableDictionary *event in eventInfo[TopLevelEventInfoKey]) {
         if (![event[HIDEventCoordinateSpaceKey] isEqualToString:HIDEventCoordinateSpaceTypeContent])
             continue;
         
         if (event[HIDEventStartEventKey])
-            convertCoordinates(event[HIDEventStartEventKey]);
+            convertCoordinates(webView, event[HIDEventStartEventKey]);
         
         if (event[HIDEventEndEventKey])
-            convertCoordinates(event[HIDEventEndEventKey]);
+            convertCoordinates(webView, event[HIDEventEndEventKey]);
         
         if (event[HIDEventTouchesKey])
-            convertCoordinates(event);
+            convertCoordinates(webView, event);
     }
     
     if (!eventInfo || ![eventInfo isKindOfClass:[NSDictionary class]]) {
@@ -415,12 +408,12 @@ void UIScriptController::sendEventStream(JSStringRef eventsJSON, JSValueRef call
     }];
 }
 
-void UIScriptController::dragFromPointToPoint(long startX, long startY, long endX, long endY, double durationSeconds, JSValueRef callback)
+void UIScriptControllerIOS::dragFromPointToPoint(long startX, long startY, long endX, long endY, double durationSeconds, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    CGPoint startPoint = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), startX, startY);
-    CGPoint endPoint = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), endX, endY);
+    CGPoint startPoint = globalToContentCoordinates(webView(), startX, startY);
+    CGPoint endPoint = globalToContentCoordinates(webView(), endX, endY);
     
     [[HIDEventGenerator sharedHIDEventGenerator] dragWithStartPoint:startPoint endPoint:endPoint duration:durationSeconds completionBlock:^{
         if (!m_context)
@@ -429,25 +422,24 @@ void UIScriptController::dragFromPointToPoint(long startX, long startY, long end
     }];
 }
     
-void UIScriptController::longPressAtPoint(long x, long y, JSValueRef callback)
+void UIScriptControllerIOS::longPressAtPoint(long x, long y, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
     
-    [[HIDEventGenerator sharedHIDEventGenerator] longPress:globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y) completionBlock:^{
+    [[HIDEventGenerator sharedHIDEventGenerator] longPress:globalToContentCoordinates(webView(), x, y) completionBlock:^{
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
     }];
 }
 
-void UIScriptController::enterText(JSStringRef text)
+void UIScriptControllerIOS::enterText(JSStringRef text)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     auto textAsCFString = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, text));
-    [webView _simulateTextEntered:(NSString *)textAsCFString.get()];
+    [webView() _simulateTextEntered:(NSString *)textAsCFString.get()];
 }
 
-void UIScriptController::typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef callback)
+void UIScriptControllerIOS::typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
@@ -468,7 +460,7 @@ static UIPhysicalKeyboardEvent *createUIPhysicalKeyboardEvent(NSString *hidInput
     return keyboardEvent;
 }
 
-void UIScriptController::keyDown(JSStringRef character, JSValueRef modifierArray)
+void UIScriptControllerIOS::keyDown(JSStringRef character, JSValueRef modifierArray)
 {
     // Character can be either a single Unicode code point or the name of a special key (e.g. "downArrow").
     // HIDEventGenerator knows how to map these special keys to the appropriate keycode.
@@ -489,15 +481,14 @@ void UIScriptController::keyDown(JSStringRef character, JSValueRef modifierArray
     [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:^{ /* Do nothing */ }];
 }
 
-void UIScriptController::dismissFormAccessoryView()
+void UIScriptControllerIOS::dismissFormAccessoryView()
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    [webView dismissFormAccessoryView];
+    [webView() dismissFormAccessoryView];
 }
 
-void UIScriptController::dismissFilePicker(JSValueRef callback)
+void UIScriptControllerIOS::dismissFilePicker(JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    TestRunnerWKWebView *webView = this->webView();
     [webView _dismissFilePicker];
 
     // Round-trip with the WebProcess to make sure it has been notified of the dismissal.
@@ -508,40 +499,34 @@ void UIScriptController::dismissFilePicker(JSValueRef callback)
     }];
 }
 
-JSRetainPtr<JSStringRef> UIScriptController::selectFormPopoverTitle() const
+JSRetainPtr<JSStringRef> UIScriptControllerIOS::selectFormPopoverTitle() const
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return adopt(JSStringCreateWithCFString((CFStringRef)webView.selectFormPopoverTitle));
+    return adopt(JSStringCreateWithCFString((CFStringRef)webView().selectFormPopoverTitle));
 }
 
-JSRetainPtr<JSStringRef> UIScriptController::textContentType() const
+JSRetainPtr<JSStringRef> UIScriptControllerIOS::textContentType() const
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return adopt(JSStringCreateWithCFString((CFStringRef)(webView.textContentTypeForTesting ?: @"")));
+    return adopt(JSStringCreateWithCFString((CFStringRef)(webView().textContentTypeForTesting ?: @"")));
 }
 
-JSRetainPtr<JSStringRef> UIScriptController::formInputLabel() const
+JSRetainPtr<JSStringRef> UIScriptControllerIOS::formInputLabel() const
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return adopt(JSStringCreateWithCFString((CFStringRef)webView.formInputLabel));
+    return adopt(JSStringCreateWithCFString((CFStringRef)webView().formInputLabel));
 }
 
-void UIScriptController::selectFormAccessoryPickerRow(long rowIndex)
+void UIScriptControllerIOS::selectFormAccessoryPickerRow(long rowIndex)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    [webView selectFormAccessoryPickerRow:rowIndex];
+    [webView() selectFormAccessoryPickerRow:rowIndex];
 }
 
-void UIScriptController::setTimePickerValue(long hour, long minute)
+void UIScriptControllerIOS::setTimePickerValue(long hour, long minute)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    [webView setTimePickerValueToHour:hour minute:minute];
+    [webView() setTimePickerValueToHour:hour minute:minute];
 }
 
-bool UIScriptController::isPresentingModally() const
+bool UIScriptControllerIOS::isPresentingModally() const
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return !!webView.window.rootViewController.presentedViewController;
+    return !!webView().window.rootViewController.presentedViewController;
 }
 
 static CGPoint contentOffsetBoundedInValidRange(UIScrollView *scrollView, CGPoint contentOffset)
@@ -560,39 +545,35 @@ static CGPoint contentOffsetBoundedInValidRange(UIScrollView *scrollView, CGPoin
     return contentOffset;
 }
 
-double UIScriptController::contentOffsetX() const
+double UIScriptControllerIOS::contentOffsetX() const
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return webView.scrollView.contentOffset.x;
+    return webView().scrollView.contentOffset.x;
 }
 
-double UIScriptController::contentOffsetY() const
+double UIScriptControllerIOS::contentOffsetY() const
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return webView.scrollView.contentOffset.y;
+    return webView().scrollView.contentOffset.y;
 }
 
-bool UIScriptController::scrollUpdatesDisabled() const
+bool UIScriptControllerIOS::scrollUpdatesDisabled() const
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return webView._scrollingUpdatesDisabledForTesting;
+    return webView()._scrollingUpdatesDisabledForTesting;
 }
 
-void UIScriptController::setScrollUpdatesDisabled(bool disabled)
+void UIScriptControllerIOS::setScrollUpdatesDisabled(bool disabled)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    webView._scrollingUpdatesDisabledForTesting = disabled;
+    webView()._scrollingUpdatesDisabledForTesting = disabled;
 }
 
-void UIScriptController::scrollToOffset(long x, long y)
+void UIScriptControllerIOS::scrollToOffset(long x, long y)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    TestRunnerWKWebView *webView = this->webView();
     [webView.scrollView setContentOffset:contentOffsetBoundedInValidRange(webView.scrollView, CGPointMake(x, y)) animated:YES];
 }
 
-void UIScriptController::immediateScrollToOffset(long x, long y)
+void UIScriptControllerIOS::immediateScrollToOffset(long x, long y)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    TestRunnerWKWebView *webView = this->webView();
     [webView.scrollView setContentOffset:contentOffsetBoundedInValidRange(webView.scrollView, CGPointMake(x, y)) animated:NO];
 }
 
@@ -606,7 +587,7 @@ static UIScrollView *enclosingScrollViewIncludingSelf(UIView *view)
     return nil;
 }
 
-void UIScriptController::immediateScrollElementAtContentPointToOffset(long x, long y, long xScrollOffset, long yScrollOffset)
+void UIScriptControllerIOS::immediateScrollElementAtContentPointToOffset(long x, long y, long xScrollOffset, long yScrollOffset)
 {
     UIView *contentView = platformContentView();
     UIView *hitView = [contentView hitTest:CGPointMake(x, y) withEvent:nil];
@@ -614,39 +595,36 @@ void UIScriptController::immediateScrollElementAtContentPointToOffset(long x, lo
     [enclosingScrollView setContentOffset:CGPointMake(xScrollOffset, yScrollOffset)];
 }
 
-void UIScriptController::immediateZoomToScale(double scale)
+void UIScriptControllerIOS::immediateZoomToScale(double scale)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    [webView.scrollView setZoomScale:scale animated:NO];
+    [webView().scrollView setZoomScale:scale animated:NO];
 }
 
-void UIScriptController::keyboardAccessoryBarNext()
+void UIScriptControllerIOS::keyboardAccessoryBarNext()
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    [webView keyboardAccessoryBarNext];
+    [webView() keyboardAccessoryBarNext];
 }
 
-void UIScriptController::keyboardAccessoryBarPrevious()
+void UIScriptControllerIOS::keyboardAccessoryBarPrevious()
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    [webView keyboardAccessoryBarPrevious];
+    [webView() keyboardAccessoryBarPrevious];
 }
 
-bool UIScriptController::isShowingKeyboard() const
+bool UIScriptControllerIOS::isShowingKeyboard() const
 {
-    return TestController::singleton().mainWebView()->platformView().showingKeyboard;
+    return webView().showingKeyboard;
 }
 
-bool UIScriptController::hasInputSession() const
+bool UIScriptControllerIOS::hasInputSession() const
 {
-    return TestController::singleton().mainWebView()->platformView().isInteractingWithFormControl;
+    return webView().isInteractingWithFormControl;
 }
 
-void UIScriptController::applyAutocorrection(JSStringRef newString, JSStringRef oldString, JSValueRef callback)
+void UIScriptControllerIOS::applyAutocorrection(JSStringRef newString, JSStringRef oldString, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    TestRunnerWKWebView *webView = this->webView();
     [webView applyAutocorrection:toWTFString(toWK(newString)) toString:toWTFString(toWK(oldString)) withCompletionHandler:^ {
         // applyAutocorrection can call its completion handler synchronously,
         // which makes UIScriptController unhappy (see bug 172884).
@@ -658,62 +636,58 @@ void UIScriptController::applyAutocorrection(JSStringRef newString, JSStringRef 
     }];
 }
 
-double UIScriptController::minimumZoomScale() const
+double UIScriptControllerIOS::minimumZoomScale() const
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return webView.scrollView.minimumZoomScale;
+    return webView().scrollView.minimumZoomScale;
 }
 
-double UIScriptController::maximumZoomScale() const
+double UIScriptControllerIOS::maximumZoomScale() const
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return webView.scrollView.maximumZoomScale;
+    return webView().scrollView.maximumZoomScale;
 }
 
-Optional<bool> UIScriptController::stableStateOverride() const
+Optional<bool> UIScriptControllerIOS::stableStateOverride() const
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    TestRunnerWKWebView *webView = this->webView();
     if (webView._stableStateOverride)
         return webView._stableStateOverride.boolValue;
 
     return WTF::nullopt;
 }
 
-void UIScriptController::setStableStateOverride(Optional<bool> overrideValue)
+void UIScriptControllerIOS::setStableStateOverride(Optional<bool> overrideValue)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    TestRunnerWKWebView *webView = this->webView();
     if (overrideValue)
         webView._stableStateOverride = @(overrideValue.value());
     else
         webView._stableStateOverride = nil;
 }
 
-JSObjectRef UIScriptController::contentVisibleRect() const
+JSObjectRef UIScriptControllerIOS::contentVisibleRect() const
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-
-    CGRect contentVisibleRect = webView._contentVisibleRect;
+    CGRect contentVisibleRect = webView()._contentVisibleRect;
     
     WebCore::FloatRect rect(contentVisibleRect.origin.x, contentVisibleRect.origin.y, contentVisibleRect.size.width, contentVisibleRect.size.height);
     return m_context->objectFromRect(rect);
 }
 
-JSObjectRef UIScriptController::textSelectionRangeRects() const
+JSObjectRef UIScriptControllerIOS::textSelectionRangeRects() const
 {
     auto selectionRects = adoptNS([[NSMutableArray alloc] init]);
-    NSArray *rects = TestController::singleton().mainWebView()->platformView()._uiTextSelectionRects;
+    NSArray *rects = webView()._uiTextSelectionRects;
     for (NSValue *rect in rects)
         [selectionRects addObject:toNSDictionary(rect.CGRectValue)];
 
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:selectionRects.get() inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
-JSObjectRef UIScriptController::textSelectionCaretRect() const
+JSObjectRef UIScriptControllerIOS::textSelectionCaretRect() const
 {
-    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(TestController::singleton().mainWebView()->platformView()._uiTextCaretRect) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(webView()._uiTextCaretRect) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
-JSObjectRef UIScriptController::selectionStartGrabberViewRect() const
+JSObjectRef UIScriptControllerIOS::selectionStartGrabberViewRect() const
 {
     UIView *contentView = platformContentView();
     UIView *selectionRangeView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView"];
@@ -723,7 +697,7 @@ JSObjectRef UIScriptController::selectionStartGrabberViewRect() const
     return JSValueToObject(jsContext, [JSValue valueWithObject:toNSDictionary(frameInContentCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
 }
 
-JSObjectRef UIScriptController::selectionEndGrabberViewRect() const
+JSObjectRef UIScriptControllerIOS::selectionEndGrabberViewRect() const
 {
     UIView *contentView = platformContentView();
     UIView *selectionRangeView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView"];
@@ -733,7 +707,7 @@ JSObjectRef UIScriptController::selectionEndGrabberViewRect() const
     return JSValueToObject(jsContext, [JSValue valueWithObject:toNSDictionary(frameInContentCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
 }
 
-JSObjectRef UIScriptController::selectionCaretViewRect() const
+JSObjectRef UIScriptControllerIOS::selectionCaretViewRect() const
 {
     UIView *contentView = platformContentView();
     UIView *caretView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.caretView"];
@@ -741,7 +715,7 @@ JSObjectRef UIScriptController::selectionCaretViewRect() const
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(rectInContentViewCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
-JSObjectRef UIScriptController::selectionRangeViewRects() const
+JSObjectRef UIScriptControllerIOS::selectionRangeViewRects() const
 {
     UIView *contentView = platformContentView();
     UIView *rangeView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView"];
@@ -755,25 +729,24 @@ JSObjectRef UIScriptController::selectionRangeViewRects() const
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:rectsAsDictionaries.get() inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
-JSObjectRef UIScriptController::inputViewBounds() const
+JSObjectRef UIScriptControllerIOS::inputViewBounds() const
 {
-    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(TestController::singleton().mainWebView()->platformView()._inputViewBounds) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(webView()._inputViewBounds) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
-void UIScriptController::removeAllDynamicDictionaries()
+void UIScriptControllerIOS::removeAllDynamicDictionaries()
 {
     [UIKeyboard removeAllDynamicDictionaries];
 }
 
-JSRetainPtr<JSStringRef> UIScriptController::scrollingTreeAsText() const
+JSRetainPtr<JSStringRef> UIScriptControllerIOS::scrollingTreeAsText() const
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return adopt(JSStringCreateWithCFString((CFStringRef)[webView _scrollingTreeAsText]));
+    return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _scrollingTreeAsText]));
 }
 
-JSObjectRef UIScriptController::propertiesOfLayerWithID(uint64_t layerID) const
+JSObjectRef UIScriptControllerIOS::propertiesOfLayerWithID(uint64_t layerID) const
 {
-    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:[TestController::singleton().mainWebView()->platformView() _propertiesOfLayerWithID:layerID] inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:[webView() _propertiesOfLayerWithID:layerID] inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
 static UIDeviceOrientation toUIDeviceOrientation(DeviceOrientation* orientation)
@@ -795,9 +768,9 @@ static UIDeviceOrientation toUIDeviceOrientation(DeviceOrientation* orientation)
     return UIDeviceOrientationPortrait;
 }
 
-void UIScriptController::simulateRotation(DeviceOrientation* orientation, JSValueRef callback)
+void UIScriptControllerIOS::simulateRotation(DeviceOrientation* orientation, JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    TestRunnerWKWebView *webView = this->webView();
     webView.usesSafariLikeRotation = NO;
     
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
@@ -811,9 +784,9 @@ void UIScriptController::simulateRotation(DeviceOrientation* orientation, JSValu
     [[UIDevice currentDevice] setOrientation:toUIDeviceOrientation(orientation) animated:YES];
 }
 
-void UIScriptController::simulateRotationLikeSafari(DeviceOrientation* orientation, JSValueRef callback)
+void UIScriptControllerIOS::simulateRotationLikeSafari(DeviceOrientation* orientation, JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    TestRunnerWKWebView *webView = this->webView();
     webView.usesSafariLikeRotation = YES;
     
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
@@ -827,128 +800,132 @@ void UIScriptController::simulateRotationLikeSafari(DeviceOrientation* orientati
     [[UIDevice currentDevice] setOrientation:toUIDeviceOrientation(orientation) animated:YES];
 }
 
-void UIScriptController::platformSetDidStartFormControlInteractionCallback()
+void UIScriptControllerIOS::setDidStartFormControlInteractionCallback(JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    webView.didStartFormControlInteractionCallback = ^{
+    UIScriptController::setDidStartFormControlInteractionCallback(callback);
+    webView().didStartFormControlInteractionCallback = ^{
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidStartFormControlInteraction);
     };
 }
 
-void UIScriptController::platformSetDidEndFormControlInteractionCallback()
+void UIScriptControllerIOS::setDidEndFormControlInteractionCallback(JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    webView.didEndFormControlInteractionCallback = ^{
+    UIScriptController::setDidEndFormControlInteractionCallback(callback);
+    webView().didEndFormControlInteractionCallback = ^{
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidEndFormControlInteraction);
     };
 }
     
-void UIScriptController::platformSetDidShowForcePressPreviewCallback()
+void UIScriptControllerIOS::setDidShowForcePressPreviewCallback(JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    webView.didShowForcePressPreviewCallback = ^ {
+    UIScriptController::setDidShowForcePressPreviewCallback(callback);
+    webView().didShowForcePressPreviewCallback = ^ {
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidShowForcePressPreview);
     };
 }
 
-void UIScriptController::platformSetDidDismissForcePressPreviewCallback()
+void UIScriptControllerIOS::setDidDismissForcePressPreviewCallback(JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    webView.didDismissForcePressPreviewCallback = ^ {
+    UIScriptController::setDidDismissForcePressPreviewCallback(callback);
+    webView().didDismissForcePressPreviewCallback = ^ {
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidEndFormControlInteraction);
     };
 }
 
-void UIScriptController::platformSetWillBeginZoomingCallback()
+void UIScriptControllerIOS::setWillBeginZoomingCallback(JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    webView.willBeginZoomingCallback = ^{
+    UIScriptController::setWillBeginZoomingCallback(callback);
+    webView().willBeginZoomingCallback = ^{
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeWillBeginZooming);
     };
 }
 
-void UIScriptController::platformSetDidEndZoomingCallback()
+void UIScriptControllerIOS::setDidEndZoomingCallback(JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    webView.didEndZoomingCallback = ^{
+    UIScriptController::setDidEndZoomingCallback(callback);
+    webView().didEndZoomingCallback = ^{
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidEndZooming);
     };
 }
 
-void UIScriptController::platformSetDidShowKeyboardCallback()
+void UIScriptControllerIOS::setDidShowKeyboardCallback(JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    webView.didShowKeyboardCallback = ^{
+    UIScriptController::setDidShowKeyboardCallback(callback);
+    webView().didShowKeyboardCallback = ^{
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidShowKeyboard);
     };
 }
 
-void UIScriptController::platformSetDidHideKeyboardCallback()
+void UIScriptControllerIOS::setDidHideKeyboardCallback(JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    webView.didHideKeyboardCallback = ^{
+    UIScriptController::setDidHideKeyboardCallback(callback);
+    webView().didHideKeyboardCallback = ^{
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidHideKeyboard);
     };
 }
 
-void UIScriptController::platformSetDidShowMenuCallback()
+void UIScriptControllerIOS::setDidShowMenuCallback(JSValueRef callback)
 {
-    TestController::singleton().mainWebView()->platformView().didShowMenuCallback = ^{
+    UIScriptController::setDidShowMenuCallback(callback);
+    webView().didShowMenuCallback = ^{
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidShowMenu);
     };
 }
 
-void UIScriptController::platformSetDidHideMenuCallback()
+void UIScriptControllerIOS::setDidHideMenuCallback(JSValueRef callback)
 {
-    TestController::singleton().mainWebView()->platformView().didHideMenuCallback = ^{
+    UIScriptController::setDidHideMenuCallback(callback);
+    webView().didHideMenuCallback = ^{
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidHideMenu);
     };
 }
 
-bool UIScriptController::isShowingPopover() const
+bool UIScriptControllerIOS::isShowingPopover() const
 {
-    return TestController::singleton().mainWebView()->platformView().showingPopover;
+    return webView().showingPopover;
 }
 
-void UIScriptController::platformSetWillPresentPopoverCallback()
+void UIScriptControllerIOS::setWillPresentPopoverCallback(JSValueRef callback)
 {
-    TestController::singleton().mainWebView()->platformView().willPresentPopoverCallback = ^{
+    UIScriptController::setWillPresentPopoverCallback(callback);
+    webView().willPresentPopoverCallback = ^{
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeWillPresentPopover);
     };
 }
 
-void UIScriptController::platformSetDidDismissPopoverCallback()
+void UIScriptControllerIOS::setDidDismissPopoverCallback(JSValueRef callback)
 {
-    TestController::singleton().mainWebView()->platformView().didDismissPopoverCallback = ^{
+    UIScriptController::setDidDismissPopoverCallback(callback);
+    webView().didDismissPopoverCallback = ^{
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidDismissPopover);
     };
 }
 
-JSObjectRef UIScriptController::rectForMenuAction(JSStringRef jsAction) const
+JSObjectRef UIScriptControllerIOS::rectForMenuAction(JSStringRef jsAction) const
 {
     auto action = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsAction));
 
@@ -978,7 +955,7 @@ JSObjectRef UIScriptController::rectForMenuAction(JSStringRef jsAction) const
     return m_context->objectFromRect(WebCore::FloatRect(rectInRootViewCoordinates.origin.x, rectInRootViewCoordinates.origin.y, rectInRootViewCoordinates.size.width, rectInRootViewCoordinates.size.height));
 }
 
-JSObjectRef UIScriptController::menuRect() const
+JSObjectRef UIScriptControllerIOS::menuRect() const
 {
     UIView *calloutBar = UICalloutBar.activeCalloutBar;
     if (!calloutBar.window)
@@ -988,51 +965,48 @@ JSObjectRef UIScriptController::menuRect() const
     return m_context->objectFromRect(WebCore::FloatRect(rectInRootViewCoordinates.origin.x, rectInRootViewCoordinates.origin.y, rectInRootViewCoordinates.size.width, rectInRootViewCoordinates.size.height));
 }
 
-bool UIScriptController::isDismissingMenu() const
+bool UIScriptControllerIOS::isDismissingMenu() const
 {
-    return TestController::singleton().mainWebView()->platformView().dismissingMenu;
+    return webView().dismissingMenu;
 }
 
-bool UIScriptController::isShowingMenu() const
+bool UIScriptControllerIOS::isShowingMenu() const
 {
-    return TestController::singleton().mainWebView()->platformView().showingMenu;
+    return webView().showingMenu;
 }
 
-void UIScriptController::platformSetDidEndScrollingCallback()
+void UIScriptControllerIOS::setDidEndScrollingCallback(JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    webView.didEndScrollingCallback = ^{
+    UIScriptController::setDidEndScrollingCallback(callback);
+    webView().didEndScrollingCallback = ^{
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidEndScrolling);
     };
 }
 
-void UIScriptController::platformClearAllCallbacks()
+void UIScriptControllerIOS::clearAllCallbacks()
 {
-    [TestController::singleton().mainWebView()->platformView() resetInteractionCallbacks];
+    [webView() resetInteractionCallbacks];
 }
 
-void UIScriptController::setSafeAreaInsets(double top, double right, double bottom, double left)
+void UIScriptControllerIOS::setSafeAreaInsets(double top, double right, double bottom, double left)
 {
     UIEdgeInsets insets = UIEdgeInsetsMake(top, left, bottom, right);
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    webView.overrideSafeAreaInsets = insets;
+    webView().overrideSafeAreaInsets = insets;
 }
 
-void UIScriptController::beginBackSwipe(JSValueRef callback)
+void UIScriptControllerIOS::beginBackSwipe(JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    [webView _beginBackSwipeForTesting];
+    [webView() _beginBackSwipeForTesting];
 }
 
-void UIScriptController::completeBackSwipe(JSValueRef callback)
+void UIScriptControllerIOS::completeBackSwipe(JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    [webView _completeBackSwipeForTesting];
+    [webView() _completeBackSwipeForTesting];
 }
 
-bool UIScriptController::isShowingDataListSuggestions() const
+bool UIScriptControllerIOS::isShowingDataListSuggestions() const
 {
     Class remoteKeyboardWindowClass = NSClassFromString(@"UIRemoteKeyboardWindow");
     Class suggestionsPickerViewClass = NSClassFromString(@"WKDataListSuggestionsPickerView");
@@ -1059,10 +1033,9 @@ bool UIScriptController::isShowingDataListSuggestions() const
 #if HAVE(PENCILKIT)
 static PKCanvasView *findEditableImageCanvas()
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     Class pkCanvasViewClass = NSClassFromString(@"PKCanvasView");
     __block PKCanvasView *canvasView = nil;
-    forEachViewInHierarchy(webView.window, ^(UIView *subview, BOOL *stop) {
+    forEachViewInHierarchy(webView().window, ^(UIView *subview, BOOL *stop) {
         if (![subview isKindOfClass:pkCanvasViewClass])
             return;
 
@@ -1073,7 +1046,7 @@ static PKCanvasView *findEditableImageCanvas()
 }
 #endif
 
-void UIScriptController::drawSquareInEditableImage()
+void UIScriptControllerIOS::drawSquareInEditableImage()
 {
 #if HAVE(PENCILKIT)
     Class pkDrawingClass = NSClassFromString(@"PKDrawing");
@@ -1091,7 +1064,7 @@ void UIScriptController::drawSquareInEditableImage()
 #endif
 }
 
-long UIScriptController::numberOfStrokesInEditableImage()
+long UIScriptControllerIOS::numberOfStrokesInEditableImage()
 {
 #if HAVE(PENCILKIT)
     PKCanvasView *canvasView = findEditableImageCanvas();
@@ -1101,14 +1074,14 @@ long UIScriptController::numberOfStrokesInEditableImage()
 #endif
 }
 
-void UIScriptController::setKeyboardInputModeIdentifier(JSStringRef identifier)
+void UIScriptControllerIOS::setKeyboardInputModeIdentifier(JSStringRef identifier)
 {
     TestController::singleton().setKeyboardInputModeIdentifier(toWTFString(toWK(identifier)));
 }
 
 // FIXME: Write this in terms of HIDEventGenerator once we know how to reset caps lock state
 // on test completion to avoid it effecting subsequent tests.
-void UIScriptController::toggleCapsLock(JSValueRef callback)
+void UIScriptControllerIOS::toggleCapsLock(JSValueRef callback)
 {
     m_capsLockOn = !m_capsLockOn;
     auto *keyboardEvent = createUIPhysicalKeyboardEvent(@"capsLock", [NSString string], m_capsLockOn ? UIKeyModifierAlphaShift : 0,
@@ -1117,12 +1090,10 @@ void UIScriptController::toggleCapsLock(JSValueRef callback)
     doAsyncTask(callback);
 }
 
-JSObjectRef UIScriptController::attachmentInfo(JSStringRef jsAttachmentIdentifier)
+JSObjectRef UIScriptControllerIOS::attachmentInfo(JSStringRef jsAttachmentIdentifier)
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-
     auto attachmentIdentifier = toWTFString(toWK(jsAttachmentIdentifier));
-    _WKAttachment *attachment = [webView _attachmentForIdentifier:attachmentIdentifier];
+    _WKAttachment *attachment = [webView() _attachmentForIdentifier:attachmentIdentifier];
     _WKAttachmentInfo *attachmentInfo = attachment.info;
 
     NSDictionary *attachmentInfoDictionary = @{
@@ -1136,23 +1107,27 @@ JSObjectRef UIScriptController::attachmentInfo(JSStringRef jsAttachmentIdentifie
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:attachmentInfoDictionary inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
-UIView *UIScriptController::platformContentView() const
+UIView *UIScriptControllerIOS::platformContentView() const
 {
-    return [TestController::singleton().mainWebView()->platformView() valueForKeyPath:@"_currentContentView"];
+    return [webView() valueForKeyPath:@"_currentContentView"];
 }
 
-JSObjectRef UIScriptController::calendarType() const
+JSObjectRef UIScriptControllerIOS::calendarType() const
 {
-    WKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    UIView *contentView = [webView valueForKeyPath:@"_currentContentView"];
+    UIView *contentView = [webView() valueForKeyPath:@"_currentContentView"];
     NSString *calendarTypeString = [contentView valueForKeyPath:@"formInputControl.dateTimePickerCalendarType"];
     auto jsContext = m_context->jsContext();
     return JSValueToObject(jsContext, [JSValue valueWithObject:calendarTypeString inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
 }
 
-void UIScriptController::setHardwareKeyboardAttached(bool attached)
+void UIScriptControllerIOS::setHardwareKeyboardAttached(bool attached)
 {
     GSEventSetHardwareKeyboardAttached(attached, 0);
+}
+
+void UIScriptControllerIOS::setAllowsViewportShrinkToFit(bool allows)
+{
+    webView()._allowsViewportShrinkToFit = allows;
 }
 
 }

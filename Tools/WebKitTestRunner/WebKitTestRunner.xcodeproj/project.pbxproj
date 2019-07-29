@@ -78,6 +78,8 @@
 		29A8FCDD145F0337009045A6 /* JSAccessibilityTextMarkerRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */; };
 		29A8FCE2145F037B009045A6 /* AccessibilityTextMarkerRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE1145F037B009045A6 /* AccessibilityTextMarkerRange.cpp */; };
 		29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */; };
+		2D058E0922E2EE2200E4C145 /* UIScriptControllerCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D058E0822E2EE2200E4C145 /* UIScriptControllerCocoa.h */; };
+		2D058E0B22E2EF6D00E4C145 /* UIScriptControllerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D058E0A22E2EF6D00E4C145 /* UIScriptControllerMac.h */; };
 		2DB6187E1D7D58D400978D19 /* CoreGraphicsTestSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB6187D1D7D58D400978D19 /* CoreGraphicsTestSPI.h */; };
 		2DD4C49A1D6E7D3B0007379C /* EventSerializerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD4C4981D6E7D3B0007379C /* EventSerializerMac.h */; };
 		2DD4C49B1D6E7D3B0007379C /* EventSerializerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DD4C4991D6E7D3B0007379C /* EventSerializerMac.mm */; };
@@ -231,11 +233,11 @@
 		0F73B5571BA7929E004B3EF4 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		0F73B55B1BA89042004B3EF4 /* UIScriptControllerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIScriptControllerIOS.mm; sourceTree = "<group>"; };
 		0F87B6111BACAD6F004EC572 /* UIScriptControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIScriptControllerMac.mm; sourceTree = "<group>"; };
-		0F87B6141BACC4B9004EC572 /* TestRunnerWKWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestRunnerWKWebView.h; path = cocoa/TestRunnerWKWebView.h; sourceTree = "<group>"; };
-		0F87B6151BACC4B9004EC572 /* TestRunnerWKWebView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestRunnerWKWebView.mm; path = cocoa/TestRunnerWKWebView.mm; sourceTree = "<group>"; };
+		0F87B6141BACC4B9004EC572 /* TestRunnerWKWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestRunnerWKWebView.h; sourceTree = "<group>"; };
+		0F87B6151BACC4B9004EC572 /* TestRunnerWKWebView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestRunnerWKWebView.mm; sourceTree = "<group>"; };
 		0FEB909E1905A776000FDBF3 /* InjectedBundlePageCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundlePageCocoa.mm; sourceTree = "<group>"; };
-		0FEB90A21905BC6A000FDBF3 /* CrashReporterInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CrashReporterInfo.h; path = cocoa/CrashReporterInfo.h; sourceTree = "<group>"; };
-		0FEB90A31905BC6A000FDBF3 /* CrashReporterInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CrashReporterInfo.mm; path = cocoa/CrashReporterInfo.mm; sourceTree = "<group>"; };
+		0FEB90A21905BC6A000FDBF3 /* CrashReporterInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrashReporterInfo.h; sourceTree = "<group>"; };
+		0FEB90A31905BC6A000FDBF3 /* CrashReporterInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CrashReporterInfo.mm; sourceTree = "<group>"; };
 		0FEBF8581BB61DF20028722D /* HIDEventGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDEventGenerator.h; sourceTree = "<group>"; };
 		0FEBF8591BB61DF20028722D /* HIDEventGenerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HIDEventGenerator.mm; sourceTree = "<group>"; };
 		1A3326051B75396500F89F62 /* TestOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestOptions.h; sourceTree = "<group>"; };
@@ -271,9 +273,12 @@
 		29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAccessibilityTextMarkerRange.cpp; sourceTree = "<group>"; };
 		29A8FCE1345E7021006AA5A7 /* JSAccessibilityTextMarkerRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAccessibilityTextMarkerRange.h; sourceTree = "<group>"; };
 		29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTextMarkerRangeMac.mm; sourceTree = "<group>"; };
+		2D058E0822E2EE2200E4C145 /* UIScriptControllerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIScriptControllerCocoa.h; sourceTree = "<group>"; };
+		2D058E0A22E2EF6D00E4C145 /* UIScriptControllerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIScriptControllerMac.h; sourceTree = "<group>"; };
+		2D0BEE1722EAD1360092B738 /* UIScriptControllerIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIScriptControllerIOS.h; sourceTree = "<group>"; };
 		2D0FF14A2192C78300C975D6 /* PencilKitTestSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PencilKitTestSPI.h; path = ../TestRunnerShared/spi/PencilKitTestSPI.h; sourceTree = "<group>"; };
 		2DB6187D1D7D58D400978D19 /* CoreGraphicsTestSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreGraphicsTestSPI.h; path = ../TestRunnerShared/spi/CoreGraphicsTestSPI.h; sourceTree = "<group>"; };
-		2DCE2CD11B84524500C7F832 /* TestControllerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestControllerCocoa.mm; path = cocoa/TestControllerCocoa.mm; sourceTree = "<group>"; };
+		2DCE2CD11B84524500C7F832 /* TestControllerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestControllerCocoa.mm; sourceTree = "<group>"; };
 		2DD4C4981D6E7D3B0007379C /* EventSerializerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventSerializerMac.h; path = mac/EventSerializerMac.h; sourceTree = "<group>"; };
 		2DD4C4991D6E7D3B0007379C /* EventSerializerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EventSerializerMac.mm; path = mac/EventSerializerMac.mm; sourceTree = "<group>"; };
 		2DFA98461D7F70CF00AFF2C9 /* SharedEventStreamsMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SharedEventStreamsMac.h; path = mac/SharedEventStreamsMac.h; sourceTree = "<group>"; };
@@ -299,8 +304,8 @@
 		378D442213346D00006A777B /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		41230E16138C78BF00BCCFCA /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4181731B138AD39D0057AAA4 /* WebCoreTestSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreTestSupport.h; path = WebCoreTestSupport/WebCoreTestSupport.h; sourceTree = BUILT_PRODUCTS_DIR; };
-		41C5378C21F1333C008B1FAD /* TestWebsiteDataStoreDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestWebsiteDataStoreDelegate.h; path = cocoa/TestWebsiteDataStoreDelegate.h; sourceTree = "<group>"; };
-		41C5378D21F1333C008B1FAD /* TestWebsiteDataStoreDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestWebsiteDataStoreDelegate.mm; path = cocoa/TestWebsiteDataStoreDelegate.mm; sourceTree = "<group>"; };
+		41C5378C21F1333C008B1FAD /* TestWebsiteDataStoreDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestWebsiteDataStoreDelegate.h; sourceTree = "<group>"; };
+		41C5378D21F1333C008B1FAD /* TestWebsiteDataStoreDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestWebsiteDataStoreDelegate.mm; sourceTree = "<group>"; };
 		41D5B62522DD9D36000F4C4A /* FakeHelvetica-SingleExtendedCharacter.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "FakeHelvetica-SingleExtendedCharacter.ttf"; path = "fonts/FakeHelvetica-SingleExtendedCharacter.ttf"; sourceTree = "<group>"; };
 		4429FC5E1627089600F66D8B /* WorkQueueManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueueManager.cpp; sourceTree = "<group>"; };
 		4429FC611627089600F66D8B /* WorkQueueManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueueManager.h; sourceTree = "<group>"; };
@@ -583,9 +588,10 @@
 				0F87B6151BACC4B9004EC572 /* TestRunnerWKWebView.mm */,
 				41C5378C21F1333C008B1FAD /* TestWebsiteDataStoreDelegate.h */,
 				41C5378D21F1333C008B1FAD /* TestWebsiteDataStoreDelegate.mm */,
+				2D058E0822E2EE2200E4C145 /* UIScriptControllerCocoa.h */,
 				F46240AF2170128300917B16 /* UIScriptControllerCocoa.mm */,
 			);
-			name = cocoa;
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 		1AB674ADFE9D54B511CA2CBB /* Products */ = {
@@ -688,6 +694,7 @@
 				0FEBF8591BB61DF20028722D /* HIDEventGenerator.mm */,
 				2EE52D131890A9FB0010ED21 /* PlatformWebViewIOS.mm */,
 				2EE52D141890A9FB0010ED21 /* TestControllerIOS.mm */,
+				2D0BEE1722EAD1360092B738 /* UIScriptControllerIOS.h */,
 				0F73B55B1BA89042004B3EF4 /* UIScriptControllerIOS.mm */,
 			);
 			path = ios;
@@ -777,6 +784,7 @@
 				E1C642C217CBCC7300D66A3C /* PoseAsClass.h */,
 				E1C642C117CBCC7300D66A3C /* PoseAsClass.mm */,
 				BC8C795B11D2785D004535A1 /* TestControllerMac.mm */,
+				2D058E0A22E2EF6D00E4C145 /* UIScriptControllerMac.h */,
 				0F87B6111BACAD6F004EC572 /* UIScriptControllerMac.mm */,
 				E132AA3917CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.h */,
 				E132AA3817CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm */,
@@ -889,6 +897,8 @@
 				2DD4C49A1D6E7D3B0007379C /* EventSerializerMac.h in Headers */,
 				0F73B5521BA78968004B3EF4 /* JSUIScriptController.h in Headers */,
 				2DFA98481D7F70CF00AFF2C9 /* SharedEventStreamsMac.h in Headers */,
+				2D058E0922E2EE2200E4C145 /* UIScriptControllerCocoa.h in Headers */,
+				2D058E0B22E2EF6D00E4C145 /* UIScriptControllerMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
