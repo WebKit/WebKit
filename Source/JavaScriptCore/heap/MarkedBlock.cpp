@@ -161,7 +161,7 @@ void MarkedBlock::Handle::stopAllocating(const FreeList& freeList)
             if (MarkedBlockInternal::verbose)
                 dataLog("Free cell: ", RawPointer(cell), "\n");
             if (m_attributes.destruction == NeedsDestruction)
-                cell->zap(HeapCell::StopAllocating);
+                cell->zap();
             block().clearNewlyAllocated(cell);
         });
     
