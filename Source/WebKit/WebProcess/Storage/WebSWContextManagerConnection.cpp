@@ -145,6 +145,7 @@ void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerCont
 #if ENABLE(INDEXED_DATABASE)
     pageConfiguration.databaseProvider = WebDatabaseProvider::getOrCreate(m_pageGroupID);
 #endif
+    pageConfiguration.socketProvider = WebSocketProvider::create();
 
     auto effectiveUserAgent =  WTFMove(userAgent);
     if (effectiveUserAgent.isNull())
