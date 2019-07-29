@@ -732,9 +732,9 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
     });
 }
 
-void WebPage::completePendingSyntheticClickForContentChangeObserver()
+void WebPage::didFinishContentChangeObserving()
 {
-    LOG_WITH_STREAM(ContentObservation, stream << "completePendingSyntheticClickForContentChangeObserver: pending target node(" << m_pendingSyntheticClickNode << ")");
+    LOG_WITH_STREAM(ContentObservation, stream << "didFinishContentChangeObserving: pending target node(" << m_pendingSyntheticClickNode << ")");
     if (!m_pendingSyntheticClickNode)
         return;
     auto observedContentChange = m_pendingSyntheticClickNode->document().contentChangeObserver().observedContentChange();

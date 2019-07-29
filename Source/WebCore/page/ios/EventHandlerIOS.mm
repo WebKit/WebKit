@@ -501,8 +501,9 @@ void EventHandler::mouseMoved(WebEvent *event)
         // Run style recalc to be able to capture content changes as the result of the mouse move event.
         document.updateStyleIfNeeded();
         callOnMainThread([protectedFrame = makeRef(m_frame)] {
+            // This is called by WebKitLegacy only.
             if (auto* document = protectedFrame->document())
-                document->page()->chrome().client().observedContentChange(*document->frame());
+                document->page()->chrome().client().didFinishContentChangeObserving(*document->frame());
         });
     }
 

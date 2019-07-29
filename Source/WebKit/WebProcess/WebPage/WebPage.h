@@ -956,7 +956,7 @@ public:
     void applicationDidFinishSnapshottingAfterEnteringBackground();
     void applicationWillEnterForeground(bool isSuspendedUnderLock);
     void applicationDidBecomeActive();
-    void completePendingSyntheticClickForContentChangeObserver();
+    void didFinishContentChangeObserving();
 
     bool platformPrefersTextLegibilityBasedZoomScaling() const;
     const WebCore::ViewportConfiguration& viewportConfiguration() const { return m_viewportConfiguration; }

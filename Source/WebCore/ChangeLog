@@ -1,3 +1,20 @@
+2019-07-29  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] ChromeClient::observedContentChange() name is misleading
+        https://bugs.webkit.org/show_bug.cgi?id=200238
+        <rdar://problem/53677038>
+
+        Reviewed by Simon Fraser.
+
+        This function indicates that we've finished observing content changes.
+
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::mouseMoved):
+
 2019-07-29  Sam Weinig  <weinig@apple.com>
 
         StringBuilder::append(makeString(...)) is inefficient

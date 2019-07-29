@@ -66,9 +66,9 @@ void WebChromeClient::setNeedsScrollNotifications(WebCore::Frame&, bool)
     notImplemented();
 }
 
-void WebChromeClient::observedContentChange(WebCore::Frame&)
+void WebChromeClient::didFinishContentChangeObserving(WebCore::Frame&)
 {
-    m_page.completePendingSyntheticClickForContentChangeObserver();
+    m_page.didFinishContentChangeObserving();
 }
 
 void WebChromeClient::notifyRevealedSelectionByScrollingFrame(WebCore::Frame&)

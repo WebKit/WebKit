@@ -182,7 +182,7 @@ void WebChromeClientIOS::setNeedsScrollNotifications(WebCore::Frame& frame, bool
     [[webView() _UIKitDelegateForwarder] webView:webView() needsScrollNotifications:[NSNumber numberWithBool:flag] forFrame:kit(&frame)];
 }
 
-void WebChromeClientIOS::observedContentChange(WebCore::Frame& frame)
+void WebChromeClientIOS::didFinishContentChangeObserving(WebCore::Frame& frame)
 {
     if (!frame.document())
         return;
