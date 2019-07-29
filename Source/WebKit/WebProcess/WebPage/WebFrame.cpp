@@ -856,6 +856,9 @@ RefPtr<ShareableBitmap> WebFrame::createSelectionSnapshot() const
     // FIXME: We should consider providing a way to use subpixel antialiasing for the snapshot
     // if we're compositing this image onto a solid color (e.g. the modern find indicator style).
     auto graphicsContext = sharedSnapshot->createGraphicsContext();
+    if (!graphicsContext)
+        return nullptr;
+
     float deviceScaleFactor = coreFrame()->page()->deviceScaleFactor();
     graphicsContext->scale(deviceScaleFactor);
     graphicsContext->drawConsumingImageBuffer(WTFMove(snapshot), FloatPoint());

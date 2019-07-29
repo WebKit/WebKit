@@ -2372,6 +2372,8 @@ RefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bit
     if (!snapshot)
         return nullptr;
     auto graphicsContext = snapshot->bitmap().createGraphicsContext();
+    if (!graphicsContext)
+        return nullptr;
 
     paintSnapshotAtSize(rect, bitmapSize, options, *coreFrame, *frameView, *graphicsContext);
 
@@ -2441,6 +2443,8 @@ RefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions opti
     if (!snapshot)
         return nullptr;
     auto graphicsContext = snapshot->bitmap().createGraphicsContext();
+    if (!graphicsContext)
+        return nullptr;
 
     if (!(options & SnapshotOptionsExcludeDeviceScaleFactor)) {
         double deviceScaleFactor = corePage()->deviceScaleFactor();
@@ -4782,20 +4786,21 @@ void WebPage::drawRectToImage(uint64_t frameID, const PrintInfo& printInfo, cons
             return;
         }
         auto graphicsContext = bitmap->createGraphicsContext();
-
-        float printingScale = static_cast<float>(imageSize.width()) / rect.width();
-        graphicsContext->scale(printingScale);
+        if (graphicsContext) {
+            float printingScale = static_cast<float>(imageSize.width()) / rect.width();
+            graphicsContext->scale(printingScale);
 
 #if PLATFORM(MAC)
-        if (RetainPtr<PDFDocument> pdfDocument = pdfDocumentForPrintingFrame(coreFrame)) {
-            ASSERT(!m_printContext);
-            graphicsContext->scale(FloatSize(1, -1));
-            graphicsContext->translate(0, -rect.height());
-            drawPDFDocument(graphicsContext->platformContext(), pdfDocument.get(), printInfo, rect);
-        } else
+            if (RetainPtr<PDFDocument> pdfDocument = pdfDocumentForPrintingFrame(coreFrame)) {
+                ASSERT(!m_printContext);
+                graphicsContext->scale(FloatSize(1, -1));
+                graphicsContext->translate(0, -rect.height());
+                drawPDFDocument(graphicsContext->platformContext(), pdfDocument.get(), printInfo, rect);
+            } else
 #endif
-        {
-            m_printContext->spoolRect(*graphicsContext, rect);
+            {
+                m_printContext->spoolRect(*graphicsContext, rect);
+            }
         }
 
         image = WebImage::create(bitmap.releaseNonNull());

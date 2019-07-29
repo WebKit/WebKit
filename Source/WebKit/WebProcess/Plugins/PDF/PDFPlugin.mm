@@ -1244,6 +1244,8 @@ RefPtr<ShareableBitmap> PDFPlugin::snapshot()
 
     auto bitmap = ShareableBitmap::createShareable(backingStoreSize, { });
     auto context = bitmap->createGraphicsContext();
+    if (!context)
+        return nullptr;
 
     context->scale(FloatSize(contentsScaleFactor, -contentsScaleFactor));
     context->translate(-m_scrollOffset.width(), -m_pdfDocumentSize.height() + m_scrollOffset.height());

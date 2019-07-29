@@ -749,6 +749,8 @@ RefPtr<ShareableBitmap> NetscapePlugin::snapshot()
 
     auto bitmap = ShareableBitmap::createShareable(backingStoreSize, { });
     auto context = bitmap->createGraphicsContext();
+    if (!context)
+        return nullptr;
 
     // FIXME: We should really call applyDeviceScaleFactor instead of scale, but that ends up calling into WKSI
     // which we currently don't have initiated in the plug-in process.

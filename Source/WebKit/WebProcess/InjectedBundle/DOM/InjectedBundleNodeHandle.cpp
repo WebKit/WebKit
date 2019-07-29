@@ -160,6 +160,9 @@ static RefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& painti
         return nullptr;
 
     auto graphicsContext = snapshot->bitmap().createGraphicsContext();
+    if (!graphicsContext)
+        return nullptr;
+
     graphicsContext->clearRect(IntRect(IntPoint(), bitmapSize));
     graphicsContext->applyDeviceScaleFactor(deviceScaleFactor);
     graphicsContext->scale(bitmapScaleFactor);

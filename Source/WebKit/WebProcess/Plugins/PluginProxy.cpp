@@ -213,12 +213,14 @@ void PluginProxy::paint(GraphicsContext& graphicsContext, const IntRect& dirtyRe
     
         // Blit the plug-in backing store into our own backing store.
         auto graphicsContext = m_backingStore->createGraphicsContext();
-        graphicsContext->applyDeviceScaleFactor(contentsScaleFactor());
-        graphicsContext->setCompositeOperation(CompositeCopy);
+        if (graphicsContext) {
+            graphicsContext->applyDeviceScaleFactor(contentsScaleFactor());
+            graphicsContext->setCompositeOperation(CompositeCopy);
 
-        m_pluginBackingStore->paint(*graphicsContext, contentsScaleFactor(), IntPoint(), pluginBounds());
+            m_pluginBackingStore->paint(*graphicsContext, contentsScaleFactor(), IntPoint(), pluginBounds());
 
-        m_pluginBackingStoreContainsValidData = true;
+            m_pluginBackingStoreContainsValidData = true;
+        }
     }
 
     m_backingStore->paint(graphicsContext, contentsScaleFactor(), dirtyRect.location(), dirtyRect);
@@ -723,9 +725,11 @@ void PluginProxy::update(const IntRect& paintedRect)
     if (m_backingStore) {
         // Blit the plug-in backing store into our own backing store.
         auto graphicsContext = m_backingStore->createGraphicsContext();
-        graphicsContext->applyDeviceScaleFactor(contentsScaleFactor());
-        graphicsContext->setCompositeOperation(CompositeCopy);
-        m_pluginBackingStore->paint(*graphicsContext, contentsScaleFactor(), paintedRect.location(), paintedRect);
+        if (graphicsContext) {
+            graphicsContext->applyDeviceScaleFactor(contentsScaleFactor());
+            graphicsContext->setCompositeOperation(CompositeCopy);
+            m_pluginBackingStore->paint(*graphicsContext, contentsScaleFactor(), paintedRect.location(), paintedRect);
+        }
     }
 
     // Ask the controller to invalidate the rect for us.

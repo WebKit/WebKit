@@ -143,6 +143,9 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
         return nullptr;
 
     auto graphicsContext = backingStore->createGraphicsContext();
+    if (!graphicsContext)
+        return nullptr;
+
     graphicsContext->scale(scaleFactor);
 
     paintRect.move(frameView->frameRect().x(), frameView->frameRect().y());

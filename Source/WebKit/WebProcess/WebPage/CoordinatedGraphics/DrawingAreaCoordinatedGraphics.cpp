@@ -731,14 +731,16 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     m_scrollOffset = IntSize();
 
     auto graphicsContext = bitmap->createGraphicsContext();
-    graphicsContext->applyDeviceScaleFactor(deviceScaleFactor);
+    if (graphicsContext) {
+        graphicsContext->applyDeviceScaleFactor(deviceScaleFactor);
+        graphicsContext->translate(-bounds.x(), -bounds.y());
+    }
 
     updateInfo.updateRectBounds = bounds;
 
-    graphicsContext->translate(-bounds.x(), -bounds.y());
-
     for (const auto& rect : rects) {
-        m_webPage.drawRect(*graphicsContext, rect);
+        if (graphicsContext)
+            m_webPage.drawRect(*graphicsContext, rect);
         updateInfo.updateRects.append(rect);
     }
 

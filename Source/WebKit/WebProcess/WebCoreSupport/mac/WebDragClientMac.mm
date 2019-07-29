@@ -184,6 +184,9 @@ static RefPtr<ShareableBitmap> convertCGImageToBitmap(CGImageRef image, const In
         return nullptr;
 
     auto graphicsContext = bitmap->createGraphicsContext();
+    if (!graphicsContext)
+        return nullptr;
+
     UIGraphicsPushContext(graphicsContext->platformContext());
     CGContextDrawImage(graphicsContext->platformContext(), CGRectMake(0, 0, size.width(), size.height()), image);
     UIGraphicsPopContext();

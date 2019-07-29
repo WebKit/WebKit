@@ -279,7 +279,8 @@ bool RemoteLayerBackingStore::display()
         if (m_backBuffer.bitmap && !willPaintEntireBackingStore)
             backImage = m_backBuffer.bitmap->makeCGImage();
 
-        drawInContext(*context, backImage.get());
+        if (context)
+            drawInContext(*context, backImage.get());
     }
     
     m_layer->owner()->platformCALayerLayerDidDisplay(m_layer);

@@ -91,7 +91,9 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 
     unsigned bytesPerPixel = calculateBytesPerPixel(m_configuration);
     RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(data(), m_size.width(), m_size.height(), bytesPerPixel * 8 / 4, calculateBytesPerRow(m_size, m_configuration).unsafeGet(), colorSpace(m_configuration), bitmapInfo(m_configuration), releaseBitmapContextData, this));
-    
+    if (!bitmapContext)
+        return nullptr;
+
     ASSERT(bitmapContext.get());
 
     // We want the origin to be in the top left corner so we flip the backing store context.
@@ -114,6 +116,9 @@ void ShareableBitmap::paint(WebCore::GraphicsContext& context, float scaleFactor
 RetainPtr<CGImageRef> ShareableBitmap::makeCGImageCopy()
 {
     auto graphicsContext = createGraphicsContext();
+    if (!graphicsContext)
+        return nullptr;
+
     RetainPtr<CGImageRef> image = adoptCF(CGBitmapContextCreateImage(graphicsContext->platformContext()));
     return image;
 }

@@ -50,6 +50,9 @@ WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)
     auto webImage = WebKit::WebImage::create(imageSize, WebKit::toImageOptions(options));
 
     auto graphicsContext = webImage->bitmap().createGraphicsContext();
+    if (!graphicsContext)
+        return nullptr;
+
     WebCore::FloatRect rect(WebCore::FloatPoint(0, 0), imageSize);
     graphicsContext->clearRect(rect);
     graphicsContext->drawNativeImage(imageRef, imageSize, rect, rect);
