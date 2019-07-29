@@ -344,7 +344,7 @@ BaseTypeNameNode* TypeNamer::insert(AST::UnnamedType& unnamedType, Vector<Unique
         vectorToInsertInto->append(WTFMove(result));
         return &vectorToInsertInto->last().get();
     }
-    auto addResult = m_unnamedTypeMapping.add(&unnamedType, &*iterator);
+    m_unnamedTypeMapping.add(&unnamedType, &*iterator);
     return &*iterator;
 }
 
