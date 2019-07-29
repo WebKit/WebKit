@@ -1,3 +1,11 @@
+2019-07-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, update expectations for rdar://problem/48616298.
+
+        * platform/ios-wk2/TestExpectations:
+        The fast/viewport/ios directory is marked as passing in this file, which was overriding the entries in the 'ios' file.
+        * platform/ios/TestExpectations:
+
 2019-07-29  Andres Gonzalez  <andresg_22@apple.com>
 
         REGRESSION (r247891): Layout Test accessibility/ios-simulator/video-elements-ios.html is failing

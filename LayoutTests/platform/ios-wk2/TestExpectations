@@ -1365,3 +1365,7 @@ fast/scrolling/ios/hit-testing-iframe-006.html [ ImageOnlyFailure ]
 
 # <rdar://problem/52699318> fast/scrolling/ios/body-overflow-hidden-height-100-percent-keyboard.html is timing out
 fast/scrolling/ios/body-overflow-hidden-height-100-percent-keyboard.html [ Pass Timeout ]
+
+# Skip tests timing out for <rdar://problem/48616298>
+fast/viewport/ios/constant-width-viewport-after-changing-view-scale.html [ Skip ]
+fast/viewport/ios/ignore-minimum-device-width-for-page-with-viewport-device-width.html [ Skip ]

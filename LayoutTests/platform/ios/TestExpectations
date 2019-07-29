@@ -3284,10 +3284,6 @@ media/video-played-collapse.html [ Failure ]
 media/video-played-ranges-1.html [ Failure ]
 media/video-played-reset.html [ Failure ]
 
-# Skip tests timing out for <rdar://problem/48616298>
-fast/viewport/ios/constant-width-viewport-after-changing-view-scale.html [ Skip ]
-fast/viewport/ios/ignore-minimum-device-width-for-page-with-viewport-device-width.html [ Skip ]
-
 # <rdar://problem/51055223> (iOS 13): jsc-layout-tests.yaml/js/script-tests/intl-numberformat.js.layout is failing
 js/intl-numberformat.html [ Failure ]
 
