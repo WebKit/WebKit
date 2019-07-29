@@ -26,7 +26,6 @@
 #include "ResourceLoadDelegate.h"
 
 #include "Common.h"
-#include "PageLoadTestClient.h"
 #include "WebKitLegacyBrowserWindow.h"
 #include <WebCore/COMPtr.h>
 #include <WebKitLegacy/WebKitCOMAPI.h>
@@ -66,19 +65,11 @@ ULONG ResourceLoadDelegate::Release()
 
 HRESULT ResourceLoadDelegate::identifierForInitialRequest(_In_opt_ IWebView*, _In_opt_ IWebURLRequest*, _In_opt_ IWebDataSource*, unsigned long identifier)
 {
-    if (!m_client)
-        return E_FAIL;
-
-    m_client->pageLoadTestClient().didInitiateResourceLoad(identifier);
-
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT ResourceLoadDelegate::willSendRequest(_In_opt_ IWebView*, unsigned long, _In_opt_ IWebURLRequest*, _In_opt_ IWebURLResponse*, _In_opt_ IWebDataSource*, _COM_Outptr_opt_ IWebURLRequest** result)
 {
-    if (!result)
-        return E_POINTER;
-    *result = nullptr;
     return E_NOTIMPL;
 }
 
@@ -126,22 +117,12 @@ HRESULT ResourceLoadDelegate::didReceiveContentLength(_In_opt_ IWebView*, unsign
 
 HRESULT ResourceLoadDelegate::didFinishLoadingFromDataSource(_In_opt_ IWebView*, unsigned long identifier, _In_opt_ IWebDataSource*)
 {
-    if (!m_client)
-        return E_FAIL;
-
-    m_client->pageLoadTestClient().didEndResourceLoad(identifier);
-
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT ResourceLoadDelegate::didFailLoadingWithError(_In_opt_ IWebView*, unsigned long identifier, _In_opt_ IWebError*, _In_opt_ IWebDataSource*)
 {
-    if (!m_client)
-        return E_FAIL;
-
-    m_client->pageLoadTestClient().didEndResourceLoad(identifier);
-
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT ResourceLoadDelegate::plugInFailedWithError(_In_opt_ IWebView*, _In_opt_ IWebError*, _In_opt_ IWebDataSource*)

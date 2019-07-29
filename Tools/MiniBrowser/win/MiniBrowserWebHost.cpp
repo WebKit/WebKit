@@ -29,7 +29,6 @@
 #include "stdafx.h"
 #include "MiniBrowserWebHost.h"
 
-#include "PageLoadTestClient.h"
 #include "WebKitLegacyBrowserWindow.h"
 #include <WebKitLegacy/WebKit.h>
 
@@ -59,11 +58,6 @@ HRESULT MiniBrowserWebHost::updateAddressBar(IWebView& webView)
     hr = request->mainDocumentURL(frameURL.GetAddress());
     if (FAILED(hr))
         return hr;
-
-    if (frameURL.length()) {
-        m_client->pageLoadTestClient().setPageURL(frameURL);
-        m_client->pageLoadTestClient().didCommitLoad();
-    }
 
     loadURL(frameURL);
 
@@ -123,15 +117,6 @@ HRESULT MiniBrowserWebHost::didFinishLoadForFrame(_In_opt_ IWebView* webView, _I
     if (!frame || !webView)
         return E_POINTER;
 
-    IWebFrame2Ptr frame2;
-    if (SUCCEEDED(frame->QueryInterface(&frame2.GetInterfacePtr()))) {
-        BOOL mainFrame = FALSE;
-        if (frame2 && SUCCEEDED(frame2->isMainFrame(&mainFrame))) {
-            if (mainFrame)
-                m_client->pageLoadTestClient().didFinishLoad();
-        }
-    }
-
     if (m_client)
         m_client->showLastVisitedSites(*webView);
 
@@ -140,16 +125,11 @@ HRESULT MiniBrowserWebHost::didFinishLoadForFrame(_In_opt_ IWebView* webView, _I
 
 HRESULT MiniBrowserWebHost::didStartProvisionalLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame* frame)
 {
-    if (!frame)
-        return E_FAIL;
-
-    m_client->pageLoadTestClient().didStartProvisionalLoad(*frame);
     return S_OK;
 }
 
 HRESULT MiniBrowserWebHost::didFailLoadWithError(_In_opt_ IWebView*, _In_opt_ IWebError*, _In_opt_ IWebFrame*)
 {
-    m_client->pageLoadTestClient().didFailLoad();
     return S_OK;
 }
 
@@ -172,9 +152,6 @@ HRESULT MiniBrowserWebHost::didHandleOnloadEventsForFrame(_In_opt_ IWebView* sen
     if (FAILED(hr))
         return hr;
 
-    if (frameURL.length())
-        m_client->pageLoadTestClient().didHandleOnLoadEvents();
-
     return S_OK;
 }
 
@@ -186,12 +163,6 @@ HRESULT MiniBrowserWebHost::didFirstLayoutInFrame(_In_opt_ IWebView*, _In_opt_ I
     IWebFrame2Ptr frame2;
     if (FAILED(frame->QueryInterface(&frame2.GetInterfacePtr())))
         return S_OK;
-
-    BOOL mainFrame;
-    if (frame2 && SUCCEEDED(frame2->isMainFrame(&mainFrame))) {
-        if (mainFrame)
-            m_client->pageLoadTestClient().didFirstLayoutForMainFrame();
-    }
 
     return S_OK;
 }

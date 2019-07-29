@@ -33,12 +33,12 @@
 
 class MainWindow : public RefCounted<MainWindow> {
 public:
-    using BrowserWindowFactory = std::function<Ref<BrowserWindow>(HWND mainWnd, HWND urlBarWnd, bool usesLayeredWebView, bool pageLoadTesting)>;
+    using BrowserWindowFactory = std::function<Ref<BrowserWindow>(HWND mainWnd, HWND urlBarWnd, bool usesLayeredWebView)>;
 
     static Ref<MainWindow> create();
 
     ~MainWindow();
-    bool init(BrowserWindowFactory, HINSTANCE hInstance, bool usesLayeredWebView = false, bool pageLoadTesting = false);
+    bool init(BrowserWindowFactory, HINSTANCE hInstance, bool usesLayeredWebView = false);
 
     void resizeSubViews();
     HWND hwnd() const { return m_hMainWnd; }

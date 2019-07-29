@@ -12,7 +12,6 @@ set(MiniBrowser_SOURCES
     Common.cpp
     DOMDefaultImpl.cpp
     MainWindow.cpp
-    PageLoadTestClient.cpp
     PrintWebUIDelegate.cpp
     ResourceLoadDelegate.cpp
     WebDownloadDelegate.cpp

@@ -25,11 +25,11 @@
 
 #pragma once
 #include "BrowserWindow.h"
-#include "PageLoadTestClient.h"
 #include <WebKitLegacy/WebKit.h>
 #include <comip.h>
 #include <memory>
 #include <vector>
+#include <wtf/Ref.h>
 
 typedef _com_ptr_t<_com_IIID<IWebFrame, &__uuidof(IWebFrame)>> IWebFramePtr;
 typedef _com_ptr_t<_com_IIID<IWebView, &__uuidof(IWebView)>> IWebViewPtr;
@@ -50,7 +50,7 @@ typedef _com_ptr_t<_com_IIID<IWebFramePrivate, &__uuidof(IWebFramePrivate)>> IWe
 
 class WebKitLegacyBrowserWindow : public BrowserWindow {
 public:
-    static Ref<BrowserWindow> create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false, bool pageLoadTesting = false);
+    static Ref<BrowserWindow> create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false);
 
 private:
     friend class AccessibilityDelegate;
@@ -58,7 +58,6 @@ private:
     friend class PrintWebUIDelegate;
     friend class WebDownloadDelegate;
     friend class ResourceLoadDelegate;
-    friend class PageLoadTestClient;
 
     ULONG AddRef();
     ULONG Release();
@@ -73,7 +72,6 @@ private:
     void openProxySettings();
     void navigateForwardOrBackward(UINT menuID);
     void navigateToHistory(UINT menuID);
-    void exitProgram();
     bool seedInitialDefaultPreferences();
     bool setToDefaultPreferences();
 
@@ -99,8 +97,6 @@ private:
     void setUserAgent(_bstr_t& customUAString);
     _bstr_t userAgent();
 
-    PageLoadTestClient& pageLoadTestClient() { return *m_pageLoadTestClient; }
-
     void resetZoom();
     void zoomIn();
     void zoomOut();
@@ -113,7 +109,7 @@ private:
     void updateStatistics(HWND dialog);
     void setPreference(UINT menuID, bool enable);
 
-    WebKitLegacyBrowserWindow(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting);
+    WebKitLegacyBrowserWindow(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView);
     void subclassForLayeredWindow();
     bool setCacheFolder();
 
@@ -141,6 +137,4 @@ private:
     HWND m_viewWnd { nullptr };
 
     bool m_useLayeredWebView;
-
-    std::unique_ptr<PageLoadTestClient> m_pageLoadTestClient;
 };

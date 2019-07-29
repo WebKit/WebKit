@@ -59,16 +59,15 @@ static const int maxHistorySize = 10;
 
 typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
 
-Ref<BrowserWindow> WebKitLegacyBrowserWindow::create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting)
+Ref<BrowserWindow> WebKitLegacyBrowserWindow::create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView)
 {
-    return adoptRef(*new WebKitLegacyBrowserWindow(mainWnd, urlBarWnd, useLayeredWebView, pageLoadTesting));
+    return adoptRef(*new WebKitLegacyBrowserWindow(mainWnd, urlBarWnd, useLayeredWebView));
 }
 
-WebKitLegacyBrowserWindow::WebKitLegacyBrowserWindow(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting)
+WebKitLegacyBrowserWindow::WebKitLegacyBrowserWindow(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView)
     : m_hMainWnd(mainWnd)
     , m_hURLBarWnd(urlBarWnd)
     , m_useLayeredWebView(useLayeredWebView)
-    , m_pageLoadTestClient(std::make_unique<PageLoadTestClient>(this, pageLoadTesting))
 {
 }
 
@@ -506,11 +505,6 @@ HRESULT WebKitLegacyBrowserWindow::loadURL(const BSTR& passedURL)
     hr = frame->loadRequest(request);
 
     return hr;
-}
-
-void WebKitLegacyBrowserWindow::exitProgram()
-{
-    ::PostMessage(m_hMainWnd, static_cast<UINT>(WM_COMMAND), MAKELPARAM(IDM_EXIT, 0), 0);
 }
 
 void WebKitLegacyBrowserWindow::setUserAgent(_bstr_t& customUserAgent)

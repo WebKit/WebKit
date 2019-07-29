@@ -29,6 +29,7 @@
 #include "Common.h"
 #include "MiniBrowserLibResource.h"
 #include "WebKitLegacyBrowserWindow.h"
+#include <CoreFoundation/CoreFoundation.h>
 
 #if ENABLE(WEBKIT)
 #include "WebKitBrowserWindow.h"
@@ -98,7 +99,7 @@ Ref<MainWindow> MainWindow::create()
     return adoptRef(*new MainWindow());
 }
 
-bool MainWindow::init(BrowserWindowFactory factory, HINSTANCE hInstance, bool usesLayeredWebView, bool pageLoadTesting)
+bool MainWindow::init(BrowserWindowFactory factory, HINSTANCE hInstance, bool usesLayeredWebView)
 {
     registerClass(hInstance);
 
@@ -122,7 +123,7 @@ bool MainWindow::init(BrowserWindowFactory factory, HINSTANCE hInstance, bool us
     DefEditProc = reinterpret_cast<WNDPROC>(GetWindowLongPtr(m_hURLBarWnd, GWLP_WNDPROC));
     SetWindowLongPtr(m_hURLBarWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(EditProc));
 
-    m_browserWindow = factory(m_hMainWnd, m_hURLBarWnd, usesLayeredWebView, pageLoadTesting);
+    m_browserWindow = factory(m_hMainWnd, m_hURLBarWnd, usesLayeredWebView);
     if (!m_browserWindow)
         return false;
     HRESULT hr = m_browserWindow->init();

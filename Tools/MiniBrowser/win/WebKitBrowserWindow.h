@@ -29,10 +29,11 @@
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WebKit2_C.h>
 #include <unordered_map>
+#include <wtf/Ref.h>
 
 class WebKitBrowserWindow : public BrowserWindow {
 public:
-    static Ref<BrowserWindow> create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false, bool pageLoadTesting = false);
+    static Ref<BrowserWindow> create(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false);
 
 private:
     WebKitBrowserWindow(WKPageConfigurationRef, HWND mainWnd, HWND urlBarWnd);

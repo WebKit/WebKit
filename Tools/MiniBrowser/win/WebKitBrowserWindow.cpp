@@ -104,7 +104,7 @@ WKRetainPtr<WKURLRef> createWKURL(const std::wstring& str)
     return adoptWK(WKURLCreateWithUTF8CString(utf8.data()));
 }
 
-Ref<BrowserWindow> WebKitBrowserWindow::create(HWND mainWnd, HWND urlBarWnd, bool, bool)
+Ref<BrowserWindow> WebKitBrowserWindow::create(HWND mainWnd, HWND urlBarWnd, bool)
 {
     auto conf = adoptWK(WKPageConfigurationCreate());
 
@@ -354,7 +354,7 @@ bool WebKitBrowserWindow::canTrustServerCertificate(WKProtectionSpaceRef protect
 WKPageRef WebKitBrowserWindow::createNewPage(WKPageRef page, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
 {
     auto& newWindow = MainWindow::create().leakRef();
-    auto factory = [configuration](HWND mainWnd, HWND urlBarWnd, bool, bool) -> auto {
+    auto factory = [configuration](HWND mainWnd, HWND urlBarWnd, bool) -> auto {
         return adoptRef(*new WebKitBrowserWindow(configuration, mainWnd, urlBarWnd));
     };
     bool ok = newWindow.init(factory, hInst);

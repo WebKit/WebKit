@@ -37,7 +37,6 @@ enum class BrowserWindowType {
 struct CommandLineOptions {
     bool usesLayeredWebView { };
     bool useFullDesktop { };
-    bool pageLoadTesting { };
     BrowserWindowType windowType;
     _bstr_t requestedURL;
 

@@ -1,3 +1,46 @@
+2019-07-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Remove PageLoadTestClient
+        https://bugs.webkit.org/show_bug.cgi?id=200155
+
+        Reviewed by Brent Fulgham.
+
+        It is not used nowadays.
+
+        * MiniBrowser/win/CMakeLists.txt:
+        * MiniBrowser/win/Common.cpp:
+        (parseCommandLine):
+        * MiniBrowser/win/Common.h:
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::init):
+        * MiniBrowser/win/MainWindow.h:
+        * MiniBrowser/win/MiniBrowserWebHost.cpp:
+        (MiniBrowserWebHost::updateAddressBar):
+        (MiniBrowserWebHost::didFinishLoadForFrame):
+        (MiniBrowserWebHost::didStartProvisionalLoadForFrame):
+        (MiniBrowserWebHost::didFailLoadWithError):
+        (MiniBrowserWebHost::didHandleOnloadEventsForFrame):
+        (MiniBrowserWebHost::didFirstLayoutInFrame):
+        * MiniBrowser/win/PageLoadTestClient.cpp: Removed.
+        * MiniBrowser/win/PageLoadTestClient.h: Removed.
+        * MiniBrowser/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::identifierForInitialRequest):
+        (ResourceLoadDelegate::willSendRequest):
+        (ResourceLoadDelegate::didFinishLoadingFromDataSource):
+        (ResourceLoadDelegate::didFailLoadingWithError):
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::create):
+        (WebKitBrowserWindow::createNewPage):
+        * MiniBrowser/win/WebKitBrowserWindow.h:
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.cpp:
+        (WebKitLegacyBrowserWindow::create):
+        (WebKitLegacyBrowserWindow::WebKitLegacyBrowserWindow):
+        (WebKitLegacyBrowserWindow::exitProgram): Deleted.
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.h:
+        (WebKitLegacyBrowserWindow::pageLoadTestClient): Deleted.
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain):
+
 2019-07-26  Jiewen Tan  <jiewen_tan@apple.com>
 
         NavigationSOAuthorizationSession should check the active URL of the responding page after waking up from waiting

@@ -34,6 +34,7 @@
 #include "MiniBrowserReplace.h"
 #include <dbghelp.h>
 #include <shlobj.h>
+#include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 
 // Global Variables:
@@ -270,8 +271,6 @@ CommandLineOptions parseCommandLine()
             options.usesLayeredWebView = true;
         else if (!wcsicmp(argv[i], L"--desktop"))
             options.useFullDesktop = true;
-        else if (!wcsicmp(argv[i], L"--performance"))
-            options.pageLoadTesting = true;
         else if (!wcsicmp(argv[i], L"--wk1") || !wcsicmp(argv[i], L"--legacy"))
             options.windowType = BrowserWindowType::WebKitLegacy;
 #if ENABLE(WEBKIT)
