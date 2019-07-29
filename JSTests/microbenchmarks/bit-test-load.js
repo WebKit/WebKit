@@ -13,10 +13,10 @@ function doTest() {
 }
 noInline(doTest);
 
-for (let i=0; i<(1<<30); ++i) {
+for (let i=0; i<(1<<25); ++i) {
     arr[0] = arr[1] = arr[2] = arr[3] = i
     doTest()
 }
 
-if (glob != 1073741824)
+if (glob != 33554432)
     throw "Error: bad result: " + glob;
