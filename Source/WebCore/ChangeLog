@@ -1,5 +1,32 @@
 2019-07-29  Simon Fraser  <simon.fraser@apple.com>
 
+        REGRESSION (r246899): Subtitles show twice when controls show/hide on hulu.com
+        https://bugs.webkit.org/show_bug.cgi?id=200187
+        rdar://problem/53511121
+
+        Reviewed by Zalan Bujtas.
+
+        When a layer that painted into shared backing moved, we'd fail to repaint its old position
+        because the RenderLayer's repaint rects are cleared via BackingSharingState::updateBeforeDescendantTraversal().
+
+        Recomputing repaint rects is expensive, so we only want to do it when necessary, which is for
+        layers that start and stop sharing (going into and out of compositing already recomputes them).
+        So add logic to RenderLayerBacking::setBackingSharingLayers() that recomputes repaint rects
+        on layers that will no longer use shared backing, and those that are newly using shared
+        backing.
+
+        Test: compositing/shared-backing/backing-sharing-repaint.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setBackingProviderLayer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::setBackingSharingLayers):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::BackingSharingState::appendSharingLayer):
+        (WebCore::RenderLayerCompositor::updateBacking):
+
+2019-07-29  Simon Fraser  <simon.fraser@apple.com>
+
         The touch-action property was ignored on replaced elements (canvas, img etc)
         https://bugs.webkit.org/show_bug.cgi?id=200205
         rdar://problem/53331224
