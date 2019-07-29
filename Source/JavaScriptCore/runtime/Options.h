@@ -198,6 +198,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(bool, reportTotalCompileTimes, false, Normal, nullptr) \
     v(bool, reportParseTimes, false, Normal, "dumps JS function signature and the time it took to parse") \
     v(bool, reportBytecodeCompileTimes, false, Normal, "dumps JS function signature and the time it took to bytecode compile") \
+    v(bool, countParseTimes, false, Normal, "counts parse times") \
     v(bool, verboseExitProfile, false, Normal, nullptr) \
     v(bool, verboseCFA, false, Normal, nullptr) \
     v(bool, verboseDFGFailure, false, Normal, nullptr) \

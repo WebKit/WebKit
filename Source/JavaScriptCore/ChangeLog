@@ -1,3 +1,30 @@
+2019-07-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Increment bytecode age only when SlotVisitor is first-visit
+        https://bugs.webkit.org/show_bug.cgi?id=200196
+
+        Reviewed by Robin Morisset.
+
+        WriteBarrier can cause multiple visits for the same UnlinkedCodeBlock. But this does not mean that we are having multiple cycles of GC.
+        We should increment the age of the UnlinkedCodeBlock only when the SlotVisitor is saying that this is the first visit.
+
+        In practice,this almost never happens. Multiple visits can happen only when the marked UnlinkedCodeBlock gets a write-barrier. But, mutation
+        of UnlinkedCodeBlock is rare or none after it is initialized. I ran all the JSTests and I cannot find any tests that get re-visiting of UnlinkedCodeBlock.
+        This patch extends JSTests/stress/reparsing-unlinked-codeblock.js to ensure that UnlinkedCodeBlockJettisoning feature is working after this change.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::visitChildren):
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::isFirstVisit const):
+        * parser/Parser.cpp:
+        * parser/Parser.h:
+        (JSC::parse):
+        (JSC::parseFunctionForFunctionConstructor):
+        * runtime/Options.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::functionParseCount):
+        (JSC::JSDollarVM::finishCreation):
+
 2019-07-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r247886.

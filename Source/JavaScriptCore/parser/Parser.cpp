@@ -88,6 +88,8 @@
 
 namespace JSC {
 
+std::atomic<unsigned> globalParseCount { 0 };
+
 ALWAYS_INLINE static SourceParseMode getAsynFunctionBodyParseMode(SourceParseMode parseMode)
 {
     if (isAsyncGeneratorWrapperParseMode(parseMode))

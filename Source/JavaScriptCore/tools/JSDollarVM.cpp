@@ -40,6 +40,7 @@
 #include "JSONObject.h"
 #include "JSProxy.h"
 #include "JSString.h"
+#include "Parser.h"
 #include "ShadowChicken.h"
 #include "Snippet.h"
 #include "SnippetParams.h"
@@ -2186,6 +2187,11 @@ static EncodedJSValue JSC_HOST_CALL functionTotalGCTime(ExecState* exec)
     return JSValue::encode(jsNumber(vm.heap.totalGCTime().seconds()));
 }
 
+static EncodedJSValue JSC_HOST_CALL functionParseCount(ExecState*)
+{
+    return JSValue::encode(jsNumber(globalParseCount.load()));
+}
+
 void JSDollarVM::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
@@ -2299,6 +2305,8 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "deltaBetweenButterflies", functionDeltaBetweenButterflies, 2);
     
     addFunction(vm, "totalGCTime", functionTotalGCTime, 0);
+
+    addFunction(vm, "parseCount", functionParseCount, 0);
 }
 
 void JSDollarVM::addFunction(VM& vm, JSGlobalObject* globalObject, const char* name, NativeFunction function, unsigned arguments)

@@ -150,6 +150,8 @@ ALWAYS_INLINE static bool isSafeContextualKeyword(const JSToken& token)
     return token.m_type >= FirstSafeContextualKeywordToken && token.m_type <= LastSafeContextualKeywordToken;
 }
 
+JS_EXPORT_PRIVATE extern std::atomic<unsigned> globalParseCount;
+
 struct Scope {
     WTF_MAKE_NONCOPYABLE(Scope);
 
@@ -2031,6 +2033,9 @@ std::unique_ptr<ParsedNode> parse(
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();
     }
 
+    if (UNLIKELY(Options::countParseTimes()))
+        globalParseCount++;
+
     if (UNLIKELY(Options::reportParseTimes())) {
         MonotonicTime after = MonotonicTime::now();
         ParseHash hash(source);
@@ -2062,6 +2067,9 @@ inline std::unique_ptr<ProgramNode> parseFunctionForFunctionConstructor(VM& vm, 
         if (positionBeforeLastNewline)
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();
     }
+
+    if (UNLIKELY(Options::countParseTimes()))
+        globalParseCount++;
 
     if (UNLIKELY(Options::reportParseTimes())) {
         MonotonicTime after = MonotonicTime::now();

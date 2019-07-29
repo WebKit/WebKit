@@ -119,6 +119,8 @@ public:
 
     bool isEmpty() { return m_collectorStack.isEmpty() && m_mutatorStack.isEmpty(); }
 
+    bool isFirstVisit() const { return m_isFirstVisit; }
+
     void didStartMarking();
     void reset();
     void clearMarkStacks();
