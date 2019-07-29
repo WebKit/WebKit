@@ -38,6 +38,17 @@
 
 using namespace WebCore;
 
+// Never pause download of media resources smaller than 2MiB.
+#define SMALL_MEDIA_RESOURCE_MAX_SIZE 2 * 1024 * 1024
+
+// Keep at most 2% of the full, non-small, media resource buffered. When this
+// threshold is reached, the download task is paused.
+#define HIGH_QUEUE_FACTOR_THRESHOLD 0.02
+
+// Keep at least 20% of maximum queue size buffered. When this threshold is
+// reached, the download task resumes.
+#define LOW_QUEUE_FACTOR_THRESHOLD 0.2
+
 class CachedResourceStreamingClient final : public PlatformMediaResourceClient {
     WTF_MAKE_NONCOPYABLE(CachedResourceStreamingClient);
 public:
@@ -129,6 +140,7 @@ struct _WebKitWebSrcPrivate {
     Lock adapterLock;
     Condition adapterCondition;
     uint64_t queueSize { 0 };
+    bool isDownloadSuspended { false };
     GRefPtr<GstAdapter> adapter;
     GRefPtr<GstEvent> httpHeadersEvent;
     GUniquePtr<GstStructure> httpHeaders;
@@ -185,7 +197,7 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
     GstElementClass* eklass = GST_ELEMENT_CLASS(klass);
     gst_element_class_add_static_pad_template(eklass, &srcTemplate);
 
-    gst_element_class_set_metadata(eklass, "WebKit Web source element", "Source", "Handles HTTP/HTTPS uris",
+    gst_element_class_set_metadata(eklass, "WebKit Web source element", "Source/Network", "Handles HTTP/HTTPS uris",
         "Philippe Normand <philn@igalia.com>");
 
     /* Allows setting the uri using the 'location' property, which is used
@@ -378,7 +390,9 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
         });
     }
 
-    GST_TRACE_OBJECT(src, "flushing: %s, doesHaveEOS: %s, queueSize: %" G_GSIZE_FORMAT, boolForPrinting(priv->isFlushing), boolForPrinting(priv->doesHaveEOS), priv->queueSize);
+    GST_TRACE_OBJECT(src, "flushing: %s, doesHaveEOS: %s, queueSize: %" G_GSIZE_FORMAT ", isDownloadSuspended: %s",
+        boolForPrinting(priv->isFlushing), boolForPrinting(priv->doesHaveEOS), priv->queueSize,
+        boolForPrinting(priv->isDownloadSuspended));
 
     if (priv->isFlushing) {
         GST_DEBUG_OBJECT(src, "Flushing");
@@ -410,7 +424,7 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
     }
 
     if (isAdapterDrained) {
-        GST_DEBUG_OBJECT(src, "Adapter still empty after 3 seconds of waiting, assuming EOS");
+        GST_DEBUG_OBJECT(src, "Adapter still empty after 800 milli-seconds of waiting, assuming EOS");
         return GST_FLOW_EOS;
     }
 
@@ -444,6 +458,17 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
                     priv->doesHaveEOS = true;
             } else if (priv->wasSeeking)
                 priv->wasSeeking = false;
+
+            if (!priv->doesHaveEOS && priv->haveSize && priv->isSeekable
+                && (priv->size > SMALL_MEDIA_RESOURCE_MAX_SIZE) && priv->readPosition
+                && (priv->readPosition != priv->size)
+                && (priv->queueSize < (priv->size * HIGH_QUEUE_FACTOR_THRESHOLD * LOW_QUEUE_FACTOR_THRESHOLD))
+                && (GST_STATE(src) == GST_STATE_PLAYING) && priv->isDownloadSuspended) {
+                GST_DEBUG_OBJECT(src, "[Buffering] Adapter running out of data, restarting download");
+                priv->isDownloadSuspended = false;
+                webKitWebSrcMakeRequest(baseSrc, false);
+            }
+
         } else
             GST_ERROR_OBJECT(src, "Empty adapter?");
     }
@@ -1016,7 +1041,8 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
             priv->size = length;
             priv->isDurationSet = false;
         }
-    }
+    } else
+        priv->haveSize = false;
 
     // Signal to downstream if this is an Icecast stream.
     GRefPtr<GstCaps> caps;
@@ -1090,6 +1116,16 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const c
         GstBuffer* buffer = gst_buffer_new_wrapped(g_memdup(data, length), length);
         priv->queueSize += length;
         gst_adapter_push(priv->adapter.get(), buffer);
+        GST_TRACE_OBJECT(src, "[Buffering] isDownloadSuspended: %s", boolForPrinting(priv->isDownloadSuspended));
+        if (priv->haveSize && (priv->size > SMALL_MEDIA_RESOURCE_MAX_SIZE) && (priv->queueSize > (priv->size * HIGH_QUEUE_FACTOR_THRESHOLD))
+            && !priv->isDownloadSuspended && priv->isSeekable) {
+            GST_TRACE_OBJECT(src, "[Buffering] queueSize: %" G_GUINT64_FORMAT ", threshold: %f", priv->queueSize,
+                priv->size * HIGH_QUEUE_FACTOR_THRESHOLD);
+            GST_DEBUG_OBJECT(src, "[Buffering] Stopping resource loader");
+            priv->isDownloadSuspended = true;
+            priv->resource->stop();
+            return;
+        }
         priv->adapterCondition.notifyOne();
     }
 }

@@ -1,3 +1,33 @@
+2019-07-29  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r243058): [GStreamer] WebKitWebSrc's internal queue can exhaust the WebProcess memory
+        https://bugs.webkit.org/show_bug.cgi?id=199998
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        With the webkitwebsrc rewrite the element lost its ability to tell
+        the resource loader when to pause and resume downloading because
+        we don't use appsrc and its enough-data/need-data signals anymore.
+        So new heuristics are introduced with this patch. Downloading of
+        resources bigger than 2MiB might pause when the internal adapter
+        has enough data (2% of the full resource) and resume when the
+        adapter size goes below 20% of those 2%.
+
+        No new tests, the media element spec doesn't clearly mandate how
+        the resource loading should behave when the element is paused or
+        how aggressively the resource should be downloaded during
+        playback.
+
+        This patch was functionally tested with a 1.3GiB resource loaded
+        over the local network, the resource was downloaded in ~30MiB
+        chunks, stopping and resuming every 20 seconds, approximately.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_class_init):
+        (webKitWebSrcCreate):
+        (CachedResourceStreamingClient::responseReceived):
+        (CachedResourceStreamingClient::dataReceived):
+
 2019-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebSockets: workers never use the platform WebSockets path
