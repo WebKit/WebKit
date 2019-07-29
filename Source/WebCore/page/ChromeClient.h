@@ -59,6 +59,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include "PlatformLayer.h"
+#include "WKContentObservation.h"
 #define NSResponder WAKResponder
 #ifndef __OBJC__
 class WAKResponder;
@@ -246,7 +247,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     virtual void didReceiveMobileDocType(bool) = 0;
     virtual void setNeedsScrollNotifications(Frame&, bool) = 0;
-    virtual void didFinishContentChangeObserving(Frame&) = 0;
+    virtual void didFinishContentChangeObserving(Frame&, WKContentChange) = 0;
     virtual void notifyRevealedSelectionByScrollingFrame(Frame&) = 0;
 
     enum LayoutType { NormalLayout, Scroll };

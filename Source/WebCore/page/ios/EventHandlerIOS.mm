@@ -503,7 +503,7 @@ void EventHandler::mouseMoved(WebEvent *event)
         callOnMainThread([protectedFrame = makeRef(m_frame)] {
             // This is called by WebKitLegacy only.
             if (auto* document = protectedFrame->document())
-                document->page()->chrome().client().didFinishContentChangeObserving(*document->frame());
+                document->page()->chrome().client().didFinishContentChangeObserving(*document->frame(), document->contentChangeObserver().observedContentChange());
         });
     }
 

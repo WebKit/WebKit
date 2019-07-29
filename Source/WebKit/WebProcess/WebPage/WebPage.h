@@ -102,6 +102,7 @@ typedef struct _AtkObject AtkObject;
 #include "WebPageMessages.h"
 #include <WebCore/IntPointHash.h>
 #include <WebCore/ViewportConfiguration.h>
+#include <WebCore/WKContentObservation.h>
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -956,7 +957,7 @@ public:
     void applicationDidFinishSnapshottingAfterEnteringBackground();
     void applicationWillEnterForeground(bool isSuspendedUnderLock);
     void applicationDidBecomeActive();
-    void didFinishContentChangeObserving();
+    void didFinishContentChangeObserving(WKContentChange);
 
     bool platformPrefersTextLegibilityBasedZoomScaling() const;
     const WebCore::ViewportConfiguration& viewportConfiguration() const { return m_viewportConfiguration; }

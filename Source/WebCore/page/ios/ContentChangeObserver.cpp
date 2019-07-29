@@ -491,7 +491,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
         LOG_WITH_STREAM(ContentObservation, stream << "adjustStateAndNotifyContentChangeIfNeeded: sending observedContentChange ->" << observedContentChange());
         ASSERT(m_document.page());
         ASSERT(m_document.frame());
-        m_document.page()->chrome().client().didFinishContentChangeObserving(*m_document.frame());
+        m_document.page()->chrome().client().didFinishContentChangeObserving(*m_document.frame(), observedContentChange());
     };
 
     switch (event) {
