@@ -696,13 +696,12 @@ void NetworkConnectionToWebProcess::logSubresourceRedirect(PAL::SessionID sessio
 
 void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&& statistics)
 {
-    for (auto& networkSession : networkProcess().networkSessions().values()) {
-        if (networkSession->sessionID().isEphemeral())
-            continue;
+    auto* networkSession = networkProcess().networkSessionByConnection(connection());
+    if (!networkSession)
+        return;
 
-        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->resourceLoadStatisticsUpdated(WTFMove(statistics));
-    }
+    if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
+        resourceLoadStatistics->resourceLoadStatisticsUpdated(WTFMove(statistics));
 }
 
 void NetworkConnectionToWebProcess::hasStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
