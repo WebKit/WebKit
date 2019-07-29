@@ -1,3 +1,64 @@
+2019-07-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        UI process occasionally hangs in -[UIKeyboardTaskQueue lockWhenReadyForMainThread]
+        https://bugs.webkit.org/show_bug.cgi?id=200215
+        <rdar://problem/52976965>
+
+        Reviewed by Tim Horton.
+
+        To implement autocorrection on iOS, UIKit sometimes needs to request contextual information from WebKit. This is
+        handled as a sync IPC message in WebKit, since UIKit would otherwise proceed to block the main thread after
+        sending the request, preventing WebKit from handling any IPC responses in the UI process (potentially resulting
+        in deadlock if any other sync IPC messages were to arrive in the UI process during this time).
+
+        The synchronous nature of this autocorrection request means that if any sync IPC message were to be
+        simultaneously dispatched in the opposite direction (i.e. web to UI process), we need to immediately handle the
+        incoming sync message in the UI process (otherwise, we'd end up deadlocking for 1 second until the
+        autocorrection context request hits a 1-second IPC timeout).
+
+        One such synchronous message from the web process to the UI process is WebPageProxy::CreateNewPage, triggered as
+        a result of synchronously opening a new window. Due to Safari changes in iOS 13 (<rdar://problem/51755088>),
+        this message now calls into code which then causes UIKit to call *back into* -[WKContentView
+        requestAutocorrectionContextWithCompletionHandler:] for the newly opened web view, under the scope of the call
+        to -requestAutocorrectionContextWithCompletionHandler: in the original web view.
+
+        This caused a crash, which was tracked in <rdar://problem/52590170>. There was an attempt to fix this in r247345
+        by invoking the existing handler well before storing the new one; while this avoided the crash, it didn't solve
+        the root problem, which was that keyboard task queues would get into a bad state after this scenario; this would
+        manifest in a UI process hang under -[UIKeyboardTaskQueue lockWhenReadyForMainThread] during the next user
+        gesture, which is tracked by this bug (<rdar://problem/52976965>).
+
+        As it turns out, the keyboard task queue gets into a bad state because it is architected in such a way that
+        tasks added to the queue under the scope of parent task must be finished executing before their parents;
+        otherwise, the call to -[UIKeyboardTaskExecutionContext returnExecutionToParentWithInfo:] never happens when
+        handling the child task. This has the effect of causing the keyboard task queue to end up with a
+        UIKeyboardTaskExecutionContext that can never return execution to its parent context, such that if the task
+        queue is then told to wait until any future task is finished executing, it will hang forever, waiting for these
+        stuck tasks to finish executing (which never happens, because they're all waiting to return execution to their
+        parents which are already done executing!)
+
+        To fix this hang and avoid ever getting into this bad state, we need to invoke the autocorrection request
+        handlers in this order:
+
+        (1) Receive outer autocorrection context request.
+        (2) Receive inner autocorrection context request.
+        (3) Invoke inner autocorrection context request completion handler.
+        (4) Invoke outer autocorrection context request completion handler.
+
+        ...instead of swapping (3) and (4), like we do currently.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView resignFirstResponderForWebView]):
+
+        Remove the hack added in r247345 to try and avoid reentrant autocorrection context requests; we don't need this
+        anymore, since we should now be able to handle these reentrant requests in the way UIKit expects.
+
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+
+        Add an early return in the case where the request is synchronous and there's already a pending autocorrection
+        context to ensure that the completion handler for the nested request is invoked before the outer request is
+        finished.
+
 2019-07-29  Youenn Fablet  <youenn@apple.com>
 
         NetworkProcess clear and fetch of cache entries might move the callback aggregator more than once
