@@ -5001,7 +5001,7 @@ String Internals::ongoingLoadsDescriptions() const
         builder.append('[');
 
         for (auto& info : platformStrategies()->loaderStrategy()->intermediateLoadInformationFromResourceLoadIdentifier(identifier))
-            builder.append(makeString("[", (int)info.type, ",\"", info.request.url().string(), "\",\"", info.request.httpMethod(), "\",", info.response.httpStatusCode(), "]"));
+            builder.flexibleAppend('[', (int)info.type, ",\"", info.request.url().string(), "\",\"", info.request.httpMethod(), "\",", info.response.httpStatusCode(), ']');
 
         builder.append(']');
     }

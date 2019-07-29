@@ -143,7 +143,7 @@ String EntryPointScaffolding::resourceHelperTypes()
 {
     StringBuilder stringBuilder;
     for (size_t i = 0; i < m_layout.size(); ++i) {
-        stringBuilder.append(makeString("struct ", m_namedBindGroups[i].structName, " {\n"));
+        stringBuilder.flexibleAppend("struct ", m_namedBindGroups[i].structName, " {\n");
         Vector<std::pair<unsigned, String>> structItems;
         for (size_t j = 0; j < m_layout[i].bindings.size(); ++j) {
             auto iterator = m_resourceMap.find(&m_layout[i].bindings[j]);
@@ -171,7 +171,7 @@ String EntryPointScaffolding::resourceHelperTypes()
             return left.first < right.first;
         });
         for (const auto& structItem : structItems)
-            stringBuilder.append(makeString("    ", structItem.second, '\n'));
+            stringBuilder.flexibleAppend("    ", structItem.second, '\n');
         stringBuilder.append("};\n\n");
     }
     return stringBuilder.toString();
@@ -187,7 +187,7 @@ Optional<String> EntryPointScaffolding::resourceSignature()
         if (i)
             stringBuilder.append(", ");
         auto& namedBindGroup = m_namedBindGroups[i];
-        stringBuilder.append(makeString("device ", namedBindGroup.structName, "& ", namedBindGroup.variableName, " [[buffer(", namedBindGroup.argumentBufferIndex, ")]]"));
+        stringBuilder.flexibleAppend("device ", namedBindGroup.structName, "& ", namedBindGroup.variableName, " [[buffer(", namedBindGroup.argumentBufferIndex, ")]]");
     }
     return stringBuilder.toString();
 }
@@ -243,7 +243,7 @@ Optional<String> EntryPointScaffolding::builtInsSignature()
         if (internalType.isNull())
             internalType = m_typeNamer.mangledNameForType(*item.unnamedType);
         auto variableName = namedBuiltIn.variableName;
-        stringBuilder.append(makeString(internalType, ' ', variableName, ' ', attributeForSemantic(builtInSemantic)));
+        stringBuilder.flexibleAppend(internalType, ' ', variableName, ' ', attributeForSemantic(builtInSemantic));
     }
     return stringBuilder.toString();
 }
@@ -272,7 +272,7 @@ String EntryPointScaffolding::mangledInputPath(Vector<String>& path)
         ASSERT(structureDefinition);
         auto* next = structureDefinition->find(path[i]);
         ASSERT(next);
-        stringBuilder.append(makeString('.', m_typeNamer.mangledNameForStructureElement(*next)));
+        stringBuilder.flexibleAppend('.', m_typeNamer.mangledNameForStructureElement(*next));
         structureDefinition = nullptr;
         auto& unifyNode = next->type().unifyNode();
         if (is<AST::NamedType>(unifyNode)) {
@@ -296,7 +296,7 @@ String EntryPointScaffolding::mangledOutputPath(Vector<String>& path)
         ASSERT(structureDefinition);
         auto* next = structureDefinition->find(component);
         ASSERT(next);
-        stringBuilder.append(makeString('.', m_typeNamer.mangledNameForStructureElement(*next)));
+        stringBuilder.flexibleAppend('.', m_typeNamer.mangledNameForStructureElement(*next));
         structureDefinition = nullptr;
         auto& unifyNode = next->type().unifyNode();
         if (is<AST::NamedType>(unifyNode)) {
@@ -313,7 +313,7 @@ String EntryPointScaffolding::unpackResourcesAndNamedBuiltIns()
 {
     StringBuilder stringBuilder;
     for (size_t i = 0; i < m_functionDefinition.parameters().size(); ++i)
-        stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*m_functionDefinition.parameters()[i]->type()), ' ', m_parameterVariables[i], ";\n"));
+        stringBuilder.flexibleAppend(m_typeNamer.mangledNameForType(*m_functionDefinition.parameters()[i]->type()), ' ', m_parameterVariables[i], ";\n");
 
     for (size_t i = 0; i < m_layout.size(); ++i) {
         auto variableName = m_namedBindGroups[i].variableName;
@@ -330,16 +330,18 @@ String EntryPointScaffolding::unpackResourcesAndNamedBuiltIns()
                 auto& unnamedType = *m_entryPointItems.inputs[iterator->value].unnamedType;
                 auto mangledTypeName = m_typeNamer.mangledNameForType(downcast<AST::ReferenceType>(unnamedType).elementType());
 
-                stringBuilder.append(makeString("size_t ", lengthTemporaryName, " = ", variableName, '.', lengthElementName, ".y;\n"));
-                stringBuilder.append(makeString(lengthTemporaryName, " = ", lengthTemporaryName, " << 32;\n"));
-                stringBuilder.append(makeString(lengthTemporaryName, " = ", lengthTemporaryName, " | ", variableName, '.', lengthElementName, ".x;\n"));
-                stringBuilder.append(makeString(lengthTemporaryName, " = ", lengthTemporaryName, " / sizeof(", mangledTypeName, ");\n"));
-                stringBuilder.append(makeString("if (", lengthTemporaryName, " > 0xFFFFFFFF) ", lengthTemporaryName, " = 0xFFFFFFFF;\n"));
-                stringBuilder.append(makeString(mangledInputPath(path), " = { ", variableName, '.', elementName, ", static_cast<uint32_t>(", lengthTemporaryName, ") };\n"));
+                stringBuilder.flexibleAppend(
+                    "size_t ", lengthTemporaryName, " = ", variableName, '.', lengthElementName, ".y;\n",
+                    lengthTemporaryName, " = ", lengthTemporaryName, " << 32;\n",
+                    lengthTemporaryName, " = ", lengthTemporaryName, " | ", variableName, '.', lengthElementName, ".x;\n",
+                    lengthTemporaryName, " = ", lengthTemporaryName, " / sizeof(", mangledTypeName, ");\n",
+                    "if (", lengthTemporaryName, " > 0xFFFFFFFF) ", lengthTemporaryName, " = 0xFFFFFFFF;\n",
+                    mangledInputPath(path), " = { ", variableName, '.', elementName, ", static_cast<uint32_t>(", lengthTemporaryName, ") };\n"
+                );
             } else {
                 auto& path = m_entryPointItems.inputs[iterator->value].path;
                 auto elementName = m_namedBindGroups[i].namedBindings[j].elementName;
-                stringBuilder.append(makeString(mangledInputPath(path), " = ", variableName, '.', elementName, ";\n"));
+                stringBuilder.flexibleAppend(mangledInputPath(path), " = ", variableName, '.', elementName, ";\n");
             }
         }
     }
@@ -349,7 +351,7 @@ String EntryPointScaffolding::unpackResourcesAndNamedBuiltIns()
         auto& path = item.path;
         auto& variableName = namedBuiltIn.variableName;
         auto mangledTypeName = m_typeNamer.mangledNameForType(*item.unnamedType);
-        stringBuilder.append(makeString(mangledInputPath(path), " = ", mangledTypeName, '(', variableName, ");\n"));
+        stringBuilder.flexibleAppend(mangledInputPath(path), " = ", mangledTypeName, '(', variableName, ");\n");
     }
     return stringBuilder.toString();
 }
@@ -387,26 +389,28 @@ String VertexEntryPointScaffolding::helperTypes()
 {
     StringBuilder stringBuilder;
 
-    stringBuilder.append(makeString("struct ", m_stageInStructName, " {\n"));
+    stringBuilder.flexibleAppend("struct ", m_stageInStructName, " {\n");
     for (auto& namedStageIn : m_namedStageIns) {
         auto mangledTypeName = m_typeNamer.mangledNameForType(*m_entryPointItems.inputs[namedStageIn.indexInEntryPointItems].unnamedType);
         auto elementName = namedStageIn.elementName;
         auto attributeIndex = namedStageIn.attributeIndex;
-        stringBuilder.append(makeString("    ", mangledTypeName, ' ', elementName, " [[attribute(", attributeIndex, ")]];\n"));
+        stringBuilder.flexibleAppend("    ", mangledTypeName, ' ', elementName, " [[attribute(", attributeIndex, ")]];\n");
     }
-    stringBuilder.append("};\n\n");
-
-    stringBuilder.append(makeString("struct ", m_returnStructName, " {\n"));
+    stringBuilder.flexibleAppend(
+        "};\n\n"
+        "struct ", m_returnStructName, " {\n"
+    );
     for (size_t i = 0; i < m_entryPointItems.outputs.size(); ++i) {
         auto& outputItem = m_entryPointItems.outputs[i];
         auto& internalTypeName = m_namedOutputs[i].internalTypeName;
         auto elementName = m_namedOutputs[i].elementName;
         auto attribute = attributeForSemantic(*outputItem.semantic);
-        stringBuilder.append(makeString("    ", internalTypeName, ' ', elementName, ' ', attribute, ";\n"));
+        stringBuilder.flexibleAppend("    ", internalTypeName, ' ', elementName, ' ', attribute, ";\n");
     }
-    stringBuilder.append("};\n\n");
-
-    stringBuilder.append(resourceHelperTypes());
+    stringBuilder.flexibleAppend(
+        "};\n\n",
+        resourceHelperTypes()
+    );
 
     return stringBuilder.toString();
 }
@@ -415,12 +419,12 @@ String VertexEntryPointScaffolding::signature(String& functionName)
 {
     StringBuilder stringBuilder;
 
-    stringBuilder.append(makeString("vertex ", m_returnStructName, ' ', functionName, '(', m_stageInStructName, ' ', m_stageInParameterName, " [[stage_in]]"));
+    stringBuilder.flexibleAppend("vertex ", m_returnStructName, ' ', functionName, '(', m_stageInStructName, ' ', m_stageInParameterName, " [[stage_in]]");
     if (auto resourceSignature = this->resourceSignature())
-        stringBuilder.append(makeString(", ", *resourceSignature));
+        stringBuilder.flexibleAppend(", ", *resourceSignature);
     if (auto builtInsSignature = this->builtInsSignature())
-        stringBuilder.append(makeString(", ", *builtInsSignature));
-    stringBuilder.append(")");
+        stringBuilder.flexibleAppend(", ", *builtInsSignature);
+    stringBuilder.append(')');
 
     return stringBuilder.toString();
 }
@@ -434,7 +438,7 @@ String VertexEntryPointScaffolding::unpack()
     for (auto& namedStageIn : m_namedStageIns) {
         auto& path = m_entryPointItems.inputs[namedStageIn.indexInEntryPointItems].path;
         auto& elementName = namedStageIn.elementName;
-        stringBuilder.append(makeString(mangledInputPath(path), " = ", m_stageInParameterName, '.', elementName, ";\n"));
+        stringBuilder.flexibleAppend(mangledInputPath(path), " = ", m_stageInParameterName, '.', elementName, ";\n");
     }
 
     return stringBuilder.toString();
@@ -443,17 +447,18 @@ String VertexEntryPointScaffolding::unpack()
 String VertexEntryPointScaffolding::pack(const String& inputVariableName, const String& outputVariableName)
 {
     StringBuilder stringBuilder;
-    stringBuilder.append(makeString(m_returnStructName, ' ', outputVariableName, ";\n"));
+
+    stringBuilder.flexibleAppend(m_returnStructName, ' ', outputVariableName, ";\n");
     if (m_entryPointItems.outputs.size() == 1 && !m_entryPointItems.outputs[0].path.size()) {
         auto& elementName = m_namedOutputs[0].elementName;
-        stringBuilder.append(makeString(outputVariableName, '.', elementName, " = ", inputVariableName, ";\n"));
+        stringBuilder.flexibleAppend(outputVariableName, '.', elementName, " = ", inputVariableName, ";\n");
         return stringBuilder.toString();
     }
     for (size_t i = 0; i < m_entryPointItems.outputs.size(); ++i) {
         auto& elementName = m_namedOutputs[i].elementName;
         auto& internalTypeName = m_namedOutputs[i].internalTypeName;
         auto& path = m_entryPointItems.outputs[i].path;
-        stringBuilder.append(makeString(outputVariableName, '.', elementName, " = ", internalTypeName, '(', inputVariableName, mangledOutputPath(path), ");\n"));
+        stringBuilder.flexibleAppend(outputVariableName, '.', elementName, " = ", internalTypeName, '(', inputVariableName, mangledOutputPath(path), ");\n");
     }
     return stringBuilder.toString();
 }
@@ -493,26 +498,28 @@ String FragmentEntryPointScaffolding::helperTypes()
 {
     StringBuilder stringBuilder;
 
-    stringBuilder.append(makeString("struct ", m_stageInStructName, " {\n"));
+    stringBuilder.flexibleAppend("struct ", m_stageInStructName, " {\n");
     for (auto& namedStageIn : m_namedStageIns) {
         auto mangledTypeName = m_typeNamer.mangledNameForType(*m_entryPointItems.inputs[namedStageIn.indexInEntryPointItems].unnamedType);
         auto elementName = namedStageIn.elementName;
         auto attributeIndex = namedStageIn.attributeIndex;
-        stringBuilder.append(makeString("    ", mangledTypeName, ' ', elementName, " [[user(user", attributeIndex, ")]];\n"));
+        stringBuilder.flexibleAppend("    ", mangledTypeName, ' ', elementName, " [[user(user", attributeIndex, ")]];\n");
     }
-    stringBuilder.append("};\n\n");
-
-    stringBuilder.append(makeString("struct ", m_returnStructName, " {\n"));
+    stringBuilder.flexibleAppend(
+        "};\n\n"
+        "struct ", m_returnStructName, " {\n"
+    );
     for (size_t i = 0; i < m_entryPointItems.outputs.size(); ++i) {
         auto& outputItem = m_entryPointItems.outputs[i];
         auto& internalTypeName = m_namedOutputs[i].internalTypeName;
         auto elementName = m_namedOutputs[i].elementName;
         auto attribute = attributeForSemantic(*outputItem.semantic);
-        stringBuilder.append(makeString("    ", internalTypeName, ' ', elementName, ' ', attribute, ";\n"));
+        stringBuilder.flexibleAppend("    ", internalTypeName, ' ', elementName, ' ', attribute, ";\n");
     }
-    stringBuilder.append("};\n\n");
-
-    stringBuilder.append(resourceHelperTypes());
+    stringBuilder.flexibleAppend(
+        "};\n\n",
+        resourceHelperTypes()
+    );
 
     return stringBuilder.toString();
 }
@@ -521,12 +528,12 @@ String FragmentEntryPointScaffolding::signature(String& functionName)
 {
     StringBuilder stringBuilder;
 
-    stringBuilder.append(makeString("fragment ", m_returnStructName, ' ', functionName, '(', m_stageInStructName, ' ', m_stageInParameterName, " [[stage_in]]"));
+    stringBuilder.flexibleAppend("fragment ", m_returnStructName, ' ', functionName, '(', m_stageInStructName, ' ', m_stageInParameterName, " [[stage_in]]");
     if (auto resourceSignature = this->resourceSignature())
-        stringBuilder.append(makeString(", ", *resourceSignature));
+        stringBuilder.flexibleAppend(", ", *resourceSignature);
     if (auto builtInsSignature = this->builtInsSignature())
-        stringBuilder.append(makeString(", ", *builtInsSignature));
-    stringBuilder.append(")");
+        stringBuilder.flexibleAppend(", ", *builtInsSignature);
+    stringBuilder.append(')');
 
     return stringBuilder.toString();
 }
@@ -540,7 +547,7 @@ String FragmentEntryPointScaffolding::unpack()
     for (auto& namedStageIn : m_namedStageIns) {
         auto& path = m_entryPointItems.inputs[namedStageIn.indexInEntryPointItems].path;
         auto& elementName = namedStageIn.elementName;
-        stringBuilder.append(makeString(mangledInputPath(path), " = ", m_stageInParameterName, '.', elementName, ";\n"));
+        stringBuilder.flexibleAppend(mangledInputPath(path), " = ", m_stageInParameterName, '.', elementName, ";\n");
     }
 
     return stringBuilder.toString();
@@ -549,17 +556,18 @@ String FragmentEntryPointScaffolding::unpack()
 String FragmentEntryPointScaffolding::pack(const String& inputVariableName, const String& outputVariableName)
 {
     StringBuilder stringBuilder;
-    stringBuilder.append(makeString(m_returnStructName, ' ', outputVariableName, ";\n"));
+
+    stringBuilder.flexibleAppend(m_returnStructName, ' ', outputVariableName, ";\n");
     if (m_entryPointItems.outputs.size() == 1 && !m_entryPointItems.outputs[0].path.size()) {
         auto& elementName = m_namedOutputs[0].elementName;
-        stringBuilder.append(makeString(outputVariableName, '.', elementName, " = ", inputVariableName, ";\n"));
+        stringBuilder.flexibleAppend(outputVariableName, '.', elementName, " = ", inputVariableName, ";\n");
         return stringBuilder.toString();
     }
     for (size_t i = 0; i < m_entryPointItems.outputs.size(); ++i) {
         auto& elementName = m_namedOutputs[i].elementName;
         auto& internalTypeName = m_namedOutputs[i].internalTypeName;
         auto& path = m_entryPointItems.outputs[i].path;
-        stringBuilder.append(makeString(outputVariableName, '.', elementName, " = ", internalTypeName, '(', inputVariableName, mangledOutputPath(path), ");\n"));
+        stringBuilder.flexibleAppend(outputVariableName, '.', elementName, " = ", internalTypeName, '(', inputVariableName, mangledOutputPath(path), ");\n");
     }
     return stringBuilder.toString();
 }
@@ -578,18 +586,18 @@ String ComputeEntryPointScaffolding::signature(String& functionName)
 {
     StringBuilder stringBuilder;
 
-    stringBuilder.append(makeString("kernel void ", functionName, '('));
+    stringBuilder.flexibleAppend("kernel void ", functionName, '(');
     bool empty = true;
     if (auto resourceSignature = this->resourceSignature()) {
         empty = false;
-        stringBuilder.append(makeString(*resourceSignature));
+        stringBuilder.append(*resourceSignature);
     }
     if (auto builtInsSignature = this->builtInsSignature()) {
         if (!empty)
             stringBuilder.append(", ");
         stringBuilder.append(*builtInsSignature);
     }
-    stringBuilder.append(")");
+    stringBuilder.append(')');
 
     return stringBuilder.toString();
 }

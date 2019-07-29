@@ -127,18 +127,20 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         auto& returnType = nativeFunctionDeclaration.type();
         auto metalReturnName = typeNamer.mangledNameForType(returnType);
         if (!nativeFunctionDeclaration.parameters().size()) {
-            stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, "() {\n"));
-            stringBuilder.append(makeString("    ", metalReturnName, " x;\n"));
-            stringBuilder.append(makeString("    ", memsetZeroFunctionName, "(x);\n"));
-            stringBuilder.append("    return x;\n");
-            stringBuilder.append("}\n");
+            stringBuilder.flexibleAppend(
+                metalReturnName, ' ', outputFunctionName, "() {\n"
+                "    ", metalReturnName, " x;\n"
+                "    ", memsetZeroFunctionName, "(x);\n"
+                "    return x;\n"
+                "}\n"
+            );
             return stringBuilder.toString();
         }
 
         ASSERT(nativeFunctionDeclaration.parameters().size() == 1);
         auto& parameterType = *nativeFunctionDeclaration.parameters()[0]->type();
         auto metalParameterName = typeNamer.mangledNameForType(parameterType);
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"));
+        stringBuilder.flexibleAppend(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n");
 
         {
             auto isEnumerationDefinition = [] (auto& type) {
@@ -151,15 +153,17 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
                 bool hasZeroCase = false;
                 for (auto& member : enumerationDefinition.enumerationMembers()) {
                     hasZeroCase |= !member.get().value();
-                    stringBuilder.append(makeString("        case ", member.get().value(), ": break;\n"));
+                    stringBuilder.flexibleAppend("        case ", member.get().value(), ": break;\n");
                 }
                 ASSERT_UNUSED(hasZeroCase, hasZeroCase);
                 stringBuilder.append("        default: x = 0; break; }\n");
             }
         }
 
-        stringBuilder.append(makeString("    return static_cast<", metalReturnName, ">(x);\n"));
-        stringBuilder.append("}\n");
+        stringBuilder.flexibleAppend(
+            "    return static_cast<", metalReturnName, ">(x);\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
@@ -167,9 +171,11 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         ASSERT(nativeFunctionDeclaration.parameters().size() == 1);
         auto metalParameterName = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
         auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"));
-        stringBuilder.append(makeString("    return static_cast<", metalReturnName, ">(x);\n"));
-        stringBuilder.append("}\n");
+        stringBuilder.flexibleAppend(
+            metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"
+            "    return static_cast<", metalReturnName, ">(x);\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
@@ -182,16 +188,20 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         auto& unnamedParameterType = downcast<AST::UnnamedType>(parameterType);
         if (is<AST::ArrayType>(unnamedParameterType)) {
             auto& arrayParameterType = downcast<AST::ArrayType>(unnamedParameterType);
-            stringBuilder.append(makeString("uint ", outputFunctionName, '(', metalParameterName, ") {\n"));
-            stringBuilder.append(makeString("    return ", arrayParameterType.numElements(), ";\n"));
-            stringBuilder.append("}\n");
+            stringBuilder.flexibleAppend(
+                "uint ", outputFunctionName, '(', metalParameterName, ") {\n"
+                "    return ", arrayParameterType.numElements(), ";\n"
+                "}\n"
+            );
             return stringBuilder.toString();
         }
 
         ASSERT(is<AST::ArrayReferenceType>(unnamedParameterType));
-        stringBuilder.append(makeString("uint ", outputFunctionName, '(', metalParameterName, " v) {\n"));
-        stringBuilder.append(makeString("    return v.length;\n"));
-        stringBuilder.append("}\n");
+        stringBuilder.flexibleAppend(
+            "uint ", outputFunctionName, '(', metalParameterName, " v) {\n"
+            "    return v.length;\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
@@ -217,10 +227,12 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
             auto fieldName = nativeFunctionDeclaration.name().substring("operator."_str.length());
             fieldName = fieldName.substring(0, fieldName.length() - 1);
             auto metalFieldName = mangledFieldName(fieldName);
-            stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " v, ", metalParameter2Name, " n) {\n"));
-            stringBuilder.append(makeString("    v.", metalFieldName, " = n;\n"));
-            stringBuilder.append(makeString("    return v;\n"));
-            stringBuilder.append("}\n");
+            stringBuilder.flexibleAppend(
+                metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " v, ", metalParameter2Name, " n) {\n"
+                "    v.", metalFieldName, " = n;\n"
+                "    return v;\n"
+                "}\n"
+            );
             return stringBuilder.toString();
         }
 
@@ -229,9 +241,11 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         auto metalParameterName = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
         auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
         auto metalFieldName = mangledFieldName(fieldName);
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " v) {\n"));
-        stringBuilder.append(makeString("    return v.", metalFieldName, ";\n"));
-        stringBuilder.append("}\n");
+        stringBuilder.flexibleAppend(
+            metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " v) {\n"
+            "    return v.", metalFieldName, ";\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
@@ -253,9 +267,11 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         } else
             metalFieldName = fieldName;
 
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " v) {\n"));
-        stringBuilder.append(makeString("    return &(v->", metalFieldName, ");\n"));
-        stringBuilder.append("}\n");
+        stringBuilder.flexibleAppend(
+            metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " v) {\n"
+            "    return &(v->", metalFieldName, ");\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
@@ -264,11 +280,13 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         auto metalParameter1Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
         auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1]->type());
         auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " v, ", metalParameter2Name, " n) {\n"));
         ASSERT(is<AST::ArrayReferenceType>(*nativeFunctionDeclaration.parameters()[0]->type()));
-        stringBuilder.append("    if (n < v.length) return &(v.pointer[n]);\n");
-        stringBuilder.append("    return nullptr;\n");
-        stringBuilder.append("}\n");
+        stringBuilder.flexibleAppend(
+            metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " v, ", metalParameter2Name, " n) {\n"
+            "    if (n < v.length) return &(v.pointer[n]);\n"
+            "    return nullptr;\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
@@ -295,17 +313,21 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         unsigned numberOfRows = numberOfMatrixRows();
         unsigned numberOfColumns = numberOfMatrixColumns();
 
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " m, ", metalParameter2Name, " i) {\n"));
-        stringBuilder.append(makeString("    if (i >= ", numberOfRows, ") return ", metalReturnName, "(0);\n"));
-        stringBuilder.append(makeString("    ", metalReturnName, " result;\n"));
-        stringBuilder.append("    result[0] = m[i];\n");
-        stringBuilder.append(makeString("    result[1] = m[i + ", numberOfRows, "];\n"));
+        stringBuilder.flexibleAppend(
+            metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " m, ", metalParameter2Name, " i) {\n"
+            "    if (i >= ", numberOfRows, ") return ", metalReturnName, "(0);\n"
+            "    ", metalReturnName, " result;\n"
+            "    result[0] = m[i];\n"
+            "    result[1] = m[i + ", numberOfRows, "];\n"
+        );
         if (numberOfColumns >= 3)
-            stringBuilder.append(makeString("    result[2] = m[i + ", numberOfRows * 2, "];\n"));
+            stringBuilder.flexibleAppend("    result[2] = m[i + ", numberOfRows * 2, "];\n");
         if (numberOfColumns >= 4)
-            stringBuilder.append(makeString("    result[3] = m[i + ", numberOfRows * 3, "];\n"));
-        stringBuilder.append("    return result;\n");
-        stringBuilder.append("}\n");
+            stringBuilder.flexibleAppend("    result[3] = m[i + ", numberOfRows * 3, "];\n");
+        stringBuilder.append(
+            "    return result;\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
@@ -319,16 +341,20 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         unsigned numberOfRows = numberOfMatrixRows();
         unsigned numberOfColumns = numberOfMatrixColumns();
 
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " m, ", metalParameter2Name, " i, ", metalParameter3Name, " v) {\n"));
-        stringBuilder.append(makeString("    if (i >= ", numberOfRows, ") return m;\n"));
-        stringBuilder.append(makeString("    m[i] = v[0];\n"));
-        stringBuilder.append(makeString("    m[i + ", numberOfRows, "] = v[1];\n"));
+        stringBuilder.flexibleAppend(
+            metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " m, ", metalParameter2Name, " i, ", metalParameter3Name, " v) {\n"
+            "    if (i >= ", numberOfRows, ") return m;\n"
+            "    m[i] = v[0];\n"
+            "    m[i + ", numberOfRows, "] = v[1];\n"
+        );
         if (numberOfColumns >= 3)
-            stringBuilder.append(makeString("    m[i + ", numberOfRows * 2, "] = v[2];\n"));
+            stringBuilder.flexibleAppend("    m[i + ", numberOfRows * 2, "] = v[2];\n");
         if (numberOfColumns >= 4)
-            stringBuilder.append(makeString("    m[i + ", numberOfRows * 3, "] = v[3];\n"));
-        stringBuilder.append("    return m;");
-        stringBuilder.append("}\n");
+            stringBuilder.flexibleAppend("    m[i + ", numberOfRows * 3, "] = v[3];\n");
+        stringBuilder.append(
+            "    return m;"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
@@ -337,9 +363,11 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
             auto operatorName = nativeFunctionDeclaration.name().substring("operator"_str.length());
             auto metalParameterName = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
             auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
-            stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"));
-            stringBuilder.append(makeString("    return ", operatorName, "x;\n"));
-            stringBuilder.append("}\n");
+            stringBuilder.flexibleAppend(
+                metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"
+                "    return ", operatorName, "x;\n"
+                "}\n"
+            );
             return stringBuilder.toString();
         }
 
@@ -348,9 +376,11 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         auto metalParameter1Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
         auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1]->type());
         auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " x, ", metalParameter2Name, " y) {\n"));
-        stringBuilder.append(makeString("    return x ", operatorName, " y;\n"));
-        stringBuilder.append("}\n");
+        stringBuilder.flexibleAppend(
+            metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " x, ", metalParameter2Name, " y) {\n"
+            "    return x ", operatorName, " y;\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
@@ -381,9 +411,11 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         ASSERT(nativeFunctionDeclaration.parameters().size() == 1);
         auto metalParameterName = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
         auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"));
-        stringBuilder.append(makeString("    return ", mapFunctionName(nativeFunctionDeclaration.name()), "(x);\n"));
-        stringBuilder.append("}\n");
+        stringBuilder.flexibleAppend(
+            metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"
+            "    return ", mapFunctionName(nativeFunctionDeclaration.name()), "(x);\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
@@ -392,35 +424,43 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         auto metalParameter1Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
         auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1]->type());
         auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " x, ", metalParameter2Name, " y) {\n"));
-        stringBuilder.append(makeString("    return ", nativeFunctionDeclaration.name(), "(x, y);\n"));
-        stringBuilder.append("}\n");
+        stringBuilder.flexibleAppend(
+            metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " x, ", metalParameter2Name, " y) {\n"
+            "    return ", nativeFunctionDeclaration.name(), "(x, y);\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
     if (nativeFunctionDeclaration.name() == "AllMemoryBarrierWithGroupSync") {
         ASSERT(!nativeFunctionDeclaration.parameters().size());
-        stringBuilder.append(makeString("void ", outputFunctionName, "() {\n"));
-        stringBuilder.append("    threadgroup_barrier(mem_flags::mem_device);\n");
-        stringBuilder.append("    threadgroup_barrier(mem_flags::mem_threadgroup);\n");
-        stringBuilder.append("    threadgroup_barrier(mem_flags::mem_texture);\n");
-        stringBuilder.append("}\n");
+        stringBuilder.flexibleAppend(
+            "void ", outputFunctionName, "() {\n"
+            "    threadgroup_barrier(mem_flags::mem_device);\n"
+            "    threadgroup_barrier(mem_flags::mem_threadgroup);\n"
+            "    threadgroup_barrier(mem_flags::mem_texture);\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
     if (nativeFunctionDeclaration.name() == "DeviceMemoryBarrierWithGroupSync") {
         ASSERT(!nativeFunctionDeclaration.parameters().size());
-        stringBuilder.append(makeString("void ", outputFunctionName, "() {\n"));
-        stringBuilder.append("    threadgroup_barrier(mem_flags::mem_device);\n");
-        stringBuilder.append("}\n");
+        stringBuilder.flexibleAppend(
+            "void ", outputFunctionName, "() {\n"
+            "    threadgroup_barrier(mem_flags::mem_device);\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
     if (nativeFunctionDeclaration.name() == "GroupMemoryBarrierWithGroupSync") {
         ASSERT(!nativeFunctionDeclaration.parameters().size());
-        stringBuilder.append(makeString("void ", outputFunctionName, "() {\n"));
-        stringBuilder.append("    threadgroup_barrier(mem_flags::mem_threadgroup);\n");
-        stringBuilder.append("}\n");
+        stringBuilder.flexibleAppend(
+            "void ", outputFunctionName, "() {\n"
+            "    threadgroup_barrier(mem_flags::mem_threadgroup);\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
@@ -435,10 +475,12 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
             auto& fourthArgumentPointer = downcast<AST::PointerType>(*nativeFunctionDeclaration.parameters()[3]->type());
             auto fourthArgumentAddressSpace = fourthArgumentPointer.addressSpace();
             auto fourthArgumentPointee = typeNamer.mangledNameForType(fourthArgumentPointer.elementType());
-            stringBuilder.append(makeString("void ", outputFunctionName, '(', toString(firstArgumentAddressSpace), ' ', firstArgumentPointee, "* object, ", secondArgument, " compare, ", thirdArgument, " desired, ", toString(fourthArgumentAddressSpace), ' ', fourthArgumentPointee, "* out) {\n"));
-            stringBuilder.append("    atomic_compare_exchange_weak_explicit(object, &compare, desired, memory_order_relaxed, memory_order_relaxed);\n");
-            stringBuilder.append("    *out = compare;\n");
-            stringBuilder.append("}\n");
+            stringBuilder.flexibleAppend(
+                "void ", outputFunctionName, '(', toString(firstArgumentAddressSpace), ' ', firstArgumentPointee, "* object, ", secondArgument, " compare, ", thirdArgument, " desired, ", toString(fourthArgumentAddressSpace), ' ', fourthArgumentPointee, "* out) {\n"
+                "    atomic_compare_exchange_weak_explicit(object, &compare, desired, memory_order_relaxed, memory_order_relaxed);\n"
+                "    *out = compare;\n"
+                "}\n"
+            );
             return stringBuilder.toString();
         }
 
@@ -451,9 +493,11 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         auto thirdArgumentAddressSpace = thirdArgumentPointer.addressSpace();
         auto thirdArgumentPointee = typeNamer.mangledNameForType(thirdArgumentPointer.elementType());
         auto name = atomicName(nativeFunctionDeclaration.name().substring("Interlocked"_str.length()));
-        stringBuilder.append(makeString("void ", outputFunctionName, '(', toString(firstArgumentAddressSpace), ' ', firstArgumentPointee, "* object, ", secondArgument, " operand, ", toString(thirdArgumentAddressSpace), ' ', thirdArgumentPointee, "* out) {\n"));
-        stringBuilder.append(makeString("    *out = atomic_", name, "_explicit(object, operand, memory_order_relaxed);\n"));
-        stringBuilder.append("}\n");
+        stringBuilder.flexibleAppend(
+            "void ", outputFunctionName, '(', toString(firstArgumentAddressSpace), ' ', firstArgumentPointee, "* object, ", secondArgument, " operand, ", toString(thirdArgumentAddressSpace), ' ', thirdArgumentPointee, "* out) {\n"
+            "    *out = atomic_", name, "_explicit(object, operand, memory_order_relaxed);\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
@@ -473,23 +517,27 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         if (nativeFunctionDeclaration.parameters().size() == 4)
             metalParameter4Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[3]->type());
         auto metalReturnName = typeNamer.mangledNameForType(returnType);
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " theTexture, ", metalParameter2Name, " theSampler, ", metalParameter3Name, " location"));
+        stringBuilder.flexibleAppend(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " theTexture, ", metalParameter2Name, " theSampler, ", metalParameter3Name, " location");
         if (!metalParameter4Name.isNull())
-            stringBuilder.append(makeString(", ", metalParameter4Name, " offset"));
-        stringBuilder.append(") {\n");
-        stringBuilder.append("    return theTexture.sample(theSampler, ");
+            stringBuilder.flexibleAppend(", ", metalParameter4Name, " offset");
+        stringBuilder.append(
+            ") {\n"
+            "    return theTexture.sample(theSampler, "
+        );
         if (textureType.isTextureArray()) {
             ASSERT(locationVectorLength > 1);
-            stringBuilder.append(makeString("location.", "xyzw"_str.substring(0, locationVectorLength - 1), ", location.", "xyzw"_str.substring(locationVectorLength - 1, 1)));
+            stringBuilder.flexibleAppend("location.", "xyzw"_str.substring(0, locationVectorLength - 1), ", location.", "xyzw"_str.substring(locationVectorLength - 1, 1));
         } else
             stringBuilder.append("location");
         if (!metalParameter4Name.isNull())
             stringBuilder.append(", offset");
         stringBuilder.append(")");
         if (!textureType.isDepthTexture())
-            stringBuilder.append(makeString(".", "xyzw"_str.substring(0, returnVectorLength)));
-        stringBuilder.append(";\n");
-        stringBuilder.append("}\n");
+            stringBuilder.flexibleAppend(".", "xyzw"_str.substring(0, returnVectorLength));
+        stringBuilder.append(
+            ";\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
@@ -505,37 +553,41 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         auto metalParameter1Name = typeNamer.mangledNameForType(textureType);
         auto metalParameter2Name = typeNamer.mangledNameForType(locationType);
         auto metalReturnName = typeNamer.mangledNameForType(returnType);
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " theTexture, ", metalParameter2Name, " location) {\n"));
+        stringBuilder.flexibleAppend(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " theTexture, ", metalParameter2Name, " location) {\n");
         if (textureType.isTextureArray()) {
             ASSERT(locationVectorLength > 1);
             String dimensions[] = { "width"_str, "height"_str, "depth"_str };
             for (int i = 0; i < locationVectorLength - 1; ++i) {
                 auto suffix = "xyzw"_str.substring(i, 1);
-                stringBuilder.append(makeString("    if (location.", suffix, " < 0 || static_cast<uint32_t>(location.", suffix, ") >= theTexture.get_", dimensions[i], "()) return ", metalReturnName, "(0);\n"));
+                stringBuilder.flexibleAppend("    if (location.", suffix, " < 0 || static_cast<uint32_t>(location.", suffix, ") >= theTexture.get_", dimensions[i], "()) return ", metalReturnName, "(0);\n");
             }
             auto suffix = "xyzw"_str.substring(locationVectorLength - 1, 1);
-            stringBuilder.append(makeString("    if (location.", suffix, " < 0 || static_cast<uint32_t>(location.", suffix, ") >= theTexture.get_array_size()) return ", metalReturnName, "(0);\n"));
+            stringBuilder.flexibleAppend("    if (location.", suffix, " < 0 || static_cast<uint32_t>(location.", suffix, ") >= theTexture.get_array_size()) return ", metalReturnName, "(0);\n");
         } else {
             if (locationVectorLength == 1)
-                stringBuilder.append(makeString("    if (location < 0 || static_cast<uint32_t>(location) >= theTexture.get_width()) return ", metalReturnName, "(0);\n"));
+                stringBuilder.flexibleAppend("    if (location < 0 || static_cast<uint32_t>(location) >= theTexture.get_width()) return ", metalReturnName, "(0);\n");
             else {
-                stringBuilder.append(makeString("    if (location.x < 0 || static_cast<uint32_t>(location.x) >= theTexture.get_width()) return ", metalReturnName, "(0);\n"));
-                stringBuilder.append(makeString("    if (location.y < 0 || static_cast<uint32_t>(location.y) >= theTexture.get_height()) return ", metalReturnName, "(0);\n"));
+                stringBuilder.flexibleAppend(
+                    "    if (location.x < 0 || static_cast<uint32_t>(location.x) >= theTexture.get_width()) return ", metalReturnName, "(0);\n"
+                    "    if (location.y < 0 || static_cast<uint32_t>(location.y) >= theTexture.get_height()) return ", metalReturnName, "(0);\n"
+                );
                 if (locationVectorLength >= 3)
-                    stringBuilder.append(makeString("    if (location.z < 0 || static_cast<uint32_t>(location.z) >= theTexture.get_depth()) return ", metalReturnName, "(0);\n"));
+                    stringBuilder.flexibleAppend("    if (location.z < 0 || static_cast<uint32_t>(location.z) >= theTexture.get_depth()) return ", metalReturnName, "(0);\n");
             }
         }
         stringBuilder.append("    return theTexture.read(");
         if (textureType.isTextureArray()) {
             ASSERT(locationVectorLength > 1);
-            stringBuilder.append(makeString("uint", vectorSuffix(locationVectorLength - 1), "(location.", "xyzw"_str.substring(0, locationVectorLength - 1), "), uint(location.", "xyzw"_str.substring(locationVectorLength - 1, 1), ")"));
+            stringBuilder.flexibleAppend("uint", vectorSuffix(locationVectorLength - 1), "(location.", "xyzw"_str.substring(0, locationVectorLength - 1), "), uint(location.", "xyzw"_str.substring(locationVectorLength - 1, 1), ')');
         } else
-            stringBuilder.append(makeString("uint", vectorSuffix(locationVectorLength), "(location)"));
-        stringBuilder.append(")");
+            stringBuilder.flexibleAppend("uint", vectorSuffix(locationVectorLength), "(location)");
+        stringBuilder.append(')');
         if (!textureType.isDepthTexture())
-            stringBuilder.append(makeString(".", "xyzw"_str.substring(0, returnVectorLength)));
-        stringBuilder.append(";\n");
-        stringBuilder.append("}\n");
+            stringBuilder.flexibleAppend('.', "xyzw"_str.substring(0, returnVectorLength));
+        stringBuilder.append(
+            ";\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
@@ -543,9 +595,11 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         ASSERT(nativeFunctionDeclaration.parameters().size() == 1);
         auto metalParameterName = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
         auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"));
-        stringBuilder.append("    return atomic_load_explicit(x, memory_order_relaxed);\n");
-        stringBuilder.append("}\n");
+        stringBuilder.flexibleAppend(
+            metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"
+            "    return atomic_load_explicit(x, memory_order_relaxed);\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 
@@ -553,9 +607,9 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         ASSERT(nativeFunctionDeclaration.parameters().size() == 2);
         auto metalParameter1Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
         auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1]->type());
-        stringBuilder.append(makeString("void ", outputFunctionName, '(', metalParameter1Name, " x, ", metalParameter2Name, " y) {\n"));
-        stringBuilder.append("    atomic_store_explicit(x, y, memory_order_relaxed);\n");
-        stringBuilder.append("}\n");
+        stringBuilder.flexibleAppend("void ", outputFunctionName, '(', metalParameter1Name, " x, ", metalParameter2Name, " y) {\n"
+            "    atomic_store_explicit(x, y, memory_order_relaxed);\n"
+            "}\n");
         return stringBuilder.toString();
     }
 
@@ -590,45 +644,55 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         ASSERT(index == nativeFunctionDeclaration.parameters().size());
 
         auto metalParameter1Name = typeNamer.mangledNameForType(textureType);
-        stringBuilder.append(makeString("void ", outputFunctionName, '(', metalParameter1Name, " theTexture"));
+        stringBuilder.flexibleAppend("void ", outputFunctionName, '(', metalParameter1Name, " theTexture");
         if (!textureType.isWritableTexture() && textureType.textureDimension() != 1)
             stringBuilder.append(", uint mipLevel");
-        stringBuilder.append(makeString(", ", widthTypeName, " width"));
+        stringBuilder.flexibleAppend(", ", widthTypeName, " width");
         if (!heightTypeName.isNull())
-            stringBuilder.append(makeString(", ", heightTypeName, " height"));
+            stringBuilder.flexibleAppend(", ", heightTypeName, " height");
         if (!depthTypeName.isNull())
-            stringBuilder.append(makeString(", ", depthTypeName, " depth"));
+            stringBuilder.flexibleAppend(", ", depthTypeName, " depth");
         if (!elementsTypeName.isNull())
-            stringBuilder.append(makeString(", ", elementsTypeName, " elements"));
+            stringBuilder.flexibleAppend(", ", elementsTypeName, " elements");
         if (!numberOfLevelsTypeName.isNull())
-            stringBuilder.append(makeString(", ", numberOfLevelsTypeName, " numberOfLevels"));
-        stringBuilder.append(") {\n");
-        stringBuilder.append("    if (width)\n");
-        stringBuilder.append("        *width = theTexture.get_width(");
+            stringBuilder.flexibleAppend(", ", numberOfLevelsTypeName, " numberOfLevels");
+        stringBuilder.append(
+            ") {\n"
+            "    if (width)\n"
+            "        *width = theTexture.get_width("
+        );
         if (!textureType.isWritableTexture() && textureType.textureDimension() != 1)
             stringBuilder.append("mipLevel");
         stringBuilder.append(");\n");
         if (!heightTypeName.isNull()) {
-            stringBuilder.append("    if (height)\n");
-            stringBuilder.append("        *height = theTexture.get_height(");
+            stringBuilder.append(
+                "    if (height)\n"
+                "        *height = theTexture.get_height("
+            );
             if (!textureType.isWritableTexture() && textureType.textureDimension() != 1)
                 stringBuilder.append("mipLevel");
             stringBuilder.append(");\n");
         }
         if (!depthTypeName.isNull()) {
-            stringBuilder.append("    if (depth)\n");
-            stringBuilder.append("        *depth = theTexture.get_depth(");
+            stringBuilder.append(
+                "    if (depth)\n"
+                "        *depth = theTexture.get_depth("
+            );
             if (!textureType.isWritableTexture() && textureType.textureDimension() != 1)
                 stringBuilder.append("mipLevel");
             stringBuilder.append(");\n");
         }
         if (!elementsTypeName.isNull()) {
-            stringBuilder.append("    if (elements)\n");
-            stringBuilder.append("        *elements = theTexture.get_array_size();\n");
+            stringBuilder.append(
+                "    if (elements)\n"
+                "        *elements = theTexture.get_array_size();\n"
+            );
         }
         if (!numberOfLevelsTypeName.isNull()) {
-            stringBuilder.append("    if (numberOfLevels)\n");
-            stringBuilder.append("        *numberOfLevels = theTexture.get_num_mip_levels();\n");
+            stringBuilder.append(
+                "    if (numberOfLevels)\n"
+                "        *numberOfLevels = theTexture.get_num_mip_levels();\n"
+            );
         }
         stringBuilder.append("}\n");
         return stringBuilder.toString();
@@ -683,37 +747,41 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         auto metalParameter2Name = typeNamer.mangledNameForType(itemType);
         auto metalParameter3Name = typeNamer.mangledNameForType(locationType);
         auto metalInnerTypeName = typeNamer.mangledNameForType(itemVectorInnerType);
-        stringBuilder.append(makeString("void ", outputFunctionName, '(', metalParameter1Name, " theTexture, ", metalParameter2Name, " item, ", metalParameter3Name, " location) {\n"));
+        stringBuilder.flexibleAppend("void ", outputFunctionName, '(', metalParameter1Name, " theTexture, ", metalParameter2Name, " item, ", metalParameter3Name, " location) {\n");
         if (textureType.isTextureArray()) {
             ASSERT(locationVectorLength > 1);
             String dimensions[] = { "width"_str, "height"_str, "depth"_str };
             for (int i = 0; i < locationVectorLength - 1; ++i) {
                 auto suffix = "xyzw"_str.substring(i, 1);
-                stringBuilder.append(makeString("    if (location.", suffix, " >= theTexture.get_", dimensions[i], "()) return;\n"));
+                stringBuilder.flexibleAppend("    if (location.", suffix, " >= theTexture.get_", dimensions[i], "()) return;\n");
             }
             auto suffix = "xyzw"_str.substring(locationVectorLength - 1, 1);
-            stringBuilder.append(makeString("    if (location.", suffix, " >= theTexture.get_array_size()) return;\n"));
+            stringBuilder.flexibleAppend("    if (location.", suffix, " >= theTexture.get_array_size()) return;\n");
         } else {
             if (locationVectorLength == 1)
-                stringBuilder.append(makeString("    if (location >= theTexture.get_width()) return;\n"));
+                stringBuilder.append("    if (location >= theTexture.get_width()) return;\n");
             else {
-                stringBuilder.append(makeString("    if (location.x >= theTexture.get_width()) return;\n"));
-                stringBuilder.append(makeString("    if (location.y >= theTexture.get_height()) return;\n"));
+                stringBuilder.append(
+                    "    if (location.x >= theTexture.get_width()) return;\n"
+                    "    if (location.y >= theTexture.get_height()) return;\n"
+                );
                 if (locationVectorLength >= 3)
-                    stringBuilder.append(makeString("    if (location.z >= theTexture.get_depth()) return;\n"));
+                    stringBuilder.append("    if (location.z >= theTexture.get_depth()) return;\n");
             }
         }
-        stringBuilder.append(makeString("    theTexture.write(vec<", metalInnerTypeName, ", 4>(item"));
+        stringBuilder.flexibleAppend("    theTexture.write(vec<", metalInnerTypeName, ", 4>(item");
         for (int i = 0; i < 4 - itemVectorLength; ++i)
             stringBuilder.append(", 0");
         stringBuilder.append("), ");
         if (textureType.isTextureArray()) {
             ASSERT(locationVectorLength > 1);
-            stringBuilder.append(makeString("uint", vectorSuffix(locationVectorLength - 1), "(location.", "xyzw"_str.substring(0, locationVectorLength - 1), "), uint(location.", "xyzw"_str.substring(locationVectorLength - 1, 1), ")"));
+            stringBuilder.flexibleAppend("uint", vectorSuffix(locationVectorLength - 1), "(location.", "xyzw"_str.substring(0, locationVectorLength - 1), "), uint(location.", "xyzw"_str.substring(locationVectorLength - 1, 1), ')');
         } else
-            stringBuilder.append(makeString("uint", vectorSuffix(locationVectorLength), "(location)"));
-        stringBuilder.append(");\n");
-        stringBuilder.append("}\n");
+            stringBuilder.flexibleAppend("uint", vectorSuffix(locationVectorLength), "(location)");
+        stringBuilder.append(
+            ");\n"
+            "}\n"
+        );
         return stringBuilder.toString();
     }
 

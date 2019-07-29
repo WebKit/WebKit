@@ -158,8 +158,7 @@ struct Types {
 
     static void appendNameTo(StringBuilder& builder)
     {
-        builder.append(Token::typeName(t));
-        builder.append(", ");
+        builder.flexibleAppend(Token::typeName(t), ", ");
         Types<ts...>::appendNameTo(builder);
     }
 };

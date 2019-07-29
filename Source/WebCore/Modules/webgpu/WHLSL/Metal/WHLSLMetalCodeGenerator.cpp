@@ -43,26 +43,27 @@ static constexpr bool dumpMetalCode = false;
 
 static String generateMetalCodeShared(String&& metalTypes, String&& metalFunctions)
 {
-    StringBuilder stringBuilder;
-    stringBuilder.append("#include <metal_stdlib>\n");
-    stringBuilder.append("#include <metal_atomic>\n");
-    stringBuilder.append("#include <metal_math>\n");
-    stringBuilder.append("#include <metal_relational>\n");
-    stringBuilder.append("#include <metal_compute>\n");
-    stringBuilder.append("#include <metal_texture>\n");
-    stringBuilder.append("\n");
-    stringBuilder.append("using namespace metal;\n");
-    stringBuilder.append("\n");
+    auto generatedMetalCode = makeString(
+        "#include <metal_stdlib>\n"
+        "#include <metal_atomic>\n"
+        "#include <metal_math>\n"
+        "#include <metal_relational>\n"
+        "#include <metal_compute>\n"
+        "#include <metal_texture>\n"
+        "\n"
+        "using namespace metal;\n"
+        "\n",
 
-    stringBuilder.append(WTFMove(metalTypes));
-    stringBuilder.append(WTFMove(metalFunctions));
+        WTFMove(metalTypes),
+        WTFMove(metalFunctions)
+    );
 
     if (dumpMetalCode) {
         dataLogLn("Generated Metal code: ");
-        dataLogLn(stringBuilder.toString());
+        dataLogLn(generatedMetalCode);
     }
 
-    return stringBuilder.toString();
+    return generatedMetalCode;
 }
 
 RenderMetalCode generateMetalCode(Program& program, MatchedRenderSemantics&& matchedSemantics, Layout& layout)

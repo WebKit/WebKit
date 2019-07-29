@@ -1,3 +1,59 @@
+2019-07-29  Sam Weinig  <weinig@apple.com>
+
+        StringBuilder::append(makeString(...)) is inefficient
+        https://bugs.webkit.org/show_bug.cgi?id=200034
+
+        Reviewed by Saam Barati.
+
+        Replace uses of StringBuilder::append(makeString(...)) with StringBuilder::flexiblAppend(...).
+        Where possible, also merged consecutive calls to StringBuilder::append(...) into a single call
+        to StringBuilder::flexiblAppend(...) to avoid unnecessary additional overflow checks and resizes.
+        Also where possible, replaced StringBuilder with makeString() if no branching was used during
+        construction.
+        
+        A lot more can be done to improve the efficiency of StringBuilder use in the WHLSL code including:
+        - Using StringView more prevelently, especially when passing a substring to the StringBuilder.
+        - Passing existing StringBuilders to functions for them to use rather than returning a String and 
+          then appending that to another StringBuilder.
+        - Using custom StringTypeAdapters for generated names, rather than storing them as Strings. 
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp:
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::resourceHelperTypes):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::resourceSignature):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::builtInsSignature):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::mangledInputPath):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::mangledOutputPath):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::unpackResourcesAndNamedBuiltIns):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::helperTypes):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::signature):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::unpack):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::pack):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::helperTypes):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::signature):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::unpack):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::pack):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::signature):
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDeclarationWriter::visit):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::FunctionDefinitionWriter):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::emitLoop):
+        * Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.cpp:
+        (WebCore::WHLSL::Metal::generateMetalCodeShared):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeFunction):
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp:
+        (WebCore::WHLSL::Metal::MetalTypeDeclarationWriter::visit):
+        (WebCore::WHLSL::Metal::TypeNamer::emitUnnamedTypeDefinition):
+        (WebCore::WHLSL::Metal::TypeNamer::emitNamedTypeDefinition):
+        (WebCore::WHLSL::Metal::TypeNamer::metalTypes):
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Types::appendNameTo):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo):
+        * testing/Internals.cpp:
+        (WebCore::Internals::ongoingLoadsDescriptions const):
+
 2019-07-29  Megan Gardner  <megan_gardner@apple.com>
 
         Force Reveal to always lookup from menu
