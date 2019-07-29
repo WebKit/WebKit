@@ -18,9 +18,13 @@
  */
 
 #include "config.h"
+
+#include "WebKitTestServer.h"
 #include "WebViewTest.h"
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
+
+static WebKitTestServer* kServer;
 
 class ContextMenuTest: public WebViewTest {
 public:
@@ -295,6 +299,7 @@ public:
         LinkImage,
         Video,
         Audio,
+        VideoLive,
         Editable,
         Selection
     };
@@ -389,6 +394,18 @@ public:
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_COPY_AUDIO_LINK_TO_CLIPBOARD, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_OPEN_AUDIO_IN_NEW_WINDOW, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_AUDIO_TO_DISK, Visible | Enabled);
+            break;
+        case VideoLive:
+            g_assert_false(webkit_hit_test_result_context_is_link(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_image(hitTestResult));
+            g_assert_true(webkit_hit_test_result_context_is_media(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_selection(hitTestResult));
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_MEDIA_PLAY, Visible | Enabled);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_MEDIA_MUTE, Visible | Enabled);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_TOGGLE_MEDIA_CONTROLS, Visible | Enabled);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_TOGGLE_MEDIA_LOOP, Visible | Enabled);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_ENTER_VIDEO_FULLSCREEN, Visible | Enabled);
             break;
         case Editable:
             g_assert_false(webkit_hit_test_result_context_is_link(hitTestResult));
@@ -1068,11 +1085,68 @@ static void testContextMenuWebExtensionNode(ContextMenuWebExtensionNodeTest* tes
     g_assert_cmpstr(test->m_node.parentName.data(), ==, "A");
 }
 
+static void writeNextChunk(SoupMessage* message)
+{
+    GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().data(), "silence.webm", nullptr));
+    char* contents;
+    gsize contentsLength;
+    if (!g_file_get_contents(filePath.get(), &contents, &contentsLength, nullptr)) {
+        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+        soup_message_body_complete(message->response_body);
+        return;
+    }
+
+    soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, contents, contentsLength);
+    soup_message_body_complete(message->response_body);
+}
+
+static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+{
+    if (message->method != SOUP_METHOD_GET) {
+        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+        return;
+    }
+
+    soup_message_set_status(message, SOUP_STATUS_OK);
+
+    if (g_str_equal(path, "/live-stream")) {
+        static const char* html =
+            "<html><body>"
+            " <video style='position:absolute; left:1; top:1' width='300' height='300'>"
+            "  <source src='/live-stream.webm' type='video/webm' />"
+            " </video>"
+            "</body></html>";
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, html, strlen(html));
+    } else if (g_str_equal(path, "/live-stream.webm")) {
+        soup_message_headers_set_encoding(message->response_headers, SOUP_ENCODING_CHUNKED);
+        g_signal_connect(message, "wrote_headers", G_CALLBACK(writeNextChunk), nullptr);
+        g_signal_connect(message, "wrote_chunk", G_CALLBACK(writeNextChunk), nullptr);
+        return;
+    }
+
+    soup_message_body_complete(message->response_body);
+}
+
+static void testContextMenuLiveStream(ContextMenuDefaultTest* test, gconstpointer)
+{
+    test->showInWindowAndWaitUntilMapped();
+
+    test->loadURI(kServer->getURIForPath("/live-stream").data());
+    test->waitUntilLoadFinished();
+
+    test->m_expectedMenuType = ContextMenuDefaultTest::VideoLive;
+    test->showContextMenuAtPositionAndWaitUntilFinished(1, 1);
+}
+
 void beforeAll()
 {
+    kServer = new WebKitTestServer();
+    kServer->run(serverCallback);
+
     ContextMenuDefaultTest::add("WebKitWebView", "default-menu", testContextMenuDefaultMenu);
     ContextMenuDefaultTest::add("WebKitWebView", "context-menu-key", testContextMenuKey);
     ContextMenuDefaultTest::add("WebKitWebView", "popup-event-signal", testPopupEventSignal);
+    ContextMenuDefaultTest::add("WebKitWebView", "live-stream", testContextMenuLiveStream);
     ContextMenuCustomTest::add("WebKitWebView", "populate-menu", testContextMenuPopulateMenu);
     ContextMenuCustomFullTest::add("WebKitWebView", "custom-menu", testContextMenuCustomMenu);
     ContextMenuDisabledTest::add("WebKitWebView", "disable-menu", testContextMenuDisableMenu);
@@ -1084,4 +1158,5 @@ void beforeAll()
 
 void afterAll()
 {
+    delete kServer;
 }
