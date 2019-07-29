@@ -14,11 +14,12 @@ onload = function() {
     var y = element.offsetTop + 10;
 
     if (window.testRunner) {
-        if (window.eventSender) {
+        if (testRunner.isIOSFamily)
+            testRunner.runUIScript("(function() { uiController.singleTapAtPoint(" + x + ", " + y + "); })()");
+        else if (window.eventSender) {
             eventSender.mouseMoveTo(x, y);
             eventSender.mouseDown();
-            eventSender.mouseUp();
-        } else if (testRunner.runUIScript)
-            testRunner.runUIScript("(function() { uiController.singleTapAtPoint(" + x + ", " + y + "); })()");
+            eventSender.mouseUp();    
+        }
     }
 }

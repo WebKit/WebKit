@@ -1,3 +1,14 @@
+2019-07-29  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r247898): Multiple Layout Tests in http/tests/contentdispositionattachmentsandbox/* are timing out on iOS
+        <rdar://problem/53664817>
+
+        * http/tests/contentdispositionattachmentsandbox/resources/referer-header-stripped.js:
+        (onload):
+        iOS has eventSender, so this reorganizing didn't work (well, it worked for macOS...).
+        Instead, check which platform we're on and use touch vs. mouse events by
+        platform instead of by available API.
+
 2019-07-28  Tim Horton  <timothy_horton@apple.com>
 
         Reorganize UIScriptController into platform-specific subclasses
