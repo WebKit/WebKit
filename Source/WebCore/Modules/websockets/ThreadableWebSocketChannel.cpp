@@ -48,16 +48,8 @@
 
 namespace WebCore {
 
-Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecutionContext& context, WebSocketChannelClient& client, SocketProvider& provider)
+Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Document& document, WebSocketChannelClient& client, SocketProvider& provider)
 {
-    if (is<WorkerGlobalScope>(context)) {
-        WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
-        WorkerRunLoop& runLoop = workerGlobalScope.thread().runLoop();
-        return WorkerThreadableWebSocketChannel::create(workerGlobalScope, client, makeString("webSocketChannelMode", runLoop.createUniqueId()), provider);
-    }
-
-    auto& document = downcast<Document>(context);
-
     bool shouldProviderCreateSocketChannel = false;
 #if HAVE(NSURLSESSION_WEBSOCKET)
     shouldProviderCreateSocketChannel = RuntimeEnabledFeatures::sharedFeatures().isNSURLSessionWebSocketEnabled();
@@ -72,6 +64,17 @@ Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecuti
     }
 
     return WebSocketChannel::create(document, client, provider);
+}
+
+Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecutionContext& context, WebSocketChannelClient& client, SocketProvider& provider)
+{
+    if (is<WorkerGlobalScope>(context)) {
+        WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
+        WorkerRunLoop& runLoop = workerGlobalScope.thread().runLoop();
+        return WorkerThreadableWebSocketChannel::create(workerGlobalScope, client, makeString("webSocketChannelMode", runLoop.createUniqueId()), provider);
+    }
+
+    return create(downcast<Document>(context), client, provider);
 }
 
 Optional<ThreadableWebSocketChannel::ValidatedURL> ThreadableWebSocketChannel::validateURL(Document& document, const URL& requestedURL)
