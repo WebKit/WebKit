@@ -1,3 +1,14 @@
+2019-07-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WK1] Can't change Web Inspector frontend height in high DPI
+        https://bugs.webkit.org/show_bug.cgi?id=200153
+
+        Reviewed by Don Olmstead.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorFrontendClient::setAttachedWindowHeight):
+        Applied deviceScaleFactor to the argument height.
+
 2019-07-26  Konstantin Tokarev  <annulen@yandex.ru>
 
         [Win] Remove unused methods from WebPluginInfoProvider

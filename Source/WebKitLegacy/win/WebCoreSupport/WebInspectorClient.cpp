@@ -336,6 +336,7 @@ void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned height)
     int hostWindowHeight = hostWindowRect.bottom;
     int webViewWidth = inspectedRect.right - inspectedRect.left;
     int webViewHeight = frontendRect.bottom + inspectedRect.bottom;
+    height *= m_inspectedWebView->deviceScaleFactor();
 
     SetWindowPos(m_frontendWebViewHwnd, 0, 0, hostWindowHeight - height, webViewWidth, height, SWP_NOZORDER);
 
