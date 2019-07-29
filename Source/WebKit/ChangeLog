@@ -1,3 +1,16 @@
+2019-07-29  Youenn Fablet  <youenn@apple.com>
+
+        NetworkProcess clear and fetch of cache entries might move the callback aggregator more than once
+        https://bugs.webkit.org/show_bug.cgi?id=200228
+
+        Reviewed by Alex Christensen.
+
+        copyRef the callback aggregator instead of moving it.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+
 2019-07-29  Chris Dumez  <cdumez@apple.com>
 
         Possible use-after-move under NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated()

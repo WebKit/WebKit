@@ -1360,7 +1360,7 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
 #endif
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache)) {
         for (auto& session : networkSessions().values()) {
-            fetchDiskCacheEntries(session->cache(), sessionID, fetchOptions, [callbackAggregator = WTFMove(callbackAggregator)](auto entries) mutable {
+            fetchDiskCacheEntries(session->cache(), sessionID, fetchOptions, [callbackAggregator = callbackAggregator.copyRef()](auto entries) mutable {
                 callbackAggregator->m_websiteData.entries.appendVector(entries);
             });
         }
@@ -1520,7 +1520,7 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral()) {
         for (auto& session : networkSessions().values())
-            clearDiskCacheEntries(session->cache(), originDatas, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
+            clearDiskCacheEntries(session->cache(), originDatas, [clearTasksHandler = clearTasksHandler.copyRef()] { });
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
