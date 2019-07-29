@@ -112,7 +112,7 @@ TEST(WKWebView, LocalStorageProcessCrashes)
     TestWebKitAPI::Util::run(&readyToContinue);
 }
 
-TEST(WKWebView, LocalStorageProcessSuspends)
+TEST(WKWebView, DISABLED_LocalStorageProcessSuspends)
 {
     readyToContinue = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
