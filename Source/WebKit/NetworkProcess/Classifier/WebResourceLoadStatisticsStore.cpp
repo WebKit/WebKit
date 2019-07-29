@@ -296,13 +296,11 @@ void WebResourceLoadStatisticsStore::hasStorageAccess(const RegistrableDomain& s
             return;
         }
 
-        if (m_statisticsStore) {
-            m_statisticsStore->hasStorageAccess(subFrameDomain, topFrameDomain, frameID, pageID, [completionHandler = WTFMove(completionHandler)](bool hasStorageAccess) mutable {
-                postTaskReply([completionHandler = WTFMove(completionHandler), hasStorageAccess]() mutable {
-                    completionHandler(hasStorageAccess);
-                });
+        m_statisticsStore->hasStorageAccess(subFrameDomain, topFrameDomain, frameID, pageID, [completionHandler = WTFMove(completionHandler)](bool hasStorageAccess) mutable {
+            postTaskReply([completionHandler = WTFMove(completionHandler), hasStorageAccess]() mutable {
+                completionHandler(hasStorageAccess);
             });
-        }
+        });
     });
 }
 
@@ -401,13 +399,11 @@ void WebResourceLoadStatisticsStore::grantStorageAccess(const RegistrableDomain&
             return;
         }
 
-        if (m_statisticsStore) {
-            m_statisticsStore->grantStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, promptWasShown, [promptWasShown, completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted wasGrantedAccess) mutable {
-                postTaskReply([wasGrantedAccess, promptWasShown, completionHandler = WTFMove(completionHandler)]() mutable {
-                    completionHandler(wasGrantedAccess, promptWasShown);
-                });
+        m_statisticsStore->grantStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, promptWasShown, [promptWasShown, completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted wasGrantedAccess) mutable {
+            postTaskReply([wasGrantedAccess, promptWasShown, completionHandler = WTFMove(completionHandler)]() mutable {
+                completionHandler(wasGrantedAccess, promptWasShown);
             });
-        }
+        });
     });
 }
 
@@ -879,16 +875,14 @@ void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGr
             postTaskReply(WTFMove(completionHandler));
         });
 
-        if (m_statisticsStore) {
-            m_statisticsStore->clear([this, protectedThis = protectedThis.copyRef(), shouldGrandfather, callbackAggregator = callbackAggregator.copyRef()] () mutable {
-                if (shouldGrandfather == ShouldGrandfatherStatistics::Yes) {
-                    if (m_statisticsStore)
-                        m_statisticsStore->grandfatherExistingWebsiteData([callbackAggregator = WTFMove(callbackAggregator)]() mutable { });
-                    else
-                        RELEASE_LOG(ResourceLoadStatistics, "WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent After being cleared, m_statisticsStore is null when trying to grandfather data.");
-                }
-            });
-        }
+        m_statisticsStore->clear([this, protectedThis = protectedThis.copyRef(), shouldGrandfather, callbackAggregator = callbackAggregator.copyRef()] () mutable {
+            if (shouldGrandfather == ShouldGrandfatherStatistics::Yes) {
+                if (m_statisticsStore)
+                    m_statisticsStore->grandfatherExistingWebsiteData([callbackAggregator = WTFMove(callbackAggregator)]() mutable { });
+                else
+                    RELEASE_LOG(ResourceLoadStatistics, "WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent After being cleared, m_statisticsStore is null when trying to grandfather data.");
+            }
+        });
     });
 }
 
