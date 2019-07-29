@@ -57,7 +57,7 @@ Box::~Box()
 
 bool Box::establishesFormattingContext() const
 {
-    return establishesBlockFormattingContext() || establishesInlineFormattingContext();
+    return establishesBlockFormattingContext() || establishesInlineFormattingContext() || establishesTableFormattingContext();
 }
 
 bool Box::establishesBlockFormattingContext() const
@@ -80,6 +80,11 @@ bool Box::establishesBlockFormattingContext() const
         return true;
 
     return false;
+}
+
+bool Box::establishesTableFormattingContext() const
+{
+    return isTableBox();
 }
 
 bool Box::establishesBlockFormattingContextOnly() const
@@ -221,21 +226,20 @@ bool Box::isBlockLevelBox() const
 {
     // Block level elements generate block level boxes.
     auto display = m_style.display();
-    return display == DisplayType::Block || display == DisplayType::ListItem || display == DisplayType::Table;
+    return display == DisplayType::Block || display == DisplayType::ListItem || (display == DisplayType::Table && !isTableWrapperBox());
 }
 
 bool Box::isInlineLevelBox() const
 {
     // Inline level elements generate inline level boxes.
     auto display = m_style.display();
-    return display == DisplayType::Inline || display == DisplayType::InlineBlock || display == DisplayType::InlineTable;
+    return display == DisplayType::Inline || isInlineBlockBox() || display == DisplayType::InlineTable;
 }
 
 bool Box::isBlockContainerBox() const
 {
-    // Inline level elements generate inline level boxes.
     auto display = m_style.display();
-    return display == DisplayType::Block || display == DisplayType::ListItem || display == DisplayType::InlineBlock || display == DisplayType::TableCell || display == DisplayType::TableCaption; // TODO && !replaced element
+    return display == DisplayType::Block || display == DisplayType::ListItem || isInlineBlockBox() || isTableWrapperBox() || isTableCell() || display == DisplayType::TableCaption; // TODO && !replaced element
 }
 
 bool Box::isInitialContainingBlock() const

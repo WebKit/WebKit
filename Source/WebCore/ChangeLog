@@ -1,5 +1,29 @@
 2019-07-29  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Introduce Box::establishesTableFormattingContext
+        https://bugs.webkit.org/show_bug.cgi?id=200060
+
+        Reviewed by Antti Koivisto.
+
+        https://www.w3.org/TR/CSS22/tables.html
+
+        The table generates a principal block container box called the table wrapper box that contains the table box itself and any caption boxes.
+        The table box is a block-level box that contains the table's internal table boxes.
+        The table wrapper box is block-level for 'display: table', and inline-level; for 'display: inline-table'. The table wrapper box establishes a block
+        formatting context, and the table box establishes a table formatting context."
+
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::establishesFormattingContext const):
+        (WebCore::Layout::Box::establishesTableFormattingContext const):
+        (WebCore::Layout::Box::isBlockLevelBox const):
+        (WebCore::Layout::Box::isInlineLevelBox const):
+        (WebCore::Layout::Box::isBlockContainerBox const):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::isTableWrapperBox const):
+        (WebCore::Layout::Box::isTableBox const):
+
+2019-07-29  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] didFinishContentChangeObserving should include the type of content change.
         https://bugs.webkit.org/show_bug.cgi?id=200247
         <rdar://problem/53681149>
