@@ -23,7 +23,7 @@
 import {
     DOM, REF, FP, EventStream
 }
-from '../js/Ref.js';
+from '../Ref.js';
 
 import {isDarkMode} from '../Utils.js';
 import {ListComponent, ListProvider, ListProviderReceiver} from './BaseComponents.js'
@@ -185,10 +185,11 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
     // Get the css value, this component assume to use with webkit.css
     const computedStyle = getComputedStyle(document.body);
     let radius = parseInt(computedStyle.getPropertyValue('--smallSize')) / 2;
+    let dotMargin = parseInt(computedStyle.getPropertyValue('--tinySize')) / 2;
     let fontFamily = computedStyle.getPropertyValue('font-family');
     let defaultDotColor = computedStyle.getPropertyValue('--greenLight').trim();
     let defaultEmptyLineColor = computedStyle.getPropertyValue('--grey').trim();
-    let defaultFontSize = computedStyle.getPropertyValue('--tinySize');
+    let defaultFontSize = parseInt(computedStyle.getPropertyValue('--tinySize'));
 
     // Get configuration
     // Default order is left is biggest
@@ -197,7 +198,9 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
     const comp = typeof option.compareFunc === "function" ? option.compareFunc : (a, b) => a - b;
     const onDotClick = typeof option.onDotClick === "function" ? option.onDotClick : null;
     const onDotHover = typeof option.onDotHover === "function" ? option.onDotHover : null;
-    const height = option.height ? option.height : 2 * radius;
+    const tagHeight = defaultFontSize;
+    const height = option.height ? option.height : 2 * radius + tagHeight;
+
 
     // Draw dot api can be used in user defined render function
     const drawDot = (context, x, y, isEmpty, tag = null, useRadius, color, emptylineColor) => {
@@ -206,17 +209,18 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
         emptylineColor = emptylineColor ? emptylineColor : defaultEmptyLineColor;
             if (!isEmpty) {
                 //Draw the dot
-                context.arc(x + 3 * radius, y, radius, 0, 2 * Math.PI);
+                context.arc(x + dotMargin + radius, y, radius, 0, 2 * Math.PI);
                 context.fillStyle = color;
                 context.fill();
                 if (typeof tag === "number" || typeof tag === "string") {
                     context.font = `${fontFamily} ${defaultFontSize}px`;
-                    context.fillText(tag, x + 4 * radius, y + radius);
+                    const tagSize = context.measureText(tag);
+                    context.fillText(tag, x + dotMargin + radius - tagSize.width / 2, radius * 2 + tagSize.emHeightAscent);
                 }
             } else {
                 context.beginPath();
-                context.moveTo(x + 2 * radius, y);
-                context.lineTo(x + 4 * radius, y);
+                context.moveTo(x + dotMargin, y);
+                context.lineTo(x + dotMargin + 2 * radius, y);
                 context.lineWidth = 1;
                 context.strokeStyle = defaultEmptyLineColor;
                 context.stroke();
@@ -244,9 +248,9 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
             }));
     }
 
-    const dotWidth = 3 * 2 * radius;
+    const dotWidth = 2 * (radius + dotMargin);
     const padding = 100 * dotWidth / getDevicePixelRatio();
-    const offscreenCachedRender = offscreenCachedRenderFactory(padding, radius * 2);
+    const offscreenCachedRender = offscreenCachedRenderFactory(padding, height);
 
     // Generate the dot cache
     const redrawCache = (offscreenCanvas, element, stateDiff, state, notifyToRender) => {
@@ -338,7 +342,7 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
             width: 0,
         },
         onElementMount: (element) => {
-            setupCanvasHeightWithDpr(element, radius * 2);
+            setupCanvasHeightWithDpr(element, height);
             setupCanvasContextScale(element);
             if (onDotClick) {
                 element.addEventListener('click', (e) => {
@@ -499,7 +503,7 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
     const fontRotate = 60 * Math.PI / 180;
     const fontTopRotate = 300 * Math.PI / 180;
     const linkColor = computedStyle.getPropertyValue('--linkColor');
-    const scaleWidth = parseInt(computedStyle.getPropertyValue('--smallSize')) * 3;
+    const scaleWidth = parseInt(computedStyle.getPropertyValue('--smallSize')) + parseInt(computedStyle.getPropertyValue('--tinySize'));
     const scaleTagLineHeight = parseInt(computedStyle.getPropertyValue('--smallSize'));
     const scaleTagLinePadding = 10;
     const scaleBroadLineHeight = parseInt(computedStyle.getPropertyValue('--tinySize')) / 2;

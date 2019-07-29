@@ -23,7 +23,7 @@
 import {
     DOM, REF, diff, EventStream, uuidv4
 }
-from '../js/Ref.js';
+from '../Ref.js';
 
 function ApplyNewChildren(element, oldArray, newArray, childToKeyFunc, itemProcessor) {
     const newChildren = [];
