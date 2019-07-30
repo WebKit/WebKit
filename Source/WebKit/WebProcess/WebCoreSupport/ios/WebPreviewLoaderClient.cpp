@@ -28,6 +28,7 @@
 
 #if USE(QUICK_LOOK)
 
+#include "Logging.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/QuickLook.h>
@@ -88,8 +89,10 @@ void WebPreviewLoaderClient::didRequestPassword(Function<void(const String&)>&& 
 void WebPreviewLoaderClient::didReceivePassword(const String& password, WebCore::PageIdentifier pageID)
 {
     ASSERT(passwordCallbacks().contains(pageID));
-    auto completionHandler = passwordCallbacks().take(pageID);
-    completionHandler(password);
+    if (auto completionHandler = passwordCallbacks().take(pageID))
+        completionHandler(password);
+    else
+        RELEASE_LOG_ERROR(Loading, "Discarding a password for a page that did not request one in this process");
 }
 
 } // namespace WebKit
