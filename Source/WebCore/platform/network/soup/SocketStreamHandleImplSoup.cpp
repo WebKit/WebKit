@@ -39,6 +39,7 @@
 #include "ResourceError.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
+#include "SoupNetworkSession.h"
 #include "StorageSessionProvider.h"
 #include "URLSoup.h"
 #include <gio/gio.h>
