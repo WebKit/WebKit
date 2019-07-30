@@ -65,7 +65,6 @@ namespace WebCore {
 class CurlProxySettings;
 class NetworkingContext;
 class ResourceRequest;
-class SoupNetworkSession;
 
 struct Cookie;
 struct CookieRequestHeaderFieldProxy;
@@ -97,13 +96,11 @@ public:
     WEBCORE_EXPORT RetainPtr<CFHTTPCookieStorageRef> cookieStorage() const;
     WEBCORE_EXPORT static void setStorageAccessAPIEnabled(bool);
 #elif USE(SOUP)
-    WEBCORE_EXPORT NetworkStorageSession(PAL::SessionID, std::unique_ptr<SoupNetworkSession>&&);
+    WEBCORE_EXPORT explicit NetworkStorageSession(PAL::SessionID);
     ~NetworkStorageSession();
 
-    SoupNetworkSession& soupNetworkSession() const;
-    void clearSoupNetworkSession();
-    SoupCookieJar* cookieStorage() const;
-    void setCookieStorage(SoupCookieJar*);
+    SoupCookieJar* cookieStorage() const { return m_cookieStorage.get(); }
+    void setCookieStorage(GRefPtr<SoupCookieJar>&&);
     void setCookieObserverHandler(Function<void ()>&&);
     void getCredentialFromPersistentStorage(const ProtectionSpace&, GCancellable*, Function<void (Credential&&)>&& completionHandler);
     void saveCredentialToPersistentStorage(const ProtectionSpace&, const Credential&);
@@ -171,7 +168,7 @@ private:
 #elif USE(SOUP)
     static void cookiesDidChange(NetworkStorageSession*);
 
-    mutable std::unique_ptr<SoupNetworkSession> m_session;
+    GRefPtr<SoupCookieJar> m_cookieStorage;
     Function<void ()> m_cookieObserverHandler;
 #elif USE(CURL)
     UniqueRef<CookieJarCurl> m_cookieStorage;

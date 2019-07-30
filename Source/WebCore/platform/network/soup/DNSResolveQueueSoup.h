@@ -30,6 +30,8 @@
 #include <wtf/HashMap.h>
 #include <wtf/glib/GRefPtr.h>
 
+typedef struct _SoupSession SoupSession;
+
 namespace WebCore {
 
 class NetworkStorageSession;
@@ -39,7 +41,7 @@ public:
     using CompletionAndCancelHandlers = std::pair<WebCore::DNSCompletionHandler, GRefPtr<GCancellable>>;
 
     DNSResolveQueueSoup() = default;
-    static void setGlobalDefaultNetworkStorageSessionAccessor(Function<NetworkStorageSession&()>&&);
+    static void setGlobalDefaultSoupSessionAccessor(Function<SoupSession*()>&&);
     void resolve(const String& hostname, uint64_t identifier, DNSCompletionHandler&&) final;
     void stopResolve(uint64_t identifier) final;
 

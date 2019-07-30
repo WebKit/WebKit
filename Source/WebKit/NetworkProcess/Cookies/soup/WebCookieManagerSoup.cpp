@@ -27,12 +27,11 @@
 #include "WebCookieManager.h"
 
 #include "NetworkProcess.h"
+#include "NetworkSessionSoup.h"
 #include "SoupCookiePersistentStorageType.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
-#include <wtf/glib/GRefPtr.h>
-#include <wtf/text/CString.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -77,22 +76,8 @@ HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
 
 void WebCookieManager::setCookiePersistentStorage(PAL::SessionID sessionID, const String& storagePath, SoupCookiePersistentStorageType storageType)
 {
-    GRefPtr<SoupCookieJar> jar;
-    switch (storageType) {
-    case SoupCookiePersistentStorageType::Text:
-        jar = adoptGRef(soup_cookie_jar_text_new(storagePath.utf8().data(), FALSE));
-        break;
-    case SoupCookiePersistentStorageType::SQLite:
-        jar = adoptGRef(soup_cookie_jar_db_new(storagePath.utf8().data(), FALSE));
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-
-    if (auto* storageSession = m_process.storageSession(sessionID)) {
-        soup_cookie_jar_set_accept_policy(jar.get(), soup_cookie_jar_get_accept_policy(storageSession->cookieStorage()));
-        storageSession->setCookieStorage(jar.get());
-    }
+    if (auto* networkSession = m_process.networkSession(sessionID))
+        static_cast<NetworkSessionSoup&>(*networkSession).setCookiePersistentStorage(storagePath, storageType);
 }
 
 } // namespace WebKit

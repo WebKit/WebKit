@@ -41,7 +41,7 @@ public:
     {
         // Needed to destroy the SoupSession and SoupCookieJar, e.g. to avoid
         // leaking SQLite temporary journaling files.
-        globalNetworkProcess->defaultStorageSession().clearSoupNetworkSession();
+        globalNetworkProcess->destroySession(PAL::SessionID::defaultSessionID());
     }
 };
 

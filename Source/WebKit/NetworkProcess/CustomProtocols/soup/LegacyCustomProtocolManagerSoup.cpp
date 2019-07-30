@@ -23,8 +23,8 @@
 #include "DataReference.h"
 #include "LegacyCustomProtocolManagerMessages.h"
 #include "NetworkProcess.h"
+#include "NetworkSessionSoup.h"
 #include "WebKitSoupRequestInputStream.h"
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
@@ -102,8 +102,8 @@ void LegacyCustomProtocolManager::registerScheme(const String& scheme)
     auto* genericRequestClass = static_cast<SoupRequestClass*>(g_type_class_peek(WEBKIT_TYPE_SOUP_REQUEST_GENERIC));
     ASSERT(genericRequestClass);
     genericRequestClass->schemes = const_cast<const char**>(reinterpret_cast<char**>(m_registeredSchemes->pdata));
-    lastCreatedNetworkProcess()->forEachNetworkStorageSession([](const auto& session) {
-        session.soupNetworkSession().setupCustomProtocols();
+    lastCreatedNetworkProcess()->forEachNetworkSession([](const auto& session) {
+        static_cast<const NetworkSessionSoup&>(session).soupNetworkSession().setupCustomProtocols();
     });
 }
 

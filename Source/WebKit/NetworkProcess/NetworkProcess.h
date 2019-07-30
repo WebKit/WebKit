@@ -166,8 +166,7 @@ public:
     NetworkSession* networkSessionByConnection(IPC::Connection&) const;
     void destroySession(const PAL::SessionID&);
 
-    // Needed for test infrastructure
-    HashMap<PAL::SessionID, std::unique_ptr<NetworkSession>>& networkSessions() { return m_networkSessions; }
+    void forEachNetworkSession(const Function<void(NetworkSession&)>&);
 
     void forEachNetworkStorageSession(const Function<void(WebCore::NetworkStorageSession&)>&);
     WebCore::NetworkStorageSession* storageSession(const PAL::SessionID&) const;

@@ -36,11 +36,9 @@
 
 #include "DeprecatedGlobalSettings.h"
 #include "Logging.h"
-#include "NetworkStorageSession.h"
 #include "ResourceError.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
-#include "SoupNetworkSession.h"
 #include "StorageSessionProvider.h"
 #include "URLSoup.h"
 #include <gio/gio.h>
@@ -87,13 +85,13 @@ Ref<SocketStreamHandleImpl> SocketStreamHandleImpl::create(const URL& url, Socke
     Ref<SocketStreamHandleImpl> socket = adoptRef(*new SocketStreamHandleImpl(url, client, storageSessionProvider));
 
 #if SOUP_CHECK_VERSION(2, 61, 90)
-    auto* networkStorageSession = storageSessionProvider ? storageSessionProvider->storageSession() : nullptr;
-    if (!networkStorageSession)
+    auto* soupSession = storageSessionProvider ? storageSessionProvider->soupSession() : nullptr;
+    if (!soupSession)
         return socket;
 
     auto uri = urlToSoupURI(url);
     Ref<SocketStreamHandle> protectedSocketStreamHandle = socket.copyRef();
-    soup_session_connect_async(networkStorageSession->soupNetworkSession().soupSession(), uri.get(), socket->m_cancellable.get(),
+    soup_session_connect_async(soupSession, uri.get(), socket->m_cancellable.get(),
         url.protocolIs("wss") ? reinterpret_cast<SoupSessionConnectProgressCallback>(connectProgressCallback) : nullptr,
         reinterpret_cast<GAsyncReadyCallback>(connectedCallback), &protectedSocketStreamHandle.leakRef());
 #else

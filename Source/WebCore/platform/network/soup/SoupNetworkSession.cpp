@@ -106,7 +106,7 @@ static AllowedCertificatesMap& allowedCertificates()
     return certificates;
 }
 
-SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID, SoupCookieJar* cookieJar)
+SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID)
     : m_soupSession(adoptGRef(soup_session_new()))
 {
     // Values taken from http://www.browserscope.org/ following
@@ -116,19 +116,12 @@ SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID, SoupCookieJar* 
     static const int maxConnections = 17;
     static const int maxConnectionsPerHost = 6;
 
-    GRefPtr<SoupCookieJar> jar = cookieJar;
-    if (!jar) {
-        jar = adoptGRef(soup_cookie_jar_new());
-        soup_cookie_jar_set_accept_policy(jar.get(), SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY);
-    }
-
     g_object_set(m_soupSession.get(),
         SOUP_SESSION_MAX_CONNS, maxConnections,
         SOUP_SESSION_MAX_CONNS_PER_HOST, maxConnectionsPerHost,
         SOUP_SESSION_TIMEOUT, 0,
         SOUP_SESSION_IDLE_TIMEOUT, 0,
         SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_CONTENT_SNIFFER,
-        SOUP_SESSION_ADD_FEATURE, jar.get(),
         nullptr);
 
     setupCustomProtocols();

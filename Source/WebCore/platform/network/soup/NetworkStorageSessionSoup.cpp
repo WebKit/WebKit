@@ -53,34 +53,17 @@
 
 namespace WebCore {
 
-NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, std::unique_ptr<SoupNetworkSession>&& session)
+NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID)
     : m_sessionID(sessionID)
-    , m_session(WTFMove(session))
+    , m_cookieStorage(adoptGRef(soup_cookie_jar_new()))
 {
-    ASSERT(m_session->cookieJar());
-    g_signal_connect_swapped(m_session->cookieJar(), "changed", G_CALLBACK(cookiesDidChange), this);
+    soup_cookie_jar_set_accept_policy(m_cookieStorage.get(), SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY);
+    g_signal_connect_swapped(m_cookieStorage.get(), "changed", G_CALLBACK(cookiesDidChange), this);
 }
 
 NetworkStorageSession::~NetworkStorageSession()
 {
-    clearSoupNetworkSession();
-}
-
-SoupNetworkSession& NetworkStorageSession::soupNetworkSession() const
-{
-    ASSERT(m_session);
-    return *m_session.get();
-};
-
-void NetworkStorageSession::clearSoupNetworkSession()
-{
-    if (m_session) {
-        ASSERT(m_session->cookieJar());
-        g_signal_handlers_disconnect_matched(m_session->cookieJar(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-    }
-
-    m_session = nullptr;
-    m_cookieObserverHandler = nullptr;
+    g_signal_handlers_disconnect_matched(m_cookieStorage.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 }
 
 void NetworkStorageSession::cookiesDidChange(NetworkStorageSession* session)
@@ -89,25 +72,11 @@ void NetworkStorageSession::cookiesDidChange(NetworkStorageSession* session)
         session->m_cookieObserverHandler();
 }
 
-SoupCookieJar* NetworkStorageSession::cookieStorage() const
+void NetworkStorageSession::setCookieStorage(GRefPtr<SoupCookieJar>&& jar)
 {
-    ASSERT(m_session);
-    ASSERT(m_session->cookieJar());
-    return m_session->cookieJar();
-}
-
-void NetworkStorageSession::setCookieStorage(SoupCookieJar* jar)
-{
-    ASSERT(jar);
-    ASSERT(m_session);
-    ASSERT(m_session->cookieJar());
-
-    if (m_session->cookieJar() == jar)
-        return;
-
-    g_signal_handlers_disconnect_matched(m_session->cookieJar(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-    m_session->setCookieJar(jar);
-    g_signal_connect_swapped(m_session->cookieJar(), "changed", G_CALLBACK(cookiesDidChange), this);
+    g_signal_handlers_disconnect_matched(m_cookieStorage.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+    m_cookieStorage = WTFMove(jar);
+    g_signal_connect_swapped(m_cookieStorage.get(), "changed", G_CALLBACK(cookiesDidChange), this);
 }
 
 void NetworkStorageSession::setCookieObserverHandler(Function<void ()>&& handler)

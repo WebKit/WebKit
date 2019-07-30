@@ -29,7 +29,7 @@
 
 #include "NetworkCache.h"
 #include "NetworkProcessCreationParameters.h"
-#include "NetworkSession.h"
+#include "NetworkSessionSoup.h"
 #include "ResourceCachesToClear.h"
 #include "WebCookieManager.h"
 #include "WebKitCachedResolver.h"
@@ -99,8 +99,8 @@ void NetworkProcess::userPreferredLanguagesChanged(const Vector<String>& languag
 {
     auto acceptLanguages = buildAcceptLanguages(languages);
     SoupNetworkSession::setInitialAcceptLanguages(acceptLanguages);
-    forEachNetworkStorageSession([&acceptLanguages](const auto& session) {
-        session.soupNetworkSession().setAcceptLanguages(acceptLanguages);
+    forEachNetworkSession([&acceptLanguages](const auto& session) {
+        static_cast<const NetworkSessionSoup&>(session).soupNetworkSession().setAcceptLanguages(acceptLanguages);
     });
 }
 
@@ -133,7 +133,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 
 std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::platformCreateDefaultStorageSession() const
 {
-    return std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), std::make_unique<SoupNetworkSession>(PAL::SessionID::defaultSessionID()));
+    return std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
 }
 
 void NetworkProcess::setIgnoreTLSErrors(bool ignoreTLSErrors)
@@ -157,10 +157,10 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
 void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)
 {
     auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    for (auto& session : networkSessions().values()) {
-        if (auto* cache = session->cache())
+    forEachNetworkSession([modifiedSince, &aggregator](NetworkSession& session) {
+        if (auto* cache = session.cache())
             cache->clear(modifiedSince, [aggregator = aggregator.copyRef()] () { });
-    }
+    });
 }
 
 void NetworkProcess::platformTerminate()
@@ -171,8 +171,8 @@ void NetworkProcess::platformTerminate()
 void NetworkProcess::setNetworkProxySettings(const SoupNetworkProxySettings& settings)
 {
     SoupNetworkSession::setProxySettings(settings);
-    forEachNetworkStorageSession([](const auto& session) {
-        session.soupNetworkSession().setupProxy();
+    forEachNetworkSession([](const auto& session) {
+        static_cast<const NetworkSessionSoup&>(session).soupNetworkSession().setupProxy();
     });
 }
 

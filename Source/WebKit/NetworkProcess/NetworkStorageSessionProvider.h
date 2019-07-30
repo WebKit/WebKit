@@ -31,6 +31,10 @@
 #include <pal/SessionID.h>
 #include <wtf/WeakPtr.h>
 
+#if USE(SOUP)
+#include "NetworkSessionSoup.h"
+#endif
+
 namespace WebKit {
 
 class NetworkStorageSessionProvider final : public WebCore::StorageSessionProvider {
@@ -48,6 +52,19 @@ private:
             return m_networkProcess->storageSession(m_sessionID);
         return nullptr;
     }
+
+#if USE(SOUP)
+    SoupSession* soupSession() const final
+    {
+        if (!m_networkProcess)
+            return nullptr;
+
+        if (auto* session = m_networkProcess->networkSession(m_sessionID))
+            return static_cast<NetworkSessionSoup&>(*session).soupSession();
+
+        return nullptr;
+    }
+#endif
 
     WeakPtr<NetworkProcess> m_networkProcess;
     PAL::SessionID m_sessionID;

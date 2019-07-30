@@ -41,13 +41,19 @@ using namespace WebCore;
 
 NetworkSessionSoup::NetworkSessionSoup(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
     : NetworkSession(networkProcess, parameters)
+    , m_networkSession(std::make_unique<SoupNetworkSession>(m_sessionID))
 {
-    networkStorageSession()->setCookieObserverHandler([this] {
-        this->networkProcess().supplement<WebCookieManager>()->notifyCookiesDidChange(m_sessionID);
-    });
+    auto* storageSession = networkStorageSession();
+    ASSERT(storageSession);
 
     if (!parameters.cookiePersistentStoragePath.isEmpty())
-        this->networkProcess().supplement<WebCookieManager>()->setCookiePersistentStorage(m_sessionID, parameters.cookiePersistentStoragePath, parameters.cookiePersistentStorageType);
+        setCookiePersistentStorage(parameters.cookiePersistentStoragePath, parameters.cookiePersistentStorageType);
+    else
+        m_networkSession->setCookieJar(storageSession->cookieStorage());
+
+    storageSession->setCookieObserverHandler([this] {
+        this->networkProcess().supplement<WebCookieManager>()->notifyCookiesDidChange(m_sessionID);
+    });
 }
 
 NetworkSessionSoup::~NetworkSessionSoup()
@@ -58,7 +64,31 @@ NetworkSessionSoup::~NetworkSessionSoup()
 
 SoupSession* NetworkSessionSoup::soupSession() const
 {
-    return networkStorageSession()->soupNetworkSession().soupSession();
+    return m_networkSession->soupSession();
+}
+
+void NetworkSessionSoup::setCookiePersistentStorage(const String& storagePath, SoupCookiePersistentStorageType storageType)
+{
+    auto* storageSession = networkStorageSession();
+    if (!storageSession)
+        return;
+
+    GRefPtr<SoupCookieJar> jar;
+    switch (storageType) {
+    case SoupCookiePersistentStorageType::Text:
+        jar = adoptGRef(soup_cookie_jar_text_new(storagePath.utf8().data(), FALSE));
+        break;
+    case SoupCookiePersistentStorageType::SQLite:
+        jar = adoptGRef(soup_cookie_jar_db_new(storagePath.utf8().data(), FALSE));
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    soup_cookie_jar_set_accept_policy(jar.get(), soup_cookie_jar_get_accept_policy(storageSession->cookieStorage()));
+    storageSession->setCookieStorage(WTFMove(jar));
+
+    m_networkSession->setCookieJar(storageSession->cookieStorage());
 }
 
 void NetworkSessionSoup::clearCredentials()

@@ -49,7 +49,7 @@ struct SoupNetworkProxySettings;
 class SoupNetworkSession {
     WTF_MAKE_NONCOPYABLE(SoupNetworkSession); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit SoupNetworkSession(PAL::SessionID = PAL::SessionID::defaultSessionID(), SoupCookieJar* = nullptr);
+    explicit SoupNetworkSession(PAL::SessionID);
     ~SoupNetworkSession();
 
     SoupSession* soupSession() const { return m_soupSession.get(); }

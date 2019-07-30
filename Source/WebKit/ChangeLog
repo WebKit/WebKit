@@ -1,3 +1,58 @@
+2019-07-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Move SoupNetworkSession ownership from NetworkStorageSession to NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=200076
+
+        Reviewed by Michael Catanzaro.
+
+        NetworkStorageSession should only own the cookie jar, since it's the only thing it handles from the session.
+
+        * NetworkProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        (WebKit::WebCookieManager::setCookiePersistentStorage): Use the network session instead of the storage session
+        to set the peristent cookie storage.
+        * NetworkProcess/CustomProtocols/soup/LegacyCustomProtocolManagerSoup.cpp:
+        (WebKit::LegacyCustomProtocolManager::registerScheme): Iterate network sessions instead of storage sessions to
+        access the SoupNetworkSession.
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated): Use
+        NetworkProcess::forEachNetworkSession() to iterate network sessions.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::lowMemoryHandler): Ditto.
+        (WebKit::NetworkProcess::forEachNetworkSession): Added to iterate network sessions intead of exposing the map
+        that is always used to iterate the sessions.
+        (WebKit::NetworkProcess::switchToNewTestingSession): Use the new NetworkStorageSession constructor API.
+        (WebKit::NetworkProcess::ensureSession): Ditto.
+        (WebKit::NetworkProcess::destroySession): Allow to destroy the default session for soup based ports. This is
+        only called right before process exit to ensure we don't leak network resources like the cookies database.
+        (WebKit::NetworkProcess::setResourceLoadStatisticsEnabled): Use NetworkProcess::forEachNetworkSession() to
+        iterate network sessions.
+        (WebKit::NetworkProcess::fetchWebsiteData): Ditto.
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins): Ditto.
+        (WebKit::NetworkProcess::deleteWebsiteDataForRegistrableDomains): Ditto.
+        (WebKit::NetworkProcess::registrableDomainsWithWebsiteData): Ditto.
+        (WebKit::NetworkProcess::setCacheModel): Ditto.
+        (WebKit::NetworkProcess::actualPrepareToSuspend): Ditto.
+        (WebKit::NetworkProcess::resume): Ditto.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkStorageSessionProvider.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::clearDiskCache): Ditto.
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::clearCacheForAllOrigins): Ditto.
+        * NetworkProcess/soup/NetworkProcessMainSoup.cpp: Destroy the default session before process exists.
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::userPreferredLanguagesChanged): Iterate network sessions instead of storage sessions to
+        access the SoupNetworkSession.
+        (WebKit::NetworkProcess::platformCreateDefaultStorageSession const): Use the new NetworkStorageSession constructor API.
+        (WebKit::NetworkProcess::clearDiskCache): Use NetworkProcess::forEachNetworkSession() to iterate network sessions.
+        (WebKit::NetworkProcess::setNetworkProxySettings): Iterate network sessions instead of storage sessions to
+        access the SoupNetworkSession.
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::NetworkSessionSoup): Create the SoupNetworkSession and setup cookies.
+        (WebKit::NetworkSessionSoup::soupSession const): Return the SoupSession of SoupNetworkSession.
+        (WebKit::NetworkSessionSoup::setCookiePersistentStorage): Setup a new cookie jar.
+        * NetworkProcess/soup/NetworkSessionSoup.h:
+
 2019-07-30  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r247932.

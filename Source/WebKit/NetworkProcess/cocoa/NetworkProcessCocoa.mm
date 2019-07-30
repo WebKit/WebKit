@@ -199,10 +199,10 @@ void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<vo
     auto group = m_clearCacheDispatchGroup;
     dispatch_group_async(group, dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = makeRef(*this), modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
         auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
-        for (auto& session : networkSessions().values()) {
-            if (auto* cache = session->cache())
+        forEachNetworkSession([modifiedSince, &aggregator](NetworkSession& session) {
+            if (auto* cache = session.cache())
                 cache->clear(modifiedSince, [aggregator = aggregator.copyRef()] () { });
-        }
+        });
     }).get());
 }
 
