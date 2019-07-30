@@ -240,12 +240,15 @@ interface UIScriptController {
     attribute object willBeginZoomingCallback;
     attribute object didEndZoomingCallback;
 
+    attribute object willCreateNewPageCallback;
+
     void zoomToScale(double scale, object callback);
 
     void setViewScale(double scale);
     void setMinimumEffectiveWidth(double effectiveWidth);
     void setAllowsViewportShrinkToFit(boolean allows);
 
+    void becomeFirstResponder();
     void resignFirstResponder();
     readonly attribute boolean isPresentingModally;
 

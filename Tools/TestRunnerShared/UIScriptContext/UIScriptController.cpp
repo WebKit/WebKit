@@ -145,6 +145,16 @@ JSValueRef UIScriptController::didEndZoomingCallback() const
     return m_context->callbackWithID(CallbackTypeDidEndZooming);
 }
 
+void UIScriptController::setWillCreateNewPageCallback(JSValueRef callback)
+{
+    m_context->registerCallback(callback, CallbackTypeWillCreateNewPage);
+}
+
+JSValueRef UIScriptController::willCreateNewPageCallback() const
+{
+    return m_context->callbackWithID(CallbackTypeWillCreateNewPage);
+}
+
 void UIScriptController::setDidEndScrollingCallback(JSValueRef callback)
 {
     m_context->registerCallback(callback, CallbackTypeDidEndScrolling);

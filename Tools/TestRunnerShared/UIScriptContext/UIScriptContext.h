@@ -63,6 +63,7 @@ typedef enum  {
     CallbackTypeDidEndFormControlInteraction,
     CallbackTypeDidShowForcePressPreview,
     CallbackTypeDidDismissForcePressPreview,
+    CallbackTypeWillCreateNewPage,
     CallbackTypeNonPersistent = firstNonPersistentCallbackID
 } CallbackType;
 

@@ -91,6 +91,8 @@ public:
     void dumpAdClickAttribution();
     void performCustomMenuAction();
 
+    void willCreateNewPage();
+
 private:
     WKRetainPtr<WKMutableDictionaryRef> createTestSettingsDictionary();
 

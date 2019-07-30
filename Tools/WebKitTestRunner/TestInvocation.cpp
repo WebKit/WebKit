@@ -1860,4 +1860,10 @@ void TestInvocation::done()
     });
 }
 
+void TestInvocation::willCreateNewPage()
+{
+    if (m_UIScriptContext && m_UIScriptContext->callbackWithID(CallbackTypeWillCreateNewPage))
+        m_UIScriptContext->fireCallback(CallbackTypeWillCreateNewPage);
+}
+
 } // namespace WTR

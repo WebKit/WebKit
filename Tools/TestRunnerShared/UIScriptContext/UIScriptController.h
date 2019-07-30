@@ -102,6 +102,7 @@ public:
 
     // View Parenting and Visibility
 
+    virtual void becomeFirstResponder() { notImplemented(); }
     virtual void resignFirstResponder() { notImplemented(); }
 
     virtual void firstResponderSuppressionForWebView(bool) { notImplemented(); }
@@ -269,6 +270,9 @@ public:
 
     virtual void setDidEndZoomingCallback(JSValueRef);
     JSValueRef didEndZoomingCallback() const;
+
+    virtual void setWillCreateNewPageCallback(JSValueRef);
+    JSValueRef willCreateNewPageCallback() const;
 
     virtual void setDidShowKeyboardCallback(JSValueRef);
     JSValueRef didShowKeyboardCallback() const;

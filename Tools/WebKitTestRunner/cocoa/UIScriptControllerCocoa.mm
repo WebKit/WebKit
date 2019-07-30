@@ -56,6 +56,11 @@ void UIScriptControllerCocoa::setMinimumEffectiveWidth(double effectiveWidth)
     webView()._minimumEffectiveDeviceWidth = effectiveWidth;
 }
 
+void UIScriptControllerCocoa::becomeFirstResponder()
+{
+    [webView() becomeFirstResponder];
+}
+
 void UIScriptControllerCocoa::resignFirstResponder()
 {
     [webView() resignFirstResponder];

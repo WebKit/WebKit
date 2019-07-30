@@ -35,6 +35,7 @@ class UIScriptControllerCocoa : public UIScriptController {
 public:
     void setViewScale(double) override;
     void setMinimumEffectiveWidth(double) override;
+    void becomeFirstResponder() override;
     void resignFirstResponder() override;
     void doAsyncTask(JSValueRef) override;
     void setShareSheetCompletesImmediatelyWithResolution(bool) override;
