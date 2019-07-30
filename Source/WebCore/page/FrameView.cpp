@@ -1965,12 +1965,18 @@ void FrameView::viewportContentsChanged()
     });
 }
 
-IntRect FrameView::visualViewportRectExpandedByContentInsets() const
+IntRect FrameView::viewRectExpandedByContentInsets() const
 {
-    FloatRect unobscuredContentRect = this->visualViewportRect();
+    FloatRect viewRect;
+    if (delegatesScrolling() && platformWidget())
+        viewRect = unobscuredContentRect();
+    else
+        viewRect = visualViewportRect();
+
     if (auto* page = frame().page())
-        unobscuredContentRect.expand(page->contentInsets());
-    return IntRect(unobscuredContentRect);
+        viewRect.expand(page->contentInsets());
+
+    return IntRect(viewRect);
 }
 
 bool FrameView::fixedElementsLayoutRelativeToFrame() const

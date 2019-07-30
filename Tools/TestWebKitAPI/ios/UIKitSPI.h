@@ -42,6 +42,11 @@
 #import <UIKit/UIWKTextInteractionAssistant.h>
 #import <UIKit/UIWebFormAccessory.h>
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+#import <UIKit/UIWebBrowserView.h>
+#import <UIKit/UIWebView_Private.h>
+IGNORE_WARNINGS_END
+
 #if PLATFORM(IOS)
 @protocol UIDragSession;
 @class UIDragInteraction;
@@ -154,6 +159,17 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @protocol UIWKInteractionViewProtocol
 - (void)requestAutocorrectionRectsForString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForInput))completionHandler;
 @end
+
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+
+@interface UIWebBrowserView : UIView <UIKeyInput>
+@end
+
+@interface UIWebView (Private)
+- (UIWebBrowserView *)_browserView;
+@end
+
+IGNORE_WARNINGS_END
 
 #endif
 
