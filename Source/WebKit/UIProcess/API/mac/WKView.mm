@@ -71,9 +71,9 @@
 
 #endif
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 @implementation WKView
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup
 {
@@ -177,9 +177,9 @@ IGNORE_WARNINGS_END
     _data->_impl->setFrameSize(NSSizeToCGSize(size));
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)renewGState
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     _data->_impl->renewGState();
     [super renewGState];
@@ -692,9 +692,9 @@ Some other editing-related methods still unimplemented:
 }
 
 #if ENABLE(DRAG_SUPPORT)
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)draggedImage:(NSImage *)image endedAt:(NSPoint)endPoint operation:(NSDragOperation)operation
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     _data->_impl->draggedImage(image, NSPointToCGPoint(endPoint), operation);
 }
@@ -785,9 +785,9 @@ IGNORE_WARNINGS_END
     return _data->_impl->accessibilityFocusedUIElement();
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (BOOL)accessibilityIsIgnored
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     return _data->_impl->accessibilityIsIgnored();
 }
@@ -797,23 +797,23 @@ IGNORE_WARNINGS_END
     return _data->_impl->accessibilityHitTest(NSPointToCGPoint(point));
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)accessibilityAttributeValue:(NSString *)attribute
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     return _data->_impl->accessibilityAttributeValue(attribute);
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)accessibilityAttributeValue:(NSString *)attribute forParameter:(id)parameter
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     return _data->_impl->accessibilityAttributeValue(attribute, parameter);
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray<NSString *> *)accessibilityParameterizedAttributeNames
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     NSArray<NSString *> *names = [super accessibilityParameterizedAttributeNames];
     return [names arrayByAddingObject:@"AXConvertRelativeFrame"];
@@ -884,9 +884,9 @@ IGNORE_WARNINGS_END
     _data->_impl->provideDataForPasteboard(pasteboard, type);
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     return _data->_impl->namesOfPromisedFilesDroppedAtDestination(dropDestination);
 }
@@ -1139,9 +1139,9 @@ IGNORE_WARNINGS_END
 @end
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 @implementation WKView (Private)
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)saveBackForwardSnapshotForCurrentItem
 {
