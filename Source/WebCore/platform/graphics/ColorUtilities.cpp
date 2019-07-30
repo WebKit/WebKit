@@ -104,12 +104,25 @@ static float sRGBToLinearColorComponentForLuminance(float c)
     return clampTo<float>(std::pow((c + 0.055f) / 1.055f, 2.4f), 0, 1);
 }
 
-float luminance(const FloatComponents& sRGBCompontents)
+float luminance(const FloatComponents& sRGBComponents)
 {
     // Values from https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
-    return 0.2126f * sRGBToLinearColorComponentForLuminance(sRGBCompontents.components[0])
-        + 0.7152f * sRGBToLinearColorComponentForLuminance(sRGBCompontents.components[1])
-        + 0.0722f * sRGBToLinearColorComponentForLuminance(sRGBCompontents.components[2]);
+    return 0.2126f * sRGBToLinearColorComponentForLuminance(sRGBComponents.components[0])
+        + 0.7152f * sRGBToLinearColorComponentForLuminance(sRGBComponents.components[1])
+        + 0.0722f * sRGBToLinearColorComponentForLuminance(sRGBComponents.components[2]);
+}
+
+float contrastRatio(const FloatComponents& componentsA, const FloatComponents& componentsB)
+{
+    // Uses the WCAG 2.0 definition of contrast ratio.
+    // https://www.w3.org/TR/WCAG20/#contrast-ratiodef
+    float lighterLuminance = luminance(componentsA);
+    float darkerLuminance = luminance(componentsB);
+
+    if (lighterLuminance < darkerLuminance)
+        std::swap(lighterLuminance, darkerLuminance);
+
+    return (lighterLuminance + 0.05) / (darkerLuminance + 0.05);
 }
 
 FloatComponents sRGBToHSL(const FloatComponents& sRGBColor)

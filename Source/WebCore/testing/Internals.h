@@ -836,6 +836,7 @@ public:
     
     struct TextIndicatorInfo {
         RefPtr<DOMRectReadOnly> textBoundingRectInRootViewCoordinates;
+        RefPtr<DOMRectList> textRectsInBoundingRectCoordinates;
         
         TextIndicatorInfo();
         TextIndicatorInfo(const WebCore::TextIndicatorData&);
@@ -844,12 +845,18 @@ public:
         
     struct TextIndicatorOptions {
         bool useBoundingRectAndPaintAllContentForComplexRanges { false };
+        bool computeEstimatedBackgroundColor { false };
+        bool respectTextColor { false };
         
         WebCore::TextIndicatorOptions core()
         {
             WebCore::TextIndicatorOptions options = 0;
             if (useBoundingRectAndPaintAllContentForComplexRanges)
                 options = options | TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges;
+            if (computeEstimatedBackgroundColor)
+                options = options | TextIndicatorOptionComputeEstimatedBackgroundColor;
+            if (respectTextColor)
+                options = options | TextIndicatorOptionRespectTextColor;
             return options;
         }
     };
