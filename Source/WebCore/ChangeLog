@@ -1,3 +1,28 @@
+2019-07-29  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Replace Vectors with HashSets for tracking resources used by GPUCommandBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=200200
+
+        Reviewed by Myles C. Maxfield.
+
+        Resources bound to a command buffer or bind group only need be tracked once rather than once per sub-view. 
+        This patch cuts GPUQueue.submit validation from 2-12 ms down to ~0 when drawing 12000 triangles in Animometer.
+
+        Covered by existing tests; no behavior change expected.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp: Removed unused variable.
+        * platform/graphics/gpu/GPUBindGroup.h:
+        (WebCore::GPUBindGroup::boundBuffers const):
+        (WebCore::GPUBindGroup::boundTextures const):
+        * platform/graphics/gpu/GPUCommandBuffer.h:
+        (WebCore::GPUCommandBuffer::usedBuffers const):
+        (WebCore::GPUCommandBuffer::usedTextures const):
+        (WebCore::GPUCommandBuffer::useBuffer):
+        (WebCore::GPUCommandBuffer::useTexture):
+        * platform/graphics/gpu/cocoa/GPUBindGroupMetal.mm:
+        (WebCore::GPUBindGroup::tryCreate):
+        (WebCore::GPUBindGroup::GPUBindGroup):
+
 2019-07-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Introduce Box::establishesTableFormattingContext

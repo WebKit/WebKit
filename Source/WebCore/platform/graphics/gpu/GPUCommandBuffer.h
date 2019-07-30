@@ -30,10 +30,10 @@
 #include "GPUBuffer.h"
 #include "GPUOrigin3D.h"
 #include "GPUTexture.h"
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
 
 OBJC_PROTOCOL(MTLBlitCommandEncoder);
 OBJC_PROTOCOL(MTLCommandBuffer);
@@ -84,8 +84,8 @@ public:
     static RefPtr<GPUCommandBuffer> tryCreate(const GPUDevice&);
 
     PlatformCommandBuffer* platformCommandBuffer() const { return m_platformCommandBuffer.get(); }
-    const Vector<Ref<GPUBuffer>>& usedBuffers() const { return m_usedBuffers; }
-    const Vector<Ref<GPUTexture>>& usedTextures() const { return m_usedTextures; }
+    const HashSet<Ref<GPUBuffer>>& usedBuffers() const { return m_usedBuffers; }
+    const HashSet<Ref<GPUTexture>>& usedTextures() const { return m_usedTextures; }
     bool isEncodingPass() const { return m_isEncodingPass; }
 
     void setIsEncodingPass(bool isEncoding) { m_isEncodingPass = isEncoding; }
@@ -99,15 +99,15 @@ public:
     void copyTextureToBuffer(GPUTextureCopyView&&, GPUBufferCopyView&&, const GPUExtent3D&);
     void copyTextureToTexture(GPUTextureCopyView&&, GPUTextureCopyView&&, const GPUExtent3D&);
 
-    void useBuffer(Ref<GPUBuffer>&& buffer) { m_usedBuffers.append(WTFMove(buffer)); }
-    void useTexture(Ref<GPUTexture>&& texture) { m_usedTextures.append(WTFMove(texture)); }
+    void useBuffer(Ref<GPUBuffer>&& buffer) { m_usedBuffers.addVoid(WTFMove(buffer)); }
+    void useTexture(Ref<GPUTexture>&& texture) { m_usedTextures.addVoid(WTFMove(texture)); }
 
 private:
     GPUCommandBuffer(PlatformCommandBufferSmartPtr&&);
 
     PlatformCommandBufferSmartPtr m_platformCommandBuffer;
-    Vector<Ref<GPUBuffer>> m_usedBuffers;
-    Vector<Ref<GPUTexture>> m_usedTextures;
+    HashSet<Ref<GPUBuffer>> m_usedBuffers;
+    HashSet<Ref<GPUTexture>> m_usedTextures;
     bool m_isEncodingPass { false };
 #if USE(METAL)
     MTLBlitCommandEncoder *blitEncoder() const;

@@ -29,10 +29,10 @@
 
 #include "GPUBuffer.h"
 #include "GPUTexture.h"
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
 
 OBJC_PROTOCOL(MTLBuffer);
 
@@ -49,19 +49,19 @@ public:
     const MTLBuffer *fragmentArgsBuffer() const { return m_fragmentArgsBuffer.get(); }
     const MTLBuffer *computeArgsBuffer() const { return m_computeArgsBuffer.get(); }
 #endif
-    const Vector<Ref<GPUBuffer>>& boundBuffers() const { return m_boundBuffers; }
-    const Vector<Ref<GPUTexture>>& boundTextures() const { return m_boundTextures; }
+    const HashSet<Ref<GPUBuffer>>& boundBuffers() const { return m_boundBuffers; }
+    const HashSet<Ref<GPUTexture>>& boundTextures() const { return m_boundTextures; }
 
 private:
 #if USE(METAL)
-    GPUBindGroup(RetainPtr<MTLBuffer>&& vertexBuffer, RetainPtr<MTLBuffer>&& fragmentBuffer, RetainPtr<MTLBuffer>&& computeArgsBuffer, Vector<Ref<GPUBuffer>>&&, Vector<Ref<GPUTexture>>&&);
+    GPUBindGroup(RetainPtr<MTLBuffer>&& vertexBuffer, RetainPtr<MTLBuffer>&& fragmentBuffer, RetainPtr<MTLBuffer>&& computeArgsBuffer, HashSet<Ref<GPUBuffer>>&&, HashSet<Ref<GPUTexture>>&&);
     
     RetainPtr<MTLBuffer> m_vertexArgsBuffer;
     RetainPtr<MTLBuffer> m_fragmentArgsBuffer;
     RetainPtr<MTLBuffer> m_computeArgsBuffer;
 #endif
-    Vector<Ref<GPUBuffer>> m_boundBuffers;
-    Vector<Ref<GPUTexture>> m_boundTextures;
+    HashSet<Ref<GPUBuffer>> m_boundBuffers;
+    HashSet<Ref<GPUTexture>> m_boundTextures;
 };
 
 } // namespace WebCore

@@ -160,8 +160,8 @@ RefPtr<GPUBindGroup> GPUBindGroup::tryCreate(const GPUBindGroupDescriptor& descr
         return nullptr;
     }
     
-    Vector<Ref<GPUBuffer>> boundBuffers;
-    Vector<Ref<GPUTexture>> boundTextures;
+    HashSet<Ref<GPUBuffer>> boundBuffers;
+    HashSet<Ref<GPUTexture>> boundTextures;
 
     // Set each resource on each MTLArgumentEncoder it should be visible on.
     const auto& layoutBindingsMap = descriptor.layout->bindingsMap();
@@ -203,7 +203,7 @@ RefPtr<GPUBindGroup> GPUBindGroup::tryCreate(const GPUBindGroupDescriptor& descr
                 setBufferOnEncoder(fragmentEncoder, *bufferResource, layoutBinding.internalName, internalLengthName);
             if (isForCompute)
                 setBufferOnEncoder(computeEncoder, *bufferResource, layoutBinding.internalName, internalLengthName);
-            boundBuffers.append(bufferResource->buffer.copyRef());
+            boundBuffers.addVoid(bufferResource->buffer.copyRef());
             return true;
         };
 
@@ -232,7 +232,7 @@ RefPtr<GPUBindGroup> GPUBindGroup::tryCreate(const GPUBindGroupDescriptor& descr
                 setTextureOnEncoder(fragmentEncoder, textureResource->platformTexture(), layoutBinding.internalName);
             if (isForCompute)
                 setTextureOnEncoder(computeEncoder, textureResource->platformTexture(), layoutBinding.internalName);
-            boundTextures.append(textureResource.releaseNonNull());
+            boundTextures.addVoid(textureResource.releaseNonNull());
             return true;
         }, [&](GPUBindGroupLayout::StorageBuffer& storageBuffer) -> bool {
             return handleBuffer(storageBuffer.internalLengthName);
@@ -246,7 +246,7 @@ RefPtr<GPUBindGroup> GPUBindGroup::tryCreate(const GPUBindGroupDescriptor& descr
     return adoptRef(new GPUBindGroup(WTFMove(vertexArgsBuffer), WTFMove(fragmentArgsBuffer), WTFMove(computeArgsBuffer), WTFMove(boundBuffers), WTFMove(boundTextures)));
 }
     
-GPUBindGroup::GPUBindGroup(RetainPtr<MTLBuffer>&& vertexBuffer, RetainPtr<MTLBuffer>&& fragmentBuffer, RetainPtr<MTLBuffer>&& computeBuffer, Vector<Ref<GPUBuffer>>&& buffers, Vector<Ref<GPUTexture>>&& textures)
+GPUBindGroup::GPUBindGroup(RetainPtr<MTLBuffer>&& vertexBuffer, RetainPtr<MTLBuffer>&& fragmentBuffer, RetainPtr<MTLBuffer>&& computeBuffer, HashSet<Ref<GPUBuffer>>&& buffers, HashSet<Ref<GPUTexture>>&& textures)
     : m_vertexArgsBuffer(WTFMove(vertexBuffer))
     , m_fragmentArgsBuffer(WTFMove(fragmentBuffer))
     , m_computeArgsBuffer(WTFMove(computeBuffer))
