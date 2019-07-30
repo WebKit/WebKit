@@ -46,8 +46,9 @@ private:
 
     // IPC::Connection::WorkQueueMessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
-    void secItemRequest(const SecItemRequestData&, CompletionHandler<void(Optional<SecItemResponseData>&&)>&&);
+    void secItemRequest(const SecItemRequestData&, CompletionHandler<void(SecItemResponseData&&)>&&);
 
     Ref<WorkQueue> m_queue;
 };

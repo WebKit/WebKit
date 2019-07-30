@@ -64,22 +64,32 @@ static WeakPtr<NetworkProcess>& globalNetworkProcess()
     return networkProcess.get();
 }
 
+static WorkQueue& workQueue()
+{
+    static WorkQueue* workQueue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        workQueue = &WorkQueue::create("com.apple.WebKit.SecItemShim").leakRef();
+
+    });
+
+    return *workQueue;
+}
+
 static Optional<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
 {
+    if (!globalNetworkProcess())
+        return WTF::nullopt;
+
     Optional<SecItemResponseData> response;
 
     BinarySemaphore semaphore;
-    RunLoop::main().dispatch([&] {
-        if (!globalNetworkProcess()) {
-            semaphore.signal();
-            return;
-        }
-        globalNetworkProcess()->parentProcessConnection()->sendWithAsyncReply(Messages::SecItemShimProxy::SecItemRequest(SecItemRequestData(requestType, query, attributesToMatch)), [&](auto reply) {
-            if (reply)
-                response = WTFMove(*reply);
 
-            semaphore.signal();
-        });
+    globalNetworkProcess()->parentProcessConnection()->sendWithReply(Messages::SecItemShimProxy::SecItemRequest(SecItemRequestData(requestType, query, attributesToMatch)), 0, workQueue(), [&response, &semaphore](auto reply) {
+        if (reply)
+            response = WTFMove(std::get<0>(*reply));
+
+        semaphore.signal();
     });
 
     semaphore.wait();
