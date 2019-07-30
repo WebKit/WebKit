@@ -67,7 +67,7 @@ platform/generic/ScrollAnimatorGeneric.cpp
 
 platform/graphics/GLContext.cpp @no-unify
 platform/graphics/GraphicsContext3DPrivate.cpp
-platform/graphics/PlatformDisplay.cpp
+platform/graphics/PlatformDisplay.cpp @no-unify
 
 platform/graphics/cairo/BackingStoreBackendCairoX11.cpp @no-unify
 

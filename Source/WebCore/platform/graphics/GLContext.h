@@ -21,6 +21,7 @@
 #define GLContext_h
 
 #include "GraphicsContext3D.h"
+#include "IntSize.h"
 #include "PlatformDisplay.h"
 #include <wtf/Noncopyable.h>
 

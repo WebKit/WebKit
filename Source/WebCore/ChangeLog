@@ -1,3 +1,16 @@
+2019-07-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Compilation errors when GL is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=200223
+
+        Unreviewed, keep trying to fix build with -DENABLE_OPENGL=OFF.
+
+        The previous commit was sufficient for the 2.24 branch, but on trunk there are more
+        problems. This doesn't solve all of them, but it gets us closer.
+
+        * SourcesGTK.txt:
+        * platform/graphics/GLContext.h:
+
 2019-07-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Move SoupNetworkSession ownership from NetworkStorageSession to NetworkSession
