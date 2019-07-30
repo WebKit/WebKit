@@ -74,6 +74,7 @@ private:
 
 #if ENABLE(TOUCH_EVENTS)
     bool isAmazon() const;
+    bool isGoogleMaps() const;
 #endif
 
     WeakPtr<Document> m_document;
