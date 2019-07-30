@@ -174,17 +174,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)webView:(WKWebView *)webView contextMenuConfigurationForElement:(WKContextMenuElementInfo *)elementInfo completionHandler:(void (^)(UIContextMenuConfiguration * _Nullable configuration))completionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 /**
- * @abstract Called when the context menu configured by the UIContextMenuConfiguration from
- * webView:contextMenuConfigurationForElement:completionHandler: is committed.
- *
- * @param webView The web view invoking the delegate method.
- * @param elementInfo The elementInfo for the element the user is touching.
- * @param animator The animator to use for the commit animation.
- */
-
-- (void)webView:(WKWebView *)webView contextMenuForElement:(WKContextMenuElementInfo *)elementInfo willCommitWithAnimator:(id<UIContextMenuInteractionCommitAnimating>)animator WK_API_AVAILABLE(ios(WK_IOS_TBA));
-
-/**
  * @abstract Called when the context menu will be presented.
  *
  * @param webView The web view invoking the delegate method.
@@ -194,7 +183,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)webView:(WKWebView *)webView contextMenuWillPresentForElement:(WKContextMenuElementInfo *)elementInfo WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 /**
- * @abstract Called when the context menu ends.
+ * @abstract Called when the context menu configured by the UIContextMenuConfiguration from
+ * webView:contextMenuConfigurationForElement:completionHandler: is committed. That is, when
+ * the user has selected the view provided in the UIContextMenuContentPreviewProvider.
+ *
+ * @param webView The web view invoking the delegate method.
+ * @param elementInfo The elementInfo for the element the user is touching.
+ * @param animator The animator to use for the commit animation.
+ */
+
+- (void)webView:(WKWebView *)webView contextMenuForElement:(WKContextMenuElementInfo *)elementInfo willCommitWithAnimator:(id <UIContextMenuInteractionCommitAnimating>)animator WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
+/**
+ * @abstract Called when the context menu ends, either by being dismissed or when a menu action is taken.
  *
  * @param webView The web view invoking the delegate method.
  * @param elementInfo The elementInfo for the element the user is touching.
