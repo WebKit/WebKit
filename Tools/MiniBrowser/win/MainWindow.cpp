@@ -429,9 +429,19 @@ INT_PTR CALLBACK MainWindow::customUserAgentDialogProc(HWND hDlg, UINT message, 
     return (INT_PTR)FALSE;
 }
 
-void MainWindow::loadURL(BSTR url)
+void MainWindow::loadURL(std::wstring url)
 {
-    if (FAILED(m_browserWindow->loadURL(url)))
+    if (::PathFileExists(url.c_str()) || ::PathIsUNC(url.c_str())) {
+        wchar_t fileURL[INTERNET_MAX_URL_LENGTH];
+        DWORD fileURLLength = _countof(fileURL);
+
+        if (SUCCEEDED(::UrlCreateFromPath(url.c_str(), fileURL, &fileURLLength, 0)))
+            url = fileURL;
+    }
+    if (url.find(L"://") == url.npos)
+        url = L"http://" + url;
+
+    if (FAILED(m_browserWindow->loadURL(_bstr_t(url.c_str()))))
         return;
 
     SetFocus(m_browserWindow->hwnd());
@@ -442,8 +452,7 @@ void MainWindow::onURLBarEnter()
     wchar_t strPtr[INTERNET_MAX_URL_LENGTH];
     GetWindowText(m_hURLBarWnd, strPtr, INTERNET_MAX_URL_LENGTH);
     strPtr[INTERNET_MAX_URL_LENGTH - 1] = 0;
-    _bstr_t bstr(strPtr);
-    loadURL(bstr.GetBSTR());
+    loadURL(strPtr);
 }
 
 void MainWindow::updateDeviceScaleFactor()

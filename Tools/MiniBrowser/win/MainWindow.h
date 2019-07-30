@@ -44,7 +44,7 @@ public:
     HWND hwnd() const { return m_hMainWnd; }
     BrowserWindow* browserWindow() const { return m_browserWindow.get(); }
 
-    void loadURL(BSTR url);
+    void loadURL(std::wstring);
     
 private:
     static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
