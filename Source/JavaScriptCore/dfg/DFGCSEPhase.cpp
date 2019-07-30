@@ -136,7 +136,7 @@ public:
         return result;
     }
 
-    void clobber(AbstractHeap heap)
+    void clobber(AbstractHeap heap, bool clobberConservatively)
     {
         switch (heap.kind()) {
         case World: {
@@ -149,15 +149,45 @@ public:
             ASSERT(!heap.payload().isTop());
             ASSERT(heap.payload().value() == heap.payload().value32());
             m_abstractHeapStackMap.remove(heap.payload().value32());
-            clobber(m_fallbackStackMap, heap);
+            if (clobberConservatively)
+                m_fallbackStackMap.clear();
+            else
+                clobber(m_fallbackStackMap, heap);
             break;
         }
         default:
-            clobber(m_heapMap, heap);
+            if (clobberConservatively)
+                m_heapMap.clear();
+            else
+                clobber(m_heapMap, heap);
             break;
         }
 #if !defined(NDEBUG)
-        m_debugImpureData.removeIf([heap](const HashMap<HeapLocation, LazyNode>::KeyValuePairType& pair) -> bool {
+        m_debugImpureData.removeIf([heap, clobberConservatively, this](const HashMap<HeapLocation, LazyNode>::KeyValuePairType& pair) -> bool {
+            switch (heap.kind()) {
+            case World:
+            case SideState:
+                break;
+            case Stack: {
+                if (!clobberConservatively)
+                    break;
+                if (pair.key.heap().kind() == Stack) {
+                    auto iterator = m_abstractHeapStackMap.find(pair.key.heap().payload().value32());
+                    if (iterator != m_abstractHeapStackMap.end() && iterator->value->key == pair.key)
+                        return false;
+                    return true;
+                }
+                break;
+            }
+            default: {
+                if (!clobberConservatively)
+                    break;
+                AbstractHeapKind kind = pair.key.heap().kind();
+                if (kind != World && kind != SideState && kind != Stack)
+                    return true;
+                break;
+            }
+            }
             return heap.overlaps(pair.key.heap());
         });
         ASSERT(m_debugImpureData.size()
@@ -284,6 +314,7 @@ public:
         : Phase(graph, "local common subexpression elimination")
         , m_smallBlock(graph)
         , m_largeBlock(graph)
+        , m_hugeBlock(graph)
     {
     }
     
@@ -303,8 +334,10 @@ public:
             
             if (block->size() <= SmallMaps::capacity)
                 changed |= m_smallBlock.run(block);
-            else
+            else if (block->size() <= Options::maxDFGNodesInBasicBlockForPreciseAnalysis())
                 changed |= m_largeBlock.run(block);
+            else
+                changed |= m_hugeBlock.run(block);
         }
         
         return changed;
@@ -400,7 +433,8 @@ private:
     
         void write(AbstractHeap heap)
         {
-            m_impureMap.clobber(heap);
+            bool clobberConservatively = false;
+            m_impureMap.clobber(heap, clobberConservatively);
         }
     
         Node* addPure(PureValue value, Node* node)
@@ -416,6 +450,52 @@ private:
             return m_impureMap.get(location);
         }
     
+        LazyNode addImpure(const HeapLocation& location, const LazyNode& node)
+        {
+            if (const ImpureDataSlot* slot = m_impureMap.add(location, node))
+                return slot->value;
+            return LazyNode();
+        }
+
+    private:
+        HashMap<PureValue, Node*> m_pureMap;
+        ImpureMap m_impureMap;
+    };
+
+    // This is used only for huge basic blocks. Our usual CSE is quadratic complexity for # of DFG nodes in a basic block.
+    // HugeMaps model results conservatively to avoid an O(N^2) algorithm. In particular, we clear all the slots of the specified heap kind
+    // in ImpureMap instead of iterating slots and removing a matched slot. This change makes the complexity O(N).
+    // FIXME: We can make LargeMap O(N) without introducing conservative behavior if we track clobbering by hierarchical epochs.
+    // https://bugs.webkit.org/show_bug.cgi?id=200014
+    class HugeMaps {
+    public:
+        HugeMaps() = default;
+
+        void clear()
+        {
+            m_pureMap.clear();
+            m_impureMap.clear();
+        }
+
+        void write(AbstractHeap heap)
+        {
+            bool clobberConservatively = true;
+            m_impureMap.clobber(heap, clobberConservatively);
+        }
+
+        Node* addPure(PureValue value, Node* node)
+        {
+            auto result = m_pureMap.add(value, node);
+            if (result.isNewEntry)
+                return nullptr;
+            return result.iterator->value;
+        }
+
+        LazyNode findReplacement(HeapLocation location)
+        {
+            return m_impureMap.get(location);
+        }
+
         LazyNode addImpure(const HeapLocation& location, const LazyNode& node)
         {
             if (const ImpureDataSlot* slot = m_impureMap.add(location, node))
@@ -581,6 +661,7 @@ private:
 
     BlockCSE<SmallMaps> m_smallBlock;
     BlockCSE<LargeMaps> m_largeBlock;
+    BlockCSE<HugeMaps> m_hugeBlock;
 };
 
 class GlobalCSEPhase : public Phase {
@@ -668,7 +749,8 @@ public:
     
     void write(AbstractHeap heap)
     {
-        m_impureData->availableAtTail.clobber(heap);
+        bool clobberConservatively = false;
+        m_impureData->availableAtTail.clobber(heap, clobberConservatively);
         m_writesSoFar.add(heap);
     }
     
