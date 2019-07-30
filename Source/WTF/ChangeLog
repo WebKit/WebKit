@@ -1,3 +1,19 @@
+2019-07-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fix CRASH_WITH_INFO() so that it doesn't complain about unused parameters on non Clang / MSVC compilers.
+        https://bugs.webkit.org/show_bug.cgi?id=200243
+
+        Reviewed by Mark Lam.
+
+        For GCC, we'll implement WTFCrashWithInfo as a function rather than a macro. To use
+        ##__VA_ARGS we would need to enable GNU extensions, and don't want to do that. The proper
+        solution, format __VA_OPT__(,) __VA_ARGS__, requires C++20. So just use an inline function
+        for now as a workaround.
+
+        * wtf/Assertions.h:
+        (CRASH_WITH_INFO):
+        (CRASH_WITH_SECURITY_IMPLICATION_AND_INFO):
+
 2019-07-25  Dean Jackson  <dino@apple.com>
 
         Add helper for ignoring deprecated implementation warnings

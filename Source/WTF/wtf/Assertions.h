@@ -589,8 +589,8 @@ inline void compilerFenceForCrash()
 }
 
 #ifndef CRASH_WITH_INFO
-// This is useful if you are going to stuff data into registers before crashing. Like the crashWithInfo functions below...
-// GCC doesn't like the ##__VA_ARGS__ here since this macro is called from another macro so we just CRASH instead there.
+// This is useful if you are going to stuff data into registers before crashing, like the
+// crashWithInfo functions below.
 #if COMPILER(CLANG) || COMPILER(MSVC)
 #define CRASH_WITH_INFO(...) do { \
         WTF::isIntegralType(__VA_ARGS__); \
@@ -598,7 +598,24 @@ inline void compilerFenceForCrash()
         WTFCrashWithInfo(__LINE__, __FILE__, WTF_PRETTY_FUNCTION, __COUNTER__, ##__VA_ARGS__); \
     } while (false)
 #else
-#define CRASH_WITH_INFO(...) CRASH()
+// GCC does not allow ##__VA_ARGS__ unless GNU extensions are enabled (--std=gnu++NN instead of
+// --std=c++NN) and I think we don't want that, so we'll have a fallback path for GCC. Obviously
+// this will not actually succeed at getting the desired info into registers before crashing, but
+// it's just a fallback anyway.
+//
+// FIXME: When we enable C++20, we should replace ##__VA_ARGS__ with format __VA_OPT__(,) __VA_ARGS__
+// so that we can remove this fallback.
+inline NO_RETURN_DUE_TO_CRASH void CRASH_WITH_INFO(...)
+{
+    CRASH();
+}
+
+// We must define this here because CRASH_WITH_INFO() is not defined as a macro.
+// FIXME: Remove this when upgrading to C++20.
+inline NO_RETURN_DUE_TO_CRASH void CRASH_WITH_SECURITY_IMPLICATION_AND_INFO(...)
+{
+    CRASH();
+}
 #endif
 #endif // CRASH_WITH_INFO
 
