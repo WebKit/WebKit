@@ -34,6 +34,7 @@
 #include <string>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringHash.h>
 
 namespace TestWebKitAPI {
@@ -1035,6 +1036,39 @@ TEST(WTF_HashMap, Random_IsEvenlyDistributed)
     ASSERT_EQ(zeros + ones, 1000u);
     ASSERT_LE(zeros, 600u);
     ASSERT_LE(ones, 600u);
+}
+
+TEST(WTF_HashMap, ReserveInitialCapacity)
+{
+    HashMap<String, String> map;
+    EXPECT_EQ(0u, map.size());
+    map.reserveInitialCapacity(9999);
+    EXPECT_EQ(0u, map.size());
+    for (int i = 0; i < 9999; ++i)
+        map.add(makeString("foo", i), makeString("bar", i));
+    EXPECT_EQ(9999u, map.size());
+    EXPECT_TRUE(map.contains("foo3"_str));
+    EXPECT_STREQ("bar3", map.get("foo3"_str).utf8().data());
+    for (int i = 0; i < 9999; ++i)
+        map.add(makeString("excess", i), makeString("baz", i));
+    EXPECT_EQ(9999u + 9999u, map.size());
+    for (int i = 0; i < 9999; ++i)
+        EXPECT_TRUE(map.remove(makeString("foo", i)));
+    EXPECT_EQ(9999u, map.size());
+    EXPECT_STREQ("baz3", map.get("excess3"_str).utf8().data());
+    for (int i = 0; i < 9999; ++i)
+        EXPECT_TRUE(map.remove(makeString("excess", i)));
+    EXPECT_EQ(0u, map.size());
+    
+    HashMap<String, String> map2;
+    map2.reserveInitialCapacity(9999);
+    EXPECT_FALSE(map2.remove("foo1"_s));
+    for (int i = 0; i < 2000; ++i)
+        map2.add(makeString("foo", i), makeString("bar", i));
+    EXPECT_EQ(2000u, map2.size());
+    for (int i = 0; i < 2000; ++i)
+        EXPECT_TRUE(map2.remove(makeString("foo", i)));
+    EXPECT_EQ(0u, map2.size());
 }
 
 TEST(WTF_HashMap, Random_IsEvenlyDistributedAfterRemove)

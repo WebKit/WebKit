@@ -398,6 +398,20 @@ namespace WTF {
         unsigned capacity() const { return m_tableSize; }
         bool isEmpty() const { return !m_keyCount; }
 
+        void reserveInitialCapacity(unsigned keyCount)
+        {
+            ASSERT(!m_table);
+            ASSERT(!m_tableSize);
+            ASSERT(!m_deletedCount);
+
+            unsigned minimumTableSize = KeyTraits::minimumTableSize;
+            unsigned newTableSize = std::max(minimumTableSize, computeBestTableSize(keyCount));
+
+            m_tableSize = newTableSize;
+            m_tableSizeMask = newTableSize - 1;
+            m_table = allocateTable(newTableSize);
+        }
+
         AddResult add(const ValueType& value) { return add<IdentityTranslatorType>(Extractor::extract(value), value); }
         AddResult add(ValueType&& value) { return add<IdentityTranslatorType>(Extractor::extract(value), WTFMove(value)); }
 
