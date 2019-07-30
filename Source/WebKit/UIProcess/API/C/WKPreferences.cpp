@@ -1210,6 +1210,16 @@ bool WKPreferencesGetTextAutosizingEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->textAutosizingEnabled();
 }
 
+void WKPreferencesSetTextAutosizingUsesIdempotentMode(WKPreferencesRef preferencesRef, bool textAutosizingUsesIdempotentModeEnabled)
+{
+    toImpl(preferencesRef)->setTextAutosizingUsesIdempotentMode(textAutosizingUsesIdempotentModeEnabled);
+}
+
+bool WKPreferencesGetTextAutosizingUsesIdempotentMode(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->textAutosizingUsesIdempotentMode();
+}
+
 void WKPreferencesSetAggressiveTileRetentionEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setAggressiveTileRetentionEnabled(enabled);

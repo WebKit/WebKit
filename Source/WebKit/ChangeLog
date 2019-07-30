@@ -1,5 +1,53 @@
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247780. rdar://problem/53647618
+
+    ASSERTION FAILED: settings().textAutosizingEnabled() && settings().textAutosizingUsesIdempotentMode() in WebCore::Page::recomputeTextAutoSizingInAllFrames()
+    https://bugs.webkit.org/show_bug.cgi?id=200079
+    <rdar://problem/53474325>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebKit:
+    
+    Do not reset idempotent values when the text autosizing is off.
+    
+    * UIProcess/API/C/WKPreferences.cpp:
+    (WKPreferencesSetTextAutosizingUsesIdempotentMode):
+    (WKPreferencesGetTextAutosizingUsesIdempotentMode):
+    * UIProcess/API/C/WKPreferencesRef.h:
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::resetIdempotentTextAutosizingIfNeeded):
+    
+    Tools:
+    
+    Reset textAutosizingUsesIdempotentMode when transitioning to a new test.
+    
+    * WebKitTestRunner/ios/TestControllerIOS.mm:
+    (WTR::TestController::platformResetPreferencesToConsistentValues):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247780 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-24  Zalan Bujtas  <zalan@apple.com>
+
+            ASSERTION FAILED: settings().textAutosizingEnabled() && settings().textAutosizingUsesIdempotentMode() in WebCore::Page::recomputeTextAutoSizingInAllFrames()
+            https://bugs.webkit.org/show_bug.cgi?id=200079
+            <rdar://problem/53474325>
+
+            Reviewed by Wenson Hsieh.
+
+            Do not reset idempotent values when the text autosizing is off.
+
+            * UIProcess/API/C/WKPreferences.cpp:
+            (WKPreferencesSetTextAutosizingUsesIdempotentMode):
+            (WKPreferencesGetTextAutosizingUsesIdempotentMode):
+            * UIProcess/API/C/WKPreferencesRef.h:
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::resetIdempotentTextAutosizingIfNeeded):
+
+2019-07-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247755. rdar://problem/53575423
 
     AX: CrashTracer: com.apple.WebKit.WebContent at WebKit: WebKit::WebSpeechSynthesisClient::speak
