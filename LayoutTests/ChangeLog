@@ -1,3 +1,44 @@
+2019-07-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add test expectations and baselines for iPad
+        https://bugs.webkit.org/show_bug.cgi?id=199711
+
+        Unreviewed test gardening.
+
+        * platform/ipad-12/TestExpectations: Added.
+        * platform/ipad-12/fast/scrolling/ios/overflow-scrolling-ancestor-clip-expected.txt: Copied from LayoutTests/platform/ipad/fast/scrolling/ios/overflow-scrolling-ancestor-clip-expected.txt.
+        * platform/ipad-12/fast/scrolling/ios/overflow-scrolling-ancestor-clip-size-expected.txt: Copied from LayoutTests/platform/ipad/fast/scrolling/ios/overflow-scrolling-ancestor-clip-size-expected.txt.
+        * platform/ipad-12/fast/scrolling/ios/subpixel-overflow-scrolling-with-ancestor-expected.txt: Copied from LayoutTests/platform/ipad/fast/scrolling/ios/subpixel-overflow-scrolling-with-ancestor-expected.txt.
+        * platform/ipad-12/fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall-expected.txt: Copied from LayoutTests/platform/ipad/fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall-expected.txt.
+        * platform/ipad-12/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt: Copied from LayoutTests/platform/ipad/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt.
+        * platform/ipad-12/scrollingcoordinator/ios/ui-scrolling-tree-expected.txt: Copied from LayoutTests/platform/ipad/scrollingcoordinator/ios/ui-scrolling-tree-expected.txt.
+        * platform/ipad/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt: Added.
+        * platform/ipad/compositing/rtl/rtl-scrolling-with-transformed-descendants-expected.txt: Added.
+        * platform/ipad/editing/caret/ios/fixed-caret-position-after-scroll-expected.txt: Added.
+        * platform/ipad/editing/selection/ios/do-not-hide-selection-in-visible-container-expected.txt: Added.
+        * platform/ipad/fast/dom/navigator-iOS-userAgent-expected.txt: Added.
+        * platform/ipad/fast/scrolling/ios/change-scrollability-on-content-resize-nested-expected.txt: Added.
+        * platform/ipad/fast/scrolling/ios/overflow-scrolling-ancestor-clip-expected.txt:
+        * platform/ipad/fast/scrolling/ios/overflow-scrolling-ancestor-clip-size-expected.txt:
+        * platform/ipad/fast/scrolling/ios/reconcile-layer-position-recursive-expected.txt: Added.
+        * platform/ipad/fast/scrolling/ios/subpixel-overflow-scrolling-with-ancestor-expected.txt:
+        * platform/ipad/fast/viewport/ios/shrink-to-fit-for-page-without-viewport-meta-expected.txt: Added.
+        * platform/ipad/fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall-expected.txt:
+        * platform/ipad/imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-height-expected.txt: Added.
+        * platform/ipad/imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerheight-expected.txt: Added.
+        * platform/ipad/imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerwidth-expected.txt: Added.
+        * platform/ipad/imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-width-expected.txt: Added.
+        * platform/ipad/imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-innerheight-innerwidth-expected.txt: Added.
+        * platform/ipad/imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-width-height-expected.txt: Added.
+        * platform/ipad/imported/w3c/web-platform-tests/workers/WorkerNavigator_platform-expected.txt: Added.
+        * platform/ipad/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/navigator/004-expected.txt: Added.
+        * platform/ipad/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt:
+        * platform/ipad/scrollingcoordinator/ios/fixed-in-frame-layer-reconcile-layer-position-expected.txt: Added.
+        * platform/ipad/scrollingcoordinator/ios/fixed-in-overflow-scroll-scrolling-tree-expected.txt: Added.
+        * platform/ipad/scrollingcoordinator/ios/fixed-scrolling-with-keyboard-expected.txt: Copied from LayoutTests/platform/ipad/scrollingcoordinator/ios/ui-scrolling-tree-expected.txt.
+        * platform/ipad/scrollingcoordinator/ios/non-stable-viewport-scroll-expected.txt: Added.
+        * platform/ipad/scrollingcoordinator/ios/ui-scrolling-tree-expected.txt:
+
 2019-07-30  Daniel Bates  <dabates@apple.com>
 
         picture-in-picture.html fails because webkitpresentationmodechanged sometimes dispatched multiple times
