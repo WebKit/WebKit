@@ -36,6 +36,11 @@ WI.ResourceCollectionContentView = class ResourceCollectionContentView extends W
         super(collection, contentViewConstructor);
 
         if (collection.resourceType === WI.Resource.Type.Image) {
+            this._showGridButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-grid", WI.UIString("Show Grid"), WI.UIString("Hide Grid"), "Images/NavigationItemCheckers.svg", 13, 13);
+            this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleShowGridButtonClicked, this);
+            this._showGridButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+            this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
+
             let allItem = new WI.ScopeBarItem("all", WI.UIString("All"));
 
             let items = [allItem];
@@ -68,13 +73,30 @@ WI.ResourceCollectionContentView = class ResourceCollectionContentView extends W
 
     get navigationItems()
     {
-        let navigationItems = super.navigationItems;
+        let navigationItems = [];
         if (this._imageTypeScopeBar)
-            navigationItems.unshift(this._imageTypeScopeBar);
+            navigationItems.push(this._imageTypeScopeBar);
+        if (this._showGridButtonNavigationItem)
+            navigationItems.push(this._showGridButtonNavigationItem);
+        navigationItems = navigationItems.concat(super.navigationItems);
         return navigationItems;
     }
 
     // Protected
+
+    attached()
+    {
+        super.attached();
+
+        WI.settings.showImageGrid.addEventListener(WI.Setting.Event.Changed, this._handleShowImageGridSettingChanged, this);
+    }
+
+    detached()
+    {
+        WI.settings.showImageGrid.removeEventListener(null, null, this);
+
+        super.detached();
+    }
 
     contentViewAdded(contentView)
     {
@@ -99,6 +121,7 @@ WI.ResourceCollectionContentView = class ResourceCollectionContentView extends W
     _updateImageTypeScopeBar()
     {
         let extensions = new Set;
+        let visibleExtensions = 0;
 
         for (let resource of this.representedObject)
             extensions.add(WI.fileExtensionForMIMEType(resource.mimeType));
@@ -108,7 +131,18 @@ WI.ResourceCollectionContentView = class ResourceCollectionContentView extends W
             item.hidden = hidden;
             if (hidden && item.selected)
                 item.selected = false;
+
+            if (!item.hidden)
+                ++visibleExtensions;
         }
+
+        this._imageTypeScopeBar.hidden = visibleExtensions <= 1;
+        this.dispatchEventToListeners(WI.ContentView.Event.NavigationItemsDidChange);
+    }
+
+    _handleShowGridButtonClicked(event)
+    {
+        WI.settings.showImageGrid.value = !this._showGridButtonNavigationItem.activated;
     }
 
     _handleImageTypeSelectionChanged()
@@ -121,6 +155,12 @@ WI.ResourceCollectionContentView = class ResourceCollectionContentView extends W
                 hidden = !selectedTypes.includes(WI.fileExtensionForMIMEType(view.representedObject.mimeType));
             view.element.hidden = hidden;
         }
+    }
+
+    _handleShowImageGridSettingChanged(event)
+    {
+        let activated = WI.settings.showImageGrid.value;
+        this._showGridButtonNavigationItem.activated = activated;
     }
 
     _handleContentError(event)
