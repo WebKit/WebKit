@@ -248,6 +248,11 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
 
             scrollView.scrollsToTop = NO;
             scrollView.delegate = m_scrollViewDelegate.get();
+
+            if ([scrollView respondsToSelector:@selector(_setAvoidsJumpOnInterruptedBounce:)]) {
+                scrollView.tracksImmediatelyWhileDecelerating = NO;
+                scrollView._avoidsJumpOnInterruptedBounce = YES;
+            }
         }
 
         bool recomputeInsets = scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize);
