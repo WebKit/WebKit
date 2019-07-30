@@ -56,11 +56,7 @@ void SecItemShimProxy::initializeConnection(IPC::Connection& connection)
     connection.addWorkQueueMessageReceiver(Messages::SecItemShimProxy::messageReceiverName(), m_queue.get(), this);
 }
 
-void SecItemShimProxy::didReceiveMessage(IPC::Connection&, IPC::Decoder&)
-{
-}
-
-void SecItemShimProxy::secItemRequest(const SecItemRequestData& request, CompletionHandler<void(SecItemResponseData&&)>&& response)
+void SecItemShimProxy::secItemRequest(const SecItemRequestData& request, CompletionHandler<void(Optional<SecItemResponseData>&&)>&& response)
 {
     switch (request.type()) {
     case SecItemRequestData::Invalid:
@@ -95,6 +91,11 @@ void SecItemShimProxy::secItemRequest(const SecItemRequestData& request, Complet
         break;
     }
     }
+}
+
+void SecItemShimProxy::secItemRequestSync(const SecItemRequestData& data, CompletionHandler<void(Optional<SecItemResponseData>&&)>&& completionHandler)
+{
+    secItemRequest(data, WTFMove(completionHandler));
 }
 
 } // namespace WebKit
