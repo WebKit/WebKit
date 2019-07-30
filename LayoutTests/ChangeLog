@@ -1,3 +1,17 @@
+2019-07-30  Daniel Bates  <dabates@apple.com>
+
+        picture-in-picture.html fails because webkitpresentationmodechanged sometimes dispatched multiple times
+        using Apple Internal build
+        <rdar://problem/36455352>
+
+        Workaround by only listening for the first webkitpresentationmodechanged event dispatched. This test
+        is the canary in the coal mine that revealed that multiple webkitpresentationmodechanged events are
+        dispatched when one is expected. However this was not the primary purpose of the test and in absence
+        of a timeframe for a fix for <rdar://problem/36455352> work around this bug to avoid losing test coverage
+        when using an Apple Internal build.
+
+        * platform/ipad/media/controls/resources/picture-in-picture.html:
+
 2019-07-30  Truitt Savell  <tsavell@apple.com>
 
         (r247440) imported/w3c/web-platform-tests/wasm/jsapi/interface.any.worker.html is a flakey failure

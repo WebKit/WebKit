@@ -17,7 +17,7 @@ function dispatchDidChangePresentationMode()
 var video = document.querySelector("video");
 if (window.internals)
     internals.setMediaElementRestrictions(video, "NoRestrictions");
-video.addEventListener("webkitpresentationmodechanged", dispatchDidChangePresentationMode, false);
+video.addEventListener("webkitpresentationmodechanged", dispatchDidChangePresentationMode, { capture: false, once: true });
 video.addEventListener("canplaythrough", function () { video.webkitSetPresentationMode("picture-in-picture"); }, false);
 video.src = findMediaFile("video", "../../../../../media/content/test");
 </script>
