@@ -1,5 +1,34 @@
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247779. rdar://problem/53647892
+
+    Add per-document autoplay quirk for netflix.com.
+    https://bugs.webkit.org/show_bug.cgi?id=200058
+    
+    Reviewed by Eric Carlson.
+    
+    Opt netflix.com into the desktop-style per-document autoplay quirk.
+    
+    * page/Quirks.cpp:
+    (WebCore::Quirks::needsPerDocumentAutoplayBehavior const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247779 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-24  Jer Noble  <jer.noble@apple.com>
+
+            Add per-document autoplay quirk for netflix.com.
+            https://bugs.webkit.org/show_bug.cgi?id=200058
+
+            Reviewed by Eric Carlson.
+
+            Opt netflix.com into the desktop-style per-document autoplay quirk.
+
+            * page/Quirks.cpp:
+            (WebCore::Quirks::needsPerDocumentAutoplayBehavior const):
+
+2019-07-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247756. rdar://problem/53648073
 
     Long press hint has half blue shape in Feedly.com
