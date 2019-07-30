@@ -86,7 +86,7 @@
 @end
 
 @interface TestWKWebView (IOSOnly)
-@property (nonatomic, readonly) UIView <UITextInputPrivate, UITextInputInternal, UITextInputMultiDocument, UIWKInteractionViewProtocol> *textInputContentView;
+@property (nonatomic, readonly) UIView <UITextInputPrivate, UITextInputInternal, UITextInputMultiDocument, UIWKInteractionViewProtocol, UITextInputTokenizer> *textInputContentView;
 @property (nonatomic, readonly) RetainPtr<NSArray> selectionRectsAfterPresentationUpdate;
 @property (nonatomic, readonly) CGRect caretViewRectInContentCoordinates;
 @property (nonatomic, readonly) NSArray<NSValue *> *selectionViewRectsInContentCoordinates;

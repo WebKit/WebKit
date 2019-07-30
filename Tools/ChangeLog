@@ -1,3 +1,60 @@
+2019-07-29  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r247679. rdar://problem/53648080
+
+    [iOS] [WebKit2] Add limited support for -isPosition:atBoundary:inDirection: in WKContentView
+    https://bugs.webkit.org/show_bug.cgi?id=199993
+    <rdar://problem/49523528>
+    
+    Reviewed by Beth Dakin.
+    
+    Source/WebKit:
+    
+    Add support for -isPosition:atBoundary:inDirection:, only in the cases where the given position is the start or
+    and position and the given granularity is UITextGranularityParagraph.
+    
+    Test: EditorStateTests.ParagraphBoundary
+    
+    * Shared/EditorState.cpp:
+    (WebKit::EditorState::PostLayoutData::encode const):
+    (WebKit::EditorState::PostLayoutData::decode):
+    * Shared/EditorState.h:
+    
+    Add a couple of bits to indicate whether the selection start or end positions are at paragraph boundaries.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView isPosition:atBoundary:inDirection:]):
+    
+    Implement this to return selectionStartIsAtParagraphBoundary or selectionEndIsAtParagraphBoundary.
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::platformEditorState const):
+    
+    Tools:
+    
+    Add a new API test to verify the behavior of -isPosition:atBoundary:inDirection:.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/EditorStateTests.mm:
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/cocoa/TestWKWebView.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247679 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] [WebKit2] Add limited support for -isPosition:atBoundary:inDirection: in WKContentView
+            https://bugs.webkit.org/show_bug.cgi?id=199993
+            <rdar://problem/49523528>
+
+            Reviewed by Beth Dakin.
+
+            Add a new API test to verify the behavior of -isPosition:atBoundary:inDirection:.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/EditorStateTests.mm:
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/cocoa/TestWKWebView.h:
+
 2019-07-24  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r247671. rdar://problem/53501836

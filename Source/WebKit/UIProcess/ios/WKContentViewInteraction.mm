@@ -5069,6 +5069,14 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (BOOL)isPosition:(UITextPosition *)position atBoundary:(UITextGranularity)granularity inDirection:(UITextDirection)direction
 {
+    if (granularity == UITextGranularityParagraph) {
+        if (direction == UITextStorageDirectionBackward && [position isEqual:self.selectedTextRange.start])
+            return _page->editorState().postLayoutData().selectionStartIsAtParagraphBoundary;
+
+        if (direction == UITextStorageDirectionForward && [position isEqual:self.selectedTextRange.end])
+            return _page->editorState().postLayoutData().selectionEndIsAtParagraphBoundary;
+    }
+
     return NO;
 }
 

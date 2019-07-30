@@ -398,6 +398,28 @@ TEST(EditorStateTests, ObserveSelectionAttributeChanges)
     EXPECT_EQ(_WKSelectionAttributeNoSelection, [observer currentSelectionAttributes]);
 }
 
+TEST(EditorStateTests, ParagraphBoundary)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadHTMLString:@"<body contenteditable><p>Hello world.</p></body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    [webView waitForNextPresentationUpdate];
+
+    auto textInput = [webView textInputContentView];
+    auto editor = adoptNS([[EditingTestHarness alloc] initWithWebView:webView.get()]);
+    [editor selectAll];
+
+    EXPECT_TRUE([textInput isPosition:textInput.selectedTextRange.start atBoundary:UITextGranularityParagraph inDirection:UITextStorageDirectionBackward]);
+    EXPECT_TRUE([textInput isPosition:textInput.selectedTextRange.end atBoundary:UITextGranularityParagraph inDirection:UITextStorageDirectionForward]);
+
+    [editor moveForward];
+    [editor moveBackward];
+    [editor moveBackward];
+
+    EXPECT_FALSE([textInput isPosition:textInput.selectedTextRange.start atBoundary:UITextGranularityParagraph inDirection:UITextStorageDirectionBackward]);
+    EXPECT_FALSE([textInput isPosition:textInput.selectedTextRange.end atBoundary:UITextGranularityParagraph inDirection:UITextStorageDirectionForward]);
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 } // namespace TestWebKitAPI
