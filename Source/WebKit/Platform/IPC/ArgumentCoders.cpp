@@ -145,7 +145,7 @@ static inline Optional<String> decodeStringText(Decoder& decoder, uint32_t lengt
     if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(CharacterType), alignof(CharacterType)))
         return WTF::nullopt;
     
-    return WTFMove(string);
+    return string;
 }
 
 Optional<String> ArgumentCoder<String>::decode(Decoder& decoder)
