@@ -1561,6 +1561,10 @@ public:
 
     URL currentResourceDirectoryURL() const;
 
+#if ENABLE(MEDIA_STREAM)
+    void setMockCaptureDevicesEnabledOverride(Optional<bool>);
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, WebCore::PageIdentifier, Ref<API::PageConfiguration>&&);
     void platformInitialize();

@@ -1,5 +1,74 @@
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247662. rdar://problem/53648208
+
+    Remote WebInspector should enable mock capture devices in UIProcess if doing it in WebProcess
+    https://bugs.webkit.org/show_bug.cgi?id=199924
+    <rdar://problem/50552067>
+    
+    Reviewed by Devin Rousso.
+    
+    Source/WebCore:
+    
+    Add necessary API to set mock capture devices override.
+    In case of desynchronization between webprocess and uiprocess, make sure to return early
+    and fail capture instead of crashing.
+    
+    * inspector/InspectorClient.h:
+    (WebCore::InspectorClient::setMockCaptureDevicesEnabled):
+    * inspector/agents/InspectorPageAgent.cpp:
+    (WebCore::InspectorPageAgent::disable):
+    (WebCore::InspectorPageAgent::overrideSetting):
+    * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+    
+    Source/WebKit:
+    
+    Add IPC plumbery to pass inspector override value for mock capture devices.
+    Add an override in UserMediaPermissionRequestManagerProxy so that the value stays in sync with web inspector.
+    The override will be removed when web inspector goes away.
+    
+    * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+    (WebKit::UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs const):
+    * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+    (WebKit::UserMediaPermissionRequestManagerProxy::setMockCaptureDevicesEnabledOverride):
+    * UIProcess/WebInspectorProxy.cpp:
+    (WebKit::WebInspectorProxy::setMockCaptureDevicesEnabled):
+    * UIProcess/WebInspectorProxy.h:
+    * UIProcess/WebInspectorProxy.messages.in:
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::setMockCaptureDevicesEnabledOverride):
+    * UIProcess/WebPageProxy.h:
+    * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+    (WebKit::WebInspectorClient::setMockCaptureDevicesEnabled):
+    * WebProcess/WebCoreSupport/WebInspectorClient.h:
+    * WebProcess/WebPage/WebInspector.cpp:
+    (WebKit::WebInspector::setMockCaptureDevicesEnabled):
+    * WebProcess/WebPage/WebInspector.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247662 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-19  Youenn Fablet  <youenn@apple.com>
+
+            Remote WebInspector should enable mock capture devices in UIProcess if doing it in WebProcess
+            https://bugs.webkit.org/show_bug.cgi?id=199924
+            <rdar://problem/50552067>
+
+            Reviewed by Devin Rousso.
+
+            Add necessary API to set mock capture devices override.
+            In case of desynchronization between webprocess and uiprocess, make sure to return early
+            and fail capture instead of crashing.
+
+            * inspector/InspectorClient.h:
+            (WebCore::InspectorClient::setMockCaptureDevicesEnabled):
+            * inspector/agents/InspectorPageAgent.cpp:
+            (WebCore::InspectorPageAgent::disable):
+            (WebCore::InspectorPageAgent::overrideSetting):
+            * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+
+2019-07-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247649. rdar://problem/53647611
 
     IndexedDB: error in starting version change transaction may be neglected

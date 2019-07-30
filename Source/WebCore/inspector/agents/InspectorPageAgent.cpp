@@ -387,6 +387,8 @@ void InspectorPageAgent::disable(ErrorString&)
 
 #undef DISABLE_INSPECTOR_OVERRIDE_SETTING
 
+    m_client->setMockCaptureDevicesEnabledOverride(WTF::nullopt);
+
     m_instrumentingAgents.setInspectorPageAgent(nullptr);
 }
 
@@ -434,20 +436,22 @@ void InspectorPageAgent::overrideSetting(ErrorString& errorString, const String&
 
     switch (setting.value()) {
 #define CASE_INSPECTOR_OVERRIDE_SETTING(name) \
-    case Inspector::Protocol::Page::Setting::name: { \
-        if (value) \
-            m_inspectedPage.settings().set##name##InspectorOverride(*value); \
-        else \
+    case Inspector::Protocol::Page::Setting::name: {                               \
+        if (value)                                                                 \
+            m_inspectedPage.settings().set##name##InspectorOverride(*value);       \
+        else                                                                       \
             m_inspectedPage.settings().set##name##InspectorOverride(WTF::nullopt); \
-        return; \
-    } \
+        break;                                                                     \
+    }                                                                              \
 
     FOR_EACH_INSPECTOR_OVERRIDE_SETTING(CASE_INSPECTOR_OVERRIDE_SETTING)
 
 #undef CASE_INSPECTOR_OVERRIDE_SETTING
     }
 
-    ASSERT_NOT_REACHED();
+    // Update the UIProcess / client for particular overrides.
+    if (setting.value() == Inspector::Protocol::Page::Setting::MockCaptureDevicesEnabled)
+        m_client->setMockCaptureDevicesEnabledOverride(value);
 }
 
 static Inspector::Protocol::Page::CookieSameSitePolicy cookieSameSitePolicyJSON(Cookie::SameSitePolicy policy)

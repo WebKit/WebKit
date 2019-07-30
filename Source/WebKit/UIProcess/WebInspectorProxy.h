@@ -227,6 +227,7 @@ private:
     void inspectedURLChanged(const String&);
     void showCertificate(const WebCore::CertificateInfo&);
     void elementSelectionChanged(bool);
+    void setMockCaptureDevicesEnabledOverride(Optional<bool>);
 
     void save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
     void append(const String& filename, const String& content);

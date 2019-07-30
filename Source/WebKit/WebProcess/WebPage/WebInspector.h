@@ -73,6 +73,7 @@ public:
     void startElementSelection();
     void stopElementSelection();
     void elementSelectionChanged(bool);
+    void setMockCaptureDevicesEnabledOverride(Optional<bool>);
 
     void setFrontendConnection(IPC::Attachment);
 

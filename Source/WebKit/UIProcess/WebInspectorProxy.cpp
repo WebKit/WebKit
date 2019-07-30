@@ -42,6 +42,7 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/TextEncoding.h>
 #include <wtf/SetForScope.h>
@@ -590,6 +591,18 @@ void WebInspectorProxy::elementSelectionChanged(bool active)
         platformBringInspectedPageToFront();
     else if (isConnected())
         bringToFront();
+}
+
+void WebInspectorProxy::setMockCaptureDevicesEnabledOverride(Optional<bool> enabled)
+{
+#if ENABLE(MEDIA_STREAM)
+    if (!m_inspectedPage)
+        return;
+
+    m_inspectedPage->setMockCaptureDevicesEnabledOverride(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
 }
 
 void WebInspectorProxy::save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs)

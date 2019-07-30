@@ -71,6 +71,8 @@ private:
     bool overridesShowPaintRects() const override { return true; }
     void showPaintRect(const WebCore::FloatRect&) override;
 
+    void setMockCaptureDevicesEnabledOverride(Optional<bool>) final;
+
     // PageOverlay::Client
     void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
     void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
