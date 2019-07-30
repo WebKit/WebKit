@@ -366,63 +366,47 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
 
     static void encode(Encoder& encoder, const HashMapType& hashMap)
     {
-        encoder << static_cast<uint64_t>(hashMap.size());
+        encoder << static_cast<uint32_t>(hashMap.size());
         for (typename HashMapType::const_iterator it = hashMap.begin(), end = hashMap.end(); it != end; ++it)
             encoder << *it;
     }
 
-    static bool decode(Decoder& decoder, HashMapType& hashMap)
-    {
-        uint64_t hashMapSize;
-        if (!decoder.decode(hashMapSize))
-            return false;
-
-        HashMapType tempHashMap;
-        for (uint64_t i = 0; i < hashMapSize; ++i) {
-            KeyArg key;
-            MappedArg value;
-            if (!decoder.decode(key))
-                return false;
-            if (!decoder.decode(value))
-                return false;
-
-            if (!tempHashMap.add(key, value).isNewEntry) {
-                // The hash map already has the specified key, bail.
-                decoder.markInvalid();
-                return false;
-            }
-        }
-
-        hashMap.swap(tempHashMap);
-        return true;
-    }
-
     static Optional<HashMapType> decode(Decoder& decoder)
     {
-        uint64_t hashMapSize;
+        uint32_t hashMapSize;
         if (!decoder.decode(hashMapSize))
             return WTF::nullopt;
 
         HashMapType hashMap;
-        for (uint64_t i = 0; i < hashMapSize; ++i) {
+        for (uint32_t i = 0; i < hashMapSize; ++i) {
             Optional<KeyArg> key;
             decoder >> key;
-            if (!key)
+            if (UNLIKELY(!key))
                 return WTF::nullopt;
 
             Optional<MappedArg> value;
             decoder >> value;
-            if (!value)
+            if (UNLIKELY(!value))
                 return WTF::nullopt;
 
-            if (!hashMap.add(WTFMove(key.value()), WTFMove(value.value())).isNewEntry) {
+            if (UNLIKELY(!hashMap.add(WTFMove(*key), WTFMove(*value)).isNewEntry)) {
                 // The hash map already has the specified key, bail.
                 decoder.markInvalid();
                 return WTF::nullopt;
             }
         }
 
-        return hashMap;
+        return WTFMove(hashMap);
+    }
+
+    static bool decode(Decoder& decoder, HashMapType& hashMap)
+    {
+        Optional<HashMapType> tempHashMap;
+        decoder >> tempHashMap;
+        if (!tempHashMap)
+            return false;
+        hashMap.swap(*tempHashMap);
+        return true;
     }
 };
 
