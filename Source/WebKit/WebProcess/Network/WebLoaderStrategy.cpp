@@ -564,6 +564,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
     data.shrink(0);
 
     HangDetectionDisabler hangDetectionDisabler;
+    IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
 
     bool shouldNotifyOfUpload = request.hasUpload() && m_loadersWithUploads.isEmpty();
     if (shouldNotifyOfUpload)
