@@ -110,6 +110,10 @@ public:
 protected:
     NetworkSession(NetworkProcess&, PAL::SessionID, String&& localStorageDirectory, SandboxExtension::Handle&);
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    void destroyResourceLoadStatistics();
+#endif
+
     PAL::SessionID m_sessionID;
     Ref<NetworkProcess> m_networkProcess;
     HashSet<NetworkDataTask*> m_dataTaskSet;
