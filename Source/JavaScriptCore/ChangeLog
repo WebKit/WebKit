@@ -1,5 +1,36 @@
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247713. rdar://problem/53648241
+
+    Turn off Wasm fast memory on iOS
+    https://bugs.webkit.org/show_bug.cgi?id=200016
+    <rdar://problem/53417726>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    We turned them on when we disabled Gigacage on iOS. However, we re-enabled
+    Gigacage on iOS, but forgot to turn wasm fast memories back off.
+    
+    * runtime/Options.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247713 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-22  Saam Barati  <sbarati@apple.com>
+
+            Turn off Wasm fast memory on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=200016
+            <rdar://problem/53417726>
+
+            Reviewed by Yusuke Suzuki.
+
+            We turned them on when we disabled Gigacage on iOS. However, we re-enabled
+            Gigacage on iOS, but forgot to turn wasm fast memories back off.
+
+            * runtime/Options.h:
+
+2019-07-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247703. rdar://problem/53647465
 
     [JSC] Make DFG Local CSE and AI conservative for huge basic block
