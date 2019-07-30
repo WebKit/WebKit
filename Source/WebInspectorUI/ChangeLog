@@ -1,3 +1,14 @@
+2019-07-30  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Resources: Display outline around images when viewing image collections
+        https://bugs.webkit.org/show_bug.cgi?id=200212
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/CollectionContentView.css:
+        (.content-view.collection .resource.image img):
+        (.content-view.collection .resource.image img:hover):
+
 2019-07-29  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Resources: add a "Show Grid" navigation item for the Images collection
