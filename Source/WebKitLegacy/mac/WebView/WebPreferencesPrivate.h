@@ -371,6 +371,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (BOOL)isInheritURIQueryComponentEnabled;
 - (void)setEnableInheritURIQueryComponent:(BOOL)flag;
 
+- (BOOL)_mediaRecorderEnabled;
+- (void)_setMediaRecorderEnabled:(BOOL)flag;
+
 // Other private methods
 #if TARGET_OS_IPHONE
 - (BOOL)_standalone;
