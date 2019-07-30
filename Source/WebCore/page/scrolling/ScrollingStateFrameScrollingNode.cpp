@@ -50,6 +50,7 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const Scrolli
     , m_layoutViewport(stateNode.layoutViewport())
     , m_minLayoutViewportOrigin(stateNode.minLayoutViewportOrigin())
     , m_maxLayoutViewportOrigin(stateNode.maxLayoutViewportOrigin())
+    , m_overrideVisualViewportSize(stateNode.overrideVisualViewportSize())
     , m_frameScaleFactor(stateNode.frameScaleFactor())
     , m_topContentInset(stateNode.topContentInset())
     , m_headerHeight(stateNode.headerHeight())
@@ -108,6 +109,7 @@ void ScrollingStateFrameScrollingNode::setPropertyChangedBitsAfterReattach()
     setPropertyChangedBit(LayoutViewport);
     setPropertyChangedBit(MinLayoutViewportOrigin);
     setPropertyChangedBit(MaxLayoutViewportOrigin);
+    setPropertyChangedBit(OverrideVisualViewportSize);
 
     ScrollingStateScrollingNode::setPropertyChangedBitsAfterReattach();
 }
@@ -174,6 +176,15 @@ void ScrollingStateFrameScrollingNode::setMaxLayoutViewportOrigin(const FloatPoi
 
     m_maxLayoutViewportOrigin = p;
     setPropertyChanged(MaxLayoutViewportOrigin);
+}
+
+void ScrollingStateFrameScrollingNode::setOverrideVisualViewportSize(Optional<FloatSize> viewportSize)
+{
+    if (viewportSize == m_overrideVisualViewportSize)
+        return;
+
+    m_overrideVisualViewportSize = viewportSize;
+    setPropertyChanged(OverrideVisualViewportSize);
 }
 
 void ScrollingStateFrameScrollingNode::setHeaderHeight(int headerHeight)
@@ -312,6 +323,9 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingS
     ts.dumpProperty("min layout viewport origin", m_minLayoutViewportOrigin);
     ts.dumpProperty("max layout viewport origin", m_maxLayoutViewportOrigin);
     
+    if (m_overrideVisualViewportSize)
+        ts.dumpProperty("override visual viewport size", m_overrideVisualViewportSize.value());
+
     if (m_behaviorForFixed == StickToViewportBounds)
         ts.dumpProperty("behavior for fixed", m_behaviorForFixed);
 

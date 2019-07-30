@@ -186,7 +186,7 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
         m_nodeMap.remove(nodeID);
     }
 
-    LOG(Scrolling, "committed ScrollingTree\n%s", scrollingTreeAsText(ScrollingStateTreeAsTextBehaviorDebug).utf8().data());
+    LOG_WITH_STREAM(Scrolling, stream << "committed ScrollingTree" << scrollingTreeAsText(ScrollingStateTreeAsTextBehaviorDebug));
 }
 
 void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode, OrphanScrollingNodeMap& orphanNodes, HashSet<ScrollingNodeID>& unvisitedNodes)

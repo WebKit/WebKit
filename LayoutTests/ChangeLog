@@ -1,24 +1,92 @@
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
-        Cherry-pick r247824. rdar://problem/53647626
+        Cherry-pick r247839. rdar://problem/53647896
 
-    Adding iOS-specific expectations for fast/text-indicator/text-indicator-with-low-contrast-text.html.
-    https://bugs.webkit.org/show_bug.cgi?id=200064
+    [iOS WK2] A top fixed bar can flicker when scrolling with the keyboard up
+    https://bugs.webkit.org/show_bug.cgi?id=200105
+    rdar://problem/52871975
     
-    Unreviewed Test Gardening.
+    Reviewed by Wenson Hsieh.
     
-    * platform/ios/fast/text-indicator/text-indicator-with-low-contrast-text-expected.txt: Added.
+    Source/WebCore:
     
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247824 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition() computes a visual viewport
+    from the current scroll position and scrollableAreaSize(). This doesn't know anything about
+    the impact of keyboards on the visual viewport, so it computes a too-large visual viewport
+    when the keyboard is up, triggering incorrect manipulations of the layout viewport. This
+    leads to the top bar flashing to position 0 when it should be hidden off the top.
+    
+    Fix by feeding into the scrolling tree the height of the visual viewport which takes
+    FrameView::visualViewportOverrideRect() into account. This is stored on ScrollingStateFrameScrollingNode/
+    ScrollingTreeFrameScrollingNode.
+    
+    Test: scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html
+    
+    * page/FrameView.h:
+    * page/scrolling/AsyncScrollingCoordinator.cpp:
+    (WebCore::AsyncScrollingCoordinator::setFrameScrollingNodeState):
+    * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+    (WebCore::ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode):
+    (WebCore::ScrollingStateFrameScrollingNode::setPropertyChangedBitsAfterReattach):
+    (WebCore::ScrollingStateFrameScrollingNode::setOverrideVisualViewportSize):
+    (WebCore::ScrollingStateFrameScrollingNode::dumpProperties const):
+    * page/scrolling/ScrollingStateFrameScrollingNode.h:
+    * page/scrolling/ScrollingTree.cpp:
+    (WebCore::ScrollingTree::commitTreeState): LOG_WITH_STREAM() doesn't evaluate scrollingTreeAsText()
+    every time.
+    * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+    (WebCore::ScrollingTreeFrameScrollingNode::commitStateBeforeChildren):
+    (WebCore::ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition const):
+    (WebCore::ScrollingTreeFrameScrollingNode::dumpProperties const):
+    * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+    
+    Source/WebKit:
+    
+    ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition() computes a visual viewport
+    from the current scroll position and scrollableAreaSize(). This doesn't know anything about
+    the impact of keyboards on the visual viewport, so it computes a too-large visual viewport
+    when the keyboard is up, triggering incorrect manipulations of the layout viewport. This
+    leads to the top bar flashing to position 0 when it should be hidden off the top.
+    
+    Fix by feeding into the scrolling tree the height of the visual viewport which takes
+    FrameView::visualViewportOverrideRect() into account. This is stored on ScrollingStateFrameScrollingNode/
+    ScrollingTreeFrameScrollingNode.
+    
+    * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+    (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+    (ArgumentCoder<ScrollingStateFrameScrollingNode>::decode):
+    
+    LayoutTests:
+    
+    * resources/ui-helper.js:
+    (window.UIHelper.ensureStablePresentationUpdate.return.new.Promise):
+    (window.UIHelper.ensureStablePresentationUpdate):
+    * scrollingcoordinator/ios/fixed-scrolling-with-keyboard-expected.txt: Added.
+    * scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247839 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2019-07-25  Russell Epstein  <repstein@apple.com>
+    2019-07-29  Alan Coon  <alancoon@apple.com>
 
-            Adding iOS-specific expectations for fast/text-indicator/text-indicator-with-low-contrast-text.html.
-            https://bugs.webkit.org/show_bug.cgi?id=200064
+            Cherry-pick r247824. rdar://problem/53647626
 
-            Unreviewed Test Gardening.
+        Adding iOS-specific expectations for fast/text-indicator/text-indicator-with-low-contrast-text.html.
+        https://bugs.webkit.org/show_bug.cgi?id=200064
 
-            * platform/ios/fast/text-indicator/text-indicator-with-low-contrast-text-expected.txt: Added.
+        Unreviewed Test Gardening.
+
+        * platform/ios/fast/text-indicator/text-indicator-with-low-contrast-text-expected.txt: Added.
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247824 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-07-25  Russell Epstein  <repstein@apple.com>
+
+                Adding iOS-specific expectations for fast/text-indicator/text-indicator-with-low-contrast-text.html.
+                https://bugs.webkit.org/show_bug.cgi?id=200064
+
+                Unreviewed Test Gardening.
+
+                * platform/ios/fast/text-indicator/text-indicator-with-low-contrast-text-expected.txt: Added.
 
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
@@ -229,6 +297,20 @@
     Make use of WCAG's minimum legible contrast ratio instead of an
     arbitrary color difference cutoff for determining whether we consider
     text legible. It seems sensible and also considers the text on DF readable
+2019-07-24  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] A top fixed bar can flicker when scrolling with the keyboard up
+        https://bugs.webkit.org/show_bug.cgi?id=200105
+        rdar://problem/52871975
+
+        Reviewed by Wenson Hsieh.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.ensureStablePresentationUpdate.return.new.Promise):
+        (window.UIHelper.ensureStablePresentationUpdate):
+        * scrollingcoordinator/ios/fixed-scrolling-with-keyboard-expected.txt: Added.
+        * scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html: Added.
+
     (which it seems to be to me!).
     
     * testing/Internals.cpp:

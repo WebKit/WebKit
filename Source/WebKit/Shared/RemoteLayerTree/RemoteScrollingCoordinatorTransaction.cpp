@@ -183,6 +183,7 @@ void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, c
     SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::LayoutViewport, layoutViewport)
     SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::MinLayoutViewportOrigin, minLayoutViewportOrigin)
     SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::MaxLayoutViewportOrigin, maxLayoutViewportOrigin)
+    SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::OverrideVisualViewportSize, overrideVisualViewportSize)
 
     if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer))
         encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.counterScrollingLayer());
@@ -311,6 +312,7 @@ bool ArgumentCoder<ScrollingStateFrameScrollingNode>::decode(Decoder& decoder, S
     SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::LayoutViewport, FloatRect, setLayoutViewport)
     SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::MinLayoutViewportOrigin, FloatPoint, setMinLayoutViewportOrigin)
     SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::MaxLayoutViewportOrigin, FloatPoint, setMaxLayoutViewportOrigin)
+    SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::OverrideVisualViewportSize, Optional<FloatSize>, setOverrideVisualViewportSize)
 
     if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer)) {
         GraphicsLayer::PlatformLayerID layerID;

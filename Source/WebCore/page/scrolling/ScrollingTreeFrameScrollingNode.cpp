@@ -85,6 +85,9 @@ void ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(const ScrollingS
 
     if (state.hasChangedProperty(ScrollingStateFrameScrollingNode::MaxLayoutViewportOrigin))
         m_maxLayoutViewportOrigin = state.maxLayoutViewportOrigin();
+
+    if (state.hasChangedProperty(ScrollingStateFrameScrollingNode::OverrideVisualViewportSize))
+        m_overrideVisualViewportSize = state.overrideVisualViewportSize();
 }
 
 bool ScrollingTreeFrameScrollingNode::scrollPositionAndLayoutViewportMatch(const FloatPoint& position, Optional<FloatRect> overrideLayoutViewport)
@@ -94,11 +97,12 @@ bool ScrollingTreeFrameScrollingNode::scrollPositionAndLayoutViewportMatch(const
 
 FloatRect ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition(const FloatPoint& visibleContentOrigin, float scale) const
 {
-    FloatRect visibleContentRect(visibleContentOrigin, scrollableAreaSize());
+    FloatSize visualViewportSize = m_overrideVisualViewportSize.valueOr(scrollableAreaSize());
+    FloatRect visibleContentRect(visibleContentOrigin, visualViewportSize);
     LayoutRect visualViewport(FrameView::visibleDocumentRect(visibleContentRect, headerHeight(), footerHeight(), totalContentsSize(), scale));
     LayoutRect layoutViewport(m_layoutViewport);
 
-    LOG_WITH_STREAM(Scrolling, stream << "\nScrolling thread: " << "(visibleContentOrigin " << visibleContentOrigin << ") fixed behavior " << m_behaviorForFixed);
+    LOG_WITH_STREAM(Scrolling, stream << "\nScrolling thread: " << "(visibleContentOrigin " << visibleContentOrigin << ", visualViewportSize " << visualViewportSize << ") fixed behavior " << m_behaviorForFixed);
     LOG_WITH_STREAM(Scrolling, stream << "  layoutViewport: " << layoutViewport);
     LOG_WITH_STREAM(Scrolling, stream << "  visualViewport: " << visualViewport);
     LOG_WITH_STREAM(Scrolling, stream << "  scroll positions: min: " << minLayoutViewportOrigin() << " max: "<< maxLayoutViewportOrigin());
@@ -145,6 +149,9 @@ void ScrollingTreeFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingSt
     ts.dumpProperty("layout viewport", m_layoutViewport);
     ts.dumpProperty("min layoutViewport origin", m_minLayoutViewportOrigin);
     ts.dumpProperty("max layoutViewport origin", m_maxLayoutViewportOrigin);
+
+    if (m_overrideVisualViewportSize)
+        ts.dumpProperty("override visual viewport size", m_overrideVisualViewportSize.value());
 
     if (m_frameScaleFactor != 1)
         ts.dumpProperty("frame scale factor", m_frameScaleFactor);

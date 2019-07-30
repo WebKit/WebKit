@@ -1,36 +1,104 @@
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
-        Cherry-pick r247838. rdar://problem/53648220
+        Cherry-pick r247839. rdar://problem/53647896
 
-    WebKit/UIProcess/ios/WKContentViewInteraction.mm: error: implementing deprecated method contextMenuInteractionWillPresent
-    https://bugs.webkit.org/show_bug.cgi?id=200136
-    <rdar://problem/53547698>
+    [iOS WK2] A top fixed bar can flicker when scrolling with the keyboard up
+    https://bugs.webkit.org/show_bug.cgi?id=200105
+    rdar://problem/52871975
     
     Reviewed by Wenson Hsieh.
     
-    Ignore deprecation warnings for these UIContextMenuInteraction delegates.
+    Source/WebCore:
     
-    * UIProcess/ios/WKContentViewInteraction.mm:
-    (-[WKContentView contextMenuInteractionWillPresent:]):
-    (-[WKContentView contextMenuInteraction:willCommitWithAnimator:]):
-    (-[WKContentView contextMenuInteractionDidEnd:]):
+    ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition() computes a visual viewport
+    from the current scroll position and scrollableAreaSize(). This doesn't know anything about
+    the impact of keyboards on the visual viewport, so it computes a too-large visual viewport
+    when the keyboard is up, triggering incorrect manipulations of the layout viewport. This
+    leads to the top bar flashing to position 0 when it should be hidden off the top.
     
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247838 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    Fix by feeding into the scrolling tree the height of the visual viewport which takes
+    FrameView::visualViewportOverrideRect() into account. This is stored on ScrollingStateFrameScrollingNode/
+    ScrollingTreeFrameScrollingNode.
+    
+    Test: scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html
+    
+    * page/FrameView.h:
+    * page/scrolling/AsyncScrollingCoordinator.cpp:
+    (WebCore::AsyncScrollingCoordinator::setFrameScrollingNodeState):
+    * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+    (WebCore::ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode):
+    (WebCore::ScrollingStateFrameScrollingNode::setPropertyChangedBitsAfterReattach):
+    (WebCore::ScrollingStateFrameScrollingNode::setOverrideVisualViewportSize):
+    (WebCore::ScrollingStateFrameScrollingNode::dumpProperties const):
+    * page/scrolling/ScrollingStateFrameScrollingNode.h:
+    * page/scrolling/ScrollingTree.cpp:
+    (WebCore::ScrollingTree::commitTreeState): LOG_WITH_STREAM() doesn't evaluate scrollingTreeAsText()
+    every time.
+    * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+    (WebCore::ScrollingTreeFrameScrollingNode::commitStateBeforeChildren):
+    (WebCore::ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition const):
+    (WebCore::ScrollingTreeFrameScrollingNode::dumpProperties const):
+    * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+    
+    Source/WebKit:
+    
+    ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition() computes a visual viewport
+    from the current scroll position and scrollableAreaSize(). This doesn't know anything about
+    the impact of keyboards on the visual viewport, so it computes a too-large visual viewport
+    when the keyboard is up, triggering incorrect manipulations of the layout viewport. This
+    leads to the top bar flashing to position 0 when it should be hidden off the top.
+    
+    Fix by feeding into the scrolling tree the height of the visual viewport which takes
+    FrameView::visualViewportOverrideRect() into account. This is stored on ScrollingStateFrameScrollingNode/
+    ScrollingTreeFrameScrollingNode.
+    
+    * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+    (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+    (ArgumentCoder<ScrollingStateFrameScrollingNode>::decode):
+    
+    LayoutTests:
+    
+    * resources/ui-helper.js:
+    (window.UIHelper.ensureStablePresentationUpdate.return.new.Promise):
+    (window.UIHelper.ensureStablePresentationUpdate):
+    * scrollingcoordinator/ios/fixed-scrolling-with-keyboard-expected.txt: Added.
+    * scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247839 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2019-07-25  Dean Jackson  <dino@apple.com>
+    2019-07-29  Alan Coon  <alancoon@apple.com>
 
-            WebKit/UIProcess/ios/WKContentViewInteraction.mm: error: implementing deprecated method contextMenuInteractionWillPresent
-            https://bugs.webkit.org/show_bug.cgi?id=200136
-            <rdar://problem/53547698>
+            Cherry-pick r247838. rdar://problem/53648220
 
-            Reviewed by Wenson Hsieh.
+        WebKit/UIProcess/ios/WKContentViewInteraction.mm: error: implementing deprecated method contextMenuInteractionWillPresent
+        https://bugs.webkit.org/show_bug.cgi?id=200136
+        <rdar://problem/53547698>
 
-            Ignore deprecation warnings for these UIContextMenuInteraction delegates.
+        Reviewed by Wenson Hsieh.
 
-            * UIProcess/ios/WKContentViewInteraction.mm:
-            (-[WKContentView contextMenuInteractionWillPresent:]):
-            (-[WKContentView contextMenuInteraction:willCommitWithAnimator:]):
-            (-[WKContentView contextMenuInteractionDidEnd:]):
+        Ignore deprecation warnings for these UIContextMenuInteraction delegates.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView contextMenuInteractionWillPresent:]):
+        (-[WKContentView contextMenuInteraction:willCommitWithAnimator:]):
+        (-[WKContentView contextMenuInteractionDidEnd:]):
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247838 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-07-25  Dean Jackson  <dino@apple.com>
+
+                WebKit/UIProcess/ios/WKContentViewInteraction.mm: error: implementing deprecated method contextMenuInteractionWillPresent
+                https://bugs.webkit.org/show_bug.cgi?id=200136
+                <rdar://problem/53547698>
+
+                Reviewed by Wenson Hsieh.
+
+                Ignore deprecation warnings for these UIContextMenuInteraction delegates.
+
+                * UIProcess/ios/WKContentViewInteraction.mm:
+                (-[WKContentView contextMenuInteractionWillPresent:]):
+                (-[WKContentView contextMenuInteraction:willCommitWithAnimator:]):
+                (-[WKContentView contextMenuInteractionDidEnd:]):
 
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
@@ -661,6 +729,28 @@
             though its ref count has already reached 0. It is actually a common pattern in
             ResourceLoadStatisticsMemoryStore to call RunLoop::main().dispatch() and ref their m_store in
             the lambda, so that they can interact with the WebResourceLoadStatisticsStore.
+2019-07-24  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] A top fixed bar can flicker when scrolling with the keyboard up
+        https://bugs.webkit.org/show_bug.cgi?id=200105
+        rdar://problem/52871975
+
+        Reviewed by Wenson Hsieh.
+
+        ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition() computes a visual viewport
+        from the current scroll position and scrollableAreaSize(). This doesn't know anything about
+        the impact of keyboards on the visual viewport, so it computes a too-large visual viewport
+        when the keyboard is up, triggering incorrect manipulations of the layout viewport. This
+        leads to the top bar flashing to position 0 when it should be hidden off the top.
+
+        Fix by feeding into the scrolling tree the height of the visual viewport which takes
+        FrameView::visualViewportOverrideRect() into account. This is stored on ScrollingStateFrameScrollingNode/
+        ScrollingTreeFrameScrollingNode.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::decode):
+
 
             To address the issue, we now destroy m_statisticsStore / m_persistentStorage *before* the
             WebResourceLoadStatisticsStore destructor runs. The NetworkSession destructor now calls
