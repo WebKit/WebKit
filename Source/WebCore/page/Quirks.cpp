@@ -385,6 +385,22 @@ bool Quirks::needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const
 #endif
 }
 
+bool Quirks::shouldLightenJapaneseBoldSansSerif() const
+{
+#if USE(HIRAGINO_SANS_WORKAROUND)
+    if (!needsQuirks())
+        return false;
+
+    // lang="ja" style="font: bold sans-serif;" content would naturally get HiraginoSans-W8 here, but that's visually
+    // too bold. Instead, we should pick HiraginoSans-W6 instead.
+    // FIXME: webkit.org/b/200047 Remove this quirk.
+    auto host = m_document->topDocument().url().host();
+    return equalLettersIgnoringASCIICase(host, "m.yahoo.co.jp");
+#else
+    return false;
+#endif
+}
+
 // FIXME(<rdar://problem/50394969>): Remove after desmos.com adopts inputmode="none".
 bool Quirks::needsInputModeNoneImplicitly(const HTMLElement& element) const
 {

@@ -1,3 +1,31 @@
+2019-07-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r241288): Text on Yahoo Japan mobile looks too bold
+        https://bugs.webkit.org/show_bug.cgi?id=200065
+        <rdar://problem/50912757>
+
+        Reviewed by Simon Fraser.
+
+        Before r241288, we were mapping Japanese sans-serif to Hiragino Kaku Gothic ProN, which
+        has a 300 weight and a 600 weight. However, we can't use that font because it's user-installed,
+        so in r241288 we switched to using Hiragino Sans, which has a 300 weight, a 600 weight, and an
+        800 weight. According to the CSS font selection algorithm, sites that request a weight of 700
+        would get the 800 weight instead of the 600 weight, which caused the text to look too heavy.
+        Therefore, the apparent visual change is from a weight change from 600 to 800.
+
+        In general, this is working as intended. However, text on Yahoo Japan looks too heavy in weight
+        800. Instead, this patch adds a quirk specific to Yahoo Japan that overwrites any font requests
+        to give them a weight of 600 instead of 700. This way, the lighter font will be used.
+
+        No new tests because quirks cannot be tested.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::resolveGenericFamily):
+        (WebCore::CSSFontSelector::fontRangesForFamily):
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldLightenJapaneseBoldSansSerif const):
+        * page/Quirks.h:
+
 2019-07-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix GTK build after SoupNetworkSession ownership rework.
