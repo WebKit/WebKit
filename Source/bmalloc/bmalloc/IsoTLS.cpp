@@ -114,8 +114,9 @@ IsoTLS* IsoTLS::ensureEntries(unsigned offset)
                     entry->move(src, dst);
                     entry->destruct(src);
                 });
+            size_t oldSize = tls->size();
             tls->~IsoTLS();
-            vmDeallocate(tls, tls->size());
+            vmDeallocate(tls, oldSize);
         }
         tls = newTLS;
         set(tls);
@@ -142,8 +143,9 @@ void IsoTLS::destructor(void* arg)
             entry->scavenge(data);
             entry->destruct(data);
         });
+    size_t oldSize = tls->size();
     tls->~IsoTLS();
-    vmDeallocate(tls, tls->size());
+    vmDeallocate(tls, oldSize);
 }
 
 size_t IsoTLS::sizeForCapacity(unsigned capacity)
