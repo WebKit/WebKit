@@ -1,5 +1,38 @@
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247879. rdar://problem/53648230
+
+    [iPadOS] wix.com cannot select a template to edit or view
+    https://bugs.webkit.org/show_bug.cgi?id=200174
+    <rdar://problem/53281296>
+    
+    Reviewed by Simon Fraser.
+    
+    Opt out of simulated mouse event sending for template selection on wix.com.
+    When wix.com receives a simulated mouse event during the touch events, it calls preventDefault() which prevents us from running the hover heuristics -> no click.
+    
+    * page/Quirks.cpp:
+    (WebCore::Quirks::shouldDispatchSimulatedMouseEvents const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247879 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-26  Zalan Bujtas  <zalan@apple.com>
+
+            [iPadOS] wix.com cannot select a template to edit or view
+            https://bugs.webkit.org/show_bug.cgi?id=200174
+            <rdar://problem/53281296>
+
+            Reviewed by Simon Fraser.
+
+            Opt out of simulated mouse event sending for template selection on wix.com.
+            When wix.com receives a simulated mouse event during the touch events, it calls preventDefault() which prevents us from running the hover heuristics -> no click.
+
+            * page/Quirks.cpp:
+            (WebCore::Quirks::shouldDispatchSimulatedMouseEvents const):
+
+2019-07-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247873. rdar://problem/53648217
 
     slides.google.com: opening speaker notes while presenting causes a fatal error in the web app on iPad
