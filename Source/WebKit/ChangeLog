@@ -1,3 +1,24 @@
+2019-07-29  Sihui Liu  <sihui_liu@apple.com>
+
+        Try fixing crash at com.apple.WebKit.Networking: NetworkProcess::setSharedHTTPCookieStorage
+        https://bugs.webkit.org/show_bug.cgi?id=200189
+        <rdar://problem/41325767>
+
+        Reviewed by Chris Dumez.
+
+        The crash indicates that sharedCookieStorage is accessed before being set in network process. 
+        sharedCookieStorage is set during the processing of InitializeNetworkProcess message, and access to 
+        sharedCookieStorage is supposed to happen after that. Therefore, it is likely some message is received and 
+        handled before InitializeNetworkProcess. 
+ 
+        One possible explanation is WebKit APIs get called on different threads. Because of the race in checking and 
+        setting m_networkProcess, some message is sent between network process gets launched (m_networkProcess is set) 
+        and InitializeNetworkProcess message is sent. To mitigate this issue, we make sure m_networkProcess is set only
+        in the main runloop and only after InitializeNetworkProcess is sent. 
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2019-07-29  Chris Dumez  <cdumez@apple.com>
 
         Fix non-thread safe use of WeakPtr under sendSecItemRequest()
