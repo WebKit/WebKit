@@ -1984,3 +1984,5 @@ webkit.org/b/195635 scrollingcoordinator/mac/multiple-fixed.html [ Pass Timeout 
 [ Catalina+ ] fast/text/design-system-ui-14.html [ Pass ]
 [ Catalina+ ] fast/text/design-system-ui-15.html [ Pass ]
 [ Catalina+ ] fast/text/design-system-ui-16.html [ Pass ]
+
+webkit.org/b/200258 [ Debug ] imported/w3c/web-platform-tests/wasm/jsapi/interface.any.worker.html [ Pass Failure ]
