@@ -1,5 +1,59 @@
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247698. rdar://problem/53647459
+
+    Make sure the player underlying volume is correctly set after creating a new player
+    https://bugs.webkit.org/show_bug.cgi?id=199974
+    <rdar://problem/52762559>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    When creating a player before starting to play, the volume might not be correctly initialized.
+    Fix that by updating the volume like done for rate and muted state.
+    A future refactoring should probably move that code in MediaPlayer.
+    
+    Add an internal API to query the volume value from the underlying player.
+    
+    Test: http/tests/media/audio-volume-zero.html
+    
+    * html/HTMLMediaElement.cpp:
+    (WebCore::HTMLMediaElement::updateVolume):
+    (WebCore::HTMLMediaElement::updatePlayState):
+    (WebCore::HTMLMediaElement::effectiveVolume const):
+    (WebCore::HTMLMediaElement::effectiveMuted const):
+    * html/HTMLMediaElement.h:
+    * testing/Internals.cpp:
+    (WebCore::Internals::privatePlayerVolume):
+    * testing/Internals.h:
+    * testing/Internals.idl:
+    * testing/Internals.mm:
+    (WebCore::Internals::privatePlayerVolume):
+    
+    LayoutTests:
+    
+    * http/tests/media/128kbps-44khz.mp3: Added.
+    * http/tests/media/audio-volume-zero-expected.txt: Added.
+    * http/tests/media/audio-volume-zero.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247698 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-22  Youenn Fablet  <youenn@apple.com>
+
+            Make sure the player underlying volume is correctly set after creating a new player
+            https://bugs.webkit.org/show_bug.cgi?id=199974
+            <rdar://problem/52762559>
+
+            Reviewed by Eric Carlson.
+
+            * http/tests/media/128kbps-44khz.mp3: Added.
+            * http/tests/media/audio-volume-zero-expected.txt: Added.
+            * http/tests/media/audio-volume-zero.html: Added.
+
+2019-07-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247651. rdar://problem/53648007
 
     [iOS] Entering 2FA code on idmsa.apple.com causes unexpected scrolling
