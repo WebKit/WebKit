@@ -8114,7 +8114,9 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     return [self _createTargetedPreviewIfPossible];
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)contextMenuInteractionWillPresent:(UIContextMenuInteraction *)interaction
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (!_webView)
         return;
@@ -8135,7 +8137,9 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     return std::exchange(_contextMenuInteractionTargetedPreview, nil).autorelease();
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willCommitWithAnimator:(id<UIContextMenuInteractionCommitAnimating>)animator
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (!_webView)
         return;
@@ -8188,7 +8192,9 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     }
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)contextMenuInteractionDidEnd:(UIContextMenuInteraction *)interaction
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (!_webView)
         return;
