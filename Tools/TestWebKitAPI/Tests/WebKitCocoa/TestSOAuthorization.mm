@@ -761,7 +761,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithWaitingSession)
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get(), OpenExternalSchemesPolicy::Allow);
 
-    // The session will be waiting since the web view is is not int the window.
+    // The session will be waiting since the web view is is not in the window.
     [webView removeFromSuperview];
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::sleep(0.5);
@@ -781,6 +781,35 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithWaitingSession)
     Util::run(&navigationCompleted);
 #endif
     EXPECT_WK_STREQ(redirectURL.get().absoluteString, finalURL);
+}
+
+TEST(SOAuthorizationRedirect, InterceptionAbortedWithWaitingSession)
+{
+    resetState();
+    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
+    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
+    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
+
+    RetainPtr<NSURL> testURL1 = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL2 = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get(), OpenExternalSchemesPolicy::Allow);
+
+    // The session will be waiting since the web view is is not in the window.
+    [webView removeFromSuperview];
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL1.get()]];
+    Util::sleep(0.5);
+    EXPECT_FALSE(authorizationPerformed);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL2.get()]];
+    // Should activate the session.
+    [webView addToTestWindow];
+
+    // The waiting session should be aborted as the previous navigation is overwritten by a new navigation.
+    Util::run(&navigationCompleted);
+    EXPECT_FALSE(authorizationPerformed);
 }
 
 TEST(SOAuthorizationRedirect, InterceptionSucceedWithActiveSessionDidMoveWindow)

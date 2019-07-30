@@ -55,6 +55,8 @@ void NavigationSOAuthorizationSession::shouldStartInternal()
     if (!page->isInWindow()) {
         setState(State::Waiting);
         page->addObserver(*this);
+        ASSERT(page->mainFrame());
+        m_waitingPageActiveURL = page->pageLoadState().activeURL();
         return;
     }
     start();
@@ -65,8 +67,19 @@ void NavigationSOAuthorizationSession::webViewDidMoveToWindow()
     auto* page = this->page();
     if (state() != State::Waiting || !page || !page->isInWindow())
         return;
+    if (pageActiveURLDidChangeDuringWaiting()) {
+        abort();
+        page->removeObserver(*this);
+        return;
+    }
     start();
     page->removeObserver(*this);
+}
+
+bool NavigationSOAuthorizationSession::pageActiveURLDidChangeDuringWaiting() const
+{
+    auto* page = this->page();
+    return !page || page->pageLoadState().activeURL() != m_waitingPageActiveURL;
 }
 
 } // namespace WebKit

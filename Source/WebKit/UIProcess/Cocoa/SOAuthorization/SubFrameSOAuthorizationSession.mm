@@ -76,7 +76,6 @@ void SubFrameSOAuthorizationSession::fallBackToWebPathInternal()
 
 void SubFrameSOAuthorizationSession::abortInternal()
 {
-    ASSERT_NOT_REACHED();
 }
 
 void SubFrameSOAuthorizationSession::completeInternal(const WebCore::ResourceResponse& response, NSData *data)
