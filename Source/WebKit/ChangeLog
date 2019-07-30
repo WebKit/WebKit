@@ -1,5 +1,38 @@
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247787. rdar://problem/53647890
+
+    Crash in WebContent process with custom schemes.
+    <rdar://problem/52968793> and https://bugs.webkit.org/show_bug.cgi?id=200062
+    
+    Reviewed by Andy Estes.
+    
+    Almost everywhere in WebURLSchemeTaskProxy where we call processNextPendingTask() we first protect the task with a ref.
+    But not in didReceiveData.
+    So lets do that.
+    
+    * WebProcess/WebPage/WebURLSchemeTaskProxy.cpp:
+    (WebKit::WebURLSchemeTaskProxy::didReceiveData): Protect this.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247787 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-24  Brady Eidson  <beidson@apple.com>
+
+            Crash in WebContent process with custom schemes.
+            <rdar://problem/52968793> and https://bugs.webkit.org/show_bug.cgi?id=200062
+
+            Reviewed by Andy Estes.
+
+            Almost everywhere in WebURLSchemeTaskProxy where we call processNextPendingTask() we first protect the task with a ref.
+            But not in didReceiveData.
+            So lets do that.
+
+            * WebProcess/WebPage/WebURLSchemeTaskProxy.cpp:
+            (WebKit::WebURLSchemeTaskProxy::didReceiveData): Protect this.
+
+2019-07-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247786. rdar://problem/53647457
 
     Null check CompletionHandler in WebPreviewLoaderClient::didReceivePassword

@@ -125,6 +125,7 @@ void WebURLSchemeTaskProxy::didReceiveData(size_t size, const uint8_t* data)
         return;
     }
 
+    auto protectedThis = makeRef(*this);
     m_coreLoader->didReceiveData(reinterpret_cast<const char*>(data), size, 0, DataPayloadType::DataPayloadBytes);
     processNextPendingTask();
 }
