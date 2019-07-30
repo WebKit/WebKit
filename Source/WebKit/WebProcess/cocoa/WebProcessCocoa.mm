@@ -321,7 +321,11 @@ static void registerWithAccessibility()
     [NSAccessibilityRemoteUIElement setRemoteUIApp:YES];
 #endif
 #if PLATFORM(IOS_FAMILY)
-    NSString *accessibilityBundlePath = [(NSString *)GSSystemRootDirectory() stringByAppendingString:@"/System/Library/AccessibilityBundles/WebProcessLoader.axbundle"];
+    NSString *accessibilityBundlePath = (NSString *)GSSystemRootDirectory();
+#if PLATFORM(MACCATALYST)
+    accessibilityBundlePath = [accessibilityBundlePath stringByAppendingString:@"System/iOSSupport"];
+#endif
+    accessibilityBundlePath = [accessibilityBundlePath stringByAppendingString:@"System/Library/AccessibilityBundles/WebProcessLoader.axbundle"];
     NSError *error = nil;
     if (![[NSBundle bundleWithPath:accessibilityBundlePath] loadAndReturnError:&error])
         LOG_ERROR("Failed to load accessibility bundle at %@: %@", accessibilityBundlePath, error);

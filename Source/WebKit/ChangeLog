@@ -1,5 +1,38 @@
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247864. rdar://problem/53647289
+
+    AX: web process should load correct bundle path for MACCATALYST
+    https://bugs.webkit.org/show_bug.cgi?id=200122
+    
+    Patch by Eric Liang <ericliang@apple.com> on 2019-07-26
+    Reviewed by Brent Fulgham.
+    
+    Added the path to accessibility bundle for Mac Catalyst.
+    Added sandbox profile to read accessibility settings.
+    
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::registerWithAccessibility):
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247864 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-26  Eric Liang  <ericliang@apple.com>
+
+            AX: web process should load correct bundle path for MACCATALYST
+            https://bugs.webkit.org/show_bug.cgi?id=200122
+
+            Reviewed by Brent Fulgham.
+
+            Added the path to accessibility bundle for Mac Catalyst.
+            Added sandbox profile to read accessibility settings.
+
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::registerWithAccessibility):
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2019-07-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247853. rdar://problem/53648225
 
     Unreviewed, build fix after r247851
