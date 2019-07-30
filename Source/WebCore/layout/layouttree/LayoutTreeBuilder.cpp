@@ -45,11 +45,29 @@
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
 #include "RenderStyle.h"
+#include "RenderTable.h"
+#include "RenderTableCaption.h"
 #include "RenderView.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Layout {
+
+static void appendChild(Container& parent, Box& newChild)
+{
+    if (!parent.hasChild()) {
+        parent.setFirstChild(newChild);
+        parent.setLastChild(newChild);
+        newChild.setParent(parent);
+        return;
+    }
+
+    auto& lastChild = const_cast<Box&>(*parent.lastChild());
+    lastChild.setNextSibling(newChild);
+    newChild.setPreviousSibling(lastChild);
+    newChild.setParent(parent);
+    parent.setLastChild(newChild);
+}
 
 std::unique_ptr<Container> TreeBuilder::createLayoutTree(const RenderView& renderView)
 {
@@ -71,7 +89,7 @@ static Optional<LayoutSize> accumulatedOffsetForInFlowPositionedContinuation(con
     return block.relativePositionOffset();
 }
 
-void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& rootContainer)
+std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRenderer, const RenderObject& childRenderer)
 {
     auto elementAttributes = [] (const RenderElement& renderer) -> Optional<Box::ElementAttributes> {
         if (renderer.isDocumentElementRenderer())
@@ -102,79 +120,111 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
         return WTF::nullopt;
     };
 
-    for (auto& child : childrenOfType<RenderObject>(rootRenderer)) {
-        std::unique_ptr<Box> box;
+    std::unique_ptr<Box> childLayoutBox;
+    if (is<RenderText>(childRenderer)) {
+        // FIXME: Clearly there must be a helper function for this.
+        if (parentRenderer.style().display() == DisplayType::Inline)
+            childLayoutBox = std::make_unique<InlineBox>(Optional<Box::ElementAttributes>(), RenderStyle::clone(parentRenderer.style()));
+        else
+            childLayoutBox = std::make_unique<InlineBox>(Optional<Box::ElementAttributes>(), RenderStyle::createAnonymousStyleWithDisplay(parentRenderer.style(), DisplayType::Inline));
+        downcast<InlineBox>(*childLayoutBox).setTextContent(downcast<RenderText>(childRenderer).originalText());
+        return childLayoutBox;
+    }
 
-        if (is<RenderText>(child)) {
-            // FIXME: Clearly there must be a helper function for this.
-            if (rootRenderer.style().display() == DisplayType::Inline)
-                box = std::make_unique<InlineBox>(Optional<Box::ElementAttributes>(), RenderStyle::clone(rootRenderer.style()));
-            else
-                box = std::make_unique<InlineBox>(Optional<Box::ElementAttributes>(), RenderStyle::createAnonymousStyleWithDisplay(rootRenderer.style(), DisplayType::Inline));
-            downcast<InlineBox>(*box).setTextContent(downcast<RenderText>(child).originalText());
-        } else if (is<RenderLineBreak>(child)) {
-            auto& renderer = downcast<RenderLineBreak>(child);
-            box = std::make_unique<LineBreakBox>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
-        } else if (is<RenderReplaced>(child)) {
-            auto& renderer = downcast<RenderReplaced>(child);
-            auto display = renderer.style().display();
-            if (display == DisplayType::Block)
-                box = std::make_unique<Box>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
-            else
-                box = std::make_unique<InlineBox>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
-            // FIXME: We don't yet support all replaced elements and this is temporary anyway.
-            if (box->replaced())
-                box->replaced()->setIntrinsicSize(renderer.intrinsicSize());
-            if (is<RenderImage>(renderer)) {
-                auto& imageRenderer = downcast<RenderImage>(renderer);
-                if (imageRenderer.imageResource().errorOccurred())
-                    box->replaced()->setIntrinsicRatio(1);
-            }
-        } else if (is<RenderElement>(child)) {
-            auto& renderer = downcast<RenderElement>(child);
-            auto display = renderer.style().display();
-            if (display == DisplayType::Block) {
-                if (auto offset = accumulatedOffsetForInFlowPositionedContinuation(downcast<RenderBox>(renderer))) {
-                    auto style = RenderStyle::clonePtr(renderer.style());
-                    style->setTop({ offset->height(), Fixed });
-                    style->setLeft({ offset->width(), Fixed });
-                    box = std::make_unique<BlockContainer>(elementAttributes(renderer), WTFMove(*style));
-                } else
-                    box = std::make_unique<BlockContainer>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
-            } else if (display == DisplayType::Inline)
-                box = std::make_unique<InlineContainer>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
-            else if (display == DisplayType::InlineBlock)
-                box = std::make_unique<InlineContainer>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
-            else {
-                ASSERT_NOT_IMPLEMENTED_YET();
-                continue;
-            }
+    auto& renderer = downcast<RenderElement>(childRenderer);
+    auto displayType = renderer.style().display();
+    if (is<RenderLineBreak>(renderer))
+        return std::make_unique<LineBreakBox>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+
+    if (is<RenderTable>(renderer)) {
+        // Construct the principal table wrapper box (and not the table box itself).
+        if (displayType == DisplayType::Table)
+            childLayoutBox = std::make_unique<BlockContainer>(Box::ElementAttributes { Box::ElementType::TableWrapperBox }, RenderStyle::clone(renderer.style()));
+        else {
+            ASSERT(displayType == DisplayType::InlineTable);
+            childLayoutBox = std::make_unique<InlineContainer>(Box::ElementAttributes { Box::ElementType::TableWrapperBox }, RenderStyle::clone(renderer.style()));
+        }
+    } else if (is<RenderReplaced>(renderer)) {
+        if (displayType == DisplayType::Block)
+            childLayoutBox = std::make_unique<Box>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+        else
+            childLayoutBox = std::make_unique<InlineBox>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+        // FIXME: We don't yet support all replaced elements and this is temporary anyway.
+        if (childLayoutBox->replaced())
+            childLayoutBox->replaced()->setIntrinsicSize(downcast<RenderReplaced>(renderer).intrinsicSize());
+        if (is<RenderImage>(renderer)) {
+            auto& imageRenderer = downcast<RenderImage>(renderer);
+            if (imageRenderer.imageResource().errorOccurred())
+                childLayoutBox->replaced()->setIntrinsicRatio(1);
+        }
+    } else {
+        if (displayType == DisplayType::Block) {
+            if (auto offset = accumulatedOffsetForInFlowPositionedContinuation(downcast<RenderBox>(renderer))) {
+                auto style = RenderStyle::clonePtr(renderer.style());
+                style->setTop({ offset->height(), Fixed });
+                style->setLeft({ offset->width(), Fixed });
+                childLayoutBox = std::make_unique<BlockContainer>(elementAttributes(renderer), WTFMove(*style));
+            } else
+                childLayoutBox = std::make_unique<BlockContainer>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+        } else if (displayType == DisplayType::Inline)
+            childLayoutBox = std::make_unique<InlineContainer>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+        else if (displayType == DisplayType::InlineBlock)
+            childLayoutBox = std::make_unique<InlineContainer>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+        else if (displayType == DisplayType::TableCaption || displayType == DisplayType::TableCell) {
+            childLayoutBox = std::make_unique<BlockContainer>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+        } else if (displayType == DisplayType::TableRowGroup || displayType == DisplayType::TableHeaderGroup || displayType == DisplayType::TableFooterGroup
+            || displayType == DisplayType::TableRow || displayType == DisplayType::TableColumnGroup || displayType == DisplayType::TableColumn) {
+            childLayoutBox = std::make_unique<Container>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
         } else {
             ASSERT_NOT_IMPLEMENTED_YET();
-            continue;
+            return { };
         }
+    }
 
-        if (!rootContainer.hasChild()) {
-            rootContainer.setFirstChild(*box);
-            rootContainer.setLastChild(*box);
-        } else {
-            auto* lastChild = const_cast<Box*>(rootContainer.lastChild());
-            box->setPreviousSibling(*lastChild);
-            lastChild->setNextSibling(*box);
-            rootContainer.setLastChild(*box);
-        }
+    if (childLayoutBox->isOutOfFlowPositioned()) {
+        // Not efficient, but this is temporary anyway.
+        // Collect the out-of-flow descendants at the formatting root level (as opposed to at the containing block level, though they might be the same).
+        const_cast<Container&>(childLayoutBox->formattingContextRoot()).addOutOfFlowDescendant(*childLayoutBox);
+    }
+    return childLayoutBox;
+}
 
-        box->setParent(rootContainer);
-
-        if (box->isOutOfFlowPositioned()) {
-            // Not efficient, but this is temporary anyway.
-            // Collect the out-of-flow descendants at the formatting root level (as opposed to at the containing block level, though they might be the same).
-            const_cast<Container&>(box->formattingContextRoot()).addOutOfFlowDescendant(*box);
-        }
-        if (is<Container>(*box))
-            createSubTree(downcast<RenderElement>(child), downcast<Container>(*box));
+void TreeBuilder::createTableStructure(const RenderTable& tableRenderer, Container& tableWrapperBox)
+{
+    // Create caption and table box.
+    auto* tableChild = tableRenderer.firstChild();
+    while (is<RenderTableCaption>(tableChild)) {
+        auto& captionRenderer = *tableChild;
+        auto captionBox = createLayoutBox(tableRenderer, captionRenderer);
+        appendChild(tableWrapperBox, *captionBox);
+        auto& captionContainer = downcast<Container>(*captionBox);
+        TreeBuilder::createSubTree(downcast<RenderElement>(captionRenderer), captionContainer);
         // Temporary
-        box.release();
+        captionBox.release();
+        tableChild = tableChild->nextSibling();
+    }
+
+    auto tableBox = std::make_unique<BlockContainer>(Box::ElementAttributes { Box::ElementType::TableBox }, RenderStyle::clone(tableRenderer.style()));
+    appendChild(tableWrapperBox, *tableBox);
+    while (tableChild) {
+        TreeBuilder::createSubTree(downcast<RenderElement>(*tableChild), *tableBox);
+        tableChild = tableChild->nextSibling();
+    }
+    // Temporary
+    tableBox.release();
+}
+
+void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& rootContainer)
+{
+    for (auto& childRenderer : childrenOfType<RenderObject>(rootRenderer)) {
+        auto childLayoutBox = createLayoutBox(rootRenderer, childRenderer);
+        appendChild(rootContainer, *childLayoutBox);
+        if (childLayoutBox->isTableWrapperBox())
+            createTableStructure(downcast<RenderTable>(childRenderer), downcast<Container>(*childLayoutBox));
+        else if (is<Container>(*childLayoutBox))
+            createSubTree(downcast<RenderElement>(childRenderer), downcast<Container>(*childLayoutBox));
+        // Temporary
+        childLayoutBox.release();
     }
 }
 
@@ -218,13 +268,39 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
     if (layoutBox.isFloatingPositioned())
         stream << "[float] ";
 
-    if (is<InlineContainer>(layoutBox)) {
-        // FIXME: fix names
-        if (layoutBox.isInlineBlockBox())
-            stream << "DIV inline-block container";
-        else
-            stream << "SPAN inline container";
-    } else if (is<InlineBox>(layoutBox)) {
+    if (is<Container>(layoutBox)) {
+        if (layoutBox.isTableWrapperBox())
+            stream << "TABLE principal";
+        else if (is<InlineContainer>(layoutBox)) {
+            // FIXME: fix names
+            if (layoutBox.isInlineBlockBox())
+                stream << "DIV inline-block container";
+            else
+                stream << "SPAN inline container";
+        } else if (is<BlockContainer>(layoutBox)) {
+            if (layoutBox.isInitialContainingBlock())
+                stream << "Initial containing block";
+            else if (layoutBox.isDocumentBox())
+                stream << "HTML";
+            else if (layoutBox.isBodyBox())
+                stream << "BODY";
+            else if (layoutBox.isTableBox())
+                stream << "TABLE";
+            else if (layoutBox.isTableCaption())
+                stream << "CAPTION";
+            else if (layoutBox.isTableCell())
+                stream << "TD";
+            else {
+                // FIXME
+                stream << "DIV";
+            }
+        } else {
+            if (layoutBox.isTableRow())
+                stream << "TR";
+            else
+                stream << "unknown container";
+        }
+    } else if (layoutBox.isInlineLevelBox()) {
         if (layoutBox.replaced())
             stream << "IMG replaced inline box";
         else if (layoutBox.isAnonymous())
@@ -233,22 +309,11 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
             stream << "BR line break";
         else
             stream << "inline box";
-    } else if (is<BlockContainer>(layoutBox)) {
-        if (!layoutBox.parent())
-            stream << "Initial";
-        else if (layoutBox.isDocumentBox())
-            stream << "HTML";
-        else if (layoutBox.isBodyBox())
-            stream << "BODY";
-        else {
-            // FIXME
-            stream << "DIV";
-        }
-        stream << " block container";
     } else if (layoutBox.isBlockLevelBox())
         stream << "block box";
     else
         stream << "box";
+
     // FIXME: Inline text runs don't create display boxes yet.
     if (displayBox)
         stream << " at (" << displayBox->left() << "," << displayBox->top() << ") size " << displayBox->width() << "x" << displayBox->height();

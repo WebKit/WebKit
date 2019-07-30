@@ -47,7 +47,6 @@ public:
         Body,
         TableWrapperBox, // The table generates a principal block container box called the table wrapper box that contains the table box and any caption boxes. 
         TableBox, // The table box is a block-level box that contains the table's internal table boxes.
-        TableCell,
         TableColumn,
         TableRow,
         TableColumnGroup,
@@ -118,7 +117,9 @@ public:
     bool isBodyBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Body; }
     bool isTableWrapperBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableWrapperBox; }
     bool isTableBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableBox; }
-    bool isTableCell() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableCell; }
+    bool isTableCaption() const { return style().display() == DisplayType::TableCaption; }
+    bool isTableRow() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableRow; }
+    bool isTableCell() const { return style().display() == DisplayType::TableCell;; }
     bool isReplaced() const { return isImage() || isIFrame(); }
     bool isIFrame() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::IFrame; }
     bool isImage() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Image; }

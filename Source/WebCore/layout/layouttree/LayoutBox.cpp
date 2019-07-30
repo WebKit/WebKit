@@ -239,7 +239,7 @@ bool Box::isInlineLevelBox() const
 bool Box::isBlockContainerBox() const
 {
     auto display = m_style.display();
-    return display == DisplayType::Block || display == DisplayType::ListItem || isInlineBlockBox() || isTableWrapperBox() || isTableCell() || display == DisplayType::TableCaption; // TODO && !replaced element
+    return display == DisplayType::Block || display == DisplayType::ListItem || isInlineBlockBox() || isTableWrapperBox() || isTableCell() || isTableCaption(); // TODO && !replaced element
 }
 
 bool Box::isInitialContainingBlock() const
