@@ -226,7 +226,8 @@ static FloatRect absoluteBoundingRectForRange(const Range& range)
 {
     return range.absoluteBoundingRect({
         Range::BoundingRectBehavior::RespectClipping,
-        Range::BoundingRectBehavior::UseVisibleBounds
+        Range::BoundingRectBehavior::UseVisibleBounds,
+        Range::BoundingRectBehavior::IgnoreTinyRects,
     });
 }
 

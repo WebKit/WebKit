@@ -1,5 +1,55 @@
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247730. rdar://problem/53647886
+
+    Long press hint of AirPods buy buttons are tall and narrow during animation
+    https://bugs.webkit.org/show_bug.cgi?id=200036
+    <rdar://problem/53145697>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    New test: fast/text-indicator/text-indicator-with-tiny-child.html
+    
+    * dom/Range.cpp:
+    (WebCore::Range::borderAndTextRects const):
+    * dom/Range.h:
+    Add a BoundingRectBehavior that ignores 1x1 and smaller rects.
+    
+    * page/TextIndicator.cpp:
+    (WebCore::absoluteBoundingRectForRange):
+    Enable IgnoreTinyRects.
+    
+    LayoutTests:
+    
+    * fast/text-indicator/text-indicator-with-tiny-child-expected.txt: Added.
+    * fast/text-indicator/text-indicator-with-tiny-child.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247730 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-23  Tim Horton  <timothy_horton@apple.com>
+
+            Long press hint of AirPods buy buttons are tall and narrow during animation
+            https://bugs.webkit.org/show_bug.cgi?id=200036
+            <rdar://problem/53145697>
+
+            Reviewed by Wenson Hsieh.
+
+            New test: fast/text-indicator/text-indicator-with-tiny-child.html
+
+            * dom/Range.cpp:
+            (WebCore::Range::borderAndTextRects const):
+            * dom/Range.h:
+            Add a BoundingRectBehavior that ignores 1x1 and smaller rects.
+
+            * page/TextIndicator.cpp:
+            (WebCore::absoluteBoundingRectForRange):
+            Enable IgnoreTinyRects.
+
+2019-07-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247722. rdar://problem/53647293
 
     [macOS 10.15] Web process crashes when attempting to show the font panel via Font > Show Fonts
