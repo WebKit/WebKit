@@ -98,8 +98,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << deviceOrientation;
     encoder << keyboardIsAttached;
     encoder << canShowWhileLocked;
-    encoder << doubleTapForDoubleClickDelay;
-    encoder << doubleTapForDoubleClickRadius;
     encoder << overrideViewportArguments;
 #endif
 #if PLATFORM(COCOA)
@@ -291,10 +289,6 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.keyboardIsAttached))
         return WTF::nullopt;
     if (!decoder.decode(parameters.canShowWhileLocked))
-        return WTF::nullopt;
-    if (!decoder.decode(parameters.doubleTapForDoubleClickDelay))
-        return WTF::nullopt;
-    if (!decoder.decode(parameters.doubleTapForDoubleClickRadius))
         return WTF::nullopt;
 
     Optional<Optional<WebCore::ViewportArguments>> overrideViewportArguments;
