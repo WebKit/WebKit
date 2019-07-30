@@ -4309,6 +4309,9 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 
 - (void)setBaseWritingDirection:(NSWritingDirection)direction forRange:(UITextRange *)range
 {
+    if (!_page->isEditable())
+        return;
+
     if (range && ![range isEqual:self.selectedTextRange]) {
         // We currently only support changing the base writing direction at the selection.
         return;

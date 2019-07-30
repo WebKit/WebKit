@@ -1,3 +1,21 @@
+2019-07-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        YouTube search field shows RTL text outside its border on iPadOS
+        https://bugs.webkit.org/show_bug.cgi?id=200253
+        <rdar://problem/53680603>
+
+        Reviewed by Beth Dakin.
+
+        Limits code added in r238939 to respect the current keyboard's writing mode to only editable web views. This
+        behavior was only intended for Mail, and isn't generally compatible with web content.
+
+        While the call to -setInitialDirection is correctly gated on an web view editability check, it appears that
+        other changes in iOS 13 now cause -setBaseWritingDirection:forRange: to be invoked directly from keyboards code.
+        This means that -setBaseWritingDirection:forRange: should additionally be guarded with the same check.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setBaseWritingDirection:forRange:]):
+
 2019-07-29  Sihui Liu  <sihui_liu@apple.com>
 
         Try fixing crash at com.apple.WebKit.Networking: NetworkProcess::setSharedHTTPCookieStorage
