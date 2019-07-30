@@ -1,5 +1,45 @@
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247687. rdar://problem/53648060
+
+    [iOS] REGRESSION (r241734): Autocorrection highlight should hide when field becomes defocused
+    https://bugs.webkit.org/show_bug.cgi?id=199807
+    <rdar://problem/52760259>
+    
+    Fix a bad merge of r247653. svn-apply was way too forgiving. The original patch touched
+    the non-existent function, -_didCommitLoadForMainFrame in WKContentViewInteraction.mm. Because
+    that didn't exist, svn-apply patched up -clearSelection.
+    
+    * UIProcess/ios/WKContentView.h:
+    * UIProcess/ios/WKContentView.mm:
+    (-[WKContentView _didCommitLoadForMainFrame]): Deleted; moved to WKContentViewInteraction.mm
+    * UIProcess/ios/WKContentViewInteraction.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView clearSelection]): Remove code that should be in -_didCommitLoadForMainFrame.
+    (-[WKContentView _didCommitLoadForMainFrame]): Moved from WKContentView.mm
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247687 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-22  Daniel Bates  <dabates@apple.com>
+
+            [iOS] REGRESSION (r241734): Autocorrection highlight should hide when field becomes defocused
+            https://bugs.webkit.org/show_bug.cgi?id=199807
+            <rdar://problem/52760259>
+
+            Fix a bad merge of r247653. svn-apply was way too forgiving. The original patch touched
+            the non-existent function, -_didCommitLoadForMainFrame in WKContentViewInteraction.mm. Because
+            that didn't exist, svn-apply patched up -clearSelection.
+
+            * UIProcess/ios/WKContentView.h:
+            * UIProcess/ios/WKContentView.mm:
+            (-[WKContentView _didCommitLoadForMainFrame]): Deleted; moved to WKContentViewInteraction.mm
+            * UIProcess/ios/WKContentViewInteraction.h:
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView clearSelection]): Remove code that should be in -_didCommitLoadForMainFrame.
+            (-[WKContentView _didCommitLoadForMainFrame]): Moved from WKContentView.mm
+
+2019-07-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247679. rdar://problem/53648080
 
     [iOS] [WebKit2] Add limited support for -isPosition:atBoundary:inDirection: in WKContentView
