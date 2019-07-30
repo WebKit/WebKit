@@ -1,5 +1,75 @@
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247714. rdar://problem/53647616
+
+    [bmalloc] Each IsoPage gets 1MB VA because VMHeap::tryAllocateLargeChunk rounds up
+    https://bugs.webkit.org/show_bug.cgi?id=200024
+    
+    Reviewed by Saam Barati.
+    
+    Source/bmalloc:
+    
+    When we allocate IsoHeap's page, we reused VMHeap::tryAllocateLargeChunk. However, this function is originally designed
+    to be used for Large allocation in bmalloc (e.g. allocating Chunk in bmalloc). As a result, this function rounds up the
+    requested size with 1MB (bmalloc::chunkSize). As a result, all IsoHeap's 16KB page gets 1MB VA while it just uses 16KB of
+    the allocated region. This leads to VA exhaustion since IsoHeap now uses 64x VA than we expected!
+    
+    This patch fixes the above VA exhaustion issue by allocating a page by using tryVMAllocate. When allocating a page, we start
+    using a VM tag for IsoHeap. We discussed at e-mail and we decided reusing a VM tag previously assigned to CLoop Stack since
+    this is less profitable. Since this tag is not Malloc-related tag, Leaks tool can scan memory region conservatively without
+    registering allocated region into Zone, which was previously done in VMHeap and that's why we reused VMHeap for IsoHeap.
+    
+    * bmalloc/BVMTags.h:
+    * bmalloc/IsoPage.cpp:
+    (bmalloc::IsoPageBase::allocatePageMemory):
+    * bmalloc/IsoTLS.cpp:
+    (bmalloc::IsoTLS::ensureEntries):
+    * bmalloc/VMAllocate.h:
+    (bmalloc::vmAllocate):
+    
+    Source/JavaScriptCore:
+    
+    Discussed and we decided to use this VM tag for IsoHeap instead of CLoop stack.
+    
+    * interpreter/CLoopStack.cpp:
+    (JSC::CLoopStack::CLoopStack):
+    
+    Source/WebCore:
+    
+    Changed how we interpret VM tags. Add IsoHeap VM tag support, and rename WebAssembly tag
+    to Gigacage tag.
+    
+    * page/ResourceUsageData.h:
+    * page/ResourceUsageOverlay.h:
+    * page/cocoa/ResourceUsageOverlayCocoa.mm:
+    (WebCore::HistoricResourceUsageData::HistoricResourceUsageData):
+    * page/cocoa/ResourceUsageThreadCocoa.mm:
+    (WebCore::displayNameForVMTag):
+    (WebCore::categoryForVMTag):
+    
+    Source/WTF:
+    
+    Start using a VM tag for IsoHeap instead of CLoop Stack.
+    
+    * wtf/OSAllocator.h:
+    * wtf/VMTags.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247714 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [bmalloc] Each IsoPage gets 1MB VA because VMHeap::tryAllocateLargeChunk rounds up
+            https://bugs.webkit.org/show_bug.cgi?id=200024
+
+            Reviewed by Saam Barati.
+
+            Discussed and we decided to use this VM tag for IsoHeap instead of CLoop stack.
+
+            * interpreter/CLoopStack.cpp:
+            (JSC::CLoopStack::CLoopStack):
+
+2019-07-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247713. rdar://problem/53648241
 
     Turn off Wasm fast memory on iOS

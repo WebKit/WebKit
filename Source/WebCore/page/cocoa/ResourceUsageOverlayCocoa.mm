@@ -163,11 +163,12 @@ HistoricResourceUsageData::HistoricResourceUsageData()
 {
     // VM tag categories.
     categories[MemoryCategory::JSJIT] = HistoricMemoryCategoryInfo(MemoryCategory::JSJIT, 0xFFFF60FF, "JS JIT");
-    categories[MemoryCategory::WebAssembly] = HistoricMemoryCategoryInfo(MemoryCategory::WebAssembly, 0xFF654FF0, "WebAssembly");
+    categories[MemoryCategory::Gigacage] = HistoricMemoryCategoryInfo(MemoryCategory::Gigacage, 0xFF654FF0, "Gigacage");
     categories[MemoryCategory::Images] = HistoricMemoryCategoryInfo(MemoryCategory::Images, 0xFFFFFF00, "Images");
     categories[MemoryCategory::Layers] = HistoricMemoryCategoryInfo(MemoryCategory::Layers, 0xFF00FFFF, "Layers");
     categories[MemoryCategory::LibcMalloc] = HistoricMemoryCategoryInfo(MemoryCategory::LibcMalloc, 0xFF00FF00, "libc malloc");
     categories[MemoryCategory::bmalloc] = HistoricMemoryCategoryInfo(MemoryCategory::bmalloc, 0xFFFF6060, "bmalloc");
+    categories[MemoryCategory::IsoHeap] = HistoricMemoryCategoryInfo(MemoryCategory::IsoHeap, 0xFF809F40, "IsoHeap");
     categories[MemoryCategory::Other] = HistoricMemoryCategoryInfo(MemoryCategory::Other, 0xFFC0FF00, "Other");
 
     // Sub categories (e.g breakdown of bmalloc tag.)
