@@ -1,5 +1,32 @@
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247782. rdar://problem/53647473
+
+    SYS___pthread_markcancel is sometimes used by libwebrtc
+    https://bugs.webkit.org/show_bug.cgi?id=200087
+    <rdar://problem/53408606>
+    
+    Reviewed by Brent Fulgham.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    Whitelist this unix-call within WebProcess as libwebrtc uses it.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247782 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-24  Youenn Fablet  <youenn@apple.com>
+
+            SYS___pthread_markcancel is sometimes used by libwebrtc
+            https://bugs.webkit.org/show_bug.cgi?id=200087
+            <rdar://problem/53408606>
+
+            Reviewed by Brent Fulgham.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+            Whitelist this unix-call within WebProcess as libwebrtc uses it.
+
+2019-07-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247780. rdar://problem/53647618
 
     ASSERTION FAILED: settings().textAutosizingEnabled() && settings().textAutosizingUsesIdempotentMode() in WebCore::Page::recomputeTextAutoSizingInAllFrames()
