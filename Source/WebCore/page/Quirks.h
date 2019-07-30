@@ -48,6 +48,7 @@ public:
     bool needsPerDocumentAutoplayBehavior() const;
     bool shouldAutoplayForArbitraryUserGesture() const;
     bool hasBrokenEncryptedMediaAPISupportQuirk() const;
+    bool shouldStripQuotationMarkInFontFaceSetFamily() const;
 #if ENABLE(TOUCH_EVENTS)
     bool shouldDispatchSimulatedMouseEvents() const;
     bool shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTarget*) const;
