@@ -1,5 +1,45 @@
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247875. rdar://problem/53648065
+
+    [iOS] REGRESSION: Keyboard dismisses and reappears when typing 2FA pin on appleid.apple.com
+    https://bugs.webkit.org/show_bug.cgi?id=200171
+    <rdar://problem/50245251>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Take out an InputViewUpdateDeferrer token (if we don't already have one) to temporarily defer
+    tearing down the input view (keyboard) before bluring the previously focused element as part
+    of switching between focused elements. This avoid a noticeable flash caused by UIKit animating
+    out and animating in the keyboard should the newly focused element require the keyboard. We
+    only take out the InputViewUpdateDeferrer until we fall off the end of _elementDidFocus: (or
+    bail early). Once we fall of the end UIKit will update input view UI.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247875 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-26  Daniel Bates  <dabates@apple.com>
+
+            [iOS] REGRESSION: Keyboard dismisses and reappears when typing 2FA pin on appleid.apple.com
+            https://bugs.webkit.org/show_bug.cgi?id=200171
+            <rdar://problem/50245251>
+
+            Reviewed by Wenson Hsieh.
+
+            Take out an InputViewUpdateDeferrer token (if we don't already have one) to temporarily defer
+            tearing down the input view (keyboard) before bluring the previously focused element as part
+            of switching between focused elements. This avoid a noticeable flash caused by UIKit animating
+            out and animating in the keyboard should the newly focused element require the keyboard. We
+            only take out the InputViewUpdateDeferrer until we fall off the end of _elementDidFocus: (or
+            bail early). Once we fall of the end UIKit will update input view UI.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+
+2019-07-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247872. rdar://problem/53647297
 
     Avoid WebContent process SIGKILL when using kevent()
