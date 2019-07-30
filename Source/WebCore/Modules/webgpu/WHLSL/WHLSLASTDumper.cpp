@@ -435,6 +435,19 @@ void ASTDumper::visit(AST::Expression& expression)
         || is<AST::CommaExpression>(expression)
         || is<AST::VariableReference>(expression);
 
+    if (auto* annotation = expression.maybeTypeAnnotation()) {
+        if (auto addressSpace = annotation->leftAddressSpace())
+            m_out.print("<LV:", AST::toString(*addressSpace));
+        else if (annotation->isAbstractLeftValue())
+            m_out.print("<ALV");
+        else if (annotation->isRightValue())
+            m_out.print("<RV");
+
+        m_out.print(", ", expression.resolvedType().toString(), ">");
+
+        skipParens = false;
+    }
+
     if (!skipParens)
         m_out.print("(");
     Base::visit(expression);

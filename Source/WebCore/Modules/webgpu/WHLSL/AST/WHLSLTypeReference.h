@@ -110,6 +110,12 @@ public:
         return &unifyNode() == &downcast<TypeReference>(other).unifyNode();
     }
 
+    String toString() const override
+    {
+        ASSERT(m_resolvedType);
+        return m_resolvedType->name();
+    }
+
 private:
     String m_name;
     TypeArguments m_typeArguments;

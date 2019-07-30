@@ -81,6 +81,11 @@ public:
             && type() == downcast<ArrayType>(other).type();
     }
 
+    String toString() const override
+    {
+        return makeString(type().toString(), '[', numElements(), ']');
+    }
+
 private:
     Ref<UnnamedType> m_elementType;
     unsigned m_numElements;

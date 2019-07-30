@@ -121,6 +121,12 @@ public:
         return WTF::visit(visitor, m_inner);
     }
 
+    bool isAbstractLeftValue() const
+    {
+        ASSERT(!m_empty);
+        return WTF::holds_alternative<AbstractLeftValue>(m_inner);
+    }
+
 private:
     Variant<LeftValue, AbstractLeftValue, RightValue> m_inner;
 #if !ASSERT_DISABLED

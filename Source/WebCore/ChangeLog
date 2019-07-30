@@ -1,3 +1,23 @@
+2019-07-30  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Make ASTDumper dump types and address spaces
+        https://bugs.webkit.org/show_bug.cgi?id=200281
+
+        Reviewed by Robin Morisset.
+
+        This makes it much easier to gain insight into what type resolution
+        the checker does. I used this logging to debug https://bugs.webkit.org/show_bug.cgi?id=200282
+
+        * Modules/webgpu/WHLSL/AST/WHLSLAddressSpace.h:
+        (WebCore::WHLSL::AST::TypeAnnotation::isAbstractLeftValue const):
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayReferenceType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLPointerType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeReference.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.h:
+        * Modules/webgpu/WHLSL/WHLSLASTDumper.cpp:
+        (WebCore::WHLSL::ASTDumper::visit):
+
 2019-07-30  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Refactor Direct2D code to follow Cairo's model to support modern WebKit

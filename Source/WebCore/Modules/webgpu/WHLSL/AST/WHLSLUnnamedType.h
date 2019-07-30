@@ -67,6 +67,8 @@ public:
     virtual unsigned hash() const = 0;
     virtual bool operator==(const UnnamedType&) const = 0;
 
+    virtual String toString() const = 0;
+
     const CodeLocation& codeLocation() const { return m_codeLocation; }
 
 private:

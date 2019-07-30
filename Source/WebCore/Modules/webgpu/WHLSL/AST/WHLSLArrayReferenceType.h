@@ -75,6 +75,11 @@ public:
             && elementType() == downcast<ArrayReferenceType>(other).elementType();
     }
 
+    String toString() const override
+    {
+        return makeString(elementType().toString(), "[]");
+    }
+
 private:
 };
 

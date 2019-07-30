@@ -76,6 +76,11 @@ public:
             && elementType() == downcast<PointerType>(other).elementType();
     }
 
+    String toString() const override
+    {
+        return makeString(elementType().toString(), '*');
+    }
+
 private:
 };
 
