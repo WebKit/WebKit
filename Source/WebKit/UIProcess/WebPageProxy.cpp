@@ -1359,6 +1359,10 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
     m_process->send(Messages::WebPage::Reload(navigation->navigationID(), options.toRaw(), sandboxExtensionHandle), m_pageID);
     m_process->responsivenessTimer().start();
 
+#if ENABLE(SPEECH_SYNTHESIS)
+    resetSpeechSynthesizer();
+#endif
+
     return navigation;
 }
 
@@ -7053,6 +7057,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #if ENABLE(POINTER_LOCK)
     requestPointerUnlock();
 #endif
+    
+#if ENABLE(SPEECH_SYNTHESIS)
+    resetSpeechSynthesizer();
+#endif
 }
 
 void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason terminationReason)
@@ -9126,10 +9134,25 @@ void WebPageProxy::markAdClickAttributionsAsExpiredForTesting(CompletionHandler<
 }
 
 #if ENABLE(SPEECH_SYNTHESIS)
+
+void WebPageProxy::resetSpeechSynthesizer()
+{
+    if (!m_speechSynthesisData)
+        return;
+    
+    auto& synthesisData = speechSynthesisData();
+    synthesisData.speakingFinishedCompletionHandler = nullptr;
+    synthesisData.speakingStartedCompletionHandler = nullptr;
+    synthesisData.speakingPausedCompletionHandler = nullptr;
+    synthesisData.speakingResumedCompletionHandler = nullptr;
+    if (synthesisData.synthesizer)
+        synthesisData.synthesizer->resetState();
+}
+
 WebPageProxy::SpeechSynthesisData& WebPageProxy::speechSynthesisData()
 {
     if (!m_speechSynthesisData)
-        m_speechSynthesisData = SpeechSynthesisData { std::make_unique<PlatformSpeechSynthesizer>(this), nullptr, nullptr, nullptr, nullptr };
+        m_speechSynthesisData = SpeechSynthesisData { std::make_unique<PlatformSpeechSynthesizer>(this), nullptr, nullptr, nullptr, nullptr, nullptr };
     return *m_speechSynthesisData;
 }
 
@@ -9143,6 +9166,11 @@ void WebPageProxy::speechSynthesisVoiceList(CompletionHandler<void(Vector<WebSpe
     completionHandler(WTFMove(result));
 }
 
+void WebPageProxy::speechSynthesisSetFinishedCallback(CompletionHandler<void()>&& completionHandler)
+{
+    speechSynthesisData().speakingFinishedCompletionHandler = WTFMove(completionHandler);
+}
+
 void WebPageProxy::speechSynthesisSpeak(const String& text, const String& lang, float volume, float rate, float pitch, MonotonicTime startTime, const String& voiceURI, const String& voiceName, const String& voiceLang, bool localService, bool defaultVoice, CompletionHandler<void()>&& completionHandler)
 {
     auto voice = WebCore::PlatformSpeechSynthesisVoice::create(voiceURI, voiceName, voiceLang, localService, defaultVoice);
@@ -9154,8 +9182,8 @@ void WebPageProxy::speechSynthesisSpeak(const String& text, const String& lang, 
     utterance->setPitch(pitch);
     utterance->setVoice(&voice.get());
 
+    speechSynthesisData().speakingStartedCompletionHandler = WTFMove(completionHandler);
     speechSynthesisData().utterance = WTFMove(utterance);
-    speechSynthesisData().speakingFinishedCompletionHandler = WTFMove(completionHandler);
     speechSynthesisData().synthesizer->speak(m_speechSynthesisData->utterance.get());
 }
 

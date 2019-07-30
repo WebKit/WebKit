@@ -258,21 +258,26 @@ void WebPageProxy::paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinator
 #if ENABLE(SPEECH_SYNTHESIS)
 void WebPageProxy::didStartSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
 {
+    if (speechSynthesisData().speakingStartedCompletionHandler)
+        speechSynthesisData().speakingStartedCompletionHandler();
 }
 
 void WebPageProxy::didFinishSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
 {
-    m_speechSynthesisData->speakingFinishedCompletionHandler();
+    if (speechSynthesisData().speakingFinishedCompletionHandler)
+        speechSynthesisData().speakingFinishedCompletionHandler();
 }
 
 void WebPageProxy::didPauseSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
 {
-    m_speechSynthesisData->speakingPausedCompletionHandler();
+    if (speechSynthesisData().speakingPausedCompletionHandler)
+        speechSynthesisData().speakingPausedCompletionHandler();
 }
 
 void WebPageProxy::didResumeSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
 {
-    m_speechSynthesisData->speakingResumedCompletionHandler();
+    if (speechSynthesisData().speakingResumedCompletionHandler)
+        speechSynthesisData().speakingResumedCompletionHandler();
 }
 
 void WebPageProxy::speakingErrorOccurred(WebCore::PlatformSpeechSynthesisUtterance&)
