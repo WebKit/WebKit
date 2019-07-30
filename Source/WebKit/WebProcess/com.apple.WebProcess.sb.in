@@ -928,6 +928,7 @@
         (syscall-number SYS_bsdthread_terminate)
         (syscall-number SYS_workq_kernreturn)
         (syscall-number SYS_thread_selfid)
+        (syscall-number SYS_kevent)
         (syscall-number SYS_kevent_qos)
         (syscall-number SYS_kevent_id)
         (syscall-number SYS___mac_syscall)
