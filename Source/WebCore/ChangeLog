@@ -1,3 +1,30 @@
+2019-07-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WorkerGlobalScope::wrapCryptoKey/unwrapCryptoKey should use local heap objects for replies
+        https://bugs.webkit.org/show_bug.cgi?id=200179
+        <rdar://problem/52334658>
+
+        Reviewed by Brent Fulgham.
+
+        Based on the patch by Jiewen Tan.
+
+        WorkerGlobalScope::wrapCryptoKey and WorkerGlobalScope::unwrapCryptoKey had a bug that they could exit
+        the function before the main thread had finished writing to the result vector passed in to these functions
+        when the worker's runloop receives MessageQueueTerminated before the main thread finishes writing.
+
+        Fixed the bug by creating a new temporary Vector inside a ThreadSafeRefCounted object shared between
+        the main thread and the worker thread, which extends the lifetime of the Vector until when the worker thread
+        receives the result or when the main thread finishes writing to the Vector, whichever happens last.
+
+        Unfortunately no new tests since there is no reproducible test case, and this crash is highly racy.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::CryptoBufferContainer): Added.
+        (WebCore::CryptoBufferContainer::create): Added.
+        (WebCore::CryptoBufferContainer::buffer): Added.
+        (WebCore::WorkerGlobalScope::wrapCryptoKey):
+        (WebCore::WorkerGlobalScope::unwrapCryptoKey):
+
 2019-07-30  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Checker sets wrong type for property access instruction with an ander
