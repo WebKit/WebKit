@@ -1058,7 +1058,7 @@ void Checker::finishVisiting(AST::PropertyAccessExpression& propertyAccessExpres
     AST::TypeAnnotation typeAnnotation = AST::RightValue();
     if (auto leftAddressSpace = baseInfo->typeAnnotation.leftAddressSpace()) {
         if (anderFunction)
-            typeAnnotation = AST::LeftValue { *leftAddressSpace };
+            typeAnnotation = AST::LeftValue { downcast<AST::ReferenceType>(anderFunction->type()).addressSpace() };
         else if (setterFunction)
             typeAnnotation = AST::AbstractLeftValue();
     } else if (!baseInfo->typeAnnotation.isRightValue() && (setterFunction || threadAnderFunction))

@@ -1,3 +1,13 @@
+2019-07-30  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Checker sets wrong type for property access instruction with an ander
+        https://bugs.webkit.org/show_bug.cgi?id=200282
+
+        Reviewed by Myles C. Maxfield.
+
+        * webgpu/whlsl/device-proper-type-checker-expected.txt: Added.
+        * webgpu/whlsl/device-proper-type-checker.html: Added.
+
 2019-07-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add test expectations and baselines for iPad

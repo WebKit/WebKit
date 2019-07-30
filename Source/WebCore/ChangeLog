@@ -1,5 +1,30 @@
 2019-07-30  Saam Barati  <sbarati@apple.com>
 
+        [WHLSL] Checker sets wrong type for property access instruction with an ander
+        https://bugs.webkit.org/show_bug.cgi?id=200282
+
+        Reviewed by Myles C. Maxfield.
+
+        We were assigning resulting type based on the base value instead of the ander
+        of the base value. For example, consider:
+        ```
+        struct Point { float x; float y; }
+        compute main(device Point[] buffer) { buffer[0]; }
+        ```
+        
+        The local variable "buffer" is in the "thread" address space. So we would end up
+        trying to use the thread address space for "buffer[0]". This caused us to
+        generate invalid Metal code because we would call a "thread" ander with a
+        "device" pointer. The fix is to use the "device" address space, which is
+        the type of the ander we were already setting on this property access instruction.
+
+        Test: webgpu/whlsl/device-proper-type-checker.html
+
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::Checker::finishVisiting):
+
+2019-07-30  Saam Barati  <sbarati@apple.com>
+
         [WHLSL] Make ASTDumper dump types and address spaces
         https://bugs.webkit.org/show_bug.cgi?id=200281
 
