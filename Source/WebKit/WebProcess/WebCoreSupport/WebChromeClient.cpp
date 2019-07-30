@@ -36,6 +36,8 @@
 #include "InjectedBundleNavigationAction.h"
 #include "InjectedBundleNodeHandle.h"
 #include "NavigationActionData.h"
+#include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkProcessConnection.h"
 #include "PageBanner.h"
 #include "UserData.h"
 #include "WebColorChooser.h"
@@ -303,6 +305,14 @@ Page* WebChromeClient::createWindow(Frame& frame, const FrameLoadRequest& reques
     return webProcess.webPage(*newPageID)->corePage();
 }
 
+bool WebChromeClient::testProcessIncomingSyncMessagesWhenWaitingForSyncReply()
+{
+    bool handled = false;
+    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(m_page.pageID()), Messages::NetworkConnectionToWebProcess::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply::Reply(handled), 0, Seconds::infinity(), IPC::SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply))
+        return false;
+    return handled;
+}
+
 void WebChromeClient::show()
 {
     m_page.show();
@@ -458,7 +468,7 @@ void WebChromeClient::runJavaScriptAlert(Frame& frame, const String& alertText)
 
     HangDetectionDisabler hangDetectionDisabler;
 
-    m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptAlert(webFrame->frameID(), SecurityOriginData::fromFrame(&frame), alertText), Messages::WebPageProxy::RunJavaScriptAlert::Reply());
+    m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptAlert(webFrame->frameID(), SecurityOriginData::fromFrame(&frame), alertText), Messages::WebPageProxy::RunJavaScriptAlert::Reply(), IPC::SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply);
 }
 
 bool WebChromeClient::runJavaScriptConfirm(Frame& frame, const String& message)
@@ -475,7 +485,7 @@ bool WebChromeClient::runJavaScriptConfirm(Frame& frame, const String& message)
     HangDetectionDisabler hangDetectionDisabler;
 
     bool result = false;
-    if (!m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptConfirm(webFrame->frameID(), SecurityOriginData::fromFrame(&frame), message), Messages::WebPageProxy::RunJavaScriptConfirm::Reply(result)))
+    if (!m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptConfirm(webFrame->frameID(), SecurityOriginData::fromFrame(&frame), message), Messages::WebPageProxy::RunJavaScriptConfirm::Reply(result), IPC::SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply))
         return false;
 
     return result;
@@ -494,7 +504,7 @@ bool WebChromeClient::runJavaScriptPrompt(Frame& frame, const String& message, c
 
     HangDetectionDisabler hangDetectionDisabler;
 
-    if (!m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptPrompt(webFrame->frameID(), SecurityOriginData::fromFrame(&frame), message, defaultValue), Messages::WebPageProxy::RunJavaScriptPrompt::Reply(result)))
+    if (!m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptPrompt(webFrame->frameID(), SecurityOriginData::fromFrame(&frame), message, defaultValue), Messages::WebPageProxy::RunJavaScriptPrompt::Reply(result), IPC::SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply))
         return false;
 
     return !result.isNull();
