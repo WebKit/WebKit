@@ -52,8 +52,13 @@ static void collectDescendantViewsAtPoint(Vector<UIView *, 16>& viewsAtPoint, UI
             //        It is currently only needed for scroll views.
             if (!view.isUserInteractionEnabled)
                 return false;
+
+            if (CGRectIsEmpty([view frame]))
+                return false;
+
             if (![view pointInside:subviewPoint withEvent:event])
                 return false;
+
             if (![view isKindOfClass:[WKCompositingView class]])
                 return true;
             auto* node = RemoteLayerTreeNode::forCALayer(view.layer);

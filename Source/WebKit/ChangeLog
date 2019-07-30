@@ -318,6 +318,25 @@
         context to ensure that the completion handler for the nested request is invoked before the outer request is
         finished.
 
+2019-07-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Can't scroll on yummly.co.uk recipe (scale(0) div covers the content and hit-tests)
+        https://bugs.webkit.org/show_bug.cgi?id=200263
+        rdar://problem/53679408
+
+        Reviewed by Antti Koivisto.
+
+        The content on this page had a scale(0) div overlaying an overflow:scroll element,
+        and our UI-side hit-testing code would find this scale(0) element, because apparently
+        -[UIView convertPoint:fromView:] will happily work with non-invertible matrices, and 
+        -[UIView pointInside:withEvent:] just compares the point with the view bounds.
+
+        Since the view frame takes the transform into account, we can look for an empty frame
+        to detect these non-invertible transforms.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (WebKit::collectDescendantViewsAtPoint):
+
 2019-07-29  Youenn Fablet  <youenn@apple.com>
 
         NetworkProcess clear and fetch of cache entries might move the callback aggregator more than once
