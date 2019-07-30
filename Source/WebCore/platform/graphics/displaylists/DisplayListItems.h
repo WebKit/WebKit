@@ -70,7 +70,7 @@ enum class ItemType {
     DrawImage,
     DrawTiledImage,
     DrawTiledScaledImage,
-#if USE(CG) || USE(CAIRO)
+#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
     DrawNativeImage,
 #endif
     DrawPattern,
@@ -638,7 +638,7 @@ private:
     ImagePaintingOptions m_imagePaintingOptions;
 };
 
-#if USE(CG) || USE(CAIRO)
+#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
 class DrawNativeImage : public DrawingItem {
 public:
     static Ref<DrawNativeImage> create(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)

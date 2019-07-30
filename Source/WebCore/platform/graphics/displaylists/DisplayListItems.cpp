@@ -486,7 +486,7 @@ static TextStream& operator<<(TextStream& ts, const DrawTiledScaledImage& item)
     return ts;
 }
 
-#if USE(CG) || USE(CAIRO)
+#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
 DrawNativeImage::DrawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
     : DrawingItem(ItemType::DrawNativeImage)
 #if USE(CG)

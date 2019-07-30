@@ -34,6 +34,7 @@
 #include "HWndDC.h"
 #include "Image.h"
 #include "NotImplemented.h"
+#include "PlatformContextDirect2D.h"
 
 #include <d2d1.h>
 #include <windows.h>
@@ -42,20 +43,22 @@
 
 namespace WebCore {
 
-void deallocContext(ID2D1RenderTarget* renderTarget)
+void deallocContext(PlatformContextDirect2D* platformContext)
 {
-    if (renderTarget)
-        renderTarget->Release();
+    if (platformContext) {
+        if (auto* renderTarget = platformContext->renderTarget())
+            renderTarget->Release();
+    }
 }
 
-GDIObject<HBITMAP> allocImage(HDC dc, IntSize size, ID2D1RenderTarget** targetRef)
+GDIObject<HBITMAP> allocImage(HDC dc, IntSize size, PlatformContextDirect2D** platformContext)
 {
     BitmapInfo bmpInfo = BitmapInfo::create(size);
 
     LPVOID bits = nullptr;
     auto hbmp = adoptGDIObject(::CreateDIBSection(dc, &bmpInfo, DIB_RGB_COLORS, &bits, 0, 0));
 
-    if (!targetRef || !hbmp)
+    if (!platformContext || !hbmp)
         return hbmp;
 
     // FIXME: Use GDI Interop layer to create HBITMAP from D2D Bitmap

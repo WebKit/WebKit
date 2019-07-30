@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Igalia S.L.
+ * Copyright (C) 2011 ProFUSION embedded systems
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +26,34 @@
 
 #pragma once
 
-#include "Image.h"
+#if USE(DIRECT2D)
+
+#include "COMPtr.h"
+#include "GraphicsTypes.h"
 #include "IntSize.h"
-#include <JavaScriptCore/Uint8ClampedArray.h>
-#include <wtf/CheckedArithmetic.h>
-#include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
+
+interface ID2D1RenderTarget;
+interface IWICBitmapSource;
+interface IWICBitmap;
 
 namespace WebCore {
 
-class PlatformContextDirect2D;
+class FloatPoint;
+class IntRect;
+class IntSize;
 
-struct ImageBufferData {
-    IntSize backingStoreSize;
-    Checked<unsigned, RecordOverflow> bytesPerRow;
+namespace Direct2D {
 
-    // Only for software ImageBuffers.
-    Vector<char> data;
-    std::unique_ptr<PlatformContextDirect2D> platformContext;
-    std::unique_ptr<GraphicsContext> context;
-    COMPtr<IWICBitmap> bitmapSource;
+IntSize bitmapSize(IWICBitmapSource*);
+FloatPoint bitmapResolution(IWICBitmapSource*);
+unsigned bitsPerPixel(GUID);
+COMPtr<IWICBitmap> createDirect2DImageSurfaceWithData(void* data, const IntSize&, unsigned stride);
+COMPtr<ID2D1RenderTarget> createRenderTargetFromWICBitmap(IWICBitmap*);
 
-    RefPtr<Uint8ClampedArray> getData(AlphaPremultiplication, const IntRect&, const IntSize&, bool accelerateRendering, float resolutionScale) const;
-    void putData(const Uint8ClampedArray& source, AlphaPremultiplication sourceFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize&, bool accelerateRendering, float resolutionScale);
-};
+void copyRectFromOneSurfaceToAnother(IWICBitmap* from, IWICBitmap* to, const IntSize& sourceOffset, const IntRect&, const IntSize& destOffset = IntSize());
+
+} // namespace Direct2D
 
 } // namespace WebCore
+
+#endif // USE(DIRECT2D)

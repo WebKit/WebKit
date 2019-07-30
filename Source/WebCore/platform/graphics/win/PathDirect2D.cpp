@@ -34,6 +34,7 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
+#include "PlatformContextDirect2D.h"
 #include "StrokeStyleApplier.h"
 #include <d2d1.h>
 #include <wtf/MathExtras.h>
@@ -249,7 +250,8 @@ bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) 
 
     ASSERT(applier);
 
-    GraphicsContext scratchContext(scratchRenderTarget(), GraphicsContext::BitmapRenderingContextType::GPUMemory);
+    PlatformContextDirect2D scratchContextD2D(scratchRenderTarget());
+    GraphicsContext scratchContext(&scratchContextD2D, GraphicsContext::BitmapRenderingContextType::GPUMemory);
     applier->strokeStyle(&scratchContext);
 
     BOOL containsPoint = false;

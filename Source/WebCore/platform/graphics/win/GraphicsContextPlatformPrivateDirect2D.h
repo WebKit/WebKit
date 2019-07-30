@@ -27,6 +27,7 @@
 
 #include "COMPtr.h"
 #include "Color.h"
+#include "PlatformContextDirect2D.h"
 #include <d2d1.h>
 #include <d2d1_1.h>
 #include <d2d1effects.h>
@@ -39,10 +40,11 @@ namespace WebCore {
 class GraphicsContextPlatformPrivate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GraphicsContextPlatformPrivate(ID2D1RenderTarget*, GraphicsContext::BitmapRenderingContextType);
+    GraphicsContextPlatformPrivate(PlatformContextDirect2D&, GraphicsContext::BitmapRenderingContextType);
+    GraphicsContextPlatformPrivate(std::unique_ptr<PlatformContextDirect2D>&&, GraphicsContext::BitmapRenderingContextType);
     ~GraphicsContextPlatformPrivate();
 
-    enum Direct2DLayerType { AxisAlignedClip, LayerClip };
+    void syncContext(PlatformContextDirect2D&);
 
     void beginTransparencyLayer(float opacity);
     void endTransparencyLayer();
@@ -73,68 +75,26 @@ public:
     void setDashes(const DashArray&);
     void setAlpha(float);
 
+    PlatformContextDirect2D* platformContext() { return &m_platformContext; }
     ID2D1RenderTarget* renderTarget();
-    ID2D1Layer* clipLayer() const { return m_renderStates.last().m_activeLayer.get(); }
-    ID2D1StrokeStyle* strokeStyle();
-
-    COMPtr<ID2D1SolidColorBrush> brushWithColor(const D2D1_COLOR_F&);
 
     HDC m_hdc { nullptr };
-    D2D1_BLEND_MODE m_blendMode { D2D1_BLEND_MODE_MULTIPLY };
-    D2D1_COMPOSITE_MODE m_compositeMode { D2D1_COMPOSITE_MODE_SOURCE_OVER };
     bool m_shouldIncludeChildWindows { false };
-    bool m_strokeSyleIsDirty { false };
-
-    COMPtr<ID2D1SolidColorBrush> m_solidStrokeBrush;
-    COMPtr<ID2D1SolidColorBrush> m_solidFillBrush;
-    COMPtr<ID2D1BitmapBrush> m_patternStrokeBrush;
-    COMPtr<ID2D1BitmapBrush> m_patternFillBrush;
 
     float currentGlobalAlpha() const;
 
     D2D1_STROKE_STYLE_PROPERTIES strokeStyleProperties() const;
 
 private:
-    void recomputeStrokeStyle();
-
-    COMPtr<ID2D1RenderTarget> m_renderTarget;
+    std::unique_ptr<PlatformContextDirect2D> m_ownedPlatformContext;
+    PlatformContextDirect2D& m_platformContext;
     const GraphicsContext::BitmapRenderingContextType m_rendererType;
-    HashMap<uint32_t, COMPtr<ID2D1SolidColorBrush>> m_solidColoredBrushCache;
-    COMPtr<ID2D1SolidColorBrush> m_whiteBrush;
-    COMPtr<ID2D1SolidColorBrush> m_zeroBrush;
-    COMPtr<ID2D1StrokeStyle> m_d2dStrokeStyle;
-
-    struct RenderState {
-        COMPtr<ID2D1DrawingStateBlock> m_drawingStateBlock;
-        COMPtr<ID2D1Layer> m_activeLayer;
-        Vector<Direct2DLayerType> m_clips;
-    };
-
-    Vector<RenderState> m_renderStates;
-
-    struct TransparencyLayerState {
-        COMPtr<ID2D1BitmapRenderTarget> renderTarget;
-        Color shadowColor;
-        FloatSize shadowOffset;
-        float opacity { 1.0 };
-        float shadowBlur { 0 };
-        bool hasShadow { false };
-    };
-    Vector<TransparencyLayerState> m_transparencyLayerStack;
-
-    D2D1_CAP_STYLE m_lineCap { D2D1_CAP_STYLE_FLAT };
-    D2D1_LINE_JOIN m_lineJoin { D2D1_LINE_JOIN_MITER };
-    StrokeStyle m_strokeStyle { SolidStroke };
-    DashArray m_dashes;
 
     unsigned beginDrawCount { 0 };
 
-    float m_miterLimit { 10.0f };
-    float m_dashOffset { 0 };
-    float m_patternWidth { 1.0f };
-    float m_patternOffset { 0 };
-    float m_strokeThickness { 0 };
     float m_alpha { 1.0 };
+
+    friend class D2DContextStateSaver;
 };
 
 class D2DContextStateSaver {
@@ -144,26 +104,26 @@ public:
         , m_saveAndRestore(saveAndRestore)
     {
         if (m_saveAndRestore)
-            m_context.save();
+            m_context.m_platformContext.save();
     }
 
     ~D2DContextStateSaver()
     {
         if (m_saveAndRestore)
-            m_context.restore();
+            m_context.m_platformContext.restore();
     }
 
     void save()
     {
         ASSERT(!m_saveAndRestore);
-        m_context.save();
+        m_context.m_platformContext.save();
         m_saveAndRestore = true;
     }
 
     void restore()
     {
         ASSERT(m_saveAndRestore);
-        m_context.restore();
+        m_context.m_platformContext.restore();
         m_saveAndRestore = false;
     }
 
@@ -173,6 +133,7 @@ public:
     }
 
 private:
+    std::unique_ptr<PlatformContextDirect2D> ownedPlatformContext;
     GraphicsContextPlatformPrivate& m_context;
     bool m_saveAndRestore { false };
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,12 +30,14 @@
 
 #include "BitmapImage.h"
 #include "COMPtr.h"
+#include "Direct2DUtilities.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
 #include "ImageDecoderDirect2D.h"
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
+#include "PlatformContextDirect2D.h"
 #include <d2d1.h>
 #include <math.h>
 #include <wincodec.h>
@@ -101,21 +103,17 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
 
     m_data.data = Vector<char>(numBytes.unsafeGet(), 0);
 
-    HRESULT hr = ImageDecoderDirect2D::systemImagingFactory()->CreateBitmapFromMemory(m_size.width(), m_size.height(), GUID_WICPixelFormat32bppPBGRA, static_cast<UINT>(m_data.bytesPerRow.unsafeGet()), static_cast<UINT>(numBytes.unsafeGet()), reinterpret_cast<BYTE*>(m_data.data.data()), &m_data.bitmapSource);
-    if (!SUCCEEDED(hr))
+    m_data.bitmapSource = Direct2D::createDirect2DImageSurfaceWithData(m_data.data.data(), m_size, m_data.bytesPerRow.unsafeGet());
+    if (!m_data.bitmapSource)
         return;
 
-    auto targetProperties = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
-        D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
-        0, 0, D2D1_RENDER_TARGET_USAGE_NONE, D2D1_FEATURE_LEVEL_DEFAULT);
-
-    COMPtr<ID2D1RenderTarget> bitmapContext;
-    hr = GraphicsContext::systemFactory()->CreateWicBitmapRenderTarget(m_data.bitmapSource.get(), &targetProperties, &bitmapContext);
-    if (!bitmapContext || !SUCCEEDED(hr))
+    COMPtr<ID2D1RenderTarget> bitmapContext = Direct2D::createRenderTargetFromWICBitmap(m_data.bitmapSource.get());
+    if (!bitmapContext)
         return;
 
     // Note: This places the bitmapcontext into a locked state because of the BeginDraw call in the constructor.
-    m_data.context = std::make_unique<GraphicsContext>(bitmapContext.get());
+    m_data.platformContext = std::make_unique<PlatformContextDirect2D>(bitmapContext.get());
+    m_data.context = std::make_unique<GraphicsContext>(m_data.platformContext.get(), GraphicsContext::BitmapRenderingContextType::GPUMemory);
 
     success = true;
 }

@@ -45,6 +45,7 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/GLContext.cpp
     platform/graphics/GraphicsContext3DPrivate.cpp
+    platform/graphics/GraphicsContextImpl.cpp
     platform/graphics/PlatformDisplay.cpp
 
     platform/graphics/egl/GLContextEGL.cpp
@@ -57,9 +58,12 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/opentype/OpenTypeUtilities.cpp
 
+    platform/graphics/win/BackingStoreBackendDirect2DImpl.cpp
     platform/graphics/win/ColorDirect2D.cpp
     platform/graphics/win/ComplexTextControllerDirectWrite.cpp
     platform/graphics/win/DIBPixelData.cpp
+    platform/graphics/win/Direct2DOperations.cpp
+    platform/graphics/win/Direct2DUtilities.cpp
     platform/graphics/win/FloatPointDirect2D.cpp
     platform/graphics/win/FloatRectDirect2D.cpp
     platform/graphics/win/FloatSizeDirect2D.cpp
@@ -73,6 +77,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/GradientDirect2D.cpp
     platform/graphics/win/GraphicsContext3DDirect2D.cpp
     platform/graphics/win/GraphicsContextDirect2D.cpp
+    platform/graphics/win/GraphicsContextImplDirect2D.cpp
     platform/graphics/win/GraphicsContextWin.cpp
     platform/graphics/win/IconWin.cpp
     platform/graphics/win/ImageBufferDataDirect2D.cpp
@@ -87,6 +92,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/NativeImageDirect2D.cpp
     platform/graphics/win/PathDirect2D.cpp
     platform/graphics/win/PatternDirect2D.cpp
+    platform/graphics/win/PlatformContextDirect2D.cpp
     platform/graphics/win/SimpleFontDataWin.cpp
     platform/graphics/win/SimpleFontDataDirect2D.cpp
     platform/graphics/win/TextAnalyzerHelper.cpp
@@ -149,12 +155,19 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     page/win/FrameWin.h
 
+    platform/graphics/win/BackingStoreBackendDirect2D.h
+    platform/graphics/win/BackingStoreBackendDirect2DImpl.h
     platform/graphics/win/DIBPixelData.h
+    platform/graphics/win/Direct2DOperations.h
+    platform/graphics/win/Direct2DUtilities.h
     platform/graphics/win/FullScreenController.h
     platform/graphics/win/FullScreenControllerClient.h
+    platform/graphics/win/GraphicsContextImplDirect2D.h
     platform/graphics/win/ImageBufferDataDirect2D.h
+    platform/graphics/win/ImageDecoderDirect2D.h
     platform/graphics/win/LocalWindowsContext.h
     platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h
+    platform/graphics/win/PlatformContextDirect2D.h
     platform/graphics/win/SharedGDIObject.h
 
     platform/win/BString.h

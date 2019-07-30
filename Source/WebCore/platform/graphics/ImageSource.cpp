@@ -38,6 +38,7 @@
 
 #if USE(DIRECT2D)
 #include "GraphicsContext.h"
+#include "PlatformContextDirect2D.h"
 #endif
 
 namespace WebCore {
@@ -661,7 +662,7 @@ ImageOrientation ImageSource::frameOrientationAtIndex(size_t index)
 void ImageSource::setTargetContext(const GraphicsContext* targetContext)
 {
     if (isDecoderAvailable() && targetContext)
-        m_decoder->setTargetContext(targetContext->platformContext());
+        m_decoder->setTargetContext(targetContext->platformContext()->renderTarget());
 }
 #endif
 

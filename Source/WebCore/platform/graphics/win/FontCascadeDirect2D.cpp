@@ -36,6 +36,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsContextPlatformPrivateDirect2D.h"
 #include "IntRect.h"
+#include "PlatformContextDirect2D.h"
 #include "UniscribeController.h"
 #include "WebCoreTextRenderer.h"
 #include <d2d1.h>
@@ -47,7 +48,7 @@ namespace WebCore {
 void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font, const GlyphBuffer& glyphBuffer,
     unsigned from, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode smoothingMode)
 {
-    auto context = graphicsContext.platformContext();
+    auto context = graphicsContext.platformContext()->renderTarget();
     bool shouldUseFontSmoothing = WebCoreShouldUseFontSmoothing();
 
     switch (smoothingMode) {

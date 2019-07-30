@@ -38,6 +38,10 @@ typedef CGPatternRef PlatformPatternPtr;
 #elif USE(DIRECT2D)
 interface ID2D1BitmapBrush;
 typedef ID2D1BitmapBrush* PlatformPatternPtr;
+namespace WebCore {
+class PlatformContextDirect2D;
+}
+typedef WebCore::PlatformContextDirect2D PlatformGraphicsContext;
 #elif USE(CAIRO)
 typedef struct _cairo_pattern cairo_pattern_t;
 typedef cairo_pattern_t* PlatformPatternPtr;
@@ -62,6 +66,7 @@ public:
 #if !USE(DIRECT2D)
     PlatformPatternPtr createPlatformPattern(const AffineTransform& userSpaceTransformation) const;
 #else
+    PlatformPatternPtr createPlatformPattern(PlatformGraphicsContext&, float alpha, const AffineTransform& userSpaceTransformation) const;
     PlatformPatternPtr createPlatformPattern(const GraphicsContext&, float alpha, const AffineTransform& userSpaceTransformation) const;
 #endif
     void setPatternSpaceTransform(const AffineTransform& patternSpaceTransformation);

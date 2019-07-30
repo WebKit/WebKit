@@ -1,3 +1,46 @@
+2019-07-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Refactor Direct2D code to follow Cairo's model to support modern WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=200270
+
+        Reviewed by Dean Jackson.
+
+        Refactor the Direct2D code in WebCore so that the core routines can be shared
+        between GraphicsContext and GraphicsContextImpl. Implement PlatformContext,
+        BackingStoreBackend, and GraphicsContextImpl for the Direct2D engine.
+       
+        This patch effectively just moves code around.
+
+        * PlatformFTW.cmake:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContextImpl.h:
+        * platform/graphics/ImageSource.cpp:
+        * platform/graphics/Pattern.h:
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/win/BackingStoreBackendDirect2D.h: Added.
+        * platform/graphics/win/BackingStoreBackendDirect2DImpl.cpp: Added.
+        * platform/graphics/win/BackingStoreBackendDirect2DImpl.h: Added.
+        * platform/graphics/win/Direct2DOperations.cpp: Added.
+        * platform/graphics/win/Direct2DOperations.h: Added.
+        * platform/graphics/win/Direct2DUtilities.cpp: Added.
+        * platform/graphics/win/Direct2DUtilities.h: Added.
+        * platform/graphics/win/FontCascadeDirect2D.cpp:
+        * platform/graphics/win/GradientDirect2D.cpp:
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        * platform/graphics/win/GraphicsContextImplDirect2D.cpp: Added.
+        * platform/graphics/win/GraphicsContextImplDirect2D.h: Added.
+        * platform/graphics/win/GraphicsContextPlatformPrivateDirect2D.h:
+        * platform/graphics/win/ImageBufferDataDirect2D.h:
+        * platform/graphics/win/ImageBufferDirect2D.cpp:
+        * platform/graphics/win/NativeImageDirect2D.cpp:
+        * platform/graphics/win/PathDirect2D.cpp:
+        * platform/graphics/win/PatternDirect2D.cpp:
+        * platform/graphics/win/PlatformContextDirect2D.cpp: Added.
+        * platform/graphics/win/PlatformContextDirect2D.h: Added.
+        * platform/win/DragImageWin.cpp:
+        * svg/graphics/SVGImage.cpp:
+
 2019-07-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r241288): Text on Yahoo Japan mobile looks too bold

@@ -28,6 +28,7 @@
 
 #include "FloatPoint.h"
 #include "GraphicsContext.h"
+#include "PlatformContextDirect2D.h"
 #include <d2d1.h>
 #include <wtf/RetainPtr.h>
 
@@ -110,7 +111,7 @@ void Gradient::generateGradient(ID2D1RenderTarget* renderTarget)
 
 void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
 {
-    auto d2dContext = context.platformContext();
+    auto d2dContext = context.platformContext()->renderTarget();
 
     WTF::switchOn(m_data,
         [&] (const LinearData& data) {

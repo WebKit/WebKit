@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
+#include "PlatformContextDirect2D.h"
 #include <d2d1.h>
 #include <wincodec.h>
 
@@ -116,11 +117,11 @@ void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, cons
     float opacity = 1.0f;
 
     COMPtr<ID2D1Bitmap> bitmap;
-    HRESULT hr = platformContext->CreateBitmapFromWicBitmap(image.get(), &bitmap);
+    HRESULT hr = platformContext->renderTarget()->CreateBitmapFromWicBitmap(image.get(), &bitmap);
     if (!SUCCEEDED(hr))
         return;
 
-    platformContext->DrawBitmap(bitmap.get(), destRect, opacity, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, adjustedSrcRect);
+    platformContext->renderTarget()->DrawBitmap(bitmap.get(), destRect, opacity, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, adjustedSrcRect);
     context.flush();
 }
 

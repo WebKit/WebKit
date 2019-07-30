@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,34 +20,45 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #pragma once
 
-#include "Image.h"
-#include "IntSize.h"
-#include <JavaScriptCore/Uint8ClampedArray.h>
-#include <wtf/CheckedArithmetic.h>
-#include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
+#if USE(DIRECT2D)
+
+#include "COMPtr.h"
+#include "IntRect.h"
+#include <wincodec.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
+
 
 namespace WebCore {
 
-class PlatformContextDirect2D;
+class BackingStoreBackendDirect2D {
+    WTF_MAKE_NONCOPYABLE(BackingStoreBackendDirect2D);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    virtual ~BackingStoreBackendDirect2D() = default;
 
-struct ImageBufferData {
-    IntSize backingStoreSize;
-    Checked<unsigned, RecordOverflow> bytesPerRow;
+    IWICBitmap* surface() const { return m_surface.get(); }
+    const IntSize& size() const { return m_size; }
 
-    // Only for software ImageBuffers.
-    Vector<char> data;
-    std::unique_ptr<PlatformContextDirect2D> platformContext;
-    std::unique_ptr<GraphicsContext> context;
-    COMPtr<IWICBitmap> bitmapSource;
+    virtual void scroll(const IntRect& scrollRect, const IntSize& scrollOffset) = 0;
 
-    RefPtr<Uint8ClampedArray> getData(AlphaPremultiplication, const IntRect&, const IntSize&, bool accelerateRendering, float resolutionScale) const;
-    void putData(const Uint8ClampedArray& source, AlphaPremultiplication sourceFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize&, bool accelerateRendering, float resolutionScale);
+protected:
+    BackingStoreBackendDirect2D(const IntSize& size)
+        : m_size(size)
+    {
+    }
+
+    COMPtr<IWICBitmap> m_surface;
+    void* m_surfaceBackingData { nullptr };
+    IntSize m_size;
 };
 
+
 } // namespace WebCore
+
+#endif // USE(DIRECT2D)
