@@ -469,6 +469,8 @@ public:
 
     RefPtr<CSSValue> resolvedVariableValue(CSSPropertyID, const CSSValue&, ApplyCascadedPropertyState&) const;
 
+    bool adjustRenderStyleForTextAutosizing(RenderStyle&, const Element&);
+
 private:
     void cacheBorderAndBackground();
 
@@ -499,8 +501,6 @@ private:
     // Every N additions to the matched declaration cache trigger a sweep where entries holding
     // the last reference to a style declaration are garbage collected.
     void sweepMatchedPropertiesCache();
-
-    void adjustRenderStyleForTextAutosizing(RenderStyle&, const Element&);
 
     typedef HashMap<unsigned, MatchedPropertiesCacheItem> MatchedPropertiesCache;
     MatchedPropertiesCache m_matchedPropertiesCache;

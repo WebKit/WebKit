@@ -91,6 +91,7 @@
 #include "PointerCaptureController.h"
 #include "PointerLockController.h"
 #include "ProgressTracker.h"
+#include "RenderDescendantIterator.h"
 #include "RenderLayerCompositor.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -3003,5 +3004,28 @@ void Page::didFinishLoadingImageForElement(HTMLImageElement& element)
 {
     chrome().client().didFinishLoadingImageForElement(element);
 }
+
+#if ENABLE(TEXT_AUTOSIZING)
+void Page::recomputeTextAutoSizingInAllFrames()
+{
+    ASSERT(settings().textAutosizingEnabled() && settings().textAutosizingUsesIdempotentMode());
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (!frame->document())
+            continue;
+        auto& document = *frame->document();
+        if (!document.renderView() || !document.styleScope().resolverIfExists())
+            continue;
+
+        auto& styleResolver = document.styleScope().resolver();
+        for (auto& renderer : descendantsOfType<RenderElement>(*document.renderView())) {
+            if (auto* element = renderer.element()) {
+                auto needsLayout = styleResolver.adjustRenderStyleForTextAutosizing(renderer.mutableStyle(), *element);
+                if (needsLayout)
+                    renderer.setNeedsLayout();
+            }
+        }
+    }
+}
+#endif
 
 } // namespace WebCore

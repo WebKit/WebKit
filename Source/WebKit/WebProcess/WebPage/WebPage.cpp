@@ -431,6 +431,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(VIEWPORT_RESIZING)
     , m_shrinkToFitContentTimer(*this, &WebPage::shrinkToFitContentTimerFired, 0_s)
 #endif
+#if ENABLE(TEXT_AUTOSIZING)
+    , m_textAutoSizingAdjustmentTimer(*this, &WebPage::textAutoSizingAdjustmentTimerFired)
+#endif
 {
     ASSERT(m_pageID);
 
@@ -1400,6 +1403,10 @@ void WebPage::close()
 
 #if ENABLE(VIEWPORT_RESIZING)
     m_shrinkToFitContentTimer.stop();
+#endif
+
+#if ENABLE(TEXT_AUTOSIZING)
+    m_textAutoSizingAdjustmentTimer.stop();
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
@@ -5793,6 +5800,10 @@ void WebPage::didCommitLoad(WebFrame* frame)
     m_shrinkToFitContentTimer.stop();
 #endif
 
+#if ENABLE(TEXT_AUTOSIZING)
+    m_textAutoSizingAdjustmentTimer.stop();
+#endif
+
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     resetPrimarySnapshottedPlugIn();
 #endif
@@ -6794,6 +6805,13 @@ void WebPage::didFinishLoadingImageForElement(WebCore::HTMLImageElement&)
 {
 }
 
+#endif
+
+#if ENABLE(TEXT_AUTOSIZING)
+void WebPage::textAutoSizingAdjustmentTimerFired()
+{
+    m_page->recomputeTextAutoSizingInAllFrames();
+}
 #endif
 
 } // namespace WebKit
