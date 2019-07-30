@@ -1,3 +1,81 @@
+2019-07-29  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r247722. rdar://problem/53647293
+
+    [macOS 10.15] Web process crashes when attempting to show the font panel via Font > Show Fonts
+    https://bugs.webkit.org/show_bug.cgi?id=200021
+    <rdar://problem/53301325>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebCore:
+    
+    In macOS 10.15, attempting to access ~/Library/FontCollections/ from the web process causes a Sandbox violation
+    and a subsequent crash. This can be triggered by trying to show the font panel via Font > Show Fonts in the
+    context menu after right clicking.
+    
+    In the (near) future, we should fix this by moving logic to show the font panel, color panel and styles panel
+    from the Editor in the web process to the UI process in WebKit2. However, for the time being, we can just work
+    around this by adding a new EditorClient hook to determine whether to allow the font panel to show; this returns
+    true in the legacy macOS WebKit port, and false everywhere else.
+    
+    Test: editing/mac/style/do-not-crash-when-showing-font-panel.html
+    
+    * editing/mac/EditorMac.mm:
+    (WebCore::Editor::showFontPanel):
+    * loader/EmptyClients.cpp:
+    * page/EditorClient.h:
+    
+    Source/WebKit:
+    
+    Always return false from canShowFontPanel in WebKit2.
+    
+    * WebProcess/WebCoreSupport/WebEditorClient.h:
+    
+    Source/WebKitLegacy/mac:
+    
+    Implement a new editing client hook. In WebKit1, this always returns true on macOS and false on iOS.
+    
+    * WebCoreSupport/WebEditorClient.h:
+    
+    Source/WebKitLegacy/win:
+    
+    Implement a new editing client hook.
+    
+    * WebCoreSupport/WebEditorClient.h:
+    
+    Tools:
+    
+    Add support for grabbing the child menu items of a context menu item.
+    
+    * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+    (WTR::getMenuItemChildrenCallback):
+    
+    LayoutTests:
+    
+    Add a new layout test to verify that attempting to show the font panel doesn't crash the web process in WebKit2.
+    This test is skipped in WebKit1, since EventSender::contextClick() in WebKit1 only returns an array of strings
+    corresponding to the titles of each menu item.
+    
+    * editing/mac/style/do-not-crash-when-showing-font-panel-expected.txt: Added.
+    * editing/mac/style/do-not-crash-when-showing-font-panel.html: Added.
+    * platform/mac-wk1/TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247722 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [macOS 10.15] Web process crashes when attempting to show the font panel via Font > Show Fonts
+            https://bugs.webkit.org/show_bug.cgi?id=200021
+            <rdar://problem/53301325>
+
+            Reviewed by Ryosuke Niwa.
+
+            Implement a new editing client hook.
+
+            * WebCoreSupport/WebEditorClient.h:
+
 2019-07-24  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/53483293

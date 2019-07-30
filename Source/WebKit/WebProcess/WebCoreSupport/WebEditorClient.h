@@ -185,6 +185,13 @@ private:
     bool performTwoStepDrop(WebCore::DocumentFragment&, WebCore::Range&, bool isMove) final;
     bool supportsGlobalSelection() final;
 
+    bool canShowFontPanel() const final
+    {
+        // FIXME: Support for showing the system font panel (as well as other font styling controls) is
+        // tracked in <rdar://problem/21577518>.
+        return false;
+    }
+
     WebPage* m_page;
 };
 

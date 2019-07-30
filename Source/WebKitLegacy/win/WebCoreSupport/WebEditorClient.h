@@ -119,6 +119,8 @@ private:
 
     WebCore::TextCheckerClient* textChecker() final { return this; }
 
+    bool canShowFontPanel() const final { return false; }
+
     WebView* m_webView;
     WebEditorUndoTarget* m_undoTarget;
 };
