@@ -171,16 +171,19 @@ class TestFreshnessPage extends PageWithHeading {
         tooltipTable.style.left = rect.left + rect.width / 2 - tooltipTable.offsetWidth / 2 + containerMarginLeft + 'px';
 
         let tableContent = [element('tr', element('td', {colspan: 2}, buildSummary))];
-        if (commitSet.repositories().length)
-            tableContent.push(element('tr', element('th', {colspan: 2}, 'Latest build information')));
 
-        tableContent.push(Repository.sortByNamePreferringOnesWithURL(commitSet.repositories()).map((repository) => {
-            const commit = commitSet.commitForRepository(repository);
-            return element('tr', [
-                element('td', repository.name()),
-                element('td', commit.url() ? link(commit.label(), commit.label(), commit.url(), true) : commit.label())
-            ]);
-        }));
+        if (commitSet) {
+            if (commitSet.repositories().length)
+                tableContent.push(element('tr', element('th', {colspan: 2}, 'Latest build information')));
+
+            tableContent.push(Repository.sortByNamePreferringOnesWithURL(commitSet.repositories()).map((repository) => {
+                const commit = commitSet.commitForRepository(repository);
+                return element('tr', [
+                    element('td', repository.name()),
+                    element('td', commit.url() ? link(commit.label(), commit.label(), commit.url(), true) : commit.label())
+                ]);
+            }));
+        }
 
         if (build) {
             const url = build.url();
