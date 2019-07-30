@@ -66,6 +66,7 @@ private:
     HRESULT prepareViews(HWND mainWnd, const RECT& clientRect);
 
     HRESULT loadURL(const BSTR& passedURL);
+    void reload();
 
     void showLastVisitedSites(IWebView&);
     void launchInspector();

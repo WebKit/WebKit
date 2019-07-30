@@ -42,6 +42,7 @@ private:
     HWND hwnd() override;
 
     HRESULT loadURL(const BSTR& url) override;
+    void reload() override;
     void navigateForwardOrBackward(UINT menuID) override;
     void navigateToHistory(UINT menuID) override;
     void setPreference(UINT menuID, bool enable) override;

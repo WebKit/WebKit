@@ -1,5 +1,27 @@
 2019-07-29  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [Win][MiniBrowser] Add 'reload' menu item and 'reload' toolbar button
+        https://bugs.webkit.org/show_bug.cgi?id=200217
+
+        Reviewed by Alex Christensen.
+
+        * MiniBrowser/win/BrowserWindow.h:
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::init):
+        (MainWindow::resizeSubViews):
+        (MainWindow::WndProc):
+        * MiniBrowser/win/MainWindow.h: Added m_hReloadButtonWnd.
+        * MiniBrowser/win/MiniBrowserLib.rc:
+        * MiniBrowser/win/MiniBrowserLibResource.h: Added IDM_RELOAD.
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::reload):
+        * MiniBrowser/win/WebKitBrowserWindow.h: Added reload() interface.
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.cpp:
+        (WebKitLegacyBrowserWindow::reload):
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.h:
+
+2019-07-29  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [Win][MiniBrowser][WK2] Automatically supplement "file://" or "http://" for an input URL as well as WK1 browser window
         https://bugs.webkit.org/show_bug.cgi?id=200218
 

@@ -517,6 +517,15 @@ _bstr_t WebKitLegacyBrowserWindow::userAgent()
 
 typedef _com_ptr_t<_com_IIID<IWebIBActions, &__uuidof(IWebIBActions)>> IWebIBActionsPtr;
 
+void WebKitLegacyBrowserWindow::reload()
+{
+    IWebIBActionsPtr webActions;
+    if (FAILED(m_webView->QueryInterface(IID_IWebIBActions, reinterpret_cast<void**>(&webActions.GetInterfacePtr()))))
+        return;
+
+    webActions->reload(nullptr);
+}
+
 void WebKitLegacyBrowserWindow::resetZoom()
 {
     IWebIBActionsPtr webActions;

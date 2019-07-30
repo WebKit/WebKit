@@ -49,6 +49,7 @@ BEGIN
     END
     POPUP "&View"
     BEGIN
+        MENUITEM "Reload",                      IDM_RELOAD
         MENUITEM "Actual Size",                 IDM_ACTUAL_SIZE
         MENUITEM "Zoom In\tCtrl++",             IDM_ZOOM_IN
         MENUITEM "Zoom Out\tCtrl+-",            IDM_ZOOM_OUT
