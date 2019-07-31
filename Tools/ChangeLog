@@ -1,3 +1,16 @@
+2019-07-31  Loïc Yhuel  <loic.yhuel@softathome.com>
+
+        [GTK][WPE] Fix gtkdoc build with "build-webkit --32-bit" on 64-bit hosts
+        https://bugs.webkit.org/show_bug.cgi?id=200306
+
+        Reviewed by Michael Catanzaro.
+
+        gtkdoc-scangobj calls scangobj.py, which only uses LDFLAGS on link (when producing
+        jsc-glib-4.0-scan for example).
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject):
+
 2019-07-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, disable failing test for rdar://52355829.

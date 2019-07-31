@@ -2265,6 +2265,7 @@ sub generateBuildSystemFromCMakeProject
         push @cmakeArgs, '-DFORCE_32BIT=ON -DCMAKE_PREFIX_PATH="/usr" -DCMAKE_LIBRARY_ARCHITECTURE=x86';
         $ENV{"CFLAGS"} =  "-m32" . ($ENV{"CFLAGS"} || "");
         $ENV{"CXXFLAGS"} = "-m32" . ($ENV{"CXXFLAGS"} || "");
+        $ENV{"LDFLAGS"} = "-m32" . ($ENV{"LDFLAGS"} || "");
     }
     push @args, @cmakeArgs if @cmakeArgs;
 
