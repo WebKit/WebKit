@@ -1,3 +1,18 @@
+2019-07-31  Loïc Yhuel  <loic.yhuel@softathome.com>
+
+        [GStreamer] Fix printf format warnings for 32-bit build in GST traces
+        https://bugs.webkit.org/show_bug.cgi?id=200299
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleSyncMessage): %zu for size_t
+        (WebCore::MediaPlayerPrivateGStreamerBase::initializationDataEncountered): Ditto
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcCreate): G_GUINT64_FORMAT for uint64_t
+        * platform/mediastream/libwebrtc/GStreamerVideoDecoderFactory.cpp: G_GINT64_FORMAT for int64_t
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp: Ditto
+
 2019-07-31  Andres Gonzalez  <andresg_22@apple.com>
 
         AX: Re-enable accessibility/set-selected-text-range-after-newline.html test.

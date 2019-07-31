@@ -268,7 +268,7 @@ public:
         m_encodedFrame.capture_time_ms_ = frame.render_time_ms();
         m_encodedFrame.SetTimestamp(frame.timestamp());
 
-        GST_LOG_OBJECT(m_pipeline.get(), "Got buffer capture_time_ms: %ld _timestamp: %u",
+        GST_LOG_OBJECT(m_pipeline.get(), "Got buffer capture_time_ms: %" G_GINT64_FORMAT  " _timestamp: %u",
             m_encodedFrame.capture_time_ms_, m_encodedFrame.Timestamp());
 
         webrtc::CodecSpecificInfo codecInfo;

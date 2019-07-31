@@ -338,7 +338,7 @@ bool MediaPlayerPrivateGStreamerBase::handleSyncMessage(GstMessage* message)
         GST_DEBUG_OBJECT(pipeline(), "handling drm-preferred-decryption-system-id need context message");
         LockHolder lock(m_protectionMutex);
         ProtectionSystemEvents protectionSystemEvents(message);
-        GST_TRACE("found %lu protection events, %lu decryptors available", protectionSystemEvents.events().size(), protectionSystemEvents.availableSystems().size());
+        GST_TRACE("found %zu protection events, %zu decryptors available", protectionSystemEvents.events().size(), protectionSystemEvents.availableSystems().size());
         InitData initData;
 
         for (auto& event : protectionSystemEvents.events()) {
@@ -1277,7 +1277,7 @@ void MediaPlayerPrivateGStreamerBase::initializationDataEncountered(InitData&& i
         if (!weakThis)
             return;
 
-        GST_DEBUG("scheduling initializationDataEncountered event of size %lu", initData.payload()->size());
+        GST_DEBUG("scheduling initializationDataEncountered event of size %zu", initData.payload()->size());
         GST_MEMDUMP("init datas", reinterpret_cast<const uint8_t*>(initData.payload()->data()), initData.payload()->size());
         weakThis->m_player->initializationDataEncountered(initData.payloadContainerType(), initData.payload()->tryCreateArrayBuffer());
     });
