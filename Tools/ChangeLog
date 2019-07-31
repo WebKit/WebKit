@@ -1,3 +1,11 @@
+2019-07-30  Tim Horton  <timothy_horton@apple.com>
+
+        Remove some needless comments that snuck into the tree
+
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::setHardwareKeyboardAttached):
+        (WTR::UIScriptController::playBackEventStream):
+
 2019-07-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WebKit] Add PageLoadState::Observer C API

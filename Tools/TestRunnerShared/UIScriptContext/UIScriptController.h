@@ -75,8 +75,6 @@ public:
 
     // Preferences
 
-    // FIXME: Why does this exist? Why is it implemented in a platform specific way?
-    // Should we just use the other API?
     virtual void overridePreference(JSStringRef preference, JSStringRef value) { notImplemented(); }
 
     // Zooming
@@ -157,7 +155,7 @@ public:
     virtual bool isShowingKeyboard() const { notImplemented(); return false; }
     virtual bool hasInputSession() const { notImplemented(); return false; }
 
-    virtual void setHardwareKeyboardAttached(bool) { /* notImplemented(); */ }
+    virtual void setHardwareKeyboardAttached(bool) { }
 
     virtual void setKeyboardInputModeIdentifier(JSStringRef) { notImplemented(); }
 
@@ -175,7 +173,7 @@ public:
     // Event Stream
 
     virtual void sendEventStream(JSStringRef eventsJSON, JSValueRef callback) { notImplemented(); }
-    virtual void playBackEventStream(JSStringRef stream, JSValueRef callback) { notImplemented(); } // Are these even the same thing!?
+    virtual void playBackEventStream(JSStringRef stream, JSValueRef callback) { notImplemented(); }
 
     // Form Controls
     
