@@ -371,12 +371,16 @@ class AnalysisTaskTestGroupPane extends ComponentBase {
         if (currentGroup) {
             this.part('retry-form').setRepetitionCount(currentGroup.initialRepetitionCount());
             this.part('bisect-form').setRepetitionCount(currentGroup.initialRepetitionCount());
-            const summary = `${currentGroup.initialRepetitionCount()} requested, ${currentGroup.repetitionCount() - currentGroup.initialRepetitionCount()} added due to failures.`;
-            this.content('status-summary').innerHTML = summary;
+            const statusSummary = `${currentGroup.initialRepetitionCount()} requested, ${currentGroup.repetitionCount() - currentGroup.initialRepetitionCount()} added due to failures.`;
+            this.content('status-summary').innerHTML = statusSummary;
+
+            const authoredBy = currentGroup.author() ? `by "${currentGroup.author()}"` : '';
+            this.content('request-summary').innerHTML = `Scheduled ${authoredBy} at ${currentGroup.createdAt()}`
         }
         this.content('retry-form').style.display = currentGroup ? null : 'none';
         this.content('bisect-form').style.display = currentGroup && this._bisectingCommitSetByTestGroup.get(currentGroup) ? null : 'none';
         this.content('status-summary').style.display = currentGroup && currentGroup.repetitionCount() > currentGroup.initialRepetitionCount() ? null : 'none';
+        this.content('request-summary').style.display = currentGroup ? null : 'none';
 
         const hideButton = this.content('hide-button');
         hideButton.textContent = currentGroup && currentGroup.isHidden() ? 'Unhide' : 'Hide';
@@ -393,6 +397,7 @@ class AnalysisTaskTestGroupPane extends ComponentBase {
                 <test-group-results-viewer id="results-viewer"></test-group-results-viewer>
                 <test-group-revision-table id="revision-table"></test-group-revision-table>
                 <div id="status-summary" class="summary"></div>
+                <div id="request-summary" class="summary"></div>
                 <test-group-form id="retry-form">Retry</test-group-form>
                 <test-group-form id="bisect-form">Bisect</test-group-form>
                 <button id="hide-button">Hide</button>
