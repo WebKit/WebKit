@@ -1,3 +1,17 @@
+2019-07-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Rebaselining the straightforward cases.
+
+        * platform/wpe/css3/flexbox/flexbox-baseline-margins-expected.txt:
+        * platform/wpe/fast/dom/Window/window-properties-geolocation-expected.txt:
+        * platform/wpe/fast/xsl/sort-locale-expected.txt:
+        * platform/wpe/http/tests/dom/same-origin-detached-window-properties-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.worker-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/service-workers/service-worker/websocket-in-service-worker.https-expected.txt:
+        * platform/wpe/js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2019-07-31  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Second call to setAttributeNS creates non-prefixed attribute

@@ -45,7 +45,7 @@ PASS createImageBitmap with an oversized canvas source.
 FAIL createImageBitmap with an invalid OffscreenCanvas source. assert_throws: function "function () { throw e }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
 PASS createImageBitmap with an undecodable blob source. 
 PASS createImageBitmap with a broken image source. 
-FAIL createImageBitmap with an available but undecodable image source. promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL createImageBitmap with an available but undecodable image source. assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL createImageBitmap with an available but zero height image source. assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL createImageBitmap with an available but zero width image source. assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS createImageBitmap with a closed ImageBitmap. 

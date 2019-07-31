@@ -73,7 +73,7 @@ PASS w.navigator.product is "Gecko"
 PASS w.navigator.userAgent is ""
 PASS w.navigator.plugins.length is 0
 PASS w.navigator.mimeTypes.length is 0
-FAIL !!w.navigator.geolocation should be true. Was false.
+PASS !!w.navigator.geolocation is true
 PASS !!w.performance is true
 PASS w.foo is undefined.
 PASS w.location.foo is undefined.
@@ -148,12 +148,11 @@ PASS w.navigator.product is "Gecko"
 PASS w.navigator.userAgent is ""
 PASS w.navigator.plugins.length is 0
 PASS w.navigator.mimeTypes.length is 0
-FAIL !!w.navigator.geolocation should be true. Was false.
+PASS !!w.navigator.geolocation is true
 PASS !!w.performance is true
 PASS w.foo is undefined.
 PASS w.location.foo is undefined.
 PASS successfullyParsed is true
-Some tests failed.
 
 TEST COMPLETE
 
