@@ -1,3 +1,15 @@
+2019-07-31  Andres Gonzalez  <andresg_22@apple.com>
+
+        AX: Re-enable accessibility/set-selected-text-range-after-newline.html test.
+        https://bugs.webkit.org/show_bug.cgi?id=199431
+        <rdar://problem/52563340>
+
+        Reviewed by Chris Fleizach.
+
+        * TestExpectations:
+        * accessibility/ios-simulator/set-selected-text-range-after-newline.html: Removed because it was the same as the one in the parent accessibility directory, so enabling it for iOS in ios-wk2/TestExpectations.
+        * platform/ios-wk2/TestExpectations:
+
 2019-07-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK gardening. Update expectations after r248033.

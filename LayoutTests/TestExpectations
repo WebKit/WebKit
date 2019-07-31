@@ -2208,7 +2208,6 @@ webkit.org/b/170122 http/tests/preload/single_download_preload_headers_charset.p
 ########################################
 ### START OF -disabled tests
 
-webkit.org/b/199431 accessibility/set-selected-text-range-after-newline.html [ Skip ]
 webkit.org/b/20871 js/garbage-collect-after-string-appends.html [ Skip ]
 webkit.org/b/58323 compositing/objects/composited-object-alignment.html [ Skip ]
 webkit.org/b/48454 compositing/tiling/huge-layer-resize.html [ Skip ]

@@ -1,3 +1,23 @@
+2019-07-31  Andres Gonzalez  <andresg_22@apple.com>
+
+        AX: Re-enable accessibility/set-selected-text-range-after-newline.html test.
+        https://bugs.webkit.org/show_bug.cgi?id=199431
+        <rdar://problem/52563340>
+
+        Reviewed by Chris Fleizach.
+
+        - Re-enabled LayoutTests/accessibility/set-selected-text-range-after-newline.html.
+        - Put back workaround in visiblePositionForIndexUsingCharacterIterator
+        that is needed for several accessibility issues.
+        - This workaround was rolled back because it was thought the cause of:
+        https://bugs.webkit.org/show_bug.cgi?id=199434
+        It turned out that the actual cause of that hang was unrelated and was
+        fixed in:
+        https://bugs.webkit.org/show_bug.cgi?id=199845
+
+        * editing/Editing.cpp:
+        (WebCore::visiblePositionForIndexUsingCharacterIterator):
+
 2019-07-31  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Second call to setAttributeNS creates non-prefixed attribute
