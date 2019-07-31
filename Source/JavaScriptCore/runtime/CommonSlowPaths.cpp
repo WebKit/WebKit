@@ -1072,7 +1072,8 @@ SLOW_PATH_DECL(slow_path_resolve_scope)
     BEGIN();
     auto bytecode = pc->as<OpResolveScope>();
     auto& metadata = bytecode.metadata(exec);
-    const Identifier& ident = exec->codeBlock()->identifier(bytecode.m_var);
+    CodeBlock* codeBlock = exec->codeBlock();
+    const Identifier& ident = codeBlock->identifier(bytecode.m_var);
     JSScope* scope = exec->uncheckedR(bytecode.m_scope.offset()).Register::scope();
     JSObject* resolvedScope = JSScope::resolve(exec, scope, ident);
     // Proxy can throw an error here, e.g. Proxy in with statement's @unscopables.
@@ -1093,16 +1094,16 @@ SLOW_PATH_DECL(slow_path_resolve_scope)
             bool hasProperty = globalObject->hasProperty(exec, ident);
             CHECK_EXCEPTION();
             if (hasProperty) {
-                ConcurrentJSLocker locker(exec->codeBlock()->m_lock);
+                ConcurrentJSLocker locker(codeBlock->m_lock);
                 metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty;
-                metadata.m_globalObject = globalObject;
+                metadata.m_globalObject.set(vm, codeBlock, globalObject);
                 metadata.m_globalLexicalBindingEpoch = globalObject->globalLexicalBindingEpoch();
             }
         } else if (resolvedScope->isGlobalLexicalEnvironment()) {
             JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(resolvedScope);
-            ConcurrentJSLocker locker(exec->codeBlock()->m_lock);
+            ConcurrentJSLocker locker(codeBlock->m_lock);
             metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
-            metadata.m_globalLexicalEnvironment = globalLexicalEnvironment;
+            metadata.m_globalLexicalEnvironment.set(vm, codeBlock, globalLexicalEnvironment);
         }
         break;
     }

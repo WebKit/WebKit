@@ -603,7 +603,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 if (op.type == GlobalProperty || op.type == GlobalPropertyWithVarInjectionChecks)
                     metadata.m_globalLexicalBindingEpoch = m_globalObject->globalLexicalBindingEpoch();
             } else
-                metadata.m_globalObject = nullptr;
+                metadata.m_globalObject.clear();
             break;
         }
 

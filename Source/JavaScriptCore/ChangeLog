@@ -1,5 +1,67 @@
 2019-07-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Emit write barrier after storing instead of before storing
+        https://bugs.webkit.org/show_bug.cgi?id=200193
+
+        Reviewed by Saam Barati.
+
+        I reviewed tricky GC-related code including visitChildren and manual writeBarrier, and I found that we have several problems with write-barriers.
+
+        1. Some write-barriers are emitted before stores happen
+
+            Some code like LazyProperty emits write-barrier before we store the value. This is wrong since JSC has concurrent collector. Let's consider the situation like this.
+
+                1. Cell "A" is not marked yet
+                2. Write-barrier is emitted onto "A"
+                3. Concurrent collector scans "A"
+                4. Store to "A"'s field happens
+                5. (4)'s field is not rescaned
+
+            We should emit write-barrier after stores. This patch places write-barriers after stores happen.
+
+        2. Should emit write-barrier after the stored fields are reachable from the owner.
+
+            We have code that is logically the same to the following.
+
+                ```
+                auto data = std::make_unique<XXX>();
+                data->m_field.set(vm, owner, value);
+
+                storeStoreBarrier();
+                owner->m_data = WTFMove(data);
+                ```
+
+            This is not correct. When write-barrier is emitted, the owner cannot reach to the field that is stored.
+            The actual example is AccessCase. We are emitting write-barriers with owner when creating AccessCase, but this is not
+            effective until this AccessCase is chained to StructureStubInfo, which is reachable from CodeBlock.
+
+            I don't think this is actually an issue because currently AccessCase generation is guarded by CodeBlock->m_lock. And CodeBlock::visitChildren takes this lock.
+            But emitting a write-barrier at the right place is still better. This patch places write-barriers when StructureStubInfo::addAccessCase is called.
+
+        Speculative GC fix, it was hard to reproduce the crash since we need to control concurrent collector and main thread's scheduling in an instruction-level.
+
+        * bytecode/BytecodeList.rb:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::addAccessCase):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::considerCaching):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/LazyPropertyInlines.h:
+        (JSC::ElementType>::setMayBeNull):
+        * runtime/RegExpCachedResult.h:
+        (JSC::RegExpCachedResult::record):
+
+2019-07-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Make StructureChain less-tricky by using Auxiliary Buffer
         https://bugs.webkit.org/show_bug.cgi?id=200192
 

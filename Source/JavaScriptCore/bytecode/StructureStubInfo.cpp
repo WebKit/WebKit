@@ -136,92 +136,96 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
     const GCSafeConcurrentJSLocker& locker, CodeBlock* codeBlock, const Identifier& ident, std::unique_ptr<AccessCase> accessCase)
 {
     VM& vm = *codeBlock->vm();
-    
-    if (StructureStubInfoInternal::verbose)
-        dataLog("Adding access case: ", accessCase, "\n");
-    
-    if (!accessCase)
-        return AccessGenerationResult::GaveUp;
-    
-    AccessGenerationResult result;
-    
-    if (cacheType == CacheType::Stub) {
-        result = u.stub->addCase(locker, vm, codeBlock, *this, ident, WTFMove(accessCase));
-        
+    ASSERT(vm.heap.isDeferred());
+    AccessGenerationResult result = ([&] () -> AccessGenerationResult {
         if (StructureStubInfoInternal::verbose)
-            dataLog("Had stub, result: ", result, "\n");
+            dataLog("Adding access case: ", accessCase, "\n");
+        
+        if (!accessCase)
+            return AccessGenerationResult::GaveUp;
+        
+        AccessGenerationResult result;
+        
+        if (cacheType == CacheType::Stub) {
+            result = u.stub->addCase(locker, vm, codeBlock, *this, ident, WTFMove(accessCase));
+            
+            if (StructureStubInfoInternal::verbose)
+                dataLog("Had stub, result: ", result, "\n");
 
-        if (result.shouldResetStubAndFireWatchpoints())
-            return result;
+            if (result.shouldResetStubAndFireWatchpoints())
+                return result;
 
+            if (!result.buffered()) {
+                bufferedStructures.clear();
+                return result;
+            }
+        } else {
+            std::unique_ptr<PolymorphicAccess> access = std::make_unique<PolymorphicAccess>();
+            
+            Vector<std::unique_ptr<AccessCase>, 2> accessCases;
+            
+            std::unique_ptr<AccessCase> previousCase =
+                AccessCase::fromStructureStubInfo(vm, codeBlock, *this);
+            if (previousCase)
+                accessCases.append(WTFMove(previousCase));
+            
+            accessCases.append(WTFMove(accessCase));
+            
+            result = access->addCases(locker, vm, codeBlock, *this, ident, WTFMove(accessCases));
+            
+            if (StructureStubInfoInternal::verbose)
+                dataLog("Created stub, result: ", result, "\n");
+
+            if (result.shouldResetStubAndFireWatchpoints())
+                return result;
+
+            if (!result.buffered()) {
+                bufferedStructures.clear();
+                return result;
+            }
+            
+            cacheType = CacheType::Stub;
+            u.stub = access.release();
+        }
+        
+        RELEASE_ASSERT(!result.generatedSomeCode());
+        
+        // If we didn't buffer any cases then bail. If this made no changes then we'll just try again
+        // subject to cool-down.
         if (!result.buffered()) {
+            if (StructureStubInfoInternal::verbose)
+                dataLog("Didn't buffer anything, bailing.\n");
             bufferedStructures.clear();
             return result;
         }
-    } else {
-        std::unique_ptr<PolymorphicAccess> access = std::make_unique<PolymorphicAccess>();
         
-        Vector<std::unique_ptr<AccessCase>, 2> accessCases;
-        
-        std::unique_ptr<AccessCase> previousCase =
-            AccessCase::fromStructureStubInfo(vm, codeBlock, *this);
-        if (previousCase)
-            accessCases.append(WTFMove(previousCase));
-        
-        accessCases.append(WTFMove(accessCase));
-        
-        result = access->addCases(locker, vm, codeBlock, *this, ident, WTFMove(accessCases));
-        
-        if (StructureStubInfoInternal::verbose)
-            dataLog("Created stub, result: ", result, "\n");
-
-        if (result.shouldResetStubAndFireWatchpoints())
-            return result;
-
-        if (!result.buffered()) {
-            bufferedStructures.clear();
+        // The buffering countdown tells us if we should be repatching now.
+        if (bufferingCountdown) {
+            if (StructureStubInfoInternal::verbose)
+                dataLog("Countdown is too high: ", bufferingCountdown, ".\n");
             return result;
         }
         
-        cacheType = CacheType::Stub;
-        u.stub = access.release();
-    }
-    
-    RELEASE_ASSERT(!result.generatedSomeCode());
-    
-    // If we didn't buffer any cases then bail. If this made no changes then we'll just try again
-    // subject to cool-down.
-    if (!result.buffered()) {
-        if (StructureStubInfoInternal::verbose)
-            dataLog("Didn't buffer anything, bailing.\n");
+        // Forget the buffered structures so that all future attempts to cache get fully handled by the
+        // PolymorphicAccess.
         bufferedStructures.clear();
-        return result;
-    }
-    
-    // The buffering countdown tells us if we should be repatching now.
-    if (bufferingCountdown) {
+        
+        result = u.stub->regenerate(locker, vm, codeBlock, *this, ident);
+        
         if (StructureStubInfoInternal::verbose)
-            dataLog("Countdown is too high: ", bufferingCountdown, ".\n");
+            dataLog("Regeneration result: ", result, "\n");
+        
+        RELEASE_ASSERT(!result.buffered());
+        
+        if (!result.generatedSomeCode())
+            return result;
+        
+        // If we generated some code then we don't want to attempt to repatch in the future until we
+        // gather enough cases.
+        bufferingCountdown = Options::repatchBufferingCountdown();
         return result;
-    }
-    
-    // Forget the buffered structures so that all future attempts to cache get fully handled by the
-    // PolymorphicAccess.
-    bufferedStructures.clear();
-    
-    result = u.stub->regenerate(locker, vm, codeBlock, *this, ident);
-    
-    if (StructureStubInfoInternal::verbose)
-        dataLog("Regeneration result: ", result, "\n");
-    
-    RELEASE_ASSERT(!result.buffered());
-    
-    if (!result.generatedSomeCode())
-        return result;
-    
-    // If we generated some code then we don't want to attempt to repatch in the future until we
-    // gather enough cases.
-    bufferingCountdown = Options::repatchBufferingCountdown();
+    })();
+    vm.heap.writeBarrier(codeBlock);
     return result;
 }
 

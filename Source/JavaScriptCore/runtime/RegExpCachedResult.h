@@ -47,11 +47,11 @@ class RegExpCachedResult {
 public:
     ALWAYS_INLINE void record(VM& vm, JSObject* owner, RegExp* regExp, JSString* input, MatchResult result)
     {
-        vm.heap.writeBarrier(owner);
         m_lastRegExp.setWithoutWriteBarrier(regExp);
         m_lastInput.setWithoutWriteBarrier(input);
         m_result = result;
         m_reified = false;
+        vm.heap.writeBarrier(owner);
     }
 
     JSArray* lastResult(ExecState*, JSObject* owner);
