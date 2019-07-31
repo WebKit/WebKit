@@ -1,3 +1,23 @@
+2019-07-31  Keith Rollin  <krollin@apple.com>
+
+        Update WebKitLegacy for XCBuild
+        https://bugs.webkit.org/show_bug.cgi?id=200310
+        <rdar://problem/53773708>
+
+        Reviewed by Alex Christensen.
+
+        Bug 199771 (svn r247570) updated WebKitLegacy to use the unified-build
+        technique. Now update WebKitLegacy to build under XCBuild after those
+        changes. This work involves adding an "Apply Configuration to
+        XCFileLists" build target, adding a check-xcfilelists.sh script,
+        adding a "Check xcfilelists" build phase that calls that script,
+        adding knowledge of the project to the generate-xcfilelists script,
+        creating new .xcfilelist files, and adding those to the project.
+
+        * UnifiedSources-output.xcfilelist: Added.
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+        * scripts/check-xcfilelists.sh: Added.
+
 2019-07-18  Alex Christensen  <achristensen@webkit.org>
 
         Unify builds in WebKitLegacy/mac/DOM

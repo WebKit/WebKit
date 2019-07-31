@@ -95,6 +95,7 @@ class Application(object):
             "JavaScriptCore":   Generators.JavaScriptCoreGenerator,
             "WebCore":          Generators.WebCoreGenerator,
             "WebKit":           Generators.WebKitGenerator,
+            "WebKitLegacy":     Generators.WebKitLegacyGenerator,
             "DumpRenderTree":   Generators.DumpRenderTreeGenerator,
             "WebKitTestRunner": Generators.WebKitTestRunnerGenerator,
         }

@@ -648,7 +648,7 @@ class BaseGenerator(object):
 
 
 class JavaScriptCoreGenerator(BaseGenerator):
-    VALID_PLATFORMS = ("macosx", "maccatalyst", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator")
+    VALID_PLATFORMS = ("macosx", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator")
     VALID_CONFIGURATIONS = ("Debug", "Release", "Production", "Profiling")
 
     @util.LogEntryExit
@@ -665,7 +665,7 @@ class JavaScriptCoreGenerator(BaseGenerator):
 
 
 class WebCoreGenerator(BaseGenerator):
-    VALID_PLATFORMS = ("macosx", "maccatalyst", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator")
+    VALID_PLATFORMS = ("macosx", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator")
     VALID_CONFIGURATIONS = ("Debug", "Release", "Production")
 
     @util.LogEntryExit
@@ -682,7 +682,7 @@ class WebCoreGenerator(BaseGenerator):
 
 
 class WebKitGenerator(BaseGenerator):
-    VALID_PLATFORMS = ("macosx", "maccatalyst", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator")
+    VALID_PLATFORMS = ("macosx", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator")
     VALID_CONFIGURATIONS = ("Debug", "Release", "Production")
 
     @util.LogEntryExit
@@ -700,6 +700,19 @@ class WebKitGenerator(BaseGenerator):
     @util.LogEntryExit
     def _get_generate_unified_sources_script(self):
         return os.path.join(self._get_project_dir(), "Scripts", "generate-unified-sources.sh")
+
+
+class WebKitLegacyGenerator(BaseGenerator):
+    VALID_PLATFORMS = ("macosx", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator")
+    VALID_CONFIGURATIONS = ("Debug", "Release", "Production")
+
+    @util.LogEntryExit
+    def _get_project_file_path(self):
+        return os.path.join(self.application.get_opensource_dir(), "Source", "WebKitLegacy", "WebKitLegacy.xcodeproj")
+
+    @util.LogEntryExit
+    def _get_generate_unified_sources_script(self):
+        return os.path.join(self._get_project_dir(), "scripts", "generate-unified-sources.sh")
 
 
 class DumpRenderTreeGenerator(BaseGenerator):

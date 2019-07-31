@@ -1,3 +1,30 @@
+2019-07-31  Keith Rollin  <krollin@apple.com>
+
+        Update WebKitLegacy for XCBuild
+        https://bugs.webkit.org/show_bug.cgi?id=200310
+        <rdar://problem/53773708>
+
+        Reviewed by Alex Christensen.
+
+        Bug 199771 (svn r247570) updated WebKitLegacy to use the unified-build
+        technique. Now update WebKitLegacy to build under XCBuild after those
+        changes. This work involves adding an "Apply Configuration to
+        XCFileLists" build target, adding a check-xcfilelists.sh script,
+        adding a "Check xcfilelists" build phase that calls that script,
+        adding knowledge of the project to the generate-xcfilelists script,
+        creating new .xcfilelist files, and adding those to the project.
+
+        * Scripts/webkitpy/generate_xcfilelists_lib/application.py:
+        (Application.__init__):
+        * Scripts/webkitpy/generate_xcfilelists_lib/generators.py:
+        (JavaScriptCoreGenerator):
+        (WebCoreGenerator):
+        (WebKitGenerator):
+        (WebKitGenerator._get_generate_unified_sources_script):
+        (WebKitLegacyGenerator):
+        (WebKitLegacyGenerator._get_project_file_path):
+        (WebKitLegacyGenerator._get_generate_unified_sources_script):
+
 2019-07-31  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r247486?): Flaky API Test TestWebKitAPI.WKWebView.LocalStorageProcessSuspends
