@@ -155,6 +155,17 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (!shouldPaint(paintInfo, paintOffset))
         return;
 
+    LayoutPoint adjustedPaintOffset = paintOffset + location();
+
+    if (paintInfo.phase == PaintPhase::EventRegion) {
+        if (visibleToHitTesting()) {
+            auto borderRect = LayoutRect(adjustedPaintOffset, size());
+            auto borderRegion = approximateAsRegion(style().getRoundedBorderFor(borderRect));
+            paintInfo.eventRegionContext->unite(borderRegion, style());
+        }
+        return;
+    }
+
 #ifndef NDEBUG
     SetLayoutNeededForbiddenScope scope(this);
 #endif
@@ -169,8 +180,6 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         }
     }
 
-    LayoutPoint adjustedPaintOffset = paintOffset + location();
-    
     if (hasVisibleBoxDecorations() && paintInfo.phase == PaintPhase::Foreground)
         paintBoxDecorations(paintInfo, adjustedPaintOffset);
     
@@ -239,7 +248,8 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
         && paintInfo.phase != PaintPhase::Outline
         && paintInfo.phase != PaintPhase::SelfOutline
         && paintInfo.phase != PaintPhase::Selection
-        && paintInfo.phase != PaintPhase::Mask)
+        && paintInfo.phase != PaintPhase::Mask
+        && paintInfo.phase != PaintPhase::EventRegion)
         return false;
 
     if (!paintInfo.shouldPaintWithinRoot(*this))

@@ -1,5 +1,49 @@
 2019-07-31  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247909. rdar://problem/53764231
+
+    The touch-action property was ignored on replaced elements (canvas, img etc)
+    https://bugs.webkit.org/show_bug.cgi?id=200205
+    rdar://problem/53331224
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    The event region painting code didn't handle replaced elements correctly,
+    causing touch-action to get ignored for <canvas>, <img> etc. Fix by handling
+    region painting in RenderReplaced.
+    
+    This still doesn't fix <iframe> but I'm not sure what the correct behavior is there
+    (webkit.org/b/200204).
+    
+    Test: pointerevents/ios/touch-action-region-replaced-elements.html
+    
+    * rendering/RenderReplaced.cpp:
+    (WebCore::RenderReplaced::paint):
+    (WebCore::RenderReplaced::shouldPaint):
+    
+    LayoutTests:
+    
+    * pointerevents/ios/touch-action-region-replaced-elements-expected.txt: Added.
+    * pointerevents/ios/touch-action-region-replaced-elements.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247909 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-29  Simon Fraser  <simon.fraser@apple.com>
+
+            The touch-action property was ignored on replaced elements (canvas, img etc)
+            https://bugs.webkit.org/show_bug.cgi?id=200205
+            rdar://problem/53331224
+
+            Reviewed by Antti Koivisto.
+
+            * pointerevents/ios/touch-action-region-replaced-elements-expected.txt: Added.
+            * pointerevents/ios/touch-action-region-replaced-elements.html: Added.
+
+2019-07-31  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247891. rdar://problem/53764053
 
     Expose the aria-label attribute for <video> elements.
