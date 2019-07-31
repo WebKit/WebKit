@@ -1,3 +1,11 @@
+2019-07-30  Tim Horton  <timothy_horton@apple.com>
+
+        ASSERTion failure under takeSnapshot after r247846
+
+        * page/TextIndicator.cpp:
+        (WebCore::takeSnapshots):
+        We now sometimes inflate the scale factor; allow this.
+
 2019-07-30  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Add a fast path for TypeNamer::insert where we've already seen the type
