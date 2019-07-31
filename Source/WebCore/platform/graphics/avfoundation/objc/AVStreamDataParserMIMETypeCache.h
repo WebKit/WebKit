@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(COCOA)
+#if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>

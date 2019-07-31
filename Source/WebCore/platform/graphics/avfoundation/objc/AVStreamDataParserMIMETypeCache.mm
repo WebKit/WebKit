@@ -26,17 +26,25 @@
 #import "config.h"
 #import "AVStreamDataParserMIMETypeCache.h"
 
-#if PLATFORM(COCOA)
+#if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
 #import "AVAssetMIMETypeCache.h"
 #import "ContentType.h"
+#import <pal/spi/mac/AVFoundationSPI.h>
+#import <wtf/HashSet.h>
+
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
-#import <wtf/HashSet.h>
 
 #if !PLATFORM(MACCATALYST)
 SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT(AVFoundation)
 #endif
+
+NS_ASSUME_NONNULL_BEGIN
+@interface AVStreamDataParser (AVStreamDataParserExtendedMIMETypes)
++ (BOOL)canParseExtendedMIMEType:(NSString *)extendedMIMEType;
+@end
+NS_ASSUME_NONNULL_END
 
 namespace WebCore {
 
@@ -73,8 +81,12 @@ bool AVStreamDataParserMIMETypeCache::canDecodeType(const String& mimeType)
         return false;
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
-    // FIXME(rdar://50502771) AVStreamDataParser does not have an -isPlayableExtendedMIMEType: method, so just replace
-    // the container type with a valid one from AVAssetMIMETypeCache and ask that cache if it can decode this type:
+    if ([PAL::getAVStreamDataParserClass() respondsToSelector:@selector(canParseExtendedMIMEType:)])
+        return [PAL::getAVStreamDataParserClass() canParseExtendedMIMEType:mimeType];
+
+    // FIXME(rdar://50502771) AVStreamDataParser does not have an -canParseExtendedMIMEType: method on this system,
+    //  so just replace the container type with a valid one from AVAssetMIMETypeCache and ask that cache if it
+    //  can decode this type.
     auto& assetCache = AVAssetMIMETypeCache::singleton();
     if (!assetCache.isAvailable() || assetCache.types().isEmpty())
         return false;

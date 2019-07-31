@@ -1,5 +1,34 @@
 2019-07-31  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247934. rdar://problem/53764085
+
+    MediaSource.isTypeSupported claims FLAC-in-MP4 support on iOS and macOS, but plays silence
+    https://bugs.webkit.org/show_bug.cgi?id=198583
+    <rdar://problem/51487853>
+    
+    Reviewed by Maciej Stachowiak.
+    
+    * platform/graphics/avfoundation/objc/AVStreamDataParserMIMETypeCache.h:
+    (WebCore::AVStreamDataParserMIMETypeCache::canDecodeType): Use anParseExtendedMIMEType:
+    when it is available.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247934 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-29  Eric Carlson  <eric.carlson@apple.com>
+
+            MediaSource.isTypeSupported claims FLAC-in-MP4 support on iOS and macOS, but plays silence
+            https://bugs.webkit.org/show_bug.cgi?id=198583
+            <rdar://problem/51487853>
+
+            Reviewed by Maciej Stachowiak.
+
+            * platform/graphics/avfoundation/objc/AVStreamDataParserMIMETypeCache.h:
+            (WebCore::AVStreamDataParserMIMETypeCache::canDecodeType): Use anParseExtendedMIMEType:
+            when it is available.
+
+2019-07-31  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247915. rdar://problem/53764061
 
     Force Reveal to always lookup from menu
