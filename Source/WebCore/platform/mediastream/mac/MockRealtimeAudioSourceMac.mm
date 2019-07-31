@@ -128,7 +128,7 @@ void MockRealtimeAudioSourceMac::reconfigure()
 
     const int bytesPerFloat = sizeof(Float32);
     const int bitsPerByte = 8;
-    const int channelCount = 2;
+    const int channelCount = m_channelCount;
     const bool isFloat = true;
     const bool isBigEndian = false;
     const bool isNonInterleaved = true;

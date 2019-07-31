@@ -98,6 +98,15 @@ const RealtimeMediaSourceSettings& MockRealtimeAudioSource::settings()
     return m_currentSettings.value();
 }
 
+void MockRealtimeAudioSource::setChannelCount(unsigned channelCount)
+{
+    if (channelCount > 2)
+        return;
+
+    m_channelCount = channelCount;
+    settingsDidChange(RealtimeMediaSourceSettings::Flag::SampleRate);
+}
+
 const RealtimeMediaSourceCapabilities& MockRealtimeAudioSource::capabilities()
 {
     if (!m_capabilities) {

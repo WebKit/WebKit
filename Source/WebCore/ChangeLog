@@ -1,3 +1,43 @@
+2019-07-31  Youenn Fablet  <youenn@apple.com>
+
+        Owners of MultiChannelResampler should make sure that the output bus given to it has the same number of channels
+        https://bugs.webkit.org/show_bug.cgi?id=200248
+        <rdar://problem/53411051>
+
+        Reviewed by Eric Carlson.
+
+        When a track's number of channels changes, MediaStreamAudioSourceNode is expected
+        to update its MultiChannelResampler and its output number of channels.
+        MultiChannelResampler expects to have the same number of channels as the output
+        but it is not always the case since the channel numbers are changed in different threads
+        and locks do not help there.
+
+        Instead, whenever detecting that the number of channels do not match, render silence
+        and wait for the next rendering where the number of channels should again match.
+
+        Add internals API to change the number of channels from 2 to 1 or 1 to 2
+        to allow testing that code path (iOS only as MacOS audio capture is in UIProcess).
+        Covered by updated test.
+
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::process):
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::process):
+        * platform/audio/MultiChannelResampler.cpp:
+        (WebCore::MultiChannelResampler::process):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm:
+        (WebCore::MockRealtimeAudioSourceMac::reconfigure):
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::setChannelCount):
+        * platform/mock/MockRealtimeAudioSource.h:
+        (isType):
+        * platform/mock/MockRealtimeVideoSource.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMockAudioTrackChannelNumber):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-07-31  Chris Dumez  <cdumez@apple.com>
 
         Element.outerHTML is missing attribute prefixes in some cases in HTML documents

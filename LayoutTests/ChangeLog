@@ -1,3 +1,14 @@
+2019-07-31  Youenn Fablet  <youenn@apple.com>
+
+        Owners of MultiChannelResampler should make sure that the output bus given to it has the same number of channels
+        https://bugs.webkit.org/show_bug.cgi?id=200248
+        <rdar://problem/53411051>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/getUserMedia-webaudio-expected.txt:
+        * fast/mediastream/getUserMedia-webaudio.html:
+
 2019-07-31  Chris Dumez  <cdumez@apple.com>
 
         Element.outerHTML is missing attribute prefixes in some cases in HTML documents

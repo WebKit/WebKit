@@ -137,6 +137,10 @@ void MediaElementAudioSourceNode::process(size_t numberOfFrames)
         outputBus->zero();
         return;
     }
+    if (m_sourceNumberOfChannels != outputBus->numberOfChannels()) {
+        outputBus->zero();
+        return;
+    }
 
     if (AudioSourceProvider* provider = mediaElement().audioSourceProvider()) {
         if (m_multiChannelResampler.get()) {
