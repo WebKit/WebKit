@@ -181,6 +181,7 @@ public:
     bool canHandleHTTPSServerTrustEvaluation() const { return m_canHandleHTTPSServerTrustEvaluation; }
 
     void processWillSuspendImminently();
+    void processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&&);
     void prepareToSuspend();
     void cancelPrepareToSuspend();
     void processDidResume();

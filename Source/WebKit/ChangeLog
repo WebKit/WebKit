@@ -1,3 +1,36 @@
+2019-07-31  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r247486?): Flaky API Test TestWebKitAPI.WKWebView.LocalStorageProcessSuspends
+        https://bugs.webkit.org/show_bug.cgi?id=200086
+        <rdar://problem/53501721>
+
+        Reviewed by Alex Christensen.
+
+        The test would first send a ProcessWillSuspendImminently IPC to the NetworkProcess and then
+        run JS in the WebContent process, which would in turn send IPC to the NetworkProcess. The
+        test was flaky because it expected the network process to receive the IPC from the UIProcess
+        *before* the one from the WebContent process. However, there is no guarantee about ordering
+        from IPC messages coming from different connections.
+
+        To address the flakiness, this patch introduces a new ProcessWillSuspendImminentlyForTesting
+        synchronous IPC and uses this instead. As a result, it is now guaranteed that the network
+        process processes this IPC *before* receiving any IPC from the WebContent process that is
+        the result of IPC from the UIProcess.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::processWillSuspendImminentlyForTestingSync):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _sendNetworkProcessWillSuspendImminently]):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::sendProcessWillSuspendImminentlyForTesting):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::sendNetworkProcessWillSuspendImminentlyForTesting):
+        (WebKit::WebProcessPool::sendNetworkProcessWillSuspendImminently): Deleted.
+        * UIProcess/WebProcessPool.h:
+
 2019-07-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS 13] Safari crashes when closing a tab with a focused element if the unified field has focus

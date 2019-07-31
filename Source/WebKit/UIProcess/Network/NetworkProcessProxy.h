@@ -185,6 +185,8 @@ public:
     // ProcessThrottlerClient
     void sendProcessWillSuspendImminently() final;
     void sendProcessDidResume() final;
+    
+    void sendProcessWillSuspendImminentlyForTesting();
 
 private:
     // AuxiliaryProcessProxy

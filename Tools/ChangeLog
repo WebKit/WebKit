@@ -1,3 +1,16 @@
+2019-07-31  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r247486?): Flaky API Test TestWebKitAPI.WKWebView.LocalStorageProcessSuspends
+        https://bugs.webkit.org/show_bug.cgi?id=200086
+        <rdar://problem/53501721>
+
+        Reviewed by Alex Christensen.
+
+        re-enable the API test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStoragePersistence.mm:
+        (TEST):
+
 2019-07-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS 13] Safari crashes when closing a tab with a focused element if the unified field has focus

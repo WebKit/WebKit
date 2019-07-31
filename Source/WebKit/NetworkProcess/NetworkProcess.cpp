@@ -2110,6 +2110,12 @@ void NetworkProcess::processWillSuspendImminently()
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processWillSuspendImminently() END", this);
 }
 
+void NetworkProcess::processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&& completionHandler)
+{
+    processWillSuspendImminently();
+    completionHandler();
+}
+
 void NetworkProcess::prepareToSuspend()
 {
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend()", this);

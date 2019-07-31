@@ -439,7 +439,7 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 
 - (void)_sendNetworkProcessWillSuspendImminently
 {
-    _processPool->sendNetworkProcessWillSuspendImminently();
+    _processPool->sendNetworkProcessWillSuspendImminentlyForTesting();
 }
 
 - (void)_sendNetworkProcessDidResume

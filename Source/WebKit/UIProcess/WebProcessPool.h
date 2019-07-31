@@ -312,7 +312,7 @@ public:
     void clearCachedCredentials();
     void clearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace&&, CompletionHandler<void()>&&);
     void terminateNetworkProcess();
-    void sendNetworkProcessWillSuspendImminently();
+    void sendNetworkProcessWillSuspendImminentlyForTesting();
     void sendNetworkProcessDidResume();
     void terminateServiceWorkerProcesses();
     void disableServiceWorkerProcessTerminationDelay();

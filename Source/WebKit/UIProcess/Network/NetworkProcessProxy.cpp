@@ -981,6 +981,12 @@ void NetworkProcessProxy::sendProcessWillSuspendImminently()
     if (canSendMessage())
         send(Messages::NetworkProcess::ProcessWillSuspendImminently(), 0);
 }
+
+void NetworkProcessProxy::sendProcessWillSuspendImminentlyForTesting()
+{
+    if (canSendMessage())
+        sendSync(Messages::NetworkProcess::ProcessWillSuspendImminentlyForTestingSync(), Messages::NetworkProcess::ProcessWillSuspendImminentlyForTestingSync::Reply(), 0);
+}
     
 void NetworkProcessProxy::sendPrepareToSuspend()
 {

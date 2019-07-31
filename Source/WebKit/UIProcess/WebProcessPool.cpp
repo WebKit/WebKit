@@ -1776,10 +1776,10 @@ void WebProcessPool::terminateNetworkProcess()
     m_didNetworkProcessCrash = true;
 }
 
-void WebProcessPool::sendNetworkProcessWillSuspendImminently()
+void WebProcessPool::sendNetworkProcessWillSuspendImminentlyForTesting()
 {
     if (m_networkProcess)
-        m_networkProcess->sendProcessWillSuspendImminently();
+        m_networkProcess->sendProcessWillSuspendImminentlyForTesting();
 }
 
 void WebProcessPool::sendNetworkProcessDidResume()
