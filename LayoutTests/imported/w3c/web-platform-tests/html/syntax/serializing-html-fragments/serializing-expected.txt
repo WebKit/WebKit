@@ -59,13 +59,13 @@ PASS innerHTML Attribute in the XML namespace
 PASS innerHTML Attribute in the XML namespace with the prefix not set to xml: 
 PASS innerHTML Non-'xmlns' attribute in the xmlns namespace 
 PASS innerHTML 'xmlns' attribute in the xmlns namespace 
-FAIL innerHTML Attribute in non-standard namespace assert_equals: expected "<svg abc:def=\"test\"></svg>" but got "<svg def=\"test\"></svg>"
+PASS innerHTML Attribute in non-standard namespace 
 PASS innerHTML <span> starting with U+000A 
 PASS outerHTML Attribute in the XML namespace 
 PASS outerHTML Attribute in the XML namespace with the prefix not set to xml: 
 PASS outerHTML Non-'xmlns' attribute in the xmlns namespace 
 PASS outerHTML 'xmlns' attribute in the xmlns namespace 
-FAIL outerHTML Attribute in non-standard namespace assert_equals: expected "<span><svg abc:def=\"test\"></svg></span>" but got "<span><svg def=\"test\"></svg></span>"
+PASS outerHTML Attribute in non-standard namespace 
 PASS outerHTML <span> starting with U+000A 
 PASS innerHTML <pre> context starting with U+000A 
 PASS innerHTML <textarea> context starting with U+000A 

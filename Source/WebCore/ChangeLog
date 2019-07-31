@@ -1,3 +1,24 @@
+2019-07-31  Chris Dumez  <cdumez@apple.com>
+
+        Element.outerHTML is missing attribute prefixes in some cases in HTML documents
+        https://bugs.webkit.org/show_bug.cgi?id=200283
+
+        Reviewed by Ryosuke Niwa.
+
+        When HTML serializing a prefixed element attribute, we should always serialize the
+        prefix as per [1]. However, our code was only serializing the well-known ones (xml,
+        xmlns & xlink).
+
+        [1] https://html.spec.whatwg.org/#attribute's-serialised-name
+
+        Test: fast/dom/Element/outerHTML-prefixed-attribute.html
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::htmlAttributeSerialization):
+        (WebCore::MarkupAccumulator::xmlAttributeSerialization):
+        (WebCore::MarkupAccumulator::appendAttribute):
+        * editing/MarkupAccumulator.h:
+
 2019-07-31  Loïc Yhuel  <loic.yhuel@softathome.com>
 
         [GStreamer] Fix printf format warnings for 32-bit build in GST traces

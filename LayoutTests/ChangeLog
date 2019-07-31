@@ -1,3 +1,15 @@
+2019-07-31  Chris Dumez  <cdumez@apple.com>
+
+        Element.outerHTML is missing attribute prefixes in some cases in HTML documents
+        https://bugs.webkit.org/show_bug.cgi?id=200283
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage.
+
+        * fast/dom/Element/outerHTML-prefixed-attribute-expected.txt: Added.
+        * fast/dom/Element/outerHTML-prefixed-attribute.html: Added.
+
 2019-07-31  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE and GTK gardening. Adding some failure expectations as

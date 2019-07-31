@@ -113,6 +113,7 @@ private:
     void serializeNodesWithNamespaces(Node& targetNode, SerializedNodes, const Namespaces*, Vector<QualifiedName>* tagNamesToSkip);
     bool inXMLFragmentSerialization() const { return m_serializationSyntax == SerializationSyntax::XML; }
     void generateUniquePrefix(QualifiedName&, const Namespaces&);
+    QualifiedName xmlAttributeSerialization(const Attribute&, Namespaces*);
 
     StringBuilder m_markup;
     const ResolveURLs m_resolveURLs;
