@@ -75,6 +75,18 @@ WI.DOMManager = class DOMManager extends WI.Object
         this._documentUpdated();
     }
 
+    // Static
+
+    static supportsDisablingEventListeners()
+    {
+        return !!(InspectorBackend.domains.DOM && InspectorBackend.domains.DOM.setEventListenerDisabled);
+    }
+
+    static supportsEventListenerBreakpoints()
+    {
+        return !!(InspectorBackend.domains.DOM && InspectorBackend.domains.DOM.setBreakpointForEventListener && InspectorBackend.domains.DOM.removeBreakpointForEventListener);
+    }
+
     // Public
 
     get inspectedNode() { return this._inspectedNode; }

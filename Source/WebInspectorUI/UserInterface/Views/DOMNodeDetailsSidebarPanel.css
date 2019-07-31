@@ -61,6 +61,16 @@ body[dir=rtl] .sidebar > .panel.dom-node-details .details-section.dom-node-event
     -webkit-appearance: none;
 }
 
+.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners .details-section.event-listener-section > .header > .event-listener-options {
+    display: none;
+    width: 15px;
+    height: 15px;
+}
+
+.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners .details-section.event-listener-section:hover > .header > .event-listener-options {
+    display: block;
+}
+
 @media (prefers-color-scheme: dark) {
     .sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter:hover {
         filter: brightness(1.25);

@@ -1,3 +1,46 @@
+2019-07-31  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: DOM: provide a way to disable/breakpoint all event listeners for a given DOM node or event type
+        https://bugs.webkit.org/show_bug.cgi?id=200233
+
+        Reviewed by Joseph Pecoraro.
+
+        Often, when trying to debug issues with DOM events, it's extremely tedious to have to go
+        through event listeners one by one and disable them (or set a breakpoint). This patch adds
+        a way of performing these "state modifications" in batch operations, based on the current
+        grouping method of the Event Listeners section.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.supportsDisablingEventListeners): Added.
+        (WI.DOMManager.supportsEventListenerBreakpoints): Added.
+        Common convenience functions for checking for protocol support.
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WI.DOMNodeDetailsSidebarPanel.prototype._refreshEventListeners.createEventListenerSection):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.css:
+        (.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners .details-section.event-listener-section > .header > .event-listener-options): Added.
+        (.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners .details-section.event-listener-section:hover > .header > .event-listener-options): Added.
+        Add an options element that shows a context menu:
+         - "Disable Event Listeners"/"Enable Event Listeners"
+         - "Add Breakpoints"/"Delete Breakpoints"
+        Each action applies the corresponding state to all event listeners in that section.
+
+        * UserInterface/Views/EventListenerSectionGroup.js:
+        (WI.EventListenerSectionGroup):
+        (WI.EventListenerSectionGroup.prototype.get supportsStateModification): Added.
+        (WI.EventListenerSectionGroup.prototype.get isEventListenerDisabled): Added.
+        (WI.EventListenerSectionGroup.prototype.set isEventListenerDisabled): Added.
+        (WI.EventListenerSectionGroup.prototype.get hasEventListenerBreakpoint): Added.
+        (WI.EventListenerSectionGroup.prototype.set hasEventListenerBreakpoint): Added.
+        (WI.EventListenerSectionGroup.prototype._updateDisabledToggle): Added.
+        (WI.EventListenerSectionGroup.prototype._updateBreakpointToggle): Added.
+        (WI.EventListenerSectionGroup.prototype._createDisabledToggleRow): Deleted.
+        (WI.EventListenerSectionGroup.prototype._createBreakpointToggleRow): Deleted.
+        Expose a way to modify the event listener's state so that the UI (e.g. checkbox and title)
+        also get's updated.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-07-30  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Resources: Display outline around images when viewing image collections

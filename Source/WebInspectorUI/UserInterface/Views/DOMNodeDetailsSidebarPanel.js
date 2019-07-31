@@ -346,7 +346,28 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         function createEventListenerSection(title, eventListeners, options = {}) {
             let groups = eventListeners.map((eventListener) => new WI.EventListenerSectionGroup(eventListener, options));
 
-            const optionsElement = null;
+            let optionsElement = null;
+            if (WI.DOMManager.supportsDisablingEventListeners() || WI.DOMManager.supportsEventListenerBreakpoints() && groups.some((group) => group.supportsStateModification)) {
+                optionsElement = WI.ImageUtilities.useSVGSymbol("Images/Gear.svg", "event-listener-options", WI.UIString("Options"));
+                WI.addMouseDownContextMenuHandlers(optionsElement, (contextMenu) => {
+                    if (WI.DOMManager.supportsDisablingEventListeners()) {
+                        let shouldDisable = groups.some((eventListener) => !eventListener.isEventListenerDisabled);
+                        contextMenu.appendItem(shouldDisable ? WI.UIString("Disable Event Listeners") : WI.UIString("Enable Event Listeners"), () => {
+                            for (let group of groups)
+                                group.isEventListenerDisabled = shouldDisable;
+                        });
+                    }
+
+                    if (WI.DOMManager.supportsEventListenerBreakpoints()) {
+                        let shouldBreakpoint = groups.some((eventListener) => !eventListener.hasEventListenerBreakpoint);
+                        contextMenu.appendItem(shouldBreakpoint ? WI.UIString("Add Breakpoints") : WI.UIString("Delete Breakpoints"), () => {
+                            for (let group of groups)
+                                group.hasEventListenerBreakpoint = shouldBreakpoint;
+                        });
+                    }
+                });
+            }
+
             const defaultCollapsedSettingValue = true;
             let section = new WI.DetailsSection(`${title}-event-listener-section`, title, groups, optionsElement, defaultCollapsedSettingValue);
             section.element.classList.add("event-listener-section");
