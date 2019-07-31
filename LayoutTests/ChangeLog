@@ -1,3 +1,11 @@
+2019-07-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening.
+
+        * platform/wpe/TestExpectations:
+        Skip tests invoking the UIScriptController interface for which WPE
+        doesn't yet provide an implementation, resulting in crashes.
+
 2019-07-30  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Checker sets wrong type for property access instruction with an ander
