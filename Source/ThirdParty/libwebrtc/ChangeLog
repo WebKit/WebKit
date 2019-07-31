@@ -1,3 +1,13 @@
+2019-07-31  Youenn Fablet  <youenn@apple.com>
+
+        ObjC RTCCVPixelBuffer should be prefixed to not conflict with other apps
+        https://bugs.webkit.org/show_bug.cgi?id=200289
+        <rdar://problem/49554670>
+
+        Reviewed by Darin Adler.
+
+        * Source/webrtc/sdk/objc/components/video_frame_buffer/RTCCVPixelBuffer.h:
+
 2019-07-17  Youenn Fablet  <youenn@apple.com>
 
         Use VCP SPI in case creation of a compression session with VTB for 'h264.rtvc' fails
