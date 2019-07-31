@@ -3997,6 +3997,11 @@ webkit.org/b/160119 css3/masking/mask-base64.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/160119 media/video-object-fit-change.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/200301 storage/websql/alter-to-info-table.html [ Failure ]
+webkit.org/b/200301 storage/websql/test-authorizer.html [ Failure ]
+
+webkit.org/b/200302 accessibility/media-with-aria-label.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of tests failing due to THREADED COMPOSITOR enablement. Don't put random test
 # failures here. See the top of the file for where to put new expectations.

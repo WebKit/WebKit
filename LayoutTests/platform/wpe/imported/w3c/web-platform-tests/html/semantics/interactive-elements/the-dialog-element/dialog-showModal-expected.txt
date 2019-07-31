@@ -1,19 +1,21 @@
 
-FAIL dialog element: showModal() assert_false: expected false got undefined
+FAIL dialog element: showModal() assert_true: expected true got false
 FAIL showModal() on a <dialog> that already has an open attribute throws an InvalidStateError exception assert_throws: function "function () {
       d2.showModal();
       this.add_cleanup(function() { d2.close(); });
-    }" threw object "TypeError: d2.showModal is not a function. (In 'd2.showModal()', 'd2.showModal' is undefined)" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
-FAIL showModal() on a <dialog> after initial showModal() and removing the open attribute d9.showModal is not a function. (In 'd9.showModal()', 'd9.showModal' is undefined)
+    }" threw object "TypeError: this.add_cleanup is not a function. (In 'this.add_cleanup(function() { d2.close(); })', 'this.add_cleanup' is undefined)" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+FAIL showModal() on a <dialog> after initial showModal() and removing the open attribute assert_true: expected true got false
 FAIL showModal() on a <dialog> not in a Document throws an InvalidStateError exception assert_throws: function "function () {
       d.showModal();
       this.add_cleanup(function() { d.close(); });
-    }" threw object "TypeError: d.showModal is not a function. (In 'd.showModal()', 'd.showModal' is undefined)" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
-FAIL when opening multiple dialogs, only the newest one is non-inert assert_false: expected false got undefined
-FAIL opening dialog without focusable children assert_false: expected false got undefined
-FAIL opening dialog with multiple focusable children assert_false: expected false got undefined
-FAIL opening dialog with multiple focusable children, one having the autofocus attribute assert_false: expected false got undefined
-FAIL when opening multiple dialogs, the most recently opened is rendered on top assert_false: expected false got undefined
+    }" threw object "TypeError: this.add_cleanup is not a function. (In 'this.add_cleanup(function() { d.close(); })', 'this.add_cleanup' is undefined)" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+FAIL when opening multiple dialogs, only the newest one is non-inert assert_true: expected true got false
+FAIL opening dialog without focusable children assert_true: expected true got false
+FAIL opening dialog with multiple focusable children assert_true: expected true got false
+FAIL opening dialog with multiple focusable children, one having the autofocus attribute assert_true: expected true got false
+FAIL when opening multiple dialogs, the most recently opened is rendered on top assert_equals: expected Element node <dialog id="d11"></dialog> but got Element node <body><div id="log"></div>
+<button id="b0">OK</button>
+<d...
 OK
 foobar
 

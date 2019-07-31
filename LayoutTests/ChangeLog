@@ -1,3 +1,19 @@
+2019-07-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE and GTK gardening. Adding some failure expectations as
+        well as updating baselines for WPT tests where the behavior improved or
+        has just changed in the type of error(s) reported.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-showModal-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/service-workers/service-worker/ready.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/websockets: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/bufferedAmount-unchanged-by-sync-xhr.any.worker-expected.txt: Added.
+
 2019-07-31  Andres Gonzalez  <andresg_22@apple.com>
 
         AX: Re-enable accessibility/set-selected-text-range-after-newline.html test.
