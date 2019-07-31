@@ -96,9 +96,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     return retrieveAccessibilityValueFromMainThread<id>([&self] () -> id {
         NSMutableArray *names = [NSMutableArray array];
-        auto result = m_page->corePage()->pageOverlayController().copyAccessibilityAttributesNames(true);
-        for (auto& name : result)
-            [names addObject:(NSString *)name];
+        if (!m_page)
+            return names;
+        
+        if (auto corePage = m_page->corePage()) {
+            for (auto& name : corePage->pageOverlayController().copyAccessibilityAttributesNames(true))
+                [names addObject:(NSString *)name];
+        }
         return names;
     });
 }
