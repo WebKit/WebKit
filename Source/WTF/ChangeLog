@@ -1,3 +1,23 @@
+2019-07-31  Keith Rollin  <krollin@apple.com>
+
+        Fix 64-bit vs 32-bit mismatch in LogArgument
+        https://bugs.webkit.org/show_bug.cgi?id=200286
+        <rdar://problem/53733671>
+
+        Reviewed by Darin Adler.
+
+        LogArgument is a utility for converting scalars into strings. It has a
+        number of versions of a toString() method that is specialized for each
+        type and converts the value to a string in a manner appropriate for
+        that type. However, the versions of toString() for "long long" and
+        "unsigned long long" are actually declared to take an "long" or
+        "unsigned long" as a parameter. This difference leads to a 64-bit vs
+        32-bit build error on 32-bit systems. Fix this by specifying
+        correct/matching types.
+
+        * wtf/Logger.h:
+        (WTF::LogArgument::toString):
+
 2019-07-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r241288): Text on Yahoo Japan mobile looks too bold
