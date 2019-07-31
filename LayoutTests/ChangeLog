@@ -1,3 +1,13 @@
+2019-07-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK gardening. Update expectations after r248033.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/forms/datalist/datalist-searchinput-appearance-expected.png: Added.
+        * platform/gtk/fast/forms/datalist/datalist-searchinput-appearance-expected.txt: Added.
+        * platform/gtk/fast/forms/datalist/datalist-textinput-appearance-expected.png: Added.
+        * platform/gtk/fast/forms/datalist/datalist-textinput-appearance-expected.txt: Added.
+
 2019-07-31  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Rebaselining the straightforward cases.

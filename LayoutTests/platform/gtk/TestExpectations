@@ -1168,6 +1168,10 @@ fast/text/variations/optical-sizing-trak-2.html [ Skip ]
 # The test directly sends Cocoa events
 swipe/pushState-programmatic-back-while-swiping-crash.html [ Skip ]
 
+# GTK port doesn't suport datalist in range elements
+fast/forms/datalist/input-appearance-range-with-datalist-rtl.html [ Skip ]
+fast/forms/datalist/update-range-with-datalist.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
