@@ -473,6 +473,18 @@ void WebProcessPool::screenPropertiesStateChanged()
 
 NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* withWebsiteDataStore)
 {
+    ASSERT(RunLoop::isMain());
+    
+    // FIXME: This is a temporary workaround for apps using WebKit API on non-main threads.
+    // We should remove this once we enforce threading violation check on our APIs.
+    // https://bugs.webkit.org/show_bug.cgi?id=200246.
+    if (!RunLoop::isMain()) {
+        callOnMainRunLoopAndWait([this, protectedThis = makeRef(*this)] {
+            ensureNetworkProcess();
+        });
+        return *m_networkProcess;
+    }
+
     if (m_networkProcess) {
         if (withWebsiteDataStore) {
             m_networkProcess->addSession(makeRef(*withWebsiteDataStore));
@@ -481,7 +493,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         return *m_networkProcess;
     }
 
-    m_networkProcess = std::make_unique<NetworkProcessProxy>(*this);
+    auto networkProcess = std::make_unique<NetworkProcessProxy>(*this);
 
     NetworkProcessCreationParameters parameters;
 
@@ -553,7 +565,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         parameters.defaultDataStoreParameters.indexedDatabaseDirectory = API::WebsiteDataStore::defaultDataStore()->websiteDataStore().parameters().indexedDatabaseDirectory;
     
     SandboxExtension::createHandleForReadWriteDirectory(parameters.defaultDataStoreParameters.indexedDatabaseDirectory, parameters.defaultDataStoreParameters.indexedDatabaseDirectoryExtensionHandle);
-    m_networkProcess->createSymLinkForFileUpgrade(parameters.defaultDataStoreParameters.indexedDatabaseDirectory);
+    networkProcess->createSymLinkForFileUpgrade(parameters.defaultDataStoreParameters.indexedDatabaseDirectory);
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -619,31 +631,32 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     platformInitializeNetworkProcess(parameters);
 
     // Initialize the network process.
-    m_networkProcess->send(Messages::NetworkProcess::InitializeNetworkProcess(parameters), 0);
+    networkProcess->send(Messages::NetworkProcess::InitializeNetworkProcess(parameters), 0);
 
     if (WebPreferences::anyPagesAreUsingPrivateBrowsing())
-        m_networkProcess->send(Messages::NetworkProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters()), 0);
+        networkProcess->send(Messages::NetworkProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters()), 0);
 
 #if PLATFORM(COCOA)
-    m_networkProcess->send(Messages::NetworkProcess::SetQOS(networkProcessLatencyQOS(), networkProcessThroughputQOS()), 0);
+    networkProcess->send(Messages::NetworkProcess::SetQOS(networkProcessLatencyQOS(), networkProcessThroughputQOS()), 0);
 #endif
 
     if (m_didNetworkProcessCrash) {
         m_didNetworkProcessCrash = false;
-        reinstateNetworkProcessAssertionState(*m_networkProcess);
+        reinstateNetworkProcessAssertionState(*networkProcess);
     }
 
     if (withWebsiteDataStore) {
-        m_networkProcess->addSession(makeRef(*withWebsiteDataStore));
+        networkProcess->addSession(makeRef(*withWebsiteDataStore));
         withWebsiteDataStore->clearPendingCookies();
     }
 
     // Make sure the network process knows about all the sessions that have been registered before it started.
     for (auto& sessionID : m_sessionToPageIDsMap.keys()) {
         if (auto* websiteDataStore = WebsiteDataStore::existingNonDefaultDataStoreForSessionID(sessionID))
-            m_networkProcess->addSession(*websiteDataStore);
+            networkProcess->addSession(*websiteDataStore);
     }
 
+    m_networkProcess = WTFMove(networkProcess);
     return *m_networkProcess;
 }
 
