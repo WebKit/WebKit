@@ -1,3 +1,24 @@
+2019-07-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WebKit] Add PageLoadState::Observer C API
+        https://bugs.webkit.org/show_bug.cgi?id=199848
+
+        Reviewed by Alex Christensen.
+
+        There is no WebKit C API to get the timing of title changed since
+        WKPageLoaderClientV0::didReceiveTitleForFrame has been removed in
+        r235398. Cocoa and glib WebKit API exist.
+
+        * PlatformWin.cmake:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageStateClient):
+        * UIProcess/API/C/WKPage.h: Added WKPageSetPageStateClient.
+        * UIProcess/API/C/WKPageStateClient.h: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setPageLoadStateObserver):
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-07-30  Chris Dumez  <cdumez@apple.com>
 
         Fix non-thread safe use of WeakPtr under sendSecItemRequest()

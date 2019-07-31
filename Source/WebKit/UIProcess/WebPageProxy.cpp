@@ -636,6 +636,15 @@ void WebPageProxy::setIconLoadingClient(std::unique_ptr<API::IconLoadingClient>&
     m_process->send(Messages::WebPage::SetUseIconLoadingClient(hasClient), m_pageID);
 }
 
+void WebPageProxy::setPageLoadStateObserver(std::unique_ptr<PageLoadState::Observer>&& observer)
+{
+    if (m_pageLoadStateObserver)
+        pageLoadState().removeObserver(*m_pageLoadStateObserver);
+    m_pageLoadStateObserver = WTFMove(observer);
+    if (m_pageLoadStateObserver)
+        pageLoadState().addObserver(*m_pageLoadStateObserver);
+}
+
 void WebPageProxy::setFindClient(std::unique_ptr<API::FindClient>&& findClient)
 {
     if (!findClient) {

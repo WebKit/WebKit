@@ -65,7 +65,7 @@ private:
 
     bool canTrustServerCertificate(WKProtectionSpaceRef);
 
-    static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*);
+    static void didChangeTitle(const void*);
     static void didCommitNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*);
     static void didReceiveAuthenticationChallenge(WKPageRef, WKAuthenticationChallengeRef, const void*);
     static WKPageRef createNewPage(WKPageRef, WKPageConfigurationRef, WKNavigationActionRef, WKWindowFeaturesRef, const void *);

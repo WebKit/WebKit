@@ -43,6 +43,7 @@
 #include <WebKit/WKPageLoaderClient.h>
 #include <WebKit/WKPageNavigationClient.h>
 #include <WebKit/WKPagePolicyClient.h>
+#include <WebKit/WKPageStateClient.h>
 #include <WebKit/WKPageUIClient.h>
 #include <WebKit/WKPageVisibilityTypes.h>
 
@@ -228,6 +229,8 @@ WK_EXPORT void WKPageSetPageInjectedBundleClient(WKPageRef page, const WKPageInj
 WK_EXPORT void WKPageSetPageLoaderClient(WKPageRef page, const WKPageLoaderClientBase* client) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKPageSetPageNavigationClient, macos(10.14.4));
 WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, const WKPagePolicyClientBase* client) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKPageSetPageNavigationClient, macos(10.14.4));
 WK_EXPORT void WKPageSetPageNavigationClient(WKPageRef page, const WKPageNavigationClientBase* client);
+
+WK_EXPORT void WKPageSetPageStateClient(WKPageRef page, WKPageStateClientBase* client);
 
 typedef void (*WKPageRunJavaScriptFunction)(WKSerializedScriptValueRef, WKErrorRef, void*);
 WK_EXPORT void WKPageRunJavaScriptInMainFrame(WKPageRef page, WKStringRef script, void* context, WKPageRunJavaScriptFunction function);

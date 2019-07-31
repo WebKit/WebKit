@@ -1,3 +1,43 @@
+2019-07-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WebKit] Add PageLoadState::Observer C API
+        https://bugs.webkit.org/show_bug.cgi?id=199848
+
+        Reviewed by Alex Christensen.
+
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::WebKitBrowserWindow):
+        (WebKitBrowserWindow::didChangeTitle):
+        (WebKitBrowserWindow::didFinishNavigation): Deleted.
+        * MiniBrowser/win/WebKitBrowserWindow.h:
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/PageLoadState.cpp: Added.
+        (TestWebKitAPI::PageLoadTestState::PageLoadTestState):
+        (TestWebKitAPI::didChangeActiveURL):
+        (TestWebKitAPI::didChangeCanGoBack):
+        (TestWebKitAPI::didChangeCanGoForward):
+        (TestWebKitAPI::didChangeCertificateInfo):
+        (TestWebKitAPI::didChangeEstimatedProgress):
+        (TestWebKitAPI::didChangeHasOnlySecureContent):
+        (TestWebKitAPI::didChangeIsLoading):
+        (TestWebKitAPI::didChangeNetworkRequestsInProgress):
+        (TestWebKitAPI::didChangeTitle):
+        (TestWebKitAPI::didChangeWebProcessIsResponsive):
+        (TestWebKitAPI::didSwapWebProcesses):
+        (TestWebKitAPI::willChangeActiveURL):
+        (TestWebKitAPI::willChangeCanGoBack):
+        (TestWebKitAPI::willChangeCanGoForward):
+        (TestWebKitAPI::willChangeCertificateInfo):
+        (TestWebKitAPI::willChangeEstimatedProgress):
+        (TestWebKitAPI::willChangeHasOnlySecureContent):
+        (TestWebKitAPI::willChangeIsLoading):
+        (TestWebKitAPI::willChangeNetworkRequestsInProgress):
+        (TestWebKitAPI::willChangeTitle):
+        (TestWebKitAPI::willChangeWebProcessIsResponsive):
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+
 2019-07-30  Jonathan Bedard  <jbedard@apple.com>
 
         DumpRenderTree.app: Add CFBundleShortVersionString

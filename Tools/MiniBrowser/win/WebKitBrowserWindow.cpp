@@ -137,7 +137,6 @@ WebKitBrowserWindow::WebKitBrowserWindow(WKPageConfigurationRef conf, HWND mainW
     WKPageNavigationClientV0 navigationClient = { };
     navigationClient.base.version = 0;
     navigationClient.base.clientInfo = this;
-    navigationClient.didFinishNavigation = didFinishNavigation;
     navigationClient.didCommitNavigation = didCommitNavigation;
     navigationClient.didReceiveAuthenticationChallenge = didReceiveAuthenticationChallenge;
     WKPageSetPageNavigationClient(page, &navigationClient.base);
@@ -147,6 +146,12 @@ WebKitBrowserWindow::WebKitBrowserWindow(WKPageConfigurationRef conf, HWND mainW
     uiClient.base.clientInfo = this;
     uiClient.createNewPage = createNewPage;
     WKPageSetPageUIClient(page, &uiClient.base);
+
+    WKPageStateClientV0 stateClient = { };
+    stateClient.base.version = 0;
+    stateClient.base.clientInfo = this;
+    stateClient.didChangeTitle = didChangeTitle;
+    WKPageSetPageStateClient(page, &stateClient.base);
 
     updateProxySettings();
     resetZoom();
@@ -293,11 +298,12 @@ static WebKitBrowserWindow& toWebKitBrowserWindow(const void *clientInfo)
     return *const_cast<WebKitBrowserWindow*>(static_cast<const WebKitBrowserWindow*>(clientInfo));
 }
 
-void WebKitBrowserWindow::didFinishNavigation(WKPageRef page, WKNavigationRef navigation, WKTypeRef userData, const void* clientInfo)
+void WebKitBrowserWindow::didChangeTitle(const void* clientInfo)
 {
+    auto& thisWindow = toWebKitBrowserWindow(clientInfo);
+    auto page = WKViewGetPage(thisWindow.m_view.get());
     WKRetainPtr<WKStringRef> title = adoptWK(WKPageCopyTitle(page));
     std::wstring titleString = createString(title.get()) + L" [WebKit]";
-    auto& thisWindow = toWebKitBrowserWindow(clientInfo);
     SetWindowText(thisWindow.m_hMainWnd, titleString.c_str());
 }
 

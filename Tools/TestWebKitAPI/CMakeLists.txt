@@ -224,6 +224,7 @@ if (ENABLE_WEBKIT)
         Tests/WebKit/NewFirstVisuallyNonEmptyLayoutFrames.cpp
         Tests/WebKit/PageLoadBasic.cpp
         Tests/WebKit/PageLoadDidChangeLocationWithinPageForFrame.cpp
+        Tests/WebKit/PageLoadState.cpp
         Tests/WebKit/ParentFrame.cpp
         Tests/WebKit/PendingAPIRequestURL.cpp
         Tests/WebKit/PreventEmptyUserAgent.cpp
