@@ -1,59 +1,89 @@
 2019-07-31  Alan Coon  <alancoon@apple.com>
 
-        Cherry-pick r247936. rdar://problem/53764217
+        Cherry-pick r248015. rdar://problem/53764191
 
-    YouTube search field shows RTL text outside its border on iPadOS
-    https://bugs.webkit.org/show_bug.cgi?id=200253
-    <rdar://problem/53680603>
+    Can't scroll on yummly.co.uk recipe (scale(0) div covers the content and hit-tests)
+    https://bugs.webkit.org/show_bug.cgi?id=200263
+    rdar://problem/53679408
     
-    Reviewed by Beth Dakin.
+    Reviewed by Antti Koivisto.
     
     Source/WebKit:
     
-    Limits code added in r238939 to respect the current keyboard's writing mode to only editable web views. This
-    behavior was only intended for Mail, and isn't generally compatible with web content.
+    The content on this page had a scale(0) div overlaying an overflow:scroll element,
+    and our UI-side hit-testing code would find this scale(0) element, because apparently
+    -[UIView convertPoint:fromView:] will happily work with non-invertible matrices, and
+    -[UIView pointInside:withEvent:] just compares the point with the view bounds.
     
-    While the call to -setInitialDirection is correctly gated on an web view editability check, it appears that
-    other changes in iOS 13 now cause -setBaseWritingDirection:forRange: to be invoked directly from keyboards code.
-    This means that -setBaseWritingDirection:forRange: should additionally be guarded with the same check.
+    Since the view frame takes the transform into account, we can look for an empty frame
+    to detect these non-invertible transforms.
     
-    * UIProcess/ios/WKContentViewInteraction.mm:
-    (-[WKContentView setBaseWritingDirection:forRange:]):
+    * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+    (WebKit::collectDescendantViewsAtPoint):
     
     LayoutTests:
     
-    * editing/input/ios/rtl-keyboard-input-on-focus-in-editable-page-expected.txt: Renamed from LayoutTests/editing/input/ios/rtl-keyboard-input-on-focus-expected.txt.
-    * editing/input/ios/rtl-keyboard-input-on-focus-in-editable-page.html: Renamed from LayoutTests/editing/input/ios/rtl-keyboard-input-on-focus.html.
+    * fast/scrolling/ios/non-invertible-transformed-over-scroller-expected.txt: Added.
+    * fast/scrolling/ios/non-invertible-transformed-over-scroller.html: Added.
     
-    Rename an existing test, rtl-keyboard-input-on-focus.html, to rtl-keyboard-input-on-focus-in-editable-page.html
-    to emphasize the fact that it requires an editable web view.
-    
-    * editing/input/ios/rtl-keyboard-input-on-focus-in-non-editable-page-expected.txt: Added.
-    * editing/input/ios/rtl-keyboard-input-on-focus-in-non-editable-page.html: Added.
-    
-    Add a new layout test to ensure that we don't automatically apply an RTL attribute when focusing fields in a
-    non-editable web view.
-    
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247936 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248015 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2019-07-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+    2019-07-31  Alan Coon  <alancoon@apple.com>
 
-            YouTube search field shows RTL text outside its border on iPadOS
-            https://bugs.webkit.org/show_bug.cgi?id=200253
-            <rdar://problem/53680603>
+            Cherry-pick r247936. rdar://problem/53764217
 
-            Reviewed by Beth Dakin.
+        YouTube search field shows RTL text outside its border on iPadOS
+        https://bugs.webkit.org/show_bug.cgi?id=200253
+        <rdar://problem/53680603>
 
-            Limits code added in r238939 to respect the current keyboard's writing mode to only editable web views. This
-            behavior was only intended for Mail, and isn't generally compatible with web content.
+        Reviewed by Beth Dakin.
 
-            While the call to -setInitialDirection is correctly gated on an web view editability check, it appears that
-            other changes in iOS 13 now cause -setBaseWritingDirection:forRange: to be invoked directly from keyboards code.
-            This means that -setBaseWritingDirection:forRange: should additionally be guarded with the same check.
+        Source/WebKit:
 
-            * UIProcess/ios/WKContentViewInteraction.mm:
-            (-[WKContentView setBaseWritingDirection:forRange:]):
+        Limits code added in r238939 to respect the current keyboard's writing mode to only editable web views. This
+        behavior was only intended for Mail, and isn't generally compatible with web content.
+
+        While the call to -setInitialDirection is correctly gated on an web view editability check, it appears that
+        other changes in iOS 13 now cause -setBaseWritingDirection:forRange: to be invoked directly from keyboards code.
+        This means that -setBaseWritingDirection:forRange: should additionally be guarded with the same check.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setBaseWritingDirection:forRange:]):
+
+        LayoutTests:
+
+        * editing/input/ios/rtl-keyboard-input-on-focus-in-editable-page-expected.txt: Renamed from LayoutTests/editing/input/ios/rtl-keyboard-input-on-focus-expected.txt.
+        * editing/input/ios/rtl-keyboard-input-on-focus-in-editable-page.html: Renamed from LayoutTests/editing/input/ios/rtl-keyboard-input-on-focus.html.
+
+        Rename an existing test, rtl-keyboard-input-on-focus.html, to rtl-keyboard-input-on-focus-in-editable-page.html
+        to emphasize the fact that it requires an editable web view.
+
+        * editing/input/ios/rtl-keyboard-input-on-focus-in-non-editable-page-expected.txt: Added.
+        * editing/input/ios/rtl-keyboard-input-on-focus-in-non-editable-page.html: Added.
+
+        Add a new layout test to ensure that we don't automatically apply an RTL attribute when focusing fields in a
+        non-editable web view.
+
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247936 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-07-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+                YouTube search field shows RTL text outside its border on iPadOS
+                https://bugs.webkit.org/show_bug.cgi?id=200253
+                <rdar://problem/53680603>
+
+                Reviewed by Beth Dakin.
+
+                Limits code added in r238939 to respect the current keyboard's writing mode to only editable web views. This
+                behavior was only intended for Mail, and isn't generally compatible with web content.
+
+                While the call to -setInitialDirection is correctly gated on an web view editability check, it appears that
+                other changes in iOS 13 now cause -setBaseWritingDirection:forRange: to be invoked directly from keyboards code.
+                This means that -setBaseWritingDirection:forRange: should additionally be guarded with the same check.
+
+                * UIProcess/ios/WKContentViewInteraction.mm:
+                (-[WKContentView setBaseWritingDirection:forRange:]):
 
 2019-07-31  Alan Coon  <alancoon@apple.com>
 
@@ -318,6 +348,25 @@
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r247672. rdar://problem/53449739
+2019-07-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Can't scroll on yummly.co.uk recipe (scale(0) div covers the content and hit-tests)
+        https://bugs.webkit.org/show_bug.cgi?id=200263
+        rdar://problem/53679408
+
+        Reviewed by Antti Koivisto.
+
+        The content on this page had a scale(0) div overlaying an overflow:scroll element,
+        and our UI-side hit-testing code would find this scale(0) element, because apparently
+        -[UIView convertPoint:fromView:] will happily work with non-invertible matrices, and 
+        -[UIView pointInside:withEvent:] just compares the point with the view bounds.
+
+        Since the view frame takes the transform into account, we can look for an empty frame
+        to detect these non-invertible transforms.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (WebKit::collectDescendantViewsAtPoint):
+
 
     Micro-optimize HashMap & String IPC decoding
     https://bugs.webkit.org/show_bug.cgi?id=199967
