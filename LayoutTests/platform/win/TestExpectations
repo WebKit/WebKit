@@ -1700,6 +1700,7 @@ webkit.org/b/184676 accessibility/ARIA-reflection.html [ Skip ]
 
 # Not implemented on Win
 accessibility/insert-newline.html [ Skip ]
+accessibility/media-with-aria-label.html [ Skip ]
 
 ################################################################################
 #######################   End Accessibility Issues   ###########################

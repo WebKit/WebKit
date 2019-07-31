@@ -1,0 +1,13 @@
+ 
+
+This tests ensures that aria-label is conveyed for video and audio elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS video1.description is 'AXDescription: Video One'
+PASS audio1.description is 'AXDescription: Audio One'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
