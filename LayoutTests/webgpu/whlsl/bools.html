@@ -71,9 +71,6 @@ whlslTests.literalBool = async () => {
 whlslTests.operatorBool = async () =>
 {
     let program = `
-        bool boolFromUcharFalse() { return bool(uchar(0)); }
-        bool boolFromUcharTrue() { return bool(uchar(1)); }
-
         bool boolFromUintFalse() { return bool(uint(0)); }
         bool boolFromUintTrue() { return bool(uint(1)); }
 
@@ -84,9 +81,6 @@ whlslTests.operatorBool = async () =>
         bool boolFromFloatTrue() { return bool(float(1)); }
         bool boolFromFloatNaN(float arg) { return bool(arg); }
     `;
-
-    assert_equals(await callBoolFunction(program, "boolFromUcharFalse", []), false);
-    assert_equals(await callBoolFunction(program, "boolFromUcharTrue", []), true);
 
     assert_equals(await callBoolFunction(program, "boolFromUintFalse", []), false);
     assert_equals(await callBoolFunction(program, "boolFromUintTrue", []), true);

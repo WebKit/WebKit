@@ -9,12 +9,10 @@
 <script>
 const epsilon = 0.0001;
 
-// FIXME: Add "uchar" back in when operator+(uchar, uchar) is available.
 const numericScalarTypes = ["int", "uint", "float"];
 
 const numericScalarFuncs = {
     "int": callIntFunction,
-    "uchar": callUcharFunction,
     "uint": callUintFunction,
     "float": callFloatFunction
 };
@@ -22,7 +20,6 @@ const numericScalarFuncs = {
 const scalarArgMakers = {
     "bool": makeBool,
     "int": makeInt,
-    "uchar": makeUchar,
     "uint": makeUint,
     "float": makeFloat
 };
@@ -96,12 +93,12 @@ whlslTests.multipleBufferArguments = () => {
 };
 
 whlslTests.multipleArgumentTypes = () => {
-    const src = `float test(int i, uchar c, float4 f4, device uint[] u, device float[] fs)
+    const src = `float test(int i, uint c, float4 f4, device uint[] u, device float[] fs)
     {
         return float(i) + float(c) + f4.x + f4.y + f4.z + f4.w + float(u[0]) + fs[0] + fs[1];
     }`;
     const i = makeInt(1);
-    const c = makeUchar(2);
+    const c = makeUint(2);
     const f4 = makeFloat4([4, 5, 6, 7]);
     const u = makeUint([3]);
     const fs = makeFloat([8, 9]);

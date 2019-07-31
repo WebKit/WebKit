@@ -1,3 +1,46 @@
+2019-07-31  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL Remove char/short/half types
+        https://bugs.webkit.org/show_bug.cgi?id=200312
+
+        Reviewed by Myles C. Maxfield.
+
+        This patch removes the char/short/half types from WHLSL. Since it's not
+        supported by all HW, WebGPU is leaving these types out for now. This is
+        also a huge speedup, since it halves the size of the standard library.
+        
+        In the compute_boids demo, WHLSL::prepare goes from running in ~140ms to
+        running in ~60ms.
+
+        Test: webgpu/whlsl/smaller-than-32-bit-types.html
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeTypeWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeType):
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.cpp:
+        (WebCore::WHLSL::Intrinsics::addPrimitive):
+        (WebCore::WHLSL::Intrinsics::addVector):
+        (WebCore::WHLSL::Intrinsics::addMatrix):
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.h:
+        (WebCore::WHLSL::Intrinsics::WTF_ARRAY_LENGTH):
+        (WebCore::WHLSL::Intrinsics::ucharType const): Deleted.
+        (WebCore::WHLSL::Intrinsics::ushortType const): Deleted.
+        (WebCore::WHLSL::Intrinsics::charType const): Deleted.
+        (WebCore::WHLSL::Intrinsics::shortType const): Deleted.
+        (WebCore::WHLSL::Intrinsics::uchar2Type const): Deleted.
+        (WebCore::WHLSL::Intrinsics::uchar4Type const): Deleted.
+        (WebCore::WHLSL::Intrinsics::ushort2Type const): Deleted.
+        (WebCore::WHLSL::Intrinsics::ushort4Type const): Deleted.
+        (WebCore::WHLSL::Intrinsics::char2Type const): Deleted.
+        (WebCore::WHLSL::Intrinsics::char4Type const): Deleted.
+        (WebCore::WHLSL::Intrinsics::short2Type const): Deleted.
+        (WebCore::WHLSL::Intrinsics::short4Type const): Deleted.
+        * Modules/webgpu/WHLSL/WHLSLPipelineDescriptor.h:
+        * Modules/webgpu/WHLSL/WHLSLSemanticMatcher.cpp:
+        (WebCore::WHLSL::isAcceptableFormat):
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt:
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::convertTextureFormat):
+
 2019-07-31  Youenn Fablet  <youenn@apple.com>
 
         Use CTFontCreateForCharactersWithLanguageAndOption if available instead of CTFontCreateForCharactersWithLanguage

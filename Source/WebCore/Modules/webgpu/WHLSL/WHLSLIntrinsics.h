@@ -58,64 +58,16 @@ public:
         return *m_boolType;
     }
 
-    AST::NativeTypeDeclaration& ucharType() const
-    {
-        ASSERT(m_ucharType);
-        return *m_ucharType;
-    }
-
-    AST::NativeTypeDeclaration& ushortType() const
-    {
-        ASSERT(m_ushortType);
-        return *m_ushortType;
-    }
-
     AST::NativeTypeDeclaration& uintType() const
     {
         ASSERT(m_uintType);
         return *m_uintType;
     }
 
-    AST::NativeTypeDeclaration& charType() const
-    {
-        ASSERT(m_charType);
-        return *m_charType;
-    }
-
-    AST::NativeTypeDeclaration& shortType() const
-    {
-        ASSERT(m_shortType);
-        return *m_shortType;
-    }
-
     AST::NativeTypeDeclaration& intType() const
     {
         ASSERT(m_intType);
         return *m_intType;
-    }
-
-    AST::NativeTypeDeclaration& uchar2Type() const
-    {
-        ASSERT(m_vectorUchar[0]);
-        return *m_vectorUchar[0];
-    }
-
-    AST::NativeTypeDeclaration& uchar4Type() const
-    {
-        ASSERT(m_vectorUchar[2]);
-        return *m_vectorUchar[2];
-    }
-
-    AST::NativeTypeDeclaration& ushort2Type() const
-    {
-        ASSERT(m_vectorUshort[0]);
-        return *m_vectorUshort[0];
-    }
-
-    AST::NativeTypeDeclaration& ushort4Type() const
-    {
-        ASSERT(m_vectorUshort[2]);
-        return *m_vectorUshort[2];
     }
 
     AST::NativeTypeDeclaration& uint2Type() const
@@ -128,30 +80,6 @@ public:
     {
         ASSERT(m_vectorUint[2]);
         return *m_vectorUint[2];
-    }
-
-    AST::NativeTypeDeclaration& char2Type() const
-    {
-        ASSERT(m_vectorChar[0]);
-        return *m_vectorChar[0];
-    }
-
-    AST::NativeTypeDeclaration& char4Type() const
-    {
-        ASSERT(m_vectorChar[2]);
-        return *m_vectorChar[2];
-    }
-
-    AST::NativeTypeDeclaration& short2Type() const
-    {
-        ASSERT(m_vectorShort[0]);
-        return *m_vectorShort[0];
-    }
-
-    AST::NativeTypeDeclaration& short4Type() const
-    {
-        ASSERT(m_vectorShort[2]);
-        return *m_vectorShort[2];
     }
 
     AST::NativeTypeDeclaration& int2Type() const
@@ -234,38 +162,27 @@ private:
 
     AST::NativeTypeDeclaration* m_voidType { nullptr };
     AST::NativeTypeDeclaration* m_boolType { nullptr };
-    AST::NativeTypeDeclaration* m_ucharType { nullptr };
-    AST::NativeTypeDeclaration* m_ushortType { nullptr };
     AST::NativeTypeDeclaration* m_uintType { nullptr };
-    AST::NativeTypeDeclaration* m_charType { nullptr };
-    AST::NativeTypeDeclaration* m_shortType { nullptr };
     AST::NativeTypeDeclaration* m_intType { nullptr };
-    AST::NativeTypeDeclaration* m_halfType { nullptr };
     AST::NativeTypeDeclaration* m_floatType { nullptr };
     AST::NativeTypeDeclaration* m_atomicIntType { nullptr };
     AST::NativeTypeDeclaration* m_atomicUintType { nullptr };
     AST::NativeTypeDeclaration* m_samplerType { nullptr };
 
     AST::NativeTypeDeclaration* m_vectorBool[3] { 0 };
-    AST::NativeTypeDeclaration* m_vectorUchar[3] { 0 };
-    AST::NativeTypeDeclaration* m_vectorUshort[3] { 0 };
     AST::NativeTypeDeclaration* m_vectorUint[3] { 0 };
-    AST::NativeTypeDeclaration* m_vectorChar[3] { 0 };
-    AST::NativeTypeDeclaration* m_vectorShort[3] { 0 };
     AST::NativeTypeDeclaration* m_vectorInt[3] { 0 };
-    AST::NativeTypeDeclaration* m_vectorHalf[3] { 0 };
     AST::NativeTypeDeclaration* m_vectorFloat[3] { 0 };
 
-    AST::NativeTypeDeclaration* m_matrixHalf[3][3] {{ 0 }};
     AST::NativeTypeDeclaration* m_matrixFloat[3][3] {{ 0 }};
 
     static constexpr const char* m_textureTypeNames[] = { "Texture1D", "RWTexture1D", "Texture2D", "RWTexture2D", "Texture3D", "RWTexture3D", "TextureCube", "Texture1DArray", "RWTexture1DArray", "Texture2DArray", "RWTexture2DArray" };
 
-    static constexpr const char* m_textureInnerTypeNames[] = { "uchar", "ushort",  "uint", "char", "short", "int", "half", "float" };
+    static constexpr const char* m_textureInnerTypeNames[] = { "uint", "int", "float" };
 
     AST::NativeTypeDeclaration* m_fullTextures[WTF_ARRAY_LENGTH(m_textureTypeNames)][WTF_ARRAY_LENGTH(m_textureInnerTypeNames)][4] {{{ 0 }}};
 
-    static constexpr const char* m_depthTextureInnerTypes[] =  { "half", "float" };
+    static constexpr const char* m_depthTextureInnerTypes[] =  { "float" };
 
     AST::NativeTypeDeclaration* m_textureDepth2D[WTF_ARRAY_LENGTH(m_depthTextureInnerTypes)] { 0 };
     AST::NativeTypeDeclaration* m_textureDepth2DArray[WTF_ARRAY_LENGTH(m_depthTextureInnerTypes)] { 0 };

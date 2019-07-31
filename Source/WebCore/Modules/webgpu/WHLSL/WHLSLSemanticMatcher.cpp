@@ -217,38 +217,14 @@ static bool isAcceptableFormat(TextureFormat textureFormat, AST::UnnamedType& un
         case TextureFormat::RGBA16Float:
         case TextureFormat::RGBA32Float:
             return matches(unnamedType, intrinsics.float4Type());
-        case TextureFormat::R8Uint:
-            return matches(unnamedType, intrinsics.ucharType());
-        case TextureFormat::R8Sint:
-            return matches(unnamedType, intrinsics.charType());
-        case TextureFormat::R16Uint:
-            return matches(unnamedType, intrinsics.ushortType());
-        case TextureFormat::R16Sint:
-            return matches(unnamedType, intrinsics.shortType());
         case TextureFormat::R32Uint:
             return matches(unnamedType, intrinsics.uintType());
         case TextureFormat::R32Sint:
             return matches(unnamedType, intrinsics.intType());
-        case TextureFormat::RG8Uint:
-            return matches(unnamedType, intrinsics.uchar2Type());
-        case TextureFormat::RG8Sint:
-            return matches(unnamedType, intrinsics.char2Type());
-        case TextureFormat::RG16Uint:
-            return matches(unnamedType, intrinsics.ushort2Type());
-        case TextureFormat::RG16Sint:
-            return matches(unnamedType, intrinsics.short2Type());
         case TextureFormat::RG32Uint:
             return matches(unnamedType, intrinsics.uint2Type());
         case TextureFormat::RG32Sint:
             return matches(unnamedType, intrinsics.int2Type());
-        case TextureFormat::RGBA8Uint:
-            return matches(unnamedType, intrinsics.uchar4Type());
-        case TextureFormat::RGBA8Sint:
-            return matches(unnamedType, intrinsics.char4Type());
-        case TextureFormat::RGBA16Uint:
-            return matches(unnamedType, intrinsics.ushort4Type());
-        case TextureFormat::RGBA16Sint:
-            return matches(unnamedType, intrinsics.short4Type());
         case TextureFormat::RGBA32Uint:
             return matches(unnamedType, intrinsics.uint4Type());
         case TextureFormat::RGBA32Sint:

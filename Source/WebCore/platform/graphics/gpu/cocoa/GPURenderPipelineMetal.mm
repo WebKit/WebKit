@@ -101,8 +101,6 @@ static Optional<WHLSL::TextureFormat> convertTextureFormat(GPUTextureFormat form
     switch (format) {
     case GPUTextureFormat::Rgba8unorm:
         return WHLSL::TextureFormat::RGBA8Unorm;
-    case GPUTextureFormat::Rgba8uint:
-        return WHLSL::TextureFormat::RGBA8Uint;
     case GPUTextureFormat::Bgra8unorm:
         return WHLSL::TextureFormat::BGRA8Unorm;
     case GPUTextureFormat::Depth32floatStencil8:

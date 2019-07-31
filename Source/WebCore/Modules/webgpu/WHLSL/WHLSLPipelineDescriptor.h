@@ -50,36 +50,29 @@ struct VertexAttribute {
 
 using VertexAttributes = Vector<VertexAttribute>;
 
+// FIXME: Add back < 32 bit texture values and figure out how to box them in wider types when we load from them.
+// https://bugs.webkit.org/show_bug.cgi?id=200315
+
 enum class TextureFormat {
     R8Unorm,
     R8UnormSrgb,
     R8Snorm,
-    R8Uint,
-    R8Sint,
     R16Unorm,
     R16Snorm,
-    R16Uint,
-    R16Sint,
     R16Float,
     RG8Unorm,
     RG8UnormSrgb,
     RG8Snorm,
-    RG8Uint,
-    RG8Sint,
     B5G6R5Unorm,
     R32Uint,
     R32Sint,
     R32Float,
     RG16Unorm,
     RG16Snorm,
-    RG16Uint,
-    RG16Sint,
     RG16Float,
     RGBA8Unorm,
     RGBA8UnormSrgb,
     RGBA8Snorm,
-    RGBA8Uint,
-    RGBA8Sint,
     BGRA8Unorm,
     BGRA8UnormSrgb,
     RGB10A2Unorm,
@@ -89,8 +82,6 @@ enum class TextureFormat {
     RG32Float,
     RGBA16Unorm,
     RGBA16Snorm,
-    RGBA16Uint,
-    RGBA16Sint,
     RGBA16Float,
     RGBA32Uint,
     RGBA32Sint,

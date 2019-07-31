@@ -1,3 +1,15 @@
+2019-07-31  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL Remove char/short/half types
+        https://bugs.webkit.org/show_bug.cgi?id=200312
+
+        Reviewed by Myles C. Maxfield.
+
+        * webgpu/whlsl/bools.html:
+        * webgpu/whlsl/smaller-than-32-bit-types-expected.txt: Added.
+        * webgpu/whlsl/smaller-than-32-bit-types.html: Added.
+        * webgpu/whlsl/test-harness-test.html:
+
 2019-07-31  Truitt Savell  <tsavell@apple.com>
 
         Update test expectations for imported/blink/storage/indexeddb/blob-basics-metadata.html
