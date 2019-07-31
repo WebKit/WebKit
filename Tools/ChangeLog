@@ -1,3 +1,14 @@
+2019-07-31  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.og: Timeline in canvas painting with wrong colors, cannot customize scale
+        https://bugs.webkit.org/show_bug.cgi?id=200318
+
+        Reviewed by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/library/js/components/TimelineComponents.js:
+        (Timeline.CanvasSeriesComponent): Reset draw context between dots.
+        (Timeline.CanvasXAxisComponent): Use getLabel function.
+
 2019-07-31  Loïc Yhuel  <loic.yhuel@softathome.com>
 
         [GTK][WPE] Fix gtkdoc build with "build-webkit --32-bit" on 64-bit hosts

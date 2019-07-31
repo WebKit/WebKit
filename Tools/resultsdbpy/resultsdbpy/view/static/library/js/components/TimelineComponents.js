@@ -209,6 +209,7 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
         emptylineColor = emptylineColor ? emptylineColor : defaultEmptyLineColor;
             if (!isEmpty) {
                 //Draw the dot
+                context.beginPath();
                 context.arc(x + dotMargin + radius, y, radius, 0, 2 * Math.PI);
                 context.fillStyle = color;
                 context.fill();
@@ -560,10 +561,10 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
         context.save();
         if (!isTop) {
             context.rotate(fontRotate);
-            context.fillText(scaleLabel, middlePointX / 2 + sqrt3 * scaleTagLineHeight / 2, baseLineY - sqrt3 * (middlePointX / 2) + scaleTagLineHeight / 2);
+            context.fillText(getLabel(scaleLabel), middlePointX / 2 + sqrt3 * scaleTagLineHeight / 2, baseLineY - sqrt3 * (middlePointX / 2) + scaleTagLineHeight / 2);
         } else {
             context.rotate(fontTopRotate);
-            context.fillText(scaleLabel, middlePointX / 2 - sqrt3 * scaleTagLineHeight - fontSizeNumber, baseLineY + sqrt3 * (middlePointX / 2) -    3 * scaleTagLineHeight / 2 - fontSizeNumber);
+            context.fillText(getLabel(scaleLabel), middlePointX / 2 - sqrt3 * scaleTagLineHeight - fontSizeNumber, baseLineY + sqrt3 * (middlePointX / 2) -    3 * scaleTagLineHeight / 2 - fontSizeNumber);
         }
         context.restore();
 
