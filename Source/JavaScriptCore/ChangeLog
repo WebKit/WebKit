@@ -1,3 +1,25 @@
+2019-07-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make StructureChain less-tricky by using Auxiliary Buffer
+        https://bugs.webkit.org/show_bug.cgi?id=200192
+
+        Reviewed by Saam Barati.
+
+        StructureChain has a bit tricky write barrier / mutator fence to use UniqueArray for its underlying storage.
+        But, since the size of StructureChain is fixed at initialization, we should allocate an underlying storage from auxiliary memory and
+        set it in its constructor instead of finishCreation. We can store values in the finishCreation so that we do not need to have
+        a hacky write-barrier and mutator fence. Furthermore, we can make StructureChain non-destructible.
+
+        This patch leverages auxiliary buffer for the implementation of StructureChain. And it also adds a test that stresses StructureChain creation.
+
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::StructureChain):
+        (JSC::StructureChain::create):
+        (JSC::StructureChain::finishCreation):
+        (JSC::StructureChain::visitChildren):
+        (JSC::StructureChain::destroy): Deleted.
+        * runtime/StructureChain.h:
+
 2019-07-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Increment bytecode age only when SlotVisitor is first-visit

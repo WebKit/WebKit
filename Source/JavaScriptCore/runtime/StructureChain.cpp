@@ -34,14 +34,35 @@ namespace JSC {
     
 const ClassInfo StructureChain::s_info = { "StructureChain", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(StructureChain) };
 
-StructureChain::StructureChain(VM& vm, Structure* structure)
-    : JSCell(vm, structure)
+StructureChain::StructureChain(VM& vm, Structure* structure, WriteBarrier<Structure>* vector)
+    : Base(vm, structure)
+    , m_vector(vm, this, vector)
 {
 }
 
-void StructureChain::destroy(JSCell* cell)
+StructureChain* StructureChain::create(VM& vm, JSObject* head)
 {
-    static_cast<StructureChain*>(cell)->StructureChain::~StructureChain();
+    // FIXME: Make StructureChain::create fail for large chain. Caching large chain is not so profitable.
+    // By making the size <= UINT16_MAX, we can store length in a high bits of auxiliary pointer.
+    // https://bugs.webkit.org/show_bug.cgi?id=200290
+    size_t size = 0;
+    for (JSObject* current = head; current; current = current->structure(vm)->storedPrototypeObject(current))
+        ++size;
+    ++size; // Sentinel nullptr.
+    WriteBarrier<Structure>* vector = static_cast<WriteBarrier<Structure>*>(vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(vm, (Checked<size_t>(size) * sizeof(WriteBarrier<Structure>)).unsafeGet(), nullptr, AllocationFailureMode::Assert));
+    for (size_t i = 0; i < size; ++i)
+        vector[i].clear();
+    StructureChain* chain = new (NotNull, allocateCell<StructureChain>(vm.heap)) StructureChain(vm, vm.structureChainStructure.get(), vector);
+    chain->finishCreation(vm, head);
+    return chain;
+}
+
+void StructureChain::finishCreation(VM& vm, JSObject* head)
+{
+    Base::finishCreation(vm);
+    size_t i = 0;
+    for (JSObject* current = head; current; current = current->structure(vm)->storedPrototypeObject(current))
+        m_vector.get()[i++].set(vm, this, current->structure(vm));
 }
 
 void StructureChain::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -49,11 +70,9 @@ void StructureChain::visitChildren(JSCell* cell, SlotVisitor& visitor)
     StructureChain* thisObject = jsCast<StructureChain*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    if (WriteBarrier<Structure>* vector = thisObject->m_vector.get()) {
-        size_t i = 0;
-        while (vector[i])
-            visitor.append(vector[i++]);
-    }
+    visitor.markAuxiliary(thisObject->m_vector.get());
+    for (auto* current = thisObject->m_vector.get(); *current; ++current)
+        visitor.append(*current);
 }
 
 } // namespace JSC
