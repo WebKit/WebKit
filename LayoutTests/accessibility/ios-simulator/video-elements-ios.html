@@ -26,10 +26,9 @@
         var video = accessibilityController.accessibleElementById("video");
         shouldBeFalse("video.isIgnored");
         
-        // We shouldn't expose video elements with native controls
         var video2 = accessibilityController.accessibleElementById("video2");
-        shouldBeTrue("video2.isIgnored");
-        
+        shouldBeFalse("video2.isIgnored");
+
         vid.oncanplaythrough = function() {
             shouldBe("video.description", "'AXLabel: Video label1, 9 seconds'");
             shouldBe("video.stringValue", "'AXValue: 0 seconds'");
