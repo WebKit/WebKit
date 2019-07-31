@@ -36,6 +36,7 @@
 #include "DOMTokenList.h"
 #include "Element.h"
 #include "FloatPoint.h"
+#include "FloatRoundedRect.h"
 #include "FloatSize.h"
 #include "FontCascade.h"
 #include "FontCascadeDescription.h"
@@ -49,7 +50,6 @@
 #include "Node.h"
 #include "NodeList.h"
 #include "Page.h"
-#include "Path.h"
 #include "PseudoElement.h"
 #include "RenderBox.h"
 #include "RenderBoxModelObject.h"
@@ -74,13 +74,14 @@ static constexpr float rulerStepLength = 8;
 static constexpr float rulerSubStepIncrement = 5;
 static constexpr float rulerSubStepLength = 5;
 
+static constexpr UChar ellipsis = 0x2026;
+static constexpr UChar multiplicationSign = 0x00D7;
+
 static void truncateWithEllipsis(String& string, size_t length)
 {
-    const UChar ellipsisUChar[] = { 0x2026, 0 };
-
     if (string.length() > length) {
         string.truncate(length);
-        string.append(ellipsisUChar);
+        string.append(ellipsis);
     }
 }
 
@@ -386,32 +387,33 @@ void InspectorOverlay::paint(GraphicsContext& context)
         context.fillRect({ FloatPoint::zero(), viewportSize });
     }
 
-    Highlight::Bounds bounds;
+    RulerExclusion rulerExclusion;
 
     if (m_highlightQuad) {
-        auto quadBounds = drawQuadHighlight(context, *m_highlightQuad);
-        bounds.unite(quadBounds);
+        auto quadRulerExclusion = drawQuadHighlight(context, *m_highlightQuad);
+        rulerExclusion.bounds.unite(quadRulerExclusion.bounds);
     }
 
     if (m_highlightNodeList) {
         for (unsigned i = 0; i < m_highlightNodeList->length(); ++i) {
-            if (Node* node = m_highlightNodeList->item(i)) {
-                auto nodeBounds = drawNodeHighlight(context, *node);
-                bounds.unite(nodeBounds);
+            if (auto* node = m_highlightNodeList->item(i)) {
+                auto nodeRulerExclusion = drawNodeHighlight(context, *node);
+                rulerExclusion.bounds.unite(nodeRulerExclusion.bounds);
             }
         }
     }
 
     if (m_highlightNode) {
-        auto nodeBounds = drawNodeHighlight(context, *m_highlightNode);
-        bounds.unite(nodeBounds);
+        auto nodeRulerExclusion = drawNodeHighlight(context, *m_highlightNode);
+        rulerExclusion.bounds.unite(nodeRulerExclusion.bounds);
+        rulerExclusion.titlePath = nodeRulerExclusion.titlePath;
     }
 
     if (!m_paintRects.isEmpty())
         drawPaintRects(context, m_paintRects);
 
     if (m_showRulers || m_showRulersDuringElementSelection)
-        drawRulers(context, bounds);
+        drawRulers(context, rulerExclusion);
 }
 
 void InspectorOverlay::getHighlight(Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem) const
@@ -569,40 +571,40 @@ void InspectorOverlay::updatePaintRectsTimerFired()
         update();
 }
 
-Highlight::Bounds InspectorOverlay::drawNodeHighlight(GraphicsContext& context, Node& node)
+InspectorOverlay::RulerExclusion InspectorOverlay::drawNodeHighlight(GraphicsContext& context, Node& node)
 {
-    Highlight::Bounds bounds;
+    RulerExclusion rulerExclusion;
 
-    drawFragmentHighlight(context, node, m_nodeHighlightConfig, bounds);
+    drawFragmentHighlight(context, node, m_nodeHighlightConfig, rulerExclusion.bounds);
 
     if (m_nodeHighlightConfig.showInfo)
-        drawShapeHighlight(context, node, bounds);
+        drawShapeHighlight(context, node, rulerExclusion.bounds);
 
     if (m_showRulers || m_showRulersDuringElementSelection)
-        drawBounds(context, bounds);
+        drawBounds(context, rulerExclusion.bounds);
 
     // Ensure that the title information is drawn after the bounds.
     if (m_nodeHighlightConfig.showInfo)
-        drawElementTitle(context, node, bounds);
+        rulerExclusion.titlePath = drawElementTitle(context, node, rulerExclusion.bounds);
 
-    return bounds;
+    return rulerExclusion;
 }
 
-Highlight::Bounds InspectorOverlay::drawQuadHighlight(GraphicsContext& context, const FloatQuad& quad)
+InspectorOverlay::RulerExclusion InspectorOverlay::drawQuadHighlight(GraphicsContext& context, const FloatQuad& quad)
 {
-    Highlight::Bounds bounds;
+    RulerExclusion rulerExclusion;
 
     Highlight highlight;
     buildQuadHighlight(quad, m_quadHighlightConfig, highlight);
 
     if (highlight.quads.size() >= 1) {
-        drawOutlinedQuad(context, highlight.quads[0], highlight.contentColor, highlight.contentOutlineColor, bounds);
+        drawOutlinedQuad(context, highlight.quads[0], highlight.contentColor, highlight.contentOutlineColor, rulerExclusion.bounds);
 
         if (m_showRulers || m_showRulersDuringElementSelection)
-            drawBounds(context, bounds);
+            drawBounds(context, rulerExclusion.bounds);
     }
 
-    return bounds;
+    return rulerExclusion;
 }
 
 void InspectorOverlay::drawPaintRects(GraphicsContext& context, const Deque<TimeRectPair>& paintRects)
@@ -666,7 +668,7 @@ void InspectorOverlay::drawBounds(GraphicsContext& context, const Highlight::Bou
     context.strokePath(path);
 }
 
-void InspectorOverlay::drawRulers(GraphicsContext& context, const Highlight::Bounds& bounds)
+void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverlay::RulerExclusion& rulerExclusion)
 {
     const Color rulerBackgroundColor(1.0f, 1.0f, 1.0f, 0.6f);
     const Color lightRulerColor(0.0f, 0.0f, 0.0f, 0.2f);
@@ -713,11 +715,11 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const Highlight::Bou
     {
         FloatRect topEdge(contentInset.width(), contentInset.height(), zoom(width) - contentInset.width(), rulerSize);
         FloatRect bottomEdge(contentInset.width(), zoom(height) - rulerSize, zoom(width) - contentInset.width(), rulerSize);
-        drawTopEdge = !bounds.intersects(topEdge) || bounds.intersects(bottomEdge);
+        drawTopEdge = !rulerExclusion.bounds.intersects(topEdge) || rulerExclusion.bounds.intersects(bottomEdge);
 
         FloatRect rightEdge(zoom(width) - rulerSize, contentInset.height(), rulerSize, zoom(height) - contentInset.height());
         FloatRect leftEdge(contentInset.width(), contentInset.height(), rulerSize, zoom(height) - contentInset.height());
-        drawLeftEdge = !bounds.intersects(leftEdge) || bounds.intersects(rightEdge);
+        drawLeftEdge = !rulerExclusion.bounds.intersects(leftEdge) || rulerExclusion.bounds.intersects(rightEdge);
     }
 
     float cornerX = drawLeftEdge ? contentInset.width() : zoom(width) - rulerSize;
@@ -831,22 +833,79 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const Highlight::Bou
             }
         }
     }
+
+    // Draw viewport size.
+    {
+        FontCascadeDescription fontDescription;
+        fontDescription.setOneFamily(m_page.settings().sansSerifFontFamily());
+        fontDescription.setComputedSize(12);
+
+        FontCascade font(WTFMove(fontDescription), 0, 0);
+        font.update(nullptr);
+
+        auto viewportRect = pageView->visualViewportRect();
+        auto viewportWidthText = String::numberToStringFixedPrecision(viewportRect.width() / pageZoomFactor);
+        auto viewportHeightText = String::numberToStringFixedPrecision(viewportRect.height() / pageZoomFactor);
+        TextRun viewportTextRun(makeString(viewportWidthText, "px", ' ', multiplicationSign, ' ', viewportHeightText, "px"));
+
+        const float margin = 4;
+        const float padding = 2;
+        const float radius = 4;
+        float fontWidth = font.width(viewportTextRun);
+        float fontHeight = font.fontMetrics().floatHeight();
+        FloatRect viewportTextRect(margin, margin, (padding * 2.0f) + fontWidth, (padding * 2.0f) + fontHeight);
+        const auto viewportTextRectCenter = viewportTextRect.center();
+
+        GraphicsContextStateSaver viewportSizeStateSaver(context);
+
+        float leftTranslateX = rulerSize;
+        float rightTranslateX = 0.0f - (margin * 2.0f) - (padding * 2.0f) - fontWidth;
+        float translateX = cornerX + (drawLeftEdge ? leftTranslateX : rightTranslateX);
+
+        float topTranslateY = rulerSize;
+        float bottomTranslateY = 0.0f - (margin * 2.0f) - (padding * 2.0f) - fontHeight;
+        float translateY = cornerY + (drawTopEdge ? topTranslateY : bottomTranslateY);
+
+        FloatPoint translate(translateX, translateY);
+        if (rulerExclusion.titlePath.contains(viewportTextRectCenter + translate)) {
+            // Try the opposite horizontal side.
+            float oppositeTranslateX = drawLeftEdge ? zoom(width) + rightTranslateX : contentInset.width() + leftTranslateX;
+            translate.setX(oppositeTranslateX);
+
+            if (rulerExclusion.titlePath.contains(viewportTextRectCenter + translate)) {
+                translate.setX(translateX);
+
+                // Try the opposite vertical side.
+                float oppositeTranslateY = drawTopEdge ? zoom(height) + bottomTranslateY : contentInset.height() + topTranslateY;
+                translate.setY(oppositeTranslateY);
+
+                if (rulerExclusion.titlePath.contains(viewportTextRectCenter + translate)) {
+                    // Try the opposite corner.
+                    translate.setX(oppositeTranslateX);
+                }
+            }
+        }
+        context.translate(translate);
+
+        context.fillRoundedRect(FloatRoundedRect(viewportTextRect, FloatRoundedRect::Radii(radius)), rulerBackgroundColor);
+
+        context.setFillColor(Color::black);
+        context.drawText(font, viewportTextRun, {margin +  padding, margin + padding + fontHeight - font.fontMetrics().descent() });
+    }
 }
 
-void InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, const Highlight::Bounds& bounds)
+Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, const Highlight::Bounds& bounds)
 {
     if (bounds.isEmpty())
-        return;
+        return { };
 
     Element* element = effectiveElementForNode(node);
     if (!element)
-        return;
+        return { };
 
     RenderObject* renderer = node.renderer();
     if (!renderer)
-        return;
-
-    const UChar multiplicationSignUChar[] = { 0x00D7, 0 };
+        return { };
 
     String elementTagName = element->nodeName();
     if (!element->document().isXHTMLDocument())
@@ -912,7 +971,7 @@ void InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     bool hasSecondLine = !elementRole.isEmpty();
 
     {
-        String firstLine = makeString(elementTagName, elementIDValue, elementClassValue, elementPseudoType, ' ', elementWidth, "px", ' ', multiplicationSignUChar, ' ', elementHeight, "px");
+        String firstLine = makeString(elementTagName, elementIDValue, elementClassValue, elementPseudoType, ' ', elementWidth, "px", ' ', multiplicationSign, ' ', elementHeight, "px");
         String secondLine = makeString("Role ", elementRole);
 
         float firstLineWidth = font.width(TextRun(firstLine));
@@ -943,9 +1002,9 @@ void InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     float boxHeight = elementDataArrowSize + elementDataHeight + (elementDataSpacing * 2);
 
     float boxX = bounds.x();
-    if (boxX < contentInset.width()) {
+    if (boxX < contentInset.width())
         boxX = contentInset.width();
-    } else if (boxX > viewportSize.width() - boxWidth)
+    else if (boxX > viewportSize.width() - boxWidth)
         boxX = viewportSize.width() - boxWidth;
     else
         boxX += elementDataSpacing;
@@ -1019,7 +1078,7 @@ void InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     drawText(elementWidth, Color::black);
     drawText("px"_s, Color::darkGray);
     drawText(" "_s, Color::darkGray);
-    drawText(multiplicationSignUChar, Color::darkGray);
+    drawText(makeString(multiplicationSign), Color::darkGray);
     drawText(" "_s, Color::darkGray);
     drawText(elementHeight, Color::black);
     drawText("px"_s, Color::darkGray);
@@ -1032,6 +1091,8 @@ void InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
         drawText(" "_s, Color::black);
         drawText(elementRole, Color::black);
     }
+
+    return path;
 }
 
 } // namespace WebCore

@@ -32,9 +32,11 @@
 #include "Color.h"
 #include "FloatQuad.h"
 #include "FloatRect.h"
+#include "Path.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -128,13 +130,18 @@ private:
 
     bool shouldShowOverlay() const;
 
-    Highlight::Bounds drawNodeHighlight(GraphicsContext&, Node&);
-    Highlight::Bounds drawQuadHighlight(GraphicsContext&, const FloatQuad&);
+    struct RulerExclusion {
+        Highlight::Bounds bounds;
+        Path titlePath;
+    };
+
+    RulerExclusion drawNodeHighlight(GraphicsContext&, Node&);
+    RulerExclusion drawQuadHighlight(GraphicsContext&, const FloatQuad&);
     void drawPaintRects(GraphicsContext&, const Deque<TimeRectPair>&);
     void drawBounds(GraphicsContext&, const Highlight::Bounds&);
-    void drawRulers(GraphicsContext&, const Highlight::Bounds&);
+    void drawRulers(GraphicsContext&, const RulerExclusion&);
 
-    void drawElementTitle(GraphicsContext&, Node&, const Highlight::Bounds&);
+    Path drawElementTitle(GraphicsContext&, Node&, const Highlight::Bounds&);
 
     void updatePaintRectsTimerFired();
 
