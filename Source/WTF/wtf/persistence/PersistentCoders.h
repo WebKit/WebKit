@@ -196,7 +196,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
             return false;
 
         HashMapType tempHashMap;
-        tempHashMap.reserveInitialCapacity(hashMapSize);
+        tempHashMap.reserveInitialCapacity(static_cast<unsigned>(hashMapSize));
         for (uint64_t i = 0; i < hashMapSize; ++i) {
             KeyArg key;
             MappedArg value;
