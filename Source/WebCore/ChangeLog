@@ -1,3 +1,25 @@
+2019-07-31  Youenn Fablet  <youenn@apple.com>
+
+        Use CTFontCreateForCharactersWithLanguageAndOption if available instead of CTFontCreateForCharactersWithLanguage
+        https://bugs.webkit.org/show_bug.cgi?id=200241
+
+        Reviewed by Myles C. Maxfield.
+
+        We can use CTFontCreateForCharactersWithLanguageAndOption instead of CTFontCreateForCharactersWithLanguage
+        as it allows setting more easily the fallback option.
+        This allows us to never fallback to user installed fonts.
+        In such a case, we no longer need to wrap the fonts to change the fallback option.
+        We also prewarm the fonts with the same SPI and use system fallback as the default value.
+
+        Covered by existing tests.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont):
+        (WebCore::lookupFallbackFont):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        (WebCore::FontCache::prewarm):
+        (WebCore::fontFamiliesForPrewarming):
+
 2019-07-31  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Overlay: add page width/height display

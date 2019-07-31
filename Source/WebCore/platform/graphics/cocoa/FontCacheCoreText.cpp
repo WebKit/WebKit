@@ -570,8 +570,13 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     bool dontNeedToApplyOpticalSizing = fontOpticalSizing == FontOpticalSizing::Enabled && !forceOpticalSizingOn;
     bool fontFaceDoesntSpecifyFeatures = !fontFaceFeatures || fontFaceFeatures->isEmpty();
     bool fontFaceDoesntSpecifyVariations = !fontFaceVariantSettings || fontFaceVariantSettings->isAllNormal();
-    if (noFontFeatureSettings && noFontVariationSettings && textRenderingModeIsAuto && variantSettingsIsNormal && dontNeedToApplyOpticalSizing && fontFaceDoesntSpecifyFeatures && fontFaceDoesntSpecifyVariations)
+    if (noFontFeatureSettings && noFontVariationSettings && textRenderingModeIsAuto && variantSettingsIsNormal && dontNeedToApplyOpticalSizing && fontFaceDoesntSpecifyFeatures && fontFaceDoesntSpecifyVariations) {
+#if HAVE(CTFONTCREATEFORCHARACTERSWITHLANGUAGEANDOPTION)
+        return originalFont;
+#else
         return createFontForInstalledFonts(originalFont, fontDescription.shouldAllowUserInstalledFonts());
+#endif
+    }
 
     // This algorithm is described at http://www.w3.org/TR/css3-fonts/#feature-precedence
     FeaturesMap featuresToBeApplied;
@@ -883,11 +888,15 @@ public:
             : fontDescriptor(fontDescriptor)
             , capabilities(capabilitiesForFontDescriptor(fontDescriptor))
         {
+#if HAVE(CTFONTCREATEFORCHARACTERSWITHLANGUAGEANDOPTION)
+            UNUSED_PARAM(allowUserInstalledFonts);
+#else
             if (allowUserInstalledFonts != AllowUserInstalledFonts::No)
                 return;
             auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
             addAttributesForInstalledFonts(attributes.get(), allowUserInstalledFonts);
             this->fontDescriptor = CTFontDescriptorCreateCopyWithAttributes(fontDescriptor, attributes.get());
+#endif
         }
 
         RetainPtr<CTFontDescriptorRef> fontDescriptor;
@@ -1390,7 +1399,41 @@ static inline bool isArabicCharacter(UChar character)
 }
 #endif
 
-static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValue fontWeight, const AtomString& locale, const UChar* characters, unsigned length)
+#if !ASSERT_DISABLED
+static inline bool isUserInstalledFont(CTFontRef font)
+{
+#if HAVE(DISALLOWABLE_USER_INSTALLED_FONTS)
+    auto isUserInstalledFont = adoptCF(static_cast<CFBooleanRef>(CTFontCopyAttribute(font, kCTFontUserInstalledAttribute)));
+    return isUserInstalledFont && CFBooleanGetValue(isUserInstalledFont.get());
+#else
+    UNUSED_PARAM(font);
+    return false;
+#endif
+}
+#endif
+
+#if !USE(PLATFORM_SYSTEM_FALLBACK_LIST) && (PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && TARGET_OS_IOS))
+static RetainPtr<CTFontRef> createFontForCharacters(CTFontRef font, CFStringRef localeString, AllowUserInstalledFonts, const UChar* characters, unsigned length)
+{
+    CFIndex coveredLength = 0;
+    return adoptCF(CTFontCreatePhysicalFontForCharactersWithLanguage(font, characters, length, localeString, &coveredLength));
+}
+#elif HAVE(CTFONTCREATEFORCHARACTERSWITHLANGUAGEANDOPTION)
+static RetainPtr<CTFontRef> createFontForCharacters(CTFontRef font, CFStringRef localeString, AllowUserInstalledFonts allowUserInstalledFonts, const UChar* characters, unsigned length)
+{
+    CFIndex coveredLength = 0;
+    auto fallbackOption = allowUserInstalledFonts == AllowUserInstalledFonts::No ? kCTFontFallbackOptionSystem : kCTFontFallbackOptionDefault;
+    return adoptCF(CTFontCreateForCharactersWithLanguageAndOption(font, characters, length, localeString, fallbackOption, &coveredLength));
+}
+#else
+static RetainPtr<CTFontRef> createFontForCharacters(CTFontRef font, CFStringRef localeString, AllowUserInstalledFonts, const UChar* characters, unsigned length)
+{
+    CFIndex coveredLength = 0;
+    return adoptCF(CTFontCreateForCharactersWithLanguage(font, characters, length, localeString, &coveredLength));
+}
+#endif
+
+static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValue fontWeight, const AtomString& locale, AllowUserInstalledFonts allowUserInstalledFonts, const UChar* characters, unsigned length)
 {
     ASSERT(length > 0);
 
@@ -1402,13 +1445,8 @@ static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValu
     UNUSED_PARAM(locale);
 #endif
 
-    CFIndex coveredLength = 0;
-    RetainPtr<CTFontRef> result;
-#if !USE(PLATFORM_SYSTEM_FALLBACK_LIST) && (PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && TARGET_OS_IOS))
-    result = adoptCF(CTFontCreatePhysicalFontForCharactersWithLanguage(font, characters, length, localeString.get(), &coveredLength));
-#else
-    result = adoptCF(CTFontCreateForCharactersWithLanguage(font, characters, length, localeString.get(), &coveredLength));
-#endif
+    auto result = createFontForCharacters(font, localeString.get(), allowUserInstalledFonts, characters, length);
+    ASSERT(!isUserInstalledFont(result.get()) || allowUserInstalledFonts == AllowUserInstalledFonts::Yes);
 
 #if PLATFORM(IOS_FAMILY)
     // Callers of this function won't include multiple code points. "Length" is to know how many code units
@@ -1449,7 +1487,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     if (!fullName.isEmpty())
         m_fontNamesRequiringSystemFallbackForPrewarming.add(fullName);
 
-    auto result = lookupFallbackFont(platformData.font(), description.weight(), description.locale(), characters, length);
+    auto result = lookupFallbackFont(platformData.font(), description.weight(), description.locale(), description.shouldAllowUserInstalledFonts(), characters, length);
     result = preparePlatformFont(result.get(), description, nullptr, nullptr, { });
 
     if (!result)
@@ -1648,7 +1686,12 @@ void FontCache::prewarm(const PrewarmInformation& prewarmInformation)
                 // This is sufficient to warm CoreText caches for language and character specific fallbacks.
                 CFIndex coveredLength = 0;
                 UChar character = ' ';
+
+#if HAVE(CTFONTCREATEFORCHARACTERSWITHLANGUAGEANDOPTION)
+                auto fallbackWarmingFont = adoptCF(CTFontCreateForCharactersWithLanguageAndOption(warmingFont.get(), &character, 1, nullptr, kCTFontFallbackOptionSystem, &coveredLength));
+#else
                 auto fallbackWarmingFont = adoptCF(CTFontCreateForCharactersWithLanguage(warmingFont.get(), &character, 1, nullptr, &coveredLength));
+#endif
             }
         }
     });

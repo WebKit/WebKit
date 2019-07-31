@@ -1,5 +1,18 @@
 2019-07-31  Youenn Fablet  <youenn@apple.com>
 
+        Use CTFontCreateForCharactersWithLanguageAndOption if available instead of CTFontCreateForCharactersWithLanguage
+        https://bugs.webkit.org/show_bug.cgi?id=200241
+
+        We update the tests to flush font caches as otherwise some debug asserts would be hit.
+        This is due to changing the user installed font runtime flag while browsing which is not a typical situation.
+
+        Reviewed by Myles C. Maxfield.
+
+        * fast/text/user-installed-fonts/extended-character-with-user-font.html:
+        * fast/text/user-installed-fonts/extended-character.html:
+
+2019-07-31  Youenn Fablet  <youenn@apple.com>
+
         Owners of MultiChannelResampler should make sure that the output bus given to it has the same number of channels
         https://bugs.webkit.org/show_bug.cgi?id=200248
         <rdar://problem/53411051>
