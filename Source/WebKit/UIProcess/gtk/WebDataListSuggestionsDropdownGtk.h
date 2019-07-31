@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
@@ -25,23 +25,42 @@
 
 #pragma once
 
-#include "PlatformWebView.h"
-#include "TestController.h"
-#include "UIScriptController.h"
-#include <WebKit/WKViewPrivate.h>
+#if ENABLE(DATALIST_ELEMENT)
 
-namespace WTR {
+#include "WebDataListSuggestionsDropdown.h"
 
-class UIScriptControllerGtk : public UIScriptController {
+typedef struct _GtkTreePath GtkTreePath;
+typedef struct _GtkTreeView GtkTreeView;
+typedef struct _GtkTreeViewColumn GtkTreeViewColumn;
+
+namespace WebKit {
+
+class WebPageProxy;
+
+class WebDataListSuggestionsDropdownGtk final : public WebDataListSuggestionsDropdown {
 public:
-    explicit UIScriptControllerGtk(UIScriptContext& context)
-        : UIScriptController(context)
+    static Ref<WebDataListSuggestionsDropdownGtk> create(GtkWidget* webView, WebPageProxy& page)
     {
+        return adoptRef(*new WebDataListSuggestionsDropdownGtk(webView, page));
     }
 
-    void beginBackSwipe(JSValueRef) override;
-    void completeBackSwipe(JSValueRef) override;
-    bool isShowingDataListSuggestions() const override;
+    ~WebDataListSuggestionsDropdownGtk();
+
+private:
+    WebDataListSuggestionsDropdownGtk(GtkWidget*, WebPageProxy&);
+
+    void show(WebCore::DataListSuggestionInformation&&) final;
+    void handleKeydownWithIdentifier(const String&) final;
+    void close() final;
+
+    static void treeViewRowActivatedCallback(GtkTreeView*, GtkTreePath*, GtkTreeViewColumn*, WebDataListSuggestionsDropdownGtk*);
+    void didSelectOption(const String&);
+
+    GtkWidget* m_webView { nullptr };
+    GtkWidget* m_popup { nullptr };
+    GtkWidget* m_treeView { nullptr };
 };
 
-} // namespace WTR
+} // namespace WebKit
+
+#endif // ENABLE(DATALIST_ELEMENT)

@@ -143,6 +143,11 @@ private:
     void adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintSearchFieldCancelButton(const RenderBox&, const PaintInfo&, const IntRect&) override;
 
+#if ENABLE(DATALIST_ELEMENT)
+    void paintListButtonForInput(const RenderObject&, const PaintInfo&, const FloatRect&);
+    void adjustListButtonStyle(StyleResolver&, RenderStyle&, const Element*) const override;
+#endif
+
     bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
     void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, const Element*) const override;
 

@@ -251,6 +251,7 @@ UIProcess/gtk/ViewSnapshotStoreGtk.cpp
 UIProcess/gtk/WaylandCompositor.cpp @no-unify
 UIProcess/gtk/WebColorPickerGtk.cpp
 UIProcess/gtk/WebContextMenuProxyGtk.cpp
+UIProcess/gtk/WebDataListSuggestionsDropdownGtk.cpp
 UIProcess/gtk/WebInspectorProxyGtk.cpp
 UIProcess/gtk/WebKitInspectorWindow.cpp
 UIProcess/gtk/WebPageProxyGtk.cpp @no-unify

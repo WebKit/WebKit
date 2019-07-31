@@ -177,10 +177,6 @@ webkit.org/b/98927 fast/dom/DeviceOrientation [ Skip ]
 fast/history/page-cache-notification-non-suspendable.html
 fast/history/page-cache-notification-suspendable.html
 
-# Datalist is not yet enabled.
-accessibility/datalist.html [ Skip ]
-webkit.org/b/98934 fast/forms/datalist [ Skip ]
-
 # ENABLE_INPUT_TYPE_* are not enabled.
 webkit.org/b/98936 fast/forms/date [ Skip ]
 webkit.org/b/98936 fast/forms/datetime [ Skip ]
@@ -3799,6 +3795,7 @@ webkit.org/b/199009 fast/text/variations/optical-sizing-units.html [ ImageOnlyFa
 webkit.org/b/199859 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-001.html [ ImageOnlyFailure ]
 
 webkit.org/b/199860 accessibility/button-with-aria-haspopup-role.html [ Failure ]
+webkit.org/b/199860 accessibility/datalist.html [ Failure ]
 webkit.org/b/199868 accessibility/gtk/aria-haspopup.html [ Failure ]
 
 webkit.org/b/199440 fast/mediastream/apply-constraints-video.html [ Failure ]

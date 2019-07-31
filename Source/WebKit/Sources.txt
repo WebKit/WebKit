@@ -268,6 +268,7 @@ UIProcess/WebContextMenuListenerProxy.cpp
 UIProcess/WebContextMenuProxy.cpp
 UIProcess/WebCookieManagerProxy.cpp
 UIProcess/WebCookieManagerProxyClient.cpp
+UIProcess/WebDataListSuggestionsDropdown.cpp
 UIProcess/WebEditCommandProxy.cpp
 UIProcess/WebFormClient.cpp
 UIProcess/WebFormSubmissionListenerProxy.cpp
@@ -532,6 +533,7 @@ WebProcess/WebCoreSupport/SessionStateConversion.cpp
 WebProcess/WebCoreSupport/WebChromeClient.cpp
 WebProcess/WebCoreSupport/WebColorChooser.cpp
 WebProcess/WebCoreSupport/WebContextMenuClient.cpp
+WebProcess/WebCoreSupport/WebDataListSuggestionPicker.cpp
 WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.cpp
 WebProcess/WebCoreSupport/WebDragClient.cpp
 WebProcess/WebCoreSupport/WebEditorClient.cpp

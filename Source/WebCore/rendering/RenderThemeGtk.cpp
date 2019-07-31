@@ -520,6 +520,14 @@ bool RenderThemeGtk::paintTextField(const RenderObject& renderObject, const Pain
         auto& entryWidget = static_cast<RenderThemeEntry&>(RenderThemeWidget::getOrCreate(RenderThemeWidget::Type::Entry));
         entryWidget.entry().setState(themePartStateFlags(*this, Entry, renderObject));
         entryWidget.entry().render(paintInfo.context().platformContext()->cr(), rect);
+
+#if ENABLE(DATALIST_ELEMENT)
+        if (is<HTMLInputElement>(renderObject.generatingNode())) {
+            const auto& input = downcast<HTMLInputElement>(*(renderObject.generatingNode()));
+            if (input.list())
+                paintListButtonForInput(renderObject, paintInfo, rect);
+        }
+#endif
     }
     return false;
 }
@@ -596,6 +604,34 @@ bool RenderThemeGtk::paintSearchFieldCancelButton(const RenderBox& renderObject,
 {
     return paintSearchFieldIcon(this, EntryIconRight, renderObject, paintInfo, rect);
 }
+
+#if ENABLE(DATALIST_ELEMENT)
+void RenderThemeGtk::adjustListButtonStyle(StyleResolver&, RenderStyle& style, const Element*) const
+{
+    // Add a margin to place the button at end of the input field.
+    if (style.isLeftToRightDirection())
+        style.setMarginRight(Length(-4, Fixed));
+    else
+        style.setMarginLeft(Length(-4, Fixed));
+}
+
+void RenderThemeGtk::paintListButtonForInput(const RenderObject& renderObject, const PaintInfo& paintInfo, const FloatRect& rect)
+{
+    // Use a combo box widget to render its arrow.
+    auto& comboWidget = static_cast<RenderThemeComboBox&>(RenderThemeWidget::getOrCreate(RenderThemeWidget::Type::ComboBox));
+    comboWidget.arrow().setState(themePartStateFlags(*this, ComboBoxButton, renderObject));
+
+    // But a search entry widget to get the contents rect, since this is a text input field.
+    auto& searchEntryWidget = static_cast<RenderThemeSearchEntry&>(RenderThemeWidget::getOrCreate(RenderThemeWidget::Type::SearchEntry));
+    auto& icon = static_cast<RenderThemeIconGadget&>(searchEntryWidget.rightIcon());
+    icon.setIconSize(comboWidget.arrow().preferredSize().width());
+    GtkBorder contentsBox = searchEntryWidget.entry().contentsBox();
+    FloatRect adjustedRect(rect);
+    adjustedRect.move(contentsBox.left, contentsBox.top);
+    adjustedRect.contract(contentsBox.right + 1, contentsBox.top + contentsBox.bottom);
+    comboWidget.arrow().render(paintInfo.context().platformContext()->cr(), adjustedRect);
+}
+#endif
 
 void RenderThemeGtk::adjustSearchFieldStyle(StyleResolver&, RenderStyle& style, const Element*) const
 {

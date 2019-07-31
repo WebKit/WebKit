@@ -1,3 +1,14 @@
+2019-07-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Datalist element support for TextFieldInputType
+        https://bugs.webkit.org/show_bug.cgi?id=98934
+
+        Reviewed by Michael Catanzaro.
+
+        Unskip datalist tests for GTK port.
+
+        * platform/gtk/TestExpectations:
+
 2019-07-31  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening.
