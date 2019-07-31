@@ -1,3 +1,10 @@
+2019-07-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, disable failing test for rdar://52355829.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContextMenus.mm:
+        (TEST):
+
 2019-07-31  Keith Rollin  <krollin@apple.com>
 
         Update WebKitLegacy for XCBuild

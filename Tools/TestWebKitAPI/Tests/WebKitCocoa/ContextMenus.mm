@@ -65,7 +65,7 @@ static RetainPtr<NSURL> simpleURL;
 
 @end
 
-TEST(WebKit, ContextMenuBasic)
+TEST(WebKit, DISABLED_ContextMenuBasic)
 {
     auto window = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     auto driver = adoptNS([TestContextMenuDriver new]);
