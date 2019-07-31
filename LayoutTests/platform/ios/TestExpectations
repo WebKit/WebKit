@@ -37,6 +37,7 @@ perf/accessibility-title-ui-element.html
 fullscreen
 http/tests/fullscreen
 compositing/no-compositing-when-fulll-screen-is-present.html
+webkit.org/b/200308 fast/events/touch/ios/content-observation/non-visible-content-change-in-fullscreen-mode.html [ Skip ]
 
 # WebGPU is not enabled on iOS Simulator.
 webgpu [ Skip ]

@@ -1,3 +1,15 @@
+2019-07-31  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] twitch.tv video controls do not always respond to taps in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=200309
+        <rdar://problem/52964977>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/non-visible-content-change-in-fullscreen-mode-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/non-visible-content-change-in-fullscreen-mode.html: Added.
+        * platform/ios/TestExpectations: Fullscreen API is not yet enabled on iOS.
+
 2019-07-31  Saam Barati  <sbarati@apple.com>
 
         [WHLSL Remove char/short/half types

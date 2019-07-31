@@ -1,3 +1,22 @@
+2019-07-31  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] twitch.tv video controls do not always respond to taps in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=200309
+        <rdar://problem/52964977>
+
+        Reviewed by Simon Fraser.
+
+        Do not consider an element visible if it is not a descendant of the active fullscreen element.
+
+        This patch fixes the cases when the user taps on a button in fullscreen mode while the non-fullscreen content is being mutated and
+        the ContentChangeObserver mistakenly registers it as a valid, actionable change and as a result we don't fire the click event (stay at hover).
+
+        Test: fast/events/touch/ios/content-observation/non-visible-content-change-in-fullscreen-mode.html
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::fullscreenElement):
+        (WebCore::ContentChangeObserver::isVisuallyHidden):
+
 2019-07-31  Saam Barati  <sbarati@apple.com>
 
         [WHLSL Remove char/short/half types
