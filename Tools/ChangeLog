@@ -1,3 +1,9 @@
+2019-07-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, disable failing test for rdar://51752593.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+
 2019-07-31  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.og: Timeline in canvas painting with wrong colors, cannot customize scale
