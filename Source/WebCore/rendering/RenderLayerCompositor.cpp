@@ -207,6 +207,7 @@ public:
     
     void appendSharingLayer(RenderLayer& layer)
     {
+        ASSERT(m_backingProviderCandidate);
         m_backingSharingLayers.append(makeWeakPtr(layer));
     }
 
@@ -1621,7 +1622,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositin
             // the repaint container, so change when compositing changes; we need to update them here.
             if (layer.parent())
                 layer.computeRepaintRectsIncludingDescendants();
-            
+
             layer.setNeedsCompositingGeometryUpdate();
             layer.setNeedsCompositingConfigurationUpdate();
             layer.setNeedsCompositingPaintOrderChildrenUpdate();
