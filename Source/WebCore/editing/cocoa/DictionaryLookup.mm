@@ -491,7 +491,7 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     
     if (createAnimationController)
         return [presenter animationControllerForItem:item.get() documentContext:nil presentingContext:context.get() options:nil];
-    [presenter revealItem:item.get() documentContext:nil presentingContext:context.get() options:nil];
+    [presenter revealItem:item.get() documentContext:nil presentingContext:context.get() options:@{ @"forceLookup": @YES }];
     return nil;
     
 #elif PLATFORM(MACCATALYST)
