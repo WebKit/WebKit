@@ -1,3 +1,19 @@
+2019-07-30  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Add a fast path for TypeNamer::insert where we've already seen the type
+        https://bugs.webkit.org/show_bug.cgi?id=200284
+
+        Reviewed by Myles C. Maxfield.
+
+        This is a ~27% speedup in the WHLSL::prepare for the compute_boids test.
+        This optimization makes sense since my previous patch to make UnnamedType
+        ref counted was also a huge speedup. So the TypeNamer is seeing many
+        UnnamedTypes which are the same pointer value. On compute_boids, this
+        makes generateMetalCode ~40ms faster.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp:
+        (WebCore::WHLSL::Metal::TypeNamer::insert):
+
 2019-07-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         WorkerGlobalScope::wrapCryptoKey/unwrapCryptoKey should use local heap objects for replies

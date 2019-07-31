@@ -317,6 +317,9 @@ UniqueRef<BaseTypeNameNode> TypeNamer::createNameNode(AST::UnnamedType& unnamedT
 
 BaseTypeNameNode* TypeNamer::insert(AST::UnnamedType& unnamedType, Vector<UniqueRef<BaseTypeNameNode>>& types)
 {
+    if (auto* result = m_unnamedTypeMapping.get(&unnamedType))
+        return result;
+
     Vector<UniqueRef<BaseTypeNameNode>>* vectorToInsertInto { nullptr };
     BaseTypeNameNode* parent { nullptr };
     if (is<AST::TypeReference>(unnamedType)) {
