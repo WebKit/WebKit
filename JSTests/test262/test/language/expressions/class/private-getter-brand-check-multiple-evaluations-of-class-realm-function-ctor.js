@@ -30,9 +30,12 @@ return class {
 `;
 
 let createAndInstantiateClass = function () {
-  let classFactoryFunction = new ($262.createRealm().global.Function)(classStringExpression);
+  let realm = $262.createRealm();
+  let classFactoryFunction = new (realm.global.Function)(classStringExpression);
   let Class = classFactoryFunction();
-  return new Class();
+  let obj =  new Class();
+  obj.realm = realm;
+  return obj;
 };
 
 let c1 = createAndInstantiateClass();
@@ -41,10 +44,10 @@ let c2 = createAndInstantiateClass();
 assert.sameValue(c1.access(c1), 'test262');
 assert.sameValue(c2.access(c2), 'test262');
 
-assert.throws(TypeError, function() {
+assert.throws(c1.realm.global.TypeError, function() {
   c1.access(c2);
 }, 'invalid access of c1 private method');
 
-assert.throws(TypeError, function() {
+assert.throws(c2.realm.global.TypeError, function() {
   c2.access(c1);
 }, 'invalid access of c2 private method');

@@ -2133,12 +2133,24 @@ test/intl402/DateTimeFormat/prototype/resolvedOptions/order-fractionalSecondDigi
 test/intl402/DateTimeFormat/prototype/resolvedOptions/order.js:
   default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, weekday, era, year, month, day, hour, hourCycle, hour12, minute, second, timeZoneName] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, weekday, era, year, month, day, hour, minute, second, timeZoneName] to have the same contents. undefined'
   strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, weekday, era, year, month, day, hour, hourCycle, hour12, minute, second, timeZoneName] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, weekday, era, year, month, day, hour, minute, second, timeZoneName] to have the same contents. undefined'
+test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js:
+  default: 'Test262Error: Expected SameValue(Â«cmnÂ», Â«zhÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«cmnÂ», Â«zhÂ») to be true'
+test/intl402/Intl/getCanonicalLocales/grandfathered.js:
+  default: 'Test262Error: Expected SameValue(Â«cmnÂ», Â«zhÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«cmnÂ», Â«zhÂ») to be true'
 test/intl402/Intl/getCanonicalLocales/invalid-tags.js:
   default: 'Test262Error: Test data "de-gregory-gregory" is a canonicalized and structurally valid language tag.'
   strict mode: 'Test262Error: Test data "de-gregory-gregory" is a canonicalized and structurally valid language tag.'
 test/intl402/Intl/getCanonicalLocales/non-iana-canon.js:
   default: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(Â«aar-x-privateÂ», Â«aa-x-privateÂ») to be true'
   strict mode: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(Â«aar-x-privateÂ», Â«aa-x-privateÂ») to be true'
+test/intl402/Intl/getCanonicalLocales/preferred-grandfathered.js:
+  default: 'Test262Error: Expected SameValue(Â«cel-gaulishÂ», Â«xtg-x-cel-gaulishÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«cel-gaulishÂ», Â«xtg-x-cel-gaulishÂ») to be true'
+test/intl402/Intl/getCanonicalLocales/preferred-variant.js:
+  default: 'Test262Error: Expected SameValue(Â«ja-Latn-alalc97Â», Â«ja-Latn-hepburn-heplocÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«ja-Latn-alalc97Â», Â«ja-Latn-hepburn-heplocÂ») to be true'
 test/intl402/NumberFormat/numbering-system-options.js:
   default: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(Â«arabÂ», Â«latnÂ») to be true"
   strict mode: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(Â«arabÂ», Â«latnÂ») to be true"
@@ -2148,12 +2160,9 @@ test/intl402/NumberFormat/prototype/format/format-function-name.js:
 test/intl402/NumberFormat/prototype/format/format-negative-numbers.js:
   default: 'Test262Error: Intl.NumberFormat is formatting 0 and -0 the same way. Expected SameValue(Â«0Â», Â«0Â») to be false'
   strict mode: 'Test262Error: Intl.NumberFormat is formatting 0 and -0 the same way. Expected SameValue(Â«0Â», Â«0Â») to be false'
-test/intl402/NumberFormat/prototype/resolvedOptions/order.js:
-  default: 'Test262Error: Expected [locale, numberingSystem, style, currency, currencyDisplay, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, useGrouping] and [locale, numberingSystem, style, currency, currencyDisplay, minimumIntegerDigits, minimumSignificantDigits, maximumSignificantDigits, useGrouping] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected [locale, numberingSystem, style, currency, currencyDisplay, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, useGrouping] and [locale, numberingSystem, style, currency, currencyDisplay, minimumIntegerDigits, minimumSignificantDigits, maximumSignificantDigits, useGrouping] to have the same contents. undefined'
-test/intl402/fallback-locales-are-supported.js:
-  default: "Test262Error: Locale zh-Hans-CN is supported, but fallback zh-Hans isn't. Expected SameValue(Â«-1Â», Â«-1Â») to be false (Testing with Collator.)"
-  strict mode: "Test262Error: Locale zh-Hans-CN is supported, but fallback zh-Hans isn't. Expected SameValue(Â«-1Â», Â«-1Â») to be false (Testing with Collator.)"
+test/intl402/language-tags-invalid.js:
+  default: 'Test262Error: Test data "de-gregory-gregory" is a canonicalized and structurally valid language tag.'
+  strict mode: 'Test262Error: Test data "de-gregory-gregory" is a canonicalized and structurally valid language tag.'
 test/intl402/supportedLocalesOf-returned-array-elements-are-not-frozen.js:
   default: 'Test262Error: Property 0 of object returned by SupportedLocales is not writable. Expected SameValue(Â«falseÂ», Â«trueÂ») to be true (Testing with Collator.)'
   strict mode: 'Test262Error: Property 0 of object returned by SupportedLocales is not writable. Expected SameValue(Â«falseÂ», Â«trueÂ») to be true (Testing with Collator.)'

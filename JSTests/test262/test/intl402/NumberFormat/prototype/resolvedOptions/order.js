@@ -5,6 +5,7 @@
 esid: sec-intl.numberformat.prototype.resolvedoptions
 description: Verifies the property order for the object returned by resolvedOptions().
 includes: [compareArray.js]
+features: [Intl.NumberFormat-unified]
 ---*/
 
 const options = new Intl.NumberFormat([], {
@@ -21,10 +22,13 @@ const expected = [
   "style",
   "currency",
   "currencyDisplay",
+  "currencySign",
   "minimumIntegerDigits",
   "minimumSignificantDigits",
   "maximumSignificantDigits",
   "useGrouping",
+  "notation",
+  "signDisplay",
 ];
 
 assert.compareArray(Object.getOwnPropertyNames(options), expected);

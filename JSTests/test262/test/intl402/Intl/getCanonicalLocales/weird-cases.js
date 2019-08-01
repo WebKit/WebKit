@@ -13,7 +13,6 @@ includes: [compareArray.js]
 
 var weirdCases =
   [
-   "x-u-foo",
    "en-x-u-foo",
    "en-a-bar-x-u-foo",
    "en-x-u-foo-a-bar",

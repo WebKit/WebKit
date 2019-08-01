@@ -61,12 +61,16 @@ var testData = [
         canonical: "cs",
     },
     {
+        // ECMA-402 currently requires that variant subtags are not canonicalized.
+        // https://github.com/tc39/ecma402/issues/330
         tag: "hy-arevela",
-        canonical: "hy",
+        canonical: "hy-arevela",
     },
     {
+        // ECMA-402 currently requires that variant subtags are not canonicalized.
+        // https://github.com/tc39/ecma402/issues/330
         tag: "hy-arevmda",
-        canonical: "hyw",
+        canonical: "hy-arevmda",
     },
 ];
 

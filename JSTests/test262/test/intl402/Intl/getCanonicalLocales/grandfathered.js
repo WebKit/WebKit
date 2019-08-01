@@ -16,7 +16,7 @@ const regularGrandfathered = [
     },
     {
         tag: "zh-guoyu",
-        canonical: "cmn",
+        canonical: "zh",
     },
     {
         tag: "zh-hakka",

@@ -31,8 +31,8 @@ features: [Intl.Locale]
 const validRegionOptions = [
   [undefined, undefined],
   ['FR', 'en-FR'],
-  ['554', 'en-554'],
-  [554, 'en-554'],
+  ['554', 'en-NZ'],
+  [554, 'en-NZ'],
 ];
 for (const [region, expected] of validRegionOptions) {
   let options = { region };

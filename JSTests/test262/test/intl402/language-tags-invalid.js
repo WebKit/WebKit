@@ -10,24 +10,7 @@ author: Norbert Lindenberg
 includes: [testIntl.js]
 ---*/
 
-var invalidLanguageTags = [
-    "", // empty tag
-    "i", // singleton alone
-    "x", // private use without subtag
-    "u", // extension singleton in first place
-    "419", // region code in first place
-    "u-nu-latn-cu-bob", // extension sequence without language
-    "hans-cmn-cn", // "hans" could theoretically be a 4-letter language code,
-                   // but those can't be followed by extlang codes.
-    "cmn-hans-cn-u-u", // duplicate singleton
-    "cmn-hans-cn-t-u-ca-u", // duplicate singleton
-    "de-gregory-gregory", // duplicate variant
-    "*", // language range
-    "de-*", // language range
-    "中文", // non-ASCII letters
-    "en-ß", // non-ASCII letters
-    "ıd" // non-ASCII letters
-];
+var invalidLanguageTags = getInvalidLanguageTags();
 
 testWithIntlConstructors(function (Constructor) {
     invalidLanguageTags.forEach(function (tag) {

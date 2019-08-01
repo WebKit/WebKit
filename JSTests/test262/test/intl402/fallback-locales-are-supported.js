@@ -12,17 +12,22 @@ includes: [testIntl.js]
 
 testWithIntlConstructors(function (Constructor) {
     var info = getLocaleSupportInfo(Constructor);
-    var fallback;
-    info.supported.forEach(function (locale) {
-        var pos = locale.lastIndexOf("-");
-        if (pos !== -1) {
-            fallback = locale.substring(0, pos);
-            assert.notSameValue(info.supported.indexOf(fallback), -1, "Locale " + locale + " is supported, but fallback " + fallback + " isn't.");
+    for (var locale of info.supported) {
+        var match = /^([a-z]{2,3})(-[A-Z][a-z]{3})?(-(?:[A-Z]{2}|[0-9]{3}))?$/.exec(locale);
+        assert.notSameValue(match, null, "Locale " + locale + " is supported, but can't be parsed.")
+
+        var [language, script, region] = match.slice(1);
+
+        if (script !== undefined) {
+            var fallback = language + script;
+            assert(info.supported.includes(fallback) || info.byFallback.includes(fallback),
+                   "Locale " + locale + " is supported, but fallback " + fallback + " isn't.");
         }
-        var match = /([a-z]{2,3})(-[A-Z][a-z]{3})(-[A-Z]{2})/.exec(locale);
-        if (match !== null) {
-            fallback = match[1] + match[3];
-            assert.notSameValue(info.supported.indexOf(fallback), -1, "Locale " + locale + " is supported, but fallback " + fallback + " isn't.");
+
+        if (region !== undefined) {
+            var fallback = language + region;
+            assert(info.supported.includes(fallback) || info.byFallback.includes(fallback),
+                   "Locale " + locale + " is supported, but fallback " + fallback + " isn't.");
         }
-    });
+    }
 });

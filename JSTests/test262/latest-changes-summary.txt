@@ -1,218 +1,355 @@
-A test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/Symbol.toStringTag.js
-A test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-job-not-active-throws.js
-A test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-length.js
-A test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-missing-internal-throws.js
-A test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-name.js
-A test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-not-object-throws.js
-A test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-prop-desc.js
-A test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/proto.js
-A test/built-ins/FinalizationGroup/constructor.js
-A test/built-ins/FinalizationGroup/gc-has-one-chance-to-call-cleanupCallback.js
-A test/built-ins/FinalizationGroup/instance-extensible.js
-A test/built-ins/FinalizationGroup/length.js
-A test/built-ins/FinalizationGroup/name.js
-A test/built-ins/FinalizationGroup/newtarget-prototype-is-not-object.js
-A test/built-ins/FinalizationGroup/prop-desc.js
-A test/built-ins/FinalizationGroup/proto-from-ctor-realm.js
-A test/built-ins/FinalizationGroup/proto.js
-A test/built-ins/FinalizationGroup/prototype/Symbol.toStringTag.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/callback-iterator-proto.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/callback-not-callable-throws.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/cleanup-prevented-with-reference.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/cleanup-prevented-with-unregister.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/cleanupcallback-iterator-proto.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/custom-this.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/gc-cleanup-not-prevented-with-wr-deref.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/iterator-dynamic.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/iterator-holdings-multiple-values.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/length.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/name.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/poisoned-callback-throws.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/poisoned-cleanup-callback-throws.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/prop-desc.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/return-undefined-with-gc.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/return-undefined.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/this-does-not-have-internal-cells-throws.js
-A test/built-ins/FinalizationGroup/prototype/cleanupSome/this-not-object-throws.js
-A test/built-ins/FinalizationGroup/prototype/constructor.js
-A test/built-ins/FinalizationGroup/prototype/prop-desc.js
-A test/built-ins/FinalizationGroup/prototype/proto.js
-A test/built-ins/FinalizationGroup/prototype/register/custom-this.js
-A test/built-ins/FinalizationGroup/prototype/register/holdings-any-value-type.js
-A test/built-ins/FinalizationGroup/prototype/register/holdings-same-as-target.js
-A test/built-ins/FinalizationGroup/prototype/register/length.js
-A test/built-ins/FinalizationGroup/prototype/register/name.js
-A test/built-ins/FinalizationGroup/prototype/register/prop-desc.js
-A test/built-ins/FinalizationGroup/prototype/register/return-undefined-register-itself.js
-A test/built-ins/FinalizationGroup/prototype/register/return-undefined.js
-A test/built-ins/FinalizationGroup/prototype/register/target-not-object-throws.js
-A test/built-ins/FinalizationGroup/prototype/register/this-does-not-have-internal-target-throws.js
-A test/built-ins/FinalizationGroup/prototype/register/this-not-object-throws.js
-A test/built-ins/FinalizationGroup/prototype/register/unregisterToken-not-object-or-undefined-throws.js
-A test/built-ins/FinalizationGroup/prototype/register/unregisterToken-same-as-holdings-and-target.js
-A test/built-ins/FinalizationGroup/prototype/register/unregisterToken-same-as-holdings.js
-A test/built-ins/FinalizationGroup/prototype/register/unregisterToken-same-as-target.js
-A test/built-ins/FinalizationGroup/prototype/unregister/custom-this.js
-A test/built-ins/FinalizationGroup/prototype/unregister/length.js
-A test/built-ins/FinalizationGroup/prototype/unregister/name.js
-A test/built-ins/FinalizationGroup/prototype/unregister/prop-desc.js
-A test/built-ins/FinalizationGroup/prototype/unregister/this-does-not-have-internal-cells-throws.js
-A test/built-ins/FinalizationGroup/prototype/unregister/this-not-object-throws.js
-A test/built-ins/FinalizationGroup/prototype/unregister/unregister.js
-A test/built-ins/FinalizationGroup/prototype/unregister/unregisterToken-not-object-throws.js
-A test/built-ins/FinalizationGroup/prototype-from-newtarget-abrupt.js
-A test/built-ins/FinalizationGroup/prototype-from-newtarget-custom.js
-A test/built-ins/FinalizationGroup/prototype-from-newtarget.js
-A test/built-ins/FinalizationGroup/returns-new-object-from-constructor.js
-A test/built-ins/FinalizationGroup/target-not-callable-throws.js
-A test/built-ins/FinalizationGroup/undefined-newtarget-throws.js
-A test/built-ins/FinalizationGroup/unnaffected-by-poisoned-cleanupCallback.js
-M test/built-ins/Function/StrictFunction_restricted-properties.js
-M test/built-ins/Function/prototype/bind/BoundFunction_restricted-properties.js
-M test/built-ins/Function/prototype/restricted-property-arguments.js
-M test/built-ins/Function/prototype/restricted-property-caller.js
-A test/built-ins/Object/prototype/toString/proxy-function-async.js
-M test/built-ins/Object/prototype/toString/proxy-function.js
-A test/built-ins/Object/prototype/toString/symbol-tag-non-str-builtin.js
-A test/built-ins/Object/prototype/toString/symbol-tag-non-str-proxy-function.js
-M test/built-ins/Object/subclass-object-arg.js
-M test/built-ins/Promise/all/invoke-resolve-get-error-close.js
-M test/built-ins/Promise/all/resolve-element-function-name.js
-M test/built-ins/Promise/allSettled/invoke-resolve-get-error-close.js
-M test/built-ins/Promise/allSettled/reject-element-function-name.js
-M test/built-ins/Promise/allSettled/resolve-element-function-name.js
-M test/built-ins/Promise/executor-function-name.js
-M test/built-ins/Promise/race/invoke-resolve-get-error-close.js
-M test/built-ins/Promise/reject-function-name.js
-M test/built-ins/Promise/resolve-function-name.js
-M test/built-ins/Set/prototype/values/does-not-have-setdata-internal-slot-weakset.js
-A test/built-ins/WeakRef/constructor.js
-A test/built-ins/WeakRef/instance-extensible.js
-A test/built-ins/WeakRef/length.js
-A test/built-ins/WeakRef/name.js
-A test/built-ins/WeakRef/newtarget-prototype-is-not-object.js
-A test/built-ins/WeakRef/prop-desc.js
-A test/built-ins/WeakRef/proto-from-ctor-realm.js
-A test/built-ins/WeakRef/proto.js
-A test/built-ins/WeakRef/prototype/Symbol.toStringTag.js
-A test/built-ins/WeakRef/prototype/constructor.js
-A test/built-ins/WeakRef/prototype/deref/custom-this.js
-A test/built-ins/WeakRef/prototype/deref/gc-cleanup-not-prevented-with-wr-deref.js
-A test/built-ins/WeakRef/prototype/deref/length.js
-A test/built-ins/WeakRef/prototype/deref/name.js
-A test/built-ins/WeakRef/prototype/deref/prop-desc.js
-A test/built-ins/WeakRef/prototype/deref/return-target.js
-A test/built-ins/WeakRef/prototype/deref/this-does-not-have-internal-target-throws.js
-A test/built-ins/WeakRef/prototype/deref/this-not-object-throws.js
-A test/built-ins/WeakRef/prototype/prop-desc.js
-A test/built-ins/WeakRef/prototype/proto.js
-A test/built-ins/WeakRef/prototype-from-newtarget-abrupt.js
-A test/built-ins/WeakRef/prototype-from-newtarget-custom.js
-A test/built-ins/WeakRef/prototype-from-newtarget.js
-A test/built-ins/WeakRef/returns-new-object-from-constructor.js
-A test/built-ins/WeakRef/target-not-object-throws.js
-A test/built-ins/WeakRef/undefined-newtarget-throws.js
-M test/intl402/BigInt/prototype/toLocaleString/builtin.js
-M test/intl402/BigInt/prototype/toLocaleString/default-options-object-prototype.js
-M test/intl402/BigInt/prototype/toLocaleString/length.js
-M test/intl402/BigInt/prototype/toLocaleString/returns-same-results-as-NumberFormat.js
-M test/intl402/BigInt/prototype/toLocaleString/taint-Intl-NumberFormat.js
-M test/intl402/BigInt/prototype/toLocaleString/this-value-invalid.js
-M test/intl402/BigInt/prototype/toLocaleString/throws-same-exceptions-as-NumberFormat.js
-D test/intl402/DateTimeFormat/constructor-options-order-quarter.js
-D test/intl402/DateTimeFormat/constructor-options-quarter-invalid.js
-D test/intl402/DateTimeFormat/constructor-options-quarter-valid.js
-A test/intl402/DateTimeFormat/prototype/format/dayPeriod-long-en.js
-A test/intl402/DateTimeFormat/prototype/format/dayPeriod-narrow-en.js
-A test/intl402/DateTimeFormat/prototype/format/dayPeriod-short-en.js
-A test/intl402/DateTimeFormat/prototype/format/fractionalSecondDigits.js
-M test/intl402/DateTimeFormat/prototype/formatRange/argument-date-string.js
-M test/intl402/DateTimeFormat/prototype/formatRange/argument-near-time-boundaries.js
-M test/intl402/DateTimeFormat/prototype/formatRange/argument-to-integer.js
-M test/intl402/DateTimeFormat/prototype/formatRange/builtin.js
-M test/intl402/DateTimeFormat/prototype/formatRange/prop-desc.js
-M test/intl402/DateTimeFormat/prototype/formatRangeToParts/argument-date-string.js
-M test/intl402/DateTimeFormat/prototype/formatRangeToParts/argument-near-time-boundaries.js
-M test/intl402/DateTimeFormat/prototype/formatRangeToParts/argument-to-integer.js
-M test/intl402/DateTimeFormat/prototype/formatRangeToParts/builtin.js
-M test/intl402/DateTimeFormat/prototype/formatRangeToParts/prop-desc.js
-A test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-long-en.js
-A test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-narrow-en.js
-A test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-short-en.js
-A test/intl402/DateTimeFormat/prototype/formatToParts/fractionalSecondDigits.js
-D test/intl402/DateTimeFormat/prototype/resolvedOptions/order-quarter.js
-D test/intl402/DateTimeFormat/taint-Object-prototype-quarter.js
-M test/intl402/RelativeTimeFormat/prototype/format/en-us-numeric-auto.js
-M test/intl402/RelativeTimeFormat/prototype/formatToParts/en-us-numeric-auto.js
-M test/language/expressions/arrow-function/ArrowFunction_restricted-properties.js
-A test/language/expressions/class/elements/private-field-access-on-inner-arrow-function.js
-A test/language/expressions/class/elements/private-field-access-on-inner-function.js
-A test/language/expressions/class/elements/private-getter-access-on-inner-arrow-function.js
-A test/language/expressions/class/elements/private-getter-access-on-inner-function.js
-A test/language/expressions/class/elements/private-getter-is-not-a-own-property.js
-A test/language/expressions/class/elements/private-method-access-on-inner-arrow-function.js
-A test/language/expressions/class/elements/private-method-access-on-inner-function.js
-A test/language/expressions/class/elements/private-method-is-not-a-own-property.js
-A test/language/expressions/class/elements/private-setter-access-on-inner-arrow-function.js
-A test/language/expressions/class/elements/private-setter-access-on-inner-function.js
-A test/language/expressions/class/elements/private-setter-is-not-a-own-property.js
-M test/language/expressions/class/elements/prod-private-getter-before-super-return-in-field-initializer.js
-M test/language/expressions/class/elements/prod-private-method-before-super-return-in-field-initializer.js
-M test/language/expressions/class/elements/prod-private-setter-before-super-return-in-field-initializer.js
-A test/language/expressions/class/poisoned-underscore-proto.js
-A test/language/expressions/class/private-getter-brand-check-multiple-evaluations-of-class-eval-indirect.js
-A test/language/expressions/class/private-getter-brand-check-multiple-evaluations-of-class-eval.js
-A test/language/expressions/class/private-getter-brand-check-multiple-evaluations-of-class-factory.js
-A test/language/expressions/class/private-getter-brand-check-multiple-evaluations-of-class-function-ctor.js
-A test/language/expressions/class/private-getter-brand-check-multiple-evaluations-of-class-realm-function-ctor.js
-A test/language/expressions/class/private-getter-brand-check-multiple-evaluations-of-class-realm.js
-A test/language/expressions/class/private-method-brand-check-multiple-evaluations-of-class-eval-indirect.js
-A test/language/expressions/class/private-method-brand-check-multiple-evaluations-of-class-eval.js
-A test/language/expressions/class/private-method-brand-check-multiple-evaluations-of-class-factory.js
-A test/language/expressions/class/private-method-brand-check-multiple-evaluations-of-class-function-ctor.js
-A test/language/expressions/class/private-method-brand-check-multiple-evaluations-of-class-realm-function-ctor.js
-A test/language/expressions/class/private-method-brand-check-multiple-evaluations-of-class-realm.js
-A test/language/expressions/class/private-setter-brand-check-multiple-evaluations-of-class-eval-indirect.js
-A test/language/expressions/class/private-setter-brand-check-multiple-evaluations-of-class-eval.js
-A test/language/expressions/class/private-setter-brand-check-multiple-evaluations-of-class-factory.js
-A test/language/expressions/class/private-setter-brand-check-multiple-evaluations-of-class-function-ctor.js
-A test/language/expressions/class/private-setter-brand-check-multiple-evaluations-of-class-realm-function-ctor.js
-A test/language/expressions/class/private-setter-brand-check-multiple-evaluations-of-class-realm.js
-A test/language/expressions/new.target/unary-expr.js
-A test/language/expressions/super/call-poisoned-underscore-proto.js
-A test/language/expressions/super/prop-poisoned-underscore-proto.js
-A test/language/identifiers/vals-cjk-escaped.js
-A test/language/identifiers/vals-cjk.js
-M test/language/statements/class/elements/private-class-field-on-frozen-objects.js
-A test/language/statements/class/elements/private-field-access-on-inner-arrow-function.js
-A test/language/statements/class/elements/private-field-access-on-inner-function.js
-A test/language/statements/class/elements/private-field-is-not-clobbered-by-computed-property.js
-A test/language/statements/class/elements/private-field-visible-to-direct-eval-on-initializer.js
-A test/language/statements/class/elements/private-field-visible-to-direct-eval.js
-A test/language/statements/class/elements/private-getter-access-on-inner-arrow-function.js
-A test/language/statements/class/elements/private-getter-access-on-inner-function.js
-M test/language/statements/class/elements/private-getter-brand-check-multiple-evaluations-of-class.js
-A test/language/statements/class/elements/private-getter-is-not-a-own-property.js
-A test/language/statements/class/elements/private-getter-is-not-clobbered-by-computed-property.js
-A test/language/statements/class/elements/private-getter-visible-to-direct-eval-on-initializer.js
-A test/language/statements/class/elements/private-getter-visible-to-direct-eval.js
-A test/language/statements/class/elements/private-method-access-on-inner-arrow-function.js
-A test/language/statements/class/elements/private-method-access-on-inner-function.js
-A test/language/statements/class/elements/private-method-is-not-a-own-property.js
-A test/language/statements/class/elements/private-method-is-not-clobbered-by-computed-property.js
-A test/language/statements/class/elements/private-method-visible-to-direct-eval-on-initializer.js
-A test/language/statements/class/elements/private-method-visible-to-direct-eval.js
-A test/language/statements/class/elements/private-setter-access-on-inner-arrow-function.js
-A test/language/statements/class/elements/private-setter-access-on-inner-function.js
-A test/language/statements/class/elements/private-setter-is-not-a-own-property.js
-A test/language/statements/class/elements/private-setter-is-not-clobbered-by-computed-property.js
-A test/language/statements/class/elements/private-setter-visible-to-direct-eval-on-initializer.js
-A test/language/statements/class/elements/private-setter-visible-to-direct-eval.js
-M test/language/statements/class/elements/prod-private-getter-before-super-return-in-field-initializer.js
-M test/language/statements/class/elements/prod-private-method-before-super-return-in-field-initializer.js
-M test/language/statements/class/elements/prod-private-setter-before-super-return-in-field-initializer.js
-A test/language/statements/class/elements/super-access-inside-a-private-getter.js
-A test/language/statements/class/elements/super-access-inside-a-private-method.js
-A test/language/statements/class/elements/super-access-inside-a-private-setter.js
-A test/language/statements/class/poisoned-underscore-proto.js
-M test/language/statements/function/13.2-30-s.js
+M harness/testIntl.js
+M test/built-ins/Number/bigint-conversion.js
+A test/built-ins/Object/create/properties-arg-to-object-bigint.js
+A test/built-ins/Object/create/properties-arg-to-object-non-empty-string.js
+A test/built-ins/Object/create/properties-arg-to-object-null.js
+A test/built-ins/Object/create/properties-arg-to-object.js
+M test/built-ins/Object/prototype/toString/symbol-tag-non-str-builtin.js
+M test/built-ins/Promise/allSettled/reject-deferred.js
+M test/built-ins/Promise/allSettled/reject-ignored-deferred.js
+M test/built-ins/Promise/allSettled/reject-ignored-immed.js
+M test/built-ins/Promise/allSettled/reject-immed.js
+A test/intl402/DateTimeFormat/prototype/formatRange/fractionalSecondDigits.js
+M test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js
+M test/intl402/Intl/getCanonicalLocales/grandfathered.js
+M test/intl402/Intl/getCanonicalLocales/non-iana-canon.js
+M test/intl402/Intl/getCanonicalLocales/preferred-grandfathered.js
+M test/intl402/Intl/getCanonicalLocales/preferred-variant.js
+M test/intl402/Intl/getCanonicalLocales/weird-cases.js
+M test/intl402/ListFormat/constructor/constructor/locales-valid.js
+M test/intl402/Locale/constructor-non-iana-canon.js
+M test/intl402/Locale/constructor-options-region-valid.js
+M test/intl402/Locale/constructor-tag.js
+M test/intl402/Locale/getters.js
+M test/intl402/Locale/likely-subtags-grandfathered.js
+M test/intl402/NumberFormat/currencyDisplay-unit.js
+M test/intl402/NumberFormat/prototype/resolvedOptions/order.js
+M test/intl402/PluralRules/prototype/resolvedOptions/order.js
+M test/intl402/RelativeTimeFormat/constructor/constructor/locales-valid.js
+M test/intl402/Segmenter/constructor/constructor/locales-valid.js
+M test/intl402/fallback-locales-are-supported.js
+M test/intl402/language-tags-canonicalized.js
+M test/intl402/language-tags-invalid.js
+M test/intl402/language-tags-valid.js
+A test/language/expressions/arrow-function/array-destructuring-param-strict-body.js
+A test/language/expressions/arrow-function/object-destructuring-param-strict-body.js
+A test/language/expressions/arrow-function/rest-param-strict-body.js
+A test/language/expressions/async-arrow-function/array-destructuring-param-strict-body.js
+A test/language/expressions/async-arrow-function/object-destructuring-param-strict-body.js
+A test/language/expressions/async-arrow-function/rest-param-strict-body.js
+A test/language/expressions/async-function/named-array-destructuring-param-strict-body.js
+A test/language/expressions/async-function/named-object-destructuring-param-strict-body.js
+A test/language/expressions/async-function/named-rest-param-strict-body.js
+A test/language/expressions/async-function/nameless-array-destructuring-param-strict-body.js
+A test/language/expressions/async-function/nameless-object-destructuring-param-strict-body.js
+A test/language/expressions/async-function/nameless-rest-param-strict-body.js
+A test/language/expressions/async-generator/array-destructuring-param-strict-body.js
+A test/language/expressions/async-generator/named-array-destructuring-param-strict-body.js
+A test/language/expressions/async-generator/named-object-destructuring-param-strict-body.js
+A test/language/expressions/async-generator/named-rest-param-strict-body.js
+A test/language/expressions/async-generator/object-destructuring-param-strict-body.js
+A test/language/expressions/async-generator/rest-param-strict-body.js
+A test/language/expressions/class/async-gen-method/array-destructuring-param-strict-body.js
+A test/language/expressions/class/async-gen-method/object-destructuring-param-strict-body.js
+A test/language/expressions/class/async-gen-method/rest-param-strict-body.js
+A test/language/expressions/class/async-gen-method-static/array-destructuring-param-strict-body.js
+A test/language/expressions/class/async-gen-method-static/object-destructuring-param-strict-body.js
+A test/language/expressions/class/async-gen-method-static/rest-param-strict-body.js
+A test/language/expressions/class/async-method/array-destructuring-param-strict-body.js
+A test/language/expressions/class/async-method/object-destructuring-param-strict-body.js
+A test/language/expressions/class/async-method/rest-param-strict-body.js
+A test/language/expressions/class/async-method-static/array-destructuring-param-strict-body.js
+A test/language/expressions/class/async-method-static/object-destructuring-param-strict-body.js
+A test/language/expressions/class/async-method-static/rest-param-strict-body.js
+A test/language/expressions/class/elements/static-private-method-subclass-receiver.js
+A test/language/expressions/class/elements/syntax/early-errors/grammar-privatename-in-computed-property-missing.js
+A test/language/expressions/class/gen-method/array-destructuring-param-strict-body.js
+A test/language/expressions/class/gen-method/object-destructuring-param-strict-body.js
+A test/language/expressions/class/gen-method/rest-param-strict-body.js
+A test/language/expressions/class/gen-method-static/array-destructuring-param-strict-body.js
+A test/language/expressions/class/gen-method-static/object-destructuring-param-strict-body.js
+A test/language/expressions/class/gen-method-static/rest-param-strict-body.js
+A test/language/expressions/class/method/array-destructuring-param-strict-body.js
+A test/language/expressions/class/method/object-destructuring-param-strict-body.js
+A test/language/expressions/class/method/rest-param-strict-body.js
+A test/language/expressions/class/method-static/array-destructuring-param-strict-body.js
+A test/language/expressions/class/method-static/object-destructuring-param-strict-body.js
+A test/language/expressions/class/method-static/rest-param-strict-body.js
+M test/language/expressions/class/private-getter-brand-check-multiple-evaluations-of-class-function-ctor.js
+M test/language/expressions/class/private-getter-brand-check-multiple-evaluations-of-class-realm-function-ctor.js
+M test/language/expressions/class/private-getter-brand-check-multiple-evaluations-of-class-realm.js
+M test/language/expressions/class/private-method-brand-check-multiple-evaluations-of-class-realm-function-ctor.js
+M test/language/expressions/class/private-method-brand-check-multiple-evaluations-of-class-realm.js
+M test/language/expressions/class/private-setter-brand-check-multiple-evaluations-of-class-realm-function-ctor.js
+M test/language/expressions/class/private-setter-brand-check-multiple-evaluations-of-class-realm.js
+A test/language/expressions/division/line-terminator.js
+A test/language/expressions/division/no-magic-asi-from-block-eval.js
+A test/language/expressions/division/no-magic-asi.js
+A test/language/expressions/function/array-destructuring-param-strict-body.js
+A test/language/expressions/function/object-destructuring-param-strict-body.js
+A test/language/expressions/function/rest-param-strict-body.js
+A test/language/expressions/generators/array-destructuring-param-strict-body.js
+A test/language/expressions/generators/object-destructuring-param-strict-body.js
+A test/language/expressions/generators/rest-param-strict-body.js
+A test/language/expressions/modulus/line-terminator.js
+A test/language/expressions/multiplication/line-terminator.js
+A test/language/expressions/object/method-definition/async-gen-meth-array-destructuring-param-strict-body.js
+A test/language/expressions/object/method-definition/async-gen-meth-object-destructuring-param-strict-body.js
+A test/language/expressions/object/method-definition/async-gen-meth-rest-param-strict-body.js
+A test/language/expressions/object/method-definition/async-meth-array-destructuring-param-strict-body.js
+A test/language/expressions/object/method-definition/async-meth-object-destructuring-param-strict-body.js
+A test/language/expressions/object/method-definition/async-meth-rest-param-strict-body.js
+A test/language/expressions/object/method-definition/gen-meth-array-destructuring-param-strict-body.js
+A test/language/expressions/object/method-definition/gen-meth-object-destructuring-param-strict-body.js
+A test/language/expressions/object/method-definition/gen-meth-rest-param-strict-body.js
+A test/language/expressions/object/method-definition/meth-array-destructuring-param-strict-body.js
+A test/language/expressions/object/method-definition/meth-object-destructuring-param-strict-body.js
+A test/language/expressions/object/method-definition/meth-rest-param-strict-body.js
+A test/language/literals/bigint/legacy-octal-like-invalid-00n.js
+A test/language/literals/bigint/legacy-octal-like-invalid-01n.js
+A test/language/literals/bigint/legacy-octal-like-invalid-07n.js
+A test/language/literals/bigint/non-octal-like-invalid-0008n.js
+A test/language/literals/bigint/non-octal-like-invalid-012348n.js
+A test/language/literals/bigint/non-octal-like-invalid-08n.js
+A test/language/literals/bigint/non-octal-like-invalid-09n.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-bil-bd-nsl-bd-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-bil-bd-nsl-bd.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-bil-bd-nsl-bds.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-bil-bds-nsl-bd.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-bil-bds-nsl-bds.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-bil-nsl-bd-dunder-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-bil-nsl-bd-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-dd-nsl-dd-one-of.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-dd-nsl-dds-dunder-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-dd-nsl-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-dds-nsl-dd.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-dds-nsl-dds-dunder-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-dds-nsl-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-hil-hd-nsl-hd-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-hil-hd-nsl-hd.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-hil-hd-nsl-hds.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-hil-hds-nsl-hd.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-hil-hds-nsl-hds.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-hil-nsl-hd-dunder-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-hil-nsl-hd-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-hil-od-nsl-od-one-of.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-lol-00-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-lol-01-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-lol-07-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-lol-0_0-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-lol-0_1-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-lol-0_7-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-nonoctal-08-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-nonoctal-09-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-nonoctal-0_8-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-nonoctal-0_9-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-nzd-nsl-dd-one-of.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-nzd-nsl-dd.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-nzd-nsl-dds-dunder-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-nzd-nsl-dds-leading-zero-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-nzd-nsl-dds.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-oil-nsl-od-dunder-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-oil-nsl-od-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-oil-od-nsl-od-err.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-oil-od-nsl-od-one-of.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-oil-od-nsl-od.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-oil-od-nsl-ods.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-oil-ods-nsl-od.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-oil-ods-nsl-ods.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-sign-minus-dds-nsl-dd.js
+A test/language/literals/bigint/numeric-separators/numeric-separator-literal-unicode-err.js
+R100 test/language/literals/numeric/legacy-octal-integery-000-strict test/language/literals/numeric/legacy-octal-integery-000-strict.js
+R100 test/language/literals/numeric/legacy-octal-integery-005-strict test/language/literals/numeric/legacy-octal-integery-005-strict.js
+R100 test/language/literals/numeric/legacy-octal-integery-01-strict test/language/literals/numeric/legacy-octal-integery-01-strict.js
+R100 test/language/literals/numeric/legacy-octal-integery-010-strict test/language/literals/numeric/legacy-octal-integery-010-strict.js
+R100 test/language/literals/numeric/legacy-octal-integery-06-strict test/language/literals/numeric/legacy-octal-integery-06-strict.js
+R100 test/language/literals/numeric/legacy-octal-integery-07-strict test/language/literals/numeric/legacy-octal-integery-07-strict.js
+R100 test/language/literals/numeric/numeric-separator-literal-bil-bd-nsl-bd-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-bil-bd-nsl-bd-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-bil-bd-nsl-bd.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-bil-bd-nsl-bd.js
+R100 test/language/literals/numeric/numeric-separator-literal-bil-bd-nsl-bds.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-bil-bd-nsl-bds.js
+R100 test/language/literals/numeric/numeric-separator-literal-bil-bds-nsl-bd.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-bil-bds-nsl-bd.js
+R100 test/language/literals/numeric/numeric-separator-literal-bil-bds-nsl-bds.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-bil-bds-nsl-bds.js
+R100 test/language/literals/numeric/numeric-separator-literal-bil-nsl-bd-dunder-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-bil-nsl-bd-dunder-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-bil-nsl-bd-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-bil-nsl-bd-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-dd-dot-dd-ep-sign-minus-dd-nsl-dd.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dd-dot-dd-ep-sign-minus-dd-nsl-dd.js
+R100 test/language/literals/numeric/numeric-separator-literal-dd-dot-dd-ep-sign-minus-dds-nsl-dd.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dd-dot-dd-ep-sign-minus-dds-nsl-dd.js
+R100 test/language/literals/numeric/numeric-separator-literal-dd-dot-dd-ep-sign-plus-dd-nsl-dd.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dd-dot-dd-ep-sign-plus-dd-nsl-dd.js
+R100 test/language/literals/numeric/numeric-separator-literal-dd-dot-dd-ep-sign-plus-dds-nsl-dd.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dd-dot-dd-ep-sign-plus-dds-nsl-dd.js
+R100 test/language/literals/numeric/numeric-separator-literal-dd-nsl-dd-one-of.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dd-nsl-dd-one-of.js
+R100 test/language/literals/numeric/numeric-separator-literal-dd-nsl-dds-dunder-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dd-nsl-dds-dunder-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-dd-nsl-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dd-nsl-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-dds-dot-dd-nsl-dd-ep-dd.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dds-dot-dd-nsl-dd-ep-dd.js
+R100 test/language/literals/numeric/numeric-separator-literal-dds-nsl-dd.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dds-nsl-dd.js
+R100 test/language/literals/numeric/numeric-separator-literal-dds-nsl-dds-dunder-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dds-nsl-dds-dunder-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-dds-nsl-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dds-nsl-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-dil-dot-dds-nsl-ep-dd-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dil-dot-dds-nsl-ep-dd-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-dil-dot-nsl-ep-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dil-dot-nsl-ep-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-dil-dot-nsl-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dil-dot-nsl-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-dot-dd-nsl-dd-ep.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dot-dd-nsl-dd-ep.js
+R100 test/language/literals/numeric/numeric-separator-literal-dot-dd-nsl-dds-ep.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dot-dd-nsl-dds-ep.js
+R100 test/language/literals/numeric/numeric-separator-literal-dot-dds-nsl-dd-ep.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dot-dds-nsl-dd-ep.js
+R100 test/language/literals/numeric/numeric-separator-literal-dot-dds-nsl-dds-ep.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dot-dds-nsl-dds-ep.js
+R100 test/language/literals/numeric/numeric-separator-literal-dot-dds-nsl-ep-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dot-dds-nsl-ep-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-dot-nsl-ep-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dot-nsl-ep-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-dot-nsl-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-dot-nsl-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-hil-hd-nsl-hd-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-hil-hd-nsl-hd-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-hil-hd-nsl-hd.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-hil-hd-nsl-hd.js
+R100 test/language/literals/numeric/numeric-separator-literal-hil-hd-nsl-hds.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-hil-hd-nsl-hds.js
+R100 test/language/literals/numeric/numeric-separator-literal-hil-hds-nsl-hd.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-hil-hds-nsl-hd.js
+R100 test/language/literals/numeric/numeric-separator-literal-hil-hds-nsl-hds.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-hil-hds-nsl-hds.js
+R100 test/language/literals/numeric/numeric-separator-literal-hil-nsl-hd-dunder-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-hil-nsl-hd-dunder-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-hil-nsl-hd-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-hil-nsl-hd-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-hil-od-nsl-od-one-of.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-hil-od-nsl-od-one-of.js
+A test/language/literals/numeric/numeric-separators/numeric-separator-literal-lol-00-err.js
+A test/language/literals/numeric/numeric-separators/numeric-separator-literal-lol-01-err.js
+A test/language/literals/numeric/numeric-separators/numeric-separator-literal-lol-07-err.js
+A test/language/literals/numeric/numeric-separators/numeric-separator-literal-lol-0_0-err.js
+A test/language/literals/numeric/numeric-separators/numeric-separator-literal-lol-0_1-err.js
+A test/language/literals/numeric/numeric-separators/numeric-separator-literal-lol-0_7-err.js
+A test/language/literals/numeric/numeric-separators/numeric-separator-literal-nonoctal-08-err.js
+A test/language/literals/numeric/numeric-separators/numeric-separator-literal-nonoctal-09-err.js
+A test/language/literals/numeric/numeric-separators/numeric-separator-literal-nonoctal-0_8-err.js
+A test/language/literals/numeric/numeric-separators/numeric-separator-literal-nonoctal-0_9-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-nzd-nsl-dd-one-of.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-nzd-nsl-dd-one-of.js
+R100 test/language/literals/numeric/numeric-separator-literal-nzd-nsl-dd.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-nzd-nsl-dd.js
+R100 test/language/literals/numeric/numeric-separator-literal-nzd-nsl-dds-dunder-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-nzd-nsl-dds-dunder-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-nzd-nsl-dds-leading-zero-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-nzd-nsl-dds-leading-zero-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-nzd-nsl-dds.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-nzd-nsl-dds.js
+R100 test/language/literals/numeric/numeric-separator-literal-oil-nsl-od-dunder-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-oil-nsl-od-dunder-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-oil-nsl-od-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-oil-nsl-od-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-oil-od-nsl-od-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-oil-od-nsl-od-err.js
+R100 test/language/literals/numeric/numeric-separator-literal-oil-od-nsl-od-one-of.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-oil-od-nsl-od-one-of.js
+R100 test/language/literals/numeric/numeric-separator-literal-oil-od-nsl-od.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-oil-od-nsl-od.js
+R100 test/language/literals/numeric/numeric-separator-literal-oil-od-nsl-ods.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-oil-od-nsl-ods.js
+R100 test/language/literals/numeric/numeric-separator-literal-oil-ods-nsl-od.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-oil-ods-nsl-od.js
+R100 test/language/literals/numeric/numeric-separator-literal-oil-ods-nsl-ods.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-oil-ods-nsl-ods.js
+R100 test/language/literals/numeric/numeric-separator-literal-sign-minus-dds-nsl-dd.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-sign-minus-dds-nsl-dd.js
+R100 test/language/literals/numeric/numeric-separator-literal-sign-plus-dds-nsl-dd.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-sign-plus-dds-nsl-dd.js
+R100 test/language/literals/numeric/numeric-separator-literal-unicode-err.js test/language/literals/numeric/numeric-separators/numeric-separator-literal-unicode-err.js
+A test/language/statementList/block-array-literal-with-item.js
+A test/language/statementList/block-array-literal.js
+A test/language/statementList/block-arrow-function-assignment-expr.js
+A test/language/statementList/block-arrow-function-functionbody.js
+A test/language/statementList/block-block-with-labels.js
+A test/language/statementList/block-block.js
+A test/language/statementList/block-expr-arrow-function-boolean-literal.js
+A test/language/statementList/block-let-declaration.js
+A test/language/statementList/block-regexp-literal-flags.js
+A test/language/statementList/block-regexp-literal.js
+A test/language/statementList/block-with-statment-array-literal-with-item.js
+A test/language/statementList/block-with-statment-array-literal.js
+A test/language/statementList/block-with-statment-arrow-function-assignment-expr.js
+A test/language/statementList/block-with-statment-arrow-function-functionbody.js
+A test/language/statementList/block-with-statment-block-with-labels.js
+A test/language/statementList/block-with-statment-block.js
+A test/language/statementList/block-with-statment-expr-arrow-function-boolean-literal.js
+A test/language/statementList/block-with-statment-let-declaration.js
+A test/language/statementList/block-with-statment-regexp-literal-flags.js
+A test/language/statementList/block-with-statment-regexp-literal.js
+A test/language/statementList/class-array-literal-with-item.js
+A test/language/statementList/class-array-literal.js
+A test/language/statementList/class-arrow-function-assignment-expr.js
+A test/language/statementList/class-arrow-function-functionbody.js
+A test/language/statementList/class-block-with-labels.js
+A test/language/statementList/class-block.js
+A test/language/statementList/class-expr-arrow-function-boolean-literal.js
+A test/language/statementList/class-let-declaration.js
+A test/language/statementList/class-regexp-literal-flags.js
+A test/language/statementList/class-regexp-literal.js
+A test/language/statementList/eval-block-array-literal-with-item.js
+A test/language/statementList/eval-block-array-literal.js
+A test/language/statementList/eval-block-arrow-function-assignment-expr.js
+A test/language/statementList/eval-block-arrow-function-functionbody.js
+A test/language/statementList/eval-block-block-with-labels.js
+A test/language/statementList/eval-block-block.js
+A test/language/statementList/eval-block-expr-arrow-function-boolean-literal.js
+A test/language/statementList/eval-block-let-declaration.js
+A test/language/statementList/eval-block-regexp-literal-flags.js
+A test/language/statementList/eval-block-regexp-literal.js
+A test/language/statementList/eval-block-with-statment-array-literal-with-item.js
+A test/language/statementList/eval-block-with-statment-array-literal.js
+A test/language/statementList/eval-block-with-statment-arrow-function-assignment-expr.js
+A test/language/statementList/eval-block-with-statment-arrow-function-functionbody.js
+A test/language/statementList/eval-block-with-statment-block-with-labels.js
+A test/language/statementList/eval-block-with-statment-block.js
+A test/language/statementList/eval-block-with-statment-expr-arrow-function-boolean-literal.js
+A test/language/statementList/eval-block-with-statment-let-declaration.js
+A test/language/statementList/eval-block-with-statment-regexp-literal-flags.js
+A test/language/statementList/eval-block-with-statment-regexp-literal.js
+A test/language/statementList/eval-class-array-literal-with-item.js
+A test/language/statementList/eval-class-array-literal.js
+A test/language/statementList/eval-class-arrow-function-assignment-expr.js
+A test/language/statementList/eval-class-arrow-function-functionbody.js
+A test/language/statementList/eval-class-block-with-labels.js
+A test/language/statementList/eval-class-block.js
+A test/language/statementList/eval-class-expr-arrow-function-boolean-literal.js
+A test/language/statementList/eval-class-let-declaration.js
+A test/language/statementList/eval-class-regexp-literal-flags.js
+A test/language/statementList/eval-class-regexp-literal.js
+A test/language/statementList/eval-fn-array-literal-with-item.js
+A test/language/statementList/eval-fn-array-literal.js
+A test/language/statementList/eval-fn-arrow-function-assignment-expr.js
+A test/language/statementList/eval-fn-arrow-function-functionbody.js
+A test/language/statementList/eval-fn-block-with-labels.js
+A test/language/statementList/eval-fn-block.js
+A test/language/statementList/eval-fn-expr-arrow-function-boolean-literal.js
+A test/language/statementList/eval-fn-let-declaration.js
+A test/language/statementList/eval-fn-regexp-literal-flags.js
+A test/language/statementList/eval-fn-regexp-literal.js
+A test/language/statementList/fn-array-literal-with-item.js
+A test/language/statementList/fn-array-literal.js
+A test/language/statementList/fn-arrow-function-assignment-expr.js
+A test/language/statementList/fn-arrow-function-functionbody.js
+A test/language/statementList/fn-block-with-labels.js
+A test/language/statementList/fn-block.js
+A test/language/statementList/fn-expr-arrow-function-boolean-literal.js
+A test/language/statementList/fn-let-declaration.js
+A test/language/statementList/fn-regexp-literal-flags.js
+A test/language/statementList/fn-regexp-literal.js
+A test/language/statements/async-function/array-destructuring-param-strict-body.js
+A test/language/statements/async-function/object-destructuring-param-strict-body.js
+A test/language/statements/async-function/rest-param-strict-body.js
+A test/language/statements/async-generator/array-destructuring-param-strict-body.js
+A test/language/statements/async-generator/object-destructuring-param-strict-body.js
+A test/language/statements/async-generator/rest-param-strict-body.js
+A test/language/statements/class/async-gen-method/array-destructuring-param-strict-body.js
+A test/language/statements/class/async-gen-method/object-destructuring-param-strict-body.js
+A test/language/statements/class/async-gen-method/rest-param-strict-body.js
+A test/language/statements/class/async-gen-method-static/array-destructuring-param-strict-body.js
+A test/language/statements/class/async-gen-method-static/object-destructuring-param-strict-body.js
+A test/language/statements/class/async-gen-method-static/rest-param-strict-body.js
+A test/language/statements/class/async-method/array-destructuring-param-strict-body.js
+A test/language/statements/class/async-method/object-destructuring-param-strict-body.js
+A test/language/statements/class/async-method/rest-param-strict-body.js
+A test/language/statements/class/async-method-static/array-destructuring-param-strict-body.js
+A test/language/statements/class/async-method-static/object-destructuring-param-strict-body.js
+A test/language/statements/class/async-method-static/rest-param-strict-body.js
+A test/language/statements/class/elements/get-access-of-missing-private-getter.js
+A test/language/statements/class/elements/get-access-of-missing-shadowed-private-getter.js
+A test/language/statements/class/elements/prviate-accessor-is-visible-in-computed-properties.js
+A test/language/statements/class/elements/prviate-field-is-visible-in-computed-properties.js
+A test/language/statements/class/elements/prviate-method-is-visible-in-computed-properties.js
+A test/language/statements/class/elements/set-access-of-missing-private-setter.js
+A test/language/statements/class/elements/set-access-of-missing-shadowed-private-setter.js
+A test/language/statements/class/elements/set-access-of-private-method.js
+A test/language/statements/class/elements/set-access-of-shadowed-private-method.js
+A test/language/statements/class/elements/static-private-method-subclass-receiver.js
+A test/language/statements/class/elements/syntax/early-errors/grammar-privatename-in-computed-property-missing.js
+A test/language/statements/class/gen-method/array-destructuring-param-strict-body.js
+A test/language/statements/class/gen-method/object-destructuring-param-strict-body.js
+A test/language/statements/class/gen-method/rest-param-strict-body.js
+A test/language/statements/class/gen-method-static/array-destructuring-param-strict-body.js
+A test/language/statements/class/gen-method-static/object-destructuring-param-strict-body.js
+A test/language/statements/class/gen-method-static/rest-param-strict-body.js
+A test/language/statements/class/method/array-destructuring-param-strict-body.js
+A test/language/statements/class/method/object-destructuring-param-strict-body.js
+A test/language/statements/class/method/rest-param-strict-body.js
+A test/language/statements/class/method-static/array-destructuring-param-strict-body.js
+A test/language/statements/class/method-static/object-destructuring-param-strict-body.js
+A test/language/statements/class/method-static/rest-param-strict-body.js
+A test/language/statements/function/array-destructuring-param-strict-body.js
+A test/language/statements/function/object-destructuring-param-strict-body.js
+A test/language/statements/function/rest-param-strict-body.js
+A test/language/statements/generators/array-destructuring-param-strict-body.js
+A test/language/statements/generators/object-destructuring-param-strict-body.js
+A test/language/statements/generators/rest-param-strict-body.js

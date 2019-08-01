@@ -3,11 +3,11 @@
 
 /*---
 esid: sec-setnumberformatunitoptions
-description: Checks handling of valid values for the numeric option to the RelativeTimeFormat constructor.
+description: Checks handling of valid values for the numeric option to the NumberFormat constructor.
 info: |
     SetNumberFormatUnitOptions ( intlObj, options )
 
-    6. Let currencyDisplay be ? GetOption(options, "currencyDisplay", "string", « "code", "symbol", "narrow-symbol", "name" », "symbol").
+    6. Let currencyDisplay be ? GetOption(options, "currencyDisplay", "string", « "code", "symbol", "narrowSymbol", "name" », "symbol").
     11. If style is "currency", then
         f. Set intlObj.[[CurrencyDisplay]] to currencyDisplay.
 
@@ -16,8 +16,8 @@ features: [Intl.NumberFormat-unified]
 
 const validOptions = [
   [undefined, "symbol"],
-  ["narrow-symbol", "narrow-symbol"],
-  [{ toString() { return "narrow-symbol"; } }, "narrow-symbol"],
+  ["narrowSymbol", "narrowSymbol"],
+  [{ toString() { return "narrowSymbol"; } }, "narrowSymbol"],
 ];
 
 for (const [validOption, expected] of validOptions) {

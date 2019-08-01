@@ -27,5 +27,4 @@ var thenable = {
 Promise.allSettled([thenable])
   .then((settleds) => {
     checkSettledPromises(settleds, [{ status: 'rejected', reason: simulation }]);
-    $DONE();
   }).then($DONE, $DONE);

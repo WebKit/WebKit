@@ -49,5 +49,4 @@ Promise.allSettled([fulfiller, rejector])
     assert.sameValue(settleds[0].value, 42);
     assert.sameValue(settleds[1].status, 'fulfilled');
     assert.sameValue(settleds[1].value, simulation);
-    $DONE();
   }).then($DONE, $DONE);

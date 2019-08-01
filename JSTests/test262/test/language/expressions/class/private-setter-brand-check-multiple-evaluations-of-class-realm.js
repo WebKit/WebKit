@@ -20,8 +20,10 @@ features: [class, class-methods-private]
 flags: [noStrict]
 ---*/
 
-let eval1 = $262.createRealm().global.eval;
-let eval2 = $262.createRealm().global.eval;
+let realm1 = $262.createRealm();
+let realm2 = $262.createRealm();
+let eval1 = realm1.global.eval;
+let eval2 = realm2.global.eval;
 
 let classStringExpression = `(
 class {
@@ -45,10 +47,10 @@ assert.sameValue(c1._v, 'test262');
 c2.access(c2, 'test262');
 assert.sameValue(c2._v, 'test262');
 
-assert.throws(TypeError, function() {
+assert.throws(realm1.global.TypeError, function() {
   c1.access(c2, 'foo');
 }, 'invalid access of c1 private method');
 
-assert.throws(TypeError, function() {
+assert.throws(realm2.global.TypeError, function() {
   c2.access(c1, 'foo');
 }, 'invalid access of c2 private method');

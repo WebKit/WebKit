@@ -21,10 +21,10 @@ features: [class, class-methods-private]
 
 let classStringExpression = `
 return class {
-  get m() { return 'test262'; }
+  get #m() { return 'test262'; }
 
   access(o) {
-    return o.m;
+    return o.#m;
   }
 }
 `;

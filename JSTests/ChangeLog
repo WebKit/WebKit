@@ -1,3 +1,16 @@
+2019-08-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Update Test262 (2019.08.01)
+        https://bugs.webkit.org/show_bug.cgi?id=200351
+
+        Reviewed by Keith Miller.
+
+        * test262/expectations.yaml:
+        * test262/harness/testIntl.js:
+        * test262/latest-changes-summary.txt:
+        * test262/test/:
+        * test262/test262-Revision.txt:
+
 2019-07-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Make StructureChain less-tricky by using Auxiliary Buffer
