@@ -34,7 +34,6 @@ platform/network/soup/ResourceErrorSoup.cpp
 platform/network/soup/ResourceHandleSoup.cpp
 platform/network/soup/ResourceRequestSoup.cpp
 platform/network/soup/ResourceResponseSoup.cpp
-platform/network/soup/SocketStreamHandleImplSoup.cpp
 platform/network/soup/SoupNetworkSession.cpp
 platform/network/soup/SynchronousLoaderClientSoup.cpp
 platform/network/soup/URLSoup.cpp

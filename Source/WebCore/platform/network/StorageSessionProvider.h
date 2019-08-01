@@ -27,10 +27,6 @@
 
 #include <wtf/ThreadSafeRefCounted.h>
 
-#if USE(SOUP)
-typedef struct _SoupSession SoupSession;
-#endif
-
 namespace PAL {
 class SessionID;
 }
@@ -42,11 +38,6 @@ class NetworkStorageSession;
 class StorageSessionProvider : public ThreadSafeRefCounted<StorageSessionProvider> {
 public:
     virtual NetworkStorageSession* storageSession() const = 0;
-
-#if USE(SOUP)
-    // FIXME: This is only required by SocketStreamHandleImplSoup, remove it when we switch to libsoup WebSockets API.
-    virtual SoupSession* soupSession() const { return nullptr; }
-#endif
 
     virtual ~StorageSessionProvider() { }
 };

@@ -38,12 +38,6 @@
 #if USE(SOUP)
 
 #include <pal/SessionID.h>
-#include <wtf/StreamBuffer.h>
-#include <wtf/UniqueArray.h>
-#include <wtf/glib/GRefPtr.h>
-
-typedef struct _GIOStream GIOStream;
-typedef struct _GObject GObject;
 
 namespace WebCore {
 
@@ -53,46 +47,33 @@ class StorageSessionProvider;
 
 class SocketStreamHandleImpl final : public SocketStreamHandle {
 public:
-    static Ref<SocketStreamHandleImpl> create(const URL&, SocketStreamHandleClient&, PAL::SessionID, const String&, SourceApplicationAuditToken&&, const StorageSessionProvider*);
-    virtual ~SocketStreamHandleImpl();
+    static Ref<SocketStreamHandleImpl> create(const URL&, SocketStreamHandleClient&, PAL::SessionID, const String&, SourceApplicationAuditToken&&, const StorageSessionProvider*)
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 
-    const URL& url() const { return m_url; }
+    void platformSend(const uint8_t*, size_t, Function<void(bool)>&&) final
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 
-    void platformSend(const uint8_t* data, size_t length, Function<void(bool)>&&) final;
-    void platformSendHandshake(const uint8_t* data, size_t length, const Optional<CookieRequestHeaderFieldProxy>&, Function<void(bool, bool)>&&) final;
-    void platformClose() final;
+    void platformSendHandshake(const uint8_t*, size_t, const Optional<CookieRequestHeaderFieldProxy>&, Function<void(bool, bool)>&&) final
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    void platformClose() final
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
 private:
-    SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, const StorageSessionProvider*);
-
-    size_t bufferedAmount() final;
-    Optional<size_t> platformSendInternal(const uint8_t*, size_t);
-    bool sendPendingData();
-
-    void beginWaitingForSocketWritability();
-    void stopWaitingForSocketWritability();
-
-    static void connectedCallback(GObject*, GAsyncResult*, SocketStreamHandleImpl*);
-    static void readReadyCallback(GInputStream*, GAsyncResult*, SocketStreamHandleImpl*);
-    static gboolean writeReadyCallback(GPollableOutputStream*, SocketStreamHandleImpl*);
-
-    void connected(GRefPtr<GIOStream>&&);
-    void readBytes(gssize);
-    void didFail(SocketStreamError&&);
-    void writeReady();
-
-    RefPtr<const StorageSessionProvider> m_storageSessionProvider;
-    
-    GRefPtr<GIOStream> m_stream;
-    GRefPtr<GInputStream> m_inputStream;
-    GRefPtr<GPollableOutputStream> m_outputStream;
-    GRefPtr<GSource> m_writeReadySource;
-    GRefPtr<GCancellable> m_cancellable;
-    UniqueArray<char> m_readBuffer;
-
-    StreamBuffer<uint8_t, 1024 * 1024> m_buffer;
-    static const unsigned maxBufferSize = 100 * 1024 * 1024;
+    size_t bufferedAmount() final
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 };
 
 } // namespace WebCore
 
-#endif
+#endif // USE(SOUP)

@@ -481,6 +481,20 @@ webkit.org/b/200295 fast/viewport/ios/ [ Crash ]
 webkit.org/b/200295 fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Crash ]
 webkit.org/b/200295 fast/visual-viewport/client-rects-relative-to-layout-viewport.html [ Crash ]
 
+# Inspector tests don't work with platform WebSockets API
+webkit.org/b/200162 http/tests/websocket/tests/hybi/inspector/ [ Skip ]
+
+# Extensions not supported with platform WebSockets API
+webkit.org/b/199943 http/tests/websocket/tests/hybi/extensions.html [ Failure ]
+webkit.org/b/199943 http/tests/websocket/tests/hybi/deflate-frame-invalid-parameter.html [ Failure ]
+webkit.org/b/199943 http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
+
+# Server cookie not handled with platform WebSockets API
+webkit.org/b/200165 imported/w3c/web-platform-tests/websockets/cookies/002.html [ Failure ]
+webkit.org/b/200165 imported/w3c/web-platform-tests/websockets/cookies/007.html [ Failure ]
+
+webkit.org/b/200338 http/tests/websocket/tests/hybi/client-close.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

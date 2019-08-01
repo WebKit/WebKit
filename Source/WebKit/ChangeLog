@@ -1,3 +1,14 @@
+2019-08-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Switch to use libsoup WebSockets API
+        https://bugs.webkit.org/show_bug.cgi?id=200162
+
+        Reviewed by Michael Catanzaro.
+
+        Remove temporary method added for old WebSockets implementation.
+
+        * NetworkProcess/NetworkStorageSessionProvider.h:
+
 2019-07-31  Dean Jackson  <dino@apple.com>
 
         WKImagePreviewViewController not being autoreleased

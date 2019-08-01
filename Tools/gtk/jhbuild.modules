@@ -230,21 +230,19 @@
             hash="sha256:f8fd0aeb66252dfcc638f14d9be1e2362fdaf2ca86bde0444ff4d5cc961b560f"/>
   </autotools>
 
-  <autotools id="libsoup"
-             autogen-sh="configure"
-             autogenargs="--disable-introspection">
+  <meson id="libsoup" mesonargs="-Dintrospection=false -Dgssapi=false -Dvapi=false">
     <if condition-set="macos">
-      <autogenargs value="--disable-tls-check"/>
+      <mesonargs value="-Dtls_check=false"/>
     </if>
     <dependencies>
       <dep package="glib-networking"/>
       <dep package="libpsl"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/libsoup/2.64/libsoup-${version}.tar.xz" version="2.64.2"
+    <branch module="/pub/GNOME/sources/libsoup/2.67/libsoup-${version}.tar.xz" version="2.67.90"
             repo="ftp.gnome.org"
-            hash="sha256:75ddc194a5b1d6f25033bb9d355f04bfe5c03e0e1c71ed0774104457b3a786c6">
+            hash="sha256:303686002bd7d7bf93204eebe0d5ec9f5d57d071e3411e2304d6f8bcfa97ef79">
     </branch>
-  </autotools>
+  </meson>
 
   <autotools id="fontconfig"
              autogenargs="--enable-libxml2 --disable-docs"

@@ -1,0 +1,15 @@
+Test WebSocket sends Secure cookies over secure connections.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Note: mod_pywebsocket does not send secure cookies ('see FIXMEs in mod_pywebsocket code'), so this test is expected to FAIL to return WK-websocket-test-secure=1 until that bug is fixed.
+
+See pywebsocket Bug 150 for details.
+
+WebSocket open
+WebSocket closed
+FAIL cookie should be WK-websocket-test-secure=1; WK-websocket-test=1. Was WK-websocket-test=1.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

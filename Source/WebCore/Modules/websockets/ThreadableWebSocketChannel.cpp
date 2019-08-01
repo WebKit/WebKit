@@ -50,20 +50,21 @@ namespace WebCore {
 
 Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Document& document, WebSocketChannelClient& client, SocketProvider& provider)
 {
-    bool shouldProviderCreateSocketChannel = false;
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    shouldProviderCreateSocketChannel = RuntimeEnabledFeatures::sharedFeatures().isNSURLSessionWebSocketEnabled();
-#endif
 #if USE(SOUP)
-    shouldProviderCreateSocketChannel = getenv("WEBKIT_USE_SOUP_WEBSOCKETS");
-#endif
+    auto channel = provider.createWebSocketChannel(document, client);
+    ASSERT(channel);
+    return channel.releaseNonNull();
+#else
 
-    if (shouldProviderCreateSocketChannel) {
+#if HAVE(NSURLSESSION_WEBSOCKET)
+    if (RuntimeEnabledFeatures::sharedFeatures().isNSURLSessionWebSocketEnabled()) {
         if (auto channel = provider.createWebSocketChannel(document, client))
             return channel.releaseNonNull();
     }
+#endif
 
     return WebSocketChannel::create(document, client, provider);
+#endif
 }
 
 Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecutionContext& context, WebSocketChannelClient& client, SocketProvider& provider)

@@ -1,3 +1,15 @@
+2019-08-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Switch to use libsoup WebSockets API
+        https://bugs.webkit.org/show_bug.cgi?id=200162
+
+        Reviewed by Michael Catanzaro.
+
+        Update libsoup version to 2.67.90.
+
+        * gtk/jhbuild.modules:
+        * wpe/jhbuild.modules:
+
 2019-07-31  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r240942): first visually non-empty layout milestone is not reached in media documents until after the video finishes loading

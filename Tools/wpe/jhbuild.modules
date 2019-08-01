@@ -91,18 +91,16 @@
             hash="sha256:f8fd0aeb66252dfcc638f14d9be1e2362fdaf2ca86bde0444ff4d5cc961b560f"/>
   </autotools>
 
-  <autotools id="libsoup"
-             autogen-sh="configure"
-             autogenargs="--disable-introspection">
+  <meson id="libsoup" mesonargs="-Dintrospection=false -Dgssapi=false -Dvapi=false">
     <dependencies>
       <dep package="glib-networking"/>
       <dep package="libpsl"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/libsoup/2.64/libsoup-${version}.tar.xz" version="2.64.2"
+    <branch module="/pub/GNOME/sources/libsoup/2.67/libsoup-${version}.tar.xz" version="2.67.90"
             repo="ftp.gnome.org"
-            hash="sha256:75ddc194a5b1d6f25033bb9d355f04bfe5c03e0e1c71ed0774104457b3a786c6">
+            hash="sha256:303686002bd7d7bf93204eebe0d5ec9f5d57d071e3411e2304d6f8bcfa97ef79">
     </branch>
-  </autotools>
+  </meson>
 
   <autotools id="fonts" supports-non-srcdir-builds="no"
              skip-autogen="true">
@@ -246,10 +244,10 @@
 
   <distutils id="meson" python3="1">
     <branch repo="github-tarball"
-            version="0.48.1"
+            version="0.50.1"
             module="mesonbuild/meson/releases/download/${version}/meson-${version}.tar.gz"
             checkoutdir="meson-${version}"
-            hash="sha256:425d12edbb81498314926afa93a3eb2fca4ca6929cbe0f8abeb6ab45d1d9fa8f"/>
+            hash="sha256:f68f56d60c80a77df8fc08fa1016bc5831605d4717b622c96212573271e14ecc"/>
     <dependencies>
       <dep package="ninja"/>
     </dependencies>
