@@ -1,5 +1,27 @@
 2019-08-01  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r248111. rdar://problem/53829560
+
+    Removing expectations for tests that are now consistently passing
+    
+    Unreviewed test gardening.
+    
+    * platform/mac-wk1/TestExpectations:
+    * platform/mac/TestExpectations:
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@248111 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-01  Truitt Savell  <tsavell@apple.com>
+
+            Removing expectations for tests that are now consistently passing
+
+            Unreviewed test gardening.
+
+            * platform/mac-wk1/TestExpectations:
+            * platform/mac/TestExpectations:
+
+2019-08-01  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r247919. rdar://problem/48616298
 
     Unreviewed test gardening, update expectations for rdar://problem/48616298.
