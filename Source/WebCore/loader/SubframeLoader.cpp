@@ -329,6 +329,9 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const U
     if (!SubframeLoadingDisabler::canLoadFrame(ownerElement))
         return nullptr;
 
+    if (!m_frame.page() || m_frame.page()->subframeCount() >= Page::maxNumberOfFrames)
+        return nullptr;
+
     ReferrerPolicy policy = ownerElement.referrerPolicy();
     if (policy == ReferrerPolicy::EmptyString)
         policy = document->referrerPolicy();

@@ -1,3 +1,26 @@
+2019-08-01  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/53764238
+
+    2019-08-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+            The maximum subframe count check should not be skipped for empty URLs.
+            https://bugs.webkit.org/show_bug.cgi?id=200032
+
+            Based on the patch by Sergei Glazunov (r247924).
+            Move the check closer to the actual frame creation code in loadSubframe.
+
+            Tests: fast/dom/connected-subframe-counter-overflow.html
+
+            * dom/Document.cpp:
+            (WebCore::Document::prepareForDestruction): Assert that all child frames have been detached.
+            * html/HTMLFrameElementBase.cpp:
+            (WebCore::HTMLFrameElementBase::isURLAllowed const):
+            * loader/SubframeLoader.cpp:
+            (WebCore::SubframeLoader::loadSubframe): Added the check here.
+            * page/Frame.cpp:
+            (WebCore::Frame::isURLAllowed const):
+
 2019-07-31  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r248080. rdar://problem/53788956

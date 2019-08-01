@@ -65,9 +65,6 @@ bool HTMLFrameElementBase::isURLAllowed() const
 
 bool HTMLFrameElementBase::isURLAllowed(const URL& completeURL) const
 {
-    if (document().page() && document().page()->subframeCount() >= Page::maxNumberOfFrames)
-        return false;
-
     if (completeURL.isEmpty())
         return true;
 
