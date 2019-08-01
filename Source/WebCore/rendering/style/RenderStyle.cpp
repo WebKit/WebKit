@@ -499,17 +499,34 @@ bool RenderStyle::isIdempotentTextAutosizingCandidate() const
     if (fields.contains(AutosizeStatus::Fields::AvoidSubtree))
         return false;
 
+    const float smallMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText = 5;
+    const float largeMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText = 25;
+
     if (fields.contains(AutosizeStatus::Fields::FixedHeight)) {
         if (fields.contains(AutosizeStatus::Fields::FixedWidth)) {
             if (whiteSpace() == WhiteSpace::NoWrap) {
                 if (width().isFixed())
                     return false;
 
+                if (height().isFixed() && specifiedLineHeight().isFixed()) {
+                    float specifiedSize = specifiedFontSize();
+                    if (height().value() == specifiedSize && specifiedLineHeight().value() == specifiedSize)
+                        return false;
+                }
+
                 return true;
             }
 
-            if (fields.contains(AutosizeStatus::Fields::Floating))
+            if (fields.contains(AutosizeStatus::Fields::Floating)) {
+                if (specifiedLineHeight().isFixed() && height().isFixed()) {
+                    float specifiedSize = specifiedFontSize();
+                    if (specifiedLineHeight().value() - specifiedSize > smallMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText
+                        && height().value() - specifiedSize > smallMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText) {
+                        return true;
+                    }
+                }
                 return false;
+            }
 
             if (fields.contains(AutosizeStatus::Fields::OverflowXHidden))
                 return false;
@@ -527,8 +544,12 @@ bool RenderStyle::isIdempotentTextAutosizingCandidate() const
         return true;
     }
 
-    if (width().isFixed())
+    if (width().isFixed()) {
+        if (breakWords())
+            return true;
+
         return false;
+    }
 
     if (textSizeAdjust().isPercentage() && textSizeAdjust().percentage() == 100) {
         if (fields.contains(AutosizeStatus::Fields::Floating))
@@ -537,8 +558,14 @@ bool RenderStyle::isIdempotentTextAutosizingCandidate() const
         if (fields.contains(AutosizeStatus::Fields::FixedWidth))
             return true;
 
+        if (specifiedLineHeight().isFixed() && specifiedLineHeight().value() - specifiedFontSize() > largeMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText)
+            return true;
+
         return false;
     }
+
+    if (hasBackgroundImage() && backgroundRepeatX() == FillRepeat::NoRepeat && backgroundRepeatY() == FillRepeat::NoRepeat)
+        return false;
 
     return true;
 }

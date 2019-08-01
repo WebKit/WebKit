@@ -68,6 +68,8 @@ public:
     static float idempotentTextSize(float specifiedSize, float pageScale);
     static void updateStatus(RenderStyle&);
 
+    static bool probablyContainsASmallFixedNumberOfLines(const RenderStyle&);
+
 private:
     OptionSet<Fields> m_fields;
 };

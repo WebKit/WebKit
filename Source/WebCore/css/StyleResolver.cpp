@@ -901,6 +901,9 @@ bool StyleResolver::adjustRenderStyleForTextAutosizing(RenderStyle& style, const
         if (!lineHeight.isFixed() || lineHeight.value() >= minimumLineHeight)
             return;
 
+        if (AutosizeStatus::probablyContainsASmallFixedNumberOfLines(style))
+            return;
+
         style.setLineHeight({ minimumLineHeight, Fixed });
     };
 
@@ -921,7 +924,13 @@ bool StyleResolver::adjustRenderStyleForTextAutosizing(RenderStyle& style, const
     fontDescription.setComputedSize(isCandidate ? adjustedFontSize : specifiedFontSize);
     style.setFontDescription(WTFMove(fontDescription));
     style.fontCascade().update(&document().fontSelector());
-    adjustLineHeightIfNeeded(adjustedFontSize);
+
+    // FIXME: We should restore computed line height to its original value in the case where the element is not
+    // an idempotent text autosizing candidate; otherwise, if an element that is a text autosizing candidate contains
+    // children which are not autosized, the non-autosized content will end up with a boosted line height.
+    if (isCandidate)
+        adjustLineHeightIfNeeded(adjustedFontSize);
+
     return true;
 }
 #endif

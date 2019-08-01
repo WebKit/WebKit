@@ -1,3 +1,58 @@
+2019-08-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Text autosizing] [iPadOS] Add targeted hacks to address some remaining text autosizing issues
+        https://bugs.webkit.org/show_bug.cgi?id=200271
+        <rdar://problem/51734741>
+
+        Reviewed by Zalan Bujtas.
+
+        Makes some targeted adjustments to the text autosizing heuristic, to ensure compatibility with several high-
+        profile websites. See changes below for more detail.
+
+        Tests:  fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-candidate-special-cases.html
+                fast/text-autosizing/ios/idempotentmode/line-height-boosting.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyleForTextAutosizing):
+
+        Avoid clipped sidebar links on sohu.com by not performing line-height boosting in the case where the element
+        probably has a small, fixed number of lines. See below for more detail. Additionally, don't attempt to adjust
+        the line height using the boosted font size, in the case where the element is not a candidate for idempotent
+        text autosizing.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::isIdempotentTextAutosizingCandidate const):
+
+        Make various targeted hacks to fix a few websites:
+
+        -   Add a special case for top navigation bar links on yandex.ru, where line height greatly exceeds the
+            specified font size.
+
+        -   Avoid boosting some related video links on v.youku.com by considering the line-clamp CSS property when
+            determining the maximum number of lines of text an element is expected to contain.
+
+        -   Avoid boosting some front page links on asahi.com, which have non-repeating background images.
+
+        -   Add several other adjustments to more aggressively boost pieces of text on Google search results, such as
+            taking the `word-break` CSS property into account.
+
+        The bottom few pixels of sidebar links on naver.com are also no longer clipped after these changes.
+
+        * rendering/style/TextSizeAdjustment.cpp:
+        (WebCore::AutosizeStatus::probablyContainsASmallFixedNumberOfLines):
+
+        Pulls out a piece of the heuristic added to fix sephora.com in r247467 out into a separate helper method. To
+        recap, this heuristic identifies elements with both a fixed height and fixed line height, for which the fixed
+        height is close to an integer multiple of the line height.
+
+        Also makes several small tweaks in the process: (1) change the max difference between fixed line height and
+        font size from 6 to 5 to ensure that some multiline caption text on Google search results is boosted, and (2)
+        replace usages of `lineHeight()` with `specifiedLineHeight()`, which current prevents this function from being
+        truly idempotent.
+
+        (WebCore::AutosizeStatus::updateStatus):
+        * rendering/style/TextSizeAdjustment.h:
+
 2019-07-31  Mark Lam  <mark.lam@apple.com>
 
         Rename DOMJIT safe/unsafeFunction to functionWithTypeChecks and functionWithoutTypeChecks.
