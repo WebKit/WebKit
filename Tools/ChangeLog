@@ -1,3 +1,19 @@
+2019-08-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r248082. rdar://problem/51752593
+
+    Unreviewed test gardening, disable failing test for rdar://51752593.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@248082 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Unreviewed test gardening, disable failing test for rdar://51752593.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+
 2019-07-31  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r248039. rdar://problem/53788996
