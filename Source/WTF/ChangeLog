@@ -1,3 +1,14 @@
+2019-08-01  Per Arne Vollan  <pvollan@apple.com>
+
+        Initialize memory pressure flag in MemoryPressureHandler
+        https://bugs.webkit.org/show_bug.cgi?id=200353
+
+        Reviewed by Geoffrey Garen.
+
+        The flag 'm_underMemoryPressure' in MemoryPressureHandler should be initialized to 'false'.
+
+        * wtf/MemoryPressureHandler.h:
+
 2019-08-01  Chris Dumez  <cdumez@apple.com>
 
         Add threading assertion to WeakPtr's operator->()

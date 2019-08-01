@@ -179,7 +179,7 @@ private:
 
     LowMemoryHandler m_lowMemoryHandler;
 
-    std::atomic<bool> m_underMemoryPressure;
+    std::atomic<bool> m_underMemoryPressure { false };
     bool m_installed { false };
     bool m_isSimulatingMemoryPressure { false };
     bool m_shouldLogMemoryMemoryPressureEvents { true };
