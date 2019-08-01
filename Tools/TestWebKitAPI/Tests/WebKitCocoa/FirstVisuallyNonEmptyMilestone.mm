@@ -22,11 +22,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import "config.h"
 
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <wtf/RetainPtr.h>
+
+#if PLATFORM(IOS_FAMILY)
+#include <MobileCoreServices/MobileCoreServices.h>
+#endif
 
 static bool didFirstVisuallyNonEmptyLayout;
 static bool receivedMessage;
@@ -70,4 +77,66 @@ TEST(WebKit, FirstVisuallyNonEmptyMilestoneWithDeferredScript)
 
     TestWebKitAPI::Util::run(&receivedMessage);
     EXPECT_TRUE(didFirstVisuallyNonEmptyLayout);
+}
+
+@interface NeverFinishLoadingSchemeHandler : NSObject <WKURLSchemeHandler>
+@property (nonatomic, readonly, class) NSString *URLScheme;
+@end
+
+@implementation NeverFinishLoadingSchemeHandler
+
++ (NSString *)URLScheme
+{
+    return @"never-finish-loading";
+}
+
+static NSString *contentTypeForFileExtension(NSString *fileExtension)
+{
+    auto identifier = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (__bridge CFStringRef)fileExtension, nullptr));
+    auto mimeType = adoptCF(UTTypeCopyPreferredTagWithClass(identifier.get(), kUTTagClassMIMEType));
+    return (__bridge NSString *)mimeType.autorelease();
+}
+
+- (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
+{
+    NSURL *requestURL = task.request.URL;
+    NSString *fileName = requestURL.lastPathComponent;
+    NSString *fileExtension = fileName.pathExtension;
+    NSURL *bundleURL = [NSBundle.mainBundle URLForResource:fileName.stringByDeletingPathExtension withExtension:fileExtension subdirectory:@"TestWebKitAPI.resources"];
+
+    NSData *responseData = [NSData dataWithContentsOfURL:bundleURL];
+    NSUInteger responseLength = responseData.length;
+
+    auto response = adoptNS([[NSURLResponse alloc] initWithURL:requestURL MIMEType:contentTypeForFileExtension(fileExtension) expectedContentLength:responseLength textEncodingName:nil]);
+    [task didReceiveResponse:response.get()];
+
+    [task didReceiveData:[responseData subdataWithRange:NSMakeRange(0, responseLength - 1024)]];
+}
+
+- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)task
+{
+}
+
+@end
+
+TEST(WebKit, FirstVisuallyNonEmptyMilestoneWithMediaDocument)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+#if PLATFORM(IOS_FAMILY)
+    [configuration setAllowsInlineMediaPlayback:YES];
+    [configuration _setInlineMediaPlaybackRequiresPlaysInlineAttribute:NO];
+#endif
+
+    auto schemeHandler = adoptNS([[NeverFinishLoadingSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:NeverFinishLoadingSchemeHandler.URLScheme];
+
+    auto navigationDelegate = adoptNS([[RenderingProgressNavigationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView _setAllowsMediaDocumentInlinePlayback:YES];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"never-finish-loading:///large-video-with-audio.mp4"]]];
+
+    didFirstVisuallyNonEmptyLayout = false;
+    TestWebKitAPI::Util::run(&didFirstVisuallyNonEmptyLayout);
 }
