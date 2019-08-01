@@ -1,3 +1,31 @@
+2019-08-01  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Do simple nullptr check elimination using basic data flow analysis when generating metal code
+        https://bugs.webkit.org/show_bug.cgi?id=200352
+
+        Reviewed by Myles C. Maxfield.
+
+        When doing metal code generation, we frequently know whether something
+        is null or not. This patch does a basic propagation of this information
+        to avoid emitting excessive null checks in the generated Metal code.
+        This is a 6% speedup (with a p value of 0.0001) in Metal compile times
+        on compute_boids.
+
+        An example of a null check we now eliminate is:
+        ```
+        int x;
+        thread int* ptr = &x; // We know that the lvalue for "x" is non-null, so we produce a non-null rvalue here.
+        *ptr = 42; // We know that the "ptr" rvalue is non-null, so we omit the null check.
+        ```
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::appendRightValueWithNullability):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::appendRightValue):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::appendLeftValue):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::takeLastValueAndNullability):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::takeLastLeftValue):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+
 2019-08-01  Alex Christensen  <achristensen@webkit.org>
 
         Move FormData zip file generation to NetworkProcess and enable it for all WebKit clients for uploading directories

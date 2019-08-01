@@ -155,20 +155,42 @@ protected:
         return makeString("variable", m_variableCount++);
     }
 
+    enum class Nullability : uint8_t {
+        NotNull,
+        CanBeNull
+    };
+
     struct StackItem {
         String value;
         String leftValue;
+        Nullability valueNullability;
+        Nullability leftValueNullability;
     };
 
-    void appendRightValue(AST::Expression&, String value)
+    struct StackValue {
+        String value;
+        Nullability nullability;
+    };
+
+    // This is the important data flow step where we can take the nullability of an lvalue
+    // and transfer it into the nullability of an rvalue. This is conveyed in MakePointerExpression
+    // and DereferenceExpression. MakePointerExpression will try to produce rvalues which are
+    // non-null, and DereferenceExpression will take a non-null rvalue and try to produce
+    // a non-null lvalue.
+    void appendRightValueWithNullability(AST::Expression&, String value, Nullability nullability)
     {
-        m_stack.append({ WTFMove(value), String() });
+        m_stack.append({ WTFMove(value), String(), nullability, Nullability::CanBeNull });
     }
 
-    void appendLeftValue(AST::Expression& expression, String value, String leftValue)
+    void appendRightValue(AST::Expression& expression, String value)
+    {
+        appendRightValueWithNullability(expression, WTFMove(value), Nullability::CanBeNull);
+    }
+
+    void appendLeftValue(AST::Expression& expression, String value, String leftValue, Nullability nullability)
     {
         ASSERT_UNUSED(expression, expression.typeAnnotation().leftAddressSpace());
-        m_stack.append({ WTFMove(value), WTFMove(leftValue) });
+        m_stack.append({ WTFMove(value), WTFMove(leftValue), Nullability::CanBeNull, nullability });
     }
 
     String takeLastValue()
@@ -177,10 +199,18 @@ protected:
         return m_stack.takeLast().value;
     }
 
-    String takeLastLeftValue()
+    StackValue takeLastValueAndNullability()
+    {
+        ASSERT(m_stack.last().value);
+        auto last = m_stack.takeLast();
+        return { last.value, last.valueNullability };
+    }
+
+    StackValue takeLastLeftValue()
     {
         ASSERT(m_stack.last().leftValue);
-        return m_stack.takeLast().leftValue;
+        auto last = m_stack.takeLast();
+        return { last.leftValue, last.leftValueNullability };
     }
 
     enum class BreakContext {
@@ -499,7 +529,7 @@ void FunctionDefinitionWriter::visit(AST::GlobalVariableReference& globalVariabl
         "thread ", mangledTypeName, "* ", pointerName, " = &", takeLastValue(), "->", m_typeNamer.mangledNameForStructureElement(globalVariableReference.structField()), ";\n",
         mangledTypeName, ' ', valueName, " = ", "*", pointerName, ";\n"
     );
-    appendLeftValue(globalVariableReference, valueName, pointerName);
+    appendLeftValue(globalVariableReference, valueName, pointerName, Nullability::NotNull);
 }
 
 void FunctionDefinitionWriter::visit(AST::IndexExpression& indexExpression)
@@ -535,11 +565,14 @@ void FunctionDefinitionWriter::visit(AST::VariableDeclaration& variableDeclarati
 void FunctionDefinitionWriter::visit(AST::AssignmentExpression& assignmentExpression)
 {
     checkErrorAndVisit(assignmentExpression.left());
-    auto pointerName = takeLastLeftValue();
+    auto [pointerName, nullability] = takeLastLeftValue();
     checkErrorAndVisit(assignmentExpression.right());
-    auto rightName = takeLastValue();
-    m_stringBuilder.flexibleAppend("if (", pointerName, ") *", pointerName, " = ", rightName, ";\n");
-    appendRightValue(assignmentExpression, rightName);
+    auto [rightName, rightNullability] = takeLastValueAndNullability();
+    if (nullability == Nullability::CanBeNull)
+        m_stringBuilder.flexibleAppend("if (", pointerName, ") *", pointerName, " = ", rightName, ";\n");
+    else
+        m_stringBuilder.flexibleAppend("*", pointerName, " = ", rightName, ";\n");
+    appendRightValueWithNullability(assignmentExpression, rightName, rightNullability);
 }
 
 void FunctionDefinitionWriter::visit(AST::CallExpression& callExpression)
@@ -577,16 +610,19 @@ void FunctionDefinitionWriter::visit(AST::CommaExpression& commaExpression)
 void FunctionDefinitionWriter::visit(AST::DereferenceExpression& dereferenceExpression)
 {
     checkErrorAndVisit(dereferenceExpression.pointer());
-    auto right = takeLastValue();
-    auto variableName = generateNextVariableName();
-    auto pointerName = generateNextVariableName();
+    auto [inputPointer, nullability] = takeLastValueAndNullability();
+    auto resultValue = generateNextVariableName();
+    auto resultPointer = generateNextVariableName();
     m_stringBuilder.flexibleAppend(
-        m_typeNamer.mangledNameForType(dereferenceExpression.pointer().resolvedType()), ' ', pointerName, " = ", right, ";\n",
-        m_typeNamer.mangledNameForType(dereferenceExpression.resolvedType()), ' ', variableName, ";\n",
-        "if (", pointerName, ") ", variableName, " = *", right, ";\n",
-        "else ", variableName, " = { };\n"
-    );
-    appendLeftValue(dereferenceExpression, variableName, pointerName);
+        m_typeNamer.mangledNameForType(dereferenceExpression.pointer().resolvedType()), ' ', resultPointer, " = ", inputPointer, ";\n",
+        m_typeNamer.mangledNameForType(dereferenceExpression.resolvedType()), ' ', resultValue, ";\n");
+    if (nullability == Nullability::CanBeNull) {
+        m_stringBuilder.flexibleAppend(
+            "if (", resultPointer, ") ", resultValue, " = *", inputPointer, ";\n",
+            "else ", resultValue, " = { };\n");
+    } else
+        m_stringBuilder.flexibleAppend(resultValue, " = *", inputPointer, ";\n");
+    appendLeftValue(dereferenceExpression, resultValue, resultPointer, nullability);
 }
 
 void FunctionDefinitionWriter::visit(AST::LogicalExpression& logicalExpression)
@@ -635,11 +671,11 @@ void FunctionDefinitionWriter::visit(AST::MakeArrayReferenceExpression& makeArra
             "else ", variableName, " = { nullptr, 0 };\n"
         );
     } else if (is<AST::ArrayType>(makeArrayReferenceExpression.leftValue().resolvedType())) {
-        auto lValue = takeLastLeftValue();
+        auto lValue = takeLastLeftValue().value;
         auto& arrayType = downcast<AST::ArrayType>(makeArrayReferenceExpression.leftValue().resolvedType());
         m_stringBuilder.flexibleAppend(mangledTypeName, ' ', variableName, " = { ", lValue, "->data(), ", arrayType.numElements(), " };\n");
     } else {
-        auto lValue = takeLastLeftValue();
+        auto lValue = takeLastLeftValue().value;
         m_stringBuilder.flexibleAppend(mangledTypeName, ' ', variableName, " = { ", lValue, ", 1 };\n");
     }
     appendRightValue(makeArrayReferenceExpression, variableName);
@@ -648,10 +684,10 @@ void FunctionDefinitionWriter::visit(AST::MakeArrayReferenceExpression& makeArra
 void FunctionDefinitionWriter::visit(AST::MakePointerExpression& makePointerExpression)
 {
     checkErrorAndVisit(makePointerExpression.leftValue());
-    auto pointer = takeLastLeftValue();
+    auto [pointer, nullability] = takeLastLeftValue();
     auto variableName = generateNextVariableName();
     m_stringBuilder.flexibleAppend(m_typeNamer.mangledNameForType(makePointerExpression.resolvedType()), ' ', variableName, " = ", pointer, ";\n");
-    appendRightValue(makePointerExpression, variableName);
+    appendRightValueWithNullability(makePointerExpression, variableName, nullability);
 }
 
 void FunctionDefinitionWriter::visit(AST::ReadModifyWriteExpression&)
@@ -690,7 +726,7 @@ void FunctionDefinitionWriter::visit(AST::VariableReference& variableReference)
     ASSERT(iterator != m_variableMapping.end());
     auto pointerName = generateNextVariableName();
     m_stringBuilder.flexibleAppend("thread ", m_typeNamer.mangledNameForType(variableReference.resolvedType()), "* ", pointerName, " = &", iterator->value, ";\n");
-    appendLeftValue(variableReference, iterator->value, pointerName);
+    appendLeftValue(variableReference, iterator->value, pointerName, Nullability::NotNull);
 }
 
 String FunctionDefinitionWriter::constantExpressionString(AST::ConstantExpression& constantExpression)
