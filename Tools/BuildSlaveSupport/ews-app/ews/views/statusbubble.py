@@ -46,7 +46,11 @@ class StatusBubble(View):
     # FIXME: Auto-generate the queue's trigger relationship
     QUEUE_TRIGGERS = {
         'api-ios': 'ios-sim',
+        'ios-wk2': 'ios-sim',
         'api-mac': 'mac',
+        'mac-wk1': 'mac',
+        'mac-wk2': 'mac',
+        'mac-debug-wk1': 'mac-debug',
     }
 
     STEPS_TO_HIDE = ['Killed old processes', 'Configured build', '^OS:.*Xcode:', '(skipped)']

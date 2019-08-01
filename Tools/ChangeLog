@@ -1,3 +1,13 @@
+2019-08-01  Aakash Jain  <aakash_jain@apple.com>
+
+        New EWS: Cannot see build status page when patch is waiting for tester
+        https://bugs.webkit.org/show_bug.cgi?id=200333
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble): While patch hasn't started processing on tester queue, display build information from builder queue.
+
 2019-08-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Switch to use libsoup WebSockets API
