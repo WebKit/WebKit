@@ -587,9 +587,6 @@
 (allow mach-lookup
        (global-name "com.apple.webinspector"))
 
-(allow mach-lookup
-    (global-name "com.apple.FileCoordination"))
-
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
@@ -978,18 +975,9 @@
         (syscall-number SYS_stat64_extended) ;; <rdar://problem/50473330>
         (syscall-number SYS_lstat_extended)
         (syscall-number SYS_lstat64_extended)
-        (syscall-number SYS_iopolicysys)
-        (syscall-number SYS_workq_open)
-        (syscall-number SYS_getgroups)
         (syscall-number SYS_fgetattrlist) ;; <rdar://problem/50931110>
         (syscall-number SYS_kqueue) ;; <rdar://problem/49609201>
         (syscall-number SYS_kqueue_workloop_ctl) ;; <rdar://problem/50999499>
-        (syscall-number SYS_open_dprotected_np)
-        (syscall-number SYS_flistxattr)
-        (syscall-number SYS_fsetattrlist)
-        (syscall-number SYS_fchown)
-        (syscall-number SYS_fchflags)
-        (syscall-number SYS_fstat64_extended)
     )
 )
 

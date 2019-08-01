@@ -342,6 +342,7 @@
 		5C23DF0B2246015800F454B6 /* Challenge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C23DF0A2245C9D700F454B6 /* Challenge.mm */; };
 		5C2936931D5BF70D00DEAB1E /* CookieAcceptPolicy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */; };
 		5C2936961D5C00ED00DEAB1E /* CookieMessage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C2936941D5BFD1900DEAB1E /* CookieMessage.html */; };
+		5C3A77AA22F20BEA003827FF /* UploadDirectory.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C3A77A922F20B8A003827FF /* UploadDirectory.mm */; };
 		5C3B1D2622A74F6700BCF4D0 /* ContextMenus.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C3B1D2522A74EA400BCF4D0 /* ContextMenus.mm */; };
 		5C4259462266A68A0039AA7A /* BasicProposedCredentialPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C42594422669E9B0039AA7A /* BasicProposedCredentialPlugIn.mm */; };
 		5C4A84951F7EEFFC00ACFC54 /* Configuration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C4A84941F7EEFD400ACFC54 /* Configuration.mm */; };
@@ -1819,6 +1820,7 @@
 		5C23DF0A2245C9D700F454B6 /* Challenge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Challenge.mm; sourceTree = "<group>"; };
 		5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieAcceptPolicy.mm; sourceTree = "<group>"; };
 		5C2936941D5BFD1900DEAB1E /* CookieMessage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CookieMessage.html; sourceTree = "<group>"; };
+		5C3A77A922F20B8A003827FF /* UploadDirectory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UploadDirectory.mm; sourceTree = "<group>"; };
 		5C3B1D2522A74EA400BCF4D0 /* ContextMenus.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenus.mm; sourceTree = "<group>"; };
 		5C42594422669E9B0039AA7A /* BasicProposedCredentialPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BasicProposedCredentialPlugIn.mm; sourceTree = "<group>"; };
 		5C4A84941F7EEFD400ACFC54 /* Configuration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Configuration.mm; sourceTree = "<group>"; };
@@ -2828,6 +2830,7 @@
 				F4CD74C820FDB49600DE3794 /* TestURLSchemeHandler.mm */,
 				C22FA32A228F8708009D7988 /* TextWidth.mm */,
 				5CB40B4D1F4B98BE007DC7B9 /* UIDelegate.mm */,
+				5C3A77A922F20B8A003827FF /* UploadDirectory.mm */,
 				7CC3E1FA197E234100BE6252 /* UserContentController.mm */,
 				7C882E031C80C624006BF731 /* UserContentWorld.mm */,
 				7C882E041C80C624006BF731 /* UserContentWorldPlugIn.mm */,
@@ -4686,6 +4689,7 @@
 				5C9D923A22D7E2B0008E9266 /* UnifiedSource4-mm.mm in Sources */,
 				5C9D923C22D7E2B0008E9266 /* UnifiedSource5-mm.mm in Sources */,
 				5C9D923D22D7E2B0008E9266 /* UnifiedSource5.cpp in Sources */,
+				5C3A77AA22F20BEA003827FF /* UploadDirectory.mm in Sources */,
 				5C6E27A7224EEBEA00128736 /* URLCanonicalization.mm in Sources */,
 				E3A1E77F21B25B39008C6007 /* URLParserTextEncoding.cpp in Sources */,
 				7CCE7F271A411AF600447C4C /* UserContentController.mm in Sources */,

@@ -142,9 +142,6 @@ private:
 
     void reachedMaxAppCacheSize(int64_t spaceNeeded) final;
     void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin&, int64_t spaceNeeded) final;
-
-    bool shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename) final;
-    String generateReplacementFile(const String& path) final;
     
 #if ENABLE(INPUT_TYPE_COLOR)
     std::unique_ptr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient&, const WebCore::Color&) final;

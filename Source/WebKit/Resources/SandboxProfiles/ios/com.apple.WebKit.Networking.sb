@@ -83,6 +83,7 @@
     (global-name "com.apple.passd.library"))
 
 (allow mach-lookup
+    (global-name "com.apple.FileCoordination")
     (global-name "com.apple.dmd.policy")
     (global-name "com.apple.siri.context.service")
     (global-name "com.apple.ctcategories.service"))

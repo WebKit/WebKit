@@ -473,7 +473,6 @@ void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
         m_submittedFormURL = submission->requestURL();
     }
 
-    submission->data().generateFiles(m_frame.document());
     submission->setReferrer(outgoingReferrer());
     submission->setOrigin(outgoingOrigin());
 
@@ -3773,8 +3772,6 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* from
     // If this was a repost that failed the page cache, we might try to repost the form.
     NavigationAction action;
     if (formData) {
-        formData->generateFiles(m_frame.document());
-
         request.setHTTPMethod("POST");
         request.setHTTPBody(WTFMove(formData));
         request.setHTTPContentType(item.formContentType());

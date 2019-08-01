@@ -1,3 +1,71 @@
+2019-08-01  Alex Christensen  <achristensen@webkit.org>
+
+        Move FormData zip file generation to NetworkProcess and enable it for all WebKit clients for uploading directories
+        https://bugs.webkit.org/show_bug.cgi?id=200102
+        <rdar://problem/53275114>
+
+        Reviewed by Darin Adler.
+
+        To enable directory uploading in WebKit2, we extended WebKit1's model of asking the application to generate a file for uploading.
+        This means the WebProcess needed access to everything necessary to zip a whole directory, and clients that have not implemented
+        the strange WKBundlePageUIClient callbacks won't be able to upload directories.  Safari's implementation had already been copied
+        to BlobDataFileReference::generateReplacementFile, so I reused that code to do the zipping.  Instead of a complicated model of
+        keeping track of a filename, possibly a generated filename, and whether we think we own the file or not and having nobody clean up,
+        we now do the generation, use, and cleaning up in the network process starting with a new function generateFilesForUpload.
+        This removes unimplemented SPI in WebUIDelegatePrivate in WebKitLegacy and stops calling the WKBundlePageUIClient related to upload
+        file generation and replaces them with automatic behavior equivalent to Safari's implementation of the WKBundlePageUIClient calls.
+        Since we no longer need to do these file operations in the WebProcess, I am also reverting r245322 and r246077 which tightens the sandbox.
+
+        Covered by an API test.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::extract):
+        (WebCore::FetchBody::bodyAsFormData const):
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::cleanupForError):
+        * page/Chrome.cpp:
+        (WebCore::ChromeClient::shouldReplaceWithGeneratedFileForUpload): Deleted.
+        (WebCore::ChromeClient::generateReplacementFile): Deleted.
+        * page/ChromeClient.h:
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::FormData):
+        (WebCore::FormData::~FormData):
+        (WebCore::FormData::createMultiPart):
+        (WebCore::FormDataElement::lengthInBytes const):
+        (WebCore::FormData::appendFile):
+        (WebCore::FormData::appendFileRange):
+        (WebCore::FormData::appendMultiPartFileValue):
+        (WebCore::FormData::appendMultiPartKeyValuePairItems):
+        (WebCore::FormData::resolveBlobReferences):
+        (WebCore::generateFileForUpload):
+        (WebCore::FormData::generateFilesForUpload):
+        (WebCore::FormData::generateFiles): Deleted.
+        (WebCore::FormData::hasGeneratedFiles const): Deleted.
+        (WebCore::FormData::hasOwnedGeneratedFiles const): Deleted.
+        (WebCore::FormData::removeGeneratedFilesIfNeeded): Deleted.
+        * platform/network/FormData.h:
+        (WebCore::FormDataElement::FormDataElement):
+        (WebCore::FormDataElement::EncodedFileData::isolatedCopy const):
+        (WebCore::FormDataElement::EncodedFileData::operator== const):
+        (WebCore::FormDataElement::EncodedFileData::encode const):
+        (WebCore::FormDataElement::EncodedFileData::decode):
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::advanceCurrentStream):
+        (WebCore::formCreate):
+        (WebCore::formFinalize):
+        (WebCore::createHTTPBodyCFReadStream):
+        * platform/network/mac/BlobDataFileReferenceMac.mm:
+        (WebCore::generateFileForUpload):
+        (WebCore::BlobDataFileReference::generateReplacementFile):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2019-08-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Text autosizing] [iPadOS] Add targeted hacks to address some remaining text autosizing issues

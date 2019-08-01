@@ -235,9 +235,6 @@ public:
     // the new cache.
     virtual void reachedApplicationCacheOriginQuota(SecurityOrigin&, int64_t totalSpaceNeeded) = 0;
 
-    virtual bool shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename);
-    virtual String generateReplacementFile(const String& path);
-
 #if ENABLE(IOS_TOUCH_EVENTS)
     virtual void didPreventDefaultForEvent() = 0;
 #endif

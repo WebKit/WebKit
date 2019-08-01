@@ -29,6 +29,24 @@
 #import "config.h"
 #import <wtf/FileSystem.h>
 
+#include <wtf/SoftLinking.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <Bom/BOMCopier.h>
+#endif
+
+typedef struct _BOMCopier* BOMCopier;
+
+SOFT_LINK_PRIVATE_FRAMEWORK(Bom)
+SOFT_LINK(Bom, BOMCopierNew, BOMCopier, (), ())
+SOFT_LINK(Bom, BOMCopierFree, void, (BOMCopier copier), (copier))
+SOFT_LINK(Bom, BOMCopierCopyWithOptions, int, (BOMCopier copier, const char* fromObj, const char* toObj, CFDictionaryRef options), (copier, fromObj, toObj, options))
+
+#define kBOMCopierOptionCreatePKZipKey CFSTR("createPKZip")
+#define kBOMCopierOptionSequesterResourcesKey CFSTR("sequesterResources")
+#define kBOMCopierOptionKeepParentKey CFSTR("keepParent")
+#define kBOMCopierOptionCopyResourcesKey CFSTR("copyResources")
+
 @interface WTFWebFileManagerDelegate : NSObject <NSFileManagerDelegate>
 @end
 
@@ -47,6 +65,32 @@
 namespace WTF {
 
 namespace FileSystemImpl {
+
+String createTemporaryZipArchive(const String& path)
+{
+    String temporaryFile;
+    
+    RetainPtr<NSFileCoordinator> coordinator = adoptNS([[NSFileCoordinator alloc] initWithFilePresenter:nil]);
+    [coordinator coordinateReadingItemAtURL:[NSURL fileURLWithPath:path] options:NSFileCoordinatorReadingWithoutChanges error:nullptr byAccessor:[&](NSURL *newURL) mutable {
+        CString archivePath([NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitGeneratedFileXXXXXX"].fileSystemRepresentation);
+        if (mkstemp(archivePath.mutableData()) == -1)
+            return;
+        
+        NSDictionary *options = @{
+            (__bridge id)kBOMCopierOptionCreatePKZipKey : @YES,
+            (__bridge id)kBOMCopierOptionSequesterResourcesKey : @YES,
+            (__bridge id)kBOMCopierOptionKeepParentKey : @YES,
+            (__bridge id)kBOMCopierOptionCopyResourcesKey : @YES,
+        };
+        
+        BOMCopier copier = BOMCopierNew();
+        if (!BOMCopierCopyWithOptions(copier, newURL.path.fileSystemRepresentation, archivePath.data(), (__bridge CFDictionaryRef)options))
+            temporaryFile = String::fromUTF8(archivePath);
+        BOMCopierFree(copier);
+    }];
+    
+    return temporaryFile;
+}
 
 String homeDirectoryPath()
 {

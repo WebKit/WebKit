@@ -57,7 +57,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
         for (size_t i = 0, count = elements.size(); i < count; ++i) {
             const FormDataElement& element = elements[i];
             if (auto* fileData = WTF::get_if<FormDataElement::EncodedFileData>(element.data)) {
-                const String& path = fileData->shouldGenerateFile ? fileData->generatedFilename : fileData->filename;
+                const String& path = fileData->filename;
                 SandboxExtension::createHandle(path, SandboxExtension::Type::ReadOnly, requestBodySandboxExtensions[extensionIndex++]);
             }
         }

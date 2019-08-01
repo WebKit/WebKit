@@ -93,22 +93,6 @@ void InjectedBundlePageUIClient::pageDidScroll(WebPage* page)
     m_client.pageDidScroll(toAPI(page), m_client.base.clientInfo);
 }
 
-String InjectedBundlePageUIClient::shouldGenerateFileForUpload(WebPage* page, const String& originalFilePath)
-{
-    if (!m_client.shouldGenerateFileForUpload)
-        return String();
-    RefPtr<API::String> generatedFilePath = adoptRef(toImpl(m_client.shouldGenerateFileForUpload(toAPI(page), toAPI(originalFilePath.impl()), m_client.base.clientInfo)));
-    return generatedFilePath ? generatedFilePath->string() : String();
-}
-
-String InjectedBundlePageUIClient::generateFileForUpload(WebPage* page, const String& originalFilePath)
-{
-    if (!m_client.generateFileForUpload)
-        return String();
-    RefPtr<API::String> generatedFilePath = adoptRef(toImpl(m_client.generateFileForUpload(toAPI(page), toAPI(originalFilePath.impl()), m_client.base.clientInfo)));
-    return generatedFilePath ? generatedFilePath->string() : String();
-}
-
 static API::InjectedBundle::PageUIClient::UIElementVisibility toUIElementVisibility(WKBundlePageUIElementVisibility visibility)
 {
     switch (visibility) {

@@ -1,3 +1,19 @@
+2019-08-01  Alex Christensen  <achristensen@webkit.org>
+
+        Move FormData zip file generation to NetworkProcess and enable it for all WebKit clients for uploading directories
+        https://bugs.webkit.org/show_bug.cgi?id=200102
+        <rdar://problem/53275114>
+
+        Reviewed by Darin Adler.
+
+        Move code from BlobDataFileReference::generateReplacementFile to FileSystem::createZipArchive.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::createZipArchive):
+        * wtf/FileSystem.h:
+        * wtf/cocoa/FileSystemCocoa.mm:
+        (WTF::FileSystemImpl::createZipArchive):
+
 2019-08-01  Per Arne Vollan  <pvollan@apple.com>
 
         Initialize memory pressure flag in MemoryPressureHandler

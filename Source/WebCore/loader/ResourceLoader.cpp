@@ -492,9 +492,6 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r, CompletionHan
 
     m_response = r;
 
-    if (FormData* data = m_request.httpBody())
-        data->removeGeneratedFilesIfNeeded();
-
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks)
         frameLoader()->notifier().didReceiveResponse(this, m_response);
 }
@@ -579,9 +576,6 @@ void ResourceLoader::didFail(const ResourceError& error)
 
 void ResourceLoader::cleanupForError(const ResourceError& error)
 {
-    if (FormData* data = m_request.httpBody())
-        data->removeGeneratedFilesIfNeeded();
-
     if (m_notifiedLoadComplete)
         return;
     m_notifiedLoadComplete = true;

@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-FetchBody FetchBody::extract(ScriptExecutionContext& context, Init&& value, String& contentType)
+FetchBody FetchBody::extract(ScriptExecutionContext&, Init&& value, String& contentType)
 {
     return WTF::switchOn(value, [&](RefPtr<Blob>& value) mutable {
         Ref<const Blob> blob = value.releaseNonNull();
@@ -49,7 +49,7 @@ FetchBody FetchBody::extract(ScriptExecutionContext& context, Init&& value, Stri
         return FetchBody(WTFMove(blob));
     }, [&](RefPtr<DOMFormData>& value) mutable {
         Ref<DOMFormData> domFormData = value.releaseNonNull();
-        auto formData = FormData::createMultiPart(domFormData.get(), &downcast<Document>(context));
+        auto formData = FormData::createMultiPart(domFormData.get());
         contentType = makeString("multipart/form-data; boundary=", formData->boundary().data());
         return FetchBody(WTFMove(formData));
     }, [&](RefPtr<URLSearchParams>& value) mutable {
@@ -250,9 +250,8 @@ RefPtr<FormData> FetchBody::bodyAsFormData(ScriptExecutionContext& context) cons
     if (isArrayBufferView())
         return FormData::create(arrayBufferViewBody().baseAddress(), arrayBufferViewBody().byteLength());
     if (isFormData()) {
-        ASSERT(!context.isWorkerGlobalScope());
+        ASSERT_UNUSED(context, !context.isWorkerGlobalScope());
         auto body = makeRef(const_cast<FormData&>(formDataBody()));
-        body->generateFiles(&downcast<Document>(context));
         return body;
     }
     if (auto* data = m_consumer.data())

@@ -106,6 +106,7 @@
 - (void)mouseUpAtPoint:(NSPoint)pointInWindow;
 - (void)mouseMoveToPoint:(NSPoint)pointInWindow withFlags:(NSEventModifierFlags)flags;
 - (void)sendClicksAtPoint:(NSPoint)pointInWindow numberOfClicks:(NSUInteger)numberOfClicks;
+- (void)sendClickAtPoint:(NSPoint)pointInWindow;
 - (NSWindow *)hostWindow;
 - (void)typeCharacter:(char)character;
 @end

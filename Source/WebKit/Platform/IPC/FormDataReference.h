@@ -60,7 +60,7 @@ public:
         size_t extensionIndex = 0;
         for (auto& element : elements) {
             if (auto* fileData = WTF::get_if<WebCore::FormDataElement::EncodedFileData>(element.data)) {
-                const String& path = fileData->shouldGenerateFile ? fileData->generatedFilename : fileData->filename;
+                const String& path = fileData->filename;
                 WebKit::SandboxExtension::createHandle(path, WebKit::SandboxExtension::Type::ReadOnly, sandboxExtensionHandles[extensionIndex++]);
             }
         }

@@ -198,7 +198,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, const Attribut
     String boundary;
 
     if (isMultiPartForm) {
-        formData = FormData::createMultiPart(domFormData, &document);
+        formData = FormData::createMultiPart(domFormData);
         boundary = formData->boundary().data();
     } else {
         formData = FormData::create(domFormData, attributes.method() == Method::Get ? FormData::FormURLEncoded : FormData::parseEncodingType(encodingType));

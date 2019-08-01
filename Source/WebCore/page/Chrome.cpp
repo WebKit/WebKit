@@ -525,17 +525,6 @@ void Chrome::windowScreenDidChange(PlatformDisplayID displayID)
 #endif
 }
 
-bool ChromeClient::shouldReplaceWithGeneratedFileForUpload(const String&, String&)
-{
-    return false;
-}
-
-String ChromeClient::generateReplacementFile(const String&)
-{
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
 bool Chrome::selectItemWritingDirectionIsNatural()
 {
     return m_client.selectItemWritingDirectionIsNatural();

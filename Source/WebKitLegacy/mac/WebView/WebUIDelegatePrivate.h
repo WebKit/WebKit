@@ -248,9 +248,6 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 
 - (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features;
 
-- (BOOL)webView:(WebView *)sender shouldReplaceUploadFile:(NSString *)path usingGeneratedFilename:(NSString **)filename;
-- (NSString *)webView:(WebView *)sender generateReplacementFile:(NSString *)path;
-
 /*!
     @method webView:decidePolicyForGeolocationRequestFromOrigin:frame:listener:
     @param webView The WebView sending the delegate method.

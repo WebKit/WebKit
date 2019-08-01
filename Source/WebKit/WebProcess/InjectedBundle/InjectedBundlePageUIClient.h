@@ -54,9 +54,6 @@ public:
     void mouseDidMoveOverElement(WebPage*, const WebCore::HitTestResult&, OptionSet<WebEvent::Modifier>, RefPtr<API::Object>& userData) override;
     void pageDidScroll(WebPage*) override;
 
-    String shouldGenerateFileForUpload(WebPage*, const String& originalFilePath) override;
-    String generateFileForUpload(WebPage*, const String& originalFilePath) override;
-    
     UIElementVisibility statusBarIsVisible(WebPage*) override;
     UIElementVisibility menuBarIsVisible(WebPage*) override;
     UIElementVisibility toolbarsAreVisible(WebPage*) override;

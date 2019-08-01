@@ -789,17 +789,6 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin& origin,
     cacheStorage.storeUpdatedQuotaForOrigin(&origin, newQuota);
 }
 
-bool WebChromeClient::shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename)
-{
-    generatedFilename = m_page.injectedBundleUIClient().shouldGenerateFileForUpload(&m_page, path);
-    return !generatedFilename.isNull();
-}
-
-String WebChromeClient::generateReplacementFile(const String& path)
-{
-    return m_page.injectedBundleUIClient().generateFileForUpload(&m_page, path);
-}
-
 #if ENABLE(INPUT_TYPE_COLOR)
 
 std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)

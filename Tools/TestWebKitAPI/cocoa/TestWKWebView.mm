@@ -593,6 +593,11 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
     }
 }
 
+- (void)sendClickAtPoint:(NSPoint)pointInWindow
+{
+    [self sendClicksAtPoint:pointInWindow numberOfClicks:1];
+}
+
 - (void)mouseEnterAtPoint:(NSPoint)pointInWindow
 {
     [self mouseEntered:[self _mouseEventWithType:NSEventTypeMouseEntered atLocation:pointInWindow]];
