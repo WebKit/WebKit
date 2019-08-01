@@ -1,3 +1,13 @@
+2019-08-01  Zhifei Fang  <zhifei_fang@apple.com>
+
+        results.webkit.org: Collision detection for dots is off by 2 * dotMargin
+        https://bugs.webkit.org/show_bug.cgi?id=200347
+
+        Reviewed by Jonathan Bedard.
+
+        * resultsdbpy/resultsdbpy/view/static/library/js/components/TimelineComponents.js:
+        (Timeline.CanvasSeriesComponent): Need to change it to dotMargin + radius other than use a fixed 3 * radius, which is for the old wide timeline
+
 2019-08-01  Jiewen Tan  <jiewen_tan@apple.com>
 
         Improve flakiness of SOAuthorizationRedirect tests

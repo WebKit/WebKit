@@ -322,7 +322,7 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
             let x = i * dotWidth - (scrollLeft < padding ? scrollLeft : scrollLeft - padding);
             if (currentDotIndex < dots.length && comp(scales[i], getScale(dots[currentDotIndex])) === 0) {
                 render(dots[currentDotIndex], context, x, radius);
-                dots[currentDotIndex]._dotCenter = {x: x + 3 * radius, y: radius};
+                dots[currentDotIndex]._dotCenter = {x: x + dotMargin + radius, y: radius};
                 dots[currentDotIndex]._cachedScrollLeft = scrollLeft < padding ? scrollLeft : scrollLeft - padding;
                 inCacheDots.push(dots[currentDotIndex]);
                 currentDotIndex += 1;
