@@ -657,6 +657,15 @@ fast/animation/request-animation-frame-in-two-pages.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents [ Skip ]
 pointerevents [ Skip ]
 
+# permessage-deflate WebSocket extension only supported by Soup based ports
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-comp-bit-onoff.html [ Skip ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter.html [ Skip ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-parameter.html [ Skip ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-set-bfinal.html [ Skip ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-split-frames.html [ Skip ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-unsolicited-negotiation-response.html [ Skip ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-window-bits.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

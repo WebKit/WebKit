@@ -59,7 +59,7 @@ public:
     friend class WebSocketTask;
 
 private:
-    void didConnect(const String& subprotocol);
+    void didConnect(const String& subprotocol, const String& extensions);
     void didReceiveText(const String&);
     void didReceiveBinaryData(const uint8_t* data, size_t length);
     void didClose(unsigned short code, const String& reason);

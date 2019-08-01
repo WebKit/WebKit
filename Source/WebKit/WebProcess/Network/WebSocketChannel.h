@@ -75,7 +75,7 @@ private:
     void derefThreadableWebSocketChannel() final { deref(); }
 
     // Message receivers
-    void didConnect(String&&);
+    void didConnect(String&& subprotocol, String&& extensions);
     void didReceiveText(String&&);
     void didReceiveBinaryData(IPC::DataReference&&);
     void didClose(unsigned short code, String&&);
@@ -93,6 +93,7 @@ private:
     WeakPtr<WebCore::Document> m_document;
     WeakPtr<WebCore::WebSocketChannelClient> m_client;
     String m_subprotocol;
+    String m_extensions;
     size_t m_bufferedAmount { 0 };
     bool m_isClosing { false };
     bool m_isSuspended { false };

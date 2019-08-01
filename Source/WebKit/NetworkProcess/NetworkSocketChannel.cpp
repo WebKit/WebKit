@@ -97,9 +97,9 @@ void NetworkSocketChannel::close(int32_t code, const String& reason)
     finishClosingIfPossible();
 }
 
-void NetworkSocketChannel::didConnect(const String& subprotocol)
+void NetworkSocketChannel::didConnect(const String& subprotocol, const String& extensions)
 {
-    send(Messages::WebSocketChannel::DidConnect { subprotocol });
+    send(Messages::WebSocketChannel::DidConnect { subprotocol, extensions });
 }
 
 void NetworkSocketChannel::didReceiveText(const String& text)

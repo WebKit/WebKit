@@ -484,11 +484,6 @@ webkit.org/b/200295 fast/visual-viewport/client-rects-relative-to-layout-viewpor
 # Inspector tests don't work with platform WebSockets API
 webkit.org/b/200162 http/tests/websocket/tests/hybi/inspector/ [ Skip ]
 
-# Extensions not supported with platform WebSockets API
-webkit.org/b/199943 http/tests/websocket/tests/hybi/extensions.html [ Failure ]
-webkit.org/b/199943 http/tests/websocket/tests/hybi/deflate-frame-invalid-parameter.html [ Failure ]
-webkit.org/b/199943 http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
-
 # Server cookie not handled with platform WebSockets API
 webkit.org/b/200165 imported/w3c/web-platform-tests/websockets/cookies/002.html [ Failure ]
 webkit.org/b/200165 imported/w3c/web-platform-tests/websockets/cookies/007.html [ Failure ]
@@ -675,6 +670,15 @@ fast/text/variations [ Pass ]
 # Content Extensions
 http/tests/contentextensions [ Pass ]
 http/tests/inspector/network/contentextensions [ Pass ]
+
+# permessage-deflate WebSocket extension
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-comp-bit-onoff.html [ Pass ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter.html [ Pass ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-parameter.html [ Pass ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-set-bfinal.html [ Pass ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-split-frames.html [ Pass ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-unsolicited-negotiation-response.html [ Pass ]
+http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-window-bits.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. TESTS CRASHING

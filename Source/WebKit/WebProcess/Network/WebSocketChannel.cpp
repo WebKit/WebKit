@@ -76,8 +76,7 @@ String WebSocketChannel::subprotocol()
 
 String WebSocketChannel::extensions()
 {
-    // FIXME: support extensions.
-    return emptyString();
+    return m_extensions.isNull() ? emptyString() : m_extensions;
 }
 
 WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const String& protocol)
@@ -322,7 +321,7 @@ void WebSocketChannel::disconnect()
     MessageSender::send(Messages::NetworkSocketChannel::Close { 0, { } });
 }
 
-void WebSocketChannel::didConnect(String&& subprotocol)
+void WebSocketChannel::didConnect(String&& subprotocol, String&& extensions)
 {
     if (m_isClosing)
         return;
@@ -331,13 +330,14 @@ void WebSocketChannel::didConnect(String&& subprotocol)
         return;
 
     if (m_isSuspended) {
-        enqueueTask([this, subprotocol = WTFMove(subprotocol)] () mutable {
-            didConnect(WTFMove(subprotocol));
+        enqueueTask([this, subprotocol = WTFMove(subprotocol), extensions = WTFMove(extensions)] () mutable {
+            didConnect(WTFMove(subprotocol), WTFMove(extensions));
         });
         return;
     }
 
     m_subprotocol = WTFMove(subprotocol);
+    m_extensions = WTFMove(extensions);
     m_client->didConnect();
 }
 

@@ -52,6 +52,8 @@ private:
     void didFail(const String&);
     void didClose(unsigned short code, const String& reason);
 
+    String acceptedExtensions() const;
+
     static void didReceiveMessageCallback(WebSocketTask*, SoupWebsocketDataType, GBytes*);
     static void didReceiveErrorCallback(WebSocketTask*, GError*);
     static void didCloseCallback(WebSocketTask*);

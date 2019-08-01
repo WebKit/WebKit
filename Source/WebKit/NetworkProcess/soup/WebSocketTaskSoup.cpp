@@ -30,6 +30,7 @@
 #include "NetworkSocketChannel.h"
 #include <WebCore/HTTPParsers.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
 
@@ -64,6 +65,28 @@ WebSocketTask::~WebSocketTask()
     cancel();
 }
 
+String WebSocketTask::acceptedExtensions() const
+{
+#if SOUP_CHECK_VERSION(2, 67, 90)
+    StringBuilder result;
+    GList* extensions = soup_websocket_connection_get_extensions(m_connection.get());
+    for (auto* it = extensions; it; it = g_list_next(it)) {
+        auto* extension = SOUP_WEBSOCKET_EXTENSION(it->data);
+
+        if (!result.isEmpty())
+            result.appendLiteral(", ");
+        result.append(String::fromUTF8(SOUP_WEBSOCKET_EXTENSION_GET_CLASS(extension)->name));
+
+        GUniquePtr<char> params(soup_websocket_extension_get_response_params(extension));
+        if (params)
+            result.append(String::fromUTF8(params.get()));
+    }
+    return result.toStringPreserveCapacity();
+#else
+    return { };
+#endif
+}
+
 void WebSocketTask::didConnect(GRefPtr<SoupWebsocketConnection>&& connection)
 {
     m_connection = WTFMove(connection);
@@ -78,7 +101,7 @@ void WebSocketTask::didConnect(GRefPtr<SoupWebsocketConnection>&& connection)
     g_signal_connect_swapped(m_connection.get(), "error", reinterpret_cast<GCallback>(didReceiveErrorCallback), this);
     g_signal_connect_swapped(m_connection.get(), "closed", reinterpret_cast<GCallback>(didCloseCallback), this);
 
-    m_channel.didConnect(soup_websocket_connection_get_protocol(m_connection.get()));
+    m_channel.didConnect(soup_websocket_connection_get_protocol(m_connection.get()), acceptedExtensions());
 }
 
 void WebSocketTask::didReceiveMessageCallback(WebSocketTask* task, SoupWebsocketDataType dataType, GBytes* message)

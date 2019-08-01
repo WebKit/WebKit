@@ -84,7 +84,8 @@ void WebSocketTask::resume()
 
 void WebSocketTask::didConnect(const String& protocol)
 {
-    m_channel.didConnect(protocol);
+    // FIXME: support extensions.
+    m_channel.didConnect(protocol, { });
 }
 
 void WebSocketTask::didClose(unsigned short code, const String& reason)

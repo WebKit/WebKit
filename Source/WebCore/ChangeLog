@@ -1,3 +1,23 @@
+2019-08-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] WebSockets: add support for extensions when using web sockets libsoup API
+        https://bugs.webkit.org/show_bug.cgi?id=199943
+
+        Reviewed by Alex Christensen.
+
+        Add SOUP_TYPE_WEBSOCKET_EXTENSION_MANAGER feature to the soup session to enable WebSocket extensions.
+
+        Tests: http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-comp-bit-onoff.html
+               http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter.html
+               http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-parameter.html
+               http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-set-bfinal.html
+               http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-split-frames.html
+               http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-unsolicited-negotiation-response.html
+               http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-window-bits.html
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::SoupNetworkSession):
+
 2019-08-01  Chris Dumez  <cdumez@apple.com>
 
         [iOS][WK1] Unsafe unsafe of WeakPtr<Document> from UIThread under PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit()

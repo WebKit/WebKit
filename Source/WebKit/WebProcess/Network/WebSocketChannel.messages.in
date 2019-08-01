@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebSocketChannel {
-    DidConnect(String subprotocol)
+    DidConnect(String subprotocol, String extensions)
     DidClose(unsigned short code, String reason)
     DidReceiveText(String message)
     DidReceiveBinaryData(IPC::DataReference data)
