@@ -584,7 +584,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
     {
         var issues = WI.consoleManager.issuesForSourceCode(sourceCode);
         for (var issue of issues)
-            this._addIssue(issue);
+            this._addIssue(issue, sourceCode);
     }
 
     _addTreeElementForSourceCodeToTreeOutline(sourceCode, treeOutline)
@@ -1397,13 +1397,14 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         this._pauseReasonLinkContainerElement.appendChild(linkElement);
     }
 
-    _addIssue(issueMessage)
+    _addIssue(issueMessage, sourceCode)
     {
         let issueTreeElement = this._scriptsContentTreeOutline.findTreeElement(issueMessage);
         if (issueTreeElement)
             return issueTreeElement;
 
-        let parentTreeElement = this._addTreeElementForSourceCodeToTreeOutline(issueMessage.sourceCodeLocation.sourceCode, this._scriptsContentTreeOutline);
+        console.assert(sourceCode || (issueMessage.sourceCodeLocation && issueMessage.sourceCodeLocation.sourceCode));
+        let parentTreeElement = this._addTreeElementForSourceCodeToTreeOutline(sourceCode || issueMessage.sourceCodeLocation.sourceCode, this._scriptsContentTreeOutline);
         if (!parentTreeElement)
             return null;
 

@@ -1025,11 +1025,12 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         return breakpoints;
     }
 
-    _addIssue(issueMessage)
+    _addIssue(issueMessage, sourceCode)
     {
         let issueTreeElement = this._resourcesTreeOutline.findTreeElement(issueMessage);
         if (!issueTreeElement) {
-            let parentTreeElement = this._resourcesTreeOutline.findTreeElement(issueMessage.sourceCodeLocation.sourceCode);
+            console.assert(sourceCode || (issueMessage.sourceCodeLocation && issueMessage.sourceCodeLocation.sourceCode));
+            let parentTreeElement = this._resourcesTreeOutline.findTreeElement(sourceCode || issueMessage.sourceCodeLocation.sourceCode);
             if (!parentTreeElement)
                 return null;
 
@@ -1068,7 +1069,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
     _addIssuesForSourceCode(sourceCode)
     {
         for (let issue of WI.consoleManager.issuesForSourceCode(sourceCode))
-            this._addIssue(issue);
+            this._addIssue(issue, sourceCode);
     }
 
     _updateTemporarilyDisabledBreakpointsButtons()
