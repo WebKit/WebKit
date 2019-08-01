@@ -1,3 +1,17 @@
+2019-08-01  Keith Miller  <keith_miller@apple.com>
+
+        Fix bug in testMulImm32SignExtend
+        https://bugs.webkit.org/show_bug.cgi?id=200358
+
+        Reviewed by Mark Lam.
+
+        Also, have it run in more configurations.
+
+        * b3/testb3_2.cpp:
+        (testMulImm32SignExtend):
+        * b3/testb3_3.cpp:
+        (addArgTests):
+
 2019-07-31  Mark Lam  <mark.lam@apple.com>
 
         Rename DOMJIT safe/unsafeFunction to functionWithTypeChecks and functionWithoutTypeChecks.

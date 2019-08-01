@@ -961,14 +961,14 @@ void testMulImm32SignExtend(const int a, int b)
     Value* arg1 = root->appendNew<Const64Value>(proc, Origin(), a);
     Value* arg2 = root->appendNew<Value>(
         proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
     Value* arg264 = root->appendNew<Value>(proc, SExt32, Origin(), arg2);
     Value* mul = root->appendNew<Value>(proc, Mul, Origin(), arg1, arg264);
     root->appendNewControlValue(proc, Return, Origin(), mul);
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<long int>(*code, b) == ((long int) a) * ((long int) b));
+    CHECK_EQ(invoke<long int>(*code, b), ((long int) a) * ((long int) b));
 }
 
 void testMulLoadTwice()

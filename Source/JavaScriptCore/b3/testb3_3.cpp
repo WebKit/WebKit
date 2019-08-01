@@ -3104,11 +3104,7 @@ void addArgTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testMulImmArg(0, 2));
     RUN(testMulImmArg(1, 0));
     RUN(testMulImmArg(3, 3));
-    RUN(testMulImm32SignExtend(1, 2));
-    RUN(testMulImm32SignExtend(0, 2));
-    RUN(testMulImm32SignExtend(1, 0));
-    RUN(testMulImm32SignExtend(3, 3));
-    RUN(testMulImm32SignExtend(0xFFFFFFFF, 0xFFFFFFFF));
+    RUN_BINARY(testMulImm32SignExtend, int32Operands(), int32Operands());
     RUN(testMulImm32SignExtend(0xFFFFFFFE, 0xFFFFFFFF));
     RUN(testMulImm32SignExtend(0xFFFFFFFF, 0xFFFFFFFE));
     RUN(testMulArgs32(1, 1));
