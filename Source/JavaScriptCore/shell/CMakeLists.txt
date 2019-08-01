@@ -52,7 +52,16 @@ if (DEVELOPER_MODE)
     set(testRegExp_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
     set(testRegExp_LIBRARIES WebKit::JavaScriptCore)
 
-    set(testb3_SOURCES ../b3/testb3.cpp)
+    set(testb3_SOURCES
+        ../b3/testb3_1.cpp
+        ../b3/testb3_2.cpp
+        ../b3/testb3_3.cpp
+        ../b3/testb3_4.cpp
+        ../b3/testb3_5.cpp
+        ../b3/testb3_6.cpp
+        ../b3/testb3_7.cpp
+        ../b3/testb3_8.cpp
+    )
     set(testb3_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
     set(testb3_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
     set(testb3_LIBRARIES WebKit::JavaScriptCore)
