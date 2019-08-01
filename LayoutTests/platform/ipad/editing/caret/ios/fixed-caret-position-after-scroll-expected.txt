@@ -1,0 +1,13 @@
+PASS initialCaretRect.left is 6
+PASS initialCaretRect.top is 21
+PASS initialCaretRect.width is 3
+PASS initialCaretRect.height is 15
+PASS finalCaretRect.left is 6
+FAIL finalCaretRect.top should be 4977. Was 4966.
+PASS finalCaretRect.width is 3
+PASS finalCaretRect.height is 15
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

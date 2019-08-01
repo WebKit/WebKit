@@ -1,3 +1,7 @@
+# Dark Mode is iPadOS 13 and later.
+css-dark-mode [ Pass ]
+css-dark-mode/older-systems [ Skip ]
+
 # iPads don't zoom when form elements are focused
 fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Skip ]
 
@@ -35,3 +39,70 @@ webkit.org/b/194259 fast/events/ios/rotation/layout-viewport-during-safari-type-
 webkit.org/b/194259 fast/events/ios/rotation/resize-iframe-after-orientation-change.html [ Skip ]
 webkit.org/b/194259 fast/events/ios/rotation/safari-like-rotation.html [ Skip ]
 webkit.org/b/194259 fast/events/ios/viewport-no-width-value-allows-double-tap.html [ Skip ]
+
+# <rdar://problem/51821914> REGRESSION (iOS 13): iPad Simulator: 13 http/tests/paymentrequest layout tests timing out
+http/tests/paymentrequest/payment-request-abort-method.https.html [ Skip ]
+http/tests/paymentrequest/payment-request-canmakepayment-method.https.html [ Skip ]
+http/tests/paymentrequest/payment-request-merchant-validation.https.html [ Skip ]
+http/tests/paymentrequest/payment-request-show-method.https.html [ Skip ]
+http/tests/paymentrequest/payment-response-complete-method.https.html [ Skip ]
+http/tests/paymentrequest/payment-response-payerEmail-attribute.https.html [ Skip ]
+http/tests/paymentrequest/payment-response-payerName-attribute.https.html [ Skip ]
+http/tests/paymentrequest/payment-response-payerPhone-attribute.https.html [ Skip ]
+http/tests/paymentrequest/payment-response-reference-cycle-leak.https.html [ Skip ]
+http/tests/paymentrequest/payment-response-rejects-if-not-active.https.html [ Skip ]
+http/tests/paymentrequest/payment-response-retry-method.https.html [ Skip ]
+http/tests/paymentrequest/rejects_if_not_active.https.html [ Skip ]
+http/tests/paymentrequest/updateWith-method-pmi-handling.https.html [ Skip ]
+
+# <rdar://problem/51857070> iOS 13 iPad: Many fast/text-autosizing layout tests consistently failing
+fast/text/line-height-minimumFontSize-autosize.html [ Failure ]
+fast/text-autosizing/ios/anonymous-block.html [ Failure ]
+fast/text-autosizing/ios/lists.html [ Failure ]
+fast/text-autosizing/ios/overflow.html [ Failure ]
+fast/text-autosizing/ios/percent-adjust-length-line-height.html [ Failure ]
+fast/text-autosizing/ios/percent-adjust-number-line-height.html [ Failure ]
+fast/text-autosizing/ios/percent-adjust-percent-line-height.html [ Failure ]
+fast/text-autosizing/ios/autosize-width.html [ ImageOnlyFailure ]
+fast/text-autosizing/ios/text-size-adjust-inline-style.html [ ImageOnlyFailure ]
+
+# <rdar://problem/51857277> iOS 13 iPad: editing/pasteboard/ios/dom-paste-* layout tests timing out
+editing/pasteboard/ios/dom-paste-confirmation.html [ Skip ]
+editing/pasteboard/ios/dom-paste-consecutive-confirmations.html [ Skip ]
+editing/pasteboard/ios/dom-paste-rejection.html [ Skip ]
+editing/pasteboard/ios/dom-paste-requires-user-gesture.html [ Skip ]
+
+# <rdar://problem/51862629> REGRESSION (r244239) [ iPad Sim ] Layout Test fast/canvas/canvas-too-large-to-draw.html is failing
+fast/canvas/canvas-too-large-to-draw.html [ Failure ]
+
+# <rdar://problem/51863703> [ iPad Sim ] New Layout test fast/events/autoscroll-with-software-keyboard.html is failing on iOS 13 iPad Simulator testers
+fast/events/autoscroll-with-software-keyboard.html [ Failure ]
+
+# <rdar://problem/51868813> REGRESSION (r245483) [ iPad Simulator ] 2 Layout tests fast/scrolling/ios/overflow-scroll-inherited.html fast/scrolling/ios/overflow-scrolling-touch-enabled-stacking.html are failing
+fast/scrolling/ios/overflow-scroll-inherited.html [ Failure ]
+fast/scrolling/ios/overflow-scrolling-touch-enabled-stacking.html [ ImageOnlyFailure ]
+
+# <rdar://problem/51869921> REGRESSION (iOS 13) [ iPad Sim ] Layout Test http/tests/adClickAttribution/anchor-tag-attributes-validation.html is failing
+http/tests/adClickAttribution/anchor-tag-attributes-validation.html [ Failure ]
+
+# <rdar://problem/51865126> [ iPad Simulator ] 2 New Layout tests are failing on iOS 13 iPad Simulator testers fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-*
+fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-2.html [ Skip ]
+fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-1.html [ Skip ]
+
+# <rdar://problem/51918994> [ iPad Sim ] Layout test media/video-concurrent-visible-playback.html is a flaky timeout
+media/video-concurrent-visible-playback.html [ Pass Timeout ]
+
+# <rdar://problem/51920910> [ iPad Sim ] Layout test media/video-object-fit-change.html is a flaky timeout
+media/video-concurrent-visible-playback.html [ Pass Timeout ]
+
+# <rdar://problem/52904090> (Layout Test http/tests/paymentrequest/payment-is-showing.https.html is Timing Out on iOS 13)
+http/tests/paymentrequest/payment-is-showing.https.html [ Timeout ]
+
+# <rdar://problem/52914585> (Layout Test fast/forms/file/file-input-reset-using-open-panel.html is Failing)
+fast/forms/file/file-input-reset-using-open-panel.html [ ImageOnlyFailure ]
+
+# rdar://52970947 (Layout Test scrollingcoordinator/ios/ui-scrolling-tree.html is a Flaky Failure on iPad iOS 13)
+scrollingcoordinator/ios/ui-scrolling-tree.html [ Pass Failure ]
+
+# rdar://53468934 (REGRESSION (iOS 13): Four Layout Tests Failing after SDK change)
+editing/selection/character-granularity-rect.html [ Failure ]
