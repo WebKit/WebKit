@@ -91,17 +91,7 @@ public:
         , m_functionMapping(functionMapping)
         , m_layout(layout)
     {
-        m_stringBuilder.flexibleAppend(
-            "template <typename T>\n"
-            "inline void ", memsetZeroFunctionName, "(thread T& value)\n"
-            "{\n"
-            "    thread char* ptr = static_cast<thread char*>(static_cast<thread void*>(&value));\n"
-            "    for (size_t i = 0; i < sizeof(T); ++i)\n"
-            "        ptr[i] = 0;\n"
-            "}\n");
     }
-
-    static constexpr const char* memsetZeroFunctionName = "memsetZero";
 
     virtual ~FunctionDefinitionWriter() = default;
 
@@ -217,7 +207,7 @@ void FunctionDefinitionWriter::visit(AST::NativeFunctionDeclaration& nativeFunct
 {
     auto iterator = m_functionMapping.find(&nativeFunctionDeclaration);
     ASSERT(iterator != m_functionMapping.end());
-    m_stringBuilder.append(writeNativeFunction(nativeFunctionDeclaration, iterator->value, m_intrinsics, m_typeNamer, memsetZeroFunctionName));
+    m_stringBuilder.append(writeNativeFunction(nativeFunctionDeclaration, iterator->value, m_intrinsics, m_typeNamer));
 }
 
 void FunctionDefinitionWriter::visit(AST::FunctionDefinition& functionDefinition)
@@ -594,7 +584,7 @@ void FunctionDefinitionWriter::visit(AST::DereferenceExpression& dereferenceExpr
         m_typeNamer.mangledNameForType(dereferenceExpression.pointer().resolvedType()), ' ', pointerName, " = ", right, ";\n",
         m_typeNamer.mangledNameForType(dereferenceExpression.resolvedType()), ' ', variableName, ";\n",
         "if (", pointerName, ") ", variableName, " = *", right, ";\n",
-        "else ", memsetZeroFunctionName, '(', variableName, ");\n"
+        "else ", variableName, " = { };\n"
     );
     appendLeftValue(dereferenceExpression, variableName, pointerName);
 }

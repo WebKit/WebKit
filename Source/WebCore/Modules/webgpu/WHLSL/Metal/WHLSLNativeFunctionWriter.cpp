@@ -120,7 +120,7 @@ static const char* vectorSuffix(int vectorLength)
     }
 }
 
-String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclaration, String& outputFunctionName, Intrinsics& intrinsics, TypeNamer& typeNamer, const char* memsetZeroFunctionName)
+String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclaration, String& outputFunctionName, Intrinsics& intrinsics, TypeNamer& typeNamer)
 {
     StringBuilder stringBuilder;
     if (nativeFunctionDeclaration.isCast()) {
@@ -129,8 +129,7 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         if (!nativeFunctionDeclaration.parameters().size()) {
             stringBuilder.flexibleAppend(
                 metalReturnName, ' ', outputFunctionName, "() {\n"
-                "    ", metalReturnName, " x;\n"
-                "    ", memsetZeroFunctionName, "(x);\n"
+                "    ", metalReturnName, " x = { };\n"
                 "    return x;\n"
                 "}\n"
             );

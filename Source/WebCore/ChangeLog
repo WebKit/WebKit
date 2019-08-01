@@ -1,3 +1,19 @@
+2019-07-31  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Replace memsetZero function with inline "= { }" code
+        https://bugs.webkit.org/show_bug.cgi?id=200328
+
+        Reviewed by Robin Morisset.
+
+        This is a ~20ms metal compile time improvement on compute_boids.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::FunctionDefinitionWriter):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeFunction):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.h:
+
 2019-07-31  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r240942): first visually non-empty layout milestone is not reached in media documents until after the video finishes loading
