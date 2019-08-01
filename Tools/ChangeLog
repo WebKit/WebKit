@@ -1,5 +1,23 @@
 2019-08-01  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r248072. rdar://problem/52355829
+
+    Unreviewed test gardening, disable failing test for rdar://52355829.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ContextMenus.mm:
+    (TEST):
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@248072 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Unreviewed test gardening, disable failing test for rdar://52355829.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ContextMenus.mm:
+            (TEST):
+
+2019-08-01  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r248082. rdar://problem/51752593
 
     Unreviewed test gardening, disable failing test for rdar://51752593.
