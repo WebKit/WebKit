@@ -1897,5 +1897,8 @@
     ],
     "imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-twice.html": [
         "slow"
+    ],
+    "http/tests/paymentrequest/payment-response-reference-cycle-leak.https.html": [
+        "slow"
     ]
 }
