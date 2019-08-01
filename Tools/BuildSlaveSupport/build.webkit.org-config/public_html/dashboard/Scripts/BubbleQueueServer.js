@@ -31,9 +31,6 @@ BubbleQueueServer = function()
         "jsc-armv7-ews": {platform: Dashboard.Platform.LinuxJSCOnly, shortName: "jsc-armv7", title: "ARMv7\xa0Release\xa0Build\xa0EWS"},
         "jsc-ews": {platform: Dashboard.Platform.macOSMojave, shortName: "jsc", title: "Release\xa0JSC\xa0Tests\xa0EWS"},
         "jsc-mips-ews": {platform: Dashboard.Platform.LinuxJSCOnly, shortName: "jsc-mips-ews", title: "MIPS\xa0Release\xa0Build\xa0EWS"},
-        "mac-ews": {platform: Dashboard.Platform.macOSHighSierra, shortName: "mac", title: "WebKit1\xa0Release\xa0Tests\xa0EWS"},
-        "mac-wk2-ews": {platform: Dashboard.Platform.macOSHighSierra, shortName: "mac-wk2", title: "WebKit2\xa0Release\xa0Tests\xa0EWS"},
-        "mac-debug-ews": {platform: Dashboard.Platform.macOSHighSierra, shortName: "mac-debug", title: "WebKit1\xa0Debug\xa0Tests\xa0EWS"},
         "win-ews": {platform: Dashboard.Platform.Windows10, shortName: "win", title: "WebKit1\xa0Release\xa0Build\xa0EWS"},
     };
 

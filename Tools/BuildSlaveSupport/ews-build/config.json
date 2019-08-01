@@ -330,7 +330,7 @@
       "platform": "mac-highsierra",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "triggers": ["api-tests-mac-ews"],
+      "triggers": ["api-tests-mac-ews", "macos-high-sierra-release-wk1-tests-ews", "macos-high-sierra-release-wk2-tests-ews"],
       "workernames": ["ews118", "ews119", "ews120", "ews150"]
     },
     {
@@ -454,20 +454,34 @@
       "name": "try",
       "port": 5555,
       "builderNames": ["Bindings-Tests-EWS", "GTK-Webkit2-EWS", "iOS-12-Build-EWS", "iOS-12-Simulator-Build-EWS",
-                       "macOS-High-Sierra-Release-Build-EWS", "Services-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WPE-EWS", "WinCairo-EWS"]
+                       "macOS-High-Sierra-Debug-Build-EWS", "macOS-High-Sierra-Release-Build-EWS",
+                       "Services-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WPE-EWS", "WinCairo-EWS"]
     },
     {
       "type": "Try_Userpass",
       "name": "disabled",
       "port": 5556,
-      "builderNames": ["JSC-Tests-EWS", "macOS-High-Sierra-Release-WK2-Tests-EWS",
-                       "macOS-High-Sierra-Release-WK1-Tests-EWS", "macOS-High-Sierra-Debug-Build-EWS", "Style-EWS", "Windows-EWS"]
+      "builderNames": ["JSC-Tests-EWS", "Style-EWS", "Windows-EWS"]
     },
     {
       "type": "Triggerable",
       "name": "macos-high-sierra-debug-wk1-tests-ews",
       "builderNames": [
         "macOS-High-Sierra-Debug-WK1-Tests-EWS"
+      ]
+    },
+    {
+      "type": "Triggerable",
+      "name": "macos-high-sierra-release-wk1-tests-ews",
+      "builderNames": [
+        "macOS-High-Sierra-Release-WK1-Tests-EWS"
+      ]
+    },
+    {
+      "type": "Triggerable",
+      "name": "macos-high-sierra-release-wk2-tests-ews",
+      "builderNames": [
+        "macOS-High-Sierra-Release-WK2-Tests-EWS"
       ]
     },
     {

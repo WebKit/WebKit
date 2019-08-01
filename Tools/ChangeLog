@@ -1,3 +1,17 @@
+2019-07-31  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Enable all macOS queues on new EWS
+        https://bugs.webkit.org/show_bug.cgi?id=199944
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/config.json: Enabled the triggers for macOS queues.
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble): Enabled status-bubbles for mac queues, separated builders and testers bubbles in separate lines. Also
+        removed mac-32bit and mac-32bit-wk2 bubbles, these queues were removed from Buildbot configuration previously.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueServer.js: Removed mac queues from bot-watcher's dashboard.
+        * QueueStatusServer/config/queues.py: Removed mac queues from old EWS.
+
 2019-07-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, disable failing test for rdar://51752593.
