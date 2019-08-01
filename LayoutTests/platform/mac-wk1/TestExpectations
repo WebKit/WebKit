@@ -761,16 +761,4 @@ webkit.org/b/199242 [ Debug ] http/tests/performance/performance-resource-timing
 [ Catalina+ ] http/tests/security/svg-image-with-css-cross-domain.html [ ImageOnlyFailure ]
 [ Catalina+ ] imported/blink/svg/as-image/svgview-references.html [ ImageOnlyFailure ]
 
-# <rdar://problem/51528699> REGRESSION: [ Catalina WK1 ] compositing/clipping/cached-cliprect-with-compositing-boundary.html is failing
-[ Catalina+ ] compositing/clipping/cached-cliprect-with-compositing-boundary.html [ ImageOnlyFailure ]
-
-# <rdar://problem/51529302> REGRESSION: [ Catalina WK1 ] svg/dom/complex-svgView-specification.html is failing
-[ Catalina+ ] svg/dom/complex-svgView-specification.html [ ImageOnlyFailure ]
-
-# <rdar://problem/51529218> REGRESSION: [ Catalina WK1 ] fast/replaced/outline-replaced-elements-offset.html is failing
-[ Catalina+ ] fast/replaced/outline-replaced-elements-offset.html [ ImageOnlyFailure ]
-
-# <rdar://problem/51529033> REGRESSION: [ Catalina WK1 ] compositing/geometry/composited-frame-contents.html is failing
-[ Catalina+ ] compositing/geometry/composited-frame-contents.html  [ ImageOnlyFailure ]
-
 webkit.org/b/200002 [ Mojave+ Debug ] imported/blink/storage/indexeddb/blob-basics-metadata.html [ Timeout ]

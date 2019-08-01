@@ -1,3 +1,12 @@
+2019-08-01  Truitt Savell  <tsavell@apple.com>
+
+        Removing expectations for tests that are now consistently passing
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2019-08-01  Youenn Fablet  <youenn@apple.com>
 
         UserMediaPermissionRequestManagerProxy should not use audio+video denied requests to deny audio-only or video-only requests

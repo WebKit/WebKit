@@ -1098,8 +1098,6 @@ webkit.org/b/156634 inspector/formatting/formatting-javascript.html [ Pass Timeo
 webkit.org/b/158948 inspector/timeline [ Pass Timeout ]
 webkit.org/b/191539 http/tests/inspector/network/resource-security-connection.html [ Skip ]
 
-webkit.org/b/187622 [ Debug ] inspector/view/asynchronous-layout.html [ Pass Timeout ]
-
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
 # Touch events are not enabled on Mac
@@ -1387,7 +1385,6 @@ media/modern-media-controls/scrubber-support/ipad [ Skip ]
 webkit.org/b/169876 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html [ Pass Timeout ]
 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html [ Pass Failure ]
 media/modern-media-controls/media-controller/media-controller-auto-hide-pause.html [ Pass Failure ]
-webkit.org/b/187420 media/modern-media-controls/media-controller/media-controller-auto-hide-rewind-with-mouse-enter.html [ Pass Timeout ]
 media/modern-media-controls/media-controller/media-controller-auto-hide.html [ Pass Failure ]
 
 webkit.org/b/178126 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html [ Skip ]
