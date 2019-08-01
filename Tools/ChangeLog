@@ -1,3 +1,17 @@
+2019-08-01  Youenn Fablet  <youenn@apple.com>
+
+        UserMediaPermissionRequestManagerProxy should not use audio+video denied requests to deny audio-only or video-only requests
+        https://bugs.webkit.org/show_bug.cgi?id=200317
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKit/getUserMediaAudioVideoCapture.html: Added
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaReprompt.mm:
+        (-[GetUserMediaOnlyAudioUIDelegate _webView:requestMediaCaptureAuthorization:decisionHandler:]):
+        (-[GetUserMediaOnlyAudioUIDelegate _webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:]):
+        (TestWebKitAPI::TEST):
+
 2019-08-01  Aakash Jain  <aakash_jain@apple.com>
 
         New EWS: Cannot see build status page when patch is waiting for tester

@@ -291,11 +291,20 @@ bool UserMediaPermissionRequestManagerProxy::wasRequestDenied(uint64_t mainFrame
             continue;
         if (deniedRequest.mainFrameID != mainFrameID)
             continue;
+
+        if (deniedRequest.isScreenCaptureDenied && needsScreenCapture)
+            return true;
+
+        // In case we asked for both audio and video, maybe the callback would have returned true for just audio or just video.
+        if (deniedRequest.isAudioDenied && deniedRequest.isVideoDenied) {
+            if (needsAudio && needsVideo)
+                return true;
+            continue;
+        }
+
         if (deniedRequest.isAudioDenied && needsAudio)
             return true;
         if (deniedRequest.isVideoDenied && needsVideo)
-            return true;
-        if (deniedRequest.isScreenCaptureDenied && needsScreenCapture)
             return true;
     }
     return false;
