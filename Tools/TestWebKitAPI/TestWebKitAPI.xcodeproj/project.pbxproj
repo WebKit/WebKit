@@ -3,10 +3,21 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		537CF84322EFD64100C6EBB3 /* Apply Configuration to XCFileLists */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 537CF84622EFD64100C6EBB3 /* Build configuration list for PBXAggregateTarget "Apply Configuration to XCFileLists" */;
+			buildPhases = (
+				537CF84722EFD65000C6EBB3 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Apply Configuration to XCFileLists";
+			productName = "Apply Configuration to XCFileLists";
+		};
 		5C9D921422D7DA02008E9266 /* Generate Unified Sources */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 5C9D921922D7DA02008E9266 /* Build configuration list for PBXAggregateTarget "Generate Unified Sources" */;
@@ -22,6 +33,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 7C83E02C1D0A5E1000FEBCF3 /* Build configuration list for PBXAggregateTarget "All" */;
 			buildPhases = (
+				537CF84822EFD72000C6EBB3 /* Check .xcfilelists */,
 			);
 			dependencies = (
 				7C83E0301D0A5E1B00FEBCF3 /* PBXTargetDependency */,
@@ -4067,6 +4079,9 @@
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 1000;
 				TargetAttributes = {
+					537CF84322EFD64100C6EBB3 = {
+						CreatedOnToolsVersion = 11.0;
+					};
 					7C83E02B1D0A5E1000FEBCF3 = {
 						CreatedOnToolsVersion = 8.0;
 						ProvisioningStyle = Automatic;
@@ -4106,6 +4121,7 @@
 				7C83DF951D0A5AE400FEBCF3 /* TestWTF */,
 				BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */,
 				A13EBB481B87339E00097110 /* WebProcessPlugIn */,
+				537CF84322EFD64100C6EBB3 /* Apply Configuration to XCFileLists */,
 			);
 		};
 /* End PBXProject section */
@@ -4121,6 +4137,41 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		537CF84722EFD65000C6EBB3 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "eval \"${WK_SUBLAUNCH_SCRIPT_PARAMETERS[@]}\"\n";
+		};
+		537CF84822EFD72000C6EBB3 /* Check .xcfilelists */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Check .xcfilelists";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/check-xcfilelists.sh\n";
+		};
 		5C9D921C22D7DA33008E9266 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -4134,9 +4185,9 @@
 				"$(SRCROOT)/SourcesCocoa.txt",
 			);
 			outputFileListPaths = (
+				"$(SRCROOT)/UnifiedSources-output.xcfilelist",
 			);
 			outputPaths = (
-				"$(SRCROOT)/UnifiedSources-output.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -4900,6 +4951,22 @@
 			};
 			name = Release;
 		};
+		537CF84422EFD64100C6EBB3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		537CF84522EFD64100C6EBB3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		5C9D921A22D7DA02008E9266 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -5015,6 +5082,15 @@
 			buildConfigurations = (
 				1DEB927908733DD40010E9CD /* Debug */,
 				1DEB927A08733DD40010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		537CF84622EFD64100C6EBB3 /* Build configuration list for PBXAggregateTarget "Apply Configuration to XCFileLists" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				537CF84422EFD64100C6EBB3 /* Debug */,
+				537CF84522EFD64100C6EBB3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -1,3 +1,30 @@
+2019-08-01  Keith Rollin  <krollin@apple.com>
+
+        Update TestWebKitAPI for XCBuild
+        https://bugs.webkit.org/show_bug.cgi?id=200311
+        <rdar://problem/53773804>
+
+        Reviewed by Alex Christensen.
+
+        Bug 199728 (svn 247402) updated TestWebKitAPI to use the unified-build
+        technique. Now update WebKitLegacy to build under XCBuild after those
+        changes. This work involves adding an "Apply Configuration to
+        XCFileLists" build target, adding a check-xcfilelists.sh script,
+        adding a "Check xcfilelists" build phase that calls that script,
+        adding knowledge of the project to the generate-xcfilelists script,
+        creating new .xcfilelist files, and adding those to the project.
+
+        * Scripts/webkitpy/generate_xcfilelists_lib/application.py:
+        (Application.__init__):
+        * Scripts/webkitpy/generate_xcfilelists_lib/generators.py:
+        (WebKitTestRunnerGenerator._get_generate_derived_sources_script):
+        (TestWebKitAPIGenerator):
+        (TestWebKitAPIGenerator._get_project_file_path):
+        (TestWebKitAPIGenerator._get_generate_unified_sources_script):
+        * TestWebKitAPI/Scripts/check-xcfilelists.sh: Added.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/UnifiedSources-output.xcfilelist: Added.
+
 2019-08-01  Youenn Fablet  <youenn@apple.com>
 
         UserMediaPermissionRequestManagerProxy should not use audio+video denied requests to deny audio-only or video-only requests

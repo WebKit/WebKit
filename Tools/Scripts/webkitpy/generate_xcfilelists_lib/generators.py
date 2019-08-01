@@ -739,3 +739,16 @@ class WebKitTestRunnerGenerator(BaseGenerator):
     @util.LogEntryExit
     def _get_generate_derived_sources_script(self):
         return os.path.join(self._get_project_dir(), "Scripts", "generate-derived-sources.sh")
+
+
+class TestWebKitAPIGenerator(BaseGenerator):
+    VALID_PLATFORMS = ("macosx", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator")
+    VALID_CONFIGURATIONS = ("Debug", "Release", "Production")
+
+    @util.LogEntryExit
+    def _get_project_file_path(self):
+        return os.path.join(self.application.get_opensource_dir(), "Tools", "TestWebKitAPI", "TestWebKitAPI.xcodeproj")
+
+    @util.LogEntryExit
+    def _get_generate_unified_sources_script(self):
+        return os.path.join(self._get_project_dir(), "Scripts", "generate-unified-sources.sh")
