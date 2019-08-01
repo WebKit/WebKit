@@ -5,6 +5,8 @@
     </head>
     <body>
         <script>
+if (window.internals)
+    internals.invalidateFontCache();
 if (window.testRunner)
     testRunner.installFakeHelvetica("SingleExtendedCharacter");
         </script>

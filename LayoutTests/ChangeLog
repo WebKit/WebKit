@@ -1,5 +1,71 @@
 2019-07-31  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r248071. rdar://problem/53789003
+
+    Use CTFontCreateForCharactersWithLanguageAndOption if available instead of CTFontCreateForCharactersWithLanguage
+    https://bugs.webkit.org/show_bug.cgi?id=200241
+    
+    Source/WebCore:
+    
+    Reviewed by Myles C. Maxfield.
+    
+    We can use CTFontCreateForCharactersWithLanguageAndOption instead of CTFontCreateForCharactersWithLanguage
+    as it allows setting more easily the fallback option.
+    This allows us to never fallback to user installed fonts.
+    In such a case, we no longer need to wrap the fonts to change the fallback option.
+    We also prewarm the fonts with the same SPI and use system fallback as the default value.
+    
+    Covered by existing tests.
+    
+    * platform/graphics/cocoa/FontCacheCoreText.cpp:
+    (WebCore::preparePlatformFont):
+    (WebCore::lookupFallbackFont):
+    (WebCore::FontCache::systemFallbackForCharacters):
+    (WebCore::FontCache::prewarm):
+    (WebCore::fontFamiliesForPrewarming):
+    
+    Source/WebCore/PAL:
+    
+    Reviewed by Myles C. Maxfield.
+    
+    Add new SPI.
+    
+    * pal/spi/cocoa/CoreTextSPI.h:
+    
+    Source/WTF:
+    
+    Reviewed by Myles C. Maxfield.
+    
+    * wtf/Platform.h: Add macro to enable/disable new SPI.
+    
+    LayoutTests:
+    
+    We update the tests to flush font caches as otherwise some debug asserts would be hit.
+    This is due to changing the user installed font runtime flag while browsing which is not a typical situation.
+    
+    Reviewed by Myles C. Maxfield.
+    
+    * fast/text/user-installed-fonts/extended-character-with-user-font.html:
+    * fast/text/user-installed-fonts/extended-character.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248071 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-31  Youenn Fablet  <youenn@apple.com>
+
+            Use CTFontCreateForCharactersWithLanguageAndOption if available instead of CTFontCreateForCharactersWithLanguage
+            https://bugs.webkit.org/show_bug.cgi?id=200241
+
+            We update the tests to flush font caches as otherwise some debug asserts would be hit.
+            This is due to changing the user installed font runtime flag while browsing which is not a typical situation.
+
+            Reviewed by Myles C. Maxfield.
+
+            * fast/text/user-installed-fonts/extended-character-with-user-font.html:
+            * fast/text/user-installed-fonts/extended-character.html:
+
+2019-07-31  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r248046. rdar://problem/53788952
 
     Owners of MultiChannelResampler should make sure that the output bus given to it has the same number of channels
