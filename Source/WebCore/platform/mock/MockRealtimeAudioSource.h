@@ -45,6 +45,8 @@ public:
     static CaptureSourceOrError create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints*);
     virtual ~MockRealtimeAudioSource();
 
+    WEBCORE_EXPORT void setChannelCount(unsigned);
+
 protected:
     MockRealtimeAudioSource(String&& deviceID, String&& name, String&& hashSalt);
 
@@ -64,11 +66,13 @@ private:
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Microphone; }
 
     void delaySamples(Seconds) final;
+    bool isMockSource() const final { return true; }
 
     void tick();
 
 protected:
     Ref<WorkQueue> m_workQueue;
+    unsigned m_channelCount { 2 };
 
 private:
     Optional<RealtimeMediaSourceCapabilities> m_capabilities;
@@ -84,5 +88,10 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MockRealtimeAudioSource)
+    static bool isType(const WebCore::RealtimeMediaSource& source) { return source.isCaptureSource() && source.isMockSource() && source.deviceType() == WebCore::CaptureDevice::DeviceType::Microphone; }
+SPECIALIZE_TYPE_TRAITS_END()
+
 
 #endif // ENABLE(MEDIA_STREAM)

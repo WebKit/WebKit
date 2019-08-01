@@ -38,6 +38,33 @@ promise_test((test) => {
         });
     });
 }, "Plugging in getUserMedia audio stream into Web Audio");
+
+function waitFor(duration)
+{
+    return new Promise(resolve => setTimeout(resolve, duration));
+}
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return Promise.reject("Internals API required");
+
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: {deviceId: true}});
+    internals.setMockAudioTrackChannelNumber(stream.getAudioTracks()[0], 1);
+
+    var audioContext = new webkitAudioContext();
+    var script = audioContext.createScriptProcessor(2048, 1, 1);
+    let source = audioContext.createMediaStreamSource(stream);
+    source.connect(script);
+    script.connect(audioContext.destination);
+
+    await waitFor(200);
+
+    internals.setMockAudioTrackChannelNumber(stream.getAudioTracks()[0], 2);
+    await waitFor(200);
+
+    source.disconnect(script);
+    script.disconnect(audioContext.destination);
+}, "Web Audio should work even if number of channels of a track increases from 1 to 2");
         </script>
     </body>
 </html>

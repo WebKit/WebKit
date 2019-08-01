@@ -78,6 +78,8 @@ private:
 
     void generatePresets() final;
 
+    bool isMockSource() const final { return true; }
+
     // OrientationNotifier::Observer
     void orientationChanged(int orientation) final;
     void monitorOrientation(OrientationNotifier&) final;

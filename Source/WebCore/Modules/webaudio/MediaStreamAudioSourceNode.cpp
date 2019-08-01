@@ -126,6 +126,10 @@ void MediaStreamAudioSourceNode::process(size_t numberOfFrames)
         outputBus->zero();
         return;
     }
+    if (m_sourceNumberOfChannels != outputBus->numberOfChannels()) {
+        outputBus->zero();
+        return;
+    }
 
     if (m_multiChannelResampler.get()) {
         ASSERT(m_sourceSampleRate != sampleRate());
