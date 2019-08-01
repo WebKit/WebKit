@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,11 +37,13 @@ namespace JSC { namespace DOMJIT {
 #define JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS 2
 #define JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS_INCLUDING_THIS (1 + JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS)
 
+using FunctionWithoutTypeCheck = void (*)();
+
 class Signature {
 public:
     template<typename... Arguments>
-    constexpr Signature(uintptr_t unsafeFunction, const ClassInfo* classInfo, Effect effect, SpeculatedType result, Arguments... arguments)
-        : unsafeFunction(unsafeFunction)
+    constexpr Signature(FunctionWithoutTypeCheck functionWithoutTypeCheck, const ClassInfo* classInfo, Effect effect, SpeculatedType result, Arguments... arguments)
+        : functionWithoutTypeCheck(functionWithoutTypeCheck)
         , classInfo(classInfo)
         , result(result)
         , arguments {static_cast<SpeculatedType>(arguments)...}
@@ -50,7 +52,7 @@ public:
     {
     }
 
-    uintptr_t unsafeFunction;
+    FunctionWithoutTypeCheck functionWithoutTypeCheck;
     const ClassInfo* const classInfo;
     const SpeculatedType result;
     const SpeculatedType arguments[JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS];

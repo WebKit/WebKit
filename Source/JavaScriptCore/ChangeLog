@@ -1,3 +1,36 @@
+2019-07-31  Mark Lam  <mark.lam@apple.com>
+
+        Rename DOMJIT safe/unsafeFunction to functionWithTypeChecks and functionWithoutTypeChecks.
+        https://bugs.webkit.org/show_bug.cgi?id=200323
+
+        Reviewed by Yusuke Suzuki.
+
+        The DOMJIT has a notion of a safeFunction and an unsafeFunction.  The safeFunction
+        is effectively the same as the unsafeFunction with added type check.  The DFG/FTL
+        will emit code to call the unsafeFunction if it has already emitted the needed
+        type check or proven that it isn't needed.  Otherwise, the DFG/FTL will emit
+        code to call the safeFunction (which does its own type check) instead.
+
+        This patch renames these functions to better describe their difference.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCallDOM):
+        * domjit/DOMJITSignature.h:
+        (JSC::DOMJIT::Signature::Signature):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOM):
+        * tools/JSDollarVM.cpp:
+        (JSC::DOMJITFunctionObject::functionWithTypeCheck):
+        (JSC::DOMJITFunctionObject::functionWithoutTypeCheck):
+        (JSC::DOMJITFunctionObject::finishCreation):
+        (JSC::DOMJITCheckSubClassObject::functionWithTypeCheck):
+        (JSC::DOMJITCheckSubClassObject::functionWithoutTypeCheck):
+        (JSC::DOMJITCheckSubClassObject::finishCreation):
+        (JSC::DOMJITFunctionObject::safeFunction): Deleted.
+        (JSC::DOMJITFunctionObject::unsafeFunction): Deleted.
+        (JSC::DOMJITCheckSubClassObject::safeFunction): Deleted.
+        (JSC::DOMJITCheckSubClassObject::unsafeFunction): Deleted.
+
 2019-07-31  Alex Christensen  <achristensen@webkit.org>
 
         Begin organizing b3 tests

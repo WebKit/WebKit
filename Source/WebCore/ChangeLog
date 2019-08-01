@@ -1,3 +1,31 @@
+2019-07-31  Mark Lam  <mark.lam@apple.com>
+
+        Rename DOMJIT safe/unsafeFunction to functionWithTypeChecks and functionWithoutTypeChecks.
+        https://bugs.webkit.org/show_bug.cgi?id=200323
+
+        Reviewed by Yusuke Suzuki.
+
+        No new tests.  This is just a refactoring exercise.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetArgumentTypeForFunctionWithoutTypeCheck):
+        (GenerateImplementation):
+        (GenerateOperationDefinition):
+        (ToNativeForFunctionWithoutTypeCheck):
+        (GetUnsafeArgumentType): Deleted.
+        (UnsafeToNative): Deleted.
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        (WebCore::jsTestDOMJITPrototypeFunctionGetAttributeWithoutTypeCheck):
+        (WebCore::jsTestDOMJITPrototypeFunctionItemWithoutTypeCheck):
+        (WebCore::jsTestDOMJITPrototypeFunctionHasAttributeWithoutTypeCheck):
+        (WebCore::jsTestDOMJITPrototypeFunctionGetElementByIdWithoutTypeCheck):
+        (WebCore::jsTestDOMJITPrototypeFunctionGetElementsByNameWithoutTypeCheck):
+        (WebCore::unsafeJsTestDOMJITPrototypeFunctionGetAttribute): Deleted.
+        (WebCore::unsafeJsTestDOMJITPrototypeFunctionItem): Deleted.
+        (WebCore::unsafeJsTestDOMJITPrototypeFunctionHasAttribute): Deleted.
+        (WebCore::unsafeJsTestDOMJITPrototypeFunctionGetElementById): Deleted.
+        (WebCore::unsafeJsTestDOMJITPrototypeFunctionGetElementsByName): Deleted.
+
 2019-08-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] WebSockets: add support for extensions when using web sockets libsoup API

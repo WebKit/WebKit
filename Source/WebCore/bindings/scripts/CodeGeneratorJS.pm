@@ -3818,7 +3818,7 @@ sub addUnscopableProperties
     push(@implContent, "    putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, &unscopables, JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly);\n");
 }
 
-sub GetUnsafeArgumentType
+sub GetArgumentTypeForFunctionWithoutTypeCheck
 {
     my ($interface, $type) = @_;
 
@@ -3942,11 +3942,11 @@ sub GenerateImplementation
             push(@implContent, "JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState*);\n");
             if ($operation->extendedAttributes->{DOMJIT}) {
                 $implIncludes{"DOMJITIDLType.h"} = 1;
-                my $unsafeFunctionName = "unsafe" . $codeGenerator->WK_ucfirst($functionName);
-                my $functionSignature = "JSC::EncodedJSValue JIT_OPERATION ${unsafeFunctionName}(JSC::ExecState*, $className*";
+                my $nameOfFunctionWithoutTypeCheck = $codeGenerator->WK_lcfirst($functionName) . "WithoutTypeCheck";
+                my $functionSignature = "JSC::EncodedJSValue JIT_OPERATION ${nameOfFunctionWithoutTypeCheck}(JSC::ExecState*, $className*";
                 foreach my $argument (@{$operation->arguments}) {
                     my $type = $argument->type;
-                    my $argumentType = GetUnsafeArgumentType($interface, $type);
+                    my $argumentType = GetArgumentTypeForFunctionWithoutTypeCheck($interface, $type);
                     $functionSignature .= ", ${argumentType}";
                 }
                 push(@implContent, $functionSignature . ");\n");
@@ -4005,11 +4005,11 @@ sub GenerateImplementation
 
             my $interfaceName = $interface->type->name;
             my $functionName = GetFunctionName($interface, $className, $operation);
-            my $unsafeFunctionName = "unsafe" . $codeGenerator->WK_ucfirst($functionName);
+            my $nameOfFunctionWithoutTypeCheck = $codeGenerator->WK_lcfirst($functionName) . "WithoutTypeCheck";
             my $domJITSignatureName = "DOMJITSignatureFor" . $interface->type->name . $codeGenerator->WK_ucfirst($operation->name);
             my $classInfo = "JS" . $interface->type->name . "::info()";
             my $resultType = GetResultTypeFilter($interface, $operation->type);
-            my $domJITSignatureHeader = "static const JSC::DOMJIT::Signature ${domJITSignatureName}((uintptr_t)${unsafeFunctionName},";
+            my $domJITSignatureHeader = "static const JSC::DOMJIT::Signature ${domJITSignatureName}((JSC::DOMJIT::FunctionWithoutTypeCheck)${nameOfFunctionWithoutTypeCheck},";
             my $domJITSignatureFooter = "$classInfo, JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), ${resultType}";
             foreach my $argument (@{$operation->arguments}) {
                 my $type = $argument->type;
@@ -5290,11 +5290,11 @@ sub GenerateOperationDefinition
         }
 
         AddToImplIncludes("<JavaScriptCore/FrameTracers.h>", $conditional);
-        my $unsafeFunctionName = "unsafe" . $codeGenerator->WK_ucfirst($functionName);
-        push(@$outputArray, "JSC::EncodedJSValue JIT_OPERATION ${unsafeFunctionName}(JSC::ExecState* state, $className* castedThis");
+        my $nameOfFunctionWithoutTypeCheck = $codeGenerator->WK_lcfirst($functionName) . "WithoutTypeCheck";
+        push(@$outputArray, "JSC::EncodedJSValue JIT_OPERATION ${nameOfFunctionWithoutTypeCheck}(JSC::ExecState* state, $className* castedThis");
         foreach my $argument (@{$operation->arguments}) {
             my $type = $argument->type;
-            my $argumentType = GetUnsafeArgumentType($interface, $type);
+            my $argumentType = GetArgumentTypeForFunctionWithoutTypeCheck($interface, $type);
             my $name = $argument->name;
             my $encodedName = "encoded" . $codeGenerator->WK_ucfirst($name);
             push(@$outputArray, ", ${argumentType} ${encodedName}");
@@ -5320,7 +5320,7 @@ sub GenerateOperationDefinition
             my $encodedName = "encoded" . $codeGenerator->WK_ucfirst($name);
             my $shouldPassByReference = ShouldPassArgumentByReference($argument);
 
-            my ($nativeValue, $mayThrowException) = UnsafeToNative($interface, $argument, $encodedName, $operation->extendedAttributes->{Conditional});
+            my ($nativeValue, $mayThrowException) = ToNativeForFunctionWithoutTypeCheck($interface, $argument, $encodedName, $operation->extendedAttributes->{Conditional});
             push(@$outputArray, "    auto $name = ${nativeValue};\n");
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $mayThrowException;
             $value = "WTFMove($name)";
@@ -6609,7 +6609,7 @@ sub JSValueToNative
     return "convert<$IDLType>(" . join(", ", @conversionArguments) . ")";
 }
 
-sub UnsafeToNative
+sub ToNativeForFunctionWithoutTypeCheck
 {
     my ($interface, $context, $value, $conditional, $statePointer, $stateReference, $thisObjectReference) = @_;
 
