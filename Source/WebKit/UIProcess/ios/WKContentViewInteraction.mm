@@ -7993,7 +7993,7 @@ static UIMenu *menuWithShowLinkPreviewAction(UIMenu *originalMenu)
                 if (!strongSelf)
                     return nil;
 
-                return [[WKImagePreviewViewController alloc] initWithCGImage:cgImage defaultActions:nil elementInfo:elementInfo.get()];
+                return [[[WKImagePreviewViewController alloc] initWithCGImage:cgImage defaultActions:nil elementInfo:elementInfo.get()] autorelease];
             };
 
             return continueWithContextMenuConfiguration([UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:contentPreviewProvider actionProvider:actionMenuProvider]);

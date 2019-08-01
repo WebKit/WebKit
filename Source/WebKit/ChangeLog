@@ -1,3 +1,33 @@
+2019-08-01  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r248085. rdar://problem/53825741
+
+    WKImagePreviewViewController not being autoreleased
+    https://bugs.webkit.org/show_bug.cgi?id=200325
+    <rdar://problem/53788214>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Wenson noticed I wasn't autoreleasing the WKImagePreviewViewController.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView continueContextMenuInteraction:]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248085 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-31  Dean Jackson  <dino@apple.com>
+
+            WKImagePreviewViewController not being autoreleased
+            https://bugs.webkit.org/show_bug.cgi?id=200325
+            <rdar://problem/53788214>
+
+            Reviewed by Wenson Hsieh.
+
+            Wenson noticed I wasn't autoreleasing the WKImagePreviewViewController.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView continueContextMenuInteraction:]):
+
 2019-07-31  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r248039. rdar://problem/53788996
