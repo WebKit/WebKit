@@ -32,7 +32,6 @@
 #include "WHLSLUnnamedType.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Nonmovable.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -45,7 +44,6 @@ namespace AST {
 class ArrayType final : public UnnamedType {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ArrayType);
-    WTF_MAKE_NONMOVABLE(ArrayType);
     ArrayType(CodeLocation location, Ref<UnnamedType> elementType, unsigned numElements)
         : UnnamedType(location)
         , m_elementType(WTFMove(elementType))

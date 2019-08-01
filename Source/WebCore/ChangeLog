@@ -1,3 +1,23 @@
+2019-07-31  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Remove UnnamedType copy/move constructors and mark classes as final
+        https://bugs.webkit.org/show_bug.cgi?id=200188
+        <rdar://problem/53628171>
+
+        Unreviewed followup.
+
+        As Darin pointed out in the bugzilla comments, when defining a copy
+        constructor in C++ (either deleted or an implementation), the move
+        constructor is implicitly deleted. This match removes the excessive
+        use of WTF_MAKE_NONMOVABLE when we're already using WTF_MAKE_NONCOPYABLE.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayReferenceType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLPointerType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLReferenceType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeReference.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.h:
+
 2019-07-31  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] twitch.tv video controls do not always respond to taps in fullscreen

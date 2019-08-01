@@ -43,7 +43,6 @@ namespace AST {
 class ReferenceType : public UnnamedType {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ReferenceType);
-    WTF_MAKE_NONMOVABLE(ReferenceType);
 protected:
     ReferenceType(CodeLocation location, AddressSpace addressSpace, Ref<UnnamedType> elementType)
         : UnnamedType(location)

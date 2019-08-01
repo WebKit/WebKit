@@ -31,7 +31,6 @@
 #include "WHLSLType.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Nonmovable.h>
 #include <wtf/RefCounted.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
@@ -45,7 +44,6 @@ namespace AST {
 class UnnamedType : public Type, public RefCounted<UnnamedType> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(UnnamedType);
-    WTF_MAKE_NONMOVABLE(UnnamedType);
 public:
     UnnamedType(CodeLocation location)
         : m_codeLocation(location)
