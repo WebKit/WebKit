@@ -62,6 +62,8 @@ public:
 
     template<typename T> typename T::WeakValueType* get()
     {
+        // FIXME: We need to fix thread-safety bugs in WebCore and stop being more permissive for GC threads here.
+        ASSERT(Thread::mayBeGCThread() || m_wasConstructedOnMainThread == isMainThread());
         return static_cast<typename T::WeakValueType*>(m_ptr);
     }
 
@@ -71,11 +73,17 @@ public:
 private:
     template<typename T> explicit WeakPtrImpl(T* ptr)
         : m_ptr(static_cast<typename T::WeakValueType*>(ptr))
+#if !ASSERT_DISABLED
+        , m_wasConstructedOnMainThread(isMainThread())
+#endif
     {
         DID_CREATE_WEAK_PTR_IMPL(ptr);
     }
 
     void* m_ptr;
+#if !ASSERT_DISABLED
+    bool m_wasConstructedOnMainThread;
+#endif
 };
 
 template<typename T>

@@ -1,3 +1,17 @@
+2019-08-01  Chris Dumez  <cdumez@apple.com>
+
+        Add threading assertion to WeakPtr's operator->()
+        https://bugs.webkit.org/show_bug.cgi?id=199922
+
+        Reviewed by Ryosuke Niwa.
+
+        Add threading assertion to WeakPtr's operator->() to make sure that the WeakPtr
+        always gets dereferenced on the same thread it was constructed on.
+
+        * wtf/WeakPtr.h:
+        (WTF::WeakPtrImpl::get):
+        (WTF::WeakPtrImpl::WeakPtrImpl):
+
 2019-07-31  Youenn Fablet  <youenn@apple.com>
 
         Use CTFontCreateForCharactersWithLanguageAndOption if available instead of CTFontCreateForCharactersWithLanguage
