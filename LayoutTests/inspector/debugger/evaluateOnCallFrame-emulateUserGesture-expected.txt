@@ -1,0 +1,13 @@
+Tests for Debugger.evaluateOnCallFrame emulateUserGesture option.
+
+
+== Running test suite: Debugger.evaluateOnCallFrame.emulateUserGesture
+-- Running test case: EvaluateWithoutEmulatingUserGesture
+Before debugger
+Not in User Gesture
+After debugger
+-- Running test case: EvaluateWithEmulatingUserGesture
+Before debugger
+In User Gesture
+After debugger
+

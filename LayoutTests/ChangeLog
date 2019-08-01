@@ -1,3 +1,27 @@
+2019-07-31  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debugger: support emulateUserGesture parameter in Debugger.evaluateOnCallFrame
+        https://bugs.webkit.org/show_bug.cgi?id=200272
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/debugger/evaluateOnCallFrame-emulateUserGesture.html: Added.
+        * inspector/debugger/evaluateOnCallFrame-emulateUserGesture-expected.txt: Added.
+        * inspector/debugger/evaluateOnCallFrame-emulateUserGesture-userIsInteracting.html: Added.
+        * inspector/debugger/evaluateOnCallFrame-emulateUserGesture-userIsInteracting-expected.txt: Added.
+        * TestExpectations:
+        * platform/wk2/TestExpectations:
+
+        * inspector/runtime/evaluate-emulateUserGesture.html: Added.
+        * inspector/runtime/evaluate-emulateUserGesture-expected.txt: Added.
+        * inspector/runtime/evaluate-emulateUserGesture-userIsInteracting.html: Added.
+        * inspector/runtime/evaluate-emulateUserGesture-userIsInteracting-expected.txt: Added.
+        * inspector/runtime/evaluate-userGestureEmulation.html: Deleted.
+        * inspector/runtime/evaluate-userGestureEmulation-expected.txt: Deleted.
+        * inspector/runtime/evaluate-userGestureEmulation-userIsInteracting.html: Deleted.
+        * inspector/runtime/evaluate-userGestureEmulation-userIsInteracting-expected.txt: Deleted.
+        Rename tests from "userGestureEmulation" to "emulateUserGesture" to match the parameter.
+
 2019-07-31  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] twitch.tv video controls do not always respond to taps in fullscreen

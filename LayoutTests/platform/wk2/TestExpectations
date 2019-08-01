@@ -499,7 +499,8 @@ http/tests/security/feed-urls-from-remote.html
 fast/preloader/document-write-2.html [ Pass Failure ]
 
 # User interaction is a WK2 concept.
-inspector/runtime/evaluate-userGestureEmulation-userIsInteracting.html [ Skip ]
+inspector/debugger/evaluateOnCallFrame-emulateUserGesture-userIsInteracting.html [ Skip ]
+inspector/runtime/evaluate-emulateUserGesture-userIsInteracting.html [ Skip ]
 
 ### END OF (3) Unclassified failures
 ########################################

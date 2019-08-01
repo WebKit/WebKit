@@ -133,7 +133,8 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
 
         if (WI.debuggerManager.activeCallFrame) {
             // COMPATIBILITY (iOS 8): "saveResult" did not exist.
-            target.DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WI.debuggerManager.activeCallFrame.id, expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, saveResult}, evalCallback.bind(this), target.DebuggerAgent);
+            // COMPATIBILITY (iOS 13): "emulateUserGesture" did not exist.
+            target.DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WI.debuggerManager.activeCallFrame.id, expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, saveResult, emulateUserGesture}, evalCallback.bind(this), target.DebuggerAgent);
             return;
         }
 

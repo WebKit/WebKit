@@ -33,6 +33,8 @@
 #include "PageDebuggerAgent.h"
 
 #include "CachedResource.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "EventListener.h"
 #include "EventTarget.h"
@@ -45,12 +47,13 @@
 #include "ScriptExecutionContext.h"
 #include "ScriptState.h"
 #include "Timer.h"
+#include "UserGestureIndicator.h"
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <wtf/NeverDestroyed.h>
-
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -60,6 +63,28 @@ PageDebuggerAgent::PageDebuggerAgent(PageAgentContext& context)
     : WebDebuggerAgent(context)
     , m_inspectedPage(context.inspectedPage)
 {
+}
+
+void PageDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex)
+{
+    auto& pageChromeClient = m_inspectedPage.chrome().client();
+
+    auto shouldEmulateUserGesture = emulateUserGesture && *emulateUserGesture;
+
+    Optional<ProcessingUserGestureState> userGestureState = shouldEmulateUserGesture ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt;
+    UserGestureIndicator gestureIndicator(userGestureState);
+
+    bool userWasInteracting = false;
+    if (shouldEmulateUserGesture) {
+        userWasInteracting = pageChromeClient.userIsInteracting();
+        if (!userWasInteracting)
+            pageChromeClient.setUserIsInteracting(true);
+    }
+
+    WebDebuggerAgent::evaluateOnCallFrame(errorString, callFrameId, expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, saveResult, emulateUserGesture, result, wasThrown, savedResultIndex);
+
+    if (shouldEmulateUserGesture && !userWasInteracting && pageChromeClient.userIsInteracting())
+        pageChromeClient.setUserIsInteracting(false);
 }
 
 void PageDebuggerAgent::enable()

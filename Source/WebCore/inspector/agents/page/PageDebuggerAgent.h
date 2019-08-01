@@ -49,20 +49,20 @@ public:
     PageDebuggerAgent(PageAgentContext&);
     virtual ~PageDebuggerAgent() = default;
 
-    void didClearMainFrameWindowObject();
+    // DebuggerBackendDispatcherHandler
+    void evaluateOnCallFrame(ErrorString&, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex) final;
 
+    // InspectorInstrumentation
+    void didClearMainFrameWindowObject();
     void mainFrameStartedLoading();
     void mainFrameStoppedLoading();
     void mainFrameNavigated();
-
     void didRequestAnimationFrame(int callbackId, Document&);
     void willFireAnimationFrame(int callbackId);
     void didCancelAnimationFrame(int callbackId);
-
     void didAddEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     void willRemoveEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     void willHandleEvent(const RegisteredEventListener&);
-
     void didPostMessage(const TimerBase&, JSC::ExecState&);
     void didFailPostMessage(const TimerBase&);
     void willDispatchPostMessage(const TimerBase&);
