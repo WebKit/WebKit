@@ -1,3 +1,91 @@
+2019-07-31  Alex Christensen  <achristensen@webkit.org>
+
+        Begin organizing b3 tests
+        https://bugs.webkit.org/show_bug.cgi?id=200330
+
+        Reviewed by Keith Miller.
+
+        * b3/testb3.h:
+        * b3/testb3_1.cpp:
+        (run):
+        (zero): Deleted.
+        (negativeZero): Deleted.
+        * b3/testb3_2.cpp:
+        (testBitXorTreeArgs):
+        (testBitXorTreeArgsEven):
+        (testBitXorTreeArgImm):
+        (testBitAndTreeArg32):
+        (testBitOrTreeArg32):
+        (testBitAndArgs):
+        (testBitAndSameArg):
+        (testBitAndNotNot):
+        (testBitAndNotImm):
+        (testBitAndImms):
+        (testBitAndArgImm):
+        (testBitAndImmArg):
+        (testBitAndBitAndArgImmImm):
+        (testBitAndImmBitAndArgImm):
+        (testBitAndArgs32):
+        (testBitAndSameArg32):
+        (testBitAndImms32):
+        (testBitAndArgImm32):
+        (testBitAndImmArg32):
+        (testBitAndBitAndArgImmImm32):
+        (testBitAndImmBitAndArgImm32):
+        (testBitAndWithMaskReturnsBooleans):
+        (testBitAndArgDouble):
+        (testBitAndArgsDouble):
+        (testBitAndArgImmDouble):
+        (testBitAndImmsDouble):
+        (testBitAndArgFloat):
+        (testBitAndArgsFloat):
+        (testBitAndArgImmFloat):
+        (testBitAndImmsFloat):
+        (testBitAndArgsFloatWithUselessDoubleConversion):
+        (testBitOrArgs):
+        (testBitOrSameArg):
+        (testBitOrAndAndArgs):
+        (testBitOrAndSameArgs):
+        (testBitOrNotNot):
+        (testBitOrNotImm):
+        (testBitOrImms):
+        (testBitOrArgImm):
+        (testBitOrImmArg):
+        (testBitOrBitOrArgImmImm):
+        (testBitOrImmBitOrArgImm):
+        (testBitOrArgs32):
+        (testBitOrSameArg32):
+        (testBitOrImms32):
+        (testBitOrArgImm32):
+        (testBitOrImmArg32):
+        (addBitTests):
+        * b3/testb3_3.cpp:
+        (testSShrArgs):
+        (testSShrImms):
+        (testSShrArgImm):
+        (testSShrArg32):
+        (testSShrArgs32):
+        (testSShrImms32):
+        (testSShrArgImm32):
+        (testZShrArgs):
+        (testZShrImms):
+        (testZShrArgImm):
+        (testZShrArg32):
+        (testZShrArgs32):
+        (testZShrImms32):
+        (testZShrArgImm32):
+        (zero):
+        (negativeZero):
+        (addArgTests):
+        (addCallTests):
+        (addShrTests):
+        * b3/testb3_4.cpp:
+        (addSExtTests):
+        * b3/testb3_6.cpp:
+        (testSShrShl32):
+        (testSShrShl64):
+        (addSShrShTests):
+
 2019-07-31  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: support emulateUserGesture parameter in Debugger.evaluateOnCallFrame

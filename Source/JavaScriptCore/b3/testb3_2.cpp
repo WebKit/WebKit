@@ -141,7 +141,7 @@ void testLoadOffsetScaledUnsignedOverImm12Max()
     testLoadWithOffsetImpl(32768, 16384);
 }
 
-void testBitXorTreeArgs(int64_t a, int64_t b)
+static void testBitXorTreeArgs(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -156,7 +156,7 @@ void testBitXorTreeArgs(int64_t a, int64_t b)
     CHECK_EQ(compileAndRun<int64_t>(proc, a, b), (((a ^ b) ^ b) ^ a) ^ b);
 }
 
-void testBitXorTreeArgsEven(int64_t a, int64_t b)
+static void testBitXorTreeArgsEven(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -170,7 +170,7 @@ void testBitXorTreeArgsEven(int64_t a, int64_t b)
     CHECK_EQ(compileAndRun<int64_t>(proc, a, b), ((a ^ b) ^ b) ^ a);
 }
 
-void testBitXorTreeArgImm(int64_t a, int64_t b)
+static void testBitXorTreeArgImm(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -233,7 +233,7 @@ void testMulTreeArg32(int32_t a)
     CHECK_EQ(compileAndRun<int32_t>(proc, a), expectedResult);
 }
 
-void testBitAndTreeArg32(int32_t a)
+static void testBitAndTreeArg32(int32_t a)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -250,7 +250,7 @@ void testBitAndTreeArg32(int32_t a)
     CHECK_EQ(compileAndRun<int32_t>(proc, a), a & 42);
 }
 
-void testBitOrTreeArg32(int32_t a)
+static void testBitOrTreeArg32(int32_t a)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2518,7 +2518,7 @@ void testNegFloatWithUselessDoubleConversion(float a)
     CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), -a));
 }
 
-void testBitAndArgs(int64_t a, int64_t b)
+static void testBitAndArgs(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2532,7 +2532,7 @@ void testBitAndArgs(int64_t a, int64_t b)
     CHECK(compileAndRun<int64_t>(proc, a, b) == (a & b));
 }
 
-void testBitAndSameArg(int64_t a)
+static void testBitAndSameArg(int64_t a)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2547,7 +2547,7 @@ void testBitAndSameArg(int64_t a)
     CHECK(compileAndRun<int64_t>(proc, a) == a);
 }
 
-void testBitAndNotNot(int64_t a, int64_t b)
+static void testBitAndNotNot(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2565,7 +2565,7 @@ void testBitAndNotNot(int64_t a, int64_t b)
     CHECK_EQ(compileAndRun<int64_t>(proc, a, b), (~a & ~b));
 }
 
-void testBitAndNotImm(int64_t a, int64_t b)
+static void testBitAndNotImm(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2582,7 +2582,7 @@ void testBitAndNotImm(int64_t a, int64_t b)
     CHECK_EQ(compileAndRun<int64_t>(proc, a, b), (~a & b));
 }
 
-void testBitAndImms(int64_t a, int64_t b)
+static void testBitAndImms(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2596,7 +2596,7 @@ void testBitAndImms(int64_t a, int64_t b)
     CHECK(compileAndRun<int64_t>(proc) == (a & b));
 }
 
-void testBitAndArgImm(int64_t a, int64_t b)
+static void testBitAndArgImm(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2610,7 +2610,7 @@ void testBitAndArgImm(int64_t a, int64_t b)
     CHECK(compileAndRun<int64_t>(proc, a) == (a & b));
 }
 
-void testBitAndImmArg(int64_t a, int64_t b)
+static void testBitAndImmArg(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2624,7 +2624,7 @@ void testBitAndImmArg(int64_t a, int64_t b)
     CHECK(compileAndRun<int64_t>(proc, b) == (a & b));
 }
 
-void testBitAndBitAndArgImmImm(int64_t a, int64_t b, int64_t c)
+static void testBitAndBitAndArgImmImm(int64_t a, int64_t b, int64_t c)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2642,7 +2642,7 @@ void testBitAndBitAndArgImmImm(int64_t a, int64_t b, int64_t c)
     CHECK(compileAndRun<int64_t>(proc, a) == ((a & b) & c));
 }
 
-void testBitAndImmBitAndArgImm(int64_t a, int64_t b, int64_t c)
+static void testBitAndImmBitAndArgImm(int64_t a, int64_t b, int64_t c)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2660,7 +2660,7 @@ void testBitAndImmBitAndArgImm(int64_t a, int64_t b, int64_t c)
     CHECK(compileAndRun<int64_t>(proc, b) == (a & (b & c)));
 }
 
-void testBitAndArgs32(int a, int b)
+static void testBitAndArgs32(int a, int b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2678,7 +2678,7 @@ void testBitAndArgs32(int a, int b)
     CHECK(compileAndRun<int>(proc, a, b) == (a & b));
 }
 
-void testBitAndSameArg32(int a)
+static void testBitAndSameArg32(int a)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2694,7 +2694,7 @@ void testBitAndSameArg32(int a)
     CHECK(compileAndRun<int>(proc, a) == a);
 }
 
-void testBitAndImms32(int a, int b)
+static void testBitAndImms32(int a, int b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2708,7 +2708,7 @@ void testBitAndImms32(int a, int b)
     CHECK(compileAndRun<int>(proc) == (a & b));
 }
 
-void testBitAndArgImm32(int a, int b)
+static void testBitAndArgImm32(int a, int b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2724,7 +2724,7 @@ void testBitAndArgImm32(int a, int b)
     CHECK(compileAndRun<int>(proc, a) == (a & b));
 }
 
-void testBitAndImmArg32(int a, int b)
+static void testBitAndImmArg32(int a, int b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2740,7 +2740,7 @@ void testBitAndImmArg32(int a, int b)
     CHECK(compileAndRun<int>(proc, b) == (a & b));
 }
 
-void testBitAndBitAndArgImmImm32(int a, int b, int c)
+static void testBitAndBitAndArgImmImm32(int a, int b, int c)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2760,7 +2760,7 @@ void testBitAndBitAndArgImmImm32(int a, int b, int c)
     CHECK(compileAndRun<int>(proc, a) == ((a & b) & c));
 }
 
-void testBitAndImmBitAndArgImm32(int a, int b, int c)
+static void testBitAndImmBitAndArgImm32(int a, int b, int c)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2780,7 +2780,7 @@ void testBitAndImmBitAndArgImm32(int a, int b, int c)
     CHECK(compileAndRun<int>(proc, b) == (a & (b & c)));
 }
 
-void testBitAndWithMaskReturnsBooleans(int64_t a, int64_t b)
+static void testBitAndWithMaskReturnsBooleans(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2808,7 +2808,7 @@ static double bitAndDouble(double a, double b)
     return bitwise_cast<double>(bitwise_cast<uint64_t>(a) & bitwise_cast<uint64_t>(b));
 }
 
-void testBitAndArgDouble(double a)
+static void testBitAndArgDouble(double a)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2819,7 +2819,7 @@ void testBitAndArgDouble(double a)
     CHECK(isIdentical(compileAndRun<double>(proc, a), bitAndDouble(a, a)));
 }
 
-void testBitAndArgsDouble(double a, double b)
+static void testBitAndArgsDouble(double a, double b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2831,7 +2831,7 @@ void testBitAndArgsDouble(double a, double b)
     CHECK(isIdentical(compileAndRun<double>(proc, a, b), bitAndDouble(a, b)));
 }
 
-void testBitAndArgImmDouble(double a, double b)
+static void testBitAndArgImmDouble(double a, double b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2843,7 +2843,7 @@ void testBitAndArgImmDouble(double a, double b)
     CHECK(isIdentical(compileAndRun<double>(proc, a, b), bitAndDouble(a, b)));
 }
 
-void testBitAndImmsDouble(double a, double b)
+static void testBitAndImmsDouble(double a, double b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2860,7 +2860,7 @@ static float bitAndFloat(float a, float b)
     return bitwise_cast<float>(bitwise_cast<uint32_t>(a) & bitwise_cast<uint32_t>(b));
 }
 
-void testBitAndArgFloat(float a)
+static void testBitAndArgFloat(float a)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2873,7 +2873,7 @@ void testBitAndArgFloat(float a)
     CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), bitAndFloat(a, a)));
 }
 
-void testBitAndArgsFloat(float a, float b)
+static void testBitAndArgsFloat(float a, float b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2889,7 +2889,7 @@ void testBitAndArgsFloat(float a, float b)
     CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a), bitwise_cast<int32_t>(b)), bitAndFloat(a, b)));
 }
 
-void testBitAndArgImmFloat(float a, float b)
+static void testBitAndArgImmFloat(float a, float b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2903,7 +2903,7 @@ void testBitAndArgImmFloat(float a, float b)
     CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a), bitwise_cast<int32_t>(b)), bitAndFloat(a, b)));
 }
 
-void testBitAndImmsFloat(float a, float b)
+static void testBitAndImmsFloat(float a, float b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2915,7 +2915,7 @@ void testBitAndImmsFloat(float a, float b)
     CHECK(isIdentical(compileAndRun<float>(proc), bitAndFloat(a, b)));
 }
 
-void testBitAndArgsFloatWithUselessDoubleConversion(float a, float b)
+static void testBitAndArgsFloatWithUselessDoubleConversion(float a, float b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2937,7 +2937,7 @@ void testBitAndArgsFloatWithUselessDoubleConversion(float a, float b)
     CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a), bitwise_cast<int32_t>(b)), expected));
 }
 
-void testBitOrArgs(int64_t a, int64_t b)
+static void testBitOrArgs(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2951,7 +2951,7 @@ void testBitOrArgs(int64_t a, int64_t b)
     CHECK(compileAndRun<int64_t>(proc, a, b) == (a | b));
 }
 
-void testBitOrSameArg(int64_t a)
+static void testBitOrSameArg(int64_t a)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2966,7 +2966,7 @@ void testBitOrSameArg(int64_t a)
     CHECK(compileAndRun<int64_t>(proc, a) == a);
 }
 
-void testBitOrAndAndArgs(int64_t a, int64_t b, int64_t c)
+static void testBitOrAndAndArgs(int64_t a, int64_t b, int64_t c)
 {
     // We want to check every possible ordering of arguments (to properly check every path in B3ReduceStrength):
     // ((a & b) | (a & c))
@@ -2994,7 +2994,7 @@ void testBitOrAndAndArgs(int64_t a, int64_t b, int64_t c)
     }
 }
 
-void testBitOrAndSameArgs(int64_t a, int64_t b)
+static void testBitOrAndSameArgs(int64_t a, int64_t b)
 {
     // We want to check every possible ordering of arguments (to properly check every path in B3ReduceStrength):
     // ((a & b) | a)
@@ -3016,7 +3016,7 @@ void testBitOrAndSameArgs(int64_t a, int64_t b)
     }
 }
 
-void testBitOrNotNot(int64_t a, int64_t b)
+static void testBitOrNotNot(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -3034,7 +3034,7 @@ void testBitOrNotNot(int64_t a, int64_t b)
     CHECK_EQ(compileAndRun<int64_t>(proc, a, b), (~a | ~b));
 }
 
-void testBitOrNotImm(int64_t a, int64_t b)
+static void testBitOrNotImm(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -3051,7 +3051,7 @@ void testBitOrNotImm(int64_t a, int64_t b)
     CHECK_EQ(compileAndRun<int64_t>(proc, a, b), (~a | b));
 }
 
-void testBitOrImms(int64_t a, int64_t b)
+static void testBitOrImms(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -3065,7 +3065,7 @@ void testBitOrImms(int64_t a, int64_t b)
     CHECK(compileAndRun<int64_t>(proc) == (a | b));
 }
 
-void testBitOrArgImm(int64_t a, int64_t b)
+static void testBitOrArgImm(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -3079,7 +3079,7 @@ void testBitOrArgImm(int64_t a, int64_t b)
     CHECK(compileAndRun<int64_t>(proc, a) == (a | b));
 }
 
-void testBitOrImmArg(int64_t a, int64_t b)
+static void testBitOrImmArg(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -3093,7 +3093,7 @@ void testBitOrImmArg(int64_t a, int64_t b)
     CHECK(compileAndRun<int64_t>(proc, b) == (a | b));
 }
 
-void testBitOrBitOrArgImmImm(int64_t a, int64_t b, int64_t c)
+static void testBitOrBitOrArgImmImm(int64_t a, int64_t b, int64_t c)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -3111,7 +3111,7 @@ void testBitOrBitOrArgImmImm(int64_t a, int64_t b, int64_t c)
     CHECK(compileAndRun<int64_t>(proc, a) == ((a | b) | c));
 }
 
-void testBitOrImmBitOrArgImm(int64_t a, int64_t b, int64_t c)
+static void testBitOrImmBitOrArgImm(int64_t a, int64_t b, int64_t c)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -3129,7 +3129,7 @@ void testBitOrImmBitOrArgImm(int64_t a, int64_t b, int64_t c)
     CHECK(compileAndRun<int64_t>(proc, b) == (a | (b | c)));
 }
 
-void testBitOrArgs32(int a, int b)
+static void testBitOrArgs32(int a, int b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -3147,7 +3147,7 @@ void testBitOrArgs32(int a, int b)
     CHECK(compileAndRun<int>(proc, a, b) == (a | b));
 }
 
-void testBitOrSameArg32(int a)
+static void testBitOrSameArg32(int a)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -3164,7 +3164,7 @@ void testBitOrSameArg32(int a)
     CHECK(compileAndRun<int>(proc, a) == a);
 }
 
-void testBitOrImms32(int a, int b)
+static void testBitOrImms32(int a, int b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -3178,7 +3178,7 @@ void testBitOrImms32(int a, int b)
     CHECK(compileAndRun<int>(proc) == (a | b));
 }
 
-void testBitOrArgImm32(int a, int b)
+static void testBitOrArgImm32(int a, int b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -3194,7 +3194,7 @@ void testBitOrArgImm32(int a, int b)
     CHECK(compileAndRun<int>(proc, a) == (a | b));
 }
 
-void testBitOrImmArg32(int a, int b)
+static void testBitOrImmArg32(int a, int b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -3208,6 +3208,207 @@ void testBitOrImmArg32(int a, int b)
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
 
     CHECK(compileAndRun<int>(proc, b) == (a | b));
+}
+
+void addBitTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
+{
+    RUN(testBitAndArgs(43, 43));
+    RUN(testBitAndArgs(43, 0));
+    RUN(testBitAndArgs(10, 3));
+    RUN(testBitAndArgs(42, 0xffffffffffffffff));
+    RUN(testBitAndSameArg(43));
+    RUN(testBitAndSameArg(0));
+    RUN(testBitAndSameArg(3));
+    RUN(testBitAndSameArg(0xffffffffffffffff));
+    RUN(testBitAndImms(43, 43));
+    RUN(testBitAndImms(43, 0));
+    RUN(testBitAndImms(10, 3));
+    RUN(testBitAndImms(42, 0xffffffffffffffff));
+    RUN(testBitAndArgImm(43, 43));
+    RUN(testBitAndArgImm(43, 0));
+    RUN(testBitAndArgImm(10, 3));
+    RUN(testBitAndArgImm(42, 0xffffffffffffffff));
+    RUN(testBitAndArgImm(42, 0xff));
+    RUN(testBitAndArgImm(300, 0xff));
+    RUN(testBitAndArgImm(-300, 0xff));
+    RUN(testBitAndArgImm(42, 0xffff));
+    RUN(testBitAndArgImm(40000, 0xffff));
+    RUN(testBitAndArgImm(-40000, 0xffff));
+    RUN(testBitAndImmArg(43, 43));
+    RUN(testBitAndImmArg(43, 0));
+    RUN(testBitAndImmArg(10, 3));
+    RUN(testBitAndImmArg(42, 0xffffffffffffffff));
+    RUN(testBitAndBitAndArgImmImm(2, 7, 3));
+    RUN(testBitAndBitAndArgImmImm(1, 6, 6));
+    RUN(testBitAndBitAndArgImmImm(0xffff, 24, 7));
+    RUN(testBitAndImmBitAndArgImm(7, 2, 3));
+    RUN(testBitAndImmBitAndArgImm(6, 1, 6));
+    RUN(testBitAndImmBitAndArgImm(24, 0xffff, 7));
+    RUN(testBitAndArgs32(43, 43));
+    RUN(testBitAndArgs32(43, 0));
+    RUN(testBitAndArgs32(10, 3));
+    RUN(testBitAndArgs32(42, 0xffffffff));
+    RUN(testBitAndSameArg32(43));
+    RUN(testBitAndSameArg32(0));
+    RUN(testBitAndSameArg32(3));
+    RUN(testBitAndSameArg32(0xffffffff));
+    RUN(testBitAndImms32(43, 43));
+    RUN(testBitAndImms32(43, 0));
+    RUN(testBitAndImms32(10, 3));
+    RUN(testBitAndImms32(42, 0xffffffff));
+    RUN(testBitAndArgImm32(43, 43));
+    RUN(testBitAndArgImm32(43, 0));
+    RUN(testBitAndArgImm32(10, 3));
+    RUN(testBitAndArgImm32(42, 0xffffffff));
+    RUN(testBitAndImmArg32(43, 43));
+    RUN(testBitAndImmArg32(43, 0));
+    RUN(testBitAndImmArg32(10, 3));
+    RUN(testBitAndImmArg32(42, 0xffffffff));
+    RUN(testBitAndImmArg32(42, 0xff));
+    RUN(testBitAndImmArg32(300, 0xff));
+    RUN(testBitAndImmArg32(-300, 0xff));
+    RUN(testBitAndImmArg32(42, 0xffff));
+    RUN(testBitAndImmArg32(40000, 0xffff));
+    RUN(testBitAndImmArg32(-40000, 0xffff));
+    RUN(testBitAndBitAndArgImmImm32(2, 7, 3));
+    RUN(testBitAndBitAndArgImmImm32(1, 6, 6));
+    RUN(testBitAndBitAndArgImmImm32(0xffff, 24, 7));
+    RUN(testBitAndImmBitAndArgImm32(7, 2, 3));
+    RUN(testBitAndImmBitAndArgImm32(6, 1, 6));
+    RUN(testBitAndImmBitAndArgImm32(24, 0xffff, 7));
+    RUN_BINARY(testBitAndWithMaskReturnsBooleans, int64Operands(), int64Operands());
+    RUN_UNARY(testBitAndArgDouble, floatingPointOperands<double>());
+    RUN_BINARY(testBitAndArgsDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_BINARY(testBitAndArgImmDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_BINARY(testBitAndImmsDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_UNARY(testBitAndArgFloat, floatingPointOperands<float>());
+    RUN_BINARY(testBitAndArgsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testBitAndArgImmFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testBitAndImmsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testBitAndArgsFloatWithUselessDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testBitAndNotNot, int64Operands(), int64Operands());
+    RUN_BINARY(testBitAndNotImm, int64Operands(), int64Operands());
+    
+    RUN(testBitOrArgs(43, 43));
+    RUN(testBitOrArgs(43, 0));
+    RUN(testBitOrArgs(10, 3));
+    RUN(testBitOrArgs(42, 0xffffffffffffffff));
+    RUN(testBitOrSameArg(43));
+    RUN(testBitOrSameArg(0));
+    RUN(testBitOrSameArg(3));
+    RUN(testBitOrSameArg(0xffffffffffffffff));
+    RUN(testBitOrImms(43, 43));
+    RUN(testBitOrImms(43, 0));
+    RUN(testBitOrImms(10, 3));
+    RUN(testBitOrImms(42, 0xffffffffffffffff));
+    RUN(testBitOrArgImm(43, 43));
+    RUN(testBitOrArgImm(43, 0));
+    RUN(testBitOrArgImm(10, 3));
+    RUN(testBitOrArgImm(42, 0xffffffffffffffff));
+    RUN(testBitOrImmArg(43, 43));
+    RUN(testBitOrImmArg(43, 0));
+    RUN(testBitOrImmArg(10, 3));
+    RUN(testBitOrImmArg(42, 0xffffffffffffffff));
+    RUN(testBitOrBitOrArgImmImm(2, 7, 3));
+    RUN(testBitOrBitOrArgImmImm(1, 6, 6));
+    RUN(testBitOrBitOrArgImmImm(0xffff, 24, 7));
+    RUN(testBitOrImmBitOrArgImm(7, 2, 3));
+    RUN(testBitOrImmBitOrArgImm(6, 1, 6));
+    RUN(testBitOrImmBitOrArgImm(24, 0xffff, 7));
+    RUN(testBitOrArgs32(43, 43));
+    RUN(testBitOrArgs32(43, 0));
+    RUN(testBitOrArgs32(10, 3));
+    RUN(testBitOrArgs32(42, 0xffffffff));
+    RUN(testBitOrSameArg32(43));
+    RUN(testBitOrSameArg32(0));
+    RUN(testBitOrSameArg32(3));
+    RUN(testBitOrSameArg32(0xffffffff));
+    RUN(testBitOrImms32(43, 43));
+    RUN(testBitOrImms32(43, 0));
+    RUN(testBitOrImms32(10, 3));
+    RUN(testBitOrImms32(42, 0xffffffff));
+    RUN(testBitOrArgImm32(43, 43));
+    RUN(testBitOrArgImm32(43, 0));
+    RUN(testBitOrArgImm32(10, 3));
+    RUN(testBitOrArgImm32(42, 0xffffffff));
+    RUN(testBitOrImmArg32(43, 43));
+    RUN(testBitOrImmArg32(43, 0));
+    RUN(testBitOrImmArg32(10, 3));
+    RUN(testBitOrImmArg32(42, 0xffffffff));
+    RUN(testBitOrBitOrArgImmImm32(2, 7, 3));
+    RUN(testBitOrBitOrArgImmImm32(1, 6, 6));
+    RUN(testBitOrBitOrArgImmImm32(0xffff, 24, 7));
+    RUN(testBitOrImmBitOrArgImm32(7, 2, 3));
+    RUN(testBitOrImmBitOrArgImm32(6, 1, 6));
+    RUN(testBitOrImmBitOrArgImm32(24, 0xffff, 7));
+    RUN_UNARY(testBitOrArgDouble, floatingPointOperands<double>());
+    RUN_BINARY(testBitOrArgsDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_BINARY(testBitOrArgImmDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_BINARY(testBitOrImmsDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_UNARY(testBitOrArgFloat, floatingPointOperands<float>());
+    RUN_BINARY(testBitOrArgsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testBitOrArgImmFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testBitOrImmsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testBitOrArgsFloatWithUselessDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_TERNARY(testBitOrAndAndArgs, int64Operands(), int64Operands(), int64Operands());
+    RUN_BINARY(testBitOrAndSameArgs, int64Operands(), int64Operands());
+    RUN_BINARY(testBitOrNotNot, int64Operands(), int64Operands());
+    RUN_BINARY(testBitOrNotImm, int64Operands(), int64Operands());
+    
+    RUN_BINARY(testBitXorArgs, int64Operands(), int64Operands());
+    RUN_UNARY(testBitXorSameArg, int64Operands());
+    RUN_BINARY(testBitXorImms, int64Operands(), int64Operands());
+    RUN_BINARY(testBitXorArgImm, int64Operands(), int64Operands());
+    RUN_BINARY(testBitXorImmArg, int64Operands(), int64Operands());
+    RUN(testBitXorBitXorArgImmImm(2, 7, 3));
+    RUN(testBitXorBitXorArgImmImm(1, 6, 6));
+    RUN(testBitXorBitXorArgImmImm(0xffff, 24, 7));
+    RUN(testBitXorImmBitXorArgImm(7, 2, 3));
+    RUN(testBitXorImmBitXorArgImm(6, 1, 6));
+    RUN(testBitXorImmBitXorArgImm(24, 0xffff, 7));
+    RUN(testBitXorArgs32(43, 43));
+    RUN(testBitXorArgs32(43, 0));
+    RUN(testBitXorArgs32(10, 3));
+    RUN(testBitXorArgs32(42, 0xffffffff));
+    RUN(testBitXorSameArg32(43));
+    RUN(testBitXorSameArg32(0));
+    RUN(testBitXorSameArg32(3));
+    RUN(testBitXorSameArg32(0xffffffff));
+    RUN(testBitXorImms32(43, 43));
+    RUN(testBitXorImms32(43, 0));
+    RUN(testBitXorImms32(10, 3));
+    RUN(testBitXorImms32(42, 0xffffffff));
+    RUN(testBitXorArgImm32(43, 43));
+    RUN(testBitXorArgImm32(43, 0));
+    RUN(testBitXorArgImm32(10, 3));
+    RUN(testBitXorArgImm32(42, 0xffffffff));
+    RUN(testBitXorImmArg32(43, 43));
+    RUN(testBitXorImmArg32(43, 0));
+    RUN(testBitXorImmArg32(10, 3));
+    RUN(testBitXorImmArg32(42, 0xffffffff));
+    RUN(testBitXorBitXorArgImmImm32(2, 7, 3));
+    RUN(testBitXorBitXorArgImmImm32(1, 6, 6));
+    RUN(testBitXorBitXorArgImmImm32(0xffff, 24, 7));
+    RUN(testBitXorImmBitXorArgImm32(7, 2, 3));
+    RUN(testBitXorImmBitXorArgImm32(6, 1, 6));
+    RUN(testBitXorImmBitXorArgImm32(24, 0xffff, 7));
+    RUN_TERNARY(testBitXorAndAndArgs, int64Operands(), int64Operands(), int64Operands());
+    RUN_BINARY(testBitXorAndSameArgs, int64Operands(), int64Operands());
+    
+    RUN_UNARY(testBitNotArg, int64Operands());
+    RUN_UNARY(testBitNotImm, int64Operands());
+    RUN_UNARY(testBitNotMem, int64Operands());
+    RUN_UNARY(testBitNotArg32, int32Operands());
+    RUN_UNARY(testBitNotImm32, int32Operands());
+    RUN_UNARY(testBitNotMem32, int32Operands());
+    RUN_BINARY(testNotOnBooleanAndBranch32, int32Operands(), int32Operands());
+    RUN_BINARY(testBitNotOnBooleanAndBranch32, int32Operands(), int32Operands());
+    
+    RUN_BINARY(testBitXorTreeArgs, int64Operands(), int64Operands());
+    RUN_BINARY(testBitXorTreeArgsEven, int64Operands(), int64Operands());
+    RUN_BINARY(testBitXorTreeArgImm, int64Operands(), int64Operands());
+    RUN_UNARY(testBitAndTreeArg32, int32Operands());
+    RUN_UNARY(testBitOrTreeArg32, int32Operands());
 }
 
 #endif // ENABLE(B3_JIT)

@@ -780,7 +780,7 @@ void testShlZShrArgImm32(int32_t a, int32_t b)
     CHECK(compileAndRun<int32_t>(proc, a) == static_cast<int32_t>((static_cast<uint32_t>(a) >> b) << b));
 }
 
-void testSShrArgs(int64_t a, int64_t b)
+static void testSShrArgs(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -796,7 +796,7 @@ void testSShrArgs(int64_t a, int64_t b)
     CHECK(compileAndRun<int64_t>(proc, a, b) == (a >> b));
 }
 
-void testSShrImms(int64_t a, int64_t b)
+static void testSShrImms(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -810,7 +810,7 @@ void testSShrImms(int64_t a, int64_t b)
     CHECK(compileAndRun<int64_t>(proc) == (a >> b));
 }
 
-void testSShrArgImm(int64_t a, int64_t b)
+static void testSShrArgImm(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -824,7 +824,7 @@ void testSShrArgImm(int64_t a, int64_t b)
     CHECK(compileAndRun<int64_t>(proc, a) == (a >> b));
 }
 
-void testSShrArg32(int32_t a)
+static void testSShrArg32(int32_t a)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -838,7 +838,7 @@ void testSShrArg32(int32_t a)
     CHECK(compileAndRun<int32_t>(proc, a) == (a >> (a & 31)));
 }
 
-void testSShrArgs32(int32_t a, int32_t b)
+static void testSShrArgs32(int32_t a, int32_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -856,7 +856,7 @@ void testSShrArgs32(int32_t a, int32_t b)
     CHECK(compileAndRun<int32_t>(proc, a, b) == (a >> b));
 }
 
-void testSShrImms32(int32_t a, int32_t b)
+static void testSShrImms32(int32_t a, int32_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -870,7 +870,7 @@ void testSShrImms32(int32_t a, int32_t b)
     CHECK(compileAndRun<int32_t>(proc) == (a >> b));
 }
 
-void testSShrArgImm32(int32_t a, int32_t b)
+static void testSShrArgImm32(int32_t a, int32_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -886,7 +886,7 @@ void testSShrArgImm32(int32_t a, int32_t b)
     CHECK(compileAndRun<int32_t>(proc, a) == (a >> b));
 }
 
-void testZShrArgs(uint64_t a, uint64_t b)
+static void testZShrArgs(uint64_t a, uint64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -902,7 +902,7 @@ void testZShrArgs(uint64_t a, uint64_t b)
     CHECK(compileAndRun<uint64_t>(proc, a, b) == (a >> b));
 }
 
-void testZShrImms(uint64_t a, uint64_t b)
+static void testZShrImms(uint64_t a, uint64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -916,7 +916,7 @@ void testZShrImms(uint64_t a, uint64_t b)
     CHECK(compileAndRun<uint64_t>(proc) == (a >> b));
 }
 
-void testZShrArgImm(uint64_t a, uint64_t b)
+static void testZShrArgImm(uint64_t a, uint64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -930,7 +930,7 @@ void testZShrArgImm(uint64_t a, uint64_t b)
     CHECK(compileAndRun<uint64_t>(proc, a) == (a >> b));
 }
 
-void testZShrArg32(uint32_t a)
+static void testZShrArg32(uint32_t a)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -944,7 +944,7 @@ void testZShrArg32(uint32_t a)
     CHECK(compileAndRun<uint32_t>(proc, a) == (a >> (a & 31)));
 }
 
-void testZShrArgs32(uint32_t a, uint32_t b)
+static void testZShrArgs32(uint32_t a, uint32_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -962,7 +962,7 @@ void testZShrArgs32(uint32_t a, uint32_t b)
     CHECK(compileAndRun<uint32_t>(proc, a, b) == (a >> b));
 }
 
-void testZShrImms32(uint32_t a, uint32_t b)
+static void testZShrImms32(uint32_t a, uint32_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -976,7 +976,7 @@ void testZShrImms32(uint32_t a, uint32_t b)
     CHECK(compileAndRun<uint32_t>(proc) == (a >> b));
 }
 
-void testZShrArgImm32(uint32_t a, uint32_t b)
+static void testZShrArgImm32(uint32_t a, uint32_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -2996,6 +2996,374 @@ void testStoreAddLoad32(int amount)
 
     CHECK(!compileAndRun<int>(proc, amount));
     CHECK(slot == 37 + amount);
+}
+
+// Make sure the compiler does not try to optimize anything out.
+static NEVER_INLINE double zero()
+{
+    return 0.;
+}
+
+static double negativeZero()
+{
+    return -zero();
+}
+
+void addArgTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
+{
+    RUN(testAddArg(111));
+    RUN(testAddArgs(1, 1));
+    RUN(testAddArgs(1, 2));
+    RUN(testAddArgImm(1, 2));
+    RUN(testAddArgImm(0, 2));
+    RUN(testAddArgImm(1, 0));
+    RUN(testAddImmArg(1, 2));
+    RUN(testAddImmArg(0, 2));
+    RUN(testAddImmArg(1, 0));
+    RUN_BINARY(testAddArgMem, int64Operands(), int64Operands());
+    RUN_BINARY(testAddMemArg, int64Operands(), int64Operands());
+    RUN_BINARY(testAddImmMem, int64Operands(), int64Operands());
+    RUN_UNARY(testAddArg32, int32Operands());
+    RUN(testAddArgs32(1, 1));
+    RUN(testAddArgs32(1, 2));
+    RUN_BINARY(testAddArgMem32, int32Operands(), int32Operands());
+    RUN_BINARY(testAddMemArg32, int32Operands(), int32Operands());
+    RUN_BINARY(testAddImmMem32, int32Operands(), int32Operands());
+    RUN_BINARY(testAddNeg1, int32Operands(), int32Operands());
+    RUN_BINARY(testAddNeg2, int32Operands(), int32Operands());
+    RUN(testAddArgZeroImmZDef());
+    RUN(testAddLoadTwice());
+    RUN_TERNARY(testAddMulMulArgs, int64Operands(), int64Operands(), int64Operands());
+    
+    RUN(testAddArgDouble(M_PI));
+    RUN(testAddArgsDouble(M_PI, 1));
+    RUN(testAddArgsDouble(M_PI, -M_PI));
+    RUN(testAddArgImmDouble(M_PI, 1));
+    RUN(testAddArgImmDouble(M_PI, 0));
+    RUN(testAddArgImmDouble(M_PI, negativeZero()));
+    RUN(testAddArgImmDouble(0, 0));
+    RUN(testAddArgImmDouble(0, negativeZero()));
+    RUN(testAddArgImmDouble(negativeZero(), 0));
+    RUN(testAddArgImmDouble(negativeZero(), negativeZero()));
+    RUN(testAddImmArgDouble(M_PI, 1));
+    RUN(testAddImmArgDouble(M_PI, 0));
+    RUN(testAddImmArgDouble(M_PI, negativeZero()));
+    RUN(testAddImmArgDouble(0, 0));
+    RUN(testAddImmArgDouble(0, negativeZero()));
+    RUN(testAddImmArgDouble(negativeZero(), 0));
+    RUN(testAddImmArgDouble(negativeZero(), negativeZero()));
+    RUN(testAddImmsDouble(M_PI, 1));
+    RUN(testAddImmsDouble(M_PI, 0));
+    RUN(testAddImmsDouble(M_PI, negativeZero()));
+    RUN(testAddImmsDouble(0, 0));
+    RUN(testAddImmsDouble(0, negativeZero()));
+    RUN(testAddImmsDouble(negativeZero(), negativeZero()));
+    RUN_UNARY(testAddArgFloat, floatingPointOperands<float>());
+    RUN_BINARY(testAddArgsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testAddFPRArgsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testAddArgImmFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testAddImmArgFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testAddImmsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_UNARY(testAddArgFloatWithUselessDoubleConversion, floatingPointOperands<float>());
+    RUN_BINARY(testAddArgsFloatWithUselessDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testAddArgsFloatWithEffectfulDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
+    
+    RUN(testMulArg(5));
+    RUN(testMulAddArg(5));
+    RUN(testMulAddArg(85));
+    RUN(testMulArgStore(5));
+    RUN(testMulArgStore(85));
+    RUN(testMulArgs(1, 1));
+    RUN(testMulArgs(1, 2));
+    RUN(testMulArgs(3, 3));
+    RUN(testMulArgImm(1, 2));
+    RUN(testMulArgImm(1, 4));
+    RUN(testMulArgImm(1, 8));
+    RUN(testMulArgImm(1, 16));
+    RUN(testMulArgImm(1, 0x80000000llu));
+    RUN(testMulArgImm(1, 0x800000000000llu));
+    RUN(testMulArgImm(7, 2));
+    RUN(testMulArgImm(7, 4));
+    RUN(testMulArgImm(7, 8));
+    RUN(testMulArgImm(7, 16));
+    RUN(testMulArgImm(7, 0x80000000llu));
+    RUN(testMulArgImm(7, 0x800000000000llu));
+    RUN(testMulArgImm(-42, 2));
+    RUN(testMulArgImm(-42, 4));
+    RUN(testMulArgImm(-42, 8));
+    RUN(testMulArgImm(-42, 16));
+    RUN(testMulArgImm(-42, 0x80000000llu));
+    RUN(testMulArgImm(-42, 0x800000000000llu));
+    RUN(testMulArgImm(0, 2));
+    RUN(testMulArgImm(1, 0));
+    RUN(testMulArgImm(3, 3));
+    RUN(testMulArgImm(3, -1));
+    RUN(testMulArgImm(-3, -1));
+    RUN(testMulArgImm(0, -1));
+    RUN(testMulImmArg(1, 2));
+    RUN(testMulImmArg(0, 2));
+    RUN(testMulImmArg(1, 0));
+    RUN(testMulImmArg(3, 3));
+    RUN(testMulImm32SignExtend(1, 2));
+    RUN(testMulImm32SignExtend(0, 2));
+    RUN(testMulImm32SignExtend(1, 0));
+    RUN(testMulImm32SignExtend(3, 3));
+    RUN(testMulImm32SignExtend(0xFFFFFFFF, 0xFFFFFFFF));
+    RUN(testMulImm32SignExtend(0xFFFFFFFE, 0xFFFFFFFF));
+    RUN(testMulImm32SignExtend(0xFFFFFFFF, 0xFFFFFFFE));
+    RUN(testMulArgs32(1, 1));
+    RUN(testMulArgs32(1, 2));
+    RUN(testMulArgs32(0xFFFFFFFF, 0xFFFFFFFF));
+    RUN(testMulArgs32(0xFFFFFFFE, 0xFFFFFFFF));
+    RUN(testMulArgs32SignExtend(1, 1));
+    RUN(testMulArgs32SignExtend(1, 2));
+    RUN(testMulArgs32SignExtend(0xFFFFFFFF, 0xFFFFFFFF));
+    RUN(testMulArgs32SignExtend(0xFFFFFFFE, 0xFFFFFFFF));
+    RUN(testMulLoadTwice());
+    RUN(testMulAddArgsLeft());
+    RUN(testMulAddArgsRight());
+    RUN(testMulAddArgsLeft32());
+    RUN(testMulAddArgsRight32());
+    RUN(testMulSubArgsLeft());
+    RUN(testMulSubArgsRight());
+    RUN(testMulSubArgsLeft32());
+    RUN(testMulSubArgsRight32());
+    RUN(testMulNegArgs());
+    RUN(testMulNegArgs32());
+    
+    RUN_BINARY(testMulArgNegArg, int64Operands(), int64Operands())
+    RUN_BINARY(testMulNegArgArg, int64Operands(), int64Operands())
+    RUN_UNARY(testMulArgDouble, floatingPointOperands<double>());
+    RUN_BINARY(testMulArgsDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_BINARY(testMulArgImmDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_BINARY(testMulImmArgDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_BINARY(testMulImmsDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_UNARY(testMulArgFloat, floatingPointOperands<float>());
+    RUN_BINARY(testMulArgsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testMulArgImmFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testMulImmArgFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testMulImmsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_UNARY(testMulArgFloatWithUselessDoubleConversion, floatingPointOperands<float>());
+    RUN_BINARY(testMulArgsFloatWithUselessDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testMulArgsFloatWithEffectfulDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
+    
+    RUN(testDivArgDouble(M_PI));
+    RUN(testDivArgsDouble(M_PI, 1));
+    RUN(testDivArgsDouble(M_PI, -M_PI));
+    RUN(testDivArgImmDouble(M_PI, 1));
+    RUN(testDivArgImmDouble(M_PI, 0));
+    RUN(testDivArgImmDouble(M_PI, negativeZero()));
+    RUN(testDivArgImmDouble(0, 0));
+    RUN(testDivArgImmDouble(0, negativeZero()));
+    RUN(testDivArgImmDouble(negativeZero(), 0));
+    RUN(testDivArgImmDouble(negativeZero(), negativeZero()));
+    RUN(testDivImmArgDouble(M_PI, 1));
+    RUN(testDivImmArgDouble(M_PI, 0));
+    RUN(testDivImmArgDouble(M_PI, negativeZero()));
+    RUN(testDivImmArgDouble(0, 0));
+    RUN(testDivImmArgDouble(0, negativeZero()));
+    RUN(testDivImmArgDouble(negativeZero(), 0));
+    RUN(testDivImmArgDouble(negativeZero(), negativeZero()));
+    RUN(testDivImmsDouble(M_PI, 1));
+    RUN(testDivImmsDouble(M_PI, 0));
+    RUN(testDivImmsDouble(M_PI, negativeZero()));
+    RUN(testDivImmsDouble(0, 0));
+    RUN(testDivImmsDouble(0, negativeZero()));
+    RUN(testDivImmsDouble(negativeZero(), negativeZero()));
+    RUN_UNARY(testDivArgFloat, floatingPointOperands<float>());
+    RUN_BINARY(testDivArgsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testDivArgImmFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testDivImmArgFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testDivImmsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_UNARY(testDivArgFloatWithUselessDoubleConversion, floatingPointOperands<float>());
+    RUN_BINARY(testDivArgsFloatWithUselessDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testDivArgsFloatWithEffectfulDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
+    
+    RUN_BINARY(testUDivArgsInt32, int32Operands(), int32Operands());
+    RUN_BINARY(testUDivArgsInt64, int64Operands(), int64Operands());
+    
+    RUN_UNARY(testModArgDouble, floatingPointOperands<double>());
+    RUN_BINARY(testModArgsDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_BINARY(testModArgImmDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_BINARY(testModImmArgDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_BINARY(testModImmsDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_UNARY(testModArgFloat, floatingPointOperands<float>());
+    RUN_BINARY(testModArgsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testModArgImmFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testModImmArgFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testModImmsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    
+    RUN_BINARY(testUModArgsInt32, int32Operands(), int32Operands());
+    RUN_BINARY(testUModArgsInt64, int64Operands(), int64Operands());
+    
+    RUN(testSubArg(24));
+    RUN(testSubArgs(1, 1));
+    RUN(testSubArgs(1, 2));
+    RUN(testSubArgs(13, -42));
+    RUN(testSubArgs(-13, 42));
+    RUN(testSubArgImm(1, 1));
+    RUN(testSubArgImm(1, 2));
+    RUN(testSubArgImm(13, -42));
+    RUN(testSubArgImm(-13, 42));
+    RUN(testSubArgImm(42, 0));
+    RUN(testSubImmArg(1, 1));
+    RUN(testSubImmArg(1, 2));
+    RUN(testSubImmArg(13, -42));
+    RUN(testSubImmArg(-13, 42));
+    RUN_BINARY(testSubArgMem, int64Operands(), int64Operands());
+    RUN_BINARY(testSubMemArg, int64Operands(), int64Operands());
+    RUN_BINARY(testSubImmMem, int32Operands(), int32Operands());
+    RUN_BINARY(testSubMemImm, int32Operands(), int32Operands());
+    RUN_BINARY(testSubNeg, int32Operands(), int32Operands());
+    RUN_BINARY(testNegSub, int32Operands(), int32Operands());
+    RUN_UNARY(testNegValueSubOne, int32Operands());
+    RUN_BINARY(testNegMulArgImm, int64Operands(), int64Operands());
+    RUN_TERNARY(testSubMulMulArgs, int64Operands(), int64Operands(), int64Operands());
+    
+    RUN_TERNARY(testSubSub, int32Operands(), int32Operands(), int32Operands());
+    RUN_TERNARY(testSubSub2, int32Operands(), int32Operands(), int32Operands());
+    RUN_TERNARY(testSubAdd, int32Operands(), int32Operands(), int32Operands());
+    RUN_BINARY(testSubFirstNeg, int32Operands(), int32Operands());
+    
+    RUN(testSubArgs32(1, 1));
+    RUN(testSubArgs32(1, 2));
+    RUN(testSubArgs32(13, -42));
+    RUN(testSubArgs32(-13, 42));
+    RUN(testSubArgImm32(1, 1));
+    RUN(testSubArgImm32(1, 2));
+    RUN(testSubArgImm32(13, -42));
+    RUN(testSubArgImm32(-13, 42));
+    RUN(testSubImmArg32(1, 1));
+    RUN(testSubImmArg32(1, 2));
+    RUN(testSubImmArg32(13, -42));
+    RUN(testSubImmArg32(-13, 42));
+    RUN_BINARY(testSubArgMem32, int32Operands(), int32Operands());
+    RUN_BINARY(testSubMemArg32, int32Operands(), int32Operands());
+    RUN_BINARY(testSubImmMem32, int32Operands(), int32Operands());
+    RUN_BINARY(testSubMemImm32, int32Operands(), int32Operands());
+    RUN_UNARY(testNegValueSubOne32, int64Operands());
+    
+    RUN_UNARY(testSubArgDouble, floatingPointOperands<double>());
+    RUN_BINARY(testSubArgsDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_BINARY(testSubArgImmDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_BINARY(testSubImmArgDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_BINARY(testSubImmsDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_UNARY(testSubArgFloat, floatingPointOperands<float>());
+    RUN_BINARY(testSubArgsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testSubArgImmFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testSubImmArgFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testSubImmsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_UNARY(testSubArgFloatWithUselessDoubleConversion, floatingPointOperands<float>());
+    RUN_BINARY(testSubArgsFloatWithUselessDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testSubArgsFloatWithEffectfulDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
+}
+
+void addCallTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
+{
+    RUN(testCallSimple(1, 2));
+    RUN(testCallRare(1, 2));
+    RUN(testCallRareLive(1, 2, 3));
+    RUN(testCallSimplePure(1, 2));
+    RUN(testCallFunctionWithHellaArguments());
+    RUN(testCallFunctionWithHellaArguments2());
+    RUN(testCallFunctionWithHellaArguments3());
+    
+    RUN(testReturnDouble(0.0));
+    RUN(testReturnDouble(negativeZero()));
+    RUN(testReturnDouble(42.5));
+    RUN_UNARY(testReturnFloat, floatingPointOperands<float>());
+    
+    RUN(testCallSimpleDouble(1, 2));
+    RUN(testCallFunctionWithHellaDoubleArguments());
+    RUN_BINARY(testCallSimpleFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN(testCallFunctionWithHellaFloatArguments());
+}
+
+void addShrTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
+{
+    RUN(testSShrArgs(1, 0));
+    RUN(testSShrArgs(1, 1));
+    RUN(testSShrArgs(1, 62));
+    RUN(testSShrArgs(0xffffffffffffffff, 0));
+    RUN(testSShrArgs(0xffffffffffffffff, 1));
+    RUN(testSShrArgs(0xffffffffffffffff, 63));
+    RUN(testSShrImms(1, 0));
+    RUN(testSShrImms(1, 1));
+    RUN(testSShrImms(1, 62));
+    RUN(testSShrImms(1, 65));
+    RUN(testSShrImms(0xffffffffffffffff, 0));
+    RUN(testSShrImms(0xffffffffffffffff, 1));
+    RUN(testSShrImms(0xffffffffffffffff, 63));
+    RUN(testSShrArgImm(1, 0));
+    RUN(testSShrArgImm(1, 1));
+    RUN(testSShrArgImm(1, 62));
+    RUN(testSShrArgImm(1, 65));
+    RUN(testSShrArgImm(0xffffffffffffffff, 0));
+    RUN(testSShrArgImm(0xffffffffffffffff, 1));
+    RUN(testSShrArgImm(0xffffffffffffffff, 63));
+    RUN(testSShrArg32(32));
+    RUN(testSShrArgs32(1, 0));
+    RUN(testSShrArgs32(1, 1));
+    RUN(testSShrArgs32(1, 62));
+    RUN(testSShrArgs32(1, 33));
+    RUN(testSShrArgs32(0xffffffff, 0));
+    RUN(testSShrArgs32(0xffffffff, 1));
+    RUN(testSShrArgs32(0xffffffff, 63));
+    RUN(testSShrImms32(1, 0));
+    RUN(testSShrImms32(1, 1));
+    RUN(testSShrImms32(1, 62));
+    RUN(testSShrImms32(1, 33));
+    RUN(testSShrImms32(0xffffffff, 0));
+    RUN(testSShrImms32(0xffffffff, 1));
+    RUN(testSShrImms32(0xffffffff, 63));
+    RUN(testSShrArgImm32(1, 0));
+    RUN(testSShrArgImm32(1, 1));
+    RUN(testSShrArgImm32(1, 62));
+    RUN(testSShrArgImm32(0xffffffff, 0));
+    RUN(testSShrArgImm32(0xffffffff, 1));
+    RUN(testSShrArgImm32(0xffffffff, 63));
+    
+    RUN(testZShrArgs(1, 0));
+    RUN(testZShrArgs(1, 1));
+    RUN(testZShrArgs(1, 62));
+    RUN(testZShrArgs(0xffffffffffffffff, 0));
+    RUN(testZShrArgs(0xffffffffffffffff, 1));
+    RUN(testZShrArgs(0xffffffffffffffff, 63));
+    RUN(testZShrImms(1, 0));
+    RUN(testZShrImms(1, 1));
+    RUN(testZShrImms(1, 62));
+    RUN(testZShrImms(1, 65));
+    RUN(testZShrImms(0xffffffffffffffff, 0));
+    RUN(testZShrImms(0xffffffffffffffff, 1));
+    RUN(testZShrImms(0xffffffffffffffff, 63));
+    RUN(testZShrArgImm(1, 0));
+    RUN(testZShrArgImm(1, 1));
+    RUN(testZShrArgImm(1, 62));
+    RUN(testZShrArgImm(1, 65));
+    RUN(testZShrArgImm(0xffffffffffffffff, 0));
+    RUN(testZShrArgImm(0xffffffffffffffff, 1));
+    RUN(testZShrArgImm(0xffffffffffffffff, 63));
+    RUN(testZShrArg32(32));
+    RUN(testZShrArgs32(1, 0));
+    RUN(testZShrArgs32(1, 1));
+    RUN(testZShrArgs32(1, 62));
+    RUN(testZShrArgs32(1, 33));
+    RUN(testZShrArgs32(0xffffffff, 0));
+    RUN(testZShrArgs32(0xffffffff, 1));
+    RUN(testZShrArgs32(0xffffffff, 63));
+    RUN(testZShrImms32(1, 0));
+    RUN(testZShrImms32(1, 1));
+    RUN(testZShrImms32(1, 62));
+    RUN(testZShrImms32(1, 33));
+    RUN(testZShrImms32(0xffffffff, 0));
+    RUN(testZShrImms32(0xffffffff, 1));
+    RUN(testZShrImms32(0xffffffff, 63));
+    RUN(testZShrArgImm32(1, 0));
+    RUN(testZShrArgImm32(1, 1));
+    RUN(testZShrArgImm32(1, 62));
+    RUN(testZShrArgImm32(0xffffffff, 0));
+    RUN(testZShrArgImm32(0xffffffff, 1));
+    RUN(testZShrArgImm32(0xffffffff, 63));
 }
 
 #endif // ENABLE(B3_JIT)
