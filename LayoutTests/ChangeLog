@@ -1,3 +1,25 @@
+2019-07-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick layout test changes for r247866. rdar://problem/53648067
+
+    Unable to tap/double tap to open files/folders in Google Drive in Safari
+    https://bugs.webkit.org/show_bug.cgi?id=200096
+    <rdar://problem/52748552>
+
+    Reviewed by Wenson Hsieh.
+
+    1. Rebaseline (progression).
+    2. Payment request tests activate elements by tapping on them at a high speed, triggering double clicks instead. Let's slow them down a bit.
+
+    * fast/events/touch/ios/double-tap-for-double-click3-expected.txt:
+    * http/tests/adClickAttribution/anchor-tag-attributes-validation.html:
+    * http/tests/resources/payment-request.js:
+    (activateThen):
+    * resources/ui-helper.js:
+    (window.UIHelper.activateElementAtHumanSpeed.return.new.Promise):
+    (window.UIHelper.activateElementAtHumanSpeed):
+    * tests-options.json:
+
 2019-07-31  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r248080. rdar://problem/53788956

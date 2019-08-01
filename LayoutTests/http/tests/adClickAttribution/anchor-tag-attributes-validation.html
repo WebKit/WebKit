@@ -25,10 +25,7 @@
     }
 
     function activateElement(elementID, callback) {
-        var element = document.getElementById(elementID);
-        var centerX = element.offsetLeft + element.offsetWidth / 2;
-        var centerY = element.offsetTop + element.offsetHeight / 2;
-        UIHelper.activateAt(centerX, centerY).then(
+        UIHelper.activateElementAtHumanSpeed(document.getElementById(elementID)).then(
             function () {
                 callback();
             },

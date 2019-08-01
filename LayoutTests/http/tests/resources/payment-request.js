@@ -8,7 +8,7 @@ function activateThen(completion)
             resolve(completion());
         };
         document.body.insertBefore(button, document.body.firstChild);
-        UIHelper.activateElement(button);
+        UIHelper.activateElementAtHumanSpeed(button);
     });
 }
 
