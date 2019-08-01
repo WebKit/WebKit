@@ -1,77 +1,94 @@
 2019-07-31  Alan Coon  <alancoon@apple.com>
 
-        Cherry-pick r248071. rdar://problem/53789003
+        Cherry-pick r248079. rdar://problem/53788988
 
-    Use CTFontCreateForCharactersWithLanguageAndOption if available instead of CTFontCreateForCharactersWithLanguage
-    https://bugs.webkit.org/show_bug.cgi?id=200241
+    [iPadOS] Enable simulated mouse events on iqiyi.com to fix the video controls
+    https://bugs.webkit.org/show_bug.cgi?id=200322
+    rdar://problem/53235709
     
-    Source/WebCore:
+    Reviewed by Wenson Hsieh.
     
-    Reviewed by Myles C. Maxfield.
+    iqiyi.com needs to get mouseMove events for dragging the video scrubber to work.
     
-    We can use CTFontCreateForCharactersWithLanguageAndOption instead of CTFontCreateForCharactersWithLanguage
-    as it allows setting more easily the fallback option.
-    This allows us to never fallback to user installed fonts.
-    In such a case, we no longer need to wrap the fonts to change the fallback option.
-    We also prewarm the fonts with the same SPI and use system fallback as the default value.
+    * page/Quirks.cpp:
+    (WebCore::Quirks::shouldDispatchSimulatedMouseEvents const):
     
-    Covered by existing tests.
-    
-    * platform/graphics/cocoa/FontCacheCoreText.cpp:
-    (WebCore::preparePlatformFont):
-    (WebCore::lookupFallbackFont):
-    (WebCore::FontCache::systemFallbackForCharacters):
-    (WebCore::FontCache::prewarm):
-    (WebCore::fontFamiliesForPrewarming):
-    
-    Source/WebCore/PAL:
-    
-    Reviewed by Myles C. Maxfield.
-    
-    Add new SPI.
-    
-    * pal/spi/cocoa/CoreTextSPI.h:
-    
-    Source/WTF:
-    
-    Reviewed by Myles C. Maxfield.
-    
-    * wtf/Platform.h: Add macro to enable/disable new SPI.
-    
-    LayoutTests:
-    
-    We update the tests to flush font caches as otherwise some debug asserts would be hit.
-    This is due to changing the user installed font runtime flag while browsing which is not a typical situation.
-    
-    Reviewed by Myles C. Maxfield.
-    
-    * fast/text/user-installed-fonts/extended-character-with-user-font.html:
-    * fast/text/user-installed-fonts/extended-character.html:
-    
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248071 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248079 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2019-07-31  Youenn Fablet  <youenn@apple.com>
+    2019-07-31  Alan Coon  <alancoon@apple.com>
 
-            Use CTFontCreateForCharactersWithLanguageAndOption if available instead of CTFontCreateForCharactersWithLanguage
-            https://bugs.webkit.org/show_bug.cgi?id=200241
+            Cherry-pick r248071. rdar://problem/53789003
 
-            Reviewed by Myles C. Maxfield.
+        Use CTFontCreateForCharactersWithLanguageAndOption if available instead of CTFontCreateForCharactersWithLanguage
+        https://bugs.webkit.org/show_bug.cgi?id=200241
 
-            We can use CTFontCreateForCharactersWithLanguageAndOption instead of CTFontCreateForCharactersWithLanguage
-            as it allows setting more easily the fallback option.
-            This allows us to never fallback to user installed fonts.
-            In such a case, we no longer need to wrap the fonts to change the fallback option.
-            We also prewarm the fonts with the same SPI and use system fallback as the default value.
+        Source/WebCore:
 
-            Covered by existing tests.
+        Reviewed by Myles C. Maxfield.
 
-            * platform/graphics/cocoa/FontCacheCoreText.cpp:
-            (WebCore::preparePlatformFont):
-            (WebCore::lookupFallbackFont):
-            (WebCore::FontCache::systemFallbackForCharacters):
-            (WebCore::FontCache::prewarm):
-            (WebCore::fontFamiliesForPrewarming):
+        We can use CTFontCreateForCharactersWithLanguageAndOption instead of CTFontCreateForCharactersWithLanguage
+        as it allows setting more easily the fallback option.
+        This allows us to never fallback to user installed fonts.
+        In such a case, we no longer need to wrap the fonts to change the fallback option.
+        We also prewarm the fonts with the same SPI and use system fallback as the default value.
+
+        Covered by existing tests.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont):
+        (WebCore::lookupFallbackFont):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        (WebCore::FontCache::prewarm):
+        (WebCore::fontFamiliesForPrewarming):
+
+        Source/WebCore/PAL:
+
+        Reviewed by Myles C. Maxfield.
+
+        Add new SPI.
+
+        * pal/spi/cocoa/CoreTextSPI.h:
+
+        Source/WTF:
+
+        Reviewed by Myles C. Maxfield.
+
+        * wtf/Platform.h: Add macro to enable/disable new SPI.
+
+        LayoutTests:
+
+        We update the tests to flush font caches as otherwise some debug asserts would be hit.
+        This is due to changing the user installed font runtime flag while browsing which is not a typical situation.
+
+        Reviewed by Myles C. Maxfield.
+
+        * fast/text/user-installed-fonts/extended-character-with-user-font.html:
+        * fast/text/user-installed-fonts/extended-character.html:
+
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248071 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-07-31  Youenn Fablet  <youenn@apple.com>
+
+                Use CTFontCreateForCharactersWithLanguageAndOption if available instead of CTFontCreateForCharactersWithLanguage
+                https://bugs.webkit.org/show_bug.cgi?id=200241
+
+                Reviewed by Myles C. Maxfield.
+
+                We can use CTFontCreateForCharactersWithLanguageAndOption instead of CTFontCreateForCharactersWithLanguage
+                as it allows setting more easily the fallback option.
+                This allows us to never fallback to user installed fonts.
+                In such a case, we no longer need to wrap the fonts to change the fallback option.
+                We also prewarm the fonts with the same SPI and use system fallback as the default value.
+
+                Covered by existing tests.
+
+                * platform/graphics/cocoa/FontCacheCoreText.cpp:
+                (WebCore::preparePlatformFont):
+                (WebCore::lookupFallbackFont):
+                (WebCore::FontCache::systemFallbackForCharacters):
+                (WebCore::FontCache::prewarm):
+                (WebCore::fontFamiliesForPrewarming):
 
 2019-07-31  Alan Coon  <alancoon@apple.com>
 
@@ -379,6 +396,19 @@
     Force Reveal to always lookup from menu
     https://bugs.webkit.org/show_bug.cgi?id=200186
     <rdar://problem/52967940>
+2019-07-31  Simon Fraser  <simon.fraser@apple.com>
+
+        [iPadOS] Enable simulated mouse events on iqiyi.com to fix the video controls
+        https://bugs.webkit.org/show_bug.cgi?id=200322
+        rdar://problem/53235709
+
+        Reviewed by Wenson Hsieh.
+        
+        iqiyi.com needs to get mouseMove events for dragging the video scrubber to work.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldDispatchSimulatedMouseEvents const):
+
     
     Reviewed by Tim Horton.
     
