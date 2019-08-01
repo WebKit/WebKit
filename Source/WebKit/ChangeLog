@@ -1,5 +1,43 @@
 2019-07-31  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r247700. rdar://problem/53456055
+
+    WebKit SPI fix for [ClickyOrb] Audio continues playing after dismissing a video preview in Safari
+    https://bugs.webkit.org/show_bug.cgi?id=200011
+    <rdar://problem/53409457>
+    
+    Reviewed by Tim Horton.
+    
+    Don't check for the SPI @selector(_webView:contextMenuDidEndForElement:)
+    on the WKUIDelegate so that clients that got caught implementing the
+    SPI before moving to the real API can still clean-up state. In other words,
+    don't force a client that only implements that method to move completely
+    to the new API.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (needsDeprecatedPreviewAPI):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247700 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-22  Dean Jackson  <dino@apple.com>
+
+            WebKit SPI fix for [ClickyOrb] Audio continues playing after dismissing a video preview in Safari
+            https://bugs.webkit.org/show_bug.cgi?id=200011
+            <rdar://problem/53409457>
+
+            Reviewed by Tim Horton.
+
+            Don't check for the SPI @selector(_webView:contextMenuDidEndForElement:)
+            on the WKUIDelegate so that clients that got caught implementing the
+            SPI before moving to the real API can still clean-up state. In other words,
+            don't force a client that only implements that method to move completely
+            to the new API.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (needsDeprecatedPreviewAPI):
+
+2019-07-31  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r248038. rdar://problem/53764075
 
     AX: com.apple.WebKit.WebContent at com.apple.WebKit: -[WKAccessibilityWebPageObject accessibilityParameterizedAttributeNames]
