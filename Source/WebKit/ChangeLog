@@ -1,3 +1,15 @@
+2019-08-01  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION: HSBC Personal Banking download/print dialog is usually positioned off screen on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=200356
+        <rdar://problem/51885199>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::desktopClassBrowsingRecommendedForRequest):
+        Add HSBC domains to the list of sites that recommend mobile mode by default.
+
 2019-08-01  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebProcessProxy::didBecomeUnresponsive()
