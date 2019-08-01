@@ -1,5 +1,46 @@
 2019-08-01  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r248116. rdar://problem/53829168
+
+    Improve flakiness of SOAuthorizationRedirect tests
+    https://bugs.webkit.org/show_bug.cgi?id=200320
+    <rdar://problem/53767057>
+    
+    Reviewed by Alex Christensen.
+    
+    This patch replaces Util::sleep(0.5) in tests that expect a SOAuthorization session to wait when the corresponding WKWebView
+    is out of the window with a more precise boolean indicator: navigationPolicyDecided. The new boolean indicator is working and
+    better because the authorizationPerformed should be set in the same runloop when NavigationState::decidePolicyForNavigationAction
+    is executed.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/TestSOAuthorization.mm:
+    (-[TestSOAuthorizationDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+    (resetState):
+    (TestWebKitAPI::TEST):
+    
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@248116 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-01  Jiewen Tan  <jiewen_tan@apple.com>
+
+            Improve flakiness of SOAuthorizationRedirect tests
+            https://bugs.webkit.org/show_bug.cgi?id=200320
+            <rdar://problem/53767057>
+
+            Reviewed by Alex Christensen.
+
+            This patch replaces Util::sleep(0.5) in tests that expect a SOAuthorization session to wait when the corresponding WKWebView
+            is out of the window with a more precise boolean indicator: navigationPolicyDecided. The new boolean indicator is working and
+            better because the authorizationPerformed should be set in the same runloop when NavigationState::decidePolicyForNavigationAction
+            is executed.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/TestSOAuthorization.mm:
+            (-[TestSOAuthorizationDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+            (resetState):
+            (TestWebKitAPI::TEST):
+
+2019-08-01  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r248072. rdar://problem/52355829
 
     Unreviewed test gardening, disable failing test for rdar://52355829.

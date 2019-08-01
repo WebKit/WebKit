@@ -52,6 +52,7 @@ static bool authorizationCancelled = false;
 static bool uiShowed = false;
 static bool newWindowCreated = false;
 static bool haveHttpBody = false;
+static bool navigationPolicyDecided = false;
 static String finalURL;
 static SOAuthorization* gAuthorization;
 static id<SOAuthorizationDelegate> gDelegate;
@@ -169,6 +170,7 @@ static const char* samlResponse =
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
+    navigationPolicyDecided = true;
     EXPECT_EQ(navigationAction._shouldOpenExternalSchemes, self.shouldOpenExternalSchemes);
     if (self.isDefaultPolicy) {
         decisionHandler(WKNavigationActionPolicyAllow);
@@ -289,6 +291,7 @@ static void resetState()
     uiShowed = false;
     newWindowCreated = false;
     haveHttpBody = false;
+    navigationPolicyDecided = false;
     finalURL = emptyString();
     gAuthorization = nullptr;
     gDelegate = nullptr;
@@ -764,7 +767,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithWaitingSession)
     // The session will be waiting since the web view is is not in the window.
     [webView removeFromSuperview];
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    Util::sleep(0.5);
+    Util::run(&navigationPolicyDecided);
     EXPECT_FALSE(authorizationPerformed);
 
     // Should activate the session.
@@ -800,7 +803,7 @@ TEST(SOAuthorizationRedirect, InterceptionAbortedWithWaitingSession)
     // The session will be waiting since the web view is is not in the window.
     [webView removeFromSuperview];
     [webView loadRequest:[NSURLRequest requestWithURL:testURL1.get()]];
-    Util::sleep(0.5);
+    Util::run(&navigationPolicyDecided);
     EXPECT_FALSE(authorizationPerformed);
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL2.get()]];
@@ -927,12 +930,13 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSuppressWaitingSession)
     // The session will be waiting since the web view is is not int the window.
     [webView removeFromSuperview];
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    Util::sleep(0.5);
+    Util::run(&navigationPolicyDecided);
     EXPECT_FALSE(authorizationPerformed);
 
     // Suppress the last waiting session.
+    navigationPolicyDecided = false;
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    Util::sleep(0.5);
+    Util::run(&navigationPolicyDecided);
     EXPECT_FALSE(authorizationPerformed);
 
     // Activate the last session.
