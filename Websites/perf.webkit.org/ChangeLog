@@ -1,3 +1,16 @@
+2019-07-26  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Dashboard should defaults to first dashboard page when summary page is not available.
+        https://bugs.webkit.org/show_bug.cgi?id=200180
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix a bug that charts page will become the default when there is no summary page but there
+        is at least one dashboard page.
+
+        * public/v3/main.js: Charts page and analysis category page should not be considered as summay pages.
+        (main):
+
 2019-07-30  Dewei Zhu  <dewei_zhu@apple.com>
 
         Analysis task page should show build request author and creation time.

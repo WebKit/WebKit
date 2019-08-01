@@ -38,8 +38,6 @@ function main() {
         const chartsPage = new ChartsPage(chartsToolbar);
         const analysisCategoryPage = new AnalysisCategoryPage();
 
-        summaryPages.push(chartsPage);
-        summaryPages.push(analysisCategoryPage);
         if (testFreshnessPage)
             summaryPages.push(testFreshnessPage);
 
@@ -53,7 +51,7 @@ function main() {
         buildRequestQueuePage.setParentPage(analysisCategoryPage);
 
         const heading = new Heading(manifest.siteTitle);
-        heading.addPageGroup(summaryPages);
+        heading.addPageGroup([chartsPage, analysisCategoryPage, ...summaryPages]);
 
         heading.setTitle(manifest.siteTitle);
         heading.addPageGroup(dashboardPages);
@@ -61,6 +59,8 @@ function main() {
         const router = new PageRouter();
         for (const summaryPage of summaryPages)
             router.addPage(summaryPage);
+        router.addPage(chartsPage);
+        router.addPage(analysisCategoryPage);
         router.addPage(createAnalysisTaskPage);
         router.addPage(analysisTaskPage);
         router.addPage(buildRequestQueuePage);
