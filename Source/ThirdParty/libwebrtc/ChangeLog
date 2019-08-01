@@ -1,3 +1,15 @@
+2019-08-01  Loïc Yhuel  <loic.yhuel@softathome.com>
+
+        Fix libwebrtc build with Linux 5.2 headers
+        https://bugs.webkit.org/show_bug.cgi?id=200342
+
+        Reviewed by Eric Carlson.
+
+        We need to include linux/sockios.h for SIOCGSTAMP.
+        Take upstream fix from https://bugs.chromium.org/p/webrtc/issues/detail?id=10677.
+
+        * Source/webrtc/rtc_base/physicalsocketserver.cc:
+
 2019-07-31  Youenn Fablet  <youenn@apple.com>
 
         ObjC RTCCVPixelBuffer should be prefixed to not conflict with other apps

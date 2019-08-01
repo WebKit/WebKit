@@ -51,6 +51,10 @@
 #include "rtc_base/nullsocketserver.h"
 #include "rtc_base/timeutils.h"
 
+#if defined(WEBRTC_LINUX)
+#include <linux/sockios.h>
+#endif
+
 #if defined(WEBRTC_WIN)
 #define LAST_SYSTEM_ERROR (::GetLastError())
 #elif defined(__native_client__) && __native_client__
