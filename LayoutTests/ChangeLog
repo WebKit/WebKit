@@ -1,5 +1,25 @@
 2019-08-01  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r247919. rdar://problem/48616298
+
+    Unreviewed test gardening, update expectations for rdar://problem/48616298.
+    
+    * platform/ios-wk2/TestExpectations:
+    The fast/viewport/ios directory is marked as passing in this file, which was overriding the entries in the 'ios' file.
+    * platform/ios/TestExpectations:
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@247919 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Unreviewed test gardening, update expectations for rdar://problem/48616298.
+
+            * platform/ios-wk2/TestExpectations:
+            The fast/viewport/ios directory is marked as passing in this file, which was overriding the entries in the 'ios' file.
+            * platform/ios/TestExpectations:
+
+2019-08-01  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r248017. rdar://problem/52956165
 
     Add test expectations and baselines for iPad
