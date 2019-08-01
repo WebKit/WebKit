@@ -1,5 +1,19 @@
 2019-08-01  Zhifei Fang  <zhifei_fang@apple.com>
 
+        [results.webkit.org] Timeline.CanvasXAxisComponent height should be defined by option
+        https://bugs.webkit.org/show_bug.cgi?id=200321
+
+        Reviewed by Jonathan Bedard.
+
+        *resultsdbpy/resultsdbpy/view/static/library/js/components/TimelineComponents.js:
+        Let the axis' height be defined in the option. Timeine component will use this value as 
+        padding-top for headers which allows headers start in the right position, even with multiple 
+        top axises.
+        (Timeline.CanvasSeriesComponent):
+        (prototype.Timeline.CanvasContainer):
+
+2019-08-01  Zhifei Fang  <zhifei_fang@apple.com>
+
         results.webkit.org: Collision detection for dots is off by 2 * dotMargin
         https://bugs.webkit.org/show_bug.cgi?id=200347
 

@@ -509,7 +509,7 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
     const scaleTagLinePadding = 10;
     const scaleBroadLineHeight = parseInt(computedStyle.getPropertyValue('--tinySize')) / 2;
     const maxinumTextHeight = scaleWidth * 4.5;
-    const canvasHeight = parseInt(computedStyle.getPropertyValue('--smallSize')) * 4;
+    const canvasHeight = typeof option.height === "number" ? option.height : parseInt(computedStyle.getPropertyValue('--smallSize')) * 5;
     const sqrt3 = Math.sqrt(3);
 
     const drawScale = (scaleLabel, group, context, x, y, isHoverable, lineColor, groupColor) => {
@@ -732,12 +732,14 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
                 <canvas ref="${canvasRef}">
             </div>`;
         }),
-        isAxis: true // Mark self as an axis
+        isAxis: true, // Mark self as an axis,
+        height: canvasHeight, // Expose Height to parent
     };
 }
 
 Timeline.CanvasContainer = (exporter, ...children) => {
-    const hasTopXAxis = children[0].isAxis;
+    let headerAxisPlaceHolderHeight = 0;
+    let topAxis = true;
     const upackChildren = (children) => {
         const headers = [];
         const serieses = [];
@@ -749,6 +751,10 @@ Timeline.CanvasContainer = (exporter, ...children) => {
             if (child.header)
                 headers.push(child.header);
             serieses.push(child.series);
+            if (child.isAxis && topAxis)
+                headerAxisPlaceHolderHeight += child.height;
+            else if (topAxis)
+                topAxis = false;
         });
         return {headers, serieses};
     };
@@ -763,7 +769,7 @@ Timeline.CanvasContainer = (exporter, ...children) => {
     }));
     return (
         `<div class="timeline">
-            <div class="header ${hasTopXAxis ? "with-top-x-axis" : ""}">
+            <div class="header" style="padding-top:${headerAxisPlaceHolderHeight}px">
                 ${ListComponent(composer, ...headers)}
             </div>
             ${XScrollableCanvasProvider(composer, ...serieses)}
