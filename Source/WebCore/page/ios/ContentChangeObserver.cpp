@@ -30,6 +30,7 @@
 #include "ChromeClient.h"
 #include "DOMTimer.h"
 #include "Document.h"
+#include "FullscreenManager.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "Logging.h"
@@ -42,6 +43,23 @@ namespace WebCore {
 
 static const Seconds maximumDelayForTimers { 400_ms };
 static const Seconds maximumDelayForTransitions { 300_ms };
+
+#if ENABLE(FULLSCREEN_API)
+static bool isHiddenBehindFullscreenElement(const Node& descendantCandidate)
+{
+    // Fullscreen status is propagated on the ancestor document chain all the way to the top document.
+    auto& document = descendantCandidate.document();
+    auto* topMostFullScreenElement = document.topDocument().fullscreenManager().fullscreenElement();
+    if (!topMostFullScreenElement)
+        return false;
+
+    // If the document where the node lives does not have an active fullscreen element, it is a sibling/nephew document -> not a descendant.
+    auto* fullscreenElement = document.fullscreenManager().fullscreenElement();
+    if (!fullscreenElement)
+        return true;
+    return !descendantCandidate.isDescendantOf(*fullscreenElement);
+}
+#endif
 
 bool ContentChangeObserver::isVisuallyHidden(const Node& node)
 {
@@ -88,6 +106,11 @@ bool ContentChangeObserver::isVisuallyHidden(const Node& node)
         if (!parent->renderStyle() || !parent->renderStyle()->opacity())
             return true;
     }
+
+#if ENABLE(FULLSCREEN_API)
+    if (isHiddenBehindFullscreenElement(node))
+        return true;
+#endif
     return false;
 }
 
