@@ -65,7 +65,7 @@
 		1171B24F219F49CD00CB897D /* FirstMeaningfulPaintMilestone_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11B7FD21219F46DD0069B27F /* FirstMeaningfulPaintMilestone_Bundle.cpp */; };
 		118153442208B7AC00B2CCD2 /* deferred-script-load.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 118153432208B7AC00B2CCD2 /* deferred-script-load.html */; };
 		118153462208B7E500B2CCD2 /* deferred-script.js in Copy Resources */ = {isa = PBXBuildFile; fileRef = 118153452208B7E500B2CCD2 /* deferred-script.js */; };
-		118153482208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestoneWithDeferredScript.mm in Sources */ = {isa = PBXBuildFile; fileRef = 118153472208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestoneWithDeferredScript.mm */; };
+		118153482208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestone.mm in Sources */ = {isa = PBXBuildFile; fileRef = 118153472208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestone.mm */; };
 		11B7FD28219F47110069B27F /* FirstMeaningfulPaintMilestone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11B7FD22219F46DD0069B27F /* FirstMeaningfulPaintMilestone.cpp */; };
 		11C2598D21FA6324004C9E23 /* async-script-load.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 11C2598C21FA618D004C9E23 /* async-script-load.html */; };
 		143DDE9820C9018B007F76FA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
@@ -1443,7 +1443,7 @@
 		115EB3421EE0B720003C2C0A /* ViewportSizeForViewportUnits.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewportSizeForViewportUnits.mm; sourceTree = "<group>"; };
 		118153432208B7AC00B2CCD2 /* deferred-script-load.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "deferred-script-load.html"; sourceTree = "<group>"; };
 		118153452208B7E500B2CCD2 /* deferred-script.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "deferred-script.js"; sourceTree = "<group>"; };
-		118153472208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestoneWithDeferredScript.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FirstVisuallyNonEmptyMilestoneWithDeferredScript.mm; sourceTree = "<group>"; };
+		118153472208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestone.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FirstVisuallyNonEmptyMilestone.mm; sourceTree = "<group>"; };
 		11B7FD21219F46DD0069B27F /* FirstMeaningfulPaintMilestone_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FirstMeaningfulPaintMilestone_Bundle.cpp; sourceTree = "<group>"; };
 		11B7FD22219F46DD0069B27F /* FirstMeaningfulPaintMilestone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FirstMeaningfulPaintMilestone.cpp; sourceTree = "<group>"; };
 		11C2598C21FA618D004C9E23 /* async-script-load.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "async-script-load.html"; sourceTree = "<group>"; };
@@ -2705,6 +2705,7 @@
 				F44D06461F395C4D001A0E29 /* EditorStateTests.mm */,
 				CDA29B2820FD2A9900F15CED /* ExitFullscreenOnEnterPiP.mm */,
 				2D8104CB1BEC13E70020DA46 /* FindInPage.mm */,
+				118153472208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestone.mm */,
 				2D1FE0AF1AD465C1006CD9E6 /* FixedLayoutSize.mm */,
 				2E92B8F8216490EA005B64F0 /* FontAttributes.mm */,
 				5CB5B3BD1FFC517E00C27BB0 /* FrameHandleSerialization.mm */,
@@ -3396,7 +3397,6 @@
 				C51AFB98169F49FF009CCF66 /* FindMatches.mm */,
 				11B7FD22219F46DD0069B27F /* FirstMeaningfulPaintMilestone.cpp */,
 				11B7FD21219F46DD0069B27F /* FirstMeaningfulPaintMilestone_Bundle.cpp */,
-				118153472208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestoneWithDeferredScript.mm */,
 				1ADBEFAD130C689C00D61D19 /* ForceRepaint.cpp */,
 				376C8C041D6E197C007D2BB9 /* FrameHandle.cpp */,
 				BCBD370F125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp */,
@@ -4373,7 +4373,7 @@
 				11B7FD28219F47110069B27F /* FirstMeaningfulPaintMilestone.cpp in Sources */,
 				7C83E0401D0A63E300FEBCF3 /* FirstResponderScrollingPosition.mm in Sources */,
 				C9E6DD351EA97D0800DD78AA /* FirstResponderSuppression.mm in Sources */,
-				118153482208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestoneWithDeferredScript.mm in Sources */,
+				118153482208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestone.mm in Sources */,
 				7C83E0BC1D0A650700FEBCF3 /* FixedLayoutSize.mm in Sources */,
 				7A909A7E1D877480007E10F8 /* FloatPoint.cpp in Sources */,
 				7A909A7F1D877480007E10F8 /* FloatRect.cpp in Sources */,

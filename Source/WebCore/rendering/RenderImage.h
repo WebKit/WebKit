@@ -100,6 +100,8 @@ protected:
         imageChanged(imageResource().imagePtr());
     }
 
+    void incrementVisuallyNonEmptyPixelCountIfNeeded(const IntSize&);
+
 private:
     const char* renderName() const override { return "RenderImage"; }
 

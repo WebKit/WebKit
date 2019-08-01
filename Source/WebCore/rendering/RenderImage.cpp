@@ -269,12 +269,9 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
     if (newImage != imageResource().imagePtr() || !newImage)
         return;
-    
-    if (!m_didIncrementVisuallyNonEmptyPixelCount) {
-        // At a zoom level of 1 the image is guaranteed to have an integer size.
-        view().frameView().incrementVisuallyNonEmptyPixelCount(flooredIntSize(imageResource().imageSize(1.0f)));
-        m_didIncrementVisuallyNonEmptyPixelCount = true;
-    }
+
+    // At a zoom level of 1 the image is guaranteed to have an integer size.
+    incrementVisuallyNonEmptyPixelCountIfNeeded(flooredIntSize(imageResource().imageSize(1.0f)));
 
     ImageSizeChangeType imageSizeChange = ImageSizeChangeNone;
 
@@ -848,6 +845,15 @@ RenderBox* RenderImage::embeddedContentBox() const
         return downcast<SVGImage>(*cachedImage->image()).embeddedContentBox();
 
     return nullptr;
+}
+
+void RenderImage::incrementVisuallyNonEmptyPixelCountIfNeeded(const IntSize& size)
+{
+    if (m_didIncrementVisuallyNonEmptyPixelCount)
+        return;
+
+    view().frameView().incrementVisuallyNonEmptyPixelCount(size);
+    m_didIncrementVisuallyNonEmptyPixelCount = true;
 }
 
 } // namespace WebCore

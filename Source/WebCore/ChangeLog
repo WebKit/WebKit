@@ -1,3 +1,47 @@
+2019-07-31  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r240942): first visually non-empty layout milestone is not reached in media documents until after the video finishes loading
+        https://bugs.webkit.org/show_bug.cgi?id=200293
+        <rdar://problem/52937749>
+
+        Reviewed by Alex Christensen.
+
+        r240942 changed FrameView::qualifiesAsVisuallyNonEmpty() to consider only documents in the
+        Interactive or Complete ready states as "finished parsing". Documents considered finished
+        parsing can qualify as visually non-empty even without exceeding the visual character or
+        pixel thresholds, but documents considered not finished must first exceed one of these
+        thresholds in order to qualify as visually non-empty.
+
+        HTMLDocuments are placed in the Interactive ready state by their HTMLDocumentParsers.
+        However, HTMLDocument subclasses like ImageDocument and MediaDocument use their own custom
+        parsers that never set the Interactive ready state on their documents; these documents go
+        from Loading directly to Complete.
+
+        In order for these HTMLDocument subclasses to be considered visually non-empty before they
+        finish loading they must render something that exceeds the visual character or pixel
+        thresholds. For image documents, rendering the image is usually enough to cross the
+        threshold, but for media documents the visual pixel threshold was never crossed because
+        videos did not contribute to the visually non-empty pixel count.
+
+        As a result, media documents are not considered visually non-empty until the main resource
+        finishes loading. On iOS this means that the layer tree remains frozen until this point,
+        even though the media might have started autoplaying with audio long before it finished
+        loading.
+
+        Fix this by teaching RenderVideo to contribute the video player's size to FrameView's
+        visually non-empty pixel count once the video player has loaded enough data to determine its
+        intrinsic size. Videos that render more than 1024 pixels will qualify a media document as
+        visually non-empty even when it is still loading its main resource.
+
+        Added a new API test.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+        (WebCore::RenderImage::incrementVisuallyNonEmptyPixelCountIfNeeded):
+        * rendering/RenderImage.h:
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updateIntrinsicSize):
+
 2019-07-31  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Remove UnnamedType copy/move constructors and mark classes as final
