@@ -1,3 +1,15 @@
+2019-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS 10.15] Image dragged from Safari does not appear in Notes
+        https://bugs.webkit.org/show_bug.cgi?id=188490
+        <rdar://problem/39462717>
+
+        Reviewed by Andy Estes.
+
+        Add a test to verify that promised image data can be delivered to multiple pasteboards when performing a drop.
+
+        * TestWebKitAPI/Tests/mac/DragAndDropTestsMac.mm:
+
 2019-08-02  Alex Christensen  <achristensen@webkit.org>
 
         Fix API test after r248139

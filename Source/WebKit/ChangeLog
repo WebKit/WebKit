@@ -1,3 +1,33 @@
+2019-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS 10.15] Image dragged from Safari does not appear in Notes
+        https://bugs.webkit.org/show_bug.cgi?id=188490
+        <rdar://problem/39462717>
+
+        Reviewed by Andy Estes.
+
+        Removes some logic that clears out the cached promised drag image in the UI process when WebKit is asked to
+        provide TIFF image data. This prevents the drop destination from asking for promised image data, if anything
+        else (e.g. the system) also asks the web view to provide the same data. Additionally, this logic didn't
+        previously guarantee that the promised image would be cleared anyways, since it is dependent on the drop target
+        actually requesting the promised image in order to perform the cleanup.
+
+        In lieu of clearing the promised drag image when it's requested, we instead clear it out upon mainframe
+        navigation, in PageClientImpl::didCommitLoadForMainFrame.
+
+        Test: DragAndDropTests.MultiplePromisedImageDataRequests
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::clearPromisedDragImage):
+        (WebKit::WebViewImpl::pasteboardChangedOwner):
+        (WebKit::WebViewImpl::provideDataForPasteboard):
+
+        Fix the bug by not immediately clearing out the promised drag image.
+
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+
 2019-08-02  Keith Rollin  <krollin@apple.com>
 
         macCatalyst build fails the first attempt, requires a second build

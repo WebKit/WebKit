@@ -4205,21 +4205,23 @@ void WebViewImpl::setPromisedDataForImage(WebCore::Image* image, NSString *filen
     m_promisedImage = image;
 }
 
-void WebViewImpl::pasteboardChangedOwner(NSPasteboard *pasteboard)
+void WebViewImpl::clearPromisedDragImage()
 {
     m_promisedImage = nullptr;
+}
+
+void WebViewImpl::pasteboardChangedOwner(NSPasteboard *pasteboard)
+{
+    clearPromisedDragImage();
     m_promisedFilename = emptyString();
     m_promisedURL = emptyString();
 }
 
 void WebViewImpl::provideDataForPasteboard(NSPasteboard *pasteboard, NSString *type)
 {
-    // FIXME: need to support NSRTFDPboardType
-
-    if ([type isEqual:WebCore::legacyTIFFPasteboardType()] && m_promisedImage) {
+    // FIXME: Need to support NSRTFDPboardType.
+    if ([type isEqual:WebCore::legacyTIFFPasteboardType()] && m_promisedImage)
         [pasteboard setData:(__bridge NSData *)m_promisedImage->tiffRepresentation() forType:WebCore::legacyTIFFPasteboardType()];
-        m_promisedImage = nullptr;
-    }
 }
 
 static BOOL fileExists(NSString *path)

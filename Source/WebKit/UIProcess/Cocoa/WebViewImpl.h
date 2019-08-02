@@ -602,6 +602,7 @@ public:
     bool effectiveUserInterfaceLevelIsElevated();
 
     void takeFocus(WebCore::FocusDirection);
+    void clearPromisedDragImage();
 
 private:
 #if HAVE(TOUCH_BAR)
