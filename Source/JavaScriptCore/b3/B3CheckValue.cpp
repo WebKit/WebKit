@@ -44,7 +44,7 @@ void CheckValue::convertToAdd()
 CheckValue::CheckValue(Kind kind, Origin origin, Value* left, Value* right)
     : StackmapValue(CheckedOpcode, kind, left->type(), origin)
 {
-    ASSERT(B3::isInt(type()));
+    ASSERT(type().isInt());
     ASSERT(left->type() == right->type());
     ASSERT(kind == CheckAdd || kind == CheckSub || kind == CheckMul);
     append(ConstrainedValue(left, ValueRep::WarmAny));

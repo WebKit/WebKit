@@ -99,8 +99,9 @@ void lowerMacros(Code& code)
                     inst.kind.effects = true;
 
                 Tmp result = cCallResult(value->type());
-                switch (value->type()) {
+                switch (value->type().kind()) {
                 case Void:
+                case Tuple:
                     break;
                 case Float:
                     insertionSet.insert(instIndex + 1, MoveFloat, value, result, resultDst);

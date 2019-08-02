@@ -174,7 +174,7 @@ bool StackmapSpecial::isValidImpl(
         Value* child = value->child(i + numIgnoredB3Args);
         Arg& arg = inst.args[i + numIgnoredAirArgs];
 
-        if (!isArgValidForValue(arg, child))
+        if (!isArgValidForType(arg, child->type()))
             return false;
     }
 
@@ -228,7 +228,7 @@ Vector<ValueRep> StackmapSpecial::repsImpl(Air::GenerationContext& context, unsi
     return result;
 }
 
-bool StackmapSpecial::isArgValidForValue(const Air::Arg& arg, Value* value)
+bool StackmapSpecial::isArgValidForType(const Air::Arg& arg, Type type)
 {
     switch (arg.kind()) {
     case Arg::Tmp:
@@ -241,7 +241,7 @@ bool StackmapSpecial::isArgValidForValue(const Air::Arg& arg, Value* value)
         break;
     }
 
-    return arg.canRepresent(value);
+    return arg.canRepresent(type);
 }
 
 bool StackmapSpecial::isArgValidForRep(Air::Code& code, const Air::Arg& arg, const ValueRep& rep)
@@ -250,7 +250,7 @@ bool StackmapSpecial::isArgValidForRep(Air::Code& code, const Air::Arg& arg, con
     case ValueRep::WarmAny:
     case ValueRep::ColdAny:
     case ValueRep::LateColdAny:
-        // We already verified by isArgValidForValue().
+        // We already verified by isArgValidForType().
         return true;
     case ValueRep::SomeRegister:
     case ValueRep::SomeRegisterWithClobber:

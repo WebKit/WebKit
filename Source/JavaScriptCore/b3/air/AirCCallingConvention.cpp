@@ -91,7 +91,7 @@ Vector<Arg> computeCCallingConvention(Code& code, CCallValue* value)
 
 Tmp cCallResult(Type type)
 {
-    switch (type) {
+    switch (type.kind()) {
     case Void:
         return Tmp();
     case Int32:
@@ -100,6 +100,8 @@ Tmp cCallResult(Type type)
     case Float:
     case Double:
         return Tmp(FPRInfo::returnValueFPR);
+    case Tuple:
+        break;
     }
 
     RELEASE_ASSERT_NOT_REACHED();

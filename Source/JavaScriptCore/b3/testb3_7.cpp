@@ -1363,7 +1363,7 @@ void testShuffleDoesntTrashCalleeSaves()
         PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         RELEASE_ASSERT(reg.isGPR());
-        patchpoint->resultConstraint = ValueRep::reg(reg.gpr());
+        patchpoint->resultConstraints = { ValueRep::reg(reg.gpr()) };
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1383,7 +1383,7 @@ void testShuffleDoesntTrashCalleeSaves()
 
     PatchpointValue* ptr = root->appendNew<PatchpointValue>(proc, Int64, Origin());
     ptr->clobber(RegisterSet::macroScratchRegisters());
-    ptr->resultConstraint = ValueRep::reg(GPRInfo::regCS0);
+    ptr->resultConstraints = { ValueRep::reg(GPRInfo::regCS0) };
     ptr->appendSomeRegister(arg1);
     ptr->setGenerator(
         [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -1491,7 +1491,7 @@ void testReportUsedRegistersLateUseFollowedByEarlyDefDoesNotMarkUseAsDead()
 
     {
         PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
-        patchpoint->resultConstraint = ValueRep::SomeEarlyRegister;
+        patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         patchpoint->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams& params) {
             RELEASE_ASSERT(allRegs.contains(params[0].gpr()));
         });
@@ -1545,6 +1545,279 @@ void testInfiniteLoopDoesntCauseBadHoisting()
     auto code = compileProc(proc);
     RELEASE_ASSERT(!proc.calleeSaveRegisterAtOffsetList().size()); 
     invoke<void>(*code, static_cast<uint64_t>(55)); // Shouldn't crash dereferncing 55.
+}
+
+static void testSimpleTuplePair(unsigned first, int64_t second)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, proc.addTuple({ Int32, Int64 }), Origin());
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::SomeRegister };
+    patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        jit.move(CCallHelpers::TrustedImm32(first), params[0].gpr());
+        jit.move(CCallHelpers::TrustedImm64(second), params[1].gpr());
+    });
+    Value* i32 = root->appendNew<Value>(proc, ZExt32, Origin(),
+        root->appendNew<ExtractValue>(proc, Origin(), Int32, patchpoint, 0));
+    Value* i64 = root->appendNew<ExtractValue>(proc, Origin(), Int64, patchpoint, 1);
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, Add, Origin(), i32, i64));
+
+    CHECK_EQ(compileAndRun<int64_t>(proc), first + second);
+}
+
+static void testSimpleTuplePairUnused(unsigned first, int64_t second)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, proc.addTuple({ Int32, Int64, Double }), Origin());
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::SomeRegister, ValueRep::SomeRegister };
+    patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        jit.move(CCallHelpers::TrustedImm32(first), params[0].gpr());
+        jit.move(CCallHelpers::TrustedImm64(second), params[1].gpr());
+        jit.moveDouble(CCallHelpers::Imm64(bitwise_cast<uint64_t>(0.0)), params[2].fpr());
+    });
+    Value* i32 = root->appendNew<Value>(proc, ZExt32, Origin(),
+        root->appendNew<ExtractValue>(proc, Origin(), Int32, patchpoint, 0));
+    Value* i64 = root->appendNew<ExtractValue>(proc, Origin(), Int64, patchpoint, 1);
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, Add, Origin(), i32, i64));
+
+    CHECK_EQ(compileAndRun<int64_t>(proc), first + second);
+}
+
+static void testSimpleTuplePairStack(unsigned first, int64_t second)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, proc.addTuple({ Int32, Int64 }), Origin());
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::stackArgument(0) };
+    patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        jit.move(CCallHelpers::TrustedImm32(first), params[0].gpr());
+        jit.store64(CCallHelpers::TrustedImm64(second), CCallHelpers::Address(CCallHelpers::framePointerRegister, params[1].offsetFromFP()));
+    });
+    Value* i32 = root->appendNew<Value>(proc, ZExt32, Origin(),
+        root->appendNew<ExtractValue>(proc, Origin(), Int32, patchpoint, 0));
+    Value* i64 = root->appendNew<ExtractValue>(proc, Origin(), Int64, patchpoint, 1);
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, Add, Origin(), i32, i64));
+
+    CHECK_EQ(compileAndRun<int64_t>(proc), first + second);
+}
+
+template<bool shouldFixSSA>
+static void tailDupedTuplePair(unsigned first, double second)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* truthy = proc.addBlock();
+    BasicBlock* falsey = proc.addBlock();
+
+    Type tupleType = proc.addTuple({ Int32, Double });
+    Variable* var = proc.addVariable(tupleType);
+
+    Value* test = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, tupleType, Origin());
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::stackArgument(0) };
+    patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        jit.move(CCallHelpers::TrustedImm32(first), params[0].gpr());
+        jit.store64(CCallHelpers::TrustedImm64(bitwise_cast<uint64_t>(second)), CCallHelpers::Address(CCallHelpers::framePointerRegister, params[1].offsetFromFP()));
+    });
+    root->appendNew<VariableValue>(proc, Set, Origin(), var, patchpoint);
+    root->appendNewControlValue(proc, Branch, Origin(), test, FrequentedBlock(truthy), FrequentedBlock(falsey));
+
+    auto addDup = [&] (BasicBlock* block) {
+        Value* tuple = block->appendNew<VariableValue>(proc, B3::Get, Origin(), var);
+        Value* i32 = block->appendNew<Value>(proc, ZExt32, Origin(),
+            block->appendNew<ExtractValue>(proc, Origin(), Int32, tuple, 0));
+        i32 = block->appendNew<Value>(proc, IToD, Origin(), i32);
+        Value* f64 = block->appendNew<ExtractValue>(proc, Origin(), Double, tuple, 1);
+        block->appendNew<Value>(proc, Return, Origin(), block->appendNew<Value>(proc, Add, Origin(), i32, f64));
+    };
+
+    addDup(truthy);
+    addDup(falsey);
+
+    proc.resetReachability();
+    if (shouldFixSSA)
+        fixSSA(proc);
+    CHECK_EQ(compileAndRun<double>(proc, first), first + second);
+}
+
+template<bool shouldFixSSA>
+static void tuplePairVariableLoop(unsigned first, uint64_t second)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* body = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+
+    Type tupleType = proc.addTuple({ Int32, Int64 });
+    Variable* var = proc.addVariable(tupleType);
+
+    {
+        Value* first = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* second = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, tupleType, Origin());
+        patchpoint->append({ first, ValueRep::SomeRegister });
+        patchpoint->append({ second, ValueRep::SomeRegister });
+        patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister, ValueRep::SomeEarlyRegister };
+        patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            jit.move(params[2].gpr(), params[0].gpr());
+            jit.move(params[3].gpr(), params[1].gpr());
+        });
+        root->appendNew<VariableValue>(proc, Set, Origin(), var, patchpoint);
+        root->appendNewControlValue(proc, Jump, Origin(), body);
+    }
+
+    {
+        Value* tuple = body->appendNew<VariableValue>(proc, B3::Get, Origin(), var);
+        Value* first = body->appendNew<ExtractValue>(proc, Origin(), Int32, tuple, 0);
+        Value* second = body->appendNew<ExtractValue>(proc, Origin(), Int64, tuple, 1);
+        PatchpointValue* patchpoint = body->appendNew<PatchpointValue>(proc, tupleType, Origin());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        patchpoint->append({ first, ValueRep::SomeRegister });
+        patchpoint->append({ second, ValueRep::SomeRegister });
+        patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister, ValueRep::stackArgument(0) };
+        patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            CHECK(params[3].gpr() != params[0].gpr());
+            CHECK(params[2].gpr() != params[0].gpr());
+            jit.add64(CCallHelpers::TrustedImm32(1), params[3].gpr(), params[0].gpr());
+            jit.store64(params[0].gpr(), CCallHelpers::Address(CCallHelpers::framePointerRegister, params[1].offsetFromFP()));
+
+            jit.move(params[2].gpr(), params[0].gpr());
+            jit.urshift32(CCallHelpers::TrustedImm32(1), params[0].gpr());
+        });
+        body->appendNew<VariableValue>(proc, Set, Origin(), var, patchpoint);
+        Value* condition = body->appendNew<ExtractValue>(proc, Origin(), Int32, patchpoint, 0);
+        body->appendNewControlValue(proc, Branch, Origin(), condition, FrequentedBlock(body), FrequentedBlock(exit));
+    }
+
+    {
+        Value* tuple = exit->appendNew<VariableValue>(proc, B3::Get, Origin(), var);
+        Value* second = exit->appendNew<ExtractValue>(proc, Origin(), Int64, tuple, 1);
+        exit->appendNew<Value>(proc, Return, Origin(), second);
+    }
+
+    proc.resetReachability();
+    validate(proc);
+    if (shouldFixSSA)
+        fixSSA(proc);
+    CHECK_EQ(compileAndRun<uint64_t>(proc, first, second), second + (first ? getMSBSet(first) : first) + 1);
+}
+
+template<bool shouldFixSSA>
+static void tupleNestedLoop(int32_t first, double second)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* outerLoop = proc.addBlock();
+    BasicBlock* innerLoop = proc.addBlock();
+    BasicBlock* outerContinuation = proc.addBlock();
+
+    Type tupleType = proc.addTuple({ Int32, Double, Int32 });
+    Variable* varOuter = proc.addVariable(tupleType);
+    Variable* varInner = proc.addVariable(tupleType);
+    Variable* tookInner = proc.addVariable(Int32);
+
+    {
+        Value* first = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* second = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+        PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, tupleType, Origin());
+        patchpoint->append({ first, ValueRep::SomeRegisterWithClobber });
+        patchpoint->append({ second, ValueRep::SomeRegisterWithClobber });
+        patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::SomeRegister, ValueRep::SomeEarlyRegister };
+        patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            jit.move(params[3].gpr(), params[0].gpr());
+            jit.move(params[0].gpr(), params[2].gpr());
+            jit.move(params[4].fpr(), params[1].fpr());
+        });
+        root->appendNew<VariableValue>(proc, Set, Origin(), varOuter, patchpoint);
+        root->appendNew<VariableValue>(proc, Set, Origin(), tookInner, root->appendIntConstant(proc, Origin(), Int32, 0));
+        root->appendNewControlValue(proc, Jump, Origin(), outerLoop);
+    }
+
+    {
+        Value* tuple = outerLoop->appendNew<VariableValue>(proc, B3::Get, Origin(), varOuter);
+        Value* first = outerLoop->appendNew<ExtractValue>(proc, Origin(), Int32, tuple, 0);
+        Value* second = outerLoop->appendNew<ExtractValue>(proc, Origin(), Double, tuple, 1);
+        Value* third = outerLoop->appendNew<VariableValue>(proc, B3::Get, Origin(), tookInner);
+        PatchpointValue* patchpoint = outerLoop->appendNew<PatchpointValue>(proc, tupleType, Origin());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        patchpoint->append({ first, ValueRep::SomeRegisterWithClobber });
+        patchpoint->append({ second, ValueRep::SomeRegisterWithClobber });
+        patchpoint->append({ third, ValueRep::SomeRegisterWithClobber });
+        patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::SomeRegister, ValueRep::SomeRegister };
+        patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.move(params[3].gpr(), params[0].gpr());
+            jit.moveConditionally32(CCallHelpers::Equal, params[5].gpr(), CCallHelpers::TrustedImm32(0), params[0].gpr(), params[5].gpr(), params[2].gpr());
+            jit.move(params[4].fpr(), params[1].fpr());
+        });
+        outerLoop->appendNew<VariableValue>(proc, Set, Origin(), varOuter, patchpoint);
+        outerLoop->appendNew<VariableValue>(proc, Set, Origin(), varInner, patchpoint);
+        Value* condition = outerLoop->appendNew<ExtractValue>(proc, Origin(), Int32, patchpoint, 2);
+        outerLoop->appendNewControlValue(proc, Branch, Origin(), condition, FrequentedBlock(outerContinuation), FrequentedBlock(innerLoop));
+    }
+
+    {
+        Value* tuple = innerLoop->appendNew<VariableValue>(proc, B3::Get, Origin(), varInner);
+        Value* first = innerLoop->appendNew<ExtractValue>(proc, Origin(), Int32, tuple, 0);
+        Value* second = innerLoop->appendNew<ExtractValue>(proc, Origin(), Double, tuple, 1);
+        PatchpointValue* patchpoint = innerLoop->appendNew<PatchpointValue>(proc, tupleType, Origin());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        patchpoint->append({ first, ValueRep::SomeRegisterWithClobber });
+        patchpoint->append({ second, ValueRep::SomeRegisterWithClobber });
+        patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::SomeRegister, ValueRep::SomeEarlyRegister };
+        patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.move(params[3].gpr(), params[0].gpr());
+            jit.move(CCallHelpers::TrustedImm32(0), params[2].gpr());
+            jit.move(params[4].fpr(), params[1].fpr());
+        });
+        innerLoop->appendNew<VariableValue>(proc, Set, Origin(), varOuter, patchpoint);
+        innerLoop->appendNew<VariableValue>(proc, Set, Origin(), varInner, patchpoint);
+        Value* condition = innerLoop->appendNew<ExtractValue>(proc, Origin(), Int32, patchpoint, 2);
+        innerLoop->appendNew<VariableValue>(proc, Set, Origin(), tookInner, innerLoop->appendIntConstant(proc, Origin(), Int32, 1));
+        innerLoop->appendNewControlValue(proc, Branch, Origin(), condition, FrequentedBlock(innerLoop), FrequentedBlock(outerLoop));
+    }
+
+    {
+        Value* tuple = outerContinuation->appendNew<VariableValue>(proc, B3::Get, Origin(), varInner);
+        Value* first = outerContinuation->appendNew<ExtractValue>(proc, Origin(), Int32, tuple, 0);
+        Value* second = outerContinuation->appendNew<ExtractValue>(proc, Origin(), Double, tuple, 1);
+        Value* result = outerContinuation->appendNew<Value>(proc, Add, Origin(), second, outerContinuation->appendNew<Value>(proc, IToD, Origin(), first));
+        outerContinuation->appendNewControlValue(proc, Return, Origin(), result);
+    }
+
+    proc.resetReachability();
+    validate(proc);
+    if (shouldFixSSA)
+        fixSSA(proc);
+    CHECK_EQ(compileAndRun<double>(proc, first, second), first + second);
+}
+
+void addTupleTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
+{
+    RUN_BINARY(testSimpleTuplePair, int32Operands(), int64Operands());
+    RUN_BINARY(testSimpleTuplePairUnused, int32Operands(), int64Operands());
+    RUN_BINARY(testSimpleTuplePairStack, int32Operands(), int64Operands());
+    // use int64 as second argument because checking for NaN is annoying and doesn't really matter for this test.
+    RUN_BINARY(tailDupedTuplePair<true>, int32Operands(), int64Operands());
+    RUN_BINARY(tailDupedTuplePair<false>, int32Operands(), int64Operands());
+    RUN_BINARY(tuplePairVariableLoop<true>, int32Operands(), int64Operands());
+    RUN_BINARY(tuplePairVariableLoop<false>, int32Operands(), int64Operands());
+    RUN_BINARY(tupleNestedLoop<true>, int32Operands(), int64Operands());
+    RUN_BINARY(tupleNestedLoop<false>, int32Operands(), int64Operands());
 }
 
 #endif // ENABLE(B3_JIT)

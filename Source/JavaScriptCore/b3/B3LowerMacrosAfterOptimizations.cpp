@@ -138,7 +138,7 @@ private:
                 break;
             }
             case Neg: {
-                if (!isFloat(m_value->type()))
+                if (!m_value->type().isFloat())
                     break;
                 
                 // X86 is odd in that it requires this.

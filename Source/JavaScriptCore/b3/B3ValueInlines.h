@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include "B3Const64Value.h"
 #include "B3ConstDoubleValue.h"
 #include "B3ConstFloatValue.h"
+#include "B3ExtractValue.h"
 #include "B3FenceValue.h"
 #include "B3MemoryValue.h"
 #include "B3PatchpointValue.h"
@@ -138,6 +139,8 @@ namespace JSC { namespace B3 {
         return MACRO(SwitchValue); \
     case Upsilon: \
         return MACRO(UpsilonValue); \
+    case Extract: \
+        return MACRO(ExtractValue); \
     case WasmAddress: \
         return MACRO(WasmAddressValue); \
     case WasmBoundsCheck: \

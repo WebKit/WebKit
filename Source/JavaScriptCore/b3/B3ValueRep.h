@@ -94,7 +94,7 @@ public:
         Stack,
 
         // As an input representation, this forces the value to end up in the argument area at some
-        // offset.
+        // offset. As an output representation this tells us what offset from SP B3 picked.
         StackArgument,
 
         // As an output representation, this tells us that B3 constant-folded the value.

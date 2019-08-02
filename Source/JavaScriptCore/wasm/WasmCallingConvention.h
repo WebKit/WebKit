@@ -71,7 +71,7 @@ private:
 
     B3::ValueRep marshallArgument(B3::Type type, size_t& gpArgumentCount, size_t& fpArgumentCount, size_t& stackOffset) const
     {
-        switch (type) {
+        switch (type.kind()) {
         case B3::Int32:
         case B3::Int64:
             return marshallArgumentImpl(m_gprArgs, gpArgumentCount, stackOffset);
@@ -79,7 +79,9 @@ private:
         case B3::Double:
             return marshallArgumentImpl(m_fprArgs, fpArgumentCount, stackOffset);
         case B3::Void:
+        case B3::Tuple:
             break;
+
         }
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -92,7 +94,7 @@ public:
         static_assert(CallFrameSlot::codeBlock * sizeof(Register) < headerSize, "We rely on this here for now.");
 
         B3::PatchpointValue* getCalleePatchpoint = block->appendNew<B3::PatchpointValue>(proc, B3::Int64, origin);
-        getCalleePatchpoint->resultConstraint = B3::ValueRep::SomeRegister;
+        getCalleePatchpoint->resultConstraints = { B3::ValueRep::SomeRegister };
         getCalleePatchpoint->effects = B3::Effects::none();
         getCalleePatchpoint->setGenerator(
             [=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
@@ -169,16 +171,19 @@ public:
         patchpointFunctor(patchpoint);
         patchpoint->appendVector(constrainedArguments);
 
-        switch (returnType) {
+        switch (returnType.kind()) {
         case B3::Void:
             return nullptr;
         case B3::Float:
         case B3::Double:
-            patchpoint->resultConstraint = B3::ValueRep::reg(FPRInfo::returnValueFPR);
+            patchpoint->resultConstraints = { B3::ValueRep::reg(FPRInfo::returnValueFPR) };
             break;
         case B3::Int32:
         case B3::Int64:
-            patchpoint->resultConstraint = B3::ValueRep::reg(GPRInfo::returnValueGPR);
+            patchpoint->resultConstraints = { B3::ValueRep::reg(GPRInfo::returnValueGPR) };
+            break;
+        case B3::Tuple:
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
         return patchpoint;
@@ -297,13 +302,13 @@ public:
             break;
         case Type::F32:
         case Type::F64:
-            patchpoint->resultConstraint = B3::ValueRep::reg(FPRInfo::returnValueFPR);
+            patchpoint->resultConstraints = { B3::ValueRep::reg(FPRInfo::returnValueFPR) };
             break;
         case Type::I32:
         case Type::I64:
         case Type::Anyref:
         case Wasm::Funcref:
-            patchpoint->resultConstraint = B3::ValueRep::reg(GPRInfo::returnValueGPR);
+            patchpoint->resultConstraints = { B3::ValueRep::reg(GPRInfo::returnValueGPR) };
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();

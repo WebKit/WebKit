@@ -36,7 +36,7 @@ using namespace JSC::B3;
 
 void printInternal(PrintStream& out, Type type)
 {
-    switch (type) {
+    switch (type.kind()) {
     case Void:
         out.print("Void");
         return;
@@ -52,10 +52,15 @@ void printInternal(PrintStream& out, Type type)
     case Double:
         out.print("Double");
         return;
+    case Tuple:
+        out.print("Tuple");
+        return;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+static_assert(std::is_pod_v<JSC::B3::TypeKind>);
 } // namespace WTF
+
 
 #endif // ENABLE(B3_JIT)

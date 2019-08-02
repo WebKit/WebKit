@@ -115,7 +115,7 @@ public:
 
     static IntRange top(Type type)
     {
-        switch (type) {
+        switch (type.kind()) {
         case Int32:
             return top<int32_t>();
         case Int64:
@@ -136,7 +136,7 @@ public:
 
     static IntRange rangeForMask(int64_t mask, Type type)
     {
-        switch (type) {
+        switch (type.kind()) {
         case Int32:
             return rangeForMask<int32_t>(static_cast<int32_t>(mask));
         case Int64:
@@ -158,7 +158,7 @@ public:
 
     static IntRange rangeForZShr(int32_t shiftAmount, Type type)
     {
-        switch (type) {
+        switch (type.kind()) {
         case Int32:
             return rangeForZShr<int32_t>(shiftAmount);
         case Int64:
@@ -188,7 +188,7 @@ public:
 
     bool couldOverflowAdd(const IntRange& other, Type type)
     {
-        switch (type) {
+        switch (type.kind()) {
         case Int32:
             return couldOverflowAdd<int32_t>(other);
         case Int64:
@@ -209,7 +209,7 @@ public:
 
     bool couldOverflowSub(const IntRange& other, Type type)
     {
-        switch (type) {
+        switch (type.kind()) {
         case Int32:
             return couldOverflowSub<int32_t>(other);
         case Int64:
@@ -230,7 +230,7 @@ public:
 
     bool couldOverflowMul(const IntRange& other, Type type)
     {
-        switch (type) {
+        switch (type.kind()) {
         case Int32:
             return couldOverflowMul<int32_t>(other);
         case Int64:
@@ -256,7 +256,7 @@ public:
 
     IntRange shl(int32_t shiftAmount, Type type)
     {
-        switch (type) {
+        switch (type.kind()) {
         case Int32:
             return shl<int32_t>(shiftAmount);
         case Int64:
@@ -278,7 +278,7 @@ public:
 
     IntRange sShr(int32_t shiftAmount, Type type)
     {
-        switch (type) {
+        switch (type.kind()) {
         case Int32:
             return sShr<int32_t>(shiftAmount);
         case Int64:
@@ -311,7 +311,7 @@ public:
 
     IntRange zShr(int32_t shiftAmount, Type type)
     {
-        switch (type) {
+        switch (type.kind()) {
         case Int32:
             return zShr<int32_t>(shiftAmount);
         case Int64:
@@ -332,7 +332,7 @@ public:
 
     IntRange add(const IntRange& other, Type type)
     {
-        switch (type) {
+        switch (type.kind()) {
         case Int32:
             return add<int32_t>(other);
         case Int64:
@@ -353,7 +353,7 @@ public:
 
     IntRange sub(const IntRange& other, Type type)
     {
-        switch (type) {
+        switch (type.kind()) {
         case Int32:
             return sub<int32_t>(other);
         case Int64:
@@ -380,7 +380,7 @@ public:
 
     IntRange mul(const IntRange& other, Type type)
     {
-        switch (type) {
+        switch (type.kind()) {
         case Int32:
             return mul<int32_t>(other);
         case Int64:

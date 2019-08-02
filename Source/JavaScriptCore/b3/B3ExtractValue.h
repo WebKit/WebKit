@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,44 +20,45 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "B3PatchpointValue.h"
+#pragma once
 
 #if ENABLE(B3_JIT)
 
+#include "B3Value.h"
+
 namespace JSC { namespace B3 {
 
-PatchpointValue::~PatchpointValue()
-{
-}
+class JS_EXPORT_PRIVATE ExtractValue final : public Value {
+public:
+    static bool accepts(Kind kind) { return kind == Extract; }
 
-void PatchpointValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
-{
-    Base::dumpMeta(comma, out);
-    out.print(comma, "resultConstraints = ");
-    out.print(resultConstraints.size() > 1 ? "[" : "");
+    ~ExtractValue();
 
-    CommaPrinter constraintComma;
-    for (const auto& constraint : resultConstraints)
-        out.print(constraintComma, constraint);
-    out.print(resultConstraints.size() > 1 ? "]" : "");
+    int32_t index() const { return m_index; }
 
-    if (numGPScratchRegisters)
-        out.print(comma, "numGPScratchRegisters = ", numGPScratchRegisters);
-    if (numFPScratchRegisters)
-        out.print(comma, "numFPScratchRegisters = ", numFPScratchRegisters);
-}
+    B3_SPECIALIZE_VALUE_FOR_FIXED_CHILDREN(1)
+    B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_FIXED_CHILDREN
 
-PatchpointValue::PatchpointValue(Type type, Origin origin)
-    : Base(CheckedOpcode, Patchpoint, type, origin)
-    , effects(Effects::forCall())
-{
-    if (!type.isTuple())
-        resultConstraints.append(type == Void ? ValueRep::WarmAny : ValueRep::SomeRegister);
-}
+protected:
+    void dumpMeta(CommaPrinter&, PrintStream&) const override;
+
+    static Opcode opcodeFromConstructor(Origin, Type, Value*, int32_t) { return Extract; }
+
+    ExtractValue(Origin origin, Type type, Value* tuple, int32_t index)
+        : Value(CheckedOpcode, Extract, type, One, origin, tuple)
+        , m_index(index)
+    {
+    }
+
+private:
+    friend class Procedure;
+    friend class Value;
+
+    int32_t m_index;
+};
 
 } } // namespace JSC::B3
 

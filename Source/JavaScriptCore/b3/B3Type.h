@@ -36,22 +36,70 @@ IGNORE_RETURN_TYPE_WARNINGS_BEGIN
 
 namespace JSC { namespace B3 {
 
-enum Type : int8_t {
+static constexpr uint32_t tupleFlag = 1ul << (std::numeric_limits<uint32_t>::digits - 1);
+static constexpr uint32_t tupleIndexMask = tupleFlag - 1;
+
+enum TypeKind : uint32_t {
     Void,
     Int32,
     Int64,
     Float,
     Double,
+
+    // Tuples are represented as the tupleFlag | with the tuple's index into Procedure's m_tuples table.
+    Tuple = tupleFlag,
 };
 
-inline bool isInt(Type type)
+class Type {
+public:
+    constexpr Type() = default;
+    constexpr Type(const Type&) = default;
+    constexpr Type(TypeKind kind)
+        : m_kind(kind)
+    { }
+
+    ~Type() = default;
+
+    static Type tupleFromIndex(unsigned index) { ASSERT(!(index & tupleFlag)); return static_cast<TypeKind>(index | tupleFlag); }
+
+    TypeKind kind() const { return m_kind & tupleFlag ? Tuple : m_kind; }
+    uint32_t tupleIndex() const { ASSERT(m_kind & tupleFlag); return m_kind & tupleIndexMask; }
+    uint32_t hash() const { return m_kind; }
+
+    inline bool isInt() const;
+    inline bool isFloat() const;
+    inline bool isNumeric() const;
+    inline bool isTuple() const;
+
+    bool operator==(const TypeKind& otherKind) const { return kind() == otherKind; }
+    bool operator==(const Type& type) const { return m_kind == type.m_kind; }
+    bool operator!=(const TypeKind& otherKind) const { return !(*this == otherKind); }
+    bool operator!=(const Type& type) const { return !(*this == type); }
+
+private:
+    TypeKind m_kind { Void };
+};
+
+static_assert(sizeof(TypeKind) == sizeof(Type));
+
+inline bool Type::isInt() const
 {
-    return type == Int32 || type == Int64;
+    return kind() == Int32 || kind() == Int64;
 }
 
-inline bool isFloat(Type type)
+inline bool Type::isFloat() const
 {
-    return type == Float || type == Double;
+    return kind() == Float || kind() == Double;
+}
+
+inline bool Type::isNumeric() const
+{
+    return isInt() || isFloat();
+}
+
+inline bool Type::isTuple() const
+{
+    return kind() == Tuple;
 }
 
 inline Type pointerType()
@@ -63,8 +111,9 @@ inline Type pointerType()
 
 inline size_t sizeofType(Type type)
 {
-    switch (type) {
+    switch (type.kind()) {
     case Void:
+    case Tuple:
         return 0;
     case Int32:
     case Float:

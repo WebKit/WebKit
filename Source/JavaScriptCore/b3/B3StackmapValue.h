@@ -63,6 +63,7 @@ public:
     // Use this to add children.
     void append(const ConstrainedValue& value)
     {
+        ASSERT(value.value()->type().isNumeric());
         append(value.value(), value.rep());
     }
 

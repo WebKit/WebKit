@@ -409,7 +409,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
             // This prevents us from using ArgumentReg to this (logically) immutable pinned register.
             stackOverflowCheck->effects.writesPinned = false;
             stackOverflowCheck->effects.readsPinned = true;
-            stackOverflowCheck->resultConstraint = ValueRep::reg(m_wasmContextInstanceGPR);
+            stackOverflowCheck->resultConstraints = { ValueRep::reg(m_wasmContextInstanceGPR) };
         }
         stackOverflowCheck->numGPScratchRegisters = 2;
         stackOverflowCheck->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {

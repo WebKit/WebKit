@@ -50,7 +50,7 @@ public:
     
     T& at(Type type)
     {
-        switch (type) {
+        switch (type.kind()) {
         case Void:
             return m_void;
         case Int32:
@@ -61,6 +61,8 @@ public:
             return m_float;
         case Double:
             return m_double;
+        case Tuple:
+            return m_tuple;
         }
         ASSERT_NOT_REACHED();
     }
@@ -96,6 +98,7 @@ private:
     T m_int64;
     T m_float;
     T m_double;
+    T m_tuple;
 };
 
 } } // namespace JSC::B3

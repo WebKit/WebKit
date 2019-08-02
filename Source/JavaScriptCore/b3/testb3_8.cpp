@@ -31,8 +31,8 @@
 template<typename T>
 void testAtomicWeakCAS()
 {
-    Type type = NativeTraits<T>::type;
-    Width width = NativeTraits<T>::width;
+    constexpr Type type = NativeTraits<T>::type;
+    constexpr Width width = NativeTraits<T>::width;
 
     auto checkMyDisassembly = [&] (Compilation& compilation, bool fenced) {
         if (isX86()) {
@@ -278,8 +278,8 @@ void testAtomicWeakCAS()
 template<typename T>
 void testAtomicStrongCAS()
 {
-    Type type = NativeTraits<T>::type;
-    Width width = NativeTraits<T>::width;
+    constexpr Type type = NativeTraits<T>::type;
+    constexpr Width width = NativeTraits<T>::width;
 
     auto checkMyDisassembly = [&] (Compilation& compilation, bool fenced) {
         if (isX86()) {
@@ -547,8 +547,8 @@ void testAtomicStrongCAS()
 template<typename T>
 void testAtomicXchg(B3::Opcode opcode)
 {
-    Type type = NativeTraits<T>::type;
-    Width width = NativeTraits<T>::width;
+    constexpr Type type = NativeTraits<T>::type;
+    constexpr Width width = NativeTraits<T>::width;
 
     auto doTheMath = [&] (T& memory, T operand) -> T {
         T oldValue = memory;
@@ -716,8 +716,8 @@ void addAtomicTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks
     RUN(testAtomicXchg<int64_t>(AtomicXchg));
 }
 
-template<B3::Type type, typename CType, typename InputType>
-void testLoad(B3::Opcode opcode, InputType value)
+template<typename CType, typename InputType>
+void testLoad(B3::Type type, B3::Opcode opcode, InputType value)
 {
     // Simple load from an absolute address.
     {
@@ -806,29 +806,29 @@ void testLoad(B3::Opcode opcode, InputType value)
 template<typename T>
 void testLoad(B3::Opcode opcode, int32_t value)
 {
-    return testLoad<Int32, T>(opcode, value);
+    return testLoad<T>(B3::Int32, opcode, value);
 }
 
-template<B3::Type type, typename T>
-void testLoad(T value)
+template<typename T>
+void testLoad(B3::Type type, T value)
 {
-    return testLoad<type, T>(Load, value);
+    return testLoad<T>(type, Load, value);
 }
 
 void addLoadTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
 {
-    RUN(testLoad<Int32>(60));
-    RUN(testLoad<Int32>(-60));
-    RUN(testLoad<Int32>(1000));
-    RUN(testLoad<Int32>(-1000));
-    RUN(testLoad<Int32>(1000000));
-    RUN(testLoad<Int32>(-1000000));
-    RUN(testLoad<Int32>(1000000000));
-    RUN(testLoad<Int32>(-1000000000));
-    RUN_UNARY(testLoad<Int64>, int64Operands());
-    RUN_UNARY(testLoad<Float>, floatingPointOperands<float>());
-    RUN_UNARY(testLoad<Double>, floatingPointOperands<double>());
-    
+    RUN(testLoad(Int32, 60));
+    RUN(testLoad(Int32, -60));
+    RUN(testLoad(Int32, 1000));
+    RUN(testLoad(Int32, -1000));
+    RUN(testLoad(Int32, 1000000));
+    RUN(testLoad(Int32, -1000000));
+    RUN(testLoad(Int32, 1000000000));
+    RUN(testLoad(Int32, -1000000000));
+    RUN_BINARY(testLoad, { MAKE_OPERAND(Int64) }, int64Operands());
+    RUN_BINARY(testLoad, { MAKE_OPERAND(Float) }, floatingPointOperands<float>());
+    RUN_BINARY(testLoad, { MAKE_OPERAND(Double) }, floatingPointOperands<double>());
+
     RUN(testLoad<int8_t>(Load8S, 60));
     RUN(testLoad<int8_t>(Load8S, -60));
     RUN(testLoad<int8_t>(Load8S, 1000));

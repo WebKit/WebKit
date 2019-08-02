@@ -71,9 +71,14 @@ bool Arg::usesTmp(Air::Tmp tmp) const
     return uses;
 }
 
+bool Arg::canRepresent(Type type) const
+{
+    return isBank(bankForType(type));
+}
+
 bool Arg::canRepresent(Value* value) const
 {
-    return isBank(bankForType(value->type()));
+    return canRepresent(value->type());
 }
 
 bool Arg::isCompatibleBank(const Arg& other) const

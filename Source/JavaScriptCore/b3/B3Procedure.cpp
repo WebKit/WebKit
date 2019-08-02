@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,6 +85,24 @@ Variable* Procedure::addVariable(Type type)
     return m_variables.addNew(type); 
 }
 
+Type Procedure::addTuple(Vector<Type>&& types)
+{
+    Type result = Type::tupleFromIndex(m_tuples.size());
+    m_tuples.append(WTFMove(types));
+    ASSERT(result.isTuple());
+    return result;
+}
+
+bool Procedure::isValidTuple(Type tuple) const
+{
+    return tuple.tupleIndex() < m_tuples.size();
+}
+
+const Vector<Type>& Procedure::tupleForType(Type tuple) const
+{
+    return m_tuples[tuple.tupleIndex()];
+}
+
 Value* Procedure::clone(Value* value)
 {
     std::unique_ptr<Value> clone(value->cloneImpl());
@@ -95,7 +113,7 @@ Value* Procedure::clone(Value* value)
 
 Value* Procedure::addIntConstant(Origin origin, Type type, int64_t value)
 {
-    switch (type) {
+    switch (type.kind()) {
     case Int32:
         return add<Const32Value>(origin, static_cast<int32_t>(value));
     case Int64:
@@ -117,7 +135,7 @@ Value* Procedure::addIntConstant(Value* likeValue, int64_t value)
 
 Value* Procedure::addConstant(Origin origin, Type type, uint64_t bits)
 {
-    switch (type) {
+    switch (type.kind()) {
     case Int32:
         return add<Const32Value>(origin, static_cast<int32_t>(bits));
     case Int64:

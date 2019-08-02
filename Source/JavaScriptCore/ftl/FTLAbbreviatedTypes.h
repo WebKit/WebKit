@@ -32,7 +32,7 @@
 namespace JSC { namespace B3 {
 class BasicBlock;
 class Value;
-enum Type : int8_t;
+class Type;
 } }
 
 namespace JSC { namespace FTL {

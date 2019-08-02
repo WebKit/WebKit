@@ -296,6 +296,10 @@ enum Opcode : uint8_t {
     // stack.
     Patchpoint,
 
+    // This is a projection out of a tuple. Currently only patchpoints can generate a tuple. It's assumumed that
+    // each entry in a tuple has a fixed Numeric B3 Type (i.e. not Void or Tuple).
+    Extract,
+
     // Checked math. Use the CheckValue class. Like a Patchpoint, this takes a code generation
     // callback. That callback gets to emit some code after the epilogue, and gets to link the jump
     // from the check, and the choice of registers. You also get to supply a stackmap. Note that you
@@ -398,7 +402,7 @@ inline bool isConstant(Opcode opcode)
 
 inline Opcode opcodeForConstant(Type type)
 {
-    switch (type) {
+    switch (type.kind()) {
     case Int32: return Const32;
     case Int64: return Const64;
     case Float: return ConstFloat;

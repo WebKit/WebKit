@@ -59,8 +59,9 @@ inline Width pointerWidth()
 
 inline Width widthForType(Type type)
 {
-    switch (type) {
+    switch (type.kind()) {
     case Void:
+    case Tuple:
         ASSERT_NOT_REACHED();
         return Width8;
     case Int32:

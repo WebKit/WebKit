@@ -1420,7 +1420,7 @@ void testPatchpointDoubleRegs()
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Double, Origin());
     patchpoint->append(arg, ValueRep(FPRInfo::fpRegT0));
-    patchpoint->resultConstraint = ValueRep(FPRInfo::fpRegT0);
+    patchpoint->resultConstraints = { ValueRep(FPRInfo::fpRegT0) };
 
     unsigned numCalls = 0;
     patchpoint->setGenerator(
@@ -2273,7 +2273,7 @@ void testSomeEarlyRegister()
         BasicBlock* root = proc.addBlock();
     
         PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
-        patchpoint->resultConstraint = ValueRep::reg(GPRInfo::returnValueGPR);
+        patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::returnValueGPR) };
         bool ranFirstPatchpoint = false;
         patchpoint->setGenerator(
             [&] (CCallHelpers&, const StackmapGenerationParams& params) {
@@ -2286,7 +2286,7 @@ void testSomeEarlyRegister()
         patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
         patchpoint->appendSomeRegister(arg);
         if (succeed)
-            patchpoint->resultConstraint = ValueRep::SomeEarlyRegister;
+            patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         bool ranSecondPatchpoint = false;
         unsigned optLevel = proc.optLevel();
         patchpoint->setGenerator(

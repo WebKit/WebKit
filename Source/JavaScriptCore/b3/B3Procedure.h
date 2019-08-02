@@ -111,7 +111,14 @@ public:
 
     JS_EXPORT_PRIVATE StackSlot* addStackSlot(unsigned byteSize);
     JS_EXPORT_PRIVATE Variable* addVariable(Type);
-    
+
+    JS_EXPORT_PRIVATE Type addTuple(Vector<Type>&& types);
+    bool isValidTuple(Type tuple) const;
+    Type extractFromTuple(Type tuple, unsigned index) const;
+    const Vector<Type>& tupleForType(Type tuple) const;
+
+    unsigned returnCount(Type type) const { return type.isTuple() ? tupleForType(type).size() : type.isNumeric(); }
+
     template<typename ValueType, typename... Arguments>
     ValueType* add(Arguments...);
 
@@ -273,6 +280,7 @@ private:
 
     SparseCollection<StackSlot> m_stackSlots;
     SparseCollection<Variable> m_variables;
+    Vector<Vector<Type>> m_tuples;
     Vector<std::unique_ptr<BasicBlock>> m_blocks;
     SparseCollection<Value> m_values;
     std::unique_ptr<CFG> m_cfg;

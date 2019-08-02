@@ -1104,6 +1104,7 @@ public:
         ASSERT_NOT_REACHED();
     }
 
+    bool canRepresent(Type) const;
     bool canRepresent(Value* value) const;
 
     bool isCompatibleBank(const Arg& other) const;

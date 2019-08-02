@@ -38,7 +38,7 @@ namespace JSC { namespace B3 {
 
 ValueKey ValueKey::intConstant(Type type, int64_t value)
 {
-    switch (type) {
+    switch (type.kind()) {
     case Int32:
         return ValueKey(Const32, Int32, value);
     case Int64:

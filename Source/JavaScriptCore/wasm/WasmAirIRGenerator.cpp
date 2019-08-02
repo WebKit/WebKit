@@ -423,10 +423,10 @@ private:
         Inst resultMov;
         if (result) {
             ASSERT(patch->type() != B3::Void);
-            switch (patch->resultConstraint.kind()) {
+            switch (patch->resultConstraints[0].kind()) {
             case B3::ValueRep::Register:
-                inst.args.append(Tmp(patch->resultConstraint.reg()));
-                resultMov = Inst(result.isGP() ? Move : MoveDouble, nullptr, Tmp(patch->resultConstraint.reg()), result);
+                inst.args.append(Tmp(patch->resultConstraints[0].reg()));
+                resultMov = Inst(result.isGP() ? Move : MoveDouble, nullptr, Tmp(patch->resultConstraints[0].reg()), result);
                 break;
             case B3::ValueRep::SomeRegister:
                 inst.args.append(result);
@@ -464,8 +464,8 @@ private:
             }
         }
 
-        if (patch->resultConstraint.isReg())
-            patch->lateClobbered().clear(patch->resultConstraint.reg());
+        if (patch->resultConstraints[0].isReg())
+            patch->lateClobbered().clear(patch->resultConstraints[0].reg());
         for (unsigned i = patch->numGPScratchRegisters; i--;)
             inst.args.append(g64().tmp());
         for (unsigned i = patch->numFPScratchRegisters; i--;)

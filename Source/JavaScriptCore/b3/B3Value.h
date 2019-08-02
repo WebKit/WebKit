@@ -423,6 +423,7 @@ protected:
         case Load:
         case Switch:
         case Upsilon:
+        case Extract:
         case Set:
         case WasmAddress:
         case WasmBoundsCheck:
@@ -474,8 +475,10 @@ protected:
         case CheckMul:
         case Patchpoint:
             return sizeof(Vector<Value*, 3>);
+#ifdef NDEBUG
         default:
             break;
+#endif
         }
         RELEASE_ASSERT_NOT_REACHED();
         return 0;

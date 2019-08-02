@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirCode.h"
 #include "AirGenerationContext.h"
 #include "B3StackmapGenerationParams.h"
 #include "B3ValueInlines.h"
@@ -47,17 +48,20 @@ PatchpointSpecial::~PatchpointSpecial()
 
 void PatchpointSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& callback)
 {
+    const Procedure& procedure = code().proc();
     PatchpointValue* patchpoint = inst.origin->as<PatchpointValue>();
     unsigned argIndex = 1;
 
-    if (patchpoint->type() != Void) {
+    Type type = patchpoint->type();
+    for (; argIndex <= procedure.returnCount(type); ++argIndex) {
         Arg::Role role;
-        if (patchpoint->resultConstraint.kind() == ValueRep::SomeEarlyRegister)
+        if (patchpoint->resultConstraints[argIndex - 1].kind() == ValueRep::SomeEarlyRegister)
             role = Arg::EarlyDef;
         else
             role = Arg::Def;
-        
-        callback(inst.args[argIndex++], role, inst.origin->resultBank(), inst.origin->resultWidth());
+
+        Type argType = type.isTuple() ? procedure.extractFromTuple(type, argIndex - 1) : type;
+        callback(inst.args[argIndex], role, bankForType(argType), widthForType(argType));
     }
 
     forEachArgImpl(0, argIndex, inst, SameAsRep, WTF::nullopt, callback, WTF::nullopt);
@@ -71,18 +75,19 @@ void PatchpointSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgC
 
 bool PatchpointSpecial::isValid(Inst& inst)
 {
+    const Procedure& procedure = code().proc();
     PatchpointValue* patchpoint = inst.origin->as<PatchpointValue>();
     unsigned argIndex = 1;
 
-    if (inst.origin->type() != Void) {
+    Type type = patchpoint->type();
+    for (; argIndex <= procedure.returnCount(type); ++argIndex) {
         if (argIndex >= inst.args.size())
             return false;
         
-        if (!isArgValidForValue(inst.args[argIndex], patchpoint))
+        if (!isArgValidForType(inst.args[argIndex], type.isTuple() ? procedure.extractFromTuple(type, argIndex - 1) : type))
             return false;
-        if (!isArgValidForRep(code(), inst.args[argIndex], patchpoint->resultConstraint))
+        if (!isArgValidForRep(code(), inst.args[argIndex], patchpoint->resultConstraints[argIndex - 1]))
             return false;
-        argIndex++;
     }
 
     if (!isValidImpl(0, argIndex, inst))
@@ -109,11 +114,13 @@ bool PatchpointSpecial::isValid(Inst& inst)
 
 bool PatchpointSpecial::admitsStack(Inst& inst, unsigned argIndex)
 {
-    if (inst.origin->type() == Void)
-        return admitsStackImpl(0, 1, inst, argIndex);
+    ASSERT(argIndex);
 
-    if (argIndex == 1) {
-        switch (inst.origin->as<PatchpointValue>()->resultConstraint.kind()) {
+    Type type = inst.origin->type();
+    unsigned returnCount = code().proc().returnCount(type);
+
+    if (argIndex <= returnCount) {
+        switch (inst.origin->as<PatchpointValue>()->resultConstraints[argIndex - 1].kind()) {
         case ValueRep::WarmAny:
         case ValueRep::StackArgument:
             return true;
@@ -130,7 +137,7 @@ bool PatchpointSpecial::admitsStack(Inst& inst, unsigned argIndex)
         }
     }
 
-    return admitsStackImpl(0, 2, inst, argIndex);
+    return admitsStackImpl(0, returnCount + 1, inst, argIndex);
 }
 
 bool PatchpointSpecial::admitsExtendedOffsetAddr(Inst& inst, unsigned argIndex)
@@ -140,12 +147,15 @@ bool PatchpointSpecial::admitsExtendedOffsetAddr(Inst& inst, unsigned argIndex)
 
 CCallHelpers::Jump PatchpointSpecial::generate(Inst& inst, CCallHelpers& jit, Air::GenerationContext& context)
 {
+    const Procedure& procedure = code().proc();
     PatchpointValue* value = inst.origin->as<PatchpointValue>();
     ASSERT(value);
 
     Vector<ValueRep> reps;
     unsigned offset = 1;
-    if (inst.origin->type() != Void)
+
+    Type type = value->type();
+    while (offset <= procedure.returnCount(type))
         reps.append(repForArg(*context.code, inst.args[offset++]));
     reps.appendVector(repsImpl(context, 0, offset, inst));
     offset += value->numChildren();

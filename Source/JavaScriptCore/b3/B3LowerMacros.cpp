@@ -418,7 +418,7 @@ private:
         zeroDenCase->setSuccessors(FrequentedBlock(m_block));
 
         int64_t badNumeratorConst = 0;
-        switch (m_value->type()) {
+        switch (m_value->type().kind()) {
         case Int32:
             badNumeratorConst = std::numeric_limits<int32_t>::min();
             break;

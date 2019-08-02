@@ -73,7 +73,7 @@ protected:
     Vector<ValueRep> repsImpl(
         Air::GenerationContext&, unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs, Air::Inst&);
 
-    static bool isArgValidForValue(const Air::Arg&, Value*);
+    static bool isArgValidForType(const Air::Arg&, Type);
     static bool isArgValidForRep(Air::Code&, const Air::Arg&, const ValueRep&);
     static ValueRep repForArg(Air::Code&, const Air::Arg&);
 };

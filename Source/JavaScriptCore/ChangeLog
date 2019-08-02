@@ -1,3 +1,173 @@
+2019-08-01  Keith Miller  <keith_miller@apple.com>
+
+        B3 should support tuple types
+        https://bugs.webkit.org/show_bug.cgi?id=200327
+
+        Reviewed by Filip Pizlo.
+
+        As part of the Wasm multi-value proposal, we need to teach B3 that
+        patchpoints can return more than one value.  This is done by
+        adding a new B3::Type called Tuple. Unlike, other B3 types Tuple
+        is actually an encoded index into a numeric B3::Type vector on the
+        procedure. This lets us distinguish any two tuples from each
+        other, moreover, it's possible to get the vector of types with
+        just the B3::Tuple type and the procedure.
+
+        Since most B3 operations only expect to see a single numeric child
+        there is a new Opcode, Extract, that takes yields the some, fixed,
+        entry from a tuple value. Extract would be the only other change
+        needed to make tuples work in B3 except that some optimizations
+        expect to be able to take any non-Void value and stick it into a
+        Variable of the same type. This means both Get/Set from a variable
+        have to support Tuples as well. For simplicity and consistency,
+        the ability to accept tuples is also applied to Phi and Upsilon.
+
+        In order to lower a Tuple, B3Lowering needs to have a Tmp for each
+        nested type in a Tuple. While we could reuse the existing
+        IndexedTables to hold the extra information we need to lower
+        Tuples, we instead use a two new HashTables for Value->Tmp(s) and
+        Phi->Tmp(s). It's expected that Tuples will be sufficiently
+        uncommon the overhead of tracking everything together would be
+        prohibitive. On the other hand, we don't worry about this for
+        Variables because we don't expect those to make it to lowering.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * b3/B3Bank.h:
+        (JSC::B3::bankForType):
+        * b3/B3CheckValue.cpp:
+        (JSC::B3::CheckValue::CheckValue):
+        * b3/B3ExtractValue.cpp: Copied from Source/JavaScriptCore/b3/B3ProcedureInlines.h.
+        (JSC::B3::ExtractValue::~ExtractValue):
+        (JSC::B3::ExtractValue::dumpMeta const):
+        * b3/B3ExtractValue.h: Copied from Source/JavaScriptCore/b3/B3FixSSA.h.
+        * b3/B3FixSSA.h:
+        * b3/B3LowerMacros.cpp:
+        * b3/B3LowerMacrosAfterOptimizations.cpp:
+        * b3/B3LowerToAir.cpp:
+        * b3/B3NativeTraits.h:
+        * b3/B3Opcode.cpp:
+        (JSC::B3::invertedCompare):
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        (JSC::B3::opcodeForConstant):
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::forEachArg):
+        (JSC::B3::PatchpointSpecial::isValid):
+        (JSC::B3::PatchpointSpecial::admitsStack):
+        (JSC::B3::PatchpointSpecial::generate):
+        * b3/B3PatchpointValue.cpp:
+        (JSC::B3::PatchpointValue::dumpMeta const):
+        (JSC::B3::PatchpointValue::PatchpointValue):
+        * b3/B3PatchpointValue.h:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::addTuple):
+        (JSC::B3::Procedure::isValidTuple const):
+        (JSC::B3::Procedure::tupleForType const):
+        (JSC::B3::Procedure::addIntConstant):
+        (JSC::B3::Procedure::addConstant):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::returnCount const):
+        * b3/B3ProcedureInlines.h:
+        (JSC::B3::Procedure::extractFromTuple const):
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::isValidImpl):
+        (JSC::B3::StackmapSpecial::isArgValidForType):
+        (JSC::B3::StackmapSpecial::isArgValidForRep):
+        (JSC::B3::StackmapSpecial::isArgValidForValue): Deleted.
+        * b3/B3StackmapSpecial.h:
+        * b3/B3StackmapValue.h:
+        * b3/B3Type.cpp:
+        (WTF::printInternal):
+        * b3/B3Type.h:
+        (JSC::B3::Type::Type):
+        (JSC::B3::Type::tupleFromIndex):
+        (JSC::B3::Type::kind const):
+        (JSC::B3::Type::tupleIndex const):
+        (JSC::B3::Type::hash const):
+        (JSC::B3::Type::operator== const):
+        (JSC::B3::Type::operator!= const):
+        (JSC::B3::Type::isInt const):
+        (JSC::B3::Type::isFloat const):
+        (JSC::B3::Type::isNumeric const):
+        (JSC::B3::Type::isTuple const):
+        (JSC::B3::sizeofType):
+        (JSC::B3::isInt): Deleted.
+        (JSC::B3::isFloat): Deleted.
+        * b3/B3TypeMap.h:
+        (JSC::B3::TypeMap::at):
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::isRounded const):
+        (JSC::B3::Value::effects const):
+        (JSC::B3::Value::typeFor):
+        * b3/B3Value.h:
+        * b3/B3ValueInlines.h:
+        * b3/B3ValueKey.cpp:
+        (JSC::B3::ValueKey::intConstant):
+        * b3/B3ValueKey.h:
+        (JSC::B3::ValueKey::hash const):
+        * b3/B3ValueRep.h:
+        * b3/B3Width.h:
+        (JSC::B3::widthForType):
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::canRepresent const):
+        * b3/air/AirArg.h:
+        * b3/air/AirCCallingConvention.cpp:
+        (JSC::B3::Air::cCallResult):
+        * b3/air/AirLowerMacros.cpp:
+        (JSC::B3::Air::lowerMacros):
+        * b3/testb3.h:
+        (populateWithInterestingValues):
+        * b3/testb3_1.cpp:
+        (run):
+        * b3/testb3_3.cpp:
+        (testStorePartial8BitRegisterOnX86):
+        * b3/testb3_5.cpp:
+        (testPatchpointWithRegisterResult):
+        (testPatchpointWithStackArgumentResult):
+        (testPatchpointWithAnyResult):
+        * b3/testb3_6.cpp:
+        (testPatchpointDoubleRegs):
+        (testSomeEarlyRegister):
+        * b3/testb3_7.cpp:
+        (testShuffleDoesntTrashCalleeSaves):
+        (testReportUsedRegistersLateUseFollowedByEarlyDefDoesNotMarkUseAsDead):
+        (testSimpleTuplePair):
+        (testSimpleTuplePairUnused):
+        (testSimpleTuplePairStack):
+        (tailDupedTuplePair):
+        (tuplePairVariableLoop):
+        (tupleNestedLoop):
+        (addTupleTests):
+        * b3/testb3_8.cpp:
+        (testLoad):
+        (addLoadTests):
+        * ftl/FTLAbbreviatedTypes.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDirectCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCPUIntrinsic):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInstanceOf):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOMGetter):
+        (JSC::FTL::DFG::LowerDFGToB3::emitBinarySnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::emitBinaryBitOpSnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::emitRightShiftSnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateHeapCell):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::emitPatchpoint):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::CallingConvention::marshallArgument const):
+        (JSC::Wasm::CallingConvention::setupFrameInPrologue const):
+        (JSC::Wasm::CallingConvention::setupCall const):
+        (JSC::Wasm::CallingConventionAir::setupCall const):
+
 2019-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use "destroy" function directly for JSWebAssemblyCodeBlock and WebAssemblyFunction

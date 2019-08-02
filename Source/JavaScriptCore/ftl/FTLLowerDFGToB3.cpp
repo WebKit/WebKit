@@ -7890,7 +7890,7 @@ private:
         patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
-        patchpoint->resultConstraint = ValueRep::reg(GPRInfo::returnValueGPR);
+        patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::returnValueGPR) };
 
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
         State* state = &m_ftlState;
@@ -8009,7 +8009,7 @@ private:
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         if (!isTail) {
             patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
-            patchpoint->resultConstraint = ValueRep::reg(GPRInfo::returnValueGPR);
+            patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::returnValueGPR) };
         }
         
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
@@ -8330,7 +8330,7 @@ private:
 
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->clobber(RegisterSet::volatileRegistersForJSCall()); // No inputs will be in a volatile register.
-        patchpoint->resultConstraint = ValueRep::reg(GPRInfo::returnValueGPR);
+        patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::returnValueGPR) };
 
         patchpoint->numGPScratchRegisters = 0;
 
@@ -8632,7 +8632,7 @@ private:
 
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
-        patchpoint->resultConstraint = ValueRep::reg(GPRInfo::returnValueGPR);
+        patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::returnValueGPR) };
 
         // This is the minimum amount of call arg area stack space that all JS->JS calls always have.
         unsigned minimumJSCallAreaSize =
@@ -8889,7 +8889,7 @@ private:
         patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
-        patchpoint->resultConstraint = ValueRep::reg(GPRInfo::returnValueGPR);
+        patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::returnValueGPR) };
         
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
         State* state = &m_ftlState;
@@ -9543,7 +9543,7 @@ private:
             patchpoint->effects = Effects::forCall();
             patchpoint->clobber(RegisterSet { X86Registers::eax, X86Registers::edx });
             // The low 32-bits of rdtsc go into rax.
-            patchpoint->resultConstraint = ValueRep::reg(X86Registers::eax);
+            patchpoint->resultConstraints = { ValueRep::reg(X86Registers::eax) };
             patchpoint->setGenerator( [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
                 jit.rdtsc();
             });
@@ -10653,7 +10653,7 @@ private:
         patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
         patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
         patchpoint->numGPScratchRegisters = 2;
-        patchpoint->resultConstraint = ValueRep::SomeEarlyRegister;
+        patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
@@ -12635,7 +12635,7 @@ private:
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->numGPScratchRegisters = domJIT->numGPScratchRegisters;
         patchpoint->numFPScratchRegisters = domJIT->numFPScratchRegisters;
-        patchpoint->resultConstraint = ValueRep::SomeEarlyRegister;
+        patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
 
         State* state = &m_ftlState;
         Node* node = m_node;
@@ -13241,7 +13241,7 @@ private:
         if (scratchFPRUsage == NeedScratchFPR)
             patchpoint->numFPScratchRegisters++;
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
-        patchpoint->resultConstraint = ValueRep::SomeEarlyRegister;
+        patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         State* state = &m_ftlState;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -13304,7 +13304,7 @@ private:
             preparePatchpointForExceptions(patchpoint);
         patchpoint->numGPScratchRegisters = 1;
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
-        patchpoint->resultConstraint = ValueRep::SomeEarlyRegister;
+        patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         State* state = &m_ftlState;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -13360,7 +13360,7 @@ private:
         patchpoint->numGPScratchRegisters = 1;
         patchpoint->numFPScratchRegisters = 1;
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
-        patchpoint->resultConstraint = ValueRep::SomeEarlyRegister;
+        patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         State* state = &m_ftlState;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -13441,7 +13441,7 @@ private:
         else
             patchpoint->appendSomeRegisterWithClobber(allocator);
         patchpoint->numGPScratchRegisters++;
-        patchpoint->resultConstraint = ValueRep::SomeEarlyRegister;
+        patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         
         m_out.appendSuccessor(usually(continuation));
         m_out.appendSuccessor(rarely(slowPath));

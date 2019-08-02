@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@
 #include "B3CheckSpecial.h"
 #include "B3Commutativity.h"
 #include "B3Dominators.h"
+#include "B3ExtractValue.h"
 #include "B3FenceValue.h"
 #include "B3MemoryValueInlines.h"
 #include "B3PatchpointSpecial.h"
@@ -114,13 +115,36 @@ public:
         using namespace Air;
         for (B3::BasicBlock* block : m_procedure)
             m_blockToBlock[block] = m_code.addBlock(block->frequency());
-        
+
+        auto ensureTupleTmps = [&] (Value* tupleValue, auto& hashTable) {
+            hashTable.ensure(tupleValue, [&] {
+                const auto tuple = m_procedure.tupleForType(tupleValue->type());
+                Vector<Tmp> tmps(tuple.size());
+
+                for (unsigned i = 0; i < tuple.size(); ++i)
+                    tmps[i] = tmpForType(tuple[i]);
+                return tmps;
+            });
+        };
+
         for (Value* value : m_procedure.values()) {
             switch (value->opcode()) {
             case Phi: {
+                if (value->type().isTuple()) {
+                    ensureTupleTmps(value, m_tuplePhiToTmps);
+                    ensureTupleTmps(value, m_tupleValueToTmps);
+                    break;
+                }
+
                 m_phiToTmp[value] = m_code.newTmp(value->resultBank());
                 if (B3LowerToAirInternal::verbose)
                     dataLog("Phi tmp for ", *value, ": ", m_phiToTmp[value], "\n");
+                break;
+            }
+            case Get:
+            case Patchpoint: {
+                if (value->type().isTuple())
+                    ensureTupleTmps(value, m_tupleValueToTmps);
                 break;
             }
             default:
@@ -130,8 +154,12 @@ public:
 
         for (B3::StackSlot* stack : m_procedure.stackSlots())
             m_stackToStack.add(stack, m_code.addStackSlot(stack));
-        for (Variable* variable : m_procedure.variables())
-            m_variableToTmp.add(variable, m_code.newTmp(variable->bank()));
+        for (Variable* variable : m_procedure.variables()) {
+            auto addResult = m_variableToTmps.add(variable, Vector<Tmp, 1>(m_procedure.returnCount(variable->type())));
+            ASSERT(addResult.isNewEntry);
+            for (unsigned i = 0; i < m_procedure.returnCount(variable->type()); ++i)
+                addResult.iterator->value[i] = tmpForType(variable->type().isNumeric() ? variable->type() : m_procedure.extractFromTuple(variable->type(), i));
+        }
 
         // Figure out which blocks are not rare.
         m_fastWorklist.push(m_procedure[0]);
@@ -397,6 +425,29 @@ private:
         return ArgPromise::tmp(value);
     }
 
+    Tmp tmpForType(Type type)
+    {
+        return m_code.newTmp(bankForType(type));
+    }
+
+    const Vector<Tmp>& tmpsForTuple(Value* tupleValue)
+    {
+        ASSERT(tupleValue->type().isTuple());
+
+        switch (tupleValue->opcode()) {
+        case Phi:
+        case Patchpoint: {
+            return m_tupleValueToTmps.find(tupleValue)->value;
+        }
+        case Get:
+        case Set:
+            return m_variableToTmps.find(tupleValue->as<VariableValue>()->variable())->value;
+        default:
+            break;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
     bool canBeInternal(Value* value)
     {
         // If one of the internal things has already been computed, then we don't want to cause
@@ -657,12 +708,27 @@ private:
         return tmp(value);
     }
 
+    template<typename Functor>
+    void forEachImmOrTmp(Value* value, const Functor& func)
+    {
+        ASSERT(value->type() != Void);
+        if (!value->type().isTuple()) {
+            func(immOrTmp(value), value->type(), 0);
+            return;
+        }
+
+        const Vector<Type>& tuple = m_procedure.tupleForType(value->type());
+        const auto& tmps = tmpsForTuple(value);
+        for (unsigned i = 0; i < tuple.size(); ++i)
+            func(tmps[i], tuple[i], i);
+    }
+
     // By convention, we use Oops to mean "I don't know".
     Air::Opcode tryOpcodeForType(
         Air::Opcode opcode32, Air::Opcode opcode64, Air::Opcode opcodeDouble, Air::Opcode opcodeFloat, Type type)
     {
         Air::Opcode opcode;
-        switch (type) {
+        switch (type.kind()) {
         case Int32:
             opcode = opcode32;
             break;
@@ -1110,7 +1176,7 @@ private:
     Air::Opcode moveForType(Type type)
     {
         using namespace Air;
-        switch (type) {
+        switch (type.kind()) {
         case Int32:
             return Move32;
         case Int64:
@@ -1121,6 +1187,7 @@ private:
         case Double:
             return MoveDouble;
         case Void:
+        case Tuple:
             break;
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -1130,7 +1197,7 @@ private:
     Air::Opcode relaxedMoveForType(Type type)
     {
         using namespace Air;
-        switch (type) {
+        switch (type.kind()) {
         case Int32:
         case Int64:
             // For Int32, we could return Move or Move32. It's a trade-off.
@@ -1155,6 +1222,7 @@ private:
         case Double:
             return MoveDouble;
         case Void:
+        case Tuple:
             break;
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -1461,7 +1529,7 @@ private:
             Value* left = value->child(0);
             Value* right = value->child(1);
 
-            if (isInt(value->child(0)->type())) {
+            if (value->child(0)->type().isInt()) {
                 Arg rightImm = imm(right);
 
                 auto tryCompare = [&] (
@@ -2125,7 +2193,7 @@ private:
         using namespace Air;
         Air::Opcode convertToDoubleWord;
         Air::Opcode div;
-        switch (m_value->type()) {
+        switch (m_value->type().kind()) {
         case Int32:
             convertToDoubleWord = X86ConvertToDoubleWord32;
             div = X86Div32;
@@ -2449,7 +2517,7 @@ private:
                 if (isX86())
                     kind.effects = true;
                 else {
-                    switch (memory->type()) {
+                    switch (memory->type().kind()) {
                     case Int32:
                         kind = LoadAcq32;
                         break;
@@ -2631,23 +2699,23 @@ private:
         case Div: {
             if (m_value->isChill())
                 RELEASE_ASSERT(isARM64());
-            if (isInt(m_value->type()) && isX86()) {
+            if (m_value->type().isInt() && isX86()) {
                 appendX86Div(Div);
                 return;
             }
-            ASSERT(!isX86() || isFloat(m_value->type()));
+            ASSERT(!isX86() || m_value->type().isFloat());
 
             appendBinOp<Div32, Div64, DivDouble, DivFloat>(m_value->child(0), m_value->child(1));
             return;
         }
 
         case UDiv: {
-            if (isInt(m_value->type()) && isX86()) {
+            if (m_value->type().isInt() && isX86()) {
                 appendX86UDiv(UDiv);
                 return;
             }
 
-            ASSERT(!isX86() && !isFloat(m_value->type()));
+            ASSERT(!isX86() && !m_value->type().isFloat());
 
             appendBinOp<UDiv32, UDiv64, Air::Oops, Air::Oops>(m_value->child(0), m_value->child(1));
             return;
@@ -3010,7 +3078,7 @@ private:
 
         case Select: {
             MoveConditionallyConfig config;
-            if (isInt(m_value->type())) {
+            if (m_value->type().isInt()) {
                 config.moveConditionally32 = MoveConditionally32;
                 config.moveConditionally64 = MoveConditionally64;
                 config.moveConditionallyTest32 = MoveConditionallyTest32;
@@ -3075,39 +3143,45 @@ private:
             Inst inst(Patch, patchpointValue, Arg::special(m_patchpointSpecial));
 
             Vector<Inst> after;
-            if (patchpointValue->type() != Void) {
-                switch (patchpointValue->resultConstraint.kind()) {
+            auto generateResultOperand = [&] (Type type, ValueRep rep, Tmp tmp) {
+                switch (rep.kind()) {
                 case ValueRep::WarmAny:
                 case ValueRep::ColdAny:
                 case ValueRep::LateColdAny:
                 case ValueRep::SomeRegister:
                 case ValueRep::SomeEarlyRegister:
-                    inst.args.append(tmp(patchpointValue));
-                    break;
+                case ValueRep::SomeLateRegister:
+                    inst.args.append(tmp);
+                    return;
                 case ValueRep::Register: {
-                    Tmp reg = Tmp(patchpointValue->resultConstraint.reg());
+                    Tmp reg = Tmp(rep.reg());
                     inst.args.append(reg);
-                    after.append(Inst(
-                        relaxedMoveForType(patchpointValue->type()), m_value, reg, tmp(patchpointValue)));
-                    break;
+                    after.append(Inst(relaxedMoveForType(type), m_value, reg, tmp));
+                    return;
                 }
                 case ValueRep::StackArgument: {
-                    Arg arg = Arg::callArg(patchpointValue->resultConstraint.offsetFromSP());
+                    Arg arg = Arg::callArg(rep.offsetFromSP());
                     inst.args.append(arg);
-                    after.append(Inst(
-                        moveForType(patchpointValue->type()), m_value, arg, tmp(patchpointValue)));
-                    break;
+                    after.append(Inst(moveForType(type), m_value, arg, tmp));
+                    return;
                 }
                 default:
                     RELEASE_ASSERT_NOT_REACHED();
-                    break;
+                    return;
                 }
+            };
+
+            if (patchpointValue->type() != Void) {
+                forEachImmOrTmp(patchpointValue, [&] (Arg arg, Type type, unsigned index) {
+                    generateResultOperand(type, patchpointValue->resultConstraints[index], arg.tmp());
+                });
             }
             
             fillStackmap(inst, patchpointValue, 0);
-            
-            if (patchpointValue->resultConstraint.isReg())
-                patchpointValue->lateClobbered().clear(patchpointValue->resultConstraint.reg());
+            for (auto& constraint : patchpointValue->resultConstraints) {
+                if (constraint.isReg())
+                    patchpointValue->lateClobbered().clear(constraint.reg());
+            }
 
             for (unsigned i = patchpointValue->numGPScratchRegisters; i--;)
                 inst.args.append(m_code.newTmp(GP));
@@ -3116,6 +3190,15 @@ private:
             
             m_insts.last().append(WTFMove(inst));
             m_insts.last().appendVector(after);
+            return;
+        }
+
+        case Extract: {
+            Value* tupleValue = m_value->child(0);
+            unsigned index = m_value->as<ExtractValue>()->index();
+
+            const auto& tmps = tmpsForTuple(tupleValue);
+            append(relaxedMoveForType(m_value->type()), tmps[index], tmp(m_value));
             return;
         }
 
@@ -3291,9 +3374,18 @@ private:
 
         case Upsilon: {
             Value* value = m_value->child(0);
-            append(
-                relaxedMoveForType(value->type()), immOrTmp(value),
-                m_phiToTmp[m_value->as<UpsilonValue>()->phi()]);
+            Value* phi = m_value->as<UpsilonValue>()->phi();
+            if (value->type().isNumeric()) {
+                append(relaxedMoveForType(value->type()), immOrTmp(value), m_phiToTmp[phi]);
+                return;
+            }
+
+            const Vector<Type>& tuple = m_procedure.tupleForType(value->type());
+            const auto& valueTmps = tmpsForTuple(value);
+            const auto& phiTmps = m_tuplePhiToTmps.find(phi)->value;
+            ASSERT(valueTmps.size() == phiTmps.size());
+            for (unsigned i = 0; i < valueTmps.size(); ++i)
+                append(relaxedMoveForType(tuple[i]), valueTmps[i], phiTmps[i]);
             return;
         }
 
@@ -3303,22 +3395,39 @@ private:
             // Upsilon(@x, ^a)
             // @a => this should get the value of the Phi before the Upsilon, i.e. not @x.
 
-            append(relaxedMoveForType(m_value->type()), m_phiToTmp[m_value], tmp(m_value));
+            if (m_value->type().isNumeric()) {
+                append(relaxedMoveForType(m_value->type()), m_phiToTmp[m_value], tmp(m_value));
+                return;
+            }
+
+            const Vector<Type>& tuple = m_procedure.tupleForType(m_value->type());
+            const auto& valueTmps = tmpsForTuple(m_value);
+            const auto& phiTmps = m_tuplePhiToTmps.find(m_value)->value;
+            ASSERT(valueTmps.size() == phiTmps.size());
+            for (unsigned i = 0; i < valueTmps.size(); ++i)
+                append(relaxedMoveForType(tuple[i]), phiTmps[i], valueTmps[i]);
             return;
         }
 
         case Set: {
             Value* value = m_value->child(0);
-            append(
-                relaxedMoveForType(value->type()), immOrTmp(value),
-                m_variableToTmp.get(m_value->as<VariableValue>()->variable()));
+            const Vector<Tmp>& variableTmps = m_variableToTmps.get(m_value->as<VariableValue>()->variable());
+            forEachImmOrTmp(value, [&] (Arg immOrTmp, Type type, unsigned index) {
+                append(relaxedMoveForType(type), immOrTmp, variableTmps[index]);
+            });
             return;
         }
 
         case Get: {
-            append(
-                relaxedMoveForType(m_value->type()),
-                m_variableToTmp.get(m_value->as<VariableValue>()->variable()), tmp(m_value));
+            // Snapshot the value of the Get. It may change under us because you could do:
+            // a = Get(var)
+            // Set(@x, var)
+            // @a => this should get the value of the Get before the Set, i.e. not @x.
+
+            const Vector<Tmp>& variableTmps = m_variableToTmps.get(m_value->as<VariableValue>()->variable());
+            forEachImmOrTmp(m_value, [&] (Arg tmp, Type type, unsigned index) {
+                append(relaxedMoveForType(type), variableTmps[index], tmp.tmp());
+            });
             return;
         }
 
@@ -3463,8 +3572,9 @@ private:
             Value* value = m_value->child(0);
             Tmp returnValueGPR = Tmp(GPRInfo::returnValueGPR);
             Tmp returnValueFPR = Tmp(FPRInfo::returnValueFPR);
-            switch (value->type()) {
+            switch (value->type().kind()) {
             case Void:
+            case Tuple:
                 // It's impossible for a void value to be used as a child. We use RetVoid
                 // for void returns.
                 RELEASE_ASSERT_NOT_REACHED();
@@ -3584,9 +3694,11 @@ private:
     IndexSet<Value*> m_locked; // These are values that will have no Tmp in Air.
     IndexMap<Value*, Tmp> m_valueToTmp; // These are values that must have a Tmp in Air. We say that a Value* with a non-null Tmp is "pinned".
     IndexMap<Value*, Tmp> m_phiToTmp; // Each Phi gets its own Tmp.
+    HashMap<Value*, Vector<Tmp>> m_tupleValueToTmps; // This is the same as m_valueToTmp for Values that are Tuples.
+    HashMap<Value*, Vector<Tmp>> m_tuplePhiToTmps; // This is the same as m_phiToTmp for Phis that are Tuples.
     IndexMap<B3::BasicBlock*, Air::BasicBlock*> m_blockToBlock;
     HashMap<B3::StackSlot*, Air::StackSlot*> m_stackToStack;
-    HashMap<Variable*, Tmp> m_variableToTmp;
+    HashMap<Variable*, Vector<Tmp>> m_variableToTmps;
 
     UseCounts m_useCounts;
     PhiChildren m_phiChildren;

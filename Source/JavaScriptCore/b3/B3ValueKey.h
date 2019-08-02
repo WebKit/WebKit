@@ -108,7 +108,7 @@ public:
 
     unsigned hash() const
     {
-        return m_kind.hash() + m_type + WTF::IntHash<int32_t>::hash(u.indices[0]) + u.indices[1] + u.indices[2];
+        return m_kind.hash() + m_type.hash() + WTF::IntHash<int32_t>::hash(u.indices[0]) + u.indices[1] + u.indices[2];
     }
 
     explicit operator bool() const { return *this != ValueKey(); }

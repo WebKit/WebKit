@@ -2793,7 +2793,7 @@ void testStorePartial8BitRegisterOnX86()
     patchpoint->append(ConstrainedValue(whereToStore, ValueRep(GPRInfo::regT2)));
 
     // We'll produce EDI.
-    patchpoint->resultConstraint = ValueRep::reg(GPRInfo::regT6);
+    patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::regT6) };
 
     // Give the allocator a good reason not to use any other register.
     RegisterSet clobberSet = RegisterSet::allGPRs();
