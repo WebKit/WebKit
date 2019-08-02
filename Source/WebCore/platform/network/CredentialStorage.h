@@ -50,7 +50,6 @@ public:
     WEBCORE_EXPORT static HashSet<SecurityOriginData> originsWithSessionCredentials();
     WEBCORE_EXPORT static void removeSessionCredentialsWithOrigins(const Vector<SecurityOriginData>& origins);
     WEBCORE_EXPORT static void clearSessionCredentials();
-    WEBCORE_EXPORT static void clearPermanentCredentialsForProtectionSpace(const ProtectionSpace&);
 
     WEBCORE_EXPORT void clearCredentials();
 

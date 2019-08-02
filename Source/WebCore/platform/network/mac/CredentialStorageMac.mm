@@ -91,16 +91,4 @@ void CredentialStorage::clearSessionCredentials()
     }
 }
 
-void CredentialStorage::clearPermanentCredentialsForProtectionSpace(const ProtectionSpace& protectionSpace)
-{
-    auto sharedStorage = [NSURLCredentialStorage sharedCredentialStorage];
-    auto allCredentials = [sharedStorage allCredentials];
-    auto credentials = allCredentials[protectionSpace.nsSpace()];
-    for (NSString* user in credentials) {
-        auto credential = credentials[user];
-        if (credential.persistence == NSURLCredentialPersistencePermanent)
-            [sharedStorage removeCredential:credentials[user] forProtectionSpace:protectionSpace.nsSpace()];
-    }
-}
-
 } // namespace WebCore

@@ -1,3 +1,20 @@
+2019-08-02  Sihui Liu  <sihui_liu@apple.com>
+
+        API tests using permanent credentials should clear credentials left by previous tests
+        https://bugs.webkit.org/show_bug.cgi?id=199729
+
+        Reviewed by Alex Christensen.
+
+        We used to clear the permanent credentials created by API tests at the end of the API tests, to ensure those 
+        credentials will not affect tests running after. There is a case where permanent credentials were left on the 
+        system, so those API tests were timing out themselves before reaching to the cleanup, which caused cascading 
+        failure. To prevent this from happening again, add cleanup at the begining of the tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebsiteDatastore.mm:
+        (TestWebKitAPI::TEST):
+
 2019-08-02  Andres Gonzalez  <andresg_22@apple.com>
 
         Add accessibility object method to determine whether an element is inside a table cell. Needed for iOS accessibility client.

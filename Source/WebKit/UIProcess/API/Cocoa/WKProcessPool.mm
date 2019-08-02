@@ -643,11 +643,9 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     return _processPool->networkProcessHasEntitlementForTesting(entitlement);
 }
 
-- (void)_clearPermanentCredentialsForProtectionSpace:(NSURLProtectionSpace *)protectionSpace completionHandler:(void(^)())completionHandler
+- (void)_clearPermanentCredentialsForProtectionSpace:(NSURLProtectionSpace *)protectionSpace
 {
-    _processPool->clearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace(protectionSpace), [completionHandler = makeBlockPtr(completionHandler)] {
-        completionHandler();
-    });
+    _processPool->clearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace(protectionSpace));
 }
 
 @end

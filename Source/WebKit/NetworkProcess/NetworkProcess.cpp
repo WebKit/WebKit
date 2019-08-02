@@ -458,12 +458,6 @@ void NetworkProcess::clearCachedCredentials()
         ASSERT_NOT_REACHED();
 }
 
-void NetworkProcess::clearPermanentCredentialsForProtectionSpace(const ProtectionSpace& protectionSpace, CompletionHandler<void()>&& completionHandler)
-{
-    WebCore::CredentialStorage::clearPermanentCredentialsForProtectionSpace(protectionSpace);
-    completionHandler();
-}
-
 void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters)
 {
 #if ENABLE(INDEXED_DATABASE)

@@ -100,17 +100,14 @@ TEST(Challenge, SecIdentity)
     auto webView = adoptNS([WKWebView new]);
     auto delegate = adoptNS([ChallengeDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
+
+    // Make sure no credential left by previous tests.
+    NSURLProtectionSpace *protectionSpace = [[[NSURLProtectionSpace alloc] initWithHost:@"127.0.0.1" port:server.port() protocol:NSURLProtectionSpaceHTTP realm:@"testrealm" authenticationMethod:NSURLAuthenticationMethodHTTPBasic] autorelease];
+    [[webView configuration].processPool _clearPermanentCredentialsForProtectionSpace:protectionSpace];
+
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
 
     Util::run(&navigationFinished);
-
-    // Clear persistent credentials created by this test.
-    NSURLProtectionSpace *protectionSpace = [[[NSURLProtectionSpace alloc] initWithHost:@"127.0.0.1" port:server.port() protocol:NSURLProtectionSpaceHTTP realm:@"testrealm" authenticationMethod:NSURLAuthenticationMethodHTTPBasic] autorelease];
-    __block bool removedCredential = false;
-    [[webView configuration].processPool _clearPermanentCredentialsForProtectionSpace:protectionSpace completionHandler:^{
-        removedCredential = true;
-    }];
-    Util::run(&removedCredential);
 }
 
 @interface ClientCertificateDelegate : NSObject <WKNavigationDelegate> {
@@ -199,6 +196,11 @@ TEST(Challenge, BasicProposedCredential)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
     auto delegate = adoptNS([ProposedCredentialDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
+
+    // Make sure no credential left by previous tests.
+    NSURLProtectionSpace *protectionSpace = [[[NSURLProtectionSpace alloc] initWithHost:@"127.0.0.1" port:server.port() protocol:NSURLProtectionSpaceHTTP realm:@"testrealm" authenticationMethod:NSURLAuthenticationMethodHTTPBasic] autorelease];
+    [[webView configuration].processPool _clearPermanentCredentialsForProtectionSpace:protectionSpace];
+
     RetainPtr<NSURLRequest> request = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]];
     [webView loadRequest:request.get()];
     Util::run(&navigationFinished);
@@ -208,12 +210,7 @@ TEST(Challenge, BasicProposedCredential)
     EXPECT_TRUE(receivedSecondChallenge);
 
     // Clear persistent credentials created by this test.
-    NSURLProtectionSpace *protectionSpace = [[[NSURLProtectionSpace alloc] initWithHost:@"127.0.0.1" port:server.port() protocol:NSURLProtectionSpaceHTTP realm:@"testrealm" authenticationMethod:NSURLAuthenticationMethodHTTPBasic] autorelease];
-    __block bool removedCredential = false;
-    [[webView configuration].processPool _clearPermanentCredentialsForProtectionSpace:protectionSpace completionHandler:^{
-        removedCredential = true;
-    }];
-    Util::run(&removedCredential);
+    [[webView configuration].processPool _clearPermanentCredentialsForProtectionSpace:protectionSpace];
 }
 
 #if HAVE(SSL)

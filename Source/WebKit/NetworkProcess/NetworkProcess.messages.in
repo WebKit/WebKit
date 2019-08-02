@@ -38,7 +38,6 @@ messages -> NetworkProcess LegacyReceiver {
 #endif
 
     ClearCachedCredentials()
-    ClearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace protectionSpace) -> () Async
 
     AddWebsiteDataStore(struct WebKit::WebsiteDataStoreParameters websiteDataStoreParameters);
     DestroySession(PAL::SessionID sessionID)
