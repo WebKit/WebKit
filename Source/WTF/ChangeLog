@@ -1,3 +1,16 @@
+2019-08-02  Eric Carlson  <eric.carlson@apple.com>
+
+        uniqueLogIdentifier() should generate a 64-bit identifier
+        https://bugs.webkit.org/show_bug.cgi?id=200403
+        <rdar://problem/53878447>
+
+        Reviewed by Youenn Fablet.
+
+        * wtf/LoggerHelper.h:
+        (WTF::LoggerHelper::childLogIdentifier const): Use uint64_t masks.
+        (WTF::LoggerHelper::uniqueLogIdentifier): cryptographicallyRandomNumber returns a
+        uint32_t so use two to generate a 64-bit identifier.
+
 2019-08-02  Alex Christensen  <achristensen@webkit.org>
 
         Fix an internal build after r248139

@@ -58,15 +58,16 @@ public:
 
     const void* childLogIdentifier(uint64_t identifier) const
     {
-        static const int64_t parentMask = 0xffffffffffff0000l;
-        static const int64_t maskLowerWord = 0xffffl;
+        static const uint64_t parentMask = 0xffffffffffff0000ull;
+        static const uint64_t maskLowerWord = 0xffffull;
         return reinterpret_cast<const void*>((reinterpret_cast<uint64_t>(logIdentifier()) & parentMask) | (identifier & maskLowerWord));
     }
 
     static const void* uniqueLogIdentifier()
     {
-        static uint64_t logIdentifier = cryptographicallyRandomNumber();
-        return reinterpret_cast<const void*>(++logIdentifier);
+        static uint64_t highWord = cryptographicallyRandomNumber();
+        static uint64_t lowWord = cryptographicallyRandomNumber();
+        return reinterpret_cast<const void*>((highWord << 32) + lowWord);
     }
 #else
 
