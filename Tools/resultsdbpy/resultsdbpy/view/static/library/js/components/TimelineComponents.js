@@ -560,11 +560,15 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
         context.fillStyle = fontColor;
         context.save();
         if (!isTop) {
+            context.translate(middlePointX, baseLineY + scaleTagLineHeight);
             context.rotate(fontRotate);
-            context.fillText(getLabel(scaleLabel), middlePointX / 2 + sqrt3 * scaleTagLineHeight / 2, baseLineY - sqrt3 * (middlePointX / 2) + scaleTagLineHeight / 2);
+            context.translate(0 - middlePointX, 0 - baseLineY - scaleTagLineHeight);
+            context.fillText(getLabel(scaleLabel), middlePointX, baseLineY + scaleTagLineHeight);
         } else {
+            context.translate(middlePointX, baseLineY - scaleTagLineHeight);
             context.rotate(fontTopRotate);
-            context.fillText(getLabel(scaleLabel), middlePointX / 2 - sqrt3 * scaleTagLineHeight - fontSizeNumber, baseLineY + sqrt3 * (middlePointX / 2) -    3 * scaleTagLineHeight / 2 - fontSizeNumber);
+            context.translate(0 - middlePointX, 0 - baseLineY + scaleTagLineHeight);
+            context.fillText(getLabel(scaleLabel), middlePointX, baseLineY - scaleTagLineHeight);
         }
         context.restore();
 
