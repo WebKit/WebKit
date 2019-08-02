@@ -62,6 +62,7 @@ public:
     virtual void showPaintRect(const FloatRect&) { }
     virtual void didSetSearchingForNode(bool) { }
     virtual void elementSelectionChanged(bool) { }
+    virtual void timelineRecordingChanged(bool) { }
 
     virtual void setMockCaptureDevicesEnabledOverride(Optional<bool>) { }
 

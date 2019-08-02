@@ -242,16 +242,6 @@ void WebInspectorProxy::showResources()
     m_inspectedPage->process().send(Messages::WebInspector::ShowResources(), m_inspectedPage->pageID());
 }
 
-void WebInspectorProxy::showTimelines()
-{
-    if (!m_inspectedPage)
-        return;
-
-    createFrontendPage();
-
-    m_inspectedPage->process().send(Messages::WebInspector::ShowTimelines(), m_inspectedPage->pageID());
-}
-
 void WebInspectorProxy::showMainResourceForFrame(WebFrameProxy* frame)
 {
     if (!m_inspectedPage)
@@ -356,9 +346,6 @@ void WebInspectorProxy::togglePageProfiling()
         m_inspectedPage->process().send(Messages::WebInspector::StopPageProfiling(), m_inspectedPage->pageID());
     else
         m_inspectedPage->process().send(Messages::WebInspector::StartPageProfiling(), m_inspectedPage->pageID());
-
-    // FIXME: have the WebProcess notify us on state changes.
-    m_isProfilingPage = !m_isProfilingPage;
 }
 
 void WebInspectorProxy::toggleElementSelection()
@@ -591,6 +578,11 @@ void WebInspectorProxy::elementSelectionChanged(bool active)
         platformBringInspectedPageToFront();
     else if (isConnected())
         bringToFront();
+}
+
+void WebInspectorProxy::timelineRecordingChanged(bool active)
+{
+    m_isProfilingPage = active;
 }
 
 void WebInspectorProxy::setMockCaptureDevicesEnabledOverride(Optional<bool> enabled)

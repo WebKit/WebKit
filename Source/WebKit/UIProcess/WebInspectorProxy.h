@@ -133,7 +133,6 @@ public:
 
     void showConsole();
     void showResources();
-    void showTimelines();
     void showMainResourceForFrame(WebFrameProxy*);
 
     AttachmentSide attachmentSide() const { return m_attachmentSide; }
@@ -227,6 +226,7 @@ private:
     void inspectedURLChanged(const String&);
     void showCertificate(const WebCore::CertificateInfo&);
     void elementSelectionChanged(bool);
+    void timelineRecordingChanged(bool);
     void setMockCaptureDevicesEnabledOverride(Optional<bool>);
 
     void save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);

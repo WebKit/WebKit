@@ -1,3 +1,48 @@
+2019-08-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Timelines: Develop > Start Timeline Recording doesn't work when focused on a detached inspector window
+        https://bugs.webkit.org/show_bug.cgi?id=200125
+        <rdar://problem/53543008>
+
+        Reviewed by Brian Burg.
+
+        Always show the Timelines tab in Web Inspector whenever timeline recording starts/stops.
+        Notify the UIProcess whenever the timeline recording state changes.
+
+        * WebProcess/WebPage/WebInspector.messages.in:
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::startPageProfiling):
+        (WebKit::WebInspector::stopPageProfiling):
+        (WebKit::WebInspector::timelineRecordingChanged): Added.
+        (WebKit::WebInspector::showTimelines): Deleted.
+
+        * WebProcess/WebPage/WebInspectorUI.messages.in:
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::showTimelines): Deleted.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::timelineRecordingChanged): Added.
+
+        * UIProcess/WebInspectorProxy.messages.in:
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::togglePageProfiling):
+        (WebKit::WebInspectorProxy::timelineRecordingChanged): Added.
+        (WebKit::WebInspectorProxy::showTimelines): Deleted.
+
+        * UIProcess/API/C/WKInspector.cpp:
+        (WKInspectorTogglePageProfiling):
+
+        * UIProcess/API/Cocoa/_WKInspector.h:
+        * UIProcess/API/Cocoa/_WKInspector.mm:
+        (-[_WKInspector showTimelines]): Deleted.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp:
+        (WKBundleInspectorSetPageProfilingEnabled):
+
 2019-08-02  Jer Noble  <jer.noble@apple.com>
 
         [iPadOS] slides.google.com: Full Screen API warning is presented when swiping through slides

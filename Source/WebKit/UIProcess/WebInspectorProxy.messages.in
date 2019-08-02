@@ -35,6 +35,7 @@ messages -> WebInspectorProxy {
     InspectedURLChanged(String urlString)
     ShowCertificate(WebCore::CertificateInfo certificateInfo)
     ElementSelectionChanged(bool active)
+    TimelineRecordingChanged(bool active)
     SetMockCaptureDevicesEnabledOverride(Optional<bool> enabled)
 
     Save(String filename, String content, bool base64Encoded, bool forceSaveAs)

@@ -52,8 +52,6 @@ void WKBundleInspectorEvaluateScriptForTest(WKBundleInspectorRef inspectorRef, W
 
 void WKBundleInspectorSetPageProfilingEnabled(WKBundleInspectorRef inspectorRef, bool enabled)
 {
-    WebKit::toImpl(inspectorRef)->showTimelines();
-
     if (enabled)
         WebKit::toImpl(inspectorRef)->startPageProfiling();
     else

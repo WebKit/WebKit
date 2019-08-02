@@ -209,18 +209,6 @@ void WebInspector::showResources()
     });
 }
 
-void WebInspector::showTimelines()
-{
-    if (!m_page->corePage())
-        return;
-
-    m_page->corePage()->inspectorController().show();
-
-    whenFrontendConnectionEstablished([=] {
-        m_frontendConnection->send(Messages::WebInspectorUI::ShowTimelines(), 0);
-    });
-}
-
 void WebInspector::showMainResourceForFrame(uint64_t frameIdentifier)
 {
     WebFrame* frame = WebProcess::singleton().webFrame(frameIdentifier);
@@ -244,6 +232,8 @@ void WebInspector::startPageProfiling()
     if (!m_page->corePage())
         return;
 
+    m_page->corePage()->inspectorController().show();
+
     whenFrontendConnectionEstablished([=] {
         m_frontendConnection->send(Messages::WebInspectorUI::StartPageProfiling(), 0);
     });
@@ -253,6 +243,8 @@ void WebInspector::stopPageProfiling()
 {
     if (!m_page->corePage())
         return;
+
+    m_page->corePage()->inspectorController().show();
 
     whenFrontendConnectionEstablished([=] {
         m_frontendConnection->send(Messages::WebInspectorUI::StopPageProfiling(), 0);
@@ -282,6 +274,11 @@ void WebInspector::stopElementSelection()
 void WebInspector::elementSelectionChanged(bool active)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::ElementSelectionChanged(active), m_page->pageID());
+}
+
+void WebInspector::timelineRecordingChanged(bool active)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::TimelineRecordingChanged(active), m_page->pageID());
 }
 
 void WebInspector::setMockCaptureDevicesEnabledOverride(Optional<bool> enabled)

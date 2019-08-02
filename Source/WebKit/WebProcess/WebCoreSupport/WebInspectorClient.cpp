@@ -211,6 +211,12 @@ void WebInspectorClient::elementSelectionChanged(bool active)
         m_page->inspector()->elementSelectionChanged(active);
 }
 
+void WebInspectorClient::timelineRecordingChanged(bool active)
+{
+    if (m_page->inspector())
+        m_page->inspector()->timelineRecordingChanged(active);
+}
+
 void WebInspectorClient::setMockCaptureDevicesEnabledOverride(Optional<bool> enabled)
 {
     if (m_page->inspector())

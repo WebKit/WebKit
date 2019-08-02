@@ -52,7 +52,6 @@ WK_CLASS_AVAILABLE(macos(10.14.4), ios(12.2))
 - (void)showMainResourceForFrame:(_WKFrameHandle *)frame;
 - (void)attach;
 - (void)detach;
-- (void)showTimelines;
 - (void)togglePageProfiling;
 - (void)toggleElementSelection;
 - (void)printErrorToConsole:(NSString *)error;

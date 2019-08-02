@@ -67,6 +67,7 @@ private:
 #endif
 
     void elementSelectionChanged(bool) override;
+    void timelineRecordingChanged(bool) override;
 
     bool overridesShowPaintRects() const override { return true; }
     void showPaintRect(const WebCore::FloatRect&) override;

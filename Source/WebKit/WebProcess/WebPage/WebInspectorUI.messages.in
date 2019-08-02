@@ -33,7 +33,6 @@ messages -> WebInspectorUI {
 
     ShowConsole()
     ShowResources()
-    ShowTimelines()
 
     ShowMainResourceForFrame(String frameIdentifier)
 

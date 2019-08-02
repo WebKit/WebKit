@@ -58,7 +58,6 @@ public:
 
     void showConsole();
     void showResources();
-    void showTimelines();
 
     void showMainResourceForFrame(const String& frameIdentifier);
 

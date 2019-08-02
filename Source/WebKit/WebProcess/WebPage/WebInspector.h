@@ -59,7 +59,6 @@ public:
 
     void showConsole();
     void showResources();
-    void showTimelines();
 
     void showMainResourceForFrame(uint64_t frameIdentifier);
 
@@ -73,6 +72,7 @@ public:
     void startElementSelection();
     void stopElementSelection();
     void elementSelectionChanged(bool);
+    void timelineRecordingChanged(bool);
     void setMockCaptureDevicesEnabledOverride(Optional<bool>);
 
     void setFrontendConnection(IPC::Attachment);

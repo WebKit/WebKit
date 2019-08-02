@@ -1,5 +1,19 @@
 2019-08-02  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Timelines: Develop > Start Timeline Recording doesn't work when focused on a detached inspector window
+        https://bugs.webkit.org/show_bug.cgi?id=200125
+        <rdar://problem/53543008>
+
+        Reviewed by Brian Burg.
+
+        Always show the Timelines tab in Web Inspector whenever timeline recording starts/stops.
+        Notify the UIProcess whenever the timeline recording state changes.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.setTimelineProfilingEnabled):
+
+2019-08-02  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: "Inspector.initialized" happens before breakpoints are set
         https://bugs.webkit.org/show_bug.cgi?id=200364
 

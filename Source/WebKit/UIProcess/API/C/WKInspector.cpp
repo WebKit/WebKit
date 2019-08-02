@@ -117,7 +117,6 @@ bool WKInspectorIsProfilingPage(WKInspectorRef inspectorRef)
 
 void WKInspectorTogglePageProfiling(WKInspectorRef inspectorRef)
 {
-    toImpl(inspectorRef)->showTimelines();
     toImpl(inspectorRef)->togglePageProfiling();
 }
 

@@ -112,11 +112,6 @@
     _inspector->detach();
 }
 
-- (void)showTimelines
-{
-    _inspector->showTimelines();
-}
-
 - (void)togglePageProfiling
 {
     _inspector->togglePageProfiling();

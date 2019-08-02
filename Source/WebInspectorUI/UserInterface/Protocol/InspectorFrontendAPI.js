@@ -44,6 +44,8 @@ InspectorFrontendAPI = {
 
     setTimelineProfilingEnabled: function(enabled)
     {
+        WI.showTimelineTab();
+
         if (WI.timelineManager.isCapturing() === enabled)
             return;
 
@@ -106,6 +108,7 @@ InspectorFrontendAPI = {
 
     },
 
+    // COMPATIBILITY (iOS 13.1): merged into InspectorFrontendAPI.setTimelineProfilingEnabled.
     showTimelines: function()
     {
         WI.showTimelineTab();

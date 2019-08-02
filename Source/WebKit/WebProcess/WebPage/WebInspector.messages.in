@@ -28,7 +28,6 @@ messages -> WebInspector {
 
     ShowConsole()
     ShowResources()
-    ShowTimelines()
 
     ShowMainResourceForFrame(uint64_t frameIdentifier)
 

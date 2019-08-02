@@ -37,6 +37,7 @@
 #include "Event.h"
 #include "Frame.h"
 #include "InspectorCPUProfilerAgent.h"
+#include "InspectorClient.h"
 #include "InspectorMemoryAgent.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
@@ -83,10 +84,11 @@ static CFRunLoopRef currentRunLoop()
 }
 #endif
 
-InspectorTimelineAgent::InspectorTimelineAgent(WebAgentContext& context)
+InspectorTimelineAgent::InspectorTimelineAgent(PageAgentContext& context)
     : InspectorAgentBase("Timeline"_s, context)
     , m_frontendDispatcher(std::make_unique<Inspector::TimelineFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::TimelineBackendDispatcher::create(context.backendDispatcher, this))
+    , m_inspectedPage(context.inspectedPage)
 {
 }
 
@@ -205,6 +207,9 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
 #endif
 
     m_frontendDispatcher->recordingStarted(timestamp());
+
+    if (auto* client = m_inspectedPage.inspectorController().inspectorClient())
+        client->timelineRecordingChanged(true);
 }
 
 void InspectorTimelineAgent::internalStop()
@@ -233,6 +238,9 @@ void InspectorTimelineAgent::internalStop()
     m_autoCapturePhase = AutoCapturePhase::None;
 
     m_frontendDispatcher->recordingStopped(timestamp());
+
+    if (auto* client = m_inspectedPage.inspectorController().inspectorClient())
+        client->timelineRecordingChanged(false);
 }
 
 double InspectorTimelineAgent::timestamp()
