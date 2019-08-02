@@ -19,7 +19,7 @@
 */
 
 [
-    GenerateIsReachable=ImplFrame,
+    GenerateIsReachable=ReachableFromDOMWindow,
     LegacyUnenumerableNamedProperties,
     ImplementationLacksVTable,
     InterfaceName=PluginArray,

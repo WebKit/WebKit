@@ -29,7 +29,7 @@
 
 // https://www.w3.org/TR/selection-api/#idl-def-Selection
 [
-    GenerateIsReachable=ImplFrame,
+    GenerateIsReachable=ReachableFromDOMWindow,
     ImplementationLacksVTable,
     InterfaceName=Selection,
 ] interface DOMSelection {

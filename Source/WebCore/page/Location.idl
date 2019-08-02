@@ -38,7 +38,7 @@
     CustomPut,
     CustomPutOnPrototype,
     CustomToStringName,
-    GenerateIsReachable=ImplFrame,
+    GenerateIsReachable=ReachableFromDOMWindow,
     IsImmutablePrototypeExoticObject,
     ImplementationLacksVTable,
     Unforgeable

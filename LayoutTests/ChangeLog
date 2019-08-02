@@ -1,3 +1,15 @@
+2019-08-02  Chris Dumez  <cdumez@apple.com>
+
+        DOMWindow properties may get GC'd before their Window object
+        https://bugs.webkit.org/show_bug.cgi?id=200359
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage.
+
+        * fast/dom/dom-window-property-gc-after-frame-detach-expected.txt: Added.
+        * fast/dom/dom-window-property-gc-after-frame-detach.html: Added.
+
 2019-08-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] WebSockets: use SOUP_WEBSOCKET_CLOSE_NO_STATUS when closing with no status

@@ -24,7 +24,7 @@
  */
 
 [
-    GenerateIsReachable=ImplFrame,
+    GenerateIsReachable=ReachableFromDOMWindow,
     SkipVTableValidation,
 ] interface Storage {
     readonly attribute unsigned long length;

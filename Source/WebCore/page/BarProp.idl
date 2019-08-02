@@ -27,7 +27,7 @@
  */
 
 [
-    GenerateIsReachable=ImplFrame,
+    GenerateIsReachable=ReachableFromDOMWindow,
     ImplementationLacksVTable,
 ] interface BarProp {
     readonly attribute boolean visible;

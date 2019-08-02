@@ -24,7 +24,7 @@
  */
 
 [
-    GenerateIsReachable=ImplFrame,
+    GenerateIsReachable=ReachableFromDOMWindow,
     JSCustomMarkFunction,
     ImplementationLacksVTable,
 ] interface History {
