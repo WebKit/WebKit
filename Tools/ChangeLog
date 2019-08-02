@@ -1,3 +1,15 @@
+2019-08-01  Zhifei Fang  <zhifei_fang@apple.com>
+
+        results.webkit.org: Force update cache when timeline updated
+        https://bugs.webkit.org/show_bug.cgi?id=200363
+
+        Reviewed by Jonathan Bedard.
+
+        * resultsdbpy/resultsdbpy/view/static/library/js/components/TimelineComponents.js:
+        (offscreenCachedRenderFactory): Add ability to force the redraw.
+        (Timeline.CanvasSeriesComponent): Force redraw when scales or dots are updated.
+        (Timeline.CanvasXAxisComponent): Force redraw when scales are updated. Add missing exporter for export scales update API
+
 2019-08-01  Alex Christensen  <achristensen@webkit.org>
 
         Do not send NetworkProcessProxy::LogTestingEvent message if we are not testing

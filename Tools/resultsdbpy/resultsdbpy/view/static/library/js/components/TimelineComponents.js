@@ -131,7 +131,7 @@ function offscreenCachedRenderFactory(padding, height) {
     // This function will call redrawCache to render a offscreen cache
     // and copy the viewport area from of it
     // It will trigger redrawCache when cache don't have enough space
-    return (redrawCache, element, stateDiff, state) => {
+    return (redrawCache, element, stateDiff, state, forceRedrawCache = false) => {
         const width = typeof stateDiff.width === 'number' ? stateDiff.width : state.width;
         if (width <= 0)
             // Nothing to render
@@ -141,25 +141,21 @@ function offscreenCachedRenderFactory(padding, height) {
         const scrollLeft = typeof stateDiff.scrollLeft === 'number' ? stateDiff.scrollLeft : state.scrollLeft;
         const context = element.getContext('2d');
         let cachePosLeft = scrollLeft - cachedScrollLeft;
+        let needToRedrawCache = forceRedrawCache;
 
         if (element.logicWidth != width) {
             // Setup the dpr in case of blur
             setupCanvasWidthWithDpr(element, width);
-
-            // We draw everything on cache
-            redrawCache(offscreenCanvas, element, stateDiff, state, () => {
-                cachedScrollLeft = scrollLeft < padding ? scrollLeft : scrollLeft - padding;
-                cachePosLeft = scrollLeft - cachedScrollLeft;
-                if (cachePosLeft < 0)
-                    cachePosLeft = 0;
-                context.clearRect(0, 0, element.width, element.height);
-                context.drawImage(offscreenCanvas, cachePosLeft * getDevicePixelRatio(), 0,    element.width, element.height, 0, 0, width * getDevicePixelRatio(), element.height);
-            });
-
+            needToRedrawCache = true;
         } else if (cachePosLeft < 0 || cachePosLeft + width > totalWidth) {
             if (scrollLeft < 0 )
                 return;
-            redrawCache(offscreenCanvas, element, stateDiff, state,    () => {
+            needToRedrawCache = true;
+        }
+
+        if (needToRedrawCache) {
+            // We draw everything on cache
+            redrawCache(offscreenCanvas, element, stateDiff, state, () => {
                 cachedScrollLeft = scrollLeft < padding ? scrollLeft : scrollLeft - padding;
                 cachePosLeft = scrollLeft - cachedScrollLeft;
                 if (cachePosLeft < 0)
@@ -367,9 +363,13 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
         },
         onStateUpdate: (element, stateDiff, state) => {
             const context = element.getContext("2d");
+            let forceRedrawCache = false;
             if (stateDiff.scales || stateDiff.dots || typeof stateDiff.scrollLeft === 'number' || typeof stateDiff.width === 'number') {
                 console.assert(dots.length <= scales.length);
-                requestAnimationFrame(() => offscreenCachedRender(redrawCache, element, stateDiff, state));
+                if (stateDiff.scales || stateDiff.dots) {
+                    forceRedrawCache = true;
+                }
+                requestAnimationFrame(() => offscreenCachedRender(redrawCache, element, stateDiff, state, forceRedrawCache));
             }
         }
     });
@@ -711,10 +711,13 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
             }
         },
         onStateUpdate: (element, stateDiff, state) => {
+            let forceRedrawCache = false;
             if (stateDiff.scales || typeof stateDiff.scrollLeft === 'number' || typeof stateDiff.width === 'number') {
-                if (stateDiff.scales)
+                if (stateDiff.scales) {
                     state.scalesMapLinkList = getScalesMapLinkList(stateDiff.scales);
-                requestAnimationFrame(() => offscreenCachedRender(redrawCache, element, stateDiff, state));
+                    forceRedrawCache = true;
+                }
+                requestAnimationFrame(() => offscreenCachedRender(redrawCache, element, stateDiff, state, forceRedrawCache));
             }
         }
     });
@@ -722,6 +725,14 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
     return {
         series: ListProviderReceiver((updateContainerWidth, onContainerScroll, onResize) => {
             updateContainerWidth(scales.length * scaleWidth * getDevicePixelRatio());
+            const updateData = (scales) => {
+                updateContainerWidth(scales.length * scaleWidth * getDevicePixelRatio());
+                canvasRef.setState({
+                    scales: scales
+                });
+            }
+            if (typeof option.exporter === "function")
+                option.exporter(updateData);
             onContainerScroll.action((e) => {
                 canvasRef.setState({scrollLeft: e.target.scrollLeft / getDevicePixelRatio()});
             });
