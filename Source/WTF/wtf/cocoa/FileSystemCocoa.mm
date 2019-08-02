@@ -31,10 +31,6 @@
 
 #include <wtf/SoftLinking.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <Bom/BOMCopier.h>
-#endif
-
 typedef struct _BOMCopier* BOMCopier;
 
 SOFT_LINK_PRIVATE_FRAMEWORK(Bom)
