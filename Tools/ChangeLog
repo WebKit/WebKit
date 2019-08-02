@@ -1,3 +1,22 @@
+2019-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        TextAutosizingBoost.ChangeAutosizingBoostAtRuntime fails on iPad Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=200402
+        <rdar://problem/53823368>
+
+        Reviewed by Tim Horton.
+
+        Make it possible to run this test using the iPad simulator.
+
+        * TestWebKitAPI/Tests/ios/TextAutosizingBoost.mm:
+
+        Two adjustments: (1) override the screen size to be 320 by 568 (so that the legacy text autosizing heuristic
+        doesn't avoid boosting this text), and (2) force text autosizing on, but disable idempotent text autosizing,
+        since this would result in differently sized text.
+
+        (mainScreenReferenceBoundsOverride):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2019-08-02  Sihui Liu  <sihui_liu@apple.com>
 
         API tests using permanent credentials should clear credentials left by previous tests

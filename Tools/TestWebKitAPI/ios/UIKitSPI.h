@@ -35,6 +35,7 @@
 #import <UIKit/UIKeyboardImpl.h>
 #import <UIKit/UIKeyboard_Private.h>
 #import <UIKit/UIResponder_Private.h>
+#import <UIKit/UIScreen_Private.h>
 #import <UIKit/UITextInputMultiDocument.h>
 #import <UIKit/UITextInputTraits_Private.h>
 #import <UIKit/UITextInput_Private.h>
@@ -174,6 +175,10 @@ IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 @end
 
 IGNORE_WARNINGS_END
+
+@interface UIScreen ()
+@property (nonatomic, readonly) CGRect _referenceBounds;
+@end
 
 #endif
 
