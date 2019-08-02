@@ -42,34 +42,33 @@
     description("This tests that menu lists that are disabled will not be triggered by AXPress actions.");
 
     // We don't test for enabled controls because opening menu lists waits on the UI process to display the menu.
-    var numOfTests = 3, notificationCount = 0;
+    var testCount = 3, testIndex = 0;
     var lists = [null, null, null];
-    if (window.accessibilityController) {
-        jsTestIsAsync = true;
-        pressNext(0);
-    }
 
-    function pressNext(testId) {
-        if (testId > numOfTests)
+    function testNextList() {
+        if (testIndex >= testCount) {
+            finishJSTest();
             return;
-        var menulist = accessibilityController.accessibleElementById("test" + testId);
+        }
+
+        var menulist = accessibilityController.accessibleElementById("test" + testIndex);
         menulist.addNotificationListener(pressListener);
         menulist.press();
-        lists[testId] = menulist;
-        window.setTimeout(function() {
-            pressNext(testId + 1);
-        }, 0);
+        lists[testIndex] = menulist;
     }
 
     function pressListener(notification) {
-        if (notification == "AXPressDidFail" || notification == "AXPressDidSucceed")
-            notificationCount++;
+        lists[testIndex].removeNotificationListener(pressListener);
 
         debug("Got notification: " + notification);
-        lists[notificationCount-1].removeNotificationListener(pressListener);
-        if (notificationCount == numOfTests) {
-            finishJSTest();
-        }
+
+        testIndex++;
+        testNextList();
+    }
+
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+        testNextList();
     }
 </script>
 

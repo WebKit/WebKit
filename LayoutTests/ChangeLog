@@ -1,3 +1,14 @@
+2019-08-02  Andres Gonzalez  <andresg_22@apple.com>
+
+        [ Mac ] Layout Test accessibility/mac/press-not-work-for-disabled-menu-list.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=196505
+        <rdar://problem/49532620>
+
+        Reviewed by Chris Fleizach.
+
+        Re-wrote test in a timing independent way. This should fix the intermittent failures.
+        * accessibility/mac/press-not-work-for-disabled-menu-list.html:
+
 2019-08-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: Crash when interacting with Template Content in Console
