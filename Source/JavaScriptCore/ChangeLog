@@ -1,3 +1,18 @@
+2019-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use "destroy" function directly for JSWebAssemblyCodeBlock and WebAssemblyFunction
+        https://bugs.webkit.org/show_bug.cgi?id=200385
+
+        Reviewed by Mark Lam.
+
+        These CellTypes are not using classInfo stored in the cells, so we can just call JSWebAssemblyCodeBlock::destroy
+        and WebAssemblyFunction::destroy directly.
+
+        * wasm/js/JSWebAssemblyCodeBlockHeapCellType.cpp:
+        (JSC::JSWebAssemblyCodeBlockDestroyFunc::operator() const):
+        * wasm/js/WebAssemblyFunctionHeapCellType.cpp:
+        (JSC::WebAssemblyFunctionDestroyFunc::operator() const):
+
 2019-08-02  Mark Lam  <mark.lam@apple.com>
 
         Gardening: build fix.

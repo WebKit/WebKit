@@ -38,7 +38,7 @@ struct JSWebAssemblyCodeBlockDestroyFunc {
     ALWAYS_INLINE void operator()(VM&, JSCell* cell) const
     {
         static_assert(std::is_final<JSWebAssemblyCodeBlock>::value, "Otherwise, this code would not be correct.");
-        JSWebAssemblyCodeBlock::info()->methodTable.destroy(cell);
+        JSWebAssemblyCodeBlock::destroy(cell);
     }
 };
 

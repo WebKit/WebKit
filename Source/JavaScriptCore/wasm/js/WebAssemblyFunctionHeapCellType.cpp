@@ -38,7 +38,7 @@ struct WebAssemblyFunctionDestroyFunc {
     ALWAYS_INLINE void operator()(VM&, JSCell* cell) const
     {
         static_assert(std::is_final<WebAssemblyFunction>::value, "Otherwise, this code would not be correct.");
-        WebAssemblyFunction::info()->methodTable.destroy(cell);
+        WebAssemblyFunction::destroy(cell);
     }
 };
 
