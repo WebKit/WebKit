@@ -1,3 +1,16 @@
+2019-08-02  Youenn Fablet  <youenn@apple.com>
+
+        [iOS] Directly use RealtimeMediaSourceCenter to compute the media capture  state
+        https://bugs.webkit.org/show_bug.cgi?id=200368
+        <rdar://problem/53191450>
+
+        Unreviewed.
+        Build fix by guarding with MEDIA_STREAM in addition to IOS.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateIsPlayingMedia):
+        (WebCore::Document::pageMutedStateDidChange):
+
 2019-08-02  Andres Gonzalez  <andresg_22@apple.com>
 
         Add accessibility object method to determine whether an element is inside a table cell. Needed for iOS accessibility client.
