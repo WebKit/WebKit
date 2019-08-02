@@ -68,6 +68,11 @@ public:
     static Ref<MediaStreamTrack> create(ScriptExecutionContext&, Ref<MediaStreamTrackPrivate>&&);
     virtual ~MediaStreamTrack();
 
+#if PLATFORM(IOS_FAMILY)
+    static MediaProducer::MediaStateFlags captureState();
+    static void muteCapture();
+#endif
+
     virtual bool isCanvas() const { return false; }
 
     const AtomString& kind() const;
