@@ -529,7 +529,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_touchDetected:(id)sender
 {
-    if ([_touchGestureRecognizer state] == UIGestureRecognizerStateBegan || [_touchGestureRecognizer state] == UIGestureRecognizerStateEnded) {
+    if ([_touchGestureRecognizer state] == UIGestureRecognizerStateEnded) {
         double score = _secheuristic.scoreOfNextTouch([_touchGestureRecognizer locationInView:self.view]);
         if (score > requiredScore)
             [self _showPhishingAlert];
