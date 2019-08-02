@@ -241,6 +241,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(bool, useBumpAllocator, true, Normal, nullptr) \
     v(bool, stealEmptyBlocksFromOtherAllocators, true, Normal, nullptr) \
     v(bool, eagerlyUpdateTopCallFrame, false, Normal, nullptr) \
+    v(bool, dumpZappedCellCrashData, false, Normal, nullptr) \
     \
     v(bool, useOSREntryToDFG, true, Normal, nullptr) \
     v(bool, useOSREntryToFTL, true, Normal, nullptr) \

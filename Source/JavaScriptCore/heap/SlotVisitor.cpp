@@ -286,8 +286,14 @@ template<typename ContainerType>
 ALWAYS_INLINE void SlotVisitor::appendToMarkStack(ContainerType& container, JSCell* cell)
 {
     ASSERT(m_heap.isMarked(cell));
+#if CPU(X86_64)
+    if (Options::dumpZappedCellCrashData()) {
+        if (UNLIKELY(cell->isZapped()))
+            reportZappedCellAndCrash(cell);
+    }
+#endif
     ASSERT(!cell->isZapped());
-    
+
     container.noteMarked();
     
     m_visitCount++;
@@ -385,6 +391,17 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
     default:
         // FIXME: This could be so much better.
         // https://bugs.webkit.org/show_bug.cgi?id=162462
+#if CPU(X86_64)
+        if (Options::dumpZappedCellCrashData()) {
+            Structure* structure = cell->structure(vm());
+            if (LIKELY(structure)) {
+                const MethodTable* methodTable = &structure->classInfo()->methodTable;
+                methodTable->visitChildren(const_cast<JSCell*>(cell), *this);
+                break;
+            }
+            reportZappedCellAndCrash(const_cast<JSCell*>(cell));
+        }
+#endif
         cell->methodTable(vm())->visitChildren(const_cast<JSCell*>(cell), *this);
         break;
     }
@@ -803,5 +820,34 @@ void SlotVisitor::addParallelConstraintTask(RefPtr<SharedTask<void(SlotVisitor&)
     
     m_currentSolver->addParallelTask(task, *m_currentConstraint);
 }
+
+#if CPU(X86_64)
+NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void SlotVisitor::reportZappedCellAndCrash(JSCell* cell)
+{
+    MarkedBlock::Handle* foundBlock = nullptr;
+    uint32_t* cellWords = reinterpret_cast_ptr<uint32_t*>(this);
+
+    uintptr_t cellAddress = bitwise_cast<uintptr_t>(cell);
+    uintptr_t headerWord = cellWords[1];
+    uintptr_t zapReason = cellWords[2];
+    unsigned subspaceHash = 0;
+    size_t cellSize = 0;
+
+    m_heap.objectSpace().forEachBlock([&] (MarkedBlock::Handle* block) {
+        if (block->contains(cell)) {
+            foundBlock = block;
+            return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    });
+
+    if (foundBlock) {
+        subspaceHash = StringHasher::computeHash(foundBlock->subspace()->name());
+        cellSize = foundBlock->cellSize();
+    }
+
+    CRASH_WITH_INFO(cellAddress, headerWord, zapReason, subspaceHash, cellSize);
+}
+#endif // PLATFORM(MAC)
 
 } // namespace JSC
