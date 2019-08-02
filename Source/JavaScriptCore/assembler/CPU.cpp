@@ -79,7 +79,7 @@ int64_t hwL3CacheSize()
 
 int32_t hwPhysicalCPUMax()
 {
-    int64_t val = 0;
+    int32_t val = 0;
     size_t valSize = sizeof(val);
     int rc = sysctlbyname("hw.physicalcpu_max", &val, &valSize, nullptr, 0);
     if (rc < 0)

@@ -1,3 +1,14 @@
+2019-08-02  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: build fix.
+        https://bugs.webkit.org/show_bug.cgi?id=200149
+        <rdar://problem/53570112>
+
+        Not reviewed.
+
+        * assembler/CPU.cpp:
+        (JSC::hwPhysicalCPUMax):
+
 2019-08-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         GetterSetter type confusion during DFG compilation
