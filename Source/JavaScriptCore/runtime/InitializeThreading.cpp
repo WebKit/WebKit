@@ -43,6 +43,7 @@
 #include "SigillCrashAnalyzer.h"
 #include "StructureIDTable.h"
 #include "SuperSampler.h"
+#include "WasmCalleeRegistry.h"
 #include "WasmCapabilities.h"
 #include "WasmThunks.h"
 #include "WriteBarrier.h"
@@ -86,8 +87,10 @@ void initializeThreading()
         thread.setSavedLastStackTop(thread.stack().origin());
 
 #if ENABLE(WEBASSEMBLY)
-        if (Wasm::isSupported())
+        if (Wasm::isSupported()) {
             Wasm::Thunks::initialize();
+            Wasm::CalleeRegistry::initialize();
+        }
 #endif
 
         if (VM::isInMiniMode())

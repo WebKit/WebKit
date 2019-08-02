@@ -1815,6 +1815,7 @@
 		E3A32BC71FC83147007D7E76 /* WeakMapImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A32BC61FC8312E007D7E76 /* WeakMapImpl.h */; };
 		E3A421431D6F58930007C617 /* PreciseJumpTargetsInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A421421D6F588F0007C617 /* PreciseJumpTargetsInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3AC277721FDB4940024452C /* RegExpCachedResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 86F75EFC151C062F007C9BA3 /* RegExpCachedResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3BD2B7622F275020011765C /* WasmCompilationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BD2B7522F275020011765C /* WasmCompilationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3BFA5D021E853A1009C0EBA /* DFGDesiredGlobalProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BFA5CD21E853A1009C0EBA /* DFGDesiredGlobalProperty.h */; };
 		E3BFD0BC1DAF808E0065DEA2 /* AccessCaseSnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BFD0BA1DAF807C0065DEA2 /* AccessCaseSnippetParams.h */; };
 		E3C295DD1ED2CBDA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C295DC1ED2CBAA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h */; };
@@ -1826,6 +1827,7 @@
 		E3F23A801ECF13F500978D99 /* SnippetReg.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7D1ECF13E500978D99 /* SnippetReg.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F23A811ECF13FA00978D99 /* SnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7C1ECF13E500978D99 /* SnippetParams.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F23A821ECF13FE00978D99 /* Snippet.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7B1ECF13E500978D99 /* Snippet.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3FB853A22F3667B008F90ED /* WasmCalleeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FB853822F36674008F90ED /* WasmCalleeRegistry.h */; };
 		E3FF75331D9CEA1800C7E16D /* DOMJITGetterSetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FF752F1D9CEA1200C7E16D /* DOMJITGetterSetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC15112EF272200184A1F /* SourceProviderCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4815,6 +4817,7 @@
 		E36CC9462086314F0051FFD6 /* WasmCreationMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmCreationMode.h; sourceTree = "<group>"; };
 		E3794E731B77EB97005543AE /* ModuleAnalyzer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleAnalyzer.cpp; sourceTree = "<group>"; };
 		E3794E741B77EB97005543AE /* ModuleAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleAnalyzer.h; sourceTree = "<group>"; };
+		E37CFB2D22F27C57009A7B38 /* WasmCompilationMode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCompilationMode.cpp; sourceTree = "<group>"; };
 		E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerHelpers.h; sourceTree = "<group>"; };
 		E380D66B1F19249D00A59095 /* BuiltinNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltinNames.cpp; sourceTree = "<group>"; };
 		E3850B14226ED63E009ABF9C /* DFGMinifiedIDInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DFGMinifiedIDInlines.h; path = dfg/DFGMinifiedIDInlines.h; sourceTree = "<group>"; };
@@ -4841,6 +4844,7 @@
 		E3A32BC51FC8312D007D7E76 /* WeakMapImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakMapImpl.cpp; sourceTree = "<group>"; };
 		E3A32BC61FC8312E007D7E76 /* WeakMapImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakMapImpl.h; sourceTree = "<group>"; };
 		E3A421421D6F588F0007C617 /* PreciseJumpTargetsInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreciseJumpTargetsInlines.h; sourceTree = "<group>"; };
+		E3BD2B7522F275020011765C /* WasmCompilationMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmCompilationMode.h; sourceTree = "<group>"; };
 		E3BFA5CB21E853A0009C0EBA /* DFGDesiredGlobalProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredGlobalProperties.cpp; path = dfg/DFGDesiredGlobalProperties.cpp; sourceTree = "<group>"; };
 		E3BFA5CC21E853A0009C0EBA /* DFGDesiredGlobalProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredGlobalProperties.h; path = dfg/DFGDesiredGlobalProperties.h; sourceTree = "<group>"; };
 		E3BFA5CD21E853A1009C0EBA /* DFGDesiredGlobalProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredGlobalProperty.h; path = dfg/DFGDesiredGlobalProperty.h; sourceTree = "<group>"; };
@@ -4863,6 +4867,8 @@
 		E3F23A7C1ECF13E500978D99 /* SnippetParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetParams.h; sourceTree = "<group>"; };
 		E3F23A7D1ECF13E500978D99 /* SnippetReg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetReg.h; sourceTree = "<group>"; };
 		E3F23A7E1ECF13E500978D99 /* SnippetSlowPathCalls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetSlowPathCalls.h; sourceTree = "<group>"; };
+		E3FB853822F36674008F90ED /* WasmCalleeRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmCalleeRegistry.h; sourceTree = "<group>"; };
+		E3FB853922F36674008F90ED /* WasmCalleeRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCalleeRegistry.cpp; sourceTree = "<group>"; };
 		E3FC25102256ECF400583518 /* DoublePredictionFuzzerAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DoublePredictionFuzzerAgent.cpp; sourceTree = "<group>"; };
 		E3FC25112256ECF400583518 /* DoublePredictionFuzzerAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DoublePredictionFuzzerAgent.h; sourceTree = "<group>"; };
 		E3FF752F1D9CEA1200C7E16D /* DOMJITGetterSetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITGetterSetter.h; sourceTree = "<group>"; };
@@ -6605,11 +6611,15 @@
 				AD4B1DF81DF244D70071AE32 /* WasmBinding.h */,
 				525C0DD71E935847002184CD /* WasmCallee.cpp */,
 				525C0DD81E935847002184CD /* WasmCallee.h */,
+				E3FB853922F36674008F90ED /* WasmCalleeRegistry.cpp */,
+				E3FB853822F36674008F90ED /* WasmCalleeRegistry.h */,
 				53FD04D11D7AB187003287D3 /* WasmCallingConvention.cpp */,
 				53FD04D21D7AB187003287D3 /* WasmCallingConvention.h */,
 				E337B966224324E50093A820 /* WasmCapabilities.h */,
 				526AC4B41E977C5D003500E1 /* WasmCodeBlock.cpp */,
 				526AC4B51E977C5D003500E1 /* WasmCodeBlock.h */,
+				E37CFB2D22F27C57009A7B38 /* WasmCompilationMode.cpp */,
+				E3BD2B7522F275020011765C /* WasmCompilationMode.h */,
 				AD412B321E7B2E8A008AF157 /* WasmContext.h */,
 				A27958D7FA1142B0AC9E364D /* WasmContextInlines.h */,
 				E36CC9462086314F0051FFD6 /* WasmCreationMode.h */,
@@ -10008,9 +10018,11 @@
 				53F8D2001E8387D400D21116 /* WasmBBQPlanInlines.h in Headers */,
 				AD4B1DFA1DF244E20071AE32 /* WasmBinding.h in Headers */,
 				525C0DDA1E935847002184CD /* WasmCallee.h in Headers */,
+				E3FB853A22F3667B008F90ED /* WasmCalleeRegistry.h in Headers */,
 				53FD04D41D7AB291003287D3 /* WasmCallingConvention.h in Headers */,
 				E337B967224324EA0093A820 /* WasmCapabilities.h in Headers */,
 				526AC4B71E977C5D003500E1 /* WasmCodeBlock.h in Headers */,
+				E3BD2B7622F275020011765C /* WasmCompilationMode.h in Headers */,
 				AD412B341E7B2E9E008AF157 /* WasmContext.h in Headers */,
 				7593C898BE714A64BE93A6E7 /* WasmContextInlines.h in Headers */,
 				E36CC9472086314F0051FFD6 /* WasmCreationMode.h in Headers */,

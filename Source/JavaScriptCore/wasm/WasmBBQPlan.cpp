@@ -306,6 +306,8 @@ void BBQPlan::complete(const AbstractLocker& locker)
             CompilationContext& context = m_compilationContexts[functionIndex];
             SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
             const Signature& signature = SignatureInformation::get(signatureIndex);
+            const uint32_t functionIndexSpace = functionIndex + m_moduleInformation->importFunctionCount();
+            ASSERT(functionIndexSpace < m_moduleInformation->functionIndexSpaceSize());
             {
                 LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, JITCompilationCanFail);
                 if (UNLIKELY(linkBuffer.didFailToAllocate())) {
@@ -314,7 +316,7 @@ void BBQPlan::complete(const AbstractLocker& locker)
                 }
 
                 m_wasmInternalFunctions[functionIndex]->entrypoint.compilation = std::make_unique<B3::Compilation>(
-                    FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "WebAssembly BBQ function[%i] %s", functionIndex, signature.toString().ascii().data()),
+                    FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "WebAssembly BBQ function[%i] %s name %s", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
                     WTFMove(context.wasmEntrypointByproducts));
             }
 
@@ -326,7 +328,7 @@ void BBQPlan::complete(const AbstractLocker& locker)
                 }
 
                 embedderToWasmInternalFunction->entrypoint.compilation = std::make_unique<B3::Compilation>(
-                    FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "Embedder->WebAssembly entrypoint[%i] %s", functionIndex, signature.toString().ascii().data()),
+                    FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "Embedder->WebAssembly entrypoint[%i] %s name %s", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
                     WTFMove(context.embedderEntrypointByproducts));
             }
         }

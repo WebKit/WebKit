@@ -29,24 +29,25 @@
 
 #include "B3Compilation.h"
 #include "RegisterAtOffsetList.h"
+#include "WasmCompilationMode.h"
 #include "WasmFormat.h"
 #include "WasmIndexOrName.h"
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC { namespace Wasm {
 
-class Callee : public ThreadSafeRefCounted<Callee> {
+class Callee final : public ThreadSafeRefCounted<Callee> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Callee> create(Wasm::Entrypoint&& entrypoint)
+    static Ref<Callee> create(Wasm::CompilationMode compilationMode, Wasm::Entrypoint&& entrypoint)
     {
-        Callee* callee = new Callee(WTFMove(entrypoint));
+        Callee* callee = new Callee(compilationMode, WTFMove(entrypoint));
         return adoptRef(*callee);
     }
 
-    static Ref<Callee> create(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    static Ref<Callee> create(Wasm::CompilationMode compilationMode, Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     {
-        Callee* callee = new Callee(WTFMove(entrypoint), index, WTFMove(name));
+        Callee* callee = new Callee(compilationMode, WTFMove(entrypoint), index, WTFMove(name));
         return adoptRef(*callee);
     }
 
@@ -54,11 +55,22 @@ public:
 
     RegisterAtOffsetList* calleeSaveRegisters() { return &m_entrypoint.calleeSaveRegisters; }
     IndexOrName indexOrName() const { return m_indexOrName; }
+    CompilationMode compilationMode() const { return m_compilationMode; }
+
+    std::tuple<void*, void*> range() const
+    {
+        void* start = m_entrypoint.compilation->codeRef().executableMemory()->start().untaggedPtr();
+        void* end = m_entrypoint.compilation->codeRef().executableMemory()->end().untaggedPtr();
+        return { start, end };
+    }
+
+    JS_EXPORT_PRIVATE ~Callee();
 
 private:
-    JS_EXPORT_PRIVATE Callee(Wasm::Entrypoint&&);
-    JS_EXPORT_PRIVATE Callee(Wasm::Entrypoint&&, size_t, std::pair<const Name*, RefPtr<NameSection>>&&);
+    JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode, Wasm::Entrypoint&&);
+    JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode, Wasm::Entrypoint&&, size_t, std::pair<const Name*, RefPtr<NameSection>>&&);
 
+    CompilationMode m_compilationMode;
     Wasm::Entrypoint m_entrypoint;
     IndexOrName m_indexOrName;
 };

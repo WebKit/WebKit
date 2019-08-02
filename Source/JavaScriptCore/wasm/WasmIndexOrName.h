@@ -35,6 +35,8 @@ namespace JSC { namespace Wasm {
 
 struct NameSection;
 
+// Keep this class copyable when the world is stopped: do not allocate any memory while copying this.
+// SamplingProfiler copies it while suspending threads.
 struct IndexOrName {
     typedef size_t Index;
 

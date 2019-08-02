@@ -31,6 +31,8 @@
 #include "CodeBlockHash.h"
 #include "JITCode.h"
 #include "MachineStackMarker.h"
+#include "WasmCompilationMode.h"
+#include "WasmIndexOrName.h"
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/Stopwatch.h>
@@ -63,13 +65,18 @@ public:
         CalleeBits unverifiedCallee;
         CodeBlock* verifiedCodeBlock { nullptr };
         CallSiteIndex callSiteIndex;
+#if ENABLE(WEBASSEMBLY)
+        Optional<Wasm::IndexOrName> wasmIndexOrName;
+#endif
+        Optional<Wasm::CompilationMode> wasmCompilationMode;
     };
 
     enum class FrameType { 
         Executable,
+        Wasm,
         Host,
         C,
-        Unknown
+        Unknown,
     };
 
     struct StackFrame {
@@ -85,6 +92,10 @@ public:
         const void* cCodePC { nullptr };
         ExecutableBase* executable { nullptr };
         JSObject* callee { nullptr };
+#if ENABLE(WEBASSEMBLY)
+        Optional<Wasm::IndexOrName> wasmIndexOrName;
+#endif
+        Optional<Wasm::CompilationMode> wasmCompilationMode;
 
         struct CodeLocation {
             bool hasCodeBlockHash() const

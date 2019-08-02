@@ -1,5 +1,85 @@
 2019-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Support WebAssembly in SamplingProfiler
+        https://bugs.webkit.org/show_bug.cgi?id=200329
+
+        Reviewed by Saam Barati.
+
+        The sampling profiler support is critical to investigate what is actually time-consuming. This patch adds the sampling profiler support for Wasm functions
+        to list up hot Wasm functions with compilation mode (BBQ or OMG). This allows us to investigate the hot functions in JetStream2 wasm tests.
+
+        In order to retrieve wasm function information from the sampling profiler safely, we need to know whether the given Wasm CalleeBits is valid in the call frame.
+        To achieve this, we start collecting valid Wasm::Callee pointers in a global hash set. Previously, each Wasm::Callee registered its code region to a hash set
+        for wasm fault signal handler to know whether the faulted program-counter is in wasm region. We reuse and change this mechanism. Instead of registering code region,
+        we register Wasm::Callee* to a hash set. The sampling profiler reuses this hash set to determine whether the given bits is a valid Wasm::Callee.
+
+        The sampling profiler retrieves the information safely from valid Wasm::Callee* pointer. It is possible that this Wasm::Callee is about to be dead: ref-count is 0,
+        now in the middle of the destructor of Wasm::Callee. Even in that case, fields of Wasm::Callee are still valid and can be accessed since destroying these fields happens
+        after we unregister Wasm::Callee from the global hash set.
+
+        We retrieve Wasm::IndexOrName and Wasm::CompilationMode. Copying them does not involve any allocations, locking etc. So we can safely copy them while some of threads are suspended.
+
+        This patch also fixes the issue that we never called `unregisterCode` while every Wasm::Calllee registers its code region through `registerCode`.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::FrameWalker::FrameWalker):
+        (JSC::FrameWalker::recordJSFrame):
+        (JSC::CFrameWalker::CFrameWalker):
+        (JSC::SamplingProfiler::takeSample):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        (JSC::SamplingProfiler::StackFrame::displayName):
+        (JSC::SamplingProfiler::StackFrame::displayNameForJSONTests):
+        (JSC::SamplingProfiler::StackFrame::functionStartLine):
+        (JSC::SamplingProfiler::StackFrame::functionStartColumn):
+        (JSC::SamplingProfiler::StackFrame::sourceID):
+        (JSC::SamplingProfiler::StackFrame::url):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+        (WTF::printInternal):
+        * runtime/SamplingProfiler.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::functionIsWasmSupported):
+        (JSC::JSDollarVM::finishCreation):
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::complete):
+        * wasm/WasmBBQPlanInlines.h:
+        (JSC::Wasm::BBQPlan::initializeCallees):
+        * wasm/WasmCallee.cpp:
+        (JSC::Wasm::Callee::Callee):
+        (JSC::Wasm::Callee::~Callee):
+        * wasm/WasmCallee.h:
+        (JSC::Wasm::Callee::create): Deleted.
+        (JSC::Wasm::Callee::entrypoint const): Deleted.
+        (JSC::Wasm::Callee::calleeSaveRegisters): Deleted.
+        (JSC::Wasm::Callee::indexOrName const): Deleted.
+        * wasm/WasmCalleeRegistry.cpp: Copied from Source/JavaScriptCore/wasm/WasmFaultSignalHandler.h.
+        (JSC::Wasm::CalleeRegistry::initialize):
+        (JSC::Wasm::CalleeRegistry::singleton):
+        * wasm/WasmCalleeRegistry.h: Copied from Source/JavaScriptCore/wasm/WasmCallee.cpp.
+        (JSC::Wasm::CalleeRegistry::getLock):
+        (JSC::Wasm::CalleeRegistry::registerCallee):
+        (JSC::Wasm::CalleeRegistry::unregisterCallee):
+        (JSC::Wasm::CalleeRegistry::isValidCallee):
+        * wasm/WasmCompilationMode.cpp: Copied from Source/JavaScriptCore/wasm/WasmFaultSignalHandler.h.
+        (JSC::Wasm::makeString):
+        * wasm/WasmCompilationMode.h: Copied from Source/JavaScriptCore/wasm/WasmFaultSignalHandler.h.
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+        (JSC::Wasm::enableFastMemory):
+        (JSC::Wasm::registerCode): Deleted.
+        (JSC::Wasm::unregisterCode): Deleted.
+        * wasm/WasmFaultSignalHandler.h:
+        * wasm/WasmIndexOrName.h:
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+
+2019-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] LazyJSValue should be robust for empty JSValue
         https://bugs.webkit.org/show_bug.cgi?id=200388
 

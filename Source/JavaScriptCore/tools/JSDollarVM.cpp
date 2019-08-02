@@ -47,6 +47,7 @@
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
 #include "VMInspector.h"
+#include "WasmCapabilities.h"
 #include <wtf/Atomics.h>
 #include <wtf/DataLog.h>
 #include <wtf/ProcessID.h>
@@ -2201,6 +2202,15 @@ static EncodedJSValue JSC_HOST_CALL functionParseCount(ExecState*)
     return JSValue::encode(jsNumber(globalParseCount.load()));
 }
 
+static EncodedJSValue JSC_HOST_CALL functionIsWasmSupported(ExecState*)
+{
+#if ENABLE(WEBASSEMBLY)
+    return JSValue::encode(jsBoolean(Wasm::isSupported()));
+#else
+    return JSValue::encode(jsBoolean(false));
+#endif
+}
+
 void JSDollarVM::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
@@ -2317,6 +2327,8 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "totalGCTime", functionTotalGCTime, 0);
 
     addFunction(vm, "parseCount", functionParseCount, 0);
+
+    addFunction(vm, "isWasmSupported", functionIsWasmSupported, 0);
 }
 
 void JSDollarVM::addFunction(VM& vm, JSGlobalObject* globalObject, const char* name, NativeFunction function, unsigned arguments)

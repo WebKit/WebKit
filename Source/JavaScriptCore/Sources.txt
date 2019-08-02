@@ -996,8 +996,10 @@ wasm/WasmB3IRGenerator.cpp
 wasm/WasmBBQPlan.cpp
 wasm/WasmBinding.cpp
 wasm/WasmCallee.cpp
+wasm/WasmCalleeRegistry.cpp
 wasm/WasmCallingConvention.cpp
 wasm/WasmCodeBlock.cpp
+wasm/WasmCompilationMode.cpp
 wasm/WasmEmbedder.h
 wasm/WasmFaultSignalHandler.cpp
 wasm/WasmFormat.cpp

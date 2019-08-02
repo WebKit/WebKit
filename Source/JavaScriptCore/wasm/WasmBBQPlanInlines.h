@@ -42,13 +42,13 @@ void BBQPlan::initializeCallees(const Functor& callback)
 
         RefPtr<Wasm::Callee> embedderEntrypointCallee;
         if (auto embedderToWasmFunction = m_embedderToWasmInternalFunctions.get(internalFunctionIndex)) {
-            embedderEntrypointCallee = Wasm::Callee::create(WTFMove(embedderToWasmFunction->entrypoint));
+            embedderEntrypointCallee = Wasm::Callee::create(CompilationMode::BBQMode, WTFMove(embedderToWasmFunction->entrypoint));
             MacroAssembler::repatchPointer(embedderToWasmFunction->calleeMoveLocation, CalleeBits::boxWasm(embedderEntrypointCallee.get()));
         }
 
         InternalFunction* function = m_wasmInternalFunctions[internalFunctionIndex].get();
         size_t functionIndexSpace = internalFunctionIndex + m_moduleInformation->importFunctionCount();
-        Ref<Wasm::Callee> wasmEntrypointCallee = Wasm::Callee::create(WTFMove(function->entrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
+        Ref<Wasm::Callee> wasmEntrypointCallee = Wasm::Callee::create(CompilationMode::BBQMode, WTFMove(function->entrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
         MacroAssembler::repatchPointer(function->calleeMoveLocation, CalleeBits::boxWasm(wasmEntrypointCallee.ptr()));
 
         callback(internalFunctionIndex, WTFMove(embedderEntrypointCallee), WTFMove(wasmEntrypointCallee));

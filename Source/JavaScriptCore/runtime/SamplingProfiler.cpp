@@ -48,6 +48,8 @@
 #include "SlotVisitor.h"
 #include "StrongInlines.h"
 #include "VM.h"
+#include "WasmCallee.h"
+#include "WasmCalleeRegistry.h"
 #include <thread>
 #include <wtf/FilePrintStream.h>
 #include <wtf/HashSet.h>
@@ -81,12 +83,13 @@ ALWAYS_INLINE static void reportStats()
 
 class FrameWalker {
 public:
-    FrameWalker(VM& vm, ExecState* callFrame, const AbstractLocker& codeBlockSetLocker, const AbstractLocker& machineThreadsLocker)
+    FrameWalker(VM& vm, ExecState* callFrame, const AbstractLocker& codeBlockSetLocker, const AbstractLocker& machineThreadsLocker, const AbstractLocker& wasmCalleeLocker)
         : m_vm(vm)
         , m_callFrame(callFrame)
         , m_entryFrame(vm.topEntryFrame)
         , m_codeBlockSetLocker(codeBlockSetLocker)
         , m_machineThreadsLocker(machineThreadsLocker)
+        , m_wasmCalleeLocker(wasmCalleeLocker)
     {
     }
 
@@ -98,7 +101,7 @@ public:
         resetAtMachineFrame();
         size_t maxStackTraceSize = stackTrace.size();
         while (!isAtTop() && !m_bailingOut && m_depth < maxStackTraceSize) {
-            recordJSFrame(stackTrace);
+            recordJITFrame(stackTrace);
             advanceToParentFrame();
             resetAtMachineFrame();
         }
@@ -115,7 +118,7 @@ public:
 protected:
 
     SUPPRESS_ASAN
-    void recordJSFrame(Vector<UnprocessedStackFrame>& stackTrace)
+    void recordJITFrame(Vector<UnprocessedStackFrame>& stackTrace)
     {
         CallSiteIndex callSiteIndex;
         CalleeBits unsafeCallee = m_callFrame->unsafeCallee();
@@ -125,6 +128,17 @@ protected:
             callSiteIndex = m_callFrame->unsafeCallSiteIndex();
         }
         stackTrace[m_depth] = UnprocessedStackFrame(codeBlock, unsafeCallee, callSiteIndex);
+#if ENABLE(WEBASSEMBLY)
+        if (unsafeCallee.isWasm()) {
+            auto* wasmCallee = unsafeCallee.asWasmCallee();
+            if (Wasm::CalleeRegistry::singleton().isValidCallee(m_wasmCalleeLocker, wasmCallee)) {
+                // At this point, Wasm::Callee would be dying (ref count is 0), but its fields are still live.
+                // And we can safely copy Wasm::IndexOrName even when any lock is held by suspended threads.
+                stackTrace[m_depth].wasmIndexOrName = wasmCallee->indexOrName();
+                stackTrace[m_depth].wasmCompilationMode = wasmCallee->compilationMode();
+            }
+        }
+#endif
         m_depth++;
     }
 
@@ -193,6 +207,7 @@ protected:
     EntryFrame* m_entryFrame;
     const AbstractLocker& m_codeBlockSetLocker;
     const AbstractLocker& m_machineThreadsLocker;
+    const AbstractLocker& m_wasmCalleeLocker;
     bool m_bailingOut { false };
     size_t m_depth { 0 };
 };
@@ -201,8 +216,8 @@ class CFrameWalker : public FrameWalker {
 public:
     typedef FrameWalker Base;
 
-    CFrameWalker(VM& vm, void* machineFrame, ExecState* callFrame, const AbstractLocker& codeBlockSetLocker, const AbstractLocker& machineThreadsLocker)
-        : Base(vm, callFrame, codeBlockSetLocker, machineThreadsLocker)
+    CFrameWalker(VM& vm, void* machineFrame, ExecState* callFrame, const AbstractLocker& codeBlockSetLocker, const AbstractLocker& machineThreadsLocker, const AbstractLocker& wasmCalleeLocker)
+        : Base(vm, callFrame, codeBlockSetLocker, machineThreadsLocker, wasmCalleeLocker)
         , m_machineFrame(machineFrame)
     {
     }
@@ -216,7 +231,7 @@ public:
         // The way the C walker decides if a frame it is about to trace is C or JS is by
         // ensuring m_callFrame points to some frame above the machineFrame.
         if (!isAtTop() && !m_bailingOut && m_machineFrame == m_callFrame) {
-            recordJSFrame(stackTrace);
+            recordJITFrame(stackTrace);
             Base::advanceToParentFrame();
             resetAtMachineFrame();
         }
@@ -233,7 +248,7 @@ public:
                 stackTrace[m_depth] = UnprocessedStackFrame(frame()->returnPC);
                 m_depth++;
             } else
-                recordJSFrame(stackTrace);
+                recordJITFrame(stackTrace);
             advanceToParentFrame();
             resetAtMachineFrame();
         }
@@ -341,8 +356,13 @@ void SamplingProfiler::takeSample(const AbstractLocker&, Seconds& stackTraceProc
         Seconds nowTime = m_stopwatch->elapsedTime();
 
         auto machineThreadsLocker = holdLock(m_vm.heap.machineThreads().getLock());
-        LockHolder codeBlockSetLocker(m_vm.heap.codeBlockSet().getLock());
-        LockHolder executableAllocatorLocker(ExecutableAllocator::singleton().getLock());
+        auto codeBlockSetLocker = holdLock(m_vm.heap.codeBlockSet().getLock());
+        auto executableAllocatorLocker = holdLock(ExecutableAllocator::singleton().getLock());
+#if ENABLE(WEBASSEMBLY)
+        auto wasmCalleesLocker = holdLock(Wasm::CalleeRegistry::singleton().getLock());
+#else
+        LockHolder wasmCalleesLocker(NoLockingNecessary);
+#endif
 
         auto didSuspend = m_jscExecutionThread->suspend();
         if (didSuspend) {
@@ -388,11 +408,11 @@ void SamplingProfiler::takeSample(const AbstractLocker&, Seconds& stackTraceProc
             bool wasValidWalk;
             bool didRunOutOfVectorSpace;
             if (Options::sampleCCode()) {
-                CFrameWalker walker(m_vm, machineFrame, callFrame, codeBlockSetLocker, machineThreadsLocker);
+                CFrameWalker walker(m_vm, machineFrame, callFrame, codeBlockSetLocker, machineThreadsLocker, wasmCalleesLocker);
                 walkSize = walker.walk(m_currentFrames, didRunOutOfVectorSpace);
                 wasValidWalk = walker.wasValidWalk();
             } else {
-                FrameWalker walker(m_vm, callFrame, codeBlockSetLocker, machineThreadsLocker);
+                FrameWalker walker(m_vm, callFrame, codeBlockSetLocker, machineThreadsLocker, wasmCalleesLocker);
                 walkSize = walker.walk(m_currentFrames, didRunOutOfVectorSpace);
                 wasValidWalk = walker.wasValidWalk();
             }
@@ -489,14 +509,19 @@ void SamplingProfiler::processUnverifiedStackTraces()
             stackTrace.frames.append(StackFrame());
         };
 
-        auto storeCalleeIntoLastFrame = [&] (CalleeBits calleeBits) {
+        auto storeCalleeIntoLastFrame = [&] (UnprocessedStackFrame& unprocessedStackFrame) {
             // Set the callee if it's a valid GC object.
+            CalleeBits calleeBits = unprocessedStackFrame.unverifiedCallee;
             StackFrame& stackFrame = stackTrace.frames.last();
             bool alreadyHasExecutable = !!stackFrame.executable;
+#if ENABLE(WEBASSEMBLY)
             if (calleeBits.isWasm()) {
-                stackFrame.frameType = FrameType::Unknown;
+                stackFrame.frameType = FrameType::Wasm;
+                stackFrame.wasmIndexOrName = unprocessedStackFrame.wasmIndexOrName;
+                stackFrame.wasmCompilationMode = unprocessedStackFrame.wasmCompilationMode;
                 return;
             }
+#endif
 
             JSValue callee = calleeBits.asCell();
             if (!HeapUtil::isValueGCObject(m_vm.heap, filter, callee)) {
@@ -603,14 +628,14 @@ void SamplingProfiler::processUnverifiedStackTraces()
                     UNUSED_PARAM(isValidPC); // FIXME: do something with this info for the web inspector: https://bugs.webkit.org/show_bug.cgi?id=153455
 
                     appendCodeBlock(topCodeBlock, bytecodeIndex);
-                    storeCalleeIntoLastFrame(unprocessedStackTrace.frames[0].unverifiedCallee);
+                    storeCalleeIntoLastFrame(unprocessedStackTrace.frames[0]);
                     startIndex = 1;
                 }
             } else {
 #if ENABLE(JIT)
                 if (Optional<CodeOrigin> codeOrigin = topCodeBlock->findPC(unprocessedStackTrace.topPC)) {
                     appendCodeOrigin(topCodeBlock, *codeOrigin);
-                    storeCalleeIntoLastFrame(unprocessedStackTrace.frames[0].unverifiedCallee);
+                    storeCalleeIntoLastFrame(unprocessedStackTrace.frames[0]);
                     startIndex = 1;
                 }
 #endif
@@ -649,7 +674,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
             // Note that this is okay to do if we walked the inline stack because
             // the machine frame will be at the top of the processed stack trace.
             if (!unprocessedStackFrame.cCodePC)
-                storeCalleeIntoLastFrame(unprocessedStackFrame.unverifiedCallee);
+                storeCalleeIntoLastFrame(unprocessedStackFrame);
         }
     }
 
@@ -761,7 +786,9 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
             return name;
     }
 
-    if (frameType == FrameType::Unknown || frameType == FrameType::C) {
+    switch (frameType) {
+    case FrameType::Unknown:
+    case FrameType::C:
 #if HAVE(DLADDR)
         if (frameType == FrameType::C) {
             auto demangled = WTF::StackTrace::demangle(const_cast<void*>(cCodePC));
@@ -771,20 +798,31 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
         }
 #endif
         return "(unknown)"_s;
-    }
-    if (frameType == FrameType::Host)
+
+    case FrameType::Host:
         return "(host)"_s;
 
-    if (executable->isHostFunction())
-        return static_cast<NativeExecutable*>(executable)->name();
+    case FrameType::Wasm:
+#if ENABLE(WEBASSEMBLY)
+        if (wasmIndexOrName)
+            return makeString(wasmIndexOrName.value());
+#endif
+        return "(wasm)"_s;
 
-    if (executable->isFunctionExecutable())
-        return static_cast<FunctionExecutable*>(executable)->ecmaName().string();
-    if (executable->isProgramExecutable() || executable->isEvalExecutable())
-        return "(program)"_s;
-    if (executable->isModuleProgramExecutable())
-        return "(module)"_s;
+    case FrameType::Executable:
+        if (executable->isHostFunction())
+            return static_cast<NativeExecutable*>(executable)->name();
 
+        if (executable->isFunctionExecutable())
+            return static_cast<FunctionExecutable*>(executable)->ecmaName().string();
+        if (executable->isProgramExecutable() || executable->isEvalExecutable())
+            return "(program)"_s;
+        if (executable->isModuleProgramExecutable())
+            return "(module)"_s;
+
+        RELEASE_ASSERT_NOT_REACHED();
+        return String();
+    }
     RELEASE_ASSERT_NOT_REACHED();
     return String();
 }
@@ -797,75 +835,121 @@ String SamplingProfiler::StackFrame::displayNameForJSONTests(VM& vm)
             return name;
     }
 
-    if (frameType == FrameType::Unknown || frameType == FrameType::C)
+    switch (frameType) {
+    case FrameType::Unknown:
+    case FrameType::C:
         return "(unknown)"_s;
-    if (frameType == FrameType::Host)
+
+    case FrameType::Host:
         return "(host)"_s;
 
-    if (executable->isHostFunction())
-        return static_cast<NativeExecutable*>(executable)->name();
-
-    if (executable->isFunctionExecutable()) {
-        String result = static_cast<FunctionExecutable*>(executable)->ecmaName().string();
-        if (result.isEmpty())
-            return "(anonymous function)"_s;
-        return result;
+    case FrameType::Wasm: {
+#if ENABLE(WEBASSEMBLY)
+        if (wasmIndexOrName)
+            return makeString(wasmIndexOrName.value());
+#endif
+        return "(wasm)"_s;
     }
-    if (executable->isEvalExecutable())
-        return "(eval)"_s;
-    if (executable->isProgramExecutable())
-        return "(program)"_s;
-    if (executable->isModuleProgramExecutable())
-        return "(module)"_s;
 
+    case FrameType::Executable:
+        if (executable->isHostFunction())
+            return static_cast<NativeExecutable*>(executable)->name();
+
+        if (executable->isFunctionExecutable()) {
+            String result = static_cast<FunctionExecutable*>(executable)->ecmaName().string();
+            if (result.isEmpty())
+                return "(anonymous function)"_s;
+            return result;
+        }
+        if (executable->isEvalExecutable())
+            return "(eval)"_s;
+        if (executable->isProgramExecutable())
+            return "(program)"_s;
+        if (executable->isModuleProgramExecutable())
+            return "(module)"_s;
+
+        RELEASE_ASSERT_NOT_REACHED();
+        return String();
+    }
     RELEASE_ASSERT_NOT_REACHED();
     return String();
 }
 
 int SamplingProfiler::StackFrame::functionStartLine()
 {
-    if (frameType == FrameType::Unknown || frameType == FrameType::Host || frameType == FrameType::C)
+    switch (frameType) {
+    case FrameType::Unknown:
+    case FrameType::Host:
+    case FrameType::C:
+    case FrameType::Wasm:
         return -1;
 
-    if (executable->isHostFunction())
-        return -1;
-    return static_cast<ScriptExecutable*>(executable)->firstLine();
+    case FrameType::Executable:
+        if (executable->isHostFunction())
+            return -1;
+        return static_cast<ScriptExecutable*>(executable)->firstLine();
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return -1;
 }
 
 unsigned SamplingProfiler::StackFrame::functionStartColumn()
 {
-    if (frameType == FrameType::Unknown || frameType == FrameType::Host || frameType == FrameType::C)
+    switch (frameType) {
+    case FrameType::Unknown:
+    case FrameType::Host:
+    case FrameType::C:
+    case FrameType::Wasm:
         return std::numeric_limits<unsigned>::max();
 
-    if (executable->isHostFunction())
-        return std::numeric_limits<unsigned>::max();
+    case FrameType::Executable:
+        if (executable->isHostFunction())
+            return std::numeric_limits<unsigned>::max();
 
-    return static_cast<ScriptExecutable*>(executable)->startColumn();
+        return static_cast<ScriptExecutable*>(executable)->startColumn();
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return std::numeric_limits<unsigned>::max();
 }
 
 intptr_t SamplingProfiler::StackFrame::sourceID()
 {
-    if (frameType == FrameType::Unknown || frameType == FrameType::Host || frameType == FrameType::C)
+    switch (frameType) {
+    case FrameType::Unknown:
+    case FrameType::Host:
+    case FrameType::C:
+    case FrameType::Wasm:
         return -1;
 
-    if (executable->isHostFunction())
-        return -1;
+    case FrameType::Executable:
+        if (executable->isHostFunction())
+            return -1;
 
-    return static_cast<ScriptExecutable*>(executable)->sourceID();
+        return static_cast<ScriptExecutable*>(executable)->sourceID();
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return -1;
 }
 
 String SamplingProfiler::StackFrame::url()
 {
-    if (frameType == FrameType::Unknown || frameType == FrameType::Host || frameType == FrameType::C)
+    switch (frameType) {
+    case FrameType::Unknown:
+    case FrameType::Host:
+    case FrameType::C:
+    case FrameType::Wasm:
         return emptyString();
+    case FrameType::Executable:
+        if (executable->isHostFunction())
+            return emptyString();
 
-    if (executable->isHostFunction())
-        return emptyString();
-
-    String url = static_cast<ScriptExecutable*>(executable)->sourceURL();
-    if (url.isEmpty())
-        return static_cast<ScriptExecutable*>(executable)->source().provider()->sourceURLDirective(); // Fall back to sourceURL directive.
-    return url;
+        String url = static_cast<ScriptExecutable*>(executable)->sourceURL();
+        if (url.isEmpty())
+            return static_cast<ScriptExecutable*>(executable)->source().provider()->sourceURLDirective(); // Fall back to sourceURL directive.
+        return url;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return String();
 }
 
 Vector<SamplingProfiler::StackTrace> SamplingProfiler::releaseStackTraces(const AbstractLocker& locker)
@@ -1025,9 +1109,10 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
         if (!stackTrace.frames.size())
             continue;
 
-        auto descriptionForLocation = [&] (StackFrame::CodeLocation location) -> String {
+        auto descriptionForLocation = [&] (StackFrame::CodeLocation location, Optional<Wasm::CompilationMode> wasmCompilationMode) -> String {
             String bytecodeIndex;
             String codeBlockHash;
+            String jitType;
             if (location.hasBytecodeIndex())
                 bytecodeIndex = String::number(location.bytecodeIndex);
             else
@@ -1040,14 +1125,19 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
             } else
                 codeBlockHash = "<nil>";
 
-            return makeString("#", codeBlockHash, ":", JITCode::typeName(location.jitType), ":", bytecodeIndex);
+            if (wasmCompilationMode)
+                jitType = Wasm::makeString(wasmCompilationMode.value());
+            else
+                jitType = JITCode::typeName(location.jitType);
+
+            return makeString("#", codeBlockHash, ":", jitType, ":", bytecodeIndex);
         };
 
         StackFrame& frame = stackTrace.frames.first();
-        String frameDescription = makeString(frame.displayName(m_vm), descriptionForLocation(frame.semanticLocation));
+        String frameDescription = makeString(frame.displayName(m_vm), descriptionForLocation(frame.semanticLocation, frame.wasmCompilationMode));
         if (Optional<std::pair<StackFrame::CodeLocation, CodeBlock*>> machineLocation = frame.machineLocation) {
             frameDescription = makeString(frameDescription, " <-- ",
-                machineLocation->second->inferredName().data(), descriptionForLocation(machineLocation->first));
+                machineLocation->second->inferredName().data(), descriptionForLocation(machineLocation->first, WTF::nullopt));
         }
         bytecodeCounts.add(frameDescription, 0).iterator->value++;
     }
@@ -1100,6 +1190,9 @@ void printInternal(PrintStream& out, SamplingProfiler::FrameType frameType)
     switch (frameType) {
     case SamplingProfiler::FrameType::Executable:
         out.print("Executable");
+        break;
+    case SamplingProfiler::FrameType::Wasm:
+        out.print("Wasm");
         break;
     case SamplingProfiler::FrameType::Host:
         out.print("Host");

@@ -997,6 +997,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
 
     wasm/WasmCapabilities.h
     wasm/WasmCodeBlock.h
+    wasm/WasmCompilationMode.h
     wasm/WasmContext.h
     wasm/WasmEmbedder.h
     wasm/WasmExceptionType.h

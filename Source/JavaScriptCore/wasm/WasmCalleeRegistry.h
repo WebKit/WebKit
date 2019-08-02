@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,31 +27,50 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Common.h"
-#include "B3Compilation.h"
-#include "B3OpaqueByproducts.h"
-#include "CCallHelpers.h"
-#include "WasmCompilationMode.h"
-#include "WasmEmbedder.h"
-#include "WasmMemory.h"
-#include "WasmModuleInformation.h"
-#include "WasmTierUpCount.h"
-#include <wtf/Expected.h>
-
-extern "C" void dumpProcedure(void*);
+#include <wtf/HashSet.h>
+#include <wtf/Lock.h>
 
 namespace JSC { namespace Wasm {
 
-class MemoryInformation;
+class Callee;
 
-struct CompilationContext {
-    std::unique_ptr<CCallHelpers> embedderEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> embedderEntrypointByproducts;
-    std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> wasmEntrypointByproducts;
+class CalleeRegistry {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(CalleeRegistry);
+public:
+    static void initialize();
+    static CalleeRegistry& singleton();
+
+    Lock& getLock() { return m_lock; }
+
+    void registerCallee(Callee* callee)
+    {
+        auto locker = holdLock(m_lock);
+        m_calleeSet.add(callee);
+    }
+
+    void unregisterCallee(Callee* callee)
+    {
+        auto locker = holdLock(m_lock);
+        m_calleeSet.remove(callee);
+    }
+
+    const HashSet<Callee*>& allCallees(const AbstractLocker&)
+    {
+        return m_calleeSet;
+    }
+
+    bool isValidCallee(const AbstractLocker&, Callee* callee)
+    {
+        return m_calleeSet.contains(callee);
+    }
+
+    CalleeRegistry() = default;
+
+private:
+    Lock m_lock;
+    HashSet<Callee*> m_calleeSet;
 };
-
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationContext&, const uint8_t*, size_t, const Signature&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, CompilationMode, uint32_t functionIndex, TierUpCount* = nullptr, ThrowWasmException = nullptr);
 
 } } // namespace JSC::Wasm
 

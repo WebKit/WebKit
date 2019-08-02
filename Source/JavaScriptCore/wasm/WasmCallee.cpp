@@ -28,21 +28,28 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmFaultSignalHandler.h"
+#include "WasmCalleeRegistry.h"
 
 namespace JSC { namespace Wasm {
 
-Callee::Callee(Entrypoint&& entrypoint)
-    : m_entrypoint(WTFMove(entrypoint))
+Callee::Callee(Wasm::CompilationMode compilationMode, Entrypoint&& entrypoint)
+    : m_compilationMode(compilationMode)
+    , m_entrypoint(WTFMove(entrypoint))
 {
-    registerCode(m_entrypoint.compilation->codeRef().executableMemory()->start().untaggedPtr(), m_entrypoint.compilation->codeRef().executableMemory()->end().untaggedPtr());
+    CalleeRegistry::singleton().registerCallee(this);
 }
 
-Callee::Callee(Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
-    : m_entrypoint(WTFMove(entrypoint))
+Callee::Callee(Wasm::CompilationMode compilationMode, Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    : m_compilationMode(compilationMode)
+    , m_entrypoint(WTFMove(entrypoint))
     , m_indexOrName(index, WTFMove(name))
 {
-    registerCode(m_entrypoint.compilation->codeRef().executableMemory()->start().untaggedPtr(), m_entrypoint.compilation->codeRef().executableMemory()->end().untaggedPtr());
+    CalleeRegistry::singleton().registerCallee(this);
+}
+
+Callee::~Callee()
+{
+    CalleeRegistry::singleton().unregisterCallee(this);
 }
 
 } } // namespace JSC::Wasm
