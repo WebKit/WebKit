@@ -57,6 +57,7 @@ public:
 
     // ApplicationCacheBackendDispatcherHandler
     void enable(ErrorString&) override;
+    void disable(ErrorString&) override;
     void getFramesWithManifests(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::ApplicationCache::FrameWithManifest>>& result) override;
     void getManifestForFrame(ErrorString&, const String& frameId, String* manifestURL) override;
     void getApplicationCacheForFrame(ErrorString&, const String& frameId, RefPtr<Inspector::Protocol::ApplicationCache::ApplicationCache>&) override;

@@ -32,32 +32,36 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
     {
         super();
 
-        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-        WI.Frame.addEventListener(WI.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
+        this._enabled = false;
+        this._reset();
+    }
 
-        this.initialize();
+    // Agent
+
+    get domains() { return ["DOMStorage"]; }
+
+    activateExtraDomain(domain)
+    {
+        console.assert(domain === "DOMStorage");
+
+        for (let target of WI.targets)
+            this.initializeTarget(target);
     }
 
     // Target
 
     initializeTarget(target)
     {
+        if (!this._enabled)
+            return;
+
         if (target.DOMStorageAgent)
             target.DOMStorageAgent.enable();
     }
 
     // Public
 
-    initialize()
-    {
-        this._domStorageObjects = [];
-        this._cookieStorageObjects = {};
-    }
-
-    get domStorageObjects()
-    {
-        return this._domStorageObjects;
-    }
+    get domStorageObjects() { return this._domStorageObjects; }
 
     get cookieStorageObjects()
     {
@@ -67,17 +71,42 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
         return cookieStorageObjects;
     }
 
-    domStorageWasAdded(id, host, isLocalStorage)
+    enable()
     {
-        var domStorage = new WI.DOMStorageObject(id, host, isLocalStorage);
+        console.assert(!this._enabled);
 
-        this._domStorageObjects.push(domStorage);
-        this.dispatchEventToListeners(WI.DOMStorageManager.Event.DOMStorageObjectWasAdded, {domStorage});
+        this._enabled = true;
+
+        this._reset();
+
+        for (let target of WI.targets)
+            this.initializeTarget(target);
+
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.Frame.addEventListener(WI.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
     }
+
+    disable()
+    {
+        console.assert(this._enabled);
+
+        this._enabled = false;
+
+        for (let target of WI.targets) {
+            if (target.DOMStorageAgent)
+                target.DOMStorageAgent.disable();
+        }
+
+        WI.Frame.removeEventListener(null, null, this);
+
+        this._reset();
+    }
+
+    // DOMStorageObserver
 
     itemsCleared(storageId)
     {
-        // Called from WI.DOMStorageObserver.
+        console.assert(this._enabled);
 
         let domStorage = this._domStorageForIdentifier(storageId);
         if (domStorage)
@@ -86,7 +115,7 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
 
     itemRemoved(storageId, key)
     {
-        // Called from WI.DOMStorageObserver.
+        console.assert(this._enabled);
 
         let domStorage = this._domStorageForIdentifier(storageId);
         if (domStorage)
@@ -95,7 +124,7 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
 
     itemAdded(storageId, key, value)
     {
-        // Called from WI.DOMStorageObserver.
+        console.assert(this._enabled);
 
         let domStorage = this._domStorageForIdentifier(storageId);
         if (domStorage)
@@ -104,7 +133,7 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
 
     itemUpdated(storageId, key, oldValue, value)
     {
-        // Called from WI.DOMStorageObserver.
+        console.assert(this._enabled);
 
         let domStorage = this._domStorageForIdentifier(storageId);
         if (domStorage)
@@ -113,6 +142,10 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
 
     inspectDOMStorage(id)
     {
+        // Called from WI.InspectorObserver.
+
+        console.assert(this._enabled);
+
         var domStorage = this._domStorageForIdentifier(id);
         console.assert(domStorage);
         if (!domStorage)
@@ -121,6 +154,20 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
     }
 
     // Private
+
+    _reset()
+    {
+        this._domStorageObjects = [];
+        this._cookieStorageObjects = {};
+
+        this.dispatchEventToListeners(DOMStorageManager.Event.Cleared);
+
+        let mainFrame = WI.networkManager.mainFrame;
+        if (mainFrame) {
+            this._addDOMStorageIfNeeded(mainFrame);
+            this._addCookieStorageIfNeeded(mainFrame);
+        }
+    }
 
     _domStorageForIdentifier(id)
     {
@@ -133,20 +180,43 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
         return null;
     }
 
-    _mainResourceDidChange(event)
+    _addDOMStorageIfNeeded(frame)
     {
-        console.assert(event.target instanceof WI.Frame);
+        if (!this._enabled)
+            return;
 
-        if (event.target.isMainFrame()) {
-            // If we are dealing with the main frame, we want to clear our list of objects, because we are navigating to a new page.
-            this.initialize();
-            this.dispatchEventToListeners(WI.DOMStorageManager.Event.Cleared);
+        if (!window.DOMStorageAgent)
+            return;
 
-            this._addDOMStorageIfNeeded(event.target);
-        }
+        // Don't show storage if we don't have a security origin (about:blank).
+        if (!frame.securityOrigin || frame.securityOrigin === "://")
+            return;
+
+        // FIXME: Consider passing the other parts of the origin along.
+
+        let addDOMStorage = (isLocalStorage) => {
+            let identifier = {securityOrigin: frame.securityOrigin, isLocalStorage};
+            if (this._domStorageForIdentifier(identifier))
+                return;
+
+            let domStorage = new WI.DOMStorageObject(identifier, frame.mainResource.urlComponents.host, identifier.isLocalStorage);
+            this._domStorageObjects.push(domStorage);
+            this.dispatchEventToListeners(DOMStorageManager.Event.DOMStorageObjectWasAdded, {domStorage});
+        };
+        addDOMStorage(true);
+        addDOMStorage(false);
+    }
+
+    _addCookieStorageIfNeeded(frame)
+    {
+        if (!this._enabled)
+            return;
+
+        if (!window.DOMStorageAgent)
+            return;
 
         // Add the host of the frame that changed the main resource to the list of hosts there could be cookies for.
-        var host = parseURL(event.target.url).host;
+        let host = parseURL(frame.url).host;
         if (!host)
             return;
 
@@ -157,24 +227,16 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
         this.dispatchEventToListeners(WI.DOMStorageManager.Event.CookieStorageObjectWasAdded, {cookieStorage: this._cookieStorageObjects[host]});
     }
 
-    _addDOMStorageIfNeeded(frame)
+    _mainResourceDidChange(event)
     {
-        if (!window.DOMStorageAgent)
+        console.assert(event.target instanceof WI.Frame);
+
+        if (event.target.isMainFrame()) {
+            this._reset();
             return;
+        }
 
-        // Don't show storage if we don't have a security origin (about:blank).
-        if (!frame.securityOrigin || frame.securityOrigin === "://")
-            return;
-
-        // FIXME: Consider passing the other parts of the origin along to domStorageWasAdded.
-
-        var localStorageIdentifier = {securityOrigin: frame.securityOrigin, isLocalStorage: true};
-        if (!this._domStorageForIdentifier(localStorageIdentifier))
-            this.domStorageWasAdded(localStorageIdentifier, frame.mainResource.urlComponents.host, true);
-
-        var sessionStorageIdentifier = {securityOrigin: frame.securityOrigin, isLocalStorage: false};
-        if (!this._domStorageForIdentifier(sessionStorageIdentifier))
-            this.domStorageWasAdded(sessionStorageIdentifier, frame.mainResource.urlComponents.host, false);
+        this._addCookieStorageIfNeeded(event.target);
     }
 
     _securityOriginDidChange(event)

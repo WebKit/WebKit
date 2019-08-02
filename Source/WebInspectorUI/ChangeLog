@@ -1,5 +1,92 @@
 2019-08-02  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Storage: disable related agents when the tab is closed
+        https://bugs.webkit.org/show_bug.cgi?id=200117
+
+        Reviewed by Joseph Pecoraro.
+
+        Rework how `enable`/`disable` is used for storage-related agents so that events are not sent
+        and data isn't kept alive when the Storage tab isn't enabled.
+
+        * UserInterface/Controllers/ApplicationCacheManager.js:
+        (WI.ApplicationCacheManager):
+        (WI.ApplicationCacheManage.prototype.get domains): Added.
+        (WI.ApplicationCacheManage.prototype.activateExtraDomain): Added.
+        (WI.ApplicationCacheManager.prototype.initializeTarget):
+        (WI.ApplicationCacheManager.prototype.enable): Added.
+        (WI.ApplicationCacheManager.prototype.disable): Added.
+        (WI.ApplicationCacheManager.prototype.networkStateUpdated):
+        (WI.ApplicationCacheManager.prototype.applicationCacheStatusUpdated):
+        (WI.ApplicationCacheManager.prototype._reset): Added.
+        (WI.ApplicationCacheManager.prototype._mainResourceDidChange):
+        (WI.ApplicationCacheManager.prototype._manifestForFrameLoaded):
+        (WI.ApplicationCacheManager.prototype._framesWithManifestsLoaded):
+        (WI.ApplicationCacheManager.prototype.initialize): Deleted.
+
+        * UserInterface/Controllers/DOMStorageManager.js:
+        (WI.DOMStorageManager):
+        (WI.DOMStorageManager.prototype.get domains): Added.
+        (WI.DOMStorageManager.prototype.activateExtraDomain): Added.
+        (WI.DOMStorageManager.prototype.initializeTarget):
+        (WI.DOMStorageManager.prototype.enable): Added.
+        (WI.DOMStorageManager.prototype.disable): Added.
+        (WI.DOMStorageManager.prototype.itemsCleared):
+        (WI.DOMStorageManager.prototype.itemRemoved):
+        (WI.DOMStorageManager.prototype.itemAdded):
+        (WI.DOMStorageManager.prototype.itemUpdated):
+        (WI.DOMStorageManager.prototype.inspectDOMStorage):
+        (WI.DOMStorageManager.prototype._reset): Added.
+        (WI.DOMStorageManager.prototype._addDOMStorageIfNeeded):
+        (WI.DOMStorageManager.prototype._addCookieStorageIfNeeded):
+        (WI.DOMStorageManager.prototype._mainResourceDidChange):
+        (WI.DOMStorageManager.prototype.initialize): Deleted.
+        (WI.DOMStorageManager.prototype.domStorageWasAdded): Deleted.
+
+        * UserInterface/Controllers/DatabaseManager.js:
+        (WI.DatabaseManager):
+        (WI.DatabaseManager.prototype.get domains): Added.
+        (WI.DatabaseManager.prototype.activateExtraDomain): Added.
+        (WI.DatabaseManager.prototype.initializeTarget):
+        (WI.DatabaseManager.prototype.enable): Added.
+        (WI.DatabaseManager.prototype.disable): Added.
+        (WI.DatabaseManager.prototype.databaseWasAdded):
+        (WI.DatabaseManager.prototype.inspectDatabase):
+        (WI.DatabaseManager.prototype._reset): Added.
+        (WI.DatabaseManager.prototype._mainResourceDidChange):
+        (WI.DatabaseManager.prototype.initialize): Deleted.
+
+        * UserInterface/Controllers/IndexedDBManager.js:
+        (WI.IndexedDBManager):
+        (WI.IndexedDBManager.prototype.get domains): Added.
+        (WI.IndexedDBManager.prototype.activateExtraDomain): Added.
+        (WI.IndexedDBManager.prototype.initializeTarget):
+        (WI.IndexedDBManager.prototype.enable): Added.
+        (WI.IndexedDBManager.prototype.disable): Added.
+        (WI.IndexedDBManager.prototype.clearObjectStore):
+        (WI.IndexedDBManager.prototype._reset): Added.
+        (WI.IndexedDBManager.prototype._mainResourceDidChange):
+        (WI.IndexedDBManager.prototype.initialize): Deleted.
+
+        * UserInterface/Controllers/AppController.js:
+        (WI.AppController.prototype.activateExtraDomains):
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype.get domains): Added.
+        (WI.CanvasManager.prototype.activateExtraDomain): Added.
+        Only call `enable` on any extra agents if the domain is not controlled by a manager.
+
+        * UserInterface/Views/StorageTabContentView.js:
+        (WI.StorageTabContentView):
+        (WI.StorageTabContentView.static isTabAllowed):
+        (WI.StorageTabContentView.prototype.canShowRepresentedObject):
+        (WI.StorageTabContentView.prototype.closed): Added.
+
+        * UserInterface/Test.html:
+        * UserInterface/Test/Test.js:
+        (WI.loaded):
+        (WI.contentLoaded):
+
+2019-08-02  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Timelines: Develop > Start Timeline Recording doesn't work when focused on a detached inspector window
         https://bugs.webkit.org/show_bug.cgi?id=200125
         <rdar://problem/53543008>

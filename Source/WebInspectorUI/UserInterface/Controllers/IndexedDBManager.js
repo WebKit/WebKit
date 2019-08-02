@@ -32,34 +32,71 @@ WI.IndexedDBManager = class IndexedDBManager extends WI.Object
     {
         super();
 
-        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-        WI.Frame.addEventListener(WI.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
+        this._enabled = false;
+        this._reset();
+    }
 
-        this.initialize();
+    // Agent
+
+    get domains() { return ["IndexedDB"]; }
+
+    activateExtraDomain(domain)
+    {
+        console.assert(domain === "IndexedDB");
+
+        for (let target of WI.targets)
+            this.initializeTarget(target);
     }
 
     // Target
 
     initializeTarget(target)
     {
+        if (!this._enabled)
+            return;
+
         if (target.IndexedDBAgent)
             target.IndexedDBAgent.enable();
     }
 
     // Public
 
-    initialize()
+    get indexedDatabases() { return this._indexedDatabases; }
+
+    enable()
     {
-        this._indexedDatabases = [];
+        console.assert(!this._enabled);
+
+        this._enabled = true;
+
+        this._reset();
+
+        for (let target of WI.targets)
+            this.initializeTarget(target);
+
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.Frame.addEventListener(WI.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
     }
 
-    get indexedDatabases()
+    disable()
     {
-        return this._indexedDatabases;
+        console.assert(this._enabled);
+
+        this._enabled = false;
+
+        for (let target of WI.targets) {
+            if (target.IndexedDBAgent)
+                target.IndexedDBAgent.disable();
+        }
+
+        WI.Frame.removeEventListener(null, null, this);
+
+        this._reset();
     }
 
     requestIndexedDatabaseData(objectStore, objectStoreIndex, startEntryIndex, maximumEntryCount, callback)
     {
+        console.assert(this._enabled);
         console.assert(window.IndexedDBAgent);
         console.assert(objectStore);
         console.assert(callback);
@@ -98,6 +135,8 @@ WI.IndexedDBManager = class IndexedDBManager extends WI.Object
 
     clearObjectStore(objectStore)
     {
+        console.assert(this._enabled);
+
         let securityOrigin = objectStore.parentDatabase.securityOrigin;
         let databaseName = objectStore.parentDatabase.name;
         let objectStoreName = objectStore.name;
@@ -107,21 +146,21 @@ WI.IndexedDBManager = class IndexedDBManager extends WI.Object
 
     // Private
 
-    _mainResourceDidChange(event)
+    _reset()
     {
-        console.assert(event.target instanceof WI.Frame);
+        this._indexedDatabases = [];
+        this.dispatchEventToListeners(WI.IndexedDBManager.Event.Cleared);
 
-        if (event.target.isMainFrame()) {
-            // If we are dealing with the main frame, we want to clear our list of objects, because we are navigating to a new page.
-            this.initialize();
-            this.dispatchEventToListeners(WI.IndexedDBManager.Event.Cleared);
-
-            this._addIndexedDBDatabasesIfNeeded(event.target);
-        }
+        let mainFrame = WI.networkManager.mainFrame;
+        if (mainFrame)
+            this._addIndexedDBDatabasesIfNeeded(mainFrame);
     }
 
     _addIndexedDBDatabasesIfNeeded(frame)
     {
+        if (!this._enabled)
+            return;
+
         if (!window.IndexedDBAgent)
             return;
 
@@ -181,6 +220,14 @@ WI.IndexedDBManager = class IndexedDBManager extends WI.Object
         }
 
         IndexedDBAgent.requestDatabaseNames(securityOrigin, processDatabaseNames.bind(this));
+    }
+
+    _mainResourceDidChange(event)
+    {
+        console.assert(event.target instanceof WI.Frame);
+
+        if (event.target.isMainFrame())
+            this._reset();
     }
 
     _securityOriginDidChange(event)

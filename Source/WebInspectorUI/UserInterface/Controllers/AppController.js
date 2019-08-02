@@ -72,10 +72,15 @@ WI.AppController = class AppController extends WI.AppControllerBase
 
         for (let domain of domains) {
             let agent = InspectorBackend.activateDomain(domain);
-            if (agent.enable)
-                agent.enable();
+
             for (let target of WI.targets)
                 target.activateExtraDomain(domain);
+
+            let manager = WI.managers.find((manager) => manager.domains && manager.domains.includes(domain));
+            if (manager)
+                manager.activateExtraDomain(domain);
+            else if (agent.enable)
+                agent.enable();
         }
 
         // FIXME: all code within WI.activateExtraDomains should be distributed elsewhere.

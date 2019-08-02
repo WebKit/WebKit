@@ -1,5 +1,31 @@
 2019-08-02  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Storage: disable related agents when the tab is closed
+        https://bugs.webkit.org/show_bug.cgi?id=200117
+
+        Reviewed by Joseph Pecoraro.
+
+        Rework how `enable`/`disable` is used for storage-related agents so that events are not sent
+        and data isn't kept alive when the Storage tab isn't enabled.
+
+        Covered by existing tests.
+
+        * inspector/agents/InspectorApplicationCacheAgent.h:
+        * inspector/agents/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorApplicationCacheAgent::enable):
+        (WebCore::InspectorApplicationCacheAgent::disable): Added.
+
+        * inspector/agents/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::enable):
+        (WebCore::InspectorDOMStorageAgent::disable):
+
+        * inspector/agents/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::enable):
+        (WebCore::InspectorDatabaseAgent::disable):
+
+2019-08-02  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Timelines: Develop > Start Timeline Recording doesn't work when focused on a detached inspector window
         https://bugs.webkit.org/show_bug.cgi?id=200125
         <rdar://problem/53543008>

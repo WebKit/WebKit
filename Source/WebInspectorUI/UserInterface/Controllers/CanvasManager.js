@@ -39,6 +39,18 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     }
 
+    // Agent
+
+    get domains() { return ["Canvas"]; }
+
+    activateExtraDomain(domain)
+    {
+        console.assert(domain === "Canvas");
+
+        for (let target of WI.targets)
+            this.initializeTarget(target);
+    }
+
     // Target
 
     initializeTarget(target)

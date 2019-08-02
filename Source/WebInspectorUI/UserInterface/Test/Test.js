@@ -36,9 +36,11 @@ WI.loaded = function()
     InspectorBackend.registerDebuggerDispatcher(new WI.DebuggerObserver);
     InspectorBackend.registerHeapDispatcher(new WI.HeapObserver);
     InspectorBackend.registerMemoryDispatcher(new WI.MemoryObserver);
+    InspectorBackend.registerDatabaseDispatcher(new WI.DatabaseObserver);
     InspectorBackend.registerDOMStorageDispatcher(new WI.DOMStorageObserver);
-    InspectorBackend.registerScriptProfilerDispatcher(new WI.ScriptProfilerObserver);
+    InspectorBackend.registerApplicationCacheDispatcher(new WI.ApplicationCacheObserver);
     InspectorBackend.registerCPUProfilerDispatcher(new WI.CPUProfilerObserver);
+    InspectorBackend.registerScriptProfilerDispatcher(new WI.ScriptProfilerObserver);
     InspectorBackend.registerTimelineDispatcher(new WI.TimelineObserver);
     InspectorBackend.registerCSSDispatcher(new WI.CSSObserver);
     InspectorBackend.registerLayerTreeDispatcher(new WI.LayerTreeObserver);
@@ -51,12 +53,15 @@ WI.loaded = function()
         WI.targetManager = new WI.TargetManager,
         WI.networkManager = new WI.NetworkManager,
         WI.domStorageManager = new WI.DOMStorageManager,
+        WI.databaseManager = new WI.DatabaseManager,
+        WI.indexedDBManager = new WI.IndexedDBManager,
         WI.domManager = new WI.DOMManager,
         WI.cssManager = new WI.CSSManager,
         WI.consoleManager = new WI.ConsoleManager,
         WI.runtimeManager = new WI.RuntimeManager,
         WI.heapManager = new WI.HeapManager,
         WI.memoryManager = new WI.MemoryManager,
+        WI.applicationCacheManager = new WI.ApplicationCacheManager,
         WI.timelineManager = new WI.TimelineManager,
         WI.auditManager = new WI.AuditManager,
         WI.debuggerManager = new WI.DebuggerManager,
@@ -127,7 +132,11 @@ WI.redirectGlobalAgentsToConnection = function(connection)
 WI.contentLoaded = function()
 {
     // Things that would normally get called by the UI, that we still want to do in tests.
+    WI.applicationCacheManager.enable();
     WI.canvasManager.enable();
+    WI.domStorageManager.enable();
+    WI.databaseManager.enable();
+    WI.indexedDBManager.enable();
 
     // Signal that the frontend is now ready to receive messages.
     InspectorFrontendAPI.loadCompleted();

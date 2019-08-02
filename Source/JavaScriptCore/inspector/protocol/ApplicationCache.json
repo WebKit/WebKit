@@ -48,6 +48,10 @@
             "description": "Enables application cache domain notifications."
         },
         {
+            "name": "disable",
+            "description": "Disable application cache domain notifications."
+        },
+        {
             "name": "getManifestForFrame",
             "description": "Returns manifest URL for document in the given frame.",
             "parameters": [

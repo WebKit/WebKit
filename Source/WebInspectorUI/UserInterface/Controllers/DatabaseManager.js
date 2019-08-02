@@ -32,34 +32,72 @@ WI.DatabaseManager = class DatabaseManager extends WI.Object
     {
         super();
 
-        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        this._enabled = false;
+        this._reset();
+    }
 
-        this.initialize();
+    // Agent
+
+    get domains() { return ["Database"]; }
+
+    activateExtraDomain(domain)
+    {
+        console.assert(domain === "Database");
+
+        for (let target of WI.targets)
+            this.initializeTarget(target);
     }
 
     // Target
 
     initializeTarget(target)
     {
+        if (!this._enabled)
+            return;
+
         if (target.DatabaseAgent)
             target.DatabaseAgent.enable();
     }
 
     // Public
 
-    initialize()
+    get databases() { return this._databaseObjects; }
+
+    enable()
     {
-        this._databaseObjects = [];
+        console.assert(!this._enabled);
+
+        this._enabled = true;
+
+        this._reset();
+
+        for (let target of WI.targets)
+            this.initializeTarget(target);
+
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     }
 
-    get databases()
+    disable()
     {
-        return this._databaseObjects;
+        console.assert(this._enabled);
+
+        this._enabled = false;
+
+        for (let target of WI.targets) {
+            if (target.DatabaseAgent)
+                target.DatabaseAgent.disable();
+        }
+
+        WI.Frame.removeEventListener(null, null, this);
+
+        this._reset();
     }
+
+    // DatabaseObserver
 
     databaseWasAdded(id, host, name, version)
     {
-        // Called from WI.DatabaseObserver.
+        console.assert(this._enabled);
 
         var database = new WI.DatabaseObject(id, host, name, version);
 
@@ -67,8 +105,12 @@ WI.DatabaseManager = class DatabaseManager extends WI.Object
         this.dispatchEventToListeners(WI.DatabaseManager.Event.DatabaseWasAdded, {database});
     }
 
+    // InspectorObserver
+
     inspectDatabase(id)
     {
+        console.assert(this._enabled);
+
         var database = this._databaseForIdentifier(id);
         console.assert(database);
         if (!database)
@@ -78,15 +120,19 @@ WI.DatabaseManager = class DatabaseManager extends WI.Object
 
     // Private
 
+    _reset()
+    {
+        this._databaseObjects = [];
+
+        this.dispatchEventToListeners(WI.DatabaseManager.Event.Cleared);
+    }
+
     _mainResourceDidChange(event)
     {
         console.assert(event.target instanceof WI.Frame);
 
-        if (event.target.isMainFrame()) {
-            // If we are dealing with the main frame, we want to clear our list of objects, because we are navigating to a new page.
-            this.initialize();
-            this.dispatchEventToListeners(WI.DatabaseManager.Event.Cleared);
-        }
+        if (event.target.isMainFrame())
+            this._reset();
     }
 
     _databaseForIdentifier(id)

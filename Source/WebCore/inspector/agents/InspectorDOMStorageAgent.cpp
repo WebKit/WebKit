@@ -72,13 +72,23 @@ void InspectorDOMStorageAgent::willDestroyFrontendAndBackend(Inspector::Disconne
     disable(unused);
 }
 
-void InspectorDOMStorageAgent::enable(ErrorString&)
+void InspectorDOMStorageAgent::enable(ErrorString& errorString)
 {
+    if (m_instrumentingAgents.inspectorDOMStorageAgent() != this) {
+        errorString = "DOMStorageAgent already disabled"_s;
+        return;
+    }
+
     m_instrumentingAgents.setInspectorDOMStorageAgent(this);
 }
 
-void InspectorDOMStorageAgent::disable(ErrorString&)
+void InspectorDOMStorageAgent::disable(ErrorString& errorString)
 {
+    if (m_instrumentingAgents.inspectorDOMStorageAgent() != this) {
+        errorString = "DOMStorageAgent already disabled"_s;
+        return;
+    }
+
     m_instrumentingAgents.setInspectorDOMStorageAgent(nullptr);
 }
 

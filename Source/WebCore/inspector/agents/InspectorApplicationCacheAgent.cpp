@@ -56,15 +56,31 @@ void InspectorApplicationCacheAgent::didCreateFrontendAndBackend(FrontendRouter*
 
 void InspectorApplicationCacheAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    m_instrumentingAgents.setInspectorApplicationCacheAgent(nullptr);
+    ErrorString unused;
+    disable(unused);
 }
 
-void InspectorApplicationCacheAgent::enable(ErrorString&)
+void InspectorApplicationCacheAgent::enable(ErrorString& errorString)
 {
+    if (m_instrumentingAgents.inspectorApplicationCacheAgent() == this) {
+        errorString = "ApplicationCacheAgent already enabled"_s;
+        return;
+    }
+
     m_instrumentingAgents.setInspectorApplicationCacheAgent(this);
 
     // We need to pass initial navigator.onOnline.
     networkStateChanged();
+}
+
+void InspectorApplicationCacheAgent::disable(ErrorString& errorString)
+{
+    if (m_instrumentingAgents.inspectorApplicationCacheAgent() != this) {
+        errorString = "ApplicationCacheAgent already disabled"_s;
+        return;
+    }
+
+    m_instrumentingAgents.setInspectorApplicationCacheAgent(nullptr);
 }
 
 void InspectorApplicationCacheAgent::updateApplicationCacheStatus(Frame* frame)

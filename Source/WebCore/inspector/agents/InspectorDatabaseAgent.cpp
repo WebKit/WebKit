@@ -232,10 +232,12 @@ void InspectorDatabaseAgent::willDestroyFrontendAndBackend(Inspector::Disconnect
     disable(unused);
 }
 
-void InspectorDatabaseAgent::enable(ErrorString&)
+void InspectorDatabaseAgent::enable(ErrorString& errorString)
 {
-    if (m_instrumentingAgents.inspectorDatabaseAgent() == this)
+    if (m_instrumentingAgents.inspectorDatabaseAgent() == this) {
+        errorString = "DatabaseAgent already enabled"_s;
         return;
+    }
 
     m_instrumentingAgents.setInspectorDatabaseAgent(this);
 
@@ -243,8 +245,13 @@ void InspectorDatabaseAgent::enable(ErrorString&)
         didOpenDatabase(database.get());
 }
 
-void InspectorDatabaseAgent::disable(ErrorString&)
+void InspectorDatabaseAgent::disable(ErrorString& errorString)
 {
+    if (m_instrumentingAgents.inspectorDatabaseAgent() != this) {
+        errorString = "DatabaseAgent already disabled"_s;
+        return;
+    }
+
     m_instrumentingAgents.setInspectorDatabaseAgent(nullptr);
 
     m_resources.clear();

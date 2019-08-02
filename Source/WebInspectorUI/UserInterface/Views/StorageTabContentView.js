@@ -31,6 +31,11 @@ WI.StorageTabContentView = class StorageTabContentView extends WI.ContentBrowser
         let detailsSidebarPanelConstructors = [WI.ApplicationCacheDetailsSidebarPanel, WI.IndexedDatabaseDetailsSidebarPanel];
 
         super(identifier || "storage", "storage", tabBarItem, WI.StorageSidebarPanel, detailsSidebarPanelConstructors);
+
+        WI.applicationCacheManager.enable();
+        WI.databaseManager.enable();
+        WI.domStorageManager.enable();
+        WI.indexedDBManager.enable();
     }
 
     static tabInfo()
@@ -43,7 +48,7 @@ WI.StorageTabContentView = class StorageTabContentView extends WI.ContentBrowser
 
     static isTabAllowed()
     {
-        return !!window.DOMStorageAgent || !!window.DatabaseAgent || !!window.IndexedDBAgent;
+        return !!(window.ApplicationCacheAgent || window.DOMStorageAgent || window.DatabaseAgent || window.IndexedDBAgent);
     }
 
     // Public
@@ -60,10 +65,24 @@ WI.StorageTabContentView = class StorageTabContentView extends WI.ContentBrowser
 
     canShowRepresentedObject(representedObject)
     {
-        return representedObject instanceof WI.DOMStorageObject || representedObject instanceof WI.CookieStorageObject ||
-            representedObject instanceof WI.DatabaseTableObject || representedObject instanceof WI.DatabaseObject ||
-            representedObject instanceof WI.ApplicationCacheFrame || representedObject instanceof WI.IndexedDatabaseObjectStore ||
-            representedObject instanceof WI.IndexedDatabase || representedObject instanceof WI.IndexedDatabaseObjectStoreIndex;
+        return representedObject instanceof WI.ApplicationCacheFrame
+            || representedObject instanceof WI.CookieStorageObject
+            || representedObject instanceof WI.DOMStorageObject
+            || representedObject instanceof WI.DatabaseObject
+            || representedObject instanceof WI.DatabaseTableObject
+            || representedObject instanceof WI.IndexedDatabase
+            || representedObject instanceof WI.IndexedDatabaseObjectStore
+            || representedObject instanceof WI.IndexedDatabaseObjectStoreIndex;
+    }
+
+    closed()
+    {
+        WI.applicationCacheManager.disable();
+        WI.databaseManager.disable();
+        WI.domStorageManager.disable();
+        WI.indexedDBManager.disable();
+
+        super.closed();
     }
 };
 
