@@ -53,27 +53,29 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         WI.Frame.addEventListener(WI.Frame.Event.ChildFrameWasRemoved, this._childFrameWasRemoved, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
-        let loadBreakpoints = async (constructor, objectStore, oldSettings, callback) => {
-            for (let key of oldSettings) {
-                let existingSerializedBreakpoints = WI.Setting.migrateValue(key);
-                if (existingSerializedBreakpoints) {
-                    for (let existingSerializedBreakpoint of existingSerializedBreakpoints)
-                        await objectStore.putObject(constructor.deserialize(existingSerializedBreakpoint));
+        let loadBreakpoints = (constructor, objectStore, oldSettings, callback) => {
+            WI.Target.registerInitializationPromise((async () => {
+                for (let key of oldSettings) {
+                    let existingSerializedBreakpoints = WI.Setting.migrateValue(key);
+                    if (existingSerializedBreakpoints) {
+                        for (let existingSerializedBreakpoint of existingSerializedBreakpoints)
+                            await objectStore.putObject(constructor.deserialize(existingSerializedBreakpoint));
+                    }
                 }
-            }
 
-            let serializedBreakpoints = await objectStore.getAll();
+                let serializedBreakpoints = await objectStore.getAll();
 
-            this._restoringBreakpoints = true;
-            for (let serializedBreakpoint of serializedBreakpoints) {
-                let breakpoint = constructor.deserialize(serializedBreakpoint);
+                this._restoringBreakpoints = true;
+                for (let serializedBreakpoint of serializedBreakpoints) {
+                    let breakpoint = constructor.deserialize(serializedBreakpoint);
 
-                const key = null;
-                objectStore.associateObject(breakpoint, key, serializedBreakpoint);
+                    const key = null;
+                    objectStore.associateObject(breakpoint, key, serializedBreakpoint);
 
-                callback(breakpoint);
-            }
-            this._restoringBreakpoints = false;
+                    callback(breakpoint);
+                }
+                this._restoringBreakpoints = false;
+            })());
         };
 
         if (this.supported) {

@@ -1,3 +1,23 @@
+2019-08-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: "Inspector.initialized" happens before breakpoints are set
+        https://bugs.webkit.org/show_bug.cgi?id=200364
+
+        Reviewed by Joseph Pecoraro.
+
+        Allow managers to register a promise that will delay `Inspector.initialized`. This is needed
+        when restoring breakpoints so that "Automatically Show Web Inspector for JSContexts" can set
+        them before any scripts have evaluated, ensuring that no breakpoints are "skipped".
+
+        * UserInterface/Protocol/Target.js:
+        (WI.Target.prototype.initialize):
+        (WI.Target.registerInitializationPromise): Added.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager):
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager):
+
 2019-08-01  Devin Rousso  <drousso@apple.com>
 
         Unreviewed, remove `emulateUserGesture` parameter from `Debugger.evaluateOnCallFrame` for iOS 13

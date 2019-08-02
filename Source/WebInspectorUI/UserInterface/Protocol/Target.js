@@ -86,7 +86,8 @@ WI.Target = class Target extends WI.Object
             WI.performOneTimeFrontendInitializationsUsingTarget(this);
         });
 
-        setTimeout(() => {
+        console.assert(Target._initializationPromises.length || Target._completedInitializationPromiseCount);
+        Promise.all(Target._initializationPromises).then(() => {
             // Tell the backend we are initialized after all our initialization messages have been sent.
             // This allows an automatically paused backend to resume execution, but we want to ensure
             // our breakpoints were already sent to that backend.
@@ -130,6 +131,22 @@ WI.Target = class Target extends WI.Object
     get TargetAgent() { return this._agents.Target; }
     get TimelineAgent() { return this._agents.Timeline; }
     get WorkerAgent() { return this._agents.Worker; }
+
+    // Static
+
+    static registerInitializationPromise(promise)
+    {
+        // This can be called for work that has to be done before `Inspector.initialized` is called.
+        // Should only be called before the first target is created.
+        console.assert(!Target._completedInitializationPromiseCount);
+
+        Target._initializationPromises.push(promise);
+
+        promise.then(() => {
+            ++Target._completedInitializationPromiseCount;
+            Target._initializationPromises.remove(promise);
+        });
+    }
 
     // Public
 
@@ -215,3 +232,6 @@ WI.Target.Event = {
     ResourceAdded: "target-resource-added",
     ScriptAdded: "target-script-added",
 };
+
+WI.Target._initializationPromises = [];
+WI.Target._completedInitializationPromiseCount = 0;

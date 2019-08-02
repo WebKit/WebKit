@@ -105,7 +105,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
 
-        (async () => {
+        WI.Target.registerInitializationPromise((async () => {
             let existingSerializedBreakpoints = WI.Setting.migrateValue("breakpoints");
             if (existingSerializedBreakpoints) {
                 for (let existingSerializedBreakpoint of existingSerializedBreakpoints)
@@ -124,7 +124,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
                 this.addBreakpoint(breakpoint);
             }
             this._restoringBreakpoints = false;
-        })();
+        })());
     }
 
     // Target
