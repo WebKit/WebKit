@@ -41,6 +41,7 @@ WI.FindBanner = class FindBanner extends WI.NavigationItem
 
         this._inputField = document.createElement("input");
         this._inputField.type = "search";
+        this._inputField.placeholder = " "; // This is necessary for :placeholder-shown.
         this._inputField.spellcheck = false;
         this._inputField.incremental = true;
         this._inputField.setAttribute("results", 5);
