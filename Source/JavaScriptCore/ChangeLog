@@ -1,3 +1,61 @@
+2019-08-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        GetterSetter type confusion during DFG compilation
+        https://bugs.webkit.org/show_bug.cgi?id=199903
+
+        Reviewed by Mark Lam.
+
+        In AI, we are strongly assuming that GetGetter's child constant value should be GetterSetter if it exists.
+        However, this can be wrong since nobody ensures that. AI assumed so because the control-flow and preceding
+        CheckStructure ensures that. But this preceding check can be eliminated if the node becomes (at runtime) unreachable.
+
+        Let's consider the following graph.
+
+            129:<!0:->     PutByOffset(KnownCell:@115, KnownCell:@115, Check:Untyped:@124, MustGen, id5{length}, 0, W:NamedProperties(5), ClobbersExit, bc#154, ExitValid)
+            130:<!0:->     PutStructure(KnownCell:@115, MustGen, %C8:Object -> %C3:Object, ID:7726, R:JSObject_butterfly, W:JSCell_indexingType,JSCell_structureID,JSCell_typeInfoFlags,JSCell_typeInfoType, ClobbersExit, bc#154, ExitInvalid)
+            ...
+            158:<!0:->     GetLocal(Check:Untyped:@197, JS|MustGen|UseAsOther, Final, loc7(R<Final>/FlushedCell), R:Stack(-8), bc#187, ExitValid)  predicting Final
+            210:< 1:->     DoubleRep(Check:NotCell:@158, Double|PureInt, BytecodeDouble, Exits, bc#187, ExitValid)
+            ...
+            162:<!0:->     CheckStructure(Cell:@158, MustGen, [%Ad:Object], R:JSCell_structureID, Exits, bc#192, ExitValid)
+            163:< 1:->     GetGetterSetterByOffset(KnownCell:@158, KnownCell:@158, JS|UseAsOther, OtherCell, id5{length}, 0, R:NamedProperties(5), Exits, bc#192, ExitValid)
+            164:< 1:->     GetGetter(KnownCell:@163, JS|UseAsOther, Function, R:GetterSetter_getter, Exits, bc#192, ExitValid)
+
+        At @163 and @164, AI proves that @158's AbstractValue is None because @210's edge filters out Cells @158 is a cell. But we do not invalidate graph status as "Invalid" even if edge filters out all possible value.
+        This is because the result of edge can be None in a valid program. For example, we can put a dependency edge between a consuming node and a producing node, where the producing node is just like a check and it
+        does not produce a value actually. So, @163 and @164 are not invalidated. This is totally fine in our compiler pipeline right now.
+
+        But after that, global CSE phase found that @115 and @158 are same and @129 dominates @158. As a result, we can replace GetGetter child's @163 with @124. Since CheckStructure is already removed (and now, at runtime,
+        @163 and @164 are never executed), we do not have any structure guarantee on @158 and the result of @163. This means that @163's CSE result can be non-GetterSetter value.
+
+            124:< 2:->     JSConstant(JS|UseAsOther, Final, Weak:Object: 0x1199e82a0 with butterfly 0x0 (Structure %B4:Object), StructureID: 49116, bc#0, ExitValid)
+            ...
+            126:< 2:->     GetGetter(KnownCell:Kill:@124, JS|UseAsOther, Function, R:GetterSetter_getter, Exits, bc#192, ExitValid)
+
+        AI filters out @124's non-cell values. But @126 can get non-GetterSetter cell at AI phase. But our AI code is like the following.
+
+
+            JSValue base = forNode(node->child1()).m_value;
+            if (base) {
+                GetterSetter* getterSetter = jsCast<GetterSetter*>(base);
+                ...
+
+        Then, jsCast casts the above object with GetterSetter accidentally.
+
+        In general, DFG AI can get a proven constant value, which could not be shown at runtime. This happens if the processing node is unreachable at runtime while the graph is not invalid yet, because preceding edge
+        filters already filter out all the possible execution. DFG AI already considered about this possibility, and it attempts to fold a node into a constant only when the constant input matches against the expected one.
+        But several DFG nodes are not handling this correctly: GetGetter, GetSetter, and SkipScope.
+
+        In this patch, we use `jsDynamicCast` to ensure that the constant input matches against the expected (foldable) one, and fold it only when the expectation is met.
+        We also remove DFG::Node::castConstant and its use. We should not rely on the constant folded value based on graph's control-flow.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::castConstant): Deleted.
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeCreateActivation):
+
 2019-08-01  Mark Lam  <mark.lam@apple.com>
 
         Add crash diagnostics for debugging unexpected zapped cells.
