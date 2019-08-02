@@ -126,38 +126,6 @@ FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, FcPattern* patte
 #endif
 }
 
-FontPlatformData::FontPlatformData(const FontPlatformData& other)
-{
-    *this = other;
-}
-
-FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
-{
-    // Check for self-assignment.
-    if (this == &other)
-        return *this;
-
-    m_size = other.m_size;
-    m_orientation = other.m_orientation;
-    m_widthVariant = other.m_widthVariant;
-    m_textRenderingMode = other.m_textRenderingMode;
-
-    m_syntheticBold = other.m_syntheticBold;
-    m_syntheticOblique = other.m_syntheticOblique;
-    m_isColorBitmapFont = other.m_isColorBitmapFont;
-    m_isHashTableDeletedValue = other.m_isHashTableDeletedValue;
-    m_isSystemFont = other.m_isSystemFont;
-
-    m_fixedWidth = other.m_fixedWidth;
-    m_pattern = other.m_pattern;
-
-    m_scaledFont = other.m_scaledFont;
-
-    return *this;
-}
-
-FontPlatformData::~FontPlatformData() = default;
-
 FontPlatformData FontPlatformData::cloneWithOrientation(const FontPlatformData& source, FontOrientation orientation)
 {
     FontPlatformData copy(source);

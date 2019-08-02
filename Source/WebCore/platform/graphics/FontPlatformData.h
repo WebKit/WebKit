@@ -112,11 +112,6 @@ public:
 
 #if USE(FREETYPE)
     FontPlatformData(cairo_font_face_t*, FcPattern*, float size, bool fixedWidth, bool syntheticBold, bool syntheticOblique, FontOrientation);
-    FontPlatformData(const FontPlatformData&);
-    FontPlatformData(FontPlatformData&&) = default;
-    FontPlatformData& operator=(const FontPlatformData&);
-    FontPlatformData& operator=(FontPlatformData&&) = default;
-    ~FontPlatformData();
 #endif
 
 #if PLATFORM(WIN)
