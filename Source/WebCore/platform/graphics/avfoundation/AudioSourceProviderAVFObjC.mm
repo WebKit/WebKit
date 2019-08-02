@@ -90,8 +90,9 @@ AudioSourceProviderAVFObjC::~AudioSourceProviderAVFObjC()
     if (m_tapStorage) {
         std::lock_guard<Lock> lock(m_tapStorage->mutex);
         m_tapStorage->_this = nullptr;
-        m_tapStorage = nullptr;
     }
+
+    m_tapStorage = nullptr;
 }
 
 void AudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProcess)
