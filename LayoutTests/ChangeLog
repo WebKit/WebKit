@@ -1,3 +1,17 @@
+2019-08-01  Chris Dumez  <cdumez@apple.com>
+
+        fast/forms/ios/file-upload-panel.html is flaky on iOS 13
+        https://bugs.webkit.org/show_bug.cgi?id=200357
+        <rdar://problem/53028551>
+
+        Reviewed by Zalan Bujtas.
+
+        Use UIHelper.activateElementAtHumanSpeed() instead of UIHelper.activateElement()
+        to address flakiness. If the button taps are issued to quickly, some of them
+        get swallowed.
+
+        * fast/forms/ios/file-upload-panel.html:
+
 2019-08-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Text autosizing] [iPadOS] Add targeted hacks to address some remaining text autosizing issues

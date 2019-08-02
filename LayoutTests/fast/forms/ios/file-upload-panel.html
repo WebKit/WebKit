@@ -52,7 +52,7 @@ function runAcceptTest(accept, expectedMenuItems)
         debug("* accept = " + accept);
         testInput.accept = accept;
 
-        UIHelper.activateElement(testInput).then(() => {
+        UIHelper.activateElementAtHumanSpeed(testInput).then(() => {
             getFileUploadPickerMenuItems().then((_items) => {
                 items = _items;
                 shouldBeTrue("areArraysEqual(items, " + expectedMenuItems + ")");
