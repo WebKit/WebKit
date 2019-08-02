@@ -15299,6 +15299,7 @@
 				FB39D0CE1200F0E300088E69 /* Sources */,
 				FB39D0CF1200F0E300088E69 /* Frameworks */,
 				5CD286461E6E154E0094FDC8 /* Check for Weak VTables and Externals */,
+				41F2354122F39AC000B4FCDB /* Check For Inappropriate Objective-C Class Names */,
 				312BDB0B15FECAB00097EBC7 /* CopyFiles */,
 				312BDB0D15FECACE0097EBC7 /* CopyFiles */,
 			);
@@ -15368,6 +15369,25 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		41F2354122F39AC000B4FCDB /* Check For Inappropriate Objective-C Class Names */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = "Check For Inappropriate Objective-C Class Names";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../../Tools/Scripts/check-for-inappropriate-objc-class-names WK_RTC || exit $?\nfi\n";
+		};
 		5C63F6661E414ABA002CA531 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
