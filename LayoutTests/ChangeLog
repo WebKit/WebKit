@@ -1,3 +1,16 @@
+2019-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Document::resume should delay resetting of form control elements.
+        https://bugs.webkit.org/show_bug.cgi?id=200376
+
+        Reviewed by Geoffrey Garen.
+
+        Added a regression test.
+
+        * fast/frames/restoring-page-cache-should-not-run-scripts-expected.txt: Added.
+        * fast/frames/restoring-page-cache-should-not-run-scripts.html: Added.
+        * platform/win/TestExpectations: Skip this test on Windows since navigating to blob fails on Windows.
+
 2019-08-02  Andres Gonzalez  <andresg_22@apple.com>
 
         Add accessibility object method to determine whether an element is inside a table cell. Needed for iOS accessibility client.

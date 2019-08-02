@@ -1486,10 +1486,12 @@ void HTMLInputElement::resumeFromDocumentSuspension()
 #if ENABLE(INPUT_TYPE_COLOR)
     // <input type=color> uses prepareForDocumentSuspension to detach the color picker UI,
     // so it should not be reset when being loaded from page cache.
-    if (isColorControl()) 
+    if (isColorControl())
         return;
 #endif // ENABLE(INPUT_TYPE_COLOR)
-    reset();
+    document().postTask([inputElement = makeRef(*this)] (ScriptExecutionContext&) {
+        inputElement->reset();
+    });
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)

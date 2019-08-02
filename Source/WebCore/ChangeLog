@@ -1,3 +1,20 @@
+2019-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Document::resume should delay resetting of form control elements.
+        https://bugs.webkit.org/show_bug.cgi?id=200376
+
+        Reviewed by Geoffrey Garen.
+
+        Delay the execution of form control element resets until the next task
+        to avoid synchronously mutating DOM during page cache restoration.
+
+        Test: fast/frames/restoring-page-cache-should-not-run-scripts.html
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::resumeFromDocumentSuspension):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::resumeFromDocumentSuspension):
+
 2019-08-02  Youenn Fablet  <youenn@apple.com>
 
         [iOS] Directly use RealtimeMediaSourceCenter to compute the media capture  state
