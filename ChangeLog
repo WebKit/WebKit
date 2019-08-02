@@ -1,3 +1,9 @@
+2019-08-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.25.4 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers
+
 2019-07-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Datalist element support for TextFieldInputType

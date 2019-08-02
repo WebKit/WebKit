@@ -1,4 +1,16 @@
 ================
+WebKitGTK 2.25.4
+================
+
+What's new in WebKitGTK+ 2.25.4?
+
+  - Switch to use libsoup WebSockets API.
+  - Add support for permessage-deflate WebSocket extension.
+  - Add support for datalist element in text input fields.
+  - Fix a crash with empty video source.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.25.3
 ================
 
