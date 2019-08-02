@@ -1,3 +1,13 @@
+2019-08-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: fix inverted check in InspectorDOMStorageAgent::enable
+        Followup to r248179.
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * inspector/agents/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::enable):
+
 2019-08-02  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Curl] Crash while destructing a URL in ~SocketStreamHandle due to data race

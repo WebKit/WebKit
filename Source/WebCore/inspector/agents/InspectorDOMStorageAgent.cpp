@@ -74,8 +74,8 @@ void InspectorDOMStorageAgent::willDestroyFrontendAndBackend(Inspector::Disconne
 
 void InspectorDOMStorageAgent::enable(ErrorString& errorString)
 {
-    if (m_instrumentingAgents.inspectorDOMStorageAgent() != this) {
-        errorString = "DOMStorageAgent already disabled"_s;
+    if (m_instrumentingAgents.inspectorDOMStorageAgent() == this) {
+        errorString = "DOMStorageAgent already enabled"_s;
         return;
     }
 
