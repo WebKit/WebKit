@@ -1,3 +1,22 @@
+2019-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] LazyJSValue should be robust for empty JSValue
+        https://bugs.webkit.org/show_bug.cgi?id=200388
+
+        Reviewed by Saam Barati.
+
+        If the Switch DFG node is preceded by ForceOSRExit or something that invalidates the basic block,
+        it can take a FrozenValue as a child which includes empty value instead of string, number etc.
+        If this Switch node is kept and we reached to DFGCFGSimplificationPhase, it will use this FrozenValue.
+        However, LazyJSValue using this FrozenValue strongly assumes that FrozenValue is never holding empty value.
+        But this assumption is wrong. This patch makes LazyJSValue robust for empty value.
+
+        * dfg/DFGLazyJSValue.cpp:
+        (JSC::DFG::LazyJSValue::tryGetStringImpl const):
+        (JSC::DFG::LazyJSValue::tryGetString const):
+        (JSC::DFG::LazyJSValue::strictEqual const):
+        (JSC::DFG::LazyJSValue::switchLookupValue const):
+
 2019-08-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Storage: disable related agents when the tab is closed
