@@ -1,3 +1,17 @@
+2019-08-02  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add accessibility object method to determine whether an element is inside a table cell. Needed for iOS accessibility client.
+        https://bugs.webkit.org/show_bug.cgi?id=200394
+        <rdar://problem/52914964>
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/ios-simulator/element-in-table-cell.html
+
+        Added _accessibilityIsInTableCell needed for iOS accessibility client.
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityIsInTableCell]):
+
 2019-08-02  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS, iOS] webaudio/silent-audio-interrupted-in-background.html sometimes crashes

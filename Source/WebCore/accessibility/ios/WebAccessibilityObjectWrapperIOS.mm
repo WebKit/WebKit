@@ -599,6 +599,13 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return nil;
 }
 
+- (BOOL)_accessibilityIsInTableCell
+{
+    return AccessibilityObject::matchedParent(*m_object, false, [] (const AccessibilityObject& object) {
+        return object.roleValue() == AccessibilityRole::Cell;
+    });
+}
+
 - (AccessibilityObjectWrapper*)_accessibilityFieldsetAncestor
 {
     if (const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, [] (const AccessibilityObject& object) {

@@ -103,6 +103,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (id)lineStartMarkerForMarker:(id)marker;
 - (id)lineEndMarkerForMarker:(id)marker;
 - (NSArray *)textMarkerRangeFromMarkers:(NSArray *)markers withText:(NSString *)text;
+- (BOOL)_accessibilityIsInTableCell;
 @end
 
 @interface NSObject (WebAccessibilityObjectWrapperPrivate)
@@ -792,6 +793,11 @@ int AccessibilityUIElement::rowCount()
 int AccessibilityUIElement::columnCount()
 {
     return [m_element accessibilityColumnCount];
+}
+
+bool AccessibilityUIElement::isInTableCell() const
+{
+    return [m_element _accessibilityIsInTableCell];
 }
 
 int AccessibilityUIElement::indexInTable()
