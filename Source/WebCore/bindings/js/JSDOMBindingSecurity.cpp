@@ -50,6 +50,9 @@ static inline bool canAccessDocument(JSC::ExecState* state, Document* targetDocu
     if (!targetDocument)
         return false;
 
+    if (auto* templateHost = targetDocument->templateDocumentHost())
+        targetDocument = templateHost;
+
     DOMWindow& active = activeDOMWindow(*state);
 
     if (active.document()->securityOrigin().canAccess(targetDocument->securityOrigin()))

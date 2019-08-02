@@ -2594,7 +2594,10 @@ void InspectorDOMAgent::pushNodeByPathToFrontend(ErrorString& errorString, const
 
 RefPtr<Inspector::Protocol::Runtime::RemoteObject> InspectorDOMAgent::resolveNode(Node* node, const String& objectGroup)
 {
-    auto* frame = node->document().frame();
+    Document* document = &node->document();
+    if (auto* templateHost = document->templateDocumentHost())
+        document = templateHost;
+    auto* frame =  document->frame();
     if (!frame)
         return nullptr;
 

@@ -1,3 +1,21 @@
+2019-08-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: Crash when interacting with Template Content in Console
+        https://bugs.webkit.org/show_bug.cgi?id=196280
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: inspector/dom/inspect-template-node.html
+
+        * bindings/js/JSDOMBindingSecurity.cpp:
+        (WebCore::canAccessDocument): if target element is from a
+        <template> use its host document to check the access. Elements
+        from the host document always have access to its template elements content.
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::resolveNode): templates are created in
+        special template document which doesn't have a frame, in such case get
+        the frame from the host document.
+
 2019-08-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Harden NodeRareData::m_connectedFrameCount
