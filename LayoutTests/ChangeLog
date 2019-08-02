@@ -1,5 +1,18 @@
 2019-08-01  Chris Dumez  <cdumez@apple.com>
 
+        Pages using MessagePorts should be PageCacheable
+        https://bugs.webkit.org/show_bug.cgi?id=200366
+        <rdar://problem/53837882>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * fast/history/page-cache-MessagePort-pending-message-expected.txt: Added.
+        * fast/history/page-cache-MessagePort-pending-message.html: Added.
+
+2019-08-01  Chris Dumez  <cdumez@apple.com>
+
         fast/forms/ios/file-upload-panel.html is flaky on iOS 13
         https://bugs.webkit.org/show_bug.cgi?id=200357
         <rdar://problem/53028551>

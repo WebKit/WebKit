@@ -1,3 +1,35 @@
+2019-08-01  Chris Dumez  <cdumez@apple.com>
+
+        Pages using MessagePorts should be PageCacheable
+        https://bugs.webkit.org/show_bug.cgi?id=200366
+        <rdar://problem/53837882>
+
+        Reviewed by Geoffrey Garen.
+
+        Allow a page to enter PageCache, even if it has MessagePorts (potentially with
+        pending messages). If there are pending messages on the MessagePorts when
+        entering PageCache, those will get dispatched upon restoring from PageCache.
+
+        Test: fast/history/page-cache-MessagePort-pending-message.html
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::messageAvailable):
+        (WebCore::MessagePort::dispatchMessages):
+        Do not dispatch messages while in PageCache.
+
+        (WebCore::MessagePort::canSuspendForDocumentSuspension const):
+        Allow pages with MessagePort objects to enter PageCache.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::resumeActiveDOMObjects):
+        Make sure pending messages on MessagePorts get dispatched asynchronously after restoring
+        from PageCache.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::areAllLoadersPageCacheAcceptable):
+        Make sure only CachedResources that are still loading upon load cancelation prevent
+        entering PageCache.
+
 2019-08-01  Konstantin Tokarev  <annulen@yandex.ru>
 
         Fix compilation of PageConsoleClient with !ENABLE(VIDEO)
