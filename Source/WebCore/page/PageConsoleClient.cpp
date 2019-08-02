@@ -310,13 +310,16 @@ void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&&
                     else if (is<HTMLPictureElement>(node)) {
                         if (auto* firstImage = childrenOfType<HTMLImageElement>(downcast<HTMLPictureElement>(*node)).first())
                             snapshotImageElement(*firstImage);
-                    } else if (is<HTMLVideoElement>(node)) {
+                    }
+#if ENABLE(VIDEO)
+                    else if (is<HTMLVideoElement>(node)) {
                         auto& videoElement = downcast<HTMLVideoElement>(*node);
                         unsigned videoWidth = videoElement.videoWidth();
                         unsigned videoHeight = videoElement.videoHeight();
                         snapshot = ImageBuffer::create(FloatSize(videoWidth, videoHeight), RenderingMode::Unaccelerated);
                         videoElement.paintCurrentFrameInContext(snapshot->context(), FloatRect(0, 0, videoWidth, videoHeight));
                     }
+#endif
                 }
 
                 if (!snapshot)
