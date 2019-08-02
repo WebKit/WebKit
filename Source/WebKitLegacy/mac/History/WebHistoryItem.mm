@@ -436,7 +436,7 @@ WebHistoryItem *kit(HistoryItem* item)
                  forKey:lastVisitedTimeIntervalKey];
     }
     if (coreItem->lastVisitWasFailure())
-        [dict setObject:[NSNumber numberWithBool:YES] forKey:lastVisitWasFailureKey];
+        [dict setObject:@YES forKey:lastVisitWasFailureKey];
     if (Vector<String>* redirectURLs = _private->_redirectURLs.get()) {
         size_t size = redirectURLs->size();
         ASSERT(size);

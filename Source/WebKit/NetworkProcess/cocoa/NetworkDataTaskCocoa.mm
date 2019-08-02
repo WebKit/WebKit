@@ -98,11 +98,11 @@ void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeede
 
 #if USE(CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE)
     if (!shouldContentEncodingSniff)
-        [mutableRequest _setProperty:@(YES) forKey:(NSString *)kCFURLRequestContentDecoderSkipURLCheck];
+        [mutableRequest _setProperty:@YES forKey:(NSString *)kCFURLRequestContentDecoderSkipURLCheck];
 #endif
 
     if (!shouldContentSniff)
-        [mutableRequest _setProperty:@(NO) forKey:(NSString *)_kCFURLConnectionPropertyShouldSniff];
+        [mutableRequest _setProperty:@NO forKey:(NSString *)_kCFURLConnectionPropertyShouldSniff];
 
     if (!cocoaSession.m_boundInterfaceIdentifier.isNull())
         [mutableRequest setBoundInterfaceIdentifier:cocoaSession.m_boundInterfaceIdentifier];

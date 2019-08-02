@@ -103,10 +103,10 @@ void LocalConnection::getAttestation(const String& rpId, const String& username,
         kMAOptionsBAAKeychainLabel: label,
         // FIXME(rdar://problem/38489134): Need a formal name.
         kMAOptionsBAAKeychainAccessGroup: @"com.apple.safari.WebAuthN.credentials",
-        kMAOptionsBAAIgnoreExistingKeychainItems: @(YES),
+        kMAOptionsBAAIgnoreExistingKeychainItems: @YES,
         // FIXME(rdar://problem/38489134): Determine a proper lifespan.
         kMAOptionsBAAValidity: @(1440), // Last one day.
-        kMAOptionsBAASCRTAttestation: @(NO),
+        kMAOptionsBAASCRTAttestation: @NO,
         kMAOptionsBAANonce: [NSData dataWithBytes:hash.data() length:hash.size()],
         kMAOptionsBAAAccessControls: (id)accessControlRef.get(),
         kMAOptionsBAAOIDSToInclude: @[kMAOptionsBAAOIDNonce]

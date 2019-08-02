@@ -100,11 +100,11 @@ CVPixelBufferPoolRef RealtimeIncomingVideoSourceCocoa::pixelBufferPool(size_t wi
             (__bridge NSString *)kCVPixelBufferWidthKey: @(width),
             (__bridge NSString *)kCVPixelBufferHeightKey: @(height),
             (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(videoCaptureFormat),
-            (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey: @(NO),
+            (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey: @NO,
 #if PLATFORM(IOS_FAMILY)
-            (__bridge NSString *)kCVPixelFormatOpenGLESCompatibility : @(YES),
+            (__bridge NSString *)kCVPixelFormatOpenGLESCompatibility : @YES,
 #else
-            (__bridge NSString *)kCVPixelBufferOpenGLCompatibilityKey : @(YES),
+            (__bridge NSString *)kCVPixelBufferOpenGLCompatibilityKey : @YES,
 #endif
             (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ }
         };

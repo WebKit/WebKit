@@ -157,7 +157,7 @@ static void enableWebKitNightlyBehaviour()
 
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *defaultPrefs = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:RunStateShutDown], WKNERunState,
-                                                                            [NSNumber numberWithBool:YES], WKNEShouldMonitorShutdowns,
+                                                                            @YES, WKNEShouldMonitorShutdowns,
                                                                             disabledInputManagers, @"NSDisabledInputManagers", nil];
     [userDefaults registerDefaults:defaultPrefs];
     if ([userDefaults boolForKey:WKNEShouldMonitorShutdowns]) {

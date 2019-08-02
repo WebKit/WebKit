@@ -1,3 +1,21 @@
+2019-08-02  Keith Rollin  <krollin@apple.com>
+
+        Consistently use Obj-C boolean literals
+        https://bugs.webkit.org/show_bug.cgi?id=200405
+        <rdar://problem/53880043>
+
+        Reviewed by Simon Fraser, Joseph Pecoraro.
+
+        There are places where we use equivalent but different expressions for
+        Obj-C boolean objects. For example, we use both [NSNumber
+        numberWithBool:YES] and @YES. There are places where both are used in
+        the same function, such as -[WebPreferences initialize]. The boolean
+        literal is in greater use and is more succinct, so standardize on
+        that. Also, change @(YES/NO) to @YES/NO.
+
+        * NetscapeCoreAnimationMoviePlugin/main.m:
+        (NPP_GetValue):
+
 2014-12-03  Ada Chan  <adachan@apple.com>
 
         Add a sample plugin to demonstrate the mute plugin API.

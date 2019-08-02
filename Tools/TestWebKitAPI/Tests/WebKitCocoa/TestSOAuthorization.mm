@@ -274,7 +274,7 @@ static id overrideAddObserverForName(id, SEL, NSNotificationName name, id, NSOpe
 {
     if ([name isEqual:NSWindowWillCloseNotification])
         gNotificationCallback = makeBlockPtr(block);
-    return [NSNumber numberWithBool:YES];
+    return @YES;
 }
 #endif
 

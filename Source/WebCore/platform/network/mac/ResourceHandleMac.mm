@@ -124,11 +124,11 @@ NSURLRequest *ResourceHandle::applySniffingPoliciesIfNeeded(NSURLRequest *reques
 
 #if USE(CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE)
     if (!shouldContentEncodingSniff)
-        [mutableRequest _setProperty:@(YES) forKey:(__bridge NSString *)kCFURLRequestContentDecoderSkipURLCheck];
+        [mutableRequest _setProperty:@YES forKey:(__bridge NSString *)kCFURLRequestContentDecoderSkipURLCheck];
 #endif
 
     if (!shouldContentSniff)
-        [mutableRequest _setProperty:@(NO) forKey:(__bridge NSString *)_kCFURLConnectionPropertyShouldSniff];
+        [mutableRequest _setProperty:@NO forKey:(__bridge NSString *)_kCFURLConnectionPropertyShouldSniff];
 
     return mutableRequest.autorelease();
 }

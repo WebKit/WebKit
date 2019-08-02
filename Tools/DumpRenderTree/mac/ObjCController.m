@@ -144,7 +144,7 @@ static void* runJavaScriptThread(void* arg)
     if ([aClass isEqualToString:@"WebUndefined"])
         return [WebUndefined undefined];
     if ([aClass isEqualToString:@"NSCFBoolean"])
-        return [NSNumber numberWithBool:true];
+        return @YES;
     if ([aClass isEqualToString:@"NSCFNumber"])
         return [NSNumber numberWithInt:1];
     if ([aClass isEqualToString:@"NSCFString"])

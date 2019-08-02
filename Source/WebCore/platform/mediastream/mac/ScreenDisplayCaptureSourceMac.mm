@@ -149,7 +149,7 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
             (__bridge NSString *)kCGDisplayStreamMinimumFrameTime : @(1 / frameRate()),
             (__bridge NSString *)kCGDisplayStreamQueueDepth : @(screenQueueMaximumLength),
             (__bridge NSString *)kCGDisplayStreamColorSpace : (__bridge id)sRGBColorSpaceRef(),
-            (__bridge NSString *)kCGDisplayStreamShowCursor : @(YES),
+            (__bridge NSString *)kCGDisplayStreamShowCursor : @YES,
         };
 
         auto weakThis = makeWeakPtr(*this);

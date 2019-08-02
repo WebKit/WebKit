@@ -1131,7 +1131,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
                 CMSampleBufferRef rawSampleCopy;
                 CMSampleBufferCreateCopy(kCFAllocatorDefault, platformSample.sample.cmSampleBuffer, &rawSampleCopy);
                 auto sampleCopy = adoptCF(rawSampleCopy);
-                CMSetAttachment(sampleCopy.get(), kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed, (__bridge CFDictionaryRef)@{ (__bridge NSString *)kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed : @(YES) }, kCMAttachmentMode_ShouldNotPropagate);
+                CMSetAttachment(sampleCopy.get(), kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed, (__bridge CFDictionaryRef)@{ (__bridge NSString *)kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed : @YES }, kCMAttachmentMode_ShouldNotPropagate);
                 [m_displayLayer enqueueSampleBuffer:sampleCopy.get()];
 #if PLATFORM(IOS_FAMILY)
                 m_mediaSource->player()->setHasAvailableVideoFrame(true);

@@ -38,7 +38,7 @@ int main(int argc, char** argv)
         argumentDomain = [[NSMutableDictionary alloc] init];
     
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                          [NSNumber numberWithBool:YES],    @"WebKitLinkedOnOrAfterEverything",
+                          @YES,    @"WebKitLinkedOnOrAfterEverything",
                           nil];
 
     [argumentDomain addEntriesFromDictionary:dict];

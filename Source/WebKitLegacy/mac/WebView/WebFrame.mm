@@ -2051,20 +2051,20 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
         [result setObject:(NSError *)documentLoader->mainDocumentError() forKey:WebFrameMainDocumentError];
         
     if (frameLoader.subframeLoader().containsPlugins())
-        [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameHasPlugins];
+        [result setObject:@YES forKey:WebFrameHasPlugins];
     
     if (DOMWindow* domWindow = _private->coreFrame->document()->domWindow()) {
         if (domWindow->hasEventListeners(eventNames().unloadEvent))
-            [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameHasUnloadListener];
+            [result setObject:@YES forKey:WebFrameHasUnloadListener];
         if (domWindow->optionalApplicationCache())
-            [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameUsesApplicationCache];
+            [result setObject:@YES forKey:WebFrameUsesApplicationCache];
     }
     
     if (Document* document = _private->coreFrame->document()) {
         if (DatabaseManager::singleton().hasOpenDatabases(*document))
-            [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameUsesDatabases];
+            [result setObject:@YES forKey:WebFrameUsesDatabases];
         if (!document->canSuspendActiveDOMObjectsForDocumentSuspension())
-            [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameCanSuspendActiveDOMObjects];
+            [result setObject:@YES forKey:WebFrameCanSuspendActiveDOMObjects];
     }
     
     return result;

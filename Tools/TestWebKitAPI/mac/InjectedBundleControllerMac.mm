@@ -40,8 +40,8 @@ void InjectedBundleController::platformInitialize()
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
                           [NSNumber numberWithInteger:4],   @"AppleAntiAliasingThreshold",
                           [NSNumber numberWithInteger:0],   @"AppleFontSmoothing",
-                          [NSNumber numberWithBool:NO],     @"NSScrollAnimationEnabled",
-                          [NSNumber numberWithBool:NO],     @"NSOverlayScrollersEnabled",
+                          @NO,     @"NSScrollAnimationEnabled",
+                          @NO,     @"NSOverlayScrollersEnabled",
                           @"Always",                        @"AppleShowScrollBars",
                           nil];
 

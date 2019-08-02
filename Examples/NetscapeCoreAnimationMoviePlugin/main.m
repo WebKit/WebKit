@@ -364,8 +364,8 @@ NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)
                 
                 if (obj->movieURL) {
                     NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:obj->movieURL, QTMovieURLAttribute,
-                                                [NSNumber numberWithBool:YES], QTMovieOpenForPlaybackAttribute, 
-                                                [NSNumber numberWithBool:YES], QTMovieLoopsAttribute, 
+                                                @YES, QTMovieOpenForPlaybackAttribute,
+                                                @YES, QTMovieLoopsAttribute,
                                                 nil];
                     obj->movie = [QTMovie movieWithAttributes:attributes error:nil];
 
