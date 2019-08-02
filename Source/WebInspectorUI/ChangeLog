@@ -1,3 +1,14 @@
+2019-08-01  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed, remove `emulateUserGesture` parameter from `Debugger.evaluateOnCallFrame` for iOS 13
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * UserInterface/Protocol/Legacy/13.0/InspectorBackendCommands.js:
+        * Versions/Inspector-iOS-13.0.json:
+        The iOS 13 protocol has already been decided, so these shouldn't have been added unless they
+        were cherry-picked in.
+
 2019-07-31  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: support emulateUserGesture parameter in Debugger.evaluateOnCallFrame
