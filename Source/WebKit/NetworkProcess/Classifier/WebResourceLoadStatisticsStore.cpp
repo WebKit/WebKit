@@ -1006,7 +1006,7 @@ void WebResourceLoadStatisticsStore::logTestingEvent(const String& event)
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_networkSession)
+    if (m_networkSession && m_networkSession->enableResourceLoadStatisticsLogTestingEvent())
         m_networkSession->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::LogTestingEvent(m_networkSession->sessionID(), event), 0);
 }
 

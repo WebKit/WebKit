@@ -81,6 +81,9 @@ NetworkStorageSession* NetworkSession::networkStorageSession() const
 NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
     : m_sessionID(parameters.sessionID)
     , m_networkProcess(networkProcess)
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    , m_enableResourceLoadStatisticsLogTestingEvent(parameters.enableResourceLoadStatisticsLogTestingEvent)
+#endif
     , m_adClickAttribution(makeUniqueRef<AdClickAttributionManager>(parameters.sessionID))
     , m_storageManager(StorageManager::create(String(parameters.localStorageDirectory)))
 {

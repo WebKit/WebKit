@@ -594,11 +594,15 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     SandboxExtension::createHandleForReadWriteDirectory(parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectory, parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectoryExtensionHandle);
 
     bool enableResourceLoadStatistics = m_shouldEnableITPForDefaultSessions;
+    bool enableResourceLoadStatisticsLogTestingEvent = false;
     bool shouldIncludeLocalhost = true;
     bool enableResourceLoadStatisticsDebugMode = false;
     WebCore::RegistrableDomain manualPrevalentResource { };
     if (withWebsiteDataStore) {
         enableResourceLoadStatistics = withWebsiteDataStore->resourceLoadStatisticsEnabled();
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+        enableResourceLoadStatisticsLogTestingEvent = withWebsiteDataStore->hasStatisticsTestingCallback();
+#endif
         if (enableResourceLoadStatistics) {
             auto networkSessionParameters = withWebsiteDataStore->parameters().networkSessionParameters;
             shouldIncludeLocalhost = networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics;
@@ -610,6 +614,9 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         parameters.defaultDataStoreParameters.perThirdPartyOriginStorageQuota = withWebsiteDataStore->perThirdPartyOriginStorageQuota();
     } else if (m_websiteDataStore) {
         enableResourceLoadStatistics = m_websiteDataStore->resourceLoadStatisticsEnabled();
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+        enableResourceLoadStatisticsLogTestingEvent = m_websiteDataStore->websiteDataStore().hasStatisticsTestingCallback();
+#endif
         if (enableResourceLoadStatistics) {
             auto networkSessionParameters = m_websiteDataStore->websiteDataStore().parameters().networkSessionParameters;
             shouldIncludeLocalhost = networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics;
@@ -622,6 +629,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     }
 
     parameters.defaultDataStoreParameters.networkSessionParameters.enableResourceLoadStatistics = enableResourceLoadStatistics;
+    parameters.defaultDataStoreParameters.networkSessionParameters.enableResourceLoadStatisticsLogTestingEvent = enableResourceLoadStatisticsLogTestingEvent;
     parameters.defaultDataStoreParameters.networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics = shouldIncludeLocalhost;
     parameters.defaultDataStoreParameters.networkSessionParameters.enableResourceLoadStatisticsDebugMode = enableResourceLoadStatisticsDebugMode;
     parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsManualPrevalentResource = manualPrevalentResource;

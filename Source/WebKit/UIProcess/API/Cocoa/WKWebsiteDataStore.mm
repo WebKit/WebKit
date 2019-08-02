@@ -456,8 +456,8 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return;
 
     if (callback) {
-        _websiteDataStore->websiteDataStore().enableResourceLoadStatisticsAndSetTestingCallback([callback = makeBlockPtr(callback), self](const String& event) {
-            callback(self, (NSString *)event);
+        _websiteDataStore->websiteDataStore().setStatisticsTestingCallback([callback = makeBlockPtr(callback), self](const String& event) {
+            callback(self, event);
         });
         return;
     }

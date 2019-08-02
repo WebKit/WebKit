@@ -50,7 +50,7 @@ NetworkSessionCreationParameters NetworkSessionCreationParameters::privateSessio
 #if USE(CURL)
         , { }, { }
 #endif
-        , { }, { }, false, { }, { }, { }, { }, { }, { }, { }, { }, { }
+        , { }, { }, false, false, { }, { }, { }, { }, { }, { }, { }, { }, { }
     };
 }
 
@@ -80,6 +80,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << resourceLoadStatisticsDirectory;
     encoder << resourceLoadStatisticsDirectoryExtensionHandle;
     encoder << enableResourceLoadStatistics;
+    encoder << enableResourceLoadStatisticsLogTestingEvent;
     encoder << shouldIncludeLocalhostInResourceLoadStatistics;
     encoder << enableResourceLoadStatisticsDebugMode;
     encoder << resourceLoadStatisticsManualPrevalentResource;
@@ -187,6 +188,11 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     if (!enableResourceLoadStatistics)
         return WTF::nullopt;
 
+    Optional<bool> enableResourceLoadStatisticsLogTestingEvent;
+    decoder >> enableResourceLoadStatisticsLogTestingEvent;
+    if (!enableResourceLoadStatisticsLogTestingEvent)
+        return WTF::nullopt;
+
     Optional<bool> shouldIncludeLocalhostInResourceLoadStatistics;
     decoder >> shouldIncludeLocalhostInResourceLoadStatistics;
     if (!shouldIncludeLocalhostInResourceLoadStatistics)
@@ -257,6 +263,7 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*resourceLoadStatisticsDirectory)
         , WTFMove(*resourceLoadStatisticsDirectoryExtensionHandle)
         , WTFMove(*enableResourceLoadStatistics)
+        , WTFMove(*enableResourceLoadStatisticsLogTestingEvent)
         , WTFMove(*shouldIncludeLocalhostInResourceLoadStatistics)
         , WTFMove(*enableResourceLoadStatisticsDebugMode)
         , WTFMove(*deviceManagementRestrictionsEnabled)

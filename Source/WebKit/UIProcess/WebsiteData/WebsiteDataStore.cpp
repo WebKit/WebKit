@@ -1845,7 +1845,14 @@ void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
         return;
 
     if (enabled) {
-        enableResourceLoadStatisticsAndSetTestingCallback(nullptr);
+        m_resourceLoadStatisticsEnabled = true;
+        
+        resolveDirectoriesIfNecessary();
+        
+        for (auto& processPool : processPools(std::numeric_limits<size_t>::max(), false)) {
+            processPool->setResourceLoadStatisticsEnabled(true);
+            processPool->sendToNetworkingProcess(Messages::NetworkProcess::SetResourceLoadStatisticsEnabled(true));
+        }
         return;
     }
 
@@ -1859,6 +1866,18 @@ void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
     UNUSED_PARAM(enabled);
 #endif
 }
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+void WebsiteDataStore::setStatisticsTestingCallback(Function<void(const String&)>&& callback)
+{
+    if (callback) {
+        for (auto& processPool : processPools(std::numeric_limits<size_t>::max(), false))
+            processPool->sendToNetworkingProcess(Messages::NetworkProcess::SetResourceLoadStatisticsLogTestingEvent(true));
+    }
+    
+    m_statisticsTestingCallback = WTFMove(callback);
+}
+#endif
 
 void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled)
 {
@@ -1881,21 +1900,6 @@ void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled, Completi
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Function<void (const String&)>&& callback)
-{
-    ASSERT(!m_sessionID.isEphemeral());
-
-    m_resourceLoadStatisticsEnabled = true;
-    setStatisticsTestingCallback(WTFMove(callback));
-
-    resolveDirectoriesIfNecessary();
-
-    for (auto& processPool : processPools(std::numeric_limits<size_t>::max(), false)) {
-        processPool->setResourceLoadStatisticsEnabled(true);
-        processPool->sendToNetworkingProcess(Messages::NetworkProcess::SetResourceLoadStatisticsEnabled(true));
-    }
-}
-
 void WebsiteDataStore::logTestingEvent(const String& event)
 {
     ASSERT(RunLoop::isMain());

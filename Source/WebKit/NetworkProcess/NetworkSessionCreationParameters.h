@@ -84,6 +84,7 @@ struct NetworkSessionCreationParameters {
     String resourceLoadStatisticsDirectory;
     SandboxExtension::Handle resourceLoadStatisticsDirectoryExtensionHandle;
     bool enableResourceLoadStatistics { false };
+    bool enableResourceLoadStatisticsLogTestingEvent { false };
     bool shouldIncludeLocalhostInResourceLoadStatistics { true };
     bool enableResourceLoadStatisticsDebugMode { false };
     bool deviceManagementRestrictionsEnabled { false };

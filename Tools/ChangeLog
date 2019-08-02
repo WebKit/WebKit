@@ -1,5 +1,16 @@
 2019-08-01  Alex Christensen  <achristensen@webkit.org>
 
+        Do not send NetworkProcessProxy::LogTestingEvent message if we are not testing
+        https://bugs.webkit.org/show_bug.cgi?id=200360
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (cleanupITPDatabase):
+        (TEST):
+
+2019-08-01  Alex Christensen  <achristensen@webkit.org>
+
         Move FormData zip file generation to NetworkProcess and enable it for all WebKit clients for uploading directories
         https://bugs.webkit.org/show_bug.cgi?id=200102
         <rdar://problem/53275114>

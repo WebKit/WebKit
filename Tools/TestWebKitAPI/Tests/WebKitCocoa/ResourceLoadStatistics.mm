@@ -27,6 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -214,16 +215,15 @@ static void cleanupITPDatabase(WKWebsiteDataStore *dataStore)
 
     // Make sure 'evil.com' is not in our data set.
     static bool doneFlag;
-    [dataStore _clearPrevalentDomain:[NSURL URLWithString:@"http://evil.com"] completionHandler: ^(void) {
-        doneFlag = true;
-    }];
-    
     static bool dataSyncCompleted;
     [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
         if (![message isEqualToString:@"Storage Synced"])
             return;
 
         dataSyncCompleted = true;
+    }];
+    [dataStore _clearPrevalentDomain:[NSURL URLWithString:@"http://evil.com"] completionHandler: ^(void) {
+        doneFlag = true;
     }];
 
     TestWebKitAPI::Util::run(&doneFlag);
@@ -472,4 +472,15 @@ TEST(ResourceLoadStatistics, NetworkProcessRestart)
     }];
 
     TestWebKitAPI::Util::run(&doneFlag);
+}
+
+TEST(ResourceLoadStatistics, NoMessagesWhenNotTesting)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKWebsiteDataStore *dataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:[[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease]] autorelease];
+    [configuration setWebsiteDataStore:dataStore];
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    EXPECT_FALSE([WKWebsiteDataStore _defaultDataStoreExists]);
 }

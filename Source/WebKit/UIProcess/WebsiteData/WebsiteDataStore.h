@@ -171,7 +171,8 @@ public:
     void setPrevalentResource(const URL&, CompletionHandler<void()>&&);
     void setPrevalentResourceForDebugMode(const URL&, CompletionHandler<void()>&&);
     void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool, CompletionHandler<void()>&&);
-    void setStatisticsTestingCallback(WTF::Function<void(const String&)>&& callback) { m_statisticsTestingCallback = WTFMove(callback); }
+    void setStatisticsTestingCallback(Function<void(const String&)>&&);
+    bool hasStatisticsTestingCallback() const { return !!m_statisticsTestingCallback; }
     void setVeryPrevalentResource(const URL&, CompletionHandler<void()>&&);
     void setSubframeUnderTopFrameDomain(const URL& subframe, const URL& topFrame);
     void setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, CompletionHandler<void()>&&);
@@ -206,8 +207,6 @@ public:
     void addPendingCookie(const WebCore::Cookie&);
     void removePendingCookie(const WebCore::Cookie&);
     void clearPendingCookies();
-
-    void enableResourceLoadStatisticsAndSetTestingCallback(Function<void (const String&)>&& callback);
 
     void setBoundInterfaceIdentifier(String&& identifier) { m_boundInterfaceIdentifier = WTFMove(identifier); }
     const String& boundInterfaceIdentifier() { return m_boundInterfaceIdentifier; }

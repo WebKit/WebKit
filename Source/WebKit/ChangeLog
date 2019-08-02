@@ -1,5 +1,34 @@
 2019-08-01  Alex Christensen  <achristensen@webkit.org>
 
+        Do not send NetworkProcessProxy::LogTestingEvent message if we are not testing
+        https://bugs.webkit.org/show_bug.cgi?id=200360
+
+        Reviewed by Tim Horton.
+
+        Sending this message causes instantiation of the default WebsiteDataStore in the UIProcess,
+        which causes more memory to be used than is needed if we are browsing without the default WebsiteDataStore.
+
+        Covered by an API test.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::logTestingEvent):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::enableResourceLoadStatisticsLogTestingEvent const):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::hasStatisticsTestingCallback const):
+
+2019-08-01  Alex Christensen  <achristensen@webkit.org>
+
         Move FormData zip file generation to NetworkProcess and enable it for all WebKit clients for uploading directories
         https://bugs.webkit.org/show_bug.cgi?id=200102
         <rdar://problem/53275114>

@@ -1159,6 +1159,13 @@ void NetworkProcess::setResourceLoadStatisticsEnabled(bool enabled)
     });
 }
 
+void NetworkProcess::setResourceLoadStatisticsLogTestingEvent(bool enabled)
+{
+    forEachNetworkSession([enabled](auto& networkSession) {
+        networkSession.setResourceLoadStatisticsLogTestingEvent(enabled);
+    });
+}
+
 void NetworkProcess::setResourceLoadStatisticsDebugMode(PAL::SessionID sessionID, bool debugMode, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
