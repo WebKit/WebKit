@@ -23,15 +23,6 @@
 
 #include "BaseXPCService.xcconfig"
 
-WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE = $(WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE_$(WK_PLATFORM_NAME));
-WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE_iphoneos = Network-iOS;
-WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE_iphonesimulator = Network-iOS;
-WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE_watchos = Network-iOS;
-WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE_watchsimulator = Network-iOS;
-WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE_appletvos = Network-iOS;
-WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE_appletvsimulator = Network-iOS;
-WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE_maccatalyst = Network-macCatalyst;
-
 PRODUCT_NAME = com.apple.WebKit.Networking;
 PRODUCT_BUNDLE_IDENTIFIER = $(PRODUCT_NAME);
 INFOPLIST_FILE[sdk=iphone*] = NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-iOS.plist;

@@ -1,3 +1,76 @@
+2019-08-02  Keith Rollin  <krollin@apple.com>
+
+        macCatalyst build fails the first attempt, requires a second build
+        https://bugs.webkit.org/show_bug.cgi?id=200242
+        <rdar://problem/53678481>
+
+        macCatalyst builds fail the first time with an error like:
+
+            Code Signing Error: The file
+            "/Users/tim_cook/Build/Debug-maccatalyst/DerivedSources/WebKit2/WebContent-macCatalyst-no-sandbox.entitlements"
+            could not be opened. Verify the value of the
+            CODE_SIGN_ENTITLEMENTS build setting for target "WebContent" is
+            correct and that the file exists on disk.
+
+        This problem is caused by the file referenced by
+        CODE_SIGN_ENTITLEMENTS changing during the build process. For
+        macCatalyst builds, we start with the iOS entitlements files and then
+        tweak them for macCatalyst. When this occurs during a clean build,
+        Xcode sees the entitlements file being generated and complains about
+        it. Restarting the build does so with the file already existing, and
+        so Xcode does not complain about it.
+
+        The approach of generating or tweaking entitlement files may have
+        worked in the past, but the fact is that Xcode doesn't support it.
+
+        We had a similar problem with macOS builds. The entitlements files
+        used to be generated on the fly with scripts like
+        WebKit/Scripts/process-network-sandbox-entitlements.sh. That process
+        was reworked to avoid the issue with Xcode not allowing the files to
+        be generated (see r241135). In short:
+
+        o The various process-*-entitlements.sh scripts were consolidated into
+          a single process-entitlements file
+        o CODE_SIGN_ENTITLEMENTS, which contains the name of the entitlements
+          file to use, was de-initialized so that Xcode would not try to
+          access our generated entitlements file
+        o CODE_SIGN_INJECT_BASE_ENTITLEMENTS (which injects some base
+          entitlements) was set to NO. If it were left set to YES, Xcode would
+          create its own entitlements file and use it as if it were specified
+          in CODE_SIGN_ENTITLEMENTS
+        o WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS was updated with an
+          "--entitlements <generated_file>" option.
+          WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS was then used to initialize
+          OTHER_CODE_SIGN_FLAGS. By specifying the entitlements file this way,
+          we avoid Xcode complaining about it.
+
+        This approach works well for macOS, and so we now also use it to
+        address the issue with macCatalyst. While we're at it, convert the
+        rest of the platforms to use the same approach and also generate their
+        entitlements from the process-entitlements script.
+
+        The new process was validated by performing a build with the old
+        process and the new process, and then comparing the entitlements of
+        the resulting XPC services to make sure they were the same. Builds
+        were performed for all platforms, and for Engineering and Production
+        builds.
+
+        Reviewed by Brent Fulgham.
+
+        * Configurations/BaseXPCService.xcconfig:
+        * Configurations/Network-iOS.entitlements: Removed.
+        * Configurations/Network-macCatalyst.entitlements: Removed.
+        * Configurations/NetworkService.xcconfig:
+        * Configurations/PluginService.64.xcconfig:
+        * Configurations/PluginService.entitlements: Removed.
+        * Configurations/WebContent-iOS.entitlements: Removed.
+        * Configurations/WebContent-macCatalyst.entitlements: Removed.
+        * Configurations/WebContentService.Development.xcconfig:
+        * Configurations/WebContentService.xcconfig:
+        * Scripts/copy-webcontent-resources-to-private-headers.sh:
+        * Scripts/process-entitlements.sh:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-08-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.25.4 release

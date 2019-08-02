@@ -28,13 +28,8 @@ set -e
 WEB_CONTENT_RESOURCES_PATH="${BUILT_PRODUCTS_DIR}/WebKit.framework/PrivateHeaders/CustomWebContentResources"
 mkdir -p "${WEB_CONTENT_RESOURCES_PATH}"
 
-if [[ ${WK_PLATFORM_NAME} == "macosx" ]]; then
-    ENTITLEMENTS_FILE="${WK_PROCESSED_XCENT_FILE}"
-else
-    ENTITLEMENTS_FILE="${SRCROOT}/Configurations/WebContent-iOS.entitlements"
-fi
-echo "Copying WebContent entitlements from ${ENTITLEMENTS_FILE} to ${WEB_CONTENT_RESOURCES_PATH}/WebContent.entitlements"
-ditto "${ENTITLEMENTS_FILE}" "${WEB_CONTENT_RESOURCES_PATH}/WebContent.entitlements"
+echo "Copying WebContent entitlements from ${WK_PROCESSED_XCENT_FILE} to ${WEB_CONTENT_RESOURCES_PATH}/WebContent.entitlements"
+ditto "${WK_PROCESSED_XCENT_FILE}" "${WEB_CONTENT_RESOURCES_PATH}/WebContent.entitlements"
 
 WEBCONTENT_XIB="${SRCROOT}/Resources/WebContentProcess.xib"
 echo "Copying WebContentProcess.xib from ${WEBCONTENT_XIB} to ${WEB_CONTENT_RESOURCES_PATH}/WebContentProcess.xib"
