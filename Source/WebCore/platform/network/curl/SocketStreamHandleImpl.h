@@ -64,7 +64,7 @@ private:
     Optional<size_t> platformSendInternal(const uint8_t*, size_t);
     bool sendPendingData();
 
-    void threadEntryPoint();
+    void threadEntryPoint(const URL&);
     void handleError(CURLcode);
     void stopThread();
 

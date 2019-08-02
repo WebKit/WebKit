@@ -57,8 +57,8 @@ SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandl
     if (m_url.protocolIs("wss") && DeprecatedGlobalSettings::allowsAnySSLCertificate())
         CurlContext::singleton().sslHandle().setIgnoreSSLErrors(true);
 
-    m_workerThread = Thread::create("WebSocket thread", [this, protectedThis = makeRef(*this)] {
-        threadEntryPoint();
+    m_workerThread = Thread::create("WebSocket thread", [this, protectedThis = makeRef(*this), url = url.isolatedCopy()] {
+        threadEntryPoint(url);
     });
 }
 
@@ -104,11 +104,11 @@ void SocketStreamHandleImpl::platformClose()
     m_client.didCloseSocketStream(*this);
 }
 
-void SocketStreamHandleImpl::threadEntryPoint()
+void SocketStreamHandleImpl::threadEntryPoint(const URL& url)
 {
     ASSERT(!isMainThread());
 
-    CurlSocketHandle socket { m_url.isolatedCopy(), [this](CURLcode errorCode) {
+    CurlSocketHandle socket { url, [this](CURLcode errorCode) {
         handleError(errorCode);
     }};
 
