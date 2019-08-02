@@ -29,6 +29,7 @@
 #include "DataReference.h"
 #include "NetworkSocketChannel.h"
 #include <WebCore/HTTPParsers.h>
+#include <WebCore/WebSocketChannel.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -192,6 +193,11 @@ void WebSocketTask::close(int32_t code, const String& reason)
         didClose(code ? code : SOUP_WEBSOCKET_CLOSE_ABNORMAL, reason);
         return;
     }
+
+#if SOUP_CHECK_VERSION(2, 67, 90)
+    if (code == WebCore::WebSocketChannel::CloseEventCodeNotSpecified)
+        code = SOUP_WEBSOCKET_CLOSE_NO_STATUS;
+#endif
 
     if (soup_websocket_connection_get_state(m_connection.get()) == SOUP_WEBSOCKET_STATE_OPEN)
         soup_websocket_connection_close(m_connection.get(), code, reason.utf8().data());
