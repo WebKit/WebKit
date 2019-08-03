@@ -381,7 +381,7 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Layout
         return false;
 
     // FIXME: Block replaced boxes clearly don't collapse through their margins, but I couldn't find it in the spec yet (and no, it's not a quirk).
-    if (layoutBox.isReplaced())
+    if (layoutBox.replaced())
         return false;
 
     if (!is<Container>(layoutBox))

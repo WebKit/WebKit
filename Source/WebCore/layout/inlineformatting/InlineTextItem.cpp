@@ -29,7 +29,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BreakLines.h"
-#include "LayoutInlineBox.h"
 
 namespace WebCore {
 namespace Layout {
@@ -86,7 +85,7 @@ static unsigned moveToNextBreakablePosition(unsigned startPosition, LazyLineBrea
     return textLength - startPosition;
 }
 
-void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const InlineBox& inlineBox)
+void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const Box& inlineBox)
 {
     auto text = inlineBox.textContent();
     if (!text.length())
@@ -118,7 +117,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
     }
 }
 
-InlineTextItem::InlineTextItem(const InlineBox& inlineBox, unsigned start, unsigned length, bool isWhitespace, bool isCollapsed)
+InlineTextItem::InlineTextItem(const Box& inlineBox, unsigned start, unsigned length, bool isWhitespace, bool isCollapsed)
     : InlineItem(inlineBox, Type::Text)
     , m_start(start)
     , m_length(length)
@@ -131,7 +130,7 @@ std::unique_ptr<InlineTextItem> InlineTextItem::split(unsigned splitPosition, un
 {
     RELEASE_ASSERT(splitPosition >= this->start());
     RELEASE_ASSERT(splitPosition + length <= end());
-    return std::make_unique<InlineTextItem>(inlineBox(), splitPosition, length, isWhitespace(), isCollapsed());
+    return std::make_unique<InlineTextItem>(layoutBox(), splitPosition, length, isWhitespace(), isCollapsed());
 }
 
 }

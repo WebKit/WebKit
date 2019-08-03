@@ -33,7 +33,6 @@
 #include "InlineTextItem.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
-#include "LayoutInlineBox.h"
 #include "LayoutState.h"
 #include "Logging.h"
 #include "Textutil.h"
@@ -68,8 +67,11 @@ void InlineFormattingContext::layout() const
     if (!is<Container>(root()))
         return;
 
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> formatting root(" << &root() << ")");
     auto& root = downcast<Container>(this->root());
+    if (!root.hasInFlowOrFloatingChild())
+        return;
+
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> formatting root(" << &root << ")");
     auto availableWidth = layoutState().displayBoxForLayoutBox(root).contentBoxWidth();
     auto usedValues = UsedHorizontalValues { availableWidth };
     auto* layoutBox = root.firstInFlowOrFloatingChild();
@@ -81,10 +83,10 @@ void InlineFormattingContext::layout() const
             computeMarginBorderAndPaddingForInlineContainer(downcast<Container>(*layoutBox), usedValues);
         else if (layoutBox->isReplaced())
             computeWidthAndHeightForReplacedInlineBox(*layoutBox, usedValues);
-        else if (is<InlineBox>(*layoutBox))
-            initializeMarginBorderAndPaddingForGenericInlineBox(downcast<InlineBox>(*layoutBox));
-        else
-            ASSERT_NOT_REACHED();
+        else {
+            ASSERT(layoutBox->isInlineLevelBox());
+            initializeMarginBorderAndPaddingForGenericInlineBox(*layoutBox);
+        }
         layoutBox = nextInPreOrder(*layoutBox, root);
     }
 
@@ -99,11 +101,15 @@ void InlineFormattingContext::layout() const
 
 void InlineFormattingContext::computeIntrinsicWidthConstraints() const
 {
-    ASSERT(is<Container>(root()));
-
     auto& layoutState = this->layoutState();
+    ASSERT(!layoutState.formattingStateForBox(root()).intrinsicWidthConstraints(root()));
+
+    ASSERT(is<Container>(root()));
     auto& root = downcast<Container>(this->root());
-    ASSERT(!layoutState.formattingStateForBox(root).intrinsicWidthConstraints(root));
+    if (!root.hasInFlowOrFloatingChild()) {
+        layoutState.formattingStateForBox(root).setIntrinsicWidthConstraints(root, Geometry::constrainByMinMaxWidth(root, { 0, 0 }));
+        return;
+    }
 
     Vector<const Box*> formattingContextRootList;
     auto usedValues = UsedHorizontalValues { };
@@ -146,11 +152,10 @@ void InlineFormattingContext::computeIntrinsicWidthConstraints() const
     layoutState.formattingStateForBox(root).setIntrinsicWidthConstraints(root, intrinsicWidthConstraints);
 }
 
-void InlineFormattingContext::initializeMarginBorderAndPaddingForGenericInlineBox(const InlineBox& layoutBox) const
+void InlineFormattingContext::initializeMarginBorderAndPaddingForGenericInlineBox(const Box& layoutBox) const
 {
-    ASSERT(layoutBox.isAnonymous() || is<LineBreakBox>(layoutBox));
-    auto& layoutState = this->layoutState();
-    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+    ASSERT(layoutBox.isAnonymous() || layoutBox.isLineBreakBox());
+    auto& displayBox = layoutState().displayBoxForLayoutBox(layoutBox);
 
     displayBox.setVerticalMargin({ { }, { } });
     displayBox.setHorizontalMargin({ });
@@ -264,11 +269,7 @@ void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Bo
 
 void InlineFormattingContext::collectInlineContent() const
 {
-    if (!is<Container>(root()))
-        return;
     auto& root = downcast<Container>(this->root());
-    if (!root.hasInFlowOrFloatingChild())
-        return;
     // Traverse the tree and create inline items out of containers and leaf nodes. This essentially turns the tree inline structure into a flat one.
     // <span>text<span></span><img></span> -> [ContainerStart][InlineBox][ContainerStart][ContainerEnd][InlineBox][ContainerEnd]
     auto& formattingState = this->formattingState();
@@ -295,14 +296,14 @@ void InlineFormattingContext::collectInlineContent() const
             // This is the end of an inline container (e.g. </span>).
             if (treatAsInlineContainer(layoutBox))
                 formattingState.addInlineItem(std::make_unique<InlineItem>(layoutBox, InlineItem::Type::ContainerEnd));
-            else if (is<LineBreakBox>(layoutBox))
+            else if (layoutBox.isLineBreakBox())
                 formattingState.addInlineItem(std::make_unique<InlineItem>(layoutBox, InlineItem::Type::HardLineBreak));
             else if (layoutBox.isFloatingPositioned())
                 formattingState.addInlineItem(std::make_unique<InlineItem>(layoutBox, InlineItem::Type::Float));
             else {
-                ASSERT(is<InlineBox>(layoutBox) || layoutBox.isInlineBlockBox());
-                if (is<InlineBox>(layoutBox) && downcast<InlineBox>(layoutBox).hasTextContent())
-                    InlineTextItem::createAndAppendTextItems(formattingState.inlineItems(), downcast<InlineBox>(layoutBox));
+                ASSERT(layoutBox.isInlineLevelBox());
+                if (layoutBox.hasTextContent())
+                    InlineTextItem::createAndAppendTextItems(formattingState.inlineItems(), layoutBox);
                 else
                     formattingState.addInlineItem(std::make_unique<InlineItem>(layoutBox, InlineItem::Type::Box));
             }

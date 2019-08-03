@@ -55,6 +55,7 @@ public:
         TableFooterGroup,
         Image,
         IFrame,
+        HardLineBreak,
         GenericElement
     };
 
@@ -64,13 +65,12 @@ public:
 
     enum BaseTypeFlag {
         BoxFlag               = 1 << 0,
-        ContainerFlag         = 1 << 1,
-        InlineBoxFlag         = 1 << 3,
-        LineBreakBoxFlag      = 1 << 5
+        ContainerFlag         = 1 << 1
     };
     typedef unsigned BaseTypeFlags;
 
     Box(Optional<ElementAttributes>, RenderStyle&&);
+    Box(String textContent, RenderStyle&&);
     virtual ~Box();
 
     bool establishesFormattingContext() const;
@@ -121,6 +121,7 @@ public:
     bool isReplaced() const { return isImage() || isIFrame(); }
     bool isIFrame() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::IFrame; }
     bool isImage() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Image; }
+    bool isLineBreakBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::HardLineBreak; }
 
     const Container* parent() const { return m_parent; }
     const Box* nextSibling() const { return m_nextSibling; }
@@ -134,17 +135,16 @@ public:
     bool isBlockContainer() const { return isBlockLevelBox() && isContainer(); }
     bool isInlineContainer() const { return isInlineLevelBox() && isContainer(); }
 
-    bool isInlineBox() const { return m_baseTypeFlags & InlineBoxFlag; }
-    bool isLineBreakBox() const { return m_baseTypeFlags & LineBreakBoxFlag; }
-
     bool isPaddingApplicable() const;
     bool isOverflowVisible() const;
 
     const RenderStyle& style() const { return m_style; }
 
-    const Replaced* replaced() const { return m_replaced.get(); }
+    const Replaced* replaced() const;
     // FIXME: Temporary until after intrinsic size change is tracked by Replaced.
-    Replaced* replaced() { return m_replaced.get(); }
+    Replaced* replaced();
+    bool hasTextContent() const;
+    String textContent() const;
 
     void setParent(Container& parent) { m_parent = &parent; }
     void setNextSibling(Box& nextSibling) { m_nextSibling = &nextSibling; }
@@ -154,6 +154,27 @@ protected:
     Box(Optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags);
 
 private:
+    void setTextContent(String);
+
+    class BoxRareData {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        BoxRareData() = default;
+
+        String textContent;
+        std::unique_ptr<Replaced> replaced;
+    };
+
+    bool hasRareData() const { return m_hasRareData; }
+    void setHasRareData(bool hasRareData) { m_hasRareData = hasRareData; }
+    const BoxRareData& rareData() const;
+    BoxRareData& ensureRareData();
+    void removeRareData();
+
+    typedef HashMap<const Box*, std::unique_ptr<BoxRareData>> RareDataMap;
+
+    static RareDataMap& rareDataMap();
+
     RenderStyle m_style;
     Optional<ElementAttributes> m_elementAttributes;
 
@@ -161,9 +182,8 @@ private:
     Box* m_previousSibling { nullptr };
     Box* m_nextSibling { nullptr };
 
-    std::unique_ptr<Replaced> m_replaced;
-
     unsigned m_baseTypeFlags : 6;
+    bool m_hasRareData : 1;
 };
 
 }

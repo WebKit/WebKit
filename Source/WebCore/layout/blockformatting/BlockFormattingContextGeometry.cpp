@@ -303,10 +303,9 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::i
         if (!style.logicalWidth().isAuto())
             return { };
 
-        if (layoutBox.isReplaced()) {
-            auto& replaced = *layoutBox.replaced();
-            if (replaced.hasIntrinsicWidth()) {
-                auto replacedWidth = replaced.intrinsicWidth();
+        if (auto* replaced = layoutBox.replaced()) {
+            if (replaced->hasIntrinsicWidth()) {
+                auto replacedWidth = replaced->intrinsicWidth();
                 return { replacedWidth, replacedWidth };
             }
             return { };

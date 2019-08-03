@@ -83,7 +83,7 @@ private:
     void layoutFormattingContextRoot(const Box&, UsedHorizontalValues) const;
     void computeIntrinsicWidthForFloatBox(const Box&) const;
     void computeMarginBorderAndPaddingForInlineContainer(const Container&, UsedHorizontalValues) const;
-    void initializeMarginBorderAndPaddingForGenericInlineBox(const InlineBox&) const;
+    void initializeMarginBorderAndPaddingForGenericInlineBox(const Box&) const;
     void computeIntrinsicWidthForInlineBlock(const Box&) const;
     void computeWidthAndHeightForReplacedInlineBox(const Box&, UsedHorizontalValues) const;
     void computeHorizontalMargin(const Box&, UsedHorizontalValues) const;

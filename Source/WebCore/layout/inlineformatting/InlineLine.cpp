@@ -204,7 +204,7 @@ void Line::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
         return appendInlineContainerStart(inlineItem, logicalWidth);
     if (inlineItem.isContainerEnd())
         return appendInlineContainerEnd(inlineItem, logicalWidth);
-    if (inlineItem.layoutBox().isReplaced())
+    if (inlineItem.layoutBox().replaced())
         return appendReplacedInlineBox(inlineItem, logicalWidth);
     appendNonReplacedInlineBox(inlineItem, logicalWidth);
 }
@@ -415,7 +415,7 @@ LayoutUnit Line::inlineItemContentHeight(const InlineItem& inlineItem) const
     if (layoutBox.isFloatingPositioned())
         return displayBox.borderBoxHeight();
 
-    if (layoutBox.isReplaced())
+    if (layoutBox.replaced())
         return displayBox.borderBoxHeight();
 
     if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())

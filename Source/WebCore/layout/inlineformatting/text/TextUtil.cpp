@@ -39,7 +39,7 @@ Optional<unsigned> TextUtil::hyphenPositionBefore(const InlineItem&, unsigned, u
     return WTF::nullopt;
 }
 
-LayoutUnit TextUtil::width(const InlineBox& inlineBox, unsigned from, unsigned to, LayoutUnit contentLogicalLeft)
+LayoutUnit TextUtil::width(const Box& inlineBox, unsigned from, unsigned to, LayoutUnit contentLogicalLeft)
 {
     auto& style = inlineBox.style();
     auto& font = style.fontCascade();
@@ -97,7 +97,7 @@ bool TextUtil::isTrimmableContent(const InlineItem& inlineItem)
     return inlineTextItem.isWhitespace() && inlineTextItem.style().collapseWhiteSpace();
 }
 
-TextUtil::SplitData TextUtil::split(const InlineBox& inlineBox, unsigned startPosition, unsigned length, LayoutUnit textWidth, LayoutUnit availableWidth, LayoutUnit contentLogicalLeft)
+TextUtil::SplitData TextUtil::split(const Box& inlineBox, unsigned startPosition, unsigned length, LayoutUnit textWidth, LayoutUnit availableWidth, LayoutUnit contentLogicalLeft)
 {
     // FIXME This should take hypens into account.
     ASSERT(availableWidth >= 0);

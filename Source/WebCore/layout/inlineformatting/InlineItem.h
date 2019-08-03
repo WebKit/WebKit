@@ -28,8 +28,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutBox.h"
-#include "LayoutInlineBox.h"
-#include "LayoutLineBreakBox.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

@@ -49,7 +49,7 @@ static LayoutUnit inlineItemWidth(const LayoutState& layoutState, const InlineIt
     if (is<InlineTextItem>(inlineItem)) {
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
         auto end = inlineTextItem.isCollapsed() ? inlineTextItem.start() + 1 : inlineTextItem.end();
-        return TextUtil::width(inlineTextItem.inlineBox(), inlineTextItem.start(), end, contentLogicalLeft);
+        return TextUtil::width(inlineTextItem.layoutBox(), inlineTextItem.start(), end, contentLogicalLeft);
     }
 
     auto& layoutBox = inlineItem.layoutBox();
@@ -59,7 +59,7 @@ static LayoutUnit inlineItemWidth(const LayoutState& layoutState, const InlineIt
     if (layoutBox.isFloatingPositioned())
         return displayBox.marginBoxWidth();
 
-    if (layoutBox.isReplaced())
+    if (layoutBox.replaced())
         return displayBox.width();
 
     if (inlineItem.isContainerStart())
@@ -206,7 +206,7 @@ LineLayout::IsEndOfLine LineLayout::placeInlineItem(const InlineItem& inlineItem
     if (breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Split) {
         ASSERT(inlineItem.isText());
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-        auto splitData = TextUtil::split(inlineTextItem.inlineBox(), inlineTextItem.start(), inlineTextItem.length(), itemLogicalWidth, availableWidth, currentLogicalRight);
+        auto splitData = TextUtil::split(inlineTextItem.layoutBox(), inlineTextItem.start(), inlineTextItem.length(), itemLogicalWidth, availableWidth, currentLogicalRight);
         // Construct a partial trailing inline item.
         ASSERT(!m_trailingPartialInlineTextItem);
         m_trailingPartialInlineTextItem = inlineTextItem.split(splitData.start, splitData.length);

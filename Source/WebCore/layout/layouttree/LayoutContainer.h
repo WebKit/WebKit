@@ -37,7 +37,7 @@ class RenderStyle;
 
 namespace Layout {
 
-class Container : public Box {
+class Container final : public Box {
     WTF_MAKE_ISO_ALLOCATED(Container);
 public:
     Container(Optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags = ContainerFlag);

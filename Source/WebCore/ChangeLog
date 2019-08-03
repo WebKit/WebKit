@@ -1,5 +1,72 @@
 2019-08-03  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Remove formatting context type leaf classes
+        https://bugs.webkit.org/show_bug.cgi?id=200224
+        <rdar://problem/53661907>
+
+        Reviewed by Antti Koivisto.
+
+        Let's keep the layout tree formatting context type independent.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout const):
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthConstraints const):
+        (WebCore::Layout::InlineFormattingContext::initializeMarginBorderAndPaddingForGenericInlineBox const):
+        (WebCore::Layout::InlineFormattingContext::collectInlineContent const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::inlineItemWidth):
+        (WebCore::Layout::LineLayout::placeInlineItem):
+        * layout/inlineformatting/InlineItem.h:
+        * layout/inlineformatting/InlineTextItem.cpp:
+        (WebCore::Layout::InlineTextItem::createAndAppendTextItems):
+        (WebCore::Layout::InlineTextItem::InlineTextItem):
+        (WebCore::Layout::InlineTextItem::split const):
+        * layout/inlineformatting/InlineTextItem.h:
+        (WebCore::Layout::InlineTextItem::inlineBox const): Deleted.
+        * layout/inlineformatting/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::width):
+        (WebCore::Layout::TextUtil::split):
+        * layout/inlineformatting/text/TextUtil.h:
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::Box):
+        (WebCore::Layout::Box::~Box):
+        (WebCore::Layout::Box::formattingContextRoot const):
+        (WebCore::Layout::Box::setTextContent):
+        (WebCore::Layout::Box::hasTextContent const):
+        (WebCore::Layout::Box::textContent const):
+        (WebCore::Layout::Box::replaced const):
+        (WebCore::Layout::Box::replaced):
+        (WebCore::Layout::Box::rareDataMap):
+        (WebCore::Layout::Box::rareData const):
+        (WebCore::Layout::Box::ensureRareData):
+        (WebCore::Layout::Box::removeRareData):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::isLineBreakBox const):
+        (WebCore::Layout::Box::hasRareData const):
+        (WebCore::Layout::Box::setHasRareData):
+        (WebCore::Layout::Box::isInlineBox const): Deleted.
+        (WebCore::Layout::Box::replaced const): Deleted.
+        (WebCore::Layout::Box::replaced): Deleted.
+        * layout/layouttree/LayoutContainer.h:
+        (WebCore::Layout::Container::firstChild const): Deleted.
+        (WebCore::Layout::Container::lastChild const): Deleted.
+        (WebCore::Layout::Container::hasChild const): Deleted.
+        (WebCore::Layout::Container::hasInFlowChild const): Deleted.
+        (WebCore::Layout::Container::hasInFlowOrFloatingChild const): Deleted.
+        (WebCore::Layout::Container::outOfFlowDescendants const): Deleted.
+        * layout/layouttree/LayoutInlineBox.cpp: Removed.
+        * layout/layouttree/LayoutInlineBox.h: Removed.
+        * layout/layouttree/LayoutLineBreakBox.cpp: Removed.
+        * layout/layouttree/LayoutLineBreakBox.h: Removed.
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+        (WebCore::Layout::outputLayoutBox):
+
+2019-08-03  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Remove formatting context type container classes.
         https://bugs.webkit.org/show_bug.cgi?id=200202
 

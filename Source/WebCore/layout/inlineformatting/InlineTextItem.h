@@ -27,7 +27,6 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "InlineBox.h"
 #include "InlineFormattingState.h"
 #include "InlineItem.h"
 
@@ -36,9 +35,9 @@ namespace Layout {
 
 class InlineTextItem : public InlineItem {
 public:
-    static void createAndAppendTextItems(InlineItems&, const InlineBox&);
+    static void createAndAppendTextItems(InlineItems&, const Box&);
 
-    InlineTextItem(const InlineBox&, unsigned start, unsigned length, bool isWhitespace, bool isCollapsed);
+    InlineTextItem(const Box&, unsigned start, unsigned length, bool isWhitespace, bool isCollapsed);
 
     unsigned start() const { return m_start; }
     unsigned end() const { return start() + length(); }
@@ -46,8 +45,6 @@ public:
 
     bool isWhitespace() const { return m_isWhitespace; }
     bool isCollapsed() const { return m_isCollapsed; }
-
-    const InlineBox& inlineBox() const { return downcast<InlineBox>(layoutBox()); }
 
     std::unique_ptr<InlineTextItem> split(unsigned splitPosition, unsigned length) const;
 

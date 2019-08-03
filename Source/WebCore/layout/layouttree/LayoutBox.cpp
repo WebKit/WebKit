@@ -41,9 +41,10 @@ Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style, BaseTypeFl
     : m_style(WTFMove(style))
     , m_elementAttributes(attributes)
     , m_baseTypeFlags(baseTypeFlags)
+    , m_hasRareData(false)
 {
     if (isReplaced())
-        m_replaced = std::make_unique<Replaced>(*this);
+        ensureRareData().replaced = std::make_unique<Replaced>(*this);
 }
 
 Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style)
@@ -51,8 +52,15 @@ Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style)
 {
 }
 
+Box::Box(String textContent, RenderStyle&& style)
+    : Box({ }, WTFMove(style), BaseTypeFlag::BoxFlag)
+{
+    setTextContent(textContent);
+}
+
 Box::~Box()
 {
+    removeRareData();
 }
 
 bool Box::establishesFormattingContext() const
@@ -212,7 +220,7 @@ const Container& Box::formattingContextRoot() const
     // While the relatively positioned inline container (span) is placed relative to its containing block "outer", it lives in the inline
     // formatting context established by "inner".
     const Container* ancestor = nullptr;
-    if (isInlineBox() && isInFlowPositioned())
+    if (isInlineLevelBox() && isInFlowPositioned())
         ancestor = parent();
     else
         ancestor = containingBlock();
@@ -357,6 +365,64 @@ bool Box::isPaddingApplicable() const
         && elementType != ElementType::TableRow
         && elementType != ElementType::TableColumnGroup
         && elementType != ElementType::TableColumn;
+}
+
+void Box::setTextContent(String textContent)
+{
+    ASSERT(isInlineLevelBox());
+    ensureRareData().textContent = textContent;
+}
+
+bool Box::hasTextContent() const
+{
+    ASSERT(isInlineLevelBox());
+    return hasRareData() && !rareData().textContent.isNull();
+}
+
+String Box::textContent() const
+{
+    ASSERT(hasRareData());
+    ASSERT(isInlineLevelBox());
+    return rareData().textContent;
+}
+
+const Replaced* Box::replaced() const
+{
+    return const_cast<Box*>(this)->replaced();
+}
+
+Replaced* Box::replaced()
+{
+    if (!isReplaced()) {
+        ASSERT(!hasRareData() || !rareData().replaced.get());
+        return nullptr;
+    }
+    ASSERT(hasRareData() && rareData().replaced.get());
+    return rareData().replaced.get();
+}
+
+Box::RareDataMap& Box::rareDataMap()
+{
+    static NeverDestroyed<RareDataMap> map;
+    return map;
+}
+
+const Box::BoxRareData& Box::rareData() const
+{
+    ASSERT(hasRareData());
+    return *rareDataMap().get(this);
+}
+
+Box::BoxRareData& Box::ensureRareData()
+{
+    setHasRareData(true);
+    return *rareDataMap().ensure(this, [] { return std::make_unique<BoxRareData>(); }).iterator->value;
+}
+
+void Box::removeRareData()
+{
+    rareDataMap().remove(this);
+    setHasRareData(false);
 }
 
 }

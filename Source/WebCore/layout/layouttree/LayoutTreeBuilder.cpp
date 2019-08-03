@@ -35,7 +35,6 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContainer.h"
 #include "LayoutDescendantIterator.h"
-#include "LayoutInlineBox.h"
 #include "LayoutState.h"
 #include "RenderBlock.h"
 #include "RenderChildIterator.h"
@@ -123,6 +122,9 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
                 return Box::ElementAttributes { Box::ElementType::Image };
             if (element->hasTagName(HTMLNames::iframeTag))
                 return Box::ElementAttributes { Box::ElementType::IFrame };
+            // FIXME wbr should not be considered as hard linebreak.
+            if (element->hasTagName(HTMLNames::brTag) || element->hasTagName(HTMLNames::wbrTag))
+                return Box::ElementAttributes { Box::ElementType::HardLineBreak };
             return Box::ElementAttributes { Box::ElementType::GenericElement };
         }
         return WTF::nullopt;
@@ -132,17 +134,16 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
     if (is<RenderText>(childRenderer)) {
         // FIXME: Clearly there must be a helper function for this.
         if (parentRenderer.style().display() == DisplayType::Inline)
-            childLayoutBox = std::make_unique<InlineBox>(Optional<Box::ElementAttributes>(), RenderStyle::clone(parentRenderer.style()));
+            childLayoutBox = std::make_unique<Box>(downcast<RenderText>(childRenderer).originalText(), RenderStyle::clone(parentRenderer.style()));
         else
-            childLayoutBox = std::make_unique<InlineBox>(Optional<Box::ElementAttributes>(), RenderStyle::createAnonymousStyleWithDisplay(parentRenderer.style(), DisplayType::Inline));
-        downcast<InlineBox>(*childLayoutBox).setTextContent(downcast<RenderText>(childRenderer).originalText());
+            childLayoutBox = std::make_unique<Box>(downcast<RenderText>(childRenderer).originalText(), RenderStyle::createAnonymousStyleWithDisplay(parentRenderer.style(), DisplayType::Inline));
         return childLayoutBox;
     }
 
     auto& renderer = downcast<RenderElement>(childRenderer);
     auto displayType = renderer.style().display();
     if (is<RenderLineBreak>(renderer))
-        return std::make_unique<LineBreakBox>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+        return std::make_unique<Box>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
 
     if (is<RenderTable>(renderer)) {
         // Construct the principal table wrapper box (and not the table box itself).
@@ -151,7 +152,7 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
         if (displayType == DisplayType::Block)
             childLayoutBox = std::make_unique<Box>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
         else
-            childLayoutBox = std::make_unique<InlineBox>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+            childLayoutBox = std::make_unique<Box>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
         // FIXME: We don't yet support all replaced elements and this is temporary anyway.
         if (childLayoutBox->replaced())
             childLayoutBox->replaced()->setIntrinsicSize(downcast<RenderReplaced>(renderer).intrinsicSize());
@@ -290,7 +291,7 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
             stream << "IMG replaced inline box";
         else if (layoutBox.isAnonymous())
             stream << "anonymous inline box";
-        else if (is<LineBreakBox>(layoutBox))
+        else if (layoutBox.isLineBreakBox())
             stream << "BR line break";
         else
             stream << "inline box";
@@ -303,8 +304,8 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
     if (displayBox)
         stream << " at (" << displayBox->left() << "," << displayBox->top() << ") size " << displayBox->width() << "x" << displayBox->height();
     stream << " layout box->(" << &layoutBox << ")";
-    if (is<InlineBox>(layoutBox) && downcast<InlineBox>(layoutBox).hasTextContent())
-        stream << " text content [\"" << downcast<InlineBox>(layoutBox).textContent().utf8().data() << "\"]";
+    if (layoutBox.isInlineLevelBox() && layoutBox.isAnonymous())
+        stream << " text content [\"" << layoutBox.textContent().utf8().data() << "\"]";
 
     stream.nextLine();
 }

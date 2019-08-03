@@ -940,7 +940,6 @@ fast/text/user-installed-fonts/shadow-postscript-family-disable.html
 fast/text/user-installed-fonts/shadow-postscript-family.html
 fast/text/user-installed-fonts/shadow-postscript.html
 fast/text/user-installed-fonts/shadow.html
-fast/text/user-installed-fonts/system-ui.html
 fast/text/variations/advances.html
 fast/text/variations/calc.html
 fast/text/variations/case-axis-names.html
@@ -1530,8 +1529,6 @@ css2.1/tables/table-anonymous-objects-121.xht
 css2.1/tables/table-anonymous-objects-122.xht
 css3/autoclose-braces-and-parentheses.html
 css3/calculated-word-spacing.html
-css3/css3-modsel-36.html
-css3/css3-modsel-37.html
 css3/css-variable-definition.html
 css3/font-feature-settings-calc.html
 css3/font-feature-settings-font-face-rendering.html
