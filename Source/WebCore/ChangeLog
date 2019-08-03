@@ -1,3 +1,20 @@
+2019-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Ref Frame in DOMWindow::screen* functions
+        https://bugs.webkit.org/show_bug.cgi?id=200409
+
+        Reviewed by Simon Fraser.
+
+        Ref Frame in the following functions.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::innerHeight const):
+        (WebCore::DOMWindow::innerWidth const):
+        (WebCore::DOMWindow::screenX const):
+        (WebCore::DOMWindow::screenY const):
+        (WebCore::DOMWindow::scrollX const):
+        (WebCore::DOMWindow::scrollY const):
+
 2019-08-02  Mark Lam  <mark.lam@apple.com>
 
         [ARM64E] Harden the diversity of the DOMJIT::Signature::unsafeFunction pointer.
