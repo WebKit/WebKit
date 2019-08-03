@@ -30,7 +30,6 @@
 #include "NotImplemented.h"
 #include "WindowsKeyboardCodes.h"
 #include <WebCore/BackForwardController.h>
-#include <WebCore/KeyboardUtilities.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 
