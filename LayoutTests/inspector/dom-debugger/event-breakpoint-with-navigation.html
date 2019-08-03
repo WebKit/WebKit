@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/event-breakpoint-utilities.js"></script>
 <script>
 function handleLoad(event) {
     TestPage.dispatchEventToFrontend("TestPageLoad");
@@ -22,7 +23,7 @@ function test() {
                 paused = true;
 
                 let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
-                InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.EventListener, "Pause reason should be EventListener.");
+                InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.Listener, "Pause reason should be Listener.");
                 InspectorTest.expectEqual(targetData.pauseData.eventName, "load", "Pause data eventName should be \"load\".");
 
                 WI.debuggerManager.resume()
@@ -44,7 +45,7 @@ function test() {
 
             InspectorTest.log("Adding \"load\" Event Breakpoint...");
 
-            let breakpoint = new WI.EventBreakpoint(WI.EventBreakpoint.Type.Listener, "load");
+            let breakpoint = new WI.EventBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "load"});
 
             WI.domDebuggerManager.awaitEvent(WI.DOMDebuggerManager.Event.EventBreakpointAdded)
             .then((event) => {
@@ -58,13 +59,7 @@ function test() {
 
             WI.domDebuggerManager.addEventBreakpoint(breakpoint);
         },
-        teardown(resolve, reject) {
-            let breakpoints = WI.domDebuggerManager.eventBreakpoints;
-            for (let breakpoint of breakpoints)
-                WI.domDebuggerManager.removeEventBreakpoint(breakpoint);
-
-            resolve();
-        },
+        teardown: InspectorTest.EventBreakpoint.teardown,
     });
 
     suite.runTestCasesAndFinish();

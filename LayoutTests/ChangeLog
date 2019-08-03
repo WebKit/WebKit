@@ -1,5 +1,37 @@
 2019-08-03  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: DOM: add a special breakpoint for "All Events"
+        https://bugs.webkit.org/show_bug.cgi?id=200285
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/dom/breakpoint-for-event-listener.html:
+        * inspector/dom/breakpoint-for-event-listener-expected.txt:
+
+        * inspector/dom-debugger/event-animation-frame-breakpoints.html:
+        * inspector/dom-debugger/event-animation-frame-breakpoints-expected.txt:
+        * inspector/dom-debugger/event-breakpoint-with-navigation.html:
+        * inspector/dom-debugger/event-breakpoint-with-navigation-expected.txt:
+        * inspector/dom-debugger/event-interval-breakpoints.html: Added.
+        * inspector/dom-debugger/event-interval-breakpoints-expected.txt: Added.
+        * inspector/dom-debugger/event-listener-breakpoints.html:
+        * inspector/dom-debugger/event-listener-breakpoints-expected.txt:
+        * inspector/dom-debugger/event-timeout-breakpoints.html: Added.
+        * inspector/dom-debugger/event-timeout-breakpoints-expected.txt: Added.
+
+        * inspector/dom-debugger/resources/event-breakpoint-utilities.js:
+        (TestPage.registerInitializer.InspectorTest.EventBreakpoint.teardown):
+        (TestPage.registerInitializer.InspectorTest.EventBreakpoint.failOnPause):
+        (TestPage.registerInitializer.InspectorTest.EventBreakpoint.createBreakpoint): Added.
+        (TestPage.registerInitializer.InspectorTest.EventBreakpoint.addBreakpoint):
+        (TestPage.registerInitializer.InspectorTest.EventBreakpoint.removeBreakpoint):
+        (TestPage.registerInitializer.InspectorTest.EventBreakpoint.disableBreakpoint):
+
+        * inspector/dom-debugger/event-timer-breakpoints.html: Removed.
+        * inspector/dom-debugger/event-timer-breakpoints-expected.txt: Removed.
+
+2019-08-03  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: CSS Formatter: comments with an escape character aren't formatted
         https://bugs.webkit.org/show_bug.cgi?id=200168
 

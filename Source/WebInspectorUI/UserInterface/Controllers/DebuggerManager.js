@@ -863,8 +863,14 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return WI.DebuggerManager.PauseReason.Exception;
         case DebuggerAgent.PausedReason.Fetch:
             return WI.DebuggerManager.PauseReason.Fetch;
+        case DebuggerAgent.PausedReason.Interval:
+            return WI.DebuggerManager.PauseReason.Interval;
+        case DebuggerAgent.PausedReason.Listener:
+            return WI.DebuggerManager.PauseReason.Listener;
         case DebuggerAgent.PausedReason.PauseOnNextStatement:
             return WI.DebuggerManager.PauseReason.PauseOnNextStatement;
+        case DebuggerAgent.PausedReason.Timeout:
+            return WI.DebuggerManager.PauseReason.Timeout;
         case DebuggerAgent.PausedReason.Timer:
             return WI.DebuggerManager.PauseReason.Timer;
         case DebuggerAgent.PausedReason.XHR:
@@ -1383,11 +1389,18 @@ WI.DebuggerManager.PauseReason = {
     CSPViolation: "CSP-violation",
     DebuggerStatement: "debugger-statement",
     DOM: "DOM",
-    EventListener: "event-listener",
     Exception: "exception",
     Fetch: "fetch",
+    Interval: "interval",
+    Listener: "listener",
     PauseOnNextStatement: "pause-on-next-statement",
-    Timer: "timer",
+    Timeout: "timeout",
     XHR: "xhr",
     Other: "other",
+
+    // COMPATIBILITY (iOS 13): DOMDebugger.EventBreakpointType.Timer was replaced by DOMDebugger.EventBreakpointType.Interval and DOMDebugger.EventBreakpointType.Timeout.
+    Timer: "timer",
+
+    // COMPATIBILITY (iOS 13): DOMDebugger.EventBreakpointType.EventListener was replaced by DOMDebugger.EventBreakpointType.Listener.
+    EventListener: "event-listener",
 };

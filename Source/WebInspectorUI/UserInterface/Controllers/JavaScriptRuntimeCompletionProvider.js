@@ -221,7 +221,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                 let commandLineAPI = WI.JavaScriptRuntimeCompletionProvider._commandLineAPI.slice(0);
                 if (WI.debuggerManager.paused) {
                     let targetData = WI.debuggerManager.dataForTarget(WI.runtimeManager.activeExecutionContext.target);
-                    if (targetData.pauseReason === WI.DebuggerManager.PauseReason.EventListener)
+                    if (targetData.pauseReason === WI.DebuggerManager.PauseReason.Listener || targetData.pauseReason === WI.DebuggerManager.PauseReason.EventListener)
                         commandLineAPI.push("$event");
                     else if (targetData.pauseReason === WI.DebuggerManager.PauseReason.Exception)
                         commandLineAPI.push("$exception");

@@ -1,5 +1,109 @@
 2019-08-03  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: DOM: add a special breakpoint for "All Events"
+        https://bugs.webkit.org/show_bug.cgi?id=200285
+
+        Reviewed by Joseph Pecoraro.
+
+        Similar to the existing "All Requests" breakpoint, there should be a way to set a breakpoint
+        that would pause for any DOM event, regardless of the event's name. This is useful for
+        situations where the event name isn't known, or where one simply want's to pause on the next
+        entry to the event loop.
+
+        Along these lines, make the "requestAnimationFrame", "setTimeout", and "setInterval"
+        event breakpoints into special breakpoints that can be added/removed via the create
+        breakpoint context menu. This simplifies the process for setting these breakpoints, and also
+        makes them more discoverable (most people wouldn't consider them to be "events").
+
+        * UserInterface/Models/EventBreakpoint.js:
+        (WI.EventBreakpoint):
+        (WI.EventBreakpoint.deserialize):
+        (WI.EventBreakpoint.prototype.saveIdentityToCookie):
+        (WI.EventBreakpoint.prototype.toJSON):
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype._pauseReasonFromPayload):
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager):
+        (WI.DOMDebuggerManager.prototype.initializeTarget):
+        (WI.DOMDebuggerManager.supportsDOMBreakpoints): Added.
+        (WI.DOMDebuggerManager.supportsEventBreakpoints):
+        (WI.DOMDebuggerManager.supportsEventListenerBreakpoints): Added.
+        (WI.DOMDebuggerManager.supportsURLBreakpoints):
+        (WI.DOMDebuggerManager.supportsXHRBreakpoints): Added.
+        (WI.DOMDebuggerManager.supportsAllListenersBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype.get allAnimationFramesBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype.get allIntervalsBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype.get allListenersBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype.get allTimeoutsBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype.get listenerBreakpoints): Added.
+        (WI.DOMDebuggerManager.prototype.isBreakpointSpecial):
+        (WI.DOMDebuggerManager.prototype.listenerBreakpointForEventName): Added.
+        (WI.DOMDebuggerManager.prototype.addEventBreakpoint):
+        (WI.DOMDebuggerManager.prototype.removeEventBreakpoint):
+        (WI.DOMDebuggerManager.prototype.addURLBreakpoint):
+        (WI.DOMDebuggerManager.prototype._resolveDOMBreakpoint):
+        (WI.DOMDebuggerManager.prototype._updateDOMBreakpoint):
+        (WI.DOMDebuggerManager.prototype._updateEventBreakpoint):
+        (WI.DOMDebuggerManager.prototype._updateURLBreakpoint):
+        (WI.DOMDebuggerManager.prototype._handleDOMBreakpointDisabledStateChanged):
+        (WI.DOMDebuggerManager.prototype._handleEventBreakpointDisabledStateChanged):
+        (WI.DOMDebuggerManager.prototype._handleURLBreakpointDisabledStateChanged):
+        (WI.DOMDebuggerManager.prototype.get eventBreakpoints): Deleted.
+        (WI.DOMDebuggerManager.prototype.eventBreakpointForTypeAndEventName): Deleted.
+        Add additional target compatibility checks.
+
+        * UserInterface/Views/EventBreakpointPopover.js:
+        (WI.EventBreakpointPopover.prototype.show):
+        (WI.EventBreakpointPopover.prototype.dismiss):
+        (WI.EventBreakpointPopover.prototype._handleTypeSelectChange): Deleted.
+        * UserInterface/Views/EventBreakpointPopover.css:
+        (.popover .event-breakpoint-content > input): Added.
+        (.popover .event-breakpoint-content > input::placeholder): Added.
+        (.popover .event-breakpoint-content > .event-type): Deleted.
+        (.popover .event-breakpoint-content > .event-type > input): Deleted.
+        (.popover .event-breakpoint-content > .event-type > input::placeholder): Deleted.
+
+        * UserInterface/Views/EventBreakpointTreeElement.css:
+        (.breakpoint.event.breakpoint-for-interval:not(.breakpoint-paused-icon) .icon): Added.
+        (.breakpoint.event.breakpoint-for-timeout:not(.breakpoint-paused-icon) .icon): Added.
+        (.breakpoint.event.breakpoint-for-timer:not(.breakpoint-paused-icon) .icon): Deleted.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel):
+        (WI.DebuggerSidebarPanel.prototype.saveStateToCookie):
+        (WI.DebuggerSidebarPanel.prototype.restoreStateFromCookie):
+        (WI.DebuggerSidebarPanel.prototype._addBreakpoint):
+        (WI.DebuggerSidebarPanel.prototype._addTreeElement):
+        (WI.DebuggerSidebarPanel.prototype._updatePauseReasonSection):
+        (WI.DebuggerSidebarPanel.prototype._handleBreakpointElementAddedOrRemoved):
+        (WI.DebuggerSidebarPanel.prototype._populateCreateBreakpointContextMenu.addToggleForSpecialEventBreakpoint): Added.
+        (WI.DebuggerSidebarPanel.prototype._populateCreateBreakpointContextMenu):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype._insertDebuggerTreeElement):
+        (WI.SourcesNavigationSidebarPanel.prototype._addBreakpoint):
+        (WI.SourcesNavigationSidebarPanel.prototype._updatePauseReasonSection):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleBreakpointElementAddedOrRemoved):
+        (WI.SourcesNavigationSidebarPanel.prototype._populateCreateBreakpointContextMenu.addToggleForSpecialEventBreakpoint): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._populateCreateBreakpointContextMenu):
+        Add create breakpoint context menu items (also sort the breakpoints in this order):
+         - "All Animation Frames"  =>  [A] All Animation Frames
+         - "All Timeouts"          =>  [T] All Timeouts
+         - "All Intervals"         =>  [I] All Intervals
+         - "All Events"            =>  [E] All Events
+
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        (WI.JavaScriptRuntimeCompletionProvider.completionControllerCompletionsNeeded.receivedPropertyNames):
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Images/EventBreakpointInterval.svg: Added.
+        * UserInterface/Images/EventBreakpointTimeout.svg: Renamed from Source/WebInspectorUI/UserInterface/Images/EventBreakpointTimer.svg.
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-08-03  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Heap Snapshot Views should be searchable
         https://bugs.webkit.org/show_bug.cgi?id=157582
         <rdar://problem/26228629>

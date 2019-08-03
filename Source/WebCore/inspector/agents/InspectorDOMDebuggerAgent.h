@@ -62,8 +62,8 @@ public:
     // DOMDebugger API
     void setURLBreakpoint(ErrorString&, const String& url, const bool* optionalIsRegex) final;
     void removeURLBreakpoint(ErrorString&, const String& url) final;
-    void setEventBreakpoint(ErrorString&, const String& breakpointType, const String& eventName) final;
-    void removeEventBreakpoint(ErrorString&, const String& breakpointType, const String& eventName) final;
+    void setEventBreakpoint(ErrorString&, const String& breakpointType, const String* eventName) final;
+    void removeEventBreakpoint(ErrorString&, const String& breakpointType, const String* eventName) final;
     void setDOMBreakpoint(ErrorString&, int nodeId, const String& type) final;
     void removeDOMBreakpoint(ErrorString&, int nodeId, const String& type) final;
 
@@ -99,7 +99,6 @@ private:
     void descriptionForDOMEvent(Node& target, int breakpointType, bool insertion, JSON::Object& description);
     void updateSubtreeBreakpoints(Node*, uint32_t rootMask, bool set);
     bool hasBreakpoint(Node*, int type);
-    void discardBindings();
 
     RefPtr<Inspector::DOMDebuggerBackendDispatcher> m_backendDispatcher;
     Inspector::InjectedScriptManager& m_injectedScriptManager;
@@ -107,15 +106,15 @@ private:
     Inspector::InspectorDebuggerAgent* m_debuggerAgent { nullptr };
 
     HashMap<Node*, uint32_t> m_domBreakpoints;
-
-    using EventBreakpointType = Inspector::Protocol::DOMDebugger::EventBreakpointType;
-    HashSet<std::pair<EventBreakpointType, String>,
-        WTF::PairHash<EventBreakpointType, String>,
-        WTF::PairHashTraits<WTF::StrongEnumHashTraits<EventBreakpointType>, WTF::HashTraits<String>>
-    > m_eventBreakpoints;
+    HashSet<String> m_listenerBreakpoints;
 
     enum class URLBreakpointType { RegularExpression, Text };
     HashMap<String, URLBreakpointType> m_urlBreakpoints;
+
+    bool m_pauseOnAllAnimationFramesEnabled { false };
+    bool m_pauseOnAllIntervalsEnabled { false };
+    bool m_pauseOnAllListenersEnabled { false };
+    bool m_pauseOnAllTimeoutsEnabled { false };
     bool m_pauseOnAllURLsEnabled { false };
 };
 

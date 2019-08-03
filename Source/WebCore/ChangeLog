@@ -1,3 +1,42 @@
+2019-08-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: DOM: add a special breakpoint for "All Events"
+        https://bugs.webkit.org/show_bug.cgi?id=200285
+
+        Reviewed by Joseph Pecoraro.
+
+        Similar to the existing "All Requests" breakpoint, there should be a way to set a breakpoint
+        that would pause for any DOM event, regardless of the event's name. This is useful for
+        situations where the event name isn't known, or where one simply want's to pause on the next
+        entry to the event loop.
+
+        Along these lines, make the "requestAnimationFrame", "setTimeout", and "setInterval"
+        event breakpoints into special breakpoints that can be added/removed via the create
+        breakpoint context menu. This simplifies the process for setting these breakpoints, and also
+        makes them more discoverable (most people wouldn't consider them to be "events").
+
+        Tests: inspector/dom/breakpoint-for-event-listener.html
+               inspector/dom-debugger/event-animation-frame-breakpoints.html
+               inspector/dom-debugger/event-breakpoint-with-navigation.html
+               inspector/dom-debugger/event-interval-breakpoints.html
+               inspector/dom-debugger/event-listener-breakpoints.html
+               inspector/dom-debugger/event-timeout-breakpoints.html
+
+        * inspector/agents/InspectorDOMDebuggerAgent.h:
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::disable):
+        (WebCore::InspectorDOMDebuggerAgent::frameDocumentUpdated):
+        (WebCore::InspectorDOMDebuggerAgent::setEventBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::removeEventBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::willHandleEvent):
+        (WebCore::InspectorDOMDebuggerAgent::willFireTimer):
+        (WebCore::InspectorDOMDebuggerAgent::willFireAnimationFrame):
+        (WebCore::InspectorDOMDebuggerAgent::discardBindings): Deleted.
+        Make `eventName` optional for `addEventBreakpoint`/`removeEventBreakpoint`. When omitted,
+        the corresponding breakpoint that is added/removed is treated as a global breakpoint that
+        applies to all events of that type (e.g. a global `listener` breakpoint would pause for any
+        event that is fired).
+
 2019-08-03  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Remove formatting context type leaf classes

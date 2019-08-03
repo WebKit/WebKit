@@ -28,16 +28,12 @@
     padding: 5px;
 }
 
-.popover .event-breakpoint-content > .event-type {
-    display: flex;
+.popover .event-breakpoint-content > input {
     margin-top: 4px;
-}
-
-.popover .event-breakpoint-content > .event-type > input {
     font-family: Menlo, monospace;
     text-align: left;
 }
 
-.popover .event-breakpoint-content > .event-type > input::placeholder {
+.popover .event-breakpoint-content > input::placeholder {
     font-family: system-ui;
 }

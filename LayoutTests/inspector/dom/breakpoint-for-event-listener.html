@@ -46,7 +46,7 @@ function test() {
                 paused = true;
 
                 let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
-                InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.EventListener, `Pause reason should be EventListener.`);
+                InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.Listener, `Pause reason should be Listener.`);
                 InspectorTest.expectEqual(targetData.pauseData.eventName, "click", `Pause data eventName should be "click".`);
 
                 awaitGetClickEventListener(button1Node.id)
@@ -108,7 +108,7 @@ function test() {
                 paused = true;
 
                 let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
-                InspectorTest.assert(targetData.pauseReason, WI.DebuggerManager.PauseReason.EventListener, `Pause reason should be EventListener.`);
+                InspectorTest.assert(targetData.pauseReason, WI.DebuggerManager.PauseReason.Listener, `Pause reason should be Listener.`);
                 InspectorTest.assert(targetData.pauseData.eventName, "click", `Pause data eventName should be "click".`);
 
                 awaitGetClickEventListener(button1Node.id)

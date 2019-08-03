@@ -316,17 +316,29 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._handleResourceGroupingModeChanged();
 
         if (WI.domDebuggerManager.supported) {
-            if (WI.settings.showAllRequestsBreakpoint.value)
-                WI.domDebuggerManager.addURLBreakpoint(WI.domDebuggerManager.allRequestsBreakpoint);
+            if (WI.settings.showAllAnimationFramesBreakpoint.value)
+                WI.domDebuggerManager.addEventBreakpoint(WI.domDebuggerManager.allAnimationFramesBreakpoint);
 
-            for (let eventBreakpoint of WI.domDebuggerManager.eventBreakpoints)
+            if (WI.settings.showAllTimeoutsBreakpoint.value)
+                WI.domDebuggerManager.addEventBreakpoint(WI.domDebuggerManager.allTimeoutsBreakpoint);
+
+            if (WI.settings.showAllIntervalsBreakpoint.value)
+                WI.domDebuggerManager.addEventBreakpoint(WI.domDebuggerManager.allIntervalsBreakpoint);
+
+            if (WI.settings.showAllListenersBreakpoint.value)
+                WI.domDebuggerManager.addEventBreakpoint(WI.domDebuggerManager.allListenersBreakpoint);
+
+            for (let eventBreakpoint of WI.domDebuggerManager.listenerBreakpoints)
                 this._addBreakpoint(eventBreakpoint);
+
+            for (let eventListenerBreakpoint of WI.domManager.eventListenerBreakpoints)
+                this._addBreakpoint(eventListenerBreakpoint);
 
             for (let domBreakpoint of WI.domDebuggerManager.domBreakpoints)
                 this._addBreakpoint(domBreakpoint);
 
-            for (let eventListenerBreakpoint of WI.domManager.eventListenerBreakpoints)
-                this._addBreakpoint(eventListenerBreakpoint);
+            if (WI.settings.showAllRequestsBreakpoint.value)
+                WI.domDebuggerManager.addURLBreakpoint(WI.domDebuggerManager.allRequestsBreakpoint);
 
             for (let urlBreakpoints of WI.domDebuggerManager.urlBreakpoints)
                 this._addBreakpoint(urlBreakpoints);
@@ -854,6 +866,10 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.uncaughtExceptionsBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.assertionFailuresBreakpoint,
                 (treeElement) => treeElement instanceof WI.BreakpointTreeElement || treeElement instanceof WI.ResourceTreeElement || treeElement instanceof WI.ScriptTreeElement,
+                (treeElement) => treeElement.representedObject === WI.domDebuggerManager.allAnimationFramesBreakpoint,
+                (treeElement) => treeElement.representedObject === WI.domDebuggerManager.allTimeoutsBreakpoint,
+                (treeElement) => treeElement.representedObject === WI.domDebuggerManager.allIntervalsBreakpoint,
+                (treeElement) => treeElement.representedObject === WI.domDebuggerManager.allListenersBreakpoint,
                 (treeElement) => treeElement instanceof WI.EventBreakpointTreeElement,
                 (treeElement) => treeElement instanceof WI.DOMNodeTreeElement,
                 (treeElement) => treeElement.representedObject === SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject,
@@ -935,7 +951,15 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         } else if (breakpoint instanceof WI.EventBreakpoint) {
             constructor = WI.EventBreakpointTreeElement;
 
-            if (breakpoint.eventListener) {
+            if (breakpoint === WI.domDebuggerManager.allAnimationFramesBreakpoint)
+                options.title = WI.UIString("All Animation Frames");
+            else if (breakpoint === WI.domDebuggerManager.allIntervalsBreakpoint)
+                options.title = WI.UIString("All Intervals");
+            else if (breakpoint === WI.domDebuggerManager.allListenersBreakpoint)
+                options.title = WI.UIString("All Events");
+            else if (breakpoint === WI.domDebuggerManager.allTimeoutsBreakpoint)
+                options.title = WI.UIString("All Timeouts");
+            else if (breakpoint.eventListener) {
                 let eventTargetTreeElement = null;
                 if (breakpoint.eventListener.onWindow) {
                     if (!SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject)
@@ -1136,20 +1160,11 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         switch (pauseReason) {
         case WI.DebuggerManager.PauseReason.AnimationFrame: {
-            console.assert(pauseData, "Expected data with an animation frame, but found none.");
-            if (!pauseData)
-                break;
-
-            let eventBreakpoint = WI.domDebuggerManager.eventBreakpointForTypeAndEventName(WI.EventBreakpoint.Type.AnimationFrame, pauseData.eventName);
-            console.assert(eventBreakpoint, "Expected AnimationFrame breakpoint for event name.", pauseData.eventName);
-            if (!eventBreakpoint)
-                break;
-
             this._pauseReasonTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
 
-            let eventBreakpointTreeElement = new WI.EventBreakpointTreeElement(eventBreakpoint, {
+            let eventBreakpointTreeElement = new WI.EventBreakpointTreeElement(WI.domDebuggerManager.allAnimationFramesBreakpoint, {
                 className: "breakpoint-paused-icon",
-                title: WI.UIString("%s Fired").format(pauseData.eventName),
+                title: WI.UIString("requestAnimationFrame Fired"),
             });
             this._pauseReasonTreeOutline.appendChild(eventBreakpointTreeElement);
 
@@ -1268,6 +1283,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return true;
         }
 
+        case WI.DebuggerManager.PauseReason.Listener:
         case WI.DebuggerManager.PauseReason.EventListener: {
             console.assert(pauseData, "Expected data with an event listener, but found none.");
             if (!pauseData)
@@ -1277,7 +1293,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (pauseData.eventListenerId)
                 eventBreakpoint = WI.domManager.breakpointForEventListenerId(pauseData.eventListenerId);
             if (!eventBreakpoint)
-                eventBreakpoint = WI.domDebuggerManager.eventBreakpointForTypeAndEventName(WI.EventBreakpoint.Type.Listener, pauseData.eventName);
+                eventBreakpoint = WI.domDebuggerManager.listenerBreakpointForEventName(pauseData.eventName);
 
             console.assert(eventBreakpoint, "Expected Event Listener breakpoint for event name.", pauseData.eventName);
             if (!eventBreakpoint)
@@ -1325,6 +1341,22 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return true;
         }
 
+        case WI.DebuggerManager.PauseReason.Interval: {
+            this._pauseReasonTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
+
+            let eventBreakpointTreeElement = new WI.EventBreakpointTreeElement(WI.domDebuggerManager.allIntervalsBreakpoint, {
+                className: "breakpoint-paused-icon",
+                title: WI.UIString("setInterval Fired"),
+            });
+            this._pauseReasonTreeOutline.appendChild(eventBreakpointTreeElement);
+
+            let eventBreakpointRow = new WI.DetailsSectionRow;
+            eventBreakpointRow.element.appendChild(this._pauseReasonTreeOutline.element);
+
+            this._pauseReasonGroup.rows = [eventBreakpointRow];
+            return true;
+        }
+
         case WI.DebuggerManager.PauseReason.PauseOnNextStatement:
             this._pauseReasonTextRow.text = WI.UIString("Immediate Pause Requested");
             this._pauseReasonGroup.rows = [this._pauseReasonTextRow];
@@ -1335,7 +1367,16 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (!pauseData)
                 break;
 
-            let eventBreakpoint = WI.domDebuggerManager.eventBreakpointForTypeAndEventName(WI.EventBreakpoint.Type.Timer, pauseData.eventName);
+            let eventBreakpoint = null;
+            switch (pauseData.eventName) {
+            case "setTimeout":
+                eventBreakpoint = WI.domDebuggerManager.allTimeoutsBreakpoint;
+                break;
+
+            case "setInterval":
+                eventBreakpoint = WI.domDebuggerManager.allIntervalsBreakpoint;
+                break;
+            }
             console.assert(eventBreakpoint, "Expected Timer breakpoint for event name.", pauseData.eventName);
             if (!eventBreakpoint)
                 break;
@@ -1345,6 +1386,22 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             let eventBreakpointTreeElement = new WI.EventBreakpointTreeElement(eventBreakpoint, {
                 className: "breakpoint-paused-icon",
                 title: WI.UIString("%s Fired").format(pauseData.eventName),
+            });
+            this._pauseReasonTreeOutline.appendChild(eventBreakpointTreeElement);
+
+            let eventBreakpointRow = new WI.DetailsSectionRow;
+            eventBreakpointRow.element.appendChild(this._pauseReasonTreeOutline.element);
+
+            this._pauseReasonGroup.rows = [eventBreakpointRow];
+            return true;
+        }
+
+        case WI.DebuggerManager.PauseReason.Timeout: {
+            this._pauseReasonTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
+
+            let eventBreakpointTreeElement = new WI.EventBreakpointTreeElement(WI.domDebuggerManager.allTimeoutsBreakpoint, {
+                className: "breakpoint-paused-icon",
+                title: WI.UIString("setTimeout Fired"),
             });
             this._pauseReasonTreeOutline.appendChild(eventBreakpointTreeElement);
 
@@ -1493,10 +1550,31 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         let treeElement = event.data.element;
 
         let setting = null;
-        if (treeElement.breakpoint === WI.debuggerManager.assertionFailuresBreakpoint)
+        switch (treeElement.representedObject) {
+        case WI.debuggerManager.assertionFailuresBreakpoint:
             setting = WI.settings.showAssertionFailuresBreakpoint;
-        else if (treeElement.representedObject === WI.domDebuggerManager.allRequestsBreakpoint)
+            break;
+
+        case WI.domDebuggerManager.allAnimationFramesBreakpoint:
+            setting = WI.settings.showAllAnimationFramesBreakpoint;
+            break;
+
+        case WI.domDebuggerManager.allIntervalsBreakpoint:
+            setting = WI.settings.showAllIntervalsBreakpoint;
+            break;
+
+        case WI.domDebuggerManager.allListenersBreakpoint:
+            setting = WI.settings.showAllListenersBreakpoint;
+            break;
+
+        case WI.domDebuggerManager.allRequestsBreakpoint:
             setting = WI.settings.showAllRequestsBreakpoint;
+            break;
+
+        case WI.domDebuggerManager.allTimeoutsBreakpoint:
+            setting = WI.settings.showAllTimeoutsBreakpoint;
+            break;
+        }
 
         if (setting)
             setting.value = !!treeElement.parent;
@@ -1523,8 +1601,28 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             }, assertionFailuresBreakpointShown);
         }
 
-        if (WI.domDebuggerManager.supported) {
+        if (WI.DOMDebuggerManager.supportsEventBreakpoints() || WI.DOMDebuggerManager.supportsEventListenerBreakpoints()) {
+            function addToggleForSpecialEventBreakpoint(breakpoint, label, checked) {
+                contextMenu.appendCheckboxItem(label, () => {
+                    if (checked)
+                        WI.domDebuggerManager.removeEventBreakpoint(breakpoint);
+                    else {
+                        breakpoint.disabled = false;
+                        WI.domDebuggerManager.addEventBreakpoint(breakpoint);
+                    }
+                }, checked);
+            }
+
             contextMenu.appendSeparator();
+
+            addToggleForSpecialEventBreakpoint(WI.domDebuggerManager.allAnimationFramesBreakpoint, WI.UIString("All Animation Frames"), WI.settings.showAllAnimationFramesBreakpoint.value);
+            addToggleForSpecialEventBreakpoint(WI.domDebuggerManager.allTimeoutsBreakpoint, WI.UIString("All Timeouts"), WI.settings.showAllTimeoutsBreakpoint.value);
+            addToggleForSpecialEventBreakpoint(WI.domDebuggerManager.allIntervalsBreakpoint, WI.UIString("All Intervals"), WI.settings.showAllIntervalsBreakpoint.value);
+
+            contextMenu.appendSeparator();
+
+            if (WI.DOMDebuggerManager.supportsAllListenersBreakpoint())
+                addToggleForSpecialEventBreakpoint(WI.domDebuggerManager.allListenersBreakpoint, WI.UIString("All Events"), WI.settings.showAllListenersBreakpoint.value);
 
             contextMenu.appendItem(WI.UIString("Event Breakpoint\u2026"), () => {
                 let popover = new WI.EventBreakpointPopover(this);
@@ -1532,9 +1630,10 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             });
 
             contextMenu.appendSeparator();
+        }
 
+        if (WI.DOMDebuggerManager.supportsURLBreakpoints() || WI.DOMDebuggerManager.supportsXHRBreakpoints()) {
             let allRequestsBreakpointShown = WI.settings.showAllRequestsBreakpoint.value;
-
             contextMenu.appendCheckboxItem(WI.repeatedUIString.allRequests(), () => {
                 if (allRequestsBreakpointShown)
                     WI.domDebuggerManager.removeURLBreakpoint(WI.domDebuggerManager.allRequestsBreakpoint);
@@ -1544,7 +1643,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 }
             }, allRequestsBreakpointShown);
 
-            contextMenu.appendItem(WI.UIString("URL Breakpoint\u2026"), () => {
+            contextMenu.appendItem(WI.DOMDebuggerManager.supportsURLBreakpoints() ? WI.UIString("URL Breakpoint\u2026") : WI.UIString("XHR Breakpoint\u2026"), () => {
                 let popover = new WI.URLBreakpointPopover(this);
                 popover.show(this._createBreakpointButton.element, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
             });

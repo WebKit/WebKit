@@ -25,15 +25,14 @@
 
 WI.EventBreakpoint = class EventBreakpoint extends WI.Object
 {
-    constructor(type, eventName, {eventListener, disabled} = {})
+    constructor(type, {eventName, eventListener, disabled} = {})
     {
         super();
 
         console.assert(Object.values(WI.EventBreakpoint.Type).includes(type), type);
-        console.assert(typeof eventName === "string", eventName);
 
         this._type = type;
-        this._eventName = eventName;
+        this._eventName = eventName || null;
         this._eventListener = eventListener || null;
         this._disabled = disabled || false;
     }
@@ -42,7 +41,8 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Object
 
     static deserialize(serializedInfo)
     {
-        return new WI.EventBreakpoint(serializedInfo.type, serializedInfo.eventName, {
+        return new WI.EventBreakpoint(serializedInfo.type, {
+            eventName: serializedInfo.eventName,
             disabled: !!serializedInfo.disabled,
         });
     }
@@ -71,26 +71,36 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Object
     saveIdentityToCookie(cookie)
     {
         cookie["event-breakpoint-type"] = this._type;
-        cookie["event-breakpoint-event-name"] = this._eventName;
+        if (this._eventName)
+            cookie["event-breakpoint-event-name"] = this._eventName;
+        if (this._eventListener)
+            cookie["event-breakpoint-event-listener"] = this._eventListener.eventListenerId;
+        if (this._disabled)
+            cookie["event-breakpoint-disabled"] = this._disabled;
     }
 
     toJSON(key)
     {
         let json = {
             type: this._type,
-            eventName: this._eventName,
         };
+        if (this._eventName)
+            json.eventName = this._eventName;
         if (this._disabled)
             json.disabled = true;
         if (key === WI.ObjectStore.toJSONSymbol)
-            json[WI.objectStores.eventBreakpoints.keyPath] = this._type + ":" + this._eventName;
+            json[WI.objectStores.eventBreakpoints.keyPath] = this._type + (this._eventName ? ":" + this._eventName : "");
         return json;
     }
 };
 
 WI.EventBreakpoint.Type = {
     AnimationFrame: "animation-frame",
+    Interval: "interval",
     Listener: "listener",
+    Timeout: "timeout",
+
+    // COMPATIBILITY (iOS 13): DOMDebugger.EventBreakpointTypes.Timer was removed.
     Timer: "timer",
 };
 

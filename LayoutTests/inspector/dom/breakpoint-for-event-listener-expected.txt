@@ -9,7 +9,7 @@ Clicking button2...
 PASS: Should not pause before button2 event handler is run.
 Clicking button1...
 PASS: Should pause before button1 event handler is run.
-PASS: Pause reason should be EventListener.
+PASS: Pause reason should be Listener.
 PASS: Pause data eventName should be "click".
 
 -- Running test case: DOM.removeBreakpointForEventListener

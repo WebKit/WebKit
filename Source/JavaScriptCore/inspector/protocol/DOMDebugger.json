@@ -12,7 +12,7 @@
         {
             "id": "EventBreakpointType",
             "type": "string",
-            "enum": ["animation-frame", "listener", "timer"],
+            "enum": ["animation-frame", "interval", "listener", "timeout"],
             "description": "Event breakpoint type."
         }
     ],
@@ -38,7 +38,7 @@
             "description": "Sets breakpoint on particular event of given type.",
             "parameters": [
                 { "name": "breakpointType", "$ref": "EventBreakpointType" },
-                { "name": "eventName", "type": "string", "description": "The name of the event to stop on." }
+                { "name": "eventName", "type": "string", "optional": true, "description": "The name of the specific event to stop on." }
             ]
         },
         {
@@ -46,7 +46,7 @@
             "description": "Removes breakpoint on particular event of given type.",
             "parameters": [
                 { "name": "breakpointType", "$ref": "EventBreakpointType" },
-                { "name": "eventName", "type": "string", "description": "The name of the event to stop on." }
+                { "name": "eventName", "type": "string", "optional": true, "description": "The name of the specific event to stop on." }
             ]
         },
         {
