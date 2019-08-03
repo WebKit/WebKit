@@ -467,9 +467,11 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.diagnosticLoggingClient = std::make_unique<WebDiagnosticLoggingClient>(*this);
     pageConfiguration.performanceLoggingClient = std::make_unique<WebPerformanceLoggingClient>(*this);
 
+#if ENABLE(WEBGL)
     pageConfiguration.webGLStateTracker = std::make_unique<WebGLStateTracker>([this](bool isUsingHighPerformanceWebGL) {
         send(Messages::WebPageProxy::SetIsUsingHighPerformanceWebGL(isUsingHighPerformanceWebGL));
     });
+#endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
     pageConfiguration.speechSynthesisClient = std::make_unique<WebSpeechSynthesisClient>(*this);
