@@ -422,6 +422,14 @@ void assertIsNullOrTaggedWith(PtrType ptr, PtrTag tag)
 
 inline bool usesPointerTagging() { return true; }
 
+// vtbl function pointers need to sign with ptrauth_key_process_independent_code
+// because they reside in library code shared by multiple processes.
+// The second argument to __ptrauth() being 1 means to use the address of the pointer
+// for diversification as well. __ptrauth() expects a literal int for this argument.
+#define WTF_VTBL_FUNCPTR_PTRAUTH(discriminator) WTF_VTBL_FUNCPTR_PTRAUTH_STR(#discriminator)
+#define WTF_VTBL_FUNCPTR_PTRAUTH_STR(discriminatorStr) \
+    __ptrauth(ptrauth_key_process_independent_code, 1, ptrauth_string_discriminator(discriminatorStr))
+
 #else // not CPU(ARM64E)
 
 inline void registerPtrTagLookup(PtrTagLookup*) { }
@@ -545,6 +553,9 @@ template<typename PtrType> void assertIsTaggedWith(PtrType, PtrTag) { }
 template<typename PtrType> void assertIsNullOrTaggedWith(PtrType, PtrTag) { }
 
 inline bool usesPointerTagging() { return false; }
+
+#define WTF_VTBL_FUNCPTR_PTRAUTH(discriminator)
+#define WTF_VTBL_FUNCPTR_PTRAUTH_STR(discriminatorStr)
 
 #endif // CPU(ARM64E)
 

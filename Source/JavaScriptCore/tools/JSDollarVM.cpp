@@ -827,7 +827,7 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-static const DOMJIT::Signature DOMJITFunctionObjectSignature((DOMJIT::FunctionWithoutTypeCheck)DOMJITFunctionObject::functionWithoutTypeCheck, DOMJITFunctionObject::info(), DOMJIT::Effect::forRead(DOMJIT::HeapRange::top()), SpecInt32Only);
+static const DOMJIT::Signature DOMJITFunctionObjectSignature(DOMJITFunctionObject::functionWithoutTypeCheck, DOMJITFunctionObject::info(), DOMJIT::Effect::forRead(DOMJIT::HeapRange::top()), SpecInt32Only);
 
 void DOMJITFunctionObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
@@ -881,7 +881,7 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-static const DOMJIT::Signature DOMJITCheckSubClassObjectSignature((DOMJIT::FunctionWithoutTypeCheck)DOMJITCheckSubClassObject::functionWithoutTypeCheck, DOMJITCheckSubClassObject::info(), DOMJIT::Effect::forRead(DOMJIT::HeapRange::top()), SpecInt32Only);
+static const DOMJIT::Signature DOMJITCheckSubClassObjectSignature(DOMJITCheckSubClassObject::functionWithoutTypeCheck, DOMJITCheckSubClassObject::info(), DOMJIT::Effect::forRead(DOMJIT::HeapRange::top()), SpecInt32Only);
 
 void DOMJITCheckSubClassObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {

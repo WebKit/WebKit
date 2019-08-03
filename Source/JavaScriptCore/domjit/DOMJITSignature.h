@@ -37,13 +37,13 @@ namespace JSC { namespace DOMJIT {
 #define JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS 2
 #define JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS_INCLUDING_THIS (1 + JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS)
 
-using FunctionWithoutTypeCheck = void (*)();
+using FunctionPtr = void (*WTF_VTBL_FUNCPTR_PTRAUTH(DOMJITFunctionPtrTag))();
 
 class Signature {
 public:
     template<typename... Arguments>
-    constexpr Signature(FunctionWithoutTypeCheck functionWithoutTypeCheck, const ClassInfo* classInfo, Effect effect, SpeculatedType result, Arguments... arguments)
-        : functionWithoutTypeCheck(functionWithoutTypeCheck)
+    constexpr Signature(CFunctionPtr functionWithoutTypeCheck, const ClassInfo* classInfo, Effect effect, SpeculatedType result, Arguments... arguments)
+        : functionWithoutTypeCheck(functionWithoutTypeCheck.get())
         , classInfo(classInfo)
         , result(result)
         , arguments {static_cast<SpeculatedType>(arguments)...}
@@ -52,7 +52,7 @@ public:
     {
     }
 
-    FunctionWithoutTypeCheck functionWithoutTypeCheck;
+    const FunctionPtr functionWithoutTypeCheck;
     const ClassInfo* const classInfo;
     const SpeculatedType result;
     const SpeculatedType arguments[JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS];

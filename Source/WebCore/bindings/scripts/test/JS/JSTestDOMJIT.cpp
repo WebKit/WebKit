@@ -105,15 +105,15 @@ JSC::EncodedJSValue jsTestDOMJITByteStringNullableAttr(JSC::ExecState*, JSC::Enc
 JSC::EncodedJSValue jsTestDOMJITUsvStringNullableAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestDOMJITNodeNullableAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 
-static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetAttribute((JSC::DOMJIT::FunctionWithoutTypeCheck)jsTestDOMJITPrototypeFunctionGetAttributeWithoutTypeCheck, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLDOMString>>::value, DOMJIT::IDLArgumentTypeFilter<IDLDOMString>::value);
+static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetAttribute(jsTestDOMJITPrototypeFunctionGetAttributeWithoutTypeCheck, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLDOMString>>::value, DOMJIT::IDLArgumentTypeFilter<IDLDOMString>::value);
 
-static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITItem((JSC::DOMJIT::FunctionWithoutTypeCheck)jsTestDOMJITPrototypeFunctionItemWithoutTypeCheck, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLDOMString>::value, DOMJIT::IDLArgumentTypeFilter<IDLUnsignedShort>::value, DOMJIT::IDLArgumentTypeFilter<IDLUnsignedShort>::value);
+static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITItem(jsTestDOMJITPrototypeFunctionItemWithoutTypeCheck, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLDOMString>::value, DOMJIT::IDLArgumentTypeFilter<IDLUnsignedShort>::value, DOMJIT::IDLArgumentTypeFilter<IDLUnsignedShort>::value);
 
-static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITHasAttribute((JSC::DOMJIT::FunctionWithoutTypeCheck)jsTestDOMJITPrototypeFunctionHasAttributeWithoutTypeCheck, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLBoolean>::value);
+static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITHasAttribute(jsTestDOMJITPrototypeFunctionHasAttributeWithoutTypeCheck, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLBoolean>::value);
 
-static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetElementById((JSC::DOMJIT::FunctionWithoutTypeCheck)jsTestDOMJITPrototypeFunctionGetElementByIdWithoutTypeCheck, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLInterface<Element>>::value, DOMJIT::IDLArgumentTypeFilter<IDLRequiresExistingAtomStringAdaptor<IDLDOMString>>::value);
+static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetElementById(jsTestDOMJITPrototypeFunctionGetElementByIdWithoutTypeCheck, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLInterface<Element>>::value, DOMJIT::IDLArgumentTypeFilter<IDLRequiresExistingAtomStringAdaptor<IDLDOMString>>::value);
 
-static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetElementsByName((JSC::DOMJIT::FunctionWithoutTypeCheck)jsTestDOMJITPrototypeFunctionGetElementsByNameWithoutTypeCheck, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLInterface<NodeList>>::value, DOMJIT::IDLArgumentTypeFilter<IDLAtomStringAdaptor<IDLDOMString>>::value);
+static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetElementsByName(jsTestDOMJITPrototypeFunctionGetElementsByNameWithoutTypeCheck, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLInterface<NodeList>>::value, DOMJIT::IDLArgumentTypeFilter<IDLAtomStringAdaptor<IDLDOMString>>::value);
 
 static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITAnyAttr {
     jsTestDOMJITAnyAttr,

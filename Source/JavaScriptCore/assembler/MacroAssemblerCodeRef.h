@@ -58,6 +58,71 @@ template<PtrTag> class MacroAssemblerCodePtr;
 
 enum OpcodeID : unsigned;
 
+// CFunctionPtr can only be used to hold C/C++ functions.
+class CFunctionPtr {
+public:
+    using Ptr = void(*)();
+
+    CFunctionPtr() { }
+    CFunctionPtr(std::nullptr_t) { }
+
+    template<typename ReturnType, typename... Arguments>
+    constexpr CFunctionPtr(ReturnType(&ptr)(Arguments...))
+        : m_ptr(reinterpret_cast<Ptr>(&ptr))
+    { }
+
+    template<typename ReturnType, typename... Arguments>
+    explicit CFunctionPtr(ReturnType(*ptr)(Arguments...))
+        : m_ptr(reinterpret_cast<Ptr>(ptr))
+    {
+        assertIsCFunctionPtr(m_ptr);
+    }
+
+    // MSVC doesn't seem to treat functions with different calling conventions as
+    // different types; these methods are already defined for fastcall, below.
+#if CALLING_CONVENTION_IS_STDCALL && !OS(WINDOWS)
+    template<typename ReturnType, typename... Arguments>
+    constexpr CFunctionPtr(ReturnType(CDECL &ptr)(Arguments...))
+        : m_ptr(reinterpret_cast<Ptr>(&ptr))
+    { }
+
+    template<typename ReturnType, typename... Arguments>
+    explicit CFunctionPtr(ReturnType(CDECL *ptr)(Arguments...))
+        : m_ptr(reinterpret_cast<Ptr>(ptr))
+    {
+        assertIsCFunctionPtr(m_ptr);
+    }
+
+#endif // CALLING_CONVENTION_IS_STDCALL && !OS(WINDOWS)
+
+#if COMPILER_SUPPORTS(FASTCALL_CALLING_CONVENTION)
+    template<typename ReturnType, typename... Arguments>
+    constexpr CFunctionPtr(ReturnType(FASTCALL &ptr)(Arguments...))
+        : m_ptr(reinterpret_cast<Ptr>(&ptr))
+    { }
+
+    template<typename ReturnType, typename... Arguments>
+    explicit CFunctionPtr(ReturnType(FASTCALL *ptr)(Arguments...))
+        : m_ptr(reinterpret_cast<Ptr>(ptr))
+    {
+        assertIsCFunctionPtr(m_ptr);
+    }
+#endif // COMPILER_SUPPORTS(FASTCALL_CALLING_CONVENTION)
+
+    constexpr Ptr get() const { return m_ptr; }
+    void* address() const { return reinterpret_cast<void*>(m_ptr); }
+
+    explicit operator bool() const { return !!m_ptr; }
+    bool operator!() const { return !m_ptr; }
+
+    bool operator==(const CFunctionPtr& other) const { return m_ptr == other.m_ptr; }
+    bool operator!=(const CFunctionPtr& other) const { return m_ptr != other.m_ptr; }
+
+private:
+    Ptr m_ptr { nullptr };
+};
+
+
 // FunctionPtr:
 //
 // FunctionPtr should be used to wrap pointers to C/C++ functions in JSC

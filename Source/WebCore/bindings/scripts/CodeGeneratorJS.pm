@@ -4009,7 +4009,7 @@ sub GenerateImplementation
             my $domJITSignatureName = "DOMJITSignatureFor" . $interface->type->name . $codeGenerator->WK_ucfirst($operation->name);
             my $classInfo = "JS" . $interface->type->name . "::info()";
             my $resultType = GetResultTypeFilter($interface, $operation->type);
-            my $domJITSignatureHeader = "static const JSC::DOMJIT::Signature ${domJITSignatureName}((JSC::DOMJIT::FunctionWithoutTypeCheck)${nameOfFunctionWithoutTypeCheck},";
+            my $domJITSignatureHeader = "static const JSC::DOMJIT::Signature ${domJITSignatureName}(${nameOfFunctionWithoutTypeCheck},";
             my $domJITSignatureFooter = "$classInfo, JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), ${resultType}";
             foreach my $argument (@{$operation->arguments}) {
                 my $type = $argument->type;

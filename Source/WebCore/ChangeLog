@@ -1,3 +1,18 @@
+2019-08-02  Mark Lam  <mark.lam@apple.com>
+
+        [ARM64E] Harden the diversity of the DOMJIT::Signature::unsafeFunction pointer.
+        https://bugs.webkit.org/show_bug.cgi?id=200292
+        <rdar://problem/53706881>
+
+        Reviewed by Geoffrey Garen.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        - Update to work with the new DOMJIT::Signature constructor.
+
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        - Re-base test results.
+
 2019-08-02  Keith Rollin  <krollin@apple.com>
 
         Consistently use Obj-C boolean literals

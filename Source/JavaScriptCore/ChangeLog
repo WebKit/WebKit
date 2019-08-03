@@ -1,3 +1,75 @@
+2019-08-02  Mark Lam  <mark.lam@apple.com>
+
+        [ARM64E] Harden the diversity of the DOMJIT::Signature::unsafeFunction pointer.
+        https://bugs.webkit.org/show_bug.cgi?id=200292
+        <rdar://problem/53706881>
+
+        Reviewed by Geoffrey Garen.
+
+        Previously, DOMJIT::Signature::functionWithoutTypeCheck was signed as a C function
+        pointer.  We can do better by signing it like a vtbl function pointer.
+
+        No new tests needed.  The DOMJIT mechanism is covered by existing tests.
+
+        I also manually confirmed that DOMJIT::Signature::functionWithoutTypeCheck is signed
+        exactly as expected by reading its bits out of memory (not letting Clang have a
+        chance to resign it into a C function pointer) and comparing it against manually
+        signed bits with the expected diversifier.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::CFunctionPtr::CFunctionPtr):
+        (JSC::CFunctionPtr::get const):
+        (JSC::CFunctionPtr::address const):
+        (JSC::CFunctionPtr::operator bool const):
+        (JSC::CFunctionPtr::operator! const):
+        (JSC::CFunctionPtr::operator== const):
+        (JSC::CFunctionPtr::operator!= const):
+
+        - Introduce a CFunctionPtr abstraction that is used to hold pointers to C functions.
+          It can instantiated in 4 ways:
+
+          1. The default constructor.
+          2. A constructor that takes a nullptr_t.
+
+             These 2 forms will instantiate a CFunctionPtr with a nullptr.
+
+          3. A constructor that takes the name of a function.
+          4. A constructor that takes a function pointer.
+
+              Form 3 already knows that we're initializing with a real function, and
+              that Clang will give it to use signed as a C function pointer.  So, it
+              doesn't do any assertions.  This form is useful for initializing CFunctionPtrs
+              embedded in const data structures.
+
+              Form 4 is an explicit constructor that takes an arbitrary function
+              pointer, but does not know if that pointer is already signed as a C function
+              pointer.  Hence, this form will do a RELEASE_ASSERT that the given function
+              pointer is actually signed as a C function pointer.
+
+          Once instantiated, we are guaranteed that a C function pointer is either null
+          or contains a signed C function pointer.
+
+        * domjit/DOMJITSignature.h:
+        (JSC::DOMJIT::Signature::Signature):
+        - Sign functionWithoutTypeCheck as WTF_VTBL_FUNCPTR_PTRAUTH(DOMJITFunctionPtrTag).
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCallDOM):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOM):
+        - Use the new CFunctionPtr to document that the retrieved signature->functionWithoutTypeCheck
+          is signed as a C function pointer.
+
+        * runtime/ClassInfo.h:
+        - Update MethodTable to sign its function pointers using the new WTF_VTBL_FUNCPTR_PTRAUTH_STR
+          to be consistent.  No longer need to roll its own PTRAUTH macro.
+
+        * runtime/JSCPtrTag.h:
+        - Add DOMJITFunctionPtrTag.
+
+        * tools/JSDollarVM.cpp:
+        - Update to work with the new DOMJIT::Signature constructor.
+
 2019-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Support WebAssembly in SamplingProfiler

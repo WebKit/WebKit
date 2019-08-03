@@ -36,6 +36,7 @@ using PtrTag = WTF::PtrTag;
     v(B3CompilationPtrTag) \
     v(BytecodePtrTag) \
     v(CopyFunctionPtrTag) \
+    v(DOMJITFunctionPtrTag) \
     v(DisassemblyPtrTag) \
     v(ExceptionHandlerPtrTag) \
     v(ExecutableMemoryPtrTag) \
