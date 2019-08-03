@@ -1,3 +1,19 @@
+2019-08-02  Robin Morisset  <rmorisset@apple.com>
+
+        [WHLSL] Avoid visiting the full AST in computeDimensions
+        https://bugs.webkit.org/show_bug.cgi?id=200410
+
+        Reviewed by Myles C. Maxfield.
+
+        Avoid visiting the full AST in computeDimensions
+        This cuts the time spent in computeDimensions on compute_boids.html from about 2ms to about 0.002ms.
+
+        No new tests as there is no functional change intended.
+
+        * Modules/webgpu/WHLSL/WHLSLComputeDimensions.cpp:
+        (WebCore::WHLSL::computeDimensions):
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp:
+
 2019-08-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Ref Frame in DOMWindow::screen* functions

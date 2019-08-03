@@ -38,50 +38,31 @@ namespace WebCore {
 
 namespace WHLSL {
 
-class ComputeDimensionsVisitor : public Visitor {
-public:
-    ComputeDimensionsVisitor(AST::FunctionDefinition& entryPoint)
-        : m_entryPoint(entryPoint)
-    {
-    }
+Optional<ComputeDimensions> computeDimensions(Program& program, AST::FunctionDefinition& entryPoint)
+{
+    Optional<ComputeDimensions> computeDimensions;
 
-    virtual ~ComputeDimensionsVisitor() = default;
-
-    Optional<ComputeDimensions> computeDimensions() const { return m_computeDimensions; }
-
-private:
-    void visit(AST::FunctionDeclaration& functionDeclaration) override
-    {
+    for (auto& functionDefinition : program.functionDefinitions()) {
         bool foundNumThreadsFunctionAttribute = false;
-        for (auto& functionAttribute : functionDeclaration.attributeBlock()) {
+        for (auto& functionAttribute : functionDefinition->attributeBlock()) {
             auto success = WTF::visit(WTF::makeVisitor([&](AST::NumThreadsFunctionAttribute& numThreadsFunctionAttribute) {
                 if (foundNumThreadsFunctionAttribute)
                     return false;
                 foundNumThreadsFunctionAttribute = true;
-                if (&functionDeclaration == &m_entryPoint) {
-                    ASSERT(!m_computeDimensions);
-                    m_computeDimensions = {{ numThreadsFunctionAttribute.width(), numThreadsFunctionAttribute.height(), numThreadsFunctionAttribute.depth() }};
+                if (&functionDefinition == &entryPoint) {
+                    ASSERT(!computeDimensions);
+                    computeDimensions = {{ numThreadsFunctionAttribute.width(), numThreadsFunctionAttribute.height(), numThreadsFunctionAttribute.depth() }};
                 }
                 return true;
             }), functionAttribute);
             if (!success) {
-                setError(Error("Cannot declare multiple numthread attributes.", functionDeclaration.codeLocation()));
-                return;
+                // Cannot declare multiple numthread attributes on a single function.
+                return WTF::nullopt;
             }
         }
     }
 
-    AST::FunctionDefinition& m_entryPoint;
-    Optional<ComputeDimensions> m_computeDimensions;
-};
-
-Optional<ComputeDimensions> computeDimensions(Program& program, AST::FunctionDefinition& entryPoint)
-{
-    ComputeDimensionsVisitor computeDimensions(entryPoint);
-    computeDimensions.Visitor::visit(program);
-    if (computeDimensions.hasError())
-        return WTF::nullopt;
-    return computeDimensions.computeDimensions();
+    return computeDimensions;
 }
 
 } // namespace WHLSL
