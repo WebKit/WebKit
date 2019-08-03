@@ -159,9 +159,12 @@ WI.QuickConsole = class QuickConsole extends WI.View
         if (!executionContext)
             executionContext = WI.mainTarget.executionContext;
 
-        WI.runtimeManager.activeExecutionContext = executionContext;
-
         this._automaticExecutionContextPathComponent.displayName = WI.UIString("Auto - %s").format(preferredName || executionContext.name);
+
+        let changed = WI.runtimeManager.activeExecutionContext !== executionContext;
+        if (changed)
+            WI.runtimeManager.activeExecutionContext = executionContext;
+        return changed;
     }
 
     _handleMouseDown(event)
@@ -405,7 +408,11 @@ WI.QuickConsole = class QuickConsole extends WI.View
     _pathComponentSelected(event)
     {
         this._shouldAutomaticallySelectExecutionContext = event.data.pathComponent === this._automaticExecutionContextPathComponent;
-        this._selectExecutionContext(event.data.pathComponent.representedObject);
+
+        // Only manually rebuild the execution context path components if the newly selected
+        // execution context matches the previously selected one.
+        if (!this._selectExecutionContext(event.data.pathComponent.representedObject))
+            this._rebuildExecutionContextPathComponents();
     }
 
     _pathComponentClicked(event)

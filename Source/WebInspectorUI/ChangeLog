@@ -1,3 +1,20 @@
+2019-08-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Console: execution context picker doesn't update when switching to the inferred context from auto
+        https://bugs.webkit.org/show_bug.cgi?id=200279
+
+        Reviewed by Joseph Pecoraro.
+
+        The `representedObject` of the "auto" execution context path component is shared with that
+        execution context's actual path component, meaning that if the user switches from "auto" to
+        that execution context's path component, the underlying `representedObject` wouldn't change,
+        and therfore the `RuntimeManager.Event.ActiveExecutionContextChanged` wouldn't fire. In this
+        case, update the visible ("selected") execution context path component manually.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WI.QuickConsole.prototype._selectExecutionContext):
+        (WI.QuickConsole.prototype._pathComponentSelected):
+
 2019-08-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Console: all navigation items should be shown in the split console
