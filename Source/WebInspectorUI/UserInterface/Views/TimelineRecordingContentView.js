@@ -277,6 +277,16 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         this._clearTimeline();
     }
 
+    get canFocusFilterBar()
+    {
+        return !this._filterBarNavigationItem.hidden;
+    }
+
+    focusFilterBar()
+    {
+        this._filterBarNavigationItem.filterBar.focus();
+    }
+
     // ContentBrowser delegate
 
     contentBrowserTreeElementForRepresentedObject(contentBrowser, representedObject)

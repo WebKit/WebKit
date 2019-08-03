@@ -1860,13 +1860,17 @@ WI.DataGrid = class DataGrid extends WI.View
 
         function *createIteratorForNodesToBeFiltered()
         {
-            // Don't populate if we don't have any active filters.
-            // We only need to populate when a filter needs to reveal.
-            let dontPopulate = !this.hasFilters();
+            let hasFilters = this.hasFilters();
 
             let currentNode = this._rows[0];
             while (currentNode && !currentNode.root) {
                 yield currentNode;
+
+                // Don't populate if we don't have any active filters.
+                // We only need to populate when a filter needs to reveal.
+                let dontPopulate = !hasFilters;
+                if (hasFilters && this._filterDelegate && this._filterDelegate.dataGridMatchShouldPopulateWhenFilteringNode)
+                    dontPopulate = this._filterDelegate.dataGridMatchShouldPopulateWhenFilteringNode(currentNode);
                 currentNode = currentNode.traverseNextNode(false, null, dontPopulate);
             }
         }

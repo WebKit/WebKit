@@ -116,6 +116,15 @@ WI.FilterBar = class FilterBar extends WI.Object
         this._element.classList.toggle("active", !!active);
     }
 
+    focus()
+    {
+        // FIXME: Workaround for: <https://webkit.org/b/149504> Caret missing from <input> after clearing text and calling select()
+        if (!this._inputField.value.length)
+            this._inputField.focus();
+        else
+            this._inputField.select();
+    }
+
     clear()
     {
         this._filterFunctionsMap.clear();

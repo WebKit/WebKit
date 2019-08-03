@@ -175,6 +175,12 @@ WI.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentView extends
         return this._showContentViewForIdentifier(WI.HeapSnapshotClusterContentView.ObjectGraphIdentifier);
     }
 
+    updateFilter(filters)
+    {
+        console.assert(this._contentViewContainer.currentContentView);
+        this._contentViewContainer.currentContentView.updateFilter(filters);
+    }
+
     // Private
 
     _supportsObjectGraph()

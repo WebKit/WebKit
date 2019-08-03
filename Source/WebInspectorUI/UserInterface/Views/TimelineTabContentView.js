@@ -341,6 +341,18 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
         return representedObject instanceof WI.TimelineRecording;
     }
 
+    get canHandleFindEvent()
+    {
+        console.assert(this._displayedContentView);
+        return this._displayedContentView.canFocusFilterBar;
+    }
+
+    handleFindEvent(event)
+    {
+        console.assert(this._displayedContentView);
+        this._displayedContentView.focusFilterBar();
+    }
+
     async handleFileDrop(files)
     {
         await WI.FileUtilities.readJSON(files, (result) => WI.timelineManager.processJSON(result));

@@ -1,5 +1,47 @@
 2019-08-03  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Heap Snapshot Views should be searchable
+        https://bugs.webkit.org/show_bug.cgi?id=157582
+        <rdar://problem/26228629>
+
+        Reviewed by Joseph Pecoraro.
+
+        Without the ability to filter/search, it's far more difficult to find objects of interest.
+        Rather than spending time scrolling through the entire heap snapshot or sorting by "Name",
+        a simple filter/search (which also uses the global search settings) is almost instant.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WI.HeapAllocationsTimelineView.prototype.updateFilter): Addded.
+        (WI.HeapAllocationsTimelineView.prototype.get showsFilterBar): Deleted.
+        * UserInterface/Views/HeapSnapshotClusterContentView.js:
+        (WI.HeapSnapshotClusterContentView.prototype.updateFilter): Added.
+        * UserInterface/Views/HeapSnapshotContentView.js:
+        (WI.HeapSnapshotContentView):
+        (WI.HeapSnapshotContentView.prototype.updateFilter): Added.
+        (WI.HeapSnapshotContentView.prototype.dataGridMatchNodeAgainstCustomFilters): Added.
+        (WI.HeapSnapshotContentView.prototype.dataGridMatchShouldPopulateWhenFilteringNode): Added.
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid.prototype._updateFilter.createIteratorForNodesToBeFiltered):
+        Don't attempt to populate each heap snapshot `WI.DataGridNode` when filtering, as that can
+        quickly exhaust memory due to the sheer size of a heap snapshot.
+
+        * UserInterface/Base/Main.js:
+        (WI._find):
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView.prototype.get canHandleFindEvent): Added.
+        (WI.TimelineTabContentView.prototype.handleFindEvent): Added.
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView.prototype.get canFocusFilterBar): Added.
+        (WI.TimelineRecordingContentView.prototype.focusFilterBar): Added.
+        * UserInterface/Views/FilterBar.js:
+        (WI.FilterBar.prototype.focus): Added.
+        Allow the current tab to intercept the find shortcut and do something custom. In the case
+        of a `WI.TimelineTabContentView`, declare that it can handle the find event if the displayed
+        content view (`WI.TimelineRecordingContentView`) can focus it's filter bar. If so, when the
+        find shortcut is triggered, focus the filter bar.
+
+2019-08-03  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: CSS Formatter: comments with an escape character aren't formatted
         https://bugs.webkit.org/show_bug.cgi?id=200168
 

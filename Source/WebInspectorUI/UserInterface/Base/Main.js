@@ -2486,6 +2486,12 @@ WI._beforecopy = function(event)
 
 WI._find = function(event)
 {
+    let tabContentView = WI.tabBrowser.selectedTabContentView;
+    if (tabContentView && tabContentView.canHandleFindEvent) {
+        tabContentView.handleFindEvent(event);
+        return;
+    }
+
     let contentBrowser = WI._focusedOrVisibleContentBrowser();
     if (!contentBrowser)
         return;
