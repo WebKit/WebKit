@@ -88,7 +88,6 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             this._style.updatePropertiesModifiedState();
 
         let properties = this.propertiesToRender;
-        this.element.classList.toggle("no-properties", !properties.length);
 
         // FIXME: Only re-layout properties that have been modified and preserve focus whenever possible.
         this._propertyViews = [];

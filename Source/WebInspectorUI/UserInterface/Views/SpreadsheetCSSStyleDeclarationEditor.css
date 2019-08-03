@@ -35,6 +35,10 @@
     --border-color-selected: var(--selected-background-color);
 }
 
+.spreadsheet-style-declaration-editor:empty {
+    height: 2px;
+}
+
 .spreadsheet-style-declaration-editor .property {
     padding-right: var(--css-declaration-horizontal-padding);
     padding-left: calc(var(--css-declaration-horizontal-padding) + 17px);
@@ -67,10 +71,6 @@
     position: relative;
     z-index: 1;
     max-width: 100%;
-}
-
-.spreadsheet-style-declaration-editor.no-properties {
-    display: none;
 }
 
 .spreadsheet-style-declaration-editor .property-toggle {

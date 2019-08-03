@@ -307,8 +307,12 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         experimentalSettingsView.addSetting(WI.UIString("User Interface:"), WI.settings.experimentalEnableNewTabBar, WI.UIString("Enable New Tab Bar"));
         experimentalSettingsView.addSeparator();
 
-        experimentalSettingsView.addSetting(WI.UIString("Styles:"), WI.settings.experimentalEnableStylesJumpToEffective, WI.UIString("Show Jump to Effective Property Button"));
-        experimentalSettingsView.addSeparator();
+        if (InspectorBackend.domains.CSS) {
+            let stylesGroup = experimentalSettingsView.addGroup(WI.UIString("Styles:"));
+            stylesGroup.addSetting(WI.settings.experimentalEnableStylesIcons, WI.UIString("Show Icons"));
+            stylesGroup.addSetting(WI.settings.experimentalEnableStylesJumpToEffective, WI.UIString("Show Jump to Effective Property Button"));
+            experimentalSettingsView.addSeparator();
+        }
 
         let reloadInspectorButton = document.createElement("button");
         reloadInspectorButton.textContent = WI.UIString("Reload Web Inspector");
@@ -337,7 +341,11 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         listenForChange(WI.settings.experimentalEnableSourcesTab);
         listenForChange(WI.settings.experimentalEnableLayersTab);
         listenForChange(WI.settings.experimentalEnableNewTabBar);
-        listenForChange(WI.settings.experimentalEnableStylesJumpToEffective);
+
+        if (InspectorBackend.domains.CSS) {
+            listenForChange(WI.settings.experimentalEnableStylesIcons);
+            listenForChange(WI.settings.experimentalEnableStylesJumpToEffective);
+        }
 
         this.addSettingsView(experimentalSettingsView);
     }

@@ -205,6 +205,12 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         }
     }
 
+    spreadsheetCSSStyleDeclarationSectionAddNewRule(section, selector, text)
+    {
+        this._newRuleSelector = selector;
+        this.nodeStyles.addRule(this._newRuleSelector, text);
+    }
+
     // Protected
 
     layout()
@@ -300,8 +306,8 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         let beforePseudoId = null;
         let afterPseudoId = null;
         if (InspectorBackend.domains.CSS.PseudoId) {
-            beforePseudoId = InspectorBackend.domains.CSS.PseudoId.Before;
-            afterPseudoId = InspectorBackend.domains.CSS.PseudoId.After;
+            beforePseudoId = WI.CSSManager.PseudoSelectorNames.Before;
+            afterPseudoId = WI.CSSManager.PseudoSelectorNames.After;
         } else {
             // Compatibility (iOS 12.2): CSS.PseudoId did not exist.
             beforePseudoId = 4;

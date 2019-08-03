@@ -137,31 +137,31 @@ WI.CSSManager = class CSSManager extends WI.Object
         }
 
         switch (pseudoId) {
-        case InspectorBackend.domains.CSS.PseudoId.FirstLine:
+        case CSSManager.PseudoSelectorNames.FirstLine:
             return WI.unlocalizedString("::first-line");
-        case InspectorBackend.domains.CSS.PseudoId.FirstLetter:
+        case CSSManager.PseudoSelectorNames.FirstLetter:
             return WI.unlocalizedString("::first-letter");
-        case InspectorBackend.domains.CSS.PseudoId.Marker:
+        case CSSManager.PseudoSelectorNames.Marker:
             return WI.unlocalizedString("::marker");
-        case InspectorBackend.domains.CSS.PseudoId.Before:
+        case CSSManager.PseudoSelectorNames.Before:
             return WI.unlocalizedString("::before");
-        case InspectorBackend.domains.CSS.PseudoId.After:
+        case CSSManager.PseudoSelectorNames.After:
             return WI.unlocalizedString("::after");
-        case InspectorBackend.domains.CSS.PseudoId.Selection:
+        case CSSManager.PseudoSelectorNames.Selection:
             return WI.unlocalizedString("::selection");
-        case InspectorBackend.domains.CSS.PseudoId.Scrollbar:
+        case CSSManager.PseudoSelectorNames.Scrollbar:
             return WI.unlocalizedString("::scrollbar");
-        case InspectorBackend.domains.CSS.PseudoId.ScrollbarThumb:
+        case CSSManager.PseudoSelectorNames.ScrollbarThumb:
             return WI.unlocalizedString("::scrollbar-thumb");
-        case InspectorBackend.domains.CSS.PseudoId.ScrollbarButton:
+        case CSSManager.PseudoSelectorNames.ScrollbarButton:
             return WI.unlocalizedString("::scrollbar-button");
-        case InspectorBackend.domains.CSS.PseudoId.ScrollbarTrack:
+        case CSSManager.PseudoSelectorNames.ScrollbarTrack:
             return WI.unlocalizedString("::scrollbar-track");
-        case InspectorBackend.domains.CSS.PseudoId.ScrollbarTrackPiece:
+        case CSSManager.PseudoSelectorNames.ScrollbarTrackPiece:
             return WI.unlocalizedString("::scrollbar-track-piece");
-        case InspectorBackend.domains.CSS.PseudoId.ScrollbarCorner:
+        case CSSManager.PseudoSelectorNames.ScrollbarCorner:
             return WI.unlocalizedString("::scrollbar-corner");
-        case InspectorBackend.domains.CSS.PseudoId.Resizer:
+        case CSSManager.PseudoSelectorNames.Resizer:
             return WI.unlocalizedString("::resizer");
 
         default:
@@ -738,6 +738,22 @@ WI.CSSManager.Event = {
 WI.CSSManager.Appearance = {
     Light: Symbol("light"),
     Dark: Symbol("dark"),
+};
+
+WI.CSSManager.PseudoSelectorNames = {
+    After: "after",
+    Before: "before",
+    FirstLetter: "first-letter",
+    FirstLine: "first-line",
+    Marker: "marker",
+    Resizer: "resizer",
+    Scrollbar: "scrollbar",
+    ScrollbarButton: "scrollbar-button",
+    ScrollbarCorner: "scrollbar-corner",
+    ScrollbarThumb: "scrollbar-thumb",
+    ScrollbarTrack: "scrollbar-track",
+    ScrollbarTrackPiece: "scrollbar-track-piece",
+    Selection: "selection",
 };
 
 WI.CSSManager.PseudoElementNames = ["before", "after"];

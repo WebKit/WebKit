@@ -47,6 +47,10 @@
     padding-top: var(--css-declaration-vertical-padding);
 }
 
+.spreadsheet-css-declaration .header.editing-selector .selector {
+    margin-top: 1px;
+}
+
 .spreadsheet-css-declaration .header.editing-selector .origin {
     position: absolute;
     right: var(--css-declaration-horizontal-padding);
@@ -99,8 +103,25 @@
     -webkit-user-modify: read-only;
 }
 
+.spreadsheet-css-declaration .selector > .icon {
+    width: 16px;
+    height: 16px;
+    margin-top: -1px;
+    -webkit-margin-start: -2px;
+    vertical-align: -3.5px;
+    -webkit-user-select: none;
+}
+
+.spreadsheet-css-declaration .selector > .icon + * {
+    -webkit-padding-start: 2px;
+}
+
 .spreadsheet-css-declaration .selector > span {
     color: var(--text-color-secondary);
+}
+
+.spreadsheet-css-declaration .selector.style-attribute > span {
+    -webkit-margin-start: 0.5px;
 }
 
 .spreadsheet-css-declaration .selector.editing:focus,

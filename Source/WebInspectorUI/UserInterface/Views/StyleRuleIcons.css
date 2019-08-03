@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CSSSelector = class CSSSelector
-{
-    constructor(text, specificity, dynamic)
-    {
-        console.assert(text);
+.author-style-rule-icon .icon {
+    content: url(../Images/StyleRule.svg#author);
+}
 
-        this._text = text;
-        this._specificity = specificity || null;
-        this._dynamic = dynamic || false;
-    }
+.author-style-rule-icon.pseudo-selector .icon {
+    content: url(../Images/StyleRulePseudo.svg#author);
+}
 
-    // Public
+.user-style-rule-icon .icon {
+    content: url(../Images/StyleRule.svg#user);
+}
 
-    get text() { return this._text; }
-    get specificity() { return this._specificity; }
-    get dynamic() { return this._dynamic; }
+.user-style-rule-icon.pseudo-selector .icon {
+    content: url(../Images/StyleRulePseudo.svg#user);
+}
 
-    isPseudoSelector()
-    {
-        return Object.values(WI.CSSManager.PseudoSelectorNames).some((pseudoId) => (new RegExp("(?:\\b|^):{1,2}(?:-webkit-)?" + pseudoId + "(?:\\b|$)")).test(this._text));
-    }
-};
+.user-agent-style-rule-icon .icon {
+    content: url(../Images/StyleRule.svg#useragent);
+}
+
+.user-agent-style-rule-icon.pseudo-selector .icon {
+    content: url(../Images/StyleRulePseudo.svg#useragent);
+}
+
+.inspector-style-rule-icon .icon {
+    content: url(../Images/StyleRule.svg#inspector);
+}
+
+.inspector-style-rule-icon.pseudo-selector .icon {
+    content: url(../Images/StyleRulePseudo.svg#inspector);
+}
+
+.inherited-style-rule-icon .icon {
+    content: url(../Images/StyleRule.svg#inherited);
+}
+
+.inherited-element-style-rule-icon .icon {
+    content: url(../Images/StyleRuleInheritedElement.svg);
+}

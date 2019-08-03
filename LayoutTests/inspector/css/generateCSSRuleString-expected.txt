@@ -1,0 +1,41 @@
+Testing that generated CSS rule strings have proper formatting.
+
+
+== Running test suite: CSS.generateCSSRuleString
+-- Running test case: CSS.generateCSSRuleString.InlineStyle
+#test-node {
+    a-b: 1;
+    c-d: 2;
+}
+
+-- Running test case: CSS.generateCSSRuleString.MatchedRules
+@media only screen and (min-width: 0px) {
+    @media only screen and (min-height: 0px) {
+        body > div#test-node {
+            a-b: 1;
+            c-d: 2;
+        }
+    }
+}
+@media only screen and (min-width: 0px) {
+    body > #test-node {
+        a-b: 1;
+        c-d: 2;
+    }
+}
+body > div {
+    a-b: 1;
+    c-d: 2;
+}
+body > * {
+    a-b: 1;
+    c-d: 2;
+}
+* {
+    a-b: 1;
+    c-d: 2;
+}
+address, article, aside, div, footer, header, hgroup, layer, main, nav, section {
+    display: block;
+}
+

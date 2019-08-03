@@ -451,6 +451,28 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
             WI.cssManager.removeModifiedStyle(this);
     }
 
+    generateCSSRuleString()
+    {
+        let indentString = WI.indentString();
+        let styleText = "";
+        let mediaList = this.mediaList.filter((media) => media.text !== "all");
+        let mediaQueriesCount = mediaList.length;
+        for (let i = mediaQueriesCount - 1; i >= 0; --i)
+            styleText += indentString.repeat(mediaQueriesCount - i - 1) + "@media " + mediaList[i].text + " {\n";
+
+        styleText += indentString.repeat(mediaQueriesCount) + this.selectorText + " {\n";
+
+        for (let property of (this._styleSheetTextRange ? this.visibleProperties : this._properties))
+            styleText += indentString.repeat(mediaQueriesCount + 1) + property.formattedText + "\n";
+
+        for (let i = mediaQueriesCount; i > 0; --i)
+            styleText += indentString.repeat(i) + "}\n";
+
+        styleText += "}";
+
+        return styleText;
+    }
+
     // Protected
 
     get nodeStyles()

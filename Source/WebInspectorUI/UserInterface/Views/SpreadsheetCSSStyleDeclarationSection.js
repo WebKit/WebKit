@@ -62,6 +62,43 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     {
         super.initialLayout();
 
+        if (WI.settings.experimentalEnableStylesIcons.value) {
+            let iconClassName = null;
+            switch (this._style.type) {
+            case WI.CSSStyleDeclaration.Type.Rule:
+                console.assert(this._style.ownerRule);
+                if (this._style.inherited) {
+                    iconClassName = "inherited-style-rule-icon";
+                    break;
+                }
+
+                switch (this._style.ownerRule.type) {
+                case WI.CSSStyleSheet.Type.Author:
+                    iconClassName = "author-style-rule-icon";
+                    break;
+                case WI.CSSStyleSheet.Type.User:
+                    iconClassName = "user-style-rule-icon";
+                    break;
+                case WI.CSSStyleSheet.Type.UserAgent:
+                    iconClassName = "user-agent-style-rule-icon";
+                    break;
+                case WI.CSSStyleSheet.Type.Inspector:
+                    iconClassName = "inspector-style-rule-icon";
+                    break;
+                }
+                break;
+            case WI.CSSStyleDeclaration.Type.Inline:
+            case WI.CSSStyleDeclaration.Type.Attribute:
+                if (this._style.inherited)
+                    iconClassName = "inherited-element-style-rule-icon";
+                else
+                    iconClassName = WI.DOMTreeElementPathComponent.DOMElementIconStyleClassName;
+                break;
+            }
+            console.assert(iconClassName);
+            this._element.classList.add(iconClassName);
+        }
+
         this._headerElement = document.createElement("div");
         this._headerElement.classList.add("header");
 
@@ -297,27 +334,44 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             selectorElement.classList.add(WI.SpreadsheetCSSStyleDeclarationSection.MatchedSelectorElementStyleClassName);
         };
 
+        if (WI.settings.experimentalEnableStylesIcons.value) {
+            if (!this._iconElement) {
+                this._iconElement = document.createElement("img");
+                this._iconElement.classList.add("icon");
+                WI.addMouseDownContextMenuHandlers(this._iconElement, this._populateIconElementContextMenu.bind(this));
+            }
+            this._selectorElement.appendChild(this._iconElement);
+        }
+
         switch (this._style.type) {
         case WI.CSSStyleDeclaration.Type.Rule:
             console.assert(this._style.ownerRule);
 
+            var hasMatchingPseudoSelector = false;
+
             var selectors = this._style.ownerRule.selectors;
-            var matchedSelectorIndices = this._style.ownerRule.matchedSelectorIndices;
             if (selectors.length) {
                 for (let i = 0; i < selectors.length; ++i) {
-                    appendSelector(selectors[i], matchedSelectorIndices.includes(i));
+                    let matched = this._style.ownerRule.matchedSelectorIndices.includes(i);
+                    if (matched && selectors[i].isPseudoSelector())
+                        hasMatchingPseudoSelector = true;
+
+                    appendSelector(selectors[i], matched);
                     if (i < selectors.length - 1)
                         this._selectorElement.append(", ");
                 }
             } else
                 appendSelectorTextKnownToMatch(this._style.ownerRule.selectorText);
 
+            this._element.classList.toggle("pseudo-selector", hasMatchingPseudoSelector);
             break;
 
-        case WI.CSSStyleDeclaration.Type.Inline:
-            this._selectorElement.textContent = WI.UIString("Style Attribute", "CSS properties defined via HTML style attribute");
+        case WI.CSSStyleDeclaration.Type.Inline: {
             this._selectorElement.classList.add("style-attribute");
+            let wrapper = this._selectorElement.appendChild(document.createElement("span"));
+            wrapper.textContent = WI.UIString("Style Attribute", "CSS properties defined via HTML style attribute");
             break;
+        }
 
         case WI.CSSStyleDeclaration.Type.Attribute:
             appendSelectorTextKnownToMatch(this._style.node.displayName);
@@ -428,6 +482,99 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             this._element.classList.add("selecting");
         } else
             this._stopSelection();
+    }
+
+    _populateIconElementContextMenu(contextMenu)
+    {
+        contextMenu.appendItem(WI.UIString("Copy Rule"), () => {
+            InspectorFrontendHost.copyText(this._style.generateCSSRuleString());
+        });
+
+        if (this._style.editable && this._style.properties.length) {
+            let shouldDisable = this._style.properties.some((property) => property.enabled);
+            contextMenu.appendItem(shouldDisable ? WI.UIString("Disable Rule") : WI.UIString("Enable Rule"), () => {
+                for (let property of this._style.properties)
+                    property.commentOut(shouldDisable);
+            });
+        }
+
+        if (!this._style.inherited) {
+            let generateSelector = () => {
+                if (this._style.type === WI.CSSStyleDeclaration.Type.Attribute)
+                    return this._style.node.displayName;
+                return this._style.selectorText;
+            };
+
+            let createNewRule = (selector, text) => {
+                if (this._delegate && this._delegate.spreadsheetCSSStyleDeclarationSectionAddNewRule)
+                    this._delegate.spreadsheetCSSStyleDeclarationSectionAddNewRule(this, selector, text);
+                else
+                    this._style.nodeStyles.addRule(selector, text);
+            };
+
+            contextMenu.appendSeparator();
+
+            contextMenu.appendItem(WI.UIString("Duplicate Selector"), () => {
+                createNewRule(generateSelector());
+            });
+
+            if (!WI.CSSManager.PseudoElementNames.some((className) => this._style.selectorText.includes(":" + className))) {
+                let addPseudoRule = (pseudoSelector, text) => {
+                    let selector = null;
+                    if (this._style.ownerRule)
+                        selector = this._style.ownerRule.selectors.map((selector) => selector.text + pseudoSelector).join(", ");
+                    else
+                        selector = generateSelector() + pseudoSelector;
+                    createNewRule(selector, text);
+                };
+
+                if (WI.CSSManager.ForceablePseudoClasses.every((className) => !this._style.selectorText.includes(":" + className))) {
+                    contextMenu.appendSeparator();
+
+                     for (let pseudoClass of WI.CSSManager.ForceablePseudoClasses) {
+                        if (pseudoClass === "visited" && this._style.node.nodeName() !== "A")
+                            continue;
+
+                        let pseudoClassSelector = ":" + pseudoClass;
+                        contextMenu.appendItem(WI.UIString("Add %s Rule").format(pseudoClassSelector), () => {
+                            this._style.node.setPseudoClassEnabled(pseudoClass, true);
+                            addPseudoRule(pseudoClassSelector);
+                        });
+                    }
+                }
+
+                if (this._style.type === WI.CSSStyleDeclaration.Type.Rule) {
+                    contextMenu.appendSeparator();
+
+                    for (let pseudoElement of WI.CSSManager.PseudoElementNames) {
+                        let pseudoElementSelector = "::" + pseudoElement;
+                        contextMenu.appendItem(WI.UIString("Create %s Rule").format(pseudoElementSelector), () => {
+                            addPseudoRule(pseudoElementSelector, "content: \"\";");
+                        });
+                    }
+                }
+            }
+        }
+
+        if (this._style.ownerRule && this._style.ownerRule.sourceCodeLocation) {
+            contextMenu.appendSeparator();
+
+            let label = null;
+            let sourceCode = this._style.ownerRule.sourceCodeLocation.displaySourceCode;
+            if (sourceCode instanceof WI.CSSStyleSheet || (sourceCode instanceof WI.Resource && sourceCode.type === WI.Resource.Type.Stylesheet))
+                label = WI.UIString("Reveal in Stylesheet");
+            else if (WI.settings.experimentalEnableSourcesTab.value)
+                label = WI.UIString("Reveal in Sources Tab");
+            else
+                label = WI.UIString("Reveal in Resources Tab");
+
+            contextMenu.appendItem(label, () => {
+                WI.showSourceCodeLocation(this._style.ownerRule.sourceCodeLocation, {
+                    ignoreNetworkTab: true,
+                    ignoreSearchTab: true,
+                });
+            });
+        }
     }
 
     _handleWindowClick(event)

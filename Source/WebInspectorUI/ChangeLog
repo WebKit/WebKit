@@ -1,5 +1,80 @@
 2019-08-03  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Elements: Styles: add icons for various CSS rule types
+        https://bugs.webkit.org/show_bug.cgi?id=199946
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager.displayNameForPseudoId):
+        Add hardcoded pseudo-selector identifiers for older backends.
+
+        * UserInterface/Models/CSSSelector.js:
+        (WI.CSSSelector.prototype.isPseudoSelector): Added.
+        (WI.CSSSelector.prototype.isPseudoElementSelector): Deleted.
+        There are more types of pseudo-selectors than just `:{before|after}`.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype.generateCSSRuleString): Added.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.spreadsheetCSSStyleDeclarationSectionAddNewRule): Added.
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.layout):
+        Provide a delegate method for adding a new rule, so the `WI.SpreadsheetRulesStyleDetailsPanel`
+        can know what selector to focus once the new rule gets added.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._renderSelector):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._populateIconElementContextMenu): Added.
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        (.spreadsheet-css-declaration .header.editing-selector .selector): Added.
+        (.spreadsheet-css-declaration .selector > .icon): Added.
+        (.spreadsheet-css-declaration .selector > .icon + *): Added.
+        (.spreadsheet-css-declaration .selector.style-attribute > span): Added.
+        When "mousedown" (or "contextmenu") on the icon, show a context menu with helpful actions:
+         - Copy Rule
+         - {Disable|Enable} Rule
+         - Duplicate Selector
+         - Add :{active|focus|hover|visited} Rule
+         - Create ::{before|after} Rule
+         - Reveal in {Resources Tab|Sources Tab|Stylesheet}
+        Drive-by: add an extra 0.5px of initial margin before the Style Attribute selector (which is
+        sans-serif) so it properly aligns with the other selectors (which are monospaced).
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.layout):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor:empty): Added.
+        (.spreadsheet-style-declaration-editor.no-properties): Deleted.
+        Add some extra space when there's no inline style so it looks a bit less cramped.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/StyleRuleIcons.css: Added.
+        (.author-style-rule-icon .icon):
+        (.author-style-rule-icon.pseudo-selector .icon):
+        (.user-style-rule-icon .icon):
+        (.user-style-rule-icon.pseudo-selector .icon):
+        (.user-agent-style-rule-icon .icon):
+        (.user-agent-style-rule-icon.pseudo-selector .icon):
+        (.inspector-style-rule-icon .icon):
+        (.inspector-style-rule-icon.pseudo-selector .icon):
+        (.inherited-style-rule-icon .icon):
+        (.inherited-element-style-rule-icon .icon):
+        * UserInterface/Images/StyleRule.svg: Added.
+        * UserInterface/Images/StyleRuleInheritedElement.svg: Added.
+        * UserInterface/Images/StyleRulePseudo.svg: Added.
+        Add generic icon classes for style rule icons.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        Add experimental setting.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-08-03  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: DOM: add a special breakpoint for "All Events"
         https://bugs.webkit.org/show_bug.cgi?id=200285
 
