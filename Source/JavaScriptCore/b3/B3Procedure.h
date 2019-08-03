@@ -113,6 +113,7 @@ public:
     JS_EXPORT_PRIVATE Variable* addVariable(Type);
 
     JS_EXPORT_PRIVATE Type addTuple(Vector<Type>&& types);
+    const Vector<Vector<Type>>& tuples() const { return m_tuples; };
     bool isValidTuple(Type tuple) const;
     Type extractFromTuple(Type tuple, unsigned index) const;
     const Vector<Type>& tupleForType(Type tuple) const;

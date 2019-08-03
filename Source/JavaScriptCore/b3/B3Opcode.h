@@ -296,8 +296,8 @@ enum Opcode : uint8_t {
     // stack.
     Patchpoint,
 
-    // This is a projection out of a tuple. Currently only patchpoints can generate a tuple. It's assumumed that
-    // each entry in a tuple has a fixed Numeric B3 Type (i.e. not Void or Tuple).
+    // This is a projection out of a tuple. Currently only Patchpoints, Get, and Phi can produce tuples.
+    // It's assumumed that each entry in a tuple has a fixed Numeric B3 Type (i.e. not Void or Tuple).
     Extract,
 
     // Checked math. Use the CheckValue class. Like a Patchpoint, this takes a code generation

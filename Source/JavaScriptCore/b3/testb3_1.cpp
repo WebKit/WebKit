@@ -904,7 +904,7 @@ int main(int argc, char** argv)
 
     JSC::initializeThreading();
     
-    for (unsigned i = 1; i <= 2; ++i) {
+    for (unsigned i = 0; i <= 2; ++i) {
         JSC::Options::defaultB3OptLevel() = i;
         run(filter);
     }

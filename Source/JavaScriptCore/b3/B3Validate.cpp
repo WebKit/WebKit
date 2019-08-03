@@ -74,6 +74,12 @@ public:
         HashMap<Value*, unsigned> valueIndex;
         HashMap<Value*, Vector<Optional<Type>>> extractions;
 
+        for (unsigned tuple = 0; tuple < m_procedure.tuples().size(); ++tuple) {
+            VALIDATE(m_procedure.tuples()[tuple].size(), ("In tuple ", tuple));
+            for (unsigned i = 0; i < m_procedure.tuples()[tuple].size(); ++i)
+                VALIDATE(m_procedure.tuples()[tuple][i].isNumeric(), ("In tuple ", tuple, " at index", i));
+        }
+
         for (BasicBlock* block : m_procedure) {
             blocks.add(block);
             for (unsigned i = 0; i < block->size(); ++i) {
