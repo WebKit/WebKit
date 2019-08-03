@@ -5,6 +5,9 @@ Test CSS formatting.
 -- Running test case: CSSFormatter.basic.css
 PASS
 
+-- Running test case: CSSFormatter.comment.css
+PASS
+
 -- Running test case: CSSFormatter.gradient.css
 PASS
 

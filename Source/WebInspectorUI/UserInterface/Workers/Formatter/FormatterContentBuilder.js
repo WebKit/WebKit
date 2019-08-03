@@ -87,6 +87,11 @@ FormatterContentBuilder = class FormatterContentBuilder
         return this._currentLine;
     }
 
+    get indented()
+    {
+        return this._indent > 0;
+    }
+
     setOriginalContent(originalContent)
     {
         console.assert(!this._originalContent);

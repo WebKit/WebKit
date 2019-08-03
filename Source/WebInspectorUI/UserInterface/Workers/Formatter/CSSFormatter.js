@@ -76,6 +76,8 @@ CSSFormatter = class CSSFormatter
         const removeSpaceBefore = new Set([`,`, `(`, `)`, `}`, `:`, `;`]);
         const removeSpaceAfter = new Set([`(`, `{`, `}`, `,`, `!`, `;`]);
 
+        const whitespaceOnlyRegExp = /^\s*$/;
+
         const inAtRuleRegExp = /^\s*@[a-zA-Z][-a-zA-Z]+/;
         const inAtRuleBeforeParenthesisRegExp = /^\s*@[a-zA-Z][-a-zA-Z]+$/;
         const inAtRuleAfterParenthesisRegExp = /^\s*@[a-zA-Z][-a-zA-Z]+[^("':]*\([^"':]*:/;
@@ -91,6 +93,8 @@ CSSFormatter = class CSSFormatter
             let c = this._sourceText[i];
 
             let testCurrentLine = (regExp) => regExp.test(this._builder.currentLine);
+
+            let inComment = false;
 
             let inSelector = () => {
                 let nextOpenBrace = this._sourceText.indexOf(`{`, i);
@@ -225,36 +229,84 @@ CSSFormatter = class CSSFormatter
             let specialSequenceEnd = null;
             if (quoteTypes.has(c))
                 specialSequenceEnd = c;
-            else if (c === `/` && this._sourceText[i + 1] === `*`)
+            else if (c === `/` && this._sourceText[i + 1] === `*`) {
+                inComment = true;
                 specialSequenceEnd = `*/`;
-            else if (c === `u` && this._sourceText[i + 1] === `r` && this._sourceText[i + 2] === `l` && this._sourceText[i + 3] === `(`)
+            } else if (c === `u` && this._sourceText[i + 1] === `r` && this._sourceText[i + 2] === `l` && this._sourceText[i + 3] === `(`)
                 specialSequenceEnd = `)`;
 
             if (specialSequenceEnd) {
+                let startIndex = i;
                 let endIndex = i;
                 do {
                     endIndex = this._sourceText.indexOf(specialSequenceEnd, endIndex + specialSequenceEnd.length);
-                } while (endIndex !== -1 && this._sourceText[endIndex - 1] === `\\`);
+                } while (endIndex !== -1 && !inComment && this._sourceText[endIndex - 1] === `\\`);
 
                 if (endIndex === -1)
                     endIndex = this._sourceText.length;
+                endIndex += specialSequenceEnd.length;
 
-                this._builder.appendToken(this._sourceText.substring(i, endIndex + specialSequenceEnd.length), i);
-                i = endIndex + specialSequenceEnd.length - 1; // Account for the iteration of the for loop.
+                let specialSequenceText = this._sourceText.substring(startIndex, endIndex);
 
+                let lastSourceNewlineWasMultiple = this._sourceText[startIndex - 1] === `\n` && this._sourceText[startIndex - 2] === `\n`;
+                let lastAppendNewlineWasMultiple = this._builder.lastNewlineAppendWasMultiple;
+
+                let commentOnOwnLine = false;
+                if (inComment) {
+                    commentOnOwnLine = testCurrentLine(whitespaceOnlyRegExp);
+
+                    if (!commentOnOwnLine || lastAppendNewlineWasMultiple) {
+                        while (this._builder.lastTokenWasNewline)
+                            this._builder.removeLastNewline();
+                    }
+
+                    if (commentOnOwnLine) {
+                        if (startIndex > 0 && !this._builder.indented)
+                            this._builder.appendNewline();
+                    } else if (this._builder.currentLine.length && !this._builder.lastTokenWasWhitespace)
+                        this._builder.appendSpace();
+
+                    if (this._builder.lastTokenWasNewline && lastSourceNewlineWasMultiple)
+                        this._builder.appendNewline(true);
+                }
+
+                this._builder.appendToken(specialSequenceText, startIndex);
+
+                i = endIndex;
                 c = this._sourceText[i];
+
+                if (inComment) {
+                    if (commentOnOwnLine) {
+                        if (lastAppendNewlineWasMultiple && !lastSourceNewlineWasMultiple)
+                            this._builder.appendMultipleNewlines(2);
+                        else
+                            this._builder.appendNewline();
+                    } else if (!/\s/.test(c)) {
+                        if (!testCurrentLine(inAtRuleRegExp) && !inSelector() && !inProperty())
+                            this._builder.appendNewline();
+                        else
+                            this._builder.appendSpace();
+                    }
+                }
+
+                --i; // Account for the iteration of the for loop.
+                c = this._sourceText[i];
+
                 formatAfter();
                 continue;
             }
 
             if (/\s/.test(c)) {
-                if (c === `\n` && !this._builder.lastTokenWasNewline) {
-                    while (this._builder.lastTokenWasWhitespace)
-                        this._builder.removeLastWhitespace();
-                    if (!removeSpaceAfter.has(this._builder.lastToken))
-                        this._builder.appendNewline();
-                    else
-                        this._builder.appendSpace();
+                if (c === `\n`) {
+                    this._builder.addOriginalLineEnding(i);
+                    if (!this._builder.lastTokenWasNewline) {
+                        while (this._builder.lastTokenWasWhitespace)
+                            this._builder.removeLastWhitespace();
+                        if (!removeSpaceAfter.has(this._builder.lastToken))
+                            this._builder.appendNewline();
+                        else
+                            this._builder.appendSpace();
+                    }
                 } else if (!this._builder.lastTokenWasWhitespace && !removeSpaceAfter.has(this._builder.lastToken))
                     this._builder.appendSpace();
                 continue;
