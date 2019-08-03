@@ -64,8 +64,10 @@ inline const Box* firstChild(U& object)
     return object.firstChild();
 }
 
-inline const Box* firstChild(const Box&)
+inline const Box* firstChild(const Box& box)
 {
+    if (is<Container>(box))
+        return downcast<Container>(box).firstChild();
     return nullptr;
 }
 

@@ -1,3 +1,49 @@
+2019-08-03  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Remove formatting context type container classes.
+        https://bugs.webkit.org/show_bug.cgi?id=200202
+
+        Reviewed by Antti Koivisto.
+
+        These are formatting context specific classes. Let's try to have a layout tree without such types.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeIntrinsicWidthConstraints const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout const):
+        (WebCore::Layout::InlineFormattingContext::computeMarginBorderAndPaddingForInlineContainer const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::layout const):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::appendTextContent):
+        * layout/layouttree/LayoutBlockContainer.cpp: Removed.
+        * layout/layouttree/LayoutBlockContainer.h: Removed.
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::establishesInlineFormattingContext const):
+        (WebCore::Layout::Box::establishesInlineFormattingContextOnly const):
+        (WebCore::Layout::Box::formattingContextRoot const):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::isBlockContainer const):
+        (WebCore::Layout::Box::isInlineContainer const):
+        (WebCore::Layout::Box::isInlineBox const):
+        (WebCore::Layout::Box::establishesInlineFormattingContext const): Deleted.
+        (WebCore::Layout::Box::establishesInlineFormattingContextOnly const): Deleted.
+        * layout/layouttree/LayoutInlineContainer.cpp: Removed.
+        * layout/layouttree/LayoutInlineContainer.h: Removed.
+        * layout/layouttree/LayoutIterator.h:
+        (WebCore::Layout::LayoutBoxTraversal::firstChild):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutTree):
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+        (WebCore::Layout::TreeBuilder::createTableStructure):
+        (WebCore::Layout::outputLayoutBox):
+        * layout/layouttree/LayoutTreeBuilder.h:
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
 2019-08-02  Robin Morisset  <rmorisset@apple.com>
 
         [WHLSL] Avoid visiting the full AST in computeDimensions

@@ -82,6 +82,29 @@ bool Box::establishesBlockFormattingContext() const
     return false;
 }
 
+bool Box::establishesInlineFormattingContext() const
+{
+    // 9.4.2 Inline formatting contexts
+    // An inline formatting context is established by a block container box that contains no block-level boxes.
+    if (!isBlockContainerBox())
+        return false;
+
+    if (!isContainer())
+        return false;
+
+    // FIXME ???
+    if (!downcast<Container>(*this).firstInFlowChild())
+        return false;
+
+    // It's enough to check the first in-flow child since we can't have both block and inline level sibling boxes.
+    return downcast<Container>(*this).firstInFlowChild()->isInlineLevelBox();
+}
+
+bool Box::establishesInlineFormattingContextOnly() const
+{
+    return establishesInlineFormattingContext() && !establishesBlockFormattingContext();
+}
+
 bool Box::establishesTableFormattingContext() const
 {
     return isTableBox();
@@ -182,10 +205,21 @@ const Container& Box::formattingContextRoot() const
     // We should never need to ask this question on the ICB.
     ASSERT(!isInitialContainingBlock());
     // A box lives in the same formatting context as its containing block unless the containing block establishes a formatting context.
-    auto& containingBlock = *this->containingBlock();
-    if (containingBlock.establishesFormattingContext())
-        return containingBlock;
-    return containingBlock.formattingContextRoot();
+    // However relatively positioned (inflow) inline container lives in the formatting context where its parent lives unless
+    // the parent establishes a formatting context.
+    //
+    // <div id=outer style="position: absolute"><div id=inner><span style="position: relative">content</span></div></div>
+    // While the relatively positioned inline container (span) is placed relative to its containing block "outer", it lives in the inline
+    // formatting context established by "inner".
+    const Container* ancestor = nullptr;
+    if (isInlineBox() && isInFlowPositioned())
+        ancestor = parent();
+    else
+        ancestor = containingBlock();
+    ASSERT(ancestor);
+    if (ancestor->establishesFormattingContext())
+        return *ancestor;
+    return ancestor->formattingContextRoot();
 }
 
 const Container& Box::initialContainingBlock() const

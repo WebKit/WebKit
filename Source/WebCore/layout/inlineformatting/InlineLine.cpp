@@ -279,7 +279,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
         adjustBaselineAndLineHeight(inlineItem, runHeight);
     }
 
-    auto textContext = Content::Run::TextContext { inlineItem.start(), inlineItem.isCollapsed() ? 1 : inlineItem.length(), isCompletelyCollapsed, canBeExtended, inlineItem.isWhitespace() };
+    auto textContext = Content::Run::TextContext { inlineItem.start(), inlineItem.isCollapsed() ? 1 : inlineItem.length(), isCompletelyCollapsed, inlineItem.isWhitespace(), canBeExtended };
     auto lineItem = std::make_unique<Content::Run>(inlineItem, textContext, logicalRect);
     if (isTrimmable && !isCompletelyCollapsed)
         m_trimmableContent.add(lineItem.get());

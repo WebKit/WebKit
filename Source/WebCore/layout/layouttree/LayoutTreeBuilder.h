@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class RenderElement;
+class RenderObject;
 class RenderTable;
 class RenderView;
 

@@ -34,7 +34,6 @@
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
 #include "LayoutInlineBox.h"
-#include "LayoutInlineContainer.h"
 #include "LayoutState.h"
 #include "Logging.h"
 #include "Textutil.h"
@@ -79,7 +78,7 @@ void InlineFormattingContext::layout() const
         if (layoutBox->establishesFormattingContext())
             layoutFormattingContextRoot(*layoutBox, usedValues);
         else if (is<Container>(*layoutBox))
-            computeMarginBorderAndPaddingForInlineContainer(downcast<InlineContainer>(*layoutBox), usedValues);
+            computeMarginBorderAndPaddingForInlineContainer(downcast<Container>(*layoutBox), usedValues);
         else if (layoutBox->isReplaced())
             computeWidthAndHeightForReplacedInlineBox(*layoutBox, usedValues);
         else if (is<InlineBox>(*layoutBox))
@@ -159,7 +158,7 @@ void InlineFormattingContext::initializeMarginBorderAndPaddingForGenericInlineBo
     displayBox.setPadding({ });
 }
 
-void InlineFormattingContext::computeMarginBorderAndPaddingForInlineContainer(const InlineContainer& container, UsedHorizontalValues usedValues) const
+void InlineFormattingContext::computeMarginBorderAndPaddingForInlineContainer(const Container& container, UsedHorizontalValues usedValues) const
 {
     computeHorizontalMargin(container, usedValues);
     computeBorderAndPadding(container, usedValues);

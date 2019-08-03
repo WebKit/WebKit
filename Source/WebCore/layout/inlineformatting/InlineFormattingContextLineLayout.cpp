@@ -279,8 +279,6 @@ InlineFormattingContext::InlineLayout::InlineLayout(const InlineFormattingContex
 
 void InlineFormattingContext::InlineLayout::layout(const InlineItems& inlineItems, LayoutUnit widthConstraint) const
 {
-    ASSERT(!inlineItems.isEmpty());
-
     auto& formattingRootDisplayBox = layoutState().displayBoxForLayoutBox(m_formattingRoot);
     auto& floatingState = layoutState().establishedFormattingState(m_formattingRoot).floatingState();
 

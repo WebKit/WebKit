@@ -65,9 +65,7 @@ public:
     enum BaseTypeFlag {
         BoxFlag               = 1 << 0,
         ContainerFlag         = 1 << 1,
-        BlockContainerFlag    = 1 << 2,
         InlineBoxFlag         = 1 << 3,
-        InlineContainerFlag   = 1 << 4,
         LineBreakBoxFlag      = 1 << 5
     };
     typedef unsigned BaseTypeFlags;
@@ -79,8 +77,8 @@ public:
     bool establishesBlockFormattingContext() const;
     bool establishesTableFormattingContext() const;
     bool establishesBlockFormattingContextOnly() const;
-    virtual bool establishesInlineFormattingContext() const { return false; }
-    virtual bool establishesInlineFormattingContextOnly() const { return false; }
+    bool establishesInlineFormattingContext() const;
+    bool establishesInlineFormattingContextOnly() const;
 
     bool isInFlow() const { return !isFloatingOrOutOfFlowPositioned(); }
     bool isPositioned() const { return isInFlowPositioned() || isOutOfFlowPositioned(); }
@@ -133,9 +131,10 @@ public:
     const Box* previousInFlowOrFloatingSibling() const;
 
     bool isContainer() const { return m_baseTypeFlags & ContainerFlag; }
-    bool isBlockContainer() const { return m_baseTypeFlags & BlockContainerFlag; }
+    bool isBlockContainer() const { return isBlockLevelBox() && isContainer(); }
+    bool isInlineContainer() const { return isInlineLevelBox() && isContainer(); }
+
     bool isInlineBox() const { return m_baseTypeFlags & InlineBoxFlag; }
-    bool isInlineContainer() const { return m_baseTypeFlags & InlineContainerFlag; }
     bool isLineBreakBox() const { return m_baseTypeFlags & LineBreakBoxFlag; }
 
     bool isPaddingApplicable() const;

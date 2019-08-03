@@ -37,7 +37,6 @@ namespace WebCore {
 namespace Layout {
 
 class FloatingState;
-class InlineContainer;
 struct LineContent;
 struct LineInput;
 
@@ -83,7 +82,7 @@ private:
 
     void layoutFormattingContextRoot(const Box&, UsedHorizontalValues) const;
     void computeIntrinsicWidthForFloatBox(const Box&) const;
-    void computeMarginBorderAndPaddingForInlineContainer(const InlineContainer&, UsedHorizontalValues) const;
+    void computeMarginBorderAndPaddingForInlineContainer(const Container&, UsedHorizontalValues) const;
     void initializeMarginBorderAndPaddingForGenericInlineBox(const InlineBox&) const;
     void computeIntrinsicWidthForInlineBlock(const Box&) const;
     void computeWidthAndHeightForReplacedInlineBox(const Box&, UsedHorizontalValues) const;
