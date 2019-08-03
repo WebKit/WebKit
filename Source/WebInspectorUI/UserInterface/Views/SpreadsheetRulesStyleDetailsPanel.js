@@ -300,31 +300,45 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
                 addSection(preservedSection);
         };
 
-        for (let style of this.nodeStyles.uniqueOrderedStyles)
+        let addedPseudoStyles = false;
+        let addPseudoStyles = () => {
+            if (addedPseudoStyles)
+                return;
+
+            // Add all pseudo styles before any inherited rules.
+            let beforePseudoId = null;
+            let afterPseudoId = null;
+            if (InspectorBackend.domains.CSS.PseudoId) {
+                beforePseudoId = WI.CSSManager.PseudoSelectorNames.Before;
+                afterPseudoId = WI.CSSManager.PseudoSelectorNames.After;
+            } else {
+                // Compatibility (iOS 12.2): CSS.PseudoId did not exist.
+                beforePseudoId = 4;
+                afterPseudoId = 5;
+            }
+
+            for (let [pseudoId, pseudoElementInfo] of this.nodeStyles.pseudoElements) {
+                let pseudoElement = null;
+                if (pseudoId === beforePseudoId)
+                    pseudoElement = this.nodeStyles.node.beforePseudoElement();
+                else if (pseudoId === afterPseudoId)
+                    pseudoElement = this.nodeStyles.node.afterPseudoElement();
+                addHeader(WI.UIString("Pseudo-Element"), pseudoElement || pseudoId);
+
+                for (let style of WI.DOMNodeStyles.uniqueOrderedStyles(pseudoElementInfo.orderedStyles))
+                    createSection(style);
+            }
+
+            addedPseudoStyles = true;
+        };
+
+        for (let style of this.nodeStyles.uniqueOrderedStyles) {
+            if (style.inherited)
+                addPseudoStyles();
             createSection(style);
-
-        let beforePseudoId = null;
-        let afterPseudoId = null;
-        if (InspectorBackend.domains.CSS.PseudoId) {
-            beforePseudoId = WI.CSSManager.PseudoSelectorNames.Before;
-            afterPseudoId = WI.CSSManager.PseudoSelectorNames.After;
-        } else {
-            // Compatibility (iOS 12.2): CSS.PseudoId did not exist.
-            beforePseudoId = 4;
-            afterPseudoId = 5;
         }
 
-        for (let [pseudoId, pseudoElementInfo] of this.nodeStyles.pseudoElements) {
-            let pseudoElement = null;
-            if (pseudoId === beforePseudoId)
-                pseudoElement = this.nodeStyles.node.beforePseudoElement();
-            else if (pseudoId === afterPseudoId)
-                pseudoElement = this.nodeStyles.node.afterPseudoElement();
-            addHeader(WI.UIString("Pseudo-Element"), pseudoElement || pseudoId);
-
-            for (let style of WI.DOMNodeStyles.uniqueOrderedStyles(pseudoElementInfo.orderedStyles))
-                createSection(style);
-        }
+        addPseudoStyles();
 
         this._newRuleSelector = null;
 
