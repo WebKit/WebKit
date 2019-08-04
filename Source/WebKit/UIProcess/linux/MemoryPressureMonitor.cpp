@@ -220,7 +220,7 @@ void MemoryPressureMonitor::start()
 
     m_started = true;
 
-    Thread::create("MemoryPressureMonitor", [this] {
+    Thread::create("MemoryPressureMonitor", [] {
         Seconds pollInterval = s_maxPollingInterval;
         while (true) {
             sleep(pollInterval);
