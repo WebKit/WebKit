@@ -741,7 +741,7 @@ public:
     bool isSealed(VM& vm) { return structure(vm)->isSealed(vm); }
     bool isFrozen(VM& vm) { return structure(vm)->isFrozen(vm); }
 
-    bool anyObjectInChainMayInterceptIndexedAccesses(VM&) const;
+    JS_EXPORT_PRIVATE bool anyObjectInChainMayInterceptIndexedAccesses(VM&) const;
     JS_EXPORT_PRIVATE bool prototypeChainMayInterceptStoreTo(VM&, PropertyName);
     bool needsSlowPutIndexing(VM&) const;
 
