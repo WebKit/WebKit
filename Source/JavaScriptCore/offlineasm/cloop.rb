@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2012-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -426,7 +426,12 @@ def cloopEmitShiftOperation(operands, type, operator)
         truncationHeader = ""
         truncationFooter = ""
     end
-    $asm.putc "#{dst.clLValue(type)} = #{truncationHeader}#{operands[1].clValue(type)} #{operator} (#{operands[0].clValue(:int)} & 0x1f)#{truncationFooter};"
+    # FIXME: rename :int to :intptr to be match their expected names from C++. Ditto for :uint.
+    # https://bugs.webkit.org/show_bug.cgi?id=195183
+    shiftMask = "((sizeof(uintptr_t) == 8) ? 0x3f : 0x1f)" if type == :int || type == :uint
+    shiftMask = "0x3f" if type == :int64 || type == :uint64
+    shiftMask = "0x1f" if type == :int32 || type == :uint32
+    $asm.putc "#{dst.clLValue(type)} = #{truncationHeader}#{operands[1].clValue(type)} #{operator} (#{operands[0].clValue(:int)} & #{shiftMask})#{truncationFooter};"
 end
 
 def cloopEmitUnaryOperation(operands, type, operator)
