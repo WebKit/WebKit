@@ -713,6 +713,7 @@ private:
     CollectorPhase m_lastPhase { CollectorPhase::NotRunning };
     CollectorPhase m_currentPhase { CollectorPhase::NotRunning };
     CollectorPhase m_nextPhase { CollectorPhase::NotRunning };
+    bool m_collectorThreadIsRunning { false };
     bool m_threadShouldStop { false };
     bool m_threadIsStopping { false };
     bool m_mutatorDidRun { true };
