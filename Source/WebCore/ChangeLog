@@ -1,5 +1,17 @@
 2019-08-04  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Create formatting context/state.
+        https://bugs.webkit.org/show_bug.cgi?id=200428
+        <rdar://problem/53913625>
+
+        Reviewed by Antti Koivisto.
+
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::createFormattingStateForFormattingRootIfNeeded):
+        (WebCore::Layout::LayoutState::createFormattingContext):
+
+2019-08-04  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Cleanup preferred width computation
         https://bugs.webkit.org/show_bug.cgi?id=200426
         <rdar://problem/53912607>

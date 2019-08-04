@@ -38,6 +38,8 @@
 #include "Invalidation.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
+#include "TableFormattingContext.h"
+#include "TableFormattingState.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -147,6 +149,14 @@ FormattingState& LayoutState::createFormattingStateForFormattingRootIfNeeded(con
         }).iterator->value;
     }
 
+    if (formattingRoot.establishesTableFormattingContext()) {
+        return *m_formattingStates.ensure(&formattingRoot, [&] {
+
+            // Table formatting context always establishes a new floating state -and it stays empty.
+            return std::make_unique<TableFormattingState>(FloatingState::create(*this, formattingRoot), *this);
+        }).iterator->value;
+    }
+
     CRASH();
 }
 
@@ -162,6 +172,11 @@ std::unique_ptr<FormattingContext> LayoutState::createFormattingContext(const Bo
         ASSERT(formattingContextRoot.establishesBlockFormattingContextOnly());
         auto& blockFormattingState = downcast<BlockFormattingState>(createFormattingStateForFormattingRootIfNeeded(formattingContextRoot));
         return std::make_unique<BlockFormattingContext>(formattingContextRoot, blockFormattingState);
+    }
+
+    if (formattingContextRoot.establishesTableFormattingContext()) {
+        auto& tableFormattingState = downcast<TableFormattingState>(createFormattingStateForFormattingRootIfNeeded(formattingContextRoot));
+        return std::make_unique<TableFormattingContext>(formattingContextRoot, tableFormattingState);
     }
 
     CRASH();
