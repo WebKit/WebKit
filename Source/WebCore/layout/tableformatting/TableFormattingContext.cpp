@@ -46,6 +46,11 @@ void TableFormattingContext::layout() const
 {
 }
 
+FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthConstraints() const
+{
+    return { };
+}
+
 }
 }
 

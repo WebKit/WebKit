@@ -49,7 +49,7 @@ public:
     void layout() const override;
 
 private:
-    void computeIntrinsicWidthConstraints() const override;
+    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() const override;
 
     class InlineLayout {
     public:
@@ -81,10 +81,9 @@ private:
     };
 
     void layoutFormattingContextRoot(const Box&, UsedHorizontalValues) const;
-    void computeIntrinsicWidthForFloatBox(const Box&) const;
     void computeMarginBorderAndPaddingForInlineContainer(const Container&, UsedHorizontalValues) const;
     void initializeMarginBorderAndPaddingForGenericInlineBox(const Box&) const;
-    void computeIntrinsicWidthForInlineBlock(const Box&) const;
+    void computeIntrinsicWidthForFormattingRoot(const Box&) const;
     void computeWidthAndHeightForReplacedInlineBox(const Box&, UsedHorizontalValues) const;
     void computeHorizontalMargin(const Box&, UsedHorizontalValues) const;
     void computeHeightAndMargin(const Box&) const;

@@ -41,6 +41,9 @@ class TableFormattingContext : public FormattingContext {
 public:
     TableFormattingContext(const Box& formattingContextRoot, TableFormattingState&);
     void layout() const override;
+
+private:
+    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() const override;
 };
 
 }

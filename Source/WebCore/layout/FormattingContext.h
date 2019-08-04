@@ -53,10 +53,12 @@ public:
     void layoutOutOfFlowDescendants(const Box&) const;
 
     struct IntrinsicWidthConstraints {
+        void expand(LayoutUnit horizontalValue);
+
         LayoutUnit minimum;
         LayoutUnit maximum;
     };
-    virtual void computeIntrinsicWidthConstraints() const = 0;
+    virtual IntrinsicWidthConstraints computedIntrinsicWidthConstraints() const = 0;
 
     static Display::Box mapBoxToAncestor(const LayoutState&, const Box&, const Container& ancestor);
     static LayoutUnit mapTopToAncestor(const LayoutState&, const Box&, const Container& ancestor);
@@ -138,6 +140,12 @@ private:
     WeakPtr<const Box> m_root;
     FormattingState& m_formattingState;
 };
+
+inline void FormattingContext::IntrinsicWidthConstraints::expand(LayoutUnit horizontalValue)
+{
+    minimum += horizontalValue;
+    maximum += horizontalValue;
+}
 
 }
 }

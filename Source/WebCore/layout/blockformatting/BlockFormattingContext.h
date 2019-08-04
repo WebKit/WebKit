@@ -69,7 +69,7 @@ private:
     void computeEstimatedVerticalPositionForFormattingRoot(const Box&) const;
     void computeEstimatedVerticalPositionForFloatClear(const FloatingContext&, const Box&) const;
 
-    void computeIntrinsicWidthConstraints() const override;
+    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() const override;
     LayoutUnit verticalPositionWithMargin(const Box&, const UsedVerticalMargin&) const;
 
     // This class implements positioning and sizing for boxes participating in a block formatting context.
@@ -82,8 +82,7 @@ private:
         static LayoutUnit staticVerticalPosition(const LayoutState&, const Box&);
         static LayoutUnit staticHorizontalPosition(const LayoutState&, const Box&);
 
-        static bool intrinsicWidthConstraintsNeedChildrenWidth(const Box&);
-        static IntrinsicWidthConstraints intrinsicWidthConstraints(const LayoutState&, const Box&);
+        static IntrinsicWidthConstraints intrinsicWidthConstraints(LayoutState&, const Box&);
 
     private:
         static HeightAndMargin inFlowNonReplacedHeightAndMargin(const LayoutState&, const Box&, UsedVerticalValues);

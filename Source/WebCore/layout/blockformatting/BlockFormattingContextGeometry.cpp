@@ -285,15 +285,18 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(const Layo
     return inFlowReplacedWidthAndMargin(layoutState, layoutBox, usedValues);
 }
 
-bool BlockFormattingContext::Geometry::intrinsicWidthConstraintsNeedChildrenWidth(const Box& layoutBox)
+FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::intrinsicWidthConstraints(LayoutState& layoutState, const Box& layoutBox)
 {
-    if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
-        return false;
-    return layoutBox.style().width().isAuto();
-}
+    auto fixedMarginBorderAndPadding = [&](auto& layoutBox) {
+        auto& style = layoutBox.style();
+        return fixedValue(style.marginStart()).valueOr(0)
+            + LayoutUnit { style.borderLeftWidth() }
+            + fixedValue(style.paddingLeft()).valueOr(0)
+            + fixedValue(style.paddingRight()).valueOr(0)
+            + LayoutUnit { style.borderRightWidth() }
+            + fixedValue(style.marginEnd()).valueOr(0);
+    };
 
-FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::intrinsicWidthConstraints(const LayoutState& layoutState, const Box& layoutBox)
-{
     auto computedIntrinsicWidthConstraints = [&]() -> IntrinsicWidthConstraints {
         auto& style = layoutBox.style();
         if (auto width = fixedValue(style.logicalWidth()))
@@ -311,32 +314,31 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::i
             return { };
         }
 
-        if (!is<Container>(layoutBox))
+        if (layoutBox.establishesFormattingContext())
+            return layoutState.createFormattingContext(layoutBox)->computedIntrinsicWidthConstraints();
+
+        if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
             return { };
 
         auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
+        auto& formattingState = layoutState.formattingStateForBox(layoutBox);
         for (auto& child : childrenOfType<Box>(downcast<Container>(layoutBox))) {
             if (child.isOutOfFlowPositioned())
                 continue;
-            const auto& formattingState = layoutState.formattingStateForBox(child);
-            ASSERT(formattingState.isBlockFormattingState());
-            auto childIntrinsicWidthConstraints = formattingState.intrinsicWidthConstraints(child);
+            auto childIntrinsicWidthConstraints = formattingState.intrinsicWidthConstraintsForBox(child);
             ASSERT(childIntrinsicWidthConstraints);
 
-            auto& childStyle = child.style();
-            auto marginBorderAndPadding = fixedValue(childStyle.marginStart()).valueOr(0)
-                + LayoutUnit { childStyle.borderLeftWidth() }
-                + fixedValue(childStyle.paddingLeft()).valueOr(0)
-                + fixedValue(childStyle.paddingRight()).valueOr(0)
-                + LayoutUnit { childStyle.borderRightWidth() }
-                + fixedValue(childStyle.marginEnd()).valueOr(0);
+            // FIXME Check for box-sizing: border-box;
+            auto marginBorderAndPadding = fixedMarginBorderAndPadding(child);
             intrinsicWidthConstraints.minimum = std::max(intrinsicWidthConstraints.minimum, childIntrinsicWidthConstraints->minimum + marginBorderAndPadding);
             intrinsicWidthConstraints.maximum = std::max(intrinsicWidthConstraints.maximum, childIntrinsicWidthConstraints->maximum + marginBorderAndPadding);
         }
         return intrinsicWidthConstraints;
     };
-
-    return constrainByMinMaxWidth(layoutBox, computedIntrinsicWidthConstraints());
+    // FIXME Check for box-sizing: border-box;
+    auto intrinsicWidthConstraints = constrainByMinMaxWidth(layoutBox, computedIntrinsicWidthConstraints());
+    intrinsicWidthConstraints.expand(fixedMarginBorderAndPadding(layoutBox));
+    return intrinsicWidthConstraints;
 }
 
 }

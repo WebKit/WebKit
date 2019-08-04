@@ -250,12 +250,10 @@ LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(LayoutState& layoutStat
     // 'padding-left', 'padding-right', 'border-right-width', 'margin-right', and the widths of any relevant scroll bars.
 
     // Then the shrink-to-fit width is: min(max(preferred minimum width, available width), preferred width).
-    auto& formattingStateForRoot = layoutState.formattingStateForBox(formattingRoot);
-    auto intrinsicWidthConstraints = formattingStateForRoot.intrinsicWidthConstraints(formattingRoot);
-    if (!intrinsicWidthConstraints) {
-        layoutState.createFormattingContext(formattingRoot)->computeIntrinsicWidthConstraints();
-        intrinsicWidthConstraints = formattingStateForRoot.intrinsicWidthConstraints(formattingRoot);
-    }
+    auto& formattingStateForRoot = layoutState.createFormattingStateForFormattingRootIfNeeded(formattingRoot);
+    auto intrinsicWidthConstraints = formattingStateForRoot.intrinsicWidthConstraints();
+    if (!intrinsicWidthConstraints)
+        intrinsicWidthConstraints = layoutState.createFormattingContext(formattingRoot)->computedIntrinsicWidthConstraints();
     auto availableWidth = *usedValues.containingBlockWidth;
     return std::min(std::max(intrinsicWidthConstraints->minimum, availableWidth), intrinsicWidthConstraints->maximum);
 }

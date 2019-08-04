@@ -1,3 +1,80 @@
+2019-08-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Cleanup preferred width computation
+        https://bugs.webkit.org/show_bug.cgi?id=200426
+        <rdar://problem/53912607>
+
+        Reviewed by Antti Koivisto.
+
+        The intrinsic width for a formatting root box has 2 sets of values now. One set(min/max) is stored in the established formatting context's state
+        while the other is in the formatting context's state where the box lives.
+
+        <div style="position: absolute"><div style="float: left; border: 1px solid green">foobar</div></div>
+
+        The float box participates in the formatting context established by the absolutely position box, but it also establishes an inline formatting context.
+        The min/max width pair in the established context is the width of the "foobar" (same value for min/max). This set is stored in the inline formatting state.
+        However the float box has horizontal border so the "final" min/max width pair is expanded by this border value and stored in the formatting state where
+        the box lives (which is different from the one it establishes).
+
+        This and the "remove the formatting context type classes from the tree" changes open up interesting optimization opportunities.
+        Here is a very simple case:
+        <div style="display: inline-block; width: auto;">
+          <div style="float: left">some text</div>
+          <div style="float: left">some super long .... text</div>
+          <div></div>
+        </div>
+        In order to lay out this content properly, we
+        1. Compute the min/max width of the first float (expensive text measuring)
+        2. Compute the min/max width of the second float (some more expensive text measuring)
+        3. Compute the min/max width of the inline-block (that is pretty much the 2 float's min/max)
+        4. Lay out the 2 floats, the empty div and the inline-block using these min/max width pairs.
+
+        Now if the inline-block box's display value is changed to "block" and the positioning is to absolute (style="display: box; position: absolute;")
+        we currently(on trunk) tear down the render tree, build a new one and run all the steps again from #1 to #4.
+
+        In LFC, we start with the following layout tree
+        <container> -> block formatting context
+          <container> -> inline formatting context
+            <anonymous inline box>
+          <container> -> inline formatting context
+            <anonymous inline box>
+          <container> -> inline formatting context
+        and when the style change happens, we don't need to tear down the tree at all. Not only that, but since every formatting contexts stay the same
+        we can just reuse their states and actually skip all the steps (even the positioning since the absolutely positioned container has static top/bottom/left/right).
+
+        Surprisingly the final layout produces the exact same "display boxes" as the original layout.
+
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::IntrinsicWidthConstraints::expand):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::shrinkToFitWidth):
+        * layout/FormattingState.h:
+        (WebCore::Layout::FormattingState::setIntrinsicWidthConstraints):
+        (WebCore::Layout::FormattingState::intrinsicWidthConstraints const):
+        (WebCore::Layout::FormattingState::setIntrinsicWidthConstraintsForBox):
+        (WebCore::Layout::FormattingState::clearIntrinsicWidthConstraints):
+        (WebCore::Layout::FormattingState::intrinsicWidthConstraintsForBox const):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computedIntrinsicWidthConstraints const):
+        (WebCore::Layout::BlockFormattingContext::computeIntrinsicWidthConstraints const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::intrinsicWidthConstraints):
+        (WebCore::Layout::BlockFormattingContext::Geometry::intrinsicWidthConstraintsNeedChildrenWidth): Deleted.
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::horizontalMarginBorderAndPadding const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::nextInPreOrder):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints const):
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthForFormattingRoot const):
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthConstraints const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthForFloatBox const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthForInlineBlock const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computedIntrinsicWidthConstraints const):
+        * layout/tableformatting/TableFormattingContext.h:
+
 2019-08-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: DOM: add a special breakpoint for "All Events"
