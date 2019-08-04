@@ -73,7 +73,7 @@ bool HTMLFrameElementBase::isURLAllowed(const URL& completeURL) const
 
     if (WTF::protocolIsJavaScript(completeURL)) {
         RefPtr<Document> contentDoc = this->contentDocument();
-        if (contentDoc && !ScriptController::canAccessFromCurrentOrigin(contentDoc->frame()))
+        if (contentDoc && !ScriptController::canAccessFromCurrentOrigin(contentDoc->frame(), document()))
             return false;
     }
 
