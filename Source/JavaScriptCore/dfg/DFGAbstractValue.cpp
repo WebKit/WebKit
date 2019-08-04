@@ -341,17 +341,17 @@ void AbstractValue::filterValueByType()
     // the value, then we could clear both of those things. But that's unlikely to help
     // in any realistic scenario, so we don't do it. Simpler is better.
 
-    if (!!m_type) {
-        // The type is still non-empty. It may be that the new type renders
-        // the value empty because it contravenes the constant value we had.
-        if (m_value && !validateType(m_value))
-            clear();
+    if (!m_value)
         return;
-    }
-    
-    // The type has been rendered empty. That means that the value must now be invalid,
-    // as well.
-    ASSERT(!m_value || !validateType(m_value));
+
+    if (validateType(m_value))
+        return;
+
+    // We assume that the constant value can produce a narrower type at
+    // some point. For example, rope JSString produces SpecString, but
+    // it produces SpecStringIdent once it is resolved to AtomicStringImpl.
+    // We do not make this AbstractValue cleared, but clear the constant
+    // value if validation fails currently.
     m_value = JSValue();
 }
 
