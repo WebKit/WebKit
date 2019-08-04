@@ -1,5 +1,17 @@
 2019-06-04  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Argument elimination should check transitive dependents for interference
+        https://bugs.webkit.org/show_bug.cgi?id=198520
+        <rdar://problem/50863343>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/argument-elimination-inline-rest-past-kill.js: Added.
+        (f2):
+        (f3):
+
+2019-06-04  Tadeu Zagallo  <tzagallo@apple.com>
+
         Argument elimination should check for negative indices in GetByVal
         https://bugs.webkit.org/show_bug.cgi?id=198302
         <rdar://problem/51188095>

@@ -502,6 +502,33 @@ private:
             }
         }
         
+        using InlineCallFrames = HashSet<InlineCallFrame*, WTF::DefaultHash<InlineCallFrame*>::Hash, WTF::NullableHashTraits<InlineCallFrame*>>;
+        using InlineCallFramesForCanditates = HashMap<Node*, InlineCallFrames>;
+        InlineCallFramesForCanditates inlineCallFramesForCandidate;
+        auto forEachDependentNode = recursableLambda([&](auto self, Node* node, const auto& functor) -> void {
+            functor(node);
+
+            if (node->op() == Spread) {
+                self(node->child1().node(), functor);
+                return;
+            }
+
+            if (node->op() == NewArrayWithSpread) {
+                BitVector* bitVector = node->bitVector();
+                for (unsigned i = node->numChildren(); i--; ) {
+                    if (bitVector->get(i))
+                        self(m_graph.varArgChild(node, i).node(), functor);
+                }
+                return;
+            }
+        });
+        for (Node* candidate : m_candidates) {
+            auto& set = inlineCallFramesForCandidate.add(candidate, InlineCallFrames()).iterator->value;
+            forEachDependentNode(candidate, [&](Node* dependent) {
+                set.add(dependent->origin.semantic.inlineCallFrame);
+            });
+        }
+
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             // Stop if we've already removed all candidates.
             if (m_candidates.isEmpty())
@@ -524,82 +551,84 @@ private:
                     if (!m_candidates.contains(candidate))
                         return;
                     
-                    // Check if this block has any clobbers that affect this candidate. This is a fairly
-                    // fast check.
-                    bool isClobberedByBlock = false;
-                    Operands<bool>& clobberedByThisBlock = clobberedByBlock[block];
-                    
-                    if (InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame) {
-                        if (inlineCallFrame->isVarargs()) {
-                            isClobberedByBlock |= clobberedByThisBlock.operand(
-                                inlineCallFrame->stackOffset + CallFrameSlot::argumentCount);
-                        }
+                    for (InlineCallFrame* inlineCallFrame : inlineCallFramesForCandidate.get(candidate)) {
+                        // Check if this block has any clobbers that affect this candidate. This is a fairly
+                        // fast check.
+                        bool isClobberedByBlock = false;
+                        Operands<bool>& clobberedByThisBlock = clobberedByBlock[block];
                         
-                        if (!isClobberedByBlock || inlineCallFrame->isClosureCall) {
-                            isClobberedByBlock |= clobberedByThisBlock.operand(
-                                inlineCallFrame->stackOffset + CallFrameSlot::callee);
-                        }
-                        
-                        if (!isClobberedByBlock) {
-                            for (unsigned i = 0; i < inlineCallFrame->argumentCountIncludingThis - 1; ++i) {
-                                VirtualRegister reg =
-                                    VirtualRegister(inlineCallFrame->stackOffset) +
-                                    CallFrame::argumentOffset(i);
-                                if (clobberedByThisBlock.operand(reg)) {
+                        if (inlineCallFrame) {
+                            if (inlineCallFrame->isVarargs()) {
+                                isClobberedByBlock |= clobberedByThisBlock.operand(
+                                    inlineCallFrame->stackOffset + CallFrameSlot::argumentCount);
+                            }
+
+                            if (!isClobberedByBlock || inlineCallFrame->isClosureCall) {
+                                isClobberedByBlock |= clobberedByThisBlock.operand(
+                                    inlineCallFrame->stackOffset + CallFrameSlot::callee);
+                            }
+
+                            if (!isClobberedByBlock) {
+                                for (unsigned i = 0; i < inlineCallFrame->argumentCountIncludingThis - 1; ++i) {
+                                    VirtualRegister reg =
+                                        VirtualRegister(inlineCallFrame->stackOffset) +
+                                        CallFrame::argumentOffset(i);
+                                    if (clobberedByThisBlock.operand(reg)) {
+                                        isClobberedByBlock = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        } else {
+                            // We don't include the ArgumentCount or Callee in this case because we can be
+                            // damn sure that this won't be clobbered.
+                            for (unsigned i = 1; i < static_cast<unsigned>(codeBlock()->numParameters()); ++i) {
+                                if (clobberedByThisBlock.argument(i)) {
                                     isClobberedByBlock = true;
                                     break;
                                 }
                             }
                         }
-                    } else {
-                        // We don't include the ArgumentCount or Callee in this case because we can be
-                        // damn sure that this won't be clobbered.
-                        for (unsigned i = 1; i < static_cast<unsigned>(codeBlock()->numParameters()); ++i) {
-                            if (clobberedByThisBlock.argument(i)) {
-                                isClobberedByBlock = true;
-                                break;
-                            }
-                        }
-                    }
-                    
-                    if (!isClobberedByBlock)
-                        return;
-                    
-                    // Check if we can immediately eliminate this candidate. If the block has a clobber
-                    // for this arguments allocation, and we'd have to examine every node in the block,
-                    // then we can just eliminate the candidate.
-                    if (nodeIndex == block->size() && candidate->owner != block) {
-                        if (DFGArgumentsEliminationPhaseInternal::verbose)
-                            dataLog("eliminating candidate: ", candidate, " because it is clobbered by: ", block->at(nodeIndex), "\n");
-                        transitivelyRemoveCandidate(candidate);
-                        return;
-                    }
-                    
-                    // This loop considers all nodes up to the nodeIndex, excluding the nodeIndex.
-                    while (nodeIndex--) {
-                        Node* node = block->at(nodeIndex);
-                        if (node == candidate)
-                            break;
                         
-                        bool found = false;
-                        clobberize(
-                            m_graph, node, NoOpClobberize(),
-                            [&] (AbstractHeap heap) {
-                                if (heap.kind() == Stack && !heap.payload().isTop()) {
-                                    if (argumentsInvolveStackSlot(candidate, VirtualRegister(heap.payload().value32())))
-                                        found = true;
-                                    return;
-                                }
-                                if (heap.overlaps(Stack))
-                                    found = true;
-                            },
-                            NoOpClobberize());
+                        if (!isClobberedByBlock)
+                            continue;
                         
-                        if (found) {
+                        // Check if we can immediately eliminate this candidate. If the block has a clobber
+                        // for this arguments allocation, and we'd have to examine every node in the block,
+                        // then we can just eliminate the candidate.
+                        if (nodeIndex == block->size() && candidate->owner != block) {
                             if (DFGArgumentsEliminationPhaseInternal::verbose)
-                                dataLog("eliminating candidate: ", candidate, " because it is clobbered by ", block->at(nodeIndex), "\n");
+                                dataLog("eliminating candidate: ", candidate, " because it is clobbered by: ", block->at(nodeIndex), "\n");
                             transitivelyRemoveCandidate(candidate);
                             return;
+                        }
+
+                        // This loop considers all nodes up to the nodeIndex, excluding the nodeIndex.
+                        while (nodeIndex--) {
+                            Node* node = block->at(nodeIndex);
+                            if (node == candidate)
+                                break;
+
+                            bool found = false;
+                            clobberize(
+                                m_graph, node, NoOpClobberize(),
+                                [&] (AbstractHeap heap) {
+                                    if (heap.kind() == Stack && !heap.payload().isTop()) {
+                                        if (argumentsInvolveStackSlot(inlineCallFrame, VirtualRegister(heap.payload().value32())))
+                                            found = true;
+                                        return;
+                                    }
+                                    if (heap.overlaps(Stack))
+                                        found = true;
+                                },
+                                NoOpClobberize());
+
+                            if (found) {
+                                if (DFGArgumentsEliminationPhaseInternal::verbose)
+                                    dataLog("eliminating candidate: ", candidate, " because it is clobbered by ", block->at(nodeIndex), "\n");
+                                transitivelyRemoveCandidate(candidate);
+                                return;
+                            }
                         }
                     }
                 });
