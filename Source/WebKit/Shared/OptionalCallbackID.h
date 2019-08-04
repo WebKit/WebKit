@@ -48,10 +48,7 @@ public:
 
     ALWAYS_INLINE OptionalCallbackID& operator=(const OptionalCallbackID& otherID)
     {
-        if (this == &otherID)
-            return *this;
         m_id = otherID.m_id;
-        ASSERT(!HashTraits<uint64_t>::isDeletedValue(m_id));
         return *this;
     }
 
