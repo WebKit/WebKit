@@ -693,18 +693,6 @@ void MediaPlayerPrivateGStreamer::clearTracks()
 }
 #undef CLEAR_TRACKS
 
-#if ENABLE(VIDEO_TRACK)
-#define CREATE_TRACK(type, Type) \
-    m_has##Type = true; \
-    if (!useMediaSource) {\
-        RefPtr<Type##TrackPrivateGStreamer> track = Type##TrackPrivateGStreamer::create(makeWeakPtr(*this), i, stream); \
-        m_##type##Tracks.add(track->id(), track); \
-        m_player->add##Type##Track(*track);\
-        if (gst_stream_get_stream_flags(stream.get()) & GST_STREAM_FLAG_SELECT) {                                    \
-            m_current##Type##StreamId = String(gst_stream_get_stream_id(stream.get()));                              \
-        }                                                                                                            \
-    }
-
 FloatSize MediaPlayerPrivateGStreamer::naturalSize() const
 {
 #if ENABLE(MEDIA_STREAM)
@@ -723,8 +711,22 @@ FloatSize MediaPlayerPrivateGStreamer::naturalSize() const
 
     return MediaPlayerPrivateGStreamerBase::naturalSize();
 }
+
+#if ENABLE(VIDEO_TRACK)
+#define CREATE_TRACK(type, Type) G_STMT_START {                         \
+        m_has##Type = true;                                             \
+        if (!useMediaSource) {                                          \
+            RefPtr<Type##TrackPrivateGStreamer> track = Type##TrackPrivateGStreamer::create(makeWeakPtr(*this), i, stream); \
+            m_##type##Tracks.add(track->id(), track);                   \
+            m_player->add##Type##Track(*track);                         \
+            if (gst_stream_get_stream_flags(stream.get()) & GST_STREAM_FLAG_SELECT) \
+                m_current##Type##StreamId = String(gst_stream_get_stream_id(stream.get())); \
+        }                                                               \
+    } G_STMT_END
 #else
-#define CREATE_TRACK(type, _id, tracks, method, stream) m_has##Type## = true;
+#define CREATE_TRACK(type, Type) G_STMT_START { \
+        m_has##Type## = true;                   \
+    } G_STMT_END
 #endif // ENABLE(VIDEO_TRACK)
 
 void MediaPlayerPrivateGStreamer::updateTracks()
@@ -745,11 +747,11 @@ void MediaPlayerPrivateGStreamer::updateTracks()
         GstStreamType type = gst_stream_get_stream_type(stream.get());
 
         GST_DEBUG_OBJECT(pipeline(), "Inspecting %s track with ID %s", gst_stream_type_get_name(type), streamId.utf8().data());
-        if (type & GST_STREAM_TYPE_AUDIO) {
-            CREATE_TRACK(audio, Audio)
-        } else if (type & GST_STREAM_TYPE_VIDEO) {
-            CREATE_TRACK(video, Video)
-        } else if (type & GST_STREAM_TYPE_TEXT && !useMediaSource) {
+        if (type & GST_STREAM_TYPE_AUDIO)
+            CREATE_TRACK(audio, Audio);
+        else if (type & GST_STREAM_TYPE_VIDEO)
+            CREATE_TRACK(video, Video);
+        else if (type & GST_STREAM_TYPE_TEXT && !useMediaSource) {
 #if ENABLE(VIDEO_TRACK)
             auto track = InbandTextTrackPrivateGStreamer::create(textTrackIndex++, stream);
             m_textTracks.add(streamId, track.copyRef());
@@ -768,6 +770,8 @@ void MediaPlayerPrivateGStreamer::updateTracks()
     m_player->client().mediaPlayerEngineUpdated(m_player);
 }
 #endif // GST_CHECK_VERSION(1, 10, 0)
+
+#undef CREATE_TRACK
 
 void MediaPlayerPrivateGStreamer::enableTrack(TrackPrivateBaseGStreamer::TrackType trackType, unsigned index)
 {
