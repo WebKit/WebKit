@@ -97,7 +97,7 @@ RefPtr<InjectedBundle> InjectedBundle::create(WebProcessCreationParameters& para
     if (!bundle->initialize(parameters, initializationUserData))
         return nullptr;
 
-    return WTFMove(bundle);
+    return bundle;
 }
 
 InjectedBundle::InjectedBundle(const WebProcessCreationParameters& parameters)

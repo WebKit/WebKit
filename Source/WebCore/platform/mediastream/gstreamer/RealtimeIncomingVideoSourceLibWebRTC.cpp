@@ -41,7 +41,7 @@ Ref<RealtimeIncomingVideoSource> RealtimeIncomingVideoSource::create(rtc::scoped
 {
     auto source = RealtimeIncomingVideoSourceLibWebRTC::create(WTFMove(videoTrack), WTFMove(trackId));
     source->start();
-    return WTFMove(source);
+    return source;
 }
 
 Ref<RealtimeIncomingVideoSourceLibWebRTC> RealtimeIncomingVideoSourceLibWebRTC::create(rtc::scoped_refptr<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)

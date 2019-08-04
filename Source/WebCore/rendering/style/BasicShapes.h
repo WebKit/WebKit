@@ -88,13 +88,6 @@ public:
         updateComputedLength();
     }
 
-    BasicShapeCenterCoordinate(const BasicShapeCenterCoordinate& other)
-        : m_direction(other.direction())
-        , m_length(other.length())
-        , m_computedLength(other.m_computedLength)
-    {
-    }
-
     Direction direction() const { return m_direction; }
     const Length& length() const { return m_length; }
     const Length& computedLength() const { return m_computedLength; }
@@ -138,10 +131,6 @@ public:
     explicit BasicShapeRadius(Type t)
         : m_value(Undefined)
         , m_type(t)
-    { }
-    BasicShapeRadius(const BasicShapeRadius& other)
-        : m_value(other.value())
-        , m_type(other.type())
     { }
 
     const Length& value() const { return m_value; }

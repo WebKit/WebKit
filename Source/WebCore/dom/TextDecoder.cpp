@@ -38,7 +38,7 @@ ExceptionOr<Ref<TextDecoder>> TextDecoder::create(const String& label, Options o
     auto decoder = adoptRef(*new TextDecoder(strippedLabel.utf8().data(), options));
     if (!decoder->m_textEncoding.isValid() || !strcmp(decoder->m_textEncoding.name(), "replacement"))
         return Exception { RangeError };
-    return WTFMove(decoder);
+    return decoder;
 }
 
 TextDecoder::TextDecoder(const char* label, Options options)
@@ -132,7 +132,7 @@ ExceptionOr<String> TextDecoder::decode(Optional<BufferSource::VariantType> inpu
         m_buffer.clear();
 
     m_hasDecoded = true;
-    return WTFMove(result);
+    return result;
 }
 
 String TextDecoder::encoding() const

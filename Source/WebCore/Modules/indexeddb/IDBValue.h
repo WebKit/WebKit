@@ -89,7 +89,7 @@ Optional<IDBValue> IDBValue::decode(Decoder& decoder)
     if (!decoder.decode(result.m_blobFilePaths))
         return WTF::nullopt;
 
-    return WTFMove(result);
+    return result;
 }
 
 } // namespace WebCore

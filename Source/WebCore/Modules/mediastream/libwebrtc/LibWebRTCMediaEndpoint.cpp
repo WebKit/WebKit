@@ -304,7 +304,7 @@ void LibWebRTCMediaEndpoint::getStats(Ref<DeferredPromise>&& promise, WTF::Funct
         // The promise resolution might fail in which case no backing map will be created.
         if (!report->backingMap())
             return nullptr;
-        return WTFMove(report);
+        return report;
     });
     LibWebRTCProvider::callOnWebRTCSignalingThread([getStatsFunction = WTFMove(getStatsFunction), collector = WTFMove(collector)]() mutable {
         getStatsFunction(WTFMove(collector));

@@ -189,7 +189,7 @@ ExceptionOr<void> DatabaseTracker::canEstablishDatabase(DatabaseContext& context
     if (exception.code() != QuotaExceededError)
         doneCreatingDatabase(origin, name);
 
-    return WTFMove(exception);
+    return exception;
 }
 
 // Note: a thought about performance: hasAdequateQuotaForOrigin() was also
@@ -220,7 +220,7 @@ ExceptionOr<void> DatabaseTracker::retryCanEstablishDatabase(DatabaseContext& co
     ASSERT(exception.code() == QuotaExceededError);
     doneCreatingDatabase(origin, name);
 
-    return WTFMove(exception);
+    return exception;
 }
 
 bool DatabaseTracker::hasEntryForOriginNoLock(const SecurityOriginData& origin)

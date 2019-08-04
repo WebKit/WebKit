@@ -78,7 +78,7 @@ RefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(Range* 
 
     auto rangeHandle = InjectedBundleRangeHandle::create(*range);
     result.iterator->value = rangeHandle.ptr();
-    return WTFMove(rangeHandle);
+    return rangeHandle;
 }
 
 Ref<InjectedBundleRangeHandle> InjectedBundleRangeHandle::create(Range& range)

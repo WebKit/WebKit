@@ -366,7 +366,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     parameters.backgroundColor = WTFMove(*backgroundColor);
 
-    return WTFMove(parameters);
+    return parameters;
 }
 
 } // namespace WebKit

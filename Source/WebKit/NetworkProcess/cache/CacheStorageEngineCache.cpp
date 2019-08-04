@@ -625,7 +625,7 @@ Optional<Record> Cache::decode(const Storage::Record& storage)
     auto record = WTFMove(result->record);
     record.responseBody = WebCore::SharedBuffer::create(storage.body.data(), storage.body.size());
 
-    return WTFMove(record);
+    return record;
 }
 
 Vector<Key> Cache::keys() const

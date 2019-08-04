@@ -107,7 +107,7 @@ Optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString)
             return WTF::nullopt;
     }
 
-    return WTFMove(parameters);
+    return parameters;
 }
 
 }

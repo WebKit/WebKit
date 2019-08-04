@@ -42,7 +42,7 @@ struct VariadicConverter {
         auto result = Converter<IDLType>::convert(state, value);
         RETURN_IF_EXCEPTION(scope, WTF::nullopt);
 
-        return WTFMove(result);
+        return result;
     }
 };
 
@@ -62,7 +62,7 @@ template<typename IDLType> Vector<typename VariadicConverter<IDLType>::Item> con
         result.uncheckedAppend(WTFMove(*value));
     }
 
-    return WTFMove(result);
+    return result;
 }
 
 } // namespace WebCore

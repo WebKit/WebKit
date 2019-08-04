@@ -53,12 +53,6 @@ public:
     {
     }
 
-    TextRunIterator(const TextRunIterator& other)
-        : m_textRun(other.m_textRun)
-        , m_offset(other.m_offset)
-    {
-    }
-
     unsigned offset() const { return m_offset; }
     void increment() { m_offset++; }
     bool atEnd() const { return !m_textRun || m_offset >= m_textRun->length(); }

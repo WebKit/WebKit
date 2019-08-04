@@ -127,7 +127,7 @@ ExceptionOr<Ref<HTMLTableCellElement>> HTMLTableRowElement::insertCell(int index
         result = insertBefore(cell, index < 1 ? firstChild() : children->item(index));
     if (result.hasException())
         return result.releaseException();
-    return WTFMove(cell);
+    return cell;
 }
 
 ExceptionOr<void> HTMLTableRowElement::deleteCell(int index)

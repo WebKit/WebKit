@@ -76,7 +76,7 @@ RefPtr<MHTMLArchive> MHTMLParser::parseArchiveWithHeader(MIMEHeader* header)
         if (!resource)
             return nullptr;
         archive->setMainResource(resource.releaseNonNull());
-        return WTFMove(archive);
+        return archive;
     }
 
     // Skip the message content (it's a generic browser specific message).
@@ -113,7 +113,7 @@ RefPtr<MHTMLArchive> MHTMLParser::parseArchiveWithHeader(MIMEHeader* header)
         addResourceToArchive(resource.get(), archive.ptr());
     }
 
-    return WTFMove(archive);
+    return archive;
 }
 
 void MHTMLParser::addResourceToArchive(ArchiveResource* resource, MHTMLArchive* archive)

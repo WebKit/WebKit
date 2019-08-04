@@ -194,7 +194,7 @@ RefPtr<MetaAllocatorHandle> MetaAllocator::allocate(size_t sizeInBytes, void* ow
     if (UNLIKELY(!!m_tracker))
         m_tracker->notify(handle.ptr());
 
-    return WTFMove(handle);
+    return handle;
 }
 
 MetaAllocator::Statistics MetaAllocator::currentStatistics()

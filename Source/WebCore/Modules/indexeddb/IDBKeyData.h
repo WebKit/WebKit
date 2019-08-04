@@ -267,7 +267,7 @@ Optional<IDBKeyData> IDBKeyData::decode(Decoder& decoder)
         return WTF::nullopt;
 
     if (keyData.m_isNull)
-        return WTFMove(keyData);
+        return keyData;
 
     if (!decoder.decodeEnum(keyData.m_type))
         return WTF::nullopt;
@@ -300,7 +300,7 @@ Optional<IDBKeyData> IDBKeyData::decode(Decoder& decoder)
         break;
     }
 
-    return WTFMove(keyData);
+    return keyData;
 }
 
 using IDBKeyDataSet = StdSet<IDBKeyData>;

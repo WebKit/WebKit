@@ -148,7 +148,7 @@ RefPtr<FilterEffect> SVGFECompositeElement::build(SVGFilterBuilder* filterBuilde
     inputEffects.reserveCapacity(2);
     inputEffects.append(input1);
     inputEffects.append(input2);    
-    return WTFMove(effect);
+    return effect;
 }
 
 }

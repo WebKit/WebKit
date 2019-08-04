@@ -100,7 +100,7 @@ Ref<MediaSample> MockMediaSample::createNonDisplayingCopy() const
 {
     auto copy = MockMediaSample::create(m_box);
     copy->m_box.setFlag(MockSampleBox::IsNonDisplaying);
-    return WTFMove(copy);
+    return copy;
 }
 
 class MockMediaDescription final : public MediaDescription {

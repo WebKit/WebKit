@@ -368,7 +368,7 @@ Ref<CSSValue> computeFontVariant(const FontVariantSettings& variantSettings)
         break;
     }
 
-    return WTFMove(list);
+    return list;
 }
 
 }

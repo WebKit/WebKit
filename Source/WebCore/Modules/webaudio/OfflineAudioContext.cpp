@@ -46,7 +46,7 @@ ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutio
         return Exception { SyntaxError };
     auto audioContext = adoptRef(*new OfflineAudioContext(downcast<Document>(context), numberOfChannels, numberOfFrames, sampleRate));
     audioContext->suspendIfNeeded();
-    return WTFMove(audioContext);
+    return audioContext;
 }
 
 } // namespace WebCore

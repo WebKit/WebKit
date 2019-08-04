@@ -59,7 +59,7 @@ RefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilder, F
     if (mergeInputs.isEmpty())
         return nullptr;
 
-    return WTFMove(effect);
+    return effect;
 }
 
 }

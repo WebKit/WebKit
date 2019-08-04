@@ -93,7 +93,7 @@ ExceptionOr<Ref<PerformanceMark>> UserTiming::mark(const String& markName)
     auto& performanceEntryList = m_marksMap.ensure(markName, [] { return Vector<RefPtr<PerformanceEntry>>(); }).iterator->value;
     auto entry = PerformanceMark::create(markName, m_performance.now());
     performanceEntryList.append(entry.copyRef());
-    return WTFMove(entry);
+    return entry;
 }
 
 void UserTiming::clearMarks(const String& markName)
@@ -148,7 +148,7 @@ ExceptionOr<Ref<PerformanceMeasure>> UserTiming::measure(const String& measureNa
     auto& performanceEntryList = m_measuresMap.ensure(measureName, [] { return Vector<RefPtr<PerformanceEntry>>(); }).iterator->value;
     auto entry = PerformanceMeasure::create(measureName, startTime, endTime);
     performanceEntryList.append(entry.copyRef());
-    return WTFMove(entry);
+    return entry;
 }
 
 void UserTiming::clearMeasures(const String& measureName)

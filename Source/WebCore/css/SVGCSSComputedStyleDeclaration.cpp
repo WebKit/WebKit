@@ -58,7 +58,7 @@ static Ref<CSSValue> strokeDashArrayToCSSValueList(const Vector<SVGLengthValue>&
     for (auto& length : dashes)
         list->append(SVGLengthValue::toCSSPrimitiveValue(length));
 
-    return WTFMove(list);
+    return list;
 }
 
 Ref<CSSValue> ComputedStyleExtractor::adjustSVGPaintForCurrentColor(SVGPaintType paintType, const String& url, const Color& color, const Color& currentColor) const
@@ -72,7 +72,7 @@ Ref<CSSValue> ComputedStyleExtractor::adjustSVGPaintForCurrentColor(SVGPaintType
             values->append(CSSPrimitiveValue::create(currentColor));
         else if (paintType == SVGPaintType::URIRGBColor)
             values->append(CSSPrimitiveValue::create(color));
-        return WTFMove(values);
+        return values;
     }
     if (paintType == SVGPaintType::None)
         return CSSPrimitiveValue::createIdentifier(CSSValueNone);

@@ -283,7 +283,7 @@ RefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* filterB
 
     auto effect = FEConvolveMatrix::create(filter, IntSize(orderXValue, orderYValue), divisorValue, bias(), IntPoint(targetXValue, targetYValue), edgeMode(), FloatPoint(kernelUnitLengthXValue, kernelUnitLengthYValue), preserveAlpha(), kernelMatrix);
     effect->inputEffects().append(input1);
-    return WTFMove(effect);
+    return effect;
 }
 
 } // namespace WebCore

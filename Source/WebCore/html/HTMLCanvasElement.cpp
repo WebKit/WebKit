@@ -867,7 +867,7 @@ ExceptionOr<Ref<MediaStream>> HTMLCanvasElement::captureStream(ScriptExecutionCo
     auto track = CanvasCaptureMediaStreamTrack::create(context, *this, WTFMove(frameRequestRate));
     auto stream =  MediaStream::create(context);
     stream->addTrack(track);
-    return WTFMove(stream);
+    return stream;
 }
 #endif
 

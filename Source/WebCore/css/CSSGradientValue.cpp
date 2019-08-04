@@ -64,7 +64,7 @@ RefPtr<Image> CSSGradientValue::image(RenderElement& renderer, const FloatSize& 
     auto newImage = GradientImage::create(createGradient(*this, renderer, size), size);
     if (cacheable)
         saveCachedImageForSize(size, newImage.get());
-    return WTFMove(newImage);
+    return newImage;
 }
 
 // Should only ever be called for deprecated gradients.

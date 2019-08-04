@@ -558,7 +558,7 @@ ExceptionOr<RefPtr<DocumentFragment>> Range::processContents(ActionType action)
         fragment = DocumentFragment::create(ownerDocument());
 
     if (collapsed())
-        return WTFMove(fragment);
+        return fragment;
 
     RefPtr<Node> commonRoot = commonAncestorContainer();
     ASSERT(commonRoot);
@@ -567,7 +567,7 @@ ExceptionOr<RefPtr<DocumentFragment>> Range::processContents(ActionType action)
         auto result = processContentsBetweenOffsets(action, fragment, &startContainer(), m_start.offset(), m_end.offset());
         if (result.hasException())
             return result.releaseException();
-        return WTFMove(fragment);
+        return fragment;
     }
 
     // Since mutation events can modify the range during the process, the boundary points need to be saved.
@@ -660,7 +660,7 @@ ExceptionOr<RefPtr<DocumentFragment>> Range::processContents(ActionType action)
             return result.releaseException();
     }
 
-    return WTFMove(fragment);
+    return fragment;
 }
 
 static inline ExceptionOr<void> deleteCharacterData(CharacterData& data, unsigned startOffset, unsigned endOffset)
@@ -761,7 +761,7 @@ static ExceptionOr<RefPtr<Node>> processContentsBetweenOffsets(Range::ActionType
         break;
     }
 
-    return WTFMove(result);
+    return result;
 }
 
 static ExceptionOr<void> processNodes(Range::ActionType action, Vector<Ref<Node>>& nodes, Node* oldContainer, RefPtr<Node> newContainer)
@@ -859,7 +859,7 @@ ExceptionOr<RefPtr<Node>> processAncestorsAndTheirSiblings(Range::ActionType act
         firstChildInAncestorToProcess = direction == ProcessContentsForward ? ancestor->nextSibling() : ancestor->previousSibling();
     }
 
-    return WTFMove(clonedContainer);
+    return clonedContainer;
 }
 
 ExceptionOr<Ref<DocumentFragment>> Range::extractContents()

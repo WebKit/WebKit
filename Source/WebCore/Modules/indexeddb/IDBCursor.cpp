@@ -135,7 +135,7 @@ ExceptionOr<Ref<IDBRequest>> IDBCursor::update(ExecState& state, JSValue value)
     auto request = putResult.releaseReturnValue();
     request->setSource(*this);
 
-    return WTFMove(request);
+    return request;
 }
 
 ExceptionOr<void> IDBCursor::advance(unsigned count)
@@ -306,7 +306,7 @@ ExceptionOr<Ref<WebCore::IDBRequest>> IDBCursor::deleteFunction(ExecState& state
     auto request = result.releaseReturnValue();
     request->setSource(*this);
 
-    return WTFMove(request);
+    return request;
 }
 
 void IDBCursor::setGetResult(IDBRequest&, const IDBGetResult& getResult)

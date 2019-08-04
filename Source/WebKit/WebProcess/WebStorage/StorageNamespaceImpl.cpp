@@ -207,7 +207,7 @@ Ref<StorageNamespace> StorageNamespaceImpl::copy(Page* newPage)
     for (auto& iter : m_ephemeralLocalStorageAreas)
         newNamespace->m_ephemeralLocalStorageAreas.set(iter.key, iter.value->copy());
 
-    return WTFMove(newNamespace);
+    return newNamespace;
 }
 
 } // namespace WebKit

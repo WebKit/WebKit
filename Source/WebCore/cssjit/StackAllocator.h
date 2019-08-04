@@ -58,6 +58,8 @@ public:
     {
     }
 
+    StackAllocator(const StackAllocator&) = default;
+
     StackReference stackTop()
     {
         return StackReference(m_offsetFromTop + stackUnitInBytes());

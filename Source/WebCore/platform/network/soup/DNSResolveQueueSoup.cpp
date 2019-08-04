@@ -161,7 +161,7 @@ std::unique_ptr<DNSResolveQueueSoup::CompletionAndCancelHandlers> DNSResolveQueu
     if (!completionAndCancelHandlers)
         return nullptr;
 
-    return WTFMove(completionAndCancelHandlers);
+    return completionAndCancelHandlers;
 }
 
 void DNSResolveQueueSoup::removeCancelAndCompletionHandler(uint64_t identifier)

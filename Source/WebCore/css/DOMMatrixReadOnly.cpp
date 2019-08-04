@@ -245,7 +245,7 @@ ExceptionOr<DOMMatrixReadOnly::AbstractMatrix> DOMMatrixReadOnly::parseStringInt
             matrix.is2D = false;
     }
 
-    return WTFMove(matrix);
+    return matrix;
 }
 
 // https://drafts.fxtf.org/geometry/#dom-dommatrix-setmatrixvalue

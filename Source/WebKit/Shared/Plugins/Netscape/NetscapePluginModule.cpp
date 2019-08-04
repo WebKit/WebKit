@@ -151,7 +151,7 @@ RefPtr<NetscapePluginModule> NetscapePluginModule::getOrCreate(const String& plu
     if (!pluginModule->load())
         return nullptr;
     
-    return WTFMove(pluginModule);
+    return pluginModule;
 }
 
 void NetscapePluginModule::incrementLoadCount()

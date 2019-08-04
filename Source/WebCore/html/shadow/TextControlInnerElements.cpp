@@ -88,7 +88,7 @@ Optional<ElementStyle> TextControlInnerContainer::resolveCustomStyle(const Rende
         elementStyle.renderStyle->setOverflowX(Overflow::Hidden);
         elementStyle.renderStyle->setOverflowY(Overflow::Hidden);
     }
-    return WTFMove(elementStyle);
+    return elementStyle;
 }
 
 TextControlInnerElement::TextControlInnerElement(Document& document)
@@ -203,7 +203,7 @@ Optional<ElementStyle> TextControlPlaceholderElement::resolveCustomStyle(const R
         auto& inputElement = downcast<HTMLInputElement>(controlElement);
         style.renderStyle->setTextOverflow(inputElement.shouldTruncateText(*shadowHostStyle) ? TextOverflow::Ellipsis : TextOverflow::Clip);
     }
-    return WTFMove(style);
+    return style;
 }
 
 // MARK: SearchFieldResultsButtonElement

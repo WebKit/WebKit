@@ -60,7 +60,7 @@ static ExceptionOr<Vector<ListedChild>> listDirectoryWithMetadata(const String& 
             continue;
         listedChildren.uncheckedAppend(ListedChild { FileSystem::pathGetFileName(childPath), metadata.value().type });
     }
-    return WTFMove(listedChildren);
+    return listedChildren;
 }
 
 static ExceptionOr<Vector<Ref<FileSystemEntry>>> toFileSystemEntries(ScriptExecutionContext& context, DOMFileSystem& fileSystem, ExceptionOr<Vector<ListedChild>>&& listedChildren, const String& parentVirtualPath)
@@ -84,7 +84,7 @@ static ExceptionOr<Vector<Ref<FileSystemEntry>>> toFileSystemEntries(ScriptExecu
             break;
         }
     }
-    return WTFMove(entries);
+    return entries;
 }
 
 // https://wicg.github.io/entries-api/#name

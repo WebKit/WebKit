@@ -1647,7 +1647,7 @@ RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> InspectorDOMAgent::buildAr
         pseudoElements->addItem(buildObjectForNode(beforeElement, 0, nodesMap));
     if (afterElement)
         pseudoElements->addItem(buildObjectForNode(afterElement, 0, nodesMap));
-    return WTFMove(pseudoElements);
+    return pseudoElements;
 }
 
 Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, int identifier, const AtomicString& eventType, Node* node, const String* objectGroupId, bool disabled, bool hasBreakpoint)
@@ -2050,7 +2050,7 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
             value->setIsPopUpButton(isPopupButton);
     }
 
-    return WTFMove(value);
+    return value;
 }
 
 static bool containsOnlyHTMLWhitespace(Node* node)

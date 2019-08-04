@@ -6202,7 +6202,7 @@ sub GenerateCallbackImplementationContent
                 push(@$contentRef, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
                 push(@$contentRef, "    auto returnValue = ${nativeValue};\n");
                 push(@$contentRef, "    RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);\n");
-                push(@$contentRef, "    return WTFMove(returnValue);\n");
+                push(@$contentRef, "    return returnValue;\n");
             }
 
             push(@$contentRef, "}\n\n");

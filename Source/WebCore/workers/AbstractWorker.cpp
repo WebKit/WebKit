@@ -56,7 +56,7 @@ ExceptionOr<URL> AbstractWorker::resolveURL(const String& url, bool shouldBypass
     if (!shouldBypassMainWorldContentSecurityPolicy && !context.contentSecurityPolicy()->allowChildContextFromSource(scriptURL))
         return Exception { SecurityError };
 
-    return WTFMove(scriptURL);
+    return scriptURL;
 }
 
 } // namespace WebCore

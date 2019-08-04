@@ -243,7 +243,7 @@ template<class Decoder> inline Optional<FetchOptions> FetchOptions::decode(Decod
         return WTF::nullopt;
     options.clientIdentifier = WTFMove(clientIdentifier.value());
 
-    return WTFMove(options);
+    return options;
 }
 
 } // namespace WebCore

@@ -66,7 +66,7 @@ Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& do
     element->setIsCustomElementUpgradeCandidate();
     element->setIsFailedCustomElement(*this);
 
-    return WTFMove(element);
+    return element;
 }
 
 Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& document, const QualifiedName& name)
@@ -81,7 +81,7 @@ Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& do
     element->setIsCustomElementUpgradeCandidate();
     element->setIsFailedCustomElement(*this);
 
-    return WTFMove(element);
+    return element;
 }
 
 RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& document, const AtomicString& localName)

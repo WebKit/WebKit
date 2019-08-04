@@ -94,7 +94,7 @@ Optional<String> BufferedLineReader::nextLine()
     if (shouldReturnLine) {
         auto line = m_lineBuffer.toString();
         m_lineBuffer.clear();
-        return WTFMove(line);
+        return line;
     }
 
     ASSERT(m_buffer.isEmpty());

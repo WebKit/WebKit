@@ -239,7 +239,7 @@ Ref<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(GraphicsLayer::Ty
     m_registeredLayers.add(layer->id(), layer.ptr());
     layer->setNeedsVisibleRectAdjustment();
     notifyFlushRequired(layer.ptr());
-    return WTFMove(layer);
+    return layer;
 }
 
 FloatRect CompositingCoordinator::visibleContentsRect() const

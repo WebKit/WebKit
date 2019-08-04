@@ -103,7 +103,7 @@ ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const String& na
     if (documentElement)
         document->appendChild(*documentElement);
 
-    return WTFMove(document);
+    return document;
 }
 
 Ref<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, const String& media)

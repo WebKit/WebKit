@@ -70,7 +70,7 @@ auto RTCNetwork::IPAddress::decode(IPC::Decoder& decoder) -> Optional<IPAddress>
     ASSERT(family == AF_INET || family == AF_INET6 || family == AF_UNSPEC);
 
     if (family == AF_UNSPEC)
-        return WTFMove(result);
+        return result;
 
     IPC::DataReference data;
     if (!decoder.decode(data))
@@ -80,13 +80,13 @@ auto RTCNetwork::IPAddress::decode(IPC::Decoder& decoder) -> Optional<IPAddress>
         if (data.size() != sizeof(in_addr))
             return WTF::nullopt;
         result.value = rtc::IPAddress(*reinterpret_cast<const in_addr*>(data.data()));
-        return WTFMove(result);
+        return result;
     }
 
     if (data.size() != sizeof(in6_addr))
         return WTF::nullopt;
     result.value = rtc::IPAddress(*reinterpret_cast<const in6_addr*>(data.data()));
-    return WTFMove(result);
+    return result;
 }
 
 void RTCNetwork::IPAddress::encode(IPC::Encoder& encoder) const

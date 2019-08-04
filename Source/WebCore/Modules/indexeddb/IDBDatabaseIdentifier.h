@@ -155,7 +155,7 @@ Optional<IDBDatabaseIdentifier> IDBDatabaseIdentifier::decode(Decoder& decoder)
     identifier.m_sessionID = WTFMove(*sessionID);
     identifier.m_openingOrigin = WTFMove(*openingOrigin);
     identifier.m_mainFrameOrigin = WTFMove(*mainFrameOrigin);
-    return WTFMove(identifier);
+    return identifier;
 }
 
 } // namespace WebCore

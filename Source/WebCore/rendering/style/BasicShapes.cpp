@@ -198,7 +198,7 @@ Ref<BasicShape> BasicShapeCircle::blend(const BasicShape& other, double progress
     result->setCenterX(m_centerX.blend(otherCircle.centerX(), progress));
     result->setCenterY(m_centerY.blend(otherCircle.centerY(), progress));
     result->setRadius(m_radius.blend(otherCircle.radius(), progress));
-    return WTFMove(result);
+    return result;
 }
 
 bool BasicShapeEllipse::operator==(const BasicShape& other) const
@@ -257,14 +257,14 @@ Ref<BasicShape> BasicShapeEllipse::blend(const BasicShape& other, double progres
         result->setCenterY(otherEllipse.centerY());
         result->setRadiusX(otherEllipse.radiusX());
         result->setRadiusY(otherEllipse.radiusY());
-        return WTFMove(result);
+        return result;
     }
 
     result->setCenterX(m_centerX.blend(otherEllipse.centerX(), progress));
     result->setCenterY(m_centerY.blend(otherEllipse.centerY(), progress));
     result->setRadiusX(m_radiusX.blend(otherEllipse.radiusX(), progress));
     result->setRadiusY(m_radiusY.blend(otherEllipse.radiusY(), progress));
-    return WTFMove(result);
+    return result;
 }
 
 bool BasicShapePolygon::operator==(const BasicShape& other) const
@@ -311,7 +311,7 @@ Ref<BasicShape> BasicShapePolygon::blend(const BasicShape& other, double progres
     size_t length = m_values.size();
     auto result = BasicShapePolygon::create();
     if (!length)
-        return WTFMove(result);
+        return result;
 
     result->setWindRule(otherPolygon.windRule());
 
@@ -321,7 +321,7 @@ Ref<BasicShape> BasicShapePolygon::blend(const BasicShape& other, double progres
             WebCore::blend(otherPolygon.values().at(i + 1), m_values.at(i + 1), progress));
     }
 
-    return WTFMove(result);
+    return result;
 }
 
 BasicShapePath::BasicShapePath(std::unique_ptr<SVGPathByteStream>&& byteStream)
@@ -363,7 +363,7 @@ Ref<BasicShape> BasicShapePath::blend(const BasicShape& from, double progress) c
 
     auto result = BasicShapePath::create(WTFMove(resultingPathBytes));
     result->setWindRule(windRule());
-    return WTFMove(result);
+    return result;
 }
 
 bool BasicShapeInset::operator==(const BasicShape& other) const
@@ -425,6 +425,6 @@ Ref<BasicShape> BasicShapeInset::blend(const BasicShape& from, double progress) 
     result->setBottomRightRadius(WebCore::blend(fromInset.bottomRightRadius(), bottomRightRadius(), progress));
     result->setBottomLeftRadius(WebCore::blend(fromInset.bottomLeftRadius(), bottomLeftRadius(), progress));
 
-    return WTFMove(result);
+    return result;
 }
 }

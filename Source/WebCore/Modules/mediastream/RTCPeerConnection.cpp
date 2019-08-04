@@ -300,7 +300,7 @@ static inline ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> ice
                 servers.uncheckedAppend({ WTFMove(serverURLs), server.credential, server.username });
         }
     }
-    return WTFMove(servers);
+    return servers;
 }
 
 ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> RTCPeerConnection::certificatesFromConfiguration(const RTCConfiguration& configuration)
@@ -319,7 +319,7 @@ ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> RTCPeerConnectio
 
         certificates.uncheckedAppend(MediaEndpointConfiguration::CertificatePEM { certificate->pemCertificate(), certificate->pemPrivateKey(), });
     }
-    return WTFMove(certificates);
+    return certificates;
 }
 
 ExceptionOr<void> RTCPeerConnection::initializeConfiguration(RTCConfiguration&& configuration)
@@ -619,12 +619,12 @@ static inline ExceptionOr<PeerConnectionBackend::CertificateInformation> certifi
             result.rsaParameters = PeerConnectionBackend::CertificateInformation::RSA { *parameters.modulusLength, publicExponent };
         }
         result.expires = parameters.expires;
-        return WTFMove(result);
+        return result;
     }
     if (parameters.name == "ECDSA"_s && parameters.namedCurve == "P-256"_s) {
         auto result = PeerConnectionBackend::CertificateInformation::ECDSA_P256();
         result.expires = parameters.expires;
-        return WTFMove(result);
+        return result;
     }
 
     return Exception { NotSupportedError, "Algorithm is not supported"_s };

@@ -208,7 +208,7 @@ ExceptionOr<Ref<IDBTransaction>> IDBDatabase::transaction(StringOrVectorOfString
 
     m_activeTransactions.set(info.identifier(), transaction.ptr());
 
-    return WTFMove(transaction);
+    return transaction;
 }
 
 ExceptionOr<void> IDBDatabase::deleteObjectStore(const String& objectStoreName)

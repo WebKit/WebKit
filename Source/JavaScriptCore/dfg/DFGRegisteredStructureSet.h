@@ -52,11 +52,6 @@ public:
     {
     }
     
-    ALWAYS_INLINE RegisteredStructureSet(const RegisteredStructureSet& other)
-        : TinyPtrSet(other)
-    {
-    }
-    
     RegisteredStructure onlyStructure() const
     {
         return onlyEntry();

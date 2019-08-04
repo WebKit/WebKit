@@ -191,7 +191,7 @@ RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(RenderSty
     if (displayState() == DisplayingSnapshot) {
         auto renderSnapshottedPlugIn = createRenderer<RenderSnapshottedPlugIn>(*this, WTFMove(style));
         renderSnapshottedPlugIn->updateSnapshot(m_snapshotImage.get());
-        return WTFMove(renderSnapshottedPlugIn);
+        return renderSnapshottedPlugIn;
     }
 
     if (useFallbackContent())

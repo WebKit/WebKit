@@ -89,7 +89,7 @@ Optional<NPIdentifierData> NPIdentifierData::decode(IPC::Decoder& decoder)
 
     if (!decoder.decode(result.m_number))
         return WTF::nullopt;
-    return WTFMove(result);
+    return result;
 }
 
 } // namespace WebKit

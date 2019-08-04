@@ -2450,7 +2450,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNode(Attr& attrNode)
 {
     RefPtr<Attr> oldAttrNode = attrIfExists(attrNode.localName(), shouldIgnoreAttributeCase(*this));
     if (oldAttrNode.get() == &attrNode)
-        return WTFMove(oldAttrNode);
+        return oldAttrNode;
 
     // InUseAttributeError: Raised if node is an Attr that is already an attribute of another Element object.
     // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
@@ -2490,14 +2490,14 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNode(Attr& attrNode)
         }
     }
 
-    return WTFMove(oldAttrNode);
+    return oldAttrNode;
 }
 
 ExceptionOr<RefPtr<Attr>> Element::setAttributeNodeNS(Attr& attrNode)
 {
     RefPtr<Attr> oldAttrNode = attrIfExists(attrNode.qualifiedName());
     if (oldAttrNode.get() == &attrNode)
-        return WTFMove(oldAttrNode);
+        return oldAttrNode;
 
     // InUseAttributeError: Raised if node is an Attr that is already an attribute of another Element object.
     // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
@@ -2526,7 +2526,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNodeNS(Attr& attrNode)
     attachAttributeNodeIfNeeded(attrNode);
     setAttributeInternal(index, attrNode.qualifiedName(), attrNodeValue, NotInSynchronizationOfLazyAttribute);
 
-    return WTFMove(oldAttrNode);
+    return oldAttrNode;
 }
 
 ExceptionOr<Ref<Attr>> Element::removeAttributeNode(Attr& attr)
@@ -2550,7 +2550,7 @@ ExceptionOr<Ref<Attr>> Element::removeAttributeNode(Attr& attr)
     detachAttrNodeFromElementWithValue(&attr, m_elementData->attributeAt(existingAttributeIndex).value());
     removeAttributeInternal(existingAttributeIndex, NotInSynchronizationOfLazyAttribute);
 
-    return WTFMove(oldAttrNode);
+    return oldAttrNode;
 }
 
 ExceptionOr<QualifiedName> Element::parseAttributeName(const AtomicString& namespaceURI, const AtomicString& qualifiedName)
@@ -2561,7 +2561,7 @@ ExceptionOr<QualifiedName> Element::parseAttributeName(const AtomicString& names
     QualifiedName parsedAttributeName { parseResult.releaseReturnValue() };
     if (!Document::hasValidNamespaceForAttributes(parsedAttributeName))
         return Exception { NamespaceError };
-    return WTFMove(parsedAttributeName);
+    return parsedAttributeName;
 }
 
 ExceptionOr<void> Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value)
@@ -4117,7 +4117,7 @@ ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::ExecState& state, JSC::Stro
     if (animationPlayResult.hasException())
         return animationPlayResult.releaseException();
 
-    return WTFMove(animation);
+    return animation;
 }
 
 Vector<RefPtr<WebAnimation>> Element::getAnimations()

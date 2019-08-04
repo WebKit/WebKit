@@ -78,7 +78,7 @@ static Expected<Vector<String>, std::error_code> getStringList(ExecState& exec, 
             return makeUnexpected(error);
         strings.append(string);
     }
-    return WTFMove(strings);
+    return strings;
 }
 
 static Expected<Vector<String>, std::error_code> getDomainList(ExecState& exec, const JSObject* arrayObject)
@@ -225,7 +225,7 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
     } else if (!unlessTopURLValue.isUndefined())
         return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
 
-    return WTFMove(trigger);
+    return trigger;
 }
 
 bool isValidCSSSelector(const String& selector)
@@ -345,7 +345,7 @@ static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(
             ruleList.append(*rule.value());
     }
 
-    return WTFMove(ruleList);
+    return ruleList;
 }
 
 Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const String& ruleJSON)
@@ -374,7 +374,7 @@ Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const Stri
     dataLogF("Time spent loading extension %f\n", (loadExtensionEndTime - loadExtensionStartTime).seconds());
 #endif
 
-    return WTFMove(*ruleList);
+    return *ruleList;
 }
 
 } // namespace ContentExtensions
