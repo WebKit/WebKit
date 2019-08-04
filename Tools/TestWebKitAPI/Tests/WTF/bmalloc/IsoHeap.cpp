@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,22 +10,27 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+#include "config.h"
+
+#if !USE(SYSTEM_MALLOC)
 
 #include <bmalloc/bmalloc.h>
 #include <bmalloc/Environment.h>
 #include <bmalloc/IsoHeapInlines.h>
+
 #include <cmath>
 #include <cstdlib>
 #include <set>
@@ -34,32 +39,22 @@
 using namespace bmalloc;
 using namespace bmalloc::api;
 
-// We don't have a NO_RETURN_DUE_TO_EXIT, nor should we. That's ridiculous.
-static bool hiddenTruthBecauseNoReturnIsStupid() { return true; }
-
-static void usage()
-{
-    puts("Usage: testb3 [<filter>]");
-    if (hiddenTruthBecauseNoReturnIsStupid())
-        exit(1);
-}
-
 #define RUN(test) do {                          \
-        if (!shouldRun(#test))                  \
-            break;                              \
-        puts(#test "...");                      \
-        test;                                   \
-        puts(#test ": OK!");                    \
-    } while (false)
+if (!shouldRun(#test))                  \
+break;                              \
+puts(#test "...");                      \
+test;                                   \
+puts(#test ": OK!");                    \
+} while (false)
 
 // Nothing fancy for now; we just use the existing WTF assertion machinery.
 #define CHECK(x) do {                                                   \
-        if (!!(x))                                                      \
-            break;                                                      \
-        fprintf(stderr, "%s:%d: in %s: assertion %s failed.\n",         \
-            __FILE__, __LINE__, __PRETTY_FUNCTION__, #x);               \
-        abort();                                                        \
-    } while (false)
+if (!!(x))                                                      \
+break;                                                      \
+fprintf(stderr, "%s:%d: in %s: assertion %s failed.\n",         \
+__FILE__, __LINE__, __PRETTY_FUNCTION__, #x);               \
+abort();                                                        \
+} while (false)
 
 static std::set<void*> toptrset(const std::vector<void*>& ptrs)
 {
@@ -138,7 +133,7 @@ static void assertClean(IsoHeap<heapType>& heap)
     }
 }
 
-static void testIsoSimple()
+TEST(bmalloc, IsoSimple)
 {
     static IsoHeap<double> heap;
     void* ptr1 = heap.allocate();
@@ -153,7 +148,7 @@ static void testIsoSimple()
     assertClean(heap);
 }
 
-static void testIsoSimpleScavengeBeforeDealloc()
+TEST(bmalloc, IsoSimpleScavengeBeforeDealloc)
 {
     static IsoHeap<double> heap;
     void* ptr1 = heap.allocate();
@@ -169,7 +164,7 @@ static void testIsoSimpleScavengeBeforeDealloc()
     assertClean(heap);
 }
 
-static void testIsoFlipFlopFragmentedPages()
+TEST(bmalloc, IsoFlipFlopFragmentedPages)
 {
     static IsoHeap<double> heap;
     std::vector<void*> ptrs;
@@ -189,7 +184,7 @@ static void testIsoFlipFlopFragmentedPages()
     assertClean(heap);
 }
 
-static void testIsoFlipFlopFragmentedPagesScavengeInMiddle()
+TEST(bmalloc, IsoFlipFlopFragmentedPagesScavengeInMiddle)
 {
     static IsoHeap<double> heap;
     std::vector<void*> ptrs;
@@ -222,7 +217,7 @@ static void testIsoFlipFlopFragmentedPagesScavengeInMiddle()
     assertClean(heap);
 }
 
-static void testIsoFlipFlopFragmentedPagesScavengeInMiddle288()
+TEST(bmalloc, IsoFlipFlopFragmentedPagesScavengeInMiddle288)
 {
     static IsoHeap<char[288]> heap;
     std::vector<void*> ptrs;
@@ -255,6 +250,17 @@ static void testIsoFlipFlopFragmentedPagesScavengeInMiddle288()
     assertClean(heap);
 }
 
+TEST(bmalloc, IsoMallocAndFreeFast)
+{
+    static IsoHeap<char[256]> heap;
+    void* ptr = nullptr;
+    for (int i = 0; i < 1e6; ++i) {
+        ptr = heap.allocate();
+        heap.deallocate(ptr);
+    }
+    CHECK(!IsoPageBase::pageFor(ptr)->isShared());
+}
+
 class BisoMalloced {
     MAKE_BISO_MALLOCED(BisoMalloced);
 public:
@@ -263,14 +269,14 @@ public:
         , y(y)
     {
     }
-    
+
     int x;
     float y;
 };
 
 MAKE_BISO_MALLOCED_IMPL(BisoMalloced);
 
-static void testBisoMalloced()
+TEST(bmalloc, BisoMalloced)
 {
     BisoMalloced* ptr = new BisoMalloced(4, 5);
     assertHasObjects(BisoMalloced::bisoHeap(), { ptr });
@@ -286,12 +292,12 @@ public:
         , y(y)
     {
     }
-    
+
     int x;
     float y;
 };
 
-static void testBisoMallocedInline()
+TEST(bmalloc, BisoMallocedInline)
 {
     BisoMallocedInline* ptr = new BisoMallocedInline(4, 5);
     assertHasObjects(BisoMallocedInline::bisoHeap(), { ptr });
@@ -299,38 +305,42 @@ static void testBisoMallocedInline()
     assertClean(BisoMallocedInline::bisoHeap());
 }
 
-static void run(const char* filter)
+
+TEST(bmalloc, ScavengedMemoryShouldBeReused)
 {
-    auto shouldRun = [&] (const char* testName) -> bool {
-        return !filter || !!strcasestr(testName, filter);
+    static IsoHeap<double> heap;
+
+    auto run = [] (unsigned numPagesToCommit) {
+        auto* ptr1 = heap.allocate();
+
+        std::vector<void*> ptrs;
+
+        for (unsigned i = 0; ;i++) {
+            void* ptr = heap.allocate();
+            CHECK(ptr);
+            ptrs.push_back(ptr);
+            if (heap.impl().numCommittedPages() == numPagesToCommit)
+                break;
+        }
+
+        std::set<void*> uniquedPtrs = toptrset(ptrs);
+
+        heap.deallocate(ptr1);
+        for (unsigned i = 0; i < IsoPage<decltype(heap)::Config>::numObjects - 1; i++) {
+            heap.deallocate(ptrs[i]);
+            uniquedPtrs.erase(ptrs[i]);
+        }
+
+        scavenge();
+        assertHasOnlyObjects(heap, uniquedPtrs);
+
+        // FIXME: This only seems to pass when lldb is attached but the scavenger thread isn't running...
+        // see: https://bugs.webkit.org/show_bug.cgi?id=198384
+        // auto* ptr2 = heap.allocate();
+        // CHECK(ptr1 == ptr2);
     };
-    
-    RUN(testIsoSimple());
-    RUN(testIsoSimpleScavengeBeforeDealloc());
-    RUN(testIsoFlipFlopFragmentedPages());
-    RUN(testIsoFlipFlopFragmentedPagesScavengeInMiddle());
-    RUN(testIsoFlipFlopFragmentedPagesScavengeInMiddle288());
-    RUN(testBisoMalloced());
-    RUN(testBisoMallocedInline());
-    
-    puts("Success!");
+
+    run(2);
 }
 
-int main(int argc, char** argv)
-{
-    const char* filter = nullptr;
-    switch (argc) {
-    case 1:
-        break;
-    case 2:
-        filter = argv[1];
-        break;
-    default:
-        usage();
-        break;
-    }
-    
-    run(filter);
-    return 0;
-}
-
+#endif

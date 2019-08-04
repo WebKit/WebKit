@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,8 +68,8 @@ public:
     EligibilityResult<Config> takeFirstEligible();
     
     // Callbacks from directory.
-    void didBecomeEligible(IsoDirectory<Config, numPagesInInlineDirectory>*);
-    void didBecomeEligible(IsoDirectory<Config, IsoDirectoryPage<Config>::numPages>*);
+    void didBecomeEligibleOrDecommited(IsoDirectory<Config, numPagesInInlineDirectory>*);
+    void didBecomeEligibleOrDecommited(IsoDirectory<Config, IsoDirectoryPage<Config>::numPages>*);
     
     void scavenge(Vector<DeferredDecommit>&) override;
     void scavengeToHighWatermark(Vector<DeferredDecommit>&) override;
@@ -120,8 +120,8 @@ private:
     unsigned m_nextDirectoryPageIndex { 1 }; // We start at 1 so that the high water mark being zero means we've only allocated in the inline directory since the last scavenge.
     unsigned m_directoryHighWatermark { 0 };
     
-    bool m_isInlineDirectoryEligible { true };
-    IsoDirectoryPage<Config>* m_firstEligibleDirectory { nullptr };
+    bool m_isInlineDirectoryEligibleOrDecommitted { true };
+    IsoDirectoryPage<Config>* m_firstEligibleOrDecommitedDirectory { nullptr };
     
     IsoTLSAllocatorEntry<Config> m_allocator;
 };

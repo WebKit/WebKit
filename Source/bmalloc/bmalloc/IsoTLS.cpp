@@ -183,11 +183,13 @@ void IsoTLS::determineMallocFallbackState()
             if (s_mallocFallbackState != MallocFallbackState::Undecided)
                 return;
 
-#if GIGACAGE_ENABLED
+#if GIGACAGE_ENABLED || BCPU(ARM64)
+#if !BCPU(ARM64)
             if (!Gigacage::shouldBeEnabled()) {
                 s_mallocFallbackState = MallocFallbackState::FallBackToMalloc;
                 return;
             }
+#endif
             const char* env = getenv("bmalloc_IsoHeap");
             if (env && (!strcasecmp(env, "false") || !strcasecmp(env, "no") || !strcmp(env, "0")))
                 s_mallocFallbackState = MallocFallbackState::FallBackToMalloc;

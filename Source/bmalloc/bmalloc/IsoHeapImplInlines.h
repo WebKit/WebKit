@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,26 +42,26 @@ IsoHeapImpl<Config>::IsoHeapImpl()
 template<typename Config>
 EligibilityResult<Config> IsoHeapImpl<Config>::takeFirstEligible()
 {
-    if (m_isInlineDirectoryEligible) {
+    if (m_isInlineDirectoryEligibleOrDecommitted) {
         EligibilityResult<Config> result = m_inlineDirectory.takeFirstEligible();
         if (result.kind == EligibilityKind::Full)
-            m_isInlineDirectoryEligible = false;
+            m_isInlineDirectoryEligibleOrDecommitted = false;
         else
             return result;
     }
     
-    if (!m_firstEligibleDirectory) {
+    if (!m_firstEligibleOrDecommitedDirectory) {
         // If nothing is eligible, it can only be because we have no directories. It wouldn't be the end
-        // of the world if we broke this invariant. It would only mean that didBecomeEligible() would need
+        // of the world if we broke this invariant. It would only mean that didBecomeEligibleOrDecommited() would need
         // a null check.
         RELEASE_BASSERT(!m_headDirectory);
         RELEASE_BASSERT(!m_tailDirectory);
     }
     
-    for (; m_firstEligibleDirectory; m_firstEligibleDirectory = m_firstEligibleDirectory->next) {
-        EligibilityResult<Config> result = m_firstEligibleDirectory->payload.takeFirstEligible();
+    for (; m_firstEligibleOrDecommitedDirectory; m_firstEligibleOrDecommitedDirectory = m_firstEligibleOrDecommitedDirectory->next) {
+        EligibilityResult<Config> result = m_firstEligibleOrDecommitedDirectory->payload.takeFirstEligible();
         if (result.kind != EligibilityKind::Full) {
-            m_directoryHighWatermark = std::max(m_directoryHighWatermark, m_firstEligibleDirectory->index());
+            m_directoryHighWatermark = std::max(m_directoryHighWatermark, m_firstEligibleOrDecommitedDirectory->index());
             return result;
         }
     }
@@ -76,26 +76,26 @@ EligibilityResult<Config> IsoHeapImpl<Config>::takeFirstEligible()
         m_tailDirectory = newDirectory;
     }
     m_directoryHighWatermark = newDirectory->index();
-    m_firstEligibleDirectory = newDirectory;
+    m_firstEligibleOrDecommitedDirectory = newDirectory;
     EligibilityResult<Config> result = newDirectory->payload.takeFirstEligible();
     RELEASE_BASSERT(result.kind != EligibilityKind::Full);
     return result;
 }
 
 template<typename Config>
-void IsoHeapImpl<Config>::didBecomeEligible(IsoDirectory<Config, numPagesInInlineDirectory>* directory)
+void IsoHeapImpl<Config>::didBecomeEligibleOrDecommited(IsoDirectory<Config, numPagesInInlineDirectory>* directory)
 {
     RELEASE_BASSERT(directory == &m_inlineDirectory);
-    m_isInlineDirectoryEligible = true;
+    m_isInlineDirectoryEligibleOrDecommitted = true;
 }
 
 template<typename Config>
-void IsoHeapImpl<Config>::didBecomeEligible(IsoDirectory<Config, IsoDirectoryPage<Config>::numPages>* directory)
+void IsoHeapImpl<Config>::didBecomeEligibleOrDecommited(IsoDirectory<Config, IsoDirectoryPage<Config>::numPages>* directory)
 {
-    RELEASE_BASSERT(m_firstEligibleDirectory);
+    RELEASE_BASSERT(m_firstEligibleOrDecommitedDirectory);
     auto* directoryPage = IsoDirectoryPage<Config>::pageFor(directory);
-    if (directoryPage->index() < m_firstEligibleDirectory->index())
-        m_firstEligibleDirectory = directoryPage;
+    if (directoryPage->index() < m_firstEligibleOrDecommitedDirectory->index())
+        m_firstEligibleOrDecommitedDirectory = directoryPage;
 }
 
 template<typename Config>

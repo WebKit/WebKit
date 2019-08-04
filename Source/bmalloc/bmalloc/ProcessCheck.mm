@@ -46,7 +46,8 @@ bool gigacageEnabledForProcess()
     bool isOptInBinary = [processName isEqualToString:@"jsc"]
         || [processName isEqualToString:@"DumpRenderTree"]
         || [processName isEqualToString:@"wasm"]
-        || [processName hasPrefix:@"test"];
+        || [processName hasPrefix:@"test"]
+        || [processName hasPrefix:@"Test"];
 
     return isOptInBinary;
 }
