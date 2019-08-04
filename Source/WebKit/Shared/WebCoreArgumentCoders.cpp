@@ -924,7 +924,7 @@ Optional<Region::Span> ArgumentCoder<Region::Span>::decode(Decoder& decoder)
         return WTF::nullopt;
     
     span.segmentIndex = segmentIndex;
-    return WTFMove(span);
+    return span;
 }
 
 void ArgumentCoder<Region>::encode(Encoder& encoder, const Region& region)
