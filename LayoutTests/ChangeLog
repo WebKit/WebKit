@@ -1,3 +1,18 @@
+2019-08-04  Chris Dumez  <cdumez@apple.com>
+
+        Ping loads should not prevent page caching
+        https://bugs.webkit.org/show_bug.cgi?id=200418
+        <rdar://problem/53901632>
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * http/tests/navigation/page-cache-pending-ping-load-cross-origin-expected.txt: Added.
+        * http/tests/navigation/page-cache-pending-ping-load-cross-origin.html: Added.
+        * http/tests/navigation/page-cache-pending-ping-load-same-origin-expected.txt: Added.
+        * http/tests/navigation/page-cache-pending-ping-load-same-origin.html: Added.
+
 2019-08-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Elements: Styles: add icons for various CSS rule types

@@ -1,3 +1,35 @@
+2019-08-04  Chris Dumez  <cdumez@apple.com>
+
+        Ping loads should not prevent page caching
+        https://bugs.webkit.org/show_bug.cgi?id=200418
+        <rdar://problem/53901632>
+
+        Reviewed by Darin Adler.
+
+        We normally prevent page caching if there were any pending subresource loads when navigating,
+        to avoid caching partial / broken content. However, this should not apply to Ping / Beacon
+        loads since those do not impact page rendering and can outlive the page.
+
+        Tests: http/tests/navigation/page-cache-pending-ping-load-cross-origin.html
+               http/tests/navigation/page-cache-pending-ping-load-same-origin.html
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::addIfCacheable):
+        After we've fired the 'pagehide' event in each frame, stop all the loads again. This is needed
+        since pages are allowed to start ping / beacon loads in their 'pagehide' handlers. If we do not
+        stop those loads, then the next call to canCachePage() would fail because the DocumentLoader is
+        still loading. Note that we're not actually preventing these ping loads from hitting the server
+        since we never cancel page loads and those can outlive their page.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::shouldPendingCachedResourceLoadPreventPageCache):
+        (WebCore::areAllLoadersPageCacheAcceptable):
+        Make sure that Ping / Beacon / Prefetches / Icon loads do not prevent page caching.
+
+        (WebCore::DocumentLoader::addSubresourceLoader):
+        Tweak assertion that was incorrect since we actually allow ping / beacon loads when the
+        document is about to enter PageCache (while firing pagehide event).
+
 2019-08-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Create formatting context/state.
