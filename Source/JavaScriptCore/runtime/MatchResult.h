@@ -30,7 +30,12 @@
 
 namespace JSC {
 
-typedef uint64_t EncodedMatchResult;
+struct MatchResult;
+#if CPU(ARM64) || CPU(X86_64)
+using EncodedMatchResult = MatchResult;
+#else
+using EncodedMatchResult = uint64_t;
+#endif
 
 struct MatchResult {
     MatchResult()
@@ -45,19 +50,13 @@ struct MatchResult {
     {
     }
 
-    explicit ALWAYS_INLINE MatchResult(EncodedMatchResult encoded)
+#if !(CPU(ARM64) || CPU(X86_64))
+    ALWAYS_INLINE MatchResult(EncodedMatchResult match)
+        : start(bitwise_cast<MatchResult>(match).start)
+        , end(bitwise_cast<MatchResult>(match).end)
     {
-        union u {
-            uint64_t encoded;
-            struct s {
-                size_t start;
-                size_t end;
-            } split;
-        } value;
-        value.encoded = encoded;
-        start = value.split.start;
-        end = value.split.end;
     }
+#endif
 
     ALWAYS_INLINE static MatchResult failed()
     {
@@ -79,5 +78,7 @@ struct MatchResult {
     size_t start;
     size_t end;
 };
+
+static_assert(sizeof(MatchResult) == sizeof(EncodedMatchResult), "Match result and EncodedMatchResult should be the same size");
 
 } // namespace JSC

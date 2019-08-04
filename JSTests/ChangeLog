@@ -1,3 +1,14 @@
+2019-05-20  Keith Miller  <keith_miller@apple.com>
+
+        Cleanup Yarr regexp code around paren contexts.
+        https://bugs.webkit.org/show_bug.cgi?id=198063
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/regexp-many-named-sequential-capture-groups.js: Added.
+        (i.s):
+        * stress/regexp-many-unnamed-sequential-capture-groups.js: Added.
+
 2019-05-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Invalid DFG JIT genereation in high CPU usage state

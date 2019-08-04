@@ -779,6 +779,8 @@ public:
     Lock m_regExpPatternContextLock;
     char* acquireRegExpPatternContexBuffer();
     void releaseRegExpPatternContexBuffer();
+#else
+    static constexpr size_t patternContextBufferSize = 0; // Space allocated to save nested parenthesis context
 #endif
 
     Ref<CompactVariableMap> m_compactVariableMap;
