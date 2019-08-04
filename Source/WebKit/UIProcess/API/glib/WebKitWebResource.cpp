@@ -230,11 +230,11 @@ static void webkitWebResourceUpdateURI(WebKitWebResource* resource, const CStrin
     g_object_notify(G_OBJECT(resource), "uri");
 }
 
-WebKitWebResource* webkitWebResourceCreate(WebFrameProxy* frame, WebKitURIRequest* request, bool isMainResource)
+WebKitWebResource* webkitWebResourceCreate(WebFrameProxy& frame, WebKitURIRequest* request, bool isMainResource)
 {
     ASSERT(frame);
     WebKitWebResource* resource = WEBKIT_WEB_RESOURCE(g_object_new(WEBKIT_TYPE_WEB_RESOURCE, NULL));
-    resource->priv->frame = frame;
+    resource->priv->frame = &frame;
     resource->priv->uri = webkit_uri_request_get_uri(request);
     resource->priv->isMainResource = isMainResource;
     return resource;
