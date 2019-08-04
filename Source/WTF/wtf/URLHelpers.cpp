@@ -767,8 +767,8 @@ static String escapeUnsafeCharacters(const String& sourceBuffer)
             uint8_t utf8Buffer[4];
             size_t offset = 0;
             UBool failure = false;
-            U8_APPEND(utf8Buffer, offset, 4, c, failure)
-            ASSERT(!failure);
+            U8_APPEND(utf8Buffer, offset, 4, c, failure);
+            ASSERT_UNUSED(failure, !failure);
 
             for (size_t j = 0; j < offset; ++j) {
                 outBuffer.append('%');
