@@ -115,9 +115,9 @@ class DeviceType(object):
         elif self.software_version:
             version = VersionNameMap.map().to_name(self.software_version, platform=self.software_variant.lower())
 
-        return '{hardware_family}{hardware_type} running {version}'.format(
+        return u'{hardware_family}{hardware_type} running {version}'.format(
             hardware_family=self.hardware_family if self.hardware_family else 'Device',
-            hardware_type=' {}'.format(self.hardware_type) if self.hardware_type else '',
+            hardware_type=u' {}'.format(self.hardware_type) if self.hardware_type else '',
             version=version or self.software_variant,
         )
 

@@ -184,15 +184,15 @@ class Manager(object):
         device_type_list = self._port.supported_device_types()
         for device_type in device_type_list:
             """Run the tests and return a RunDetails object with the results."""
-            for_device_type = 'for {} '.format(device_type) if device_type else ''
-            self._printer.write_update('Collecting tests {}...'.format(for_device_type))
+            for_device_type = u'for {} '.format(device_type) if device_type else ''
+            self._printer.write_update(u'Collecting tests {}...'.format(for_device_type))
             try:
                 paths, test_names = self._collect_tests(args, device_type=device_type)
             except IOError:
                 # This is raised if --test-list doesn't exist
                 return test_run_results.RunDetails(exit_code=-1)
 
-            self._printer.write_update('Parsing expectations {}...'.format(for_device_type))
+            self._printer.write_update(u'Parsing expectations {}...'.format(for_device_type))
             self._expectations[device_type] = test_expectations.TestExpectations(self._port, test_names, force_expectations_pass=self._options.force, device_type=device_type)
             self._expectations[device_type].parse_all_expectations()
 
@@ -259,7 +259,7 @@ class Manager(object):
 
             self._printer.print_baseline_search_path(device_type=device_type)
 
-            _log.info('Running {}{}'.format(pluralize(len(tests_to_run_by_device[device_type]), 'test'), ' for {}'.format(str(device_type)) if device_type else ''))
+            _log.info(u'Running {}{}'.format(pluralize(len(tests_to_run_by_device[device_type]), 'test'), u' for {}'.format(device_type) if device_type else ''))
             _log.info('')
             start_time_for_device = time.time()
             if not tests_to_run_by_device[device_type]:

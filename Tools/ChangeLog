@@ -1,3 +1,46 @@
+2019-08-05  Jonathan Bedard  <jbedard@apple.com>
+
+        run-webkit-tests asserts when the iPhone XR simulator is running
+        https://bugs.webkit.org/show_bug.cgi?id=200404
+        <rdar://problem/53878739>
+
+        Reviewed by Dean Jackson.
+
+        Support unicode in all logging statements tied to device model.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_baseline_search_path):
+        * Scripts/webkitpy/port/device.py:
+        (Device.__repr__):
+        * Scripts/webkitpy/port/device_port.py:
+        (DevicePort._install):
+        (DevicePort.setup_test_run):
+        (DevicePort.clean_up_test_run):
+        (DevicePort.configuration_for_upload):
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.default_baseline_search_path):
+        * Scripts/webkitpy/xcode/device_type.py:
+        (DeviceType.__str__):
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager.populate_available_devices):
+        (SimulatedDeviceManager._find_available_name):
+        (SimulatedDeviceManager._get_device_identifier_for_type):
+        (SimulatedDeviceManager._create_or_find_device_for_request):
+        (SimulatedDeviceManager._does_fulfill_request):
+        (SimulatedDeviceManager._wait_until_device_in_state):
+        (SimulatedDeviceManager._wait_until_device_is_usable):
+        (SimulatedDeviceManager._boot_device):
+        (SimulatedDeviceManager.initialize_devices):
+        (SimulatedDeviceManager.max_supported_simulators):
+        (SimulatedDeviceManager.swap):
+        (SimulatedDevice.is_usable):
+        (SimulatedDevice._shut_down):
+        (SimulatedDevice._delete):
+        (SimulatedDevice.launch_app):
+        (SimulatedDevice.__repr__):
+
 2019-08-04  Chris Dumez  <cdumez@apple.com>
 
         Ping loads should not prevent page caching

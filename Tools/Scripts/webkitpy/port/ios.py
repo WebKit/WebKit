@@ -74,12 +74,12 @@ class IOSPort(DevicePort):
 
         base_variants = []
         if hardware_family and hardware_type:
-            base_variants.append('{}-{}-{}'.format(hardware_family, hardware_type, runtime_type))
+            base_variants.append(u'{}-{}-{}'.format(hardware_family, hardware_type, runtime_type))
         if hardware_family:
-            base_variants.append('{}-{}'.format(hardware_family, runtime_type))
-        base_variants.append('{}-{}'.format(IOSPort.port_name, runtime_type))
+            base_variants.append(u'{}-{}'.format(hardware_family, runtime_type))
+        base_variants.append(u'{}-{}'.format(IOSPort.port_name, runtime_type))
         if hardware_family and hardware_type:
-            base_variants.append('{}-{}'.format(hardware_family, hardware_type))
+            base_variants.append(u'{}-{}'.format(hardware_family, hardware_type))
         if hardware_family:
             base_variants.append(hardware_family)
         base_variants.append(IOSPort.port_name)
@@ -92,15 +92,15 @@ class IOSPort(DevicePort):
                     apple_name = VersionNameMap.map(self.host.platform).to_name(version, platform=IOSPort.port_name, table=INTERNAL_TABLE)
 
                 if apple_name:
-                    expectations.append(self._apple_baseline_path('{}-{}-{}'.format(variant, apple_name.lower().replace(' ', ''), wk_string)))
-                expectations.append(self._webkit_baseline_path('{}-{}-{}'.format(variant, version.major, wk_string)))
+                    expectations.append(self._apple_baseline_path(u'{}-{}-{}'.format(variant, apple_name.lower().replace(' ', ''), wk_string)))
+                expectations.append(self._webkit_baseline_path(u'{}-{}-{}'.format(variant, version.major, wk_string)))
                 if apple_name:
-                    expectations.append(self._apple_baseline_path('{}-{}'.format(variant, apple_name.lower().replace(' ', ''))))
-                expectations.append(self._webkit_baseline_path('{}-{}'.format(variant, version.major)))
+                    expectations.append(self._apple_baseline_path(u'{}-{}'.format(variant, apple_name.lower().replace(' ', ''))))
+                expectations.append(self._webkit_baseline_path(u'{}-{}'.format(variant, version.major)))
 
             if apple_additions():
-                expectations.append(self._apple_baseline_path('{}-{}'.format(variant, wk_string)))
-            expectations.append(self._webkit_baseline_path('{}-{}'.format(variant, wk_string)))
+                expectations.append(self._apple_baseline_path(u'{}-{}'.format(variant, wk_string)))
+            expectations.append(self._webkit_baseline_path(u'{}-{}'.format(variant, wk_string)))
             if apple_additions():
                 expectations.append(self._apple_baseline_path(variant))
             expectations.append(self._webkit_baseline_path(variant))

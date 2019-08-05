@@ -97,7 +97,7 @@ class DevicePort(DarwinPort):
 
         for i in xrange(self.child_processes()):
             device = self.target_host(i)
-            _log.debug('Installing to {}'.format(device))
+            _log.debug(u'Installing to {}'.format(device))
             # Without passing DYLD_LIBRARY_PATH, libWebCoreTestSupport cannot be loaded and DRT/WKTR will crash pre-launch,
             # leaving a crash log which will be picked up in results. DYLD_FRAMEWORK_PATH is needed to prevent an early crash.
             if not device.install_app(self._path_to_driver(), {'DYLD_LIBRARY_PATH': self._build_path(), 'DYLD_FRAMEWORK_PATH': self._build_path()}):
@@ -162,7 +162,7 @@ class DevicePort(DarwinPort):
             raise RuntimeError(self.NO_DEVICE_MANAGER)
 
         device_type = self._device_type_with_version(device_type)
-        _log.debug('\nCreating devices for {}'.format(device_type))
+        _log.debug(u'\nCreating devices for {}'.format(device_type))
 
         request = DeviceRequest(
             device_type,
@@ -212,7 +212,7 @@ class DevicePort(DarwinPort):
                 if isinstance(e, Exception):
                     exception_list.append([e, trace])
                 else:
-                    exception_list.append([Exception('Exception while tearing down {}'.format(device)), trace])
+                    exception_list.append([Exception(u'Exception while tearing down {}'.format(device)), trace])
 
         if len(exception_list) == 1:
             raise
@@ -247,7 +247,7 @@ class DevicePort(DarwinPort):
         device_type = host.device_type if host else self.DEVICE_TYPE
         model = device_type.hardware_family
         if model and device_type.hardware_type:
-            model += ' {}'.format(device_type.hardware_type)
+            model += u' {}'.format(device_type.hardware_type)
 
         version = self.device_version()
         version_name = None

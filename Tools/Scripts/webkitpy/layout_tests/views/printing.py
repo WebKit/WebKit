@@ -99,12 +99,12 @@ class Printer(object):
         normalize_baseline = lambda baseline_search_path: [
             fs.relpath(x, self._port.layout_tests_dir()).replace("../", "") for x in baseline_search_path]
 
-        self._print_default('Verbose baseline search path: {} -> generic'.format(
-            ' -> '.join(normalize_baseline(full_baseline_search_path))))
+        self._print_default(u'Verbose baseline search path: {} -> generic'.format(
+            u' -> '.join(normalize_baseline(full_baseline_search_path))))
 
         self._print_default('')
-        self._print_default('Baseline search path: {} -> generic'.format(
-            ' -> '.join(normalize_baseline([path for path in full_baseline_search_path if fs.exists(path)]))))
+        self._print_default(u'Baseline search path: {} -> generic'.format(
+            u' -> '.join(normalize_baseline([path for path in full_baseline_search_path if fs.exists(path)]))))
         self._print_default('')
 
     def print_found(self, num_all_test_files, num_to_run, repeat_each, iterations):
