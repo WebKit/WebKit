@@ -150,7 +150,7 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<true, T, inlineCa
     static void encode(Encoder& encoder, const Vector<T, inlineCapacity>& vector)
     {
         encoder << static_cast<uint64_t>(vector.size());
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T), alignof(T));
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T));
     }
     
     static bool decode(Decoder& decoder, Vector<T, inlineCapacity>& vector)

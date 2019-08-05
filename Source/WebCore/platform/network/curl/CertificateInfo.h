@@ -49,7 +49,7 @@ public:
 
     bool containsNonRootSHA1SignedCertificate() const { notImplemented(); return false; }
 
-    Optional<SummaryInfo> summaryInfo() const { notImplemented(); return WTF::nullopt; }
+    Optional<SummaryInfo> summaryInfo() const;
 
     bool isEmpty() const { return m_certificateChain.isEmpty(); }
 
@@ -71,15 +71,37 @@ namespace WTF {
 namespace Persistence {
 
 template<> struct Coder<WebCore::CertificateInfo> {
-    static void encode(Encoder&, const WebCore::CertificateInfo&)
+    static void encode(Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
     {
-        notImplemented();
+        auto& certificateChain = certificateInfo.certificateChain();
+
+        encoder << certificateInfo.verificationError();
+        encoder << certificateChain.size();
+        for (auto& certificate : certificateChain)
+            encoder << certificate;
     }
 
-    static bool decode(Decoder&, WebCore::CertificateInfo&)
+    static bool decode(Decoder& decoder, WebCore::CertificateInfo& certificateInfo)
     {
-        notImplemented();
-        return false;
+        int verificationError;
+        if (!decoder.decode(verificationError))
+            return false;
+
+        size_t numOfCert = 0;
+        if (!decoder.decode(numOfCert))
+            return false;
+
+        WebCore::CertificateInfo::CertificateChain certificateChain;
+        for (size_t i = 0; i < numOfCert; i++) {
+            WebCore::CertificateInfo::Certificate certificate;
+            if (!decoder.decode(certificate))
+                return false;
+
+            certificateChain.append(WTFMove(certificate));
+        }
+
+        certificateInfo = WebCore::CertificateInfo(verificationError, WTFMove(certificateChain));
+        return true;
     }
 };
 

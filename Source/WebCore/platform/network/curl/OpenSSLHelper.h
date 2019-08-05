@@ -23,42 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#pragma once
+
 #include "CertificateInfo.h"
+#include <openssl/ssl.h>
+#include <wtf/Optional.h>
+#include <wtf/Vector.h>
 
-#include "OpenSSLHelper.h"
-#include <wtf/CrossThreadCopier.h>
+namespace OpenSSL {
 
-#if USE(CURL)
+Optional<WebCore::CertificateInfo> createCertificateInfo(X509_STORE_CTX*);
+Optional<WebCore::CertificateInfo::SummaryInfo> createSummaryInfo(const Vector<uint8_t>& pem);
 
-namespace WebCore {
-
-CertificateInfo::CertificateInfo(int verificationError, CertificateChain&& certificateChain)
-    : m_verificationError(verificationError)
-    , m_certificateChain(WTFMove(certificateChain))
-{
-}
-
-CertificateInfo CertificateInfo::isolatedCopy() const
-{
-    return { m_verificationError, crossThreadCopy(m_certificateChain) };
-}
-
-CertificateInfo::Certificate CertificateInfo::makeCertificate(const uint8_t* buffer, size_t size)
-{
-    Certificate certificate;
-    certificate.append(buffer, size);
-    return certificate;
-}
-
-Optional<CertificateInfo::SummaryInfo> CertificateInfo::summaryInfo() const
-{
-    if (!m_certificateChain.size())
-        return WTF::nullopt;
-
-    return OpenSSL::createSummaryInfo(m_certificateChain.at(0));
-}
-
-}
-
-#endif
+} // namespace OpenSSL

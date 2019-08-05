@@ -30,11 +30,9 @@
 #if USE(CURL)
 #include "CurlContext.h"
 #include "CurlSSLHandle.h"
-#include <openssl/ssl.h>
 
 namespace WebCore {
 
-static Vector<CertificateInfo::Certificate> pemDataFromCtx(X509StoreCTX*);
 static CurlSSLVerifier::SSLCertificateFlags convertToSSLCertificateFlags(unsigned);
 
 CurlSSLVerifier::CurlSSLVerifier(void* sslCtx)
@@ -61,15 +59,16 @@ CurlSSLVerifier::CurlSSLVerifier(void* sslCtx)
         SSL_CTX_set1_curves_list(ctx, curvesList.utf8().data());
 }
 
-void CurlSSLVerifier::collectInfo(X509StoreCTX* ctx)
+void CurlSSLVerifier::collectInfo(X509_STORE_CTX* ctx)
 {
-    m_certificateInfo = CertificateInfo { X509_STORE_CTX_get_error(ctx), pemDataFromCtx(ctx) };
+    if (auto certificateInfo = OpenSSL::createCertificateInfo(ctx))
+        m_certificateInfo = WTFMove(*certificateInfo);
 
     if (auto error = m_certificateInfo.verificationError())
         m_sslErrors = static_cast<int>(convertToSSLCertificateFlags(error));
 }
 
-int CurlSSLVerifier::verifyCallback(int preverified, X509StoreCTX* ctx)
+int CurlSSLVerifier::verifyCallback(int preverified, X509_STORE_CTX* ctx)
 {
     auto ssl = static_cast<SSL*>(X509_STORE_CTX_get_ex_data(ctx, SSL_get_ex_data_X509_STORE_CTX_idx()));
     auto sslCtx = SSL_get_SSL_CTX(ssl);
@@ -78,75 +77,6 @@ int CurlSSLVerifier::verifyCallback(int preverified, X509StoreCTX* ctx)
     verifier->collectInfo(ctx);
     // whether the verification of the certificate in question was passed (preverified=1) or not (preverified=0)
     return preverified;
-}
-
-class StackOfX509 {
-public:
-    explicit StackOfX509(X509StoreCTX* ctx)
-        : m_certs { X509_STORE_CTX_get1_chain(ctx) }
-    {
-    }
-
-    ~StackOfX509()
-    {
-        if (m_certs)
-            sk_X509_pop_free(m_certs, X509_free);
-    }
-
-    unsigned count() { return sk_X509_num(m_certs); }
-    X509* item(unsigned i) { return sk_X509_value(m_certs, i); }
-
-private:
-    STACK_OF(X509)* m_certs { nullptr };
-};
-
-class BIOHolder {
-public:
-    BIOHolder()
-        : m_bio { BIO_new(BIO_s_mem()) }
-    {
-    }
-
-    ~BIOHolder()
-    {
-        if (m_bio)
-            BIO_free(m_bio);
-    }
-
-    bool write(X509* data) { return PEM_write_bio_X509(m_bio, data); }
-    CertificateInfo::Certificate asCertificate()
-    {
-        uint8_t* data;
-        long length = BIO_get_mem_data(m_bio, &data);
-        if (length < 0)
-            return CertificateInfo::Certificate();
-
-        auto cert = CertificateInfo::makeCertificate(data, length);
-        return cert;
-    }
-
-private:
-    BIO* m_bio { nullptr };
-};
-
-static Vector<CertificateInfo::Certificate> pemDataFromCtx(X509StoreCTX* ctx)
-{
-    Vector<CertificateInfo::Certificate> result;
-    StackOfX509 certs { ctx };
-    for (int i = 0; i < certs.count(); i++) {
-        BIOHolder bio;
-
-        if (!bio.write(certs.item(i)))
-            return Vector<CertificateInfo::Certificate> { };
-
-        auto certificate = bio.asCertificate();
-        if (certificate.isEmpty())
-            return Vector<CertificateInfo::Certificate> { };
-
-        result.append(WTFMove(certificate));
-    }
-
-    return result;
 }
 
 static CurlSSLVerifier::SSLCertificateFlags convertToSSLCertificateFlags(unsigned sslError)

@@ -1,3 +1,64 @@
+2019-08-05  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] implement CertificateInfo::summaryInfo
+        https://bugs.webkit.org/show_bug.cgi?id=191498
+
+        Reviewed by Alex Christensen.
+
+        Implement CertificaeInfo::SummaryInfo.
+        This patch makes WebInspector show summary of certificates.
+
+        Tests: http/tests/inspector/network/resource-security-certificate.html
+               http/tests/inspector/network/getSerializedCertificate.html
+
+        * platform/Curl.cmake:
+        * platform/network/curl/CertificateInfo.h:
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::encode):
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::decode):
+        (WebCore::CertificateInfo::summaryInfo const): Deleted.
+        * platform/network/curl/CertificateInfoCurl.cpp:
+        (WebCore::CertificateInfo::summaryInfo const):
+        * platform/network/curl/CurlSSLVerifier.cpp:
+        (WebCore::CurlSSLVerifier::collectInfo):
+        (WebCore::CurlSSLVerifier::verifyCallback):
+        (WebCore::StackOfX509::StackOfX509): Deleted.
+        (WebCore::StackOfX509::~StackOfX509): Deleted.
+        (WebCore::StackOfX509::count): Deleted.
+        (WebCore::StackOfX509::item): Deleted.
+        (): Deleted.
+        (WebCore::BIOHolder::BIOHolder): Deleted.
+        (WebCore::BIOHolder::~BIOHolder): Deleted.
+        (WebCore::BIOHolder::write): Deleted.
+        (WebCore::BIOHolder::asCertificate): Deleted.
+        (WebCore::pemDataFromCtx): Deleted.
+        * platform/network/curl/CurlSSLVerifier.h:
+        * platform/network/curl/OpenSSLHelper.cpp: Added.
+        (OpenSSL::deleter<X509>::operator()):
+        (OpenSSL::StackOfGeneralName::StackOfGeneralName):
+        (OpenSSL::StackOfGeneralName::~StackOfGeneralName):
+        (OpenSSL::StackOfGeneralName::operator bool):
+        (OpenSSL::StackOfGeneralName::count):
+        (OpenSSL::StackOfGeneralName::item):
+        (OpenSSL::StackOfX509::StackOfX509):
+        (OpenSSL::StackOfX509::~StackOfX509):
+        (OpenSSL::StackOfX509::count):
+        (OpenSSL::StackOfX509::item):
+        (OpenSSL::BIO::BIO):
+        (OpenSSL::BIO::~BIO):
+        (OpenSSL::BIO::getDataAsVector const):
+        (OpenSSL::BIO::getDataAsString const):
+        (OpenSSL::BIO::readX509):
+        (OpenSSL::BIO::get):
+        (OpenSSL::pemDataFromCtx):
+        (OpenSSL::createCertificateInfo):
+        (OpenSSL::toString):
+        (OpenSSL::getCommonName):
+        (OpenSSL::getSubjectName):
+        (OpenSSL::convertASN1TimeToSeconds):
+        (OpenSSL::getSubjectAltName):
+        (OpenSSL::createSummaryInfo):
+        * platform/network/curl/OpenSSLHelper.h: Copied from Source/WebCore/platform/network/curl/CertificateInfoCurl.cpp.
+
 2019-08-04  Youenn Fablet  <youenn@apple.com>
 
         WebRTC: got incorrect `this` in negotiationneeded event

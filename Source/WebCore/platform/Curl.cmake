@@ -24,6 +24,7 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/CurlSSLVerifier.cpp
     platform/network/curl/DNSResolveQueueCurl.cpp
     platform/network/curl/NetworkStorageSessionCurl.cpp
+    platform/network/curl/OpenSSLHelper.cpp
     platform/network/curl/ProtectionSpaceCurl.cpp
     platform/network/curl/ProxyServerCurl.cpp
     platform/network/curl/PublicSuffixCurl.cpp
@@ -51,11 +52,15 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/curl/CurlProxySettings.h
     platform/network/curl/CurlRequest.h
     platform/network/curl/CurlRequestClient.h
+    platform/network/curl/CurlRequestScheduler.h
     platform/network/curl/CurlRequestSchedulerClient.h
     platform/network/curl/CurlResourceHandleDelegate.h
     platform/network/curl/CurlResponse.h
     platform/network/curl/CurlSSLHandle.h
+    platform/network/curl/CurlSSLVerifier.h
+    platform/network/curl/DNSResolveQueueCurl.h
     platform/network/curl/DownloadBundle.h
+    platform/network/curl/OpenSSLHelper.h
     platform/network/curl/ProtectionSpaceCurl.h
     platform/network/curl/ResourceError.h
     platform/network/curl/ResourceRequest.h

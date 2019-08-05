@@ -1018,8 +1018,8 @@ http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-content-type-header.ht
 http/tests/xmlviewer [ Skip ]
 
 webkit.org/b/192406 http/tests/inspector/network/resource-security-connection.html [ Skip ]
-webkit.org/b/191498 http/tests/inspector/network/resource-security-certificate.html [ Skip ]
-webkit.org/b/191498 http/tests/inspector/network/getSerializedCertificate.html [ Skip ]
+webkit.org/b/191498 http/tests/inspector/network/resource-security-certificate.html [ Pass ]
+webkit.org/b/191498 http/tests/inspector/network/getSerializedCertificate.html [ Pass ]
 
 #///////////////////////////////////////////////////////////////////////////////
 # Issue categories below are shared with other platforms (primarily AppleWin)
