@@ -9734,6 +9734,7 @@
 		7C7903BC1F86FF3400463A70 /* PlaceholderRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceholderRenderingContext.h; sourceTree = "<group>"; };
 		7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsCoreSoftLink.mm; sourceTree = "<group>"; };
 		7C7941E31C56C29300A4C58E /* DataDetectorsCoreSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsCoreSoftLink.h; sourceTree = "<group>"; };
+		7C7C769C22F67ECD0032BCCD /* WHLSLMangledNames.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLMangledNames.h; sourceTree = "<group>"; };
 		7C8139A31ED6281D00CE26E8 /* JSDOMAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMAttribute.h; sourceTree = "<group>"; };
 		7C8139A41ED6281D00CE26E8 /* JSDOMOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMOperation.h; sourceTree = "<group>"; };
 		7C8139A51ED6281D00CE26E8 /* JSDOMOperationReturningPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMOperationReturningPromise.h; sourceTree = "<group>"; };
@@ -17172,6 +17173,7 @@
 				1CECB3BB21F511AA00F44542 /* WHLSLEntryPointScaffolding.h */,
 				1CECB3AF21F2B98400F44542 /* WHLSLFunctionWriter.cpp */,
 				1CECB3B221F2B98600F44542 /* WHLSLFunctionWriter.h */,
+				7C7C769C22F67ECD0032BCCD /* WHLSLMangledNames.h */,
 				1CECB3B521F50AC700F44542 /* WHLSLMetalCodeGenerator.cpp */,
 				1CECB3B621F50AC700F44542 /* WHLSLMetalCodeGenerator.h */,
 				1CECB3B821F50D1000F44542 /* WHLSLNativeFunctionWriter.cpp */,

@@ -27,10 +27,9 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLMangledNames.h"
 #include "WHLSLVisitor.h"
 #include <wtf/HashMap.h>
-#include <wtf/text/StringConcatenate.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -64,20 +63,13 @@ public:
 
     // Must be called after calling metalTypes().
     String mangledNameForType(AST::NativeTypeDeclaration&);
-    String mangledNameForType(AST::UnnamedType&);
-    String mangledNameForType(AST::NamedType&);
-    String mangledNameForEnumerationMember(AST::EnumerationMember&);
-    String mangledNameForStructureElement(AST::StructureElement&);
+    MangledTypeName mangledNameForType(AST::UnnamedType&);
+    MangledOrNativeTypeName mangledNameForType(AST::NamedType&);
+    MangledEnumerationMemberName mangledNameForEnumerationMember(AST::EnumerationMember&);
+    MangledStructureElementName mangledNameForStructureElement(AST::StructureElement&);
 
-    String generateNextTypeName()
-    {
-        return makeString("type", m_typeCount++);
-    }
-
-    String generateNextStructureElementName()
-    {
-        return makeString("structureElement", m_structureElementCount++);
-    }
+    MangledTypeName generateNextTypeName() { return { m_typeCount++ }; }
+    MangledStructureElementName generateNextStructureElementName() { return { m_structureElementCount++ }; }
 
 private:
     void visit(AST::UnnamedType&) override;
@@ -88,10 +80,7 @@ private:
     void visit(AST::Expression&) override;
     void visit(AST::CallExpression&) override;
 
-    String generateNextEnumerationMemberName()
-    {
-        return makeString("enumerationMember", m_enumerationMemberCount++);
-    }
+    MangledEnumerationMemberName generateNextEnumerationMemberName() { return { m_enumerationMemberCount++ }; }
 
     void emitNamedTypeDefinition(AST::NamedType&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes, StringBuilder&);
     void emitUnnamedTypeDefinition(BaseTypeNameNode&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes, StringBuilder&);
@@ -105,10 +94,10 @@ private:
     Program& m_program;
     Vector<UniqueRef<BaseTypeNameNode>> m_trie;
     HashMap<AST::UnnamedType*, BaseTypeNameNode*> m_unnamedTypeMapping;
-    HashMap<AST::NamedType*, String> m_namedTypeMapping;
+    HashMap<AST::NamedType*, MangledTypeName> m_namedTypeMapping;
     HashMap<AST::NamedType*, Vector<std::reference_wrapper<BaseTypeNameNode>>> m_dependencyGraph;
-    HashMap<AST::EnumerationMember*, String> m_enumerationMemberMapping;
-    HashMap<AST::StructureElement*, String> m_structureElementMapping;
+    HashMap<AST::EnumerationMember*, MangledEnumerationMemberName> m_enumerationMemberMapping;
+    HashMap<AST::StructureElement*, MangledStructureElementName> m_structureElementMapping;
     unsigned m_typeCount { 0 };
     unsigned m_enumerationMemberCount { 0 };
     unsigned m_structureElementCount { 0 };

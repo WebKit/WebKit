@@ -94,7 +94,7 @@ static Optional<WHLSL::ComputeDimensions> trySetFunctions(const GPUPipelineStage
         ASSERT(computeLibrary);
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195771 Once we zero-fill variables, there should be no warnings, so we should be able to ASSERT(!error) here.
 
-        computeEntryPoint = whlslCompileResult->mangledEntryPointName;
+        computeEntryPoint = whlslCompileResult->mangledEntryPointName.toString();
     } else {
         computeLibrary = computeStage.module->platformShaderModule();
         computeEntryPoint = computeStage.entryPoint;

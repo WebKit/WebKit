@@ -49,7 +49,7 @@ namespace Metal {
 
 class FunctionDeclarationWriter : public Visitor {
 public:
-    FunctionDeclarationWriter(TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, String>& functionMapping)
+    FunctionDeclarationWriter(TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, MangledFunctionName>& functionMapping)
         : m_typeNamer(typeNamer)
         , m_functionMapping(functionMapping)
     {
@@ -63,7 +63,7 @@ public:
 
 private:
     TypeNamer& m_typeNamer;
-    HashMap<AST::FunctionDeclaration*, String>& m_functionMapping;
+    HashMap<AST::FunctionDeclaration*, MangledFunctionName>& m_functionMapping;
     StringBuilder m_stringBuilder;
 };
 
@@ -78,14 +78,14 @@ void FunctionDeclarationWriter::visit(AST::FunctionDeclaration& functionDeclarat
     for (size_t i = 0; i < functionDeclaration.parameters().size(); ++i) {
         if (i)
             m_stringBuilder.append(", ");
-        m_stringBuilder.append(m_typeNamer.mangledNameForType(*functionDeclaration.parameters()[i]->type()));
+        m_stringBuilder.flexibleAppend(m_typeNamer.mangledNameForType(*functionDeclaration.parameters()[i]->type()));
     }
     m_stringBuilder.append(");\n");
 }
 
 class FunctionDefinitionWriter : public Visitor {
 public:
-    FunctionDefinitionWriter(Intrinsics& intrinsics, TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, String>& functionMapping, Layout& layout)
+    FunctionDefinitionWriter(Intrinsics& intrinsics, TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, MangledFunctionName>& functionMapping, Layout& layout)
         : m_intrinsics(intrinsics)
         , m_typeNamer(typeNamer)
         , m_functionMapping(functionMapping)
@@ -150,10 +150,7 @@ protected:
 
     String constantExpressionString(AST::ConstantExpression&);
 
-    String generateNextVariableName()
-    {
-        return makeString("variable", m_variableCount++);
-    }
+    MangledVariableName generateNextVariableName() { return { m_variableCount++ }; }
 
     enum class Nullability : uint8_t {
         NotNull,
@@ -161,14 +158,14 @@ protected:
     };
 
     struct StackItem {
-        String value;
-        String leftValue;
+        MangledVariableName value;
+        Optional<MangledVariableName> leftValue;
         Nullability valueNullability;
         Nullability leftValueNullability;
     };
 
     struct StackValue {
-        String value;
+        MangledVariableName value;
         Nullability nullability;
     };
 
@@ -177,31 +174,29 @@ protected:
     // and DereferenceExpression. MakePointerExpression will try to produce rvalues which are
     // non-null, and DereferenceExpression will take a non-null rvalue and try to produce
     // a non-null lvalue.
-    void appendRightValueWithNullability(AST::Expression&, String value, Nullability nullability)
+    void appendRightValueWithNullability(AST::Expression&, MangledVariableName value, Nullability nullability)
     {
-        m_stack.append({ WTFMove(value), String(), nullability, Nullability::CanBeNull });
+        m_stack.append({ WTFMove(value), WTF::nullopt, nullability, Nullability::CanBeNull });
     }
 
-    void appendRightValue(AST::Expression& expression, String value)
+    void appendRightValue(AST::Expression& expression, MangledVariableName value)
     {
         appendRightValueWithNullability(expression, WTFMove(value), Nullability::CanBeNull);
     }
 
-    void appendLeftValue(AST::Expression& expression, String value, String leftValue, Nullability nullability)
+    void appendLeftValue(AST::Expression& expression, MangledVariableName value, MangledVariableName leftValue, Nullability nullability)
     {
         ASSERT_UNUSED(expression, expression.typeAnnotation().leftAddressSpace());
         m_stack.append({ WTFMove(value), WTFMove(leftValue), Nullability::CanBeNull, nullability });
     }
 
-    String takeLastValue()
+    MangledVariableName takeLastValue()
     {
-        ASSERT(m_stack.last().value);
         return m_stack.takeLast().value;
     }
 
     StackValue takeLastValueAndNullability()
     {
-        ASSERT(m_stack.last().value);
         auto last = m_stack.takeLast();
         return { last.value, last.valueNullability };
     }
@@ -210,7 +205,7 @@ protected:
     {
         ASSERT(m_stack.last().leftValue);
         auto last = m_stack.takeLast();
-        return { last.leftValue, last.leftValueNullability };
+        return { *last.leftValue, last.leftValueNullability };
     }
 
     enum class BreakContext {
@@ -222,15 +217,15 @@ protected:
 
     Intrinsics& m_intrinsics;
     TypeNamer& m_typeNamer;
-    HashMap<AST::FunctionDeclaration*, String>& m_functionMapping;
-    HashMap<AST::VariableDeclaration*, String> m_variableMapping;
+    HashMap<AST::FunctionDeclaration*, MangledFunctionName>& m_functionMapping;
+    HashMap<AST::VariableDeclaration*, MangledVariableName> m_variableMapping;
     StringBuilder m_stringBuilder;
 
     Vector<StackItem> m_stack;
     std::unique_ptr<EntryPointScaffolding> m_entryPointScaffolding;
     Layout& m_layout;
     unsigned m_variableCount { 0 };
-    String m_breakOutOfCurrentLoopEarlyVariable;
+    Optional<MangledVariableName> m_breakOutOfCurrentLoopEarlyVariable;
 };
 
 void FunctionDefinitionWriter::visit(AST::NativeFunctionDeclaration& nativeFunctionDeclaration)
@@ -307,9 +302,9 @@ void FunctionDefinitionWriter::visit(AST::Break&)
         m_stringBuilder.append("break;\n");
         break;
     case BreakContext::Loop:
-        ASSERT(m_breakOutOfCurrentLoopEarlyVariable.length());
+        ASSERT(m_breakOutOfCurrentLoopEarlyVariable);
         m_stringBuilder.flexibleAppend(
-            m_breakOutOfCurrentLoopEarlyVariable, " = true;\n"
+            *m_breakOutOfCurrentLoopEarlyVariable, " = true;\n"
             "break;\n"
         );
         break;
@@ -318,7 +313,7 @@ void FunctionDefinitionWriter::visit(AST::Break&)
 
 void FunctionDefinitionWriter::visit(AST::Continue&)
 {
-    ASSERT(m_breakOutOfCurrentLoopEarlyVariable.length());
+    ASSERT(m_breakOutOfCurrentLoopEarlyVariable);
     m_stringBuilder.append("break;\n");
 }
 
@@ -335,10 +330,10 @@ void FunctionDefinitionWriter::visit(AST::Fallthrough&)
 
 void FunctionDefinitionWriter::emitLoop(LoopConditionLocation loopConditionLocation, AST::Expression* conditionExpression, AST::Expression* increment, AST::Statement& body)
 {
-    SetForScope<String> loopVariableScope(m_breakOutOfCurrentLoopEarlyVariable, generateNextVariableName());
+    SetForScope<Optional<MangledVariableName>> loopVariableScope(m_breakOutOfCurrentLoopEarlyVariable, generateNextVariableName());
 
     m_stringBuilder.flexibleAppend(
-        "bool ", m_breakOutOfCurrentLoopEarlyVariable, " = false;\n",
+        "bool ", *m_breakOutOfCurrentLoopEarlyVariable, " = false;\n",
         "while (true) {\n"
     );
 
@@ -352,7 +347,7 @@ void FunctionDefinitionWriter::emitLoop(LoopConditionLocation loopConditionLocat
     checkErrorAndVisit(body);
     m_stringBuilder.flexibleAppend(
         "} while(false); \n"
-        "if (", m_breakOutOfCurrentLoopEarlyVariable, ") break;\n"
+        "if (", *m_breakOutOfCurrentLoopEarlyVariable, ") break;\n"
     );
 
     if (increment) {
@@ -516,7 +511,7 @@ void FunctionDefinitionWriter::visit(AST::DotExpression& dotExpression)
     // This should be lowered already.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195788 Replace this with ASSERT_NOT_REACHED().
     notImplemented();
-    appendRightValue(dotExpression, "dummy");
+    appendRightValue(dotExpression, generateNextVariableName());
 }
 
 void FunctionDefinitionWriter::visit(AST::GlobalVariableReference& globalVariableReference)
@@ -537,7 +532,7 @@ void FunctionDefinitionWriter::visit(AST::IndexExpression& indexExpression)
     // This should be lowered already.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195788 Replace this with ASSERT_NOT_REACHED().
     notImplemented();
-    appendRightValue(indexExpression, "dummy");
+    appendRightValue(indexExpression, generateNextVariableName());
 }
 
 void FunctionDefinitionWriter::visit(AST::PropertyAccessExpression& propertyAccessExpression)
@@ -545,7 +540,7 @@ void FunctionDefinitionWriter::visit(AST::PropertyAccessExpression& propertyAcce
     // This should be lowered already.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195788 Replace this with ASSERT_NOT_REACHED().
     notImplemented();
-    appendRightValue(propertyAccessExpression, "dummy");
+    appendRightValue(propertyAccessExpression, generateNextVariableName());
 }
 
 void FunctionDefinitionWriter::visit(AST::VariableDeclaration& variableDeclaration)
@@ -577,7 +572,7 @@ void FunctionDefinitionWriter::visit(AST::AssignmentExpression& assignmentExpres
 
 void FunctionDefinitionWriter::visit(AST::CallExpression& callExpression)
 {
-    Vector<String> argumentNames;
+    Vector<MangledVariableName> argumentNames;
     for (auto& argument : callExpression.arguments()) {
         checkErrorAndVisit(argument);
         argumentNames.append(takeLastValue());
@@ -591,7 +586,7 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& callExpression)
     for (size_t i = 0; i < argumentNames.size(); ++i) {
         if (i)
             m_stringBuilder.append(", ");
-        m_stringBuilder.append(argumentNames[i]);
+        m_stringBuilder.flexibleAppend(argumentNames[i]);
     }
     m_stringBuilder.append(");\n");
     appendRightValue(callExpression, variableName);
@@ -599,12 +594,13 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& callExpression)
 
 void FunctionDefinitionWriter::visit(AST::CommaExpression& commaExpression)
 {
-    String result;
+    Optional<MangledVariableName> result;
     for (auto& expression : commaExpression.list()) {
         checkErrorAndVisit(expression);
         result = takeLastValue();
     }
-    appendRightValue(commaExpression, result);
+    ASSERT(result);
+    appendRightValue(commaExpression, *result);
 }
 
 void FunctionDefinitionWriter::visit(AST::DereferenceExpression& dereferenceExpression)
@@ -750,7 +746,7 @@ String FunctionDefinitionWriter::constantExpressionString(AST::ConstantExpressio
 
 class RenderFunctionDefinitionWriter : public FunctionDefinitionWriter {
 public:
-    RenderFunctionDefinitionWriter(Intrinsics& intrinsics, TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, String>& functionMapping, MatchedRenderSemantics&& matchedSemantics, Layout& layout)
+    RenderFunctionDefinitionWriter(Intrinsics& intrinsics, TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, MangledFunctionName>& functionMapping, MatchedRenderSemantics&& matchedSemantics, Layout& layout)
         : FunctionDefinitionWriter(intrinsics, typeNamer, functionMapping, layout)
         , m_matchedSemantics(WTFMove(matchedSemantics))
     {
@@ -764,7 +760,7 @@ private:
 
 std::unique_ptr<EntryPointScaffolding> RenderFunctionDefinitionWriter::createEntryPointScaffolding(AST::FunctionDefinition& functionDefinition)
 {
-    auto generateNextVariableName = [this]() -> String {
+    auto generateNextVariableName = [this]() -> MangledVariableName {
         return this->generateNextVariableName();
     };
     if (&functionDefinition == m_matchedSemantics.vertexShader)
@@ -776,7 +772,7 @@ std::unique_ptr<EntryPointScaffolding> RenderFunctionDefinitionWriter::createEnt
 
 class ComputeFunctionDefinitionWriter : public FunctionDefinitionWriter {
 public:
-    ComputeFunctionDefinitionWriter(Intrinsics& intrinsics, TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, String>& functionMapping, MatchedComputeSemantics&& matchedSemantics, Layout& layout)
+    ComputeFunctionDefinitionWriter(Intrinsics& intrinsics, TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, MangledFunctionName>& functionMapping, MatchedComputeSemantics&& matchedSemantics, Layout& layout)
         : FunctionDefinitionWriter(intrinsics, typeNamer, functionMapping, layout)
         , m_matchedSemantics(WTFMove(matchedSemantics))
     {
@@ -790,7 +786,7 @@ private:
 
 std::unique_ptr<EntryPointScaffolding> ComputeFunctionDefinitionWriter::createEntryPointScaffolding(AST::FunctionDefinition& functionDefinition)
 {
-    auto generateNextVariableName = [this]() -> String {
+    auto generateNextVariableName = [this]() -> MangledVariableName {
         return this->generateNextVariableName();
     };
     if (&functionDefinition == m_matchedSemantics.shader)
@@ -799,7 +795,7 @@ std::unique_ptr<EntryPointScaffolding> ComputeFunctionDefinitionWriter::createEn
 }
 
 struct SharedMetalFunctionsResult {
-    HashMap<AST::FunctionDeclaration*, String> functionMapping;
+    HashMap<AST::FunctionDeclaration*, MangledFunctionName> functionMapping;
     String metalFunctions;
 };
 static SharedMetalFunctionsResult sharedMetalFunctions(Program& program, TypeNamer& typeNamer, const HashSet<AST::FunctionDeclaration*>& reachableFunctions)
@@ -807,13 +803,13 @@ static SharedMetalFunctionsResult sharedMetalFunctions(Program& program, TypeNam
     StringBuilder stringBuilder;
 
     unsigned numFunctions = 0;
-    HashMap<AST::FunctionDeclaration*, String> functionMapping;
+    HashMap<AST::FunctionDeclaration*, MangledFunctionName> functionMapping;
     for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations()) {
-        auto addResult = functionMapping.add(&nativeFunctionDeclaration, makeString("function", numFunctions++));
+        auto addResult = functionMapping.add(&nativeFunctionDeclaration, MangledFunctionName { numFunctions++ });
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }
     for (auto& functionDefinition : program.functionDefinitions()) {
-        auto addResult = functionMapping.add(&functionDefinition, makeString("function", numFunctions++));
+        auto addResult = functionMapping.add(&functionDefinition, MangledFunctionName { numFunctions++ });
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }
 

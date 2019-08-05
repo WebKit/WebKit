@@ -1,3 +1,107 @@
+2019-08-04  Sam Weinig  <weinig@apple.com>
+
+        Mangled WHLSL names don't need to allocate Strings
+        https://bugs.webkit.org/show_bug.cgi?id=200429
+
+        Reviewed by Saam Barati.
+
+        To avoid allocating strings for each mangled name used to transform WHLSL to Metal, which we'd
+        like to avoid since it is both unnecessarily expensive in time and space, we can instead just
+        store the unique integer identifier that was being used to construct the String. 
+        
+        Since the existing mangled names were all of the form "prefix" + unsigned integer value (where 
+        prefix could be "type", "enumerationMember", "structureElement", "variable" or "function") we
+        strongly type the integer by storing it in a struct (MangledVariableName, MangledTypeName, etc.)
+        When the full name is actually needed, StringTypeAdapter's specialized for the structs are
+        used to write directly into the preallocated buffers of StringBuilders or makeString().
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLMangledNames.h: Added.
+        (WebCore::WHLSL::Metal::MangledVariableName):
+        (WebCore::WHLSL::Metal::MangledTypeName):
+        (WebCore::WHLSL::Metal::MangledStructureElementName):
+        (WebCore::WHLSL::Metal::MangledEnumerationMemberName):
+        (WebCore::WHLSL::Metal::MangledFunctionName):
+        Adds structs for each type of mangled name and StringTypeAdapter specializations for
+        each to allow their use in StringBuilder.flexibleAppend() or makeString(). 
+        
+        Additionally, a Variant, MangledOrNativeTypeName, of MangledTypeName and String is 
+        declared to allow for the few cases where a native type (e.g. float4) is needed. The
+        StringTypeAdapter for MangledOrNativeTypeName could be generalized for any Variant
+        in the future, but I left it non-general for now, as it is non-obvious if one would
+        want to store Variant<Types...>, and have each member function construct a temporary
+        StringTypeAdapter, or store a Variant<StringTypeAdapter<Types>...> and perform conversion
+        in the construction.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp:
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::EntryPointScaffolding):
+        (WebCore::WHLSL::Metal::internalTypeForSemantic):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::builtInsSignature):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::mangledInputPath):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::VertexEntryPointScaffolding):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::signature):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::pack):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::FragmentEntryPointScaffolding):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::signature):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::pack):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::ComputeEntryPointScaffolding):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::signature):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::pack):
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.h:
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::parameterVariables):
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDeclarationWriter::FunctionDeclarationWriter):
+        (WebCore::WHLSL::Metal::FunctionDeclarationWriter::visit):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::FunctionDefinitionWriter):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::generateNextVariableName):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::appendRightValueWithNullability):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::appendRightValue):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::appendLeftValue):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::takeLastValue):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::takeLastValueAndNullability):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::takeLastLeftValue):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::emitLoop):
+        (WebCore::WHLSL::Metal::RenderFunctionDefinitionWriter::RenderFunctionDefinitionWriter):
+        (WebCore::WHLSL::Metal::RenderFunctionDefinitionWriter::createEntryPointScaffolding):
+        (WebCore::WHLSL::Metal::ComputeFunctionDefinitionWriter::ComputeFunctionDefinitionWriter):
+        (WebCore::WHLSL::Metal::ComputeFunctionDefinitionWriter::createEntryPointScaffolding):
+        (WebCore::WHLSL::Metal::sharedMetalFunctions):
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeFunction):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp:
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::BaseTypeNameNode):
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::mangledName const):
+        (WebCore::WHLSL::Metal::ArrayTypeNameNode::ArrayTypeNameNode):
+        (WebCore::WHLSL::Metal::ArrayReferenceTypeNameNode::ArrayReferenceTypeNameNode):
+        (WebCore::WHLSL::Metal::PointerTypeNameNode::PointerTypeNameNode):
+        (WebCore::WHLSL::Metal::ReferenceTypeNameNode::ReferenceTypeNameNode):
+        (WebCore::WHLSL::Metal::MetalTypeDeclarationWriter::MetalTypeDeclarationWriter):
+        (WebCore::WHLSL::Metal::TypeNamer::metalTypeDeclarations):
+        (WebCore::WHLSL::Metal::TypeNamer::emitNamedTypeDefinition):
+        (WebCore::WHLSL::Metal::TypeNamer::mangledNameForType):
+        (WebCore::WHLSL::Metal::TypeNamer::mangledNameForEnumerationMember):
+        (WebCore::WHLSL::Metal::TypeNamer::mangledNameForStructureElement):
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.h:
+        (WebCore::WHLSL::Metal::TypeNamer::generateNextTypeName):
+        (WebCore::WHLSL::Metal::TypeNamer::generateNextStructureElementName):
+        (WebCore::WHLSL::Metal::TypeNamer::generateNextEnumerationMemberName):
+        * Modules/webgpu/WHLSL/WHLSLPrepare.h:
+        Replace uses of String with the appropriate mangled name type.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add WHLSLMangledNames.h
+
+        * platform/graphics/gpu/cocoa/GPUComputePipelineMetal.mm:
+        (WebCore::trySetFunctions):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::trySetFunctions):
+        Convert the mangled names to Strings for passing to Metal API. NOTE: We could avoid having the
+        toString() member function on MangledFunctionName if we allowed makeString() to take a single
+        argument.
+
 2019-08-04  Chris Dumez  <cdumez@apple.com>
 
         Ping loads should not prevent page caching

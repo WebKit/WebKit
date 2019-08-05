@@ -411,8 +411,8 @@ static bool trySetFunctions(const GPUPipelineStageDescriptor& vertexStage, const
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195771 Once we zero-fill variables, there should be no warnings, so we should be able to ASSERT(!error) here.
 
         fragmentLibrary = vertexLibrary;
-        vertexEntryPoint = whlslCompileResult->mangledVertexEntryPointName;
-        fragmentEntryPoint = whlslCompileResult->mangledFragmentEntryPointName;
+        vertexEntryPoint = whlslCompileResult->mangledVertexEntryPointName.toString();
+        fragmentEntryPoint = whlslCompileResult->mangledFragmentEntryPointName.toString();
     } else {
         vertexLibrary = vertexStage.module->platformShaderModule();
         vertexEntryPoint = vertexStage.entryPoint;

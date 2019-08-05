@@ -61,7 +61,7 @@ namespace Metal {
 class BaseTypeNameNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BaseTypeNameNode(BaseTypeNameNode* parent, String&& mangledName)
+    BaseTypeNameNode(BaseTypeNameNode* parent, MangledTypeName&& mangledName)
         : m_parent(parent)
         , m_mangledName(mangledName)
     {
@@ -77,18 +77,18 @@ public:
         m_children.append(WTFMove(child));
     }
     BaseTypeNameNode* parent() { return m_parent; }
-    const String& mangledName() const { return m_mangledName; }
+    MangledTypeName mangledName() const { return m_mangledName; }
 
 private:
     Vector<UniqueRef<BaseTypeNameNode>> m_children;
     BaseTypeNameNode* m_parent;
-    String m_mangledName;
+    MangledTypeName m_mangledName;
 };
 
 class ArrayTypeNameNode : public BaseTypeNameNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ArrayTypeNameNode(BaseTypeNameNode* parent, String&& mangledName, unsigned numElements)
+    ArrayTypeNameNode(BaseTypeNameNode* parent, MangledTypeName&& mangledName, unsigned numElements)
         : BaseTypeNameNode(parent, WTFMove(mangledName))
         , m_numElements(numElements)
     {
@@ -104,7 +104,7 @@ private:
 class ArrayReferenceTypeNameNode : public BaseTypeNameNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ArrayReferenceTypeNameNode(BaseTypeNameNode* parent, String&& mangledName, AST::AddressSpace addressSpace)
+    ArrayReferenceTypeNameNode(BaseTypeNameNode* parent, MangledTypeName&& mangledName, AST::AddressSpace addressSpace)
         : BaseTypeNameNode(parent, WTFMove(mangledName))
         , m_addressSpace(addressSpace)
     {
@@ -120,7 +120,7 @@ private:
 class PointerTypeNameNode : public BaseTypeNameNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PointerTypeNameNode(BaseTypeNameNode* parent, String&& mangledName, AST::AddressSpace addressSpace)
+    PointerTypeNameNode(BaseTypeNameNode* parent, MangledTypeName&& mangledName, AST::AddressSpace addressSpace)
         : BaseTypeNameNode(parent, WTFMove(mangledName))
         , m_addressSpace(addressSpace)
     {
@@ -136,7 +136,7 @@ private:
 class ReferenceTypeNameNode : public BaseTypeNameNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ReferenceTypeNameNode(BaseTypeNameNode* parent, String&& mangledName, AST::NamedType& namedType)
+    ReferenceTypeNameNode(BaseTypeNameNode* parent, MangledTypeName&& mangledName, AST::NamedType& namedType)
         : BaseTypeNameNode(parent, WTFMove(mangledName))
         , m_namedType(namedType)
     {
@@ -354,7 +354,7 @@ BaseTypeNameNode* TypeNamer::insert(AST::UnnamedType& unnamedType, Vector<Unique
 class MetalTypeDeclarationWriter : public Visitor {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MetalTypeDeclarationWriter(std::function<String(AST::NamedType&)>&& mangledNameForNamedType)
+    MetalTypeDeclarationWriter(std::function<MangledOrNativeTypeName(AST::NamedType&)>&& mangledNameForNamedType)
         : m_mangledNameForNamedType(WTFMove(mangledNameForNamedType))
     {
     }
@@ -367,13 +367,13 @@ private:
         m_stringBuilder.flexibleAppend("struct ", m_mangledNameForNamedType(structureDefinition), ";\n");
     }
 
-    std::function<String(AST::NamedType&)> m_mangledNameForNamedType;
+    std::function<MangledOrNativeTypeName(AST::NamedType&)> m_mangledNameForNamedType;
     StringBuilder m_stringBuilder;
 };
 
 String TypeNamer::metalTypeDeclarations()
 {
-    MetalTypeDeclarationWriter metalTypeDeclarationWriter([&](AST::NamedType& namedType) -> String {
+    MetalTypeDeclarationWriter metalTypeDeclarationWriter([&](AST::NamedType& namedType) -> MangledOrNativeTypeName {
         return mangledNameForType(namedType);
     });
     metalTypeDeclarationWriter.Visitor::visit(m_program);
@@ -460,12 +460,12 @@ String TypeNamer::metalTypeDefinitions()
     return stringBuilder.toString();
 }
 
-String TypeNamer::mangledNameForType(AST::UnnamedType& unnamedType)
+MangledTypeName TypeNamer::mangledNameForType(AST::UnnamedType& unnamedType)
 {
     return find(unnamedType, m_trie).mangledName();
 }
 
-String TypeNamer::mangledNameForType(AST::NamedType& namedType)
+MangledOrNativeTypeName TypeNamer::mangledNameForType(AST::NamedType& namedType)
 {
     if (is<AST::NativeTypeDeclaration>(namedType))
         return mangledNameForType(downcast<AST::NativeTypeDeclaration>(namedType));
@@ -475,14 +475,14 @@ String TypeNamer::mangledNameForType(AST::NamedType& namedType)
 }
 
 
-String TypeNamer::mangledNameForEnumerationMember(AST::EnumerationMember& enumerationMember)
+MangledEnumerationMemberName TypeNamer::mangledNameForEnumerationMember(AST::EnumerationMember& enumerationMember)
 {
     auto iterator = m_enumerationMemberMapping.find(&enumerationMember);
     ASSERT(iterator != m_enumerationMemberMapping.end());
     return iterator->value;
 }
 
-String TypeNamer::mangledNameForStructureElement(AST::StructureElement& structureElement)
+MangledStructureElementName TypeNamer::mangledNameForStructureElement(AST::StructureElement& structureElement)
 {
     auto iterator = m_structureElementMapping.find(&structureElement);
     ASSERT(iterator != m_structureElementMapping.end());

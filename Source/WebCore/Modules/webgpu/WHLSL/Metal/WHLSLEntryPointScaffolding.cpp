@@ -91,7 +91,7 @@ static String attributeForSemantic(AST::Semantic& semantic)
     return makeString("[[user(user", stageInOutSemantic.index(), ")]]");
 }
 
-EntryPointScaffolding::EntryPointScaffolding(AST::FunctionDefinition& functionDefinition, Intrinsics& intrinsics, TypeNamer& typeNamer, EntryPointItems& entryPointItems, HashMap<Binding*, size_t>& resourceMap, Layout& layout, std::function<String()>&& generateNextVariableName)
+EntryPointScaffolding::EntryPointScaffolding(AST::FunctionDefinition& functionDefinition, Intrinsics& intrinsics, TypeNamer& typeNamer, EntryPointItems& entryPointItems, HashMap<Binding*, size_t>& resourceMap, Layout& layout, std::function<MangledVariableName()>&& generateNextVariableName)
     : m_functionDefinition(functionDefinition)
     , m_intrinsics(intrinsics)
     , m_typeNamer(typeNamer)
@@ -192,38 +192,38 @@ Optional<String> EntryPointScaffolding::resourceSignature()
     return stringBuilder.toString();
 }
 
-static String internalTypeForSemantic(const AST::BuiltInSemantic& builtInSemantic)
+static StringView internalTypeForSemantic(const AST::BuiltInSemantic& builtInSemantic)
 {
     switch (builtInSemantic.variable()) {
     case AST::BuiltInSemantic::Variable::SVInstanceID:
-        return "uint"_str;
+        return "uint";
     case AST::BuiltInSemantic::Variable::SVVertexID:
-        return "uint"_str;
+        return "uint";
     case AST::BuiltInSemantic::Variable::PSize:
-        return "float"_str;
+        return "float";
     case AST::BuiltInSemantic::Variable::SVPosition:
-        return "float4"_str;
+        return "float4";
     case AST::BuiltInSemantic::Variable::SVIsFrontFace:
-        return "bool"_str;
+        return "bool";
     case AST::BuiltInSemantic::Variable::SVSampleIndex:
-        return "uint"_str;
+        return "uint";
     case AST::BuiltInSemantic::Variable::SVInnerCoverage:
-        return "uint"_str;
+        return "uint";
     case AST::BuiltInSemantic::Variable::SVTarget:
-        return String();
+        return { };
     case AST::BuiltInSemantic::Variable::SVDepth:
-        return "float"_str;
+        return "float";
     case AST::BuiltInSemantic::Variable::SVCoverage:
-        return "uint"_str;
+        return "uint";
     case AST::BuiltInSemantic::Variable::SVDispatchThreadID:
-        return "uint3"_str;
+        return "uint3";
     case AST::BuiltInSemantic::Variable::SVGroupID:
-        return "uint3"_str;
+        return "uint3";
     case AST::BuiltInSemantic::Variable::SVGroupIndex:
-        return "uint"_str;
+        return "uint";
     default:
         ASSERT(builtInSemantic.variable() == AST::BuiltInSemantic::Variable::SVGroupThreadID);
-        return "uint3"_str;
+        return "uint3";
     }
 }
 
@@ -240,10 +240,11 @@ Optional<String> EntryPointScaffolding::builtInsSignature()
         auto& item = m_entryPointItems.inputs[namedBuiltIn.indexInEntryPointItems];
         auto& builtInSemantic = WTF::get<AST::BuiltInSemantic>(*item.semantic);
         auto internalType = internalTypeForSemantic(builtInSemantic);
-        if (internalType.isNull())
-            internalType = m_typeNamer.mangledNameForType(*item.unnamedType);
-        auto variableName = namedBuiltIn.variableName;
-        stringBuilder.flexibleAppend(internalType, ' ', variableName, ' ', attributeForSemantic(builtInSemantic));
+        if (!internalType.isNull())
+            stringBuilder.flexibleAppend(internalType);
+        else
+            stringBuilder.flexibleAppend(m_typeNamer.mangledNameForType(*item.unnamedType));
+        stringBuilder.flexibleAppend(' ', namedBuiltIn.variableName, ' ', attributeForSemantic(builtInSemantic));
     }
     return stringBuilder.toString();
 }
@@ -256,7 +257,7 @@ String EntryPointScaffolding::mangledInputPath(Vector<String>& path)
     AST::StructureDefinition* structureDefinition = nullptr;
     for (size_t i = 0; i < m_functionDefinition.parameters().size(); ++i) {
         if (m_functionDefinition.parameters()[i]->name() == path[0]) {
-            stringBuilder.append(m_parameterVariables[i]);
+            stringBuilder.flexibleAppend(m_parameterVariables[i]);
             auto& unifyNode = m_functionDefinition.parameters()[i]->type()->unifyNode();
             if (is<AST::NamedType>(unifyNode)) {
                 auto& namedType = downcast<AST::NamedType>(unifyNode);
@@ -356,7 +357,7 @@ String EntryPointScaffolding::unpackResourcesAndNamedBuiltIns()
     return stringBuilder.toString();
 }
 
-VertexEntryPointScaffolding::VertexEntryPointScaffolding(AST::FunctionDefinition& functionDefinition, Intrinsics& intrinsics, TypeNamer& typeNamer, EntryPointItems& entryPointItems, HashMap<Binding*, size_t>& resourceMap, Layout& layout, std::function<String()>&& generateNextVariableName, HashMap<VertexAttribute*, size_t>& matchedVertexAttributes)
+VertexEntryPointScaffolding::VertexEntryPointScaffolding(AST::FunctionDefinition& functionDefinition, Intrinsics& intrinsics, TypeNamer& typeNamer, EntryPointItems& entryPointItems, HashMap<Binding*, size_t>& resourceMap, Layout& layout, std::function<MangledVariableName()>&& generateNextVariableName, HashMap<VertexAttribute*, size_t>& matchedVertexAttributes)
     : EntryPointScaffolding(functionDefinition, intrinsics, typeNamer, entryPointItems, resourceMap, layout, WTFMove(generateNextVariableName))
     , m_matchedVertexAttributes(matchedVertexAttributes)
     , m_stageInStructName(typeNamer.generateNextTypeName())
@@ -377,9 +378,12 @@ VertexEntryPointScaffolding::VertexEntryPointScaffolding(AST::FunctionDefinition
         auto& outputItem = m_entryPointItems.outputs[i];
         NamedOutput namedOutput;
         namedOutput.elementName = m_typeNamer.generateNextStructureElementName();
+        StringView internalType;
         if (WTF::holds_alternative<AST::BuiltInSemantic>(*outputItem.semantic))
-            namedOutput.internalTypeName = internalTypeForSemantic(WTF::get<AST::BuiltInSemantic>(*outputItem.semantic));
-        if (namedOutput.internalTypeName.isNull())
+            internalType = internalTypeForSemantic(WTF::get<AST::BuiltInSemantic>(*outputItem.semantic));
+        if (!internalType.isNull())
+            namedOutput.internalTypeName = internalType.toString();
+        else
             namedOutput.internalTypeName = m_typeNamer.mangledNameForType(*outputItem.unnamedType);
         m_namedOutputs.uncheckedAppend(WTFMove(namedOutput));
     }
@@ -415,7 +419,7 @@ String VertexEntryPointScaffolding::helperTypes()
     return stringBuilder.toString();
 }
 
-String VertexEntryPointScaffolding::signature(String& functionName)
+String VertexEntryPointScaffolding::signature(MangledFunctionName functionName)
 {
     StringBuilder stringBuilder;
 
@@ -444,7 +448,7 @@ String VertexEntryPointScaffolding::unpack()
     return stringBuilder.toString();
 }
 
-String VertexEntryPointScaffolding::pack(const String& inputVariableName, const String& outputVariableName)
+String VertexEntryPointScaffolding::pack(MangledVariableName inputVariableName, MangledVariableName outputVariableName)
 {
     StringBuilder stringBuilder;
 
@@ -463,7 +467,7 @@ String VertexEntryPointScaffolding::pack(const String& inputVariableName, const 
     return stringBuilder.toString();
 }
 
-FragmentEntryPointScaffolding::FragmentEntryPointScaffolding(AST::FunctionDefinition& functionDefinition, Intrinsics& intrinsics, TypeNamer& typeNamer, EntryPointItems& entryPointItems, HashMap<Binding*, size_t>& resourceMap, Layout& layout, std::function<String()>&& generateNextVariableName, HashMap<AttachmentDescriptor*, size_t>&)
+FragmentEntryPointScaffolding::FragmentEntryPointScaffolding(AST::FunctionDefinition& functionDefinition, Intrinsics& intrinsics, TypeNamer& typeNamer, EntryPointItems& entryPointItems, HashMap<Binding*, size_t>& resourceMap, Layout& layout, std::function<MangledVariableName()>&& generateNextVariableName, HashMap<AttachmentDescriptor*, size_t>&)
     : EntryPointScaffolding(functionDefinition, intrinsics, typeNamer, entryPointItems, resourceMap, layout, WTFMove(generateNextVariableName))
     , m_stageInStructName(typeNamer.generateNextTypeName())
     , m_returnStructName(typeNamer.generateNextTypeName())
@@ -486,9 +490,12 @@ FragmentEntryPointScaffolding::FragmentEntryPointScaffolding(AST::FunctionDefini
         auto& outputItem = m_entryPointItems.outputs[i];
         NamedOutput namedOutput;
         namedOutput.elementName = m_typeNamer.generateNextStructureElementName();
+        StringView internalType;
         if (WTF::holds_alternative<AST::BuiltInSemantic>(*outputItem.semantic))
-            namedOutput.internalTypeName = internalTypeForSemantic(WTF::get<AST::BuiltInSemantic>(*outputItem.semantic));
-        if (namedOutput.internalTypeName.isNull())
+            internalType = internalTypeForSemantic(WTF::get<AST::BuiltInSemantic>(*outputItem.semantic));
+        if (!internalType.isNull())
+            namedOutput.internalTypeName = internalType.toString();
+        else
             namedOutput.internalTypeName = m_typeNamer.mangledNameForType(*outputItem.unnamedType);
         m_namedOutputs.uncheckedAppend(WTFMove(namedOutput));
     }
@@ -524,7 +531,7 @@ String FragmentEntryPointScaffolding::helperTypes()
     return stringBuilder.toString();
 }
 
-String FragmentEntryPointScaffolding::signature(String& functionName)
+String FragmentEntryPointScaffolding::signature(MangledFunctionName functionName)
 {
     StringBuilder stringBuilder;
 
@@ -553,7 +560,7 @@ String FragmentEntryPointScaffolding::unpack()
     return stringBuilder.toString();
 }
 
-String FragmentEntryPointScaffolding::pack(const String& inputVariableName, const String& outputVariableName)
+String FragmentEntryPointScaffolding::pack(MangledVariableName inputVariableName, MangledVariableName outputVariableName)
 {
     StringBuilder stringBuilder;
 
@@ -572,7 +579,7 @@ String FragmentEntryPointScaffolding::pack(const String& inputVariableName, cons
     return stringBuilder.toString();
 }
 
-ComputeEntryPointScaffolding::ComputeEntryPointScaffolding(AST::FunctionDefinition& functionDefinition, Intrinsics& intrinsics, TypeNamer& typeNamer, EntryPointItems& entryPointItems, HashMap<Binding*, size_t>& resourceMap, Layout& layout, std::function<String()>&& generateNextVariableName)
+ComputeEntryPointScaffolding::ComputeEntryPointScaffolding(AST::FunctionDefinition& functionDefinition, Intrinsics& intrinsics, TypeNamer& typeNamer, EntryPointItems& entryPointItems, HashMap<Binding*, size_t>& resourceMap, Layout& layout, std::function<MangledVariableName()>&& generateNextVariableName)
     : EntryPointScaffolding(functionDefinition, intrinsics, typeNamer, entryPointItems, resourceMap, layout, WTFMove(generateNextVariableName))
 {
 }
@@ -582,7 +589,7 @@ String ComputeEntryPointScaffolding::helperTypes()
     return resourceHelperTypes();
 }
 
-String ComputeEntryPointScaffolding::signature(String& functionName)
+String ComputeEntryPointScaffolding::signature(MangledFunctionName functionName)
 {
     StringBuilder stringBuilder;
 
@@ -607,7 +614,7 @@ String ComputeEntryPointScaffolding::unpack()
     return unpackResourcesAndNamedBuiltIns();
 }
 
-String ComputeEntryPointScaffolding::pack(const String&, const String&)
+String ComputeEntryPointScaffolding::pack(MangledVariableName, MangledVariableName)
 {
     ASSERT_NOT_REACHED();
     return String();
