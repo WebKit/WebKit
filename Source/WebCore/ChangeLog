@@ -1,3 +1,18 @@
+2019-08-04  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC: got incorrect `this` in negotiationneeded event
+        https://bugs.webkit.org/show_bug.cgi?id=200427
+
+        Reviewed by Darin Adler.
+
+        Make sure a dom object created through a JS built-in constructor is added to the wrapper cache.
+
+        Test: webrtc/onnegotiationneeded.html
+
+        * bindings/js/JSDOMBuiltinConstructor.h:
+        (WebCore::createJSObjectFromWrapper):
+        (WebCore::createJSObject):
+
 2019-08-04  Sam Weinig  <weinig@apple.com>
 
         Mangled WHLSL names don't need to allocate Strings

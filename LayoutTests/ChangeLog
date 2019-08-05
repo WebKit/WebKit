@@ -1,3 +1,13 @@
+2019-08-04  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC: got incorrect `this` in negotiationneeded event
+        https://bugs.webkit.org/show_bug.cgi?id=200427
+
+        Reviewed by Darin Adler.
+
+        * webrtc/onnegotiationneeded-expected.txt: Added.
+        * webrtc/onnegotiationneeded.html: Added.
+
 2019-08-04  Chris Dumez  <cdumez@apple.com>
 
         Ping loads should not prevent page caching
