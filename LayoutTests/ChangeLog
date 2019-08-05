@@ -1,3 +1,19 @@
+2019-08-05  Youenn Fablet  <youenn@apple.com>
+
+        Disable speculative loading if cache is not to be used for the load
+        https://bugs.webkit.org/show_bug.cgi?id=199644
+
+        Reviewed by Alex Christensen.
+
+        * http/wpt/fetch/disable-speculative-for-reload-expected.txt: Added.
+        * http/wpt/fetch/disable-speculative-for-reload.html: Added.
+        * http/wpt/fetch/resources/iframe-with-image.py: Added.
+        (main):
+        * http/wpt/fetch/resources/image-load-count.py: Added.
+        (main):
+        * http/wpt/fetch/resources/image-load.py: Added.
+        (main):
+
 2019-08-05  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] implement CertificateInfo::summaryInfo
