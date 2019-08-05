@@ -1,4 +1,4 @@
-Tests that blocking is removed mid-flight in redirects.
+Tests that blocking is not removed mid-flight in redirects.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -44,8 +44,8 @@ Client-side document.cookie:
 --------
 Frame: '<!--frame5-->'
 --------
-Redirect case 2, should receive first-party cookie for 127.0.0.1.
-Received cookie named 'firstPartyCookieIP'.
+Redirect case 2, should not receive first-party cookie for 127.0.0.1.
+Did not receive cookie named 'firstPartyCookieIP'.
 Did not receive cookie named 'firstPartyCookieLocalhost'.
 Did not receive cookie named 'thirdPartyCookie'.
 Client-side document.cookie: firstPartyCookieIP=127.0.0.1

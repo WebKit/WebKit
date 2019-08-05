@@ -7,7 +7,7 @@
 </head>
 <body>
 <script>
-    description("Tests that blocking is removed mid-flight in redirects.");
+    description("Tests that blocking is not removed mid-flight in redirects.");
     jsTestIsAsync = true;
 
     const partitionHost = "127.0.0.1:8000";
@@ -37,10 +37,10 @@
                 // Set first-party cookies for 127.0.0.1 and localhost.
                 if (document.location.origin === thirdPartyOrigin) {
                     document.cookie = firstPartyCookieNameLocalhost + "=localhost;path='/'";
-                    document.location.href = "http://127.0.0.1:8000/resourceLoadStatistics/remove-blocking-in-redirect.html#step2";
+                    document.location.href = "http://127.0.0.1:8000/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html#step2";
                 } else {
                     document.cookie = firstPartyCookieNameIP + "=127.0.0.1;path='/'";
-                    document.location.href = "http://localhost:8000/resourceLoadStatistics/remove-blocking-in-redirect.html#step1";
+                    document.location.href = "http://localhost:8000/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html#step1";
                 }
                 break;
             case "#step2":
@@ -75,7 +75,7 @@
             case "#step7":
                 // Load an iframe in a redirect chain that starts with localhost and ends with 127.0.0.1. Expect a cookie for 127.0.0.1.
                 document.location.hash = "step8";
-                openIframe(redirectChainUrl + "&message=Redirect case 2, should receive first-party cookie for 127.0.0.1.", runTest);
+                openIframe(redirectChainUrl + "&message=Redirect case 2, should not receive first-party cookie for 127.0.0.1.", runTest);
                 break;
             case "#step8":
                 setEnableFeature(false, finishJSTest);

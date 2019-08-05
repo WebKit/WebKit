@@ -1,3 +1,28 @@
+2019-08-05  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Re-introduce latch mode for subresource cookie blocking
+        https://bugs.webkit.org/show_bug.cgi?id=200395
+        <rdar://problem/53869611>
+
+        Reviewed by Darin Adler.
+
+        Back when we had a relaxation of cookie blocking 24 hours after first-party user
+        interaction, we made sure cookie blocking could be turned on and off in subresource
+        redirect chains. The 24 hour window is now long gone. This patch simplifies the
+        cookie blocking so that once a subresource request is denied cookies, any
+        subsequent redirect of that request will also be denied cookies, regardless of the
+        classification status of the domains involved. I call it latch mode.
+
+        * http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect-expected.txt: Renamed from LayoutTests/http/tests/resourceLoadStatistics/remove-blocking-in-redirect-expected.txt.
+        * http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html: Renamed from LayoutTests/http/tests/resourceLoadStatistics/remove-blocking-in-redirect.html.
+            Changed to expect no removal of blocking in the redirect and renamed accordingly.
+        * platform/ios/TestExpectations:
+            Renamed.
+        * platform/mac-wk2/TestExpectations:
+            Renamed.
+        * platform/wk2/TestExpectations:
+            Renamed.
+
 2019-08-05  Youenn Fablet  <youenn@apple.com>
 
         Disable speculative loading if cache is not to be used for the load

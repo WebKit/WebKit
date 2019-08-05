@@ -84,7 +84,7 @@ private:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     static NSHTTPCookieStorage *statelessCookieStorage();
-    void applyCookieBlockingPolicy(bool shouldBlock);
+    void blockCookies();
 #endif
     bool isThirdPartyRequest(const WebCore::ResourceRequest&);
     bool isAlwaysOnLoggingAllowed() const;

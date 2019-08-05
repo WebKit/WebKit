@@ -791,7 +791,7 @@ webkit.org/b/185994 fast/text/user-installed-fonts/shadow-postscript-family.html
 [ HighSierra+ ] http/tests/resourceLoadStatistics/cookie-deletion.html [ Pass ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html [ Pass ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/add-blocking-to-redirect.html [ Pass ]
-[ HighSierra+ ] http/tests/resourceLoadStatistics/remove-blocking-in-redirect.html [ Pass ]
+[ HighSierra+ ] http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Pass ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store.html [ Pass ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Pass ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/grandfathering.html [ Pass ]

@@ -131,22 +131,15 @@ NSHTTPCookieStorage *NetworkDataTaskCocoa::statelessCookieStorage()
     return statelessCookieStorage.get().get();
 }
 
-void NetworkDataTaskCocoa::applyCookieBlockingPolicy(bool shouldBlock)
+void NetworkDataTaskCocoa::blockCookies()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
-    if (shouldBlock == m_hasBeenSetToUseStatelessCookieStorage)
+    if (m_hasBeenSetToUseStatelessCookieStorage)
         return;
 
-    NSHTTPCookieStorage *storage = nil;
-    if (shouldBlock)
-        storage = statelessCookieStorage();
-    else if (auto* storageSession = m_session->networkStorageSession())
-        storage = storageSession->nsCookieStorage();
-    if (storage) {
-        [m_task _setExplicitCookieStorage:storage._cookieStorage];
-        m_hasBeenSetToUseStatelessCookieStorage = shouldBlock;
-    }
+    [m_task _setExplicitCookieStorage:statelessCookieStorage()._cookieStorage];
+    m_hasBeenSetToUseStatelessCookieStorage = true;
 }
 #endif
 
@@ -261,7 +254,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 #else
         LOG(NetworkSession, "%llu Blocking cookies for URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
 #endif
-        applyCookieBlockingPolicy(shouldBlockCookies);
+        blockCookies();
     }
 #endif
 
@@ -384,28 +377,17 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         request.setFirstPartyForCookies(request.url());
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    bool shouldBlockCookies = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless
-        || (m_session->networkStorageSession() && m_session->networkStorageSession()->shouldBlockCookies(request, m_frameID, m_pageID));
+    if (!m_hasBeenSetToUseStatelessCookieStorage) {
+        if (m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless
+            || (m_session->networkStorageSession() && m_session->networkStorageSession()->shouldBlockCookies(request, m_frameID, m_pageID)))
+            blockCookies();
+    }
 #if !RELEASE_LOG_DISABLED
     if (m_session->shouldLogCookieInformation())
-        RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::willPerformHTTPRedirection::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: %s cookies for redirect URL %s", this, m_pageID.toUInt64(), m_frameID, (unsigned long)[m_task taskIdentifier], (shouldBlockCookies ? "Blocking" : "Not blocking"), request.url().string().utf8().data());
+        RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::willPerformHTTPRedirection::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: %s cookies for redirect URL %s", this, m_pageID.toUInt64(), m_frameID, (unsigned long)[m_task taskIdentifier], (m_hasBeenSetToUseStatelessCookieStorage ? "Blocking" : "Not blocking"), request.url().string().utf8().data());
 #else
-    LOG(NetworkSession, "%llu %s cookies for redirect URL %s", [m_task taskIdentifier], (shouldBlockCookies ? "Blocking" : "Not blocking"), request.url().string().utf8().data());
+    LOG(NetworkSession, "%llu %s cookies for redirect URL %s", [m_task taskIdentifier], (m_hasBeenSetToUseStatelessCookieStorage ? "Blocking" : "Not blocking"), request.url().string().utf8().data());
 #endif
-#endif
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    // Always apply the policy since blocking may need to be turned on or off in a redirect.
-    applyCookieBlockingPolicy(shouldBlockCookies);
-
-    if (!shouldBlockCookies) {
-#if !RELEASE_LOG_DISABLED
-        if (m_session->shouldLogCookieInformation())
-            RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::willPerformHTTPRedirection::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: Not partitioning cookies for redirect URL %s", this, m_pageID.toUInt64(), m_frameID, (unsigned long)[m_task taskIdentifier], request.url().string().utf8().data());
-#else
-        LOG(NetworkSession, "%llu Not partitioning cookies for redirect URL %s", [m_task taskIdentifier], request.url().string().utf8().data());
-#endif
-    }
 #endif
 
     updateTaskWithFirstPartyForSameSiteCookies(m_task.get(), request);
