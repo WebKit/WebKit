@@ -36,6 +36,8 @@ namespace WebCore {
 
 namespace WHLSL {
 
+constexpr bool dumpMetalCompileTimes = false;
+
 struct RenderPrepareResult {
     String metalSource;
     Metal::MangledFunctionName mangledVertexEntryPointName;

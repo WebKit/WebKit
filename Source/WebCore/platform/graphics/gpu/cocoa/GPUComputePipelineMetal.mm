@@ -34,6 +34,8 @@
 #import "WHLSLPrepare.h"
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/DataLog.h>
+#import <wtf/MonotonicTime.h>
 #import <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
@@ -85,7 +87,12 @@ static Optional<WHLSL::ComputeDimensions> trySetFunctions(const GPUPipelineStage
         NSError *error = nil;
 
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        MonotonicTime startTime;
+        if (WHLSL::dumpMetalCompileTimes)
+            startTime = MonotonicTime::now();
         computeLibrary = adoptNS([device.platformDevice() newLibraryWithSource:whlslCompileResult->metalSource options:nil error:&error]);
+        if (WHLSL::dumpMetalCompileTimes)
+            dataLogLn("Metal compile times: ", (MonotonicTime::now() - startTime).milliseconds(), " ms");
         END_BLOCK_OBJC_EXCEPTIONS;
 #ifndef NDEBUG
         if (!computeLibrary)

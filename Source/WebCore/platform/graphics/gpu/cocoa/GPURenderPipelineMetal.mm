@@ -37,7 +37,9 @@
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/CheckedArithmetic.h>
+#import <wtf/DataLog.h>
 #import <wtf/HashSet.h>
+#import <wtf/MonotonicTime.h>
 #import <wtf/OptionSet.h>
 #import <wtf/Optional.h>
 #import <wtf/text/StringConcatenate.h>
@@ -397,7 +399,12 @@ static bool trySetFunctions(const GPUPipelineStageDescriptor& vertexStage, const
         NSError *error = nil;
 
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        MonotonicTime startTime;
+        if (WHLSL::dumpMetalCompileTimes)
+            startTime = MonotonicTime::now();
         vertexLibrary = adoptNS([device.platformDevice() newLibraryWithSource:whlslCompileResult->metalSource options:nil error:&error]);
+        if (WHLSL::dumpMetalCompileTimes)
+            dataLogLn("Metal compile times: ", (MonotonicTime::now() - startTime).milliseconds(), " ms");
         END_BLOCK_OBJC_EXCEPTIONS;
 
         if (!vertexLibrary && error) {
