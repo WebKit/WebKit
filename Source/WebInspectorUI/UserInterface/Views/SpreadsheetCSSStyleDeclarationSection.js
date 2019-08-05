@@ -421,7 +421,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         console.assert(this._style.ownerRule.sourceCodeLocation instanceof WI.SourceCodeLocation);
 
         let sourceCode = this._style.ownerRule.sourceCodeLocation.sourceCode;
-        if (sourceCode.type !== WI.Resource.Type.Stylesheet) {
+        if (sourceCode.type !== WI.Resource.Type.StyleSheet) {
             // FIXME: Can't save CSS inside style="" <https://webkit.org/b/150357>
             InspectorFrontendHost.beep();
             return;
@@ -561,8 +561,8 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
             let label = null;
             let sourceCode = this._style.ownerRule.sourceCodeLocation.displaySourceCode;
-            if (sourceCode instanceof WI.CSSStyleSheet || (sourceCode instanceof WI.Resource && sourceCode.type === WI.Resource.Type.Stylesheet))
-                label = WI.UIString("Reveal in Stylesheet");
+            if (sourceCode instanceof WI.CSSStyleSheet || (sourceCode instanceof WI.Resource && sourceCode.type === WI.Resource.Type.StyleSheet))
+                label = WI.UIString("Reveal in Style Sheet");
             else if (WI.settings.experimentalEnableSourcesTab.value)
                 label = WI.UIString("Reveal in Sources Tab");
             else

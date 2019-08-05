@@ -295,8 +295,8 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         if (this.resource instanceof WI.CSSStyleSheet)
             return true;
 
-        // Check the MIME-type for CSS since Resource.Type.Stylesheet also includes XSL, which we can't edit yet.
-        if (this.resource.type === WI.Resource.Type.Stylesheet && this.resource.syntheticMIMEType === "text/css")
+        // Check the MIME-type for CSS since Resource.Type.StyleSheet also includes XSL, which we can't edit yet.
+        if (this.resource.type === WI.Resource.Type.StyleSheet && this.resource.syntheticMIMEType === "text/css")
             return true;
 
         // Allow editing any local file since edits can be saved and reloaded right from the Inspector.

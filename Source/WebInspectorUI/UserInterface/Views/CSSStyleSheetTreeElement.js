@@ -30,6 +30,6 @@ WI.CSSStyleSheetTreeElement = class CSSStyleSheetTreeElement extends WI.SourceCo
         console.assert(styleSheet instanceof WI.CSSStyleSheet);
         console.assert(styleSheet.isInspectorStyleSheet());
 
-        super(styleSheet, ["stylesheet", "stylesheet-icon"], WI.UIString("Inspector Style Sheet"));
+        super(styleSheet, ["style-sheet", "style-sheet-icon"], WI.UIString("Inspector Style Sheet"));
     }
 };

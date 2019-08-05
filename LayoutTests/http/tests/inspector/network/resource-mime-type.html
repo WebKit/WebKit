@@ -108,20 +108,20 @@ function test()
         synthetic: "text/javascript",
     });
 
-    // Stylesheets.
+    // Style Sheets.
 
     addTestCase({
-        name: "Resource.MIMEType.Stylesheet.css",
+        name: "Resource.MIMEType.StyleSheet.css",
         expression: `loadStyleSheetWithURL("resources/stylesheet.css")`,
-        type: WI.Resource.Type.Stylesheet,
+        type: WI.Resource.Type.StyleSheet,
         mimeType: mimeTypeForExtension.css,
         synthetic: mimeTypeForExtension.css,
     });
 
     addTestCase({
-        name: "Resource.MIMEType.Stylesheet.txt",
+        name: "Resource.MIMEType.StyleSheet.txt",
         expression: `loadStyleSheetWithURL("resources/stylesheet.txt")`,
-        type: WI.Resource.Type.Stylesheet,
+        type: WI.Resource.Type.StyleSheet,
         mimeType: mimeTypeForExtension.txt,
         synthetic: "text/css",
     });

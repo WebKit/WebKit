@@ -552,7 +552,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 return selectedScopeBarItem[WI.SourcesNavigationSidebarPanel.ResourceTypeSymbol] === WI.Resource.Type.Script;
 
             if (treeElement instanceof WI.CSSStyleSheetTreeElement)
-                return selectedScopeBarItem[WI.SourcesNavigationSidebarPanel.ResourceTypeSymbol] === WI.Resource.Type.Stylesheet;
+                return selectedScopeBarItem[WI.SourcesNavigationSidebarPanel.ResourceTypeSymbol] === WI.Resource.Type.StyleSheet;
 
             console.assert(treeElement instanceof WI.ResourceTreeElement, "Unknown treeElement", treeElement);
             if (!(treeElement instanceof WI.ResourceTreeElement))

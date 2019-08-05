@@ -134,10 +134,10 @@ WI.Resource = class Resource extends WI.SourceCode
             if (plural)
                 return WI.UIString("Documents");
             return WI.UIString("Document");
-        case WI.Resource.Type.Stylesheet:
+        case WI.Resource.Type.StyleSheet:
             if (plural)
-                return WI.UIString("Stylesheets");
-            return WI.UIString("Stylesheet");
+                return WI.UIString("Style Sheets");
+            return WI.UIString("Style Sheet");
         case WI.Resource.Type.Image:
             if (plural)
                 return WI.UIString("Images");
@@ -384,7 +384,7 @@ WI.Resource = class Resource extends WI.SourceCode
         // Return the default MIME-types for the Resource.Type, since the current MIME-type
         // does not match what is expected for the Resource.Type.
         switch (this._type) {
-        case WI.Resource.Type.Stylesheet:
+        case WI.Resource.Type.StyleSheet:
             return "text/css";
         case WI.Resource.Type.Script:
             return "text/javascript";
@@ -1164,7 +1164,7 @@ WI.Resource.Event = {
 // Keep these in sync with the "ResourceType" enum defined by the "Page" domain.
 WI.Resource.Type = {
     Document: "resource-type-document",
-    Stylesheet: "resource-type-stylesheet",
+    StyleSheet: "resource-type-style-sheet",
     Image: "resource-type-image",
     Font: "resource-type-font",
     Script: "resource-type-script",
@@ -1174,6 +1174,9 @@ WI.Resource.Type = {
     Beacon: "resource-type-beacon",
     WebSocket: "resource-type-websocket",
     Other: "resource-type-other",
+
+    // COMPATIBILITY (iOS 13): Page.ResourceType.Stylesheet was renamed to Page.ResourceType.StyleSheet.
+    Stylesheet: "resource-type-style-sheet",
 };
 
 WI.Resource.ResponseSource = {
@@ -1204,11 +1207,11 @@ WI.Resource._mimeTypeMap = {
     "text/plain": WI.Resource.Type.Document,
     "application/xhtml+xml": WI.Resource.Type.Document,
 
-    "text/css": WI.Resource.Type.Stylesheet,
-    "text/xsl": WI.Resource.Type.Stylesheet,
-    "text/x-less": WI.Resource.Type.Stylesheet,
-    "text/x-sass": WI.Resource.Type.Stylesheet,
-    "text/x-scss": WI.Resource.Type.Stylesheet,
+    "text/css": WI.Resource.Type.StyleSheet,
+    "text/xsl": WI.Resource.Type.StyleSheet,
+    "text/x-less": WI.Resource.Type.StyleSheet,
+    "text/x-sass": WI.Resource.Type.StyleSheet,
+    "text/x-scss": WI.Resource.Type.StyleSheet,
 
     "application/pdf": WI.Resource.Type.Image,
     "image/svg+xml": WI.Resource.Type.Image,

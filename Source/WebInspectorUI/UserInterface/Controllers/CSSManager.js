@@ -545,7 +545,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         var resource = event.data.resource;
         console.assert(resource);
 
-        if (resource.type !== WI.Resource.Type.Stylesheet)
+        if (resource.type !== WI.Resource.Type.StyleSheet)
             return;
 
         this._clearStyleSheetsForResource(resource);
@@ -556,7 +556,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         console.assert(event.target instanceof WI.Resource);
 
         var resource = event.target;
-        if (resource.type !== WI.Resource.Type.Stylesheet)
+        if (resource.type !== WI.Resource.Type.StyleSheet)
             return;
 
         this._clearStyleSheetsForResource(resource);
@@ -564,7 +564,7 @@ WI.CSSManager = class CSSManager extends WI.Object
 
     _clearStyleSheetsForResource(resource)
     {
-        // Clear known stylesheets for this URL and frame. This will cause the stylesheets to
+        // Clear known stylesheets for this URL and frame. This will cause the style sheets to
         // be updated next time _fetchInfoForAllStyleSheets is called.
         this._styleSheetIdentifierMap.delete(this._frameURLMapKey(resource.parentFrame, resource.url));
     }
@@ -638,8 +638,8 @@ WI.CSSManager = class CSSManager extends WI.Object
         if (resource === this._ignoreResourceContentDidChangeEventForResource)
             return;
 
-        // Ignore if it isn't a CSS stylesheet.
-        if (resource.type !== WI.Resource.Type.Stylesheet || resource.syntheticMIMEType !== "text/css")
+        // Ignore if it isn't a CSS style sheet.
+        if (resource.type !== WI.Resource.Type.StyleSheet || resource.syntheticMIMEType !== "text/css")
             return;
 
         function applyStyleSheetChanges()
@@ -688,7 +688,7 @@ WI.CSSManager = class CSSManager extends WI.Object
 
                 // Only try to update stylesheet resources. Other resources, like documents, can contain
                 // multiple stylesheets and we don't have the source ranges to update those.
-                if (representedObject.type !== WI.Resource.Type.Stylesheet)
+                if (representedObject.type !== WI.Resource.Type.StyleSheet)
                     return;
             }
 
@@ -758,4 +758,4 @@ WI.CSSManager.PseudoSelectorNames = {
 
 WI.CSSManager.PseudoElementNames = ["before", "after"];
 WI.CSSManager.ForceablePseudoClasses = ["active", "focus", "hover", "visited"];
-WI.CSSManager.PreferredInspectorStyleSheetSymbol = Symbol("css-manager-preferred-inspector-stylesheet");
+WI.CSSManager.PreferredInspectorStyleSheetSymbol = Symbol("css-manager-preferred-inspector-style-sheet");

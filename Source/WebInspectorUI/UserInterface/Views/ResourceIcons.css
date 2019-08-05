@@ -39,7 +39,7 @@
     content: image-set(url(../Images/DocumentFont.png) 1x, url(../Images/DocumentFont@2x.png) 2x);
 }
 
-:matches(.resource-icon.resource-type-stylesheet, .stylesheet-icon) .icon {
+:matches(.resource-icon.resource-type-style-sheet, .style-sheet-icon) .icon {
     content: image-set(url(../Images/DocumentCSS.png) 1x, url(../Images/DocumentCSS@2x.png) 2x);
 }
 
@@ -55,7 +55,7 @@
     content: image-set(url(../Images/ClippingGeneric.png) 1x, url(../Images/ClippingGeneric@2x.png) 2x);
 }
 
-.source-map-resource.resource-icon.resource-type-stylesheet .icon {
+.source-map-resource.resource-icon.resource-type-style-sheet .icon {
     content: image-set(url(../Images/ClippingCSS.png) 1x, url(../Images/ClippingCSS@2x.png) 2x);
 }
 
@@ -98,7 +98,7 @@
     content: image-set(url(../Images/DocumentFontLarge.png) 1x, url(../Images/DocumentFontLarge@2x.png) 2x);
 }
 
-.large :matches(.resource-icon.resource-type-stylesheet, .stylesheet-icon) .icon {
+.large :matches(.resource-icon.resource-type-style-sheet, .style-sheet-icon) .icon {
     content: image-set(url(../Images/DocumentCSSLarge.png) 1x, url(../Images/DocumentCSSLarge@2x.png) 2x);
 }
 
@@ -114,7 +114,7 @@
     content: image-set(url(../Images/ClippingGenericLarge.png) 1x, url(../Images/ClippingGenericLarge@2x.png) 2x);
 }
 
-.large .source-map-resource.resource-icon.resource-type-stylesheet .icon {
+.large .source-map-resource.resource-icon.resource-type-style-sheet .icon {
     content: image-set(url(../Images/ClippingCSSLarge.png) 1x, url(../Images/ClippingCSSLarge@2x.png) 2x);
 }
 

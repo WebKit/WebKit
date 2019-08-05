@@ -14,15 +14,15 @@ PASS: Resource Type should be 'resource-type-script'.
 PASS: Resource mimeType should be 'text/plain'.
 PASS: Resource syntheticMIMEType should be 'text/javascript'.
 
--- Running test case: Resource.MIMEType.Stylesheet.css
+-- Running test case: Resource.MIMEType.StyleSheet.css
 PASS: Resource should be created.
-PASS: Resource Type should be 'resource-type-stylesheet'.
+PASS: Resource Type should be 'resource-type-style-sheet'.
 PASS: Resource mimeType should be 'text/css'.
 PASS: Resource syntheticMIMEType should be 'text/css'.
 
--- Running test case: Resource.MIMEType.Stylesheet.txt
+-- Running test case: Resource.MIMEType.StyleSheet.txt
 PASS: Resource should be created.
-PASS: Resource Type should be 'resource-type-stylesheet'.
+PASS: Resource Type should be 'resource-type-style-sheet'.
 PASS: Resource mimeType should be 'text/plain'.
 PASS: Resource syntheticMIMEType should be 'text/css'.
 

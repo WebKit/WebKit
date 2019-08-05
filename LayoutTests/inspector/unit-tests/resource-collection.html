@@ -34,16 +34,16 @@ function test()
         test(resolve, reject) {
             let collection = new WI.ResourceCollection;
             collection.add(createResource("one", WI.Resource.Type.Image));
-            collection.add(createResource("two", WI.Resource.Type.Stylesheet));
+            collection.add(createResource("two", WI.Resource.Type.StyleSheet));
             collection.add(createResource("three", WI.Resource.Type.Image));
             collection.add(createResource("four", WI.Resource.Type.Document));
-            collection.add(createResource("five", WI.Resource.Type.Stylesheet));
+            collection.add(createResource("five", WI.Resource.Type.StyleSheet));
 
             logResourceNames(collection.resourceCollectionForType(WI.Resource.Type.Image));
 
             let typedCollection = new WI.ResourceCollection(WI.Resource.Type.Image);
             typedCollection.add(createResource("one", WI.Resource.Type.Image));
-            typedCollection.add(createResource("two", WI.Resource.Type.Stylesheet));
+            typedCollection.add(createResource("two", WI.Resource.Type.StyleSheet));
             typedCollection.add(createResource("three", WI.Resource.Type.Image));
 
             logResourceNames(typedCollection);

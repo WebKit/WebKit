@@ -233,8 +233,8 @@ Inspector::Protocol::Page::ResourceType InspectorPageAgent::resourceTypeJSON(Ins
         return Inspector::Protocol::Page::ResourceType::Image;
     case FontResource:
         return Inspector::Protocol::Page::ResourceType::Font;
-    case StylesheetResource:
-        return Inspector::Protocol::Page::ResourceType::Stylesheet;
+    case StyleSheetResource:
+        return Inspector::Protocol::Page::ResourceType::StyleSheet;
     case ScriptResource:
         return Inspector::Protocol::Page::ResourceType::Script;
     case XHRResource:
@@ -271,7 +271,7 @@ InspectorPageAgent::ResourceType InspectorPageAgent::inspectorResourceType(Cache
     case CachedResource::Type::XSLStyleSheet:
 #endif
     case CachedResource::Type::CSSStyleSheet:
-        return InspectorPageAgent::StylesheetResource;
+        return InspectorPageAgent::StyleSheetResource;
     case CachedResource::Type::Script:
         return InspectorPageAgent::ScriptResource;
     case CachedResource::Type::MainResource:

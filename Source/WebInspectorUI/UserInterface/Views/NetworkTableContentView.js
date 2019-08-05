@@ -61,14 +61,14 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         let uniqueTypes = [
             ["Document", (type) => type === WI.Resource.Type.Document],
-            ["Stylesheet", (type) => type === WI.Resource.Type.Stylesheet],
+            ["StyleSheet", (type) => type === WI.Resource.Type.StyleSheet],
             ["Image", (type) => type === WI.Resource.Type.Image],
             ["Font", (type) => type === WI.Resource.Type.Font],
             ["Script", (type) => type === WI.Resource.Type.Script],
             ["XHR", (type) => type === WI.Resource.Type.XHR || type === WI.Resource.Type.Fetch],
             ["Other", (type) => {
                 return type !== WI.Resource.Type.Document
-                    && type !== WI.Resource.Type.Stylesheet
+                    && type !== WI.Resource.Type.StyleSheet
                     && type !== WI.Resource.Type.Image
                     && type !== WI.Resource.Type.Font
                     && type !== WI.Resource.Type.Script
@@ -199,16 +199,16 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         switch (type) {
         case WI.Resource.Type.Document:
             return WI.UIString("Document");
-        case WI.Resource.Type.Stylesheet:
-            return "CSS";
+        case WI.Resource.Type.StyleSheet:
+            return WI.unlocalizedString("CSS");
         case WI.Resource.Type.Image:
             return WI.UIString("Image");
         case WI.Resource.Type.Font:
             return WI.UIString("Font");
         case WI.Resource.Type.Script:
-            return "JS";
+            return WI.unlocalizedString("JS");
         case WI.Resource.Type.XHR:
-            return "XHR";
+            return WI.unlocalizedString("XHR");
         case WI.Resource.Type.Fetch:
             return WI.repeatedUIString.fetch();
         case WI.Resource.Type.Ping:

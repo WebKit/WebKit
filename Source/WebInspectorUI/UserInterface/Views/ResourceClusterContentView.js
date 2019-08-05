@@ -208,7 +208,7 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
         switch (type) {
         case WI.Resource.Type.Document:
         case WI.Resource.Type.Script:
-        case WI.Resource.Type.Stylesheet:
+        case WI.Resource.Type.StyleSheet:
             return new WI.TextResourceContentView(this._resource);
 
         case WI.Resource.Type.Image:

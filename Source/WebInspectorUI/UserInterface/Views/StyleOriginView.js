@@ -61,15 +61,15 @@ WI.StyleOriginView = class StyleOriginView
 
                 switch (style.ownerRule.type) {
                 case WI.CSSStyleSheet.Type.Author:
-                    originString = WI.UIString("Author Stylesheet");
+                    originString = WI.UIString("Author Style Sheet");
                     break;
 
                 case WI.CSSStyleSheet.Type.User:
-                    originString = WI.UIString("User Stylesheet");
+                    originString = WI.UIString("User Style Sheet");
                     break;
 
                 case WI.CSSStyleSheet.Type.UserAgent:
-                    originString = WI.UIString("User Agent Stylesheet");
+                    originString = WI.UIString("User Agent Style Sheet");
                     break;
 
                 case WI.CSSStyleSheet.Type.Inspector:
@@ -84,7 +84,7 @@ WI.StyleOriginView = class StyleOriginView
                 if (!style.editable) {
                     let styleTitle = "";
                     if (style.ownerRule && style.ownerRule.type === WI.CSSStyleSheet.Type.UserAgent)
-                        styleTitle = WI.UIString("User Agent Stylesheet");
+                        styleTitle = WI.UIString("User Agent Style Sheet");
                     else
                         styleTitle = WI.UIString("Style rule");
 

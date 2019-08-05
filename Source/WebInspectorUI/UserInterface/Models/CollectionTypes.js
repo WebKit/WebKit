@@ -60,7 +60,7 @@ WI.CSSStyleSheetCollection = class CSSStyleSheetCollection extends WI.Collection
 
     get displayName()
     {
-        return WI.UIString("Stylesheets");
+        return WI.UIString("Style Sheets");
     }
 
     objectIsRequiredType(object)

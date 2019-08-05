@@ -60,7 +60,7 @@ public:
 
     enum ResourceType {
         DocumentResource,
-        StylesheetResource,
+        StyleSheetResource,
         ImageResource,
         FontResource,
         ScriptResource,

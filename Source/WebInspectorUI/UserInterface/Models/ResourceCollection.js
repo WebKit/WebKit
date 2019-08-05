@@ -47,7 +47,7 @@ WI.ResourceCollection = class ResourceCollection extends WI.Collection
 
     objectIsRequiredType(object)
     {
-        if (this._resourceType === WI.Resource.Type.Stylesheet && object instanceof WI.CSSStyleSheet)
+        if (this._resourceType === WI.Resource.Type.StyleSheet && object instanceof WI.CSSStyleSheet)
             return true;
 
         if (!(object instanceof WI.Resource))
