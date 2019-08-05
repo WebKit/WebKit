@@ -2050,7 +2050,7 @@ void DOMWindow::resetAllGeolocationPermission()
     // FIXME: Can we remove the PLATFORM(IOS_FAMILY)-guard?
 #if ENABLE(GEOLOCATION) && PLATFORM(IOS_FAMILY)
     if (m_navigator)
-        NavigatorGeolocation::from(m_navigator.get())->resetAllGeolocationPermission();
+        NavigatorGeolocation::from(*m_navigator)->resetAllGeolocationPermission();
 #endif
 }
 

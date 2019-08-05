@@ -87,6 +87,8 @@ public:
 
     bool isAlwaysOnLoggingAllowed() const;
 
+    NavigatorBase* navigator() { return &m_navigator; }
+
 private:
     void scheduleJob(std::unique_ptr<ServiceWorkerJob>&&);
 

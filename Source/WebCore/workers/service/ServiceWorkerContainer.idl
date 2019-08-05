@@ -31,7 +31,7 @@
     Exposed=(Window,ServiceWorker),
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=ServiceWorker,
-    GenerateIsReachable=Impl,
+    GenerateIsReachable=ReachableFromNavigator
 ] interface ServiceWorkerContainer : EventTarget {
     readonly attribute ServiceWorker? controller;
     readonly attribute Promise<ServiceWorkerRegistration> ready;

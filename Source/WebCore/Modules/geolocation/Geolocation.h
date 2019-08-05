@@ -45,6 +45,7 @@ namespace WebCore {
 class Frame;
 class GeoNotifier;
 class GeolocationError;
+class Navigator;
 class Page;
 class ScriptExecutionContext;
 class SecurityOrigin;
@@ -54,12 +55,11 @@ class Geolocation final : public ScriptWrappable, public RefCounted<Geolocation>
     WTF_MAKE_ISO_ALLOCATED(Geolocation);
     friend class GeoNotifier;
 public:
-    static Ref<Geolocation> create(ScriptExecutionContext*);
+    static Ref<Geolocation> create(Navigator&);
     WEBCORE_EXPORT ~Geolocation();
 
     WEBCORE_EXPORT void resetAllGeolocationPermission();
     Document* document() const { return downcast<Document>(scriptExecutionContext()); }
-    Frame* frame() const { return document() ? document()->frame() : nullptr; }
 
     void getCurrentPosition(Ref<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, PositionOptions&&);
     int watchPosition(Ref<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, PositionOptions&&);
@@ -73,8 +73,11 @@ public:
     void setError(GeolocationError&);
     bool shouldBlockGeolocationRequests();
 
+    Navigator* navigator();
+    WEBCORE_EXPORT Frame* frame() const;
+
 private:
-    explicit Geolocation(ScriptExecutionContext*);
+    explicit Geolocation(Navigator&);
 
     Geoposition* lastPosition();
 
@@ -144,25 +147,20 @@ private:
     bool haveSuitableCachedPosition(const PositionOptions&);
     void makeCachedPositionCallbacks();
 
+    void resumeTimerFired();
+
+    WeakPtr<Navigator> m_navigator;
     GeoNotifierSet m_oneShots;
     Watchers m_watchers;
     GeoNotifierSet m_pendingForPermissionNotifiers;
     RefPtr<Geoposition> m_lastPosition;
 
-    enum {
-        Unknown,
-        InProgress,
-        Yes,
-        No
-    } m_allowGeolocation;
-    bool m_isSuspended;
-    bool m_resetOnResume;
-    bool m_hasChangedPosition;
+    enum { Unknown, InProgress, Yes, No } m_allowGeolocation { Unknown };
+    bool m_isSuspended { false };
+    bool m_resetOnResume { false };
+    bool m_hasChangedPosition { false };
     RefPtr<PositionError> m_errorWaitingForResume;
-
-    void resumeTimerFired();
     Timer m_resumeTimer;
-
     GeoNotifierSet m_requestsAwaitingCachedPosition;
 };
     

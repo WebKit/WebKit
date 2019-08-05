@@ -31,13 +31,14 @@
 #include <wtf/RefCounted.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class ScriptExecutionContext;
 class ServiceWorkerContainer;
 
-class NavigatorBase : public RefCounted<NavigatorBase>, public ContextDestructionObserver {
+class NavigatorBase : public RefCounted<NavigatorBase>, public ContextDestructionObserver, public CanMakeWeakPtr<NavigatorBase> {
 public:
     virtual ~NavigatorBase();
 

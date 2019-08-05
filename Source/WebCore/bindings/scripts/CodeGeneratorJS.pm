@@ -4690,18 +4690,20 @@ sub GenerateImplementation
                 $rootString  = "    WebGLRenderingContextBase* root = WTF::getPtr(js${interfaceName}->wrapped().context());\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from ${interfaceName}\";\n";
-            } elsif (GetGenerateIsReachable($interface) eq "ImplFrame") {
-                $rootString  = "    Frame* root = WTF::getPtr(js${interfaceName}->wrapped().frame());\n";
-                $rootString .= "    if (!root)\n";
-                $rootString .= "        return false;\n";
-                $rootString .= "    if (UNLIKELY(reason))\n";
-                $rootString .= "        *reason = \"Reachable from Frame\";\n";
             } elsif (GetGenerateIsReachable($interface) eq "ReachableFromDOMWindow") {
                 $rootString  = "    auto* root = WTF::getPtr(js${interfaceName}->wrapped().window());\n";
                 $rootString .= "    if (!root)\n";
                 $rootString .= "        return false;\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from Window\";\n";
+            } elsif (GetGenerateIsReachable($interface) eq "ReachableFromNavigator") {
+                $implIncludes{"Navigator.h"} = 1;
+                $implIncludes{"WorkerNavigator.h"} = 1;
+                $rootString  = "    NavigatorBase* root = WTF::getPtr(js${interfaceName}->wrapped().navigator());\n";
+                $rootString .= "    if (!root)\n";
+                $rootString .= "        return false;\n";
+                $rootString .= "    if (UNLIKELY(reason))\n";
+                $rootString .= "        *reason = \"Reachable from Navigator\";\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplDocument") {
                 $rootString  = "    Document* root = WTF::getPtr(js${interfaceName}->wrapped().document());\n";
                 $rootString .= "    if (!root)\n";

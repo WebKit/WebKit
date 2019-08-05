@@ -22,6 +22,7 @@
 
 #include "DOMPlugin.h"
 #include "DOMWindowProperty.h"
+#include "Navigator.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 
@@ -29,10 +30,10 @@ namespace WebCore {
 
 class PluginData;
 
-class DOMPluginArray final : public ScriptWrappable, public RefCounted<DOMPluginArray>, public DOMWindowProperty {
+class DOMPluginArray final : public ScriptWrappable, public RefCounted<DOMPluginArray> {
     WTF_MAKE_ISO_ALLOCATED(DOMPluginArray);
 public:
-    static Ref<DOMPluginArray> create(DOMWindow* window) { return adoptRef(*new DOMPluginArray(window)); }
+    static Ref<DOMPluginArray> create(Navigator& navigator) { return adoptRef(*new DOMPluginArray(navigator)); }
     ~DOMPluginArray();
 
     unsigned length() const;
@@ -41,10 +42,16 @@ public:
     Vector<AtomString> supportedPropertyNames();
 
     void refresh(bool reloadPages);
+    
+    Navigator* navigator() { return m_navigator.get(); }
 
 private:
-    explicit DOMPluginArray(DOMWindow*);
+    explicit DOMPluginArray(Navigator&);
+
     PluginData* pluginData() const;
+    Frame* frame() const { return m_navigator ? m_navigator->frame() : nullptr; }
+    
+    WeakPtr<Navigator> m_navigator;
 };
 
 } // namespace WebCore

@@ -19,7 +19,7 @@
 */
 
 [
-    GenerateIsReachable=ReachableFromDOMWindow,
+    GenerateIsReachable=ReachableFromNavigator,
     LegacyUnenumerableNamedProperties,
     ImplementationLacksVTable,
     InterfaceName=MimeTypeArray,

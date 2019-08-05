@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-NavigatorGeolocation::NavigatorGeolocation(DOMWindow* window)
-    : DOMWindowProperty(window)
+NavigatorGeolocation::NavigatorGeolocation(Navigator& navigator)
+    : m_navigator(navigator)
 {
 }
 
@@ -46,13 +46,13 @@ const char* NavigatorGeolocation::supplementName()
     return "NavigatorGeolocation";
 }
 
-NavigatorGeolocation* NavigatorGeolocation::from(Navigator* navigator)
+NavigatorGeolocation* NavigatorGeolocation::from(Navigator& navigator)
 {
-    NavigatorGeolocation* supplement = static_cast<NavigatorGeolocation*>(Supplement<Navigator>::from(navigator, supplementName()));
+    NavigatorGeolocation* supplement = static_cast<NavigatorGeolocation*>(Supplement<Navigator>::from(&navigator, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<NavigatorGeolocation>(navigator->window());
+        auto newSupplement = std::make_unique<NavigatorGeolocation>(navigator);
         supplement = newSupplement.get();
-        provideTo(navigator, supplementName(), WTFMove(newSupplement));
+        provideTo(&navigator, supplementName(), WTFMove(newSupplement));
     }
     return supplement;
 }
@@ -67,13 +67,13 @@ void NavigatorGeolocation::resetAllGeolocationPermission()
 
 Geolocation* NavigatorGeolocation::geolocation(Navigator& navigator)
 {
-    return NavigatorGeolocation::from(&navigator)->geolocation();
+    return NavigatorGeolocation::from(navigator)->geolocation();
 }
 
 Geolocation* NavigatorGeolocation::geolocation() const
 {
     if (!m_geolocation)
-        m_geolocation = Geolocation::create(window() ? window()->document() : nullptr);
+        m_geolocation = Geolocation::create(m_navigator);
     return m_geolocation.get();
 }
 

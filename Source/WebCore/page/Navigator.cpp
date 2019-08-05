@@ -153,7 +153,7 @@ DOMPluginArray& Navigator::plugins()
             ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), ResourceLoadStatistics::NavigatorAPI::Plugins);
     }
     if (!m_plugins)
-        m_plugins = DOMPluginArray::create(window());
+        m_plugins = DOMPluginArray::create(*this);
     return *m_plugins;
 }
 
@@ -164,7 +164,7 @@ DOMMimeTypeArray& Navigator::mimeTypes()
             ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), ResourceLoadStatistics::NavigatorAPI::MimeTypes);
     }
     if (!m_mimeTypes)
-        m_mimeTypes = DOMMimeTypeArray::create(window());
+        m_mimeTypes = DOMMimeTypeArray::create(*this);
     return *m_mimeTypes;
 }
 

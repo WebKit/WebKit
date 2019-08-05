@@ -31,8 +31,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DOMPluginArray);
 
-DOMPluginArray::DOMPluginArray(DOMWindow* window)
-    : DOMWindowProperty(window)
+DOMPluginArray::DOMPluginArray(Navigator& navigator)
+    : m_navigator(makeWeakPtr(navigator))
 {
 }
 

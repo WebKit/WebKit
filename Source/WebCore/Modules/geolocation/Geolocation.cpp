@@ -38,6 +38,7 @@
 #include "GeolocationError.h"
 #include "GeolocationPosition.h"
 #include "Geoposition.h"
+#include "Navigator.h"
 #include "Page.h"
 #include "PositionError.h"
 #include "RuntimeApplicationChecks.h"
@@ -129,18 +130,16 @@ void Geolocation::Watchers::getNotifiersVector(GeoNotifierVector& copy) const
     copy = copyToVector(m_idToNotifierMap.values());
 }
 
-Ref<Geolocation> Geolocation::create(ScriptExecutionContext* context)
+Ref<Geolocation> Geolocation::create(Navigator& navigator)
 {
-    auto geolocation = adoptRef(*new Geolocation(context));
+    auto geolocation = adoptRef(*new Geolocation(navigator));
     geolocation.get().suspendIfNeeded();
     return geolocation;
 }
 
-Geolocation::Geolocation(ScriptExecutionContext* context)
-    : ActiveDOMObject(context)
-    , m_allowGeolocation(Unknown)
-    , m_isSuspended(false)
-    , m_hasChangedPosition(false)
+Geolocation::Geolocation(Navigator& navigator)
+    : ActiveDOMObject(navigator.scriptExecutionContext())
+    , m_navigator(makeWeakPtr(navigator))
     , m_resumeTimer(*this, &Geolocation::resumeTimerFired)
 {
 }
@@ -729,6 +728,16 @@ void Geolocation::handlePendingPermissionNotifiers()
         } else
             notifier->setFatalError(PositionError::create(PositionError::PERMISSION_DENIED, permissionDeniedErrorMessage));
     }
+}
+
+Navigator* Geolocation::navigator()
+{
+    return m_navigator.get();
+}
+
+Frame* Geolocation::frame() const
+{
+    return m_navigator ? m_navigator->frame() : nullptr;
 }
 
 } // namespace WebCore

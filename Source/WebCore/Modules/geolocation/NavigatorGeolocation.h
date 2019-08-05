@@ -29,12 +29,12 @@ namespace WebCore {
 class Geolocation;
 class Navigator;
 
-class NavigatorGeolocation : public Supplement<Navigator>, public DOMWindowProperty {
+class NavigatorGeolocation : public Supplement<Navigator> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit NavigatorGeolocation(DOMWindow*);
+    explicit NavigatorGeolocation(Navigator&);
     virtual ~NavigatorGeolocation();
-    static NavigatorGeolocation* from(Navigator*);
+    static NavigatorGeolocation* from(Navigator&);
 
     static Geolocation* geolocation(Navigator&);
     Geolocation* geolocation() const;
@@ -47,6 +47,7 @@ private:
     static const char* supplementName();
 
     mutable RefPtr<Geolocation> m_geolocation;
+    Navigator& m_navigator;
 };
 
 } // namespace WebCore
