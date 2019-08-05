@@ -1,3 +1,14 @@
+2019-08-05  Aakash Jain  <aakash_jain@apple.com>
+
+        New EWS:mac-wk2 status-bubble shows waiting to run tests for all recent bugs
+        https://bugs.webkit.org/show_bug.cgi?id=200400
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble._build_bubble):
+        (StatusBubble._queue_position):
+
 2019-08-05  Jonathan Bedard  <jbedard@apple.com>
 
         run-webkit-tests asserts when the iPhone XR simulator is running

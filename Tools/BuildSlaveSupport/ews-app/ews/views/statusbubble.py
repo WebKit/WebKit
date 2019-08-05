@@ -54,6 +54,7 @@ class StatusBubble(View):
     }
 
     STEPS_TO_HIDE = ['Killed old processes', 'Configured build', '^OS:.*Xcode:', '(skipped)']
+    DAYS_TO_CHECK = 3
 
     def _build_bubble(self, patch, queue):
         bubble = {
@@ -83,6 +84,11 @@ class StatusBubble(View):
             bubble['details_message'] = 'Build is in-progress. Recent messages:\n\n' + self._steps_messages(build)
         elif build.result == Buildbot.SUCCESS:
             if is_parent_build:
+                if patch.modified < (timezone.now() - datetime.timedelta(days=StatusBubble.DAYS_TO_CHECK)):
+                    # Do not display bubble for old patch for which no build has been reported on given queue.
+                    # Most likely the patch would never be processed on this queue, since either the queue was
+                    # added after the patch was submitted, or build request for that patch was cancelled.
+                    return None
                 bubble['state'] = 'started'
                 bubble['details_message'] = 'Build is in-progress. Recent messages:\n\n' + self._steps_messages(build) + '\n\nWaiting to run tests.'
             else:
@@ -194,8 +200,7 @@ class StatusBubble(View):
 
     def _queue_position(self, patch, queue, parent_queue=None):
         # FIXME: Handle retried builds and cancelled build-requests as well.
-        DAYS_TO_CHECK = 3
-        from_timestamp = timezone.now() - datetime.timedelta(days=DAYS_TO_CHECK)
+        from_timestamp = timezone.now() - datetime.timedelta(days=StatusBubble.DAYS_TO_CHECK)
 
         if patch.modified < from_timestamp:
             # Do not display bubble for old patch for which no build has been reported on given queue.
