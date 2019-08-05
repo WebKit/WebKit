@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<style>
+#foo {
+    --a: blue;
+    --b: green;
+}
+</style>
+<script>
+function test() {
+    let suite = InspectorTest.createSyncSuite("WI.CSSStyleDeclaration.prototype.resolveVariableValue");
+
+    let computedStyle = null;
+
+    function addTest({name, expression, expected}) {
+        suite.addTestCase({
+            name,
+            test() {
+                InspectorTest.expectEqual(computedStyle.resolveVariableValue(expression), expected, `"${expression}" should resolve to ${JSON.stringify(expected)}.`);
+            },
+        })
+    }
+    addTest({
+        name: "NotVariable",
+        expression: "red",
+        expected: null,
+    });
+    addTest({
+        name: "EmptyVariable",
+        expression: "var()",
+        expected: null,
+    });
+    addTest({
+        name: "InvalidVariable",
+        expression: "var(invalid)",
+        expected: null,
+    });
+    addTest({
+        name: "NonExistentVariable",
+        expression: "var(--DNE)",
+        expected: null,
+    });
+    addTest({
+        name: "ValidVariable",
+        expression: "var(--a)",
+        expected: "blue",
+    });
+    addTest({
+        name: "InvalidFallbackValue",
+        expression: "var(--DNE, )",
+        expected: null,
+    });
+    addTest({
+        name: "ValidFallbackValue",
+        expression: "var(--DNE, red)",
+        expected: "red",
+    });
+    addTest({
+        name: "InvalidFallbackVariable",
+        expression: "var(--DNE, var(--DNE))",
+        expected: null,
+    });
+    addTest({
+        name: "ValidFallbackVariable",
+        expression: "var(--DNE, var(--b, red))",
+        expected: "green",
+    });
+    addTest({
+        name: "ValidVariableWithInvalidFallbackValue",
+        expression: "var(--a, )",
+        expected: "blue",
+    });
+    addTest({
+        name: "ValidVariableWithValidFallbackValue",
+        expression: "var(--a, red)",
+        expected: "blue",
+    });
+    addTest({
+        name: "ValidVariableWithInvalidFallbackVariable",
+        expression: "var(--a, var(--DNE))",
+        expected: "blue",
+    });
+    addTest({
+        name: "ValidVariableWithValidFallbackVariable",
+        expression: "var(--a, var(--b))",
+        expected: "blue",
+    });
+    
+
+    WI.domManager.requestDocument((documentNode) => {
+        WI.domManager.querySelector(documentNode.id, "#foo", (contentNodeId) => {
+            if (!contentNodeId) {
+                InspectorTest.fail("DOM node not found.");
+                InspectorTest.completeTest();
+                return;
+            }
+
+            let domNode = WI.domManager.nodeForId(contentNodeId);
+            nodeStyles = WI.cssManager.stylesForNode(domNode);
+
+            if (nodeStyles.needsRefresh) {
+                nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                    computedStyle = nodeStyles.computedStyle;
+                    suite.runTestCasesAndFinish();
+                });
+                return;
+            }
+
+            computedStyle = nodeStyles.computedStyle;
+            suite.runTestCasesAndFinish();
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that WI.CSSStyleDeclaration.prototype.resolveVariableValue works as expected.</p>
+<div id="foo"></div>
+</body>
+</html>

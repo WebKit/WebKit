@@ -1,5 +1,44 @@
 2019-08-05  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Styles: variable swatch not shown for var() with a fallback
+        https://bugs.webkit.org/show_bug.cgi?id=200237
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._createInlineSwatch):
+        (WI.SpreadsheetStyleProperty.prototype._replaceSpecialTokens): Added.
+        (WI.SpreadsheetStyleProperty.prototype._addGradientTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addColorTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addTimingFunctionTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addVariableTokens):
+        Check to see if there's a fallback value in the `var()` and tokenize it if there is. Mark
+        the property as invalid if the `var()` doesn't end up resolving to anything.
+
+        * UserInterface/Views/InlineSwatch.js:
+        (WI.InlineSwatch):
+        (WI.InlineSwatch.prototype.get value):
+        (WI.InlineSwatch.prototype._updateSwatch):
+        (WI.InlineSwatch.prototype._handleContextMenuEvent):
+        (WI.InlineSwatch.prototype._getNextValidHEXFormat.hexMatchesCurrentColor):
+        (WI.InlineSwatch.prototype._getNextValidHEXFormat):
+        Allow the `value` to be a function. In that case, use the getter `this.value` instead of the
+        value `this._value` directly so that the function is invoked.
+        This is needed for variable swatches because the fallback value could change after the
+        swatch has been created (e.g. another swatch in a CSS property value that just modifies the
+        text, rather than re-renders the entire CSS property value).
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype.resolveVariableValue): Added.
+        Follow the variable chain until an ultimate value is reached.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        (WI.CSSKeywordCompletions.isColorAwareProperty):
+        (WI.CSSKeywordCompletions.isTimingFunctionAwareProperty): Added.
+        Limit `cubic-bezier` and `spring` tokens to only be shown for timing function properties.
+
+2019-08-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: rename "Stylesheet" to "Style Sheet" to match spec text
         https://bugs.webkit.org/show_bug.cgi?id=200422
 

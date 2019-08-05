@@ -348,6 +348,62 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         return newProperty;
     }
 
+    resolveVariableValue(text)
+    {
+        const invalid = Symbol("invalid");
+
+        let checkTokens = (tokens) => {
+            let startIndex = NaN;
+            let openParenthesis = 0;
+            for (let i = 0; i < tokens.length; i++) {
+                let token = tokens[i];
+                if (token.value === "var" && token.type && token.type.includes("atom")) {
+                    if (isNaN(startIndex)) {
+                        startIndex = i;
+                        openParenthesis = 0;
+                    }
+                    continue;
+                }
+
+                if (isNaN(startIndex))
+                    continue;
+
+                if (token.value === "(") {
+                    ++openParenthesis;
+                    continue;
+                }
+
+                if (token.value === ")") {
+                    --openParenthesis;
+                    if (openParenthesis > 0)
+                        continue;
+
+                    let variableTokens = tokens.slice(startIndex, i + 1);
+                    startIndex = NaN;
+
+                    let variableNameIndex = variableTokens.findIndex((token) => token.value.startsWith("--") && /\bvariable-2\b/.test(token.type));
+                    if (variableNameIndex === -1)
+                        continue;
+
+                    let variableProperty = this.propertyForName(variableTokens[variableNameIndex].value, true);
+                    if (variableProperty)
+                        return variableProperty.value.trim();
+
+                    let fallbackStartIndex = variableTokens.findIndex((value, j) => j > variableNameIndex + 1 && /\bm-css\b/.test(value.type));
+                    if (fallbackStartIndex === -1)
+                        return invalid;
+
+                    let fallbackTokens = variableTokens.slice(fallbackStartIndex, i);
+                    return checkTokens(fallbackTokens) || fallbackTokens.reduce((accumulator, token) => accumulator + token.value, "").trim();
+                }
+            }
+            return null;
+        };
+
+        let resolved = checkTokens(WI.tokenizeCSSValue(text));
+        return resolved === invalid ? null : resolved;
+    }
+
     newBlankProperty(propertyIndex)
     {
         let text, name, value, priority, overridden, implicit, anonymous;

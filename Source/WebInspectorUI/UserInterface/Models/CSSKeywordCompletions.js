@@ -75,14 +75,26 @@ WI.CSSKeywordCompletions.forProperty = function(propertyName)
 
 WI.CSSKeywordCompletions.isColorAwareProperty = function(name)
 {
-    if (name in WI.CSSKeywordCompletions._colorAwareProperties)
+    if (WI.CSSKeywordCompletions._colorAwareProperties.has(name))
         return true;
 
     let isNotPrefixed = name.charAt(0) !== "-";
-    if (isNotPrefixed && ("-webkit-" + name) in WI.CSSKeywordCompletions._colorAwareProperties)
+    if (isNotPrefixed && WI.CSSKeywordCompletions._colorAwareProperties.has("-webkit-" + name))
         return true;
 
     if (name.endsWith("color"))
+        return true;
+
+    return false;
+};
+
+WI.CSSKeywordCompletions.isTimingFunctionAwareProperty = function(name)
+{
+    if (WI.CSSKeywordCompletions._timingFunctionAwareProperties.has(name))
+        return true;
+
+    let isNotPrefixed = name.charAt(0) !== "-";
+    if (isNotPrefixed && WI.CSSKeywordCompletions._timingFunctionAwareProperties.has("-webkit-" + name))
         return true;
 
     return false;
@@ -302,17 +314,52 @@ WI.CSSKeywordCompletions._colors = [
     "wheat", "whitesmoke", "yellowgreen", "rgb()", "rgba()", "hsl()", "hsla()"
 ];
 
-WI.CSSKeywordCompletions._colorAwareProperties = [
-    "background", "background-color", "background-image", "border", "border-color", "border-top", "border-right", "border-bottom",
-    "border-left", "border-top-color", "border-right-color", "border-bottom-color", "border-left-color", "box-shadow", "color",
-    "fill", "outline", "outline-color", "stroke", "text-line-through", "text-line-through-color", "text-overline", "text-overline-color",
-    "text-shadow", "text-underline", "text-underline-color", "-webkit-box-shadow", "-webkit-column-rule", "-webkit-column-rule-color",
-    "-webkit-text-emphasis", "-webkit-text-emphasis-color", "-webkit-text-fill-color", "-webkit-text-stroke", "-webkit-text-stroke-color",
-    "-webkit-text-decoration-color",
+WI.CSSKeywordCompletions._colorAwareProperties = new Set([
+    "background",
+    "background-color",
+    "background-image",
+    "border",
+    "border-color",
+    "border-bottom",
+    "border-bottom-color",
+    "border-left",
+    "border-left-color",
+    "border-right",
+    "border-right-color",
+    "border-top",
+    "border-top-color",
+    "box-shadow", "-webkit-box-shadow",
+    "color",
+    "column-rule", "-webkit-column-rule",
+    "column-rule-color", "-webkit-column-rule-color",
+    "fill",
+    "outline",
+    "outline-color",
+    "stroke",
+    "text-decoration-color", "-webkit-text-decoration-color",
+    "text-emphasis", "-webkit-text-emphasis",
+    "text-emphasis-color", "-webkit-text-emphasis-color",
+    "text-line-through",
+    "text-line-through-color",
+    "text-overline",
+    "text-overline-color",
+    "text-shadow",
+    "text-underline",
+    "text-underline-color",
+    "-webkit-text-fill-color",
+    "-webkit-text-stroke",
+    "-webkit-text-stroke-color",
 
     // iOS Properties
-    "-webkit-tap-highlight-color"
-].keySet();
+    "-webkit-tap-highlight-color",
+]);
+
+WI.CSSKeywordCompletions._timingFunctionAwareProperties = new Set([
+    "animation", "-webkit-animation",
+    "animation-timing-function", "-webkit-animation-timing-function",
+    "transition", "-webkit-transition",
+    "transition-timing-function", "-webkit-transition-timing-function",
+]);
 
 WI.CSSKeywordCompletions._propertyKeywordMap = {
     "content": [

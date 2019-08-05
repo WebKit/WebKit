@@ -447,18 +447,8 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         const maxValueLength = 150;
         let tokens = WI.tokenizeCSSValue(value);
 
-        if (this._property.enabled) {
-            // FIXME: <https://webkit.org/b/178636> Web Inspector: Styles: Make inline widgets work with CSS functions (var(), calc(), etc.)
-
-            // CSS variables may contain color - display color picker for them.
-            if (this._property.variable || WI.CSSKeywordCompletions.isColorAwareProperty(this._property.name)) {
-                tokens = this._addGradientTokens(tokens);
-                tokens = this._addColorTokens(tokens);
-            }
-            tokens = this._addTimingFunctionTokens(tokens, "cubic-bezier");
-            tokens = this._addTimingFunctionTokens(tokens, "spring");
-            tokens = this._addVariableTokens(tokens);
-        }
+        if (this._property.enabled)
+            tokens = this._replaceSpecialTokens(tokens);
 
         tokens = tokens.map((token) => {
             if (token instanceof Element)
@@ -493,11 +483,18 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._valueElement.append(...tokens);
     }
 
-    _createInlineSwatch(type, text, valueObject)
+    _createInlineSwatch(type, contents, valueObject)
     {
         let tokenElement = document.createElement("span");
         let innerElement = document.createElement("span");
-        innerElement.textContent = text;
+        for (let item of contents) {
+            if (item instanceof Node)
+                innerElement.appendChild(item);
+            else if (typeof item === "object")
+                innerElement.append(item.value);
+            else
+                innerElement.append(item);
+        }
 
         let readOnly = !this._isEditable();
         let swatch = new WI.InlineSwatch(type, valueObject, readOnly);
@@ -514,6 +511,12 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 this._renderValue(this._property.rawValue);
         }, this);
 
+        if (type === WI.InlineSwatch.Type.Variable) {
+            swatch.value = () => {
+                return this._property.ownerStyle.nodeStyles.computedStyle.resolveVariableValue(innerElement.textContent);
+            };
+        }
+
         if (this._delegate && typeof this._delegate.stylePropertyInlineSwatchActivated === "function") {
             swatch.addEventListener(WI.InlineSwatch.Event.Activated, () => {
                 this._delegate.stylePropertyInlineSwatchActivated();
@@ -529,6 +532,25 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         tokenElement.append(swatch.element, innerElement);
 
         return tokenElement;
+    }
+
+    _replaceSpecialTokens(tokens)
+    {
+        // FIXME: <https://webkit.org/b/178636> Web Inspector: Styles: Make inline widgets work with CSS functions (var(), calc(), etc.)
+
+        tokens = this._addVariableTokens(tokens);
+
+        if (this._property.variable || WI.CSSKeywordCompletions.isColorAwareProperty(this._property.name)) {
+            tokens = this._addGradientTokens(tokens);
+            tokens = this._addColorTokens(tokens);
+        }
+
+        if (this._property.variable || WI.CSSKeywordCompletions.isTimingFunctionAwareProperty(this._property.name)) {
+            tokens = this._addTimingFunctionTokens(tokens, "cubic-bezier");
+            tokens = this._addTimingFunctionTokens(tokens, "spring");
+        }
+
+        return tokens;
     }
 
     _addGradientTokens(tokens)
@@ -556,7 +578,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 let text = rawTokens.map((token) => token.value).join("");
                 let gradient = WI.Gradient.fromString(text);
                 if (gradient)
-                    newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.Gradient, text, gradient));
+                    newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.Gradient, rawTokens, gradient));
                 else
                     newTokens.push(...rawTokens);
 
@@ -575,7 +597,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         let pushPossibleColorToken = (text, ...rawTokens) => {
             let color = WI.Color.fromString(text);
             if (color)
-                newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.Color, text, color));
+                newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.Color, rawTokens, color));
             else
                 newTokens.push(...rawTokens);
         };
@@ -642,7 +664,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 }
 
                 if (valueObject)
-                    newTokens.push(this._createInlineSwatch(inlineSwatchType, text, valueObject));
+                    newTokens.push(this._createInlineSwatch(inlineSwatchType, rawTokens, valueObject));
                 else
                     newTokens.push(...rawTokens);
 
@@ -663,8 +685,10 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         for (let i = 0; i < tokens.length; i++) {
             let token = tokens[i];
             if (token.value === "var" && token.type && token.type.includes("atom")) {
-                startIndex = i;
-                openParenthesis = 0;
+                if (isNaN(startIndex)) {
+                    startIndex = i;
+                    openParenthesis = 0;
+                }
             } else if (token.value === "(" && !isNaN(startIndex))
                 ++openParenthesis;
             else if (token.value === ")" && !isNaN(startIndex)) {
@@ -673,14 +697,22 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                     continue;
 
                 let rawTokens = tokens.slice(startIndex, i + 1);
-                let tokenValues = rawTokens.map((token) => token.value);
-                let variableName = tokenValues.find((value, i) => value.startsWith("--") && /\bvariable-2\b/.test(rawTokens[i].type));
+                let variableNameIndex = rawTokens.findIndex((token) => token.value.startsWith("--") && /\bvariable-2\b/.test(token.type));
+                if (variableNameIndex !== -1) {
+                    let contents = [];
+                    let fallbackStartIndex = rawTokens.findIndex((value, i) => i > variableNameIndex + 1 && /\bm-css\b/.test(value.type));
+                    if (fallbackStartIndex !== -1) {
+                        contents = contents.concat(rawTokens.slice(0, fallbackStartIndex));
+                        contents = contents.concat(this._replaceSpecialTokens(rawTokens.slice(fallbackStartIndex, i)));
+                    } else
+                        contents = contents.concat(rawTokens.slice(0, i));
+                    contents.push(token);
 
-                const dontCreateIfMissing = true;
-                let variableProperty = this._property.ownerStyle.nodeStyles.computedStyle.propertyForName(variableName, dontCreateIfMissing);
-                if (variableProperty) {
-                    let valueObject = variableProperty.value.trim();
-                    newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.Variable, tokenValues.join(""), valueObject));
+                    let text = rawTokens.reduce((accumulator, token) => accumulator + token.value, "");
+                    if (this._property.ownerStyle.nodeStyles.computedStyle.resolveVariableValue(text))
+                        newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.Variable, contents));
+                    else
+                        newTokens = newTokens.concat(contents);
                 } else {
                     this._hasInvalidVariableValue = true;
                     newTokens.push(...rawTokens);
