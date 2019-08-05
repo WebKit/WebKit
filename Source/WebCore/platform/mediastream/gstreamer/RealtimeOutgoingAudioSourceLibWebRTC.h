@@ -46,7 +46,7 @@ private:
     bool isReachingBufferedAudioDataLowLimit() final;
     bool hasBufferedEnoughData() final;
 
-    void pullAudioData() final;
+    void pullAudioData();
 
     GUniquePtr<GstAudioConverter> m_sampleConverter;
     std::unique_ptr<GStreamerAudioStreamDescription> m_inputStreamDescription;

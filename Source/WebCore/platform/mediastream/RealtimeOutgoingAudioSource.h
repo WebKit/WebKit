@@ -74,8 +74,6 @@ protected:
 
     void unobserveSource();
 
-    virtual void pullAudioData() { }
-
     bool isSilenced() const { return m_muted || !m_enabled; }
 
     void sendAudioFrames(const void* audioData, int bitsPerSample, int sampleRate, size_t numberOfChannels, size_t numberOfFrames);

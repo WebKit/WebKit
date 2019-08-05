@@ -52,7 +52,7 @@ private:
     bool hasBufferedEnoughData() final;
     void sourceUpdated() final;
 
-    void pullAudioData() final;
+    void pullAudioData();
 
     Ref<AudioSampleDataSource> m_sampleConverter;
     CAAudioStreamDescription m_inputStreamDescription;
