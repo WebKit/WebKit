@@ -30,6 +30,8 @@ namespace WebCore {
 
 template<> WEBCORE_EXPORT DictionaryImplName convertDictionary<DictionaryImplName>(JSC::ExecState&, JSC::JSValue);
 
+WEBCORE_EXPORT JSC::JSObject* convertDictionaryToJS(JSC::ExecState&, JSDOMGlobalObject&, const DictionaryImplName&);
+
 String convertEnumerationToString(TestStandaloneDictionary::EnumInStandaloneDictionaryFile);
 template<> JSC::JSString* convertEnumerationToJS(JSC::ExecState&, TestStandaloneDictionary::EnumInStandaloneDictionaryFile);
 

@@ -169,6 +169,7 @@ struct( IDLDictionary => {
     parentType => 'IDLType',
     members => '@', # List of 'IDLDictionaryMember'
     extendedAttributes => '$',
+    isPartial => '$', # Used for partial interfaces
 });
 
 # https://heycam.github.io/webidl/#idl-callback-functions
@@ -887,25 +888,9 @@ sub parsePartialDefinition
         return $interface;
     }
     if ($next->value() eq "dictionary") {
-        return $self->parsePartialDictionary($extendedAttributeList);
-    }
-    $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parsePartialInterface
-{
-    my $self = shift;
-    my $extendedAttributeList = shift;
-
-    my $next = $self->nextToken();
-    if ($next->value() eq "interface") {
-        $self->assertTokenValue($self->getToken(), "interface", __LINE__);
-        $self->assertTokenType($self->getToken(), IdentifierToken);
-        $self->assertTokenValue($self->getToken(), "{", __LINE__);
-        $self->parseInterfaceMembers();
-        $self->assertTokenValue($self->getToken(), "}", __LINE__);
-        $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        return;
+        my $dictionary = $self->parseDictionary($extendedAttributeList);
+        $dictionary->isPartial(1);
+        return $dictionary;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -1056,22 +1041,6 @@ sub parseDictionaryMember
         $member->default($self->parseDefault());
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
         return $member;
-    }
-    $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parsePartialDictionary
-{
-    my $self = shift;
-    my $next = $self->nextToken();
-    if ($next->value() eq "dictionary") {
-        $self->assertTokenValue($self->getToken(), "dictionary", __LINE__);
-        $self->assertTokenType($self->getToken(), IdentifierToken);
-        $self->assertTokenValue($self->getToken(), "{", __LINE__);
-        $self->parseDictionaryMembers();
-        $self->assertTokenValue($self->getToken(), "}", __LINE__);
-        $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        return;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }

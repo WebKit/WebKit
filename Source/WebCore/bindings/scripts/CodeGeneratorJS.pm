@@ -2332,6 +2332,12 @@ sub GenerateDictionaryImplementationContent
             my $type = $member->type;
             AddToImplIncludesForIDLType($type);
 
+            my $conditional = $member->extendedAttributes->{Conditional};
+            if ($conditional) {
+                my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
+                $result .= "#if ${conditionalString}\n";
+            }
+
             # 4.1. Let key be the identifier of member.
             my $key = $member->name;
             my $implementedAsKey = $member->extendedAttributes->{ImplementedAs} || $key;
@@ -2368,6 +2374,8 @@ sub GenerateDictionaryImplementationContent
             } else {
                 $result .= "    }\n";
             }
+
+            $result .= "#endif\n" if $conditional;
         }
     }
 
@@ -2398,6 +2406,12 @@ sub GenerateDictionaryImplementationContent
                 my $key = $member->name;
                 my $implementedAsKey = $member->extendedAttributes->{ImplementedAs} || $key;
                 my $valueExpression = "dictionary.${implementedAsKey}";
+
+                my $conditional = $member->extendedAttributes->{Conditional};
+                if ($conditional) {
+                    my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
+                    $result .= "#if ${conditionalString}\n";
+                }
 
                 # 1. Let key be the identifier of member.
                 # 2. If the dictionary member named key is present in V, then:
@@ -2430,6 +2444,8 @@ sub GenerateDictionaryImplementationContent
                 if ($needsRuntimeCheck) {
                     $result .= "    }\n";
                 }
+
+                $result .= "#endif\n" if $conditional;
             }
         }
 

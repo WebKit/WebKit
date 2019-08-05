@@ -51,3 +51,16 @@
     [JSBuiltin] void builtinFunction();
     [JSBuiltin] attribute unsigned short builtinAttribute;
 };
+
+[
+    Conditional=Conditional13|Conditional14,
+] partial dictionary TestStandaloneDictionary {
+    required long partialRequiredLongMember;
+    boolean partialBooleanMember;
+    DOMString partialStringMember;
+    TestEnumInStandaloneDictionaryFile partialEnumMember;
+    VoidCallback partialCallbackMember;
+    [ImplementedAs=partialUnsignedLongMember] unsigned long partialUnsignedLongMemberWithImplementedAs;
+    [Conditional=Conditional15] boolean partialBooleanMemberWithIgnoredConditional;
+    [EnabledBySetting=TestSetting] DOMString partialStringMemberWithEnabledBySetting;
+};

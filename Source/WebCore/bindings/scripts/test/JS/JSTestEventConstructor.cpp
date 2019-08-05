@@ -99,6 +99,7 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.attr2 = emptyString();
+#if ENABLE(SPECIAL_EVENT)
     JSValue attr3Value;
     if (isNullOrUndefined)
         attr3Value = jsUndefined();
@@ -111,6 +112,7 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.attr3 = emptyString();
+#endif
     return result;
 }
 

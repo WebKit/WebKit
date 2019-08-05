@@ -1,3 +1,32 @@
+2019-08-05  Andy Estes  <aestes@apple.com>
+
+        [WebIDL] Support partial dictionaries and conditional dictionary members
+        https://bugs.webkit.org/show_bug.cgi?id=200441
+
+        Reviewed by Alex Christensen.
+
+        Added new bindings tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDictionaryImplementationContent):
+        * bindings/scripts/IDLParser.pm:
+        (parsePartialDefinition):
+        (parsePartialInterface): Deleted.
+        (parsePartialDictionary): Deleted.
+        * bindings/scripts/generate-bindings.pl:
+        (generateBindings):
+        * bindings/scripts/preprocess-idls.pl:
+        (getPartialNamesFromIDL):
+        (getPartialInterfaceNameFromIDL): Deleted.
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::convertDictionary<TestEventConstructor::Init>):
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        (WebCore::convertDictionary<DictionaryImplName>):
+        (WebCore::convertDictionaryToJS):
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.h:
+        * bindings/scripts/test/TestStandaloneDictionary.idl:
+        * bindings/scripts/test/TestSupplemental.idl:
+
 2019-08-05  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: rename "Stylesheet" to "Style Sheet" to match spec text
