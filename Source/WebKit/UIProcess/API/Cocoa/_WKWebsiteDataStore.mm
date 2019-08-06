@@ -40,9 +40,9 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataTypes) {
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 @implementation _WKWebsiteDataStore
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (instancetype)initWithDataStore:(WKWebsiteDataStore *)dataStore
 {

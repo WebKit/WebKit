@@ -217,15 +217,15 @@ using namespace WebCore;
     [super dealloc];
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)initWithRequest:(NSURLRequest *)request delegate:(id<NSURLDownloadDelegate>)delegate
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     [self _setRealDelegate:delegate];
     return [super initWithRequest:request delegate:_webInternal];
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)_initWithLoadingConnection:(NSURLConnection *)connection
                          request:(NSURLRequest *)request
                         response:(NSURLResponse *)response
@@ -237,7 +237,7 @@ IGNORE_WARNINGS_END
     return [super _initWithLoadingConnection:connection request:request response:response delegate:_webInternal proxy:proxy];
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)_initWithRequest:(NSURLRequest *)request
               delegate:(id)delegate
              directory:(NSString *)directory

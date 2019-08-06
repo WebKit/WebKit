@@ -3567,9 +3567,9 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _impl->setFrameSize(NSSizeToCGSize(size));
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)renewGState
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     _impl->renewGState();
     [super renewGState];
@@ -4063,9 +4063,9 @@ WEBCORE_COMMAND(yankAndSelect)
 }
 
 #if ENABLE(DRAG_SUPPORT)
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)draggedImage:(NSImage *)image endedAt:(NSPoint)endPoint operation:(NSDragOperation)operation
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     _impl->draggedImage(image, NSPointToCGPoint(endPoint), operation);
 }
@@ -4156,9 +4156,9 @@ IGNORE_WARNINGS_END
     return _impl->accessibilityFocusedUIElement();
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (BOOL)accessibilityIsIgnored
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     return _impl->accessibilityIsIgnored();
 }
@@ -4168,23 +4168,23 @@ IGNORE_WARNINGS_END
     return _impl->accessibilityHitTest(NSPointToCGPoint(point));
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)accessibilityAttributeValue:(NSString *)attribute
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     return _impl->accessibilityAttributeValue(attribute);
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)accessibilityAttributeValue:(NSString *)attribute forParameter:(id)parameter
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     return _impl->accessibilityAttributeValue(attribute, parameter);
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray<NSString *> *)accessibilityParameterizedAttributeNames
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     NSArray<NSString *> *names = [super accessibilityParameterizedAttributeNames];
     return [names arrayByAddingObject:@"AXConvertRelativeFrame"];
@@ -4255,9 +4255,9 @@ IGNORE_WARNINGS_END
     _impl->provideDataForPasteboard(pasteboard, type);
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     return _impl->namesOfPromisedFilesDroppedAtDestination(dropDestination);
 }

@@ -168,9 +168,9 @@ static bool scheduledWithCustomRunLoopMode(const Optional<SchedulePairHashSet>& 
     return requestResult.autorelease();
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     ASSERT(!isMainThread());
     UNUSED_PARAM(connection);
@@ -188,9 +188,9 @@ IGNORE_WARNINGS_END
     [self callFunctionOnMainThread:WTFMove(work)];
 }
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
-IGNORE_WARNINGS_END
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     ASSERT(!isMainThread());
     UNUSED_PARAM(connection);
