@@ -202,6 +202,8 @@ public:
     template <class Decoder> static bool decode(Decoder&, HTTPHeaderMap&);
 
 private:
+    void setUncommonHeader(const String& name, const String& value);
+
     CommonHeadersVector m_commonHeaders;
     UncommonHeadersVector m_uncommonHeaders;
 };

@@ -69,16 +69,11 @@ void HTTPHeaderMap::set(CFStringRef name, const String& value)
     if (auto* nameCharacters = CFStringGetCStringPtr(name, kCFStringEncodingASCII)) {
         unsigned length = CFStringGetLength(name);
         HTTPHeaderName headerName;
-        if (findHTTPHeaderName(StringView(reinterpret_cast<const LChar*>(nameCharacters), length), headerName)) {
-            auto index = m_commonHeaders.findMatching([&](auto& header) {
-                return header.key == headerName;
-            });
-            if (index == notFound)
-                m_commonHeaders.append(CommonHeader { headerName, value });
-            else
-                m_commonHeaders[index].value = value;
-        } else
-            set(String(nameCharacters, length), value);
+        if (findHTTPHeaderName(StringView(nameCharacters, length), headerName))
+            set(headerName, value);
+        else
+            setUncommonHeader(String(nameCharacters, length), value);
+
         return;
     }
 
@@ -95,6 +90,11 @@ void HTTPHeaderMap::set(const String& name, const String& value)
         return;
     }
 
+    setUncommonHeader(name, value);
+}
+
+void HTTPHeaderMap::setUncommonHeader(const String& name, const String& value)
+{
     auto index = m_uncommonHeaders.findMatching([&](auto& header) {
         return equalIgnoringASCIICase(header.key, name);
     });

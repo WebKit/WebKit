@@ -32,10 +32,10 @@ namespace TestWebKitAPI {
 
 StringView stringViewFromLiteral(const char* characters)
 {
-    return StringView(reinterpret_cast<const LChar*>(characters), strlen(characters));
+    return StringView(characters);
 }
 
-StringView stringViewFromUTF8(String &ref, const char* characters)
+StringView stringViewFromUTF8(String& ref, const char* characters)
 {
     ref = String::fromUTF8(characters);
     return ref;

@@ -728,7 +728,7 @@ size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, 
     }
 
     nameSize = name.size();
-    nameStr = StringView(reinterpret_cast<const LChar*>(namePtr), nameSize);
+    nameStr = StringView(namePtr, nameSize);
 
     for (; p < end && *p == 0x20; p++) { }
 

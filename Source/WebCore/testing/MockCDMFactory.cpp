@@ -269,7 +269,7 @@ CDMInstance::SuccessValue MockCDMInstance::setPersistentStateAllowed(bool persis
 
 CDMInstance::SuccessValue MockCDMInstance::setServerCertificate(Ref<SharedBuffer>&& certificate)
 {
-    StringView certificateStringView(reinterpret_cast<const LChar*>(certificate->data()), certificate->size());
+    StringView certificateStringView(certificate->data(), certificate->size());
 
     if (equalIgnoringASCIICase(certificateStringView, "valid"))
         return Succeeded;

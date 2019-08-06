@@ -314,7 +314,7 @@ bool isDefaultPortForProtocol(uint16_t port, StringView protocol)
 
 bool URL::protocolIs(const char* protocol) const
 {
-    assertProtocolIsGood(StringView(reinterpret_cast<const LChar*>(protocol), strlen(protocol)));
+    assertProtocolIsGood(StringView { protocol });
 
     // JavaScript URLs are "valid" and should be executed even if URL decides they are invalid.
     // The free function protocolIsJavaScript() should be used instead. 
@@ -770,7 +770,7 @@ template<typename StringClass>
 bool protocolIsInternal(const StringClass& url, const char* protocol)
 {
     // Do the comparison without making a new string object.
-    assertProtocolIsGood(StringView(reinterpret_cast<const LChar*>(protocol), strlen(protocol)));
+    assertProtocolIsGood(StringView { protocol });
     bool isLeading = true;
     for (unsigned i = 0, j = 0; url[i]; ++i) {
         // Skip leading whitespace and control characters.

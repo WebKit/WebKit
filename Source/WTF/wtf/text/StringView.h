@@ -66,6 +66,7 @@ public:
     StringView(const LChar*, unsigned length);
     StringView(const UChar*, unsigned length);
     StringView(const char*);
+    StringView(const char*, unsigned length);
 
     static StringView empty();
 
@@ -329,6 +330,11 @@ inline StringView::StringView(const char* characters)
     initialize(reinterpret_cast<const LChar*>(characters), strlen(characters));
 }
 
+inline StringView::StringView(const char* characters, unsigned length)
+{
+    initialize(reinterpret_cast<const LChar*>(characters), length);
+}
+
 inline StringView::StringView(const StringImpl& string)
 {
     setUnderlyingString(&string);
@@ -378,7 +384,7 @@ inline void StringView::clear()
 
 inline StringView StringView::empty()
 {
-    return StringView(reinterpret_cast<const LChar*>(""), 0);
+    return StringView("", 0);
 }
 
 inline const LChar* StringView::characters8() const

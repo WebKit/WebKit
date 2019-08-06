@@ -1,3 +1,20 @@
+2019-08-06  Chris Dumez  <cdumez@apple.com>
+
+        Fix inefficiency in HTTPHeaderMap::set(CFStringRef, const String&)
+        https://bugs.webkit.org/show_bug.cgi?id=200475
+
+        Reviewed by Darin Adler.
+
+        Add convenience constuctor to StringView which takes in a const char*
+        and an unsigned length, similarly to what we already have for String.
+
+        * wtf/URL.cpp:
+        (WTF::URL::protocolIs const):
+        (WTF::protocolIsInternal):
+        * wtf/text/StringView.h:
+        (WTF::StringView::StringView):
+        (WTF::StringView::empty):
+
 2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Enable LocalAuthenticator for macOS

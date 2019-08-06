@@ -1,3 +1,27 @@
+2019-08-06  Chris Dumez  <cdumez@apple.com>
+
+        Fix inefficiency in HTTPHeaderMap::set(CFStringRef, const String&)
+        https://bugs.webkit.org/show_bug.cgi?id=200475
+
+        Reviewed by Darin Adler.
+
+        In the case where CFStringGetCStringPtr() succeeds in returning us a pointer
+        to the CFStringRef underlying characters but it is not a common header, we
+        would fall back to calling HTTPHeaderMap::set(const String&, const String&)
+        which would unecessarily call findHTTPHeaderName() again to try and determine
+        if it is a common header. Avoid this by introducing a new setUncommonHeader()
+        private method and calling this one instead. Also got rid of some code
+        duplication at the same time.
+
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::set):
+        (WebCore::HTTPHeaderMap::setUncommonHeader):
+        * platform/network/HTTPHeaderMap.h:
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseHTTPHeader):
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMInstance::setServerCertificate):
+
 2019-08-06  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Remove the auto initialize variables pass

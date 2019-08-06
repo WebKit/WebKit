@@ -1,3 +1,14 @@
+2019-08-06  Chris Dumez  <cdumez@apple.com>
+
+        Fix inefficiency in HTTPHeaderMap::set(CFStringRef, const String&)
+        https://bugs.webkit.org/show_bug.cgi?id=200475
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/StringView.cpp:
+        (TestWebKitAPI::stringViewFromLiteral):
+        (TestWebKitAPI::stringViewFromUTF8):
+
 2019-08-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Update my status in contributors.json to reviewer.
