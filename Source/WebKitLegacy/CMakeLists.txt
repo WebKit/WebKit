@@ -42,7 +42,9 @@ endif ()
 
 WEBKIT_FRAMEWORK(WebKitLegacy)
 
-add_dependencies(WebKitLegacy WebCore WebCorePrivateFrameworkHeaders)
+if (NOT INTERNAL_BUILD)
+    add_dependencies(WebKitLegacy WebCore WebCorePrivateFrameworkHeaders)
+endif ()
 if (TARGET WebKitLegacyGUID)
     add_dependencies(WebKitLegacy WebKitLegacyGUID)
 endif ()

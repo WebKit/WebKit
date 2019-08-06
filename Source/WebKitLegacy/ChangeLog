@@ -1,3 +1,14 @@
+2019-08-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Fix AppleWin build
+        https://bugs.webkit.org/show_bug.cgi?id=200455
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * PlatformWin.cmake:
+        * WebKitLegacy.vcxproj/WebKitLegacy.proj:
+
 2019-07-31  Keith Rollin  <krollin@apple.com>
 
         Update WebKitLegacy for XCBuild

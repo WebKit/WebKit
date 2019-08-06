@@ -21,6 +21,10 @@ if (WTF_OS_MAC_OS_X)
     list(APPEND jsc_LIBRARIES edit)
 endif ()
 
+if (WIN32)
+    list(APPEND jsc_LIBRARIES Winmm)
+endif ()
+
 WEBKIT_EXECUTABLE_DECLARE(jsc)
 
 if (DEVELOPER_MODE)
