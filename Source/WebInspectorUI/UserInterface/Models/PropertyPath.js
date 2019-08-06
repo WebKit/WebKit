@@ -55,7 +55,9 @@ WI.PropertyPath = class PropertyPath
     get object() { return this._object; }
     get parent() { return this._parent; }
     get isPrototype() { return this._isPrototype; }
+
     get pathComponent() { return this._pathComponent; }
+    set pathComponent(pathComponent) { this._pathComponent = pathComponent; }
 
     get rootObject()
     {

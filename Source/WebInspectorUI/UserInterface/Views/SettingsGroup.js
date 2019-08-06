@@ -64,4 +64,11 @@ WI.SettingsGroup = class SettingsGroup extends WI.Object
         this._editorGroupElement.append(editor.element);
         return editor;
     }
+
+    addCustomEditor()
+    {
+        let element = this._editorGroupElement.appendChild(document.createElement("div"));
+        element.classList.add("editor");
+        return element;
+    }
 };

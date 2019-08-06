@@ -97,6 +97,11 @@ TestHarness = class TestHarness extends WI.Object
             this.addResult(message);
     }
 
+    newline()
+    {
+        this.log("");
+    }
+
     json(object, filter)
     {
         this.log(JSON.stringify(object, filter || null, 2));

@@ -260,6 +260,30 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
     {
         let consoleSettingsView = new WI.SettingsView("console", WI.UIString("Console"));
 
+        // COMPATIBILITY (iOS 12.2): Runtime.setSavedResultAlias did not exist.
+        if (InspectorBackend.domains.Runtime.setSavedResultAlias) {
+            let consoleSavedResultAliasEditor = consoleSettingsView.addGroupWithCustomEditor(WI.UIString("Saved Result Alias:"));
+
+            let consoleSavedResultAliasInput = consoleSavedResultAliasEditor.appendChild(document.createElement("input"));
+            consoleSavedResultAliasInput.type = "text";
+            consoleSavedResultAliasInput.value = WI.settings.consoleSavedResultAlias.value;
+            consoleSavedResultAliasInput.placeholder = WI.unlocalizedString("$");
+            consoleSavedResultAliasInput.addEventListener("keydown", (event) => {
+                if (!/[a-zA-Z0-9_$]/.test(event.key) || (consoleSavedResultAliasInput.selectionStart === 0 && /[0-9]/.test(event.key))) {
+                    event.preventDefault();
+                    InspectorFrontendHost.beep();
+                }
+            });
+            consoleSavedResultAliasInput.addEventListener("input", (event) => {
+                let savedResultAlias = consoleSavedResultAliasInput.value;
+                if (savedResultAlias === "$")
+                    savedResultAlias = "";
+                WI.settings.consoleSavedResultAlias.value = savedResultAlias;
+            });
+
+            consoleSettingsView.addSeparator();
+        }
+
         consoleSettingsView.addSetting(WI.UIString("Traces:"), WI.settings.consoleAutoExpandTrace, WI.UIString("Auto-expand"));
 
         if (WI.ConsoleManager.supportsLogChannels()) {

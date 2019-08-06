@@ -27,10 +27,11 @@ function test()
 
     suite.addTestCase({
         name: "EmptyBefore",
-        description: "Without exceptions, $exception should be undefined",
+        description: "Without exceptions, $exception should not be defined",
         test(resolve, reject) {
             WI.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, (result, wasThrown) => {
-                InspectorTest.expectThat(result.description === "undefined", "$exception should be undefined if there is no exception.");
+                InspectorTest.expectThat(wasThrown, "$exception should throw an error if there is no exception.");
+                InspectorTest.log(result.description);
                 resolve();
             });
         }
@@ -87,10 +88,11 @@ function test()
 
     suite.addTestCase({
         name: "EmptyAfter",
-        description: "Without exceptions, $exception should be undefined",
+        description: "Without exceptions, $exception should not be defined",
         test(resolve, reject) {
             WI.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, (result, wasThrown) => {
-                InspectorTest.expectThat(result.description === "undefined", "$exception should be undefined if there is no exception.");
+                InspectorTest.expectThat(wasThrown, "$exception should throw an error if there is no exception.");
+                InspectorTest.log(result.description);
                 resolve();
             });
         }

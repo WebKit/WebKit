@@ -57,6 +57,7 @@ public:
 
     // Attributes.
     JSC::JSValue evaluate(JSC::ExecState*) const;
+    JSC::JSValue savedResultAlias(JSC::ExecState*) const;
 
     // Functions.
     JSC::JSValue evaluateWithScopeExtension(JSC::ExecState*);

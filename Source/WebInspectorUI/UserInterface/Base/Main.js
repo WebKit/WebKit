@@ -573,6 +573,12 @@ WI.contentLoaded = function()
     WI.tabBar.addEventListener(WI.TabBar.Event.TabBarItemRemoved, WI._rememberOpenTabs);
     WI.tabBar.addEventListener(WI.TabBar.Event.TabBarItemsReordered, WI._rememberOpenTabs);
 
+    function updateConsoleSavedResultPrefixCSSVariable() {
+        document.body.style.setProperty("--console-saved-result-prefix", "\"" + WI.RuntimeManager.preferredSavedResultPrefix() + "\"");
+    }
+    WI.settings.consoleSavedResultAlias.addEventListener(WI.Setting.Event.Changed, updateConsoleSavedResultPrefixCSSVariable);
+    updateConsoleSavedResultPrefixCSSVariable();
+
     // Signal that the frontend is now ready to receive messages.
     WI.whenTargetsAvailable().then(() => {
         InspectorFrontendAPI.loadCompleted();

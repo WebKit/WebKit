@@ -318,6 +318,13 @@
             ]
         },
         {
+            "name": "setSavedResultAlias",
+            "description": "Creates an additional reference to all saved values in the Console using the the given string as a prefix instead of $.",
+            "parameters": [
+                { "name": "alias", "type": "string", "optional": true, "description": "Passing an empty/null string will clear the alias." }
+            ]
+        },
+        {
             "name": "releaseObject",
             "description": "Releases remote object with given id.",
             "parameters": [

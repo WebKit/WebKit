@@ -394,6 +394,11 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             return;
         }
 
+        for (let messageElement of this._allMessageElements()) {
+            if (messageElement.__messageView)
+                messageElement.__messageView.removeEventListeners();
+        }
+
         const isFirstSession = false;
         const newSessionReason = event.data.wasReloaded ? WI.ConsoleSession.NewSessionReason.PageReloaded : WI.ConsoleSession.NewSessionReason.PageNavigated;
         this._logViewController.startNewSession(isFirstSession, {newSessionReason, timestamp: event.data.timestamp});
@@ -824,6 +829,11 @@ WI.LogContentView = class LogContentView extends WI.ContentView
     {
         for (let item of this._scopeBar.items)
             item.element.classList.remove("unread");
+
+        for (let messageElement of this._allMessageElements()) {
+            if (messageElement.__messageView)
+                messageElement.__messageView.removeEventListeners();
+        }
 
         this._logViewController.clear();
         this._nestingLevel = 0;

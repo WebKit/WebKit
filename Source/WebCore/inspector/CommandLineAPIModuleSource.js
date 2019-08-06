@@ -46,16 +46,34 @@ function bind(func, thisObject, ...outerArgs)
  */
 function CommandLineAPI(commandLineAPIImpl, callFrame)
 {
-    this.$_ = injectedScript._lastResult;
-    this.$event = injectedScript._eventValue;
-    this.$exception = injectedScript._exceptionValue;
+    let savedResultAlias = InjectedScriptHost.savedResultAlias;
+
+    let defineGetter = (key, value) => {
+        if (typeof value !== "function") {
+            let originalValue = value;
+            value = function() { return originalValue; };
+        }
+
+        this.__defineGetter__("$" + key, value);
+        if (savedResultAlias)
+            this.__defineGetter__(savedResultAlias + key, value);
+    };
+
+    if ("_lastResult" in injectedScript)
+        defineGetter("_", injectedScript._lastResult);
+
+    if ("_exceptionValue" in injectedScript)
+        defineGetter("exception", injectedScript._exceptionValue);
+
+    if ("_eventValue" in injectedScript)
+        defineGetter("event", injectedScript._eventValue);
 
     // $0
-    this.__defineGetter__("$0", bind(commandLineAPIImpl._inspectedObject, commandLineAPIImpl));
+    defineGetter("0", bind(commandLineAPIImpl._inspectedObject, commandLineAPIImpl));
 
     // $1-$99
     for (let i = 1; i <= injectedScript._savedResults.length; ++i)
-        this.__defineGetter__("$" + i, bind(injectedScript._savedResult, injectedScript, i));
+        defineGetter(i, bind(injectedScript._savedResult, injectedScript, i));
 
     // Command Line API methods.
     for (let i = 0; i < CommandLineAPI.methods.length; ++i) {

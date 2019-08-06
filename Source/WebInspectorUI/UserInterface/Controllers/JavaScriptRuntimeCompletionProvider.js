@@ -229,9 +229,19 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                 for (let name of commandLineAPI)
                     propertyNames[name] = true;
 
+                let savedResultAlias = WI.settings.consoleSavedResultAlias.value;
+                if (savedResultAlias) {
+                    propertyNames[savedResultAlias + "0"] = true;
+                    propertyNames[savedResultAlias + "_"] = true;
+                }
+
                 // FIXME: Due to caching, sometimes old $n values show up as completion results even though they are not available. We should clear that proactively.
-                for (var i = 1; i <= WI.ConsoleCommandResultMessage.maximumSavedResultIndex; ++i)
+                for (var i = 1; i <= WI.ConsoleCommandResultMessage.maximumSavedResultIndex; ++i) {
                     propertyNames["$" + i] = true;
+
+                    if (savedResultAlias)
+                        propertyNames[savedResultAlias + i] = true;
+                }
             }
 
             propertyNames = Object.keys(propertyNames);

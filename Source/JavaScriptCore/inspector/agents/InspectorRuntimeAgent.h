@@ -68,6 +68,7 @@ public:
     void getDisplayableProperties(ErrorString&, const String& objectId, const bool* generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<JSON::ArrayOf<Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) final;
     void getCollectionEntries(ErrorString&, const String& objectId, const String* objectGroup, const int* startIndex, const int* numberToFetch, RefPtr<JSON::ArrayOf<Protocol::Runtime::CollectionEntry>>& entries) final;
     void saveResult(ErrorString&, const JSON::Object& callArgument, const int* executionContextId, Optional<int>& savedResultIndex) final;
+    void setSavedResultAlias(ErrorString&, const String* alias) final;
     void releaseObjectGroup(ErrorString&, const String& objectGroup) final;
     void getRuntimeTypesForVariablesAtOffsets(ErrorString&, const JSON::Array& locations, RefPtr<JSON::ArrayOf<Protocol::Runtime::TypeDescription>>&) override;
     void enableTypeProfiler(ErrorString&) override;

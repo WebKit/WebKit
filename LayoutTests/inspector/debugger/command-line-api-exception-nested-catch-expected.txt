@@ -5,7 +5,8 @@ Checks that $exception is the value of the current exception, even in nested cat
 
 == Running test suite: CommandLineAPI.$exception
 -- Running test case: EmptyBefore
-PASS: $exception should be undefined if there is no exception.
+PASS: $exception should throw an error if there is no exception.
+ReferenceError: Can't find variable: $exception
 
 -- Running test case: CheckExceptionInsideNestedCatchBlocks
 OUTER 1: $exception => outer exception
@@ -16,5 +17,6 @@ OUTER 2: $exception => outer exception
   CATCH: $exception === e1 ? true
 
 -- Running test case: EmptyAfter
-PASS: $exception should be undefined if there is no exception.
+PASS: $exception should throw an error if there is no exception.
+ReferenceError: Can't find variable: $exception
 

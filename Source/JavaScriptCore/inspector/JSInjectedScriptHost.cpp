@@ -102,6 +102,14 @@ JSValue JSInjectedScriptHost::evaluate(ExecState* exec) const
     return globalObject->evalFunction();
 }
 
+JSValue JSInjectedScriptHost::savedResultAlias(ExecState* exec) const
+{
+    auto savedResultAlias = impl().savedResultAlias();
+    if (!savedResultAlias)
+        return jsUndefined();
+    return jsString(exec, savedResultAlias.value());
+}
+
 JSValue JSInjectedScriptHost::evaluateWithScopeExtension(ExecState* exec)
 {
     VM& vm = exec->vm();

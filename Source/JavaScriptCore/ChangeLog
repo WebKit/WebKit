@@ -1,5 +1,38 @@
 2019-08-05  Devin Rousso  <drousso@apple.com>
 
+        Can't use $0, $1 etc when inspecting Google Docs pages because the content uses these for function names
+        https://bugs.webkit.org/show_bug.cgi?id=195834
+
+        Reviewed by Joseph Pecoraro.
+
+        Allow the user to alias saved results by providing a different prefix (e.g. "$") from within
+        Web Inspector. When changing the alias, all existing saved results will update to be
+        reference-able from the new alias.
+
+        * inspector/protocol/Runtime.json:
+        Add `setSavedResultAlias` command.
+
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::setSavedResultAlias): Added.
+
+        * inspector/InjectedScriptHost.h:
+        (Inspector::InjectedScriptHost::setSavedResultAlias): Added.
+        (Inspector::InjectedScriptHost::savedResultAlias const): Added.
+        * inspector/JSInjectedScriptHost.h:
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::savedResultAlias const): Added.
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::JSInjectedScriptHostPrototype::finishCreation):
+        (Inspector::jsInjectedScriptHostPrototypeAttributeSavedResultAlias): Added.
+        Store the saved result alias on the `InjectedScriptHost` since it is a shared object among
+        all `InjectedScript`.
+
+        * inspector/InjectedScriptSource.js:
+        (BasicCommandLineAPI):
+
+2019-08-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Timelines: disable related agents when the tab is closed
         https://bugs.webkit.org/show_bug.cgi?id=200118
 

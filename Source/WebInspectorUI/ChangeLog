@@ -1,5 +1,65 @@
 2019-08-05  Devin Rousso  <drousso@apple.com>
 
+        Can't use $0, $1 etc when inspecting Google Docs pages because the content uses these for function names
+        https://bugs.webkit.org/show_bug.cgi?id=195834
+
+        Reviewed by Joseph Pecoraro.
+
+        Allow the user to alias saved results by providing a different prefix (e.g. "$") from within
+        Web Inspector. When changing the alias, all existing saved results will update to be
+        reference-able from the new alias.
+
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WI.RuntimeManager):
+        (WI.RuntimeManager.preferredSavedResultPrefix): Added.
+        (WI.RuntimeManager.prototype.initializeTarget):
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        (WI.JavaScriptRuntimeCompletionProvider.completionControllerCompletionsNeeded.receivedPropertyNames):
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        (WI.contentLoaded.updateConsoleSavedResultPrefixCSSVariable): Added.
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WI.ConsoleMessageView.prototype.toClipboardString):
+        (WI.ConsoleMessageView.prototype.removeEventListeners): Added.
+        (WI.ConsoleMessageView.prototype._appendSavedResultIndex):
+        (WI.ConsoleMessageView.prototype._appendSavedResultIndex.updateSavedVariableText): Added.
+        (WI.ConsoleMessageView.prototype._rootPropertyPathForObject):
+        (WI.ConsoleMessageView.prototype._rootPropertyPathForObject.prefixSavedResultIndex): Added.
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype._sessionStarted):
+        (WI.LogContentView.prototype._logCleared):
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom.show-last-selected li.last-selected > span::after):
+        * UserInterface/Views/QuickConsole.js:
+        (WI.QuickConsole):
+        (WI.QuickConsole.prototype.closed):
+        (WI.QuickConsole.prototype._updateAutomaticExecutionContextPathComponentTooltip): Added.
+        Listen for changes to the setting that holds the current saved result alias and update any
+        related UI accordingly.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createConsoleSettingsView):
+        * UserInterface/Views/SettingsTabContentView.css:
+        (.content-view.settings > .settings-view > .container > .editor-group > .editor input[type="text"]): Added.
+        * UserInterface/Views/SettingsGroup.js:
+        (WI.SettingsGroup.prototype.addCustomEditor): Added.
+        Add an input to the Settings tab that controls the saved result prefix alias. Only allow
+        [a-zA-Z0-9_$] as values (but [0-9] cannot be used as the start).
+
+        * UserInterface/Models/PropertyPath.js:
+        (WI.PropertyPath.prototype.set pathComponent): Added.
+        Miscellaneous getters/setters.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Test/TestHarness.js:
+        (TestHarness.prototype.newline): Added.
+        Convenience function for adding newlines to test results.
+
+2019-08-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Timelines: disable related agents when the tab is closed
         https://bugs.webkit.org/show_bug.cgi?id=200118
 

@@ -71,7 +71,7 @@
 }
 
 .tree-outline.dom.show-last-selected li.last-selected > span::after {
-    content: " = $0";
+    content: " = " var(--console-saved-result-prefix) "0";
     color: var(--console-secondary-text-color);
     position: absolute;
     white-space: pre;

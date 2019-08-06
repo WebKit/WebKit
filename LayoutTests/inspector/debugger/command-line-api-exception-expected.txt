@@ -15,7 +15,8 @@ Checks that $exception is available and accurate in evaluations when paused on a
 
 == Running test suite: CommandLineAPI.$exception
 -- Running test case: BeforeExceptions
-PASS: $exception should be undefined if there is no exception.
+PASS: $exception should throw an error if there is no exception.
+ReferenceError: Can't find variable: $exception
 
 -- Running test case: UncaughtTypeException
 $exception => TypeError: undefined is not an object (evaluating '[].x.x')
@@ -69,5 +70,6 @@ PASS: `$exception` should be equal to `e`.
 $exception => Object
 
 -- Running test case: AfterExceptions
-PASS: $exception should be undefined if there is no exception.
+PASS: $exception should throw an error if there is no exception.
+ReferenceError: Can't find variable: $exception
 

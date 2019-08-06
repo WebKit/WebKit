@@ -260,6 +260,14 @@ void InspectorRuntimeAgent::saveResult(ErrorString& errorString, const JSON::Obj
     injectedScript.saveResult(errorString, callArgument.toJSONString(), savedResultIndex);
 }
 
+void InspectorRuntimeAgent::setSavedResultAlias(ErrorString&, const String* alias)
+{
+    Optional<String> savedResultAlias;
+    if (alias && !alias->isEmpty())
+        savedResultAlias = *alias;
+    m_injectedScriptManager.injectedScriptHost().setSavedResultAlias(savedResultAlias);
+}
+
 void InspectorRuntimeAgent::releaseObject(ErrorString&, const String& objectId)
 {
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);

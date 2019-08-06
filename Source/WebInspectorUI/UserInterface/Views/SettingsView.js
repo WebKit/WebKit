@@ -52,6 +52,12 @@ WI.SettingsView = class SettingsView extends WI.View
         return settingsGroup.addCustomSetting(editorType, options);
     }
 
+    addGroupWithCustomEditor(title, element)
+    {
+        let settingsGroup = this.addGroup(title);
+        return settingsGroup.addCustomEditor();
+    }
+
     addGroup(title)
     {
         let settingsGroup = new WI.SettingsGroup(title);
