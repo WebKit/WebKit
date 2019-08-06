@@ -1,3 +1,12 @@
+2019-08-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Update my status in contributors.json to reviewer.
+
+        Regained the status after following the procedure for inactive contributors.
+        See r247136 for further explanation.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Enable LocalAuthenticator for macOS
