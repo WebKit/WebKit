@@ -145,6 +145,7 @@ WebKitBrowserWindow::WebKitBrowserWindow(WKPageConfigurationRef conf, HWND mainW
     uiClient.base.version = 13;
     uiClient.base.clientInfo = this;
     uiClient.createNewPage = createNewPage;
+    uiClient.didNotHandleKeyEvent = didNotHandleKeyEvent;
     WKPageSetPageUIClient(page, &uiClient.base);
 
     WKPageStateClientV0 stateClient = { };
@@ -376,4 +377,10 @@ WKPageRef WebKitBrowserWindow::createNewPage(WKPageRef page, WKPageConfiguration
     auto& newBrowserWindow = *static_cast<WebKitBrowserWindow*>(newWindow.browserWindow());
     WKRetainPtr<WKPageRef> newPage = WKViewGetPage(newBrowserWindow.m_view.get());
     return newPage.leakRef();
+}
+
+void WebKitBrowserWindow::didNotHandleKeyEvent(WKPageRef, WKNativeEventPtr event, const void* clientInfo)
+{
+    auto& thisWindow = toWebKitBrowserWindow(clientInfo);
+    DefWindowProc(thisWindow.hwnd(), event->message, event->wParam, event->lParam);
 }
