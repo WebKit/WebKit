@@ -37,6 +37,9 @@
 
 namespace WebCore {
 
+// For catching <rdar://problem/53413013>
+bool DocumentRuleSets::s_isInvalidatingStyleWithRuleSets { false };
+
 DocumentRuleSets::DocumentRuleSets(StyleResolver& styleResolver)
     : m_styleResolver(styleResolver)
 {
@@ -44,7 +47,10 @@ DocumentRuleSets::DocumentRuleSets(StyleResolver& styleResolver)
     m_authorStyle->disableAutoShrinkToFit();
 }
 
-DocumentRuleSets::~DocumentRuleSets() = default;
+DocumentRuleSets::~DocumentRuleSets()
+{
+    RELEASE_ASSERT(!s_isInvalidatingStyleWithRuleSets);
+}
 
 RuleSet* DocumentRuleSets::userAgentMediaQueryStyle() const
 {
@@ -148,6 +154,8 @@ void DocumentRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet
 
 void DocumentRuleSets::collectFeatures() const
 {
+    RELEASE_ASSERT(!s_isInvalidatingStyleWithRuleSets);
+
     m_features.clear();
     // Collect all ids and rules using sibling selectors (:first-child and similar)
     // in the current set of stylesheets. Style sharing code uses this information to reject

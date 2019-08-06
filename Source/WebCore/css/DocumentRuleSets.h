@@ -76,6 +76,8 @@ public:
 
     RuleFeatureSet& mutableFeatures();
 
+    static bool s_isInvalidatingStyleWithRuleSets;
+
 private:
     void collectFeatures() const;
     void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, RuleSet& userStyle, const MediaQueryEvaluator&, StyleResolver&);

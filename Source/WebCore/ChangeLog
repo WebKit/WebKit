@@ -1,5 +1,23 @@
 2019-08-06  Antti Koivisto  <antti@apple.com>
 
+        Add release assert against InvalidationRuleSet mutation during invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=200467
+
+        Reviewed by Chris Dumez.
+
+        Try to get a more informative stack for rdar://problem/53413013
+
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::~DocumentRuleSets):
+        (WebCore::DocumentRuleSets::collectFeatures const):
+        * css/DocumentRuleSets.h:
+        * style/AttributeChangeInvalidation.cpp:
+        (WebCore::Style::AttributeChangeInvalidation::invalidateStyleWithRuleSets):
+        * style/ClassChangeInvalidation.cpp:
+        (WebCore::Style::ClassChangeInvalidation::invalidateStyleWithRuleSets):
+
+2019-08-06  Antti Koivisto  <antti@apple.com>
+
         REGRESSION: Cannot tap on any buttons on m.naver.com home screen on iPad
         https://bugs.webkit.org/show_bug.cgi?id=200466
 
