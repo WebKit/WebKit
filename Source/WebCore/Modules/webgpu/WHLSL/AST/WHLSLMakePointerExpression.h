@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLAddressEscapeMode.h"
 #include "WHLSLExpression.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
@@ -40,9 +41,10 @@ namespace AST {
 class MakePointerExpression : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MakePointerExpression(CodeLocation location, UniqueRef<Expression>&& leftValue)
+    MakePointerExpression(CodeLocation location, UniqueRef<Expression>&& leftValue, AddressEscapeMode addressEscapeMode)
         : Expression(location)
         , m_leftValue(WTFMove(leftValue))
+        , m_addressEscapeMode(addressEscapeMode)
     {
     }
 
@@ -55,8 +57,11 @@ public:
 
     Expression& leftValue() { return m_leftValue; }
 
+    bool mightEscape() const { return m_addressEscapeMode == AddressEscapeMode::Escapes; }
+
 private:
     UniqueRef<Expression> m_leftValue;
+    AddressEscapeMode m_addressEscapeMode;
 };
 
 } // namespace AST

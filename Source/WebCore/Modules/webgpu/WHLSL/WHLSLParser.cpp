@@ -59,7 +59,7 @@ namespace WHLSL {
         return Unexpected<Error>(name.error());
 
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195682 Return a better error code from this, and report it to JavaScript.
-auto Parser::parse(Program& program, StringView stringView, Mode mode) -> Expected<void, Error>
+auto Parser::parse(Program& program, StringView stringView, ParsingMode mode) -> Expected<void, Error>
 {
     m_lexer = Lexer(stringView);
     m_mode = mode;
@@ -94,7 +94,7 @@ auto Parser::parse(Program& program, StringView stringView, Mode mode) -> Expect
             continue;
         }
         case Token::Type::Native: {
-            ASSERT(m_mode == Mode::StandardLibrary);
+            ASSERT(m_mode == ParsingMode::StandardLibrary);
             auto furtherToken = peekFurther();
             if (!furtherToken)
                 return { };
@@ -986,7 +986,7 @@ auto Parser::parseComputeFunctionDeclaration() -> Expected<AST::FunctionDeclarat
     auto endOffset = m_lexer.peek().startOffset();
 
     bool isOperator = false;
-    return AST::FunctionDeclaration({ origin->startOffset(), endOffset }, WTFMove(*attributeBlock), AST::EntryPointType::Compute, WTFMove(*type), name->stringView(m_lexer).toString(), WTFMove(*parameters), WTFMove(*semantic), isOperator);
+    return AST::FunctionDeclaration({ origin->startOffset(), endOffset }, WTFMove(*attributeBlock), AST::EntryPointType::Compute, WTFMove(*type), name->stringView(m_lexer).toString(), WTFMove(*parameters), WTFMove(*semantic), isOperator, m_mode);
 }
 
 auto Parser::parseVertexOrFragmentFunctionDeclaration() -> Expected<AST::FunctionDeclaration, Error>
@@ -1004,7 +1004,7 @@ auto Parser::parseVertexOrFragmentFunctionDeclaration() -> Expected<AST::Functio
     auto endOffset = m_lexer.peek().startOffset();
 
     bool isOperator = false;
-    return AST::FunctionDeclaration({ entryPoint->startOffset(), endOffset }, { }, entryPointType, WTFMove(*type), name->stringView(m_lexer).toString(), WTFMove(*parameters), WTFMove(*semantic), isOperator);
+    return AST::FunctionDeclaration({ entryPoint->startOffset(), endOffset }, { }, entryPointType, WTFMove(*type), name->stringView(m_lexer).toString(), WTFMove(*parameters), WTFMove(*semantic), isOperator, m_mode);
 }
 
 auto Parser::parseRegularFunctionDeclaration() -> Expected<AST::FunctionDeclaration, Error>
@@ -1023,7 +1023,7 @@ auto Parser::parseRegularFunctionDeclaration() -> Expected<AST::FunctionDeclarat
 
     auto endOffset = m_lexer.peek().startOffset();
 
-    return AST::FunctionDeclaration({ origin->startOffset(), endOffset }, { }, WTF::nullopt, WTFMove(*type), name->stringView(m_lexer).toString(), WTFMove(*parameters), WTFMove(*semantic), isOperator);
+    return AST::FunctionDeclaration({ origin->startOffset(), endOffset }, { }, WTF::nullopt, WTFMove(*type), name->stringView(m_lexer).toString(), WTFMove(*parameters), WTFMove(*semantic), isOperator, m_mode);
 }
 
 auto Parser::parseOperatorFunctionDeclaration() -> Expected<AST::FunctionDeclaration, Error>
@@ -1036,7 +1036,7 @@ auto Parser::parseOperatorFunctionDeclaration() -> Expected<AST::FunctionDeclara
     auto endOffset = m_lexer.peek().startOffset();
 
     bool isOperator = true;
-    return AST::FunctionDeclaration({ origin->startOffset(), endOffset }, { }, WTF::nullopt, WTFMove(*type), "operator cast"_str, WTFMove(*parameters), WTFMove(*semantic), isOperator);
+    return AST::FunctionDeclaration({ origin->startOffset(), endOffset }, { }, WTF::nullopt, WTFMove(*type), "operator cast"_str, WTFMove(*parameters), WTFMove(*semantic), isOperator, m_mode);
 }
 
 auto Parser::parseFunctionDeclaration() -> Expected<AST::FunctionDeclaration, Error>
@@ -1937,9 +1937,9 @@ auto Parser::parsePossiblePrefix(bool *isEffectful) -> Expected<UniqueRef<AST::E
             return { makeUniqueRef<AST::LogicalNotExpression>(location, WTFMove(boolCast)) };
         }
         case Token::Type::And:
-            return { makeUniqueRef<AST::MakePointerExpression>(location, WTFMove(*next)) };
+            return { makeUniqueRef<AST::MakePointerExpression>(location, WTFMove(*next), AST::AddressEscapeMode::Escapes) };
         case Token::Type::At:
-            return { makeUniqueRef<AST::MakeArrayReferenceExpression>(location, WTFMove(*next)) };
+            return { makeUniqueRef<AST::MakeArrayReferenceExpression>(location, WTFMove(*next), AST::AddressEscapeMode::Escapes) };
         default:
             ASSERT(prefix->type == Token::Type::Star);
             return { makeUniqueRef<AST::DereferenceExpression>(location, WTFMove(*next)) };

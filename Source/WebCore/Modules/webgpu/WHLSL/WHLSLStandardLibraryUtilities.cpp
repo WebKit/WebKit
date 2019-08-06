@@ -79,7 +79,7 @@ void includeStandardLibrary(Program& program, Parser& parser, bool parseFullStan
 {
     static NeverDestroyed<String> standardLibrary(decompressAndDecodeStandardLibrary());
     if (parseFullStandardLibrary) {
-        auto parseResult = parser.parse(program, standardLibrary.get(), Parser::Mode::StandardLibrary);
+        auto parseResult = parser.parse(program, standardLibrary.get(), ParsingMode::StandardLibrary);
         if (!parseResult) {
             dataLogLn("failed to parse the (full) standard library: ", Lexer::errorString(StringView(standardLibrary), parseResult.error()));
             ASSERT_NOT_REACHED();
@@ -90,7 +90,7 @@ void includeStandardLibrary(Program& program, Parser& parser, bool parseFullStan
     static NeverDestroyed<HashMap<String, SubstringLocation>> standardLibraryFunctionMap(computeStandardLibraryFunctionMap());
 
     auto stringView = StringView(standardLibrary.get()).substring(0, firstFunctionOffsetInStandardLibrary());
-    auto parseResult = parser.parse(program, stringView, Parser::Mode::StandardLibrary);
+    auto parseResult = parser.parse(program, stringView, ParsingMode::StandardLibrary);
     ASSERT_UNUSED(parseResult, parseResult);
 
     NameFinder nameFinder;
@@ -110,7 +110,7 @@ void includeStandardLibrary(Program& program, Parser& parser, bool parseFullStan
             if (iterator == standardLibraryFunctionMap.get().end())
                 continue;
             auto stringView = StringView(standardLibrary.get()).substring(iterator->value.start, iterator->value.end - iterator->value.start);
-            auto parseResult = parser.parse(program, stringView, Parser::Mode::StandardLibrary);
+            auto parseResult = parser.parse(program, stringView, ParsingMode::StandardLibrary);
             if (!parseResult) {
                 dataLogLn("failed to parse the (partial) standard library: ", Lexer::errorString(stringView, parseResult.error()));
                 ASSERT_NOT_REACHED();

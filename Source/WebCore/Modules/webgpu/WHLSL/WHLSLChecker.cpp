@@ -125,7 +125,7 @@ static AST::NativeFunctionDeclaration resolveWithOperatorAnderIndexer(CodeLocati
     AST::VariableDeclarations parameters;
     parameters.append(makeUniqueRef<AST::VariableDeclaration>(location, AST::Qualifiers(), &firstArgument, String(), nullptr, nullptr));
     parameters.append(makeUniqueRef<AST::VariableDeclaration>(location, AST::Qualifiers(), AST::TypeReference::wrap(location, intrinsics.uintType()), String(), nullptr, nullptr));
-    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator&[]", String::ConstructFromLiteral), WTFMove(parameters), nullptr, isOperator));
+    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator&[]", String::ConstructFromLiteral), WTFMove(parameters), nullptr, isOperator, ParsingMode::StandardLibrary));
 }
 
 static AST::NativeFunctionDeclaration resolveWithOperatorLength(CodeLocation location, AST::UnnamedType& firstArgument, const Intrinsics& intrinsics)
@@ -134,7 +134,7 @@ static AST::NativeFunctionDeclaration resolveWithOperatorLength(CodeLocation loc
     auto returnType = AST::TypeReference::wrap(location, intrinsics.uintType());
     AST::VariableDeclarations parameters;
     parameters.append(makeUniqueRef<AST::VariableDeclaration>(location, AST::Qualifiers(), &firstArgument, String(), nullptr, nullptr));
-    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator.length", String::ConstructFromLiteral), WTFMove(parameters), nullptr, isOperator));
+    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator.length", String::ConstructFromLiteral), WTFMove(parameters), nullptr, isOperator, ParsingMode::StandardLibrary));
 }
 
 static AST::NativeFunctionDeclaration resolveWithReferenceComparator(CodeLocation location, ResolvingType& firstArgument, ResolvingType& secondArgument, const Intrinsics& intrinsics)
@@ -156,7 +156,7 @@ static AST::NativeFunctionDeclaration resolveWithReferenceComparator(CodeLocatio
     AST::VariableDeclarations parameters;
     parameters.append(makeUniqueRef<AST::VariableDeclaration>(location, AST::Qualifiers(), argumentType.copyRef(), String(), nullptr, nullptr));
     parameters.append(makeUniqueRef<AST::VariableDeclaration>(location, AST::Qualifiers(), WTFMove(argumentType), String(), nullptr, nullptr));
-    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator==", String::ConstructFromLiteral), WTFMove(parameters), nullptr, isOperator));
+    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator==", String::ConstructFromLiteral), WTFMove(parameters), nullptr, isOperator, ParsingMode::StandardLibrary));
 }
 
 enum class Acceptability {

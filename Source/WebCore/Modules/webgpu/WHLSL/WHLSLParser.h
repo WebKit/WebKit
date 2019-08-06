@@ -27,71 +27,11 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLArrayReferenceType.h"
-#include "WHLSLArrayType.h"
-#include "WHLSLAssignmentExpression.h"
-#include "WHLSLBaseFunctionAttribute.h"
-#include "WHLSLBaseSemantic.h"
-#include "WHLSLBlock.h"
-#include "WHLSLBooleanLiteral.h"
-#include "WHLSLBreak.h"
-#include "WHLSLBuiltInSemantic.h"
-#include "WHLSLCallExpression.h"
-#include "WHLSLCommaExpression.h"
-#include "WHLSLConstantExpression.h"
-#include "WHLSLContinue.h"
-#include "WHLSLDereferenceExpression.h"
-#include "WHLSLDoWhileLoop.h"
-#include "WHLSLDotExpression.h"
-#include "WHLSLEffectfulExpressionStatement.h"
-#include "WHLSLEnumerationDefinition.h"
-#include "WHLSLEnumerationMember.h"
+#include "WHLSLAST.h"
 #include "WHLSLError.h"
-#include "WHLSLExpression.h"
-#include "WHLSLFallthrough.h"
-#include "WHLSLFloatLiteral.h"
-#include "WHLSLForLoop.h"
-#include "WHLSLFunctionAttribute.h"
-#include "WHLSLFunctionDeclaration.h"
-#include "WHLSLFunctionDefinition.h"
-#include "WHLSLIfStatement.h"
-#include "WHLSLIndexExpression.h"
-#include "WHLSLIntegerLiteral.h"
 #include "WHLSLLexer.h"
-#include "WHLSLLogicalExpression.h"
-#include "WHLSLLogicalNotExpression.h"
-#include "WHLSLMakeArrayReferenceExpression.h"
-#include "WHLSLMakePointerExpression.h"
-#include "WHLSLNativeFunctionDeclaration.h"
-#include "WHLSLNativeTypeDeclaration.h"
-#include "WHLSLNullLiteral.h"
-#include "WHLSLNumThreadsFunctionAttribute.h"
-#include "WHLSLPointerType.h"
+#include "WHLSLParsingMode.h"
 #include "WHLSLProgram.h"
-#include "WHLSLPropertyAccessExpression.h"
-#include "WHLSLQualifier.h"
-#include "WHLSLReadModifyWriteExpression.h"
-#include "WHLSLReferenceType.h"
-#include "WHLSLResourceSemantic.h"
-#include "WHLSLReturn.h"
-#include "WHLSLSemantic.h"
-#include "WHLSLSpecializationConstantSemantic.h"
-#include "WHLSLStageInOutSemantic.h"
-#include "WHLSLStatement.h"
-#include "WHLSLStructureDefinition.h"
-#include "WHLSLStructureElement.h"
-#include "WHLSLSwitchCase.h"
-#include "WHLSLSwitchStatement.h"
-#include "WHLSLTernaryExpression.h"
-#include "WHLSLType.h"
-#include "WHLSLTypeArgument.h"
-#include "WHLSLTypeDefinition.h"
-#include "WHLSLTypeReference.h"
-#include "WHLSLUnsignedIntegerLiteral.h"
-#include "WHLSLVariableDeclaration.h"
-#include "WHLSLVariableDeclarationsStatement.h"
-#include "WHLSLVariableReference.h"
-#include "WHLSLWhileLoop.h"
 #include <wtf/Expected.h>
 #include <wtf/Optional.h>
 #include <wtf/PrintStream.h>
@@ -102,12 +42,7 @@ namespace WHLSL {
 
 class Parser {
 public:
-    enum class Mode {
-        StandardLibrary,
-        User
-    };
-
-    Expected<void, Error> parse(Program&, StringView, Mode);
+    Expected<void, Error> parse(Program&, StringView, ParsingMode);
 
 private:
     // FIXME: We should not need this
@@ -232,7 +167,7 @@ private:
     Expected<UniqueRef<AST::Expression>, Error> parseTerm();
 
     Lexer m_lexer;
-    Mode m_mode;
+    ParsingMode m_mode;
 };
 
 } // namespace WHLSL

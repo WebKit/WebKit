@@ -27,49 +27,17 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLAddressEscapeMode.h"
-#include "WHLSLExpression.h"
-#include <wtf/FastMalloc.h>
-#include <wtf/UniqueRef.h>
-
 namespace WebCore {
 
 namespace WHLSL {
 
-namespace AST {
-
-class MakeArrayReferenceExpression : public Expression {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    MakeArrayReferenceExpression(CodeLocation location, UniqueRef<Expression>&& leftValue, AddressEscapeMode addressEscapeMode)
-        : Expression(location)
-        , m_leftValue(WTFMove(leftValue))
-        , m_addressEscapeMode(addressEscapeMode)
-    {
-    }
-
-    virtual ~MakeArrayReferenceExpression() = default;
-
-    MakeArrayReferenceExpression(const MakeArrayReferenceExpression&) = delete;
-    MakeArrayReferenceExpression(MakeArrayReferenceExpression&&) = default;
-
-    bool isMakeArrayReferenceExpression() const override { return true; }
-
-    Expression& leftValue() { return m_leftValue; }
-
-    bool mightEscape() const { return m_addressEscapeMode == AddressEscapeMode::Escapes; }
-
-private:
-    UniqueRef<Expression> m_leftValue;
-    AddressEscapeMode m_addressEscapeMode;
+enum class ParsingMode : uint8_t {
+    StandardLibrary,
+    User
 };
 
-} // namespace AST
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-}
-
-SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(MakeArrayReferenceExpression, isMakeArrayReferenceExpression())
-
-#endif
+#endif // ENABLE(WEBGPU)

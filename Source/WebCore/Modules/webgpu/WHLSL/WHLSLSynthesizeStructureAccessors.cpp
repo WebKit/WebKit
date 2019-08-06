@@ -51,7 +51,7 @@ Expected<void, Error> synthesizeStructureAccessors(Program& program)
                 AST::VariableDeclarations parameters;
                 parameters.append(WTFMove(variableDeclaration));
                 auto returnType = AST::PointerType::create(structureElement.codeLocation(), addressSpace, structureElement.type());
-                AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(structureElement.codeLocation(), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), makeString("operator&.", structureElement.name()), WTFMove(parameters), nullptr, isOperator));
+                AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(structureElement.codeLocation(), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), makeString("operator&.", structureElement.name()), WTFMove(parameters), nullptr, isOperator, ParsingMode::StandardLibrary));
                 return nativeFunctionDeclaration;
             };
             if (!program.append(createAnder(AST::AddressSpace::Constant))

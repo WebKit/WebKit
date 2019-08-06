@@ -98,13 +98,19 @@ struct AnderCallArgumentResult {
 };
 
 template <typename ExpressionConstructor, typename TypeConstructor>
-static Optional<AnderCallArgumentResult> wrapAnderCallArgument(UniqueRef<AST::Expression>& expression, Ref<AST::UnnamedType> baseType, bool anderFunction, bool threadAnderFunction)
+static Optional<AnderCallArgumentResult> wrapAnderCallArgument(UniqueRef<AST::Expression>& expression, Ref<AST::UnnamedType> baseType, AST::FunctionDeclaration* anderFunction, AST::FunctionDeclaration* threadAnderFunction)
 {
+    auto functionEscapeMode = [] (AST::FunctionDeclaration& functionDeclaration) {
+        if (functionDeclaration.isNativeFunctionDeclaration() || functionDeclaration.parsingMode() == ParsingMode::StandardLibrary)
+            return AST::AddressEscapeMode::DoesNotEscape;
+        return AST::AddressEscapeMode::Escapes;
+    };
+
     auto location = expression->codeLocation();
     if (auto addressSpace = expression->typeAnnotation().leftAddressSpace()) {
         if (!anderFunction)
             return WTF::nullopt;
-        auto makeArrayReference = makeUniqueRef<ExpressionConstructor>(location, WTFMove(expression));
+        auto makeArrayReference = makeUniqueRef<ExpressionConstructor>(location, WTFMove(expression), functionEscapeMode(*anderFunction));
         makeArrayReference->setType(TypeConstructor::create(location, *addressSpace, WTFMove(baseType)));
         makeArrayReference->setTypeAnnotation(AST::RightValue());
         return {{ WTFMove(makeArrayReference), WTF::nullopt, WhichAnder::Ander }};
@@ -124,7 +130,7 @@ static Optional<AnderCallArgumentResult> wrapAnderCallArgument(UniqueRef<AST::Ex
         variableReference2->setType(baseType.copyRef());
         variableReference2->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread });
 
-        auto expression = makeUniqueRef<ExpressionConstructor>(location, WTFMove(variableReference2));
+        auto expression = makeUniqueRef<ExpressionConstructor>(location, WTFMove(variableReference2), functionEscapeMode(*threadAnderFunction));
         auto resultType = TypeConstructor::create(location, AST::AddressSpace::Thread, WTFMove(baseType));
         expression->setType(resultType.copyRef());
         expression->setTypeAnnotation(AST::RightValue());
@@ -140,7 +146,7 @@ static Optional<AnderCallArgumentResult> wrapAnderCallArgument(UniqueRef<AST::Ex
     return WTF::nullopt;
 }
 
-static Optional<AnderCallArgumentResult> anderCallArgument(UniqueRef<AST::Expression>& expression, bool anderFunction, bool threadAnderFunction)
+static Optional<AnderCallArgumentResult> anderCallArgument(UniqueRef<AST::Expression>& expression, AST::FunctionDeclaration* anderFunction, AST::FunctionDeclaration* threadAnderFunction)
 {
     if (!anderFunction && !threadAnderFunction)
         return WTF::nullopt;
@@ -172,7 +178,7 @@ static UniqueRef<AST::Expression> setterCall(AST::PropertyAccessExpression& prop
     if (relevantAnder) {
         // *operator&.foo(&v) = newValue
         auto leftValue = leftValueFactory();
-        auto argument = anderCallArgument(leftValue, true, true);
+        auto argument = anderCallArgument(leftValue, relevantAnder, relevantAnder);
         ASSERT(argument);
         ASSERT(!argument->variableDeclaration);
         ASSERT(argument->whichAnder == WhichAnder::Ander);
@@ -233,7 +239,7 @@ static UniqueRef<AST::Expression> getterCall(AST::PropertyAccessExpression& prop
     if (relevantAnder) {
         // *operator&.foo(&v)
         auto leftValue = leftValueFactory();
-        auto argument = anderCallArgument(leftValue, true, true);
+        auto argument = anderCallArgument(leftValue, relevantAnder, relevantAnder);
         ASSERT(argument);
         ASSERT(!argument->variableDeclaration);
         ASSERT(argument->whichAnder == WhichAnder::Ander);
@@ -362,7 +368,7 @@ static ModifyResult modify(AST::PropertyAccessExpression& propertyAccessExpressi
 
     // Step 1:
     {
-        auto makePointerExpression = makeUniqueRef<AST::MakePointerExpression>(innerLeftExpression.codeLocation(), WTFMove(leftExpression));
+        auto makePointerExpression = makeUniqueRef<AST::MakePointerExpression>(innerLeftExpression.codeLocation(), WTFMove(leftExpression), AST::AddressEscapeMode::DoesNotEscape);
         makePointerExpression->setType(AST::PointerType::create(innerLeftExpression.codeLocation(), *innerLeftExpression.typeAnnotation().leftAddressSpace(), innerLeftExpression.resolvedType()));
         makePointerExpression->setTypeAnnotation(AST::RightValue());
 
@@ -559,7 +565,7 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
         Vector<UniqueRef<AST::Expression>> expressions;
 
         {
-            auto makePointerExpression = makeUniqueRef<AST::MakePointerExpression>(leftValueLocation, readModifyWriteExpression.takeLeftValue());
+            auto makePointerExpression = makeUniqueRef<AST::MakePointerExpression>(leftValueLocation, readModifyWriteExpression.takeLeftValue(), AST::AddressEscapeMode::DoesNotEscape);
             makePointerExpression->setType(pointerType.copyRef());
             makePointerExpression->setTypeAnnotation(AST::RightValue());
 

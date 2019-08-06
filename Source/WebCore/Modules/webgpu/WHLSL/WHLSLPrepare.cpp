@@ -157,7 +157,7 @@ static Expected<Program, String> prepareShared(PhaseTimes& phaseTimes, String& w
 
     {
         PhaseTimer phaseTimer("parse", phaseTimes);
-        auto parseResult = parser.parse(program, whlslSource, Parser::Mode::User);
+        auto parseResult = parser.parse(program, whlslSource, ParsingMode::User);
         if (!parseResult) {
             if (dumpPassFailure)
                 dataLogLn("failed to parse the program: ", Lexer::errorString(whlslSource, parseResult.error()));

@@ -1,3 +1,71 @@
+2019-08-06  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Reduce the number of variables that make it into the global struct by skipping stdlib functions and internal uses of MakePointerExpression/MakeArrayReference
+        https://bugs.webkit.org/show_bug.cgi?id=200463
+
+        Reviewed by Myles C. Maxfield.
+
+        This patch makes it so that we put fewer variables in the global struct.
+        This decreases end-to-end running time in compute_boids by 30% (with p = 0.0001).
+        
+        We achieve this in two ways:
+        1. We track if each function is user code or "standard library" code. We also
+        count native functions as the standard library. We know a priori that the
+        standard library never escapes any variables. So the preserve variable
+        lifetimes phase skips analyzing all standard library functions and also
+        skips passing the global struct to any standard library functions.
+        
+        2. We internally emit MakePointerExpression/MakeArrayReferenceExpression nodes in
+        the compiler in various phases. We sometimes emit these nodes in such a way
+        that we know that this address-of expression does not cause the variable to
+        escape. We now mark each address-of expressions as either:
+        - Conservatively escaping. We conservatively do this for all user code.
+        - Not escaping. This means that this address-of operation definitely does
+        not escape the variable. If a variable never has an escaping use, we will
+        omit putting this variable in the struct.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLAddressEscapeMode.h: Added.
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionDeclaration.h:
+        (WebCore::WHLSL::AST::FunctionDeclaration::FunctionDeclaration):
+        (WebCore::WHLSL::AST::FunctionDeclaration::parsingMode const):
+        * Modules/webgpu/WHLSL/AST/WHLSLMakeArrayReferenceExpression.h:
+        (WebCore::WHLSL::AST::MakeArrayReferenceExpression::MakeArrayReferenceExpression):
+        (WebCore::WHLSL::AST::MakeArrayReferenceExpression::mightEscape const):
+        * Modules/webgpu/WHLSL/AST/WHLSLMakePointerExpression.h:
+        (WebCore::WHLSL::AST::MakePointerExpression::MakePointerExpression):
+        (WebCore::WHLSL::AST::MakePointerExpression::mightEscape const):
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::resolveWithOperatorAnderIndexer):
+        (WebCore::WHLSL::resolveWithOperatorLength):
+        (WebCore::WHLSL::resolveWithReferenceComparator):
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::parse):
+        (WebCore::WHLSL::Parser::parseComputeFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseVertexOrFragmentFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseRegularFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseOperatorFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parsePossiblePrefix):
+        * Modules/webgpu/WHLSL/WHLSLParser.h:
+        * Modules/webgpu/WHLSL/WHLSLParsingMode.h: Added.
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp:
+        (WebCore::WHLSL::prepareShared):
+        * Modules/webgpu/WHLSL/WHLSLPreserveVariableLifetimes.cpp:
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp:
+        (WebCore::WHLSL::wrapAnderCallArgument):
+        (WebCore::WHLSL::modify):
+        (WebCore::WHLSL::PropertyResolver::visit):
+        * Modules/webgpu/WHLSL/WHLSLStandardLibraryUtilities.cpp:
+        (WebCore::WHLSL::includeStandardLibrary):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeArrayOperatorLength.cpp:
+        (WebCore::WHLSL::synthesizeArrayOperatorLength):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.cpp:
+        (WebCore::WHLSL::synthesizeConstructors):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeEnumerationFunctions.cpp:
+        (WebCore::WHLSL::synthesizeEnumerationFunctions):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeStructureAccessors.cpp:
+        (WebCore::WHLSL::synthesizeStructureAccessors):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-08-06  Jer Noble  <jer.noble@apple.com>
 
         Adopt -expectMinimumUpcomingSampleBufferPresentationTime:

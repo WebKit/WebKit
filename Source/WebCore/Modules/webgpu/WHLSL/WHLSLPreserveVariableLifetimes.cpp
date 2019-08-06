@@ -77,12 +77,14 @@ public:
 
     void visit(AST::MakePointerExpression& makePointerExpression) override
     {
-        escapeVariableUse(makePointerExpression.leftValue());
+        if (makePointerExpression.mightEscape())
+            escapeVariableUse(makePointerExpression.leftValue());
     }
 
     void visit(AST::MakeArrayReferenceExpression& makeArrayReferenceExpression) override
     {
-        escapeVariableUse(makeArrayReferenceExpression.leftValue());
+        if (makeArrayReferenceExpression.mightEscape())
+            escapeVariableUse(makeArrayReferenceExpression.leftValue());
     }
 
     HashMap<AST::VariableDeclaration*, String> takeEscapedVariables() { return WTFMove(m_escapedVariables); }
@@ -133,6 +135,9 @@ public:
 
     void visit(AST::FunctionDefinition& functionDefinition) override
     {
+        if (functionDefinition.parsingMode() == ParsingMode::StandardLibrary)
+            return;
+
         bool isEntryPoint = !!functionDefinition.entryPointType();
         if (isEntryPoint) {
             auto structVariableDeclaration = makeUniqueRef<AST::VariableDeclaration>(functionDefinition.codeLocation(), AST::Qualifiers(),
@@ -146,7 +151,7 @@ public:
             structVariableDeclarations.append(WTFMove(structVariableDeclaration));
             auto structDeclarationStatement = makeUniqueRef<AST::VariableDeclarationsStatement>(functionDefinition.codeLocation(), WTFMove(structVariableDeclarations));
 
-            auto makePointerExpression = std::make_unique<AST::MakePointerExpression>(functionDefinition.codeLocation(), WTFMove(structVariableReference));
+            auto makePointerExpression = std::make_unique<AST::MakePointerExpression>(functionDefinition.codeLocation(), WTFMove(structVariableReference), AST::AddressEscapeMode::DoesNotEscape);
             makePointerExpression->setType(m_pointerToStructType.copyRef());
             makePointerExpression->setTypeAnnotation(AST::RightValue());
 
@@ -190,7 +195,7 @@ public:
 
         // This works because it's illegal to call an entrypoint. Therefore, we can only
         // call functions where we've already appended this struct as its final parameter.
-        if (!callExpression.function().isNativeFunctionDeclaration())
+        if (!callExpression.function().isNativeFunctionDeclaration() && callExpression.function().parsingMode() != ParsingMode::StandardLibrary)
             callExpression.arguments().append(makeStructVariableReference());
     }
 
