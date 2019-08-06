@@ -1,5 +1,13 @@
 2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
 
+        Unreviewed, a build fix after r248308
+
+        Don't use WK_ENGINEERING_CODE_SIGN_IDENTITY for Production build.
+
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig:
+
+2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
+
         Unreviewed, a build fix after r248319
 
         Use HAVE(DATA_PROTECTION_KEYCHAIN) instead of HAVE_DATA_PROTECTION_KEYCHAIN.
