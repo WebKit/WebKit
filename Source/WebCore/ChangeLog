@@ -1,3 +1,46 @@
+2019-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Unable to increase zoom level on Google using the Aa menu
+        https://bugs.webkit.org/show_bug.cgi?id=200453
+        <rdar://problem/52278579>
+
+        Reviewed by Tim Horton.
+
+        Makes a couple of minor adjustments to how layout size scale factor is handled in ViewportConfiguration, to
+        address some scenarios in which adjusting WKWebView's _viewScale does not have any apparent effect on the page.
+        See changes below for more detail.
+
+        Tests: fast/viewport/ios/non-responsive-viewport-after-changing-view-scale.html
+               fast/viewport/ios/responsive-viewport-with-minimum-width-after-changing-view-scale.html
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::initialScaleFromSize const):
+
+        When the page is either zoomed in or zoomed out using _viewScale, let the specified initial scale take
+        precedence over the scale computed by fitting the content width to the view width, or the scale computed by
+        fitting the content height to the view height.
+
+        This avoids a scenario in which nothing happens when increasing view scale in a responsively designed web page
+        that has a fixed minimum width. Before this change, when computing the initial scale at a view scale that would
+        not allow the entire content width of the page to fit within the viewport, the new initial scale would remain
+        unchanged if the initial scale in the meta viewport is not also set to 1, because a new initial scale would be
+        computed in ViewportConfiguration::initialScaleFromSize to accomodate for the entire content width.
+
+        Our new behavior allows us to zoom into the page, even if doing so would cause horizontal scrolling.
+
+        (WebCore::ViewportConfiguration::updateConfiguration):
+
+        When the page is either zoomed in or zoomed out using _viewScale and the default viewport configuration has a
+        fixed width (e.g. on iPhone), then adjust the width of the default viewport configuration to account for the
+        _viewScale. For example, the default width of a viewport-less web page is 980px on iPhone; at a view scale of 2,
+        this would become 490px instead, and at 0.5 view scale, it would become 1960px.
+
+        This ensures that on iPhone, for web pages without a meta viewport, changing the view scale still changes the
+        layout and initial scale of the web page.
+
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::layoutSizeIsExplicitlyScaled const):
+
 2019-08-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Remove out-of-flow descendants from Container

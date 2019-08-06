@@ -1,3 +1,31 @@
+2019-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Unable to increase zoom level on Google using the Aa menu
+        https://bugs.webkit.org/show_bug.cgi?id=200453
+        <rdar://problem/52278579>
+
+        Reviewed by Tim Horton.
+
+        Adds a couple of layout tests (with device-specific expectations) to verify that the two scenarios targeted by
+        this change are fixed.
+
+        * fast/viewport/ios/non-responsive-viewport-after-changing-view-scale-expected.txt: Added.
+        * fast/viewport/ios/non-responsive-viewport-after-changing-view-scale.html: Added.
+
+        Verifies that, for a page with no viewport meta tag (where we fall back to a fixed 980px viewport on iPhone),
+        changing view scale still changes page scale and window size.
+
+        * fast/viewport/ios/responsive-viewport-with-minimum-width-after-changing-view-scale-expected.txt: Added.
+        * fast/viewport/ios/responsive-viewport-with-minimum-width-after-changing-view-scale.html: Added.
+
+        Verifies that, for a page with a responsive meta viewport tag containing a fixed-width element that forces a
+        minimum width for the page, setting the view scale such that the page scrolls horizontally (2.5) doesn't result
+        in the initial scale being adjusted back to the maximum scale that would accomodate the full contents of the
+        page (2).
+
+        * platform/ipad/fast/viewport/ios/non-responsive-viewport-after-changing-view-scale-expected.txt: Added.
+        * platform/ipad/fast/viewport/ios/responsive-viewport-with-minimum-width-after-changing-view-scale-expected.txt: Added.
+
 2019-08-05  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Styles: show @supports CSS groupings

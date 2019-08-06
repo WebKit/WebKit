@@ -246,6 +246,18 @@ double ViewportConfiguration::initialScaleFromSize(double width, double height, 
 {
     ASSERT(!constraintsAreAllRelative(m_configuration));
 
+    auto clampToMinimumAndMaximumScales = [&] (double initialScale) {
+        return clampTo<double>(initialScale, shouldIgnoreScalingConstraints ? m_defaultConfiguration.minimumScale : m_configuration.minimumScale, m_configuration.maximumScale);
+    };
+
+    if (layoutSizeIsExplicitlyScaled()) {
+        if (m_configuration.initialScaleIsSet)
+            return clampToMinimumAndMaximumScales(m_configuration.initialScale);
+
+        if (m_configuration.width > 0)
+            return clampToMinimumAndMaximumScales(m_viewLayoutSize.width() / m_configuration.width);
+    }
+
     // If the document has specified its own initial scale, use it regardless.
     // This is guaranteed to be sanity checked already, so no need for MIN/MAX.
     if (m_configuration.initialScaleIsSet && !shouldIgnoreScalingConstraints)
@@ -261,7 +273,7 @@ double ViewportConfiguration::initialScaleFromSize(double width, double height, 
     if (height > 0 && height * initialScale < m_viewLayoutSize.height() && !shouldIgnoreHorizontalScalingConstraints())
         initialScale = m_viewLayoutSize.height() / height;
 
-    return std::min(std::max(initialScale, shouldIgnoreScalingConstraints ? m_defaultConfiguration.minimumScale : m_configuration.minimumScale), m_configuration.maximumScale);
+    return clampToMinimumAndMaximumScales(initialScale);
 }
 
 double ViewportConfiguration::initialScale() const
@@ -458,6 +470,11 @@ void ViewportConfiguration::updateConfiguration()
     bool viewportArgumentsOverridesWidth;
     bool viewportArgumentsOverridesHeight;
 
+    auto effectiveLayoutScale = effectiveLayoutSizeScaleFactor();
+
+    if (layoutSizeIsExplicitlyScaled())
+        m_configuration.width /= effectiveLayoutScale;
+
     applyViewportArgument(m_configuration.minimumScale, m_viewportArguments.minZoom, minimumViewportArgumentsScaleFactor, maximumViewportArgumentsScaleFactor);
     applyViewportArgument(m_configuration.maximumScale, m_viewportArguments.maxZoom, m_configuration.minimumScale, maximumViewportArgumentsScaleFactor);
     applyViewportArgument(m_configuration.initialScale, viewportArgumentsOverridesInitialScale, m_viewportArguments.zoom, m_configuration.minimumScale, m_configuration.maximumScale);
@@ -486,7 +503,6 @@ void ViewportConfiguration::updateConfiguration()
 
     m_configuration.avoidsUnsafeArea = m_viewportArguments.viewportFit != ViewportFit::Cover;
     m_configuration.initialScaleIgnoringLayoutScaleFactor = m_configuration.initialScale;
-    float effectiveLayoutScale = effectiveLayoutSizeScaleFactor();
     m_configuration.initialScale *= effectiveLayoutScale;
     m_configuration.minimumScale *= effectiveLayoutScale;
     m_configuration.maximumScale *= effectiveLayoutScale;
