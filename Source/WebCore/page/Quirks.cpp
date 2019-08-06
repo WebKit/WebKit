@@ -295,9 +295,16 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
         return true;
     if (equalLettersIgnoringASCIICase(host, "naver.com"))
         return true;
-    // Disable the quirk for tv.naver.com subdomain to be able to simulate hover on videos.
-    if (host.endsWithIgnoringASCIICase(".naver.com"))
-        return !equalLettersIgnoringASCIICase(host, "tv.naver.com");
+    if (host.endsWithIgnoringASCIICase(".naver.com")) {
+        // Disable the quirk for tv.naver.com subdomain to be able to simulate hover on videos.
+        if (equalLettersIgnoringASCIICase(host, "tv.naver.com"))
+            return false;
+        // Disable the quirk on the mobile site.
+        // FIXME: Maybe this quirk should be disabled for "m." subdomains on all sites? These are generally mobile sites that don't need mouse events.
+        if (equalLettersIgnoringASCIICase(host, "m.naver.com"))
+            return false;
+        return true;
+    }
     return false;
 }
 
