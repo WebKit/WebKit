@@ -38,7 +38,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         this._style = style;
         this._propertiesEditor = null;
         this._selectorElements = [];
-        this._groupingElements = [];
+        this._mediaElements = [];
         this._filterText = null;
         this._shouldFocusSelectorElement = false;
         this._wasEditing = false;
@@ -99,29 +99,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             this._element.classList.add(iconClassName);
         }
 
-        let groupings = this._style.groupings.filter((grouping) => grouping.text !== "all");
-        if (groupings.length) {
-            let groupingsElement = this.element.appendChild(document.createElement("div"));
-            groupingsElement.classList.add("header-groupings");
-
-            let currentGroupingType = null;
-            let groupingTypeElement = null;
-            this._groupingElements = groupings.map((grouping) => {
-                if (grouping.type !== currentGroupingType) {
-                    groupingTypeElement = groupingsElement.appendChild(document.createElement("div"));
-                    groupingTypeElement.classList.add("grouping");
-                    groupingTypeElement.textContent = grouping.prefix + " ";
-                    currentGroupingType = grouping.type;
-                } else
-                    groupingTypeElement.append(", ");
-
-                let span = groupingTypeElement.appendChild(document.createElement("span"));
-                span.textContent = grouping.text;
-                return span;
-            });
-        }
-
-        this._headerElement = this._element.appendChild(document.createElement("div"));
+        this._headerElement = document.createElement("div");
         this._headerElement.classList.add("header");
 
         this._styleOriginView = new WI.StyleOriginView();
@@ -158,7 +136,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         this._closeBrace.classList.add("close-brace");
         this._closeBrace.textContent = "}";
 
-
+        this._element.append(this._createMediaHeader(), this._headerElement);
         this.addSubview(this._propertiesEditor);
         this._propertiesEditor.needsLayout();
         this._element.append(this._closeBrace);
@@ -402,6 +380,31 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         if (this._filterText)
             this.applyFilter(this._filterText);
+    }
+
+    _createMediaHeader()
+    {
+        let mediaList = this._style.mediaList;
+        if (!mediaList.length || (mediaList.length === 1 && (mediaList[0].text === "all" || mediaList[0].text === "screen")))
+            return "";
+
+        let mediaElement = document.createElement("div");
+        mediaElement.classList.add("header-media");
+
+        let mediaLabel = mediaElement.appendChild(document.createElement("div"));
+        mediaLabel.className = "media-label";
+        mediaLabel.append("@media ");
+
+        this._mediaElements = mediaList.map((media, i) => {
+            if (i)
+                mediaLabel.append(", ");
+
+            let span = mediaLabel.appendChild(document.createElement("span"));
+            span.textContent = media.text;
+            return span;
+        });
+
+        return mediaElement;
     }
 
     _save(event)
@@ -665,13 +668,13 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
     _handleEditorFilterApplied(event)
     {
-        let matchesGrouping = false;
-        for (let groupingElement of this._groupingElements) {
-            groupingElement.classList.remove(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
+        let matchesMedia = false;
+        for (let mediaElement of this._mediaElements) {
+            mediaElement.classList.remove(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
 
-            if (groupingElement.textContent.includes(this._filterText)) {
-                groupingElement.classList.add(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
-                matchesGrouping = true;
+            if (mediaElement.textContent.includes(this._filterText)) {
+                mediaElement.classList.add(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
+                matchesMedia = true;
             }
         }
 
@@ -685,7 +688,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             }
         }
 
-        let matches = event.data.matches || matchesGrouping || matchesSelector;
+        let matches = event.data.matches || matchesMedia || matchesSelector;
         if (!matches)
             this._element.classList.add(WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
 

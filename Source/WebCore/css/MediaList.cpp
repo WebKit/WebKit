@@ -73,6 +73,7 @@ MediaQuerySet::MediaQuerySet() = default;
 
 MediaQuerySet::MediaQuerySet(const MediaQuerySet& o)
     : RefCounted()
+    , m_lastLine(o.m_lastLine)
     , m_queries(o.m_queries)
 {
 }

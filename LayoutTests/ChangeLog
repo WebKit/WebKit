@@ -1,3 +1,16 @@
+2019-08-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r248289.
+        https://bugs.webkit.org/show_bug.cgi?id=200488
+
+        Broke internal builds (Requested by drousso on #webkit).
+
+        Reverted changeset:
+
+        "Web Inspector: Styles: show @supports CSS groupings"
+        https://bugs.webkit.org/show_bug.cgi?id=200419
+        https://trac.webkit.org/changeset/248289
+
 2019-08-06  Russell Epstein  <repstein@apple.com>
 
         Updating Test Expectations for <rdar://53957264>, <rdar://53946482>, <rdar://53866783>

@@ -123,23 +123,14 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
     // Public
 
-    get node() { return this._node; }
-    get matchedRules() { return this._matchedRules; }
-    get inheritedRules() { return this._inheritedRules; }
-    get inlineStyle() { return this._inlineStyle; }
-    get attributesStyle() { return this._attributesStyle; }
-    get pseudoElements() { return this._pseudoElements; }
-    get computedStyle() { return this._computedStyle; }
-    get orderedStyles() { return this._orderedStyles; }
+    get node()
+    {
+        return this._node;
+    }
 
     get needsRefresh()
     {
         return this._pendingRefreshTask || this._needsRefresh;
-    }
-
-    get uniqueOrderedStyles()
-    {
-        return WI.DOMNodeStyles.uniqueOrderedStyles(this._orderedStyles);
     }
 
     refreshIfNeeded()
@@ -382,6 +373,62 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             inspectorStyleSheetAvailable.call(this, WI.cssManager.styleSheetForIdentifier(styleSheetId));
         else
             WI.cssManager.preferredInspectorStyleSheetForFrame(this._node.frame, inspectorStyleSheetAvailable.bind(this));
+    }
+
+    rulesForSelector(selector)
+    {
+        selector = selector || this._node.appropriateSelectorFor(true);
+
+        function ruleHasSelector(rule) {
+            return !rule.mediaList.length && rule.selectorText === selector;
+        }
+
+        let rules = this._matchedRules.filter(ruleHasSelector);
+
+        for (let pseudoElementInfo of this._pseudoElements.values())
+            rules = rules.concat(pseudoElementInfo.matchedRules.filter(ruleHasSelector));
+
+        return rules;
+    }
+
+    get matchedRules()
+    {
+        return this._matchedRules;
+    }
+
+    get inheritedRules()
+    {
+        return this._inheritedRules;
+    }
+
+    get inlineStyle()
+    {
+        return this._inlineStyle;
+    }
+
+    get attributesStyle()
+    {
+        return this._attributesStyle;
+    }
+
+    get pseudoElements()
+    {
+        return this._pseudoElements;
+    }
+
+    get computedStyle()
+    {
+        return this._computedStyle;
+    }
+
+    get orderedStyles()
+    {
+        return this._orderedStyles;
+    }
+
+    get uniqueOrderedStyles()
+    {
+        return WI.DOMNodeStyles.uniqueOrderedStyles(this._orderedStyles);
     }
 
     effectivePropertyForName(name)
@@ -684,24 +731,27 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             sourceCodeLocation = styleSheet.offsetSourceCodeLocation(sourceCodeLocation);
         }
 
-        // COMPATIBILITY (iOS 13): CSS.CSSRule.groupings did not exist yet.
-        let groupings = (payload.groupings || payload.media || []).map((grouping) => {
-            let groupingType = WI.CSSManager.protocolGroupingTypeToEnum(grouping.type || grouping.source);
-            let groupingSourceCodeLocation = DOMNodeStyles.createSourceCodeLocation(grouping.sourceURL);
+        var mediaList = [];
+        for (var i = 0; payload.media && i < payload.media.length; ++i) {
+            var mediaItem = payload.media[i];
+            var mediaType = WI.CSSManager.protocolMediaSourceToEnum(mediaItem.source);
+            var mediaText = mediaItem.text;
+            let mediaSourceCodeLocation = DOMNodeStyles.createSourceCodeLocation(mediaItem.sourceURL, {line: mediaItem.sourceLine});
             if (styleSheet)
-                groupingSourceCodeLocation = styleSheet.offsetSourceCodeLocation(groupingSourceCodeLocation);
-            return new WI.CSSGrouping(groupingType, grouping.text, groupingSourceCodeLocation);
-        });
+                mediaSourceCodeLocation = styleSheet.offsetSourceCodeLocation(mediaSourceCodeLocation);
+
+            mediaList.push(new WI.CSSMedia(mediaType, mediaText, mediaSourceCodeLocation));
+        }
 
         if (rule) {
-            rule.update(sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, groupings);
+            rule.update(sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, mediaList);
             return rule;
         }
 
         if (styleSheet)
             styleSheet.addEventListener(WI.CSSStyleSheet.Event.ContentDidChange, this._styleSheetContentDidChange, this);
 
-        rule = new WI.CSSRule(this, styleSheet, id, type, sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, groupings);
+        rule = new WI.CSSRule(this, styleSheet, id, type, sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, mediaList);
 
         if (mapKey)
             this._rulesMap.set(mapKey, rule);

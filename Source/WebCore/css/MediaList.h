@@ -56,6 +56,9 @@ public:
 
     const Vector<MediaQuery>& queryVector() const { return m_queries; }
 
+    int lastLine() const { return m_lastLine; }
+    void setLastLine(int lastLine) { m_lastLine = lastLine; }
+
     WEBCORE_EXPORT String mediaText() const;
 
     Ref<MediaQuerySet> copy() const { return adoptRef(*new MediaQuerySet(*this)); }
@@ -67,6 +70,7 @@ private:
     WEBCORE_EXPORT MediaQuerySet(const String& mediaQuery);
     MediaQuerySet(const MediaQuerySet&);
 
+    int m_lastLine { 0 };
     Vector<MediaQuery> m_queries;
 };
 

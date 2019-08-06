@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CSSGrouping = class CSSGrouping
+WI.CSSMedia = class CSSMedia
 {
     constructor(type, text, sourceCodeLocation)
     {
-        console.assert(Object.values(CSSGrouping.Type).includes(type));
-        console.assert(typeof text === "string" && text.length);
         console.assert(!sourceCodeLocation || sourceCodeLocation instanceof WI.SourceCodeLocation);
 
-        this._type = type;
-        this._text = text;
+        this._type = type || null;
+        this._text = text || "";
         this._sourceCodeLocation = sourceCodeLocation || null;
     }
 
@@ -41,34 +39,11 @@ WI.CSSGrouping = class CSSGrouping
     get type() { return this._type; }
     get text() { return this._text; }
     get sourceCodeLocation() { return this._sourceCodeLocation; }
-
-    get isMedia()
-    {
-        return this._type === WI.CSSGrouping.Type.MediaRule
-            || this._type === WI.CSSGrouping.Type.MediaImportRule
-            || this._type === WI.CSSGrouping.Type.MediaLinkNode
-            || this._type === WI.CSSGrouping.Type.MediaStyleNode;
-    }
-
-    get isSupports()
-    {
-        return this._type === WI.CSSGrouping.Type.SupportsRule;
-    }
-
-    get prefix()
-    {
-        if (this.isSupports)
-            return "@supports";
-
-        console.assert(this.isMedia);
-        return "@media";
-    }
 };
 
-WI.CSSGrouping.Type = {
-    MediaRule: "media-rule",
-    MediaImportRule: "media-import-rule",
-    MediaLinkNode: "media-link-node",
-    MediaStyleNode: "media-style-node",
-    SupportsRule: "supports-rule",
+WI.CSSMedia.Type = {
+    MediaRule: "css-media-type-media-rule",
+    ImportRule: "css-media-type-import-rule",
+    LinkedStyleSheet: "css-media-type-linked-stylesheet",
+    InlineStyleSheet: "css-media-type-inline-stylesheet"
 };
