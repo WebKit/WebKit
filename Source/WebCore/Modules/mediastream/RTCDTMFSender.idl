@@ -26,21 +26,12 @@
 
 [
     ActiveDOMObject,
-    Conditional=WEB_RTC_DTMF,
+    Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection,
 ] interface RTCDTMFSender : EventTarget {
-    // FIXME 169662: change to unsigned long with defaults
-    [MayThrowException] void insertDTMF(DOMString tones, optional long duration, optional long interToneGap);
+    [MayThrowException] void insertDTMF(DOMString tones, optional unsigned long duration = 100, optional unsigned long interToneGap = 70);
     attribute EventHandler ontonechange;
-    readonly attribute DOMString toneBuffer;
 
-    // Legacy
-    // FIXME 169662: remove
     readonly attribute boolean canInsertDTMF;
-    // FIXME 169662: remove
-    readonly attribute MediaStreamTrack track;
-    // FIXME 169662: remove
-    readonly attribute long duration;
-    // FIXME 169662: remove
-    readonly attribute long interToneGap;
+    readonly attribute DOMString toneBuffer;
 };

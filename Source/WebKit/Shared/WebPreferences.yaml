@@ -572,6 +572,15 @@ WebRTCVP8CodecEnabled:
   humanReadableDescription: "Enable WebRTC VP8 codec"
   category: experimental
 
+WebRTCDTMFEnabled:
+  type: bool
+  defaultValue: true
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  humanReadableName: "WebRTC DTMF"
+  humanReadableDescription: "Enable WebRTC DTMF"
+  category: experimental
+
 WebRTCH264SimulcastEnabled:
   type: bool
   defaultValue: true

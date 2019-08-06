@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.
+ * Copyright (C) 2019 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,23 +26,39 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "JSDOMPromiseDeferred.h"
+#include "LibWebRTCMacros.h"
+#include "RTCDTMFSenderBackend.h"
+#include <wtf/WeakPtr.h>
+
+ALLOW_UNUSED_PARAMETERS_BEGIN
+
+#include <webrtc/api/dtmfsenderinterface.h>
+#include <webrtc/rtc_base/scoped_ref_ptr.h>
+
+ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
 
-class MediaStreamTrack;
-class RTCDTMFSenderBackend;
-class RTCRtpSender;
-struct RTCRtpSendParameters;
-class ScriptExecutionContext;
-
-class RTCRtpSenderBackend {
+class LibWebRTCDTMFSenderBackend final : public RTCDTMFSenderBackend, private webrtc::DtmfSenderObserverInterface, public CanMakeWeakPtr<LibWebRTCDTMFSenderBackend> {
 public:
-    virtual void replaceTrack(ScriptExecutionContext&, RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) = 0;
-    virtual RTCRtpSendParameters getParameters() const = 0;
-    virtual void setParameters(const RTCRtpSendParameters&, DOMPromiseDeferred<void>&&) = 0;
-    virtual std::unique_ptr<RTCDTMFSenderBackend> createDTMFBackend() = 0;
-    virtual ~RTCRtpSenderBackend() = default;
+    explicit LibWebRTCDTMFSenderBackend(rtc::scoped_refptr<webrtc::DtmfSenderInterface>&&);
+    ~LibWebRTCDTMFSenderBackend();
+
+private:
+    // RTCDTMFSenderBackend
+    bool canInsertDTMF() final;
+    void playTone(const String& tone, size_t duration, size_t interToneGap) final;
+    void onTonePlayed(Function<void(const String&)>&&) final;
+    String tones() const final;
+    size_t duration() const final;
+    size_t interToneGap() const final;
+
+    // DtmfSenderObserverInterface
+    void OnToneChange(const std::string& tone, const std::string&) final;
+
+    rtc::scoped_refptr<webrtc::DtmfSenderInterface> m_sender;
+    Function<void(const String&)> m_onTonePlayed;
+    WeakPtr<LibWebRTCDTMFSenderBackend> m_weakThis;
 };
 
 } // namespace WebCore

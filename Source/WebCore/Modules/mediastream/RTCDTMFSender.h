@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_RTC_DTMF)
+#if ENABLE(WEB_RTC)
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
@@ -36,25 +36,25 @@
 namespace WebCore {
 
 class MediaStreamTrack;
+class RTCDTMFSenderBackend;
+class RTCRtpSender;
 
 class RTCDTMFSender final : public RefCounted<RTCDTMFSender>, public EventTargetWithInlineData, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(RTCDTMFSender);
 public:
+    static Ref<RTCDTMFSender> create(ScriptExecutionContext& context, RTCRtpSender& sender, std::unique_ptr<RTCDTMFSenderBackend>&& backend) { return adoptRef(* new RTCDTMFSender(context, sender, WTFMove(backend))); }
     virtual ~RTCDTMFSender();
 
     bool canInsertDTMF() const;
-    MediaStreamTrack* track() const;
     String toneBuffer() const;
-    int duration() const { return m_duration; }
-    int interToneGap() const { return m_interToneGap; }
 
-    ExceptionOr<void> insertDTMF(const String& tones, Optional<int> duration, Optional<int> interToneGap);
+    ExceptionOr<void> insertDTMF(const String& tones, size_t duration, size_t interToneGap);
 
     using RefCounted::ref;
     using RefCounted::deref;
 
 private:
-    RTCDTMFSender(ScriptExecutionContext&, RefPtr<MediaStreamTrack>&&);
+    RTCDTMFSender(ScriptExecutionContext&, RTCRtpSender&, std::unique_ptr<RTCDTMFSenderBackend>&&);
 
     void stop() final;
     const char* activeDOMObjectName() const final;
@@ -66,19 +66,19 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    void didPlayTone(const String&);
+    bool isStopped() const { return !m_sender; }
 
-    void scheduleDispatchEvent(Ref<Event>&&);
-    void scheduledEventTimerFired();
+    void playNextTone();
+    void onTonePlayed();
+    void toneTimerFired();
 
-    RefPtr<MediaStreamTrack> m_track;
-    int m_duration;
-    int m_interToneGap;
-
-    bool m_stopped;
-
-    Timer m_scheduledEventTimer;
-    Vector<Ref<Event>> m_scheduledEvents;
+    Timer m_toneTimer;
+    WeakPtr<RTCRtpSender> m_sender;
+    std::unique_ptr<RTCDTMFSenderBackend> m_backend;
+    String m_tones;
+    size_t m_duration;
+    size_t m_interToneGap;
+    bool m_isPendingPlayoutTask { false };
 };
 
 } // namespace WebCore

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RTCDTMFToneChangeEvent.h"
 
-#if ENABLE(WEB_RTC_DTMF)
+#if ENABLE(WEB_RTC)
 
 #include "EventNames.h"
 

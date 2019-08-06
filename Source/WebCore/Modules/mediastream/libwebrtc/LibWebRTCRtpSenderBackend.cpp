@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
+#include "LibWebRTCDTMFSenderBackend.h"
 #include "LibWebRTCPeerConnectionBackend.h"
 #include "LibWebRTCUtils.h"
 #include "RTCPeerConnection.h"
@@ -143,6 +144,11 @@ void LibWebRTCRtpSenderBackend::setParameters(const RTCRtpSendParameters& parame
         return;
     }
     promise.resolve();
+}
+
+std::unique_ptr<RTCDTMFSenderBackend> LibWebRTCRtpSenderBackend::createDTMFBackend()
+{
+    return std::make_unique<LibWebRTCDTMFSenderBackend>(m_rtcSender->GetDtmfSender());
 }
 
 } // namespace WebCore

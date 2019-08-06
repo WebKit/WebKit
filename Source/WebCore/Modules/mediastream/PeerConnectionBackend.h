@@ -169,6 +169,9 @@ public:
 
     virtual void collectTransceivers() { };
 
+    ScriptExecutionContext* context() const;
+    RTCRtpTransceiver* transceiverFromSender(const RTCRtpSender&);
+
 protected:
     void fireICECandidateEvent(RefPtr<RTCIceCandidate>&&, String&& url);
     void doneGatheringCandidates();

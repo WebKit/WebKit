@@ -1,3 +1,70 @@
+2019-08-05  Youenn Fablet  <youenn@apple.com>
+
+        Support RTCRtpSender.dtmf
+        https://bugs.webkit.org/show_bug.cgi?id=200431
+
+        Reviewed by Eric Carlson.
+
+        Add a new backend interface to RTCDTMFSender and implementation of it using libwebrtc.
+        Update RTCDTMFSender to use that new backend and make RTCRtpSender return a RTCDTMFSender
+        conditionally on a newly added runtime flag.
+        Update RTCDTMFSender implementation based on https://w3c.github.io/webrtc-pc/#peer-to-peer-dtmf.
+
+        Covered by rebased tests.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::context const):
+        (WebCore::PeerConnectionBackend::transceiverFromSender):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        (WebCore::RTCDTMFSender::RTCDTMFSender):
+        (WebCore::RTCDTMFSender::canInsertDTMF const):
+        (WebCore::RTCDTMFSender::toneBuffer const):
+        (WebCore::isToneCharacterInvalid):
+        (WebCore::RTCDTMFSender::insertDTMF):
+        (WebCore::RTCDTMFSender::playNextTone):
+        (WebCore::RTCDTMFSender::onTonePlayed):
+        (WebCore::RTCDTMFSender::toneTimerFired):
+        (WebCore::RTCDTMFSender::stop):
+        (WebCore::RTCDTMFSender::activeDOMObjectName const):
+        (WebCore::RTCDTMFSender::canSuspendForDocumentSuspension const):
+        * Modules/mediastream/RTCDTMFSender.h:
+        * Modules/mediastream/RTCDTMFSender.idl:
+        * Modules/mediastream/RTCDTMFToneChangeEvent.cpp:
+        * Modules/mediastream/RTCDTMFToneChangeEvent.h:
+        * Modules/mediastream/RTCDTMFToneChangeEvent.idl:
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::dtmf):
+        (WebCore::RTCRtpSender::currentTransceiverDirection const):
+        * Modules/mediastream/RTCRtpSender.h:
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/RTCRtpSenderBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        (WebCore::LibWebRTCRtpSenderBackend::createDTMFBackend):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::webRTCDTMFEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setWebRTCDTMFEnabled):
+        * platform/mediastream/RTCDTMFSenderBackend.h: Added.
+        * platform/mediastream/RTCDTMFSenderHandler.h: Removed.
+        * platform/mediastream/RTCDTMFSenderHandlerClient.h: Removed.
+        * platform/mediastream/libwebrtc/LibWebRTCDTMFSenderBackend.cpp: Added.
+        (WebCore::toWTFString):
+        (WebCore::LibWebRTCDTMFSenderBackend::LibWebRTCDTMFSenderBackend):
+        (WebCore::LibWebRTCDTMFSenderBackend::~LibWebRTCDTMFSenderBackend):
+        (WebCore::LibWebRTCDTMFSenderBackend::canInsertDTMF):
+        (WebCore::LibWebRTCDTMFSenderBackend::playTone):
+        (WebCore::LibWebRTCDTMFSenderBackend::tones const):
+        (WebCore::LibWebRTCDTMFSenderBackend::duration const):
+        (WebCore::LibWebRTCDTMFSenderBackend::interToneGap const):
+        (WebCore::LibWebRTCDTMFSenderBackend::OnToneChange):
+        (WebCore::LibWebRTCDTMFSenderBackend::onTonePlayed):
+        * platform/mediastream/libwebrtc/LibWebRTCDTMFSenderBackend.h: Added.
+
 2019-08-05  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Inline all native function calls

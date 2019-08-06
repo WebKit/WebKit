@@ -35,18 +35,22 @@
 #include "MediaStreamTrack.h"
 #include "PeerConnectionBackend.h"
 #include "RTCRtpSenderBackend.h"
+#include "RTCRtpTransceiverDirection.h"
 #include "ScriptWrappable.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class PeerConnectionBackend;
+class RTCDTMFSender;
 struct RTCRtpCapabilities;
 
-class RTCRtpSender final : public RefCounted<RTCRtpSender>, public ScriptWrappable {
+class RTCRtpSender final : public RefCounted<RTCRtpSender>, public ScriptWrappable, public CanMakeWeakPtr<RTCRtpSender> {
     WTF_MAKE_ISO_ALLOCATED(RTCRtpSender);
 public:
     static Ref<RTCRtpSender> create(PeerConnectionBackend&, Ref<MediaStreamTrack>&&, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&&);
     static Ref<RTCRtpSender> create(PeerConnectionBackend&, String&& trackKind, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&&);
+    ~RTCRtpSender();
 
     static Optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
 
@@ -74,6 +78,9 @@ public:
 
     bool isCreatedBy(const PeerConnectionBackend&) const;
 
+    RTCDTMFSender* dtmf();
+    Optional<RTCRtpTransceiverDirection> currentTransceiverDirection() const;
+
 private:
     RTCRtpSender(PeerConnectionBackend&, String&& trackKind, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&&);
 
@@ -83,6 +90,7 @@ private:
     Vector<String> m_mediaStreamIds;
     std::unique_ptr<RTCRtpSenderBackend> m_backend;
     WeakPtr<PeerConnectionBackend> m_connection;
+    RefPtr<RTCDTMFSender> m_dtmfSender;
 };
 
 } // namespace WebCore

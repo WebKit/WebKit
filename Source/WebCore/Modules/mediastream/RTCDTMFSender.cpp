@@ -26,10 +26,9 @@
 #include "config.h"
 #include "RTCDTMFSender.h"
 
-#if ENABLE(WEB_RTC_DTMF)
+#if ENABLE(WEB_RTC)
 
-#include "MediaStreamTrack.h"
-#include "RTCDTMFSenderHandler.h"
+#include "RTCDTMFSenderBackend.h"
 #include "RTCDTMFToneChangeEvent.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/IsoMallocInlines.h>
@@ -38,64 +37,109 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RTCDTMFSender);
 
-static const long minToneDurationMs = 40;
-static const long defaultToneDurationMs = 100;
-static const long maxToneDurationMs = 6000;
-static const long minInterToneGapMs = 30;
-static const long defaultInterToneGapMs = 70;
+static const unsigned long minToneDurationMs = 40;
+static const unsigned long maxToneDurationMs = 6000;
+static const unsigned long minInterToneGapMs = 30;
 
-RTCDTMFSender::RTCDTMFSender(ScriptExecutionContext& context, RefPtr<MediaStreamTrack>&& track)
+RTCDTMFSender::RTCDTMFSender(ScriptExecutionContext& context, RTCRtpSender& sender, std::unique_ptr<RTCDTMFSenderBackend>&& backend)
     : ActiveDOMObject(&context)
-    , m_track(WTFMove(track))
-    , m_duration(defaultToneDurationMs)
-    , m_interToneGap(defaultInterToneGapMs)
-    , m_stopped(false)
-    , m_scheduledEventTimer(*this, &RTCDTMFSender::scheduledEventTimerFired)
+    , m_toneTimer(*this, &RTCDTMFSender::toneTimerFired)
+    , m_sender(makeWeakPtr(sender))
+    , m_backend(WTFMove(backend))
 {
+    m_backend->onTonePlayed([this](const String&) {
+        onTonePlayed();
+    });
+    suspendIfNeeded();
 }
 
 RTCDTMFSender::~RTCDTMFSender() = default;
 
 bool RTCDTMFSender::canInsertDTMF() const
 {
-    return false;
-}
+    if (!m_sender || m_sender->isStopped())
+        return false;
 
-MediaStreamTrack* RTCDTMFSender::track() const
-{
-    return m_track.get();
+    auto currentDirection = m_sender->currentTransceiverDirection();
+    if (!currentDirection)
+        return false;
+    if (*currentDirection != RTCRtpTransceiverDirection::Sendrecv && *currentDirection != RTCRtpTransceiverDirection::Sendonly)
+        return false;
+
+    return m_backend && m_backend->canInsertDTMF();
 }
 
 String RTCDTMFSender::toneBuffer() const
 {
+    return m_tones;
+}
+
+static inline bool isToneCharacterInvalid(UChar character)
+{
+    if (character >= '0' && character <= '9')
+        return false;
+    if (character >= 'A' && character <= 'D')
+        return false;
+    return character != '#' && character != '*' && character != ',';
+}
+
+ExceptionOr<void> RTCDTMFSender::insertDTMF(const String& tones, size_t duration, size_t interToneGap)
+{
+    if (!canInsertDTMF())
+        return Exception { InvalidStateError, "Cannot insert DTMF"_s };
+
+    auto normalizedTones = tones.convertToUppercaseWithoutLocale();
+    if (normalizedTones.find(isToneCharacterInvalid) != notFound)
+        return Exception { InvalidCharacterError, "Tones are not valid"_s };
+
+    m_tones = WTFMove(normalizedTones);
+    m_duration = clampTo(duration, minToneDurationMs, maxToneDurationMs);
+    m_interToneGap = std::max(interToneGap, minInterToneGapMs);
+
+    if (m_tones.isEmpty() || m_isPendingPlayoutTask)
+        return { };
+
+    m_isPendingPlayoutTask = true;
+    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this)](auto&) {
+        playNextTone();
+    });
     return { };
 }
 
-ExceptionOr<void> RTCDTMFSender::insertDTMF(const String&, Optional<int> duration, Optional<int> interToneGap)
+void RTCDTMFSender::playNextTone()
 {
-    if (!canInsertDTMF())
-        return Exception { NotSupportedError };
+    if (m_tones.isEmpty()) {
+        m_isPendingPlayoutTask = false;
+        dispatchEvent(RTCDTMFToneChangeEvent::create({ }));
+        return;
+    }
 
-    if (duration && (duration.value() > maxToneDurationMs || duration.value() < minToneDurationMs))
-        return Exception { SyntaxError };
+    if (!canInsertDTMF()) {
+        m_isPendingPlayoutTask = false;
+        return;
+    }
 
-    if (interToneGap && interToneGap.value() < minInterToneGapMs)
-        return Exception { SyntaxError };
+    auto currentTone = m_tones.substring(0, 1);
+    m_tones.remove(0);
 
-    m_duration = duration.valueOr(defaultToneDurationMs);
-    m_interToneGap = interToneGap.valueOr(defaultInterToneGapMs);
-
-    return Exception { SyntaxError };
+    m_backend->playTone(currentTone, m_duration, m_interToneGap);
+    dispatchEvent(RTCDTMFToneChangeEvent::create(currentTone));
 }
 
-void RTCDTMFSender::didPlayTone(const String& tone)
+void RTCDTMFSender::onTonePlayed()
 {
-    scheduleDispatchEvent(RTCDTMFToneChangeEvent::create(tone));
+    m_toneTimer.startOneShot(1_ms * m_interToneGap);
+}
+
+void RTCDTMFSender::toneTimerFired()
+{
+    playNextTone();
 }
 
 void RTCDTMFSender::stop()
 {
-    m_stopped = true;
+    m_backend = nullptr;
+    m_toneTimer.stop();
 }
 
 const char* RTCDTMFSender::activeDOMObjectName() const
@@ -105,28 +149,7 @@ const char* RTCDTMFSender::activeDOMObjectName() const
 
 bool RTCDTMFSender::canSuspendForDocumentSuspension() const
 {
-    // FIXME: We should try and do better here.
-    return false;
-}
-
-void RTCDTMFSender::scheduleDispatchEvent(Ref<Event>&& event)
-{
-    m_scheduledEvents.append(WTFMove(event));
-
-    if (!m_scheduledEventTimer.isActive())
-        m_scheduledEventTimer.startOneShot(0_s);
-}
-
-void RTCDTMFSender::scheduledEventTimerFired()
-{
-    if (m_stopped)
-        return;
-
-    Vector<Ref<Event>> events;
-    events.swap(m_scheduledEvents);
-
-    for (auto& event : events)
-        dispatchEvent(event);
+    return !m_sender || m_sender->isStopped();
 }
 
 } // namespace WebCore

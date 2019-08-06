@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.
+ * Copyright (C) 2019 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,23 +26,23 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "JSDOMPromiseDeferred.h"
+#include "ExceptionOr.h"
+#include <wtf/Function.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class MediaStreamTrack;
-class RTCDTMFSenderBackend;
-class RTCRtpSender;
-struct RTCRtpSendParameters;
-class ScriptExecutionContext;
-
-class RTCRtpSenderBackend {
+class RTCDTMFSenderBackend {
 public:
-    virtual void replaceTrack(ScriptExecutionContext&, RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) = 0;
-    virtual RTCRtpSendParameters getParameters() const = 0;
-    virtual void setParameters(const RTCRtpSendParameters&, DOMPromiseDeferred<void>&&) = 0;
-    virtual std::unique_ptr<RTCDTMFSenderBackend> createDTMFBackend() = 0;
-    virtual ~RTCRtpSenderBackend() = default;
+    virtual bool canInsertDTMF() = 0;
+    virtual void playTone(const String& tone, size_t duration, size_t interToneGap) = 0;
+    virtual void onTonePlayed(Function<void(const String&)>&&) = 0;
+
+    virtual String tones() const = 0;
+    virtual size_t duration() const = 0;
+    virtual size_t interToneGap() const = 0;
+
+    virtual ~RTCDTMFSenderBackend() = default;
 };
 
 } // namespace WebCore

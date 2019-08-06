@@ -33,7 +33,7 @@ PaymentRequest conditional=PAYMENT_REQUEST
 PaymentResponse conditional=PAYMENT_REQUEST
 Performance
 RTCDataChannel conditional=WEB_RTC
-RTCDTMFSender conditional=WEB_RTC_DTMF
+RTCDTMFSender conditional=WEB_RTC
 RTCPeerConnection conditional=WEB_RTC
 ServiceWorker conditional=SERVICE_WORKER
 ServiceWorkerContainer conditional=SERVICE_WORKER

@@ -561,6 +561,20 @@ void PeerConnectionBackend::generateCertificate(Document& document, const Certif
 #endif
 }
 
+ScriptExecutionContext* PeerConnectionBackend::context() const
+{
+    return m_peerConnection.scriptExecutionContext();
+}
+
+RTCRtpTransceiver* PeerConnectionBackend::transceiverFromSender(const RTCRtpSender& sender)
+{
+    for (auto& transceiver : m_peerConnection.currentTransceivers()) {
+        if (&transceiver->sender() == &sender)
+            return transceiver.get();
+    }
+    return nullptr;
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& PeerConnectionBackend::logChannel() const
 {

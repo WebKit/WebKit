@@ -33,6 +33,8 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "RTCDTMFSender.h"
+#include "RTCDTMFSenderBackend.h"
 #include "RTCRtpCapabilities.h"
 #include "RuntimeEnabledFeatures.h"
 #include <wtf/IsoMallocInlines.h>
@@ -61,6 +63,8 @@ RTCRtpSender::RTCRtpSender(PeerConnectionBackend& connection, String&& trackKind
 {
     ASSERT(!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled() || m_backend);
 }
+
+RTCRtpSender::~RTCRtpSender() = default;
 
 void RTCRtpSender::setTrackToNull()
 {
@@ -133,6 +137,26 @@ bool RTCRtpSender::isCreatedBy(const PeerConnectionBackend& connection) const
 Optional<RTCRtpCapabilities> RTCRtpSender::getCapabilities(ScriptExecutionContext& context, const String& kind)
 {
     return PeerConnectionBackend::senderCapabilities(context, kind);
+}
+
+RTCDTMFSender* RTCRtpSender::dtmf()
+{
+    if (!m_dtmfSender && m_connection && m_connection->context() && m_backend)
+        m_dtmfSender = RTCDTMFSender::create(*m_connection->context(), *this, m_backend->createDTMFBackend());
+
+    return m_dtmfSender.get();
+}
+
+Optional<RTCRtpTransceiverDirection> RTCRtpSender::currentTransceiverDirection() const
+{
+    if (!m_connection)
+        return { };
+
+    auto* transceiver = m_connection->transceiverFromSender(*this);
+    if (!transceiver)
+        return { };
+
+    return transceiver->currentDirection();
 }
 
 } // namespace WebCore

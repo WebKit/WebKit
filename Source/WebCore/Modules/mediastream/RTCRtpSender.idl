@@ -43,4 +43,6 @@
     Promise<void> setParameters(RTCRtpSendParameters parameters);
     [CallWith=ScriptExecutionContext] Promise<void> replaceTrack(MediaStreamTrack? withTrack);
     Promise<RTCStatsReport> getStats();
+
+    [Conditional=WEB_RTC, EnabledAtRuntime=WebRTCDTMF] readonly attribute RTCDTMFSender? dtmf;
 };

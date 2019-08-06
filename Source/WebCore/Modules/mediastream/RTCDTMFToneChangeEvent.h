@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_RTC_DTMF)
+#if ENABLE(WEB_RTC)
 
 #include "Event.h"
 #include <wtf/text/AtomString.h>

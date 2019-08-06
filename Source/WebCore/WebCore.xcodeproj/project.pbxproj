@@ -166,8 +166,6 @@
 		078E093A17D16E1C00420AA1 /* MediaConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B9917CF0AD400848E51 /* MediaConstraints.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093C17D16E1C00420AA1 /* RTCDataChannelHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BA217CF0AD400848E51 /* RTCDataChannelHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093D17D16E1C00420AA1 /* RTCDataChannelHandlerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BA317CF0AD400848E51 /* RTCDataChannelHandlerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		078E093E17D16E1C00420AA1 /* RTCDTMFSenderHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BA417CF0AD400848E51 /* RTCDTMFSenderHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		078E093F17D16E1C00420AA1 /* RTCDTMFSenderHandlerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BA517CF0AD400848E51 /* RTCDTMFSenderHandlerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E094017D16E1C00420AA1 /* RTCIceCandidateDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BA717CF0AD400848E51 /* RTCIceCandidateDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E094217D16E1C00420AA1 /* RTCPeerConnectionHandlerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BAA17CF0AD400848E51 /* RTCPeerConnectionHandlerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E094317D16E1C00420AA1 /* RTCSessionDescriptionDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BAC17CF0AD400848E51 /* RTCSessionDescriptionDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5314,8 +5312,6 @@
 		07221B9D17CF0AD400848E51 /* MediaStreamPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamPrivate.h; sourceTree = "<group>"; };
 		07221BA217CF0AD400848E51 /* RTCDataChannelHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataChannelHandler.h; sourceTree = "<group>"; };
 		07221BA317CF0AD400848E51 /* RTCDataChannelHandlerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataChannelHandlerClient.h; sourceTree = "<group>"; };
-		07221BA417CF0AD400848E51 /* RTCDTMFSenderHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDTMFSenderHandler.h; sourceTree = "<group>"; };
-		07221BA517CF0AD400848E51 /* RTCDTMFSenderHandlerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDTMFSenderHandlerClient.h; sourceTree = "<group>"; };
 		07221BA617CF0AD400848E51 /* RTCIceCandidateDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCIceCandidateDescriptor.cpp; sourceTree = "<group>"; };
 		07221BA717CF0AD400848E51 /* RTCIceCandidateDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceCandidateDescriptor.h; sourceTree = "<group>"; };
 		07221BAA17CF0AD400848E51 /* RTCPeerConnectionHandlerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPeerConnectionHandlerClient.h; sourceTree = "<group>"; };
@@ -7392,6 +7388,9 @@
 		41F062130F5F192600A07EAC /* InspectorDatabaseResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDatabaseResource.cpp; sourceTree = "<group>"; };
 		41F1D21D0EF35C2A00DA8753 /* ScriptCachedFrameData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCachedFrameData.h; sourceTree = "<group>"; };
 		41F1D21E0EF35C2A00DA8753 /* ScriptCachedFrameData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCachedFrameData.cpp; sourceTree = "<group>"; };
+		41F2354422F5503300B4FCDB /* RTCDTMFSenderBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDTMFSenderBackend.h; sourceTree = "<group>"; };
+		41F2354522F550BE00B4FCDB /* LibWebRTCDTMFSenderBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCDTMFSenderBackend.cpp; path = libwebrtc/LibWebRTCDTMFSenderBackend.cpp; sourceTree = "<group>"; };
+		41F2354622F550BF00B4FCDB /* LibWebRTCDTMFSenderBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LibWebRTCDTMFSenderBackend.h; path = libwebrtc/LibWebRTCDTMFSenderBackend.h; sourceTree = "<group>"; };
 		41F54F7D1C50C4F600338488 /* FetchBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchBody.cpp; sourceTree = "<group>"; };
 		41F54F7E1C50C4F600338488 /* FetchBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchBody.h; sourceTree = "<group>"; };
 		41F54F7F1C50C4F600338488 /* FetchBody.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FetchBody.idl; sourceTree = "<group>"; };
@@ -15845,8 +15844,7 @@
 				07221BA217CF0AD400848E51 /* RTCDataChannelHandler.h */,
 				07221BA317CF0AD400848E51 /* RTCDataChannelHandlerClient.h */,
 				316DE7011E83AE1D0084C261 /* RTCDataChannelState.h */,
-				07221BA417CF0AD400848E51 /* RTCDTMFSenderHandler.h */,
-				07221BA517CF0AD400848E51 /* RTCDTMFSenderHandlerClient.h */,
+				41F2354422F5503300B4FCDB /* RTCDTMFSenderBackend.h */,
 				07221BA617CF0AD400848E51 /* RTCIceCandidateDescriptor.cpp */,
 				07221BA717CF0AD400848E51 /* RTCIceCandidateDescriptor.h */,
 				313591001E7DDC6000F30630 /* RTCIceConnectionState.h */,
@@ -17658,6 +17656,8 @@
 				41D51BB21E4E2E8100131A5B /* LibWebRTCAudioFormat.h */,
 				415080341E3F00AA0051D75D /* LibWebRTCAudioModule.cpp */,
 				415080351E3F00AA0051D75D /* LibWebRTCAudioModule.h */,
+				41F2354522F550BE00B4FCDB /* LibWebRTCDTMFSenderBackend.cpp */,
+				41F2354622F550BF00B4FCDB /* LibWebRTCDTMFSenderBackend.h */,
 				415747431E38699E00E914D8 /* LibWebRTCMacros.h */,
 				41A1B00D1E52656E007F3769 /* LibWebRTCProvider.cpp */,
 				415747441E38699E00E914D8 /* LibWebRTCProvider.h */,
@@ -31325,8 +31325,6 @@
 				073794FA19F5864E00E5A045 /* RTCDataChannelHandlerMock.h in Headers */,
 				316DE7021E83AE1D0084C261 /* RTCDataChannelState.h in Headers */,
 				078E092017D14D1C00420AA1 /* RTCDTMFSender.h in Headers */,
-				078E093E17D16E1C00420AA1 /* RTCDTMFSenderHandler.h in Headers */,
-				078E093F17D16E1C00420AA1 /* RTCDTMFSenderHandlerClient.h in Headers */,
 				078E092117D14D1C00420AA1 /* RTCDTMFToneChangeEvent.h in Headers */,
 				078E092317D14D1C00420AA1 /* RTCIceCandidate.h in Headers */,
 				078E094017D16E1C00420AA1 /* RTCIceCandidateDescriptor.h in Headers */,
