@@ -1,5 +1,1 @@
-class Benchmark {
-    runIteration() {
-        print("Hello world!");
-    }
-}
+print("Hello world!");

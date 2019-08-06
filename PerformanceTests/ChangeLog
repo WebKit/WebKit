@@ -1,3 +1,103 @@
+2019-08-06  Michael Saboff  <msaboff@apple.com>
+
+        Make JSC memory benchmark available on OpenSource
+        https://bugs.webkit.org/show_bug.cgi?id=195012
+
+        Reviewed by Saam Barati.
+
+        This patch upstreams the RAMification memory benchmark to open source.
+
+        The prior RAMification.py driver script in the Internal directory has been moved here
+        with the device execution code seperated out to a new Internal driver script.
+        As a result, command line argument parsing as well as acting on the resulting argument
+        values has changed.  The remote device Runner creates an ArgumentParser object that is
+        passed through main().  In main(), if we have an ArgumentParser, we use it otherwise we
+        create one for benchmarking locally.  The arguments object returned from argument
+        parsing is now passed to the Runner constructor so it can extract the settings appropriate
+        for that particular runner.
+
+        Added some sane argument default values for the JSC command patch and the JetStream2
+        source directory.
+
+        Updated the Lua tests to eliminate the testing harness and its overhead, matching what was
+        done in the Internal tree.
+
+        * JetStream2/LuaJSFight/hello_world.js:
+        (Benchmark.prototype.runIteration): Deleted.
+        (Benchmark): Deleted.
+        * JetStream2/LuaJSFight/list_search.js:
+        (run): Deleted.
+        (Benchmark.prototype.runIteration): Deleted.
+        (Benchmark): Deleted.
+        * JetStream2/LuaJSFight/lists.js:
+        (): Deleted.
+        (Benchmark.prototype.runIteration): Deleted.
+        (Benchmark): Deleted.
+        * JetStream2/LuaJSFight/richards.js: Added.
+        (runRichards):
+        (Scheduler):
+        (Scheduler.prototype.addIdleTask):
+        (Scheduler.prototype.addWorkerTask):
+        (Scheduler.prototype.addHandlerTask):
+        (Scheduler.prototype.addDeviceTask):
+        (Scheduler.prototype.addRunningTask):
+        (Scheduler.prototype.addTask):
+        (Scheduler.prototype.schedule):
+        (Scheduler.prototype.release):
+        (Scheduler.prototype.holdCurrent):
+        (Scheduler.prototype.suspendCurrent):
+        (Scheduler.prototype.queue):
+        (TaskControlBlock):
+        (TaskControlBlock.prototype.setRunning):
+        (TaskControlBlock.prototype.markAsNotHeld):
+        (TaskControlBlock.prototype.markAsHeld):
+        (TaskControlBlock.prototype.isHeldOrSuspended):
+        (TaskControlBlock.prototype.markAsSuspended):
+        (TaskControlBlock.prototype.markAsRunnable):
+        (TaskControlBlock.prototype.run):
+        (TaskControlBlock.prototype.checkPriorityAdd):
+        (TaskControlBlock.prototype.toString):
+        (IdleTask):
+        (IdleTask.prototype.run):
+        (IdleTask.prototype.toString):
+        (DeviceTask):
+        (DeviceTask.prototype.run):
+        (DeviceTask.prototype.toString):
+        (WorkerTask):
+        (WorkerTask.prototype.run):
+        (WorkerTask.prototype.toString):
+        (HandlerTask):
+        (HandlerTask.prototype.run):
+        (HandlerTask.prototype.toString):
+        (Packet):
+        (Packet.prototype.addTo):
+        (Packet.prototype.toString):
+        * JetStream2/LuaJSFight/string_lists.js:
+        (): Deleted.
+        (Benchmark.prototype.runIteration): Deleted.
+        (Benchmark): Deleted.
+        * JetStream2/RAMification.py: Added.
+        (mean):
+        (geomean):
+        (frameworkPathFromExecutablePath):
+        (parseArgs):
+        (parseArgs.optStrToBool):
+        (BaseRunner):
+        (BaseRunner.__init__):
+        (BaseRunner.setup):
+        (BaseRunner.setEnv):
+        (BaseRunner.unsetEnv):
+        (BaseRunner.resetForTest):
+        (BaseRunner.processLine):
+        (BaseRunner.setReturnCode):
+        (BaseRunner.getResults):
+        (LocalRunner):
+        (LocalRunner.__init__):
+        (LocalRunner.runOneTest):
+        (main):
+        (main.runTestList):
+        * JetStream2/__init__.py: Added.
+
 2019-07-23  Keith Rollin  <krollin@apple.com>
 
         Remove rest of NavigatorContentUtils support
