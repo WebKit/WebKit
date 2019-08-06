@@ -903,6 +903,10 @@ sub XcodeStaticAnalyzerOption()
 
 sub canUseXCBuild()
 {
+    if (`xcodebuild -version | grep "Build version"` =~ /Build version (\d+)([a-zA-Z])(\d+)([a-zA-Z]?)/) {
+        return $1 >= 11;
+    }
+
     return 0;
 }
 
