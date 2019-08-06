@@ -1,3 +1,15 @@
+2019-08-06  Jer Noble  <jer.noble@apple.com>
+
+        Add test for behavior introduced in r248174
+        https://bugs.webkit.org/show_bug.cgi?id=200446
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/FullscreenTouchSecheuristicTests.cpp: Added.
+        (WebKit::configureSecheuristic):
+        (WebKit::TEST):
+
 2019-08-05  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [MiniBrowser][WK2] Unhandled key events should be bubbled up to the parent window

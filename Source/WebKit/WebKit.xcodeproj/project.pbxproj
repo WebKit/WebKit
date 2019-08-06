@@ -1593,7 +1593,7 @@
 		CD003A5319D49B5D005ABCE0 /* WebMediaKeyStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CD003A5119D49B5D005ABCE0 /* WebMediaKeyStorageManager.h */; };
 		CD0C6831201FD10100A59409 /* WKFullScreenViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0C682F201FD10100A59409 /* WKFullScreenViewController.h */; };
 		CD19A26E1A13E834008D650E /* WebDiagnosticLoggingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD19A26A1A13E821008D650E /* WebDiagnosticLoggingClient.h */; };
-		CD19D2EA2046406F0017074A /* FullscreenTouchSecheuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = CD19D2E82046406F0017074A /* FullscreenTouchSecheuristic.h */; };
+		CD19D2EA2046406F0017074A /* FullscreenTouchSecheuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = CD19D2E82046406F0017074A /* FullscreenTouchSecheuristic.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD2865EE2255562000606AC7 /* ProcessTaskStateObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2865EC2255562000606AC7 /* ProcessTaskStateObserver.h */; };
 		CD2865EF2255562000606AC7 /* ProcessTaskStateObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD2865ED2255562000606AC7 /* ProcessTaskStateObserver.mm */; };
 		CD491B081E70D05F00009066 /* UserMediaCaptureManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CD491B061E70D05F00009066 /* UserMediaCaptureManager.h */; };
@@ -1616,6 +1616,8 @@
 		CDA29A291CBEB67A00901CCF /* PlaybackSessionManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A251CBEB67A00901CCF /* PlaybackSessionManagerMessages.h */; };
 		CDA29A2A1CBEB67A00901CCF /* PlaybackSessionManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A261CBEB67A00901CCF /* PlaybackSessionManagerProxyMessageReceiver.cpp */; };
 		CDA29A2B1CBEB67A00901CCF /* PlaybackSessionManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A271CBEB67A00901CCF /* PlaybackSessionManagerProxyMessages.h */; };
+		CDA93DB022F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA93DAE22F8BCF300490A69 /* FullscreenTouchSecheuristicParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDA93DB122F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA93DAF22F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.cpp */; };
 		CDC2831D201BD79D00E6E745 /* WKFullscreenStackView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC2831B201BD79D00E6E745 /* WKFullscreenStackView.h */; };
 		CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */; };
 		CE11AD521CBC482F00681EE5 /* CodeSigning.h in Headers */ = {isa = PBXBuildFile; fileRef = CE11AD511CBC482F00681EE5 /* CodeSigning.h */; };
@@ -4560,6 +4562,8 @@
 		CDA29A251CBEB67A00901CCF /* PlaybackSessionManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaybackSessionManagerMessages.h; path = DerivedSources/WebKit2/PlaybackSessionManagerMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDA29A261CBEB67A00901CCF /* PlaybackSessionManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlaybackSessionManagerProxyMessageReceiver.cpp; path = DerivedSources/WebKit2/PlaybackSessionManagerProxyMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDA29A271CBEB67A00901CCF /* PlaybackSessionManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaybackSessionManagerProxyMessages.h; path = DerivedSources/WebKit2/PlaybackSessionManagerProxyMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDA93DAE22F8BCF300490A69 /* FullscreenTouchSecheuristicParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FullscreenTouchSecheuristicParameters.h; path = ios/fullscreen/FullscreenTouchSecheuristicParameters.h; sourceTree = "<group>"; };
+		CDA93DAF22F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FullscreenTouchSecheuristicParameters.cpp; path = ios/fullscreen/FullscreenTouchSecheuristicParameters.cpp; sourceTree = "<group>"; };
 		CDC2831B201BD79D00E6E745 /* WKFullscreenStackView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKFullscreenStackView.h; path = ios/fullscreen/WKFullscreenStackView.h; sourceTree = "<group>"; };
 		CDC2831C201BD79D00E6E745 /* WKFullscreenStackView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFullscreenStackView.mm; path = ios/fullscreen/WKFullscreenStackView.mm; sourceTree = "<group>"; };
 		CDC382F717211506008A2FC3 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = /System/Library/Frameworks/CFNetwork.framework; sourceTree = "<absolute>"; };
@@ -8943,6 +8947,8 @@
 			children = (
 				CD19D2E92046406F0017074A /* FullscreenTouchSecheuristic.cpp */,
 				CD19D2E82046406F0017074A /* FullscreenTouchSecheuristic.h */,
+				CDA93DAE22F8BCF300490A69 /* FullscreenTouchSecheuristicParameters.h */,
+				CDA93DAF22F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.cpp */,
 				CDC2831B201BD79D00E6E745 /* WKFullscreenStackView.h */,
 				CDC2831C201BD79D00E6E745 /* WKFullscreenStackView.mm */,
 				CD0C682F201FD10100A59409 /* WKFullScreenViewController.h */,
@@ -10000,6 +10006,7 @@
 				1A445BA5184D5FDA004B3414 /* WKContextConnectionClient.h in Headers */,
 				1A445BA3184D5FCF004B3414 /* WKContextDownloadClient.h in Headers */,
 				1A445BA1184D5FC1004B3414 /* WKContextHistoryClient.h in Headers */,
+				CDA93DB022F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.h in Headers */,
 				1A445B9F184D5FB5004B3414 /* WKContextInjectedBundleClient.h in Headers */,
 				5C795D70229F373F003FF1C4 /* WKContextMenuElementInfo.h in Headers */,
 				5C795D71229F3757003FF1C4 /* WKContextMenuElementInfoPrivate.h in Headers */,
@@ -11146,6 +11153,7 @@
 				BC82844D16B5081C00A278FE /* PluginServiceEntryPoint.mm in Sources */,
 				2D91344D212CF9F000128AFD /* PluginView.cpp in Sources */,
 				2D54C31B212F4DA60049C174 /* ProcessLauncher.cpp in Sources */,
+				CDA93DB122F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.cpp in Sources */,
 				CD2865EF2255562000606AC7 /* ProcessTaskStateObserver.mm in Sources */,
 				2D72A1FA212BF46E00517A20 /* RemoteLayerTreeDrawingArea.mm in Sources */,
 				0FF24A2D1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp in Sources */,

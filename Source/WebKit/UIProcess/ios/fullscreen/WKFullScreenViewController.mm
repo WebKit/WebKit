@@ -43,7 +43,6 @@
 static const NSTimeInterval showHideAnimationDuration = 0.1;
 static const NSTimeInterval pipHideAnimationDuration = 0.2;
 static const NSTimeInterval autoHideDelay = 4.0;
-static const double requiredScore = 0.1;
 
 @class WKFullscreenStackView;
 
@@ -183,11 +182,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     _nonZeroStatusBarHeight = UIApplication.sharedApplication.statusBarFrame.size.height;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_statusBarFrameDidChange:) name:UIApplicationDidChangeStatusBarFrameNotification object:nil];
 ALLOW_DEPRECATED_DECLARATIONS_END
-    _secheuristic.setRampUpSpeed(Seconds(0.25));
-    _secheuristic.setRampDownSpeed(Seconds(1.));
-    _secheuristic.setXWeight(0);
-    _secheuristic.setGamma(0.1);
-    _secheuristic.setGammaCutoff(0.08);
+    _secheuristic.setParameters(WebKit::FullscreenTouchSecheuristicParameters::iosParameters());
 
     self._webView = webView;
 
@@ -531,7 +526,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if ([_touchGestureRecognizer state] == UIGestureRecognizerStateEnded) {
         double score = _secheuristic.scoreOfNextTouch([_touchGestureRecognizer locationInView:self.view]);
-        if (score > requiredScore)
+        if (score > _secheuristic.requiredScore())
             [self _showPhishingAlert];
     }
     if (!self.animating)

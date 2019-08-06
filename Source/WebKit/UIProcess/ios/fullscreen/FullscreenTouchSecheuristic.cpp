@@ -26,8 +26,6 @@
 #include "config.h"
 #include "FullscreenTouchSecheuristic.h"
 
-#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
-
 #include <wtf/MonotonicTime.h>
 
 namespace WebKit {
@@ -38,16 +36,24 @@ double FullscreenTouchSecheuristic::scoreOfNextTouch(CGPoint location)
 
     if (!m_lastTouchTime) {
         m_lastTouchTime = WTFMove(now);
-        m_lastTouchLocation = WTFMove(location);
         return 0;
     }
 
     Seconds deltaTime = now - m_lastTouchTime;
+    m_lastTouchTime = now;
+
+    return scoreOfNextTouch(location, deltaTime);
+}
+
+double FullscreenTouchSecheuristic::scoreOfNextTouch(CGPoint location, const Seconds& deltaTime)
+{
+    if (m_lastTouchLocation.x == -1 && m_lastTouchLocation.y ==  -1) {
+        m_lastTouchLocation = WTFMove(location);
+        return 0;
+    }
 
     double coefficient = attenuationFactor(deltaTime);
     m_lastScore = coefficient * distanceScore(location, m_lastTouchLocation, deltaTime) + (1 - coefficient) * m_lastScore;
-
-    m_lastTouchTime = now;
     m_lastTouchLocation = location;
     return m_lastScore;
 }
@@ -55,32 +61,30 @@ double FullscreenTouchSecheuristic::scoreOfNextTouch(CGPoint location)
 void FullscreenTouchSecheuristic::reset()
 {
     m_lastTouchTime = 0_s;
-    m_lastTouchLocation = { };
+    m_lastTouchLocation = { -1, -1 };
     m_lastScore = 0;
 }
 
 double FullscreenTouchSecheuristic::distanceScore(const CGPoint& nextLocation, const CGPoint& lastLocation, const Seconds& deltaTime)
 {
     double distance = sqrt(
-        m_xWeight * pow(nextLocation.x - lastLocation.x, 2) +
-        m_yWeight * pow(nextLocation.y - lastLocation.y, 2));
+        m_parameters.xWeight * pow(nextLocation.x - lastLocation.x, 2) +
+        m_parameters.yWeight * pow(nextLocation.y - lastLocation.y, 2));
     double sizeFactor = sqrt(
-        m_xWeight * pow(m_size.width, 2) +
-        m_yWeight * pow(m_size.height, 2));
+        m_parameters.xWeight * pow(m_size.width, 2) +
+        m_parameters.yWeight * pow(m_size.height, 2));
     double scaledDistance = distance / sizeFactor;
-    if (scaledDistance <= m_cutoff)
-        return scaledDistance * (m_rampUpSpeed / deltaTime);
+    if (scaledDistance <= m_parameters.gammaCutoff)
+        return scaledDistance * (m_parameters.rampUpSpeed / deltaTime);
 
-    double exponentialDistance = m_cutoff + pow((scaledDistance - m_cutoff) / (1 - m_cutoff), m_gamma);
-    return exponentialDistance * (m_rampUpSpeed / deltaTime);
+    double exponentialDistance = m_parameters.gammaCutoff + pow((scaledDistance - m_parameters.gammaCutoff) / (1 - m_parameters.gammaCutoff), m_parameters.gamma);
+    return exponentialDistance * (m_parameters.rampUpSpeed / deltaTime);
 }
 
 double FullscreenTouchSecheuristic::attenuationFactor(Seconds delta)
 {
-    double normalizedTimeDelta = delta / m_rampDownSpeed;
+    double normalizedTimeDelta = delta / m_parameters.rampDownSpeed;
     return std::max(std::min(normalizedTimeDelta * m_weight, 1.0), 0.0);
 }
 
 }
-
-#endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)

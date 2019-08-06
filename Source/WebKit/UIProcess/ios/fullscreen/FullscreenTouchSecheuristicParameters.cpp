@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
+#include "config.h"
 #include "FullscreenTouchSecheuristicParameters.h"
 
 namespace WebKit {
 
-class FullscreenTouchSecheuristic {
-public:
-    WK_EXPORT double scoreOfNextTouch(CGPoint location);
-    WK_EXPORT double scoreOfNextTouch(CGPoint location, const Seconds& deltaTime);
-    WK_EXPORT void reset();
-
-    void setParameters(const FullscreenTouchSecheuristicParameters& parameters) { m_parameters = parameters; }
-    double requiredScore() const { return m_parameters.requiredScore; }
-
-    void setRampUpSpeed(Seconds speed) { m_parameters.rampUpSpeed = speed; }
-    void setRampDownSpeed(Seconds speed) { m_parameters.rampDownSpeed = speed; }
-    void setXWeight(double weight) { m_parameters.xWeight = weight; }
-    void setYWeight(double weight) { m_parameters.yWeight = weight; }
-    void setSize(CGSize size) { m_size = size; }
-    void setGamma(double gamma) { m_parameters.gamma = gamma; }
-    void setGammaCutoff(double cutoff) { m_parameters.gammaCutoff = cutoff; }
-
-private:
-    WK_EXPORT double distanceScore(const CGPoint& nextLocation, const CGPoint& lastLocation, const Seconds& deltaTime);
-    WK_EXPORT double attenuationFactor(Seconds delta);
-
-    double m_weight { 0.1 };
-    FullscreenTouchSecheuristicParameters m_parameters;
-    CGSize m_size { };
-    Seconds m_lastTouchTime { 0 };
-    CGPoint m_lastTouchLocation { -1, -1 };
-    double m_lastScore { 0 };
-};
+FullscreenTouchSecheuristicParameters FullscreenTouchSecheuristicParameters::iosParameters()
+{
+    return {
+        .rampUpSpeed = 0.25_s,
+        .rampDownSpeed = 1_s,
+        .xWeight = 0,
+        .yWeight = 1,
+        .gamma = 0.1,
+        .gammaCutoff = 0.08,
+        .requiredScore = 0.1,
+    };
+}
 
 }
