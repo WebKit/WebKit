@@ -119,7 +119,7 @@ void LocalAuthenticator::makeCredential()
             (id)kSecAttrLabel: requestData().creationOptions.rp.id,
             (id)kSecReturnAttributes: @YES,
             (id)kSecMatchLimit: (id)kSecMatchLimitAll,
-#if HAVE_DATA_PROTECTION_KEYCHAIN
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
             (id)kSecUseDataProtectionKeychain: @YES
 #else
             (id)kSecAttrNoLegacy: @YES
@@ -175,7 +175,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserConsented(LocalConnectio
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrLabel: requestData().creationOptions.rp.id,
         (id)kSecAttrApplicationTag: [NSData dataWithBytes:requestData().creationOptions.user.idVector.data() length:requestData().creationOptions.user.idVector.size()],
-#if HAVE_DATA_PROTECTION_KEYCHAIN
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
         (id)kSecUseDataProtectionKeychain: @YES
 #else
         (id)kSecAttrNoLegacy: @YES
@@ -235,7 +235,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKe
             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
             (id)kSecAttrLabel: label,
             (id)kSecReturnAttributes: @YES,
-#if HAVE_DATA_PROTECTION_KEYCHAIN
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
             (id)kSecUseDataProtectionKeychain: @YES
 #else
             (id)kSecAttrNoLegacy: @YES
@@ -257,7 +257,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKe
             (id)kSecClass: (id)kSecClassKey,
             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
             (id)kSecAttrApplicationLabel: nsAttributes[(id)kSecAttrApplicationLabel],
-#if HAVE_DATA_PROTECTION_KEYCHAIN
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
             (id)kSecUseDataProtectionKeychain: @YES
 #else
             (id)kSecAttrNoLegacy: @YES
@@ -364,7 +364,7 @@ void LocalAuthenticator::getAssertion()
         (id)kSecAttrLabel: requestData().requestOptions.rpId,
         (id)kSecReturnAttributes: @YES,
         (id)kSecMatchLimit: (id)kSecMatchLimitAll,
-#if HAVE_DATA_PROTECTION_KEYCHAIN
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
         (id)kSecUseDataProtectionKeychain: @YES
 #else
         (id)kSecAttrNoLegacy: @YES
@@ -447,7 +447,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserConsented(LocalConnection:
             (id)kSecAttrApplicationLabel: [NSData dataWithBytes:credentialId.data() length:credentialId.size()],
             (id)kSecUseAuthenticationContext: context,
             (id)kSecReturnRef: @YES,
-#if HAVE_DATA_PROTECTION_KEYCHAIN
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
             (id)kSecUseDataProtectionKeychain: @YES
 #else
             (id)kSecAttrNoLegacy: @YES

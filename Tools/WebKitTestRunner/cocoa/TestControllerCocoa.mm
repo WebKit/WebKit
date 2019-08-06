@@ -348,7 +348,7 @@ void TestController::addTestKeyToKeychain(const String& privateKeyBase64, const 
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrLabel: attrLabel,
         (id)kSecAttrApplicationTag: adoptNS([[NSData alloc] initWithBase64EncodedString:applicationTagBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
-#if HAVE_DATA_PROTECTION_KEYCHAIN
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
         (id)kSecUseDataProtectionKeychain: @YES
 #else
         (id)kSecAttrNoLegacy: @YES
@@ -363,7 +363,7 @@ void TestController::cleanUpKeychain(const String& attrLabel)
     NSDictionary* deleteQuery = @{
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrLabel: attrLabel,
-#if HAVE_DATA_PROTECTION_KEYCHAIN
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
         (id)kSecUseDataProtectionKeychain: @YES
 #else
         (id)kSecAttrNoLegacy: @YES
@@ -379,7 +379,7 @@ bool TestController::keyExistsInKeychain(const String& attrLabel, const String& 
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrLabel: attrLabel,
         (id)kSecAttrApplicationTag: adoptNS([[NSData alloc] initWithBase64EncodedString:applicationTagBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
-#if HAVE_DATA_PROTECTION_KEYCHAIN
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
         (id)kSecUseDataProtectionKeychain: @YES
 #else
         (id)kSecAttrNoLegacy: @YES

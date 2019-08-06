@@ -1,5 +1,18 @@
 2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
 
+        Unreviewed, a build fix after r248319
+
+        Use HAVE(DATA_PROTECTION_KEYCHAIN) instead of HAVE_DATA_PROTECTION_KEYCHAIN.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::makeCredential):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserConsented):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+        (WebKit::LocalAuthenticator::getAssertion):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterUserConsented):
+
+2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
+
         Unreviewed, a build fix after r248308
 
         Use kSecUseDataProtectionKeychain for iOS 13 and macOS Catalina or newer.
