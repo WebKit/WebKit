@@ -1,3 +1,9 @@
+2019-08-06  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, drop change to TestExpectations that landed accidentally with r248276.
+
+        * platform/wk2/TestExpectations:
+
 2019-08-06  Jer Noble  <jer.noble@apple.com>
 
         Adopt -expectMinimumUpcomingSampleBufferPresentationTime:
