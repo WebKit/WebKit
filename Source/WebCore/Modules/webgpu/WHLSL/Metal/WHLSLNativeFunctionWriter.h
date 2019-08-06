@@ -45,7 +45,7 @@ namespace Metal {
 
 class TypeNamer;
 
-String writeNativeFunction(AST::NativeFunctionDeclaration&, MangledFunctionName outputFunctionName, Intrinsics&, TypeNamer&);
+void inlineNativeFunction(StringBuilder&, AST::NativeFunctionDeclaration&, MangledVariableName returnName, const Vector<MangledVariableName>& argumentNames, Intrinsics&, TypeNamer&);
 
 }
 

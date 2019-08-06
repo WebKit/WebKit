@@ -228,11 +228,9 @@ protected:
     Optional<MangledVariableName> m_breakOutOfCurrentLoopEarlyVariable;
 };
 
-void FunctionDefinitionWriter::visit(AST::NativeFunctionDeclaration& nativeFunctionDeclaration)
+void FunctionDefinitionWriter::visit(AST::NativeFunctionDeclaration&)
 {
-    auto iterator = m_functionMapping.find(&nativeFunctionDeclaration);
-    ASSERT(iterator != m_functionMapping.end());
-    m_stringBuilder.append(writeNativeFunction(nativeFunctionDeclaration, iterator->value, m_intrinsics, m_typeNamer));
+    // We inline native function calls.
 }
 
 void FunctionDefinitionWriter::visit(AST::FunctionDefinition& functionDefinition)
@@ -577,19 +575,31 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& callExpression)
         checkErrorAndVisit(argument);
         argumentNames.append(takeLastValue());
     }
-    auto iterator = m_functionMapping.find(&callExpression.function());
-    ASSERT(iterator != m_functionMapping.end());
-    auto variableName = generateNextVariableName();
-    if (!matches(callExpression.resolvedType(), m_intrinsics.voidType()))
-        m_stringBuilder.flexibleAppend(m_typeNamer.mangledNameForType(callExpression.resolvedType()), ' ', variableName, " = ");
-    m_stringBuilder.flexibleAppend(iterator->value, '(');
-    for (size_t i = 0; i < argumentNames.size(); ++i) {
-        if (i)
-            m_stringBuilder.append(", ");
-        m_stringBuilder.flexibleAppend(argumentNames[i]);
+
+    bool isVoid = matches(callExpression.resolvedType(), m_intrinsics.voidType());
+    MangledVariableName returnName;
+    if (!isVoid) {
+        returnName = generateNextVariableName();
+        m_stringBuilder.flexibleAppend(m_typeNamer.mangledNameForType(callExpression.resolvedType()), ' ', returnName, ";\n");
     }
-    m_stringBuilder.append(");\n");
-    appendRightValue(callExpression, variableName);
+
+    if (is<AST::NativeFunctionDeclaration>(callExpression.function()))
+        inlineNativeFunction(m_stringBuilder, downcast<AST::NativeFunctionDeclaration>(callExpression.function()), returnName, argumentNames, m_intrinsics, m_typeNamer);
+    else {
+        auto iterator = m_functionMapping.find(&callExpression.function());
+        ASSERT(iterator != m_functionMapping.end());
+        if (!isVoid)
+            m_stringBuilder.flexibleAppend(returnName, " = ");
+        m_stringBuilder.flexibleAppend(iterator->value, '(');
+        for (size_t i = 0; i < argumentNames.size(); ++i) {
+            if (i)
+                m_stringBuilder.append(", ");
+            m_stringBuilder.flexibleAppend(argumentNames[i]);
+        }
+        m_stringBuilder.append(");\n");
+    }
+
+    appendRightValue(callExpression, returnName);
 }
 
 void FunctionDefinitionWriter::visit(AST::CommaExpression& commaExpression)
@@ -804,10 +814,6 @@ static SharedMetalFunctionsResult sharedMetalFunctions(Program& program, TypeNam
 
     unsigned numFunctions = 0;
     HashMap<AST::FunctionDeclaration*, MangledFunctionName> functionMapping;
-    for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations()) {
-        auto addResult = functionMapping.add(&nativeFunctionDeclaration, MangledFunctionName { numFunctions++ });
-        ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    }
     for (auto& functionDefinition : program.functionDefinitions()) {
         auto addResult = functionMapping.add(&functionDefinition, MangledFunctionName { numFunctions++ });
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
@@ -815,10 +821,6 @@ static SharedMetalFunctionsResult sharedMetalFunctions(Program& program, TypeNam
 
     {
         FunctionDeclarationWriter functionDeclarationWriter(typeNamer, functionMapping);
-        for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations()) {
-            if (reachableFunctions.contains(&nativeFunctionDeclaration))
-                functionDeclarationWriter.visit(nativeFunctionDeclaration);
-        }
         for (auto& functionDefinition : program.functionDefinitions()) {
             if (!functionDefinition->entryPointType() && reachableFunctions.contains(&functionDefinition))
                 functionDeclarationWriter.visit(functionDefinition);
@@ -869,10 +871,6 @@ RenderMetalFunctions metalFunctions(Program& program, TypeNamer& typeNamer, Matc
     stringBuilder.append(sharedMetalFunctions.metalFunctions);
 
     RenderFunctionDefinitionWriter functionDefinitionWriter(program.intrinsics(), typeNamer, sharedMetalFunctions.functionMapping, WTFMove(matchedSemantics), layout);
-    for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations()) {
-        if (reachableFunctions.contains(&nativeFunctionDeclaration))
-            functionDefinitionWriter.visit(nativeFunctionDeclaration);
-    }
     for (auto& functionDefinition : program.functionDefinitions()) {
         if (reachableFunctions.contains(&functionDefinition))
             functionDefinitionWriter.visit(functionDefinition);
@@ -900,10 +898,6 @@ ComputeMetalFunctions metalFunctions(Program& program, TypeNamer& typeNamer, Mat
     stringBuilder.append(sharedMetalFunctions.metalFunctions);
 
     ComputeFunctionDefinitionWriter functionDefinitionWriter(program.intrinsics(), typeNamer, sharedMetalFunctions.functionMapping, WTFMove(matchedSemantics), layout);
-    for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations()) {
-        if (reachableFunctions.contains(&nativeFunctionDeclaration))
-            functionDefinitionWriter.visit(nativeFunctionDeclaration);
-    }
     for (auto& functionDefinition : program.functionDefinitions()) {
         if (reachableFunctions.contains(&functionDefinition))
             functionDefinitionWriter.visit(functionDefinition);
