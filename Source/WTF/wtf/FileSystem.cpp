@@ -386,7 +386,7 @@ void makeSafeToUseMemoryMapForPath(const String&)
 #endif
 
 #if !PLATFORM(COCOA)
-String createTemporaryZipArchive(const String& directory)
+String createTemporaryZipArchive(const String&)
 {
     return { };
 }

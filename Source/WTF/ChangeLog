@@ -1,3 +1,13 @@
+2019-08-06  Claudio Saavedra  <csaavedra@igalia.com>
+
+        FileSystem: silent build warning
+
+        Unreviewed compilation warning fix.
+
+        Remove unused parameter in empty method
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::createTemporaryZipArchive):
+
 2019-08-05  Youenn Fablet  <youenn@apple.com>
 
         Make Logger::log thread safe so that it can be used from background threads
