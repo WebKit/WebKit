@@ -1,5 +1,16 @@
 2019-08-05  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Styles: show @supports CSS groupings
+        https://bugs.webkit.org/show_bug.cgi?id=200419
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/CSS.json:
+        Rename `CSSMedia` to `Grouping` and remove the `sourceLine` value, as it was never populated
+        and wasn't used by Web Inspector.
+
+2019-08-05  Devin Rousso  <drousso@apple.com>
+
         Can't use $0, $1 etc when inspecting Google Docs pages because the content uses these for function names
         https://bugs.webkit.org/show_bug.cgi?id=195834
 

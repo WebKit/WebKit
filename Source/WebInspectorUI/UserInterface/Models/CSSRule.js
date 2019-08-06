@@ -25,7 +25,7 @@
 
 WI.CSSRule = class CSSRule extends WI.Object
 {
-    constructor(nodeStyles, ownerStyleSheet, id, type, sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, mediaList)
+    constructor(nodeStyles, ownerStyleSheet, id, type, sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, groupings)
     {
         super();
 
@@ -37,55 +37,24 @@ WI.CSSRule = class CSSRule extends WI.Object
         this._type = type || null;
         this._initialState = null;
 
-        this.update(sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, mediaList, true);
+        this.update(sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, groupings, true);
     }
 
     // Public
 
+    get ownerStyleSheet() { return this._ownerStyleSheet; }
     get id() { return this._id; }
+    get type() { return this._type; }
     get initialState() { return this._initialState; }
-
-    get ownerStyleSheet()
-    {
-        return this._ownerStyleSheet;
-    }
+    get sourceCodeLocation() { return this._sourceCodeLocation; }
+    get selectors() { return this._selectors; }
+    get matchedSelectorIndices() { return this._matchedSelectorIndices; }
+    get style() { return this._style; }
+    get groupings() { return this._groupings; }
 
     get editable()
     {
         return !!this._id && (this._type === WI.CSSStyleSheet.Type.Author || this._type === WI.CSSStyleSheet.Type.Inspector);
-    }
-
-    update(sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, mediaList)
-    {
-        sourceCodeLocation = sourceCodeLocation || null;
-        selectorText = selectorText || "";
-        selectors = selectors || [];
-        matchedSelectorIndices = matchedSelectorIndices || [];
-        style = style || null;
-        mediaList = mediaList || [];
-
-        if (this._style)
-            this._style.ownerRule = null;
-
-        this._sourceCodeLocation = sourceCodeLocation;
-        this._selectorText = selectorText;
-        this._selectors = selectors;
-        this._matchedSelectorIndices = matchedSelectorIndices;
-        this._style = style;
-        this._mediaList = mediaList;
-
-        if (this._style)
-            this._style.ownerRule = this;
-    }
-
-    get type()
-    {
-        return this._type;
-    }
-
-    get sourceCodeLocation()
-    {
-        return this._sourceCodeLocation;
     }
 
     get selectorText()
@@ -107,24 +76,27 @@ WI.CSSRule = class CSSRule extends WI.Object
         this._nodeStyles.changeRuleSelector(this, selectorText).then(this._selectorResolved.bind(this), this._selectorRejected.bind(this));
     }
 
-    get selectors()
+    update(sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, groupings)
     {
-        return this._selectors;
-    }
+        sourceCodeLocation = sourceCodeLocation || null;
+        selectorText = selectorText || "";
+        selectors = selectors || [];
+        matchedSelectorIndices = matchedSelectorIndices || [];
+        style = style || null;
+        groupings = groupings || [];
 
-    get matchedSelectorIndices()
-    {
-        return this._matchedSelectorIndices;
-    }
+        if (this._style)
+            this._style.ownerRule = null;
 
-    get style()
-    {
-        return this._style;
-    }
+        this._sourceCodeLocation = sourceCodeLocation;
+        this._selectorText = selectorText;
+        this._selectors = selectors;
+        this._matchedSelectorIndices = matchedSelectorIndices;
+        this._style = style;
+        this._groupings = groupings;
 
-    get mediaList()
-    {
-        return this._mediaList;
+        if (this._style)
+            this._style.ownerRule = this;
     }
 
     isEqualTo(rule)
@@ -173,7 +145,7 @@ WI.CSSRule = class CSSRule extends WI.Object
                     sourceCodeLocation = this._ownerStyleSheet.offsetSourceCodeLocation(sourceCodeLocation);
                 }
 
-                this.update(sourceCodeLocation, selectorText, selectors, [], this._style, this._mediaList);
+                this.update(sourceCodeLocation, selectorText, selectors, [], this._style, this._groupings);
             }
         }
 

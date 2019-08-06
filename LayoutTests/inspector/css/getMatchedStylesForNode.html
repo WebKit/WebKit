@@ -1,6 +1,36 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<style>
+    @import url(resources/external.css?1) (min-width: 0px);
+
+    body { color: red; }
+    @media (min-width: 1px) { body { color: red; } }
+    @media (min-width: 2px) { @supports(display: block) { body { color: red; } } }
+</style>
+<style media="(min-width: 3px)">
+    body { color: red;}
+</style>
+<link rel="stylesheet" href="resources/external.css?2" media="(min-width: 4px)">
+<style>
+    div#x { z-index: 100; }
+    #x { z-index: 200; }
+    div { z-index: 300; }
+
+    div::first-line { z-index: 1; }
+    div::first-letter { z-index: 2; }
+    div::marker { z-index: 3; }
+    div::before { z-index: 4; }
+    div::after { z-index: 5; }
+    div::selection { z-index: 6; }
+    div::-webkit-scrollbar { z-index: 7; }
+    div::-webkit-scrollbar-thumb { z-index: 8; }
+    div::-webkit-scrollbar-button { z-index: 9; }
+    div::-webkit-scrollbar-track { z-index: 10; }
+    div::-webkit-scrollbar-track-piece { z-index: 11; }
+    div::-webkit-scrollbar-corner { z-index: 12; }
+    div::-webkit-resizer { z-index: 13; }
+</style>
 <script>
 function test()
 {
@@ -75,29 +105,7 @@ function test()
 </script>
 </head>
 <body onLoad="runTest()">
-    <p>Testing CSS.getMatchedStylesForNode.</p>
-
-    <style>
-    body { z-index: 0; }
-
-    div#x { z-index: 100; }
-    #x { z-index: 200; }
-    div { z-index: 300; }
-
-    div::first-line { z-index: 1; }
-    div::first-letter { z-index: 2; }
-    div::marker { z-index: 3; }
-    div::before { z-index: 4; }
-    div::after { z-index: 5; }
-    div::selection { z-index: 6; }
-    div::-webkit-scrollbar { z-index: 7; }
-    div::-webkit-scrollbar-thumb { z-index: 8; }
-    div::-webkit-scrollbar-button { z-index: 9; }
-    div::-webkit-scrollbar-track { z-index: 10; }
-    div::-webkit-scrollbar-track-piece { z-index: 11; }
-    div::-webkit-scrollbar-corner { z-index: 12; }
-    div::-webkit-resizer { z-index: 13; }
-    </style>
-    <div id="x"></div>
+<p>Testing CSS.getMatchedStylesForNode.</p>
+<div id="x"></div>
 </body>
 </html>
