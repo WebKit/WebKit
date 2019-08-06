@@ -440,7 +440,7 @@ WebKitWebsiteDataManager* webkit_website_data_manager_new_ephemeral()
  *
  * Get whether a #WebKitWebsiteDataManager is ephemeral. See #WebKitWebsiteDataManager:is-ephemeral for more details.
  *
- * Returns: %TRUE if @manager is epheral or %FALSE otherwise.
+ * Returns: %TRUE if @manager is ephemeral or %FALSE otherwise.
  *
  * Since: 2.16
  */

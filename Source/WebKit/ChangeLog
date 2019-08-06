@@ -1,3 +1,11 @@
+2019-08-06  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GLIB] Fix documentation typo
+
+        Unreviewed.
+
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp:
+
 2019-08-05  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MiniBrowser][WK2] Unhandled key events should be bubbled up to the parent window
