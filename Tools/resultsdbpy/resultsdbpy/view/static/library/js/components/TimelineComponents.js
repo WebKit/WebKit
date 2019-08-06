@@ -25,7 +25,7 @@ import {
 }
 from '../Ref.js';
 
-import {isDarkMode} from '../Utils.js';
+import {isDarkMode, createInsertionObservers} from '../Utils.js';
 import {ListComponent, ListProvider, ListProviderReceiver} from './BaseComponents.js'
 
 function pointCircleCollisionDetact(point, circle) {
@@ -92,23 +92,17 @@ function XScrollableCanvasProvider(exporter, ...childrenFunctions) {
             resizeEventStream.add(element.offsetWidth);
         },
         onStateUpdate: (element, stateDiff, state) => {
-            if (typeof stateDiff.scrollLeft === 'number')
-                element.style.transform = `translate(${stateDiff.scrollLeft}px, 0)`;
             if (stateDiff.resize) {
                 element.style.width = `${element.parentElement.parentElement.offsetWidth}px`;
                 resizeEventStream.add(element.offsetWidth);
             }
         }
     });
-    scrollEventStream.action((e) => {
-        // Provide the logic scrollLeft
-        presenterRef.setState({scrollLeft: e.target.scrollLeft});
-    });
     // Provide parent functions/event to children to use
 
     return `<div class="content" ref="${scrollRef}">
-        <div ref="${containerRef}">
-            <div ref="${presenterRef}">${
+        <div ref="${containerRef}" style="position: relative">
+            <div ref="${presenterRef}" style="position: -webkit-sticky; position:sticky; top:0; left: 0">${
                 ListProvider((updateChildrenFunctions) => {
                     if (exporter) {
                         exporter((children) => {
@@ -127,11 +121,15 @@ function XScrollableCanvasProvider(exporter, ...childrenFunctions) {
 function offscreenCachedRenderFactory(padding, height) {
     let cachedScrollLeft = 0;
     let offscreenCanvas = document.createElement('canvas');
+    // Double buffering
+    const offscreenCanvasBuffer = document.createElement('canvas');
 
     // This function will call redrawCache to render a offscreen cache
     // and copy the viewport area from of it
     // It will trigger redrawCache when cache don't have enough space
     return (redrawCache, element, stateDiff, state, forceRedrawCache = false) => {
+        // Check if the canvas display on the screen or not,
+        // This will save render time
         const width = typeof stateDiff.width === 'number' ? stateDiff.width : state.width;
         if (width <= 0)
             // Nothing to render
@@ -155,7 +153,7 @@ function offscreenCachedRenderFactory(padding, height) {
 
         if (needToRedrawCache) {
             // We draw everything on cache
-            redrawCache(offscreenCanvas, element, stateDiff, state, () => {
+             redrawCache(offscreenCanvas, element, stateDiff, state, () => {
                 cachedScrollLeft = scrollLeft < padding ? scrollLeft : scrollLeft - padding;
                 cachePosLeft = scrollLeft - cachedScrollLeft;
                 if (cachePosLeft < 0)
@@ -331,50 +329,74 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
         }
     };
 
-    const canvasRef = REF.createRef({
-        state: {
-            dots: initDots,
-            scales: initScales,
-            scrollLeft: 0,
-            width: 0,
-        },
-        onElementMount: (element) => {
-            setupCanvasHeightWithDpr(element, height);
-            setupCanvasContextScale(element);
-            if (onDotClick) {
-                element.addEventListener('click', (e) => {
-                    let dots = getMouseEventTirggerDots(e, canvasRef.state.scrollLeft, element);
-                    if (dots.length)
-                        onDotClick(dots[0], e);
-                });
-            }
-
-            if (onDotClick || onDotHover) {
-                element.addEventListener('mousemove', (e) => {
-                    let dots = getMouseEventTirggerDots(e, canvasRef.state.scrollLeft, element);
-                    if (dots.length) {
-                        if (onDotHover)
-                            onDotHover(dots[0], e);
-                        element.style.cursor = "pointer";
-                    } else
-                        element.style.cursor = "default";
-                });
-            }
-        },
-        onStateUpdate: (element, stateDiff, state) => {
-            const context = element.getContext("2d");
-            let forceRedrawCache = false;
-            if (stateDiff.scales || stateDiff.dots || typeof stateDiff.scrollLeft === 'number' || typeof stateDiff.width === 'number') {
-                console.assert(dots.length <= scales.length);
-                if (stateDiff.scales || stateDiff.dots) {
-                    forceRedrawCache = true;
-                }
-                requestAnimationFrame(() => offscreenCachedRender(redrawCache, element, stateDiff, state, forceRedrawCache));
-            }
-        }
-    });
-
     return ListProviderReceiver((updateContainerWidth, onContainerScroll, onResize) => {
+        const onScrollAction = (e) => {
+            canvasRef.setState({scrollLeft: e.target.scrollLeft / getDevicePixelRatio()});
+        };
+        const onResizeAction = (width) => {
+            canvasRef.setState({width: width});
+        };
+
+        const canvasRef = REF.createRef({
+            state: {
+                dots: initDots,
+                scales: initScales,
+                scrollLeft: 0,
+                width: 0,
+                onScreen: true,
+            },
+            onElementMount: (element) => {
+                setupCanvasHeightWithDpr(element, height);
+                setupCanvasContextScale(element);
+                if (onDotClick) {
+                    element.addEventListener('click', (e) => {
+                        let dots = getMouseEventTirggerDots(e, canvasRef.state.scrollLeft, element);
+                        if (dots.length)
+                            onDotClick(dots[0], e);
+                    });
+                }
+
+                if (onDotClick || onDotHover) {
+                    element.addEventListener('mousemove', (e) => {
+                        let dots = getMouseEventTirggerDots(e, canvasRef.state.scrollLeft, element);
+                        if (dots.length) {
+                            if (onDotHover)
+                                onDotHover(dots[0], e);
+                            element.style.cursor = "pointer";
+                        } else
+                            element.style.cursor = "default";
+                    });
+                }
+
+                createInsertionObservers(element, (entries) => {
+                    canvasRef.setState({onScreen: entries[0].isIntersecting});
+                }, 0, 0.01, 0.01);
+            },
+            onElementUnmount: (element) => {
+                onContainerScroll.stopAction(onScrollAction);
+                onResize.stopAction(onResizeAction);
+            },
+            onStateUpdate: (element, stateDiff, state) => {
+                const context = element.getContext("2d");
+                let forceRedrawCache = false;
+                if (!state.onScreen && !stateDiff.onScreen)
+                    return;
+
+                if (stateDiff.scales || stateDiff.dots || typeof stateDiff.scrollLeft === 'number' || typeof stateDiff.width === 'number' || stateDiff.onScreen) {
+
+                    if (stateDiff.scales) {
+                        stateDiff.scales = stateDiff.scales.map(x => x);
+                        forceRedrawCache = true;
+                    }
+                    if (stateDiff.dots) {
+                        stateDiff.dots = stateDiff.dots.map(x => x);
+                        forceRedrawCache = true;
+                    }
+                    requestAnimationFrame(() => offscreenCachedRender(redrawCache, element, stateDiff, state, forceRedrawCache));
+                }
+            }
+        });
+
         updateContainerWidth(scales.length * dotWidth * getDevicePixelRatio());
         const updateData = (dots, scales) => {
             updateContainerWidth(scales.length * dotWidth * getDevicePixelRatio());
@@ -385,12 +407,8 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
         };
         if (typeof option.exporter === "function")
             option.exporter(updateData);
-        onContainerScroll.action((e) => {
-            canvasRef.setState({scrollLeft: e.target.scrollLeft / getDevicePixelRatio()});
-        });
-        onResize.action((width) => {
-            canvasRef.setState({width: width});
-        });
+        onContainerScroll.action(onScrollAction);
+        onResize.action(onResizeAction);
         return `<div class="series">
             <canvas ref="${canvasRef}">
         </div>`;
@@ -683,66 +701,78 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
     };
     const initScaleGroupMapLinkList = getScalesMapLinkList(initScales);
 
-    const canvasRef = REF.createRef({
-        state: {
-            scrollLeft: 0,
-            width: 0,
-            scales: initScales,
-            scalesMapLinkList: initScaleGroupMapLinkList
-        },
-        onElementMount: (element) => {
-            setupCanvasHeightWithDpr(element, canvasHeight);
-            setupCanvasContextScale(element);
-            if (onScaleClick) {
-                element.addEventListener('click', (e) => {
-                    let scales = getMouseEventTirggerScales(e, canvasRef.state.scrollLeft, element);
-                    if (scales.length)
-                        onScaleClick(scales[0], e);
-                });
-            }
-
-            if (onScaleClick || onScaleHover) {
-                element.addEventListener('mousemove', (e) => {
-                    let scales = getMouseEventTirggerScales(e, canvasRef.state.scrollLeft, element);
-                    if (scales.length) {
-                        if (onScaleHover)
-                            onScaleHover(scales[0], e);
-                        element.style.cursor = "pointer";
-                    } else {
-                        element.style.cursor = "default";
-                    }
-                });
-            }
-        },
-        onStateUpdate: (element, stateDiff, state) => {
-            let forceRedrawCache = false;
-            if (stateDiff.scales || typeof stateDiff.scrollLeft === 'number' || typeof stateDiff.width === 'number') {
-                if (stateDiff.scales) {
-                    state.scalesMapLinkList = getScalesMapLinkList(stateDiff.scales);
-                    forceRedrawCache = true;
-                }
-                requestAnimationFrame(() => offscreenCachedRender(redrawCache, element, stateDiff, state, forceRedrawCache));
-            }
-        }
-    });
 
     return {
         series: ListProviderReceiver((updateContainerWidth, onContainerScroll, onResize) => {
+            const onScrollAction = (e) => {
+                canvasRef.setState({scrollLeft: e.target.scrollLeft / getDevicePixelRatio()});
+            };
+            const onResizeAction = (width) => {
+                canvasRef.setState({width: width});
+            };
+
+            const canvasRef = REF.createRef({
+                state: {
+                    scrollLeft: 0,
+                    width: 0,
+                    scales: initScales,
+                    scalesMapLinkList: initScaleGroupMapLinkList
+                },
+                onElementMount: (element) => {
+                    setupCanvasHeightWithDpr(element, canvasHeight);
+                    setupCanvasContextScale(element);
+                    if (onScaleClick) {
+                        element.addEventListener('click', (e) => {
+                            let scales = getMouseEventTirggerScales(e, canvasRef.state.scrollLeft, element);
+                            if (scales.length)
+                                onScaleClick(scales[0], e);
+                        });
+                    }
+
+                    if (onScaleClick || onScaleHover) {
+                        element.addEventListener('mousemove', (e) => {
+                            let scales = getMouseEventTirggerScales(e, canvasRef.state.scrollLeft, element);
+                            if (scales.length) {
+                                if (onScaleHover)
+                                    onScaleHover(scales[0], e);
+                                element.style.cursor = "pointer";
+                            } else {
+                                element.style.cursor = "default";
+                            }
+                        });
+                    }
+                },
+                onElementUnmount: (element) => {
+                    onContainerScroll.stopAction(onScrollAction);
+                    onResize.stopAction(onResizeAction);
+                },
+                onStateUpdate: (element, stateDiff, state) => {
+                    let forceRedrawCache = false;
+                    if (stateDiff.scales || typeof stateDiff.scrollLeft === 'number' || typeof stateDiff.width === 'number') {
+                        if (stateDiff.scales)
+                            forceRedrawCache = true;
+                        requestAnimationFrame(() => {
+                            offscreenCachedRender(redrawCache, element, stateDiff, state, forceRedrawCache)
+                        });
+                    }
+                }
+            });
+
+
             updateContainerWidth(scales.length * scaleWidth * getDevicePixelRatio());
             const updateData = (scales) => {
-                updateContainerWidth(scales.length * scaleWidth * getDevicePixelRatio());
+                // In case of modification while rendering
+                const scalesCopy = scales.map(x => x);
+                updateContainerWidth(scalesCopy.length * scaleWidth * getDevicePixelRatio());
                 canvasRef.setState({
-                    scales: scales
+                    scales: scalesCopy,
+                    scalesMapLinkList: getScalesMapLinkList(scalesCopy)
                 });
             }
             if (typeof option.exporter === "function")
                 option.exporter(updateData);
-            onContainerScroll.action((e) => {
-                canvasRef.setState({scrollLeft: e.target.scrollLeft / getDevicePixelRatio()});
-            });
-            onResize.action((width) => {
-                canvasRef.setState({width: width});
-            });
+            onContainerScroll.action(onScrollAction);
+            onResize.action(onResizeAction);
             return `<div class="x-axis">
                 <canvas ref="${canvasRef}">
             </div>`;

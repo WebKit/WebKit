@@ -39,12 +39,12 @@ class Signal {
         return this;
     }
     removeListener(fn) {
-        const removeIndex = 0;
+        let removeIndex = 0;
         this.handlers.forEach((handler, index) => {
             if (handler === fn)
                 removeIndex = index;
         });
-        this.handler.splice(removeIndex, 1);
+        this.handlers.splice(removeIndex, 1);
         return this;
     }
     removeAllListener() {
@@ -88,6 +88,10 @@ class EventStream {
     }
     action(fn) {
         this.signal.addListener(fn);
+        return this;
+    }
+    stopAction(fn) {
+        this.signal.removeListener(fn);
         return this;
     }
     error(fn) {
@@ -243,7 +247,7 @@ class Ref {
         this.state = config.state !== undefined ? config.state : {};
         this.onStateUpdate = new Signal().addListener(config.onStateUpdate);
         this.onElementMount = new Signal().addListener(config.onElementMount);
-        this.onElementUnmout = new Signal().addListener(config.onElementUnmout);
+        this.onElementUnmount = new Signal().addListener(config.onElementUnmount);
     }
     bind(element) {
         this.apply(element.querySelector(`[ref="${this.key}"]`));
@@ -255,7 +259,7 @@ class Ref {
         if (this.element === element)
             return;
         if (this.element && this.element !== element)
-            this.onElementUnmout.emit(this.element);
+            this.onElementUnmount.emit(this.element);
         this.element = element;
         //Initial state
         if (this.state !== undefined && this.state !== null)
@@ -265,7 +269,7 @@ class Ref {
     destory(element) {
         if (!element || element !== this.element)
             return;
-        this.onElementUnmout.emit(this.element);
+        this.onElementUnmount.emit(this.element);
     }
     toString() {
         return this.key;

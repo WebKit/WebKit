@@ -42,10 +42,10 @@ function ApplyNewChildren(element, oldArray, newArray, childToKeyFunc, itemProce
     newChildren.forEach((child, index) => {
         if (index < element.children.length) {
             if (child !== element.children[index]) {
-                if (child instanceof HTMLElement)
-                    element.replaceChild(child, element.children[index]);
-                else
-                    DOM.replace(element.children[index], typeof itemProcessor === "function" ? itemProcessor(child) : child);
+                if (child instanceof HTMLElement) {
+                    element.children[index].before(child);
+                } else
+                    DOM.before(element.children[index], typeof itemProcessor === "function" ? itemProcessor(child) : child);
             }
         } else {
             if (child instanceof HTMLElement)
