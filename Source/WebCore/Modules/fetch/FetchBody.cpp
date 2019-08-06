@@ -40,31 +40,36 @@
 
 namespace WebCore {
 
-FetchBody FetchBody::extract(ScriptExecutionContext&, Init&& value, String& contentType)
+ExceptionOr<FetchBody> FetchBody::extract(Init&& value, String& contentType)
 {
-    return WTF::switchOn(value, [&](RefPtr<Blob>& value) mutable {
+    return WTF::switchOn(value, [&](RefPtr<Blob>& value) mutable -> ExceptionOr<FetchBody> {
         Ref<const Blob> blob = value.releaseNonNull();
         if (!blob->type().isEmpty())
             contentType = blob->type();
         return FetchBody(WTFMove(blob));
-    }, [&](RefPtr<DOMFormData>& value) mutable {
+    }, [&](RefPtr<DOMFormData>& value) mutable -> ExceptionOr<FetchBody> {
         Ref<DOMFormData> domFormData = value.releaseNonNull();
         auto formData = FormData::createMultiPart(domFormData.get());
         contentType = makeString("multipart/form-data; boundary=", formData->boundary().data());
         return FetchBody(WTFMove(formData));
-    }, [&](RefPtr<URLSearchParams>& value) mutable {
+    }, [&](RefPtr<URLSearchParams>& value) mutable -> ExceptionOr<FetchBody> {
         Ref<const URLSearchParams> params = value.releaseNonNull();
         contentType = HTTPHeaderValues::formURLEncodedContentType();
         return FetchBody(WTFMove(params));
-    }, [&](RefPtr<ArrayBuffer>& value) mutable {
+    }, [&](RefPtr<ArrayBuffer>& value) mutable -> ExceptionOr<FetchBody> {
         Ref<const ArrayBuffer> buffer = value.releaseNonNull();
         return FetchBody(WTFMove(buffer));
-    }, [&](RefPtr<ArrayBufferView>& value) mutable {
+    }, [&](RefPtr<ArrayBufferView>& value) mutable -> ExceptionOr<FetchBody> {
         Ref<const ArrayBufferView> buffer = value.releaseNonNull();
         return FetchBody(WTFMove(buffer));
-    }, [&](RefPtr<ReadableStream>& stream) mutable {
+    }, [&](RefPtr<ReadableStream>& stream) mutable -> ExceptionOr<FetchBody> {
+        if (stream->isDisturbed())
+            return Exception { TypeError, "Input body is disturbed."_s };
+        if (stream->isLocked())
+            return Exception { TypeError, "Input body is locked."_s };
+
         return FetchBody(stream.releaseNonNull());
-    }, [&](String& value) {
+    }, [&](String& value) -> ExceptionOr<FetchBody> {
         contentType = HTTPHeaderValues::textPlainContentType();
         return FetchBody(WTFMove(value));
     });

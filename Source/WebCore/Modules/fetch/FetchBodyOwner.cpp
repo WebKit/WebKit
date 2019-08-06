@@ -145,9 +145,13 @@ void FetchBodyOwner::cloneBody(FetchBodyOwner& owner)
     m_body = owner.m_body->clone();
 }
 
-void FetchBodyOwner::extractBody(ScriptExecutionContext& context, FetchBody::Init&& value)
+ExceptionOr<void> FetchBodyOwner::extractBody(FetchBody::Init&& value)
 {
-    m_body = FetchBody::extract(context, WTFMove(value), m_contentType);
+    auto result = FetchBody::extract(WTFMove(value), m_contentType);
+    if (result.hasException())
+        return result.releaseException();
+    m_body = result.releaseReturnValue();
+    return { };
 }
 
 void FetchBodyOwner::updateContentType()

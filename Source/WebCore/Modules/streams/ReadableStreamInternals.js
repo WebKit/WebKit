@@ -113,6 +113,8 @@ function readableStreamPipeTo(stream, sink)
                 return;
             }
             doPipe();
+        }, function(e) {
+            sink.error(e);
         });
     }
     doPipe();

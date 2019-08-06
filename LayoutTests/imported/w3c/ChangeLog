@@ -1,5 +1,23 @@
 2019-08-05  Youenn Fablet  <youenn@apple.com>
 
+        Response constructor doesn't throw on disturbed ReadableStream
+        https://bugs.webkit.org/show_bug.cgi?id=200130
+        <rdar://problem/53550351>
+
+        Reviewed by Alex Christensen.
+
+        Update test to use promise_rejects instead of assert_throws.
+
+        * web-platform-tests/fetch/api/request/request-init-stream.any-expected.txt:
+        * web-platform-tests/fetch/api/request/request-init-stream.any.js:
+        (async.assert_request):
+        (promise_test.async):
+        * web-platform-tests/fetch/api/request/request-init-stream.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/response/response-from-stream.any-expected.txt:
+        * web-platform-tests/fetch/api/response/response-from-stream.any.worker-expected.txt:
+
+2019-08-05  Youenn Fablet  <youenn@apple.com>
+
         Support RTCRtpSender.dtmf
         https://bugs.webkit.org/show_bug.cgi?id=200431
 

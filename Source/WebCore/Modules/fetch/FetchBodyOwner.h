@@ -77,7 +77,7 @@ protected:
     bool isBodyNullOrOpaque() const { return !m_body || m_isBodyOpaque; }
     void cloneBody(FetchBodyOwner&);
 
-    void extractBody(ScriptExecutionContext&, FetchBody::Init&&);
+    ExceptionOr<void> extractBody(FetchBody::Init&&);
     void updateContentType();
     void consumeOnceLoadingFinished(FetchBodyConsumer::Type, Ref<DeferredPromise>&&);
 

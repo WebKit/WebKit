@@ -29,6 +29,7 @@
 #pragma once
 
 #include "DOMFormData.h"
+#include "ExceptionOr.h"
 #include "FetchBodyConsumer.h"
 #include "FormData.h"
 #include "JSDOMPromiseDeferred.h"
@@ -55,7 +56,7 @@ public:
 #endif
 
     using Init = Variant<RefPtr<Blob>, RefPtr<ArrayBufferView>, RefPtr<ArrayBuffer>, RefPtr<DOMFormData>, RefPtr<URLSearchParams>, RefPtr<ReadableStream>, String>;
-    static FetchBody extract(ScriptExecutionContext&, Init&&, String&);
+    static ExceptionOr<FetchBody> extract(Init&&, String&);
     FetchBody() = default;
 
     WEBCORE_EXPORT static Optional<FetchBody> fromFormData(FormData&);

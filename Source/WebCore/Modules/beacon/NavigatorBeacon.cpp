@@ -132,8 +132,10 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
     if (body) {
         options.mode = FetchOptions::Mode::Cors;
         String mimeType;
-        auto fetchBody = FetchBody::extract(document, WTFMove(body.value()), mimeType);
-
+        auto result = FetchBody::extract(WTFMove(body.value()), mimeType);
+        if (result.hasException())
+            return result.releaseException();
+        auto fetchBody = result.releaseReturnValue();
         if (fetchBody.hasReadableStream())
             return Exception { TypeError, "Beacons cannot send ReadableStream body"_s };
 

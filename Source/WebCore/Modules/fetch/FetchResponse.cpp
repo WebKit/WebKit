@@ -103,7 +103,10 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
         String contentType;
 
         // 8.3 Set r’s response’s body and Content-Type to the result of extracting body.
-        extractedBody = FetchBody::extract(context, WTFMove(*body), contentType);
+        auto result = FetchBody::extract(WTFMove(*body), contentType);
+        if (result.hasException())
+            return result.releaseException();
+        extractedBody = result.releaseReturnValue();
 
         // 8.4 If Content-Type is non-null and r’s response’s header list does not contain `Content-Type`, then append
         //     `Content-Type`/Content-Type to r’s response’s header list.
