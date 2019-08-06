@@ -8324,8 +8324,6 @@
 		52B0D4BD1C57FD1E0077CE53 /* PlatformView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformView.h; sourceTree = "<group>"; };
 		52B0D4BF1C57FD660077CE53 /* VideoFullscreenChangeObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenChangeObserver.h; sourceTree = "<group>"; };
 		52B0D4C11C57FF910077CE53 /* VideoFullscreenInterfaceMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenInterfaceMac.h; sourceTree = "<group>"; };
-		52B3434922A0752200E49389 /* WHLSLAutoInitializeVariables.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLAutoInitializeVariables.h; sourceTree = "<group>"; };
-		52B3434B22A0752300E49389 /* WHLSLAutoInitializeVariables.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLAutoInitializeVariables.cpp; sourceTree = "<group>"; };
 		52D5A18D1C54590300DE34A3 /* VideoFullscreenLayerManagerObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenLayerManagerObjC.mm; sourceTree = "<group>"; };
 		52D5A18E1C54590300DE34A3 /* VideoFullscreenLayerManagerObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenLayerManagerObjC.h; sourceTree = "<group>"; };
 		52D5A1A41C57488900DE34A3 /* VideoFullscreenModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenModel.h; sourceTree = "<group>"; };
@@ -25496,8 +25494,6 @@
 				1CECB3AD21F2B96400F44542 /* Metal */,
 				C20F88AA22966B0E00D610FA /* WHLSLASTDumper.cpp */,
 				C20F88AC22966B0F00D610FA /* WHLSLASTDumper.h */,
-				52B3434B22A0752300E49389 /* WHLSLAutoInitializeVariables.cpp */,
-				52B3434922A0752200E49389 /* WHLSLAutoInitializeVariables.h */,
 				1C6B95DD22C858A400E6F14F /* WHLSLBuildStandardLibraryFunctionMap.py */,
 				C234A9B221E92C1F003C984D /* WHLSLCheckDuplicateFunctions.cpp */,
 				C234A9AE21E92C1A003C984D /* WHLSLCheckDuplicateFunctions.h */,

@@ -29,7 +29,6 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLASTDumper.h"
-#include "WHLSLAutoInitializeVariables.h"
 #include "WHLSLCheckDuplicateFunctions.h"
 #include "WHLSLCheckTextureReferences.h"
 #include "WHLSLChecker.h"
@@ -187,7 +186,6 @@ static Expected<Program, String> prepareShared(PhaseTimes& phaseTimes, String& w
 
     RUN_PASS(checkLiteralTypes, program);
     CHECK_PASS(checkTextureReferences, program);
-    CHECK_PASS(autoInitializeVariables, program);
     RUN_PASS(resolveProperties, program);
     RUN_PASS(findHighZombies, program);
     CHECK_PASS(checkStatementBehavior, program);

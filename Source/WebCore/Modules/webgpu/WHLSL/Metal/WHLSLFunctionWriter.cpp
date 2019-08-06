@@ -551,7 +551,7 @@ void FunctionDefinitionWriter::visit(AST::VariableDeclaration& variableDeclarati
         checkErrorAndVisit(*variableDeclaration.initializer());
         m_stringBuilder.flexibleAppend(m_typeNamer.mangledNameForType(*variableDeclaration.type()), ' ', variableName, " = ", takeLastValue(), ";\n");
     } else
-        m_stringBuilder.flexibleAppend(m_typeNamer.mangledNameForType(*variableDeclaration.type()), ' ', variableName, ";\n");
+        m_stringBuilder.flexibleAppend(m_typeNamer.mangledNameForType(*variableDeclaration.type()), ' ', variableName, " = { };\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::AssignmentExpression& assignmentExpression)

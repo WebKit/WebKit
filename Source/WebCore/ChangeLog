@@ -1,3 +1,27 @@
+2019-08-06  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Remove the auto initialize variables pass
+        https://bugs.webkit.org/show_bug.cgi?id=200472
+
+        Reviewed by Robin Morisset.
+
+        From a separation of concerns perspective, it's a bit nicer to make variables
+        without initializers call their default constructors as a transformation over the AST.
+        This removes the need for the lowering to need to worry about such things. However,
+        changing metal lowering to deal with this is trivial. It means we need to change one
+        line of code in Metal code generation, and we get to remove a ~50 LOC AST pass.
+        Also, in this case, it saves us from the compile time hit of having to run the
+        auto initialize variables phase, which takes ~1.2ms on compute_boids.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        * Modules/webgpu/WHLSL/WHLSLAutoInitializeVariables.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLAutoInitializeVariables.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp:
+        (WebCore::WHLSL::prepareShared):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-08-06  Sam Weinig  <weinig@apple.com>
 
         WHLSL Metal code generation unnecessarily does string copies by passing partial results as Strings
