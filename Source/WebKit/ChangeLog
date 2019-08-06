@@ -1,3 +1,17 @@
+2019-08-05  Simon Fraser  <simon.fraser@apple.com>
+
+        iOS 13: Overflow:hidden on body prevents PDF scroll
+        https://bugs.webkit.org/show_bug.cgi?id=200435
+        rdar://problem/53942888
+
+        Reviewed by Tim Horton.
+
+        When we navigate from an overflow:hidden HTML page to a custom view (like PDF), we need
+        to make sure that the scroll view is scrollable.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setHasCustomContentView:loadedMIMEType:]):
+
 2019-08-05  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Re-introduce latch mode for subresource cookie blocking

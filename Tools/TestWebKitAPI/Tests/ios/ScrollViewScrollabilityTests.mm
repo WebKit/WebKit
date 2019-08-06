@@ -29,6 +29,7 @@
 
 #import "PlatformUtilities.h"
 #import "TestInputDelegate.h"
+#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <UIKit/UIKit.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -134,6 +135,22 @@ TEST(ScrollViewScrollabilityTests, ScrollableWithOverflowHiddenAndShrunkUI)
 
     [webView synchronouslyLoadHTMLString:nonScrollableDocumentMarkup];
     [webView waitForNextPresentationUpdate];
+    EXPECT_EQ([[webView scrollView] isScrollEnabled], YES);
+}
+
+TEST(ScrollViewScrollabilityTests, ScrollableAfterNavigateToPDF)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, viewHeight, 414)]);
+
+    [webView synchronouslyLoadHTMLString:nonScrollableDocumentMarkup];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ([[webView scrollView] isScrollEnabled], NO);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+
+    [webView _test_waitForDidFinishNavigation];
+
     EXPECT_EQ([[webView scrollView] isScrollEnabled], YES);
 }
 

@@ -1630,6 +1630,7 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
 
         _scrollViewBackgroundColor = WebCore::Color();
         [_scrollView setContentOffset:[self _initialContentOffsetForScrollView]];
+        [_scrollView _setScrollEnabledInternal:YES];
 
         [self _setAvoidsUnsafeArea:NO];
     } else if (_customContentView) {
