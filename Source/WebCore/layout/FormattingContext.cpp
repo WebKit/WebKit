@@ -133,32 +133,23 @@ void FormattingContext::computeBorderAndPadding(const Box& layoutBox, Optional<U
     displayBox.setPadding(Geometry::computedPadding(layoutBox, *usedValues));
 }
 
-void FormattingContext::layoutOutOfFlowDescendants(const Box& layoutBox) const
+void FormattingContext::layoutOutOfFlowDescendants() const
 {
-    if (!is<Container>(layoutBox))
-        return;
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: layout out-of-flow descendants -> context: " << &layoutState() << " root: " << &root());
 
-    auto& container = downcast<Container>(layoutBox);
-    if (!container.hasChild())
-        return;
+    for (auto& outOfFlowBox : formattingState().outOfFlowBoxes()) {
+        ASSERT(outOfFlowBox->establishesFormattingContext());
 
-    auto& layoutState = this->layoutState();
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: layout out-of-flow descendants -> context: " << &layoutState << " root: " << &root());
+        computeBorderAndPadding(*outOfFlowBox);
+        computeOutOfFlowHorizontalGeometry(*outOfFlowBox);
 
-    for (auto& outOfFlowBox : container.outOfFlowDescendants()) {
-        auto& layoutBox = *outOfFlowBox;
+        auto formattingContext = layoutState().createFormattingContext(*outOfFlowBox);
+        formattingContext->layout();
 
-        ASSERT(layoutBox.establishesFormattingContext());
-
-        computeBorderAndPadding(layoutBox);
-        computeOutOfFlowHorizontalGeometry(layoutBox);
-
-        layoutState.createFormattingContext(layoutBox)->layout();
-
-        computeOutOfFlowVerticalGeometry(layoutBox);
-        layoutOutOfFlowDescendants(layoutBox);
+        computeOutOfFlowVerticalGeometry(*outOfFlowBox);
+        formattingContext->layoutOutOfFlowDescendants();
     }
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow descendants -> context: " << &layoutState << " root: " << &root());
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow descendants -> context: " << &layoutState() << " root: " << &root());
 }
 
 static LayoutUnit mapHorizontalPositionToAncestor(const LayoutState& layoutState, LayoutUnit horizontalPosition, const Container& containingBlock, const Container& ancestor)

@@ -75,15 +75,6 @@ std::unique_ptr<Container> TreeBuilder::createLayoutTree(const RenderView& rende
 
     std::unique_ptr<Container> initialContainingBlock(new Container(WTF::nullopt, WTFMove(style)));
     TreeBuilder::createSubTree(renderView, *initialContainingBlock);
-
-    // Not efficient, but this is temporary anyway.
-    // Collect the out-of-flow descendants at the formatting root level (as opposed to at the containing block level, though they might be the same).
-    for (auto& descendant : descendantsOfType<Box>(*initialContainingBlock)) {
-        if (!descendant.isOutOfFlowPositioned())
-            continue;
-        const_cast<Container&>(descendant.formattingContextRoot()).addOutOfFlowDescendant(descendant);
-    }
-
     return initialContainingBlock;
 }
 

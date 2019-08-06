@@ -172,6 +172,8 @@ void BlockFormattingContext::layoutFormattingContextRoot(FloatingContext& floati
     // Come back and finalize the root's geometry.
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Height][Margin] -> for layoutBox(" << &layoutBox << ")");
     computeHeightAndMargin(layoutBox);
+    // Now that we computed the root's height, we can go back and layout the out-of-flow descedants (if any).
+    formattingContext->layoutOutOfFlowDescendants();
 
     // Float related final positioning.
     if (layoutBox.isFloatingPositioned()) {
@@ -179,9 +181,6 @@ void BlockFormattingContext::layoutFormattingContextRoot(FloatingContext& floati
         floatingContext.floatingState().append(layoutBox);
     } else if (layoutBox.establishesBlockFormattingContext())
         computePositionToAvoidFloats(floatingContext, layoutBox);
-
-    // Now that we computed the root's height, we can go back and layout the out-of-flow descedants (if any).
-    formattingContext->layoutOutOfFlowDescendants(layoutBox);
 }
 
 void BlockFormattingContext::placeInFlowPositionedChildren(const Box& layoutBox) const

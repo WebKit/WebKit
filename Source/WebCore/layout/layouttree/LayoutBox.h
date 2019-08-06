@@ -97,7 +97,7 @@ public:
     bool isFloatingOrOutOfFlowPositioned() const { return isFloatingPositioned() || isOutOfFlowPositioned(); }
 
     const Container* containingBlock() const;
-    virtual const Container& formattingContextRoot() const;
+    const Container& formattingContextRoot() const;
     const Container& initialContainingBlock() const;
 
     bool isDescendantOf(const Container&) const;

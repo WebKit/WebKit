@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutContainer.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/IsoMalloc.h>
@@ -47,7 +48,6 @@ namespace Layout {
 
 enum class StyleDiff;
 class Box;
-class Container;
 class FormattingContext;
 class FormattingState;
 
@@ -61,6 +61,9 @@ class LayoutState {
     WTF_MAKE_ISO_ALLOCATED(LayoutState);
 public:
     LayoutState(const Container& initialContainingBlock);
+
+    // FIXME: This is a temporary entry point for LFC layout.
+    static void run(const RenderView&);
 
     void updateLayout();
     void styleChanged(const Box&, StyleDiff);

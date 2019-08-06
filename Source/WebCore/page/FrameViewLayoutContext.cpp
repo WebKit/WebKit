@@ -39,12 +39,8 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
-
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-#include "FormattingState.h"
-#include "LayoutContainer.h"
 #include "LayoutState.h"
-#include "LayoutTreeBuilder.h"
 #endif
 
 #include <wtf/SetForScope.h>
@@ -58,16 +54,7 @@ static void layoutUsingFormattingContext(const RenderView& renderView)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled())
         return;
-    auto initialContainingBlock = Layout::TreeBuilder::createLayoutTree(renderView);
-    auto layoutState = std::make_unique<Layout::LayoutState>(*initialContainingBlock);
-    auto quirksMode = Layout::LayoutState::QuirksMode::No;
-    if (renderView.document().inLimitedQuirksMode())
-        quirksMode = Layout::LayoutState::QuirksMode::Limited;
-    else if (renderView.document().inQuirksMode())
-        quirksMode = Layout::LayoutState::QuirksMode::Yes;
-    layoutState->setQuirksMode(quirksMode);
-    layoutState->updateLayout();
-    layoutState->verifyAndOutputMismatchingLayoutTree(renderView);
+    Layout::LayoutState::run(renderView);
 } 
 #endif
 

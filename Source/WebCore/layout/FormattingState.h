@@ -33,6 +33,7 @@
 #include "LayoutState.h"
 #include "LayoutUnit.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -64,6 +65,12 @@ public:
 
     LayoutState& layoutState() const { return m_layoutState; }
 
+    // Since we layout the out-of-flow boxes at the end of the formatting context layout, it's okay to store them in the formatting state -as opposed to the containing block level.
+    using OutOfFlowBoxList = Vector<WeakPtr<const Box>>;
+    void addOutOfFlowBox(const Box& outOfFlowBox) { m_outOfFlowBoxes.append(makeWeakPtr(outOfFlowBox)); }
+    void removeOutOfFlowBox(const Box&);
+    const OutOfFlowBoxList& outOfFlowBoxes() const { return m_outOfFlowBoxes; }
+
 protected:
     enum class Type { Block, Inline, Table };
     FormattingState(Ref<FloatingState>&&, Type, LayoutState&);
@@ -73,6 +80,8 @@ private:
     Ref<FloatingState> m_floatingState;
     HashMap<const Box*, FormattingContext::IntrinsicWidthConstraints> m_intrinsicWidthConstraintsForBoxes;
     Optional<FormattingContext::IntrinsicWidthConstraints> m_intrinsicWidthConstraints;
+    // FIXME: This needs WeakListHashSet
+    OutOfFlowBoxList m_outOfFlowBoxes;
     Type m_type;
 };
 

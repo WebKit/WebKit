@@ -249,7 +249,7 @@ void InlineFormattingContext::layoutFormattingContextRoot(const Box& root, UsedH
     // Come back and finalize the root's height and margin.
     computeHeightAndMargin(root);
     // Now that we computed the root's height, we can go back and layout the out-of-flow descedants (if any).
-    formattingContext->layoutOutOfFlowDescendants(root);
+    formattingContext->layoutOutOfFlowDescendants();
 }
 
 void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Box& layoutBox, UsedHorizontalValues usedValues) const
