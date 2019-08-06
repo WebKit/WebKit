@@ -1,3 +1,32 @@
+2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Enable LocalAuthenticator for macOS
+        https://bugs.webkit.org/show_bug.cgi?id=182772
+        <rdar://problem/43347920>
+
+        Reviewed by Brent Fulgham.
+
+        This patch enables LocalAuthenticator for macOS. The majority
+        of this patch is to tweak macOS keychain to use the modern one.
+
+        * Configurations/WebKit.xcconfig:
+        * Platform/spi/Cocoa/DeviceIdentitySPI.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticatorInternal::toVector):
+        (WebKit::LocalAuthenticator::makeCredential):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserConsented):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+        (WebKit::LocalAuthenticator::getAssertion):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterUserConsented):
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+        (WebKit::LocalConnection::getUserConsent const):
+        (WebKit::LocalConnection::getAttestation const):
+        * UIProcess/WebAuthentication/Cocoa/LocalService.mm:
+        (WebKit::LocalService::isAvailable):
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+        (WebKit::MockLocalConnection::getAttestation const):
+        * config.h:
+
 2019-08-06  Jer Noble  <jer.noble@apple.com>
 
         Add test for behavior introduced in r248174

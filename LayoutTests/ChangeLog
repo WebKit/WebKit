@@ -1,3 +1,17 @@
+2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Enable LocalAuthenticator for macOS
+        https://bugs.webkit.org/show_bug.cgi?id=182772
+        <rdar://problem/43347920>
+
+        Reviewed by Brent Fulgham.
+
+        Enable existing local authenticator tests for macOS. Since OpenSource bots
+        don't have the internal setting to include restricted entitlements, tests
+        will fail on OpenSource bots.
+
+        * platform/mac-wk2/TestExpectations:
+
 2019-08-06  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop change to TestExpectations that landed accidentally with r248276.

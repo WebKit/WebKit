@@ -27,7 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if HAVE(DEVICE_IDENTITY)
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -54,6 +54,6 @@ void DeviceIdentityIssueClientCertificateWithCompletion(dispatch_queue_t _Nullab
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
-#endif // PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // HAVE(DEVICE_IDENTITY)
 
 #endif // ENABLE(WEB_AUTHN)

@@ -1,3 +1,16 @@
+2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Enable LocalAuthenticator for macOS
+        https://bugs.webkit.org/show_bug.cgi?id=182772
+        <rdar://problem/43347920>
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/Platform.h:
+        Adds HAVE_DEVICE_IDENTITY.
+        * wtf/spi/cocoa/SecuritySPI.h:
+        Adds a SPI for telling macOS keychain to use the modern one.
+
 2019-08-06  Claudio Saavedra  <csaavedra@igalia.com>
 
         FileSystem: silent build warning

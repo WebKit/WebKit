@@ -41,12 +41,10 @@ LocalService::LocalService(Observer& observer)
 {
 }
 
+// FIXME(rdar://problem/51048542)
 bool LocalService::isAvailable()
 {
-// FIXME(182772)
-#if !PLATFORM(IOS_FAMILY)
-    return false;
-#else
+    // FIXME(198176)
     if (!WebCore::RuntimeEnabledFeatures::sharedFeatures().webAuthenticationLocalAuthenticatorEnabled())
         return false;
 
@@ -57,7 +55,6 @@ bool LocalService::isAvailable()
         return false;
     }
     return true;
-#endif
 }
 
 void LocalService::startDiscoveryInternal()

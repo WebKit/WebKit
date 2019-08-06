@@ -903,14 +903,14 @@ imported/w3c/web-platform-tests/payment-request/user-accepts-payment-request-alg
 
 webkit.org/b/189598 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Pass Failure ]
 
-# Skip local authenticator tests for mac now.
-http/wpt/webauthn/public-key-credential-create-failure-local.https.html [ Skip ]
-http/wpt/webauthn/public-key-credential-create-success-local.https.html [ Skip ]
-http/wpt/webauthn/public-key-credential-get-failure-local.https.html [ Skip ]
-http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Skip ]
-# The following tests require PublicKeyCredential objects. We can only produce them via local authenticators now.
-http/wpt/credential-management/credentialscontainer-store-basics.https.html [ Skip ]
-http/wpt/webauthn/idl.https.html [ Skip ]
+# Local authenticator tests require restricted keychain entitlement, which cannot be signed with ad hoc signing.
+# Therefore, tests fail on OpenSource bots. They will be covered by Internal bots.
+http/wpt/webauthn/public-key-credential-create-failure-local.https.html [ Failure ]
+http/wpt/webauthn/public-key-credential-create-success-local.https.html [ Failure ]
+http/wpt/webauthn/public-key-credential-get-failure-local.https.html [ Failure ]
+http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Failure ]
+http/wpt/credential-management/credentialscontainer-store-basics.https.html [ Failure ]
+http/wpt/webauthn/idl.https.html [ Failure ]
 
 webkit.org/b/183878 media/modern-media-controls/tracks-panel/tracks-panel-up-click-over-media-does-not-dimiss-media-controls-when-media-is-playing.html [ Pass Timeout ] 
 
