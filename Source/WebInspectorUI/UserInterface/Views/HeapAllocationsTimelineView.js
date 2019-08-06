@@ -408,7 +408,7 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
 
     _takeHeapSnapshotClicked()
     {
-        HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
+        WI.heapManager.snapshot((error, timestamp, snapshotStringData) => {
             let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
             workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
                 let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);

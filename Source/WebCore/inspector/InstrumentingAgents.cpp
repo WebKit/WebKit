@@ -55,7 +55,7 @@ void InstrumentingAgents::reset()
     m_pageRuntimeAgent = nullptr;
     m_inspectorScriptProfilerAgent = nullptr;
     m_inspectorTimelineAgent = nullptr;
-    m_persistentInspectorTimelineAgent = nullptr;
+    m_trackingInspectorTimelineAgent = nullptr;
     m_inspectorDOMStorageAgent = nullptr;
 #if ENABLE(RESOURCE_USAGE)
     m_inspectorCPUProfilerAgent = nullptr;

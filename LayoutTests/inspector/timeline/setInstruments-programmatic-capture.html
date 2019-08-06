@@ -17,6 +17,7 @@ function test()
     let captureStopped = null;
 
     InspectorProtocol.sendCommand("Heap.enable");
+    InspectorProtocol.sendCommand("Timeline.enable");
 
     InspectorProtocol.eventHandler["Timeline.recordingStarted"] = () => {
         ProtocolTest.pass("Timeline.recordingStarted");

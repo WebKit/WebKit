@@ -294,7 +294,7 @@ public:
     static void lastFrontendDeleted();
 
     static bool consoleAgentEnabled(ScriptExecutionContext*);
-    static bool timelineAgentEnabled(ScriptExecutionContext*);
+    static bool timelineAgentTracking(ScriptExecutionContext*);
 
     static InstrumentingAgents* instrumentingAgentsForPage(Page*);
 

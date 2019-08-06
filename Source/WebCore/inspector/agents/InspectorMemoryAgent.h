@@ -61,7 +61,6 @@ private:
 
     std::unique_ptr<Inspector::MemoryFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::MemoryBackendDispatcher> m_backendDispatcher;
-    bool m_enabled { false };
     bool m_tracking { false };
 };
 

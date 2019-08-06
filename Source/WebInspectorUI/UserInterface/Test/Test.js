@@ -134,9 +134,12 @@ WI.contentLoaded = function()
     // Things that would normally get called by the UI, that we still want to do in tests.
     WI.applicationCacheManager.enable();
     WI.canvasManager.enable();
-    WI.domStorageManager.enable();
     WI.databaseManager.enable();
+    WI.domStorageManager.enable();
+    WI.heapManager.enable();
     WI.indexedDBManager.enable();
+    WI.memoryManager.enable();
+    WI.timelineManager.enable();
 
     // Signal that the frontend is now ready to receive messages.
     InspectorFrontendAPI.loadCompleted();

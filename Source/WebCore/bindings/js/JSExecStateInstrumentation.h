@@ -35,7 +35,7 @@ namespace WebCore {
 template<typename Type, Type jsType, class DataType>
 inline InspectorInstrumentationCookie JSExecState::instrumentFunctionInternal(ScriptExecutionContext* context, Type callType, const DataType& callData)
 {
-    if (!InspectorInstrumentation::timelineAgentEnabled(context))
+    if (!InspectorInstrumentation::timelineAgentTracking(context))
         return InspectorInstrumentationCookie();
     String resourceName;
     int lineNumber = 1;

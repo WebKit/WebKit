@@ -54,6 +54,7 @@ WI.Instrument = class Instrument
 
     static startLegacyTimelineAgent(initiatedByBackend)
     {
+        console.assert(WI.timelineManager._enabled);
         console.assert(window.TimelineAgent, "Attempted to start legacy timeline agent without TimelineAgent.");
 
         if (WI.Instrument._legacyTimelineAgentStarted)
@@ -69,6 +70,9 @@ WI.Instrument = class Instrument
 
     static stopLegacyTimelineAgent(initiatedByBackend)
     {
+        console.assert(WI.timelineManager._enabled);
+        console.assert(window.TimelineAgent, "Attempted to stop legacy timeline agent without TimelineAgent.");
+
         if (!WI.Instrument._legacyTimelineAgentStarted)
             return;
 

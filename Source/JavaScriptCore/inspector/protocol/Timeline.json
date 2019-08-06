@@ -57,6 +57,14 @@
     ],
     "commands": [
         {
+            "name": "enable",
+            "description": "Enables Timeline domain events."
+        },
+        {
+            "name": "disable",
+            "description": "Disables Timeline domain events."
+        },
+        {
             "name": "start",
             "description": "Starts capturing instrumentation events.",
             "parameters": [

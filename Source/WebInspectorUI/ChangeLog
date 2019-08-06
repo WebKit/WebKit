@@ -1,3 +1,91 @@
+2019-08-05  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Timelines: disable related agents when the tab is closed
+        https://bugs.webkit.org/show_bug.cgi?id=200118
+
+        Reviewed by Joseph Pecoraro.
+
+        Rework how `enable`/`disable` is used for timeline-related agents so that events are not sent
+        and data isn't kept alive when the Timelines tab isn't enabled.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager):
+        (WI.TimelineManager.prototype.get domains): Added.
+        (WI.TimelineManager.prototype.activateExtraDomain): Added.
+        (WI.TimelineManager.prototype.initializeTarget):
+        (WI.TimelineManager.prototype.reset):
+        (WI.TimelineManager.prototype.set autoCaptureOnPageLoad):
+        (WI.TimelineManager.prototype.enable): Added.
+        (WI.TimelineManager.prototype.disable): Added.
+        (WI.TimelineManager.prototype.startCapturing):
+        (WI.TimelineManager.prototype.stopCapturing):
+        (WI.TimelineManager.prototype.async processJSON):
+        (WI.TimelineManager.prototype.capturingStarted):
+        (WI.TimelineManager.prototype.capturingStopped):
+        (WI.TimelineManager.prototype.autoCaptureStarted):
+        (WI.TimelineManager.prototype.eventRecorded):
+        (WI.TimelineManager.prototype.pageDOMContentLoadedEventFired):
+        (WI.TimelineManager.prototype.pageLoadEventFired):
+        (WI.TimelineManager.prototype.cpuProfilerTrackingUpdated):
+        (WI.TimelineManager.prototype.memoryTrackingUpdated):
+        (WI.TimelineManager.prototype.heapTrackingStarted):
+        (WI.TimelineManager.prototype.heapTrackingCompleted):
+        (WI.TimelineManager.prototype.heapSnapshotAdded):
+        (WI.TimelineManager.prototype._loadNewRecording):
+        (WI.TimelineManager.prototype._legacyAttemptStartAutoCapturingForFrame):
+        (WI.TimelineManager.prototype._provisionalLoadStarted):
+        (WI.TimelineManager.prototype._mainResourceDidChange):
+        (WI.TimelineManager.prototype._resourceWasAdded):
+        (WI.TimelineManager.prototype._garbageCollected):
+        (WI.TimelineManager.prototype._memoryPressure):
+        (WI.TimelineManager.prototype.scriptProfilerTrackingUpdated):
+        (WI.TimelineManager.prototype.scriptProfilerTrackingCompleted):
+        (WI.TimelineManager.prototype._updateAutoCaptureInstruments):
+        (WI.TimelineManager.prototype._handleDOMNodeDidFireEvent):
+        (WI.TimelineManager.prototype._handleDOMNodePowerEfficientPlaybackStateChanged):
+        * UserInterface/Models/Instrument.js:
+        (WI.Instrument.startLegacyTimelineAgent):
+        (WI.Instrument.stopLegacyTimelineAgent):
+
+        * UserInterface/Controllers/HeapManager.js:
+        (WI.HeapManager): Added.
+        (WI.HeapManager.prototype.get domains): Added.
+        (WI.HeapManager.prototype.activateExtraDomain): Added.
+        (WI.HeapManager.prototype.initializeTarget):
+        (WI.HeapManager.prototype.enable): Added.
+        (WI.HeapManager.prototype.disable): Added.
+        (WI.HeapManager.prototype.snapshot): Added.
+        (WI.HeapManager.prototype.getPreview): Added.
+        (WI.HeapManager.prototype.getRemoteObject): Added.
+        (WI.HeapManager.prototype.garbageCollected):
+
+        * UserInterface/Controllers/MemoryManager.js:
+        (WI.MemoryManager): Added.
+        (WI.MemoryManager.prototype.get domains): Added.
+        (WI.MemoryManager.prototype.activateExtraDomain): Added.
+        (WI.MemoryManager.prototype.initializeTarget):
+        (WI.MemoryManager.prototype.enable): Added.
+        (WI.MemoryManager.prototype.disable): Added.
+        (WI.MemoryManager.prototype.memoryPressure):
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView):
+        (WI.TimelineTabContentView.prototype.closed):
+
+        * UserInterface/Models/HeapAllocationsInstrument.js:
+        (WI.HeapAllocationsInstrument):
+        (WI.HeapAllocationsInstrument.prototype._takeHeapSnapshot):
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WI.HeapAllocationsTimelineView.prototype._takeHeapSnapshotClicked):
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WI.HeapSnapshotInstanceDataGridNode.logHeapSnapshotNode):
+        (WI.HeapSnapshotInstanceDataGridNode.prototype._populatePreview):
+        (WI.HeapSnapshotInstanceDataGridNode.prototype._mouseoverHandler.appendPathRow):
+        Go through the `HeapManager` for `HeapAgent` commands so it can better manage state.
+
+        * UserInterface/Test/Test.js:
+        (WI.contentLoaded):
+
 2019-08-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: brotli-compressed resources have "Compressed: No" in Resources details sidebar

@@ -54,29 +54,31 @@ void InspectorHeapAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDis
 
 void InspectorHeapAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
-    // Stop tracking without taking a snapshot.
-    m_tracking = false;
-
     ErrorString ignored;
     disable(ignored);
 }
 
-void InspectorHeapAgent::enable(ErrorString&)
+void InspectorHeapAgent::enable(ErrorString& errorString)
 {
-    if (m_enabled)
+    if (m_enabled) {
+        errorString = "HeapAgent already enabled"_s;
         return;
+    }
 
     m_enabled = true;
 
     m_environment.vm().heap.addObserver(this);
 }
 
-void InspectorHeapAgent::disable(ErrorString&)
+void InspectorHeapAgent::disable(ErrorString& errorString)
 {
-    if (!m_enabled)
+    if (!m_enabled) {
+        errorString = "HeapAgent already disabled"_s;
         return;
+    }
 
     m_enabled = false;
+    m_tracking = false;
 
     m_environment.vm().heap.removeObserver(this);
 

@@ -94,6 +94,9 @@ public:
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) final;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) final;
 
+    // TimelineBackendDispatcherHandler
+    void enable(ErrorString&) final;
+    void disable(ErrorString&) final;
     void start(ErrorString&, const int* maxCallStackDepth = nullptr) final;
     void stop(ErrorString&) final;
     void setAutoCaptureEnabled(ErrorString&, bool) final;
@@ -214,8 +217,8 @@ private:
     int m_id { 1 };
     int m_maxCallStackDepth { 5 };
 
-    bool m_enabled { false };
-    bool m_enabledFromFrontend { false };
+    bool m_tracking { false };
+    bool m_trackingFromFrontend { false };
     bool m_programmaticCaptureRestoreBreakpointActiveValue { false };
 
     bool m_autoCaptureEnabled { false };

@@ -109,8 +109,8 @@ public:
     InspectorTimelineAgent* inspectorTimelineAgent() const { return m_inspectorTimelineAgent; }
     void setInspectorTimelineAgent(InspectorTimelineAgent* agent) { m_inspectorTimelineAgent = agent; }
 
-    InspectorTimelineAgent* persistentInspectorTimelineAgent() const { return m_persistentInspectorTimelineAgent; }
-    void setPersistentInspectorTimelineAgent(InspectorTimelineAgent* agent) { m_persistentInspectorTimelineAgent = agent; }
+    InspectorTimelineAgent* trackingInspectorTimelineAgent() const { return m_trackingInspectorTimelineAgent; }
+    void setTrackingInspectorTimelineAgent(InspectorTimelineAgent* agent) { m_trackingInspectorTimelineAgent = agent; }
 
     InspectorDOMStorageAgent* inspectorDOMStorageAgent() const { return m_inspectorDOMStorageAgent; }
     void setInspectorDOMStorageAgent(InspectorDOMStorageAgent* agent) { m_inspectorDOMStorageAgent = agent; }
@@ -163,7 +163,7 @@ private:
     PageRuntimeAgent* m_pageRuntimeAgent { nullptr };
     Inspector::InspectorScriptProfilerAgent* m_inspectorScriptProfilerAgent { nullptr };
     InspectorTimelineAgent* m_inspectorTimelineAgent { nullptr };
-    InspectorTimelineAgent* m_persistentInspectorTimelineAgent { nullptr };
+    InspectorTimelineAgent* m_trackingInspectorTimelineAgent { nullptr };
     InspectorDOMStorageAgent* m_inspectorDOMStorageAgent { nullptr };
 #if ENABLE(RESOURCE_USAGE)
     InspectorCPUProfilerAgent* m_inspectorCPUProfilerAgent { nullptr };

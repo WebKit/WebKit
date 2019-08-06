@@ -1,3 +1,82 @@
+2019-08-05  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Timelines: disable related agents when the tab is closed
+        https://bugs.webkit.org/show_bug.cgi?id=200118
+
+        Reviewed by Joseph Pecoraro.
+
+        Rework how `enable`/`disable` is used for timeline-related agents so that events are not sent
+        and data isn't kept alive when the Timelines tab isn't enabled.
+
+        * inspector/agents/InspectorTimelineAgent.h:
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorTimelineAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorTimelineAgent::enable):
+        (WebCore::InspectorTimelineAgent::disable):
+        (WebCore::InspectorTimelineAgent::start):
+        (WebCore::InspectorTimelineAgent::stop):
+        (WebCore::InspectorTimelineAgent::internalStart):
+        (WebCore::InspectorTimelineAgent::internalStop):
+        (WebCore::InspectorTimelineAgent::startFromConsole):
+        (WebCore::InspectorTimelineAgent::stopFromConsole):
+        (WebCore::InspectorTimelineAgent::mainFrameStartedLoading):
+        (WebCore::InspectorTimelineAgent::startProgrammaticCapture):
+        (WebCore::InspectorTimelineAgent::stopProgrammaticCapture):
+        Rename `m_enabled*` to `m_tracking*` to match other timeline-related agents.
+
+        * inspector/agents/InspectorMemoryAgent.h:
+        * inspector/agents/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorMemoryAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorMemoryAgent::enable):
+        (WebCore::InspectorMemoryAgent::disable):
+        (WebCore::InspectorMemoryAgent::didHandleMemoryPressure):
+
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::trackingInspectorTimelineAgent): Added.
+        (WebCore::InstrumentingAgents::setTrackingInspectorTimelineAgent): Added.
+        (WebCore::InstrumentingAgents::persistentInspectorTimelineAgent): Added.
+        (WebCore::InstrumentingAgents::setPersistentInspectorTimelineAgent): Added.
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::reset):
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didInstallTimerImpl):
+        (WebCore::InspectorInstrumentation::didRemoveTimerImpl):
+        (WebCore::InspectorInstrumentation::willCallFunctionImpl):
+        (WebCore::InspectorInstrumentation::willDispatchEventImpl):
+        (WebCore::InspectorInstrumentation::willDispatchEventOnWindowImpl):
+        (WebCore::InspectorInstrumentation::willEvaluateScriptImpl):
+        (WebCore::InspectorInstrumentation::willFireTimerImpl):
+        (WebCore::InspectorInstrumentation::didInvalidateLayoutImpl):
+        (WebCore::InspectorInstrumentation::willLayoutImpl):
+        (WebCore::InspectorInstrumentation::willCompositeImpl):
+        (WebCore::InspectorInstrumentation::didCompositeImpl):
+        (WebCore::InspectorInstrumentation::willPaintImpl):
+        (WebCore::InspectorInstrumentation::didPaintImpl):
+        (WebCore::InspectorInstrumentation::willRecalculateStyleImpl):
+        (WebCore::InspectorInstrumentation::didScheduleStyleRecalculationImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::frameStartedLoadingImpl):
+        (WebCore::InspectorInstrumentation::startConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::stopConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::consoleTimeStampImpl):
+        (WebCore::InspectorInstrumentation::startProfilingImpl):
+        (WebCore::InspectorInstrumentation::stopProfilingImpl):
+        (WebCore::InspectorInstrumentation::timelineAgentTracking): Added.
+        (WebCore::InspectorInstrumentation::didRequestAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::didCancelAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::willFireAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::willFireObserverCallbackImpl):
+        (WebCore::InspectorInstrumentation::retrieveTimelineAgent):
+        (WebCore::InspectorInstrumentation::timelineAgentEnabled): Deleted.
+        * bindings/js/JSExecStateInstrumentation.h:
+        (WebCore::JSExecState::instrumentFunctionInternal):
+        Rename for clarity/correctness:
+         - `inspectorTimelineAgent` => `trackingInspectorTimelineAgent`
+         - `persistentInspectorTimelineAgent` => `inspectorTimelineAgent`
+
 2019-08-05  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Specifying huge font-size causes crashing

@@ -7,6 +7,10 @@ function test()
 {
     let suite = ProtocolTest.createAsyncSuite("Timeline.setInstruments.errors");
 
+    InspectorProtocol.sendCommand("Heap.enable");
+    InspectorProtocol.sendCommand("Memory.enable");
+    InspectorProtocol.sendCommand("Timeline.enable");
+
     suite.addTestCase({
         name: "MissingRequiredArgument",
         test(resolve, reject) {

@@ -47,26 +47,36 @@ InspectorMemoryAgent::InspectorMemoryAgent(PageAgentContext& context)
 
 void InspectorMemoryAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
-    m_instrumentingAgents.setInspectorMemoryAgent(this);
 }
 
 void InspectorMemoryAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
-    m_instrumentingAgents.setInspectorMemoryAgent(nullptr);
-
     ErrorString ignored;
-    stopTracking(ignored);
     disable(ignored);
 }
 
-void InspectorMemoryAgent::enable(ErrorString&)
+void InspectorMemoryAgent::enable(ErrorString& errorString)
 {
-    m_enabled = true;
+    if (m_instrumentingAgents.inspectorMemoryAgent() == this) {
+        errorString = "MemoryAgent already enabled"_s;
+        return;
+    }
+
+    m_instrumentingAgents.setInspectorMemoryAgent(this);
 }
 
-void InspectorMemoryAgent::disable(ErrorString&)
+void InspectorMemoryAgent::disable(ErrorString& errorString)
 {
-    m_enabled = false;
+    if (m_instrumentingAgents.inspectorMemoryAgent() != this) {
+        errorString = "MemoryAgent already disabled"_s;
+        return;
+    }
+
+    m_instrumentingAgents.setInspectorMemoryAgent(nullptr);
+
+    m_tracking = false;
+
+    ResourceUsageThread::removeObserver(this);
 }
 
 void InspectorMemoryAgent::startTracking(ErrorString&)
@@ -97,9 +107,6 @@ void InspectorMemoryAgent::stopTracking(ErrorString&)
 
 void InspectorMemoryAgent::didHandleMemoryPressure(Critical critical)
 {
-    if (!m_enabled)
-        return;
-
     MemoryFrontendDispatcher::Severity severity = critical == Critical::Yes ? MemoryFrontendDispatcher::Severity::Critical : MemoryFrontendDispatcher::Severity::NonCritical;
     m_frontendDispatcher->memoryPressure(m_environment.executionStopwatch()->elapsedTime().seconds(), severity);
 }
