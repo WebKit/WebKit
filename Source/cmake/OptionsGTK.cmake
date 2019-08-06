@@ -25,7 +25,7 @@ find_package(GLIB 2.44.0 REQUIRED COMPONENTS gio gio-unix gobject gthread gmodul
 find_package(GTK3 3.22.0 REQUIRED)
 find_package(GDK3 3.22.0 REQUIRED)
 find_package(HarfBuzz 0.9.2 REQUIRED)
-find_package(ICU REQUIRED COMPONENTS data i18n uc)
+find_package(ICU REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(LibSoup 2.54.0 REQUIRED)
 find_package(LibXml2 2.8.0 REQUIRED)

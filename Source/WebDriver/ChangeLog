@@ -1,3 +1,17 @@
+2019-08-06  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/53992160
+
+    2019-08-06  Per Arne Vollan  <pvollan@apple.com>
+
+            [Win] Fix AppleWin build
+            https://bugs.webkit.org/show_bug.cgi?id=200414
+
+            Reviewed by Brent Fulgham.
+
+            * CMakeLists.txt:
+            * PlatformWPE.cmake:
+
 2019-06-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r245567): [GTK][WPE] [2.25.1] WebKitWebDriver gets installed as WebDriver

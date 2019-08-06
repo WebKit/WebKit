@@ -22,7 +22,7 @@ set(WebKitGLibAPITests_SYSTEM_INCLUDE_DIRECTORIES
 )
 
 set(WebKitAPITest_LIBRARIES
-    WebKit::JavaScriptCore
+    JavaScriptCore
     WebKit
 )
 
@@ -34,7 +34,7 @@ set(WebKitGLibAPITest_LIBRARIES
 )
 
 set(WebKitGLibAPITestExtension_LIBRARIES
-    WebKit::JavaScriptCore
+    JavaScriptCore
     WebKit
     ${GLIB_LIBRARIES}
 )

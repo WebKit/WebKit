@@ -25,8 +25,12 @@ set(WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
     "${WebKitLegacy_DERIVED_SOURCES_DIR}"
 )
 
+set(WebKitLegacy_SYSTEM_INCLUDE_DIRECTORIES
+    "${ICU_INCLUDE_DIRS}"
+)
+
 set(WebKitLegacy_LIBRARIES
-    PRIVATE WebKit::JavaScriptCore
+    PRIVATE JavaScriptCore${DEBUG_SUFFIX}
     PRIVATE WebCore${DEBUG_SUFFIX}
     PRIVATE PAL${DEBUG_SUFFIX}
 )
@@ -42,7 +46,9 @@ endif ()
 
 WEBKIT_FRAMEWORK(WebKitLegacy)
 
-add_dependencies(WebKitLegacy WebCore WebCorePrivateFrameworkHeaders)
+if (NOT INTERNAL_BUILD)
+    add_dependencies(WebKitLegacy WebCore WebCorePrivateFrameworkHeaders)
+endif ()
 if (TARGET WebKitLegacyGUID)
     add_dependencies(WebKitLegacy WebKitLegacyGUID)
 endif ()

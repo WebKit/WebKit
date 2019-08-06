@@ -236,4 +236,9 @@ if (WTF_PLATFORM_WIN_CAIRO AND EXISTS ${WEBKIT_LIBRARIES_DIR}/etc/ssl/cert.pem)
     )
 endif ()
 
-set(WebCore_OUTPUT_NAME WebCore${DEBUG_SUFFIX})
+set(WebCore_OUTPUT_NAME
+    WebCore${DEBUG_SUFFIX}
+)
+
+list(APPEND WebCore_LIBRARIES WTF${DEBUG_SUFFIX})
+list(APPEND WebCoreTestSupport_LIBRARIES WTF${DEBUG_SUFFIX})

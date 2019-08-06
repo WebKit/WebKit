@@ -23,7 +23,7 @@ set(DumpRenderTree_SOURCES
 
 set(DumpRenderTree_LIBRARIES
     WebCoreTestSupport
-    WebKit::JavaScriptCore
+    JavaScriptCore
 )
 
 set(DumpRenderTree_INCLUDE_DIRECTORIES
@@ -67,7 +67,8 @@ set(TestNetscapePlugIn_SOURCES
 )
 
 set(TestNetscapePlugIn_LIBRARIES
-    WebKit::JavaScriptCore
+    JavaScriptCore
+    WTF
     WebCoreTestSupport
 )
 

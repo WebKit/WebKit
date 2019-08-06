@@ -166,6 +166,8 @@ if (NOT ENABLE_UNIFIED_BUILDS AND WebCore_LIBRARY_TYPE MATCHES STATIC)
     set(WebCore_LIBRARY_TYPE OBJECT)
 endif ()
 
+find_package(ICU REQUIRED)
+
 # If <winsock2.h> is not included before <windows.h> redefinition errors occur
 # unless _WINSOCKAPI_ is defined before <windows.h> is included
 add_definitions(-D_WINSOCKAPI_=)

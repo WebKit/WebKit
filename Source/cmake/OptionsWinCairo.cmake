@@ -4,7 +4,6 @@ include(OptionsWin)
 
 find_package(Cairo 1.15.12 REQUIRED)
 find_package(CURL 7.60.0 REQUIRED)
-find_package(ICU REQUIRED COMPONENTS data i18n uc)
 find_package(JPEG 1.5.2 REQUIRED)
 find_package(LibXml2 2.9.7 REQUIRED)
 find_package(OpenSSL 2.0.0 REQUIRED)

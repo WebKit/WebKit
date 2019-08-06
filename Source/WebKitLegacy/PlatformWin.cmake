@@ -24,12 +24,16 @@ else ()
         PRIVATE CoreText${DEBUG_SUFFIX}
         PRIVATE QuartzCore${DEBUG_SUFFIX}
         PRIVATE libdispatch${DEBUG_SUFFIX}
+        PRIVATE libicuin${DEBUG_SUFFIX}
+        PRIVATE libicuuc${DEBUG_SUFFIX}
         PRIVATE ${LIBXML2_LIBRARIES}
         PRIVATE ${LIBXSLT_LIBRARIES}
         PRIVATE ${SQLITE_LIBRARIES}
         PRIVATE ${ZLIB_LIBRARIES}
     )
 endif ()
+
+list(APPEND WebKitLegacy_LIBRARIES PRIVATE WTF${DEBUG_SUFFIX})
 
 add_custom_command(
     OUTPUT ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitVersion.h
@@ -486,7 +490,9 @@ WEBKIT_MAKE_FORWARDING_HEADERS(WebKitLegacyGUID
     FILES ${WebKitLegacy_PUBLIC_FRAMEWORK_HEADERS}
     FLATTENED
 )
-add_dependencies(WebKitLegacyFrameworkHeaders WebCorePrivateFrameworkHeaders)
+if (NOT INTERNAL_BUILD)
+    add_dependencies(WebKitLegacyFrameworkHeaders WebCorePrivateFrameworkHeaders)
+endif ()
 
 set(WebKitLegacy_OUTPUT_NAME
     WebKit${DEBUG_SUFFIX}
