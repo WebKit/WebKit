@@ -1,0 +1,86 @@
+<!-- This demo loosely based off of https://github.com/d3dcoder/d3d12book/tree/master/Chapter%2013%20The%20Compute%20Shader/Blur -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=600">
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>WebGPU Compute</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+body {
+    font-family: system-ui;
+    color: #f7f7ff;
+    background-color: rgb(13, 77, 153);
+    text-align: center;
+}
+canvas {
+    margin: 0 auto;
+}
+p {
+    margin: 0 auto 1em;
+    width: 600px;
+    position: relative;
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 50%;
+    height: 10px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: rgb(66, 200, 255);
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: rgb(66, 200, 255);
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+<div id="contents">
+    <h1>Compute Demo</h1>
+    <p>
+        This demo uses the WebGPU compute pipeline to perform a Gaussian blur of the source image data. Use the slider to set the blur radius.
+    </p>
+    <p>
+        <div class="slidecontainer">
+            Blur radius: 
+            <input type="range" min="0" max="32" value="0" class="slider" id="radiusSlider">
+        </div>
+    </p>
+    <div id="demo">
+        <canvas></canvas>
+    </div>
+</div>
+<div id="error">
+    <h2>WebGPU not available</h2>
+    <p>
+        Make sure you are on a system with WebGPU enabled. In
+        Safari, first make sure the Developer Menu is visible (Preferences →
+        Advanced), then Develop → Experimental Features → WebGPU.
+    </p>
+</div>
+<script src="scripts/compute-blur.js"></script>
+</body>
+</html>

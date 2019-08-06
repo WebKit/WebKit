@@ -12,33 +12,29 @@ async function helloTriangle() {
     /* GPUShaderModule */
     const positionLocation = 0;
     const colorLocation = 1;
-    
-    const shaderSource = `
-    #include <metal_stdlib>
-  
-    using namespace metal;
-  
-    struct Vertex {
-        float4 position [[attribute(${positionLocation})]];
-        float4 color [[attribute(${colorLocation})]];
-    };
-  
+
+    const whlslSource = `
     struct FragmentData {
-        float4 position [[position]];
-        float4 color;
-    };
-  
-    vertex FragmentData vertexMain(const Vertex in [[stage_in]]) 
-    {
-        return FragmentData { in.position, in.color };
+        float4 position : SV_Position;
+        float4 color : attribute(${colorLocation});
     }
-  
-    fragment float4 fragmentMain(const FragmentData in [[stage_in]])
+
+    vertex FragmentData vertexMain(float4 position : attribute(${positionLocation}), float4 color : attribute(${colorLocation}))
     {
-        return in.color;
+        FragmentData out;
+
+        out.position = position;
+        out.color = color;
+
+        return out;
+    }
+
+    fragment float4 fragmentMain(float4 color : attribute(${colorLocation})) : SV_Target 0
+    {
+        return color;
     }
     `;
-    const shaderModule = device.createShaderModule({ code: shaderSource });
+    const shaderModule = device.createShaderModule({ code: whlslSource, isWHLSL: true });
     
     /* GPUPipelineStageDescriptors */
     const vertexStageDescriptor = { module: shaderModule, entryPoint: "vertexMain" };
@@ -52,12 +48,12 @@ async function helloTriangle() {
     const vertexDataSize = vertexStride * 3;
     
     /* GPUBufferDescriptor */
-    const vertexBufferDescriptor = { 
+    const vertexDataBufferDescriptor = { 
         size: vertexDataSize,
         usage: GPUBufferUsage.MAP_WRITE | GPUBufferUsage.VERTEX
     };
     /* GPUBuffer */
-    const vertexBuffer = device.createBuffer(vertexBufferDescriptor);
+    const vertexBuffer = device.createBuffer(vertexDataBufferDescriptor);
     
     /*** Write Data To GPU ***/
     
@@ -78,28 +74,24 @@ async function helloTriangle() {
     /* GPUVertexAttributeDescriptors */
     const positionAttribute = {
         shaderLocation: positionLocation,
-        inputSlot: vertexBufferSlot,
         offset: 0,
         format: "float4"
     };
     const colorAttribute = {
         shaderLocation: colorLocation,
-        inputSlot: vertexBufferSlot,
         offset: colorOffset,
         format: "float4"
     };
-    
+
+    /* GPUVertexBufferDescriptor */
+    const vertexBufferDescriptor = {
+        stride: vertexStride,
+        attributeSet: [positionAttribute, colorAttribute]
+    };
+
     /* GPUVertexInputDescriptor */
     const vertexInputDescriptor = {
-        inputSlot: vertexBufferSlot,
-        stride: vertexStride,
-        stepMode: "vertex"
-    };
-    
-    /* GPUInputStateDescriptor */
-    const inputStateDescriptor = {
-        attributes: [positionAttribute, colorAttribute],
-        inputs: [vertexInputDescriptor]
+        vertexBuffers: [vertexBufferDescriptor]
     };
     
     /*** Finish Pipeline State ***/
@@ -122,7 +114,7 @@ async function helloTriangle() {
         fragmentStage: fragmentStageDescriptor,
         primitiveTopology: "triangle-list",
         colorStates: [colorStateDescriptor],
-        inputState: inputStateDescriptor
+        vertexInput: vertexInputDescriptor
     };
     /* GPURenderPipeline */
     const renderPipeline = device.createRenderPipeline(renderPipelineDescriptor);
@@ -130,9 +122,8 @@ async function helloTriangle() {
     /*** Swap Chain Setup ***/
     
     const canvas = document.querySelector("canvas");
-    let canvasSize = canvas.getBoundingClientRect();
-    canvas.width = canvasSize.width;
-    canvas.height = canvasSize.height;
+    canvas.width = 600;
+    canvas.height = 600;
 
     const gpuContext = canvas.getContext("gpu");
     
@@ -151,7 +142,7 @@ async function helloTriangle() {
     const renderAttachment = swapChainTexture.createDefaultView();
     
     /* GPUColor */
-    const darkBlue = { r: 0, g: 0, b: 0.5, a: 1 };
+    const darkBlue = { r: 0.15, g: 0.15, b: 0.5, a: 1 };
     
     /* GPURenderPassColorATtachmentDescriptor */
     const colorAttachmentDescriptor = {

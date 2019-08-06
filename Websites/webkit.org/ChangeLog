@@ -1,3 +1,37 @@
+2019-08-06  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Fix up demos on and add compute demo to webkit.org/demos
+        https://bugs.webkit.org/show_bug.cgi?id=200454
+
+        Reviewed by Jon Lee.
+
+        Add the compute-blur demo.
+        Ensure that WebGPU demos will work on upcoming STP release. 
+
+        * demos/webgpu/compute-blur.html: Added.
+        * demos/webgpu/css/style.css: Sync with internal demo repository stylesheet.
+        (body):
+        (canvas):
+        (body.error img):
+        (body.error input):
+        (#error p):
+        * demos/webgpu/hello-cube.html:
+        * demos/webgpu/hello-triangle.html:
+        * demos/webgpu/index.html:
+        * demos/webgpu/resources/compute-blur.png: Added.
+        * demos/webgpu/resources/hello-cube.png:
+        * demos/webgpu/resources/textured-cube.png: Added.
+        * demos/webgpu/scripts/compute-blur.js: Added.
+        (async.init):
+        (async.loadImage):
+        (setUpCompute):
+        (async.computeBlur):
+        (async.setUniforms):
+        (createShaderCode):
+        * demos/webgpu/scripts/hello-triangle.js:
+        (async.helloTriangle):
+        * demos/webgpu/textured-cube.html: Renmaed from Websites/webkit.org/demos/webgpu/hello-cube.html.
+
 2019-07-03  Jon Davis  <jond@apple.com>
 
         Added a domain check for validation URLs in Apple Pay demo.

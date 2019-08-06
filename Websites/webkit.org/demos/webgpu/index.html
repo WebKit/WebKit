@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width">
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-<title>WebMetal demos</title>
+<title>WebGPU demos</title>
 <link rel="stylesheet" href="https://webkit.org/wp-content/themes/webkit/style.css">
 <link rel="stylesheet" href="https://www.apple.com/wss/fonts?family=Myriad+Set+Pro&amp;v=1">
 <style>
@@ -162,27 +162,26 @@ section p a {
 <body>
     <header>
         <img src="resources/circle.svg">
-        <h1>Web GPU<br>demos</h1>
+        <h1>WebGPU<br>demos</h1>
     </header>
     <section class="demos">
         <p class="intro">
             Here are a collection of simple <a
-            href="https://en.wikipedia.org/wiki/WebGPU">Web GPU</a>
+            href="https://en.wikipedia.org/wiki/WebGPU">WebGPU</a>
             examples. They should work in the latest <a
-            href="https://webkit.org/build-archives/">WebKit</a> builds, and 
-            soon in a <a
-            href="https://developer.apple.com/safari/technology-preview/">Safari
-             Technology Preview</a> release. The full specification is a work-in-progress on <a
+            href="https://webkit.org/build-archives/">WebKit</a> builds and 
+            <a href="https://developer.apple.com/safari/technology-preview/">Safari
+             Technology Preview</a> release. The full <a href="https://gpuweb.github.io/gpuweb/">specification</a> is a work-in-progress on <a
             href="https://github.com/gpuweb/gpuweb
             ">GitHub</a>, and the implementation may differ from the current API.
         </p>
         <p class="howto">
-            Make sure you are on a system with Web GPU enabled. In Safari, first
+            Make sure you are on a system with WebGPU enabled. In Safari, first
             make sure the Developer Menu is visible (Preferences → Advanced),
-            then ensure Develop → Experimental Features → Web GPU is checked.
+            then ensure Develop → Experimental Features → WebGPU is checked.
         </p>
         <p class="warning">
-            Web GPU is an experimental technology, and you should not browse the entire
+            WebGPU is an experimental technology, and you should not browse the entire
             Web with it enabled for now. It doesn't do much validation of content, and
             thus may cause some issues with your computer.
         </p>
@@ -194,8 +193,20 @@ section p a {
         </div>
         <div class="example">
             <a href="hello-cube.html">
-            <img src="resources/hello-cube.png"><br>
+            <img src = "resources/hello-cube.png"><br>
+            Hello World Cube
+            </a>
+        </div>
+        <div class="example">
+            <a href="textured-cube.html">
+            <img src="resources/textured-cube.png"><br>
             Textured Spinning Cube
+            </a>
+        </div>
+        <div class="example">
+            <a href="compute-blur.html">
+            <img src="resources/compute-blur.png"><br>
+            Compute Shader Blur
             </a>
         </div>
     </section>
