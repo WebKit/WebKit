@@ -70,6 +70,7 @@ struct SourceBuffer::TrackBuffer {
     MediaTime lastFrameDuration;
     MediaTime highestPresentationTimestamp;
     MediaTime lastEnqueuedPresentationTime;
+    MediaTime minimumEnqueuedPresentationTime;
     DecodeOrderSampleMap::KeyType lastEnqueuedDecodeKey;
     MediaTime lastEnqueuedDecodeDuration;
     MediaTime roundedTimestampOffset;
@@ -77,6 +78,7 @@ struct SourceBuffer::TrackBuffer {
     bool needRandomAccessFlag { true };
     bool enabled { false };
     bool needsReenqueueing { false };
+    bool needsMinimumUpcomingPresentationTimeUpdating { false };
     SampleMap samples;
     DecodeOrderSampleMap::MapType decodeQueue;
     RefPtr<MediaDescription> description;
@@ -1788,6 +1790,9 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(MediaSample& sample)
         DecodeOrderSampleMap::KeyType decodeKey(sample.decodeTime(), sample.presentationTime());
         if (trackBuffer.lastEnqueuedDecodeKey.first.isInvalid() || decodeKey > trackBuffer.lastEnqueuedDecodeKey) {
             trackBuffer.decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, &sample));
+
+            if (trackBuffer.minimumEnqueuedPresentationTime.isValid() && sample.presentationTime() < trackBuffer.minimumEnqueuedPresentationTime)
+                trackBuffer.needsMinimumUpcomingPresentationTimeUpdating = true;
         }
 
         // NOTE: the spec considers "Coded Frame Duration" to be the presentation duration, but this is not necessarily equal
@@ -2021,6 +2026,9 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, const AtomString& 
     unsigned enqueuedSamples = 0;
 #endif
 
+    if (trackBuffer.needsMinimumUpcomingPresentationTimeUpdating)
+        resetMinimumUpcomingPresentationTime(trackBuffer, trackID);
+
     while (!trackBuffer.decodeQueue.empty()) {
         if (!m_private->isReadyForMoreSamples(trackID)) {
             DEBUG_LOG(LOGIDENTIFIER, "bailing early, track id ", trackID, " is not ready for more data");
@@ -2061,11 +2069,48 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, const AtomString& 
 #endif
     }
 
+    updateMinimumUpcomingPresentationTime(trackBuffer, trackID);
+
 #if !RELEASE_LOG_DISABLED
     DEBUG_LOG(LOGIDENTIFIER, "enqueued ", enqueuedSamples, " samples, ", static_cast<size_t>(trackBuffer.decodeQueue.size()), " remaining");
 #endif
 
     trySignalAllSamplesInTrackEnqueued(trackID);
+}
+
+void SourceBuffer::updateMinimumUpcomingPresentationTime(TrackBuffer& trackBuffer, const AtomString& trackID)
+{
+    if (!m_private->canSetMinimumUpcomingPresentationTime(trackID))
+        return;
+
+    if (trackBuffer.decodeQueue.empty()) {
+        trackBuffer.minimumEnqueuedPresentationTime = MediaTime::invalidTime();
+        m_private->clearMinimumUpcomingPresentationTime(trackID);
+        return;
+    }
+
+    auto minPts = std::min_element(trackBuffer.decodeQueue.begin(), trackBuffer.decodeQueue.end(), [](auto& left, auto& right) -> bool {
+        return left.second->outputPresentationTime() < right.second->outputPresentationTime();
+    });
+
+    if (minPts == trackBuffer.decodeQueue.end()) {
+        trackBuffer.minimumEnqueuedPresentationTime = MediaTime::invalidTime();
+        m_private->clearMinimumUpcomingPresentationTime(trackID);
+        return;
+    }
+
+    trackBuffer.minimumEnqueuedPresentationTime = minPts->second->outputPresentationTime();
+    m_private->setMinimumUpcomingPresentationTime(trackID, trackBuffer.minimumEnqueuedPresentationTime);
+}
+
+
+void SourceBuffer::resetMinimumUpcomingPresentationTime(TrackBuffer& trackBuffer, const AtomString& trackID)
+{
+    if (!m_private->canSetMinimumUpcomingPresentationTime(trackID))
+        return;
+
+    trackBuffer.minimumEnqueuedPresentationTime = MediaTime::invalidTime();
+    m_private->clearMinimumUpcomingPresentationTime(trackID);
 }
 
 void SourceBuffer::trySignalAllSamplesInTrackEnqueued(const AtomString& trackID)
@@ -2269,6 +2314,16 @@ Vector<String> SourceBuffer::bufferedSamplesForTrackID(const AtomString& trackID
 Vector<String> SourceBuffer::enqueuedSamplesForTrackID(const AtomString& trackID)
 {
     return m_private->enqueuedSamplesForTrackID(trackID);
+}
+
+MediaTime SourceBuffer::minimumUpcomingPresentationTimeForTrackID(const AtomString& trackID)
+{
+    return m_private->minimumUpcomingPresentationTimeForTrackID(trackID);
+}
+
+void SourceBuffer::setMaximumQueueDepthForTrackID(const AtomString& trackID, size_t maxQueueDepth)
+{
+    m_private->setMaximumQueueDepthForTrackID(trackID, maxQueueDepth);
 }
 
 Document& SourceBuffer::document() const

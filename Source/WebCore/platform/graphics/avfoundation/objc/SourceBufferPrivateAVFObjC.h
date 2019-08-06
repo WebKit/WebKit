@@ -163,6 +163,9 @@ private:
     bool isReadyForMoreSamples(const AtomString& trackID) final;
     void setActive(bool) final;
     void notifyClientWhenReadyForMoreSamples(const AtomString& trackID) final;
+    bool canSetMinimumUpcomingPresentationTime(const AtomString&) const override;
+    void setMinimumUpcomingPresentationTime(const AtomString&, const MediaTime&) override;
+    void clearMinimumUpcomingPresentationTime(const AtomString&) override;
     bool canSwitchToType(const ContentType&) final;
 
     void didBecomeReadyForMoreSamples(int trackID);

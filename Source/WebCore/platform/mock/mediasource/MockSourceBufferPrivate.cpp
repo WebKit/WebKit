@@ -240,6 +240,31 @@ Vector<String> MockSourceBufferPrivate::enqueuedSamplesForTrackID(const AtomStri
     return m_enqueuedSamples;
 }
 
+MediaTime MockSourceBufferPrivate::minimumUpcomingPresentationTimeForTrackID(const AtomString&)
+{
+    return m_minimumUpcomingPresentationTime;
+}
+
+void MockSourceBufferPrivate::setMaximumQueueDepthForTrackID(const AtomString&, size_t maxQueueDepth)
+{
+    m_maxQueueDepth = maxQueueDepth;
+}
+
+bool MockSourceBufferPrivate::canSetMinimumUpcomingPresentationTime(const AtomString&) const
+{
+    return true;
+}
+
+void MockSourceBufferPrivate::setMinimumUpcomingPresentationTime(const AtomString&, const MediaTime& presentationTime)
+{
+    m_minimumUpcomingPresentationTime = presentationTime;
+}
+
+void MockSourceBufferPrivate::clearMinimumUpcomingPresentationTime(const AtomString&)
+{
+    m_minimumUpcomingPresentationTime = MediaTime::invalidTime();
+}
+
 bool MockSourceBufferPrivate::canSwitchToType(const ContentType& contentType)
 {
     MediaEngineSupportParameters parameters;

@@ -198,6 +198,8 @@ private:
     void reportExtraMemoryAllocated();
 
     void updateBufferedFromTrackBuffers();
+    void updateMinimumUpcomingPresentationTime(TrackBuffer&, const AtomString& trackID);
+    void resetMinimumUpcomingPresentationTime(TrackBuffer&, const AtomString& trackID);
 
     void appendError(bool);
 
@@ -210,6 +212,8 @@ private:
     friend class Internals;
     WEBCORE_EXPORT Vector<String> bufferedSamplesForTrackID(const AtomString&);
     WEBCORE_EXPORT Vector<String> enqueuedSamplesForTrackID(const AtomString&);
+    WEBCORE_EXPORT MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&);
+    WEBCORE_EXPORT void setMaximumQueueDepthForTrackID(const AtomString&, size_t);
 
     Ref<SourceBufferPrivate> m_private;
     MediaSource* m_source;

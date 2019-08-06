@@ -62,14 +62,19 @@ private:
     void removedFromMediaSource() final;
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;
+    bool canSetMinimumUpcomingPresentationTime(const AtomString&) const final;
+    void setMinimumUpcomingPresentationTime(const AtomString&, const MediaTime&) final;
+    void clearMinimumUpcomingPresentationTime(const AtomString&) final;
     bool canSwitchToType(const ContentType&) final;
 
-    void flush(const AtomString&) final { m_enqueuedSamples.clear(); }
+    void flush(const AtomString&) final { m_enqueuedSamples.clear(); m_minimumUpcomingPresentationTime = MediaTime::invalidTime(); }
     void enqueueSample(Ref<MediaSample>&&, const AtomString&) final;
-    bool isReadyForMoreSamples(const AtomString&) final { return true; }
+    bool isReadyForMoreSamples(const AtomString&) final { return !m_maxQueueDepth || m_enqueuedSamples.size() < m_maxQueueDepth.value(); }
     void setActive(bool) final;
 
     Vector<String> enqueuedSamplesForTrackID(const AtomString&) final;
+    MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) final;
+    void setMaximumQueueDepthForTrackID(const AtomString&, size_t) final;
 
     void didReceiveInitializationSegment(const MockInitializationBox&);
     void didReceiveSample(const MockSampleBox&);
@@ -81,8 +86,9 @@ private:
 
     MockMediaSourcePrivate* m_mediaSource;
     SourceBufferPrivateClient* m_client;
+    MediaTime m_minimumUpcomingPresentationTime;
     Vector<String> m_enqueuedSamples;
-
+    Optional<size_t> m_maxQueueDepth;
     Vector<char> m_inputBuffer;
 };
 
