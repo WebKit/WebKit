@@ -108,6 +108,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         this._text = text;
         this._name = name;
         this._rawValue = value;
+        this._value = undefined;
         this._priority = priority;
         this._enabled = enabled;
         this._implicit = implicit;
