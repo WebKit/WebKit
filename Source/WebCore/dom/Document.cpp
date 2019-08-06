@@ -8020,8 +8020,22 @@ static MessageLevel messageLevelFromWTFLogLevel(WTFLogLevel level)
     return MessageLevel::Log;
 }
 
+static inline Vector<JSONLogValue> crossThreadCopy(Vector<JSONLogValue>&& source)
+{
+    auto values = WTFMove(source);
+    for (auto& value : values)
+        value.value = crossThreadCopy(WTFMove(value.value));
+    return values;
+}
+
 void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Vector<JSONLogValue>&& logMessages)
 {
+    if (!isMainThread()) {
+        postTask([this, channel, level, logMessages = crossThreadCopy(WTFMove(logMessages))](auto&) mutable {
+            didLogMessage(channel, level, WTFMove(logMessages));
+        });
+        return;
+    }
     if (!page())
         return;
 

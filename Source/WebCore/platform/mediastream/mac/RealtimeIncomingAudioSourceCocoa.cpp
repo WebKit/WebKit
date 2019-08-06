@@ -87,11 +87,7 @@ void RealtimeIncomingAudioSourceCocoa::OnData(const void* audioData, int bitsPer
         memcpy(audioBufferList.buffer(0)->mData, audioData, audioBufferList.buffer(0)->mDataByteSize);
 
 #if !RELEASE_LOG_DISABLED
-    if (!(++m_chunksReceived % 200)) {
-        callOnMainThread([this, protectedThis = makeRef(*this)] {
-            ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "chunk ", m_chunksReceived);
-        });
-    }
+    ALWAYS_LOG_IF(loggerPtr() && !(++m_chunksReceived % 200), LOGIDENTIFIER, "chunk ", m_chunksReceived);
 #endif
 
     audioSamplesAvailable(mediaTime, audioBufferList, CAAudioStreamDescription(newDescription), numberOfFrames);

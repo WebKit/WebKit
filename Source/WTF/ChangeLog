@@ -1,3 +1,18 @@
+2019-08-05  Youenn Fablet  <youenn@apple.com>
+
+        Make Logger::log thread safe so that it can be used from background threads
+        https://bugs.webkit.org/show_bug.cgi?id=200448
+
+        Reviewed by Eric Carlson.
+
+        Add a lock to ensure calling log is thread-safe.
+
+        * wtf/Logger.h:
+        (WTF::Logger::addObserver):
+        (WTF::Logger::removeObserver):
+        (WTF::Logger::log):
+        (WTF::Logger::observerLock):
+
 2019-08-05  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] implement CertificateInfo::summaryInfo
