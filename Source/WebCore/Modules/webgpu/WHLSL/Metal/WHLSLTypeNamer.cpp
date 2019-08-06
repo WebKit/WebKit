@@ -351,44 +351,42 @@ BaseTypeNameNode* TypeNamer::insert(AST::UnnamedType& unnamedType, Vector<Unique
     return &*iterator;
 }
 
-class MetalTypeDeclarationWriter : public Visitor {
+class MetalTypeDeclarationWriter final : public Visitor {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MetalTypeDeclarationWriter(std::function<MangledOrNativeTypeName(AST::NamedType&)>&& mangledNameForNamedType)
+    MetalTypeDeclarationWriter(StringBuilder& stringBuilder, std::function<MangledOrNativeTypeName(AST::NamedType&)>&& mangledNameForNamedType)
         : m_mangledNameForNamedType(WTFMove(mangledNameForNamedType))
+        , m_stringBuilder(stringBuilder)
     {
     }
 
-    String toString() { return m_stringBuilder.toString(); }
-
 private:
-    void visit(AST::StructureDefinition& structureDefinition)
+    void visit(AST::StructureDefinition& structureDefinition) override
     {
         m_stringBuilder.flexibleAppend("struct ", m_mangledNameForNamedType(structureDefinition), ";\n");
     }
 
     std::function<MangledOrNativeTypeName(AST::NamedType&)> m_mangledNameForNamedType;
-    StringBuilder m_stringBuilder;
+    StringBuilder& m_stringBuilder;
 };
 
-String TypeNamer::metalTypeDeclarations()
+void TypeNamer::emitMetalTypeDeclarations(StringBuilder& stringBuilder)
 {
-    MetalTypeDeclarationWriter metalTypeDeclarationWriter([&](AST::NamedType& namedType) -> MangledOrNativeTypeName {
+    MetalTypeDeclarationWriter metalTypeDeclarationWriter(stringBuilder, [&](AST::NamedType& namedType) -> MangledOrNativeTypeName {
         return mangledNameForType(namedType);
     });
     metalTypeDeclarationWriter.Visitor::visit(m_program);
-    return metalTypeDeclarationWriter.toString();
 }
 
-void TypeNamer::emitUnnamedTypeDefinition(BaseTypeNameNode& baseTypeNameNode, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes, StringBuilder& stringBuilder)
+void TypeNamer::emitUnnamedTypeDefinition(StringBuilder& stringBuilder, BaseTypeNameNode& baseTypeNameNode, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes)
 {
     if (emittedUnnamedTypes.contains(&baseTypeNameNode))
         return;
     if (baseTypeNameNode.parent())
-        emitUnnamedTypeDefinition(*baseTypeNameNode.parent(), emittedNamedTypes, emittedUnnamedTypes, stringBuilder);
+        emitUnnamedTypeDefinition(stringBuilder, *baseTypeNameNode.parent(), emittedNamedTypes, emittedUnnamedTypes);
     if (is<ReferenceTypeNameNode>(baseTypeNameNode)) {
         auto& namedType = downcast<ReferenceTypeNameNode>(baseTypeNameNode).namedType();
-        emitNamedTypeDefinition(namedType, emittedNamedTypes, emittedUnnamedTypes, stringBuilder);
+        emitNamedTypeDefinition(stringBuilder, namedType, emittedNamedTypes, emittedUnnamedTypes);
         stringBuilder.flexibleAppend("typedef ", mangledNameForType(namedType), ' ', baseTypeNameNode.mangledName(), ";\n");
     } else if (is<PointerTypeNameNode>(baseTypeNameNode)) {
         auto& pointerType = downcast<PointerTypeNameNode>(baseTypeNameNode);
@@ -411,14 +409,14 @@ void TypeNamer::emitUnnamedTypeDefinition(BaseTypeNameNode& baseTypeNameNode, Ha
     emittedUnnamedTypes.add(&baseTypeNameNode);
 }
 
-void TypeNamer::emitNamedTypeDefinition(AST::NamedType& namedType, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes, StringBuilder& stringBuilder)
+void TypeNamer::emitNamedTypeDefinition(StringBuilder& stringBuilder, AST::NamedType& namedType, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes)
 {
     if (emittedNamedTypes.contains(&namedType))
         return;
     auto iterator = m_dependencyGraph.find(&namedType);
     ASSERT(iterator != m_dependencyGraph.end());
     for (auto& baseTypeNameNode : iterator->value)
-        emitUnnamedTypeDefinition(baseTypeNameNode, emittedNamedTypes, emittedUnnamedTypes, stringBuilder);
+        emitUnnamedTypeDefinition(stringBuilder, baseTypeNameNode, emittedNamedTypes, emittedUnnamedTypes);
     if (is<AST::EnumerationDefinition>(namedType)) {
         auto& enumerationDefinition = downcast<AST::EnumerationDefinition>(namedType);
         auto& baseType = enumerationDefinition.type().unifyNode();
@@ -441,23 +439,21 @@ void TypeNamer::emitNamedTypeDefinition(AST::NamedType& namedType, HashSet<AST::
     emittedNamedTypes.add(&namedType);
 }
 
-void TypeNamer::emitAllUnnamedTypeDefinitions(Vector<UniqueRef<BaseTypeNameNode>>& nodes, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes, StringBuilder& stringBuilder)
+void TypeNamer::emitAllUnnamedTypeDefinitions(StringBuilder& stringBuilder, Vector<UniqueRef<BaseTypeNameNode>>& nodes, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes)
 {
     for (auto& node : nodes) {
-        emitUnnamedTypeDefinition(node, emittedNamedTypes, emittedUnnamedTypes, stringBuilder);
-        emitAllUnnamedTypeDefinitions(node->children(), emittedNamedTypes, emittedUnnamedTypes, stringBuilder);
+        emitUnnamedTypeDefinition(stringBuilder, node, emittedNamedTypes, emittedUnnamedTypes);
+        emitAllUnnamedTypeDefinitions(stringBuilder, node->children(), emittedNamedTypes, emittedUnnamedTypes);
     }
 }
 
-String TypeNamer::metalTypeDefinitions()
+void TypeNamer::emitMetalTypeDefinitions(StringBuilder& stringBuilder)
 {
     HashSet<AST::NamedType*> emittedNamedTypes;
     HashSet<BaseTypeNameNode*> emittedUnnamedTypes;
-    StringBuilder stringBuilder;
     for (auto& keyValuePair : m_dependencyGraph)
-        emitNamedTypeDefinition(*keyValuePair.key, emittedNamedTypes, emittedUnnamedTypes, stringBuilder);
-    emitAllUnnamedTypeDefinitions(m_trie, emittedNamedTypes, emittedUnnamedTypes, stringBuilder);
-    return stringBuilder.toString();
+        emitNamedTypeDefinition(stringBuilder, *keyValuePair.key, emittedNamedTypes, emittedUnnamedTypes);
+    emitAllUnnamedTypeDefinitions(stringBuilder, m_trie, emittedNamedTypes, emittedUnnamedTypes);
 }
 
 MangledTypeName TypeNamer::mangledNameForType(AST::UnnamedType& unnamedType)
@@ -489,10 +485,13 @@ MangledStructureElementName TypeNamer::mangledNameForStructureElement(AST::Struc
     return iterator->value;
 }
 
-String TypeNamer::metalTypes()
+void TypeNamer::emitMetalTypes(StringBuilder& stringBuilder)
 {
     Visitor::visit(m_program);
-    return makeString(metalTypeDeclarations(), '\n', metalTypeDefinitions());
+
+    emitMetalTypeDeclarations(stringBuilder);
+    stringBuilder.append('\n');
+    emitMetalTypeDefinitions(stringBuilder);
 }
 
 } // namespace Metal

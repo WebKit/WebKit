@@ -30,8 +30,7 @@
 #include "WHLSLMangledNames.h"
 #include "WHLSLPipelineDescriptor.h"
 #include "WHLSLSemanticMatcher.h"
-#include <wtf/Variant.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -42,7 +41,7 @@ class Program;
 namespace Metal {
 
 struct RenderMetalCode {
-    String metalSource;
+    StringBuilder metalSource;
     MangledFunctionName mangledVertexEntryPointName;
     MangledFunctionName mangledFragmentEntryPointName;
 };
@@ -50,7 +49,7 @@ struct RenderMetalCode {
 RenderMetalCode generateMetalCode(Program&, MatchedRenderSemantics&& matchedSemantics, Layout&);
 
 struct ComputeMetalCode {
-    String metalSource;
+    StringBuilder metalSource;
     MangledFunctionName mangledEntryPointName;
 };
 // Can't fail. Any failure checks need to be done earlier, in the backend-agnostic part of the compiler.

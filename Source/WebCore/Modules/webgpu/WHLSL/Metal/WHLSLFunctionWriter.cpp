@@ -47,24 +47,23 @@ namespace WHLSL {
 
 namespace Metal {
 
-class FunctionDeclarationWriter : public Visitor {
+class FunctionDeclarationWriter final : public Visitor {
 public:
-    FunctionDeclarationWriter(TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, MangledFunctionName>& functionMapping)
+    FunctionDeclarationWriter(StringBuilder& stringBuilder, TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, MangledFunctionName>& functionMapping)
         : m_typeNamer(typeNamer)
         , m_functionMapping(functionMapping)
+        , m_stringBuilder(stringBuilder)
     {
     }
 
     virtual ~FunctionDeclarationWriter() = default;
-
-    String toString() { return m_stringBuilder.toString(); }
 
     void visit(AST::FunctionDeclaration&) override;
 
 private:
     TypeNamer& m_typeNamer;
     HashMap<AST::FunctionDeclaration*, MangledFunctionName>& m_functionMapping;
-    StringBuilder m_stringBuilder;
+    StringBuilder& m_stringBuilder;
 };
 
 void FunctionDeclarationWriter::visit(AST::FunctionDeclaration& functionDeclaration)
@@ -85,8 +84,9 @@ void FunctionDeclarationWriter::visit(AST::FunctionDeclaration& functionDeclarat
 
 class FunctionDefinitionWriter : public Visitor {
 public:
-    FunctionDefinitionWriter(Intrinsics& intrinsics, TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, MangledFunctionName>& functionMapping, Layout& layout)
-        : m_intrinsics(intrinsics)
+    FunctionDefinitionWriter(StringBuilder& stringBuilder, Intrinsics& intrinsics, TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, MangledFunctionName>& functionMapping, Layout& layout)
+        : m_stringBuilder(stringBuilder)
+        , m_intrinsics(intrinsics)
         , m_typeNamer(typeNamer)
         , m_functionMapping(functionMapping)
         , m_layout(layout)
@@ -94,8 +94,6 @@ public:
     }
 
     virtual ~FunctionDefinitionWriter() = default;
-
-    String toString() { return m_stringBuilder.toString(); }
 
     void visit(AST::NativeFunctionDeclaration&) override;
     void visit(AST::FunctionDefinition&) override;
@@ -148,7 +146,7 @@ protected:
     };
     void emitLoop(LoopConditionLocation, AST::Expression* conditionExpression, AST::Expression* increment, AST::Statement& body);
 
-    String constantExpressionString(AST::ConstantExpression&);
+    void emitConstantExpressionString(AST::ConstantExpression&);
 
     MangledVariableName generateNextVariableName() { return { m_variableCount++ }; }
 
@@ -215,11 +213,11 @@ protected:
 
     Optional<BreakContext> m_currentBreakContext;
 
+    StringBuilder& m_stringBuilder;
     Intrinsics& m_intrinsics;
     TypeNamer& m_typeNamer;
     HashMap<AST::FunctionDeclaration*, MangledFunctionName>& m_functionMapping;
     HashMap<AST::VariableDeclaration*, MangledVariableName> m_variableMapping;
-    StringBuilder m_stringBuilder;
 
     Vector<StackItem> m_stack;
     std::unique_ptr<EntryPointScaffolding> m_entryPointScaffolding;
@@ -242,11 +240,12 @@ void FunctionDefinitionWriter::visit(AST::FunctionDefinition& functionDefinition
         if (!entryPointScaffolding)
             return;
         m_entryPointScaffolding = WTFMove(entryPointScaffolding);
-        m_stringBuilder.flexibleAppend(
-            m_entryPointScaffolding->helperTypes(), '\n',
-            m_entryPointScaffolding->signature(iterator->value), " {\n",
-            m_entryPointScaffolding->unpack()
-        );
+        m_entryPointScaffolding->emitHelperTypes(m_stringBuilder);
+        m_stringBuilder.append('\n');
+        m_entryPointScaffolding->emitSignature(m_stringBuilder, iterator->value);
+        m_stringBuilder.append(" {\n");
+        m_entryPointScaffolding->emitUnpack(m_stringBuilder);
+    
         for (size_t i = 0; i < functionDefinition.parameters().size(); ++i) {
             auto addResult = m_variableMapping.add(&functionDefinition.parameters()[i], m_entryPointScaffolding->parameterVariables()[i]);
             ASSERT_UNUSED(addResult, addResult.isNewEntry);
@@ -406,10 +405,8 @@ void FunctionDefinitionWriter::visit(AST::Return& returnStatement)
         checkErrorAndVisit(*returnStatement.value());
         if (m_entryPointScaffolding) {
             auto variableName = generateNextVariableName();
-            m_stringBuilder.flexibleAppend(
-                m_entryPointScaffolding->pack(takeLastValue(), variableName),
-                "return ", variableName, ";\n"
-            );
+            m_entryPointScaffolding->emitPack(m_stringBuilder, takeLastValue(), variableName);
+            m_stringBuilder.flexibleAppend("return ", variableName, ";\n");
         } else
             m_stringBuilder.flexibleAppend("return ", takeLastValue(), ";\n");
     } else
@@ -428,9 +425,11 @@ void FunctionDefinitionWriter::visit(AST::SwitchStatement& switchStatement)
 
 void FunctionDefinitionWriter::visit(AST::SwitchCase& switchCase)
 {
-    if (switchCase.value())
-        m_stringBuilder.flexibleAppend("case ", constantExpressionString(*switchCase.value()), ":\n");
-    else
+    if (switchCase.value()) {
+        m_stringBuilder.flexibleAppend("case ");
+        emitConstantExpressionString(*switchCase.value());
+        m_stringBuilder.flexibleAppend(":\n");
+    } else
         m_stringBuilder.append("default:\n");
     SetForScope<Optional<BreakContext>> breakContext(m_currentBreakContext, BreakContext::Switch);
     checkErrorAndVisit(switchCase.block());
@@ -735,29 +734,39 @@ void FunctionDefinitionWriter::visit(AST::VariableReference& variableReference)
     appendLeftValue(variableReference, iterator->value, pointerName, Nullability::NotNull);
 }
 
-String FunctionDefinitionWriter::constantExpressionString(AST::ConstantExpression& constantExpression)
+void FunctionDefinitionWriter::emitConstantExpressionString(AST::ConstantExpression& constantExpression)
 {
-    return constantExpression.visit(WTF::makeVisitor([&](AST::IntegerLiteral& integerLiteral) -> String {
-        return makeString("", integerLiteral.value());
-    }, [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) -> String {
-        return makeString("", unsignedIntegerLiteral.value());
-    }, [&](AST::FloatLiteral& floatLiteral) -> String {
-        return makeString("", floatLiteral.value());
-    }, [&](AST::NullLiteral&) -> String {
-        return "nullptr"_str;
-    }, [&](AST::BooleanLiteral& booleanLiteral) -> String {
-        return booleanLiteral.value() ? "true"_str : "false"_str;
-    }, [&](AST::EnumerationMemberLiteral& enumerationMemberLiteral) -> String {
-        ASSERT(enumerationMemberLiteral.enumerationDefinition());
-        ASSERT(enumerationMemberLiteral.enumerationDefinition());
-        return makeString(m_typeNamer.mangledNameForType(*enumerationMemberLiteral.enumerationDefinition()), "::", m_typeNamer.mangledNameForEnumerationMember(*enumerationMemberLiteral.enumerationMember()));
-    }));
+    constantExpression.visit(WTF::makeVisitor(
+        [&](AST::IntegerLiteral& integerLiteral) {
+            m_stringBuilder.flexibleAppend(integerLiteral.value());
+        },
+        [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) {
+            m_stringBuilder.flexibleAppend(unsignedIntegerLiteral.value());
+        },
+        [&](AST::FloatLiteral& floatLiteral) {
+            m_stringBuilder.flexibleAppend(floatLiteral.value());
+        },
+        [&](AST::NullLiteral&) {
+            m_stringBuilder.flexibleAppend("nullptr");
+        },
+        [&](AST::BooleanLiteral& booleanLiteral) {
+            if (booleanLiteral.value())
+                m_stringBuilder.flexibleAppend("true");
+            else
+                m_stringBuilder.flexibleAppend("false");
+        },
+        [&](AST::EnumerationMemberLiteral& enumerationMemberLiteral) {
+            ASSERT(enumerationMemberLiteral.enumerationDefinition());
+            ASSERT(enumerationMemberLiteral.enumerationDefinition());
+            m_stringBuilder.flexibleAppend(m_typeNamer.mangledNameForType(*enumerationMemberLiteral.enumerationDefinition()), "::", m_typeNamer.mangledNameForEnumerationMember(*enumerationMemberLiteral.enumerationMember()));
+        }
+    ));
 }
 
-class RenderFunctionDefinitionWriter : public FunctionDefinitionWriter {
+class RenderFunctionDefinitionWriter final : public FunctionDefinitionWriter {
 public:
-    RenderFunctionDefinitionWriter(Intrinsics& intrinsics, TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, MangledFunctionName>& functionMapping, MatchedRenderSemantics&& matchedSemantics, Layout& layout)
-        : FunctionDefinitionWriter(intrinsics, typeNamer, functionMapping, layout)
+    RenderFunctionDefinitionWriter(StringBuilder& stringBuilder, Intrinsics& intrinsics, TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, MangledFunctionName>& functionMapping, MatchedRenderSemantics&& matchedSemantics, Layout& layout)
+        : FunctionDefinitionWriter(stringBuilder, intrinsics, typeNamer, functionMapping, layout)
         , m_matchedSemantics(WTFMove(matchedSemantics))
     {
     }
@@ -780,10 +789,10 @@ std::unique_ptr<EntryPointScaffolding> RenderFunctionDefinitionWriter::createEnt
     return nullptr;
 }
 
-class ComputeFunctionDefinitionWriter : public FunctionDefinitionWriter {
+class ComputeFunctionDefinitionWriter final : public FunctionDefinitionWriter {
 public:
-    ComputeFunctionDefinitionWriter(Intrinsics& intrinsics, TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, MangledFunctionName>& functionMapping, MatchedComputeSemantics&& matchedSemantics, Layout& layout)
-        : FunctionDefinitionWriter(intrinsics, typeNamer, functionMapping, layout)
+    ComputeFunctionDefinitionWriter(StringBuilder& stringBuilder, Intrinsics& intrinsics, TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, MangledFunctionName>& functionMapping, MatchedComputeSemantics&& matchedSemantics, Layout& layout)
+        : FunctionDefinitionWriter(stringBuilder, intrinsics, typeNamer, functionMapping, layout)
         , m_matchedSemantics(WTFMove(matchedSemantics))
     {
     }
@@ -804,14 +813,8 @@ std::unique_ptr<EntryPointScaffolding> ComputeFunctionDefinitionWriter::createEn
     return nullptr;
 }
 
-struct SharedMetalFunctionsResult {
-    HashMap<AST::FunctionDeclaration*, MangledFunctionName> functionMapping;
-    String metalFunctions;
-};
-static SharedMetalFunctionsResult sharedMetalFunctions(Program& program, TypeNamer& typeNamer, const HashSet<AST::FunctionDeclaration*>& reachableFunctions)
+static HashMap<AST::FunctionDeclaration*, MangledFunctionName> generateMetalFunctionsMapping(Program& program)
 {
-    StringBuilder stringBuilder;
-
     unsigned numFunctions = 0;
     HashMap<AST::FunctionDeclaration*, MangledFunctionName> functionMapping;
     for (auto& functionDefinition : program.functionDefinitions()) {
@@ -819,20 +822,21 @@ static SharedMetalFunctionsResult sharedMetalFunctions(Program& program, TypeNam
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }
 
-    {
-        FunctionDeclarationWriter functionDeclarationWriter(typeNamer, functionMapping);
-        for (auto& functionDefinition : program.functionDefinitions()) {
-            if (!functionDefinition->entryPointType() && reachableFunctions.contains(&functionDefinition))
-                functionDeclarationWriter.visit(functionDefinition);
-        }
-        stringBuilder.append(functionDeclarationWriter.toString());
+    return functionMapping;
+}
+
+static void emitSharedMetalFunctions(StringBuilder& stringBuilder, Program& program, TypeNamer& typeNamer, const HashSet<AST::FunctionDeclaration*>& reachableFunctions, HashMap<AST::FunctionDeclaration*, MangledFunctionName>& functionMapping)
+{
+    FunctionDeclarationWriter functionDeclarationWriter(stringBuilder, typeNamer, functionMapping);
+    for (auto& functionDefinition : program.functionDefinitions()) {
+        if (!functionDefinition->entryPointType() && reachableFunctions.contains(&functionDefinition))
+            functionDeclarationWriter.visit(functionDefinition);
     }
 
     stringBuilder.append('\n');
-    return { WTFMove(functionMapping), stringBuilder.toString() };
 }
 
-class ReachableFunctionsGatherer : public Visitor {
+class ReachableFunctionsGatherer final : public Visitor {
 public:
     void visit(AST::FunctionDeclaration& functionDeclaration) override
     {
@@ -855,7 +859,7 @@ private:
     HashSet<AST::FunctionDeclaration*> m_reachableFunctions;
 };
 
-RenderMetalFunctions metalFunctions(Program& program, TypeNamer& typeNamer, MatchedRenderSemantics&& matchedSemantics, Layout& layout)
+RenderMetalFunctionEntryPoints emitMetalFunctions(StringBuilder& stringBuilder, Program& program, TypeNamer& typeNamer, MatchedRenderSemantics&& matchedSemantics, Layout& layout)
 {
     auto& vertexShaderEntryPoint = *matchedSemantics.vertexShader;
     auto& fragmentShaderEntryPoint = *matchedSemantics.fragmentShader;
@@ -865,26 +869,20 @@ RenderMetalFunctions metalFunctions(Program& program, TypeNamer& typeNamer, Matc
     reachableFunctionsGatherer.Visitor::visit(fragmentShaderEntryPoint);
     auto reachableFunctions = reachableFunctionsGatherer.takeReachableFunctions();
 
-    auto sharedMetalFunctions = Metal::sharedMetalFunctions(program, typeNamer, reachableFunctions);
+    auto functionMapping = generateMetalFunctionsMapping(program);
+    
+    emitSharedMetalFunctions(stringBuilder, program, typeNamer, reachableFunctions, functionMapping);
 
-    StringBuilder stringBuilder;
-    stringBuilder.append(sharedMetalFunctions.metalFunctions);
-
-    RenderFunctionDefinitionWriter functionDefinitionWriter(program.intrinsics(), typeNamer, sharedMetalFunctions.functionMapping, WTFMove(matchedSemantics), layout);
+    RenderFunctionDefinitionWriter functionDefinitionWriter(stringBuilder, program.intrinsics(), typeNamer, functionMapping, WTFMove(matchedSemantics), layout);
     for (auto& functionDefinition : program.functionDefinitions()) {
         if (reachableFunctions.contains(&functionDefinition))
             functionDefinitionWriter.visit(functionDefinition);
     }
-    stringBuilder.append(functionDefinitionWriter.toString());
 
-    RenderMetalFunctions result;
-    result.metalSource = stringBuilder.toString();
-    result.mangledVertexEntryPointName = sharedMetalFunctions.functionMapping.get(&vertexShaderEntryPoint);
-    result.mangledFragmentEntryPointName = sharedMetalFunctions.functionMapping.get(&fragmentShaderEntryPoint);
-    return result;
+    return { functionMapping.get(&vertexShaderEntryPoint), functionMapping.get(&fragmentShaderEntryPoint) };
 }
 
-ComputeMetalFunctions metalFunctions(Program& program, TypeNamer& typeNamer, MatchedComputeSemantics&& matchedSemantics, Layout& layout)
+ComputeMetalFunctionEntryPoints emitMetalFunctions(StringBuilder& stringBuilder, Program& program, TypeNamer& typeNamer, MatchedComputeSemantics&& matchedSemantics, Layout& layout)
 {
     auto& entryPoint = *matchedSemantics.shader;
 
@@ -892,22 +890,16 @@ ComputeMetalFunctions metalFunctions(Program& program, TypeNamer& typeNamer, Mat
     reachableFunctionsGatherer.Visitor::visit(entryPoint);
     auto reachableFunctions = reachableFunctionsGatherer.takeReachableFunctions();
 
-    auto sharedMetalFunctions = Metal::sharedMetalFunctions(program, typeNamer, reachableFunctions);
+    auto functionMapping = generateMetalFunctionsMapping(program);
+    emitSharedMetalFunctions(stringBuilder, program, typeNamer, reachableFunctions, functionMapping);
 
-    StringBuilder stringBuilder;
-    stringBuilder.append(sharedMetalFunctions.metalFunctions);
-
-    ComputeFunctionDefinitionWriter functionDefinitionWriter(program.intrinsics(), typeNamer, sharedMetalFunctions.functionMapping, WTFMove(matchedSemantics), layout);
+    ComputeFunctionDefinitionWriter functionDefinitionWriter(stringBuilder, program.intrinsics(), typeNamer, functionMapping, WTFMove(matchedSemantics), layout);
     for (auto& functionDefinition : program.functionDefinitions()) {
         if (reachableFunctions.contains(&functionDefinition))
             functionDefinitionWriter.visit(functionDefinition);
     }
-    stringBuilder.append(functionDefinitionWriter.toString());
 
-    ComputeMetalFunctions result;
-    result.metalSource = stringBuilder.toString();
-    result.mangledEntryPointName = sharedMetalFunctions.functionMapping.get(&entryPoint);
-    return result;
+    return { functionMapping.get(&entryPoint) };
 }
 
 } // namespace Metal

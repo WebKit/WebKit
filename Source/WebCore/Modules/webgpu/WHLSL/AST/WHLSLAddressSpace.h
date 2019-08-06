@@ -44,18 +44,18 @@ enum class AddressSpace : uint8_t {
     Thread
 };
 
-ALWAYS_INLINE String toString(AddressSpace addressSpace)
+ALWAYS_INLINE StringView toString(AddressSpace addressSpace)
 {
     switch (addressSpace) {
     case AddressSpace::Constant:
-        return "constant"_str;
+        return "constant";
     case AddressSpace::Device:
-        return "device"_str;
+        return "device";
     case AddressSpace::Threadgroup:
-        return "threadgroup"_str;
+        return "threadgroup";
     default:
         ASSERT(addressSpace == AddressSpace::Thread);
-        return "thread"_str;
+        return "thread";
     }
 }
 

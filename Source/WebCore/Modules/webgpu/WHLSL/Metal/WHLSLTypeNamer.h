@@ -59,7 +59,7 @@ public:
     TypeNamer(Program&);
     virtual ~TypeNamer();
 
-    String metalTypes();
+    void emitMetalTypes(StringBuilder&);
 
     // Must be called after calling metalTypes().
     String mangledNameForType(AST::NativeTypeDeclaration&);
@@ -82,11 +82,11 @@ private:
 
     MangledEnumerationMemberName generateNextEnumerationMemberName() { return { m_enumerationMemberCount++ }; }
 
-    void emitNamedTypeDefinition(AST::NamedType&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes, StringBuilder&);
-    void emitUnnamedTypeDefinition(BaseTypeNameNode&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes, StringBuilder&);
-    void emitAllUnnamedTypeDefinitions(Vector<UniqueRef<BaseTypeNameNode>>&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes, StringBuilder&);
-    String metalTypeDeclarations();
-    String metalTypeDefinitions();
+    void emitNamedTypeDefinition(StringBuilder&, AST::NamedType&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes);
+    void emitUnnamedTypeDefinition(StringBuilder&, BaseTypeNameNode&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes);
+    void emitAllUnnamedTypeDefinitions(StringBuilder&, Vector<UniqueRef<BaseTypeNameNode>>&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes);
+    void emitMetalTypeDeclarations(StringBuilder&);
+    void emitMetalTypeDefinitions(StringBuilder&);
 
     UniqueRef<BaseTypeNameNode> createNameNode(AST::UnnamedType&, BaseTypeNameNode* parent);
     BaseTypeNameNode* insert(AST::UnnamedType&, Vector<UniqueRef<BaseTypeNameNode>>&);

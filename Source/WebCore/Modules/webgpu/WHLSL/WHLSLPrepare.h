@@ -30,6 +30,7 @@
 #include "WHLSLError.h"
 #include "WHLSLMangledNames.h"
 #include "WHLSLPipelineDescriptor.h"
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -39,7 +40,7 @@ namespace WHLSL {
 constexpr bool dumpMetalCompileTimes = false;
 
 struct RenderPrepareResult {
-    String metalSource;
+    StringBuilder metalSource;
     Metal::MangledFunctionName mangledVertexEntryPointName;
     Metal::MangledFunctionName mangledFragmentEntryPointName;
 };
@@ -52,7 +53,7 @@ struct ComputeDimensions {
 };
 
 struct ComputePrepareResult {
-    String metalSource;
+    StringBuilder metalSource;
     Metal::MangledFunctionName mangledEntryPointName;
     ComputeDimensions computeDimensions;
 };

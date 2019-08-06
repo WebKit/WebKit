@@ -60,7 +60,7 @@ public:
     ResourceSemantic(const ResourceSemantic&) = delete;
     ResourceSemantic(ResourceSemantic&&) = default;
 
-    String toString()
+    StringView toString()
     {
         switch (m_mode) {
         case Mode::UnorderedAccessView:

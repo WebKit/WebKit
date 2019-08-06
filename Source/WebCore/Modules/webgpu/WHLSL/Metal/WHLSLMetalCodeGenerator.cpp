@@ -41,9 +41,9 @@ namespace Metal {
 
 static constexpr bool dumpMetalCode = false;
 
-static String generateMetalCodeShared(String&& metalTypes, String&& metalFunctions)
+static StringView metalCodeProlog()
 {
-    auto generatedMetalCode = makeString(
+    return StringView {
         "#include <metal_stdlib>\n"
         "#include <metal_atomic>\n"
         "#include <metal_math>\n"
@@ -52,36 +52,46 @@ static String generateMetalCodeShared(String&& metalTypes, String&& metalFunctio
         "#include <metal_texture>\n"
         "\n"
         "using namespace metal;\n"
-        "\n",
+        "\n"
+    };
+}
 
-        WTFMove(metalTypes),
-        WTFMove(metalFunctions)
-    );
-
+static void dumpMetalCodeIfNeeded(StringBuilder& stringBuilder)
+{
     if (dumpMetalCode) {
         dataLogLn("Generated Metal code: ");
-        dataLogLn(generatedMetalCode);
+        dataLogLn(stringBuilder.toString());
     }
-
-    return generatedMetalCode;
 }
 
 RenderMetalCode generateMetalCode(Program& program, MatchedRenderSemantics&& matchedSemantics, Layout& layout)
 {
+    StringBuilder stringBuilder;
+    stringBuilder.append(metalCodeProlog());
+
     TypeNamer typeNamer(program);
-    auto metalTypes = typeNamer.metalTypes();
-    auto metalFunctions = Metal::metalFunctions(program, typeNamer, WTFMove(matchedSemantics), layout);
-    auto metalCode = generateMetalCodeShared(WTFMove(metalTypes), WTFMove(metalFunctions.metalSource));
-    return { WTFMove(metalCode), WTFMove(metalFunctions.mangledVertexEntryPointName), WTFMove(metalFunctions.mangledFragmentEntryPointName) };
+    typeNamer.emitMetalTypes(stringBuilder);
+    
+    auto metalFunctionEntryPoints = Metal::emitMetalFunctions(stringBuilder, program, typeNamer, WTFMove(matchedSemantics), layout);
+
+    dumpMetalCodeIfNeeded(stringBuilder);
+
+    return { WTFMove(stringBuilder), WTFMove(metalFunctionEntryPoints.mangledVertexEntryPointName), WTFMove(metalFunctionEntryPoints.mangledFragmentEntryPointName) };
 }
 
 ComputeMetalCode generateMetalCode(Program& program, MatchedComputeSemantics&& matchedSemantics, Layout& layout)
 {
+    StringBuilder stringBuilder;
+    stringBuilder.append(metalCodeProlog());
+
     TypeNamer typeNamer(program);
-    auto metalTypes = typeNamer.metalTypes();
-    auto metalFunctions = Metal::metalFunctions(program, typeNamer, WTFMove(matchedSemantics), layout);
-    auto metalCode = generateMetalCodeShared(WTFMove(metalTypes), WTFMove(metalFunctions.metalSource));
-    return { WTFMove(metalCode), WTFMove(metalFunctions.mangledEntryPointName) };
+    typeNamer.emitMetalTypes(stringBuilder);
+
+    auto metalFunctionEntryPoints = Metal::emitMetalFunctions(stringBuilder, program, typeNamer, WTFMove(matchedSemantics), layout);
+
+    dumpMetalCodeIfNeeded(stringBuilder);
+
+    return { WTFMove(stringBuilder), WTFMove(metalFunctionEntryPoints.mangledEntryPointName) };
 }
 
 }

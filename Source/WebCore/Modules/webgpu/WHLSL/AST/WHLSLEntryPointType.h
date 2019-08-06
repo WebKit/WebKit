@@ -41,7 +41,7 @@ enum class EntryPointType : uint8_t {
     Compute,
 };
 
-ALWAYS_INLINE String toString(EntryPointType type)
+ALWAYS_INLINE StringView toString(EntryPointType type)
 {
     switch (type) {
     case EntryPointType::Vertex:

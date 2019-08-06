@@ -90,7 +90,8 @@ static Optional<WHLSL::ComputeDimensions> trySetFunctions(const GPUPipelineStage
         MonotonicTime startTime;
         if (WHLSL::dumpMetalCompileTimes)
             startTime = MonotonicTime::now();
-        computeLibrary = adoptNS([device.platformDevice() newLibraryWithSource:whlslCompileResult->metalSource options:nil error:&error]);
+        // FIXME: https://webkit.org/b/200474 Add direct StringBuilder -> NSString conversion to avoid extra copy into a WTF::String
+        computeLibrary = adoptNS([device.platformDevice() newLibraryWithSource:whlslCompileResult->metalSource.toString() options:nil error:&error]);
         if (WHLSL::dumpMetalCompileTimes)
             dataLogLn("Metal compile times: ", (MonotonicTime::now() - startTime).milliseconds(), " ms");
         END_BLOCK_OBJC_EXCEPTIONS;

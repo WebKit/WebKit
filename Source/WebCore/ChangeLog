@@ -1,3 +1,135 @@
+2019-08-06  Sam Weinig  <weinig@apple.com>
+
+        WHLSL Metal code generation unnecessarily does string copies by passing partial results as Strings
+        https://bugs.webkit.org/show_bug.cgi?id=200471
+
+        Reviewed by Saam Barati.
+
+        Avoid string copies by passing a single StringBuilder all the way through Metal code
+        generation and only converting to a String when passing the constructed shader to Metal
+        API.
+        
+        Where possible, use StringView in lieu of String for temporary strings being passed to
+        the StringBuilder to avoid the allocation overhead of StringImpl. 
+
+        * Modules/webgpu/WHLSL/AST/WHLSLAddressSpace.h:
+        (WebCore::WHLSL::AST::toString):
+        Switch to StringView.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLBuiltInSemantic.h:
+        (WebCore::WHLSL::AST::BuiltInSemantic::toString const):
+        Switch to StringView.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLEntryPointType.h:
+        (WebCore::WHLSL::AST::toString):
+        Switch to StringView.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLPointerType.h:
+        Remove unnecessary "private:".
+    
+        * Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.h:
+        (WebCore::WHLSL::AST::ResourceSemantic::toString):
+        Switch to StringView.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp:
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::emitResourceHelperTypes):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::emitResourceSignature):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::emitBuiltInsSignature):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::emitMangledInputPath):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::emitMangledOutputPath):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::emitUnpackResourcesAndNamedBuiltIns):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::emitHelperTypes):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::emitSignature):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::emitUnpack):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::emitPack):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::emitHelperTypes):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::emitSignature):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::emitUnpack):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::emitPack):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::emitHelperTypes):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::emitSignature):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::emitUnpack):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::emitPack):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::resourceHelperTypes): Deleted.
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::resourceSignature): Deleted.
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::builtInsSignature): Deleted.
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::mangledInputPath): Deleted.
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::mangledOutputPath): Deleted.
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::unpackResourcesAndNamedBuiltIns): Deleted.
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::helperTypes): Deleted.
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::signature): Deleted.
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::unpack): Deleted.
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::pack): Deleted.
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::helperTypes): Deleted.
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::signature): Deleted.
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::unpack): Deleted.
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::pack): Deleted.
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::helperTypes): Deleted.
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::signature): Deleted.
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::unpack): Deleted.
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::pack): Deleted.
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.h:
+        Rather than have scaffolding return strings, pass in StringBuilders everywhere. 
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::FunctionDefinitionWriter):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::emitConstantExpressionString):
+        (WebCore::WHLSL::Metal::generateMetalFunctionsMapping):
+        (WebCore::WHLSL::Metal::emitSharedMetalFunctions):
+        (WebCore::WHLSL::Metal::emitMetalFunctions):
+        (WebCore::WHLSL::Metal::FunctionDeclarationWriter::FunctionDeclarationWriter): Deleted.
+        (WebCore::WHLSL::Metal::FunctionDeclarationWriter::toString): Deleted.
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::toString): Deleted.
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::constantExpressionString): Deleted.
+        (WebCore::WHLSL::Metal::RenderFunctionDefinitionWriter::RenderFunctionDefinitionWriter): Deleted.
+        (WebCore::WHLSL::Metal::ComputeFunctionDefinitionWriter::ComputeFunctionDefinitionWriter): Deleted.
+        (WebCore::WHLSL::Metal::sharedMetalFunctions): Deleted.
+        (WebCore::WHLSL::Metal::metalFunctions): Deleted.
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.h:
+        Rather than returning Strings from function generation functions, pass in StringBuilders everywhere.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.cpp:
+        (WebCore::WHLSL::Metal::metalCodeProlog):
+        (WebCore::WHLSL::Metal::dumpMetalCodeIfNeeded):
+        (WebCore::WHLSL::Metal::generateMetalCode):
+        (WebCore::WHLSL::Metal::generateMetalCodeShared): Deleted.
+        * Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.h:
+        Switch RenderMetalCode and ComputeMetalCode to contain StringBuilders to allow
+        delaying conversion to String to the latest point possible.
+        
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp:
+        (WebCore::WHLSL::Metal::TypeNamer::emitMetalTypeDeclarations):
+        (WebCore::WHLSL::Metal::TypeNamer::emitUnnamedTypeDefinition):
+        (WebCore::WHLSL::Metal::TypeNamer::emitNamedTypeDefinition):
+        (WebCore::WHLSL::Metal::TypeNamer::emitAllUnnamedTypeDefinitions):
+        (WebCore::WHLSL::Metal::TypeNamer::emitMetalTypeDefinitions):
+        (WebCore::WHLSL::Metal::TypeNamer::emitMetalTypes):
+        (WebCore::WHLSL::Metal::MetalTypeDeclarationWriter::MetalTypeDeclarationWriter): Deleted.
+        (WebCore::WHLSL::Metal::MetalTypeDeclarationWriter::toString): Deleted.
+        (WebCore::WHLSL::Metal::MetalTypeDeclarationWriter::visit): Deleted.
+        (WebCore::WHLSL::Metal::TypeNamer::metalTypeDeclarations): Deleted.
+        (WebCore::WHLSL::Metal::TypeNamer::metalTypeDefinitions): Deleted.
+        (WebCore::WHLSL::Metal::TypeNamer::metalTypes): Deleted.
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.h:
+        Rather than returning Strings from function generation functions, pass in StringBuilders everywhere.
+
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::parseResourceSemantic):
+        Remove use of _str, which allocates a String, and just use a StringView directly.
+
+        * Modules/webgpu/WHLSL/WHLSLPrepare.h:
+        Switch RenderPrepareResult and ComputePrepareResult to contain StringBuilders to allow
+        delaying conversion to String to the latest point possible.
+
+        * platform/graphics/gpu/cocoa/GPUComputePipelineMetal.mm:
+        (WebCore::trySetFunctions):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::trySetFunctions):
+        Convert StringBuilders to String at the last moment necessary. Adds a FIXME to improve
+        in the future by adding direct conversion from StringBuilder to NSString to avoid another
+        copy.
+
 2019-08-06  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Reduce the number of variables that make it into the global struct by skipping stdlib functions and internal uses of MakePointerExpression/MakeArrayReference

@@ -83,7 +83,7 @@ public:
         return !(*this == other);
     }
 
-    String toString() const
+    StringView toString() const
     {
         switch (m_variable) {
         case Variable::SVInstanceID:

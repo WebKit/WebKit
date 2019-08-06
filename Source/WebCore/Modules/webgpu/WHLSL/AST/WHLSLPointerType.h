@@ -49,8 +49,8 @@ class PointerType final : public ReferenceType {
         : Base(location, addressSpace, WTFMove(elementType))
     {
     }
-public:
 
+public:
     static Ref<PointerType> create(CodeLocation location, AddressSpace addressSpace, Ref<UnnamedType> elementType)
     {
         return adoptRef(*new PointerType(location, addressSpace, WTFMove(elementType)));
@@ -78,8 +78,6 @@ public:
     {
         return makeString(elementType().toString(), '*');
     }
-
-private:
 };
 
 } // namespace AST

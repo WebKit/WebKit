@@ -695,8 +695,8 @@ auto Parser::parseResourceSemantic() -> Expected<AST::ResourceSemantic, Error>
     if (tryType(Token::Type::Comma)) {
         CONSUME_TYPE(spaceToken, Identifier);
         auto spaceTokenStringView = spaceToken->stringView(m_lexer);
-        auto prefix = "space"_str;
-        if (!spaceTokenStringView.startsWith(StringView(prefix)))
+        StringView prefix { "space" };
+        if (!spaceTokenStringView.startsWith(prefix))
             return Unexpected<Error>(Error(makeString("Second argument to resource semantic ", spaceTokenStringView, " needs be of the form 'space0'")));
         if (spaceTokenStringView.length() <= prefix.length())
             return Unexpected<Error>(Error(makeString("Second argument to resource semantic ", spaceTokenStringView, " needs be of the form 'space0'")));

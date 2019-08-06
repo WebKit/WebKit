@@ -40,18 +40,16 @@ namespace Metal {
 
 class TypeNamer;
 
-struct RenderMetalFunctions {
-    String metalSource;
+struct RenderMetalFunctionEntryPoints {
     MangledFunctionName mangledVertexEntryPointName;
     MangledFunctionName mangledFragmentEntryPointName;
 };
-RenderMetalFunctions metalFunctions(Program&, TypeNamer&, MatchedRenderSemantics&&, Layout&);
+RenderMetalFunctionEntryPoints emitMetalFunctions(StringBuilder&, Program&, TypeNamer&, MatchedRenderSemantics&&, Layout&);
 
-struct ComputeMetalFunctions {
-    String metalSource;
+struct ComputeMetalFunctionEntryPoints {
     MangledFunctionName mangledEntryPointName;
 };
-ComputeMetalFunctions metalFunctions(Program&, TypeNamer&, MatchedComputeSemantics&&, Layout&);
+ComputeMetalFunctionEntryPoints emitMetalFunctions(StringBuilder&, Program&, TypeNamer&, MatchedComputeSemantics&&, Layout&);
 
 }
 
