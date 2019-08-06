@@ -1,3 +1,12 @@
+2019-08-06  Russell Epstein  <repstein@apple.com>
+
+        [iPad] editing/selection/character-granularity-rect.html is now passing.
+        <rdar://53468934>
+
+        Unreviewed Test Gardening.
+
+        * platform/ipad/TestExpectations: Removed expectation for passing test, editing/selection/character-granularity-rect.html
+
 2019-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] Unable to increase zoom level on Google using the Aa menu
