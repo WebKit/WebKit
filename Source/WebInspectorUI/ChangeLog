@@ -1,3 +1,17 @@
+2019-08-06  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: RTL: go-to arrows and expand triangles in Computed panel should match their context
+        https://bugs.webkit.org/show_bug.cgi?id=200449
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ComputedStyleSection.css:
+        (body[dir=rtl] .computed-style-section .computed-property-item .disclosure-button): Deleted.
+
+        * UserInterface/Views/Main.css:
+        (body[dir=rtl] [dir=ltr] .go-to-arrow): Added.
+        In the RTL mode, LTR "islands" should have their contents to be still LTR.
+
 2019-08-05  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Styles: show @supports CSS groupings

@@ -290,6 +290,10 @@ body[dir=rtl] .go-to-arrow {
     transform: scaleX(-1);
 }
 
+body[dir=rtl] [dir=ltr] .go-to-arrow {
+    transform: revert;
+}
+
 :focus .selected .go-to-arrow {
     background-image: url(../Images/GoToArrow.svg#selected);
 }
