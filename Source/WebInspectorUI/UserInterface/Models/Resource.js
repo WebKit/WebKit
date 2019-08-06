@@ -592,7 +592,7 @@ WI.Resource = class Resource extends WI.SourceCode
     get compressed()
     {
         let contentEncoding = this._responseHeaders.valueForCaseInsensitiveKey("Content-Encoding");
-        return !!(contentEncoding && /\b(?:gzip|deflate)\b/.test(contentEncoding));
+        return !!(contentEncoding && /\b(?:gzip|deflate|br)\b/.test(contentEncoding));
     }
 
     get requestedByteRange()
