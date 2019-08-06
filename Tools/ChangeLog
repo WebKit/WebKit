@@ -1,3 +1,14 @@
+2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a build fix after r248308
+
+        Use kSecUseDataProtectionKeychain for iOS 13 and macOS Catalina or newer.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::addTestKeyToKeychain):
+        (WTR::TestController::cleanUpKeychain):
+        (WTR::TestController::keyExistsInKeychain):
+
 2019-08-06  Keith Rollin  <krollin@apple.com>
 
         Enable XCBuild for `make` and `build-webkit` builds

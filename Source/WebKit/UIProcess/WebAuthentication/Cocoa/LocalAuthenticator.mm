@@ -119,9 +119,11 @@ void LocalAuthenticator::makeCredential()
             (id)kSecAttrLabel: requestData().creationOptions.rp.id,
             (id)kSecReturnAttributes: @YES,
             (id)kSecMatchLimit: (id)kSecMatchLimitAll,
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+#if HAVE_DATA_PROTECTION_KEYCHAIN
+            (id)kSecUseDataProtectionKeychain: @YES
+#else
             (id)kSecAttrNoLegacy: @YES
-ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
         };
         CFTypeRef attributesArrayRef = nullptr;
         OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
@@ -173,7 +175,11 @@ void LocalAuthenticator::continueMakeCredentialAfterUserConsented(LocalConnectio
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrLabel: requestData().creationOptions.rp.id,
         (id)kSecAttrApplicationTag: [NSData dataWithBytes:requestData().creationOptions.user.idVector.data() length:requestData().creationOptions.user.idVector.size()],
+#if HAVE_DATA_PROTECTION_KEYCHAIN
+        (id)kSecUseDataProtectionKeychain: @YES
+#else
         (id)kSecAttrNoLegacy: @YES
+#endif
     };
     OSStatus status = SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
     if (status && status != errSecItemNotFound) {
@@ -229,7 +235,11 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKe
             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
             (id)kSecAttrLabel: label,
             (id)kSecReturnAttributes: @YES,
+#if HAVE_DATA_PROTECTION_KEYCHAIN
+            (id)kSecUseDataProtectionKeychain: @YES
+#else
             (id)kSecAttrNoLegacy: @YES
+#endif
         };
         CFTypeRef attributesRef = nullptr;
         OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)credentialIdQuery, &attributesRef);
@@ -247,7 +257,11 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKe
             (id)kSecClass: (id)kSecClassKey,
             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
             (id)kSecAttrApplicationLabel: nsAttributes[(id)kSecAttrApplicationLabel],
+#if HAVE_DATA_PROTECTION_KEYCHAIN
+            (id)kSecUseDataProtectionKeychain: @YES
+#else
             (id)kSecAttrNoLegacy: @YES
+#endif
         };
         NSDictionary *updateParams = @{
             (id)kSecAttrLabel: requestData().creationOptions.rp.id,
@@ -350,7 +364,11 @@ void LocalAuthenticator::getAssertion()
         (id)kSecAttrLabel: requestData().requestOptions.rpId,
         (id)kSecReturnAttributes: @YES,
         (id)kSecMatchLimit: (id)kSecMatchLimitAll,
+#if HAVE_DATA_PROTECTION_KEYCHAIN
+        (id)kSecUseDataProtectionKeychain: @YES
+#else
         (id)kSecAttrNoLegacy: @YES
+#endif
     };
     CFTypeRef attributesArrayRef = nullptr;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
@@ -429,7 +447,11 @@ void LocalAuthenticator::continueGetAssertionAfterUserConsented(LocalConnection:
             (id)kSecAttrApplicationLabel: [NSData dataWithBytes:credentialId.data() length:credentialId.size()],
             (id)kSecUseAuthenticationContext: context,
             (id)kSecReturnRef: @YES,
+#if HAVE_DATA_PROTECTION_KEYCHAIN
+            (id)kSecUseDataProtectionKeychain: @YES
+#else
             (id)kSecAttrNoLegacy: @YES
+#endif
         };
         CFTypeRef privateKeyRef = nullptr;
         OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &privateKeyRef);
