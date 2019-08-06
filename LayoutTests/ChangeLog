@@ -1,3 +1,12 @@
+2019-08-06  Russell Epstein  <repstein@apple.com>
+
+        Updating Test Expectations for <rdar://53957264>, <rdar://53946482>, <rdar://53866783>
+
+        Unreviewed Test Gardening.
+
+        * platform/ios-12/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Enable LocalAuthenticator for macOS
