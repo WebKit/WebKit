@@ -119,7 +119,9 @@ void LocalAuthenticator::makeCredential()
             (id)kSecAttrLabel: requestData().creationOptions.rp.id,
             (id)kSecReturnAttributes: @YES,
             (id)kSecMatchLimit: (id)kSecMatchLimitAll,
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             (id)kSecAttrNoLegacy: @YES
+ALLOW_DEPRECATED_DECLARATIONS_END
         };
         CFTypeRef attributesArrayRef = nullptr;
         OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);

@@ -1,3 +1,10 @@
+2019-08-06  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix internal iOS build after r248308.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::makeCredential):
+
 2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Enable LocalAuthenticator for macOS
