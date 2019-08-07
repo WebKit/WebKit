@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TextPaintStyle.h"
 
+#include "ColorUtilities.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
@@ -60,8 +61,9 @@ bool TextPaintStyle::operator==(const TextPaintStyle& other) const
 
 bool textColorIsLegibleAgainstBackgroundColor(const Color& textColor, const Color& backgroundColor)
 {
-    // Semi-arbitrarily chose 65025 (255^2) value here after a few tests.
-    return differenceSquared(textColor, backgroundColor) > 65025;
+    // Uses the WCAG 2.0 definition of legibility: a contrast ratio of 4.5:1 or greater.
+    // https://www.w3.org/TR/WCAG20/#visual-audio-contrast-contrast
+    return contrastRatio(textColor, backgroundColor) > 4.5;
 }
 
 static Color adjustColorForVisibilityOnBackground(const Color& textColor, const Color& backgroundColor)

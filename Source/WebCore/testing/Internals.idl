@@ -164,6 +164,7 @@ enum CompositingPolicy {
     JSGenerateToJSObject,
 ] dictionary TextIndicatorInfo {
     DOMRectReadOnly textBoundingRectInRootViewCoordinates;
+    DOMRectList textRectsInBoundingRectCoordinates;
 };
 
 [
@@ -171,6 +172,8 @@ enum CompositingPolicy {
     JSGenerateToJSObject,
 ] dictionary TextIndicatorOptions {
     boolean useBoundingRectAndPaintAllContentForComplexRanges = false;
+    boolean computeEstimatedBackgroundColor = false;
+    boolean respectTextColor = false;
 };
 
 [

@@ -162,6 +162,7 @@ FloatComponents sRGBToHSL(const FloatComponents&);
 FloatComponents HSLToSRGB(const FloatComponents&);
 
 float luminance(const FloatComponents& sRGBCompontents);
+float contrastRatio(const FloatComponents&, const FloatComponents&);
 
 class ColorMatrix {
 public:
