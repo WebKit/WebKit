@@ -1,3 +1,17 @@
+2019-08-07  Yury Semikhatsky  <yurys@chromium.org>
+
+        LayoutTest inspector/worker/debugger-scripts.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=165582
+
+        Reviewed by Joseph Pecoraro.
+
+        Unflake the test. Main resource in the worker target is populated asychronously
+        when the script is parsed and sent to the debugger, so we need to wait for it
+        before performing further checks.
+
+        * inspector/worker/debugger-scripts.html:
+        * platform/mac/TestExpectations:
+
 2019-08-07  Russell Epstein  <repstein@apple.com>
 
         Updating TestExpectations for editing/pasteboard/paste-does-not-fire-promises-while-sanitizing-web-content.html.

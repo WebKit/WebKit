@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/worker-utilities.js"></script>
 <script>
 let worker = new Worker("resources/worker-scripts.js");
 
@@ -89,7 +90,7 @@ function test()
         }
     });
 
-    suite.runTestCasesAndFinish();
+    awaitTargetMainResource(workerTarget).then(() => suite.runTestCasesAndFinish());
 }
 </script>
 </head>
