@@ -50,7 +50,7 @@ public:
     virtual ~FormattingContext();
 
     virtual void layout() const = 0;
-    void layoutOutOfFlowDescendants() const;
+    void layoutOutOfFlowContent() const;
 
     struct IntrinsicWidthConstraints {
         void expand(LayoutUnit horizontalValue);

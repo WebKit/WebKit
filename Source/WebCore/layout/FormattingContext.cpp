@@ -133,9 +133,9 @@ void FormattingContext::computeBorderAndPadding(const Box& layoutBox, Optional<U
     displayBox.setPadding(Geometry::computedPadding(layoutBox, *usedValues));
 }
 
-void FormattingContext::layoutOutOfFlowDescendants() const
+void FormattingContext::layoutOutOfFlowContent() const
 {
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: layout out-of-flow descendants -> context: " << &layoutState() << " root: " << &root());
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
 
     for (auto& outOfFlowBox : formattingState().outOfFlowBoxes()) {
         ASSERT(outOfFlowBox->establishesFormattingContext());
@@ -147,9 +147,9 @@ void FormattingContext::layoutOutOfFlowDescendants() const
         formattingContext->layout();
 
         computeOutOfFlowVerticalGeometry(*outOfFlowBox);
-        formattingContext->layoutOutOfFlowDescendants();
+        formattingContext->layoutOutOfFlowContent();
     }
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow descendants -> context: " << &layoutState() << " root: " << &root());
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
 }
 
 static LayoutUnit mapHorizontalPositionToAncestor(const LayoutState& layoutState, LayoutUnit horizontalPosition, const Container& containingBlock, const Container& ancestor)
@@ -239,8 +239,7 @@ void FormattingContext::validateGeometryConstraintsAfterLayout() const
         if ((layoutBox.isBlockLevelBox() || layoutBox.isOutOfFlowPositioned()) && !layoutBox.replaced()) {
             // margin-left + border-left-width + padding-left + width + padding-right + border-right-width + margin-right = width of containing block
             auto containingBlockWidth = containingBlockDisplayBox.contentBoxWidth();
-            ASSERT(displayBox.marginStart() + displayBox.borderLeft() + displayBox.paddingLeft().valueOr(0) + displayBox.contentBoxWidth()
-                + displayBox.paddingRight().valueOr(0) + displayBox.borderRight() + displayBox.marginEnd() == containingBlockWidth);
+            ASSERT(displayBox.horizontalMarginBorderAndPadding() + displayBox.contentBoxWidth() == containingBlockWidth);
         }
 
         // 10.6.4 Absolutely positioned, non-replaced elements

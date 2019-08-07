@@ -172,8 +172,8 @@ void BlockFormattingContext::layoutFormattingContextRoot(FloatingContext& floati
     // Come back and finalize the root's geometry.
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Height][Margin] -> for layoutBox(" << &layoutBox << ")");
     computeHeightAndMargin(layoutBox);
-    // Now that we computed the root's height, we can go back and layout the out-of-flow descedants (if any).
-    formattingContext->layoutOutOfFlowDescendants();
+    // Now that we computed the root's height, we can go back and layout the out-of-flow content.
+    formattingContext->layoutOutOfFlowContent();
 
     // Float related final positioning.
     if (layoutBox.isFloatingPositioned()) {

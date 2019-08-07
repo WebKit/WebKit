@@ -1,5 +1,37 @@
 2019-08-07  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Rename FormattingContext::layoutOutOfFlowDescendants to layoutOutOfFlowContent
+        https://bugs.webkit.org/show_bug.cgi?id=200502
+        <rdar://problem/54032534>
+
+        Reviewed by Antti Koivisto.
+
+        The layoutOutOfFlowDescendants name is not entirely accurate. In a formatting context we only
+        lay out the out-of-flow boxes that actually belong to the current formatting context.
+
+        <div style="float: left">
+          <div id=outer style="position: absolute">
+            <div id=inner style="position: absolute"></div>
+          </div>
+        </div>
+
+        The float's formatting context only lays out the outer absolutely positioned box. The inner box
+        (which is also an out-of-flow descendant of the float box) is taken care of by the outer box.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowContent const):
+        (WebCore::Layout::FormattingContext::validateGeometryConstraintsAfterLayout const):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const): Deleted.
+        * layout/FormattingContext.h:
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::layoutFormattingContextSubtree):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot const):
+
+2019-08-07  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Introduce Layout::Phase class
         https://bugs.webkit.org/show_bug.cgi?id=200473
         <rdar://problem/53996061>
