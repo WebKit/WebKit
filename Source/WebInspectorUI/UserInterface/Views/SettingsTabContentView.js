@@ -167,7 +167,10 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         this._createConsoleSettingsView();
         this._createExperimentalSettingsView();
 
-        WI.notifications.addEventListener(WI.Notification.DebugUIEnabledDidChange, this._updateDebugSettingsViewVisibility, this);
+        if (WI.isEngineeringBuild)
+            this._createEngineeringSettingsView();
+
+        WI.showDebugUISetting.addEventListener(WI.Setting.Event.Changed, this._updateDebugSettingsViewVisibility, this);
         this._updateDebugSettingsViewVisibility();
 
         this.selectedSettingsView = this._settingsViews[0];
@@ -374,6 +377,25 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         this.addSettingsView(experimentalSettingsView);
     }
 
+    _createEngineeringSettingsView()
+    {
+        // These settings are only ever shown in engineering builds, so the strings are unlocalized.
+
+        let engineeringSettingsView = new WI.SettingsView("engineering", WI.unlocalizedString("Engineering"));
+
+        let debuggingGroup = engineeringSettingsView.addGroup(WI.unlocalizedString("Debugging:"));
+        debuggingGroup.addSetting(WI.settings.engineeringShowInternalScripts, WI.unlocalizedString("Show WebKit-internal scripts"));
+        debuggingGroup.addSetting(WI.settings.engineeringPauseForInternalScripts, WI.unlocalizedString("Pause in WebKit-internal scripts"));
+
+        engineeringSettingsView.addSeparator();
+
+        let heapSnapshotGroup = engineeringSettingsView.addGroup(WI.unlocalizedString("Heap Snapshot:"));
+        heapSnapshotGroup.addSetting(WI.settings.engineeringShowInternalObjectsInHeapSnapshot, WI.unlocalizedString("Show Internal Objects"));
+        heapSnapshotGroup.addSetting(WI.settings.engineeringShowPrivateSymbolsInHeapSnapshot, WI.unlocalizedString("Show Private Symbols"));
+
+        this.addSettingsView(engineeringSettingsView);
+    }
+
     _createDebugSettingsView()
     {
         if (this._debugSettingsView)
@@ -385,30 +407,29 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         let protocolMessagesGroup = this._debugSettingsView.addGroup(WI.unlocalizedString("Protocol Logging:"));
 
-        let autoLogProtocolMessagesEditor = protocolMessagesGroup.addSetting(WI.settings.autoLogProtocolMessages, WI.unlocalizedString("Messages"));
-        WI.settings.autoLogProtocolMessages.addEventListener(WI.Setting.Event.Changed, () => {
-            autoLogProtocolMessagesEditor.value = InspectorBackend.dumpInspectorProtocolMessages;
+        let protocolAutoLogMessagesEditor = protocolMessagesGroup.addSetting(WI.settings.protocolAutoLogMessages, WI.unlocalizedString("Messages"));
+        WI.settings.protocolAutoLogMessages.addEventListener(WI.Setting.Event.Changed, () => {
+            protocolAutoLogMessagesEditor.value = InspectorBackend.dumpInspectorProtocolMessages;
         });
 
-        protocolMessagesGroup.addSetting(WI.settings.autoLogTimeStats, WI.unlocalizedString("Time Stats"));
+        protocolMessagesGroup.addSetting(WI.settings.protocolAutoLogTimeStats, WI.unlocalizedString("Time Stats"));
 
         this._debugSettingsView.addSeparator();
 
-        this._debugSettingsView.addSetting(WI.unlocalizedString("Layout Flashing:"), WI.settings.enableLayoutFlashing, WI.unlocalizedString("Draw borders when a view performs a layout"));
+        this._debugSettingsView.addSetting(WI.unlocalizedString("Debugging:"), WI.settings.debugShowConsoleEvaluations, WI.unlocalizedString("Show Console Evaluations"));
 
         this._debugSettingsView.addSeparator();
 
-        this._debugSettingsView.addSetting(WI.unlocalizedString("Styles:"), WI.settings.enableStyleEditingDebugMode, WI.unlocalizedString("Enable style editing debug mode"));
+        this._debugSettingsView.addSetting(WI.unlocalizedString("Layout Flashing:"), WI.settings.debugEnableLayoutFlashing, WI.unlocalizedString("Draw borders when a view performs a layout"));
 
         this._debugSettingsView.addSeparator();
 
-        this._debugSettingsView.addSetting(WI.unlocalizedString("Heap Snapshot:"), WI.settings.debugShowInternalObjectsInHeapSnapshot, WI.unlocalizedString("Show Internal Objects"));
+        this._debugSettingsView.addSetting(WI.unlocalizedString("Styles:"), WI.settings.debugEnableStyleEditingDebugMode, WI.unlocalizedString("Enable style editing debug mode"));
 
         this._debugSettingsView.addSeparator();
 
-        this._debugSettingsView.addSetting(WI.unlocalizedString("Debugging:"), WI.settings.pauseForInternalScripts, WI.unlocalizedString("Pause in WebKit-internal scripts"));
 
-        this._debugSettingsView.addSetting(WI.unlocalizedString("Uncaught Exception Reporter:"), WI.settings.enableUncaughtExceptionReporter, WI.unlocalizedString("Enabled"));
+        this._debugSettingsView.addSetting(WI.unlocalizedString("Uncaught Exception Reporter:"), WI.settings.debugEnableUncaughtExceptionReporter, WI.unlocalizedString("Enabled"));
 
         this._debugSettingsView.addSeparator();
 
@@ -419,8 +440,10 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         ];
 
         let layoutDirectionEditor = this._debugSettingsView.addGroupWithCustomSetting(WI.unlocalizedString("Layout Direction:"), WI.SettingEditor.Type.Select, {values: layoutDirectionValues});
-        layoutDirectionEditor.value = WI.settings.layoutDirection.value;
+        layoutDirectionEditor.value = WI.settings.debugLayoutDirection.value;
         layoutDirectionEditor.addEventListener(WI.SettingEditor.Event.ValueDidChange, () => { WI.setLayoutDirection(layoutDirectionEditor.value); });
+
+        this._debugSettingsView.addSeparator();
 
         let resetInspectorButton = document.createElement("button");
         resetInspectorButton.textContent = WI.unlocalizedString("Reset Web Inspector");

@@ -463,7 +463,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
         console.assert(oldText === styleText.slice(range.startOffset, range.endOffset), "_styleSheetTextRange data is invalid.");
 
-        if (WI.settings.enableStyleEditingDebugMode.value) {
+        if (WI.isDebugUIEnabled() && WI.settings.debugEnableStyleEditingDebugMode.value) {
             let prefix = styleText.slice(0, range.startOffset);
             let postfix = styleText.slice(range.endOffset);
             console.info(`${prefix}%c${oldText}%c${newText}%c${postfix}`, `background: hsl(356, 100%, 90%); color: black`, `background: hsl(100, 100%, 91%); color: black`, `background: transparent`);

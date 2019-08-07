@@ -124,7 +124,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         //                                  ^
         //                                  update only happens here
         if (this._updatesInProgressCount > 0 && !options.forceUpdate) {
-            if (WI.settings.enableStyleEditingDebugMode.value && text !== this._text)
+            if (WI.isDebugUIEnabled() && WI.settings.debugEnableStyleEditingDebugMode.value && text !== this._text)
                 console.warn("Style modified while editing:", text);
 
             return;

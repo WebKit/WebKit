@@ -45,8 +45,8 @@ InspectorBackendClass = class InspectorBackendClass
         for (let debuggableType of Object.values(WI.DebuggableType))
             this._supportedDomainsForDebuggableType.set(debuggableType, []);
 
-        WI.settings.autoLogProtocolMessages.addEventListener(WI.Setting.Event.Changed, this._startOrStopAutomaticTracing, this);
-        WI.settings.autoLogTimeStats.addEventListener(WI.Setting.Event.Changed, this._startOrStopAutomaticTracing, this);
+        WI.settings.protocolAutoLogMessages.addEventListener(WI.Setting.Event.Changed, this._startOrStopAutomaticTracing, this);
+        WI.settings.protocolAutoLogTimeStats.addEventListener(WI.Setting.Event.Changed, this._startOrStopAutomaticTracing, this);
         this._startOrStopAutomaticTracing();
 
         this.currentDispatchState = {
@@ -71,19 +71,19 @@ InspectorBackendClass = class InspectorBackendClass
     set dumpInspectorProtocolMessages(value)
     {
         // Implicitly cause automatic logging to start if it's allowed.
-        WI.settings.autoLogProtocolMessages.value = value;
+        WI.settings.protocolAutoLogMessages.value = value;
 
         this._defaultTracer.dumpMessagesToConsole = value;
     }
 
     get dumpInspectorProtocolMessages()
     {
-        return WI.settings.autoLogProtocolMessages.value;
+        return WI.settings.protocolAutoLogMessages.value;
     }
 
     set dumpInspectorTimeStats(value)
     {
-        WI.settings.autoLogTimeStats.value = value;
+        WI.settings.protocolAutoLogTimeStats.value = value;
 
         if (!this.dumpInspectorProtocolMessages)
             this.dumpInspectorProtocolMessages = true;
@@ -93,19 +93,19 @@ InspectorBackendClass = class InspectorBackendClass
 
     get dumpInspectorTimeStats()
     {
-        return WI.settings.autoLogTimeStats.value;
+        return WI.settings.protocolAutoLogTimeStats.value;
     }
 
     set filterMultiplexingBackendInspectorProtocolMessages(value)
     {
-        WI.settings.filterMultiplexingBackendInspectorProtocolMessages.value = value;
+        WI.settings.protocolFilterMultiplexingBackendMessages.value = value;
 
         this._defaultTracer.filterMultiplexingBackend = value;
     }
 
     get filterMultiplexingBackendInspectorProtocolMessages()
     {
-        return WI.settings.filterMultiplexingBackendInspectorProtocolMessages.value;
+        return WI.settings.protocolFilterMultiplexingBackendMessages.value;
     }
 
     set customTracer(tracer)

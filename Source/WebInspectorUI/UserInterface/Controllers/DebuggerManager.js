@@ -29,8 +29,6 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     {
         super();
 
-        WI.notifications.addEventListener(WI.Notification.DebugUIEnabledDidChange, this._debugUIEnabledDidChange, this);
-
         WI.Breakpoint.addEventListener(WI.Breakpoint.Event.DisplayLocationDidChange, this._breakpointDisplayLocationDidChange, this);
         WI.Breakpoint.addEventListener(WI.Breakpoint.Event.DisabledStateDidChange, this._breakpointDisabledStateDidChange, this);
         WI.Breakpoint.addEventListener(WI.Breakpoint.Event.ConditionDidChange, this._breakpointEditablePropertyDidChange, this);
@@ -45,7 +43,10 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._targetRemoved, this);
 
-        WI.settings.pauseForInternalScripts.addEventListener(WI.Setting.Event.Changed, this._pauseForInternalScriptsDidChange, this);
+        if (WI.isEngineeringBuild) {
+            WI.settings.engineeringShowInternalScripts.addEventListener(WI.Setting.Event.Changed, this._handleEngineeringShowInternalScriptsSettingChanged, this);
+            WI.settings.engineeringPauseForInternalScripts.addEventListener(WI.Setting.Event.Changed, this._handleEngineeringPauseForInternalScriptsSettingChanged, this);
+        }
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
@@ -146,9 +147,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (target.DebuggerAgent.setAsyncStackTraceDepth)
             target.DebuggerAgent.setAsyncStackTraceDepth(this._asyncStackTraceDepthSetting.value);
 
-        // COMPATIBILITY (iOS 12): DebuggerAgent.setPauseForInternalScripts did not exist yet.
-        if (target.DebuggerAgent.setPauseForInternalScripts)
-            target.DebuggerAgent.setPauseForInternalScripts(WI.settings.pauseForInternalScripts.value);
+        if (WI.isEngineeringBuild) {
+            // COMPATIBILITY (iOS 12): DebuggerAgent.setPauseForInternalScripts did not exist yet.
+            if (target.DebuggerAgent.setPauseForInternalScripts)
+                target.DebuggerAgent.setPauseForInternalScripts(WI.settings.engineeringPauseForInternalScripts.value);
+        }
 
         if (this.paused)
             targetData.pauseIfNeeded();
@@ -319,13 +322,13 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     {
         let knownScripts = [];
 
-        for (let [target, targetData] of this._targetDebuggerDataMap) {
+        for (let targetData of this._targetDebuggerDataMap.values()) {
             for (let script of targetData.scripts) {
                 if (script.resource)
                     continue;
-                if (isWebInspectorConsoleEvaluationScript(script.sourceURL))
+                if ((!WI.isDebugUIEnabled() || !WI.settings.debugShowConsoleEvaluations.value) && isWebInspectorConsoleEvaluationScript(script.sourceURL))
                     continue;
-                if (!WI.isDebugUIEnabled() && isWebKitInternalScript(script.sourceURL))
+                if ((!WI.isEngineeringBuild || !WI.settings.engineeringShowInternalScripts.value) && isWebKitInternalScript(script.sourceURL))
                     continue;
                 knownScripts.push(script);
             }
@@ -621,7 +624,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
                 continue;
 
             // Exclude the case where the call frame is in the inspector code.
-            if (!WI.isDebugUIEnabled() && isWebKitInternalScript(sourceCodeLocation.sourceCode.sourceURL))
+            if ((!WI.isEngineeringBuild || !WI.settings.engineeringShowInternalScripts.value) && isWebKitInternalScript(sourceCodeLocation.sourceCode.sourceURL))
                 continue;
 
             let scopeChain = this._scopeChainFromPayload(target, callFramePayload.scopeChain);
@@ -710,7 +713,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return;
         }
 
-        if (!WI.isDebugUIEnabled() && isWebKitInternalScript(sourceURL))
+        if ((!WI.isEngineeringBuild || !WI.settings.engineeringShowInternalScripts.value) && isWebKitInternalScript(sourceURL))
             return;
 
         let range = new WI.TextRange(startLine, startColumn, endLine, endColumn);
@@ -740,12 +743,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         if (isWebKitInternalScript(script.sourceURL)) {
             this._internalWebKitScripts.push(script);
-            if (!WI.isDebugUIEnabled())
+            if (!WI.isEngineeringBuild || !WI.settings.engineeringShowInternalScripts.value)
                 return;
         }
 
-        // Console expressions are not added to the UI by default.
-        if (isWebInspectorConsoleEvaluationScript(script.sourceURL))
+        if ((!WI.isDebugUIEnabled() || !WI.settings.debugShowConsoleEvaluations.value) && isWebInspectorConsoleEvaluationScript(script.sourceURL))
             return;
 
         this.dispatchEventToListeners(WI.DebuggerManager.Event.ScriptAdded, {script});
@@ -1191,11 +1193,18 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             this.dispatchEventToListeners(WI.DebuggerManager.Event.Resumed);
     }
 
-    _pauseForInternalScriptsDidChange(event)
+    _handleEngineeringShowInternalScriptsSettingChanged(event)
+    {
+        let eventType = WI.settings.engineeringShowInternalScripts.value ? WI.DebuggerManager.Event.ScriptAdded : WI.DebuggerManager.Event.ScriptRemoved;
+        for (let script of this._internalWebKitScripts)
+            this.dispatchEventToListeners(eventType, {script});
+    }
+
+    _handleEngineeringPauseForInternalScriptsSettingChanged(event)
     {
         for (let target of WI.targets) {
             if (target.DebuggerAgent.setPauseForInternalScripts)
-                target.DebuggerAgent.setPauseForInternalScripts(WI.settings.pauseForInternalScripts.value);
+                target.DebuggerAgent.setPauseForInternalScripts(WI.settings.engineeringPauseForInternalScripts.value);
         }
     }
 
@@ -1355,13 +1364,6 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             this.dispatchEventToListeners(WI.DebuggerManager.Event.ProbeSetAdded, {probeSet});
         }
         return probeSet;
-    }
-
-    _debugUIEnabledDidChange()
-    {
-        let eventType = WI.isDebugUIEnabled() ? WI.DebuggerManager.Event.ScriptAdded : WI.DebuggerManager.Event.ScriptRemoved;
-        for (let script of this._internalWebKitScripts)
-            this.dispatchEventToListeners(eventType, {script});
     }
 };
 

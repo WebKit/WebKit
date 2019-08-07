@@ -676,7 +676,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
     _updateDebugLockStatus()
     {
-        if (!this._style || !WI.settings.enableStyleEditingDebugMode.value)
+        if (!this._style || !WI.isDebugUIEnabled() || !WI.settings.debugEnableStyleEditingDebugMode.value)
             return;
 
         this.element.classList.toggle("debug-style-locked", this._style.locked);

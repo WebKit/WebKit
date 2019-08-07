@@ -402,7 +402,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
             });
         }
 
-        if (callFrame && (!callFrame.isConsoleEvaluation || WI.isDebugUIEnabled())) {
+        if (callFrame && (!callFrame.isConsoleEvaluation || (WI.isDebugUIEnabled() && WI.settings.debugShowConsoleEvaluations.value))) {
             const showFunctionName = !!callFrame.functionName;
             var locationElement = new WI.CallFrameView(callFrame, showFunctionName);
             locationElement.classList.add("console-message-location");

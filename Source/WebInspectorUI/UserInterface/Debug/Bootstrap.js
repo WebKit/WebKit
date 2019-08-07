@@ -25,6 +25,18 @@
 
 WI.isEngineeringBuild = true;
 
+// Disable Pause in Internal Scripts if Show Internal Scripts is dibbled.
+WI.settings.engineeringShowInternalScripts.addEventListener(WI.Setting.Event.Changed, (event) => {
+    if (!WI.settings.engineeringShowInternalScripts.value)
+        WI.settings.engineeringPauseForInternalScripts.value = false;
+}, WI.settings.engineeringPauseForInternalScripts);
+
+// Enable Show Internal Scripts if Pause in Internal Scripts is enabled.
+WI.settings.engineeringPauseForInternalScripts.addEventListener(WI.Setting.Event.Changed, (event) => {
+    if (WI.settings.engineeringPauseForInternalScripts.value)
+        WI.settings.engineeringShowInternalScripts.value = true;
+}, WI.settings.engineeringShowInternalScripts);
+
 // This function is invoked after the inspector has loaded and has a backend target.
 WI.runBootstrapOperations = function() {
     WI.showDebugUISetting = new WI.Setting("show-debug-ui", false);
@@ -95,7 +107,7 @@ WI.runBootstrapOperations = function() {
         }
         applyDumpMessagesState(nextState);
     });
-    WI.settings.autoLogProtocolMessages.addEventListener(WI.Setting.Event.Changed, () => {
+    WI.settings.protocolAutoLogMessages.addEventListener(WI.Setting.Event.Changed, () => {
         if (ignoreChangesToState)
             return;
         applyDumpMessagesState(dumpMessagesCurrentState());
@@ -119,7 +131,6 @@ WI.runBootstrapOperations = function() {
 
     WI.showDebugUISetting.addEventListener(WI.Setting.Event.Changed, () => {
         updateDebugUI();
-        WI.notifications.dispatchEventToListeners(WI.Notification.DebugUIEnabledDidChange);
     });
 
     updateDebugUI();

@@ -44,7 +44,7 @@ WI.HeapSnapshotEdgeProxy = class HeapSnapshotEdgeProxy
 
     isPrivateSymbol()
     {
-        if (WI.isDebugUIEnabled())
+        if (WI.isEngineeringBuild && WI.settings.engineeringShowPrivateSymbolsInHeapSnapshot.value)
             return false;
 
         return typeof this.data === "string" && this.data.startsWith("PrivateSymbol");

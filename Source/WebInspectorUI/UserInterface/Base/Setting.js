@@ -187,14 +187,21 @@ WI.settings = {
     experimentalEnableStylesIcons: new WI.Setting("experimental-styles-icons", false),
     experimentalEnableStylesJumpToEffective: new WI.Setting("experimental-styles-jump-to-effective", false),
 
-    // DebugUI
-    autoLogProtocolMessages: new WI.Setting("auto-collect-protocol-messages", false),
-    autoLogTimeStats: new WI.Setting("auto-collect-time-stats", false),
-    enableLayoutFlashing: new WI.Setting("enable-layout-flashing", false),
-    enableStyleEditingDebugMode: new WI.Setting("enable-style-editing-debug-mode", false),
-    enableUncaughtExceptionReporter: new WI.Setting("enable-uncaught-exception-reporter", true),
-    filterMultiplexingBackendInspectorProtocolMessages: new WI.Setting("filter-multiplexing-backend-inspector-protocol-messages", true),
-    layoutDirection: new WI.Setting("layout-direction-override", "system"),
-    pauseForInternalScripts: new WI.Setting("pause-for-internal-scripts", false),
-    debugShowInternalObjectsInHeapSnapshot: new WI.Setting("debug-show-internal-objects-in-heap-snapshot", false),
+    // Protocol
+    protocolAutoLogMessages: new WI.Setting("protocol-auto-log-messages", false),
+    protocolAutoLogTimeStats: new WI.Setting("protocol-auto-log-time-stats", false),
+    protocolFilterMultiplexingBackendMessages: new WI.Setting("protocol-filter-multiplexing-backend-messages", true),
+
+    // Engineering
+    engineeringShowInternalScripts: new WI.Setting("engineering-show-internal-scripts", false),
+    engineeringPauseForInternalScripts: new WI.Setting("engineering-pause-for-internal-scripts", false),
+    engineeringShowInternalObjectsInHeapSnapshot: new WI.Setting("engineering-show-internal-objects-in-heap-snapshot", false),
+    engineeringShowPrivateSymbolsInHeapSnapshot: new WI.Setting("engineering-show-private-symbols-in-heap-snapshot", false),
+
+    // Debug
+    debugShowConsoleEvaluations: new WI.Setting("debug-show-console-evaluations", false),
+    debugEnableLayoutFlashing: new WI.Setting("debug-enable-layout-flashing", false),
+    debugEnableStyleEditingDebugMode: new WI.Setting("debug-enable-style-editing-debug-mode", false),
+    debugEnableUncaughtExceptionReporter: new WI.Setting("debug-enable-uncaught-exception-reporter", true),
+    debugLayoutDirection: new WI.Setting("debug-layout-direction-override", "system"),
 };

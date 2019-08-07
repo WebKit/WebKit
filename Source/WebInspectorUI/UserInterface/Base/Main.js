@@ -2703,22 +2703,23 @@ WI.setZoomFactor = function(factor)
 
 WI.resolvedLayoutDirection = function()
 {
-    let layoutDirection = WI.settings.layoutDirection.value;
-    if (layoutDirection === WI.LayoutDirection.System)
+    let layoutDirection = WI.settings.debugLayoutDirection.value;
+    if (!WI.isDebugUIEnabled() || layoutDirection === WI.LayoutDirection.System)
         layoutDirection = InspectorFrontendHost.userInterfaceLayoutDirection();
-
     return layoutDirection;
 };
 
 WI.setLayoutDirection = function(value)
 {
+    console.assert(WI.isDebugUIEnabled());
+
     if (!Object.values(WI.LayoutDirection).includes(value))
         WI.reportInternalError("Unknown layout direction requested: " + value);
 
-    if (value === WI.settings.layoutDirection.value)
+    if (value === WI.settings.debugLayoutDirection.value)
         return;
 
-    WI.settings.layoutDirection.value = value;
+    WI.settings.debugLayoutDirection.value = value;
 
     if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL && WI._dockConfiguration === WI.DockConfiguration.Right)
         WI._dockLeft();

@@ -1,3 +1,74 @@
+2019-08-07  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Settings: add an Engineering pane to expose useful settings for other WebKit engineers
+        https://bugs.webkit.org/show_bug.cgi?id=200492
+
+        Reviewed by Joseph Pecoraro.
+
+        Other WebKit engineers might find being able to see internal objects or pause in internal
+        scripts useful, so we should allow them to do so without having to enable Web Inspector's
+        debug "mode".
+
+        A new "Engineering" pane is added to the Settings Tab:
+         - Debugging
+            - Show WebKit-internal scripts
+            - Pause in WebKit-internal scripts
+         - Heap Snapshot
+            - Show Internal Objects
+            - Show Private Symbols
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype.initialLayout):
+        (WI.SettingsTabContentView.prototype._createEngineeringSettingsView): Added.
+        (WI.SettingsTabContentView.prototype._createDebugSettingsView):
+
+        * UserInterface/Base/Main.js:
+        (WI.resolvedLayoutDirection):
+        (WI.setLayoutDirection):
+        * UserInterface/Base/Object.js:
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass):
+        (InspectorBackendClass.prototype.set dumpInspectorProtocolMessages):
+        (InspectorBackendClass.prototype.get dumpInspectorProtocolMessages):
+        (InspectorBackendClass.prototype.set dumpInspectorTimeStats):
+        (InspectorBackendClass.prototype.get dumpInspectorTimeStats):
+        (InspectorBackendClass.prototype.set filterMultiplexingBackendInspectorProtocolMessages):
+        (InspectorBackendClass.prototype.get filterMultiplexingBackendInspectorProtocolMessages):
+        * UserInterface/Protocol/RemoteObject.js:
+        (WI.RemoteObject.prototype.findFunctionSourceCodeLocation):
+        * UserInterface/Debug/Bootstrap.js:
+        (WI.runBootstrapOperations):
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        (handleUncaughtExceptionRecord):
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype._updateOwnerStyleText):
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype.update):
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager):
+        (WI.DebuggerManager.prototype.initializeTarget):
+        (WI.DebuggerManager.prototype.get knownNonResourceScripts):
+        (WI.DebuggerManager.prototype.debuggerDidPause):
+        (WI.DebuggerManager.prototype.scriptDidParse):
+        (WI.DebuggerManager.prototype._handleEngineeringShowInternalScriptsSettingChanged): Added.
+        (WI.DebuggerManager.prototype._handleEngineeringPauseForInternalScriptsSettingChanged): Added.
+        (WI.DebuggerManager.prototype._pauseForInternalScriptsDidChange): Deleted.
+        (WI.DebuggerManager.prototype._debugUIEnabledDidChange): Deleted.
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WI.ConsoleMessageView.prototype._appendLocationLink):
+        * UserInterface/Views/HeapSnapshotDataGridTree.js:
+        (WI.HeapSnapshotInstancesDataGridTree.prototype.populateTopLevel):
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WI.OpenResourceDialog.prototype._addScriptsForTarget):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor):
+        * UserInterface/Views/StackTraceView.js:
+        (WI.StackTraceView):
+        * UserInterface/Views/View.js:
+        (WI.View.prototype._layoutSubtree):
+
 2019-08-07  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: RTL: content of Variables section should always be LTR
