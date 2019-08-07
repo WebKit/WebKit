@@ -112,6 +112,7 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         this._variablesTextEditor.hideFilterNonMatchingProperties = true;
         this._variablesTextEditor.sortPropertiesByName = true;
         this._variablesTextEditor.addEventListener(WI.SpreadsheetCSSStyleDeclarationEditor.Event.FilterApplied, this._handleEditorFilterApplied, this);
+        this._variablesTextEditor.element.dir = "ltr";
 
         let variablesRow = new WI.DetailsSectionRow;
         let variablesGroup = new WI.DetailsSectionGroup([variablesRow]);
