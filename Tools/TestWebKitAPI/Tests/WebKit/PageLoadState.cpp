@@ -295,6 +295,8 @@ TEST(WebKit, PageLoadState)
     Util::run(&test1Done);
 
     EXPECT_EQ(state.didChangeActiveURL, 4);
+
+    WKPageSetPageStateClient(webView.page(), &stateClient.base);
 }
 
 } // namespace TestWebKitAPI

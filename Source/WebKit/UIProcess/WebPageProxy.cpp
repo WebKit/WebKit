@@ -500,6 +500,8 @@ WebPageProxy::~WebPageProxy()
         ASSERT(page != this);
 #endif
 
+    setPageLoadStateObserver(nullptr);
+
     if (!m_isClosed)
         close();
 

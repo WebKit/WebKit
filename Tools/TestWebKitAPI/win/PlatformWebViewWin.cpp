@@ -93,6 +93,7 @@ void PlatformWebView::initialize(WKPageConfigurationRef configuration)
 PlatformWebView::~PlatformWebView()
 {
     ::DestroyWindow(m_window);
+    WKRelease(m_view);
 }
 
 WKPageRef PlatformWebView::page() const
