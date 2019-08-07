@@ -33,9 +33,15 @@
 #import <CoreServices/CoreServicesPriv.h>
 #elif PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/LSAppLinkPriv.h>
+#elif PLATFORM(IOS)
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
+#import <CoreServices/LSURLOverridePriv.h>
+#else
+#import <CoreServices/LSApplicationWorkspace.h>
+#endif
 #endif
 
-#endif
+#endif // USE(APPLE_INTERNAL_SDK)
 
 #if HAVE(APP_LINKS)
 @class LSAppLink;
@@ -72,6 +78,10 @@ typedef void (^LSAppLinkOpenCompletionHandler)(BOOL success, NSError *error);
 @property (readonly, strong) LSApplicationProxy *targetApplicationProxy;
 @end
 #endif
+
+@interface NSURL ()
+- (NSURL *)iTunesStoreURL;
+@end
 
 #if PLATFORM(MAC)
 enum LSSessionID {
