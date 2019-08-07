@@ -356,6 +356,11 @@
                         r"|LayoutTests/crypto/"
                         r"|LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/",
         },
+        "WebGPU": {
+            "filename": r"Source/WebCore/Modules/webgpu/"
+                        r"|Source/WebCore/platform/graphics/gpu/"
+                        r"|Source/WebCore/platform/graphics/gpu/cocoa/",
+        },
         "WebRTC": {
             "filename": r"Source/ThirdParty/libwebrtc/"
                         r"|Source/WebKit/Shared/*RTC*"
@@ -363,6 +368,11 @@
                         r"|Source/WebKit/WebProcess/Network/webrtc/"
                         r"|LayoutTests/webrtc/"
                         r"|LayoutTests/imported/w3c/web-platform-tests/webrtc/",
+        },
+        "WHLSL": {
+            "filename": r"Source/WebCore/Modules/webgpu/WHLSL/"
+                        r"|Source/WebCore/Modules/webgpu/WHLSL/AST/"
+                        r"|Source/WebCore/Modules/webgpu/WHLSL/Metal/",
         },
     },
     "CC_RULES": {
@@ -434,7 +444,9 @@
         "webkitperl": [ "dbates@webkit.org" ],
         "webkitpy": [ "glenn@skynav.com" ],
         "WebCryptoAPI": [ "jiewen_tan@apple.com" ],
+        "WebGPU": [ "mmaxfield@apple.com" ],
         "WebRTC": [ "eric.carlson@apple.com" ],
+        "WHLSL": [ "mmaxfield@apple.com" ],
     },
     "MESSAGE_RULES": {
         "GtkWebKit2PublicAPI": [ "Thanks for the patch. If this patch contains new public API "
