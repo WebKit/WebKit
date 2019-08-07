@@ -1,3 +1,30 @@
+2019-08-07  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] cache results of argumentTypeForAndOverload inside Checker
+        https://bugs.webkit.org/show_bug.cgi?id=200462
+
+        Reviewed by Robin Morisset.
+
+        When I profiled the time we spent in the checker, it turned out that 
+        argumentTypeForAndOverload is one of the most expensive functions. If
+        we just cache the results of that function, we can avoid 99% of the
+        duplicate allocations that function does in compute_boids. This patch
+        is a ~4ms speedup in the checker on compute_boids.
+
+        * Modules/webgpu/WHLSL/WHLSLCheckDuplicateFunctions.cpp:
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::AndOverloadTypeKey::AndOverloadTypeKey):
+        (WebCore::WHLSL::AndOverloadTypeKey::isEmptyValue const):
+        (WebCore::WHLSL::AndOverloadTypeKey::isHashTableDeletedValue const):
+        (WebCore::WHLSL::AndOverloadTypeKey::hash const):
+        (WebCore::WHLSL::AndOverloadTypeKey::operator== const):
+        (WebCore::WHLSL::AndOverloadTypeKey::Hash::hash):
+        (WebCore::WHLSL::AndOverloadTypeKey::Hash::equal):
+        (WebCore::WHLSL::AndOverloadTypeKey::Traits::isEmptyValue):
+        (WebCore::WHLSL::Checker::argumentTypeForAndOverload):
+        (WebCore::WHLSL::Checker::finishVisiting):
+        (WebCore::WHLSL::argumentTypeForAndOverload): Deleted.
+
 2019-08-07  Youenn Fablet  <youenn@apple.com>
 
         Remove IDBDatabaseIdentifier::m_sessionID

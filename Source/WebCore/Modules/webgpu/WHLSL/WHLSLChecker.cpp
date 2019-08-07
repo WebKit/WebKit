@@ -199,6 +199,57 @@ private:
     AST::NamedType* m_castReturnType;
 };
 
+class AndOverloadTypeKey {
+public:
+    AndOverloadTypeKey() = default;
+    AndOverloadTypeKey(WTF::HashTableDeletedValueType)
+    {
+        m_type = bitwise_cast<AST::UnnamedType*>(static_cast<uintptr_t>(1));
+    }
+
+    AndOverloadTypeKey(AST::UnnamedType& type, AST::AddressSpace addressSpace)
+        : m_type(&type)
+        , m_addressSpace(addressSpace)
+    { }
+
+    bool isEmptyValue() const { return !m_type; }
+    bool isHashTableDeletedValue() const { return m_type == bitwise_cast<AST::UnnamedType*>(static_cast<uintptr_t>(1)); }
+
+    unsigned hash() const
+    {
+        return IntHash<uint8_t>::hash(static_cast<uint8_t>(m_addressSpace)) ^ m_type->hash();
+    }
+
+    bool operator==(const AndOverloadTypeKey& other) const
+    {
+        return m_addressSpace == other.m_addressSpace
+            && *m_type == *other.m_type;
+    }
+
+    struct Hash {
+        static unsigned hash(const AndOverloadTypeKey& key)
+        {
+            return key.hash();
+        }
+
+        static bool equal(const AndOverloadTypeKey& a, const AndOverloadTypeKey& b)
+        {
+            return a == b;
+        }
+
+        static const bool safeToCompareToEmptyOrDeleted = false;
+    };
+
+    struct Traits : public WTF::SimpleClassHashTraits<AndOverloadTypeKey> {
+        static const bool hasIsEmptyValueFunction = true;
+        static bool isEmptyValue(const AndOverloadTypeKey& key) { return key.isEmptyValue(); }
+    };
+
+private:
+    AST::UnnamedType* m_type { nullptr };
+    AST::AddressSpace m_addressSpace;
+};
+
 static AST::NativeFunctionDeclaration resolveWithOperatorAnderIndexer(CodeLocation location, AST::ArrayReferenceType& firstArgument, const Intrinsics& intrinsics)
 {
     const bool isOperator = true;
@@ -598,6 +649,8 @@ private:
 
     AST::FunctionDeclaration* resolveFunction(Vector<std::reference_wrapper<ResolvingType>>& types, const String& name, CodeLocation, AST::NamedType* castReturnType = nullptr);
 
+    RefPtr<AST::UnnamedType> argumentTypeForAndOverload(AST::UnnamedType& baseType, AST::AddressSpace);
+
     AST::UnnamedType& wrappedFloatType()
     {
         if (!m_wrappedFloatType)
@@ -634,6 +687,7 @@ private:
     Program& m_program;
     AST::FunctionDefinition* m_currentFunction { nullptr };
     HashMap<FunctionKey, Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>, FunctionKey::Hash, FunctionKey::Traits> m_functions;
+    HashMap<AndOverloadTypeKey, RefPtr<AST::UnnamedType>, AndOverloadTypeKey::Hash, AndOverloadTypeKey::Traits> m_andOverloadTypeMap;
 };
 
 void Checker::visit(Program& program)
@@ -1084,26 +1138,39 @@ void Checker::visit(AST::MakeArrayReferenceExpression& makeArrayReferenceExpress
     assignConcreteType(makeArrayReferenceExpression, AST::ArrayReferenceType::create(makeArrayReferenceExpression.codeLocation(), *leftAddressSpace, *leftValueType));
 }
 
-static RefPtr<AST::UnnamedType> argumentTypeForAndOverload(AST::UnnamedType& baseType, AST::AddressSpace addressSpace)
+RefPtr<AST::UnnamedType> Checker::argumentTypeForAndOverload(AST::UnnamedType& baseType, AST::AddressSpace addressSpace)
 {
-    auto& unifyNode = baseType.unifyNode();
-    if (is<AST::NamedType>(unifyNode)) {
-        auto& namedType = downcast<AST::NamedType>(unifyNode);
-        return { AST::PointerType::create(namedType.codeLocation(), addressSpace, AST::TypeReference::wrap(namedType.codeLocation(), namedType)) };
+    AndOverloadTypeKey key { baseType, addressSpace };
+    {
+        auto iter = m_andOverloadTypeMap.find(key);
+        if (iter != m_andOverloadTypeMap.end())
+            return iter->value;
     }
 
-    auto& unnamedType = downcast<AST::UnnamedType>(unifyNode);
+    auto createArgumentType = [&] () -> RefPtr<AST::UnnamedType> {
+        auto& unifyNode = baseType.unifyNode();
+        if (is<AST::NamedType>(unifyNode)) {
+            auto& namedType = downcast<AST::NamedType>(unifyNode);
+            return { AST::PointerType::create(namedType.codeLocation(), addressSpace, AST::TypeReference::wrap(namedType.codeLocation(), namedType)) };
+        }
 
-    if (is<AST::ArrayReferenceType>(unnamedType))
-        return &unnamedType;
+        auto& unnamedType = downcast<AST::UnnamedType>(unifyNode);
 
-    if (is<AST::ArrayType>(unnamedType))
-        return { AST::ArrayReferenceType::create(unnamedType.codeLocation(), addressSpace, downcast<AST::ArrayType>(unnamedType).type()) };
+        if (is<AST::ArrayReferenceType>(unnamedType))
+            return &unnamedType;
 
-    if (is<AST::PointerType>(unnamedType))
-        return nullptr;
+        if (is<AST::ArrayType>(unnamedType))
+            return { AST::ArrayReferenceType::create(unnamedType.codeLocation(), addressSpace, downcast<AST::ArrayType>(unnamedType).type()) };
 
-    return { AST::PointerType::create(unnamedType.codeLocation(), addressSpace, unnamedType) };
+        if (is<AST::PointerType>(unnamedType))
+            return nullptr;
+
+        return { AST::PointerType::create(unnamedType.codeLocation(), addressSpace, unnamedType) };
+    };
+
+    auto result = createArgumentType();
+    m_andOverloadTypeMap.add(key, result);
+    return result;
 }
 
 void Checker::finishVisiting(AST::PropertyAccessExpression& propertyAccessExpression, ResolvingType* additionalArgumentType)
@@ -1135,7 +1202,7 @@ void Checker::finishVisiting(AST::PropertyAccessExpression& propertyAccessExpres
     RefPtr<AST::UnnamedType> anderReturnType = nullptr;
     auto leftAddressSpace = baseInfo->typeAnnotation.leftAddressSpace();
     if (leftAddressSpace) {
-        if (auto argumentTypeForAndOverload = WHLSL::argumentTypeForAndOverload(*baseUnnamedType, *leftAddressSpace)) {
+        if (auto argumentTypeForAndOverload = this->argumentTypeForAndOverload(*baseUnnamedType, *leftAddressSpace)) {
             ResolvingType argumentType = { Ref<AST::UnnamedType>(*argumentTypeForAndOverload) };
             Vector<std::reference_wrapper<ResolvingType>> anderArgumentTypes { argumentType };
             if (additionalArgumentType)
@@ -1151,7 +1218,7 @@ void Checker::finishVisiting(AST::PropertyAccessExpression& propertyAccessExpres
 
     AST::FunctionDeclaration* threadAnderFunction = nullptr;
     RefPtr<AST::UnnamedType> threadAnderReturnType = nullptr;
-    if (auto argumentTypeForAndOverload = WHLSL::argumentTypeForAndOverload(*baseUnnamedType, AST::AddressSpace::Thread)) {
+    if (auto argumentTypeForAndOverload = this->argumentTypeForAndOverload(*baseUnnamedType, AST::AddressSpace::Thread)) {
         ResolvingType argumentType = { Ref<AST::UnnamedType>(AST::PointerType::create(propertyAccessExpression.codeLocation(), AST::AddressSpace::Thread, *baseUnnamedType)) };
         Vector<std::reference_wrapper<ResolvingType>> threadAnderArgumentTypes { argumentType };
         if (additionalArgumentType)

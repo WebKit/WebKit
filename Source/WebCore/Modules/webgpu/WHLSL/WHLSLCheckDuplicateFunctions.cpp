@@ -103,7 +103,6 @@ public:
         }
 
         static const bool safeToCompareToEmptyOrDeleted = false;
-        static const bool emptyValueIsZero = true;
     };
 
     struct Traits : public WTF::SimpleClassHashTraits<DuplicateFunctionKey> {
