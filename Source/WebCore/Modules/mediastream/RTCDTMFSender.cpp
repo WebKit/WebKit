@@ -37,9 +37,9 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RTCDTMFSender);
 
-static const unsigned long minToneDurationMs = 40;
-static const unsigned long maxToneDurationMs = 6000;
-static const unsigned long minInterToneGapMs = 30;
+static const size_t minToneDurationMs = 40;
+static const size_t maxToneDurationMs = 6000;
+static const size_t minInterToneGapMs = 30;
 
 RTCDTMFSender::RTCDTMFSender(ScriptExecutionContext& context, RTCRtpSender& sender, std::unique_ptr<RTCDTMFSenderBackend>&& backend)
     : ActiveDOMObject(&context)
