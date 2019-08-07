@@ -1,5 +1,40 @@
 2019-08-06  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r247756. rdar://problem/54017897
+
+    Long press hint has half blue shape in Feedly.com
+    https://bugs.webkit.org/show_bug.cgi?id=200053
+    <rdar://problem/53323369>
+    
+    Reviewed by Simon Fraser.
+    
+    No new tests, because TextIndicator snapshots are not yet testable.
+    
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::paintForegroundForFragments):
+    Paint ChildBlockBackgrounds when painting selection AND backgrounds;
+    only exclude it when doing a selection-only paint.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247756 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-23  Tim Horton  <timothy_horton@apple.com>
+
+            Long press hint has half blue shape in Feedly.com
+            https://bugs.webkit.org/show_bug.cgi?id=200053
+            <rdar://problem/53323369>
+
+            Reviewed by Simon Fraser.
+
+            No new tests, because TextIndicator snapshots are not yet testable.
+
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::paintForegroundForFragments):
+            Paint ChildBlockBackgrounds when painting selection AND backgrounds;
+            only exclude it when doing a selection-only paint.
+
+2019-08-06  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r247730. rdar://problem/54017873
 
     Long press hint of AirPods buy buttons are tall and narrow during animation
