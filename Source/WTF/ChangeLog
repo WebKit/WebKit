@@ -1,3 +1,21 @@
+2019-08-07  Chris Dumez  <cdumez@apple.com>
+
+        Tighten WeakPtr threading assertions for GC threads
+        https://bugs.webkit.org/show_bug.cgi?id=200451
+
+        Reviewed by Youenn Fablet.
+
+        Make sure our GC threads do not dereference WeakPtr for main thread
+        objects by tightening our threading assertions in WeakPtr. They are
+        still allowed to call WeakPtr::get() for now though.
+
+        * wtf/WeakPtr.h:
+        (WTF::WeakPtrImpl::get):
+        (WTF::WeakPtrImpl::wasConstructedOnMainThread const):
+        (WTF::WeakPtr::get const):
+        (WTF::WeakPtr::operator-> const):
+        (WTF::WeakPtr::operator* const):
+
 2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a build fix after r248308

@@ -62,13 +62,15 @@ public:
 
     template<typename T> typename T::WeakValueType* get()
     {
-        // FIXME: We need to fix thread-safety bugs in WebCore and stop being more permissive for GC threads here.
-        ASSERT(Thread::mayBeGCThread() || m_wasConstructedOnMainThread == isMainThread());
         return static_cast<typename T::WeakValueType*>(m_ptr);
     }
 
     explicit operator bool() const { return m_ptr; }
     void clear() { m_ptr = nullptr; }
+
+#if !ASSERT_DISABLED
+    bool wasConstructedOnMainThread() const { return m_wasConstructedOnMainThread; }
+#endif
 
 private:
     template<typename T> explicit WeakPtrImpl(T* ptr)
@@ -95,15 +97,30 @@ public:
     template<typename U> WeakPtr(const WeakPtr<U>&);
     template<typename U> WeakPtr(WeakPtr<U>&&);
 
-    T* get() const { return m_impl ? static_cast<T*>(m_impl->get<T>()) : nullptr; }
+    T* get() const
+    {
+        // FIXME: Our GC threads currently need to get opaque pointers from WeakPtrs and have to be special-cased.
+        ASSERT(!m_impl || Thread::mayBeGCThread() || m_impl->wasConstructedOnMainThread() == isMainThread());
+        return m_impl ? static_cast<T*>(m_impl->get<T>()) : nullptr;
+    }
+
     explicit operator bool() const { return m_impl && *m_impl; }
 
     WeakPtr& operator=(std::nullptr_t) { m_impl = nullptr; return *this; }
     template<typename U> WeakPtr& operator=(const WeakPtr<U>&);
     template<typename U> WeakPtr& operator=(WeakPtr<U>&&);
 
-    T* operator->() const { return get(); }
-    T& operator*() const { return *get(); }
+    T* operator->() const
+    {
+        ASSERT(!m_impl || m_impl->wasConstructedOnMainThread() == isMainThread());
+        return get();
+    }
+
+    T& operator*() const
+    {
+        ASSERT(!m_impl || m_impl->wasConstructedOnMainThread() == isMainThread());
+        return *get();
+    }
 
     void clear() { m_impl = nullptr; }
 
