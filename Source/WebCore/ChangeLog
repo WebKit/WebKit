@@ -1,3 +1,27 @@
+2019-08-07  Robin Morisset  <rmorisset@apple.com>
+
+        [WHLSL] Simplify and eliminate redundant work in WHLSLFunctionWriter.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=200460
+
+        Reviewed by Myles Maxfield.
+
+        2 trivial simplifications:
+        - Replace FunctionDeclarationWriter by a standalone function, there was no reason to make it a subclass of Visitor
+        - Avoid an exponential blow-up in the computation of reachable functions.
+
+        I have way too much noise on my system (swings back and forth between 7 and 12ms for this phase) to measure a performance win,
+        but since this patch simplifies things without adding complexity I think it is worth it.
+
+        No new test as there is no functional change intended.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::declareFunction):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::FunctionDefinitionWriter):
+        (WebCore::WHLSL::Metal::RenderFunctionDefinitionWriter::RenderFunctionDefinitionWriter):
+        (WebCore::WHLSL::Metal::ComputeFunctionDefinitionWriter::ComputeFunctionDefinitionWriter):
+        (WebCore::WHLSL::Metal::sharedMetalFunctions):
+        (WebCore::WHLSL::Metal::metalFunctions):
+
 2019-08-07  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] checkRecursion, checkTextureReferences, and EscapedVariableCollector should skip stdlib functions

@@ -47,39 +47,20 @@ namespace WHLSL {
 
 namespace Metal {
 
-class FunctionDeclarationWriter final : public Visitor {
-public:
-    FunctionDeclarationWriter(StringBuilder& stringBuilder, TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, MangledFunctionName>& functionMapping)
-        : m_typeNamer(typeNamer)
-        , m_functionMapping(functionMapping)
-        , m_stringBuilder(stringBuilder)
-    {
-    }
-
-    virtual ~FunctionDeclarationWriter() = default;
-
-    void visit(AST::FunctionDeclaration&) override;
-
-private:
-    TypeNamer& m_typeNamer;
-    HashMap<AST::FunctionDeclaration*, MangledFunctionName>& m_functionMapping;
-    StringBuilder& m_stringBuilder;
-};
-
-void FunctionDeclarationWriter::visit(AST::FunctionDeclaration& functionDeclaration)
+static void declareFunction(StringBuilder& stringBuilder, AST::FunctionDeclaration& functionDeclaration, TypeNamer& typeNamer, HashMap<AST::FunctionDeclaration*, MangledFunctionName>& functionMapping)
 {
     if (functionDeclaration.entryPointType())
         return;
 
-    auto iterator = m_functionMapping.find(&functionDeclaration);
-    ASSERT(iterator != m_functionMapping.end());
-    m_stringBuilder.flexibleAppend(m_typeNamer.mangledNameForType(functionDeclaration.type()), ' ', iterator->value, '(');
+    auto iterator = functionMapping.find(&functionDeclaration);
+    ASSERT(iterator != functionMapping.end());
+    stringBuilder.flexibleAppend(typeNamer.mangledNameForType(functionDeclaration.type()), ' ', iterator->value, '(');
     for (size_t i = 0; i < functionDeclaration.parameters().size(); ++i) {
         if (i)
-            m_stringBuilder.append(", ");
-        m_stringBuilder.flexibleAppend(m_typeNamer.mangledNameForType(*functionDeclaration.parameters()[i]->type()));
+            stringBuilder.append(", ");
+        stringBuilder.flexibleAppend(typeNamer.mangledNameForType(*functionDeclaration.parameters()[i]->type()));
     }
-    m_stringBuilder.append(");\n");
+    stringBuilder.append(");\n");
 }
 
 class FunctionDefinitionWriter : public Visitor {
@@ -827,10 +808,9 @@ static HashMap<AST::FunctionDeclaration*, MangledFunctionName> generateMetalFunc
 
 static void emitSharedMetalFunctions(StringBuilder& stringBuilder, Program& program, TypeNamer& typeNamer, const HashSet<AST::FunctionDeclaration*>& reachableFunctions, HashMap<AST::FunctionDeclaration*, MangledFunctionName>& functionMapping)
 {
-    FunctionDeclarationWriter functionDeclarationWriter(stringBuilder, typeNamer, functionMapping);
     for (auto& functionDefinition : program.functionDefinitions()) {
         if (!functionDefinition->entryPointType() && reachableFunctions.contains(&functionDefinition))
-            functionDeclarationWriter.visit(functionDefinition);
+            declareFunction(stringBuilder, functionDefinition, typeNamer, functionMapping);
     }
 
     stringBuilder.append('\n');
@@ -840,8 +820,9 @@ class ReachableFunctionsGatherer final : public Visitor {
 public:
     void visit(AST::FunctionDeclaration& functionDeclaration) override
     {
-        Visitor::visit(functionDeclaration);
-        m_reachableFunctions.add(&functionDeclaration);
+        auto result = m_reachableFunctions.add(&functionDeclaration);
+        if (result.isNewEntry)
+            Visitor::visit(functionDeclaration);
     }
 
     void visit(AST::CallExpression& callExpression) override
