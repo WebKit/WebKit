@@ -210,9 +210,6 @@ void WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore()
 {
     ASSERT(RunLoop::isMain());
 
-    if (!m_persistentStorage && !m_statisticsStore)
-        return;
-
     // Make sure we destroy the persistent store on the background queue and wait for it to die
     // synchronously since it has a C++ reference to us. Blocking nature of this task allows us
     // to not maintain a WebResourceLoadStatisticsStore reference for the duration of dispatch,
