@@ -85,9 +85,13 @@ bool Encoder::isSyncMessage() const
     return *buffer() & SyncMessage;
 }
 
-bool Encoder::shouldDispatchMessageWhenWaitingForSyncReply() const
+ShouldDispatchWhenWaitingForSyncReply Encoder::shouldDispatchMessageWhenWaitingForSyncReply() const
 {
-    return *buffer() & DispatchMessageWhenWaitingForSyncReply;
+    if (*buffer() & DispatchMessageWhenWaitingForSyncReply)
+        return ShouldDispatchWhenWaitingForSyncReply::Yes;
+    if (*buffer() & DispatchMessageWhenWaitingForUnboundedSyncReply)
+        return ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC;
+    return ShouldDispatchWhenWaitingForSyncReply::No;
 }
 
 void Encoder::setIsSyncMessage(bool isSyncMessage)
@@ -98,12 +102,21 @@ void Encoder::setIsSyncMessage(bool isSyncMessage)
         *buffer() &= ~SyncMessage;
 }
 
-void Encoder::setShouldDispatchMessageWhenWaitingForSyncReply(bool shouldDispatchMessageWhenWaitingForSyncReply)
+void Encoder::setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply shouldDispatchWhenWaitingForSyncReply)
 {
-    if (shouldDispatchMessageWhenWaitingForSyncReply)
+    switch (shouldDispatchWhenWaitingForSyncReply) {
+    case ShouldDispatchWhenWaitingForSyncReply::No:
+        *buffer() &= ~(DispatchMessageWhenWaitingForSyncReply | DispatchMessageWhenWaitingForUnboundedSyncReply);
+        break;
+    case ShouldDispatchWhenWaitingForSyncReply::Yes:
         *buffer() |= DispatchMessageWhenWaitingForSyncReply;
-    else
+        *buffer() &= ~DispatchMessageWhenWaitingForUnboundedSyncReply;
+        break;
+    case ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC:
+        *buffer() |= DispatchMessageWhenWaitingForUnboundedSyncReply;
         *buffer() &= ~DispatchMessageWhenWaitingForSyncReply;
+        break;
+    }
 }
 
 void Encoder::setFullySynchronousModeForTesting()
@@ -116,7 +129,7 @@ void Encoder::wrapForTesting(std::unique_ptr<Encoder> original)
     ASSERT(isSyncMessage());
     ASSERT(!original->isSyncMessage());
 
-    original->setShouldDispatchMessageWhenWaitingForSyncReply(true);
+    original->setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply::Yes);
 
     encodeVariableLengthByteArray(DataReference(original->buffer(), original->bufferSize()));
 

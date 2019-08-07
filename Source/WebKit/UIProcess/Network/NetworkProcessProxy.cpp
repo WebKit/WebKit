@@ -1211,7 +1211,7 @@ void NetworkProcessProxy::testProcessIncomingSyncMessagesWhenWaitingForSyncReply
         return reply(false);
 
     bool handled = false;
-    if (!page->sendSync(Messages::WebPage::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(), Messages::WebPage::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply::Reply(handled)))
+    if (!page->sendSync(Messages::WebPage::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(), Messages::WebPage::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply::Reply(handled), Seconds::infinity(), IPC::SendSyncOption::ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply))
         return reply(false);
     reply(handled);
 }

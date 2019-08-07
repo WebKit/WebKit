@@ -31,8 +31,11 @@ namespace IPC {
 enum MessageFlags {
     SyncMessage = 1 << 0,
     DispatchMessageWhenWaitingForSyncReply = 1 << 1,
-    UseFullySynchronousModeForTesting = 1 << 2,
+    DispatchMessageWhenWaitingForUnboundedSyncReply = 1 << 2,
+    UseFullySynchronousModeForTesting = 1 << 3,
 };
+
+enum class ShouldDispatchWhenWaitingForSyncReply { No, Yes, YesDuringUnboundedIPC };
 
 } // namespace IPC
 
