@@ -82,11 +82,15 @@ ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore(WebResource
 
 bool ResourceLoadStatisticsMemoryStore::isEmpty() const
 {
+    ASSERT(!RunLoop::isMain());
+
     return m_resourceStatisticsMap.isEmpty();
 }
 
 void ResourceLoadStatisticsMemoryStore::setPersistentStorage(ResourceLoadStatisticsPersistentStorage& persistentStorage)
 {
+    ASSERT(!RunLoop::isMain());
+
     m_persistentStorage = makeWeakPtr(persistentStorage);
 }
 
@@ -100,6 +104,8 @@ void ResourceLoadStatisticsMemoryStore::calculateAndSubmitTelemetry() const
 
 void ResourceLoadStatisticsMemoryStore::incrementRecordsDeletedCountForDomains(HashSet<RegistrableDomain>&& domainsWithDeletedWebsiteData)
 {
+    ASSERT(!RunLoop::isMain());
+
     for (auto& domain : domainsWithDeletedWebsiteData) {
         auto& statistic = ensureResourceStatisticsForRegistrableDomain(domain);
         ++statistic.dataRecordsRemoved;
@@ -172,6 +178,8 @@ bool ResourceLoadStatisticsMemoryStore::isPrevalentDueToDebugMode(ResourceLoadSt
 
 void ResourceLoadStatisticsMemoryStore::classifyPrevalentResources()
 {
+    ASSERT(!RunLoop::isMain());
+
     for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
         if (shouldSkip(resourceStatistic.registrableDomain))
             continue;
@@ -189,12 +197,16 @@ void ResourceLoadStatisticsMemoryStore::classifyPrevalentResources()
 
 void ResourceLoadStatisticsMemoryStore::syncStorageIfNeeded()
 {
+    ASSERT(!RunLoop::isMain());
+
     if (m_persistentStorage)
         m_persistentStorage->scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::No);
 }
 
 void ResourceLoadStatisticsMemoryStore::syncStorageImmediately()
 {
+    ASSERT(!RunLoop::isMain());
+
     if (m_persistentStorage)
         m_persistentStorage->scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::Yes);
 }
@@ -315,6 +327,8 @@ void ResourceLoadStatisticsMemoryStore::grantStorageAccessInternal(SubFrameDomai
 
 void ResourceLoadStatisticsMemoryStore::grandfatherDataForDomains(const HashSet<RegistrableDomain>& domains)
 {
+    ASSERT(!RunLoop::isMain());
+
     for (auto& domain : domains) {
         auto& statistic = ensureResourceStatisticsForRegistrableDomain(domain);
         statistic.grandfathered = true;
@@ -323,6 +337,8 @@ void ResourceLoadStatisticsMemoryStore::grandfatherDataForDomains(const HashSet<
 
 Vector<RegistrableDomain> ResourceLoadStatisticsMemoryStore::ensurePrevalentResourcesForDebugMode()
 {
+    ASSERT(!RunLoop::isMain());
+
     if (!debugModeEnabled())
         return { };
 

@@ -445,6 +445,8 @@ void ResourceLoadStatisticsStore::clearBlockingStateForDomains(const Vector<Regi
 
 Optional<Seconds> ResourceLoadStatisticsStore::statisticsEpirationTime() const
 {
+    ASSERT(!RunLoop::isMain());
+
     if (m_parameters.timeToLiveUserInteraction)
         return WallTime::now().secondsSinceEpoch() - m_parameters.timeToLiveUserInteraction.value();
     
@@ -475,6 +477,8 @@ Vector<OperatingDate> ResourceLoadStatisticsStore::mergeOperatingDates(const Vec
 
 void ResourceLoadStatisticsStore::mergeOperatingDates(Vector<OperatingDate>&& newDates)
 {
+    ASSERT(!RunLoop::isMain());
+
     m_operatingDates = mergeOperatingDates(m_operatingDates, WTFMove(newDates));
 }
 

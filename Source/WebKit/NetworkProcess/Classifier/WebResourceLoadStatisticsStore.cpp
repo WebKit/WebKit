@@ -306,10 +306,14 @@ void WebResourceLoadStatisticsStore::hasStorageAccess(const RegistrableDomain& s
 
 bool WebResourceLoadStatisticsStore::hasStorageAccessForFrame(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, uint64_t frameID, PageIdentifier pageID)
 {
-    if (m_networkSession) {
-        if (auto* storageSession = m_networkSession->networkStorageSession())
-            return storageSession->hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID);
-    }
+    ASSERT(RunLoop::isMain());
+
+    if (!m_networkSession)
+        return false;
+
+    if (auto* storageSession = m_networkSession->networkStorageSession())
+        return storageSession->hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID);
+
     return false;
 }
 
@@ -329,6 +333,8 @@ void WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler(const R
 
 void WebResourceLoadStatisticsStore::requestStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, PageIdentifier pageID, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
+
     if (subFrameDomain == topFrameDomain) {
         completionHandler(StorageAccessWasGranted::Yes, StorageAccessPromptWasShown::No);
         return;
@@ -409,6 +415,8 @@ void WebResourceLoadStatisticsStore::grantStorageAccess(const RegistrableDomain&
 
 StorageAccessWasGranted WebResourceLoadStatisticsStore::grantStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<uint64_t> frameID, PageIdentifier pageID)
 {
+    ASSERT(RunLoop::isMain());
+
     bool isStorageGranted = false;
 
     if (m_networkSession) {
@@ -454,6 +462,7 @@ void WebResourceLoadStatisticsStore::removeAllStorageAccess(CompletionHandler<vo
 
 void WebResourceLoadStatisticsStore::applicationWillTerminate()
 {
+    ASSERT(RunLoop::isMain());
     flushAndDestroyPersistentStore();
 }
 
@@ -513,6 +522,8 @@ void WebResourceLoadStatisticsStore::logFrameNavigation(const WebFrameProxy& fra
 
 void WebResourceLoadStatisticsStore::logFrameNavigation(const RegistrableDomain& targetDomain, const RegistrableDomain& topFrameDomain, const RegistrableDomain& sourceDomain, bool isRedirect, bool isMainFrame)
 {
+    ASSERT(RunLoop::isMain());
+
     postTask([this, targetDomain = targetDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), sourceDomain = sourceDomain.isolatedCopy(), isRedirect, isMainFrame] {
         if (m_statisticsStore)
             m_statisticsStore->logFrameNavigation(targetDomain, topFrameDomain, sourceDomain, isRedirect, isMainFrame);
@@ -521,6 +532,8 @@ void WebResourceLoadStatisticsStore::logFrameNavigation(const RegistrableDomain&
 
 void WebResourceLoadStatisticsStore::logWebSocketLoading(const RegistrableDomain& targetDomain, const RegistrableDomain& topFrameDomain, WallTime lastSeen, CompletionHandler<void()>&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
+
     postTask([this, targetDomain = targetDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), lastSeen, completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_statisticsStore)
             m_statisticsStore->logSubresourceLoading(targetDomain, topFrameDomain, lastSeen);
@@ -531,6 +544,8 @@ void WebResourceLoadStatisticsStore::logWebSocketLoading(const RegistrableDomain
 
 void WebResourceLoadStatisticsStore::logSubresourceLoading(const SubResourceDomain& targetDomain, const TopFrameDomain& topFrameDomain, WallTime lastSeen, CompletionHandler<void()>&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
+
     postTask([this, targetDomain = targetDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), lastSeen, completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_statisticsStore)
             m_statisticsStore->logSubresourceLoading(targetDomain, topFrameDomain, lastSeen);
@@ -541,6 +556,8 @@ void WebResourceLoadStatisticsStore::logSubresourceLoading(const SubResourceDoma
 
 void WebResourceLoadStatisticsStore::logSubresourceRedirect(const RegistrableDomain& sourceDomain, const RegistrableDomain& targetDomain, CompletionHandler<void()>&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
+
     postTask([this, sourceDomain = sourceDomain.isolatedCopy(), targetDomain = targetDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_statisticsStore)
             m_statisticsStore->logSubresourceRedirect(sourceDomain, targetDomain);
@@ -584,6 +601,8 @@ void WebResourceLoadStatisticsStore::clearUserInteraction(const RegistrableDomai
 
 void WebResourceLoadStatisticsStore::hasHadUserInteraction(const RegistrableDomain& domain, CompletionHandler<void(bool)>&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
+
     postTask([this, domain, completionHandler = WTFMove(completionHandler)]() mutable {
         bool hadUserInteraction = m_statisticsStore ? m_statisticsStore->hasHadUserInteraction(domain, OperatingDatesWindow::Long) : false;
         postTaskReply([hadUserInteraction, completionHandler = WTFMove(completionHandler)]() mutable {
@@ -954,10 +973,12 @@ void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesFor
 
 void WebResourceLoadStatisticsStore::removePrevalentDomains(const Vector<RegistrableDomain>& domains)
 {
-    if (m_networkSession) {
-        if (auto* storageSession = m_networkSession->networkStorageSession())
-            storageSession->removePrevalentDomains(domains);
-    }
+    ASSERT(RunLoop::isMain());
+    if (!m_networkSession)
+        return;
+
+    if (auto* storageSession = m_networkSession->networkStorageSession())
+        storageSession->removePrevalentDomains(domains);
 }
 
 void WebResourceLoadStatisticsStore::callRemoveDomainsHandler(const Vector<RegistrableDomain>& domains)
@@ -1020,11 +1041,13 @@ void WebResourceLoadStatisticsStore::notifyResourceLoadStatisticsProcessed()
 
 NetworkSession* WebResourceLoadStatisticsStore::networkSession()
 {
+    ASSERT(RunLoop::isMain());
     return m_networkSession.get();
 }
 
 void WebResourceLoadStatisticsStore::invalidateAndCancel()
 {
+    ASSERT(RunLoop::isMain());
     m_networkSession = nullptr;
 }
 
@@ -1054,12 +1077,14 @@ void WebResourceLoadStatisticsStore::registrableDomainsWithWebsiteData(OptionSet
 
 void WebResourceLoadStatisticsStore::sendDiagnosticMessageWithValue(const String& message, const String& description, unsigned value, unsigned sigDigits, WebCore::ShouldSample shouldSample) const
 {
+    ASSERT(RunLoop::isMain());
     if (m_networkSession)
         const_cast<WebResourceLoadStatisticsStore*>(this)->networkSession()->logDiagnosticMessageWithValue(message, description, value, sigDigits, shouldSample);
 }
 
 void WebResourceLoadStatisticsStore::notifyPageStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins) const
 {
+    ASSERT(RunLoop::isMain());
     if (m_networkSession)
         const_cast<WebResourceLoadStatisticsStore*>(this)->networkSession()->notifyPageStatisticsTelemetryFinished(totalPrevalentResources, totalPrevalentResourcesWithUserInteraction, top3SubframeUnderTopFrameOrigins);
 }
