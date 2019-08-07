@@ -905,6 +905,7 @@ void WebPageProxy::setIsShowingInputViewForFocusedElement(bool showingInputView)
 
 void WebPageProxy::elementDidFocus(const FocusedElementInformation& information, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges, const UserData& userData)
 {
+    m_pendingInputModeChange = WTF::nullopt;
     m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = true;
 
     API::Object* userDataObject = process().transformHandlesToObjects(userData.object()).get();
@@ -919,6 +920,7 @@ void WebPageProxy::elementDidFocus(const FocusedElementInformation& information,
 
 void WebPageProxy::elementDidBlur()
 {
+    m_pendingInputModeChange = WTF::nullopt;
     m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = false;
     m_deferredElementDidFocusArguments = nullptr;
     pageClient().elementDidBlur();
@@ -926,7 +928,23 @@ void WebPageProxy::elementDidBlur()
 
 void WebPageProxy::focusedElementDidChangeInputMode(WebCore::InputMode mode)
 {
+#if ENABLE(TOUCH_EVENTS)
+    if (m_touchAndPointerEventTracking.isTrackingAnything()) {
+        m_pendingInputModeChange = mode;
+        return;
+    }
+#endif
+
     pageClient().focusedElementDidChangeInputMode(mode);
+}
+
+void WebPageProxy::didReleaseAllTouchPoints()
+{
+    if (!m_pendingInputModeChange)
+        return;
+
+    pageClient().focusedElementDidChangeInputMode(*m_pendingInputModeChange);
+    m_pendingInputModeChange = WTF::nullopt;
 }
 
 void WebPageProxy::autofillLoginCredentials(const String& username, const String& password)

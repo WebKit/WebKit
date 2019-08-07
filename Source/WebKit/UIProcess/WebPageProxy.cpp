@@ -2688,8 +2688,10 @@ void WebPageProxy::handleTouchEventSynchronously(NativeWebTouchEvent& event)
     pageClient().doneWithTouchEvent(event, handled);
     m_process->responsivenessTimer().stop();
 
-    if (event.allTouchPointsAreReleased())
+    if (event.allTouchPointsAreReleased()) {
         m_touchAndPointerEventTracking.reset();
+        didReleaseAllTouchPoints();
+    }
 }
 
 void WebPageProxy::resetPotentialTapSecurityOrigin()
@@ -2711,8 +2713,10 @@ void WebPageProxy::handleTouchEventAsynchronously(const NativeWebTouchEvent& eve
 
     m_process->send(Messages::EventDispatcher::TouchEvent(m_pageID, event), 0);
 
-    if (event.allTouchPointsAreReleased())
+    if (event.allTouchPointsAreReleased()) {
         m_touchAndPointerEventTracking.reset();
+        didReleaseAllTouchPoints();
+    }
 }
 
 #elif ENABLE(TOUCH_EVENTS)
@@ -2745,8 +2749,10 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
         }
     }
 
-    if (event.allTouchPointsAreReleased())
+    if (event.allTouchPointsAreReleased()) {
         m_touchAndPointerEventTracking.reset();
+        didReleaseAllTouchPoints();
+    }
 }
 #endif // ENABLE(TOUCH_EVENTS)
 

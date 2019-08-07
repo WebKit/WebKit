@@ -30,7 +30,8 @@ if (!window.testRunner) {
 }
 
 async function runTest() {
-    await UIHelper.setHardwareKeyboardAttached(false);
+    if (window.testRunner)
+        await UIHelper.setHardwareKeyboardAttached(false);
 
     debug('inputmode="text"');
 

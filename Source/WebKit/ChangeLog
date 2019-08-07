@@ -1,3 +1,48 @@
+2019-08-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [iPadOS] slides.google.com: tapping near cursor in a slide title focuses the speaker notes
+        https://bugs.webkit.org/show_bug.cgi?id=200216
+
+        Reviewed by Wenson Hsieh.
+
+        The bug was caused by a race condition between Google slides removing inputmode="none" from the hidden
+        content editable and updating the focused region upon receiving a pointerup event, which happens after
+        the Google slides had already updated its page layout & coordinates based on new visual viewport with
+        the software keyboard's boudning rect taken into account.
+
+        Delay bringing up the software keyboard for a inputmode change until all touches are released.
+
+        In the future, we could consider also delaying the software keyboard to be brought in general until
+        touchend / pointerup events are dispatched but this is rather risky since that could affact random
+        other websites while Google suites is the only major site to make use of inputmode="none".
+
+        This patch also reverts r243044, which was added for Google slides, since it's no longer needed and
+        interferes with this patch by adding another way to bring up the software keyboard.
+
+        Note: Adjusting touchend / pointerup coordinates while the keyboard is being brought up doesn't work
+        because the page had already updated the layout by then based on new visual viewport size.
+
+        Test: fast/forms/ios/inputmode-change-update-keyboard-after-pointerup.html
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleTouchEventSynchronously): Call didReleaseAllTouchPoints when all
+        touches are released.
+        (WebKit::WebPageProxy::handleTouchEventAsynchronously): Ditto.
+        (WebKit::WebPageProxy::handleTouchEvent): Ditto.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::didReleaseAllTouchPoints): Added for non-iOS platforms.
+        (WebKit::WebPageProxy::m_pendingInputModeChange): Added. Used when inputmode is changed while
+        there is an on-going touch interaction.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::elementDidFocus): Clear m_pendingInputModeChange when a new element is focused.
+        (WebKit::WebPageProxy::elementDidBlur): Ditto for bluring.
+        (WebKit::WebPageProxy::focusedElementDidChangeInputMode): Don't bring up the software keyboard now if
+        there are on-going touches by exiting early after setting m_pendingInputModeChange.
+        (WebKit::WebPageProxy::didReleaseAllTouchPoints): Bring up the software keyboard if inputmode
+        had changed from "none" to something else.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::dispatchTouchEvent): Removed the code added by r243044.
+
 2019-08-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         ASSERTION FAILED: m_observers.isEmpty() if WKPageSetPageStateClient is used

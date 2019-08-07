@@ -1946,6 +1946,7 @@ private:
     void elementDidFocus(const FocusedElementInformation&, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges, const UserData&);
     void elementDidBlur();
     void focusedElementDidChangeInputMode(WebCore::InputMode);
+    void didReleaseAllTouchPoints();
     void didReceiveEditorStateUpdateAfterFocus();
 
     void showInspectorHighlight(const WebCore::Highlight&);
@@ -1954,6 +1955,8 @@ private:
     void enableInspectorNodeSearch();
     void disableInspectorNodeSearch();
     void focusedElementInformationCallback(const FocusedElementInformation&, CallbackID);
+#else
+    void didReleaseAllTouchPoints() { }
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(DATA_DETECTION)
@@ -2174,6 +2177,7 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    Optional<WebCore::InputMode> m_pendingInputModeChange;
     Optional<WebCore::ViewportArguments> m_overrideViewportArguments;
     VisibleContentRectUpdateInfo m_lastVisibleContentRectUpdate;
     uint64_t m_firstLayerTreeTransactionIdAfterDidCommitLoad { 0 };
