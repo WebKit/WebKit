@@ -48,7 +48,7 @@ class SQLiteIDBCursor;
 class SQLiteIDBBackingStore : public IDBBackingStore {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SQLiteIDBBackingStore(const IDBDatabaseIdentifier&, const String& databaseRootDirectory, IDBBackingStoreTemporaryFileHandler&, uint64_t quota);
+    SQLiteIDBBackingStore(PAL::SessionID, const IDBDatabaseIdentifier&, const String& databaseRootDirectory, IDBBackingStoreTemporaryFileHandler&, uint64_t quota);
     
     ~SQLiteIDBBackingStore() final;
 
@@ -91,7 +91,7 @@ public:
 
     IDBBackingStoreTemporaryFileHandler& temporaryFileHandler() const { return m_temporaryFileHandler; }
 
-    IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, PAL::SessionID&, Vector<String>& blobFilePaths);
+    IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, Vector<String>& blobFilePaths);
 
     static String databaseNameFromEncodedFilename(const String&);
     static uint64_t databasesSizeForFolder(const String& folder);
@@ -101,6 +101,9 @@ public:
     static String databaseNameFromFile(const String&);
 
     bool hasTransaction(const IDBResourceIdentifier&) const final;
+
+    PAL::SessionID sessionID() const { return m_sessionID; }
+
 private:
     String filenameForDatabaseName() const;
     String fullDatabasePath() const;
@@ -191,6 +194,7 @@ private:
     JSC::JSGlobalObject& globalObject();
     void initializeVM();
 
+    PAL::SessionID m_sessionID;
     IDBDatabaseIdentifier m_identifier;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfoBeforeVersionChange;

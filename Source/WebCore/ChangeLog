@@ -1,3 +1,41 @@
+2019-08-07  Youenn Fablet  <youenn@apple.com>
+
+        Remove IDBDatabaseIdentifier::m_sessionID
+        https://bugs.webkit.org/show_bug.cgi?id=200489
+
+        Reviewed by Darin Adler.
+
+        IDBDatabaseIdentifier can be created without a valid session ID.
+        Its session ID is only used in NetworkProcess where it can be retrieved from the IDBServer.
+        In WebProcess, session ID is also known from the IDB connection.
+        Update SQLiteIDBBackingStore to store a session ID which is given from its IDBServer.
+        No observable change of behavior.
+
+        * Modules/indexeddb/IDBDatabaseIdentifier.cpp:
+        (WebCore::IDBDatabaseIdentifier::IDBDatabaseIdentifier):
+        (WebCore::IDBDatabaseIdentifier::isolatedCopy const):
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+        (WebCore::IDBDatabaseIdentifier::hash const):
+        (WebCore::IDBDatabaseIdentifier::databaseName const):
+        (WebCore::IDBDatabaseIdentifier::encode const):
+        (WebCore::IDBDatabaseIdentifier::decode):
+        (WebCore::IDBDatabaseIdentifier::sessionID const): Deleted.
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::openInternal):
+        (WebCore::IDBFactory::deleteDatabase):
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::createBackingStore):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::SQLiteIDBBackingStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllObjectStoreRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::sessionID const):
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::internalFetchNextRecord):
+
 2019-08-07  Chris Dumez  <cdumez@apple.com>
 
         Fix thread safety issue under JSHistory::visitAdditionalChildren()

@@ -45,7 +45,7 @@ public:
     {
     }
 
-    WEBCORE_EXPORT IDBDatabaseIdentifier(const String& databaseName, const PAL::SessionID&, SecurityOriginData&& openingOrigin, SecurityOriginData&& mainFrameOrigin);
+    WEBCORE_EXPORT IDBDatabaseIdentifier(const String& databaseName, SecurityOriginData&& openingOrigin, SecurityOriginData&& mainFrameOrigin);
 
     IDBDatabaseIdentifier isolatedCopy() const;
 
@@ -57,10 +57,9 @@ public:
     unsigned hash() const
     {
         unsigned nameHash = StringHash::hash(m_databaseName);
-        unsigned sessionIDHash = WTF::SessionIDHash::hash(m_sessionID);
         unsigned originHash = m_origin.hash();
 
-        unsigned hashCodes[3] = { nameHash, sessionIDHash, originHash };
+        unsigned hashCodes[2] = { nameHash, originHash };
         return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
     }
 
@@ -81,7 +80,6 @@ public:
     }
 
     const String& databaseName() const { return m_databaseName; }
-    const PAL::SessionID& sessionID() const { return m_sessionID; }
     const ClientOrigin& origin() const { return m_origin; }
 
     String databaseDirectoryRelativeToRoot(const String& rootDirectory, const String& versionString="v1") const;
@@ -98,7 +96,6 @@ public:
 
 private:
     String m_databaseName;
-    PAL::SessionID m_sessionID;
     ClientOrigin m_origin;
     SecurityOriginData m_mainFrameOrigin;
 };
@@ -118,7 +115,7 @@ struct IDBDatabaseIdentifierHashTraits : WTF::SimpleClassHashTraits<IDBDatabaseI
 template<class Encoder>
 void IDBDatabaseIdentifier::encode(Encoder& encoder) const
 {
-    encoder << m_databaseName << m_sessionID << m_origin;
+    encoder << m_databaseName << m_origin;
 }
 
 template<class Decoder>
@@ -129,11 +126,6 @@ Optional<IDBDatabaseIdentifier> IDBDatabaseIdentifier::decode(Decoder& decoder)
     if (!databaseName)
         return WTF::nullopt;
 
-    Optional<PAL::SessionID> sessionID;
-    decoder >> sessionID;
-    if (!sessionID)
-        return WTF::nullopt;
-    
     Optional<ClientOrigin> origin;
     decoder >> origin;
     if (!origin)
@@ -141,7 +133,6 @@ Optional<IDBDatabaseIdentifier> IDBDatabaseIdentifier::decode(Decoder& decoder)
 
     IDBDatabaseIdentifier identifier;
     identifier.m_databaseName = WTFMove(*databaseName); // FIXME: When decoding from IPC, databaseName can be null, and the non-empty constructor asserts that this is not the case.
-    identifier.m_sessionID = WTFMove(*sessionID);
     identifier.m_origin = WTFMove(*origin);
     return identifier;
 }
