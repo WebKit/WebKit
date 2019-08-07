@@ -100,6 +100,8 @@ void InspectorTimelineAgent::didCreateFrontendAndBackend(Inspector::FrontendRout
 
 void InspectorTimelineAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
+    ErrorString ignored;
+    disable(ignored);
 }
 
 void InspectorTimelineAgent::enable(ErrorString& errorString)

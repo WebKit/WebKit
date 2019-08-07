@@ -108,7 +108,7 @@ InspectorFrontendAPI = {
 
     },
 
-    // COMPATIBILITY (iOS 13.1): merged into InspectorFrontendAPI.setTimelineProfilingEnabled.
+    // COMPATIBILITY (iOS 13): merged into InspectorFrontendAPI.setTimelineProfilingEnabled.
     showTimelines: function()
     {
         WI.showTimelineTab();

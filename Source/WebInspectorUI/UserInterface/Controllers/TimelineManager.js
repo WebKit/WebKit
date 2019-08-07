@@ -83,7 +83,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             return;
 
         if (target.TimelineAgent) {
-            // COMPATIBILITY (iOS 13.1): Timeline.enable did not exist.
+            // COMPATIBILITY (iOS 13): Timeline.enable did not exist yet.
             if (target.TimelineAgent.enable)
                 target.TimelineAgent.enable();
 
@@ -281,7 +281,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this.reset();
 
         for (let target of WI.targets) {
-            // COMPATIBILITY (iOS 13.1): Timeline.disable did not exist.
+            // COMPATIBILITY (iOS 13): Timeline.disable did not exist yet.
             if (target.TimelineAgent && target.TimelineAgent.disable)
                 target.TimelineAgent.disable();
         }
