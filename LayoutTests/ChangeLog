@@ -1,3 +1,13 @@
+2019-08-07  Jer Noble  <jer.noble@apple.com>
+
+        Muted <video> elements can block display from sleeping.
+        https://bugs.webkit.org/show_bug.cgi?id=200511
+
+        Reviewed by Eric Carlson.
+
+        * media/video-muted-holds-sleep-assertion-expected.txt: Added.
+        * media/video-muted-holds-sleep-assertion.html: Added.
+
 2019-08-07  Russell Epstein  <repstein@apple.com>
 
         Updating TestExpectations for Two Failing Layout Tests.

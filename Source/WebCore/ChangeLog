@@ -1,3 +1,17 @@
+2019-08-07  Jer Noble  <jer.noble@apple.com>
+
+        Muted <video> elements can block display from sleeping.
+        https://bugs.webkit.org/show_bug.cgi?id=200511
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-muted-holds-sleep-assertion.html
+
+        Modify the shouldDisableSleep() method to take muting into account.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::shouldDisableSleep const):
+
 2019-08-07  Robin Morisset  <rmorisset@apple.com>
 
         [WHLSL] Simplify and eliminate redundant work in WHLSLFunctionWriter.cpp
