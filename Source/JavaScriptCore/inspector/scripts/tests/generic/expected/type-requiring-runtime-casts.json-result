@@ -421,8 +421,9 @@ public:
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(TypeNeedingCast) == sizeof(JSON::Object), cannot_cast);
 
-            Ref<JSON::Object> result = m_result.releaseNonNull();
-            return WTFMove(*reinterpret_cast<Ref<TypeNeedingCast>*>(&result));
+            Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
+            auto result = WTFMove(*reinterpret_cast<Ref<TypeNeedingCast>*>(&jsonResult));
+            return result;
         }
     };
 
@@ -486,8 +487,9 @@ public:
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(RecursiveObject1) == sizeof(JSON::Object), cannot_cast);
 
-            Ref<JSON::Object> result = m_result.releaseNonNull();
-            return WTFMove(*reinterpret_cast<Ref<RecursiveObject1>*>(&result));
+            Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
+            auto result = WTFMove(*reinterpret_cast<Ref<RecursiveObject1>*>(&jsonResult));
+            return result;
         }
     };
 
@@ -537,8 +539,9 @@ public:
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(RecursiveObject2) == sizeof(JSON::Object), cannot_cast);
 
-            Ref<JSON::Object> result = m_result.releaseNonNull();
-            return WTFMove(*reinterpret_cast<Ref<RecursiveObject2>*>(&result));
+            Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
+            auto result = WTFMove(*reinterpret_cast<Ref<RecursiveObject2>*>(&jsonResult));
+            return result;
         }
     };
 

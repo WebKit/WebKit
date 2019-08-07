@@ -402,8 +402,9 @@ public:
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(Error) == sizeof(JSON::Object), cannot_cast);
 
-            Ref<JSON::Object> result = m_result.releaseNonNull();
-            return WTFMove(*reinterpret_cast<Ref<Error>*>(&result));
+            Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
+            auto result = WTFMove(*reinterpret_cast<Ref<Error>*>(&jsonResult));
+            return result;
         }
     };
 
@@ -462,8 +463,9 @@ public:
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(OptionalParameterBundle) == sizeof(JSON::Object), cannot_cast);
 
-            Ref<JSON::Object> result = m_result.releaseNonNull();
-            return WTFMove(*reinterpret_cast<Ref<OptionalParameterBundle>*>(&result));
+            Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
+            auto result = WTFMove(*reinterpret_cast<Ref<OptionalParameterBundle>*>(&jsonResult));
+            return result;
         }
     };
 
@@ -630,8 +632,9 @@ public:
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(ParameterBundle) == sizeof(JSON::Object), cannot_cast);
 
-            Ref<JSON::Object> result = m_result.releaseNonNull();
-            return WTFMove(*reinterpret_cast<Ref<ParameterBundle>*>(&result));
+            Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
+            auto result = WTFMove(*reinterpret_cast<Ref<ParameterBundle>*>(&jsonResult));
+            return result;
         }
     };
 
@@ -726,8 +729,9 @@ public:
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(ObjectWithPropertyNameConflicts) == sizeof(JSON::Object), cannot_cast);
 
-            Ref<JSON::Object> result = m_result.releaseNonNull();
-            return WTFMove(*reinterpret_cast<Ref<ObjectWithPropertyNameConflicts>*>(&result));
+            Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
+            auto result = WTFMove(*reinterpret_cast<Ref<ObjectWithPropertyNameConflicts>*>(&jsonResult));
+            return result;
         }
     };
 
@@ -849,8 +853,9 @@ public:
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(ParameterBundle) == sizeof(JSON::Object), cannot_cast);
 
-            Ref<JSON::Object> result = m_result.releaseNonNull();
-            return WTFMove(*reinterpret_cast<Ref<ParameterBundle>*>(&result));
+            Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
+            auto result = WTFMove(*reinterpret_cast<Ref<ParameterBundle>*>(&jsonResult));
+            return result;
         }
     };
 
