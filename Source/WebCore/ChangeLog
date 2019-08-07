@@ -1,3 +1,66 @@
+2019-08-07  Priyanka Agarwal  <pagarwal999@apple.com>
+
+        Allow clients to toggle a text input field between being viewable and having characters hidden while maintaining 
+        a yellow auto-filled appearance
+        https://bugs.webkit.org/show_bug.cgi?id=200037
+        rdar://problem/51900961
+
+        Reviewed by Daniel Bates.
+
+        Tests: fast/forms/auto-fill-button/hide-auto-fill-strong-password-viewable-treatment-when-form-is-reset.html
+               fast/forms/auto-fill-button/input-strong-password-viewable.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText const):
+        Adding CSSSelector case for new pseudo class of AutofillStrongPasswordViewable.
+
+        * css/CSSSelector.h: Added PseudoClassAutofillStrongPasswordViewable
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne const): Added handling for SelectorChecker.cpp
+
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::isAutofilledStrongPasswordViewable):
+        Checking if the element is an input element and considered to be
+        AutoFilled and Viewable. Returns a boolean accordingly.
+
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in:
+        Add -webkit-autofill-strong-password-viewable css class.
+
+        * css/html.css:
+        (input:-webkit-autofill, input:-webkit-autofill-strong-password, input:-webkit-autofill-strong-password-viewable):
+        (input:-webkit-autofill-strong-password-viewable):
+        (input:-webkit-autofill, input:-webkit-autofill-strong-password): Deleted. Updated to include viewable pseudo class.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        Add case handling for PseudoClassAutofillStrongPasswordViewable.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        Add boolean m_isAutoFilledAndViewable for representing if the
+        input element is both AutoFilled and should be viewable.
+        Don't update the viewable treatment in setValueFromRenderer() because even if the user makes edits to the input field
+        the visual treatment should still be applied.
+
+        (WebCore::HTMLInputElement::resignStrongPasswordAppearance):
+        Updates boolean representing if input element is autofilled and viewable to false.
+
+        (WebCore::HTMLInputElement::reset):
+        Updates boolean representing if input element is autofilled and viewable to false.
+
+        (WebCore::HTMLInputElement::setAutoFilledAndViewable):
+        Setter function for the boolean of m_isAutoFilledAndViewable.
+
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isAutoFilledAndViewable const):
+        Creating boolean value for m_isAutoFilledAndViewable.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::setAutoFilledAndViewable): Adding for testing purposes.
+        * testing/Internals.h: Adding for testing purposes.
+        * testing/Internals.idl:
+
 2019-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Declarations and implementations of findCaret(Min|Max)imumOffset have inconsistent signatures

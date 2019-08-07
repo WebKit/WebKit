@@ -1,3 +1,40 @@
+2019-08-07  Priyanka Agarwal  <pagarwal999@apple.com>
+
+        Allow clients to toggle a text input field between being viewable and having characters hidden while maintaining 
+        a yellow auto-filled appearance
+        https://bugs.webkit.org/show_bug.cgi?id=200037
+        rdar://problem/51900961
+
+        Reviewed by Daniel Bates.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        (-[WKWebProcessPlugInNodeHandle HTMLInputElementIsAutoFilledAndViewable]):
+        Accessor function for boolean which represents if the input element is autofilled and viewable.
+
+        (-[WKWebProcessPlugInNodeHandle setHTMLInputElementIsAutoFilledAndViewable:]):
+        Setter function for boolean which represents if the input element is autofilled and viewable.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleSetHTMLInputElementAutoFilledAndViewable):
+        Accessor function for boolean which represents if the input element is autofilled and viewable.
+
+       * WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h:
+        Creating function declaration for boolean setter.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        Accessor function for boolean which represents if the input element is autofilled and viewable.
+
+        (WebKit::InjectedBundleNodeHandle::isHTMLInputElementAutoFilledAndViewable const):
+        Setter function for boolean which represents if the input element is autofilled and viewable.
+
+        (WebKit::InjectedBundleNodeHandle::setHTMLInputElementAutoFilledAndViewable):
+        Setter function for boolean which represents if the input element is autofilled and viewable.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+        Adding setter and getter functions for the boolean which represents if the input element is autofilled
+        and viewable.
+
 2019-08-07  Chris Dumez  <cdumez@apple.com>
 
         Add more threading assertions to ITP code

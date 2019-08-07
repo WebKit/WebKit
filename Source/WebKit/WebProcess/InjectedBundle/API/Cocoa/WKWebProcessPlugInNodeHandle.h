@@ -51,6 +51,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 @property (nonatomic, readonly) CGRect elementBounds;
 @property (nonatomic) BOOL HTMLInputElementIsAutoFilled;
+@property (nonatomic) BOOL HTMLInputElementIsAutoFilledAndViewable;
 @property (nonatomic, readonly) BOOL HTMLInputElementIsUserEdited;
 @property (nonatomic, readonly) BOOL HTMLTextAreaElementIsUserEdited;
 @property (nonatomic, readonly) WKWebProcessPlugInNodeHandle *HTMLTableCellElementCellAbove;

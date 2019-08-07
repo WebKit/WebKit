@@ -57,6 +57,11 @@ ALWAYS_INLINE bool isAutofilledStrongPassword(const Element& element)
     return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isAutoFilled() && downcast<HTMLInputElement>(element).hasAutoFillStrongPasswordButton();
 }
 
+ALWAYS_INLINE bool isAutofilledStrongPasswordViewable(const Element& element)
+{
+    return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isAutoFilledAndViewable();
+}
+
 ALWAYS_INLINE bool matchesDefaultPseudoClass(const Element& element)
 {
     return element.matchesDefaultPseudoClass();

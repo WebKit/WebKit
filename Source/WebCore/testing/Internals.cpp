@@ -1863,6 +1863,11 @@ void Internals::setAutofilled(HTMLInputElement& element, bool enabled)
     element.setAutoFilled(enabled);
 }
 
+void Internals::setAutoFilledAndViewable(HTMLInputElement& element, bool enabled)
+{
+    element.setAutoFilledAndViewable(enabled);
+}
+
 static AutoFillButtonType toAutoFillButtonType(Internals::AutoFillButtonType type)
 {
     switch (type) {

@@ -3399,6 +3399,8 @@ webkit.org/b/180802 imported/w3c/web-platform-tests/html/webappapis/system-state
 webkit.org/b/180803 imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html [ Failure ]
 
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-auto-fill-button.html [ Missing Failure ]
+webkit.org/b/200037 fast/forms/auto-fill-button/hide-auto-fill-strong-password-viewable-treatment-when-form-is-reset.html [ Missing Failure ]
+webkit.org/b/200037 fast/forms/auto-fill-button/input-strong-password-viewable.html [ Missing Failure ]
 
 webkit.org/b/182050 http/wpt/fetch/response-opaque-clone.html [ Pass Crash ]
 

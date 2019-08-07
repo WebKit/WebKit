@@ -1,3 +1,24 @@
+2019-08-07  Priyanka Agarwal  <pagarwal999@apple.com>
+
+        Allow clients to toggle a text input field between being viewable and having characters hidden while maintaining 
+        a yellow auto-filled appearance
+        https://bugs.webkit.org/show_bug.cgi?id=200037
+        rdar://problem/51900961
+
+        Reviewed by Daniel Bates.
+
+        * fast/forms/auto-fill-button/hide-auto-fill-strong-password-viewable-treatment-when-form-is-reset.html: Added.
+        Test for when the form is reset to no longer be autofilled.
+
+        * fast/forms/auto-fill-button/input-strong-password-viewable.html: Added.
+        Test for when the form is set to being autofilled and viewable.
+
+        * fast/forms/auto-fill-button/resources/process-auto-fill-button-type-and-invoke-runTest.js:
+        (window.onload): Javascript used by test to set the element to be autofilled and viewable added
+
+        * platform/mac/fast/forms/auto-fill-button/hide-auto-fill-strong-password-viewable-treatment-when-form-is-reset-expected.txt: Added.
+        * platform/mac/fast/forms/auto-fill-button/input-strong-password-viewable-expected.txt:
+
 2019-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Extra space inserted at start of line when inserting a newline in Mail compose

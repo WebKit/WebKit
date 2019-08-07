@@ -110,6 +110,7 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& docum
     , m_isActivatedSubmit(false)
     , m_autocomplete(Uninitialized)
     , m_isAutoFilled(false)
+    , m_isAutoFilledAndViewable(false)
     , m_autoFillButtonType(static_cast<uint8_t>(AutoFillButtonType::None))
     , m_lastAutoFillButtonType(static_cast<uint8_t>(AutoFillButtonType::None))
     , m_isAutoFillAvailable(false)
@@ -517,6 +518,7 @@ void HTMLInputElement::resignStrongPasswordAppearance()
     if (!hasAutoFillStrongPasswordButton())
         return;
     setAutoFilled(false);
+    setAutoFilledAndViewable(false);
     setShowAutoFillButton(AutoFillButtonType::None);
     if (auto* page = document().page())
         page->chrome().client().inputElementDidResignStrongPasswordAppearance(*this);
@@ -915,6 +917,7 @@ void HTMLInputElement::reset()
         setValue(String());
 
     setAutoFilled(false);
+    setAutoFilledAndViewable(false);
     setShowAutoFillButton(AutoFillButtonType::None);
     setChecked(hasAttributeWithoutSynchronization(checkedAttr));
     m_dirtyCheckednessFlag = false;
@@ -1340,6 +1343,15 @@ void HTMLInputElement::setAutoFilled(bool autoFilled)
         return;
 
     m_isAutoFilled = autoFilled;
+    invalidateStyleForSubtree();
+}
+
+void HTMLInputElement::setAutoFilledAndViewable(bool autoFilledAndViewable)
+{
+    if (autoFilledAndViewable == m_isAutoFilledAndViewable)
+        return;
+
+    m_isAutoFilledAndViewable = autoFilledAndViewable;
     invalidateStyleForSubtree();
 }
 

@@ -250,12 +250,28 @@ bool InjectedBundleNodeHandle::isHTMLInputElementAutoFilled() const
     return downcast<HTMLInputElement>(m_node.get()).isAutoFilled();
 }
 
+bool InjectedBundleNodeHandle::isHTMLInputElementAutoFilledAndViewable() const
+{
+    if (!is<HTMLInputElement>(m_node))
+        return false;
+
+    return downcast<HTMLInputElement>(m_node.get()).isAutoFilledAndViewable();
+}
+
 void InjectedBundleNodeHandle::setHTMLInputElementAutoFilled(bool filled)
 {
     if (!is<HTMLInputElement>(m_node))
         return;
 
     downcast<HTMLInputElement>(m_node.get()).setAutoFilled(filled);
+}
+
+void InjectedBundleNodeHandle::setHTMLInputElementAutoFilledAndViewable(bool autoFilledAndViewable)
+{
+    if (!is<HTMLInputElement>(m_node))
+        return;
+
+    downcast<HTMLInputElement>(m_node.get()).setAutoFilledAndViewable(autoFilledAndViewable);
 }
 
 bool InjectedBundleNodeHandle::isHTMLInputElementAutoFillButtonEnabled() const

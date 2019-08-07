@@ -130,6 +130,11 @@ void WKBundleNodeHandleSetHTMLInputElementAutoFilled(WKBundleNodeHandleRef htmlI
     WebKit::toImpl(htmlInputElementHandleRef)->setHTMLInputElementAutoFilled(filled);
 }
 
+void WKBundleNodeHandleSetHTMLInputElementAutoFilledAndViewable(WKBundleNodeHandleRef htmlInputElementHandleRef, bool autoFilledAndViewable)
+{
+    WebKit::toImpl(htmlInputElementHandleRef)->setHTMLInputElementAutoFilledAndViewable(autoFilledAndViewable);
+}
+
 bool WKBundleNodeHandleGetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHandleRef htmlInputElementHandleRef)
 {
     return WebKit::toImpl(htmlInputElementHandleRef)->isHTMLInputElementAutoFillButtonEnabled();

@@ -43,6 +43,9 @@
 @interface DOMHTMLInputElement (WebDOMHTMLInputElementOperationsPrivate)
 - (BOOL)_isAutofilled;
 - (void)_setAutofilled:(BOOL)autofilled;
+
+- (BOOL)_isAutoFilledAndViewable;
+- (void)_setAutoFilledAndViewable:(BOOL)autoFilledAndViewable;
 @end
 
 @interface DOMNode (WebDOMNodeOperationsPendingPublic)

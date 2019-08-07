@@ -722,13 +722,16 @@ input[type="file"] {
 }
 
 input:-webkit-autofill-strong-password {
-    -webkit-text-security: none !important;
     -webkit-user-select: none !important;
+}
+
+input:-webkit-autofill-strong-password, input:-webkit-autofill-strong-password-viewable {
+    -webkit-text-security: none !important;
     cursor: default !important;
     font-family: monospace;
 }
 
-input:-webkit-autofill, input:-webkit-autofill-strong-password {
+input:-webkit-autofill, input:-webkit-autofill-strong-password, input:-webkit-autofill-strong-password-viewable {
     background-color: #FAFFBD !important;
     background-image: none !important;
     color: #000000 !important;

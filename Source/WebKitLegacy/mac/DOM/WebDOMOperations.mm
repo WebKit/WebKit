@@ -225,9 +225,19 @@ using namespace JSC;
     return downcast<HTMLInputElement>(core((DOMElement *)self))->isAutoFilled();
 }
 
+- (BOOL)_isAutoFilledAndViewable
+{
+    return downcast<HTMLInputElement>(core((DOMElement *)self))->isAutoFilledAndViewable();
+}
+
 - (void)_setAutofilled:(BOOL)autofilled
 {
     downcast<HTMLInputElement>(core((DOMElement *)self))->setAutoFilled(autofilled);
+}
+
+- (void)_setAutoFilledAndViewable:(BOOL)autoFilledAndViewable
+{
+    downcast<HTMLInputElement>(core((DOMElement *)self))->setAutoFilledAndViewable(autoFilledAndViewable);
 }
 
 @end

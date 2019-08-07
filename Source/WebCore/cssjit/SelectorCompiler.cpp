@@ -540,6 +540,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassAutofillStrongPassword:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<CSSOperationPtrTag>(isAutofilledStrongPassword));
         return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassAutofillStrongPasswordViewable:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<CSSOperationPtrTag>(isAutofilledStrongPasswordViewable));
+        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassChecked:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<CSSOperationPtrTag>(isChecked));
         return FunctionType::SimpleSelectorChecker;
