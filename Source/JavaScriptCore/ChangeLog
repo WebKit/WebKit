@@ -1,3 +1,17 @@
+2019-08-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] sampling-profiler can see garbage Wasm::Callee* pointer which is HashTable deleted / empty values
+        https://bugs.webkit.org/show_bug.cgi?id=200494
+
+        Reviewed by Saam Barati.
+
+        The sampling-profiler can see a garbage pointer which is like Wasm::Callee*. This can be filtered by HashSet<Callee*>.
+        But this is safe only when the garbage pointer is not deleted / empty values. We saw occasional crash with JetStream2/tsf-wasm.
+        This patch filters out these values with `HashSet<Callee*>::isValidValue`.
+
+        * wasm/WasmCalleeRegistry.h:
+        (JSC::Wasm::CalleeRegistry::isValidCallee):
+
 2019-08-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r248289.

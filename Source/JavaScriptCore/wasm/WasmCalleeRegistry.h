@@ -62,6 +62,8 @@ public:
 
     bool isValidCallee(const AbstractLocker&, Callee* callee)
     {
+        if (!HashSet<Callee*>::isValidValue(callee))
+            return false;
         return m_calleeSet.contains(callee);
     }
 
