@@ -1,3 +1,13 @@
+2019-08-07  Russell Epstein  <repstein@apple.com>
+
+        Updating TestExpectations for Two Failing Layout Tests.
+        rdar://53779679
+
+        Unreviewed Test Gardening.
+
+        * platform/ios-12/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2019-08-07  Priyanka Agarwal  <pagarwal999@apple.com>
 
         Allow clients to toggle a text input field between being viewable and having characters hidden while maintaining 
