@@ -1,3 +1,17 @@
+2019-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Extra space inserted at start of line when inserting a newline in Mail compose
+        https://bugs.webkit.org/show_bug.cgi?id=200490
+        <rdar://problem/53501354>
+
+        Reviewed by Antti Koivisto.
+
+        Add a new test to verify that inserting a newline in the middle of text in a document with designMode "on"
+        doesn't insert an extra space at the beginning of the newly inserted line.
+
+        * editing/inserting/insert-paragraph-in-designmode-document-expected.txt: Added.
+        * editing/inserting/insert-paragraph-in-designmode-document.html: Added.
+
 2019-08-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         [iPadOS] slides.google.com: tapping near cursor in a slide title focuses the speaker notes

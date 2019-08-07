@@ -1489,14 +1489,15 @@ unsigned RenderText::countRenderedCharacterOffsetsUntil(unsigned offset) const
 
 bool RenderText::containsRenderedCharacterOffset(unsigned offset) const
 {
-    ASSERT(!simpleLineLayout());
+    if (auto* layout = simpleLineLayout())
+        return SimpleLineLayout::containsOffset(*this, *layout, offset, SimpleLineLayout::OffsetType::CharacterOffset);
     return m_lineBoxes.containsOffset(*this, offset, RenderTextLineBoxes::CharacterOffset);
 }
 
 bool RenderText::containsCaretOffset(unsigned offset) const
 {
     if (auto* layout = simpleLineLayout())
-        return SimpleLineLayout::containsCaretOffset(*this, *layout, offset);
+        return SimpleLineLayout::containsOffset(*this, *layout, offset, SimpleLineLayout::OffsetType::CaretOffset);
     return m_lineBoxes.containsOffset(*this, offset, RenderTextLineBoxes::CaretOffset);
 }
 

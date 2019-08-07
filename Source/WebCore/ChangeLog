@@ -1,3 +1,53 @@
+2019-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Extra space inserted at start of line when inserting a newline in Mail compose
+        https://bugs.webkit.org/show_bug.cgi?id=200490
+        <rdar://problem/53501354>
+
+        Reviewed by Antti Koivisto.
+
+        This started happening after r244494, which deferred editor state computation until the next layer tree flush
+        when changing selection. After inserting a paragraph, the act of computing an editor state ensured that the text
+        node containing the caret drops out of simple line layout, while grabbing the characters near the selection
+        (i.e., calling charactersAroundPosition). This meant that when we subsequently ask positionAfterSplit whether it
+        isRenderedCharacter() at the end of the command, we are guaranteed to have line boxes, so we get a meaningful
+        answer and avoid inserting an extra non-breaking space.
+
+        However, after r244494, we defer the editor state computation until the end of the edit command; this means that
+        we may not have line boxes for positionAfterSplit's text node renderer, due to remaining in simple line layout.
+        In turn, this means that we end up hitting the assertion in containsRenderedCharacterOffset in debug builds; on
+        release builds, we simply return false from containsRenderedCharacterOffset, which causes us to insert an extra
+        space.
+
+        To fix this, we educate RenderText::containsRenderedCharacterOffset about simple line layout.
+
+        Test: editing/inserting/insert-paragraph-in-designmode-document.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::containsRenderedCharacterOffset const):
+        (WebCore::RenderText::containsCaretOffset const):
+
+        Changed to use SimpleLineLayout::containsOffset.
+
+        * rendering/SimpleLineLayoutFunctions.h:
+        (WebCore::SimpleLineLayout::containsOffset):
+
+        I first contrasted the behavior of RenderTextLineBoxes::containsOffset in the cases where the OffsetType is
+        CaretOffset or CharacterOffset, and found that the only interesting differences were:
+
+        1. The caret offset type case has special handling for line breaks.
+        2. Both offset types have handling for reversed text.
+        3. The end offset of a line box contains a caret offset, but not a character offset.
+
+        For the purposes of OffsetType CharacterOffset, (1) is irrelevant; furthermore, (2) is already not handled by
+        logic in containsCaretOffset(). Thus, the only major difference in the CharacterOffset case should be (3), which
+        we handle by only allowing the case where the given offset is equal to the very end of a text run for caret
+        offsets, and not character offsets.
+
+        (WebCore::SimpleLineLayout::containsCaretOffset): Deleted.
+
+        Renamed to just containsOffset.
+
 2019-08-07  Youenn Fablet  <youenn@apple.com>
 
         ASSERT that a sessionID is valid when encoding it
