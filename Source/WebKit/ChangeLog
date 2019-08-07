@@ -1,3 +1,16 @@
+2019-08-07  Kate Cheney  <katherine_cheney@apple.com>
+
+        Adopt non-deprecated CGColorSpace API
+        https://bugs.webkit.org/show_bug.cgi?id=184358
+
+        Reviewed by Darin Adler.
+
+        * Shared/mac/ColorSpaceData.mm:
+        (WebKit::ColorSpaceData::decode):
+
+        We changed the deprecated CGColorSpaceCreateWithICCProfile function to 
+        CGColorSpaceCreateWithICCData. 
+
 2019-08-07  Alex Christensen  <achristensen@webkit.org>
 
         Remove speculative workaround for upload crash

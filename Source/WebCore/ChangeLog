@@ -1,3 +1,16 @@
+2019-08-07  Kate Cheney  <katherine_cheney@apple.com>
+
+        Adopt non-deprecated CGColorSpace API
+        https://bugs.webkit.org/show_bug.cgi?id=184358
+
+        Reviewed by Darin Adler.
+
+        * platform/ScreenProperties.h:
+        (WebCore::ScreenData::decode):
+
+        We changed the deprecated CGColorSpaceCreateWithICCProfile function to 
+        CGColorSpaceCreateWithICCData. 
+ 
 2019-08-07  Sam Weinig  <weinig@apple.com>
 
         [WHLSL] Metal code generation takes a long time uniquing UnnamedTypes

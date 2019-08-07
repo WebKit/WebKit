@@ -83,9 +83,7 @@ bool ColorSpaceData::decode(IPC::Decoder& decoder, ColorSpaceData& colorSpaceDat
         if (!IPC::decode(decoder, data))
             return false;
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        colorSpaceData.cgColorSpace = adoptCF(CGColorSpaceCreateWithICCProfile(data.get()));
-        ALLOW_DEPRECATED_DECLARATIONS_END
+        colorSpaceData.cgColorSpace = adoptCF(CGColorSpaceCreateWithICCData(data.get()));
         return true;
     }
 

@@ -194,10 +194,7 @@ Optional<ScreenData> ScreenData::decode(Decoder& decoder)
             return WTF::nullopt;
 
         auto colorSpaceData = adoptCF(CFDataCreate(kCFAllocatorDefault, iccData->data(), iccData->size()));
-        // FIXME: <http://webkit.org/b/184358> We should switch to CGColorSpaceCreateICCBased.
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        cgColorSpace = adoptCF(CGColorSpaceCreateWithICCProfile(colorSpaceData.get()));
-        ALLOW_DEPRECATED_DECLARATIONS_END
+        cgColorSpace = adoptCF(CGColorSpaceCreateWithICCData(colorSpaceData.get()));
         break;
     }
     }
