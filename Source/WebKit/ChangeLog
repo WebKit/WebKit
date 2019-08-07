@@ -1,3 +1,13 @@
+2019-08-06  Chris Dumez  <cdumez@apple.com>
+
+        Avoid unnecessary ResourceRequest copy under NetworkResourceLoader::isCrossOriginPrefetch()
+        https://bugs.webkit.org/show_bug.cgi?id=200478
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::isCrossOriginPrefetch const):
+
 2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a build fix after r248319

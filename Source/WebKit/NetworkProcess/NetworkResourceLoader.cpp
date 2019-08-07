@@ -1177,7 +1177,7 @@ void NetworkResourceLoader::logSlowCacheRetrieveIfNeeded(const NetworkCache::Cac
 
 bool NetworkResourceLoader::isCrossOriginPrefetch() const
 {
-    auto request = originalRequest();
+    auto& request = originalRequest();
     return request.httpHeaderField(HTTPHeaderName::Purpose) == "prefetch" && !m_parameters.sourceOrigin->canRequest(request.url());
 }
 
