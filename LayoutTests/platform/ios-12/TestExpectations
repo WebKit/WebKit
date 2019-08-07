@@ -29,3 +29,6 @@ http/tests/misc/iframe-beforeunload-dialog-block-modals.html [ Pass ]
 http/tests/quicklook/base-url-blocked.html [ Pass ]
 http/tests/quicklook/submit-form-blocked.html [ Pass ]
 
+# rdar://54049321 (REGRESSION: editing/pasteboard/paste-does-not-fire-promises-while-sanitizing-web-content.html Failing)
+editing/pasteboard/paste-does-not-fire-promises-while-sanitizing-web-content.htm [ Pass ]
+

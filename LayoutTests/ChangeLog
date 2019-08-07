@@ -1,3 +1,13 @@
+2019-08-07  Russell Epstein  <repstein@apple.com>
+
+        Updating TestExpectations for editing/pasteboard/paste-does-not-fire-promises-while-sanitizing-web-content.html.
+        rdar://54049321
+
+        Unreviewed Test Gardening.
+
+        * platform/ios-12/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2019-08-07  Jer Noble  <jer.noble@apple.com>
 
         Muted <video> elements can block display from sleeping.
