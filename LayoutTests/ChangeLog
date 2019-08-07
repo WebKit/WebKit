@@ -1,5 +1,50 @@
 2019-08-06  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r248037. rdar://problem/54018119
+
+    AX: Re-enable accessibility/set-selected-text-range-after-newline.html test.
+    https://bugs.webkit.org/show_bug.cgi?id=199431
+    <rdar://problem/52563340>
+    
+    Patch by Andres Gonzalez <andresg_22@apple.com> on 2019-07-31
+    Reviewed by Chris Fleizach.
+    
+    Source/WebCore:
+    
+    - Re-enabled LayoutTests/accessibility/set-selected-text-range-after-newline.html.
+    - Put back workaround in visiblePositionForIndexUsingCharacterIterator
+    that is needed for several accessibility issues.
+    - This workaround was rolled back because it was thought the cause of:
+    https://bugs.webkit.org/show_bug.cgi?id=199434
+    It turned out that the actual cause of that hang was unrelated and was
+    fixed in:
+    https://bugs.webkit.org/show_bug.cgi?id=199845
+    
+    * editing/Editing.cpp:
+    (WebCore::visiblePositionForIndexUsingCharacterIterator):
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    * accessibility/ios-simulator/set-selected-text-range-after-newline.html: Removed because it was the same as the one in the parent accessibility directory, so enabling it for iOS in ios-wk2/TestExpectations.
+    * platform/ios-wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248037 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-31  Andres Gonzalez  <andresg_22@apple.com>
+
+            AX: Re-enable accessibility/set-selected-text-range-after-newline.html test.
+            https://bugs.webkit.org/show_bug.cgi?id=199431
+            <rdar://problem/52563340>
+
+            Reviewed by Chris Fleizach.
+
+            * TestExpectations:
+            * accessibility/ios-simulator/set-selected-text-range-after-newline.html: Removed because it was the same as the one in the parent accessibility directory, so enabling it for iOS in ios-wk2/TestExpectations.
+            * platform/ios-wk2/TestExpectations:
+
+2019-08-06  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r248265. rdar://problem/54017843
 
     Ping loads should not prevent page caching
