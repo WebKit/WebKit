@@ -32,11 +32,10 @@
 #if PLATFORM(MAC)
 #import <CoreServices/CoreServicesPriv.h>
 #elif PLATFORM(IOS_FAMILY)
-#import <CoreServices/LSURLOverridePriv.h>
 #import <MobileCoreServices/LSAppLinkPriv.h>
 #endif
 
-#endif // USE(APPLE_INTERNAL_SDK)
+#endif
 
 #if HAVE(APP_LINKS)
 @class LSAppLink;
@@ -73,10 +72,6 @@ typedef void (^LSAppLinkOpenCompletionHandler)(BOOL success, NSError *error);
 @property (readonly, strong) LSApplicationProxy *targetApplicationProxy;
 @end
 #endif
-
-@interface NSURL ()
-- (NSURL *)iTunesStoreURL;
-@end
 
 #if PLATFORM(MAC)
 enum LSSessionID {

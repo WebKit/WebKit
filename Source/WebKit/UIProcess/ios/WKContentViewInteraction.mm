@@ -106,7 +106,6 @@
 #import <WebKit/WebSelectionRect.h> // FIXME: WK2 should not include WebKit headers!
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
-#import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/ios/DataDetectorsUISPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -7809,7 +7808,7 @@ static UIMenu *menuWithShowLinkPreviewAction(UIMenu *originalMenu)
 
         // Previously, UIPreviewItemController would detect the case where there was no previewViewController
         // and create one. We need to replicate this code for the new API.
-        if (!previewViewController || [(NSURL *)url iTunesStoreURL]) {
+        if (!previewViewController) {
             auto ddContextMenuActionClass = getDDContextMenuActionClass();
             if ([ddContextMenuActionClass respondsToSelector:@selector(contextMenuConfigurationForURL:identifier:selectedText:results:inView:context:menuIdentifier:)]) {
                 BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -7954,24 +7953,15 @@ static UIMenu *menuWithShowLinkPreviewAction(UIMenu *originalMenu)
 
         _page->startInteractionWithElementAtPosition(_positionInformation.request.point);
 
-        continueWithContextMenuConfiguration([UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:contentPreviewProvider actionProvider:actionMenuProvider]);
-        return;
+        // FIXME: Should we provide an identifier and ASSERT in delegates if we don't match?
+        return continueWithContextMenuConfiguration([UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:contentPreviewProvider actionProvider:actionMenuProvider]);
     }
-
-#if ENABLE(DATA_DETECTION)
-    if ([(NSURL *)linkURL iTunesStoreURL]) {
-        if ([self continueContextMenuInteractionWithDataDetectors:continueWithContextMenuConfiguration])
-            return;
-    }
-#endif
 
     auto completionBlock = makeBlockPtr([continueWithContextMenuConfiguration = makeBlockPtr(continueWithContextMenuConfiguration), linkURL = WTFMove(linkURL), weakSelf = WeakObjCPtr<WKContentView>(self)] (UIContextMenuConfiguration *configurationFromWKUIDelegate) mutable {
 
         auto strongSelf = weakSelf.get();
-        if (!strongSelf) {
-            continueWithContextMenuConfiguration(nil);
-            return;
-        }
+        if (!strongSelf)
+            return continueWithContextMenuConfiguration(nil);
 
         if (configurationFromWKUIDelegate) {
             strongSelf->_page->startInteractionWithElementAtPosition(strongSelf->_positionInformation.request.point);
@@ -8006,8 +7996,7 @@ static UIMenu *menuWithShowLinkPreviewAction(UIMenu *originalMenu)
                 return [[[WKImagePreviewViewController alloc] initWithCGImage:cgImage defaultActions:nil elementInfo:elementInfo.get()] autorelease];
             };
 
-            continueWithContextMenuConfiguration([UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:contentPreviewProvider actionProvider:actionMenuProvider]);
-            return;
+            return continueWithContextMenuConfiguration([UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:contentPreviewProvider actionProvider:actionMenuProvider]);
         }
 
         // At this point we have an object we might want to show a context menu for, but the
@@ -8018,15 +8007,23 @@ static UIMenu *menuWithShowLinkPreviewAction(UIMenu *originalMenu)
 #if ENABLE(DATA_DETECTION)
         // FIXME: Support JavaScript urls here. But make sure they don't show a preview.
         // <rdar://problem/50572283>
-        if (!linkURL.protocolIsInHTTPFamily() && !WebCore::DataDetection::canBePresentedByDataDetectors(linkURL)) {
-            continueWithContextMenuConfiguration(nil);
-            return;
-        }
+        if (!linkURL.protocolIsInHTTPFamily() && !WebCore::DataDetection::canBePresentedByDataDetectors(linkURL))
+            return continueWithContextMenuConfiguration(nil);
 
-        if ([strongSelf continueContextMenuInteractionWithDataDetectors:continueWithContextMenuConfiguration.get()])
-            return;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        auto ddContextMenuActionClass = getDDContextMenuActionClass();
+        if ([ddContextMenuActionClass respondsToSelector:@selector(contextMenuConfigurationWithURL:inView:context:menuIdentifier:)]) {
+            NSDictionary *context = [strongSelf dataDetectionContextForPositionInformation:strongSelf->_positionInformation];
+            UIContextMenuConfiguration *configurationFromDD = [ddContextMenuActionClass contextMenuConfigurationForURL:linkURL identifier:strongSelf->_positionInformation.dataDetectorIdentifier selectedText:[strongSelf selectedText] results:strongSelf->_positionInformation.dataDetectorResults.get() inView:strongSelf.get() context:context menuIdentifier:nil];
+            strongSelf->_contextMenuActionProviderDelegateNeedsOverride = YES;
+            strongSelf->_page->startInteractionWithElementAtPosition(strongSelf->_positionInformation.request.point);
+            if (strongSelf->_showLinkPreviews)
+                return continueWithContextMenuConfiguration(configurationFromDD);
+            return continueWithContextMenuConfiguration([UIContextMenuConfiguration configurationWithIdentifier:[configurationFromDD identifier] previewProvider:nil actionProvider:[configurationFromDD actionProvider]]);
+        }
+        END_BLOCK_OBJC_EXCEPTIONS;
 #endif
-        continueWithContextMenuConfiguration(nil);
+        return continueWithContextMenuConfiguration(nil);
     });
 
     _contextMenuActionProviderDelegateNeedsOverride = NO;
@@ -8050,26 +8047,6 @@ static UIMenu *menuWithShowLinkPreviewAction(UIMenu *originalMenu)
     } else
         completionBlock(nil);
 }
-
-#if ENABLE(DATA_DETECTION)
-- (BOOL)continueContextMenuInteractionWithDataDetectors:(void(^)(UIContextMenuConfiguration *))continueWithContextMenuConfiguration
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    auto ddContextMenuActionClass = getDDContextMenuActionClass();
-    if ([ddContextMenuActionClass respondsToSelector:@selector(contextMenuConfigurationWithURL:inView:context:menuIdentifier:)]) {
-        URL linkURL = _positionInformation.url;
-        NSDictionary *context = [self dataDetectionContextForPositionInformation:_positionInformation];
-        UIContextMenuConfiguration *configurationFromDD = [ddContextMenuActionClass contextMenuConfigurationForURL:linkURL identifier:_positionInformation.dataDetectorIdentifier selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() inView:self context:context menuIdentifier:nil];
-        _contextMenuActionProviderDelegateNeedsOverride = YES;
-        _page->startInteractionWithElementAtPosition(_positionInformation.request.point);
-        continueWithContextMenuConfiguration(configurationFromDD);
-        return YES;
-    }
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    return NO;
-}
-#endif
 
 - (NSArray<UIMenuElement *> *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction overrideSuggestedActionsForConfiguration:(UIContextMenuConfiguration *)configuration
 {
