@@ -1,3 +1,15 @@
+2019-08-07  Alex Christensen  <achristensen@webkit.org>
+
+        Remove speculative workaround for upload crash
+        https://bugs.webkit.org/show_bug.cgi?id=200514
+
+        Reviewed by Geoffrey Garen.
+
+        This workaround didn't help anyways, and the crash has been resolved.  Let's clean up.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:needNewBodyStream:]):
+
 2019-08-07  Chris Dumez  <cdumez@apple.com>
 
         Regression(r247784) ResourceLoadStatisticsMemoryStore / ResourceLoadStatisticsPersistentStorage may get destroyed on the wrong thread
