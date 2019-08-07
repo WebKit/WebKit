@@ -1,3 +1,53 @@
+2019-08-06  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Make resolveFunction in Checker faster
+        https://bugs.webkit.org/show_bug.cgi?id=200287
+
+        Reviewed by Robin Morisset.
+
+        This patch makes compute_boids faster by making function overload
+        resolution faster inside the Checker. It's a ~6ms speedup in the
+        checker. The main idea is to limit the number of overloads we need
+        to look for by using a hash table that describes a function's type
+        instead of just using a hash table keyed by a function's name.
+        
+        The interesting implementation detail here is we must construct entries
+        in the hash table such that they still allow constants to be resolved to
+        various types. This means that the key in the hash table must normalize
+        the vector of types it uses to express a function's identity. The normalization
+        rules are:
+        - int => float
+        - uint => float
+        - T* => float*
+        - T[] => float*
+        
+        The first two rules are because int constants can be matched against
+        the float and uint types. The latter two rules are because the null
+        literal can be matched against any pointer or any array reference
+        (we pick float* arbitrarily). Even though it seems like these
+        normalization rules would drastically broaden the efficacy of the hash
+        table, we still see a 100x reduction in the number of overloads we must
+        resolve inside compute_boids. We go from having to resolve 400,000
+        overloads to just resolving 4,000.
+
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::FunctionKey::FunctionKey):
+        (WebCore::WHLSL::FunctionKey::isEmptyValue const):
+        (WebCore::WHLSL::FunctionKey::isHashTableDeletedValue const):
+        (WebCore::WHLSL::FunctionKey::hash const):
+        (WebCore::WHLSL::FunctionKey::operator== const):
+        (WebCore::WHLSL::FunctionKey::Hash::hash):
+        (WebCore::WHLSL::FunctionKey::Hash::equal):
+        (WebCore::WHLSL::FunctionKey::Traits::isEmptyValue):
+        (WebCore::WHLSL::Checker::Checker):
+        (WebCore::WHLSL::Checker::wrappedFloatType):
+        (WebCore::WHLSL::Checker::genericPointerType):
+        (WebCore::WHLSL::Checker::normalizedTypeForFunctionKey):
+        (WebCore::WHLSL::Checker::resolveFunction):
+        (WebCore::WHLSL::Checker::finishVisiting):
+        (WebCore::WHLSL::Checker::visit):
+        (WebCore::WHLSL::resolveFunction): Deleted.
+
 2019-08-06  Loïc Yhuel  <loic.yhuel@softathome.com>
 
         Fix 32-bit Linux build after r248282
