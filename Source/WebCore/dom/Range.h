@@ -119,6 +119,7 @@ public:
     enum class BoundingRectBehavior : uint8_t {
         RespectClipping = 1 << 0,
         UseVisibleBounds = 1 << 1,
+        IgnoreTinyRects = 1 << 2,
     };
 
     // Not transform-friendly
