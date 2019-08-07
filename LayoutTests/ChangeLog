@@ -1,5 +1,109 @@
 2019-08-06  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r247822. rdar://problem/54017886
+
+    Avoid UI Process hangs when the WebContent process is showing JS prompts / alerts
+    https://bugs.webkit.org/show_bug.cgi?id=200107
+    <rdar://problem/53034592>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebCore:
+    
+    Add testing infrastructure for SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply.
+    
+    Test: fast/misc/testProcessIncomingSyncMessagesWhenWaitingForSyncReply.html
+    
+    * page/ChromeClient.h:
+    * testing/Internals.cpp:
+    (WebCore::Internals::testProcessIncomingSyncMessagesWhenWaitingForSyncReply):
+    * testing/Internals.h:
+    * testing/Internals.idl:
+    
+    Source/WebKit:
+    
+    * Platform/IPC/Connection.cpp:
+    (IPC::Connection::SyncMessageState::incrementProcessIncomingSyncMessagesWhenWaitingForSyncReplyCount):
+    (IPC::Connection::SyncMessageState::decrementProcessIncomingSyncMessagesWhenWaitingForSyncReplyCount):
+    (IPC::Connection::SyncMessageState::processIncomingMessage):
+    (IPC::Connection::sendSyncMessage):
+    * Platform/IPC/Connection.h:
+    Add support for new SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply flag
+    to allow processing incoming sync messages while sending a particular sync IPC. This is the
+    default behavior in all processes except in the WebContent process, where we try to avoid
+    re-entering to prevent bugs. This flag allows the WebContent process to change its default
+    behavior for some specific IPCs, where we know it is safe to re-enter and where it benefits
+    performance to re-renter.
+    
+    * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+    (WebKit::NetworkConnectionToWebProcess::testProcessIncomingSyncMessagesWhenWaitingForSyncReply):
+    * NetworkProcess/NetworkConnectionToWebProcess.h:
+    * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+    * UIProcess/Network/NetworkProcessProxy.cpp:
+    (WebKit::NetworkProcessProxy::didReceiveSyncMessage):
+    (WebKit::NetworkProcessProxy::testProcessIncomingSyncMessagesWhenWaitingForSyncReply):
+    * UIProcess/Network/NetworkProcessProxy.h:
+    * UIProcess/Network/NetworkProcessProxy.messages.in:
+    * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+    (WebKit::WebChromeClient::testProcessIncomingSyncMessagesWhenWaitingForSyncReply):
+    * WebProcess/WebCoreSupport/WebChromeClient.h:
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::testProcessIncomingSyncMessagesWhenWaitingForSyncReply):
+    * WebProcess/WebPage/WebPage.h:
+    (WebKit::WebPage::sendSyncWithDelayedReply):
+    * WebProcess/WebPage/WebPage.messages.in:
+    SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply
+    Add testing infrastructure for SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply
+    flag.
+    
+    * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+    (WebKit::WebChromeClient::runJavaScriptAlert):
+    (WebKit::WebChromeClient::runJavaScriptConfirm):
+    (WebKit::WebChromeClient::runJavaScriptPrompt):
+    Use new SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply flag when sending
+    the synchronous IPC for JS alerts / prompt / confirm. This allows the WebProcess to process
+    incoming synchronous IPC for other processes (in particular the UIProcess) while it is blocked
+    on those synchronous IPCs. It is safe to re-enter the WebContent process on these sync IPCs
+    since they are triggered by JS and we return to JS right after. This should avoid UIProcess
+    hangs when the UIProcess is sending a sync IPC to the WebContent process, which is itself
+    stuck on the sync IPC to show a JS alert.
+    
+    LayoutTests:
+    
+    Add layout test coverage for SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply.
+    Without the flag on the sendSync from the WebContent process of the
+    NetworkConnectionToWebProcess::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply IPC, the
+    test would hang. This is because the WebContent process sends a sync IPC to the network process,
+    which in turns sends one to the UIProcess, which itself sends one back to the WebContent process.
+    This would attempt to re-enter the WebContent process which is currently sending a sync IPC, which
+    is not allowed by default.
+    
+    * fast/misc/testProcessIncomingSyncMessagesWhenWaitingForSyncReply-expected.txt: Added.
+    * fast/misc/testProcessIncomingSyncMessagesWhenWaitingForSyncReply.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247822 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-25  Chris Dumez  <cdumez@apple.com>
+
+            Avoid UI Process hangs when the WebContent process is showing JS prompts / alerts
+            https://bugs.webkit.org/show_bug.cgi?id=200107
+            <rdar://problem/53034592>
+
+            Reviewed by Geoffrey Garen.
+
+            Add layout test coverage for SendSyncOption::ProcessIncomingSyncMessagesWhenWaitingForSyncReply.
+            Without the flag on the sendSync from the WebContent process of the
+            NetworkConnectionToWebProcess::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply IPC, the
+            test would hang. This is because the WebContent process sends a sync IPC to the network process,
+            which in turns sends one to the UIProcess, which itself sends one back to the WebContent process.
+            This would attempt to re-enter the WebContent process which is currently sending a sync IPC, which
+            is not allowed by default.
+
+            * fast/misc/testProcessIncomingSyncMessagesWhenWaitingForSyncReply-expected.txt: Added.
+            * fast/misc/testProcessIncomingSyncMessagesWhenWaitingForSyncReply.html: Added.
+
+2019-08-06  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r247792. rdar://problem/54017900
 
     Daring Fireball long press highlights are unnecessarily inflated due to false illegibility

@@ -222,6 +222,8 @@ private:
 
     void contentRuleListNotification(const URL&, const WebCore::ContentRuleListResults&) final;
 
+    bool testProcessIncomingSyncMessagesWhenWaitingForSyncReply() final;
+
 #if PLATFORM(WIN)
     void setLastSetCursorToCurrentCursor() final { }
     void AXStartFrameLoad() final { }
