@@ -201,6 +201,12 @@ WebProcessProxy::~WebProcessProxy()
 
 void WebProcessProxy::setIsInProcessCache(bool value)
 {
+    if (value) {
+        RELEASE_ASSERT(m_pageMap.isEmpty());
+        RELEASE_ASSERT(!m_suspendedPageCount);
+        RELEASE_ASSERT(m_provisionalPages.isEmpty());
+    }
+
     ASSERT(m_isInProcessCache != value);
     m_isInProcessCache = value;
 
@@ -395,7 +401,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
 {
     ASSERT(!m_pageMap.contains(webPage.pageID()));
     ASSERT(!globalPageMap().contains(webPage.pageID()));
-    ASSERT(!m_isInProcessCache);
+    RELEASE_ASSERT(!m_isInProcessCache);
     ASSERT(!m_websiteDataStore || m_websiteDataStore == &webPage.websiteDataStore());
 
     if (beginsUsingDataStore == BeginsUsingDataStore::Yes)
