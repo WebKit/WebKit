@@ -1,5 +1,26 @@
 2019-08-06  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r248028. rdar://problem/54017896
+
+    ASSERTion failure under takeSnapshot after r247846
+    
+    * page/TextIndicator.cpp:
+    (WebCore::takeSnapshots):
+    We now sometimes inflate the scale factor; allow this.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248028 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-30  Tim Horton  <timothy_horton@apple.com>
+
+            ASSERTion failure under takeSnapshot after r247846
+
+            * page/TextIndicator.cpp:
+            (WebCore::takeSnapshots):
+            We now sometimes inflate the scale factor; allow this.
+
+2019-08-06  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r248018. rdar://problem/54017893
 
     REGRESSION(r241288): Text on Yahoo Japan mobile looks too bold
