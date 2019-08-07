@@ -1,5 +1,81 @@
 2019-08-06  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r248265. rdar://problem/54017843
+
+    Ping loads should not prevent page caching
+    https://bugs.webkit.org/show_bug.cgi?id=200418
+    <rdar://problem/53901632>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    We normally prevent page caching if there were any pending subresource loads when navigating,
+    to avoid caching partial / broken content. However, this should not apply to Ping / Beacon
+    loads since those do not impact page rendering and can outlive the page.
+    
+    Tests: http/tests/navigation/page-cache-pending-ping-load-cross-origin.html
+           http/tests/navigation/page-cache-pending-ping-load-same-origin.html
+    
+    * history/PageCache.cpp:
+    (WebCore::PageCache::addIfCacheable):
+    After we've fired the 'pagehide' event in each frame, stop all the loads again. This is needed
+    since pages are allowed to start ping / beacon loads in their 'pagehide' handlers. If we do not
+    stop those loads, then the next call to canCachePage() would fail because the DocumentLoader is
+    still loading. Note that we're not actually preventing these ping loads from hitting the server
+    since we never cancel page loads and those can outlive their page.
+    
+    * loader/DocumentLoader.cpp:
+    (WebCore::shouldPendingCachedResourceLoadPreventPageCache):
+    (WebCore::areAllLoadersPageCacheAcceptable):
+    Make sure that Ping / Beacon / Prefetches / Icon loads do not prevent page caching.
+    
+    (WebCore::DocumentLoader::addSubresourceLoader):
+    Tweak assertion that was incorrect since we actually allow ping / beacon loads when the
+    document is about to enter PageCache (while firing pagehide event).
+    
+    Tools:
+    
+    Add TestOption to enable PageCache at UIProcess-level so that we can test
+    page caching when navigating cross-origin with PSON enabled.
+    
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::TestController::resetPreferencesToConsistentValues):
+    (WTR::updateTestOptionsFromTestHeader):
+    * WebKitTestRunner/TestOptions.h:
+    (WTR::TestOptions::hasSameInitializationOptions const):
+    
+    LayoutTests:
+    
+    Add layout test coverage.
+    
+    * http/tests/navigation/page-cache-pending-ping-load-cross-origin-expected.txt: Added.
+    * http/tests/navigation/page-cache-pending-ping-load-cross-origin.html: Added.
+    * http/tests/navigation/page-cache-pending-ping-load-same-origin-expected.txt: Added.
+    * http/tests/navigation/page-cache-pending-ping-load-same-origin.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248265 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-04  Chris Dumez  <cdumez@apple.com>
+
+            Ping loads should not prevent page caching
+            https://bugs.webkit.org/show_bug.cgi?id=200418
+            <rdar://problem/53901632>
+
+            Reviewed by Darin Adler.
+
+            Add TestOption to enable PageCache at UIProcess-level so that we can test
+            page caching when navigating cross-origin with PSON enabled.
+
+            * WebKitTestRunner/TestController.cpp:
+            (WTR::TestController::resetPreferencesToConsistentValues):
+            (WTR::updateTestOptionsFromTestHeader):
+            * WebKitTestRunner/TestOptions.h:
+            (WTR::TestOptions::hasSameInitializationOptions const):
+
+2019-08-06  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r247720. rdar://problem/54017869
 
     WebKit should strip away system font names from the pasted content
