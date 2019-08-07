@@ -783,6 +783,17 @@ Vector<String> FontCache::systemFontFamilies()
     return fontFamilies;
 }
 
+static inline bool isSystemFont(const String& family)
+{
+    // AtomString's operator[] handles out-of-bounds by returning 0.
+    return family[0] == '.';
+}
+
+bool FontCache::isSystemFontForbiddenForEditing(const String& fontFamily)
+{
+    return isSystemFont(fontFamily);
+}
+
 static CTFontSymbolicTraits computeTraits(const FontDescription& fontDescription)
 {
     CTFontSymbolicTraits traits = 0;
@@ -828,12 +839,6 @@ void FontCache::setFontWhitelist(const Vector<String>& inputWhitelist)
     whitelist.clear();
     for (auto& item : inputWhitelist)
         whitelist.add(item);
-}
-
-static inline bool isSystemFont(const AtomString& family)
-{
-    // AtomString's operator[] handles out-of-bounds by returning 0.
-    return family[0] == '.';
 }
 
 class FontDatabase {
@@ -1183,7 +1188,7 @@ struct FontLookup {
 static FontLookup platformFontLookupWithFamily(const AtomString& family, FontSelectionRequest request, float size, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     const auto& whitelist = fontWhitelist();
-    if (!isSystemFont(family) && whitelist.size() && !whitelist.contains(family))
+    if (!isSystemFont(family.string()) && whitelist.size() && !whitelist.contains(family))
         return { nullptr };
 
     if (equalLettersIgnoringASCIICase(family, ".applesystemuifontserif")

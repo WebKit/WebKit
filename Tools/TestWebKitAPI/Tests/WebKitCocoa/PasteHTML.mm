@@ -327,5 +327,34 @@ TEST(PasteHTML, StripsMSOListWhenMissingMSOHTMLElement)
     EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:@"document.queryCommandValue('foreColor')"]);
 }
 
+TEST(PasteHTML, StripsSystemFontNames)
+{
+    writeHTMLToPasteboard([NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"cocoa-writer-markup-with-system-fonts" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"] encoding:NSUTF8StringEncoding error:NULL]);
+
+    auto webView = createWebViewWithCustomPasteboardDataSetting(true);
+    [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
+    [webView paste:nil];
+
+    EXPECT_WK_STREQ("[\"text/html\"]", [webView stringByEvaluatingJavaScript:@"JSON.stringify(clipboardData.types)"]);
+    [webView stringByEvaluatingJavaScript:@"window.htmlInDataTransfer = clipboardData.values[0]"];
+    [webView stringByEvaluatingJavaScript:@"window.pastedHTML = editor.innerHTML"];
+
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('Hello Cocoa')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('font-weight: bold')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!pastedHTML.includes('.AppleSystemUIFont')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!pastedHTML.includes('.SFUI')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!pastedHTML.includes('.SF')"].boolValue);
+
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('Hello Cocoa')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('font-weight: bold')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!htmlInDataTransfer.includes('.AppleSystemUIFont')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!htmlInDataTransfer.includes('.SFUI')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!htmlInDataTransfer.includes('.SF')"].boolValue);
+
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('.s2')).fontFamily"],
+        [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.body).fontFamily"]);
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('.s4')).fontFamily"],
+        [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.body).fontFamily"]);
+}
 
 #endif // PLATFORM(COCOA)

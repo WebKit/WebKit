@@ -328,6 +328,11 @@ Vector<String> FontCache::systemFontFamilies()
     return fontFamilies;
 }
 
+bool FontCache::isSystemFontForbiddenForEditing(const String&)
+{
+    return false;
+}
+
 RefPtr<Font> FontCache::fontFromDescriptionAndLogFont(const FontDescription& fontDescription, const LOGFONT& font, AtomString& outFontFamilyName)
 {
     AtomString familyName(font.lfFaceName, wcsnlen(font.lfFaceName, LF_FACESIZE));

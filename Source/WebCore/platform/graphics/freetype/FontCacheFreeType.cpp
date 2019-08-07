@@ -186,6 +186,11 @@ Vector<String> FontCache::systemFontFamilies()
     return fontFamilies;
 }
 
+bool FontCache::isSystemFontForbiddenForEditing(const String&)
+{
+    return false;
+}
+
 Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
     // We want to return a fallback font here, otherwise the logic preventing FontConfig
