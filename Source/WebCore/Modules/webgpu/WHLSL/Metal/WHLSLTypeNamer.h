@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLMangledNames.h"
+#include "WHLSLUnnamedTypeHash.h"
 #include "WHLSLVisitor.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
@@ -84,15 +85,15 @@ private:
 
     void emitNamedTypeDefinition(StringBuilder&, AST::NamedType&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes);
     void emitUnnamedTypeDefinition(StringBuilder&, BaseTypeNameNode&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes);
-    void emitAllUnnamedTypeDefinitions(StringBuilder&, Vector<UniqueRef<BaseTypeNameNode>>&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes);
     void emitMetalTypeDeclarations(StringBuilder&);
     void emitMetalTypeDefinitions(StringBuilder&);
 
-    UniqueRef<BaseTypeNameNode> createNameNode(AST::UnnamedType&, BaseTypeNameNode* parent);
-    BaseTypeNameNode* insert(AST::UnnamedType&, Vector<UniqueRef<BaseTypeNameNode>>&);
+    std::unique_ptr<BaseTypeNameNode> createNameNode(AST::UnnamedType&, BaseTypeNameNode* parent);
+    BaseTypeNameNode* insert(AST::UnnamedType&);
+    BaseTypeNameNode& find(AST::UnnamedType&);
 
     Program& m_program;
-    Vector<UniqueRef<BaseTypeNameNode>> m_trie;
+    HashMap<UnnamedTypeKey, std::unique_ptr<BaseTypeNameNode>, UnnamedTypeKey::Hash, UnnamedTypeKey::Traits> m_unnamedTypesUniquingMap;
     HashMap<AST::UnnamedType*, BaseTypeNameNode*> m_unnamedTypeMapping;
     HashMap<AST::NamedType*, MangledTypeName> m_namedTypeMapping;
     HashMap<AST::NamedType*, Vector<std::reference_wrapper<BaseTypeNameNode>>> m_dependencyGraph;

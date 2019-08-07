@@ -40,13 +40,13 @@ namespace WHLSL {
 
 namespace AST {
 
-class ArrayReferenceType : public ReferenceType {
+class ArrayReferenceType final : public ReferenceType {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ArrayReferenceType);
     using Base = ReferenceType;
 
     ArrayReferenceType(CodeLocation location, AddressSpace addressSpace, Ref<UnnamedType> elementType)
-        : Base(location, addressSpace, WTFMove(elementType))
+        : Base(location, addressSpace, WTFMove(elementType), Kind::ArrayReferenceType)
     {
     }
 public:
@@ -57,28 +57,20 @@ public:
 
     virtual ~ArrayReferenceType() = default;
 
-    bool isArrayReferenceType() const override { return true; }
-
-    unsigned hash() const override
+    unsigned hash() const
     {
         return this->Base::hash() ^ StringHasher::computeLiteralHash("array");
     }
 
-    bool operator==(const UnnamedType& other) const override
+    bool operator==(const ArrayReferenceType& other) const
     {
-        if (!is<ArrayReferenceType>(other))
-            return false;
-
-        return addressSpace() == downcast<ArrayReferenceType>(other).addressSpace()
-            && elementType() == downcast<ArrayReferenceType>(other).elementType();
+        return addressSpace() == other.addressSpace() && elementType() == other.elementType();
     }
 
     String toString() const override
     {
         return makeString(elementType().toString(), "[]");
     }
-
-private:
 };
 
 } // namespace AST

@@ -1,3 +1,62 @@
+2019-08-07  Sam Weinig  <weinig@apple.com>
+
+        [WHLSL] Metal code generation takes a long time uniquing UnnamedTypes
+        https://bugs.webkit.org/show_bug.cgi?id=200512
+
+        Reviewed by Saam Barati.
+
+        Instead of using a trie for unnamed type uniquing, use the same technique used
+        in SynthesizeConstructors and use a HashMap of UnnamedTypeKeys. To make this
+        profitable, we also need to devirtualize the hash and equality functions on
+        UnnamedType, instead using an enum + switch. While this change only devirtualizes
+        the UnnamedType subtree, we should probably do it for the entire AST in a future
+        change.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayReferenceType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLPointerType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLReferenceType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeReference.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.cpp: Added.
+        (WebCore::WHLSL::AST::UnnamedType::hash const):
+        (WebCore::WHLSL::AST::UnnamedType::operator== const):
+         * Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.h:
+        Devirtualize hash, operator== and type predicates.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedTypeHash.h: Added.
+        (WebCore::WHLSL::UnnamedTypeKey::UnnamedTypeKey):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.cpp:
+        (WebCore::WHLSL::UnnamedTypeKey::UnnamedTypeKey): Deleted.
+        Moved UnnamedTypeKey into it's own header from WHLSLSynthesizeConstructors.cpp
+        
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp:
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::BaseTypeNameNode):
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::kind):
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::isReferenceTypeNameNode const):
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::isPointerTypeNameNode const):
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::isArrayReferenceTypeNameNode const):
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::isArrayTypeNameNode const):
+        Devirtualize BaseTypeNameNode as well. In a future change, we should consider removing
+        this class entirely and instead mapping directly to a parent/mangled name pair.
+ 
+        (WebCore::WHLSL::Metal::TypeNamer::visit):
+        (WebCore::WHLSL::Metal::TypeNamer::find):
+        (WebCore::WHLSL::Metal::TypeNamer::createNameNode):
+        (WebCore::WHLSL::Metal::parent):
+        (WebCore::WHLSL::Metal::TypeNamer::insert):
+        (WebCore::WHLSL::Metal::TypeNamer::emitUnnamedTypeDefinition):
+        (WebCore::WHLSL::Metal::TypeNamer::emitMetalTypeDefinitions):
+        (WebCore::WHLSL::Metal::TypeNamer::mangledNameForType):
+        (WebCore::WHLSL::Metal::findInVector): Deleted.
+        (WebCore::WHLSL::Metal::find): Deleted.
+        (WebCore::WHLSL::Metal::TypeNamer::emitAllUnnamedTypeDefinitions): Deleted.
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.h:
+        Switch from a Vector based trie to a HashMap for UnnamedType uniquing. Also
+        use UnnamedType::Kind where possible with switch statements to clarify code.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
 2019-08-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Uncaught Exception: TimelineAgent already enabled

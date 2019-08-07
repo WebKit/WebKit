@@ -23,16 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WHLSLUnnamedType.h"
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLAddressSpace.h"
-#include "WHLSLCodeLocation.h"
-#include "WHLSLUnnamedType.h"
-#include <wtf/FastMalloc.h>
-#include <wtf/UniqueRef.h>
-#include <wtf/text/WTFString.h>
+#include "WHLSLArrayReferenceType.h"
+#include "WHLSLArrayType.h"
+#include "WHLSLPointerType.h"
+#include "WHLSLTypeReference.h"
 
 namespace WebCore {
 
@@ -40,39 +39,41 @@ namespace WHLSL {
 
 namespace AST {
 
-class ReferenceType : public UnnamedType {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(ReferenceType);
-protected:
-    ReferenceType(CodeLocation location, AddressSpace addressSpace, Ref<UnnamedType> elementType, Kind kind)
-        : UnnamedType(location, kind)
-        , m_addressSpace(addressSpace)
-        , m_elementType(WTFMove(elementType))
-    {
+unsigned UnnamedType::hash() const
+{
+    switch (m_kind) {
+    case Kind::TypeReference:
+        return downcast<TypeReference>(*this).hash();
+    case Kind::PointerType:
+        return downcast<PointerType>(*this).hash();
+    case Kind::ArrayReferenceType:
+        return downcast<ArrayReferenceType>(*this).hash();
+    case Kind::ArrayType:
+        return downcast<ArrayType>(*this).hash();
     }
-public:
-    virtual ~ReferenceType() = default;
+}
 
-    AddressSpace addressSpace() const { return m_addressSpace; }
-    const UnnamedType& elementType() const { return m_elementType; }
-    UnnamedType& elementType() { return m_elementType; }
+bool UnnamedType::operator==(const UnnamedType& other) const
+{
+    if (other.m_kind != m_kind)
+        return false;
 
-    unsigned hash() const
-    {
-        return ~m_elementType->hash();
+    switch (m_kind) {
+    case Kind::TypeReference:
+        return downcast<TypeReference>(*this) == downcast<TypeReference>(other);
+    case Kind::PointerType:
+        return downcast<PointerType>(*this) == downcast<PointerType>(other);
+    case Kind::ArrayReferenceType:
+        return downcast<ArrayReferenceType>(*this) == downcast<ArrayReferenceType>(other);
+    case Kind::ArrayType:
+        return downcast<ArrayType>(*this) == downcast<ArrayType>(other);
     }
-
-private:
-    AddressSpace m_addressSpace;
-    Ref<UnnamedType> m_elementType;
-};
+}
 
 } // namespace AST
 
-}
+} // namespace WHLSL
 
-}
-
-SPECIALIZE_TYPE_TRAITS_WHLSL_UNNAMED_TYPE(ReferenceType, isReferenceType())
+} // namespace WebCore
 
 #endif

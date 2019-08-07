@@ -48,7 +48,7 @@ class TypeReference final : public UnnamedType {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(TypeReference);
     TypeReference(CodeLocation location, String&& name, TypeArguments&& typeArguments)
-        : UnnamedType(location)
+        : UnnamedType(location, Kind::TypeReference)
         , m_name(WTFMove(name))
         , m_typeArguments(WTFMove(typeArguments))
     {
@@ -62,8 +62,6 @@ public:
     virtual ~TypeReference() = default;
 
     static Ref<TypeReference> wrap(CodeLocation, NamedType& resolvedType);
-
-    bool isTypeReference() const override { return true; }
 
     String& name() { return m_name; }
     TypeArguments& typeArguments() { return m_typeArguments; }
@@ -91,7 +89,7 @@ public:
         m_resolvedType = &resolvedType;
     }
 
-    unsigned hash() const override
+    unsigned hash() const
     {
         // Currently, we only use this function after the name resolver runs.
         // Relying on having a resolved type simplifies this implementation.
@@ -99,13 +97,10 @@ public:
         return WTF::PtrHash<const Type*>::hash(&unifyNode());
     }
 
-    bool operator==(const UnnamedType& other) const override
+    bool operator==(const TypeReference& other) const
     {
         ASSERT(m_resolvedType);
-        if (!is<TypeReference>(other))
-            return false;
-
-        return &unifyNode() == &downcast<TypeReference>(other).unifyNode();
+        return &unifyNode() == &other.unifyNode();
     }
 
     String toString() const override

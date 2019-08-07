@@ -2231,6 +2231,7 @@
 		7C8139A81ED6287400CE26E8 /* JSDOMOperationReturningPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8139A51ED6281D00CE26E8 /* JSDOMOperationReturningPromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C8139AA1ED6604B00CE26E8 /* JSDOMCastedThisErrorBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8139A91ED62DF200CE26E8 /* JSDOMCastedThisErrorBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C83DE861D04CC5D00FEBCF3 /* SpringSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C83DE851D04CBD400FEBCF3 /* SpringSolver.h */; };
+		7C85B20222FB04850030684F /* WHLSLUnnamedType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C85B20122FB04850030684F /* WHLSLUnnamedType.cpp */; };
 		7C8E34AD1E4A33AF0054CE23 /* JSDOMConvertAny.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34921E4A338E0054CE23 /* JSDOMConvertAny.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C8E34AE1E4A33AF0054CE23 /* JSDOMConvertBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34931E4A338E0054CE23 /* JSDOMConvertBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C8E34AF1E4A33AF0054CE23 /* JSDOMConvertBoolean.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34941E4A338E0054CE23 /* JSDOMConvertBoolean.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9741,6 +9742,8 @@
 		7C8139A51ED6281D00CE26E8 /* JSDOMOperationReturningPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMOperationReturningPromise.h; sourceTree = "<group>"; };
 		7C8139A91ED62DF200CE26E8 /* JSDOMCastedThisErrorBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMCastedThisErrorBehavior.h; sourceTree = "<group>"; };
 		7C83DE851D04CBD400FEBCF3 /* SpringSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpringSolver.h; sourceTree = "<group>"; };
+		7C85B20122FB04850030684F /* WHLSLUnnamedType.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLUnnamedType.cpp; sourceTree = "<group>"; };
+		7C85B20422FB06320030684F /* WHLSLUnnamedTypeHash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLUnnamedTypeHash.h; sourceTree = "<group>"; };
 		7C8E34921E4A338E0054CE23 /* JSDOMConvertAny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertAny.h; sourceTree = "<group>"; };
 		7C8E34931E4A338E0054CE23 /* JSDOMConvertBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertBase.h; sourceTree = "<group>"; };
 		7C8E34941E4A338E0054CE23 /* JSDOMConvertBoolean.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertBoolean.h; sourceTree = "<group>"; };
@@ -17058,8 +17061,8 @@
 		1CA0C2F621EEDAD200A11860 /* AST */ = {
 			isa = PBXGroup;
 			children = (
-				1C840B9021EC30F900D0500D /* WHLSLAddressSpace.h */,
 				52914C2C22F93E5D00578150 /* WHLSLAddressEscapeMode.h */,
+				1C840B9021EC30F900D0500D /* WHLSLAddressSpace.h */,
 				C21BF72521CD89E200227979 /* WHLSLArrayReferenceType.h */,
 				C21BF70921CD89CA00227979 /* WHLSLArrayType.h */,
 				C21BF73021CD89ED00227979 /* WHLSLAssignmentExpression.h */,
@@ -17137,7 +17140,9 @@
 				C21BF72921CD89E600227979 /* WHLSLTypeDefinition.h */,
 				C20F4F6421DFBE5C0070C45A /* WHLSLTypeReference.cpp */,
 				C21BF71F21CD89DC00227979 /* WHLSLTypeReference.h */,
+				7C85B20122FB04850030684F /* WHLSLUnnamedType.cpp */,
 				1C33277221CF0D2E000DC9F2 /* WHLSLUnnamedType.h */,
+				7C85B20422FB06320030684F /* WHLSLUnnamedTypeHash.h */,
 				C20F4F6721DFF3A70070C45A /* WHLSLUnsignedIntegerLiteral.cpp */,
 				C21BF72B21CD89E800227979 /* WHLSLUnsignedIntegerLiteral.h */,
 				1CB69B3B21DF041E006E846A /* WHLSLUnsignedIntegerLiteralType.cpp */,
@@ -33515,6 +33520,7 @@
 				F12171F516A8CED2000053CA /* WebVTTElement.cpp in Sources */,
 				5D21A80213ECE5DF00BB7064 /* WebVTTParser.cpp in Sources */,
 				B10B6981140C174000BC1C26 /* WebVTTTokenizer.cpp in Sources */,
+				7C85B20222FB04850030684F /* WHLSLUnnamedType.cpp in Sources */,
 				A14832C2187F65C700DA63A6 /* WKUtilities.c in Sources */,
 				A833C7CC0A2CF07400D57664 /* XLinkNames.cpp in Sources */,
 				A833C80C0A2CF25600D57664 /* XMLNames.cpp in Sources */,

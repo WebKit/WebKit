@@ -27,52 +27,51 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLAddressSpace.h"
-#include "WHLSLCodeLocation.h"
 #include "WHLSLUnnamedType.h"
-#include <wtf/FastMalloc.h>
-#include <wtf/UniqueRef.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/HashTraits.h>
 
 namespace WebCore {
 
 namespace WHLSL {
 
-namespace AST {
-
-class ReferenceType : public UnnamedType {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(ReferenceType);
-protected:
-    ReferenceType(CodeLocation location, AddressSpace addressSpace, Ref<UnnamedType> elementType, Kind kind)
-        : UnnamedType(location, kind)
-        , m_addressSpace(addressSpace)
-        , m_elementType(WTFMove(elementType))
-    {
-    }
+class UnnamedTypeKey {
 public:
-    virtual ~ReferenceType() = default;
-
-    AddressSpace addressSpace() const { return m_addressSpace; }
-    const UnnamedType& elementType() const { return m_elementType; }
-    UnnamedType& elementType() { return m_elementType; }
-
-    unsigned hash() const
+    UnnamedTypeKey() = default;
+    UnnamedTypeKey(WTF::HashTableDeletedValueType)
+        : m_type(bitwise_cast<AST::UnnamedType*>(static_cast<uintptr_t>(1)))
     {
-        return ~m_elementType->hash();
     }
+
+    UnnamedTypeKey(AST::UnnamedType& type)
+        : m_type(&type)
+    {
+    }
+
+    bool isEmptyValue() const { return !m_type; }
+    bool isHashTableDeletedValue() const { return m_type == bitwise_cast<AST::UnnamedType*>(static_cast<uintptr_t>(1)); }
+
+    unsigned hash() const { return m_type->hash(); }
+    bool operator==(const UnnamedTypeKey& other) const { return *m_type == *other.m_type; }
+    AST::UnnamedType& unnamedType() const { return *m_type; }
+
+    struct Hash {
+        static unsigned hash(const UnnamedTypeKey& key) { return key.hash(); }
+        static bool equal(const UnnamedTypeKey& a, const UnnamedTypeKey& b) { return a == b; }
+        static const bool safeToCompareToEmptyOrDeleted = false;
+        static const bool emptyValueIsZero = true;
+    };
+
+    struct Traits : public WTF::SimpleClassHashTraits<UnnamedTypeKey> {
+        static const bool hasIsEmptyValueFunction = true;
+        static bool isEmptyValue(const UnnamedTypeKey& key) { return key.isEmptyValue(); }
+    };
 
 private:
-    AddressSpace m_addressSpace;
-    Ref<UnnamedType> m_elementType;
+    AST::UnnamedType* m_type { nullptr };
 };
 
-} // namespace AST
-
 }
 
 }
-
-SPECIALIZE_TYPE_TRAITS_WHLSL_UNNAMED_TYPE(ReferenceType, isReferenceType())
 
 #endif

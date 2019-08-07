@@ -45,25 +45,35 @@ class UnnamedType : public Type, public RefCounted<UnnamedType> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(UnnamedType);
 public:
-    UnnamedType(CodeLocation location)
+    enum class Kind {
+        TypeReference,
+        PointerType,
+        ArrayReferenceType,
+        ArrayType
+    };
+
+    UnnamedType(CodeLocation location, Kind kind)
         : m_codeLocation(location)
+        , m_kind(kind)
     {
     }
 
     virtual ~UnnamedType() = default;
 
     bool isUnnamedType() const override { return true; }
-    virtual bool isTypeReference() const { return false; }
-    virtual bool isPointerType() const { return false; }
-    virtual bool isArrayReferenceType() const { return false; }
-    virtual bool isArrayType() const { return false; }
-    virtual bool isReferenceType() const { return false; }
+
+    Kind kind() const { return m_kind; }
+    bool isTypeReference() const { return m_kind == Kind::TypeReference; }
+    bool isPointerType() const { return m_kind == Kind::PointerType; }
+    bool isArrayReferenceType() const { return m_kind == Kind::ArrayReferenceType; }
+    bool isArrayType() const { return m_kind == Kind::ArrayType; }
+    bool isReferenceType() const { return isPointerType() || isArrayReferenceType(); }
 
     virtual const Type& unifyNode() const { return *this; }
     virtual Type& unifyNode() { return *this; }
 
-    virtual unsigned hash() const = 0;
-    virtual bool operator==(const UnnamedType&) const = 0;
+    unsigned hash() const;
+    bool operator==(const UnnamedType&) const;
 
     virtual String toString() const = 0;
 
@@ -71,6 +81,7 @@ public:
 
 private:
     CodeLocation m_codeLocation;
+    Kind m_kind;
 };
 
 } // namespace AST

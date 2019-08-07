@@ -46,7 +46,7 @@ class PointerType final : public ReferenceType {
     using Base = ReferenceType;
 
     PointerType(CodeLocation location, AddressSpace addressSpace, Ref<UnnamedType> elementType)
-        : Base(location, addressSpace, WTFMove(elementType))
+        : Base(location, addressSpace, WTFMove(elementType), Kind::PointerType)
     {
     }
 
@@ -58,20 +58,14 @@ public:
 
     virtual ~PointerType() = default;
 
-    bool isPointerType() const override { return true; }
-
-    unsigned hash() const override
+    unsigned hash() const
     {
         return this->Base::hash() ^ StringHasher::computeLiteralHash("pointer");
     }
 
-    bool operator==(const UnnamedType& other) const override
+    bool operator==(const PointerType& other) const
     {
-        if (!is<PointerType>(other))
-            return false;
-
-        return addressSpace() == downcast<PointerType>(other).addressSpace()
-            && elementType() == downcast<PointerType>(other).elementType();
+        return addressSpace() == other.addressSpace() && elementType() == other.elementType();
     }
 
     String toString() const override

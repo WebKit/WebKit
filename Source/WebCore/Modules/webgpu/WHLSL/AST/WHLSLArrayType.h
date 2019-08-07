@@ -33,6 +33,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -45,7 +46,7 @@ class ArrayType final : public UnnamedType {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ArrayType);
     ArrayType(CodeLocation location, Ref<UnnamedType> elementType, unsigned numElements)
-        : UnnamedType(location)
+        : UnnamedType(location, Kind::ArrayType)
         , m_elementType(WTFMove(elementType))
         , m_numElements(numElements)
     {
@@ -59,24 +60,18 @@ public:
 
     virtual ~ArrayType() = default;
 
-    bool isArrayType() const override { return true; }
-
     const UnnamedType& type() const { return m_elementType; }
     UnnamedType& type() { return m_elementType; }
     unsigned numElements() const { return m_numElements; }
 
-    unsigned hash() const override
+    unsigned hash() const
     {
         return WTF::IntHash<unsigned>::hash(m_numElements) ^ m_elementType->hash();
     }
 
-    bool operator==(const UnnamedType& other) const override
+    bool operator==(const ArrayType& other) const
     {
-        if (!is<ArrayType>(other))
-            return false;
-
-        return numElements() == downcast<ArrayType>(other).numElements()
-            && type() == downcast<ArrayType>(other).type();
+        return numElements() == other.numElements() && type() == other.type();
     }
 
     String toString() const override
