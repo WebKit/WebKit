@@ -29,6 +29,7 @@
 #include "QualifiedName.h"
 #include "TagCollection.h"
 #include <wtf/HashSet.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -319,7 +320,7 @@ public:
 #endif
 
 private:
-    unsigned m_connectedFrameCount : 10; // Must fit Page::maxNumberOfFrames.
+    unsigned m_connectedFrameCount; // Must fit Page::maxNumberOfFrames.
 
     std::unique_ptr<NodeListsNodeData> m_nodeLists;
     std::unique_ptr<NodeMutationObserverData> m_mutationObserverData;
