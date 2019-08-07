@@ -79,15 +79,13 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 {
     const int width = size.width();
     const int height = size.height();
-    GLuint colorFormat = 0, pixelDataType = 0;
+    GLuint colorFormat = 0;
     if (m_attrs.alpha) {
         m_internalColorFormat = GL_RGBA;
         colorFormat = GL_RGBA;
-        pixelDataType = GL_UNSIGNED_BYTE;
     } else {
         m_internalColorFormat = GL_RGB;
         colorFormat = GL_RGB;
-        pixelDataType = GL_UNSIGNED_SHORT_5_6_5;
     }
 
     // We don't allow the logic where stencil is required and depth is not.
@@ -103,7 +101,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 
     ASSERT(m_texture);
     ::glBindTexture(GL_TEXTURE_2D, m_texture);
-    ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, pixelDataType, 0);
+    ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
     ::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
 
 #if USE(COORDINATED_GRAPHICS)

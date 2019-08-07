@@ -1,3 +1,17 @@
+2019-08-07  Chris Lord  <clord@igalia.com>
+
+        context-attributes-alpha-depth-stencil-antialias fails on WPE WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=200434
+
+        Reviewed by Žan Doberšek.
+
+        This patch fixes 16-bit surfaces being used for FBOs with no
+        alpha component when using the GLES implementation of GraphicsContext3D.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        Use GL_UNSIGNED_BYTE instead of GL_UNSIGNED_SHORT_5_6_5 for surfaces with no alpha.
+
 2019-08-06  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Make resolveFunction in Checker faster
