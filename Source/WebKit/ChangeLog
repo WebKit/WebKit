@@ -1,38 +1,68 @@
 2019-08-06  Kocsen Chung  <kocsen_chung@apple.com>
 
-        Cherry-pick r247920. rdar://problem/54017883
+        Cherry-pick r248015. rdar://problem/54017889
 
-    Contextual menu does not present when holding an embedded photo but works with link and attachments
-    https://bugs.webkit.org/show_bug.cgi?id=200239
-    <rdar://problem/53318733>
+    Can't scroll on yummly.co.uk recipe (scale(0) div covers the content and hit-tests)
+    https://bugs.webkit.org/show_bug.cgi?id=200263
+    rdar://problem/53679408
     
-    Reviewed by Tim Horton.
+    Reviewed by Antti Koivisto.
     
-    If the user long-pressed on an image, and the client implemented the new API but did
-    not provide a configuration, we were not falling back to the default behaviour of
-    giving a menu allowing the user to copy/share/save the image.
+    Source/WebKit:
     
-    * UIProcess/ios/WKContentViewInteraction.mm:
-    (-[WKContentView continueContextMenuInteraction:]): If we get through the delegates,
-    and the element is an image, return the default configuration.
+    The content on this page had a scale(0) div overlaying an overflow:scroll element,
+    and our UI-side hit-testing code would find this scale(0) element, because apparently
+    -[UIView convertPoint:fromView:] will happily work with non-invertible matrices, and
+    -[UIView pointInside:withEvent:] just compares the point with the view bounds.
     
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247920 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    Since the view frame takes the transform into account, we can look for an empty frame
+    to detect these non-invertible transforms.
+    
+    * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+    (WebKit::collectDescendantViewsAtPoint):
+    
+    LayoutTests:
+    
+    * fast/scrolling/ios/non-invertible-transformed-over-scroller-expected.txt: Added.
+    * fast/scrolling/ios/non-invertible-transformed-over-scroller.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248015 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2019-07-29  Dean Jackson  <dino@apple.com>
+    2019-08-06  Kocsen Chung  <kocsen_chung@apple.com>
 
-            Contextual menu does not present when holding an embedded photo but works with link and attachments
-            https://bugs.webkit.org/show_bug.cgi?id=200239
-            <rdar://problem/53318733>
+            Cherry-pick r247920. rdar://problem/54017883
 
-            Reviewed by Tim Horton.
+        Contextual menu does not present when holding an embedded photo but works with link and attachments
+        https://bugs.webkit.org/show_bug.cgi?id=200239
+        <rdar://problem/53318733>
 
-            If the user long-pressed on an image, and the client implemented the new API but did
-            not provide a configuration, we were not falling back to the default behaviour of
-            giving a menu allowing the user to copy/share/save the image.
+        Reviewed by Tim Horton.
 
-            * UIProcess/ios/WKContentViewInteraction.mm:
-            (-[WKContentView continueContextMenuInteraction:]): If we get through the delegates,
-            and the element is an image, return the default configuration.
+        If the user long-pressed on an image, and the client implemented the new API but did
+        not provide a configuration, we were not falling back to the default behaviour of
+        giving a menu allowing the user to copy/share/save the image.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView continueContextMenuInteraction:]): If we get through the delegates,
+        and the element is an image, return the default configuration.
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@247920 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-07-29  Dean Jackson  <dino@apple.com>
+
+                Contextual menu does not present when holding an embedded photo but works with link and attachments
+                https://bugs.webkit.org/show_bug.cgi?id=200239
+                <rdar://problem/53318733>
+
+                Reviewed by Tim Horton.
+
+                If the user long-pressed on an image, and the client implemented the new API but did
+                not provide a configuration, we were not falling back to the default behaviour of
+                giving a menu allowing the user to copy/share/save the image.
+
+                * UIProcess/ios/WKContentViewInteraction.mm:
+                (-[WKContentView continueContextMenuInteraction:]): If we get through the delegates,
+                and the element is an image, return the default configuration.
 
 2019-08-06  Kocsen Chung  <kocsen_chung@apple.com>
 
@@ -318,6 +348,25 @@
             incoming synchronous IPC for other processes (in particular the UIProcess) while it is blocked
             on those synchronous IPCs. It is safe to re-enter the WebContent process on these sync IPCs
             since they are triggered by JS and we return to JS right after. This should avoid UIProcess
+2019-07-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Can't scroll on yummly.co.uk recipe (scale(0) div covers the content and hit-tests)
+        https://bugs.webkit.org/show_bug.cgi?id=200263
+        rdar://problem/53679408
+
+        Reviewed by Antti Koivisto.
+
+        The content on this page had a scale(0) div overlaying an overflow:scroll element,
+        and our UI-side hit-testing code would find this scale(0) element, because apparently
+        -[UIView convertPoint:fromView:] will happily work with non-invertible matrices, and 
+        -[UIView pointInside:withEvent:] just compares the point with the view bounds.
+
+        Since the view frame takes the transform into account, we can look for an empty frame
+        to detect these non-invertible transforms.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (WebKit::collectDescendantViewsAtPoint):
+
             hangs when the UIProcess is sending a sync IPC to the WebContent process, which is itself
             stuck on the sync IPC to show a JS alert.
 

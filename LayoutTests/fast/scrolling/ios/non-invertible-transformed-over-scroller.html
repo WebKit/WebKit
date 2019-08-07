@@ -1,0 +1,99 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <style>
+        div {
+            box-sizing: border-box;
+        }
+        .container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 10px;
+            border: 1px solid black;
+        }
+        
+        .scroller {
+            overflow: scroll;
+        }
+        
+        .content {
+            width: 100%;
+            height: 300%;
+            background-image: repeating-linear-gradient(white, silver 200px);
+        }
+        
+        .overlay {
+            transform-origin: top left;
+            background-color: rgba(0, 0, 0, 0.25);
+        }
+        
+        .container > div {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script>
+        var scrollTopWithScale0Overlay;
+        var scrollTopWithScaledOverlayHitOverlay;
+        var scrollTopWithScaledOverlayHitScroller;
+
+        window.addEventListener('load', async () => {
+
+            let scrollers = document.querySelectorAll('.scroller');
+            let bounds = scrollers[0].getBoundingClientRect();
+
+            await UIHelper.immediateScrollElementAtContentPointToOffset(bounds.left + 10, bounds.top + 10, 0, 100);
+            scrollTopWithScale0Overlay = scrollers[0].scrollTop;
+            
+            // In case the previous scroll failed.
+            document.scrollingElement.scrollTop = 0;
+            scrollers[1].scrollTop = 0;
+
+            bounds = scrollers[1].getBoundingClientRect();
+            // Hit the overlay
+            await UIHelper.immediateScrollElementAtContentPointToOffset(bounds.left + 10, bounds.top + 10, 0, 100);
+            scrollTopWithScaledOverlayHitOverlay = scrollers[1].scrollTop;
+
+            // In case the previous scroll failed.
+            document.scrollingElement.scrollTop = 0;
+            scrollers[1].scrollTop = 0;
+
+            // Hit the scroller
+            await UIHelper.immediateScrollElementAtContentPointToOffset(bounds.left + bounds.width / 2 + 10, bounds.top + 10, 0, 100);
+            scrollTopWithScaledOverlayHitScroller = scrollers[1].scrollTop;
+            
+            description('Tests hit-testing of layers over scrollers with odd transforms');
+            shouldBe('scrollTopWithScale0Overlay', '100');
+            shouldBe('scrollTopWithScaledOverlayHitOverlay', '0');
+            shouldBe('scrollTopWithScaledOverlayHitScroller', '100');
+
+            finishJSTest();
+            
+        }, false);
+
+        var successfullyParsed = true;
+        var jsTestIsAsync = true;
+    </script>
+    <script src="../../../resources/js-test-post.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="scroller">
+            <div class="content"></div>
+        </div>
+        <div class="overlay" style="transform: scale(0)"></div>
+    </div>
+
+    <div class="container">
+        <div class="scroller">
+            <div class="content"></div>
+        </div>
+        <div class="overlay" style="transform: scale(0.5)"></div>
+    </div>
+</body>
+</html>
