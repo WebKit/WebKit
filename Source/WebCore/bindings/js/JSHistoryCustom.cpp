@@ -46,7 +46,7 @@ JSValue JSHistory::state(ExecState& state) const
 
 void JSHistory::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    wrapped().cachedState().visit(visitor);
+    wrapped().cachedStateForGC().visit(visitor);
 }
 
 } // namespace WebCore

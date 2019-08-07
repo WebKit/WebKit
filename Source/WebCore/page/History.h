@@ -53,6 +53,7 @@ public:
 
     SerializedScriptValue* state();
     JSValueInWrappedObject& cachedState();
+    JSValueInWrappedObject& cachedStateForGC() { return m_cachedState; }
 
     void back();
     void forward();
