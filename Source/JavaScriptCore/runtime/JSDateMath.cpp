@@ -131,14 +131,16 @@ static inline int msToWeekDay(double ms)
 // If this function is called with NaN it returns NaN.
 static LocalTimeOffset localTimeOffset(VM& vm, double ms, WTF::TimeType inputTimeType = WTF::UTCTime)
 {
-    LocalTimeOffsetCache& cache = vm.localTimeOffsetCache;
+    LocalTimeOffsetCache& cache = inputTimeType == WTF::LocalTime
+        ? vm.localTimeOffsetCache : vm.utcTimeOffsetCache;
+
     double start = cache.start;
     double end = cache.end;
-    WTF::TimeType cachedTimeType = cache.timeType;
 
-    if (cachedTimeType == inputTimeType && start <= ms) {
+    if (start <= ms) {
         // If the time fits in the cached interval, return the cached offset.
-        if (ms <= end) return cache.offset;
+        if (ms <= end)
+            return cache.offset;
 
         // Compute a possible new interval end.
         double newEnd = end + cache.increment;
@@ -183,7 +185,6 @@ static LocalTimeOffset localTimeOffset(VM& vm, double ms, WTF::TimeType inputTim
     cache.start = ms;
     cache.end = ms;
     cache.increment = msPerMonth;
-    cache.timeType = inputTimeType;
     return offset;
 }
 
@@ -192,6 +193,7 @@ double gregorianDateTimeToMS(VM& vm, const GregorianDateTime& t, double milliSec
     double day = dateToDaysFrom1970(t.year(), t.month(), t.monthDay());
     double ms = timeToMS(t.hour(), t.minute(), t.second(), milliSeconds);
     double localTimeResult = (day * WTF::msPerDay) + ms;
+
     double localToUTCTimeOffset = inputTimeType == LocalTime
         ? localTimeOffset(vm, localTimeResult, inputTimeType).offset : 0;
 

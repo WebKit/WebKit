@@ -1,3 +1,26 @@
+2019-08-07  Caio Lima  <ticaiolima@gmail.com>
+
+        High number of cache miss on localTimeOffset
+        https://bugs.webkit.org/show_bug.cgi?id=200444
+
+        Reviewed by Darin Adler.
+
+        This patch is separating the `LocalTimeOffsetCache` for each
+        `WTF::TimeType` to avoid constant cache miss on pathological cases
+        where `gregorianDateTimeToMS` and `msToGregorianDateTime` are
+        intercaleted with `inputTimeType ==  WTF::LocalTime`. Such case
+        happens during execution of Facebook Messenger
+        (https://www.messenger.com).
+
+        * runtime/JSDateMath.cpp:
+        (JSC::localTimeOffset):
+        (JSC::gregorianDateTimeToMS):
+        * runtime/VM.cpp:
+        (JSC::VM::resetDateCache):
+        * runtime/VM.h:
+        (JSC::LocalTimeOffsetCache::LocalTimeOffsetCache):
+        (JSC::LocalTimeOffsetCache::reset):
+
 2019-08-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] sampling-profiler can see garbage Wasm::Callee* pointer which is HashTable deleted / empty values

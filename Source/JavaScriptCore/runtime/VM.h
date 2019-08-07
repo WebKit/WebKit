@@ -185,7 +185,6 @@ struct LocalTimeOffsetCache {
         : start(0.0)
         , end(-1.0)
         , increment(0.0)
-        , timeType(WTF::UTCTime)
     {
     }
 
@@ -195,14 +194,12 @@ struct LocalTimeOffsetCache {
         start = 0.0;
         end = -1.0;
         increment = 0.0;
-        timeType = WTF::UTCTime;
     }
 
     LocalTimeOffset offset;
     double start;
     double end;
     double increment;
-    WTF::TimeType timeType;
 };
 
 class QueuedTask {
@@ -809,6 +806,7 @@ public:
     JSObject* stringRecursionCheckFirstObject { nullptr };
     HashSet<JSObject*> stringRecursionCheckVisitedObjects;
     
+    LocalTimeOffsetCache utcTimeOffsetCache;
     LocalTimeOffsetCache localTimeOffsetCache;
 
     String cachedDateString;

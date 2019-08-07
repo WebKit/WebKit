@@ -733,6 +733,7 @@ VM::ClientData::~ClientData()
 
 void VM::resetDateCache()
 {
+    utcTimeOffsetCache.reset();
     localTimeOffsetCache.reset();
     cachedDateString = String();
     cachedDateStringValue = std::numeric_limits<double>::quiet_NaN();
