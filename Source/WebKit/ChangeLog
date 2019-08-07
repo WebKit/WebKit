@@ -1,3 +1,27 @@
+2019-08-06  Dean Jackson  <dino@apple.com>
+
+        Context menu on a universal link produces a blank preview
+        https://bugs.webkit.org/show_bug.cgi?id=200485
+        <rdar://problem/53699620>
+
+        Reviewed by Dean Jackson.
+
+        If the context menu is activated on an iTunesStore URL, pass it
+        on to DataDetectors, who should know how to handle it.
+
+        Two drive-by fixes:
+        - make it clear that early returns do not produce a value. Instead call the
+          completion handler first, then return.
+        - The new API DataDetectors case doesn't need to worry about hiding link previews
+          as DataDetectors itself will handle that.
+
+        * UIProcess/ios/WKContentViewInteraction.mm: If the URL is an iTunesStoreURL
+        (as defined by CoreServices), let DataDetectors handle it.
+        (-[WKContentView assignLegacyDataForContextMenuInteraction]):
+        (-[WKContentView continueContextMenuInteraction:]):
+        (-[WKContentView continueContextMenuInteractionWithDataDetectors:]): New method to
+        use DataDetectors if possible.
+
 2019-08-06  Chris Dumez  <cdumez@apple.com>
 
         Avoid unnecessary ResourceRequest copy under NetworkResourceLoader::isCrossOriginPrefetch()
