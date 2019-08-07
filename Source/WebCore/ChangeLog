@@ -1,3 +1,25 @@
+2019-08-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Introduce Layout::Phase class
+        https://bugs.webkit.org/show_bug.cgi?id=200473
+        <rdar://problem/53996061>
+
+        Reviewed by Antti Koivisto.
+
+        It helps to check whether we could run certain actions like layout while constructing the tree.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/LayoutState.h:
+        * layout/floats/FloatingContext.cpp:
+        * layout/inlineformatting/InlineLine.cpp:
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::establishesFormattingContext const):
+        (WebCore::Layout::Box::containingBlock const):
+        (WebCore::Layout::Box::formattingContextRoot const):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutTree):
+
 2019-08-07  Chris Lord  <clord@igalia.com>
 
         context-attributes-alpha-depth-stencil-antialias fails on WPE WebKit

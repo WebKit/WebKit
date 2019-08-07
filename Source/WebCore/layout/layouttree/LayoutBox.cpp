@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutContainer.h"
+#include "LayoutPhase.h"
 #include "RenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -65,6 +66,8 @@ Box::~Box()
 
 bool Box::establishesFormattingContext() const
 {
+    // We need the final tree structure to tell whether a box establishes a certain formatting context. 
+    ASSERT(!Phase::isInTreeBuilding());
     return establishesBlockFormattingContext() || establishesInlineFormattingContext() || establishesTableFormattingContext();
 }
 
@@ -177,6 +180,8 @@ bool Box::isFloatAvoider() const
 
 const Container* Box::containingBlock() const
 {
+    // Finding the containing block by traversing the tree during tree construction could provide incorrect result.
+    ASSERT(!Phase::isInTreeBuilding());
     // The containing block in which the root element lives is a rectangle called the initial containing block.
     // For other elements, if the element's position is 'relative' or 'static', the containing block is formed by the
     // content edge of the nearest block container ancestor box.
@@ -210,6 +215,8 @@ const Container* Box::containingBlock() const
 
 const Container& Box::formattingContextRoot() const
 {
+    // Finding the context root by traversing the tree during tree construction could provide incorrect result.
+    ASSERT(!Phase::isInTreeBuilding());
     // We should never need to ask this question on the ICB.
     ASSERT(!isInitialContainingBlock());
     // A box lives in the same formatting context as its containing block unless the containing block establishes a formatting context.

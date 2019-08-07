@@ -31,6 +31,7 @@
 #include "DisplayBox.h"
 #include "FloatAvoider.h"
 #include "FloatBox.h"
+#include "FormattingContext.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
 #include "LayoutState.h"

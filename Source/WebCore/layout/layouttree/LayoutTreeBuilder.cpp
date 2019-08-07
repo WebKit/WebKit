@@ -35,6 +35,7 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContainer.h"
 #include "LayoutDescendantIterator.h"
+#include "LayoutPhase.h"
 #include "LayoutState.h"
 #include "RenderBlock.h"
 #include "RenderChildIterator.h"
@@ -69,6 +70,8 @@ static void appendChild(Container& parent, Box& newChild)
 
 std::unique_ptr<Container> TreeBuilder::createLayoutTree(const RenderView& renderView)
 {
+    PhaseScope scope(Phase::Type::TreeBuilding);
+
     auto style = RenderStyle::clone(renderView.style());
     style.setLogicalWidth(Length(renderView.width(), Fixed));
     style.setLogicalHeight(Length(renderView.height(), Fixed));

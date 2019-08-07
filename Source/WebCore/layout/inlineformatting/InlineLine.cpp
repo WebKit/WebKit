@@ -28,6 +28,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "InlineFormattingContext.h"
+#include "TextUtil.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

@@ -38,6 +38,7 @@
 #include "Invalidation.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
+#include "LayoutPhase.h"
 #include "LayoutTreeBuilder.h"
 #include "RenderView.h"
 #include "TableFormattingContext.h"
@@ -71,6 +72,8 @@ LayoutState::LayoutState(const Container& initialContainingBlock)
 
 void LayoutState::updateLayout()
 {
+    PhaseScope scope(Phase::Type::Layout);
+
     ASSERT(!m_formattingContextRootListForLayout.isEmpty());
     for (auto* layoutRoot : m_formattingContextRootListForLayout)
         layoutFormattingContextSubtree(*layoutRoot);
@@ -94,6 +97,8 @@ Display::Box& LayoutState::displayBoxForLayoutBox(const Box& layoutBox) const
 
 void LayoutState::styleChanged(const Box& layoutBox, StyleDiff styleDiff)
 {
+    PhaseScope scope(Phase::Type::Invalidation);
+
     auto& formattingState = formattingStateForBox(layoutBox);
     const Container* invalidationRoot = nullptr;
     if (is<BlockFormattingState>(formattingState))

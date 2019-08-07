@@ -36,9 +36,7 @@
 
 namespace WebCore {
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 class RenderView;
-#endif
 
 namespace Display {
 class Box;
