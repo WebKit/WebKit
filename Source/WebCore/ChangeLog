@@ -1,5 +1,19 @@
 2019-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Declarations and implementations of findCaret(Min|Max)imumOffset have inconsistent signatures
+        https://bugs.webkit.org/show_bug.cgi?id=200503
+
+        Reviewed by Darin Adler.
+
+        No change in behavior.
+
+        * rendering/SimpleLineLayoutFunctions.h:
+
+        Update these function declarations to take "const RenderText&", which matches the signatures of their inline
+        implementations below.
+
+2019-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Extra space inserted at start of line when inserting a newline in Mail compose
         https://bugs.webkit.org/show_bug.cgi?id=200490
         <rdar://problem/53501354>

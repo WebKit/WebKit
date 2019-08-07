@@ -52,8 +52,8 @@ void collectFlowOverflow(RenderBlockFlow&, const Layout&);
 bool isTextRendered(const RenderText&, const Layout&);
 enum class OffsetType { CaretOffset, CharacterOffset };
 bool containsOffset(const RenderText&, const Layout&, unsigned, OffsetType);
-unsigned findCaretMinimumOffset(const RenderObject&, const Layout&);
-unsigned findCaretMaximumOffset(const RenderObject&, const Layout&);
+unsigned findCaretMinimumOffset(const RenderText&, const Layout&);
+unsigned findCaretMaximumOffset(const RenderText&, const Layout&);
 IntRect computeBoundingBox(const RenderObject&, const Layout&);
 IntPoint computeFirstRunLocation(const RenderObject&, const Layout&);
 
