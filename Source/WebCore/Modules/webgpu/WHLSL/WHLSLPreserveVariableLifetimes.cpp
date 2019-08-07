@@ -54,7 +54,7 @@ namespace WHLSL {
 //   "x". If "x" is a function parameter, we store to "struct->x" as the first
 //   thing we do in the function body.
 
-class EscapedVariableCollector : public Visitor {
+class EscapedVariableCollector final : public Visitor {
     using Base = Visitor;
 public:
 
@@ -85,6 +85,12 @@ public:
     {
         if (makeArrayReferenceExpression.mightEscape())
             escapeVariableUse(makeArrayReferenceExpression.leftValue());
+    }
+
+    void visit(AST::FunctionDefinition& functionDefinition) override
+    {
+        if (functionDefinition.parsingMode() != ParsingMode::StandardLibrary)
+            Base::visit(functionDefinition);
     }
 
     HashMap<AST::VariableDeclaration*, String> takeEscapedVariables() { return WTFMove(m_escapedVariables); }
@@ -253,7 +259,8 @@ void preserveVariableLifetimes(Program& program)
     HashMap<AST::VariableDeclaration*, String> escapedVariables;
     {
         EscapedVariableCollector collector;
-        collector.Visitor::visit(program);
+        for (size_t i = 0; i < program.functionDefinitions().size(); ++i)
+            collector.visit(program.functionDefinitions()[i]);
         escapedVariables = collector.takeEscapedVariables();
     }
 

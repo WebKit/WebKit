@@ -39,7 +39,7 @@ namespace WebCore {
 
 namespace WHLSL {
 
-class TextureReferencesChecker : public Visitor {
+class TextureReferencesChecker final : public Visitor {
 public:
     TextureReferencesChecker() = default;
 
@@ -50,6 +50,8 @@ private:
     void visit(AST::ArrayReferenceType&) override;
     void visit(AST::ArrayType&) override;
     void visit(AST::Expression&) override;
+    void visit(AST::FunctionDefinition&) override;
+    void visit(AST::NativeFunctionDeclaration&) override;
 
     bool containsTextureOrSampler(AST::UnnamedType&);
 };
@@ -112,6 +114,16 @@ void TextureReferencesChecker::visit(AST::Expression& expression)
 {
     Visitor::visit(expression);
     checkErrorAndVisit(expression.resolvedType());
+}
+
+void TextureReferencesChecker::visit(AST::FunctionDefinition& functionDefinition)
+{
+    if (functionDefinition.parsingMode() != ParsingMode::StandardLibrary)
+        Visitor::visit(functionDefinition);
+}
+
+void TextureReferencesChecker::visit(AST::NativeFunctionDeclaration&)
+{
 }
 
 Expected<void, Error> checkTextureReferences(Program& program)

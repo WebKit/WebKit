@@ -39,7 +39,7 @@ namespace WebCore {
 namespace WHLSL {
 
 // Makes sure there is no function recursion.
-class RecursionChecker : public Visitor {
+class RecursionChecker final : public Visitor {
 private:
     void visit(Program& program) override
     {
@@ -58,7 +58,8 @@ private:
             return;
         }
 
-        Visitor::visit(functionDefinition);
+        if (functionDefinition.parsingMode() != ParsingMode::StandardLibrary)
+            Visitor::visit(functionDefinition);
 
         {
             auto addResult = m_finishedVisiting.add(&functionDefinition);

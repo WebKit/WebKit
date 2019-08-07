@@ -1,5 +1,29 @@
 2019-08-07  Saam Barati  <sbarati@apple.com>
 
+        [WHLSL] checkRecursion, checkTextureReferences, and EscapedVariableCollector should skip stdlib functions
+        https://bugs.webkit.org/show_bug.cgi?id=200510
+
+        Reviewed by Myles C. Maxfield.
+
+        We can skip walking the stdlib part of the AST in various semantic checking phases:
+        - checkRecursion: the stdlib does not have recursion
+        - checkTextureReferences: the stdlib does not have references to textures
+        - EscapedVariableCollector: this is used inside preserveVariableLifetimes, and
+          the stdlib never escapes any variables.
+        
+        This patch speeds up checkRecursion, checkTextureReferences, and preserveVariableLifetimes
+        by about 1ms each, leading to a 3ms compile time speedup in compute_boids.
+
+        * Modules/webgpu/WHLSL/WHLSLCheckTextureReferences.cpp:
+        (WebCore::WHLSL::TextureReferencesChecker::visit):
+        * Modules/webgpu/WHLSL/WHLSLPreserveVariableLifetimes.cpp:
+        (WebCore::WHLSL::preserveVariableLifetimes):
+        (WebCore::WHLSL::EscapedVariableCollector::escapeVariableUse): Deleted.
+        (WebCore::WHLSL::EscapedVariableCollector::takeEscapedVariables): Deleted.
+        * Modules/webgpu/WHLSL/WHLSLRecursionChecker.cpp:
+
+2019-08-07  Saam Barati  <sbarati@apple.com>
+
         [WHLSL] cache results of argumentTypeForAndOverload inside Checker
         https://bugs.webkit.org/show_bug.cgi?id=200462
 
