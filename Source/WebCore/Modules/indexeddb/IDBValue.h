@@ -50,7 +50,7 @@ public:
 
     const ThreadSafeDataBuffer& data() const { return m_data; }
     const Vector<String>& blobURLs() const { return m_blobURLs; }
-    const PAL::SessionID& sessionID() const { return m_sessionID; }
+    PAL::SessionID sessionID() const;
     const Vector<String>& blobFilePaths() const { return m_blobFilePaths; }
 
     template<class Encoder> void encode(Encoder&) const;
@@ -59,10 +59,17 @@ public:
 private:
     ThreadSafeDataBuffer m_data;
     Vector<String> m_blobURLs;
-    PAL::SessionID m_sessionID;
+    Optional<PAL::SessionID> m_sessionID;
     Vector<String> m_blobFilePaths;
 };
 
+inline PAL::SessionID IDBValue::sessionID() const
+{
+    // FIXME: We should assert m_sessionID is valid or remove m_sessionID.
+    if (!m_sessionID)
+        return { };
+    return *m_sessionID;
+}
 
 template<class Encoder>
 void IDBValue::encode(Encoder& encoder) const

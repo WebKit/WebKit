@@ -65,7 +65,7 @@ public:
     IndexedDB::IndexRecordType indexRecordType() const;
     IDBResourceIdentifier cursorIdentifier() const;
 
-    const IDBDatabaseIdentifier& databaseIdentifier() const { return m_databaseIdentifier; }
+    const IDBDatabaseIdentifier& databaseIdentifier() const;
     uint64_t requestedVersion() const;
 
     bool isOpenRequest() const { return m_requestType == IndexedDB::RequestType::Open; }
@@ -89,11 +89,19 @@ private:
     uint64_t m_indexIdentifier { 0 };
     IndexedDB::IndexRecordType m_indexRecordType;
 
-    IDBDatabaseIdentifier m_databaseIdentifier;
+    mutable Optional<IDBDatabaseIdentifier> m_databaseIdentifier;
     uint64_t m_requestedVersion { 0 };
 
     IndexedDB::RequestType m_requestType { IndexedDB::RequestType::Other };
 };
+
+inline const IDBDatabaseIdentifier& IDBRequestData::databaseIdentifier() const
+{
+    ASSERT(m_databaseIdentifier);
+    if (!m_databaseIdentifier)
+        m_databaseIdentifier = IDBDatabaseIdentifier { };
+    return *m_databaseIdentifier;
+}
 
 template<class Encoder>
 void IDBRequestData::encode(Encoder& encoder) const
@@ -128,7 +136,7 @@ bool IDBRequestData::decode(Decoder& decoder, IDBRequestData& request)
     if (!decoder.decode(request.m_indexIdentifier))
         return false;
 
-    Optional<IDBDatabaseIdentifier> databaseIdentifier;
+    Optional<Optional<IDBDatabaseIdentifier>> databaseIdentifier;
     decoder >> databaseIdentifier;
     if (!databaseIdentifier)
         return false;

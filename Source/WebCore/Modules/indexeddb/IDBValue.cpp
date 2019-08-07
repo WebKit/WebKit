@@ -40,8 +40,9 @@ IDBValue::IDBValue()
 IDBValue::IDBValue(const SerializedScriptValue& scriptValue)
     : m_data(ThreadSafeDataBuffer::copyVector(scriptValue.data()))
     , m_blobURLs(scriptValue.blobURLsIsolatedCopy())
-    , m_sessionID(scriptValue.sessionID())
 {
+    if (scriptValue.sessionID().isValid())
+        m_sessionID = scriptValue.sessionID();
 }
 
 IDBValue::IDBValue(const ThreadSafeDataBuffer& value)
@@ -52,26 +53,29 @@ IDBValue::IDBValue(const ThreadSafeDataBuffer& value)
 IDBValue::IDBValue(const SerializedScriptValue& scriptValue, const Vector<String>& blobURLs, const PAL::SessionID& sessionID, const Vector<String>& blobFilePaths)
     : m_data(ThreadSafeDataBuffer::copyVector(scriptValue.data()))
     , m_blobURLs(blobURLs)
-    , m_sessionID(sessionID)
     , m_blobFilePaths(blobFilePaths)
 {
     ASSERT(m_data.data());
+    if (sessionID.isValid())
+        m_sessionID = sessionID;
 }
 
 IDBValue::IDBValue(const ThreadSafeDataBuffer& value, Vector<String>&& blobURLs, const PAL::SessionID& sessionID, Vector<String>&& blobFilePaths)
     : m_data(value)
     , m_blobURLs(WTFMove(blobURLs))
-    , m_sessionID(sessionID)
     , m_blobFilePaths(WTFMove(blobFilePaths))
 {
+    if (sessionID.isValid())
+        m_sessionID = sessionID;
 }
 
 IDBValue::IDBValue(const ThreadSafeDataBuffer& value, const Vector<String>& blobURLs, const PAL::SessionID& sessionID, const Vector<String>& blobFilePaths)
     : m_data(value)
     , m_blobURLs(blobURLs)
-    , m_sessionID(sessionID)
     , m_blobFilePaths(blobFilePaths)
 {
+    if (sessionID.isValid())
+        m_sessionID = sessionID;
 }
 
 void IDBValue::setAsIsolatedCopy(const IDBValue& other)

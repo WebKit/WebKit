@@ -1,3 +1,25 @@
+2019-08-07  Youenn Fablet  <youenn@apple.com>
+
+        ASSERT that a sessionID is valid when encoding it
+        https://bugs.webkit.org/show_bug.cgi?id=199302
+
+        Reviewed by Darin Adler.
+
+        For IDBValue, instead of encoding an invalid session ID, encode a boolean that tells there is no sessionID.
+        For IDBRequestData, keep track of whether there is an IDBDatabaseIdentifier
+        and encode/decode accordingly to not encode an invalid sessionID.
+        No observable change of behavior.
+
+        * Modules/indexeddb/IDBValue.h:
+        (WebCore::IDBValue::sessionID const):
+        (WebCore::IDBValue::encode const):
+        (WebCore::IDBValue::decode):
+        * Modules/indexeddb/shared/IDBRequestData.cpp:
+        (WebCore::IDBRequestData::isolatedCopy):
+        * Modules/indexeddb/shared/IDBRequestData.h:
+        (WebCore::IDBRequestData::databaseIdentifier const):
+        (WebCore::IDBRequestData::decode):
+
 2019-08-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Rename FormattingContext::layoutOutOfFlowDescendants to layoutOutOfFlowContent
