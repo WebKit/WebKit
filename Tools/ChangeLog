@@ -1,3 +1,13 @@
+2019-08-08  Brady Eidson  <beidson@apple.com>
+
+        Do not allow navigations of frames about to get replaced by the result of evaluating javascript: URLs
+        <rdar://problem/53788893> and https://bugs.webkit.org/show_bug.cgi?id=198786
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/JavascriptURLNavigation.mm: Added.
+
 2019-08-08  Rob Buis  <rbuis@igalia.com>
 
         Add runtime flag for lazy image loading

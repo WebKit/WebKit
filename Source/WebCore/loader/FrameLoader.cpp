@@ -1324,7 +1324,7 @@ static void applyShouldOpenExternalURLsPolicyToNewDocumentLoader(Frame& frame, D
 
 bool FrameLoader::isNavigationAllowed() const
 {
-    return m_pageDismissalEventBeingDispatched == PageDismissalType::None && NavigationDisabler::isNavigationAllowed(m_frame);
+    return m_pageDismissalEventBeingDispatched == PageDismissalType::None && !m_frame.script().willReplaceWithResultOfExecutingJavascriptURL() && NavigationDisabler::isNavigationAllowed(m_frame);
 }
 
 bool FrameLoader::isStopLoadingAllowed() const
