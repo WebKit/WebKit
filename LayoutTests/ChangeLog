@@ -1,5 +1,27 @@
 2019-08-07  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r247833. rdar://problem/53551736
+
+    rdar://53551736 (Layout Test editing/pasteboard/paste-and-sanitize.html is a Flaky Failure on iOS 13).
+    
+    Unreviewed Test Gardening.
+    
+    * platform/ios-12/TestExpectations: Test is passing on iOS 12
+    * platform/ios/TestExpectations: Marking test as flaky on iOS 13
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@247833 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-07-25  Russell Epstein  <repstein@apple.com>
+
+            rdar://53551736 (Layout Test editing/pasteboard/paste-and-sanitize.html is a Flaky Failure on iOS 13).
+
+            Unreviewed Test Gardening.
+
+            * platform/ios-12/TestExpectations: Test is passing on iOS 12
+            * platform/ios/TestExpectations: Marking test as flaky on iOS 13
+
+2019-08-07  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r248300. rdar://problem/53468934
 
     [iPad] editing/selection/character-granularity-rect.html is now passing.
