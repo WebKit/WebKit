@@ -8,3 +8,6 @@ fast/images/animated-heics-verify.html [ Skip ]
 fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-after-hiding-auto-fill-strong-password-button.html [ Skip ]
 fast/forms/auto-fill-button/caps-lock-indicator-should-not-be-visible-when-auto-fill-strong-password-button-is-visible.html [ Skip ]
 fast/forms/password-scrolled-after-caps-lock-toggled.html [ Skip ]
+
+# rdar://53551736 (Layout Test editing/pasteboard/paste-and-sanitize.html is a Flaky Failure on iOS 13)
+editing/pasteboard/paste-and-sanitize.html [ Pass ]
