@@ -1502,8 +1502,12 @@ BasicCommandLineAPI.methods = [
         return result;
     },
 
+    function queryInstances() {
+        return InjectedScriptHost.queryInstances(...arguments);
+    },
+
     function queryObjects() {
-        return InjectedScriptHost.queryObjects(...arguments);
+        return InjectedScriptHost.queryInstances(...arguments);
     },
 ];
 

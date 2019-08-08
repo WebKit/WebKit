@@ -1,3 +1,15 @@
+2019-08-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: rename `queryObjects` to `queryInstances` for clarity
+        https://bugs.webkit.org/show_bug.cgi?id=200520
+
+        Reviewed by Brian Burg.
+
+        * inspector/console/queryInstances.html: Renamed from LayoutTests/inspector/console/queryObjects.html.
+        * inspector/console/queryInstances-expected.txt: Renamed from LayoutTests/inspector/console/queryObjects-expected.txt.
+
+        * http/tests/inspector/console/cross-domain-inspected-node-access-expected.txt:
+
 2019-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS 13] Taps that interrupt momentum scrolling are recognized as clicks

@@ -661,7 +661,7 @@ static bool checkForbiddenPrototype(ExecState* exec, JSValue value, JSValue prot
     return JSObject::defaultHasInstance(exec, proto, value);
 }
 
-JSValue JSInjectedScriptHost::queryObjects(ExecState* exec)
+JSValue JSInjectedScriptHost::queryInstances(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
         return jsUndefined();
@@ -671,11 +671,11 @@ JSValue JSInjectedScriptHost::queryObjects(ExecState* exec)
 
     JSValue prototypeOrConstructor = exec->uncheckedArgument(0);
     if (!prototypeOrConstructor.isObject())
-        return throwTypeError(exec, scope, "queryObjects first argument must be an object."_s);
+        return throwTypeError(exec, scope, "queryInstances first argument must be an object."_s);
 
     JSObject* object = asObject(prototypeOrConstructor);
     if (object->inherits<ProxyObject>(vm))
-        return throwTypeError(exec, scope, "queryObjects cannot be called with a Proxy."_s);
+        return throwTypeError(exec, scope, "queryInstances cannot be called with a Proxy."_s);
 
     JSValue prototype = object;
 
@@ -692,22 +692,22 @@ JSValue JSInjectedScriptHost::queryObjects(ExecState* exec)
     }
 
     if (object->inherits<ProxyObject>(vm) || prototype.inherits<ProxyObject>(vm))
-        return throwTypeError(exec, scope, "queryObjects cannot be called with a Proxy."_s);
+        return throwTypeError(exec, scope, "queryInstances cannot be called with a Proxy."_s);
 
     // FIXME: implement a way of distinguishing between internal and user-created objects.
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
     if (checkForbiddenPrototype(exec, object, lexicalGlobalObject->objectPrototype()))
-        return throwTypeError(exec, scope, "queryObjects cannot be called with Object."_s);
+        return throwTypeError(exec, scope, "queryInstances cannot be called with Object."_s);
     if (checkForbiddenPrototype(exec, object, lexicalGlobalObject->functionPrototype()))
-        return throwTypeError(exec, scope, "queryObjects cannot be called with Function."_s);
+        return throwTypeError(exec, scope, "queryInstances cannot be called with Function."_s);
     if (checkForbiddenPrototype(exec, object, lexicalGlobalObject->arrayPrototype()))
-        return throwTypeError(exec, scope, "queryObjects cannot be called with Array."_s);
+        return throwTypeError(exec, scope, "queryInstances cannot be called with Array."_s);
     if (checkForbiddenPrototype(exec, object, lexicalGlobalObject->mapPrototype()))
-        return throwTypeError(exec, scope, "queryObjects cannot be called with Map."_s);
+        return throwTypeError(exec, scope, "queryInstances cannot be called with Map."_s);
     if (checkForbiddenPrototype(exec, object, lexicalGlobalObject->jsSetPrototype()))
-        return throwTypeError(exec, scope, "queryObjects cannot be called with Set."_s);
+        return throwTypeError(exec, scope, "queryInstances cannot be called with Set."_s);
     if (checkForbiddenPrototype(exec, object, lexicalGlobalObject->promisePrototype()))
-        return throwTypeError(exec, scope, "queryObjects cannot be called with Promise."_s);
+        return throwTypeError(exec, scope, "queryInstances cannot be called with Promise."_s);
 
     sanitizeStackForVM(&vm);
     vm.heap.collectNow(Sync, CollectionScope::Full);

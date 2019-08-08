@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
@@ -60,11 +60,11 @@ function clearInstances() {
 }
 
 function test() {
-    function queryObjects(prototypeOrConstructor, callback) {
-        WI.runtimeManager.evaluateInInspectedWindow(`queryObjects(${prototypeOrConstructor})`, {objectGroup: "test", includeCommandLineAPI: true, generatePreview: true}, callback);
+    function queryInstances(prototypeOrConstructor, callback) {
+        WI.runtimeManager.evaluateInInspectedWindow(`queryInstances(${prototypeOrConstructor})`, {objectGroup: "test", includeCommandLineAPI: true, generatePreview: true}, callback);
     }
 
-    let suite = InspectorTest.createAsyncSuite("CommandLineAPI.queryObjects");
+    let suite = InspectorTest.createAsyncSuite("CommandLineAPI.queryInstances");
 
     let cases = [
         {prototypeOrConstructor: `Instances.ClassA`, resultCount: 0},
@@ -123,11 +123,11 @@ function test() {
 
     for (let {prototypeOrConstructor, resultCount, shouldThrow} of cases) {
         suite.addTestCase({
-            name: `CommandLineAPI.queryObjects.${prototypeOrConstructor}`,
+            name: `CommandLineAPI.queryInstances.${prototypeOrConstructor}`,
             test(resolve, reject) {
-                queryObjects(prototypeOrConstructor, (remoteObject, wasThrown, savedResultIndex) => {
+                queryInstances(prototypeOrConstructor, (remoteObject, wasThrown, savedResultIndex) => {
                     if (shouldThrow) {
-                        InspectorTest.expectThat(wasThrown, `Calling "queryObjects" with "${prototypeOrConstructor}" should throw an exception.`);
+                        InspectorTest.expectThat(wasThrown, `Calling "queryInstances" with "${prototypeOrConstructor}" should throw an exception.`);
                         InspectorTest.log(remoteObject.description);
                         if (wasThrown) {
                             resolve();
@@ -161,9 +161,9 @@ function test() {
     }
 
     suite.addTestCase({
-        name: "CommandLineAPI.queryObjects.GC",
+        name: "CommandLineAPI.queryInstances.GC",
         test(resolve, reject) {
-            queryObjects(`ClassC`, (remoteObject, wasThrown, savedResultIndex) => {
+            queryInstances(`ClassC`, (remoteObject, wasThrown, savedResultIndex) => {
                 InspectorTest.assert(!wasThrown);
                 if (wasThrown)
                     InspectorTest.log(remoteObject.description);
@@ -175,7 +175,7 @@ function test() {
                 RuntimeAgent.releaseObjectGroup("test");
                 InspectorTest.evaluateInPage(`clearInstances()`);
 
-                queryObjects(`ClassC`, (remoteObject, wasThrown, savedResultIndex) => {
+                queryInstances(`ClassC`, (remoteObject, wasThrown, savedResultIndex) => {
                     InspectorTest.assert(!wasThrown);
                     if (wasThrown)
                         InspectorTest.log(remoteObject.description);
@@ -188,10 +188,10 @@ function test() {
     });
 
     suite.addTestCase({
-        name: "CommandLineAPI.queryObjects.NoParameter",
+        name: "CommandLineAPI.queryInstances.NoParameter",
         test(resolve, reject) {
             const prototypeOrConstructor = "";
-            queryObjects(prototypeOrConstructor, (remoteObject, wasThrown, savedResultIndex) => {
+            queryInstances(prototypeOrConstructor, (remoteObject, wasThrown, savedResultIndex) => {
                 if (wasThrown) {
                     InspectorTest.fail("An exception was thrown.");
                     InspectorTest.log(remoteObject.description);
@@ -210,6 +210,6 @@ function test() {
 </script>
 </head>
 <body onload="runTest()">
-    <p>Tests for the `queryObjects` function in the Command Line API.</p>
+<p>Tests for the `queryInstances` function in the Command Line API.</p>
 </body>
 </html>
