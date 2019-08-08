@@ -29,6 +29,8 @@
 
 #include <WebCore/ScrollingTreeOverflowScrollingNode.h>
 
+OBJC_CLASS UIScrollView;
+
 namespace WebKit {
 
 class ScrollingTreeScrollingNodeDelegateIOS;
@@ -37,6 +39,8 @@ class ScrollingTreeOverflowScrollingNodeIOS : public WebCore::ScrollingTreeOverf
 public:
     static Ref<ScrollingTreeOverflowScrollingNodeIOS> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
     virtual ~ScrollingTreeOverflowScrollingNodeIOS();
+
+    UIScrollView* scrollView() const;
 
 private:
     ScrollingTreeOverflowScrollingNodeIOS(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);

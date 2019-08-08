@@ -378,6 +378,37 @@
         (WebCore::WHLSL::EscapedVariableCollector::takeEscapedVariables): Deleted.
         * Modules/webgpu/WHLSL/WHLSLRecursionChecker.cpp:
 
+2019-08-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Add to InteractionInformationAtPosition information about whether the element is in a subscrollable region
+        https://bugs.webkit.org/show_bug.cgi?id=200374
+        rdar://problem/54095519
+
+        Reviewed by Tim Horton.
+
+        Add to InteractionInformationAtPosition a ScrollingNodeID which represents the enclosing scrolling
+        node that affects the targeted element's position. We use this to find a UIScrollView in the UI process.
+        
+        The entrypoint to finding the enclosing scrolling node is ScrollingCoordinator::scrollableContainerNodeID(),
+        which calls RenderLayerCompositor::asyncScrollableContainerNodeID() to look for a scrolling ancestor in
+        the current frame, and then looks for an enclosing scrollable frame, or a scrolling ancestor in
+        the enclosing frame.
+        
+        There's a bit of subtlety in RenderLayerCompositor::asyncScrollableContainerNodeID() because if you're asking
+        for the node that scrolls the renderer, if the renderer itself has a layer and is scrollable, you want
+        its enclosing scroller.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::scrollableContainerNodeID const):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::scrollableContainerNodeID const):
+        * page/scrolling/ScrollingCoordinator.h:
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::asyncScrollableContainerNodeID):
+        * rendering/RenderLayerCompositor.h:
+
 2019-08-07  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] cache results of argumentTypeForAndOverload inside Checker

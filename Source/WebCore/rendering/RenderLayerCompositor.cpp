@@ -2707,6 +2707,37 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
     return newStack;
 }
 
+// Note that this returns the ScrollingNodeID of the scroller this layer is embedded in, not the layer's own ScrollingNodeID if it has one.
+ScrollingNodeID RenderLayerCompositor::asyncScrollableContainerNodeID(const RenderObject& renderer)
+{
+    auto* enclosingLayer = renderer.enclosingLayer();
+    if (!enclosingLayer)
+        return 0;
+    
+    auto layerScrollingNodeID = [](const RenderLayer& layer) -> ScrollingNodeID {
+        if (layer.isComposited())
+            return layer.backing()->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
+        return 0;
+    };
+
+    // If the renderer is inside the layer, we care about the layer's scrollability. Otherwise, we let traverseAncestorLayers look at ancestors.
+    if (!renderer.hasLayer()) {
+        if (auto scrollingNodeID = layerScrollingNodeID(*enclosingLayer))
+            return scrollingNodeID;
+    }
+
+    ScrollingNodeID containerScrollingNodeID = 0;
+    traverseAncestorLayers(*enclosingLayer, [&](const RenderLayer& ancestorLayer, bool isContainingBlockChain, bool /*isPaintOrderAncestor*/) {
+        if (isContainingBlockChain && ancestorLayer.hasCompositedScrollableOverflow()) {
+            containerScrollingNodeID = layerScrollingNodeID(ancestorLayer);
+            return AncestorTraversal::Stop;
+        }
+        return AncestorTraversal::Continue;
+    });
+
+    return containerScrollingNodeID;
+}
+
 // Return true if the given layer is a stacking context and has compositing child
 // layers that it needs to clip. In this case we insert a clipping GraphicsLayer
 // into the hierarchy between this layer and its children in the z-order hierarchy.

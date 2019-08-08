@@ -2683,6 +2683,14 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
 #endif
     }
 
+    auto* elementForScrollTesting = linkElement ? linkElement : &element;
+    if (auto* renderer = elementForScrollTesting->renderer()) {
+#if ENABLE(ASYNC_SCROLLING)
+        if (auto* scrollingCoordinator = page.scrollingCoordinator())
+            info.containerScrollingNodeID = scrollingCoordinator->scrollableContainerNodeID(*renderer);
+#endif
+    }
+
     if (auto* renderer = element.renderer()) {
         if (renderer->isRenderImage())
             imagePositionInformation(page, element, request, info);

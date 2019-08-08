@@ -310,6 +310,34 @@
         (-[WKContentView continueContextMenuInteractionWithDataDetectors:]): New method to
         use DataDetectors if possible.
 
+2019-08-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Add to InteractionInformationAtPosition information about whether the element is in a subscrollable region
+        https://bugs.webkit.org/show_bug.cgi?id=200374
+        rdar://problem/54095519
+
+        Reviewed by Tim Horton.
+        
+        Add InteractionInformationAtPosition.containerScrollingNodeID and initialize it in elementPositionInformation()
+        by asking the scrolling coordinator.
+        
+        Also add a way to get from a ScrollingNodeID to a UIScrollView to RemoteScrollingCoordinatorProxy,
+        which gets the scrolling node and asks the delegate for the UIView.
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollViewForScrollingNodeID const):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::scrollView const):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::elementPositionInformation):
+
 2019-08-07  Priyanka Agarwal  <pagarwal999@apple.com>
 
         Allow clients to toggle a text input field between being viewable and having characters hidden while maintaining 
