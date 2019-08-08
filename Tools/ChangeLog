@@ -1,3 +1,14 @@
+2019-08-08  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Fix /webkit/WebKitWebsiteData/databases failure
+        https://bugs.webkit.org/show_bug.cgi?id=200536
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp:
+        (testWebsiteDataDatabases): Databases take a moment to be written,
+        wait before fetching the data as it's done in other tests.
+
 2019-08-08  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Use canvas for timeline

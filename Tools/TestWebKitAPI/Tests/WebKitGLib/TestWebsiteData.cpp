@@ -413,6 +413,8 @@ static void testWebsiteDataDatabases(WebsiteDataTest* test, gconstpointer)
     test->waitUntilLoadFinished();
     test->runJavaScriptAndWaitUntilFinished("window.indexedDB.open('TestDatabase');", nullptr);
 
+    test->wait(1);
+
     dataList = test->fetch(databaseTypes);
     g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
