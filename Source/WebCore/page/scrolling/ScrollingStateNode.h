@@ -30,7 +30,7 @@
 #include "GraphicsLayer.h"
 #include "ScrollingCoordinator.h"
 #include <stdint.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 
@@ -180,10 +180,9 @@ private:
     Type m_representation { EmptyRepresentation };
 };
 
-class ScrollingStateNode : public RefCounted<ScrollingStateNode> {
+class ScrollingStateNode : public ThreadSafeRefCounted<ScrollingStateNode> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ScrollingStateNode(ScrollingNodeType, ScrollingStateTree&, ScrollingNodeID);
     virtual ~ScrollingStateNode();
     
     ScrollingNodeType nodeType() const { return m_nodeType; }
@@ -248,6 +247,7 @@ public:
 
 protected:
     ScrollingStateNode(const ScrollingStateNode&, ScrollingStateTree&);
+    ScrollingStateNode(ScrollingNodeType, ScrollingStateTree&, ScrollingNodeID);
 
     virtual void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;
 

@@ -54,7 +54,6 @@ ScrollingStateNode::ScrollingStateNode(const ScrollingStateNode& stateNode, Scro
     if (hasChangedProperty(Layer))
         setLayer(stateNode.layer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 
-    relaxAdoptionRequirement();
     scrollingStateTree().addNode(*this);
 }
 
