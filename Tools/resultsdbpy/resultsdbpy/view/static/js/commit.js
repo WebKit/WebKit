@@ -127,12 +127,10 @@ class Commit {
         this.order = json.order;
         this.repository_id = json.repository_id;
         this.timestamp = json.timestamp;
-    }
-    uuid() {
-        return this.timestamp * TIMESTAMP_TO_UUID_MULTIPLIER + this.order;
+        this.uuid = this.timestamp * TIMESTAMP_TO_UUID_MULTIPLIER + this.order;
     }
     compare(commit) {
-        return this.uuid() - commit.uuid();
+        return this.uuid - commit.uuid;
     }
 };
 
@@ -155,9 +153,9 @@ class _CommitBank {
         while (begin <= end) {
             const mid = Math.ceil((begin + end) / 2);
             const candidate = this.commits[mid];
-            if (candidate.uuid() === uuid)
+            if (candidate.uuid === uuid)
                 return candidate;
-            if (candidate.uuid() < uuid)
+            if (candidate.uuid < uuid)
                 begin = mid + 1;
             else
                 end = mid - 1;
@@ -183,12 +181,12 @@ class _CommitBank {
                     json[key].forEach(commitJson => {
                         const commit = new Commit(commitJson);
                         while (index >= 0) {
-                            if (self.commits[index].uuid() < commit.uuid()) {
+                            if (self.commits[index].uuid < commit.uuid) {
                                 self.commits.splice(index, 0, commit);
                                 --index;
                                 break;
                             }
-                            if (self.commits[index].uuid() === commit.uuid())
+                            if (self.commits[index].uuid === commit.uuid)
                                 break;
                             --index;
                         }
@@ -240,12 +238,12 @@ class _CommitBank {
                         countForRepository.set(commit.repository_id, countForRepository.get(commit.repository_id) + 1);
 
                     while (commitsIndex < self.commits.length) {
-                        if (self.commits[commitsIndex].uuid() > commit.uuid()) {
+                        if (self.commits[commitsIndex].uuid > commit.uuid) {
                             self.commits.splice(commitsIndex, 0, commit);
                             ++commitsIndex;
                             break;
                         }
-                        if (self.commits[commitsIndex].uuid() === commit.uuid())
+                        if (self.commits[commitsIndex].uuid === commit.uuid)
                             break;
                         ++commitsIndex;
                     }
@@ -260,7 +258,7 @@ class _CommitBank {
                 countForRepository.forEach((count, repo) => {
                     if (count === limit) {
                         let commit = new Commit(json[firstIndexForRepository.get(repo)]);
-                        minFound = Math.max(minFound, commit.uuid());
+                        minFound = Math.max(minFound, commit.uuid);
                     }
                 });
                 if (minFound != beginUuid)

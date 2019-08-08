@@ -35,7 +35,7 @@ import {deepCompare, ErrorDisplay, queryToParams, paramsToQuery} from '/assets/j
 import {Configuration} from '/assets/js/configuration.js';
 import {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider} from '/assets/js/drawer.js';
 import {DOM, REF} from '/library/js/Ref.js';
-import {Legend, Timeline} from '/assets/js/timeline.js';
+import {Legend, TimelineFromEndpoint} from '/assets/js/timeline.js';
 
 const DEFAULT_LIMIT = 100;
 const SUITES = JSON.parse('{{ suites|safe }}');    
@@ -66,7 +66,7 @@ class MainView {
         this.children = {};
 
         SUITES.forEach((suite) => {
-            this.children[suite] = new Timeline('api/results/' + suite, suite);
+            this.children[suite] = new TimelineFromEndpoint('api/results/' + suite, suite);
         });
     }
     unpackSuites(suitesJson) {
@@ -81,9 +81,10 @@ class MainView {
         });
 
         let sortedSuites = [...suites].sort();
+        Object.keys(this.children).forEach(key => {this.children[key].teardown();});
         this.children = {};
         sortedSuites.forEach((suite) => {
-            this.children[suite] = new Timeline('api/results/' + suite);
+            this.children[suite] = new TimelineFromEndpoint('api/results/' + suite);
         });
         return sortedSuites;
     }
@@ -143,7 +144,7 @@ class MainView {
         let children = this.children;
         return Legend(() => {
             for (let suite in children) {
-                children[suite].rerender();
+                children[suite].update();
             }
         }, true) + suites.map(suite => {
             return `<div class="section">

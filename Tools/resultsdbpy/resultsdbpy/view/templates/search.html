@@ -36,7 +36,7 @@ import {Configuration} from '/assets/js/configuration.js';
 import {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider} from '/assets/js/drawer.js';
 import {DOM, REF} from '/library/js/Ref.js';
 import {SearchBar} from '/assets/js/search.js';
-import {Legend, Timeline} from '/assets/js/timeline.js';
+import {Legend, TimelineFromEndpoint} from '/assets/js/timeline.js';
 
 const DEFAULT_LIMIT = 100;
 const SUITES = JSON.parse('{{ suites|safe }}');    
@@ -55,7 +55,7 @@ class SearchView {
                 state.children.push({
                     suite: this.currentParams.suite[i],
                     test: this.currentParams.test[i],
-                    timeline: new Timeline(`api/results/${this.currentParams.suite[i]}/${this.currentParams.test[i]}`, this.currentParams.suite[i]),
+                    timeline: new TimelineFromEndpoint(`api/results/${this.currentParams.suite[i]}/${this.currentParams.test[i]}`, this.currentParams.suite[i]),
                 });
             }
         }
@@ -129,7 +129,7 @@ class SearchView {
                 if (diff.children)
                     DOM.inject(element, Legend(() => {
                         self.ref.state.children.forEach((child) => {
-                            child.timeline.rerender();
+                            child.timeline.update();
                         });
                     }, false) + diff.children.map(renderChild).join(''));
                 if (diff.prepending) {
@@ -160,7 +160,8 @@ class SearchView {
                         didFind = true;
                         this.ref.state.children.splice(search, 1);
                         break;
-                    }
+                    } else
+                        this.ref.state.children[search].timeline.teardown();
                     needReRender = true;
                 }
                 if (!didFind) {
@@ -169,7 +170,7 @@ class SearchView {
                     newChildren.push({
                         suite: params.suite[i],
                         test: params.test[i],
-                        timeline: new Timeline(`api/results/${params.suite[i]}/${params.test[i]}`),
+                        timeline: new TimelineFromEndpoint(`api/results/${params.suite[i]}/${params.test[i]}`),
                     });
                 }
             }
@@ -239,7 +240,7 @@ DOM.inject(
             let child = {
                 suite: arguments[i].suite,
                 test: arguments[i].test,
-                timeline: new Timeline(`api/results/${arguments[i].suite}/${arguments[i].test}`),
+                timeline: new TimelineFromEndpoint(`api/results/${arguments[i].suite}/${arguments[i].test}`),
             }
 
             view.ref.setState({prepending: [child]});

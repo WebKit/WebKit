@@ -24,7 +24,8 @@
 import {CommitBank} from '/assets/js/commit.js';
 import {Configuration} from '/assets/js/configuration.js';
 import {deepCompare, ErrorDisplay, paramsToQuery, queryToParams} from '/assets/js/common.js';
-import {DOM, EventStream, REF} from '/library/js/Ref.js';
+import {DOM, EventStream, REF, FP} from '/library/js/Ref.js';
+import {Timeline} from '/library/js/components/TimelineComponents.js';
 
 
 const DEFAULT_LIMIT = 100;
@@ -71,165 +72,288 @@ class Expectations
 }
 let willFilterExpected = false;
 
-function tickForCommit(commit, scale) {
-    let params = {
-        branch: commit.branch ? [commit.branch] : queryToParams(document.URL.split('?')[1]).branch,
-        uuid: [commit.uuid()],
-    }
-    if (!params.branch)
-        delete params.branch;
-    const query = paramsToQuery(params);
+function minimumUuidForResults(results, limit) {
+    const now = Math.floor(Date.now() / 10);
+    let minDisplayedUuid = now;
+    let maxLimitedUuid = 0;
 
-    if (scale <= 0)
-        return '';
-    if (scale === 1)
-        return `<div class="scale">
-                <div class="line"></div>
-                    <div class="text">
-                        <a href="/commit?${query}" target="_blank">${String(commit.id).substring(0,10)}</a>
-                    </div>
-                </div>`;
-    let result = '';
-    while (scale > 0) {
-        let countToUse = scale;
-        if (countToUse === 11 || countToUse == 12)
-            countToUse = 6;
-        else if (countToUse > 10)
-            countToUse = 10;
-        result += `<div class="scale group-${countToUse}">
-                <div class="border-line-left"></div>
-                <div class="line"></div>
-                <div class="text">
-                    <a href="/commit?${query}" target="_blank">${String(commit.id).substring(0,10)}</a>
-                </div>
-                <div class="border-line-right"></div>
-            </div>`;
-        scale -= countToUse;
-    }
-    return result;
+    Object.keys(results).forEach((key) => {
+        results[key].forEach(pair => {
+            if (!pair.results.length)
+                return;
+            if (limit !== 1 && limit === pair.results.length)
+                maxLimitedUuid = Math.max(pair.results[0].uuid, maxLimitedUuid);
+            else if (limit === 1)
+                minDisplayedUuid = Math.min(pair.results[pair.results.length - 1].uuid, minDisplayedUuid);
+            else
+                minDisplayedUuid = Math.min(pair.results[0].uuid, minDisplayedUuid);
+        });
+    });
+
+    if (minDisplayedUuid === now)
+        return maxLimitedUuid;
+    return Math.max(minDisplayedUuid, maxLimitedUuid);
 }
 
-function renderTimeline(commits, repositories = [], top = false) {
-    // FIXME: This function breaks with more than 3 repositories because of <rdar://problem/51042981>
-    if (repositories.length === 0) {
-        if (top)
-            return '';
-        repositories = [null];
-    }
-    const start = top ? Math.ceil(repositories.length / 2) : 0;
-    const end = top ? repositories.length : Math.ceil(repositories.length / 2);
-    const numberOfElements = commits.length - Math.max(repositories.length - 1, 0)
-    return repositories.slice(start, end).map(repository => {
-        let commitsFromOtherRepos = 0;
-        let renderedElements = 0;
-        return `<div class="x-axis ${top ? 'top' : ''}">
-                ${commits.map(commit => {
-                    if (commit.repository_id && commit.repository_id !== repository) {
-                        ++commitsFromOtherRepos;
-                        return '';
+function commitsForResults(results, limit, allCommits = true) {
+    const minDisplayedUuid = minimumUuidForResults(limit);
+    let commits = [];
+    let repositories = new Set();
+    let currentCommitIndex = CommitBank.commits.length - 1;
+    Object.keys(results).forEach((key) => {
+        results[key].forEach(pair => {
+            pair.results.forEach(result => {
+                if (result.uuid < minDisplayedUuid)
+                    return;
+                let candidateCommits = [];
+
+                if (!allCommits)
+                    currentCommitIndex = CommitBank.commits.length - 1;
+                while (currentCommitIndex >= 0) {
+                    if (CommitBank.commits[currentCommitIndex].uuid < result.uuid)
+                        break;
+                    if (allCommits || CommitBank.commits[currentCommitIndex].uuid === result.uuid)
+                        candidateCommits.push(CommitBank.commits[currentCommitIndex]);
+                    --currentCommitIndex;
+                }
+                if (candidateCommits.length === 0 || candidateCommits[candidateCommits.length - 1].uuid !== result.uuid)
+                    candidateCommits.push({
+                        id: '?',
+                        uuid: result.uuid,
+                    });
+
+                let index = 0;
+                candidateCommits.forEach(commit => {
+                    if (commit.repository_id)
+                        repositories.add(commit.repository_id);
+                    while (index < commits.length) {
+                        if (commit.uuid === commits[index].uuid)
+                            return;
+                        if (commit.uuid > commits[index].uuid) {
+                            commits.splice(index, 0, commit);
+                            return;
+                        }
+                        ++index;
                     }
-                    const scale =  Math.min(commitsFromOtherRepos + 1, numberOfElements - renderedElements);
-                    commitsFromOtherRepos = 0;
-                    renderedElements += scale;
-                    return tickForCommit(commit, scale);
-                }).join('')}
-            </div>`;
-    }).join('');
-}
-
-class Dot {
-    static merge(dots = {}) {
-        let result = [];
-        let index = 0;
-        let hasData = true;
-
-        while (hasData) {
-            let dot = new Dot();
-            hasData = false;
-
-            Object.keys(dots).forEach(key => {
-                if (dots[key].length <= index)
-                    return;
-                hasData = true;
-                if (!dots[key][index].count)
-                    return;
-                if (dot.count)
-                    dot.combined = true;
-
-                dot.count += dots[key][index].count;
-                dot.failed += dots[key][index].failed;
-                dot.timeout += dots[key][index].timeout;
-                dot.crash += dots[key][index].crash;
-                if (dot.combined)
-                    dot.link = null;
-                else
-                    dot.link = dots[key][index].link;
+                    commits.push(commit);
+                });
             });
-            if (hasData)
-                result.push(dot);
-            ++index;
+        });
+    });
+    if (currentCommitIndex >= 0 && commits.length) {
+        let trailingRepositories = new Set(repositories);
+        trailingRepositories.delete(commits[commits.length - 1].repository_id);
+        while (currentCommitIndex >= 0 && trailingRepositories.size) {
+            const commit = CommitBank.commits[currentCommitIndex];
+            if (trailingRepositories.has(commit.repository_id)) {
+                commits.push(commit);
+                trailingRepositories.delete(commit.repository_id);
+            }
+            --currentCommitIndex;
         }
-        return result;
     }
-    constructor(count = 0, failed = 0, timeout = 0, crash = 0, combined = false, link = null) {
-        this.count = count;
-        this.failed = failed;
-        this.timeout = timeout;
-        this.crash = crash;
-        this.combined = combined;
-        this.link = link;
-    }
-    toString() {
-        if (!this.count)
-            return `<div class="dot empty"></div>`;
 
-        const self = this;
-
-        function render(cssClass, inside='') {
-            if (self.link)
-                return `<a href="${self.link}" target="_blank" class="${cssClass}">${inside}</a>`;
-            return `<div class="${cssClass}">${inside}</div>`;
-        }
-
-        if (!this.failed)
-            return render('dot success');
-
-        let key = 'failed';
-        if (this.timeout)
-            key = 'timeout';
-        if (this.crash)
-            key = 'crash';
-
-        if (!this.combined)
-            return render(`dot ${key}`, `<div class="tag" style="color:var(--boldInverseColor)">${this.failed}</div>`);
-
-        return render(`dot ${key}`, `<div class="tag" style="color:var(--boldInverseColor)">
-                ${function() {
-                    let percent = Math.ceil(self.failed / self.count * 100 - .5);
-                    if (percent > 0)
-                        return percent;
-                    return '<1';
-                }()} %
-            </div>`);
-    }
+    repositories = [...repositories];
+    repositories.sort();
+    return commits;
 }
 
-class Timeline {
+function scaleForCommits(commits) {
+    let scale = [];
+    for (let i = commits.length - 1; i >= 0; --i) {
+        const repository_id = commits[i].repository_id ? commits[i].repository_id : '?';
+        scale.unshift({});
+        scale[0][repository_id] = commits[i];
+        if (scale.length < 2)
+            continue;
+        Object.keys(scale[1]).forEach((key) => {
+            if (key === repository_id || key === '?' || key === 'uuid')
+                return;
+            scale[0][key] = scale[1][key];
+        });
+        scale[0].uuid = Math.max(...Object.keys(scale[0]).map((key) => {
+            return scale[0][key].uuid;
+        }));
+    }
+    return scale;
+}
+
+function repositoriesForCommits(commits) {
+    let repositories = new Set();
+    commits.forEach((commit) => {
+        if (commit.repository_id)
+            repositories.add(commit.repository_id);
+    });
+    repositories = [...repositories];
+    if (!repositories.length)
+        repositories = ['?'];
+    repositories.sort();
+    return repositories;
+}
+
+function xAxisFromScale(scale, repository, updatesArray, isTop=false)
+{
+    function scaleForRepository(scale) {
+        return scale.map(node => {
+            let commit = node[repository];
+            if (!commit)
+                commit = node['?'];
+            if (!commit)
+                return {id: '', uuid: null};
+            return commit;
+        });
+    }
+
+    return Timeline.CanvasXAxisComponent(scaleForRepository(scale), {
+        isTop: isTop,
+        height: 130,
+        onScaleClick: (node) => {
+            if (!node.label.id)
+                return;
+            let params = {
+                branch: node.label.branch ? [node.label.branch] : queryToParams(document.URL.split('?')[1]).branch,
+                uuid: [node.label.uuid],
+            }
+            if (!params.branch)
+                delete params.branch;
+            const query = paramsToQuery(params);
+            window.open(`/commit?${query}`, '_blank');
+        },
+        // Per the birthday paradox, 10% change of collision with 7.7 million commits with 12 character commits
+        getLabelFunc: (commit) => {return commit ? commit.id.substring(0,12) : '?';},
+        getScaleFunc: (commit) => commit.uuid,
+        exporter: (updateFunction) => {
+            updatesArray.push((scale) => {updateFunction(scaleForRepository(scale));});
+        },
+    });
+}
+
+const testsRegex = /tests_([a-z])+/;
+const failureTypeOrder = ['failed', 'timedout', 'crashed'];
+const failureTypeMapping = {
+    failed: 'ERROR',
+    timedout: 'TIMEOUT',
+    crashed: 'CRASH',
+}
+
+function inPlaceCombine(out, obj)
+{
+    if (!obj)
+        return out;
+
+    if (!out) {
+        out = {};
+        Object.keys(obj).forEach(key => {
+            if (key[0] === '_')
+                return;
+            if (obj[key] instanceof Object)
+                out[key] = inPlaceCombine(out[key], obj[key]);
+            else
+                out[key] = obj[key];
+        });
+    } else {
+        Object.keys(out).forEach(key => {
+            if (key[0] === '_')
+                return;
+
+            if (out[key] instanceof Object) {
+                out[key] = inPlaceCombine(out[key], obj[key]);
+                return;
+            }
+
+            // Set of special case keys which need to be added together
+            if (key.match(testsRegex)) {
+                out[key] += obj[key];
+                return;
+            }
+
+            // If the key exists, but doesn't match, delete it
+            if (!(key in obj) || out[key] !== obj[key]) {
+                delete out[key];
+                return;
+            }
+        });
+        Object.keys(obj).forEach(key => {
+            if (key.match(testsRegex) && !(key in out))
+                out[key] = obj[key];
+        });
+    }
+    return out;
+}
+
+function statsForSingleResult(result) {
+    const actualId = Expectations.stringToStateId(result.actual);
+    const unexpectedId = Expectations.stringToStateId(Expectations.unexpectedResults(result.actual, result.expected));
+    let stats = {
+        tests_run: 1,
+        tests_skipped: 0,
+    }
+    failureTypeOrder.forEach(type => {
+        const idForType = Expectations.stringToStateId(failureTypeMapping[type]);
+        stats[`tests_${type}`] = actualId > idForType  ? 0 : 1;
+        stats[`tests_unexpected_${type}`] = unexpectedId > idForType  ? 0 : 1;
+    });
+    return stats;
+}
+
+function combineResults() {
+    let counts = new Array(arguments.length).fill(0);
+    let data = [];
+
+    while (true) {
+        // Find candidate uuid
+        let uuid = 0;
+        for (let i = 0; i < counts.length; ++i) {
+            let candidateUuid = null;
+            while (arguments[i] && arguments[i].length > counts[i]) {
+                candidateUuid = arguments[i][counts[i]].uuid;
+                if (candidateUuid)
+                    break;
+                ++counts[i];
+            }
+            if (candidateUuid)
+                uuid = Math.max(uuid, candidateUuid);
+        }
+
+        if (!uuid)
+            return data;
+
+        // Combine relevant results
+        let dataNode = null;
+        for (let i = 0; i < counts.length; ++i) {
+            while (counts[i] < arguments[i].length && arguments[i][counts[i]] && arguments[i][counts[i]].uuid === uuid) {
+                if (dataNode && !dataNode.stats)
+                    dataNode.stats = statsForSingleResult(dataNode);
+
+                dataNode = inPlaceCombine(dataNode, arguments[i][counts[i]]);
+
+                if (dataNode.stats && !arguments[i][counts[i]].stats)
+                    dataNode.stats = inPlaceCombine(dataNode.stats, statsForSingleResult(arguments[i][counts[i]]));
+
+                ++counts[i];
+            }
+        }
+        if (dataNode)
+            data.push(dataNode);
+    }
+    return data;
+}
+
+class TimelineFromEndpoint {
     constructor(endpoint, suite = null) {
         this.endpoint = endpoint;
         this.displayAllCommits = true;
 
         this.configurations = Configuration.fromQuery();
         this.results = {};
-        this.collapsed = {};
-        this.expandedSDKs = {};
         this.suite = suite;  // Suite is often implied by the endpoint, but trying to determine suite from endpoint is not trivial.
 
+        this.updates = [];
+        this.xaxisUpdates = [];
+        this.timelineUpdate = null;
+        this.repositories = [];
+
         const self = this;
-        this.configurations.forEach(configuration => {
-            this.results[configuration.toKey()] = [];
-            this.collapsed[configuration.toKey()] = true;
-        });
 
         this.latestDispatch = Date.now();
         this.ref = REF.createRef({
@@ -244,15 +368,46 @@ class Timeline {
             }
         });
 
-        CommitBank.callbacks.push(() => {
-            const params = queryToParams(document.URL.split('?')[1]);
-            self.ref.setState(params.limit ? parseInt(params.limit[params.limit.length - 1]) : DEFAULT_LIMIT);
-        });
+        this.commit_callback = () => {
+            self.update();
+        };
+        CommitBank.callbacks.push(this.commit_callback);
 
         this.reload();
     }
+    teardown() {
+        CommitBank.callbacks = CommitBank.callbacks.filter((value, index, arr) => {
+            return this.commit_callback === value;
+        });
+    }
+    update() {
+        const params = queryToParams(document.URL.split('?')[1]);
+        const commits = commitsForResults(this.results, params.limit ? parseInt(params.limit[params.limit.length - 1]) : DEFAULT_LIMIT, this.allCommits);
+        const scale = scaleForCommits(commits);
+
+        const newRepositories = repositoriesForCommits(commits);
+        let haveNewRepos = this.repositories.length !== newRepositories.length;
+        for (let i = 0; !haveNewRepos && i < this.repositories.length && i < newRepositories.length; ++i)
+            haveNewRepos = this.repositories[i] !== newRepositories[i];
+        if (haveNewRepos && this.timelineUpdate) {
+            this.xaxisUpdates = [];
+            let top = true;
+            let components = [];
+
+            newRepositories.forEach(repository => {
+                components.push(xAxisFromScale(scale, repository, this.xaxisUpdates, top));
+                top = false;
+            });
+
+            this.timelineUpdate(components);
+            this.repositories = newRepositories;
+        }
+
+        this.updates.forEach(func => {func(scale);})
+        this.xaxisUpdates.forEach(func => {func(scale);});
+    }
     rerender() {
-        let params = queryToParams(document.URL.split('?')[1]);
+        const params = queryToParams(document.URL.split('?')[1]);
         this.ref.setState(params.limit ? parseInt(params.limit[params.limit.length - 1]) : DEFAULT_LIMIT);
     }
     reload() {
@@ -273,11 +428,8 @@ class Timeline {
         if (!deepCompare(newConfigs, this.configurations)) {
             this.configurations = newConfigs;
             this.results = {};
-            this.collapsed = {};
-            this.expandedSDKs = {};
             this.configurations.forEach(configuration => {
                 this.results[configuration.toKey()] = [];
-                this.collapsed[configuration.toKey()] = true;
             });
         }
 
@@ -331,277 +483,225 @@ class Timeline {
             state: this.ref.state,
             onStateUpdate: (element, state) => {
                 if (state.error)
-                    element.innerHTML = ErrorDisplay(state);
+                    DOM.inject(element, ErrorDisplay(state));
                 else if (state > 0)
                     DOM.inject(element, this.render(state));
                 else
-                    element.innerHTML = this.placeholder();
+                    DOM.inject(element, this.placeholder());
             }
         });
 
         return `<div class="content" ref="${this.ref}"></div>`;
     }
+
     render(limit) {
-        let now = Math.floor(Date.now() / 10);
-        let minDisplayedUuid = now;
-        let maxLimitedUuid = 0;
-        this.configurations.forEach(configuration => {
-            this.results[configuration.toKey()].forEach(pair => {
-                if (!pair.results.length)
-                    return;
-                if (limit !== 1 && limit === pair.results.length)
-                    maxLimitedUuid = Math.max(pair.results[0].uuid, maxLimitedUuid);
-                else if (limit === 1)
-                    minDisplayedUuid = Math.min(pair.results[pair.results.length - 1].uuid, minDisplayedUuid);
-                else
-                    minDisplayedUuid = Math.min(pair.results[0].uuid, minDisplayedUuid);
-            });
-        });
-        if (minDisplayedUuid === now)
-            minDisplayedUuid = maxLimitedUuid;
-        else
-            minDisplayedUuid = Math.max(minDisplayedUuid, maxLimitedUuid);
+        const branch = queryToParams(document.URL.split('?')[1]).branch;
+        const self = this;
+        const commits = commitsForResults(this.results, limit, this.allCommits);
+        const scale = scaleForCommits(commits);
 
-        let commits = [];
-        let repositories = new Set();
-        let currentCommitIndex = CommitBank.commits.length - 1;
-        this.configurations.forEach(configuration => {
-            this.results[configuration.toKey()].forEach(pair => {
-                pair.results.forEach(result => {
-                    if (result.uuid < minDisplayedUuid)
-                        return;
-                    let candidateCommits = [];
-
-                    if (!this.displayAllCommits)
-                        currentCommitIndex = CommitBank.commits.length - 1;
-                    while (currentCommitIndex >= 0) {
-                        if (CommitBank.commits[currentCommitIndex].uuid() < result.uuid)
-                            break;
-                        if (this.displayAllCommits || CommitBank.commits[currentCommitIndex].uuid() == result.uuid)
-                            candidateCommits.push(CommitBank.commits[currentCommitIndex]);
-                        --currentCommitIndex;
-                    }
-                    if (candidateCommits.length === 0 || candidateCommits[candidateCommits.length - 1].uuid() !== result.uuid)
-                        candidateCommits.push({
-                            'id': '?',
-                            'uuid': () => {return result.uuid;}
-                        });
-
-                    let index = 0;
-                    candidateCommits.forEach(commit => {
-                        if (commit.repository_id)
-                            repositories.add(commit.repository_id);
-                        while (index < commits.length) {
-                            if (commit.uuid() === commits[index].uuid())
-                                return;
-                            if (commit.uuid() > commits[index].uuid()) {
-                                commits.splice(index, 0, commit);
-                                return;
-                            }
-                            ++index;
-                        }
-                        commits.push(commit);
-                    });
-                });
-            });
-        });
-        if (currentCommitIndex >= 0 && commits.length) {
-            let trailingRepositories = new Set(repositories);
-            trailingRepositories.delete(commits[commits.length - 1].repository_id);
-            while (currentCommitIndex >= 0 && trailingRepositories.size) {
-                const commit = CommitBank.commits[currentCommitIndex];
-                if (trailingRepositories.has(commit.repository_id)) {
-                    commits.push(commit);
-                    trailingRepositories.delete(commit.repository_id);
-                }
-                --currentCommitIndex;
-            }
-
+        const computedStyle = getComputedStyle(document.body);
+        const colorMap = {
+            success: computedStyle.getPropertyValue('--greenLight').trim(),
+            failed: computedStyle.getPropertyValue('--redLight').trim(),
+            timedout: computedStyle.getPropertyValue('--orangeLight').trim(),
+            crashed: computedStyle.getPropertyValue('--purpleLight').trim(),
         }
 
-        repositories = [...repositories];
-        repositories.sort();
+        this.updates = [];
+        const options = {
+            getScaleFunc: (value) => {
+                if (value && value.uuid)
+                    return {uuid: value.uuid};
+                return {};
+            },
+            compareFunc: (a, b) => {return b.uuid - a.uuid;},
+            renderFactory: (drawDot) => (data, context, x, y) => {
+                if (!data)
+                    return drawDot(context, x, y, true);
 
-        return `<div class="timeline">
-                <div ${repositories.length > 1 ? `class="header with-top-x-axis"` : `class="header"`}>
-                    ${this.configurations.map(configuration => {
-                        if (Object.keys(this.results[configuration.toKey()]).length === 0)
-                            return '';
-                        const self = this;
-                        const expander = REF.createRef({
-                            onElementMount: element => {
-                                element.onclick = () => {
-                                    self.collapsed[configuration.toKey()] = !self.collapsed[configuration.toKey()];
-                                    self.rerender();
-                                }
-                            },
-                        });
-                        let result = `<div class="series">
-                                <a ref="${expander}" style="cursor: pointer;">
-                                    ${function() {return self.collapsed[configuration.toKey()] ? '+' : '-'}()}
-                                </a>
-                                ${configuration}
-                            </div>`;
-                        if (!this.collapsed[configuration.toKey()]) {
-                            const seriesHeaderForSDKLessConfig = config => {
-                                if (typeof config === 'string')
-                                    return `<div class="series">${config}</div>`;
+                let tag = null;
+                let color = colorMap.success;
+                if (data.stats) {
+                    tag = data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}failed`];
 
-                                let queueParams = config.toParams();
-                                queueParams['suite'] = [this.suite];
-                                const configLink = `<a class="text tiny" href="/urls/queue?${paramsToQuery(queueParams)}" target="_blank">${config}</a>`;
-                                const key = config.toKey();
-                                const expander = REF.createRef({
-                                    onElementMount: element => {
-                                        element.onclick = () => {
-                                            self.expandedSDKs[key] = !self.expandedSDKs[key];
-                                            self.rerender();
-                                        }
-                                    },
-                                });
-                                if (this.expandedSDKs[key] === undefined)
-                                    return `<div class="series">${configLink}</div>`;
-                                return `<div class="series text tiny">
-                                        <a ref="${expander}" style="cursor: pointer;">
-                                            ${function() {return self.expandedSDKs[key] ? '-sdk' : '+sdk'}()}
-                                        </a>
-                                         | ${configLink}
-                                    </div>`;
-                            }
-                            let lastConfig = null;
+                    // If we have failures that are a result of multiple runs, combine them.
+                    if (tag && !data.start_time) {
+                        tag = Math.ceil(tag / data.stats.tests_run * 100 - .5);
+                        if (!tag)
+                            tag = '<1';
+                        tag = `${tag} %`
+                    }
 
-                            this.results[configuration.toKey()].forEach(pair => {
-                                if (pair.results.length <= 0 || pair.results[pair.results.length - 1].uuid < minDisplayedUuid)
-                                    return '';
+                    failureTypeOrder.forEach(type => {
+                        if (data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}${type}`] > 0)
+                            color = colorMap[type];
+                    });
+                } else {
+                    let resultId = Expectations.stringToStateId(data.actual);
+                    if (willFilterExpected)
+                        resultId = Expectations.stringToStateId(Expectations.unexpectedResults(data.actual, data.expected));
+                    failureTypeOrder.forEach(type => {
+                        if (Expectations.stringToStateId(failureTypeMapping[type]) >= resultId)
+                            color = colorMap[type];
+                    });
+                }
 
-                                let config = new Configuration(pair.configuration);
-                                const sdk = config.sdk;
-                                delete config.sdk;  // Strip out sdk information.
+                return drawDot(context, x, y, false, tag ? tag : null, false, color);
+            },
+        };
 
-                                const key = config.toKey();
-                                const compareIndex = config.compare(lastConfig);
-                                if (lastConfig !== null && compareIndex != 0 && !this.expandedSDKs[lastConfig.toKey()])
-                                    result += seriesHeaderForSDKLessConfig(lastConfig);
-                                else if (compareIndex === 0 && this.expandedSDKs[key] === undefined)
-                                    this.expandedSDKs[key] = false;  // Populate this dictionary on the fly.
-                                if (this.expandedSDKs[key]) {
-                                    if (compareIndex)
-                                        result += seriesHeaderForSDKLessConfig(config);
-                                    result += `<div class="series">${sdk}</div>`;
-                                }
-                                lastConfig = config;
-                            });
-                            if (lastConfig !== null && !this.expandedSDKs[lastConfig.toKey()])
-                                result += seriesHeaderForSDKLessConfig(lastConfig);
-                        }
-                        return result;
-                    }).join('')}
-                </div>
-                <div class="content">
-                    ${renderTimeline(commits, repositories, true)}
-                    ${this.configurations.map(configuration => {
-                        if (Object.keys(this.results[configuration.toKey()]).length === 0)
-                            return '';
+        function onDotClickFactory(configuration) {
+            return (data) => {
+                // FIXME: We should do something sane here, but we probably need another endpoint
+                if (!data.start_time) {
+                    alert('Node is a combination of multiple runs');
+                    return;
+                }
 
-                        let currentArrayIndex = new Array(this.results[configuration.toKey()].length).fill(1);
-                        let dots = {};
-                        for (let i = 0; i < this.results[configuration.toKey()].length; ++i) {
-                            const pairForIndex = this.results[configuration.toKey()][i];
-                            if (pairForIndex.results.length <= 0 || pairForIndex.results[pairForIndex.results.length - 1].uuid < minDisplayedUuid)
-                                continue;
-                            dots[new Configuration(pairForIndex.configuration).toKey()] = [];
-                        }
-                        commits.slice(0, commits.length - Math.max(repositories.length - 1, 0)).forEach(commit => {
-                            for (let i = 0; i < currentArrayIndex.length; ++i) {
-                                const pairForIndex = this.results[configuration.toKey()][i];
-                                if (pairForIndex.results.length <= 0 || pairForIndex.results[pairForIndex.results.length - 1].uuid < minDisplayedUuid)
-                                    continue;
+                let buildParams = configuration.toParams();
+                buildParams['suite'] = [self.suite];
+                buildParams['uuid'] = [data.uuid];
+                buildParams['after_time'] = [data.start_time];
+                buildParams['before_time'] = [data.start_time];
+                if (branch)
+                    buildParams['branch'] = branch;
+                window.open(`/urls/build?${paramsToQuery(buildParams)}`, '_blank');
+            }
+        }
 
-                                const config = new Configuration(pairForIndex.configuration);
-                                const configurationKey = config.toKey();
-                                let resultIndex = pairForIndex.results.length - currentArrayIndex[i];
-                                if (resultIndex < 0) {
-                                    dots[configurationKey].push(new Dot());
-                                    continue;
-                                }
+        function exporterFactory(data) {
+            return (updateFunction) => {
+                self.updates.push((scale) => {updateFunction(data, scale);});
+            }
+        }
 
-                                if (commit.uuid() === pairForIndex.results[resultIndex].uuid) {
-                                    let buildParams = config.toParams();
-                                    buildParams['suite'] = [this.suite];
-                                    buildParams['uuid'] = [commit.uuid()];
-                                    const buildLink = `/urls/build?${paramsToQuery(buildParams)}`;
+        let children = [];
+        this.configurations.forEach(configuration => {
+            if (!this.results[configuration.toKey()] || Object.keys(this.results[configuration.toKey()]).length === 0)
+                return;
 
-                                    if (pairForIndex.results[resultIndex].stats)
-                                        dots[configurationKey].push(new Dot(
-                                            pairForIndex.results[resultIndex].stats.tests_run,
-                                            pairForIndex.results[resultIndex].stats[`tests${willFilterExpected ? '_unexpected_' : '_'}failed`],
-                                            pairForIndex.results[resultIndex].stats[`tests${willFilterExpected ? '_unexpected_' : '_'}timedout`],
-                                            pairForIndex.results[resultIndex].stats[`tests${willFilterExpected ? '_unexpected_' : '_'}crashed`],
-                                            false,
-                                            buildLink,
-                                        ));
-                                    else {
-                                        let resultId = Expectations.stringToStateId(pairForIndex.results[resultIndex].actual);
-                                        if (willFilterExpected)
-                                            resultId = Expectations.stringToStateId(Expectations.unexpectedResults(
-                                                pairForIndex.results[resultIndex].actual,
-                                                pairForIndex.results[resultIndex].expected,
-                                            ));
+            // Create a list of configurations to display with SDKs stripped
+            let mappedChildrenConfigs = {};
+            let childrenConfigsBySDK = {}
+            let resultsByKey = {};
+            this.results[configuration.toKey()].forEach(pair => {
+                const strippedConfig = new Configuration(pair.configuration);
+                resultsByKey[strippedConfig.toKey()] = combineResults([], [...pair.results].sort(function(a, b) {return b.uuid - a.uuid;}));
+                delete strippedConfig.sdk;
+                mappedChildrenConfigs[strippedConfig.toKey()] = strippedConfig;
+                if (!childrenConfigsBySDK[strippedConfig.toKey()])
+                    childrenConfigsBySDK[strippedConfig.toKey()] = [];
+                childrenConfigsBySDK[strippedConfig.toKey()].push(new Configuration(pair.configuration));
+            });
+            let childrenConfigs = [];
+            Object.keys(mappedChildrenConfigs).forEach(key => {
+                childrenConfigs.push(mappedChildrenConfigs[key]);
+            });
+            childrenConfigs.sort(function(a, b) {return a.compare(b);});
 
-                                        dots[configurationKey].push(new Dot(
-                                            1,
-                                            resultId <= Expectations.stringToStateId('ERROR') ? 1 : 0,
-                                            resultId <= Expectations.stringToStateId('TIMEOUT') ? 1 : 0,
-                                            resultId <= Expectations.stringToStateId('CRASH') ? 1 : 0,
-                                            false,
-                                            buildLink,
-                                        ));
-                                    }
-                                } else
-                                    dots[configurationKey].push(new Dot());
+            // Create the collapsed timelines, cobine results
+            let allResults = [];
+            let collapsedTimelines = [];
+            childrenConfigs.forEach(config => {
+                childrenConfigsBySDK[config.toKey()].sort(function(a, b) {return a.compareSDKs(b);});
 
-                                while (resultIndex >= 0 && commit.uuid() <= pairForIndex.results[resultIndex].uuid) {
-                                    ++currentArrayIndex[i];
-                                    resultIndex = pairForIndex.results.length - currentArrayIndex[i];
-                                }
-                            }
-                        });
+                let resultsForConfig = [];
+                childrenConfigsBySDK[config.toKey()].forEach(sdkConfig => {
+                    resultsForConfig = combineResults(resultsForConfig, resultsByKey[sdkConfig.toKey()]);
+                });
+                allResults = combineResults(allResults, resultsForConfig);
 
-                        if (this.collapsed[configuration.toKey()])
-                            return `<div class="series">${Dot.merge(dots).map(dot => {return dot.toString();}).join('')}</div>`;
+                let queueParams = config.toParams();
+                queueParams['suite'] = [this.suite];
+                if (branch)
+                    queueParams['branch'];
+                let myTimeline = Timeline.SeriesWithHeaderComponent(
+                    `${childrenConfigsBySDK[config.toKey()].length > 1 ? ' | ' : ''}<a href="/urls/queue?${paramsToQuery(queueParams)}" target="_blank">${config}</a>`,
+                    Timeline.CanvasSeriesComponent(resultsForConfig, scale, {
+                        getScaleFunc: options.getScaleFunc,
+                        compareFunc: options.compareFunc,
+                        renderFactory: options.renderFactory,
+                        exporter: options.exporter,
+                        onDotClick: onDotClickFactory(config),
+                        exporter: exporterFactory(resultsForConfig),
+                    }));
 
-                        let result = '';
-                        let currentDots = {};
-                        let lastConfig = null;
+                if (childrenConfigsBySDK[config.toKey()].length > 1) {
+                    let timelinesBySDK = [];
+                    childrenConfigsBySDK[config.toKey()].forEach(sdkConfig => {
+                        timelinesBySDK.push(
+                            Timeline.SeriesWithHeaderComponent(`${sdkConfig.sdk}`,
+                                Timeline.CanvasSeriesComponent(resultsByKey[sdkConfig.toKey()], scale, {
+                                    getScaleFunc: options.getScaleFunc,
+                                    compareFunc: options.compareFunc,
+                                    renderFactory: options.renderFactory,
+                                    exporter: options.exporter,
+                                    onDotClick: onDotClickFactory(sdkConfig),
+                                    exporter: exporterFactory(resultsByKey[sdkConfig.toKey()]),
+                                })));
+                    });
+                    myTimeline = Timeline.ExpandableSeriesWithHeaderExpanderComponent(myTimeline, ...timelinesBySDK);
+                }
+                collapsedTimelines.push(myTimeline);
+            });
 
-                        this.results[configuration.toKey()].forEach(pair => {
-                            let config = new Configuration(pair.configuration);
-                            const key = config.toKey();
-                            if (!dots[key])
-                                return;
-                            delete config.sdk;  // Strip out sdk information
+            if (collapsedTimelines.length === 0)
+                return;
+            if (collapsedTimelines.length === 1) {
+                if (!collapsedTimelines[0].header.includes('class="series"'))
+                    collapsedTimelines[0].header = Timeline.HeaderComponent(collapsedTimelines[0].header);
+                children.push(collapsedTimelines[0]);
+                return;
+            }
 
-                            const compareIndex = config.compare(lastConfig);
-                            const isSDKExpanded = this.expandedSDKs[config.toKey()];
-                            if (compareIndex || isSDKExpanded) {
-                                result += `<div class="series">${Dot.merge(currentDots).map(dot => {return dot.toString();}).join('')}</div>`;
-                                currentDots = {};
-                            }
-                            if (compareIndex && isSDKExpanded)
-                                result += '<div class="series"></div>';
-                            currentDots[key] = dots[key];
-                            lastConfig = config;
-                        });
-                        if (currentDots)
-                            result += `<div class="series">${Dot.merge(currentDots).map(dot => {return dot.toString();}).join('')}</div>`;
+            children.push(
+                Timeline.ExpandableSeriesWithHeaderExpanderComponent(
+                Timeline.SeriesWithHeaderComponent(` ${configuration}`,
+                    Timeline.CanvasSeriesComponent(allResults, scale, {
+                        getScaleFunc: options.getScaleFunc,
+                        compareFunc: options.compareFunc,
+                        renderFactory: options.renderFactory,
+                        onDotClick: onDotClickFactory(configuration),
+                        exporter: exporterFactory(allResults),
+                    })),
+                ...collapsedTimelines
+            ));
+        });
 
-                        return result;
-                    }).join('')}
-                    ${renderTimeline(commits, repositories)}
-                </div>
-            </div>`;
+        let top = true;
+        self.xaxisUpdates = [];
+        this.repositories = repositoriesForCommits(commits);
+        this.repositories.forEach(repository => {
+            const xAxisComponent = xAxisFromScale(scale, repository, self.xaxisUpdates, top);
+            if (top)
+                children.unshift(xAxisComponent);
+            else
+                children.push(xAxisComponent);
+            top = false;
+        });
+
+        const composer = FP.composer((updateTimeline) => {
+            self.timelineUpdate = (xAxises) => {
+                children.splice(0, 1);
+                if (self.repositories.length > 1)
+                    children.splice(children.length - self.repositories.length, self.repositories.length);
+
+                let top = true;
+                xAxises.forEach(component => {
+                    if (top)
+                        children.unshift(component);
+                    else
+                        children.push(component);
+                    top = false;
+                });
+                updateTimeline(children);
+            };
+        });
+        return Timeline.CanvasContainer(composer, ...children);
     }
 }
+
 
 function LegendLabel(eventStream, filterExpectedText, filterUnexpectedText) {
     let ref = REF.createRef({
@@ -680,4 +780,4 @@ function Legend(callback=null, plural=false) {
     return `<div class="content">${result}</div><br>`;
 }
 
-export {Legend, Timeline, Expectations};
+export {Legend, TimelineFromEndpoint, Expectations};

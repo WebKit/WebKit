@@ -1,3 +1,41 @@
+2019-08-08  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Use canvas for timeline
+        https://bugs.webkit.org/show_bug.cgi?id=200172
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/js/commit.js:
+        (Commit.constructor): Make uuid a member variable instead of a member function for efficiency.
+        (Commit.compare): Ditto.
+        (_CommitBank.commitByUuid): Ditto.
+        (_CommitBank._loadSiblings): Ditto.
+        (_CommitBank._load): Ditto.
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (tickForCommit): Deleted.
+        (minimumUuidForResults): Given a dictionary of result lists, determine the minimum UUID
+        which encompasses all results. Crucially, this function must exclude an UUIDs which may
+        refer to results excluded because of the limit argument.
+        (renderTimeline): Deleted.
+        (commitsForResults): Given a dictionary of result lists, return a list of commits associated
+        with those results.
+        (scaleForCommits): Given a list of commits, generate a scale to be consumed by the canvas Timeline.
+        (repositoriesForCommits): Given a list of commits, return a sorted list of associated repository ids.
+        (xAxisFromScale): Create a canvas-based x-axis based on the provided scale and a repository id.
+        (inPlaceCombine): Combine result objects together.
+        (statsForSingleResult): Turn a single result into a stat object.
+        (combineResults): Given lists of results, combine these lists while keeping the original lists unchanged.
+        (Dot): Deleted.
+        (TimelineFromEndpoint): Renamed from Timeline.
+        (TimelineFromEndpoint.constructor): Canvas Timeline manages expansion and collapsing of nested timelines.
+        (TimelineFromEndpoint.teardown): Detach callbacks from CommitBank.
+        (TimelineFromEndpoint.update): Update with any new commit information, force a re-draw of the current
+        cache contents.
+        (TimelineFromEndpoint.reload): Remove management of nested timelines.
+        (TimelineFromEndpoint.render): Use canvas Timeline instead of html timeline to visualize results.
+        * resultsdbpy/resultsdbpy/view/templates/search.html: Use TimelineFromEndpoint class.
+        * resultsdbpy/resultsdbpy/view/templates/suite_results.html: Ditto.
+
 2019-08-08  Brady Eidson  <beidson@apple.com>
 
         Do not allow navigations of frames about to get replaced by the result of evaluating javascript: URLs
