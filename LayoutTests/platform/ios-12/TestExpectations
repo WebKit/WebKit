@@ -11,3 +11,17 @@ fast/forms/password-scrolled-after-caps-lock-toggled.html [ Skip ]
 
 # rdar://53551736 (Layout Test editing/pasteboard/paste-and-sanitize.html is a Flaky Failure on iOS 13)
 editing/pasteboard/paste-and-sanitize.html [ Pass ]
+
+# rdar://53866783 (REGRESSION: Layout Test fast/shadow-dom/click-text-inside-linked-slot.html is Failing)
+fast/shadow-dom/click-text-inside-linked-slot.html [ Pass ]
+
+# rdar://53946482 (REGRESSION: Multiple Layout Tests (*-using-open-panel.html) are Timing Out)
+fast/files/apply-blob-url-to-xhr-using-open-panel.html [ Pass ]
+fast/files/file-reader-abort-using-open-panel.html [ Pass ]
+http/tests/local/formdata/send-form-data-with-empty-file-filename-using-open-panel.html [ Pass ]
+http/tests/local/fileapi/file-last-modified-using-open-panel.html [ Pass ]
+
+# rdar://53957264 (REGRESSION: Layout Tests http/tests/misc/iframe-beforeunload-dialog-not-matching-ancestor-securityorigin.html and http/tests/misc/iframe-beforeunload-dialog-block-modals.html Timing Out)
+http/tests/misc/iframe-beforeunload-dialog-not-matching-ancestor-securityorigin.html [ Pass ]
+http/tests/misc/iframe-beforeunload-dialog-block-modals.html [ Pass ]
+

@@ -1,5 +1,27 @@
 2019-08-08  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r248312. rdar://problem/53829560
+
+    Updating Test Expectations for <rdar://53957264>, <rdar://53946482>, <rdar://53866783>
+    
+    Unreviewed Test Gardening.
+    
+    * platform/ios-12/TestExpectations:
+    * platform/ios/TestExpectations:
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@248312 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-06  Russell Epstein  <repstein@apple.com>
+
+            Updating Test Expectations for <rdar://53957264>, <rdar://53946482>, <rdar://53866783>
+
+            Unreviewed Test Gardening.
+
+            * platform/ios-12/TestExpectations:
+            * platform/ios/TestExpectations:
+
+2019-08-08  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r247833. rdar://problem/53551736
 
     rdar://53551736 (Layout Test editing/pasteboard/paste-and-sanitize.html is a Flaky Failure on iOS 13).
