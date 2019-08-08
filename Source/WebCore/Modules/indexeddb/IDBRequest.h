@@ -41,6 +41,7 @@
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Function.h>
 #include <wtf/Scope.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -60,7 +61,7 @@ class IDBConnectionProxy;
 class IDBConnectionToServer;
 }
 
-class IDBRequest : public EventTargetWithInlineData, public IDBActiveDOMObject, public RefCounted<IDBRequest>, public CanMakeWeakPtr<IDBRequest> {
+class IDBRequest : public EventTargetWithInlineData, public IDBActiveDOMObject, public ThreadSafeRefCounted<IDBRequest>, public CanMakeWeakPtr<IDBRequest> {
     WTF_MAKE_ISO_ALLOCATED(IDBRequest);
 public:
     enum class NullResultType {
@@ -102,8 +103,8 @@ public:
 
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    using ThreadSafeRefCounted::ref;
+    using ThreadSafeRefCounted::deref;
 
     void completeRequestAndDispatchEvent(const IDBResultData&);
 
@@ -160,8 +161,8 @@ private:
     void stop() final;
     virtual void cancelForStop();
 
-    void refEventTarget() final { RefCounted::ref(); }
-    void derefEventTarget() final { RefCounted::deref(); }
+    void refEventTarget() final { ThreadSafeRefCounted::ref(); }
+    void derefEventTarget() final { ThreadSafeRefCounted::deref(); }
     void uncaughtExceptionInEventHandler() final;
 
     virtual bool isOpenDBRequest() const { return false; }
