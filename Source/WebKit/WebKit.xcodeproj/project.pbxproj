@@ -911,6 +911,10 @@
 		467E43E82243FF7D00B13924 /* WebProcessDataStoreParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 467E43E72243FF6D00B13924 /* WebProcessDataStoreParameters.h */; };
 		46A2B6091E5676A600C3DEDA /* BackgroundProcessResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 46A2B6071E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.h */; };
 		46B0524722668D8500265B97 /* WebDeviceOrientationAndMotionAccessController.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B0524422668D2300265B97 /* WebDeviceOrientationAndMotionAccessController.h */; };
+		46BEB6D722FB9BD700269867 /* StorageArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 46BEB6D522FB9BD600269867 /* StorageArea.h */; };
+		46BEB6DB22FB9D4800269867 /* LocalStorageNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 46BEB6D922FB9D4800269867 /* LocalStorageNamespace.h */; };
+		46BEB6DF22FBB16B00269867 /* SessionStorageNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 46BEB6DD22FBB16B00269867 /* SessionStorageNamespace.h */; };
+		46BEB6E322FBB21A00269867 /* TransientLocalStorageNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 46BEB6E122FBB21A00269867 /* TransientLocalStorageNamespace.h */; };
 		46DF063C1F3905F8001980BB /* NetworkCORSPreflightChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DF063A1F3905E5001980BB /* NetworkCORSPreflightChecker.h */; };
 		4A3CC18B19B0640F00D14AEF /* UserMediaPermissionRequestManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F3A19AF7B04002EBAB5 /* UserMediaPermissionRequestManagerProxy.h */; };
 		4A3CC18D19B0641900D14AEF /* UserMediaPermissionRequestProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F3C19AF7B04002EBAB5 /* UserMediaPermissionRequestProxy.h */; };
@@ -3192,6 +3196,14 @@
 		46A2B6071E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundProcessResponsivenessTimer.h; sourceTree = "<group>"; };
 		46B0524422668D2300265B97 /* WebDeviceOrientationAndMotionAccessController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationAndMotionAccessController.h; sourceTree = "<group>"; };
 		46B0524522668D2400265B97 /* WebDeviceOrientationAndMotionAccessController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDeviceOrientationAndMotionAccessController.cpp; sourceTree = "<group>"; };
+		46BEB6D522FB9BD600269867 /* StorageArea.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StorageArea.h; sourceTree = "<group>"; };
+		46BEB6D622FB9BD700269867 /* StorageArea.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StorageArea.cpp; sourceTree = "<group>"; };
+		46BEB6D922FB9D4800269867 /* LocalStorageNamespace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalStorageNamespace.h; sourceTree = "<group>"; };
+		46BEB6DA22FB9D4800269867 /* LocalStorageNamespace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LocalStorageNamespace.cpp; sourceTree = "<group>"; };
+		46BEB6DD22FBB16B00269867 /* SessionStorageNamespace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SessionStorageNamespace.h; sourceTree = "<group>"; };
+		46BEB6DE22FBB16B00269867 /* SessionStorageNamespace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SessionStorageNamespace.cpp; sourceTree = "<group>"; };
+		46BEB6E122FBB21A00269867 /* TransientLocalStorageNamespace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TransientLocalStorageNamespace.h; sourceTree = "<group>"; };
+		46BEB6E222FBB21A00269867 /* TransientLocalStorageNamespace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TransientLocalStorageNamespace.cpp; sourceTree = "<group>"; };
 		46DF06391F3905E5001980BB /* NetworkCORSPreflightChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCORSPreflightChecker.cpp; sourceTree = "<group>"; };
 		46DF063A1F3905E5001980BB /* NetworkCORSPreflightChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCORSPreflightChecker.h; sourceTree = "<group>"; };
 		4A410F3519AF7AC3002EBAB5 /* WKUserMediaPermissionRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKUserMediaPermissionRequest.cpp; sourceTree = "<group>"; };
@@ -7283,9 +7295,17 @@
 				93B26145227D147000B97A76 /* LocalStorageDatabase.h */,
 				93B26147227D147100B97A76 /* LocalStorageDatabaseTracker.cpp */,
 				93B26146227D147100B97A76 /* LocalStorageDatabaseTracker.h */,
+				46BEB6DA22FB9D4800269867 /* LocalStorageNamespace.cpp */,
+				46BEB6D922FB9D4800269867 /* LocalStorageNamespace.h */,
+				46BEB6DE22FBB16B00269867 /* SessionStorageNamespace.cpp */,
+				46BEB6DD22FBB16B00269867 /* SessionStorageNamespace.h */,
+				46BEB6D622FB9BD700269867 /* StorageArea.cpp */,
+				46BEB6D522FB9BD600269867 /* StorageArea.h */,
 				93B2614A227D147200B97A76 /* StorageManager.cpp */,
 				93B26149227D147200B97A76 /* StorageManager.h */,
 				93B2614B227D147200B97A76 /* StorageManager.messages.in */,
+				46BEB6E222FBB21A00269867 /* TransientLocalStorageNamespace.cpp */,
+				46BEB6E122FBB21A00269867 /* TransientLocalStorageNamespace.h */,
 			);
 			path = WebStorage;
 			sourceTree = "<group>";
@@ -8947,8 +8967,8 @@
 			children = (
 				CD19D2E92046406F0017074A /* FullscreenTouchSecheuristic.cpp */,
 				CD19D2E82046406F0017074A /* FullscreenTouchSecheuristic.h */,
-				CDA93DAE22F8BCF300490A69 /* FullscreenTouchSecheuristicParameters.h */,
 				CDA93DAF22F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.cpp */,
+				CDA93DAE22F8BCF300490A69 /* FullscreenTouchSecheuristicParameters.h */,
 				CDC2831B201BD79D00E6E745 /* WKFullscreenStackView.h */,
 				CDC2831C201BD79D00E6E745 /* WKFullscreenStackView.mm */,
 				CD0C682F201FD10100A59409 /* WKFullScreenViewController.h */,
@@ -9369,6 +9389,7 @@
 				2D4AF0892044C3C4006C8817 /* FrontBoardServicesSPI.h in Headers */,
 				CD78E1151DB7D7ED0014A2DE /* FullscreenClient.h in Headers */,
 				CD19D2EA2046406F0017074A /* FullscreenTouchSecheuristic.h in Headers */,
+				CDA93DB022F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.h in Headers */,
 				515BE1B31D5902DD00DD7C68 /* GamepadData.h in Headers */,
 				BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */,
 				BC06F42F12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h in Headers */,
@@ -9431,6 +9452,7 @@
 				57DCEDAE214C60330016B847 /* LocalService.h in Headers */,
 				93B2614E227D14B100B97A76 /* LocalStorageDatabase.h in Headers */,
 				93B2614F227D14B100B97A76 /* LocalStorageDatabaseTracker.h in Headers */,
+				46BEB6DB22FB9D4800269867 /* LocalStorageNamespace.h in Headers */,
 				51A7F2F3125BF820008AEB1D /* Logging.h in Headers */,
 				0FDCD7F71D47E92A009F08BC /* LogInitialization.h in Headers */,
 				1A6D86C21DF75265007745E8 /* MachMessage.h in Headers */,
@@ -9632,6 +9654,7 @@
 				414DEDD71F9EDDE50047C40D /* ServiceWorkerProcessProxy.h in Headers */,
 				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
+				46BEB6DF22FBB16B00269867 /* SessionStorageNamespace.h in Headers */,
 				1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */,
 				51217461164C20E30037A5C1 /* ShareableResource.h in Headers */,
 				1A24BED5120894D100FBB059 /* SharedMemory.h in Headers */,
@@ -9651,6 +9674,7 @@
 				5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */,
 				514BDED316C98EDD00E4E25E /* StatisticsRequest.h in Headers */,
 				7A3FECA221F7C09700F267CD /* StorageAccessStatus.h in Headers */,
+				46BEB6D722FB9BD700269867 /* StorageArea.h in Headers */,
 				1AD3306F16B1D991004F60E7 /* StorageAreaImpl.h in Headers */,
 				1ACECD2517162DB1001FC9EF /* StorageAreaMap.h in Headers */,
 				1A334DEE16DE8F88006A8E38 /* StorageAreaMapMessages.h in Headers */,
@@ -9670,6 +9694,7 @@
 				1AAF263914687C39004A1E8A /* TiledCoreAnimationDrawingArea.h in Headers */,
 				1AF05D8714688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h in Headers */,
 				2F8336861FA139DF00C6E080 /* TouchBarMenuData.h in Headers */,
+				46BEB6E322FBB21A00269867 /* TransientLocalStorageNamespace.h in Headers */,
 				57EB2E3A21E1983E00B89CDF /* U2fHidAuthenticator.h in Headers */,
 				1AFE436618B6C081009C7A48 /* UIDelegate.h in Headers */,
 				515BE1B51D5917FF00DD7C68 /* UIGamepad.h in Headers */,
@@ -10006,7 +10031,6 @@
 				1A445BA5184D5FDA004B3414 /* WKContextConnectionClient.h in Headers */,
 				1A445BA3184D5FCF004B3414 /* WKContextDownloadClient.h in Headers */,
 				1A445BA1184D5FC1004B3414 /* WKContextHistoryClient.h in Headers */,
-				CDA93DB022F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.h in Headers */,
 				1A445B9F184D5FB5004B3414 /* WKContextInjectedBundleClient.h in Headers */,
 				5C795D70229F373F003FF1C4 /* WKContextMenuElementInfo.h in Headers */,
 				5C795D71229F3757003FF1C4 /* WKContextMenuElementInfoPrivate.h in Headers */,
@@ -11095,6 +11119,7 @@
 				1A64230812DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp in Sources */,
 				2D92A780212B6A7100F493FD /* Encoder.cpp in Sources */,
 				1AA576021496B97900A4EE06 /* EventDispatcherMessageReceiver.cpp in Sources */,
+				CDA93DB122F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.cpp in Sources */,
 				2749F6442146561B008380BF /* InjectedBundleNodeHandle.cpp in Sources */,
 				2749F6452146561E008380BF /* InjectedBundleRangeHandle.cpp in Sources */,
 				2D913441212CF9F000128AFD /* JSNPMethod.cpp in Sources */,
@@ -11153,7 +11178,6 @@
 				BC82844D16B5081C00A278FE /* PluginServiceEntryPoint.mm in Sources */,
 				2D91344D212CF9F000128AFD /* PluginView.cpp in Sources */,
 				2D54C31B212F4DA60049C174 /* ProcessLauncher.cpp in Sources */,
-				CDA93DB122F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.cpp in Sources */,
 				CD2865EF2255562000606AC7 /* ProcessTaskStateObserver.mm in Sources */,
 				2D72A1FA212BF46E00517A20 /* RemoteLayerTreeDrawingArea.mm in Sources */,
 				0FF24A2D1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp in Sources */,

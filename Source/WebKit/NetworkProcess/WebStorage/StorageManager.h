@@ -41,13 +41,21 @@ class SecurityOrigin;
 namespace WebKit {
 
 class LocalStorageDatabaseTracker;
+class LocalStorageNamespace;
+class SessionStorageNamespace;
+class StorageArea;
+class TransientLocalStorageNamespace;
 class WebProcessProxy;
 
 using GetValuesCallback = CompletionHandler<void(const HashMap<String, String>&)>;
 
 class StorageManager : public IPC::Connection::WorkQueueMessageReceiver {
 public:
-    static Ref<StorageManager> create(String&& localStorageDirectory);
+    static Ref<StorageManager> create(String&& localStorageDirectory)
+    {
+        return adoptRef(*new StorageManager(WTFMove(localStorageDirectory)));
+    }
+    
     ~StorageManager();
 
     void createSessionStorageNamespace(uint64_t storageNamespaceID, unsigned quotaInBytes);
@@ -75,6 +83,12 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>& replyEncoder);
+    
+    LocalStorageDatabaseTracker* localStorageDatabaseTracker() const { return m_localStorageDatabaseTracker.get(); }
+    
+    WorkQueue& workQueue() const { return m_queue.get(); }
+    
+    static const unsigned localStorageDatabaseQuotaInBytes;
 
 private:
     explicit StorageManager(String&& localStorageDirectory);
@@ -92,13 +106,10 @@ private:
     void removeItem(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString);
     void clear(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& urlString);
 
-    class StorageArea;
     StorageArea* findStorageArea(IPC::Connection&, uint64_t) const;
 
-    class LocalStorageNamespace;
     LocalStorageNamespace* getOrCreateLocalStorageNamespace(uint64_t storageNamespaceID);
 
-    class TransientLocalStorageNamespace;
     TransientLocalStorageNamespace* getOrCreateTransientLocalStorageNamespace(uint64_t storageNamespaceID, WebCore::SecurityOriginData&& topLevelOrigin);
 
     Ref<WorkQueue> m_queue;
@@ -108,7 +119,6 @@ private:
 
     HashMap<std::pair<uint64_t, WebCore::SecurityOriginData>, RefPtr<TransientLocalStorageNamespace>> m_transientLocalStorageNamespaces;
 
-    class SessionStorageNamespace;
     HashMap<uint64_t, RefPtr<SessionStorageNamespace>> m_sessionStorageNamespaces;
 
     HashMap<std::pair<IPC::Connection::UniqueID, uint64_t>, RefPtr<StorageArea>> m_storageAreasByConnection;

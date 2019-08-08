@@ -28,8 +28,12 @@
 
 #include "LocalStorageDatabase.h"
 #include "LocalStorageDatabaseTracker.h"
+#include "LocalStorageNamespace.h"
+#include "SessionStorageNamespace.h"
+#include "StorageArea.h"
 #include "StorageAreaMapMessages.h"
 #include "StorageManagerMessages.h"
+#include "TransientLocalStorageNamespace.h"
 #include "WebProcessProxy.h"
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
@@ -42,447 +46,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-class StorageManager::StorageArea : public ThreadSafeRefCounted<StorageManager::StorageArea> {
-public:
-    static Ref<StorageArea> create(LocalStorageNamespace*, const SecurityOriginData&, unsigned quotaInBytes);
-    ~StorageArea();
-
-    const WebCore::SecurityOriginData& securityOrigin() const { return m_securityOrigin; }
-
-    void addListener(IPC::Connection::UniqueID, uint64_t storageMapID);
-    void removeListener(IPC::Connection::UniqueID, uint64_t storageMapID);
-    bool hasListener(IPC::Connection::UniqueID, uint64_t storageMapID) const;
-
-    Ref<StorageArea> clone() const;
-
-    void setItem(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException);
-    void setItems(const HashMap<String, String>&);
-    void removeItem(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString);
-    void clear(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& urlString);
-
-    const HashMap<String, String>& items() const;
-    void clear();
-
-    bool isEphemeral() const { return !m_localStorageNamespace; }
-
-    void openDatabaseAndImportItemsIfNeeded() const;
-
-private:
-    explicit StorageArea(LocalStorageNamespace*, const SecurityOriginData&, unsigned quotaInBytes);
-
-    void dispatchEvents(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const;
-
-    // Will be null if the storage area belongs to a session storage namespace or the storage area is in an ephemeral session.
-    WeakPtr<LocalStorageNamespace> m_localStorageNamespace;
-    mutable RefPtr<LocalStorageDatabase> m_localStorageDatabase;
-    mutable bool m_didImportItemsFromDatabase { false };
-
-    SecurityOriginData m_securityOrigin;
-    unsigned m_quotaInBytes;
-
-    RefPtr<StorageMap> m_storageMap;
-    HashSet<std::pair<IPC::Connection::UniqueID, uint64_t>> m_eventListeners;
-};
-
-class StorageManager::LocalStorageNamespace : public ThreadSafeRefCounted<LocalStorageNamespace>, public CanMakeWeakPtr<LocalStorageNamespace> {
-public:
-    static Ref<LocalStorageNamespace> create(StorageManager&, uint64_t storageManagerID);
-    ~LocalStorageNamespace();
-
-    StorageManager* storageManager() const { return &m_storageManager; }
-
-    enum class IsEphemeral : bool { No, Yes };
-    Ref<StorageArea> getOrCreateStorageArea(SecurityOriginData&&, IsEphemeral);
-
-    void clearStorageAreasMatchingOrigin(const SecurityOriginData&);
-    void clearAllStorageAreas();
-
-    Vector<SecurityOriginData> ephemeralOrigins() const;
-    void cloneTo(LocalStorageNamespace& newLocalStorageNamespace);
-
-private:
-    LocalStorageNamespace(StorageManager&, uint64_t storageManagerID);
-
-    StorageManager& m_storageManager;
-    unsigned m_quotaInBytes;
-
-    HashMap<SecurityOriginData, RefPtr<StorageArea>> m_storageAreaMap;
-};
-
 // Suggested by https://www.w3.org/TR/webstorage/#disk-space
-const unsigned localStorageDatabaseQuotaInBytes = 5 * 1024 * 1024;
-
-class StorageManager::TransientLocalStorageNamespace : public ThreadSafeRefCounted<TransientLocalStorageNamespace> {
-public:
-    static Ref<TransientLocalStorageNamespace> create()
-    {
-        return adoptRef(*new TransientLocalStorageNamespace());
-    }
-
-    ~TransientLocalStorageNamespace()
-    {
-    }
-
-    Ref<StorageArea> getOrCreateStorageArea(SecurityOriginData&& securityOrigin)
-    {
-        return *m_storageAreaMap.ensure(securityOrigin, [this, &securityOrigin]() mutable {
-            return StorageArea::create(nullptr, WTFMove(securityOrigin), m_quotaInBytes);
-        }).iterator->value.copyRef();
-    }
-
-    Vector<SecurityOriginData> origins() const
-    {
-        Vector<SecurityOriginData> origins;
-
-        for (const auto& storageArea : m_storageAreaMap.values()) {
-            if (!storageArea->items().isEmpty())
-                origins.append(storageArea->securityOrigin());
-        }
-
-        return origins;
-    }
-
-    void clearStorageAreasMatchingOrigin(const SecurityOriginData& securityOrigin)
-    {
-        auto originAndStorageArea = m_storageAreaMap.find(securityOrigin);
-        if (originAndStorageArea != m_storageAreaMap.end())
-            originAndStorageArea->value->clear();
-    }
-
-    void clearAllStorageAreas()
-    {
-        for (auto& storageArea : m_storageAreaMap.values())
-            storageArea->clear();
-    }
-
-private:
-    explicit TransientLocalStorageNamespace()
-    {
-    }
-
-    const unsigned m_quotaInBytes = localStorageDatabaseQuotaInBytes;
-
-    HashMap<SecurityOriginData, RefPtr<StorageArea>> m_storageAreaMap;
-};
-
-auto StorageManager::StorageArea::create(LocalStorageNamespace* localStorageNamespace, const SecurityOriginData& securityOrigin, unsigned quotaInBytes) -> Ref<StorageManager::StorageArea>
-{
-    return adoptRef(*new StorageArea(localStorageNamespace, securityOrigin, quotaInBytes));
-}
-
-StorageManager::StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, const SecurityOriginData& securityOrigin, unsigned quotaInBytes)
-    : m_localStorageNamespace(localStorageNamespace ? makeWeakPtr(*localStorageNamespace) : nullptr)
-    , m_securityOrigin(securityOrigin)
-    , m_quotaInBytes(quotaInBytes)
-    , m_storageMap(StorageMap::create(m_quotaInBytes))
-{
-}
-
-StorageManager::StorageArea::~StorageArea()
-{
-    ASSERT(m_eventListeners.isEmpty());
-    ASSERT(!m_localStorageNamespace);
-
-    if (m_localStorageDatabase)
-        m_localStorageDatabase->close();
-}
-
-void StorageManager::StorageArea::addListener(IPC::Connection::UniqueID connectionID, uint64_t storageMapID)
-{
-    ASSERT(!m_eventListeners.contains(std::make_pair(connectionID, storageMapID)));
-    m_eventListeners.add(std::make_pair(connectionID, storageMapID));
-}
-
-void StorageManager::StorageArea::removeListener(IPC::Connection::UniqueID connectionID, uint64_t storageMapID)
-{
-    ASSERT(isEphemeral() || m_eventListeners.contains(std::make_pair(connectionID, storageMapID)));
-    m_eventListeners.remove(std::make_pair(connectionID, storageMapID));
-}
-
-bool StorageManager::StorageArea::hasListener(IPC::Connection::UniqueID connectionID, uint64_t storageMapID) const
-{
-    return m_eventListeners.contains(std::make_pair(connectionID, storageMapID));
-}
-
-Ref<StorageManager::StorageArea> StorageManager::StorageArea::clone() const
-{
-    ASSERT(!m_localStorageNamespace);
-
-    auto storageArea = StorageArea::create(nullptr, m_securityOrigin, m_quotaInBytes);
-    storageArea->m_storageMap = m_storageMap;
-
-    return storageArea;
-}
-
-void StorageManager::StorageArea::setItem(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException)
-{
-    openDatabaseAndImportItemsIfNeeded();
-
-    String oldValue;
-
-    auto newStorageMap = m_storageMap->setItem(key, value, oldValue, quotaException);
-    if (newStorageMap)
-        m_storageMap = WTFMove(newStorageMap);
-
-    if (quotaException)
-        return;
-
-    if (m_localStorageDatabase)
-        m_localStorageDatabase->setItem(key, value);
-
-    dispatchEvents(sourceConnection, sourceStorageAreaID, key, oldValue, value, urlString);
-}
-
-void StorageManager::StorageArea::setItems(const HashMap<String, String>& items)
-{
-    // Import items from web process if items are not stored on disk.
-    if (!isEphemeral())
-        return;
-
-    for (auto& item : items) {
-        String oldValue;
-        bool quotaException;
-        auto newStorageMap = m_storageMap->setItem(item.key, item.value, oldValue, quotaException);
-        if (newStorageMap)
-            m_storageMap = WTFMove(newStorageMap);
-        
-        if (quotaException)
-            return;
-    }
-}
-
-void StorageManager::StorageArea::removeItem(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString)
-{
-    openDatabaseAndImportItemsIfNeeded();
-
-    String oldValue;
-    auto newStorageMap = m_storageMap->removeItem(key, oldValue);
-    if (newStorageMap)
-        m_storageMap = WTFMove(newStorageMap);
-
-    if (oldValue.isNull())
-        return;
-
-    if (m_localStorageDatabase)
-        m_localStorageDatabase->removeItem(key);
-
-    dispatchEvents(sourceConnection, sourceStorageAreaID, key, oldValue, String(), urlString);
-}
-
-void StorageManager::StorageArea::clear(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& urlString)
-{
-    openDatabaseAndImportItemsIfNeeded();
-
-    if (!m_storageMap->length())
-        return;
-
-    m_storageMap = StorageMap::create(m_quotaInBytes);
-
-    if (m_localStorageDatabase)
-        m_localStorageDatabase->clear();
-
-    dispatchEvents(sourceConnection, sourceStorageAreaID, String(), String(), String(), urlString);
-}
-
-const HashMap<String, String>& StorageManager::StorageArea::items() const
-{
-    openDatabaseAndImportItemsIfNeeded();
-
-    return m_storageMap->items();
-}
-
-void StorageManager::StorageArea::clear()
-{
-    m_storageMap = StorageMap::create(m_quotaInBytes);
-
-    if (m_localStorageDatabase) {
-        m_localStorageDatabase->close();
-        m_localStorageDatabase = nullptr;
-    }
-
-    for (auto it = m_eventListeners.begin(), end = m_eventListeners.end(); it != end; ++it) {
-        RunLoop::main().dispatch([connectionID = it->first, destinationStorageAreaID = it->second] {
-            if (auto* connection = IPC::Connection::connection(connectionID))
-                connection->send(Messages::StorageAreaMap::ClearCache(), destinationStorageAreaID);
-        });
-    }
-}
-
-void StorageManager::StorageArea::openDatabaseAndImportItemsIfNeeded() const
-{
-    if (!m_localStorageNamespace)
-        return;
-
-    ASSERT(m_localStorageNamespace->storageManager()->m_localStorageDatabaseTracker);
-    // We open the database here even if we've already imported our items to ensure that the database is open if we need to write to it.
-    if (!m_localStorageDatabase)
-        m_localStorageDatabase = LocalStorageDatabase::create(m_localStorageNamespace->storageManager()->m_queue.copyRef(), *m_localStorageNamespace->storageManager()->m_localStorageDatabaseTracker, m_securityOrigin);
-
-    if (m_didImportItemsFromDatabase)
-        return;
-
-    m_localStorageDatabase->importItems(*m_storageMap);
-    m_didImportItemsFromDatabase = true;
-}
-
-void StorageManager::StorageArea::dispatchEvents(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const
-{
-    for (auto it = m_eventListeners.begin(), end = m_eventListeners.end(); it != end; ++it) {
-        sourceStorageAreaID = it->first == sourceConnection ? sourceStorageAreaID : 0;
-
-        RunLoop::main().dispatch([connectionID = it->first, sourceStorageAreaID, destinationStorageAreaID = it->second, key = key.isolatedCopy(), oldValue = oldValue.isolatedCopy(), newValue = newValue.isolatedCopy(), urlString = urlString.isolatedCopy()] {
-            if (auto* connection = IPC::Connection::connection(connectionID))
-                connection->send(Messages::StorageAreaMap::DispatchStorageEvent(sourceStorageAreaID, key, oldValue, newValue, urlString), destinationStorageAreaID);
-        });
-    }
-}
-
-Ref<StorageManager::LocalStorageNamespace> StorageManager::LocalStorageNamespace::create(StorageManager& storageManager, uint64_t storageNamespaceID)
-{
-    return adoptRef(*new LocalStorageNamespace(storageManager, storageNamespaceID));
-}
-
-// FIXME: The quota value is copied from GroupSettings.cpp.
-// We should investigate a way to share it with WebCore.
-StorageManager::LocalStorageNamespace::LocalStorageNamespace(StorageManager& storageManager, uint64_t storageNamespaceID)
-    : m_storageManager(storageManager)
-    , m_quotaInBytes(localStorageDatabaseQuotaInBytes)
-{
-}
-
-StorageManager::LocalStorageNamespace::~LocalStorageNamespace()
-{
-}
-
-auto StorageManager::LocalStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin, IsEphemeral isEphemeral) -> Ref<StorageArea>
-{
-    return *m_storageAreaMap.ensure(securityOrigin, [&]() mutable {
-        return StorageArea::create(isEphemeral == IsEphemeral::Yes ? nullptr : this, WTFMove(securityOrigin), m_quotaInBytes);
-    }).iterator->value;
-}
-
-void StorageManager::LocalStorageNamespace::clearStorageAreasMatchingOrigin(const SecurityOriginData& securityOrigin)
-{
-    auto originAndStorageArea = m_storageAreaMap.find(securityOrigin);
-    if (originAndStorageArea != m_storageAreaMap.end())
-        originAndStorageArea->value->clear();
-}
-
-void StorageManager::LocalStorageNamespace::clearAllStorageAreas()
-{
-    for (auto storageArea : m_storageAreaMap.values())
-        storageArea->clear();
-}
-
-Vector<SecurityOriginData> StorageManager::LocalStorageNamespace::ephemeralOrigins() const
-{
-    Vector<SecurityOriginData> origins;
-    for (const auto& storageArea : m_storageAreaMap.values()) {
-        if (!storageArea->items().isEmpty())
-            origins.append(storageArea->securityOrigin());
-    }
-    return origins;
-}
-
-void StorageManager::LocalStorageNamespace::cloneTo(LocalStorageNamespace& newLocalStorageNamespace)
-{
-    for (auto& pair : m_storageAreaMap)
-        newLocalStorageNamespace.m_storageAreaMap.add(pair.key, pair.value->clone());
-}
-
-class StorageManager::SessionStorageNamespace : public ThreadSafeRefCounted<SessionStorageNamespace> {
-public:
-    static Ref<SessionStorageNamespace> create(unsigned quotaInBytes);
-    ~SessionStorageNamespace();
-
-    bool isEmpty() const { return m_storageAreaMap.isEmpty(); }
-
-    const HashSet<IPC::Connection::UniqueID>& allowedConnections() const { return m_allowedConnections; }
-    void addAllowedConnection(IPC::Connection::UniqueID);
-    void removeAllowedConnection(IPC::Connection::UniqueID);
-
-    Ref<StorageArea> getOrCreateStorageArea(SecurityOriginData&&);
-
-    void cloneTo(SessionStorageNamespace& newSessionStorageNamespace);
-
-    Vector<SecurityOriginData> origins() const
-    {
-        Vector<SecurityOriginData> origins;
-
-        for (const auto& storageArea : m_storageAreaMap.values()) {
-            if (!storageArea->items().isEmpty())
-                origins.append(storageArea->securityOrigin());
-        }
-
-        return origins;
-    }
-
-    void clearStorageAreasMatchingOrigin(const SecurityOriginData& securityOrigin)
-    {
-        auto originAndStorageArea = m_storageAreaMap.find(securityOrigin);
-        if (originAndStorageArea != m_storageAreaMap.end())
-            originAndStorageArea->value->clear();
-    }
-
-    void clearAllStorageAreas()
-    {
-        for (auto& storageArea : m_storageAreaMap.values())
-            storageArea->clear();
-    }
-
-private:
-    explicit SessionStorageNamespace(unsigned quotaInBytes);
-
-    HashSet<IPC::Connection::UniqueID> m_allowedConnections;
-    unsigned m_quotaInBytes;
-
-    HashMap<SecurityOriginData, RefPtr<StorageArea>> m_storageAreaMap;
-};
-
-Ref<StorageManager::SessionStorageNamespace> StorageManager::SessionStorageNamespace::create(unsigned quotaInBytes)
-{
-    return adoptRef(*new SessionStorageNamespace(quotaInBytes));
-}
-
-StorageManager::SessionStorageNamespace::SessionStorageNamespace(unsigned quotaInBytes)
-    : m_quotaInBytes(quotaInBytes)
-{
-}
-
-StorageManager::SessionStorageNamespace::~SessionStorageNamespace()
-{
-}
-
-void StorageManager::SessionStorageNamespace::addAllowedConnection(IPC::Connection::UniqueID allowedConnection)
-{
-    m_allowedConnections.add(allowedConnection);
-}
-
-
-void StorageManager::SessionStorageNamespace::removeAllowedConnection(IPC::Connection::UniqueID allowedConnection)
-{
-    ASSERT(m_allowedConnections.contains(allowedConnection));
-    m_allowedConnections.remove(allowedConnection);
-}
-auto StorageManager::SessionStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin) -> Ref<StorageArea>
-{
-    return *m_storageAreaMap.ensure(securityOrigin, [this, &securityOrigin]() mutable {
-        return StorageArea::create(nullptr, WTFMove(securityOrigin), m_quotaInBytes);
-    }).iterator->value.copyRef();
-}
-
-void StorageManager::SessionStorageNamespace::cloneTo(SessionStorageNamespace& newSessionStorageNamespace)
-{
-    ASSERT_UNUSED(newSessionStorageNamespace, newSessionStorageNamespace.isEmpty());
-
-    for (auto& pair : m_storageAreaMap)
-        newSessionStorageNamespace.m_storageAreaMap.add(pair.key, pair.value->clone());
-}
-
-Ref<StorageManager> StorageManager::create(String&& localStorageDirectory)
-{
-    return adoptRef(*new StorageManager(WTFMove(localStorageDirectory)));
-}
+const unsigned StorageManager::localStorageDatabaseQuotaInBytes = 5 * 1024 * 1024;
 
 StorageManager::StorageManager(String&& localStorageDirectory)
     : m_queue(WorkQueue::create("com.apple.WebKit.StorageManager"))
@@ -749,7 +314,7 @@ void StorageManager::createLocalStorageMap(IPC::Connection& connection, uint64_t
     LocalStorageNamespace* localStorageNamespace = getOrCreateLocalStorageNamespace(storageNamespaceID);
     ASSERT(localStorageNamespace);
 
-    auto storageArea = localStorageNamespace->getOrCreateStorageArea(WTFMove(securityOriginData), m_localStorageDatabaseTracker ? StorageManager::LocalStorageNamespace::IsEphemeral::No : StorageManager::LocalStorageNamespace::IsEphemeral::Yes);
+    auto storageArea = localStorageNamespace->getOrCreateStorageArea(WTFMove(securityOriginData), m_localStorageDatabaseTracker ? LocalStorageNamespace::IsEphemeral::No : LocalStorageNamespace::IsEphemeral::Yes);
     storageArea->addListener(connectionID, storageMapID);
 
     result.iterator->value = WTFMove(storageArea);
@@ -970,7 +535,7 @@ void StorageManager::resume()
         m_stateChangeCondition.notifyOne();
 }
 
-StorageManager::StorageArea* StorageManager::findStorageArea(IPC::Connection& connection, uint64_t storageMapID) const
+StorageArea* StorageManager::findStorageArea(IPC::Connection& connection, uint64_t storageMapID) const
 {
     std::pair<IPC::Connection::UniqueID, uint64_t> connectionAndStorageMapIDPair(connection.uniqueID(), storageMapID);
 
@@ -980,7 +545,7 @@ StorageManager::StorageArea* StorageManager::findStorageArea(IPC::Connection& co
     return m_storageAreasByConnection.get(connectionAndStorageMapIDPair);
 }
 
-StorageManager::LocalStorageNamespace* StorageManager::getOrCreateLocalStorageNamespace(uint64_t storageNamespaceID)
+LocalStorageNamespace* StorageManager::getOrCreateLocalStorageNamespace(uint64_t storageNamespaceID)
 {
     if (!m_localStorageNamespaces.isValidKey(storageNamespaceID))
         return nullptr;
@@ -990,7 +555,7 @@ StorageManager::LocalStorageNamespace* StorageManager::getOrCreateLocalStorageNa
     }).iterator->value.get();
 }
 
-StorageManager::TransientLocalStorageNamespace* StorageManager::getOrCreateTransientLocalStorageNamespace(uint64_t storageNamespaceID, WebCore::SecurityOriginData&& topLevelOrigin)
+TransientLocalStorageNamespace* StorageManager::getOrCreateTransientLocalStorageNamespace(uint64_t storageNamespaceID, WebCore::SecurityOriginData&& topLevelOrigin)
 {
     if (!m_transientLocalStorageNamespaces.isValidKey({ storageNamespaceID, topLevelOrigin }))
         return nullptr;

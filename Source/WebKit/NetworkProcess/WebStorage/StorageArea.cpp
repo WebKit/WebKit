@@ -1,0 +1,206 @@
+/*
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "StorageArea.h"
+
+#include "LocalStorageDatabase.h"
+#include "LocalStorageNamespace.h"
+#include "StorageAreaMapMessages.h"
+#include "StorageManager.h"
+#include <WebCore/StorageMap.h>
+
+namespace WebKit {
+
+using namespace WebCore;
+
+StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, const SecurityOriginData& securityOrigin, unsigned quotaInBytes)
+    : m_localStorageNamespace(makeWeakPtr(localStorageNamespace))
+    , m_securityOrigin(securityOrigin)
+    , m_quotaInBytes(quotaInBytes)
+    , m_storageMap(StorageMap::create(m_quotaInBytes))
+{
+}
+
+StorageArea::~StorageArea()
+{
+    ASSERT(m_eventListeners.isEmpty());
+    ASSERT(!m_localStorageNamespace);
+
+    if (m_localStorageDatabase)
+        m_localStorageDatabase->close();
+}
+
+void StorageArea::addListener(IPC::Connection::UniqueID connectionID, uint64_t storageMapID)
+{
+    ASSERT(!m_eventListeners.contains(std::make_pair(connectionID, storageMapID)));
+    m_eventListeners.add(std::make_pair(connectionID, storageMapID));
+}
+
+void StorageArea::removeListener(IPC::Connection::UniqueID connectionID, uint64_t storageMapID)
+{
+    ASSERT(isEphemeral() || m_eventListeners.contains(std::make_pair(connectionID, storageMapID)));
+    m_eventListeners.remove(std::make_pair(connectionID, storageMapID));
+}
+
+bool StorageArea::hasListener(IPC::Connection::UniqueID connectionID, uint64_t storageMapID) const
+{
+    return m_eventListeners.contains(std::make_pair(connectionID, storageMapID));
+}
+
+Ref<StorageArea> StorageArea::clone() const
+{
+    ASSERT(!m_localStorageNamespace);
+
+    auto storageArea = StorageArea::create(nullptr, m_securityOrigin, m_quotaInBytes);
+    storageArea->m_storageMap = m_storageMap;
+
+    return storageArea;
+}
+
+void StorageArea::setItem(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException)
+{
+    openDatabaseAndImportItemsIfNeeded();
+
+    String oldValue;
+
+    auto newStorageMap = m_storageMap->setItem(key, value, oldValue, quotaException);
+    if (newStorageMap)
+        m_storageMap = WTFMove(newStorageMap);
+
+    if (quotaException)
+        return;
+
+    if (m_localStorageDatabase)
+        m_localStorageDatabase->setItem(key, value);
+
+    dispatchEvents(sourceConnection, sourceStorageAreaID, key, oldValue, value, urlString);
+}
+
+void StorageArea::setItems(const HashMap<String, String>& items)
+{
+    // Import items from web process if items are not stored on disk.
+    if (!isEphemeral())
+        return;
+
+    for (auto& item : items) {
+        String oldValue;
+        bool quotaException;
+        auto newStorageMap = m_storageMap->setItem(item.key, item.value, oldValue, quotaException);
+        if (newStorageMap)
+            m_storageMap = WTFMove(newStorageMap);
+        
+        if (quotaException)
+            return;
+    }
+}
+
+void StorageArea::removeItem(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString)
+{
+    openDatabaseAndImportItemsIfNeeded();
+
+    String oldValue;
+    auto newStorageMap = m_storageMap->removeItem(key, oldValue);
+    if (newStorageMap)
+        m_storageMap = WTFMove(newStorageMap);
+
+    if (oldValue.isNull())
+        return;
+
+    if (m_localStorageDatabase)
+        m_localStorageDatabase->removeItem(key);
+
+    dispatchEvents(sourceConnection, sourceStorageAreaID, key, oldValue, String(), urlString);
+}
+
+void StorageArea::clear(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& urlString)
+{
+    openDatabaseAndImportItemsIfNeeded();
+
+    if (!m_storageMap->length())
+        return;
+
+    m_storageMap = StorageMap::create(m_quotaInBytes);
+
+    if (m_localStorageDatabase)
+        m_localStorageDatabase->clear();
+
+    dispatchEvents(sourceConnection, sourceStorageAreaID, String(), String(), String(), urlString);
+}
+
+const HashMap<String, String>& StorageArea::items() const
+{
+    openDatabaseAndImportItemsIfNeeded();
+
+    return m_storageMap->items();
+}
+
+void StorageArea::clear()
+{
+    m_storageMap = StorageMap::create(m_quotaInBytes);
+
+    if (m_localStorageDatabase) {
+        m_localStorageDatabase->close();
+        m_localStorageDatabase = nullptr;
+    }
+
+    for (auto it = m_eventListeners.begin(), end = m_eventListeners.end(); it != end; ++it) {
+        RunLoop::main().dispatch([connectionID = it->first, destinationStorageAreaID = it->second] {
+            if (auto* connection = IPC::Connection::connection(connectionID))
+                connection->send(Messages::StorageAreaMap::ClearCache(), destinationStorageAreaID);
+        });
+    }
+}
+
+void StorageArea::openDatabaseAndImportItemsIfNeeded() const
+{
+    if (!m_localStorageNamespace)
+        return;
+
+    ASSERT(m_localStorageNamespace->storageManager()->localStorageDatabaseTracker());
+    // We open the database here even if we've already imported our items to ensure that the database is open if we need to write to it.
+    if (!m_localStorageDatabase)
+        m_localStorageDatabase = LocalStorageDatabase::create(m_localStorageNamespace->storageManager()->workQueue(), *m_localStorageNamespace->storageManager()->localStorageDatabaseTracker(), m_securityOrigin);
+
+    if (m_didImportItemsFromDatabase)
+        return;
+
+    m_localStorageDatabase->importItems(*m_storageMap);
+    m_didImportItemsFromDatabase = true;
+}
+
+void StorageArea::dispatchEvents(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const
+{
+    for (auto it = m_eventListeners.begin(), end = m_eventListeners.end(); it != end; ++it) {
+        sourceStorageAreaID = it->first == sourceConnection ? sourceStorageAreaID : 0;
+
+        RunLoop::main().dispatch([connectionID = it->first, sourceStorageAreaID, destinationStorageAreaID = it->second, key = key.isolatedCopy(), oldValue = oldValue.isolatedCopy(), newValue = newValue.isolatedCopy(), urlString = urlString.isolatedCopy()] {
+            if (auto* connection = IPC::Connection::connection(connectionID))
+                connection->send(Messages::StorageAreaMap::DispatchStorageEvent(sourceStorageAreaID, key, oldValue, newValue, urlString), destinationStorageAreaID);
+        });
+    }
+}
+
+} // namespace WebKit
