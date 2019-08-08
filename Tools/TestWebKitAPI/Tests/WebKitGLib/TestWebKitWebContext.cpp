@@ -442,7 +442,7 @@ static void testWebContextLanguages(WebViewTest* test, gconstpointer)
     g_ptr_array_add(languages.get(), 0);
     webkit_web_context_set_preferred_languages(test->m_webContext.get(), reinterpret_cast<const char* const*>(languages->pdata));
 
-    static const char* expectedLanguages = "en, es-es;q=0.90, de;q=0.80";
+    static const char* expectedLanguages = "en,ES-es;q=0.90,dE;q=0.80";
     test->loadURI(kServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
     mainResourceDataSize = 0;
