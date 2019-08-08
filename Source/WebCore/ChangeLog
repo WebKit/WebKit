@@ -1,3 +1,23 @@
+2019-08-08  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Remove the reference to WebCore::Animation from TextureMapperAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=200533
+
+        Reviewed by Žan Doberšek.
+
+        Pass the relevant parameters to TextureMapperAnimation instead of creating a new WebCore::Animation
+        inside it.
+
+        * platform/graphics/texmap/TextureMapperAnimation.cpp:
+        (WebCore::timingFunctionForAnimationValue):
+        (WebCore::TextureMapperAnimation::TextureMapperAnimation):
+        (WebCore::TextureMapperAnimation::apply):
+        (WebCore::TextureMapperAnimation::isActive const):
+        * platform/graphics/texmap/TextureMapperAnimation.h:
+        (WebCore::TextureMapperAnimation::keyframes const):
+        (WebCore::TextureMapperAnimation::timingFunction const):
+        (WebCore::TextureMapperAnimation::animation const): Deleted.
+
 2019-08-08  Charlie Turner  <cturner@igalia.com>
 
         [GTK] WebKitWebProcess crashes when viewing an HTML with a <video> element referencing unknown file

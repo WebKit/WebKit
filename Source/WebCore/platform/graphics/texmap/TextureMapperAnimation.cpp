@@ -155,7 +155,7 @@ static TransformationMatrix applyTransformAnimation(const TransformOperations& f
     return matrix;
 }
 
-static const TimingFunction& timingFunctionForAnimationValue(const AnimationValue& animationValue, const Animation& animation)
+static const TimingFunction& timingFunctionForAnimationValue(const AnimationValue& animationValue, const TextureMapperAnimation& animation)
 {
     if (animationValue.timingFunction())
         return *animationValue.timingFunction();
@@ -168,7 +168,11 @@ TextureMapperAnimation::TextureMapperAnimation(const String& name, const Keyfram
     : m_name(name.isSafeToSendToAnotherThread() ? name : name.isolatedCopy())
     , m_keyframes(keyframes)
     , m_boxSize(boxSize)
-    , m_animation(Animation::create(animation))
+    , m_timingFunction(animation.timingFunction()->clone())
+    , m_iterationCount(animation.iterationCount())
+    , m_duration(animation.duration())
+    , m_direction(animation.direction())
+    , m_fillsForwards(animation.fillsForwards())
     , m_listsMatch(listsMatch)
     , m_startTime(startTime)
     , m_pauseTime(pauseTime)
@@ -182,7 +186,11 @@ TextureMapperAnimation::TextureMapperAnimation(const TextureMapperAnimation& oth
     : m_name(other.m_name.isSafeToSendToAnotherThread() ? other.m_name : other.m_name.isolatedCopy())
     , m_keyframes(other.m_keyframes)
     , m_boxSize(other.m_boxSize)
-    , m_animation(Animation::create(*other.m_animation))
+    , m_timingFunction(other.m_timingFunction->clone())
+    , m_iterationCount(other.m_iterationCount)
+    , m_duration(other.m_duration)
+    , m_direction(other.m_direction)
+    , m_fillsForwards(other.m_fillsForwards)
     , m_listsMatch(other.m_listsMatch)
     , m_startTime(other.m_startTime)
     , m_pauseTime(other.m_pauseTime)
@@ -198,13 +206,13 @@ void TextureMapperAnimation::apply(ApplicationResult& applicationResults, Monoto
         return;
 
     Seconds totalRunningTime = computeTotalRunningTime(time);
-    double normalizedValue = normalizedAnimationValue(totalRunningTime.seconds(), m_animation->duration(), m_animation->direction(), m_animation->iterationCount());
+    double normalizedValue = normalizedAnimationValue(totalRunningTime.seconds(), m_duration, m_direction, m_iterationCount);
 
-    if (m_animation->iterationCount() != Animation::IterationCountInfinite && totalRunningTime.seconds() >= m_animation->duration() * m_animation->iterationCount()) {
+    if (m_iterationCount != Animation::IterationCountInfinite && totalRunningTime.seconds() >= m_duration * m_iterationCount) {
         m_state = AnimationState::Stopped;
         m_pauseTime = 0_s;
-        if (m_animation->fillsForwards())
-            normalizedValue = normalizedAnimationValueForFillsForwards(m_animation->iterationCount(), m_animation->direction());
+        if (m_fillsForwards)
+            normalizedValue = normalizedAnimationValueForFillsForwards(m_iterationCount, m_direction);
     }
 
     applicationResults.hasRunningAnimations |= (m_state == AnimationState::Playing);
@@ -219,8 +227,8 @@ void TextureMapperAnimation::apply(ApplicationResult& applicationResults, Monoto
         return;
     }
     if (m_keyframes.size() == 2) {
-        auto& timingFunction = timingFunctionForAnimationValue(m_keyframes.at(0), *m_animation);
-        normalizedValue = timingFunction.transformTime(normalizedValue, m_animation->duration());
+        auto& timingFunction = timingFunctionForAnimationValue(m_keyframes.at(0), *this);
+        normalizedValue = timingFunction.transformTime(normalizedValue, m_duration);
         applyInternal(applicationResults, m_keyframes.at(0), m_keyframes.at(1), normalizedValue);
         return;
     }
@@ -232,8 +240,8 @@ void TextureMapperAnimation::apply(ApplicationResult& applicationResults, Monoto
             continue;
 
         normalizedValue = (normalizedValue - from.keyTime()) / (to.keyTime() - from.keyTime());
-        auto& timingFunction = timingFunctionForAnimationValue(from, *m_animation);
-        normalizedValue = timingFunction.transformTime(normalizedValue, m_animation->duration());
+        auto& timingFunction = timingFunctionForAnimationValue(from, *this);
+        normalizedValue = timingFunction.transformTime(normalizedValue, m_duration);
         applyInternal(applicationResults, from, to, normalizedValue);
         break;
     }
@@ -281,7 +289,7 @@ Seconds TextureMapperAnimation::computeTotalRunningTime(MonotonicTime time)
 
 bool TextureMapperAnimation::isActive() const
 {
-    return m_state != AnimationState::Stopped || m_animation->fillsForwards();
+    return m_state != AnimationState::Stopped || m_fillsForwards;
 }
 
 void TextureMapperAnimation::applyInternal(ApplicationResult& applicationResults, const AnimationValue& from, const AnimationValue& to, float progress)

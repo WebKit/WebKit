@@ -51,8 +51,8 @@ public:
 
     const String& name() const { return m_name; }
     const KeyframeValueList& keyframes() const { return m_keyframes; }
-    const RefPtr<Animation> animation() const { return m_animation; }
     AnimationState state() const { return m_state; }
+    TimingFunction* timingFunction() const { return m_timingFunction.get(); }
 
 private:
     void applyInternal(ApplicationResult&, const AnimationValue& from, const AnimationValue& to, float progress);
@@ -61,7 +61,11 @@ private:
     String m_name;
     KeyframeValueList m_keyframes;
     FloatSize m_boxSize;
-    RefPtr<Animation> m_animation;
+    RefPtr<TimingFunction> m_timingFunction;
+    double m_iterationCount;
+    double m_duration;
+    Animation::AnimationDirection m_direction;
+    bool m_fillsForwards;
     bool m_listsMatch;
     MonotonicTime m_startTime;
     Seconds m_pauseTime;
