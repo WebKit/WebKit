@@ -1,5 +1,18 @@
 2019-08-08  Chris Dumez  <cdumez@apple.com>
 
+        Fix thread safety bug in AudioSourceProviderAVFObjC::prepare()
+        https://bugs.webkit.org/show_bug.cgi?id=200542
+
+        Reviewed by Jer Noble.
+
+        Fix thread safety bug in AudioSourceProviderAVFObjC::prepare(). It calls callOnMainThread()
+        from a background thread and captures makeRef(*this) in the lambda, even though |this| is a
+        AudioSourceProviderAVFObjC, which subclasses RefCounted, not ThreadSafeRefCounted.
+
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.h:
+
+2019-08-08  Chris Dumez  <cdumez@apple.com>
+
         Make IDBRequest ThreadSafeRefCounted
         https://bugs.webkit.org/show_bug.cgi?id=200540
 

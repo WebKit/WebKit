@@ -31,8 +31,8 @@
 #include "AudioSourceProvider.h"
 #include <atomic>
 #include <wtf/MediaTime.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVPlayerItem;
@@ -49,7 +49,7 @@ namespace WebCore {
 
 class CARingBuffer;
 
-class AudioSourceProviderAVFObjC : public RefCounted<AudioSourceProviderAVFObjC>, public AudioSourceProvider {
+class AudioSourceProviderAVFObjC : public ThreadSafeRefCounted<AudioSourceProviderAVFObjC>, public AudioSourceProvider {
 public:
     static RefPtr<AudioSourceProviderAVFObjC> create(AVPlayerItem*);
     virtual ~AudioSourceProviderAVFObjC();
