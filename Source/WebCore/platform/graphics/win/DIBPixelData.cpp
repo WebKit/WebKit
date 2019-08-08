@@ -50,6 +50,15 @@ void DIBPixelData::initialize(HBITMAP bitmap)
     m_bitsPerPixel = bmpInfo.bmBitsPixel;
 }
 
+DIBPixelData::DIBPixelData(void* data, IntSize size)
+    : m_bitmapBuffer(reinterpret_cast<UInt8*>(data))
+    , m_bitmapBufferLength(8 * size.width() * size.height())
+    , m_size(size)
+    , m_bytesPerRow(8 * size.width())
+    , m_bitsPerPixel(8)
+{
+}
+
 #ifndef NDEBUG
 void DIBPixelData::writeToFile(LPCWSTR filePath)
 {

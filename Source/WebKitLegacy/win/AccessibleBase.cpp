@@ -326,7 +326,11 @@ HRESULT AccessibleBase::get_locale(_Out_ IA2Locale* locale)
     if (!m_object)
         return E_FAIL;
 
+#if USE(CF)
     locale->language = BString(m_object->language().createCFString().get()).release();
+#else
+    locale->language = BString(m_object->language()).release();
+#endif
 
     return S_OK;
 }

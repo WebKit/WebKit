@@ -46,6 +46,10 @@
 #include <wtf/glib/RunLoopSourcePriority.h>
 #endif
 
+#if USE(DIRECT2D)
+#include <d2d1.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 

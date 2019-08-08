@@ -62,7 +62,9 @@ public:
 
 protected:
     ULONG m_refCount { 0 };
+#if USE(CF)
     RefPtr<WebCore::LegacyWebArchive> m_archive;
+#endif
 };
 
 #endif // WebArchive_h

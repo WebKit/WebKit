@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BackingStore_h
-#define BackingStore_h
+#pragma once
 
 #include <WebCore/IntRect.h>
 #include <wtf/Noncopyable.h>
 
 #if USE(CAIRO)
 #include <WebCore/BackingStoreBackendCairo.h>
+#elif USE(DIRECT2D)
+#include <WebCore/BackingStoreBackendDirect2D.h>
+#endif
+
+#if USE(DIRECT2D)
+interface ID2D1RenderTarget;
 #endif
 
 namespace WebKit {
@@ -52,10 +57,16 @@ public:
 
 #if USE(CAIRO)
     typedef cairo_t* PlatformGraphicsContext;
+#elif USE(DIRECT2D)
+    typedef ID2D1RenderTarget* PlatformGraphicsContext;
 #endif
 
     void paint(PlatformGraphicsContext, const WebCore::IntRect&);
     void incorporateUpdate(const UpdateInfo&);
+
+#if USE(DIRECT2D)
+    ID2D1DCRenderTarget* renderTarget() { return m_backend->renderTarget(); }
+#endif
 
 private:
     void incorporateUpdate(ShareableBitmap*, const UpdateInfo&);
@@ -63,6 +74,8 @@ private:
 
 #if USE(CAIRO)
     std::unique_ptr<WebCore::BackingStoreBackendCairo> createBackend();
+#elif USE(DIRECT2D)
+    std::unique_ptr<WebCore::BackingStoreBackendDirect2D> createBackend();
 #endif
 
     WebCore::IntSize m_size;
@@ -70,9 +83,9 @@ private:
     WebPageProxy& m_webPageProxy;
 #if USE(CAIRO)
     std::unique_ptr<WebCore::BackingStoreBackendCairo> m_backend;
+#elif USE(DIRECT2D)
+    std::unique_ptr<WebCore::BackingStoreBackendDirect2D> m_backend;
 #endif
 };
 
 } // namespace WebKit
-
-#endif // BackingStore_h

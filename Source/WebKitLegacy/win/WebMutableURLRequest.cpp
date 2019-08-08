@@ -365,9 +365,13 @@ HRESULT WebMutableURLRequest::setClientCertificate(ULONG_PTR cert)
         return E_POINTER;
 
     PCCERT_CONTEXT certContext = reinterpret_cast<PCCERT_CONTEXT>(cert);
+#if USE(CF)
     RetainPtr<CFDataRef> certData = WebCore::copyCertificateToData(certContext);
     ResourceHandle::setClientCertificate(m_request.url().host().toString(), certData.get());
     return S_OK;
+#else
+    return E_NOTIMPL;
+#endif
 }
 
 CFURLRequestRef WebMutableURLRequest::cfRequest()

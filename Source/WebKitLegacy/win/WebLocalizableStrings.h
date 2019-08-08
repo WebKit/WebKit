@@ -26,6 +26,8 @@
 #ifndef WebLocalizableStrings_H
 #define WebLocalizableStrings_H
 
+#if USE(CF)
+
 #include <CoreFoundation/CoreFoundation.h>
 
 typedef struct {
@@ -71,3 +73,6 @@ extern WebLocalizableStringsBundle LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME);
 #endif
 
 #endif
+
+#endif
+

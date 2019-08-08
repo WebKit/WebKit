@@ -71,7 +71,7 @@ static COMPtr<IPropertyBag> createUserInfoFromArray(BSTR notificationStr, IWebHi
     Vector<COMPtr<IWebHistoryItem>, 1> arrayItem;
     arrayItem.reserveInitialCapacity(size);
     for (size_t i = 0; i < size; ++i)
-        arrayItem[i] = data[i];
+        arrayItem.uncheckedAppend(data[i]);
 
     HashMap<String, Vector<COMPtr<IWebHistoryItem>>> dictionary;
     String key(notificationStr, ::SysStringLen(notificationStr));

@@ -30,9 +30,10 @@
 #include "COMPtr.h"
 #include "IntRect.h"
 #include <wincodec.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
+interface ID2D1Bitmap;
+interface ID2D1DCRenderTarget;
 
 namespace WebCore {
 
@@ -42,7 +43,8 @@ class BackingStoreBackendDirect2D {
 public:
     virtual ~BackingStoreBackendDirect2D() = default;
 
-    IWICBitmap* surface() const { return m_surface.get(); }
+    ID2D1DCRenderTarget* renderTarget() const { return m_renderTarget.get(); }
+    ID2D1Bitmap* surface() const { return m_surface.get(); }
     const IntSize& size() const { return m_size; }
 
     virtual void scroll(const IntRect& scrollRect, const IntSize& scrollOffset) = 0;
@@ -53,8 +55,8 @@ protected:
     {
     }
 
-    COMPtr<IWICBitmap> m_surface;
-    void* m_surfaceBackingData { nullptr };
+    COMPtr<ID2D1DCRenderTarget> m_renderTarget;
+    COMPtr<ID2D1Bitmap> m_surface;
     IntSize m_size;
 };
 

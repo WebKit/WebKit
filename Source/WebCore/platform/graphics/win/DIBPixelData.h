@@ -47,6 +47,7 @@ public:
     {
     }
     DIBPixelData(HBITMAP);
+    DIBPixelData(void* data, IntSize);
 
     void initialize(HBITMAP);
 

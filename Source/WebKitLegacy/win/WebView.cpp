@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple, Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple, Inc. All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2011 Brent Fulgham. All rights reserved.
  *
@@ -202,6 +202,10 @@
 #include "AcceleratedCompositingContext.h"
 #endif
 
+#if USE(DIRECT2D)
+#include <WebCore/PlatformContextDirect2D.h>
+#endif
+
 #if ENABLE(FULLSCREEN_API)
 #include <WebCore/FullScreenController.h>
 #endif
@@ -235,7 +239,9 @@ using JSC::JSLock;
 
 static String webKitVersionString();
 
+#if USE(CF)
 static const CFStringRef WebKitLocalCacheDefaultsKey = CFSTR("WebKitLocalCache");
+#endif
 static HMODULE accessibilityLib;
 
 static HashSet<WebView*>& pendingDeleteBackingStoreSet()
@@ -872,13 +878,6 @@ bool WebView::ensureBackingStore()
             if (!SUCCEEDED(hr))
                 return false;
         }
-
-        COMPtr<ID2D1SolidColorBrush> brush;
-        m_renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::BlueViolet), &brush);
-
-        m_renderTarget->BeginDraw();
-        m_renderTarget->FillRoundedRectangle(D2D1::RoundedRect(D2D1::RectF(100.0f, 100.0f, 300.0f, 200.0f), 20.0f, 20.0f), brush.get());
-        m_renderTarget->EndDraw();
 #endif
         m_backingStoreSize.cx = width;
         m_backingStoreSize.cy = height;
@@ -896,12 +895,6 @@ bool WebView::ensureBackingStore()
 
         hr = m_backingStoreRenderTarget->QueryInterface(__uuidof(ID2D1GdiInteropRenderTarget), (void**)&m_backingStoreGdiInterop);
         RELEASE_ASSERT(SUCCEEDED(hr));
-
-        COMPtr<ID2D1SolidColorBrush> brush2;
-        m_backingStoreRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::SeaGreen), &brush2);
-        m_backingStoreRenderTarget->BeginDraw();
-        m_renderTarget->FillRoundedRectangle(D2D1::RoundedRect(D2D1::RectF(100.0f, 100.0f, 300.0f, 200.0f), 20.0f, 20.0f), brush2.get());
-        m_renderTarget->EndDraw();
 #endif
         return true;
     }
@@ -1252,7 +1245,8 @@ void WebView::paintWithDirect2D()
     }
 
     RECT clientRect = {};
-    GraphicsContext gc(m_renderTarget.get());
+    PlatformContextDirect2D platformContext(m_renderTarget.get());
+    GraphicsContext gc(&platformContext, GraphicsContext::BitmapRenderingContextType::GPUMemory);
 
     {
         m_renderTarget->SetTags(WEBKIT_DRAWING, __LINE__);
@@ -5341,6 +5335,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         if (FAILED(hr))
             return hr;
 
+#if USE(CF)
         RetainPtr<CFURLRef> url = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, toString(str).createCFString().get(), 0));
 
         // Check if the passed in string is a path and convert it to a URL.
@@ -5358,6 +5353,9 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         }
 
         settings.setUserStyleSheetLocation(url.get());
+#else
+        ASSERT(0);
+#endif
         str.clear();
     } else
         settings.setUserStyleSheetLocation(URL());

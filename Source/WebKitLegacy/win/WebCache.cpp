@@ -108,6 +108,7 @@ HRESULT WebCache::statistics(_Inout_ int* count, _Inout_opt_ IPropertyBag** s)
 
     WebCore::MemoryCache::Statistics stat = WebCore::MemoryCache::singleton().getStatistics();
 
+#if USE(CF)
     static CFStringRef imagesKey = CFSTR("images");
     static CFStringRef stylesheetsKey = CFSTR("style sheets");
     static CFStringRef xslKey = CFSTR("xsl");
@@ -209,6 +210,9 @@ HRESULT WebCache::statistics(_Inout_ int* count, _Inout_opt_ IPropertyBag** s)
     s[3] = propBag.leakRef();
 
     return S_OK;
+#else
+    return E_FAIL;
+#endif
 }
 
 HRESULT WebCache::empty()

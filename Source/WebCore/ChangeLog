@@ -1,3 +1,73 @@
+2019-08-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Get WebKit, WebKit2, and MiniBrowser building and executing
+        https://bugs.webkit.org/show_bug.cgi?id=200539
+        <rdar://problem/54082550>
+
+        Reviewed by Dean Jackson.
+
+        * platform/graphics/win/BackingStoreBackendDirect2D.h:
+        (WebCore::BackingStoreBackendDirect2D::renderTarget const):
+        (WebCore::BackingStoreBackendDirect2D::surface const):
+        (): Deleted.
+        * platform/graphics/win/BackingStoreBackendDirect2DImpl.cpp:
+        (WebCore::BackingStoreBackendDirect2DImpl::~BackingStoreBackendDirect2DImpl):
+        (WebCore::BackingStoreBackendDirect2DImpl::scroll):
+        (WebCore::createDirect2DImageSurfaceWithFastMalloc): Deleted.
+        * platform/graphics/win/BackingStoreBackendDirect2DImpl.h:
+        * platform/graphics/win/DIBPixelData.cpp:
+        (WebCore::DIBPixelData::DIBPixelData):
+        * platform/graphics/win/DIBPixelData.h:
+        * platform/graphics/win/Direct2DOperations.cpp:
+        (WebCore::Direct2D::fillRectWithRoundedHole):
+        (WebCore::Direct2D::fillRectWithGradient):
+        (WebCore::Direct2D::drawGlyphs):
+        (WebCore::Direct2D::PlatformContextStateSaver::PlatformContextStateSaver): Deleted.
+        (WebCore::Direct2D::PlatformContextStateSaver::~PlatformContextStateSaver): Deleted.
+        (WebCore::Direct2D::PlatformContextStateSaver::save): Deleted.
+        (WebCore::Direct2D::PlatformContextStateSaver::restore): Deleted.
+        (WebCore::Direct2D::PlatformContextStateSaver::didSave const): Deleted.
+        * platform/graphics/win/Direct2DOperations.h:
+        * platform/graphics/win/Direct2DUtilities.cpp:
+        (WebCore::Direct2D::bitmapSize):
+        (WebCore::Direct2D::bitmapResolution):
+        (WebCore::Direct2D::createWicBitmap):
+        (WebCore::Direct2D::createBitmap):
+        (WebCore::Direct2D::createGDIRenderTarget):
+        (WebCore::Direct2D::copyRectFromOneSurfaceToAnother):
+        * platform/graphics/win/Direct2DUtilities.h:
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::platformContext const):
+        (WebCore::GraphicsContextPlatformPrivate::setAlpha):
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        (WebCore::GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::beginDraw):
+        (WebCore::GraphicsContextPlatformPrivate::endDraw):
+        (WebCore::GraphicsContext::beginDraw):
+        (WebCore::GraphicsContext::endDraw):
+        (WebCore::GraphicsContext::setCTM):
+        (WebCore::GraphicsContext::isAcceleratedContext const):
+        * platform/graphics/win/GraphicsContextImplDirect2D.cpp:
+        (WebCore::GraphicsContextImplDirect2D::fillRect):
+        (WebCore::GraphicsContextImplDirect2D::fillRectWithRoundedHole):
+        (WebCore::GraphicsContextImplDirect2D::drawGlyphs):
+        * platform/graphics/win/GraphicsContextPlatformPrivateDirect2D.h:
+        (WebCore::GraphicsContextPlatformPrivate::platformContext):
+        * platform/graphics/win/PathDirect2D.cpp:
+        (WebCore::Path::transform):
+        * platform/graphics/win/PlatformContextDirect2D.cpp:
+        (WebCore::PlatformContextDirect2D::beginDraw):
+        (WebCore::PlatformContextDirect2D::endDraw):
+        * platform/graphics/win/PlatformContextDirect2D.h:
+        (WebCore::PlatformContextStateSaver::PlatformContextStateSaver):
+        (WebCore::PlatformContextStateSaver::~PlatformContextStateSaver):
+        (WebCore::PlatformContextStateSaver::save):
+        (WebCore::PlatformContextStateSaver::restore):
+        (WebCore::PlatformContextStateSaver::didSave const):
+
 2019-08-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, address post-landing review comments for r248431.

@@ -53,8 +53,6 @@ GraphicsContext::GraphicsContext(HDC hdc, bool hasAlpha)
 
 GraphicsContext::GraphicsContext(HDC hdc, ID2D1DCRenderTarget** renderTarget, RECT rect, bool hasAlpha)
 {
-    m_data->m_hdc = hdc;
-
     // Create a DC render target.
     auto targetProperties = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
         D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
@@ -67,6 +65,7 @@ GraphicsContext::GraphicsContext(HDC hdc, ID2D1DCRenderTarget** renderTarget, RE
 
     auto ownedPlatformContext = std::make_unique<PlatformContextDirect2D>(*renderTarget);
     m_data = new GraphicsContextPlatformPrivate(WTFMove(ownedPlatformContext), BitmapRenderingContextType::GPUMemory);
+    m_data->m_hdc = hdc;
 }
 
 GraphicsContext::GraphicsContext(PlatformContextDirect2D* platformGraphicsContext, BitmapRenderingContextType rendererType)
@@ -164,8 +163,10 @@ void GraphicsContext::platformDestroy()
 
 PlatformContextDirect2D* GraphicsContext::platformContext() const
 {
+    if (m_impl)
+        return m_impl->platformContext();
     ASSERT(!paintingDisabled());
-    return m_data->platformContext();
+    return &m_data->platformContext();
 }
 
 void GraphicsContextPlatformPrivate::syncContext(PlatformContextDirect2D&)
@@ -197,18 +198,12 @@ float GraphicsContextPlatformPrivate::currentGlobalAlpha() const
 
 void GraphicsContext::savePlatformState()
 {
-    ASSERT(!paintingDisabled());
-    ASSERT(!m_impl);
-
     ASSERT(hasPlatformContext());
     Direct2D::save(*platformContext());
 }
 
 void GraphicsContext::restorePlatformState()
 {
-    ASSERT(!paintingDisabled());
-    ASSERT(!m_impl);
-
     ASSERT(hasPlatformContext());
     Direct2D::restore(*platformContext());
 }
@@ -247,14 +242,17 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
 
     auto bitmapProperties = D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED));
 
+    ASSERT(hasPlatformContext());
+    auto& platformContext = *this->platformContext();
+
     COMPtr<ID2D1Bitmap> bitmap;
-    HRESULT hr = platformContext()->renderTarget()->CreateBitmap(pixelData.size(), pixelData.buffer(), pixelData.bytesPerRow(), &bitmapProperties, &bitmap);
+    HRESULT hr = platformContext.renderTarget()->CreateBitmap(pixelData.size(), pixelData.buffer(), pixelData.bytesPerRow(), &bitmapProperties, &bitmap);
     ASSERT(SUCCEEDED(hr));
 
-    D2DContextStateSaver stateSaver(*m_data);
+    PlatformContextStateSaver stateSaver(platformContext);
 
     // Note: The content in the HDC is inverted compared to Direct2D, so it needs to be flipped.
-    auto context = platformContext()->renderTarget();
+    auto context = platformContext.renderTarget();
 
     D2D1_MATRIX_3X2_F currentTransform;
     context->GetTransform(&currentTransform);
@@ -314,7 +312,7 @@ GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
     if (!m_platformContext.renderTarget())
         return;
 
-    if (beginDrawCount)
+    if (m_platformContext.beginDrawCount)
         endDraw();
 }
 
@@ -346,21 +344,12 @@ void GraphicsContextPlatformPrivate::flush()
 
 void GraphicsContextPlatformPrivate::beginDraw()
 {
-    ASSERT(m_platformContext.renderTarget());
-    m_platformContext.renderTarget()->BeginDraw();
-    ++beginDrawCount;
+    m_platformContext.beginDraw();
 }
 
 void GraphicsContextPlatformPrivate::endDraw()
 {
-    ASSERT(m_platformContext.renderTarget());
-    D2D1_TAG first, second;
-    HRESULT hr = m_platformContext.renderTarget()->EndDraw(&first, &second);
-
-    if (!SUCCEEDED(hr))
-        WTFLogAlways("Failed in GraphicsContextPlatformPrivate::endDraw: hr=%xd, first=%ld, second=%ld", hr, first, second);
-
-    --beginDrawCount;
+    m_platformContext.endDraw();
 }
 
 void GraphicsContextPlatformPrivate::restore()
@@ -419,12 +408,14 @@ ID2D1Brush* GraphicsContext::patternFillBrush() const
 
 void GraphicsContext::beginDraw()
 {
-    m_data->beginDraw();
+    ASSERT(hasPlatformContext());
+    platformContext()->beginDraw();
 }
 
 void GraphicsContext::endDraw()
 {
-    m_data->endDraw();
+    ASSERT(hasPlatformContext());
+    platformContext()->endDraw();
 }
 
 void GraphicsContext::flush()
@@ -995,7 +986,7 @@ void GraphicsContext::setCTM(const AffineTransform& transform)
         return;
 
     if (m_impl) {
-        WTFLogAlways("GraphicsContext::setCTM() is not compatible with recording contexts.");
+        m_impl->setCTM(transform);
         return;
     }
 
@@ -1131,10 +1122,9 @@ void GraphicsContext::setIsAcceleratedContext(bool isAccelerated)
 
 bool GraphicsContext::isAcceleratedContext() const
 {
-    if (paintingDisabled())
+    if (!hasPlatformContext())
         return false;
 
-    ASSERT(hasPlatformContext());
     return Direct2D::State::isAcceleratedContext(*platformContext());
 }
 

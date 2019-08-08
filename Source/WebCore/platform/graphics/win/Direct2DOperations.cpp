@@ -55,47 +55,6 @@ namespace Direct2D {
 enum PatternAdjustment { NoAdjustment, AdjustPatternForGlobalAlpha };
 enum AlphaPreservation { DoNotPreserveAlpha, PreserveAlpha };
 
-
-class PlatformContextStateSaver {
-public:
-    PlatformContextStateSaver(PlatformContextDirect2D& context, bool saveAndRestore = true)
-        : m_context(context)
-        , m_saveAndRestore(saveAndRestore)
-    {
-        if (m_saveAndRestore)
-            m_context.save();
-    }
-
-    ~PlatformContextStateSaver()
-    {
-        if (m_saveAndRestore)
-            m_context.restore();
-    }
-
-    void save()
-    {
-        ASSERT(!m_saveAndRestore);
-        m_context.save();
-        m_saveAndRestore = true;
-    }
-
-    void restore()
-    {
-        ASSERT(m_saveAndRestore);
-        m_context.restore();
-        m_saveAndRestore = false;
-    }
-
-    bool didSave() const
-    {
-        return m_saveAndRestore;
-    }
-
-private:
-    PlatformContextDirect2D& m_context;
-    bool m_saveAndRestore { false };
-};
-
 // FIXME: Replace once GraphicsContext::dashedLineCornerWidthForStrokeWidth()
 // is refactored as a static public function.
 static float dashedLineCornerWidthForStrokeWidth(float strokeWidth, StrokeStyle strokeStyle, float strokeThickness)
@@ -521,7 +480,7 @@ void fillRectWithRoundedHole(PlatformContextDirect2D& platformContext, const Flo
     FillSource fillWithHoleSource = fillSource;
     fillWithHoleSource.fillRule = WindRule::EvenOdd;
 
-    fillPath(platformContext, path, fillSource, shadowState);
+    fillPath(platformContext, path, fillWithHoleSource, shadowState);
 }
 
 void fillRectWithGradient(PlatformContextDirect2D& platformContext, const FloatRect& rect, ID2D1Brush* gradient)
@@ -534,6 +493,8 @@ void fillRectWithGradient(PlatformContextDirect2D& platformContext, const FloatR
         const D2D1_RECT_F d2dRect = rect;
         renderTarget->FillRectangle(&d2dRect, gradient);
     };
+
+    drawWithoutShadow(platformContext, rect, drawFunction);
 }
 
 void fillPath(PlatformContextDirect2D& platformContext, const Path& path, const FillSource& fillSource, const ShadowState& shadowState)
@@ -735,12 +696,73 @@ void clearRect(PlatformContextDirect2D& platformContext, const FloatRect& rect)
     });
 }
 
-/*
-void drawGlyphs(PlatformContextDirect2D& platformContext, const FillSource& fillSource, const StrokeSource& strokeSource, const ShadowState& shadowState, const FloatPoint& point, DirectWriteScaledFont* scaledFont, double syntheticBoldOffset, const Vector<DirectWriteGlyphType>& glyphs, float xOffset, TextDrawingModeFlags textDrawingMode, float strokeThickness, const FloatSize& shadowOffset, const Color& shadowColor)
+
+void drawGlyphs(PlatformContextDirect2D& platformContext, const FillSource& fillSource, const StrokeSource& strokeSource, const ShadowState& shadowState, const FloatPoint& point, const Font& font, double syntheticBoldOffset, const Vector<unsigned short>& glyphs, const Vector<float>& horizontalAdvances, const Vector<DWRITE_GLYPH_OFFSET>& glyphOffsets, float xOffset, TextDrawingModeFlags textDrawingMode, float strokeThickness, const FloatSize& shadowOffset, const Color& shadowColor)
 {
-    notImplemented();
+    auto renderTarget = platformContext.renderTarget();
+    const FontPlatformData& platformData = font.platformData();
+
+    platformContext.save();
+
+    D2D1_MATRIX_3X2_F matrix;
+    renderTarget->GetTransform(&matrix);
+
+    /*
+    // FIXME: Get Synthetic Oblique working
+    if (platformData.syntheticOblique()) {
+        static float skew = -tanf(syntheticObliqueAngle() * piFloat / 180.0f);
+        auto skewMatrix = D2D1::Matrix3x2F::Skew(skew, 0);
+        context->SetTransform(matrix * skewMatrix);
+    }
+    */
+
+    RELEASE_ASSERT(platformData.dwFont());
+    RELEASE_ASSERT(platformData.dwFontFace());
+
+    DWRITE_GLYPH_RUN glyphRun;
+    glyphRun.fontFace = platformData.dwFontFace();
+    glyphRun.fontEmSize = platformData.size();
+    glyphRun.glyphCount = glyphs.size();
+    glyphRun.glyphIndices = glyphs.data();
+    glyphRun.glyphAdvances = horizontalAdvances.data();
+    glyphRun.glyphOffsets = nullptr;
+    glyphRun.isSideways = platformData.orientation() == FontOrientation::Vertical;
+    glyphRun.bidiLevel = 0;
+
+    /*
+    // FIXME(): Get Shadows working
+    FloatSize shadowOffset;
+    float shadowBlur;
+    Color shadowColor;
+    graphicsContext.getShadow(shadowOffset, shadowBlur, shadowColor);
+
+    bool hasSimpleShadow = graphicsContext.textDrawingMode() == TextModeFill && shadowColor.isValid() && !shadowBlur && (!graphicsContext.shadowsIgnoreTransforms() || graphicsContext.getCTM().isIdentityOrTranslationOrFlipped());
+    if (hasSimpleShadow) {
+        // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
+        graphicsContext.clearShadow();
+        Color fillColor = graphicsContext.fillColor();
+        Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
+        float shadowTextX = point.x() + shadowOffset.width();
+        // If shadows are ignoring transforms, then we haven't applied the Y coordinate flip yet, so down is negative.
+        float shadowTextY = point.y() + shadowOffset.height() * (graphicsContext.shadowsIgnoreTransforms() ? -1 : 1);
+
+        auto shadowBrush = graphicsContext.brushWithColor(shadowFillColor);
+        context->DrawGlyphRun(D2D1::Point2F(shadowTextX, shadowTextY), &glyphRun, shadowBrush);
+        if (font.syntheticBoldOffset())
+            context->DrawGlyphRun(D2D1::Point2F(shadowTextX + font.syntheticBoldOffset(), shadowTextY), &glyphRun, shadowBrush);
+    }
+    */
+
+    renderTarget->DrawGlyphRun(D2D1::Point2F(point.x(), point.y()), &glyphRun, fillSource.brush.get());
+    // if (font.syntheticBoldOffset())
+    //     context->DrawGlyphRun(D2D1::Point2F(point.x() + font.syntheticBoldOffset(), point.y()), &glyphRun, graphicsContext.solidFillBrush());
+
+    // if (hasSimpleShadow)
+    //     graphicsContext.setShadow(shadowOffset, shadowBlur, shadowColor);
+
+    platformContext.restore();
 }
-*/
+
 
 void drawNativeImage(PlatformContextDirect2D& platformContext, IWICBitmap* image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOperator, BlendMode blendMode, ImageOrientation orientation, InterpolationQuality imageInterpolationQuality, float globalAlpha, const ShadowState& shadowState)
 {

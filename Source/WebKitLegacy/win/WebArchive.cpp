@@ -28,7 +28,10 @@
 
 #include "DOMCoreClasses.h"
 #include "MemoryStream.h"
+
+#if USE(CF)
 #include <WebCore/LegacyWebArchive.h>
+#endif
 
 using namespace WebCore;
 
@@ -36,9 +39,13 @@ using namespace WebCore;
 
 WebArchive* WebArchive::createInstance()
 {
+#if USE(CF)
     WebArchive* instance = new WebArchive(0);
     instance->AddRef();
     return instance;
+#else
+    return nullptr;
+#endif
 }
 
 WebArchive* WebArchive::createInstance(RefPtr<LegacyWebArchive>&& coreArchive)
@@ -50,7 +57,9 @@ WebArchive* WebArchive::createInstance(RefPtr<LegacyWebArchive>&& coreArchive)
 }
 
 WebArchive::WebArchive(RefPtr<LegacyWebArchive>&& coreArchive)
+#if USE(CF)
     : m_archive(WTFMove(coreArchive))
+#endif
 {
     gClassCount++;
     gClassNameCount().add("WebArchive");
@@ -113,8 +122,10 @@ HRESULT WebArchive::initWithNode(_In_opt_ IDOMNode* node)
     if (!domNode)
         return E_NOINTERFACE;
 
+#if USE(CF)
     m_archive = LegacyWebArchive::create(*domNode->node());
-    
+#endif
+
     return S_OK;
 }
 
@@ -147,6 +158,7 @@ HRESULT WebArchive::data(_COM_Outptr_opt_ IStream** stream)
     if (!stream)
         return E_POINTER;
 
+#if USE(CF)
     *stream = nullptr;
     RetainPtr<CFDataRef> cfData = m_archive->rawDataRepresentation();
     if (!cfData)
@@ -155,4 +167,8 @@ HRESULT WebArchive::data(_COM_Outptr_opt_ IStream** stream)
     auto buffer = SharedBuffer::create(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()));
 
     return MemoryStream::createInstance(WTFMove(buffer)).copyRefTo(stream);
+#else
+    UNUSED_PARAM(stream);
+    return E_FAIL;
+#endif
 }

@@ -27,6 +27,10 @@
 
 #include "WebLocalizableStrings.h"
 
+#if USE(CF)
+
+#include <CoreFoundation/CoreFoundation.h>
+
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -37,7 +41,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadingPrimitives.h>
-#include <CoreFoundation/CoreFoundation.h>
 
 class LocalizedString;
 
@@ -241,3 +244,4 @@ LPCTSTR WebLocalizedLPCTSTR(WebLocalizableStringsBundle* stringsBundle, LPCTSTR 
 void SetWebLocalizedStringMainBundle(CFBundleRef)
 {
 }
+#endif

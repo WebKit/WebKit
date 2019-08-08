@@ -75,7 +75,7 @@ public:
     void setDashes(const DashArray&);
     void setAlpha(float);
 
-    PlatformContextDirect2D* platformContext() { return &m_platformContext; }
+    PlatformContextDirect2D& platformContext() { return m_platformContext; }
     ID2D1RenderTarget* renderTarget();
 
     HDC m_hdc { nullptr };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2009, 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CFDictionaryPropertyBag_h
-#define CFDictionaryPropertyBag_h
+#pragma once
 
 #include "WebKit.h"
 #include <WebCore/COMPtr.h>
 #include <wtf/RetainPtr.h>
 
+#if USE(CF)
 typedef struct __CFDictionary* CFMutableDictionaryRef;
+#endif
 
 class CFDictionaryPropertyBag : public IPropertyBag {
 public:
@@ -40,8 +41,10 @@ public:
     virtual ULONG STDMETHODCALLTYPE AddRef();
     virtual ULONG STDMETHODCALLTYPE Release();
 
+#if USE(CF)
     void setDictionary(CFMutableDictionaryRef dictionary);
     WEBKIT_API CFMutableDictionaryRef dictionary() const;
+#endif
 
 private:
     CFDictionaryPropertyBag();
@@ -53,8 +56,8 @@ private:
     virtual HRESULT STDMETHODCALLTYPE Read(LPCOLESTR pszPropName, VARIANT*, IErrorLog*);
     virtual HRESULT STDMETHODCALLTYPE Write(_In_ LPCOLESTR pszPropName, _In_  VARIANT*);
 
+#if USE(CF)
     RetainPtr<CFMutableDictionaryRef> m_dictionary;
+#endif
     ULONG m_refCount { 0 };
 };
-
-#endif // CFDictionaryPropertyBag_h

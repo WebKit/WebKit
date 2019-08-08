@@ -29,6 +29,10 @@
 #include "ShareableBitmap.h"
 #include "UpdateInfo.h"
 
+#if USE(DIRECT2D)
+#include <d2d1.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 

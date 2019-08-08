@@ -317,10 +317,12 @@ public:
     HRESULT postPreferencesChangesNotification();
 
 protected:
+#if USE(CF)
     void setValueForKey(CFStringRef key, CFPropertyListRef value);
     RetainPtr<CFPropertyListRef> valueForKey(CFStringRef key);
     void setValueForKey(const char* key, CFPropertyListRef value);
     RetainPtr<CFPropertyListRef> valueForKey(const char* key);
+#endif
     BSTR stringValueForKey(const char* key);
     int integerValueForKey(const char* key);
     BOOL boolValueForKey(const char* key);
@@ -335,15 +337,20 @@ protected:
     static void initializeDefaultSettings();
     void save();
     void load();
+#if USE(CF)
     void migrateWebKitPreferencesToCFPreferences();
     void copyWebKitPreferencesToCFPreferences(CFDictionaryRef);
+#endif
 
 protected:
     ULONG m_refCount { 0 };
-    RetainPtr<CFMutableDictionaryRef> m_privatePrefs;
     WebCore::BString m_identifier;
     bool m_autoSaves { false };
     bool m_automaticallyDetectsCacheModel { true };
     unsigned m_numWebViews { 0 };
+
+#if USE(CF)
+    RetainPtr<CFMutableDictionaryRef> m_privatePrefs;
     static RetainPtr<CFStringRef> m_applicationId;
+#endif
 };

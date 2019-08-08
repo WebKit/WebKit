@@ -76,7 +76,9 @@ HRESULT WebKitCreateInstance(REFCLSID rclsid, IUnknown* pUnkOuter, REFIID riid, 
     return factory->CreateInstance(pUnkOuter, riid, ppvObject);
 }
 
+#if USE(CF)
 CFBundleRef webKitBundle()
 {
     return WebCore::webKitBundle();
 }
+#endif

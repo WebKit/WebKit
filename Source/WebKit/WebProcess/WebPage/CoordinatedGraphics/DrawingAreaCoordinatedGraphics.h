@@ -59,8 +59,11 @@ private:
     void setPaintingEnabled(bool paintingEnabled) override { m_isPaintingEnabled = paintingEnabled; };
     void updatePreferences(const WebPreferencesStore&) override;
     void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
+
+#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     void deviceOrPageScaleFactorChanged() override;
     void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override;
+#endif
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     void setRootCompositingLayer(WebCore::GraphicsLayer*) override;

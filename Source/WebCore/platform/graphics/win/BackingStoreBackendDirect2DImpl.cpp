@@ -40,21 +40,6 @@ namespace WebCore {
 
 static const Seconds scrollHysteresisDuration { 300_ms };
 
-static COMPtr<IWICBitmap> createDirect2DImageSurfaceWithFastMalloc(const IntSize& size, double deviceScaleFactor, void*& backingStoreData)
-{
-    auto bytesPerRow = 4 * Checked<unsigned, RecordOverflow>(size.width());
-    if (bytesPerRow.hasOverflowed())
-        return nullptr;
-
-    Checked<size_t, RecordOverflow> numBytes = Checked<unsigned, RecordOverflow>(size.height()) * bytesPerRow;
-    if (numBytes.hasOverflowed())
-        return nullptr;
-
-    backingStoreData = fastZeroedMalloc(numBytes.unsafeGet());
-
-    return Direct2D::createDirect2DImageSurfaceWithData(backingStoreData, size, bytesPerRow.unsafeGet());
-}
-
 BackingStoreBackendDirect2DImpl::BackingStoreBackendDirect2DImpl(const IntSize& size, float deviceScaleFactor)
     : BackingStoreBackendDirect2D(size)
     , m_scrolledHysteresis([this](PAL::HysteresisState state) {
@@ -62,15 +47,15 @@ BackingStoreBackendDirect2DImpl::BackingStoreBackendDirect2DImpl(const IntSize& 
             m_scrollSurface = nullptr;
         }, scrollHysteresisDuration)
 {
+    m_renderTarget = WebCore::Direct2D::createGDIRenderTarget();
+
     IntSize scaledSize = m_size;
     scaledSize.scale(deviceScaleFactor);
-    m_surface = createDirect2DImageSurfaceWithFastMalloc(scaledSize, deviceScaleFactor, m_surfaceBackingData);
+    m_surface = Direct2D::createBitmap(m_renderTarget.get(), scaledSize);
 }
 
 BackingStoreBackendDirect2DImpl::~BackingStoreBackendDirect2DImpl()
 {
-    fastFree(m_surfaceBackingData);
-    fastFree(m_scrollSurfaceBackingData);
 }
 
 void BackingStoreBackendDirect2DImpl::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
@@ -83,10 +68,11 @@ void BackingStoreBackendDirect2DImpl::scroll(const IntRect& scrollRect, const In
         return;
 
     if (!m_scrollSurface) {
-        auto size = Direct2D::bitmapSize(m_surface.get());
+        auto floatSize = Direct2D::bitmapSize(m_surface.get());
+        IntSize size(floatSize.width(), floatSize.height());
         auto scale = Direct2D::bitmapResolution(m_surface.get());
         ASSERT(scale.x() == scale.y());
-        m_scrollSurface = createDirect2DImageSurfaceWithFastMalloc(size, scale.x(), m_scrollSurfaceBackingData);
+        m_scrollSurface = Direct2D::createBitmap(m_renderTarget.get(), size);
     }
 
     Direct2D::copyRectFromOneSurfaceToAnother(m_surface.get(), m_scrollSurface.get(), scrollOffset, targetRect);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2007, 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,7 @@ COMPtr<CFDictionaryPropertyBag> CFDictionaryPropertyBag::createInstance()
     return new CFDictionaryPropertyBag;
 }
 
+#if USE(CF)
 void CFDictionaryPropertyBag::setDictionary(CFMutableDictionaryRef dictionary)
 {
     m_dictionary = dictionary;
@@ -57,6 +58,7 @@ CFMutableDictionaryRef CFDictionaryPropertyBag::dictionary() const
 {
     return m_dictionary.get();
 }
+#endif
 
 // IUnknown -------------------------------------------------------------------
 
@@ -96,6 +98,7 @@ ULONG CFDictionaryPropertyBag::Release()
 
 static bool ConvertCFTypeToVariant(VARIANT* pVar, void* cfObj)
 {
+#if USE(CF)
     if (!cfObj) {
         V_VT(pVar) = VT_NULL;
         return true;
@@ -121,9 +124,11 @@ static bool ConvertCFTypeToVariant(VARIANT* pVar, void* cfObj)
             }
         }
     }
+#endif
     return false;
 }
 
+#if USE(CF)
 static bool ConvertVariantToCFType(VARIANT* pVar, void** cfObj)
 {
     if (V_VT(pVar) == VT_NULL) {
@@ -153,11 +158,13 @@ static bool ConvertVariantToCFType(VARIANT* pVar, void** cfObj)
     }
     return false;
 }
+#endif
 
 HRESULT CFDictionaryPropertyBag::Read(LPCOLESTR pszPropName, VARIANT *pVar, IErrorLog * /*pErrorLog*/)
 {
     if (!pszPropName)
         return E_POINTER;
+#if USE(CF)
     if (m_dictionary) {
         void* value;
         CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(pszPropName);
@@ -170,6 +177,7 @@ HRESULT CFDictionaryPropertyBag::Read(LPCOLESTR pszPropName, VARIANT *pVar, IErr
         CFRelease(key);
         return hr;
     }
+#endif
     return E_FAIL;
 }
         
@@ -177,6 +185,7 @@ HRESULT CFDictionaryPropertyBag::Write(_In_ LPCOLESTR pszPropName, _In_ VARIANT*
 {
     if (!pszPropName || !pVar)
         return E_POINTER;
+#if USE(CF)
     if (!m_dictionary) {
         m_dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     }
@@ -189,5 +198,6 @@ HRESULT CFDictionaryPropertyBag::Write(_In_ LPCOLESTR pszPropName, _In_ VARIANT*
         CFRelease(cfObj);
         return S_OK;
     }
+#endif
     return E_FAIL;
 }

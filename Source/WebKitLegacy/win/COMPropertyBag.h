@@ -139,12 +139,16 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Read(LPC
     if (it == end)
         return E_INVALIDARG;
 
+#if USE(CF)
     VARTYPE requestedType = V_VT(pVar);
     V_VT(pVar) = VT_EMPTY;
     COMVariantSetter<ValueType>::setVariant(pVar, it->value);
 
     if (requestedType != COMVariantSetter<ValueType>::variantType(it->value) && requestedType != VT_EMPTY)
         return ::VariantChangeType(pVar, pVar, VARIANT_NOUSEROVERRIDE | VARIANT_ALPHABOOL, requestedType);
+#else
+    ASSERT(0);
+#endif
 
     return S_OK;
 }
@@ -201,6 +205,7 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::GetPrope
     if (m_hashMap.size() <= iProperty)
         return E_INVALIDARG;
 
+#if USE(CF)
     *pcProperties = 0;
     auto current = m_hashMap.begin();
     auto end = m_hashMap.end();
@@ -220,6 +225,7 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::GetPrope
         wcscpy_s(pPropBag[j].pstrName, current->key.length()+1, current->key.wideCharacters().data());
         ++*pcProperties;
     }
+#endif
     return S_OK;
 }
 

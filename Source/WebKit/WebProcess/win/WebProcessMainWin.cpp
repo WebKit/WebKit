@@ -28,6 +28,7 @@
 
 #include "AuxiliaryProcessMain.h"
 #include "WebProcess.h"
+#include <Objbase.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -42,6 +43,9 @@ public:
 
 int WebProcessMainWin(int argc, char** argv)
 {
+    // WebProcess uses DirectX
+    HRESULT hr = ::CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+    RELEASE_ASSERT(SUCCEEDED(hr));
     return AuxiliaryProcessMain<WebProcess, WebProcessMain>(argc, argv);
 }
 

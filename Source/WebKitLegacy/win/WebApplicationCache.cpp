@@ -40,7 +40,9 @@
 
 using namespace WebCore;
 
+#if USE(CF)
 static CFStringRef WebKitLocalCacheDefaultsKey = CFSTR("WebKitLocalCache");
+#endif
 
 // WebApplicationCache ---------------------------------------------------------------------------
 
@@ -189,6 +191,7 @@ HRESULT WebApplicationCache::originsWithCache(IPropertyBag** origins)
 
     auto coreOrigins = storage().originsWithCache();
 
+#if USE(CF)
     RetainPtr<CFMutableArrayRef> arrayItem = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, coreOrigins.size(), &MarshallingHelpers::kIUnknownArrayCallBacks));
 
     for (auto& coreOrigin : coreOrigins)
@@ -203,6 +206,7 @@ HRESULT WebApplicationCache::originsWithCache(IPropertyBag** origins)
     COMPtr<CFDictionaryPropertyBag> result = CFDictionaryPropertyBag::createInstance();
     result->setDictionary(dictionary.get());
     *origins = result.leakRef();
+#endif
 
     return S_OK;
 }

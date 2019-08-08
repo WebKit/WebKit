@@ -241,6 +241,25 @@ void PlatformContextDirect2D::setPatternOffset(float patternOffset)
     m_strokeSyleIsDirty = true;
 }
 
+void PlatformContextDirect2D::beginDraw()
+{
+    ASSERT(m_renderTarget);
+    m_renderTarget->BeginDraw();
+    ++beginDrawCount;
+}
+
+void PlatformContextDirect2D::endDraw()
+{
+    ASSERT(m_renderTarget);
+    D2D1_TAG first, second;
+    HRESULT hr = m_renderTarget->EndDraw(&first, &second);
+
+    if (!SUCCEEDED(hr))
+        WTFLogAlways("Failed in PlatformContextDirect2D::endDraw: hr=%xd, first=%ld, second=%ld", hr, first, second);
+
+    --beginDrawCount;
+}
+
 } // namespace WebCore
 
 #endif // USE(DIRECT2D)

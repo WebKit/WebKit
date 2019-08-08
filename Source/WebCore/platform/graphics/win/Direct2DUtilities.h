@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Igalia S.L.
  * Copyright (C) 2011 ProFUSION embedded systems
+ * Copyright (C) 2019 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +33,8 @@
 #include "GraphicsTypes.h"
 #include "IntSize.h"
 
+interface ID2D1Bitmap;
+interface ID2D1DCRenderTarget;
 interface ID2D1RenderTarget;
 interface IWICBitmapSource;
 interface IWICBitmap;
@@ -39,18 +42,24 @@ interface IWICBitmap;
 namespace WebCore {
 
 class FloatPoint;
+class FloatSize;
 class IntRect;
 class IntSize;
 
 namespace Direct2D {
 
 IntSize bitmapSize(IWICBitmapSource*);
+FloatSize bitmapSize(ID2D1Bitmap*);
 FloatPoint bitmapResolution(IWICBitmapSource*);
+FloatPoint bitmapResolution(ID2D1Bitmap*);
 unsigned bitsPerPixel(GUID);
+COMPtr<ID2D1Bitmap> createBitmap(ID2D1RenderTarget*, const IntSize&);
+COMPtr<IWICBitmap> createWicBitmap(const IntSize&);
 COMPtr<IWICBitmap> createDirect2DImageSurfaceWithData(void* data, const IntSize&, unsigned stride);
 COMPtr<ID2D1RenderTarget> createRenderTargetFromWICBitmap(IWICBitmap*);
+COMPtr<ID2D1DCRenderTarget> createGDIRenderTarget();
 
-void copyRectFromOneSurfaceToAnother(IWICBitmap* from, IWICBitmap* to, const IntSize& sourceOffset, const IntRect&, const IntSize& destOffset = IntSize());
+void copyRectFromOneSurfaceToAnother(ID2D1Bitmap* from, ID2D1Bitmap* to, const IntSize& sourceOffset, const IntRect&, const IntSize& destOffset = IntSize());
 
 } // namespace Direct2D
 

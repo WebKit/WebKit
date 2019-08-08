@@ -50,7 +50,9 @@
 
 using namespace WebCore;
 
+#if USE(CF)
 static CFStringRef WebDatabaseDirectoryDefaultsKey = CFSTR("WebDatabaseDirectory");
+#endif
 
 static inline bool isEqual(LPCWSTR s1, LPCWSTR s2)
 {

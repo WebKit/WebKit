@@ -35,8 +35,12 @@
 
 using namespace WebCore;
 
+#if USE(CF)
+
 CFArrayCallBacks MarshallingHelpers::kIUnknownArrayCallBacks = {0, IUnknownRetainCallback, IUnknownReleaseCallback, 0, 0};
 CFDictionaryValueCallBacks MarshallingHelpers::kIUnknownDictionaryValueCallBacks = {0, IUnknownRetainCallback, IUnknownReleaseCallback, 0, 0};
+
+#endif
 
 URL MarshallingHelpers::BSTRToKURL(BSTR urlStr)
 {
@@ -48,6 +52,7 @@ BSTR MarshallingHelpers::URLToBSTR(const URL& url)
     return BString(url.string()).release();
 }
 
+#if USE(CF)
 CFURLRef MarshallingHelpers::PathStringToFileCFURLRef(const String& string)
 {
     return CFURLCreateWithFileSystemPath(0, string.createCFString().get(), kCFURLWindowsPathStyle, false);
@@ -99,7 +104,9 @@ CFNumberRef MarshallingHelpers::intToCFNumberRef(int num)
 {
     return CFNumberCreate(0, kCFNumberSInt32Type, &num);
 }
+#endif
 
+#if USE(CF)
 CFAbsoluteTime MarshallingHelpers::windowsEpochAbsoluteTime()
 {
     static CFAbsoluteTime windowsEpochAbsoluteTime = 0;
@@ -109,8 +116,34 @@ CFAbsoluteTime MarshallingHelpers::windowsEpochAbsoluteTime()
     }
     return windowsEpochAbsoluteTime;
 }
+#else
+double MarshallingHelpers::windowsEpochAbsoluteTime()
+{
+    static double windowsEpochAbsoluteTime = 0;
+    if (!windowsEpochAbsoluteTime) {
+        SYSTEMTIME windowsEpochDate = { };
+        windowsEpochDate.wYear = 1899;
+        windowsEpochDate.wMonth = 12;
+        windowsEpochDate.wDay = 30;
 
+        FILETIME absoluteFileTime;
+        SystemTimeToFileTime(&windowsEpochDate, &absoluteFileTime);
+
+        ULARGE_INTEGER timeValue;
+        timeValue.LowPart = absoluteFileTime.dwLowDateTime;
+        timeValue.HighPart = absoluteFileTime.dwHighDateTime;
+
+        windowsEpochAbsoluteTime = timeValue.QuadPart;
+    }
+    return windowsEpochAbsoluteTime;
+}
+#endif
+
+#if USE(CF)
 CFAbsoluteTime MarshallingHelpers::DATEToCFAbsoluteTime(DATE date)
+#else
+double MarshallingHelpers::DATEToAbsoluteTime(DATE date)
+#endif
 {
     // <http://msdn2.microsoft.com/en-us/library/ms221627.aspx>
     // DATE: This is the same numbering system used by most spreadsheet programs,
@@ -129,11 +162,16 @@ CFAbsoluteTime MarshallingHelpers::DATEToCFAbsoluteTime(DATE date)
     return round((date + windowsEpochAbsoluteTime()) * secondsPerDay);
 }
 
+#if USE(CF)
 DATE MarshallingHelpers::CFAbsoluteTimeToDATE(CFAbsoluteTime absoluteTime)
+#else
+DATE MarshallingHelpers::absoluteTimeToDATE(double absoluteTime)
+#endif
 {
     return (round(absoluteTime)/secondsPerDay - windowsEpochAbsoluteTime());
 }
 
+#if USE(CF)
 // utility method to store a 1-dim string vector into a newly created SAFEARRAY
 SAFEARRAY* MarshallingHelpers::stringArrayToSafeArray(CFArrayRef inArray)
 {
@@ -163,6 +201,7 @@ SAFEARRAY* MarshallingHelpers::intArrayToSafeArray(CFArrayRef inArray)
     }
     return sa;
 }
+#endif
 
 SAFEARRAY* MarshallingHelpers::intRectToSafeArray(const WebCore::IntRect& rect)
 {
@@ -188,6 +227,8 @@ SAFEARRAY* MarshallingHelpers::intRectToSafeArray(const WebCore::IntRect& rect)
 
     return sa;
 }
+
+#if USE(CF)
 
 // utility method to store a 1-dim IUnknown* vector into a newly created SAFEARRAY
 SAFEARRAY* MarshallingHelpers::iunknownArrayToSafeArray(CFArrayRef inArray)
@@ -267,3 +308,5 @@ void MarshallingHelpers::IUnknownReleaseCallback(CFAllocatorRef /*allocator*/, c
 {
     ((IUnknown*) value)->Release();
 }
+
+#endif

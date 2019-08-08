@@ -33,7 +33,6 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
-#include "RemoteInspectorProtocolHandler.h"
 #include "WKAPICast.h"
 #include "WebContextMenuProxyWin.h"
 #include "WebEditCommandProxy.h"
@@ -53,13 +52,25 @@
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <WebCore/WindowsTouch.h>
-#include <cairo-win32.h>
-#include <cairo.h>
 #include <wtf/FileSystem.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
+
+#if ENABLE(REMOTE_INSPECTOR)
+#include "RemoteInspectorProtocolHandler.h"
+#endif
+
+#if USE(CAIRO)
+#include <cairo-win32.h>
+#include <cairo.h>
+#endif 
+
+#if USE(DIRECT2D)
+#include <WebCore/Direct2DUtilities.h>
+#endif
+
 
 namespace WebKit {
 using namespace WebCore;
@@ -471,6 +482,7 @@ void WebView::paint(HDC hdc, const IntRect& dirtyRect)
     if (auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(m_page->drawingArea())) {
         // FIXME: We should port WebKit1's rect coalescing logic here.
         Region unpaintedRegion;
+#if USE(CAIRO)
         cairo_surface_t* surface = cairo_win32_surface_create(hdc);
         cairo_t* context = cairo_create(surface);
 
@@ -478,6 +490,13 @@ void WebView::paint(HDC hdc, const IntRect& dirtyRect)
 
         cairo_destroy(context);
         cairo_surface_destroy(surface);
+#else
+        RECT d2DirtyRect = dirtyRect;
+        if (COMPtr<ID2D1DCRenderTarget> renderTarget = drawingArea->renderTarget()) {
+            renderTarget->BindDC(hdc, &d2DirtyRect);
+            drawingArea->paint(renderTarget.get(), dirtyRect, unpaintedRegion);
+        }
+#endif
 
         auto unpaintedRects = unpaintedRegion.rects();
         for (auto& rect : unpaintedRects)

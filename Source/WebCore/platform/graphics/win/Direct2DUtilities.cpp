@@ -31,6 +31,7 @@
 
 #include "COMPtr.h"
 #include "FloatPoint.h"
+#include "FloatSize.h"
 #include "GraphicsContext.h"
 #include "ImageDecoderDirect2D.h"
 #include "IntRect.h"
@@ -53,6 +54,11 @@ IntSize bitmapSize(IWICBitmapSource* bitmapSource)
     return IntSize(width, height);
 }
 
+FloatSize bitmapSize(ID2D1Bitmap* bitmapSource)
+{
+    return bitmapSource->GetSize();
+}
+
 FloatPoint bitmapResolution(IWICBitmapSource* bitmapSource)
 {
     constexpr double dpiBase = 96.0;
@@ -63,8 +69,21 @@ FloatPoint bitmapResolution(IWICBitmapSource* bitmapSource)
         return { };
 
     FloatPoint result(dpiX, dpiY);
-    result.scale(1 / dpiBase);
+    result.scale(1.0 / dpiBase);
     return result;
+}
+
+FloatPoint bitmapResolution(ID2D1Bitmap* bitmap)
+{
+    constexpr double dpiBase = 96.0;
+
+    float dpiX, dpiY;
+    bitmap->GetDpi(&dpiX, &dpiY);
+
+    FloatPoint result(dpiX, dpiY);
+    result.scale(1.0 / dpiBase);
+    return result;
+
 }
 
 unsigned bitsPerPixel(GUID bitmapFormat)
@@ -101,6 +120,29 @@ COMPtr<IWICBitmap> createDirect2DImageSurfaceWithData(void* data, const IntSize&
     return surface;
 }
 
+COMPtr<IWICBitmap> createWicBitmap(const IntSize& size)
+{
+    COMPtr<IWICBitmap> surface;
+    HRESULT hr = ImageDecoderDirect2D::systemImagingFactory()->CreateBitmap(size.width(), size.height(), GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnDemand, &surface);
+    if (!SUCCEEDED(hr))
+        return nullptr;
+
+    return surface;
+}
+
+COMPtr<ID2D1Bitmap> createBitmap(ID2D1RenderTarget* renderTarget, const IntSize& size)
+{
+    auto bitmapProperties = D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED));
+
+    COMPtr<ID2D1Bitmap> bitmap;
+    D2D1_SIZE_U bitmapSize = size;
+    HRESULT hr = renderTarget->CreateBitmap(bitmapSize, bitmapProperties, &bitmap);
+    if (!SUCCEEDED(hr))
+        return nullptr;
+
+    return bitmap;
+}
+
 COMPtr<ID2D1RenderTarget> createRenderTargetFromWICBitmap(IWICBitmap* bitmapSource)
 {
     auto targetProperties = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
@@ -115,14 +157,26 @@ COMPtr<ID2D1RenderTarget> createRenderTargetFromWICBitmap(IWICBitmap* bitmapSour
     return bitmapContext;
 }
 
-void copyRectFromOneSurfaceToAnother(IWICBitmap* from, IWICBitmap* to, const IntSize& sourceOffset, const IntRect& rect, const IntSize& destOffset)
+COMPtr<ID2D1DCRenderTarget> createGDIRenderTarget()
 {
-    /*
-    RefPtr<cairo_t> context = adoptRef(cairo_create(to));
-    cairo_translate(context.get(), destOffset.width(), destOffset.height());
-    cairo_set_operator(context.get(), cairoOperator);
-    copyRectFromCairoSurfaceToContext(from, context.get(), sourceOffset, rect);
-    */
+    auto targetProperties = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
+        D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
+        0, 0, D2D1_RENDER_TARGET_USAGE_GDI_COMPATIBLE, D2D1_FEATURE_LEVEL_DEFAULT);
+
+    COMPtr<ID2D1DCRenderTarget> renderTarget;
+    HRESULT hr = GraphicsContext::systemFactory()->CreateDCRenderTarget(&targetProperties, &renderTarget);
+    if (!renderTarget || !SUCCEEDED(hr))
+        return nullptr;
+
+    return renderTarget;
+}
+
+void copyRectFromOneSurfaceToAnother(ID2D1Bitmap* from, ID2D1Bitmap* to, const IntSize& sourceOffset, const IntRect& rect, const IntSize& destOffset)
+{
+    auto offset = D2D1::Point2U();
+    auto sourceRect = D2D1::RectU(sourceOffset.width(), -sourceOffset.height(), rect.width(), rect.height());
+    HRESULT hr = to->CopyFromBitmap(&offset, from, &sourceRect);
+    ASSERT(SUCCEEDED(hr));
 }
 
 } // namespace Direct2D

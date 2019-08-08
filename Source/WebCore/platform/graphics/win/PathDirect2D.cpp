@@ -323,6 +323,9 @@ void Path::transform(const AffineTransform& transform)
     if (!currentPoint)
         return;
 
+    if (!m_activePath)
+        return;
+
     m_activePath->SetFillMode(fillMode);
 
     auto transformedPoint = transform.mapPoint(currentPoint.value());

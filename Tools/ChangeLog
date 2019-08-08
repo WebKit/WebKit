@@ -1,3 +1,14 @@
+2019-08-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Get WebKit, WebKit2, and MiniBrowser building and executing
+        https://bugs.webkit.org/show_bug.cgi?id=200539
+        <rdar://problem/54082550>
+
+        Reviewed by Dean Jackson.
+
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.cpp:
+        * PlatformFTW.cmake: Added.
+
 2019-08-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [iOS] Position image information should respect the image orientation

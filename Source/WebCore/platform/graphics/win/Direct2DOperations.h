@@ -125,7 +125,7 @@ void strokeRect(PlatformContextDirect2D&, const FloatRect&, float, const StrokeS
 void strokePath(PlatformContextDirect2D&, const Path&, const StrokeSource&, const ShadowState&);
 void clearRect(PlatformContextDirect2D&, const FloatRect&);
 
-// FIXME(IMPLEMENT): void drawGlyphs(PlatformContextDirect2D&, const FillSource&, const StrokeSource&, const ShadowState&, const FloatPoint&, DirectWriteScaledFont*, double, const Vector<DirectWriteGlyphType>&, float, TextDrawingModeFlags, float, const FloatSize&, const Color&);
+void drawGlyphs(PlatformContextDirect2D&, const FillSource&, const StrokeSource&, const ShadowState&, const FloatPoint&, const Font&, double, const Vector<unsigned short>& glyphs, const Vector<float>& horizontalAdvances, const Vector<DWRITE_GLYPH_OFFSET>&, float, TextDrawingModeFlags, float, const FloatSize&, const Color&);
 
 void drawNativeImage(PlatformContextDirect2D&, IWICBitmap*, const FloatSize& imageSize, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientation, InterpolationQuality, float, const ShadowState&);
 void drawNativeImage(PlatformContextDirect2D&, ID2D1Bitmap*, const FloatSize& imageSize, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientation, InterpolationQuality, float, const ShadowState&);
