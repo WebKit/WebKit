@@ -94,10 +94,10 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 42x14
             chunk 1 (middle anchor) text run 1 at (-20.65,15.00) startOffset 0 endOffset 9 width 41.31: "(default)"
       RenderSVGContainer {g} at (173,232) size 104x46 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,260.00)}]
-        RenderSVGContainer {use} at (179,232) size 92x36
-          RenderSVGText {text} at (-46,-28) size 92x36 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 91x35
-              chunk 1 (middle anchor) text run 1 at (-45.50,0.00) startOffset 0 endOffset 6 width 90.99: "sample"
+        RenderSVGContainer {use} at (181,232) size 88x36
+          RenderSVGText {text} at (-44,-28) size 88x36 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 87x35
+              chunk 1 (middle anchor) text run 1 at (-43.33,0.00) startOffset 0 endOffset 6 width 86.66: "sample"
         RenderSVGText {text} at (-52,4) size 104x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 103x14
             chunk 1 (middle anchor) text run 1 at (-51.32,15.00) startOffset 0 endOffset 22 width 102.64: "default, bold, oblique"

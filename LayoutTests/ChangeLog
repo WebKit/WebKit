@@ -1,3 +1,61 @@
+2019-08-08  Russell Epstein  <repstein@apple.com>
+
+        Add Catalina Baselines for Font-related Tests.
+        rdar://53836015
+
+        Unreviewed Test Gardening.
+
+        * platform/mac-mojave/css1/basic/inheritance-expected.txt: Copied from LayoutTests/platform/mac/css1/basic/inheritance-expected.txt.
+        * platform/mac-mojave/css2.1/t0602-c13-inh-underlin-00-e-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t0602-c13-inh-underlin-00-e-expected.txt.
+        * platform/mac-mojave/css2.1/t0805-c5522-brdr-02-e-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t0805-c5522-brdr-02-e-expected.txt.
+        * platform/mac-mojave/css3/selectors3/html/css3-modsel-18-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/html/css3-modsel-18-expected.txt.
+        * platform/mac-mojave/css3/selectors3/xhtml/css3-modsel-18-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xhtml/css3-modsel-18-expected.txt.
+        * platform/mac-mojave/css3/selectors3/xml/css3-modsel-18-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xml/css3-modsel-18-expected.txt.
+        * platform/mac-mojave/fast/block/basic/001-expected.txt: Copied from LayoutTests/platform/mac/fast/block/basic/001-expected.txt.
+        * platform/mac-mojave/fast/css/css3-nth-child-expected.txt: Copied from LayoutTests/platform/mac/fast/css/css3-nth-child-expected.txt.
+        * platform/mac-mojave/fast/dom/34176-expected.txt: Copied from LayoutTests/platform/mac/fast/dom/34176-expected.txt.
+        * platform/mac-mojave/fast/dom/clone-node-dynamic-style-expected.txt: Copied from LayoutTests/platform/mac/fast/dom/clone-node-dynamic-style-expected.txt.
+        * platform/mac-mojave/fast/forms/plaintext-mode-2-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/plaintext-mode-2-expected.txt.
+        * platform/mac-mojave/fast/invalid/003-expected.txt: Copied from LayoutTests/platform/mac/fast/invalid/003-expected.txt.
+        * platform/mac-mojave/fast/invalid/004-expected.txt: Copied from LayoutTests/platform/mac/fast/invalid/004-expected.txt.
+        * platform/mac-mojave/fast/invalid/nestedh3s-expected.txt: Copied from LayoutTests/platform/mac/fast/invalid/nestedh3s-expected.txt.
+        * platform/mac-mojave/fast/selectors/018-expected.txt: Copied from LayoutTests/platform/mac/fast/selectors/018-expected.txt.
+        * platform/mac-mojave/fast/table/frame-and-rules-expected.txt: Copied from LayoutTests/platform/mac/fast/table/frame-and-rules-expected.txt.
+        * platform/mac-mojave/fast/text/atsui-multiple-renderers-expected.txt: Copied from LayoutTests/platform/mac/fast/text/atsui-multiple-renderers-expected.txt.
+        * platform/mac-mojave/fast/text/bidi-embedding-pop-and-push-same-expected.txt: Copied from LayoutTests/platform/mac/fast/text/bidi-embedding-pop-and-push-same-expected.txt.
+        * platform/mac-mojave/fast/text/font-weights-expected.txt: Copied from LayoutTests/platform/mac/fast/text/font-weights-expected.txt.
+        * platform/mac-mojave/fast/text/font-weights-zh-expected.txt: Copied from LayoutTests/platform/mac/fast/text/font-weights-zh-expected.txt.
+        * platform/mac-mojave/svg/W3C-SVG-1.1/animate-elem-46-t-expected.txt: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-46-t-expected.txt.
+        * platform/mac-mojave/svg/W3C-SVG-1.1/struct-use-01-t-expected.txt: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/struct-use-01-t-expected.txt.
+        * platform/mac-mojave/svg/batik/text/textStyles-expected.txt: Copied from LayoutTests/platform/mac/svg/batik/text/textStyles-expected.txt.
+        * platform/mac-mojave/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt.
+        * platform/mac-mojave/tables/mozilla/other/wa_table_tr_align-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/other/wa_table_tr_align-expected.txt.
+        * platform/mac/css1/basic/inheritance-expected.txt:
+        * platform/mac/css2.1/t0602-c13-inh-underlin-00-e-expected.txt:
+        * platform/mac/css2.1/t0805-c5522-brdr-02-e-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-18-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-18-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-18-expected.txt:
+        * platform/mac/fast/block/basic/001-expected.txt:
+        * platform/mac/fast/css/css3-nth-child-expected.txt:
+        * platform/mac/fast/dom/34176-expected.txt:
+        * platform/mac/fast/dom/clone-node-dynamic-style-expected.txt:
+        * platform/mac/fast/forms/plaintext-mode-2-expected.txt:
+        * platform/mac/fast/invalid/003-expected.txt:
+        * platform/mac/fast/invalid/004-expected.txt:
+        * platform/mac/fast/invalid/nestedh3s-expected.txt:
+        * platform/mac/fast/selectors/018-expected.txt:
+        * platform/mac/fast/table/frame-and-rules-expected.txt:
+        * platform/mac/fast/text/atsui-multiple-renderers-expected.txt:
+        * platform/mac/fast/text/bidi-embedding-pop-and-push-same-expected.txt:
+        * platform/mac/fast/text/font-weights-expected.txt:
+        * platform/mac/fast/text/font-weights-zh-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-46-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-use-01-t-expected.txt:
+        * platform/mac/svg/batik/text/textStyles-expected.txt:
+        * platform/mac/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/mac/tables/mozilla/other/wa_table_tr_align-expected.txt:
+
 2019-08-08  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening. Update expectations after r248403.

@@ -24,19 +24,19 @@ layer at (0,0) size 785x730
             text run at (218,0) width 36: "blue"
         RenderText {#text} at (253,0) size 41x22
           text run at (253,0) width 41: " and "
-        RenderInline {EM} at (0,0) size 57x22 [color=#800080]
-          RenderText {#text} at (293,0) size 57x22
-            text run at (293,0) width 57: "purple"
-        RenderText {#text} at (349,0) size 5x22
-          text run at (349,0) width 5: "."
+        RenderInline {EM} at (0,0) size 52x22 [color=#800080]
+          RenderText {#text} at (293,0) size 52x22
+            text run at (293,0) width 52: "purple"
+        RenderText {#text} at (344,0) size 5x22
+          text run at (344,0) width 5: "."
       RenderBlock {H3} at (0,213) size 769x23 [color=#0000FF]
         RenderText {#text} at (0,0) size 197x22
           text run at (0,0) width 197: "This sentence should be "
-        RenderInline {SPAN} at (0,0) size 38x22
-          RenderText {#text} at (196,0) size 38x22
-            text run at (196,0) width 38: "blue"
-        RenderText {#text} at (233,0) size 102x22
-          text run at (233,0) width 102: " throughout."
+        RenderInline {SPAN} at (0,0) size 35x22
+          RenderText {#text} at (196,0) size 35x22
+            text run at (196,0) width 35: "blue"
+        RenderText {#text} at (230,0) size 102x22
+          text run at (230,0) width 102: " throughout."
       RenderBlock {P} at (0,254) size 769x19
         RenderText {#text} at (0,0) size 230x18
           text run at (0,0) width 230: "This should be green except for the "
@@ -112,19 +112,19 @@ layer at (0,0) size 785x730
                     text run at (218,0) width 36: "blue"
                 RenderText {#text} at (253,0) size 41x22
                   text run at (253,0) width 41: " and "
-                RenderInline {EM} at (0,0) size 57x22 [color=#800080]
-                  RenderText {#text} at (293,0) size 57x22
-                    text run at (293,0) width 57: "purple"
-                RenderText {#text} at (349,0) size 5x22
-                  text run at (349,0) width 5: "."
+                RenderInline {EM} at (0,0) size 52x22 [color=#800080]
+                  RenderText {#text} at (293,0) size 52x22
+                    text run at (293,0) width 52: "purple"
+                RenderText {#text} at (344,0) size 5x22
+                  text run at (344,0) width 5: "."
               RenderBlock {H3} at (4,44) size 596x23 [color=#0000FF]
                 RenderText {#text} at (0,0) size 197x22
                   text run at (0,0) width 197: "This sentence should be "
-                RenderInline {SPAN} at (0,0) size 38x22
-                  RenderText {#text} at (196,0) size 38x22
-                    text run at (196,0) width 38: "blue"
-                RenderText {#text} at (233,0) size 102x22
-                  text run at (233,0) width 102: " throughout."
+                RenderInline {SPAN} at (0,0) size 35x22
+                  RenderText {#text} at (196,0) size 35x22
+                    text run at (196,0) width 35: "blue"
+                RenderText {#text} at (230,0) size 102x22
+                  text run at (230,0) width 102: " throughout."
               RenderBlock {P} at (4,85) size 596x19
                 RenderText {#text} at (0,0) size 230x18
                   text run at (0,0) width 230: "This should be green except for the "
