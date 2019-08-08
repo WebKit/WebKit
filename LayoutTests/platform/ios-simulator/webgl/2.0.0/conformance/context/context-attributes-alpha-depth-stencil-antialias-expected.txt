@@ -19,7 +19,7 @@ Test: ../../resources/webgl_test_files/conformance/context/context-attributes-al
 [ 16: PASS ] should be 127,127,127,127
 [ 17: PASS ] getError was expected value: NO_ERROR : should be no errors
 [ 18: PASS ] gl = getWebGL(1, 1, { alpha: false, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0) is non-null.
-[ 19: FAIL ] gl.getParameter(gl.ALPHA_BITS) == 0 should be true. Was false.
+[ 19: PASS ] gl.getParameter(gl.ALPHA_BITS) == 0 is true
 [ 20: PASS ] gl.getParameter(gl.RED_BITS) >= 8 is true
 [ 21: PASS ] gl.getParameter(gl.GREEN_BITS) >= 8 is true
 [ 22: PASS ] gl.getParameter(gl.BLUE_BITS) >= 8 is true
@@ -104,5 +104,5 @@ Test: ../../resources/webgl_test_files/conformance/context/context-attributes-al
 [ 101: PASS ] redChannels[1] == 255 && redChannels[2] == 0 is true
 [ 102: PASS ] redChannels[0] != 255 && redChannels[0] != 0 is contextAttribs.antialias
 [ 103: PASS ] successfullyParsed is true
-[ FAIL ] 2 failures reported
+[ FAIL ] 1 failures reported
 

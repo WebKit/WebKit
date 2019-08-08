@@ -421,6 +421,8 @@ WebGLAny WebGLRenderingContext::getParameter(GC3Denum pname)
     case GraphicsContext3D::ALIASED_POINT_SIZE_RANGE:
         return getWebGLFloatArrayParameter(pname);
     case GraphicsContext3D::ALPHA_BITS:
+        if (!m_framebufferBinding && !m_attributes.alpha)
+            return 0;
         return getIntParameter(pname);
     case GraphicsContext3D::ARRAY_BUFFER_BINDING:
         return m_boundArrayBuffer;
