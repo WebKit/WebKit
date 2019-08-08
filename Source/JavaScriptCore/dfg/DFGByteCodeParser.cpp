@@ -5735,6 +5735,24 @@ void ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_jneq_null);
         }
 
+        case op_jundefined_or_null: {
+            auto bytecode = currentInstruction->as<OpJundefinedOrNull>();
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
+            Node* value = get(bytecode.m_value);
+            Node* condition = addToGraph(IsUndefinedOrNull, value);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
+            LAST_OPCODE(op_jundefined_or_null);
+        }
+
+        case op_jnundefined_or_null: {
+            auto bytecode = currentInstruction->as<OpJnundefinedOrNull>();
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
+            Node* value = get(bytecode.m_value);
+            Node* condition = addToGraph(IsUndefinedOrNull, value);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
+            LAST_OPCODE(op_jnundefined_or_null);
+        }
+
         case op_jless: {
             auto bytecode = currentInstruction->as<OpJless>();
             unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);

@@ -1,3 +1,44 @@
+2019-08-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Add "jump if (not) undefined or null" bytecode ops
+        https://bugs.webkit.org/show_bug.cgi?id=200480
+
+        Reviewed by Saam Barati.
+
+        This patch introduces fused jumps for op_is_undefined_or_null, which ignores "masquerade as undefined" behavior.
+
+        This lets us fix a edge-case bug in RequireObjectCoercible (where `({ length } = document.all)` was a TypeError)
+        and moreover provides a very useful optimization for the new ?. and ?? operators, which have semantics centered
+        around op_jundefined_or_null and op_jnundefined_or_null, respectively.
+
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/Opcode.h:
+        (JSC::isBranch):
+        * bytecode/PreciseJumpTargetsInlines.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::Label::setLocation):
+        (JSC::BytecodeGenerator::emitJumpIfTrue):
+        (JSC::BytecodeGenerator::emitJumpIfFalse):
+        (JSC::BytecodeGenerator::emitRequireObjectCoercible):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jundefined_or_null): Added.
+        (JSC::JIT::emit_op_jnundefined_or_null): Added.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_jundefined_or_null): Added.
+        (JSC::JIT::emit_op_jnundefined_or_null): Added.
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2019-08-07  Devin Rousso  <drousso@apple.com>
 
         Rebase inspector generator tests.

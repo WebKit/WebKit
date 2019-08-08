@@ -442,6 +442,30 @@ void JIT::emit_op_jneq_null(const Instruction* currentInstruction)
     wasNotImmediate.link(this);
 }
 
+void JIT::emit_op_jundefined_or_null(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpJundefinedOrNull>();
+    int value = bytecode.m_value.offset();
+    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
+
+    emitGetVirtualRegister(value, regT0);
+
+    and64(TrustedImm32(~TagBitUndefined), regT0);
+    addJump(branch64(Equal, regT0, TrustedImm64(JSValue::encode(jsNull()))), target);
+}
+
+void JIT::emit_op_jnundefined_or_null(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpJnundefinedOrNull>();
+    int value = bytecode.m_value.offset();
+    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
+
+    emitGetVirtualRegister(value, regT0);
+
+    and64(TrustedImm32(~TagBitUndefined), regT0);
+    addJump(branch64(NotEqual, regT0, TrustedImm64(JSValue::encode(jsNull()))), target);
+}
+
 void JIT::emit_op_jneq_ptr(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJneqPtr>();

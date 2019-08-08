@@ -625,6 +625,18 @@ op :jneq_null,
         targetLabel: BoundLabel,
     }
 
+op :jundefined_or_null,
+    args: {
+        value: VirtualRegister,
+        targetLabel: BoundLabel,
+    }
+
+op :jnundefined_or_null,
+    args: {
+        value: VirtualRegister,
+        targetLabel: BoundLabel,
+    }
+
 op :jneq_ptr,
     args: {
         value: VirtualRegister,

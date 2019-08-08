@@ -66,3 +66,8 @@ testOK(`({ } = /1/)`);
 testOK(`({ a } = /1/)`);
 testOK(`({ a: { b } = /1/ } = { })`);
 testOK(`({ a: { b } } = { a: /1/ })`);
+
+testOK(`({ } = makeMasquerader())`);
+testOK(`({ a } = makeMasquerader())`);
+testOK(`({ a: { b } = makeMasquerader() } = { })`);
+testOK(`({ a: { b } } = { a: makeMasquerader() })`);

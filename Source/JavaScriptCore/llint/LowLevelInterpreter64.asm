@@ -1769,6 +1769,24 @@ equalNullJumpOp(jneq_null, OpJneqNull,
     end,
     macro (value, target) bqneq value, ValueNull, target end)
 
+macro undefinedOrNullJumpOp(opcodeName, opcodeStruct, fn)
+    llintOpWithJump(op_%opcodeName%, opcodeStruct, macro (size, get, jump, dispatch)
+        get(m_value, t1)
+        loadConstantOrVariable(size, t1, t0)
+        andq ~TagBitUndefined, t0
+        fn(t0, .target)
+        dispatch()
+
+    .target:
+        jump(m_targetLabel)
+    end)
+end
+
+undefinedOrNullJumpOp(jundefined_or_null, OpJundefinedOrNull,
+    macro (value, target) bqeq value, ValueNull, target end)
+
+undefinedOrNullJumpOp(jnundefined_or_null, OpJnundefinedOrNull,
+    macro (value, target) bqneq value, ValueNull, target end)
 
 llintOpWithMetadata(op_jneq_ptr, OpJneqPtr, macro (size, get, dispatch, metadata, return)
     get(m_value, t0)

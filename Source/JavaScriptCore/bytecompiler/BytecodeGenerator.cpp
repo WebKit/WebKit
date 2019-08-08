@@ -115,6 +115,8 @@ void Label::setLocation(BytecodeGenerator& generator, unsigned location)
         CASE(OpJfalse)
         CASE(OpJeqNull)
         CASE(OpJneqNull)
+        CASE(OpJundefinedOrNull)
+        CASE(OpJnundefinedOrNull)
         CASE(OpJeq)
         CASE(OpJstricteq)
         CASE(OpJneq)
@@ -1481,6 +1483,9 @@ void BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label& target)
         } else if (m_lastOpcodeID == op_neq_null && target.isForward()) {
             if (fuseTestAndJmp<OpNeqNull, OpJneqNull>(cond, target))
                 return;
+        } else if (m_lastOpcodeID == op_is_undefined_or_null && target.isForward()) {
+            if (fuseTestAndJmp<OpIsUndefinedOrNull, OpJundefinedOrNull>(cond, target))
+                return;
         }
     }
 
@@ -1528,6 +1533,9 @@ void BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label& target)
                 return;
         } else if (m_lastOpcodeID == op_neq_null && target.isForward()) {
             if (fuseTestAndJmp<OpNeqNull, OpJeqNull>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_is_undefined_or_null && target.isForward()) {
+            if (fuseTestAndJmp<OpIsUndefinedOrNull, OpJnundefinedOrNull>(cond, target))
                 return;
         }
     }
@@ -4457,10 +4465,8 @@ RegisterID* BytecodeGenerator::emitRestParameter(RegisterID* result, unsigned nu
 
 void BytecodeGenerator::emitRequireObjectCoercible(RegisterID* value, const String& error)
 {
-    // FIXME: op_jneq_null treats "undetectable" objects as null/undefined. RequireObjectCoercible
-    // thus incorrectly throws a TypeError for interfaces like HTMLAllCollection.
     Ref<Label> target = newLabel();
-    OpJneqNull::emit(this, value, target->bind(this));
+    OpJnundefinedOrNull::emit(this, value, target->bind(this));
     emitThrowTypeError(error);
     emitLabel(target.get());
 }

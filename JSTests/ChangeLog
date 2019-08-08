@@ -1,3 +1,13 @@
+2019-08-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Add "jump if (not) undefined or null" bytecode ops
+        https://bugs.webkit.org/show_bug.cgi?id=200480
+
+        Reviewed by Saam Barati.
+
+        * stress/destructuring-assignment-require-object-coercible.js:
+        * stress/nullish-coalescing.js:
+
 2019-08-05  Michael Saboff  <msaboff@apple.com>
 
         JSC: assertion failure in SpeculativeJIT::compileGetByValOnIntTypedArray

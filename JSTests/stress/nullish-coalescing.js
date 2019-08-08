@@ -21,19 +21,25 @@ function shouldThrowSyntaxError(script) {
         throw new Error('Expected SyntaxError!');
 }
 
-shouldBe(undefined ?? 3, 3);
-shouldBe(null ?? 3, 3);
-shouldBe(true ?? 3, true);
-shouldBe(false ?? 3, false);
-shouldBe(0 ?? 3, 0);
-shouldBe(1 ?? 3, 1);
-shouldBe('' ?? 3, '');
-shouldBe('hi' ?? 3, 'hi');
-shouldBe(({} ?? 3) instanceof Object, true);
-shouldBe(({ x: 'hi' } ?? 3).x, 'hi');
-shouldBe(([] ?? 3) instanceof Array, true);
-shouldBe((['hi'] ?? 3)[0], 'hi');
-shouldBe((makeMasquerader() ?? 3) == null, true);
+function testBasicCases() {
+    shouldBe(undefined ?? 3, 3);
+    shouldBe(null ?? 3, 3);
+    shouldBe(true ?? 3, true);
+    shouldBe(false ?? 3, false);
+    shouldBe(0 ?? 3, 0);
+    shouldBe(1 ?? 3, 1);
+    shouldBe('' ?? 3, '');
+    shouldBe('hi' ?? 3, 'hi');
+    shouldBe(({} ?? 3) instanceof Object, true);
+    shouldBe(({ x: 'hi' } ?? 3).x, 'hi');
+    shouldBe(([] ?? 3) instanceof Array, true);
+    shouldBe((['hi'] ?? 3)[0], 'hi');
+    shouldBe((makeMasquerader() ?? 3) == null, true);
+}
+noInline(testBasicCases);
+
+for (let i = 0; i < 1e5; i++)
+    testBasicCases();
 
 shouldBe(1 | null ?? 3, 1);
 shouldBe(1 ^ null ?? 3, 1);

@@ -173,6 +173,8 @@ inline bool isBranch(OpcodeID opcodeID)
     case op_jfalse:
     case op_jeq_null:
     case op_jneq_null:
+    case op_jundefined_or_null:
+    case op_jnundefined_or_null:
     case op_jneq_ptr:
     case op_jless:
     case op_jlesseq:
