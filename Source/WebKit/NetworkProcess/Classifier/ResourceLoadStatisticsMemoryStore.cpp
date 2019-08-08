@@ -72,7 +72,7 @@ static void pruneResources(HashMap<RegistrableDomain, ResourceLoadStatistics>& s
 ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost)
     : ResourceLoadStatisticsStore(store, workQueue, shouldIncludeLocalhost)
 {
-    ASSERT(!RunLoop::isMain());
+    RELEASE_ASSERT(!RunLoop::isMain());
 
     workQueue.dispatchAfter(5_s, [weakThis = makeWeakPtr(*this)] {
         if (weakThis)
@@ -82,7 +82,7 @@ ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore(WebResource
 
 bool ResourceLoadStatisticsMemoryStore::isEmpty() const
 {
-    ASSERT(!RunLoop::isMain());
+    RELEASE_ASSERT(!RunLoop::isMain());
 
     return m_resourceStatisticsMap.isEmpty();
 }

@@ -1,3 +1,23 @@
+2019-08-07  Chris Dumez  <cdumez@apple.com>
+
+        Turn some ITP threading ASSERTs into RELEASE_ASSERTs
+        https://bugs.webkit.org/show_bug.cgi?id=200521
+
+        Reviewed by Ryosuke Niwa.
+
+        Turn some ITP threading ASSERTs into RELEASE_ASSERTs to help catch more bugs.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore):
+        (WebKit::ResourceLoadStatisticsMemoryStore::isEmpty const):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::ResourceLoadStatisticsPersistentStorage):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::~ResourceLoadStatisticsPersistentStorage):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore):
+
 2019-08-07  Kate Cheney  <katherine_cheney@apple.com>
 
         Adopt non-deprecated CGColorSpace API

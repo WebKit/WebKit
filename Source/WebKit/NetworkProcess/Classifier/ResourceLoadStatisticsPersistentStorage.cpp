@@ -60,7 +60,7 @@ ResourceLoadStatisticsPersistentStorage::ResourceLoadStatisticsPersistentStorage
     , m_workQueue(workQueue)
     , m_storageDirectoryPath(storageDirectoryPath)
 {
-    ASSERT(!RunLoop::isMain());
+    RELEASE_ASSERT(!RunLoop::isMain());
 
     m_memoryStore.setPersistentStorage(*this);
 
@@ -70,7 +70,7 @@ ResourceLoadStatisticsPersistentStorage::ResourceLoadStatisticsPersistentStorage
 
 ResourceLoadStatisticsPersistentStorage::~ResourceLoadStatisticsPersistentStorage()
 {
-    ASSERT(!RunLoop::isMain());
+    RELEASE_ASSERT(!RunLoop::isMain());
 
     if (m_hasPendingWrite)
         writeMemoryStoreToDisk();

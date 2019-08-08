@@ -155,7 +155,7 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& n
     , m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
     , m_dailyTasksTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::performDailyTasks)
 {
-    ASSERT(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
     
     postTask([this, resourceLoadStatisticsDirectory = resourceLoadStatisticsDirectory.isolatedCopy(), shouldIncludeLocalhost] {
         if (RuntimeEnabledFeatures::sharedFeatures().isITPDatabaseEnabled()) {
@@ -179,9 +179,9 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& n
 
 WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
 {
-    ASSERT(RunLoop::isMain());
-    ASSERT(!m_statisticsStore);
-    ASSERT(!m_persistentStorage);
+    RELEASE_ASSERT(RunLoop::isMain());
+    RELEASE_ASSERT(!m_statisticsStore);
+    RELEASE_ASSERT(!m_persistentStorage);
 }
 
 void WebResourceLoadStatisticsStore::didDestroyNetworkSession()
@@ -208,7 +208,7 @@ inline void WebResourceLoadStatisticsStore::postTaskReply(WTF::Function<void()>&
 
 void WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore()
 {
-    ASSERT(RunLoop::isMain());
+    RELEASE_ASSERT(RunLoop::isMain());
 
     // Make sure we destroy the persistent store on the background queue and wait for it to die
     // synchronously since it has a C++ reference to us. Blocking nature of this task allows us
