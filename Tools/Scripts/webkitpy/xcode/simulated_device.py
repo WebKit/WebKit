@@ -396,7 +396,7 @@ class SimulatedDeviceManager(object):
             SimulatedDeviceManager._boot_device(device, host)
 
         if simulator_ui and host.executive.run_command(['killall', '-0', 'Simulator'], return_exit_code=True) != 0:
-            SimulatedDeviceManager._managing_simulator_app = not host.executive.run_command(['open', '-g', '-b', SimulatedDeviceManager.simulator_bundle_id], return_exit_code=True)
+            SimulatedDeviceManager._managing_simulator_app = not host.executive.run_command(['open', '-g', '-b', SimulatedDeviceManager.simulator_bundle_id, '--args', '-PasteboardAutomaticSync', '0'], return_exit_code=True)
 
         deadline = time.time() + timeout
         for device in SimulatedDeviceManager.INITIALIZED_DEVICES:
