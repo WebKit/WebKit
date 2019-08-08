@@ -1,3 +1,19 @@
+2019-08-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS] Position image information should respect the image orientation
+        https://bugs.webkit.org/show_bug.cgi?id=200487
+
+        Reviewed by Simon Fraser.
+
+        Add an API test to verify the position image information is drawn rotated
+        because of respecting its image orientation.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/exif-orientation-8-llo.jpg: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/img-with-rotated-image.html: Added.
+
 2019-08-08  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Fix WebContext languages test

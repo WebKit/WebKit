@@ -96,7 +96,51 @@ TEST(WebKit, RequestActivatedElementInfoForImage)
     
     TestWebKitAPI::Util::run(&finished);
 }
-    
+
+TEST(WebKit, RequestActivatedElementInfoForRotatedImage)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"img-with-rotated-image" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    __block bool finished = false;
+    [webView _requestActivatedElementAtPosition:CGPointMake(50, 50) completionBlock: ^(_WKActivatedElementInfo *elementInfo) {
+
+        auto image = elementInfo.image.CGImage;
+        auto data = adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(image)));
+        auto buffer = reinterpret_cast<const unsigned*>(CFDataGetBytePtr(data.get()));
+
+        auto pixelAt = [&](unsigned x, unsigned y) {
+            unsigned i = y * elementInfo.image.size.width + x;
+            return buffer[i];
+        };
+        
+        static const unsigned yellow = 0xFFFFFF00;
+        static const unsigned red = 0xFFF51900;
+        static const unsigned green = 0xFF278000;
+        static const unsigned blue = 0xFF0000FF;
+
+        EXPECT_TRUE(elementInfo.type == _WKActivatedElementTypeImage);
+        EXPECT_WK_STREQ(elementInfo.imageURL.lastPathComponent, "exif-orientation-8-llo.jpg");
+        EXPECT_NOT_NULL(elementInfo.image);
+        EXPECT_EQ(elementInfo.boundingRect.size.width, 50);
+        EXPECT_EQ(elementInfo.boundingRect.size.height, 100);
+        EXPECT_EQ(elementInfo.image.size.width, 50);
+        EXPECT_EQ(elementInfo.image.size.height, 100);
+
+        EXPECT_EQ(pixelAt(0, 0), yellow);
+        EXPECT_EQ(pixelAt(elementInfo.image.size.width - 1, 0), red);
+        EXPECT_EQ(pixelAt(0, elementInfo.image.size.height - 1), green);
+        EXPECT_EQ(pixelAt(elementInfo.image.size.width - 1, elementInfo.image.size.height - 1), blue);
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
 TEST(WebKit, RequestActivatedElementInfoForBlank)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

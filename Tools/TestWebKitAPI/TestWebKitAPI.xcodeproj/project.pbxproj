@@ -406,6 +406,8 @@
 		6B9ABE122086952F00D75DE6 /* HTTPParsers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B9ABE112086952F00D75DE6 /* HTTPParsers.cpp */; };
 		6BFD294C1D5E6C1D008EC968 /* HashCountedSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A38D7E51C752D5F004F157D /* HashCountedSet.cpp */; };
 		725C3EF322058A5B007C36FC /* AdditionalSupportedImageTypes.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 725C3EF2220584BA007C36FC /* AdditionalSupportedImageTypes.html */; };
+		7283A9D022FA754900B21C7D /* img-with-rotated-image.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7283A9CE22FA6BBE00B21C7D /* img-with-rotated-image.html */; };
+		7283A9D222FB1E0600B21C7D /* exif-orientation-8-llo.jpg in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7283A9D122FB1D9700B21C7D /* exif-orientation-8-llo.jpg */; };
 		751B05D61F8EAC410028A09E /* DatabaseTrackerTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 751B05D51F8EAC1A0028A09E /* DatabaseTrackerTest.mm */; };
 		754CEC811F6722F200D0039A /* AutoFillAvailable.mm in Sources */ = {isa = PBXBuildFile; fileRef = 754CEC801F6722DC00D0039A /* AutoFillAvailable.mm */; };
 		7673499D1930C5BB00E44DF9 /* StopLoadingDuringDidFailProvisionalLoad_bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7673499A1930182E00E44DF9 /* StopLoadingDuringDidFailProvisionalLoad_bundle.cpp */; };
@@ -1195,6 +1197,7 @@
 				F407FE391F1D0DFC0017CF25 /* enormous.svg in Copy Resources */,
 				07492B3C1DF8B86600633DE1 /* enumerateMediaDevices.html in Copy Resources */,
 				C5E1AFFE16B221F1006CC1F2 /* execCopy.html in Copy Resources */,
+				7283A9D222FB1E0600B21C7D /* exif-orientation-8-llo.jpg in Copy Resources */,
 				CDA29B2B20FD358400F15CED /* ExitFullscreenOnEnterPiP.html in Copy Resources */,
 				F41AB9A31EF4696B0083FA08 /* file-uploading.html in Copy Resources */,
 				BC2D006412AA04CE00E732A3 /* file-with-anchor.html in Copy Resources */,
@@ -1237,6 +1240,7 @@
 				F41AB9A51EF4696B0083FA08 /* image-and-textarea.html in Copy Resources */,
 				F4DEF6ED1E9B4DB60048EF61 /* image-in-link-and-input.html in Copy Resources */,
 				F45B63FB1F197F4A009D38B9 /* image-map.html in Copy Resources */,
+				7283A9D022FA754900B21C7D /* img-with-rotated-image.html in Copy Resources */,
 				935786CD20F6A2910000CDFC /* IndexedDB.sqlite3 in Copy Resources */,
 				935786CE20F6A2A10000CDFC /* IndexedDB.sqlite3-shm in Copy Resources */,
 				935786CC20F6A2700000CDFC /* IndexedDB.sqlite3-wal in Copy Resources */,
@@ -1889,6 +1893,8 @@
 		6B4E861B2220A5520022F389 /* RegistrableDomain.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RegistrableDomain.cpp; sourceTree = "<group>"; };
 		6B9ABE112086952F00D75DE6 /* HTTPParsers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPParsers.cpp; sourceTree = "<group>"; };
 		725C3EF2220584BA007C36FC /* AdditionalSupportedImageTypes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = AdditionalSupportedImageTypes.html; sourceTree = "<group>"; };
+		7283A9CE22FA6BBE00B21C7D /* img-with-rotated-image.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "img-with-rotated-image.html"; sourceTree = "<group>"; };
+		7283A9D122FB1D9700B21C7D /* exif-orientation-8-llo.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "exif-orientation-8-llo.jpg"; sourceTree = "<group>"; };
 		751B05D51F8EAC1A0028A09E /* DatabaseTrackerTest.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DatabaseTrackerTest.mm; sourceTree = "<group>"; };
 		754CEC801F6722DC00D0039A /* AutoFillAvailable.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AutoFillAvailable.mm; sourceTree = "<group>"; };
 		7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryCacheAddImageToCacheIOS.mm; sourceTree = "<group>"; };
@@ -3160,6 +3166,7 @@
 				51C8E1A81F27F47300BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist */,
 				F4C2AB211DD6D94100E06D5B /* enormous-video-with-sound.html */,
 				F407FE381F1D0DE60017CF25 /* enormous.svg */,
+				7283A9D122FB1D9700B21C7D /* exif-orientation-8-llo.jpg */,
 				CDA29B2A20FD344E00F15CED /* ExitFullscreenOnEnterPiP.html */,
 				F41AB99B1EF4692C0083FA08 /* file-uploading.html */,
 				A17EAC542083056E0084B41B /* find.pdf */,
@@ -3184,6 +3191,7 @@
 				F41AB9931EF4692C0083FA08 /* image-and-textarea.html */,
 				F4DEF6EC1E9B4D950048EF61 /* image-in-link-and-input.html */,
 				F45B63FA1F197F33009D38B9 /* image-map.html */,
+				7283A9CE22FA6BBE00B21C7D /* img-with-rotated-image.html */,
 				934FA5C720F69FEE0040DC1B /* IndexedDB.sqlite3 */,
 				934FA5C620F69FED0040DC1B /* IndexedDB.sqlite3-shm */,
 				934FA5C520F69FED0040DC1B /* IndexedDB.sqlite3-wal */,
