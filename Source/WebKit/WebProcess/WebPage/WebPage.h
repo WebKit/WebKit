@@ -1631,7 +1631,6 @@ private:
     HashMap<uint64_t, RefPtr<WebCore::TextCheckingRequest>> m_pendingTextCheckingRequestMap;
 
     bool m_useFixedLayout { false };
-    bool m_drawsBackground { true };
 
     WebCore::Color m_underlayColor;
 

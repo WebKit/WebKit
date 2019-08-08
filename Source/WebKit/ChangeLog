@@ -1,3 +1,16 @@
+2019-08-08  Timothy Hatcher  <timothy@apple.com>
+
+        Set WKWebView opaque based on drawsBackground in PageConfiguration.
+        https://bugs.webkit.org/show_bug.cgi?id=200528
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]): Set self.opaque = NO when !self.opaque || !pageConfiguration->drawsBackground().
+        It is almost impossible to have !self.opaque be NO at this point, since we are still inside initWithFrame:. A subclass could
+        override opaque and return NO, but checking pageConfiguration's drawsBackground is a good alternative.
+        * WebProcess/WebPage/WebPage.h: Remove unused m_drawsBackground member.
+
 2019-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS 13] Taps that interrupt momentum scrolling are recognized as clicks
