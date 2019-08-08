@@ -1,3 +1,17 @@
+2019-08-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Add key accelerators for reload and close window
+        https://bugs.webkit.org/show_bug.cgi?id=200497
+
+        Reviewed by Brent Fulgham.
+
+        Added short cuts Ctrl-W to close window, Ctrl-R to reload.
+
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::WndProc): Added IDM_CLOSE_WINDOW case.
+        * MiniBrowser/win/MiniBrowserLib.rc: Added "Close" menu item. Added accelerators.
+        * MiniBrowser/win/MiniBrowserLibResource.h: Added IDM_CLOSE_WINDOW.
+
 2019-08-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add WHLSL and WebGPU to the watchlist file

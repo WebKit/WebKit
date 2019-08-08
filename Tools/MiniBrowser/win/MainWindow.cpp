@@ -197,6 +197,9 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
             ShowWindow(newWindow.hwnd(), SW_SHOW);
             break;
         }
+        case IDM_CLOSE_WINDOW:
+            PostMessage(hWnd, WM_CLOSE, 0, 0);
+            break;
         case IDM_ABOUT:
             DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
             break;

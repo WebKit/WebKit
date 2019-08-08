@@ -46,10 +46,11 @@ BEGIN
         MENUITEM "E&xit",                       IDM_EXIT
         MENUITEM "New WebKit Window",           IDM_NEW_WEBKIT_WINDOW
         MENUITEM "New WebKitLegacy Window",     IDM_NEW_WEBKITLEGACY_WINDOW
+        MENUITEM "Close\tCtrl-W",               IDM_CLOSE_WINDOW
     END
     POPUP "&View"
     BEGIN
-        MENUITEM "Reload",                      IDM_RELOAD
+        MENUITEM "Reload\tCtrl-R",              IDM_RELOAD
         MENUITEM "Actual Size",                 IDM_ACTUAL_SIZE
         MENUITEM "Zoom In\tCtrl++",             IDM_ZOOM_IN
         MENUITEM "Zoom Out\tCtrl+-",            IDM_ZOOM_OUT
@@ -131,6 +132,8 @@ BEGIN
     "?",            IDM_ABOUT,              ASCII,  ALT, NOINVERT
     VK_ADD,         IDM_ZOOM_IN,            VIRTKEY, CONTROL, NOINVERT
     VK_SUBTRACT,    IDM_ZOOM_OUT,           VIRTKEY, CONTROL, NOINVERT
+    "W",            IDM_CLOSE_WINDOW,       VIRTKEY, CONTROL, NOINVERT
+    "R",            IDM_RELOAD,             VIRTKEY, CONTROL, NOINVERT
 END
 
 
