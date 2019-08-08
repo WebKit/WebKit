@@ -8320,6 +8320,8 @@
 		522E1A192297D6D400E5D36A /* WHLSLPreserveVariableLifetimes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLPreserveVariableLifetimes.h; sourceTree = "<group>"; };
 		526724F11CB2FDF60075974D /* TextTrackRepresentationCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextTrackRepresentationCocoa.mm; sourceTree = "<group>"; };
 		526724F21CB2FDF60075974D /* TextTrackRepresentationCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackRepresentationCocoa.h; sourceTree = "<group>"; };
+		526B3F0122FB7BDD0076D37D /* WHLSLPruneUnreachableStandardLibraryFunctions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLPruneUnreachableStandardLibraryFunctions.cpp; sourceTree = "<group>"; };
+		526B3F0322FB7BDE0076D37D /* WHLSLPruneUnreachableStandardLibraryFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLPruneUnreachableStandardLibraryFunctions.h; sourceTree = "<group>"; };
 		52914C2A22F93E4E00578150 /* WHLSLParsingMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLParsingMode.h; sourceTree = "<group>"; };
 		52914C2C22F93E5D00578150 /* WHLSLAddressEscapeMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLAddressEscapeMode.h; sourceTree = "<group>"; };
 		52B0D4BD1C57FD1E0077CE53 /* PlatformView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformView.h; sourceTree = "<group>"; };
@@ -25540,6 +25542,8 @@
 				C24A57BB21FEAFEA004C6DD1 /* WHLSLPrepare.h */,
 				522E1A172297D6D400E5D36A /* WHLSLPreserveVariableLifetimes.cpp */,
 				522E1A192297D6D400E5D36A /* WHLSLPreserveVariableLifetimes.h */,
+				526B3F0122FB7BDD0076D37D /* WHLSLPruneUnreachableStandardLibraryFunctions.cpp */,
+				526B3F0322FB7BDE0076D37D /* WHLSLPruneUnreachableStandardLibraryFunctions.h */,
 				C21BF73A21CD8D7000227979 /* WHLSLProgram.h */,
 				1CAA82F62242AE0500E84BBB /* WHLSLPropertyResolver.cpp */,
 				1CAA82F72242AE0500E84BBB /* WHLSLPropertyResolver.h */,

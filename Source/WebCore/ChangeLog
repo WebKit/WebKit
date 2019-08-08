@@ -1,3 +1,25 @@
+2019-08-07  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Prune unreachable stdlib functions after the Checker runs
+        https://bugs.webkit.org/show_bug.cgi?id=200518
+
+        Reviewed by Robin Morisset.
+
+        We now prune unreachable stdlib functions after the checker runs. We must
+        do this after the checker runs because that's when we resolve all remaining
+        function calls. While we can't prune unreachable user code, because we must
+        still report errors in it, we can prune unreachable standard library code
+        because we know a priori that it has no errors. This is a 10ms end-to-end
+        speedup in compute_boids.
+
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp:
+        (WebCore::WHLSL::prepareShared):
+        * Modules/webgpu/WHLSL/WHLSLPruneUnreachableStandardLibraryFunctions.cpp: Added.
+        (WebCore::WHLSL::pruneUnreachableStandardLibraryFunctions):
+        * Modules/webgpu/WHLSL/WHLSLPruneUnreachableStandardLibraryFunctions.h: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-08-07  Kate Cheney  <katherine_cheney@apple.com>
 
         Adopt non-deprecated CGColorSpace API

@@ -42,6 +42,7 @@
 #include "WHLSLPreserveVariableLifetimes.h"
 #include "WHLSLProgram.h"
 #include "WHLSLPropertyResolver.h"
+#include "WHLSLPruneUnreachableStandardLibraryFunctions.h"
 #include "WHLSLRecursionChecker.h"
 #include "WHLSLRecursiveTypeChecker.h"
 #include "WHLSLSemanticMatcher.h"
@@ -183,6 +184,7 @@ static Expected<Program, String> prepareShared(PhaseTimes& phaseTimes, String& w
     CHECK_PASS(checkDuplicateFunctions, program);
 
     CHECK_PASS(check, program);
+    RUN_PASS(pruneUnreachableStandardLibraryFunctions, program);
 
     RUN_PASS(checkLiteralTypes, program);
     CHECK_PASS(checkTextureReferences, program);

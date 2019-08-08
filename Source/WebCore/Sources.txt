@@ -312,6 +312,7 @@ Modules/webgpu/WHLSL/WHLSLASTDumper.cpp
 Modules/webgpu/WHLSL/WHLSLInferTypes.cpp
 Modules/webgpu/WHLSL/WHLSLLexer.cpp
 Modules/webgpu/WHLSL/WHLSLParser.cpp
+Modules/webgpu/WHLSL/WHLSLPruneUnreachableStandardLibraryFunctions.cpp
 Modules/webgpu/WHLSL/WHLSLCheckTextureReferences.cpp
 Modules/webgpu/WHLSL/WHLSLChecker.cpp
 Modules/webgpu/WHLSL/WHLSLGatherEntryPointItems.cpp
