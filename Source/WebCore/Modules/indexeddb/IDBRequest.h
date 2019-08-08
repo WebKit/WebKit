@@ -161,8 +161,8 @@ private:
     void stop() final;
     virtual void cancelForStop();
 
-    void refEventTarget() final { ThreadSafeRefCounted::ref(); }
-    void derefEventTarget() final { ThreadSafeRefCounted::deref(); }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
     void uncaughtExceptionInEventHandler() final;
 
     virtual bool isOpenDBRequest() const { return false; }
