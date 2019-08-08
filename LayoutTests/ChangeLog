@@ -1,3 +1,9 @@
+2019-08-08  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening. Update expectations after r248403.
+
+        * platform/gtk/TestExpectations:
+
 2019-08-08  Rob Buis  <rbuis@igalia.com>
 
         Import lazy loading WPT tests
