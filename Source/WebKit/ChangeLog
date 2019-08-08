@@ -1,3 +1,45 @@
+2019-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 13] Taps that interrupt momentum scrolling are recognized as clicks
+        https://bugs.webkit.org/show_bug.cgi?id=200516
+        <rdar://problem/53889373>
+
+        Reviewed by Tim Horton.
+
+        After <https://trac.webkit.org/r247656>, the -tracksImmediatelyWhileDecelerating property of WKScrollView and
+        WKChildScrollView is set to NO. This means that if a user interacts with the page while the scroll view is
+        decelerating (e.g. after momentum scrolling), the pan gesture recognizer will not be immediately recognized.
+        This gives other gesture recognizers, such as the synthetic click (single tap) gesture a chance to instead
+        recognize first. In this particular bug, this causes taps on the web view that are intended to only stop
+        momentum scrolling to instead activate clickable elements beneath the touch, such as links and buttons.
+
+        To mitigate this, we add some logic to prevent the click gesture recognizer from firing in the case where the
+        tap also causes the scroll view to decelerate. This heuristic is similar to the one introduced in r219310, which
+        has the same purpose of hiding gestures that stop momentum scrolling from the page, and also consults
+        -[UIScrollView _isInterruptingDeceleration].
+
+        Tests:  fast/scrolling/ios/click-events-during-momentum-scroll-in-main-frame.html
+                fast/scrolling/ios/click-events-during-momentum-scroll-in-overflow-after-tap-on-body.html
+                fast/scrolling/ios/click-events-during-momentum-scroll-in-overflow.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+
+        Return NO in the case of the single tap gesture if the UIScrollView most recently touched by the single tap
+        gesture (or one of its enclosing scroll views, up to the main WKScrollView) is being interrupted while
+        decelerating.
+
+        * UIProcess/ios/WKSyntheticTapGestureRecognizer.h:
+        * UIProcess/ios/WKSyntheticTapGestureRecognizer.mm:
+        (-[WKSyntheticTapGestureRecognizer reset]):
+        (-[WKSyntheticTapGestureRecognizer touchesBegan:withEvent:]):
+
+        Teach WKSyntheticTapGestureRecognizer to keep track of the last WKScrollView that was touched, for later use in
+        -gestureRecognizerShouldBegin:. To do this, we keep a weak reference to the first UIScrollView we find in the
+        set of touches.
+
+        (-[WKSyntheticTapGestureRecognizer lastTouchedScrollView]):
+
 2019-08-08  Dean Jackson  <dino@apple.com>
 
         Use "safari" glyph for "Show Link Previews" contextual menu

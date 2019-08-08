@@ -1017,4 +1017,24 @@ window.UIHelper = class UIHelper {
             })()`, resolve);
         });
     }
+
+    static dragFromPointToPoint(fromX, fromY, toX, toY, duration)
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily()) {
+            eventSender.mouseMoveTo(fromX, fromY);
+            eventSender.mouseDown();
+            eventSender.leapForward(duration * 1000);
+            eventSender.mouseMoveTo(toX, toY);
+            eventSender.mouseUp();
+            return Promise.resolve();
+        }
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.dragFromPointToPoint(${fromX}, ${fromY}, ${toX}, ${toY}, ${duration}, () => {
+                    uiController.uiScriptComplete("");
+                });
+            })();`, resolve);
+        });
+    }
 }

@@ -1,0 +1,10 @@
+Verifies that tapping the page during momentum scrolling does not dispatch click events to the page. To run the test manually, swipe up to scroll down; while the page is momentum scrolling, tap the screen to interrupt scrolling. The page should not observe any click events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.scrollingElement.scrollTop passed 1000
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

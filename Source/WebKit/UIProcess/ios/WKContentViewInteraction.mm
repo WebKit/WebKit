@@ -2090,6 +2090,21 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (gestureRecognizer == _stylusSingleTapGestureRecognizer)
         return _webView._stylusTapGestureShouldCreateEditableImage;
 
+    if (gestureRecognizer == _singleTapGestureRecognizer) {
+        UIScrollView *mainScroller = _webView.scrollView;
+        UIView *view = [_singleTapGestureRecognizer lastTouchedScrollView] ?: mainScroller;
+        while (view) {
+            if ([view isKindOfClass:UIScrollView.class] && [(UIScrollView *)view _isInterruptingDeceleration])
+                return NO;
+
+            if (mainScroller == view)
+                break;
+
+            view = view.superview;
+        }
+        return YES;
+    }
+
     if (gestureRecognizer == _highlightLongPressGestureRecognizer
         || gestureRecognizer == _doubleTapGestureRecognizer
         || gestureRecognizer == _nonBlockingDoubleTapGestureRecognizer

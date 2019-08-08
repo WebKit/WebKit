@@ -39,6 +39,7 @@
 @property (nonatomic, weak) UIWebTouchEventsGestureRecognizer *supportingWebTouchEventsGestureRecognizer;
 @property (nonatomic, readonly) NSNumber *lastActiveTouchIdentifier;
 #endif
+@property (nonatomic, readonly, weak) UIScrollView *lastTouchedScrollView;
 @end
 
 #endif
