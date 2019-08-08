@@ -1647,6 +1647,12 @@ void MediaPlayerPrivateGStreamer::purgeInvalidTextTracks(Vector<String> validTra
 
 void MediaPlayerPrivateGStreamer::fillTimerFired()
 {
+    if (m_errorOccured) {
+        GST_DEBUG_OBJECT(pipeline(), "[Buffering] An error occurred, disabling the fill timer");
+        m_fillTimer.stop();
+        return;
+    }
+
     GRefPtr<GstQuery> query = adoptGRef(gst_query_new_buffering(GST_FORMAT_PERCENT));
     double fillStatus = 100.0;
     GstBufferingMode mode = GST_BUFFERING_DOWNLOAD;

@@ -1,3 +1,15 @@
+2019-08-08  Charlie Turner  <cturner@igalia.com>
+
+        [GTK] WebKitWebProcess crashes when viewing an HTML with a <video> element referencing unknown file
+        https://bugs.webkit.org/show_bug.cgi?id=200530
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Not amenable to unit testing.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::fillTimerFired):
+
 2019-08-07  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Prune unreachable stdlib functions after the Checker runs
