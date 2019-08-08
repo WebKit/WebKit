@@ -209,3 +209,5 @@
 #define WebKitResizeObserverEnabledPreferenceKey "WebKitResizeObserverEnabled"
 
 #define WebKitCoreMathMLEnabledPreferenceKey "WebKitCoreMathMLEnabled"
+
+#define WebKitLazyImageLoadingEnabledPreferenceKey "WebKitLazyImageLoadingEnabled"

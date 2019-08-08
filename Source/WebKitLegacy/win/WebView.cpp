@@ -5608,6 +5608,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setCoreMathMLEnabled(!!enabled);
 
+    hr = prefsPrivate->lazyImageLoadingEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    RuntimeEnabledFeatures::sharedFeatures().setLazyImageLoadingEnabled(!!enabled);
+
     return S_OK;
 }
 

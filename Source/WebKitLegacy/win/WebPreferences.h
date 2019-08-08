@@ -287,6 +287,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setResizeObserverEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE coreMathMLEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setCoreMathMLEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE lazyImageLoadingEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setLazyImageLoadingEnabled(BOOL);
 
     // WebPreferences
 

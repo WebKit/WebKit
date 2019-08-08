@@ -117,6 +117,8 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             enableResizeObserver = parseBooleanTestHeaderValue(value);
         else if (key == "experimental:CoreMathMLEnabled")
             enableCoreMathML = parseBooleanTestHeaderValue(value);
+        else if (key == "experimental:LazyImageLoadingEnabled")
+            enableLazyImageLoading = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

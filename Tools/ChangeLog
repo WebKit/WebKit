@@ -1,5 +1,24 @@
 2019-08-08  Rob Buis  <rbuis@igalia.com>
 
+        Add runtime flag for lazy image loading
+        https://bugs.webkit.org/show_bug.cgi?id=199794
+
+        Reviewed by Darin Adler.
+
+        Set lazyImageLoading preference as part of experimental features. Add
+        TestOption for lazy image loading.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (TestOptions::TestOptions):
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        (setWebPreferencesForTestOptions):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (enableExperimentalFeatures):
+
+2019-08-08  Rob Buis  <rbuis@igalia.com>
+
         Import lazy loading WPT tests
         https://bugs.webkit.org/show_bug.cgi?id=199795
 

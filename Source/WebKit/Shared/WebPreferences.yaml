@@ -1715,6 +1715,14 @@ IsNSURLSessionWebSocketEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: HAVE(NSURLSESSION_WEBSOCKET)
 
+LazyImageLoadingEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Lazy Image Loading"
+  humanReadableDescription: "Enable Lazy Image Loading support"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
+
 # Deprecated
 
 ICECandidateFilteringEnabled:

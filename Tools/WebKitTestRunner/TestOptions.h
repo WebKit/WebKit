@@ -93,6 +93,7 @@ struct TestOptions {
     bool shouldPresentPopovers { true };
     bool enableAppNap { false };
     bool enablePageCache { false };
+    bool enableLazyImageLoading { false };
 
     double contentInsetTop { 0 };
 

@@ -1,3 +1,18 @@
+2019-08-08  Rob Buis  <rbuis@igalia.com>
+
+        Add runtime flag for lazy image loading
+        https://bugs.webkit.org/show_bug.cgi?id=199794
+
+        Reviewed by Darin Adler.
+
+        Add loading attribute and expose it on HTMLImageElement.
+
+        * html/HTMLAttributeNames.in:
+        * html/HTMLImageElement.idl:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setLazyImageLoadingEnabled):
+        (WebCore::RuntimeEnabledFeatures::lazyImageLoadingEnabled const):
+
 2019-08-08  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Remove the reference to WebCore::Animation from TextureMapperAnimation

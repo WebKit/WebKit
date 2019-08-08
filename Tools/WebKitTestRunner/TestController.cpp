@@ -821,6 +821,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetColorFilterEnabled(preferences, options.enableColorFilter);
     WKPreferencesSetPunchOutWhiteBackgroundsInDarkMode(preferences, options.punchOutWhiteBackgroundsInDarkMode);
     WKPreferencesSetPageCacheEnabled(preferences, options.enablePageCache);
+    WKPreferencesSetLazyImageLoadingEnabled(preferences, options.enableLazyImageLoading);
 
     static WKStringRef defaultTextEncoding = WKStringCreateWithUTF8CString("ISO-8859-1");
     WKPreferencesSetDefaultTextEncodingName(preferences, defaultTextEncoding);
@@ -1401,6 +1402,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableAppNap = parseBooleanTestHeaderValue(value);
         else if (key == "enablePageCache")
             testOptions.enablePageCache = parseBooleanTestHeaderValue(value);
+        else if (key == "enableLazyImageLoading")
+            testOptions.enableLazyImageLoading = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

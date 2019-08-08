@@ -2139,3 +2139,13 @@ bool WKPreferencesGetReferrerPolicyAttributeEnabled(WKPreferencesRef preferences
 {
     return toImpl(preferencesRef)->referrerPolicyAttributeEnabled();
 }
+
+void WKPreferencesSetLazyImageLoadingEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setLazyImageLoadingEnabled(flag);
+}
+
+bool WKPreferencesGetLazyImageLoadingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->lazyImageLoadingEnabled();
+}

@@ -364,6 +364,9 @@ public:
     bool linkPreloadResponsiveImagesEnabled() const { return m_linkPreloadResponsiveImagesEnabled; }
     void setLinkPreloadResponsiveImagesEnabled(bool isEnabled) { m_linkPreloadResponsiveImagesEnabled = isEnabled; }
 
+    void setLazyImageLoadingEnabled(bool areEnabled) { m_lazyImageLoadingEnabled = areEnabled; }
+    bool lazyImageLoadingEnabled() const { return m_lazyImageLoadingEnabled; }
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 #if HAVE(NSURLSESSION_WEBSOCKET)
@@ -557,6 +560,8 @@ private:
 #if HAVE(NSURLSESSION_WEBSOCKET)
     bool m_isNSURLSessionWebSocketEnabled { false };
 #endif
+
+    bool m_lazyImageLoadingEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

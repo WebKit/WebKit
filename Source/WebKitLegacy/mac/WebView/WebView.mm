@@ -3186,6 +3186,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     RuntimeEnabledFeatures::sharedFeatures().setReferrerPolicyAttributeEnabled([preferences referrerPolicyAttributeEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setLinkPreloadResponsiveImagesEnabled([preferences linkPreloadResponsiveImagesEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setDialogElementEnabled([preferences dialogElementEnabled]);
+    RuntimeEnabledFeatures::sharedFeatures().setLazyImageLoadingEnabled([preferences lazyImageLoadingEnabled]);
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RuntimeEnabledFeatures::sharedFeatures().setLegacyEncryptedMediaAPIEnabled(preferences.legacyEncryptedMediaAPIEnabled);
