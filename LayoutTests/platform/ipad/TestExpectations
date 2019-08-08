@@ -103,6 +103,3 @@ fast/forms/file/file-input-reset-using-open-panel.html [ ImageOnlyFailure ]
 
 # rdar://52970947 (Layout Test scrollingcoordinator/ios/ui-scrolling-tree.html is a Flaky Failure on iPad iOS 13)
 scrollingcoordinator/ios/ui-scrolling-tree.html [ Pass Failure ]
-
-# rdar://53468934 (REGRESSION (iOS 13): Four Layout Tests Failing after SDK change)
-editing/selection/character-granularity-rect.html [ Failure ]

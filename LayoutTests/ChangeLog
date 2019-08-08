@@ -1,3 +1,25 @@
+2019-08-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r248300. rdar://problem/53468934
+
+    [iPad] editing/selection/character-granularity-rect.html is now passing.
+    <rdar://53468934>
+    
+    Unreviewed Test Gardening.
+    
+    * platform/ipad/TestExpectations: Removed expectation for passing test, editing/selection/character-granularity-rect.html
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@248300 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-06  Russell Epstein  <repstein@apple.com>
+
+            [iPad] editing/selection/character-granularity-rect.html is now passing.
+            <rdar://53468934>
+
+            Unreviewed Test Gardening.
+
+            * platform/ipad/TestExpectations: Removed expectation for passing test, editing/selection/character-granularity-rect.html
+
 2019-08-01  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/53764238
