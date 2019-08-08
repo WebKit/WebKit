@@ -1,3 +1,16 @@
+2019-08-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [Mac] Use the PID of the WebContent process when issuing local file read sandbox extensions
+        https://bugs.webkit.org/show_bug.cgi?id=200543
+        <rdar://problem/49394015>
+
+        Reviewed by Brent Fulgham.
+
+        Add new SPI.
+
+        * wtf/Platform.h:
+        * wtf/spi/darwin/SandboxSPI.h:
+
 2019-08-07  Chris Dumez  <cdumez@apple.com>
 
         Tighten WeakPtr threading assertions for GC threads

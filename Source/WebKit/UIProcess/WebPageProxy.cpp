@@ -1076,7 +1076,11 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     // Inspector resources are in a directory with assumed access.
     ASSERT_WITH_SECURITY_IMPLICATION(!WebKit::isInspectorPage(*this));
 
+#if PLATFORM(MAC) && HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
+    if (SandboxExtension::createHandleForReadByPid("/", processIdentifier(), sandboxExtensionHandle)) {
+#else
     if (SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly, sandboxExtensionHandle)) {
+#endif
         willAcquireUniversalFileReadSandboxExtension(process);
         return;
     }
@@ -1089,7 +1093,13 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     // We failed to issue an universal file read access sandbox, fall back to issuing one for the base URL instead.
     auto baseURL = URL(URL(), url.baseAsString());
     auto basePath = baseURL.fileSystemPath();
-    if (!basePath.isNull() && SandboxExtension::createHandle(basePath, SandboxExtension::Type::ReadOnly, sandboxExtensionHandle))
+    if (basePath.isNull())
+        return;
+#if PLATFORM(MAC) && HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
+    if (SandboxExtension::createHandleForReadByPid(basePath, processIdentifier(), sandboxExtensionHandle))
+#else
+    if (SandboxExtension::createHandle(basePath, SandboxExtension::Type::ReadOnly, sandboxExtensionHandle))
+#endif
         m_process->assumeReadAccessToBaseURL(*this, baseURL);
 }
 
