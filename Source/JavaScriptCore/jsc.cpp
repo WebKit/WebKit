@@ -137,13 +137,19 @@
 #include <arm/arch.h>
 #endif
 
-#if __has_include(<WebKitAdditions/MemoryFootprint.h>)
-#include <WebKitAdditions/MemoryFootprint.h>
+#if OS(DARWIN)
+#include <wtf/spi/darwin/ProcessMemoryFootprint.h>
+struct MemoryFootprint : ProcessMemoryFootprint {
+    MemoryFootprint(const ProcessMemoryFootprint& src)
+        : ProcessMemoryFootprint(src)
+    {
+    }
+};
 #else
 struct MemoryFootprint {
     uint64_t current;
     uint64_t peak;
-    
+
     static MemoryFootprint now()
     {
         return { 0L, 0L };
