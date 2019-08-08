@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Lock.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WTF {
@@ -106,7 +107,7 @@ struct ConsoleLogValue<Argument, false> {
     }
 };
 
-class Logger : public RefCounted<Logger> {
+class Logger : public ThreadSafeRefCounted<Logger> {
     WTF_MAKE_NONCOPYABLE(Logger);
 public:
 
