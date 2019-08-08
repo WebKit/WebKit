@@ -1,3 +1,15 @@
+2019-08-08  Rob Buis  <rbuis@igalia.com>
+
+        Import lazy loading WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=199795
+
+        Reviewed by Darin Adler.
+
+        Skip the lazy tests for now.
+
+        * TestExpectations:
+        * http/wpt/loading/redirect-headers-expected.txt:
+
 2019-08-07  Yury Semikhatsky  <yurys@chromium.org>
 
         LayoutTest inspector/worker/debugger-scripts.html is a flaky failure

@@ -83,7 +83,7 @@ TestInvocation::TestInvocation(WKURLRef url, const TestOptions& options)
     m_urlString = String(urlVector.data(), stringLength);
 
     // FIXME: Avoid mutating the setting via a test directory like this.
-    m_dumpFrameLoadCallbacks = urlContains("loading/");
+    m_dumpFrameLoadCallbacks = urlContains("loading/") && !urlContains("://localhost");
 }
 
 TestInvocation::~TestInvocation()

@@ -1,3 +1,17 @@
+2019-08-08  Rob Buis  <rbuis@igalia.com>
+
+        Import lazy loading WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=199795
+
+        Reviewed by Darin Adler.
+
+        Only do loading/ exception for WebKit specific, non WPT tests.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (shouldLogFrameLoadDelegates):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::TestInvocation):
+
 2019-08-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MiniBrowser] Add key accelerators for reload and close window

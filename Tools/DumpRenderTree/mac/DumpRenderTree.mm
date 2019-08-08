@@ -1802,7 +1802,7 @@ void dump()
 
 static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
 {
-    return strstr(pathOrURL, "loading/");
+    return strstr(pathOrURL, "loading/") && !strstr(pathOrURL, "://localhost");
 }
 
 static bool shouldLogHistoryDelegates(const char* pathOrURL)
