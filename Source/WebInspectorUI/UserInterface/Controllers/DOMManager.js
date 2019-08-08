@@ -618,7 +618,7 @@ WI.DOMManager = class DOMManager extends WI.Object
             return;
         }
 
-        breakpoint = new WI.EventBreakpoint(WI.EventBreakpoint.Type.Listener, eventListener.type, {eventListener});
+        breakpoint = new WI.EventBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: eventListener.type, eventListener});
         console.assert(!breakpoint.disabled);
 
         this._breakpointsForEventListeners.set(eventListener.eventListenerId, breakpoint);
