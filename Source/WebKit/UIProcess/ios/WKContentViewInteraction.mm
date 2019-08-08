@@ -3885,11 +3885,6 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     }
 #endif
 
-    if (!_page->hasRunningProcess()) {
-        completionHandler(WKAutocorrectionContext.emptyAutocorrectionContext);
-        return;
-    }
-
     // FIXME: Remove the synchronous call when <rdar://problem/16207002> is fixed.
     const bool useSyncRequest = true;
 
@@ -3904,6 +3899,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     if (useSyncRequest) {
         _page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAutocorrectionContext>(_page->pageID(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
         [self _cancelPendingAutocorrectionContextHandler];
+        return;
     }
 }
 

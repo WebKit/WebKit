@@ -1,5 +1,9 @@
 2019-08-08  Alan Coon  <alancoon@apple.com>
 
+        Revert r248039. rdar://problem/54087592
+
+2019-08-08  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r248410. rdar://problem/54084738
 
     Do not allow navigations of frames about to get replaced by the result of evaluating javascript: URLs
