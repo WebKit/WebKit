@@ -1,5 +1,29 @@
 2019-08-07  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r248379. rdar://problem/53779679
+
+    Updating TestExpectations for Two Failing Layout Tests.
+    rdar://53779679
+    
+    Unreviewed Test Gardening.
+    
+    * platform/ios-12/TestExpectations:
+    * platform/ios/TestExpectations:
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@248379 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-07  Russell Epstein  <repstein@apple.com>
+
+            Updating TestExpectations for Two Failing Layout Tests.
+            rdar://53779679
+
+            Unreviewed Test Gardening.
+
+            * platform/ios-12/TestExpectations:
+            * platform/ios/TestExpectations:
+
+2019-08-07  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r248312. rdar://problem/53829560
 
     Updating Test Expectations for <rdar://53957264>, <rdar://53946482>, <rdar://53866783>
