@@ -1,5 +1,17 @@
 2019-08-09  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r248480): Sources: the Pause Reason section takes the entire vertical space when there are few breakpoints/resources
+        https://bugs.webkit.org/show_bug.cgi?id=200597
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.css:
+        (@media (min-height: 650px) .sidebar > .panel.navigation.sources > .content > .pause-reason-container): Deleted.
+        Don't `flex-grow` or `flex-shrink` the Pause Reason section so it always displays its full
+        content. The rest of the sections can grow/shrink as needed.
+
+2019-08-09  Devin Rousso  <drousso@apple.com>
+
         REGRESSION (Safari 6): Web Inspector: JSON may not be pretty printed if served as text/html
         https://bugs.webkit.org/show_bug.cgi?id=122898
         <rdar://problem/15241419>

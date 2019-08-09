@@ -111,11 +111,6 @@
         --details-section-header-top: 0;
     }
 
-    .sidebar > .panel.navigation.sources > .content > .pause-reason-container {
-        flex-grow: 4;
-        flex-shrink: 1;
-    }
-
     .sidebar > .panel.navigation.sources > .content > :matches(.call-stack-container, .breakpoints-container, .resources) {
         height: 100%;
         max-height: fit-content;
