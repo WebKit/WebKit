@@ -1,3 +1,7 @@
+2019-08-08  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed. Get rid of extraneous whitespace in ChangeLog.
+
 2019-08-08  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Disable shared clipboard between Simulators
@@ -286,7 +290,7 @@
 
         Reviewed by Jonathan Bedard.
 
-        1. Unhook the scroll event when a series/axis have been removed from the container 
+        1. Unhook the scroll event when a series/axis have been removed from the container
         2. Fix the axis's cache data structure out of sync.
         3. Use position:sticky to reduce the scrolling blink when update the presenter's transform
         4. Use intersection observer to detect if the canvas on screen or not, if a canvas is not on the screen, we do nothing, this will eliminate render requests we send out.
@@ -341,7 +345,7 @@
         rdar://problem/53942888
 
         Reviewed by Tim Horton.
-    
+
         When we navigate from an overflow:hidden HTML page to a custom view (like PDF), we need
         to make sure that the scroll view is scrollable.
 
@@ -475,9 +479,9 @@
 
         Reviewed by Alex Christensen.
 
-        We used to clear the permanent credentials created by API tests at the end of the API tests, to ensure those 
-        credentials will not affect tests running after. There is a case where permanent credentials were left on the 
-        system, so those API tests were timing out themselves before reaching to the cleanup, which caused cascading 
+        We used to clear the permanent credentials created by API tests at the end of the API tests, to ensure those
+        credentials will not affect tests running after. There is a case where permanent credentials were left on the
+        system, so those API tests were timing out themselves before reaching to the cleanup, which caused cascading
         failure. To prevent this from happening again, add cleanup at the begining of the tests.
 
         * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
@@ -584,8 +588,8 @@
         Reviewed by Jonathan Bedard.
 
         *resultsdbpy/resultsdbpy/view/static/library/js/components/TimelineComponents.js:
-        Let the axis' height be defined in the option. Timeine component will use this value as 
-        padding-top for headers which allows headers start in the right position, even with multiple 
+        Let the axis' height be defined in the option. Timeine component will use this value as
+        padding-top for headers which allows headers start in the right position, even with multiple
         top axises.
         (Timeline.CanvasSeriesComponent):
         (prototype.Timeline.CanvasContainer):
@@ -1286,7 +1290,7 @@
         (-[TestInputDelegate _webViewAdditionalContextForStrongPasswordAssistance:]): Function which populates the additional autofill
         context dictionary.
 
-        (-[TestInputDelegate setFocusRequiresStrongPasswordAssistanceHandler:]): Setting the handler for the function which checks if the 
+        (-[TestInputDelegate setFocusRequiresStrongPasswordAssistanceHandler:]): Setting the handler for the function which checks if the
         input field requires strong password work.
 
         (-[TestInputDelegate focusRequiresStrongPasswordAssistanceHandler]): Returns the handler for the function which checks if the
@@ -1309,7 +1313,7 @@
         * Scripts/run-javascriptcore-tests: The script now failed wether the run-jsc-stress-tests failed or test binaries failed.
         (runTest): Record test binary failure
         (reportTestFailures): Report test binary failure
-        (runJSCStressTests): 
+        (runJSCStressTests):
         * Scripts/webkitpy/common/config/ports.py: Skip run jsc test binaries for those need to run remotely
         (JscOnlyPort.build_jsc_command):
         (JscOnlyPort):
@@ -2051,16 +2055,16 @@
         Reviewed by Darin Adler.
 
         * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
-        Add basic test showing that StringBuilder::flexibleAppend can be used to 
-        append one or more string adaptable types. 
+        Add basic test showing that StringBuilder::flexibleAppend can be used to
+        append one or more string adaptable types.
 
         * TestWebKitAPI/CMakeLists.txt:
         * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
         Add WTFStringUtilities.cpp
 
         * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
-        Add basic test showing that StringBuilder::flexibleAppend can be used to 
-        append one or more string adaptable types. 
+        Add basic test showing that StringBuilder::flexibleAppend can be used to
+        append one or more string adaptable types.
 
         * TestWebKitAPI/Tests/WTF/StringOperators.cpp:
         * TestWebKitAPI/WTFStringUtilities.cpp: Added.
@@ -2587,7 +2591,7 @@
         rdar://problem/51930364
 
         Reviewed by Tim Horton.
-        
+
         New API tests that test scrollability with various combinations of content, insets,
         input accessory bars etc.
 
@@ -2707,8 +2711,8 @@
         Reviewed by Darin Adler.
 
         * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
-        Add basic test showing that StringBuilder::flexibleAppend can be used to 
-        append one or more string adaptable types. 
+        Add basic test showing that StringBuilder::flexibleAppend can be used to
+        append one or more string adaptable types.
 
 2019-07-09  Sihui Liu  <sihui_liu@apple.com>
 
@@ -3507,7 +3511,7 @@
 
         Reviewed by Jonathan Bedard.
 
-        * BuildSlaveSupport/ews-build/steps.py: Renamed patchFailedJSCTests and patchFailedAPITests to patchFailedTests. This property 
+        * BuildSlaveSupport/ews-build/steps.py: Renamed patchFailedJSCTests and patchFailedAPITests to patchFailedTests. This property
         can also be used for layout-tests later on.
         * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests.
 
@@ -3699,7 +3703,7 @@
         Reviewed by Jonathan Bedard.
 
         * BuildSlaveSupport/ews-build/steps.py:
-        (ExtractTestResults.resultsDownloadURL): Method to return layout test result zip file url. 
+        (ExtractTestResults.resultsDownloadURL): Method to return layout test result zip file url.
         (ExtractTestResults.addCustomURLs): Add url to download layout test results zip file.
 
 2019-06-24  Michael Catanzaro  <mcatanzaro@igalia.com>
@@ -3818,7 +3822,7 @@
 
         * Scripts/webkitpy/test/main.py: Check if lldb tests are supported before adding them
         to the runner.
-        (main): 
+        (main):
         (_supports_building_and_running_lldb_tests): Check if you are running macOS Catalina.
 
 2019-06-20  Dean Johnson  <dean_johnson@apple.com>
