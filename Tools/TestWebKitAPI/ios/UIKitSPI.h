@@ -217,6 +217,10 @@ IGNORE_WARNINGS_END
 - (void)pasteWithCompletionHandler:(void (^)(void))completionHandler;
 @end
 
+@protocol UITextInputPrivate_Staging_54140418 <UITextInputPrivate>
+@property (nonatomic, readonly) BOOL supportsImagePaste;
+@end
+
 @interface UIWebFormAccessory (Staging_49666643)
 - (void)setNextPreviousItemsVisible:(BOOL)visible;
 @end

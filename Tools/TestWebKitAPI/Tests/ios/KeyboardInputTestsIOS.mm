@@ -555,6 +555,38 @@ TEST(KeyboardInputTests, TestWebViewAdditionalContextForStrongPasswordAssistance
     EXPECT_TRUE([[actual allValues] containsObject:expected]);
 }
 
+TEST(KeyboardInputTests, SupportsImagePaste)
+{
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568)]);
+    auto contentView = (id <UITextInputPrivate_Staging_54140418>)[webView textInputContentView];
+    [webView synchronouslyLoadHTMLString:@"<input id='input'></input><div contenteditable id='editor'></div><textarea id='textarea'></textarea>"];
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    [webView stringByEvaluatingJavaScript:@"input.focus()"];
+    EXPECT_TRUE(contentView.supportsImagePaste);
+
+    [webView stringByEvaluatingJavaScript:@"document.activeElement.blur(); input.type = 'date'"];
+    [webView waitForNextPresentationUpdate];
+    [webView stringByEvaluatingJavaScript:@"input.focus()"];
+    EXPECT_FALSE(contentView.supportsImagePaste);
+
+    [webView stringByEvaluatingJavaScript:@"editor.focus()"];
+    EXPECT_TRUE(contentView.supportsImagePaste);
+
+    [webView stringByEvaluatingJavaScript:@"document.activeElement.blur(); input.type = 'color'"];
+    [webView waitForNextPresentationUpdate];
+    [webView stringByEvaluatingJavaScript:@"input.focus()"];
+    EXPECT_FALSE(contentView.supportsImagePaste);
+
+    [webView stringByEvaluatingJavaScript:@"textarea.focus()"];
+    EXPECT_TRUE(contentView.supportsImagePaste);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)

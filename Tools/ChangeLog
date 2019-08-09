@@ -1,3 +1,17 @@
+2019-08-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 13] Google Docs/Slides/Sheets: paste often doesn't work and sometimes produces an error
+        https://bugs.webkit.org/show_bug.cgi?id=200591
+        <rdar://problem/54102238>
+
+        Reviewed by Ryosuke Niwa and Tim Horton.
+
+        Add a new API test to exercise -supportsImagePaste.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2019-08-09  Aakash Jain  <aakash_jain@apple.com>
 
         Follow-up commit to r248474 as webkit-patch did not commit the svn property changes.
