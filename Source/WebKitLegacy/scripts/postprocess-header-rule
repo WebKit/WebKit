@@ -59,22 +59,22 @@ do
     fi
 done
 
-unifdef -B ${unifdefOptions} -o ${header}.unifdef ${header}
+unifdef -B ${unifdefOptions} -o "${header}.unifdef" "${header}"
 case $? in
-    0) rm ${header}.unifdef ;;
-    1) mv ${header}{.unifdef,} ;;
+    0) rm "${header}".unifdef ;;
+    1) mv "${header}"{.unifdef,} ;;
     *) exit 1 ;;
 esac
 
-if [[ ${header} == "./WebKitAvailability.h" ]]; then
+if [[ "${header}" == "./WebKitAvailability.h" ]]; then
     exit 0
 fi
 
 if [[ ${WK_PLATFORM_NAME} != macosx ]]; then
-    sed -E -e "s/ *WEBKIT_((CLASS_|ENUM_)?(AVAILABLE|DEPRECATED))_MAC\([^)]+\)//g" < ${header} > ${header}.sed
-    if cmp -s ${header} ${header}.sed; then
-        rm ${header}.sed
+    sed -E -e "s/ *WEBKIT_((CLASS_|ENUM_)?(AVAILABLE|DEPRECATED))_MAC\([^)]+\)//g" < "${header}" > "${header}.sed"
+    if cmp -s "${header}" "${header}.sed"; then
+        rm "${header}.sed"
     else
-        mv ${header}.sed ${header}
+        mv "${header}.sed" "${header}"
     fi
 fi

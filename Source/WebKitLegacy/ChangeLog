@@ -1,3 +1,22 @@
+2019-08-09  Keith Rollin  <krollin@apple.com>
+
+        Fix WebKitLegacy's post-process-header-rule script to support paths with spaces in them
+        https://bugs.webkit.org/show_bug.cgi?id=200595
+        <rdar://problem/54045608>
+
+        Reviewed by Darin Adler.
+
+        A number of scripts were added to WebKit, JavaScriptCore, and
+        WebKitLegacy to support XCBuild's new facility for copying and
+        modifying files in one atomic step. The first two are OK, but
+        WebKitLegacy's script (post-process-header-rule) references a file via
+        a variable named "header", and does so without quoting the variable's
+        value. When the header's path contains spaces -- as can happen when
+        building Safari Technology Preview -- the script breaks. Fix this by
+        adding quoting.
+
+        * scripts/postprocess-header-rule:
+
 2019-08-08  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Get WebKit, WebKit2, and MiniBrowser building and executing
