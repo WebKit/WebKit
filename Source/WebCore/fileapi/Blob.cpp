@@ -48,20 +48,20 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(Blob);
 
 class BlobURLRegistry final : public URLRegistry {
 public:
-    void registerURL(SecurityOrigin*, const URL&, URLRegistrable&) override;
-    void unregisterURL(const URL&) override;
+    void registerURL(ScriptExecutionContext&, const URL&, URLRegistrable&) final;
+    void unregisterURL(ScriptExecutionContext&, const URL&) final;
 
     static URLRegistry& registry();
 };
 
 
-void BlobURLRegistry::registerURL(SecurityOrigin* origin, const URL& publicURL, URLRegistrable& blob)
+void BlobURLRegistry::registerURL(ScriptExecutionContext& context, const URL& publicURL, URLRegistrable& blob)
 {
     ASSERT(&blob.registry() == this);
-    ThreadableBlobRegistry::registerBlobURL(origin, publicURL, static_cast<Blob&>(blob).url());
+    ThreadableBlobRegistry::registerBlobURL(context.securityOrigin(), publicURL, static_cast<Blob&>(blob).url());
 }
 
-void BlobURLRegistry::unregisterURL(const URL& url)
+void BlobURLRegistry::unregisterURL(ScriptExecutionContext&, const URL& url)
 {
     ThreadableBlobRegistry::unregisterBlobURL(url);
 }

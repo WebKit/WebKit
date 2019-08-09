@@ -103,7 +103,7 @@ String DOMURL::createPublicURL(ScriptExecutionContext& scriptExecutionContext, U
     if (publicURL.isEmpty())
         return String();
 
-    scriptExecutionContext.publicURLManager().registerURL(scriptExecutionContext.securityOrigin(), publicURL, registrable);
+    scriptExecutionContext.publicURLManager().registerURL(publicURL, registrable);
 
     return publicURL.string();
 }

@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class SecurityOrigin;
+class ScriptExecutionContext;
 class URLRegistry;
 
 class URLRegistrable {
@@ -47,8 +47,8 @@ class URLRegistry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~URLRegistry() = default;
-    virtual void registerURL(SecurityOrigin*, const URL&, URLRegistrable&) = 0;
-    virtual void unregisterURL(const URL&) = 0;
+    virtual void registerURL(ScriptExecutionContext&, const URL&, URLRegistrable&) = 0;
+    virtual void unregisterURL(ScriptExecutionContext&, const URL&) = 0;
 
     // This is an optional API
     virtual URLRegistrable* lookup(const String&) const { ASSERT_NOT_REACHED(); return 0; }
