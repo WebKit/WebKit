@@ -1,5 +1,66 @@
 2019-08-08  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r248438. rdar://problem/54093226
+
+    [iOS] Position image information should respect the image orientation
+    https://bugs.webkit.org/show_bug.cgi?id=200487
+    
+    Patch by Said Abou-Hallawa <sabouhallawa@apple.com> on 2019-08-08
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Re-factor CachedImage::imageSizeForRenderer() into another overriding
+    function which does not scale the imageSize. Therefore the new function
+    returns FloatSize while the original function returns LayoutSize.
+    
+    * loader/cache/CachedImage.cpp:
+    (WebCore::CachedImage::imageSizeForRenderer const):
+    * loader/cache/CachedImage.h:
+    * rendering/RenderElement.h:
+    
+    Source/WebKit:
+    
+    imagePositionInformation() should respect the image orientation when
+    drawing an Image to a ShareableBitmap context.
+    
+    boundsPositionInformation() already takes care of the image orientation
+    because it gets RenderImage::enclosingBoundingBox().
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::imagePositionInformation):
+    
+    Tools:
+    
+    Add an API test to verify the position image information is drawn rotated
+    because of respecting its image orientation.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm:
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/exif-orientation-8-llo.jpg: Added.
+    * TestWebKitAPI/Tests/WebKitCocoa/img-with-rotated-image.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248438 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            [iOS] Position image information should respect the image orientation
+            https://bugs.webkit.org/show_bug.cgi?id=200487
+
+            Reviewed by Simon Fraser.
+
+            imagePositionInformation() should respect the image orientation when
+            drawing an Image to a ShareableBitmap context.
+
+            boundsPositionInformation() already takes care of the image orientation
+            because it gets RenderImage::enclosingBoundingBox().
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::imagePositionInformation):
+
+2019-08-08  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r248436. rdar://problem/54093232
 
     Set WKWebView opaque based on drawsBackground in PageConfiguration.
