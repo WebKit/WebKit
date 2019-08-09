@@ -1,49 +1,107 @@
-2019-08-08  Kocsen Chung  <kocsen_chung@apple.com>
+2019-08-09  Kocsen Chung  <kocsen_chung@apple.com>
 
-        Cherry-pick r248039. rdar://problem/54087592
+        Cherry-pick r248447. rdar://problem/54109873
 
-    [iOS 13] Safari crashes when closing a tab with a focused element if the unified field has focus
-    https://bugs.webkit.org/show_bug.cgi?id=200291
-    <rdar://problem/53717946>
+    Add to InteractionInformationAtPosition information about whether the element is in a subscrollable region
+    https://bugs.webkit.org/show_bug.cgi?id=200374
+    rdar://problem/54095519
     
-    Reviewed by Megan Gardner.
+    Reviewed by Tim Horton.
+    Source/WebCore:
+    
+    Add to InteractionInformationAtPosition a ScrollingNodeID which represents the enclosing scrolling
+    node that affects the targeted element's position. We use this to find a UIScrollView in the UI process.
+    
+    The entrypoint to finding the enclosing scrolling node is ScrollingCoordinator::scrollableContainerNodeID(),
+    which calls RenderLayerCompositor::asyncScrollableContainerNodeID() to look for a scrolling ancestor in
+    the current frame, and then looks for an enclosing scrollable frame, or a scrolling ancestor in
+    the enclosing frame.
+    
+    There's a bit of subtlety in RenderLayerCompositor::asyncScrollableContainerNodeID() because if you're asking
+    for the node that scrolls the renderer, if the renderer itself has a layer and is scrollable, you want
+    its enclosing scroller.
+    
+    * page/scrolling/AsyncScrollingCoordinator.cpp:
+    (WebCore::AsyncScrollingCoordinator::scrollableContainerNodeID const):
+    * page/scrolling/AsyncScrollingCoordinator.h:
+    * page/scrolling/ScrollingCoordinator.cpp:
+    (WebCore::scrollableContainerNodeID const):
+    * page/scrolling/ScrollingCoordinator.h:
+    * rendering/RenderLayer.h:
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::asyncScrollableContainerNodeID):
+    * rendering/RenderLayerCompositor.h:
     
     Source/WebKit:
     
-    Makes -requestAutocorrectionContextWithCompletionHandler: robust in the case where the web page has been closed,
-    and there is no Connection object to use when waiting for a sync IPC response.
+    Add InteractionInformationAtPosition.containerScrollingNodeID and initialize it in elementPositionInformation()
+    by asking the scrolling coordinator.
     
-    Test: AutocorrectionTests.RequestAutocorrectionContextAfterClosingPage
+    Also add a way to get from a ScrollingNodeID to a UIScrollView to RemoteScrollingCoordinatorProxy,
+    which gets the scrolling node and asks the delegate for the UIView.
     
-    * UIProcess/ios/WKContentViewInteraction.mm:
-    (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+    * Shared/ios/InteractionInformationAtPosition.h:
+    * Shared/ios/InteractionInformationAtPosition.mm:
+    (WebKit::InteractionInformationAtPosition::encode const):
+    (WebKit::InteractionInformationAtPosition::decode):
+    * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+    * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+    (WebKit::RemoteScrollingCoordinatorProxy::scrollViewForScrollingNodeID const):
+    * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+    * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+    (WebKit::ScrollingTreeOverflowScrollingNodeIOS::scrollView const):
+    * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::elementPositionInformation):
     
-    Tools:
-    
-    Add an API test to exercise the scenario of synchronously requesting the autocorrection context immediately
-    after closing the web view, while the web view's content view isn't the first responder.
-    
-    * TestWebKitAPI/Tests/ios/AutocorrectionTestsIOS.mm:
-    * TestWebKitAPI/ios/UIKitSPI.h:
-    
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248039 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248447 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2019-07-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+    2019-08-08  Kocsen Chung  <kocsen_chung@apple.com>
 
-            [iOS 13] Safari crashes when closing a tab with a focused element if the unified field has focus
-            https://bugs.webkit.org/show_bug.cgi?id=200291
-            <rdar://problem/53717946>
+            Cherry-pick r248039. rdar://problem/54087592
 
-            Reviewed by Megan Gardner.
+        [iOS 13] Safari crashes when closing a tab with a focused element if the unified field has focus
+        https://bugs.webkit.org/show_bug.cgi?id=200291
+        <rdar://problem/53717946>
 
-            Makes -requestAutocorrectionContextWithCompletionHandler: robust in the case where the web page has been closed,
-            and there is no Connection object to use when waiting for a sync IPC response.
+        Reviewed by Megan Gardner.
 
-            Test: AutocorrectionTests.RequestAutocorrectionContextAfterClosingPage
+        Source/WebKit:
 
-            * UIProcess/ios/WKContentViewInteraction.mm:
-            (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+        Makes -requestAutocorrectionContextWithCompletionHandler: robust in the case where the web page has been closed,
+        and there is no Connection object to use when waiting for a sync IPC response.
+
+        Test: AutocorrectionTests.RequestAutocorrectionContextAfterClosingPage
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+
+        Tools:
+
+        Add an API test to exercise the scenario of synchronously requesting the autocorrection context immediately
+        after closing the web view, while the web view's content view isn't the first responder.
+
+        * TestWebKitAPI/Tests/ios/AutocorrectionTestsIOS.mm:
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248039 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-07-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+                [iOS 13] Safari crashes when closing a tab with a focused element if the unified field has focus
+                https://bugs.webkit.org/show_bug.cgi?id=200291
+                <rdar://problem/53717946>
+
+                Reviewed by Megan Gardner.
+
+                Makes -requestAutocorrectionContextWithCompletionHandler: robust in the case where the web page has been closed,
+                and there is no Connection object to use when waiting for a sync IPC response.
+
+                Test: AutocorrectionTests.RequestAutocorrectionContextAfterClosingPage
+
+                * UIProcess/ios/WKContentViewInteraction.mm:
+                (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
 
 2019-08-08  Kocsen Chung  <kocsen_chung@apple.com>
 
@@ -309,6 +367,34 @@
             destroying those members. Later on, the background task would then initialize those data members and we
             would then destroy them on the main thread when the WebResourceLoadStatisticsStore is destroyed on the
             main thread.
+
+2019-08-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Add to InteractionInformationAtPosition information about whether the element is in a subscrollable region
+        https://bugs.webkit.org/show_bug.cgi?id=200374
+        rdar://problem/54095519
+
+        Reviewed by Tim Horton.
+        
+        Add InteractionInformationAtPosition.containerScrollingNodeID and initialize it in elementPositionInformation()
+        by asking the scrolling coordinator.
+        
+        Also add a way to get from a ScrollingNodeID to a UIScrollView to RemoteScrollingCoordinatorProxy,
+        which gets the scrolling node and asks the delegate for the UIView.
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollViewForScrollingNodeID const):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::scrollView const):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::elementPositionInformation):
 
             * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
             (WebKit::WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore):

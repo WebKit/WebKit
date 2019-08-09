@@ -91,6 +91,8 @@ private:
     
     bool asyncFrameOrOverflowScrollingEnabled() const;
 
+    WEBCORE_EXPORT ScrollingNodeID scrollableContainerNodeID(const RenderObject&) const override;
+
     WEBCORE_EXPORT void frameViewLayoutUpdated(FrameView&) override;
     WEBCORE_EXPORT void frameViewRootLayerDidChange(FrameView&) override;
     WEBCORE_EXPORT void frameViewVisualViewportChanged(FrameView&) override;

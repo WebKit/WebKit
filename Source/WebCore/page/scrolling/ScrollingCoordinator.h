@@ -59,6 +59,7 @@ class FrameView;
 class GraphicsLayer;
 class Page;
 class Region;
+class RenderObject;
 class RenderLayer;
 class ScrollableArea;
 class ViewportConstraints;
@@ -82,6 +83,9 @@ public:
 
     // Return whether this scrolling coordinator handles scrolling for the given overflow scroll layer.
     WEBCORE_EXPORT virtual bool coordinatesScrollingForOverflowLayer(const RenderLayer&) const;
+
+    // Returns the ScrollingNodeID of the innermost scrolling node that scrolls the renderer.
+    WEBCORE_EXPORT virtual ScrollingNodeID scrollableContainerNodeID(const RenderObject&) const;
 
     // Should be called whenever the given frame view has been laid out.
     virtual void frameViewLayoutUpdated(FrameView&) { }

@@ -1,63 +1,121 @@
-2019-08-08  Kocsen Chung  <kocsen_chung@apple.com>
+2019-08-09  Kocsen Chung  <kocsen_chung@apple.com>
 
-        Cherry-pick r248438. rdar://problem/54093226
+        Cherry-pick r248447. rdar://problem/54109873
 
-    [iOS] Position image information should respect the image orientation
-    https://bugs.webkit.org/show_bug.cgi?id=200487
+    Add to InteractionInformationAtPosition information about whether the element is in a subscrollable region
+    https://bugs.webkit.org/show_bug.cgi?id=200374
+    rdar://problem/54095519
     
-    Patch by Said Abou-Hallawa <sabouhallawa@apple.com> on 2019-08-08
-    Reviewed by Simon Fraser.
-    
+    Reviewed by Tim Horton.
     Source/WebCore:
     
-    Re-factor CachedImage::imageSizeForRenderer() into another overriding
-    function which does not scale the imageSize. Therefore the new function
-    returns FloatSize while the original function returns LayoutSize.
+    Add to InteractionInformationAtPosition a ScrollingNodeID which represents the enclosing scrolling
+    node that affects the targeted element's position. We use this to find a UIScrollView in the UI process.
     
-    * loader/cache/CachedImage.cpp:
-    (WebCore::CachedImage::imageSizeForRenderer const):
-    * loader/cache/CachedImage.h:
-    * rendering/RenderElement.h:
+    The entrypoint to finding the enclosing scrolling node is ScrollingCoordinator::scrollableContainerNodeID(),
+    which calls RenderLayerCompositor::asyncScrollableContainerNodeID() to look for a scrolling ancestor in
+    the current frame, and then looks for an enclosing scrollable frame, or a scrolling ancestor in
+    the enclosing frame.
+    
+    There's a bit of subtlety in RenderLayerCompositor::asyncScrollableContainerNodeID() because if you're asking
+    for the node that scrolls the renderer, if the renderer itself has a layer and is scrollable, you want
+    its enclosing scroller.
+    
+    * page/scrolling/AsyncScrollingCoordinator.cpp:
+    (WebCore::AsyncScrollingCoordinator::scrollableContainerNodeID const):
+    * page/scrolling/AsyncScrollingCoordinator.h:
+    * page/scrolling/ScrollingCoordinator.cpp:
+    (WebCore::scrollableContainerNodeID const):
+    * page/scrolling/ScrollingCoordinator.h:
+    * rendering/RenderLayer.h:
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::asyncScrollableContainerNodeID):
+    * rendering/RenderLayerCompositor.h:
     
     Source/WebKit:
     
-    imagePositionInformation() should respect the image orientation when
-    drawing an Image to a ShareableBitmap context.
+    Add InteractionInformationAtPosition.containerScrollingNodeID and initialize it in elementPositionInformation()
+    by asking the scrolling coordinator.
     
-    boundsPositionInformation() already takes care of the image orientation
-    because it gets RenderImage::enclosingBoundingBox().
+    Also add a way to get from a ScrollingNodeID to a UIScrollView to RemoteScrollingCoordinatorProxy,
+    which gets the scrolling node and asks the delegate for the UIView.
     
+    * Shared/ios/InteractionInformationAtPosition.h:
+    * Shared/ios/InteractionInformationAtPosition.mm:
+    (WebKit::InteractionInformationAtPosition::encode const):
+    (WebKit::InteractionInformationAtPosition::decode):
+    * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+    * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+    (WebKit::RemoteScrollingCoordinatorProxy::scrollViewForScrollingNodeID const):
+    * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+    * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+    (WebKit::ScrollingTreeOverflowScrollingNodeIOS::scrollView const):
+    * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
     * WebProcess/WebPage/ios/WebPageIOS.mm:
-    (WebKit::imagePositionInformation):
+    (WebKit::elementPositionInformation):
     
-    Tools:
-    
-    Add an API test to verify the position image information is drawn rotated
-    because of respecting its image orientation.
-    
-    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
-    * TestWebKitAPI/Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm:
-    (TestWebKitAPI::TEST):
-    * TestWebKitAPI/Tests/WebKitCocoa/exif-orientation-8-llo.jpg: Added.
-    * TestWebKitAPI/Tests/WebKitCocoa/img-with-rotated-image.html: Added.
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248438 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248447 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2019-08-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+    2019-08-08  Kocsen Chung  <kocsen_chung@apple.com>
 
-            [iOS] Position image information should respect the image orientation
-            https://bugs.webkit.org/show_bug.cgi?id=200487
+            Cherry-pick r248438. rdar://problem/54093226
 
-            Reviewed by Simon Fraser.
+        [iOS] Position image information should respect the image orientation
+        https://bugs.webkit.org/show_bug.cgi?id=200487
 
-            Re-factor CachedImage::imageSizeForRenderer() into another overriding
-            function which does not scale the imageSize. Therefore the new function
-            returns FloatSize while the original function returns LayoutSize.
+        Patch by Said Abou-Hallawa <sabouhallawa@apple.com> on 2019-08-08
+        Reviewed by Simon Fraser.
 
-            * loader/cache/CachedImage.cpp:
-            (WebCore::CachedImage::imageSizeForRenderer const):
-            * loader/cache/CachedImage.h:
-            * rendering/RenderElement.h:
+        Source/WebCore:
+
+        Re-factor CachedImage::imageSizeForRenderer() into another overriding
+        function which does not scale the imageSize. Therefore the new function
+        returns FloatSize while the original function returns LayoutSize.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::imageSizeForRenderer const):
+        * loader/cache/CachedImage.h:
+        * rendering/RenderElement.h:
+
+        Source/WebKit:
+
+        imagePositionInformation() should respect the image orientation when
+        drawing an Image to a ShareableBitmap context.
+
+        boundsPositionInformation() already takes care of the image orientation
+        because it gets RenderImage::enclosingBoundingBox().
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::imagePositionInformation):
+
+        Tools:
+
+        Add an API test to verify the position image information is drawn rotated
+        because of respecting its image orientation.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/exif-orientation-8-llo.jpg: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/img-with-rotated-image.html: Added.
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248438 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-08-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+                [iOS] Position image information should respect the image orientation
+                https://bugs.webkit.org/show_bug.cgi?id=200487
+
+                Reviewed by Simon Fraser.
+
+                Re-factor CachedImage::imageSizeForRenderer() into another overriding
+                function which does not scale the imageSize. Therefore the new function
+                returns FloatSize while the original function returns LayoutSize.
+
+                * loader/cache/CachedImage.cpp:
+                (WebCore::CachedImage::imageSizeForRenderer const):
+                * loader/cache/CachedImage.h:
+                * rendering/RenderElement.h:
 
 2019-08-08  Alan Coon  <alancoon@apple.com>
 
@@ -377,6 +435,37 @@
             <rdar://problem/53901632>
 
             Reviewed by Darin Adler.
+
+2019-08-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Add to InteractionInformationAtPosition information about whether the element is in a subscrollable region
+        https://bugs.webkit.org/show_bug.cgi?id=200374
+        rdar://problem/54095519
+
+        Reviewed by Tim Horton.
+
+        Add to InteractionInformationAtPosition a ScrollingNodeID which represents the enclosing scrolling
+        node that affects the targeted element's position. We use this to find a UIScrollView in the UI process.
+        
+        The entrypoint to finding the enclosing scrolling node is ScrollingCoordinator::scrollableContainerNodeID(),
+        which calls RenderLayerCompositor::asyncScrollableContainerNodeID() to look for a scrolling ancestor in
+        the current frame, and then looks for an enclosing scrollable frame, or a scrolling ancestor in
+        the enclosing frame.
+        
+        There's a bit of subtlety in RenderLayerCompositor::asyncScrollableContainerNodeID() because if you're asking
+        for the node that scrolls the renderer, if the renderer itself has a layer and is scrollable, you want
+        its enclosing scroller.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::scrollableContainerNodeID const):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::scrollableContainerNodeID const):
+        * page/scrolling/ScrollingCoordinator.h:
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::asyncScrollableContainerNodeID):
+        * rendering/RenderLayerCompositor.h:
 
             We normally prevent page caching if there were any pending subresource loads when navigating,
             to avoid caching partial / broken content. However, this should not apply to Ping / Beacon
