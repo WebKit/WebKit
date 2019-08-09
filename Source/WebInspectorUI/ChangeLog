@@ -1,3 +1,69 @@
+2019-08-09  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Sources: increase the vertical space allocated to the call stack when paused
+        https://bugs.webkit.org/show_bug.cgi?id=200236
+
+        Reviewed by Joseph Pecoraro.
+
+        Rather than uniformly constrict the height of the Call Stack and Breakpoints sections, they
+        should "flex" based on their importance, which can likely be derived from the current state.
+        This way, it's possible to see information from each section at the same time, but still
+        have enough space in each section to be able to do something useful.
+
+        When paused, the most useful data is the call stack, so give the Call Stack section the most
+        vertical space (the Pause Reason is also important, but it usually needs very little space).
+
+        When not paused, it's likely that the user cares more about the resources with breakpoints
+        than those without, so favor the Breakpoints section.
+
+        Each section will only expand to fit it's maximum content height.
+
+        If the inspector window becomes too short, remove the "flex" entirely and have all the
+        content be part of a single scroll area instead.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype.createContentTreeOutline):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleBreakpointElementAddedOrRemoved):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerPaused):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerResumed):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleCallStackElementAddedOrRemoved): Deleted.
+        * UserInterface/Views/SourcesNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.sources > .content > :matches(.pause-reason-container, .call-stack-container, .breakpoints-container)): Added.
+        (.sidebar > .panel.navigation.sources > .content .details-section): Added.
+        (.sidebar > .panel.navigation.sources > .content .details-section.collapsed > .header > .options, .sidebar > .panel.navigation.sources > .content .details-section:not(.collapsed) > .content, .sidebar > .panel.navigation.sources > .content .details-section:not(.collapsed) > .content > .group): Added.
+        (.sidebar > .panel.navigation.sources > .content > .breakpoints-container .create-breakpoint): Added.
+        (.sidebar > .panel.navigation.sources > .content > .navigation-bar): Added.
+        (@media (min-height: 650px)): Added.
+        (.sidebar > .panel.navigation.sources > .content > .pause-reason-container): Added.
+        (.sidebar > .panel.navigation.sources > .content > :matches(.call-stack-container, .breakpoints-container, .resources)): Added.
+        (.sidebar > .panel.navigation.sources > .content > .call-stack-container): Added.
+        (.sidebar > .panel.navigation.sources > .content > .breakpoints-container): Added.
+        (.sidebar > .panel.navigation.sources > .content > .resources): Added.
+        (.sidebar > .panel.navigation.sources > .content > .breakpoints-container .tree-outline .item.event-target-window .icon): Added.
+        (.sidebar > .panel.navigation.sources > .content > .details-section): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .details-section:matches(.paused-reason, .breakpoints).collapsed > .header > .options,): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .details-section.collapsed > .content): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints > .header > .options .create-breakpoint): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .details-section:matches(.pause-reason, .call-stack, .breakpoints) > .content,): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .details-section:matches(.call-stack, .breakpoints) > .content): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .details-section:matches(.call-stack, .breakpoints):not(.collapsed) > .content): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .details-section.call-stack): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints .create-breakpoint): Deleted.
+        (@media (min-height: 600px)): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .pause-reason): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .details-section:matches(.call-stack, .breakpoints):not(.collapsed) > .content,): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints .tree-outline .item.event-target-window .icon): Deleted.
+        Wrap the Pause Reason, Call Stack, and Breakpoints `WI.DetailsSection`s in a container
+        element so that the styling of the sticky header doesn't get affected by the clamping of the
+        container's height.
+
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section):
+        (.details-section > .header):
+        Create CSS variables for styles that will be overridden by the Sources navigation sidebar.
+
 2019-08-08  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Page: don't allow the domain to be disabled

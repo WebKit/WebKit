@@ -26,7 +26,10 @@
 .details-section {
     font-size: 10px;
     background-color: var(--panel-background-color);
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: var(--details-section-border-bottom);
+
+    --details-section-border-bottom: 1px solid var(--border-color);
+    --details-section-header-top: -1px;
 }
 
 .details-section .details-section {
@@ -44,7 +47,7 @@
 
 .details-section > .header {
     position: sticky;
-    top: -1px;
+    top: var(--details-section-header-top);
     height: 23px;
     padding: 4px 0;
     -webkit-padding-end: 5px;

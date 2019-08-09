@@ -65,56 +65,31 @@
     display: none;
 }
 
-.sidebar > .panel.navigation.sources > .content > .details-section {
-    padding-bottom: 1px;
-    font-size: 11px;
-    border-bottom-width: 1px !important;
+.sidebar > .panel.navigation.sources > .content > :matches(.pause-reason-container, .call-stack-container, .breakpoints-container) {
+    border-bottom: 1px solid var(--border-color);
 }
 
-.sidebar > .panel.navigation.sources > .content > .details-section:matches(.paused-reason, .breakpoints).collapsed > .header > .options,
-.sidebar > .panel.navigation.sources > .content > .details-section > .content,
-.sidebar > .panel.navigation.sources > .content > .details-section > .content > .group {
+.sidebar > .panel.navigation.sources > .content .details-section {
+    font-size: 11px;
+    --details-section-border-bottom: none;
+}
+
+.sidebar > .panel.navigation.sources > .content .details-section.collapsed > .header > .options,
+.sidebar > .panel.navigation.sources > .content .details-section:not(.collapsed) > .content,
+.sidebar > .panel.navigation.sources > .content .details-section:not(.collapsed) > .content > .group {
     display: block;
 }
 
-.sidebar > .panel.navigation.sources > .content > .details-section.collapsed > .content {
-    display: none;
-}
-
-.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints > .header > .options .create-breakpoint {
-    width: 15px;
-}
-
-.sidebar > .panel.navigation.sources > .content > .details-section:matches(.pause-reason, .call-stack, .breakpoints) > .content,
-.sidebar > .panel.navigation.sources > .content > .tree-outline.resources {
-    overflow-y: auto;
-}
-
-.sidebar > .panel.navigation.sources > .content > .details-section:matches(.call-stack, .breakpoints) > .content {
-    /* Same calculation as below, but without var(--item-count) */
-    max-height: 110px;
-}
-
-.sidebar > .panel.navigation.sources > .content > .details-section:matches(.call-stack, .breakpoints):not(.collapsed) > .content {
-    /* 1px from .sidebar > .panel.navigation.sources > .content > .details-section (border-bottom) */
-    /* 5.5 to ensure that half of the next item is shown when overflowing */
-    min-height: calc(min(var(--item-count), 5.5) * 20px);
-}
-
-.sidebar > .panel.navigation.sources > .content > .details-section.call-stack {
-    --item-count: var(--call-stack-count);
-}
-
-.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints {
-    --item-count: var(--breakpoints-count);
-}
-
-.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints .create-breakpoint {
+.sidebar > .panel.navigation.sources > .content > .breakpoints-container .create-breakpoint {
     width: 15px;
 }
 
 .sidebar > .panel.navigation.sources > .content > .navigation-bar {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-index-header);
     margin-bottom: 1px;
+    background-color: var(--panel-background-color);
 }
 
 .sidebar > .panel.navigation.sources > .content .tree-outline.single-thread {
@@ -125,24 +100,45 @@
     display: none;
 }
 
-@media (min-height: 600px) {
+@media (min-height: 650px) {
     .sidebar > .panel.navigation.sources > .content {
         display: flex;
         flex-direction: column;
         overflow-y: hidden;
     }
 
-    .sidebar > .panel.navigation.sources > .content > .pause-reason {
-        flex-shrink: 0;
+    .sidebar > .panel.navigation.sources > .content .details-section {
+        --details-section-header-top: 0;
     }
 
-    .sidebar > .panel.navigation.sources > .content > .details-section:matches(.call-stack, .breakpoints):not(.collapsed) > .content,
-    .sidebar > .panel.navigation.sources > .content > .tree-outline.resources {
+    .sidebar > .panel.navigation.sources > .content > .pause-reason-container {
+        flex-grow: 4;
+        flex-shrink: 1;
+    }
+
+    .sidebar > .panel.navigation.sources > .content > :matches(.call-stack-container, .breakpoints-container, .resources) {
         height: 100%;
+        max-height: fit-content;
+        overflow-y: auto;
+    }
+
+    .sidebar > .panel.navigation.sources > .content > .call-stack-container {
+        flex-grow: 3;
+        flex-shrink: 2;
+    }
+
+    .sidebar > .panel.navigation.sources > .content > .breakpoints-container {
+        flex-grow: 2;
+        flex-shrink: 3;
+    }
+
+    .sidebar > .panel.navigation.sources > .content > .resources {
+        flex-grow: 1;
+        flex-shrink: 3;
     }
 }
 
-.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints .tree-outline .item.event-target-window .icon {
+.sidebar > .panel.navigation.sources > .content > .breakpoints-container .tree-outline .item.event-target-window .icon {
     content: url(../Images/TypeObject.svg);
 }
 
@@ -152,3 +148,4 @@
         background-color: var(--yellow-highlight-background-color);
     }
 }
+
