@@ -467,7 +467,7 @@ void WebDownload::didFinish()
 
     // We try to rename the bundle to the final file name.  If that fails, we give the delegate one more chance to chose
     // the final file name, then we just leave it
-    if (!MoveFileEx(m_bundlePath.charactersWithNullTermination().data(), m_destination.charactersWithNullTermination().data(), 0)) {
+    if (!MoveFileEx(m_bundlePath.wideCharacters().data(), m_destination.wideCharacters().data(), 0)) {
         LOG_ERROR("Failed to move bundle %s to %s on completion\nError - %i", m_bundlePath.ascii().data(), m_destination.ascii().data(), GetLastError());
         
         bool reportBundlePathAsFinalPath = true;
@@ -479,7 +479,7 @@ void WebDownload::didFinish()
         // The call to m_delegate->decideDestinationWithSuggestedFilename() should have changed our destination, so we'll try the move
         // one last time.
         if (!m_destination.isEmpty())
-            if (MoveFileEx(m_bundlePath.charactersWithNullTermination().data(), m_destination.charactersWithNullTermination().data(), 0))
+            if (MoveFileEx(m_bundlePath.wideCharacters().data(), m_destination.wideCharacters().data(), 0))
                 reportBundlePathAsFinalPath = false;
 
         // We either need to tell the delegate our final filename is the bundle filename, or is the file name they just told us to use

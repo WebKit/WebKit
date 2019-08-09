@@ -1,3 +1,41 @@
+2019-08-09  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r248462. rdar://problem/54144119
+
+    [Win] Fix internal build
+    https://bugs.webkit.org/show_bug.cgi?id=200519
+    
+    Reviewed by Alex Christensen.
+    
+    Source/JavaScriptCore:
+    
+    The script 'generate-js-builtins.py' cannot be found when building WebCore. Copy the JavaScriptCore Scripts
+    folder after building JSC.
+    
+    * JavaScriptCore.vcxproj/JavaScriptCore.proj:
+    
+    Source/WebKitLegacy/win:
+    
+    Switch to the String::wideCharacers method, since its return type is compatible with the Win32 api.
+    
+    * WebDownloadCFNet.cpp:
+    (WebDownload::didFinish):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248462 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-08  Per Arne Vollan  <pvollan@apple.com>
+
+            [Win] Fix internal build
+            https://bugs.webkit.org/show_bug.cgi?id=200519
+
+            Reviewed by Alex Christensen.
+
+            Switch to the String::wideCharacers method, since its return type is compatible with the Win32 api.
+
+            * WebDownloadCFNet.cpp:
+            (WebDownload::didFinish):
+
 2019-08-06  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/53992160
