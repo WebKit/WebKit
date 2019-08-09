@@ -1,5 +1,40 @@
 2019-08-08  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r248455. rdar://problem/54109873
+
+    [iOS WK2] Hide previews when an inner overflow or frame scrollview scrolls
+    https://bugs.webkit.org/show_bug.cgi?id=200552
+    rdar://problem/54086338
+    
+    Reviewed by Wenson Hsieh.
+    
+    Give UITargetedPreview the UIScrollView that the target element is inside of,
+    so it can clean up if the user starts to scroll that view.
+    
+    * Platform/spi/ios/UIKitSPI.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView _createTargetedPreviewIfPossible]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248455 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-08  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] Hide previews when an inner overflow or frame scrollview scrolls
+            https://bugs.webkit.org/show_bug.cgi?id=200552
+            rdar://problem/54086338
+
+            Reviewed by Wenson Hsieh.
+
+            Give UITargetedPreview the UIScrollView that the target element is inside of,
+            so it can clean up if the user starts to scroll that view.
+
+            * Platform/spi/ios/UIKitSPI.h:
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView _createTargetedPreviewIfPossible]):
+
+2019-08-08  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r248438. rdar://problem/54093226
 
     [iOS] Position image information should respect the image orientation
