@@ -1,5 +1,62 @@
 2019-08-09  Devin Rousso  <drousso@apple.com>
 
+        REGRESSION (Safari 6): Web Inspector: JSON may not be pretty printed if served as text/html
+        https://bugs.webkit.org/show_bug.cgi?id=122898
+        <rdar://problem/15241419>
+
+        Reviewed by Joseph Pecoraro.
+
+        Check the request/response data to see if it's JSON parsable. If so, allow the user to elect
+        to view the request/response as a JSON preview instead of raw (or pretty printed) text.
+
+        Prefer the JSON view wherever possible.
+
+        * UserInterface/Views/ResourceClusterContentView.js:
+        (WI.ResourceClusterContentView):
+        (WI.ResourceClusterContentView.prototype.get requestContentView):
+        (WI.ResourceClusterContentView.prototype.get customRequestContentView): Added.
+        (WI.ResourceClusterContentView.prototype.get customResponseContentView):
+        (WI.ResourceClusterContentView.prototype.get selectionPathComponents):
+        (WI.ResourceClusterContentView.prototype.showRequest):
+        (WI.ResourceClusterContentView.prototype._canShowCustomRequestContentView): Added.
+        (WI.ResourceClusterContentView.prototype._canShowCustomResponseContentView):
+        (WI.ResourceClusterContentView.prototype._contentViewForResourceType):
+        (WI.ResourceClusterContentView.prototype._pathComponentForContentView):
+        (WI.ResourceClusterContentView.prototype._identifierForContentView):
+        (WI.ResourceClusterContentView.prototype._showContentViewForIdentifier):
+        (WI.ResourceClusterContentView.prototype._canUseJSONContentViewForContent): Added.
+        (WI.ResourceClusterContentView.prototype._tryEnableCustomRequestContentView): Added.
+        (WI.ResourceClusterContentView.prototype._tryEnableCustomResponseContentView):
+        (WI.ResourceClusterContentView.prototype.saveToCookie): Deleted.
+        (WI.ResourceClusterContentView.prototype._customContentViewConstructorForResource): Deleted.
+        Since the current view is already saved in a `WI.Setting`, there's no need to save that
+        state to a cookie, as it'll be restored elsewhere.
+
+        * UserInterface/Base/Main.js:
+        (WI.showResourceRequest):
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/JSONContentView.js: Added.
+        (WI.JSONContentView):
+        (WI.JSONContentView.prototype.initialLayout):
+        (WI.JSONContentView.prototype.attached):
+        (WI.JSONContentView.prototype.closed):
+        * UserInterface/Views/JSONContentView.css: Added.
+        (.content-view.json):
+        * Source/WebInspectorUI/UserInterface/Views/JSONResourceContentView.js: Deleted.
+        * Source/WebInspectorUI/UserInterface/Views/JSONResourceContentView.css: Deleted.
+        Create a more generic content view that shows a preview for the given JSON parsable string.
+
+        * UserInterface/Base/Utilities.js:
+        (String.prototype.isJSON): Added.
+        * UserInterface/Views/WebSocketDataGridNode.js:
+        (WI.WebSocketDataGridNode.prototype.appendContextMenuItems):
+        Utility function for checking if a string is JSON parsable.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-08-09  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Sources: increase the vertical space allocated to the call stack when paused
         https://bugs.webkit.org/show_bug.cgi?id=200236
 

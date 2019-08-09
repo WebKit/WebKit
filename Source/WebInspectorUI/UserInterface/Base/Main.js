@@ -1405,7 +1405,7 @@ WI.showOriginalOrFormattedSourceCodeTextRange = function(sourceCodeTextRange, op
 
 WI.showResourceRequest = function(resource, options = {})
 {
-    WI.showRepresentedObject(resource, {[WI.ResourceClusterContentView.ContentViewIdentifierCookieKey]: WI.ResourceClusterContentView.RequestIdentifier}, options);
+    WI.showRepresentedObject(resource, {[WI.ResourceClusterContentView.ContentViewIdentifierCookieKey]: WI.ResourceClusterContentView.CustomRequestIdentifier}, options);
 };
 
 WI.debuggerToggleBreakpoints = function(event)

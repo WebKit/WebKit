@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,61 +23,73 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.JSONResourceContentView = class JSONResourceContentView extends WI.ResourceContentView
+WI.JSONContentView = class JSONContentView extends WI.ContentView
 {
-    constructor(resource)
+    constructor(json, representedObject)
     {
-        super(resource, "json");
+        console.assert(typeof json === "string" && json.isJSON());
 
+        super(representedObject);
+
+        this._json = json;
         this._remoteObject = null;
-    }
+        this._spinnerTimeout = undefined;
 
-    // Static
-
-    static customContentViewDisplayName()
-    {
-        return WI.UIString("JSON");
+        this.element.classList.add("json");
     }
 
     // Protected
 
-    contentAvailable(content, base64Encoded)
+    initialLayout()
     {
-        try {
-            JSON.parse(content);
-        } catch (e) {
-            this.showMessage(WI.UIString("Unable to parse as JSON: %s").format(e.message));
-            return;
-        }
+        super.initialLayout();
 
         const options = {
-            expression: "(" + content + ")",
-            includeCommandLineAPI: false,
+            expression: "(" + this._json + ")",
             doNotPauseOnExceptionsAndMuteConsole: true,
-            contextId: undefined,
-            returnByValue: false,
             generatePreview: true,
         };
-        this.resource.target.RuntimeAgent.evaluate.invoke(options, (error, result, wasThrown) => {
-            if (error || wasThrown) {
-                this.showMessage(WI.UIString("Unable to parse as JSON: %s").format(result.description));
-                return;
-            }
+        RuntimeAgent.evaluate.invoke(options, (error, result, wasThrown) => {
+            console.assert(!error);
+            console.assert(!wasThrown);
 
-            this.removeLoadingIndicator();
-
-            this._remoteObject = WI.RemoteObject.fromPayload(result, this.resource.target);
+            this._remoteObject = WI.RemoteObject.fromPayload(result);
 
             let objectTree = new WI.ObjectTreeView(this._remoteObject);
             objectTree.showOnlyJSON();
             objectTree.expand();
 
+            if (this._spinnerTimeout) {
+                clearTimeout(this._spinnerTimeout);
+                this._spinnerTimeout = undefined;
+            }
+
+            this.element.removeChildren();
             this.element.appendChild(objectTree.element);
-        }, this.resource.target);
+        });
+    }
+
+    attached()
+    {
+        super.attached();
+
+        if (this._spinnerTimeout || this._remoteObject)
+            return;
+
+        this._spinnerTimeout = setTimeout(() => {
+            console.assert(this._spinnerTimeout);
+
+            let spinner = new WI.IndeterminateProgressSpinner;
+            this.element.appendChild(spinner.element);
+
+            this._spinnerTimeout = undefined;
+        }, 100);
     }
 
     closed()
     {
+        super.closed();
+
         if (this._remoteObject) {
             this._remoteObject.release();
             this._remoteObject = null;

@@ -66,11 +66,7 @@ WI.WebSocketDataGridNode = class WebSocketDataGridNode extends WI.DataGridNode
                 });
             });
 
-            try {
-                // The result of this is unnecessary, as we just need the string to evaluate.
-                // We still need to execute this, however, in order to try-catch if it fails.
-                JSON.parse(this._data.data);
-
+            if (this._data.data.isJSON()) {
                 contextMenu.appendItem(WI.UIString("Log Frame Value"), () => {
                     const options = {
                         objectGroup: WI.RuntimeManager.ConsoleObjectGroup,
@@ -82,7 +78,7 @@ WI.WebSocketDataGridNode = class WebSocketDataGridNode extends WI.DataGridNode
                     let expression = "(" + this._data.data + ")";
                     WI.runtimeManager.evaluateInInspectedWindow(expression, options, logResult);
                 });
-            } catch { }
+            }
 
             contextMenu.appendSeparator();
         }

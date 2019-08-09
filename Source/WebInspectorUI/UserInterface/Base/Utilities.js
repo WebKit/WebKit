@@ -734,6 +734,18 @@ Object.defineProperty(String.prototype, "isUpperCase",
     }
 });
 
+Object.defineProperty(String.prototype, "isJSON",
+{
+    value(predicate)
+    {
+        try {
+            let json = JSON.parse(this);
+            return !predicate || predicate(json);
+        } catch { }
+        return false;
+    }
+});
+
 Object.defineProperty(String.prototype, "truncateStart",
 {
     value(maxLength)
