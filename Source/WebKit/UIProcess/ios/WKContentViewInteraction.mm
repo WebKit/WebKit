@@ -8185,6 +8185,15 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     if (!targetedPreview)
         targetedPreview = createFallbackTargetedPreview(self, self.containerViewForTargetedPreviews, _positionInformation.bounds);
 
+    if (_positionInformation.containerScrollingNodeID) {
+        UIScrollView *positionTrackingView = _webView.scrollView;
+        if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy())
+            positionTrackingView = scrollingCoordinator->scrollViewForScrollingNodeID(_positionInformation.containerScrollingNodeID);
+
+        if ([targetedPreview respondsToSelector:@selector(_setOverridePositionTrackingView:)])
+            [targetedPreview _setOverridePositionTrackingView:positionTrackingView];
+    }
+
     _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
     return _contextMenuInteractionTargetedPreview.get();
 }
