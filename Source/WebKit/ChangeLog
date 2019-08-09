@@ -1,3 +1,22 @@
+2019-08-09  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused Connection::sendWithReply
+        https://bugs.webkit.org/show_bug.cgi?id=200590
+
+        Reviewed by Chris Dumez.
+
+        This was attempted in r245151, but rolled out in r245164 because my SecItemShim code didn't work well on non-main threads.
+        Chris found a better solution for SecItemShim in r248014, making this unused code.  Let's remove it.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::invalidate):
+        (IPC::Connection::processIncomingSyncReply):
+        (IPC::Connection::connectionDidClose):
+        (IPC::Connection::sendMessageWithReply): Deleted.
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::send):
+        (IPC::Connection::sendWithReply): Deleted.
+
 2019-08-09  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Remove context menu hints on navigation
