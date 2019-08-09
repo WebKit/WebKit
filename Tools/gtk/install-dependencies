@@ -156,6 +156,9 @@ function installDependenciesWithApt {
         curl \
         dbus-x11 \
         gdb \
+        hunspell \
+        hunspell-en-us \
+        hunspell-en-gb \
         libapache2-mod-bw \
         libapache2-mod-php \
         php-json \
@@ -325,6 +328,7 @@ function installDependenciesWithPacman {
         gdb \
         hunspell \
         hunspell-en \
+        hunspell-en_GB \
         php-apache \
         libgpg-error \
         psmisc \
@@ -487,6 +491,7 @@ function installDependenciesWithDnf {
         dbus-x11 \
         gdb \
         hunspell-en \
+        hunspell-en-gb \
         httpd \
         libgpg-error-devel \
         mod_bw \

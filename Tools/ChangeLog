@@ -1,3 +1,14 @@
+2019-08-09  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Add missing spellchecking packages to dependencies script
+        https://bugs.webkit.org/show_bug.cgi?id=200574
+
+        Reviewed by Philippe Normand.
+
+        These are needed for the spellchecking test in WebContext API tests.
+
+        * gtk/install-dependencies:
+
 2019-08-08  Jon Lee  <jonlee@apple.com>
 
         Unreviewed. Get rid of extraneous whitespace in ChangeLog.
