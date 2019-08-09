@@ -1,5 +1,15 @@
 2019-08-09  Aakash Jain  <aakash_jain@apple.com>
 
+        Follow-up commit to r248474 as webkit-patch did not commit the svn property changes.
+        [ews-build] Set svn:ignore to various EWS Buildbot files
+        https://bugs.webkit.org/show_bug.cgi?id=200581
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build: Added property svn:ignore.
+
+2019-08-09  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Set svn:ignore to various EWS Buildbot files
         https://bugs.webkit.org/show_bug.cgi?id=200581
 
