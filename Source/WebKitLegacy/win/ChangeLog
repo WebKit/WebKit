@@ -1,3 +1,15 @@
+2019-08-09  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Remove compiler workaround for VS2013
+        https://bugs.webkit.org/show_bug.cgi?id=200582
+
+        Reviewed by Don Olmstead.
+
+        A VS2013 compiler workaround can be removed now.
+
+        * WebKitQuartzCoreAdditions/API/WebKitQuartzCoreAdditions.cpp:
+        (DllMain):
+
 2019-08-08  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Fix internal build
