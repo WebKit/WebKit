@@ -36,14 +36,17 @@ using namespace WebCore;
 TransientLocalStorageNamespace::TransientLocalStorageNamespace()
     : m_quotaInBytes(StorageManager::localStorageDatabaseQuotaInBytes)
 {
+    ASSERT(!RunLoop::isMain());
 }
 
 TransientLocalStorageNamespace::~TransientLocalStorageNamespace()
 {
+    ASSERT(!RunLoop::isMain());
 }
 
 Ref<StorageArea> TransientLocalStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin)
 {
+    ASSERT(!RunLoop::isMain());
     return *m_storageAreaMap.ensure(securityOrigin, [this, &securityOrigin]() mutable {
         return StorageArea::create(nullptr, WTFMove(securityOrigin), m_quotaInBytes);
     }).iterator->value.copyRef();
@@ -51,6 +54,7 @@ Ref<StorageArea> TransientLocalStorageNamespace::getOrCreateStorageArea(Security
 
 Vector<SecurityOriginData> TransientLocalStorageNamespace::origins() const
 {
+    ASSERT(!RunLoop::isMain());
     Vector<SecurityOriginData> origins;
 
     for (const auto& storageArea : m_storageAreaMap.values()) {
@@ -63,6 +67,7 @@ Vector<SecurityOriginData> TransientLocalStorageNamespace::origins() const
 
 void TransientLocalStorageNamespace::clearStorageAreasMatchingOrigin(const SecurityOriginData& securityOrigin)
 {
+    ASSERT(!RunLoop::isMain());
     auto originAndStorageArea = m_storageAreaMap.find(securityOrigin);
     if (originAndStorageArea != m_storageAreaMap.end())
         originAndStorageArea->value->clear();
@@ -70,6 +75,7 @@ void TransientLocalStorageNamespace::clearStorageAreasMatchingOrigin(const Secur
 
 void TransientLocalStorageNamespace::clearAllStorageAreas()
 {
+    ASSERT(!RunLoop::isMain());
     for (auto& storageArea : m_storageAreaMap.values())
         storageArea->clear();
 }

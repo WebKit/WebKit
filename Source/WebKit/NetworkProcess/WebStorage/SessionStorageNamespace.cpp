@@ -35,25 +35,30 @@ using namespace WebCore;
 SessionStorageNamespace::SessionStorageNamespace(unsigned quotaInBytes)
     : m_quotaInBytes(quotaInBytes)
 {
+    ASSERT(!RunLoop::isMain());
 }
 
 SessionStorageNamespace::~SessionStorageNamespace()
 {
+    ASSERT(!RunLoop::isMain());
 }
 
 void SessionStorageNamespace::addAllowedConnection(IPC::Connection::UniqueID allowedConnection)
 {
+    ASSERT(!RunLoop::isMain());
     m_allowedConnections.add(allowedConnection);
 }
 
 
 void SessionStorageNamespace::removeAllowedConnection(IPC::Connection::UniqueID allowedConnection)
 {
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_allowedConnections.contains(allowedConnection));
     m_allowedConnections.remove(allowedConnection);
 }
 auto SessionStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin) -> Ref<StorageArea>
 {
+    ASSERT(!RunLoop::isMain());
     return *m_storageAreaMap.ensure(securityOrigin, [this, &securityOrigin]() mutable {
         return StorageArea::create(nullptr, WTFMove(securityOrigin), m_quotaInBytes);
     }).iterator->value.copyRef();
@@ -61,6 +66,7 @@ auto SessionStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securi
 
 void SessionStorageNamespace::cloneTo(SessionStorageNamespace& newSessionStorageNamespace)
 {
+    ASSERT(!RunLoop::isMain());
     ASSERT_UNUSED(newSessionStorageNamespace, newSessionStorageNamespace.isEmpty());
 
     for (auto& pair : m_storageAreaMap)
@@ -69,6 +75,7 @@ void SessionStorageNamespace::cloneTo(SessionStorageNamespace& newSessionStorage
 
 Vector<SecurityOriginData> SessionStorageNamespace::origins() const
 {
+    ASSERT(!RunLoop::isMain());
     Vector<SecurityOriginData> origins;
 
     for (const auto& storageArea : m_storageAreaMap.values()) {
@@ -81,6 +88,7 @@ Vector<SecurityOriginData> SessionStorageNamespace::origins() const
 
 void SessionStorageNamespace::clearStorageAreasMatchingOrigin(const SecurityOriginData& securityOrigin)
 {
+    ASSERT(!RunLoop::isMain());
     auto originAndStorageArea = m_storageAreaMap.find(securityOrigin);
     if (originAndStorageArea != m_storageAreaMap.end())
         originAndStorageArea->value->clear();
@@ -88,6 +96,7 @@ void SessionStorageNamespace::clearStorageAreasMatchingOrigin(const SecurityOrig
 
 void SessionStorageNamespace::clearAllStorageAreas()
 {
+    ASSERT(!RunLoop::isMain());
     for (auto& storageArea : m_storageAreaMap.values())
         storageArea->clear();
 }

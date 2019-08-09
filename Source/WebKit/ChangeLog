@@ -1,3 +1,73 @@
+2019-08-08  Chris Dumez  <cdumez@apple.com>
+
+        Add threading assertions to WebStorage code
+        https://bugs.webkit.org/show_bug.cgi?id=200550
+
+        Reviewed by Geoffrey Garen.
+
+        Add threading assertions to WebStorage code for extra safety.
+
+        * NetworkProcess/WebStorage/LocalStorageNamespace.cpp:
+        (WebKit::LocalStorageNamespace::LocalStorageNamespace):
+        (WebKit::LocalStorageNamespace::~LocalStorageNamespace):
+        (WebKit::LocalStorageNamespace::getOrCreateStorageArea):
+        (WebKit::LocalStorageNamespace::clearStorageAreasMatchingOrigin):
+        (WebKit::LocalStorageNamespace::clearAllStorageAreas):
+        (WebKit::LocalStorageNamespace::ephemeralOrigins const):
+        (WebKit::LocalStorageNamespace::cloneTo):
+        * NetworkProcess/WebStorage/SessionStorageNamespace.cpp:
+        (WebKit::SessionStorageNamespace::SessionStorageNamespace):
+        (WebKit::SessionStorageNamespace::~SessionStorageNamespace):
+        (WebKit::SessionStorageNamespace::addAllowedConnection):
+        (WebKit::SessionStorageNamespace::removeAllowedConnection):
+        (WebKit::SessionStorageNamespace::getOrCreateStorageArea):
+        (WebKit::SessionStorageNamespace::cloneTo):
+        (WebKit::SessionStorageNamespace::origins const):
+        (WebKit::SessionStorageNamespace::clearStorageAreasMatchingOrigin):
+        (WebKit::SessionStorageNamespace::clearAllStorageAreas):
+        * NetworkProcess/WebStorage/StorageArea.cpp:
+        (WebKit::StorageArea::StorageArea):
+        (WebKit::StorageArea::~StorageArea):
+        (WebKit::StorageArea::addListener):
+        (WebKit::StorageArea::removeListener):
+        (WebKit::StorageArea::hasListener const):
+        (WebKit::StorageArea::clone const):
+        (WebKit::StorageArea::setItem):
+        (WebKit::StorageArea::setItems):
+        (WebKit::StorageArea::removeItem):
+        (WebKit::StorageArea::clear):
+        (WebKit::StorageArea::items const):
+        (WebKit::StorageArea::openDatabaseAndImportItemsIfNeeded const):
+        (WebKit::StorageArea::dispatchEvents const):
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::createSessionStorageNamespace):
+        (WebKit::StorageManager::destroySessionStorageNamespace):
+        (WebKit::StorageManager::addAllowedSessionStorageNamespaceConnection):
+        (WebKit::StorageManager::removeAllowedSessionStorageNamespaceConnection):
+        (WebKit::StorageManager::cloneSessionStorageNamespace):
+        (WebKit::StorageManager::processDidCloseConnection):
+        (WebKit::StorageManager::getSessionStorageOrigins):
+        (WebKit::StorageManager::deleteSessionStorageOrigins):
+        (WebKit::StorageManager::deleteSessionStorageEntriesForOrigins):
+        (WebKit::StorageManager::getLocalStorageOrigins):
+        (WebKit::StorageManager::getLocalStorageOriginDetails):
+        (WebKit::StorageManager::deleteLocalStorageEntriesForOrigin):
+        (WebKit::StorageManager::deleteLocalStorageOriginsModifiedSince):
+        (WebKit::StorageManager::deleteLocalStorageEntriesForOrigins):
+        (WebKit::StorageManager::waitUntilTasksFinished):
+        (WebKit::StorageManager::suspend):
+        (WebKit::StorageManager::resume):
+        (WebKit::StorageManager::findStorageArea const):
+        (WebKit::StorageManager::getOrCreateLocalStorageNamespace):
+        (WebKit::StorageManager::getOrCreateTransientLocalStorageNamespace):
+        * NetworkProcess/WebStorage/TransientLocalStorageNamespace.cpp:
+        (WebKit::TransientLocalStorageNamespace::TransientLocalStorageNamespace):
+        (WebKit::TransientLocalStorageNamespace::~TransientLocalStorageNamespace):
+        (WebKit::TransientLocalStorageNamespace::getOrCreateStorageArea):
+        (WebKit::TransientLocalStorageNamespace::origins const):
+        (WebKit::TransientLocalStorageNamespace::clearStorageAreasMatchingOrigin):
+        (WebKit::TransientLocalStorageNamespace::clearAllStorageAreas):
+
 2019-08-08  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Get WebKit, WebKit2, and MiniBrowser building and executing

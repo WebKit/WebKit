@@ -42,10 +42,12 @@ StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, const Sec
     , m_quotaInBytes(quotaInBytes)
     , m_storageMap(StorageMap::create(m_quotaInBytes))
 {
+    ASSERT(!RunLoop::isMain());
 }
 
 StorageArea::~StorageArea()
 {
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_eventListeners.isEmpty());
     ASSERT(!m_localStorageNamespace);
 
@@ -55,23 +57,27 @@ StorageArea::~StorageArea()
 
 void StorageArea::addListener(IPC::Connection::UniqueID connectionID, uint64_t storageMapID)
 {
+    ASSERT(!RunLoop::isMain());
     ASSERT(!m_eventListeners.contains(std::make_pair(connectionID, storageMapID)));
     m_eventListeners.add(std::make_pair(connectionID, storageMapID));
 }
 
 void StorageArea::removeListener(IPC::Connection::UniqueID connectionID, uint64_t storageMapID)
 {
+    ASSERT(!RunLoop::isMain());
     ASSERT(isEphemeral() || m_eventListeners.contains(std::make_pair(connectionID, storageMapID)));
     m_eventListeners.remove(std::make_pair(connectionID, storageMapID));
 }
 
 bool StorageArea::hasListener(IPC::Connection::UniqueID connectionID, uint64_t storageMapID) const
 {
+    ASSERT(!RunLoop::isMain());
     return m_eventListeners.contains(std::make_pair(connectionID, storageMapID));
 }
 
 Ref<StorageArea> StorageArea::clone() const
 {
+    ASSERT(!RunLoop::isMain());
     ASSERT(!m_localStorageNamespace);
 
     auto storageArea = StorageArea::create(nullptr, m_securityOrigin, m_quotaInBytes);
@@ -82,6 +88,7 @@ Ref<StorageArea> StorageArea::clone() const
 
 void StorageArea::setItem(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException)
 {
+    ASSERT(!RunLoop::isMain());
     openDatabaseAndImportItemsIfNeeded();
 
     String oldValue;
@@ -101,6 +108,7 @@ void StorageArea::setItem(IPC::Connection::UniqueID sourceConnection, uint64_t s
 
 void StorageArea::setItems(const HashMap<String, String>& items)
 {
+    ASSERT(!RunLoop::isMain());
     // Import items from web process if items are not stored on disk.
     if (!isEphemeral())
         return;
@@ -119,6 +127,7 @@ void StorageArea::setItems(const HashMap<String, String>& items)
 
 void StorageArea::removeItem(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString)
 {
+    ASSERT(!RunLoop::isMain());
     openDatabaseAndImportItemsIfNeeded();
 
     String oldValue;
@@ -137,6 +146,7 @@ void StorageArea::removeItem(IPC::Connection::UniqueID sourceConnection, uint64_
 
 void StorageArea::clear(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& urlString)
 {
+    ASSERT(!RunLoop::isMain());
     openDatabaseAndImportItemsIfNeeded();
 
     if (!m_storageMap->length())
@@ -152,6 +162,7 @@ void StorageArea::clear(IPC::Connection::UniqueID sourceConnection, uint64_t sou
 
 const HashMap<String, String>& StorageArea::items() const
 {
+    ASSERT(!RunLoop::isMain());
     openDatabaseAndImportItemsIfNeeded();
 
     return m_storageMap->items();
@@ -159,6 +170,7 @@ const HashMap<String, String>& StorageArea::items() const
 
 void StorageArea::clear()
 {
+    ASSERT(!RunLoop::isMain());
     m_storageMap = StorageMap::create(m_quotaInBytes);
 
     if (m_localStorageDatabase) {
@@ -176,6 +188,7 @@ void StorageArea::clear()
 
 void StorageArea::openDatabaseAndImportItemsIfNeeded() const
 {
+    ASSERT(!RunLoop::isMain());
     if (!m_localStorageNamespace)
         return;
 
@@ -193,6 +206,7 @@ void StorageArea::openDatabaseAndImportItemsIfNeeded() const
 
 void StorageArea::dispatchEvents(IPC::Connection::UniqueID sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const
 {
+    ASSERT(!RunLoop::isMain());
     for (auto it = m_eventListeners.begin(), end = m_eventListeners.end(); it != end; ++it) {
         sourceStorageAreaID = it->first == sourceConnection ? sourceStorageAreaID : 0;
 

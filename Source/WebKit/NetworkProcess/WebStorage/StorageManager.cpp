@@ -67,6 +67,7 @@ StorageManager::~StorageManager()
 
 void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, unsigned quotaInBytes)
 {
+    ASSERT(RunLoop::isMain());
     m_queue->dispatch([this, protectedThis = makeRef(*this), storageNamespaceID, quotaInBytes]() mutable {
         m_sessionStorageNamespaces.ensure(storageNamespaceID, [quotaInBytes] {
             return SessionStorageNamespace::create(quotaInBytes);
@@ -76,6 +77,7 @@ void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, 
 
 void StorageManager::destroySessionStorageNamespace(uint64_t storageNamespaceID)
 {
+    ASSERT(RunLoop::isMain());
     m_queue->dispatch([this, protectedThis = makeRef(*this), storageNamespaceID] {
         ASSERT(m_sessionStorageNamespaces.contains(storageNamespaceID));
         if (auto* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID)) {
@@ -87,6 +89,7 @@ void StorageManager::destroySessionStorageNamespace(uint64_t storageNamespaceID)
 
 void StorageManager::addAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, IPC::Connection& allowedConnection)
 {
+    ASSERT(RunLoop::isMain());
     auto allowedConnectionID = allowedConnection.uniqueID();
     auto addResult = m_connections.add(allowedConnectionID);
     if (addResult.isNewEntry)
@@ -101,6 +104,7 @@ void StorageManager::addAllowedSessionStorageNamespaceConnection(uint64_t storag
 
 void StorageManager::removeAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, IPC::Connection& allowedConnection)
 {
+    ASSERT(RunLoop::isMain());
     auto allowedConnectionID = allowedConnection.uniqueID();
     m_queue->dispatch([this, protectedThis = makeRef(*this), allowedConnectionID, storageNamespaceID]() mutable {
         ASSERT(m_sessionStorageNamespaces.contains(storageNamespaceID));
@@ -111,6 +115,7 @@ void StorageManager::removeAllowedSessionStorageNamespaceConnection(uint64_t sto
 
 void StorageManager::cloneSessionStorageNamespace(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID)
 {
+    ASSERT(RunLoop::isMain());
     m_queue->dispatch([this, protectedThis = makeRef(*this), storageNamespaceID, newStorageNamespaceID] {
         SessionStorageNamespace* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID);
         if (!sessionStorageNamespace) {
@@ -136,6 +141,7 @@ void StorageManager::cloneSessionStorageNamespace(uint64_t storageNamespaceID, u
 
 void StorageManager::processDidCloseConnection(IPC::Connection& connection)
 {
+    ASSERT(RunLoop::isMain());
     if (m_connections.remove(connection.uniqueID()))
         connection.removeWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName());
 
@@ -168,6 +174,7 @@ void StorageManager::processDidCloseConnection(IPC::Connection& connection)
 
 void StorageManager::getSessionStorageOrigins(Function<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
     m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         HashSet<SecurityOriginData> origins;
 
@@ -184,6 +191,7 @@ void StorageManager::getSessionStorageOrigins(Function<void(HashSet<WebCore::Sec
 
 void StorageManager::deleteSessionStorageOrigins(Function<void()>&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
     m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         for (auto& sessionStorageNamespace : m_sessionStorageNamespaces.values())
             sessionStorageNamespace->clearAllStorageAreas();
@@ -194,6 +202,7 @@ void StorageManager::deleteSessionStorageOrigins(Function<void()>&& completionHa
 
 void StorageManager::deleteSessionStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>& origins, Function<void()>&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
     m_queue->dispatch([this, protectedThis = makeRef(*this), copiedOrigins = crossThreadCopy(origins), completionHandler = WTFMove(completionHandler)]() mutable {
         for (auto& origin : copiedOrigins) {
             for (auto& sessionStorageNamespace : m_sessionStorageNamespaces.values())
@@ -206,6 +215,7 @@ void StorageManager::deleteSessionStorageEntriesForOrigins(const Vector<WebCore:
 
 void StorageManager::getLocalStorageOrigins(Function<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
     m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         HashSet<SecurityOriginData> origins;
 
@@ -232,6 +242,7 @@ void StorageManager::getLocalStorageOrigins(Function<void(HashSet<WebCore::Secur
 
 void StorageManager::getLocalStorageOriginDetails(Function<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
     m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         Vector<LocalStorageDatabaseTracker::OriginDetails> originDetails;
         if (m_localStorageDatabaseTracker)
@@ -245,6 +256,7 @@ void StorageManager::getLocalStorageOriginDetails(Function<void(Vector<LocalStor
 
 void StorageManager::deleteLocalStorageEntriesForOrigin(const SecurityOriginData& securityOrigin)
 {
+    ASSERT(RunLoop::isMain());
     m_queue->dispatch([this, protectedThis = makeRef(*this), copiedOrigin = securityOrigin.isolatedCopy()]() mutable {
         for (auto& localStorageNamespace : m_localStorageNamespaces.values())
             localStorageNamespace->clearStorageAreasMatchingOrigin(copiedOrigin);
@@ -259,6 +271,7 @@ void StorageManager::deleteLocalStorageEntriesForOrigin(const SecurityOriginData
 
 void StorageManager::deleteLocalStorageOriginsModifiedSince(WallTime time, Function<void()>&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
     m_queue->dispatch([this, protectedThis = makeRef(*this), time, completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_localStorageDatabaseTracker) {
             auto originsToDelete = m_localStorageDatabaseTracker->databasesModifiedSince(time);
@@ -283,6 +296,7 @@ void StorageManager::deleteLocalStorageOriginsModifiedSince(WallTime time, Funct
 
 void StorageManager::deleteLocalStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>& origins, Function<void()>&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
     m_queue->dispatch([this, protectedThis = makeRef(*this), copiedOrigins = crossThreadCopy(origins), completionHandler = WTFMove(completionHandler)]() mutable {
         for (auto& origin : copiedOrigins) {
             for (auto& localStorageNamespace : m_localStorageNamespaces.values())
@@ -476,6 +490,7 @@ void StorageManager::clear(IPC::Connection& connection, WebCore::SecurityOriginD
 
 void StorageManager::waitUntilTasksFinished()
 {
+    ASSERT(RunLoop::isMain());
     BinarySemaphore semaphore;
     m_queue->dispatch([this, &semaphore] {
         Vector<std::pair<IPC::Connection::UniqueID, uint64_t>> connectionAndStorageMapIDPairsToRemove;
@@ -496,6 +511,7 @@ void StorageManager::waitUntilTasksFinished()
 
 void StorageManager::suspend(CompletionHandler<void()>&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
     CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
     if (!m_localStorageDatabaseTracker)
         return;
@@ -525,6 +541,7 @@ void StorageManager::suspend(CompletionHandler<void()>&& completionHandler)
 
 void StorageManager::resume()
 {
+    ASSERT(RunLoop::isMain());
     if (!m_localStorageDatabaseTracker)
         return;
 
@@ -537,6 +554,7 @@ void StorageManager::resume()
 
 StorageArea* StorageManager::findStorageArea(IPC::Connection& connection, uint64_t storageMapID) const
 {
+    ASSERT(!RunLoop::isMain());
     std::pair<IPC::Connection::UniqueID, uint64_t> connectionAndStorageMapIDPair(connection.uniqueID(), storageMapID);
 
     if (!m_storageAreasByConnection.isValidKey(connectionAndStorageMapIDPair))
@@ -547,6 +565,7 @@ StorageArea* StorageManager::findStorageArea(IPC::Connection& connection, uint64
 
 LocalStorageNamespace* StorageManager::getOrCreateLocalStorageNamespace(uint64_t storageNamespaceID)
 {
+    ASSERT(!RunLoop::isMain());
     if (!m_localStorageNamespaces.isValidKey(storageNamespaceID))
         return nullptr;
 
@@ -557,6 +576,7 @@ LocalStorageNamespace* StorageManager::getOrCreateLocalStorageNamespace(uint64_t
 
 TransientLocalStorageNamespace* StorageManager::getOrCreateTransientLocalStorageNamespace(uint64_t storageNamespaceID, WebCore::SecurityOriginData&& topLevelOrigin)
 {
+    ASSERT(!RunLoop::isMain());
     if (!m_transientLocalStorageNamespaces.isValidKey({ storageNamespaceID, topLevelOrigin }))
         return nullptr;
 

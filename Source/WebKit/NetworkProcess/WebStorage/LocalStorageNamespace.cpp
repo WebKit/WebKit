@@ -39,14 +39,17 @@ LocalStorageNamespace::LocalStorageNamespace(StorageManager& storageManager, uin
     : m_storageManager(storageManager)
     , m_quotaInBytes(StorageManager::localStorageDatabaseQuotaInBytes)
 {
+    ASSERT(!RunLoop::isMain());
 }
 
 LocalStorageNamespace::~LocalStorageNamespace()
 {
+    ASSERT(!RunLoop::isMain());
 }
 
 auto LocalStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin, IsEphemeral isEphemeral) -> Ref<StorageArea>
 {
+    ASSERT(!RunLoop::isMain());
     return *m_storageAreaMap.ensure(securityOrigin, [&]() mutable {
         return StorageArea::create(isEphemeral == IsEphemeral::Yes ? nullptr : this, WTFMove(securityOrigin), m_quotaInBytes);
     }).iterator->value;
@@ -54,6 +57,7 @@ auto LocalStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& security
 
 void LocalStorageNamespace::clearStorageAreasMatchingOrigin(const SecurityOriginData& securityOrigin)
 {
+    ASSERT(!RunLoop::isMain());
     auto originAndStorageArea = m_storageAreaMap.find(securityOrigin);
     if (originAndStorageArea != m_storageAreaMap.end())
         originAndStorageArea->value->clear();
@@ -61,12 +65,14 @@ void LocalStorageNamespace::clearStorageAreasMatchingOrigin(const SecurityOrigin
 
 void LocalStorageNamespace::clearAllStorageAreas()
 {
+    ASSERT(!RunLoop::isMain());
     for (auto storageArea : m_storageAreaMap.values())
         storageArea->clear();
 }
 
 Vector<SecurityOriginData> LocalStorageNamespace::ephemeralOrigins() const
 {
+    ASSERT(!RunLoop::isMain());
     Vector<SecurityOriginData> origins;
     for (const auto& storageArea : m_storageAreaMap.values()) {
         if (!storageArea->items().isEmpty())
@@ -77,6 +83,7 @@ Vector<SecurityOriginData> LocalStorageNamespace::ephemeralOrigins() const
 
 void LocalStorageNamespace::cloneTo(LocalStorageNamespace& newLocalStorageNamespace)
 {
+    ASSERT(!RunLoop::isMain());
     for (auto& pair : m_storageAreaMap)
         newLocalStorageNamespace.m_storageAreaMap.add(pair.key, pair.value->clone());
 }
