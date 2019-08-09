@@ -8225,6 +8225,23 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     return std::exchange(_contextMenuInteractionTargetedPreview, nil).autorelease();
 }
 
+- (nullable _UIContextMenuStyle *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction styleForMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
+{
+#if defined(DD_CONTEXT_MENU_SPI_VERSION) && DD_CONTEXT_MENU_SPI_VERSION >= 2
+    if ([configuration isKindOfClass:getDDContextMenuConfigurationClass()]) {
+        DDContextMenuConfiguration *ddConfiguration = static_cast<DDContextMenuConfiguration *>(configuration);
+
+        if (ddConfiguration.prefersActionMenuStyle) {
+            _UIContextMenuStyle *style = [_UIContextMenuStyle defaultStyle];
+            style.preferredLayout = _UIContextMenuLayoutActionsOnly;
+            return style;
+        }
+    }
+#endif
+
+    return nil;
+}
+
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willPerformPreviewActionForMenuWithConfiguration:(UIContextMenuConfiguration *)configuration animator:(id<UIContextMenuInteractionCommitAnimating>)animator
 {
     if (!_webView)
@@ -8276,6 +8293,45 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
         [uiDelegate _webView:_webView contextMenuForElement:_contextMenuElementInfo.get() willCommitWithAnimator:animator];
         ALLOW_DEPRECATED_DECLARATIONS_END
     }
+
+#if defined(DD_CONTEXT_MENU_SPI_VERSION) && DD_CONTEXT_MENU_SPI_VERSION >= 2
+    if ([configuration isKindOfClass:getDDContextMenuConfigurationClass()]) {
+        DDContextMenuConfiguration *ddConfiguration = static_cast<DDContextMenuConfiguration *>(configuration);
+
+        BOOL shouldExpandPreview = NO;
+        RetainPtr<UIViewController> presentedViewController;
+
+#if defined(DD_CONTEXT_MENU_SPI_VERSION) && DD_CONTEXT_MENU_SPI_VERSION >= 3
+        shouldExpandPreview = !!ddConfiguration.interactionViewControllerProvider;
+        if (shouldExpandPreview)
+            presentedViewController = ddConfiguration.interactionViewControllerProvider();
+#else
+        shouldExpandPreview = ddConfiguration.expandPreviewOnInteraction;
+        presentedViewController = animator.previewViewController;
+#endif
+
+        if (shouldExpandPreview) {
+            animator.preferredCommitStyle = UIContextMenuInteractionCommitStylePop;
+
+            // We will re-present modally on the same VC that is currently presenting the preview in a context menu.
+            RetainPtr<UIViewController> presentingViewController = animator.previewViewController.presentingViewController;
+
+            [animator addAnimations:^{
+                [presentingViewController presentViewController:presentedViewController.get() animated:NO completion:nil];
+            }];
+            return;
+        }
+
+        if (NSURL *interactionURL = ddConfiguration.interactionURL) {
+            animator.preferredCommitStyle = UIContextMenuInteractionCommitStylePop;
+
+            [animator addAnimations:^{
+                [[UIApplication sharedApplication] openURL:interactionURL withCompletionHandler:nil];
+            }];
+            return;
+        }
+    }
+#endif
 }
 
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willEndForConfiguration:(UIContextMenuConfiguration *)configuration animator:(nullable id<UIContextMenuInteractionAnimating>)animator

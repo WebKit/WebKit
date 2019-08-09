@@ -1,3 +1,28 @@
+2019-08-09  Tim Horton  <timothy_horton@apple.com>
+
+        Tapping buttons in Data Detectors lookup previews doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=200579
+        <rdar://problem/54056519>
+
+        Reviewed by Megan Gardner.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _contextMenuInteraction:styleForMenuWithConfiguration:]):
+        If a Data Detectors context menu wants the action menu style, provide it.
+
+        (-[WKContentView contextMenuInteraction:willPerformPreviewActionForMenuWithConfiguration:animator:]):
+        If a Data Detectors context menu provides a view controller to present
+        on context menu commit, present it. We present on top of the same view
+        controller that is currently presenting the context menu, but modally
+        instead of inside the context menu.
+
+        If a Data Detectors context menu instead provides a URL to launch on
+        context menu commit, call openURL.
+
+        In both cases, change the commit style to pop, since we're committing
+        instead of dismissing.
+
 2019-08-08  Dean Jackson  <dino@apple.com>
 
         REGRESSION (52279987): Most of the WKUIDelegate contextMenu delegate methods are not being called

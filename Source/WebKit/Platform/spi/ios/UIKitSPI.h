@@ -90,6 +90,7 @@
 #import <UIKit/UIPreviewAction_Private.h>
 #import <UIKit/UIPreviewItemController.h>
 #if USE(UICONTEXTMENU)
+#import <UIKit/UIContextMenuInteraction_ForSpringBoardOnly.h>
 #import <UIKit/UIContextMenuInteraction_ForWebKitOnly.h>
 #endif
 #endif
