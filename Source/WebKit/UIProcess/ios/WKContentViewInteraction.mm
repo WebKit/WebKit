@@ -8171,9 +8171,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     return [self _createTargetedPreviewIfPossible];
 }
 
-ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-- (void)contextMenuInteractionWillPresent:(UIContextMenuInteraction *)interaction
-ALLOW_DEPRECATED_IMPLEMENTATIONS_END
+- (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willDisplayMenuForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id<UIContextMenuInteractionAnimating>)animator
 {
     if (!_webView)
         return;
@@ -8194,9 +8192,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return std::exchange(_contextMenuInteractionTargetedPreview, nil).autorelease();
 }
 
-ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-- (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willCommitWithAnimator:(id<UIContextMenuInteractionCommitAnimating>)animator
-ALLOW_DEPRECATED_IMPLEMENTATIONS_END
+- (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willPerformPreviewActionForMenuWithConfiguration:(UIContextMenuConfiguration *)configuration animator:(id<UIContextMenuInteractionCommitAnimating>)animator
 {
     if (!_webView)
         return;
@@ -8249,9 +8245,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 }
 
-ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-- (void)contextMenuInteractionDidEnd:(UIContextMenuInteraction *)interaction
-ALLOW_DEPRECATED_IMPLEMENTATIONS_END
+- (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willEndForConfiguration:(UIContextMenuConfiguration *)configuration animator:(nullable id<UIContextMenuInteractionAnimating>)animator
 {
     if (!_webView)
         return;
