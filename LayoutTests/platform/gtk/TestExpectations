@@ -1271,7 +1271,6 @@ webkit.org/b/198126 http/tests/xmlhttprequest/access-control-response-with-body-
 webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure Crash ]
 webkit.org/b/199010 css2.1/t1204-order-01-d.html [ Pass Crash ]
 webkit.org/b/199014 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Pass Crash ]
-webkit.org/b/199018 fast/mediastream/RTCPeerConnection-add-removeTrack.html [ Crash ]
 
 webkit.org/b/199440 fast/mediastream/mediastreamtrack-video-clone.html [ Failure Timeout Crash ]
 

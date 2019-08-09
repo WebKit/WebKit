@@ -1,3 +1,14 @@
+2019-08-09  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GTK] fast/mediastream/RTCPeerConnection-add-removeTrack.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=199018
+
+        This is fixed by the patch provided in https://bugs.webkit.org/show_bug.cgi?id=194326
+
+        Unreviewed gardening patch
+
+        * platform/gtk/TestExpectations:
+
 2019-08-09  Russell Epstein  <repstein@apple.com>
 
         Correcting Expectation Typo from r248388.
