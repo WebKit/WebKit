@@ -1,3 +1,27 @@
+2019-08-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (iOS 13): united.com web forms do not respond to taps
+        https://bugs.webkit.org/show_bug.cgi?id=200531
+
+        Reviewed by Antti Koivisto and Wenson Hsieh.
+
+        The bug is caused by the content change observer detecting “Site Feedback” link at the bottom of
+        the page (https://www.united.com/ual/en/US/account/enroll/default) constantly getting re-generated
+        in every frame via requestAnimationFrame when the page is opened with iPhone UA string.
+        Note that the content re-generation can be reproduced even in Chrome if iPhone UA string is used.
+
+        Ignore this constant content change in ContentChangeObserver as a site specific quirk.
+
+        In the future, we should make ContentChangeObserver observe the final location of each element
+        being observed so that we can ignore content that like this which is placed outside the viewport,
+        and/or far away from where the user tapped.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldIgnoreContentChange const): Added.
+        * page/Quirks.h:
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::shouldObserveVisibilityChangeForElement):
+
 2019-08-08  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Page: don't allow the domain to be disabled

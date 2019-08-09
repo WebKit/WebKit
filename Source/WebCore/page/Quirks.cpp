@@ -410,6 +410,30 @@ bool Quirks::shouldLightenJapaneseBoldSansSerif() const
 #endif
 }
 
+bool Quirks::shouldIgnoreContentChange(const Element& element) const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    auto* parentElement = element.parentElement();
+    if (!parentElement || !parentElement->hasClass())
+        return false;
+
+    DOMTokenList& classList = parentElement->classList();
+    if (!classList.contains("feedback") || !classList.contains("feedback-mid"))
+        return false;
+
+    if (!equalLettersIgnoringASCIICase(topPrivatelyControlledDomain(m_document->url().host().toString()), "united.com"))
+        return false;
+
+    return true;
+#else
+    UNUSED_PARAM(element);
+    return false;
+#endif
+}
+
 // FIXME(<rdar://problem/50394969>): Remove after desmos.com adopts inputmode="none".
 bool Quirks::needsInputModeNoneImplicitly(const HTMLElement& element) const
 {
