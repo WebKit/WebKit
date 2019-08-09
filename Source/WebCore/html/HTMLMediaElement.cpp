@@ -144,7 +144,6 @@
 #if ENABLE(MEDIA_STREAM)
 #include "DOMURL.h"
 #include "MediaStream.h"
-#include "MediaStreamRegistry.h"
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -1583,7 +1582,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
     if (m_mediaSource) {
         loadAttempted = true;
-        
+
         ALWAYS_LOG(LOGIDENTIFIER, "loading MSE blob");
         if (!m_mediaSource->attachToElement(*this) || !m_player->load(url, contentType, m_mediaSource.get())) {
             // Forget our reference to the MediaSource, so we leave it alone
@@ -1593,18 +1592,12 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
         }
     }
 #endif
-
 #if ENABLE(MEDIA_STREAM)
-    if (!loadAttempted) {
-        if (!m_mediaStreamSrcObject && url.protocolIs(mediaStreamBlobProtocol))
-            m_mediaStreamSrcObject = MediaStreamRegistry::shared().lookUp(url);
-
-        if (m_mediaStreamSrcObject) {
-            loadAttempted = true;
-            ALWAYS_LOG(LOGIDENTIFIER, "loading media stream blob");
-            if (!m_player->load(m_mediaStreamSrcObject->privateStream()))
-                mediaLoadingFailed(MediaPlayer::FormatError);
-        }
+    if (!loadAttempted && m_mediaStreamSrcObject) {
+        loadAttempted = true;
+        ALWAYS_LOG(LOGIDENTIFIER, "loading media stream blob");
+        if (!m_player->load(m_mediaStreamSrcObject->privateStream()))
+            mediaLoadingFailed(MediaPlayer::FormatError);
     }
 #endif
 

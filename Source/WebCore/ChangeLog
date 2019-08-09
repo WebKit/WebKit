@@ -1,3 +1,34 @@
+2019-08-09  Youenn Fablet  <youenn@apple.com>
+
+        Remove MediaStreamRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=200570
+
+        Reviewed by Eric Carlson.
+
+        MediaStream cannot be registered as an URL by JavaScript.
+        Remove MediaStreamRegistry and the 'src' loading specific handling in HTMLMediaElement.
+        Implement ending of capture track by directly handling MediaStreamTrack which is more accurate.
+        No change of behavior.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream):
+        (WebCore::MediaStream::~MediaStream):
+        (WebCore::MediaStream::stop):
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStreamRegistry.cpp: Removed.
+        * Modules/mediastream/MediaStreamRegistry.h: Removed.
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        (WebCore::MediaStreamTrack::~MediaStreamTrack):
+        (WebCore::MediaStreamTrack::endCapture):
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::stopMediaCapture):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource):
+
 2019-08-09  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GL][GStreamer] activate wrapped shared context

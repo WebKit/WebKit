@@ -124,6 +124,7 @@
 #include "MediaProducer.h"
 #include "MediaQueryList.h"
 #include "MediaQueryMatcher.h"
+#include "MediaStream.h"
 #include "MessageEvent.h"
 #include "Microtasks.h"
 #include "MouseEventWithHitTestResults.h"
@@ -304,11 +305,6 @@
 
 #if ENABLE(XSLT)
 #include "XSLTProcessor.h"
-#endif
-
-#if ENABLE(MEDIA_STREAM)
-#include "MediaStream.h"
-#include "MediaStreamRegistry.h"
 #endif
 
 #if ENABLE(WEBGL)
@@ -7664,10 +7660,7 @@ void Document::notifyMediaCaptureOfVisibilityChanged()
 #if ENABLE(MEDIA_STREAM)
 void Document::stopMediaCapture()
 {
-    MediaStreamRegistry::shared().forEach([this](MediaStream& stream) {
-        if (stream.document() == this)
-            stream.endCaptureTracks();
-    });
+    MediaStreamTrack::endCapture(*this);
 }
 
 void Document::registerForMediaStreamStateChangeCallbacks(HTMLMediaElement& element)

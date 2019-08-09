@@ -49,8 +49,7 @@ namespace WebCore {
 class Document;
 
 class MediaStream final
-    : public URLRegistrable
-    , public EventTargetWithInlineData
+    : public EventTargetWithInlineData
     , public ActiveDOMObject
     , public MediaStreamTrack::Observer
     , public MediaStreamPrivate::Observer
@@ -94,17 +93,12 @@ public:
     void startProducingData();
     void stopProducingData();
 
-    void endCaptureTracks();
-
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return MediaStreamEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
     using RefCounted<MediaStream>::ref;
     using RefCounted<MediaStream>::deref;
-
-    // URLRegistrable
-    URLRegistry& registry() const override;
 
     void addObserver(Observer*);
     void removeObserver(Observer*);

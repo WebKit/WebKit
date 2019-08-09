@@ -48,6 +48,12 @@
 
 namespace WebCore {
 
+static HashSet<MediaStreamTrack*>& allCaptureTracks()
+{
+    static NeverDestroyed<HashSet<MediaStreamTrack*>> captureTracks;
+    return captureTracks;
+}
+
 static MediaProducer::MediaStateFlags sourceCaptureState(RealtimeMediaSource&);
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamTrack);
@@ -71,6 +77,8 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
     if (!isCaptureTrack())
         return;
 
+    allCaptureTracks().add(this);
+
     if (auto document = this->document()) {
         if (document->page() && document->page()->mutedState())
             setMuted(true);
@@ -86,6 +94,8 @@ MediaStreamTrack::~MediaStreamTrack()
 
     if (!isCaptureTrack())
         return;
+
+    allCaptureTracks().remove(this);
 
 #if !PLATFORM(IOS_FAMILY)
     if (auto document = this->document())
@@ -472,6 +482,15 @@ void MediaStreamTrack::muteCapture()
         source->setMuted(true);
 }
 #endif
+
+void MediaStreamTrack::endCapture(Document& document)
+{
+    for (auto* captureTrack : allCaptureTracks()) {
+        if (captureTrack->document() != &document)
+            continue;
+        captureTrack->stopTrack(MediaStreamTrack::StopMode::PostEvent);
+    }
+}
 
 void MediaStreamTrack::trackStarted(MediaStreamTrackPrivate&)
 {

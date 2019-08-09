@@ -36,7 +36,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "Logging.h"
-#include "MediaStreamRegistry.h"
 #include "MediaStreamTrackEvent.h"
 #include "NetworkingContext.h"
 #include "Page.h"
@@ -92,7 +91,6 @@ MediaStream::MediaStream(Document& document, const MediaStreamTrackVector& track
 
     setIsActive(m_private->active());
     m_private->addObserver(*this);
-    MediaStreamRegistry::shared().registerStream(*this);
     suspendIfNeeded();
 }
 
@@ -105,7 +103,6 @@ MediaStream::MediaStream(Document& document, Ref<MediaStreamPrivate>&& streamPri
 
     setIsActive(m_private->active());
     m_private->addObserver(*this);
-    MediaStreamRegistry::shared().registerStream(*this);
 
     for (auto& trackPrivate : m_private->tracks()) {
         auto track = MediaStreamTrack::create(document, *trackPrivate);
@@ -120,7 +117,6 @@ MediaStream::~MediaStream()
     // Set isActive to false immediately so any callbacks triggered by shutting down, e.g.
     // mediaState(), are short circuited.
     m_isActive = false;
-    MediaStreamRegistry::shared().unregisterStream(*this);
     m_private->removeObserver(*this);
     for (auto& track : m_trackSet.values())
         track->removeObserver(*this);
@@ -325,16 +321,6 @@ void MediaStream::stopProducingData()
     m_private->stopProducingData();
 }
 
-void MediaStream::endCaptureTracks()
-{
-    ALWAYS_LOG(LOGIDENTIFIER);
-
-    for (auto& track : m_trackSet.values()) {
-        if (track->isCaptureTrack())
-            track->stopTrack(MediaStreamTrack::StopMode::PostEvent);
-    }
-}
-
 MediaProducer::MediaStateFlags MediaStream::mediaState() const
 {
     MediaProducer::MediaStateFlags state = MediaProducer::IsNotPlaying;
@@ -382,11 +368,6 @@ void MediaStream::updateActiveState()
         return;
 
     setIsActive(active);
-}
-
-URLRegistry& MediaStream::registry() const
-{
-    return MediaStreamRegistry::shared();
 }
 
 MediaStreamTrackVector MediaStream::trackVectorForType(RealtimeMediaSource::Type filterType) const
@@ -483,7 +464,6 @@ bool MediaStream::processingUserGestureForMedia() const
 void MediaStream::stop()
 {
     m_isActive = false;
-    endCaptureTracks();
 }
 
 const char* MediaStream::activeDOMObjectName() const
