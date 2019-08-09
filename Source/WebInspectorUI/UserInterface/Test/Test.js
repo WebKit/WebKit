@@ -77,6 +77,7 @@ WI.loaded = function()
     // Targets.
     WI.backendTarget = null;
     WI.pageTarget = null;
+    WI._targetsAvailablePromise = new WI.WrappedPromise;
 
     // FIXME: Eliminate `TargetAgent.exists`.
     TargetAgent.exists((error) => {
@@ -90,6 +91,8 @@ WI.initializeBackendTarget = function(target)
     WI.backendTarget = target;
 
     WI.resetMainExecutionContext();
+
+    WI._targetsAvailablePromise.resolve();
 };
 
 WI.initializePageTarget = function(target)
@@ -142,7 +145,9 @@ WI.contentLoaded = function()
     WI.timelineManager.enable();
 
     // Signal that the frontend is now ready to receive messages.
-    InspectorFrontendAPI.loadCompleted();
+    WI.whenTargetsAvailable().then(() => {
+        InspectorFrontendAPI.loadCompleted();
+    });
 
     // Tell the InspectorFrontendHost we loaded, which causes the window to display
     // and pending InspectorFrontendAPI commands to be sent.
@@ -165,6 +170,16 @@ WI.performOneTimeFrontendInitializationsUsingTarget = function(target)
 
 WI.initializeTarget = function(target)
 {
+};
+
+WI.targetsAvailable = function()
+{
+    return WI._targetsAvailablePromise.settled;
+};
+
+WI.whenTargetsAvailable = function()
+{
+    return WI._targetsAvailablePromise.promise;
 };
 
 Object.defineProperty(WI, "mainTarget",

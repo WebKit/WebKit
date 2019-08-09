@@ -10,7 +10,6 @@ theMediaQueryList.addListener(function(aMediaQueryList) {
 
 function test()
 {
-    InspectorProtocol.sendCommand("Page.enable", {});
     InspectorProtocol.sendCommand("Page.setEmulatedMedia", {"media": "print"}, function(messageObject) {
         if (messageObject.error)
             ProtocolTest.log("FAILED: " + messageObject.error.message);

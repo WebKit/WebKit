@@ -322,6 +322,7 @@ public:
     virtual ~InspectorStubFrontend();
 
 private:
+    void frontendLoaded() final;
     void attachWindow(DockSide) final { }
     void detachWindow() final { }
     void closeWindow() final;
@@ -337,26 +338,18 @@ private:
     void sendMessageToFrontend(const String& message) final;
     ConnectionType connectionType() const final { return ConnectionType::Local; }
 
-    Page* frontendPage() const
-    {
-        if (!m_frontendWindow || !m_frontendWindow->document())
-            return nullptr;
-
-        return m_frontendWindow->document()->page();
-    }
-
     RefPtr<DOMWindow> m_frontendWindow;
-    InspectorController& m_frontendController;
+    Vector<String> m_messages;
+    bool m_loaded { false };
 };
 
 InspectorStubFrontend::InspectorStubFrontend(Page& inspectedPage, RefPtr<DOMWindow>&& frontendWindow)
     : InspectorFrontendClientLocal(&inspectedPage.inspectorController(), frontendWindow->document()->page(), std::make_unique<InspectorFrontendClientLocal::Settings>())
     , m_frontendWindow(frontendWindow.copyRef())
-    , m_frontendController(frontendPage()->inspectorController())
 {
     ASSERT_ARG(frontendWindow, frontendWindow);
 
-    m_frontendController.setInspectorFrontendClient(this);
+    frontendPage()->inspectorController().setInspectorFrontendClient(this);
     inspectedPage.inspectorController().connectFrontend(*this);
 }
 
@@ -365,12 +358,21 @@ InspectorStubFrontend::~InspectorStubFrontend()
     closeWindow();
 }
 
+void InspectorStubFrontend::frontendLoaded()
+{
+    m_loaded = true;
+
+    for (auto& message : m_messages)
+        sendMessageToFrontend(message);
+    m_messages.clear();
+}
+
 void InspectorStubFrontend::closeWindow()
 {
     if (!m_frontendWindow)
         return;
 
-    m_frontendController.setInspectorFrontendClient(nullptr);
+    frontendPage()->inspectorController().setInspectorFrontendClient(nullptr);
     inspectedPage()->inspectorController().disconnectFrontend(*this);
 
     m_frontendWindow->close();
@@ -380,6 +382,11 @@ void InspectorStubFrontend::closeWindow()
 void InspectorStubFrontend::sendMessageToFrontend(const String& message)
 {
     ASSERT_ARG(message, !message.isEmpty());
+
+    if (!m_loaded) {
+        m_messages.append(message);
+        return;
+    }
 
     InspectorClient::doDispatchMessageOnFrontendPage(frontendPage(), message);
 }

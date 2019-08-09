@@ -4,7 +4,6 @@
 <script>
 function test()
 {
-    InspectorProtocol.sendCommand("Page.enable", {});
     InspectorProtocol.sendCommand("Page.archive", {}, function(event) {
         var data = event.result.data;
         if (!data)

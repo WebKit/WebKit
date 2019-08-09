@@ -1,3 +1,52 @@
+2019-08-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Page: don't allow the domain to be disabled
+        https://bugs.webkit.org/show_bug.cgi?id=200109
+
+        Reviewed by Brian Burg.
+
+        The `PageAgent` is relied on by many of the other agents, so much so that it doesn't make
+        sense to support the ability to "disable" (as well as "enable") the agent.
+
+        When the first frontend connects, we should treat the `PageAgent` as active and available.
+
+        * inspector/agents/InspectorPageAgent.h:
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorPageAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorPageAgent::timestamp):
+        (WebCore::InspectorPageAgent::enable): Deleted.
+        (WebCore::InspectorPageAgent::disable): Deleted.
+
+        * inspector/agents/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::updateApplicationCacheStatus):
+        (WebCore::InspectorApplicationCacheAgent::getFramesWithManifests):
+        (WebCore::InspectorApplicationCacheAgent::assertFrameWithDocumentLoader):
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::createStyleSheet):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::highlightSelector):
+        (WebCore::InspectorDOMAgent::highlightFrame):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::setFrameIdentifier):
+        * inspector/agents/page/PageNetworkAgent.cpp:
+        (WebCore::PageNetworkAgent::loaderIdentifier):
+        (WebCore::PageNetworkAgent::frameIdentifier):
+        (WebCore::PageNetworkAgent::scriptExecutionContext):
+        * inspector/agents/page/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::didCreateMainWorldContext):
+        (WebCore::PageRuntimeAgent::reportExecutionContextCreation):
+
+        * testing/Internals.cpp:
+        (WebCore::InspectorStubFrontend::InspectorStubFrontend):
+        (WebCore::InspectorStubFrontend::frontendLoaded): Added.
+        (WebCore::InspectorStubFrontend::closeWindow):
+        (WebCore::InspectorStubFrontend::sendMessageToFrontend):
+        (WebCore::InspectorStubFrontend::frontendPage): Deleted.
+        Ensure that the backend always gets notified via `InspectorFrontendHost.loaded` so that
+        messages being sent to the frontend are batched.
+
 2019-08-08  Chris Lord  <clord@igalia.com>
 
         Short-cut WebGLRenderingContext::getParameter() for ALPHA_BITS when alpha channel is disabled

@@ -681,13 +681,7 @@ void InspectorCSSAgent::setRuleSelector(ErrorString& errorString, const JSON::Ob
 
 void InspectorCSSAgent::createStyleSheet(ErrorString& errorString, const String& frameId, String* styleSheetId)
 {
-    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
-    if (!pageAgent) {
-        errorString = "Missing Page agent"_s;
-        return;
-    }
-
-    Frame* frame = pageAgent->frameForId(frameId);
+    Frame* frame = m_instrumentingAgents.inspectorPageAgent()->frameForId(frameId);
     if (!frame) {
         errorString = "No frame for given id found"_s;
         return;

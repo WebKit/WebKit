@@ -1,5 +1,30 @@
 2019-08-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Page: don't allow the domain to be disabled
+        https://bugs.webkit.org/show_bug.cgi?id=200109
+
+        Reviewed by Brian Burg.
+
+        The `PageAgent` is relied on by many of the other agents, so much so that it doesn't make
+        sense to support the ability to "disable" (as well as "enable") the agent.
+
+        When the first frontend connects, we should treat the `PageAgent` as active and available.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.initializeTarget):
+
+        * Test/Test.js:
+        (WI.loaded):
+        (WI.initializeBackendTarget):
+        (WI.contentLoaded):
+        (WI.targetsAvailable): Added.
+        (WI.whenTargetsAvailable): Added.
+        * Test/TestStub.js:
+        Ensure that the backend always gets notified via `InspectorFrontendHost.loaded` so that
+        messages being sent to the frontend are batched.
+
+2019-08-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: rename `queryObjects` to `queryInstances` for clarity
         https://bugs.webkit.org/show_bug.cgi?id=200520
 

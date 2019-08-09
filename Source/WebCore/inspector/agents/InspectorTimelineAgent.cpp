@@ -740,11 +740,7 @@ void InspectorTimelineAgent::setFrameIdentifier(JSON::Object* record, Frame* fra
     if (!frame)
         return;
 
-    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
-    if (!pageAgent)
-        return;
-
-    record->setString("frameId"_s, pageAgent->frameId(frame));
+    record->setString("frameId"_s, m_instrumentingAgents.inspectorPageAgent()->frameId(frame));
 }
 
 void InspectorTimelineAgent::didCompleteRecordEntry(const TimelineRecordEntry& entry)

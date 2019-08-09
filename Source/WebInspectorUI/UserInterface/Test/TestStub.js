@@ -29,6 +29,10 @@ InspectorFrontendAPI.dispatchMessageAsync = InspectorProtocol.dispatchMessageFro
 
 window.ProtocolTest = new ProtocolTestHarness();
 
+document.addEventListener("DOMContentLoaded", (event) => {
+    InspectorFrontendHost.loaded();
+});
+
 window.addEventListener("message", (event) => {
     try {
         eval(event.data);

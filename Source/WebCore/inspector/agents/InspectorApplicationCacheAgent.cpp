@@ -85,10 +85,6 @@ void InspectorApplicationCacheAgent::disable(ErrorString& errorString)
 
 void InspectorApplicationCacheAgent::updateApplicationCacheStatus(Frame* frame)
 {
-    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
-    if (!pageAgent)
-        return;
-
     if (!frame)
         return;
 
@@ -100,7 +96,7 @@ void InspectorApplicationCacheAgent::updateApplicationCacheStatus(Frame* frame)
     int status = host.status();
     auto manifestURL = host.applicationCacheInfo().manifest.string();
 
-    m_frontendDispatcher->applicationCacheStatusUpdated(pageAgent->frameId(frame), manifestURL, status);
+    m_frontendDispatcher->applicationCacheStatusUpdated(m_instrumentingAgents.inspectorPageAgent()->frameId(frame), manifestURL, status);
 }
 
 void InspectorApplicationCacheAgent::networkStateChanged()
@@ -112,8 +108,6 @@ void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString&, RefPtr
 {
     result = JSON::ArrayOf<Inspector::Protocol::ApplicationCache::FrameWithManifest>::create();
 
-    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
-
     for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* documentLoader = frame->loader().documentLoader();
         if (!documentLoader)
@@ -123,7 +117,7 @@ void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString&, RefPtr
         String manifestURL = host.applicationCacheInfo().manifest.string();
         if (!manifestURL.isEmpty()) {
             result->addItem(Inspector::Protocol::ApplicationCache::FrameWithManifest::create()
-                .setFrameId(pageAgent->frameId(frame))
+                .setFrameId(m_instrumentingAgents.inspectorPageAgent()->frameId(frame))
                 .setManifestURL(manifestURL)
                 .setStatus(static_cast<int>(host.status()))
                 .release());
@@ -133,13 +127,7 @@ void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString&, RefPtr
 
 DocumentLoader* InspectorApplicationCacheAgent::assertFrameWithDocumentLoader(ErrorString& errorString, const String& frameId)
 {
-    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
-    if (!pageAgent) {
-        errorString = "Missing Page agent"_s;
-        return nullptr;
-    }
-
-    Frame* frame = pageAgent->assertFrame(errorString, frameId);
+    Frame* frame = m_instrumentingAgents.inspectorPageAgent()->assertFrame(errorString, frameId);
     if (!frame)
         return nullptr;
 
