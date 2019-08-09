@@ -54,18 +54,9 @@
 #endif
 
 #if USE(GSTREAMER_GL)
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-#define GST_GL_CAPS_FORMAT "{ BGRx, BGRA }"
-#define TEXTURE_MAPPER_COLOR_CONVERT_FLAG TextureMapperGL::ShouldConvertTextureBGRAToRGBA
-#define TEXTURE_COPIER_COLOR_CONVERT_FLAG VideoTextureCopierGStreamer::ColorConversion::ConvertBGRAToRGBA
-#else
-#define GST_GL_CAPS_FORMAT "{ xRGB, ARGB }"
-#define TEXTURE_MAPPER_COLOR_CONVERT_FLAG TextureMapperGL::ShouldConvertTextureARGBToRGBA
-#define TEXTURE_COPIER_COLOR_CONVERT_FLAG VideoTextureCopierGStreamer::ColorConversion::ConvertARGBToRGBA
-#endif
+#define TEXTURE_COPIER_COLOR_CONVERT_FLAG VideoTextureCopierGStreamer::ColorConversion::NoConvert
 
 #include <gst/app/gstappsink.h>
-
 
 #include "GLContext.h"
 #if USE(GLX)
@@ -474,6 +465,19 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
         m_glContext = adoptGRef(gst_gl_context_new_wrapped(m_glDisplay.get(), reinterpret_cast<guintptr>(contextHandle), glPlatform, glAPI));
     else
         m_glContext = gst_gl_context_new_wrapped(m_glDisplay.get(), reinterpret_cast<guintptr>(contextHandle), glPlatform, glAPI);
+
+    // Activate and fill the GStreamer wrapped context with the Webkit's shared one.
+    auto previousActiveContext = GLContext::current();
+    webkitContext->makeContextCurrent();
+    if (gst_gl_context_activate(m_glContext.get(), TRUE)) {
+        GUniqueOutPtr<GError> error;
+        if (!gst_gl_context_fill_info(m_glContext.get(), &error.outPtr()))
+            GST_WARNING("Failed to fill in GStreamer context: %s", error->message);
+        gst_gl_context_activate(m_glContext.get(), FALSE);
+    } else
+        GST_WARNING("Failed to activate GStreamer context %" GST_PTR_FORMAT, m_glContext.get());
+    if (previousActiveContext)
+        previousActiveContext->makeContextCurrent();
 
     return true;
 }
@@ -993,14 +997,6 @@ void MediaPlayerPrivateGStreamerBase::updateTextureMapperFlags()
         m_textureMapperFlags = 0;
         break;
     }
-
-#if USE(GSTREAMER_GL)
-    // When the imxvpudecoder is used, the texture sampling of the
-    // directviv-uploaded texture returns an RGB value, so there's no need to
-    // convert it.
-    if (m_videoDecoderPlatform != WebKitGstVideoDecoderPlatform::ImxVPU)
-        m_textureMapperFlags |= TEXTURE_MAPPER_COLOR_CONVERT_FLAG;
-#endif
 }
 #endif
 
@@ -1065,6 +1061,10 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSinkGL()
     GstElement* colorconvert = gst_element_factory_make("glcolorconvert", nullptr);
     GstElement* appsink = createGLAppSink();
 
+    // glsinkbin is not used because it includes glcolorconvert which only process RGBA,
+    // but in the future it would be possible to render YUV formats too:
+    // https://bugs.webkit.org/show_bug.cgi?id=132869
+
     if (!appsink || !upload || !colorconvert) {
         GST_WARNING("Failed to create GstGL elements");
         gst_object_unref(videoSink);
@@ -1082,10 +1082,11 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSinkGL()
 
     gst_bin_add_many(GST_BIN(videoSink), upload, colorconvert, appsink, nullptr);
 
-    GRefPtr<GstCaps> caps = adoptGRef(gst_caps_from_string("video/x-raw(" GST_CAPS_FEATURE_MEMORY_GL_MEMORY "), format = (string) " GST_GL_CAPS_FORMAT));
+    GRefPtr<GstCaps> caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "RGBA", nullptr));
+    gst_caps_set_features(caps.get(), 0, gst_caps_features_new(GST_CAPS_FEATURE_MEMORY_GL_MEMORY, nullptr));
+    g_object_set(appsink, "caps", caps.get(), nullptr);
 
-    result &= gst_element_link_pads(upload, "src", colorconvert, "sink");
-    result &= gst_element_link_pads_filtered(colorconvert, "src", appsink, "sink", caps.get());
+    result &= gst_element_link_many(upload, colorconvert, appsink, nullptr);
 
     GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(upload, "sink"));
     gst_element_add_pad(videoSink, gst_ghost_pad_new("sink", pad.get()));

@@ -307,7 +307,7 @@ protected:
     bool m_waitingForKey { false };
 #endif
 
-    enum class WebKitGstVideoDecoderPlatform { ImxVPU, Video4Linux };
+    enum class WebKitGstVideoDecoderPlatform { Video4Linux };
     Optional<WebKitGstVideoDecoderPlatform> m_videoDecoderPlatform;
 };
 

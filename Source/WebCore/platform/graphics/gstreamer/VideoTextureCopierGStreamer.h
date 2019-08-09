@@ -36,7 +36,8 @@ class VideoTextureCopierGStreamer {
 public:
     enum class ColorConversion {
         ConvertBGRAToRGBA,
-        ConvertARGBToRGBA
+        ConvertARGBToRGBA,
+        NoConvert,
     };
 
     VideoTextureCopierGStreamer(ColorConversion);

@@ -1,3 +1,57 @@
+2019-08-09  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GL][GStreamer] activate wrapped shared context
+        https://bugs.webkit.org/show_bug.cgi?id=196966
+
+        Reviewed by Žan Doberšek.
+
+        This patch consists in four parts:
+
+        1\ When the media player is instantiated, and it is intended to
+        render textures, it will create a wrapped object of the
+        application's GL context, and in order to populate the wrapped
+        object with the GL vtable, the context has to be current. Thus,
+        this patch makes current the shared WebKit application context,
+        and populate the wrapped GstGLContext by activating it and filling
+        in it. Afterwards, the wrapped context is deactivated.
+
+        2\ This patch makes GL texture use the RGBA color space, thus the
+        color transformation is done in GStreamer, and no further color
+        transformation is required in WebKit.
+
+        3\ Since it is not necessary to modify behavior if the decoder is
+        imxvpudecoder, its identification and label were removed.
+
+        4\ As only RGBA is used, the old color conversions when rendering
+        using Cairo (fallback) were changed to convert the RGBA, as in
+        GStreamer's format, to ARGB32, as in Cairo format -which depends
+        on endianness.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/gstreamer/ImageGStreamerCairo.cpp:
+        (WebCore::ImageGStreamer::ImageGStreamer): Only convert GStreamer
+        RGBA to Cairo RGB32.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin): Removes
+        the IMX VPU identification.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::ensureGstGLContext):
+        Intializes the wrapped GL Context.
+        (WebCore::MediaPlayerPrivateGStreamerBase::updateTextureMapperFlags):
+        Removes frame's color conversion.
+        (WebCore::MediaPlayerPrivateGStreamerBase::createVideoSinkGL):
+        Instead of parsing a string, the GstCaps are created manually, and
+        it is set to appsink, rather than a filtered linking.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        Removes ImxVPU enumeration value.
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.cpp:
+        Adds NoConvert option to texture copier, setting an identity
+        matrix.
+        (WebCore::VideoTextureCopierGStreamer::updateColorConversionMatrix):
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.h: Adds
+        NoConvert enumeration value.
+
 2019-08-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (iOS 13): united.com web forms do not respond to taps

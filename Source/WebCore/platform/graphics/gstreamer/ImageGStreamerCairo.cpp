@@ -57,11 +57,7 @@ ImageGStreamer::ImageGStreamer(GstSample* sample)
 
     RefPtr<cairo_surface_t> surface;
     cairo_format_t cairoFormat;
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-    cairoFormat = (GST_VIDEO_FRAME_FORMAT(&m_videoFrame) == GST_VIDEO_FORMAT_BGRA) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24;
-#else
-    cairoFormat = (GST_VIDEO_FRAME_FORMAT(&m_videoFrame) == GST_VIDEO_FORMAT_ARGB) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24;
-#endif
+    cairoFormat = (GST_VIDEO_FRAME_FORMAT(&m_videoFrame) == GST_VIDEO_FORMAT_RGBA) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24;
 
     // GStreamer doesn't use premultiplied alpha, but cairo does. So if the video format has an alpha component
     // we need to premultiply it before passing the data to cairo. This needs to be both using gstreamer-gl and not
@@ -75,20 +71,19 @@ ImageGStreamer::ImageGStreamer(GstSample* sample)
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-                // Video frames use BGRA in little endian.
                 unsigned short alpha = bufferData[3];
-                surfacePixel[0] = (bufferData[0] * alpha + 128) / 255;
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+                // Video frames use RGBA in little endian.
+                surfacePixel[0] = (bufferData[2] * alpha + 128) / 255;
                 surfacePixel[1] = (bufferData[1] * alpha + 128) / 255;
-                surfacePixel[2] = (bufferData[2] * alpha + 128) / 255;
+                surfacePixel[2] = (bufferData[0] * alpha + 128) / 255;
                 surfacePixel[3] = alpha;
 #else
-                // Video frames use ARGB in big endian.
-                unsigned short alpha = bufferData[0];
+                // Video frames use RGBA in big endian.
                 surfacePixel[0] = alpha;
-                surfacePixel[1] = (bufferData[1] * alpha + 128) / 255;
-                surfacePixel[2] = (bufferData[2] * alpha + 128) / 255;
-                surfacePixel[3] = (bufferData[3] * alpha + 128) / 255;
+                surfacePixel[1] = (bufferData[0] * alpha + 128) / 255;
+                surfacePixel[2] = (bufferData[1] * alpha + 128) / 255;
+                surfacePixel[3] = (bufferData[2] * alpha + 128) / 255;
 #endif
                 bufferData += 4;
                 surfacePixel += 4;

@@ -84,6 +84,9 @@ void VideoTextureCopierGStreamer::updateColorConversionMatrix(ColorConversion co
     case ColorConversion::ConvertARGBToRGBA:
         m_colorConversionMatrix.setMatrix(0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0);
         break;
+    case ColorConversion::NoConvert:
+        m_colorConversionMatrix.makeIdentity();
+        break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }

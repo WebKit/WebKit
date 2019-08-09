@@ -2435,8 +2435,6 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
         GUniquePtr<char> elementName(gst_element_get_name(element));
         if (g_str_has_prefix(elementName.get(), "v4l2"))
             player->m_videoDecoderPlatform = WebKitGstVideoDecoderPlatform::Video4Linux;
-        else if (g_str_has_prefix(elementName.get(), "imxvpudecoder"))
-            player->m_videoDecoderPlatform = WebKitGstVideoDecoderPlatform::ImxVPU;
 
 #if USE(TEXTURE_MAPPER_GL)
         player->updateTextureMapperFlags();
