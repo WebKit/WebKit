@@ -43,7 +43,7 @@ class UniqueRef {
 public:
     template <typename U>
     UniqueRef(UniqueRef<U>&& other)
-        : m_ref(WTFMove(other.m_ref))
+        : m_ref(other.m_ref.release())
     {
         ASSERT(m_ref);
     }

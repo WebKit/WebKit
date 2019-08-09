@@ -32,6 +32,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/text/StringConcatenate.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -46,7 +47,7 @@ class ArrayReferenceType final : public ReferenceType {
     using Base = ReferenceType;
 
     ArrayReferenceType(CodeLocation location, AddressSpace addressSpace, Ref<UnnamedType> elementType)
-        : Base(location, addressSpace, WTFMove(elementType), Kind::ArrayReferenceType)
+        : Base(location, addressSpace, WTFMove(elementType), Kind::ArrayReference)
     {
     }
 public:
@@ -55,7 +56,7 @@ public:
         return adoptRef(*new ArrayReferenceType(location, addressSpace, WTFMove(elementType)));
     }
 
-    virtual ~ArrayReferenceType() = default;
+    ~ArrayReferenceType() = default;
 
     unsigned hash() const
     {
@@ -67,7 +68,7 @@ public:
         return addressSpace() == other.addressSpace() && elementType() == other.elementType();
     }
 
-    String toString() const override
+    String toString() const
     {
         return makeString(elementType().toString(), "[]");
     }

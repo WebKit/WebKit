@@ -37,17 +37,17 @@ namespace WHLSL {
 
 namespace AST {
 
-class UnsignedIntegerLiteral : public Expression {
+class UnsignedIntegerLiteral final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     UnsignedIntegerLiteral(CodeLocation location, unsigned value)
-        : Expression(location)
+        : Expression(location, Kind::UnsignedIntegerLiteral)
         , m_type(location, value)
         , m_value(value)
     {
     }
 
-    virtual ~UnsignedIntegerLiteral() = default;
+    ~UnsignedIntegerLiteral() = default;
 
     UnsignedIntegerLiteral(const UnsignedIntegerLiteral&) = delete;
     UnsignedIntegerLiteral(UnsignedIntegerLiteral&&) = default;
@@ -57,8 +57,6 @@ public:
 
     UnsignedIntegerLiteralType& type() { return m_type; }
     unsigned value() const { return m_value; }
-
-    bool isUnsignedIntegerLiteral() const override { return true; }
 
     UnsignedIntegerLiteral clone() const
     {
@@ -82,6 +80,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(UnsignedIntegerLiteral)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(UnsignedIntegerLiteral, isUnsignedIntegerLiteral())
 

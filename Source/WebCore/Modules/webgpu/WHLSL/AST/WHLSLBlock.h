@@ -38,23 +38,21 @@ namespace WHLSL {
 
 namespace AST {
 
-class Block : public Statement {
+class Block final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Block(CodeLocation location, Statements&& statements)
-        : Statement(location)
+        : Statement(location, Kind::Block)
         , m_statements(WTFMove(statements))
     {
     }
 
-    virtual ~Block() = default;
+    ~Block() = default;
 
     Block(const Block&) = delete;
     Block(Block&&) = default;
 
     Statements& statements() { return m_statements; }
-
-    bool isBlock() const override { return true; }
 
 private:
     Statements m_statements;
@@ -65,6 +63,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(Block)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(Block, isBlock())
 

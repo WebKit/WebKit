@@ -38,33 +38,31 @@ namespace WHLSL {
 
 namespace AST {
 
-class DotExpression : public PropertyAccessExpression {
+class DotExpression final : public PropertyAccessExpression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     DotExpression(CodeLocation location, UniqueRef<Expression>&& base, String&& fieldName)
-        : PropertyAccessExpression(location, WTFMove(base))
+        : PropertyAccessExpression(location, Kind::Dot, WTFMove(base))
         , m_fieldName(WTFMove(fieldName))
     {
     }
 
-    virtual ~DotExpression() = default;
+    ~DotExpression() = default;
 
     DotExpression(const DotExpression&) = delete;
     DotExpression(DotExpression&&) = default;
 
-    bool isDotExpression() const override { return true; }
-
-    String getterFunctionName() const override
+    String getterFunctionName() const
     {
         return makeString("operator.", m_fieldName);
     }
 
-    String setterFunctionName() const override
+    String setterFunctionName() const
     {
         return makeString("operator.", m_fieldName, "=");
     }
 
-    String anderFunctionName() const override
+    String anderFunctionName() const
     {
         return makeString("operator&.", m_fieldName);
     }
@@ -80,6 +78,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(DotExpression)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(DotExpression, isDotExpression())
 

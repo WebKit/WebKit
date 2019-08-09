@@ -1,3 +1,18 @@
+2019-08-09  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Devirtualize the AST
+        https://bugs.webkit.org/show_bug.cgi?id=200522
+
+        Reviewed by Robin Morisset.
+
+        Make RefCounted use std::default_delete instead of explicitly calling delete.
+        This allows uses of RefCounted to define their own custom deleter.
+
+        * wtf/RefCounted.h:
+        (WTF::RefCounted::deref const):
+        * wtf/UniqueRef.h:
+        (WTF::UniqueRef::UniqueRef):
+
 2019-08-08  Chris Dumez  <cdumez@apple.com>
 
         Fix thread safety issue in AudioSampleDataSource() constructor

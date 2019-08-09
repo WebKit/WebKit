@@ -38,33 +38,31 @@ namespace WHLSL {
 
 namespace AST {
 
-class IndexExpression : public PropertyAccessExpression {
+class IndexExpression final : public PropertyAccessExpression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     IndexExpression(CodeLocation location, UniqueRef<Expression>&& base, UniqueRef<Expression>&& index)
-        : PropertyAccessExpression(location, WTFMove(base))
+        : PropertyAccessExpression(location, Kind::Index, WTFMove(base))
         , m_index(WTFMove(index))
     {
     }
 
-    virtual ~IndexExpression() = default;
+    ~IndexExpression() = default;
 
     IndexExpression(const IndexExpression&) = delete;
     IndexExpression(IndexExpression&&) = default;
 
-    bool isIndexExpression() const override { return true; }
-
-    String getterFunctionName() const override
+    String getterFunctionName() const
     {
         return "operator[]"_str;
     }
 
-    String setterFunctionName() const override
+    String setterFunctionName() const
     {
         return "operator[]="_str;
     }
 
-    String anderFunctionName() const override
+    String anderFunctionName() const
     {
         return "operator&[]"_str;
     }
@@ -81,6 +79,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(IndexExpression)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(IndexExpression, isIndexExpression())
 

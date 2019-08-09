@@ -49,15 +49,19 @@ namespace AST {
  *  6. Evaluate m_resultExpression
  *  7. Return the result
  */
-class ReadModifyWriteExpression : public Expression {
+class ReadModifyWriteExpression final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static UniqueRef<ReadModifyWriteExpression> create(CodeLocation location, UniqueRef<Expression> lValue)
+    ReadModifyWriteExpression(CodeLocation location, UniqueRef<Expression> leftValue)
+        : Expression(location, Kind::ReadModifyWrite)
+        , m_leftValue(WTFMove(leftValue))
+        , m_oldValue(makeUniqueRef<VariableDeclaration>(location, Qualifiers(), nullptr, String(), nullptr, nullptr))
+        , m_newValue(makeUniqueRef<VariableDeclaration>(location, Qualifiers(), nullptr, String(), nullptr, nullptr))
     {
-        return makeUniqueRef<ReadModifyWriteExpression>(location, WTFMove(lValue));
     }
 
-    virtual ~ReadModifyWriteExpression() = default;
+
+    ~ReadModifyWriteExpression() = default;
 
     ReadModifyWriteExpression(const ReadModifyWriteExpression&) = delete;
     ReadModifyWriteExpression(ReadModifyWriteExpression&&) = default;
@@ -81,8 +85,6 @@ public:
     {
         return makeUniqueRef<VariableReference>(VariableReference::wrap(m_newValue));
     }
-
-    bool isReadModifyWriteExpression() const override { return true; }
 
     Expression& leftValue() { return m_leftValue; }
     VariableDeclaration& oldValue() { return m_oldValue; }
@@ -114,16 +116,6 @@ public:
     }
 
 private:
-    template<class U, class... Args> friend UniqueRef<U> WTF::makeUniqueRef(Args&&...);
-
-    ReadModifyWriteExpression(CodeLocation location, UniqueRef<Expression> leftValue)
-        : Expression(location)
-        , m_leftValue(WTFMove(leftValue))
-        , m_oldValue(makeUniqueRef<VariableDeclaration>(location, Qualifiers(), nullptr, String(), nullptr, nullptr))
-        , m_newValue(makeUniqueRef<VariableDeclaration>(location, Qualifiers(), nullptr, String(), nullptr, nullptr))
-    {
-    }
-
     UniqueRef<Expression> m_leftValue;
     UniqueRef<VariableDeclaration> m_oldValue;
     UniqueRef<VariableDeclaration> m_newValue;
@@ -136,6 +128,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(ReadModifyWriteExpression)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(ReadModifyWriteExpression, isReadModifyWriteExpression())
 

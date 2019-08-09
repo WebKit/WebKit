@@ -39,21 +39,19 @@ namespace WHLSL {
 
 namespace AST {
 
-class Return : public Statement {
+class Return final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Return(CodeLocation location, std::unique_ptr<Expression>&& value)
-        : Statement(location)
+        : Statement(location, Kind::Return)
         , m_value(WTFMove(value))
     {
     }
 
-    virtual ~Return() = default;
+    ~Return() = default;
 
     Return(const Return&) = delete;
     Return(Return&&) = default;
-
-    bool isReturn() const override { return true; }
 
     Expression* value() { return m_value.get(); }
 
@@ -66,6 +64,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(Return)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(Return, isReturn())
 

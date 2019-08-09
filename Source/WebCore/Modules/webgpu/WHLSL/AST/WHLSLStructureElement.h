@@ -40,7 +40,7 @@ namespace WHLSL {
 
 namespace AST {
 
-class StructureElement {
+class StructureElement final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     StructureElement(CodeLocation location, Qualifiers&& qualifiers, Ref<UnnamedType> type, String&& name, std::unique_ptr<Semantic>&& semantic)
@@ -52,7 +52,7 @@ public:
     {
     }
 
-    virtual ~StructureElement() = default;
+    ~StructureElement() = default;
 
     StructureElement(const StructureElement&) = delete;
     StructureElement(StructureElement&&) = default;

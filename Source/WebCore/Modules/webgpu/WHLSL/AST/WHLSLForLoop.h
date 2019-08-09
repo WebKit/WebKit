@@ -42,11 +42,11 @@ namespace WHLSL {
 
 namespace AST {
 
-class ForLoop : public Statement {
+class ForLoop final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ForLoop(CodeLocation location, Variant<UniqueRef<Statement>, UniqueRef<Expression>>&& initialization, std::unique_ptr<Expression>&& condition, std::unique_ptr<Expression>&& increment, UniqueRef<Statement>&& body)
-        : Statement(location)
+        : Statement(location, Kind::ForLoop)
         , m_initialization(WTFMove(initialization))
         , m_condition(WTFMove(condition))
         , m_increment(WTFMove(increment))
@@ -54,14 +54,10 @@ public:
     {
     }
 
-    virtual ~ForLoop()
-    {
-    }
+    ~ForLoop() = default;
 
     ForLoop(const ForLoop&) = delete;
     ForLoop(ForLoop&&) = default;
-
-    bool isForLoop() const override { return true; }
 
     Variant<UniqueRef<Statement>, UniqueRef<Expression>>& initialization() { return m_initialization; }
     Expression* condition() { return m_condition.get(); }
@@ -80,6 +76,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(ForLoop)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(ForLoop, isForLoop())
 

@@ -1,3 +1,407 @@
+2019-08-09  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Devirtualize the AST
+        https://bugs.webkit.org/show_bug.cgi?id=200522
+
+        Reviewed by Robin Morisset.
+
+        This patch devirtualizes the AST for Type, Expression, and Statement.
+        We now have an enum which represents all the concrete types in the
+        three hierarchies. Doing dynamic dispatch is implemented as a switch
+        on that type enum.
+        
+        The interesting part of this patch is how to handle destruction. We do
+        this by defining a custom deleter for all nodes in the AST. This ensures
+        that when they're used inside UniqueRef, unique_ptr, Ref, and RefPtr,
+        we do dynamic dispatch when we delete the object. This allows each base
+        class to define a "destroy" method which does dynamic dispatch on type
+        and calls the appropriate delete. We also mark all non-concrete nodes
+        in all type hierarchies with a protected destructor, which ensures it's
+        never called except from within the concrete child classes. We allow
+        all concrete classes to have public destructors, as it's valid for
+        their destructors to be called explicitly since there is no need for
+        dynamic dispatch in such scenarios. All concrete classes are also marked
+        as final.
+        
+        This is a 3ms speedup on compute_boids, which is about a 10% improvement
+        in the WHLSL compiler.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayReferenceType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLAssignmentExpression.h:
+        (WebCore::WHLSL::AST::AssignmentExpression::AssignmentExpression): Deleted.
+        (WebCore::WHLSL::AST::AssignmentExpression::left): Deleted.
+        (WebCore::WHLSL::AST::AssignmentExpression::right): Deleted.
+        (WebCore::WHLSL::AST::AssignmentExpression::takeRight): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLBlock.h:
+        (WebCore::WHLSL::AST::Block::Block): Deleted.
+        (WebCore::WHLSL::AST::Block::statements): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLBooleanLiteral.h:
+        (WebCore::WHLSL::AST::BooleanLiteral::BooleanLiteral): Deleted.
+        (WebCore::WHLSL::AST::BooleanLiteral::value const): Deleted.
+        (WebCore::WHLSL::AST::BooleanLiteral::clone const): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLBreak.h:
+        (WebCore::WHLSL::AST::Break::Break): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLCallExpression.h:
+        (WebCore::WHLSL::AST::CallExpression::CallExpression): Deleted.
+        (WebCore::WHLSL::AST::CallExpression::arguments): Deleted.
+        (WebCore::WHLSL::AST::CallExpression::name): Deleted.
+        (WebCore::WHLSL::AST::CallExpression::setCastData): Deleted.
+        (WebCore::WHLSL::AST::CallExpression::isCast): Deleted.
+        (WebCore::WHLSL::AST::CallExpression::castReturnType): Deleted.
+        (WebCore::WHLSL::AST::CallExpression::function): Deleted.
+        (WebCore::WHLSL::AST::CallExpression::setFunction): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLCommaExpression.h:
+        (WebCore::WHLSL::AST::CommaExpression::CommaExpression): Deleted.
+        (WebCore::WHLSL::AST::CommaExpression::list): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLConstantExpression.h:
+        (WebCore::WHLSL::AST::ConstantExpression::ConstantExpression): Deleted.
+        (WebCore::WHLSL::AST::ConstantExpression::integerLiteral): Deleted.
+        (WebCore::WHLSL::AST::ConstantExpression::visit): Deleted.
+        (WebCore::WHLSL::AST::ConstantExpression::visit const): Deleted.
+        (WebCore::WHLSL::AST::ConstantExpression::clone const): Deleted.
+        (WebCore::WHLSL::AST::ConstantExpression::matches const): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLContinue.h:
+        (WebCore::WHLSL::AST::Continue::Continue): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLDefaultDelete.h: Added.
+        * Modules/webgpu/WHLSL/AST/WHLSLDereferenceExpression.h:
+        (WebCore::WHLSL::AST::DereferenceExpression::DereferenceExpression): Deleted.
+        (WebCore::WHLSL::AST::DereferenceExpression::pointer): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLDoWhileLoop.h:
+        (WebCore::WHLSL::AST::DoWhileLoop::DoWhileLoop): Deleted.
+        (WebCore::WHLSL::AST::DoWhileLoop::body): Deleted.
+        (WebCore::WHLSL::AST::DoWhileLoop::conditional): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLDotExpression.h:
+        (WebCore::WHLSL::AST::DotExpression::DotExpression): Deleted.
+        (WebCore::WHLSL::AST::DotExpression::fieldName): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLEffectfulExpressionStatement.h:
+        (WebCore::WHLSL::AST::EffectfulExpressionStatement::EffectfulExpressionStatement): Deleted.
+        (WebCore::WHLSL::AST::EffectfulExpressionStatement::effectfulExpression): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationDefinition.h:
+        (WebCore::WHLSL::AST::EnumerationDefinition::EnumerationDefinition): Deleted.
+        (WebCore::WHLSL::AST::EnumerationDefinition::type): Deleted.
+        (WebCore::WHLSL::AST::EnumerationDefinition::add): Deleted.
+        (WebCore::WHLSL::AST::EnumerationDefinition::memberByName): Deleted.
+        (WebCore::WHLSL::AST::EnumerationDefinition::enumerationMembers): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationMemberLiteral.h:
+        (WebCore::WHLSL::AST::EnumerationMemberLiteral::EnumerationMemberLiteral): Deleted.
+        (WebCore::WHLSL::AST::EnumerationMemberLiteral::wrap): Deleted.
+        (WebCore::WHLSL::AST::EnumerationMemberLiteral::left const): Deleted.
+        (WebCore::WHLSL::AST::EnumerationMemberLiteral::right const): Deleted.
+        (WebCore::WHLSL::AST::EnumerationMemberLiteral::clone const): Deleted.
+        (WebCore::WHLSL::AST::EnumerationMemberLiteral::enumerationDefinition): Deleted.
+        (WebCore::WHLSL::AST::EnumerationMemberLiteral::enumerationDefinition const): Deleted.
+        (WebCore::WHLSL::AST::EnumerationMemberLiteral::enumerationMember): Deleted.
+        (WebCore::WHLSL::AST::EnumerationMemberLiteral::enumerationMember const): Deleted.
+        (WebCore::WHLSL::AST::EnumerationMemberLiteral::setEnumerationMember): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.cpp: Added.
+        (WebCore::WHLSL::AST::Expression::destroy):
+        (WebCore::WHLSL::AST::PropertyAccessExpression::getterFunctionName const):
+        (WebCore::WHLSL::AST::PropertyAccessExpression::setterFunctionName const):
+        (WebCore::WHLSL::AST::PropertyAccessExpression::anderFunctionName const):
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.h:
+        (WebCore::WHLSL::AST::Expression::Expression):
+        (WebCore::WHLSL::AST::Expression::kind const):
+        (WebCore::WHLSL::AST::Expression::isAssignmentExpression const):
+        (WebCore::WHLSL::AST::Expression::isBooleanLiteral const):
+        (WebCore::WHLSL::AST::Expression::isCallExpression const):
+        (WebCore::WHLSL::AST::Expression::isCommaExpression const):
+        (WebCore::WHLSL::AST::Expression::isDereferenceExpression const):
+        (WebCore::WHLSL::AST::Expression::isDotExpression const):
+        (WebCore::WHLSL::AST::Expression::isGlobalVariableReference const):
+        (WebCore::WHLSL::AST::Expression::isFloatLiteral const):
+        (WebCore::WHLSL::AST::Expression::isIndexExpression const):
+        (WebCore::WHLSL::AST::Expression::isIntegerLiteral const):
+        (WebCore::WHLSL::AST::Expression::isLogicalExpression const):
+        (WebCore::WHLSL::AST::Expression::isLogicalNotExpression const):
+        (WebCore::WHLSL::AST::Expression::isMakeArrayReferenceExpression const):
+        (WebCore::WHLSL::AST::Expression::isMakePointerExpression const):
+        (WebCore::WHLSL::AST::Expression::isNullLiteral const):
+        (WebCore::WHLSL::AST::Expression::isPropertyAccessExpression const):
+        (WebCore::WHLSL::AST::Expression::isReadModifyWriteExpression const):
+        (WebCore::WHLSL::AST::Expression::isTernaryExpression const):
+        (WebCore::WHLSL::AST::Expression::isUnsignedIntegerLiteral const):
+        (WebCore::WHLSL::AST::Expression::isVariableReference const):
+        (WebCore::WHLSL::AST::Expression::isEnumerationMemberLiteral const):
+        (WebCore::WHLSL::AST::Expression::codeLocation const):
+        (WebCore::WHLSL::AST::Expression::updateCodeLocation):
+        * Modules/webgpu/WHLSL/AST/WHLSLFallthrough.h:
+        (WebCore::WHLSL::AST::Fallthrough::Fallthrough): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteral.h:
+        (WebCore::WHLSL::AST::FloatLiteral::FloatLiteral): Deleted.
+        (WebCore::WHLSL::AST::FloatLiteral::type): Deleted.
+        (WebCore::WHLSL::AST::FloatLiteral::value const): Deleted.
+        (WebCore::WHLSL::AST::FloatLiteral::clone const): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.cpp:
+        (WebCore::WHLSL::AST::FloatLiteralType::FloatLiteralType):
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.h:
+        (WebCore::WHLSL::AST::FloatLiteralType::value const): Deleted.
+        (WebCore::WHLSL::AST::FloatLiteralType::preferredType): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLForLoop.h:
+        (WebCore::WHLSL::AST::ForLoop::ForLoop): Deleted.
+        (WebCore::WHLSL::AST::ForLoop::~ForLoop): Deleted.
+        (WebCore::WHLSL::AST::ForLoop::initialization): Deleted.
+        (WebCore::WHLSL::AST::ForLoop::condition): Deleted.
+        (WebCore::WHLSL::AST::ForLoop::increment): Deleted.
+        (WebCore::WHLSL::AST::ForLoop::body): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLGlobalVariableReference.h:
+        (WebCore::WHLSL::AST::GlobalVariableReference::GlobalVariableReference): Deleted.
+        (WebCore::WHLSL::AST::GlobalVariableReference::structField): Deleted.
+        (WebCore::WHLSL::AST::GlobalVariableReference::base): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLIfStatement.h:
+        (WebCore::WHLSL::AST::IfStatement::IfStatement): Deleted.
+        (WebCore::WHLSL::AST::IfStatement::conditional): Deleted.
+        (WebCore::WHLSL::AST::IfStatement::body): Deleted.
+        (WebCore::WHLSL::AST::IfStatement::elseBody): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLIndexExpression.h:
+        (WebCore::WHLSL::AST::IndexExpression::IndexExpression): Deleted.
+        (WebCore::WHLSL::AST::IndexExpression::indexExpression): Deleted.
+        (WebCore::WHLSL::AST::IndexExpression::takeIndex): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteral.h:
+        (WebCore::WHLSL::AST::IntegerLiteral::IntegerLiteral): Deleted.
+        (WebCore::WHLSL::AST::IntegerLiteral::type): Deleted.
+        (WebCore::WHLSL::AST::IntegerLiteral::value const): Deleted.
+        (WebCore::WHLSL::AST::IntegerLiteral::clone const): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.cpp:
+        (WebCore::WHLSL::AST::IntegerLiteralType::IntegerLiteralType):
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.h:
+        (WebCore::WHLSL::AST::IntegerLiteralType::value const): Deleted.
+        (WebCore::WHLSL::AST::IntegerLiteralType::preferredType): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLLogicalExpression.h:
+        (WebCore::WHLSL::AST::LogicalExpression::LogicalExpression): Deleted.
+        (WebCore::WHLSL::AST::LogicalExpression::type const): Deleted.
+        (WebCore::WHLSL::AST::LogicalExpression::left): Deleted.
+        (WebCore::WHLSL::AST::LogicalExpression::right): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLLogicalNotExpression.h:
+        (WebCore::WHLSL::AST::LogicalNotExpression::LogicalNotExpression): Deleted.
+        (WebCore::WHLSL::AST::LogicalNotExpression::operand): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLMakeArrayReferenceExpression.h:
+        (WebCore::WHLSL::AST::MakeArrayReferenceExpression::MakeArrayReferenceExpression): Deleted.
+        (WebCore::WHLSL::AST::MakeArrayReferenceExpression::leftValue): Deleted.
+        (WebCore::WHLSL::AST::MakeArrayReferenceExpression::mightEscape const): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLMakePointerExpression.h:
+        (WebCore::WHLSL::AST::MakePointerExpression::MakePointerExpression): Deleted.
+        (WebCore::WHLSL::AST::MakePointerExpression::leftValue): Deleted.
+        (WebCore::WHLSL::AST::MakePointerExpression::mightEscape const): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLNamedType.h:
+        (WebCore::WHLSL::AST::NamedType::NamedType):
+        (WebCore::WHLSL::AST::NamedType::unifyNodeImpl):
+        (): Deleted.
+        (WebCore::WHLSL::AST::NamedType::isTypeDefinition const): Deleted.
+        (WebCore::WHLSL::AST::NamedType::isStructureDefinition const): Deleted.
+        (WebCore::WHLSL::AST::NamedType::isEnumerationDefinition const): Deleted.
+        (WebCore::WHLSL::AST::NamedType::isNativeTypeDeclaration const): Deleted.
+        (WebCore::WHLSL::AST::NamedType::unifyNode const): Deleted.
+        (WebCore::WHLSL::AST::NamedType::unifyNode): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLNativeTypeDeclaration.h:
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::NativeTypeDeclaration): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::typeArguments): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isInt const): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isNumber const): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isFloating const): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isAtomic const): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isVector const): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isMatrix const): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isOpaqueType const): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isTexture const): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isTextureArray const): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isDepthTexture const): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isWritableTexture const): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::textureDimension const): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isSigned const): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::std::function<bool const): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::std::function<int64_t const): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::iterateAllValues): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsInt): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsNumber): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsFloating): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsAtomic): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsVector): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsMatrix): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsOpaqueType): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsTexture): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsTextureArray): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsDepthTexture): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsWritableTexture): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setTextureDimension): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsSigned): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setCanRepresentInteger): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setCanRepresentUnsignedInteger): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setCanRepresentFloat): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setSuccessor): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setFormatValueFromInteger): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setFormatValueFromUnsignedInteger): Deleted.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIterateAllValues): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLNullLiteral.h:
+        (WebCore::WHLSL::AST::NullLiteral::NullLiteral): Deleted.
+        (WebCore::WHLSL::AST::NullLiteral::type): Deleted.
+        (WebCore::WHLSL::AST::NullLiteral::clone const): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLNullLiteralType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLPointerType.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLPropertyAccessExpression.h:
+        (WebCore::WHLSL::AST::PropertyAccessExpression::PropertyAccessExpression):
+        * Modules/webgpu/WHLSL/AST/WHLSLReadModifyWriteExpression.h:
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::create): Deleted.
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::setNewValueExpression): Deleted.
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::setResultExpression): Deleted.
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::oldVariableReference): Deleted.
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::newVariableReference): Deleted.
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::leftValue): Deleted.
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::oldValue): Deleted.
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::newValue): Deleted.
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::newValueExpression): Deleted.
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::resultExpression): Deleted.
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::takeLeftValue): Deleted.
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::takeOldValue): Deleted.
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::takeNewValue): Deleted.
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::takeNewValueExpression): Deleted.
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::takeResultExpression): Deleted.
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::ReadModifyWriteExpression): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLReferenceType.h:
+        (WebCore::WHLSL::AST::ReferenceType::ReferenceType):
+        * Modules/webgpu/WHLSL/AST/WHLSLResolvableType.h:
+        (WebCore::WHLSL::AST::ResolvableType::ResolvableType):
+        (): Deleted.
+        (WebCore::WHLSL::AST::ResolvableType::isFloatLiteralType const): Deleted.
+        (WebCore::WHLSL::AST::ResolvableType::isIntegerLiteralType const): Deleted.
+        (WebCore::WHLSL::AST::ResolvableType::isNullLiteralType const): Deleted.
+        (WebCore::WHLSL::AST::ResolvableType::isUnsignedIntegerLiteralType const): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLReturn.h:
+        (WebCore::WHLSL::AST::Return::Return): Deleted.
+        (WebCore::WHLSL::AST::Return::value): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLStatement.cpp: Added.
+        (WebCore::WHLSL::AST::Statement::destroy):
+        * Modules/webgpu/WHLSL/AST/WHLSLStatement.h:
+        (WebCore::WHLSL::AST::Statement::Statement):
+        (WebCore::WHLSL::AST::Statement::kind const):
+        (WebCore::WHLSL::AST::Statement::isBlock const):
+        (WebCore::WHLSL::AST::Statement::isBreak const):
+        (WebCore::WHLSL::AST::Statement::isContinue const):
+        (WebCore::WHLSL::AST::Statement::isDoWhileLoop const):
+        (WebCore::WHLSL::AST::Statement::isEffectfulExpressionStatement const):
+        (WebCore::WHLSL::AST::Statement::isFallthrough const):
+        (WebCore::WHLSL::AST::Statement::isForLoop const):
+        (WebCore::WHLSL::AST::Statement::isIfStatement const):
+        (WebCore::WHLSL::AST::Statement::isReturn const):
+        (WebCore::WHLSL::AST::Statement::isStatementList const):
+        (WebCore::WHLSL::AST::Statement::isSwitchCase const):
+        (WebCore::WHLSL::AST::Statement::isSwitchStatement const):
+        (WebCore::WHLSL::AST::Statement::isVariableDeclarationsStatement const):
+        (WebCore::WHLSL::AST::Statement::isWhileLoop const):
+        (WebCore::WHLSL::AST::Statement::codeLocation const):
+        (WebCore::WHLSL::AST::Statement::updateCodeLocation):
+        * Modules/webgpu/WHLSL/AST/WHLSLStatementList.h:
+        (WebCore::WHLSL::AST::StatementList::StatementList): Deleted.
+        (WebCore::WHLSL::AST::StatementList::statements): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLStructureDefinition.h:
+        (WebCore::WHLSL::AST::StructureDefinition::StructureDefinition): Deleted.
+        (WebCore::WHLSL::AST::StructureDefinition::structureElements): Deleted.
+        (WebCore::WHLSL::AST::StructureDefinition::find): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLStructureElement.h:
+        (WebCore::WHLSL::AST::StructureElement::StructureElement): Deleted.
+        (WebCore::WHLSL::AST::StructureElement::codeLocation const): Deleted.
+        (WebCore::WHLSL::AST::StructureElement::type): Deleted.
+        (WebCore::WHLSL::AST::StructureElement::name): Deleted.
+        (WebCore::WHLSL::AST::StructureElement::semantic): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLSwitchCase.h:
+        (WebCore::WHLSL::AST::SwitchCase::SwitchCase): Deleted.
+        (WebCore::WHLSL::AST::SwitchCase::value): Deleted.
+        (WebCore::WHLSL::AST::SwitchCase::block): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLSwitchStatement.h:
+        (WebCore::WHLSL::AST::SwitchStatement::SwitchStatement): Deleted.
+        (WebCore::WHLSL::AST::SwitchStatement::value): Deleted.
+        (WebCore::WHLSL::AST::SwitchStatement::switchCases): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLTernaryExpression.h:
+        (WebCore::WHLSL::AST::TernaryExpression::TernaryExpression): Deleted.
+        (WebCore::WHLSL::AST::TernaryExpression::predicate): Deleted.
+        (WebCore::WHLSL::AST::TernaryExpression::bodyExpression): Deleted.
+        (WebCore::WHLSL::AST::TernaryExpression::elseExpression): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLType.cpp: Added.
+        (WebCore::WHLSL::AST::Type::destroy):
+        (WebCore::WHLSL::AST::Type::unifyNode):
+        (WebCore::WHLSL::AST::ResolvableType::canResolve const):
+        (WebCore::WHLSL::AST::ResolvableType::conversionCost const):
+        (WebCore::WHLSL::AST::UnnamedType::toString const):
+        * Modules/webgpu/WHLSL/AST/WHLSLType.h:
+        (WebCore::WHLSL::AST::Type::Type):
+        (WebCore::WHLSL::AST::Type::kind const):
+        (WebCore::WHLSL::AST::Type::isUnnamedType const):
+        (WebCore::WHLSL::AST::Type::isNamedType const):
+        (WebCore::WHLSL::AST::Type::isResolvableType const):
+        (WebCore::WHLSL::AST::Type::isTypeReference const):
+        (WebCore::WHLSL::AST::Type::isPointerType const):
+        (WebCore::WHLSL::AST::Type::isArrayReferenceType const):
+        (WebCore::WHLSL::AST::Type::isArrayType const):
+        (WebCore::WHLSL::AST::Type::isReferenceType const):
+        (WebCore::WHLSL::AST::Type::isTypeDefinition const):
+        (WebCore::WHLSL::AST::Type::isStructureDefinition const):
+        (WebCore::WHLSL::AST::Type::isEnumerationDefinition const):
+        (WebCore::WHLSL::AST::Type::isNativeTypeDeclaration const):
+        (WebCore::WHLSL::AST::Type::isFloatLiteralType const):
+        (WebCore::WHLSL::AST::Type::isIntegerLiteralType const):
+        (WebCore::WHLSL::AST::Type::isNullLiteralType const):
+        (WebCore::WHLSL::AST::Type::isUnsignedIntegerLiteralType const):
+        (WebCore::WHLSL::AST::Type::unifyNode const):
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeDefinition.h:
+        (WebCore::WHLSL::AST::TypeDefinition::TypeDefinition): Deleted.
+        (WebCore::WHLSL::AST::TypeDefinition::type): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeReference.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.cpp:
+        (WebCore::WHLSL::AST::UnnamedType::hash const):
+        (WebCore::WHLSL::AST::UnnamedType::operator== const):
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.h:
+        (WebCore::WHLSL::AST::UnnamedType::UnnamedType):
+        (WebCore::WHLSL::AST::UnnamedType::unifyNodeImpl):
+        (): Deleted.
+        (WebCore::WHLSL::AST::UnnamedType::kind const): Deleted.
+        (WebCore::WHLSL::AST::UnnamedType::isTypeReference const): Deleted.
+        (WebCore::WHLSL::AST::UnnamedType::isPointerType const): Deleted.
+        (WebCore::WHLSL::AST::UnnamedType::isArrayReferenceType const): Deleted.
+        (WebCore::WHLSL::AST::UnnamedType::isArrayType const): Deleted.
+        (WebCore::WHLSL::AST::UnnamedType::isReferenceType const): Deleted.
+        (WebCore::WHLSL::AST::UnnamedType::unifyNode const): Deleted.
+        (WebCore::WHLSL::AST::UnnamedType::unifyNode): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteral.h:
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteral::UnsignedIntegerLiteral): Deleted.
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteral::type): Deleted.
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteral::value const): Deleted.
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteral::clone const): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.cpp:
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteralType::UnsignedIntegerLiteralType):
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.h:
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteralType::value const): Deleted.
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteralType::preferredType): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclarationsStatement.h:
+        (WebCore::WHLSL::AST::VariableDeclarationsStatement::VariableDeclarationsStatement): Deleted.
+        (WebCore::WHLSL::AST::VariableDeclarationsStatement::variableDeclarations): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableReference.h:
+        (WebCore::WHLSL::AST::VariableReference::VariableReference): Deleted.
+        (WebCore::WHLSL::AST::VariableReference::wrap): Deleted.
+        (WebCore::WHLSL::AST::VariableReference::name): Deleted.
+        (WebCore::WHLSL::AST::VariableReference::variable): Deleted.
+        (WebCore::WHLSL::AST::VariableReference::setVariable): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLWhileLoop.h:
+        (WebCore::WHLSL::AST::WhileLoop::WhileLoop): Deleted.
+        (WebCore::WHLSL::AST::WhileLoop::conditional): Deleted.
+        (WebCore::WHLSL::AST::WhileLoop::body): Deleted.
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp:
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::isPointerTypeNameNode const):
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::isArrayReferenceTypeNameNode const):
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::isArrayTypeNameNode const):
+        (WebCore::WHLSL::Metal::TypeNamer::createNameNode):
+        (WebCore::WHLSL::Metal::parent):
+        (WebCore::WHLSL::Metal::TypeNamer::emitUnnamedTypeDefinition):
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::parseSuffixOperator):
+        (WebCore::WHLSL::Parser::completeAssignment):
+        (WebCore::WHLSL::Parser::parsePossiblePrefix):
+        * Modules/webgpu/WHLSL/WHLSLPreserveVariableLifetimes.cpp:
+        * Modules/webgpu/WHLSL/WHLSLVisitor.cpp:
+        (WebCore::WHLSL::Visitor::visit):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * workers/WorkerScriptLoader.h:
+
 2019-08-09  Youenn Fablet  <youenn@apple.com>
 
         Pass a ScriptExecutionContext as input to register/unregister URLRegistry routines

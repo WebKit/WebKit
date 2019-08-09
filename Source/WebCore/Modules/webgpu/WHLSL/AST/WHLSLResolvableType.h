@@ -40,10 +40,15 @@ namespace AST {
 
 class ResolvableType : public Type {
     WTF_MAKE_FAST_ALLOCATED;
-public:
-    ResolvableType() = default;
 
-    virtual ~ResolvableType() = default;
+protected:
+    ~ResolvableType() = default;
+
+public:
+    ResolvableType(Kind kind)
+        : Type(kind)
+    { }
+
 
     ResolvableType(const ResolvableType&) = delete;
     ResolvableType(ResolvableType&&) = default;
@@ -51,14 +56,8 @@ public:
     ResolvableType& operator=(const ResolvableType&) = delete;
     ResolvableType& operator=(ResolvableType&&) = default;
 
-    bool isResolvableType() const override { return true; }
-    virtual bool isFloatLiteralType() const { return false; }
-    virtual bool isIntegerLiteralType() const { return false; }
-    virtual bool isNullLiteralType() const { return false; }
-    virtual bool isUnsignedIntegerLiteralType() const { return false; }
-
-    virtual bool canResolve(const Type&) const = 0;
-    virtual unsigned conversionCost(const UnnamedType&) const = 0;
+    bool canResolve(const Type&) const;
+    unsigned conversionCost(const UnnamedType&) const;
 
     const UnnamedType* maybeResolvedType() const { return m_resolvedType ? &*m_resolvedType : nullptr; }
     const UnnamedType& resolvedType() const
@@ -88,6 +87,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(ResolvableType)
 
 #define SPECIALIZE_TYPE_TRAITS_WHLSL_RESOLVABLE_TYPE(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WHLSL::AST::ToValueTypeName) \

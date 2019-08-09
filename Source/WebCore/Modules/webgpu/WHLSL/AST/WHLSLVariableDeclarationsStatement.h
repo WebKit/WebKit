@@ -39,21 +39,19 @@ namespace WHLSL {
 
 namespace AST {
 
-class VariableDeclarationsStatement : public Statement {
+class VariableDeclarationsStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     VariableDeclarationsStatement(CodeLocation location, VariableDeclarations&& variableDeclarations)
-        : Statement(location)
+        : Statement(location, Kind::VariableDeclarations)
         , m_variableDeclarations(WTFMove(variableDeclarations))
     {
     }
 
-    virtual ~VariableDeclarationsStatement() = default;
+    ~VariableDeclarationsStatement() = default;
 
     VariableDeclarationsStatement(const VariableDeclarationsStatement&) = delete;
     VariableDeclarationsStatement(VariableDeclarationsStatement&&) = default;
-
-    bool isVariableDeclarationsStatement() const override { return true; }
 
     Vector<UniqueRef<VariableDeclaration>>& variableDeclarations() { return m_variableDeclarations; }
 
@@ -66,6 +64,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(VariableDeclarationsStatement)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(VariableDeclarationsStatement, isVariableDeclarationsStatement())
 

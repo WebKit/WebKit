@@ -46,7 +46,7 @@ class ArrayType final : public UnnamedType {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ArrayType);
     ArrayType(CodeLocation location, Ref<UnnamedType> elementType, unsigned numElements)
-        : UnnamedType(location, Kind::ArrayType)
+        : UnnamedType(location, Kind::Array)
         , m_elementType(WTFMove(elementType))
         , m_numElements(numElements)
     {
@@ -58,7 +58,7 @@ public:
         return adoptRef(*new ArrayType(location, WTFMove(elementType), numElements));
     }
 
-    virtual ~ArrayType() = default;
+    ~ArrayType() = default;
 
     const UnnamedType& type() const { return m_elementType; }
     UnnamedType& type() { return m_elementType; }
@@ -74,7 +74,7 @@ public:
         return numElements() == other.numElements() && type() == other.type();
     }
 
-    String toString() const override
+    String toString() const
     {
         return makeString(type().toString(), '[', numElements(), ']');
     }
@@ -89,6 +89,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(ArrayType)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_UNNAMED_TYPE(ArrayType, isArrayType())
 

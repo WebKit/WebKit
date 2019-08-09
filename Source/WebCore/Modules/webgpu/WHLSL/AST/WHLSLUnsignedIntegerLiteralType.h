@@ -40,27 +40,25 @@ namespace AST {
 
 class TypeReference;
 
-class UnsignedIntegerLiteralType : public ResolvableType {
+class UnsignedIntegerLiteralType final : public ResolvableType {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     UnsignedIntegerLiteralType(CodeLocation, unsigned value);
 
-    virtual ~UnsignedIntegerLiteralType();
+    ~UnsignedIntegerLiteralType() = default;
 
     UnsignedIntegerLiteralType(const UnsignedIntegerLiteralType&) = delete;
-    UnsignedIntegerLiteralType(UnsignedIntegerLiteralType&&);
+    UnsignedIntegerLiteralType(UnsignedIntegerLiteralType&&) = default;
 
     UnsignedIntegerLiteralType& operator=(const UnsignedIntegerLiteralType&) = delete;
-    UnsignedIntegerLiteralType& operator=(UnsignedIntegerLiteralType&&);
-
-    bool isUnsignedIntegerLiteralType() const override { return true; }
+    UnsignedIntegerLiteralType& operator=(UnsignedIntegerLiteralType&&) = default;
 
     unsigned value() const { return m_value; }
 
     TypeReference& preferredType() { return m_preferredType; }
 
-    bool canResolve(const Type&) const override;
-    unsigned conversionCost(const UnnamedType&) const override;
+    bool canResolve(const Type&) const;
+    unsigned conversionCost(const UnnamedType&) const;
 
     UnsignedIntegerLiteralType clone() const;
 
@@ -76,6 +74,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(UnsignedIntegerLiteralType)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_RESOLVABLE_TYPE(UnsignedIntegerLiteralType, isUnsignedIntegerLiteralType())
 

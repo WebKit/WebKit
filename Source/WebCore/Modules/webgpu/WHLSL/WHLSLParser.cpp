@@ -1494,7 +1494,7 @@ auto Parser::parseSuffixOperator(UniqueRef<AST::Expression>&& previous) -> Suffi
     }
     case Token::Type::PlusPlus: {
         CodeLocation location(previous->codeLocation(), *suffix);
-        auto result = AST::ReadModifyWriteExpression::create(location, WTFMove(previous));
+        auto result = makeUniqueRef<AST::ReadModifyWriteExpression>(location, WTFMove(previous));
         Vector<UniqueRef<AST::Expression>> callArguments;
         callArguments.append(result->oldVariableReference());
         result->setNewValueExpression(makeUniqueRef<AST::CallExpression>(location, "operator++"_str, WTFMove(callArguments)));
@@ -1504,7 +1504,7 @@ auto Parser::parseSuffixOperator(UniqueRef<AST::Expression>&& previous) -> Suffi
     default: {
         ASSERT(suffix->type == Token::Type::MinusMinus);
         CodeLocation location(previous->codeLocation(), *suffix);
-        auto result = AST::ReadModifyWriteExpression::create(location, WTFMove(previous));
+        auto result = makeUniqueRef<AST::ReadModifyWriteExpression>(location, WTFMove(previous));
         Vector<UniqueRef<AST::Expression>> callArguments;
         callArguments.append(result->oldVariableReference());
         result->setNewValueExpression(makeUniqueRef<AST::CallExpression>(location, "operator--"_str, WTFMove(callArguments)));
@@ -1606,7 +1606,7 @@ auto Parser::completeAssignment(UniqueRef<AST::Expression>&& left) -> Expected<U
         break;
     }
 
-    auto result = AST::ReadModifyWriteExpression::create(location, WTFMove(left));
+    auto result = makeUniqueRef<AST::ReadModifyWriteExpression>(location, WTFMove(left));
     Vector<UniqueRef<AST::Expression>> callArguments;
     callArguments.append(result->oldVariableReference());
     callArguments.append(WTFMove(*right));
@@ -1898,7 +1898,7 @@ auto Parser::parsePossiblePrefix(bool *isEffectful) -> Expected<UniqueRef<AST::E
         case Token::Type::PlusPlus: {
             if (isEffectful)
                 *isEffectful = true;
-            auto result = AST::ReadModifyWriteExpression::create(location, WTFMove(*next));
+            auto result = makeUniqueRef<AST::ReadModifyWriteExpression>(location, WTFMove(*next));
             Vector<UniqueRef<AST::Expression>> callArguments;
             callArguments.append(result->oldVariableReference());
             result->setNewValueExpression(makeUniqueRef<AST::CallExpression>(location, "operator++"_str, WTFMove(callArguments)));
@@ -1908,7 +1908,7 @@ auto Parser::parsePossiblePrefix(bool *isEffectful) -> Expected<UniqueRef<AST::E
         case Token::Type::MinusMinus: {
             if (isEffectful)
                 *isEffectful = true;
-            auto result = AST::ReadModifyWriteExpression::create(location, WTFMove(*next));
+            auto result = makeUniqueRef<AST::ReadModifyWriteExpression>(location, WTFMove(*next));
             Vector<UniqueRef<AST::Expression>> callArguments;
             callArguments.append(result->oldVariableReference());
             result->setNewValueExpression(makeUniqueRef<AST::CallExpression>(location, "operator--"_str, WTFMove(callArguments)));

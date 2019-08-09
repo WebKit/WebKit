@@ -29,6 +29,7 @@
 
 #include "WHLSLAddressSpace.h"
 #include "WHLSLCodeLocation.h"
+#include "WHLSLDefaultDelete.h"
 #include "WHLSLUnnamedType.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Optional.h>
@@ -42,13 +43,43 @@ namespace AST {
 
 class Expression {
     WTF_MAKE_FAST_ALLOCATED;
+
+protected:
+    ~Expression() = default;
+
 public:
-    Expression(CodeLocation codeLocation)
+
+    enum class Kind : uint8_t {
+        Assignment,
+        BooleanLiteral,
+        Call,
+        Comma,
+        Dereference,
+        Dot,
+        GlobalVariableReference,
+        FloatLiteral,
+        Index,
+        IntegerLiteral,
+        Logical,
+        LogicalNot,
+        MakeArrayReference,
+        MakePointer,
+        NullLiteral,
+        ReadModifyWrite,
+        Ternary,
+        UnsignedIntegerLiteral,
+        VariableReference,
+        EnumerationMemberLiteral,
+    };
+
+    Expression(CodeLocation codeLocation, Kind kind)
         : m_codeLocation(codeLocation)
+        , m_kind(kind)
     {
     }
 
-    virtual ~Expression() = default;
+    static void destroy(Expression&);
+    static void destruct(Expression&);
 
     Expression(const Expression&) = delete;
     Expression(Expression&&) = default;
@@ -92,27 +123,28 @@ public:
             other.setTypeAnnotation(TypeAnnotation(*typeAnnotation));
     }
 
-    virtual bool isAssignmentExpression() const { return false; }
-    virtual bool isBooleanLiteral() const { return false; }
-    virtual bool isCallExpression() const { return false; }
-    virtual bool isCommaExpression() const { return false; }
-    virtual bool isDereferenceExpression() const { return false; }
-    virtual bool isDotExpression() const { return false; }
-    virtual bool isGlobalVariableReference() const { return false; }
-    virtual bool isFloatLiteral() const { return false; }
-    virtual bool isIndexExpression() const { return false; }
-    virtual bool isIntegerLiteral() const { return false; }
-    virtual bool isLogicalExpression() const { return false; }
-    virtual bool isLogicalNotExpression() const { return false; }
-    virtual bool isMakeArrayReferenceExpression() const { return false; }
-    virtual bool isMakePointerExpression() const { return false; }
-    virtual bool isNullLiteral() const { return false; }
-    virtual bool isPropertyAccessExpression() const { return false; }
-    virtual bool isReadModifyWriteExpression() const { return false; }
-    virtual bool isTernaryExpression() const { return false; }
-    virtual bool isUnsignedIntegerLiteral() const { return false; }
-    virtual bool isVariableReference() const { return false; }
-    virtual bool isEnumerationMemberLiteral() const { return false; }
+    Kind kind() const  { return m_kind; }
+    bool isAssignmentExpression() const { return kind() == Kind::Assignment; }
+    bool isBooleanLiteral() const { return kind() == Kind::BooleanLiteral; }
+    bool isCallExpression() const { return kind() == Kind::Call; }
+    bool isCommaExpression() const { return kind() == Kind::Comma; }
+    bool isDereferenceExpression() const { return kind() == Kind::Dereference; }
+    bool isDotExpression() const { return kind() == Kind::Dot; }
+    bool isGlobalVariableReference() const { return kind() == Kind::GlobalVariableReference; }
+    bool isFloatLiteral() const { return kind() == Kind::FloatLiteral; }
+    bool isIndexExpression() const { return kind() == Kind::Index; }
+    bool isIntegerLiteral() const { return kind() == Kind::IntegerLiteral; }
+    bool isLogicalExpression() const { return kind() == Kind::Logical; }
+    bool isLogicalNotExpression() const { return kind() == Kind::LogicalNot; }
+    bool isMakeArrayReferenceExpression() const { return kind() == Kind::MakeArrayReference; }
+    bool isMakePointerExpression() const { return kind() == Kind::MakePointer; }
+    bool isNullLiteral() const { return kind() == Kind::NullLiteral; }
+    bool isPropertyAccessExpression() const { return isDotExpression() || isIndexExpression(); }
+    bool isReadModifyWriteExpression() const { return kind() == Kind::ReadModifyWrite; }
+    bool isTernaryExpression() const { return kind() == Kind::Ternary; }
+    bool isUnsignedIntegerLiteral() const { return kind() == Kind::UnsignedIntegerLiteral; }
+    bool isVariableReference() const { return kind() == Kind::VariableReference; }
+    bool isEnumerationMemberLiteral() const { return kind() == Kind::EnumerationMemberLiteral; }
 
     CodeLocation codeLocation() const { return m_codeLocation; }
     void updateCodeLocation(CodeLocation location) { m_codeLocation = location; }
@@ -121,6 +153,7 @@ private:
     CodeLocation m_codeLocation;
     RefPtr<UnnamedType> m_type;
     Optional<TypeAnnotation> m_typeAnnotation;
+    Kind m_kind;
 };
 
 } // namespace AST
@@ -128,6 +161,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(Expression)
 
 #define SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WHLSL::AST::ToValueTypeName) \

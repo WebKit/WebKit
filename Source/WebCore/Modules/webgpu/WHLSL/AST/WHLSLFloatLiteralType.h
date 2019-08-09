@@ -40,27 +40,25 @@ namespace AST {
 
 class TypeReference;
 
-class FloatLiteralType : public ResolvableType {
+class FloatLiteralType final : public ResolvableType {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FloatLiteralType(CodeLocation, float value);
 
-    virtual ~FloatLiteralType();
+    ~FloatLiteralType() = default;
 
     FloatLiteralType(const FloatLiteralType&) = delete;
-    FloatLiteralType(FloatLiteralType&&);
+    FloatLiteralType(FloatLiteralType&&) = default;
 
     FloatLiteralType& operator=(const FloatLiteralType&) = delete;
-    FloatLiteralType& operator=(FloatLiteralType&&);
-
-    bool isFloatLiteralType() const override { return true; }
+    FloatLiteralType& operator=(FloatLiteralType&&) = default;
 
     float value() const { return m_value; }
 
     TypeReference& preferredType() { return m_preferredType; }
 
-    bool canResolve(const Type&) const override;
-    unsigned conversionCost(const UnnamedType&) const override;
+    bool canResolve(const Type&) const;
+    unsigned conversionCost(const UnnamedType&) const;
 
     FloatLiteralType clone() const;
 
@@ -76,6 +74,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(FloatLiteralType)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_RESOLVABLE_TYPE(FloatLiteralType, isFloatLiteralType())
 

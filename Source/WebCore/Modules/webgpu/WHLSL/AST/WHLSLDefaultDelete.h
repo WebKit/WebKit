@@ -27,48 +27,30 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLExpression.h"
-#include "WHLSLStatement.h"
-#include <wtf/FastMalloc.h>
-#include <wtf/UniqueRef.h>
+#include <type_traits>
 
-namespace WebCore {
-
-namespace WHLSL {
-
-namespace AST {
-
-class WhileLoop final : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WhileLoop(CodeLocation location, UniqueRef<Expression>&& conditional, UniqueRef<Statement>&& body)
-        : Statement(location, Kind::WhileLoop)
-        , m_conditional(WTFMove(conditional))
-        , m_body(WTFMove(body))
-    {
-    }
-
-    ~WhileLoop() = default;
-
-    WhileLoop(const WhileLoop&) = delete;
-    WhileLoop(WhileLoop&&) = default;
-
-    Expression& conditional() { return m_conditional; }
-    Statement& body() { return m_body; }
-
-private:
-    UniqueRef<Expression> m_conditional;
-    UniqueRef<Statement> m_body;
-};
-
-} // namespace AST
-
-}
-
-}
-
-DEFINE_DEFAULT_DELETE(WhileLoop)
-
-SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(WhileLoop, isWhileLoop())
+#define DEFINE_DEFAULT_DELETE(type) \
+    namespace std { \
+        template<> \
+        struct default_delete<WebCore::WHLSL::AST::type> { \
+            template <typename T> \
+            void callDelete(T* t) \
+            { \
+                delete t; \
+            } \
+            template <typename T> \
+            void callDestroy(T* t) \
+            { \
+                WebCore::WHLSL::AST::type::destroy(*t); \
+            } \
+            constexpr void operator()(WebCore::WHLSL::AST::type* value) \
+            { \
+                if constexpr (std::is_final<WebCore::WHLSL::AST::type>::value) \
+                    callDelete(value); \
+                else \
+                    callDestroy(value); \
+            } \
+        }; \
+    } \
 
 #endif

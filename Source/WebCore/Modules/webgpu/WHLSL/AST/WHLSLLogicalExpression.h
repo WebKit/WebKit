@@ -37,7 +37,7 @@ namespace WHLSL {
 
 namespace AST {
 
-class LogicalExpression : public Expression {
+class LogicalExpression final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Type : uint8_t {
@@ -46,21 +46,19 @@ public:
     };
 
     LogicalExpression(CodeLocation location, Type type, UniqueRef<Expression>&& left, UniqueRef<Expression>&& right)
-        : Expression(location)
+        : Expression(location, Kind::Logical)
         , m_type(type)
         , m_left(WTFMove(left))
         , m_right(WTFMove(right))
     {
     }
 
-    virtual ~LogicalExpression() = default;
+    ~LogicalExpression() = default;
 
     LogicalExpression(const LogicalExpression&) = delete;
     LogicalExpression(LogicalExpression&&) = default;
 
     Type type() const { return m_type; }
-
-    bool isLogicalExpression() const override { return true; }
 
     Expression& left() { return m_left; }
     Expression& right() { return m_right; }
@@ -76,6 +74,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(LogicalExpression)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(LogicalExpression, isLogicalExpression())
 

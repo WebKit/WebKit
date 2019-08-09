@@ -40,25 +40,23 @@ namespace AST {
 class EnumerationDefinition;
 class EnumerationMember;
 
-class EnumerationMemberLiteral : public Expression {
+class EnumerationMemberLiteral final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     EnumerationMemberLiteral(CodeLocation location, String&& left, String&& right)
-        : Expression(location)
+        : Expression(location, Kind::EnumerationMemberLiteral)
         , m_left(WTFMove(left))
         , m_right(WTFMove(right))
     {
     }
 
-    virtual ~EnumerationMemberLiteral() = default;
+    ~EnumerationMemberLiteral() = default;
 
     explicit EnumerationMemberLiteral(const EnumerationMemberLiteral&) = delete;
     EnumerationMemberLiteral(EnumerationMemberLiteral&&) = default;
 
     EnumerationMemberLiteral& operator=(const EnumerationMemberLiteral&) = delete;
     EnumerationMemberLiteral& operator=(EnumerationMemberLiteral&&) = default;
-
-    bool isEnumerationMemberLiteral() const override { return true; }
 
     static EnumerationMemberLiteral wrap(CodeLocation location, String&& left, String&& right, EnumerationDefinition& enumerationDefinition, EnumerationMember& enumerationMember)
     {
@@ -117,6 +115,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(EnumerationMemberLiteral)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(EnumerationMemberLiteral, isEnumerationMemberLiteral())
 

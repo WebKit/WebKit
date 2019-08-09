@@ -37,20 +37,18 @@ namespace WHLSL {
 
 namespace AST {
 
-class Fallthrough : public Statement {
+class Fallthrough final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Fallthrough(CodeLocation location)
-        : Statement(location)
+        : Statement(location, Kind::Fallthrough)
     {
     }
 
-    virtual ~Fallthrough() = default;
+    ~Fallthrough() = default;
 
     Fallthrough(const Fallthrough&) = delete;
     Fallthrough(Fallthrough&&) = default;
-
-    bool isFallthrough() const override { return true; }
 
 private:
 };
@@ -60,6 +58,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(Fallthrough)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(Fallthrough, isFallthrough())
 

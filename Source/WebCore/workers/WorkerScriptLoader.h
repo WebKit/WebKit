@@ -79,6 +79,7 @@ public:
 
 private:
     friend class WTF::RefCounted<WorkerScriptLoader>;
+    friend struct std::default_delete<WorkerScriptLoader>;
 
     WorkerScriptLoader();
     ~WorkerScriptLoader();

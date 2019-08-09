@@ -40,27 +40,25 @@ namespace AST {
 
 class TypeReference;
 
-class IntegerLiteralType : public ResolvableType {
+class IntegerLiteralType final : public ResolvableType {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     IntegerLiteralType(CodeLocation, int value);
 
-    virtual ~IntegerLiteralType();
+    ~IntegerLiteralType() = default;
 
     IntegerLiteralType(const IntegerLiteralType&) = delete;
-    IntegerLiteralType(IntegerLiteralType&&);
+    IntegerLiteralType(IntegerLiteralType&&) = default;
 
     IntegerLiteralType& operator=(const IntegerLiteralType&) = delete;
-    IntegerLiteralType& operator=(IntegerLiteralType&&);
-
-    bool isIntegerLiteralType() const override { return true; }
+    IntegerLiteralType& operator=(IntegerLiteralType&&) = default;
 
     int value() const { return m_value; }
 
     TypeReference& preferredType() { return m_preferredType; }
 
-    bool canResolve(const Type&) const override;
-    unsigned conversionCost(const UnnamedType&) const override;
+    bool canResolve(const Type&) const;
+    unsigned conversionCost(const UnnamedType&) const;
 
     IntegerLiteralType clone() const;
 
@@ -76,6 +74,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(IntegerLiteralType)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_RESOLVABLE_TYPE(IntegerLiteralType, isIntegerLiteralType())
 

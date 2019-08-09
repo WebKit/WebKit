@@ -45,7 +45,7 @@ namespace AST {
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198158 macOS Sierra doesn't seem to support putting Variants inside Variants,
 // so this is a wrapper class to make sure that doesn't happen. As soon as we don't
 // have to support Sierra, this can be migrated to a Variant proper.
-class ConstantExpression {
+class ConstantExpression final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ConstantExpression(IntegerLiteral&& integerLiteral)

@@ -40,35 +40,29 @@ namespace WHLSL {
 
 namespace AST {
 
-class TypeDefinition : public NamedType {
+class TypeDefinition final : public NamedType {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     TypeDefinition(CodeLocation location, String&& name, Ref<UnnamedType> type)
-        : NamedType(location, WTFMove(name))
+        : NamedType(Kind::TypeDefinition, location, WTFMove(name))
         , m_type(WTFMove(type))
     {
     }
 
-    virtual ~TypeDefinition() = default;
+    ~TypeDefinition() = default;
 
     TypeDefinition(const TypeDefinition&) = delete;
     TypeDefinition(TypeDefinition&&) = default;
 
-    bool isTypeDefinition() const override { return true; }
-
     UnnamedType& type() { return m_type; }
 
-    const Type& unifyNode() const override
-    {
-        return m_type->unifyNode();
-    }
-
-    Type& unifyNode() override
-    {
-        return m_type->unifyNode();
-    }
-
 private:
+    friend class Type;
+    Type& unifyNodeImpl()
+    {
+        return m_type->unifyNode();
+    }
+
     Ref<UnnamedType> m_type;
 };
 
@@ -77,6 +71,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(TypeDefinition)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_NAMED_TYPE(TypeDefinition, isTypeDefinition())
 

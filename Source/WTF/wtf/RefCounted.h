@@ -136,13 +136,13 @@ inline void adopted(RefCountedBase* object)
 }
 #endif
 
-template<typename T> class RefCounted : public RefCountedBase {
+template<typename T, typename Deleter = std::default_delete<T>> class RefCounted : public RefCountedBase {
     WTF_MAKE_NONCOPYABLE(RefCounted); WTF_MAKE_FAST_ALLOCATED;
 public:
     void deref() const
     {
         if (derefBase())
-            delete static_cast<const T*>(this);
+            Deleter()(const_cast<T*>(static_cast<const T*>(this)));
     }
 
 protected:

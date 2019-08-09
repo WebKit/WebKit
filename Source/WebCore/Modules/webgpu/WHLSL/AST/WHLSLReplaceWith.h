@@ -38,7 +38,7 @@ ALWAYS_INLINE New* replaceWith(Old& old, Args&&... args)
 {
     static_assert(sizeof(New) <= sizeof(Old), "This is needed for the placement new below to not overwrite unowned memory.");
     void* location = &old;
-    old.~Old();
+    Old::destruct(old);
     return new (location) New(std::forward<Args>(args)...);
 }
 

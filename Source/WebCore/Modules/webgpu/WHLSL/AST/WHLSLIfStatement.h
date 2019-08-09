@@ -39,23 +39,21 @@ namespace WHLSL {
 
 namespace AST {
 
-class IfStatement : public Statement {
+class IfStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     IfStatement(CodeLocation location, UniqueRef<Expression>&& conditional, UniqueRef<Statement>&& body, std::unique_ptr<Statement>&& elseBody)
-        : Statement(location)
+        : Statement(location, Kind::If)
         , m_conditional(WTFMove(conditional))
         , m_body(WTFMove(body))
         , m_elseBody(WTFMove(elseBody))
     {
     }
 
-    virtual ~IfStatement() = default;
+    ~IfStatement() = default;
 
     IfStatement(const IfStatement&) = delete;
     IfStatement(IfStatement&&) = default;
-
-    bool isIfStatement() const override { return true; }
 
     Expression& conditional() { return m_conditional; }
     Statement& body() { return m_body; }
@@ -72,6 +70,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(IfStatement)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(IfStatement, isIfStatement())
 

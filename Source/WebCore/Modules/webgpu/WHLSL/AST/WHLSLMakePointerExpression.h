@@ -38,22 +38,20 @@ namespace WHLSL {
 
 namespace AST {
 
-class MakePointerExpression : public Expression {
+class MakePointerExpression final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     MakePointerExpression(CodeLocation location, UniqueRef<Expression>&& leftValue, AddressEscapeMode addressEscapeMode)
-        : Expression(location)
+        : Expression(location, Kind::MakePointer)
         , m_leftValue(WTFMove(leftValue))
         , m_addressEscapeMode(addressEscapeMode)
     {
     }
 
-    virtual ~MakePointerExpression() = default;
+    ~MakePointerExpression() = default;
 
     MakePointerExpression(const MakePointerExpression&) = delete;
     MakePointerExpression(MakePointerExpression&&) = default;
-
-    bool isMakePointerExpression() const override { return true; }
 
     Expression& leftValue() { return m_leftValue; }
 
@@ -69,6 +67,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(MakePointerExpression)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(MakePointerExpression, isMakePointerExpression())
 

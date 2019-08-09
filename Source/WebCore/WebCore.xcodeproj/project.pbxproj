@@ -2230,7 +2230,6 @@
 		7C8139A81ED6287400CE26E8 /* JSDOMOperationReturningPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8139A51ED6281D00CE26E8 /* JSDOMOperationReturningPromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C8139AA1ED6604B00CE26E8 /* JSDOMCastedThisErrorBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8139A91ED62DF200CE26E8 /* JSDOMCastedThisErrorBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C83DE861D04CC5D00FEBCF3 /* SpringSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C83DE851D04CBD400FEBCF3 /* SpringSolver.h */; };
-		7C85B20222FB04850030684F /* WHLSLUnnamedType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C85B20122FB04850030684F /* WHLSLUnnamedType.cpp */; };
 		7C8E34AD1E4A33AF0054CE23 /* JSDOMConvertAny.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34921E4A338E0054CE23 /* JSDOMConvertAny.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C8E34AE1E4A33AF0054CE23 /* JSDOMConvertBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34931E4A338E0054CE23 /* JSDOMConvertBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C8E34AF1E4A33AF0054CE23 /* JSDOMConvertBoolean.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34941E4A338E0054CE23 /* JSDOMConvertBoolean.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8313,6 +8312,7 @@
 		52131E5A1C4F15610033F802 /* VideoFullscreenInterfaceMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenInterfaceMac.mm; sourceTree = "<group>"; };
 		5215862C229377B7005925EF /* WHLSLAST.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLAST.h; sourceTree = "<group>"; };
 		522BAB9622E6A36200C54CE9 /* WHLSLCodeLocation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLCodeLocation.h; sourceTree = "<group>"; };
+		522D07A322FBAB4300B905BE /* WHLSLExpression.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLExpression.cpp; sourceTree = "<group>"; };
 		522DA3D3229E1D390042D151 /* WHLSLGlobalVariableReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLGlobalVariableReference.h; sourceTree = "<group>"; };
 		522E1A172297D6D400E5D36A /* WHLSLPreserveVariableLifetimes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLPreserveVariableLifetimes.cpp; sourceTree = "<group>"; };
 		522E1A192297D6D400E5D36A /* WHLSLPreserveVariableLifetimes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLPreserveVariableLifetimes.h; sourceTree = "<group>"; };
@@ -8325,6 +8325,7 @@
 		52B0D4BD1C57FD1E0077CE53 /* PlatformView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformView.h; sourceTree = "<group>"; };
 		52B0D4BF1C57FD660077CE53 /* VideoFullscreenChangeObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenChangeObserver.h; sourceTree = "<group>"; };
 		52B0D4C11C57FF910077CE53 /* VideoFullscreenInterfaceMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenInterfaceMac.h; sourceTree = "<group>"; };
+		52CB11DB22FDDB2E009F0A64 /* WHLSLDefaultDelete.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLDefaultDelete.h; sourceTree = "<group>"; };
 		52D5A18D1C54590300DE34A3 /* VideoFullscreenLayerManagerObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenLayerManagerObjC.mm; sourceTree = "<group>"; };
 		52D5A18E1C54590300DE34A3 /* VideoFullscreenLayerManagerObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenLayerManagerObjC.h; sourceTree = "<group>"; };
 		52D5A1A41C57488900DE34A3 /* VideoFullscreenModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenModel.h; sourceTree = "<group>"; };
@@ -17074,6 +17075,7 @@
 				C21BF70621CD89C700227979 /* WHLSLCommaExpression.h */,
 				C21BF73321CD89F000227979 /* WHLSLConstantExpression.h */,
 				C21BF6F521CD89B500227979 /* WHLSLContinue.h */,
+				52CB11DB22FDDB2E009F0A64 /* WHLSLDefaultDelete.h */,
 				C21BF70121CD89C400227979 /* WHLSLDereferenceExpression.h */,
 				C21BF71821CD89D700227979 /* WHLSLDotExpression.h */,
 				C21BF6FB21CD89BE00227979 /* WHLSLDoWhileLoop.h */,
@@ -17083,6 +17085,7 @@
 				C21BF72621CD89E300227979 /* WHLSLEnumerationMember.h */,
 				C21BF70221CD89C400227979 /* WHLSLEnumerationMemberLiteral.h */,
 				C21BF70C21CD89CC00227979 /* WHLSLExpression.h */,
+				522D07A322FBAB4300B905BE /* WHLSLExpression.cpp */,
 				C21BF70021CD89C200227979 /* WHLSLFallthrough.h */,
 				C21BF73521CD89F200227979 /* WHLSLFloatLiteral.h */,
 				1CB69B3821DF03E1006E846A /* WHLSLFloatLiteralType.cpp */,
@@ -33516,7 +33519,6 @@
 				F12171F516A8CED2000053CA /* WebVTTElement.cpp in Sources */,
 				5D21A80213ECE5DF00BB7064 /* WebVTTParser.cpp in Sources */,
 				B10B6981140C174000BC1C26 /* WebVTTTokenizer.cpp in Sources */,
-				7C85B20222FB04850030684F /* WHLSLUnnamedType.cpp in Sources */,
 				A14832C2187F65C700DA63A6 /* WKUtilities.c in Sources */,
 				A833C7CC0A2CF07400D57664 /* XLinkNames.cpp in Sources */,
 				A833C80C0A2CF25600D57664 /* XMLNames.cpp in Sources */,

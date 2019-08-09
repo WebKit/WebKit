@@ -40,22 +40,20 @@ namespace WHLSL {
 
 namespace AST {
 
-class SwitchCase : public Statement {
+class SwitchCase final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     SwitchCase(CodeLocation location, Optional<ConstantExpression>&& value, Block&& block)
-        : Statement(location)
+        : Statement(location, Kind::SwitchCase)
         , m_value(WTFMove(value))
         , m_block(WTFMove(block))
     {
     }
 
-    virtual ~SwitchCase() = default;
+    ~SwitchCase() = default;
 
     SwitchCase(const SwitchCase&) = delete;
     SwitchCase(SwitchCase&&) = default;
-
-    bool isSwitchCase() const override { return true; }
 
     Optional<ConstantExpression>& value() { return m_value; }
     Block& block() { return m_block; }
@@ -70,6 +68,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(SwitchCase)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(SwitchCase, isSwitchCase())
 

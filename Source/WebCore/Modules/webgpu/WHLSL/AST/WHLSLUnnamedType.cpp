@@ -41,32 +41,36 @@ namespace AST {
 
 unsigned UnnamedType::hash() const
 {
-    switch (m_kind) {
+    switch (kind()) {
     case Kind::TypeReference:
         return downcast<TypeReference>(*this).hash();
-    case Kind::PointerType:
+    case Kind::Pointer:
         return downcast<PointerType>(*this).hash();
-    case Kind::ArrayReferenceType:
+    case Kind::ArrayReference:
         return downcast<ArrayReferenceType>(*this).hash();
-    case Kind::ArrayType:
+    case Kind::Array:
         return downcast<ArrayType>(*this).hash();
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
 bool UnnamedType::operator==(const UnnamedType& other) const
 {
-    if (other.m_kind != m_kind)
+    if (other.kind() != kind())
         return false;
 
-    switch (m_kind) {
+    switch (kind()) {
     case Kind::TypeReference:
         return downcast<TypeReference>(*this) == downcast<TypeReference>(other);
-    case Kind::PointerType:
+    case Kind::Pointer:
         return downcast<PointerType>(*this) == downcast<PointerType>(other);
-    case Kind::ArrayReferenceType:
+    case Kind::ArrayReference:
         return downcast<ArrayReferenceType>(*this) == downcast<ArrayReferenceType>(other);
-    case Kind::ArrayType:
+    case Kind::Array:
         return downcast<ArrayType>(*this) == downcast<ArrayType>(other);
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 

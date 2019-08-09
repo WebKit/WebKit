@@ -40,23 +40,22 @@ namespace AST {
 
 class PropertyAccessExpression : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
+protected:
+    ~PropertyAccessExpression() = default;
+
 public:
-    PropertyAccessExpression(CodeLocation location, UniqueRef<Expression>&& base)
-        : Expression(location)
+    PropertyAccessExpression(CodeLocation location, Kind kind, UniqueRef<Expression>&& base)
+        : Expression(location, kind)
         , m_base(WTFMove(base))
     {
     }
 
-    virtual ~PropertyAccessExpression() = default;
-
     PropertyAccessExpression(const PropertyAccessExpression&) = delete;
     PropertyAccessExpression(PropertyAccessExpression&&) = default;
 
-    bool isPropertyAccessExpression() const override { return true; }
-
-    virtual String getterFunctionName() const = 0;
-    virtual String setterFunctionName() const = 0;
-    virtual String anderFunctionName() const = 0;
+    String getterFunctionName() const;
+    String setterFunctionName() const;
+    String anderFunctionName() const;
 
     FunctionDeclaration* getterFunction() { return m_getterFunction; }
     FunctionDeclaration* anderFunction() { return m_anderFunction; }

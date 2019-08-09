@@ -72,9 +72,9 @@ public:
     
     AST::UnnamedType::Kind kind() { return m_kind; }
     bool isReferenceTypeNameNode() const { return m_kind == AST::UnnamedType::Kind::TypeReference; }
-    bool isPointerTypeNameNode() const { return m_kind == AST::UnnamedType::Kind::PointerType; }
-    bool isArrayReferenceTypeNameNode() const { return m_kind == AST::UnnamedType::Kind::ArrayReferenceType; }
-    bool isArrayTypeNameNode() const { return m_kind == AST::UnnamedType::Kind::ArrayType; }
+    bool isPointerTypeNameNode() const { return m_kind == AST::UnnamedType::Kind::Pointer; }
+    bool isArrayReferenceTypeNameNode() const { return m_kind == AST::UnnamedType::Kind::ArrayReference; }
+    bool isArrayTypeNameNode() const { return m_kind == AST::UnnamedType::Kind::Array; }
 
     BaseTypeNameNode* parent() { return m_parent; }
     MangledTypeName mangledName() const { return m_mangledName; }
@@ -89,7 +89,7 @@ class ArrayTypeNameNode final : public BaseTypeNameNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ArrayTypeNameNode(BaseTypeNameNode* parent, MangledTypeName&& mangledName, unsigned numElements)
-        : BaseTypeNameNode(parent, WTFMove(mangledName), AST::UnnamedType::Kind::ArrayType)
+        : BaseTypeNameNode(parent, WTFMove(mangledName), AST::UnnamedType::Kind::Array)
         , m_numElements(numElements)
     {
     }
@@ -104,7 +104,7 @@ class ArrayReferenceTypeNameNode final : public BaseTypeNameNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ArrayReferenceTypeNameNode(BaseTypeNameNode* parent, MangledTypeName&& mangledName, AST::AddressSpace addressSpace)
-        : BaseTypeNameNode(parent, WTFMove(mangledName), AST::UnnamedType::Kind::ArrayReferenceType)
+        : BaseTypeNameNode(parent, WTFMove(mangledName), AST::UnnamedType::Kind::ArrayReference)
         , m_addressSpace(addressSpace)
     {
     }
@@ -119,7 +119,7 @@ class PointerTypeNameNode final : public BaseTypeNameNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PointerTypeNameNode(BaseTypeNameNode* parent, MangledTypeName&& mangledName, AST::AddressSpace addressSpace)
-        : BaseTypeNameNode(parent, WTFMove(mangledName), AST::UnnamedType::Kind::PointerType)
+        : BaseTypeNameNode(parent, WTFMove(mangledName), AST::UnnamedType::Kind::Pointer)
         , m_addressSpace(addressSpace)
     {
     }
@@ -274,18 +274,20 @@ std::unique_ptr<BaseTypeNameNode> TypeNamer::createNameNode(AST::UnnamedType& un
         auto& typeReference = downcast<AST::TypeReference>(unnamedType);
         return std::make_unique<ReferenceTypeNameNode>(parent, generateNextTypeName(), typeReference.resolvedType());
     }
-    case AST::UnnamedType::Kind::PointerType: {
+    case AST::UnnamedType::Kind::Pointer: {
         auto& pointerType = downcast<AST::PointerType>(unnamedType);
         return std::make_unique<PointerTypeNameNode>(parent, generateNextTypeName(), pointerType.addressSpace());
     }
-    case AST::UnnamedType::Kind::ArrayReferenceType: {
+    case AST::UnnamedType::Kind::ArrayReference: {
         auto& arrayReferenceType = downcast<AST::ArrayReferenceType>(unnamedType);
         return std::make_unique<ArrayReferenceTypeNameNode>(parent, generateNextTypeName(), arrayReferenceType.addressSpace());
     }
-    case AST::UnnamedType::Kind::ArrayType: {
+    case AST::UnnamedType::Kind::Array: {
         auto& arrayType = downcast<AST::ArrayType>(unnamedType);
         return std::make_unique<ArrayTypeNameNode>(parent, generateNextTypeName(), arrayType.numElements());
     }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
@@ -294,12 +296,14 @@ static AST::UnnamedType* parent(AST::UnnamedType& unnamedType)
     switch (unnamedType.kind()) {
     case AST::UnnamedType::Kind::TypeReference:
         return nullptr;
-    case AST::UnnamedType::Kind::PointerType:
+    case AST::UnnamedType::Kind::Pointer:
         return &downcast<AST::PointerType>(unnamedType).elementType();
-    case AST::UnnamedType::Kind::ArrayReferenceType:
+    case AST::UnnamedType::Kind::ArrayReference:
         return &downcast<AST::ArrayReferenceType>(unnamedType).elementType();
-    case AST::UnnamedType::Kind::ArrayType:
+    case AST::UnnamedType::Kind::Array:
         return &downcast<AST::ArrayType>(unnamedType).type();
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
@@ -361,13 +365,13 @@ void TypeNamer::emitUnnamedTypeDefinition(StringBuilder& stringBuilder, BaseType
         stringBuilder.flexibleAppend("typedef ", mangledNameForType(namedType), ' ', baseTypeNameNode.mangledName(), ";\n");
         break;
     }
-    case AST::UnnamedType::Kind::PointerType: {
+    case AST::UnnamedType::Kind::Pointer: {
         auto& pointerType = downcast<PointerTypeNameNode>(baseTypeNameNode);
         ASSERT(baseTypeNameNode.parent());
         stringBuilder.flexibleAppend("typedef ", toString(pointerType.addressSpace()), ' ', pointerType.parent()->mangledName(), "* ", pointerType.mangledName(), ";\n");
         break;
     }
-    case AST::UnnamedType::Kind::ArrayReferenceType: {
+    case AST::UnnamedType::Kind::ArrayReference: {
         auto& arrayReferenceType = downcast<ArrayReferenceTypeNameNode>(baseTypeNameNode);
         ASSERT(baseTypeNameNode.parent());
         stringBuilder.flexibleAppend(
@@ -378,12 +382,14 @@ void TypeNamer::emitUnnamedTypeDefinition(StringBuilder& stringBuilder, BaseType
         );
         break;
     }
-    case AST::UnnamedType::Kind::ArrayType: {
+    case AST::UnnamedType::Kind::Array: {
         auto& arrayType = downcast<ArrayTypeNameNode>(baseTypeNameNode);
         ASSERT(baseTypeNameNode.parent());
         stringBuilder.flexibleAppend("typedef array<", arrayType.parent()->mangledName(), ", ", arrayType.numElements(), "> ", arrayType.mangledName(), ";\n");
         break;
     }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     emittedUnnamedTypes.add(&baseTypeNameNode);

@@ -32,6 +32,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/text/StringConcatenate.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -46,17 +47,18 @@ class PointerType final : public ReferenceType {
     using Base = ReferenceType;
 
     PointerType(CodeLocation location, AddressSpace addressSpace, Ref<UnnamedType> elementType)
-        : Base(location, addressSpace, WTFMove(elementType), Kind::PointerType)
+        : Base(location, addressSpace, WTFMove(elementType), Kind::Pointer)
     {
     }
 
 public:
     static Ref<PointerType> create(CodeLocation location, AddressSpace addressSpace, Ref<UnnamedType> elementType)
     {
-        return adoptRef(*new PointerType(location, addressSpace, WTFMove(elementType)));
+        auto result = adoptRef(*new PointerType(location, addressSpace, WTFMove(elementType)));
+        return result;
     }
 
-    virtual ~PointerType() = default;
+    ~PointerType() = default;
 
     unsigned hash() const
     {
@@ -68,7 +70,7 @@ public:
         return addressSpace() == other.addressSpace() && elementType() == other.elementType();
     }
 
-    String toString() const override
+    String toString() const
     {
         return makeString(elementType().toString(), '*');
     }
@@ -79,6 +81,8 @@ public:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(PointerType)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_UNNAMED_TYPE(PointerType, isPointerType())
 

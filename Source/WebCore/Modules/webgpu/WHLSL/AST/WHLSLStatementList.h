@@ -38,20 +38,18 @@ namespace WHLSL {
 
 namespace AST {
 
-class StatementList : public Statement {
+class StatementList final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
     using Base = Statement;
 public:
     StatementList(CodeLocation location, Statements&& statements)
-        : Base(location)
+        : Base(location, Kind::StatementList)
         , m_statements(WTFMove(statements))
     { }
 
-    virtual ~StatementList() = default;
+    ~StatementList() = default;
 
     Statements& statements() { return m_statements; }
-
-    bool isStatementList() const override { return true; }
 
 private:
     Statements m_statements;
@@ -62,6 +60,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(StatementList)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(StatementList, isStatementList())
 

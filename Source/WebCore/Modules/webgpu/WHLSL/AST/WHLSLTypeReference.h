@@ -59,7 +59,7 @@ public:
         return adoptRef(* new TypeReference(location, WTFMove(name), WTFMove(typeArguments)));
     }
 
-    virtual ~TypeReference() = default;
+    ~TypeReference() = default;
 
     static Ref<TypeReference> wrap(CodeLocation, NamedType& resolvedType);
 
@@ -70,18 +70,6 @@ public:
     {
         ASSERT(m_resolvedType);
         return *m_resolvedType;
-    }
-
-    const Type& unifyNode() const override
-    {
-        ASSERT(m_resolvedType);
-        return m_resolvedType->unifyNode();
-    }
-
-    Type& unifyNode() override
-    {
-        ASSERT(m_resolvedType);
-        return m_resolvedType->unifyNode();
     }
 
     void setResolvedType(NamedType& resolvedType)
@@ -103,13 +91,20 @@ public:
         return &unifyNode() == &other.unifyNode();
     }
 
-    String toString() const override
+    String toString() const
     {
         ASSERT(m_resolvedType);
         return m_resolvedType->name();
     }
 
 private:
+    friend class Type;
+    Type& unifyNodeImpl()
+    {
+        ASSERT(m_resolvedType);
+        return m_resolvedType->unifyNode();
+    }
+
     String m_name;
     TypeArguments m_typeArguments;
     NamedType* m_resolvedType { nullptr };
@@ -120,6 +115,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(TypeReference)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_UNNAMED_TYPE(TypeReference, isTypeReference())
 

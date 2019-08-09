@@ -40,16 +40,11 @@ namespace WHLSL {
 namespace AST {
 
 IntegerLiteralType::IntegerLiteralType(CodeLocation location, int value)
-    : m_value(value)
+    : ResolvableType(Kind::IntegerLiteral)
+    , m_value(value)
     , m_preferredType(TypeReference::create(location, "int"_str, TypeArguments()))
 {
 }
-
-IntegerLiteralType::~IntegerLiteralType() = default;
-
-IntegerLiteralType::IntegerLiteralType(IntegerLiteralType&&) = default;
-
-IntegerLiteralType& IntegerLiteralType::operator=(IntegerLiteralType&&) = default;
 
 bool IntegerLiteralType::canResolve(const Type& type) const
 {

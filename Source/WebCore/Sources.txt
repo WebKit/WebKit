@@ -341,6 +341,7 @@ Modules/webgpu/WHLSL/Metal/WHLSLNativeTypeWriter.cpp
 Modules/webgpu/WHLSL/Metal/WHLSLVertexBufferIndexCalculator.cpp
 Modules/webgpu/WHLSL/WHLSLFunctionStageChecker.cpp
 Modules/webgpu/WHLSL/AST/WHLSLTypeArgument.cpp
+Modules/webgpu/WHLSL/AST/WHLSLExpression.cpp
 Modules/webgpu/WHLSL/AST/WHLSLBuiltInSemantic.cpp
 Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.cpp
 Modules/webgpu/WHLSL/AST/WHLSLSpecializationConstantSemantic.cpp
@@ -349,9 +350,12 @@ Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.cpp
 Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.cpp
 Modules/webgpu/WHLSL/AST/WHLSLNullLiteralType.cpp
 Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.cpp
+Modules/webgpu/WHLSL/AST/WHLSLStatement.cpp
+Modules/webgpu/WHLSL/AST/WHLSLType.cpp
 Modules/webgpu/WHLSL/AST/WHLSLTypeReference.cpp
 Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteral.cpp
 Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteral.cpp
+Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.cpp
 Modules/webgpu/WHLSL/WHLSLPrepare.cpp
 Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp
 Modules/webgpu/WebGPU.cpp

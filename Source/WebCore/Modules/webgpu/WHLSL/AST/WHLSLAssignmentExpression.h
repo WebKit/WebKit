@@ -37,11 +37,11 @@ namespace WHLSL {
 
 namespace AST {
 
-class AssignmentExpression : public Expression {
+class AssignmentExpression final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     AssignmentExpression(CodeLocation location, UniqueRef<Expression>&& left, UniqueRef<Expression>&& right)
-        : Expression(location)
+        : Expression(location, Kind::Assignment)
         , m_left(WTFMove(left))
         , m_right(WTFMove(right))
     {
@@ -50,12 +50,10 @@ public:
 #endif
     }
 
-    virtual ~AssignmentExpression() = default;
+    ~AssignmentExpression() = default;
 
     AssignmentExpression(const AssignmentExpression&) = delete;
     AssignmentExpression(AssignmentExpression&&) = default;
-
-    bool isAssignmentExpression() const override { return true; }
 
     Expression& left() { return m_left; }
     Expression& right() { return m_right; }
@@ -74,6 +72,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(AssignmentExpression)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(AssignmentExpression, isAssignmentExpression())
 

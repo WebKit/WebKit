@@ -39,16 +39,11 @@ namespace WHLSL {
 namespace AST {
 
 FloatLiteralType::FloatLiteralType(CodeLocation location, float value)
-    : m_value(value)
+    : ResolvableType(Kind::FloatLiteral)
+    , m_value(value)
     , m_preferredType(TypeReference::create(location, "float"_str, TypeArguments()))
 {
 }
-
-FloatLiteralType::~FloatLiteralType() = default;
-
-FloatLiteralType::FloatLiteralType(FloatLiteralType&&) = default;
-
-FloatLiteralType& FloatLiteralType::operator=(FloatLiteralType&&) = default;
 
 bool FloatLiteralType::canResolve(const Type& type) const
 {

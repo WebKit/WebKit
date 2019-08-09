@@ -41,16 +41,11 @@ namespace WHLSL {
 namespace AST {
 
 UnsignedIntegerLiteralType::UnsignedIntegerLiteralType(CodeLocation location, unsigned value)
-    : m_value(value)
+    : ResolvableType(Kind::UnsignedIntegerLiteral)
+    , m_value(value)
     , m_preferredType(TypeReference::create(location, "uint"_str, TypeArguments()))
 {
 }
-
-UnsignedIntegerLiteralType::~UnsignedIntegerLiteralType() = default;
-
-UnsignedIntegerLiteralType::UnsignedIntegerLiteralType(UnsignedIntegerLiteralType&&) = default;
-
-UnsignedIntegerLiteralType& UnsignedIntegerLiteralType::operator=(UnsignedIntegerLiteralType&&) = default;
 
 bool UnsignedIntegerLiteralType::canResolve(const Type& type) const
 {

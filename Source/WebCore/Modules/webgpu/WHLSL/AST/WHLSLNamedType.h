@@ -40,14 +40,17 @@ namespace AST {
 
 class NamedType : public Type {
     WTF_MAKE_FAST_ALLOCATED;
+
+protected:
+    ~NamedType() = default;
+
 public:
-    NamedType(CodeLocation location, String&& name)
-        : m_codeLocation(location)
+    NamedType(Kind kind, CodeLocation location, String&& name)
+        : Type(kind)
+        , m_codeLocation(location)
         , m_name(WTFMove(name))
     {
     }
-
-    virtual ~NamedType() = default;
 
     NamedType(const NamedType&) = delete;
     NamedType(NamedType&&) = default;
@@ -57,16 +60,10 @@ public:
 
     String& name() { return m_name; }
 
-    bool isNamedType() const override { return true; }
-    virtual bool isTypeDefinition() const { return false; }
-    virtual bool isStructureDefinition() const { return false; }
-    virtual bool isEnumerationDefinition() const { return false; }
-    virtual bool isNativeTypeDeclaration() const { return false; }
-
-    virtual const Type& unifyNode() const { return *this; }
-    virtual Type& unifyNode() { return *this; }
 
 private:
+    friend class Type;
+    Type& unifyNodeImpl() { return *this; }
     CodeLocation m_codeLocation;
     String m_name;
 };
@@ -76,6 +73,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(NamedType)
 
 #define SPECIALIZE_TYPE_TRAITS_WHLSL_NAMED_TYPE(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WHLSL::AST::ToValueTypeName) \

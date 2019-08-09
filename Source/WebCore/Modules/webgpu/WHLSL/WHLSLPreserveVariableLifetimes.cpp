@@ -157,7 +157,7 @@ public:
             structVariableDeclarations.append(WTFMove(structVariableDeclaration));
             auto structDeclarationStatement = makeUniqueRef<AST::VariableDeclarationsStatement>(functionDefinition.codeLocation(), WTFMove(structVariableDeclarations));
 
-            auto makePointerExpression = std::make_unique<AST::MakePointerExpression>(functionDefinition.codeLocation(), WTFMove(structVariableReference), AST::AddressEscapeMode::DoesNotEscape);
+            std::unique_ptr<AST::Expression> makePointerExpression(new AST::MakePointerExpression(functionDefinition.codeLocation(), WTFMove(structVariableReference), AST::AddressEscapeMode::DoesNotEscape));
             makePointerExpression->setType(m_pointerToStructType.copyRef());
             makePointerExpression->setTypeAnnotation(AST::RightValue());
 

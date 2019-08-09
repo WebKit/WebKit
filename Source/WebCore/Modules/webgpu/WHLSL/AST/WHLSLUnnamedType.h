@@ -45,43 +45,23 @@ class UnnamedType : public Type, public RefCounted<UnnamedType> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(UnnamedType);
 public:
-    enum class Kind {
-        TypeReference,
-        PointerType,
-        ArrayReferenceType,
-        ArrayType
-    };
-
     UnnamedType(CodeLocation location, Kind kind)
-        : m_codeLocation(location)
-        , m_kind(kind)
+        : Type(kind)
+        , m_codeLocation(location)
     {
     }
-
-    virtual ~UnnamedType() = default;
-
-    bool isUnnamedType() const override { return true; }
-
-    Kind kind() const { return m_kind; }
-    bool isTypeReference() const { return m_kind == Kind::TypeReference; }
-    bool isPointerType() const { return m_kind == Kind::PointerType; }
-    bool isArrayReferenceType() const { return m_kind == Kind::ArrayReferenceType; }
-    bool isArrayType() const { return m_kind == Kind::ArrayType; }
-    bool isReferenceType() const { return isPointerType() || isArrayReferenceType(); }
-
-    virtual const Type& unifyNode() const { return *this; }
-    virtual Type& unifyNode() { return *this; }
 
     unsigned hash() const;
     bool operator==(const UnnamedType&) const;
 
-    virtual String toString() const = 0;
+    String toString() const;
 
-    const CodeLocation& codeLocation() const { return m_codeLocation; }
+    CodeLocation codeLocation() const { return m_codeLocation; }
 
 private:
+    friend class Type;
+    Type& unifyNodeImpl() { return *this; }
     CodeLocation m_codeLocation;
-    Kind m_kind;
 };
 
 } // namespace AST
@@ -89,6 +69,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(UnnamedType)
 
 #define SPECIALIZE_TYPE_TRAITS_WHLSL_UNNAMED_TYPE(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WHLSL::AST::ToValueTypeName) \

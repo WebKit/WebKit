@@ -37,17 +37,17 @@ namespace WHLSL {
 
 namespace AST {
 
-class FloatLiteral : public Expression {
+class FloatLiteral final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FloatLiteral(CodeLocation location, float value)
-        : Expression(location)
+        : Expression(location, Kind::FloatLiteral)
         , m_type(location, value)
         , m_value(value)
     {
     }
 
-    virtual ~FloatLiteral() = default;
+    ~FloatLiteral() = default;
 
     FloatLiteral(const FloatLiteral&) = delete;
     FloatLiteral(FloatLiteral&&) = default;
@@ -57,8 +57,6 @@ public:
 
     FloatLiteralType& type() { return m_type; }
     float value() const { return m_value; }
-
-    bool isFloatLiteral() const override { return true; }
 
     FloatLiteral clone() const
     {
@@ -80,6 +78,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(FloatLiteral)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(FloatLiteral, isFloatLiteral())
 

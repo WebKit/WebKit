@@ -37,15 +37,15 @@ namespace WHLSL {
 
 namespace AST {
 
-class NullLiteral : public Expression {
+class NullLiteral final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     NullLiteral(CodeLocation location)
-        : Expression(location)
+        : Expression(location, Kind::NullLiteral)
     {
     }
 
-    virtual ~NullLiteral() = default;
+    ~NullLiteral() = default;
 
     NullLiteral(const NullLiteral&) = delete;
     NullLiteral(NullLiteral&&) = default;
@@ -54,8 +54,6 @@ public:
     NullLiteral& operator=(NullLiteral&&) = default;
 
     NullLiteralType& type() { return m_type; }
-
-    bool isNullLiteral() const override { return true; }
 
     NullLiteral clone() const
     {
@@ -75,6 +73,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(NullLiteral)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(NullLiteral, isNullLiteral())
 

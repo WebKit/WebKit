@@ -38,21 +38,19 @@ namespace WHLSL {
 
 namespace AST {
 
-class EffectfulExpressionStatement : public Statement {
+class EffectfulExpressionStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     EffectfulExpressionStatement(UniqueRef<Expression>&& effectfulExpression)
-        : Statement(effectfulExpression->codeLocation())
+        : Statement(effectfulExpression->codeLocation(), Kind::EffectfulExpression)
         , m_effectfulExpression(WTFMove(effectfulExpression))
     {
     }
 
-    virtual ~EffectfulExpressionStatement() = default;
+    ~EffectfulExpressionStatement() = default;
 
     EffectfulExpressionStatement(const EffectfulExpressionStatement&) = delete;
     EffectfulExpressionStatement(EffectfulExpressionStatement&&) = default;
-
-    bool isEffectfulExpressionStatement() const override { return true; }
 
     Expression& effectfulExpression() { return m_effectfulExpression; }
 
@@ -65,6 +63,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(EffectfulExpressionStatement)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(EffectfulExpressionStatement, isEffectfulExpressionStatement())
 

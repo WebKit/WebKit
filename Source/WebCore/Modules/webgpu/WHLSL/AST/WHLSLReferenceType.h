@@ -43,6 +43,10 @@ namespace AST {
 class ReferenceType : public UnnamedType {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ReferenceType);
+
+protected:
+    ~ReferenceType() = default;
+
 protected:
     ReferenceType(CodeLocation location, AddressSpace addressSpace, Ref<UnnamedType> elementType, Kind kind)
         : UnnamedType(location, kind)
@@ -50,9 +54,9 @@ protected:
         , m_elementType(WTFMove(elementType))
     {
     }
-public:
-    virtual ~ReferenceType() = default;
 
+
+public:
     AddressSpace addressSpace() const { return m_addressSpace; }
     const UnnamedType& elementType() const { return m_elementType; }
     UnnamedType& elementType() { return m_elementType; }
@@ -72,6 +76,8 @@ private:
 }
 
 }
+
+DEFINE_DEFAULT_DELETE(ReferenceType)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_UNNAMED_TYPE(ReferenceType, isReferenceType())
 

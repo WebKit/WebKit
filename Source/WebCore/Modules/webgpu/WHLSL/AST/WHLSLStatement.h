@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLCodeLocation.h"
+#include "WHLSLDefaultDelete.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
 
@@ -39,46 +40,73 @@ namespace AST {
 
 class Statement {
     WTF_MAKE_FAST_ALLOCATED;
+
+protected:
+    ~Statement() = default;
+
 public:
-    Statement(CodeLocation codeLocation)
+    enum class Kind : uint8_t {
+        Block,
+        Break,
+        Continue,
+        DoWhileLoop,
+        EffectfulExpression,
+        Fallthrough,
+        ForLoop,
+        If,
+        Return,
+        StatementList,
+        SwitchCase,
+        Switch,
+        VariableDeclarations,
+        WhileLoop,
+    };
+    Statement(CodeLocation codeLocation, Kind kind)
         : m_codeLocation(codeLocation)
+        , m_kind(kind)
     {
     }
 
-    virtual ~Statement() = default;
+    static void destroy(Statement&);
+    static void destruct(Statement&);
 
     Statement(const Statement&) = delete;
     Statement(Statement&&) = default;
 
-    virtual bool isBlock() const { return false; }
-    virtual bool isBreak() const { return false; }
-    virtual bool isContinue() const { return false; }
-    virtual bool isDoWhileLoop() const { return false; }
-    virtual bool isEffectfulExpressionStatement() const { return false; }
-    virtual bool isFallthrough() const { return false; }
-    virtual bool isForLoop() const { return false; }
-    virtual bool isIfStatement() const { return false; }
-    virtual bool isReturn() const { return false; }
-    virtual bool isStatementList() const { return false; }
-    virtual bool isSwitchCase() const { return false; }
-    virtual bool isSwitchStatement() const { return false; }
-    virtual bool isVariableDeclarationsStatement() const { return false; }
-    virtual bool isWhileLoop() const { return false; }
+    Kind kind() const { return m_kind; }
+
+    bool isBlock() const { return kind() == Kind::Block; }
+    bool isBreak() const { return kind() == Kind::Break; }
+    bool isContinue() const { return kind() == Kind::Continue; }
+    bool isDoWhileLoop() const { return kind() == Kind::DoWhileLoop; }
+    bool isEffectfulExpressionStatement() const { return kind() == Kind::EffectfulExpression; }
+    bool isFallthrough() const { return kind() == Kind::Fallthrough; }
+    bool isForLoop() const { return kind() == Kind::ForLoop; }
+    bool isIfStatement() const { return kind() == Kind::If; }
+    bool isReturn() const { return kind() == Kind::Return; }
+    bool isStatementList() const { return kind() == Kind::StatementList; }
+    bool isSwitchCase() const { return kind() == Kind::SwitchCase; }
+    bool isSwitchStatement() const { return kind() == Kind::Switch; }
+    bool isVariableDeclarationsStatement() const { return kind() == Kind::VariableDeclarations; }
+    bool isWhileLoop() const { return kind() == Kind::WhileLoop; }
 
     CodeLocation codeLocation() const { return m_codeLocation; }
     void updateCodeLocation(CodeLocation location) { m_codeLocation = location; }
 
 private:
     CodeLocation m_codeLocation;
+    Kind m_kind;
 };
 
 using Statements = Vector<UniqueRef<Statement>>;
 
-} // namespace AST
-
 }
 
 }
+
+}
+
+DEFINE_DEFAULT_DELETE(Statement)
 
 #define SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WHLSL::AST::ToValueTypeName) \
