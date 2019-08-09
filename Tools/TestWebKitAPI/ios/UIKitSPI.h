@@ -156,8 +156,12 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @property (nonatomic) CGRect lastRect;
 @end
 
+@interface UIWKAutocorrectionContext : NSObject
+@end
+
 @protocol UIWKInteractionViewProtocol
 - (void)requestAutocorrectionRectsForString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForInput))completionHandler;
+- (void)requestAutocorrectionContextWithCompletionHandler:(void (^)(UIWKAutocorrectionContext *autocorrectionContext))completionHandler;
 @end
 
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")

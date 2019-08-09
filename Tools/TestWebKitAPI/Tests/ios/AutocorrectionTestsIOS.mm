@@ -94,4 +94,20 @@ TEST(AutocorrectionTests, FontAtCaretWhenUsingUICTFontTextStyle)
     EXPECT_EQ(32, fontAfterScaling.pointSize);
 }
 
+TEST(AutocorrectionTests, RequestAutocorrectionContextAfterClosingPage)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] init]);
+    [webView synchronouslyLoadTestPageNamed:@"autofocused-text-input"];
+
+    auto contentView = [webView textInputContentView];
+    [contentView resignFirstResponder];
+    [webView _close];
+
+    bool done = false;
+    [contentView requestAutocorrectionContextWithCompletionHandler:[&] (UIWKAutocorrectionContext *) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 #endif // PLATFORM(IOS_FAMILY)
