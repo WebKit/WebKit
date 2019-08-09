@@ -280,6 +280,7 @@ namespace WebKit {
 
 bool defaultPassiveTouchListenersAsDefaultOnDocument();
 bool defaultCustomPasteboardDataEnabled();
+bool defaultCSSOMViewScrollingAPIEnabled();
 
 #if ENABLE(TEXT_AUTOSIZING)
 bool defaultTextAutosizingUsesIdempotentMode();

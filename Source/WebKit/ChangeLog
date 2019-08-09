@@ -1,3 +1,19 @@
+2019-08-09  Alex Christensen  <achristensen@webkit.org>
+
+        Disable CSSOM View Scrolling API for IMDb iOS app
+        https://bugs.webkit.org/show_bug.cgi?id=200586
+        <rdar://problem/53645833>
+
+        Reviewed by Simon Fraser.
+
+        Change the CSSOMViewScrollingAPIEnabled default value to be off for the IMDb app's WKWebViews.
+        I manually verified this is effective in those WKWebViews but no other WKWebViews and that it fixes the radar.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultCSSOMViewScrollingAPIEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+
 2019-08-09  Tim Horton  <timothy_horton@apple.com>
 
         Tapping buttons in Data Detectors lookup previews doesn't work
