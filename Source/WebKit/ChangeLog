@@ -1,3 +1,26 @@
+2019-08-08  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (52279987): Most of the WKUIDelegate contextMenu delegate methods are not being called
+        https://bugs.webkit.org/show_bug.cgi?id=200557
+        <rdar://problem/53717962>
+
+        Reviewed by Wenson Hsieh.
+
+        UIKit changed the name of delegates recently. We ignored the warning because
+        it was still calling the old methods. However, it will only do so for applications
+        authored by Apple, breaking 3rd parties.
+
+        The change here is just adopting the new methods in place of the old ones.
+        It does not change the API that WebKit vends (they still use the older names).
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView contextMenuInteraction:willDisplayMenuForConfiguration:animator:]):
+        (-[WKContentView contextMenuInteraction:willPerformPreviewActionForMenuWithConfiguration:animator:]):
+        (-[WKContentView contextMenuInteraction:willEndForConfiguration:animator:]):
+        (-[WKContentView contextMenuInteractionWillPresent:]): Deleted.
+        (-[WKContentView contextMenuInteraction:willCommitWithAnimator:]): Deleted.
+        (-[WKContentView contextMenuInteractionDidEnd:]): Deleted.
+
 2019-08-08  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Hide previews when an inner overflow or frame scrollview scrolls
