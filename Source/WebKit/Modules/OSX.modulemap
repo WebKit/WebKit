@@ -15,7 +15,4 @@ framework module WebKit [system] [extern_c] {
     header "DOMProgressEvent.h"
     export *
   }
-
-  exclude header "HIWebView.h"
-  exclude header "CarbonUtils.h"  
 }

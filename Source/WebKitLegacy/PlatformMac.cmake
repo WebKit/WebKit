@@ -202,7 +202,6 @@ list(APPEND WebKitLegacy_SOURCES
     mac/Plugins/WebBaseNetscapePluginView.mm
     mac/Plugins/WebBasePluginPackage.mm
     mac/Plugins/WebNetscapePluginEventHandler.mm
-    mac/Plugins/WebNetscapePluginEventHandlerCarbon.mm
     mac/Plugins/WebNetscapePluginEventHandlerCocoa.mm
     mac/Plugins/WebNetscapePluginPackage.mm
     mac/Plugins/WebNetscapePluginStream.mm
@@ -342,11 +341,6 @@ set(WebKitLegacy_FORWARDING_HEADERS_FILES
 add_definitions("-include WebKitPrefix.h")
 
 set(C99_FILES
-    ${WEBKITLEGACY_DIR}/mac/Carbon/CarbonUtils.m
-    ${WEBKITLEGACY_DIR}/mac/Carbon/CarbonWindowContentView.m
-    ${WEBKITLEGACY_DIR}/mac/Carbon/CarbonWindowFrame.m
-    ${WEBKITLEGACY_DIR}/mac/Carbon/HIViewAdapter.m
-
     mac/DefaultDelegates/WebDefaultEditingDelegate.m
     mac/DefaultDelegates/WebDefaultPolicyDelegate.m
     mac/DefaultDelegates/WebDefaultUIDelegate.m

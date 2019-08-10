@@ -1,3 +1,12 @@
+2019-08-10  Tim Horton  <timothy_horton@apple.com>
+
+        Remove some more unused 32-bit code
+        https://bugs.webkit.org/show_bug.cgi?id=200607
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Modules/OSX.modulemap:
+
 2019-08-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS 13] Google Docs/Slides/Sheets: paste often doesn't work and sometimes produces an error

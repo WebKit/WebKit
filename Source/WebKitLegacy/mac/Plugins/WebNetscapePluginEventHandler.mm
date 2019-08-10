@@ -29,7 +29,6 @@
 
 #import <wtf/Assertions.h>
 #import "WebNetscapePluginView.h"
-#import "WebNetscapePluginEventHandlerCarbon.h"
 #import "WebNetscapePluginEventHandlerCocoa.h"
 
 std::unique_ptr<WebNetscapePluginEventHandler> WebNetscapePluginEventHandler::create(WebNetscapePluginView *pluginView)

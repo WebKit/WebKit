@@ -2546,14 +2546,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     float newBottom;
     view->adjustPageHeightDeprecated(&newBottom, top, bottom, bottomLimit);
 
-#ifdef __LP64__
     // If the new bottom is equal to the old bottom (when both are treated as floats), we just return the original
     // bottom. This prevents rounding errors that can occur when converting newBottom to a double.
     if (WTF::areEssentiallyEqual(static_cast<float>(bottom), newBottom))
         return bottom;
-    else
-#endif
-        return newBottom;
+    return newBottom;
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -4508,7 +4505,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)pressureChangeWithEvent:(NSEvent *)event
 {
-#if PLATFORM(MAC) && defined(__LP64__)
+#if PLATFORM(MAC)
     NSEvent *lastPressureEvent = [[self _webView] _pressureEvent];
     if (event.phase != NSEventPhaseChanged && event.phase != NSEventPhaseBegan && event.phase != NSEventPhaseEnded)
         return;

@@ -76,9 +76,6 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
 #if ENABLE(SERVICE_CONTROLS)
 - (instancetype)initWithItems:(NSArray *)items includeEditorServices:(BOOL)includeEditorServices client:(WebSharingServicePickerClient*)pickerClient style:(NSSharingServicePickerStyle)style
 {
-#ifndef __LP64__
-    return nil;
-#else
     if (!(self = [super init]))
         return nil;
 
@@ -91,14 +88,10 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
     _pickerClient = pickerClient;
 
     return self;
-#endif
 }
 
 - (instancetype)initWithSharingServicePicker:(NSSharingServicePicker *)sharingServicePicker client:(WebSharingServicePickerClient&)pickerClient
 {
-#ifndef __LP64__
-    return nil;
-#else
     if (!(self = [super init]))
         return nil;
 
@@ -109,7 +102,6 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
     _pickerClient = &pickerClient;
 
     return self;
-#endif
 }
 #endif // ENABLE(SERVICE_CONTROLS)
 
@@ -202,7 +194,6 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
 
     if ([item isKindOfClass:[NSImage class]])
         [self didShareImageData:[item TIFFRepresentation] confirmDataIsValidTIFFData:NO];
-#ifdef __LP64__
     else if ([item isKindOfClass:[NSItemProvider class]]) {
         NSItemProvider *itemProvider = (NSItemProvider *)item;
         NSString *itemUTI = itemProvider.registeredTypeIdentifiers.firstObject;
@@ -224,7 +215,6 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
 
         }];
     }
-#endif
     else if ([item isKindOfClass:[NSAttributedString class]]) {
         Frame& frame = _pickerClient->pageForSharingServicePicker(*self)->focusController().focusedOrMainFrame();
         frame.editor().replaceSelectionWithAttributedString(item);

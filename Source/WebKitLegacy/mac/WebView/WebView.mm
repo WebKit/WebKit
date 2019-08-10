@@ -9203,15 +9203,7 @@ bool LayerFlushController::flushLayers()
     // An NSWindow may not display in the next runloop cycle after dirtying due to delayed window display logic,
     // in which case this observer can fire first. So if the window is due for a display, don't commit
     // layer changes, otherwise they'll show on screen before the view drawing.
-    bool viewsNeedDisplay;
-#ifndef __LP64__
-    if (window && [window _wrapsCarbonWindow])
-        viewsNeedDisplay = HIViewGetNeedsDisplay(HIViewGetRoot(static_cast<WindowRef>([window windowRef])));
-    else
-#endif
-        viewsNeedDisplay = [window viewsNeedDisplay];
-
-    if (viewsNeedDisplay)
+    if (window.viewsNeedDisplay)
         return false;
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
 #endif // PLATFORM(MAC)
