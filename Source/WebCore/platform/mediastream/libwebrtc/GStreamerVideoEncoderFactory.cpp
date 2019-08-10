@@ -64,13 +64,11 @@ public:
     GStreamerVideoEncoder(const webrtc::SdpVideoFormat&)
         : m_firstFramePts(GST_CLOCK_TIME_NONE)
         , m_restrictionCaps(adoptGRef(gst_caps_new_empty_simple("video/x-raw")))
-        , m_adapter(adoptGRef(gst_adapter_new()))
     {
     }
     GStreamerVideoEncoder()
         : m_firstFramePts(GST_CLOCK_TIME_NONE)
         , m_restrictionCaps(adoptGRef(gst_caps_new_empty_simple("video/x-raw")))
-        , m_adapter(adoptGRef(gst_adapter_new()))
     {
     }
 
@@ -379,7 +377,6 @@ private:
     size_t m_encodedImageBufferSize;
 
     Lock m_bufferMapLock;
-    GRefPtr<GstAdapter> m_adapter;
     GstElement* m_sink;
 };
 
