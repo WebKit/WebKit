@@ -347,6 +347,26 @@ Optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(EventTarg
 
     return Event::IsCancelable::Yes;
 }
+
+bool Quirks::shouldMakeTouchEventNonCancelableForTarget(EventTarget* target) const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->topDocument().url().host();
+
+    if (equalLettersIgnoringASCIICase(host, "www.youtube.com")) {
+        if (is<Element>(target)) {
+            unsigned depth = 3;
+            for (auto* element = downcast<Element>(target); element && depth; element = element->parentElement(), --depth) {
+                if (element->localName() == "paper-item" && element->classList().contains("yt-dropdown-menu"))
+                    return true;
+            }
+        }
+    }
+
+    return false;
+}
 #endif
 
 bool Quirks::shouldAvoidResizingWhenInputViewBoundsChange() const
