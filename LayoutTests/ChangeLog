@@ -1,3 +1,14 @@
+2019-08-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Universal XSS in JSObject::putInlineSlow and JSValue::putToPrimitive
+        https://bugs.webkit.org/show_bug.cgi?id=199864
+
+        Reviewed by Saam Barati.
+
+        * http/tests/security/cross-frame-access-object-put-optimization-expected.txt: Added.
+        * http/tests/security/cross-frame-access-object-put-optimization.html: Added.
+        * http/tests/security/resources/cross-frame-iframe-for-object-put-optimization-test.html: Added.
+
 2019-08-09  Ali Juma  <ajuma@chromium.org>
 
         Don't allow cross-origin iframes to autofocus

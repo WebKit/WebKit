@@ -39,6 +39,7 @@ public:
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestActiveDOMObject* toWrapped(JSC::VM&, JSC::JSValue);
+    static void doPutPropertySecurityCheck(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PutPropertySlot&);
     static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;
@@ -51,7 +52,7 @@ public:
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
     static void heapSnapshot(JSCell*, JSC::HeapSnapshotBuilder&);
 public:
-    static const unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
+    static const unsigned StructureFlags = Base::StructureFlags | JSC::HasPutPropertySecurityCheck | JSC::HasStaticPropertyTable;
 protected:
     JSTestActiveDOMObject(JSC::Structure*, JSDOMGlobalObject&, Ref<TestActiveDOMObject>&&);
 

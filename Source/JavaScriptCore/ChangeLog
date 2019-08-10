@@ -1,3 +1,62 @@
+2019-08-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Universal XSS in JSObject::putInlineSlow and JSValue::putToPrimitive
+        https://bugs.webkit.org/show_bug.cgi?id=199864
+
+        Reviewed by Saam Barati.
+
+        Our JSObject::put implementation is not correct in term of the spec. Our [[Put]] implementation is something like this.
+
+            JSObject::put(object):
+                if (can-do-fast-path(object))
+                    return fast-path(object);
+                // slow-path
+                do {
+                    object-put-check-and-setter-calls(object); // (1)
+                    object = object->prototype;
+                } while (is-object(object));
+                return do-put(object);
+
+        Since JSObject::put is registered in the methodTable, the derived classes can override it. Some of classes are adding
+        extra checks to this put.
+
+            Derived::put(object):
+                if (do-extra-check(object))
+                    fail
+                return JSObject::put(object)
+
+        The problem is that Derived::put is only called when the |this| object is the Derived class. When traversing [[Prototype]] in
+        JSObject::put, at (1), we do not perform the extra checks added in Derived::put even if `object` is Derived one. This means that
+        we skip the check.
+
+        Currently, JSObject::put and WebCore checking mechanism are broken. JSObject::put should call getOwnPropertySlot at (1) to
+        perform the additional checks. This behavior is matching against the spec. However, currently, our JSObject::getOwnPropertySlot
+        does not propagate setter information. This is required to cache cacheable [[Put]] at (1) for CustomValue, CustomAccessor, and
+        Accessors. We also need to reconsider how to integrate static property setters to this mechanism. So, basically, this involves
+        large refactoring to renew our JSObject::put and JSObject::getOwnPropertySlot.
+
+        To work-around for now, we add a new TypeInfo flag, HasPutPropertySecurityCheck . And adding this flag to DOM objects
+        that implements the addition checks. We also add doPutPropertySecurityCheck method hook to perform the check in JSObject.
+        When we found this flag at (1), we perform doPutPropertySecurityCheck to properly perform the checks.
+
+        Since our JSObject::put code is old and it does not match against the spec now, we should refactor it largely. This is tracked separately in [1].
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=200562
+
+        * runtime/ClassInfo.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::doPutPropertySecurityCheck):
+        * runtime/JSCell.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineSlow):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        * runtime/JSObject.h:
+        (JSC::JSObject::doPutPropertySecurityCheck):
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::hasPutPropertySecurityCheck const):
+
 2019-08-08  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Fix internal build

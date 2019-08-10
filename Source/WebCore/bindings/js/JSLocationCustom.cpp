@@ -126,6 +126,23 @@ static bool putCommon(JSLocation& thisObject, ExecState& state, PropertyName pro
     return false;
 }
 
+void JSLocation::doPutPropertySecurityCheck(JSObject* object, ExecState* state, PropertyName propertyName, PutPropertySlot&)
+{
+    auto* thisObject = jsCast<JSLocation*>(object);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+
+    VM& vm = state->vm();
+
+    // Always allow assigning to the whole location.
+    // However, alllowing assigning of pieces might inadvertently disclose parts of the original location.
+    // So fall through to the access check for those.
+    if (propertyName == static_cast<JSVMClientData*>(vm.clientData)->builtinNames().hrefPublicName())
+        return;
+
+    // Block access and throw if there is a security error.
+    BindingSecurity::shouldAllowAccessToDOMWindow(state, thisObject->wrapped().window(), ThrowSecurityError);
+}
+
 bool JSLocation::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& putPropertySlot)
 {
     auto* thisObject = jsCast<JSLocation*>(cell);
