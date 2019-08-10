@@ -1,3 +1,27 @@
+2019-08-09  Ali Juma  <ajuma@chromium.org>
+
+        Don't allow cross-origin iframes to autofocus
+        https://bugs.webkit.org/show_bug.cgi?id=200515
+        <rdar://problem/54092988>
+
+        Reviewed by Ryosuke Niwa.
+
+        According to Step 6 in the WhatWG Spec (https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofocusing-a-form-control:-the-autofocus-attribute),
+        the 'autofocus' attribute shouldn't work for cross-origin iframes.
+
+        This change is based on the Blink change (patch by <mustaq@chromium.org>):
+        <https://chromium-review.googlesource.com/c/chromium/src/+/1593026>
+
+        Also disallow cross-origin iframes from focusing programmatically without ever having
+        had any user interaction.
+
+        * dom/Element.cpp: Check if an invalid frame is trying to grab the focus.
+        (WebCore::Element::focus):
+        * html/HTMLFormControlElement.cpp: Check if the focus is moving to an invalid frame.
+        (WebCore::shouldAutofocus):
+        * page/DOMWindow.cpp: Check if an invalid frame is trying to grab the focus.
+        (WebCore::DOMWindow::focus):
+
 2019-08-09  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Devirtualize the AST

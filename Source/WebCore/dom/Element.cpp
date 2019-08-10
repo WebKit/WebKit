@@ -2841,6 +2841,10 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
 
     RefPtr<Node> protect;
     if (Page* page = document().page()) {
+        auto& frame = *document().frame();
+        if (!frame.hasHadUserInteraction() && !frame.isMainFrame() && !document().topDocument().securityOrigin().canAccess(document().securityOrigin()))
+            return;
+
         // Focus and change event handlers can cause us to lose our last ref.
         // If a focus event handler changes the focus to a different node it
         // does not make sense to continue and update appearence.

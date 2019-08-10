@@ -34,8 +34,10 @@
             }
         };
 
-        if (shouldFocus == "true")
-            input.focus();
+        if (shouldFocus == "true") {
+            if (window.internals)
+                internals.withUserGesture(() => { input.focus(); });
+        }
         navigator.credentials.create(makeOptions).then(
             function(value) {
                 messageToTop("Access granted. " + value);

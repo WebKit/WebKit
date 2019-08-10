@@ -1,3 +1,28 @@
+2019-08-09  Ali Juma  <ajuma@chromium.org>
+
+        Don't allow cross-origin iframes to autofocus
+        https://bugs.webkit.org/show_bug.cgi?id=200515
+        <rdar://problem/54092988>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test coverage, and simulate user interaction in existing tests
+        that require focusing a cross-origin frame.
+
+        * http/tests/security/clipboard/resources/copy-html.html:
+        * http/tests/security/clipboard/resources/copy-mso-list.html:
+        * http/tests/security/clipboard/resources/copy-url.html:
+        * http/wpt/html/interaction/focus/no-cross-origin-element-focus-expected.txt: Added.
+        * http/wpt/html/interaction/focus/no-cross-origin-element-focus.html: Added.
+        * http/wpt/html/interaction/focus/no-cross-origin-window-focus-expected.txt: Added.
+        * http/wpt/html/interaction/focus/no-cross-origin-window-focus.html: Added.
+        * http/wpt/html/interaction/focus/resources/child-focus-element.html: Added.
+        * http/wpt/html/interaction/focus/resources/child-focus-window.html: Added.
+        * http/wpt/html/semantics/forms/autofocus/no-cross-origin-autofocus.sub-expected.txt: Added.
+        * http/wpt/html/semantics/forms/autofocus/no-cross-origin-autofocus.sub.html: Added.
+        * http/wpt/html/semantics/forms/autofocus/resources/child-autofocus.html: Added.
+        * http/wpt/webauthn/resources/last-layer-frame.https.html:
+
 2019-08-09  Thibault Saunier  <tsaunier@igalia.com>
 
         [GTK] fast/mediastream/RTCPeerConnection-add-removeTrack.html is crashing

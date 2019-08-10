@@ -998,6 +998,9 @@ void DOMWindow::focus(bool allowFocus)
     if (!frame())
         return;
 
+    if (!frame()->hasHadUserInteraction() && !isSameSecurityOriginAsMainFrame())
+        return;
+
     // Clear the current frame's focused node if a new frame is about to be focused.
     Frame* focusedFrame = page->focusController().focusedFrame();
     if (focusedFrame && focusedFrame != frame())

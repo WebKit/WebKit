@@ -123,7 +123,7 @@ TEST(WebKit, FocusedFrameAfterCrash)
 
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
-    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("many-iframes", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("many-same-origin-iframes", "html"));
     WKPageLoadURL(webView.page(), url.get());
     Util::run(&loadBeforeCrash);
 
