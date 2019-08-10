@@ -294,9 +294,8 @@ body[dir=rtl] .details-section > .header::before {
     }
 
     .details-section .details-section,
-    .details-section .details-section > .header,
-    .details-section.computed-style-properties:not(.collapsed) > .header{
-        background-color: var(--background-color);
+    .details-section .details-section > .header {
+        background-color: var(--background-color-content);
     }
 
     .details-section .details-section:not(.collapsed) > .header {
