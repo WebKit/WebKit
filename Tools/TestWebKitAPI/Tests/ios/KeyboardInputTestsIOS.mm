@@ -325,7 +325,8 @@ TEST(KeyboardInputTests, CanHandleKeyEventInCompletionHandler)
 
 TEST(KeyboardInputTests, CaretSelectionRectAfterRestoringFirstResponderWithRetainActiveFocusedState)
 {
-    auto expectedCaretRect = CGRectMake(16, 13, 2, 15);
+    // This difference in caret width is due to the fact that we don't zoom in to the input field on iPad, but do on iPhone.
+    auto expectedCaretRect = CGRectMake(16, 13, UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad ? 3 : 2, 15);
     auto webView = webViewWithAutofocusedInput();
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
     [webView waitForCaretViewFrameToBecome:expectedCaretRect];
@@ -360,7 +361,8 @@ TEST(KeyboardInputTests, RangedSelectionRectAfterRestoringFirstResponderWithReta
 
 TEST(KeyboardInputTests, CaretSelectionRectAfterRestoringFirstResponder)
 {
-    auto expectedCaretRect = CGRectMake(16, 13, 2, 15);
+    // This difference in caret width is due to the fact that we don't zoom in to the input field on iPad, but do on iPhone.
+    auto expectedCaretRect = CGRectMake(16, 13, UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad ? 3 : 2, 15);
     auto webView = webViewWithAutofocusedInput();
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
     [webView waitForCaretViewFrameToBecome:expectedCaretRect];
