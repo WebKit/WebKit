@@ -79,6 +79,6 @@ private:
 
 DEFINE_DEFAULT_DELETE(ReferenceType)
 
-SPECIALIZE_TYPE_TRAITS_WHLSL_UNNAMED_TYPE(ReferenceType, isReferenceType())
+SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(ReferenceType, isReferenceType())
 
 #endif

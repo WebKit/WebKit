@@ -92,6 +92,6 @@ private:
 
 DEFINE_DEFAULT_DELETE(ArrayType)
 
-SPECIALIZE_TYPE_TRAITS_WHLSL_UNNAMED_TYPE(ArrayType, isArrayType())
+SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(ArrayType, isArrayType())
 
 #endif

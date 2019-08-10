@@ -96,6 +96,6 @@ private:
 
 DEFINE_DEFAULT_DELETE(EnumerationDefinition)
 
-SPECIALIZE_TYPE_TRAITS_WHLSL_NAMED_TYPE(EnumerationDefinition, isEnumerationDefinition())
+SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(EnumerationDefinition, isEnumerationDefinition())
 
 #endif

@@ -118,6 +118,6 @@ private:
 
 DEFINE_DEFAULT_DELETE(TypeReference)
 
-SPECIALIZE_TYPE_TRAITS_WHLSL_UNNAMED_TYPE(TypeReference, isTypeReference())
+SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(TypeReference, isTypeReference())
 
 #endif

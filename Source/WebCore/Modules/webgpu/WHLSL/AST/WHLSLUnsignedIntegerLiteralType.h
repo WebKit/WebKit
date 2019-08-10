@@ -77,6 +77,6 @@ private:
 
 DEFINE_DEFAULT_DELETE(UnsignedIntegerLiteralType)
 
-SPECIALIZE_TYPE_TRAITS_WHLSL_RESOLVABLE_TYPE(UnsignedIntegerLiteralType, isUnsignedIntegerLiteralType())
+SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(UnsignedIntegerLiteralType, isUnsignedIntegerLiteralType())
 
 #endif

@@ -84,6 +84,6 @@ public:
 
 DEFINE_DEFAULT_DELETE(PointerType)
 
-SPECIALIZE_TYPE_TRAITS_WHLSL_UNNAMED_TYPE(PointerType, isPointerType())
+SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(PointerType, isPointerType())
 
 #endif

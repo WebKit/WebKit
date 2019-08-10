@@ -77,6 +77,6 @@ private:
 
 DEFINE_DEFAULT_DELETE(StructureDefinition)
 
-SPECIALIZE_TYPE_TRAITS_WHLSL_NAMED_TYPE(StructureDefinition, isStructureDefinition())
+SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(StructureDefinition, isStructureDefinition())
 
 #endif

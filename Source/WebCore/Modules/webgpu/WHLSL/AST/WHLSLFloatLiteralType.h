@@ -77,6 +77,6 @@ private:
 
 DEFINE_DEFAULT_DELETE(FloatLiteralType)
 
-SPECIALIZE_TYPE_TRAITS_WHLSL_RESOLVABLE_TYPE(FloatLiteralType, isFloatLiteralType())
+SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(FloatLiteralType, isFloatLiteralType())
 
 #endif

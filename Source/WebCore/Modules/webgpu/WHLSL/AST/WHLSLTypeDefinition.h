@@ -74,6 +74,6 @@ private:
 
 DEFINE_DEFAULT_DELETE(TypeDefinition)
 
-SPECIALIZE_TYPE_TRAITS_WHLSL_NAMED_TYPE(TypeDefinition, isTypeDefinition())
+SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(TypeDefinition, isTypeDefinition())
 
 #endif

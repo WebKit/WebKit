@@ -80,6 +80,6 @@ public:
 
 }
 
-SPECIALIZE_TYPE_TRAITS_WHLSL_UNNAMED_TYPE(ArrayReferenceType, isArrayReferenceType())
+SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(ArrayReferenceType, isArrayReferenceType())
 
 #endif

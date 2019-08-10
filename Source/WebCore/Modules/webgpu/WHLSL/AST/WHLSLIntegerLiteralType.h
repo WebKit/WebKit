@@ -77,6 +77,6 @@ private:
 
 DEFINE_DEFAULT_DELETE(IntegerLiteralType)
 
-SPECIALIZE_TYPE_TRAITS_WHLSL_RESOLVABLE_TYPE(IntegerLiteralType, isIntegerLiteralType())
+SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(IntegerLiteralType, isIntegerLiteralType())
 
 #endif

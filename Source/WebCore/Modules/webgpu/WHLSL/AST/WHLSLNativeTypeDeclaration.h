@@ -128,6 +128,6 @@ private:
 
 }
 
-SPECIALIZE_TYPE_TRAITS_WHLSL_NAMED_TYPE(NativeTypeDeclaration, isNativeTypeDeclaration())
+SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(NativeTypeDeclaration, isNativeTypeDeclaration())
 
 #endif

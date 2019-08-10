@@ -90,11 +90,6 @@ private:
 
 DEFINE_DEFAULT_DELETE(ResolvableType)
 
-#define SPECIALIZE_TYPE_TRAITS_WHLSL_RESOLVABLE_TYPE(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WHLSL::AST::ToValueTypeName) \
-    static bool isType(const WebCore::WHLSL::AST::ResolvableType& type) { return type.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
-
 SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(ResolvableType, isResolvableType())
 
 #endif

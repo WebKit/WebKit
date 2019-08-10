@@ -72,11 +72,6 @@ private:
 
 DEFINE_DEFAULT_DELETE(UnnamedType)
 
-#define SPECIALIZE_TYPE_TRAITS_WHLSL_UNNAMED_TYPE(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WHLSL::AST::ToValueTypeName) \
-    static bool isType(const WebCore::WHLSL::AST::UnnamedType& type) { return type.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
-
 SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(UnnamedType, isUnnamedType())
 
 #endif

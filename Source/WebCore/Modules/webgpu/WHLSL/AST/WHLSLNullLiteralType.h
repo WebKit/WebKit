@@ -65,6 +65,6 @@ private:
 
 DEFINE_DEFAULT_DELETE(NullLiteralType)
 
-SPECIALIZE_TYPE_TRAITS_WHLSL_RESOLVABLE_TYPE(NullLiteralType, isNullLiteralType())
+SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(NullLiteralType, isNullLiteralType())
 
 #endif
