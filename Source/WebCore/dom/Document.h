@@ -1033,7 +1033,7 @@ public:
     void incDOMTreeVersion() { m_domTreeVersion = ++s_globalTreeVersion; }
     uint64_t domTreeVersion() const { return m_domTreeVersion; }
 
-    WEBCORE_EXPORT String originIdentifierForPasteboard();
+    WEBCORE_EXPORT String originIdentifierForPasteboard() const;
 
     // XPathEvaluator methods
     WEBCORE_EXPORT ExceptionOr<Ref<XPathExpression>> createExpression(const String& expression, RefPtr<XPathNSResolver>&&);
@@ -1688,7 +1688,7 @@ private:
     uint64_t m_domTreeVersion;
     static uint64_t s_globalTreeVersion;
 
-    String m_uniqueIdentifier;
+    mutable String m_uniqueIdentifier;
 
     HashSet<NodeIterator*> m_nodeIterators;
     HashSet<Range*> m_ranges;

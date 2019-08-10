@@ -5728,7 +5728,7 @@ bool Document::isTelephoneNumberParsingAllowed() const
 
 #endif
 
-String Document::originIdentifierForPasteboard()
+String Document::originIdentifierForPasteboard() const
 {
     auto origin = securityOrigin().toString();
     if (origin != "null")

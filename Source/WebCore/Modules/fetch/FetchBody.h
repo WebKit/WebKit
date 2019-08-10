@@ -59,7 +59,7 @@ public:
     static ExceptionOr<FetchBody> extract(Init&&, String&);
     FetchBody() = default;
 
-    WEBCORE_EXPORT static Optional<FetchBody> fromFormData(FormData&);
+    WEBCORE_EXPORT static Optional<FetchBody> fromFormData(PAL::SessionID, FormData&);
 
     void loadingFailed(const Exception&);
     void loadingSucceeded();

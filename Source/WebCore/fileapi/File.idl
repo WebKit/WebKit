@@ -28,6 +28,7 @@ typedef (BufferSource or Blob or USVString) BlobPart;
 // FIXME: This should be exposed on Workers as well.
 [
     Constructor(sequence<BlobPart> fileBits, USVString fileName, optional FilePropertyBag options),
+    ConstructorCallWith=ScriptExecutionContext,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window),
     JSGenerateToJSObject,

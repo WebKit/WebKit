@@ -1326,7 +1326,7 @@ RefPtr<DataTransfer> ReplaceSelectionCommand::inputEventDataTransfer() const
     if (isEditingTextAreaOrTextInput())
         return CompositeEditCommand::inputEventDataTransfer();
 
-    return DataTransfer::createForInputEvent(m_documentFragmentPlainText, m_documentFragmentHTMLMarkup);
+    return DataTransfer::createForInputEvent(document(), m_documentFragmentPlainText, m_documentFragmentHTMLMarkup);
 }
 
 bool ReplaceSelectionCommand::shouldRemoveEndBR(Node* endBR, const VisiblePosition& originalVisPosBeforeEndBR)

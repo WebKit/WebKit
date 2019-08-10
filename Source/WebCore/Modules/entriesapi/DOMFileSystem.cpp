@@ -343,7 +343,7 @@ void DOMFileSystem::getFile(ScriptExecutionContext& context, FileSystemFileEntry
             if (validatedVirtualPath.hasException())
                 completionCallback(validatedVirtualPath.releaseException());
             else
-                completionCallback(File::create(fullPath));
+                completionCallback(File::create(context->sessionID(), fullPath));
         });
     });
 }

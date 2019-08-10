@@ -28,8 +28,10 @@
 #include "ExceptionOr.h"
 #include "JSDOMConvert.h"
 #include "JSDOMGuardedObject.h"
+#include "ScriptExecutionContext.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSPromiseDeferred.h>
+#include <pal/SessionID.h>
 
 namespace WebCore {
 
@@ -135,6 +137,8 @@ public:
     JSC::JSValue promise() const;
 
     void whenSettled(std::function<void()>&&);
+
+    PAL::SessionID sessionID() const { return globalObject()->scriptExecutionContext()->sessionID(); }
 
 private:
     DeferredPromise(JSDOMGlobalObject& globalObject, JSC::JSPromiseDeferred& deferred, Mode mode)

@@ -1,3 +1,113 @@
+2019-08-10  Youenn Fablet  <youenn@apple.com>
+
+        Blob should store its session ID
+        https://bugs.webkit.org/show_bug.cgi?id=200572
+
+        Reviewed by Darin Adler.
+
+        Blob at creation time now initializes its session ID.
+        This will allow in the future to call blob registry routines with it.
+        Update all call sites to provide the session ID.
+
+        No observable change.
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::getFile):
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::fromFormData):
+        * Modules/fetch/FetchBody.h:
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::blobFromData):
+        (WebCore::resolveWithTypeAndData):
+        (WebCore::FetchBodyConsumer::resolve):
+        (WebCore::FetchBodyConsumer::takeAsBlob):
+        * Modules/fetch/FetchBodyConsumer.h:
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::blob):
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::createRecordingDataBlob):
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::didReceiveRawData):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didReceiveBinaryData):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        * bindings/js/JSDOMPromiseDeferred.h:
+        (WebCore::DeferredPromise::sessionID const):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readFile):
+        (WebCore::CloneDeserializer::readTerminal):
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::DataTransfer):
+        (WebCore::DataTransfer::createForCopyAndPaste):
+        (WebCore::DataTransfer::filesFromPasteboardAndItemList const):
+        (WebCore::DataTransfer::createForInputEvent):
+        (WebCore::DataTransfer::createForDrag):
+        (WebCore::DataTransfer::createForDragStartEvent):
+        (WebCore::DataTransfer::createForDrop):
+        (WebCore::DataTransfer::createForUpdatingDropTarget):
+        * dom/DataTransfer.h:
+        * dom/Document.cpp:
+        (WebCore::Document::originIdentifierForPasteboard const):
+        * dom/Document.h:
+        * editing/ReplaceRangeWithTextCommand.cpp:
+        (WebCore::ReplaceRangeWithTextCommand::inputEventDataTransfer const):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::inputEventDataTransfer const):
+        * editing/SpellingCorrectionCommand.cpp:
+        (WebCore::SpellingCorrectionCommand::inputEventDataTransfer const):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::inputEventDataTransfer const):
+        * editing/WebCorePasteboardFileReader.cpp:
+        (WebCore::WebCorePasteboardFileReader::readFilename):
+        (WebCore::WebCorePasteboardFileReader::readBuffer):
+        * editing/WebCorePasteboardFileReader.h:
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::createFragmentForImageAttachment):
+        (WebCore::replaceRichContentWithAttachments):
+        (WebCore::createFragmentAndAddResources):
+        (WebCore::sanitizeMarkupWithArchive):
+        (WebCore::WebContentReader::readImage):
+        (WebCore::attachmentForFilePath):
+        (WebCore::attachmentForData):
+        * editing/markup.cpp:
+        (WebCore::restoreAttachmentElementsInFragment):
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob):
+        * fileapi/Blob.h:
+        (WebCore::Blob::create):
+        (WebCore::Blob::deserialize):
+        (WebCore::Blob::slice const):
+        * fileapi/Blob.idl:
+        * fileapi/File.cpp:
+        (WebCore::File::createWithRelativePath):
+        (WebCore::File::File):
+        * fileapi/File.h:
+        * fileapi/File.idl:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::appendFormData const):
+        (WebCore::FileInputType::filesChosen):
+        * html/FileListCreator.cpp:
+        (WebCore::appendDirectoryFiles):
+        (WebCore::FileListCreator::FileListCreator):
+        (WebCore::FileListCreator::createFileList):
+        * html/FileListCreator.h:
+        (WebCore::FileListCreator::create):
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::updateEnclosingImageWithData):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::toBlob):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleDrag):
+        * testing/Internals.cpp:
+        (WebCore::Internals::createFile):
+        * testing/ServiceWorkerInternals.cpp:
+        (WebCore::ServiceWorkerInternals::createOpaqueWithBlobBodyResponse):
+        * workers/service/context/ServiceWorkerFetch.cpp:
+        (WebCore::ServiceWorkerFetch::dispatchFetchEvent):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createResponseBlob):
+
 2019-08-10  Alex Christensen  <achristensen@webkit.org>
 
         Disable ContentChangeObserver TouchEvent adjustment on youtube.com on iOS in mobile browsing mode

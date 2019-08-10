@@ -212,7 +212,7 @@ Ref<Blob> XMLHttpRequest::createResponseBlob()
         data.append(m_binaryResponseBuilder->data(), m_binaryResponseBuilder->size());
     m_binaryResponseBuilder = nullptr;
     String normalizedContentType = Blob::normalizedContentType(responseMIMEType()); // responseMIMEType defaults to text/xml which may be incorrect.
-    return Blob::create(WTFMove(data), normalizedContentType);
+    return Blob::create(scriptExecutionContext()->sessionID(), WTFMove(data), normalizedContentType);
 }
 
 RefPtr<ArrayBuffer> XMLHttpRequest::createResponseArrayBuffer()

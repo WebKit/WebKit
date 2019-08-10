@@ -3772,7 +3772,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     // This does work only if we missed a dragEnd. Do it anyway, just to make sure the old dataTransfer gets numbed.
     invalidateDataTransfer();
 
-    dragState().dataTransfer = DataTransfer::createForDrag();
+    dragState().dataTransfer = DataTransfer::createForDrag(*m_frame.document());
     HasNonDefaultPasteboardData hasNonDefaultPasteboardData = HasNonDefaultPasteboardData::No;
     
     if (dragState().shouldDispatchEvents) {

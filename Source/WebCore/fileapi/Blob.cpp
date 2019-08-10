@@ -72,19 +72,22 @@ URLRegistry& BlobURLRegistry::registry()
     return instance;
 }
 
-Blob::Blob(UninitializedContructor)
+Blob::Blob(UninitializedContructor, PAL::SessionID sessionID)
+    : m_sessionID(sessionID)
 {
 }
 
-Blob::Blob()
-    : m_size(0)
+Blob::Blob(PAL::SessionID sessionID)
+    : m_sessionID(sessionID)
+    , m_size(0)
 {
     m_internalURL = BlobURL::createInternalURL();
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, { },  { });
 }
 
-Blob::Blob(Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
-    : m_internalURL(BlobURL::createInternalURL())
+Blob::Blob(PAL::SessionID sessionID, Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
+    : m_sessionID(sessionID)
+    , m_internalURL(BlobURL::createInternalURL())
     , m_type(normalizedContentType(propertyBag.type))
     , m_size(-1)
 {
@@ -100,8 +103,9 @@ Blob::Blob(Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& pr
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, builder.finalize(), m_type);
 }
 
-Blob::Blob(const SharedBuffer& buffer, const String& contentType)
-    : m_type(contentType)
+Blob::Blob(PAL::SessionID sessionID, const SharedBuffer& buffer, const String& contentType)
+    : m_sessionID(sessionID)
+    , m_type(contentType)
     , m_size(buffer.size())
 {
     Vector<uint8_t> data;
@@ -113,8 +117,9 @@ Blob::Blob(const SharedBuffer& buffer, const String& contentType)
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, WTFMove(blobParts), contentType);
 }
 
-Blob::Blob(Vector<uint8_t>&& data, const String& contentType)
-    : m_type(contentType)
+Blob::Blob(PAL::SessionID sessionID, Vector<uint8_t>&& data, const String& contentType)
+    : m_sessionID(sessionID)
+    , m_type(contentType)
     , m_size(data.size())
 {
     Vector<BlobPart> blobParts;
@@ -124,15 +129,17 @@ Blob::Blob(Vector<uint8_t>&& data, const String& contentType)
 }
 
 Blob::Blob(ReferencingExistingBlobConstructor, const Blob& blob)
-    : m_internalURL(BlobURL::createInternalURL())
+    : m_sessionID(blob.m_sessionID)
+    , m_internalURL(BlobURL::createInternalURL())
     , m_type(blob.type())
     , m_size(blob.size())
 {
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, { BlobPart(blob.url()) } , m_type);
 }
 
-Blob::Blob(DeserializationContructor, const URL& srcURL, const String& type, long long size, const String& fileBackedPath)
-    : m_type(normalizedContentType(type))
+Blob::Blob(DeserializationContructor, PAL::SessionID sessionID, const URL& srcURL, const String& type, long long size, const String& fileBackedPath)
+    : m_sessionID(sessionID)
+    , m_type(normalizedContentType(type))
     , m_size(size)
 {
     m_internalURL = BlobURL::createInternalURL();
@@ -142,8 +149,9 @@ Blob::Blob(DeserializationContructor, const URL& srcURL, const String& type, lon
         ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(m_internalURL, srcURL, fileBackedPath, m_type);
 }
 
-Blob::Blob(const URL& srcURL, long long start, long long end, const String& type)
-    : m_type(normalizedContentType(type))
+Blob::Blob(PAL::SessionID sessionID, const URL& srcURL, long long start, long long end, const String& type)
+    : m_sessionID(sessionID)
+    , m_type(normalizedContentType(type))
     , m_size(-1) // size is not necessarily equal to end - start.
 {
     m_internalURL = BlobURL::createInternalURL();

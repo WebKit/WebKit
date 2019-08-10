@@ -39,15 +39,15 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(File);
 
-Ref<File> File::createWithRelativePath(const String& path, const String& relativePath)
+Ref<File> File::createWithRelativePath(PAL::SessionID sessionID, const String& path, const String& relativePath)
 {
-    auto file = File::create(path);
+    auto file = File::create(sessionID, path);
     file->setRelativePath(relativePath);
     return file;
 }
 
-File::File(const String& path)
-    : Blob(uninitializedContructor)
+File::File(PAL::SessionID sessionID, const String& path)
+    : Blob(uninitializedContructor, sessionID)
     , m_path(path)
 {
     m_internalURL = BlobURL::createInternalURL();
@@ -56,8 +56,8 @@ File::File(const String& path)
     ThreadableBlobRegistry::registerFileBlobURL(m_internalURL, path, m_type);
 }
 
-File::File(const String& path, const String& nameOverride)
-    : Blob(uninitializedContructor)
+File::File(PAL::SessionID sessionID, const String& path, const String& nameOverride)
+    : Blob(uninitializedContructor, sessionID)
     , m_path(path)
 {
     m_internalURL = BlobURL::createInternalURL();
@@ -66,8 +66,8 @@ File::File(const String& path, const String& nameOverride)
     ThreadableBlobRegistry::registerFileBlobURL(m_internalURL, path, m_type);
 }
 
-File::File(DeserializationContructor, const String& path, const URL& url, const String& type, const String& name, const Optional<int64_t>& lastModified)
-    : Blob(deserializationContructor, url, type, -1, path)
+File::File(DeserializationContructor, PAL::SessionID sessionID, const String& path, const URL& url, const String& type, const String& name, const Optional<int64_t>& lastModified)
+    : Blob(deserializationContructor, sessionID, url, type, -1, path)
     , m_path(path)
     , m_name(name)
     , m_lastModifiedDateOverride(lastModified)
@@ -81,8 +81,8 @@ static BlobPropertyBag convertPropertyBag(const File::PropertyBag& initialBag)
     return bag;
 }
 
-File::File(Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
-    : Blob(WTFMove(blobPartVariants), convertPropertyBag(propertyBag))
+File::File(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
+    : Blob(context.sessionID(), WTFMove(blobPartVariants), convertPropertyBag(propertyBag))
     , m_name(filename)
     , m_lastModifiedDateOverride(propertyBag.lastModified.valueOr(WallTime::now().secondsSinceEpoch().milliseconds()))
 {

@@ -68,8 +68,9 @@ private:
 
 #endif
 
-DataTransfer::DataTransfer(StoreMode mode, std::unique_ptr<Pasteboard> pasteboard, Type type)
-    : m_storeMode(mode)
+DataTransfer::DataTransfer(const Document& document, StoreMode mode, std::unique_ptr<Pasteboard> pasteboard, Type type)
+    : m_sessionID(document.sessionID())
+    , m_storeMode(mode)
     , m_pasteboard(WTFMove(pasteboard))
 #if ENABLE(DRAG_SUPPORT)
     , m_type(type)
@@ -83,9 +84,9 @@ DataTransfer::DataTransfer(StoreMode mode, std::unique_ptr<Pasteboard> pasteboar
 #endif
 }
 
-Ref<DataTransfer> DataTransfer::createForCopyAndPaste(Document& document, StoreMode storeMode, std::unique_ptr<Pasteboard>&& pasteboard)
+Ref<DataTransfer> DataTransfer::createForCopyAndPaste(const Document& document, StoreMode storeMode, std::unique_ptr<Pasteboard>&& pasteboard)
 {
-    auto dataTransfer = adoptRef(*new DataTransfer(storeMode, WTFMove(pasteboard)));
+    auto dataTransfer = adoptRef(*new DataTransfer(document, storeMode, WTFMove(pasteboard)));
     dataTransfer->m_originIdentifier = document.originIdentifierForPasteboard();
     return dataTransfer;
 }
@@ -348,7 +349,7 @@ Vector<Ref<File>> DataTransfer::filesFromPasteboardAndItemList() const
     bool addedFilesFromPasteboard = false;
     Vector<Ref<File>> files;
     if ((!forDrag() || forFileDrag()) && m_pasteboard->fileContentState() != Pasteboard::FileContentState::NoFileOrImageData) {
-        WebCorePasteboardFileReader reader;
+        WebCorePasteboardFileReader reader { m_sessionID };
         m_pasteboard->read(reader);
         files = WTFMove(reader.files);
         addedFilesFromPasteboard = !files.isEmpty();
@@ -413,12 +414,12 @@ bool DataTransfer::hasStringOfType(const String& type)
     return !type.isNull() && types().contains(type);
 }
 
-Ref<DataTransfer> DataTransfer::createForInputEvent(const String& plainText, const String& htmlText)
+Ref<DataTransfer> DataTransfer::createForInputEvent(const Document& document, const String& plainText, const String& htmlText)
 {
     auto pasteboard = std::make_unique<StaticPasteboard>();
     pasteboard->writeString("text/plain"_s, plainText);
     pasteboard->writeString("text/html"_s, htmlText);
-    return adoptRef(*new DataTransfer(StoreMode::Readonly, WTFMove(pasteboard), Type::InputEvent));
+    return adoptRef(*new DataTransfer(document, StoreMode::Readonly, WTFMove(pasteboard), Type::InputEvent));
 }
 
 void DataTransfer::commitToPasteboard(Pasteboard& nativePasteboard)
@@ -463,29 +464,29 @@ void DataTransfer::setDragImage(Element*, int, int)
 
 #else
 
-Ref<DataTransfer> DataTransfer::createForDrag()
+Ref<DataTransfer> DataTransfer::createForDrag(const Document& document)
 {
-    return adoptRef(*new DataTransfer(StoreMode::ReadWrite, Pasteboard::createForDragAndDrop(), Type::DragAndDropData));
+    return adoptRef(*new DataTransfer(document, StoreMode::ReadWrite, Pasteboard::createForDragAndDrop(), Type::DragAndDropData));
 }
 
-Ref<DataTransfer> DataTransfer::createForDragStartEvent(Document& document)
+Ref<DataTransfer> DataTransfer::createForDragStartEvent(const Document& document)
 {
-    auto dataTransfer = adoptRef(*new DataTransfer(StoreMode::ReadWrite, std::make_unique<StaticPasteboard>(), Type::DragAndDropData));
+    auto dataTransfer = adoptRef(*new DataTransfer(document, StoreMode::ReadWrite, std::make_unique<StaticPasteboard>(), Type::DragAndDropData));
     dataTransfer->m_originIdentifier = document.originIdentifierForPasteboard();
     return dataTransfer;
 }
 
-Ref<DataTransfer> DataTransfer::createForDrop(Document& document, std::unique_ptr<Pasteboard>&& pasteboard, DragOperation sourceOperation, bool draggingFiles)
+Ref<DataTransfer> DataTransfer::createForDrop(const Document& document, std::unique_ptr<Pasteboard>&& pasteboard, DragOperation sourceOperation, bool draggingFiles)
 {
-    auto dataTransfer = adoptRef(*new DataTransfer(DataTransfer::StoreMode::Readonly, WTFMove(pasteboard), draggingFiles ? Type::DragAndDropFiles : Type::DragAndDropData));
+    auto dataTransfer = adoptRef(*new DataTransfer(document, DataTransfer::StoreMode::Readonly, WTFMove(pasteboard), draggingFiles ? Type::DragAndDropFiles : Type::DragAndDropData));
     dataTransfer->setSourceOperation(sourceOperation);
     dataTransfer->m_originIdentifier = document.originIdentifierForPasteboard();
     return dataTransfer;
 }
 
-Ref<DataTransfer> DataTransfer::createForUpdatingDropTarget(Document& document, std::unique_ptr<Pasteboard>&& pasteboard, DragOperation sourceOperation, bool draggingFiles)
+Ref<DataTransfer> DataTransfer::createForUpdatingDropTarget(const Document& document, std::unique_ptr<Pasteboard>&& pasteboard, DragOperation sourceOperation, bool draggingFiles)
 {
-    auto dataTransfer = adoptRef(*new DataTransfer(DataTransfer::StoreMode::Protected, WTFMove(pasteboard), draggingFiles ? Type::DragAndDropFiles : Type::DragAndDropData));
+    auto dataTransfer = adoptRef(*new DataTransfer(document, DataTransfer::StoreMode::Protected, WTFMove(pasteboard), draggingFiles ? Type::DragAndDropFiles : Type::DragAndDropData));
     dataTransfer->setSourceOperation(sourceOperation);
     dataTransfer->m_originIdentifier = document.originIdentifierForPasteboard();
     return dataTransfer;
