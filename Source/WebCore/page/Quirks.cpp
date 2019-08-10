@@ -36,6 +36,7 @@
 #include "LayoutUnit.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
+#include "UserAgent.h"
 
 namespace WebCore {
 
@@ -226,6 +227,19 @@ bool Quirks::needsYouTubeMouseOutQuirk() const
         return false;
 
     return equalLettersIgnoringASCIICase(m_document->url().host(), "www.youtube.com");
+#else
+    return false;
+#endif
+}
+
+bool Quirks::shouldAvoidUsingIOS13ForGmail() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    auto& url = m_document->topDocument().url();
+    return equalLettersIgnoringASCIICase(url.host(), "mail.google.com");
 #else
     return false;
 #endif

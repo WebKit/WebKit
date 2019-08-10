@@ -123,6 +123,7 @@
 #import <WebCore/StyleProperties.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIterator.h>
+#import <WebCore/UserAgent.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WebEvent.h>
 #import <wtf/MathExtras.h>
@@ -3782,6 +3783,16 @@ void WebPage::contentSizeCategoryDidChange(const String& contentSizeCategory)
 
 String WebPage::platformUserAgent(const URL&) const
 {
+    if (!m_page->settings().needsSiteSpecificQuirks())
+        return String();
+
+    auto document = m_mainFrame->coreFrame()->document();
+    if (!document)
+        return String();
+
+    if (document->quirks().shouldAvoidUsingIOS13ForGmail() && osNameForUserAgent() == "iPhone OS" && systemMarketingVersionForUserAgentString() == "13_1")
+        return standardUserAgentWithApplicationName({ }, "12_1_3");
+
     return String();
 }
 

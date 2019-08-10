@@ -1,3 +1,24 @@
+2019-08-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS] Add a quirk for gmail.com messages on iPhone iOS13
+        https://bugs.webkit.org/show_bug.cgi?id=200605
+
+        Reviewed by Maciej Stachowiak.
+
+        Add a quirk which sets the user agent for gmail.com messages on iPhone
+        OS 13 to be iPhone OS 12. This is a workaround for a gmail.com bug till
+        it is fixed.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldAvoidUsingIOS13ForGmail const):
+        * page/Quirks.h:
+        * platform/UserAgent.h:
+        * platform/ios/UserAgentIOS.mm:
+        (WebCore::osNameForUserAgent):
+        (WebCore::standardUserAgentWithApplicationName):
+        * platform/mac/UserAgentMac.mm:
+        (WebCore::standardUserAgentWithApplicationName):
+
 2019-08-10  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC] Remove unused GstAdapter

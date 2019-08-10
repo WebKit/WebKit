@@ -70,6 +70,8 @@ public:
     WEBCORE_EXPORT bool shouldAvoidScrollingWhenFocusedContentIsVisible() const;
 
     WEBCORE_EXPORT bool needsYouTubeMouseOutQuirk() const;
+    
+    WEBCORE_EXPORT bool shouldAvoidUsingIOS13ForGmail() const;
 
     bool needsGMailOverflowScrollQuirk() const;
     bool needsYouTubeOverflowScrollQuirk() const;
