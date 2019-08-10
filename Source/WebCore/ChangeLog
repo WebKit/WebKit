@@ -1,3 +1,17 @@
+2019-08-09  Chris Dumez  <cdumez@apple.com>
+
+        Possible non-thread safe usage of RefCounted in ~VideoFullscreenControllerContext()
+        https://bugs.webkit.org/show_bug.cgi?id=200599
+
+        Reviewed by Geoffrey Garen.
+
+        WebVideoFullscreenControllerAVKit's m_playbackModel & m_fullscreenModel data members are
+        WebThread objects so we need to make sure we grab the WebThread lock before dereferencing
+        them in the WebVideoFullscreenControllerAVKit destructor, when destroyed on the UIThread.
+
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::~VideoFullscreenControllerContext):
+
 2019-08-09  Ali Juma  <ajuma@chromium.org>
 
         Don't allow cross-origin iframes to autofocus

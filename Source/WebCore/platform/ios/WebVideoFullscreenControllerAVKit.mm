@@ -226,9 +226,12 @@ VideoFullscreenControllerContext::~VideoFullscreenControllerContext()
         while (!m_fullscreenClients.isEmpty())
             (*m_fullscreenClients.begin())->modelDestroyed();
     };
-    if (isUIThread())
+    if (isUIThread()) {
+        WebThreadLock();
         notifyClientsModelWasDestroyed();
-    else
+        m_playbackModel = nullptr;
+        m_fullscreenModel = nullptr;
+    } else
         dispatch_sync(dispatch_get_main_queue(), WTFMove(notifyClientsModelWasDestroyed));
 }
 
