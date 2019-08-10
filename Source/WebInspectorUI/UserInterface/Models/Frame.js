@@ -266,11 +266,15 @@ WI.Frame = class Frame extends WI.Object
 
     markDOMContentReadyEvent(timestamp)
     {
+        console.assert(isNaN(this._domContentReadyEventTimestamp));
+
         this._domContentReadyEventTimestamp = timestamp || NaN;
     }
 
     markLoadEvent(timestamp)
     {
+        console.assert(isNaN(this._loadEventTimestamp));
+
         this._loadEventTimestamp = timestamp || NaN;
     }
 

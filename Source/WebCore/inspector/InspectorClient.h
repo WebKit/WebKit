@@ -69,8 +69,6 @@ public:
 #if ENABLE(REMOTE_INSPECTOR)
     virtual bool allowRemoteInspectionToPageDirectly() const { return false; }
 #endif
-
-    WEBCORE_EXPORT static void doDispatchMessageOnFrontendPage(Page* frontendPage, const String& message);
 };
 
 } // namespace WebCore

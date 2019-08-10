@@ -38,6 +38,7 @@
 #include "Frame.h"
 #include "InspectorCPUProfilerAgent.h"
 #include "InspectorClient.h"
+#include "InspectorController.h"
 #include "InspectorMemoryAgent.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"

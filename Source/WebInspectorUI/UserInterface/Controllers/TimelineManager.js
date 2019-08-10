@@ -551,11 +551,11 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             return;
 
         console.assert(this._activeRecording);
-        console.assert(isNaN(WI.networkManager.mainFrame.domContentReadyEventTimestamp));
 
         let computedTimestamp = this._activeRecording.computeElapsedTime(timestamp);
 
-        WI.networkManager.mainFrame.markDOMContentReadyEvent(computedTimestamp);
+        if (WI.networkManager.mainFrame)
+            WI.networkManager.mainFrame.markDOMContentReadyEvent(computedTimestamp);
 
         let eventMarker = new WI.TimelineMarker(computedTimestamp, WI.TimelineMarker.Type.DOMContentEvent);
         this._activeRecording.addEventMarker(eventMarker);
@@ -567,11 +567,11 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             return;
 
         console.assert(this._activeRecording);
-        console.assert(isNaN(WI.networkManager.mainFrame.loadEventTimestamp));
 
         let computedTimestamp = this._activeRecording.computeElapsedTime(timestamp);
 
-        WI.networkManager.mainFrame.markLoadEvent(computedTimestamp);
+        if (WI.networkManager.mainFrame)
+            WI.networkManager.mainFrame.markLoadEvent(computedTimestamp);
 
         let eventMarker = new WI.TimelineMarker(computedTimestamp, WI.TimelineMarker.Type.LoadEvent);
         this._activeRecording.addEventMarker(eventMarker);

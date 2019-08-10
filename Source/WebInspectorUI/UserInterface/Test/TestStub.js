@@ -25,6 +25,7 @@
  */
 
 InspectorFrontendAPI = {};
+InspectorFrontendAPI.dispatch = function () { };
 InspectorFrontendAPI.dispatchMessageAsync = InspectorProtocol.dispatchMessageFromBackend;
 
 window.ProtocolTest = new ProtocolTestHarness();

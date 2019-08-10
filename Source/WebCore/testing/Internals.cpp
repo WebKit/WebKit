@@ -322,7 +322,6 @@ public:
     virtual ~InspectorStubFrontend();
 
 private:
-    void frontendLoaded() final;
     void attachWindow(DockSide) final { }
     void detachWindow() final { }
     void closeWindow() final;
@@ -339,8 +338,6 @@ private:
     ConnectionType connectionType() const final { return ConnectionType::Local; }
 
     RefPtr<DOMWindow> m_frontendWindow;
-    Vector<String> m_messages;
-    bool m_loaded { false };
 };
 
 InspectorStubFrontend::InspectorStubFrontend(Page& inspectedPage, RefPtr<DOMWindow>&& frontendWindow)
@@ -358,15 +355,6 @@ InspectorStubFrontend::~InspectorStubFrontend()
     closeWindow();
 }
 
-void InspectorStubFrontend::frontendLoaded()
-{
-    m_loaded = true;
-
-    for (auto& message : m_messages)
-        sendMessageToFrontend(message);
-    m_messages.clear();
-}
-
 void InspectorStubFrontend::closeWindow()
 {
     if (!m_frontendWindow)
@@ -381,14 +369,7 @@ void InspectorStubFrontend::closeWindow()
 
 void InspectorStubFrontend::sendMessageToFrontend(const String& message)
 {
-    ASSERT_ARG(message, !message.isEmpty());
-
-    if (!m_loaded) {
-        m_messages.append(message);
-        return;
-    }
-
-    InspectorClient::doDispatchMessageOnFrontendPage(frontendPage(), message);
+    dispatchMessageAsync(message);
 }
 
 static bool markerTypeFrom(const String& markerType, DocumentMarker::MarkerType& result)

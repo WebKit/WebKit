@@ -1331,7 +1331,6 @@ inspector/InspectorAuditAccessibilityObject.cpp
 inspector/InspectorAuditDOMObject.cpp
 inspector/InspectorAuditResourcesObject.cpp
 inspector/InspectorCanvas.cpp
-inspector/InspectorClient.cpp
 inspector/InspectorController.cpp
 inspector/InspectorDatabaseResource.cpp
 inspector/InspectorFrontendClientLocal.cpp
