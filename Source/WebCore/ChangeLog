@@ -1,3 +1,25 @@
+2019-08-10  Alex Christensen  <achristensen@webkit.org>
+
+        Disable ContentChangeObserver TouchEvent adjustment on youtube.com on iOS in mobile browsing mode
+        https://bugs.webkit.org/show_bug.cgi?id=200609
+        <rdar://problem/54015403>
+
+        Reviewed by Maciej Stachowiak.
+
+        When watching a youtube video on iOS with "Autoplay" switched to off,
+        upon finishing the video all clicks anywhere on the page are effectively ignored.
+        Disabling ContentChangeObserver's TouchEvent adjustment fixes this bug.  I verified this manually.
+        This switch was introduced in r242621, and it disables part of a new feature, so there is low risk of fallout.
+
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::setAllowContentChangeObserverQuirk):
+        (WebCore::DocumentLoader::allowContentChangeObserverQuirk const):
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldDisableContentChangeObserverTouchEventAdjustment const):
+        * page/Quirks.h:
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::touchEventDidStart):
+
 2019-08-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [iOS] Add a quirk for gmail.com messages on iPhone iOS13

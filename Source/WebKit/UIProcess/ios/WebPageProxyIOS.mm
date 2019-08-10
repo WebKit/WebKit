@@ -1420,8 +1420,10 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
 
     m_allowsFastClicksEverywhere = false;
 
-    if (!useDesktopBrowsingMode)
+    if (!useDesktopBrowsingMode) {
+        policies.setAllowContentChangeObserverQuirk(true);
         return WebContentMode::Mobile;
+    }
 
     if (policies.customUserAgent().isEmpty() && customUserAgent().isEmpty()) {
         auto applicationName = policies.applicationNameForDesktopUserAgent();

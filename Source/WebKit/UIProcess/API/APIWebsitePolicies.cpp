@@ -62,6 +62,7 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setMediaSourcePolicy(m_mediaSourcePolicy);
     policies->setSimulatedMouseEventsDispatchPolicy(m_simulatedMouseEventsDispatchPolicy);
     policies->setLegacyOverflowScrollingTouchPolicy(m_legacyOverflowScrollingTouchPolicy);
+    policies->setAllowContentChangeObserverQuirk(m_allowContentChangeObserverQuirk);
     
     Vector<WebCore::HTTPHeaderField> legacyCustomHeaderFields;
     legacyCustomHeaderFields.reserveInitialCapacity(m_legacyCustomHeaderFields.size());
@@ -115,6 +116,7 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
         m_mediaSourcePolicy,
         m_simulatedMouseEventsDispatchPolicy,
         m_legacyOverflowScrollingTouchPolicy,
+        m_allowContentChangeObserverQuirk,
     };
 }
 

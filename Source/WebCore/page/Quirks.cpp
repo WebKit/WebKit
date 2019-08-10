@@ -139,6 +139,20 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
     return m_hasBrokenEncryptedMediaAPISupportQuirk.value();
 }
 
+bool Quirks::shouldDisableContentChangeObserverTouchEventAdjustment() const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto& topDocument = m_document->topDocument();
+    auto* topDocumentLoader = topDocument.loader();
+    if (!topDocumentLoader || !topDocumentLoader->allowContentChangeObserverQuirk())
+        return false;
+
+    auto host = m_document->topDocument().url().host();
+    return host.endsWith(".youtube.com") || host == "youtube.com";
+}
+
 bool Quirks::shouldStripQuotationMarkInFontFaceSetFamily() const
 {
     if (!needsQuirks())

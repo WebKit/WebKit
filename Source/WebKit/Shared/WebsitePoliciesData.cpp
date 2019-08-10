@@ -53,6 +53,7 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << mediaSourcePolicy;
     encoder << simulatedMouseEventsDispatchPolicy;
     encoder << legacyOverflowScrollingTouchPolicy;
+    encoder << allowContentChangeObserverQuirk;
 }
 
 Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
@@ -129,6 +130,11 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
     if (!legacyOverflowScrollingTouchPolicy)
         return WTF::nullopt;
 
+    Optional<bool> allowContentChangeObserverQuirk;
+    decoder >> allowContentChangeObserverQuirk;
+    if (!allowContentChangeObserverQuirk)
+        return WTF::nullopt;
+    
     return { {
         WTFMove(*contentBlockersEnabled),
         WTFMove(*allowedAutoplayQuirks),
@@ -146,6 +152,7 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
         WTFMove(*mediaSourcePolicy),
         WTFMove(*simulatedMouseEventsDispatchPolicy),
         WTFMove(*legacyOverflowScrollingTouchPolicy),
+        WTFMove(*allowContentChangeObserverQuirk),
     } };
 }
 
@@ -255,6 +262,8 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
         documentLoader.setLegacyOverflowScrollingTouchPolicy(WebCore::LegacyOverflowScrollingTouchPolicy::Enable);
         break;
     }
+
+    documentLoader.setAllowContentChangeObserverQuirk(websitePolicies.allowContentChangeObserverQuirk);
 
     auto* frame = documentLoader.frame();
     if (!frame)
