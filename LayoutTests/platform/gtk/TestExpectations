@@ -228,7 +228,6 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-avt
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Failure Crash ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-a-bitrate.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Failure Pass ]
 # Crash is webkit.org/b/176020
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Failure Crash ]
