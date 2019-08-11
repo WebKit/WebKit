@@ -113,8 +113,6 @@ public:
     bool hasMarginBeforeQuirk(const RenderBox& child) const;
     bool hasMarginAfterQuirk(const RenderBox& child) const;
 
-    bool generatesLineBoxesForInlineChild(RenderObject*);
-
     void markPositionedObjectsForLayout();
     void markForPaginationRelayoutIfNeeded() override;
     

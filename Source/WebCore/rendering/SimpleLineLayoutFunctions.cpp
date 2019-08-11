@@ -356,7 +356,7 @@ void generateLineBoxTree(RenderBlockFlow& flow, const Layout& layout)
         // lineInfo.setLastLine(lastLine);
         lineInfo.setEmpty(!bidiRuns.runCount());
         bidiRuns.setLogicallyLastRun(bidiRuns.lastRun());
-        auto* root = flow.constructLine(bidiRuns, lineInfo);
+        auto* root = flow.complexLineLayout().constructLine(bidiRuns, lineInfo);
         bidiRuns.clear();
         if (!root)
             continue;

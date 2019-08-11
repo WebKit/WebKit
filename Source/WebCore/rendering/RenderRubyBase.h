@@ -62,7 +62,7 @@ public:
 private:
     bool isRubyBase() const override { return true; }
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
-    TextAlignMode textAlignmentForLine(bool endsWithSoftBreak) const override;
+    Optional<TextAlignMode> overrideTextAlignmentForLine(bool endsWithSoftBreak) const override;
     void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const override;
 
     float m_initialOffset;

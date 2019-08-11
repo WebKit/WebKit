@@ -1,3 +1,147 @@
+2019-08-11  Antti Koivisto  <antti@apple.com>
+
+        Factor complex line layout path out from RenderBlockFlow
+        https://bugs.webkit.org/show_bug.cgi?id=200612
+
+        Reviewed by Zalan Bujtas.
+
+        This patch factors the line layout code that is currently part of the RenderBlockFlow and lives in RenderBlockLineLayout.cpp
+        into a new ComplexLineLayout class. ComplexLineLayout is a member of RenderBlockFlow.
+
+        In the future we can stop constructing ComplexLineLayout at all when using other line layout paths.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/ComplexLineLayout.cpp: Copied from Source/WebCore/rendering/RenderBlockLineLayout.cpp.
+        (WebCore::ComplexLineLayout::ComplexLineLayout):
+        (WebCore::ComplexLineLayout::appendRunsForObject):
+        (WebCore::ComplexLineLayout::createRootInlineBox):
+        (WebCore::ComplexLineLayout::createAndAppendRootInlineBox):
+        (WebCore::ComplexLineLayout::createInlineBoxForRenderer):
+        (WebCore::ComplexLineLayout::createLineBoxes):
+        (WebCore::ComplexLineLayout::constructLine):
+        (WebCore::ComplexLineLayout::textAlignmentForLine const):
+        (WebCore::ComplexLineLayout::setMarginsForRubyRun):
+        (WebCore::ComplexLineLayout::updateRubyForJustifiedText):
+        (WebCore::ComplexLineLayout::computeExpansionForJustifiedText):
+        (WebCore::ComplexLineLayout::updateLogicalWidthForAlignment):
+        (WebCore::ComplexLineLayout::computeInlineDirectionPositionsForLine):
+        (WebCore::ComplexLineLayout::computeInlineDirectionPositionsForSegment):
+        (WebCore::ComplexLineLayout::removeInlineBox const):
+        (WebCore::ComplexLineLayout::computeBlockDirectionPositionsForLine):
+        (WebCore::ComplexLineLayout::handleTrailingSpaces):
+        (WebCore::ComplexLineLayout::appendFloatingObjectToLastLine):
+        (WebCore::ComplexLineLayout::createLineBoxesFromBidiRuns):
+        (WebCore::ComplexLineLayout::layoutRunsAndFloats):
+        (WebCore::ComplexLineLayout::restartLayoutRunsAndFloatsInRange):
+        (WebCore::ComplexLineLayout::layoutRunsAndFloatsInRange):
+        (WebCore::ComplexLineLayout::reattachCleanLineFloats):
+        (WebCore::ComplexLineLayout::linkToEndLineIfNeeded):
+        (WebCore::ComplexLineLayout::layoutLineBoxes):
+        (WebCore::ComplexLineLayout::checkFloatInCleanLine):
+        (WebCore::ComplexLineLayout::determineStartPosition):
+        (WebCore::ComplexLineLayout::determineEndPosition):
+        (WebCore::ComplexLineLayout::checkPaginationAndFloatsAtEndLine):
+        (WebCore::ComplexLineLayout::lineWidthForPaginatedLineChanged const):
+        (WebCore::ComplexLineLayout::matchedEndLine):
+        (WebCore::ComplexLineLayout::addOverflowFromInlineChildren):
+        (WebCore::ComplexLineLayout::deleteEllipsisLineBoxes):
+        (WebCore::ComplexLineLayout::checkLinesForTextOverflow):
+        (WebCore::ComplexLineLayout::positionNewFloatOnLine):
+        (WebCore::ComplexLineLayout::startAlignedOffsetForLine):
+        (WebCore::ComplexLineLayout::updateFragmentForLine const):
+        (WebCore::ComplexLineLayout::style const):
+        (WebCore::ComplexLineLayout::layoutContext const):
+        (WebCore::RenderBlockFlow::appendRunsForObject): Deleted.
+        (WebCore::RenderBlockFlow::createRootInlineBox): Deleted.
+        (WebCore::RenderBlockFlow::createAndAppendRootInlineBox): Deleted.
+        (WebCore::createInlineBoxForRenderer): Deleted.
+        (WebCore::RenderBlockFlow::createLineBoxes): Deleted.
+        (WebCore::RenderBlockFlow::constructLine): Deleted.
+        (WebCore::RenderBlockFlow::textAlignmentForLine const): Deleted.
+        (WebCore::RenderBlockFlow::setMarginsForRubyRun): Deleted.
+        (WebCore::RenderBlockFlow::updateRubyForJustifiedText): Deleted.
+        (WebCore::RenderBlockFlow::computeExpansionForJustifiedText): Deleted.
+        (WebCore::RenderBlockFlow::updateLogicalWidthForAlignment): Deleted.
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForLine): Deleted.
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment): Deleted.
+        (WebCore::RenderBlockFlow::removeInlineBox const): Deleted.
+        (WebCore::RenderBlockFlow::computeBlockDirectionPositionsForLine): Deleted.
+        (WebCore::RenderBlockFlow::handleTrailingSpaces): Deleted.
+        (WebCore::RenderBlockFlow::appendFloatingObjectToLastLine): Deleted.
+        (WebCore::RenderBlockFlow::createLineBoxesFromBidiRuns): Deleted.
+        (WebCore::RenderBlockFlow::layoutRunsAndFloats): Deleted.
+        (WebCore::RenderBlockFlow::restartLayoutRunsAndFloatsInRange): Deleted.
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange): Deleted.
+        (WebCore::RenderBlockFlow::reattachCleanLineFloats): Deleted.
+        (WebCore::RenderBlockFlow::linkToEndLineIfNeeded): Deleted.
+        (WebCore::RenderBlockFlow::layoutLineBoxes): Deleted.
+        (WebCore::RenderBlockFlow::checkFloatInCleanLine): Deleted.
+        (WebCore::RenderBlockFlow::determineStartPosition): Deleted.
+        (WebCore::RenderBlockFlow::determineEndPosition): Deleted.
+        (WebCore::RenderBlockFlow::checkPaginationAndFloatsAtEndLine): Deleted.
+        (WebCore::RenderBlockFlow::lineWidthForPaginatedLineChanged const): Deleted.
+        (WebCore::RenderBlockFlow::matchedEndLine): Deleted.
+        (WebCore::RenderBlock::generatesLineBoxesForInlineChild): Deleted.
+        (WebCore::RenderBlockFlow::addOverflowFromInlineChildren): Deleted.
+        (WebCore::RenderBlockFlow::deleteEllipsisLineBoxes): Deleted.
+        (WebCore::RenderBlockFlow::checkLinesForTextOverflow): Deleted.
+        (WebCore::RenderBlockFlow::positionNewFloatOnLine): Deleted.
+        (WebCore::RenderBlockFlow::startAlignedOffsetForLine): Deleted.
+        (WebCore::RenderBlockFlow::updateFragmentForLine const): Deleted.
+        * rendering/ComplexLineLayout.h: Added.
+        (WebCore::ComplexLineLayout::lineBoxes):
+        (WebCore::ComplexLineLayout::lineBoxes const):
+        (WebCore::ComplexLineLayout::firstRootBox const):
+        (WebCore::ComplexLineLayout::lastRootBox const):
+        * rendering/InlineIterator.h:
+        (WebCore::IsolateTracker::addFakeRunIfNecessary):
+        (WebCore::InlineBidiResolver::appendRunInternal):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::RenderBlockFlow):
+        (WebCore::RenderBlockFlow::willBeDestroyed):
+        (WebCore::RenderBlockFlow::layoutInlineChildren):
+        (WebCore::RenderBlockFlow::updateStaticInlinePositionForChild):
+        (WebCore::RenderBlockFlow::deleteLines):
+        (WebCore::RenderBlockFlow::hitTestInlineChildren):
+        (WebCore::RenderBlockFlow::addOverflowFromInlineChildren):
+        (WebCore::RenderBlockFlow::paintInlineChildren):
+        (WebCore::RenderBlockFlow::layoutSimpleLines):
+        (WebCore::RenderBlockFlow::ensureLineBoxes):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::lineBoxes):
+        (WebCore::RenderBlockFlow::lineBoxes const):
+        (WebCore::RenderBlockFlow::firstRootBox const):
+        (WebCore::RenderBlockFlow::lastRootBox const):
+        (WebCore::RenderBlockFlow::floatingObjects):
+        (WebCore::RenderBlockFlow::complexLineLayout):
+        (WebCore::RenderBlockFlow::overrideTextAlignmentForLine const):
+        (WebCore::RenderBlockFlow::adjustInlineDirectionLineBounds const):
+        * rendering/RenderBlockLineLayout.cpp: Removed.
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::overrideTextAlignmentForLine const):
+        (WebCore::RenderRubyBase::textAlignmentForLine const): Deleted.
+        * rendering/RenderRubyBase.h:
+        * rendering/RenderRubyText.cpp:
+        (WebCore::RenderRubyText::overrideTextAlignmentForLine const):
+        (WebCore::RenderRubyText::textAlignmentForLine const): Deleted.
+        * rendering/RenderRubyText.h:
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::generateLineBoxTree):
+        * rendering/line/LineBreaker.cpp:
+        (WebCore::LineBreaker::skipLeadingWhitespace):
+        * rendering/line/LineBreaker.h:
+        (WebCore::LineBreaker::positionNewFloatOnLine):
+        * rendering/line/LineInlineHeaders.h:
+        (WebCore::setStaticPositions):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::createRootInlineBox): Deleted.
+        * rendering/svg/RenderSVGText.h:
+        * rendering/updating/RenderTreeBuilderList.cpp:
+        (WebCore::generatesLineBoxesForInlineChild):
+        (WebCore::getParentOfFirstLineBox):
+
 2019-08-10  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r245974): Missing content on habitburger.com, amazon.com

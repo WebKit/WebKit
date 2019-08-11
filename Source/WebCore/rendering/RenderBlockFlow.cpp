@@ -24,6 +24,7 @@
 #include "config.h"
 #include "RenderBlockFlow.h"
 
+#include "ComplexLineLayout.h"
 #include "Editor.h"
 #include "FloatingObjects.h"
 #include "Frame.h"
@@ -110,6 +111,7 @@ RenderBlockFlow::RenderBlockFlow(Element& element, RenderStyle&& style)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
 #endif
+    , m_complexLineLayout(*this)
 {
     setChildrenInline(true);
 }
@@ -120,6 +122,7 @@ RenderBlockFlow::RenderBlockFlow(Document& document, RenderStyle&& style)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
 #endif
+    , m_complexLineLayout(*this)
 {
     setChildrenInline(true);
 }
@@ -151,7 +154,7 @@ void RenderBlockFlow::willBeDestroyed()
             parent()->dirtyLinesFromChangedChild(*this);
     }
 
-    m_lineBoxes.deleteLineBoxes();
+    lineBoxes().deleteLineBoxes();
 
     blockWillBeDestroyed();
 
@@ -674,7 +677,7 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
     }
 
     m_simpleLineLayout = nullptr;
-    layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+    complexLineLayout().layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
 }
 
 void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo, LayoutUnit& previousFloatLogicalBottom, LayoutUnit& maxFloatLogicalBottom)
@@ -896,7 +899,7 @@ void RenderBlockFlow::adjustFloatingBlock(const MarginInfo& marginInfo)
 void RenderBlockFlow::updateStaticInlinePositionForChild(RenderBox& child, LayoutUnit logicalTop, IndentTextOrNot shouldIndentText)
 {
     if (child.style().isOriginalDisplayInlineType())
-        setStaticInlinePositionForChild(child, logicalTop, startAlignedOffsetForLine(logicalTop, shouldIndentText));
+        setStaticInlinePositionForChild(child, logicalTop, complexLineLayout().startAlignedOffsetForLine(logicalTop, shouldIndentText));
     else
         setStaticInlinePositionForChild(child, logicalTop, startOffsetForContent(logicalTop));
 }
@@ -2064,10 +2067,10 @@ void RenderBlockFlow::deleteLines()
         m_floatingObjects->clearLineBoxTreePointers();
 
     if (m_simpleLineLayout) {
-        ASSERT(!m_lineBoxes.firstLineBox());
+        ASSERT(!lineBoxes().firstLineBox());
         m_simpleLineLayout = nullptr;
     } else
-        m_lineBoxes.deleteLineBoxTree();
+        lineBoxes().deleteLineBoxTree();
 
     RenderBlock::deleteLines();
 }
@@ -2904,7 +2907,18 @@ bool RenderBlockFlow::hitTestInlineChildren(const HitTestRequest& request, HitTe
     if (auto simpleLineLayout = this->simpleLineLayout())
         return SimpleLineLayout::hitTestFlow(*this, *simpleLineLayout, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 
-    return m_lineBoxes.hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
+    return lineBoxes().hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
+}
+
+void RenderBlockFlow::addOverflowFromInlineChildren()
+{
+    if (auto simpleLineLayout = this->simpleLineLayout()) {
+        ASSERT(!hasOverflowClip());
+        SimpleLineLayout::collectFlowOverflow(*this, *simpleLineLayout);
+        return;
+    }
+
+    complexLineLayout().addOverflowFromInlineChildren();
 }
 
 void RenderBlockFlow::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit& right) const
@@ -3486,7 +3500,7 @@ void RenderBlockFlow::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoin
         SimpleLineLayout::paintFlow(*this, *simpleLineLayout, paintInfo, paintOffset);
         return;
     }
-    m_lineBoxes.paint(this, paintInfo, paintOffset);
+    lineBoxes().paint(this, paintInfo, paintOffset);
 }
 
 bool RenderBlockFlow::relayoutForPagination()
@@ -3581,7 +3595,7 @@ void RenderBlockFlow::layoutSimpleLines(bool relayoutChildren, LayoutUnit& repai
     }
     for (auto& renderer : childrenOfType<RenderObject>(*this))
         renderer.clearNeedsLayout();
-    ASSERT(!m_lineBoxes.firstLineBox());
+    ASSERT(!lineBoxes().firstLineBox());
     LayoutUnit lineLayoutHeight = SimpleLineLayout::computeFlowHeight(*this, *m_simpleLineLayout);
     LayoutUnit lineLayoutTop = borderAndPaddingBefore();
     repaintLogicalTop = lineLayoutTop;
@@ -3627,14 +3641,14 @@ void RenderBlockFlow::ensureLineBoxes()
     LayoutUnit repaintLogicalBottom;
     if (isPaginated) {
         PaginatedLayoutStateMaintainer state(*this);
-        layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+        complexLineLayout().layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         // This matches relayoutToAvoidWidows.
         if (shouldBreakAtLineToAvoidWidow())
-            layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+            complexLineLayout().layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         // FIXME: This is needed as long as simple and normal line layout produce different line breakings.
         repaint();
     } else
-        layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+        complexLineLayout().layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
 
     updateLogicalHeight();
     ASSERT(didNeedLayout || logicalHeight() == oldHeight);

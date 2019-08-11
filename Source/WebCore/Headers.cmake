@@ -1239,6 +1239,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/BreakLines.h
     rendering/ClipPathOperation.h
     rendering/ClipRect.h
+    rendering/ComplexLineLayout.h
     rendering/EventRegion.h
     rendering/FloatingObjects.h
     rendering/GapRects.h

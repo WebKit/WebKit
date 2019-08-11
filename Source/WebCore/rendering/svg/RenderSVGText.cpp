@@ -425,13 +425,6 @@ void RenderSVGText::layout()
     clearNeedsLayout();
 }
 
-std::unique_ptr<RootInlineBox> RenderSVGText::createRootInlineBox()
-{
-    auto box = std::make_unique<SVGRootInlineBox>(*this);
-    box->setHasVirtualLogicalHeight();
-    return box;
-}
-
 bool RenderSVGText::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
 {
     PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_TEXT_HITTESTING, request, style().pointerEvents());

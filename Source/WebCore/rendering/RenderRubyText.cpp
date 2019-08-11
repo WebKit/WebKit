@@ -57,12 +57,12 @@ bool RenderRubyText::isChildAllowed(const RenderObject& child, const RenderStyle
     return child.isInline();
 }
 
-TextAlignMode RenderRubyText::textAlignmentForLine(bool endsWithSoftBreak) const
+Optional<TextAlignMode> RenderRubyText::overrideTextAlignmentForLine(bool) const
 {
     TextAlignMode textAlign = style().textAlign();
     // FIXME: This check is bogus since user can set the initial value.
     if (textAlign != RenderStyle::initialTextAlign())
-        return RenderBlockFlow::textAlignmentForLine(endsWithSoftBreak);
+        return { };
 
     // The default behavior is to allow ruby text to expand if it is shorter than the ruby base.
     return TextAlignMode::Justify;

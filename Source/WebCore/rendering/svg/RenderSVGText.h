@@ -87,7 +87,6 @@ private:
 
     const AffineTransform& localToParentTransform() const override { return m_localTransform; }
     AffineTransform localTransform() const override { return m_localTransform; }
-    std::unique_ptr<RootInlineBox> createRootInlineBox() override;
 
     RenderBlock* firstLineBlock() const override;
 

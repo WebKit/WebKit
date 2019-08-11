@@ -4824,6 +4824,7 @@
 		E4E39AFB1330EFA8003AB274 /* LegacyTileLayerPool.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E39AFA1330EFA8003AB274 /* LegacyTileLayerPool.h */; };
 		E4E8B4EC216B79E500B8834D /* SystemFontDatabaseCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E8B4EA216B79E500B8834D /* SystemFontDatabaseCoreText.h */; };
 		E4E8B4F5216B956500B8834D /* FontCascadeDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E8B4F2216B8B6000B8834D /* FontCascadeDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E4E94D6122FF158A00DD191F /* ComplexLineLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A1AC7822FAFD500017B75B /* ComplexLineLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4E9B1191810916F003ACCDF /* SimpleLineLayoutResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E9B1181810916F003ACCDF /* SimpleLineLayoutResolver.h */; };
 		E4E9B11D1814569C003ACCDF /* SimpleLineLayoutFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E9B11C1814569C003ACCDF /* SimpleLineLayoutFunctions.h */; };
 		E4F9EEF3156DA00700D23E7E /* StyleSheetContents.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F9EEF1156D84C400D23E7E /* StyleSheetContents.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13102,7 +13103,7 @@
 		BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSComputedStyleDeclaration.cpp; sourceTree = "<group>"; };
 		BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSComputedStyleDeclaration.h; sourceTree = "<group>"; };
 		BCEA478C097CAAC80094C9E4 /* CSSValueKeywords.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSValueKeywords.in; sourceTree = "<group>"; };
-		BCEA4813097D93020094C9E4 /* RenderBlockLineLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderBlockLineLayout.cpp; sourceTree = "<group>"; };
+		BCEA4813097D93020094C9E4 /* ComplexLineLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexLineLayout.cpp; sourceTree = "<group>"; };
 		BCEA4815097D93020094C9E4 /* BreakLines.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BreakLines.cpp; sourceTree = "<group>"; };
 		BCEA4816097D93020094C9E4 /* BreakLines.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BreakLines.h; sourceTree = "<group>"; };
 		BCEA481A097D93020094C9E4 /* InlineTextBox.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = InlineTextBox.cpp; sourceTree = "<group>"; };
@@ -14956,6 +14957,7 @@
 		E4A007821B820EC8002C5A6E /* DataURLDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataURLDecoder.h; sourceTree = "<group>"; };
 		E4A007841B820ED3002C5A6E /* DataURLDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataURLDecoder.cpp; sourceTree = "<group>"; };
 		E4A1822F1F13BE5800FEF698 /* StyleInvalidationFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleInvalidationFunctions.h; sourceTree = "<group>"; };
+		E4A1AC7822FAFD500017B75B /* ComplexLineLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplexLineLayout.h; sourceTree = "<group>"; };
 		E4A7994E20EE4AE100C19568 /* CSSParserContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSParserContext.h; path = parser/CSSParserContext.h; sourceTree = "<group>"; };
 		E4A7995020EE4AE200C19568 /* CSSParserContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSParserContext.cpp; path = parser/CSSParserContext.cpp; sourceTree = "<group>"; };
 		E4A814D31C6DEC4000BF85AC /* ClassChangeInvalidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassChangeInvalidation.h; sourceTree = "<group>"; };
@@ -26985,6 +26987,8 @@
 				5803715F1A66F00A00BAF519 /* ClipRect.cpp */,
 				580371601A66F00A00BAF519 /* ClipRect.h */,
 				BCDD454D1236C95C009A7985 /* ColumnInfo.h */,
+				BCEA4813097D93020094C9E4 /* ComplexLineLayout.cpp */,
+				E4A1AC7822FAFD500017B75B /* ComplexLineLayout.h */,
 				9392F14F0AD1862300691BD4 /* CounterNode.cpp */,
 				9392F14B0AD1861B00691BD4 /* CounterNode.h */,
 				0F53FB81213B1BB800C40D34 /* CSSFilter.cpp */,
@@ -27052,7 +27056,6 @@
 				BCEA4821097D93020094C9E4 /* RenderBlock.h */,
 				BCFB45F417D8E49400444446 /* RenderBlockFlow.cpp */,
 				BCFB45F317D8E39200444446 /* RenderBlockFlow.h */,
-				BCEA4813097D93020094C9E4 /* RenderBlockLineLayout.cpp */,
 				BCEA4822097D93020094C9E4 /* RenderBox.cpp */,
 				BCEA4823097D93020094C9E4 /* RenderBox.h */,
 				BCEB179B143379F50052EAE9 /* RenderBoxFragmentInfo.h */,
@@ -30812,6 +30815,7 @@
 				1A7FA6190DDA3B3A0028F8A5 /* NetworkStateNotifier.h in Headers */,
 				E13EF3441684ECF40034C83F /* NetworkStorageSession.h in Headers */,
 				269397241A4A5B6400E8349D /* NFA.h in Headers */,
+				E4E94D6122FF158A00DD191F /* ComplexLineLayout.h in Headers */,
 				269397221A4A412F00E8349D /* NFANode.h in Headers */,
 				267726011A5B3AD9003C24DD /* NFAToDFA.h in Headers */,
 				BCEF43DD0E674012001C1287 /* NinePieceImage.h in Headers */,

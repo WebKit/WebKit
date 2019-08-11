@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "ComplexLineLayout.h"
 #include "FloatingObjects.h"
 #include "LineWidth.h"
 #include "RenderBlock.h"
@@ -32,16 +33,9 @@
 
 namespace WebCore {
 
-class FloatWithRect;
 class LineBreaker;
-class LineInfo;
 class RenderMultiColumnFlow;
 class RenderRubyRun;
-
-struct WordMeasurement;
-
-template <class Run> class BidiRunList;
-typedef Vector<WordMeasurement, 64> WordMeasurements;
 
 #if ENABLE(TEXT_AUTOSIZING)
 enum LineCount {
@@ -332,11 +326,11 @@ public:
 
     LayoutPoint flipFloatForWritingModeForChild(const FloatingObject&, const LayoutPoint&) const;
 
-    RenderLineBoxList& lineBoxes() { return m_lineBoxes; }
-    const RenderLineBoxList& lineBoxes() const { return m_lineBoxes; }
+    RenderLineBoxList& lineBoxes() { return m_complexLineLayout.lineBoxes(); }
+    const RenderLineBoxList& lineBoxes() const { return m_complexLineLayout.lineBoxes(); }
 
-    RootInlineBox* firstRootBox() const { return downcast<RootInlineBox>(m_lineBoxes.firstLineBox()); }
-    RootInlineBox* lastRootBox() const { return downcast<RootInlineBox>(m_lineBoxes.lastLineBox()); }
+    RootInlineBox* firstRootBox() const { return m_complexLineLayout.firstRootBox(); }
+    RootInlineBox* lastRootBox() const { return m_complexLineLayout.lastRootBox(); }
 
     bool hasLines() const;
     void invalidateLineLayoutPath() final;
@@ -484,8 +478,8 @@ private:
     // Called from lineWidth, to position the floats added in the last line.
     // Returns true if and only if it has positioned any floats.
     bool positionNewFloats();
-
     void clearFloats(Clear);
+    FloatingObjects* floatingObjects() { return m_floatingObjects.get(); }
 
     LayoutUnit logicalRightFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit logicalHeight) const override;
     LayoutUnit logicalLeftFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit logicalHeight) const override;
@@ -523,63 +517,17 @@ private:
     VisiblePosition positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents, const RenderFragmentContainer*) override;
     void addFocusRingRectsForInlineChildren(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*) override;
 
-// FIXME-BLOCKFLOW: These methods have implementations in
-// RenderBlockLineLayout. They should be moved to the proper header once the
-// line layout code is separated from RenderBlock and RenderBlockFlow.
-// START METHODS DEFINED IN RenderBlockLineLayout
 public:
-    static void appendRunsForObject(BidiRunList<BidiRun>*, int start, int end, RenderObject&, InlineBidiResolver&);
-    RootInlineBox* createAndAppendRootInlineBox();
+    ComplexLineLayout& complexLineLayout() { return m_complexLineLayout; }
 
-    LayoutUnit startAlignedOffsetForLine(LayoutUnit position, IndentTextOrNot shouldIndentText);
-    virtual TextAlignMode textAlignmentForLine(bool endsWithSoftBreak) const;
+    virtual Optional<TextAlignMode> overrideTextAlignmentForLine(bool /* endsWithSoftBreak */) const { return { }; }
     virtual void adjustInlineDirectionLineBounds(int /* expansionOpportunityCount */, float& /* logicalLeft */, float& /* logicalWidth */) const { }
-    RootInlineBox* constructLine(BidiRunList<BidiRun>&, const LineInfo&);
 
-private:        
-    void adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
-
-    void layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
+private:
     void layoutSimpleLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
-    virtual std::unique_ptr<RootInlineBox> createRootInlineBox(); // Subclassed by RenderSVGText.
-    InlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, InlineBox* childBox);
-    void setMarginsForRubyRun(BidiRun*, RenderRubyRun&, RenderObject*, const LineInfo&);
-    void computeInlineDirectionPositionsForLine(RootInlineBox*, const LineInfo&, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&, WordMeasurements&);
-    void updateRubyForJustifiedText(RenderRubyRun&, BidiRun&, const Vector<unsigned, 16>& expansionOpportunities, unsigned& expansionOpportunityCount, float& totalLogicalWidth, float availableLogicalWidth, size_t& expansionIndex);
-    void computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* trailingSpaceRun, const Vector<unsigned, 16>& expansionOpportunities, unsigned expansionOpportunityCount, float totalLogicalWidth, float availableLogicalWidth);
-    BidiRun* computeInlineDirectionPositionsForSegment(RootInlineBox*, const LineInfo&, TextAlignMode, float& logicalLeft,
-        float& availableLogicalWidth, BidiRun* firstRun, BidiRun* trailingSpaceRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache&, WordMeasurements&);
-    void computeBlockDirectionPositionsForLine(RootInlineBox*, BidiRun*, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
-    BidiRun* handleTrailingSpaces(BidiRunList<BidiRun>&, BidiContext*);
-    void appendFloatingObjectToLastLine(FloatingObject&);
-    // Helper function for layoutInlineChildren()
-    RootInlineBox* createLineBoxesFromBidiRuns(unsigned bidiLevel, BidiRunList<BidiRun>&, const InlineIterator& end, LineInfo&, VerticalPositionCache&, BidiRun* trailingSpaceRun, WordMeasurements&);
-    void layoutRunsAndFloats(LineLayoutState&, bool hasInlineChild);
-    const InlineIterator& restartLayoutRunsAndFloatsInRange(LayoutUnit oldLogicalHeight, LayoutUnit newLogicalHeight,  FloatingObject* lastFloatFromPreviousLine, InlineBidiResolver&,  const InlineIterator&);
-    void layoutRunsAndFloatsInRange(LineLayoutState&, InlineBidiResolver&, const InlineIterator& cleanLineStart, const BidiStatus& cleanLineBidiStatus, unsigned consecutiveHyphenatedLines);
-    void reattachCleanLineFloats(RootInlineBox& cleanLine, LayoutUnit delta, bool isFirstCleanLine);
-    void linkToEndLineIfNeeded(LineLayoutState&);
-    void checkFloatInCleanLine(RootInlineBox& cleanLine, RenderBox& floatBoxOnCleanLine, FloatWithRect& matchingFloatWithRect,
-        bool& encounteredNewFloat, bool& dirtiedByFloat);
-    RootInlineBox* determineStartPosition(LineLayoutState&, InlineBidiResolver&);
-    void determineEndPosition(LineLayoutState&, RootInlineBox* startBox, InlineIterator& cleanLineStart, BidiStatus& cleanLineBidiStatus);
-    bool checkPaginationAndFloatsAtEndLine(LineLayoutState&);
-    bool matchedEndLine(LineLayoutState&, const InlineBidiResolver&, const InlineIterator& endLineStart, const BidiStatus& endLineStatus);
-    void deleteEllipsisLineBoxes();
-    void checkLinesForTextOverflow();
-    // Positions new floats and also adjust all floats encountered on the line if any of them
-    // have to move to the next page/column.
-    bool positionNewFloatOnLine(const FloatingObject& newFloat, FloatingObject* lastFloatFromPreviousLine, LineInfo&, LineWidth&);
-    // This function is called to test a line box that has moved in the block direction to see if it has ended up in a new
-    // page/column that has a different available line width than the old one. Used to know when you have to dirty a
-    // line, i.e., that it can't be re-used.
-    bool lineWidthForPaginatedLineChanged(RootInlineBox*, LayoutUnit lineDelta, RenderFragmentedFlow*) const;
-    void updateLogicalWidthForAlignment(const TextAlignMode&, const RootInlineBox*, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float& availableLogicalWidth, int expansionOpportunityCount);
-// END METHODS DEFINED IN RenderBlockLineLayout
-
+    void adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
     void computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
-
     void adjustInitialLetterPosition(RenderBox& childBox, LayoutUnit& logicalTopOffset, LayoutUnit& marginBeforeOffset);
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -588,12 +536,9 @@ private:
 #endif
     void setSelectionState(SelectionState) final;
 
-    void removeInlineBox(BidiRun&, const RootInlineBox&) const;
-
 public:
     // FIXME-BLOCKFLOW: These can be made protected again once all callers have been moved here.
     void adjustLinePositionForPagination(RootInlineBox*, LayoutUnit& deltaOffset, bool& overflowsFragment, RenderFragmentedFlow*); // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
-    void updateFragmentForLine(RootInlineBox*) const;
 
     // Pagination routines.
     bool relayoutForPagination();
@@ -616,11 +561,14 @@ public:
 protected:
     std::unique_ptr<FloatingObjects> m_floatingObjects;
     std::unique_ptr<RenderBlockFlowRareData> m_rareBlockFlowData;
-    RenderLineBoxList m_lineBoxes;
+
+    // FIXME: Only one of these should be needed at any given time.
+    ComplexLineLayout m_complexLineLayout;
     std::unique_ptr<SimpleLineLayout::Layout> m_simpleLineLayout;
 
     friend class LineBreaker;
     friend class LineWidth; // Needs to know FloatingObject
+    friend class ComplexLineLayout;
 };
 
 inline const SimpleLineLayout::Layout* RenderBlockFlow::simpleLineLayout() const

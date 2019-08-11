@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "LineInfo.h"
 #include "RenderLayer.h"
 
 namespace WebCore {
@@ -129,7 +130,7 @@ inline void setStaticPositions(RenderBlockFlow& block, RenderBox& child, IndentT
         // A relative positioned inline encloses us. In this case, we also have to determine our
         // position as though we were an inline. Set |staticInlinePosition| and |staticBlockPosition| on the relative positioned
         // inline so that we can obtain the value later.
-        downcast<RenderInline>(*containerBlock).layer()->setStaticInlinePosition(block.startAlignedOffsetForLine(blockHeight, DoNotIndentText));
+        downcast<RenderInline>(*containerBlock).layer()->setStaticInlinePosition(block.complexLineLayout().startAlignedOffsetForLine(blockHeight, DoNotIndentText));
         downcast<RenderInline>(*containerBlock).layer()->setStaticBlockPosition(blockHeight);
     }
     block.updateStaticInlinePositionForChild(child, blockHeight, shouldIndentText);

@@ -2025,6 +2025,7 @@ rendering/BorderEdge.cpp
 rendering/BreakLines.cpp
 rendering/CSSFilter.cpp
 rendering/ClipRect.cpp
+rendering/ComplexLineLayout.cpp
 rendering/CounterNode.cpp
 rendering/EllipsisBox.cpp
 rendering/EventRegion.cpp
@@ -2054,7 +2055,6 @@ rendering/PointerEventsHitRules.cpp
 rendering/RenderAttachment.cpp
 rendering/RenderBlock.cpp
 rendering/RenderBlockFlow.cpp
-rendering/RenderBlockLineLayout.cpp
 rendering/RenderBox.cpp
 rendering/RenderBoxModelObject.cpp
 rendering/RenderButton.cpp

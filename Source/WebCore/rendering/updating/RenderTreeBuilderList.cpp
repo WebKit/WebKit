@@ -24,6 +24,8 @@
 #include "config.h"
 #include "RenderTreeBuilderList.h"
 
+#include "InlineIterator.h"
+#include "LineInlineHeaders.h"
 #include "RenderChildIterator.h"
 #include "RenderListMarker.h"
 #include "RenderMultiColumnFlow.h"
@@ -32,6 +34,15 @@
 
 namespace WebCore {
 
+// FIXME: This shouldn't need InlineIterator
+static bool generatesLineBoxesForInlineChild(RenderBlock& current, RenderObject* inlineObj)
+{
+    InlineIterator it(&current, inlineObj, 0);
+    while (!it.atEnd() && !requiresLineBox(it))
+        it.increment();
+    return !it.atEnd();
+}
+
 static RenderBlock* getParentOfFirstLineBox(RenderBlock& current, RenderObject& marker)
 {
     bool inQuirksMode = current.document().inQuirksMode();
@@ -39,7 +50,7 @@ static RenderBlock* getParentOfFirstLineBox(RenderBlock& current, RenderObject& 
         if (&child == &marker)
             continue;
 
-        if (child.isInline() && (!is<RenderInline>(child) || current.generatesLineBoxesForInlineChild(&child)))
+        if (child.isInline() && (!is<RenderInline>(child) || generatesLineBoxesForInlineChild(current, &child)))
             return &current;
 
         if (child.isFloating() || child.isOutOfFlowPositioned())

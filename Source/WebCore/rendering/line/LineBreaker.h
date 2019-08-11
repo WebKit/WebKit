@@ -66,7 +66,7 @@ private:
     FloatingObject* insertFloatingObject(RenderBox& floatBox) { return m_block.insertFloatingObject(floatBox); }
     bool positionNewFloatOnLine(const FloatingObject& newFloat, FloatingObject* lastFloatFromPreviousLine, LineInfo& lineInfo, LineWidth& width)
     {
-        return m_block.positionNewFloatOnLine(newFloat, lastFloatFromPreviousLine, lineInfo, width);
+        return m_block.complexLineLayout().positionNewFloatOnLine(newFloat, lastFloatFromPreviousLine, lineInfo, width);
     }
 
     RenderBlockFlow& m_block;
