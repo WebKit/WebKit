@@ -1,3 +1,62 @@
+2019-08-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WebPage and ViewportConfiguration have differing notions of viewLayoutSize
+        https://bugs.webkit.org/show_bug.cgi?id=200619
+
+        Reviewed by Tim Horton.
+
+        The notion of a "view layout size" exists on WebPage and WebPageProxy for the purpose of specifying an intrinsic
+        content size for the entire web view on macOS. However, it also exists in ViewportConfiguration (as
+        viewLayoutSize) and WebPageProxy (under the name m_viewportConfigurationViewLayoutSize) for the purposes of
+        specifying the minimum layout size of the page's viewport.
+
+        This is especially confusing in WebPageProxy, which has both m_viewportConfigurationViewLayoutSize and
+        m_viewLayoutSize. To remedy this, rename "*viewLayoutSize" for the purposes of specifying an intrinsic web view
+        size to "*minimumSizeForAutoLayout" instead, which is consistent with the corresponding SPI property name on
+        WKView.
+
+        No change in behavior.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _minimumLayoutWidth]):
+        (-[WKWebView _setMinimumLayoutWidth:]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setMinimumSizeForAutoLayout):
+        (WebKit::WebViewImpl::minimumSizeForAutoLayout const):
+        (WebKit::WebViewImpl::setIntrinsicContentSize):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::minimumSizeForAutoLayoutDidChange):
+        (WebKit::DrawingAreaProxy::viewLayoutSizeDidChange): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::minimumSizeForAutoLayout const):
+        (WebKit::WebPageProxy::viewLayoutSize const): Deleted.
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::minimumSizeForAutoLayoutDidChange):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::willSendUpdateGeometry):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::viewLayoutSizeDidChange): Deleted.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_textAutoSizingAdjustmentTimer):
+        (WebKit::WebPage::reinitializeWebPage):
+        (WebKit::WebPage::setMinimumSizeForAutoLayout):
+        (WebKit::WebPage::updateIntrinsicContentSizeIfNeeded):
+        (WebKit::WebPage::setViewLayoutSize): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::minimumSizeForAutoLayout const):
+        (WebKit::WebPage::viewLayoutSize const): Deleted.
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+
 2019-08-10  Alex Christensen  <achristensen@webkit.org>
 
         Disable ContentChangeObserver TouchEvent adjustment on youtube.com on iOS in mobile browsing mode

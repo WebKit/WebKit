@@ -583,7 +583,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     updateIsInWindow(true);
 
-    setViewLayoutSize(parameters.viewLayoutSize);
+    setMinimumSizeForAutoLayout(parameters.minimumSizeForAutoLayout);
     setAutoSizingShouldExpandToViewHeight(parameters.autoSizingShouldExpandToViewHeight);
     setViewportSizeForCSSViewportUnits(parameters.viewportSizeForCSSViewportUnits);
     
@@ -769,7 +769,7 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
         unfreezeLayerTree(LayerTreeFreezeReason::PageSuspended);
     }
 
-    setViewLayoutSize(parameters.viewLayoutSize);
+    setMinimumSizeForAutoLayout(parameters.minimumSizeForAutoLayout);
 
     if (m_activityState != parameters.activityState)
         setActivityState(parameters.activityState, ActivityStateChangeAsynchronous, Vector<CallbackID>());
@@ -5593,20 +5593,18 @@ void WebPage::setAlwaysShowsVerticalScroller(bool alwaysShowsVerticalScroller)
     view->setVerticalScrollbarMode(alwaysShowsVerticalScroller ? ScrollbarAlwaysOn : m_mainFrameIsScrollable ? ScrollbarAuto : ScrollbarAlwaysOff, alwaysShowsVerticalScroller || !m_mainFrameIsScrollable);
 }
 
-void WebPage::setViewLayoutSize(const IntSize& viewLayoutSize)
+void WebPage::setMinimumSizeForAutoLayout(const IntSize& size)
 {
-    if (m_viewLayoutSize == viewLayoutSize)
+    if (m_minimumSizeForAutoLayout == size)
         return;
 
-    m_viewLayoutSize = viewLayoutSize;
-    if (viewLayoutSize.width() <= 0) {
+    m_minimumSizeForAutoLayout = size;
+    if (size.width() <= 0) {
         corePage()->mainFrame().view()->enableAutoSizeMode(false, { });
         return;
     }
 
-    int viewLayoutWidth = viewLayoutSize.width();
-    int viewLayoutHeight = std::max(viewLayoutSize.height(), 1);
-    corePage()->mainFrame().view()->enableAutoSizeMode(true, { viewLayoutWidth, viewLayoutHeight });
+    corePage()->mainFrame().view()->enableAutoSizeMode(true, { size.width(), std::max(size.height(), 1) });
 }
 
 void WebPage::setAutoSizingShouldExpandToViewHeight(bool shouldExpand)
@@ -6346,7 +6344,7 @@ void WebPage::removeAllUserContent()
 
 void WebPage::updateIntrinsicContentSizeIfNeeded(const WebCore::IntSize& size)
 {
-    if (!viewLayoutSize().width())
+    if (!minimumSizeForAutoLayout().width())
         return;
     ASSERT(mainFrameView());
     ASSERT(mainFrameView()->isAutoSizeEnabled());

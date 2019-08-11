@@ -6569,14 +6569,14 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (CGFloat)_minimumLayoutWidth
 {
-    return _page->viewLayoutSize().width();
+    return _page->minimumSizeForAutoLayout().width();
 }
 
 - (void)_setMinimumLayoutWidth:(CGFloat)width
 {
     BOOL expandsToFit = width > 0;
 
-    _page->setViewLayoutSize(WebCore::IntSize(width, 0));
+    _page->setMinimumSizeForAutoLayout(WebCore::IntSize(width, 0));
     _page->setMainFrameIsScrollable(!expandsToFit);
 
     _impl->setClipsToVisibleRect(expandsToFit);

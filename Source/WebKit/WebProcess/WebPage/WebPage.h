@@ -1009,8 +1009,8 @@ public:
     bool alwaysShowsHorizontalScroller() const { return m_alwaysShowsHorizontalScroller; };
     bool alwaysShowsVerticalScroller() const { return m_alwaysShowsVerticalScroller; };
 
-    void setViewLayoutSize(const WebCore::IntSize&);
-    WebCore::IntSize viewLayoutSize() const { return m_viewLayoutSize; }
+    void setMinimumSizeForAutoLayout(const WebCore::IntSize&);
+    WebCore::IntSize minimumSizeForAutoLayout() const { return m_minimumSizeForAutoLayout; }
 
     void setAutoSizingShouldExpandToViewHeight(bool shouldExpand);
     bool autoSizingShouldExpandToViewHeight() { return m_autoSizingShouldExpandToViewHeight; }
@@ -1808,7 +1808,7 @@ private:
 
     HashSet<unsigned long> m_trackedNetworkResourceRequestIdentifiers;
 
-    WebCore::IntSize m_viewLayoutSize;
+    WebCore::IntSize m_minimumSizeForAutoLayout;
     bool m_autoSizingShouldExpandToViewHeight { false };
     Optional<WebCore::IntSize> m_viewportSizeForCSSViewportUnits;
 

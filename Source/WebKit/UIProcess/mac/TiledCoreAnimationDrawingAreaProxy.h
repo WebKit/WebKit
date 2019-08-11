@@ -41,7 +41,7 @@ private:
     void deviceScaleFactorDidChange() override;
     void sizeDidChange() override;
     void colorSpaceDidChange() override;
-    void viewLayoutSizeDidChange() override;
+    void minimumSizeForAutoLayoutDidChange() override;
 
     void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
     void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) override;
@@ -70,7 +70,7 @@ private:
     WebCore::IntSize m_lastSentSize;
 
     // The last minimum layout size we sent to the web process.
-    WebCore::IntSize m_lastSentViewLayoutSize;
+    WebCore::IntSize m_lastSentMinimumSizeForAutoLayout;
 
     CallbackMap m_callbacks;
 };

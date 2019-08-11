@@ -1243,8 +1243,8 @@ public:
     void endColorPicker();
 #endif
 
-    WebCore::IntSize viewLayoutSize() const { return m_viewLayoutSize; }
-    void setViewLayoutSize(const WebCore::IntSize&);
+    WebCore::IntSize minimumSizeForAutoLayout() const { return m_minimumSizeForAutoLayout; }
+    void setMinimumSizeForAutoLayout(const WebCore::IntSize&);
 
     bool autoSizingShouldExpandToViewHeight() const { return m_autoSizingShouldExpandToViewHeight; }
     void setAutoSizingShouldExpandToViewHeight(bool);
@@ -2422,7 +2422,7 @@ private:
 
     bool m_suppressVisibilityUpdates { false };
     bool m_autoSizingShouldExpandToViewHeight { false };
-    WebCore::IntSize m_viewLayoutSize;
+    WebCore::IntSize m_minimumSizeForAutoLayout;
     Optional<WebCore::IntSize> m_viewportSizeForCSSViewportUnits;
 
     // Visual viewports

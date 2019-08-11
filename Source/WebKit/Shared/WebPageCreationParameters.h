@@ -118,7 +118,7 @@ struct WebPageCreationParameters {
     bool mayStartMediaWhenInWindow;
     bool mediaPlaybackIsSuspended { false };
 
-    WebCore::IntSize viewLayoutSize;
+    WebCore::IntSize minimumSizeForAutoLayout;
     bool autoSizingShouldExpandToViewHeight;
     Optional<WebCore::IntSize> viewportSizeForCSSViewportUnits;
     

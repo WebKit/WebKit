@@ -7206,7 +7206,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.muted = m_mutedState;
     parameters.mayStartMediaWhenInWindow = m_mayStartMediaWhenInWindow;
     parameters.mediaPlaybackIsSuspended = m_mediaPlaybackIsSuspended;
-    parameters.viewLayoutSize = m_viewLayoutSize;
+    parameters.minimumSizeForAutoLayout = m_minimumSizeForAutoLayout;
     parameters.autoSizingShouldExpandToViewHeight = m_autoSizingShouldExpandToViewHeight;
     parameters.viewportSizeForCSSViewportUnits = m_viewportSizeForCSSViewportUnits;
     parameters.scrollPinningBehavior = m_scrollPinningBehavior;
@@ -7778,21 +7778,21 @@ void WebPageProxy::savePDFToFileInDownloadsFolder(String&& suggestedFilename, UR
         API::Data::create(dataReference.data(), dataReference.size()).get());
 }
 
-void WebPageProxy::setViewLayoutSize(const IntSize& viewLayoutSize)
+void WebPageProxy::setMinimumSizeForAutoLayout(const IntSize& size)
 {
-    if (m_viewLayoutSize == viewLayoutSize)
+    if (m_minimumSizeForAutoLayout == size)
         return;
 
-    m_viewLayoutSize = viewLayoutSize;
+    m_minimumSizeForAutoLayout = size;
 
     if (!hasRunningProcess())
         return;
 
-    m_process->send(Messages::WebPage::SetViewLayoutSize(viewLayoutSize), m_pageID);
-    m_drawingArea->viewLayoutSizeDidChange();
+    m_process->send(Messages::WebPage::SetMinimumSizeForAutoLayout(size), m_pageID);
+    m_drawingArea->minimumSizeForAutoLayoutDidChange();
 
 #if USE(APPKIT)
-    if (m_viewLayoutSize.width() <= 0)
+    if (m_minimumSizeForAutoLayout.width() <= 0)
         didChangeIntrinsicContentSize(IntSize(-1, -1));
 #endif
 }

@@ -67,7 +67,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << muted;
     encoder << mayStartMediaWhenInWindow;
     encoder << mediaPlaybackIsSuspended;
-    encoder << viewLayoutSize;
+    encoder << minimumSizeForAutoLayout;
     encoder << autoSizingShouldExpandToViewHeight;
     encoder << viewportSizeForCSSViewportUnits;
     encoder.encodeEnum(scrollPinningBehavior);
@@ -226,7 +226,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     if (!decoder.decode(parameters.mediaPlaybackIsSuspended))
         return WTF::nullopt;
-    if (!decoder.decode(parameters.viewLayoutSize))
+    if (!decoder.decode(parameters.minimumSizeForAutoLayout))
         return WTF::nullopt;
     if (!decoder.decode(parameters.autoSizingShouldExpandToViewHeight))
         return WTF::nullopt;
