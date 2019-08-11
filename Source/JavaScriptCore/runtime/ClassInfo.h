@@ -80,7 +80,7 @@ struct MethodTable {
     GetOwnPropertySlotByIndexFunctionPtr WTF_METHOD_TABLE_ENTRY(getOwnPropertySlotByIndex);
 
     using DoPutPropertySecurityCheckFunctionPtr = void (*)(JSObject*, ExecState*, PropertyName, PutPropertySlot&);
-    DoPutPropertySecurityCheckFunctionPtr METHOD_TABLE_ENTRY(doPutPropertySecurityCheck);
+    DoPutPropertySecurityCheckFunctionPtr WTF_METHOD_TABLE_ENTRY(doPutPropertySecurityCheck);
 
     using ToThisFunctionPtr = JSValue (*)(JSCell*, ExecState*, ECMAMode);
     ToThisFunctionPtr WTF_METHOD_TABLE_ENTRY(toThis);
