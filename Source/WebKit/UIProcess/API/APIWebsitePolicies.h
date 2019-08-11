@@ -114,6 +114,9 @@ public:
     WTF::String applicationNameForDesktopUserAgent() const { return m_applicationNameForDesktopUserAgent; }
     void setApplicationNameForDesktopUserAgent(const WTF::String& applicationName) { m_applicationNameForDesktopUserAgent = applicationName; }
 
+    bool allowContentChangeObserverQuirk() const { return m_allowContentChangeObserverQuirk; }
+    void setAllowContentChangeObserverQuirk(bool allow) { m_allowContentChangeObserverQuirk = allow; }
+
 private:
     WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk>, WebKit::WebsiteAutoplayPolicy, Vector<WebCore::HTTPHeaderField>&&, Vector<WebCore::CustomHeaderFields>&&, WebKit::WebsitePopUpPolicy, RefPtr<WebsiteDataStore>&&);
 
@@ -137,6 +140,7 @@ private:
     WebKit::WebsiteLegacyOverflowScrollingTouchPolicy m_legacyOverflowScrollingTouchPolicy { WebKit::WebsiteLegacyOverflowScrollingTouchPolicy::Default };
     bool m_allowSiteSpecificQuirksToOverrideContentMode { false };
     WTF::String m_applicationNameForDesktopUserAgent;
+    bool m_allowContentChangeObserverQuirk { false };
 };
 
 } // namespace API

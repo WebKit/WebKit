@@ -391,6 +391,9 @@ public:
 
     WEBCORE_EXPORT void applyPoliciesToSettings();
 
+    void setAllowContentChangeObserverQuirk(bool allow) { m_allowContentChangeObserverQuirk = allow; }
+    bool allowContentChangeObserverQuirk() const { return m_allowContentChangeObserverQuirk; }
+
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
 
@@ -594,6 +597,7 @@ private:
 #endif
     String m_customUserAgent;
     String m_customJavaScriptUserAgentAsSiteSpecificQuirks;
+    bool m_allowContentChangeObserverQuirk { false };
     String m_customNavigatorPlatform;
     bool m_userContentExtensionsEnabled { true };
 #if ENABLE(DEVICE_ORIENTATION)
