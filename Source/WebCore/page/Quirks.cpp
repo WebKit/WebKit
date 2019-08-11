@@ -27,6 +27,7 @@
 #include "Quirks.h"
 
 #include "CustomHeaderFields.h"
+#include "DOMTokenList.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "HTMLMetaElement.h"

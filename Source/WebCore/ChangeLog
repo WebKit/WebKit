@@ -1,3 +1,13 @@
+2019-08-11  Babak Shafiei  <bshafiei@apple.com>
+
+        Apply patch. rdar://problem/54139834
+
+    2019-08-11  Maciej Stachowiak  <mjs@apple.com>
+
+            Branch build fix for r248463
+
+            * page/Quirks.cpp: #include DOMTokenList.h, since it's now needed (and apparently was added by something else on mainline.
+
 2019-08-10  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r248502. rdar://problem/54130678
