@@ -52,7 +52,7 @@ static inline bool isClassicPhone()
     return isClassic() && [PAL::getUIApplicationClass() _classicMode] != UIApplicationSceneClassicModeOriginalPad;
 }
 
-static inline String osNameForUserAgent()
+String osNameForUserAgent()
 {
     if (deviceHasIPadCapability() && !isClassicPhone())
         return "OS";
@@ -79,7 +79,7 @@ static inline String deviceNameForUserAgent()
     return name;
 }
 
-String standardUserAgentWithApplicationName(const String& applicationName, UserAgentType type)
+String standardUserAgentWithApplicationName(const String& applicationName, const String& userAgentOSVersion, UserAgentType type)
 {
     if (type == UserAgentType::Desktop) {
         String appNameSuffix = applicationName.isEmpty() ? "" : makeString(" ", applicationName);
@@ -95,7 +95,7 @@ String standardUserAgentWithApplicationName(const String& applicationName, UserA
         CFRelease(override);
     }
 
-    String osVersion = systemMarketingVersionForUserAgentString();
+    String osVersion = userAgentOSVersion.isEmpty()  ? systemMarketingVersionForUserAgentString() : userAgentOSVersion;
     String appNameSuffix = applicationName.isEmpty() ? "" : makeString(" ", applicationName);
 
     return makeString("Mozilla/5.0 (", deviceNameForUserAgent(), "; CPU ", osNameForUserAgent(), " ", osVersion, " like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko)", appNameSuffix);
