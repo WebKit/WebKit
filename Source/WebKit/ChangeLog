@@ -1,5 +1,28 @@
 2019-08-10  Babak Shafiei  <bshafiei@apple.com>
 
+        Apply patch. rdar://problem/54130665
+
+    2019-08-10  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] Remove context menu hints on navigation
+            https://bugs.webkit.org/show_bug.cgi?id=200588
+            rdar://problem/54061796
+
+            Reviewed by Tim Horton.
+
+            Make sure the context menu hint doesn't linger across navigations by hosting it in its
+            own container view (shared with drag previews), and hiding that view on navigation (unparenting
+            may have bad consequences). We remove the view when the animation ends.
+
+            * UIProcess/ios/WKContentViewInteraction.h:
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView _didCommitLoadForMainFrame]):
+            (-[WKContentView containerViewForTargetedPreviews]):
+            (-[WKContentView _hideContextMenu]):
+            (-[WKContentView contextMenuInteraction:willEndForConfiguration:animator:]):
+
+2019-08-10  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r248502. rdar://problem/54130678
 
     Disable ContentChangeObserver TouchEvent adjustment on youtube.com on iOS in mobile browsing mode

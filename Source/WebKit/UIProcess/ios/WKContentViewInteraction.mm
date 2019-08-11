@@ -6362,9 +6362,26 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     return _focusedElementInformation.shouldAvoidScrollingWhenFocusedContentIsVisible;
 }
 
+// FIXME: This is used for drag previews and context menu hints; it needs a better name.
 - (UIView *)containerViewForTargetedPreviews
 {
-    return self.unscaledView ?: self;
+    if (_contextMenuHintContainerView) {
+        ASSERT([_contextMenuHintContainerView superview]);
+        [_contextMenuHintContainerView setHidden:NO];
+        return _contextMenuHintContainerView.get();
+    }
+
+    _contextMenuHintContainerView = adoptNS([[UIView alloc] init]);
+    [_contextMenuHintContainerView layer].anchorPoint = CGPointZero;
+    [_contextMenuHintContainerView layer].name = @"Context Menu Container";
+    [_interactionViewsContainerView addSubview:_contextMenuHintContainerView.get()];
+
+    return _contextMenuHintContainerView.get();
+}
+
+- (void)_hideContextMenuHintContainer
+{
+    [_contextMenuHintContainerView setHidden:YES];
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -8331,6 +8348,11 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     _contextMenuLegacyMenu = nullptr;
     _contextMenuHasRequestedLegacyData = NO;
     _contextMenuElementInfo = nullptr;
+
+    [animator addCompletion:[weakSelf = WeakObjCPtr<WKContentView>(self)] () {
+        if (auto strongSelf = weakSelf.get())
+            [std::exchange(strongSelf->_contextMenuHintContainerView, nil) removeFromSuperview];
+    }];
 }
 
 #endif // USE(UICONTEXTMENU)

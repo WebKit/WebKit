@@ -585,6 +585,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 {
     [self _elementDidBlur];
     [self _cancelLongPressGestureRecognizer];
+    [self _hideContextMenuHintContainer];
     [_webView _didCommitLoadForMainFrame];
 }
 
