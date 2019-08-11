@@ -1,3 +1,17 @@
+2019-08-10  Andres Gonzalez  <andresg_22@apple.com>
+
+        Accessibility client cannot navigate to internal links targets on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=200559
+        <rdar://problem/45242534>
+
+        Reviewed by Zalan Bujtas.
+
+        Extneded this test to not only check that internal links expose their
+        target, but also that the target is an accessible element. Added a
+        second test case where the target is contained in a grouping element.
+        * accessibility/ios-simulator/internal-link-expected.txt:
+        * accessibility/ios-simulator/internal-link.html:
+
 2019-08-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Universal XSS in JSObject::putInlineSlow and JSValue::putToPrimitive

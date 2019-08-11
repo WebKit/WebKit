@@ -1,3 +1,24 @@
+2019-08-10  Andres Gonzalez  <andresg_22@apple.com>
+
+        Accessibility client cannot navigate to internal links targets on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=200559
+        <rdar://problem/45242534>
+
+        Reviewed by Zalan Bujtas.
+
+        The cause of the problem on iOS is that AccessibilityObject::firstAccessibleObjectFromNode
+        used in AccessibilityRenderObject::linkedUIElements may return an object
+        that is ignored by accessibility clients on iOS, and thus the client
+        would not track the target of an internal link. This change ensures that
+        accessibilityLinkedElement will return a valid accessibility element to
+        the client, if it is exists.
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::firstAccessibleObjectFromNode):
+        (WebCore::firstAccessibleObjectFromNode):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityLinkedElement]):
+
 2019-08-10  Youenn Fablet  <youenn@apple.com>
 
         Blob should store its session ID

@@ -1069,6 +1069,8 @@ inline int AccessibilityObject::lineForPosition(const VisiblePosition&) const { 
 inline void AccessibilityObject::updateBackingStore() { }
 #endif
 
+AccessibilityObject* firstAccessibleObjectFromNode(const Node*, const WTF::Function<bool(const AccessibilityObject&)>& isAccessible);
+
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(ToValueTypeName, predicate) \

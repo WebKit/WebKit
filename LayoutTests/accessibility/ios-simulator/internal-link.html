@@ -3,39 +3,40 @@
 <head>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-var successfullyParsed = false;
 if (window.testRunner)
-   testRunner.dumpAsText();
+    testRunner.dumpAsText();
 </script>
 </head>
 <body>
 
-<a href="#name1" id="name">Name</a>
-
-<BR><BR><BR><BR>
+<a href="#linked1" id="name">Name</a>
 <BR><BR><BR>
-<a name="name1">Linked Element</a>
+<a name="linked1">Linked Element</a>
 
+<BR><BR><BR>
+
+<a href="#linked2" id="gotoGreeting">Go to greeting</a>
+<BR><BR><BR>
+<div id="linked2">Hello World!</div>
 
 <p id="description"></p>
 <div id="console"></div>
 
 <script>
-
-    description("This test thats internal links return their linked elements");
+    description("This tests that internal links return their linked elements, and that the returned object is indeed an accessible element.");
 
     if (window.accessibilityController) {
+        var link1 = accessibilityController.accessibleElementById("name");
+        var linked1 = link1.linkedElement();
+        shouldBe("linked1.description", "'AXLabel: Linked Element'");
+        shouldBeFalse("linked1.isIgnored");
 
-        document.getElementById("name").focus();
-        var link = accessibilityController.focusedElement;
-        shouldBe("link.linkedElement().description", "'AXLabel: Linked Element'");
+        var link2 = accessibilityController.accessibleElementById("gotoGreeting");
+        var linked2 = link2.linkedElement();
+        shouldBe("linked2.description", "'AXLabel: Hello World!'");
+        shouldBeFalse("linked2.isIgnored");
     }
-
-    successfullyParsed = true;
 </script>
-
 <script src="../../resources/js-test-post.js"></script>
-
 </body>
 </html>
-
