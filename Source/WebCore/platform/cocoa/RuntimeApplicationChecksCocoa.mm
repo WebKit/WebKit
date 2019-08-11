@@ -208,6 +208,12 @@ bool IOSApplication::isMobileSafari()
     return isMobileSafari;
 }
 
+bool IOSApplication::isIMDb()
+{
+    static bool isIMDb = applicationBundleIsEqualTo("com.imdb.imdb"_s);
+    return isIMDb;
+}
+
 bool IOSApplication::isWebBookmarksD()
 {
     static bool isWebBookmarksD = applicationBundleIsEqualTo("com.apple.webbookmarksd"_s);

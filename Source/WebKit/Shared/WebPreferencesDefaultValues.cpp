@@ -61,6 +61,15 @@ bool defaultCustomPasteboardDataEnabled()
 #endif
 }
 
+bool defaultCSSOMViewScrollingAPIEnabled()
+{
+#if PLATFORM(IOS_FAMILY)
+    if (WebCore::IOSApplication::isIMDb() && applicationSDKVersion() < DYLD_IOS_VERSION_13_0)
+        return false;
+#endif
+    return true;
+}
+
 #if ENABLE(TEXT_AUTOSIZING) && !PLATFORM(IOS_FAMILY)
 
 bool defaultTextAutosizingUsesIdempotentMode()
