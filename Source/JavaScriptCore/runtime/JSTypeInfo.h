@@ -56,6 +56,7 @@ static const unsigned IsImmutablePrototypeExoticObject = 1 << 13;
 static const unsigned GetOwnPropertySlotIsImpureForPropertyAbsence = 1 << 14;
 static const unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero = 1 << 15;
 static const unsigned StructureIsImmortal = 1 << 16;
+static const unsigned HasPutPropertySecurityCheck = 1 << 17;
 
 class TypeInfo {
 public:
@@ -96,6 +97,7 @@ public:
     bool prohibitsPropertyCaching() const { return isSetOnFlags2(ProhibitsPropertyCaching); }
     bool getOwnPropertySlotIsImpure() const { return isSetOnFlags2(GetOwnPropertySlotIsImpure); }
     bool getOwnPropertySlotIsImpureForPropertyAbsence() const { return isSetOnFlags2(GetOwnPropertySlotIsImpureForPropertyAbsence); }
+    bool hasPutPropertySecurityCheck() const { return isSetOnFlags2(HasPutPropertySecurityCheck); }
     bool newImpurePropertyFiresWatchpoints() const { return isSetOnFlags2(NewImpurePropertyFiresWatchpoints); }
     bool isImmutablePrototypeExoticObject() const { return isSetOnFlags2(IsImmutablePrototypeExoticObject); }
     bool interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero() const { return isSetOnFlags2(InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero); }

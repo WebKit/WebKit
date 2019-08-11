@@ -162,18 +162,27 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
         return false;
     JSValue prototype;
     if (propertyName != vm.propertyNames->underscoreProto) {
-        for (; !obj->structure(vm)->hasReadOnlyOrGetterSetterPropertiesExcludingProto(); obj = asObject(prototype)) {
+        while (true) {
+            Structure* structure = obj->structure(vm);
+            if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || structure->typeInfo().hasPutPropertySecurityCheck())
+                break;
             prototype = obj->getPrototype(vm, exec);
             RETURN_IF_EXCEPTION(scope, false);
 
             if (prototype.isNull())
                 return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
+            obj = asObject(prototype);
         }
     }
 
     for (; ; obj = asObject(prototype)) {
+        Structure* structure = obj->structure(vm);
+        if (UNLIKELY(structure->typeInfo().hasPutPropertySecurityCheck())) {
+            obj->methodTable(vm)->doPutPropertySecurityCheck(obj, exec, propertyName, slot);
+            RETURN_IF_EXCEPTION(scope, false);
+        }
         unsigned attributes;
-        PropertyOffset offset = obj->structure(vm)->get(vm, propertyName, attributes);
+        PropertyOffset offset = structure->get(vm, propertyName, attributes);
         if (offset != invalidOffset) {
             if (attributes & PropertyAttribute::ReadOnly)
                 return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);

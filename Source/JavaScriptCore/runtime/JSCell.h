@@ -265,6 +265,7 @@ protected:
     static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
+    static NO_RETURN_DUE_TO_CRASH void doPutPropertySecurityCheck(JSObject*, ExecState*, PropertyName, PutPropertySlot&);
 
 private:
     friend class LLIntOffsetsExtractor;
