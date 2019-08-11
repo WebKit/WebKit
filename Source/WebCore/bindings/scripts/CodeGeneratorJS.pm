@@ -2639,6 +2639,11 @@ sub GenerateHeader
         push(@headerContent, "    static bool getOwnPropertySlotByIndex(JSC::JSObject*, JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);\n");
         $structureFlags{"JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero"} = 1;
     }
+
+    if ($interface->extendedAttributes->{CheckSecurity}) {
+        push(@headerContent, "    static void doPutPropertySecurityCheck(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PutPropertySlot&);\n");
+        $structureFlags{"JSC::HasPutPropertySecurityCheck"} = 1;
+    }
     
     if (InstanceOverridesGetOwnPropertyNames($interface)) {
         push(@headerContent, "    static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode = JSC::EnumerationMode());\n");
