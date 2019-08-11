@@ -83,6 +83,7 @@
 SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsUI)
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
 SOFT_LINK_CLASS(DataDetectorsUI, DDContextMenuAction);
+SOFT_LINK_CLASS(DataDetectorsUI, DDContextMenuConfiguration);
 #endif
 SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
 SOFT_LINK_CONSTANT(DataDetectorsUI, kDataDetectorsLeadingText, const NSString *)
