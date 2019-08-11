@@ -1,3 +1,12 @@
+2019-08-10  Alexey Proskuryakov  <ap@apple.com>
+
+        WebKitTestRunner's InjectedBundle has too aggressive stripping, resulting in non-symbolicated crash logs
+        https://bugs.webkit.org/show_bug.cgi?id=200621
+
+        Reviewed by Dan Bernstein.
+
+        * WebKitTestRunner/Configurations/InjectedBundle.xcconfig:
+
 2019-08-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         KeyboardInputTests.CaretSelectionRectAfterRestoringFirstResponder API tests time out on iPad
