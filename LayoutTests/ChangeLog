@@ -1,3 +1,17 @@
+2019-08-10  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r245974): Missing content on habitburger.com, amazon.com
+        https://bugs.webkit.org/show_bug.cgi?id=200618
+        rdar://problem/53920224
+
+        Reviewed by Zalan Bujtas.
+
+        * compositing/backing/layer-outside-tiled-parent-expected.txt: Added.
+        * compositing/backing/layer-outside-tiled-parent.html: Added.
+        * platform/ios-wk2/compositing/backing/layer-outside-tiled-parent-expected.txt: Added.
+        * tiled-drawing/tile-coverage-iframe-to-zero-coverage-expected.txt:
+        * tiled-drawing/tiled-backing-in-window-expected.txt:
+
 2019-08-10  Andres Gonzalez  <andresg_22@apple.com>
 
         Accessibility client cannot navigate to internal links targets on iOS.

@@ -79,7 +79,7 @@
                                   (contentsOpaque 1)
                                   (drawsContent 1)
                                   (visible rect 0.00, 0.00 0.00 x 0.00)
-                                  (coverage rect 0.00, 0.00 0.00 x 0.00)
+                                  (coverage rect -8.00, -8.00 0.00 x 0.00)
                                   (intersects coverage rect 0)
                                   (contentsScale 1.00)
                                   (tile cache coverage 0, 0 0 x 0)

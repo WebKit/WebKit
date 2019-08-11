@@ -368,8 +368,7 @@ FloatRect TileController::adjustTileCoverageRect(const FloatRect& coverageRect, 
     if (sizeChanged || MemoryPressureHandler::singleton().isUnderMemoryPressure())
         return unionRect(coverageRect, currentVisibleRect);
 
-    auto expandedCoverageRect = GraphicsLayer::adjustCoverageRectForMovement(coverageRect, previousVisibleRect, currentVisibleRect);
-    return intersection(expandedCoverageRect, boundsWithoutMargin());
+    return GraphicsLayer::adjustCoverageRectForMovement(coverageRect, previousVisibleRect, currentVisibleRect);
 }
 
 #if !PLATFORM(IOS_FAMILY)

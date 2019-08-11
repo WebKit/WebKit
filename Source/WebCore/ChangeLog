@@ -1,3 +1,27 @@
+2019-08-10  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r245974): Missing content on habitburger.com, amazon.com
+        https://bugs.webkit.org/show_bug.cgi?id=200618
+        rdar://problem/53920224
+
+        Reviewed by Zalan Bujtas.
+
+        In r245974 TileController::adjustTileCoverageRect() started to intersect the coverage
+        rect with the bounds of the layer, which is wrong because this coverage rect is passed down
+        to descendant layers, and they may project outside the bounds of this tiled layer.
+        
+        This caused missing dropdowns on amazon.com, and a missing menu on habitburger.com on iPhone.
+
+        The fix is to just not do the intersection with the bounds. TileGrid::getTileIndexRangeForRect()
+        already ensures that we never make tiles outside the bounds of a TileController.
+
+        Test: compositing/backing/layer-outside-tiled-parent.html
+
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::adjustTileCoverageRect):
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::ensureTilesForRect):
+
 2019-08-10  Andres Gonzalez  <andresg_22@apple.com>
 
         Accessibility client cannot navigate to internal links targets on iOS.
