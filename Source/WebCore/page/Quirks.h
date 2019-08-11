@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class Document;
+class Element;
 class EventTarget;
 class HTMLElement;
 class LayoutUnit;
@@ -54,6 +55,7 @@ public:
     Optional<Event::IsCancelable> simulatedMouseEventTypeForTarget(EventTarget*) const;
 #endif
     bool shouldDisablePointerEventsQuirk() const;
+    bool shouldIgnoreContentChange(const Element&) const;
     bool needsInputModeNoneImplicitly(const HTMLElement&) const;
     bool needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const;
     bool shouldLightenJapaneseBoldSansSerif() const;
