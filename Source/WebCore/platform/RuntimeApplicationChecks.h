@@ -43,7 +43,7 @@ inline bool isInWebProcess() { return true; }
 bool isInWebProcess();
 
 WEBCORE_EXPORT void setApplicationSDKVersion(uint32_t);
-uint32_t applicationSDKVersion();
+WEBCORE_EXPORT uint32_t applicationSDKVersion();
 
 WEBCORE_EXPORT void setApplicationBundleIdentifier(const String&);
 String applicationBundleIdentifier();
@@ -78,6 +78,7 @@ namespace IOSApplication {
 
 WEBCORE_EXPORT bool isMobileMail();
 WEBCORE_EXPORT bool isMobileSafari();
+WEBCORE_EXPORT bool isIMDb();
 WEBCORE_EXPORT bool isWebBookmarksD();
 WEBCORE_EXPORT bool isDumpRenderTree();
 bool isMobileStore();
