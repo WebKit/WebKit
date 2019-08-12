@@ -1,3 +1,15 @@
+2019-08-11  Chris Dumez  <cdumez@apple.com>
+
+        Add threading assertions to RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=200507
+
+        Reviewed by Ryosuke Niwa.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        Disable threading assertions for DFG::Plan::m_inlineCallFrames while the JSC team
+        investigates.
+
 2019-08-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Universal XSS in JSObject::putInlineSlow and JSValue::putToPrimitive

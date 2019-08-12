@@ -31,6 +31,7 @@
 #import <WebCore/LogInitialization.h>
 #import <mutex>
 #import <wtf/MainThread.h>
+#import <wtf/RefCounted.h>
 #import <wtf/RunLoop.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -49,6 +50,8 @@ static void runInitializationCode(void* = nullptr)
 
     JSC::initializeThreading();
     RunLoop::initializeMainRunLoop();
+
+    WTF::RefCountedBase::enableThreadingChecksGlobally();
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
     WebCore::initializeLogChannelsIfNecessary();

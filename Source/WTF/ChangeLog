@@ -1,3 +1,35 @@
+2019-08-11  Chris Dumez  <cdumez@apple.com>
+
+        Add threading assertions to RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=200507
+
+        Reviewed by Ryosuke Niwa.
+
+        Add threading assertions to RefCounted to try and catch unsafe concurrent ref'ing / derefing of
+        RefCounted objects from several threads. If you hit these new assertions, it likely means you either
+        need to:
+        1. Have your class subclass ThreadSafeRefCounted instead of RefCounted
+        or
+        2. Make sure your objects always gets ref'd / deref'd from the same thread.
+
+        These assertions already found several thread safety bugs in our code base, which I fixed via
+        dependency bugs.
+
+        These assertions are currently enabled in WebKit (UIProcess, child processes and
+        WebKitLegacy), they do not apply other JavascriptCore API clients.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/RefCounted.cpp: Added.
+        * wtf/RefCounted.h:
+        (WTF::RefCountedBase::ref const):
+        (WTF::RefCountedBase::disableThreadingChecks):
+        (WTF::RefCountedBase::enableThreadingChecksGlobally):
+        (WTF::RefCountedBase::RefCountedBase):
+        (WTF::RefCountedBase::areThreadingCheckedEnabled const):
+        (WTF::RefCountedBase::derefBase const):
+        * wtf/SizeLimits.cpp:
+
 2019-08-09  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Devirtualize the AST

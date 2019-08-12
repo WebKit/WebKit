@@ -5416,6 +5416,8 @@ static Vector<String> toStringVector(NSArray* patterns)
     RunLoop::initializeMainRunLoop();
 #endif
 
+    WTF::RefCountedBase::enableThreadingChecksGlobally();
+
     WTF::setProcessPrivileges(allPrivileges());
     WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
 
