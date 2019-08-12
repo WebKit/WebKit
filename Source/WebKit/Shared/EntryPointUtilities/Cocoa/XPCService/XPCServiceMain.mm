@@ -144,6 +144,8 @@ int XPCServiceMain(int, const char**)
 #endif
 #endif
 
+    WTF::initializeMainThread();
+
     xpc_main(XPCServiceEventHandler);
     return 0;
 }

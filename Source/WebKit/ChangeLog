@@ -1,3 +1,10 @@
+2019-08-12  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, add missing WTF::initializeMainThread() call to fix some crashes on the bots after r248533.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceMain):
+
 2019-08-12  Megan Gardner  <megan_gardner@apple.com>
 
         Fix Crash in Mail Search
