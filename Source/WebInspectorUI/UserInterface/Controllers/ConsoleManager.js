@@ -85,10 +85,10 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         this._remoteObjectsToRelease.add(remoteObject);
     }
 
+    // ConsoleObserver
+
     messageWasAdded(target, source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, requestId)
     {
-        // Called from WI.ConsoleObserver.
-
         // FIXME: Get a request from request ID.
 
         if (parameters)
@@ -108,8 +108,6 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
     messagesCleared()
     {
-        // Called from WI.ConsoleObserver.
-
         if (this._remoteObjectsToRelease) {
             for (let remoteObject of this._remoteObjectsToRelease)
                 remoteObject.release();
@@ -134,25 +132,8 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         }
     }
 
-    _delayedMessagesCleared()
-    {
-        if (this._isNewPageOrReload) {
-            this._isNewPageOrReload = false;
-
-            if (!WI.settings.clearLogOnNavigate.value)
-                return;
-        }
-
-        this._issues = [];
-
-        // A console.clear() or command line clear() happened.
-        this.dispatchEventToListeners(WI.ConsoleManager.Event.Cleared);
-    }
-
     messageRepeatCountUpdated(count)
     {
-        // Called from WI.ConsoleObserver.
-
         this.dispatchEventToListeners(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, {count});
     }
 
@@ -187,6 +168,21 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
     }
 
     // Private
+
+    _delayedMessagesCleared()
+    {
+        if (this._isNewPageOrReload) {
+            this._isNewPageOrReload = false;
+
+            if (!WI.settings.clearLogOnNavigate.value)
+                return;
+        }
+
+        this._issues = [];
+
+        // A console.clear() or command line clear() happened.
+        this.dispatchEventToListeners(WI.ConsoleManager.Event.Cleared);
+    }
 
     _mainResourceDidChange(event)
     {

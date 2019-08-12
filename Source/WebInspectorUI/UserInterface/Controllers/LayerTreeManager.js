@@ -90,6 +90,8 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
         });
     }
 
+    // LayerTreeObserver
+
     layerTreeDidChange()
     {
         this.dispatchEventToListeners(WI.LayerTreeManager.Event.LayerTreeDidChange);

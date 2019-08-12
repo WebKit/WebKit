@@ -168,10 +168,80 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         loadAndParseSourceMap();
     }
 
+    localResourceForURL(url)
+    {
+        return this._localResourcesMap.get(url);
+    }
+
+    resourceForURL(url)
+    {
+        if (!this._mainFrame)
+            return null;
+
+        if (this._mainFrame.mainResource.url === url)
+            return this._mainFrame.mainResource;
+
+        return this._mainFrame.resourceForURL(url, true);
+    }
+
+    adoptOrphanedResourcesForTarget(target)
+    {
+        let resources = this._orphanedResources.take(target.identifier);
+        if (!resources)
+            return;
+
+        for (let resource of resources)
+            target.adoptResource(resource);
+    }
+
+    processHAR({json, error})
+    {
+        if (error) {
+            WI.NetworkManager.synthesizeImportError(error);
+            return null;
+        }
+
+        if (typeof json !== "object" || json === null) {
+            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid JSON"));
+            return null;
+        }
+
+        if (typeof json.log !== "object" || typeof json.log.version !== "string") {
+            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR"));
+            return null;
+        }
+
+        if (json.log.version !== "1.2") {
+            WI.NetworkManager.synthesizeImportError(WI.UIString("unsupported HAR version"));
+            return null;
+        }
+
+        if (!Array.isArray(json.log.entries) || !Array.isArray(json.log.pages) || !json.log.pages[0] || !json.log.pages[0].startedDateTime) {
+            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR"));
+            return null;
+        }
+
+        let mainResourceSentWalltime = WI.HARBuilder.dateFromHARDate(json.log.pages[0].startedDateTime) / 1000;
+        if (isNaN(mainResourceSentWalltime)) {
+            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR"));
+            return null;
+        }
+
+        let localResources = [];
+
+        for (let entry of json.log.entries) {
+            let localResource = WI.LocalResource.fromHAREntry(entry, mainResourceSentWalltime);
+            this._localResourcesMap.set(localResource.url, localResource);
+            localResources.push(localResource);
+        }
+
+        return localResources;
+    }
+
+    // PageObserver
+
     frameDidNavigate(framePayload)
     {
-        // Called from WI.PageObserver.
-
         // Ignore this while waiting for the whole frame/resource tree.
         if (this._waitingForMainFrameResourceTreePayload)
             return;
@@ -244,8 +314,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     frameDidDetach(frameId)
     {
-        // Called from WI.PageObserver.
-
         // Ignore this while waiting for the whole frame/resource tree.
         if (this._waitingForMainFrameResourceTreePayload)
             return;
@@ -272,10 +340,10 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             this._mainFrameDidChange(oldMainFrame);
     }
 
+    // NetworkObserver
+
     resourceRequestWillBeSent(requestIdentifier, frameIdentifier, loaderIdentifier, request, type, redirectResponse, timestamp, walltime, initiator, targetId)
     {
-        // Called from WI.NetworkObserver.
-
         // Ignore this while waiting for the whole frame/resource tree.
         if (this._waitingForMainFrameResourceTreePayload)
             return;
@@ -417,8 +485,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     markResourceRequestAsServedFromMemoryCache(requestIdentifier)
     {
-        // Called from WI.NetworkObserver.
-
         // Ignore this while waiting for the whole frame/resource tree.
         if (this._waitingForMainFrameResourceTreePayload)
             return;
@@ -436,8 +502,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     resourceRequestWasServedFromMemoryCache(requestIdentifier, frameIdentifier, loaderIdentifier, cachedResourcePayload, timestamp, initiator)
     {
-        // Called from WI.NetworkObserver.
-
         // Ignore this while waiting for the whole frame/resource tree.
         if (this._waitingForMainFrameResourceTreePayload)
             return;
@@ -475,8 +539,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     resourceRequestDidReceiveResponse(requestIdentifier, frameIdentifier, loaderIdentifier, type, response, timestamp)
     {
-        // Called from WI.NetworkObserver.
-
         // Ignore this while waiting for the whole frame/resource tree.
         if (this._waitingForMainFrameResourceTreePayload)
             return;
@@ -525,8 +587,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     resourceRequestDidReceiveData(requestIdentifier, dataLength, encodedDataLength, timestamp)
     {
-        // Called from WI.NetworkObserver.
-
         // Ignore this while waiting for the whole frame/resource tree.
         if (this._waitingForMainFrameResourceTreePayload)
             return;
@@ -548,8 +608,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     resourceRequestDidFinishLoading(requestIdentifier, timestamp, sourceMapURL, metrics)
     {
-        // Called from WI.NetworkObserver.
-
         // Ignore this while waiting for the whole frame/resource tree.
         if (this._waitingForMainFrameResourceTreePayload)
             return;
@@ -575,8 +633,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     resourceRequestDidFailLoading(requestIdentifier, canceled, timestamp, errorText)
     {
-        // Called from WI.NetworkObserver.
-
         // Ignore this while waiting for the whole frame/resource tree.
         if (this._waitingForMainFrameResourceTreePayload)
             return;
@@ -597,10 +653,10 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._resourceRequestIdentifierMap.delete(requestIdentifier);
     }
 
+    // RuntimeObserver
+
     executionContextCreated(contextPayload)
     {
-        // Called from WI.RuntimeObserver.
-
         let frame = this.frameForIdentifier(contextPayload.frameId);
         console.assert(frame);
         if (!frame)
@@ -610,76 +666,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         let target = frame.mainResource.target;
         let executionContext = new WI.ExecutionContext(target, contextPayload.id, displayName, contextPayload.isPageContext, frame);
         frame.addExecutionContext(executionContext);
-    }
-
-    localResourceForURL(url)
-    {
-        return this._localResourcesMap.get(url);
-    }
-
-    resourceForURL(url)
-    {
-        if (!this._mainFrame)
-            return null;
-
-        if (this._mainFrame.mainResource.url === url)
-            return this._mainFrame.mainResource;
-
-        return this._mainFrame.resourceForURL(url, true);
-    }
-
-    adoptOrphanedResourcesForTarget(target)
-    {
-        let resources = this._orphanedResources.take(target.identifier);
-        if (!resources)
-            return;
-
-        for (let resource of resources)
-            target.adoptResource(resource);
-    }
-
-    processHAR({json, error})
-    {
-        if (error) {
-            WI.NetworkManager.synthesizeImportError(error);
-            return null;
-        }
-
-        if (typeof json !== "object" || json === null) {
-            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid JSON"));
-            return null;
-        }
-
-        if (typeof json.log !== "object" || typeof json.log.version !== "string") {
-            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR"));
-            return null;
-        }
-
-        if (json.log.version !== "1.2") {
-            WI.NetworkManager.synthesizeImportError(WI.UIString("unsupported HAR version"));
-            return null;
-        }
-
-        if (!Array.isArray(json.log.entries) || !Array.isArray(json.log.pages) || !json.log.pages[0] || !json.log.pages[0].startedDateTime) {
-            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR"));
-            return null;
-        }
-
-        let mainResourceSentWalltime = WI.HARBuilder.dateFromHARDate(json.log.pages[0].startedDateTime) / 1000;
-        if (isNaN(mainResourceSentWalltime)) {
-            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR"));
-            return null;
-        }
-
-        let localResources = [];
-
-        for (let entry of json.log.entries) {
-            let localResource = WI.LocalResource.fromHAREntry(entry, mainResourceSentWalltime);
-            this._localResourcesMap.set(localResource.url, localResource);
-            localResources.push(localResource);
-        }
-
-        return localResources;
     }
 
     // Private

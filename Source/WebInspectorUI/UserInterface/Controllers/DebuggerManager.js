@@ -548,12 +548,10 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         return this._nextBreakpointActionIdentifier++;
     }
 
-    // Protected (Called from WI.DebuggerObserver)
+    // DebuggerObserver
 
     breakpointResolved(target, breakpointIdentifier, location)
     {
-        // Called from WI.DebuggerObserver.
-
         let breakpoint = this._breakpointIdMap.get(breakpointIdentifier);
         console.assert(breakpoint);
         if (!breakpoint)
@@ -569,10 +567,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         breakpoint.resolved = true;
     }
 
-    reset()
+    globalObjectCleared()
     {
-        // Called from WI.DebuggerObserver.
-
         let wasPaused = this.paused;
 
         WI.Script.resetUniqueDisplayNameNumbers();
@@ -600,8 +596,6 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     debuggerDidPause(target, callFramesPayload, reason, data, asyncStackTracePayload)
     {
-        // Called from WI.DebuggerObserver.
-
         if (this._delayedResumeTimeout) {
             clearTimeout(this._delayedResumeTimeout);
             this._delayedResumeTimeout = undefined;
@@ -674,8 +668,6 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     debuggerDidResume(target)
     {
-        // Called from WI.DebuggerObserver.
-
         // COMPATIBILITY (iOS 10): Debugger.resumed event was ambiguous. When stepping
         // we would receive a Debugger.resumed and we would not know if it really meant
         // the backend resumed or would pause again due to a step. Legacy backends wait
@@ -692,15 +684,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     playBreakpointActionSound(breakpointActionIdentifier)
     {
-        // Called from WI.DebuggerObserver.
-
         InspectorFrontendHost.beep();
     }
 
     scriptDidParse(target, scriptIdentifier, url, startLine, startColumn, endLine, endColumn, isModule, isContentScript, sourceURL, sourceMapURL)
     {
-        // Called from WI.DebuggerObserver.
-
         // Don't add the script again if it is already known.
         let targetData = this.dataForTarget(target);
         let existingScript = targetData.scriptForIdentifier(scriptIdentifier);

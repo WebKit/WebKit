@@ -140,10 +140,10 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
             domStorage.itemUpdated(key, oldValue, value);
     }
 
+    // InspectorObserver
+
     inspectDOMStorage(id)
     {
-        // Called from WI.InspectorObserver.
-
         console.assert(this._enabled);
 
         var domStorage = this._domStorageForIdentifier(id);

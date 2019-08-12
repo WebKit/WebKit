@@ -62,45 +62,6 @@ WI.TargetManager = class TargetManager extends WI.Object
         return null;
     }
 
-    targetCreated(targetInfo)
-    {
-        // Called from WI.TargetObserver.
-
-        // FIXME: Eliminate this once the local inspector is configured to use
-        // the Multiplexing code path. Then we can perform this immediately
-        // in `WI.loaded` if a TargetAgent exists.
-        if (this._targets.size === 0)
-            this.createMultiplexingBackendTarget(targetInfo);
-
-        let connection = new InspectorBackend.TargetConnection(targetInfo.targetId);
-        let target = this._createTarget(targetInfo, connection);
-        this._checkAndHandlePageTargetTransition(target);
-        target.initialize();
-
-        this.addTarget(target);
-    }
-
-    targetDestroyed(targetId)
-    {
-        // Called from WI.TargetObserver.
-
-        let target = this._targets.get(targetId);
-        this._checkAndHandlePageTargetTermination(target);
-        this.removeTarget(target);
-    }
-
-    dispatchMessageFromTarget(targetId, message)
-    {
-        // Called from WI.TargetObserver.
-
-        let target = this._targets.get(targetId);
-        console.assert(target);
-        if (!target)
-            return;
-
-        target.connection.dispatch(message);
-    }
-
     addTarget(target)
     {
         console.assert(target);
@@ -145,6 +106,41 @@ WI.TargetManager = class TargetManager extends WI.Object
             WI.initializePageTarget(target);
 
         this.addTarget(target);
+    }
+
+    // TargetObserver
+
+    targetCreated(targetInfo)
+    {
+        // FIXME: Eliminate this once the local inspector is configured to use
+        // the Multiplexing code path. Then we can perform this immediately
+        // in `WI.loaded` if a TargetAgent exists.
+        if (this._targets.size === 0)
+            this.createMultiplexingBackendTarget(targetInfo);
+
+        let connection = new InspectorBackend.TargetConnection(targetInfo.targetId);
+        let target = this._createTarget(targetInfo, connection);
+        this._checkAndHandlePageTargetTransition(target);
+        target.initialize();
+
+        this.addTarget(target);
+    }
+
+    targetDestroyed(targetId)
+    {
+        let target = this._targets.get(targetId);
+        this._checkAndHandlePageTargetTermination(target);
+        this.removeTarget(target);
+    }
+
+    dispatchMessageFromTarget(targetId, message)
+    {
+        let target = this._targets.get(targetId);
+        console.assert(target);
+        if (!target)
+            return;
+
+        target.connection.dispatch(message);
     }
 
     // Private

@@ -34,7 +34,7 @@ WI.DebuggerObserver = class DebuggerObserver
 
     globalObjectCleared()
     {
-        WI.debuggerManager.reset();
+        WI.debuggerManager.globalObjectCleared();
     }
 
     scriptParsed(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceURL, sourceMapURL, isModule)

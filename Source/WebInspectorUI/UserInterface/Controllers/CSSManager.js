@@ -401,10 +401,30 @@ WI.CSSManager = class CSSManager extends WI.Object
         this.mediaQueryResultChanged();
     }
 
+    get modifiedStyles()
+    {
+        return Array.from(this._modifiedStyles.values());
+    }
+
+    addModifiedStyle(style)
+    {
+        this._modifiedStyles.set(style.stringId, style);
+    }
+
+    getModifiedStyle(style)
+    {
+        return this._modifiedStyles.get(style.stringId);
+    }
+
+    removeModifiedStyle(style)
+    {
+        this._modifiedStyles.delete(style.stringId);
+    }
+
+    // PageObserver
+
     defaultAppearanceDidChange(protocolName)
     {
-        // Called from WI.PageObserver.
-
         let appearance = null;
 
         switch (protocolName) {
@@ -428,39 +448,16 @@ WI.CSSManager = class CSSManager extends WI.Object
         this.dispatchEventToListeners(WI.CSSManager.Event.DefaultAppearanceDidChange, {appearance});
     }
 
-    get modifiedStyles()
-    {
-        return Array.from(this._modifiedStyles.values());
-    }
-
-    addModifiedStyle(style)
-    {
-        this._modifiedStyles.set(style.stringId, style);
-    }
-
-    getModifiedStyle(style)
-    {
-        return this._modifiedStyles.get(style.stringId);
-    }
-
-    removeModifiedStyle(style)
-    {
-        this._modifiedStyles.delete(style.stringId);
-    }
-
-    // Protected
+    // CSSObserver
 
     mediaQueryResultChanged()
     {
-        // Called from WI.CSSObserver.
-
         for (var key in this._nodeStylesMap)
             this._nodeStylesMap[key].mediaQueryResultDidChange();
     }
 
     styleSheetChanged(styleSheetIdentifier)
     {
-        // Called from WI.CSSObserver.
         var styleSheet = this.styleSheetForIdentifier(styleSheetIdentifier);
         console.assert(styleSheet);
 
