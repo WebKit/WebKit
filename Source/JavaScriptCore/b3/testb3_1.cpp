@@ -902,6 +902,7 @@ int main(int argc, char** argv)
         break;
     }
 
+    WTF::initializeMainThread();
     JSC::initializeThreading();
     
     for (unsigned i = 0; i <= 2; ++i) {

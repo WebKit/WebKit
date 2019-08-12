@@ -60,6 +60,8 @@ void AuxiliaryProcess::didClose(IPC::Connection&)
 
 void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters& parameters)
 {
+    WTF::RefCountedBase::enableThreadingChecksGlobally();
+
     RELEASE_ASSERT_WITH_MESSAGE(parameters.processIdentifier, "Unable to initialize child process without a WebCore process identifier");
     Process::setIdentifier(*parameters.processIdentifier);
 
