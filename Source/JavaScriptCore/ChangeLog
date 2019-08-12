@@ -1,5 +1,15 @@
 2019-08-12  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/54171876
+
+    2019-08-12  Maciej Stachowiak  <mjs@apple.com>
+
+            Branch build fix for r248494
+
+            * runtime/ClassInfo.h: METHOD_TABLE_ENTRY was called WTF_METHOD_TABLE_ENTRY on the branch.
+
+2019-08-12  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r248494. rdar://problem/54171876
 
     Universal XSS in JSObject::putInlineSlow and JSValue::putToPrimitive
