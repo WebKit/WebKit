@@ -1,3 +1,13 @@
+2019-08-12  Jonathan Bedard  <jbedard@apple.com>
+
+        [REGRESSION] run-webkit-tests: No PID defined when searching for simulator crashlogs
+        https://bugs.webkit.org/show_bug.cgi?id=200644
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess._start): Define system PID after launching app.
+
 2019-08-12  Sam Weinig  <weinig@apple.com>
 
         Replace multiparameter overloads of append() in StringBuilder as a first step toward standardizinging on the flexibleAppend() implementation
