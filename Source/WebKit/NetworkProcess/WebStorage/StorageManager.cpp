@@ -502,6 +502,7 @@ void StorageManager::waitUntilTasksFinished()
         for (auto& connectionStorageAreaPair : connectionAndStorageMapIDPairsToRemove)
             m_storageAreasByConnection.remove(connectionStorageAreaPair);
 
+        m_sessionStorageNamespaces.clear();
         m_localStorageNamespaces.clear();
 
         semaphore.signal();
