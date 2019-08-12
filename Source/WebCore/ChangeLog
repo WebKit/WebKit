@@ -1,3 +1,54 @@
+2019-08-12  Antti Koivisto  <antti@apple.com>
+
+        Only construct ComplexLineLayout when needed
+        https://bugs.webkit.org/show_bug.cgi?id=200625
+
+        Reviewed by Zalan Bujtas.
+
+        * rendering/ComplexLineLayout.cpp:
+        (WebCore::ComplexLineLayout::createInlineBoxForRenderer):
+        (WebCore::ComplexLineLayout::createLineBoxes):
+        (WebCore::ComplexLineLayout::constructLine):
+        (WebCore::ComplexLineLayout::updateLogicalWidthForAlignment):
+
+        Make static so this can be invoked without constructing complex line layout (from startAlignedOffsetForLine).
+
+        (WebCore::ComplexLineLayout::computeInlineDirectionPositionsForSegment):
+        (WebCore::ComplexLineLayout::deleteEllipsisLineBoxes):
+        (WebCore::ComplexLineLayout::checkLinesForTextOverflow):
+        (WebCore::ComplexLineLayout::startAlignedOffsetForLine): Deleted.
+
+        This is also used in block layout to set static positions of positioned objects.
+        Move to RenderBlockFlow where its only caller is.
+
+        * rendering/ComplexLineLayout.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::RenderBlockFlow):
+        (WebCore::RenderBlockFlow::willBeDestroyed):
+        (WebCore::RenderBlockFlow::layoutInlineChildren):
+        (WebCore::RenderBlockFlow::updateStaticInlinePositionForChild):
+        (WebCore::RenderBlockFlow::startAlignedOffsetForLine):
+        (WebCore::RenderBlockFlow::deleteLines):
+        (WebCore::RenderBlockFlow::hitTestInlineChildren):
+        (WebCore::RenderBlockFlow::addOverflowFromInlineChildren):
+        (WebCore::RenderBlockFlow::paintInlineChildren):
+        (WebCore::RenderBlockFlow::hasLines const):
+        (WebCore::RenderBlockFlow::layoutSimpleLines):
+        (WebCore::RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout):
+        (WebCore::RenderBlockFlow::ensureLineBoxes):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::firstRootBox const):
+        (WebCore::RenderBlockFlow::lastRootBox const):
+        (WebCore::RenderBlockFlow::complexLineLayout):
+        (WebCore::RenderBlockFlow::lineBoxes): Deleted.
+        (WebCore::RenderBlockFlow::lineBoxes const): Deleted.
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::removeLineBoxFromRenderObject):
+        (WebCore::RootInlineBox::extractLineBoxFromRenderObject):
+        (WebCore::RootInlineBox::attachLineBoxToRenderObject):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::generateLineBoxTree):
+
 2019-08-12  Youenn Fablet  <youenn@apple.com>
 
         Remove IDBValue::m_sessionID

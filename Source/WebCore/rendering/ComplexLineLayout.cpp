@@ -152,10 +152,10 @@ RootInlineBox* ComplexLineLayout::createAndAppendRootInlineBox()
     return rootBox;
 }
 
-inline InlineBox* ComplexLineLayout::createInlineBoxForRenderer(RenderObject* renderer, bool isRootLineBox, bool isOnlyRun)
+InlineBox* ComplexLineLayout::createInlineBoxForRenderer(RenderObject* renderer, bool isOnlyRun)
 {
-    if (isRootLineBox)
-        return downcast<RenderBlockFlow>(*renderer).complexLineLayout().createAndAppendRootInlineBox();
+    if (renderer == &m_flow)
+        return createAndAppendRootInlineBox();
 
     if (is<RenderText>(*renderer))
         return downcast<RenderText>(*renderer).createInlineTextBox();
@@ -226,7 +226,7 @@ InlineFlowBox* ComplexLineLayout::createLineBoxes(RenderObject* obj, const LineI
         if (allowedToConstructNewBox && !canUseExistingParentBox) {
             // We need to make a new box for this render object. Once
             // made, we need to place it at the end of the current line.
-            InlineBox* newBox = createInlineBoxForRenderer(obj, obj == &m_flow);
+            InlineBox* newBox = createInlineBoxForRenderer(obj);
             parentBox = downcast<InlineFlowBox>(newBox);
             parentBox->setIsFirstLine(lineInfo.isFirstLine());
             parentBox->setIsHorizontal(m_flow.isHorizontalWritingMode());
@@ -301,7 +301,7 @@ RootInlineBox* ComplexLineLayout::constructLine(BidiRunList<BidiRun>& bidiRuns, 
         if (lineInfo.isEmpty())
             continue;
 
-        InlineBox* box = createInlineBoxForRenderer(&r->renderer(), false, isOnlyRun);
+        InlineBox* box = createInlineBoxForRenderer(&r->renderer(), isOnlyRun);
         r->setBox(box);
 
         if (!rootHasSelectedChildren && box->renderer().selectionState() != RenderObject::SelectionNone)
@@ -631,13 +631,15 @@ void ComplexLineLayout::computeExpansionForJustifiedText(BidiRun* firstRun, Bidi
     }
 }
 
-void ComplexLineLayout::updateLogicalWidthForAlignment(const TextAlignMode& textAlign, const RootInlineBox* rootInlineBox, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float& availableLogicalWidth, int expansionOpportunityCount)
+void ComplexLineLayout::updateLogicalWidthForAlignment(RenderBlockFlow& flow, const TextAlignMode& textAlign, const RootInlineBox* rootInlineBox, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float& availableLogicalWidth, int expansionOpportunityCount)
 {
     TextDirection direction;
-    if (rootInlineBox && style().unicodeBidi() == Plaintext)
+    if (rootInlineBox && flow.style().unicodeBidi() == Plaintext)
         direction = rootInlineBox->direction();
     else
-        direction = style().direction();
+        direction = flow.style().direction();
+
+    bool isLeftToRightDirection = flow.style().isLeftToRightDirection();
 
     // Armed with the total width of the line (without justification),
     // we now examine our text-align property in order to determine where to position the
@@ -646,18 +648,18 @@ void ComplexLineLayout::updateLogicalWidthForAlignment(const TextAlignMode& text
     switch (textAlign) {
     case TextAlignMode::Left:
     case TextAlignMode::WebKitLeft:
-        updateLogicalWidthForLeftAlignedBlock(style().isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+        updateLogicalWidthForLeftAlignedBlock(isLeftToRightDirection, trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
         break;
     case TextAlignMode::Right:
     case TextAlignMode::WebKitRight:
-        updateLogicalWidthForRightAlignedBlock(style().isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+        updateLogicalWidthForRightAlignedBlock(isLeftToRightDirection, trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
         break;
     case TextAlignMode::Center:
     case TextAlignMode::WebKitCenter:
-        updateLogicalWidthForCenterAlignedBlock(style().isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+        updateLogicalWidthForCenterAlignedBlock(isLeftToRightDirection, trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
         break;
     case TextAlignMode::Justify:
-        m_flow.adjustInlineDirectionLineBounds(expansionOpportunityCount, logicalLeft, availableLogicalWidth);
+        flow.adjustInlineDirectionLineBounds(expansionOpportunityCount, logicalLeft, availableLogicalWidth);
         if (expansionOpportunityCount) {
             if (trailingSpaceRun) {
                 totalLogicalWidth -= trailingSpaceRun->box()->logicalWidth();
@@ -668,15 +670,15 @@ void ComplexLineLayout::updateLogicalWidthForAlignment(const TextAlignMode& text
         FALLTHROUGH;
     case TextAlignMode::Start:
         if (direction == TextDirection::LTR)
-            updateLogicalWidthForLeftAlignedBlock(style().isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+            updateLogicalWidthForLeftAlignedBlock(isLeftToRightDirection, trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
         else
-            updateLogicalWidthForRightAlignedBlock(style().isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+            updateLogicalWidthForRightAlignedBlock(isLeftToRightDirection, trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
         break;
     case TextAlignMode::End:
         if (direction == TextDirection::LTR)
-            updateLogicalWidthForRightAlignedBlock(style().isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+            updateLogicalWidthForRightAlignedBlock(isLeftToRightDirection, trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
         else
-            updateLogicalWidthForLeftAlignedBlock(style().isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+            updateLogicalWidthForLeftAlignedBlock(isLeftToRightDirection, trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
         break;
     }
 }
@@ -959,7 +961,7 @@ BidiRun* ComplexLineLayout::computeInlineDirectionPositionsForSegment(RootInline
     if (is<RenderRubyBase>(m_flow) && !expansionOpportunityCount)
         textAlign = TextAlignMode::Center;
 
-    updateLogicalWidthForAlignment(textAlign, lineBox, trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth, expansionOpportunityCount);
+    updateLogicalWidthForAlignment(m_flow, textAlign, lineBox, trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth, expansionOpportunityCount);
 
     computeExpansionForJustifiedText(firstRun, trailingSpaceRun, expansionOpportunities, expansionOpportunityCount, totalLogicalWidth, availableLogicalWidth);
 
@@ -2113,7 +2115,7 @@ void ComplexLineLayout::deleteEllipsisLineBoxes()
             float logicalLeft = m_flow.logicalLeftOffsetForLine(curr->lineTop(), shouldIndentText);
             float availableLogicalWidth = m_flow.logicalRightOffsetForLine(curr->lineTop(), DoNotIndentText) - logicalLeft;
             float totalLogicalWidth = curr->logicalWidth();
-            updateLogicalWidthForAlignment(textAlign, curr, 0, logicalLeft, totalLogicalWidth, availableLogicalWidth, 0);
+            updateLogicalWidthForAlignment(m_flow, textAlign, curr, 0, logicalLeft, totalLogicalWidth, availableLogicalWidth, 0);
 
             if (ltr)
                 curr->adjustLogicalPosition((logicalLeft - curr->logicalLeft()), 0);
@@ -2158,7 +2160,7 @@ void ComplexLineLayout::checkLinesForTextOverflow()
 
                 float logicalLeft = 0; // We are only interested in the delta from the base position.
                 float truncatedWidth = m_flow.availableLogicalWidthForLine(curr->lineTop(), shouldIndentText);
-                updateLogicalWidthForAlignment(textAlign, curr, nullptr, logicalLeft, totalLogicalWidth, truncatedWidth, 0);
+                updateLogicalWidthForAlignment(m_flow, textAlign, curr, nullptr, logicalLeft, totalLogicalWidth, truncatedWidth, 0);
                 if (ltr)
                     curr->adjustLogicalPosition(logicalLeft, 0);
                 else
@@ -2223,45 +2225,6 @@ bool ComplexLineLayout::positionNewFloatOnLine(const FloatingObject& newFloat, F
     // no content, then we don't want to improperly grow the height of the block.
     lineInfo.setFloatPaginationStrut(lineInfo.floatPaginationStrut() + paginationStrut);
     return true;
-}
-
-LayoutUnit ComplexLineLayout::startAlignedOffsetForLine(LayoutUnit position, IndentTextOrNot shouldIndentText)
-{
-    TextAlignMode textAlign = style().textAlign();
-    bool shouldApplyIndentText = false;
-    switch (textAlign) {
-    case TextAlignMode::Left:
-    case TextAlignMode::WebKitLeft:
-        shouldApplyIndentText = style().isLeftToRightDirection();
-        break;
-    case TextAlignMode::Right:
-    case TextAlignMode::WebKitRight:
-        shouldApplyIndentText = !style().isLeftToRightDirection();
-        break;
-    case TextAlignMode::Start:
-        shouldApplyIndentText = true;
-        break;
-    default:
-        shouldApplyIndentText = false;
-    }
-    // <rdar://problem/15427571>
-    // https://bugs.webkit.org/show_bug.cgi?id=124522
-    // This quirk is for legacy content that doesn't work properly with the center positioning scheme
-    // being honored (e.g., epubs).
-    if (shouldApplyIndentText || m_flow.settings().useLegacyTextAlignPositionedElementBehavior()) // FIXME: Handle TextAlignMode::End here
-        return m_flow.startOffsetForLine(position, shouldIndentText);
-
-    // updateLogicalWidthForAlignment() handles the direction of the block so no need to consider it here
-    float totalLogicalWidth = 0;
-    float logicalLeft = m_flow.logicalLeftOffsetForLine(m_flow.logicalHeight(), DoNotIndentText);
-    float availableLogicalWidth = m_flow.logicalRightOffsetForLine(m_flow.logicalHeight(), DoNotIndentText) - logicalLeft;
-
-    // FIXME: Bug 129311: We need to pass a valid RootInlineBox here, considering the bidi level used to construct the line.
-    updateLogicalWidthForAlignment(textAlign, 0, 0, logicalLeft, totalLogicalWidth, availableLogicalWidth, 0);
-
-    if (!style().isLeftToRightDirection())
-        return LayoutUnit(m_flow.logicalWidth() - logicalLeft);
-    return LayoutUnit(logicalLeft);
 }
 
 void ComplexLineLayout::updateFragmentForLine(RootInlineBox* lineBox) const

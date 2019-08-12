@@ -828,17 +828,17 @@ EllipsisBox* RootInlineBox::ellipsisBox() const
 
 void RootInlineBox::removeLineBoxFromRenderObject()
 {
-    blockFlow().lineBoxes().removeLineBox(this);
+    blockFlow().complexLineLayout()->lineBoxes().removeLineBox(this);
 }
 
 void RootInlineBox::extractLineBoxFromRenderObject()
 {
-    blockFlow().lineBoxes().extractLineBox(this);
+    blockFlow().complexLineLayout()->lineBoxes().extractLineBox(this);
 }
 
 void RootInlineBox::attachLineBoxToRenderObject()
 {
-    blockFlow().lineBoxes().attachLineBox(this);
+    blockFlow().complexLineLayout()->lineBoxes().attachLineBox(this);
 }
 
 LayoutRect RootInlineBox::paddedLayoutOverflowRect(LayoutUnit endPadding) const

@@ -70,7 +70,11 @@ protected:
     LayoutUnit collapsedMarginBefore() const final { return maxPositiveMarginBefore() - maxNegativeMarginBefore(); }
     LayoutUnit collapsedMarginAfter() const final { return maxPositiveMarginAfter() - maxNegativeMarginAfter(); }
 
-    void dirtyLinesFromChangedChild(RenderObject& child) final { lineBoxes().dirtyLinesFromChangedChild(*this, child); }
+    void dirtyLinesFromChangedChild(RenderObject& child) final
+    {
+        if (m_complexLineLayout)
+            m_complexLineLayout->lineBoxes().dirtyLinesFromChangedChild(*this, child);
+    }
 
     void paintColumnRules(PaintInfo&, const LayoutPoint&) override;
 
@@ -231,6 +235,8 @@ public:
     void setStaticInlinePositionForChild(RenderBox& child, LayoutUnit blockOffset, LayoutUnit inlinePosition);
     void updateStaticInlinePositionForChild(RenderBox& child, LayoutUnit logicalTop, IndentTextOrNot shouldIndentText);
 
+    LayoutUnit startAlignedOffsetForLine(LayoutUnit position, IndentTextOrNot);
+
     LayoutUnit collapseMargins(RenderBox& child, MarginInfo&);
     LayoutUnit collapseMarginsWithChildInfo(RenderBox* child, RenderObject* prevSibling, MarginInfo&);
 
@@ -326,11 +332,8 @@ public:
 
     LayoutPoint flipFloatForWritingModeForChild(const FloatingObject&, const LayoutPoint&) const;
 
-    RenderLineBoxList& lineBoxes() { return m_complexLineLayout.lineBoxes(); }
-    const RenderLineBoxList& lineBoxes() const { return m_complexLineLayout.lineBoxes(); }
-
-    RootInlineBox* firstRootBox() const { return m_complexLineLayout.firstRootBox(); }
-    RootInlineBox* lastRootBox() const { return m_complexLineLayout.lastRootBox(); }
+    RootInlineBox* firstRootBox() const { return m_complexLineLayout ? m_complexLineLayout->firstRootBox() : nullptr; }
+    RootInlineBox* lastRootBox() const { return m_complexLineLayout ? m_complexLineLayout->lastRootBox() : nullptr; }
 
     bool hasLines() const;
     void invalidateLineLayoutPath() final;
@@ -518,7 +521,7 @@ private:
     void addFocusRingRectsForInlineChildren(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*) override;
 
 public:
-    ComplexLineLayout& complexLineLayout() { return m_complexLineLayout; }
+    ComplexLineLayout* complexLineLayout() { return m_complexLineLayout.get(); }
 
     virtual Optional<TextAlignMode> overrideTextAlignmentForLine(bool /* endsWithSoftBreak */) const { return { }; }
     virtual void adjustInlineDirectionLineBounds(int /* expansionOpportunityCount */, float& /* logicalLeft */, float& /* logicalWidth */) const { }
@@ -563,7 +566,7 @@ protected:
     std::unique_ptr<RenderBlockFlowRareData> m_rareBlockFlowData;
 
     // FIXME: Only one of these should be needed at any given time.
-    ComplexLineLayout m_complexLineLayout;
+    std::unique_ptr<ComplexLineLayout> m_complexLineLayout;
     std::unique_ptr<SimpleLineLayout::Layout> m_simpleLineLayout;
 
     friend class LineBreaker;

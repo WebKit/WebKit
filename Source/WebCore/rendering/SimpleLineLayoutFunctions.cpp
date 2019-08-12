@@ -331,7 +331,7 @@ static void initializeInlineTextBox(RenderBlockFlow& flow, InlineTextBox& inline
 
 void generateLineBoxTree(RenderBlockFlow& flow, const Layout& layout)
 {
-    ASSERT(!flow.lineBoxes().firstLineBox());
+    ASSERT(!flow.complexLineLayout()->lineBoxes().firstLineBox());
     if (!layout.runCount())
         return;
 
@@ -351,12 +351,12 @@ void generateLineBoxTree(RenderBlockFlow& flow, const Layout& layout)
         }
 
         LineInfo lineInfo;
-        lineInfo.setFirstLine(!flow.lineBoxes().firstLineBox());
+        lineInfo.setFirstLine(!flow.complexLineLayout()->lineBoxes().firstLineBox());
         // FIXME: This is needed for flow boxes -but we don't have them yet.
         // lineInfo.setLastLine(lastLine);
         lineInfo.setEmpty(!bidiRuns.runCount());
         bidiRuns.setLogicallyLastRun(bidiRuns.lastRun());
-        auto* root = flow.complexLineLayout().constructLine(bidiRuns, lineInfo);
+        auto* root = flow.complexLineLayout()->constructLine(bidiRuns, lineInfo);
         bidiRuns.clear();
         if (!root)
             continue;
