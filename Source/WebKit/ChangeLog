@@ -1,3 +1,19 @@
+2019-08-12  Sihui Liu  <sihui_liu@apple.com>
+
+        Remove an assertion in ~StorageArea()
+        https://bugs.webkit.org/show_bug.cgi?id=200630
+        <rdar://problem/54097722>
+
+        Reviewed by Chris Dumez.
+
+        In r247370, we clear the LocalStorageNamespace before the destructor of LocalStorageNamespace is invoked, to 
+        make sure StorageArea gets destroyed on the background thread. 
+        StorageArea can get destroyed before LocalStorageNamespace, so the assertion in ~StorageArea() is not true any 
+        more.
+
+        * NetworkProcess/WebStorage/StorageArea.cpp:
+        (WebKit::StorageArea::~StorageArea):
+
 2019-08-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] Web pages sometimes load at half width in Safari

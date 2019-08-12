@@ -49,7 +49,6 @@ StorageArea::~StorageArea()
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(m_eventListeners.isEmpty());
-    ASSERT(!m_localStorageNamespace);
 
     if (m_localStorageDatabase)
         m_localStorageDatabase->close();
