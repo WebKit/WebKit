@@ -74,6 +74,9 @@ interface UIScriptController {
     void keyDown(DOMString character, object modifierArray);
     void toggleCapsLock(object callback);
 
+    void rawKeyDown(DOMString key);
+    void rawKeyUp(DOMString key);
+
     // eventsJSON describes a series of user events in JSON form. For the keys, see HIDEventGenerator.mm.
     // For example, this JSON describes a touch down followed by a touch up (i.e. a single tap).
     //  {

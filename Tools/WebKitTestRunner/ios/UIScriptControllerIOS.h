@@ -64,6 +64,10 @@ public:
     void enterText(JSStringRef text) override;
     void typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef) override;
     void keyDown(JSStringRef character, JSValueRef modifierArray) override;
+
+    void rawKeyDown(JSStringRef) override;
+    void rawKeyUp(JSStringRef) override;
+
     void dismissFormAccessoryView() override;
     void dismissFilePicker(JSValueRef) override;
     JSRetainPtr<JSStringRef> selectFormPopoverTitle() const override;

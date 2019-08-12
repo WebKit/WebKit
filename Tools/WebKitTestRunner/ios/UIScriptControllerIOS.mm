@@ -460,6 +460,22 @@ static UIPhysicalKeyboardEvent *createUIPhysicalKeyboardEvent(NSString *hidInput
     return keyboardEvent;
 }
 
+void UIScriptControllerIOS::rawKeyDown(JSStringRef key)
+{
+    // Key can be either a single Unicode code point or the name of a special key (e.g. "downArrow").
+    // HIDEventGenerator knows how to map these special keys to the appropriate keycode.
+    [[HIDEventGenerator sharedHIDEventGenerator] keyDown:toWTFString(toWK(key))];
+    [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:^{ /* Do nothing */ }];
+}
+
+void UIScriptControllerIOS::rawKeyUp(JSStringRef key)
+{
+    // Key can be either a single Unicode code point or the name of a special key (e.g. "downArrow").
+    // HIDEventGenerator knows how to map these special keys to the appropriate keycode.
+    [[HIDEventGenerator sharedHIDEventGenerator] keyUp:toWTFString(toWK(key))];
+    [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:^{ /* Do nothing */ }];
+}
+
 void UIScriptControllerIOS::keyDown(JSStringRef character, JSValueRef modifierArray)
 {
     // Character can be either a single Unicode code point or the name of a special key (e.g. "downArrow").

@@ -1,3 +1,16 @@
+2019-08-12  Daniel Bates  <dabates@apple.com>
+
+        Add a test to ensure that we dispatch keydown and keyup events when multiple keys are pressed at the same time
+        https://bugs.webkit.org/show_bug.cgi?id=200548
+
+        Reviewed by Darin Adler.
+
+        Add a test. Skip the test for now until we have the fixes for <rdar://problem/53613454> and <rdar://problem/54001139>.
+
+        * fast/events/ios/multiple-key-press-and-release-ordering-expected.txt: Added.
+        * fast/events/ios/multiple-key-press-and-release-ordering.html: Added.
+        * platform/ios/TestExpectations:
+
 2019-08-11  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Don't use vorbisparse
