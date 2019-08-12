@@ -174,7 +174,10 @@ void NetworkResourceLoader::start()
     m_wasStarted = true;
 
     if (m_networkLoadChecker) {
-        m_networkLoadChecker->check(ResourceRequest { originalRequest() }, this, [this] (auto&& result) {
+        m_networkLoadChecker->check(ResourceRequest { originalRequest() }, this, [this, weakThis = makeWeakPtr(*this)] (auto&& result) {
+            if (!weakThis)
+                return;
+
             WTF::switchOn(result,
                 [this] (ResourceError& error) {
                     RELEASE_LOG_IF_ALLOWED("start: error checking (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d, parentPID = %d, error.domain = %{public}s, error.code = %d)", m_parameters.webPageID.toUInt64(), m_parameters.webFrameID, m_parameters.identifier, this->isMainResource(), this->isSynchronous(), m_parameters.parentPID, error.domain().utf8().data(), error.errorCode());
@@ -213,7 +216,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
 {
     ASSERT(canUseCache(request));
 
-    RefPtr<NetworkResourceLoader> loader(this);
+    auto protectedThis = makeRef(*this);
     if (isMainFrameLoad()) {
         ASSERT(m_parameters.options.mode == FetchOptions::Mode::Navigate);
         if (auto* session = m_connection->networkProcess().networkSession(sessionID())) {
@@ -221,33 +224,31 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
                 // FIXME: Deal with credentials (https://bugs.webkit.org/show_bug.cgi?id=200000)
                 if (!entry->redirectRequest.isNull()) {
                     auto cacheEntry = m_cache->makeRedirectEntry(request, entry->response, entry->redirectRequest);
-                    loader->retrieveCacheEntryInternal(WTFMove(cacheEntry), ResourceRequest { request });
+                    retrieveCacheEntryInternal(WTFMove(cacheEntry), ResourceRequest { request });
                     auto maxAgeCap = validateCacheEntryForMaxAgeCapValidation(request, entry->redirectRequest, entry->response);
                     m_cache->storeRedirect(request, entry->response, entry->redirectRequest, maxAgeCap);
                     return;
                 }
                 auto buffer = entry->releaseBuffer();
                 auto cacheEntry = m_cache->makeEntry(request, entry->response, buffer.copyRef());
-                loader->retrieveCacheEntryInternal(WTFMove(cacheEntry), ResourceRequest { request });
+                retrieveCacheEntryInternal(WTFMove(cacheEntry), ResourceRequest { request });
                 m_cache->store(request, entry->response, WTFMove(buffer), nullptr);
                 return;
             }
         }
     }
-    m_cache->retrieve(request, { m_parameters.webPageID, m_parameters.webFrameID }, [this, loader = WTFMove(loader), request = ResourceRequest { request }](auto entry, auto info) mutable {
-        if (loader->hasOneRef()) {
-            // The loader has been aborted and is only held alive by this lambda.
+    m_cache->retrieve(request, { m_parameters.webPageID, m_parameters.webFrameID }, [this, weakThis = makeWeakPtr(*this), request = ResourceRequest { request }](auto entry, auto info) mutable {
+        if (!weakThis)
             return;
-        }
 
-        loader->logSlowCacheRetrieveIfNeeded(info);
+        logSlowCacheRetrieveIfNeeded(info);
 
         if (!entry) {
             RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Resource not in cache (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID.toUInt64(), m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
-            loader->startNetworkLoad(WTFMove(request), FirstLoad::Yes);
+            startNetworkLoad(WTFMove(request), FirstLoad::Yes);
             return;
         }
-        loader->retrieveCacheEntryInternal(WTFMove(entry), WTFMove(request));
+        retrieveCacheEntryInternal(WTFMove(entry), WTFMove(request));
     });
 }
 
