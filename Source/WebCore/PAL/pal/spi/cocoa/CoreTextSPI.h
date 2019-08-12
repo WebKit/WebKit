@@ -132,7 +132,9 @@ extern const CFStringRef kCTFrameMaximumNumberOfLinesAttributeName;
 bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);
 CTFontRef CTFontCreateForCSS(CFStringRef name, uint16_t weight, CTFontSymbolicTraits, CGFloat size);
 CTFontRef CTFontCreateForCharactersWithLanguage(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFStringRef language, CFIndex *coveredLength);
+#if HAVE(CTFONTCREATEFORCHARACTERSWITHLANGUAGEANDOPTION)
 CTFontRef CTFontCreateForCharactersWithLanguageAndOption(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFStringRef language, CTFontFallbackOption option, CFIndex *coveredLength);
+#endif
 CTFontRef CTFontCopyPhysicalFont(CTFontRef);
 
 extern const CFStringRef kCTUIFontTextStyleShortHeadline;
