@@ -58,6 +58,25 @@ static int numberOfPrompts = 0;
 }
 @end
 
+@interface GetUserMediaOnlyAudioUIDelegate : NSObject<WKUIDelegate>
+- (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler;
+- (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler;
+@end
+
+@implementation GetUserMediaOnlyAudioUIDelegate
+- (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler
+{
+    numberOfPrompts++;
+    wasPrompted = true;
+    decisionHandler((devices == _WKCaptureDeviceMicrophone) ? YES : NO);
+}
+
+- (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler
+{
+    decisionHandler(@"0x987654321", YES);
+}
+@end
+
 @interface GetUserMediaRepromptTestView : TestWKWebView
 - (BOOL)haveStream:(BOOL)expected;
 @end
@@ -115,6 +134,29 @@ TEST(WebKit2, GetUserMediaReprompt)
 
     wasPrompted = false;
     [webView stringByEvaluatingJavaScript:@"promptForCapture()"];
+    TestWebKitAPI::Util::run(&wasPrompted);
+    EXPECT_TRUE([webView haveStream:YES]);
+}
+
+TEST(WebKit2, GetUserMediaRepromptAfterAudioVideoBeingDenied)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    auto preferences = [configuration preferences];
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    preferences._mediaDevicesEnabled = YES;
+    preferences._mockCaptureDevicesEnabled = YES;
+    auto webView = [[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
+    auto delegate = adoptNS([[GetUserMediaOnlyAudioUIDelegate alloc] init]);
+    webView.UIDelegate = delegate.get();
+
+    wasPrompted = false;
+    [webView loadTestPageNamed:@"getUserMediaAudioVideoCapture"];
+    TestWebKitAPI::Util::run(&wasPrompted);
+    EXPECT_TRUE([webView haveStream:NO]);
+
+    wasPrompted = false;
+    [webView stringByEvaluatingJavaScript:@"promptForAudioOnly()"];
     TestWebKitAPI::Util::run(&wasPrompted);
     EXPECT_TRUE([webView haveStream:YES]);
 }

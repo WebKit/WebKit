@@ -1,5 +1,60 @@
 2019-08-12  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r248104. rdar://problem/53836566
+
+    UserMediaPermissionRequestManagerProxy should not use audio+video denied requests to deny audio-only or video-only requests
+    https://bugs.webkit.org/show_bug.cgi?id=200317
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebKit:
+    
+    Only match audio+video denied requests with new audio+video requests.
+    That will ensure that audio can still be captured if user denied access to the camera through preferences
+    and website started with a getUserMedia({audio: true, video: true}) call.
+    Covered by added API test.
+    
+    * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+    (WebKit::UserMediaPermissionRequestManagerProxy::wasRequestDenied):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKit/getUserMediaAudioVideoCapture.html: Added
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKit/GetUserMediaReprompt.mm:
+    (-[GetUserMediaOnlyAudioUIDelegate _webView:requestMediaCaptureAuthorization:decisionHandler:]):
+    (-[GetUserMediaOnlyAudioUIDelegate _webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:]):
+    (TestWebKitAPI::TEST):
+    
+    LayoutTests:
+    
+    Update existing test with new behavior.
+    Added new test for the case where video is blocked but not audio.
+    
+    * fast/mediastream/getUserMedia-deny-persistency3-expected.txt:
+    * fast/mediastream/getUserMedia-deny-persistency3.html:
+    * fast/mediastream/getUserMedia-deny-persistency4-expected.txt: Added.
+    * fast/mediastream/getUserMedia-deny-persistency4.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248104 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-01  Youenn Fablet  <youenn@apple.com>
+
+            UserMediaPermissionRequestManagerProxy should not use audio+video denied requests to deny audio-only or video-only requests
+            https://bugs.webkit.org/show_bug.cgi?id=200317
+
+            Reviewed by Eric Carlson.
+
+            * TestWebKitAPI/Tests/WebKit/getUserMediaAudioVideoCapture.html: Added
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit/GetUserMediaReprompt.mm:
+            (-[GetUserMediaOnlyAudioUIDelegate _webView:requestMediaCaptureAuthorization:decisionHandler:]):
+            (-[GetUserMediaOnlyAudioUIDelegate _webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:]):
+            (TestWebKitAPI::TEST):
+
+2019-08-12  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r248095. rdar://problem/53820658
 
     REGRESSION (r240942): first visually non-empty layout milestone is not reached in media documents until after the video finishes loading
