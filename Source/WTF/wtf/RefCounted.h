@@ -40,15 +40,7 @@ class RefCountedBase {
 public:
     void ref() const
     {
-#if !ASSERT_DISABLED
-        if (m_isOwnedByMainThread != isMainThread() && hasOneRef())
-            m_isOwnedByMainThread = isMainThread(); // Likely ownership transfer.
-
-        // If you hit this assertion, it means that the RefCounted object was ref'd or deref'd
-        // concurrent from several threads, which is not safe. You should either subclass
-        // ThreadSafeRefCounted instead, or make sure to always ref / deref from the same thread.
-        ASSERT_WITH_MESSAGE(!areThreadingCheckedEnabled() || m_isOwnedByMainThread == isMainThread(), "Should not be ref'd / deref'd concurrently from several threads");
-#endif
+        applyRefDerefThreadingCheck();
 
 #if CHECK_REF_COUNTED_LIFECYCLE
         ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
@@ -108,12 +100,21 @@ protected:
     {
     }
 
-#if !ASSERT_DISABLED
-    bool areThreadingCheckedEnabled() const
+    void applyRefDerefThreadingCheck() const
     {
-        return areThreadingChecksEnabledGlobally && m_areThreadingChecksEnabled;
-    }
+#if !ASSERT_DISABLED
+        if (hasOneRef()) {
+            // Likely an ownership transfer across threads that may be safe.
+            m_isOwnedByMainThread = isMainThread();
+        } else if (areThreadingChecksEnabledGlobally && m_areThreadingChecksEnabled) {
+            // If you hit this assertion, it means that the RefCounted object was ref/deref'd
+            // from both the main thread and another in a way that is likely concurrent and unsafe.
+            // Derive from ThreadSafeRefCounted and make sure the destructor is safe on threads
+            // that call deref, or ref/deref from a single thread.
+            ASSERT_WITH_MESSAGE(m_isOwnedByMainThread == isMainThread(), "Unsafe to ref/deref from different threads");
+        }
 #endif
+    }
 
     ~RefCountedBase()
     {
@@ -126,15 +127,7 @@ protected:
     // Returns whether the pointer should be freed or not.
     bool derefBase() const
     {
-#if !ASSERT_DISABLED
-        if (m_isOwnedByMainThread != isMainThread() && hasOneRef())
-            m_isOwnedByMainThread = isMainThread(); // Likely ownership transfer.
-
-        // If you hit this assertion, it means that the RefCounted object was ref'd or deref'd
-        // concurrent from several threads, which is not safe. You should either subclass
-        // ThreadSafeRefCounted instead, or make sure to always ref / deref from the same thread.
-        ASSERT_WITH_MESSAGE(!areThreadingCheckedEnabled() || m_isOwnedByMainThread == isMainThread(), "Should not be ref'd / deref'd concurrently from several threads");
-#endif
+        applyRefDerefThreadingCheck();
 
 #if CHECK_REF_COUNTED_LIFECYCLE
         ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
