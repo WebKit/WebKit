@@ -112,6 +112,10 @@
 #import <UIKit/_UITextDragCaretView.h>
 #endif
 
+#if __has_include(<UIKit/UITargetedPreview_Private.h>)
+#import <UIKit/UITargetedPreview_Private.h>
+#endif
+
 #else // USE(APPLE_INTERNAL_SDK)
 
 #if ENABLE(DRAG_SUPPORT)
@@ -1156,6 +1160,12 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 - (void)_preserveFocusWithToken:(id <NSCopying, NSSecureCoding>)token destructively:(BOOL)destructively;
 @end
 #endif
+
+#if USE(UICONTEXTMENU)
+@interface UITargetedPreview (Radar54086338)
+@property (nonatomic, strong, setter=_setOverridePositionTrackingView:) UIView *overridePositionTrackingView;
+@end
+#endif // USE(UICONTEXTMENU)
 
 @interface UIResponder ()
 - (UIResponder *)firstResponder;
