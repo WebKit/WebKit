@@ -28,7 +28,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "ThreadSafeDataBuffer.h"
-#include <pal/SessionID.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,16 +40,15 @@ public:
     WEBCORE_EXPORT IDBValue();
     IDBValue(const SerializedScriptValue&);
     IDBValue(const ThreadSafeDataBuffer&);
-    IDBValue(const SerializedScriptValue&, const Vector<String>& blobURLs, const PAL::SessionID&, const Vector<String>& blobFilePaths);
-    IDBValue(const ThreadSafeDataBuffer&, Vector<String>&& blobURLs, const PAL::SessionID&, Vector<String>&& blobFilePaths);
-    IDBValue(const ThreadSafeDataBuffer&, const Vector<String>& blobURLs, const PAL::SessionID&, const Vector<String>& blobFilePaths);
+    IDBValue(const SerializedScriptValue&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths);
+    IDBValue(const ThreadSafeDataBuffer&, Vector<String>&& blobURLs, Vector<String>&& blobFilePaths);
+    IDBValue(const ThreadSafeDataBuffer&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths);
 
     void setAsIsolatedCopy(const IDBValue&);
     IDBValue isolatedCopy() const;
 
     const ThreadSafeDataBuffer& data() const { return m_data; }
     const Vector<String>& blobURLs() const { return m_blobURLs; }
-    PAL::SessionID sessionID() const;
     const Vector<String>& blobFilePaths() const { return m_blobFilePaths; }
 
     template<class Encoder> void encode(Encoder&) const;
@@ -59,24 +57,14 @@ public:
 private:
     ThreadSafeDataBuffer m_data;
     Vector<String> m_blobURLs;
-    Optional<PAL::SessionID> m_sessionID;
     Vector<String> m_blobFilePaths;
 };
-
-inline PAL::SessionID IDBValue::sessionID() const
-{
-    // FIXME: We should assert m_sessionID is valid or remove m_sessionID.
-    if (!m_sessionID)
-        return { };
-    return *m_sessionID;
-}
 
 template<class Encoder>
 void IDBValue::encode(Encoder& encoder) const
 {
     encoder << m_data;
     encoder << m_blobURLs;
-    encoder << m_sessionID;
     encoder << m_blobFilePaths;
 }
 
@@ -88,9 +76,6 @@ Optional<IDBValue> IDBValue::decode(Decoder& decoder)
         return WTF::nullopt;
 
     if (!decoder.decode(result.m_blobURLs))
-        return WTF::nullopt;
-
-    if (!decoder.decode(result.m_sessionID))
         return WTF::nullopt;
 
     if (!decoder.decode(result.m_blobFilePaths))

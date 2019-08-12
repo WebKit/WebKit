@@ -2040,7 +2040,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
 
     auto* objectStoreInfo = infoForObjectStore(objectStoreID);
     ASSERT(objectStoreInfo);
-    resultValue = { keyData, { valueResultBuffer, WTFMove(blobURLs), m_sessionID, WTFMove(blobFilePaths) }, objectStoreInfo->keyPath()};
+    resultValue = { keyData, { valueResultBuffer, WTFMove(blobURLs), WTFMove(blobFilePaths) }, objectStoreInfo->keyPath()};
     return IDBError { };
 }
 
@@ -2159,7 +2159,7 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
             if (!error.isNull())
                 return error;
 
-            result.addValue({ valueResultBuffer, WTFMove(blobURLs), m_sessionID, WTFMove(blobFilePaths) });
+            result.addValue({ valueResultBuffer, WTFMove(blobURLs), WTFMove(blobFilePaths) });
         }
 
         ++returnedResults;
@@ -2322,7 +2322,7 @@ IDBError SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey(int64_t indexID
 
     auto* objectStoreInfo = infoForObjectStore(objectStoreID);
     ASSERT(objectStoreInfo);
-    getResult = { objectStoreKey, objectStoreKey, { ThreadSafeDataBuffer::create(WTFMove(valueVector)), WTFMove(blobURLs), m_sessionID, WTFMove(blobFilePaths) }, objectStoreInfo->keyPath() };
+    getResult = { objectStoreKey, objectStoreKey, { ThreadSafeDataBuffer::create(WTFMove(valueVector)), WTFMove(blobURLs), WTFMove(blobFilePaths) }, objectStoreInfo->keyPath() };
     return IDBError { };
 }
 

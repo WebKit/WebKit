@@ -1,5 +1,43 @@
 2019-08-12  Youenn Fablet  <youenn@apple.com>
 
+        Remove IDBValue::m_sessionID
+        https://bugs.webkit.org/show_bug.cgi?id=199320
+
+        Reviewed by Alex Christensen.
+
+        Remove sessionID from IDBValue.
+        This does not seem to be really used in any way.
+        No change of behavior.
+
+        * Modules/indexeddb/IDBValue.cpp:
+        (WebCore::IDBValue::IDBValue):
+        * Modules/indexeddb/IDBValue.h:
+        (WebCore::IDBValue::blobURLs const):
+        (WebCore::IDBValue::encode const):
+        (WebCore::IDBValue::decode):
+        (WebCore::IDBValue::sessionID const): Deleted.
+        * Modules/indexeddb/shared/IDBRequestData.cpp:
+        (WebCore::IDBRequestData::isolatedCopy):
+        * Modules/indexeddb/shared/IDBRequestData.h:
+        (WebCore::IDBRequestData::databaseIdentifier const):
+        (WebCore::IDBRequestData::decode):
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::deserializeIDBValueToJSValue):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneSerializer::CloneSerializer):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneDeserializer::deserialize):
+        (WebCore::CloneDeserializer::CloneDeserializer):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::deserialize):
+        (WebCore::SerializedScriptValue::writeBlobsToDiskForIndexedDB):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::sessionID const): Deleted.
+
+2019-08-12  Youenn Fablet  <youenn@apple.com>
+
         Remove IDB-specific quota
         https://bugs.webkit.org/show_bug.cgi?id=196545
 

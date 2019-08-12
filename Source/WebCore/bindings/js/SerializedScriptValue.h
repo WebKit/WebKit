@@ -78,7 +78,7 @@ public:
 
     WEBCORE_EXPORT JSC::JSValue deserialize(JSC::ExecState&, JSC::JSGlobalObject*, SerializationErrorMode = SerializationErrorMode::Throwing);
     WEBCORE_EXPORT JSC::JSValue deserialize(JSC::ExecState&, JSC::JSGlobalObject*, const Vector<RefPtr<MessagePort>>&, SerializationErrorMode = SerializationErrorMode::Throwing);
-    JSC::JSValue deserialize(JSC::ExecState&, JSC::JSGlobalObject*, const Vector<RefPtr<MessagePort>>&, const Vector<String>& blobURLs, const PAL::SessionID&, const Vector<String>& blobFilePaths, SerializationErrorMode = SerializationErrorMode::Throwing);
+    JSC::JSValue deserialize(JSC::ExecState&, JSC::JSGlobalObject*, const Vector<RefPtr<MessagePort>>&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths, SerializationErrorMode = SerializationErrorMode::Throwing);
 
     static uint32_t wireFormatVersion();
 
@@ -93,9 +93,8 @@ public:
 
 #if ENABLE(INDEXED_DATABASE)
     Vector<String> blobURLsIsolatedCopy() const;
-    const PAL::SessionID& sessionID() const { return m_sessionID; }
-    void writeBlobsToDiskForIndexedDB(CompletionHandler<void(IDBValue&&)>&&);
-    IDBValue writeBlobsToDiskForIndexedDBSynchronously();
+    void writeBlobsToDiskForIndexedDB(PAL::SessionID, CompletionHandler<void(IDBValue&&)>&&);
+    IDBValue writeBlobsToDiskForIndexedDBSynchronously(PAL::SessionID);
 #endif // ENABLE(INDEXED_DATABASE)
 
     static Ref<SerializedScriptValue> createFromWireBytes(Vector<uint8_t>&& data)
@@ -112,7 +111,7 @@ public:
 private:
     WEBCORE_EXPORT SerializedScriptValue(Vector<unsigned char>&&);
     WEBCORE_EXPORT SerializedScriptValue(Vector<unsigned char>&&, std::unique_ptr<ArrayBufferContentsArray>);
-    SerializedScriptValue(Vector<unsigned char>&&, const Vector<String>& blobURLs, const PAL::SessionID&, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::pair<std::unique_ptr<ImageBuffer>, bool>>&& imageBuffers
+    SerializedScriptValue(Vector<unsigned char>&&, const Vector<String>& blobURLs, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::pair<std::unique_ptr<ImageBuffer>, bool>>&& imageBuffers
 #if ENABLE(WEBASSEMBLY)
         , std::unique_ptr<WasmModuleArray>
 #endif
@@ -126,7 +125,6 @@ private:
     std::unique_ptr<WasmModuleArray> m_wasmModulesArray;
 #endif
     Vector<String> m_blobURLs;
-    PAL::SessionID m_sessionID;
 };
 
 template<class Encoder>

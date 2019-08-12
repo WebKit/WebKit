@@ -41,8 +41,6 @@ IDBValue::IDBValue(const SerializedScriptValue& scriptValue)
     : m_data(ThreadSafeDataBuffer::copyVector(scriptValue.data()))
     , m_blobURLs(scriptValue.blobURLsIsolatedCopy())
 {
-    if (scriptValue.sessionID().isValid())
-        m_sessionID = scriptValue.sessionID();
 }
 
 IDBValue::IDBValue(const ThreadSafeDataBuffer& value)
@@ -50,32 +48,26 @@ IDBValue::IDBValue(const ThreadSafeDataBuffer& value)
 {
 }
 
-IDBValue::IDBValue(const SerializedScriptValue& scriptValue, const Vector<String>& blobURLs, const PAL::SessionID& sessionID, const Vector<String>& blobFilePaths)
+IDBValue::IDBValue(const SerializedScriptValue& scriptValue, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths)
     : m_data(ThreadSafeDataBuffer::copyVector(scriptValue.data()))
     , m_blobURLs(blobURLs)
     , m_blobFilePaths(blobFilePaths)
 {
     ASSERT(m_data.data());
-    if (sessionID.isValid())
-        m_sessionID = sessionID;
 }
 
-IDBValue::IDBValue(const ThreadSafeDataBuffer& value, Vector<String>&& blobURLs, const PAL::SessionID& sessionID, Vector<String>&& blobFilePaths)
+IDBValue::IDBValue(const ThreadSafeDataBuffer& value, Vector<String>&& blobURLs, Vector<String>&& blobFilePaths)
     : m_data(value)
     , m_blobURLs(WTFMove(blobURLs))
     , m_blobFilePaths(WTFMove(blobFilePaths))
 {
-    if (sessionID.isValid())
-        m_sessionID = sessionID;
 }
 
-IDBValue::IDBValue(const ThreadSafeDataBuffer& value, const Vector<String>& blobURLs, const PAL::SessionID& sessionID, const Vector<String>& blobFilePaths)
+IDBValue::IDBValue(const ThreadSafeDataBuffer& value, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths)
     : m_data(value)
     , m_blobURLs(blobURLs)
     , m_blobFilePaths(blobFilePaths)
 {
-    if (sessionID.isValid())
-        m_sessionID = sessionID;
 }
 
 void IDBValue::setAsIsolatedCopy(const IDBValue& other)
@@ -84,7 +76,6 @@ void IDBValue::setAsIsolatedCopy(const IDBValue& other)
 
     m_data = other.m_data;
     m_blobURLs = crossThreadCopy(other.m_blobURLs);
-    m_sessionID = other.m_sessionID;
     m_blobFilePaths = crossThreadCopy(other.m_blobFilePaths);
 }
 
