@@ -1,3 +1,17 @@
+2019-08-12  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix Crash in Mail Search
+        https://bugs.webkit.org/show_bug.cgi?id=200589
+        <rdar://problem/53666720>
+
+        Reviewed by Tim Horton.
+
+        If we search in Mail backwards first, for AppKit reasons 
+        we get a -1 for the index of the found item.
+        Do not try and insert data in this case.
+
+        * UIProcess/mac/WKTextFinderClient.mm:
+
 2019-08-12  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Fix building without unified sources

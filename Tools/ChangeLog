@@ -1,3 +1,16 @@
+2019-08-12  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix Crash in Mail Search
+        https://bugs.webkit.org/show_bug.cgi?id=200589
+
+        Reviewed by Tim Horton.
+
+        If you search backwards first in mail, we would crash,
+        this tests that codepath.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FindInPage.mm:
+        (TEST):
+
 2019-08-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] Web pages sometimes load at half width in Safari

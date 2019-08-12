@@ -224,6 +224,22 @@ TEST(WebKit, FindInPageWrappingDisabled)
     EXPECT_FALSE(result.didWrap);
 }
 
+TEST(WebKit, FindInPageBackwardsFirst)
+{
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
+    [webView _setOverrideDeviceScaleFactor:2];
+
+    [webView loadHTMLString:@"word word" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    // Find one match, doing an incremental search.
+    auto result = findMatches(webView.get(), @"word", wrapBackwardsFindOptions, 1);
+    EXPECT_EQ((NSUInteger)1, [result.matches count]);
+
+    result = findMatches(webView.get(), @"word", wrapBackwardsFindOptions, 1);
+    EXPECT_EQ((NSUInteger)1, [result.matches count]);
+}
+
 TEST(WebKit, FindInPageWrappingSubframe)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
