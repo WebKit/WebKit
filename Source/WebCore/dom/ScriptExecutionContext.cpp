@@ -307,6 +307,10 @@ void ScriptExecutionContext::resumeActiveDOMObjects(ReasonForSuspension why)
         activeDOMObject.resume();
         return ShouldContinue::Yes;
     });
+
+    // In case there were pending messages at the time the script execution context entered PageCache,
+    // make sure those get dispatched shortly after restoring from PageCache.
+    processMessageWithMessagePortsSoon();
 }
 
 void ScriptExecutionContext::stopActiveDOMObjects()

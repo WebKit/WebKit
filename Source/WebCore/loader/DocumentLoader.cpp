@@ -135,9 +135,9 @@ static bool areAllLoadersPageCacheAcceptable(const ResourceLoaderMap& loaders)
         if (!cachedResource)
             return false;
 
-        // Only image and XHR loads do prevent the page from entering the PageCache.
+        // Only image and XHR loads do not prevent the page from entering the PageCache.
         // All non-image loads will prevent the page from entering the PageCache.
-        if (!cachedResource->isImage() && !cachedResource->areAllClientsXMLHttpRequests())
+        if (cachedResource->isLoading() && !cachedResource->isImage() && !cachedResource->areAllClientsXMLHttpRequests())
             return false;
     }
     return true;
