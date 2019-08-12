@@ -710,8 +710,9 @@ static void validate(WKWebViewConfiguration *configuration)
 
     _page = [_contentView page];
     [self _dispatchSetDeviceOrientation:deviceOrientation()];
-    if (!self.opaque)
-        _page->setBackgroundColor(WebCore::Color(WebCore::Color::transparent));
+
+    if (!self.opaque || !pageConfiguration->drawsBackground())
+        self.opaque = NO;
 
     [_contentView layer].anchorPoint = CGPointZero;
     [_contentView setFrame:bounds];
