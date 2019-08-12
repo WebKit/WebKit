@@ -1,3 +1,31 @@
+2019-08-12  Sam Weinig  <weinig@apple.com>
+
+        Replace multiparameter overloads of append() in StringBuilder as a first step toward standardizinging on the flexibleAppend() implementation
+        https://bugs.webkit.org/show_bug.cgi?id=200614
+
+        Reviewed by Darin Adler.
+
+        Renames StringBuilder::append(const LChar*, unsigned), StringBuilder::append(const UChar*, unsigned) and 
+        StringBuilder::append(const char*, unsigned) to StringBuilder::appendCharacters(...).
+        
+        Renames StringBuilder::append(const String& string, unsigned offset, unsigned length) to 
+        StringBuilder::appendSubstring(...).
+
+        * wtf/HexNumber.h:
+        (WTF::appendUnsignedAsHexFixedSize):
+        Add overload that explicitly takes a StringBuilder to work around rename from append to appendCharacters.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::appendCharacters):
+        (WTF::StringBuilder::append):
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::appendCharacters):
+        (WTF::StringBuilder::append):
+        (WTF::StringBuilder::appendSubstring):
+        (WTF::StringBuilder::appendLiteral):
+        (WTF::IntegerToStringConversionTrait<StringBuilder>::flush):
+        Update for renames.
+
 2019-08-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF][JSC] Make JSC and WTF aggressively-fast-malloced

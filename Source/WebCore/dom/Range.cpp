@@ -946,7 +946,7 @@ String Range::toString() const
             unsigned length = data.length();
             unsigned start = node == &startContainer() ? std::min(m_start.offset(), length) : 0U;
             unsigned end = node == &endContainer() ? std::min(std::max(start, m_end.offset()), length) : length;
-            builder.append(data, start, end - start);
+            builder.appendSubstring(data, start, end - start);
         }
     }
 

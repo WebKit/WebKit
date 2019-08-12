@@ -303,7 +303,7 @@ CharacterType* StringBuilder::appendUninitializedSlow(unsigned requiredLength)
     return result;
 }
 
-void StringBuilder::append(const UChar* characters, unsigned length)
+void StringBuilder::appendCharacters(const UChar* characters, unsigned length)
 {
     if (!length || hasOverflowed())
         return;
@@ -314,7 +314,7 @@ void StringBuilder::append(const UChar* characters, unsigned length)
         if (length == 1 && !(*characters & ~0xff)) {
             // Append as 8 bit character
             LChar lChar = static_cast<LChar>(*characters);
-            return append(&lChar, 1);
+            return appendCharacters(&lChar, 1);
         }
 
         // Calculate the new size of the builder after appending.
@@ -345,7 +345,7 @@ void StringBuilder::append(const UChar* characters, unsigned length)
     ASSERT(m_buffer->length() >= m_length.unsafeGet<unsigned>());
 }
 
-void StringBuilder::append(const LChar* characters, unsigned length)
+void StringBuilder::appendCharacters(const LChar* characters, unsigned length)
 {
     if (!length || hasOverflowed())
         return;
@@ -383,7 +383,7 @@ void StringBuilder::append(CFStringRef string)
 {
     // Fast path: avoid constructing a temporary String when possible.
     if (auto* characters = CFStringGetCStringPtr(string, kCFStringEncodingISOLatin1)) {
-        append(reinterpret_cast<const LChar*>(characters), CFStringGetLength(string));
+        appendCharacters(reinterpret_cast<const LChar*>(characters), CFStringGetLength(string));
         return;
     }
     append(String(string));

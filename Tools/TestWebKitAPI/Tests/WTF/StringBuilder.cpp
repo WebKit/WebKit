@@ -64,7 +64,7 @@ TEST(StringBuilderTest, Append)
     expectBuilderContent("0123456789", builder);
     builder.append("abcd");
     expectBuilderContent("0123456789abcd", builder);
-    builder.append("efgh", 3);
+    builder.appendCharacters("efgh", 3);
     expectBuilderContent("0123456789abcdefg", builder);
     builder.append("");
     expectBuilderContent("0123456789abcdefg", builder);
@@ -73,11 +73,11 @@ TEST(StringBuilderTest, Append)
 
     builder.toString(); // Test after reifyString().
     StringBuilder builder1;
-    builder.append("", 0);
+    builder.appendCharacters("", 0);
     expectBuilderContent("0123456789abcdefg#", builder);
-    builder1.append(builder.characters8(), builder.length());
+    builder1.appendCharacters(builder.characters8(), builder.length());
     builder1.append("XYZ");
-    builder.append(builder1.characters8(), builder1.length());
+    builder.appendCharacters(builder1.characters8(), builder1.length());
     expectBuilderContent("0123456789abcdefg#0123456789abcdefg#XYZ", builder);
 
     StringBuilder builder2;
@@ -104,12 +104,12 @@ TEST(StringBuilderTest, Append)
         StringBuilder builder2;
         UChar32 frakturAChar = 0x1D504;
         const UChar data[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar) };
-        builder2.append(data, 2);
+        builder2.appendCharacters(data, 2);
         ASSERT_EQ(2U, builder2.length());
         String result2 = builder2.toString();
         ASSERT_EQ(2U, result2.length());
         builder.append(builder2);
-        builder.append(data, 2);
+        builder.appendCharacters(data, 2);
         ASSERT_EQ(4U, builder.length());
         const UChar resultArray[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar), U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar) };
         expectBuilderContent(String(resultArray, WTF_ARRAY_LENGTH(resultArray)), builder);
@@ -360,7 +360,7 @@ TEST(StringBuilderTest, ToAtomStringOnEmpty)
     }
     { // AtomString constructed from an empty char* string.
         StringBuilder builder;
-        builder.append("", 0);
+        builder.appendCharacters("", 0);
         AtomString atomString = builder.toAtomString();
         ASSERT_EQ(emptyAtom(), atomString);
     }

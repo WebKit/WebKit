@@ -792,9 +792,9 @@ void WebProcessPool::didReceiveInvalidMessage(const IPC::StringReference& messag
         return;
 
     StringBuilder messageNameStringBuilder;
-    messageNameStringBuilder.append(messageReceiverName.data(), messageReceiverName.size());
+    messageNameStringBuilder.appendCharacters(messageReceiverName.data(), messageReceiverName.size());
     messageNameStringBuilder.append('.');
-    messageNameStringBuilder.append(messageName.data(), messageName.size());
+    messageNameStringBuilder.appendCharacters(messageName.data(), messageName.size());
 
     s_invalidMessageCallback(toAPI(API::String::create(messageNameStringBuilder.toString()).ptr()));
 }

@@ -420,7 +420,7 @@ String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfP
         if (character == selectedWhitespaceCharacter)
             continue;
         rebalancedString.reserveCapacity(length);
-        rebalancedString.append(string, rebalancedString.length(), i - rebalancedString.length());
+        rebalancedString.appendSubstring(string, rebalancedString.length(), i - rebalancedString.length());
         rebalancedString.append(selectedWhitespaceCharacter);
     }
 
@@ -428,7 +428,7 @@ String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfP
         return string;
 
     rebalancedString.reserveCapacity(length);
-    rebalancedString.append(string, rebalancedString.length(), length - rebalancedString.length());
+    rebalancedString.appendSubstring(string, rebalancedString.length(), length - rebalancedString.length());
     return rebalancedString.toString();
 }
 

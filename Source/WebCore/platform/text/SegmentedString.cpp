@@ -27,7 +27,7 @@ namespace WebCore {
 
 inline void SegmentedString::Substring::appendTo(StringBuilder& builder) const
 {
-    builder.append(string, string.length() - length, length);
+    builder.appendSubstring(string, string.length() - length, length);
 }
 
 SegmentedString& SegmentedString::operator=(SegmentedString&& other)
