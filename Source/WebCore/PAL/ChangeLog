@@ -1,3 +1,51 @@
+2019-08-12  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r248380. rdar://problem/54018115
+
+    Context menu on a universal link produces a blank preview
+    https://bugs.webkit.org/show_bug.cgi?id=200485
+    <rdar://problem/53699620>
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore/PAL:
+    
+    Define iTunesStoreURL from CoreServices.
+    
+    * pal/spi/cocoa/LaunchServicesSPI.h:
+    
+    Source/WebKit:
+    
+    If the context menu is activated on an iTunesStore URL, pass it
+    on to DataDetectors, who should know how to handle it.
+    
+    Two drive-by fixes:
+    - make it clear that early returns do not produce a value. Instead call the
+      completion handler first, then return.
+    - The new API DataDetectors case doesn't need to worry about hiding link previews
+      as DataDetectors itself will handle that.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm: If the URL is an iTunesStoreURL
+    (as defined by CoreServices), let DataDetectors handle it.
+    (-[WKContentView assignLegacyDataForContextMenuInteraction]):
+    (-[WKContentView continueContextMenuInteraction:]):
+    (-[WKContentView continueContextMenuInteractionWithDataDetectors:]): New method to
+    use DataDetectors if possible.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248380 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-06  Dean Jackson  <dino@apple.com>
+
+            Context menu on a universal link produces a blank preview
+            https://bugs.webkit.org/show_bug.cgi?id=200485
+            <rdar://problem/53699620>
+
+            Reviewed by Tim Horton.
+
+            Define iTunesStoreURL from CoreServices.
+
+            * pal/spi/cocoa/LaunchServicesSPI.h:
+
 2019-08-06  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/53992160
