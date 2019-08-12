@@ -212,6 +212,11 @@ bool JSCell::getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned, Property
     return false;
 }
 
+void JSCell::doPutPropertySecurityCheck(JSObject*, ExecState*, PropertyName, PutPropertySlot&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void JSCell::getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode)
 {
     RELEASE_ASSERT_NOT_REACHED();

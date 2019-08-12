@@ -168,6 +168,7 @@ public:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
     bool getOwnPropertySlotInline(ExecState*, PropertyName, PropertySlot&);
+    static void doPutPropertySecurityCheck(JSObject*, ExecState*, PropertyName, PutPropertySlot&);
 
     // The key difference between this and getOwnPropertySlot is that getOwnPropertySlot
     // currently returns incorrect results for the DOM window (with non-own properties)
@@ -1402,6 +1403,10 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlot(JSObject* object, ExecState* exe
     if (Optional<uint32_t> index = parseIndex(propertyName))
         return getOwnPropertySlotByIndex(object, exec, index.value(), slot);
     return false;
+}
+
+ALWAYS_INLINE void JSObject::doPutPropertySecurityCheck(JSObject*, ExecState*, PropertyName, PutPropertySlot&)
+{
 }
 
 // It may seem crazy to inline a function this large but it makes a big difference
