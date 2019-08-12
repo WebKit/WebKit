@@ -393,7 +393,6 @@ set(WTF_SOURCES
     RandomDevice.cpp
     RandomNumber.cpp
     ReadWriteLock.cpp
-    RefCounted.cpp
     RefCountedLeakCounter.cpp
     RunLoop.cpp
     SHA1.cpp

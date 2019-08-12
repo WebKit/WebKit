@@ -150,7 +150,6 @@ Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
     , m_stage(Preparing)
 {
     RELEASE_ASSERT(m_codeBlock->alternative()->jitCode());
-    m_inlineCallFrames->disableThreadingChecks();
 }
 
 Plan::~Plan()
