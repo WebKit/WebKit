@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-String standardUserAgentWithApplicationName(const String& applicationName, UserAgentType)
+String standardUserAgentWithApplicationName(const String& applicationName, const String&, UserAgentType)
 {
     String osVersion = systemMarketingVersionForUserAgentString();
     String appNameSuffix = applicationName.isEmpty() ? "" : makeString(" ", applicationName);
