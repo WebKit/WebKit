@@ -195,7 +195,6 @@ public:
         }
     }
 
-
     int32_t Encode(const webrtc::VideoFrame& frame,
         const webrtc::CodecSpecificInfo*,
         const std::vector<webrtc::FrameType>* frameTypes) final

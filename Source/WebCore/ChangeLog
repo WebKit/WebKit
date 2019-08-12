@@ -1,3 +1,23 @@
+2019-08-12  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][WebRTC] Handle broken data in the libwebrtc GStreamer decoders
+        https://bugs.webkit.org/show_bug.cgi?id=200584
+
+        Reviewed by Philippe Normand.
+
+        Listening to parsers warnings and error messages (synchronously so that we react
+        right away) and requesting keyframes from the peer.
+
+        Also simplify the decoder code by trying to make decoding happen
+        in one single pass, also hiding away GStreamer threading and allowing
+        us to react as soon as the decoder/parser fails.
+
+        * platform/mediastream/libwebrtc/GStreamerVideoDecoderFactory.cpp:
+        (WebCore::GStreamerVideoDecoder::GStreamerVideoDecoder):
+        (WebCore::GStreamerVideoDecoder::pullSample):
+        (WebCore::H264Decoder::H264Decoder):
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+
 2019-08-12  Antti Koivisto  <antti@apple.com>
 
         Only construct ComplexLineLayout when needed

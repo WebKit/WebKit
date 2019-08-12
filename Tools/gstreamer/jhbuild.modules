@@ -92,7 +92,8 @@
       <dep package="libsrtp"/>
     </dependencies>
     <branch hash="sha256:22139de35626ada6090bdfa3423b27b7fc15a0198331d25c95e6b12cb1072b05" module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" repo="gstreamer" version="1.16.0">
-      <patch file="gst-plugins-bad-do-not-retry-downloads-during-shutdown.patch" strip="1"/> <!-- In review: https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/merge_requests/427 -->
+      <patch file="gst-plugins-bad-do-not-retry-downloads-during-shutdown.patch" strip="1"/> <!-- Merged, discussing backporting: https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/merge_requests/427 -->
+      <patch file="gst-plugins-bad-0001-h264parse-Post-a-WARNING-when-data-is-broken.patch" strip="1"/> <!-- Merged, discussing backporting https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/merge_requests/386-->
     </branch>
   </meson>
 
