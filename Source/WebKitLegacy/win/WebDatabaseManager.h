@@ -56,7 +56,6 @@ public:
 
     // IWebDatabaseManager2
     virtual HRESULT STDMETHODCALLTYPE deleteAllIndexedDatabases();
-    virtual HRESULT STDMETHODCALLTYPE setIDBPerOriginQuota(unsigned long long);
 
     // DatabaseManagerClient
     virtual void dispatchDidModifyOrigin(const WebCore::SecurityOriginData&);

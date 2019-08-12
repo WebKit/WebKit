@@ -228,12 +228,11 @@ static const String& blobFilesTableSchemaAlternate()
     return blobFilesTableSchemaString;
 }
 
-SQLiteIDBBackingStore::SQLiteIDBBackingStore(PAL::SessionID sessionID, const IDBDatabaseIdentifier& identifier, const String& databaseRootDirectory, IDBBackingStoreTemporaryFileHandler& fileHandler, uint64_t quota)
+SQLiteIDBBackingStore::SQLiteIDBBackingStore(PAL::SessionID sessionID, const IDBDatabaseIdentifier& identifier, const String& databaseRootDirectory, IDBBackingStoreTemporaryFileHandler& fileHandler)
     : m_sessionID(sessionID)
     , m_identifier(identifier)
     , m_databaseRootDirectory(databaseRootDirectory)
     , m_temporaryFileHandler(fileHandler)
-    , m_quota(quota)
 {
     m_databaseDirectory = fullDatabaseDirectoryWithUpgrade();
 }
@@ -873,14 +872,6 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
     return IDBError { };
 }
 
-uint64_t SQLiteIDBBackingStore::quotaForOrigin() const
-{
-    ASSERT(!isMainThread());
-    uint64_t diskFreeSpaceSize = 0;
-    FileSystem::getVolumeFreeSpace(m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory), diskFreeSpaceSize);
-    return std::min(diskFreeSpaceSize / 2, m_quota);
-}
-
 uint64_t SQLiteIDBBackingStore::databasesSizeForFolder(const String& folder)
 {
     uint64_t diskUsage = 0;
@@ -898,24 +889,6 @@ uint64_t SQLiteIDBBackingStore::databasesSizeForOrigin() const
     return databasesSizeForFolder(oldVersionOriginDirectory) + databasesSizeForFolder(newVersionOriginDirectory);
 }
 
-uint64_t SQLiteIDBBackingStore::maximumSize() const
-{
-    ASSERT(!isMainThread());
-
-    // The maximum size for one database file is the quota for its origin, minus size of all databases within that origin,
-    // and plus current size of the database file.
-    uint64_t databaseFileSize = SQLiteFileSystem::getDatabaseFileSize(fullDatabasePath());
-    uint64_t quota = quotaForOrigin();
-
-    uint64_t diskUsage = databasesSizeForOrigin();
-    ASSERT(diskUsage >= databaseFileSize);
-
-    if (quota < diskUsage)
-        return databaseFileSize;
-
-    return quota - diskUsage + databaseFileSize;
-}
-
 IDBError SQLiteIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::beginTransaction - %s", info.identifier().loggingString().utf8().data());
@@ -924,7 +897,6 @@ IDBError SQLiteIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
     ASSERT(m_sqliteDB->isOpen());
     ASSERT(m_databaseInfo);
 
-    m_sqliteDB->setMaximumSize(maximumSize());
     auto addResult = m_transactions.add(info.identifier(), nullptr);
     if (!addResult.isNewEntry) {
         LOG_ERROR("Attempt to establish transaction identifier that already exists");
@@ -941,10 +913,7 @@ IDBError SQLiteIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
         if (sql.prepare() != SQLITE_OK
             || sql.bindText(1, String::number(info.newVersion())) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
-            if (m_sqliteDB->lastError() == SQLITE_FULL)
-                error = IDBError { QuotaExceededError, "Failed to store new database version in database because no enough space for domain"_s };
-            else
-                error = IDBError { UnknownError, "Failed to store new database version in database"_s };
+            error = IDBError { UnknownError, "Failed to store new database version in database"_s };
         }
     }
 
@@ -1027,8 +996,6 @@ IDBError SQLiteIDBBackingStore::createObjectStore(const IDBResourceIdentifier& t
             || sql->bindInt64(5, info.maxIndexID()) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not add object store '%s' to ObjectStoreInfo table (%i) - %s", info.name().utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            if (m_sqliteDB->lastError() == SQLITE_FULL)
-                return IDBError { QuotaExceededError, "Could not create object store because no enough space for domain"_s };
             return IDBError { UnknownError, "Could not create object store"_s };
         }
     }
@@ -1039,8 +1006,6 @@ IDBError SQLiteIDBBackingStore::createObjectStore(const IDBResourceIdentifier& t
             || sql->bindInt64(1, info.identifier()) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not seed initial key generator value for ObjectStoreInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            if (m_sqliteDB->lastError() == SQLITE_FULL)
-                return IDBError { QuotaExceededError, "Could not seed initial key generator value for object store because no enough space for domain"_s };
             return IDBError { UnknownError, "Could not seed initial key generator value for object store"_s };
         }
     }
@@ -1164,8 +1129,6 @@ IDBError SQLiteIDBBackingStore::renameObjectStore(const IDBResourceIdentifier& t
             || sql->bindInt64(2, objectStoreIdentifier) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not update name for object store id %" PRIi64 " in ObjectStoreInfo table (%i) - %s", objectStoreIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            if (m_sqliteDB->lastError() == SQLITE_FULL)
-                return IDBError { QuotaExceededError, "Could not rename object store because no enough space for domain"_s };
             return IDBError { UnknownError, "Could not rename object store"_s };
         }
     }
@@ -1247,8 +1210,6 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
         || sql->bindInt(6, info.multiEntry()) != SQLITE_OK
         || sql->step() != SQLITE_DONE) {
         LOG_ERROR("Could not add index '%s' to IndexInfo table (%i) - %s", info.name().utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        if (m_sqliteDB->lastError() == SQLITE_FULL)
-            return IDBError { QuotaExceededError, "Unable to create index in database because no enough space for domain"_s };
         return IDBError { UnknownError, "Unable to create index in database"_s };
     }
 
@@ -1397,8 +1358,6 @@ IDBError SQLiteIDBBackingStore::uncheckedPutIndexRecord(int64_t objectStoreID, i
             || sql->bindInt64(5, recordID) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not put index record for index %" PRIi64 " in object store %" PRIi64 " in Records table (%i) - %s", indexID, objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            if (m_sqliteDB->lastError() == SQLITE_FULL)
-                return IDBError { QuotaExceededError, "Error putting index record into database because no enough space for domain"_s };
             return IDBError { UnknownError, "Error putting index record into database"_s };
         }
     }
@@ -1484,8 +1443,6 @@ IDBError SQLiteIDBBackingStore::renameIndex(const IDBResourceIdentifier& transac
             || sql->bindInt64(3, indexIdentifier) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not update name for index id (%" PRIi64 ", %" PRIi64 ") in IndexInfo table (%i) - %s", objectStoreIdentifier, indexIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            if (m_sqliteDB->lastError() == SQLITE_FULL)
-                return IDBError { QuotaExceededError, "Could not rename index because no enough space for domain"_s };
             return IDBError { UnknownError, "Could not rename index"_s };
         }
     }
@@ -1823,8 +1780,6 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
             || sql->bindBlob(3, value.data().data()->data(), value.data().data()->size()) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not put record for object store %" PRIi64 " in Records table (%i) - %s", objectStoreInfo.identifier(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            if (m_sqliteDB->lastError() == SQLITE_FULL)
-                return IDBError { QuotaExceededError, "Unable to store record in object store because no enough space for domain"_s };
             return IDBError { UnknownError, "Unable to store record in object store"_s };
         }
 
@@ -1857,8 +1812,6 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
                 || sql->bindText(2, url) != SQLITE_OK
                 || sql->step() != SQLITE_DONE) {
                 LOG_ERROR("Unable to record Blob record in database");
-                if (m_sqliteDB->lastError() == SQLITE_FULL)
-                    return IDBError { QuotaExceededError, "Unable to record Blob record in database because no enough space for domain"_s };
                 return IDBError { UnknownError, "Unable to record Blob record in database"_s };
             }
         }
@@ -1892,8 +1845,6 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
                 || sql->bindText(2, storedFilename) != SQLITE_OK
                 || sql->step() != SQLITE_DONE) {
                 LOG_ERROR("Unable to record Blob file record in database");
-                if (m_sqliteDB->lastError() == SQLITE_FULL)
-                    return IDBError { QuotaExceededError, "Unable to record Blob file in database because no enough space for domain"_s };
                 return IDBError { UnknownError, "Unable to record Blob file record in database"_s };
             }
         }
@@ -2429,8 +2380,6 @@ IDBError SQLiteIDBBackingStore::uncheckedSetKeyGeneratorValue(int64_t objectStor
         || sql->bindInt64(2, value) != SQLITE_OK
         || sql->step() != SQLITE_DONE) {
         LOG_ERROR("Could not update key generator value (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        if (m_sqliteDB->lastError() == SQLITE_FULL)
-            return IDBError { QuotaExceededError, "Error storing new key generator value in database because no enough space for domain"_s };
         return IDBError { ConstraintError, "Error storing new key generator value in database" };
     }
 

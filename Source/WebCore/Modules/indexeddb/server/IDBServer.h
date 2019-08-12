@@ -115,9 +115,6 @@ public:
     WEBCORE_EXPORT void closeAndDeleteDatabasesModifiedSince(WallTime, Function<void ()>&& completionHandler);
     WEBCORE_EXPORT void closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&, Function<void ()>&& completionHandler);
 
-    uint64_t perOriginQuota() const { return m_perOriginQuota; }
-    WEBCORE_EXPORT void setPerOriginQuota(uint64_t);
-
     void requestSpace(const ClientOrigin&, uint64_t taskSize, CompletionHandler<void(StorageQuotaManager::Decision)>&&);
     void increasePotentialSpaceUsed(const ClientOrigin&, uint64_t taskSize);
     void decreasePotentialSpaceUsed(const ClientOrigin&, uint64_t taskSize);
@@ -195,8 +192,6 @@ private:
 
     String m_databaseDirectoryPath;
     IDBBackingStoreTemporaryFileHandler& m_backingStoreTemporaryFileHandler;
-
-    uint64_t m_perOriginQuota { defaultPerOriginQuota };
 
     HashMap<ClientOrigin, std::unique_ptr<QuotaUser>> m_quotaUsers;
     QuotaManagerGetter m_quotaManagerGetter;

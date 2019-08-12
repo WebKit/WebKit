@@ -940,7 +940,6 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     WKWebsiteDataStoreClearAllDeviceOrientationPermissions(websiteDataStore);
 
     ClearIndexedDatabases();
-    setIDBPerOriginQuota(50 * MB);
 
     clearServiceWorkerRegistrations();
     clearDOMCaches();
@@ -3062,11 +3061,6 @@ void TestController::clearDOMCaches()
 
     WKWebsiteDataStoreRemoveAllFetchCaches(websiteDataStore, &context, clearDOMCacheCallback);
     runUntil(context.done, noTimeout);
-}
-
-void TestController::setIDBPerOriginQuota(uint64_t quota)
-{
-    WKContextSetIDBPerOriginQuota(platformContext(), quota);
 }
 
 struct RemoveAllIndexedDatabasesCallbackContext {

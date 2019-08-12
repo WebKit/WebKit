@@ -126,8 +126,6 @@ public:
 
     uint64_t spaceUsed() const;
 
-    void setQuota(uint64_t);
-
     void finishActiveTransactions();
 
 private:
