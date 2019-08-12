@@ -42,6 +42,43 @@ bool AutosizeStatus::contains(Fields fields) const
     return m_fields.contains(fields);
 }
 
+bool AutosizeStatus::probablyContainsASmallFixedNumberOfLines(const RenderStyle& style)
+{
+    auto& lineHeightAsLength = style.specifiedLineHeight();
+    if (!lineHeightAsLength.isFixed() && !lineHeightAsLength.isPercent())
+        return false;
+
+    auto& maxHeight = style.maxHeight();
+    Optional<Length> heightOrMaxHeightAsLength;
+    if (maxHeight.isFixed())
+        heightOrMaxHeightAsLength = style.maxHeight();
+    else if (style.height().isFixed() && (!maxHeight.isSpecified() || maxHeight.isUndefined()))
+        heightOrMaxHeightAsLength = style.height();
+
+    if (!heightOrMaxHeightAsLength)
+        return false;
+
+    float heightOrMaxHeight = heightOrMaxHeightAsLength->value();
+    if (heightOrMaxHeight <= 0)
+        return false;
+
+    float approximateLineHeight = lineHeightAsLength.isPercent() ? lineHeightAsLength.percent() * style.specifiedFontSize() / 100 : lineHeightAsLength.value();
+    if (approximateLineHeight <= 0)
+        return false;
+
+    float approximateNumberOfLines = heightOrMaxHeight / approximateLineHeight;
+    auto& lineClamp = style.lineClamp();
+    if (!lineClamp.isNone() && !lineClamp.isPercentage()) {
+        int lineClampValue = lineClamp.value();
+        return lineClampValue && std::floor(approximateNumberOfLines) == lineClampValue;
+    }
+
+    const int maximumNumberOfLines = 5;
+    const float thresholdForConsideringAnApproximateNumberOfLinesToBeCloseToAnInteger = 0.01;
+    return approximateNumberOfLines <= maximumNumberOfLines + thresholdForConsideringAnApproximateNumberOfLinesToBeCloseToAnInteger
+        && approximateNumberOfLines - std::floor(approximateNumberOfLines) <= thresholdForConsideringAnApproximateNumberOfLinesToBeCloseToAnInteger;
+}
+
 void AutosizeStatus::updateStatus(RenderStyle& style)
 {
     auto result = style.autosizeStatus().fields();
@@ -50,32 +87,15 @@ void AutosizeStatus::updateStatus(RenderStyle& style)
         if (style.display() == DisplayType::None)
             return true;
 
-        if (!style.lineHeight().isSpecified() || style.whiteSpace() == WhiteSpace::NoWrap)
+        const float maximumDifferenceBetweenFixedLineHeightAndFontSize = 5;
+        auto& lineHeight = style.specifiedLineHeight();
+        if (lineHeight.isFixed() && lineHeight.value() - style.specifiedFontSize() > maximumDifferenceBetweenFixedLineHeightAndFontSize)
             return false;
 
-        const float maximumDifferenceBetweenFixedLineHeightAndFontSize = 6;
-        if (style.lineHeight().isFixed() && style.lineHeight().value() - style.fontDescription().specifiedSize() > maximumDifferenceBetweenFixedLineHeightAndFontSize)
+        if (style.whiteSpace() == WhiteSpace::NoWrap)
             return false;
 
-        Optional<Length> heightOrMaxHeightAsLength;
-        if (style.height().isFixed() && style.maxHeight().isAuto())
-            heightOrMaxHeightAsLength = style.height();
-        else if (style.maxHeight().isFixed())
-            heightOrMaxHeightAsLength = style.maxHeight();
-
-        if (!heightOrMaxHeightAsLength)
-            return false;
-
-        float heightOrMaxHeight = heightOrMaxHeightAsLength->value();
-        float computedLineHeight = style.computedLineHeight();
-        if (computedLineHeight <= 0)
-            return false;
-
-        float approximateNumberOfLines = heightOrMaxHeight / computedLineHeight;
-        const int maximumNumberOfLines = 5;
-        const float thresholdForConsideringAnApproximateNumberOfLinesToBeCloseToAnInteger = 0.01;
-        return approximateNumberOfLines <= maximumNumberOfLines + thresholdForConsideringAnApproximateNumberOfLinesToBeCloseToAnInteger
-            && approximateNumberOfLines - std::floor(approximateNumberOfLines) <= thresholdForConsideringAnApproximateNumberOfLinesToBeCloseToAnInteger;
+        return probablyContainsASmallFixedNumberOfLines(style);
     };
 
     if (shouldAvoidAutosizingEntireSubtree())
