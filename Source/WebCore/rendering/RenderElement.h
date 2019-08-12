@@ -204,7 +204,7 @@ public:
     RenderBlock* containingBlockForFixedPosition() const;
     RenderBlock* containingBlockForAbsolutePosition() const;
 
-    RespectImageOrientationEnum shouldRespectImageOrientation() const;
+    WEBCORE_EXPORT RespectImageOrientationEnum shouldRespectImageOrientation() const;
 
     void removeFromRenderFragmentedFlow();
     virtual void resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow*);
