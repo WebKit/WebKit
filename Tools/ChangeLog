@@ -1,5 +1,45 @@
 2019-08-12  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r248410. rdar://problem/54084721
+
+    Do not allow navigations of frames about to get replaced by the result of evaluating javascript: URLs
+    <rdar://problem/53788893> and https://bugs.webkit.org/show_bug.cgi?id=198786
+    
+    Reviewed by Geoff Garen.
+    
+    Source/WebCore:
+    
+    Covered by API Test
+    
+    Add a "willReplaceWithResultOfExecutingJavascriptURL" flag which is respected inside FrameLoader::isNavigationAllowed
+    
+    * bindings/js/ScriptController.cpp:
+    (WebCore::ScriptController::executeIfJavaScriptURL):
+    * bindings/js/ScriptController.h:
+    (WebCore::ScriptController::willReplaceWithResultOfExecutingJavascriptURL const):
+    
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::isNavigationAllowed const):
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/mac/JavascriptURLNavigation.mm: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248410 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-08  Brady Eidson  <beidson@apple.com>
+
+            Do not allow navigations of frames about to get replaced by the result of evaluating javascript: URLs
+            <rdar://problem/53788893> and https://bugs.webkit.org/show_bug.cgi?id=198786
+
+            Reviewed by Geoff Garen.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/mac/JavascriptURLNavigation.mm: Added.
+
+2019-08-12  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r248265. rdar://problem/54017842
 
     Ping loads should not prevent page caching
