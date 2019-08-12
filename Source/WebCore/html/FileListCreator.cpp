@@ -83,7 +83,7 @@ Ref<FileList> FileListCreator::createFileList(PAL::SessionID sessionID, const Ve
         if (shouldResolveDirectories == ShouldResolveDirectories::Yes && FileSystem::fileIsDirectory(info.path, FileSystem::ShouldFollowSymbolicLinks::No))
             appendDirectoryFiles(sessionID, info.path, FileSystem::pathGetFileName(info.path), fileObjects);
         else
-            fileObjects.append(File::createWithName(sessionID, info.path, info.displayName));
+            fileObjects.append(File::create(sessionID, info.path, info.displayName));
     }
     return FileList::create(WTFMove(fileObjects));
 }

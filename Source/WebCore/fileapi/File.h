@@ -41,10 +41,8 @@ public:
         Optional<int64_t> lastModified;
     };
 
-    static Ref<File> create(PAL::SessionID sessionID, const String& path)
-    {
-        return adoptRef(*new File(sessionID, path));
-    }
+    // Create a file with an optional name exposed to the author (via File.name and associated DOM properties) that differs from the one provided in the path.
+    WEBCORE_EXPORT static Ref<File> create(PAL::SessionID, const String& path, const String& nameOverride = { });
 
     // Create a File using the 'new File' constructor.
     static Ref<File> create(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
@@ -55,14 +53,6 @@ public:
     static Ref<File> deserialize(PAL::SessionID sessionID, const String& path, const URL& srcURL, const String& type, const String& name, const Optional<int64_t>& lastModified = WTF::nullopt)
     {
         return adoptRef(*new File(deserializationContructor, sessionID, path, srcURL, type, name, lastModified));
-    }
-
-    // Create a file with a name exposed to the author (via File.name and associated DOM properties) that differs from the one provided in the path.
-    static Ref<File> createWithName(PAL::SessionID sessionID, const String& path, const String& nameOverride)
-    {
-        if (nameOverride.isEmpty())
-            return adoptRef(*new File(sessionID, path));
-        return adoptRef(*new File(sessionID, path, nameOverride));
     }
 
     static Ref<File> create(const Blob& blob, const String& name)
@@ -96,7 +86,7 @@ public:
 
 private:
     WEBCORE_EXPORT explicit File(PAL::SessionID, const String& path);
-    File(PAL::SessionID, const String& path, const String& nameOverride);
+    File(PAL::SessionID, URL&&, String&& type, String&& path, String&& name);
     File(ScriptExecutionContext&, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag&);
     File(const Blob&, const String& name);
     File(const File&, const String& name);

@@ -1,3 +1,33 @@
+2019-08-12  Youenn Fablet  <youenn@apple.com>
+
+        Make Blob::m_size an Optional
+        https://bugs.webkit.org/show_bug.cgi?id=200617
+
+        Reviewed by Alex Christensen.
+
+        Use an Optional instead of -1 to know that m_size is initialized or not.
+        No change of behavior.
+
+        Refactoring to make all Blob members private.
+        Remove one static Blob create method.
+
+        Covered by existing tests.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::fromFormData):
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob):
+        (WebCore::Blob::size const):
+        * fileapi/Blob.h:
+        (WebCore::Blob::setInternalURL):
+        * fileapi/File.cpp:
+        (WebCore::File::create):
+        (WebCore::File::File):
+        (WebCore::File::computeNameAndContentType):
+        * fileapi/File.h:
+        * html/FileListCreator.cpp:
+        (WebCore::FileListCreator::createFileList):
+
 2019-08-12  Chris Dumez  <cdumez@apple.com>
 
         GPUBuffer seems to be ref'd / deref'd from multiple thread concurrently but is not ThreadSafeRefCounted

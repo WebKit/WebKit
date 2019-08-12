@@ -88,7 +88,7 @@ Optional<FetchBody> FetchBody::fromFormData(PAL::SessionID sessionID, FormData& 
     auto url = formData.asBlobURL();
     if (!url.isNull()) {
         // FIXME: Properly set mime type and size of the blob.
-        Ref<const Blob> blob = Blob::deserialize(sessionID, url, { }, 0, { });
+        Ref<const Blob> blob = Blob::deserialize(sessionID, url, { }, { }, { });
         return FetchBody { WTFMove(blob) };
     }
 

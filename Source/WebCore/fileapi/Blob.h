@@ -117,22 +117,25 @@ protected:
     Blob(ReferencingExistingBlobConstructor, const Blob&);
 
     enum UninitializedContructor { uninitializedContructor };
-    Blob(UninitializedContructor, PAL::SessionID);
+    Blob(UninitializedContructor, PAL::SessionID, URL&&, String&& type);
 
     enum DeserializationContructor { deserializationContructor };
-    Blob(DeserializationContructor, PAL::SessionID, const URL& srcURL, const String& type, long long size, const String& fileBackedPath);
+    Blob(DeserializationContructor, PAL::SessionID, const URL& srcURL, const String& type, Optional<unsigned long long> size, const String& fileBackedPath);
 
     // For slicing.
     Blob(PAL::SessionID, const URL& srcURL, long long start, long long end, const String& contentType);
 
+private:
     PAL::SessionID m_sessionID;
+
     // This is an internal URL referring to the blob data associated with this object. It serves
     // as an identifier for this blob. The internal URL is never used to source the blob's content
     // into an HTML or for FileRead'ing, public blob URLs must be used for those purposes.
     URL m_internalURL;
 
     String m_type;
-    mutable long long m_size;
+
+    mutable Optional<unsigned long long> m_size;
 };
 
 } // namespace WebCore
