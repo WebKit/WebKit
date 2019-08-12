@@ -207,7 +207,7 @@ WI.LayoutDirection = {
     RTL: "rtl",
 };
 
-WI.resolvedLayoutDirection = () => { return InspectorFrontendHost.userInterfaceLayoutDirection(); }
+WI.resolvedLayoutDirection = () => { return InspectorFrontendHost.userInterfaceLayoutDirection(); };
 
 // Add stubs that are called by the frontend API.
 WI.updateDockedState = () => {};

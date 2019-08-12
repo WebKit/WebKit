@@ -360,7 +360,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     tableRepresentedObjectForIndex(table, index)
     {
-        console.assert(index >=0 && index < this._activeCollection.filteredEntries.length);
+        console.assert(index >= 0 && index < this._activeCollection.filteredEntries.length);
         return this._activeCollection.filteredEntries[index];
     }
 

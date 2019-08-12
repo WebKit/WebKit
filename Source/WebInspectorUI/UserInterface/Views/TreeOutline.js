@@ -729,19 +729,6 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._selectionController.selectItems(new Set(selectableObjects));
     }
 
-    get selectedTreeElementIndex()
-    {
-        if (!this.hasChildren || !this.selectedTreeElement)
-            return;
-
-        for (var i = 0; i < this.children.length; ++i) {
-            if (this.children[i] === this.selectedTreeElement)
-                return i;
-        }
-
-        return false;
-    }
-
     get virtualized()
     {
         return this._virtualizedScrollContainer && !isNaN(this._virtualizedTreeItemHeight);

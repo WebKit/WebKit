@@ -301,7 +301,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                 }
             }
 
-            this._includeUserAgentRulesOnNextRefresh = false
+            this._includeUserAgentRulesOnNextRefresh = false;
 
             this.dispatchEventToListeners(WI.DOMNodeStyles.Event.Refreshed, {significantChange});
 

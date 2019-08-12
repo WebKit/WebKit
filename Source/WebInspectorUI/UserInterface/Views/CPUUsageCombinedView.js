@@ -138,7 +138,7 @@ WI.CPUUsageCombinedView = class CPUUsageCombinedView extends WI.View
             let x = xScale(dataPoint.time);
             let y1 = yScale(dataPoint.mainThreadUsage);
             let y2 = yScale(dataPoint.mainThreadUsage + dataPoint.workerThreadUsage);
-            let y3 = yScale(dataPoint.usage)
+            let y3 = yScale(dataPoint.usage);
             this._chart.addPointSet(x, [y1, y2, y3]);
         }
 

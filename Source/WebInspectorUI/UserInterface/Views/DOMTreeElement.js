@@ -1937,7 +1937,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             return;
 
         let shouldEnable = breakpoints.some((breakpoint) => breakpoint.disabled);
-        breakpoints.forEach((breakpoint) => breakpoint.disabled = !shouldEnable);
+        breakpoints.forEach((breakpoint) => { breakpoint.disabled = !shouldEnable });
     }
 
     _statusImageContextmenu(event)

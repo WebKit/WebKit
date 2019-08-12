@@ -1651,7 +1651,7 @@ function isTextLikelyMinified(content)
     if (startRatio < autoFormatWhitespaceRatio)
         return true;
 
-    let endRatio = whitespaceRatio(content, content.length - autoFormatMaxCharactersToCheck, content.length)
+    let endRatio = whitespaceRatio(content, content.length - autoFormatMaxCharactersToCheck, content.length);
     if (endRatio < autoFormatWhitespaceRatio)
         return true;
 

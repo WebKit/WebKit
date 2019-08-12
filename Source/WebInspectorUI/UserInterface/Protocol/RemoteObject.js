@@ -462,7 +462,7 @@ WI.RemoteObject = class RemoteObject
             callback(0);
     }
 
-    async fetchProperties(propertyNames, resultObject={})
+    async fetchProperties(propertyNames, resultObject = {})
     {
         let seenPropertyNames = new Set;
         let requestedValues = [];

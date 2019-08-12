@@ -81,7 +81,7 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
             startTime: this.startTime,
             endTime: this.endTime,
             quad: this._quad || undefined,
-        }
+        };
     }
 
     // Public

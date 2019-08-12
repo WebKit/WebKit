@@ -1,5 +1,32 @@
 2019-08-09  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Address some ESLint warnings
+        https://bugs.webkit.org/show_bug.cgi?id=200598
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Base/Utilities.js:
+        * UserInterface/Controllers/TimelineManager.js:
+        * UserInterface/Models/DOMNodeStyles.js:
+        * UserInterface/Models/LayoutTimelineRecord.js:
+        * UserInterface/Models/ServerTimingEntry.js:
+        * UserInterface/Models/TimelineRecording.js:
+        * UserInterface/Protocol/RemoteObject.js:
+        * UserInterface/Test/FrontendTestHarness.js:
+        * UserInterface/Test/Test.js:
+        * UserInterface/Views/CPUTimelineView.js:
+        * UserInterface/Views/CPUUsageCombinedView.js:
+        * UserInterface/Views/ChangesDetailsSidebarPanel.js:
+        * UserInterface/Views/DOMTreeContentView.js:
+        * UserInterface/Views/DOMTreeElement.js:
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        * UserInterface/Views/NetworkTableContentView.js:
+        * UserInterface/Views/ResourceTimingBreakdownView.js:
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        * UserInterface/Views/TreeOutline.js:
+
+2019-08-09  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Better organize manager / observer API groups
         https://bugs.webkit.org/show_bug.cgi?id=200594
 

@@ -156,7 +156,7 @@ WI.ServerTimingEntry = class ServerTimingEntry
                 if (parseParameter)
                     parseParameter(paramValue, entry);
                 else
-                    console.warn("Unknown Server-Timing parameter:", paramName, paramValue)
+                    console.warn("Unknown Server-Timing parameter:", paramName, paramValue);
             }
 
             entries.push(entry);

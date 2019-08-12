@@ -332,7 +332,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             return;
         }
 
-        if (!json.recording  || typeof json.recording !== "object" || !json.overview || typeof json.overview !== "object" || typeof json.version !== "number") {
+        if (!json.recording || typeof json.recording !== "object" || !json.overview || typeof json.overview !== "object" || typeof json.version !== "number") {
             WI.TimelineManager.synthesizeImportError(WI.UIString("invalid JSON"));
             return;
         }

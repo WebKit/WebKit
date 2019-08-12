@@ -38,6 +38,7 @@
         "AuditAgent": true,
         "ApplicationCacheAgent": true,
         "CSSAgent": true,
+        "CPUProfilerAgent": true,
         "CanvasAgent": true,
         "ConsoleAgent": true,
         "DOMAgent": true,
@@ -56,6 +57,7 @@
         "RuntimeAgent": true,
         "ScriptProfilerAgent": true,
         "ServiceWorkerAgent": true,
+        "TargetAgent": true,
         "TimelineAgent": true,
         "WorkerAgent": true,
 
@@ -109,6 +111,7 @@
         // Utilities
         "appendWebInspectorConsoleEvaluationSourceURL": true,
         "appendWebInspectorSourceURL": true,
+        "blobAsText": true,
         "clamp": true,
         "doubleQuotedString": true,
         "ellipsis": true,

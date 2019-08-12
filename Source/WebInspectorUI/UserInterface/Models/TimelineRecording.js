@@ -247,7 +247,7 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         this._firstRecordOfTypeAfterDiscontinuity.clear();
 
         this._exportDataRecords = [];
-        this._exportDataMarkers = []
+        this._exportDataMarkers = [];
         this._exportDataMemoryPressureEvents = [];
         this._exportDataSampleStackTraces = [];
         this._exportDataSampleDurations = [];

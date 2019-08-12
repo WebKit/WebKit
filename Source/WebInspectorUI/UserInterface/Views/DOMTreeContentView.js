@@ -694,7 +694,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         }
 
         console.assert(appearanceToForce);
-        WI.cssManager.forcedAppearance = WI.cssManager.forcedAppearance == appearanceToForce ? null : appearanceToForce;
+        WI.cssManager.forcedAppearance = WI.cssManager.forcedAppearance === appearanceToForce ? null : appearanceToForce;
 
         // When no longer forcing an appearance, if the last known default appearance is different than the current
         // default appearance, then update the navigation button now. Otherwise just toggle the activated state.

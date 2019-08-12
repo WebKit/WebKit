@@ -361,7 +361,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
     deselectProperties()
     {
-        for (let propertyView  of this._propertyViews)
+        for (let propertyView of this._propertyViews)
             propertyView.selected = false;
 
         this._focused = false;

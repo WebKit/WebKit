@@ -77,7 +77,7 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
         this.evaluateInPage(`TestPage.debugLog(unescape("${escape(stringifiedMessage)}"));`);
     }
 
-    evaluateInPage(expression, callback, options={})
+    evaluateInPage(expression, callback, options = {})
     {
         let remoteObjectOnly = !!options.remoteObjectOnly;
 

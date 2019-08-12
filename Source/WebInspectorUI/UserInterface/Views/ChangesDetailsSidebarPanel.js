@@ -92,7 +92,7 @@ WI.ChangesDetailsSidebarPanel = class ChangesDetailsSidebarPanel extends WI.DOMD
                         return true;
 
                     if (style.ownerRule)
-                        return stylesForNode.matchedRules.some((matchedRule) => style.ownerRule.isEqualTo(matchedRule))
+                        return stylesForNode.matchedRules.some((matchedRule) => style.ownerRule.isEqualTo(matchedRule));
 
                     return false;
                 });

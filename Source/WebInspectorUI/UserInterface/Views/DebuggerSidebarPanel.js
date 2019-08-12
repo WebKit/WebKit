@@ -343,7 +343,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
     createContentTreeOutline(options = {})
     {
-        let treeOutline = super.createContentTreeOutline(options)
+        let treeOutline = super.createContentTreeOutline(options);
 
         treeOutline.addEventListener(WI.TreeOutline.Event.ElementRevealed, (event) => {
             let treeElement = event.data.element;
