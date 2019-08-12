@@ -34,11 +34,7 @@
 #elif PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/LSAppLinkPriv.h>
 #elif PLATFORM(IOS)
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
-#import <CoreServices/LSURLOverridePriv.h>
-#else
-#import <CoreServices/LSApplicationWorkspace.h>
-#endif
+#import <MobileCoreServices/MobileCoreServicesPriv.h>
 #endif
 
 #endif // USE(APPLE_INTERNAL_SDK)
