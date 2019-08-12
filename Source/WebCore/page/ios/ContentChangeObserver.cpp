@@ -36,6 +36,7 @@
 #include "Logging.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
+#include "Quirks.h"
 #include "RenderDescendantIterator.h"
 #include "Settings.h"
 
@@ -596,7 +597,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
 
 bool ContentChangeObserver::shouldObserveVisibilityChangeForElement(const Element& element)
 {
-    return isObservingContentChanges() && !hasVisibleChangeState() && !visibleRendererWasDestroyed(element);
+    return isObservingContentChanges() && !hasVisibleChangeState() && !visibleRendererWasDestroyed(element) && !element.document().quirks().shouldIgnoreContentChange(element);
 }
 
 ContentChangeObserver::StyleChangeScope::StyleChangeScope(Document& document, const Element& element)
