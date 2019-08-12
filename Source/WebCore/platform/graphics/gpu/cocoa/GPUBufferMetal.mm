@@ -34,6 +34,7 @@
 #import <JavaScriptCore/ArrayBuffer.h>
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/MainThread.h>
 
@@ -148,25 +149,26 @@ JSC::ArrayBuffer* GPUBuffer::mapOnCreation()
 #if USE(METAL)
 void GPUBuffer::commandBufferCommitted(MTLCommandBuffer *commandBuffer)
 {
+    ASSERT(isMainThread());
     ++m_numScheduledCommandBuffers;
 
-    auto protectedThis = makeRefPtr(this);
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer>) {
-        protectedThis->commandBufferCompleted();
-    }];
+    // Make sure |this| only gets ref'd / deref'd on the main thread since it is not ThreadSafeRefCounted.
+    [commandBuffer addCompletedHandler:makeBlockPtr([this, protectedThis = makeRef(*this)](id<MTLCommandBuffer>) mutable {
+        callOnMainThread([this, protectedThis = WTFMove(protectedThis)] {
+            commandBufferCompleted();
+        });
+    }).get()];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void GPUBuffer::commandBufferCompleted()
 {
+    ASSERT(isMainThread());
     ASSERT(m_numScheduledCommandBuffers);
 
-    if (m_numScheduledCommandBuffers == 1 && state() == State::Mapped) {
-        callOnMainThread([this, protectedThis = makeRef(*this)] () {
-            runMappingCallback();
-        });
-    }
+    if (m_numScheduledCommandBuffers == 1 && state() == State::Mapped)
+        runMappingCallback();
 
     --m_numScheduledCommandBuffers;
 }

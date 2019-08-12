@@ -1,3 +1,17 @@
+2019-08-12  Chris Dumez  <cdumez@apple.com>
+
+        GPUBuffer seems to be ref'd / deref'd from multiple thread concurrently but is not ThreadSafeRefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=200629
+
+        Reviewed by Geoffrey Garen.
+
+        Make sure GPUBuffer only gets ref'd / deref'd on the main thread, since it is not
+        ThreadSafeRefCounted.
+
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::commandBufferCommitted):
+        (WebCore::GPUBuffer::commandBufferCompleted):
+
 2019-08-12  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC] Handle broken data in the libwebrtc GStreamer decoders
